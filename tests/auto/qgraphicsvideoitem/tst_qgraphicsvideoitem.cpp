@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,10 +40,8 @@
 ****************************************************************************/
 
 #include <qmobilityglobal.h>
-#include <QtTest/QtTest>
-
 #include "qgraphicsvideoitem.h"
-
+#include <QtTest/QtTest>
 #include "qmediaobject.h"
 #include "qmediaservice.h"
 #include "qpaintervideosurface_p.h"
@@ -57,10 +55,13 @@
 #include <QtGui/qgraphicsscene.h>
 #include <QtGui/qgraphicsview.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class tst_QGraphicsVideoItem : public QObject
 {
     Q_OBJECT
+public slots:
+    void initTestCase();
+
 private slots:
     void nullObject();
     void nullService();
@@ -72,6 +73,12 @@ private slots:
 
     void show();
 
+    void aspectRatioMode();
+    void offset();
+    void size();
+    void nativeSize_data();
+    void nativeSize();
+
     void boundingRect_data();
     void boundingRect();
 
@@ -79,6 +86,7 @@ private slots:
 };
 
 Q_DECLARE_METATYPE(const uchar *)
+Q_DECLARE_METATYPE(Qt::AspectRatioMode)
 
 class QtTestOutputControl : public QVideoOutputControl
 {
@@ -209,6 +217,11 @@ public:
 private:
     int m_paintCount;
 };
+
+void tst_QGraphicsVideoItem::initTestCase()
+{
+    qRegisterMetaType<Qt::AspectRatioMode>();
+}
 
 void tst_QGraphicsVideoItem::nullObject()
 {
@@ -345,7 +358,7 @@ void tst_QGraphicsVideoItem::show()
     QVERIFY(object.testService->rendererControl->surface() != 0);
 
     item->hide();
-    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::NoOutput);
+    QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
 
     item->show();
     QCOMPARE(object.testService->outputControl->output(), QVideoOutputControl::RendererOutput);
@@ -366,47 +379,239 @@ void tst_QGraphicsVideoItem::show()
     QVERIFY(item->paintCount() || item->waitForPaint(1));
 }
 
-void tst_QGraphicsVideoItem::boundingRect_data()
+void tst_QGraphicsVideoItem::aspectRatioMode()
+{
+    QGraphicsVideoItem item;
+
+    QCOMPARE(item.aspectRatioMode(), Qt::KeepAspectRatio);
+
+    item.setAspectRatioMode(Qt::IgnoreAspectRatio);
+    QCOMPARE(item.aspectRatioMode(), Qt::IgnoreAspectRatio);
+
+    item.setAspectRatioMode(Qt::KeepAspectRatioByExpanding);
+    QCOMPARE(item.aspectRatioMode(), Qt::KeepAspectRatioByExpanding);
+
+    item.setAspectRatioMode(Qt::KeepAspectRatio);
+    QCOMPARE(item.aspectRatioMode(), Qt::KeepAspectRatio);
+}
+
+void tst_QGraphicsVideoItem::offset()
+{
+    QGraphicsVideoItem item;
+
+    QCOMPARE(item.offset(), QPointF(0, 0));
+
+    item.setOffset(QPointF(-32.4, 43.0));
+    QCOMPARE(item.offset(), QPointF(-32.4, 43.0));
+
+    item.setOffset(QPointF(1, 1));
+    QCOMPARE(item.offset(), QPointF(1, 1));
+
+    item.setOffset(QPointF(12, -30.4));
+    QCOMPARE(item.offset(), QPointF(12, -30.4));
+
+    item.setOffset(QPointF(-90.4, -75));
+    QCOMPARE(item.offset(), QPointF(-90.4, -75));
+}
+
+void tst_QGraphicsVideoItem::size()
+{
+    QGraphicsVideoItem item;
+
+    QCOMPARE(item.size(), QSizeF(320, 240));
+
+    item.setSize(QSizeF(542.5, 436.3));
+    QCOMPARE(item.size(), QSizeF(542.5, 436.3));
+
+    item.setSize(QSizeF(-43, 12));
+    QCOMPARE(item.size(), QSizeF(0, 0));
+
+    item.setSize(QSizeF(54, -9));
+    QCOMPARE(item.size(), QSizeF(0, 0));
+
+    item.setSize(QSizeF(-90, -65));
+    QCOMPARE(item.size(), QSizeF(0, 0));
+
+    item.setSize(QSizeF(1000, 1000));
+    QCOMPARE(item.size(), QSizeF(1000, 1000));
+}
+
+void tst_QGraphicsVideoItem::nativeSize_data()
 {
     QTest::addColumn<QSize>("frameSize");
     QTest::addColumn<QRect>("viewport");
     QTest::addColumn<QSize>("pixelAspectRatio");
-    QTest::addColumn<QRectF>("expectedRect");
+    QTest::addColumn<QSizeF>("nativeSize");
 
     QTest::newRow("640x480")
             << QSize(640, 480)
             << QRect(0, 0, 640, 480)
             << QSize(1, 1)
-            << QRectF(-319, -239, 640, 480);
+            << QSizeF(640, 480);
 
     QTest::newRow("800x600, (80,60, 640x480) viewport")
             << QSize(800, 600)
             << QRect(80, 60, 640, 480)
             << QSize(1, 1)
-            << QRectF(-319,-239, 640, 480);
+            << QSizeF(640, 480);
 
     QTest::newRow("800x600, (80,60, 640x480) viewport, 4:3")
             << QSize(800, 600)
             << QRect(80, 60, 640, 480)
             << QSize(4, 3)
-            << QRectF(-426, -239, 853, 480);
+            << QSizeF(853, 480);
+}
 
+void tst_QGraphicsVideoItem::nativeSize()
+{
+    QFETCH(QSize, frameSize);
+    QFETCH(QRect, viewport);
+    QFETCH(QSize, pixelAspectRatio);
+    QFETCH(QSizeF, nativeSize);
+
+    QtTestVideoObject object(new QtTestRendererControl);
+    QGraphicsVideoItem item;
+    item.setMediaObject(&object);
+
+    QCOMPARE(item.nativeSize(), QSizeF());
+
+    QSignalSpy spy(&item, SIGNAL(nativeSizeChanged(QSizeF)));
+
+    QVideoSurfaceFormat format(frameSize, QVideoFrame::Format_ARGB32);
+    format.setViewport(viewport);
+    format.setPixelAspectRatio(pixelAspectRatio);
+
+    QVERIFY(object.testService->rendererControl->surface()->start(format));
+
+    QCOMPARE(item.nativeSize(), nativeSize);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.last().first().toSizeF(), nativeSize);
+
+    object.testService->rendererControl->surface()->stop();
+
+    QCOMPARE(item.nativeSize(), QSizeF(0, 0));
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(spy.last().first().toSizeF(), QSizeF(0, 0));
+}
+
+void tst_QGraphicsVideoItem::boundingRect_data()
+{
+    QTest::addColumn<QSize>("frameSize");
+    QTest::addColumn<QPointF>("offset");
+    QTest::addColumn<QSizeF>("size");
+    QTest::addColumn<Qt::AspectRatioMode>("aspectRatioMode");
+    QTest::addColumn<QRectF>("expectedRect");
+
+
+    QTest::newRow("640x480: (0,0 640x480), Keep")
+            << QSize(640, 480)
+            << QPointF(0, 0)
+            << QSizeF(640, 480)
+            << Qt::KeepAspectRatio
+            << QRectF(0, 0, 640, 480);
+
+    QTest::newRow("800x600, (0,0, 640x480), Keep")
+            << QSize(800, 600)
+            << QPointF(0, 0)
+            << QSizeF(640, 480)
+            << Qt::KeepAspectRatio
+            << QRectF(0, 0, 640, 480);
+
+    QTest::newRow("800x600, (0,0, 640x480), KeepByExpanding")
+            << QSize(800, 600)
+            << QPointF(0, 0)
+            << QSizeF(640, 480)
+            << Qt::KeepAspectRatioByExpanding
+            << QRectF(0, 0, 640, 480);
+
+    QTest::newRow("800x600, (0,0, 640x480), Ignore")
+            << QSize(800, 600)
+            << QPointF(0, 0)
+            << QSizeF(640, 480)
+            << Qt::IgnoreAspectRatio
+            << QRectF(0, 0, 640, 480);
+
+    QTest::newRow("800x600, (100,100, 640x480), Keep")
+            << QSize(800, 600)
+            << QPointF(100, 100)
+            << QSizeF(640, 480)
+            << Qt::KeepAspectRatio
+            << QRectF(100, 100, 640, 480);
+
+    QTest::newRow("800x600, (100,-100, 640x480), KeepByExpanding")
+            << QSize(800, 600)
+            << QPointF(100, -100)
+            << QSizeF(640, 480)
+            << Qt::KeepAspectRatioByExpanding
+            << QRectF(100, -100, 640, 480);
+
+    QTest::newRow("800x600, (-100,-100, 640x480), Ignore")
+            << QSize(800, 600)
+            << QPointF(-100, -100)
+            << QSizeF(640, 480)
+            << Qt::IgnoreAspectRatio
+            << QRectF(-100, -100, 640, 480);
+
+    QTest::newRow("800x600, (0,0, 1920x1024), Keep")
+            << QSize(800, 600)
+            << QPointF(0, 0)
+            << QSizeF(1920, 1024)
+            << Qt::KeepAspectRatio
+            << QRectF(832.0 / 3, 0, 4096.0 / 3, 1024);
+
+    QTest::newRow("800x600, (0,0, 1920x1024), KeepByExpanding")
+            << QSize(800, 600)
+            << QPointF(0, 0)
+            << QSizeF(1920, 1024)
+            << Qt::KeepAspectRatioByExpanding
+            << QRectF(0, 0, 1920, 1024);
+
+    QTest::newRow("800x600, (0,0, 1920x1024), Ignore")
+            << QSize(800, 600)
+            << QPointF(0, 0)
+            << QSizeF(1920, 1024)
+            << Qt::IgnoreAspectRatio
+            << QRectF(0, 0, 1920, 1024);
+
+    QTest::newRow("800x600, (100,100, 1920x1024), Keep")
+            << QSize(800, 600)
+            << QPointF(100, 100)
+            << QSizeF(1920, 1024)
+            << Qt::KeepAspectRatio
+            << QRectF(100 + 832.0 / 3, 100, 4096.0 / 3, 1024);
+
+    QTest::newRow("800x600, (100,-100, 1920x1024), KeepByExpanding")
+            << QSize(800, 600)
+            << QPointF(100, -100)
+            << QSizeF(1920, 1024)
+            << Qt::KeepAspectRatioByExpanding
+            << QRectF(100, -100, 1920, 1024);
+
+    QTest::newRow("800x600, (-100,-100, 1920x1024), Ignore")
+            << QSize(800, 600)
+            << QPointF(-100, -100)
+            << QSizeF(1920, 1024)
+            << Qt::IgnoreAspectRatio
+            << QRectF(-100, -100, 1920, 1024);
 }
 
 void tst_QGraphicsVideoItem::boundingRect()
 {
     QFETCH(QSize, frameSize);
-    QFETCH(QRect, viewport);
-    QFETCH(QSize, pixelAspectRatio);
+    QFETCH(QPointF, offset);
+    QFETCH(QSizeF, size);
+    QFETCH(Qt::AspectRatioMode, aspectRatioMode);
     QFETCH(QRectF, expectedRect);
 
     QtTestVideoObject object(new QtTestRendererControl);
     QGraphicsVideoItem item;
     item.setMediaObject(&object);
 
+    item.setOffset(offset);
+    item.setSize(size);
+    item.setAspectRatioMode(aspectRatioMode);
+
     QVideoSurfaceFormat format(frameSize, QVideoFrame::Format_ARGB32);
-    format.setViewport(viewport);
-    format.setPixelAspectRatio(pixelAspectRatio);
 
     QVERIFY(object.testService->rendererControl->surface()->start(format));
 

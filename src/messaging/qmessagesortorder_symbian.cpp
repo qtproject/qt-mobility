@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -103,10 +103,10 @@ bool QMessageSortOrderPrivate::lessThan(const QMessageSortOrder &sortOrder,
             QString leftStr;
             QString rightStr;
             foreach (QMessageAddress a, left->to() + left->cc() + left->bcc()) {
-                leftStr.append(a.recipient() + ";");
+                leftStr.append(a.addressee() + ";");
             }
             foreach (QMessageAddress a, right->to() + right->cc() + right->bcc()) {
-                rightStr.append(a.recipient() + ";");
+                rightStr.append(a.addressee() + ";");
             }
             COMPARE(leftStr, rightStr)
         }

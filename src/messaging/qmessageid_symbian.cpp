@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 #include "qmessageid.h"
-#include <qhash>
-
+#include <qhash.h>
+#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -81,9 +81,9 @@ QMessageId& QMessageId::operator=(const QMessageId& other)
 
     if (!d_ptr)
         d_ptr = new QMessageIdPrivate;
-    
+
     d_ptr->_id = other.d_ptr->_id;
-        
+
     return *this;
 }
 
@@ -91,10 +91,10 @@ bool QMessageId::operator==(const QMessageId& other) const
 {
     if (!other.d_ptr && !d_ptr)
         return true;
-    
+
     if (!other.d_ptr || !d_ptr)
         return false;
-    
+
     return (d_ptr->_id == other.d_ptr->_id);
 }
 
@@ -103,12 +103,12 @@ bool QMessageId::operator<(const QMessageId& other) const
     long left = 0;
     long right = 0;
     if (d_ptr) {
-        left = d_ptr->_id.toLong();
+        left = SymbianHelpers::stripIdPrefix(d_ptr->_id).toLong();
     }
     if (other.d_ptr) {
-        right = other.d_ptr->_id.toLong();
+        right = SymbianHelpers::stripIdPrefix(other.d_ptr->_id).toLong();
     }
-    
+
     return (left < right);
 }
 

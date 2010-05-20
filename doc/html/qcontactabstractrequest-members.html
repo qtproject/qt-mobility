@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactabstractrequest.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: List of All Members for QContactAbstractRequest</title>
+  <title>Qt Mobility Project 1.1: List of All Members for QContactAbstractRequest</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -17,9 +17,7 @@
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn">enum <b><a href="qcontactabstractrequest.html#RequestType-enum">RequestType</a></b></div></li>
-<li><div class="fn">enum <b><a href="qcontactabstractrequest.html#Status-enum">Status</a></b></div></li>
-<li><div class="fn"><b><a href="qcontactabstractrequest.html#QContactAbstractRequest">QContactAbstractRequest</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qcontactabstractrequest.html#QContactAbstractRequest-2">QContactAbstractRequest</a></b> ( QContactAbstractRequestPrivate * )</div></li>
+<li><div class="fn">enum <b><a href="qcontactabstractrequest.html#State-enum">State</a></b></div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#dtor.QContactAbstractRequest">~QContactAbstractRequest</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#cancel">cancel</a></b> () : bool</div></li>
@@ -40,17 +38,18 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dumpObjectTree">dumpObjectTree</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dynamicPropertyNames">dynamicPropertyNames</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#error">error</a></b> () const : QContactManager::Error</div></li>
-<li><div class="fn"><b><a href="qcontactabstractrequest.html#errors">errors</a></b> () const : QList&lt;QContactManager::Error&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#isActive">isActive</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qcontactabstractrequest.html#isCanceled">isCanceled</a></b> () const : bool</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#isFinished">isFinished</a></b> () const : bool</div></li>
+<li><div class="fn"><b><a href="qcontactabstractrequest.html#isInactive">isInactive</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#manager">manager</a></b> () const : QContactManager *</div></li>
@@ -61,6 +60,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
+<li><div class="fn"><b><a href="qcontactabstractrequest.html#resultsAvailable">resultsAvailable</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#sender">sender</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#setManager">setManager</a></b> ( QContactManager * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
@@ -69,23 +69,23 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#signalsBlocked">signalsBlocked</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#start">start</a></b> () : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#startTimer">startTimer</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qcontactabstractrequest.html#state">state</a></b> () const : State</div></li>
+<li><div class="fn"><b><a href="qcontactabstractrequest.html#stateChanged">stateChanged</a></b> ( QContactAbstractRequest::State )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#staticMetaObject-var">staticMetaObject</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#staticQtMetaObject-var">staticQtMetaObject</a></b> : </div></li>
-<li><div class="fn"><b><a href="qcontactabstractrequest.html#status">status</a></b> () const : Status</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#thread">thread</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#timerEvent">timerEvent</a></b> ( QTimerEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#tr">tr</a></b> ( const char *, const char *, int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#trUtf8">trUtf8</a></b> ( const char *, const char *, int )</div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#type">type</a></b> () const : RequestType</div></li>
 <li><div class="fn"><b><a href="qcontactabstractrequest.html#waitForFinished">waitForFinished</a></b> ( int ) : bool</div></li>
-<li><div class="fn"><b><a href="qcontactabstractrequest.html#waitForProgress">waitForProgress</a></b> ( int ) : bool</div></li>
 </ul>
 </td></tr>
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

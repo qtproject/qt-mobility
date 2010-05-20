@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -66,6 +66,10 @@ public:
 
 #if defined(Q_OS_WIN)
     static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types);
+#endif
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    static QMessageAccount from(const QMessageAccountId &id, const QString &name, const QMessageAddress &address, const QMessage::TypeFlags &types);
+    static QMessageAccountPrivate* implementation(const QMessageAccount &account);
 #endif
 #if defined(Q_OS_SYMBIAN)
     static QMessageAccount from(const QMessageAccountId &id, const QString &name, long int service1EntryId, long int service2EntryId, const QMessage::TypeFlags &types);

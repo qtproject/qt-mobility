@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,9 +45,11 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qmetatype.h>
 
-QTM_BEGIN_NAMESPACE
+#include <qmobilityglobal.h>
 
-namespace QtMedia
+QT_BEGIN_NAMESPACE
+
+namespace QtMediaServices
 {
     enum MetaData
     {
@@ -140,7 +142,12 @@ namespace QtMedia
         Contrast,
         Saturation,
         Sharpness,
-        DeviceSettingDescription
+        DeviceSettingDescription,
+
+        PosterImage,
+        CoverArtImage,
+        ThumbnailImage
+
     };
 
     enum SupportEstimate
@@ -148,7 +155,7 @@ namespace QtMedia
         NotSupported,
         MaybeSupported,
         ProbablySupported,
-        PreferedService
+        PreferredService
     };
 
     enum EncodingQuality
@@ -178,6 +185,6 @@ namespace QtMedia
 
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

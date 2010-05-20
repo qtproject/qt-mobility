@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,7 +53,7 @@
 #include <sys/ioctl.h>
 #include <linux/videodev2.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class V4LRadioService;
 
@@ -65,7 +65,7 @@ public:
     ~V4LRadioControl();
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMediaServices::AvailabilityError availabilityError() const;
 
     QRadioTuner::State state() const;
 

@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- location.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Location</title>
+  <title>Qt Mobility Project 1.1: Location</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -15,14 +15,23 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Location<br /><span class="subtitle"></span>
 </h1>
 <p>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</p>
-<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#namespace">Namespace</a></li>
+<li><a href="#overview">Overview</a></li>
 <ul><li><a href="#requesting-location-data-from-data-sources">Requesting location data from data sources</a></li>
 <li><a href="#controlling-aspects-of-data-sources">Controlling aspects of data sources</a></li>
 <li><a href="#reading-nmea-data">Reading NMEA data</a></li>
 </ul>
 <li><a href="#example-creating-a-custom-location-data-source">Example: Creating a custom location data source</a></li>
+<li><a href="#examples">Examples</a></li>
+<ul><li><a href="#flickr-demo">Flickr Demo</a></li>
+<li><a href="#weather-info-demo">Weather Info Demo</a></li>
+<li><a href="#light-maps-demo">Light Maps Demo</a></li>
+</ul>
 <li><a href="#classes">Classes</a></li>
 </ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>Location data involves a precisely specified position on the Earth's surface &#x2014; as provided by a latitude-longitude coordinate &#x2014; along with associated data, such as:</p>
@@ -35,7 +44,7 @@
 <p>This data can be extracted through a variety of methods. One of the most well known methods of positioning is GPS (Global Positioning System), a publicly available system that uses radiowave signals received from Earth-orbiting satellites to calculate the precise position and time of the receiver. Another popular method is Cell ID positioning, which uses the cell ID of the cell site that is currently serving the receiving device to calculate its approximate location. These and other positioning methods can all be used with the Location API; the only requirement for a location data source within the API is that it provides a latitude-longitude coordinate with a date/time value, with the option of providing the other attributes listed above.</p>
 <p>Location data sources are created by subclassing <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> and providing <a href="qgeopositioninfo.html">QGeoPositionInfo</a> objects through the <a href="qgeopositioninfosource.html#positionUpdated">QGeoPositionInfoSource::positionUpdated</a>() signal. Clients that require location data can connect to the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated()</a> signal and call <a href="qgeopositioninfosource.html#startUpdates">startUpdates()</a> or <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate()</a> to trigger the distribution of location data.</p>
 <p>A default position source may be available on some platforms. Call <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>() to create an instance of the default position source; the method returns 0 if no default source is available for the platform.</p>
-<p>The <a href="qgeoareamonitor.html">QGeoAreaMonitor</a> class enables client applications to be notified when the receiving device has moved in or out of a particular area, as specified by a coordinate and radius. If the platform provides built-in support for area monitoring, QGeoAreaMonitor::createMonitor() returns an instance of the default area monitor.</p>
+<p>The <a href="qgeoareamonitor.html">QGeoAreaMonitor</a> class enables client applications to be notified when the receiving device has moved in or out of a particular area, as specified by a coordinate and radius. If the platform provides built-in support for area monitoring, <a href="qgeoareamonitor.html#createDefaultMonitor">QGeoAreaMonitor::createDefaultMonitor</a>() returns an instance of the default area monitor.</p>
 <p>Satellite information can also be distributed through the <a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a> class. Call <a href="qgeosatelliteinfosource.html#createDefaultSource">QGeoSatelliteInfoSource::createDefaultSource</a>() to create an instance of the default satellite data source for the platform, if one is available. Alternatively, clients can subclass it to provide a custom satellite data source.</p>
 <a name="requesting-location-data-from-data-sources"></a>
 <h4>Requesting location data from data sources</h4>
@@ -146,7 +155,7 @@
         if (logFile-&gt;canReadLine())
             readNextPosition();
         else
-            emit requestTimeout();
+            emit updateTimeout();
     }
 
     void LogFilePositionSource::readNextPosition()
@@ -158,13 +167,13 @@
             double longitude;
             bool hasLatitude = false;
             bool hasLongitude = false;
-            QDateTime dateTime = QDateTime::fromString(QString(data.value(0)), Qt::ISODate);
+            QDateTime timestamp = QDateTime::fromString(QString(data.value(0)), Qt::ISODate);
             latitude = data.value(1).toDouble(&amp;hasLatitude);
             longitude = data.value(2).toDouble(&amp;hasLongitude);
 
-            if (hasLatitude &amp;&amp; hasLongitude &amp;&amp; dateTime.isValid()) {
+            if (hasLatitude &amp;&amp; hasLongitude &amp;&amp; timestamp.isValid()) {
                 QGeoCoordinate coordinate(latitude, longitude);
-                QGeoPositionInfo info(coordinate, dateTime);
+                QGeoPositionInfo info(coordinate, timestamp);
                 if (info.isValid()) {
                     lastPosition = info;
                     emit positionUpdated(info);
@@ -174,6 +183,17 @@
     }</pre>
 <p>The example includes a <tt>ClientApplication</tt> class that requests updates from the <tt>LogFilePositionSource</tt> class. Run the exaple to see the data that is received by <tt>ClientApplication</tt>.</p>
 <p>Before running the example, make sure you have done both <tt>make</tt> and <tt>make install</tt>.</p>
+<a name="examples"></a>
+<h3>Examples</h3>
+<a name="flickr-demo"></a>
+<h4>Flickr Demo</h4>
+<p>The <a href="flickrdemo.html">Flickr Demo</a> uses the Location to download thumbnail images from Flickr relevant to the current location.</p>
+<a name="weather-info-demo"></a>
+<h4>Weather Info Demo</h4>
+<p>The <a href="weatherinfo.html">Weather Info demo</a> uses Location display data about the weather for the current location.</p>
+<a name="light-maps-demo"></a>
+<h4>Light Maps Demo</h4>
+<p>The <a href="lightmaps.html">Light Maps demo</a> uses Location display a street map for the current location.</p>
 <a name="classes"></a>
 <h3>Classes</h3>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
@@ -187,8 +207,8 @@
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

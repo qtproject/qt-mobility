@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,7 +55,7 @@ class Q_MESSAGING_EXPORT QMessageAccountId
 public:
     QMessageAccountId();
     QMessageAccountId(const QMessageAccountId &other);
-    QMessageAccountId(const QString &id);
+    QMessageAccountId(const QString& id);
     ~QMessageAccountId();
     
     QMessageAccountId& operator=(const QMessageAccountId &other);

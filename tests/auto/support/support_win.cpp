@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,6 +57,8 @@
 #ifdef _WIN32_WCE
 #include <cemapi.h>
 #endif
+
+#include <messagingutil_p.h>
 
 // Missing definitions
 #ifndef PR_PST_CONFIG_FLAGS
@@ -386,7 +388,7 @@ QMessageAccountId accountIdFromRecordKey(const QByteArray &recordKey)
         encodedIdStream << recordKey;
     }
 
-    return QMessageAccountId(encodedId.toBase64());
+    return QMessageAccountId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
 }
 
 QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByteArray &entryId, const QByteArray &storeKey)
@@ -407,7 +409,7 @@ QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByte
 #endif
     }
 
-    return QMessageFolderId(encodedId.toBase64());
+    return QMessageFolderId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
 }
 
 QByteArray objectProperty(IMAPIProp *object, ULONG tag)
@@ -1351,8 +1353,8 @@ public:
                             message.setType(QMessage::Mms);
                         } else if (type.toLower() == "sms") {
                             message.setType(QMessage::Sms);
-                        } else if (type.toLower() == "xmpp") {
-                            message.setType(QMessage::Xmpp);
+                        } else if (type.toLower() == "instantmessage") {
+                            message.setType(QMessage::InstantMessage);
                         } else {
                             message.setType(QMessage::Email);
                         }

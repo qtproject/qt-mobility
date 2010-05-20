@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,6 +58,7 @@
 
 #include <QList>
 #include <QPointer>
+#include <QMutex>
 
 QTM_BEGIN_NAMESPACE
 
@@ -66,7 +67,7 @@ class QContactAbstractRequestPrivate
 public:
     QContactAbstractRequestPrivate()
         : m_error(QContactManager::NoError),
-            m_status(QContactAbstractRequest::Inactive),
+            m_state(QContactAbstractRequest::InactiveState),
             m_manager(0)
     {
     }
@@ -81,9 +82,9 @@ public:
     }
 
     QContactManager::Error m_error;
-    QContactAbstractRequest::Status m_status;
+    QContactAbstractRequest::State m_state;
     QPointer<QContactManager> m_manager;
-    QList<QContactManager::Error> m_errors;
+    mutable QMutex m_mutex;
 };
 
 QTM_END_NAMESPACE

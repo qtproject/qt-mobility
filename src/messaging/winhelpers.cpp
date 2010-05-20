@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -82,6 +82,7 @@
 #include "qmessageaccountfilter_p.h"
 #include "qmessageaccountsortorder_p.h"
 #include "qmessagestore_p.h"
+#include "messagingutil_p.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -90,7 +91,6 @@
 #include <QThreadStorage>
 #include <QTimer>
 #include <QMutexLocker>
-
 
 #include <shlwapi.h>
 #include <shlguid.h>
@@ -120,6 +120,8 @@ QTM_BEGIN_NAMESPACE
 
 namespace WinHelpers
 {
+	
+
     bool setMapiProperty(IMAPIProp *object, ULONG tag, const QString &value)
     {
         SPropValue prop = { 0 };
@@ -437,11 +439,11 @@ namespace {
         entry.rgPropVals[0].Value.l = type;
 
 #ifdef _WIN32_WCE
-        QString addressStr = addr.recipient();
+        QString addressStr = addr.addressee();
 #else
         QString addressStr("[%1:%2]");
         addressStr = addressStr.arg(addr.type() == QMessageAddress::Phone ? "SMS" : "SMTP");
-        addressStr = addressStr.arg(addr.recipient());
+        addressStr = addressStr.arg(addr.addressee());
 #endif
 
         // TODO: Escape illegal characters, as per: http://msdn.microsoft.com/en-us/library/cc842281.aspx
@@ -553,20 +555,21 @@ namespace {
                 if (HR_SUCCEEDED(attachment->OpenProperty(PR_ATTACH_DATA_BIN, &IID_IStream, 0, MAPI_MODIFY | MAPI_CREATE, (LPUNKNOWN*)&os))) {
                     const int BUF_SIZE=4096;
                     char pData[BUF_SIZE];
-                    ULONG ulSize=0,ulRead,ulWritten;
+                    ULONG ulSize=0,ulRead,ulWritten, ulTotalWritten=0;
 
                     QDataStream attachmentStream(attachmentContainer.content());
 
                     ulRead=attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
                     while (ulRead) {
                         os->Write(pData,ulRead, &ulWritten);
+                        ulTotalWritten += ulWritten;
 
                         ulSize += ulRead;
                         ulRead = attachmentStream.readRawData(static_cast<char*>(pData), BUF_SIZE);
                     }
 
                     ULARGE_INTEGER uli = { 0 };
-                    uli.LowPart = ulWritten;
+                    uli.LowPart = ulTotalWritten;
                     os->SetSize(uli);
 
                     os->Commit(STGC_DEFAULT);
@@ -1001,7 +1004,7 @@ namespace {
             qWarning() << "Unable to set subject in message.";
             *error = QMessageManager::FrameworkFault;
         } else {
-            QString emailAddress = source.from().recipient();
+            QString emailAddress = source.from().addressee();
             if (!setMapiProperty(message, PR_SENDER_EMAIL_ADDRESS, emailAddress)) {
                 qWarning() << "Unable to set sender address in message.";
                 *error = QMessageManager::FrameworkFault;
@@ -3032,7 +3035,7 @@ QMessage::StandardFolder MapiStore::standardFolder(const MapiEntryId &entryId) c
         }
     }
 
-    return QMessage::InboxFolder;
+    return QMessage::DraftsFolder;
 }
 
 bool MapiStore::setAdviseSink(ULONG mask, IMAPIAdviseSink *sink)
@@ -3178,9 +3181,13 @@ SessionManager::SessionManager()
 
 bool SessionManager::initialize(MapiSession *newSession)
 {
-    ptr = MapiSessionPtr(newSession);
-    ptr->_self = ptr;
-    return true;
+    if(newSession->_mapiSession)
+    {
+        ptr = MapiSessionPtr(newSession);
+        ptr->_self = ptr;
+        return true;
+    }
+    return false;
 }
 
 const MapiSessionPtr &SessionManager::session() const

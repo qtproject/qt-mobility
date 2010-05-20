@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,27 +55,27 @@ class Q_CONTACTS_EXPORT QContactAnniversary : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldCalendarId;
-    const char* FieldOriginalDate;
-    const char* FieldEvent;
-    const char* FieldSubType;
-    const char* SubTypeWedding;
-    const char* SubTypeEngagement;
-    const char* SubTypeHouse;
-    const char* SubTypeEmployment;
-    const char* SubTypeMemorial;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldCalendarId;
+    static const QLatin1Constant FieldOriginalDate;
+    static const QLatin1Constant FieldEvent;
+    static const QLatin1Constant FieldSubType;
+    static const QLatin1Constant SubTypeWedding;
+    static const QLatin1Constant SubTypeEngagement;
+    static const QLatin1Constant SubTypeHouse;
+    static const QLatin1Constant SubTypeEmployment;
+    static const QLatin1Constant SubTypeMemorial;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAnniversary, "Anniversary")
-    Q_DECLARE_LATIN1_LITERAL(FieldCalendarId, "CalendarId");
-    Q_DECLARE_LATIN1_LITERAL(FieldOriginalDate, "OriginalDate");
-    Q_DECLARE_LATIN1_LITERAL(FieldEvent, "Event");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeWedding, "Wedding");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeEngagement, "Engagement");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeHouse, "House");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeEmployment, "Employment");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeMemorial, "Memorial");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCalendarId, "CalendarId");
+    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
+    Q_DECLARE_LATIN1_CONSTANT(FieldEvent, "Event");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeWedding, "Wedding");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeEngagement, "Engagement");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeHouse, "House");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeEmployment, "Employment");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeMemorial, "Memorial");
 #endif
 
     void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}

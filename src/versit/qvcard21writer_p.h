@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,21 +53,22 @@
 // We mean it.
 //
 
-#include "qversitwriter_p.h"
+#include "qversitdocumentwriter_p.h"
 #include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class Q_AUTOTEST_EXPORT QVCard21Writer : public QVersitWriterPrivate
+class Q_AUTOTEST_EXPORT QVCard21Writer : public QVersitDocumentWriter
 {
 public:
     QVCard21Writer();
     ~QVCard21Writer();
 
-protected: // From QVersitWriterPrivate
-    QByteArray encodeVersitProperty(const QVersitProperty& property);
-    QByteArray encodeParameters(const QMultiHash<QString,QString>& parameters) const;
-    bool quotedPrintableEncode(const QVersitProperty& property, QByteArray& value) const;
+    void encodeVersitProperty(const QVersitProperty& property);
+    bool encodeVersitValue(QMultiHash<QString,QString>& parameters, QString& value);
+    void encodeParameters(const QMultiHash<QString,QString>& parameters);
+    bool quotedPrintableEncode(QString& text) const;
+    bool shouldBeQuotedPrintableEncoded(QChar chr) const;
 };
 
 QTM_END_NAMESPACE

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,8 +59,8 @@ class QGeoPositionInfoPrivate;
 class Q_LOCATION_EXPORT QGeoPositionInfo
 {
 public:
-    enum Property {
-        Heading,
+    enum Attribute {
+        Direction,
         GroundSpeed,
         VerticalSpeed,
         MagneticVariation,
@@ -76,40 +76,41 @@ public:
     QGeoPositionInfo &operator=(const QGeoPositionInfo &other);
 
     bool operator==(const QGeoPositionInfo &other) const;
-    inline bool operator!=(const QGeoPositionInfo &other) const { return !operator==(other); }
+    inline bool operator!=(const QGeoPositionInfo &other) const {
+        return !operator==(other);
+    }
 
     bool isValid() const;
 
-    void setDateTime(const QDateTime &dateTime);
-    QDateTime dateTime() const;
+    void setTimestamp(const QDateTime &timestamp);
+    QDateTime timestamp() const;
 
     void setCoordinate(const QGeoCoordinate &coordinate);
     QGeoCoordinate coordinate() const;
 
-    void setProperty(Property property, qreal value);
-    qreal property(Property property) const;
-    void removeProperty(Property property);
-
-    bool hasProperty(Property property) const;
+    void setAttribute(Attribute attribute, qreal value);
+    qreal attribute(Attribute attribute) const;
+    void removeAttribute(Attribute attribute);
+    bool hasAttribute(Attribute attribute) const;
 
 private:
 #ifndef QT_NO_DEBUG_STREAM
-    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update);
+    friend Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
 #endif
 #ifndef QT_NO_DATASTREAM
-    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update);
-    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
+    friend Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
+    friend Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
     QGeoPositionInfoPrivate *d;
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &update);
+Q_LOCATION_EXPORT QDebug operator<<(QDebug dbg, const QGeoPositionInfo &info);
 #endif
 
 #ifndef QT_NO_DATASTREAM
-Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &update);
-Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &update);
+Q_LOCATION_EXPORT QDataStream &operator<<(QDataStream &stream, const QGeoPositionInfo &info);
+Q_LOCATION_EXPORT QDataStream &operator>>(QDataStream &stream, QGeoPositionInfo &info);
 #endif
 
 QTM_END_NAMESPACE

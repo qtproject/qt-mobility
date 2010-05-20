@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,18 @@ QGstVideoBuffer::QGstVideoBuffer(GstBuffer *buffer, int bytesPerLine)
     , m_buffer(buffer)
     , m_bytesPerLine(bytesPerLine)
     , m_mode(NotMapped)
+{
+    gst_buffer_ref(m_buffer);
+}
+
+QGstVideoBuffer::QGstVideoBuffer(GstBuffer *buffer, int bytesPerLine,
+                QGstVideoBuffer::HandleType handleType,
+                const QVariant &handle)
+    : QAbstractVideoBuffer(handleType)
+    , m_buffer(buffer)
+    , m_bytesPerLine(bytesPerLine)
+    , m_mode(NotMapped)
+    , m_handle(handle)
 {
     gst_buffer_ref(m_buffer);
 }

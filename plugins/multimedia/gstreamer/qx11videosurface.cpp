@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,10 +39,16 @@
 **
 ****************************************************************************/
 
+#include <QtCore/qvariant.h>
+#include <QtCore/qdebug.h>
 #include <QtGui/qx11info_x11.h>
 #include <QtMultimedia/qvideosurfaceformat.h>
 
 #include "qx11videosurface.h"
+
+Q_DECLARE_METATYPE(XvImage*);
+
+static QAbstractVideoBuffer::HandleType XvHandleType = QAbstractVideoBuffer::HandleType(4);
 
 struct XvFormatRgb
 {
@@ -124,6 +130,7 @@ static const XvFormatYuv qt_xvYuvLookup[] =
     { QVideoFrame::Format_YUV420P, 12, XvPlanar, 3, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YUV"  },
     { QVideoFrame::Format_YV12   , 12, XvPlanar, 3, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YVU"  },
     { QVideoFrame::Format_UYVY   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "UYVY" },
+    { QVideoFrame::Format_YUYV   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "YUY2" },
     { QVideoFrame::Format_YUYV   , 16, XvPacked, 1, 8, 8, 8, 1, 2, 2, 1, 1, 1, "YUYV" },
     { QVideoFrame::Format_NV12   , 12, XvPlanar, 2, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YUV"  },
     { QVideoFrame::Format_NV12   , 12, XvPlanar, 2, 8, 8, 8, 1, 2, 2, 1, 2, 2, "YVU"  },
@@ -155,6 +162,8 @@ WId QX11VideoSurface::winId() const
 
 void QX11VideoSurface::setWinId(WId id)
 {
+    //qDebug() << "setWinID:" << id;
+
     if (id == m_winId)
         return;
 
@@ -182,13 +191,18 @@ void QX11VideoSurface::setWinId(WId id)
         if (m_image) {
             m_image = 0;
 
-            if (!start(surfaceFormat()))
+            if (!start(surfaceFormat())) {
                 QAbstractVideoSurface::stop();
+                qWarning() << "Failed to start video surface with format" << surfaceFormat();
+            }
         }
-    } else if (m_image) {
-        m_image = 0;
+    } else {
+        qWarning() << "Failed to find XVideo port";
+        if (m_image) {
+            m_image = 0;
 
-        QAbstractVideoSurface::stop();
+            QAbstractVideoSurface::stop();
+        }
     }
 
     emit supportedFormatsChanged();
@@ -202,6 +216,16 @@ QRect QX11VideoSurface::displayRect() const
 void QX11VideoSurface::setDisplayRect(const QRect &rect)
 {
     m_displayRect = rect;
+}
+
+QRect QX11VideoSurface::viewport() const
+{
+    return m_viewport;
+}
+
+void QX11VideoSurface::setViewport(const QRect &rect)
+{
+    m_viewport = rect;
 }
 
 int QX11VideoSurface::brightness() const
@@ -284,7 +308,7 @@ int QX11VideoSurface::redistribute(
 QList<QVideoFrame::PixelFormat> QX11VideoSurface::supportedPixelFormats(
         QAbstractVideoBuffer::HandleType handleType) const
 {
-    return handleType == QAbstractVideoBuffer::NoHandle
+    return handleType == QAbstractVideoBuffer::NoHandle || handleType ==  XvHandleType
             ? m_supportedPixelFormats
             : QList<QVideoFrame::PixelFormat>();
 }
@@ -319,7 +343,12 @@ bool QX11VideoSurface::start(const QVideoSurfaceFormat &format)
             m_viewport = format.viewport();
             m_image = image;
 
-            return QAbstractVideoSurface::start(format);
+            QVideoSurfaceFormat newFormat = format;
+            newFormat.setProperty("portId", QVariant(quint64(m_portId)));
+            newFormat.setProperty("xvFormatId", xvFormatId);
+            newFormat.setProperty("dataSize", image->data_size);
+
+            return QAbstractVideoSurface::start(newFormat);
         }
     }
 
@@ -359,31 +388,57 @@ bool QX11VideoSurface::present(const QVideoFrame &frame)
         } else {
             bool presented = false;
 
-            if (m_image->data_size > frame.mappedBytes()) {
+            if (frame.handleType() != XvHandleType &&
+                m_image->data_size > frame.mappedBytes()) {
                 qWarning("Insufficient frame buffer size");
                 setError(IncorrectFormatError);
-            } else if (m_image->num_planes > 0 && m_image->pitches[0] != frame.bytesPerLine()) {
+            } else if (frame.handleType() != XvHandleType &&
+                       m_image->num_planes > 0 &&
+                       m_image->pitches[0] != frame.bytesPerLine()) {
                 qWarning("Incompatible frame pitches");
                 setError(IncorrectFormatError);
             } else {
-                m_image->data = reinterpret_cast<char *>(frameCopy.bits());
+                if (frame.handleType() != XvHandleType) {
+                    m_image->data = reinterpret_cast<char *>(frameCopy.bits());
 
-                XvPutImage(
-                       QX11Info::display(),
-                       m_portId,
-                       m_winId,
-                       m_gc,
-                       m_image,
-                       m_viewport.x(),
-                       m_viewport.y(),
-                       m_viewport.width(),
-                       m_viewport.height(),
-                       m_displayRect.x(),
-                       m_displayRect.y(),
-                       m_displayRect.width(),
-                       m_displayRect.height());
+                    //qDebug() << "copy frame";
+                    XvPutImage(
+                            QX11Info::display(),
+                            m_portId,
+                            m_winId,
+                            m_gc,
+                            m_image,
+                            m_viewport.x(),
+                            m_viewport.y(),
+                            m_viewport.width(),
+                            m_viewport.height(),
+                            m_displayRect.x(),
+                            m_displayRect.y(),
+                            m_displayRect.width(),
+                            m_displayRect.height());
 
-                m_image->data = 0;
+                    m_image->data = 0;
+                } else {
+                    XvImage *img = frame.handle().value<XvImage*>();
+
+                    //qDebug() << "render directly";
+                    if (img)
+                        XvShmPutImage(
+                           QX11Info::display(),
+                           m_portId,
+                           m_winId,
+                           m_gc,
+                           img,
+                           m_viewport.x(),
+                           m_viewport.y(),
+                           m_viewport.width(),
+                           m_viewport.height(),
+                           m_displayRect.x(),
+                           m_displayRect.y(),
+                           m_displayRect.width(),
+                           m_displayRect.height(),
+                           false);
+                }
 
                 presented = true;
             }
@@ -402,7 +457,13 @@ bool QX11VideoSurface::findPort()
     bool portFound = false;
 
     if (XvQueryAdaptors(QX11Info::display(), m_winId, &count, &adaptors) == Success) {
+#ifdef Q_WS_MAEMO_5
+            //the overlay xvideo adapter fails to switch winId,
+            //prefer the "SGX Textured Video" adapter instead
+        for (unsigned int i = count-1; i >=0 && !portFound; --i) {
+#else
         for (unsigned int i = 0; i < count && !portFound; ++i) {
+#endif
             if (adaptors[i].type & XvImageMask) {
                 m_portId = adaptors[i].base_id;
 

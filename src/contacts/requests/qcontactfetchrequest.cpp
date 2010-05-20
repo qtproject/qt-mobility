@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,25 +48,18 @@ QTM_BEGIN_NAMESPACE
   \class QContactFetchRequest
   \brief The QContactFetchRequest class allows a client to asynchronously
     request contacts from a contacts store manager.
-   \ingroup contacts-requests
+
+
+  For a QContactFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  contacts (which may be retrieved by calling contacts()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
+  \ingroup contacts-requests
  */
 
-/*!
- * \fn QContactFetchRequest::progress(QContactFetchRequest* self, bool appendOnly)
- * This signal is emitted when some progress has been made on the request, causing either a change of
- * status or an update of results, or both.  It identifies which request the signal originated from
- * by including a pointer to \a self, and contains an \a appendOnly flag which signifies whether or not the total
- * ordering of the results have been maintained since the last progress signal was emitted.
- */
-
-/*! Constructs a new contact fetch request */
-QContactFetchRequest::QContactFetchRequest()
-    : QContactAbstractRequest(new QContactFetchRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by this contact fetch request */
-QContactFetchRequest::~QContactFetchRequest()
+/*! Constructs a new contact fetch request whose parent is the specified \a parent */
+QContactFetchRequest::QContactFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactFetchRequestPrivate, parent)
 {
 }
 
@@ -74,6 +67,7 @@ QContactFetchRequest::~QContactFetchRequest()
 void QContactFetchRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_filter = filter;
 }
 
@@ -81,22 +75,30 @@ void QContactFetchRequest::setFilter(const QContactFilter& filter)
 void QContactFetchRequest::setSorting(const QList<QContactSortOrder>& sorting)
 {
     Q_D(QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_sorting = sorting;
 }
 
-/*! Sets the list of allowable detail definition names to \a definitionNames.  Any contacts retrieved
-    by the request will have any details whose definition name is not on the restricted list
-    removed prior to being returned. */
-void QContactFetchRequest::setDefinitionRestrictions(const QStringList& definitionNames)
+/*!
+  Sets the fetch hint which may be used by the backend to optimize contact retrieval
+  to \a fetchHint.  A client should not make changes to a contact which has been retrieved
+  using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+  \sa QContactFetchHint
+ */
+void QContactFetchRequest::setFetchHint(const QContactFetchHint &fetchHint)
 {
     Q_D(QContactFetchRequest);
-    d->m_definitionRestrictions = definitionNames;
+    QMutexLocker ml(&d->m_mutex);
+    d->m_fetchHint = fetchHint;
 }
 
 /*! Returns the filter that will be used to select contacts to be returned */
 QContactFilter QContactFetchRequest::filter() const
 {
     Q_D(const QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_filter;
 }
 
@@ -104,20 +106,30 @@ QContactFilter QContactFetchRequest::filter() const
 QList<QContactSortOrder> QContactFetchRequest::sorting() const
 {
     Q_D(const QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_sorting;
 }
 
-/*! Returns the list of definition names which define which details contacts in the result list will be limited to */
-QStringList QContactFetchRequest::definitionRestrictions() const
+/*!
+  Returns the fetch hint which may be used by the backend to optimize contact retrieval.
+  A client should not make changes to a contact which has been retrieved
+  using a fetch hint other than the default fetch hint.  Doing so will result in information
+  loss when saving the contact back to the manager (as the "new" restricted contact will
+  replace the previously saved contact in the backend).
+  \sa QContactFetchHint
+ */
+QContactFetchHint QContactFetchRequest::fetchHint() const
 {
     Q_D(const QContactFetchRequest);
-    return d->m_definitionRestrictions;
+    QMutexLocker ml(&d->m_mutex);
+    return d->m_fetchHint;
 }
 
 /*! Returns the list of contacts retrieved by this request */
 QList<QContact> QContactFetchRequest::contacts() const
 {
     Q_D(const QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contacts;
 }
 

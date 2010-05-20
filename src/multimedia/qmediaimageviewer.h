@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,10 +42,10 @@
 #ifndef QMEDIAIMAGEVIEWER_H
 #define QMEDIAIMAGEVIEWER_H
 
-#include <qmediaobject.h>
-#include <qmediacontent.h>
+#include "qmediaobject.h"
+#include "qmediacontent.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class QMediaImageViewerPrivate;
@@ -113,6 +113,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed())
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

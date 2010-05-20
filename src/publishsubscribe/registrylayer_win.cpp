@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -959,72 +959,63 @@ bool RegistryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const
 
     HKEY key = hKeys.value(rh);
 
-    DWORD regType;
-    const BYTE *regData;
-    DWORD regSize;
-    const void *toDelete;
+    long result;
 
     switch (data.type()) {
     case QVariant::UInt: {
-        regType = REG_DWORD;
-        DWORD *temp = new DWORD;
-        *temp = data.toUInt();
-        toDelete = regData = reinterpret_cast<const BYTE *>(temp);
-        regSize = sizeof(DWORD);
+        DWORD temp = data.toUInt();
+        result = RegSetValueEx(key, reinterpret_cast<const wchar_t*>(value.utf16()), 0,
+                               REG_DWORD, reinterpret_cast<const BYTE *>(&temp), sizeof(DWORD));
         break;
     }
     case QVariant::ULongLong: {
-        regType = REG_QWORD;
-        quint64 *temp = new quint64;
-        *temp = data.toULongLong();
-        toDelete = regData = reinterpret_cast<const BYTE *>(temp);
-        regSize = sizeof(quint64);
+        quint64 temp = data.toULongLong();
+        result = RegSetValueEx(key, reinterpret_cast<const wchar_t*>(value.utf16()), 0,
+                               REG_QWORD, reinterpret_cast<const BYTE *>(&temp), sizeof(quint64));
         break;
     }
     case QVariant::String: {
-        regType = REG_SZ;
-        int length = data.toString().length() + 1;
+        // This may be wrong!
+        QString tempString = data.toString();
+        int length = tempString.length() + 1;
         wchar_t *temp = new wchar_t[length];
-        data.toString().toWCharArray(temp);
+        tempString.toWCharArray(temp);
         temp[length - 1] = L'\0';
-        toDelete = regData = reinterpret_cast<const BYTE *>(temp);
-        regSize = length * sizeof(wchar_t);
+        result = RegSetValueEx(key, reinterpret_cast<const wchar_t*>(value.utf16()), 0,
+                    REG_SZ, reinterpret_cast<const BYTE *>(temp), length * sizeof(wchar_t));
+        delete[] temp;
         break;
     }
     case QVariant::StringList: {
-        regType = REG_MULTI_SZ;
-        QString joined = data.toStringList().join(QString(QLatin1Char('\0')));
+        const QString joined = data.toStringList().join(QString(QLatin1Char('\0')));
         int length = joined.length() + 2;
         wchar_t *temp = new wchar_t[length];
         joined.toWCharArray(temp);
         temp[length - 2] = L'\0';
         temp[length - 1] = L'\0';
-        toDelete = regData = reinterpret_cast<const BYTE *>(temp);
-        regSize = length * sizeof(wchar_t);
+        result = RegSetValueEx(key, reinterpret_cast<const wchar_t*>(value.utf16()), 0,
+                               REG_MULTI_SZ, reinterpret_cast<const BYTE *>(temp),
+                               length * sizeof(wchar_t));
+        delete[] temp;
         break;
     }
     case QVariant::ByteArray: {
-        regType = REG_BINARY;
-        QByteArray *temp = new QByteArray(data.toByteArray());
-        regData = reinterpret_cast<const BYTE *>(temp->constData());
-        toDelete = temp;
-        regSize = temp->length();
+        QByteArray temp = data.toByteArray();
+        result = RegSetValueEx(key, reinterpret_cast<const wchar_t*>(value.utf16()), 0,
+                               REG_BINARY, reinterpret_cast<const BYTE *>(temp.constData()),
+                               temp.length());
         break;
     }
     default: {
-        regType = REG_NONE;
-        QByteArray *temp = new QByteArray;
-        QDataStream stream(temp, QIODevice::WriteOnly | QIODevice::Truncate);
+        QByteArray temp;
+        QDataStream stream(&temp, QIODevice::WriteOnly | QIODevice::Truncate);
         stream << data;
-        regData = reinterpret_cast<const BYTE *>(temp->constData());
-        toDelete = temp;
-        regSize = temp->length();
+        result = RegSetValueEx(key, reinterpret_cast<const wchar_t*>(value.utf16()), 0,
+                               REG_NONE, reinterpret_cast<const BYTE *>(temp.constData()),
+                               temp.length());
         break;
     }
     };
-
-    long result = RegSetValueEx(key, reinterpret_cast<const wchar_t*>(value.utf16()), 
-            0, regType, regData, regSize);
 
     QString fullPath(rh->path);
     if (fullPath != QLatin1String("/"))
@@ -1034,8 +1025,6 @@ bool RegistryLayer::setValue(QValueSpacePublisher *creator, Handle handle, const
 
     if (!creators[creator].contains(fullPath))
         creators[creator].append(fullPath);
-
-    delete[] toDelete;
 
     if (createdHandle)
         removeHandle(Handle(rh));

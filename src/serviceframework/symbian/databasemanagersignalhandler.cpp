@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "databasemanagersignalhandler.h"
-#include "clientservercommon.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -48,18 +47,9 @@ DatabaseManagerSignalHandler::DatabaseManagerSignalHandler(CDatabaseManagerServe
 {
 }
 
-DatabaseManagerSignalHandler::~DatabaseManagerSignalHandler()
+void DatabaseManagerSignalHandler::databaseChanged(const QString &path)
 {
-}
-
-void DatabaseManagerSignalHandler::ServiceAdded(const QString& aServiceName)
-{
-    iDatabaseManagerServerSession.ServiceAdded(aServiceName);
-}
-
-void DatabaseManagerSignalHandler::ServiceRemoved(const QString& aServiceName)
-{
-    iDatabaseManagerServerSession.ServiceRemoved(aServiceName);
+    iDatabaseManagerServerSession.databaseChanged(path);
 }
 
 #include "moc_databasemanagersignalhandler.cpp"

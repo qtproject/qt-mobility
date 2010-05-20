@@ -11,7 +11,12 @@ CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=release
 }
 
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(staticconfig.pri)
+
+symbian:contains(symbian_symbols_unfrozen,1) {
+    #see configure.bat for details
+    MMP_RULES+="EXPORTUNFROZEN"
+}
 
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
@@ -80,11 +85,21 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin {
-        contains(TEMPLATE,.*lib):DESTDIR = $$OUTPUT_DIR/lib
-        else:DESTDIR = $$OUTPUT_DIR/bin
+        contains(TEMPLATE,.*lib) {
+            DESTDIR = $$OUTPUT_DIR/lib
+            symbian:defFilePath=../s60installs
+        } else {
+            DESTDIR = $$OUTPUT_DIR/bin
+        }
     } else {
-        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
-        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
+        testplugin {
+            DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
+        } else {
+            #check that plugin_type is set or warn otherwise
+            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
+            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+            INSTALLS += target
+        }
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -104,8 +119,13 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 }
 
+contains(TEMPLATE,.*lib):DEFINES += QT_SHARED
+
 maemo6 {
     DEFINES+= Q_WS_MAEMO_6
+    contains(TEMPLATE,.*app.*): QMAKE_LIB_FLAGS+= -Wl,-rpath-link $$[QT_INSTALL_LIBS]
+    QMAKE_LIB_FLAGS+= -Wl,-rpath-link $$[QT_INSTALL_LIBS]
+    QMAKE_RPATHDIR += $$[QT_INSTALL_LIBS]
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
@@ -151,9 +171,8 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
-# For symbian, we are not freezing yet
-symbian:MMP_RULES += "EXPORTUNFROZEN"
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
+!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PLUGINS, \\\\, /)\\\"

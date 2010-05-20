@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,15 +54,15 @@
 //
 
 #include <qmobilityglobal.h>
-#include <qvideowidget.h>
+#include "qvideowidget.h"
 
 #ifndef QT_NO_OPENGL
 #include <QGLWidget>
 #endif
 
-#include <qpaintervideosurface_p.h>
+#include "qpaintervideosurface_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QVideoWidgetControlInterface
 {
@@ -76,8 +76,8 @@ public:
 
     virtual void setFullScreen(bool fullScreen) = 0;
 
-    virtual QVideoWidget::AspectRatioMode aspectRatioMode() const = 0;
-    virtual void setAspectRatioMode(QVideoWidget::AspectRatioMode mode) = 0;
+    virtual Qt::AspectRatioMode aspectRatioMode() const = 0;
+    virtual void setAspectRatioMode(Qt::AspectRatioMode mode) = 0;
 };
 
 class QVideoWidgetBackend : public QObject, public QVideoWidgetControlInterface
@@ -108,8 +108,8 @@ public:
 
     void setFullScreen(bool fullScreen);
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
 private:
     QVideoWidgetControl *m_widgetControl;
@@ -134,8 +134,8 @@ public:
 
     void setFullScreen(bool fullScreen);
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     QSize sizeHint() const;
 
@@ -152,14 +152,20 @@ Q_SIGNALS:
     void hueChanged(int hue);
     void saturationChanged(int saturation);
 
+private Q_SLOTS:
+    void formatChanged(const QVideoSurfaceFormat &format);
+    void frameChanged();
+
 private:
-    QRect displayRect() const;
+    void updateRects();
 
     QVideoRendererControl *m_rendererControl;
     QWidget *m_widget;
     QPainterVideoSurface *m_surface;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
-    QSize m_aspectRatio;
+    Qt::AspectRatioMode m_aspectRatioMode;
+    QRect m_boundingRect;
+    QRectF m_sourceRect;
+    QSize m_nativeSize;
     bool m_updatePaintDevice;
 };
 
@@ -179,8 +185,8 @@ public:
 
    void setFullScreen(bool fullScreen);
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     QSize sizeHint() const;
 
@@ -193,7 +199,7 @@ public:
 private:
     QVideoWindowControl *m_windowControl;
     QWidget *m_widget;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_pixelAspectRatio;
 };
 
@@ -218,7 +224,7 @@ public:
         , contrast(0)
         , hue(0)
         , saturation(0)
-        , aspectRatioMode(QVideoWidget::KeepAspectRatio)
+        , aspectRatioMode(Qt::KeepAspectRatio)
         , nonFullScreenFlags(0)
         , wasFullScreen(false)
     {
@@ -237,7 +243,7 @@ public:
     int contrast;
     int hue;
     int saturation;
-    QVideoWidget::AspectRatioMode aspectRatioMode;
+    Qt::AspectRatioMode aspectRatioMode;
     Qt::WindowFlags nonFullScreenFlags;
     bool wasFullScreen;
 
@@ -255,6 +261,6 @@ public:
     void _q_dimensionsChanged();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

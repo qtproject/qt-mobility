@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,12 +40,11 @@
 ****************************************************************************/
 
 #include <QtCore/qstring.h>
-#include <QtCore/qdebug.h>
 
 #include "audiocaptureserviceplugin.h"
 #include "audiocaptureservice.h"
 
-#include <qmediaserviceprovider.h>
+#include "../../../src/multimedia/qmediaserviceprovider.h"
 
 
 QStringList AudioCaptureServicePlugin::keys() const
@@ -58,7 +57,6 @@ QMediaService* AudioCaptureServicePlugin::create(QString const& key)
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new AudioCaptureService;
 
-    qDebug() << "unsupported key:" << key;
     return 0;
 }
 
@@ -67,5 +65,5 @@ void AudioCaptureServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(audioengine, AudioCaptureServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_audioengine, AudioCaptureServicePlugin);
 

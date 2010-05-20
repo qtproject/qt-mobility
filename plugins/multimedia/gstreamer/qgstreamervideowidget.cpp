@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -112,6 +112,11 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
             gst_element_set_state(m_videoSink, GST_STATE_NULL);
 
             g_object_set(G_OBJECT(m_videoSink), "force-aspect-ratio", 1, (const char*)NULL);
+#ifdef Q_WS_MAEMO_5
+            //the overlay xvideo adapter fails to switch winId,
+            //use "SGX Textured Video" adapter instead
+            g_object_set(G_OBJECT(m_videoSink), "device", "1", NULL);
+#endif
         }
     }
 
@@ -120,6 +125,8 @@ QGstreamerVideoWidgetControl::QGstreamerVideoWidgetControl(QObject *parent)
 
     gst_object_ref (GST_OBJECT (m_videoSink)); //Take ownership
     gst_object_sink (GST_OBJECT (m_videoSink));
+
+
 }
 
 QGstreamerVideoWidgetControl::~QGstreamerVideoWidgetControl()
@@ -218,17 +225,17 @@ QWidget *QGstreamerVideoWidgetControl::videoWidget()
     return m_widget;
 }
 
-QVideoWidget::AspectRatioMode QGstreamerVideoWidgetControl::aspectRatioMode() const
+Qt::AspectRatioMode QGstreamerVideoWidgetControl::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QGstreamerVideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+void QGstreamerVideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode mode)
 {
     if (m_videoSink) {
         g_object_set(G_OBJECT(m_videoSink),
                      "force-aspect-ratio",
-                     (mode == QVideoWidget::KeepAspectRatio),
+                     (mode == Qt::KeepAspectRatio),
                      (const char*)NULL);
     }
 

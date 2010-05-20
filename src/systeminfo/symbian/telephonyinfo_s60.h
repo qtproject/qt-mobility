@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,7 @@
 #define DEVICEINFO_H
 
 #include <e32base.h>
-#include <Etel3rdParty.h>
+#include <etel3rdparty.h>
 #include <QString>
 #include <QList>
 
@@ -53,7 +53,6 @@ class MTelephonyInfoObserver
 {
 public:
     virtual void batteryLevelChanged() = 0;
-    virtual void powerStateChanged() = 0;
 
     virtual void countryCodeChanged() = 0;
     virtual void networkCodeChanged() = 0;
@@ -125,24 +124,6 @@ private:
     QString m_imsi;
 };
 
-/*
-class CIndicatorInfo : public CTelephonyInfo
-{
-public:
-    CIndicatorInfo(CTelephony &telephony);
-
-protected:
-    void DoCancel();
-
-public:
-    bool isBatteryCharging() const;
-
-private:
-    CTelephony::TBatteryInfoV1Pckg m_batteryInfoV1Pckg;
-    CTelephony::TBatteryInfoV1 m_batteryInfoV1;
-};
-*/
-
 class CBatteryInfo : public CTelephonyInfo
 {
 public:
@@ -155,7 +136,6 @@ protected:
 
 public:
     int batteryLevel() const;
-    CTelephony::TBatteryStatus powerState() const;
 
 private:
     bool m_initializing;
@@ -165,9 +145,6 @@ private:
     
     int m_batteryLevel;
     int m_previousBatteryLevel;
-
-    CTelephony::TBatteryStatus m_powerState;
-    CTelephony::TBatteryStatus m_previousPowerState;
 };
 
 class CCellNetworkInfo : public CTelephonyInfo

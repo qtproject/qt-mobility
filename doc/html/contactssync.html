@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- contactssync.qdoc -->
+<head>
+  <title>Qt Mobility Project 1.1: Contacts Synchronous API</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Contacts Synchronous API<br /><span class="subtitle"></span>
+</h1>
+<ul><li><a href="#introduction">Introduction</a></li>
+<li><a href="#using-the-api">Using The API</a></li>
+<ul><li><a href="#error-reporting">Error Reporting</a></li>
+<li><a href="#contact-manipulation">Contact Manipulation</a></li>
+<li><a href="#relationship-manipulation">Relationship Manipulation</a></li>
+<li><a href="#schema-manipulation">Schema Manipulation</a></li>
+</ul>
+<li><a href="#examples-of-usage">Examples Of Usage</a></li>
+<ul><li><a href="#saving-a-new-contact-to-the-default-manager">Saving a new contact to the default manager</a></li>
+<li><a href="#filtering-by-detail-definition-and-value">Filtering by detail definition and value</a></li>
+<li><a href="#installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail">Installing a plugin that modifies the definition of one type of detail</a></li>
+<ul><li><a href="#modifying-an-existing-contact-and-saving-the-modifications">Modifying an existing contact and saving the modifications</a></li>
+</ul>
+</ul>
+</ul>
+<a name="introduction"></a>
+<h2>Introduction</h2>
+<p>The Contacts Synchronous API enables a client to synchronously fetch, update, or remove contact data from a contact manager. A synchronous API is of most use to clients who wish to perform simple requests where performance or UI responsiveness is not critical. Synchronous calls to a contact manager will block until they are completed, and therefore should not be performed in the GUI thread if the manager is a frontend to an online service or long-latency datastore. The main advantage of the synchronous API is its simplicity and convenience.</p>
+<p>Most operations which may be performed using the synchronous API may also be performed using the asynchronous API. It is recommended for most applications that the asynchronous API be used where possible.</p>
+<a name="using-the-api"></a>
+<h2>Using The API</h2>
+<p>The synchronous API offered by the Contacts module is available through the <a href="qcontactmanager.html">QContactManager</a> class. It consists of four major sections:</p>
+<ul>
+<li>Error Reporting</li>
+<li>Schema Manipulation</li>
+<li>Contact Manipulation</li>
+<li>Relationship Manipulation</li>
+</ul>
+<a name="error-reporting"></a>
+<h3>Error Reporting</h3>
+<p>When a synchronous operation fails, clients need to be able to retrieve error information associated with that synchronous operation. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function provides this information to clients.</p>
+<p>For some synchronous operations (for example, batch save or remove operations) it is possible that multiple errors may occur during the operation. In those cases, the synchronous function will take a pointer to a map of input index to error, which will be filled by the function as required, and the <a href="qcontactmanager.html#error">QContactManager::error</a>() function will report the overall operation error.</p>
+<p>Error reporting is handled slightly differently in the asynchronous API, in that each instance of an asynchronous request is able to report any overall operation error as well as the finer-grained map of errors, for the operation which it requested.</p>
+<a name="contact-manipulation"></a>
+<h3>Contact Manipulation</h3>
+<p>The most common type of operation that clients will perform involves retrieval or modification of contacts. The <a href="qcontactmanager.html">QContactManager</a> class offers synchronous API to retrieve, create, update and delete contacts. The create and update operations are provided through the same interface. Both singular and batch operations are offered by the API.</p>
+<p>A contact is identified by its <a href="qcontactid.html">QContactId</a>. This id consists of two parts: a URI which identifies the contact manager which stores the contact, and the local id of the contact in that manager. Some operations which take a pointer to a contact as an argument may modify the contact during the operation; updating the contact id is a common example.</p>
+<p>The <a href="qcontactmanager.html">QContactManager</a> class provides API for accessing the ids of contacts which are stored in the manager:</p>
+<ul>
+<li>contactIds(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
+<li>contactIds(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
+</ul>
+<p>The contact id retrieval functionality is also provided via asynchronous API through the <a href="qcontactlocalidfetchrequest.html">QContactLocalIdFetchRequest</a> class.</p>
+<p>The synchronous, singular contact manipulation functions offered by the <a href="qcontactmanager.html">QContactManager</a> class are:</p>
+<ul>
+<li>contact(const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&amp; contactId, const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
+<li>saveContact(<a href="qcontact.html">QContact</a>* contact)</li>
+<li>removeContact(const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&amp; contactId)</li>
+</ul>
+<p>The (optional) fetch argument to the contact accessor function allows clients to tell the plugin which types of information they wish to retrieve. This argument is a hint only, and may be ignored safely by the plugin, or used by the plugin to optimize the performance of the retrieve operation.</p>
+<p>The save operation entails a validation step, where the contact's details are checked against the supported schema. If the contact is valid, it will be saved. Note that if the contact already exists in the database (determined by the id of the contact) it will be replaced with the contact contained in the argument. This means that clients should not save any contact which was retrieved with a non-empty fetchHint defined, or data loss may occur.</p>
+<p>Any error which occurs during such singular contact manipulation functions may be accessed by calling <a href="qcontactmanager.html#error">QContactManager::error</a>() directly after the original synchronous call.</p>
+<p>The synchronous, batch contact manipulation functions offered by the <a href="qcontactmanager.html">QContactManager</a> class are:</p>
+<ul>
+<li>contacts(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
+<li>contacts(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
+<li>saveContacts(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt;* contacts, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt;* errorMap)</li>
+<li>removeContacts(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt;* contactIds, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt;* errorMap)</li>
+</ul>
+<p>The batch save and remove functions both take an (optional) pointer to a map of errors. If the pointer is non-null, this map will be filled out with any errors which occur. The overall operation error of any batch manipulation operation may be accessed by calling <a href="qcontactmanager.html#error">QContactManager::error</a>() directly after the original synchronous call.</p>
+<p>The contact manipulation functionality is also provided via asynchronous API through the <a href="qcontactfetchrequest.html">QContactFetchRequest</a>, <a href="qcontactsaverequest.html">QContactSaveRequest</a>, and <a href="qcontactremoverequest.html">QContactRemoveRequest</a> classes.</p>
+<p>The &quot;self&quot; contact is a special concept, which has dedicated API. A client may instruct any backend which supports the concept of a self contact that a particular, previously saved contact is the self contact. Any backend which implements this functionality should report that it supports the <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::SelfContact</a> feature.</p>
+<p>The API which provides the self-contact functionality consists of:</p>
+<ul>
+<li>setSelfContactId(const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&amp; contactId)</li>
+<li>selfContactId() const</li>
+</ul>
+<p>In order to unset the self contact, a client may either delete the contact which is currently set as the self contact, or set the self contact id to be the invalid, zero id (constructed via <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>(0)). The self-contact manipulation functionality is only available via the synchronous API.</p>
+<a name="relationship-manipulation"></a>
+<h3>Relationship Manipulation</h3>
+<p>Contacts may be related in various ways. The contacts API allows clients to define relationships between contacts if the plugin providing the functionality supports such relationships. Any plugin which supports relationships should report this functionality by reporting that it supports the <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::Relationships</a> feature.</p>
+<p>Some plugins support arbitrary relationship types. Clients can define custom relationships between contacts saved in such plugins. Any plugin which supports arbitrary relationship types should report this functionality by reporting that it supports the <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::ArbitraryRelationshipTypes</a> feature.</p>
+<p>The API which provides the relationship manipulation functionality consists of:</p>
+<ul>
+<li>relationships(const <a href="qcontactid.html">QContactId</a>&amp; participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;</li>
+<li>relationships(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; relationshipType = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QString</a>(), const <a href="qcontactid.html">QContactId</a>&amp; participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;</li>
+<li>saveRelationship(<a href="qcontactrelationship.html">QContactRelationship</a>* relationship);</li>
+<li>saveRelationships(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt;* relationships);</li>
+<li>removeRelationship(const <a href="qcontactrelationship.html">QContactRelationship</a>&amp; relationship);</li>
+<li>removeRelationships(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt;&amp; relationships);</li>
+</ul>
+<p>The relationship manipulation functionality is also provided via asynchronous API through the <a href="qcontactrelationshipfetchrequest.html">QContactRelationshipFetchRequest</a>, <a href="qcontactrelationshipsaverequest.html">QContactRelationshipSaveRequest</a>, and <a href="qcontactrelationshipremoverequest.html">QContactRelationshipRemoveRequest</a> classes.</p>
+<a name="schema-manipulation"></a>
+<h3>Schema Manipulation</h3>
+<p>The schema supported by a plugin is the list of detail definitions which are supported by the plugin. A contact which contains a detail of a particular definition which is not supported by the plugin will fail to validate when the user attempts to save it in that manager. The schema also includes any access constraints which may apply to certain details or detail definitions (for example, a particular detail definition might be declared to be unique per-contact in a particular manager).</p>
+<p>Every plugin will support a slightly different schema, as the schema which can be supported will depend on the semantics and limitations of the underlying storage platform on which the plugin is based. The default schema is described in the <a href="contactsschema.html">Qt Mobility Contacts schema documentation</a>, and plugins should attempt to implement that schema; however no guarantees are given to clients as to the conformance of the schemas supported by various plugins to the default schema.</p>
+<p>Some plugins support extensible detail types. This means that third party developers can extend the schema of such plugins at run time (for example, to add a new field to a detail). Some plugins allow third party developers to define new detail types (that is, to add an entirely new detail type to the schema supported by that plugin). Plugins which support these types of operations must report to clients that they support the <a href="qcontactmanager.html#ManagerFeature-enum">QContactManager::MutableDefinitions</a> feature.</p>
+<p>The synchronous API offers several functions to retrieve or modify the schema supported by a plugin:</p>
+<ul>
+<li>detailDefinitions(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; contactType = <a href="qcontacttype.html#TypeContact-var">QContactType::TypeContact</a>) const</li>
+<li>detailDefinition(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; definitionName, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; contactType = <a href="qcontacttype.html#TypeContact-var">QContactType::TypeContact</a>) const</li>
+<li>saveDetailDefinition(const <a href="qcontactdetaildefinition.html">QContactDetailDefinition</a>&amp; def, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; contactType = <a href="qcontacttype.html#TypeContact-var">QContactType::TypeContact</a>)</li>
+<li>removeDetailDefinition(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; definitionName, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&amp; contactType = <a href="qcontacttype.html#TypeContact-var">QContactType::TypeContact</a>)</li>
+</ul>
+<p>The schema manipulation functionality is also provided via asynchronous API through the <a href="qcontactdetaildefinitionfetchrequest.html">QContactDetailDefinitionFetchRequest</a>, <a href="qcontactdetaildefinitionsaverequest.html">QContactDetailDefinitionSaveRequest</a> and <a href="qcontactdetaildefinitionremoverequest.html">QContactDetailDefinitionRemoveRequest</a> classes.</p>
+<p>Note that the schema supported by a plugin may vary depending on the type of contact to which the schema applies. For example, a particular plugin might support name, address, phone number, email address, and gender details for normal contacts, but only name, address, and phone number details for a group contact.</p>
+<a name="examples-of-usage"></a>
+<h2>Examples Of Usage</h2>
+<p>The synchronous API provides the simplest way to access or modify the contact information managed by a particular backend. It has the disadvantage that calls block until completion and is therefore most suitable only for applications which interact with local, high-speed datastores.</p>
+<a name="saving-a-new-contact-to-the-default-manager"></a>
+<h3>Saving a new contact to the default manager</h3>
+<p>The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager.</p>
+<p>We assume the existence of a specialised leaf-class that allows simple access to details of the definition identified by the &quot;PhoneNumber&quot; identifier, and another that allows simple access to details of the definition identified by the &quot;Name&quot; identifier. These specialised leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qcontactdetail.html">QContactDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
+<pre>    void addContact(QContactManager* cm)
+    {
+        QContact alice;
+
+        <span class="comment">/* Set the contact's name */</span>
+        QContactName aliceName;
+        aliceName.setFirstName(&quot;Alice&quot;);
+        aliceName.setLastName(&quot;Jones&quot;);
+        aliceName.setCustomLabel(&quot;Ally Jones&quot;);
+        alice.saveDetail(&amp;aliceName);
+
+        <span class="comment">/* Add a phone number */</span>
+        QContactPhoneNumber number;
+        number.setContexts(QContactDetail::ContextHome);
+        number.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+        number.setNumber(&quot;12345678&quot;);
+        alice.saveDetail(&amp;number);
+
+        <span class="comment">/* Add a second phone number */</span>
+        QContactPhoneNumber number2;
+        number2.setContexts(QContactDetail::ContextWork);
+        number2.setSubTypes(QContactPhoneNumber::SubTypeLandline);
+        number2.setNumber(&quot;555-4444&quot;);
+        alice.saveDetail(&amp;number2);
+
+        <span class="comment">/* Save the contact */</span>
+        cm-&gt;saveContact(&amp;alice) ? qDebug() &lt;&lt; &quot;Successfully saved&quot; &lt;&lt; aliceName.customLabel()
+                                : qDebug() &lt;&lt; &quot;Failed to save&quot; &lt;&lt; aliceName.customLabel();
+        qDebug() &lt;&lt; &quot;The backend has synthesized a display label for the contact:&quot; &lt;&lt; alice.displayLabel();
+    }</pre>
+<a name="filtering-by-detail-definition-and-value"></a>
+<h3>Filtering by detail definition and value</h3>
+<p>The client utilises a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
+<pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
+    {
+        QContactDetailFilter phoneFilter;
+        phoneFilter.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
+        phoneFilter.setValue(incomingCallNbr);
+        phoneFilter.setMatchFlags(QContactFilter::MatchExactly);
+
+        QList&lt;QContactLocalId&gt; matchingContacts = cm-&gt;contactIds(phoneFilter);
+        if (matchingContacts.size() == 0) {
+            qDebug() &lt;&lt; &quot;Incoming call from unknown contact (&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
+        } else {
+            QContact match = cm-&gt;contact(matchingContacts.at(0));
+            qDebug() &lt;&lt; &quot;Incoming call from&quot;
+                     &lt;&lt; match.displayLabel()
+                     &lt;&lt; &quot;(&quot; &lt;&lt; incomingCallNbr &lt;&lt; &quot;)&quot;;
+        }
+    }</pre>
+<a name="installing-a-plugin-that-modifies-the-definition-of-one-type-of-detail"></a>
+<h3>Installing a plugin that modifies the definition of one type of detail</h3>
+<p>The client installs a plugin, which requires a new field to be added to details of the &quot;EmailAddress&quot; definition. It loads the definition from the default manager, modifies it (by adding the new field - a label field), and saves it back.</p>
+<pre>    void addPlugin(QContactManager* cm)
+    {
+        <span class="comment">/* Find the definition that we are modifying */</span>
+        QMap&lt;QString, QContactDetailDefinition&gt; definitions = cm-&gt;detailDefinitions();
+        QContactDetailDefinition modified = definitions.value(QContactEmailAddress::DefinitionName);
+
+        <span class="comment">/* Make our modifications: we add a &quot;Label&quot; field to email addresses */</span>
+        QContactDetailFieldDefinition newField;
+        newField.setDataType(QVariant::String);
+        QMap&lt;QString, QContactDetailFieldDefinition&gt; fields = modified.fields();
+        fields.insert(&quot;Label&quot;, newField);
+
+        <span class="comment">/* Update the definition with the new field included */</span>
+        modified.setFields(fields);
+
+        <span class="comment">/* Save the definition back to the manager */</span>
+        if (cm-&gt;saveDetailDefinition(modified))
+            qDebug() &lt;&lt; &quot;Successfully modified the detail definition!&quot;;
+        else
+            qDebug() &lt;&lt; &quot;This backend could not support our modifications!&quot;;
+    }</pre>
+<a name="modifying-an-existing-contact-and-saving-the-modifications"></a>
+<h4>Modifying an existing contact and saving the modifications</h4>
+<p>The client retrieves a contact, modifies one of its details, adds a new detail, and then saves the contact back to the manager. Note that it uses the newly added field of the email address definition!</p>
+<pre>    void editView(QContactManager* cm)
+    {
+        QList&lt;QContactLocalId&gt; contactIds = cm-&gt;contactIds();
+        QContact a = cm-&gt;contact(contactIds.first());
+        qDebug() &lt;&lt; &quot;Modifying the details of&quot; &lt;&lt; a.displayLabel();
+
+        <span class="comment">/* Change the first phone number */</span>
+        QList&lt;QContactDetail&gt; numbers = a.details(QContactPhoneNumber::DefinitionName);
+        QContactPhoneNumber phone = numbers.value(0);
+        phone.setNumber(&quot;123-4445&quot;);
+
+        <span class="comment">/* Add an email address */</span>
+        QContactEmailAddress email;
+        email.setEmailAddress(&quot;alice.jones@example&quot;);
+        email.setContexts(QContactDetail::ContextHome);
+        email.setValue(&quot;Label&quot;, &quot;Alice's Work Email Address&quot;);
+
+        <span class="comment">/* Save the updated details to the contact. */</span>
+        a.saveDetail(&amp;phone);
+        a.saveDetail(&amp;email);
+
+        <span class="comment">/* Now we must save the updated contact back to the database. */</span>
+        cm-&gt;saveContact(&amp;a);
+        viewDetails(cm);
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

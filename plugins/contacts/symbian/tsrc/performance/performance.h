@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,14 @@
 **
 ****************************************************************************/
 #include <QObject>
+#include <qmobilityglobal.h>
 #include <qtcontacts.h>
 
-class QDebug;
-class QFile;
-
+QTM_BEGIN_NAMESPACE
 #define NO_OF_CONTACTS 1000
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
 
 class SymbianPluginPerfomance : public QObject
 {
@@ -78,6 +80,9 @@ private slots:  // Test cases
 	*/
     void removeComplexContacts();
 
+    void createComplexContactsWithOnlineAccount();
+    void sortContactsWithOnlineAccount();
+    void removeComplextContactsWithOnlineAccount();   
 private:
     int measureContactsFetch(
             QString debugMessage,

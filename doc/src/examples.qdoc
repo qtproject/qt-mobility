@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,7 +57,7 @@
 
     \list
     \o \l{samplephonebook}{Sample Phonebook}
-    \o \l{incomingcalls}{Incoming Call Simulator}
+    \o \l{qmlcontacts}{QML-based Sample Phonebook}
     \endlist
 
     \section2 Location
@@ -71,21 +71,17 @@
 
     \list
     \o \l{keepintouch}{Keep in Touch}
-    \o \l{querymessages}{Query Messages}
     \o \l{serviceactions}{Service Actions}
-    \o \l{writemessage}{Write Message}
     \endlist
 
     \section2 Multimedia
 
     \list
     \o \l{audiorecorder}{Audio Recorder}
-    \o \l{cameracapture}{Camera Capture}
     \o \l{player}{Player}
     \o \l{radio}{Radio}
     \o \l{recorder}{Recorder}
     \o \l{slideshow}{Slideshow}
-    \o \l{streamplayer}{Stream Player}
     \endlist
 
     \section2 Publish and Subscribe
@@ -98,10 +94,13 @@
     \section2 Service Framework
 
     \list
-    \o \l{bluetoothtransferplugin}{Bluetooth Transfer Plugin}
-    \o \l{declarative}{Qt Declarative based service framework example}
-    \o \l{filemanagerplugin}{File Manager Plugin}
     \o \l{servicebrowser}{Service Browser}\raisedaster
+    \o \l{bluetoothtransferplugin}{Bluetooth Transfer Plugin}
+    \o \l{filemanagerplugin}{File Manager Plugin}
+    \o \l{notesmanagerplugin}{Notes Manager Plugin}
+    \o \l{sfw-notes}{Notes Manager}
+    \o \l{declarative-sfw-notes}{Declarative Notes Manager}
+    \o \l{declarative-sfw-dialer}{Declarative Dialer}
     \endlist
 
     \section2 System Information

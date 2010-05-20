@@ -8,6 +8,7 @@ SOURCES += main.cpp\
         dialog.cpp
 
 HEADERS  += dialog.h
+RESOURCES = examples.qrc
 
 INCLUDEPATH += ../../src/systeminfo
 
@@ -23,7 +24,11 @@ win32 {
 
 unix: {
     linux-*: {
-        FORMS += dialog.ui
+        maemo* {
+            FORMS += dialog_landscape.ui
+        } else {
+            FORMS += dialog.ui
+        }
     }
     
     mac: {

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,7 +57,7 @@ QTM_USE_NAMESPACE
 class DummyEngine : public QContactManagerEngine
 {
 public:
-    DummyEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+    DummyEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
     DummyEngine(const DummyEngine& other);
     ~DummyEngine();
     DummyEngine& operator=(const DummyEngine& other);
@@ -66,27 +66,172 @@ public:
     QString managerName() const;
 
     /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
-    bool saveContact(QContact* contact, bool batch, QContactManager::Error& error);
-    bool removeContact(const QContactLocalId& contactId, bool batch, QContactManager::Error& error);
+    QList<QContactLocalId> contacts(QContactManager::Error* error) const;
+    QContact contact(const QContactLocalId& contactId, QContactManager::Error* error) const;
+    QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+    bool saveContact(QContact* contact, bool batch, QContactManager::Error* error);
+    bool removeContact(const QContactLocalId& contactId, bool batch, QContactManager::Error* error);
 
     /* Capabilities reporting */
     QStringList capabilities() const;
     QStringList fastFilterableDefinitions() const;
     QList<QVariant::Type> supportedDataTypes() const;
+
+    QMap<QString, QString> managerParameters() const {return QMap<QString, QString>();}
+    int managerVersion() const {return 0;}
+
+    QList<QContactLocalId> contactIds(const QContactFilter&, const QList<QContactSortOrder>&, QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return QList<QContactLocalId>();
+    }
+
+    QList<QContact> contacts(const QContactFilter&, const QList<QContactSortOrder>&, const QContactFetchHint&, QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return QList<QContact>();
+    }
+
+    bool saveContacts(QList<QContact>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    bool removeContacts(const QList<QContactLocalId>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    QContact conformingContact(const QContact&, QContactManager::Error* error)
+    {
+        *error = QContactManager::NotSupportedError;
+        return QContact();
+    }
+
+    /* Synthesize the display label of a contact */
+    virtual QString synthesizedDisplayLabel(const QContact&, QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return QString();
+    }
+
+    /* "Self" contact id (MyCard) */
+    virtual bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error)
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    virtual QContactLocalId selfContactId(QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return 0;
+    }
+
+    /* Relationships between contacts */
+    virtual QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return QList<QContactRelationship>();
+    }
+
+    virtual bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    virtual bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error)
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    /* Validation for saving */
+    virtual QContact compatibleContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error =  QContactManager::NotSupportedError;
+        return QContact();
+    }
+
+    virtual bool validateContact(const QContact&, QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    virtual bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    /* Definitions - Accessors and Mutators */
+    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString&, QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return QMap<QString, QContactDetailDefinition>();
+    }
+
+    virtual QContactDetailDefinition detailDefinition(const QString&, const QString&, QContactManager::Error* error) const
+    {
+        *error = QContactManager::NotSupportedError;
+        return QContactDetailDefinition();
+    }
+
+    virtual bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error)
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    virtual bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error)
+    {
+        *error = QContactManager::NotSupportedError;
+        return false;
+    }
+
+    /* Asynchronous Request Support */
+    virtual void requestDestroyed(QContactAbstractRequest*) {}
+    virtual bool startRequest(QContactAbstractRequest*) {return false;}
+    virtual bool cancelRequest(QContactAbstractRequest*) {return false;}
+    virtual bool waitForRequestFinished(QContactAbstractRequest*, int) {return false;}
+
+    /* Capabilities reporting */
+    virtual bool hasFeature(QContactManager::ManagerFeature, const QString&) const
+    {
+        return false;
+    }
+
+    virtual bool isRelationshipTypeSupported(const QString&, const QString&) const
+    {
+        return false;
+    }
+
+    virtual bool isFilterSupported(const QContactFilter&) const
+    {
+        return false;
+    }
+
+    virtual QStringList supportedContactTypes() const
+    {
+        return QStringList();
+    }
+
 };
 
-class Q_DECL_EXPORT DummyEngineFactory : public QObject, public QContactManagerEngineFactory
+class DummyEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)
     public:
-        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error);
+        QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
         QString managerName() const;
 };
 
-QContactManagerEngine* DummyEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+QContactManagerEngine* DummyEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
     return new DummyEngine(parameters, error);
 }
@@ -101,10 +246,10 @@ QString DummyEngineFactory::managerName() const
 }
 Q_EXPORT_PLUGIN2(DUMMYPLUGINTARGET, DummyEngineFactory);
 
-DummyEngine::DummyEngine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+DummyEngine::DummyEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
     Q_UNUSED(parameters);
-    error = QContactManager::AlreadyExistsError; // Another random choice
+    *error = QContactManager::AlreadyExistsError; // Another random choice
 }
 
 DummyEngine::DummyEngine(const DummyEngine& other)
@@ -143,28 +288,36 @@ QString DummyEngine::managerName() const
 #endif
 }
 
-QList<QContactLocalId> DummyEngine::contacts(QContactManager::Error& error) const
+QList<QContactLocalId> DummyEngine::contacts(QContactManager::Error* error) const
 {
     QList<QContactLocalId> allCIds;
 
-    if (allCIds.count() > 0 && error == QContactManager::NoError)
-        error = QContactManager::DoesNotExistError;
+    if (allCIds.count() > 0 && *error == QContactManager::NoError)
+        *error = QContactManager::DoesNotExistError;
 
     return allCIds;
 }
 
-QContact DummyEngine::contact(const QContactLocalId& contactId, QContactManager::Error& error) const
+QContact DummyEngine::contact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
     Q_UNUSED(contactId);
-    error = QContactManager::DoesNotExistError;
+    *error = QContactManager::DoesNotExistError;
     return QContact();
 }
 
-bool DummyEngine::saveContact(QContact* contact, bool batch, QContactManager::Error& error)
+QContact DummyEngine::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const
+{
+    Q_UNUSED(contactId);
+    Q_UNUSED(fetchHint);
+    *error = QContactManager::DoesNotExistError;
+    return QContact();
+}
+
+bool DummyEngine::saveContact(QContact* contact, bool batch, QContactManager::Error* error)
 {
     // ensure that the contact's details conform to their definitions
     if (!validateContact(*contact, error)) {
-        error = QContactManager::InvalidDetailError;
+        *error = QContactManager::InvalidDetailError;
         return false;
     }
 
@@ -173,7 +326,7 @@ bool DummyEngine::saveContact(QContact* contact, bool batch, QContactManager::Er
     newId.setManagerUri(managerUri());
     newId.setLocalId(5);
     contact->setId(newId);
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
 
     // if we need to emit signals (ie, this isn't part of a batch operation)
     // then emit the correct one.
@@ -186,14 +339,14 @@ bool DummyEngine::saveContact(QContact* contact, bool batch, QContactManager::Er
     return true;
 }
 
-bool DummyEngine::removeContact(const QContactLocalId& contactId, bool batch, QContactManager::Error& error)
+bool DummyEngine::removeContact(const QContactLocalId& contactId, bool batch, QContactManager::Error* error)
 {
     if (contactId != 5) {
-        error = QContactManager::DoesNotExistError;
+        *error = QContactManager::DoesNotExistError;
         return false;
     }
 
-    error = QContactManager::NoError;
+    *error = QContactManager::NoError;
 
     // if we need to emit signals (ie, this isn't part of a batch operation)
     // then emit the correct one.

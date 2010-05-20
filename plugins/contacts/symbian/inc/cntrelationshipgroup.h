@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,10 +52,10 @@ public:
     virtual ~CntRelationshipGroup();
 
 public:
-    QList<QContactRelationship> relationshipsL(const QContactId &participantId, QContactRelationshipFilter::Role role, QContactManager::Error &error);
-    bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship *relationship, QContactManager::Error &error);
-    bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship &relationship, QContactManager::Error &error);
-    bool validateRelationship(const QContactRelationship &relationship, QContactManager::Error &error);
+    QList<QContactRelationship> relationshipsL(const QContactId &participantId, QContactRelationship::Role role, QContactManager::Error *error);
+    bool saveRelationshipL(QSet<QContactLocalId> *affectedContactIds, QContactRelationship *relationship, QContactManager::Error *error);
+    bool removeRelationshipL(QSet<QContactLocalId> *affectedContactIds, const QContactRelationship &relationship, QContactManager::Error *error);
+    bool validateRelationship(const QContactRelationship &relationship, QContactManager::Error *error);
     
 private:
     void isGroupMemberL(const CContactItem *contactItem, const TContactItemId groupId) const;

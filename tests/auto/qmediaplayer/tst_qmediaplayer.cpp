@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,7 @@
 #include <qmediastreamscontrol.h>
 
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class AutoConnection
 {
 public:
@@ -97,10 +97,11 @@ public:
 
     int bufferStatus() const { return _bufferStatus; }
 
+    bool isAudioAvailable() const { return _audioAvailable; }
     bool isVideoAvailable() const { return _videoAvailable; }
 
     bool isSeekable() const { return _isSeekable; }
-    QPair<qint64, qint64> seekRange() const { return _seekRange; }
+    QMediaTimeRange availablePlaybackRanges() const { return QMediaTimeRange(_seekRange.first, _seekRange.second); }
     void setSeekRange(qint64 minimum, qint64 maximum) { _seekRange = qMakePair(minimum, maximum); }
 
     qreal playbackRate() const { return _playbackRate; }
@@ -132,6 +133,7 @@ public:
     int _volume;
     bool _muted;
     int _bufferStatus;
+    bool _audioAvailable;
     bool _videoAvailable;
     bool _isSeekable;
     QPair<qint64, qint64> _seekRange;
@@ -153,9 +155,9 @@ public:
     StreamType streamType(int index) { return _streams.at(index).type; }
     void setStreamType(int index, StreamType type) { _streams[index].type = type; }
 
-    QVariant metaData(int index, QtMedia::MetaData key) {
+    QVariant metaData(int index, QtMediaServices::MetaData key) {
         return _streams.at(index).metaData.value(key); }
-    void setMetaData(int index, QtMedia::MetaData key, const QVariant &value) {
+    void setMetaData(int index, QtMediaServices::MetaData key, const QVariant &value) {
         _streams[index].metaData.insert(key, value); }
 
     bool isActive(int index) { return _streams.at(index).active; }
@@ -166,7 +168,7 @@ private:
     {
         Stream() : type(UnknownStream), active(false) {}
         StreamType type;
-        QMap<QtMedia::MetaData, QVariant> metaData;
+        QMap<QtMediaServices::MetaData, QVariant> metaData;
         bool active;
     };
 
@@ -770,10 +772,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::LoadingMedia);
     QCOMPARE(statusSpy.count(), 1);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::LoadingMedia);
 
@@ -781,10 +779,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::LoadedMedia);
     QCOMPARE(statusSpy.count(), 2);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::LoadedMedia);
 
@@ -796,10 +790,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::StalledMedia);
     QCOMPARE(statusSpy.count(), 3);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::StalledMedia);
 
@@ -813,10 +803,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::BufferingMedia);
     QCOMPARE(statusSpy.count(), 4);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::BufferingMedia);
 
@@ -830,10 +816,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::BufferedMedia);
     QCOMPARE(statusSpy.count(), 5);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::BufferedMedia);
 
@@ -845,10 +827,6 @@ void tst_QMediaPlayer::testMediaStatus()
     QCOMPARE(player->mediaStatus(), QMediaPlayer::EndOfMedia);
     QCOMPARE(statusSpy.count(), 6);
 
-#ifdef QTM_NAMESPACE
-    //looks like the correct value is emited, but QSignalSpy doesn't work correctly with QtMobility namespace
-    QEXPECT_FAIL("", "QSignalSpy doesn't grab the correct value from signal because of QtMobility namespace", Continue);
-#endif
     QCOMPARE(qvariant_cast<QMediaPlayer::MediaStatus>(statusSpy.last().value(0)),
              QMediaPlayer::EndOfMedia);
 }

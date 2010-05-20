@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -95,10 +95,11 @@ void  QMLBackendMonitorAO::DoCancel()
 
 void QMLBackendMonitorAO::RunL()
 {
+    CMonitorTriggerInfo *triggerInfo = NULL;
     switch (iStatus.Int()) {
         case KErrNone :
             //retrieve the triggerInfo corresponding to iTriggerInfo.iTriggerId
-            CMonitorTriggerInfo* triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(
+            triggerInfo = iTriggerMonitorInfo->getMonitorTriggerInfo(
                                                    iTriggerInfo.iTriggerId);
             if (triggerInfo) {
                 //callback called only if generated for the current AO - Trigger ID
@@ -146,7 +147,7 @@ void QMLBackendMonitorAO::ConstructL(RLbtServer &aLbtServ)
 }
 
 QMLBackendMonitorAO::QMLBackendMonitorAO()
-        :CActive(EPriorityStandard), // Standard priority
+        : CActive(EPriorityStandard), // Standard priority
         subsessionCreated(FALSE)
 {
     CActiveScheduler::Add(this);

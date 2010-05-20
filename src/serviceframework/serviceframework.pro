@@ -37,22 +37,15 @@ symbian {
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC84
-    deploy.path = $$EPOCROOT
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
     
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
-
     libBlock = \
         "$${LITERAL_HASH}ifdef WINSCW" \
-        "LIBRARY SFWDatabaseManagerServer.lib" \
+        "LIBRARY qsfwdatabasemanagerserver.lib" \
         "$${LITERAL_HASH}endif"
 
     MMP_RULES += libBlock
 
-    QtServiceFrameworkDeployment.sources = QtServiceFramework.dll SFWDatabaseManagerServer.exe
+    QtServiceFrameworkDeployment.sources = QtServiceFramework.dll qsfwdatabasemanagerserver.exe
     QtServiceFrameworkDeployment.path = /sys/bin
 
     DEPLOYMENT += QtServiceFrameworkDeployment
@@ -68,4 +61,5 @@ symbian {
 
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
+CONFIG += middleware
 include(../../features/deploy.pri)

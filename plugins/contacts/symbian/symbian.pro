@@ -1,9 +1,10 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(mobapicontactspluginsymbian)
+TARGET = $$qtLibraryTarget(qtcontacts_symbian)
 PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
+include(symbian_defines.pri)
 symbian: { 
     load(data_caging_paths)
 
@@ -20,81 +21,109 @@ symbian: {
     INCLUDEPATH += $$SOURCE_DIR/contacts/filters
     INCLUDEPATH += $$SOURCE_DIR/contacts/requests
 
-  HEADERS += \
+    HEADERS += \
         $$PUBLIC_HEADERS \
         inc/cntsymbianengine.h \
-        inc/cnttransformcontact.h \
-        inc/cnttransformcontactdata.h \
-        inc/cnttransformname.h \
-        inc/cnttransformnickname.h \
-        inc/cnttransformphonenumber.h \
-        inc/cnttransformemail.h \
-        inc/cnttransformaddress.h \
-        inc/cnttransformurl.h \
-        inc/cnttransformbirthday.h \
-        inc/cnttransformonlineaccount.h \
-        inc/cnttransformorganisation.h \
-        inc/cnttransformavatar.h \
-        inc/cnttransformavatarsimple.h \
-        inc/cntthumbnailcreator.h \
-        inc/cnttransformsynctarget.h \
-        inc/cnttransformgender.h \
-        inc/cnttransformanniversary.h \
-        inc/cnttransformanniversarysimple.h \
-        inc/cnttransformgeolocation.h \
-        inc/cnttransformnote.h \
-        inc/cnttransformfamily.h \  
-        inc/cnttransformempty.h \  
-        inc/cntabstractcontactfilter.h \
-        inc/cntsymbianfilterdbms.h \
-        inc/cntsymbianfiltersql.h \
-        inc/cntabstractcontactsorter.h \
-        inc/cntsymbiansorterdbms.h \
-        inc/cntrelationship.h \
         inc/cntabstractrelationship.h \
         inc/cntrelationshipgroup.h \
-        inc/cntsymbianfiltersqlhelper.h \
-        inc/cntsymbiansrvconnection.h \
         inc/cntsymbiantransformerror.h \
         inc/cntsymbiandatabase.h \
-	    inc/cntdisplaylabel.h 
-      
-    SOURCES += \
-        src/cntsymbianengine.cpp \
-        src/cnttransformcontact.cpp \
-        src/cnttransformcontactdata.cpp \
-        src/cnttransformname.cpp \
-        src/cnttransformnickname.cpp \
-        src/cnttransformphonenumber.cpp \
-        src/cnttransformemail.cpp \
-        src/cnttransformaddress.cpp \
-        src/cnttransformurl.cpp \
-        src/cnttransformbirthday.cpp \
-        src/cnttransformonlineaccount.cpp \
-        src/cnttransformorganisation.cpp \
-        src/cnttransformavatar.cpp \
-        src/cnttransformavatarsimple.cpp \
-        src/cntthumbnailcreator.cpp\
-        src/cnttransformsynctarget.cpp \
-        src/cnttransformgender.cpp \
-        src/cnttransformanniversary.cpp \
-        src/cnttransformanniversarysimple.cpp \
-        src/cnttransformgeolocation.cpp \
-        src/cnttransformnote.cpp \
-        src/cnttransformfamily.cpp \  
-        src/cnttransformempty.cpp \
-        src/cntsymbianfilterdbms.cpp \
-        src/cntsymbianfiltersql.cpp \
-        src/cntsymbiansorterdbms.cpp \
-        src/cntrelationship.cpp \
+        inc/cntdisplaylabel.h \
+        inc/cntrelationship.h \
+        inc/transform/cnttransformcontact.h \
+        inc/transform/cnttransformcontactdata.h \
+        inc/transform/cnttransformname.h \
+        inc/transform/cnttransformnickname.h \
+        inc/transform/cnttransformphonenumber.h \
+        inc/transform/cnttransformemail.h \
+        inc/transform/cnttransformaddress.h \
+        inc/transform/cnttransformurl.h \
+        inc/transform/cnttransformbirthday.h \
+        inc/transform/cnttransformonlineaccount.h \
+        inc/transform/cnttransformonlineaccountsimple.h \
+        inc/transform/cnttransformorganisation.h \
+        inc/transform/cnttransformringtone.h \
+        inc/transform/cnttransformthumbnail.h \
+        inc/transform/cnttransformavatar.h \
+        inc/transform/cntthumbnailcreator.h \
+        inc/transform/cnttransformsynctarget.h \
+        inc/transform/cnttransformgender.h \
+        inc/transform/cnttransformanniversary.h \
+        inc/transform/cnttransformanniversarysimple.h \
+        inc/transform/cnttransformgeolocation.h \
+        inc/transform/cnttransformnote.h \
+        inc/transform/cnttransformfamily.h \
+        inc/transform/cnttransformempty.h \
+        inc/filtering/cntfilterrelationship.h \
+        inc/filtering/cntfilterdetaildisplaylabel.h \
+        inc/filtering/cntfilterdetail.h \
+        inc/filtering/cntdbinfo.h \
+        inc/filtering/cntfilterdefault.h \
+        inc/filtering/cntfilterintersection.h \
+        inc/filtering/cntfilterunion.h \
+        inc/filtering/cntfilterinvalid.h \
+        inc/filtering/cntfilterlocalid.h \
+        inc/filtering/cntfilterchangelog.h \
+        inc/filtering/cntfilterdetailrange.h \
+        inc/filtering/cntabstractcontactsorter.h \
+        inc/filtering/cntabstractcontactfilter.h \
+        inc/filtering/cntsymbianfilterdbms.h \
+        inc/filtering/cntsymbianfiltersql.h \
+        inc/filtering/cntsymbiansorterdbms.h \
+        inc/filtering/cntsymbiansrvconnection.h \
+        inc/filtering/cntdisplaylabelsqlfilter.h \
+        inc/filtering/cntsqlsearch.h
+        
+    SOURCES += \       
+        src/transform/cnttransformcontact.cpp \
+        src/transform/cnttransformcontactdata.cpp \
+        src/transform/cnttransformname.cpp \
+        src/transform/cnttransformnickname.cpp \
+        src/transform/cnttransformphonenumber.cpp \
+        src/transform/cnttransformemail.cpp \
+        src/transform/cnttransformaddress.cpp \
+        src/transform/cnttransformurl.cpp \
+        src/transform/cnttransformbirthday.cpp \
+        src/transform/cnttransformonlineaccount.cpp \
+        src/transform/cnttransformonlineaccountsimple.cpp \
+        src/transform/cnttransformorganisation.cpp \
+        src/transform/cnttransformringtone.cpp \
+        src/transform/cnttransformthumbnail.cpp \
+        src/transform/cnttransformavatar.cpp \
+        src/transform/cntthumbnailcreator.cpp\
+        src/transform/cnttransformsynctarget.cpp \
+        src/transform/cnttransformgender.cpp \
+        src/transform/cnttransformanniversary.cpp \
+        src/transform/cnttransformanniversarysimple.cpp \
+        src/transform/cnttransformgeolocation.cpp \
+        src/transform/cnttransformnote.cpp \
+        src/transform/cnttransformfamily.cpp \  
+        src/transform/cnttransformempty.cpp \
+        src/filtering/cntfilterrelationship.cpp \
+        src/filtering/cntfilterdetaildisplaylabel.cpp \
+        src/filtering/cntfilterdetail.cpp \
+        src/filtering/cntdbinfo.cpp \
+        src/filtering/cntfilterdefault.cpp \
+        src/filtering/cntfilterintersection.cpp \
+        src/filtering/cntfilterunion.cpp \
+        src/filtering/cntfilterinvalid.cpp \
+        src/filtering/cntfilterlocalid.cpp \
+        src/filtering/cntfilterchangelog.cpp \
+        src/filtering/cntfilterdetailrange.cpp \
+        src/filtering/cntsymbianfilterdbms.cpp \
+        src/filtering/cntsymbianfiltersql.cpp \
+        src/filtering/cntsymbiansorterdbms.cpp \
+        src/filtering/cntsymbiansrvconnection.cpp \
+        src/filtering/cntdisplaylabelsqlfilter.cpp \
+        src/filtering/cntsqlsearch.cpp \
+    	src/cntsymbianengine.cpp \
         src/cntabstractrelationship.cpp \
         src/cntrelationshipgroup.cpp \
-        src/cntsymbianfiltersqlhelper.cpp \
-        src/cntsymbiansrvconnection.cpp \
         src/cntsymbiantransformerror.cpp \
         src/cntsymbiandatabase.cpp \
-	    src/cntdisplaylabel.cpp
-      
+        src/cntdisplaylabel.cpp \
+        src/cntrelationship.cpp 
+
     CONFIG += mobility
     MOBILITY = contacts
 
@@ -107,24 +136,21 @@ symbian: {
         -lfbscli \
         -limageconversion \
         -lbitmaptransforms \
-        -lbafl
+        -lbafl \
+        -ltzclient
 
     target.path = /sys/bin
     INSTALLS += target
 
-    exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-        DEFINES += SYMBIAN_BACKEND_USE_SQLITE
+    contains(DEFINES, SYMBIAN_BACKEND_USE_SQLITE) {
         cntmodelResourceFile = \
-            "START RESOURCE ../rss/cntmodel.rss" \
+            "START RESOURCE ../../rss/cntmodel.rss" \
             "TARGETPATH $${CONTACTS_RESOURCE_DIR}" \
             "END"
         MMP_RULES += cntmodelResourceFile
     }
-
+    
     symbianplugin.sources = $${TARGET}.dll
-    symbianplugin.path = /resource/qt/plugins/contacts
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 }
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
-INSTALLS+=target

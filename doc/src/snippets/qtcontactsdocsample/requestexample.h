@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,9 +55,46 @@
 //
 
 #include <QObject>
-#include "qcontactfetchrequest.h"
+#include "qmobilityglobal.h"
+#include "qcontactrequests.h"
 
+//! [Class setup]
 QTM_USE_NAMESPACE
+class AsyncRequestExample : public QObject
+{
+    Q_OBJECT
+
+public:
+    AsyncRequestExample();
+    ~AsyncRequestExample();
+
+public slots:
+    void performRequests();
+
+private slots:
+    void contactFetchRequestStateChanged(QContactAbstractRequest::State newState);
+    void contactSaveRequestStateChanged(QContactAbstractRequest::State newState);
+    void contactRemoveRequestStateChanged(QContactAbstractRequest::State newState);
+    void relationshipFetchRequestStateChanged(QContactAbstractRequest::State newState);
+    void relationshipSaveRequestStateChanged(QContactAbstractRequest::State newState);
+    void relationshipRemoveRequestStateChanged(QContactAbstractRequest::State newState);
+    void definitionFetchRequestStateChanged(QContactAbstractRequest::State newState);
+    void definitionSaveRequestStateChanged(QContactAbstractRequest::State newState);
+    void definitionRemoveRequestStateChanged(QContactAbstractRequest::State newState);
+
+private:
+    QContactManager *m_manager;
+    QContactFetchRequest m_contactFetchRequest;
+    QContactSaveRequest m_contactSaveRequest;
+    QContactRemoveRequest m_contactRemoveRequest;
+    QContactRelationshipFetchRequest m_relationshipFetchRequest;
+    QContactRelationshipSaveRequest m_relationshipSaveRequest;
+    QContactRelationshipRemoveRequest m_relationshipRemoveRequest;
+    QContactDetailDefinitionFetchRequest m_definitionFetchRequest;
+    QContactDetailDefinitionSaveRequest m_definitionSaveRequest;
+    QContactDetailDefinitionRemoveRequest m_definitionRemoveRequest;
+};
+//! [Class setup]
 
 class RequestExample : public QObject
 {
@@ -85,7 +122,8 @@ public:
 
 private slots:
     void performRequest();
-    void printContacts(QContactFetchRequest* request, bool appendOnly);
+    void printContacts();
+    void stateChanged(QContactAbstractRequest::State state);
 
 private:
     int m_previousLastIndex;

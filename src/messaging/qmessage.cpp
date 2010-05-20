@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,13 +59,12 @@ QList<QByteArray> charsets;
 /*!
     \class QMessage
 
-    \preliminary
     \brief The QMessage class provides a convenient interface for working with messages.
     
     \ingroup messaging
    
     QMessage supports a number of types. Including internet email messages, 
-    the telephony types SMS and MMS, and also XMPP messages.
+    and the telephony types SMS and MMS.
      
     The QMessageId identifier for a message is returned by id(). Messages can be constructed by 
     retrieval from the messaging store via their identifier using QMessageManager::message(). A 
@@ -86,7 +85,7 @@ QList<QByteArray> charsets;
         
     Only phone numbers are valid destination addresses for SMS messages, only email addresses are valid
     destination addresses for Email messages, MMS messages may be addressed to either phone numbers
-    or email addresses. Only XMPP addresses are valid destination addresses for XMPP messages.
+    or email addresses.
     
     \sa QMessageContentContainer, QMessageManager, QMessageId
 */
@@ -96,12 +95,12 @@ QList<QByteArray> charsets;
 
     This enum type is used to describe the type of a message.
     
-    \value NoType   The message type is not defined.
-    \value Mms      The message is an MMS, Multimedia Messaging Service object.
-    \value Sms      The message is an SMS, Short Message Service object.
-    \value Email    The message is an Email, Internet Message Format object.
-    \value Xmpp     The message is an XMPP, Extensible Messaging and Presence Protocol object.
-    \value AnyType  Bitflag value that matches any message type defined.
+    \value NoType             The message type is not defined.
+    \value Mms                The message is an MMS, Multimedia Messaging Service object.
+    \value Sms                The message is an SMS, Short Message Service object.
+    \value Email              The message is an Email, Internet Message Format object.
+    \value InstantMessage     The message is an instant message object, such as XMPP.
+    \value AnyType            Bitflag value that matches any message type defined.
     
     \sa type(), setType()
 */
@@ -238,7 +237,7 @@ QList<QByteArray> charsets;
   
     Returns the standard folder of the message.
     
-    Defaults to InboxFolder.
+    Defaults to DraftsFolder.
 */
     
 /*!

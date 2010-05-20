@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,50 +53,58 @@
 // We mean it.
 //
 
+#include "qversitwriter.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
+#include "qversitwriter.h"
 
 #include <QThread>
-#include <QByteArray>
 #include <QIODevice>
+#include <QMutex>
+#include <QWaitCondition>
+
+QT_BEGIN_NAMESPACE
+class QBuffer;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
+
+class QVersitDocumentWriter;
 
 class Q_AUTOTEST_EXPORT QVersitWriterPrivate : public QThread
 {
     Q_OBJECT
 
+signals:
+    void stateChanged(QVersitWriter::State state);
+
 public:
-    virtual ~QVersitWriterPrivate();
-    bool isReady() const;
-    bool write();
-
-public: // Data
-    QIODevice* mIoDevice;
-    QVersitDocument mVersitDocument;
-
-protected: // To be implemented in each of the subclasses
-    virtual QByteArray encodeVersitProperty(const QVersitProperty& property) = 0;
-    virtual QByteArray encodeParameters(
-        const QMultiHash<QString,QString>& parameters) const = 0;
-
-protected: // Protected Constructors
-    QVersitWriterPrivate(const QByteArray& documentType, const QByteArray& version);
-
-protected: // From QThread
-     void run();
-
-protected: // New functions
-    QByteArray encodeVersitDocument(const QVersitDocument& document);
-    QByteArray encodeGroupsAndName(const QVersitProperty& property) const;
-
-private: // Constructors
     QVersitWriterPrivate();
+    virtual ~QVersitWriterPrivate();
+    void init(QVersitWriter* writer);
+    void write();
 
-private: // Data
-    QByteArray mDocumentType;
-    QByteArray mVersion;
+    // mutexed getters and setters.
+    void setState(QVersitWriter::State);
+    QVersitWriter::State state() const;
+    void setError(QVersitWriter::Error);
+    QVersitWriter::Error error() const;
+    void setCanceling(bool cancelling);
+    bool isCanceling();
+
+    void run();
+
+    static QVersitDocumentWriter* writerForType(QVersitDocument::VersitType type);
+
+    QIODevice* mIoDevice;
+    QScopedPointer<QBuffer> mOutputBytes; // Holds the data set by setData()
+    QList<QVersitDocument> mInput;
+    QVersitWriter::State mState;
+    QVersitWriter::Error mError;
+    bool mIsCanceling;
+    mutable QMutex mMutex;
+    QTextCodec* mDefaultCodec;
 };
 
 QTM_END_NAMESPACE

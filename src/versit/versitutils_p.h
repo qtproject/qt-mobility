@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,9 +43,21 @@
 #ifndef VERSITUTILS_P_H
 #define VERSITUTILS_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qmobilityglobal.h"
 
 #include <QByteArray>
+#include <QByteArrayMatcher>
 #include <QPair>
 #include <QString>
 #include <QStringList>
@@ -56,32 +68,19 @@ QTM_BEGIN_NAMESPACE
 class Q_AUTOTEST_EXPORT VersitUtils
 {
 public:
-    static QByteArray fold(QByteArray& text, int maxChars);
-    static QByteArray unfold(QByteArray& text);
-    static int countLeadingWhiteSpaces(const QByteArray& text, int pos=0);
-    static bool quotedPrintableEncode(QByteArray& text);
-    static void decodeQuotedPrintable(QByteArray& text);
-    static bool backSlashEscape(QByteArray& text);
-    static void removeBackSlashEscaping(QByteArray& text);
-    static int findHardLineBreakInQuotedPrintable(const QByteArray& encoded);
-    static QPair<QStringList,QString> extractPropertyGroupsAndName(
-        const QByteArray& property);
-    static QByteArray extractPropertyValue(const QByteArray& property);
-    static QMultiHash<QString,QString> extractVCard21PropertyParams(
-        const QByteArray& property);
-    static QMultiHash<QString,QString> extractVCard30PropertyParams(
-        const QByteArray& property);
+    static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
+    static QByteArray encode(char ch, QTextCodec* codec);
+    static QList<QByteArrayMatcher>* newlineList(QTextCodec* codec);
+    static void changeCodec(QTextCodec* codec);
 
-    // "Private" functions
-    static QList<QByteArray> extractParams(const QByteArray& property);
-    static QList<QByteArray> extractParts(const QByteArray& text, char separator);
-    static QByteArray extractPart(
-        const QByteArray& text,
-        int startPosition, 
-        int length=-1);
-    static QByteArray paramName(const QByteArray& parameter);
-    static QByteArray paramValue(const QByteArray& parameter);
-    static bool shouldBeQuotedPrintableEncoded(char chr);
+private:
+    // These are caches for performance:
+    // The previous codec that encode(char, QTextCodec) was called with
+    static QTextCodec* m_previousCodec;
+    // The QByteArray corresponding to each char from 0-255, encoded with m_previousCodec
+    static QByteArray m_encodingMap[256];
+    // List of different newline delimeters, encoded with m_previousCodec
+    static QList<QByteArrayMatcher>* m_newlineList;
 };
 
 QTM_END_NAMESPACE

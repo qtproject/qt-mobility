@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qradiotuner.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QRadioTuner Class Reference</title>
+  <title>Qt Mobility Project 1.1: QRadioTuner Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#Band-enum">Band</a></b> { AM, FM, SW, LW }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#Band-enum">Band</a></b> { AM, FM, SW, LW, FM2 }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#Error-enum">Error</a></b> { NoError, ResourceError, OpenError, OutOfRangeError }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#State-enum">State</a></b> { ActiveState, StoppedState }</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#StereoMode-enum">StereoMode</a></b> { Auto, ForceStereo, ForceMono }</td></tr>
@@ -76,7 +76,7 @@
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual QtMedia::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#availabilityError">availabilityError</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMediaServices::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#availabilityError">availabilityError</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#isAvailable">isAvailable</a></b> () const</td></tr>
 </table>
 <ul>
@@ -148,6 +148,7 @@
 <a name="//apple_ref/cpp/econst/QRadioTuner/FM"></a>
 <a name="//apple_ref/cpp/econst/QRadioTuner/SW"></a>
 <a name="//apple_ref/cpp/econst/QRadioTuner/LW"></a>
+<a name="//apple_ref/cpp/econst/QRadioTuner/FM2"></a>
 <h3 class="fn"><a name="Band-enum"></a>enum QRadioTuner::Band</h3>
 <p>Enumerates radio frequency bands.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
@@ -156,6 +157,7 @@
 <tr><td valign="top"><tt>QRadioTuner::FM</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">87.5 to 108.0 MHz, except Japan 76-90 MHz</td></tr>
 <tr><td valign="top"><tt>QRadioTuner::SW</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing</td></tr>
 <tr><td valign="top"><tt>QRadioTuner::LW</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)</td></tr>
+<tr><td valign="top"><tt>QRadioTuner::FM2</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">range not defined, used when area supports more than one FM range.</td></tr>
 </table></p>
 <a name="//apple_ref/cpp/tag/QRadioTuner/Error"></a>
 <a name="//apple_ref/cpp/econst/QRadioTuner/NoError"></a>
@@ -321,7 +323,7 @@
 <h3 class="fn"><a name="dtor.QRadioTuner"></a>QRadioTuner::~QRadioTuner ()</h3>
 <p>Destroys a radio tuner.</p>
 <a name="//apple_ref/cpp/instm/QRadioTuner/availabilityError"></a>
-<h3 class="fn"><a name="availabilityError"></a><a href="qtmedia.html#AvailabilityError-enum">QtMedia::AvailabilityError</a> QRadioTuner::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmediaservices.html#AvailabilityError-enum">QtMediaServices::AvailabilityError</a> QRadioTuner::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
 <p>Returns the availability error state.</p>
 <a name="//apple_ref/cpp/instm/QRadioTuner/bandChanged"></a>
@@ -392,8 +394,8 @@
 <p>Signals that the <i>volume</i> of a radio tuner's audio output has changed.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

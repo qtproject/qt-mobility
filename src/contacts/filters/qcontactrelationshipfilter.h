@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,7 @@
 #include "qtcontactsglobal.h"
 #include "qcontactfilter.h"
 #include "qcontactid.h"
+#include "qcontactrelationship.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -60,19 +61,14 @@ public:
     QContactRelationshipFilter();
     QContactRelationshipFilter(const QContactFilter& other);
 
-    enum Role {
-        First = 0,
-        Second,
-        Either
-    };
-
-    void setRole(QContactRelationshipFilter::Role roleInRelationship);
     void setRelationshipType(const QString& relationshipType);
-    void setOtherParticipantId(const QContactId& contactId);
+    void setRelatedContactId(const QContactId& relatedContactId);
+    void setRelatedContactRole(QContactRelationship::Role relatedContactRole);
 
-    QContactRelationshipFilter::Role role() const;
     QString relationshipType() const;
-    QContactId otherParticipantId() const;
+    QContactId relatedContactId() const;
+    QContactRelationship::Role relatedContactRole() const;
+
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactRelationshipFilter)

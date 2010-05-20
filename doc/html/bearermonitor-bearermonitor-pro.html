@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: bearermonitor.pro Example File (bearermonitor/bearermonitor.pro)</title>
+  <title>Qt Mobility Project 1.1: bearermonitor.pro Example File (bearermonitor/bearermonitor.pro)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -13,27 +13,30 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">bearermonitor.pro Example File<br /><span class="small-subtitle">bearermonitor/bearermonitor.pro</span>
 </h1>
-<pre>    HEADERS = sessionwidget.h \
+<pre>    TARGET = bearermonitor
+    QT = core gui network
+
+    INCLUDEPATH += ../../src/bearer
+    include(../examples.pri)
+
+    CONFIG += mobility
+    MOBILITY = bearer
+
+    HEADERS = sessionwidget.h \
               bearermonitor.h
 
     SOURCES = main.cpp \
               bearermonitor.cpp \
               sessionwidget.cpp
 
-    FORMS = bearermonitor_240_320.ui \
-            bearermonitor_640_480.ui \
-            sessionwidget.ui
-
-    TARGET = bearermonitor
-
-    QT = core gui network
-
-    INCLUDEPATH += ../../src/bearer
-
-    include(../examples.pri)
-
-    CONFIG += mobility
-    MOBILITY = bearer
+    maemo5|maemo6 {
+      FORMS = bearermonitor_maemo.ui \
+              sessionwidget_maemo.ui
+    } else {
+      FORMS = bearermonitor_240_320.ui \
+              bearermonitor_640_480.ui \
+              sessionwidget.ui
+    }
 
     win32:!wince*:LIBS += -lWs2_32
     wince*:LIBS += -lWs2
@@ -43,8 +46,8 @@
     symbian:TARGET.CAPABILITY = NetworkServices ReadUserData</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

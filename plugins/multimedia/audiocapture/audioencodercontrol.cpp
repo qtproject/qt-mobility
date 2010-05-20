@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,14 +49,23 @@
 AudioEncoderControl::AudioEncoderControl(QObject *parent)
     :QAudioEncoderControl(parent)
 {
+    m_session = qobject_cast<AudioCaptureSession*>(parent);
+
     QT_PREPEND_NAMESPACE(QAudioFormat) fmt;
     fmt.setSampleSize(8);
     fmt.setChannels(1);
     fmt.setFrequency(8000);
     fmt.setSampleType(QT_PREPEND_NAMESPACE(QAudioFormat)::SignedInt);
     fmt.setCodec("audio/pcm");
+    fmt.setByteOrder(QAudioFormat::LittleEndian);
+    m_session->setFormat(fmt);
 
-    m_session = qobject_cast<AudioCaptureSession*>(parent);
+    m_settings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
+    m_settings.setCodec("audio/pcm");
+    m_settings.setBitRate(8000);
+    m_settings.setChannelCount(1);
+    m_settings.setSampleRate(8000);
+    m_settings.setQuality(QtMediaServices::LowQuality);
 }
 
 AudioEncoderControl::~AudioEncoderControl()
@@ -65,73 +74,19 @@ AudioEncoderControl::~AudioEncoderControl()
 
 QStringList AudioEncoderControl::supportedAudioCodecs() const
 {
-    return m_session->supportedAudioCodecs();
-}
+    QStringList list;
+    if (m_session->supportedContainers().size() > 0)
+        list.append("audio/pcm");
 
-QString AudioEncoderControl::audioCodec() const
-{
-    return m_session->format().codec();
-}
-
-bool AudioEncoderControl::setAudioCodec(const QString &codecName)
-{
-    QT_PREPEND_NAMESPACE(QAudioFormat) fmt = m_session->format();
-    fmt.setCodec(codecName);
-    return m_session->setFormat(fmt);
+    return list;
 }
 
 QString AudioEncoderControl::codecDescription(const QString &codecName) const
 {
-    if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/x-wav") == 0)
-        return QString("wav file format");
-    if(qstrcmp(codecName.toLocal8Bit().constData(),"audio/pcm") == 0)
-                return QString("raw audio");
+    if (codecName.contains(QLatin1String("audio/pcm")))
+        return QString(tr("PCM audio data"));
 
     return QString();
-}
-
-int AudioEncoderControl::bitRate() const
-{
-    return (m_session->format().frequency()*m_session->format().channels()*(m_session->format().sampleSize()/8));
-}
-
-void AudioEncoderControl::setBitRate(int value)
-{
-    QT_PREPEND_NAMESPACE(QAudioFormat) fmt = m_session->format();
-
-    if(value <= 8) {
-        // low, 8000Hz mono U8
-        fmt.setSampleType(QT_PREPEND_NAMESPACE(QAudioFormat)::UnSignedInt);
-        fmt.setSampleSize(8);
-        fmt.setFrequency(8000);
-        fmt.setChannels(1);
-
-    } else if(value <= 44) {
-        // medium, 22050Hz mono S16
-        fmt.setSampleType(QT_PREPEND_NAMESPACE(QAudioFormat)::SignedInt);
-        fmt.setSampleSize(16);
-        fmt.setFrequency(22050);
-        fmt.setChannels(1);
-
-    } else {
-        // high, 44100Hz mono S16
-        fmt.setSampleType(QT_PREPEND_NAMESPACE(QAudioFormat)::SignedInt);
-        fmt.setSampleSize(16);
-        fmt.setFrequency(44100);
-        fmt.setChannels(1);
-
-    }
-    m_session->setFormat(fmt);
-}
-
-QtMedia::EncodingQuality AudioEncoderControl::quality() const
-{
-    return QtMedia::NormalQuality;
-}
-
-void AudioEncoderControl::setQuality(QtMedia::EncodingQuality value)
-{
-    Q_UNUSED(value)
 }
 
 QStringList AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
@@ -145,9 +100,7 @@ QStringList AudioEncoderControl::supportedEncodingOptions(const QString &codec) 
 QVariant AudioEncoderControl::encodingOption(const QString &codec, const QString &name) const
 {
     Q_UNUSED(codec)
-    if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
-        return QVariant(8000);
-    }
+    Q_UNUSED(name)
 
     return QVariant();
 }
@@ -157,29 +110,7 @@ void AudioEncoderControl::setEncodingOption(
 {
     Q_UNUSED(value)
     Q_UNUSED(codec)
-
-    QT_PREPEND_NAMESPACE(QAudioFormat) fmt = m_session->format();
-
-    if(qstrcmp(name.toLocal8Bit().constData(),"bitrate") == 0) {
-        //TODO
-
-    } else if(qstrcmp(name.toLocal8Bit().constData(),"quality") == 0) {
-        //TODO
-
-    } else
-        qWarning()<<"option: "<<name<<" is an unknown option!";
-}
-
-int AudioEncoderControl::sampleRate() const
-{
-    return m_session->format().frequency();
-}
-
-void AudioEncoderControl::setSampleRate(int sampleRate)
-{
-    QT_PREPEND_NAMESPACE(QAudioFormat) fmt = m_session->format();
-    fmt.setFrequency(sampleRate);
-    m_session->setFormat(fmt);
+    Q_UNUSED(name)
 }
 
 QList<int> AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &, bool *continuous) const
@@ -190,57 +121,48 @@ QList<int> AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings
     return m_session->deviceInfo()->supportedFrequencies();
 }
 
-int AudioEncoderControl::channelCount() const
-{
-    return m_session->format().channels();
-}
-
-void AudioEncoderControl::setChannelCount(int channels)
-{
-    QT_PREPEND_NAMESPACE(QAudioFormat) fmt = m_session->format();
-    fmt.setChannels(channels);
-    m_session->setFormat(fmt);
-}
-
-QList<int> AudioEncoderControl::supportedChannelCounts() const
-{
-    return QList<int>() << 1 << 2;
-}
-
-int AudioEncoderControl::sampleSize() const
-{
-    return m_session->format().sampleSize();
-}
-
-void AudioEncoderControl::setSampleSize(int sampleSize)
-{
-    QT_PREPEND_NAMESPACE(QAudioFormat) fmt = m_session->format();
-    fmt.setSampleSize(sampleSize);
-    m_session->setFormat(fmt);
-}
-
-QList<int> AudioEncoderControl::supportedSampleSizes() const
-{
-    QList<int> sizes = m_session->deviceInfo()->supportedSampleSizes();
-    return sizes;
-}
-
 QAudioEncoderSettings AudioEncoderControl::audioSettings() const
 {
-    QAudioEncoderSettings settings;
-    settings.setCodec(audioCodec());
-    settings.setBitRate(bitRate());
-    settings.setQuality(quality());
-    settings.setSampleRate(sampleRate());
-    settings.setChannelCount(channelCount());
-    return settings;
+    return m_settings;
 }
 
 void AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
-    setAudioCodec(settings.codec());
-    setBitRate(settings.bitRate());
-    setQuality(settings.quality());
-    setSampleRate(settings.sampleRate());
-    setChannelCount(settings.channelCount());
+    QAudioFormat fmt = m_session->format();
+
+    if (settings.encodingMode() == QtMediaServices::ConstantQualityEncoding) {
+        if (settings.quality() == QtMediaServices::LowQuality) {
+            fmt.setSampleSize(8);
+            fmt.setChannels(1);
+            fmt.setFrequency(8000);
+            fmt.setSampleType(QAudioFormat::UnSignedInt);
+
+        } else if (settings.quality() == QtMediaServices::NormalQuality) {
+            fmt.setSampleSize(16);
+            fmt.setChannels(1);
+            fmt.setFrequency(22050);
+            fmt.setSampleType(QAudioFormat::SignedInt);
+
+        } else {
+            fmt.setSampleSize(16);
+            fmt.setChannels(1);
+            fmt.setFrequency(44100);
+            fmt.setSampleType(QAudioFormat::SignedInt);
+        }
+
+    } else {
+        fmt.setChannels(settings.channelCount());
+        fmt.setFrequency(settings.sampleRate());
+        if (settings.sampleRate() == 8000 && settings.bitRate() == 8000) {
+            fmt.setSampleType(QAudioFormat::UnSignedInt);
+            fmt.setSampleSize(8);
+        } else {
+            fmt.setSampleSize(16);
+            fmt.setSampleType(QAudioFormat::SignedInt);
+        }
+    }
+    fmt.setCodec("audio/pcm");
+
+    m_session->setFormat(fmt);
+    m_settings = settings;
 }

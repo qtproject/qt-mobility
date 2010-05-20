@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,7 @@
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoSatelliteInfo)
-Q_DECLARE_METATYPE(QGeoSatelliteInfo::Property)
+Q_DECLARE_METATYPE(QGeoSatelliteInfo::Attribute)
 
 QByteArray tst_qgeosatelliteinfo_debug;
 
@@ -96,12 +96,12 @@ QList<int> tst_qgeosatelliteinfo_intTestValues()
     return values;
 }
 
-QList<QGeoSatelliteInfo::Property> tst_qgeosatelliteinfo_getProperties()
+QList<QGeoSatelliteInfo::Attribute> tst_qgeosatelliteinfo_getAttributes()
 {
-    QList<QGeoSatelliteInfo::Property> properties;
-    properties << QGeoSatelliteInfo::Elevation
+    QList<QGeoSatelliteInfo::Attribute> attributes;
+    attributes << QGeoSatelliteInfo::Elevation
             << QGeoSatelliteInfo::Azimuth;
-    return properties;
+    return attributes;
 }
 
 
@@ -110,10 +110,10 @@ class tst_QGeoSatelliteInfo : public QObject
     Q_OBJECT
 
 private:
-    QGeoSatelliteInfo updateWithProperty(QGeoSatelliteInfo::Property property, qreal value)
+    QGeoSatelliteInfo updateWithAttribute(QGeoSatelliteInfo::Attribute attribute, qreal value)
     {
         QGeoSatelliteInfo info;
-        info.setProperty(property, value);
+        info.setAttribute(attribute, value);
         return info;
     }
 
@@ -134,11 +134,11 @@ private:
             QTest::newRow("signal strength") << info;
         }
 
-        QList<QGeoSatelliteInfo::Property> properties = tst_qgeosatelliteinfo_getProperties();
+        QList<QGeoSatelliteInfo::Attribute> attributes = tst_qgeosatelliteinfo_getAttributes();
         QList<qreal> qrealValues = tst_qgeosatelliteinfo_qrealTestValues();
-        for (int i=0; i<properties.count(); i++) {
-            QTest::newRow(qPrintable(QString("Property %1 = %2").arg(properties[i]).arg(qrealValues[i])))
-                    << updateWithProperty(properties[i], qrealValues[i]);
+        for (int i=0; i<attributes.count(); i++) {
+            QTest::newRow(qPrintable(QString("Attribute %1 = %2").arg(attributes[i]).arg(qrealValues[i])))
+                    << updateWithAttribute(attributes[i], qrealValues[i]);
         }
     }
 
@@ -148,9 +148,9 @@ private slots:
         QGeoSatelliteInfo info;
         QCOMPARE(info.prnNumber(), -1);
         QCOMPARE(info.signalStrength(), -1);
-        QList<QGeoSatelliteInfo::Property> properties = tst_qgeosatelliteinfo_getProperties();
-        for (int i=0; i<properties.count(); i++)
-            QCOMPARE(info.property(properties[i]), qreal(-1.0));
+        QList<QGeoSatelliteInfo::Attribute> attributes = tst_qgeosatelliteinfo_getAttributes();
+        for (int i=0; i<attributes.count(); i++)
+            QCOMPARE(info.attribute(attributes[i]), qreal(-1.0));
     }
 
     void constructor_copy()
@@ -235,77 +235,96 @@ private slots:
             QTest::newRow(qPrintable(QString("%1").arg(intValues[i]))) << intValues[i];
     }
 
-    void property()
+    void attribute()
     {
-        QFETCH(QGeoSatelliteInfo::Property, property);
+        QFETCH(QGeoSatelliteInfo::Attribute, attribute);
         QFETCH(qreal, value);
 
         QGeoSatelliteInfo u;
-        QCOMPARE(u.property(property), qreal(-1.0));
+        QCOMPARE(u.attribute(attribute), qreal(-1.0));
 
-        u.setProperty(property, value);
-        QCOMPARE(u.property(property), value);
+        u.setAttribute(attribute, value);
+        QCOMPARE(u.attribute(attribute), value);
 
-        u.removeProperty(property);
-        QCOMPARE(u.property(property), qreal(-1.0));
+        u.removeAttribute(attribute);
+        QCOMPARE(u.attribute(attribute), qreal(-1.0));
     }
 
-    void property_data()
+    void attribute_data()
     {
-        QTest::addColumn<QGeoSatelliteInfo::Property>("property");
+        QTest::addColumn<QGeoSatelliteInfo::Attribute>("attribute");
         QTest::addColumn<qreal>("value");
 
-        QList<QGeoSatelliteInfo::Property> props;
+        QList<QGeoSatelliteInfo::Attribute> props;
         props << QGeoSatelliteInfo::Elevation
               << QGeoSatelliteInfo::Azimuth;
         for (int i=0; i<props.count(); i++) {
-            QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(-1.0);
-            QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(0.0);
-            QTest::newRow(QTest::toString("property " + props[i])) << props[i] << qreal(1.0);
+            QTest::newRow(QTest::toString("attribute " + props[i])) << props[i] << qreal(-1.0);
+            QTest::newRow(QTest::toString("attribute " + props[i])) << props[i] << qreal(0.0);
+            QTest::newRow(QTest::toString("attribute " + props[i])) << props[i] << qreal(1.0);
         }
     }
 
-    void hasProperty()
+    void hasAttribute()
     {
-        QFETCH(QGeoSatelliteInfo::Property, property);
+        QFETCH(QGeoSatelliteInfo::Attribute, attribute);
         QFETCH(qreal, value);
 
         QGeoSatelliteInfo u;
-        QVERIFY(!u.hasProperty(property));
+        QVERIFY(!u.hasAttribute(attribute));
 
-        u.setProperty(property, value);
-        QVERIFY(u.hasProperty(property));
+        u.setAttribute(attribute, value);
+        QVERIFY(u.hasAttribute(attribute));
 
-        u.removeProperty(property);
-        QVERIFY(!u.hasProperty(property));
+        u.removeAttribute(attribute);
+        QVERIFY(!u.hasAttribute(attribute));
     }
 
-    void hasProperty_data()
+    void hasAttribute_data()
     {
-        property_data();
+        attribute_data();
     }
 
-    void removeProperty()
+    void removeAttribute()
     {
-        QFETCH(QGeoSatelliteInfo::Property, property);
+        QFETCH(QGeoSatelliteInfo::Attribute, attribute);
         QFETCH(qreal, value);
 
         QGeoSatelliteInfo u;
-        QVERIFY(!u.hasProperty(property));
+        QVERIFY(!u.hasAttribute(attribute));
 
-        u.setProperty(property, value);
-        QVERIFY(u.hasProperty(property));
+        u.setAttribute(attribute, value);
+        QVERIFY(u.hasAttribute(attribute));
 
-        u.removeProperty(property);
-        QVERIFY(!u.hasProperty(property));
+        u.removeAttribute(attribute);
+        QVERIFY(!u.hasAttribute(attribute));
 
-        u.setProperty(property, value);
-        QVERIFY(u.hasProperty(property));
+        u.setAttribute(attribute, value);
+        QVERIFY(u.hasAttribute(attribute));
     }
 
-    void removeProperty_data()
+    void removeAttribute_data()
     {
-        property_data();
+        attribute_data();
+    }
+
+    void datastream()
+    {
+        QFETCH(QGeoSatelliteInfo, info);
+
+        QByteArray ba;
+        QDataStream out(&ba, QIODevice::WriteOnly);
+        out << info;
+
+        QDataStream in(&ba, QIODevice::ReadOnly);
+        QGeoSatelliteInfo inInfo;
+        in >> inInfo;
+        QCOMPARE(inInfo, info);
+    }
+
+    void datastream_data()
+    {
+        addTestData_update();
     }
 
     void debug()
@@ -340,12 +359,12 @@ private slots:
                 << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=1)");
 
         info = QGeoSatelliteInfo();
-        info.setProperty(QGeoSatelliteInfo::Elevation, 1.1);
+        info.setAttribute(QGeoSatelliteInfo::Elevation, 1.1);
         QTest::newRow("with Elevation") << info
                 << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=-1, Elevation=1.1)");
 
         info = QGeoSatelliteInfo();
-        info.setProperty(QGeoSatelliteInfo::Azimuth, 1.1);
+        info.setAttribute(QGeoSatelliteInfo::Azimuth, 1.1);
         QTest::newRow("with Azimuth") << info
                 << QByteArray("QGeoSatelliteInfo(PRN=-1, signal-strength=-1, Azimuth=1.1)");
     }

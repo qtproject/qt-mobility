@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -85,6 +85,8 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
             reinterpret_cast<void **>(&m_player))) != S_OK) {
         qWarning("failed to create media player control, %x: %s", hr, qwmp_error_string(hr));
     } else {
+        m_events = new QWmpEvents(m_player);
+
         if ((hr = m_player->QueryInterface(
                 __uuidof(IOleObject), reinterpret_cast<void **>(&m_oleObject))) != S_OK) {
             qWarning("No IOleObject interface, %x: %s", hr, qwmp_error_string(hr));
@@ -103,8 +105,12 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
             IWMPVideoRenderConfig *config = 0;
             if (m_player->QueryInterface(
                     __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
-                if (HINSTANCE evrHwnd = LoadLibrary(L"evr"))
+                if (HINSTANCE evrHwnd = LoadLibrary(L"evr")) {
                     m_evrVideoOverlay = new QEvrVideoOverlay(evrHwnd);
+
+                    connect(m_events, SIGNAL(OpenStateChange(long)),
+                            m_evrVideoOverlay, SLOT(openStateChanged(long)));
+                }
 
                 config->Release();
             }
@@ -118,7 +124,6 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
             }
         }
 
-        m_events = new QWmpEvents(m_player);
         m_metaData = new QWmpMetaData(m_player, m_events);
         m_playlist = new QWmpPlaylistControl(m_player, m_events);
         m_control = new QWmpPlayerControl(m_player, m_events);

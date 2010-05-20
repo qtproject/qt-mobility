@@ -61,7 +61,8 @@ PUBLIC_HEADERS += \
     qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
-    qvideorenderercontrol.h
+    qvideorenderercontrol.h \
+    qmediatimerange.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
@@ -98,17 +99,20 @@ SOURCES += qmediacontrol.cpp \
     qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp \
-    qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
-    qvideorenderercontrol.cpp
+    qvideorenderercontrol.cpp \
+    qmediatimerange.cpp
 
-contains(QT_CONFIG, declarative) {
-   QT += declarative
-   PRIVATE_HEADERS += qmlsound_p.h
-   SOURCES += qmlsound.cpp
+maemo5 {
+    QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+    HEADERS += qxvideosurface_maemo5_p.h
+    SOURCES += qxvideosurface_maemo5.cpp
+    SOURCES += qgraphicsvideoitem_maemo5.cpp
+    LIBS += -lXv
+} else {
+    SOURCES += qgraphicsvideoitem.cpp
 }
 
-include (experimental/experimental.pri)
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
@@ -117,16 +121,9 @@ symbian {
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2002AC77
-    MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
-
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include/mw
-    
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
+    LIBS += -lefsrv
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

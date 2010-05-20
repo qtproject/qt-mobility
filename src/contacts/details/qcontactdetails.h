@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,6 +54,7 @@
 #include "qcontactfamily.h"
 #include "qcontactgender.h"
 #include "qcontactgeolocation.h"
+#include "qcontactglobalpresence.h"
 #include "qcontactguid.h"
 #include "qcontactname.h"
 #include "qcontactnickname.h"
@@ -61,7 +62,11 @@
 #include "qcontactonlineaccount.h"
 #include "qcontactorganization.h"
 #include "qcontactphonenumber.h"
+#include "qcontactpresence.h"
+#include "qcontactringtone.h"
 #include "qcontactsynctarget.h"
+#include "qcontacttag.h"
+#include "qcontactthumbnail.h"
 #include "qcontacttimestamp.h"
 #include "qcontacttype.h"
 #include "qcontacturl.h"

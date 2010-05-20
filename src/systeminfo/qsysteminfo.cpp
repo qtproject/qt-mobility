@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,8 +42,13 @@
 #include "qsysteminfo.h"
 
 #ifdef Q_OS_LINUX
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "qsysteminfo_maemo_p.h"
+#else
 #include "qsysteminfo_linux_p.h"
-#endif
+#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
+#endif //Q_OS_LINUX
+
 #ifdef Q_OS_WIN
 #include "qsysteminfo_win_p.h"
 #endif
@@ -157,7 +162,7 @@ is a reliable way to gather such information.
     \enum QSystemNetworkInfo::NetworkMode
     This enum describes the type of network:
 
-    \value UnknownMode             Unknown network.or netowrk error.
+    \value UnknownMode             Unknown network, or network error.
     \value GsmMode                 Global System for Mobile (GSM) network.
     \value CdmaMode                Code division multiple access (CDMA) network.
     \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
@@ -202,7 +207,7 @@ is a reliable way to gather such information.
     \class QSystemDeviceInfo
 
     \ingroup systeminfo
-    
+
     \brief The QSystemDeviceInfo class provides access to device
 information from the system.
 
@@ -224,14 +229,14 @@ information from the system.
    /*!
   \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
 
-  This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
+  This signal is emitted when the power state has changed, such as when a phone gets plugged in to the wall.
   \a state is the new power state.
  */
 
 /*!
   \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
-  This signal is emitted whenever the network profile changes, specified by \a profile.
+  This signal is emitted whenever the users active profile changes, specified by \a profile.
 */
 
 
@@ -352,12 +357,16 @@ information from the system.
   This signal is emitted whenever bluetooth state changes, specified by \a on.
 */
 
+Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
+Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+
  /*!
 \fn QSystemInfo::QSystemInfo(QObject *parent)
    Constructs a QSystemInfo object with the given \a parent.
  */
-
-Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent), d(sysinfoPrivate())
@@ -433,7 +442,6 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    Constructs a QSystemNetworkInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
     : QObject(parent), d(netInfoPrivate())
@@ -467,7 +475,8 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 /*!
     Returns the status of the network \a mode.
 */
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode) {
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode)
+{
     return netInfoPrivate()->networkStatus(mode);
 }
 
@@ -530,7 +539,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
   \property QSystemNetworkInfo::homeMobileCountryCode
   \brief The home MNC.
 
-    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -541,7 +550,9 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
   \property QSystemNetworkInfo::homeMobileNetworkCode
   \brief The home MCC.
 
-    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Note: Some platforms don't support retrieving this info. In this case the Network Code is
+    returned only when the device is registered on home network.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
@@ -572,13 +583,58 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
 {
     return netInfoPrivate()->interfaceForMode(mode);
 }
+/*!
+  Returns the current active mode. If more than one mode is active, returns the
+  default or preferred mode. If no modes are active, returns UnknownMode.
+  */
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
+{
+    return netInfoPrivate()->currentMode();
+}
+
+/*!
+    \internal
+
+    This function is called when the client connects to the networkSignalStrengthChanged()
+    signal.
+*/
+void QSystemNetworkInfo::connectNotify(const char *signal)
+{
+    //check for networkSignalStrengthChanged() signal connect notification
+    //This is not required on all platforms
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+                                 networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
+        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
+    }
+#endif
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the networkSignalStrengthChanged()
+    signal.
+
+    \sa connectNotify()
+*/
+void QSystemNetworkInfo::disconnectNotify(const char *signal)
+{
+    //check for networkSignalStrengthChanged() signal disconnect notification
+    //This is not required on all platforms
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+                                 networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
+        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
+    }
+#endif
+}
 
 // display
  /*!
    \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
    Constructs a QSystemDisplayInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 
 QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
     : QObject(parent)
@@ -593,20 +649,23 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 }
 
 /*!
-    Returns the display brightness of \a screen in %, 1 - 100 scale.
+    Returns the display brightness of the screen with index \a screenNumber in %, 1 - 100 scale.
 
     Depending on platform, displayBrightness may not be available due to
     differing hardware, software or driver implementation. In which case this
     will return 0.
 
+    \sa QDesktopWidget::screenCount()
 */
-int QSystemDisplayInfo::displayBrightness(int screen)
+int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
-    return displayInfoPrivate()->displayBrightness(screen);
+    return displayInfoPrivate()->displayBrightness(screenNumber);
 }
 
 /*!
-    Returns the color depth of the screen \a screenNumber, in bits per pixel.
+    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel.
+
+    \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
@@ -617,7 +676,6 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
    \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    Constructs a QSystemStorageInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
     : QObject(parent)
@@ -673,7 +731,6 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
    \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
    Constructs a QSystemDeviceInfo with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
@@ -857,7 +914,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
+#ifdef Q_OS_LINUX
+    d = new QSystemScreenSaverPrivate(static_cast<QSystemScreenSaverLinuxCommonPrivate*>(parent));
+#else
     d = new QSystemScreenSaverPrivate(parent);
+#endif
     screenSaverIsInhibited = screenSaverInhibited();
 }
 
@@ -866,10 +927,6 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
-    qWarning() << Q_FUNC_INFO;
-//    if(screenSaverIsInhibited != screenSaverInhibited())
-//        setScreenSaverEnabled(screenSaverIsInhibited);
-
     delete d;
 }
 

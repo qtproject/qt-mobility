@@ -1,6 +1,6 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-:: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+:: Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 :: All rights reserved.
 :: Contact: Nokia Corporation (qt-info@nokia.com)
 ::
@@ -68,7 +68,11 @@ tst_qgeosatelliteinfosource.exe
 tst_qgeopositioninfosource.exe
 tst_qgeoareamonitor.exe
 tst_qlocationutils.exe
-tst_qnmeapositioninfosource.exe
+tst_dummynmeapositioninfosource.exe
+tst_qnmeapositioninfosource_realtime.exe
+tst_qnmeapositioninfosource_realtime_generic.exe
+tst_qnmeapositioninfosource_simulation.exe
+tst_qnmeapositioninfosource_simulation_generic.exe
 
 ::Publish and Subscribe
 tst_qvaluespace.exe
@@ -89,7 +93,6 @@ tst_qsystemstorageinfo.exe
 
 ::QMedia
 tst_qaudiocapturesource.exe
-tst_qcamera.exe
 tst_qgraphicsvideoitem.exe
 tst_qmediacontent.exe
 tst_qmediaimageviewer.exe

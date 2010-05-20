@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qnetworkconfigmanager.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QNetworkConfigurationManager Class Reference</title>
+  <title>Qt Mobility Project 1.1: QNetworkConfigurationManager Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -26,7 +26,7 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#Capability-enum">Capabilities</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#Capability-enum">Capability</a></b> { CanStartAndStopInterfaces, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming, ForcedRoaming, DataStatistics }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qnetworkconfigurationmanager.html#Capability-enum">Capability</a></b> { CanStartAndStopInterfaces, DirectConnectionRouting, SystemSessionSupport, ApplicationLevelRoaming, ..., NetworkSessionRequired }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -84,6 +84,7 @@
 <a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/ApplicationLevelRoaming"></a>
 <a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/ForcedRoaming"></a>
 <a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/DataStatistics"></a>
+<a name="//apple_ref/cpp/econst/QNetworkConfigurationManager/NetworkSessionRequired"></a>
 <a name="//apple_ref/cpp/tdef/QNetworkConfigurationManager/Capabilities"></a>
 <h3 class="flags"><a name="Capability-enum"></a>enum QNetworkConfigurationManager::Capability<br />flags QNetworkConfigurationManager::Capabilities</h3>
 <p>Specifies the system capabilities of the bearer API. The possible values are:</p>
@@ -95,6 +96,7 @@
 <tr><td valign="top"><tt>QNetworkConfigurationManager::ApplicationLevelRoaming</tt></td><td align="center" valign="top"><tt>0x00000008</tt></td><td valign="top">The system gives applications control over the systems roaming behavior. Applications can initiate roaming (in case the current link is not suitable) and are consulted if the system has identified a more suitable access point.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::ForcedRoaming</tt></td><td align="center" valign="top"><tt>0x00000010</tt></td><td valign="top">The system disconnects an existing access point and reconnects via a more suitable one. The application does not have any control over this process and has to reconnect its active sockets.</td></tr>
 <tr><td valign="top"><tt>QNetworkConfigurationManager::DataStatistics</tt></td><td align="center" valign="top"><tt>0x00000020</tt></td><td valign="top">If this flag is set <a href="qnetworksession.html">QNetworkSession</a> can provide statistics about transmitted and received data.</td></tr>
+<tr><td valign="top"><tt>QNetworkConfigurationManager::NetworkSessionRequired</tt></td><td align="center" valign="top"><tt>0x00000040</tt></td><td valign="top">If this flag is set the platform requires that a network session is created before network operations can be performed.</td></tr>
 </table></p>
 <p>The Capabilities type is a typedef for <a href="qflags.html">QFlags</a>&lt;Capability&gt;. It stores an OR combination of Capability values.</p>
 <hr />
@@ -111,7 +113,7 @@
 <p>By default this function returns all (defined and undefined) configurations.</p>
 <p>A wireless network with a particular SSID may only be accessible in a certain area despite the fact that the system has a valid configuration for it. Therefore the filter flag may be used to limit the list to discovered and possibly connected configurations only.</p>
 <p>If <i>filter</i> is set to zero this function returns all possible configurations.</p>
-<p>Note that this function returns the states for all configurations as they are known at the time of this function call. If for instance a configuration of type WLAN is defined the system may have to perform a WLAN scan in order to determine whether it is actually available. To obtain the most accurate state <a href="qnetworkconfigurationmanager.html#updateConfigurations">updateConfigurations</a>() should be used to update each configuration's state. Note that such an update may require some time. It's completion is signalled by <a href="qnetworkconfigurationmanager.html#updateCompleted">updateCompleted</a>(). In the absence of a configuration update this function returns the best estimate at the time of the call.</p>
+<p>Note that this function returns the states for all configurations as they are known at the time of this function call. If for instance a configuration of type WLAN is defined the system may have to perform a WLAN scan in order to determine whether it is actually available. To obtain the most accurate state <a href="qnetworkconfigurationmanager.html#updateConfigurations">updateConfigurations</a>() should be used to update each configuration's state. Note that such an update may require some time. It's completion is signalled by <a href="qnetworkconfigurationmanager.html#updateCompleted">updateCompleted</a>(). In the absence of a configuration update this function returns the best estimate at the time of the call. Therefore, if WLAN configurations are of interest, it is recommended that <a href="qnetworkconfigurationmanager.html#updateConfigurations">updateConfigurations</a>() is called once after <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a> instantiation (WLAN scans are too time consuming to perform in constructor). After this the data is kept automatically up-to-date as the system reports any changes.</p>
 <a name="//apple_ref/cpp/instm/QNetworkConfigurationManager/capabilities"></a>
 <h3 class="fn"><a name="capabilities"></a><a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::Capabilities</a> QNetworkConfigurationManager::capabilities () const</h3>
 <p>Returns the capabilities supported by the current platform.</p>
@@ -159,8 +161,8 @@
 <p>See also <a href="qnetworkconfigurationmanager.html#allConfigurations">allConfigurations</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

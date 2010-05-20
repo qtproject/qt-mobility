@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,18 +46,18 @@
 #include <QtCore/qpointer.h>
 
 
-#include <qmediaplayer.h>
+#include "qmediaplayer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaservice.h>
-#include <qmediaplayercontrol.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaplaylist.h>
-#include <qmediaplaylistcontrol.h>
-#include <qvideowidget.h>
-#include <qgraphicsvideoitem.h>
+#include "qmediaobject_p.h"
+#include "qmediaservice.h"
+#include "qmediaplayercontrol.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaplaylist.h"
+#include "qmediaplaylistcontrol.h"
+#include "qvideowidget.h"
+#include "qgraphicsvideoitem.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlayer
@@ -240,10 +240,17 @@ void QMediaPlayerPrivate::_q_playlistDestroyed()
 
 static QMediaService *playerService(QMediaPlayer::Flags flags, QMediaServiceProvider *provider)
 {
-    if (flags && QMediaPlayer::LowLatency)
+    if (flags) {
+        QMediaServiceProviderHint::Features features = 0;
+        if (flags & QMediaPlayer::LowLatency)
+            features |= QMediaServiceProviderHint::LowLatencyPlayback;
+
+        if (flags & QMediaPlayer::StreamPlayback)
+            features |= QMediaServiceProviderHint::StreamPlayback;
+
         return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER,
-                                        QMediaServiceProviderHint(QMediaServiceProviderHint::LowLatencyPlayback));
-    else
+                                        QMediaServiceProviderHint(features));
+    } else
         return provider->requestService(Q_MEDIASERVICE_MEDIAPLAYER);
 }
 
@@ -278,6 +285,7 @@ QMediaPlayer::QMediaPlayer(QObject *parent, QMediaPlayer::Flags flags, QMediaSer
 
             connect(d->control, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
             connect(d->control, SIGNAL(positionChanged(qint64)), SIGNAL(positionChanged(qint64)));
+            connect(d->control, SIGNAL(audioAvailableChanged(bool)), SIGNAL(audioAvailableChanged(bool)));
             connect(d->control, SIGNAL(videoAvailableChanged(bool)), SIGNAL(videoAvailableChanged(bool)));
             connect(d->control, SIGNAL(volumeChanged(int)), SIGNAL(volumeChanged(int)));
             connect(d->control, SIGNAL(mutedChanged(bool)), SIGNAL(mutedChanged(bool)));
@@ -396,6 +404,16 @@ int QMediaPlayer::bufferStatus() const
         return d->control->bufferStatus();
 
     return 0;
+}
+
+bool QMediaPlayer::isAudioAvailable() const
+{
+    Q_D(const QMediaPlayer);
+
+    if (d->control != 0)
+        return d->control->isAudioAvailable();
+
+    return false;
 }
 
 bool QMediaPlayer::isVideoAvailable() const
@@ -631,7 +649,7 @@ void QMediaPlayer::unbind(QObject *obj)
     The \a flags argument allows additional requirements such as performance indicators to be
     specified.
 */
-QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
+QtMediaServices::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
 {
@@ -837,6 +855,15 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
 */
 
 /*!
+    \property QMediaPlayer::audioAvailable
+    \brief the audio availabilty status for the current media.
+
+    As the life time of QMediaPlayer can be longer than the playback of one
+    QMediaContent, this property may change over time, the
+    audioAvailableChanged signal can be used to monitor it's status.
+*/
+
+/*!
     \property QMediaPlayer::videoAvailable
     \brief the video availability status for the current media.
 
@@ -904,6 +931,12 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
 */
 
 /*!
+    \fn void QMediaPlayer::audioAvailableChanged(bool available)
+
+    Signals the availability of audio content has changed to \a available.
+*/
+
+/*!
     \fn void QMediaPlayer::bufferStatusChanged(int percentFilled)
 
     Signal the amount of the local buffer filled as a percentage by \a percentFilled.
@@ -916,8 +949,13 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
             The player is expected to be used with simple audio formats,
             but playback should start without significant delay.
             Such playback service can be used for beeps, ringtones, etc.
+
+    \value StreamPlayback
+            The player is expected to play QIODevice based streams.
+            If passed to QMediaPlayer constructor, the service supporting
+            streams playback will be choosen.
 */
 
 #include "moc_qmediaplayer.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -130,7 +130,7 @@ bool PathMapper::getChildren(const QString &path, QSet<QString> &children) const
     QString basePath = path;
     if (basePath.right(1) != QString(QLatin1Char('/')))
         basePath += QLatin1Char('/');
-    foreach (QString foundPath, childPaths(basePath)) {
+    foreach (const QString foundPath, childPaths(basePath)) {
         QString value = foundPath.mid(basePath.size());
         int index = value.indexOf(QLatin1Char('/'));
         if (index != -1)

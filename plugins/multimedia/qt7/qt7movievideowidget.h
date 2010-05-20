@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,7 +56,7 @@
 
 class GLVideoWidget;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QCvDisplayLink;
 class QT7PlayerSession;
@@ -79,8 +79,8 @@ public:
 
     QSize nativeSize() const;
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     int brightness() const;
     void setBrightness(int brightness);
@@ -114,13 +114,13 @@ private:
 
     bool m_fullscreen;
     QSize m_nativeSize;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     int m_brightness;
     int m_contrast;
     int m_hue;
     int m_saturation;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

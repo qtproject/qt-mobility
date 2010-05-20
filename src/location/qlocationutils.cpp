@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -70,7 +70,7 @@ static void qlocationutils_readGga(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 1 && parts[1].count() > 0) {
         QTime time;
         if (QLocationUtils::getNmeaTime(parts[1], &time))
-            info->setDateTime(QDateTime(QDate(), time, Qt::UTC));
+            info->setTimestamp(QDateTime(QDate(), time, Qt::UTC));
     }
 
     if (parts.count() > 5 && parts[3].count() == 1 && parts[5].count() == 1) {
@@ -105,7 +105,7 @@ static void qlocationutils_readGll(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 5 && parts[5].count() > 0) {
         QTime time;
         if (QLocationUtils::getNmeaTime(parts[5], &time))
-            info->setDateTime(QDateTime(QDate(), time, Qt::UTC));
+            info->setTimestamp(QDateTime(QDate(), time, Qt::UTC));
     }
 
     if (parts.count() > 4 && parts[2].count() == 1 && parts[4].count() == 1) {
@@ -157,12 +157,12 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 7 && parts[7].count() > 0) {
         value = parts[7].toDouble(&parsed);
         if (parsed)
-            info->setProperty(QGeoPositionInfo::GroundSpeed, qreal(value * 1.852 / 3.6));    // knots -> m/s
+            info->setAttribute(QGeoPositionInfo::GroundSpeed, qreal(value * 1.852 / 3.6));    // knots -> m/s
     }
     if (parts.count() > 8 && parts[8].count() > 0) {
         value = parts[8].toDouble(&parsed);
         if (parsed)
-            info->setProperty(QGeoPositionInfo::Heading, qreal(value));
+            info->setAttribute(QGeoPositionInfo::Direction, qreal(value));
     }
     if (parts.count() > 11 && parts[11].count() == 1
             && (parts[11][0] == 'E' || parts[11][0] == 'W')) {
@@ -170,14 +170,14 @@ static void qlocationutils_readRmc(const char *data, int size, QGeoPositionInfo 
         if (parsed) {
             if (parts[11][0] == 'W')
                 value *= -1;
-            info->setProperty(QGeoPositionInfo::MagneticVariation, qreal(value));
+            info->setAttribute(QGeoPositionInfo::MagneticVariation, qreal(value));
         }
     }
 
     if (coord.type() != QGeoCoordinate::InvalidCoordinate)
         info->setCoordinate(coord);
 
-    info->setDateTime(QDateTime(date, time, Qt::UTC));
+    info->setTimestamp(QDateTime(date, time, Qt::UTC));
 }
 
 static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
@@ -193,12 +193,12 @@ static void qlocationutils_readVtg(const char *data, int size, QGeoPositionInfo 
     if (parts.count() > 1 && parts[1].count() > 0) {
         value = parts[1].toDouble(&parsed);
         if (parsed)
-            info->setProperty(QGeoPositionInfo::Heading, qreal(value));
+            info->setAttribute(QGeoPositionInfo::Direction, qreal(value));
     }
     if (parts.count() > 7 && parts[7].count() > 0) {
         value = parts[7].toDouble(&parsed);
         if (parsed)
-            info->setProperty(QGeoPositionInfo::GroundSpeed, qreal(value / 3.6));    // km/h -> m/s
+            info->setAttribute(QGeoPositionInfo::GroundSpeed, qreal(value / 3.6));    // km/h -> m/s
     }
 }
 
@@ -224,7 +224,7 @@ static void qlocationutils_readZda(const char *data, int size, QGeoPositionInfo 
             date.setDate(year, month, day);
     }
 
-    info->setDateTime(QDateTime(date, time, Qt::UTC));
+    info->setTimestamp(QDateTime(date, time, Qt::UTC));
 }
 
 bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPositionInfo *info, bool *hasFix)
@@ -273,7 +273,7 @@ bool QLocationUtils::getPosInfoFromNmea(const char *data, int size, QGeoPosition
 bool QLocationUtils::hasValidNmeaChecksum(const char *data, int size)
 {
     int asteriskIndex = -1;
-    for (int i=0; i<size; i++) {
+    for (int i = 0; i < size; i++) {
         if (data[i] == '*') {
             asteriskIndex = i;
             break;
@@ -286,7 +286,7 @@ bool QLocationUtils::hasValidNmeaChecksum(const char *data, int size)
 
     // XOR byte value of all characters between '$' and '*'
     int result = 0;
-    for (int i=1; i<asteriskIndex; i++)
+    for (int i = 1; i < asteriskIndex; i++)
         result ^= data[i];
     /*
         char calc[CSUM_LEN + 1];
@@ -309,8 +309,8 @@ bool QLocationUtils::getNmeaTime(const QByteArray &bytes, QTime *time)
     } else {
         tempTime = QTime::fromString(bytes.mid(0, dotIndex), "hhmmss");
         bool hasMsecs = false;
-        int midLen = qMin(3, bytes.size() - dotIndex-1);
-        int msecs = bytes.mid(dotIndex+1, midLen).toUInt(&hasMsecs);
+        int midLen = qMin(3, bytes.size() - dotIndex - 1);
+        int msecs = bytes.mid(dotIndex + 1, midLen).toUInt(&hasMsecs);
         if (hasMsecs)
             tempTime = tempTime.addMSecs(msecs);
     }

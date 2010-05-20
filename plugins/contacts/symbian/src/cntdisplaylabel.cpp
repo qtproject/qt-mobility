@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,28 +62,31 @@ CntDisplayLabel::~CntDisplayLabel()
  * Sets the fields that should be used for displaylabel
  * 
  * The order is defined in the QList of preferred options
- * Whereas the qmap includes the fields that should be used for 
- * the specific option
+ * Whereas the QPair includes the fields that should be used for 
+ * the specific detail
  */
 void CntDisplayLabel::setDisplayLabelDetails()
 {
-    //this will be variated in the future
-    //add the contact details definition names + fields to be used.
-    //preferred details to be used (note qmap sets the values in reverse order)
-    QMap<QString, QString> preferredContactDetails;
-    preferredContactDetails.insertMulti(QContactName::DefinitionName, QContactName::FieldLast);
-    preferredContactDetails.insertMulti(QContactName::DefinitionName, QContactName::FieldFirst);
-    m_contactDetails.append(preferredContactDetails);        
+    //This will be variated in the future
+    //adds the contact's details definition names + fields to be used for display name and filtering display label
+
+    //Display label details
+    //Contact
+    //Preferred details
+    QList<QPair<QLatin1String, QLatin1String> > contactPrefferedDisplayLabelDetails;
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldFirstName)));
+    contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldLastName)));
+    m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
+
+    //if preferred details doesn't exist use these
+    QList<QPair<QLatin1String, QLatin1String> > contactSecondaryDisplayLabelDetails;
+    contactSecondaryDisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
+    m_contactDisplayLabelDetails.append(contactSecondaryDisplayLabelDetails);
     
-    //if preferred details not exist use these
-    QMap<QString, QString> preferredContactDetails2;
-    preferredContactDetails2.insertMulti(QContactOrganization::DefinitionName, QContactOrganization::FieldName);
-    m_contactDetails.append(preferredContactDetails2);    
-    
-    //preferred group details to be used
-    QMap<QString, QString> preferredGroupDetails;
-    preferredGroupDetails.insert(QContactName::DefinitionName, QContactName::FieldCustomLabel);
-    m_groupDetails.append(preferredGroupDetails);
+    //Group
+    QList<QPair<QLatin1String, QLatin1String> > preferredGroupDisplayLabelDetails;
+    preferredGroupDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), QLatin1String(QContactName::FieldCustomLabel)));
+    m_groupDisplayLabelDetails.append(preferredGroupDisplayLabelDetails);
 }
 
 /*! 
@@ -92,23 +95,24 @@ void CntDisplayLabel::setDisplayLabelDetails()
  * \a error On return, contains the possible error.
  * \return synthesised display label 
  */
-QString CntDisplayLabel::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     QString displayLabel;
+    *error = QContactManager::NoError;
     
     //contact
     if(contact.type() == QContactType::TypeContact) {
-        displayLabel = generateDisplayLabel(contact, contactDisplayLabelDetails());    
+        displayLabel = generateDisplayLabel(contact, m_contactDisplayLabelDetails);    
     }
     
     //group
     else if (contact.type() == QContactType::TypeGroup) {
-        displayLabel = generateDisplayLabel(contact, groupDisplayLabelDetails());
+        displayLabel = generateDisplayLabel(contact, m_groupDisplayLabelDetails);
     } 
     
     //invalid type
     else {
-        error = QContactManager::InvalidContactTypeError;
+        *error = QContactManager::InvalidContactTypeError;
     }
     
     return displayLabel;
@@ -120,46 +124,37 @@ QString CntDisplayLabel::synthesizeDisplayLabel(const QContact& contact, QContac
  * \a detailList contains the details to be read from the contact
  * \return synthesised display label 
  */
-QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QList<QMap<QString, QString> > detailList) const
+QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QList<QList<QPair<QLatin1String, QLatin1String> > > detailList) const
 {
+    // Default to empty display label. It is up to the client to create a
+    // localised presentation of a contact without a name.
     QString displayLabel("");
     
+    //loop through the details and create display label
     for(int i = 0; i < detailList.count() && displayLabel.isEmpty(); i++ )
     {
-        QMap<QString, QString> detailMap = detailList.at(i);
-        
-        //iterate through the details
-        QMapIterator<QString, QString> iterator(detailMap);
+        QList<QPair<QLatin1String, QLatin1String> > detailPairList = detailList.at(i);
         QContactDetail contactDetail;
         
-        while (iterator.hasNext()) {
-            iterator.next();
-            
-            //read the detail
-            contactDetail = contact.detail(iterator.key());
-            
+        for(int j = 0; j < detailPairList.count(); j++)
+        {
+            contactDetail = contact.detail(detailPairList.at(j).first);
+                    
             if(displayLabel.isEmpty()){ //read the value and set it as display label
-                displayLabel =  contactDetail.value(iterator.value());
+                displayLabel =  contactDetail.value(detailPairList.at(j).second);
             }
             else{ //read the value and append it to the display label
-                QString label = contactDetail.value(iterator.value());
+                QString label = contactDetail.value(detailPairList.at(j).second);
                 
                 if(!label.isEmpty())
                 {
                     displayLabel.append(delimiter());
                     displayLabel.append(label);
-                }
+                }  
             }
         }
     }
-    
-    //no display label, set default value
-    if(displayLabel.isEmpty())
-    {
-        //should the unnamned be read from somewhere?
-        displayLabel = QString(tr("Unnamed"));
-    }
-    
+
     return displayLabel;
 }
 
@@ -174,17 +169,17 @@ QString CntDisplayLabel::delimiter() const
 }
 
 /*!
- * Returns the display name detail definition names used for a contact
+ * Returns the details to be used for contact filtering
  */
-QList<QMap<QString, QString> > CntDisplayLabel::contactDisplayLabelDetails() const
+QList<QPair<QLatin1String, QLatin1String> > CntDisplayLabel::contactFilterDetails() const
 {
-    return m_contactDetails;
+    return m_contactDisplayLabelDetails.at(0);
 }
 
 /*!
- * Returns the display name detail definition names used by groups
+ * Returns the details to be used for group filtering
  */
-QList<QMap<QString, QString> > CntDisplayLabel::groupDisplayLabelDetails() const
+QList<QPair<QLatin1String, QLatin1String> > CntDisplayLabel::groupFilterDetails() const
 {
-    return m_groupDetails;
+    return m_groupDisplayLabelDetails.at(0);
 }

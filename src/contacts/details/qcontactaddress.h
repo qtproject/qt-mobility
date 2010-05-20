@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,31 +56,31 @@ class Q_CONTACTS_EXPORT QContactAddress : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldStreet;
-    const char* FieldLocality;
-    const char* FieldRegion;
-    const char* FieldPostcode;
-    const char* FieldCountry;
-    const char* FieldSubTypes;
-    const char* FieldPostOfficeBox;
-    const char* SubTypeParcel;
-    const char* SubTypePostal;
-    const char* SubTypeDomestic;
-    const char* SubTypeInternational;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldStreet;
+    static const QLatin1Constant FieldLocality;
+    static const QLatin1Constant FieldRegion;
+    static const QLatin1Constant FieldPostcode;
+    static const QLatin1Constant FieldCountry;
+    static const QLatin1Constant FieldSubTypes;
+    static const QLatin1Constant FieldPostOfficeBox;
+    static const QLatin1Constant SubTypeParcel;
+    static const QLatin1Constant SubTypePostal;
+    static const QLatin1Constant SubTypeDomestic;
+    static const QLatin1Constant SubTypeInternational;
 #else
-    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "StreetAddress")
-    Q_DECLARE_LATIN1_LITERAL(FieldStreet, "Street");
-    Q_DECLARE_LATIN1_LITERAL(FieldLocality, "Locality");
-    Q_DECLARE_LATIN1_LITERAL(FieldRegion, "Region");
-    Q_DECLARE_LATIN1_LITERAL(FieldPostcode, "Postcode");
-    Q_DECLARE_LATIN1_LITERAL(FieldCountry, "Country");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubTypes, "SubTypes");
-    Q_DECLARE_LATIN1_LITERAL(FieldPostOfficeBox, "PostOfficeBox");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeParcel, "Parcel");
-    Q_DECLARE_LATIN1_LITERAL(SubTypePostal, "Postal");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeDomestic, "Domestic");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeInternational, "International");
+    Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactAddress, "Address")
+    Q_DECLARE_LATIN1_CONSTANT(FieldStreet, "Street");
+    Q_DECLARE_LATIN1_CONSTANT(FieldLocality, "Locality");
+    Q_DECLARE_LATIN1_CONSTANT(FieldRegion, "Region");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPostcode, "Postcode");
+    Q_DECLARE_LATIN1_CONSTANT(FieldCountry, "Country");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubTypes, "SubTypes");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPostOfficeBox, "PostOfficeBox");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeParcel, "Parcel");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypePostal, "Postal");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeDomestic, "Domestic");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeInternational, "International");
 #endif
 
     void setStreet(const QString& street) {setValue(FieldStreet, street);}

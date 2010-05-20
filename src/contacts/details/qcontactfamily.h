@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,13 +56,13 @@ class Q_CONTACTS_EXPORT QContactFamily : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldSpouse;
-    const char* FieldChildren;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldSpouse;
+    static const QLatin1Constant FieldChildren;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactFamily, "Family")
-    Q_DECLARE_LATIN1_LITERAL(FieldSpouse, "Spouse");
-    Q_DECLARE_LATIN1_LITERAL(FieldChildren, "Children");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSpouse, "Spouse");
+    Q_DECLARE_LATIN1_CONSTANT(FieldChildren, "Children");
 #endif
 
     void setSpouse(const QString& spouseName) {setValue(FieldSpouse, spouseName);}

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,12 +42,13 @@
 #ifndef QMEDIAPLAYERCONTROL_H
 #define QMEDIAPLAYERCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediaplayer.h>
+#include "qmediacontrol.h"
+#include "qmediaplayer.h"
+#include "qmediatimerange.h"
 
 #include <QtCore/qpair.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylist;
 
@@ -75,10 +76,12 @@ public:
 
     virtual int bufferStatus() const = 0;
 
+    virtual bool isAudioAvailable() const = 0;
     virtual bool isVideoAvailable() const = 0;
 
     virtual bool isSeekable() const = 0;
-    virtual QPair<qint64,qint64> seekRange() const = 0;
+
+    virtual QMediaTimeRange availablePlaybackRanges() const = 0;
 
     virtual qreal playbackRate() const = 0;
     virtual void setPlaybackRate(qreal rate) = 0;
@@ -99,10 +102,11 @@ Q_SIGNALS:
     void mediaStatusChanged(QMediaPlayer::MediaStatus status);
     void volumeChanged(int volume);
     void mutedChanged(bool muted);
+    void audioAvailableChanged(bool audioAvailable);
     void videoAvailableChanged(bool videoAvailable);
     void bufferStatusChanged(int percentFilled);
     void seekableChanged(bool);
-    void seekRangeChanged(const QPair<qint64,qint64>&);
+    void availablePlaybackRangesChanged(const QMediaTimeRange&);
     void playbackRateChanged(qreal rate);
     void error(int error, const QString &errorString);
 
@@ -113,7 +117,7 @@ protected:
 #define QMediaPlayerControl_iid "com.nokia.Qt.QMediaPlayerControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaPlayerControl, QMediaPlayerControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIAPLAYERCONTROL_H
 

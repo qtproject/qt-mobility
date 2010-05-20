@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,9 +57,9 @@
 #include <QtCore/qset.h>
 #include <QtCore/qtimer.h>
 
-#include <qmediaobject.h>
+#include "qmediaobject.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMetaDataControl;
 
@@ -74,6 +74,7 @@ class QMediaObjectPrivate
 
 public:
     QMediaObjectPrivate():metaDataControl(0), notifyTimer(0) {}
+    virtual ~QMediaObjectPrivate() {}
 
     void _q_notify();
 
@@ -85,6 +86,6 @@ public:
     QMediaObject *q_ptr;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

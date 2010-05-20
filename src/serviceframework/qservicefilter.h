@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -71,7 +71,7 @@ public:
     QServiceFilter();
     ~QServiceFilter();
     QServiceFilter(const QServiceFilter& other);
-    QServiceFilter(const QString& interfaceName,
+    explicit QServiceFilter(const QString& interfaceName,
                    const QString& version = QString(),
                    QServiceFilter::VersionMatchRule rule = QServiceFilter::MinimumVersionMatch);
 

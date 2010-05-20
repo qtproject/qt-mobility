@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,10 +49,11 @@
 QT_BEGIN_HEADER
 
 #ifdef Q_QDOC
-//normally we would use macro only but this causes some other compilation issues 
-QTM_BEGIN_NAMESPACE 
+//normally we would use macro only but this causes some other compilation issues
+QTM_BEGIN_NAMESPACE
 #else
-namespace QtMobility {
+namespace QtMobility
+{
 #endif
 
 
@@ -83,7 +84,7 @@ Q_SIGNALS:
 private:
     Q_DISABLE_COPY(QGeoAreaMonitor)
     QGeoAreaMonitorPrivate *d;
-}; 
+};
 
 }
 

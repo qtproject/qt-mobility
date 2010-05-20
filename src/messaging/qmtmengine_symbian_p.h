@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,8 +57,6 @@
 #include "qmessageservice.h"
 
 
-
-
 class CRichText;
 class CCharFormatLayer;
 class CParaFormatLayer;
@@ -73,6 +71,7 @@ class CMsvFindOperation;
 
 
 QTM_BEGIN_NAMESPACE
+
 class CMessagesFindOperation;
 class QMessageId;
 class QMessageAccount;
@@ -82,6 +81,7 @@ struct MessageEvent
     QMessageStorePrivate::NotificationType notificationType;
     TMsvId messageId;
     QMessageManager::NotificationFilterIdSet matchingFilters;
+    bool unfiltered;
 };
 
 struct MessageQueryInfo
@@ -161,6 +161,8 @@ public:
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,
                                      bool resultSetOrdered);
 
+    inline RFs& FsSession() const { return((RFs&)iFsSession); }
+
 private:
     void updateEmailAccountsL() const;
     bool switchToMTMRootEntry(MTMType aMTMType);
@@ -224,6 +226,7 @@ private:
     void storeEmailL(QMessage &message);
     void sendEmailL(QMessage &message);
     void storeSMSL(QMessage &message);
+    bool validateSMS();
     void sendSMSL(QMessage &message);
     void retrieveL(const QMessageId &messageId, const QMessageContentContainerId& id);
     void retrieveBodyL(const QMessageId& id) const;
@@ -250,6 +253,7 @@ private: //from MMsvSessionObserver:
                              TAny* aArg2, TAny* aArg3);
 
 private:
+    RFs iFsSession;
     QMessageStorePrivate* ipMessageStorePrivate;
     
     bool iSessionReady;

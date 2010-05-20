@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,15 +54,23 @@
 //
 
 #include "qnetworksessionengine_p.h"
+#include "qnetworkconfiguration.h"
+
 #include <QMap>
 #include <QTimer>
+#include <SystemConfiguration/SystemConfiguration.h>
+#include <QThread>
+#include <QMutex>
+
 QTM_BEGIN_NAMESPACE
 
 class QNetworkConfigurationPrivate;
+class QScanThread;
 
 class QCoreWlanEngine : public QNetworkSessionEngine
 {
     Q_OBJECT
+    friend class QScanThread;
 
 public:
     QCoreWlanEngine(QObject *parent = 0);
@@ -80,18 +88,61 @@ public:
     void requestUpdate();
 
     static QCoreWlanEngine *instance();
-    static bool getAllScInterfaces();
+    QString interfaceName;
 
 private:
     bool isWifiReady(const QString &dev);
-    QMap<uint, QString> configurationInterface;
     QTimer pollTimer;
-    QList<QNetworkConfigurationPrivate *> scanForSsids(const QString &interfaceName);
-
-    bool isKnownSsid(const QString &interfaceName, const QString &ssid);
     QList<QNetworkConfigurationPrivate *> foundConfigurations;
 
+    SCDynamicStoreRef storeSession;
+    CFRunLoopSourceRef runloopSource;
+    bool hasWifi;
+    QScanThread *scanThread;
+    QMutex mutex;
+    static bool getAllScInterfaces();
+
+private Q_SLOTS:
+    void init();
+
+protected:
+    void startNetworkChangeLoop();
 };
+
+class QScanThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QScanThread(QObject *parent = 0);
+    ~QScanThread();
+
+    void quit();
+    QList<QNetworkConfigurationPrivate *> getConfigurations();
+    QString interfaceName;
+    QMap<QString, QString> configurationInterface;
+    void getUserProfiles();
+    QString getNetworkNameFromSsid(const QString &ssid);
+    QString getSsidFromNetworkName(const QString &name);
+    bool isKnownSsid(const QString &ssid);
+    QMap<QString, QMap<QString,QString> > userProfiles;
+
+signals:
+    void networksChanged();
+
+protected:
+    void run();
+
+private:
+    QList<QNetworkConfigurationPrivate *> fetchedConfigurations;
+    QMutex mutex;
+    QStringList foundNetwork(const QString &id, const QString &ssid,
+                             const QNetworkConfiguration::StateFlags state,
+                             const QString &interfaceName,
+                             const QNetworkConfiguration::Purpose purpose);
+
+};
+
 
 QTM_END_NAMESPACE
 

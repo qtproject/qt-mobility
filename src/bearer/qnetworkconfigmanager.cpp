@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,6 +43,8 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworkconfigmanager_s60_p.h"
+#elif (defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5))
+#include "qnetworkconfigmanager_maemo_p.h"
 #else
 #include "qnetworkconfigmanager_p.h"
 #endif
@@ -160,6 +162,8 @@ Q_GLOBAL_STATIC(QNetworkConfigurationManagerPrivate, connManager);
                                      sockets.
     \value DataStatistics            If this flag is set QNetworkSession can provide statistics
                                      about transmitted and received data.
+    \value NetworkSessionRequired    If this flag is set the platform requires that a network
+                                     session is created before network operations can be performed.
 */
 
 /*!
@@ -222,15 +226,19 @@ QNetworkConfiguration QNetworkConfigurationManager::defaultConfiguration() const
     be used to update each configuration's state. Note that such an update may require
     some time. It's completion is signalled by updateCompleted(). In the absence of a
     configuration update this function returns the best estimate at the time of the call.
+    Therefore, if WLAN configurations are of interest, it is recommended that
+    updateConfigurations() is called once after QNetworkConfigurationManager
+    instantiation (WLAN scans are too time consuming to perform in constructor).
+    After this the data is kept automatically up-to-date as the system reports
+    any changes.
 */
 QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNetworkConfiguration::StateFlags filter) const
 {
     QList<QNetworkConfiguration> result;
     QNetworkConfigurationManagerPrivate* conPriv = connManager();
-    QList<QString> cpsIdents = conPriv->accessPointConfigurations.keys();
 
     //find all InternetAccessPoints
-    foreach( QString ii, cpsIdents) {
+    foreach (const QString &ii, conPriv->accessPointConfigurations.keys()) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
             conPriv->accessPointConfigurations.value(ii);
         if ( (p->state & filter) == filter ) {
@@ -241,8 +249,7 @@ QList<QNetworkConfiguration> QNetworkConfigurationManager::allConfigurations(QNe
     }
 
     //find all service networks
-    cpsIdents = conPriv->snapConfigurations.keys();
-    foreach( QString ii, cpsIdents) {
+    foreach (const QString &ii, conPriv->snapConfigurations.keys()) {
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
             conPriv->snapConfigurations.value(ii);
         if ( (p->state & filter) == filter ) {

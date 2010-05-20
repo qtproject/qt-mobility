@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qtmobility-known-issues.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Release Notes of the QtMobility Project</title>
+  <title>Qt Mobility Project 1.1: Release Notes of the QtMobility Project</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -27,23 +27,12 @@
 </ul>
 </ul>
 <li><a href="#known-issues">Known Issues</a></li>
-<ul><li><a href="#issues-affecting-all-platforms">Issues Affecting All Platforms</a></li>
-<li><a href="#symbian-s60-specific">Symbian/S60 Specific</a></li>
-<ul><li><a href="#bearer-management">Bearer Management</a></li>
+<ul><li><a href="#non-api-specific-issues">Non-API specific issues</a></li>
 <li><a href="#contacts-api">Contacts API</a></li>
-<li><a href="#location-api">Location API</a></li>
 <li><a href="#messaging-api">Messaging API</a></li>
 <li><a href="#multimedia-api">Multimedia API</a></li>
-<li><a href="#publish-and-subscribe-api">Publish and Subscribe API</a></li>
-<li><a href="#service-framework-api">Service Framework API</a></li>
+<li><a href="#sensors-api">Sensors API</a></li>
 <li><a href="#system-info-api">System Info API</a></li>
-</ul>
-<li><a href="#maemo-specific">Maemo Specific</a></li>
-<li><a href="#windows-mobile-specific">Windows Mobile Specific</a></li>
-<ul><li><a href="#contacts-api">Contacts API</a></li>
-<li><a href="#messaging-api">Messaging API</a></li>
-</ul>
-<li><a href="#windows-specific">Windows Specific</a></li>
 </ul>
 </ul>
 <a name="new-features"></a>
@@ -123,122 +112,71 @@
 </ul>
 <a name="known-issues"></a>
 <h2>Known Issues</h2>
-<a name="issues-affecting-all-platforms"></a>
-<h3>Issues Affecting All Platforms</h3>
+<a name="non-api-specific-issues"></a>
+<h3>Non-API specific issues</h3>
 <ul>
-<li>Messaging filtering and Sorting functions are not fully optimized.</li>
-<li>Versit support for Contacts API is ALPHA, see <tt>src/versit/README</tt></li>
+<li>Qt Mobility does not compile if Qt using a namespace.</li>
 <li>Not all example applications will display(fit) well on small screens.</li>
 </ul>
-<a name="symbian-s60-specific"></a>
-<h3>Symbian/S60 Specific</h3>
-<p>Currently it is not possible to use Qt convenience header includes:</p>
-<pre>    #include &lt;QSystemInfo&gt; <span class="comment">//does not work on Symbian</span>
-<span class="comment">    //use</span>
-    #include &lt;qsysteminfo.h&gt;</pre>
-<a name="bearer-management"></a>
-<h4>Bearer Management</h4>
-<p>No specific issues to highlight.</p>
 <a name="contacts-api"></a>
-<h4>Contacts API</h4>
+<h3>Contacts API</h3>
 <ul>
-<li>Async contact operations not supported</li>
-<li>Support for SIM contacts is not supported</li>
-<li>Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.</li>
-<li>auto test failures for tst_qcontactasync and tst_qcontactmanager</li>
-<li>samplephonebook not operating properly due to backend problems</li>
+<li>S60: Async contact operations not supported</li>
+<li>S60: Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.</li>
+<li>S60 3.1: the Symbian contacts plugins are not loaded on a device.</li>
 </ul>
-<a name="location-api"></a>
-<h4>Location API</h4>
-<p>No specific issues to highlight.</p>
 <a name="messaging-api"></a>
-<h4>Messaging API</h4>
+<h3>Messaging API</h3>
 <ul>
-<li>Exporting IMAP or POP3 Message Updates from client to server is not supported</li>
-<li>Only one level of folders is supported &lt;=&gt; Symbian/S60 applications do not use nested folders</li>
-<li>Complex filter cases are not supported where nested filters are used (for example: <tt>QMessageFilter::byParentAccountId(const QMessageAccountFilter ,...)</tt></li>
-<li>ReceptionTimeStamp is not supported in filtering &lt;=&gt; Symbian reports only one date for SMS &amp; MMS which means that <tt>QMessage::date()</tt> field is used, not <tt>receivedDate()</tt>)</li>
-<li>Message size reporting should be improved</li>
-<li>Preferred charsets handling auto test cases do not pass</li>
-<li>Cc address handling does not pass all auto test cases</li>
-<li>Multipart message body/attachment content type handling does not pass all auto test cases (problems with .png content)</li>
-<li><tt>replyToAll</tt> functionality does not pass &quot;to&quot; &amp; &quot;cc&quot; field auto test</li>
-<li>Local services messages, for example bluetooth, are listed/read in Inbox</li>
+<li>Messaging filtering and Sorting functions are not fully optimized.</li>
+<li>Fremantle: <tt>QMessageService::compose</tt> not supported for SMS type messages.</li>
+<li>Fremantle: queryMessages service action is synchronous for SMS type messages.</li>
+<li>Fremantle: <tt>QMessageService::show</tt> not supported for SMS type messages.</li>
+<li>Fremantle: <tt>QMessageManager::messageAdded</tt> signal is not reported for messages in inbox when inbox is open in modest.</li>
+<li>Fremantle: <tt>QMessageManager::updateMessage</tt> is not supported.</li>
+<li>Fremantle: <tt>QMessageManager::addMessage</tt> is not supported for SMS type messages.</li>
+<li>Fremantle: <tt>QMessageManager::addMessage</tt> can not be used to set priority and status of email messages.</li>
+<li>Fremantle and Windows: <tt>QMessageServiceAction::send</tt>: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's disgression.</li>
+<li>Fremantle, S60 and Windows: <tt>QMessageManager::addMessage</tt> can not be used to set size of messages.</li>
+<li>Fremantle and Windows: <tt>QMessageManager::addMessage</tt> can not be used to set the date of messages.</li>
+<li>S60: Exporting POP3 Message Updates from client to server is not supported.</li>
+<li>S60: Only one level of folders is supported &lt;=&gt; Symbian/S60 applications do not use nested folders</li>
+<li>S60: ReceptionTimeStamp is not supported in filtering &lt;=&gt; Symbian reports only one date for SMS &amp; MMS which means that <tt>QMessage::date()</tt> field is used, not <tt>receivedDate()</tt>)</li>
+<li>S60: Local services messages, for example bluetooth, are listed/read in Inbox</li>
+<li>Windows: <tt>QMessageServiceAction::queryMessages</tt> does not incrementally emit matching message identifiers or progress information.</li>
+<li>Windows: <tt>QMessageServiceAction::exportUpdates</tt>: Performs no operation as changes are automatically synchronized with external servers when a connection is available. control of update progress.</li>
+<li>Windows desktop: <tt>QMessageStore::instance</tt> shows a blocking modal dialog if MAPI is not installed.</li>
+<li>Windows mobile: <tt>QMessageSerivceAction::retrieve</tt>: Only retrieves content for messages bodies at present. Attachment retrieval overridden by mapi/mail client settings.</li>
+<li>Windows mobile: <tt>QMessageServiceAction::cancelOperation</tt>: Async nature of native calls used to implement service actions means that cancelOperation will only operate on the ::retrieveBody service action.</li>
 </ul>
 <a name="multimedia-api"></a>
-<h4>Multimedia API</h4>
+<h3>Multimedia API</h3>
 <ul>
-<li>Playback of streaming or DRM protected media not supported</li>
-<li>S60 specific play list not supported</li>
-<li>Camera related functionality not supported (take picture or record video from camera)</li>
-<li>Radio related functionality not supported</li>
-<li>Device specific play list management not supported.</li>
-<li>Trans coding of media not supported</li>
-<li>Media editing not supported</li>
-<li>TV not supported</li>
-<li>Audio capture does not support currently any special features like format, encoding etc..&#x2e;</li>
-<li>No S60 specific auto test cases exists</li>
-<li>mute sometime disables audio output in mediaplayer</li>
-<li>seeking is not working properly</li>
-<li>video size does not remain constant in repeated plays</li>
-<li>full screen video not working OK</li>
-<li>player example application sometimes freezes</li>
+<li><b>Multimedia API is in beta state.</b></li>
+<li>S60: Audio capture does not support currently any special features like format, encoding etc.</li>
+<li>S60: seeking is not working properly</li>
+<li>S60: video size does not remain constant in repeated plays</li>
+<li>S60: full screen video not working OK</li>
+<li>S60: 3.2&#x2e;3 (E75 for example) player example don't work.</li>
+<li>Windows desktop: wmp multimedia plugin does not display video with Windows Media Player 10 or 12</li>
 </ul>
-<a name="publish-and-subscribe-api"></a>
-<h4>Publish and Subscribe API</h4>
+<a name="sensors-api"></a>
+<h3>Sensors API</h3>
 <ul>
-<li>Remove value from RProperty/CRepository not supported</li>
-<li>Mapper service running in its separate process (Symbian OS server) not supported</li>
-<li>Not all the types are supported by RProperty and CRepository.</li>
-<li>Autotests do not work. (Need support of removing values as well as S60 specific CRML files.)</li>
+<li>S60: The S60 sensor backends are under development and may not be complete.</li>
+<li>S60 3.1: src/s60installs/s60installs.pro: the s60_sensor_api plugin for 3.1 devices is not added to the sis file when generating the sis file for multiple SDKs.</li>
 </ul>
-<a name="service-framework-api"></a>
-<h4>Service Framework API</h4>
-<p>Several failing autotests.</p>
 <a name="system-info-api"></a>
-<h4>System Info API</h4>
+<h3>System Info API</h3>
 <ul>
-<li>Battery status incorrect on test applications startup</li>
-<li>Phone is still charging but power state shows 100% and &quot;wall power&quot;</li>
-</ul>
-<a name="maemo-specific"></a>
-<h3>Maemo Specific</h3>
-<ul>
-<li>Messaging backend for Maemo is not yet implemented.</li>
-<li>The Publish and Subscribe API only supports subscription but not publification.</li>
-<li>Location backend for Maemo is not yet implemented.</li>
-</ul>
-<a name="windows-mobile-specific"></a>
-<h3>Windows Mobile Specific</h3>
-<a name="contacts-api"></a>
-<h4>Contacts API</h4>
-<p>The samplephonebook application has the following limitations</p>
-<ul>
-<li>Adding a Contact Group fails.</li>
-<li>Adding an Avatar to a contact fails.</li>
-<li>Not all contact details can be are be viewed/added/edited.</li>
-</ul>
-<a name="messaging-api"></a>
-<h4>Messaging API</h4>
-<p>For the QMessageServiceAction class the following limitations apply to this release:</p>
-<ul>
-<li><tt>QMessageServiceAction::exportUpdates</tt> : Full account synchronization currently unavailable due to lack of synchronous control of update progress.</li>
-<li><tt>QMessageSerivceAction::retrieve</tt> : Only retrieves content for messages bodies at present. Attachment retrieval overridden by mapi/mail client settings.</li>
-<li><tt>QMessageServiceAction::cancelOperation</tt> : Async nature of native calls used to implement service actions means that cancelOperation will only operate on <tt>::retieveBody</tt> at present.</li>
-<li><tt>QMessageServiceAction::send</tt>: Provides no way of determining actual transmission failure.</li>
-</ul>
-<a name="windows-specific"></a>
-<h3>Windows Specific</h3>
-<ul>
-<li>Windows Mobile backend only tested with Windows Mobile 6.0 Standard and Professional Edition with MSVC 2008.</li>
-<li>Windows Desktop backend only tested with Windows XP win32-msvc2008, and is not officially supported.</li>
-<li>Windows All Platforms <tt>QMessageServiceAction::queryMessages</tt> does not incrementally emit matching message identifiers or progress information.</li>
-<li>Windows All Platforms <tt>QMessageStore::instance</tt> shows a blocking modal dialog if MAPI is not installed.</li>
+<li>S60: Battery status incorrect on test applications startup.</li>
+<li>S60: Phone is still charging but power state shows 100% and &quot;wall power&quot;.</li>
+<li>S60: number of bars for network reporting signal strength is hardcoded.</li>
 </ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

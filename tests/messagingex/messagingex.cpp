@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "messagingex.h"
-#include "QMessageFilter.h"
+#include "qmessagefilter.h"
 #include <QFileDialog>
 
 MessagingEx::MessagingEx(QWidget* parent)
@@ -50,7 +50,7 @@ MessagingEx::MessagingEx(QWidget* parent)
     connect(&m_manager, SIGNAL(messageAdded(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageReceived(const QMessageId&)));
     connect(&m_manager, SIGNAL(messageRemoved(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageRemoved(const QMessageId&)));
     connect(&m_manager, SIGNAL(messageUpdated(const QMessageId&, const QMessageManager::NotificationFilterIdSet&)), this, SLOT(messageUpdated(const QMessageId&)));
-    m_manager.registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));    
+    m_manager.registerNotificationFilter(QMessageFilter::byStandardFolder(QMessage::InboxFolder));
     connect(&m_service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     m_accountList = m_manager.queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
@@ -67,6 +67,9 @@ MessagingEx::MessagingEx(QWidget* parent)
         priorityAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
     }
     connect(accountComboBox_2,SIGNAL(currentIndexChanged(int)),this,SLOT(sortParentAccountId()));
+
+    timestampdateTimeEdit->setDateTime(QDateTime::currentDateTime());
+    receptiondateTimeEdit->setDateTime(QDateTime::currentDateTime());
 }
 
 void MessagingEx::createMenus()
@@ -276,13 +279,17 @@ void MessagingEx::addMessage()
 void MessagingEx::on_sendSmsButton_clicked()
 {
     QMessage message;
+    foreach (const QMessageAccountId& id,m_accountList) {
+       QMessageAccount acc(id);
+       if(acc.messageTypes() & QMessage::Sms) message.setParentAccountId(id);
+    }
     message.setType(QMessage::Sms);
-    message.setTo(QMessageAddress(QMessageAddress::Email, phoneNumberEdit->text()));
+    message.setTo(QMessageAddress(QMessageAddress::Phone, phoneNumberEdit->text()));
     message.setBody(QString(smsMessageEdit->toPlainText()));
     
     if (!QString(phoneNumberEdit->text()).isEmpty())
     {
-        if (!m_service.send(message))
+        if (m_service.send(message))
         {
             QMessageBox msgBox;
             msgBox.setStandardButtons(QMessageBox::Close);
@@ -314,7 +321,7 @@ void MessagingEx::on_sendMmsButton_clicked()
     
     if (!QString(mmsPhoneNumberEdit->text()).isEmpty())
     {
-        if (!m_service.send(message))
+        if (m_service.send(message))
         {
             QMessageBox msgBox;
             msgBox.setStandardButtons(QMessageBox::Close);
@@ -341,28 +348,43 @@ void MessagingEx::on_sendMmsButton_clicked()
 
 void MessagingEx::messageReceived(const QMessageId& aId)
 {
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-    msgBox.setText(tr("Message added : ")+aId.toString());
-    msgBox.exec();
-    m_service.show(aId);
+    bool canShow = true;
+    if (m_manager.message(aId).type() == QMessage::NoType) {
+        // Message can not be read/shown
+        // Wait message availability for 5 seconds at maximum
+        canShow = false;
+        int tries = 0;
+        QEventLoop* loop = new QEventLoop(this);
+        while (tries < 50) {
+            // => Wait for 0.1 seconds and try to read message again
+            QTimer::singleShot(100, loop, SLOT(quit()));
+            loop->exec();
+            if (m_manager.message(aId).type() != QMessage::NoType) {
+                // Message can be read/shown
+                canShow = true;
+                break;
+            } else {
+                // Message can not be read/shown
+                // => Continue waiting
+                tries++;
+            }
+        }
+        loop->disconnect();
+        loop->deleteLater();
+    }
+
+    if (canShow) {
+        m_service.show(aId);
+    }
 }
 
 void MessagingEx::messageRemoved(const QMessageId& aId)
 {
     Q_UNUSED(aId);
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-    msgBox.setText(tr("Message removed : ")+aId.toString());
-    msgBox.exec();
 }
 
 void MessagingEx::messageUpdated(const QMessageId& aId)
 {
-    QMessageBox msgBox;
-    msgBox.setStandardButtons(QMessageBox::Close);
-    msgBox.setText(tr("Message updated : ")+aId.toString());
-    msgBox.exec();
     Q_UNUSED(aId);
 }
 
@@ -671,7 +693,7 @@ void MessagingEx::sortParentAccountId()
         QMessageFolder folder;
         folder = m_manager.folder(ids[i]);
         QString name = folder.name();
-        folderComboBox->addItem(name, folder.id().toString());    
+        folderComboBox->addItem(name, folder.id().toString());
     }
 }
 
@@ -764,7 +786,7 @@ void MessagingEx::messagesFound(const QMessageIdList &ids)
     stackedWidget->setCurrentIndex(12);
     for (int i=0; i < ids.count(); i++) {
         QMessage message = m_manager.message(ids[i]);
-        QString from = message.from().recipient();
+        QString from = message.from().addressee();
         QString subject = message.subject();
         if (subject.length() == 0) {
             subject = message.textContent();

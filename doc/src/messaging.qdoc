@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,6 +55,12 @@ or respond to an existing message.
 
 \tableofcontents
 
+\section1 Namespace
+
+The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility API's into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
 
 \section1 Overview
 
@@ -62,7 +68,7 @@ The messaging library provides a set of APIs for accessing messaging data.
 Interfaces are provided to retrieve and query messages, folders and
 accounts, also interfaces to create, modify, and store messages are
 provided. A unified interface for manipulation and storage of SMS, MMS,
-Email and XMPP messages is provided. Handling of internet media (MIME)
+MIME Email and TNEF Email messages is provided. Handling of
 messages that have only been partially retrieved is supported.
 
 An API to access messaging services to send messages and retrieve message
@@ -218,6 +224,20 @@ only one thread may access the data concurrently.
 \section1 Abstraction of Messaging Data Storage Mechanism
 
 The library abstracts the storage method used to store messaging data.
+
+\section1 Examples
+
+\section2 Keep In Touch
+
+The \l {keepintouch}{Keep In Touch} example shows how to extract useful
+information from the messages stored by the system.
+
+
+\section2 Service Actions
+
+The \l {serviceactions}{Service Actions} example is a program to demonstrate
+how to compose, send, show, query and retrieve messages, and also react to
+message store events using the Qt Mobility Messaging API.
 
 */
 

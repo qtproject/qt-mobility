@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,6 +55,7 @@
 
 #include <qnetworkconfigmanager.h>
 #include <qnetworkconfiguration_s60_p.h>
+#include <qnetworksession.h>
 
 #include <QHash>
 #include <rconnmon.h>
@@ -62,7 +63,11 @@
     #include <cmmanager.h>
 #endif
 
+// Uncomment and compile QtBearer to gain detailed state tracing
+// #define QT_BEARERMGMT_SYMBIAN_DEBUG
+
 class CCommsDatabase;
+class QEventLoop;
 
 QT_BEGIN_NAMESPACE
 class QTimer;
@@ -91,6 +96,9 @@ Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);
     void onlineStateChanged(bool isOnline);
     
+    void configurationStateChanged(TUint32 accessPointId, TUint32 connMonId,
+                                   QNetworkSession::State newState);
+    
 public Q_SLOTS:
     void updateConfigurations();
 
@@ -118,18 +126,24 @@ private:
     void accessPointScanningReady(TBool scanSuccessful, TConnMonIapInfo iapInfo);
     void startCommsDatabaseNotifications();
     void stopCommsDatabaseNotifications();
+    void waitRandomTime();
 
     QNetworkConfiguration defaultConfigurationL();
     TBool GetS60PlatformVersion(TUint& aMajor, TUint& aMinor) const;
     void startMonitoringIAPData(TUint32 aIapId);
     QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> dataByConnectionId(TUint aConnectionId);
 
-protected: // From CActive
+protected:
+    // From CActive
     void RunL();
     void DoCancel();
     
-private: // MConnectionMonitorObserver
+private:
+    // MConnectionMonitorObserver
     void EventL(const CConnMonEventBase& aEvent);
+    // For QNetworkSessionPrivate to indicate about state changes
+    void configurationStateChangeReport(TUint32 accessPointId,
+                                   QNetworkSession::State newState);
 
 public: // Data
     //this table contains an up to date list of all configs at any time.
@@ -149,8 +163,10 @@ private: // Data
     TBool              iOnline;
     TBool              iInitOk;
     TBool              iUpdateGoingOn;
+    TBool              iIgnoringUpdates;
+    TUint              iTimeToWait;
+    QEventLoop*        iIgnoreEventLoop;
 
-    
     AccessPointsAvailabilityScanner* ipAccessPointsAvailabilityScanner;
     
     friend class QNetworkSessionPrivate;

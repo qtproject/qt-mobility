@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,10 +61,6 @@ public:
 
     static TestQGeoSatelliteInfoSource *createDefaultSourceTest();
 
-public slots:
-	void test_slot1();
-	void test_slot2();
-
 protected:
     virtual QGeoSatelliteInfoSource *createTestSource() = 0;
 
@@ -73,6 +69,10 @@ protected:
     void base_init();
     void base_cleanup();
     void base_cleanupTestCase();
+
+public slots:
+    void test_slot1();
+    void test_slot2();
 
 private slots:
     void initTestCase();

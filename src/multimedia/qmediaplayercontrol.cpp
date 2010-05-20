@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include <qmediaplayercontrol.h>
-#include <qmediacontrol_p.h>
-#include <qmediaplayer.h>
+#include "qmediaplayercontrol.h"
+#include "qmediacontrol_p.h"
+#include "qmediaplayer.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -219,6 +219,22 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
+    \fn QMediaPlayerControl::isAudioAvailable() const
+
+    Identifies if there is audio output available for the current media.
+
+    Returns true if audio output is available and false otherwise.
+*/
+
+/*!
+    \fn QMediaPlayerControl::audioAvailableChanged(bool audio)
+
+    Signals that there has been a change in the availability of \a audio output.
+
+    \sa isAudioAvailable()
+*/
+
+/*!
     \fn QMediaPlayerControl::isVideoAvailable() const
 
     Identifies if there is video output available for the current media.
@@ -251,20 +267,21 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 /*!
-    \fn QMediaPlayerControl::seekRange() const
+    \fn QMediaPlayerControl::availablePlaybackRanges() const
 
-    Returns the range in milliseconds the player can seek to.
-    Usually for local files this this range equals to [0..duration()]
-    or [0..0] if seeking is not supported, but for network sources
-    it means the buffered part of media.
+    Returns a range of times in milliseconds that can be played back.
+
+    Usually for local files this is a continuous interval equal to [0..duration()]
+    or an empty time range if seeking is not supported, but for network sources
+    it refers to the buffered parts of the media.
 */
 
 /*!
-    \fn QMediaPlayerControl::seekRangeChanged(const QPair<qint64,qint64>& range)
+    \fn QMediaPlayerControl::availablePlaybackRangesChanged(const QMediaTimeRange &ranges)
 
-    Signals that the media seek \a range has changed.
+    Signals that the available media playback \a ranges have changed.
 
-    \sa QMediaPlayerControl::seekRange()
+    \sa QMediaPlayerControl::availablePlaybackRanges()
 */
 
 /*!
@@ -355,5 +372,5 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 #include "moc_qmediaplayercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

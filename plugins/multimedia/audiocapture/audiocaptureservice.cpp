@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,12 +38,12 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include <QDebug>
 
 #include "audiocaptureservice.h"
 #include "audiocapturesession.h"
 #include "audioendpointselector.h"
 #include "audioencodercontrol.h"
+#include "audiocontainercontrol.h"
 #include "audiomediarecordercontrol.h"
 
 AudioCaptureService::AudioCaptureService(QObject *parent):
@@ -51,6 +51,7 @@ AudioCaptureService::AudioCaptureService(QObject *parent):
 {
     m_session = new AudioCaptureSession(this);
     m_encoderControl  = new AudioEncoderControl(m_session);
+    m_containerControl = new AudioContainerControl(m_session);
     m_mediaControl   = new AudioMediaRecorderControl(m_session);
     m_endpointSelector  = new AudioEndpointSelector(m_session);
 }
@@ -58,6 +59,7 @@ AudioCaptureService::AudioCaptureService(QObject *parent):
 AudioCaptureService::~AudioCaptureService()
 {
     delete m_encoderControl;
+    delete m_containerControl;
     delete m_endpointSelector;
     delete m_mediaControl;
     delete m_session;
@@ -73,6 +75,9 @@ QMediaControl *AudioCaptureService::control(const char *name) const
 
     if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
         return m_endpointSelector;
+
+    if (qstrcmp(name,QMediaContainerControl_iid) == 0)
+        return m_containerControl;
 
     return 0;
 }

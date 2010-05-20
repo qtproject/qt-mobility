@@ -1,8 +1,8 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(m3u)
+TARGET = $$qtLibraryTarget(qtmedia_m3u)
 
-PLUGIN_TYPE = playlistformats
+PLUGIN_TYPE=playlistformats
 
 include (../../../common.pri)
 
@@ -17,9 +17,12 @@ HEADERS += qm3uhandler.h
 SOURCES += main.cpp \
            qm3uhandler.cpp
 symbian {
+    TARGET.UID3 = 0x2002BFC7
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
+    
+    #make a sis package from plugin + stub (plugin)
+    pluginDep.sources = $${TARGET}.dll
+    pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
+    DEPLOYMENT += pluginDep
 }
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/playlistformats
-INSTALLS+=target

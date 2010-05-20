@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,42 +52,29 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactRelationshipFetchRequest class allows a client to
   asynchronously request relationships from a contacts store manager.
 
+  For a QContactRelationshipFetchRequest, the resultsAvailable() signal will be emitted when the resultant
+  relationships (which may be retrieved by calling relationships()), are updated, as well as if
+  the overall operation error (which may be retrieved by calling error()) is updated.
+
   \ingroup contacts-requests
  */
 
-/*!
-
-  \fn QContactRelationshipFetchRequest::progress(QContactRelationshipFetchRequest* self, bool appendOnly)
-
-  This signal is emitted when some progress has been made on the
-  request, causing either a change of status or an update of results,
-  or both.  It identifies which request the signal originated from by
-  including a pointer to \a self, and contains an \a appendOnly flag
-  which signifies whether or not the total ordering of the results
-  have been maintained since the last progress signal was emitted.
+/*! Constructs a new relationship fetch request whose parent is the specified \a parent
  */
-
-/*! Constructs a new relationship fetch request
- */
-QContactRelationshipFetchRequest::QContactRelationshipFetchRequest()
-    : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate)
+QContactRelationshipFetchRequest::QContactRelationshipFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactRelationshipFetchRequestPrivate, parent)
 {
 }
 
-/*! Cleans up the memory in use by this relationship fetch request
- */
-QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
-{
-}
-
-/*! Sets the source contact criterion of the fetch request to \a contactId.
-    If \a contactId is the default-constructed id, or the first contact is not set,
+/*! Sets the source contact criterion of the fetch request to \a firstId.
+    If \a firstId is the default-constructed id, or the first contact id is not set,
     the request will fetch relationships involving any first contact.
 */
-void QContactRelationshipFetchRequest::setFirst(const QContactId& contactId)
+void QContactRelationshipFetchRequest::setFirst(const QContactId& firstId)
 {
     Q_D(QContactRelationshipFetchRequest);
-    d->m_first = contactId;
+    QMutexLocker ml(&d->m_mutex);
+    d->m_first = firstId;
 }
 
 /*! Returns the source contact criterion of the fetch request
@@ -95,6 +82,7 @@ void QContactRelationshipFetchRequest::setFirst(const QContactId& contactId)
 QContactId QContactRelationshipFetchRequest::first() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_first;
 }
 
@@ -105,6 +93,7 @@ QContactId QContactRelationshipFetchRequest::first() const
 void QContactRelationshipFetchRequest::setRelationshipType(const QString& relationshipType)
 {
     Q_D(QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationshipType = relationshipType;
 }
 
@@ -113,52 +102,28 @@ void QContactRelationshipFetchRequest::setRelationshipType(const QString& relati
 QString QContactRelationshipFetchRequest::relationshipType() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationshipType;
 }
 
-/*!
-
-  Sets the participant criterion of the fetch request to \a
-  participantUri.  If the \a participantUri references a contact in
-  the manager from which the relationships are being fetched and the
-  \a role is \c QContactRelationshipFilter::Either, a relationship
-  will match the criterion if the contact appears in the relationship
-  as either the source or a destination contact.  If the \a
-  participantUri references a contact in a different manager to the
-  one from which the relationships are being fetched and the \a role
-  is \c QContactRelationshipFilter::Either, a relationship will match
-  the criterion only if the contact appears in the relationship as a
-  destination contact.  If the \a participantUri references a contact
-  in a different manager to the one from which the relationships are
-  being fetched and the \a role is \c
-  QContactRelationshipFilter::Source, no relationships will be
-  fetched.
-  
-  If the \a participantUri consists of an empty manager URI and the
-  zero contact id, or if the participant criterion is not set, the
-  request will fetch relationships involving any participant.
- */
-void QContactRelationshipFetchRequest::setParticipant(const QContactId& participantUri, QContactRelationshipFilter::Role role)
+/*! Sets the destination contact criterion of the fetch request to \a secondId.
+    If \a secondId is the default-constructed id, or the second contact id is not set,
+    the request will fetch relationships involving any second contact.
+*/
+void QContactRelationshipFetchRequest::setSecond(const QContactId& secondId)
 {
     Q_D(QContactRelationshipFetchRequest);
-    d->m_participantUri = participantUri;
-    d->m_role = role;
+    QMutexLocker ml(&d->m_mutex);
+    d->m_second = secondId;
 }
 
-/*! Returns the participant criterion of the fetch request
+/*! Returns the destination contact criterion of the fetch request
  */
-QContactId QContactRelationshipFetchRequest::participant() const
+QContactId QContactRelationshipFetchRequest::second() const
 {
     Q_D(const QContactRelationshipFetchRequest);
-    return d->m_participantUri;
-}
-
-/*! Returns the role of the participant criterion of the fetch request
- */
-QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRole() const
-{
-    Q_D(const QContactRelationshipFetchRequest);
-    return d->m_role;
+    QMutexLocker ml(&d->m_mutex);
+    return d->m_second;
 }
 
 /*! Returns the list of relationships that was the result of the request
@@ -166,6 +131,7 @@ QContactRelationshipFilter::Role QContactRelationshipFetchRequest::participantRo
 QList<QContactRelationship> QContactRelationshipFetchRequest::relationships() const
 {
     Q_D(const QContactRelationshipFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationships;
 }
 

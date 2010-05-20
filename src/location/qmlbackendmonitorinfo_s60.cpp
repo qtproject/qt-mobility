@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,8 +58,7 @@ CBackendMonitorInfo* CBackendMonitorInfo::NewL()
 //returns the CMonitorTriggerInfo info based on the aTrigID
 CMonitorTriggerInfo* CBackendMonitorInfo::getMonitorTriggerInfo(TLbtTriggerId aTrigID)
 {
-    CMonitorTriggerInfo* currentNode = NULL;
-    currentNode = iMonitorInfo;
+    CMonitorTriggerInfo* currentNode = iMonitorInfo;
     while (currentNode && (currentNode->iTriggerID != aTrigID)) {
         currentNode = currentNode->next;
     }
@@ -67,10 +66,9 @@ CMonitorTriggerInfo* CBackendMonitorInfo::getMonitorTriggerInfo(TLbtTriggerId aT
 }
 
 //returns the CMonitorTriggerInfo info based on the aParent,aType from the linked list
-CMonitorTriggerInfo* CBackendMonitorInfo::getMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,enTriggerType aType)
+CMonitorTriggerInfo* CBackendMonitorInfo::getMonitorTriggerInfo(QGeoAreaMonitorS60* aParent, enTriggerType aType)
 {
-    CMonitorTriggerInfo* currentNode = NULL;
-    currentNode = iMonitorInfo;
+    CMonitorTriggerInfo* currentNode = iMonitorInfo;
     while (currentNode) {
         if ((currentNode->iParent == aParent) && (currentNode->iType == aType))
             break;
@@ -81,7 +79,7 @@ CMonitorTriggerInfo* CBackendMonitorInfo::getMonitorTriggerInfo(QGeoAreaMonitorS
 }
 
 //creates and adds a new CMonitorTriggerInfo object to the end of linked list
-bool CBackendMonitorInfo::addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,TLbtTriggerId aTriggerID,enTriggerType aType)
+bool CBackendMonitorInfo::addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent, TLbtTriggerId aTriggerID, enTriggerType aType)
 {
     CMonitorTriggerInfo* currentNode = NULL;
 

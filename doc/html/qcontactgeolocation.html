@@ -4,18 +4,18 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactdetails.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QContactGeolocation Class Reference</title>
+  <title>Qt Mobility Project 1.1: QContactGeoLocation Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-<a name="//apple_ref/cpp/cl//QContactGeolocation"></a>
+<a name="//apple_ref/cpp/cl//QContactGeoLocation"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactGeolocation Class Reference</h1>
-<p>The QContactGeolocation class contains the global location coordinate associated with a contact. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactGeolocation&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactGeoLocation Class Reference</h1>
+<p>The QContactGeoLocation class contains a global location coordinate associated with a contact. <a href="#details">More...</a></p>
+<pre>    #include &lt;QContactGeoLocation&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
 <ul>
 <li><a href="qcontactgeolocation-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -43,141 +43,146 @@
 <tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#timestamp">timestamp</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>17 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
-<a name="public-variables"></a>
-<h2>Public Variables</h2>
+<a name="static-public-members"></a>
+<h2>Static Public Members</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#DefinitionName-var">DefinitionName</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldAccuracy-var">FieldAccuracy</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldAltitude-var">FieldAltitude</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldAltitudeAccuracy-var">FieldAltitudeAccuracy</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldHeading-var">FieldHeading</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldLabel-var">FieldLabel</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldLatitude-var">FieldLatitude</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldLongitude-var">FieldLongitude</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldSpeed-var">FieldSpeed</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const char * </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldTimestamp-var">FieldTimestamp</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#DefinitionName-var">DefinitionName</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldAccuracy-var">FieldAccuracy</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldAltitude-var">FieldAltitude</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldAltitudeAccuracy-var">FieldAltitudeAccuracy</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldHeading-var">FieldHeading</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldLabel-var">FieldLabel</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldLatitude-var">FieldLatitude</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldLongitude-var">FieldLongitude</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldSpeed-var">FieldSpeed</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactgeolocation.html#FieldTimestamp-var">FieldTimestamp</a></b></td></tr>
 </table>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>1 protected function inherited from <a href="qcontactdetail.html#protected-functions">QContactDetail</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QContactGeolocation class contains the global location coordinate associated with a contact.</p>
+<p>The QContactGeoLocation class contains a global location coordinate associated with a contact.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/accuracy"></a>
-<h3 class="fn"><a name="accuracy"></a>double QContactGeolocation::accuracy () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/accuracy"></a>
+<h3 class="fn"><a name="accuracy"></a>double QContactGeoLocation::accuracy () const</h3>
 <p>Returns the accuracy (in metres) of the latitude and longitude of the location stored in the detail.</p>
 <p>See also <a href="qcontactgeolocation.html#setAccuracy">setAccuracy</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/altitude"></a>
-<h3 class="fn"><a name="altitude"></a>double QContactGeolocation::altitude () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/altitude"></a>
+<h3 class="fn"><a name="altitude"></a>double QContactGeoLocation::altitude () const</h3>
 <p>Returns the altitude (in metres) of the location stored in the detail.</p>
 <p>See also <a href="qcontactgeolocation.html#setAltitude">setAltitude</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/altitudeAccuracy"></a>
-<h3 class="fn"><a name="altitudeAccuracy"></a>double QContactGeolocation::altitudeAccuracy () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/altitudeAccuracy"></a>
+<h3 class="fn"><a name="altitudeAccuracy"></a>double QContactGeoLocation::altitudeAccuracy () const</h3>
 <p>Returns the accuracy of the altitude portion of the location stored in the detail.</p>
 <p>See also <a href="qcontactgeolocation.html#setAltitudeAccuracy">setAltitudeAccuracy</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/heading"></a>
-<h3 class="fn"><a name="heading"></a>double QContactGeolocation::heading () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/heading"></a>
+<h3 class="fn"><a name="heading"></a>double QContactGeoLocation::heading () const</h3>
 <p>Returns the heading (at the time of measurement) of the location-aware device that recorded (or was provided) the measurement.</p>
 <p>See also <a href="qcontactgeolocation.html#setHeading">setHeading</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/label"></a>
-<h3 class="fn"><a name="label"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactGeolocation::label () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/label"></a>
+<h3 class="fn"><a name="label"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactGeoLocation::label () const</h3>
 <p>Returns the label of the location stored in the detail.</p>
 <p>See also <a href="qcontactgeolocation.html#setLabel">setLabel</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/latitude"></a>
-<h3 class="fn"><a name="latitude"></a>double QContactGeolocation::latitude () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/latitude"></a>
+<h3 class="fn"><a name="latitude"></a>double QContactGeoLocation::latitude () const</h3>
 <p>Returns the latitude portion of the coordinate (specified in decimal degrees) of the location stored in the detail.</p>
 <p>See also <a href="qcontactgeolocation.html#setLatitude">setLatitude</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/longitude"></a>
-<h3 class="fn"><a name="longitude"></a>double QContactGeolocation::longitude () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/longitude"></a>
+<h3 class="fn"><a name="longitude"></a>double QContactGeoLocation::longitude () const</h3>
 <p>Returns the longitude portion of the coordinate (specified in decimal degrees) of the location stored in the detail.</p>
 <p>See also <a href="qcontactgeolocation.html#setLongitude">setLongitude</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setAccuracy"></a>
-<h3 class="fn"><a name="setAccuracy"></a>void QContactGeolocation::setAccuracy ( double <i>accuracy</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setAccuracy"></a>
+<h3 class="fn"><a name="setAccuracy"></a>void QContactGeoLocation::setAccuracy ( double <i>accuracy</i> )</h3>
 <p>Specifies that the latitude and longitude portions of the location stored in the detail are accurate to within <i>accuracy</i> metres.</p>
 <p>See also <a href="qcontactgeolocation.html#accuracy">accuracy</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setAltitude"></a>
-<h3 class="fn"><a name="setAltitude"></a>void QContactGeolocation::setAltitude ( double <i>altitude</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setAltitude"></a>
+<h3 class="fn"><a name="setAltitude"></a>void QContactGeoLocation::setAltitude ( double <i>altitude</i> )</h3>
 <p>Sets the altitude portion of the coordinate (in metres above the ellipsoid) of the location stored in the detail to <i>altitude</i>.</p>
 <p>See also <a href="qcontactgeolocation.html#altitude">altitude</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setAltitudeAccuracy"></a>
-<h3 class="fn"><a name="setAltitudeAccuracy"></a>void QContactGeolocation::setAltitudeAccuracy ( double <i>altitudeAccuracy</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setAltitudeAccuracy"></a>
+<h3 class="fn"><a name="setAltitudeAccuracy"></a>void QContactGeoLocation::setAltitudeAccuracy ( double <i>altitudeAccuracy</i> )</h3>
 <p>Sets the altitude-accuracy portion of the coordinate (in metres) of the location stored in the detail to <i>altitudeAccuracy</i>.</p>
 <p>See also <a href="qcontactgeolocation.html#altitudeAccuracy">altitudeAccuracy</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setHeading"></a>
-<h3 class="fn"><a name="setHeading"></a>void QContactGeolocation::setHeading ( double <i>heading</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setHeading"></a>
+<h3 class="fn"><a name="setHeading"></a>void QContactGeoLocation::setHeading ( double <i>heading</i> )</h3>
 <p>Sets the heading portion of the coordinate (in decimal degrees clockwise relative to true north) of the location-aware device at the time of measurement to <i>heading</i>.</p>
 <p>See also <a href="qcontactgeolocation.html#heading">heading</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setLabel"></a>
-<h3 class="fn"><a name="setLabel"></a>void QContactGeolocation::setLabel ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>label</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setLabel"></a>
+<h3 class="fn"><a name="setLabel"></a>void QContactGeoLocation::setLabel ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>label</i> )</h3>
 <p>Sets the label of the location stored in the detail to <i>label</i>.</p>
 <p>See also <a href="qcontactgeolocation.html#label">label</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setLatitude"></a>
-<h3 class="fn"><a name="setLatitude"></a>void QContactGeolocation::setLatitude ( double <i>latitude</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setLatitude"></a>
+<h3 class="fn"><a name="setLatitude"></a>void QContactGeoLocation::setLatitude ( double <i>latitude</i> )</h3>
 <p>Sets the latitude portion of the coordinate (in decimal degrees) of the location stored in the detail to <i>latitude</i>.</p>
 <p>See also <a href="qcontactgeolocation.html#latitude">latitude</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setLongitude"></a>
-<h3 class="fn"><a name="setLongitude"></a>void QContactGeolocation::setLongitude ( double <i>longitude</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setLongitude"></a>
+<h3 class="fn"><a name="setLongitude"></a>void QContactGeoLocation::setLongitude ( double <i>longitude</i> )</h3>
 <p>Sets the longitude portion of the coordinate (in decimal degrees) of the location stored in the detail to <i>longitude</i>.</p>
 <p>See also <a href="qcontactgeolocation.html#longitude">longitude</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setSpeed"></a>
-<h3 class="fn"><a name="setSpeed"></a>void QContactGeolocation::setSpeed ( double <i>speed</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setSpeed"></a>
+<h3 class="fn"><a name="setSpeed"></a>void QContactGeoLocation::setSpeed ( double <i>speed</i> )</h3>
 <p>Sets the speed portion of the coordinate (in metres per second) of the location-aware device at the time of measurement to <i>speed</i>.</p>
 <p>See also <a href="qcontactgeolocation.html#speed">speed</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/setTimestamp"></a>
-<h3 class="fn"><a name="setTimestamp"></a>void QContactGeolocation::setTimestamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>timestamp</i> )</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/setTimestamp"></a>
+<h3 class="fn"><a name="setTimestamp"></a>void QContactGeoLocation::setTimestamp ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>timestamp</i> )</h3>
 <p>Sets the creation (or first-valid) timestamp of the location information to <i>timestamp</i>.</p>
 <p>See also <a href="qcontactgeolocation.html#timestamp">timestamp</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/speed"></a>
-<h3 class="fn"><a name="speed"></a>double QContactGeolocation::speed () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/speed"></a>
+<h3 class="fn"><a name="speed"></a>double QContactGeoLocation::speed () const</h3>
 <p>Returns the speed (at the time of measurement) of the location-aware device that recorded (or was provided) the measurement.</p>
 <p>See also <a href="qcontactgeolocation.html#setSpeed">setSpeed</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactGeolocation/timestamp"></a>
-<h3 class="fn"><a name="timestamp"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QContactGeolocation::timestamp () const</h3>
+<a name="//apple_ref/cpp/instm/QContactGeoLocation/timestamp"></a>
+<h3 class="fn"><a name="timestamp"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QContactGeoLocation::timestamp () const</h3>
 <p>Returns the timestamp associated with the location stored in the detail.</p>
 <p>See also <a href="qcontactgeolocation.html#setTimestamp">setTimestamp</a>().</p>
 <hr />
 <h2>Member Variable Documentation</h2>
-<a name="//apple_ref/cpp/data/QContactGeolocation/DefinitionName"></a>
-<h3 class="fn"><a name="DefinitionName-var"></a>const char * QContactGeolocation::DefinitionName</h3>
-<p>The constant string which identifies the definition of details which describe a location associated with a contact.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldAccuracy"></a>
-<h3 class="fn"><a name="FieldAccuracy-var"></a>const char * QContactGeolocation::FieldAccuracy</h3>
-<p>The constant key for which the location accuracy value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldAltitude"></a>
-<h3 class="fn"><a name="FieldAltitude-var"></a>const char * QContactGeolocation::FieldAltitude</h3>
-<p>The constant key for which the altitude value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldAltitudeAccuracy"></a>
-<h3 class="fn"><a name="FieldAltitudeAccuracy-var"></a>const char * QContactGeolocation::FieldAltitudeAccuracy</h3>
-<p>The constant key for which the altitude accuracy value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldHeading"></a>
-<h3 class="fn"><a name="FieldHeading-var"></a>const char * QContactGeolocation::FieldHeading</h3>
-<p>The constant key for which the heading value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldLabel"></a>
-<h3 class="fn"><a name="FieldLabel-var"></a>const char * QContactGeolocation::FieldLabel</h3>
-<p>The constant key for which the location label value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldLatitude"></a>
-<h3 class="fn"><a name="FieldLatitude-var"></a>const char * QContactGeolocation::FieldLatitude</h3>
-<p>The constant key for which the latitude value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldLongitude"></a>
-<h3 class="fn"><a name="FieldLongitude-var"></a>const char * QContactGeolocation::FieldLongitude</h3>
-<p>The constant key for which the longitude value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldSpeed"></a>
-<h3 class="fn"><a name="FieldSpeed-var"></a>const char * QContactGeolocation::FieldSpeed</h3>
-<p>The constant key for which the speed value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactGeolocation/FieldTimestamp"></a>
-<h3 class="fn"><a name="FieldTimestamp-var"></a>const char * QContactGeolocation::FieldTimestamp</h3>
-<p>The constant key for which the timestamp value is stored in details of the <a href="qcontactgeolocation.html">QContactGeolocation</a> type.</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/DefinitionName"></a>
+<h3 class="fn"><a name="DefinitionName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::DefinitionName</h3>
+<p>The string constant for the definition name of <a href="qcontactgeolocation.html">QContactGeoLocation</a> details.</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldAccuracy"></a>
+<h3 class="fn"><a name="FieldAccuracy-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldAccuracy</h3>
+<p>The field key constant for the value containing the location (latitude/longitude) accuracy.</p>
+<p>See also <a href="qcontactgeolocation.html#accuracy">accuracy</a>() and <a href="qcontactgeolocation.html#setAccuracy">setAccuracy</a>().</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldAltitude"></a>
+<h3 class="fn"><a name="FieldAltitude-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldAltitude</h3>
+<p>The field key constant for the value containing the altitude.</p>
+<p>See also <a href="qcontactgeolocation.html#altitude">altitude</a>() and <a href="qcontactgeolocation.html#setAltitude">setAltitude</a>().</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldAltitudeAccuracy"></a>
+<h3 class="fn"><a name="FieldAltitudeAccuracy-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldAltitudeAccuracy</h3>
+<p>The field key constant for the value containing the accuracy of the altitude.</p>
+<p>See also <a href="qcontactgeolocation.html#altitudeAccuracy">altitudeAccuracy</a>() and <a href="qcontactgeolocation.html#setAltitudeAccuracy">setAltitudeAccuracy</a>().</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldHeading"></a>
+<h3 class="fn"><a name="FieldHeading-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldHeading</h3>
+<p>The field key constant for the value containing the heading.</p>
+<p>See also <a href="qcontactgeolocation.html#heading">heading</a>() and <a href="qcontactgeolocation.html#setHeading">setHeading</a>().</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldLabel"></a>
+<h3 class="fn"><a name="FieldLabel-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldLabel</h3>
+<p>The field key constant for the value containing the location label.</p>
+<p>See also <a href="qcontactgeolocation.html#label">label</a>() and <a href="qcontactgeolocation.html#setLabel">setLabel</a>().</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldLatitude"></a>
+<h3 class="fn"><a name="FieldLatitude-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldLatitude</h3>
+<p>The field key constant for the value containing the latitude.</p>
+<p>See also <a href="qcontactgeolocation.html#latitude">latitude</a>() and <a href="qcontactgeolocation.html#setLatitude">setLatitude</a>().</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldLongitude"></a>
+<h3 class="fn"><a name="FieldLongitude-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldLongitude</h3>
+<p>The field key constant for the value containing the longitude.</p>
+<p>See also <a href="qcontactgeolocation.html#longitude">longitude</a>() and <a href="qcontactgeolocation.html#setLongitude">setLongitude</a>().</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldSpeed"></a>
+<h3 class="fn"><a name="FieldSpeed-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldSpeed</h3>
+<p>The field key constant for the value containing the speed.</p>
+<p>See also <a href="qcontactgeolocation.html#speed">speed</a>() and <a href="qcontactgeolocation.html#setSpeed">setSpeed</a>().</p>
+<a name="//apple_ref/cpp/data/QContactGeoLocation/FieldTimestamp"></a>
+<h3 class="fn"><a name="FieldTimestamp-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactGeoLocation::FieldTimestamp</h3>
+<p>The field key constant for the value containing the timestamp of the location information.</p>
+<p>See also <a href="qcontactgeolocation.html#timestamp">timestamp</a>() and <a href="qcontactgeolocation.html#setTimestamp">setTimestamp</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

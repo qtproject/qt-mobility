@@ -1,25 +1,37 @@
 TEMPLATE=app
-INCLUDEPATH += ../../src/location
+INCLUDEPATH += ../../src/location \
+                ../../src/bearer \
+                ../../src/global \
+                ../satellitedialog
+
 
 QT += webkit network
 
-HEADERS = mapwindow.h
+HEADERS = mapwindow.h \
+            ../satellitedialog/satellitedialog.h
 SOURCES = mapwindow.cpp \
-          main.cpp
+            ../satellitedialog/satellitedialog.cpp \
+            main.cpp
 
 include(../examples.pri)
-CONFIG += mobility
-MOBILITY = location
 
-symbian: {
-    addFiles.sources = nmealog.txt
-    DEPLOYMENT += addFiles
-    
-    TARGET.CAPABILITY = Location NetworkServices
+CONFIG += mobility
+MOBILITY = location bearer
+
+symbian|wince* {
+    symbian {
+        addFiles.sources = nmealog.txt
+        DEPLOYMENT += addFiles
+        TARGET.CAPABILITY += Location \
+                NetworkServices
+    }
+    wince* {
+        addFiles.sources = ./nmealog.txt
+        addFiles.path = .
+        DEPLOYMENT += addFiles
+    }
 } else {
-    logfile.path = $$DESTDIR
+    logfile.path = $$QT_MOBILITY_PREFIX/bin
     logfile.files = nmealog.txt
-    logfile.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
     INSTALLS += logfile
-    build_pass:ALL_DEPS+=install_logfile
 }

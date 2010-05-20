@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,7 +48,7 @@
 
 #include <evr.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QEvrVideoOverlay : public QVideoWindowControl, public QMFActivate
 {
@@ -68,8 +68,8 @@ public:
 
     QSize nativeSize() const;
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     void repaint();
 
@@ -97,6 +97,9 @@ public:
     HRESULT STDMETHODCALLTYPE ShutdownObject();
     HRESULT STDMETHODCALLTYPE DetachObject();
 
+public Q_SLOTS:
+    void openStateChanged(long state);
+
 private:
     typedef HRESULT (WINAPI *PtrMFCreateVideoPresenter)(IUnknown*, REFIID, REFIID, void**);
 
@@ -105,7 +108,7 @@ private:
     PtrMFCreateVideoPresenter ptrMFCreateVideoPresenter;
     IMFVideoPresenter *m_presenter;
     IMFVideoDisplayControl *m_displayControl;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_sizeHint;
     QRect m_displayRect;
     WId m_winId;

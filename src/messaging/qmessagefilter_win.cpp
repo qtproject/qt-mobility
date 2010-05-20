@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -534,14 +534,14 @@ bool QMessageFilterPrivate::matchesMessageSimple(const QMessageFilter &filter, c
             if (filter.d_ptr->_field == QMessageFilterPrivate::Recipients) {
                 QMessageAddressList addresses(message.to() + message.cc() + message.bcc());
                 foreach(QMessageAddress address, addresses) {
-                    tmp = address.recipient();
+                    tmp = address.addressee();
                     if (!caseSensitive) {
                         tmp = tmp.toLower();
                     }
                     messageStrings.append(tmp);
                 }
             } else if (filter.d_ptr->_field == QMessageFilterPrivate::Sender) {
-                tmp = message.from().recipient();
+                tmp = message.from().addressee();
                 if (!caseSensitive) {
                     tmp = tmp.toLower();
                 }
@@ -1754,7 +1754,7 @@ QMessageFilter QMessageFilter::byType(QMessage::Type type, QMessageDataComparato
 
 QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataComparator::InclusionComparator cmp)
 {
-    QMessage::TypeFlags type(aType & (QMessage::Sms | QMessage::Email)); // strip Mms, Xmpp
+    QMessage::TypeFlags type(aType & (QMessage::Sms | QMessage::Email)); // strip Mms, InstantMessage
     if (type == QMessage::Sms) {
         if (cmp == QMessageDataComparator::Includes) {
             return QMessageFilter::byParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms), QMessageDataComparator::Equal);
@@ -1774,7 +1774,7 @@ QMessageFilter QMessageFilter::byType(QMessage::TypeFlags aType, QMessageDataCom
             return QMessageFilter(); // inclusion, match all
         return ~QMessageFilter(); // exclusion, match none
     }
-    // Mms/Xmpp only
+    // Mms/InstantMessage only
     if (cmp == QMessageDataComparator::Includes)
         return ~QMessageFilter(); // mms only inclusion, match none
     return QMessageFilter(); // mms only exclusion, match all

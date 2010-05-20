@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,12 +54,12 @@
 //
 
 #include <qmobilityglobal.h>
-#include <qmediaservice.h>
-#include <qmediaimageviewer.h>
-#include <qvideooutputcontrol.h>
-#include <qvideorenderercontrol.h>
-#include <qvideowidget.h>
-#include <qvideowidgetcontrol.h>
+#include "qmediaservice.h"
+#include "qmediaimageviewer.h"
+#include "qvideooutputcontrol.h"
+#include "qvideorenderercontrol.h"
+#include "qvideowidget.h"
+#include "qvideowidgetcontrol.h"
 
 #include <QtGui/qimage.h>
 
@@ -68,7 +68,7 @@ class QAbstractVideoSurface;
 class QNetworkAccessManager;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaImageViewerServicePrivate;
 
@@ -154,6 +154,6 @@ private:
     Output m_output;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

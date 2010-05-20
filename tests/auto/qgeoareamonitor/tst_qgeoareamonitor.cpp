@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -91,7 +91,7 @@ private:
 private slots:
     void initTestCase()
     {
-        int id = qRegisterMetaType<QGeoPositionInfo>();
+        qRegisterMetaType<QGeoPositionInfo>();
     } 
 
     void init()
@@ -124,20 +124,20 @@ private slots:
     //TC_ID_4_x_1
     void constructor_withoutParent()
     {
-        QLocationTestUtils::uheap_mark();
+        //QLocationTestUtils::uheap_mark();
         MyPositionAreaMonitor *myMonitor = new MyPositionAreaMonitor();
         delete myMonitor;
-        QLocationTestUtils::uheap_mark_end();
+        //QLocationTestUtils::uheap_mark_end();
     }
 
     //TC_ID_4_x_2
     void constructor_withParent()
     {
-        QLocationTestUtils::uheap_mark();
+        //QLocationTestUtils::uheap_mark();
         QObject* parent = new QObject;
-        MyPositionAreaMonitor *myMonitor = new MyPositionAreaMonitor(parent);
+        new MyPositionAreaMonitor(parent);
         delete parent;
-        QLocationTestUtils::uheap_mark_end();
+        //QLocationTestUtils::uheap_mark_end();
     }
 
     //TC_ID_4_x_1
@@ -145,12 +145,12 @@ private slots:
     {
         if (!QLocationTestUtils::hasDefaultMonitor()) QSKIP("No default monitor source", SkipAll);
 
-        QLocationTestUtils::uheap_mark();
+        //QLocationTestUtils::uheap_mark();
         QObject* parent = new QObject;
         QGeoAreaMonitor* obj = QGeoAreaMonitor::createDefaultMonitor(parent);
         QVERIFY(obj != 0);
         delete parent;
-        QLocationTestUtils::uheap_mark_end();
+        //QLocationTestUtils::uheap_mark_end();
     }
 
     //TC_ID_4_x_1

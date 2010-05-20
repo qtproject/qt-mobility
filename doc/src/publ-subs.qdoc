@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,6 +54,12 @@ navigate through and subscribe to change notifications.
 
 \tableofcontents
 
+\section1 Namespace
+
+The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility API's into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
 
 \section1 Overview
 
@@ -141,6 +147,11 @@ The Shared Memory layer has an order of 0x10000000.
         \o The Symbian Settings layer provides a permanent Value Space backing store using the
            Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository).
            The Symbian Settings layer has an order of 0.
+    \row
+        \o \l{GConf Layer}
+        \o The GConf Layer provides a permanent Value Space backing store using the
+           GConf configuration system designed for the GNOME desktop environment.
+           The GConf Layer has an order of 0 and it's the only available layer in Maemo 5.
 \endtable
 
 The Value Space has support for both client/server and peer-to-peer layer architectures.  If a
@@ -177,9 +188,7 @@ exactly what has changed without the need for a bulkier change notification prot
 \section2 Symbian Settings Layer
 
 Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as
-Central Repository files (CRepository).  The underlying system limits the features and available
-data types but at least reading, writing and monitoring Symbian aware data types work in both
-RProperty and CRepository.
+Central Repository files (CRepository).
 
 \section3 Declaring Value Space Paths
 
@@ -195,7 +204,7 @@ The following QCRML file defines Value Space paths for power state properties st
 Properties:
 \code
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="RProperty" version="" uidName="KPSUidHWRMPowerState" uidValue="0x10205041">
+<repository target="RProperty" uidValue="0x10205041">
     <key ref="/resources/battery/level" int="0x00000001"/>
     <key ref="/resources/battery/status" int="0x00000002"/>
     <key ref="/resources/charging/status" int="0x00000003"/>
@@ -206,7 +215,7 @@ The following QCRML file defines a Value Space path for the "current profile id"
 Repository:
 \code
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="CRepository" version="" uidName="KCRUidProfileEngine" uidValue="0x101f8798">
+<repository target="CRepository" uidValue="0x101f8798">
     <key ref="/profile/id" int="0x7e000001"/>
 </repository>
 \endcode
@@ -215,8 +224,8 @@ The \c qcrmlgen tool located in the \c tools directory can be used to create QCR
 
 \section3 Location of QCRML Files
 
-All the QCRML files need to be located in \c {c:\resource\qt\crml} directory in Symbian file
-system.
+All the QCRML files need to be located in \c {\resource\qt\crml} directory (in any available drive)
+in Symbian file system.
 
 In \c {.pro} files this means that the files need to be deployed with the SIS package.
 
@@ -232,13 +241,24 @@ symbian {
 
 \section3 Limitations
 
-Symbian OS Properties are limited to data of type \c int and \c QByteArray.  QString is also
-possible to be passed via Value Space but it is recognized as QByteArray in the receiving end.  Use
-QVariant::toString() to explicitly convert it back into a QString in cases where you know that the
-data was originally a QString.  The maximum size for QByteArray is 65535 bytes.
+The underlying Symbian APIs limit the data types that can be stored natively in available backing stores.
+In practice this is not a problem since the unsupported data types are automatically serialized in
+QByteArray and stored as 8-bit byte form by SymbianSettingslayer. The serialization/deserialization
+is transparent operation to the API user but may cause interoperatibility issues with native Symbian codes
+that access the same data directly. The maximum size of the bytearray is 65535 for RPropery backing store.
 
-In addition to the types supported by Symbian OS Properties, Central Repository also supports
-qreal.
+\section2 GConf Layer
+
+Publish and Subscribe API can be used to access the GConf configuration system.
+
+\section3 Limitations
+
+GConf can natively store only a limited set of QVariant data types. These types are Bool, Int, Double,
+String, StringList and List. When publishing other data types the values are automatically serialized
+and stored to GConf as BASE64 encoded strings. When reading these values they are automatically
+converted back to the original data types. The serialization/deserialization is transparent operation
+to the API user but may cause interoperatibility issues with native applications that access the same
+data directly.
 
 \section1 Examples
 

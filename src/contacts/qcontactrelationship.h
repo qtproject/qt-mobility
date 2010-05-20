@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,19 +59,20 @@ class Q_CONTACTS_EXPORT QContactRelationship
 {
 public:
 #ifdef Q_QDOC
-    const char* HasMember;
-    const char* Aggregates;
-    const char* Is;
-    const char* HasAssistant;
-    const char* HasManager;
-    const char* HasSpouse;
+    static const QLatin1Constant HasMember;
+    static const QLatin1Constant Aggregates;
+    static const QLatin1Constant Is;
+    static const QLatin1Constant IsSameAs;
+    static const QLatin1Constant HasAssistant;
+    static const QLatin1Constant HasManager;
+    static const QLatin1Constant HasSpouse;
 #else
-    Q_DECLARE_LATIN1_LITERAL(HasMember, "HasMember");
-    Q_DECLARE_LATIN1_LITERAL(Aggregates, "Aggregates");
-    Q_DECLARE_LATIN1_LITERAL(Is, "Is");
-    Q_DECLARE_LATIN1_LITERAL(HasAssistant, "HasAssistant");
-    Q_DECLARE_LATIN1_LITERAL(HasManager, "HasManager");
-    Q_DECLARE_LATIN1_LITERAL(HasSpouse, "HasSpouse");
+    Q_DECLARE_LATIN1_CONSTANT(HasMember, "HasMember");
+    Q_DECLARE_LATIN1_CONSTANT(Aggregates, "Aggregates");
+    Q_DECLARE_LATIN1_CONSTANT(IsSameAs, "IsSameAs");
+    Q_DECLARE_LATIN1_CONSTANT(HasAssistant, "HasAssistant");
+    Q_DECLARE_LATIN1_CONSTANT(HasManager, "HasManager");
+    Q_DECLARE_LATIN1_CONSTANT(HasSpouse, "HasSpouse");
 #endif
 
     QContactRelationship();
@@ -90,9 +91,20 @@ public:
     void setSecond(const QContactId& secondId);
     void setRelationshipType(const QString& relationshipType);
 
+    enum Role {
+        First = 0,
+        Second,
+        Either
+    };
+
 private:
     QSharedDataPointer<QContactRelationshipPrivate> d;
 };
+
+Q_CONTACTS_EXPORT uint qHash(const QContactRelationship& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_CONTACTS_EXPORT QDebug operator<<(QDebug dbg, const QContactRelationship& rel);
+#endif
 
 QTM_END_NAMESPACE
 

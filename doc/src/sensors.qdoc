@@ -1,0 +1,233 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+\page sensors-api.html
+\title Sensors API
+\brief The Sensors API provides access to sensors.
+\ingroup mobility
+
+\warning This API should be considered in a beta state. It is
+under development and subject to change.
+
+The Sensors API provides access to sensors.
+
+This covers both high-level sensors such as screen orientation (portrait, landscape)
+and low-level, real-time sensors such as accelerometer data.
+
+\tableofcontents
+
+\section1 Namespace
+The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility API's into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
+
+
+\section1 Sensor Types
+
+On a device there can be many types of sensors. Not all of the types that the Sensors API
+supports may be available. There may also be types available that are not defined in the
+Sensors API. You can find the sensor types available on a device using the
+\l QSensor::sensorTypes() function.
+
+For a list of built-in sensor types, see the \l{Sensor Classes} section below.
+
+\section1 Common Conventions
+
+Unless otherwise specified, sensors shall use the
+\l{http://en.wikipedia.org/wiki/Cartesian_coordinate_system}{Right Hand Cartesian coordinate system}.
+
+\image sensors-coordinates.jpg
+
+To allow for measurements in all 6 directions, negative values are used.
+
+\image sensors-coordinates2.jpg
+
+Where rotation around an axis is used, the rotation shall be expressed as a Right Hand rotation.
+
+\image sensors-coordinates3.jpg
+
+In general, sensor data is oriented to the top of the device. If values are to be displayed on
+the screen the values may need to be transformed so that they match the UI orientation. A sensor
+may define its data as being oriented to the UI. This will be noted in the documentation for the
+sensor.
+
+\image sensors-sides2.jpg
+
+\section1 Using a Sensor
+
+The life cycle of a sensor is typically:
+
+\list
+\o Create an instance of QSensor or one of its sub-classes on the stack or heap.
+\o Setup as required by the application.
+\o Start receiving values.
+\o Sensor data is used by the application.
+\o Stop receiving values.
+\endlist
+
+Here is an example of creating a sensor on the heap and on the stack.
+
+\snippet snippets/sensors/creating.cpp Creating a sensor
+
+\section1 Accessing sensor data in a generic fashion
+
+The preferred way to deal with sensor data is via the \l{Reading Classes}.
+However, sometimes this may not be possible. For example, you may be deploying
+an application to a device that has a new sensor type but no C++ header
+describing the reading class is available.
+
+Thanks to Qt's property system you can still access the sensor data. You need to know
+3 pieces of information in order to do this:
+
+\list
+\o The sensor type.
+\o The property name or index.
+\o The property type or a comparable type.
+\endlist
+
+For example, here is an example of how you can access a property of the accelerometer.
+This code does not require any compile-time links to \l QAccelerometer or
+\l QAccelerometerReading.
+
+\snippet snippets/sensors/start.cpp Starting a sensor
+
+You can discover all of this information at runtime too. The sensor_explorer example
+shows you information about available sensors.
+
+\section1 Front end, back end
+
+The Sensors API has a front end, for application developers to use and a back end,
+where device implementors write code to access their hardware. As an application
+developer you do not need to access the back end though it may be useful to understand
+how it works.
+
+Commands from the application are delivered through QSensor and then down to the
+device plugin. Data comes back through the QSensorReading class.
+
+\image sensors-overview.png
+
+More information about the back end can be found in \l{Sensors Backend}.
+
+\section1 Main Classes
+
+The primary classes that make up the Sensors API.
+
+\annotatedlist sensors_main
+
+\section1 Reading Classes
+
+The best way to access sensor data is via one of these classes.
+
+\annotatedlist sensors_reading
+
+\section1 Sensor Classes
+
+These classes provide convenience wrappers that reduce the need for casting.
+Each of these classes represents a sensor type that the Sensors API knows
+about. Note that additional types may be made available at run-time. See
+\l{Sensor Types} for more information.
+
+\annotatedlist sensors_type
+
+\section1 Filter Classes
+
+As with the sensor classes, these provide convenience wrappers that reduce
+the need for casting.
+
+\annotatedlist sensors_filter
+
+*/
+
+/*!
+\page sensors-backend.html
+\title Sensors Backend
+\brief The Sensors Backend connects the Sensors API to the platform services or hardware sensors.
+
+The Sensors Backend connects the Sensors API to the platform services or hardware sensors.
+
+\tableofcontents
+
+\section1 Overview
+
+\section1 Backend API
+
+QSensor instances talk to a backend object. Backends are usually supplied
+with the QtSensors library for a specific device although third party
+backends may be used as well. A backend may talk
+directly to hardware or it may talk to a system service. In some instances
+it may even talk to another sensor.
+An example of this is the orientation sensor backend that talks to an
+accelerometer to determine the orientation.
+
+\section1 Backend Classes
+If you are making sensors available through the Sensors API, these are the
+classes to use.
+\annotatedlist sensors_backend
+
+*/
+
+/*!
+\page creating-a-sensor-plugin.html
+\title Creating a sensor plugin
+
+\section1 How a sensor plugin is loaded
+
+Since sensor backends are created on demand, the sensor plugin is loaded and asked
+to register the sensor backends it handles. The plugin should implement
+QSensorPluginInterface::registerSensors() and call QSensorManager::registerBackend()
+to register available backends. Typically the plugin will also implement
+QSensorBackendFactory::createBackend() in order to instantiate backends it has registered.
+
+The simplest plugin will have just once sensor backend although there is no reason
+that multiple sensor backends cannot be in a plugin.
+
+An example follows.
+
+\snippet snippets/sensors/plugin.cpp Plugin
+
+If you woud like to build a backend into a library or application you can use the
+REGISTER_STATIC_PLUGIN() macro although it may not work in all situations as it
+uses static initialization.
+
+*/
+

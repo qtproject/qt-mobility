@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,7 +41,7 @@
 #ifndef QMESSAGEFILTERPRIVATE_H
 #define QMESSAGEFILTERPRIVATE_H
 #include "qmessagefilter.h"
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include <qvariant.h>
 #endif
 #if defined(Q_OS_WIN)
@@ -109,7 +109,7 @@ public:
     QMessageFilter *q_ptr;
     QMessageDataComparator::MatchFlags _matchFlags;
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     typedef QList<QMessageFilter> SortedMessageFilterList;
     
     bool filter(const QMessage &message) const;

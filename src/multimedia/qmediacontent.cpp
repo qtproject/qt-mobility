@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,9 +42,9 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-#include <qmediacontent.h>
+#include "qmediacontent.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class QMediaContentPrivate : public QSharedData
@@ -104,6 +104,19 @@ QMediaContent::QMediaContent(const QUrl &url):
     d(new QMediaContentPrivate)
 {
     d->resources << QMediaResource(url);
+}
+
+/*!
+    Constructs a media content with \a request providing a reference to the content.
+
+    This constructor can be used to reference media content via network protocols such as HTTP.
+    This may include additional information required to obtain the resource, such as Cookies or HTTP headers.
+*/
+
+QMediaContent::QMediaContent(const QNetworkRequest &request):
+    d(new QMediaContentPrivate)
+{
+    d->resources << QMediaResource(request);
 }
 
 /*!
@@ -191,6 +204,15 @@ QUrl QMediaContent::canonicalUrl() const
 }
 
 /*!
+    Returns a QNetworkRequest that represents that canonical resource for this media content.
+*/
+
+QNetworkRequest QMediaContent::canonicalRequest() const
+{
+    return canonicalResource().request();
+}
+
+/*!
     Returns a QMediaResource that represents that canonical resource for this media content.
 */
 
@@ -213,5 +235,5 @@ QMediaResourceList QMediaContent::resources() const
             : QMediaResourceList();
 }
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

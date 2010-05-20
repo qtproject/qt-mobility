@@ -1,0 +1,438 @@
+tQ Mobility 1.0.0-beta1 is a beta release. It contains a number of changes,
+including API improvements and bug fixes, since the Qt Mobility 1.0.0-tp2
+release. For more details, please refer to the online documentation included
+in this distribution. The documentation is also available online:
+
+  http://qt.nokia.com/doc/qtmobility-1.0
+
+Some of the changes listed in this file include issue tracking numbers
+corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
+of the public source repository.
+
+Qt Bug Tracker: http://bugreports.qt.nokia.com
+Merge Request:  http://qt.gitorious.org
+
+
+****************************************************************************
+*                           General                                        *
+****************************************************************************
+
+New features
+------
+
+ - SomeClass, SomeOtherClass
+    * New classes for foo, bar and baz
+
+Optimizations
+------
+
+ - Optimized foo in QSomeClass
+    * See list of Important Behavior Changes below
+
+
+****************************************************************************
+*                   Important Behavior Changes                             *
+****************************************************************************
+
+ -
+
+
+****************************************************************************
+*                          Library                                         *
+****************************************************************************
+
+QtBearer
+------
+
+ - Various memory leaks.
+ - Documentation fixes.
+ - QNetworkSession API changes.
+    * Renamed isActive() to isOpen().
+    * Renamed property key "ActiveConfigurationIdentifier" to
+      "ActiveConfiguration".
+    * Renamed property key "UserChoiceConfigurationIdentifier" to
+      "UserChoiceConfiguration".
+    * bearerName() function moved to QNetworkConfiguration::bearerName().
+ - Symbian
+    * Add Symbian build time declarations to examples and tests (capabilities,
+      UIDs etc).
+ - Improved unit test coverage and stability.
+
+
+QtContacts
+------
+
+ - QContactManager (and QContactManagerEngine where applicable)
+    * add QContactManager(QObject* parent) ctor
+    * deprecate filterSupported(), add isFilterSupported()
+    * deprecate synthesizeDisplayLabel(), add synthesizedDisplayLabel()
+    * managerFeature - enums as powers of two (deprecation strategy?)
+    * deprecate implementationVersion(), add managerVersion()
+    * deprecate splitUri(), add parseUri()
+    * deprecate contacts() functions, replace with contactIds() functions
+    * add new contacts() functions which return QList<QContact> and can be limited to particular details
+       - add a restrictToDefinitions/Fields parameter in contacts() and contact()
+    * deprecate old batch saveContacts() and removeContacts() functions, replace with new ones
+       - return bool, and take new param: map of int (input list index) to error which occurred for the item at that index
+       - consistent with async request changes, clearer, and more consistent with single save/remove functions too.
+
+ - QContactManagerEngine
+    * deprecated request-related functions in QCME, replaced with better/cleaner ones
+       - deprecated updateRequest() functions in QCME, replaced with:
+          . updateContactFetchRequest()
+          . updateContactSaveRequest()
+          . updateContactRemoveRequest()
+          . updateContactLocalIdFetchRequest()
+          . updateDetailDefinitionSaveRequest()
+          . updateDetailDefinitionRemoveRequest()
+          . updateDetailDefinitionFetchRequest()
+          . updateRelationshipSaveRequest()
+          . updateRelationshipFetchRequest()
+          . updateRelationshipRemoveRequest()
+       - deprecated updateRequestStatus() and replace with a new updateRequestState() function.
+       - state and results are now updated separately and a distinct signal is emitted for each.
+
+ - QContactDetail
+    * deprecate values(), add variantValues()
+    * access constraints now in detail instead of definition (set by backend on a per-detail basis)
+       - possible constraints are now: ReadOnly, Irremovable, NoConstraint.  Deprecated CreateOnly constraint.
+
+ - QContactDetailDefinition
+    * deprecate fields() returning nonconst reference. (To be removed after transition period has elapsed).
+    * Rename QContactDetailDefinitionField class to QContactDetailFieldDefinition (deprecated via typedef).
+
+ - QContactAction
+    * deprecate metadata(), add metaData()
+
+ - QContactDetails
+    * Deprecate QContactGeolocation, add QContactGeoLocation
+    * QContactName -> deprecate first() add firstName(), same for middle() and last().
+    * QContactOnlineAccount -> added Capabilities (string list) field
+
+ - QContactAbstractRequest and leaf classes
+    * QContactDetailDefinitionFetchRequest: deprecated names()/setNames, add definitionNames()/setDefinitionNames()
+    * Deprecate Status enum, add State enum (values suffixed by State; eg, ActiveState)
+    * deprecate status(), add state()
+    * deprecate waitForProgress() -- to be removed (unnecessary API).
+    * add stateChanged() signal to base class
+    * deprecate progress() signal, add resultsAvailable() signal to base class
+       - note that resultsAvailable() signal does not contain a ptr to self - use sender() instead.
+       - state and results are now updated separately in the backend, with distinct signal emitted for each.
+    * QContact*RemoveRequest -> take a list of items as input arguments, instead of a filter / filtering values.
+       - allows detailed error reporting for remove requests, and is more intuitive / simpler API.
+       - current selection criteria functions in RemoveRequests have been deprecated.
+       - this change affects QContactRemoveRequest, QContactDetailDefinitionRemoveRequest and QContactRelationshipRemoveRequest.
+    * deprecated errors() function from base QContactAbstractRequest class
+    * added errorMap() function to various leaf classes where that class' selection input is a list of items
+       - errorMap() returns a map of input list index to an error which occurred for the item at that index.
+ - SamplePhonebook
+    * UI layout refactored to fit small screen better
+
+QtLocation
+------
+
+ - QGeoPositionInfoSource
+    * Renamed requestTimeout to updateTimeout().
+    * updateTimeout() is now emitted during periodic updates if
+      the update is late or an error occurs.
+ - QGeoCoordinate
+    * Renamed QGeoCoordinate:DecimalDegrees to QGeoCoordinate::Degrees.
+ - QGeoPositionInfo
+    * Renamed property() to attribute().
+    * Renamed setProperty() to setAttribute().
+    * Renamed hasProperty() to hasAttribute().
+    * Renamed removeProperty() to removeAttribute().
+    * Renamed QGeoPositionInfo::Heading to QGeoPositionInfo::Direction.
+ - QGeoSatelliteInfo
+    * Renamed property() to attribute().
+    * Renamed setProperty() to setAttribute().
+    * Renamed hasProperty() to hasAttribute().
+    * Renamed removeProperty() to removeAttribute().
+ - QNmeaPositionInfoSource
+    * Added protected virtual function parsePosInfoFromNmeaData() to 
+      enable clients to handle non-standard NMEA sentences if they need to.
+
+QtMessaging
+------
+
+ - Wrap QMessageStore with QMessageManager.
+    * In order to provide a consistent interface with other components
+      of QtMobility that provide a central data manager interface, the
+      existing QMessageStore interface is now private, and replaced in
+      the public interface by the QMessageManager class.
+    
+      The new class provides exactly the same interface as the old class
+      except that it is instantiated as a handle rather than accessed as
+      a singleton.  Internally the handle object can be instantiated as
+      needed, but in documentation or examples the class should be treated
+      as if it were potentially expensive to create and destroy; this will
+      give a consistent form of use for all Q{x}Manager classes between
+      the various QtMobility projects.
+    
+      The old QMessageStore class is still used internally by the
+      QMessageManager, so the latter class need not be reimplemented for
+      multiple platforms.
+
+ - Rename Q{X}Ordering to Q{X}SortOrder.
+    * For increased consistency between QtMobility APIs.
+
+ - Support ordering via a list of SortOrder objects.
+    * For consistency with other QtMobility APIs, allow a composite ordering
+      to be specified using a list of Q{X}SortOrder objects rather than
+      requiring the objects to be accumulated via the + operator.
+
+ - Rename QMessageDataComparator::Options to MatchFlags.
+
+ - Rename QMessageServiceAction to QMessageService.
+    * The term 'action' is already used with conflicting meanings;
+      it can represnt a user-input (QAction), or a facility provided
+      by a service provider which is exposed to the user (as in
+      QContactAction).
+    
+      QMessageService provides a proxy, dispatcher or broker
+      facility, but adding any of these terms to the class name has
+      been judged as not constituting an improvement to readability.
+
+ - Return int from size() functions.
+    * Consistent with standard Qt practice.
+
+ - Rename write{Text}ContentTo to write{Text}Content.
+    * For improved consistentcy with Qt naming.
+
+ - Rename QMessageManager::ErrorCode to QMessageManager::Error.
+    * For improved consistency with Qt naming.
+
+ - Reorder the parameters for QMessageAddress(Type, Address).
+    * There is a logical dependency of address on type.
+
+ - API improvements to QMessageService.
+    * Use the same State enum values as used by the QtMobility Contacts
+      API, and provide the same stateChanged() signal signature.
+    
+      Rename cancelOperation() to cancel() for consistency with Qt.
+
+ - Rename QMessageStore:: and QMessageManager::lastError() to error().
+    * This is the more common form in Qt, and in line with the equivalent
+      Contacts interface name.
+
+ - Rename QMessageFolder::displayName() to name().
+    * DisplayName should be used where the name used for display purposes
+      differs from the fundamental name property.
+
+ - Symbian specific fixes
+    * Added correct Symbian UID to Messaging DLL
+    * Corrected exporting of public headers (to /epoc32/include/)
+    * Changed DLL capability to: ALL -TCB (was previously: ALL -TCB -AllFiles -DRM)
+    * Fixed "." (application private) folder support (attachments)
+      Now all auto tests can use "." folder for test files
+    * Fixed auto tests to use "." folder (just like in other backends)
+    * Fixed file type recognition bug (.png files)
+    * Fixed bug: Messaging queries list unknown (for example bluetooth)
+                 messages from Inbox
+    * Nested filters support for account, folder & message filters finalized, all auto tests pass
+    * MIME type handling related bugs fixed
+    * Character set handling bugs fixes
+    * Default account bug fixed
+    * Message attachment memory usage optimized
+    * Standard folder support for emails improved (Inbox filtering)
+    * Message size calculation accuracy improved
+    * CEikonEnv usages removed (relations to Symbian UI Framework)
+    * message type handling improved (if message type is not defined, message type is retrieved from parentAccount)
+      Related to bug that prevented MMS message sending from MessagingEx
+      (Note: MMS message sending in writemessage example worked)
+    * MMS Message content retrieval bug fixed (related to QByteArray QMessageContentContainer::content() const; bug)
+
+
+QtMedia
+------
+
+ - Added Audio and Video QML elements.
+ - Renamed QtMedia::Frequency to QtMedia::SampleRate for consistency and
+   clarity.
+ - Renamed QtMedia::CoverArtUriSmall to QtMedia::CoverArtUrlSmall,
+   QtMedia::CoverArtUriLarge to CoverArtUrlLarge, and  QtMedia::PosterUri
+   to QtMedia::PosterUrl.
+ - QGraphicsVideoItem
+    * Added offset(), size(), nativeSize(), and aspectRatioMode()
+      properties.
+ - QGraphicsVideoItem, QMediaPlaylist, QVideoWidget
+    * Replaced QMediaObject* constructor parameter with setMediaObject()
+      function.
+ - QMediaContent
+    * Renamed canonicalUri() to canonicalUrl().
+    * Removed coverArtUriSmall(), coverArtUriLarge(), posterUri(),
+      thumbnailUriSmall(), and thumbnailUriLarge() properties.
+ - QMediaPlayer
+    * Added static supportedMimeTypes() method.
+    * Added isAudioAvailable() property.
+ - Added QMediaTimeRange and QMediaTimeInterval classes to represent time
+   periods in media items.
+ - QMediaPlayerControl
+    * Renamed seekRanges() to availablePlaybackRanges(). This method now
+      returns a QMediaTimeRange, which can contain multiple disjoint time
+      intervals representing buffered portions of media.
+ - QMediaResource
+    * Renamed uri() to url().
+    * Renamed channels() to channelCount().
+    * Renamed size() to dataSize().
+    * Removed duration() and sampleSize().
+
+QtPublishSubscribe
+------
+
+ - Rename QValueSpacePublisher::attributeInterestChanged() to
+   QValueSpacePublisher::interestChanged().
+ - Symbian backend improvements
+    * MOBILITY-387: Symbian central repository related compile error fixed
+    * Support for removeValue.
+    * subPaths only returns the values that are really available.
+    * Unsupported data types are published as serialized QByteArrays.
+      All QVariant data types can be passed through the Publish and Subscribe.
+    * PSPathMapper server added so the QCRML files no longer need to be parsed
+      in client-side.
+    * QCRML files can now be installed on any drive.
+ - Fixed bugs
+    * QTMOBILITY-38: The table/list view in the subscriber window of publish
+      and subscribe example is now readonly.
+    * QTMOBILITY-39: Compile failure with gcc 4.4.
+    * QTMOBILITY-43: Rework P&S example to support small screen sizes.
+    * Memory leak in Registry Layer.
+
+QtServiceFramework
+------
+
+ - QService namespace added
+    * Renamed QServiceManager::Scope to QService::Scope
+ - QServiceFilter
+    * Renamed customPropertyKeys() to customAttributes()
+    * Renamed setCustomProperty() to setCustomAttribute()
+    * Removed removeCustomProperty()
+    * Renamed clearCustomProperties() to clearCustomAttribute()
+    * Renamed CapabilityMatchRule::MatchAll to CapabilityMatchRule::MatchMinimum
+    * Renamed interfaceMajorVersion() to majorVersion()
+    * Renamed interfaceMinorVersion() to minorVersion()
+ - QServiceInterfaceDescriptor
+    * Renamed inSystemScope() to scope()
+    * Renamed PropertyKey to Attribute
+    * Renamed property() to attribute()
+    * Renamed customProperty() to customAttribute()
+    * Renamed customPropertyKeys() to customAttributes()
+ - QServiceManager
+    * Renamed getInterface() to loadLocalTypedInterface()
+
+
+ - error reporting for Service XML parsing imporved
+ - export macro name changed due to name clash
+ - multiple unit test fixes
+ - Symbian backend
+    * Maturity improvements in emulator environment
+    * DB handling server is terminated automatically when any client no
+      longer uses it
+    * Fixed how library existence is checked in Symbian
+    * databasemanager server UID added
+    * All emulator processes use common service framework database
+    * Multiple QServiceManager instance issue on emulator fixed
+
+QtSystemInfo
+------
+
+ - New features for Maemo5 backend
+    * simStatus
+    * Available languages
+    * hasFeatureSupported completed
+    * displayBrightness
+    * imsi
+
+ - New features for Mac backend
+    * added network signaling
+
+ - New features for Linux backend
+    * code refactoring
+
+
+
+****************************************************************************
+*                      Platform Specific Changes                           *
+****************************************************************************
+
+Qt Mobility for Embedded Linux
+------
+
+ -
+
+Qt Mobility for Unix (X11 and Mac OS X)
+------
+
+ - 
+
+Qt Mobility for Linux/X11
+------
+
+ -
+
+Qt Mobility for Windows
+------
+
+ - Added Direct Show based media player service implementation.
+
+Qt Mobility for Mac OS X
+------
+
+ -
+
+Qt Mobility for Windows CE
+------
+
+ -
+
+Qt Mobility for Maemo5
+------
+
+ - Experimental support for QtLocation
+ - Experimental support for QtSystemInfo
+ 
+ Qt Mobility for Symbian
+------
+
+ - QContactManager backends
+    * QContactAvatar: Added support for pixmap field and VideoRingtone subtype. For pixmap field there is a known issue that it is not always shown in the name list view of S60 platform Phonebook.
+    * The display label now uses the same formatting rules as the platform phonebook application, except that "unnamed" contact label is not localised.
+    * When filtering with QContactDisplayLabel and match flag MatchStartsWith is set the filtering rules follow the platform Phonebook's name list view filtering rules.
+    * When filtering with a phone number detail and match flags MatchPhoneNumber is set the filtering rules follow the platform Phonebook's phone number matching rules. Known issue: the matched phone number needs to be at least 7 digits.
+    * Contact filtering: added support for intersection and union filters. This improves performance in those cases where the contained filters give only a sub-set of the contacts.
+    * Fixed a bug where modifying the details of a self-contact failed.
+    * Added an experimental support for SIM ADN contacts with QContactManager implementation named "symbiansim".
+    * Several bug fixes to contact relationships.
+    * Fixed the error handling when a client tries to update the contact type. This is not supported.
+    * Bugfix: Saving and deleting contacts in quick successive manner caused the contact database server to fail on S60 3.2 devices.
+    * Bugfix [QTMOBILITY-54]: Loading a QContact for a contact database contact with an undefined field type caused a crash. 
+
+ - Installpath for Symbian headers changed
+    * Contacts and Versit installed to EPOCROOT/include/app
+    * All other API headers installed to EPOCROOT/include/mw
+
+ - Multimedia
+    * Symbian backend added for 3rd ed FP1, 3rd ed FP2 and 5th ed. Following services supported
+      - AudioCapture
+        * limited codec support
+      - Radio support (needs sim-card when testing)
+        * listen radio
+        * search channels / frequency
+        * change volume
+      - Mediaplayer
+        * play local files
+        * play local video
+        * play stream e.g. from youtube working
+        * retrieve metadata ( following tags supported: title, artist, comment, genre, ye   ar, copyright, album, composer, albumtrack, audiobitrate, videobitrate, duration, content type)
+	* read extended metadata supported
+        * writing metada to file not supported by S60
+        * codec support depends on device model
+        * AudioDeviceControl not implemented for mediaplayer, defaults to device default.
+
+****************************************************************************
+*                          Tools                                           *
+****************************************************************************
+
+ - ICheck added 
+    * Validation tool for meta object defined service framework interfaces
+

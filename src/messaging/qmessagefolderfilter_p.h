@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,7 @@
 #define QMESSAGEFOLDERFILTERPRIVATE_H
 #include "qmessagefolderfilter.h"
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include <qvariant.h>
 #include "qmessagefolder.h"
 #endif
@@ -58,7 +58,7 @@ class QMessageFolderFilterPrivate
 {
     Q_DECLARE_PUBLIC(QMessageFolderFilter)
 public:
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     enum Criterion { 
         None = 0, 
         IdEquality, 
@@ -92,7 +92,7 @@ public:
     ~QMessageFolderFilterPrivate();
     QMessageFolderFilter *q_ptr;
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     typedef QList<QMessageFolderFilter> SortedMessageFolderFilterList;
     
     bool filter(const QMessageFolder &messageFolder) const;

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,11 +41,15 @@
 #include "databasemanagerserver.h"
 #include "clientservercommon.h"
 #include "databasemanagersession.h"
+#ifdef __WINS__
+#include <QThread>
+#endif
 
 QTM_BEGIN_NAMESPACE
 
 CDatabaseManagerServer::CDatabaseManagerServer()
     : CServer2(EPriorityNormal)
+    , iSessionCount(0)
     {
     }
 
@@ -56,14 +60,30 @@ CSession2* CDatabaseManagerServer::NewSessionL(const TVersion& aVersion, const R
             {
             User::Leave(KErrNotSupported);
             }
-
-        return CDatabaseManagerServerSession::NewL();
+        
+        return CDatabaseManagerServerSession::NewL(*const_cast<CDatabaseManagerServer*>(this));
     }
 
 void CDatabaseManagerServer::PanicServer(TDatabaseManagerSerververPanic aPanic)
     {
     _LIT(KTxtServerPanic,"Database manager server panic");
     User::Panic(KTxtServerPanic, aPanic);
+    }
+
+void CDatabaseManagerServer::IncreaseSessions()
+    {
+    iSessionCount++;
+    }
+
+void CDatabaseManagerServer::DecreaseSessions()
+    {
+    iSessionCount--;
+    if (iSessionCount <= 0)
+        {
+#ifdef __WINS__        
+        QThread::currentThread()->quit();
+#endif
+        }
     }
 
 QTM_END_NAMESPACE

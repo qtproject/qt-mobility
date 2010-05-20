@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,57 +39,94 @@
 **
 ****************************************************************************/
 #include "qmessageaccountid.h"
+#include "qmessageaccountid_p.h"
+
+#include <qhash.h>
 
 QTM_BEGIN_NAMESPACE
 
 QMessageAccountId::QMessageAccountId()
+ : d_ptr(0)
 {
 }
 
 QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
+ : d_ptr(0)
 {
-    Q_UNUSED(other)
+    this->operator=(other);
 }
 
 QMessageAccountId::QMessageAccountId(const QString& id)
+ : d_ptr(new QMessageAccountIdPrivate(this))
 {
-    Q_UNUSED(id)
+    d_ptr->_id = id;
 }
 
 QMessageAccountId::~QMessageAccountId()
 {
+    delete d_ptr;
 }
 
 bool QMessageAccountId::operator==(const QMessageAccountId& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (isValid()) {
+        if (other.isValid()) {
+            return (d_ptr->_id == other.d_ptr->_id);
+        }
+        return false;
+    } else {
+        return !other.isValid();
+    }
 }
 
 QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+    if (&other != this) {
+        if (other.isValid()) {
+            if (!d_ptr) {
+                d_ptr = new QMessageAccountIdPrivate(this);
+            }
+            d_ptr->_id = other.d_ptr->_id;
+        } else {
+            delete d_ptr;
+            d_ptr = 0;
+        }
+    }
+
+    return *this;
 }
 
 bool QMessageAccountId::operator<(const QMessageAccountId& other) const
 {
-    return false; // stub
+    long left = 0;
+    long right = 0;
+    if (d_ptr) {
+        left = qHash(d_ptr->_id);
+    }
+    if (other.d_ptr) {
+        right = qHash(other.d_ptr->_id);
+    }
+
+    return (left < right);
 }
 
 QString QMessageAccountId::toString() const
 {
-    return QString::null; // stub
+    if (!isValid()) {
+        return QString();
+    }
+
+    return d_ptr->_id;
 }
 
 bool QMessageAccountId::isValid() const
 {
-    return false; // stub
+    return (d_ptr && !d_ptr->_id.isEmpty());
 }
 
 uint qHash(const QMessageAccountId &id)
 {
-    Q_UNUSED(id)
-    return 0; // stub
+    return qHash(id.toString());
 }
+
 QTM_END_NAMESPACE

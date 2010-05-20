@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,25 +58,57 @@
 #include <qnetworksession.h>
 #include <QNetworkInterface>
 #include <QDateTime>
+#include <QTimer>
 
-#ifdef Q_WS_MAEMO_6
 #include <icd/dbus_api.h>
-#endif
 
 QTM_BEGIN_NAMESPACE
+
+struct ICd2DetailsDBusStruct
+{
+    QString serviceType;
+    uint serviceAttributes;
+    QString setviceId;
+    QString networkType;
+    uint networkAttributes;
+    QByteArray networkId;
+};
+
+typedef QList<ICd2DetailsDBusStruct> ICd2DetailsList;
 
 class QNetworkSessionPrivate : public QObject
 {
     Q_OBJECT
 public:
     QNetworkSessionPrivate() : 
-	    tx_data(0), rx_data(0), m_activeTime(0), isActive(false),
-#ifdef Q_WS_MAEMO_6
-        connectFlags(ICD_CONNECTION_FLAG_USER_EVENT)
-#else
-        connectFlags(0)
-#endif
+        tx_data(0), rx_data(0), m_activeTime(0), isOpen(false),
+        connectFlags(ICD_CONNECTION_FLAG_USER_EVENT),
+        currentState(QNetworkSession::Invalid),
+        m_asynchCallActive(false)
     {
+        m_stopTimer.setSingleShot(true);
+        connect(&m_stopTimer, SIGNAL(timeout()), this, SLOT(finishStopBySendingClosedSignal()));
+
+        QDBusConnection systemBus = QDBusConnection::systemBus();
+
+        m_dbusInterface = new QDBusInterface(ICD_DBUS_API_INTERFACE,
+                                         ICD_DBUS_API_PATH,
+                                         ICD_DBUS_API_INTERFACE,
+                                         systemBus,
+                                         this);
+
+        systemBus.connect(ICD_DBUS_API_INTERFACE,
+                        ICD_DBUS_API_PATH,
+                        ICD_DBUS_API_INTERFACE,
+                        ICD_DBUS_API_CONNECT_SIG,
+                        this,
+                        SLOT(stateChange(const QDBusMessage&)));
+
+        qDBusRegisterMetaType<ICd2DetailsDBusStruct>();
+        qDBusRegisterMetaType<ICd2DetailsList>();
+
+        m_connectRequestTimer.setSingleShot(true);
+        connect(&m_connectRequestTimer, SIGNAL(timeout()), this, SLOT(connectTimeout()));
     }
 
     ~QNetworkSessionPrivate()
@@ -120,7 +152,11 @@ Q_SIGNALS:
 private Q_SLOTS:
     void do_open();
     void networkConfigurationsChanged();
-    void configurationChanged(const QNetworkConfiguration &config);
+    void iapStateChanged(const QString& iapid, uint icd_connection_state);
+    void updateProxies(QNetworkSession::State newState);
+    void finishStopBySendingClosedSignal();
+    void stateChange(const QDBusMessage& rep);
+    void connectTimeout();
 
 private:
     QNetworkConfigurationManager manager;
@@ -131,6 +167,7 @@ private:
 
     // The config set on QNetworkSession.
     QNetworkConfiguration publicConfig;
+    QNetworkConfiguration config;
 
     // If publicConfig is a ServiceNetwork this is a copy of publicConfig.
     // If publicConfig is an UserChoice that is resolved to a ServiceNetwork this is the actual
@@ -143,7 +180,6 @@ private:
 
     QNetworkConfiguration& copyConfig(QNetworkConfiguration &fromConfig, QNetworkConfiguration &toConfig, bool deepCopy = true);
     void clearConfiguration(QNetworkConfiguration &config);
-    void cleanupAnyConfiguration();
 
     QNetworkSession::State state;
     bool isOpen;
@@ -159,12 +195,32 @@ private:
     QString currentNetworkInterface;
     friend class IcdListener;
     void updateState(QNetworkSession::State);
-    void updateIdentifier(QString &newId);
+    void updateIdentifier(const QString &newId);
     quint64 getStatistics(bool sent) const;
     void cleanupSession(void);
+
+    void updateProxyInformation();
+    void clearProxyInformation();
+    QNetworkSession::State currentState;
+
+    QDBusInterface *m_dbusInterface;
+
+    QTimer m_stopTimer;
+
+    bool m_asynchCallActive;
+    QTimer m_connectRequestTimer;
 };
 
 QTM_END_NAMESPACE
+
+// Marshall the ICd2DetailsDBusStruct data into a D-Bus argument
+QDBusArgument &operator<<(QDBusArgument &argument, const QtMobility::ICd2DetailsDBusStruct &icd2);
+
+// Retrieve the ICd2DetailsDBusStruct data from the D-Bus argument
+const QDBusArgument &operator>>(const QDBusArgument &argument, QtMobility::ICd2DetailsDBusStruct &icd2);
+
+Q_DECLARE_METATYPE(QtMobility::ICd2DetailsDBusStruct);
+Q_DECLARE_METATYPE(QtMobility::ICd2DetailsList);
 
 #endif //QNETWORKSESSIONPRIVATE_H
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qlocationtestutils_p.h"
 
 #if defined(Q_OS_SYMBIAN)
@@ -60,7 +61,7 @@ void QLocationTestUtils::uheap_mark_end()
 
 bool QLocationTestUtils::hasDefaultSource()
 {
-#if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
+#if defined(Q_OS_SYMBIAN)
     return true;
 #elif defined (Q_OS_WINCE)
     return true;
@@ -71,10 +72,13 @@ bool QLocationTestUtils::hasDefaultSource()
 
 bool QLocationTestUtils::hasDefaultMonitor()
 {
-#if defined(Q_OS_SYMBIAN)
+#if defined(Q_OS_SYMBIAN) && defined(QT_LOCATION_S60_MONITORING)
     return true;
-#endif
+#elif defined (Q_WS_MAEMO_5)
+    return true;
+#else
     return false;
+#endif
 }
 
 QString QLocationTestUtils::addNmeaChecksumAndBreaks(const QString &sentence)
@@ -103,6 +107,12 @@ QString QLocationTestUtils::createGgaSentence(const QTime &time)
 {
     QString nmea = QString("$GPGGA,%1,2734.76859,S,15305.99361,E,1,04,3.5,49.4,M,39.2,M,,*")
             .arg(time.toString("hhmmss.zzz"));
+    return addNmeaChecksumAndBreaks(nmea);
+}
+
+QString QLocationTestUtils::createGgaSentence(int lat, int lng, const QTime &time) {
+    QString nmea = QString("$GPGGA,%1,%200.00000,S,%300.,E,1,04,3.5,49.4,M,39.2,M,,*")
+            .arg(time.toString("hhmmss.zzz")).arg(lat).arg(lng);
     return addNmeaChecksumAndBreaks(nmea);
 }
 

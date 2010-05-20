@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,7 +45,6 @@
 // this file includes all of the leaf filter classes
 // provided by the Qt Contacts API.
 
-#include "qcontactactionfilter.h"
 #include "qcontactchangelogfilter.h"
 #include "qcontactdetailfilter.h"
 #include "qcontactdetailrangefilter.h"

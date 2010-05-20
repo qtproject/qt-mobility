@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -80,6 +80,13 @@
  * Gender field type.
  */
 #define KUidContactFieldGenderValue		0x200100E7
+
+// !! In case this is undefined on earlier platforms
+#ifndef KUidContactFieldGEOValue
+#define KUidContactFieldGEOValue                0x10274DB2
+// This is to let cntmodelextuids.h know it should also declare the const TUid version
+#define Q_HAD_TO_DECLARE_GEO_VALUE  1
+#endif
 
 #endif // CNTMODELEXTUIDS_HRH
 

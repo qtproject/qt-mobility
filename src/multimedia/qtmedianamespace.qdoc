@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,15 +40,15 @@
 ****************************************************************************/
 
 /*!
-    \namespace QtMedia
+    \namespace QtMediaServices
     \ingroup multimedia
 
-    \brief The QtMedia namespace contains miscellaneous identifiers used throughout the Qt Media
-    library.
+    \brief The QtMediaServices namespace contains miscellaneous identifiers used throughout the Qt Media
+    services library.
 */
 
 /*!
-    \enum QtMedia::MetaData
+    \enum QtMediaServices::MetaData
 
     This enum provides identifiers for meta-data attributes.
 
@@ -98,6 +98,7 @@
 
     \value CoverArtUrlSmall The URL of a small cover art image. QUrl.
     \value CoverArtUrlLarge The URL of a large cover art image. QUrl.
+    \value CoverArtImage An embedded cover art image. QImage.
 
     Image and video attributes
     \value Resolution The dimensions of an image or video.  QSize.
@@ -109,6 +110,7 @@
     \value VideoCodec The codec of the media's video stream.  QString.
 
     \value PosterUrl The URL of a poster image.  QUrl.
+    \value PosterImage An embedded poster image.  QImage.
 
     Movie attributes
     \value ChapterNumber The chapter number of the media.  int.
@@ -162,21 +164,23 @@
         Indicates the direction of sharpness processing applied by the camera when the image was shot.
     \value DeviceSettingDescription
         Exif tag, indicates information on the picture-taking conditions of a particular camera model. QString
+
+    \value ThumbnailImage An embedded thumbnail image.  QImage.
 */
 
 /*!
-    \enum QtMedia::SupportEstimate
+    \enum QtMediaServices::SupportEstimate
 
     Enumerates the levels of support a media service provider may have for a feature.
 
     \value NotSupported The feature is not supported.
     \value MaybeSupported The feature may be supported.
     \value ProbablySupported The feature is probably supported.
-    \value PreferedService The service is the preferred provider of a service.
+    \value PreferredService The service is the preferred provider of a service.
 */
 
 /*!
-    \enum QtMedia::EncodingQuality
+    \enum QtMediaServices::EncodingQuality
 
     Enumerates quality encoding levels.
 
@@ -188,7 +192,7 @@
 */
 
 /*!
-    \enum QtMedia::EncodingMode
+    \enum QtMediaServices::EncodingMode
 
     Enumerates encoding modes.
 
@@ -199,7 +203,7 @@
 */
 
 /*!
-    \enum QtMedia::AvailabilityError
+    \enum QtMediaServices::AvailabilityError
 
     Enumerates Service status errors.
 

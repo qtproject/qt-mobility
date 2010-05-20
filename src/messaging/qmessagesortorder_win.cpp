@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -88,10 +88,10 @@ bool QMessageSortOrderPrivate::lessThan(const QMessageSortOrder &sortOrder, cons
             QString leftStr;
             QString rightStr;
             foreach (QMessageAddress a, left->to() + left->cc() + left->bcc()) {
-                leftStr.append(a.recipient() + ";");
+                leftStr.append(a.addressee() + ";");
             }
             foreach (QMessageAddress a, right->to() + right->cc() + right->bcc()) {
-                rightStr.append(a.recipient() + ";");
+                rightStr.append(a.addressee() + ";");
             }
             COMPARE(leftStr, rightStr)
         }
@@ -223,7 +223,7 @@ QList<QMessageFilter> QMessageSortOrderPrivate::normalize(const QList<QMessageFi
                     result.append(QMessageFilter::byType(QMessage::Mms) & filter);
                     result.append(QMessageFilter::byType(QMessage::Sms) & filter);
                     result.append(QMessageFilter::byType(QMessage::Email) & filter);
-                    result.append(QMessageFilter::byType(QMessage::Xmpp) & filter);
+                    result.append(QMessageFilter::byType(QMessage::InstantMessage) & filter);
                 }
             } break;
             case Read:

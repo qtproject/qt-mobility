@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,12 +57,12 @@ public:
         System = 1,
         Phone,
         Email,
-        Xmpp
+        InstantMessage
         // Extensible
     };
 
     QMessageAddress();
-    QMessageAddress(Type type, const QString &recipient);
+    QMessageAddress(Type type, const QString &addressee);
     QMessageAddress(const QMessageAddress &other);
 
     virtual ~QMessageAddress();
@@ -75,8 +75,8 @@ public:
     Type type() const;
     void setType(Type type);
 
-    QString recipient() const;
-    void setRecipient(const QString &recipient);
+    QString addressee() const;
+    void setAddressee(const QString &addressee);
 
     static void parseEmailAddress(const QString& emailAddress, QString *name, QString *address, QString *suffix = 0, bool *startDelimeterFound = 0, bool *endDelimeterFound = 0);
 

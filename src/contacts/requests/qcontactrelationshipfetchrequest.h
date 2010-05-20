@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,8 +59,7 @@ class Q_CONTACTS_EXPORT QContactRelationshipFetchRequest : public QContactAbstra
     Q_OBJECT
 
 public:
-    QContactRelationshipFetchRequest();
-    ~QContactRelationshipFetchRequest();
+    QContactRelationshipFetchRequest(QObject* parent = 0);
 
     /* Selection */
     void setFirst(const QContactId& firstId);
@@ -69,15 +68,11 @@ public:
     void setRelationshipType(const QString& relationshipType);
     QString relationshipType() const;
 
-    void setParticipant(const QContactId& participant, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either);
-    QContactId participant() const;
-    QContactRelationshipFilter::Role participantRole() const;
+    void setSecond(const QContactId& secondId);
+    QContactId second() const;
 
     /* Results */
     QList<QContactRelationship> relationships() const;
-
-signals:
-    void progress(QContactRelationshipFetchRequest* self, bool appendOnly);
 
 private:
     Q_DISABLE_COPY(QContactRelationshipFetchRequest)

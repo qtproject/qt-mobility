@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,9 +56,9 @@
 #include <CoreVideo/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>
 
-class QGLContext;
+QT_BEGIN_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+class QGLContext;
 
 class QCvDisplayLink;
 class QT7PlayerSession;
@@ -102,6 +102,6 @@ private:
     QSize m_nativeSize;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

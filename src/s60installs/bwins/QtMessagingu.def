@@ -1,0 +1,345 @@
+EXPORTS
+	?matchFlags@QMessageFolderFilter@QtMobility@@QBE?AV?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@XZ @ 1 NONAME ; class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag> QtMobility::QMessageFolderFilter::matchFlags(void) const
+	??8QMessageContentContainerId@QtMobility@@QBE_NABV01@@Z @ 2 NONAME ; bool QtMobility::QMessageContentContainerId::operator==(class QtMobility::QMessageContentContainerId const &) const
+	??0QMessageFolderId@QtMobility@@QAE@XZ @ 3 NONAME ; QtMobility::QMessageFolderId::QMessageFolderId(void)
+	?toString@QMessageAccountId@QtMobility@@QBE?AVQString@@XZ @ 4 NONAME ; class QString QtMobility::QMessageAccountId::toString(void) const
+	?getStaticMetaObject@QMessageService@QtMobility@@SAABUQMetaObject@@XZ @ 5 NONAME ; struct QMetaObject const & QtMobility::QMessageService::getStaticMetaObject(void)
+	?byId@QMessageFilter@QtMobility@@SA?AV12@ABV12@W4InclusionComparator@QMessageDataComparator@2@@Z @ 6 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byId(class QtMobility::QMessageFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??1QMessageAddress@QtMobility@@UAE@XZ @ 7 NONAME ; QtMobility::QMessageAddress::~QMessageAddress(void)
+	?type@QMessageAddress@QtMobility@@QBE?AW4Type@12@XZ @ 8 NONAME ; enum QtMobility::QMessageAddress::Type QtMobility::QMessageAddress::type(void) const
+	??0QMessageFolderId@QtMobility@@QAE@ABVQString@@@Z @ 9 NONAME ; QtMobility::QMessageFolderId::QMessageFolderId(class QString const &)
+	?setBody@QMessage@QtMobility@@QAEXAAVQTextStream@@ABVQByteArray@@@Z @ 10 NONAME ; void QtMobility::QMessage::setBody(class QTextStream &, class QByteArray const &)
+	??IQMessageFilter@QtMobility@@QBE?AV01@ABV01@@Z @ 11 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::operator&(class QtMobility::QMessageFilter const &) const
+	?progressChanged@QMessageService@QtMobility@@IAEXII@Z @ 12 NONAME ; void QtMobility::QMessageService::progressChanged(unsigned int, unsigned int)
+	?setDerivedMessage@QMessageContentContainer@QtMobility@@AAEXPAVQMessage@2@@Z @ 13 NONAME ; void QtMobility::QMessageContentContainer::setDerivedMessage(class QtMobility::QMessage *)
+	?contentCharset@QMessageContentContainer@QtMobility@@QBE?AVQByteArray@@XZ @ 14 NONAME ; class QByteArray QtMobility::QMessageContentContainer::contentCharset(void) const
+	?writeContent@QMessageContentContainer@QtMobility@@QBEXAAVQDataStream@@@Z @ 15 NONAME ; void QtMobility::QMessageContentContainer::writeContent(class QDataStream &) const
+	??MQMessageId@QtMobility@@QBE_NABV01@@Z @ 16 NONAME ; bool QtMobility::QMessageId::operator<(class QtMobility::QMessageId const &) const
+	?setPreferredCharsets@QMessage@QtMobility@@SAXABV?$QList@VQByteArray@@@@@Z @ 17 NONAME ; void QtMobility::QMessage::setPreferredCharsets(class QList<class QByteArray> const &)
+	?size@QMessage@QtMobility@@QBEHXZ @ 18 NONAME ; int QtMobility::QMessage::size(void) const
+	??_EQMessageAccountSortOrder@QtMobility@@UAE@I@Z @ 19 NONAME ; QtMobility::QMessageAccountSortOrder::~QMessageAccountSortOrder(unsigned int)
+	?isEmpty@QMessageFolderFilter@QtMobility@@QBE_NXZ @ 20 NONAME ; bool QtMobility::QMessageFolderFilter::isEmpty(void) const
+	?byTimeStamp@QMessageSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 21 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::byTimeStamp(enum Qt::SortOrder)
+	?contentIds@QMessageContentContainer@QtMobility@@QBE?AV?$QList@VQMessageContentContainerId@QtMobility@@@@XZ @ 22 NONAME ; class QList<class QtMobility::QMessageContentContainerId> QtMobility::QMessageContentContainer::contentIds(void) const
+	??4QMessageAccountSortOrder@QtMobility@@QAEAAV01@ABV01@@Z @ 23 NONAME ; class QtMobility::QMessageAccountSortOrder & QtMobility::QMessageAccountSortOrder::operator=(class QtMobility::QMessageAccountSortOrder const &)
+	??0QMessageAccount@QtMobility@@QAE@XZ @ 24 NONAME ; QtMobility::QMessageAccount::QMessageAccount(void)
+	?setFrom@QMessage@QtMobility@@QAEXABVQMessageAddress@2@@Z @ 25 NONAME ; void QtMobility::QMessage::setFrom(class QtMobility::QMessageAddress const &)
+	?setTo@QMessage@QtMobility@@QAEXABVQMessageAddress@2@@Z @ 26 NONAME ; void QtMobility::QMessage::setTo(class QtMobility::QMessageAddress const &)
+	??8QMessageFolderSortOrder@QtMobility@@QBE_NABV01@@Z @ 27 NONAME ; bool QtMobility::QMessageFolderSortOrder::operator==(class QtMobility::QMessageFolderSortOrder const &) const
+	??1QMessageSortOrder@QtMobility@@UAE@XZ @ 28 NONAME ; QtMobility::QMessageSortOrder::~QMessageSortOrder(void)
+	?setPriority@QMessage@QtMobility@@QAEXW4Priority@12@@Z @ 29 NONAME ; void QtMobility::QMessage::setPriority(enum QtMobility::QMessage::Priority)
+	?byParentFolderId@QMessageFolderFilter@QtMobility@@SA?AV12@ABV12@W4InclusionComparator@QMessageDataComparator@2@@Z @ 30 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byParentFolderId(class QtMobility::QMessageFolderFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??SQMessageFilter@QtMobility@@QBE?AV01@XZ @ 31 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::operator~(void) const
+	?byTimeStamp@QMessageFilter@QtMobility@@SA?AV12@ABVQDateTime@@W4EqualityComparator@QMessageDataComparator@2@@Z @ 32 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byTimeStamp(class QDateTime const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?byId@QMessageFolderFilter@QtMobility@@SA?AV12@ABV12@W4InclusionComparator@QMessageDataComparator@2@@Z @ 33 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byId(class QtMobility::QMessageFolderFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??SQMessageAccountFilter@QtMobility@@QBE?AV01@XZ @ 34 NONAME ; class QtMobility::QMessageAccountFilter QtMobility::QMessageAccountFilter::operator~(void) const
+	?qHash@QtMobility@@YAIABVQMessageAccountId@1@@Z @ 35 NONAME ; unsigned int QtMobility::qHash(class QtMobility::QMessageAccountId const &)
+	??9QMessageFolderFilter@QtMobility@@QBE_NABV01@@Z @ 36 NONAME ; bool QtMobility::QMessageFolderFilter::operator!=(class QtMobility::QMessageFolderFilter const &) const
+	?isEmpty@QMessageFilter@QtMobility@@QBE_NXZ @ 37 NONAME ; bool QtMobility::QMessageFilter::isEmpty(void) const
+	?countFolders@QMessageManager@QtMobility@@QBEHABVQMessageFolderFilter@2@@Z @ 38 NONAME ; int QtMobility::QMessageManager::countFolders(class QtMobility::QMessageFolderFilter const &) const
+	?byParentAccountId@QMessageFilter@QtMobility@@SA?AV12@ABVQMessageAccountId@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 39 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byParentAccountId(class QtMobility::QMessageAccountId const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	??1QMessageManager@QtMobility@@UAE@XZ @ 40 NONAME ; QtMobility::QMessageManager::~QMessageManager(void)
+	?getStaticMetaObject@QMessageManager@QtMobility@@SAABUQMetaObject@@XZ @ 41 NONAME ; struct QMetaObject const & QtMobility::QMessageManager::getStaticMetaObject(void)
+	??9QMessageId@QtMobility@@QBE_NABV01@@Z @ 42 NONAME ; bool QtMobility::QMessageId::operator!=(class QtMobility::QMessageId const &) const
+	?headerFields@QMessageContentContainer@QtMobility@@QBE?AV?$QList@VQByteArray@@@@XZ @ 43 NONAME ; class QList<class QByteArray> QtMobility::QMessageContentContainer::headerFields(void) const
+	?error@QMessageManager@QtMobility@@QBE?AW4Error@12@XZ @ 44 NONAME ; enum QtMobility::QMessageManager::Error QtMobility::QMessageManager::error(void) const
+	??0QMessageAccountId@QtMobility@@QAE@XZ @ 45 NONAME ; QtMobility::QMessageAccountId::QMessageAccountId(void)
+	?setBody@QMessage@QtMobility@@QAEXABVQString@@ABVQByteArray@@@Z @ 46 NONAME ; void QtMobility::QMessage::setBody(class QString const &, class QByteArray const &)
+	?countMessages@QMessageManager@QtMobility@@QBEHABVQMessageFilter@2@@Z @ 47 NONAME ; int QtMobility::QMessageManager::countMessages(class QtMobility::QMessageFilter const &) const
+	?retrieve@QMessageService@QtMobility@@QAE_NABVQMessageId@2@ABVQMessageContentContainerId@2@@Z @ 48 NONAME ; bool QtMobility::QMessageService::retrieve(class QtMobility::QMessageId const &, class QtMobility::QMessageContentContainerId const &)
+	?isValid@QMessageFolderId@QtMobility@@QBE_NXZ @ 49 NONAME ; bool QtMobility::QMessageFolderId::isValid(void) const
+	??1QMessageAccount@QtMobility@@UAE@XZ @ 50 NONAME ; QtMobility::QMessageAccount::~QMessageAccount(void)
+	?byReceptionTimeStamp@QMessageSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 51 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::byReceptionTimeStamp(enum Qt::SortOrder)
+	??9QMessageAccountId@QtMobility@@QBE_NABV01@@Z @ 52 NONAME ; bool QtMobility::QMessageAccountId::operator!=(class QtMobility::QMessageAccountId const &) const
+	?date@QMessage@QtMobility@@QBE?AVQDateTime@@XZ @ 53 NONAME ; class QDateTime QtMobility::QMessage::date(void) const
+	?bySubject@QMessageFilter@QtMobility@@SA?AV12@ABVQString@@W4EqualityComparator@QMessageDataComparator@2@@Z @ 54 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::bySubject(class QString const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	??9QMessageAccountSortOrder@QtMobility@@QBE_NABV01@@Z @ 55 NONAME ; bool QtMobility::QMessageAccountSortOrder::operator!=(class QtMobility::QMessageAccountSortOrder const &) const
+	?tr@QMessageService@QtMobility@@SA?AVQString@@PBD0@Z @ 56 NONAME ; class QString QtMobility::QMessageService::tr(char const *, char const *)
+	?textContent@QMessageContentContainer@QtMobility@@QBE?AVQString@@XZ @ 57 NONAME ; class QString QtMobility::QMessageContentContainer::textContent(void) const
+	??0QMessageFolderFilter@QtMobility@@QAE@XZ @ 58 NONAME ; QtMobility::QMessageFolderFilter::QMessageFolderFilter(void)
+	?byAncestorFolderIds@QMessageFolderFilter@QtMobility@@SA?AV12@ABV12@W4InclusionComparator@QMessageDataComparator@2@@Z @ 59 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byAncestorFolderIds(class QtMobility::QMessageFolderFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??1QMessageFolderSortOrder@QtMobility@@UAE@XZ @ 60 NONAME ; QtMobility::QMessageFolderSortOrder::~QMessageFolderSortOrder(void)
+	?toString@QMessageContentContainerId@QtMobility@@QBE?AVQString@@XZ @ 61 NONAME ; class QString QtMobility::QMessageContentContainerId::toString(void) const
+	?unregisterNotificationFilter@QMessageManager@QtMobility@@QAEXH@Z @ 62 NONAME ; void QtMobility::QMessageManager::unregisterNotificationFilter(int)
+	??0QMessageAddress@QtMobility@@QAE@ABV01@@Z @ 63 NONAME ; QtMobility::QMessageAddress::QMessageAddress(class QtMobility::QMessageAddress const &)
+	?queryMessages@QMessageManager@QtMobility@@QBE?AV?$QList@VQMessageId@QtMobility@@@@ABVQMessageFilter@2@ABV?$QList@VQMessageSortOrder@QtMobility@@@@II@Z @ 64 NONAME ; class QList<class QtMobility::QMessageId> QtMobility::QMessageManager::queryMessages(class QtMobility::QMessageFilter const &, class QList<class QtMobility::QMessageSortOrder> const &, unsigned int, unsigned int) const
+	?isEmpty@QMessageFolderSortOrder@QtMobility@@QBE_NXZ @ 65 NONAME ; bool QtMobility::QMessageFolderSortOrder::isEmpty(void) const
+	??0QMessageFolder@QtMobility@@QAE@ABV01@@Z @ 66 NONAME ; QtMobility::QMessageFolder::QMessageFolder(class QtMobility::QMessageFolder const &)
+	?setTo@QMessage@QtMobility@@QAEXABV?$QList@VQMessageAddress@QtMobility@@@@@Z @ 67 NONAME ; void QtMobility::QMessage::setTo(class QList<class QtMobility::QMessageAddress> const &)
+	?retrieveHeader@QMessageService@QtMobility@@QAE_NABVQMessageId@2@@Z @ 68 NONAME ; bool QtMobility::QMessageService::retrieveHeader(class QtMobility::QMessageId const &)
+	?byType@QMessageFilter@QtMobility@@SA?AV12@V?$QFlags@W4Type@QMessage@QtMobility@@@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 69 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byType(class QFlags<enum QtMobility::QMessage::Type>, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?byPriority@QMessageSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 70 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::byPriority(enum Qt::SortOrder)
+	?messageUpdated@QMessageManager@QtMobility@@IAEXABVQMessageId@2@ABV?$QSet@H@@@Z @ 71 NONAME ; void QtMobility::QMessageManager::messageUpdated(class QtMobility::QMessageId const &, class QSet<int> const &)
+	?qHash@QtMobility@@YAIABVQMessageId@1@@Z @ 72 NONAME ; unsigned int QtMobility::qHash(class QtMobility::QMessageId const &)
+	?createResponseMessage@QMessage@QtMobility@@QBE?AV12@W4ResponseType@12@@Z @ 73 NONAME ; class QtMobility::QMessage QtMobility::QMessage::createResponseMessage(enum QtMobility::QMessage::ResponseType) const
+	??_EQMessageContentContainer@QtMobility@@UAE@I@Z @ 74 NONAME ; QtMobility::QMessageContentContainer::~QMessageContentContainer(unsigned int)
+	??_EQMessage@QtMobility@@UAE@I@Z @ 75 NONAME ; QtMobility::QMessage::~QMessage(unsigned int)
+	?registerNotificationFilter@QMessageManager@QtMobility@@QAEHABVQMessageFilter@2@@Z @ 76 NONAME ; int QtMobility::QMessageManager::registerNotificationFilter(class QtMobility::QMessageFilter const &)
+	??4QMessageFolderFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 77 NONAME ; class QtMobility::QMessageFolderFilter & QtMobility::QMessageFolderFilter::operator=(class QtMobility::QMessageFolderFilter const &)
+	?defaultAccount@QMessageAccount@QtMobility@@SA?AVQMessageAccountId@2@W4Type@QMessage@2@@Z @ 78 NONAME ; class QtMobility::QMessageAccountId QtMobility::QMessageAccount::defaultAccount(enum QtMobility::QMessage::Type)
+	?byParentFolderId@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQMessageFolderId@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 79 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byParentFolderId(class QtMobility::QMessageFolderId const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?isValid@QMessageContentContainerId@QtMobility@@QBE_NXZ @ 80 NONAME ; bool QtMobility::QMessageContentContainerId::isValid(void) const
+	?removeMessage@QMessageManager@QtMobility@@QAE_NABVQMessageId@2@W4RemovalOption@12@@Z @ 81 NONAME ; bool QtMobility::QMessageManager::removeMessage(class QtMobility::QMessageId const &, enum QtMobility::QMessageManager::RemovalOption)
+	?messagesFound@QMessageService@QtMobility@@IAEXABV?$QList@VQMessageId@QtMobility@@@@@Z @ 82 NONAME ; void QtMobility::QMessageService::messagesFound(class QList<class QtMobility::QMessageId> const &)
+	?preferredCharsets@QMessage@QtMobility@@SA?AV?$QList@VQByteArray@@@@XZ @ 83 NONAME ; class QList<class QByteArray> QtMobility::QMessage::preferredCharsets(void)
+	?messageAdded@QMessageManager@QtMobility@@IAEXABVQMessageId@2@ABV?$QSet@H@@@Z @ 84 NONAME ; void QtMobility::QMessageManager::messageAdded(class QtMobility::QMessageId const &, class QSet<int> const &)
+	?messagesCounted@QMessageService@QtMobility@@IAEXH@Z @ 85 NONAME ; void QtMobility::QMessageService::messagesCounted(int)
+	?queryMessages@QMessageService@QtMobility@@QAE_NABVQMessageFilter@2@ABVQString@@V?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@ABVQMessageSortOrder@2@II@Z @ 86 NONAME ; bool QtMobility::QMessageService::queryMessages(class QtMobility::QMessageFilter const &, class QString const &, class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag>, class QtMobility::QMessageSortOrder const &, unsigned int, unsigned int)
+	??4QMessageFolder@QtMobility@@QAEAAV01@ABV01@@Z @ 87 NONAME ; class QtMobility::QMessageFolder & QtMobility::QMessageFolder::operator=(class QtMobility::QMessageFolder const &)
+	??0QMessageContentContainer@QtMobility@@QAE@XZ @ 88 NONAME ; QtMobility::QMessageContentContainer::QMessageContentContainer(void)
+	?id@QMessage@QtMobility@@QBE?AVQMessageId@2@XZ @ 89 NONAME ; class QtMobility::QMessageId QtMobility::QMessage::id(void) const
+	??MQMessageFolderId@QtMobility@@QBE_NABV01@@Z @ 90 NONAME ; bool QtMobility::QMessageFolderId::operator<(class QtMobility::QMessageFolderId const &) const
+	?isEmpty@QMessageAccountFilter@QtMobility@@QBE_NXZ @ 91 NONAME ; bool QtMobility::QMessageAccountFilter::isEmpty(void) const
+	??1QMessageContentContainer@QtMobility@@UAE@XZ @ 92 NONAME ; QtMobility::QMessageContentContainer::~QMessageContentContainer(void)
+	?setDate@QMessage@QtMobility@@QAEXABVQDateTime@@@Z @ 93 NONAME ; void QtMobility::QMessage::setDate(class QDateTime const &)
+	?isSupported@QMessageAccountFilter@QtMobility@@QBE_NXZ @ 94 NONAME ; bool QtMobility::QMessageAccountFilter::isSupported(void) const
+	?byPath@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQString@@W4EqualityComparator@QMessageDataComparator@2@@Z @ 95 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byPath(class QString const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?writeTextContent@QMessageContentContainer@QtMobility@@QBEXAAVQTextStream@@@Z @ 96 NONAME ; void QtMobility::QMessageContentContainer::writeTextContent(class QTextStream &) const
+	?bySubject@QMessageSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 97 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::bySubject(enum Qt::SortOrder)
+	?tr@QMessageManager@QtMobility@@SA?AVQString@@PBD0@Z @ 98 NONAME ; class QString QtMobility::QMessageManager::tr(char const *, char const *)
+	??9QMessageContentContainerId@QtMobility@@QBE_NABV01@@Z @ 99 NONAME ; bool QtMobility::QMessageContentContainerId::operator!=(class QtMobility::QMessageContentContainerId const &) const
+	??IQMessageAccountFilter@QtMobility@@QBE?AV01@ABV01@@Z @ 100 NONAME ; class QtMobility::QMessageAccountFilter QtMobility::QMessageAccountFilter::operator&(class QtMobility::QMessageAccountFilter const &) const
+	?byName@QMessageAccountFilter@QtMobility@@SA?AV12@ABVQString@@W4EqualityComparator@QMessageDataComparator@2@@Z @ 101 NONAME ; class QtMobility::QMessageAccountFilter QtMobility::QMessageAccountFilter::byName(class QString const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?messageTypes@QMessageAccount@QtMobility@@QBE?AV?$QFlags@W4Type@QMessage@QtMobility@@@@XZ @ 102 NONAME ; class QFlags<enum QtMobility::QMessage::Type> QtMobility::QMessageAccount::messageTypes(void) const
+	?queryFolders@QMessageManager@QtMobility@@QBE?AV?$QList@VQMessageFolderId@QtMobility@@@@ABVQMessageFolderFilter@2@ABV?$QList@VQMessageFolderSortOrder@QtMobility@@@@II@Z @ 103 NONAME ; class QList<class QtMobility::QMessageFolderId> QtMobility::QMessageManager::queryFolders(class QtMobility::QMessageFolderFilter const &, class QList<class QtMobility::QMessageFolderSortOrder> const &, unsigned int, unsigned int) const
+	?setAddressee@QMessageAddress@QtMobility@@QAEXABVQString@@@Z @ 104 NONAME ; void QtMobility::QMessageAddress::setAddressee(class QString const &)
+	?from@QMessage@QtMobility@@QBE?AVQMessageAddress@2@XZ @ 105 NONAME ; class QtMobility::QMessageAddress QtMobility::QMessage::from(void) const
+	??8QMessageFolderId@QtMobility@@QBE_NABV01@@Z @ 106 NONAME ; bool QtMobility::QMessageFolderId::operator==(class QtMobility::QMessageFolderId const &) const
+	??HQMessageFolderSortOrder@QtMobility@@QBE?AV01@ABV01@@Z @ 107 NONAME ; class QtMobility::QMessageFolderSortOrder QtMobility::QMessageFolderSortOrder::operator+(class QtMobility::QMessageFolderSortOrder const &) const
+	?queryAccounts@QMessageManager@QtMobility@@QBE?AV?$QList@VQMessageAccountId@QtMobility@@@@ABVQMessageAccountFilter@2@ABV?$QList@VQMessageAccountSortOrder@QtMobility@@@@II@Z @ 108 NONAME ; class QList<class QtMobility::QMessageAccountId> QtMobility::QMessageManager::queryAccounts(class QtMobility::QMessageAccountFilter const &, class QList<class QtMobility::QMessageAccountSortOrder> const &, unsigned int, unsigned int) const
+	?parentAccountId@QMessage@QtMobility@@QBE?AVQMessageAccountId@2@XZ @ 109 NONAME ; class QtMobility::QMessageAccountId QtMobility::QMessage::parentAccountId(void) const
+	??UQMessageFolderFilter@QtMobility@@QBE?AV01@ABV01@@Z @ 110 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::operator|(class QtMobility::QMessageFolderFilter const &) const
+	?byStandardFolder@QMessageFilter@QtMobility@@SA?AV12@W4StandardFolder@QMessage@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 111 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byStandardFolder(enum QtMobility::QMessage::StandardFolder, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?bcc@QMessage@QtMobility@@QBE?AV?$QList@VQMessageAddress@QtMobility@@@@XZ @ 112 NONAME ; class QList<class QtMobility::QMessageAddress> QtMobility::QMessage::bcc(void) const
+	?message@QMessageManager@QtMobility@@QBE?AVQMessage@2@ABVQMessageId@2@@Z @ 113 NONAME ; class QtMobility::QMessage QtMobility::QMessageManager::message(class QtMobility::QMessageId const &) const
+	?isEmpty@QMessageAccountSortOrder@QtMobility@@QBE_NXZ @ 114 NONAME ; bool QtMobility::QMessageAccountSortOrder::isEmpty(void) const
+	?byId@QMessageFilter@QtMobility@@SA?AV12@ABVQMessageId@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 115 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byId(class QtMobility::QMessageId const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?trUtf8@QMessageService@QtMobility@@SA?AVQString@@PBD0@Z @ 116 NONAME ; class QString QtMobility::QMessageService::trUtf8(char const *, char const *)
+	?queryMessages@QMessageManager@QtMobility@@QBE?AV?$QList@VQMessageId@QtMobility@@@@ABVQMessageFilter@2@ABVQString@@V?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@ABV?$QList@VQMessageSortOrder@QtMobility@@@@II@Z @ 117 NONAME ; class QList<class QtMobility::QMessageId> QtMobility::QMessageManager::queryMessages(class QtMobility::QMessageFilter const &, class QString const &, class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag>, class QList<class QtMobility::QMessageSortOrder> const &, unsigned int, unsigned int) const
+	??4QMessageFolderSortOrder@QtMobility@@QAEAAV01@ABV01@@Z @ 118 NONAME ; class QtMobility::QMessageFolderSortOrder & QtMobility::QMessageFolderSortOrder::operator=(class QtMobility::QMessageFolderSortOrder const &)
+	??0QMessageManager@QtMobility@@QAE@PAVQObject@@@Z @ 119 NONAME ; QtMobility::QMessageManager::QMessageManager(class QObject *)
+	?byStatus@QMessageFilter@QtMobility@@SA?AV12@V?$QFlags@W4Status@QMessage@QtMobility@@@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 120 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byStatus(class QFlags<enum QtMobility::QMessage::Status>, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?trUtf8@QMessageManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 121 NONAME ; class QString QtMobility::QMessageManager::trUtf8(char const *, char const *, int)
+	?updateMessage@QMessageManager@QtMobility@@QAE_NPAVQMessage@2@@Z @ 122 NONAME ; bool QtMobility::QMessageManager::updateMessage(class QtMobility::QMessage *)
+	?byRecipients@QMessageSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 123 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::byRecipients(enum Qt::SortOrder)
+	?parentFolderId@QMessageFolder@QtMobility@@QBE?AVQMessageFolderId@2@XZ @ 124 NONAME ; class QtMobility::QMessageFolderId QtMobility::QMessageFolder::parentFolderId(void) const
+	?receivedDate@QMessage@QtMobility@@QBE?AVQDateTime@@XZ @ 125 NONAME ; class QDateTime QtMobility::QMessage::receivedDate(void) const
+	?setType@QMessageAddress@QtMobility@@QAEXW4Type@12@@Z @ 126 NONAME ; void QtMobility::QMessageAddress::setType(enum QtMobility::QMessageAddress::Type)
+	?queryMessages@QMessageManager@QtMobility@@QBE?AV?$QList@VQMessageId@QtMobility@@@@ABVQMessageFilter@2@ABVQMessageSortOrder@2@II@Z @ 127 NONAME ; class QList<class QtMobility::QMessageId> QtMobility::QMessageManager::queryMessages(class QtMobility::QMessageFilter const &, class QtMobility::QMessageSortOrder const &, unsigned int, unsigned int) const
+	?qt_metacast@QMessageManager@QtMobility@@UAEPAXPBD@Z @ 128 NONAME ; void * QtMobility::QMessageManager::qt_metacast(char const *)
+	?headerFieldValues@QMessageContentContainer@QtMobility@@QBE?AVQStringList@@ABVQByteArray@@@Z @ 129 NONAME ; class QStringList QtMobility::QMessageContentContainer::headerFieldValues(class QByteArray const &) const
+	?byPath@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQString@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 130 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byPath(class QString const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?setType@QMessage@QtMobility@@QAEXW4Type@12@@Z @ 131 NONAME ; void QtMobility::QMessage::setType(enum QtMobility::QMessage::Type)
+	??_5QMessageFolderFilter@QtMobility@@QAEABV01@ABV01@@Z @ 132 NONAME ; class QtMobility::QMessageFolderFilter const & QtMobility::QMessageFolderFilter::operator|=(class QtMobility::QMessageFolderFilter const &)
+	?queryAccounts@QMessageManager@QtMobility@@QBE?AV?$QList@VQMessageAccountId@QtMobility@@@@ABVQMessageAccountFilter@2@ABVQMessageAccountSortOrder@2@II@Z @ 133 NONAME ; class QList<class QtMobility::QMessageAccountId> QtMobility::QMessageManager::queryAccounts(class QtMobility::QMessageAccountFilter const &, class QtMobility::QMessageAccountSortOrder const &, unsigned int, unsigned int) const
+	?byStatus@QMessageFilter@QtMobility@@SA?AV12@W4Status@QMessage@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 134 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byStatus(enum QtMobility::QMessage::Status, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?queryMessages@QMessageService@QtMobility@@QAE_NABVQMessageFilter@2@ABVQMessageSortOrder@2@II@Z @ 135 NONAME ; bool QtMobility::QMessageService::queryMessages(class QtMobility::QMessageFilter const &, class QtMobility::QMessageSortOrder const &, unsigned int, unsigned int)
+	??8QMessageAccountSortOrder@QtMobility@@QBE_NABV01@@Z @ 136 NONAME ; bool QtMobility::QMessageAccountSortOrder::operator==(class QtMobility::QMessageAccountSortOrder const &) const
+	??_EQMessageAccountFilter@QtMobility@@UAE@I@Z @ 137 NONAME ; QtMobility::QMessageAccountFilter::~QMessageAccountFilter(unsigned int)
+	?removeMessages@QMessageManager@QtMobility@@QAE_NABVQMessageFilter@2@W4RemovalOption@12@@Z @ 138 NONAME ; bool QtMobility::QMessageManager::removeMessages(class QtMobility::QMessageFilter const &, enum QtMobility::QMessageManager::RemovalOption)
+	??MQMessageAccountId@QtMobility@@QBE_NABV01@@Z @ 139 NONAME ; bool QtMobility::QMessageAccountId::operator<(class QtMobility::QMessageAccountId const &) const
+	??8QMessageAccountFilter@QtMobility@@QBE_NABV01@@Z @ 140 NONAME ; bool QtMobility::QMessageAccountFilter::operator==(class QtMobility::QMessageAccountFilter const &) const
+	?contains@QMessageContentContainer@QtMobility@@QBE_NABVQMessageContentContainerId@2@@Z @ 141 NONAME ; bool QtMobility::QMessageContentContainer::contains(class QtMobility::QMessageContentContainerId const &) const
+	?cc@QMessage@QtMobility@@QBE?AV?$QList@VQMessageAddress@QtMobility@@@@XZ @ 142 NONAME ; class QList<class QtMobility::QMessageAddress> QtMobility::QMessage::cc(void) const
+	?countMessages@QMessageService@QtMobility@@QAE_NABVQMessageFilter@2@@Z @ 143 NONAME ; bool QtMobility::QMessageService::countMessages(class QtMobility::QMessageFilter const &)
+	??1QMessage@QtMobility@@UAE@XZ @ 144 NONAME ; QtMobility::QMessage::~QMessage(void)
+	?trUtf8@QMessageManager@QtMobility@@SA?AVQString@@PBD0@Z @ 145 NONAME ; class QString QtMobility::QMessageManager::trUtf8(char const *, char const *)
+	?byType@QMessageSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 146 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::byType(enum Qt::SortOrder)
+	?contentType@QMessageContentContainer@QtMobility@@QBE?AVQByteArray@@XZ @ 147 NONAME ; class QByteArray QtMobility::QMessageContentContainer::contentType(void) const
+	?byStatus@QMessageSortOrder@QtMobility@@SA?AV12@W4Status@QMessage@2@W4SortOrder@Qt@@@Z @ 148 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::byStatus(enum QtMobility::QMessage::Status, enum Qt::SortOrder)
+	??YQMessageFolderSortOrder@QtMobility@@QAEAAV01@ABV01@@Z @ 149 NONAME ; class QtMobility::QMessageFolderSortOrder & QtMobility::QMessageFolderSortOrder::operator+=(class QtMobility::QMessageFolderSortOrder const &)
+	?id@QMessageAccount@QtMobility@@QBE?AVQMessageAccountId@2@XZ @ 150 NONAME ; class QtMobility::QMessageAccountId QtMobility::QMessageAccount::id(void) const
+	?send@QMessageService@QtMobility@@QAE_NAAVQMessage@2@@Z @ 151 NONAME ; bool QtMobility::QMessageService::send(class QtMobility::QMessage &)
+	?bySender@QMessageSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 152 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::bySender(enum Qt::SortOrder)
+	?isSupported@QMessageFolderFilter@QtMobility@@QBE_NXZ @ 153 NONAME ; bool QtMobility::QMessageFolderFilter::isSupported(void) const
+	?byName@QMessageAccountSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 154 NONAME ; class QtMobility::QMessageAccountSortOrder QtMobility::QMessageAccountSortOrder::byName(enum Qt::SortOrder)
+	??4QMessageContentContainerId@QtMobility@@QAEAAV01@ABV01@@Z @ 155 NONAME ; class QtMobility::QMessageContentContainerId & QtMobility::QMessageContentContainerId::operator=(class QtMobility::QMessageContentContainerId const &)
+	??8QMessageId@QtMobility@@QBE_NABV01@@Z @ 156 NONAME ; bool QtMobility::QMessageId::operator==(class QtMobility::QMessageId const &) const
+	??1QMessageService@QtMobility@@UAE@XZ @ 157 NONAME ; QtMobility::QMessageService::~QMessageService(void)
+	??_EQMessageAccount@QtMobility@@UAE@I@Z @ 158 NONAME ; QtMobility::QMessageAccount::~QMessageAccount(unsigned int)
+	??0QMessageFolderId@QtMobility@@QAE@ABV01@@Z @ 159 NONAME ; QtMobility::QMessageFolderId::QMessageFolderId(class QtMobility::QMessageFolderId const &)
+	??SQMessageFolderFilter@QtMobility@@QBE?AV01@XZ @ 160 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::operator~(void) const
+	??0QMessageFolderFilter@QtMobility@@QAE@ABV01@@Z @ 161 NONAME ; QtMobility::QMessageFolderFilter::QMessageFolderFilter(class QtMobility::QMessageFolderFilter const &)
+	?bySender@QMessageFilter@QtMobility@@SA?AV12@ABVQString@@W4EqualityComparator@QMessageDataComparator@2@@Z @ 162 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::bySender(class QString const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?byReceptionTimeStamp@QMessageFilter@QtMobility@@SA?AV12@ABVQDateTime@@W4EqualityComparator@QMessageDataComparator@2@@Z @ 163 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byReceptionTimeStamp(class QDateTime const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	??0QMessageFolder@QtMobility@@QAE@ABVQMessageFolderId@1@@Z @ 164 NONAME ; QtMobility::QMessageFolder::QMessageFolder(class QtMobility::QMessageFolderId const &)
+	??8QMessageFolderFilter@QtMobility@@QBE_NABV01@@Z @ 165 NONAME ; bool QtMobility::QMessageFolderFilter::operator==(class QtMobility::QMessageFolderFilter const &) const
+	??0QMessageContentContainerId@QtMobility@@QAE@ABVQString@@@Z @ 166 NONAME ; QtMobility::QMessageContentContainerId::QMessageContentContainerId(class QString const &)
+	??1QMessageFolderId@QtMobility@@QAE@XZ @ 167 NONAME ; QtMobility::QMessageFolderId::~QMessageFolderId(void)
+	?byParentAccountId@QMessageFilter@QtMobility@@SA?AV12@ABVQMessageAccountFilter@2@W4InclusionComparator@QMessageDataComparator@2@@Z @ 168 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byParentAccountId(class QtMobility::QMessageAccountFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?subject@QMessage@QtMobility@@QBE?AVQString@@XZ @ 169 NONAME ; class QString QtMobility::QMessage::subject(void) const
+	?queryMessages@QMessageManager@QtMobility@@QBE?AV?$QList@VQMessageId@QtMobility@@@@ABVQMessageFilter@2@ABVQString@@V?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@ABVQMessageSortOrder@2@II@Z @ 170 NONAME ; class QList<class QtMobility::QMessageId> QtMobility::QMessageManager::queryMessages(class QtMobility::QMessageFilter const &, class QString const &, class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag>, class QtMobility::QMessageSortOrder const &, unsigned int, unsigned int) const
+	?qt_metacall@QMessageService@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 171 NONAME ; int QtMobility::QMessageService::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?attachmentIds@QMessage@QtMobility@@QBE?AV?$QList@VQMessageContentContainerId@QtMobility@@@@XZ @ 172 NONAME ; class QList<class QtMobility::QMessageContentContainerId> QtMobility::QMessage::attachmentIds(void) const
+	?standardFolder@QMessage@QtMobility@@QBE?AW4StandardFolder@12@XZ @ 173 NONAME ; enum QtMobility::QMessage::StandardFolder QtMobility::QMessage::standardFolder(void) const
+	?byTimeStamp@QMessageFilter@QtMobility@@SA?AV12@ABVQDateTime@@W4RelationComparator@QMessageDataComparator@2@@Z @ 174 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byTimeStamp(class QDateTime const &, enum QtMobility::QMessageDataComparator::RelationComparator)
+	??4QMessageFolderId@QtMobility@@QAEAAV01@ABV01@@Z @ 175 NONAME ; class QtMobility::QMessageFolderId & QtMobility::QMessageFolderId::operator=(class QtMobility::QMessageFolderId const &)
+	?setBcc@QMessage@QtMobility@@QAEXABV?$QList@VQMessageAddress@QtMobility@@@@@Z @ 176 NONAME ; void QtMobility::QMessage::setBcc(class QList<class QtMobility::QMessageAddress> const &)
+	?setStatus@QMessage@QtMobility@@QAEXW4Status@12@_N@Z @ 177 NONAME ; void QtMobility::QMessage::setStatus(enum QtMobility::QMessage::Status, bool)
+	?matchFlags@QMessageAccountFilter@QtMobility@@QBE?AV?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@XZ @ 178 NONAME ; class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag> QtMobility::QMessageAccountFilter::matchFlags(void) const
+	?byParentFolderId@QMessageFilter@QtMobility@@SA?AV12@ABVQMessageFolderFilter@2@W4InclusionComparator@QMessageDataComparator@2@@Z @ 179 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byParentFolderId(class QtMobility::QMessageFolderFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?countAccounts@QMessageManager@QtMobility@@QBEHABVQMessageAccountFilter@2@@Z @ 180 NONAME ; int QtMobility::QMessageManager::countAccounts(class QtMobility::QMessageAccountFilter const &) const
+	?tr@QMessageManager@QtMobility@@SA?AVQString@@PBD0H@Z @ 181 NONAME ; class QString QtMobility::QMessageManager::tr(char const *, char const *, int)
+	?qt_metacall@QMessageManager@QtMobility@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 182 NONAME ; int QtMobility::QMessageManager::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?error@QMessageService@QtMobility@@QBE?AW4Error@QMessageManager@2@XZ @ 183 NONAME ; enum QtMobility::QMessageManager::Error QtMobility::QMessageService::error(void) const
+	??0QMessageId@QtMobility@@QAE@ABV01@@Z @ 184 NONAME ; QtMobility::QMessageId::QMessageId(class QtMobility::QMessageId const &)
+	?bySize@QMessageSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 185 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::bySize(enum Qt::SortOrder)
+	??0QMessageAccount@QtMobility@@QAE@ABVQMessageAccountId@1@@Z @ 186 NONAME ; QtMobility::QMessageAccount::QMessageAccount(class QtMobility::QMessageAccountId const &)
+	??_EQMessageManager@QtMobility@@UAE@I@Z @ 187 NONAME ; QtMobility::QMessageManager::~QMessageManager(unsigned int)
+	?isSupported@QMessageSortOrder@QtMobility@@QBE_NXZ @ 188 NONAME ; bool QtMobility::QMessageSortOrder::isSupported(void) const
+	??_EQMessageSortOrder@QtMobility@@UAE@I@Z @ 189 NONAME ; QtMobility::QMessageSortOrder::~QMessageSortOrder(unsigned int)
+	??_4QMessageFolderFilter@QtMobility@@QAEABV01@ABV01@@Z @ 190 NONAME ; class QtMobility::QMessageFolderFilter const & QtMobility::QMessageFolderFilter::operator&=(class QtMobility::QMessageFolderFilter const &)
+	??0QMessageContentContainer@QtMobility@@QAE@ABV01@@Z @ 191 NONAME ; QtMobility::QMessageContentContainer::QMessageContentContainer(class QtMobility::QMessageContentContainer const &)
+	?byId@QMessageFilter@QtMobility@@SA?AV12@ABV?$QList@VQMessageId@QtMobility@@@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 192 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byId(class QList<class QtMobility::QMessageId> const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?setMatchFlags@QMessageAccountFilter@QtMobility@@QAEXV?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@@Z @ 193 NONAME ; void QtMobility::QMessageAccountFilter::setMatchFlags(class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag>)
+	??0QMessageFilter@QtMobility@@QAE@ABV01@@Z @ 194 NONAME ; QtMobility::QMessageFilter::QMessageFilter(class QtMobility::QMessageFilter const &)
+	??0QMessageId@QtMobility@@QAE@XZ @ 195 NONAME ; QtMobility::QMessageId::QMessageId(void)
+	?trUtf8@QMessageService@QtMobility@@SA?AVQString@@PBD0H@Z @ 196 NONAME ; class QString QtMobility::QMessageService::trUtf8(char const *, char const *, int)
+	?bySize@QMessageFilter@QtMobility@@SA?AV12@HW4EqualityComparator@QMessageDataComparator@2@@Z @ 197 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::bySize(int, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	??0QMessageSortOrder@QtMobility@@QAE@XZ @ 198 NONAME ; QtMobility::QMessageSortOrder::QMessageSortOrder(void)
+	?byId@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQMessageFolderId@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 199 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byId(class QtMobility::QMessageFolderId const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	??UQMessageFilter@QtMobility@@QBE?AV01@ABV01@@Z @ 200 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::operator|(class QtMobility::QMessageFilter const &) const
+	?retrieveBody@QMessageService@QtMobility@@QAE_NABVQMessageId@2@@Z @ 201 NONAME ; bool QtMobility::QMessageService::retrieveBody(class QtMobility::QMessageId const &)
+	?parseEmailAddress@QMessageAddress@QtMobility@@SAXABVQString@@PAV3@11PA_N2@Z @ 202 NONAME ; void QtMobility::QMessageAddress::parseEmailAddress(class QString const &, class QString *, class QString *, class QString *, bool *, bool *)
+	?addMessage@QMessageManager@QtMobility@@QAE_NPAVQMessage@2@@Z @ 203 NONAME ; bool QtMobility::QMessageManager::addMessage(class QtMobility::QMessage *)
+	?isEmpty@QMessageSortOrder@QtMobility@@QBE_NXZ @ 204 NONAME ; bool QtMobility::QMessageSortOrder::isEmpty(void) const
+	?messageRemoved@QMessageManager@QtMobility@@IAEXABVQMessageId@2@ABV?$QSet@H@@@Z @ 205 NONAME ; void QtMobility::QMessageManager::messageRemoved(class QtMobility::QMessageId const &, class QSet<int> const &)
+	?isSupported@QMessageFilter@QtMobility@@QBE_NXZ @ 206 NONAME ; bool QtMobility::QMessageFilter::isSupported(void) const
+	?appendAttachments@QMessage@QtMobility@@QAEXABVQStringList@@@Z @ 207 NONAME ; void QtMobility::QMessage::appendAttachments(class QStringList const &)
+	?bodyId@QMessage@QtMobility@@QBE?AVQMessageContentContainerId@2@XZ @ 208 NONAME ; class QtMobility::QMessageContentContainerId QtMobility::QMessage::bodyId(void) const
+	?setCc@QMessage@QtMobility@@QAEXABV?$QList@VQMessageAddress@QtMobility@@@@@Z @ 209 NONAME ; void QtMobility::QMessage::setCc(class QList<class QtMobility::QMessageAddress> const &)
+	??8QMessageFilter@QtMobility@@QBE_NABV01@@Z @ 210 NONAME ; bool QtMobility::QMessageFilter::operator==(class QtMobility::QMessageFilter const &) const
+	?type@QMessage@QtMobility@@QBE?AW4Type@12@XZ @ 211 NONAME ; enum QtMobility::QMessage::Type QtMobility::QMessage::type(void) const
+	?status@QMessage@QtMobility@@QBE?AV?$QFlags@W4Status@QMessage@QtMobility@@@@XZ @ 212 NONAME ; class QFlags<enum QtMobility::QMessage::Status> QtMobility::QMessage::status(void) const
+	??4QMessageAccountFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 213 NONAME ; class QtMobility::QMessageAccountFilter & QtMobility::QMessageAccountFilter::operator=(class QtMobility::QMessageAccountFilter const &)
+	??4QMessageAccount@QtMobility@@QAEAAV01@ABV01@@Z @ 214 NONAME ; class QtMobility::QMessageAccount & QtMobility::QMessageAccount::operator=(class QtMobility::QMessageAccount const &)
+	?setMatchFlags@QMessageFolderFilter@QtMobility@@QAEXV?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@@Z @ 215 NONAME ; void QtMobility::QMessageFolderFilter::setMatchFlags(class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag>)
+	??0QMessageSortOrder@QtMobility@@QAE@ABV01@@Z @ 216 NONAME ; QtMobility::QMessageSortOrder::QMessageSortOrder(class QtMobility::QMessageSortOrder const &)
+	??0QMessageService@QtMobility@@QAE@PAVQObject@@@Z @ 217 NONAME ; QtMobility::QMessageService::QMessageService(class QObject *)
+	?compose@QMessageService@QtMobility@@QAE_NABVQMessage@2@@Z @ 218 NONAME ; bool QtMobility::QMessageService::compose(class QtMobility::QMessage const &)
+	?isValid@QMessageAccountId@QtMobility@@QBE_NXZ @ 219 NONAME ; bool QtMobility::QMessageAccountId::isValid(void) const
+	??4QMessageAccountId@QtMobility@@QAEAAV01@ABV01@@Z @ 220 NONAME ; class QtMobility::QMessageAccountId & QtMobility::QMessageAccountId::operator=(class QtMobility::QMessageAccountId const &)
+	?metaObject@QMessageManager@QtMobility@@UBEPBUQMetaObject@@XZ @ 221 NONAME ; struct QMetaObject const * QtMobility::QMessageManager::metaObject(void) const
+	?byPath@QMessageFolderSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 222 NONAME ; class QtMobility::QMessageFolderSortOrder QtMobility::QMessageFolderSortOrder::byPath(enum Qt::SortOrder)
+	??1QMessageContentContainerId@QtMobility@@QAE@XZ @ 223 NONAME ; QtMobility::QMessageContentContainerId::~QMessageContentContainerId(void)
+	?byAncestorFolderIds@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQMessageFolderId@2@W4InclusionComparator@QMessageDataComparator@2@@Z @ 224 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byAncestorFolderIds(class QtMobility::QMessageFolderId const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??0QMessageAccountId@QtMobility@@QAE@ABVQString@@@Z @ 225 NONAME ; QtMobility::QMessageAccountId::QMessageAccountId(class QString const &)
+	??8QMessageSortOrder@QtMobility@@QBE_NABV01@@Z @ 226 NONAME ; bool QtMobility::QMessageSortOrder::operator==(class QtMobility::QMessageSortOrder const &) const
+	?staticMetaObject@QMessageManager@QtMobility@@2UQMetaObject@@B @ 227 NONAME ; struct QMetaObject const QtMobility::QMessageManager::staticMetaObject
+	??0QMessageAccountId@QtMobility@@QAE@ABV01@@Z @ 228 NONAME ; QtMobility::QMessageAccountId::QMessageAccountId(class QtMobility::QMessageAccountId const &)
+	?stateChanged@QMessageService@QtMobility@@IAEXW4State@12@@Z @ 229 NONAME ; void QtMobility::QMessageService::stateChanged(enum QtMobility::QMessageService::State)
+	??_EQMessageFolderFilter@QtMobility@@UAE@I@Z @ 230 NONAME ; QtMobility::QMessageFolderFilter::~QMessageFolderFilter(unsigned int)
+	??4QMessage@QtMobility@@QAEAAV01@ABV01@@Z @ 231 NONAME ; class QtMobility::QMessage & QtMobility::QMessage::operator=(class QtMobility::QMessage const &)
+	?isValid@QMessageId@QtMobility@@QBE_NXZ @ 232 NONAME ; bool QtMobility::QMessageId::isValid(void) const
+	??1QMessageFilter@QtMobility@@UAE@XZ @ 233 NONAME ; QtMobility::QMessageFilter::~QMessageFilter(void)
+	??0QMessageAccountFilter@QtMobility@@QAE@ABV01@@Z @ 234 NONAME ; QtMobility::QMessageAccountFilter::QMessageAccountFilter(class QtMobility::QMessageAccountFilter const &)
+	??YQMessageSortOrder@QtMobility@@QAEAAV01@ABV01@@Z @ 235 NONAME ; class QtMobility::QMessageSortOrder & QtMobility::QMessageSortOrder::operator+=(class QtMobility::QMessageSortOrder const &)
+	??HQMessageSortOrder@QtMobility@@QBE?AV01@ABV01@@Z @ 236 NONAME ; class QtMobility::QMessageSortOrder QtMobility::QMessageSortOrder::operator+(class QtMobility::QMessageSortOrder const &) const
+	??0QMessageId@QtMobility@@QAE@ABVQString@@@Z @ 237 NONAME ; QtMobility::QMessageId::QMessageId(class QString const &)
+	??9QMessageAddress@QtMobility@@QBE_NABV01@@Z @ 238 NONAME ; bool QtMobility::QMessageAddress::operator!=(class QtMobility::QMessageAddress const &) const
+	?addressee@QMessageAddress@QtMobility@@QBE?AVQString@@XZ @ 239 NONAME ; class QString QtMobility::QMessageAddress::addressee(void) const
+	?find@QMessageContentContainer@QtMobility@@QBE?AV12@ABVQMessageContentContainerId@2@@Z @ 240 NONAME ; class QtMobility::QMessageContentContainer QtMobility::QMessageContentContainer::find(class QtMobility::QMessageContentContainerId const &) const
+	?setStatus@QMessage@QtMobility@@QAEXV?$QFlags@W4Status@QMessage@QtMobility@@@@@Z @ 241 NONAME ; void QtMobility::QMessage::setStatus(class QFlags<enum QtMobility::QMessage::Status>)
+	??4QMessageFilter@QtMobility@@QAEAAV01@ABV01@@Z @ 242 NONAME ; class QtMobility::QMessageFilter & QtMobility::QMessageFilter::operator=(class QtMobility::QMessageFilter const &)
+	??4QMessageSortOrder@QtMobility@@QAEAAV01@ABV01@@Z @ 243 NONAME ; class QtMobility::QMessageSortOrder & QtMobility::QMessageSortOrder::operator=(class QtMobility::QMessageSortOrder const &)
+	?bySubject@QMessageFilter@QtMobility@@SA?AV12@ABVQString@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 244 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::bySubject(class QString const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?folder@QMessageManager@QtMobility@@QBE?AVQMessageFolder@2@ABVQMessageFolderId@2@@Z @ 245 NONAME ; class QtMobility::QMessageFolder QtMobility::QMessageManager::folder(class QtMobility::QMessageFolderId const &) const
+	?byId@QMessageAccountFilter@QtMobility@@SA?AV12@ABV?$QList@VQMessageAccountId@QtMobility@@@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 246 NONAME ; class QtMobility::QMessageAccountFilter QtMobility::QMessageAccountFilter::byId(class QList<class QtMobility::QMessageAccountId> const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?byName@QMessageAccountFilter@QtMobility@@SA?AV12@ABVQString@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 247 NONAME ; class QtMobility::QMessageAccountFilter QtMobility::QMessageAccountFilter::byName(class QString const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??9QMessageFolderSortOrder@QtMobility@@QBE_NABV01@@Z @ 248 NONAME ; bool QtMobility::QMessageFolderSortOrder::operator!=(class QtMobility::QMessageFolderSortOrder const &) const
+	??0QMessage@QtMobility@@QAE@ABVQMessageId@1@@Z @ 249 NONAME ; QtMobility::QMessage::QMessage(class QtMobility::QMessageId const &)
+	??0QMessageFilter@QtMobility@@QAE@XZ @ 250 NONAME ; QtMobility::QMessageFilter::QMessageFilter(void)
+	?byName@QMessageFolderSortOrder@QtMobility@@SA?AV12@W4SortOrder@Qt@@@Z @ 251 NONAME ; class QtMobility::QMessageFolderSortOrder QtMobility::QMessageFolderSortOrder::byName(enum Qt::SortOrder)
+	??0QMessageAccountSortOrder@QtMobility@@QAE@ABV01@@Z @ 252 NONAME ; QtMobility::QMessageAccountSortOrder::QMessageAccountSortOrder(class QtMobility::QMessageAccountSortOrder const &)
+	?size@QMessageContentContainer@QtMobility@@QBEHXZ @ 253 NONAME ; int QtMobility::QMessageContentContainer::size(void) const
+	?suggestedFileName@QMessageContentContainer@QtMobility@@QBE?AVQByteArray@@XZ @ 254 NONAME ; class QByteArray QtMobility::QMessageContentContainer::suggestedFileName(void) const
+	??0QMessage@QtMobility@@QAE@ABV01@@Z @ 255 NONAME ; QtMobility::QMessage::QMessage(class QtMobility::QMessage const &)
+	?byRecipients@QMessageFilter@QtMobility@@SA?AV12@ABVQString@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 256 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byRecipients(class QString const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??1QMessageFolder@QtMobility@@UAE@XZ @ 257 NONAME ; QtMobility::QMessageFolder::~QMessageFolder(void)
+	??0QMessageAccountFilter@QtMobility@@QAE@XZ @ 258 NONAME ; QtMobility::QMessageAccountFilter::QMessageAccountFilter(void)
+	?byId@QMessageAccountFilter@QtMobility@@SA?AV12@ABV12@W4InclusionComparator@QMessageDataComparator@2@@Z @ 259 NONAME ; class QtMobility::QMessageAccountFilter QtMobility::QMessageAccountFilter::byId(class QtMobility::QMessageAccountFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?byPriority@QMessageFilter@QtMobility@@SA?AV12@W4Priority@QMessage@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 260 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byPriority(enum QtMobility::QMessage::Priority, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	??_5QMessageAccountFilter@QtMobility@@QAEABV01@ABV01@@Z @ 261 NONAME ; class QtMobility::QMessageAccountFilter const & QtMobility::QMessageAccountFilter::operator|=(class QtMobility::QMessageAccountFilter const &)
+	?toString@QMessageFolderId@QtMobility@@QBE?AVQString@@XZ @ 262 NONAME ; class QString QtMobility::QMessageFolderId::toString(void) const
+	?setParentAccountId@QMessage@QtMobility@@QAEXABVQMessageAccountId@2@@Z @ 263 NONAME ; void QtMobility::QMessage::setParentAccountId(class QtMobility::QMessageAccountId const &)
+	??1QMessageFolderFilter@QtMobility@@UAE@XZ @ 264 NONAME ; QtMobility::QMessageFolderFilter::~QMessageFolderFilter(void)
+	??9QMessageFolderId@QtMobility@@QBE_NABV01@@Z @ 265 NONAME ; bool QtMobility::QMessageFolderId::operator!=(class QtMobility::QMessageFolderId const &) const
+	??0QMessageAccount@QtMobility@@QAE@ABV01@@Z @ 266 NONAME ; QtMobility::QMessageAccount::QMessageAccount(class QtMobility::QMessageAccount const &)
+	?qHash@QtMobility@@YAIABVQMessageFolderId@1@@Z @ 267 NONAME ; unsigned int QtMobility::qHash(class QtMobility::QMessageFolderId const &)
+	?exportUpdates@QMessageService@QtMobility@@QAE_NABVQMessageAccountId@2@@Z @ 268 NONAME ; bool QtMobility::QMessageService::exportUpdates(class QtMobility::QMessageAccountId const &)
+	??8QMessageAddress@QtMobility@@QBE_NABV01@@Z @ 269 NONAME ; bool QtMobility::QMessageAddress::operator==(class QtMobility::QMessageAddress const &) const
+	?tr@QMessageService@QtMobility@@SA?AVQString@@PBD0H@Z @ 270 NONAME ; class QString QtMobility::QMessageService::tr(char const *, char const *, int)
+	??_4QMessageAccountFilter@QtMobility@@QAEABV01@ABV01@@Z @ 271 NONAME ; class QtMobility::QMessageAccountFilter const & QtMobility::QMessageAccountFilter::operator&=(class QtMobility::QMessageAccountFilter const &)
+	?preferredCharsetFor@QMessage@QtMobility@@SA?AVQByteArray@@ABVQString@@@Z @ 272 NONAME ; class QByteArray QtMobility::QMessage::preferredCharsetFor(class QString const &)
+	?account@QMessageManager@QtMobility@@QBE?AVQMessageAccount@2@ABVQMessageAccountId@2@@Z @ 273 NONAME ; class QtMobility::QMessageAccount QtMobility::QMessageManager::account(class QtMobility::QMessageAccountId const &) const
+	?byAncestorFolderIds@QMessageFilter@QtMobility@@SA?AV12@ABVQMessageFolderFilter@2@W4InclusionComparator@QMessageDataComparator@2@@Z @ 274 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byAncestorFolderIds(class QtMobility::QMessageFolderFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?byAncestorFolderIds@QMessageFilter@QtMobility@@SA?AV12@ABVQMessageFolderId@2@W4InclusionComparator@QMessageDataComparator@2@@Z @ 275 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byAncestorFolderIds(class QtMobility::QMessageFolderId const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??1QMessageAccountId@QtMobility@@QAE@XZ @ 276 NONAME ; QtMobility::QMessageAccountId::~QMessageAccountId(void)
+	??1QMessageId@QtMobility@@QAE@XZ @ 277 NONAME ; QtMobility::QMessageId::~QMessageId(void)
+	??0QMessageContentContainerId@QtMobility@@QAE@ABV01@@Z @ 278 NONAME ; QtMobility::QMessageContentContainerId::QMessageContentContainerId(class QtMobility::QMessageContentContainerId const &)
+	?byReceptionTimeStamp@QMessageFilter@QtMobility@@SA?AV12@ABVQDateTime@@W4RelationComparator@QMessageDataComparator@2@@Z @ 279 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byReceptionTimeStamp(class QDateTime const &, enum QtMobility::QMessageDataComparator::RelationComparator)
+	?isSupported@QMessageFolderSortOrder@QtMobility@@QBE_NXZ @ 280 NONAME ; bool QtMobility::QMessageFolderSortOrder::isSupported(void) const
+	??IQMessageFolderFilter@QtMobility@@QBE?AV01@ABV01@@Z @ 281 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::operator&(class QtMobility::QMessageFolderFilter const &) const
+	?id@QMessageFolder@QtMobility@@QBE?AVQMessageFolderId@2@XZ @ 282 NONAME ; class QtMobility::QMessageFolderId QtMobility::QMessageFolder::id(void) const
+	?isModified@QMessage@QtMobility@@QBE_NXZ @ 283 NONAME ; bool QtMobility::QMessage::isModified(void) const
+	??0QMessageFolderSortOrder@QtMobility@@QAE@ABV01@@Z @ 284 NONAME ; QtMobility::QMessageFolderSortOrder::QMessageFolderSortOrder(class QtMobility::QMessageFolderSortOrder const &)
+	??0QMessageFolderSortOrder@QtMobility@@QAE@XZ @ 285 NONAME ; QtMobility::QMessageFolderSortOrder::QMessageFolderSortOrder(void)
+	??0QMessageFolder@QtMobility@@QAE@XZ @ 286 NONAME ; QtMobility::QMessageFolder::QMessageFolder(void)
+	?state@QMessageService@QtMobility@@QBE?AW4State@12@XZ @ 287 NONAME ; enum QtMobility::QMessageService::State QtMobility::QMessageService::state(void) const
+	??_5QMessageFilter@QtMobility@@QAEABV01@ABV01@@Z @ 288 NONAME ; class QtMobility::QMessageFilter const & QtMobility::QMessageFilter::operator|=(class QtMobility::QMessageFilter const &)
+	?parentFolderId@QMessage@QtMobility@@QBE?AVQMessageFolderId@2@XZ @ 289 NONAME ; class QtMobility::QMessageFolderId QtMobility::QMessage::parentFolderId(void) const
+	?name@QMessageFolder@QtMobility@@QBE?AVQString@@XZ @ 290 NONAME ; class QString QtMobility::QMessageFolder::name(void) const
+	??9QMessageSortOrder@QtMobility@@QBE_NABV01@@Z @ 291 NONAME ; bool QtMobility::QMessageSortOrder::operator!=(class QtMobility::QMessageSortOrder const &) const
+	??4QMessageAddress@QtMobility@@QAEAAV01@ABV01@@Z @ 292 NONAME ; class QtMobility::QMessageAddress & QtMobility::QMessageAddress::operator=(class QtMobility::QMessageAddress const &)
+	?name@QMessageAccount@QtMobility@@QBE?AVQString@@XZ @ 293 NONAME ; class QString QtMobility::QMessageAccount::name(void) const
+	??0QMessageContentContainerId@QtMobility@@QAE@XZ @ 294 NONAME ; QtMobility::QMessageContentContainerId::QMessageContentContainerId(void)
+	?matchFlags@QMessageFilter@QtMobility@@QBE?AV?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@XZ @ 295 NONAME ; class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag> QtMobility::QMessageFilter::matchFlags(void) const
+	?show@QMessageService@QtMobility@@QAE_NABVQMessageId@2@@Z @ 296 NONAME ; bool QtMobility::QMessageService::show(class QtMobility::QMessageId const &)
+	??4QMessageContentContainer@QtMobility@@QAEAAV01@ABV01@@Z @ 297 NONAME ; class QtMobility::QMessageContentContainer & QtMobility::QMessageContentContainer::operator=(class QtMobility::QMessageContentContainer const &)
+	?queryFolders@QMessageManager@QtMobility@@QBE?AV?$QList@VQMessageFolderId@QtMobility@@@@ABVQMessageFolderFilter@2@ABVQMessageFolderSortOrder@2@II@Z @ 298 NONAME ; class QList<class QtMobility::QMessageFolderId> QtMobility::QMessageManager::queryFolders(class QtMobility::QMessageFolderFilter const &, class QtMobility::QMessageFolderSortOrder const &, unsigned int, unsigned int) const
+	?headerFieldValue@QMessageContentContainer@QtMobility@@QBE?AVQString@@ABVQByteArray@@@Z @ 299 NONAME ; class QString QtMobility::QMessageContentContainer::headerFieldValue(class QByteArray const &) const
+	?byType@QMessageFilter@QtMobility@@SA?AV12@W4Type@QMessage@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 300 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byType(enum QtMobility::QMessage::Type, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	??_4QMessageFilter@QtMobility@@QAEABV01@ABV01@@Z @ 301 NONAME ; class QtMobility::QMessageFilter const & QtMobility::QMessageFilter::operator&=(class QtMobility::QMessageFilter const &)
+	??0QMessage@QtMobility@@QAE@XZ @ 302 NONAME ; QtMobility::QMessage::QMessage(void)
+	??1QMessageAccountFilter@QtMobility@@UAE@XZ @ 303 NONAME ; QtMobility::QMessageAccountFilter::~QMessageAccountFilter(void)
+	??_EQMessageFolderSortOrder@QtMobility@@UAE@I@Z @ 304 NONAME ; QtMobility::QMessageFolderSortOrder::~QMessageFolderSortOrder(unsigned int)
+	?byId@QMessageFolderFilter@QtMobility@@SA?AV12@ABV?$QList@VQMessageFolderId@QtMobility@@@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 305 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byId(class QList<class QtMobility::QMessageFolderId> const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?staticMetaObject@QMessageService@QtMobility@@2UQMetaObject@@B @ 306 NONAME ; struct QMetaObject const QtMobility::QMessageService::staticMetaObject
+	?isContentAvailable@QMessageContentContainer@QtMobility@@QBE_NXZ @ 307 NONAME ; bool QtMobility::QMessageContentContainer::isContentAvailable(void) const
+	??_EQMessageFilter@QtMobility@@UAE@I@Z @ 308 NONAME ; QtMobility::QMessageFilter::~QMessageFilter(unsigned int)
+	?byId@QMessageAccountFilter@QtMobility@@SA?AV12@ABVQMessageAccountId@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 309 NONAME ; class QtMobility::QMessageAccountFilter QtMobility::QMessageAccountFilter::byId(class QtMobility::QMessageAccountId const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?metaObject@QMessageService@QtMobility@@UBEPBUQMetaObject@@XZ @ 310 NONAME ; struct QMetaObject const * QtMobility::QMessageService::metaObject(void) const
+	?isSupported@QMessageAccountSortOrder@QtMobility@@QBE_NXZ @ 311 NONAME ; bool QtMobility::QMessageAccountSortOrder::isSupported(void) const
+	?qt_metacast@QMessageService@QtMobility@@UAEPAXPBD@Z @ 312 NONAME ; void * QtMobility::QMessageService::qt_metacast(char const *)
+	?byParentFolderId@QMessageFilter@QtMobility@@SA?AV12@ABVQMessageFolderId@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 313 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::byParentFolderId(class QtMobility::QMessageFolderId const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?priority@QMessage@QtMobility@@QBE?AW4Priority@12@XZ @ 314 NONAME ; enum QtMobility::QMessage::Priority QtMobility::QMessage::priority(void) const
+	??8QMessageAccountId@QtMobility@@QBE_NABV01@@Z @ 315 NONAME ; bool QtMobility::QMessageAccountId::operator==(class QtMobility::QMessageAccountId const &) const
+	?to@QMessage@QtMobility@@QBE?AV?$QList@VQMessageAddress@QtMobility@@@@XZ @ 316 NONAME ; class QList<class QtMobility::QMessageAddress> QtMobility::QMessage::to(void) const
+	?byParentAccountId@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQMessageAccountFilter@2@W4InclusionComparator@QMessageDataComparator@2@@Z @ 317 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byParentAccountId(class QtMobility::QMessageAccountFilter const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	?cancel@QMessageService@QtMobility@@QAEXXZ @ 318 NONAME ; void QtMobility::QMessageService::cancel(void)
+	?clearAttachments@QMessage@QtMobility@@QAEXXZ @ 319 NONAME ; void QtMobility::QMessage::clearAttachments(void)
+	??9QMessageFilter@QtMobility@@QBE_NABV01@@Z @ 320 NONAME ; bool QtMobility::QMessageFilter::operator!=(class QtMobility::QMessageFilter const &) const
+	??UQMessageAccountFilter@QtMobility@@QBE?AV01@ABV01@@Z @ 321 NONAME ; class QtMobility::QMessageAccountFilter QtMobility::QMessageAccountFilter::operator|(class QtMobility::QMessageAccountFilter const &) const
+	??4QMessageId@QtMobility@@QAEAAV01@ABV01@@Z @ 322 NONAME ; class QtMobility::QMessageId & QtMobility::QMessageId::operator=(class QtMobility::QMessageId const &)
+	?bySender@QMessageFilter@QtMobility@@SA?AV12@ABVQString@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 323 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::bySender(class QString const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??9QMessageAccountFilter@QtMobility@@QBE_NABV01@@Z @ 324 NONAME ; bool QtMobility::QMessageAccountFilter::operator!=(class QtMobility::QMessageAccountFilter const &) const
+	?contentSubType@QMessageContentContainer@QtMobility@@QBE?AVQByteArray@@XZ @ 325 NONAME ; class QByteArray QtMobility::QMessageContentContainer::contentSubType(void) const
+	??_EQMessageService@QtMobility@@UAE@I@Z @ 326 NONAME ; QtMobility::QMessageService::~QMessageService(unsigned int)
+	??0QMessageAddress@QtMobility@@QAE@XZ @ 327 NONAME ; QtMobility::QMessageAddress::QMessageAddress(void)
+	?byName@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQString@@W4EqualityComparator@QMessageDataComparator@2@@Z @ 328 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byName(class QString const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	?bySize@QMessageFilter@QtMobility@@SA?AV12@HW4RelationComparator@QMessageDataComparator@2@@Z @ 329 NONAME ; class QtMobility::QMessageFilter QtMobility::QMessageFilter::bySize(int, enum QtMobility::QMessageDataComparator::RelationComparator)
+	?path@QMessageFolder@QtMobility@@QBE?AVQString@@XZ @ 330 NONAME ; class QString QtMobility::QMessageFolder::path(void) const
+	?setReceivedDate@QMessage@QtMobility@@QAEXABVQDateTime@@@Z @ 331 NONAME ; void QtMobility::QMessage::setReceivedDate(class QDateTime const &)
+	?setMatchFlags@QMessageFilter@QtMobility@@QAEXV?$QFlags@W4MatchFlag@QMessageDataComparator@QtMobility@@@@@Z @ 332 NONAME ; void QtMobility::QMessageFilter::setMatchFlags(class QFlags<enum QtMobility::QMessageDataComparator::MatchFlag>)
+	?parentAccountId@QMessageFolder@QtMobility@@QBE?AVQMessageAccountId@2@XZ @ 333 NONAME ; class QtMobility::QMessageAccountId QtMobility::QMessageFolder::parentAccountId(void) const
+	??_EQMessageAddress@QtMobility@@UAE@I@Z @ 334 NONAME ; QtMobility::QMessageAddress::~QMessageAddress(unsigned int)
+	?toString@QMessageId@QtMobility@@QBE?AVQString@@XZ @ 335 NONAME ; class QString QtMobility::QMessageId::toString(void) const
+	?setSubject@QMessage@QtMobility@@QAEXABVQString@@@Z @ 336 NONAME ; void QtMobility::QMessage::setSubject(class QString const &)
+	??_EQMessageFolder@QtMobility@@UAE@I@Z @ 337 NONAME ; QtMobility::QMessageFolder::~QMessageFolder(unsigned int)
+	?content@QMessageContentContainer@QtMobility@@QBE?AVQByteArray@@XZ @ 338 NONAME ; class QByteArray QtMobility::QMessageContentContainer::content(void) const
+	??0QMessageAccountSortOrder@QtMobility@@QAE@XZ @ 339 NONAME ; QtMobility::QMessageAccountSortOrder::QMessageAccountSortOrder(void)
+	?byParentAccountId@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQMessageAccountId@2@W4EqualityComparator@QMessageDataComparator@2@@Z @ 340 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byParentAccountId(class QtMobility::QMessageAccountId const &, enum QtMobility::QMessageDataComparator::EqualityComparator)
+	??0QMessageAddress@QtMobility@@QAE@W4Type@01@ABVQString@@@Z @ 341 NONAME ; QtMobility::QMessageAddress::QMessageAddress(enum QtMobility::QMessageAddress::Type, class QString const &)
+	?byName@QMessageFolderFilter@QtMobility@@SA?AV12@ABVQString@@W4InclusionComparator@QMessageDataComparator@2@@Z @ 342 NONAME ; class QtMobility::QMessageFolderFilter QtMobility::QMessageFolderFilter::byName(class QString const &, enum QtMobility::QMessageDataComparator::InclusionComparator)
+	??1QMessageAccountSortOrder@QtMobility@@UAE@XZ @ 343 NONAME ; QtMobility::QMessageAccountSortOrder::~QMessageAccountSortOrder(void)
+

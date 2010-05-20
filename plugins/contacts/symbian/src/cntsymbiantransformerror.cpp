@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,59 +46,59 @@
  * \param symbianError Symbian error.
  * \param QtError Qt error.
 */
-void CntSymbianTransformError::transformError(TInt symbianError, QContactManager::Error& qtError)
+void CntSymbianTransformError::transformError(TInt symbianError, QContactManager::Error* qtError)
 {
     switch(symbianError)
     {
         case KErrNone:
         {
-            qtError = QContactManager::NoError;
+            *qtError = QContactManager::NoError;
             break;
         }
         case KErrNotFound:
         {
-            qtError = QContactManager::DoesNotExistError;
+            *qtError = QContactManager::DoesNotExistError;
             break;
         }
         case KErrAlreadyExists:
         {
-            qtError = QContactManager::AlreadyExistsError;
+            *qtError = QContactManager::AlreadyExistsError;
             break;
         }
         case KErrLocked:
         {
-            qtError = QContactManager::LockedError;
+            *qtError = QContactManager::LockedError;
             break;
         }
         case KErrAccessDenied:
         case KErrPermissionDenied:
         {
-            qtError = QContactManager::PermissionsError;
+            *qtError = QContactManager::PermissionsError;
             break;
         }
         case KErrNoMemory:
         {
-            qtError = QContactManager::OutOfMemoryError;
+            *qtError = QContactManager::OutOfMemoryError;
             break;
         }
         case KErrNotSupported:
         {
-            qtError = QContactManager::NotSupportedError;
+            *qtError = QContactManager::NotSupportedError;
             break;
         }
         case KErrArgument:
         {
-            qtError = QContactManager::BadArgumentError;
+            *qtError = QContactManager::BadArgumentError;
             break;
         }
         case KErrInvalidContactDetail:
         {
-            qtError = QContactManager::InvalidDetailError;
+            *qtError = QContactManager::InvalidDetailError;
             break;
         }
         default:
         {
-            qtError = QContactManager::UnspecifiedError;
+            *qtError = QContactManager::UnspecifiedError;
             break;
         }
     }

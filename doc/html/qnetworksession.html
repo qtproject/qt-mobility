@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qnetworksession.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QNetworkSession Class Reference</title>
+  <title>Qt Mobility Project 1.1: QNetworkSession Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -114,7 +114,7 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QNetworkSession::UnknownSessionError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">An unidentified error occurred.</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::SessionAbortedError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The session was aborted by the user or system.</td></tr>
-<tr><td valign="top"><tt>QNetworkSession::RoamingError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The session cannot roam to the new configuration.</td></tr>
+<tr><td valign="top"><tt>QNetworkSession::RoamingError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The session cannot roam to a new configuration.</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::OperationNotSupportedError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The operation is not supported for current configuration.</td></tr>
 <tr><td valign="top"><tt>QNetworkSession::InvalidConfigurationError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The operation cannot currently be performed for the current configuration.</td></tr>
 </table></p>
@@ -199,6 +199,7 @@
 <p>Returns the network interface that is used by this session.</p>
 <p>This function only returns a valid <a href="http://qt.nokia.com/doc/4.6/qnetworkinterface.html">QNetworkInterface</a> when this session is <a href="qnetworksession.html#State-enum">Connected</a>.</p>
 <p>The returned interface may change as a result of a roaming process.</p>
+<p>Note: this function does not work in Symbian emulator due to the way the connectivity is emulated on Windows.</p>
 <p>See also <a href="qnetworksession.html#state">state</a>().</p>
 <a name="//apple_ref/cpp/instm/QNetworkSession/isOpen"></a>
 <h3 class="fn"><a name="isOpen"></a>bool QNetworkSession::isOpen () const</h3>
@@ -293,8 +294,8 @@
 <p>See also <a href="qnetworksession.html#open">open</a>() and <a href="qnetworksession.html#error">error</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

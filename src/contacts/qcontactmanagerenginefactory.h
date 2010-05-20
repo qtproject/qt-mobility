@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,18 +55,10 @@ class QContactManagerEngine;
 class Q_CONTACTS_EXPORT QContactManagerEngineFactory
 {
 public:
-
-    int version() const
-    {
-        return QContactManager::version();
-    }
-
-    virtual QList<int> supportedImplementationVersions() const
-    {
-        return QList<int>();
-    }
-    virtual ~QContactManagerEngineFactory() {}
-    virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error& error) = 0;
+    // engine factory functions
+    virtual QList<int> supportedImplementationVersions() const;
+    virtual ~QContactManagerEngineFactory();
+    virtual QContactManagerEngine* engine(const QMap<QString, QString>& parameters, QContactManager::Error* error) = 0;
     virtual QString managerName() const = 0;
 };
 QTM_END_NAMESPACE

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,12 +47,11 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageAddress
 
-    \preliminary
     \brief The QMessageAddress class provides an interface for a message address.
 
     \ingroup messaging
    
-    A message address consists of a recipient string and a type.
+    A message address consists of an addressee string and a type.
 */    
 
 /*!
@@ -60,10 +59,10 @@ QTM_BEGIN_NAMESPACE
 
     This enum type is used to describe the type of a message address.
     
-    \value System   A system address.
-    \value Phone    A telephony address.
-    \value Email    An Email, Internet Message Format address.
-    \value Xmpp     An XMPP, Extensible Messaging and Presence Protocol address.
+    \value System             A system address.
+    \value Phone              A telephony address.
+    \value Email              An Email, Internet Message Format address.
+    \value InstantMessage     An Instant Messaging address.
     
     \sa type(), setType()
 */
@@ -78,13 +77,13 @@ QMessageAddress::QMessageAddress()
 }
 
 /*!
-    Constructs a message address with the type \a type and the recipient address \a recipient.
+    Constructs a message address with the given \a type and \a addressee.
 */
-QMessageAddress::QMessageAddress(Type type, const QString &recipient)
+QMessageAddress::QMessageAddress(Type type, const QString &addressee)
     : d_ptr(new QMessageAddressPrivate(this))
 {
     d_ptr->type = type;
-    d_ptr->recipient = recipient;
+    d_ptr->addressee = addressee;
 }
 
 /*!
@@ -100,7 +99,7 @@ QMessageAddress::QMessageAddress(const QMessageAddress &other)
 QMessageAddress& QMessageAddress::operator=(const QMessageAddress& other)
 {
     if (&other != this) {
-        d_ptr->recipient = other.d_ptr->recipient;
+        d_ptr->addressee = other.d_ptr->addressee;
         d_ptr->type = other.d_ptr->type;
     }
 
@@ -119,7 +118,7 @@ QMessageAddress::~QMessageAddress()
 /*! \internal */
 bool QMessageAddress::operator==(const QMessageAddress& other) const
 {
-    return ((d_ptr->type == other.d_ptr->type) && (d_ptr->recipient == other.d_ptr->recipient));
+    return ((d_ptr->type == other.d_ptr->type) && (d_ptr->addressee == other.d_ptr->addressee));
 }
 
 /*! \internal */
@@ -129,23 +128,23 @@ bool QMessageAddress::operator!=(const QMessageAddress& other) const
 }
 
 /*!
-    Returns the recipient.
+    Returns the addressee.
 
-    \sa setRecipient()
+    \sa setAddressee()
 */
-QString QMessageAddress::recipient() const
+QString QMessageAddress::addressee() const
 {
-    return d_ptr->recipient;
+    return d_ptr->addressee;
 }
 
 /*!
-    Sets the recipient to \a recipient.
+    Sets the addressee to \a addressee.
 
-    \sa recipient()
+    \sa addressee()
 */
-void QMessageAddress::setRecipient(const QString &recipient)
+void QMessageAddress::setAddressee(const QString &addressee)
 {
-    d_ptr->recipient = recipient;
+    d_ptr->addressee = addressee;
 }
 
 /*!

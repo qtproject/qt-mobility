@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaplayercontrol.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaPlayerControl Class Reference</title>
+  <title>Qt Mobility Project 1.1: QMediaPlayerControl Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -25,8 +25,10 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#dtor.QMediaPlayerControl">~QMediaPlayerControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaTimeRange </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#availablePlaybackRanges">availablePlaybackRanges</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#bufferStatus">bufferStatus</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#duration">duration</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#isAudioAvailable">isAudioAvailable</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#isMuted">isMuted</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#isSeekable">isSeekable</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#isVideoAvailable">isVideoAvailable</a></b> () const = 0</td></tr>
@@ -37,7 +39,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#play">play</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRate">playbackRate</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#position">position</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QPair&lt;qint64, qint64&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekRange">seekRange</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMedia">setMedia</a></b> ( const QMediaContent &amp; <i>media</i>, QIODevice * <i>stream</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setMuted">setMuted</a></b> ( bool <i>mute</i> ) = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#setPlaybackRate">setPlaybackRate</a></b> ( qreal <i>rate</i> ) = 0</td></tr>
@@ -54,6 +55,8 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#audioAvailableChanged">audioAvailableChanged</a></b> ( bool <i>audio</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#availablePlaybackRangesChanged">availablePlaybackRangesChanged</a></b> ( const QMediaTimeRange &amp; <i>ranges</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int <i>progress</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#error">error</a></b> ( int <i>error</i>, const QString &amp; <i>errorString</i> )</td></tr>
@@ -62,7 +65,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#mutedChanged">mutedChanged</a></b> ( bool <i>mute</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekRangeChanged">seekRangeChanged</a></b> ( const QPair&lt;qint64, qint64&gt; &amp; <i>range</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayercontrol.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool <i>video</i> )</td></tr>
@@ -110,6 +112,18 @@
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/~QMediaPlayerControl"></a>
 <h3 class="fn"><a name="dtor.QMediaPlayerControl"></a>QMediaPlayerControl::~QMediaPlayerControl ()</h3>
 <p>Destroys a media player control.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlayerControl/audioAvailableChanged"></a>
+<h3 class="fn"><a name="audioAvailableChanged"></a>void QMediaPlayerControl::audioAvailableChanged ( bool <i>audio</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that there has been a change in the availability of <i>audio</i> output.</p>
+<p>See also <a href="qmediaplayercontrol.html#isAudioAvailable">isAudioAvailable</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaPlayerControl/availablePlaybackRanges"></a>
+<h3 class="fn"><a name="availablePlaybackRanges"></a><a href="qmediatimerange.html">QMediaTimeRange</a> QMediaPlayerControl::availablePlaybackRanges () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns a range of times in milliseconds that can be played back.</p>
+<p>Usually for local files this is a continuous interval equal to [0..<a href="qmediaplayercontrol.html#duration">duration</a>()] or an empty time range if seeking is not supported, but for network sources it refers to the buffered parts of the media.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlayerControl/availablePlaybackRangesChanged"></a>
+<h3 class="fn"><a name="availablePlaybackRangesChanged"></a>void QMediaPlayerControl::availablePlaybackRangesChanged ( const <a href="qmediatimerange.html">QMediaTimeRange</a> &amp; <i>ranges</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signals that the available media playback <i>ranges</i> have changed.</p>
+<p>See also <a href="qmediaplayercontrol.html#availablePlaybackRanges">QMediaPlayerControl::availablePlaybackRanges</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/bufferStatus"></a>
 <h3 class="fn"><a name="bufferStatus"></a>int QMediaPlayerControl::bufferStatus () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the buffering progress of the current media. Progress is measured in the percentage of the buffer filled.</p>
@@ -127,6 +141,10 @@
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/error"></a>
 <h3 class="fn"><a name="error"></a>void QMediaPlayerControl::error ( int <i>error</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>errorString</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that an <i>error</i> has occurred. The <i>errorString</i> provides a more detailed explanation.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlayerControl/isAudioAvailable"></a>
+<h3 class="fn"><a name="isAudioAvailable"></a>bool QMediaPlayerControl::isAudioAvailable () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Identifies if there is audio output available for the current media.</p>
+<p>Returns true if audio output is available and false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/isMuted"></a>
 <h3 class="fn"><a name="isMuted"></a>bool QMediaPlayerControl::isMuted () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the mute state of a player control.</p>
@@ -186,13 +204,6 @@
 <p>Signals the playback <i>position</i> has changed.</p>
 <p>This is only emitted in when there has been a discontinous change in the playback postion, such as a seek or the position being reset.</p>
 <p>See also <a href="qmediaplayercontrol.html#position">position</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayerControl/seekRange"></a>
-<h3 class="fn"><a name="seekRange"></a><a href="http://qt.nokia.com/doc/4.6/qpair.html">QPair</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a>&gt; QMediaPlayerControl::seekRange () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns the range in milliseconds the player can seek to. Usually for local files this this range equals to [0..<a href="qmediaplayercontrol.html#duration">duration</a>()] or [0..0] if seeking is not supported, but for network sources it means the buffered part of media.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayerControl/seekRangeChanged"></a>
-<h3 class="fn"><a name="seekRangeChanged"></a>void QMediaPlayerControl::seekRangeChanged ( const <a href="http://qt.nokia.com/doc/4.6/qpair.html">QPair</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a>&gt; &amp; <i>range</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signals that the media seek <i>range</i> has changed.</p>
-<p>See also <a href="qmediaplayercontrol.html#seekRange">QMediaPlayerControl::seekRange</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlayerControl/seekableChanged"></a>
 <h3 class="fn"><a name="seekableChanged"></a>void QMediaPlayerControl::seekableChanged ( bool <i>seekable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the <i>seekable</i> state of a player control has changed.</p>
@@ -249,8 +260,8 @@
 <p>Defines the interface name of the <a href="qmediaplayercontrol.html">QMediaPlayerControl</a> class.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>
