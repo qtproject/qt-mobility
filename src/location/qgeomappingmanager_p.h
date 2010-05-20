@@ -67,9 +67,6 @@ public:
     QSize minimumSize;
     QSize maximumSize;
 
-    QNetworkProxy proxy;
-    QString host;
-
     //internal map state
 
     int zoomLevel;

@@ -53,15 +53,21 @@
 
 QGeoMappingManagerNokia::QGeoMappingManagerNokia()
 {
-    connect(&m_nam,
-            SIGNAL(finished(QNetworkReply*)),
-            this,
-            SLOT(netReplyFinished(QNetworkReply*)));
 }
 
 QGeoMappingManagerNokia::~QGeoMappingManagerNokia()
 {
     //delete m_cache;
+}
+
+void QGeoMappingManagerNokia::setProxy(const QNetworkProxy &proxy)
+{
+    m_nam->setProxy(proxy);
+}
+
+void QGeoMappingManagerNokia::setHost(QString host)
+{
+    m_host = host;
 }
 
 QGeoMappingReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoomLevel,
@@ -92,7 +98,7 @@ QGeoMappingReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoo
     */
         QString rawRequest = getRequestString(*info);
         QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
-        QNetworkReply* netReply = m_nam.get(netRequest);
+        QNetworkReply* netReply = m_nam->get(netRequest);
         QGeoMappingReply* mapReply = new QGeoMappingReplyNokia(netReply, this);
         m_pendingReplies.insert(mapReply, info);
 
@@ -149,10 +155,8 @@ void QGeoMappingManagerNokia::mapError(QGeoMappingReply::Error error, const QStr
 
 QString QGeoMappingManagerNokia::getRequestString(const QuadTileInfo &info) const
 {
-    Q_D(const QGeoMappingManager);
-
     QString request = "http://";
-    request += d->host;
+    request += m_host;
     request += "/maptiler/maptile/newest/";
     request += mapTypeToStr(info.options.mapType());
     request += '/';
@@ -316,4 +320,40 @@ QGeoCoordinate QGeoMappingManagerNokia::screenPositionToCoordinate(QPointF scree
 
     return QGeoCoordinate(lat, lng);
 }
+
+QGeoMappingReply* QGeoMappingManagerNokia::requestMap(const QGeoCoordinate &center,
+                                                      int zoomLevel,
+                                                      const QSize &size,
+                                                      const QGeoMapRequestOptions &requestOptions)
+{
+    return NULL;
+}
+
+void QGeoMappingManagerNokia::setZoomLevel(int zoomLevel)
+{
+}
+
+void QGeoMappingManagerNokia::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
+{
+}
+
+void QGeoMappingManagerNokia::setCenter(const QGeoCoordinate &center)
+{
+}
+
+QGeoCoordinate QGeoMappingManagerNokia::center() const
+{
+    return QGeoCoordinate();
+}
+
+void QGeoMappingManagerNokia::pan(int startX, int startY, int endX, int endY)
+{
+}
+
+QGeoBoundingBox QGeoMappingManagerNokia::viewBounds() const
+{
+    return QGeoBoundingBox();
+}
+
+
 

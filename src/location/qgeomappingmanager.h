@@ -50,7 +50,6 @@
 #include <QPixmap>
 
 class QSize;
-class QNetworkProxy;
 class QPainter;
 class QStyleOptionGraphicsItem;
 
@@ -79,9 +78,9 @@ public:
     virtual ~QGeoMappingManager();
 
     virtual QGeoMappingReply* requestMap(const QGeoCoordinate &center,
-                                        int zoomLevel,
-                                        const QSize &size,
-                                        const QGeoMapRequestOptions &requestOptions) = 0;
+                                         int zoomLevel,
+                                         const QSize &size,
+                                         const QGeoMapRequestOptions &requestOptions) = 0;
 
     virtual QGeoMappingReply* requestTile(int row, int col, int zoomLevel,
                                           const QSize &size,
@@ -95,11 +94,6 @@ public:
 
     int minimumZoomLevel() const;
     int maximumZoomLevel() const;
-
-    QString host() const;
-    QNetworkProxy proxy() const;
-    void setHost(const QString &host);
-    void setProxy(const QNetworkProxy &proxy);
 
     //internal map state
 

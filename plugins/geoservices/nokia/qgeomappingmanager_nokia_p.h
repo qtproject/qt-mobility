@@ -84,12 +84,25 @@ public:
     QGeoMappingManagerNokia();
     virtual ~QGeoMappingManagerNokia();
 
+    void setProxy(const QNetworkProxy &proxy);
+    void setHost(QString host);
+
+    virtual QGeoMappingReply* requestMap(const QGeoCoordinate &center,
+                                         int zoomLevel,
+                                         const QSize &size,
+                                         const QGeoMapRequestOptions &requestOptions);
+
     virtual QGeoMappingReply* requestTile(int row, int col, int zoomLevel,
                                           const QSize &size,
                                           const QGeoMapRequestOptions &requestOptions);
 
     //internal map state
-
+    virtual void setZoomLevel(int zoomLevel);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    virtual void setCenter(const QGeoCoordinate &center);
+    virtual QGeoCoordinate center() const;
+    virtual void pan(int startX, int startY, int endX, int endY);
+    virtual QGeoBoundingBox viewBounds() const;
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
@@ -110,7 +123,8 @@ private:
     static qint64 getTileIndex(qint32 row, qint32 col, qint32 zoomLevel);
 
 private:
-    QNetworkAccessManager m_nam;
+    QNetworkAccessManager *m_nam;
+    QString m_host;
     //QGeoQuadTileCacheNokia* m_cache;
     QHash<QGeoMappingReply*, QuadTileInfo*> m_pendingReplies;
 

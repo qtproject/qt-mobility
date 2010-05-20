@@ -43,6 +43,7 @@
 
 #include "qgeoplacesmanager_nokia_p.h"
 #include "qgeoroutingmanager_nokia_p.h"
+#include "qgeomappingmanager_nokia_p.h"
 
 #include <QtPlugin>
 #include <QNetworkProxy>
@@ -112,6 +113,26 @@ bool QGeoServiceProviderPluginNokia::initialize(const QMap<QString, QString> &pa
     
     m_routingManager = routingManager;
 
+    if (m_mappingManager)
+        delete m_mappingManager;
+
+    QGeoMappingManagerNokia* mappingManager = new QGeoMappingManagerNokia();
+    if(keys.contains("places.proxy")) {
+        QString proxy = parameters.value("routing.proxy");
+        if(proxy.isEmpty())
+            mappingManager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+        else
+            mappingManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
+    }
+    if(keys.contains("places.host")) {
+        QString host = parameters.value("routing.host");
+        if(!host.isEmpty())
+            mappingManager->setHost(host);
+    }
+    
+    m_mappingManager = mappingManager;
+
+    //TODO: don't get these two assignments
     if (error)
         *error = QGeoServiceProvider::NoError;
 
