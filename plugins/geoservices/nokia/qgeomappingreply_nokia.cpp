@@ -39,11 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qgeoplacesreply_nokia_p.h"
-#include "qgeocodexmlparser_p.h"
+#include "qgeomappingreply_nokia_p.h"
 
-QGeoPlacesReplyNokia::QGeoPlacesReplyNokia(QNetworkReply *reply, QObject *parent)
-    : QGeoPlacesReply(parent),
+QGeoMappingReplyNokia::QGeoMappingReplyNokia(QNetworkReply *reply, QObject *parent)
+    : QGeoMappingReply(parent),
     m_reply(reply)
 {
     connect(m_reply,
@@ -57,40 +56,45 @@ QGeoPlacesReplyNokia::QGeoPlacesReplyNokia(QNetworkReply *reply, QObject *parent
             SLOT(networkError(QNetworkReply::NetworkError)));
 }
 
-QGeoPlacesReplyNokia::~QGeoPlacesReplyNokia()
+QGeoMappingReplyNokia::~QGeoMappingReplyNokia()
 {
     //TODO: possible mem leak -> m_reply->deleteLater() ?
 }
 
-void QGeoPlacesReplyNokia::abort()
+void QGeoMappingReplyNokia::abort()
 {
     m_reply->abort();
     m_reply->deleteLater();
 }
 
-void QGeoPlacesReplyNokia::networkFinished()
+void QGeoMappingReplyNokia::networkFinished()
 {
     if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoPlacesReply::CommunicationError, m_reply->errorString());
+        setError(QGeoMappingReply::CommunicationError, m_reply->errorString());
         m_reply->deleteLater();
         return;
     }
 
-    QGeoCodeXmlParser parser;
+    QPixmap tile;
+    
+    if (!tile.loadFromData(m_reply->readAll(), "PNG")) {
+        // add a qWarning with the actual parser.errorString()
+        setError(QGeoMappingReply::ParseError, "The response from the service was not in a recognisable format.");
+    }
 
-    if (parser.parse(m_reply)) {
-        setPlaces(parser.results());
+    if(!tile.isNull() && !tile.size().isEmpty()) {
+        setMapImage(tile);
         setFinished(true);
     } else {
         // add a qWarning with the actual parser.errorString()
-        setError(QGeoPlacesReply::ParseError, "The response from the service was not in a recognisable format.");
+        setError(QGeoMappingReply::ParseError, "The map image is empty.");
     }
 
     m_reply->deleteLater();
 }
 
-void QGeoPlacesReplyNokia::networkError(QNetworkReply::NetworkError error)
+void QGeoMappingReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    setError(QGeoPlacesReply::CommunicationError, m_reply->errorString());
+    setError(QGeoMappingReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }

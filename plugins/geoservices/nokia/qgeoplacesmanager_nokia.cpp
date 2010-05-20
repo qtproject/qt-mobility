@@ -198,6 +198,7 @@ void QGeoPlacesManagerNokia::placesFinished()
     QGeoPlacesReply *reply = qobject_cast<QGeoPlacesReply*>(sender());
 
     if (reply)
+        //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
         emit finished(reply);
 }
 

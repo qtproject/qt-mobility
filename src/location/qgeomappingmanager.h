@@ -54,8 +54,6 @@ class QNetworkProxy;
 class QPainter;
 class QStyleOptionGraphicsItem;
 
-QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
 //class QGeoMapWidget;
@@ -150,7 +148,5 @@ private:
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

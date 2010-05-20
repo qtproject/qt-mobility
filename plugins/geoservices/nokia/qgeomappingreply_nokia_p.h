@@ -39,58 +39,42 @@
 **
 ****************************************************************************/
 
-#include "qgeoplacesreply_nokia_p.h"
-#include "qgeocodexmlparser_p.h"
+#ifndef QGEOMAPPINGREPLY_NOKIA_P_H
+#define QGEOMAPPINGREPLY_NOKIA_P_H
 
-QGeoPlacesReplyNokia::QGeoPlacesReplyNokia(QNetworkReply *reply, QObject *parent)
-    : QGeoPlacesReply(parent),
-    m_reply(reply)
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <qgeomappingreply.h>
+
+#include <QNetworkReply>
+
+QTM_USE_NAMESPACE
+
+class QGeoMappingReplyNokia : public QGeoMappingReply
 {
-    connect(m_reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(networkFinished()));
+    Q_OBJECT
 
-    connect(m_reply,
-            SIGNAL(error(QNetworkReply::NetworkError)),
-            this,
-            SLOT(networkError(QNetworkReply::NetworkError)));
-}
+public:
+    QGeoMappingReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    ~QGeoMappingReplyNokia();
 
-QGeoPlacesReplyNokia::~QGeoPlacesReplyNokia()
-{
-    //TODO: possible mem leak -> m_reply->deleteLater() ?
-}
+    void abort();
 
-void QGeoPlacesReplyNokia::abort()
-{
-    m_reply->abort();
-    m_reply->deleteLater();
-}
+private slots:
+    void networkFinished();
+    void networkError(QNetworkReply::NetworkError error);
 
-void QGeoPlacesReplyNokia::networkFinished()
-{
-    if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoPlacesReply::CommunicationError, m_reply->errorString());
-        m_reply->deleteLater();
-        return;
-    }
+private:
+    QNetworkReply *m_reply;
+};
 
-    QGeoCodeXmlParser parser;
-
-    if (parser.parse(m_reply)) {
-        setPlaces(parser.results());
-        setFinished(true);
-    } else {
-        // add a qWarning with the actual parser.errorString()
-        setError(QGeoPlacesReply::ParseError, "The response from the service was not in a recognisable format.");
-    }
-
-    m_reply->deleteLater();
-}
-
-void QGeoPlacesReplyNokia::networkError(QNetworkReply::NetworkError error)
-{
-    setError(QGeoPlacesReply::CommunicationError, m_reply->errorString());
-    m_reply->deleteLater();
-}
+#endif
