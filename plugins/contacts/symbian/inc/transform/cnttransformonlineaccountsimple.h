@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,35 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QTRACKERRELATIONSHIPFETCHREQUEST_H_
-#define QTRACKERRELATIONSHIPFETCHREQUEST_H_
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
 
-#include <QObject>
-#include <qtrackercontactasyncrequest.h>
-#include <QPair>
-#include <QList>
-#include <QtTracker/QLive>
-#include <QtTracker/ontologies/nco.h>
-#include <qtcontacts.h>
+#ifndef TRANSFORMONLINEACCOUNTSIMPLE_H
+#define TRANSFORMONLINEACCOUNTSIMPLE_H
 
-QTM_BEGIN_NAMESPACE
-class QContactAbstractRequest;
-QTM_END_NAMESPACE
+#include "cnttransformcontactdata.h"
 
 QTM_USE_NAMESPACE
 
-class QTrackerRelationshipFetchRequest: public QObject, public QTrackerContactAsyncRequest
+class CntTransformOnlineAccount : public CntTransformContactData
 {
-    Q_OBJECT
-public:
-    QTrackerRelationshipFetchRequest(QContactAbstractRequest* req, QContactManagerEngine* parent);
-    virtual ~QTrackerRelationshipFetchRequest();
-
-private slots:
-    void modelUpdated();
-
-private:
-    SopranoLive::LiveNodes query;
+protected:
+	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
+	QContactDetail *transformItemField(const CContactItemField &field, const QContact &contact);
+	bool supportsDetail(QString detailName) const;
+	QList<TUid> supportedFields() const;
+	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+    bool supportsSubType(const QString &subType) const;
+    quint32 getIdForField(const QString &fieldName) const;
+    void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString &contactType) const;
 };
 
-#endif /* QTRACKERRELATIONSHIPFETCHREQUEST_H_ */
+#endif // TRANSFORMONLINEACCOUNT_H
+
+#endif // SYMBIAN_BACKEND_USE_SQLITE

@@ -81,6 +81,9 @@ private:
     QSharedDataPointer<QContactFetchHintPrivate> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFetchHint::OptimizationHints);
+
 QTM_END_NAMESPACE
+
 
 #endif

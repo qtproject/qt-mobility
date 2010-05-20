@@ -73,6 +73,7 @@ QContactRelationshipSaveRequest::QContactRelationshipSaveRequest(QObject* parent
 void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship& contactRelationship)
 {
     Q_D(QContactRelationshipSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships.clear();
     d->m_relationships.append(contactRelationship);
 }
@@ -81,6 +82,7 @@ void QContactRelationshipSaveRequest::setRelationship(const QContactRelationship
 void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelationship>& contactRelationships)
 {
     Q_D(QContactRelationshipSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships = contactRelationships;
 }
 
@@ -89,6 +91,7 @@ void QContactRelationshipSaveRequest::setRelationships(const QList<QContactRelat
 QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() const
 {
     Q_D(const QContactRelationshipSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationships;
 }
 
@@ -96,6 +99,7 @@ QList<QContactRelationship> QContactRelationshipSaveRequest::relationships() con
 QMap<int, QContactManager::Error> QContactRelationshipSaveRequest::errorMap() const
 {
     Q_D(const QContactRelationshipSaveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

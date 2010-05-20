@@ -75,15 +75,6 @@ QContactDetail *CntTransformEmail::transformItemField(const CContactItemField& f
 	return email;
 }
 
-bool CntTransformEmail::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldEMail.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformEmail::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -91,6 +82,12 @@ bool CntTransformEmail::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformEmail::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldEMail;
 }
 
 QList<TUid> CntTransformEmail::supportedSortingFieldTypes(QString detailFieldName) const

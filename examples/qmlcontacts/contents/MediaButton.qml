@@ -11,13 +11,13 @@ Item {
     }
     Image {
         id: pressed
-        source: "pics/button-pressed.png"
         opacity: 0
+        source: "pics/button-pressed.png"
     }
-    MouseRegion {
+    MouseArea {
         id: clickRegion
         anchors.fill: normal
-        onClicked: { container.clicked(); }
+        onClicked: { container.clicked();}
     }
     Text {
         font.bold: true
@@ -26,6 +26,7 @@ Item {
         text: container.text
     }
     width: normal.width
+    height: childrenRect.height
 
     states: State {
         name: "Pressed"
