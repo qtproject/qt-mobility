@@ -52,6 +52,10 @@ contains(MOBILITY, versit) {
     qtAddLibrary(QtVersit)
 }
 
+contains(MOBILITY, telephony) {
+    qtAddLibrary(QtTelephony)
+}
+
 # Add dependency to QtMobility package to all projects besides QtMobility package itself.
 # Mobility libs have UID3 0x2002AC89
 # self-sgned MObility libs have UID3 0xE002AC89
