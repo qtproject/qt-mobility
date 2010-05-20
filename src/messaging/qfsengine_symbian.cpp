@@ -1951,11 +1951,14 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
         TRAPD(err, partCount = mPart->PartCountL());
         if (err == KErrNone) {
             for (TInt i = 0; i < partCount; i++) {
-                TRAPD(err2, AddContentToMessage(mPart->PartByIndexL(i), aMessage));
-                Q_UNUSED(err2);
+                MEmailMessageContent* content = NULL;
+                TRAPD(err2, content = mPart->PartByIndexL(i));
+                if (err2 == KErrNone) {
+                    AddContentToMessage(content, aMessage);
+                    content->Release();
+                }
             }
         }
-        mPart->Release();
         return;
     }
     
@@ -1963,19 +1966,12 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
     if (textContent) { 
         QByteArray mimeType;
         TInt availableSize = textContent->AvailableSize();
-        CFetchOperationWait* op = CFetchOperationWait::NewLC();
-        if (!availableSize) {
-            textContent->FetchL(*op);     
-            op->Wait();
-        }
-        CleanupStack::PopAndDestroy(op);
         TRAPD(err, 
             TPtrC body = textContent->ContentL();
             QString text = QString::fromUtf16(body.Ptr(), body.Length());
             aMessage->setBody(text, mimeType);
             );
         Q_UNUSED(err);
-        textContent->Release();
         return;
     }
 }
