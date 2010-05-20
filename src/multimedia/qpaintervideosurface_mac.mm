@@ -66,7 +66,13 @@ QVideoSurfaceCoreGraphicsPainter::QVideoSurfaceCoreGraphicsPainter(bool glSuppor
     //qDebug() << "QVideoSurfaceCoreGraphicsPainter, GL supported:" << glSupported;
     ciContext = 0;
     m_imagePixelFormats
-        << QVideoFrame::Format_RGB32;
+        << QVideoFrame::Format_RGB32
+        << QVideoFrame::Format_ARGB32
+        << QVideoFrame::Format_ARGB32_Premultiplied
+        << QVideoFrame::Format_RGB24
+        << QVideoFrame::Format_RGB565
+        << QVideoFrame::Format_RGB555
+        << QVideoFrame::Format_ARGB8565_Premultiplied;
 
     m_supportedHandles
             << QAbstractVideoBuffer::NoHandle
@@ -261,9 +267,12 @@ QAbstractVideoSurface::Error QVideoSurfaceCoreGraphicsPainter::paint(
         }
 
         m_frame.unmap();
+    } else if (m_frame.isValid()) {
+        return QAbstractVideoSurface::IncorrectFormatError;
     } else {
         painter->fillRect(target, Qt::black);
     }
+
     return QAbstractVideoSurface::NoError;
 }
 
