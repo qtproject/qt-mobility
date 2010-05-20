@@ -73,7 +73,7 @@ QTM_END_NAMESPACE
 class CntSymbianDatabase;
 class CntSymbianSrvConnection;
 class CntTransformContact;
-class CntAbstractContactFilter;
+class CntSymbianFilter;
 class CntAbstractContactSorter;
 class CntRelationship;
 class CntDisplayLabel;
