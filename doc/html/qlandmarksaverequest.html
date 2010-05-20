@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qlandmarksaverequest.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QLandmarkSaveRequest Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QLandmarkSaveRequest Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QLandmarkSaveRequest"></a>
@@ -41,20 +41,17 @@
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>2 signals inherited from <a href="qlandmarkabstractrequest.html#signals">QLandmarkAbstractRequest</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkSaveRequest class allows a client to asynchronously request that certain landmarks be saved by a landmark manager.</p>
 <p>For a QLandmarkSaveRequest, the <a href="qlandmarkabstractrequest.html#resultsAvailable">resultsAvailable</a>() signal will be emitted when either an individual items error out (individaul errors may be retrieved by calling <a href="qlandmarksaverequest.html#errorMap">errorMap</a>()), an overall operation error occurs(which may be retrieved by calling <a href="qlandmarkabstractrequest.html#error">error</a>()), or when individual items have been saved (which may be retrieved by calling <a href="qlandmarksaverequest.html#landmarks">landmarks</a>()).</p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkSaveRequest/QLandmarkSaveRequest"></a>
 <h3 class="fn"><a name="QLandmarkSaveRequest"></a>QLandmarkSaveRequest::QLandmarkSaveRequest ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>manager</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -77,11 +74,10 @@
 <h3 class="fn"><a name="setLandmarks"></a>void QLandmarkSaveRequest::setLandmarks ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmark.html">QLandmark</a>&gt; &amp; <i>landmarks</i> )</h3>
 <p>Sets the list of <i>landmarks</i> to be saved.</p>
 <p>See also <a href="qlandmarksaverequest.html#landmarks">landmarks</a>() and <a href="qlandmarksaverequest.html#setLandmark">setLandmark</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

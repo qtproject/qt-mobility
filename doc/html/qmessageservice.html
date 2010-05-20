@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmessageservice.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMessageService Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QMessageService Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMessageService"></a>
@@ -71,14 +71,13 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageService class provides the interface for requesting messaging service operations.</p>
 <p>QMessageService provides the mechanisms for messaging clients to request services, and to receive information in response. All requestable service operations present the same interface for communicating status, and progress information.</p>
@@ -89,9 +88,7 @@
 <p>A QMessageService instance supports only a single request at a time. Attempting to initiate an operation on a QMessageService while another operation is already in progress will result in function initiating the latter request returning false. A client may, however, use multiple QMessageService instances to concurrently initiate a queue of requests that will be serviced sequentially.</p>
 <p>Each QMessageService instance will report only the changes pertaining to the request that instance initiated.</p>
 <p>Except where noted QMessageServices may initiate network activity. Other functions in the mobility messaging API will not initiate network activity, with the exception of Windows mobile and desktop platforms which may initiate network activity during the evaluation of any function call.</p>
-</div>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QMessageService/State"></a>
 <a name="//apple_ref/cpp/econst/QMessageService/InactiveState"></a>
@@ -107,9 +104,7 @@
 <tr><td valign="top"><tt>QMessageService::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The operation was canceled.</td></tr>
 <tr><td valign="top"><tt>QMessageService::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The operation has finished execution; succesfully completed or otherwise.</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessageService/QMessageService"></a>
 <h3 class="fn"><a name="QMessageService"></a>QMessageService::QMessageService ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -216,11 +211,10 @@
 <h3 class="fn"><a name="stateChanged"></a>void QMessageService::stateChanged ( <a href="qmessageservice.html#State-enum">QMessageService::State</a> <i>newState</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when the state of the operation changes, with the new state described by <i>newState</i>.</p>
 <p>See also <a href="qmessageservice.html#state">state</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

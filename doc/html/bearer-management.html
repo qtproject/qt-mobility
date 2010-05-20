@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- bearermanagement.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Bearer Management</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: Bearer Management</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -15,9 +15,9 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Bearer Management<br /><span class="subtitle"></span>
 </h1>
 <p>Bearer Management controls the connectivity state of the system so that the user can start or stop interfaces or roam transparently between access points.</p>
-<ul><li><a href="#namespace">Namespace</a></li>
-<li><a href="#overview">Overview</a></li>
-<ul><li><a href="#the-api-in-detail">The API in Detail</a></li>
+<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#migration-to-qt-4-7-or-higher">Migration to Qt 4.7 or higher</a></li>
+<li><a href="#the-api-in-detail">The API in Detail</a></li>
 <ul><li><a href="#service-networks">Service networks</a></li>
 <li><a href="#managing-network-sessions">Managing network sessions</a></li>
 <li><a href="#roaming">Roaming</a></li>
@@ -33,14 +33,16 @@
 </ul>
 <li><a href="#classes">Classes</a></li>
 </ul>
-<a name="namespace"></a>
-<h3>Namespace</h3>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>The Bearer Management API controls the system's connectivity state. This incorporates simple information such as whether the device is online and how many interfaces there are as well as enables the application developer to start, stop network interfaces and influences other connection specific details. Depending on the platform's capabilities it may even provide session management so that a network interface remains up for as long as clients have a registered interest in them while at the same time optimizes the interface's uptime.</p>
-<p>This API is a key enabler for HTTP level roaming in <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a>.</p>
 <p>This API does not provide support for management of network configurations themselves. It is up to the platform to provide infrastructure which enables to user to create, edit or delete network configurations.</p>
+<a name="migration-to-qt-4-7-or-higher"></a>
+<h4>Migration to Qt 4.7 or higher</h4>
+<p>The Bearer API has been migrated to the Qt 4.7 <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a> library. This enables connection manager and roaming support for <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a>. Starting with Qt 4.7 the Mobility version has been deprecated in favor of Qt's Bearer API. Furthermore the roaming enabled <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a> cannot be used in connection with Mobility's Bearer API.</p>
+<p>The porting effort from Mobility Bearer to Qt Bearer is minimal as the relevant classes are source compatible. The only exception is the removal of the QtMobility namespace. Already deployed applications will continue to work but cannot make use of the new features in Qt 4.7 and <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a>.</p>
+<p>An application can select the Bearer API to be used via its project file. As long as the MOBILITY variable contains the <tt>bearer</tt> string the project will link Mobility's bearer library (even if the project links against <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a> at the same time).</p>
+<pre>    MOBILITY+=bearer   #choose Mobility bearer</pre>
 <a name="the-api-in-detail"></a>
 <h4>The API in Detail</h4>
 <p>Computer systems manage their network interfaces via a set of configurations. Each configuration describes a set of parameters which instruct the system how a particular network interface is started. One of the most simplistic examples might be an Ethernet configuration that links a network card to a DHCP server. A more complex example might be a Wireless LAN configuration which may comprise of hardware details such as the WLAN card address, WLAN access point details (e.g ESSID, encryption details) and user specific information (for example username and password). Once the network interface was configured and started according to the configuration blue print, multiple applications are free to use this link layer connection/session for their own socket operations. Note that the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object only provides limited information about the configuration details themselves. It's main purpose is to act as a configuration identifier through which link layer connections can be created, destroyed and monitored.</p>
@@ -64,7 +66,7 @@
 <p>Some mobile platforms use the concept of grouped access points (also called SNAP or Service Network Access Point). In principle multiple configurations are grouped together and possibly even prioritized when compared to each other. This is useful for use cases where all configurations serve a similar purpose or context. A common context could be that they provide access to the public Internet or possibly only to the office Intranet. By providing a pool of configurations the system can make a decision based on given priorities which usually map to factors such as speed, availability and cost. Furthermore the system can automatically roam from one access point to the next one while ensuring minimal impact on the user experience.</p>
 <p>The <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::Type</a> flag specifies to what category a configuration belongs. The <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</a> type is the most common example. It represents a configuration that can be used to create a session. The above mentioned grouping behavior is provided by <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a> configurations. Service networks are place holders until such time when the user attempts to <a href="qnetworksession.html#open">open()</a> a new session. At that point in time the system determines which of the configurations <a href="qnetworkconfiguration.html#children">QNetworkConfiguration::children</a>() is best to use. The selection algorithm is provided by the platform and is usually managed by network settings applications. A service network can only have one level of indirection which implies children can only be of type <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</a>.</p>
 <p>Most systems allow the user to define the systems default configuration. Usually the default behavior is either a service network, a particular Internet access point or the user instructs the platform to ask the user once an application requests the network. User interaction is generally implemented by some sort of system dialog which shows up at the appropriate point in time. The application does not have to handle the user input. This API provides the <a href="qnetworkconfigurationmanager.html#defaultConfiguration">QNetworkConfigurationManager::defaultConfiguration</a>() call which serves a similar purpose. The subsequent code snippet provides a quick way how an application can quickly create a new network session without (or only minimal) user interaction:</p>
-<pre>    // Set Internet Access Point
+<pre><span class="comment">    // Set Internet Access Point</span>
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
                               &amp; QNetworkConfigurationManager::CanStartAndStopInterfaces);
@@ -133,8 +135,8 @@
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

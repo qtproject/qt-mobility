@@ -890,7 +890,7 @@ int QLandmarkManagerEngine::compareLandmark(const QLandmark& a, const QLandmark&
             case (QLandmarkSortOrder::DistanceSort):
             {
                 const QLandmarkDistanceSort distanceSort = sortOrders.at(i);
-                comparison = compareName(a, b, distanceSort);
+                comparison = compareDistance(a, b, distanceSort);
                 break;
             }
             default:
@@ -951,7 +951,7 @@ int QLandmarkManagerEngine::compareDistance(const QLandmark &a, const QLandmark 
             double da = distanceSort.coordinate().distanceTo(a.coordinate());
             double db = distanceSort.coordinate().distanceTo(b.coordinate());
 
-            if (da == db) { //TODO: Fix need to find a proper way to compare doubles
+            if (qFuzzyCompare(da,db)) {
                 result = 0;
             } else if (da < db) {
                 result = -1;
@@ -983,6 +983,19 @@ int QLandmarkManagerEngine::compareDistance(const QLandmark &a, const QLandmark 
  */
 void QLandmarkManagerEngine::addSorted(QList<QLandmark>* sorted, const QLandmark& landmark, const QList<QLandmarkSortOrder>& sortOrders)
 {
+    if (sortOrders.count() > 0) {
+        for (int i = 0; i < sorted->size(); i++) {
+            // check to see if the new contact should be inserted here
+            int comparison = compareLandmark(sorted->at(i), landmark, sortOrders);
+            if (comparison > 0) {
+                sorted->insert(i, landmark);
+                return;
+            }
+        }
+    }
+
+    // hasn't been inserted yet?  append to the list.
+    sorted->append(landmark);
 }
 
 /*!
@@ -1131,7 +1144,22 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
 /*! Sorts the given list of \a landmarks according to the provided \a sortOrders */
 QList<QLandmarkId> QLandmarkManagerEngine::sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder>& sortOrders)
 {
-    return QList<QLandmarkId>();
+    QList<QLandmarkId> landmarkIds;
+    QList<QLandmark> sortedLandmarks;
+    if(!sortOrders.isEmpty()) {
+        foreach (const QLandmark& landmark, landmarks) {
+            QLandmarkManagerEngine::addSorted(&sortedLandmarks, landmark, sortOrders);
+        }
+
+        foreach (const QLandmark& landmark, sortedLandmarks) {
+            landmarkIds.append(landmark.landmarkId());
+        }
+    } else {
+        foreach(const QLandmark& landmark, landmarks) {
+            landmarkIds.append(landmark.landmarkId());
+        }
+    }
+    return landmarkIds;
 }
 
 #include "moc_qlandmarkmanagerengine.cpp"

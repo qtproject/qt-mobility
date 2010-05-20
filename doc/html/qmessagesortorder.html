@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmessagesortorder.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMessageSortOrder Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QMessageSortOrder Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMessageSortOrder"></a>
@@ -46,17 +46,14 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageSortOrder class defines the parameters used for sorting a subset of queried messages from the messaging store.</p>
 <p>A QMessageSortOrder is composed of a message property to sort and a sort order. The QMessageSortOrder class is used in conjunction with the <a href="qmessagemanager.html#queryMessages">QMessageManager::queryMessages</a>() and <a href="qmessageservice.html#queryMessages">QMessageService::queryMessages</a>() functions to sort message results according to the criteria defined by the sort order.</p>
 <p>For example: To create a query for all messages sorted by their timestamp in decending order:</p>
 <pre>    QMessageSortOrder sortOrder(QMessageSortOrder::byTimeStamp(Qt::DescendingOrder));
     QMessageIdList results = QMessageManager().queryMessages(QMessageFilter(), sortOrder);</pre>
-</div>
 <p>See also <a href="qmessagemanager.html">QMessageManager</a> and <a href="qmessagefilter.html">QMessageFilter</a>.</p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessageSortOrder/QMessageSortOrder"></a>
 <h3 class="fn"><a name="QMessageSortOrder"></a>QMessageSortOrder::QMessageSortOrder ()</h3>
@@ -126,11 +123,10 @@
 <p>Appends the value of the sort order <i>other</i> with the value of this sort order and assigns the result to this sort order.</p>
 <p>This function determines sorting precedence.</p>
 <p>On the Windows Mobile platform <a href="qmessagesortorder.html#bySubject">bySubject</a>() and <a href="qmessagesortorder.html#byReceptionTimeStamp">byReceptionTimeStamp</a>() sort orders can not be combined with each other.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

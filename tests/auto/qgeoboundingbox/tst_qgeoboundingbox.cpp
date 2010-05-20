@@ -45,6 +45,7 @@
 
 QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QGeoCoordinate)
+Q_DECLARE_METATYPE(QGeoBoundingBox)
 
 class tst_QGeoBoundingBox : public QObject
 {
@@ -276,7 +277,6 @@ void tst_QGeoBoundingBox::getWidth()
     QCOMPARE(box.getWidth(), getWidth);
 }
 
-Q_DECLARE_METATYPE(QGeoBoundingBox)
 void tst_QGeoBoundingBox::intersects_data()
 {
     QTest::addColumn<QGeoBoundingBox>("bbox");

@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: weatherinfo.cpp Example File (weatherinfo/weatherinfo.cpp)</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: weatherinfo.cpp Example File (weatherinfo/weatherinfo.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -343,7 +343,7 @@
 
         void requestTownName(QString longitude, QString latitude) {
             <span class="comment">// http://code.google.com/intl/en/apis/maps/documentation/geocoding/index.html#ReverseGeocoding</span>
-            QUrl url(&quot;http://maps.google.com/maps/geo&quot;);
+            QUrl url(&quot;http:<span class="comment">//maps.google.com/maps/geo&quot;);</span>
             url.addEncodedQueryItem(&quot;q&quot;, QUrl::toPercentEncoding(latitude + &quot;,&quot; + longitude));
             url.addEncodedQueryItem(&quot;output&quot;, QUrl::toPercentEncoding(&quot;xml&quot;));
 
@@ -362,7 +362,7 @@
         }
 
         void request(const QString &amp;location) {
-            QUrl url(&quot;http://www.google.com/ig/api&quot;);
+            QUrl url(&quot;http:<span class="comment">//www.google.com/ig/api&quot;);</span>
             url.addEncodedQueryItem(&quot;hl&quot;, &quot;en&quot;);
             url.addEncodedQueryItem(&quot;weather&quot;, QUrl::toPercentEncoding(location));
 
@@ -692,8 +692,8 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- contacts.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Contacts</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: Contacts</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -37,7 +37,7 @@
 <li><a href="#building-and-compiling">Building and compiling</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#main-classes">Main classes</a></li>
-<li><a href="#contact-details- leaf-classes">&quot;Contact Details&quot; Leaf Classes</a></li>
+<li><a href="#contact-details-leaf-classes">&quot;Contact Details&quot; Leaf Classes</a></li>
 <li><a href="#asynchronous-requests">Asynchronous Requests</a></li>
 <li><a href="#contact-selection">Contact Selection</a></li>
 <li><a href="#implementing-backends">Implementing Backends</a></li>
@@ -66,11 +66,11 @@
 <a name="detail"></a>
 <h5>Detail</h5>
 <p>A <a href="qcontactdetail.html">detail</a> is a single, cohesive unit of information that is stored in a contact. As explained previously, it is valid for a particular context or set of contexts, and conforms to a particular definition. A detail may have specific metadata associated with it, such as its sub-type, context, and arbitrary, user-defined metadata, as well as access constraints which may apply to the the detail (such as read-only, irremovable, etc).</p>
-<p>There are a number of common details defined in the API which are intended for use by clients, as listed <a href="#contact-details- leaf-classes">here</a>.</p>
+<p>There are a number of common details defined in the API which are intended for use by clients, as listed <a href="#contact-details-leaf-classes">here</a>.</p>
 <a name="detail-definition"></a>
 <h5>Detail Definition</h5>
 <p>Each detail stored in a contact has defined semantics of usage and storage. The Qt Contacts API allows per-datastore contact <a href="qcontactdetaildefinition.html">detail definitions</a>, allowing a manager to provide clients with this information on demand, and allowing third-party developers to register detail definitions for use by clients. A detail definition includes the fields (and value-types of those fields) which make up the detail, and per-contact uniqueness constraints on details of the definition.</p>
-<p>Most clients can safely ignore this class entirely, since they will most likely want to use the predefined details listed <a href="#contact-details- leaf-classes">here</a>. In some cases, however, a manager will not support all of the fields of a particular predefined detail leaf class; in that case, it may be necessary for the client to inspect the supported detail definition for that leaf class and modify its behaviour accordingly (for example, if the <tt>CustomLabel</tt> field of the <a href="qcontactname.html">QContactName</a> leaf detail is not supported in a particular manager).</p>
+<p>Most clients can safely ignore this class entirely, since they will most likely want to use the predefined details listed <a href="#contact-details-leaf-classes">here</a>. In some cases, however, a manager will not support all of the fields of a particular predefined detail leaf class; in that case, it may be necessary for the client to inspect the supported detail definition for that leaf class and modify its behaviour accordingly (for example, if the <tt>CustomLabel</tt> field of the <a href="qcontactname.html">QContactName</a> leaf detail is not supported in a particular manager).</p>
 <a name="relationships"></a>
 <h5>Relationships</h5>
 <p>Contacts may participate in <a href="qcontactrelationship.html">relationships</a> with other contacts. The details of any such relationship is stored by the manager which contains the contact. There are several standard relationship types supported by the default schema, and arbitrary relationship types are also allowed if the manager supports that feature. One important relationship is that of group membership; membership of a contact in a group can be modeled as that group contact participating in a <tt>HasMember</tt> relationship with the contact.</p>
@@ -138,7 +138,7 @@
 <tr valign="top" class="odd"><th><a href="qcontactmanager.html">QContactManager</a></th><td>Interface which allows clients with access to contact information stored in a particular backend</td></tr>
 <tr valign="top" class="even"><th><a href="qcontactrelationship.html">QContactRelationship</a></th><td>Describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact</td></tr>
 </table></p>
-<a name="contact-details- leaf-classes"></a>
+<a name="contact-details-leaf-classes"></a>
 <h4>&quot;Contact Details&quot; Leaf Classes</h4>
 <p>Several subclasses of <a href="qcontactdetail.html">QContactDetail</a> are provided as part of the Qt Mobility Project Contacts API. They are general in design but are intended to fulfil specific use-cases. Please note that certain backends may choose not to support one or more of these subclasses as they appear here; they may offer their own which provide similar functionality.</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
@@ -220,8 +220,8 @@
 <p>See also: <a href="contactsusagehtml.html">Contacts API Usage</a></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

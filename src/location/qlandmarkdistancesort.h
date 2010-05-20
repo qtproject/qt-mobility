@@ -43,6 +43,7 @@
 #define QLANDMARKDISTANCESORT_H
 
 #include "qlandmarksortorder.h"
+#include "qgeocoordinate.h"
 
 QT_BEGIN_HEADER
 
@@ -54,7 +55,8 @@ class QLandmarkDistanceSortPrivate;
 class Q_LOCATION_EXPORT QLandmarkDistanceSort : public QLandmarkSortOrder
 {
 public:
-    QLandmarkDistanceSort(const QGeoCoordinate &coordinate, Qt::SortOrder direction);
+    QLandmarkDistanceSort(const QGeoCoordinate &coordinate = QGeoCoordinate(),
+                        Qt::SortOrder direction=Qt::AscendingOrder);
     QLandmarkDistanceSort(const QLandmarkSortOrder &other);
     virtual ~QLandmarkDistanceSort();
 

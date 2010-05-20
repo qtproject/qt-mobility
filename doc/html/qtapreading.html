@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qtapsensor.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QTapReading Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QTapReading Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QTapReading"></a>
@@ -53,23 +53,20 @@
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QTapReading class represents one reading from the tap sensor.</p>
 <a name="qtapreading-units"></a>
 <h3>QTapReading Units</h3>
 <p>The tap sensor registers tap events in one of the six directions. There are 3 axes that originate from the phone. They are arranged as follows.</p>
-<p align="center"><img src="images/sensors-coordinates2.jpg" /></p><p>By default it returns double tap events. The <a href="qtapsensor.html#returnDoubleTapEvents-prop">QTapSensor::returnDoubleTapEvents</a> property must be set to false to return individual tap events.</p>
-</div>
+<p align="center"><img src="images/sensors-coordinates2.jpg" /></p><p>By default it returns only double tap events. The <a href="qtapsensor.html#returnDoubleTapEvents-prop">QTapSensor::returnDoubleTapEvents</a> property must be set to false to return individual tap events.</p>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QTapReading/TapDirection"></a>
 <a name="//apple_ref/cpp/econst/QTapReading/Undefined"></a>
@@ -97,9 +94,7 @@
 <tr><td valign="top"><tt>QTapReading::Y_Neg</tt></td><td align="center" valign="top"><tt>0x0202</tt></td><td valign="top">This value is returned if the tap was towards the negative Y direction.</td></tr>
 <tr><td valign="top"><tt>QTapReading::Z_Neg</tt></td><td align="center" valign="top"><tt>0x0404</tt></td><td valign="top">This value is returned if the tap was towards the negative Z direction.</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QTapReading/isDoubleTap"></a>
 <h3 class="fn"><a name="doubleTap-prop"></a>doubleTap : const bool</h3>
@@ -121,9 +116,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">TapDirection </td><td class="memItemRight" valign="bottom"><b>tapDirection</b> () const</td></tr>
 </table>
 <p>See also <a href="qtapreading.html#qtapreading-units">QTapReading Units</a>.</p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QTapReading/setDoubleTap"></a>
 <h3 class="fn"><a name="setDoubleTap"></a>void QTapReading::setDoubleTap ( bool <i>doubleTap</i> )</h3>
@@ -133,11 +126,10 @@
 <h3 class="fn"><a name="setTapDirection"></a>void QTapReading::setTapDirection ( <a href="qtapreading.html#TapDirection-enum">TapDirection</a> <i>tapDirection</i> )</h3>
 <p>Sets the tap direction to <i>tapDirection</i>.</p>
 <p>See also <a href="qtapreading.html#tapDirection-prop">tapDirection</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

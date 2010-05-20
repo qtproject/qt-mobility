@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- location.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Location</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: Location</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -17,7 +17,7 @@
 <p>The Location API provides a library for distributing and receiving location data using arbitrary data sources.</p>
 <ul><li><a href="#namespace">Namespace</a></li>
 <li><a href="#location-positioning">Location Positioning</a></li>
-<ul><li><a href="#example- creating-a-custom-location-data-source">Example: Creating a custom location data source</a></li>
+<ul><li><a href="#example-creating-a-custom-location-data-source">Example: Creating a custom location data source</a></li>
 <li><a href="#examples">Examples</a></li>
 <ul><li><a href="#flickr-demo">Flickr Demo</a></li>
 <li><a href="#weather-info-demo">Weather Info Demo</a></li>
@@ -84,7 +84,7 @@
 <p><a href="qgeopositioninfosource.html#setPreferredPositioningMethods">QGeoPositionInfoSource::setPreferredPositioningMethods</a>() enables client applications to request that a certain type of positioning method be used. For example, if the application prefers to use only satellite positioning, which offers fairly precise outdoor positioning but can be a heavy user of power resources, it can call this method with the <a href="qgeopositioninfosource.html#PositioningMethod-enum">QGeoPositionInfoSource::SatellitePositioningMethods</a> value. However, this method should only be used in specialized client applications; in most cases, the default positioning methods should not be changed, as a source may internally use a variety of positioning methods that can be useful to the application.</p>
 <p>Reading NMEA data</p>
 <p><a href="http://en.wikipedia.org/wiki/NMEA_0183">NMEA</a> is a common text-based protocol for specifying navigational data. For convenience, the <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> is provided to enable client applications to read and distribute NMEA data in either real-time mode (for example, when streaming from a GPS device) or simulation mode (for example, when reading from a NMEA log file). In simulation mode, the source will emit updates according to the time stamp of each NMEA sentence to produce a &quot;replay&quot; of the recorded data.</p>
-<a name="example- creating-a-custom-location-data-source"></a>
+<a name="example-creating-a-custom-location-data-source"></a>
 <h4>Example: Creating a custom location data source</h4>
 <p>Generally, the capabilities provided by the default position source as returned by <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>(), along with the <a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a> class, are sufficient for retrieving location data. However, in some cases developers may wish to write their own custom location data sources.</p>
 <p>The <tt>LogFilePositionSource</tt> class in <tt>examples/logfilepositionsource</tt> shows how to subclass <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> to create a custom location data source.</p>
@@ -297,8 +297,8 @@
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

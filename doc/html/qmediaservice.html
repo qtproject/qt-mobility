@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaservice.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaService Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QMediaService Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMediaService"></a>
@@ -45,13 +45,12 @@
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaService class provides a common base class for media service implementations.</p>
 <p>Media services provide implementations of the functionality promised by media objects, and allow multiple providers to implement a <a href="qmediaobject.html">QMediaObject</a>.</p>
@@ -60,10 +59,8 @@
 <pre>    QMediaPlayerControl *control = qobject_cast&lt;QMediaPlayerControl *&gt;(
             service-&gt;control(&quot;com.nokia.Qt.QMediaPlayerControl/1.0&quot;));</pre>
 <p>Media objects can use services loaded dynamically from plug-ins or implemented statically within an applications. Plug-in based services should also implement the <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a> interface. Static services should implement the <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> interface.</p>
-</div>
 <p>See also <a href="qmediaobject.html">QMediaObject</a>, <a href="qmediacontrol.html">QMediaControl</a>, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>, and <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a>.</p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaService/QMediaService"></a>
 <h3 class="fn"><a name="QMediaService"></a>QMediaService::QMediaService ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -78,11 +75,10 @@
 <h3 class="fn"><a name="control-2"></a>T QMediaService::control () const</h3>
 <p>Returns a pointer to the media control of type T implemented by a media service.</p>
 <p>If the service does not implment the control a null pointer is returned instead.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

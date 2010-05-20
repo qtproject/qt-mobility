@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmapview.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMapView Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QMapView Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMapView"></a>
@@ -118,9 +118,9 @@
 <li><div class="fn"></div>8 properties inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#properties">QGraphicsWidget</a></li>
 <li><div class="fn"></div>12 properties inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#properties">QGraphicsObject</a></li>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-variables">QGraphicsWidget</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-variables">QGraphicsWidget</a></li>
 <li><div class="fn"></div>2 public variables inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#public-variables">QGraphicsItem</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>1 static public member inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#static-public-members">QGraphicsWidget</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>24 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#protected-functions">QGraphicsWidget</a></li>
@@ -133,14 +133,11 @@
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMapView class displays a map. It supports panning, zooming, different map formats, and the adding of map objects (overlays).</p>
 <p>The map is a 2D Mercator projection of geo coordinates. The map allows seamless continual panning along the x-axis. The map is logically 2^zoomLevel * width(map tile) pixels wide, and 2^zoomLevel * height(map tile) high, with the top left corner being (0,0). This logical 2D map space is spit equally into 2^zoomLevel map tiles along each axis. The QMapView provides a view port onto that logical map space that is always QMapView::width() wide and QMapView::height() high.</p>
 <p>Instead of using a full-blown quad tree, QMapView exploits the fact that the map is made up of map tiles. Internally, it uses efficient hash maps (tileToObjectsMap, itemToObjectMap) to map each internal <a href="qmapobject.html">QMapObject</a> to its corresponding tiles. These mappings are then used to determine which map objects need to be shown in the current view port.</p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMapView/QMapView"></a>
 <h3 class="fn"><a name="QMapView"></a>QMapView::QMapView ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html">QGraphicsItem</a> * <i>parent</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qt.html#WindowFlags-typedef">Qt::WindowFlags</a> <i>wFlags</i> = 0 )</h3>
@@ -264,11 +261,10 @@
 <a name="//apple_ref/cpp/instm/QMapView/zoomLevelChanged"></a>
 <h3 class="fn"><a name="zoomLevelChanged"></a>void QMapView::zoomLevelChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>oldZoomLevel</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>newZoomLevel</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted after the map has changed its zoom level.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

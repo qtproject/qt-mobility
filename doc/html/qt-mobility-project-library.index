@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QDOCINDEX>
-<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0.0">
+<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.1.0">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationship" href="qcontactrelationship.html" location="qcontactrelationship.h" bases="" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="HasMember" fullname="QContactRelationship::HasMember" href="qcontactrelationship.html#HasMember-var" location="qcontactrelationship.h" type="const QLatin1Constant" static="true"/>
@@ -2412,6 +2412,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QLandmarkIntersectionFilter::remove" href="qlandmarkintersectionfilter.html#remove" location="qlandmarkintersectionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="remove(const QLandmarkFilter &amp; filter)">
                 <parameter left="const QLandmarkFilter &amp;" right="" name="filter" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QLandmarkIntersectionFilter::clear" href="qlandmarkintersectionfilter.html#clear" location="qlandmarkintersectionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" fullname="QLandmarkIntersectionFilter::operator&lt;&lt;" href="qlandmarkintersectionfilter.html#operator&lt;&lt;" location="qlandmarkintersectionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QLandmarkIntersectionFilter &amp;" signature="operator&lt;&lt;(const QLandmarkFilter &amp; filter)">
                 <parameter left="const QLandmarkFilter &amp;" right="" name="filter" default=""/>
             </function>
@@ -4131,6 +4132,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QLandmarkUnionFilter::remove" href="qlandmarkunionfilter.html#remove" location="qlandmarkunionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="remove(const QLandmarkFilter &amp; filter)">
                 <parameter left="const QLandmarkFilter &amp;" right="" name="filter" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QLandmarkUnionFilter::clear" href="qlandmarkunionfilter.html#clear" location="qlandmarkunionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" fullname="QLandmarkUnionFilter::operator&lt;&lt;" href="qlandmarkunionfilter.html#operator&lt;&lt;" location="qlandmarkunionfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QLandmarkUnionFilter &amp;" signature="operator&lt;&lt;(const QLandmarkFilter &amp; filter)">
                 <parameter left="const QLandmarkFilter &amp;" right="" name="filter" default=""/>
             </function>
@@ -4609,8 +4611,8 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkDistanceSort" href="qlandmarkdistancesort.html" location="qlandmarkdistancesort.h" bases="QLandmarkSortOrder" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkDistanceSort" fullname="QLandmarkDistanceSort::QLandmarkDistanceSort" href="qlandmarkdistancesort.html#QLandmarkDistanceSort" location="qlandmarkdistancesort.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkDistanceSort(const QGeoCoordinate &amp; coordinate, Qt::SortOrder direction)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-                <parameter left="Qt::SortOrder" right="" name="direction" default=""/>
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default="QGeoCoordinate()"/>
+                <parameter left="Qt::SortOrder" right="" name="direction" default="Qt::AscendingOrder"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkDistanceSort" fullname="QLandmarkDistanceSort::QLandmarkDistanceSort" href="qlandmarkdistancesort.html#QLandmarkDistanceSort-2" location="qlandmarkdistancesort.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QLandmarkDistanceSort(const QLandmarkSortOrder &amp; other)">
                 <parameter left="const QLandmarkSortOrder &amp;" right="" name="other" default=""/>
@@ -7917,13 +7919,6 @@
                 <value name="InvalidManagerError" value="9"/>
                 <value name="UnknownError" value="10"/>
             </enum>
-            <enum access="public" threadsafety="unspecified" status="commendable" name="Format" fullname="QLandmarkManager::Format" href="qlandmarkmanager.html#Format-enum" location="qlandmarkmanager.h">
-                <value name="LandmarkExchange" value="0"/>
-                <value name="GPSExchange" value="1"/>
-                <value name="KeyholeMarkupLanguage" value="2"/>
-                <value name="CommaSeparatedValues" value="3"/>
-                <value name="Custom" value="4"/>
-            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkManager" fullname="QLandmarkManager::QLandmarkManager" href="qlandmarkmanager.html#QLandmarkManager" location="qlandmarkmanager.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkManager(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
@@ -8241,6 +8236,19 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setLandmarkIds" fullname="QLandmarkIdFilter::setLandmarkIds" href="qlandmarkidfilter.html#setLandmarkIds" location="qlandmarkidfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setLandmarkIds(const QList&lt;QLandmarkId&gt; &amp; ids)">
                 <parameter left="const QList&lt;QLandmarkId&gt; &amp;" right="" name="ids" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="prepend" fullname="QLandmarkIdFilter::prepend" href="qlandmarkidfilter.html#prepend" location="qlandmarkidfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="prepend(const QLandmarkId &amp; id)">
+                <parameter left="const QLandmarkId &amp;" right="" name="id" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="append" fullname="QLandmarkIdFilter::append" href="qlandmarkidfilter.html#append" location="qlandmarkidfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="append(const QLandmarkId &amp; id)">
+                <parameter left="const QLandmarkId &amp;" right="" name="id" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="remove" fullname="QLandmarkIdFilter::remove" href="qlandmarkidfilter.html#remove" location="qlandmarkidfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="remove(const QLandmarkId &amp; id)">
+                <parameter left="const QLandmarkId &amp;" right="" name="id" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="clear" fullname="QLandmarkIdFilter::clear" href="qlandmarkidfilter.html#clear" location="qlandmarkidfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="clear()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="operator&lt;&lt;" fullname="QLandmarkIdFilter::operator&lt;&lt;" href="qlandmarkidfilter.html#operator&lt;&lt;" location="qlandmarkidfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QLandmarkIdFilter &amp;" signature="operator&lt;&lt;(const QLandmarkId &amp; id)">
+                <parameter left="const QLandmarkId &amp;" right="" name="id" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" href="qversitdocument.html" location="qversitdocument.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="VersitType" fullname="QVersitDocument::VersitType" href="qversitdocument.html#VersitType-enum" location="qversitdocument.h">
@@ -8325,7 +8333,7 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNameSort" href="qlandmarknamesort.html" location="qlandmarknamesort.h" bases="QLandmarkSortOrder" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNameSort" fullname="QLandmarkNameSort::QLandmarkNameSort" href="qlandmarknamesort.html#QLandmarkNameSort" location="qlandmarknamesort.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkNameSort(Qt::SortOrder direction, Qt::CaseSensitivity sensitivity)">
-                <parameter left="Qt::SortOrder" right="" name="direction" default=""/>
+                <parameter left="Qt::SortOrder" right="" name="direction" default="Qt::AscendingOrder"/>
                 <parameter left="Qt::CaseSensitivity" right="" name="sensitivity" default="Qt::CaseInsensitive"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNameSort" fullname="QLandmarkNameSort::QLandmarkNameSort" href="qlandmarknamesort.html#QLandmarkNameSort-2" location="qlandmarknamesort.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QLandmarkNameSort(const QLandmarkSortOrder &amp; other)">
@@ -8776,19 +8784,12 @@
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialer.h" href="declarative-sfw-dialer-landlinedialer-landlinedialer-h.html" subtype="file" title="" fulltitle="landlinedialer.h Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialer.h" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialerplugin.cpp" href="declarative-sfw-dialer-landlinedialer-landlinedialerplugin-cpp.html" subtype="file" title="" fulltitle="landlinedialerplugin.cpp Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialerplugin.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialerplugin.h" href="declarative-sfw-dialer-landlinedialer-landlinedialerplugin-h.html" subtype="file" title="" fulltitle="landlinedialerplugin.h Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialerplugin.h" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/qdeclarativeservice.cpp" href="declarative-sfw-dialer-sfwexample-qdeclarativeservice-cpp.html" subtype="file" title="" fulltitle="qdeclarativeservice.cpp Example File" subtitle="declarative-sfw-dialer/sfwexample/qdeclarativeservice.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/qdeclarativeservice.h" href="declarative-sfw-dialer-sfwexample-qdeclarativeservice-h.html" subtype="file" title="" fulltitle="qdeclarativeservice.h Example File" subtitle="declarative-sfw-dialer/sfwexample/qdeclarativeservice.h" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/sfwexample.cpp" href="declarative-sfw-dialer-sfwexample-sfwexample-cpp.html" subtype="file" title="" fulltitle="sfwexample.cpp Example File" subtitle="declarative-sfw-dialer/sfwexample/sfwexample.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/sfwexample.h" href="declarative-sfw-dialer-sfwexample-sfwexample-h.html" subtype="file" title="" fulltitle="sfwexample.h Example File" subtitle="declarative-sfw-dialer/sfwexample/sfwexample.h" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialer.cpp" href="declarative-sfw-dialer-voipdialer-voipdialer-cpp.html" subtype="file" title="" fulltitle="voipdialer.cpp Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialer.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialer.h" href="declarative-sfw-dialer-voipdialer-voipdialer-h.html" subtype="file" title="" fulltitle="voipdialer.h Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialer.h" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp" href="declarative-sfw-dialer-voipdialer-voipdialerplugin-cpp.html" subtype="file" title="" fulltitle="voipdialerplugin.cpp Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialerplugin.h" href="declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html" subtype="file" title="" fulltitle="voipdialerplugin.h Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialerplugin.h" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/main.cpp" href="declarative-sfw-dialer-sfwexample-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="declarative-sfw-dialer/sfwexample/main.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/declarative-sfw-dialer.pro" href="declarative-sfw-dialer-declarative-sfw-dialer-pro.html" subtype="file" title="" fulltitle="declarative-sfw-dialer.pro Example File" subtitle="declarative-sfw-dialer/declarative-sfw-dialer.pro" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialer.pro" href="declarative-sfw-dialer-landlinedialer-landlinedialer-pro.html" subtype="file" title="" fulltitle="landlinedialer.pro Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialer.pro" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/resource.qrc" href="declarative-sfw-dialer-sfwexample-resource-qrc.html" subtype="file" title="" fulltitle="resource.qrc Example File" subtitle="declarative-sfw-dialer/sfwexample/resource.qrc" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/sfwexample.pro" href="declarative-sfw-dialer-sfwexample-sfwexample-pro.html" subtype="file" title="" fulltitle="sfwexample.pro Example File" subtitle="declarative-sfw-dialer/sfwexample/sfwexample.pro" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialer.pro" href="declarative-sfw-dialer-voipdialer-voipdialer-pro.html" subtype="file" title="" fulltitle="voipdialer.pro Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialer.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="fetchgooglemaps" href="fetchgooglemaps.html" subtype="example" title="Fetch Google Maps Example" fulltitle="Fetch Google Maps Example" subtitle="" location="undocumented.qdoc">
@@ -8879,20 +8880,20 @@
             <page access="public" status="commendable" name="quickstart/quickstart.pro" href="quickstart-quickstart-pro.html" subtype="file" title="" fulltitle="quickstart.pro Example File" subtitle="quickstart/quickstart.pro" location=""/>
         </page>
         <page access="public" status="commendable" name="3rdparty.html" href="3rdparty.html" subtype="page" title="Third-Party Licenses Used in Qt" fulltitle="Third-Party Licenses Used in Qt" subtitle="" location="3rdparty.qdoc">
-            <contents name="des-()" title="DES ()" level="1"/>
-            <contents name="freetype-2-() version-2-3-6" title="FreeType 2 () version 2.3.6" level="1"/>
-            <contents name="harfbuzz-()" title="HarfBuzz ()" level="1"/>
-            <contents name="the-independent-jpeg-group-s-jpeg-software-() version-6b" title="The Independent JPEG Group's JPEG Software () version 6b" level="1"/>
-            <contents name="md4-( and-)" title="MD4 ( and )" level="1"/>
-            <contents name="md5-( and-)" title="MD5 ( and )" level="1"/>
-            <contents name="mng-library-() version-1-0-10" title="MNG Library () version 1.0.10" level="1"/>
-            <contents name="png-reference-library-() version-1-2-29" title="PNG Reference Library () version 1.2.29" level="1"/>
-            <contents name="the-ptmalloc-memory-allocator-() version-1-8" title="The ptmalloc memory allocator () version 1.8" level="1"/>
-            <contents name="sha-1-()" title="SHA-1 ()" level="1"/>
-            <contents name="sqlite-() version-3-5-9" title="SQLite () version 3.5.9" level="1"/>
-            <contents name="tiff-software-distribution-() version-3-8-2" title="TIFF Software Distribution () version 3.8.2" level="1"/>
-            <contents name="wintab-api-()" title="Wintab API ()" level="1"/>
-            <contents name="data-compression-library-() version-1-2-3" title="Data Compression Library () version 1.2.3" level="1"/>
+            <contents name="des" title="DES ()" level="1"/>
+            <contents name="freetype-2-version-2-3-6" title="FreeType 2 () version 2.3.6" level="1"/>
+            <contents name="harfbuzz" title="HarfBuzz ()" level="1"/>
+            <contents name="the-independent-jpeg-group-s-jpeg-software-version-6b" title="The Independent JPEG Group's JPEG Software () version 6b" level="1"/>
+            <contents name="md4-and" title="MD4 ( and )" level="1"/>
+            <contents name="md5-and" title="MD5 ( and )" level="1"/>
+            <contents name="mng-library-version-1-0-10" title="MNG Library () version 1.0.10" level="1"/>
+            <contents name="png-reference-library-version-1-2-29" title="PNG Reference Library () version 1.2.29" level="1"/>
+            <contents name="the-ptmalloc-memory-allocator-version-1-8" title="The ptmalloc memory allocator () version 1.8" level="1"/>
+            <contents name="sha-1" title="SHA-1 ()" level="1"/>
+            <contents name="sqlite-version-3-5-9" title="SQLite () version 3.5.9" level="1"/>
+            <contents name="tiff-software-distribution-version-3-8-2" title="TIFF Software Distribution () version 3.8.2" level="1"/>
+            <contents name="wintab-api" title="Wintab API ()" level="1"/>
+            <contents name="data-compression-library-version-1-2-3" title="Data Compression Library () version 1.2.3" level="1"/>
         </page>
         <page access="public" status="commendable" name="slideshow" href="slideshow.html" subtype="example" title="SlideShow Example" fulltitle="SlideShow Example" subtitle="" location="slideshow.qdoc">
             <page access="public" status="commendable" name="slideshow/slideshow.cpp" href="slideshow-slideshow-cpp.html" subtype="file" title="" fulltitle="slideshow.cpp Example File" subtitle="slideshow/slideshow.cpp" location=""/>
@@ -8951,7 +8952,7 @@
             <contents name="building-and-compiling" title="Building and compiling" level="1"/>
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
-            <contents name="contact-details- leaf-classes" title="&quot;Contact Details&quot; Leaf Classes" level="2"/>
+            <contents name="contact-details-leaf-classes" title="&quot;Contact Details&quot; Leaf Classes" level="2"/>
             <contents name="asynchronous-requests" title="Asynchronous Requests" level="2"/>
             <contents name="contact-selection" title="Contact Selection" level="2"/>
             <contents name="implementing-backends" title="Implementing Backends" level="2"/>
@@ -8993,7 +8994,7 @@
             <contents name="backend-classes" title="Backend Classes" level="2"/>
         </page>
         <page access="public" status="commendable" name="lgpl.html" href="lgpl.html" subtype="page" title="GNU Lesser General Public License (LGPL)" fulltitle="GNU Lesser General Public License (LGPL)" subtitle="" location="gpl.qdoc">
-            <contents name="the-gnu-lesser-general-public-license-(version-2-1" title="The GNU Lesser General Public License (Version 2.1)" level="1"/>
+            <contents name="the-gnu-lesser-general-public-license-version-2-1" title="The GNU Lesser General Public License (Version 2.1)" level="1"/>
             <contents name="nokia-qt-lgpl-exception-version-1-0" title="Nokia Qt LGPL Exception version 1.0" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoWindowControl_iid" href="qvideowindowcontrol.html#QVideoWindowControl_iid" location="qvideowindowcontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoWindowControl" type="" signature="QVideoWindowControl_iid()"/>
@@ -9007,7 +9008,7 @@
         <page access="public" status="commendable" name="location-overview.html" href="location-overview.html" subtype="page" title="Location" fulltitle="Location" subtitle="" location="location.qdoc">
             <contents name="namespace" title="Namespace" level="1"/>
             <contents name="location-positioning" title="Location Positioning" level="1"/>
-            <contents name="example- creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="2"/>
+            <contents name="example-creating-a-custom-location-data-source" title="Example: Creating a custom location data source" level="2"/>
             <contents name="examples" title="Examples" level="2"/>
             <contents name="flickr-demo" title="Flickr Demo" level="3"/>
             <contents name="weather-info-demo" title="Weather Info Demo" level="3"/>
@@ -9053,8 +9054,8 @@
         </page>
         <page access="public" status="commendable" name="bearer" href="bearer.html" subtype="group" title="Qt Bearer Management API" fulltitle="Qt Bearer Management API" subtitle="" location="bearermanagement.qdoc"/>
         <page access="public" status="commendable" name="bearer-management.html" href="bearer-management.html" subtype="page" title="Bearer Management" fulltitle="Bearer Management" subtitle="" location="bearermanagement.qdoc">
-            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
+            <contents name="migration-to-qt-4-7-or-higher" title="Migration to Qt 4.7 or higher" level="2"/>
             <contents name="the-api-in-detail" title="The API in Detail" level="2"/>
             <contents name="service-networks" title="Service networks" level="3"/>
             <contents name="managing-network-sessions" title="Managing network sessions" level="3"/>
@@ -9084,6 +9085,7 @@
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs Overview" fulltitle="Qt Mobility Project APIs Overview" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
+            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
             <contents name="the-new-qt-apis" title="The New Qt APIs" level="1"/>
@@ -9110,19 +9112,12 @@
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialer.h" href="declarative-sfw-dialer-landlinedialer-landlinedialer-h.html" subtype="file" title="" fulltitle="landlinedialer.h Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialer.h" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialerplugin.cpp" href="declarative-sfw-dialer-landlinedialer-landlinedialerplugin-cpp.html" subtype="file" title="" fulltitle="landlinedialerplugin.cpp Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialerplugin.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialerplugin.h" href="declarative-sfw-dialer-landlinedialer-landlinedialerplugin-h.html" subtype="file" title="" fulltitle="landlinedialerplugin.h Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialerplugin.h" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/qdeclarativeservice.cpp" href="declarative-sfw-dialer-sfwexample-qdeclarativeservice-cpp.html" subtype="file" title="" fulltitle="qdeclarativeservice.cpp Example File" subtitle="declarative-sfw-dialer/sfwexample/qdeclarativeservice.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/qdeclarativeservice.h" href="declarative-sfw-dialer-sfwexample-qdeclarativeservice-h.html" subtype="file" title="" fulltitle="qdeclarativeservice.h Example File" subtitle="declarative-sfw-dialer/sfwexample/qdeclarativeservice.h" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/sfwexample.cpp" href="declarative-sfw-dialer-sfwexample-sfwexample-cpp.html" subtype="file" title="" fulltitle="sfwexample.cpp Example File" subtitle="declarative-sfw-dialer/sfwexample/sfwexample.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/sfwexample.h" href="declarative-sfw-dialer-sfwexample-sfwexample-h.html" subtype="file" title="" fulltitle="sfwexample.h Example File" subtitle="declarative-sfw-dialer/sfwexample/sfwexample.h" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialer.cpp" href="declarative-sfw-dialer-voipdialer-voipdialer-cpp.html" subtype="file" title="" fulltitle="voipdialer.cpp Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialer.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialer.h" href="declarative-sfw-dialer-voipdialer-voipdialer-h.html" subtype="file" title="" fulltitle="voipdialer.h Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialer.h" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp" href="declarative-sfw-dialer-voipdialer-voipdialerplugin-cpp.html" subtype="file" title="" fulltitle="voipdialerplugin.cpp Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialerplugin.h" href="declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html" subtype="file" title="" fulltitle="voipdialerplugin.h Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialerplugin.h" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/main.cpp" href="declarative-sfw-dialer-sfwexample-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="declarative-sfw-dialer/sfwexample/main.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/declarative-sfw-dialer.pro" href="declarative-sfw-dialer-declarative-sfw-dialer-pro.html" subtype="file" title="" fulltitle="declarative-sfw-dialer.pro Example File" subtitle="declarative-sfw-dialer/declarative-sfw-dialer.pro" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialer.pro" href="declarative-sfw-dialer-landlinedialer-landlinedialer-pro.html" subtype="file" title="" fulltitle="landlinedialer.pro Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialer.pro" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/resource.qrc" href="declarative-sfw-dialer-sfwexample-resource-qrc.html" subtype="file" title="" fulltitle="resource.qrc Example File" subtitle="declarative-sfw-dialer/sfwexample/resource.qrc" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-dialer/sfwexample/sfwexample.pro" href="declarative-sfw-dialer-sfwexample-sfwexample-pro.html" subtype="file" title="" fulltitle="sfwexample.pro Example File" subtitle="declarative-sfw-dialer/sfwexample/sfwexample.pro" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialer.pro" href="declarative-sfw-dialer-voipdialer-voipdialer-pro.html" subtype="file" title="" fulltitle="voipdialer.pro Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialer.pro" location=""/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QAudioEncoderControl_iid" href="qaudioencodercontrol.html#QAudioEncoderControl_iid" location="qaudioencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QAudioEncoderControl" type="" signature="QAudioEncoderControl_iid()"/>
@@ -9133,7 +9128,7 @@
         <page access="public" status="commendable" name="servicebrowser" href="servicebrowser.html" subtype="example" title="Service Browser Example" fulltitle="Service Browser Example" subtitle="" location="servicebrowser.qdoc">
             <contents name="servicebrowser-class-definition" title="ServiceBrowser Class Definition" level="1"/>
             <contents name="servicebrowser-class-implementation" title="ServiceBrowser Class Implementation" level="1"/>
-            <contents name="invoking-attributes- an-example" title="Invoking attributes: an example" level="2"/>
+            <contents name="invoking-attributes-an-example" title="Invoking attributes: an example" level="2"/>
             <page access="public" status="commendable" name="servicebrowser/servicebrowser.cpp" href="servicebrowser-servicebrowser-cpp.html" subtype="file" title="" fulltitle="servicebrowser.cpp Example File" subtitle="servicebrowser/servicebrowser.cpp" location=""/>
             <page access="public" status="commendable" name="servicebrowser/servicebrowser.h" href="servicebrowser-servicebrowser-h.html" subtype="file" title="" fulltitle="servicebrowser.h Example File" subtitle="servicebrowser/servicebrowser.h" location=""/>
             <page access="public" status="commendable" name="servicebrowser/main.cpp" href="servicebrowser-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="servicebrowser/main.cpp" location=""/>
@@ -9218,7 +9213,7 @@
             <contents name="limitations" title="Limitations" level="3"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="publish-and-subscribe" title="Publish and Subscribe" level="2"/>
-            <contents name="battery-charging-- accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
+            <contents name="battery-charging-accessing-publish-and-subscribe-from-qml" title="Battery Charging - Accessing Publish and Subscribe from QML" level="2"/>
             <contents name="namespaces-and-classes" title="Namespaces and Classes" level="1"/>
         </page>
         <page access="public" status="commendable" name="sysinfo" href="sysinfo.html" subtype="example" title="System Information Example" fulltitle="System Information Example" subtitle="" location="sysinfo.qdoc">
@@ -9235,7 +9230,7 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="information-categories" title="Information Categories" level="2"/>
             <contents name="version" title="Version" level="3"/>
-            <contents name="features-(hardware" title="Features (hardware)" level="3"/>
+            <contents name="features-hardware" title="Features (hardware)" level="3"/>
             <contents name="network" title="Network" level="3"/>
             <contents name="display-information" title="Display Information" level="3"/>
             <contents name="storage-information" title="Storage Information" level="3"/>
@@ -9362,7 +9357,7 @@
         </page>
         <page access="public" status="commendable" name="installation.html" href="installation.html" subtype="page" title="Installation Guide" fulltitle="Installation Guide" subtitle="" location="installation.qdoc">
             <contents name="get-the-qt-mobility-api-package" title="Get the Qt Mobility API Package" level="1"/>
-            <contents name="pre-requisites-&amp; dependencies" title="Pre-requisites &amp; Dependencies" level="1"/>
+            <contents name="pre-requisites-dependencies" title="Pre-requisites &amp; Dependencies" level="1"/>
             <contents name="unpacking" title="Unpacking" level="1"/>
             <contents name="building" title="Building" level="1"/>
             <contents name="building-on-unix" title="Building On Unix" level="2"/>
@@ -9428,7 +9423,7 @@
         <page access="public" status="commendable" name="http://bugreports.qt.nokia.com" href="http-bugreports-qt-nokia-com.html" subtype="externalpage" title="QtMobility Project Bug Tracker" fulltitle="QtMobility Project Bug Tracker" subtitle="" location="qtmobility-known-issues.qdoc"/>
         <page access="public" status="commendable" name="qtmobility-known-issues.html" href="qtmobility-known-issues.html" subtype="page" title="Release Notes of the QtMobility Project" fulltitle="Release Notes of the QtMobility Project" subtitle="" location="qtmobility-known-issues.qdoc">
             <contents name="new-features" title="New Features" level="1"/>
-            <contents name="detailed-feature-support-- symbian-s60" title="Detailed Feature support - Symbian/S60" level="2"/>
+            <contents name="detailed-feature-support-symbian-s60" title="Detailed Feature support - Symbian/S60" level="2"/>
             <contents name="bearer-management-api" title="Bearer Management API" level="3"/>
             <contents name="contacts-api" title="Contacts API" level="3"/>
             <contents name="messaging-api" title="Messaging API" level="3"/>
@@ -9496,7 +9491,7 @@
             <contents name="common-conventions" title="Common Conventions" level="1"/>
             <contents name="using-a-sensor" title="Using a Sensor" level="1"/>
             <contents name="accessing-sensor-data-in-a-generic-fashion" title="Accessing sensor data in a generic fashion" level="1"/>
-            <contents name="front-end- back-end" title="Front end, back end" level="1"/>
+            <contents name="front-end-back-end" title="Front end, back end" level="1"/>
             <contents name="main-classes" title="Main Classes" level="1"/>
             <contents name="reading-classes" title="Reading Classes" level="1"/>
             <contents name="sensor-classes" title="Sensor Classes" level="1"/>
@@ -9521,7 +9516,7 @@
             <contents name="symbian-3-1-engine" title="Symbian 3.1 Engine" level="3"/>
             <contents name="symbian-3-2-engine" title="Symbian 3.2 Engine" level="3"/>
             <contents name="symbian-5-0-engine" title="Symbian 5.0 Engine" level="3"/>
-            <contents name="maemo-5-(fremantle- engine" title="Maemo 5 (Fremantle) Engine" level="3"/>
+            <contents name="maemo-5-fremantle-engine" title="Maemo 5 (Fremantle) Engine" level="3"/>
             <contents name="libqttracker-engine" title="libQtTracker Engine" level="3"/>
             <contents name="information-for-engine-implementors" title="Information For Engine Implementors" level="1"/>
             <contents name="which-functions-do-i-need-to-implement" title="Which Functions Do I Need To Implement" level="2"/>
@@ -9532,14 +9527,6 @@
             <contents name="other-considerations" title="Other Considerations" level="2"/>
             <contents name="example-implementation" title="Example Implementation" level="2"/>
         </page>
-        <page access="public" status="commendable" name="declarative-sfw-notes" href="declarative-sfw-notes.html" subtype="example" title="Declarative Service Framework Notes Manager" fulltitle="Declarative Service Framework Notes Manager" subtitle="" location="declarative-sfw-notes.qdoc">
-            <page access="public" status="commendable" name="declarative-sfw-notes/qdeclarativeservice.cpp" href="declarative-sfw-notes-qdeclarativeservice-cpp.html" subtype="file" title="" fulltitle="qdeclarativeservice.cpp Example File" subtitle="declarative-sfw-notes/qdeclarativeservice.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-notes/qdeclarativeservice.h" href="declarative-sfw-notes-qdeclarativeservice-h.html" subtype="file" title="" fulltitle="qdeclarativeservice.h Example File" subtitle="declarative-sfw-notes/qdeclarativeservice.h" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-notes/sfwnotes.cpp" href="declarative-sfw-notes-sfwnotes-cpp.html" subtype="file" title="" fulltitle="sfwnotes.cpp Example File" subtitle="declarative-sfw-notes/sfwnotes.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-notes/sfwnotes.h" href="declarative-sfw-notes-sfwnotes-h.html" subtype="file" title="" fulltitle="sfwnotes.h Example File" subtitle="declarative-sfw-notes/sfwnotes.h" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-notes/main.cpp" href="declarative-sfw-notes-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="declarative-sfw-notes/main.cpp" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-notes/declarative-sfw-notes.pro" href="declarative-sfw-notes-declarative-sfw-notes-pro.html" subtype="file" title="" fulltitle="declarative-sfw-notes.pro Example File" subtitle="declarative-sfw-notes/declarative-sfw-notes.pro" location=""/>
-            <page access="public" status="commendable" name="declarative-sfw-notes/sfwnotes.qrc" href="declarative-sfw-notes-sfwnotes-qrc.html" subtype="file" title="" fulltitle="sfwnotes.qrc Example File" subtitle="declarative-sfw-notes/sfwnotes.qrc" location=""/>
-        </page>
+        <page access="public" status="commendable" name="declarative-sfw-notes" href="declarative-sfw-notes.html" subtype="example" title="Declarative Service Framework Notes Manager" fulltitle="Declarative Service Framework Notes Manager" subtitle="" location="declarative-sfw-notes.qdoc"/>
     </namespace>
 </INDEX>

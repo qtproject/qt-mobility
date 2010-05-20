@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qversitcontactimporter.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QVersitContactImporter Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QVersitContactImporter Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QVersitContactImporter"></a>
@@ -40,7 +40,6 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitContactImporter class creates QContacts from QVersitDocuments.</p>
 <p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the importer to supply the behaviour for saving files to persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which does not save files to persistent storage. Note that although avatars found in vCards are not saved to disk by default, the importer does set the pixmap of the contact detail to the image. If a full-sized avatar image needs to be persisted, a custom <a href="qversitresourcehandler.html">QVersitResourceHandler</a> should be supplied which implements this.</p>
@@ -147,10 +146,8 @@
             }
         }
     }</pre>
-</div>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a>, <a href="qversitreader.html">QVersitReader</a>, and <a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a>.</p>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QVersitContactImporter/Error"></a>
 <a name="//apple_ref/cpp/econst/QVersitContactImporter/NoError"></a>
@@ -164,9 +161,7 @@
 <tr><td valign="top"><tt>QVersitContactImporter::InvalidDocumentError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">One of the documents is not a vCard</td></tr>
 <tr><td valign="top"><tt>QVersitContactImporter::EmptyDocumentError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">One of the documents is empty</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitContactImporter/QVersitContactImporter"></a>
 <h3 class="fn"><a name="QVersitContactImporter"></a>QVersitContactImporter::QVersitContactImporter ()</h3>
@@ -204,11 +199,10 @@
 <p>Sets <i>handler</i> to be the handler to save files with, or 0 to have no handler.</p>
 <p>Does not take ownership of the handler. The client should ensure the handler remains valid for the lifetime of the exporter.</p>
 <p>See also <a href="qversitcontactimporter.html#resourceHandler">resourceHandler</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

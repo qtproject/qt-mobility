@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediatimerange.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaTimeRange Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QMediaTimeRange Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMediaTimeRange"></a>
@@ -59,16 +59,13 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaTimeRange class represents a set of zero or more disjoint time intervals.</p>
 <p>The <a href="qmediatimerange.html#earliestTime">earliestTime</a>(), <a href="qmediatimerange.html#latestTime">latestTime</a>(), <a href="qmediatimerange.html#intervals">intervals</a>() and <a href="qmediatimerange.html#isEmpty">isEmpty</a>() methods are used to get information about the current time range.</p>
 <p>The <a href="qmediatimerange.html#addInterval">addInterval</a>(), <a href="qmediatimerange.html#removeInterval">removeInterval</a>() and <a href="qmediatimerange.html#clear">clear</a>() methods are used to modify the current time range.</p>
 <p>When adding or removing intervals from the time range, existing intervals within the range may be expanded, trimmed, deleted, merged or split to ensure that all intervals within the time range remain distinct and disjoint. As a consequence, all intervals added or removed from a time range must be <a href="qmediatimeinterval.html#isNormal">normal</a>.</p>
-</div>
 <p>See also <a href="qmediatimeinterval.html">QMediaTimeInterval</a>.</p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaTimeRange/QMediaTimeRange"></a>
 <h3 class="fn"><a name="QMediaTimeRange"></a>QMediaTimeRange::QMediaTimeRange ()</h3>
@@ -158,9 +155,7 @@
 <p>Takes a copy of the <i>other</i> time range and returns itself.</p>
 <h3 class="fn"><a name="operator-eq-2"></a>QMediaTimeRange &amp; QMediaTimeRange::operator= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>interval</i> )</h3>
 <p>Sets the time range to a single continuous interval, <i>interval</i>.</p>
-</div>
 <hr />
-<div class="relnonmem"/>
 <h2>Related Non-Members</h2>
 <h3 class="fn"><a name="operator-not-eq-37"></a>bool operator!= ( const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>a</i>, const <a href="qmediatimeinterval.html">QMediaTimeInterval</a> &amp; <i>b</i> )</h3>
 <p>Returns true if <i>a</i> is not exactly equal to <i>b</i>.</p>
@@ -170,11 +165,10 @@
 <p>Returns true if <i>a</i> is exactly equal to <i>b</i>.</p>
 <h3 class="fn"><a name="operator-eq-eq-44"></a>bool operator== ( const QMediaTimeRange &amp; <i>a</i>, const QMediaTimeRange &amp; <i>b</i> )</h3>
 <p>Returns true if all intervals in <i>a</i> are present in <i>b</i>.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

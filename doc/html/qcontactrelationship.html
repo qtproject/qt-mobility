@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qcontactrelationship.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QContactRelationship Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QContactRelationship Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QContactRelationship"></a>
@@ -54,16 +54,13 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactRelationship class describes a one-to-one relationship between a locally-stored contact and another (possibly remote) contact.</p>
 <p>Each relationship is uniquely identified by the combination of the first contact id, second contact id, and the relationship type.</p>
 <p>A relationship should not contain a second contact which is the same as the first contact. Any local contacts which are referenced in the relationship (that is, any source contact, or any second contact whose manager URI is left empty or whose manager URI references the manager that stores the source contact, and in which the relationship will be saved) should exist.</p>
 <p>If any of these requirements are not met, validation of the relationship may fail when attempting to save the relationship in a <a href="qcontactmanager.html">QContactManager</a>.</p>
-</div>
 <p>See also <a href="qcontactrelationshipfilter.html">QContactRelationshipFilter</a>.</p>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactRelationship/Role"></a>
 <a name="//apple_ref/cpp/econst/QContactRelationship/First"></a>
@@ -77,9 +74,7 @@
 <tr><td valign="top"><tt>QContactRelationship::Second</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The contact is the second contact in the relationship</td></tr>
 <tr><td valign="top"><tt>QContactRelationship::Either</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The contact is either the first or second contact in the relationship</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QContactRelationship/QContactRelationship"></a>
 <h3 class="fn"><a name="QContactRelationship"></a>QContactRelationship::QContactRelationship ()</h3>
@@ -122,9 +117,7 @@
 <a name="//apple_ref/cpp/instm/QContactRelationship/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactRelationship::operator== ( const QContactRelationship &amp; <i>other</i> ) const</h3>
 <p>Returns true if this relationship is equal to the <i>other</i> relationship, otherwise returns false.</p>
-</div>
 <hr />
-<div class="vars"/>
 <h2>Member Variable Documentation</h2>
 <a name="//apple_ref/cpp/data/QContactRelationship/Aggregates"></a>
 <h3 class="fn"><a name="Aggregates-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::Aggregates</h3>
@@ -144,11 +137,10 @@
 <a name="//apple_ref/cpp/data/QContactRelationship/IsSameAs"></a>
 <h3 class="fn"><a name="IsSameAs-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactRelationship::IsSameAs</h3>
 <p>The relationship type which identifies the first contact as being the same contact as the second contact</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

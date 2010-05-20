@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediacontrol.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaControl Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QMediaControl Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMediaControl"></a>
@@ -50,13 +50,12 @@
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaControl class provides a base interface for media service controls.</p>
 <p>Media controls provide an interface to individual features provided by a media service. Most services implement a principal control which exposes the core functionality of the service and a number optional controls which expose any additional functionality.</p>
@@ -66,10 +65,8 @@
 <p>Alternatively if the IId of the control has been declared using Q_MEDIA_DECLARE_CONTROL the template version of <a href="qmediaservice.html#control">QMediaService::control</a>() can be used to request the service without explicitly passing the IId.</p>
 <pre>    QMediaPlayerControl *control = service-&gt;control&lt;QMediaPlayerControl *&gt;();</pre>
 <p>Most application code will not interface directly with a media service's controls, instead the <a href="qmediaobject.html">QMediaObject</a> which owns the service acts as an intermeditary between one or more controls and the application.</p>
-</div>
 <p>See also <a href="qmediaservice.html">QMediaService</a> and <a href="qmediaobject.html">QMediaObject</a>.</p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaControl/QMediaControl"></a>
 <h3 class="fn"><a name="QMediaControl"></a>QMediaControl::QMediaControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -77,9 +74,7 @@
 <a name="//apple_ref/cpp/instm/QMediaControl/~QMediaControl"></a>
 <h3 class="fn"><a name="dtor.QMediaControl"></a>QMediaControl::~QMediaControl ()</h3>
 <p>Destroys a media control.</p>
-</div>
 <hr />
-<div class="macros"/>
 <h2>Macro Documentation</h2>
 <a name="//apple_ref/cpp/macro//Q_MEDIA_DECLARE_CONTROL"></a>
 <h3 class="fn"><a name="Q_MEDIA_DECLARE_CONTROL"></a>Q_MEDIA_DECLARE_CONTROL (  <i>Class</i>,  <i>IId</i> )</h3>
@@ -87,11 +82,10 @@
 <p>Declaring an IId for a <a href="qmediacontrol.html">QMediaControl</a> allows an instance of that control to be requested from <a href="qmediaservice.html#control">QMediaService::control</a>() without explicitly passing the IId.</p>
 <pre>    QMediaPlayerControl *control = service-&gt;control&lt;QMediaPlayerControl *&gt;();</pre>
 <p>See also <a href="qmediaservice.html#control">QMediaService::control</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

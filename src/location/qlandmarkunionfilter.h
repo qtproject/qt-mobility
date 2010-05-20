@@ -60,6 +60,7 @@ public:
     void prepend(const QLandmarkFilter &filter);
     void append(const QLandmarkFilter &filter);
     void remove(const QLandmarkFilter &filter);
+    void clear();
 
     QLandmarkUnionFilter& operator<<(const QLandmarkFilter &filter);
     QList<QLandmarkFilter> filters() const;

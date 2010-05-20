@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qlandmarkfilter.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QLandmarkFilter Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QLandmarkFilter Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QLandmarkFilter"></a>
@@ -48,14 +48,11 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkFilter class serves as the base class for all filter classes. Also serves as the default filter which retrieves all landmarks.</p>
 <p>This class is used as a parameter to search for landmarks, it allows selection of landmarks which meet certain criteria. It is used with <a href="qlandmarkmanager.html">QLandmarkManager</a> for synchronous searches or the appropriate request classes for asynchronous searches.</p>
 <p>The QLandmarkFilter is primarily intended to serve as the base class for all filter types. However it also has the type of a QLandmark::DefaultFilter, and may thus be used as a filter to match all landmarks.</p>
-</div>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QLandmarkFilter/FilterType"></a>
 <a name="//apple_ref/cpp/econst/QLandmarkFilter/InvalidFilter"></a>
@@ -85,9 +82,7 @@
 <tr><td valign="top"><tt>QLandmarkFilter::AttributeFilter</tt></td><td align="center" valign="top"><tt>9</tt></td><td valign="top">A filter which matches landmarks based on generic attributes.</td></tr>
 <tr><td valign="top"><tt>QLandmarkFilter::LandmarkIdFilter</tt></td><td align="center" valign="top"><tt>10</tt></td><td valign="top">A filter which matches landmarks based on a list of landmark ids.</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkFilter/QLandmarkFilter"></a>
 <h3 class="fn"><a name="QLandmarkFilter"></a>QLandmarkFilter::QLandmarkFilter ()</h3>
@@ -119,9 +114,7 @@
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QLandmarkFilter::operator== ( const QLandmarkFilter &amp; <i>other</i> ) const</h3>
 <p>Returns true if the filter has the same type and criteria as <i>other</i>.</p>
 <p>See also <a href="qlandmarkfilter.html#operator-not-eq">operator!=</a>().</p>
-</div>
 <hr />
-<div class="relnonmem"/>
 <h2>Related Non-Members</h2>
 <h3 class="fn"><a name="operator-and-3"></a>const QLandmarkFilter operator&amp; ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</h3>
 <p>Returns a filter which is the intersection of the <i>left</i> and <i>right</i> filters</p>
@@ -129,11 +122,10 @@
 <h3 class="fn"><a name="operator-7c-3"></a>const QLandmarkFilter operator| ( const QLandmarkFilter &amp; <i>left</i>, const QLandmarkFilter &amp; <i>right</i> )</h3>
 <p>Returns a filter which is the union of the <i>left</i> and <i>right</i> filters</p>
 <p>See also <a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a>.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

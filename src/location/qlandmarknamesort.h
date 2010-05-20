@@ -52,7 +52,7 @@ class QLandmarkNameSortPrivate;
 class Q_LOCATION_EXPORT QLandmarkNameSort : public QLandmarkSortOrder
 {
 public:
-    QLandmarkNameSort(Qt::SortOrder direction, Qt::CaseSensitivity = Qt::CaseInsensitive);
+    QLandmarkNameSort(Qt::SortOrder direction = Qt::AscendingOrder, Qt::CaseSensitivity = Qt::CaseInsensitive);
     QLandmarkNameSort(const QLandmarkSortOrder &other);
     virtual ~QLandmarkNameSort();
 

@@ -2256,7 +2256,12 @@
             <keyword name="sorting" id="QLandmarkIdFetchRequest::sorting" ref="qlandmarkidfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkIdFetchRequest" id="QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest" ref="qlandmarkidfetchrequest.html#dtor.QLandmarkIdFetchRequest"/>
             <keyword name="QLandmarkIdFilter" id="QLandmarkIdFilter" ref="qlandmarkidfilter.html"/>
+            <keyword name="append" id="QLandmarkIdFilter::append" ref="qlandmarkidfilter.html#append"/>
+            <keyword name="clear" id="QLandmarkIdFilter::clear" ref="qlandmarkidfilter.html#clear"/>
             <keyword name="landmarkIds" id="QLandmarkIdFilter::landmarkIds" ref="qlandmarkidfilter.html#landmarkIds"/>
+            <keyword name="operator&lt;&lt;" id="QLandmarkIdFilter::operator&lt;&lt;" ref="qlandmarkidfilter.html#operator-lt-lt"/>
+            <keyword name="prepend" id="QLandmarkIdFilter::prepend" ref="qlandmarkidfilter.html#prepend"/>
+            <keyword name="remove" id="QLandmarkIdFilter::remove" ref="qlandmarkidfilter.html#remove"/>
             <keyword name="setLandmarkIds" id="QLandmarkIdFilter::setLandmarkIds" ref="qlandmarkidfilter.html#setLandmarkIds"/>
             <keyword name="~QLandmarkIdFilter" id="QLandmarkIdFilter::~QLandmarkIdFilter" ref="qlandmarkidfilter.html#dtor.QLandmarkIdFilter"/>
             <keyword name="QLandmarkImportRequest" id="QLandmarkImportRequest" ref="qlandmarkimportrequest.html"/>
@@ -2270,6 +2275,7 @@
             <keyword name="~QLandmarkImportRequest" id="QLandmarkImportRequest::~QLandmarkImportRequest" ref="qlandmarkimportrequest.html#dtor.QLandmarkImportRequest"/>
             <keyword name="QLandmarkIntersectionFilter" id="QLandmarkIntersectionFilter" ref="qlandmarkintersectionfilter.html"/>
             <keyword name="append" id="QLandmarkIntersectionFilter::append" ref="qlandmarkintersectionfilter.html#append"/>
+            <keyword name="clear" id="QLandmarkIntersectionFilter::clear" ref="qlandmarkintersectionfilter.html#clear"/>
             <keyword name="filters" id="QLandmarkIntersectionFilter::filters" ref="qlandmarkintersectionfilter.html#filters"/>
             <keyword name="operator&lt;&lt;" id="QLandmarkIntersectionFilter::operator&lt;&lt;" ref="qlandmarkintersectionfilter.html#operator-lt-lt"/>
             <keyword name="prepend" id="QLandmarkIntersectionFilter::prepend" ref="qlandmarkintersectionfilter.html#prepend"/>
@@ -2289,12 +2295,6 @@
             <keyword name="QLandmarkManager::BadArgumentError" id="QLandmarkManager::BadArgumentError" ref="qlandmarkmanager.html#Error-enum"/>
             <keyword name="QLandmarkManager::InvalidManagerError" id="QLandmarkManager::InvalidManagerError" ref="qlandmarkmanager.html#Error-enum"/>
             <keyword name="QLandmarkManager::UnknownError" id="QLandmarkManager::UnknownError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::Format" id="QLandmarkManager::Format" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::LandmarkExchange" id="QLandmarkManager::LandmarkExchange" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::GPSExchange" id="QLandmarkManager::GPSExchange" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::KeyholeMarkupLanguage" id="QLandmarkManager::KeyholeMarkupLanguage" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::CommaSeparatedValues" id="QLandmarkManager::CommaSeparatedValues" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::Custom" id="QLandmarkManager::Custom" ref="qlandmarkmanager.html#Format-enum"/>
             <keyword name="availableManagers" id="QLandmarkManager::availableManagers" ref="qlandmarkmanager.html#availableManagers"/>
             <keyword name="buildUri" id="QLandmarkManager::buildUri" ref="qlandmarkmanager.html#buildUri"/>
             <keyword name="categories" id="QLandmarkManager::categories" ref="qlandmarkmanager.html#categories"/>
@@ -2432,6 +2432,7 @@
             <keyword name="~QLandmarkSortOrder" id="QLandmarkSortOrder::~QLandmarkSortOrder" ref="qlandmarksortorder.html#dtor.QLandmarkSortOrder"/>
             <keyword name="QLandmarkUnionFilter" id="QLandmarkUnionFilter" ref="qlandmarkunionfilter.html"/>
             <keyword name="append" id="QLandmarkUnionFilter::append" ref="qlandmarkunionfilter.html#append"/>
+            <keyword name="clear" id="QLandmarkUnionFilter::clear" ref="qlandmarkunionfilter.html#clear"/>
             <keyword name="filters" id="QLandmarkUnionFilter::filters" ref="qlandmarkunionfilter.html#filters"/>
             <keyword name="operator&lt;&lt;" id="QLandmarkUnionFilter::operator&lt;&lt;" ref="qlandmarkunionfilter.html#operator-lt-lt"/>
             <keyword name="prepend" id="QLandmarkUnionFilter::prepend" ref="qlandmarkunionfilter.html#prepend"/>
@@ -4420,7 +4421,6 @@
             <file>images/writemessage-example.png</file>
             <file>logfilepositionsource-logfilepositionsource-cpp.html</file>
             <file>qmessagefolder-members.html</file>
-            <file>declarative-sfw-dialer-sfwexample-qdeclarativeservice-h.html</file>
             <file>qmessageaccountfilter-members.html</file>
             <file>contactsschema.html</file>
             <file>qgeocoordinate-members.html</file>
@@ -4451,7 +4451,6 @@
             <file>qlandmarkcategoryremoverequest.html</file>
             <file>lightmaps.html</file>
             <file>flickrdemo-flickr-icon-svg.html</file>
-            <file>declarative-sfw-dialer-sfwexample-main-cpp.html</file>
             <file>qsystemnetworkinfo-members.html</file>
             <file>qsystemdisplayinfo.html</file>
             <file>keepintouch-main-cpp.html</file>
@@ -4470,7 +4469,6 @@
             <file>fetchgooglemaps-mapwindow-h.html</file>
             <file>qradiotuner.html</file>
             <file>3rdparty.html</file>
-            <file>declarative-sfw-dialer-sfwexample-sfwexample-h.html</file>
             <file>creating-a-sensor-plugin.html</file>
             <file>qmagnetometer-members.html</file>
             <file>qcontactphonenumber.html</file>
@@ -4565,7 +4563,6 @@
             <file>qcontactthumbnail-members.html</file>
             <file>qcontactremoverequest-members.html</file>
             <file>publish-subscribe.html</file>
-            <file>declarative-sfw-notes-sfwnotes-cpp.html</file>
             <file>battery-charge-battery-publisher-batterypublisher-cpp.html</file>
             <file>qcontactmanagerenginefactory.html</file>
             <file>qcontactsortorder-members.html</file>
@@ -4600,7 +4597,6 @@
             <file>qmappolygon.html</file>
             <file>qlandmarksaverequest.html</file>
             <file>qgeopositioninfosource-members.html</file>
-            <file>declarative-sfw-notes-sfwnotes-h.html</file>
             <file>qlandmarkdistancesort.html</file>
             <file>qlandmarkidfetchrequest-members.html</file>
             <file>qaudiocapturesource.html</file>
@@ -4655,8 +4651,8 @@
             <file>qlandmarkcategory-members.html</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
             <file>qcontactgeolocation.html</file>
-            <file>annotated.html</file>
             <file>weatherinfo-icons-weather-overcast-svg.html</file>
+            <file>annotated.html</file>
             <file>qcontactmanagerenginefactory-members.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
@@ -4678,8 +4674,8 @@
             <file>qlandmarkcategoryidfetchrequest.html</file>
             <file>qlandmarkimportrequest-members.html</file>
             <file>bearercloud-unknown-svg.html</file>
-            <file>qsystemstorageinfo.html</file>
             <file>weatherinfo-icons-weather-icy-svg.html</file>
+            <file>qsystemstorageinfo.html</file>
             <file>weatherinfo-icons-weather-thundershower-svg.html</file>
             <file>flickrdemo-flickrdemo-h.html</file>
             <file>qvideorenderercontrol-members.html</file>
@@ -4722,7 +4718,6 @@
             <file>flickrdemo-connectivityhelper-cpp.html</file>
             <file>bearer-management.html</file>
             <file>fetchgooglemaps-main-cpp.html</file>
-            <file>declarative-sfw-dialer-sfwexample-qdeclarativeservice-cpp.html</file>
             <file>qcontactbirthday-members.html</file>
             <file>publ-subs.html</file>
             <file>qversitcontactexporterdetailhandler-members.html</file>
@@ -4792,7 +4787,6 @@
             <file>qlandmarkproximityfilter.html</file>
             <file>filemanagerplugin-filemanagerstorage-cpp.html</file>
             <file>serviceactions-mainwindow-h.html</file>
-            <file>declarative-sfw-notes-qdeclarativeservice-cpp.html</file>
             <file>qmediarecorder-members.html</file>
             <file>player-player-cpp.html</file>
             <file>qmessagemanager-members.html</file>
@@ -4832,7 +4826,6 @@
             <file>qgeocodereply.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
-            <file>declarative-sfw-notes-qdeclarativeservice-h.html</file>
             <file>qserviceinterfacedescriptor.html</file>
             <file>index.html</file>
             <file>bearercloud.html</file>
@@ -4948,13 +4941,12 @@
             <file>bearermonitor-bearermonitor-h.html</file>
             <file>qvideooutputcontrol-members.html</file>
             <file>qservicefilter.html</file>
+            <file>versit.html</file>
             <file>qvaluespace.html</file>
             <file>bearermonitor-sessionwidget-cpp.html</file>
-            <file>versit.html</file>
             <file>qmessagedatacomparator.html</file>
             <file>qcontactremoverequest.html</file>
             <file>logfilepositionsource-logfilepositionsource-h.html</file>
-            <file>declarative-sfw-notes-main-cpp.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialerplugin-cpp.html</file>
             <file>battery-charge-battery-subscriber-battery-subscriber-qrc.html</file>
             <file>notesmanagerplugin-notesmanager-h.html</file>
@@ -5045,7 +5037,6 @@
             <file>player-player-h.html</file>
             <file>qmediaservice.html</file>
             <file>qcompassfilter-members.html</file>
-            <file>declarative-sfw-notes-sfwnotes-qrc.html</file>
             <file>sfw-notes-sfwnotes-qrc.html</file>
             <file>qcontactrelationship-members.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html</file>
@@ -5109,7 +5100,6 @@
             <file>qcontactsynctarget.html</file>
             <file>qradiotunercontrol-members.html</file>
             <file>qmediacontent-members.html</file>
-            <file>declarative-sfw-notes-declarative-sfw-notes-pro.html</file>
             <file>qmediacontainercontrol.html</file>
             <file>flickrdemo-flickrdemo-pro.html</file>
             <file>qmlcontacts-qmlcontacts-pro.html</file>
@@ -5123,8 +5113,6 @@
             <file>qlandmarkattributefilter-members.html</file>
             <file>qlandmarksaverequest-members.html</file>
             <file>qmagnetometerfilter-members.html</file>
-            <file>declarative-sfw-dialer-sfwexample-sfwexample-cpp.html</file>
-            <file>declarative-sfw-dialer-sfwexample-resource-qrc.html</file>
             <file>player-mediakeysobserver-cpp.html</file>
             <file>qmlcontacts-main-cpp.html</file>
             <file>qmediaserviceprovider.html</file>
@@ -5161,7 +5149,6 @@
             <file>qgeopositioninfo-members.html</file>
             <file>qlandmarkabstractrequest.html</file>
             <file>images/battery-subscriber.png</file>
-            <file>declarative-sfw-dialer-sfwexample-sfwexample-pro.html</file>
             <file>qmessageservice.html</file>
             <file>qcontactfetchrequest-members.html</file>
             <file>qnmeapositioninfosource-members.html</file>
@@ -5181,9 +5168,9 @@
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
+            <file>weatherinfo-icons-weather-haze-svg.html</file>
             <file>qmlcontacts-qmlcontacts-qrc.html</file>
             <file>writemessage-writemessage-pro.html</file>
-            <file>weatherinfo-icons-weather-haze-svg.html</file>
             <file>flickrdemo-main-cpp.html</file>
             <file>sensors-api.html</file>
             <file>qmessagefolderid-members.html</file>

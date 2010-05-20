@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qnmeapositioninfosource.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QNmeaPositionInfoSource Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <title>Qt Mobility Project 1.1: QNmeaPositionInfoSource Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QNmeaPositionInfoSource"></a>
@@ -75,14 +75,13 @@
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>2 signals inherited from <a href="qgeopositioninfosource.html#signals">QGeoPositionInfoSource</a></li>
 <li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>1 static public member inherited from <a href="qgeopositioninfosource.html#static-public-members">QGeoPositionInfoSource</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QNmeaPositionInfoSource class provides positional information using a NMEA data source.</p>
 <p>NMEA is a commonly used protocol for the specification of one's global position at a certain point in time. The QNmeaPositionInfoSource class reads NMEA data and uses it to provide positional data in the form of <a href="qgeopositioninfo.html">QGeoPositionInfo</a> objects.</p>
@@ -90,9 +89,7 @@
 <p>The source of NMEA data is set with <a href="qnmeapositioninfosource.html#setDevice">setDevice</a>().</p>
 <p>Use <a href="qnmeapositioninfosource.html#startUpdates">startUpdates</a>() to start receiving regular position updates and <a href="qnmeapositioninfosource.html#stopUpdates">stopUpdates</a>() to stop these updates. If you only require updates occasionally, you can call <a href="qnmeapositioninfosource.html#requestUpdate">requestUpdate</a>() to request a single update.</p>
 <p>In both cases the position information is received via the <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a>() signal and the last known position can be accessed with <a href="qnmeapositioninfosource.html#lastKnownPosition">lastKnownPosition</a>().</p>
-</div>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QNmeaPositionInfoSource/UpdateMode"></a>
 <a name="//apple_ref/cpp/econst/QNmeaPositionInfoSource/RealTimeMode"></a>
@@ -104,9 +101,7 @@
 <tr><td valign="top"><tt>QNmeaPositionInfoSource::RealTimeMode</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Positional data is read and distributed from the data source as it becomes available. Use this mode if you are using a live source of positional data (for example, a GPS hardware device).</td></tr>
 <tr><td valign="top"><tt>QNmeaPositionInfoSource::SimulationMode</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The data and time information in the NMEA source data is used to provide positional updates at the rate at which the data was originally recorded. Use this mode if the data source contains previously recorded NMEA data and you want to replay the data for simulation purposes.</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QNmeaPositionInfoSource/QNmeaPositionInfoSource"></a>
 <h3 class="fn"><a name="QNmeaPositionInfoSource"></a>QNmeaPositionInfoSource::QNmeaPositionInfoSource ( <a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> <i>updateMode</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -154,11 +149,10 @@
 <a name="//apple_ref/cpp/instm/QNmeaPositionInfoSource/updateMode"></a>
 <h3 class="fn"><a name="updateMode"></a><a href="qnmeapositioninfosource.html#UpdateMode-enum">UpdateMode</a> QNmeaPositionInfoSource::updateMode () const</h3>
 <p>Returns the update mode.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>
