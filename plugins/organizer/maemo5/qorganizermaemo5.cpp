@@ -255,7 +255,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
         return QOrganizerItem();
     }
     QString calendarName = d->m_cIdToCName.value(entireItemId);
-    QString calItemId = entireItemId.mid(calendarName.size(), -1); // entireItemId = calendarName:cId
+    QString calItemId = entireItemId.mid((calendarName.size() + 1), -1); // entireItemId = calendarName:cId
     CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
 
     // now attempt to get the item.
@@ -315,7 +315,6 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
                     if (errorMap) {
                         errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
                     }
-qDebug() << "unable to modify event:" << QString::fromStdString(cevent->getId()) << " with LID" << curr.localId();
                     *error = QOrganizerItemManager::UnspecifiedError;
                     calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
                 } else {
@@ -330,7 +329,6 @@ qDebug() << "unable to modify event:" << QString::fromStdString(cevent->getId())
                     if (errorMap) {
                         errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
                     }
-qDebug() << "unable to add event:" << QString::fromStdString(cevent->getId()) << " with LID" << curr.localId();
                     *error = QOrganizerItemManager::UnspecifiedError;
                     calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
                 } else {
@@ -483,13 +481,14 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
             continue;
         }
         QString calendarName = d->m_cIdToCName.value(entireId);
-        QString cId = entireId.mid(calendarName.size(), -1); // entireId = calendarName:cId
+        QString cId = entireId.mid((calendarName.size() + 1), -1); // entireId = calendarName:cId
         CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
         if (calendar) {
             calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-	    std::vector<std::string> removeItemIds;
-	    removeItemIds.push_back(cId.toStdString());
+            std::vector<std::string> removeItemIds;
+            removeItemIds.push_back(cId.toStdString());
             d->m_mcInstance->deleteComponents(removeItemIds, calendar->getCalendarId(), calError);
+	    
             if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
                 calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
                 *error = QOrganizerItemManager::DoesNotExistError;
@@ -797,7 +796,7 @@ CEvent* QOrganizerItemMaemo5Engine::convertQEventToCEvent(const QOrganizerEvent&
     QOrganizerItemLocalId eventId = event.localId();
     QString entireId = d->m_cIdToQId.key(eventId);
     QString calName = d->m_cIdToCName.value(entireId);
-    QString eventStrId = entireId.mid(calName.size(), -1); // entireId = calendarName:cId
+    QString eventStrId = entireId.mid((calName.size() + 1), -1); // entireId = calendarName:cId
 
     int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
     bool deleteCalendar = true;
@@ -862,7 +861,7 @@ CTodo* QOrganizerItemMaemo5Engine::convertQTodoToCTodo(const QOrganizerTodo& tod
     QOrganizerItemLocalId todoId = todo.localId();
     QString entireId = d->m_cIdToQId.key(todoId);
     QString calName = d->m_cIdToCName.value(entireId);
-    QString todoStrId = entireId.mid(calName.size(), -1); // entireId = calendarName:cId
+    QString todoStrId = entireId.mid((calName.size() + 1), -1); // entireId = calendarName:cId
 
     int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
     bool deleteCalendar = true;
@@ -922,7 +921,7 @@ CJournal* QOrganizerItemMaemo5Engine::convertQJournalToCJournal(const QOrganizer
     QOrganizerItemLocalId journalId = journal.localId();
     QString entireId = d->m_cIdToQId.key(journalId);
     QString calName = d->m_cIdToCName.value(entireId);
-    QString journalStrId = entireId.mid(calName.size(), -1); // entireId = calendarName:cId
+    QString journalStrId = entireId.mid((calName.size() + 1), -1); // entireId = calendarName:cId
 
     int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
     bool deleteCalendar = true;
