@@ -1293,7 +1293,7 @@ void TestFiltering::testDefaultFilterWithPredictiveSearch9()
 void TestFiltering::testFilterSupported()
     {
     CntSymbianSrvConnection srvConnection(m_engine);
-    CntDbInfo dbInfo;
+    CntDbInfo dbInfo(m_engine);
     QContactDetailFilter f1;
     f1.setDetailDefinitionName(QContactNickname::DefinitionName, QContactNickname::FieldNickname);
     f1.setValue("Mic");
@@ -1344,7 +1344,7 @@ void TestFiltering::testCreateSelectQuery()
     f1.setValue("Mic");
     f1.setMatchFlags(QContactFilter::MatchStartsWith);
     CntSymbianSrvConnection srvConnection(m_engine);
-    CntDbInfo dbInfo;
+    CntDbInfo dbInfo(m_engine);
     QString sqlquery;
     QContactManager::Error error;
     

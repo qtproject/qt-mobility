@@ -42,6 +42,7 @@
 #include "testrunner.h"
 #include "ut_cntsymbianengine.h"
 #include "ut_cntfiltering.h"
+#include "ut_matchphonenumber.h"
 #include "ut_cntrelationship.h"
 //#include "ut_cntsymbiandatabase.h"
 #include "ut_transformcontactdata.h"
@@ -67,6 +68,9 @@ int main(int argc, char *argv[])
     
     TestFiltering ut_filtering;
     testRunner.runTests(ut_filtering);
+    
+    TestMatchPhoneNumber ut_matchphonenumber;
+    testRunner.runTests(ut_matchphonenumber);
     
     TestCntRelationship ut_relationship;
     testRunner.runTests(ut_relationship);

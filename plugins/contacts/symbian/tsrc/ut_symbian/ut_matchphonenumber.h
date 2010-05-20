@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtCore module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -38,45 +38,39 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QObject>
+#include <QHash>
+#include <qcontactfilter.h>
+#include <cntdb.h>
+#include "cntsymbianengine.h"
 
-#ifndef CNTFILTERUNION_H
-#define CNTFILTERUNION_H
-
-#include "cntabstractcontactfilter.h"
-#include "cntsymbiansrvconnection.h"
-#include "cntdbinfo.h"
-
-#include <qmobilityglobal.h>
 
 QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
+QTM_END_NAMESPACE
 
-class CntFilterUnion : public CntAbstractContactFilter
+class TestMatchPhoneNumber : public QObject
 {
-public:
-    CntFilterUnion(CContactDatabase& contactDatabase,CntSymbianSrvConnection &cntServer,CntDbInfo& dbInfo);
-    virtual ~CntFilterUnion();
-    QList<QContactLocalId> contacts(
-            const QContactFilter &filter,
-            const QList<QContactSortOrder> &sortOrders,
-            bool &filterSupported,
-            QContactManager::Error* error) ;
-    bool filterSupported(const QContactFilter& filter) ;
-    
-    void createSelectQuery(const QContactFilter& filter,
-                                 QString& selectquery,
-                                 QContactManager::Error* error);
-#ifdef PBK_UNIT_TEST
-    void emulateBestMatching();
-#endif //PBK_UNIT_TEST
+    Q_OBJECT
+
+private slots:  // Init & cleanup
+	void initTestCase();
+	void cleanupTestCase();
 
 private:
-    void getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error* error);
-    
-protected:
-    CContactDatabase& m_contactdatabase;
-    CntSymbianSrvConnection &m_srvConnection;
-    CntDbInfo& m_dbInfo;
-    bool m_emulateBestMatching; //PBK_UNIT_TEST
+	void cleanupContactsDb();
+	void setupBestMatchingContactsDb1();
+	void setupBestMatchingContactsDb2();
+	void setupBestMatchingContactsDb3();
+    void addContact(QString firstname,QString lastname,QString phonenumber);
+    void testBestMatchingStrategy1();
+    void testBestMatchingStrategy2();
+    void testBestMatchingStrategy3();
+    void testBestMatchingWithUnionFilter();
+    void testBestMatchingWithIntersectionFilter();
+private slots:  // Test cases
+    void testMatchPhoneNumber();
+private:
+    CContactDatabase *m_database;
+    CntSymbianEngine *m_engine;
 };
-
-#endif // CNTFILTERUNION_H

@@ -65,7 +65,7 @@ public:
             ESipAddress
             };
 public:
-    CntDbInfo();
+    CntDbInfo(QContactManagerEngine* engine);
     virtual ~CntDbInfo();
     
     void getDbTableAndColumnName( const QString definitionName,
@@ -78,10 +78,12 @@ public:
     QString getSortQuery(const QList<QContactSortOrder> &sortOrders,
                          const QString& selectQuery,
                          QContactManager::Error* error);
+    QContactManagerEngine* engine();
 
 private:
     QHash<QString,QString> contactsTableIdColumNameMapping;
     QHash<QString,QPair<int,bool> > commAddrTableIdColumNameMapping;
+    QContactManagerEngine* m_engine; // not owned
 };
 
 #endif /* CNTDBINFO_H_ */
