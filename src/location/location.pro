@@ -191,6 +191,7 @@ SOURCES += \
             qgeonavigationinstruction.cpp \
             qgeomappingmanager.cpp \
             qgeomappingreply.cpp \
+            qgeomaprequestoptions.cpp \
             qgeoplacesmanager.cpp \
             qgeoplacesreply.cpp \
             qgeopositioninfo.cpp \
