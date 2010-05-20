@@ -3,7 +3,9 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(audioengine)
 PLUGIN_TYPE=mediaservice
 
-QT += multimedia
+contains(QT_CONFIG,multimedia) {
+    QT += multimedia
+}
 
 include (../../../common.pri)
 INCLUDEPATH += ../../../src/multimedia

@@ -49,7 +49,7 @@
 
 #include <qpaintervideosurface_p.h>
 #include <qvideorenderercontrol.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 #include <qpainter.h>
 
 #include <qapplication.h>

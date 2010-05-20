@@ -58,8 +58,8 @@
 #include <QtGui/qimage.h>
 #include <QtGui/qmatrix4x4.h>
 #include <QtGui/qpaintengine.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideoframe.h>
+#include <qabstractvideosurface.h>
+#include <qvideoframe.h>
 
 QT_BEGIN_NAMESPACE
 class QGLContext;

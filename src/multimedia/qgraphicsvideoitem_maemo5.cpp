@@ -56,7 +56,7 @@
 #include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #include <qxvideosurface_maemo5_p.h>
 

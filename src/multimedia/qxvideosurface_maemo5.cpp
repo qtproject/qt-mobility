@@ -42,7 +42,7 @@
 #include <QtGui/qx11info_x11.h>
 #include <QtCore/qdebug.h>
 #include <QtCore/qvariant.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #include "qxvideosurface_maemo5_p.h"
 

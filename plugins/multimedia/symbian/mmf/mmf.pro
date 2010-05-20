@@ -1,5 +1,9 @@
 TEMPLATE = lib
+
+contains(QT_CONFIG,multimedia) {
 QT += multimedia
+}
+
 CONFIG += plugin
 TARGET = QtMobilityMmfEngine
 PLUGIN_SUBDIR = mediaservice

@@ -118,6 +118,16 @@ contains(mobility_modules,multimedia) {
         qvideowidget \
         qmediatimerange
 
+    !contains(QT_CONFIG,multimedia) {
+        SUBDIRS += \
+                qaudiodeviceinfo \
+                qaudiooutput \
+                qaudioinput \
+                qaudioformat \
+                qvideoframe \
+                qvideosurfaceformat
+    }
+
     symbian: {
         #symbian spesific autotests
         SUBDIRS += symbian 

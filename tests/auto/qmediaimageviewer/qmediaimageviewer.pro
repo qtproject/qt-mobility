@@ -6,7 +6,7 @@ include (../../../common.pri)
 
 SOURCES += tst_qmediaimageviewer.cpp
 
-QT += network multimedia
+QT += network
 CONFIG += mobility
 MOBILITY = multimedia
 

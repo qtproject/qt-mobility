@@ -6,7 +6,7 @@ TARGET = QtMedia
 include (../../common.pri)
 INCLUDEPATH+= .
 
-QT += network multimedia
+QT += network
 
 contains(QT_CONFIG, opengl): QT += opengl
 
@@ -103,6 +103,14 @@ SOURCES += qmediacontrol.cpp \
     qpaintervideosurface.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp
+
+!contains(QT_CONFIG,multimedia) {
+    include(audio/audio.pri)
+    include(video/video.pri)
+    INCLUDEPATH += audio video
+} else {
+    QT += multimedia
+}
 
 maemo5 {
     QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon

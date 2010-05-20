@@ -54,7 +54,7 @@
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmetaobject.h>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 QT_BEGIN_NAMESPACE
 

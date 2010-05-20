@@ -431,6 +431,13 @@ for module in $MOBILITY_MODULES; do
             ;;
         multimedia)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
+            echo "contains(QT_CONFIG,multimedia):message(1)" > 1.pro
+            SOMETHING=`qmake 1.pro 2>&1`
+            if [ "$SOMETHING" != "Project MESSAGE: 1" ]; then
+                $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/audio
+                $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/video
+            fi
+            rm 1.pro
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/messaging

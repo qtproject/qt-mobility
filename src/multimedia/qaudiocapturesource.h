@@ -46,7 +46,7 @@
 #include <QtCore/qpair.h>
 #include <QtCore/qsize.h>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 #include <qmediarecorder.h>
 #include <qmediacontrol.h>

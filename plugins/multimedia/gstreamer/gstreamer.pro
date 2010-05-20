@@ -8,7 +8,10 @@ INCLUDEPATH+=../../../src/multimedia
 
 CONFIG += mobility
 MOBILITY = multimedia
-QT += multimedia
+
+contains(QT_CONFIG,multimedia) {
+    QT += multimedia
+}
 
 DEPENDPATH += .
 

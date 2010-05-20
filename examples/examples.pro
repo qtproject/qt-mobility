@@ -65,6 +65,15 @@ contains(mobility_modules,multimedia) {
         player \
         slideshow \
         audiorecorder
+
+    !contains(QT_CONFIG,multimedia) {
+        SUBDIRS += \
+            audiodevices \
+            audioinput \
+            audiooutput \
+            videographicsitem \
+            videowidget
+    }
 }
 
 
