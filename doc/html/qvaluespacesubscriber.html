@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qvaluespacesubscriber.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QValueSpaceSubscriber Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QValueSpaceSubscriber"></a>
@@ -62,14 +62,13 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QValueSpaceSubscriber class allows applications to read and subscribe to Value Space paths.</p>
 <p>By default QValueSpaceSubscriber can read values from and report change notifications for all available Value Space layers. Only data from the layer with the highest order and that contains the specific key is returned by this class.</p>
@@ -86,9 +85,7 @@
 <pre>        QValueSpaceSubscriber *buttons = new QValueSpaceSubscriber(&quot;/Device/Buttons&quot;);
         QObject::connect(buttons, SIGNAL(contentsChanged()), this, SLOT(buttonInfoChanged()));</pre>
 <p>will invoke the <tt>buttonInfoChanged()</tt> slot whenever any value under <tt>/Device/Buttons</tt> changes. This includes the value of <tt>/Device/Buttons</tt> itself, a change of a subpath such as <tt>/Device/Buttons/2/Name</tt> or the creation or removal of a subpath.</p>
-</div>
 <hr />
-<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QValueSpaceSubscriber/path"></a>
 <a name="//apple_ref/cpp/instm/QValueSpaceSubscriber/setPath"></a>
@@ -108,9 +105,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvaluespacesubscriber.html#contentsChanged">contentsChanged</a></b> ()</td></tr>
 </table>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QValueSpaceSubscriber/QValueSpaceSubscriber"></a>
 <h3 class="fn"><a name="QValueSpaceSubscriber"></a>QValueSpaceSubscriber::QValueSpaceSubscriber ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -161,7 +156,6 @@
 
 <span class="comment">    // Is true</span>
     equiv.value() == base.value(&quot;Nokia/General/Mapping&quot;);</pre>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

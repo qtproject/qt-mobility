@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qlandmark.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QLandmark Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QLandmark"></a>
@@ -56,16 +56,13 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmark class represents a location or point of interest of some significance.</p>
 <p>Each landmark consists of a number of properties such as name, coordinates, descriptoin etc. Landmarks may also be assigned a set of generic attributes which may be accessed and modified by using the <a href="qlandmark.html#attribute">attribute</a>() and <a href="qlandmark.html#setAttribute">setAttribute</a>() functions.</p>
 <p>Each QLandmark may be associated with zero or more categories. A category defines a type of landmark such as restaurant or cinema. To set the category that a landmark belongs to, use the setCategoryId() or <a href="qlandmark.html#addCategoryId">addCategoryId</a>() functions. A landmark may be removed from a category by using the <a href="qlandmark.html#removeCategoryId">removeCategoryId</a>() function.</p>
 <p>Some landmarks may be designated as read-only, e.g&#x2e; a publically accessible landmark server may not want some of its content to be editable. Localization is only possible for landmarks that are read-only. If the landmark store supports localization, the locale may be set through a <a href="qlandmarkmanager.html">QLandmarkManager</a>'s parameters and whenever landmarks are retrieved, the translated names are used. The <tt>QLandmarkManager::isReadOnly(const QLandmarkyId &amp;)</tt> function may be used to determine if a category is read-only.</p>
 <p>Each QLandmark is an in memory representation of a landmark; it does not reflect the actual landmark state in persistent storage until the appropriate synchronization method is called on the <a href="qlandmarkmanager.html">QLandmarkManager</a>(e.g&#x2e; <a href="qlandmarkmanager.html#saveLandmark">saveLandmark()</a>, <a href="qlandmarkmanager.html#removeLandmark">removeLandmark()</a>).</p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmark/QLandmark"></a>
 <h3 class="fn"><a name="QLandmark"></a>QLandmark::QLandmark ()</h3>
@@ -191,7 +188,6 @@
 <p>Returns true if this landmark is equal to <i>other</i>, otherwise returns false.</p>
 <p>Two landmarks are considered equal if both the landmark details and identifiers are equal.</p>
 <p>See also <a href="qlandmark.html#operator-not-eq">operator!=</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

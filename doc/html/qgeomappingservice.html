@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qgeomappingservice.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QGeoMappingService Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QGeoMappingService"></a>
@@ -70,23 +70,20 @@
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoMappingService class manages requests to and replies from a geographical map image service.</p>
 <p>The request functions return a <a href="qgeomapreply.html">QGeoMapReply</a> instance, which is responsible for delivering the status and results of the request.</p>
 <p>The rest of the class consists of functions providing metadata about the service provider, primarily dealing with the capabilities of the service and any limitations that may apply to the request inputs.</p>
 <p>The <a href="qgeomapreply.html">QGeoMapReply</a> objects and the QGeoMappingService instance will both emit signals to indicate that a request has completed successfully or has resulted in an error.</p>
 <p><b>Note:</b> After the request has finished, it is the responsibility of the user to delete the <a href="qgeomapreply.html">QGeoMapReply</a> object at an appropriate time. Do not directly delete it inside the slot connected to <a href="qgeomappingservice.html#replyFinished">replyFinished</a>() or <a href="qgeomappingservice.html#replyError">replyError</a>() - the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() function should be used instead.</p>
-</div>
 <p>See also <a href="qgeomapreply.html">QGeoMapReply</a>.</p>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoMappingService/ErrorCode"></a>
 <a name="//apple_ref/cpp/econst/QGeoMappingService/NoError"></a>
@@ -96,9 +93,7 @@
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QGeoMappingService::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No error occurred.</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoMappingService/QGeoMappingService"></a>
 <h3 class="fn"><a name="QGeoMappingService"></a>QGeoMappingService::QGeoMappingService ()&nbsp;&nbsp;<tt> [protected]</tt></h3>
@@ -188,7 +183,6 @@
 <h3 class="fn"><a name="supportedMapTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; QGeoMappingService::supportedMapTypes () const</h3>
 <p>Returns a list of the map types supported by this <a href="qgeomappingservice.html">QGeoMappingService</a> instance.</p>
 <p>See also <a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a> and <a href="qgeomappingservice.html#setSupportedMapTypes">QGeoMappingService::setSupportedMapTypes</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

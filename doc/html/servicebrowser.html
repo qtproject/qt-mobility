@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- servicebrowser.qdoc -->
 <head>
   <title>Qt Mobility Project 1.0: Service Browser Example</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -149,7 +149,7 @@
     }</pre>
 <p>Call <a href="http://qt.nokia.com/doc/4.6/qobject.html#metaObject">QObject::metaObject</a>() on the implementation instance to get a <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html">QMetaObject</a> instance that reveals the dynamically invokable attributes for the instance. These attributes include properties, signals, slots, and methods marked with the <a href="http://qt.nokia.com/doc/4.6/qobject.html#Q_INVOKABLE">Q_INVOKABLE</a> macro. Call <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html#method">QMetaObject::method</a>() to get information about a signal, slot or invokable method, and <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html#property">QMetaObject::property</a>() to access a property of the instance.</p>
 <p>When you know the name of the method you wish to invoke, call QMetaObject::invoke() or <a href="http://qt.nokia.com/doc/4.6/qmetamethod.html#invoke">QMetaMethod::invoke</a>() to invoke it dynamically. Similarly, <a href="http://qt.nokia.com/doc/4.6/qmetaproperty.html#read">QMetaProperty::read</a>() and <a href="http://qt.nokia.com/doc/4.6/qmetaproperty.html#write">QMetaProperty::write</a>() can be used to read and modify the value of a property.</p>
-<a name="invoking-attributes- an-example"></a>
+<a name="invoking-attributes-an-example"></a>
 <h3>Invoking attributes: an example</h3>
 <p>Here is an example of invoking attributes on an implementation, using the <a href="filemanagerplugin.html">FileManagerPlugin</a> that is shown in the Service Browser.</p>
 <p>The <a href="filemanagerplugin.html">FileManagerPlugin</a> provides a service called &quot;FileManagerService&quot; in its <tt>filemanagerplugin.xml</tt> service definition. When FileManagerPlugin::createInstance() is called, if the com.nokia.qt.examples.FileStorage interface is requested, it returns an instance of the FileManagerStorage class. The FileManagerStorage class is defined like this:</p>

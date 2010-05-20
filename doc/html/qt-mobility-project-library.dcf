@@ -1795,8 +1795,13 @@
     </section>
     <section ref="qlandmarkidfilter.html" title="QLandmarkIdFilter Class Reference">
         <keyword ref="qlandmarkidfilter.html">QLandmarkIdFilter</keyword>
+        <keyword ref="qlandmarkidfilter.html#append">append</keyword>
+        <keyword ref="qlandmarkidfilter.html#clear">clear</keyword>
         <keyword ref="qlandmarkidfilter.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkidfilter.html#prepend">prepend</keyword>
+        <keyword ref="qlandmarkidfilter.html#remove">remove</keyword>
         <keyword ref="qlandmarkidfilter.html#setLandmarkIds">setLandmarkIds</keyword>
+        <keyword ref="qlandmarkidfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
         <section ref="qlandmarkidfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkimportrequest.html" title="QLandmarkImportRequest Class Reference">
@@ -1813,6 +1818,7 @@
     <section ref="qlandmarkintersectionfilter.html" title="QLandmarkIntersectionFilter Class Reference">
         <keyword ref="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</keyword>
         <keyword ref="qlandmarkintersectionfilter.html#append">append</keyword>
+        <keyword ref="qlandmarkintersectionfilter.html#clear">clear</keyword>
         <keyword ref="qlandmarkintersectionfilter.html#filters">filters</keyword>
         <keyword ref="qlandmarkintersectionfilter.html#prepend">prepend</keyword>
         <keyword ref="qlandmarkintersectionfilter.html#remove">remove</keyword>
@@ -1834,12 +1840,6 @@
         <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::LockedError</keyword>
         <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::InvalidManagerError</keyword>
         <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::NotSupportedError</keyword>
-        <keyword ref="qlandmarkmanager.html#Format-enum">Format</keyword>
-        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::GPSExchange</keyword>
-        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::CommaSeparatedValues</keyword>
-        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::LandmarkExchange</keyword>
-        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::KeyholeMarkupLanguage</keyword>
-        <keyword ref="qlandmarkmanager.html#Format-enum">QLandmarkManager::Custom</keyword>
         <keyword ref="qlandmarkmanager.html#availableManagers">availableManagers</keyword>
         <keyword ref="qlandmarkmanager.html#buildUri">buildUri</keyword>
         <keyword ref="qlandmarkmanager.html#categories">categories</keyword>
@@ -1997,6 +1997,7 @@
     <section ref="qlandmarkunionfilter.html" title="QLandmarkUnionFilter Class Reference">
         <keyword ref="qlandmarkunionfilter.html">QLandmarkUnionFilter</keyword>
         <keyword ref="qlandmarkunionfilter.html#append">append</keyword>
+        <keyword ref="qlandmarkunionfilter.html#clear">clear</keyword>
         <keyword ref="qlandmarkunionfilter.html#filters">filters</keyword>
         <keyword ref="qlandmarkunionfilter.html#prepend">prepend</keyword>
         <keyword ref="qlandmarkunionfilter.html#remove">remove</keyword>

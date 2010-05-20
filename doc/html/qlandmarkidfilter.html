@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qlandmarkidfilter.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QLandmarkIdFilter Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QLandmarkIdFilter"></a>
@@ -26,20 +26,22 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#QLandmarkIdFilter">QLandmarkIdFilter</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>ids</i> = QList&lt;QLandmarkId&gt; () )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#QLandmarkIdFilter-2">QLandmarkIdFilter</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#dtor.QLandmarkIdFilter">~QLandmarkIdFilter</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#append">append</a></b> ( const QLandmarkId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#clear">clear</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#landmarkIds">landmarkIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#prepend">prepend</a></b> ( const QLandmarkId &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#remove">remove</a></b> ( const QLandmarkId &amp; <i>id</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#setLandmarkIds">setLandmarkIds</a></b> ( const QList&lt;QLandmarkId&gt; &amp; <i>ids</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QLandmarkIdFilter &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkidfilter.html#operator-lt-lt">operator&lt;&lt;</a></b> ( const QLandmarkId &amp; <i>id</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>6 public functions inherited from <a href="qlandmarkfilter.html#public-functions">QLandmarkFilter</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkIdFilter class is used to search for landmarks based on a list of landmark identifiers.</p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFilter/QLandmarkIdFilter"></a>
 <h3 class="fn"><a name="QLandmarkIdFilter"></a>QLandmarkIdFilter::QLandmarkIdFilter ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>ids</i> = QList&lt;QLandmarkId&gt; () )</h3>
@@ -49,15 +51,29 @@
 <a name="//apple_ref/cpp/instm/QLandmarkIdFilter/~QLandmarkIdFilter"></a>
 <h3 class="fn"><a name="dtor.QLandmarkIdFilter"></a>QLandmarkIdFilter::~QLandmarkIdFilter ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the filter.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkIdFilter/append"></a>
+<h3 class="fn"><a name="append"></a>void QLandmarkIdFilter::append ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3>
+<p>Appends <i>id</i> to the list of landmark ids this filter searches for.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkIdFilter/clear"></a>
+<h3 class="fn"><a name="clear"></a>void QLandmarkIdFilter::clear ()</h3>
+<p>Removes all identifiers from the filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFilter/landmarkIds"></a>
 <h3 class="fn"><a name="landmarkIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; QLandmarkIdFilter::landmarkIds () const</h3>
 <p>Returns the list of landmark identifiers that the filter will use to determine matches.</p>
 <p>See also <a href="qlandmarkidfilter.html#setLandmarkIds">setLandmarkIds</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkIdFilter/prepend"></a>
+<h3 class="fn"><a name="prepend"></a>void QLandmarkIdFilter::prepend ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3>
+<p>Prepends <i>id</i> to the list of landmark ids this filter searches for.</p>
+<a name="//apple_ref/cpp/instm/QLandmarkIdFilter/remove"></a>
+<h3 class="fn"><a name="remove"></a>void QLandmarkIdFilter::remove ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3>
+<p>Removes <i>id</i> to the list of landmark ids this filter searches for.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFilter/setLandmarkIds"></a>
 <h3 class="fn"><a name="setLandmarkIds"></a>void QLandmarkIdFilter::setLandmarkIds ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>ids</i> )</h3>
 <p>Sets the <i>ids</i> that the filter will use to determine matches.</p>
 <p>See also <a href="qlandmarkidfilter.html#landmarkIds">landmarkIds</a>().</p>
-</div>
+<a name="//apple_ref/cpp/instm/QLandmarkIdFilter/operator&lt;&lt;"></a>
+<h3 class="fn"><a name="operator-lt-lt"></a>QLandmarkIdFilter &amp; QLandmarkIdFilter::operator&lt;&lt; ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3>
+<p>Appends the given <i>id</i> to the list of landmark identifiers this filter searches for.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

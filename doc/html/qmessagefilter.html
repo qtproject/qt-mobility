@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmessagefilter.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QMessageFilter Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMessageFilter"></a>
@@ -68,7 +68,6 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMessageFilter class defines the parameters used for querying a subset of all available messages from the messaging store.</p>
 <p>A QMessageFilter is composed of a message property, an optional comparison operator and a comparison value. The QMessageFilter class is used in conjunction with the <a href="qmessagemanager.html#queryMessages">QMessageManager::queryMessages</a>(), <a href="qmessagemanager.html#countMessages">QMessageManager::countMessages</a>(), <a href="qmessageservice.html#queryMessages">QMessageService::queryMessages</a>(), and <a href="qmessageservice.html#countMessages">QMessageService::countMessages</a>() functions to filter results which meet the criteria defined by the filter.</p>
@@ -78,10 +77,8 @@
 <pre>    QMessageFilter subjectFilter(QMessageFilter::bySubject(&quot;meeting&quot;));
     QMessageFilter senderFilter(QMessageFilter::bySender(&quot;joe@user.com&quot;));
     QMessageIdList results = QMessageManager().queryMessages(subjectFilter &amp; senderFilter);</pre>
-</div>
 <p>See also <a href="qmessagemanager.html">QMessageManager</a> and <a href="qmessage.html">QMessage</a>.</p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMessageFilter/QMessageFilter"></a>
 <h3 class="fn"><a name="QMessageFilter"></a>QMessageFilter::QMessageFilter ()</h3>
@@ -220,7 +217,6 @@
 <p>Returns a filter that is the logical NOT of the value of this filter (ignoring any <a href="qmessagefilter.html#matchFlags">matchFlags</a>() set on the filter).</p>
 <p>If this filter is empty, the result will be a non-matching filter; if this filter is non-matching, the result will be an empty filter.</p>
 <p>See also <a href="qmessagefilter.html#isEmpty">isEmpty</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

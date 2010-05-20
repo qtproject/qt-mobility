@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qgeopositioninfosource.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QGeoPositionInfoSource Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QGeoPositionInfoSource"></a>
@@ -86,28 +86,25 @@
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.</p>
 <p>The static function <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>() creates a default position source that is appropriate for the platform, if one is available. Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate custom source of position data.</p>
 <p>Users of a QGeoPositionInfoSource subclass can request the current position using <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>(), or start and stop regular position updates using <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() and <a href="qgeopositioninfosource.html#stopUpdates">stopUpdates</a>(). When an update is available, <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a>() is emitted. The last known position can be accessed with <a href="qgeopositioninfosource.html#lastKnownPosition">lastKnownPosition</a>().</p>
 <p>If regular position updates are required, <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() can be used to specify how often these updates should be emitted. If no interval is specified, updates are simply provided whenever they are available. For example:</p>
-<pre>    // Emit updates every 10 seconds if available
+<pre><span class="comment">    // Emit updates every 10 seconds if available</span>
     QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
     if (source)
         source-&gt;setUpdateInterval(10000);</pre>
 <p>To remove an update interval that was previously set, call <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() with a value of 0.</p>
 <p>Note that the position source may have a minimum value requirement for update intervals, as returned by <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</a>().</p>
 <p><b>Warning:</b> On Windows CE it is not possible to detect if a device is GPS enabled. The default position source on a Windows CE device without GPS support will never provide any position data.</p>
-</div>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoPositionInfoSource/PositioningMethod"></a>
 <a name="//apple_ref/cpp/econst/QGeoPositionInfoSource/SatellitePositioningMethods"></a>
@@ -123,9 +120,7 @@
 <tr><td valign="top"><tt>QGeoPositionInfoSource::AllPositioningMethods</tt></td><td align="center" valign="top"><tt>0xffffffff</tt></td><td valign="top">A flag that matches all positioning methods.</td></tr>
 </table></p>
 <p>The PositioningMethods type is a typedef for <a href="qflags.html">QFlags</a>&lt;PositioningMethod&gt;. It stores an OR combination of PositioningMethod values.</p>
-</div>
 <hr />
-<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/minimumUpdateInterval"></a>
 <h3 class="fn"><a name="minimumUpdateInterval-prop"></a>minimumUpdateInterval : const int</h3>
@@ -149,9 +144,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>updateInterval</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b>setUpdateInterval</b> ( int <i>msec</i> )</td></tr>
 </table>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/QGeoPositionInfoSource"></a>
 <h3 class="fn"><a name="QGeoPositionInfoSource"></a>QGeoPositionInfoSource::QGeoPositionInfoSource ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> )</h3>
@@ -204,7 +197,6 @@
 <h3 class="fn"><a name="updateTimeout"></a>void QGeoPositionInfoSource::updateTimeout ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>If <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>() was called, this signal will be emitted if the current position could not be retrieved within the specified timeout.</p>
 <p>If <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() has been called, this signal will be emitted if this <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> subclass determines that it will not be able to provide further regular updates. This signal will not be emitted again until after the regular updates resume.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

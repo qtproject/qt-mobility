@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <title>Qt Mobility Project 1.0: player.cpp Example File (player/player.cpp)</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -244,7 +244,7 @@
         QStringList fileNames = qApp-&gt;arguments();
         fileNames.removeAt(0);
         foreach (QString const &amp;fileName, fileNames) {
-            if (fileName.startsWith(QLatin1String(&quot;http://&quot;)))
+            if (fileName.startsWith(QLatin1String(&quot;http:<span class="comment">//&quot;)))</span>
                 playlist-&gt;addMedia(QUrl(fileName));
             else if (QFileInfo(fileName).exists())
                 playlist-&gt;addMedia(QUrl::fromLocalFile(fileName));
@@ -709,7 +709,7 @@
 
         QLineEdit *input = youtubeDialog-&gt;findChild&lt;QLineEdit *&gt;();
         QListWidget *resultList = youtubeDialog-&gt;findChild&lt;QListWidget *&gt;();
-        QString urlstring = QString(&quot;http://gdata.youtube.com/feeds/api/videos?q=%1&amp;max-results=25&amp;v=2&amp;format=6&quot;).arg(input-&gt;text().replace(' ', '+'));
+        QString urlstring = QString(&quot;http:<span class="comment">//gdata.youtube.com/feeds/api/videos?q=%1&amp;max-results=25&amp;v=2&amp;format=6&quot;).arg(input-&gt;text().replace(' ', '+'));</span>
         QUrl url(urlstring);
         http.setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
         resultList-&gt;clear();

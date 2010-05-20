@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- sensors.qdoc -->
 <head>
   <title>Qt Mobility Project 1.0: Sensors API</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -22,7 +22,7 @@
 <li><a href="#common-conventions">Common Conventions</a></li>
 <li><a href="#using-a-sensor">Using a Sensor</a></li>
 <li><a href="#accessing-sensor-data-in-a-generic-fashion">Accessing sensor data in a generic fashion</a></li>
-<li><a href="#front-end- back-end">Front end, back end</a></li>
+<li><a href="#front-end-back-end">Front end, back end</a></li>
 <li><a href="#main-classes">Main Classes</a></li>
 <li><a href="#reading-classes">Reading Classes</a></li>
 <li><a href="#sensor-classes">Sensor Classes</a></li>
@@ -76,7 +76,7 @@
     qreal x = reading-&gt;property(&quot;x&quot;).value&lt;qreal&gt;();
     qreal y = reading-&gt;value(1).value&lt;qreal&gt;();</pre>
 <p>You can discover all of this information at runtime too. The sensor_explorer example shows you information about available sensors.</p>
-<a name="front-end- back-end"></a>
+<a name="front-end-back-end"></a>
 <h3>Front end, back end</h3>
 <p>The Sensors API has a front end, for application developers to use and a back end, where device implementors write code to access their hardware. As an application developer you do not need to access the back end though it may be useful to understand how it works.</p>
 <p>Commands from the application are delivered through <a href="qsensor.html">QSensor</a> and then down to the device plugin. Data comes back through the <a href="qsensorreading.html">QSensorReading</a> class.</p>
