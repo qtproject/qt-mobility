@@ -353,10 +353,6 @@ bool QVersitReaderPrivate::parseVersitDocument(LineReader& lineReader, QVersitDo
     if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
         return false; // To prevent infinite recursion
 
-    bool parsingOk = true;
-    mDocumentNestingLevel++;
-
-    // TODO: Various readers should be made subclasses and eliminate assumptions like this.
     // We don't know what type it is: just assume it's a vCard 3.0
     document.setType(QVersitDocument::VCard30Type);
 
@@ -364,50 +360,69 @@ bool QVersitReaderPrivate::parseVersitDocument(LineReader& lineReader, QVersitDo
 
     if (!foundBegin) {
         property = parseNextVersitProperty(document.type(), lineReader);
-        if (property.name() == QLatin1String("BEGIN")
-            && property.value().trimmed().toUpper() == QLatin1String("VCARD")) {
-            foundBegin = true;
-        } else if (property.isEmpty()) {
+        QString propertyValue = property.value().trimmed().toUpper();
+        if (property.isEmpty()) {
             // A blank document (or end of file) was found.
             document = QVersitDocument();
+            return true;
+        } else if (property.name() == QLatin1String("BEGIN")) {
+            if (propertyValue == QLatin1String("VCARD")) {
+                document.setComponentType(propertyValue);
+                foundBegin = true;
+            } else if (propertyValue == QLatin1String("VCALENDAR")) {
+                document.setType(QVersitDocument::ICalendar20Type);
+                document.setComponentType(propertyValue);
+                foundBegin = true;
+            } else {
+                // Unknown document type
+                document = QVersitDocument();
+                return false;
+            }
         } else {
             // Some property other than BEGIN was found.
-            parsingOk = false;
+            document = QVersitDocument();
+            return false;
         }
     }
 
-    if (foundBegin) {
-        do {
-            /* Grab it */
-            property = parseNextVersitProperty(document.type(), lineReader);
+    return parseVersitDocumentBody(lineReader, document);
+}
 
-            /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
-            if (property.name() == QLatin1String("BEGIN") &&
-                QString::compare(property.value().trimmed(),
-                                 QLatin1String("VCARD"), Qt::CaseInsensitive) == 0) {
-                parsingOk = false;
-                QVersitDocument nestedDocument;
-                if (!parseVersitDocument(lineReader, nestedDocument, true))
-                    break;
-            }
+bool QVersitReaderPrivate::parseVersitDocumentBody(LineReader& lineReader, QVersitDocument& document)
+{
+    mDocumentNestingLevel++;
+    bool parsingOk = true;
+    QVersitProperty property;
+    do {
+        /* Grab it */
+        property = parseNextVersitProperty(document.type(), lineReader);
 
-            // See if this is a version property and continue parsing under that version
-            if (!setVersionFromProperty(document, property)) {
-                parsingOk = false;
-                break;
-            }
-
-            /* Nope, something else.. just add it */
-            if (property.name() != QLatin1String("VERSION") &&
-                property.name() != QLatin1String("END"))
-                document.addProperty(property);
-        } while (property.name().length() > 0 && property.name() != QLatin1String("END"));
-        if (property.name() != QLatin1String("END"))
+        /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
+        if (property.name() == QLatin1String("BEGIN") &&
+            QString::compare(property.value().trimmed(),
+                             QLatin1String("VCARD"), Qt::CaseInsensitive) == 0) {
             parsingOk = false;
-    }
-    mDocumentNestingLevel--;
+            QVersitDocument nestedDocument;
+            if (!parseVersitDocument(lineReader, nestedDocument, true))
+                break;
+        }
+
+        // See if this is a version property and continue parsing under that version
+        if (!setVersionFromProperty(document, property)) {
+            parsingOk = false;
+            break;
+        }
+
+        /* Nope, something else.. just add it */
+        if (property.name() != QLatin1String("VERSION") &&
+            property.name() != QLatin1String("END"))
+            document.addProperty(property);
+    } while (property.name().length() > 0 && property.name() != QLatin1String("END"));
+    if (property.name() != QLatin1String("END"))
+        parsingOk = false;
     if (!parsingOk)
         document = QVersitDocument();
+    mDocumentNestingLevel--;
 
     return parsingOk;
 }
