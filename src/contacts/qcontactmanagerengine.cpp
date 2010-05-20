@@ -2224,19 +2224,14 @@ void QContactManagerEngine::addSorted(QList<QContact>* sorted, const QContact& t
 QList<QContactLocalId> QContactManagerEngine::sortContacts(const QList<QContact>& cs, const QList<QContactSortOrder>& sortOrders)
 {
     QList<QContactLocalId> sortedIds;
+    QList<QContact> sortedContacts = cs;
     if (!sortOrders.isEmpty()) {
-        QList<QContact> sortedContacts;
-        foreach (const QContact& c, cs) {
-            QContactManagerEngine::addSorted(&sortedContacts, c, sortOrders);
-        }
+        ContactLessThan lessThan(&sortOrders);
+        qStableSort(sortedContacts.begin(), sortedContacts.end(), lessThan);
+    }
 
-        foreach(const QContact& c, sortedContacts) {
-            sortedIds.append(c.localId());
-        }
-    } else {
-        foreach(const QContact& c, cs) {
-            sortedIds.append(c.localId());
-        }
+    foreach(const QContact& c, sortedContacts) {
+        sortedIds.append(c.localId());
     }
     return sortedIds;
 }

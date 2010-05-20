@@ -55,6 +55,7 @@ examples/sfw-notes/sfw-notes
 examples/slideshow/slideshow
 examples/sysinfo/sysinfo
 examples/weatherinfo/weatherinfo_with_location
+examples/qmlcontacts/qmlcontacts
 *.app
 config.tests/networkmanager/networkmanager
 config.tests/qmf/qmf
