@@ -64,7 +64,7 @@ public:
         SearchLandmarksOnly = 0x0002,
         SearchAll = 0xFFFF
     };
-    Q_DECLARE_FLAGS(SearchTypes, SearchType);
+    Q_DECLARE_FLAGS(SearchTypes, SearchType)
 
     QGeoPlacesManager(QObject *parent = 0);
     virtual ~QGeoPlacesManager();

@@ -112,7 +112,7 @@ QTM_BEGIN_NAMESPACE
 #if defined(Q_OS_SYMBIAN)
     inline bool checkMobilityPluginsDir(const QDir &dir)
     {
-        RFS rfs;
+        RFs rfs;
         qt_symbian_throwIfError(rfs.Connect());
         bool pathFound = false;
         // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
