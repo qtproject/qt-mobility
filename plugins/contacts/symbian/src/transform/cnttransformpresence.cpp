@@ -43,6 +43,8 @@
 #include "cnttransformpresence.h"
 #include "cntmodelextuids.h"
 
+const int KMaxDetailCounterLength = 16;
+
 CntTransformPresence::CntTransformPresence() :
 m_detailCounter(0)
 {
@@ -57,6 +59,9 @@ QList<CContactItemField *> CntTransformPresence::transformDetailL(const QContact
 
 	//cast to presence
 	const QContactPresence &presenceDetail(static_cast<const QContactPresence&>(detail));
+	
+    HBufC* detailCount = HBufC::NewLC(KMaxDetailCounterLength);
+    detailCount->Des().AppendNum(m_detailCounter);
 
     // Transform presence informaiton
 	if(presenceDetail.presenceState() != QContactPresence::PresenceUnknown) {
@@ -65,7 +70,7 @@ QList<CContactItemField *> CntTransformPresence::transformDetailL(const QContact
         TPtrC presenceEncodedText(reinterpret_cast<const TUint16*>(presence.utf16()));
         presenceField->TextStorage()->SetTextL(presenceEncodedText);
         presenceField->AddFieldTypeL(KUidContactFieldPresence);
-        presenceField->SetUserFlags(m_detailCounter);
+        presenceField->SetLabelL(*detailCount);
         fieldList.append(presenceField);
         CleanupStack::Pop(presenceField);
     }
@@ -76,11 +81,13 @@ QList<CContactItemField *> CntTransformPresence::transformDetailL(const QContact
         CContactItemField* statusMsgField = CContactItemField::NewLC(KStorageTypeText);
         statusMsgField->TextStorage()->SetTextL(statusMsgText);
         statusMsgField->AddFieldTypeL(KUidContactFieldStatusMsg);
-        statusMsgField->SetUserFlags(m_detailCounter);
+        statusMsgField->SetLabelL(*detailCount);
         fieldList.append(statusMsgField);
         CleanupStack::Pop(statusMsgField);
 	}
 
+    CleanupStack::PopAndDestroy(detailCount);
+    
 	if(fieldList.count() > 0) {
         m_detailCounter++;
 	}
@@ -91,17 +98,23 @@ QList<CContactItemField *> CntTransformPresence::transformDetailL(const QContact
 QContactDetail *CntTransformPresence::transformItemField(const CContactItemField& field, const QContact &contact)
 {
     QList<QContactDetail> presenceDetails = contact.details(QContactPresence::DefinitionName);
+    TLex label(field.Label());
+    int counter = -1;
+    if (label.Val(counter) != KErrNone) {
+        return NULL;
+    }
+    
     //check what presence detail the provided field belongs to. if there is no such detail yet,
     //let's create it.
-    if (presenceDetails.count() <= field.UserFlags()) {
-        for (int i = presenceDetails.count(); i <= field.UserFlags(); i++) {
+    if (presenceDetails.count() <= counter) {
+        for (int i = presenceDetails.count(); i <= counter; i++) {
             QContactPresence *presence = new QContactPresence();
             QContact& currentContact = const_cast<QContact&>(contact);
             currentContact.saveDetail(presence);
         }
         presenceDetails = contact.details(QContactPresence::DefinitionName);
     }
-    QContactPresence *presenceDetail = new QContactPresence(presenceDetails.at(field.UserFlags()));
+    QContactPresence *presenceDetail = new QContactPresence(presenceDetails.at(counter));
 
 	CContactTextField* storage = field.TextStorage();
 	QString presenceString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());

@@ -44,6 +44,8 @@
 #include "cntmodelextuids.h"
 #include "qcontactpresence.h"
 
+const int KMaxDetailCounterLength = 16;
+
 CntTransformOnlineAccount::CntTransformOnlineAccount() :
 m_detailCounter(0)
 {
@@ -65,6 +67,9 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(onlineAccount.accountUri().utf16()));
 	if(fieldText.Length()) {
+        HBufC* detailCount = HBufC::NewLC(KMaxDetailCounterLength);
+        detailCount->Des().AppendNum(m_detailCounter);
+	
 	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText);
 	    newField->TextStorage()->SetTextL(fieldText);
 
@@ -113,7 +118,7 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	    //contexts
 	    setContextsL(onlineAccount, *newField);
 
-	    newField->SetUserFlags(m_detailCounter);
+	    newField->SetLabelL(*detailCount);
 	    fieldList.append(newField);
 	    CleanupStack::Pop(newField);
 	    
@@ -123,10 +128,11 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
             CContactItemField* serviceProviderField = CContactItemField::NewLC(KStorageTypeText);
 	        serviceProviderField->TextStorage()->SetTextL(ServiceProviderText);
 	        serviceProviderField->AddFieldTypeL(KUidContactFieldServiceProvider);
-	        serviceProviderField->SetUserFlags(m_detailCounter);
+	        serviceProviderField->SetLabelL(*detailCount);
 	        fieldList.append(serviceProviderField);
 	        CleanupStack::Pop(serviceProviderField);
 	    }
+	    CleanupStack::PopAndDestroy(detailCount);
 	}
 
 	if(fieldList.count() > 0) {
@@ -139,17 +145,23 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
 {
     QList<QContactDetail> onlineAccounts = contact.details(QContactOnlineAccount::DefinitionName);
+    TLex label(field.Label());
+    int counter = -1;
+    if (label.Val(counter) != KErrNone) {
+        return NULL;
+    }
+    
     //check what online account detail the provided field belongs to. if there is no such detail yet,
     //let's create it.
-    if (onlineAccounts.count() <= field.UserFlags()) {
-        for (int i = onlineAccounts.count(); i <= field.UserFlags(); i++) {
+    if (onlineAccounts.count() <= counter) {
+        for (int i = onlineAccounts.count(); i <= counter; i++) {
             QContactOnlineAccount *account = new QContactOnlineAccount();
             QContact& currentContact = const_cast<QContact&>(contact);
             currentContact.saveDetail(account);
         }
         onlineAccounts = contact.details(QContactOnlineAccount::DefinitionName);
     }
-    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount(onlineAccounts.at(field.UserFlags()));
+    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount(onlineAccounts.at(counter));
 
 	CContactTextField* storage = field.TextStorage();
 	QString onlineAccountString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
