@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: mapwindow.cpp Example File (fetchgooglemaps/mapwindow.cpp)</title>
+  <title>Qt Mobility Project 1.1: mapwindow.cpp Example File (fetchgooglemaps/mapwindow.cpp)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -59,10 +59,8 @@
     #include &lt;qgeopositioninfosource.h&gt;
     #include &lt;qnmeapositioninfosource.h&gt;
     #include &lt;qgeosatelliteinfosource.h&gt;
-    #ifndef Q_WS_MAEMO_5
     #include &lt;qnetworksession.h&gt;
     #include &lt;qnetworkconfigmanager.h&gt;
-    #endif
 
     #include &quot;satellitedialog.h&quot;
 
@@ -150,9 +148,7 @@
     MapWindow::~MapWindow()
     {
         location-&gt;stopUpdates();
-    #ifndef Q_WS_MAEMO_5
         session-&gt;close();
-    #endif
     }
 
     void MapWindow::delayedInit()
@@ -165,7 +161,6 @@
             location-&gt;stopUpdates();
         }
 
-    #ifndef Q_WS_MAEMO_5
         <span class="comment">// Set Internet Access Point</span>
         QNetworkConfigurationManager manager;
         const bool canStartIAP = (manager.capabilities()
@@ -181,7 +176,6 @@
         session = new QTM_PREPEND_NAMESPACE(QNetworkSession)(cfg, this);
         session-&gt;open();
         session-&gt;waitForOpened(-1);
-    #endif
         connect(location, SIGNAL(updateTimeout()), this, SLOT(waitForFix()));
 
         location-&gt;startUpdates();
@@ -269,8 +263,8 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

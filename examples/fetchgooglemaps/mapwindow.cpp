@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,10 +44,8 @@
 #include <qgeopositioninfosource.h>
 #include <qnmeapositioninfosource.h>
 #include <qgeosatelliteinfosource.h>
-#ifndef Q_WS_MAEMO_5
 #include <qnetworksession.h>
 #include <qnetworkconfigmanager.h>
-#endif
 
 #include "satellitedialog.h"
 
@@ -136,9 +134,7 @@ MapWindow::MapWindow(QWidget *parent, Qt::WFlags flags)
 MapWindow::~MapWindow()
 {
     location->stopUpdates();
-#ifndef Q_WS_MAEMO_5
     session->close();
-#endif
 }
 
 void MapWindow::delayedInit()
@@ -151,7 +147,6 @@ void MapWindow::delayedInit()
         location->stopUpdates();
     }
 
-#ifndef Q_WS_MAEMO_5
     // Set Internet Access Point
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
@@ -167,7 +162,6 @@ void MapWindow::delayedInit()
     session = new QTM_PREPEND_NAMESPACE(QNetworkSession)(cfg, this);
     session->open();
     session->waitForOpened(-1);
-#endif
     connect(location, SIGNAL(updateTimeout()), this, SLOT(waitForFix()));
 
     location->startUpdates();
