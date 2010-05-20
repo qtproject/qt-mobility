@@ -168,7 +168,7 @@ private:
     CntSymbianSrvConnection *m_srvConnection;
     QString m_managerUri;
     CntTransformContact *m_transformContact;
-    CntAbstractContactFilter *m_contactFilter;
+    CntSymbianFilter *m_contactFilter;
 #ifndef SYMBIAN_BACKEND_USE_SQLITE    
     CntAbstractContactSorter *m_contactSorter;
 #endif    
