@@ -210,6 +210,8 @@ public:
 
     QFutureWatcher<int> queryWatcher;
 
+    void update(int index);
+
     int queryRows(int offset);
     void correctRows(
             row_iterator begin,

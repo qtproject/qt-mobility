@@ -49,6 +49,25 @@ Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
+void QGalleryTrackerItemListPrivate::update(int index)
+{
+    upperThreshold = index + minimumPagedItems;
+    lowerThreshold = index + queryLimit - minimumPagedItems;
+
+    aCache.index = rCache.index;
+    aCache.count = rCache.count;
+    aCache.offset = rCache.index;
+
+    rCache.index = index;
+    rCache.count = 0;
+    rCache.cutoff = 0;
+
+    qSwap(aCache.values, rCache.values);
+
+    queryWatcher.setFuture(QtConcurrent::run(
+            this, &QGalleryTrackerItemListPrivate::queryRows, index));
+}
+
 int QGalleryTrackerItemListPrivate::queryRows(int offset)
 {
     QDBusReply<QVector<QStringList> > reply = queryInterface->callWithArgumentList(
@@ -361,25 +380,8 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished()
 
 
     const int index = qMax(0, cursorPosition & ~63);
-    const int count = index + minimumPagedItems;
-
-    if (index > lowerThreshold || count < upperThreshold) {
-        upperThreshold = count;
-        lowerThreshold = index + queryLimit - minimumPagedItems;
-
-        aCache.index = rCache.index;
-        aCache.count = rCache.count;
-        aCache.offset = rCache.index;
-
-        rCache.index = index;
-        rCache.count = 0;
-        rCache.cutoff = 0;
-
-        qSwap(aCache.values, rCache.values);
-
-        queryWatcher.setFuture(QtConcurrent::run(
-                this, &QGalleryTrackerItemListPrivate::queryRows, index));
-    }
+    if (index > lowerThreshold || index + minimumPagedItems < upperThreshold)
+        update(index);
 }
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
@@ -475,25 +477,9 @@ void QGalleryTrackerItemList::setCursorPosition(int position)
 
     if (d->queryWatcher.isFinished()) {
         const int index = qMax(0, position & ~63);
-        const int count = index + d->minimumPagedItems;
 
-        if (index > d->lowerThreshold || count < d->upperThreshold) {
-            d->upperThreshold = count;
-            d->lowerThreshold = index + d->queryLimit - d->minimumPagedItems;
-
-            d->aCache.index = d->rCache.index;
-            d->aCache.count = d->rCache.count;
-            d->aCache.offset = d->rCache.index;
-
-            d->rCache.index = index;
-            d->rCache.count = 0;
-            d->rCache.cutoff = 0;
-
-            qSwap(d->aCache.values, d->rCache.values);
-
-            d->queryWatcher.setFuture(QtConcurrent::run(
-                    d, &QGalleryTrackerItemListPrivate::queryRows, index));
-        }
+        if (index > d->lowerThreshold || index + d->minimumPagedItems < d->upperThreshold)
+            d->update(index);
     }
 
     if (d->rCache.cutoff > 0) {
