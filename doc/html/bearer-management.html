@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- bearermanagement.qdoc -->
 <head>
   <title>Qt Mobility Project 1.0: Bearer Management</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
@@ -64,7 +64,7 @@
 <p>Some mobile platforms use the concept of grouped access points (also called SNAP or Service Network Access Point). In principle multiple configurations are grouped together and possibly even prioritized when compared to each other. This is useful for use cases where all configurations serve a similar purpose or context. A common context could be that they provide access to the public Internet or possibly only to the office Intranet. By providing a pool of configurations the system can make a decision based on given priorities which usually map to factors such as speed, availability and cost. Furthermore the system can automatically roam from one access point to the next one while ensuring minimal impact on the user experience.</p>
 <p>The <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::Type</a> flag specifies to what category a configuration belongs. The <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</a> type is the most common example. It represents a configuration that can be used to create a session. The above mentioned grouping behavior is provided by <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::ServiceNetwork</a> configurations. Service networks are place holders until such time when the user attempts to <a href="qnetworksession.html#open">open()</a> a new session. At that point in time the system determines which of the configurations <a href="qnetworkconfiguration.html#children">QNetworkConfiguration::children</a>() is best to use. The selection algorithm is provided by the platform and is usually managed by network settings applications. A service network can only have one level of indirection which implies children can only be of type <a href="qnetworkconfiguration.html#Type-enum">QNetworkConfiguration::InternetAccessPoint</a>.</p>
 <p>Most systems allow the user to define the systems default configuration. Usually the default behavior is either a service network, a particular Internet access point or the user instructs the platform to ask the user once an application requests the network. User interaction is generally implemented by some sort of system dialog which shows up at the appropriate point in time. The application does not have to handle the user input. This API provides the <a href="qnetworkconfigurationmanager.html#defaultConfiguration">QNetworkConfigurationManager::defaultConfiguration</a>() call which serves a similar purpose. The subsequent code snippet provides a quick way how an application can quickly create a new network session without (or only minimal) user interaction:</p>
-<pre>    // Set Internet Access Point
+<pre><span class="comment">    // Set Internet Access Point</span>
     QNetworkConfigurationManager manager;
     const bool canStartIAP = (manager.capabilities()
                               &amp; QNetworkConfigurationManager::CanStartAndStopInterfaces);

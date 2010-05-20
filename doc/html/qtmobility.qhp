@@ -2256,7 +2256,12 @@
             <keyword name="sorting" id="QLandmarkIdFetchRequest::sorting" ref="qlandmarkidfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkIdFetchRequest" id="QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest" ref="qlandmarkidfetchrequest.html#dtor.QLandmarkIdFetchRequest"/>
             <keyword name="QLandmarkIdFilter" id="QLandmarkIdFilter" ref="qlandmarkidfilter.html"/>
+            <keyword name="append" id="QLandmarkIdFilter::append" ref="qlandmarkidfilter.html#append"/>
+            <keyword name="clear" id="QLandmarkIdFilter::clear" ref="qlandmarkidfilter.html#clear"/>
             <keyword name="landmarkIds" id="QLandmarkIdFilter::landmarkIds" ref="qlandmarkidfilter.html#landmarkIds"/>
+            <keyword name="operator&lt;&lt;" id="QLandmarkIdFilter::operator&lt;&lt;" ref="qlandmarkidfilter.html#operator-lt-lt"/>
+            <keyword name="prepend" id="QLandmarkIdFilter::prepend" ref="qlandmarkidfilter.html#prepend"/>
+            <keyword name="remove" id="QLandmarkIdFilter::remove" ref="qlandmarkidfilter.html#remove"/>
             <keyword name="setLandmarkIds" id="QLandmarkIdFilter::setLandmarkIds" ref="qlandmarkidfilter.html#setLandmarkIds"/>
             <keyword name="~QLandmarkIdFilter" id="QLandmarkIdFilter::~QLandmarkIdFilter" ref="qlandmarkidfilter.html#dtor.QLandmarkIdFilter"/>
             <keyword name="QLandmarkImportRequest" id="QLandmarkImportRequest" ref="qlandmarkimportrequest.html"/>
@@ -2270,6 +2275,7 @@
             <keyword name="~QLandmarkImportRequest" id="QLandmarkImportRequest::~QLandmarkImportRequest" ref="qlandmarkimportrequest.html#dtor.QLandmarkImportRequest"/>
             <keyword name="QLandmarkIntersectionFilter" id="QLandmarkIntersectionFilter" ref="qlandmarkintersectionfilter.html"/>
             <keyword name="append" id="QLandmarkIntersectionFilter::append" ref="qlandmarkintersectionfilter.html#append"/>
+            <keyword name="clear" id="QLandmarkIntersectionFilter::clear" ref="qlandmarkintersectionfilter.html#clear"/>
             <keyword name="filters" id="QLandmarkIntersectionFilter::filters" ref="qlandmarkintersectionfilter.html#filters"/>
             <keyword name="operator&lt;&lt;" id="QLandmarkIntersectionFilter::operator&lt;&lt;" ref="qlandmarkintersectionfilter.html#operator-lt-lt"/>
             <keyword name="prepend" id="QLandmarkIntersectionFilter::prepend" ref="qlandmarkintersectionfilter.html#prepend"/>
@@ -2289,12 +2295,6 @@
             <keyword name="QLandmarkManager::BadArgumentError" id="QLandmarkManager::BadArgumentError" ref="qlandmarkmanager.html#Error-enum"/>
             <keyword name="QLandmarkManager::InvalidManagerError" id="QLandmarkManager::InvalidManagerError" ref="qlandmarkmanager.html#Error-enum"/>
             <keyword name="QLandmarkManager::UnknownError" id="QLandmarkManager::UnknownError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::Format" id="QLandmarkManager::Format" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::LandmarkExchange" id="QLandmarkManager::LandmarkExchange" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::GPSExchange" id="QLandmarkManager::GPSExchange" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::KeyholeMarkupLanguage" id="QLandmarkManager::KeyholeMarkupLanguage" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::CommaSeparatedValues" id="QLandmarkManager::CommaSeparatedValues" ref="qlandmarkmanager.html#Format-enum"/>
-            <keyword name="QLandmarkManager::Custom" id="QLandmarkManager::Custom" ref="qlandmarkmanager.html#Format-enum"/>
             <keyword name="availableManagers" id="QLandmarkManager::availableManagers" ref="qlandmarkmanager.html#availableManagers"/>
             <keyword name="buildUri" id="QLandmarkManager::buildUri" ref="qlandmarkmanager.html#buildUri"/>
             <keyword name="categories" id="QLandmarkManager::categories" ref="qlandmarkmanager.html#categories"/>
@@ -2432,6 +2432,7 @@
             <keyword name="~QLandmarkSortOrder" id="QLandmarkSortOrder::~QLandmarkSortOrder" ref="qlandmarksortorder.html#dtor.QLandmarkSortOrder"/>
             <keyword name="QLandmarkUnionFilter" id="QLandmarkUnionFilter" ref="qlandmarkunionfilter.html"/>
             <keyword name="append" id="QLandmarkUnionFilter::append" ref="qlandmarkunionfilter.html#append"/>
+            <keyword name="clear" id="QLandmarkUnionFilter::clear" ref="qlandmarkunionfilter.html#clear"/>
             <keyword name="filters" id="QLandmarkUnionFilter::filters" ref="qlandmarkunionfilter.html#filters"/>
             <keyword name="operator&lt;&lt;" id="QLandmarkUnionFilter::operator&lt;&lt;" ref="qlandmarkunionfilter.html#operator-lt-lt"/>
             <keyword name="prepend" id="QLandmarkUnionFilter::prepend" ref="qlandmarkunionfilter.html#prepend"/>

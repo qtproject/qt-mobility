@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qlandmarkintersectionfilter.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QLandmarkIntersectionFilter Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QLandmarkIntersectionFilter"></a>
@@ -27,6 +27,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkintersectionfilter.html#QLandmarkIntersectionFilter-2">QLandmarkIntersectionFilter</a></b> ( const QLandmarkFilter &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkintersectionfilter.html#dtor.QLandmarkIntersectionFilter">~QLandmarkIntersectionFilter</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkintersectionfilter.html#append">append</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkintersectionfilter.html#clear">clear</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkFilter&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkintersectionfilter.html#filters">filters</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkintersectionfilter.html#prepend">prepend</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qlandmarkintersectionfilter.html#remove">remove</a></b> ( const QLandmarkFilter &amp; <i>filter</i> )</td></tr>
@@ -38,13 +39,10 @@
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QLandmarkIntersectionFilter class provides a filter which intersects the results of its constituent filters.</p>
 <p>Conceptually it performs an AND operation and thus may be used to select landmarks which match all of it's constituent filters.</p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkIntersectionFilter/QLandmarkIntersectionFilter"></a>
 <h3 class="fn"><a name="QLandmarkIntersectionFilter"></a>QLandmarkIntersectionFilter::QLandmarkIntersectionFilter ()</h3>
@@ -58,6 +56,9 @@
 <h3 class="fn"><a name="append"></a>void QLandmarkIntersectionFilter::append ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends the given <i>filter</i> to the list of intersected filters</p>
 <p>See also <a href="qlandmarkintersectionfilter.html#operator-lt-lt">operator&lt;&lt;</a>(), <a href="qlandmarkintersectionfilter.html#prepend">prepend</a>(), and <a href="qlandmarkintersectionfilter.html#filters">filters</a>().</p>
+<a name="//apple_ref/cpp/instm/QLandmarkIntersectionFilter/clear"></a>
+<h3 class="fn"><a name="clear"></a>void QLandmarkIntersectionFilter::clear ()</h3>
+<p>Removes all filters from the list of intersected filters.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIntersectionFilter/filters"></a>
 <h3 class="fn"><a name="filters"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkfilter.html">QLandmarkFilter</a>&gt; QLandmarkIntersectionFilter::filters () const</h3>
 <p>Returns the list of filters which form the intersection filter</p>
@@ -78,7 +79,6 @@
 <h3 class="fn"><a name="operator-lt-lt"></a>QLandmarkIntersectionFilter &amp; QLandmarkIntersectionFilter::operator&lt;&lt; ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>filter</i> )</h3>
 <p>Appends the given <i>filter</i> to the list of intersected filters</p>
 <p>See also <a href="qlandmarkintersectionfilter.html#append">append</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

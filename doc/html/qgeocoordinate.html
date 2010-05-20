@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qgeocoordinate.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QGeoCoordinate Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QGeoCoordinate"></a>
@@ -58,15 +58,12 @@
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoCoordinate class defines a geographical position on the surface of the Earth.</p>
 <p>A QGeoCoordinate is defined by latitude, longitude, and optionally, altitude.</p>
 <p>Use <a href="qgeocoordinate.html#type">type</a>() to determine whether a coordinate is a 2D coordinate (has latitude and longitude only) or 3D coordinate (has latitude, longitude and altitude). Use <a href="qgeocoordinate.html#distanceTo">distanceTo</a>() and <a href="qgeocoordinate.html#azimuthTo">azimuthTo</a>() to calculate the distance and bearing between coordinates.</p>
 <p>The coordinate values should be specified using the WGS84 datum.</p>
-</div>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoCoordinate/CoordinateFormat"></a>
 <a name="//apple_ref/cpp/econst/QGeoCoordinate/Degrees"></a>
@@ -99,9 +96,7 @@
 <tr><td valign="top"><tt>QGeoCoordinate::Coordinate2D</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A coordinate with valid latitude and longitude values.</td></tr>
 <tr><td valign="top"><tt>QGeoCoordinate::Coordinate3D</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">A coordinate with valid latitude and longitude values, and also an altitude value.</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoCoordinate/QGeoCoordinate"></a>
 <h3 class="fn"><a name="QGeoCoordinate"></a>QGeoCoordinate::QGeoCoordinate ()</h3>
@@ -189,9 +184,7 @@
 <a name="//apple_ref/cpp/instm/QGeoCoordinate/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoCoordinate::operator== ( const QGeoCoordinate &amp; <i>other</i> ) const</h3>
 <p>Returns true if the latitude, longitude and altitude of this coordinate are the same as those of <i>other</i>.</p>
-</div>
 <hr />
-<div class="relnonmem"/>
 <h2>Related Non-Members</h2>
 <h3 class="fn"><a name="operator-lt-lt-84"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, const QGeoCoordinate &amp; <i>coordinate</i> )</h3>
 <p>Writes the given <i>coordinate</i> to the specified <i>stream</i>.</p>
@@ -199,7 +192,6 @@
 <h3 class="fn"><a name="operator-gt-gt-75"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, QGeoCoordinate &amp; <i>coordinate</i> )</h3>
 <p>Reads a coordinate from the specified <i>stream</i> into the given <i>coordinate</i>.</p>
 <p>See also <a href="http://qt.nokia.com/doc/4.6/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaimageviewer.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QMediaImageViewer Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QMediaImageViewer"></a>
@@ -89,7 +89,7 @@
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
@@ -97,7 +97,6 @@
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaImageViewer class provides a means of viewing image media.</p>
 <p>QMediaImageViewer is used together with a media display object such as <a href="qvideowidget.html">QVideoWidget</a> to present an image. A display object is attached to the image viewer by passing a pointer to the QMediaImageViewer instance to the setMediaObject() function of the display object.</p>
@@ -116,9 +115,7 @@
 
     viewer-&gt;setTimeout(5000);
     viewer-&gt;play();</pre>
-</div>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QMediaImageViewer/MediaStatus"></a>
 <a name="//apple_ref/cpp/econst/QMediaImageViewer/NoMedia"></a>
@@ -146,9 +143,7 @@
 <tr><td valign="top"><tt>QMediaImageViewer::PlayingState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The slide show is playing, and will move to the next image when the <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> reaches the <a href="qmediaimageviewer.html#timeout-prop">timeout</a>. The <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> is being incremented.</td></tr>
 <tr><td valign="top"><tt>QMediaImageViewer::PausedState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The image viewer is paused, and will not automatically move the to next image. The <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> is fixed at the time the image viewer was paused.</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="prop"/>
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaImageViewer/elapsedTime"></a>
 <a name="//apple_ref/cpp/instm/QMediaImageViewer/elapsedTimeChanged"></a>
@@ -211,9 +206,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>timeout</b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setTimeout</b> ( int <i>timeout</i> )</td></tr>
 </table>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaImageViewer/QMediaImageViewer"></a>
 <h3 class="fn"><a name="QMediaImageViewer"></a>QMediaImageViewer::QMediaImageViewer ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
@@ -248,7 +241,6 @@
 <h3 class="fn"><a name="stop"></a>void QMediaImageViewer::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Stops a slide show.</p>
 <p>The current media is retained, but the elapsed time is discarded. If resumed, the current image will be displayed for the full time out period before the next image is loaded.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

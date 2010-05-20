@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="iso-8859-1"?>
 <!DOCTYPE html
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qversitwriter.cpp -->
 <head>
   <title>Qt Mobility Project 1.0: QVersitWriter Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <a name="//apple_ref/cpp/cl//QVersitWriter"></a>
@@ -67,14 +67,13 @@
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QVersitWriter class writes Versit documents such as vCards to a device.</p>
 <p>QVersitWriter converts a <a href="qversitdocument.html">QVersitDocument</a> into its textual representation. QVersitWriter supports writing to an abstract I/O device which can be for example a file or a memory buffer. The writing can be done asynchronously and the <a href="qversitwriter.html#waitForFinished">waitForFinished</a>() function can be used to implement a blocking write.</p>
@@ -84,10 +83,8 @@
 <li><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArrays</a> are assumed to be binary data and are serialized as base-64 encoded values.</li>
 <li><a href="qversitdocument.html">QVersitDocuments</a> are serialized as a nested document (eg. as per the AGENT property in vCard).</li>
 </ul>
-</div>
 <p>See also <a href="qversitdocument.html">QVersitDocument</a> and <a href="qversitproperty.html">QVersitProperty</a>.</p>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QVersitWriter/Error"></a>
 <a name="//apple_ref/cpp/econst/QVersitWriter/NoError"></a>
@@ -119,9 +116,7 @@
 <tr><td valign="top"><tt>QVersitWriter::CanceledState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Write operation is finished due to cancelation</td></tr>
 <tr><td valign="top"><tt>QVersitWriter::FinishedState</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Write operation successfully completed</td></tr>
 </table></p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVersitWriter/QVersitWriter"></a>
 <h3 class="fn"><a name="QVersitWriter"></a>QVersitWriter::QVersitWriter ()</h3>
@@ -168,7 +163,6 @@
 <a name="//apple_ref/cpp/instm/QVersitWriter/waitForFinished"></a>
 <h3 class="fn"><a name="waitForFinished"></a>bool QVersitWriter::waitForFinished ( int <i>msec</i> = -1 )</h3>
 <p>If the state is <a href="qversitwriter.html#State-enum">ActiveState</a>, blocks until the writer has finished writing or <i>msec</i> milliseconds has elapsed, returning true if it successfully finishes or is cancelled by the user. If the state is <a href="qversitwriter.html#State-enum">FinishedState</a>, returns true immediately. Otherwise, returns false immediately.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
