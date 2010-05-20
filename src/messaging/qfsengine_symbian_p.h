@@ -186,6 +186,7 @@ private:
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
     QMessage CreateQMessageL(MEmailMessage* aMessage) const; 
     void AddContentToMessage(MEmailMessageContent* aContent, QMessage* aMessage) const;
+    void addAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const;
     QDateTime symbianTTimetoQDateTime(const TTime& time) const;
     TTime qDateTimeToSymbianTTime(const QDateTime& date) const;
     
@@ -224,6 +225,7 @@ private:
     QMessageManager::NotificationFilterId m_filterId;
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
     QMessageAccount m_account;
+    RMailboxPtrArray m_mailboxes;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
