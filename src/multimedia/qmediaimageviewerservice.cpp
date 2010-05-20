@@ -429,10 +429,10 @@ void QMediaImageViewerControl::showMedia(const QMediaContent &media)
 
     if (media.isNull()) {
         d->service->d_func()->clear();
-
-        d->status = QMediaImageViewer::NoMedia;
-
-        emit mediaStatusChanged(d->status);
+        if (d->status != QMediaImageViewer::NoMedia) {
+            d->status = QMediaImageViewer::NoMedia;
+            emit mediaStatusChanged(d->status);
+        }
     } else {
         d->possibleResources = media.resources();
         d->loadImage();
