@@ -63,8 +63,8 @@ public slots:
 
 private slots:
     void on_btnRequest_clicked();
-    void replyFinished(QGeoMappingReply* reply);
-    void resultsError(QGeoMappingReply* reply, QGeoMappingReply::Error error, QString errorString);
+    void replyFinished(QGeoMapReply* reply);
+    void resultsError(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString);
 
 private:
     QGeoMappingManager *m_mapManager;

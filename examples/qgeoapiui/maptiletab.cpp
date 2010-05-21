@@ -107,11 +107,11 @@ void MapTileTab::initialize(QGeoMappingManager *mapManager)
 {
     m_mapManager = mapManager;
     if (m_mapManager) {
-        QObject::connect(m_mapManager, SIGNAL(finished(QGeoMappingReply*)), this,
-            SLOT(replyFinished(QGeoMappingReply*)));
+        QObject::connect(m_mapManager, SIGNAL(finished(QGeoMapReply*)), this,
+            SLOT(replyFinished(QGeoMapReply*)));
         QObject::connect(m_mapManager,
-            SIGNAL(error(QGeoMappingReply*,QGeoMappingReply::ErrorCode,QString)), this,
-            SLOT(resultsError(QGeoMappingReply*,QGeoMappingReply::ErrorCode,QString)));
+            SIGNAL(error(QGeoMapReply*,QGeoMapReply::ErrorCode,QString)), this,
+            SLOT(resultsError(QGeoMapReply*,QGeoMapReply::ErrorCode,QString)));
     }
 }
 
@@ -130,13 +130,13 @@ void MapTileTab::on_btnRequest_clicked()
     }
 }
 
-void MapTileTab::replyFinished(QGeoMappingReply* reply)
+void MapTileTab::replyFinished(QGeoMapReply* reply)
 {
     m_result->setPixmap(reply->mapImage());
     reply->deleteLater();
 }
 
-void MapTileTab::resultsError(QGeoMappingReply* reply, QGeoMappingReply::Error error, QString errorString)
+void MapTileTab::resultsError(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString)
 {
     m_result->setText(tr("Error ")+errorString);
     reply->deleteLater();
