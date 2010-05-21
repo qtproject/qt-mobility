@@ -1,8 +1,9 @@
 TEMPLATE = lib
-CONFIG += plugin
+CONFIG += plugin mobility
 TARGET = xarecordservice
 
 PLUGIN_SUBDIR = mediaservice
+MOBILITY = multimedia
 
 include (../../../../../common.pri)
 
