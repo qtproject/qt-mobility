@@ -230,7 +230,13 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
     case EContactDbObserverEventOwnCardChanged:
         if (m_contactsEmitted.contains(id)) {
             m_contactsEmitted.removeOne(id);
-        } else {
+        }
+        else {
+            if (m_currentOwnCardId == QContactLocalId(id)) {
+                //own card content was changed
+                changeSet.insertChangedContact(m_currentOwnCardId);
+            }
+        
             QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(id));
             changeSet.setOldAndNewSelfContactId(ownCard);
             m_currentOwnCardId = QContactLocalId(id);
