@@ -70,6 +70,9 @@ private Q_SLOTS:
     void fadeTimeChanged(int);
     void fadeIntensityChanged(int);
 
+    void periodChanged(int value);
+    void periodToggled(bool on);
+
 private:
     QFeedbackDevice currentDevice() const;
     Ui_Dialog ui;

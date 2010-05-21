@@ -62,6 +62,10 @@ Dialog::Dialog()
     connect(ui.fadeTime, SIGNAL(valueChanged(int)), SLOT(fadeTimeChanged(int)));
     connect(ui.fadeIntensity, SIGNAL(valueChanged(int)), SLOT(fadeIntensityChanged(int)));
 
+    //for the period
+    connect(ui.grpPeriod, SIGNAL(toggled(bool)), SLOT(periodToggled(bool)));
+    connect(ui.period, SIGNAL(valueChanged(int)), SLOT(periodChanged(int)));
+
     foreach(const QFeedbackDevice &dev, QFeedbackDevice::devices()) {
         ui.devices->addItem(dev.name());
     }
@@ -89,8 +93,7 @@ void Dialog::deviceChanged()
     QFeedbackDevice dev = currentDevice();
     const QMetaObject &mo = QFeedbackDevice::staticMetaObject;
     ui.deviceType->setText(mo.enumerator(mo.indexOfEnumerator("Type")).key(dev.type()));
-    ui.enabled->setChecked(dev.isEnabled());
-    ui.envelope->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackDevice::Envelope));
+    enabledChanged(dev.isEnabled());
     effect.setDevice(dev);
 }
 
@@ -102,6 +105,7 @@ void Dialog::enabledChanged(bool on)
     dev.setEnabled(on);
     ui.enabled->setChecked(dev.isEnabled());
     ui.envelope->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackDevice::Envelope));
+    ui.grpPeriod->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackDevice::Period));
 }
 
 void Dialog::playPauseClicked()
@@ -159,6 +163,16 @@ void Dialog::fadeIntensityChanged(int fadeIntensity)
 {
     effect.setFadeIntensity(qreal(fadeIntensity) / ui.fadeIntensity->maximum());
     ui.lblFadeIntensity->setText(QString::number(effect.fadeIntensity()));
+}
+
+void Dialog::periodToggled(bool on)
+{
+    effect.setPeriod(on ? ui.period->value() : 0);
+}
+
+void Dialog::periodChanged(int value)
+{
+    effect.setPeriod(value);
 }
 
 #include "moc_dialog.cpp"
