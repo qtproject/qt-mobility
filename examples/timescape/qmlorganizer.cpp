@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,33 +38,59 @@
 **
 ****************************************************************************/
 
-
-#include <QApplication>
-#include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlorganizermodel.h"
-#include "qmlorganizeritem.h"
+#include <qorganizeritemdetails.h>
+#include <qorganizeritemfilters.h>
+#include <qorganizeritemrequests.h>
 #include "qmlorganizer.h"
-#include "qmlorganizeritemdetail.h"
+#include "qmlorganizermodel.h"
 
-QT_USE_NAMESPACE
+#include <QDebug>
 
-
-class QOrganizerQmlPlugin : public QDeclarativeExtensionPlugin
+QMLOrganizer::QMLOrganizer(QObject *parent)
+    :QObject(parent),
+    m_manager(0)
 {
-    Q_OBJECT
-public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLOrganizerModel>(uri, 1, 0, "QmlOrganizerModel");
-        qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
-        qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
-        qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 0, "QmlOrganizerItemDetail");
+    setManager(QString());
+}
+
+QStringList QMLOrganizer::availableManagers() const
+{
+    return QOrganizerItemManager::availableManagers();
+}
+
+QString QMLOrganizer::manager()
+{
+    if (m_manager)
+        return m_manager->managerName();
+    return QString();
+}
+
+void QMLOrganizer::setManager(const QString& managerName)
+{
+    delete m_manager;
+    m_manager = new QOrganizerItemManager(managerName);
+
+    if (managerName == "memory" && m_manager->itemIds().isEmpty()) {
+        //fillOrganizerItemsIntoMemoryEngine(m_manager);
     }
-};
 
-#include "plugin.moc"
+    qWarning() << "Changed backend to: " << managerName;
 
-Q_EXPORT_PLUGIN2(qorganizerqmlplugin, QOrganizerQmlPlugin);
+    QList< QPair<QDateTime, QDateTime> > keys = m_models.keys();
+
+    for (int i = 0; i < keys.count(); i++) {
+        QMLOrganizerModel* model = m_models.value(keys[i]);
+        model->setManager(m_manager);
+    }
+}
+
+QMLOrganizerModel* QMLOrganizer::itemModel(const QDateTime& start, const QDateTime& end)
+{
+    QMLOrganizerModel* model = 0;
+    if (m_models.contains(QPair<QDateTime, QDateTime>(start, end))) {
+        model = m_models.value(QPair<QDateTime, QDateTime>(start, end));
+    } else {
+        model = new QMLOrganizerModel(m_manager, start, end, this);
+    }
+    return model;
+}

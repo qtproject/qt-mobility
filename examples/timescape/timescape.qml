@@ -1,5 +1,5 @@
 import Qt 4.7
-import com.nokia.mobility 1.0
+//import com.nokia.mobility 1.0
 import "contents" as TimeScape
 
 Rectangle {
@@ -68,8 +68,7 @@ Rectangle {
             height: 600;
             opacity: 0;
             anchors.fill: contentArea;
-
-            Loader {id: monthLoader; anchors.fill: parent; source: "contents/monthview.qml";}
+            Loader {id: monthLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/monthview.qml";}
         }
         Rectangle {
             id: timelineView;
@@ -79,7 +78,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Loader {id: timelineLoader; anchors.fill: parent; source: "contents/timelineview.qml";}
+            Loader {id: timelineLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/timelineview.qml";}
         }
         Rectangle {
             id: detailsView;
@@ -89,7 +88,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Loader {id: detailLoader; anchors.fill: parent; source: "contents/detailsview.qml";}
+            Loader {id: detailLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/detailsview.qml";}
         }
         Rectangle {
             id: settingsView;
@@ -99,7 +98,7 @@ Rectangle {
             opacity: 0;
             anchors.fill: contentArea;
 
-            Loader {id: settingsLoader; anchors.fill: parent; source: "contents/settingsview.qml";}
+            Loader {id: settingsLoader; opacity:parent.opacity; anchors.fill: parent; source: "contents/settingsview.qml";}
         }
     }
 }

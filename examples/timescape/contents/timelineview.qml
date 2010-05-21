@@ -4,12 +4,24 @@ import Qt 4.7
 Rectangle {
     id : timelineView
     anchors.fill : parent
-
-
+    opacity : parent.opacity
     Script {
         function changeDate() {
             //TODO
         }
+
+        function changeToday() {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth();
+            var day = now.getUTCDate();
+
+            yearList.currentIndex = year - yearModel.start;
+            monthList.currentIndex = month;
+            dayList.positionViewAtIndex(day, Center);
+            dayList.currentIndex = day;
+        }
+
     }
 
 
@@ -20,6 +32,7 @@ Rectangle {
         anchors.left : monthView.right
         anchors.top : parent.top
         anchors.bottom : parent.bottom
+        opacity : parent.opacity
 
         ListView {
             id : dayList
@@ -27,6 +40,7 @@ Rectangle {
             anchors.fill: parent
             clip: true
             focus: true
+            opacity : parent.opacity
 
             delegate : dayDelegate
             highlight: dayHighlight
@@ -36,13 +50,8 @@ Rectangle {
             highlightMoveSpeed : 2000
             keyNavigationWraps : true
 
-            Component.onCompleted : {
-               var now = new Date();
-               var day = now.getUTCDate();
-               dayList.positionViewAtIndex(day, Center);
-               dayList.currentIndex = day;
-            }
-
+            Component.onCompleted : changeToday()
+            onOpacityChanged : changeToday()
             Keys.onUpPressed : changeDate()
             Keys.onDownPressed : changeDate()
         }

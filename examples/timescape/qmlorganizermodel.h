@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,33 +38,63 @@
 **
 ****************************************************************************/
 
+#ifndef QMLORGANIZERMODEL_H
+#define QMLORGANIZERMODEL_H
 
-#include <QApplication>
+#include <QList>
+#include <QMap>
+#include <QDate>
+#include <QAbstractListModel>
+#include <QDeclarativeListProperty>
 #include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlorganizermodel.h"
-#include "qmlorganizeritem.h"
-#include "qmlorganizer.h"
-#include "qmlorganizeritemdetail.h"
+#include <qorganizeritemfilters.h>
 
-QT_USE_NAMESPACE
+#include "qorganizeritem.h"
+#include "qorganizeritemmanager.h"
+#include "qorganizeriteminstancefetchrequest.h"
 
-
-class QOrganizerQmlPlugin : public QDeclarativeExtensionPlugin
+QTM_USE_NAMESPACE;
+class QMLOrganizerItem;
+class QMLOrganizerModel : public QAbstractListModel
 {
-    Q_OBJECT
+Q_OBJECT
+Q_PROPERTY(QString manager READ manager)
+Q_PROPERTY(QDateTime startPeriod READ startPeriod)
+Q_PROPERTY(QDateTime endPeriod READ endPeriod)
+
 public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLOrganizerModel>(uri, 1, 0, "QmlOrganizerModel");
-        qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
-        qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
-        qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 0, "QmlOrganizerItemDetail");
-    }
+    enum {
+        OrganizerItemIdRole = Qt::UserRole + 500,
+        OrganizerItemRole
+
+    };
+    explicit QMLOrganizerModel(QObject *parent = 0);
+    explicit QMLOrganizerModel(QOrganizerItemManager* manager, const QDateTime& start, const QDateTime& end, QObject *parent = 0);
+
+    QString manager();
+    void setManager(QOrganizerItemManager* manager);
+
+    QDateTime startPeriod() const;
+    void setStartPeriod(const QDateTime& start);
+
+    QDateTime endPeriod() const;
+    void setEndPeriod(const QDateTime& end);
+
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+
+private slots:
+    void reloadData();
+    void itemsReceived();
+private:
+    QList<QMLOrganizerItem*> m_items;
+    QOrganizerItemManager* m_manager;
+    QOrganizerItemInstanceFetchRequest m_request;
+    QDateTime m_start;
+    QDateTime m_end;
+    QOrganizerItemDateTimePeriodFilter m_filter;
 };
 
-#include "plugin.moc"
+QML_DECLARE_TYPE(QMLOrganizerModel)
 
-Q_EXPORT_PLUGIN2(qorganizerqmlplugin, QOrganizerQmlPlugin);
+#endif // QMLCONTACTMODEL_H

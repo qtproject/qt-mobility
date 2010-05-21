@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,33 +38,47 @@
 **
 ****************************************************************************/
 
+#ifndef QMLORGANIZER_H
+#define QMLORGANIZER_H
 
-#include <QApplication>
+#include <QList>
+#include <QPair>
+#include <QMap>
+#include <QDate>
+#include <QAbstractListModel>
+#include <QDeclarativeListProperty>
 #include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlorganizermodel.h"
-#include "qmlorganizeritem.h"
-#include "qmlorganizer.h"
-#include "qmlorganizeritemdetail.h"
 
-QT_USE_NAMESPACE
+#include "qorganizeritem.h"
+#include "qorganizeritemmanager.h"
+#include "qorganizeritemlocalidfetchrequest.h"
 
-
-class QOrganizerQmlPlugin : public QDeclarativeExtensionPlugin
+QTM_USE_NAMESPACE;
+class QMLOrganizerItem;
+class QMLOrganizerModel;
+class QMLOrganizer : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
+Q_PROPERTY(QStringList availableManagers READ availableManagers)
+Q_PROPERTY(QString manager READ manager WRITE setManager)
+
 public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLOrganizerModel>(uri, 1, 0, "QmlOrganizerModel");
-        qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
-        qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
-        qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 0, "QmlOrganizerItemDetail");
-    }
+
+    explicit QMLOrganizer(QObject *parent = 0);
+
+    QStringList availableManagers() const;
+
+    QString manager();
+    void setManager(const QString& manager);
+
+    Q_INVOKABLE QMLOrganizerModel* itemModel(const QDateTime& start, const QDateTime& end);
+
+private:
+    friend class QMLOrganizerModel;
+    QMap<QPair<QDateTime,QDateTime>, QMLOrganizerModel*> m_models;
+    QOrganizerItemManager* m_manager;
 };
 
-#include "plugin.moc"
+QML_DECLARE_TYPE(QMLOrganizer)
 
-Q_EXPORT_PLUGIN2(qorganizerqmlplugin, QOrganizerQmlPlugin);
+#endif // QMLORGANIZER_H

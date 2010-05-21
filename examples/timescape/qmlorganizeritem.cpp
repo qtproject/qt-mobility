@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,33 +38,44 @@
 **
 ****************************************************************************/
 
-
-#include <QApplication>
-#include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlorganizermodel.h"
+#include <qorganizeritemdetails.h>
 #include "qmlorganizeritem.h"
-#include "qmlorganizer.h"
 #include "qmlorganizeritemdetail.h"
 
-QT_USE_NAMESPACE
 
 
-class QOrganizerQmlPlugin : public QDeclarativeExtensionPlugin
+static QString normalizePropertyName(const QString& name)
 {
-    Q_OBJECT
-public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLOrganizerModel>(uri, 1, 0, "QmlOrganizerModel");
-        qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
-        qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
-        qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 0, "QmlOrganizerItemDetail");
+   if (!name.isEmpty())
+     return name.mid(1).prepend(name[0].toLower());
+   return QString();
+}
+
+
+QMLOrganizerItem::QMLOrganizerItem(QObject *parent)
+    :QObject(parent)
+{
+}
+
+void QMLOrganizerItem::setOrganizerItem(const QOrganizerItem& item)
+{
+    QList<QOrganizerItemDetail> details = item.details();
+
+    m_details.clear();
+    foreach (const QOrganizerItemDetail& detail, details) {
+      QMLOrganizerItemDetail* qmldetail = new QMLOrganizerItemDetail(detail, this);
+      setProperty(normalizePropertyName(detail.definitionName()).toLatin1().data(), qVariantFromValue(qmldetail));
+      m_details.append(qmldetail);
     }
-};
+}
 
-#include "plugin.moc"
 
-Q_EXPORT_PLUGIN2(qorganizerqmlplugin, QOrganizerQmlPlugin);
+QVariant QMLOrganizerItem::details() const
+{
+    return QVariant::fromValue(m_details);
+}
+
+ bool QMLOrganizerItem::isEmpty() const
+ {
+    return m_details.isEmpty();
+ }

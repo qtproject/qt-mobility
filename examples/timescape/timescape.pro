@@ -6,19 +6,33 @@ CONFIG += qt plugin
 QT += declarative
 VERSION = 1.0.0
 
-# CONFIG += mobility
-# MOBILITY = organizer versit
+CONFIG += mobility
+#MOBILITY = organizer versit
+MOBILITY = organizer
+
 
 DEPENDPATH += .
 INCLUDEPATH += . \
     ../../include \
     ../../src/organizer \
+    ../../src/organizer/requests \
+    ../../src/organizer/details \
+    ../../src/organizer/filters \
     ../../src/versit
 QT += declarative
 QT += script
 
 # Input
-SOURCES += plugin.cpp
+HEADERS += qmlorganizermodel.h \
+           qmlorganizeritem.h \
+           qmlorganizeritemdetail.h \
+           qmlorganizer.h
+
+SOURCES += plugin.cpp \
+           qmllorganizermodel.cpp \
+           qmlorganizeritem.cpp \
+           qmlorganizeritemdetail.cpp \
+           qmlorganizer.cpp
 
 OTHER_FILES +=  timescape.qml \
                 contents/Button.qml \

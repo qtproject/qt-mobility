@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,33 +38,33 @@
 **
 ****************************************************************************/
 
+#ifndef QMLORGANIZERITEMDETAIL_H
+#define QMLORGANIZERITEMDETAIL_H
 
-#include <QApplication>
 #include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlorganizermodel.h"
-#include "qmlorganizeritem.h"
-#include "qmlorganizer.h"
-#include "qmlorganizeritemdetail.h"
+#include <QDeclarativePropertyMap>
+#include <QVariant>
+#include "qorganizeritemdetail.h"
 
-QT_USE_NAMESPACE
+QTM_USE_NAMESPACE;
 
-
-class QOrganizerQmlPlugin : public QDeclarativeExtensionPlugin
+class QMLOrganizerItemDetail : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
+Q_PROPERTY(QVariant defaultProperty READ defaultProperty WRITE setDefaultProperty)
+Q_CLASSINFO("DefaultProperty", "defaultProperty")
+
 public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLOrganizerModel>(uri, 1, 0, "QmlOrganizerModel");
-        qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
-        qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
-        qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 0, "QmlOrganizerItemDetail");
-    }
+    explicit QMLOrganizerItemDetail(QObject *parent = 0);
+    explicit QMLOrganizerItemDetail(const QOrganizerItemDetail& detail, QObject *parent = 0);
+    void setItemDetail(const QOrganizerItemDetail& detail);
+    QVariant defaultProperty() const;
+    void setDefaultProperty(const QVariant& value);
+
+    QDeclarativePropertyMap m_Properties;
+    QString m_defaultPropertyName;
 };
 
-#include "plugin.moc"
+QML_DECLARE_TYPE(QMLOrganizerItemDetail)
 
-Q_EXPORT_PLUGIN2(qorganizerqmlplugin, QOrganizerQmlPlugin);
+#endif // QMLORGANIZERITEMDETAIL_H

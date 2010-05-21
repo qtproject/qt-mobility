@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,33 +38,34 @@
 **
 ****************************************************************************/
 
+#ifndef QMLORGANIZERITEM_H
+#define QMLORGANIZERITEM_H
 
-#include <QApplication>
+#include <QList>
 #include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlorganizermodel.h"
-#include "qmlorganizeritem.h"
-#include "qmlorganizer.h"
-#include "qmlorganizeritemdetail.h"
 
-QT_USE_NAMESPACE
+#include "qorganizeritem.h"
+#include "qorganizeritemmanager.h"
+#include "qorganizeritemfetchrequest.h"
 
+QTM_USE_NAMESPACE;
 
-class QOrganizerQmlPlugin : public QDeclarativeExtensionPlugin
+class QMLOrganizerItemDetail;
+class QMLOrganizerItem : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
+Q_CLASSINFO("DefaultProperty", "displayLabel")
+
 public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLOrganizerModel>(uri, 1, 0, "QmlOrganizerModel");
-        qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
-        qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
-        qmlRegisterType<QMLOrganizerItemDetail>(uri, 1, 0, "QmlOrganizerItemDetail");
-    }
+    explicit QMLOrganizerItem(QObject *parent = 0);
+    void setOrganizerItem(const QOrganizerItem& item);
+    bool isEmpty() const;
+    //Acts as details model
+    Q_INVOKABLE QVariant details() const;
+private:
+    QList<QObject*> m_details;
 };
 
-#include "plugin.moc"
+ QML_DECLARE_TYPE(QMLOrganizerItem)
 
-Q_EXPORT_PLUGIN2(qorganizerqmlplugin, QOrganizerQmlPlugin);
+#endif // QMLORGANIZERITEM_H
