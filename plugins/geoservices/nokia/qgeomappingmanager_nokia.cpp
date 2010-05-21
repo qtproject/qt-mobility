@@ -53,6 +53,9 @@
 
 QGeoMappingManagerNokia::QGeoMappingManagerNokia()
 {
+    m_nam = new QNetworkAccessManager(this);
+    setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
+    setHost("loc.desktop.maps.svc.ovi.com");
 }
 
 QGeoMappingManagerNokia::~QGeoMappingManagerNokia()

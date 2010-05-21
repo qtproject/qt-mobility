@@ -117,15 +117,15 @@ bool QGeoServiceProviderPluginNokia::initialize(const QMap<QString, QString> &pa
         delete m_mappingManager;
 
     QGeoMappingManagerNokia* mappingManager = new QGeoMappingManagerNokia();
-    if(keys.contains("places.proxy")) {
-        QString proxy = parameters.value("routing.proxy");
+    if(keys.contains("mapping.proxy")) {
+        QString proxy = parameters.value("mapping.proxy");
         if(proxy.isEmpty())
             mappingManager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
         else
             mappingManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
     }
-    if(keys.contains("places.host")) {
-        QString host = parameters.value("routing.host");
+    if(keys.contains("mapping.host")) {
+        QString host = parameters.value("mapping.host");
         if(!host.isEmpty())
             mappingManager->setHost(host);
     }
