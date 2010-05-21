@@ -4,11 +4,11 @@ INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/audio
 
 include (../../../common.pri)
 
-wince*: {
+wince*{
     DEFINES += SRCDIR=\\\"\\\"
     QT += gui
 } else {
-    DEFINES += SRCDIR=\\\"$$PWD/\\\"
+    !symbian:DEFINES += SRCDIR=\\\"$$PWD/\\\"
 }
 
 HEADERS += wavheader.h
