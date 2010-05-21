@@ -76,34 +76,6 @@ public:
     virtual QVariant value(QVector<QVariant>::const_iterator row) const = 0;
 };
 
-class QGalleryTrackerImageData : public QSharedData
-{
-public:
-    QGalleryTrackerImageData(uint id) : id(id) {}
-
-    uint id;
-    QVariant image;
-};
-
-class QGalleryTrackerImage
-{
-public:
-    QGalleryTrackerImage() {}
-    QGalleryTrackerImage(QGalleryTrackerImageData *data) : d(data) {}
-    QGalleryTrackerImage(const QGalleryTrackerImage &image) : d(image.d) {}
-    ~QGalleryTrackerImage() {}
-
-    QGalleryTrackerImage &operator =(const QGalleryTrackerImage &image);
-
-    uint id() const { return d->id; }
-    QVariant image() const { return d->image; }
-
-    QGalleryTrackerImageData *data() { return d.data(); }
-
-private:
-    QExplicitlySharedDataPointer<QGalleryTrackerImageData> d;
-};
-
 class QGalleryTrackerImageColumn : public QObject
 {
     Q_OBJECT

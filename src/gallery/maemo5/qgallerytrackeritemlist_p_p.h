@@ -153,15 +153,6 @@ public:
         QVector<QVariant> values;
     };
 
-    struct ImageCache
-    {
-        ImageCache() : index(0), count(0) {}
-
-        int index;
-        int count;
-        QVector<QGalleryTrackerImage> images;
-    };
-
     typedef QVector<QGalleryTrackerSortCriteria>::const_iterator sort_iterator;
 
     ~QGalleryTrackerItemListPrivate()
