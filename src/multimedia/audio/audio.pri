@@ -1,46 +1,46 @@
-INCLUDEPATH += $$PWD \
+INCLUDEPATH += audio \
                ./
 
-HEADERS += qaudio.h \
-           qaudioformat.h \
-           qaudioinput.h \
-           qaudiooutput.h \
-           qaudiodeviceinfo.h \
-           qaudiosystemplugin.h \
-           qaudiosystem.h \
-           qaudiodevicefactory_p.h
+PUBLIC_HEADERS += audio/qaudio.h \
+           audio/qaudioformat.h \
+           audio/qaudioinput.h \
+           audio/qaudiooutput.h \
+           audio/qaudiodeviceinfo.h \
+           audio/qaudiosystemplugin.h \
+           audio/qaudiosystem.h \
+           audio/qaudiodevicefactory_p.h
 
 
-SOURCES += qaudio.cpp \
-           qaudioformat.cpp  \
-           qaudiodeviceinfo.cpp \
-           qaudiooutput.cpp \
-           qaudioinput.cpp \
-           qaudiosystemplugin.cpp \
-           qaudiosystem.cpp \
-           qaudiodevicefactory.cpp
+SOURCES += audio/qaudio.cpp \
+           audio/qaudioformat.cpp  \
+           audio/qaudiodeviceinfo.cpp \
+           audio/qaudiooutput.cpp \
+           audio/qaudioinput.cpp \
+           audio/qaudiosystemplugin.cpp \
+           audio/qaudiosystem.cpp \
+           audio/qaudiodevicefactory.cpp
 
 #contains(QT_CONFIG, audio-backend) {
 
 mac {
-    HEADERS +=  qaudioinput_mac_p.h \
-                qaudiooutput_mac_p.h \
-                qaudiodeviceinfo_mac_p.h \
-                qaudio_mac_p.h
+    HEADERS +=  audio/qaudioinput_mac_p.h \
+                audio/qaudiooutput_mac_p.h \
+                audio/qaudiodeviceinfo_mac_p.h \
+                audio/qaudio_mac_p.h
 
-    SOURCES += qaudiodeviceinfo_mac_p.cpp \
-               qaudiooutput_mac_p.cpp \
-               qaudioinput_mac_p.cpp \
-               qaudio_mac.cpp
+    SOURCES += audio/qaudiodeviceinfo_mac_p.cpp \
+               audio/qaudiooutput_mac_p.cpp \
+               audio/qaudioinput_mac_p.cpp \
+               audio/qaudio_mac.cpp
 
     LIBS += -framework ApplicationServices -framework CoreAudio -framework AudioUnit -framework AudioToolbox
 
 } else:win32 {
 
-    HEADERS += qaudioinput_win32_p.h qaudiooutput_win32_p.h qaudiodeviceinfo_win32_p.h
-    SOURCES += qaudiodeviceinfo_win32_p.cpp \
-               qaudiooutput_win32_p.cpp \
-               qaudioinput_win32_p.cpp
+    HEADERS += audio/qaudioinput_win32_p.h audio/qaudiooutput_win32_p.h audio/qaudiodeviceinfo_win32_p.h
+    SOURCES += audio/qaudiodeviceinfo_win32_p.cpp \
+               audio/qaudiooutput_win32_p.cpp \
+               audio/qaudioinput_win32_p.cpp
     !wince*:LIBS += -lwinmm
     wince*:LIBS += -lcoredll
 
@@ -48,25 +48,25 @@ mac {
     INCLUDEPATH += /epoc32/include/mmf/common
     INCLUDEPATH += /epoc32/include/mmf/server
 
-    HEADERS += qaudio_symbian_p.h \
-               qaudiodeviceinfo_symbian_p.h \
-               qaudioinput_symbian_p.h \
-               qaudiooutput_symbian_p.h
+    HEADERS += audio/qaudio_symbian_p.h \
+               audio/qaudiodeviceinfo_symbian_p.h \
+               audio/qaudioinput_symbian_p.h \
+               audio/qaudiooutput_symbian_p.h
 
-    SOURCES += qaudio_symbian_p.cpp \
-               qaudiodeviceinfo_symbian_p.cpp \
-               qaudioinput_symbian_p.cpp \
-               qaudiooutput_symbian_p.cpp
+    SOURCES += audio/qaudio_symbian_p.cpp \
+               audio/qaudiodeviceinfo_symbian_p.cpp \
+               audio/qaudioinput_symbian_p.cpp \
+               audio/qaudiooutput_symbian_p.cpp
 
     LIBS += -lmmfdevsound
 } else:unix {
     unix:contains(QT_CONFIG, alsa) {
         linux-*|freebsd-*|openbsd-*:{
             DEFINES += HAS_ALSA
-            HEADERS += qaudiooutput_alsa_p.h qaudioinput_alsa_p.h qaudiodeviceinfo_alsa_p.h
-            SOURCES += qaudiodeviceinfo_alsa_p.cpp \
-                   qaudiooutput_alsa_p.cpp \
-                   qaudioinput_alsa_p.cpp
+            HEADERS += audio/qaudiooutput_alsa_p.h audio/qaudioinput_alsa_p.h audio/qaudiodeviceinfo_alsa_p.h
+            SOURCES += audio/qaudiodeviceinfo_alsa_p.cpp \
+                   audio/qaudiooutput_alsa_p.cpp \
+                   audio/qaudioinput_alsa_p.cpp
             LIBS_PRIVATE += -lasound
         }
     }

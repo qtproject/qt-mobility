@@ -107,7 +107,6 @@ SOURCES += qmediacontrol.cpp \
 !contains(QT_CONFIG,multimedia) {
     include(audio/audio.pri)
     include(video/video.pri)
-    INCLUDEPATH += audio video
 } else {
     QT += multimedia
 }
