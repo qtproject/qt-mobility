@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,73 +38,58 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACTS_H
-#define QMLCONTACTS_H
+#ifndef QMLCONTACTMODEL_H
+#define QMLCONTACTMODEL_H
 
-#include <QObject>
-#include <qmobilityglobal.h>
-#include <QContactManager>
-#include <QContactAbstractRequest>
+#include <QAbstractListModel>
+#include "qcontact.h"
+#include "qcontactmanager.h"
+#include "qcontactfetchrequest.h"
 
-#include "qmlcontact.h"
-
-QTM_BEGIN_NAMESPACE
-class QContactFetchRequest;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
-
-// ![0]
-#include <QtDeclarative>
-
-class QMLContactManagerAsync : public QObject {
+QTM_USE_NAMESPACE;
+class QMLContactModel : public QAbstractListModel
+{
 Q_OBJECT
-Q_PROPERTY(QString availableManagers READ availableManagers)
+Q_PROPERTY(QStringList availableManagers READ availableManagers)
 Q_PROPERTY(QString manager READ manager WRITE setManager)
-Q_PROPERTY(int numContacts READ numContacts)
 public:
-    QMLContactManagerAsync(QObject *parent = 0);
-    ~QMLContactManagerAsync();
+    explicit QMLContactModel(QObject *parent = 0);
 
-    QString availableManagers() const;
+    enum {
+        InterestRole = Qt::UserRole + 500,
+        InterestLabelRole,
+        AvatarRole,
+        PresenceAvailableRole,
+        PresenceTextRole,
+        PresenceStateRole,
+        PresenceMessageRole
+    };
+
+    QStringList availableManagers() const;
 
     QString manager();
-    void setManager(QString manager);
+    void setManager(const QString& manager);
 
-    Q_INVOKABLE void contacts();
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+signals:
 
-    int numContacts();
-
-    Q_INVOKABLE QString idToName(QString name);
-//    void setName(const QString &);
-//
-//    int shoeSize() const;
-//    void setShoeSize(int);
-
-Q_SIGNALS:
-    void dataChanged();
-    void contactsAdded(const QList<QContactLocalId>& contactIds);
-    void contactsChanged(const QList<QContactLocalId>& contactIds);
-    void contactsRemoved(const QList<QContactLocalId>& contactIds);
-    void relationshipsAdded(const QList<QContactLocalId>& contactIds);
-    void relationshipsRemoved(const QList<QContactLocalId>& contactIds);
-
-    void contactsLoaded(QmlContact *contact);
-    void contactsLoadedDone();
+public slots:
 
 private slots:
-
-    void contactProgress(QContactAbstractRequest::State newState);
+    void resultsReceived();
+    void fetchAgain();
 
 private:
-    QContactManager *qc;    
-    //QStringList m_contacts;
-    QList<QContactLocalId> m_contactIds;
-    void fillContactsIntoMemoryEngine(QContactManager* manager);
-    QString contactListToQString(const QList<QContactLocalId>& contactIds) const;
-    QStringList contactListToQString(const QList<QContact>& contact) const;
-};
-QML_DECLARE_TYPE(QMLContactManagerAsync)
-// ![0]
+    QPair<QString, QString> interestingDetail(const QContact&c) const;
 
-#endif // QMLCONTACTS_H
+    void fillContactsIntoMemoryEngine(QContactManager* manager);
+
+    QList<QContact> m_contacts;
+    QContactManager* m_manager;
+    QContactFetchHint m_fetchHint;
+    QContactSortOrder m_sortOrder;
+    QContactFetchRequest m_contactsRequest;
+};
+
+#endif // QMLCONTACTMODEL_H

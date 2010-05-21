@@ -46,16 +46,6 @@
 
 \brief Additional APIs under development.
 
-
-\target {Management of Versit Documents}
-\section1 Management of Versit Documents
-
-\l{Versit API}{Versit API Documentation}
-
-Versit Classes.
-\annotatedlist versit
-
-
 */
 
 

@@ -690,7 +690,7 @@ void QContactMemoryEngine::performAsynchronousOperation(QContactAbstractRequest 
             QList<QContactSortOrder> sorting = r->sorting();
             QContactFetchHint fetchHint = r->fetchHint();
 
-            QContactManager::Error operationError;
+            QContactManager::Error operationError = QContactManager::NoError;
             QList<QContact> requestedContacts = contacts(filter, sorting, fetchHint, &operationError);
 
             // update the request with the results.

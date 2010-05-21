@@ -59,9 +59,9 @@
     #include &lt;QDeclarativeComponent&gt;
     #include &lt;QDebug&gt;
     #include &lt;QDeclarativeView&gt;
-    #include &lt;QContactManager&gt;
-    #include &quot;qmlcontactsa.h&quot;
-    #include &quot;qmlcontact.h&quot;
+    #include &lt;qcontactmanager.h&gt;
+    #include &quot;qmlcontactmodel.h&quot;
+
     QT_USE_NAMESPACE
     QTM_USE_NAMESPACE
 
@@ -70,10 +70,8 @@
         QApplication app(argc, argv);
 
         QDeclarativeEngine engine;
-        QDeclarativeComponent component(&amp;engine, &quot;:example.qml&quot;);
 
-        qmlRegisterType&lt;QmlContact&gt;(&quot;QmlContact&quot;, 1, 0, &quot;QmlContact&quot;);
-        qmlRegisterType&lt;QMLContactManagerAsync&gt;(&quot;QMLContactManagerAsync&quot;, 1, 0, &quot;QMLContactManagerAsync&quot;);
+        qmlRegisterType&lt;QMLContactModel&gt;(&quot;QmlContactModel&quot;, 1, 0, &quot;QmlContactModel&quot;);
 
         QWidget *b = new QWidget();
         QVBoxLayout *vbox = new QVBoxLayout;
@@ -85,7 +83,6 @@
         view-&gt;setSource(QUrl(&quot;qrc:/example.qml&quot;));
         vbox-&gt;addWidget(view);
         b-&gt;setLayout(vbox);
-<span class="comment">    //    b-&gt;resize(800,480);</span>
         b-&gt;show();
 
         return app.exec();
