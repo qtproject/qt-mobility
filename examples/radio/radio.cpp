@@ -79,10 +79,7 @@ Radio::Radio()
     volumeSlider = new QSlider(Qt::Vertical,this);
 #endif
     volumeSlider->setRange(0,100);
-#if defined Q_OS_SYMBIAN
-    volumeSlider->setRange(0,10);
-#endif
-    volumeSlider->setValue(radio->volume());
+    volumeSlider->setValue(50);
     connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
     topBar->addWidget(volumeSlider);
 

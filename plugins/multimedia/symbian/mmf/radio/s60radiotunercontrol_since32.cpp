@@ -211,6 +211,7 @@ void S60RadioTunerControl::setVolume(int volume)
 {
 	if (m_playerUtility) {
 		m_vol = volume;
+		volume *= m_volMultiplier;
 		m_playerUtility->SetVolume(volume);
 		emit volumeChanged(m_vol);
 	}
@@ -299,7 +300,7 @@ QtMediaServices::AvailabilityError S60RadioTunerControl::availabilityError() con
 }
 
 void S60RadioTunerControl::start()
-{	
+{
 	if (!m_tunerControl) {
 		m_fmTunerUtility->RequestTunerControl();
 		m_apiTunerState = QRadioTuner::ActiveState;
@@ -364,6 +365,7 @@ void S60RadioTunerControl::MrftoRequestTunerControlComplete(TInt aError)
 {
 	if (aError == KErrNone) {
 		m_playerUtility->GetMaxVolume(m_maxVolume);
+		m_volMultiplier = float(m_maxVolume)/float(100);
 		m_radioError = QRadioTuner::NoError;
 		m_tunerControl = true;
 		m_available = true;
