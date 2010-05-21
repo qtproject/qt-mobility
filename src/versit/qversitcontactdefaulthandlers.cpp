@@ -52,6 +52,13 @@ QTM_USE_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
+Q_DEFINE_LATIN1_CONSTANT(PropertyName, "X-NOKIA-QCONTACTFIELD");
+Q_DEFINE_LATIN1_CONSTANT(DetailDefinitionParameter, "DETAIL");
+Q_DEFINE_LATIN1_CONSTANT(FieldParameter, "FIELD");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameter, "DATATYPE");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterValue, "V");
+Q_DEFINE_LATIN1_CONSTANT(GroupPrefix, "G");
+
 /*
  * This is a map from Versit group names to the details that were generated from properties with the
  * said groups.  Multiple details can be associated with a single group.
@@ -167,13 +174,13 @@ void QVersitContactImporterDefaultPropertyHandler::propertyProcessed(
     if (!property.groups().isEmpty())
         group = property.groups().first();
     if (!alreadyProcessed) {
-        if (property.name() != QLatin1String("X-NOKIA-QCONTACTFIELD"))
+        if (property.name() != PropertyName)
             return;
         if (property.groups().size() != 1)
             return;
         QMultiHash<QString,QString> parameters = property.parameters();
-        QString definitionName = parameters.value(QLatin1String("DETAIL"));
-        QString fieldName = parameters.value(QLatin1String("FIELD"));
+        QString definitionName = parameters.value(DetailDefinitionParameter);
+        QString fieldName = parameters.value(FieldParameter);
 
         // Find a detail previously seen with the same definitionName, which was generated from
         // a property from the same group
@@ -186,7 +193,7 @@ void QVersitContactImporterDefaultPropertyHandler::propertyProcessed(
         // If not found, it's a new empty detail with the definitionName set.
 
         // Import the field
-        if (parameters.contains(QLatin1String("DATATYPE"), QLatin1String("V"))) {
+        if (parameters.contains(DatatypeParameter, DatatypeParameterValue)) {
             // The value was stored as a QVariant serialized in a QByteArray
             QDataStream stream(property.variantValue().toByteArray());
             QVariant value;
@@ -303,7 +310,7 @@ void QVersitContactExporterDefaultDetailHandler::detailProcessed(
         return; // special case of an unhandled detail that we don't export
     QVariantMap fields = detail.variantValues();
     // fields from the same detail have the same group so the importer can collate them
-    QString detailGroup = QLatin1String("G") + QString::number(d->mDetailNumber++);
+    QString detailGroup = GroupPrefix + QString::number(d->mDetailNumber++);
     int toBeAddedCount = toBeAdded->count();
     bool propertiesSynthesized = false;
     for (QVariantMap::const_iterator it = fields.constBegin(); it != fields.constEnd(); it++) {
@@ -311,9 +318,9 @@ void QVersitContactExporterDefaultDetailHandler::detailProcessed(
             // Generate a property for the unknown field
             QVersitProperty property;
             property.setGroups(QStringList(detailGroup));
-            property.setName(QLatin1String("X-NOKIA-QCONTACTFIELD"));
-            property.insertParameter(QLatin1String("DETAIL"), detail.definitionName());
-            property.insertParameter(QLatin1String("FIELD"), it.key());
+            property.setName(PropertyName);
+            property.insertParameter(DetailDefinitionParameter, detail.definitionName());
+            property.insertParameter(FieldParameter, it.key());
 
             // serialize the value
             if (it.value().type() == QVariant::String
@@ -325,7 +332,7 @@ void QVersitContactExporterDefaultDetailHandler::detailProcessed(
                 QByteArray valueBytes;
                 QDataStream stream(&valueBytes, QIODevice::WriteOnly);
                 stream << it.value();
-                property.insertParameter(QLatin1String("DATATYPE"), QLatin1String("V"));
+                property.insertParameter(DatatypeParameter, DatatypeParameterValue);
                 property.setValue(valueBytes);
             }
 
