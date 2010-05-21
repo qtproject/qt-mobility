@@ -44,6 +44,7 @@
 #include "qgallerytrackeritemlist_p_p.h"
 #include "qgallerytrackerschema_p.h"
 
+#include <QtCore/qcoreapplication.h>
 #include <QtDBus/qdbuspendingreply.h>
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
@@ -54,6 +55,8 @@ class QGalleryTrackerItemResponsePrivate : public QGalleryTrackerItemListPrivate
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerItemResponse)
 public:
+    QGalleryDBusInterfacePointer metaDataInterface;
+    QStringList fieldNames;
 };
 
 
@@ -74,11 +77,72 @@ QGalleryTrackerItemResponse::QGalleryTrackerItemResponse(
             minimumPagedItems,
             parent)
 {
+    Q_D(QGalleryTrackerItemResponse);
 
+    d->metaDataInterface = dbus->metaDataInterface();
+    d->fieldNames = schema.fields();
 }
 
 QGalleryTrackerItemResponse::~QGalleryTrackerItemResponse()
 {
+}
+
+void QGalleryTrackerItemResponse::setMetaData(int index, int key, const QVariant &value)
+{
+    Q_D(QGalleryTrackerItemResponse);
+
+    QVector<QVariant>::const_iterator row;
+
+    if (key < d->imageOffset) {
+        if (key >= d->aliasOffset) {
+            key = d->aliasColumns.at(key - d->aliasOffset);
+        } else if (key < d->valueOffset || key >= d->compositeOffset) {
+            return;
+        }
+
+        if (index < d->rCache.cutoff) {
+            if ((index -= d->rCache.index) >= 0) {
+                row = d->rCache.values.constBegin() + (index * d->tableWidth);
+            } else {
+                return;
+            }
+        } else if (index < d->aCache.count && (index -= d->aCache.offset) >= 0) {
+            row = d->aCache.values.begin() + (index * d->tableWidth);
+        } else {
+            return;
+        }
+    }
+
+    if (*(row + key) == value)
+        return;
+
+    QGalleryTrackerMetaDataEdit *edit = 0;
+
+    typedef QList<QGalleryTrackerMetaDataEdit *>::iterator iterator;
+    for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it) {
+        if ((*it)->index() == index) {
+            edit = *it;
+            break;
+        }
+    }
+
+    if (!edit) {
+        edit = new QGalleryTrackerMetaDataEdit(
+                d->metaDataInterface, row->toString(), (row + 1)->toString(), this);
+        edit->setIndex(index);
+
+        connect(edit, SIGNAL(finished(QGalleryTrackerMetaDataEdit*)),
+                this, SLOT(_q_editFinished(QGalleryTrackerMetaDataEdit*)));
+
+        if (d->edits.isEmpty())
+            QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
+
+        d->edits.append(edit);
+    }
+
+    edit->setValue(
+            d->fieldNames.at(key - d->valueOffset),
+            d->valueColumns.at(key - d->valueOffset)->toString(value));
 }
 
 #include "moc_qgallerytrackeritemresponse_p.cpp"

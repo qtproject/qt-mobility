@@ -58,6 +58,7 @@
 
 #include "qgalleryabstractresponse_p.h"
 #include "qgallerytrackerlistcolumn_p.h"
+#include "qgallerytrackermetadataedit_p.h"
 #include "qgallerytrackerschema_p.h"
 
 #include <QtCore/qcoreevent.h>
@@ -197,6 +198,7 @@ public:
     Cache rCache;   // Replacement cache.
 
     QFutureWatcher<int> queryWatcher;
+    QList<QGalleryTrackerMetaDataEdit *> edits;
 
     void update(int index);
 
@@ -217,6 +219,7 @@ public:
 
     void _q_queryFinished();
     void _q_imagesLoaded(int index, const QList<uint> &ids);
+    void _q_editFinished(QGalleryTrackerMetaDataEdit *edit);
 };
 
 QTM_END_NAMESPACE

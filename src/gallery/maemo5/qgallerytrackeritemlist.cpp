@@ -41,6 +41,7 @@
 
 #include "qgallerytrackeritemlist_p_p.h"
 
+#include "qgallerytrackermetadataedit_p.h"
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qtconcurrentrun.h>
 #include <QtDBus/qdbusreply.h>
@@ -276,6 +277,9 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
                     ++aIt;
                     ++rIt;
                 } else {
+                    ++aIt;
+                    ++rIt;
+
                     break;
                 }
             } while (aIt != aEnd && rIt != rEnd);
@@ -285,6 +289,9 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
                     (aBegin.begin - aCache.values.begin()) / tableWidth,
                     (rBegin.begin - rCache.values.begin()) / tableWidth,
                     (rIt.begin - rBegin.begin) / tableWidth));
+
+            aBegin = aIt;
+            rBegin = rIt;
 
             continue;
         } else if (equal) {
@@ -378,6 +385,14 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished()
     q_func()->setCursorPosition(cursorPosition);
 }
 
+void QGalleryTrackerItemListPrivate::_q_editFinished(QGalleryTrackerMetaDataEdit *edit)
+{
+    edit->deleteLater();
+
+    if (queryWatcher.isFinished())
+        update(rCache.index);
+}
+
 QGalleryTrackerItemList::QGalleryTrackerItemList(
         QGalleryTrackerItemListPrivate &dd,
         QGalleryDBusInterfaceFactory *dbus,
@@ -435,6 +450,10 @@ QGalleryTrackerItemList::~QGalleryTrackerItemList()
 {
     Q_D(QGalleryTrackerItemList);
 
+    typedef QList<QGalleryTrackerMetaDataEdit *>::iterator iterator;
+    for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it)
+        (*it)->commit();
+
     d->queryWatcher.waitForFinished();
 }
 
@@ -456,7 +475,7 @@ int QGalleryTrackerItemList::propertyKey(const QString &property) const
 
 QGalleryProperty::Attributes QGalleryTrackerItemList::propertyAttributes(int key) const
 {
-    return d_func()->propertyAttributes.value(key);
+    return d_func()->propertyAttributes.value(key - d_func()->valueOffset);
 }
 
 int QGalleryTrackerItemList::count() const
@@ -701,6 +720,16 @@ bool QGalleryTrackerItemList::event(QEvent *event)
             d->rowCount -= rowEvent->count;
 
             emit removed(rowEvent->rIndex, rowEvent->count);
+
+            return true;
+        }
+    case QEvent::UpdateRequest: {
+            Q_D(QGalleryTrackerItemList);
+
+            typedef QList<QGalleryTrackerMetaDataEdit *>::iterator iterator;
+            for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it)
+                (*it)->commit();
+            d->edits.clear();
 
             return true;
         }

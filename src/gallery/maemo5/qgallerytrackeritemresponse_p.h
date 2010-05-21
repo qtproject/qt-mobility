@@ -57,7 +57,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerSchema;
+class QGalleryTrackerMetaDataEdit;
 
 class QGalleryTrackerItemResponsePrivate;
 
@@ -74,8 +74,11 @@ public:
             QObject *parent = 0);
     ~QGalleryTrackerItemResponse();
 
+    void setMetaData(int index, int key, const QVariant &value);
+
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemResponse)
+    Q_PRIVATE_SLOT(d_func(), void _q_editFinished(QGalleryTrackerMetaDataEdit *))
 };
 
 QTM_END_NAMESPACE
