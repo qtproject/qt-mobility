@@ -51,7 +51,7 @@
 
 #define AUDIO_BUFFER 192000
 
-#if defined(Q_OS_SYBIAN)
+#if defined(Q_OS_SYMBIAN)
 #define SRCDIR ""
 #endif
 
