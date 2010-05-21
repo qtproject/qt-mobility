@@ -2,6 +2,8 @@ include($$QT_MOBILITY_BUILD_TREE/config.pri)
 
 TEMPLATE = subdirs
 
+SUBDIRS += hapticsplayer
+
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
