@@ -43,6 +43,9 @@
 
 #include <QtCore/qmetaobject.h>
 
+static const char ENUM_INSTANT_EFFECT[] = "InstantEffect";
+static const char ENUM_DEVICE_TYPE[] = "Type";
+static const char ENUM_ANIMATION_STATE[] = "State";
 
 Dialog::Dialog()
 {
@@ -66,10 +69,19 @@ Dialog::Dialog()
     connect(ui.grpPeriod, SIGNAL(toggled(bool)), SLOT(periodToggled(bool)));
     connect(ui.period, SIGNAL(valueChanged(int)), SLOT(periodChanged(int)));
 
+    connect(ui.instantPlay, SIGNAL(clicked()), SLOT(instantPlayClicked()));
+
     foreach(const QFeedbackDevice &dev, QFeedbackDevice::devices()) {
         ui.devices->addItem(dev.name());
     }
     ui.devices->addItem("test device");
+
+    //adding the instant effects
+    const QMetaObject &mo = QFeedbackEffect::staticMetaObject;
+    const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_INSTANT_EFFECT));
+    for (int i = 0 ; i < me.keyCount(); ++i) {
+        ui.instantEffect->addItem(me.key(i));
+    }
 
     //initialization
     durationChanged(effect.duration());
@@ -92,7 +104,7 @@ void Dialog::deviceChanged()
 {
     QFeedbackDevice dev = currentDevice();
     const QMetaObject &mo = QFeedbackDevice::staticMetaObject;
-    ui.deviceType->setText(mo.enumerator(mo.indexOfEnumerator("Type")).key(dev.type()));
+    ui.deviceType->setText(mo.enumerator(mo.indexOfEnumerator(ENUM_DEVICE_TYPE)).key(dev.type()));
     enabledChanged(dev.isEnabled());
     effect.setDevice(dev);
 }
@@ -133,7 +145,7 @@ void Dialog::intensityChanged(int value)
 void Dialog::effectStateChanged(QAbstractAnimation::State newState)
 {
     const QMetaObject *mo = effect.metaObject();
-    ui.effectState->setText(mo->enumerator(mo->indexOfEnumerator("State")).key(newState));
+    ui.effectState->setText(mo->enumerator(mo->indexOfEnumerator(ENUM_ANIMATION_STATE)).key(newState));
     ui.stop->setEnabled(newState != QAbstractAnimation::Stopped);
 }
 
@@ -174,5 +186,13 @@ void Dialog::periodChanged(int value)
 {
     effect.setPeriod(value);
 }
+
+void Dialog::instantPlayClicked()
+{
+    const QMetaObject &mo = QFeedbackEffect::staticMetaObject;
+    const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_INSTANT_EFFECT));
+    QFeedbackEffect::play(QFeedbackEffect::InstantEffect(me.keyToValue(ui.instantEffect->currentText().toLatin1())));
+}
+
 
 #include "moc_dialog.cpp"

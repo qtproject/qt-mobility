@@ -73,6 +73,8 @@ private Q_SLOTS:
     void periodChanged(int value);
     void periodToggled(bool on);
 
+    void instantPlayClicked();
+
 private:
     QFeedbackDevice currentDevice() const;
     Ui_Dialog ui;

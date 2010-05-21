@@ -62,23 +62,12 @@ enum ContinuousEffect {
 
 
 //instant
-enum InstantEffect {
-    InstantNone, InstantBasic, InstantSensitive, InstantBasicButton, InstantSensitiveButton,
-    InstantBasicKeypad, InstantSensitiveKeypad, InstantBasicSlider, InstantSensitiveSlider,
-    InstantBasicItem, InstantSensitiveItem, InstantItemScroll, InstantItemPick, InstantItemDrop,
-    InstantItemMoveOver, InstantBounceEffect, InstantCheckbox, InstantMultipleCheckbox, InstantEditor,
-    InstantTextSelection, InstantBlankSelection, InstantLineSelection, InstantEmptyLineSelection,
-    InstantPopUp, InstantPopupOpen, InstantPopupClose, InstantFlick, InstantStopFlick,
-    InstantMultitouchActivate, InstantRotateStep, InstantLongPress, InstantPositiveTacticon,
-    InstantNeutralTacticon, InstantNegativeTacticon,
-    NumberOfInstantFeedbacks,
-    InstantUser = 65535
-};
 
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
     Q_OBJECT
+    Q_ENUMS(InstantEffect)
 public:
     Q_PROPERTY(int duration READ duration WRITE setDuration)
     Q_PROPERTY(qreal intensity READ intensity WRITE setIntensity)
@@ -91,6 +80,19 @@ public:
 
     enum Duration {
         INFINITE = -1
+    };
+
+    enum InstantEffect {
+        InstantNone, InstantBasic, InstantSensitive, InstantBasicButton, InstantSensitiveButton,
+        InstantBasicKeypad, InstantSensitiveKeypad, InstantBasicSlider, InstantSensitiveSlider,
+        InstantBasicItem, InstantSensitiveItem, InstantItemScroll, InstantItemPick, InstantItemDrop,
+        InstantItemMoveOver, InstantBounceEffect, InstantCheckbox, InstantMultipleCheckbox, InstantEditor,
+        InstantTextSelection, InstantBlankSelection, InstantLineSelection, InstantEmptyLineSelection,
+        InstantPopUp, InstantPopupOpen, InstantPopupClose, InstantFlick, InstantStopFlick,
+        InstantMultitouchActivate, InstantRotateStep, InstantLongPress, InstantPositiveTacticon,
+        InstantNeutralTacticon, InstantNegativeTacticon,
+        NumberOfInstantFeedbacks,
+        InstantUser = 65535
     };
 
     enum ErrorType {
