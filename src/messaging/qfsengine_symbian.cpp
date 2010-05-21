@@ -308,6 +308,11 @@ void CFSEngine::NewMessageEventL(const TMailboxId& aMailbox, const REmailMessage
     QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Added;
     MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
     MEmailFolder* folder = mailbox->FolderL(aParentFolderId);
+    QString idAsString = QString::number(mailbox->MailboxId().iId);
+    for (TInt j = 0; j < m_mtmAccountList.count(); j++) {
+        if (idAsString == m_mtmAccountList[j].toString())
+            return;
+    }   
     if (folder->FolderType() == EInbox) {
         for (TInt i = 0; i < aNewMessages.Count(); i++) {
             TMessageId messageId(aNewMessages[i]);
@@ -319,6 +324,8 @@ void CFSEngine::NewMessageEventL(const TMailboxId& aMailbox, const REmailMessage
                                 matchingFilters);
         }
     }
+    folder->Release();
+    mailbox->Release();
 }
 
 void CFSEngine::MessageChangedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aChangedMessages, const TFolderId& aParentFolderId)
@@ -327,6 +334,11 @@ void CFSEngine::MessageChangedEventL(const TMailboxId& aMailbox, const REmailMes
     QMessageManager::NotificationFilterIdSet matchingFilters;
     QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Updated;
     MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
+    QString idAsString = QString::number(mailbox->MailboxId().iId);
+    for (TInt j = 0; j < m_mtmAccountList.count(); j++) {
+        if (idAsString == m_mtmAccountList[j].toString())
+            return;
+    } 
     MEmailFolder* folder = mailbox->FolderL(aParentFolderId);   
     for (TInt i = 0; i < aChangedMessages.Count(); i++) {
         TMessageId messageId(aChangedMessages[i]);
@@ -335,6 +347,8 @@ void CFSEngine::MessageChangedEventL(const TMailboxId& aMailbox, const REmailMes
                             QMessageId(addIdPrefix(QString::number(fsMessage->MessageId().iId), SymbianHelpers::EngineTypeFreestyle)), 
                             matchingFilters);
     }
+    folder->Release();
+    mailbox->Release();
 }
 
 void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aDeletedMessages, const TFolderId& aParentFolderId)
@@ -343,13 +357,20 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
     QMessageManager::NotificationFilterIdSet matchingFilters;
     QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Removed;
     MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
-    MEmailFolder* folder = mailbox->FolderL(aParentFolderId);   
+    MEmailFolder* folder = mailbox->FolderL(aParentFolderId); 
+    QString idAsString = QString::number(mailbox->MailboxId().iId);
+    for (TInt j = 0; j < m_mtmAccountList.count(); j++) {
+        if (idAsString == m_mtmAccountList[j].toString())
+            return;
+    } 
     for (TInt i = 0; i < aDeletedMessages.Count(); i++) {
         TMessageId messageId(aDeletedMessages[i]);
         ipMessageStorePrivate->messageNotification(notificationType, 
                             QMessageId(addIdPrefix(QString::number(messageId.iId), SymbianHelpers::EngineTypeFreestyle)), 
                             matchingFilters);
     }
+    folder->Release();
+    mailbox->Release();
 }
 #endif
 
@@ -489,7 +510,8 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
     }
     fsMessage->SetSubjectL(TPtrC(reinterpret_cast<const TUint16*>(message.subject().utf16())));
     
-    // TODO: set id to message
+    QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
+    privateMessage->_id = QMessageId(addIdPrefix(QString::number(fsMessage->MessageId().iId),SymbianHelpers::EngineTypeFreestyle));
     
     fsMessage->SaveChangesL();
     CleanupStack::Pop(fsMessage);
@@ -738,30 +760,18 @@ bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentConta
 {
     Q_UNUSED(messageId);
     Q_UNUSED(id);
-    /*
-     * TInt availableSize = atts[i]->AvailableSize();
-        CFetchOperationWait* op = CFetchOperationWait::NewLC();
-        if (!availableSize) {
-            atts[i]->FetchL(*op);     
-            op->Wait();
-        }
-        CleanupStack::PopAndDestroy(op);
-     */
-    // not supported in Email Client Api?
     return false;
 }
 
 bool CFSEngine::retrieveBody(const QMessageId& id)
 {
     Q_UNUSED(id);
-    // not supported in Email Client Api?
-     return false;
+    return false;
 }
 
 bool CFSEngine::retrieveHeader(const QMessageId& id)
 {
     Q_UNUSED(id);
-    // not supported in Email Client Api?
     return false;
 }
 
@@ -1798,37 +1808,6 @@ bool CFSEngine::sendEmail(QMessage &message)
         return true;
 }
 
-QString CFSEngine::attachmentTextContent(long int messageId, unsigned int attachmentId, const QByteArray &charset)
-{
-    QString result;
-    
-    QByteArray data = attachmentContent(messageId, attachmentId);
-    if (!data.isEmpty()) {
-        // Convert attachment data to string form
-        QTextCodec *codec;
-        if (!charset.isEmpty()) {
-            codec = QTextCodec::codecForName(charset);
-        } else {
-            codec = QTextCodec::codecForLocale();
-        }
-
-        if (codec) {
-            result = codec->toUnicode(data);
-        }
-    }
-    
-    return result;
-}
-
-QByteArray CFSEngine::attachmentContent(long int messageId, unsigned int attachmentId)
-{
-    // TODO:
-    Q_UNUSED(messageId);
-    Q_UNUSED(attachmentId);
-    QByteArray result;
-    return result;
-}
-
 QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
 {
     QMessage message;
@@ -1844,6 +1823,19 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     message.setParentAccountId(accountId);
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_parentFolderId = QMessageFolderId(QString::number(folderId.iId));
+    
+    MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
+    MEmailFolder* folder = mailbox->FolderL(folderId);
+    QMessagePrivate::setStandardFolder(message, QMessage::InboxFolder);
+    if (folder->FolderType() == EDrafts) {
+        QMessagePrivate::setStandardFolder(message, QMessage::DraftsFolder);
+    } else if (folder->FolderType() == EDeleted) {
+        QMessagePrivate::setStandardFolder(message, QMessage::TrashFolder);
+    } else if (folder->FolderType() == ESent) {
+        QMessagePrivate::setStandardFolder(message, QMessage::SentFolder);
+    }
+    folder->Release();
+    mailbox->Release();
 
     if (aMessage->Flags() & EFlag_Read) {
         privateMessage->_status = privateMessage->_status | QMessage::Read; 
@@ -1856,9 +1848,7 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     } else {
         message.setPriority(QMessage::NormalPriority);
     }
-    
-    QMessagePrivate::setStandardFolder(message, QMessage::InboxFolder);
-    
+
     // bodytext and attachment(s)
     MEmailMessageContent* content = aMessage->ContentL();
     if (content)

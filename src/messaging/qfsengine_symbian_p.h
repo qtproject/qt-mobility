@@ -140,9 +140,6 @@ public:
     bool retrieveHeader(const QMessageId& id);
     bool exportUpdates(const QMessageAccountId &id);
     
-    QByteArray attachmentContent(long int messageId, unsigned int attachmentId);
-    QString attachmentTextContent(long int messageId, unsigned int attachmentId, const QByteArray &charset);
-    
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
                                         const QMessageFilter& filter);
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
