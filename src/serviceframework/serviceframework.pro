@@ -31,8 +31,6 @@ SOURCES +=  servicemetadata.cpp \
             dberror.cpp
 
 symbian {
-    #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
-
     INCLUDEPATH +=  ./databasemanagerserver_symbian
     
     PRIVATE_HEADERS +=  databasemanager_symbian_p.h

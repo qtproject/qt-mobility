@@ -23,8 +23,6 @@ symbian {
     SOURCES += tst_databasemanager_symbian.cpp \
                ../qsfwtestutil.cpp
 
-    #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
-
     TARGET.CAPABILITY = ALL -TCB
     LIBS += -lefsrv
 

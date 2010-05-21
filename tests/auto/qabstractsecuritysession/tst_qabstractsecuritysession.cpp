@@ -96,8 +96,8 @@ void tst_QAbstractSecuritySession::initTestCase()
 
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
+#if defined(Q_OS_SYMBIAN)
+    QSfwTestUtil::removeDatabases_symbian();
 #endif
 }
 
@@ -199,8 +199,8 @@ void tst_QAbstractSecuritySession::cleanupTestCase()
 {
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
+#if defined(Q_OS_SYMBIAN)
+    QSfwTestUtil::removeDatabases_symbian();
 #endif
 }
 

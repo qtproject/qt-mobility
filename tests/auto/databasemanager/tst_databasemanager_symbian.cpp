@@ -95,11 +95,7 @@ void tst_DatabaseManager::initTestCase()
     // the database file (otherwise QFile::remove will get a permission denied -->
     // in next case, the isEmpty() check fails).
     QTest::qWait(1);
-    QSfwTestUtil::removeTempUserDb();
-    QSfwTestUtil::removeTempSystemDb();
-#if !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
+    QSfwTestUtil::removeDatabases_symbian();
     m_dbm = NULL;
 }
 
@@ -445,9 +441,7 @@ void tst_DatabaseManager::unregisterService()
     QVERIFY(!m_dbm->unregisterService("; drop table Interface;", DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
-#if !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
+    QSfwTestUtil::removeDatabases_symbian();
 }
 
 bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interface,
@@ -678,11 +672,7 @@ void tst_DatabaseManager::cleanupTestCase()
 {
     QTest::qWait(100);
     delete m_dbm;
-    QSfwTestUtil::removeTempUserDb();
-    QSfwTestUtil::removeTempSystemDb();
-#if !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
+    QSfwTestUtil::removeDatabases_symbian();
 }
 
 QTEST_MAIN(tst_DatabaseManager)
