@@ -51,16 +51,16 @@
 #include "qgalleryurlrequest.h"
 
 #include "qgalleryerrorresponse_p.h"
-#include "qgallerytrackeraggregatelistresponse_p.h"
 #include "qgallerytrackeraggregateresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackerfileremoveresponse_p.h"
-#include "qgallerytrackeritemlistresponse_p.h"
 #include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackerurlresponse_p.h"
 
 #include <QtDBus/qdbusmetatype.h>
+
+Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
