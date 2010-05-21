@@ -3,7 +3,7 @@
     PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: qmlcontact.h Example File (qmlcontacts/qmlcontact.h)</title>
+  <title>Qt Mobility Project 1.0: qmlcontactmodel.h Example File (qmlcontacts/qmlcontactmodel.h)</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -11,11 +11,11 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">qmlcontact.h Example File<br /><span class="small-subtitle">qmlcontacts/qmlcontact.h</span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">qmlcontactmodel.h Example File<br /><span class="small-subtitle">qmlcontacts/qmlcontactmodel.h</span>
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -53,67 +53,61 @@
     **
     ****************************************************************************/</span>
 
-    #ifndef QMLCONTACT_H
-    #define QMLCONTACT_H
+    #ifndef QMLCONTACTMODEL_H
+    #define QMLCONTACTMODEL_H
 
-    #include &lt;qmobilityglobal.h&gt;
-    #include &lt;QObject&gt;
-    #include &lt;QContact&gt;
-    #include &lt;qdeclarative.h&gt;
+    #include &lt;QAbstractListModel&gt;
+    #include &quot;qcontact.h&quot;
+    #include &quot;qcontactmanager.h&quot;
+    #include &quot;qcontactfetchrequest.h&quot;
 
-    QTM_USE_NAMESPACE
-
-    class QmlContact : public QObject {
+    QTM_USE_NAMESPACE;
+    class QMLContactModel : public QAbstractListModel
+    {
     Q_OBJECT
-    Q_PROPERTY(QContact contact READ contact WRITE setContact NOTIFY contactChanged)
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
-    Q_PROPERTY(QString email READ email WRITE setEmail NOTIFY emailChanged)
-    Q_PROPERTY(QString avatar READ avatar NOTIFY avatarChanged)
-    Q_PROPERTY(QPixmap thumbnail READ thumbnail)
-    Q_PROPERTY(bool hasThumbnail READ hasThumbnail)
-    Q_PROPERTY(QStringList details READ details)
-    Q_PROPERTY(QStringList contexts READ contexts)
-    Q_PROPERTY(QString interest READ interest)
-    Q_PROPERTY(QString interestLabel READ interestLabel)
+    Q_PROPERTY(QStringList availableManagers READ availableManagers)
+    Q_PROPERTY(QString manager READ manager WRITE setManager)
     public:
-        explicit QmlContact(const QContact&amp; contact, QObject *parent = 0);
-        QmlContact();
-        ~QmlContact();
+        explicit QMLContactModel(QObject *parent = 0);
 
-        QContact&amp; contact();
-        void setContact(QContact&amp; contact);
+        enum {
+            InterestRole = Qt::UserRole + 500,
+            InterestLabelRole,
+            AvatarRole,
+            PresenceAvailableRole,
+            PresenceTextRole,
+            PresenceStateRole,
+            PresenceMessageRole
+        };
 
-        QString name() const;
-        void setName(QString name);
+        QStringList availableManagers() const;
 
-        QString email() const;
-        void setEmail(QString email);
+        QString manager();
+        void setManager(const QString&amp; manager);
 
-        bool hasThumbnail() const;
-        QString avatar() const;
-        QPixmap thumbnail() const;
-
-        QString interest() const;
-        QString interestLabel() const;
-
-        QStringList details();
-
-        QStringList contexts();
-
-        Q_INVOKABLE QVariantMap values(QString definitionId);
-
+        int rowCount(const QModelIndex &amp;parent) const;
+        QVariant data(const QModelIndex &amp;index, int role) const;
     signals:
-        void contactChanged(QmlContact* qmlcontact);
-        void nameChanged(QmlContact* qmlcontact);
-        void emailChanged(QmlContact* qmlcontact);
+
+    public slots:
+
+    private slots:
+        void resultsReceived();
+        void fetchAgain();
 
     private:
-        QContact m_contact;
+        QPair&lt;QString, QString&gt; interestingDetail(const QContact&amp;c) const;
+
+        void fillContactsIntoMemoryEngine(QContactManager* manager);
+
+        QList&lt;QContact&gt; m_contacts;
+        QContactManager* m_manager;
+        QContactFetchHint m_fetchHint;
+        QContactSortOrder m_sortOrder;
+        QContactFetchRequest m_contactsRequest;
     };
 
-    QML_DECLARE_TYPE(QmlContact)
-
-    #endif <span class="comment">// QMLCONTACT_H</span></pre>
+    #endif <span class="comment">// QMLCONTACTMODEL_H</span></pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
