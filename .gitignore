@@ -59,6 +59,7 @@ examples/qmlcontacts/qmlcontacts
 *.app
 config.tests/networkmanager/networkmanager
 config.tests/qmf/qmf
+config.tests/maemo5-contacts/maemo5-contacts
 .qmake.cache
 
 #Symbian specific
