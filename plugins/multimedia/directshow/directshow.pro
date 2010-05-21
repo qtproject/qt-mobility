@@ -2,6 +2,8 @@ TEMPLATE = lib
 
 contains(QT_CONFIG,multimedia) {
     QT+=multimedia
+} else {
+    INCLUDEPATH += ../../../src/multimedia/audio ../../../src/multimedia/video
 }
 
 CONFIG += plugin
