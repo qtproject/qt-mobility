@@ -41,37 +41,142 @@
 
 #include "qgallerytrackerfileremoveresponse_p.h"
 
-#include <QtCore/qfile.h>
+#include "qgalleryabstractresponse_p.h"
+
+#include <QtDBus/qdbuspendingcall.h>
 
 QTM_BEGIN_NAMESPACE
 
-QGalleryTrackerFileRemoveResponse::QGalleryTrackerFileRemoveResponse(
-        const QGalleryDBusInterfacePointer &metaDataInterface,
-        const QGalleryTrackerSchema &schema,
-        const QStringList &properties,
-        const QStringList &fileNames,
-        QObject *parent)
-    : QGalleryTrackerFileEditResponse(metaDataInterface, schema, properties, fileNames, parent)
+class QGalleryTrackerRemoveResponsePrivate : public QGalleryAbstractResponsePrivate
 {
-}
+    Q_DECLARE_PUBLIC(QGalleryTrackerRemoveResponse)
+public:
+    QGalleryTrackerRemoveResponsePrivate() : removeWatcher(0) {}
 
-QGalleryTrackerFileRemoveResponse::~QGalleryTrackerFileRemoveResponse()
-{
+    QDBusPendingCallWatcher *removeWatcher;
 
-}
+    void setError(const QDBusError &error)
+    {
+        qWarning("QGalleryRemoveRequest DBUS error: %s", qPrintable(error.message()));
 
-bool QGalleryTrackerFileRemoveResponse::editFile(
-        int *error, const QString &path, const QString &fileName)
-{
-    QFile file(path + QLatin1Char('/') + fileName);
-
-    if (!file.remove() && file.exists()) {
-        *error = QGalleryAbstractRequest::PermissionsError;
-
-        return false;
-    } else {
-        return true;
+        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
     }
+
+    void _q_removeFinished(QDBusPendingCallWatcher *watcher)
+    {
+        removeWatcher = 0;
+
+        watcher->deleteLater();
+
+        if (watcher->isError())
+            setError(watcher->error());
+        else
+            q_func()->finish(QGalleryAbstractRequest::Succeeded);
+    }
+};
+
+QGalleryTrackerRemoveResponse::QGalleryTrackerRemoveResponse(
+        const QGalleryDBusInterfacePointer &fileInterface, const QString &uri, QObject *parent)
+    : QGalleryAbstractResponse(*new QGalleryTrackerRemoveResponsePrivate, parent)
+{
+    Q_D(QGalleryTrackerRemoveResponse);
+
+    QDBusPendingCall remove = fileInterface->asyncCall(QLatin1String("Delete"), uri);
+
+    if (remove.isError()) {
+        d->setError(remove.error());
+    } else if (remove.isFinished()) {
+        finish(QGalleryAbstractRequest::Succeeded);
+    } else {
+        d->removeWatcher = new QDBusPendingCallWatcher(remove);
+
+        connect(d->removeWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                this, SLOT(_q_removeFinished(QDBusPendingCallWatcher*)));
+    }
+}
+
+QGalleryTrackerRemoveResponse::~QGalleryTrackerRemoveResponse()
+{
+    delete d_func()->removeWatcher;
+}
+
+QStringList QGalleryTrackerRemoveResponse::propertyNames() const
+{
+    return QStringList();
+}
+
+int QGalleryTrackerRemoveResponse::propertyKey(const QString &) const
+{
+    return -1;
+}
+
+QGalleryProperty::Attributes QGalleryTrackerRemoveResponse::propertyAttributes(int) const
+{
+    return QGalleryProperty::Attributes();
+}
+
+int QGalleryTrackerRemoveResponse::count() const
+{
+    return 0;
+}
+
+QVariant QGalleryTrackerRemoveResponse::id(int) const
+{
+    return QVariant();
+}
+
+QUrl QGalleryTrackerRemoveResponse::url(int) const
+{
+    return QUrl();
+}
+
+QString QGalleryTrackerRemoveResponse::type(int) const
+{
+    return QString();
+}
+
+QList<QGalleryResource> QGalleryTrackerRemoveResponse::resources(int) const
+{
+    return QList<QGalleryResource>();
+}
+
+QGalleryItemList::ItemStatus QGalleryTrackerRemoveResponse::status(int index) const
+{
+    return QGalleryItemList::ItemStatus();
+}
+
+QVariant QGalleryTrackerRemoveResponse::metaData(int, int) const
+{
+    return QVariant();
+}
+
+void QGalleryTrackerRemoveResponse::setMetaData(int, int, const QVariant &)
+{
+}
+
+void QGalleryTrackerRemoveResponse::cancel()
+{
+}
+
+bool QGalleryTrackerRemoveResponse::waitForFinished(int)
+{
+    Q_D(QGalleryTrackerRemoveResponse);
+
+    if (d->removeWatcher) {
+        d->removeWatcher->waitForFinished();
+        d->removeWatcher->deleteLater();
+
+        QDBusPendingCallWatcher *watcher = d->removeWatcher;
+        d->removeWatcher = 0;
+
+        if (watcher->isError())
+            d->setError(watcher->error());
+        else
+            finish(QGalleryAbstractRequest::Succeeded);
+    }
+
+    return true;
+
 }
 
 #include "moc_qgallerytrackerfileremoveresponse_p.cpp"

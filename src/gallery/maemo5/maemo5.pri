@@ -7,7 +7,6 @@ HEADERS += \
         $$PWD/qgallerydbusinterface_p.h \
         $$PWD/qgallerytrackeraggregateresponse_p.h \
         $$PWD/qgallerytrackercountresponse_p.h \
-        $$PWD/qgallerytrackerfileeditresponse_p.h \
         $$PWD/qgallerytrackerfileremoveresponse_p.h \
         $$PWD/qgallerytrackeritemlist_p.h \
         $$PWD/qgallerytrackeritemlist_p_p.h \
@@ -22,7 +21,6 @@ SOURCES += \
         $$PWD/qdocumentgallery_maemo5.cpp \
         $$PWD/qgallerytrackeraggregateresponse.cpp \
         $$PWD/qgallerytrackercountresponse.cpp \
-        $$PWD/qgallerytrackerfileeditresponse.cpp \
         $$PWD/qgallerytrackerfileremoveresponse.cpp \
         $$PWD/qgallerytrackeritemlist.cpp \
         $$PWD/qgallerytrackeritemresponse.cpp \

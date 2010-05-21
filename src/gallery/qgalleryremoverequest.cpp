@@ -53,8 +53,7 @@ public:
     {
     }
 
-    QStringList propertyNames;
-    QVariantList itemIds;
+    QVariant itemId;
 };
 
 /*!
@@ -99,94 +98,24 @@ QGalleryRemoveRequest::~QGalleryRemoveRequest()
 }
 
 /*!
-    \property QGalleryRemoveRequest::propertyNames
-
-    \brief A list of name of meta-data properties the \l currentItem list
-    should contain values for.
-*/
-
-QStringList QGalleryRemoveRequest::propertyNames() const
-{
-    return d_func()->propertyNames;
-}
-
-void QGalleryRemoveRequest::setPropertyNames(const QStringList &propertyNames)
-{
-    d_func()->propertyNames = propertyNames;
-}
-
-/*!
     \property QGalleryRemoveRequest::itemId
 
     \brief The ID of an item to remove from a gallery.
-
-    This is equivalent to \l itemIds with a single ID.  If there are
-    multiple \l itemIds this will be null.
 */
 
 QVariant QGalleryRemoveRequest::itemId() const
 {
     Q_D(const QGalleryRemoveRequest);
 
-    return d->itemIds.count() == 1
-            ? d->itemIds.first()
-            : QVariant();
+    return d->itemId;
 }
 
 void QGalleryRemoveRequest::setItemId(const QVariant &id)
 {
     Q_D(QGalleryRemoveRequest);
 
-    d->itemIds.clear();
-
-    if (!id.isNull())
-        d->itemIds.append(id);
-
-    emit itemIdsChanged();
+    d->itemId = id;
 }
-
-/*!
-    \property QGalleryRemoveRequest::itemIds
-
-    \brief A list of IDs of items to remove from a gallery.
-
-    If the list only contains one ID this is equivalent to \l itemId.
-*/
-
-QVariantList QGalleryRemoveRequest::itemIds() const
-{
-    return d_func()->itemIds;
-}
-
-void QGalleryRemoveRequest::setItemIds(const QVariantList &ids)
-{
-    d_func()->itemIds = ids;
-
-    emit itemIdsChanged();
-}
-
-/*!
-    \fn QGalleryRemoveRequest::itemIdsChanged()
-
-    Signals that the itemId and itemIds properties have changed.
-*/
-
-/*!
-    \property QGalleryRemoveRequest::currentItem
-
-    \brief A list containing the current item being removed by a request.
-*/
-
-QGalleryItemList *QGalleryRemoveRequest::currentItem() const
-{
-    return d_func()->response;
-}
-
-/*!
-    \fn QGalleryRemoveRequest::currentItemChanged()
-
-    Signals the \l currentItem property has changed.
-*/
 
 /*!
     \reimp
@@ -195,8 +124,6 @@ QGalleryItemList *QGalleryRemoveRequest::currentItem() const
 void QGalleryRemoveRequest::setResponse(QGalleryAbstractResponse *response)
 {
     Q_UNUSED(response);
-
-    emit currentItemChanged();
 }
 
 #include "moc_qgalleryremoverequest.cpp"

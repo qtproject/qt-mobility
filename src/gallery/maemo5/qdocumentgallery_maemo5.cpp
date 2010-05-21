@@ -294,23 +294,16 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
 {
     int result = QGalleryAbstractRequest::Succeeded;
 
-    QGalleryTrackerSchema schema;
-    schema.setItemType(QDocumentGallery::File);
+    QString fileName = QGalleryTrackerSchema::uriFromItemId(&result, request->itemId());
 
-    QStringList fileNames = schema.urisFromItemIds(&result, request->itemIds());
-
-    if (fileNames.isEmpty()) {
+    if (fileName.isNull()) {
         if (result == QGalleryAbstractRequest::Succeeded)
             result = QGalleryAbstractRequest::InvalidItemError;
-    } else {
-        return new QGalleryTrackerFileRemoveResponse(
-                metaDataInterface(),
-                schema,
-                request->propertyNames(),
-                fileNames);
-    }
 
-    return new QGalleryErrorResponse(result);
+        return new QGalleryErrorResponse(result);
+    } else {
+        return new QGalleryTrackerRemoveResponse(fileInterface(), fileName);
+    }
 }
 
 QDocumentGallery::QDocumentGallery(QObject *parent)

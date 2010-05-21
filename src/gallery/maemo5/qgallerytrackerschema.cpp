@@ -1246,7 +1246,7 @@ QString QGalleryTrackerSchema::buildFilterQuery(
     return query;
 }
 
-QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId) const
+QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId)
 {
     QGalleryTypeMap typeMap(qt_galleryTypeMap);
 
@@ -1261,28 +1261,6 @@ QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId)
 
         return QString();
     }
-}
-
-QStringList QGalleryTrackerSchema::urisFromItemIds(int *error, const QVariantList &itemIds) const
-{
-    QStringList uris;
-
-    QGalleryTypeMap typeMap(qt_galleryTypeMap);
-
-    for (QVariantList::const_iterator it = itemIds.begin(), end = itemIds.end();
-            it != end;
-            ++it) {
-        const QString itemId = it->toString();
-
-        int index = typeMap.indexOfItemId(itemId);
-
-        if (index != -1)
-            uris.append(typeMap[index].prefix.strip(itemId).toString());
-        else
-            *error = QGalleryAbstractRequest::InvalidItemError;
-    }
-
-    return uris;
 }
 
 QString QGalleryTrackerSchema::service() const

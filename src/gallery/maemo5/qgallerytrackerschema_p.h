@@ -110,8 +110,7 @@ public:
     QString buildFilterQuery(
             int *error, const QString &containerId, const QGalleryFilter &filter) const;
 
-    QString uriFromItemId(int *error, const QVariant &itemId) const;
-    QStringList urisFromItemIds(int *error, const QVariantList &itemIds) const;
+    static QString uriFromItemId(int *error, const QVariant &itemId);
 
     QString service() const;
     QString field(const QString &propertyName) const;

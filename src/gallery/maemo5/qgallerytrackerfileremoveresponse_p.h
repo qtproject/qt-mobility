@@ -53,24 +53,50 @@
 // We mean it.
 //
 
-#include "qgallerytrackerfileeditresponse_p.h"
+#include <qgalleryabstractresponse.h>
+
+#include "qgallerydbusinterface_p.h"
+
+QT_BEGIN_NAMESPACE
+class QDBusPendingCallWatcher;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerFileRemoveResponse : public QGalleryTrackerFileEditResponse
+class QGalleryTrackerRemoveResponsePrivate;
+
+class QGalleryTrackerRemoveResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:
-    QGalleryTrackerFileRemoveResponse(
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            const QGalleryTrackerSchema &schema,
-            const QStringList &properties,
-            const QStringList &fileNames,
+    QGalleryTrackerRemoveResponse(
+            const QGalleryDBusInterfacePointer &fileInterface,
+            const QString &uri,
             QObject *parent = 0);
-    ~QGalleryTrackerFileRemoveResponse();
+    ~QGalleryTrackerRemoveResponse();
 
-protected:
-    bool editFile(int *error, const QString &path, const QString &fileName);
+    QStringList propertyNames() const;
+    int propertyKey(const QString &name) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const;
+
+    int count() const;
+
+    QVariant id(int index) const;
+    QUrl url(int index) const;
+    QString type(int index) const;
+    QList<QGalleryResource> resources(int index) const;
+    ItemStatus status(int index) const;
+
+    QVariant metaData(int index, int key) const;
+    void setMetaData(int index, int key, const QVariant &value);
+
+    void cancel();
+
+    bool waitForFinished(int msecs);
+
+private:
+    Q_DECLARE_PRIVATE(QGalleryTrackerRemoveResponse)
+    Q_PRIVATE_SLOT(d_func(), void _q_removeFinished(QDBusPendingCallWatcher *))
 };
 
 QTM_END_NAMESPACE
