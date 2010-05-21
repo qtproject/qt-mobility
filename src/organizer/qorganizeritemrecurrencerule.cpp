@@ -53,11 +53,11 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldCount, "Count");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldStartDate, "StartDate");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldEndDate, "EndDate");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldInterval, "Interval");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDayOfWeek, "DayOfWeek");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDayOfMonth, "DayOfMonth");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDayOfYear, "DayOfYear");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldMonth, "Month");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekOfYear, "WeekOfYear");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDaysOfWeek, "DaysOfWeek");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDaysOfMonth, "DaysOfMonth");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDaysOfYear, "DaysOfYear");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldMonths, "Months");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeeksOfYear, "WeeksOfYear");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldPosition, "Position");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStart");
 
@@ -123,19 +123,19 @@ int QOrganizerItemRecurrenceRule::interval() const
 
 // Defaults for the below: empty
 // eg: Monday,Wednesday,Thursday == every Mon, Wed and Thurs.
-void QOrganizerItemRecurrenceRule::setDayOfWeek(const QList<Qt::DayOfWeek>& days)
+void QOrganizerItemRecurrenceRule::setDaysOfWeek(const QList<Qt::DayOfWeek>& days)
 {
     QVariantList variantDays;
     for (int i = 0; i < days.size(); ++i) {
         variantDays << days.at(i);
     }
-    d->m_variantValues.insert(FieldDayOfWeek, variantDays);
+    d->m_variantValues.insert(FieldDaysOfWeek, variantDays);
 }
 
-QList<Qt::DayOfWeek> QOrganizerItemRecurrenceRule::dayOfWeek() const
+QList<Qt::DayOfWeek> QOrganizerItemRecurrenceRule::daysOfWeek() const
 {
     QList<Qt::DayOfWeek> retn;
-    QVariantList variantDays = d->m_variantValues.value(FieldDayOfWeek).toList();
+    QVariantList variantDays = d->m_variantValues.value(FieldDaysOfWeek).toList();
     for (int i = 0; i < variantDays.size(); ++i) {
         Qt::DayOfWeek curr = static_cast<Qt::DayOfWeek>(variantDays.at(i).toInt());
         retn << curr;
@@ -144,19 +144,19 @@ QList<Qt::DayOfWeek> QOrganizerItemRecurrenceRule::dayOfWeek() const
 }
 
 // eg: 31,-3 == 31st day of month (if it exists) and 3rd-last day of month
-void QOrganizerItemRecurrenceRule::setDayOfMonth(const QList<int>& days)
+void QOrganizerItemRecurrenceRule::setDaysOfMonth(const QList<int>& days)
 {
     QVariantList saveList;
     for (int i = 0; i < days.size(); ++i) {
         saveList << days.at(i);
     }
-    d->m_variantValues.insert(FieldDayOfMonth, saveList);
+    d->m_variantValues.insert(FieldDaysOfMonth, saveList);
 }
 
-QList<int> QOrganizerItemRecurrenceRule::dayOfMonth() const
+QList<int> QOrganizerItemRecurrenceRule::daysOfMonth() const
 {
     QList<int> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldDayOfMonth).toList();
+    QVariantList loadList = d->m_variantValues.value(FieldDaysOfMonth).toList();
     for (int i = 0; i < loadList.size(); ++i) {
         retn << loadList.at(i).toInt();
     }
@@ -164,19 +164,19 @@ QList<int> QOrganizerItemRecurrenceRule::dayOfMonth() const
 }
 
 // eg: 47th,-5 == 47th and 5th-last day of year
-void QOrganizerItemRecurrenceRule::setDayOfYear(const QList<int>& days)
+void QOrganizerItemRecurrenceRule::setDaysOfYear(const QList<int>& days)
 {
     QVariantList saveList;
     for (int i = 0; i < days.size(); ++i) {
         saveList << days.at(i);
     }
-    d->m_variantValues.insert(FieldDayOfMonth, saveList);
+    d->m_variantValues.insert(FieldDaysOfYear, saveList);
 }
 
-QList<int> QOrganizerItemRecurrenceRule::dayOfYear() const
+QList<int> QOrganizerItemRecurrenceRule::daysOfYear() const
 {
     QList<int> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldDayOfYear).toList();
+    QVariantList loadList = d->m_variantValues.value(FieldDaysOfYear).toList();
     for (int i = 0; i < loadList.size(); ++i) {
         retn << loadList.at(i).toInt();
     }
@@ -184,19 +184,19 @@ QList<int> QOrganizerItemRecurrenceRule::dayOfYear() const
 }
 
 // eg: January,February == during Jan and Feb
-void QOrganizerItemRecurrenceRule::setMonth(const QList<Month>& months)
+void QOrganizerItemRecurrenceRule::setMonths(const QList<Month>& months)
 {
     QVariantList saveList;
     for (int i = 0; i < months.size(); ++i) {
         saveList << static_cast<int>(months.at(i));
     }
-    d->m_variantValues.insert(FieldDayOfMonth, saveList);
+    d->m_variantValues.insert(FieldMonths, saveList);
 }
 
-QList<QOrganizerItemRecurrenceRule::Month> QOrganizerItemRecurrenceRule::month() const
+QList<QOrganizerItemRecurrenceRule::Month> QOrganizerItemRecurrenceRule::months() const
 {
     QList<QOrganizerItemRecurrenceRule::Month> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldMonth).toList();
+    QVariantList loadList = d->m_variantValues.value(FieldMonths).toList();
     for (int i = 0; i < loadList.size(); ++i) {
         retn << static_cast<QOrganizerItemRecurrenceRule::Month>(loadList.at(i).toInt());
     }
@@ -204,19 +204,19 @@ QList<QOrganizerItemRecurrenceRule::Month> QOrganizerItemRecurrenceRule::month()
 }
 
 // eg. 13,53,-3 == weeks 13 and 53 (if it exists) and the 3rd-last week of the year
-void QOrganizerItemRecurrenceRule::setWeekOfYear(const QList<int>& weeks)
+void QOrganizerItemRecurrenceRule::setWeeksOfYear(const QList<int>& weeks)
 {
     QVariantList saveList;
     for (int i = 0; i < weeks.size(); ++i) {
         saveList << weeks.at(i);
     }
-    d->m_variantValues.insert(FieldDayOfMonth, saveList);
+    d->m_variantValues.insert(FieldWeeksOfYear, saveList);
 }
 
-QList<int> QOrganizerItemRecurrenceRule::weekOfYear() const
+QList<int> QOrganizerItemRecurrenceRule::weeksOfYear() const
 {
     QList<int> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldWeekOfYear).toList();
+    QVariantList loadList = d->m_variantValues.value(FieldWeeksOfYear).toList();
     for (int i = 0; i < loadList.size(); ++i) {
         retn << loadList.at(i).toInt();
     }
@@ -233,7 +233,7 @@ void QOrganizerItemRecurrenceRule::setPosition(const QList<int>& pos)
     for (int i = 0; i < pos.size(); ++i) {
         saveList << pos.at(i);
     }
-    d->m_variantValues.insert(FieldDayOfMonth, saveList);
+    d->m_variantValues.insert(FieldPosition, saveList);
 }
 
 QList<int> QOrganizerItemRecurrenceRule::position() const
@@ -276,16 +276,16 @@ QOrganizerItemRecurrenceRule QOrganizerItemRecurrenceRule::fromVariantValues(con
     converter.setVariantValues(variantValues);
 
     ret.setCount(converter.count());
-    ret.setDayOfMonth(converter.dayOfMonth());
-    ret.setDayOfWeek(converter.dayOfWeek());
-    ret.setDayOfYear(converter.dayOfYear());
+    ret.setDaysOfMonth(converter.daysOfMonth());
+    ret.setDaysOfWeek(converter.daysOfWeek());
+    ret.setDaysOfYear(converter.daysOfYear());
     ret.setEndDate(converter.endDate());
     ret.setFrequency(converter.frequency());
     ret.setInterval(converter.interval());
-    ret.setMonth(converter.month());
+    ret.setMonths(converter.months());
     ret.setPosition(converter.position());
     ret.setStartDate(converter.startDate());
-    ret.setWeekOfYear(converter.weekOfYear());
+    ret.setWeeksOfYear(converter.weeksOfYear());
     ret.setWeekStart(converter.weekStart());
 
     return ret;

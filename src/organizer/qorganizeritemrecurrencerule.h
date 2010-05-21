@@ -104,11 +104,11 @@ public:
     const char* FieldStartDate;
     const char* FieldEndDate;
     const char* FieldInterval;
-    const char* FieldDayOfWeek;
-    const char* FieldDayOfMonth;
-    const char* FieldDayOfYear;
-    const char* FieldMonth;
-    const char* FieldWeekOfYear;
+    const char* FieldDaysOfWeek;
+    const char* FieldDaysOfMonth;
+    const char* FieldDaysOfYear;
+    const char* FieldMonths;
+    const char* FieldWeeksOfYear;
     const char* FieldPosition;
     const char* FieldWeekStart;
 #else
@@ -117,11 +117,11 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldStartDate, "StartDate");
     Q_DECLARE_LATIN1_CONSTANT(FieldEndDate, "EndDate");
     Q_DECLARE_LATIN1_CONSTANT(FieldInterval, "Interval");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDayOfWeek, "DayOfWeek");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDayOfMonth, "DayOfMonth");
-    Q_DECLARE_LATIN1_CONSTANT(FieldDayOfYear, "DayOfYear");
-    Q_DECLARE_LATIN1_CONSTANT(FieldMonth, "Month");
-    Q_DECLARE_LATIN1_CONSTANT(FieldWeekOfYear, "WeekOfYear");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfWeek, "DaysOfWeek");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfMonth, "DaysOfMonth");
+    Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfYear, "DaysOfYear");
+    Q_DECLARE_LATIN1_CONSTANT(FieldMonths, "Months");
+    Q_DECLARE_LATIN1_CONSTANT(FieldWeeksOfYear, "WeeksOfYear");
     Q_DECLARE_LATIN1_CONSTANT(FieldPosition, "Position");
     Q_DECLARE_LATIN1_CONSTANT(FieldWeekStart, "WeekStart");
 #endif
@@ -129,6 +129,7 @@ public:
     // enums
 
     enum Frequency {
+        NoRegularFrequency = 0, // eg: setMonths(<Jan, Feb>), setDaysOfMonth(15,-3)); // doesn't occur monthly, so no freq.
         Daily,
         Weekly,
         Monthly,
@@ -174,24 +175,22 @@ public:
     void setInterval(int interval);
     int interval() const;
 
-    // XXX TODO: move the implementations below to the details.cpp file.
-
     // Defaults for the below: empty
     // eg: Monday,Wednesday,Thursday == every Mon, Wed and Thurs.
-    void setDayOfWeek(const QList<Qt::DayOfWeek>& days);
-    QList<Qt::DayOfWeek> dayOfWeek() const;
+    void setDaysOfWeek(const QList<Qt::DayOfWeek>& days);
+    QList<Qt::DayOfWeek> daysOfWeek() const;
     // eg: 31,-3 == 31st day of month (if it exists) and 3rd-last day of month
-    void setDayOfMonth(const QList<int>& days);
-    QList<int> dayOfMonth() const;
+    void setDaysOfMonth(const QList<int>& days);
+    QList<int> daysOfMonth() const;
     // eg: 47th,-5 == 47th and 5th-last day of year
-    void setDayOfYear(const QList<int>& days);
-    QList<int> dayOfYear() const;
+    void setDaysOfYear(const QList<int>& days);
+    QList<int> daysOfYear() const;
     // eg: January,February == during Jan and Feb
-    void setMonth(const QList<Month>& months);
-    QList<Month> month() const;
+    void setMonths(const QList<Month>& months);
+    QList<Month> months() const;
     // eg. 13,53,-3 == weeks 13 and 53 (if it exists) and the 3rd-last week of the year
-    void setWeekOfYear(const QList<int>& weeks);
-    QList<int> weekOfYear() const;
+    void setWeeksOfYear(const QList<int>& weeks);
+    QList<int> weeksOfYear() const;
 
     // eg. frequency = Monthly, dayOfWeek = Tuesday, positions = 1,-1 means first and last Tuesday
     // of every month.

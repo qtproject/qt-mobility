@@ -230,6 +230,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     }
 
     // then, generate the required (unchanged) instances from the generator.
+    // before doing that, we have to find out all of the exception dates.
     QList<QDateTime> xdates = recur.exceptionDates();
     QList<QOrganizerItemRecurrenceRule> xrules = recur.exceptionRules();
     foreach (const QOrganizerItemRecurrenceRule& xrule, xrules) {
@@ -385,6 +386,13 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizeritem id.
 
         changeSet.insertAddedItem(theOrganizerItem->localId());
+
+        // XXX TODO: prior to all of this, need to check:
+        // 1) is it an Occurrence item?
+        //      - if so, does it differ from the generated instance for that date?
+        //          - if not different, return AlreadyExistsError
+        //          - if different, save it, AND THEN UPDATE THE PARENT ITEM with EXDATE added!
+        //      - if not, the current codepath is ok.
     }
 
     *error = QOrganizerItemManager::NoError;     // successful.
