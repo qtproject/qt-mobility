@@ -42,7 +42,7 @@
 #ifndef QGEOPLACESREPLY_H
 #define QGEOPLACESREPLY_H
 
-#include "qgeolocation.h"
+#include "qgeoplace.h"
 
 #include <QObject>
 #include <QList>
@@ -65,7 +65,6 @@ public:
         UnknownError
     };
 
-    QGeoPlacesReply(QObject *parent = 0);
     QGeoPlacesReply(Error error, const QString &errorString, QObject *parent = 0);
     virtual ~QGeoPlacesReply();
 
@@ -73,7 +72,8 @@ public:
     Error error() const;
     QString errorString() const;
 
-    QList<QGeoLocation> places() const;
+    QGeoBoundingBox bounds() const;
+    QList<QGeoPlace> places() const;
 
 public slots:
     virtual void abort();
@@ -83,11 +83,15 @@ signals:
     void error(QGeoPlacesReply::Error error, const QString &errorString = QString());
 
 protected:
+    QGeoPlacesReply(QObject *parent = 0);
+    QGeoPlacesReply(const QGeoBoundingBox &bounds, QObject *parent = 0);
+
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);
 
-    void addPlace(const QGeoLocation &place);
-    void setPlaces(const QList<QGeoLocation> &places);
+    void setBounds(const QGeoBoundingBox& bounds);
+    void addPlace(const QGeoPlace &place);
+    void setPlaces(const QList<QGeoPlace> &places);
 
 private:
     QGeoPlacesReplyPrivate *d_ptr;

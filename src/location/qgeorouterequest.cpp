@@ -134,20 +134,20 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QGeoRouteRequest::DirectionsDetail
+    \enum QGeoRouteRequest::InstructionDetail
 
-    Defines the amount of direction information that should be included with the
+    Defines the amount of instruction information that should be included with the
     route.
 
-    \value NoDirections
-        No directions should be included with the route.
-    \value BasicDirections
-        Basic directions will be included with the route.  This will typically
+    \value NoInstructions
+        No instructions should be included with the route.
+    \value BasicInstructions
+        Basic instructions will be included with the route.  This will typically
         include QGeoNavigationInstruction::instructionText().
-    \value DetailedDirections
-        Detailed directions will be included with the route.  This will typically
+    \value DetailedInstructions
+        Detailed instructions will be included with the route.  This will typically
         mean that subclasses of QNavigationInstruction are used to provide
-        data structures describing the directions.  See QGeoNavigationInstruction
+        data structures describing the instructions.  See QGeoNavigationInstruction
         and its subclasses for more details.
 
     \sa QGeoNavigationInstruction
@@ -179,14 +179,13 @@ QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoord
     Constructs a route request object from the contents of \a other.
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other)
-    : d_ptr(new QGeoRouteRequestPrivate(*(other.d_ptr))) {}
+    : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys the request.
 */
 QGeoRouteRequest::~QGeoRouteRequest()
 {
-    delete d_ptr;
 }
 
 /*!
@@ -195,7 +194,7 @@ QGeoRouteRequest::~QGeoRouteRequest()
 */
 QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest &other)
 {
-    *d_ptr = *(other.d_ptr);
+    d_ptr = other.d_ptr;
     return *this;
 }
 
@@ -314,45 +313,47 @@ QGeoRouteRequest::RouteOptimization QGeoRouteRequest::routeOptimization() const
 }
 
 /*!
-    Sets the level of the detail to use when representing routing directions
-    to \a directionsDetail.
+    Sets the level of the detail to use when representing routing instructions
+    to \a instructionsDetail.
 
-    The default value is QGeoRouteRequest::BasicDirections.
+    The default value is QGeoRouteRequest::BasicInstructions.
 */
 
-void QGeoRouteRequest::setDirectionsDetail(QGeoRouteRequest::DirectionsDetail directionsDetail)
+void QGeoRouteRequest::setInstructionDetail(QGeoRouteRequest::InstructionDetail instructionDetail)
 {
-    d_ptr->directionsDetail = directionsDetail;
+    d_ptr->instructionDetail = instructionDetail;
 }
 
 /*!
     Returns the level of detail which is used in the representation of routing
-    directions.
+    instructions.
 */
-QGeoRouteRequest::DirectionsDetail QGeoRouteRequest::directionsDetail() const
+QGeoRouteRequest::InstructionDetail QGeoRouteRequest::instructionDetail() const
 {
-    return d_ptr->directionsDetail;
+    return d_ptr->instructionDetail;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
-        : updating(false),
+        : QSharedData(),
+        updating(false),
         numberAlternativeRoutes(0),
         travelModes(QGeoRouteRequest::CarTravel),
         avoidFeatureTypes(QGeoRouteRequest::AvoidNothing),
         routeOptimization(QGeoRouteRequest::FastestRoute),
-        directionsDetail(QGeoRouteRequest::BasicDirections) {}
+        instructionDetail(QGeoRouteRequest::BasicInstructions) {}
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
-        : updating(other.updating),
+        : QSharedData(other),
+        updating(other.updating),
         waypoints(other.waypoints),
         numberAlternativeRoutes(other.numberAlternativeRoutes),
         travelModes(other.travelModes),
         avoidFeatureTypes(other.avoidFeatureTypes),
         routeOptimization(other.routeOptimization),
-        directionsDetail(other.directionsDetail)
+        instructionDetail(other.instructionDetail)
         //transitOptions(other.transitOptions)
 {}
 
@@ -366,7 +367,7 @@ QGeoRouteRequestPrivate& QGeoRouteRequestPrivate::operator= (const QGeoRouteRequ
     travelModes = other.travelModes;
     avoidFeatureTypes = other.avoidFeatureTypes;
     routeOptimization = other.routeOptimization;
-    directionsDetail = other.directionsDetail;
+    instructionDetail = other.instructionDetail;
     //transitOptions = other.transitOptions
 
     return *this;

@@ -44,6 +44,8 @@
 
 #include "qmobilityglobal.h"
 
+#include <QSharedDataPointer>
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -55,26 +57,52 @@ class Q_LOCATION_EXPORT QGeoBoundingBox
 {
 public:
     QGeoBoundingBox();
+    QGeoBoundingBox(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
+    QGeoBoundingBox(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
+
     QGeoBoundingBox(const QGeoBoundingBox &other);
-    QGeoBoundingBox(const QGeoCoordinate &upperLeft, const QGeoCoordinate &lowerRight);
     ~QGeoBoundingBox();
 
     QGeoBoundingBox& operator = (const QGeoBoundingBox &other);
 
     bool operator == (const QGeoBoundingBox &other) const;
+    bool operator != (const QGeoBoundingBox &other) const;
 
     bool isValid() const;
+    bool isEmpty() const;
 
-    void setUpperLeft(const QGeoCoordinate &upperLeft);
-    QGeoCoordinate upperLeft() const;
+    QGeoCoordinate topLeft() const;
+    QGeoCoordinate topRight() const;
+    QGeoCoordinate bottomLeft() const;
+    QGeoCoordinate bottomRight() const;
 
-    void setLowerRight(const QGeoCoordinate &lowerRight);
-    QGeoCoordinate lowerRight() const;
+    void setCenter(const QGeoCoordinate &center);
+    QGeoCoordinate center() const;
 
-    // contains / intersects methods?
+    void setWidth(double degreesWidth);
+    double width() const;
+
+    void setHeight(double degreesHeight);
+    double height();
+
+    bool contains(const QGeoCoordinate &coordinate) const;
+    bool contains(const QGeoBoundingBox &boundingBox) const;
+    bool intersects(const QGeoBoundingBox &boundingBox) const;
+
+    void translate(double degreesLatitude, double degreesLongitude);
+    QGeoBoundingBox translated(double degreesLatitude, double degreesLongitude) const;
+
+    QGeoBoundingBox united(const QGeoBoundingBox &boundingBox) const;
+    QGeoBoundingBox operator | (const QGeoBoundingBox &boundingBox) const;
+    QGeoBoundingBox& operator |= (const QGeoBoundingBox &boundingBox);
+
+    QGeoBoundingBox intersected(const QGeoBoundingBox &boundingBox) const;
+    QGeoBoundingBox operator & (const QGeoBoundingBox &boundingBox) const;
+    QGeoBoundingBox& operator &= (const QGeoBoundingBox &boundingBox);
+
 
 private:
-    QGeoBoundingBoxPrivate *d_ptr;
+    QSharedDataPointer<QGeoBoundingBoxPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

@@ -70,9 +70,14 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoPlacesReply with parent \a parent.
 */
 QGeoPlacesReply::QGeoPlacesReply(QObject *parent)
-        : QObject(parent),
-        d_ptr(new QGeoPlacesReplyPrivate())
+    : QObject(parent),
+    d_ptr(new QGeoPlacesReplyPrivate()) {}
+
+QGeoPlacesReply::QGeoPlacesReply(const QGeoBoundingBox &bounds, QObject *parent)
+    : QObject(parent),
+    d_ptr(new QGeoPlacesReplyPrivate())
 {
+    d_ptr->bounds = bounds;
 }
 
 QGeoPlacesReply::QGeoPlacesReply(Error error, const QString &errorString, QObject *parent)
@@ -117,11 +122,20 @@ QString QGeoPlacesReply::errorString() const
     return d_ptr->errorString;
 }
 
+void QGeoPlacesReply::setBounds(const QGeoBoundingBox &bounds)
+{
+    d_ptr->bounds = bounds;
+}
+
+QGeoBoundingBox QGeoPlacesReply::bounds() const
+{
+    return d_ptr->bounds;
+}
 
 /*!
     Returns a list of places corresponding to the request.
 */
-QList<QGeoLocation> QGeoPlacesReply::places() const
+QList<QGeoPlace> QGeoPlacesReply::places() const
 {
     return d_ptr->places;
 }
@@ -129,7 +143,7 @@ QList<QGeoLocation> QGeoPlacesReply::places() const
 /*!
     Adds \a place to the list of places in this reply.
 */
-void QGeoPlacesReply::addPlace(const QGeoLocation &place)
+void QGeoPlacesReply::addPlace(const QGeoPlace &place)
 {
     d_ptr->places.append(place);
 }
@@ -137,7 +151,7 @@ void QGeoPlacesReply::addPlace(const QGeoLocation &place)
 /*!
     Sets the list of places in the reply to \a places.
 */
-void QGeoPlacesReply::setPlaces(const QList<QGeoLocation> &places)
+void QGeoPlacesReply::setPlaces(const QList<QGeoPlace> &places)
 {
     d_ptr->places = places;
 }
@@ -175,6 +189,7 @@ QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate(const QGeoPlacesReplyPrivate &oth
     : error(error),
     errorString(errorString),
     isFinished(isFinished),
+    bounds(other.bounds),
     places(other.places) {}
 
 QGeoPlacesReplyPrivate::~QGeoPlacesReplyPrivate() {}
@@ -184,6 +199,7 @@ QGeoPlacesReplyPrivate& QGeoPlacesReplyPrivate::operator= (const QGeoPlacesReply
     error = other.error;
     errorString = other.errorString;
     isFinished = other.isFinished;
+    bounds = other.bounds;
     places = other.places;
 
     return *this;

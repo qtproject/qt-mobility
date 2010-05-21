@@ -83,8 +83,8 @@ public:
     void setGeometry(const QList<QGeoCoordinate> &geometry);
     QList<QGeoCoordinate> geometry() const;
 
-    void setInstructions(const QList<const QGeoNavigationInstruction *> &instructions);
-    QList<const QGeoNavigationInstruction*> instructions() const;
+    void setInstruction(const QGeoNavigationInstruction *instruction);
+    const QGeoNavigationInstruction* instruction() const;
 
 protected:
     QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr);

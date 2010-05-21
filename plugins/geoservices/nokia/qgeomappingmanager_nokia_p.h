@@ -87,12 +87,12 @@ public:
     void setProxy(const QNetworkProxy &proxy);
     void setHost(QString host);
 
-    virtual QGeoMappingReply* requestMap(const QGeoCoordinate &center,
+    virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
                                          int zoomLevel,
                                          const QSize &size,
                                          const QGeoMapRequestOptions &requestOptions);
 
-    virtual QGeoMappingReply* requestTile(int row, int col, int zoomLevel,
+    virtual QGeoMapReply* requestTile(int row, int col, int zoomLevel,
                                           const QSize &size,
                                           const QGeoMapRequestOptions &requestOptions);
 
@@ -114,7 +114,7 @@ private:
 
 private slots:
     void mapFinished();
-    void mapError(QGeoMappingReply::Error error, const QString &errorString);
+    void mapError(QGeoMapReply::Error error, const QString &errorString);
 
 private:
     static QString sizeToStr(const QSize &size);
@@ -126,7 +126,7 @@ private:
     QNetworkAccessManager *m_nam;
     QString m_host;
     //QGeoQuadTileCacheNokia* m_cache;
-    QHash<QGeoMappingReply*, QuadTileInfo*> m_pendingReplies;
+    QHash<QGeoMapReply*, QuadTileInfo*> m_pendingReplies;
 
     QString m_token;
     QString m_referrer;

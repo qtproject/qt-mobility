@@ -44,7 +44,7 @@
 
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
-#include "qgeomappingreply.h"
+#include "qgeomapreply.h"
 
 #include <QObject>
 #include <QPixmap>
@@ -77,12 +77,12 @@ public:
 
     virtual ~QGeoMappingManager();
 
-    virtual QGeoMappingReply* requestMap(const QGeoCoordinate &center,
+    virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
                                          int zoomLevel,
                                          const QSize &size,
                                          const QGeoMapRequestOptions &requestOptions) = 0;
 
-    virtual QGeoMappingReply* requestTile(int row, int col, int zoomLevel,
+    virtual QGeoMapReply* requestTile(int row, int col, int zoomLevel,
                                           const QSize &size,
                                           const QGeoMapRequestOptions &requestOptions) = 0;
 
@@ -118,8 +118,8 @@ public:
     virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
 
 signals:
-    void finished(QGeoMappingReply* reply);
-    void error(QGeoMappingReply* reply, QGeoMappingReply::Error error, QString errorString = QString());
+    void finished(QGeoMapReply* reply);
+    void error(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString = QString());
 
 protected:
     QGeoMappingManager(QGeoMappingManagerPrivate &dd);

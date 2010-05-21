@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "qgeomappingreply.h"
-#include "qgeomappingreply_p.h"
+#include "qgeomapreply.h"
+#include "qgeomapreply_p.h"
 
 QTM_BEGIN_NAMESPACE
 /*!
-    \class QGeoMappingReply
-    \brief The QGeoMappingReply class represents the response from a geocoding service.
+    \class QGeoMapReply
+    \brief The QGeoMapReply class represents the response from a geocoding service.
     \ingroup location
 
     This class represents the response from a geocoding service.
@@ -67,39 +67,39 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a QGeoMappingReply with parent \a parent.
+    Constructs a QGeoMapReply with parent \a parent.
 */
-QGeoMappingReply::QGeoMappingReply(QObject *parent)
+QGeoMapReply::QGeoMapReply(QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoMappingReplyPrivate())
+        d_ptr(new QGeoMapReplyPrivate())
 {
 }
 
-QGeoMappingReply::QGeoMappingReply(Error error, const QString &errorString, QObject *parent)
+QGeoMapReply::QGeoMapReply(Error error, const QString &errorString, QObject *parent)
     : QObject(parent),
-    d_ptr(new QGeoMappingReplyPrivate(error, errorString)) {}
+    d_ptr(new QGeoMapReplyPrivate(error, errorString)) {}
 
 /*!
     Destructor.
 */
-QGeoMappingReply::~QGeoMappingReply()
+QGeoMapReply::~QGeoMapReply()
 {
     delete d_ptr;
 }
 
-void QGeoMappingReply::setFinished(bool finished)
+void QGeoMapReply::setFinished(bool finished)
 {
     d_ptr->isFinished = finished;
     if (d_ptr->isFinished)
         emit this->finished();
 }
 
-bool QGeoMappingReply::isFinished() const
+bool QGeoMapReply::isFinished() const
 {
     return d_ptr->isFinished;
 }
 
-void QGeoMappingReply::setError(QGeoMappingReply::Error error, const QString &errorString)
+void QGeoMapReply::setError(QGeoMapReply::Error error, const QString &errorString)
 {
     d_ptr->error = error;
     d_ptr->errorString = errorString;
@@ -107,12 +107,12 @@ void QGeoMappingReply::setError(QGeoMappingReply::Error error, const QString &er
     setFinished(true);
 }
 
-QGeoMappingReply::Error QGeoMappingReply::error() const
+QGeoMapReply::Error QGeoMapReply::error() const
 {
     return d_ptr->error;
 }
 
-QString QGeoMappingReply::errorString() const
+QString QGeoMapReply::errorString() const
 {
     return d_ptr->errorString;
 }
@@ -121,7 +121,7 @@ QString QGeoMappingReply::errorString() const
 /*!
     Returns a list of places corresponding to the request.
 */
-QPixmap QGeoMappingReply::mapImage() const
+QPixmap QGeoMapReply::mapImage() const
 {
     return d_ptr->mapImage;
 }
@@ -130,7 +130,7 @@ QPixmap QGeoMappingReply::mapImage() const
 /*!
     Sets the list of places in the reply to \a places.
 */
-void QGeoMappingReply::setMapImage(const QPixmap &image)
+void QGeoMapReply::setMapImage(const QPixmap &image)
 {
     d_ptr->mapImage = image;
 }
@@ -138,15 +138,15 @@ void QGeoMappingReply::setMapImage(const QPixmap &image)
 /*!
     Cancels the receiving of this reply if the reply hasn't been received already.
 */
-void QGeoMappingReply::abort() {}
+void QGeoMapReply::abort() {}
 
 /*!
-    \fn void QGeoMappingReply::finished()
+    \fn void QGeoMapReply::finished()
 
     Indicates that the reply has been received and processed without error, and is ready to be used.
 */
 /*!
-    \fn void QGeoMappingReply::error(QGeoMappingReply::Error error, const QString &errorString)
+    \fn void QGeoMapReply::error(QGeoMapReply::Error error, const QString &errorString)
 
     Indicates that an error occurred during the receiving or processing of the reply.
 */
@@ -154,25 +154,25 @@ void QGeoMappingReply::abort() {}
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingReplyPrivate::QGeoMappingReplyPrivate()
-    : error(QGeoMappingReply::NoError),
+QGeoMapReplyPrivate::QGeoMapReplyPrivate()
+    : error(QGeoMapReply::NoError),
     errorString(""),
     isFinished(false) {}
 
-QGeoMappingReplyPrivate::QGeoMappingReplyPrivate(QGeoMappingReply::Error error, const QString &errorString)
+QGeoMapReplyPrivate::QGeoMapReplyPrivate(QGeoMapReply::Error error, const QString &errorString)
     : error(error),
     errorString(errorString),
     isFinished(true) {}
 
-QGeoMappingReplyPrivate::QGeoMappingReplyPrivate(const QGeoMappingReplyPrivate &other)
+QGeoMapReplyPrivate::QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other)
     : error(error),
     errorString(errorString),
     isFinished(isFinished),
     mapImage(other.mapImage) {}
 
-QGeoMappingReplyPrivate::~QGeoMappingReplyPrivate() {}
+QGeoMapReplyPrivate::~QGeoMapReplyPrivate() {}
 
-QGeoMappingReplyPrivate& QGeoMappingReplyPrivate::operator= (const QGeoMappingReplyPrivate &other)
+QGeoMapReplyPrivate& QGeoMapReplyPrivate::operator= (const QGeoMapReplyPrivate &other)
 {
     error = other.error;
     errorString = other.errorString;
@@ -182,6 +182,6 @@ QGeoMappingReplyPrivate& QGeoMappingReplyPrivate::operator= (const QGeoMappingRe
     return *this;
 }
 
-#include "moc_qgeomappingreply.cpp"
+#include "moc_qgeomapreply.cpp"
 
 QTM_END_NAMESPACE

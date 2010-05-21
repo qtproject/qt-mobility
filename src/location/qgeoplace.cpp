@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#include "qgeolocation.h"
-#include "qgeolocation_p.h"
+#include "qgeoplace.h"
+#include "qgeoplace_p.h"
 
 #include "qlandmark.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoLocation
-    \brief The QGeoLocation class represents a geolocation.
+    \class QGeoPlace
+    \brief The QGeoPlace class represents a geolocation.
     \ingroup location
 
     This class represent a geo location as returned by QSearchResponse::places().
@@ -57,18 +57,18 @@ QTM_BEGIN_NAMESPACE
 /*!
     Default constructor.
 */
-QGeoLocation::QGeoLocation()
-        : d_ptr(new QGeoLocationPrivate())
+QGeoPlace::QGeoPlace()
+        : d_ptr(new QGeoPlacePrivate())
 {
 }
 
-QGeoLocation::QGeoLocation(QGeoLocationPrivate *dd)
+QGeoPlace::QGeoPlace(QGeoPlacePrivate *dd)
     : d_ptr(dd) {}
 
 /*!
     Constructs a copy of \a other.
 */
-QGeoLocation::QGeoLocation(const QGeoLocation &other)
+QGeoPlace::QGeoPlace(const QGeoPlace &other)
         : d_ptr(other.d_ptr)
 {
 }
@@ -76,7 +76,7 @@ QGeoLocation::QGeoLocation(const QGeoLocation &other)
 /*!
     Destroys the location
 */
-QGeoLocation::~QGeoLocation()
+QGeoPlace::~QGeoPlace()
 {
 }
 
@@ -84,27 +84,27 @@ QGeoLocation::~QGeoLocation()
     Assigns \a other to this location and returns a reference
     to this location.
 */
-QGeoLocation &QGeoLocation::operator= (const QGeoLocation & other)
+QGeoPlace &QGeoPlace::operator= (const QGeoPlace & other)
 {
     d_ptr = other.d_ptr;
     return *this;
 }
 
-inline QGeoLocationPrivate* QGeoLocation::d_func()
+inline QGeoPlacePrivate* QGeoPlace::d_func()
 {
-    return reinterpret_cast<QGeoLocationPrivate*>(d_ptr.data());
+    return reinterpret_cast<QGeoPlacePrivate*>(d_ptr.data());
 }
 
-inline const QGeoLocationPrivate* QGeoLocation::d_func() const
+inline const QGeoPlacePrivate* QGeoPlace::d_func() const
 {
-    return reinterpret_cast<const QGeoLocationPrivate*>(d_ptr.constData());
+    return reinterpret_cast<const QGeoPlacePrivate*>(d_ptr.constData());
 }
 
 /*!
     Returns true if \a other is equal to this location,
     otherwise returns false.
 */
-bool QGeoLocation::operator== (const QGeoLocation &other) const
+bool QGeoPlace::operator== (const QGeoPlace &other) const
 {
     return (d_ptr.constData() == other.d_ptr.constData());
 }
@@ -113,9 +113,16 @@ bool QGeoLocation::operator== (const QGeoLocation &other) const
     Returns true if \a other is not equal to this location,
     otherwise returns false.
 */
-bool QGeoLocation::operator!= (const QGeoLocation &other) const
+bool QGeoPlace::operator!= (const QGeoPlace &other) const
 {
     return (!this->operator ==(other));
+}
+
+/*!
+*/
+QGeoPlace::PlaceType QGeoPlace::type() const
+{
+    return d_ptr->type;
 }
 
 /*!
@@ -124,74 +131,74 @@ bool QGeoLocation::operator!= (const QGeoLocation &other) const
     The x coordinates of the corner points represent longitudes,
     the y coordinates represent latitudes.
 */
-QGeoBoundingBox QGeoLocation::boundingBox() const
+QGeoBoundingBox QGeoPlace::boundingBox() const
 {
-    Q_D(const QGeoLocation);
+    Q_D(const QGeoPlace);
     return d->boundingBox;
 }
 
 /*!
     Sets the \a boundingBox of the location.
 */
-void QGeoLocation::setBoundingBox(const QGeoBoundingBox &boundingBox)
+void QGeoPlace::setBoundingBox(const QGeoBoundingBox &boundingBox)
 {
-    Q_D(QGeoLocation);
+    Q_D(QGeoPlace);
     d->boundingBox = boundingBox;
 }
 
 /*!
     Returns the geocoordinate of this location.
 */
-QGeoCoordinate QGeoLocation::coordinate() const
+QGeoCoordinate QGeoPlace::coordinate() const
 {
-    Q_D(const QGeoLocation);
+    Q_D(const QGeoPlace);
     return d->coordinate;
 }
 
 /*!
     Sets the \a coordinate of this location.
 */
-void QGeoLocation::setCoordinate(const QGeoCoordinate &coordinate)
+void QGeoPlace::setCoordinate(const QGeoCoordinate &coordinate)
 {
-    Q_D(QGeoLocation);
+    Q_D(QGeoPlace);
     d->coordinate = coordinate;
 }
 
 /*!
     Returns the address found.
 */
-QGeoAddress QGeoLocation::address() const
+QGeoAddress QGeoPlace::address() const
 {
-    Q_D(const QGeoLocation);
+    Q_D(const QGeoPlace);
     return d->address;
 }
 
 /*!
     Sets the \a address of this location.
 */
-void QGeoLocation::setAddress(const QGeoAddress &address)
+void QGeoPlace::setAddress(const QGeoAddress &address)
 {
-    Q_D(QGeoLocation);
+    Q_D(QGeoPlace);
     d->address = address;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoLocationPrivate::QGeoLocationPrivate()
+QGeoPlacePrivate::QGeoPlacePrivate()
     : QSharedData(),
-    type(QGeoLocation::GeoLocationType){}
+    type(QGeoPlace::GeoPlaceType){}
 
-QGeoLocationPrivate::QGeoLocationPrivate(const QGeoLocationPrivate &other)
+QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
     : QSharedData(other),
     type(other.type),
     boundingBox(other.boundingBox),
     coordinate(other.coordinate),
     address(other.address) {}
 
-QGeoLocationPrivate::~QGeoLocationPrivate(){}
+QGeoPlacePrivate::~QGeoPlacePrivate(){}
 
-QGeoLocationPrivate& QGeoLocationPrivate::operator= (const QGeoLocationPrivate &other)
+QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate &other)
 {
     type = other.type;
     boundingBox = other.boundingBox;
@@ -201,7 +208,7 @@ QGeoLocationPrivate& QGeoLocationPrivate::operator= (const QGeoLocationPrivate &
     return *this;
 }
 
-bool QGeoLocationPrivate::operator== (const QGeoLocationPrivate &other) const
+bool QGeoPlacePrivate::operator== (const QGeoPlacePrivate &other) const
 {
     return ((type == other.type)
             && (boundingBox == other.boundingBox)

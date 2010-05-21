@@ -55,21 +55,34 @@
 
 #include "qgeocoordinate.h"
 
+#include <QSharedData>
+
 QTM_BEGIN_NAMESPACE
 
-class QGeoBoundingBoxPrivate
+class QGeoBoundingBoxPrivate : public QSharedData
 {
 public:
+    static double longitudeShift(double longitudeFrom, double delta);
+    static double latitudeShift(double latitudeFrom, double delta);
+
+    static double degreesLeft(double longitudeFrom, double longitudeTo);
+    static double degreesRight(double longitudeFrom, double longitudeTo);
+    static double degreesUp(double latitudeFrom, double latitudeTo);
+    static double degreesDown(double latitudeFrom, double latitudeTo);
+
     QGeoBoundingBoxPrivate();
-    QGeoBoundingBoxPrivate(const QGeoCoordinate &upperLeft, const QGeoCoordinate &lowerRight);
+    QGeoBoundingBoxPrivate(const QGeoCoordinate &center, double degreesWidth, double degreesHeight);
+    QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight);
     QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other);
     ~QGeoBoundingBoxPrivate();
 
     QGeoBoundingBoxPrivate& operator= (const QGeoBoundingBoxPrivate &other);
+
     bool operator== (const QGeoBoundingBoxPrivate &other) const;
 
-    QGeoCoordinate upperLeft;
-    QGeoCoordinate lowerRight;
+    QGeoCoordinate center;
+    double width;
+    double height;
 };
 
 QTM_END_NAMESPACE

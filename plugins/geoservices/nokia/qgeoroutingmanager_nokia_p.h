@@ -66,7 +66,7 @@ public:
     QGeoRoutingManagerNokia(QObject *parent = 0);
     ~QGeoRoutingManagerNokia();
 
-    QGeoRouteReply* getRoute(const QGeoRouteRequest& request);
+    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
     void setProxy(const QNetworkProxy &proxy);
     void setHost(QString host);
 

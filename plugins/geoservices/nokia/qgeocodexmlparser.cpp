@@ -71,7 +71,7 @@ bool QGeoCodeXmlParser::parse(QIODevice* source)
     return true;
 }
 
-QList<QGeoLocation> QGeoCodeXmlParser::results() const
+QList<QGeoPlace> QGeoCodeXmlParser::results() const
 {
     return m_results;
 }
@@ -118,12 +118,12 @@ bool QGeoCodeXmlParser::parseRootElement()
 
             while (m_reader->readNextStartElement()) {
                 if (m_reader->name() == "place") {
-                    QGeoLocation location;
+                    QGeoPlace place;
 
-                    if (!parsePlace(&location))
+                    if (!parsePlace(&place))
                         return false;
 
-                    m_results.append(location);
+                    m_results.append(place);
                 } else {
                     m_reader->raiseError(QString("The element \"places\" did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
                     return false;
@@ -146,7 +146,7 @@ bool QGeoCodeXmlParser::parseRootElement()
     return true;
 }
 
-bool QGeoCodeXmlParser::parsePlace(QGeoLocation *location)
+bool QGeoCodeXmlParser::parsePlace(QGeoPlace *place)
 {
     /*
     <xsd:complexType name="Place">
@@ -197,7 +197,7 @@ bool QGeoCodeXmlParser::parsePlace(QGeoLocation *location)
                 return false;
             }
 
-            if (!parseLocation(location))
+            if (!parseLocation(place))
                 return false;
 
             parsedLocation = true;
@@ -211,9 +211,9 @@ bool QGeoCodeXmlParser::parsePlace(QGeoLocation *location)
             if (!parseAddress(&address))
                 return false;
             else
-                location->setAddress(address);
+                place->setAddress(address);
 
-            location->setAddress(address);
+            place->setAddress(address);
 
             parsedAddress = true;
         } else if (name == "alternatives") {
@@ -242,7 +242,7 @@ bool QGeoCodeXmlParser::parsePlace(QGeoLocation *location)
     return true;
 }
 
-bool QGeoCodeXmlParser::parseLocation(QGeoLocation *location)
+bool QGeoCodeXmlParser::parseLocation(QGeoPlace *place)
 {
     /*
     <xsd:complexType name="Location">
@@ -277,7 +277,7 @@ bool QGeoCodeXmlParser::parseLocation(QGeoLocation *location)
             if (!parseCoordinate(&coord, "position"))
                 return false;
 
-            location->setCoordinate(coord);
+            place->setCoordinate(coord);
 
             parsedPosition = true;
         } else if (name == "boundingBox") {
@@ -291,7 +291,7 @@ bool QGeoCodeXmlParser::parseLocation(QGeoLocation *location)
             if (!parseBoundingBox(&bounds))
                 return false;
 
-            location->setBoundingBox(bounds);
+            place->setBoundingBox(bounds);
 
             parsedBounds = true;
         } else {
@@ -472,8 +472,7 @@ bool QGeoCodeXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
         return false;
     }
 
-    bounds->setUpperLeft(nw);
-    bounds->setLowerRight(se);
+    *bounds = QGeoBoundingBox(nw, se);
 
     return true;
 }

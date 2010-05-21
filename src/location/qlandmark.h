@@ -44,7 +44,7 @@
 
 #include "qmobilityglobal.h"
 
-#include "qgeolocation.h"
+#include "qgeoplace.h"
 
 #include <QObject>
 #include <QSharedDataPointer>
@@ -58,15 +58,13 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkId;
 class QLandmarkCategoryId;
-class QGeoLocation;
-class QGeoAddress;
-class QGeoCoordinate;
 
 class QLandmarkPrivate;
-class Q_LOCATION_EXPORT QLandmark : public QGeoLocation
+class Q_LOCATION_EXPORT QLandmark : public QGeoPlace
 {
 public:
     QLandmark();
+    QLandmark(const QGeoPlace &other);
     QLandmark(const QLandmark &other);
     ~QLandmark();
 

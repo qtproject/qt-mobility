@@ -108,7 +108,7 @@ void RouteTab::on_btnRequest_clicked()
 
     resultTree->clear();
 
-    routingManager->getRoute(request);
+    routingManager->calculateRoute(request);
 }
 
 void RouteTab::replyFinished(QGeoRouteReply* reply)

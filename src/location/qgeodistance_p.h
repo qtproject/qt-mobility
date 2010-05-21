@@ -55,9 +55,11 @@
 
 #include "qgeodistance.h"
 
+#include <QSharedData>
+
 QTM_BEGIN_NAMESPACE
 
-class QGeoDistancePrivate
+class QGeoDistancePrivate : public QSharedData
 {
 public:
     QGeoDistancePrivate(double magnitude, QGeoDistance::DistanceUnits units);

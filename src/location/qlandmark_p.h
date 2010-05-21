@@ -54,7 +54,7 @@
 
 #include "qlandmark.h"
 #include "qlandmarkid.h"
-#include "qgeolocation_p.h"
+#include "qgeoplace_p.h"
 #include <QList>
 #include <QHash>
 #include <QSharedData>
@@ -62,10 +62,11 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkPrivate : public QGeoLocationPrivate
+class QLandmarkPrivate : public QGeoPlacePrivate
 {
 public:
     QLandmarkPrivate();
+    QLandmarkPrivate(const QGeoPlacePrivate &other);
     QLandmarkPrivate(const QLandmarkPrivate &other);
     ~QLandmarkPrivate();
 

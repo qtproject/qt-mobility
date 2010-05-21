@@ -76,7 +76,7 @@ public:
     int estimatedTravelTime;
     QGeoDistance length;
     QList<QGeoCoordinate> geometry;
-    QList<const QGeoNavigationInstruction*> instructions;
+    const QGeoNavigationInstruction* instruction;
 };
 
 QTM_END_NAMESPACE

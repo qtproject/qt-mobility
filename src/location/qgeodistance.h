@@ -44,6 +44,8 @@
 
 #include "qmobilityglobal.h"
 
+#include <QSharedDataPointer>
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
@@ -75,7 +77,7 @@ public:
     double convert(DistanceUnits units) const;
 
 private:
-    QGeoDistancePrivate *d_ptr;
+    QSharedDataPointer<QGeoDistancePrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE
