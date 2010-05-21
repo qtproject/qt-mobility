@@ -70,7 +70,7 @@ public:
     QGeoRouteRequest::TravelModes supportedTravelModes;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;
-    QGeoRouteRequest::DirectionsDetails supportedDirectionsDetails;
+    QGeoRouteRequest::InstructionDetails supportedInstructionDetails;
 };
 
 QTM_END_NAMESPACE

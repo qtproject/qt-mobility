@@ -148,8 +148,6 @@ void QGeoRouteSegment::setLength(const QGeoDistance &length)
 
 /*!
     Returns the length of this segment of the route.
-
-    \sa QGeoRouteSegment::setLength()
 */
 QGeoDistance QGeoRouteSegment::length() const
 {
@@ -164,8 +162,6 @@ QGeoDistance QGeoRouteSegment::length() const
 
     The coordinates in \a geometry should be listed in the order in which they
     would be traversed by someone travelling along this segment of the route.
-
-    \sa QGeoRouteSegment::geometry()
 */
 void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
 {
@@ -178,8 +174,6 @@ void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
 
     The coordinates should be listed in the order in which they
     would be traversed by someone travelling along this segment of the route.
-
-    \sa QGeoRouteSegment::setGeometry()
 */
 QList<QGeoCoordinate> QGeoRouteSegment::geometry() const
 {
@@ -188,25 +182,21 @@ QList<QGeoCoordinate> QGeoRouteSegment::geometry() const
 }
 
 /*!
-    Sets the instructions for this route segement to \a instructions.
-
-    \sa QGeoRouteSegment::instructions()
+    Sets the instruction for this route segement to \a instruction.
 */
-void QGeoRouteSegment::setInstructions(const QList<const QGeoNavigationInstruction *> &instructions)
+void QGeoRouteSegment::setInstruction(const QGeoNavigationInstruction *instruction)
 {
     Q_D(QGeoRouteSegment);
-    d->instructions = instructions;
+    d->instruction = instruction;
 }
 
 /*!
-    Returns the instructions for this route segment.
-
-    \sa QGeoRouteSegment::setInstructions()
+    Returns the instruction for this route segment.
 */
-QList<const QGeoNavigationInstruction*> QGeoRouteSegment::instructions() const
+const QGeoNavigationInstruction* QGeoRouteSegment::instruction() const
 {
     Q_D(const QGeoRouteSegment);
-    return d->instructions;
+    return d->instruction;
 }
 
 /*******************************************************************************
@@ -222,7 +212,7 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &
         estimatedTravelTime(other.estimatedTravelTime),
         length(other.length),
         geometry(other.geometry),
-        instructions(other.instructions) {}
+        instruction(other.instruction) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 
@@ -232,7 +222,7 @@ QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegm
     estimatedTravelTime = other.estimatedTravelTime;
     length = other.length;
     geometry = other.geometry;
-    instructions = other.instructions;
+    instruction = other.instruction;
     return *this;
 }
 

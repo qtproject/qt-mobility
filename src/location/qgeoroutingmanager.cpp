@@ -54,7 +54,7 @@ QGeoRoutingManager::~QGeoRoutingManager()
 }
 
 /*!
-\fn QGeoRouteReply* QGeoRoutingService::getRoute(const QGeoRouteRequest& request)
+\fn QGeoRouteReply* QGeoRoutingService::calculateRoute(const QGeoRouteRequest& request)
 */
 
 /*!
@@ -115,16 +115,16 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizat
 
 /*!
 */
-void QGeoRoutingManager::setSupportedDirectionsDetails(QGeoRouteRequest::DirectionsDetails directionsDetails)
+void QGeoRoutingManager::setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails)
 {
-    d_ptr->supportedDirectionsDetails = directionsDetails;
+    d_ptr->supportedInstructionDetails = instructionDetails;
 }
 
 /*!
 */
-QGeoRouteRequest::DirectionsDetails QGeoRoutingManager::supportedDirectionsDetails() const
+QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDetails() const
 {
-    return d_ptr->supportedDirectionsDetails;
+    return d_ptr->supportedInstructionDetails;
 }
 
 /*!
@@ -146,7 +146,7 @@ QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPri
     supportedTravelModes(other.supportedTravelModes),
     supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
     supportedRouteOptimizations(other.supportedRouteOptimizations),
-    supportedDirectionsDetails(other.supportedDirectionsDetails) {}
+    supportedInstructionDetails(other.supportedInstructionDetails) {}
 
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate() {}
 
@@ -156,7 +156,7 @@ QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRouti
     supportedTravelModes = other.supportedTravelModes;
     supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;
     supportedRouteOptimizations = other.supportedRouteOptimizations;
-    supportedDirectionsDetails = other.supportedDirectionsDetails;
+    supportedInstructionDetails = other.supportedInstructionDetails;
 
     return *this;
 }

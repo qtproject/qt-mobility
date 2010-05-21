@@ -51,7 +51,7 @@ void PlacePresenter::show()
 {
     treeWidget->clear();
     QTreeWidgetItem* top = showPlaces();
-    QList<QGeoLocation> places = codingReply->places();
+    QList<QGeoPlace> places = codingReply->places();
 
     for (int i = 0; i < places.length(); i++) {
         showPlace(top, places[i]);
@@ -76,7 +76,7 @@ QTreeWidgetItem* PlacePresenter::showPlaces()
     return top;
 }
 
-void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoLocation& place)
+void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoPlace& place)
 {
     QTreeWidgetItem* prop;
     QTreeWidgetItem* placeItem = new QTreeWidgetItem(top);

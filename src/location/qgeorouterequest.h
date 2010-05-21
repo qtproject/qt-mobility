@@ -45,6 +45,7 @@
 #include "qmobilityglobal.h"
 
 #include <QList>
+#include <QSharedDataPointer>
 
 QT_BEGIN_HEADER
 
@@ -87,12 +88,12 @@ public:
     };
     Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
 
-    enum DirectionsDetail {
-        NoDirections = 0x00001,
-        BasicDirections = 0x0002,
-        DetailedDirections = 0x0004
+    enum InstructionDetail {
+        NoInstructionss = 0x00001,
+        BasicInstructions = 0x0002,
+        DetailedInstructions = 0x0004
     };
-    Q_DECLARE_FLAGS(DirectionsDetails, DirectionsDetail)
+    Q_DECLARE_FLAGS(InstructionDetails, InstructionDetail)
 
     QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints = QList<QGeoCoordinate>());
     QGeoRouteRequest(const QGeoCoordinate &origin,
@@ -125,9 +126,9 @@ public:
     void setRouteOptimization(RouteOptimization optimization);
     RouteOptimization routeOptimization() const;
 
-    // default to NoDirections
-    void setDirectionsDetail(DirectionsDetail directionsDetail);
-    DirectionsDetail directionsDetail() const;
+    // default to NoInstructions
+    void setInstructionDetail(InstructionDetail instructionDetail);
+    InstructionDetail instructionDetail() const;
 
     // defaults to empty - no subclass required yet
     // this is how we handle private / public / truck attributes
@@ -135,13 +136,13 @@ public:
     //QList<const QGeoRouteTransitOptions *> transitOptions() const;
 
 private:
-    QGeoRouteRequestPrivate *d_ptr;
+    QSharedDataPointer<QGeoRouteRequestPrivate> d_ptr;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::TravelModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::AvoidFeatureTypes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::RouteOptimizations)
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::DirectionsDetails)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::InstructionDetails)
 
 QTM_END_NAMESPACE
 

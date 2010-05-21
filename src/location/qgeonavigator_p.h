@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOCODEXMLPARSER_P_H
-#define QGEOCODEXMLPARSER_P_H
+#ifndef QGEONAVIGATOR_P_H
+#define QGEONAVIGATOR_P_H
 
 //
 //  W A R N I N G
@@ -53,44 +53,31 @@
 // We mean it.
 //
 
-#include <qmobilityglobal.h>
+#include <qgeodistance.h>
 
-#include <QString>
-#include <QList>
+QTM_BEGIN_NAMESPACE
 
-class QXmlStreamReader;
-class QIODevice;
+class QGeoPositionInfoSource;
+class QGeoRoutingManager;
 
-#include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
-#include <qgeoplace.h>
-#include <qgeoaddress.h>
-
-QTM_USE_NAMESPACE;
-
-class QGeoCodeXmlParser
-{
+class QGeoNavigatorPrivate {
 public:
-    QGeoCodeXmlParser();
-    ~QGeoCodeXmlParser();
+    QGeoNavigatorPrivate();
+    QGeoNavigatorPrivate(const QGeoNavigatorPrivate &other);
+    ~QGeoNavigatorPrivate();
+    QGeoNavigatorPrivate& operator= (const QGeoNavigatorPrivate &other);
 
-    bool parse(QIODevice* source);
-
-    QList<QGeoPlace> results() const;
-    QString errorString() const;
-
-private:
-    bool parseRootElement();
-    bool parsePlace(QGeoPlace *place);
-    bool parseLocation(QGeoPlace *place);
-    bool parseAddress(QGeoAddress *address);
-    bool parseBoundingBox(QGeoBoundingBox *bounds);
-    bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
-
-    QXmlStreamReader *m_reader;
-
-    QList<QGeoPlace> m_results;
-    QString m_errorString;
+    QGeoPositionInfoSource* positionSource;
+    QGeoRoutingManager* routingManager;
+    QGeoDistance radius;
+    int elapsedTime;
+    QGeoDistance elapsedDistance;
+    int remainingTime;
+    QGeoDistance remainingDistance;
+    int timeNextInstruction;
+    QGeoDistance distanceNextInstruction;
 };
+
+QTM_END_NAMESPACE
 
 #endif

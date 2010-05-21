@@ -204,11 +204,11 @@ void GeoPresenter::showBoundingBox(QTreeWidgetItem* routeItem, const QGeoBoundin
 
     QTreeWidgetItem* nwItem = new QTreeWidgetItem(boxItem);
     nwItem->setText(0, "NW");
-    nwItem->setText(1, formatGeoCoordinate(box.upperLeft()));
+    nwItem->setText(1, formatGeoCoordinate(box.topLeft()));
 
     QTreeWidgetItem* seItem = new QTreeWidgetItem(boxItem);
     seItem->setText(0, "SE");
-    seItem->setText(1, formatGeoCoordinate(box.lowerRight()));
+    seItem->setText(1, formatGeoCoordinate(box.bottomRight()));
 }
 
 QString GeoPresenter::formatGeoCoordinate(const QGeoCoordinate& coord)

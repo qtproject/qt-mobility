@@ -13,7 +13,7 @@ MOBILITY = location
 HEADERS += \
             qgeocodexmlparser_p.h \
             qgeomappingmanager_nokia_p.h \
-            qgeomappingreply_nokia_p.h \
+            qgeomapreply_nokia_p.h \
             qgeoplacesmanager_nokia_p.h \
             qgeoplacesreply_nokia_p.h \
             qgeoroutereply_nokia_p.h \
@@ -24,7 +24,7 @@ HEADERS += \
 SOURCES += \
             qgeocodexmlparser.cpp \
             qgeomappingmanager_nokia.cpp \
-            qgeomappingreply_nokia.cpp \
+            qgeomapreply_nokia.cpp \
             qgeoplacesmanager_nokia.cpp \
             qgeoplacesreply_nokia.cpp \
             qgeoroutereply_nokia.cpp \

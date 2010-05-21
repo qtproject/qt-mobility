@@ -206,7 +206,7 @@ QString QGeoRoutingManagerNokia::trimDouble(qreal degree, int decimalDigits)
         return QString::number(degree, 'g', decimalDigits + index);
 }
 
-QGeoRouteReply* QGeoRoutingManagerNokia::getRoute(const QGeoRouteRequest& request)
+QGeoRouteReply* QGeoRoutingManagerNokia::calculateRoute(const QGeoRouteRequest& request)
 {
     QString reqString = requestString(request);
 

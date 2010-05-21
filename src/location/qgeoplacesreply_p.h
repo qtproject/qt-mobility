@@ -53,13 +53,15 @@
 // We mean it.
 //
 
-#include "qgeolocation.h"
-
 #include "qgeoplacesreply.h"
+
+#include "qgeoboundingbox.h"
 
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoPlace;
 
 class QGeoPlacesReplyPrivate
 {
@@ -75,7 +77,8 @@ public:
     QString errorString;
     bool isFinished;
 
-    QList<QGeoLocation> places;
+    QGeoBoundingBox bounds;
+    QList<QGeoPlace> places;
 };
 
 QTM_END_NAMESPACE

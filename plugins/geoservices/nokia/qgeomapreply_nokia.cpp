@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include "qgeomappingreply_nokia_p.h"
+#include "qgeomapreply_nokia_p.h"
 
-QGeoMappingReplyNokia::QGeoMappingReplyNokia(QNetworkReply *reply, QObject *parent)
-    : QGeoMappingReply(parent),
+QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, QObject *parent)
+    : QGeoMapReply(parent),
     m_reply(reply)
 {
     connect(m_reply,
@@ -56,21 +56,21 @@ QGeoMappingReplyNokia::QGeoMappingReplyNokia(QNetworkReply *reply, QObject *pare
             SLOT(networkError(QNetworkReply::NetworkError)));
 }
 
-QGeoMappingReplyNokia::~QGeoMappingReplyNokia()
+QGeoMapReplyNokia::~QGeoMapReplyNokia()
 {
     //TODO: possible mem leak -> m_reply->deleteLater() ?
 }
 
-void QGeoMappingReplyNokia::abort()
+void QGeoMapReplyNokia::abort()
 {
     m_reply->abort();
     m_reply->deleteLater();
 }
 
-void QGeoMappingReplyNokia::networkFinished()
+void QGeoMapReplyNokia::networkFinished()
 {
     if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoMappingReply::CommunicationError, m_reply->errorString());
+        setError(QGeoMapReply::CommunicationError, m_reply->errorString());
         m_reply->deleteLater();
         return;
     }
@@ -79,7 +79,7 @@ void QGeoMappingReplyNokia::networkFinished()
     
     if (!tile.loadFromData(m_reply->readAll(), "PNG")) {
         // add a qWarning with the actual parser.errorString()
-        setError(QGeoMappingReply::ParseError, "The response from the service was not in a recognisable format.");
+        setError(QGeoMapReply::ParseError, "The response from the service was not in a recognisable format.");
     }
 
     if(!tile.isNull() && !tile.size().isEmpty()) {
@@ -87,14 +87,14 @@ void QGeoMappingReplyNokia::networkFinished()
         setFinished(true);
     } else {
         // add a qWarning with the actual parser.errorString()
-        setError(QGeoMappingReply::ParseError, "The map image is empty.");
+        setError(QGeoMapReply::ParseError, "The map image is empty.");
     }
 
     m_reply->deleteLater();
 }
 
-void QGeoMappingReplyNokia::networkError(QNetworkReply::NetworkError error)
+void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    setError(QGeoMappingReply::CommunicationError, m_reply->errorString());
+    setError(QGeoMapReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }

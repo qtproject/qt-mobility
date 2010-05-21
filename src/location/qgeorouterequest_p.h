@@ -56,10 +56,11 @@
 #include "qgeorouterequest.h"
 
 #include <QList>
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoRouteRequestPrivate
+        class QGeoRouteRequestPrivate : public QSharedData
 {
 public:
     QGeoRouteRequestPrivate();
@@ -74,7 +75,7 @@ public:
     QGeoRouteRequest::TravelModes travelModes;
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;
     QGeoRouteRequest::RouteOptimization routeOptimization;
-    QGeoRouteRequest::DirectionsDetail directionsDetail;
+    QGeoRouteRequest::InstructionDetail instructionDetail;
 
     // defaults to empty - no subclass required yet
     // this is how we handle private / public / truck attributes

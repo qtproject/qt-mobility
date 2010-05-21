@@ -521,11 +521,7 @@ bool QGeoRouteXmlParser::parseManeuver(QGeoRoute *route, QGeoRouteSegment *segme
     } else {
         QGeoNavigationInstruction *instruction = new QGeoNavigationInstruction();
         instruction->setInstructionText(m_reader->attributes().value("description").toString());
-
-        QList<const QGeoNavigationInstruction*> instructions;
-        instructions.append(instruction);
-
-        segment->setInstructions(instructions);
+        segment->setInstruction(instruction);
     }
 
     /* // currently unused, might be used in a qgeoroutesegment subclass later
@@ -735,8 +731,7 @@ bool QGeoRouteXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
         return false;
     }
 
-    bounds->setUpperLeft(nw);
-    bounds->setLowerRight(se);
+    *bounds = QGeoBoundingBox(nw, se);
 
     return true;
 }

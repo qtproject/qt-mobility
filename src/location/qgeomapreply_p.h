@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGREPLY_NOKIA_P_H
-#define QGEOMAPPINGREPLY_NOKIA_P_H
+#ifndef QGEOMAPREPLY_P_H
+#define QGEOMAPREPLY_P_H
 
 //
 //  W A R N I N G
@@ -53,28 +53,27 @@
 // We mean it.
 //
 
-#include <qgeomappingreply.h>
+#include "qgeomapreply.h"
 
-#include <QNetworkReply>
+QTM_BEGIN_NAMESPACE
 
-QTM_USE_NAMESPACE
-
-class QGeoMappingReplyNokia : public QGeoMappingReply
+class QGeoMapReplyPrivate
 {
-    Q_OBJECT
-
 public:
-    QGeoMappingReplyNokia(QNetworkReply *reply, QObject *parent = 0);
-    ~QGeoMappingReplyNokia();
+    QGeoMapReplyPrivate();
+    QGeoMapReplyPrivate(QGeoMapReply::Error error, const QString& errorString);
+    QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other);
+    ~QGeoMapReplyPrivate();
 
-    void abort();
+    QGeoMapReplyPrivate& operator= (const QGeoMapReplyPrivate &other);
 
-private slots:
-    void networkFinished();
-    void networkError(QNetworkReply::NetworkError error);
+    QGeoMapReply::Error error;
+    QString errorString;
+    bool isFinished;
 
-private:
-    QNetworkReply *m_reply;
+    QPixmap mapImage;
 };
+
+QTM_END_NAMESPACE
 
 #endif

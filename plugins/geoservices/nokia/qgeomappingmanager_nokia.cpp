@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qgeomappingmanager_nokia_p.h"
-#include "qgeomappingreply_nokia_p.h"
+#include "qgeomapreply_nokia_p.h"
 
 #include <qgeomappingmanager_p.h>
 
@@ -73,7 +73,7 @@ void QGeoMappingManagerNokia::setHost(QString host)
     m_host = host;
 }
 
-QGeoMappingReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoomLevel,
+QGeoMapReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoomLevel,
                                                        const QSize &size,
                                                        const QGeoMapRequestOptions &requestOptions)
 {
@@ -102,7 +102,7 @@ QGeoMappingReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoo
         QString rawRequest = getRequestString(*info);
         QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
         QNetworkReply* netReply = m_nam->get(netRequest);
-        QGeoMappingReply* mapReply = new QGeoMappingReplyNokia(netReply, this);
+        QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, this);
         m_pendingReplies.insert(mapReply, info);
 
         connect(mapReply,
@@ -111,9 +111,9 @@ QGeoMappingReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoo
                 SLOT(mapFinished()));
 
         connect(mapReply,
-                SIGNAL(error(QGeoMappingReply::Error,QString)),
+                SIGNAL(error(QGeoMapReply::Error,QString)),
                 this,
-                SLOT(mapError(QGeoMappingReply::Error,QString)));
+                SLOT(mapError(QGeoMapReply::Error,QString)));
 
     //}
 
@@ -122,7 +122,7 @@ QGeoMappingReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoo
 
 void QGeoMappingManagerNokia::mapFinished()
 {
-    QGeoMappingReply *reply = qobject_cast<QGeoMappingReply*>(sender());
+    QGeoMapReply *reply = qobject_cast<QGeoMapReply*>(sender());
 
     if (reply) {
 
@@ -139,9 +139,9 @@ void QGeoMappingManagerNokia::mapFinished()
     }
 }
 
-void QGeoMappingManagerNokia::mapError(QGeoMappingReply::Error error, const QString &errorString)
+void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString &errorString)
 {
-    QGeoMappingReply *reply = qobject_cast<QGeoMappingReply*>(sender());
+    QGeoMapReply *reply = qobject_cast<QGeoMapReply*>(sender());
 
     if (reply) {
 
@@ -324,7 +324,7 @@ QGeoCoordinate QGeoMappingManagerNokia::screenPositionToCoordinate(QPointF scree
     return QGeoCoordinate(lat, lng);
 }
 
-QGeoMappingReply* QGeoMappingManagerNokia::requestMap(const QGeoCoordinate &center,
+QGeoMapReply* QGeoMappingManagerNokia::requestMap(const QGeoCoordinate &center,
                                                       int zoomLevel,
                                                       const QSize &size,
                                                       const QGeoMapRequestOptions &requestOptions)

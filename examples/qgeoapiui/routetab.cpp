@@ -126,7 +126,7 @@ void RouteTab::on_btnRequest_clicked()
 
         m_resultTree->clear();
 
-        m_routingManager->getRoute(request);
+        m_routingManager->calculateRoute(request);
     }
     else {
         QMessageBox::warning(this, tr("Routing"), tr("No routing manager available."));

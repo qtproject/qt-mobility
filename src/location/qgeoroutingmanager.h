@@ -58,13 +58,13 @@ public:
     QGeoRoutingManager(QObject *parent = 0);
     virtual ~QGeoRoutingManager();
 
-    virtual QGeoRouteReply* getRoute(const QGeoRouteRequest& request) = 0;
+    virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) = 0;
 
     bool supportsAlternativeRoutes() const;
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
-    QGeoRouteRequest::DirectionsDetails supportedDirectionsDetails() const;
+    QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
 
 signals:
     void finished(QGeoRouteReply* reply);
@@ -75,7 +75,7 @@ protected:
     void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);
     void setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
     void setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations);
-    void setSupportedDirectionsDetails(QGeoRouteRequest::DirectionsDetails directionsDetails);
+    void setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails);
 
 private:
     QGeoRoutingManagerPrivate *d_ptr;

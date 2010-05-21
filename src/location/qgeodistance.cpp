@@ -81,14 +81,13 @@ QGeoDistance::QGeoDistance(double magnitude, DistanceUnits units)
     Constructs a QGeoDistance object from the contents of \a other.
 */
 QGeoDistance::QGeoDistance(const QGeoDistance &other)
-        : d_ptr(new QGeoDistancePrivate(*(other.d_ptr))) {}
+        : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys this QGeoDistance object.
 */
 QGeoDistance::~QGeoDistance()
 {
-    delete d_ptr;
 }
 
 /*!
@@ -97,7 +96,7 @@ QGeoDistance::~QGeoDistance()
 */
 QGeoDistance& QGeoDistance::operator= (const QGeoDistance & other)
 {
-    *d_ptr = *(other.d_ptr);
+    d_ptr = other.d_ptr;
     return *this;
 }
 
@@ -159,11 +158,13 @@ double QGeoDistance::convert(QGeoDistance::DistanceUnits units) const
 *******************************************************************************/
 
 QGeoDistancePrivate::QGeoDistancePrivate(double magnitude, QGeoDistance::DistanceUnits units)
-        : magnitude(magnitude),
+        : QSharedData(),
+        magnitude(magnitude),
         units(units) {}
 
 QGeoDistancePrivate::QGeoDistancePrivate(const QGeoDistancePrivate &other)
-        : magnitude(other.magnitude),
+        : QSharedData(other),
+        magnitude(other.magnitude),
         units(other.units) {}
 
 QGeoDistancePrivate::~QGeoDistancePrivate() {}

@@ -39,19 +39,19 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGREPLY_H
-#define QGEOMAPPINGREPLY_H
+#ifndef QGEOMAPREPLY_H
+#define QGEOMAPREPLY_H
 
-#include "qgeolocation.h"
+#include "qmobilityglobal.h"
 
 #include <QObject>
 #include <QPixmap>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMappingReplyPrivate;
+class QGeoMapReplyPrivate;
 
-class Q_LOCATION_EXPORT QGeoMappingReply : public QObject
+class Q_LOCATION_EXPORT QGeoMapReply : public QObject
 {
     Q_OBJECT
 
@@ -64,9 +64,9 @@ public:
         UnknownError
     };
 
-    QGeoMappingReply(QObject *parent = 0);
-    QGeoMappingReply(Error error, const QString &errorString, QObject *parent = 0);
-    virtual ~QGeoMappingReply();
+    QGeoMapReply(QObject *parent = 0);
+    QGeoMapReply(Error error, const QString &errorString, QObject *parent = 0);
+    virtual ~QGeoMapReply();
 
     bool isFinished() const;
     Error error() const;
@@ -79,7 +79,7 @@ public slots:
 
 signals:
     void finished();
-    void error(QGeoMappingReply::Error error, const QString &errorString = QString());
+    void error(QGeoMapReply::Error error, const QString &errorString = QString());
 
 protected:
     void setError(Error error, const QString &errorString);
@@ -88,8 +88,8 @@ protected:
     void setMapImage(const QPixmap &image);
 
 private:
-    QGeoMappingReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoMappingReply);
+    QGeoMapReplyPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoMapReply);
 };
 
 QTM_END_NAMESPACE
