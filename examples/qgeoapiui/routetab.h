@@ -56,19 +56,23 @@ class RouteTab: public QWidget
     Q_OBJECT
 
 public:
-    RouteTab(QGeoRoutingManager *routingManager, QWidget *parent = 0);
+    RouteTab(QWidget *parent = 0);
     ~RouteTab();
+    
+public slots:
+    void initialize(QGeoRoutingManager *routingManager);
 
 private slots:
     void on_btnRequest_clicked();
     void replyFinished(QGeoRouteReply* reply);
+    void resultsError(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString);
 
 private:
-    QGeoRoutingManager *routingManager;
-    QLineEdit *srcLong;
-    QLineEdit *srcLat;
-    QLineEdit *destLong;
-    QLineEdit *destLat;
-    QTreeWidget *resultTree;
+    QGeoRoutingManager *m_routingManager;
+    QLineEdit *m_srcLong;
+    QLineEdit *m_srcLat;
+    QLineEdit *m_destLong;
+    QLineEdit *m_destLat;
+    QTreeWidget *m_resultTree;
 };
 #endif /* ROUTETAB_H_ */

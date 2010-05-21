@@ -43,7 +43,7 @@
 #define MAPTILETAB_H_
 
 #include <QWidget>
-#include "qmaptileservice.h"
+#include <qgeomappingmanager.h>
 
 class QLabel;
 class QLineEdit;
@@ -57,16 +57,20 @@ class MapTileTab: public QWidget
 public:
     MapTileTab(QWidget *parent = 0);
     ~MapTileTab();
+    
+public slots:
+    void initialize(QGeoMappingManager *mapManager);
 
 private slots:
     void on_btnRequest_clicked();
-    void replyFinished(QMapTileReply* reply);
+    void replyFinished(QGeoMappingReply* reply);
+    void resultsError(QGeoMappingReply* reply, QGeoMappingReply::Error error, QString errorString);
 
 private:
-    QMapTileService *mapService;
-    QLineEdit *tileLong;
-    QLineEdit *tileLat;
-    QLineEdit *tileZoomLevel;
-    QLabel *result;
+    QGeoMappingManager *m_mapManager;
+    QLineEdit *m_tileLong;
+    QLineEdit *m_tileLat;
+    QLineEdit *m_tileZoomLevel;
+    QLabel *m_result;
 };
 #endif /* ROUTETAB_H_ */

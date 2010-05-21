@@ -39,15 +39,16 @@
 **
 ****************************************************************************/
 
-#include <QTabWidget>
-#include <QVBoxLayout>
-#include "tabbeddialog.h"
+#include "tabbedwindow.h"
 #include "routetab.h"
 #include "geocodingtab.h"
 #include "revgeocodingtab.h"
-//#include "maptiletab.h"
+#include "maptiletab.h"
+//#include "servicestab.h"
 
 #include <QApplication>
+#include <QTabWidget>
+#include <QVBoxLayout>
 #include <QTimer>
 #include <QMessageBox>
 
@@ -55,9 +56,12 @@
 #include <qnetworkconfigmanager.h>
 #endif
 
-TabbedDialog::TabbedDialog(QWidget *parent)
-    : QDialog(parent)
+TabbedWindow::TabbedWindow(QWidget *parent)
+    : QMainWindow(parent)
 {
+
+    setWindowTitle(tr("QGeoApiUI Example"));
+
 #ifdef Q_OS_SYMBIAN
     // Set Internet Access Point
     QNetworkConfigurationManager manager;
@@ -71,38 +75,48 @@ TabbedDialog::TabbedDialog(QWidget *parent)
         return;
     }
 
-    session = new QNetworkSession(cfg, this);
-    session->open();
-    session->waitForOpened(-1);
+    m_session = new QNetworkSession(cfg, this);
+    m_session->open();
+    m_session->waitForOpened(-1);
 #endif
     QMap<QString,QString> parameters;
     parameters.insert("places.proxy", "172.16.42.137");
     parameters.insert("places.host", "dev-a7.bln.gate5.de");
     parameters.insert("routing.proxy", "172.16.42.137");
     parameters.insert("routing.host", "172.24.32.155");
+    parameters.insert("mapping.proxy", "172.16.42.40");
+    parameters.insert("mapping.host", "origin.maptile.svc.tst.s2g.gate5.de");
+
     
-    serviceProvider = new QGeoServiceProvider("nokia", parameters);
-    if (serviceProvider->error() != QGeoServiceProvider::NoError) {
+    m_serviceProvider = new QGeoServiceProvider("nokia", parameters);
+    if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("QGeoApiUI Example"), tr(
                                      "Unable to find the nokia geoservices plugin."));
         QTimer::singleShot(0, qApp, SLOT(quit()));
         return;
     }
-
-    tabWidget = new QTabWidget;
-    tabWidget->addTab(new RouteTab(serviceProvider->routingManager()), tr("Route"));
-    tabWidget->addTab(new GeocodingTab(serviceProvider->placesManager()), tr("Geocoding"));
-    tabWidget->addTab(new ReverseGeocodingTab(serviceProvider->placesManager()), tr("Reverse Geocoding"));
-    //tabWidget->addTab(new MapTileTab(), tr("Map Tile"));
     
-    QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(tabWidget);
-    setLayout(mainLayout);
-    setWindowTitle(tr("QGeoApiUI Example"));    
+//    ServicesTab* services = new ServicesTab();
+    GeocodingTab* geocoding = new GeocodingTab();
+    geocoding->initialize(m_serviceProvider->placesManager());
+    ReverseGeocodingTab* reverse = new ReverseGeocodingTab();
+    reverse->initialize(m_serviceProvider->placesManager());
+    RouteTab* routing = new RouteTab();
+    routing->initialize(m_serviceProvider->routingManager());
+    MapTileTab* mapping = new MapTileTab();
+    mapping->initialize(m_serviceProvider->mappingManager());
+    
+    m_tabWidget = new QTabWidget;
+    m_tabWidget->addTab(routing, tr("Route"));
+    m_tabWidget->addTab(geocoding, tr("Geocoding"));
+    m_tabWidget->addTab(reverse, tr("Reverse Geocoding"));
+    m_tabWidget->addTab(mapping, tr("Map Tile"));
+    
+    setCentralWidget(m_tabWidget);
 }
 
-TabbedDialog::~TabbedDialog()
+TabbedWindow::~TabbedWindow()
 {
-    delete serviceProvider;
+    delete m_serviceProvider;
 }
 

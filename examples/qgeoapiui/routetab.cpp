@@ -39,6 +39,9 @@
 **
 ****************************************************************************/
 
+#include "routetab.h"
+#include "routepresenter.h"
+
 #include <QTreeWidget>
 #include <QLineEdit>
 #include <QString>
@@ -46,52 +49,54 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
-
-#include "routetab.h"
-#include "routepresenter.h"
-
+#include <QMessageBox>
 #include <qgeorouterequest.h>
 
-RouteTab::RouteTab(QGeoRoutingManager *routingManager, QWidget *parent) :
+RouteTab::RouteTab(QWidget *parent) :
     QWidget(parent),
-    routingManager(routingManager)
+    m_routingManager(NULL)
 {
-    QObject::connect(routingManager, SIGNAL(finished(QGeoRouteReply*)),
-                     this, SLOT(replyFinished(QGeoRouteReply*)));
-
     QLabel *source = new QLabel(tr("Source:"));
-    srcLong = new QLineEdit("10");
-    srcLat = new QLineEdit("50");
+    m_srcLong = new QLineEdit("10");
+    m_srcLong->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_srcLat = new QLineEdit("50");
+    m_srcLat->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     
     QLabel *destination = new QLabel(tr("Destination:"));
-    destLong = new QLineEdit("1");
-    destLat = new QLineEdit("48");
+    m_destLong = new QLineEdit("1");
+    m_destLong->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_destLat = new QLineEdit("48");
+    m_destLat->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     QPushButton *requestBtn = new QPushButton(tr("Request Route"));
+    requestBtn->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)),
                      this, SLOT(on_btnRequest_clicked()));
-    resultTree = new QTreeWidget();
+    m_resultTree = new QTreeWidget();
     QStringList labels;
-    labels << "Elements" << "Value";
-    resultTree->setHeaderLabels(labels);
+    labels << tr("Elements") << tr("Value");
+    m_resultTree->setHeaderLabels(labels);
 
     QHBoxLayout *firstrow = new QHBoxLayout;
+    firstrow->setSpacing(0);
+    firstrow->setContentsMargins(0,0,0,0);
     firstrow->addWidget(source);
-    firstrow->addWidget(srcLong);
-    firstrow->addWidget(srcLat);
+    firstrow->addWidget(m_srcLong);
+    firstrow->addWidget(m_srcLat);
     firstrow->addWidget(requestBtn);
-    firstrow->addStretch(1);
-    
+  
     QHBoxLayout *secondrow = new QHBoxLayout;
+    secondrow->setSpacing(0);
+    secondrow->setContentsMargins(0,0,0,0);
     secondrow->addWidget(destination);
-    secondrow->addWidget(destLong);
-    secondrow->addWidget(destLat);
-    secondrow->addStretch(1);
+    secondrow->addWidget(m_destLong);
+    secondrow->addWidget(m_destLat);
     
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setSpacing(2);
+    mainLayout->setContentsMargins(2,1,2,1);
     mainLayout->addLayout(firstrow);
     mainLayout->addLayout(secondrow);
-    mainLayout->addWidget(resultTree);
-    mainLayout->addStretch(1);
+    mainLayout->addWidget(m_resultTree);
     setLayout(mainLayout);
 }
 
@@ -99,21 +104,46 @@ RouteTab::~RouteTab()
 {
 }
 
+void RouteTab::initialize(QGeoRoutingManager *routingManager)
+{
+    m_routingManager = routingManager;
+    if (m_routingManager) {
+        QObject::connect(m_routingManager, SIGNAL(finished(QGeoRouteReply*)), this,
+            SLOT(replyFinished(QGeoRouteReply*)));
+        QObject::connect(m_routingManager,
+            SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)), this,
+            SLOT(resultsError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+    }
+}
+
 void RouteTab::on_btnRequest_clicked()
 {
-    QGeoCoordinate src(srcLat->text().toDouble(), srcLong->text().toDouble());
-    QGeoCoordinate dst(destLat->text().toDouble(), destLong->text().toDouble());
+    if (m_routingManager) {
+        QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
+        QGeoCoordinate dst(m_destLat->text().toDouble(), m_destLong->text().toDouble());
 
-    QGeoRouteRequest request(src, dst);
+        QGeoRouteRequest request(src, dst);
 
-    resultTree->clear();
+        m_resultTree->clear();
 
-    routingManager->getRoute(request);
+        m_routingManager->getRoute(request);
+    }
+    else {
+        QMessageBox::warning(this, tr("Routing"), tr("No routing manager available."));
+    }
 }
 
 void RouteTab::replyFinished(QGeoRouteReply* reply)
 {
-    RoutePresenter presenter(resultTree, reply);
+    RoutePresenter presenter(m_resultTree, reply);
     presenter.show();
+    reply->deleteLater();
+}
+
+void RouteTab::resultsError(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString)
+{
+    QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
+    top->setText(0, tr("Error"));
+    top->setText(1, errorString);
     reply->deleteLater();
 }

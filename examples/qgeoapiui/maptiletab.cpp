@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#include "maptiletab.h"
+
 #include <QTreeWidget>
 #include <QLineEdit>
 #include <QString>
@@ -46,79 +48,96 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
-
-#include "maptiletab.h"
-#include "qmaptileservice_nokia_p.h"
+#include <QMessageBox>
+#include <qgeomappingmanager.h>
+#include <qgeomaprequestoptions.h>
 
 MapTileTab::MapTileTab(QWidget *parent) 
-    : QWidget(parent)
+    : QWidget(parent),
+    m_mapManager(NULL)
 {
-    QMapTileServiceNokia *service = new QMapTileServiceNokia();
-    QNetworkProxy proxy(QNetworkProxy::HttpProxy, "172.16.42.40", 8080);
-    service->setHost("origin.maptile.svc.tst.s2g.gate5.de");
-    //service->setHost("maptile.maps.svc.ovi.com");
-
-    mapService = service;
-    QObject::connect(mapService, SIGNAL(finished(QMapTileReply*)), 
-                     this, SLOT(replyFinished(QMapTileReply*)));
-    
     QLabel *coordlbl = new QLabel(tr("Coordinates:"));
-    tileLong = new QLineEdit("-74");
-    tileLat = new QLineEdit("40.7");
+    m_tileLong = new QLineEdit("-74");
+    m_tileLong->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_tileLat = new QLineEdit("40.7");
+    m_tileLat->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
     QLabel *zoomlbl = new QLabel(tr("Zoom:"));
-    tileZoomLevel = new QLineEdit("8");
+    m_tileZoomLevel = new QLineEdit("8");
+    m_tileZoomLevel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
 
     QPushButton *requestBtn = new QPushButton(tr("Request Map Tile"));
+    requestBtn->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
     
-    result = new QLabel(tr("MapTile"));
+    m_result = new QLabel(tr("MapTile"));
 
     QHBoxLayout *firstrow = new QHBoxLayout;
+    firstrow->setSpacing(0);
+    firstrow->setContentsMargins(0,0,0,0);
     firstrow->addWidget(coordlbl);
-    firstrow->addWidget(tileLong);
-    firstrow->addWidget(tileLat);
-    firstrow->addStretch(1);
+    firstrow->addWidget(m_tileLong);
+    firstrow->addWidget(m_tileLat);
     
     QHBoxLayout *secondrow = new QHBoxLayout;
+    secondrow->setSpacing(0);
+    secondrow->setContentsMargins(0,0,0,0);
     secondrow->addWidget(zoomlbl);
-    secondrow->addWidget(tileZoomLevel);
+    secondrow->addWidget(m_tileZoomLevel);
     secondrow->addWidget(requestBtn);
-    secondrow->addStretch(1);
     
     QHBoxLayout *resultrow = new QHBoxLayout;
-    resultrow->addWidget(result);
-    resultrow->addStretch(1);
+    resultrow->setSpacing(0);
+    resultrow->setContentsMargins(0,0,0,0);
+    resultrow->addWidget(m_result);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setSpacing(2);
+    mainLayout->setContentsMargins(2,1,2,1);
     mainLayout->addLayout(firstrow);
     mainLayout->addLayout(secondrow);
     mainLayout->addLayout(resultrow);
-    mainLayout->addStretch(1);
     setLayout(mainLayout);
 }
 
 MapTileTab::~MapTileTab()
 {
-    delete mapService;
+}
+
+void MapTileTab::initialize(QGeoMappingManager *mapManager)
+{
+    m_mapManager = mapManager;
+    if (m_mapManager) {
+        QObject::connect(m_mapManager, SIGNAL(finished(QGeoMappingReply*)), this,
+            SLOT(replyFinished(QGeoMappingReply*)));
+        QObject::connect(m_mapManager,
+            SIGNAL(error(QGeoMappingReply*,QGeoMappingReply::ErrorCode,QString)), this,
+            SLOT(resultsError(QGeoMappingReply*,QGeoMappingReply::ErrorCode,QString)));
+    }
 }
 
 void MapTileTab::on_btnRequest_clicked()
 {
-    QGeoCoordinate coord(tileLat->text().toDouble(),
-                         tileLong->text().toDouble()
-                        );
-    quint16 zoomLevel = tileZoomLevel->text().toInt();
+    if (m_mapManager) {
+        m_result->setText(tr("Loading map tile"));
 
-    quint32 col;
-    quint32 row;
-    mapService->getMercatorTileIndex(coord, zoomLevel, &row, &col);
-    mapService->request(zoomLevel, row, col);
+        QGeoCoordinate coord(m_tileLat->text().toDouble(), m_tileLong->text().toDouble());
+        quint16 zoomLevel = m_tileZoomLevel->text().toInt();
+        if(!m_mapManager->requestMap(coord,zoomLevel,QSize(256,256), QGeoMapRequestOptions()))
+            m_result->setText(tr("Error - requestMap returned NULL"));        
+    }
+    else {
+        QMessageBox::warning(this, tr("MapTile"), tr("No mapping manager available."));
+    }
 }
 
-void MapTileTab::replyFinished(QMapTileReply* reply)
+void MapTileTab::replyFinished(QGeoMappingReply* reply)
 {
-    QPixmap pixmap;
-    pixmap.loadFromData(reply->data());
-    result->setPixmap(pixmap);
+    m_result->setPixmap(reply->mapImage());
+    reply->deleteLater();
+}
+
+void MapTileTab::resultsError(QGeoMappingReply* reply, QGeoMappingReply::Error error, QString errorString)
+{
+    m_result->setText(tr("Error ")+errorString);
     reply->deleteLater();
 }

@@ -10,19 +10,21 @@ INCLUDEPATH += ../../src/global \
 SOURCES += main.cpp\
         routepresenter.cpp \
         placepresenter.cpp \
-        tabbeddialog.cpp \
+        tabbedwindow.cpp \
         routetab.cpp \
         geocodingtab.cpp \
-        revgeocodingtab.cpp
-        #maptiletab.cpp
+        revgeocodingtab.cpp \
+        maptiletab.cpp 
+        #servicestab.cpp
 
 HEADERS  += routepresenter.h \
         placepresenter.h \
-        tabbeddialog.h \
+        tabbedwindow.h \
         routetab.h \
         geocodingtab.h \
-        revgeocodingtab.h
-        #maptiletab.h
+        revgeocodingtab.h \
+        maptiletab.h
+        #servicestab.h
 
 include(../examples.pri)
 

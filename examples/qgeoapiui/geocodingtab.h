@@ -55,22 +55,26 @@ class GeocodingTab: public QWidget
     Q_OBJECT
 
 public:
-    GeocodingTab(QGeoPlacesManager *placesManager, QWidget *parent = 0);
+    GeocodingTab(QWidget *parent = 0);
     ~GeocodingTab();
+    
+public slots:
+    void initialize(QGeoPlacesManager *placesManager);
 
 private slots:
     void on_btnRequest_clicked();
     void replyFinished(QGeoPlacesReply* reply);
-    
+    void resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode,QString errorString);
+
 private:
-    QGeoPlacesManager *placesManager;
-    QLineEdit *obloc;
-    QLineEdit *country;
-    QLineEdit *state;
-    QLineEdit *city;
-    QLineEdit *zip;
-    QLineEdit *street;
-    QLineEdit *streetNumber;
-    QTreeWidget *resultTree;
+    QGeoPlacesManager *m_placesManager;
+    QLineEdit *m_obloc;
+    QLineEdit *m_country;
+    QLineEdit *m_state;
+    QLineEdit *m_city;
+    QLineEdit *m_zip;
+    QLineEdit *m_street;
+    QLineEdit *m_streetNumber;
+    QTreeWidget *m_resultTree;
 };
 #endif /* ROUTETAB_H_ */

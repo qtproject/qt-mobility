@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef TABBEDDIALOG_H_
-#define TABBEDDIALOG_H_
+#ifndef TABBEDWINDOW_H_
+#define TABBEDWINDOW_H_
 
-#include <QDialog>
+#include <QMainWindow>
 #include <QTabWidget>
 
 class QTabWidget;
@@ -54,20 +54,20 @@ class QTabWidget;
 
 QTM_USE_NAMESPACE
 
-class TabbedDialog: public QDialog
+class TabbedWindow: public QMainWindow
 {
 Q_OBJECT
 
 public:
-    TabbedDialog(QWidget *parent = 0);
-    virtual ~TabbedDialog();
+    TabbedWindow(QWidget *parent = 0);
+    virtual ~TabbedWindow();
 
 private:
-    QTabWidget *tabWidget;
+    QTabWidget *m_tabWidget;
 #ifdef Q_OS_SYMBIAN
-    QNetworkSession *session;
+    QNetworkSession *m_session;
 #endif
-    QGeoServiceProvider *serviceProvider;
+    QGeoServiceProvider *m_serviceProvider;
 };
 
-#endif /* TABBEDDIALOG_H_ */
+#endif /* TABBEDWINDOW_H_ */

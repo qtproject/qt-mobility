@@ -56,17 +56,21 @@ class ReverseGeocodingTab: public QWidget
     Q_OBJECT
 
 public:
-    ReverseGeocodingTab(QGeoPlacesManager *placesManager, QWidget *parent = 0);
+    ReverseGeocodingTab(QWidget *parent = 0);
     ~ReverseGeocodingTab();
+    
+public slots:
+    void initialize(QGeoPlacesManager *placesManager);
 
 private slots:
     void on_btnRequest_clicked();
     void replyFinished(QGeoPlacesReply* reply);
+    void resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode,QString errorString);
 
 private:
-    QGeoPlacesManager *placesManager;
-    QLineEdit *locLong;
-    QLineEdit *locLat;
-    QTreeWidget *resultTree;
+    QGeoPlacesManager *m_placesManager;
+    QLineEdit *m_locLong;
+    QLineEdit *m_locLat;
+    QTreeWidget *m_resultTree;
 };
 #endif /* ROUTETAB_H_ */

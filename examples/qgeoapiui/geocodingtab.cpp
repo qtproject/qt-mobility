@@ -39,6 +39,9 @@
 **
 ****************************************************************************/
 
+#include "geocodingtab.h"
+#include "placepresenter.h"
+
 #include <QTreeWidget>
 #include <QLineEdit>
 #include <QString>
@@ -46,73 +49,79 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPushButton>
-
-#include "geocodingtab.h"
-
-#include "placepresenter.h"
-
+#include <QMessageBox>
 #include <qgeoaddress.h>
 
-GeocodingTab::GeocodingTab(QGeoPlacesManager *placesManager, QWidget *parent) :
+GeocodingTab::GeocodingTab(QWidget *parent) :
     QWidget(parent),
-    placesManager(placesManager)
+        m_placesManager(NULL)
 {    
-    QObject::connect(placesManager, SIGNAL(finished(QGeoPlacesReply*)),
-                     this, SLOT(replyFinished(QGeoPlacesReply*)));
+    m_obloc = new QLineEdit("Deutschland, München");
+    m_obloc->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-    obloc = new QLineEdit("Deutschland, München");
     QLabel *countrylbl = new QLabel(tr("Country:"));
-    country = new QLineEdit("");
+    m_country = new QLineEdit("");
+    m_country->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QLabel *statelbl = new QLabel(tr("State:"));
-    state = new QLineEdit("");
+    m_state = new QLineEdit("");
+    m_state->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QLabel *citylbl = new QLabel(tr("City:"));
-    city = new QLineEdit("");
+    m_city = new QLineEdit("");
+    m_city->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QLabel *ziplbl = new QLabel(tr("Zip:"));
-    zip = new QLineEdit("");
-    QLabel *streetlbl = new QLabel(tr("street:"));
-    street = new QLineEdit("");
+    m_zip = new QLineEdit("");
+    m_zip->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    QLabel *streetlbl = new QLabel(tr("Street:"));
+    m_street = new QLineEdit("");
+    m_street->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QLabel *streetnumlbl = new QLabel(tr("#:"));
-    streetNumber = new QLineEdit("");
+    m_streetNumber = new QLineEdit("");
+    m_streetNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     QPushButton *requestBtn = new QPushButton(tr("Geocoding"));
+    requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
 
-    resultTree = new QTreeWidget();
+    m_resultTree = new QTreeWidget();
     QStringList labels;
-    labels << "Elements" << "Value";
-    resultTree->setHeaderLabels(labels);
-    resultTree->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    resultTree->setColumnWidth(0, 150);
+    labels << tr("Elements") << tr("Value");
+    m_resultTree->setHeaderLabels(labels);
+    m_resultTree->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    m_resultTree->setColumnWidth(0, 150);
 
     QHBoxLayout *firstrow = new QHBoxLayout;
-    firstrow->addWidget(obloc);
+    firstrow->setSpacing(0);
+    firstrow->setContentsMargins(0, 0, 0, 0);
+    firstrow->addWidget(m_obloc);
     firstrow->addWidget(requestBtn);
-    firstrow->addStretch(1);
 
     QHBoxLayout *secondrow = new QHBoxLayout;
+    secondrow->setSpacing(0);
+    secondrow->setContentsMargins(0, 0, 0, 0);
     secondrow->addWidget(streetlbl);
-    secondrow->addWidget(street);
+    secondrow->addWidget(m_street);
     secondrow->addWidget(streetnumlbl);
-    secondrow->addWidget(streetNumber);
+    secondrow->addWidget(m_streetNumber);
     secondrow->addWidget(ziplbl);
-    secondrow->addWidget(zip);
-    secondrow->addStretch(1);
+    secondrow->addWidget(m_zip);
 
     QHBoxLayout *thirdrow = new QHBoxLayout;
+    thirdrow->setSpacing(0);
+    thirdrow->setContentsMargins(0, 0, 0, 0);
     thirdrow->addWidget(citylbl);
-    thirdrow->addWidget(city);
+    thirdrow->addWidget(m_city);
     thirdrow->addWidget(statelbl);
-    thirdrow->addWidget(state);
+    thirdrow->addWidget(m_state);
     thirdrow->addWidget(countrylbl);
-    thirdrow->addWidget(country);
-    thirdrow->addStretch(1);
-    
+    thirdrow->addWidget(m_country);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
+    mainLayout->setSpacing(2);
+    mainLayout->setContentsMargins(2, 1, 2, 1);
     mainLayout->addLayout(firstrow);
     mainLayout->addLayout(secondrow);
     mainLayout->addLayout(thirdrow);
-    mainLayout->addWidget(resultTree);
-    mainLayout->addStretch(1);
+    mainLayout->addWidget(m_resultTree);
     setLayout(mainLayout);
 }
 
@@ -120,30 +129,55 @@ GeocodingTab::~GeocodingTab()
 {
 }
 
+void GeocodingTab::initialize(QGeoPlacesManager *placesManager)
+{
+    m_placesManager = placesManager;
+    if (m_placesManager) {
+        QObject::connect(m_placesManager, SIGNAL(finished(QGeoPlacesReply*)), this,
+            SLOT(replyFinished(QGeoPlacesReply*)));
+        QObject::connect(m_placesManager,
+            SIGNAL(error(QGeoPlacesReply*,QGeoCodingService::ErrorCode,QString)), this,
+            SLOT(resultsError(QGeoPlacesReply*,QGeoCodingService::ErrorCode,QString)));
+    }
+}
+
 void GeocodingTab::on_btnRequest_clicked()
 {
-    QString s = obloc->text();
+    if (m_placesManager) {
+        QString s = m_obloc->text();
 
-    resultTree->clear();
+        m_resultTree->clear();
 
-    if (!s.isEmpty()) {
-        placesManager->placesSearch(s, QGeoPlacesManager::SearchGeocodeOnly);
+        if (!s.isEmpty()) {
+            m_placesManager->placesSearch(s, QGeoPlacesManager::SearchGeocodeOnly);
+        }
+        else {
+            QGeoAddress address;
+            address.setCountry(m_country->text());
+            address.setState(m_state->text());
+            address.setCity(m_city->text());
+            address.setPostCode(m_zip->text());
+            address.setThoroughfareName(m_street->text());
+            address.setThoroughfareNumber(m_streetNumber->text());
+            m_placesManager->geocode(address);
+        }
     }
     else {
-        QGeoAddress address;
-        address.setCountry(country->text());
-        address.setState(state->text());
-        address.setCity(city->text());
-        address.setPostCode(zip->text());
-        address.setThoroughfareName(street->text());
-        address.setThoroughfareNumber(streetNumber->text());
-        placesManager->geocode(address);
+        QMessageBox::warning(this, tr("Places"), tr("No places manager available."));
     }
 }
 
 void GeocodingTab::replyFinished(QGeoPlacesReply* reply)
 {
-    PlacePresenter presenter(resultTree, reply);
+    PlacePresenter presenter(m_resultTree, reply);
     presenter.show();
+    reply->deleteLater();
+}
+
+void GeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode,QString errorString)
+{
+    QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
+    top->setText(0, tr("Error"));
+    top->setText(1, errorString);
     reply->deleteLater();
 }
