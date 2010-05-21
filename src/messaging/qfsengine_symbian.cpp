@@ -1883,8 +1883,9 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
                                                 mimeSubType, size);
         addAttachmentToMessage(message, attachment);       
     }
-    attachments.Reset();
     CleanupStack::PopAndDestroy();
+    attachments.Close();
+
     //from
     TPtrC from = aMessage->SenderAddressL()->Address();
     if (from.Length() > 0) {
