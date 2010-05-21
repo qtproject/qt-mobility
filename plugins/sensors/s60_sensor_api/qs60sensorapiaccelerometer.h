@@ -46,8 +46,6 @@
 #include <qsensorbackend.h>
 #include <qaccelerometer.h>
 
-#if !defined(HAS_NO_SENSOR_PROVISION)
-
 // symbian
 #include <rrsensorapi.h>
 
@@ -77,7 +75,5 @@ private:
     QAccelerometerReading m_reading;
     qreal m_sampleFactor;
 };
-
-#endif // !HAS_NO_SENSOR_PROVISION
 
 #endif // QS60SENSORAPIACCELEROMETER_H

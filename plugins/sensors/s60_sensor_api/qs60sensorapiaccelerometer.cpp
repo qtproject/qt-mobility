@@ -38,8 +38,6 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#if !defined(HAS_NO_SENSOR_PROVISION)
 //Symbian
 #include <e32std.h>
 #include <rrsensorapi.h>
@@ -143,4 +141,3 @@ void QS60SensorApiAccelerometer::findAndCreateNativeSensorL()
     
     CleanupStack::PopAndDestroy(&sensorList);
 }
-#endif
