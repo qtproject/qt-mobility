@@ -135,6 +135,25 @@ bool QXARecordSession::setOutputLocation(const QUrl &location)
 
     // If old and new locations are same, do nothing.
     QString newUrlStr = (QUrl::fromUserInput(location.toString().toLower())).toString();
+
+    int index = newUrlStr.lastIndexOf('.');
+    if (index != -1)
+        newUrlStr.chop(newUrlStr.length()-index);
+    
+    QString fileExtension;
+    
+    if ((m_containerMimeType.compare("audio/wav")) == KErrNone){
+        fileExtension = QString(".wav");
+    }
+    else if ((m_containerMimeType.compare("audio/amr")) == KErrNone){
+        fileExtension = QString(".amr");
+    }
+    else if ((m_containerMimeType.compare("audio/mpeg")) == KErrNone){
+        fileExtension = QString(".mp4");
+    }
+    
+    newUrlStr.append(fileExtension);     
+
     QString curUrlStr = (QUrl::fromUserInput(m_outputLocation.toString().toLower())).toString();
     if (curUrlStr.compare(newUrlStr) == KErrNone)
         return true;

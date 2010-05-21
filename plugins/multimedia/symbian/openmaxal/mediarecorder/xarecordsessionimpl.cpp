@@ -1211,6 +1211,7 @@ TInt32 XARecordSessionImpl::initAudioInputDevicesList()
         if (returnValue != KErrNone)
             continue;
         m_DefaultInputDeviceIDs.Append(deviceIds[index]);
+        m_InputDeviceId = deviceIds[index];
     }
 
     TRACE_FUNCTION_EXIT;
