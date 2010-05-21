@@ -189,6 +189,152 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     return QList<QOrganizerItem>();
 }
 
+QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount)
+{
+    // If no endDateTime is given, we'll only generate items that occur within the next 4 years of periodStart.
+
+    QDate startDate = rrule.startDate();
+    QDate endDate = rrule.endDate();
+    int rCount = rrule.count();
+
+    bool useMaxCount = periodEnd.isNull();             // if no period end given, just return maxCount instances.
+    bool useRCount = (endDate.isNull() || rCount);     // if no end date is specified in the RRULE, use count
+
+    QList<QDateTime> retn;
+
+    // call nextMatchingDate here in a loop until maxCount or rCount is reached, or until our timelimit (4yrs+periodStart) is reached.
+
+    return retn;
+}
+
+QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule)
+{
+    // gets the next date (starting from currDate INCLUSIVE) which matches the rrule but is less than untilDate
+    // if none found, returns an invalid, null QDate.
+    // if currDate > untilDate OR currDate < rrule.dateStart, it will return an invalid, null QDate.
+
+    QDate startDate = rrule.startDate();
+    if (currDate > untilDate || currDate < startDate)
+        return QDate();
+
+    QList<Qt::DayOfWeek> daysOfWeek = rrule.daysOfWeek();
+    qSort(daysOfWeek);
+    QList<int> daysOfMonth = rrule.daysOfMonth();
+    qSort(daysOfMonth);
+    QList<int> daysOfYear = rrule.daysOfYear();
+    qSort(daysOfYear);
+    QList<int> weeksOfYear = rrule.weeksOfYear();
+    qSort(weeksOfYear);
+    QList<QOrganizerItemRecurrenceRule::Month> monthsOfYear = rrule.months();
+    qSort(monthsOfYear);
+
+    QOrganizerItemRecurrenceRule::Frequency freq = rrule.frequency();
+    int interval = rrule.interval();
+
+    // keep going until the untilDate or the endDate of the rrule, whichever comes first.
+    QDate realUntilDate = untilDate;
+    if (rrule.endDate().isValid() && rrule.endDate() < untilDate)
+        realUntilDate = rrule.endDate();
+
+    QDate tempDate = currDate;
+    while (tempDate <= realUntilDate) {
+        // first, do FREQ+INTERVAL matching based on dateStart+rrule
+        switch (freq) {
+            case QOrganizerItemRecurrenceRule::Yearly:
+            {
+                int yearsDelta = tempDate.year() - startDate.year();
+                if (yearsDelta % interval > 0) {
+                    // this year doesn't match.
+                    tempDate.addDays(tempDate.daysInYear() - tempDate.dayOfYear());
+                    continue;
+                }
+            }
+            break;
+
+            case QOrganizerItemRecurrenceRule::Monthly:
+            {
+                int monthsDelta = tempDate.month() - startDate.month() + (12 * (tempDate.year() - startDate.year()));
+                if (monthsDelta % interval > 0) {
+                    // this month doesn't match.
+                    tempDate.addDays(tempDate.daysInMonth() - tempDate.day());
+                    continue;
+                }
+            }
+            break;
+
+            case QOrganizerItemRecurrenceRule::Weekly:
+            {
+                // Weekly is a tricky one, because of ISO week stuff.
+                int weekCount = 0;
+                QDate weeklyDate = startDate;
+                while (weeklyDate < tempDate) {
+                    int weeklyDateWeek = weeklyDate.weekNumber();
+                    weeklyDate.addDays(1);
+                    if (weeklyDate.weekNumber() > weeklyDateWeek) {
+                        weekCount += 1;
+                    }
+                }
+
+                if (weekCount % interval > 0) {
+                    // this week doesn't match.  only add one because it's tricky to calculate the next week boundary.
+                    tempDate.addDays(1);
+                    continue;
+                }
+            }
+            break;
+
+            default: // daily
+            {
+                int daysDelta = startDate.daysTo(tempDate);
+                if (daysDelta % interval > 0) {
+                    // this day doesn't match.
+                    tempDate.addDays(tempDate.daysInMonth() - tempDate.day());
+                    continue;
+                }
+            }
+            break;
+        }
+
+        // then, check months, weeksInYear, daysInMonth, daysInWeek, etc.
+        if (monthsOfYear.size() > 0 && !monthsOfYear.contains(static_cast<QOrganizerItemRecurrenceRule::Month>(tempDate.month()))) {
+            // this day didn't match.
+            tempDate.addDays(1);
+            continue;
+        }
+
+        if (weeksOfYear.size() > 0 && !weeksOfYear.contains(tempDate.weekNumber())) {
+            // this day didn't match.
+            tempDate.addDays(1);
+            continue;
+        }
+
+        if (daysOfYear.size() > 0 && !daysOfYear.contains(tempDate.day())) {
+            // this day didn't match.
+            tempDate.addDays(1);
+            continue;
+        }
+
+        if (daysOfMonth.size() > 0 && !daysOfMonth.contains(tempDate.day())) {
+            // this day didn't match.
+            tempDate.addDays(1);
+            continue;
+        }
+
+        // XXX TODO: confirm that QDate::dayOfWeek() returns a weekday rather than weekdayNumber (ISO)
+        if (daysOfWeek.size() > 0 && !daysOfWeek.contains(static_cast<Qt::DayOfWeek>(tempDate.dayOfWeek()))) {
+            // this day didn't match.
+            tempDate.addDays(1);
+            continue;
+        }
+
+        // this day didn't match.
+        tempDate.addDays(1);
+    }
+
+    // no match.
+    return QDate();
+}
+
 /*! \reimp */
 QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
@@ -234,7 +380,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     QList<QDateTime> xdates = recur.exceptionDates();
     QList<QOrganizerItemRecurrenceRule> xrules = recur.exceptionRules();
     foreach (const QOrganizerItemRecurrenceRule& xrule, xrules) {
-        if (!(xrule.endDate() < periodStart || xrule.startDate() > periodEnd)) {
+        if (!(xrule.endDate() < periodStart.date() || xrule.startDate() > periodEnd.date())) {
             // we cannot skip it, since it applies in the given time period.
             // XXX TODO: transform from rule elements to real dates...
 
@@ -246,7 +392,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     QList<QDateTime> rdates = recur.recurrenceDates();
     QList<QOrganizerItemRecurrenceRule> rrules = recur.recurrenceRules();
     foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
-        if (!(rrule.endDate() < periodStart || rrule.startDate() > periodEnd)) {
+        if (!(rrule.endDate() < periodStart.date() || rrule.startDate() > periodEnd.date())) {
             // we cannot skip it, since it applies in the given time period.
             // XXX TODO: transform from rule elements to real dates...
 

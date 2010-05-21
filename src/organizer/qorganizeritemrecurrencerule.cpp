@@ -62,14 +62,14 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldPosition, "Position"
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStart");
 
 // Compulsory for a valid rule
-void QOrganizerItemRecurrenceRule::setStartDate(const QDateTime& startDate)
+void QOrganizerItemRecurrenceRule::setStartDate(const QDate& startDate)
 {
     d->m_variantValues.insert(FieldStartDate, startDate);
 }
 
-QDateTime QOrganizerItemRecurrenceRule::startDate() const
+QDate QOrganizerItemRecurrenceRule::startDate() const
 {
-    return d->m_variantValues.value(FieldStartDate).toDateTime();
+    return d->m_variantValues.value(FieldStartDate).toDate();
 }
 
 // Default: Weekly
@@ -99,14 +99,14 @@ int QOrganizerItemRecurrenceRule::count() const
 
 // invalid means not set.
 // Default: null
-void QOrganizerItemRecurrenceRule::setEndDate(const QDateTime& endDate)
+void QOrganizerItemRecurrenceRule::setEndDate(const QDate& endDate)
 {
     d->m_variantValues.insert(FieldEndDate, endDate);
 }
 
-QDateTime QOrganizerItemRecurrenceRule::endDate() const
+QDate QOrganizerItemRecurrenceRule::endDate() const
 {
-    return d->m_variantValues.value(FieldEndDate).toDateTime();
+    return d->m_variantValues.value(FieldEndDate).toDate();
 }
 
 // eg. if frequency = Daily and interval = 2, every second day

@@ -152,8 +152,8 @@ public:
     };
 
     // Compulsory for a valid rule
-    void setStartDate(const QDateTime& startDate);
-    QDateTime startDate() const;
+    void setStartDate(const QDate& startDate);
+    QDate startDate() const;
 
     // Default: Weekly
     void setFrequency(Frequency freq);
@@ -167,8 +167,8 @@ public:
     int count() const;
     // invalid means not set.
     // Default: null
-    void setEndDate(const QDateTime& endDate);
-    QDateTime endDate() const;
+    void setEndDate(const QDate& endDate);
+    QDate endDate() const;
 
     // eg. if frequency = Daily and interval = 2, every second day
     // Default: 1
