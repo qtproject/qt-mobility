@@ -11,5 +11,7 @@ MOBILITY = multimedia
 
 contains(QT_CONFIG,multimedia) {
     QT += multimedia
+} else {
+    INCLUDEPATH += ../../../src/multimedia/video
 }
 
