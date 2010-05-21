@@ -54,7 +54,7 @@
 #include <qgeoserviceproviderplugin.h>
 
 ServicesTab::ServicesTab(QWidget *parent) :
-    QWidget(parent), m_serviceProvider(NULL)
+    QWidget(parent)
 {
     m_requestBtn = new QPushButton(tr("Set Service Provider"));
     m_requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
@@ -80,14 +80,13 @@ ServicesTab::ServicesTab(QWidget *parent) :
     setLayout(mainLayout);
 
     m_requestBtn->setDisabled(true);
+}
+
+void ServicesTab::initialize()
+{
     QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
     top->setText(0, tr("Loading Service Providers..."));
     
-    QTimer::singleShot(0, this, SLOT(delayedInit()));
-}
-
-void ServicesTab::delayedInit()
-{
     listServiceProviders();
 
     if (m_resultTree->topLevelItemCount() == 0) {
@@ -97,12 +96,12 @@ void ServicesTab::delayedInit()
     }
     else {
         m_requestBtn->setDisabled(false);
+        on_btnRequest_clicked();
     }
 }
 
 ServicesTab::~ServicesTab()
 {
-    delete m_serviceProvider;
 }
 
 void ServicesTab::on_btnRequest_clicked()
@@ -119,8 +118,7 @@ void ServicesTab::on_btnRequest_clicked()
         serviceItem = m_resultTree->currentItem()->parent();
 
     QString serviceId = serviceItem->text(0);
-    emit
-    serviceProviderChanged(serviceId);
+    emit serviceProviderChanged(serviceId);
 
     for (int i = 0; i < m_resultTree->topLevelItemCount(); ++i) {
         QTreeWidgetItem* top = m_resultTree->topLevelItem(i);
@@ -140,33 +138,33 @@ void ServicesTab::listServiceProviders()
     foreach(providerId,providers) {
         QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
         top->setText(0, providerId);
-        m_serviceProvider = new QGeoServiceProvider(providerId, QString());
+        QGeoServiceProvider* serviceProvider = new QGeoServiceProvider(providerId);
 
         QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-        prop->setText(0, Q_GEOSERVICE_GEOCODING);
-        QGeoCodingService* geocodingService = m_serviceProvider->geocodingService();
-        if (geocodingService)
+        prop->setText(0, "Places");
+        QGeoPlacesManager* placesManager = serviceProvider->placesManager();
+        if (placesManager)
             prop->setText(1, tr("true"));
         else
             prop->setText(1, tr("false"));
 
         prop = new QTreeWidgetItem(top);
-        prop->setText(0, Q_GEOSERVICE_MAPPING);
-        QGeoMappingService* mappingService = m_serviceProvider->mappingService();
-        if (mappingService)
+        prop->setText(0, "Mapping");
+        QGeoMappingManager* mappingManager = serviceProvider->mappingManager();
+        if (mappingManager)
             prop->setText(1, tr("true"));
         else
             prop->setText(1, tr("false"));
 
         prop = new QTreeWidgetItem(top);
-        prop->setText(0, Q_GEOSERVICE_ROUTING);
-        QGeoRoutingService* routeService = m_serviceProvider->routingService();
-        if (routeService)
+        prop->setText(0, "Routing");
+        QGeoRoutingManager* routingManager = serviceProvider->routingManager();
+        if (routingManager)
             prop->setText(1, tr("true"));
         else
             prop->setText(1, tr("false"));
 
-        delete m_serviceProvider;
-        m_serviceProvider = NULL;
+        // TODO: Release serviceProvider. Problem in plugin loader. 
+        //delete serviceProvider;
     }    
 }
