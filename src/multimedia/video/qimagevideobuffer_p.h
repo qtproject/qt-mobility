@@ -61,7 +61,7 @@ class QImage;
 
 class QImageVideoBufferPrivate;
 
-class Q_MULTIMEDIA_EXPORT QImageVideoBuffer : public QAbstractVideoBuffer
+class Q_MEDIA_EXPORT QImageVideoBuffer : public QAbstractVideoBuffer
 {
     Q_DECLARE_PRIVATE(QImageVideoBuffer)
 public:
