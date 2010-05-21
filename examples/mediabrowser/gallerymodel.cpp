@@ -111,8 +111,14 @@ QModelIndex GalleryModel::index(int row, int column, const QModelIndex &parent) 
             && column >= 0 && column < displayFields.count()) {
 
         // Ideally we'd use the scroll position of the view to set the cursor position
-        if (row > 0 && row < mediaList->count() - 1) {
-            const_cast<QGalleryItemList *>(mediaList)->setCursorPosition(row);
+        if (row < mediaList->count() - 1) {
+            const int position = mediaList->cursorPosition();
+            const int pageSize = mediaList->minimumPagedItems();
+
+            if (row - 16 < position && position > 0)
+                mediaList->setCursorPosition(qMax(0, row - 16));
+            else if (row + 16 > position + pageSize)
+                mediaList->setCursorPosition(qMax(0, row + 16 - pageSize));
         }
 
         return createIndex(row, column);
