@@ -66,7 +66,7 @@ class QGalleryTrackerItemResponse : public QGalleryTrackerItemList
     Q_OBJECT
 public:
     QGalleryTrackerItemResponse(
-            const QGalleryDBusInterfacePointer &searchInterface,
+            QGalleryDBusInterfaceFactory *dbus,
             const QGalleryTrackerSchema &schema,
             const QString &query,
             int cursorPosition,

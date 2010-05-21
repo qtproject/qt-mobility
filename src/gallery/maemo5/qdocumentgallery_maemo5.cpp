@@ -64,7 +64,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QDocumentGalleryPrivate : public QAbstractGalleryPrivate
+class QDocumentGalleryPrivate : public QAbstractGalleryPrivate, public QGalleryDBusInterfaceFactory
 {
 public:
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
@@ -147,24 +147,14 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
             schema.setPropertyNames(request->propertyNames());
             schema.resolveColumns();
 
-            response = new QGalleryTrackerItemResponse(
-                    searchInterface(),
-                    schema,
-                    query,
-                    0,
-                    1);
+            response = new QGalleryTrackerItemResponse(this, schema, query, 0, 1);
 
             return response;
         } else if (schema.isAggregateType()) {
             schema.setPropertyNames(request->propertyNames());
             schema.resolveColumns();
 
-            response = new QGalleryTrackerAggregateResponse(
-                    metaDataInterface(),
-                    schema,
-                    query,
-                    0,
-                    1);
+            response = new QGalleryTrackerAggregateResponse(this, schema, query, 0, 1);
 
             return response;
         } else {
@@ -202,7 +192,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
             schema.resolveColumns();
 
             response = new QGalleryTrackerItemResponse(
-                    searchInterface(),
+                    this,
                     schema,
                     query,
                     request->initialCursorPosition(),
@@ -215,7 +205,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
             schema.resolveColumns();
 
             response = new QGalleryTrackerAggregateResponse(
-                    metaDataInterface(),
+                    this,
                     schema,
                     query,
                     request->initialCursorPosition(),
@@ -250,7 +240,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
             schema.resolveColumns();
 
             QGalleryAbstractResponse *response = new QGalleryTrackerItemResponse(
-                    searchInterface(),
+                    this,
                     schema,
                     query,
                     request->initialCursorPosition(),
@@ -263,7 +253,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
             schema.resolveColumns();
 
             QGalleryAbstractResponse *response = new QGalleryTrackerAggregateResponse(
-                    metaDataInterface(),
+                    this,
                     schema,
                     query,
                     request->initialCursorPosition(),

@@ -101,6 +101,7 @@ public:
 protected:
     QGalleryTrackerItemList(
             QGalleryTrackerItemListPrivate &dd,
+            QGalleryDBusInterfaceFactory *dbus,
             const QGalleryTrackerSchema &schema,
             const QGalleryDBusInterfacePointer &queryInterface,
             const QString &query,

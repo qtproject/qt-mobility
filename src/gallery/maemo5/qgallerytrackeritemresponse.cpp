@@ -58,7 +58,7 @@ public:
 
 
 QGalleryTrackerItemResponse::QGalleryTrackerItemResponse(
-        const QGalleryDBusInterfacePointer &searchInterface,
+        QGalleryDBusInterfaceFactory *dbus,
         const QGalleryTrackerSchema &schema,
         const QString &query,
         int cursorPosition,
@@ -66,8 +66,9 @@ QGalleryTrackerItemResponse::QGalleryTrackerItemResponse(
         QObject *parent)
     : QGalleryTrackerItemList(
             *new QGalleryTrackerItemResponsePrivate,
+            dbus,
             schema,
-            searchInterface,
+            dbus->searchInterface(),
             query,
             cursorPosition,
             minimumPagedItems,

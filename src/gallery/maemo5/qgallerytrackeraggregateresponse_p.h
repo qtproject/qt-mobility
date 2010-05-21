@@ -73,7 +73,7 @@ class QGalleryTrackerAggregateResponse : public QGalleryTrackerItemList
     Q_OBJECT
 public:
     QGalleryTrackerAggregateResponse(
-            const QGalleryDBusInterfacePointer &metaDataInterface,
+            QGalleryDBusInterfaceFactory *dbus,
             const QGalleryTrackerSchema &schema,
             const QString &query,
             int cursorPosition,

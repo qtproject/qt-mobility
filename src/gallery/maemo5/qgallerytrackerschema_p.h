@@ -60,6 +60,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGalleryDBusInterfaceFactory;
 class QGalleryTrackerCompositeColumn;
 class QGalleryTrackerImageColumn;
 class QGalleryTrackerValueColumn;
@@ -154,7 +155,8 @@ public:
     QVector<QGalleryTrackerValueColumn *> createValueColumns() const;
     QVector<QGalleryTrackerCompositeColumn *> createCompositeColumns() const;
     QVector<int> aliasColumns() const;
-    QVector<QGalleryTrackerImageColumn *> createImageColumns() const;
+    QVector<QGalleryTrackerImageColumn *> createImageColumns(
+            QGalleryDBusInterfaceFactory *dbus) const;
 
     QVector<QGalleryTrackerSortCriteria> sortCriteria() const { return m_sortCriteria; }
 
@@ -178,7 +180,7 @@ private:
     QVector<int> m_identityColumns;
     QVector<int> m_compositeColumns;
     QVector<int> m_aliasColumns;
-    QVector<int> m_imageColumns;
+    QVector<QVariant::Type> m_thumbnailTypes;
     QVector<QGalleryTrackerSortCriteria> m_sortCriteria;
 };
 

@@ -58,7 +58,7 @@ public:
 };
 
 QGalleryTrackerAggregateResponse::QGalleryTrackerAggregateResponse(
-        const QGalleryDBusInterfacePointer &metaDataInterface,
+        QGalleryDBusInterfaceFactory *dbus,
         const QGalleryTrackerSchema &schema,
         const QString &query,
         int cursorPosition,
@@ -66,8 +66,9 @@ QGalleryTrackerAggregateResponse::QGalleryTrackerAggregateResponse(
         QObject *parent)
     : QGalleryTrackerItemList(
             *new QGalleryTrackerAggregateResponsePrivate,
+            dbus,
             schema,
-            metaDataInterface,
+            dbus->metaDataInterface(),
             query,
             cursorPosition,
             minimumPagedItems,

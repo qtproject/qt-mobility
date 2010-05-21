@@ -202,7 +202,6 @@ public:
     QVector<int> aliasColumns;
     QVector<QGalleryTrackerImageColumn *> imageColumns;
     QVector<QGalleryTrackerSortCriteria> sortCriteria;
-    QVector<QVector<QGalleryTrackerImage> > imageCaches;
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
@@ -226,6 +225,7 @@ public:
             const row_iterator &rEnd);
 
     void _q_queryFinished();
+    void _q_imagesLoaded(int index, const QList<uint> &ids);
 };
 
 QTM_END_NAMESPACE

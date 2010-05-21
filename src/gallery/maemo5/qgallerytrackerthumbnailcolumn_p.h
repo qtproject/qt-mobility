@@ -70,16 +70,13 @@ class QGalleryTrackerThumbnailColumn : public QGalleryTrackerImageColumn
     Q_OBJECT
 public:
     QGalleryTrackerThumbnailColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, QObject *parent = 0);
+            const QGalleryDBusInterfacePointer &thumbnailInterface, int key, QObject *parent = 0);
     ~QGalleryTrackerThumbnailColumn();
 
-    QVector<QGalleryTrackerImage> loadImages(
-            QVector<QVariant>::const_iterator begin,
-            QVector<QVariant>::const_iterator end,
-            int tableWidth,
-            uint abortId = 0);
+    void insertImages(
+            int index, int count, QVector<QVariant>::const_iterator begin, int tableWidth);
 
-    void abort(uint id);
+    void removeImages(int index, int count);
 
 protected:
     virtual QVariant loadImage(const QString &imagePath) const = 0;
@@ -116,10 +113,11 @@ private:
     const QString m_normalDir;
 #endif
     const QString m_failDir;
-
     QGalleryDBusInterfacePointer m_thumbnailInterface;
     QList<QGalleryTrackerThumbnailDBusWatcher *> m_dbusWatchers;
     QList<QGalleryTrackerThumbnailLoadWatcher *> m_loadWatchers;
+    QList<int> m_keys;
+    QVector<uint> m_imageIds;
 
 };
 
@@ -127,8 +125,8 @@ class QGalleryTrackerThumbnailImageColumn : public QGalleryTrackerThumbnailColum
 {
 public:
     QGalleryTrackerThumbnailImageColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, QObject *parent = 0)
-        : QGalleryTrackerThumbnailColumn(thumbnailInterface, parent) {}
+            const QGalleryDBusInterfacePointer &thumbnailInterface, int index, QObject *parent = 0)
+        : QGalleryTrackerThumbnailColumn(thumbnailInterface, index, parent) {}
     ~QGalleryTrackerThumbnailImageColumn() {}
 
 protected:
@@ -139,8 +137,8 @@ class QGalleryTrackerThumbnailPixmapColumn : public QGalleryTrackerThumbnailColu
 {
 public:
     QGalleryTrackerThumbnailPixmapColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, QObject *parent = 0)
-        : QGalleryTrackerThumbnailColumn(thumbnailInterface, parent) {}
+            const QGalleryDBusInterfacePointer &thumbnailInterface, int index, QObject *parent = 0)
+        : QGalleryTrackerThumbnailColumn(thumbnailInterface, index, parent) {}
     ~QGalleryTrackerThumbnailPixmapColumn() {}
 
 protected:
