@@ -161,6 +161,7 @@ public:
 private:
     // conversion functions
     QOrganizerEvent convertCEventToQEvent(CEvent* cevent, const QString& calendarName) const;
+    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const;
     QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const;
     QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
     QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const;

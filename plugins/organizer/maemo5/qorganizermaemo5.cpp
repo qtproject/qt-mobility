@@ -93,27 +93,84 @@ int QOrganizerItemMaemo5Engine::managerVersion() const
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
-    /*
-        TODO
+    *error = QOrganizerItemManager::NoError;
+    int calError;
+    QList<QOrganizerItem> retn;
+   
+    // try to find the native id of the generator they're referencing. 
+    QString entireId = d->m_cIdToQId.key(generator.localId());
+    if (entireId.isEmpty()) {
+        *error = QOrganizerItemManager::DoesNotExistError;
+        return QList<QOrganizerItem>();
+    }
 
-        This function should create a list of instances that occur in the time period from the supplied item.
-        The periodStart should always be valid, and either the periodEnd or the maxCount will be valid (if periodEnd is
-        valid, use that.  Otherwise use the count).  It's permissible to limit the number of items returned...
+    QString cId = entireId.mid(d->m_cIdToCName.value(entireId).size()+1, -1);
+    QString calName = d->m_cIdToCName.value(entireId);
+    if (generator.type() == QOrganizerItemType::TypeTodo) {
+        // in maemo5, only one occurrence per todo.  and it has the same id as the parent.
+        CCalendar *cal = d->m_mcInstance->getCalendarByName(calName.toStdString(), calError);
+        if (!cal) {
+            *error = QOrganizerItemManager::DoesNotExistError; // XXX TODO: should be CalendarDoesNotExistError!
+            return retn;
+        }
+        CTodo *ctodo = cal->getTodo(cId.toStdString(), calError);
+        if (!ctodo) {
+            delete cal;
+            *error = QOrganizerItemManager::DoesNotExistError;
+            return retn;
+        }
 
-        Basically, if the generator item is an Event, a list of EventOccurrences should be returned.  Similarly for
-        Todo/TodoOccurrence.
+        QOrganizerTodoOccurrence todoocc = convertCTodoToQTodoOccurrence(ctodo, calName);
+        delete ctodo;
+        delete cal;
+        retn.append(todoocc);
+        return retn;
+    }
 
-        If there are no instances, return an empty list.
+    // if not a todo, must be an event, since no other types have occurrences.
+    if (generator.type() != QOrganizerItemType::TypeEvent) {
+        *error = QOrganizerItemManager::BadArgumentError;
+        return retn; 
+    }
 
-        The returned items should have a QOrganizerItemInstanceOrigin detail that points to the generator and the
-        original instance that the event would have occurred on (e.g. with an exception).
+    // it's an event.  use native API to generate instances.
+    std::vector<time_t> resultVec;
+    bool success = d->m_mcInstance->getInstances(cId.toStdString(), periodStart.toTime_t(), periodEnd.toTime_t(), resultVec, 0);
+    if (!success) {
+        *error = QOrganizerItemManager::UnspecifiedError;
+        return retn;
+    }
 
-        They should not have recurrence information details in them.
+    // now instantiate the calendar and the event so we can convert required instances to QOIEOccurrences.
+    CCalendar* cal = d->m_mcInstance->getCalendarByName(calName.toStdString(), calError);
+    if (!cal) {
+        *error = QOrganizerItemManager::DoesNotExistError; // XXX TODO: should be CalendarDoesNotExistError!
+        return retn;
+    }
+    CEvent* cevent = cal->getEvent(cId.toStdString(), calError);
+    if (!cevent) {
+        delete cal;
+        *error = QOrganizerItemManager::DoesNotExistError; // XXX TODO: should be CalendarDoesNotExistError!
+        return retn;
+    }
+    
+    for (unsigned int i = 0; i < resultVec.size(); ++i) {
+        if (periodEnd.isNull()) {
+            // use count as "maximum to return"
+            unsigned int tmpMaxCount = 0;
+            if (maxCount > 0)
+                tmpMaxCount += maxCount;
 
-        We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
-    */
+            if (i >= tmpMaxCount) {
+                break;
+            }
+        }
+        QDateTime instanceDate = QDateTime::fromTime_t(resultVec[i]);
+        QOrganizerEventOccurrence eventocc = convertCEventToQEventOccurrence(cevent, instanceDate, calName);
+        retn.append(eventocc);
+    }
 
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+    return retn;
 }
 
 /*!
@@ -703,6 +760,48 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent
     return ret;
 }
 
+QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const
+{
+    QOrganizerEventOccurrence ret;
+    QString tempstr = QString::fromStdString(cevent->getGeo());
+    if (!tempstr.isEmpty())
+        ret.setLocationGeoCoordinates(tempstr);
+    int tempint = cevent->getPriority();
+    if (tempint != -1)
+        ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
+    tempstr = QString::fromStdString(cevent->getSummary());
+    if (!tempstr.isEmpty())
+        ret.setDisplayLabel(tempstr);
+    tempstr = QString::fromStdString(cevent->getDescription());
+    if (!tempstr.isEmpty())
+        ret.setDescription(tempstr);
+    tempstr = QString::fromStdString(cevent->getLocation());
+    if (!tempstr.isEmpty())
+        ret.setLocationName(tempstr);
+    QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
+    if (!tempdt.isNull())
+        ret.setStartDateTime(tempdt);
+    tempdt = QDateTime::fromTime_t(cevent->getDateEnd());
+    if (!tempdt.isNull())
+        ret.setEndDateTime(tempdt);
+
+    // now set the parent information (parent id and original datetime)
+    QOrganizerItemId pId;
+    pId.setManagerUri(managerUri());
+    QString hashKey = calendarName + ":" + QString::fromStdString(cevent->getId());
+    pId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
+    ret.setParentItemId(pId);
+    ret.setOriginalDateTime(instanceDate);
+    
+    // generate a new (empty) id for the occurrence.
+    QOrganizerItemId rId;
+    rId.setManagerUri(managerUri());
+    rId.setLocalId(QOrganizerItemLocalId()); // generated instances have no local id.
+    ret.setId(rId);
+
+    return ret;
+}
+
 QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const
 {
     QOrganizerTodo ret;
@@ -757,12 +856,15 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
     // status is always available..
     ret.setStatus(static_cast<QOrganizerItemTodoProgress::Status>(ctodo->getStatus()));
     
-    // XXX TODO: set the parent information stuff.
     QOrganizerItemId rId;
     rId.setManagerUri(managerUri());
     QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
     rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
     ret.setId(rId);
+
+    // now, in maemo, the parent id is the same as this id (todo's only have one occurrence).
+    ret.setParentItemId(rId);
+    ret.setOriginalDateTime(QDateTime::fromTime_t(ctodo->getDue())); // XXX TODO: verify this is the correct field to use as the instance date...
 
     return ret;
 }
