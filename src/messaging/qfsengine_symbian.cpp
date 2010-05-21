@@ -2089,7 +2089,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
     
     if (filters.count() == 0) {
         m_idList = QMessageIdList();
-        getAllMessagesL(sortCriteria);
+        QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
         return;
     }
     
@@ -2137,6 +2137,23 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 break;
         }
         sortCriteria.iAscending = fieldOrder.second == Qt::AscendingOrder?true:false;
+    }
+
+    if ((filters.count() == 1) &&
+        (pf->_field == QMessageFilterPrivate::None) &&
+        (pf->_filterList.count() == 0)) {
+        if (pf->_notFilter) {
+            // There is only one filter: empty ~QMessageFilter()
+            // => return empty QMessageIdList 
+            m_idList = QMessageIdList();
+            QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+        } else {
+            // There is only one filter: empty QMessageFilter()
+            // => return all messages
+            getAllMessagesL(sortCriteria);
+        }
+        m_numberOfHandledFilters++;
+        return;
     }
 
     if (!body.isEmpty()) {
