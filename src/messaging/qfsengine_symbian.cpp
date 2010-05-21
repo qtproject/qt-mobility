@@ -2165,8 +2165,8 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
     
         case QMessageFilterPrivate::ParentFolderId: {
             if (idType(pf->_value.toString()) != EngineTypeFreestyle) {
-                m_owner.filterAndOrderMessagesReady(true, m_operationId, QMessageIdList(), 1, true);
-                break;
+                QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+                return;
             }
             if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessageFolderId
                 QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(pf->_comparatorValue));
@@ -2191,8 +2191,8 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
         }
         case QMessageFilterPrivate::Id: {
             if (idType(pf->_value.toString()) != EngineTypeFreestyle) {
-                m_owner.filterAndOrderMessagesReady(true, m_operationId, QMessageIdList(), 1, true);
-                break;
+                QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+                return;
             }
             m_numberOfHandledFilters++;
             if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessageId
@@ -2249,8 +2249,8 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
             }
         case QMessageFilterPrivate::ParentAccountId: {
             if (idType(pf->_value.toString()) != EngineTypeFreestyle) {
-                m_owner.filterAndOrderMessagesReady(true, m_operationId, QMessageIdList(), 1, true);
-                break;
+                QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+                return;
             }
             if (pf->_comparatorType == QMessageFilterPrivate::Equality) { // QMessageAccountId
                 m_numberOfHandledFilters++;
