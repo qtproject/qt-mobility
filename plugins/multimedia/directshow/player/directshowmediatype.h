@@ -42,7 +42,7 @@
 #ifndef DIRECTSHOWMEDIATYPE_H
 #define DIRECTSHOWMEDIATYPE_H
 
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #include <dshow.h>
 #include <dvdmedia.h>
