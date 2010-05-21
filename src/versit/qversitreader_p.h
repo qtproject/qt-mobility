@@ -176,10 +176,9 @@ public: // New functions
         const QVersitProperty& property) const;
 
     bool unencode(
-        QVariant& value,
+        QByteArray& value,
         VersitCursor& cursor,
         QVersitProperty& property,
-        QTextCodec* codec,
         LineReader& lineReader) const;
 
     QString decodeCharset(
@@ -188,7 +187,7 @@ public: // New functions
         QTextCodec* defaultCodec,
         QTextCodec** codec) const;
 
-    void decodeQuotedPrintable(QString& text) const;
+    void decodeQuotedPrintable(QByteArray& text) const;
 
 
     /* These functions operate on a cursor describing a single line */
