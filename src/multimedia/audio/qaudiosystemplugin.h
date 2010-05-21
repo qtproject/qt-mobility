@@ -47,6 +47,9 @@
 #include <QtCore/qplugin.h>
 #include <QtCore/qfactoryinterface.h>
 
+#include <qmobilityglobal.h>
+#include <qtmedianamespace.h>
+
 #include "qaudioformat.h"
 #include "qaudiodeviceinfo.h"
 #include "qaudiosystem.h"

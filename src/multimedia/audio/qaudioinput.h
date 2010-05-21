@@ -44,7 +44,9 @@
 #define QAUDIOINPUT_H
 
 #include <QtCore/qiodevice.h>
-#include <QtCore/qglobal.h>
+
+#include <qmobilityglobal.h>
+#include <qtmedianamespace.h>
 
 #include <qaudio.h>
 #include <qaudioformat.h>

@@ -44,11 +44,13 @@
 #define QAUDIODEVICEINFO_H
 
 #include <QtCore/qobject.h>
-#include <QtCore/qglobal.h>
 #include <QtCore/qbytearray.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qlist.h>
+
+#include <qmobilityglobal.h>
+#include <qtmedianamespace.h>
 
 #include <qaudio.h>
 #include <qaudioformat.h>

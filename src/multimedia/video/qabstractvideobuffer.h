@@ -42,6 +42,10 @@
 #ifndef QABSTRACTVIDEOBUFFER_H
 #define QABSTRACTVIDEOBUFFER_H
 
+#include <qmobilityglobal.h>
+#include <qtmedianamespace.h>
+
+
 #include <QtCore/qmetatype.h>
 
 QT_BEGIN_NAMESPACE

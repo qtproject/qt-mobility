@@ -56,6 +56,10 @@
 #include <QtCore/qshareddata.h>
 #include "qabstractvideobuffer.h"
 
+#include <qmobilityglobal.h>
+#include <qtmedianamespace.h>
+
+
 QT_BEGIN_NAMESPACE
 
 class QAbstractVideoBufferPrivate

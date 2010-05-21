@@ -43,8 +43,9 @@
 #ifndef QAUDIO_H
 #define QAUDIO_H
 
+#include <qmobilityglobal.h>
+#include <qtmedianamespace.h>
 
-#include <QtCore/qglobal.h>
 #include <QtCore/qmetatype.h>
 
 QT_BEGIN_NAMESPACE

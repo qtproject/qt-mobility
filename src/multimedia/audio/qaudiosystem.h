@@ -42,7 +42,9 @@
 #ifndef QAUDIOSYSTEM_H
 #define QAUDIOSYSTEM_H
 
-#include <QtCore/qglobal.h>
+#include <qmobilityglobal.h>
+#include <qtmedianamespace.h>
+
 #include "qaudio.h"
 #include "qaudioformat.h"
 #include "qaudiodeviceinfo.h"

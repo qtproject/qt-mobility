@@ -53,9 +53,11 @@
 #ifndef QAUDIODEVICEFACTORY_P_H
 #define QAUDIODEVICEFACTORY_P_H
 
-#include <QtCore/qglobal.h>
 #include <QtCore/qbytearray.h>
 #include <QtCore/qlist.h>
+
+#include <qmobilityglobal.h>
+#include <qtmedianamespace.h>
 
 #include "qaudiodeviceinfo.h"
 
