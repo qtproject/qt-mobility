@@ -39,7 +39,6 @@ HEADERS = $$PRIVATE_HEADERS
 
 #SYSTEM_INCLUDE += ../../sensors
 
-LIBS += -lqtsensors
 QT=core
 CONFIG+=mobility
 MOBILITY+=sensors
