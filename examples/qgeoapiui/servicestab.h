@@ -58,19 +58,20 @@ class ServicesTab: public QWidget
 public:
     ServicesTab(QWidget *parent = 0);
     ~ServicesTab();
-
+    
 private:
     void listServiceProviders();
 
 signals:
     void serviceProviderChanged(QString providerId); 
 
+public slots:    
+    void initialize();
+
 private slots:
     void on_btnRequest_clicked();
-    void delayedInit();
 
 private:
-    QGeoServiceProvider *m_serviceProvider;
     QTreeWidget *m_resultTree;
     QPushButton *m_requestBtn;
 };

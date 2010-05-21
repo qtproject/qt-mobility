@@ -42,6 +42,11 @@
 #ifndef TABBEDWINDOW_H_
 #define TABBEDWINDOW_H_
 
+#include "routetab.h"
+#include "geocodingtab.h"
+#include "revgeocodingtab.h"
+#include "maptiletab.h"
+
 #include <QMainWindow>
 #include <QTabWidget>
 
@@ -62,12 +67,19 @@ public:
     TabbedWindow(QWidget *parent = 0);
     virtual ~TabbedWindow();
 
+public slots:
+    void setProvider(QString providerId);
+
 private:
     QTabWidget *m_tabWidget;
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *m_session;
 #endif
     QGeoServiceProvider *m_serviceProvider;
+    GeocodingTab* m_geocodingTab;
+    ReverseGeocodingTab* m_reverseTab;
+    RouteTab* m_routingTab;
+    MapTileTab* m_mappingTab;
 };
 
 #endif /* TABBEDWINDOW_H_ */
