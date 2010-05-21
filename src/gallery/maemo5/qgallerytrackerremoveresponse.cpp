@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgallerytrackerfileremoveresponse_p.h"
+#include "qgallerytrackerremoveresponse_p.h"
 
 #include "qgalleryabstractresponse_p.h"
 
@@ -179,6 +179,6 @@ bool QGalleryTrackerRemoveResponse::waitForFinished(int)
 
 }
 
-#include "moc_qgallerytrackerfileremoveresponse_p.cpp"
+#include "moc_qgallerytrackerremoveresponse_p.cpp"
 
 QTM_END_NAMESPACE

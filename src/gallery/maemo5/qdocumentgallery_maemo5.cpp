@@ -53,8 +53,8 @@
 #include "qgalleryerrorresponse_p.h"
 #include "qgallerytrackeraggregateresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
-#include "qgallerytrackerfileremoveresponse_p.h"
 #include "qgallerytrackeritemresponse_p.h"
+#include "qgallerytrackerremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackerurlresponse_p.h"
 
