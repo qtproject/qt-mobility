@@ -47,18 +47,14 @@
 #include <QtGui/qimage.h>
 #include <qabstractvideobuffer.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-QT_MODULE(Multimedia)
 
 class QSize;
 class QVariant;
 
 class QVideoFramePrivate;
 
-class Q_MULTIMEDIA_EXPORT QVideoFrame
+class Q_MEDIA_EXPORT QVideoFrame
 {
 public:
     enum FieldType
@@ -162,8 +158,6 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QVideoFrame::FieldType)
 Q_DECLARE_METATYPE(QVideoFrame::PixelFormat)
-
-QT_END_HEADER
 
 #endif
 

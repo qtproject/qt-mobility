@@ -49,17 +49,13 @@
 #include <QtGui/qimage.h>
 #include <qvideoframe.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-QT_MODULE(Multimedia)
 
 class QDebug;
 
 class QVideoSurfaceFormatPrivate;
 
-class Q_MULTIMEDIA_EXPORT QVideoSurfaceFormat
+class Q_MEDIA_EXPORT QVideoSurfaceFormat
 {
 public:
     enum Direction
@@ -140,8 +136,6 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QVideoSurfaceFormat::Direction)
 Q_DECLARE_METATYPE(QVideoSurfaceFormat::YCbCrColorSpace)
-
-QT_END_HEADER
 
 #endif
 

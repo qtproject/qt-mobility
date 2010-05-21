@@ -47,11 +47,7 @@
 #include <QtCore/qglobal.h>
 #include <QtCore/qmetatype.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-QT_MODULE(Multimedia)
 
 namespace QAudio
 {
@@ -61,8 +57,6 @@ namespace QAudio
 }
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 Q_DECLARE_METATYPE(QAudio::Error)
 Q_DECLARE_METATYPE(QAudio::State)

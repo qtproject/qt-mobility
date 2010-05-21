@@ -45,18 +45,14 @@
 #include <QtCore/qobject.h>
 #include <qvideoframe.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-QT_MODULE(Multimedia)
 
 class QRectF;
 class QVideoSurfaceFormat;
 
 class QAbstractVideoSurfacePrivate;
 
-class Q_MULTIMEDIA_EXPORT QAbstractVideoSurface : public QObject
+class Q_MEDIA_EXPORT QAbstractVideoSurface : public QObject
 {
     Q_OBJECT
 
@@ -104,7 +100,5 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

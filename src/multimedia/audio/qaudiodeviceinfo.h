@@ -54,16 +54,12 @@
 #include <qaudioformat.h>
 
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-QT_MODULE(Multimedia)
 
 class QAudioDeviceFactory;
 
 class QAudioDeviceInfoPrivate;
-class Q_MULTIMEDIA_EXPORT QAudioDeviceInfo
+class Q_MEDIA_EXPORT QAudioDeviceInfo
 {
     friend class QAudioDeviceFactory;
 
@@ -106,8 +102,6 @@ private:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 Q_DECLARE_METATYPE(QAudioDeviceInfo)
 

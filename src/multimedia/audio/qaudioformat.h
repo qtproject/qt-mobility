@@ -48,16 +48,12 @@
 #include <QtCore/qshareddata.h>
 
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-QT_MODULE(Multimedia)
 
 
 class QAudioFormatPrivate;
 
-class Q_MULTIMEDIA_EXPORT QAudioFormat
+class Q_MEDIA_EXPORT QAudioFormat
 {
 public:
     enum SampleType { Unknown, SignedInt, UnSignedInt, Float };

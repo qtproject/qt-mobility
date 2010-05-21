@@ -55,15 +55,11 @@
 // We mean it.
 //
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-QT_MODULE(Multimedia)
 
 class QMemoryVideoBufferPrivate;
 
-class Q_MULTIMEDIA_EXPORT QMemoryVideoBuffer : public QAbstractVideoBuffer
+class Q_MEDIA_EXPORT QMemoryVideoBuffer : public QAbstractVideoBuffer
 {
     Q_DECLARE_PRIVATE(QMemoryVideoBuffer)
 public:
@@ -77,7 +73,5 @@ public:
 };
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

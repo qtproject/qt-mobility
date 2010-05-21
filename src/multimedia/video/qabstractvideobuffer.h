@@ -44,17 +44,13 @@
 
 #include <QtCore/qmetatype.h>
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
-
-QT_MODULE(Multimedia)
 
 class QVariant;
 
 class QAbstractVideoBufferPrivate;
 
-class Q_MULTIMEDIA_EXPORT QAbstractVideoBuffer
+class Q_MEDIA_EXPORT QAbstractVideoBuffer
 {
 public:
     enum HandleType
@@ -100,7 +96,5 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QAbstractVideoBuffer::HandleType)
 Q_DECLARE_METATYPE(QAbstractVideoBuffer::MapMode)
-
-QT_END_HEADER
 
 #endif
