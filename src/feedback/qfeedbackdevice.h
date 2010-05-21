@@ -43,6 +43,7 @@
 
 #include <qmobilityglobal.h>
 #include <QtCore/QList>
+#include <QtCore/QObject>
 
 QTM_BEGIN_NAMESPACE
 
@@ -50,9 +51,12 @@ class QFeedbackEffect;
 
 class Q_FEEDBACK_EXPORT QFeedbackDevice
 {
+    Q_GADGET
+    Q_ENUMS(Type)
 public:
     enum Type {
         //should we have different type for actuators: vibra, motor...
+        None,
         Vibra,
         Touch
     };
@@ -79,6 +83,7 @@ public:
     State state() const;
 
     Capabilities supportedCapabilities() const;
+    Type type() const;
 
     bool isEnabled() const;
     void setEnabled(bool);
@@ -91,7 +96,6 @@ private:
     friend class QFeedbackEffect;
     int m_id;
 };
-
 
 QTM_END_NAMESPACE
 

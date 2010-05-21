@@ -70,6 +70,11 @@ QFeedbackDevice::Capabilities QFeedbackDevice::supportedCapabilities() const
     return 0;
 }
 
+QFeedbackDevice::Type QFeedbackDevice::Type() const
+{
+    return None;
+}
+
 bool QFeedbackDevice::isEnabled() const
 {
     return false;

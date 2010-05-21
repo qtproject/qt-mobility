@@ -193,5 +193,6 @@ int QFeedbackEffect::period() const
     That feedback is defined by the theme of the system.
 */
 
+#include "moc_qfeedbackeffect.cpp"
 
 QTM_END_NAMESPACE

@@ -51,6 +51,20 @@ QTM_BEGIN_NAMESPACE
 
 static int g_defaultDevices[2] = {VIBE_INVALID_DEVICE_HANDLE_VALUE, VIBE_INVALID_DEVICE_HANDLE_VALUE};
 
+
+static QFeedbackDevice::Type convertFromImmersion(VibeInt32 t)
+{
+    switch (t) {
+    case VIBE_DEVACTUATORTYPE_PIEZO_WAVE:
+    case VIBE_DEVACTUATORTYPE_PIEZO:
+    case VIBE_DEVACTUATORTYPE_ERM:
+        return QFeedbackDevice::Touch;
+    default:
+        return QFeedbackDevice::Vibra;
+    }
+}
+
+
 class DeviceHandler
 {
 public:
@@ -65,14 +79,11 @@ public:
         //looking for the default devices
         const int nbDev = ImmVibeGetDeviceCount();
         for (int i = 0; i < nbDev; ++i) {
-            VibeInt32 type = 0;
-            ImmVibeGetDeviceCapabilityInt32(i, VIBE_DEVCAPTYPE_ACTUATOR_TYPE, &type);
-            if (type == VIBE_DEVACTUATORTYPE_PIEZO_WAVE || type == VIBE_DEVACTUATORTYPE_PIEZO) {
-                if (VIBE_IS_INVALID_DEVICE_HANDLE(g_defaultDevices[QFeedbackDevice::Touch]))
-                    g_defaultDevices[QFeedbackDevice::Touch] = i;
-            } else if (VIBE_IS_INVALID_DEVICE_HANDLE(g_defaultDevices[QFeedbackDevice::Vibra])) {
-                g_defaultDevices[QFeedbackDevice::Vibra] = i;
-            }
+            VibeInt32 t = 0;
+            ImmVibeGetDeviceCapabilityInt32(i, VIBE_DEVCAPTYPE_ACTUATOR_TYPE, &t);
+            QFeedbackDevice::Type type = convertFromImmersion(t);
+            if (VIBE_IS_INVALID_DEVICE_HANDLE(g_defaultDevices[type]))
+                g_defaultDevices[type] = i;
         }
     }
 
@@ -87,6 +98,9 @@ public:
 
     VibeInt32 handleForDevice(const QFeedbackDevice &device)
     {
+        if (!device.isValid())
+            return VIBE_INVALID_DEVICE_HANDLE_VALUE;
+
         //we avoid locking too much (it will only lock if the device is not yet open
         if (handles.size() <= device.id()) {
             QMutexLocker locker(&mutex);
@@ -96,8 +110,12 @@ public:
 
         if (VIBE_IS_INVALID_DEVICE_HANDLE(handles.at(device.id()))) {
             QMutexLocker locker(&mutex);
-            if (VIBE_IS_INVALID_DEVICE_HANDLE(handles.at(device.id())))
+            if (VIBE_IS_INVALID_DEVICE_HANDLE(handles.at(device.id()))) {
                 ImmVibeOpenDevice(device.id(), &handles[device.id()] );
+
+                //temporary solution: provide a proto dev licence key
+                ImmVibeSetDevicePropertyString(handles.at(device.id()), VIBE_DEVPROPTYPE_LICENSE_KEY, "IMWPROTOSJZF4EH6KWVUK8HAP5WACT6Q");
+            }
         }
         return handles.at(device.id());
     }
@@ -145,16 +163,27 @@ QFeedbackDevice::Capabilities QFeedbackDevice::supportedCapabilities() const
     return Envelope | Period;
 }
 
+QFeedbackDevice::Type QFeedbackDevice::type() const
+{
+    VibeInt32 t = 0;
+    if (!isValid())
+        return None;
+
+    ImmVibeGetDeviceCapabilityInt32(m_id, VIBE_DEVCAPTYPE_ACTUATOR_TYPE, &t);
+    return convertFromImmersion(t);
+}
+
 bool QFeedbackDevice::isEnabled() const
 {
-    VibeBool ret = false;
-    ImmVibeGetDevicePropertyBool(qHandleForDevice(*this), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, &ret);
-    return ret;
+    VibeBool disabled = true;
+   if (VIBE_FAILED(ImmVibeGetDevicePropertyBool(qHandleForDevice(*this), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, &disabled)))
+        return false;
+    return !disabled;
 }
 
 void QFeedbackDevice::setEnabled(bool enabled)
 {
-    ImmVibeSetDevicePropertyBool(qHandleForDevice(*this), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, enabled);
+    ImmVibeSetDevicePropertyBool(qHandleForDevice(*this), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, !enabled);
 }
 
 

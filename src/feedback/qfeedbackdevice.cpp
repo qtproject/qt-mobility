@@ -163,4 +163,6 @@ QFeedbackDevice QFeedbackDevice::defaultDevice()
     return ret.first();
 }
 
+#include "moc_qfeedbackdevice.cpp"
+
 QTM_END_NAMESPACE

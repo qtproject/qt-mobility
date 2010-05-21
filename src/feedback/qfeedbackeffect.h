@@ -78,12 +78,14 @@ enum InstantEffect {
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
+    Q_OBJECT
 public:
     Q_PROPERTY(int duration READ duration WRITE setDuration)
     Q_PROPERTY(qreal intensity READ intensity WRITE setIntensity)
     Q_PROPERTY(int attackTime READ attackTime WRITE setAttackTime)
     Q_PROPERTY(qreal attackIntensity READ attackIntensity WRITE setAttackIntensity)
     Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime)
+    Q_PROPERTY(int fadeIntensity READ fadeIntensity WRITE setFadeIntensity)
     Q_PROPERTY(int period READ period WRITE setPeriod)
     Q_PROPERTY(QFeedbackDevice device READ device WRITE setDevice)
 

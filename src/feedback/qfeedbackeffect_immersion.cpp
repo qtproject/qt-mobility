@@ -50,6 +50,14 @@ QTM_BEGIN_NAMESPACE
 
 extern VibeInt32 qHandleForDevice(const QFeedbackDevice &device);
 
+static VibeInt32 convertedDuration(int duration)
+{
+    //this allows to manage the infinite durations
+    if (duration == -1)
+        return VIBE_TIME_INFINITE;
+    return duration;
+}
+
 void QFeedbackEffectPrivate::checkUpdateEffect()
 {
     if (VIBE_IS_INVALID_EFFECT_HANDLE(m_hEffect))
@@ -59,7 +67,7 @@ void QFeedbackEffectPrivate::checkUpdateEffect()
     if (period > 0)
         ImmVibeModifyPlayingPeriodicEffect(qHandleForDevice(device),
                                            m_hEffect,
-                                           q->duration(),
+                                           convertedDuration(q->duration()),
                                            intensity / qreal(VIBE_MAX_MAGNITUDE),
                                            period,
                                            VIBE_DEFAULT_STYLE,
@@ -70,7 +78,7 @@ void QFeedbackEffectPrivate::checkUpdateEffect()
     else
         ImmVibeModifyPlayingMagSweepEffect(qHandleForDevice(device),
                                            m_hEffect,
-                                           q->duration(),
+                                           convertedDuration(q->duration()),
                                            intensity / qreal(VIBE_MAX_MAGNITUDE),
                                            VIBE_DEFAULT_STYLE,
                                            attackTime,
@@ -120,12 +128,12 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
         if (oldState == Paused)
             ImmVibeResumePausedEffect(qHandleForDevice(d->device), d->m_hEffect);
         else if (d->period > 0) {
-            ImmVibePlayPeriodicEffect(qHandleForDevice(d->device), duration(),
+            ImmVibePlayPeriodicEffect(qHandleForDevice(d->device), convertedDuration(duration()),
                 intensity() / qreal(VIBE_MAX_MAGNITUDE), period(),
                 VIBE_DEFAULT_STYLE, attackTime(), attackIntensity(),
                 fadeTime(), fadeIntensity(), &d->m_hEffect);
         } else {
-            ImmVibePlayMagSweepEffect(qHandleForDevice(d->device), duration(),
+            ImmVibePlayMagSweepEffect(qHandleForDevice(d->device), convertedDuration(duration()),
                 intensity() / qreal(VIBE_MAX_MAGNITUDE),
                 VIBE_DEFAULT_STYLE, attackTime(), attackIntensity(),
                 fadeTime(), fadeIntensity(), &d->m_hEffect);
