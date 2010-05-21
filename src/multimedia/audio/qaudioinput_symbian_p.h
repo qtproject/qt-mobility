@@ -143,7 +143,7 @@ private:
 
 private:
     const QByteArray m_device;
-    const QAudioFormat m_format;
+    QAudioFormat m_format;
 
     int m_clientBufferSize;
     int m_notifyInterval;
