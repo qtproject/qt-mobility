@@ -122,7 +122,7 @@ void MapTileTab::on_btnRequest_clicked()
 
         QGeoCoordinate coord(m_tileLat->text().toDouble(), m_tileLong->text().toDouble());
         quint16 zoomLevel = m_tileZoomLevel->text().toInt();
-        if(!m_mapManager->requestMap(coord,zoomLevel,QSize(256,256), QGeoMapRequestOptions()))
+        if(!m_mapManager->requestTile(coord, zoomLevel, QSize(256,256), QGeoMapRequestOptions()))
             m_result->setText(tr("Error - requestMap returned NULL"));        
     }
     else {

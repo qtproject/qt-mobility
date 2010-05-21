@@ -147,7 +147,7 @@ QString QGeoMapRequestOptions::imageFormat() const
 
 QGeoMapRequestOptionsPrivate::QGeoMapRequestOptionsPrivate() :
         mapType(QGeoMappingManager::StreetMap),
-        imageFormat("jpg") {}
+        imageFormat("png") {}
 
 QGeoMapRequestOptionsPrivate::QGeoMapRequestOptionsPrivate(const QGeoMapRequestOptionsPrivate &other)
         : mapType(other.mapType),

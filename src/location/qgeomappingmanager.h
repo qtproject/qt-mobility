@@ -78,13 +78,17 @@ public:
     virtual ~QGeoMappingManager();
 
     virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
-                                         int zoomLevel,
-                                         const QSize &size,
-                                         const QGeoMapRequestOptions &requestOptions) = 0;
+                                     int zoomLevel,
+                                     const QSize &size,
+                                     const QGeoMapRequestOptions &requestOptions) = 0;
 
     virtual QGeoMapReply* requestTile(int row, int col, int zoomLevel,
-                                          const QSize &size,
-                                          const QGeoMapRequestOptions &requestOptions) = 0;
+                                      const QSize &size,
+                                      const QGeoMapRequestOptions &requestOptions) = 0;
+
+    virtual QGeoMapReply* requestTile(const QGeoCoordinate &onTile, int zoomLevel,
+                                      const QSize &size,
+                                      const QGeoMapRequestOptions &requestOptions) = 0;
 
     QList<MapType> supportedMapTypes() const;
     QList<QString> supportedImageFormats() const;

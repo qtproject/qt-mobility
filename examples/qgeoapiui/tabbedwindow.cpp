@@ -85,7 +85,7 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     parameters.insert("routing.proxy", "172.16.42.137");
     parameters.insert("routing.host", "172.24.32.155");
     parameters.insert("mapping.proxy", "172.16.42.40");
-    parameters.insert("mapping.host", "origin.maptile.svc.tst.s2g.gate5.de");
+    parameters.insert("mapping.host", "maptile.svc.nokia.com.edgesuite.net");
 
     
     m_serviceProvider = new QGeoServiceProvider("nokia", parameters);

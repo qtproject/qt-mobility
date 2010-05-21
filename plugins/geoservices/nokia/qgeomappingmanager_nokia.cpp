@@ -73,9 +73,19 @@ void QGeoMappingManagerNokia::setHost(QString host)
     m_host = host;
 }
 
+QGeoMapReply* QGeoMappingManagerNokia::requestTile(const QGeoCoordinate &onTile, int zoomLevel,
+                                                   const QSize &size,
+                                                   const QGeoMapRequestOptions &requestOptions)
+{
+    qint32 row;
+    qint32 col;
+    getMercatorTileIndex(onTile, zoomLevel, &row, &col);
+    return requestTile(row, col, zoomLevel, size, requestOptions);
+}
+
 QGeoMapReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoomLevel,
-                                                       const QSize &size,
-                                                       const QGeoMapRequestOptions &requestOptions)
+                                                   const QSize &size,
+                                                   const QGeoMapRequestOptions &requestOptions)
 {
     QuadTileInfo* info = new QuadTileInfo;
     info->row = row;
@@ -131,8 +141,8 @@ void QGeoMappingManagerNokia::mapFinished()
             qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
             m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
             delete info;
-            reply->deleteLater();
-        } else {
+//            reply->deleteLater();
+//        } else {
             //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
             emit finished(reply);
         }
@@ -325,9 +335,9 @@ QGeoCoordinate QGeoMappingManagerNokia::screenPositionToCoordinate(QPointF scree
 }
 
 QGeoMapReply* QGeoMappingManagerNokia::requestMap(const QGeoCoordinate &center,
-                                                      int zoomLevel,
-                                                      const QSize &size,
-                                                      const QGeoMapRequestOptions &requestOptions)
+                                                  int zoomLevel,
+                                                  const QSize &size,
+                                                  const QGeoMapRequestOptions &requestOptions)
 {
     return NULL;
 }

@@ -88,13 +88,17 @@ public:
     void setHost(QString host);
 
     virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
-                                         int zoomLevel,
-                                         const QSize &size,
-                                         const QGeoMapRequestOptions &requestOptions);
+                                     int zoomLevel,
+                                     const QSize &size,
+                                     const QGeoMapRequestOptions &requestOptions);
 
     virtual QGeoMapReply* requestTile(int row, int col, int zoomLevel,
-                                          const QSize &size,
-                                          const QGeoMapRequestOptions &requestOptions);
+                                      const QSize &size,
+                                      const QGeoMapRequestOptions &requestOptions);
+
+    virtual QGeoMapReply* requestTile(const QGeoCoordinate &onTile, int zoomLevel,
+                                      const QSize &size,
+                                      const QGeoMapRequestOptions &requestOptions);
 
     //internal map state
     virtual void setZoomLevel(int zoomLevel);
