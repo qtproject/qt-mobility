@@ -8,7 +8,7 @@ wince*: {
     DEFINES += SRCDIR=\\\"\\\"
     QT += gui
 } else {
-    DEFINES += SRCDIR=\\\"$$PWD/\\\"
+    !symbian:DEFINES += SRCDIR=\\\"$$PWD/\\\"
 }
 
 HEADERS += wavheader.h

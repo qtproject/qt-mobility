@@ -51,6 +51,10 @@
 
 #define AUDIO_BUFFER 192000
 
+#if defined(Q_OS_SYBIAN)
+#define SRCDIR ""
+#endif
+
 class tst_QAudioOutput : public QObject
 {
     Q_OBJECT
