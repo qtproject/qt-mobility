@@ -148,11 +148,11 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _sorted = true;
 
     _pendingRequestCount++;
-    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, 0, 0);
 
 #ifdef FREESTYLEMAILUSED
     _pendingRequestCount++;
-    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, 0, 0);
 #endif
 
     return _active;
@@ -173,11 +173,11 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _sorted = true;
     
     _pendingRequestCount++;
-    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, 0, 0);
 
 #ifdef FREESTYLEMAILUSED
     _pendingRequestCount++;
-    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, 0, 0);
 #endif
 
     return _active;
