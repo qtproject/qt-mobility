@@ -136,7 +136,7 @@ QAudioOutputPrivate::~QAudioOutputPrivate()
 
 void QAudioOutputPrivate::setFormat(const QAudioFormat& fmt)
 {
-    m_format = fmt;
+    m_format = const_cast<QAudioFormat&>(fmt);
     SymbianAudio::Utils::formatQtToNative(m_format, m_nativeFourCC,
             m_nativeFormat);
 }
