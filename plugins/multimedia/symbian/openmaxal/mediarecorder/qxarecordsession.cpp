@@ -137,22 +137,22 @@ bool QXARecordSession::setOutputLocation(const QUrl &location)
     QString newUrlStr = (QUrl::fromUserInput(location.toString().toLower())).toString();
 
     int index = newUrlStr.lastIndexOf('.');
-    if (index != -1)
-        newUrlStr.chop(newUrlStr.length()-index);
-    
-    QString fileExtension;
-    
-    if ((m_containerMimeType.compare("audio/wav")) == KErrNone){
-        fileExtension = QString(".wav");
+    if (index == -1) {
+        QString fileExtension;
+        
+        if ((m_containerMimeType.compare("audio/wav")) == KErrNone){
+            fileExtension = QString(".wav");
+        }
+        else if ((m_containerMimeType.compare("audio/amr")) == KErrNone){
+            fileExtension = QString(".amr");
+        }
+        else if ((m_containerMimeType.compare("audio/mpeg")) == KErrNone){
+            fileExtension = QString(".mp4");
+        }
+        
+        newUrlStr.append(fileExtension);     
     }
-    else if ((m_containerMimeType.compare("audio/amr")) == KErrNone){
-        fileExtension = QString(".amr");
-    }
-    else if ((m_containerMimeType.compare("audio/mpeg")) == KErrNone){
-        fileExtension = QString(".mp4");
-    }
     
-    newUrlStr.append(fileExtension);     
 
     QString curUrlStr = (QUrl::fromUserInput(m_outputLocation.toString().toLower())).toString();
     if (curUrlStr.compare(newUrlStr) == KErrNone)
@@ -198,8 +198,8 @@ qint64 QXARecordSession::duration()
 void QXARecordSession::applySettings()
 {
     /* Settings can only be applied when the recorder is in the stopped
-     * state after creation. */
-    if ((state() == QMediaRecorder::StoppedState) && (m_state == m_previousState)) {
+     * state after creation.*/
+    if ((state() == QMediaRecorder::StoppedState)) {
         if (m_appliedaudioencodersettings != m_audioencodersettings)
             setEncoderSettingsToImpl();
     }
@@ -455,7 +455,7 @@ void QXARecordSession::setAudioSettings(const QAudioEncoderSettings &settings)
 {
     /* Settings can only be set when the recorder is in the stopped
      * state after creation. */
-    if ((state() == QMediaRecorder::StoppedState) && (m_state == m_previousState)) {
+    if ((state() == QMediaRecorder::StoppedState) /*&& (m_state == m_previousState)*/) {
         m_audioencodersettings = settings;
     }
     else {
@@ -469,8 +469,7 @@ QStringList QXARecordSession::supportedEncodingOptions(const QString &codec)
     QT_TRACE_FUNCTION_ENTRY;
     Q_UNUSED(codec);
     QStringList options;
-    if ((codec.compare("aac") == 0) ||
-            (codec.compare("amr") == 0))
+    if (codec.compare("aac") == 0)
         {
         options << "bitrate";
         }

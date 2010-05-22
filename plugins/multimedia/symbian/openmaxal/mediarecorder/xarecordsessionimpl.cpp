@@ -792,8 +792,10 @@ void XARecordSessionImpl::setLowQuality()
         m_BitRate = bitrates[bitrates.Count()*1/4];
     }
     bitrates.Close();
-
-    if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
+    if (m_AudioEncoderId == XA_AUDIOCODEC_AAC) {
+            m_SampleRate = 32000 * KMilliToHz;
+    }
+    else if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
         m_SampleRate = 8000 * KMilliToHz;
     } else {
         RArray<TInt32> samplerates;
