@@ -48,8 +48,8 @@ cd /D %SOURCE_PATH%
 set SOURCE_PATH=%CD%
 cd /D %BUILD_PATH%
 
-set PROJECT_CONFIG= %BUILD_PATH%\config.in
-set PROJECT_LOG= %BUILD_PATH%\config.log
+set PROJECT_CONFIG=%BUILD_PATH%\config.in
+set PROJECT_LOG=%BUILD_PATH%\config.log
 set RELEASEMODE=release
 set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
@@ -63,9 +63,9 @@ set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 
-if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
-if exist "%PROJECT_LOG%" del %PROJECT_LOG%
-if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
+if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
+if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
+if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
 
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
@@ -427,6 +427,7 @@ goto errorTag
 
 :compileTest
 setlocal
+    @echo off
     echo Checking %1
     set CURRENT_PWD=%CD%
 
@@ -440,16 +441,24 @@ setlocal
     )
 
     call %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
-    call %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
-    call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
 
     set FAILED=0
     if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
-        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% SBS^="@sbs --check"') do set FAILED=1
+        call %MOBILITY_MAKE% clean release-gcce >> %PROJECT_LOG% 2>&1
+        call %MOBILITY_MAKE% release-armv5 >> %PROJECT_LOG% 2>&1
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-armv5 SBS^="@sbs --check"') do set FAILED=1
     ) else if %MOBILITY_BUILDSYSTEM% == symbian-abld (
-        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
-    ) else if errorlevel 1 (
-        set FAILED=1
+        call %MOBILITY_MAKE% clean release-gcce >> %PROJECT_LOG% 2>&1
+        call %MOBILITY_MAKE% release-gcce  >> %PROJECT_LOG% 2>&1
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
+    ) else (
+        REM Make for other builds
+        call %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
+        call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
+        REM have to check error level for windows / other builds to be sure.
+        if errorlevel 1 (
+           set FAILED=1
+        )
     )
 
     if %FAILED% == 0 (

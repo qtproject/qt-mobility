@@ -38,67 +38,100 @@
 **
 ****************************************************************************/
 
-#include <qvaluespacesubscriber.h>
+import Qt 4.7
+import QtMobility.publishsubscribe 1.0
+import Qt.labs.particles 1.0
+import "content"
 
-#include <QApplication>
-#include <QObject>
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QPushButton>
-#include <QUrl>
-#include <QDeclarativeView>
-#include <qdeclarative.h>
-#include <QtDeclarative>
+Rectangle {
+    color: "white"
+    width: 100
+    height: 230
 
-QTM_USE_NAMESPACE
+    Rectangle {
+        x: 20
+        y: 10
+        width: 60
+        height: 10
+        color: "black"
+    }
 
-//! [0]
-QML_DECLARE_TYPE(QValueSpaceSubscriber);
-//! [0]
+    Rectangle {
+        x: 10
+        y: 20
+        width: 80
+        height: 200
+        color: "black"
+    }
 
-class MainWidget : public QWidget
-{
-    Q_OBJECT
+    Rectangle {
+        //! [1]
+        id: visualCharge
+        x: 12
+        y: 22 + 196 - height
+        width: 76
+        height: 196 * batteryCharge.value / 100
+        clip: true
+        color: "green"
+        //! [1]
 
-public:
-    MainWidget();
+        Particles {
+            id: bubbles
+            width: parent.width
+            anchors.bottom: parent.bottom
+            source: "content/bubble.png"
+            count: 0
+            velocity: 30
+            velocityDeviation: 10
+            angle: -90
+            //lifeSpan: parent.height * 1000 / (velocity + velocityDeviation / 2)
+            lifeSpan: parent.height * 1000 / (30 + 10 / 2)
+        }
 
-private:
-    QDeclarativeView *view;
-};
+        states: [
+        //! [3]
+        State {
+            name: "charging"
+            when: batteryCharging.value
+            PropertyChanges {
+                target: bubbles
+                count: batteryCharge.value / 5
+                emissionRate: 5
+            }
+        },
+        //! [3]
+        //! [2]
+        State {
+            name: "low"
+            when: batteryCharge.value < 25 && !batteryCharging.value
+            PropertyChanges {
+                target: visualCharge
+                color: "red"
+            }
+        }
+        //! [2]
+        ]
 
-MainWidget::MainWidget()
-{
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setMargin(0);
-    setLayout(vbox);
+        transitions: [
+        Transition {
+            from: "*"
+            to: "low"
+            reversible: true
+            ColorAnimation {
+                duration: 200
+            }
+        }
+        ]
+    }
 
-    view = new QDeclarativeView(this);
-    view->setFixedSize(100, 230);
-    vbox->addWidget(view);
-
-    //! [2]
-    view->setSource(QUrl("qrc:/battery-meter.qml"));
-    view->show();
-    //! [2]
-
-    QPushButton *quitButton = new QPushButton("Quit");
-    vbox->addWidget(quitButton);
-    connect(quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
+    //! [0]
+    ValueSpaceSubscriber {
+        id: batteryCharge
+        path: "/power/battery/charge"
+    }
+    ValueSpaceSubscriber {
+        id: batteryCharging
+        path: "/power/battery/charging"
+    }
+    //! [0]
 }
-
-int main(int argc, char *argv[])
-{
-    //! [1]
-    qmlRegisterType<QValueSpaceSubscriber>("Qt", 4, 6, "ValueSpaceSubscriber");
-    //! [1]
-
-    QApplication app(argc, argv);
-
-    MainWidget mainWidget;
-    mainWidget.show();
-
-    return app.exec();
-}
-
-#include "main.moc"

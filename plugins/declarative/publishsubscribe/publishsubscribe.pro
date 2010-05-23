@@ -1,20 +1,18 @@
-INCLUDEPATH += ../../../src/serviceframework
+INCLUDEPATH += ../../../src/publishsubscribe
+DEPENDPATH += ../../../src/publishsubscribe
 INCLUDEPATH += ../../../src/global
 
-TARGET  = declarative_serviceframework
-TARGETPATH = QtMobility/serviceframework
+TARGET  = declarative_publishsubscribe
+TARGETPATH = QtMobility/publishsubscribe
 include(../../qimportbase.pri)
 include(../../../common.pri)
 
 QT += declarative
 
-HEADERS += qdeclarativeservice.h
-
-SOURCES += qdeclarativeservice.cpp \
-           serviceframework.cpp 
+SOURCES += publishsubscribe.cpp
 
 CONFIG += mobility
-MOBILITY += serviceframework
+MOBILITY += publishsubscribe
 
 DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH

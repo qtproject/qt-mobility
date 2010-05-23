@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,45 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QS60SENSORAPIACCELEROMETER_H
-#define QS60SENSORAPIACCELEROMETER_H
+#include <QtDeclarative/qdeclarativeextensionplugin.h>
+#include <QtDeclarative/qdeclarative.h>
 
-// Qt
-#include <qsensorbackend.h>
-#include <qaccelerometer.h>
+#include "qvaluespacesubscriber.h"
 
-#if !defined(HAS_NO_SENSOR_PROVISION)
-
-// symbian
-#include <rrsensorapi.h>
+QT_BEGIN_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class QS60SensorApiAccelerometer : public QSensorBackend,  public MRRSensorDataListener
-{
-public:
-    static const char *id;
-    
-    QS60SensorApiAccelerometer(QSensor *sensor);
-    virtual ~QS60SensorApiAccelerometer();
-    
-    // from QSensorBackend
-    virtual void start();
-    virtual void stop();
-    void poll();
+QML_DECLARE_TYPE(QValueSpaceSubscriber);
 
-    // from MRRSensorDataListener
-    void HandleDataEventL(TRRSensorInfo aSensor, TRRSensorEvent aEvent);
-    
-private:
-    void findAndCreateNativeSensorL();
-    
-private:
-    CRRSensorApi* m_nativeSensor;    
-    QAccelerometerReading m_reading;
-    qreal m_sampleFactor;
+class QSubscriberDeclarativeModule : public QDeclarativeExtensionPlugin
+{
+    Q_OBJECT
+public:
+    virtual void registerTypes(const char *uri)
+    {
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.publishsubscribe"));
+
+        qmlRegisterType<QValueSpaceSubscriber>(uri, 1, 0, "ValueSpaceSubscriber");
+    }
 };
 
-#endif // !HAS_NO_SENSOR_PROVISION
+QT_END_NAMESPACE
 
-#endif // QS60SENSORAPIACCELEROMETER_H
+#include "publishsubscribe.moc"
+
+Q_EXPORT_PLUGIN2(qsubscriberdeclarativemodule, QT_PREPEND_NAMESPACE(QSubscriberDeclarativeModule));
+
