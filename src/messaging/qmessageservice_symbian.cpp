@@ -50,14 +50,21 @@
 #include "qmessageservice_symbian_p.h"
 #include "qmtmengine_symbian_p.h"
 #include "qmessage_symbian_p.h"
-
+#include "messagingutil_p.h"
+#include "maemohelpers_p.h" // contains non-meamo specific helpers for messaging
+#ifdef FREESTYLEMAILUSED
+#include "qfsengine_symbian_p.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
+
+using namespace SymbianHelpers;
 
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
    _state(QMessageService::InactiveState),
-   _active(false)
+   _active(false),
+   _pendingRequestCount(0)
 {
 }
       
@@ -77,52 +84,217 @@ bool QMessageServicePrivate::sendMMS(QMessage &message)
 
 bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
-    return CMTMEngine::instance()->sendEmail(message);
+    switch (idType(message.parentAccountId())) {
+        case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+            return CFSEngine::instance()->sendEmail(message);
+#else
+            return false;
+#endif
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->sendEmail(message);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::show(const QMessageId& id)
 {
-	return CMTMEngine::instance()->showMessage(id);
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+            return CFSEngine::instance()->showMessage(id);
+#else
+            return false;
+#endif
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->showMessage(id);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::compose(const QMessage &message)
 {
-	return CMTMEngine::instance()->composeMessage(message);
+    switch (idType(message.parentAccountId())) {
+        case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+            return CFSEngine::instance()->composeMessage(message);
+#else
+            return false;
+#endif
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->composeMessage(message);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+    if (_pendingRequestCount > 0) {
+        return false;
+    }
+    _pendingRequestCount = 0;
+    _active = true;
+    _filter = filter;
+    _sortOrder = sortOrder;
+    _limit = limit;
+    _offset = offset;
+    _filtered = true;
+    _sorted = true;
+
+    _pendingRequestCount++;
+    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+
+#ifdef FREESTYLEMAILUSED
+    _pendingRequestCount++;
+    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
+#endif
+
+    return _active;
 }
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+    if (_pendingRequestCount > 0) {
+        return false;
+    }
+    _pendingRequestCount = 0;
+    _active = true;
+    _filter = filter;
+    _sortOrder = sortOrder;
+    _limit = limit;
+    _offset = offset;
+    _filtered = true;
+    _sorted = true;
+    
+    _pendingRequestCount++;
+    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+
+#ifdef FREESTYLEMAILUSED
+    _pendingRequestCount++;
+    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
+#endif
+
+    return _active;
 }
 
 bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
 {
-    return CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
+    if (_pendingRequestCount > 0) {
+        return false;
+    }
+    _pendingRequestCount = 0;
+    _active = true;
+
+    _pendingRequestCount++;
+    CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
+
+#ifdef FREESTYLEMAILUSED
+    _pendingRequestCount++;
+    CFSEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
+#endif
+    return _active;
 }
 
 bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessageContentContainerId &id)
 {
-	return CMTMEngine::instance()->retrieve(messageId, id);
+    switch (idType(messageId)) {
+        case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+            return CFSEngine::instance()->retrieve(messageId, id);
+#else
+            return false;
+#endif
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->retrieve(messageId, id);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 {
-	return CMTMEngine::instance()->retrieveBody(id);
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+            return CFSEngine::instance()->retrieveBody(id);
+#else
+            return false;
+#endif
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->retrieveBody(id);
+            break;
+    }
 }
 
 bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
-	return CMTMEngine::instance()->retrieveHeader(id);
+    switch (idType(id)) {
+        case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+            return CFSEngine::instance()->retrieveHeader(id);
+#else
+            return false;
+#endif
+            break;
+        case EngineTypeMTM:
+        default:
+            return CMTMEngine::instance()->retrieveHeader(id);
+            break;
+    }
+}
+
+void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
+{
+    _pendingRequestCount--;
+
+    if (!isFiltered) {
+        _filtered = false;
+    }
+
+    if (!isSorted) {
+        _sorted = false;
+    } else {
+        if ((ids.count() > 0) && (_ids.count() > 0)) {
+            _sorted = false;
+        }
+    }
+
+    _ids.append(ids);
+
+    if (_pendingRequestCount == 0) {
+        if (!_filtered) {
+            MessagingHelper::filterMessages(_ids, _filter);
+        }
+        if (!_sorted) {
+            MessagingHelper::orderMessages(_ids, _sortOrder);
+        }
+        MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, _limit, _offset);
+
+        emit q_ptr->messagesFound(_ids);
+
+        setFinished(true);
+
+        _ids.clear();
+        _filter = QMessageFilter();
+        _sortOrder = QMessageSortOrder();
+    }
 }
 
 bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
-    return CMTMEngine::instance()->exportUpdates(id);
+  //  if (SymbianHelpers::isFreestyleMessage(id))
+  //      return CFSEngine::instance()->exportUpdates(id);
+  //  else
+        return CMTMEngine::instance()->exportUpdates(id);
 }
 
 void QMessageServicePrivate::setFinished(bool successful)

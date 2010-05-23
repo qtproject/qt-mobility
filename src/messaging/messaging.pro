@@ -138,6 +138,10 @@ symbian|win32|maemo6|maemo5|mac {
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+	exists($${EPOCROOT}epoc32\include\platform\app\emailinterfacefactory.h) {
+   	CONFIG += FREESTYLEMAIL
+	DEFINES += FREESTYLEMAILUSED
+	}
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
@@ -145,8 +149,14 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagestore_symbian_p.h \
             qmessageservice_symbian_p.h \
             qmessagecontentcontainer_symbian_p.h \
-            qmessage_symbian_p.h
-        SOURCES += qmtmengine_symbian.cpp \
+            qmessage_symbian_p.h \
+            maemohelpers_p.h
+
+        contains(CONFIG, FREESTYLEMAIL) {
+	    HEADERS += qfsengine_symbian_p.h
+	}
+
+    SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
             qmessagefolderid_symbian.cpp \
@@ -162,8 +172,13 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagefilter_symbian.cpp \
             qmessagesortorder_symbian.cpp \
             qmessagestore_symbian.cpp \
-            qmessageservice_symbian.cpp
-        LIBS += -lsendas2 \
+            qmessageservice_symbian.cpp \
+            maemohelpers.cpp
+
+        contains(CONFIG, FREESTYLEMAIL) {
+	    SOURCES += qfsengine_symbian.cpp
+	}
+    LIBS += -lsendas2 \
             -lmsgs \
             -letext \
             -lefsrv \
@@ -178,7 +193,8 @@ symbian|win32|maemo6|maemo5|mac {
             -leikcore \
             -lcone \
             -lapgrfx \
-            -lapmime
+            -lapmime \
+            -lecom
         TARGET.CAPABILITY = ALL \
             -TCB
         TARGET.UID3 = 0x2002AC82

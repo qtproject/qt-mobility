@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -69,6 +69,8 @@ public:
     bool countMessages(const QMessageFilter &filter);
 	
     void setFinished(bool successful);
+    
+    void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);
 
 signals:
 	void stateChanged(QMessageService::State);
@@ -81,9 +83,20 @@ private:
     QMessageService::State _state;
     QMessageManager::Error _error;
     int _actionId;
-    bool _active;
+    mutable bool _active;
+    mutable int _pendingRequestCount;
+    QMessageIdList _ids;
+    mutable bool _sorted;
+    mutable bool _filtered;
+
+    mutable QMessageFilter _filter;
+    mutable QMessageSortOrder _sortOrder;
+    mutable int _limit;
+    mutable int _offset;
+
     
     friend class CMTMEngine;
+    friend class CFSEngine;
 };
 
 
