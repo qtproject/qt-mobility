@@ -1,6 +1,8 @@
 include(../../../staticconfig.pri)
 
-INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/effects
+INCLUDEPATH += ../../../src/multimedia \
+               ../../../src/multimedia/effects \
+               ../../../src/multimedia/video
 INCLUDEPATH += ../../../src/global
 
 TARGET  = declarative_multimedia
