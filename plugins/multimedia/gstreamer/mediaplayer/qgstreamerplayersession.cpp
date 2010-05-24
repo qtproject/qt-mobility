@@ -62,6 +62,7 @@ QGstreamerPlayerSession::QGstreamerPlayerSession(QObject *parent)
      m_pendingVideoSink(0),
      m_nullVideoSink(0),
      m_bus(0),
+     m_videoOutput(0),
      m_renderer(0),
      m_volume(100),
      m_playbackRate(1.0),
@@ -278,12 +279,34 @@ static void block_pad_cb(GstPad *pad, gboolean blocked, gpointer user_data)
     static int dumpNum = 0;
 #endif
 
-void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
+void QGstreamerPlayerSession::updateVideoRenderer()
 {
+    if (m_videoOutput)
+        setVideoRenderer(m_videoOutput);
+}
+
+void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
+{    
+    if (m_videoOutput != videoOutput) {
+        if (m_videoOutput)
+            disconnect(m_videoOutput, SIGNAL(sinkChanged()),
+                       this, SLOT(updateVideoRenderer()));
+        if (videoOutput)
+            connect(videoOutput, SIGNAL(sinkChanged()),
+                    this, SLOT(updateVideoRenderer()));
+
+        m_videoOutput = videoOutput;
+    }
+
     QGstreamerVideoRendererInterface* renderer = qobject_cast<QGstreamerVideoRendererInterface*>(videoOutput);
 
-    if (m_renderer == renderer)
-        return;
+    if (m_renderer == renderer) {
+        //return only if video sink is still the same
+        if (!m_renderer || m_renderer->videoSink() == m_videoSink)
+            return;
+    }
+
+    m_renderer = renderer;
 
 #ifdef DEBUG_VO_BIN_DUMP
     dumpNum++;
@@ -292,8 +315,6 @@ void QGstreamerPlayerSession::setVideoRenderer(QObject *videoOutput)
                                   GstDebugGraphDetails(GST_DEBUG_GRAPH_SHOW_ALL /* GST_DEBUG_GRAPH_SHOW_MEDIA_TYPE | GST_DEBUG_GRAPH_SHOW_NON_DEFAULT_PARAMS | GST_DEBUG_GRAPH_SHOW_STATES*/),
                                   QString("video_output_change_%1_set").arg(dumpNum).toAscii().constData());
 #endif
-
-    m_renderer = renderer;
 
     GstElement *videoSink = m_renderer ? m_renderer->videoSink() : m_nullVideoSink;
 

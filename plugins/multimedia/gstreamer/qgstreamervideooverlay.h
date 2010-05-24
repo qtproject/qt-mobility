@@ -95,6 +95,9 @@ public:
 
     GstElement *videoSink();
 
+signals:
+    void sinkChanged();
+
 private slots:
     void surfaceFormatChanged();
 

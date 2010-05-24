@@ -64,16 +64,17 @@ QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(QAbstractVideoSurface *surfac
     , m_renderReturn(GST_FLOW_ERROR)
     , m_bytesPerLine(0)
 {
-    m_supportedPixelFormats = m_surface->supportedPixelFormats();
-
-    connect(m_surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
+    if (m_surface) {
+        m_supportedPixelFormats = m_surface->supportedPixelFormats();
+        connect(m_surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
+    }
 }
 
 QList<QVideoFrame::PixelFormat> QVideoSurfaceGstDelegate::supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType) const
 {
     QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
-    if (handleType == QAbstractVideoBuffer::NoHandle)
+    if (handleType == QAbstractVideoBuffer::NoHandle || !m_surface)
         return m_supportedPixelFormats;
     else
         return m_surface->supportedPixelFormats(handleType);
@@ -87,6 +88,9 @@ QVideoSurfaceFormat QVideoSurfaceGstDelegate::surfaceFormat() const
 
 bool QVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int bytesPerLine)
 {
+    if (!m_surface)
+        return false;
+
     QMutexLocker locker(&m_mutex);
 
     m_format = format;
@@ -107,6 +111,9 @@ bool QVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int byte
 
 void QVideoSurfaceGstDelegate::stop()
 {
+    if (!m_surface)
+        return;
+
     QMutexLocker locker(&m_mutex);
 
     if (QThread::currentThread() == thread()) {
@@ -129,6 +136,9 @@ bool QVideoSurfaceGstDelegate::isActive()
 
 GstFlowReturn QVideoSurfaceGstDelegate::render(GstBuffer *buffer)
 {
+    if (!m_surface)
+        return GST_FLOW_NOT_NEGOTIATED;
+
     QMutexLocker locker(&m_mutex);
 
     QGstVideoBuffer *videoBuffer = 0;
@@ -216,7 +226,9 @@ void QVideoSurfaceGstDelegate::supportedFormatsChanged()
 {
     QMutexLocker locker(&m_mutex);
 
-    m_supportedPixelFormats = m_surface->supportedPixelFormats();
+    m_supportedPixelFormats.clear();
+    if (m_surface)
+        m_supportedPixelFormats = m_surface->supportedPixelFormats();
 }
 
 struct YuvFormat

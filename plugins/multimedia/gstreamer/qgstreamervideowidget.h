@@ -90,6 +90,9 @@ public:
 public slots:
     void updateNativeVideoSize();
 
+signals:
+    void sinkChanged();
+
 private:
     void createVideoWidget();
     void windowExposed();

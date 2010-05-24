@@ -133,6 +133,7 @@ private slots:
     void getStreamsInfo();
     void setSeekable(bool);
     void finishVideoOutputChange();
+    void updateVideoRenderer();
 
 private:
     QUrl m_url;
@@ -149,6 +150,7 @@ private:
     GstElement* m_nullVideoSink;
 
     GstBus* m_bus;
+    QObject *m_videoOutput;
     QGstreamerVideoRendererInterface *m_renderer;
 
     QMap<QByteArray, QVariant> m_tags;
