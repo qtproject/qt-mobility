@@ -142,6 +142,9 @@ symbian|win32|maemo6|maemo5|mac {
    	CONFIG += FREESTYLEMAIL
 	DEFINES += FREESTYLEMAILUSED
 	}
+	exists($${EPOCROOT}epoc32\include\platform\app\mmailboxcontentobserver.h) {
+	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+	}
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
