@@ -64,16 +64,12 @@ contains(mobility_modules,multimedia) {
         radio \
         player \
         slideshow \
-        audiorecorder
-
-    !contains(QT_CONFIG,multimedia) {
-        SUBDIRS += \
-            audiodevices \
-            audioinput \
-            audiooutput \
-            videographicsitem \
-            videowidget
-    }
+        audiorecorder \
+        audiodevices \
+        audioinput \
+        audiooutput \
+        videographicsitem \
+        videowidget
 }
 
 

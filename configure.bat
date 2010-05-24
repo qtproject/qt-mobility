@@ -481,7 +481,6 @@ if %FIRST% == bearer (
 ) else if %FIRST% == messaging (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
     set CURRENT_PWD=%CD%
     if %BUILD_PATH% == %SOURCE_PATH% (
         cd %SOURCE_PATH%\config.tests\qtmultimedia
@@ -493,8 +492,14 @@ if %FIRST% == bearer (
     )
     for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\qtmultimedia\qtmultimedia.pro 2^>^&1 1^>NUL') do set QTMULTIMEDIA=%%i 
     if %QTMULTIMEDIA% == FALSE (
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
         perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\audio
         perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\video
+    ) else (
+        echo "Only one multimedia module allowed, cannot continue."
+        echo "option 1: configure without multimedia module"
+        echo "option 2: compile Qt with -no-multimedia"
+        exit /b 1
     )
     cd /D %CURRENTDIR%
 ) else if %FIRST% == publishsubscribe (

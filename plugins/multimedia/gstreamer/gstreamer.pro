@@ -9,10 +9,6 @@ INCLUDEPATH+=../../../src/multimedia
 CONFIG += mobility
 MOBILITY = multimedia
 
-contains(QT_CONFIG,multimedia) {
-    QT += multimedia
-}
-
 DEPENDPATH += .
 
 unix:contains(QT_CONFIG, alsa) {

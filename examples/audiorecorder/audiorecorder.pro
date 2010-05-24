@@ -1,8 +1,6 @@
 TEMPLATE = app
 CONFIG += example
 
-contains(QT_CONFIG, multimedia): QT += multimedia
-
 INCLUDEPATH += ../../src/multimedia
 include(../examples.pri)
 

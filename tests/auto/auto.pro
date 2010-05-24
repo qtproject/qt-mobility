@@ -116,17 +116,13 @@ contains(mobility_modules,multimedia) {
         qradiotuner \
         qpaintervideosurface \
         qvideowidget \
-        qmediatimerange
-
-    !contains(QT_CONFIG,multimedia) {
-        SUBDIRS += \
-                qaudiodeviceinfo \
-                qaudiooutput \
-                qaudioinput \
-                qaudioformat \
-                qvideoframe \
-                qvideosurfaceformat
-    }
+        qmediatimerange \
+        qaudiodeviceinfo \
+        qaudiooutput \
+        qaudioinput \
+        qaudioformat \
+        qvideoframe \
+        qvideosurfaceformat
 
     symbian: {
         #symbian spesific autotests

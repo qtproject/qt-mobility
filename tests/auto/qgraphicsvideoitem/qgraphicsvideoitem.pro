@@ -1,5 +1,5 @@
 TARGET = tst_qgraphicsvideoitem
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/video
 CONFIG += testcase
 
 SOURCES += tst_qgraphicsvideoitem.cpp
@@ -9,8 +9,3 @@ include (../../../common.pri)
 CONFIG += mobility
 MOBILITY = multimedia
 
-contains(QT_CONFIG,multimedia) {
-    QT += multimedia
-} else {
-    INCLUDEPATH += ../../../src/multimedia/video
-}

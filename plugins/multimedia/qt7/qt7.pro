@@ -4,10 +4,6 @@ TARGET = $$qtLibraryTarget(qt7engine)
 
 QT += opengl
 
-contains(QT_CONFIG,multimedia) {
-    QT += multimedia
-}
-
 PLUGIN_TYPE = mediaservice
 
 include (../../../common.pri)

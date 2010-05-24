@@ -10,11 +10,6 @@ QT += network
 CONFIG += mobility
 MOBILITY = multimedia
 
-contains(QT_CONFIG,multimedia) {
-    QT += multimedia
-}
-
-
 !contains(QT_CONFIG, no-jpeg):DEFINES += QTEST_HAVE_JPEG
 
 wince*|symbian {

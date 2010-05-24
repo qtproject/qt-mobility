@@ -1,6 +1,6 @@
 TARGET = tst_qpaintervideosurface
 CONFIG += testcase
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/video
 
 contains(QT_CONFIG, opengl): QT += opengl
 
@@ -11,8 +11,3 @@ SOURCES += tst_qpaintervideosurface.cpp
 CONFIG += mobility
 MOBILITY = multimedia
 
-contains(QT_CONFIG,multimedia) {
-    QT += multimedia
-} else {
-    INCLUDEPATH += ../../../src/multimedia/video
-}

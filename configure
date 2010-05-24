@@ -430,12 +430,17 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include $relpath/src/contacts/filters
             ;;
         multimedia)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
             echo "contains(QT_CONFIG,multimedia):message(1)" > 1.pro
             SOMETHING=`qmake 1.pro 2>&1`
             if [ "$SOMETHING" != "Project MESSAGE: 1" ]; then
+                $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
                 $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/audio
                 $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/video
+            else
+                echo "Only one multimedia module allowed, cannot continue."
+                echo "option 1: configure without multimedia module"
+                echo "option 2: compile Qt with -no-multimedia"
+                exit 1
             fi
             rm 1.pro
             ;;

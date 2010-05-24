@@ -9,11 +9,6 @@ include(../examples.pri)
 CONFIG += mobility
 MOBILITY = multimedia
 
-contains(QT_CONFIG,multimedia) {
-    QT += multimedia
-}
-
-
 HEADERS = \
     player.h \
     playercontrols.h \

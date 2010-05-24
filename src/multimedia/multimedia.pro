@@ -106,12 +106,9 @@ SOURCES += qmediacontrol.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp
 
-!contains(QT_CONFIG,multimedia) {
     include(audio/audio.pri)
     include(video/video.pri)
-} else {
-    QT += multimedia
-}
+    include(effects/effects.pri)
 
 mac {
    HEADERS += qpaintervideosurface_mac_p.h
@@ -119,8 +116,6 @@ mac {
 
    LIBS += -framework AppKit -framework QuartzCore -framework QTKit
 }
-
-include(effects/effects.pri)
 
 maemo5 {
     QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon

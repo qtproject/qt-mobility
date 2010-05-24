@@ -9,8 +9,3 @@ SOURCES += tst_qvideosurfaceformat.cpp
 QT += core
 CONFIG += mobility
 MOBILITY = multimedia
-
-contains(QT_CONFIG,multimedia) {
-    QT += multimedia
-}
-
