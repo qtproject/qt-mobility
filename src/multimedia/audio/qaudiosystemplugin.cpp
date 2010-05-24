@@ -50,8 +50,7 @@ QT_BEGIN_NAMESPACE
 
     \ingroup multimedia
     \inmodule QtMultimedia
-    \ingroup  multimedia
-    \since 4.8
+    \internal
 
     Writing a audio plugin is achieved by subclassing this base class,
     reimplementing the pure virtual functions keys(), availableDevices(),
