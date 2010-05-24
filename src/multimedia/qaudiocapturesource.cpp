@@ -87,7 +87,7 @@ public:
         Q_Q(QAudioCaptureSource);
 
         if (service != 0)
-            audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->control(QAudioEndpointSelector_iid));
+            audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->requestControl(QAudioEndpointSelector_iid));
 
         if (audioEndpointSelector) {
             q->connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)),
@@ -139,6 +139,9 @@ QAudioCaptureSource::QAudioCaptureSource(QMediaObject *mediaObject, QObject *par
 QAudioCaptureSource::~QAudioCaptureSource()
 {
     Q_D(QAudioCaptureSource);
+
+    if (d->service && d->audioEndpointSelector)
+        d->service->releaseControl(d->audioEndpointSelector);
 
     if (d->provider)
         d->provider->releaseService(d->service);

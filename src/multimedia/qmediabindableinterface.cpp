@@ -39,44 +39,43 @@
 **
 ****************************************************************************/
 
-#include "directshowvideooutputcontrol.h"
+#include <qmediabindableinterface.h>
 
-DirectShowVideoOutputControl::DirectShowVideoOutputControl(QObject *parent)
-    : QVideoOutputControl(parent)
-    , m_output(NoOutput)
+QT_BEGIN_NAMESPACE
+
+/*!
+    \class QMediaBindableInterface
+    \ingroup multimedia
+
+    \preliminary
+    \brief QMediaBindableInterface is the base class for objects extending media objects functionality.
+
+    \sa
+*/
+
+/*!
+    Destroys a media helper object.
+*/
+
+QMediaBindableInterface::~QMediaBindableInterface()
 {
-
 }
 
-DirectShowVideoOutputControl::~DirectShowVideoOutputControl()
-{
-}
+/*!
+    \fn QMediaBindableInterface::mediaObject() const;
 
-QList<QVideoOutputControl::Output> DirectShowVideoOutputControl::availableOutputs() const
-{
-    return QList<Output>()
-            << RendererOutput
-            << WindowOutput;
-}
+    Return the currenty attached media object.
+*/
 
 
-QVideoOutputControl::Output DirectShowVideoOutputControl::output() const
-{
-    return m_output;
-}
+/*!
+    \fn QMediaBindableInterface::setMediaObject(QMediaObject *object);
 
-void DirectShowVideoOutputControl::setOutput(Output output)
-{
-    if (output != m_output) {
-        switch (output) {
-        case NoOutput:
-        case RendererOutput:
-        case WindowOutput:
-            m_output = output;
-            emit outputChanged();
-            break;
-        default:
-            break;
-        }
-    }
-}
+    Attaches to the media \a object.
+    Returns true if attached successfully, otherwise returns false.
+*/
+
+
+
+QT_END_NAMESPACE
+

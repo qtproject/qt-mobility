@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,41 +39,72 @@
 **
 ****************************************************************************/
 
-#ifndef QGSTREAMERVIDEOOUTPUTCONTROL_H
-#define QGSTREAMERVIDEOOUTPUTCONTROL_H
+#ifndef QSOUNDEFFECT_H
+#define QSOUNDEFFECT_H
 
-#include <qvideooutputcontrol.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <gst/gst.h>
+#include <qmobilityglobal.h>
+#include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
 
-QT_USE_NAMESPACE
 
-class QGstreamerVideoRendererInterface
-{
-public:
-    virtual ~QGstreamerVideoRendererInterface();
-    virtual GstElement *videoSink() = 0;
-    virtual void precessNewStream() {}
-};
+QT_BEGIN_HEADER
 
-class QGstreamerVideoOutputControl : public QVideoOutputControl
+QT_BEGIN_NAMESPACE
+
+class QSoundEffectPrivate;
+
+class Q_MEDIA_EXPORT QSoundEffect : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
+    Q_PROPERTY(int loops READ loops WRITE setLoops NOTIFY loopsChanged)
+    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
+    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
+
 public:
-    QGstreamerVideoOutputControl(QObject *parent = 0);
+    explicit QSoundEffect(QObject *parent = 0);
+    ~QSoundEffect();
 
-    QList<Output> availableOutputs() const;
-    void setAvailableOutputs(const QList<Output> &outputs);
+    QUrl source() const;
+    void setSource(const QUrl &url);
 
-    Output output() const;
-    void setOutput(Output output);
+    int loops() const;
+    void setLoops(int loopCount);
+
+    int volume() const;
+    void setVolume(int volume);
+
+    bool isMuted() const;
+    void setMuted(bool muted);
 
 Q_SIGNALS:
-    void outputChanged(QVideoOutputControl::Output output);
+    void sourceChanged();
+    void loopsChanged();
+    void volumeChanged();
+    void mutedChanged();
+
+public Q_SLOTS:
+    void play();
 
 private:
-    QList<Output> m_outputs;
-    Output m_output;
+    Q_DISABLE_COPY(QSoundEffect)
+    QSoundEffectPrivate* d;
 };
 
-#endif
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+
+#endif // QSOUNDEFFECT_H

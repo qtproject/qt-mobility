@@ -49,7 +49,6 @@
 #include "qgstreamerv4l2input.h"
 #include "qgstreamercapturemetadatacontrol.h"
 
-#include "qgstreamervideooutputcontrol.h"
 #include "qgstreameraudioinputendpointselector.h"
 #include "qgstreamervideoinputdevicecontrol.h"
 
@@ -165,29 +164,18 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
         if (m_videoInputDevice->deviceCount())
             m_videoInput->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
 
-        m_videoOutput = new QGstreamerVideoOutputControl(this);
-        connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-                this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-        
-        QList<QVideoOutputControl::Output> outputs;
-
         m_videoRenderer = new QGstreamerVideoRenderer(this);
         m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
-        outputs << QVideoOutputControl::RendererOutput;
 
 #ifndef QT_NO_XVIDEO
         QGstreamerVideoOverlay *videoWindow = new QGstreamerVideoOverlay(this);
         m_videoWindow = videoWindow;
         m_videoWindowFactory = new QGstreamerVideoRendererWrapper(videoWindow);
-        outputs << QVideoOutputControl::WindowOutput;
 
         QGstreamerVideoWidgetControl *videoWidget = new QGstreamerVideoWidgetControl(this);
         m_videoWidgetControl = videoWidget;
         m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(videoWidget);
-        outputs << QVideoOutputControl::WidgetOutput;
 #endif
-
-        m_videoOutput->setAvailableOutputs(outputs);
     }
 
     if (!m_captureSession) {
@@ -210,23 +198,11 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 {
 }
 
-QMediaControl *QGstreamerCaptureService::control(const char *name) const
+QMediaControl *QGstreamerCaptureService::requestControl(const char *name)
 {
     if (!m_captureSession)
-        return 0;
-
-    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
-        return m_videoOutput;
-
-    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
-        return m_videoRenderer;
-
-    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
-        return m_videoWindow;
-
-    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
-        return m_videoWidgetControl;
-
+        return 0;   
+    
     if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
         return m_audioInputEndpointSelector;
 
@@ -248,27 +224,29 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QMetaDataControl_iid) == 0)
         return m_metaDataControl;
 
+    if (!m_videoOutput) {
+        if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+            m_videoOutput = m_videoRenderer;
+            m_captureSession->setVideoPreview(m_videoRendererFactory);
+        } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+            m_videoOutput = m_videoWindow;
+            m_captureSession->setVideoPreview(m_videoWindowFactory);
+        } else if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
+            m_captureSession->setVideoPreview(m_videoWidgetFactory);
+            m_videoOutput = m_videoWidgetControl;
+        }
+
+        if (m_videoOutput)
+            return m_videoOutput;
+    }
+
     return 0;
 }
 
-void QGstreamerCaptureService::videoOutputChanged(QVideoOutputControl::Output output)
+void QGstreamerCaptureService::releaseControl(QMediaControl *control)
 {
-    switch (output) {
-    case QVideoOutputControl::NoOutput:
+    if (control && control == m_videoOutput) {
+        m_videoOutput = 0;
         m_captureSession->setVideoPreview(0);
-        break;
-    case QVideoOutputControl::RendererOutput:
-        m_captureSession->setVideoPreview(m_videoRendererFactory);
-        break;
-    case QVideoOutputControl::WindowOutput:
-        m_captureSession->setVideoPreview(m_videoWindowFactory);
-        break;
-    case QVideoOutputControl::WidgetOutput:
-        m_captureSession->setVideoPreview(m_videoWidgetFactory);
-        break;
-    default:
-        qWarning("Invalid video output selection");
-        m_captureSession->setVideoPreview(0);
-        break;
     }
 }

@@ -29,6 +29,7 @@ PUBLIC_HEADERS += \
     qmediacontrol.h \
     qmediaobject.h \
     qmediaservice.h \
+    qmediabindableinterface.h \
     qlocalmediaplaylistprovider.h \
     qmediaimageviewer.h \
     qmediaplayer.h \
@@ -49,7 +50,6 @@ PUBLIC_HEADERS += \
     qradiotuner.h \
     qradiotunercontrol.h \
     qtmedianamespace.h \
-    qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowindowcontrol.h \
     qvideowidgetcontrol.h \
@@ -59,6 +59,7 @@ PUBLIC_HEADERS += \
     qaudiocapturesource.h \
     qmediacontainercontrol.h \
     qmediaplaylistcontrol.h \
+    qmediaplaylistsourcecontrol.h \
     qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
@@ -68,6 +69,7 @@ PUBLIC_HEADERS += \
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
     qmediaservice.cpp \
+    qmediabindableinterface.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmediaimageviewer.cpp \
     qmediaimageviewerservice.cpp \
@@ -87,7 +89,6 @@ SOURCES += qmediacontrol.cpp \
     qmediastreamscontrol.cpp \
     qradiotuner.cpp \
     qradiotunercontrol.cpp \
-    qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
     qvideowidgetcontrol.cpp \
@@ -97,6 +98,7 @@ SOURCES += qmediacontrol.cpp \
     qaudiocapturesource.cpp \
     qmediacontainercontrol.cpp \
     qmediaplaylistcontrol.cpp \
+    qmediaplaylistsourcecontrol.cpp \
     qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp \
@@ -110,6 +112,15 @@ SOURCES += qmediacontrol.cpp \
 } else {
     QT += multimedia
 }
+
+mac {
+   HEADERS += qpaintervideosurface_mac_p.h
+   OBJECTIVE_SOURCES += qpaintervideosurface_mac.mm
+
+   LIBS += -framework AppKit -framework QuartzCore -framework QTKit
+}
+
+include(effects/effects.pri)
 
 maemo5 {
     QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon

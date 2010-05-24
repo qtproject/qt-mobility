@@ -102,7 +102,7 @@ QRadioTuner::QRadioTuner(QObject *parent, QMediaServiceProvider* provider):
     d->provider = provider;
 
     if (d->service != 0) {
-        d->control = qobject_cast<QRadioTunerControl*>(d->service->control(QRadioTunerControl_iid));
+        d->control = qobject_cast<QRadioTunerControl*>(d->service->requestControl(QRadioTunerControl_iid));
         if (d->control != 0) {
             connect(d->control, SIGNAL(stateChanged(QRadioTuner::State)), SIGNAL(stateChanged(QRadioTuner::State)));
             connect(d->control, SIGNAL(bandChanged(QRadioTuner::Band)), SIGNAL(bandChanged(QRadioTuner::Band)));
@@ -123,6 +123,9 @@ QRadioTuner::QRadioTuner(QObject *parent, QMediaServiceProvider* provider):
 QRadioTuner::~QRadioTuner()
 {
     Q_D(QRadioTuner);
+
+    if (d->service && d->control)
+        d->service->releaseControl(d->control);
 
     d->provider->releaseService(d->service);
 }

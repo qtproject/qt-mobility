@@ -380,7 +380,7 @@ public:
         mockVideoEncodeControl = new MockVideoEncodeProvider(parent);
     }
 
-    QMediaControl* control(const char *name) const
+    QMediaControl* requestControl(const char *name)
     {
         if(hasControls && qstrcmp(name,QAudioEncoderControl_iid) == 0)
             return mockAudioEncodeControl;
@@ -395,6 +395,8 @@ public:
 
         return 0;
     }
+
+    void releaseControl(QMediaControl*) {}
 
     QMediaControl   *mockControl;
     QAudioEndpointSelector  *mockAudioEndpointSelector;
@@ -456,11 +458,10 @@ void tst_QMediaRecorder::initTestCase()
     service = new MockService(this, mock);
     object = new MockObject(this, service);
     capture = new QMediaRecorder(object);
-    capture->setNotifyInterval(100);
 
-    audio = qobject_cast<QAudioEndpointSelector*>(capture->service()->control(QAudioEndpointSelector_iid));
-    encode = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
-    videoEncode = qobject_cast<QVideoEncoderControl*>(capture->service()->control(QVideoEncoderControl_iid));
+    audio = qobject_cast<QAudioEndpointSelector*>(service->requestControl(QAudioEndpointSelector_iid));
+    encode = qobject_cast<QAudioEncoderControl*>(service->requestControl(QAudioEncoderControl_iid));
+    videoEncode = qobject_cast<QVideoEncoderControl*>(service->requestControl(QVideoEncoderControl_iid));
 }
 
 void tst_QMediaRecorder::cleanupTestCase()

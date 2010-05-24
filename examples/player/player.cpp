@@ -78,9 +78,8 @@ Player::Player(QWidget *parent)
 #endif
 {
     player = new QMediaPlayer(this);
-    // owerd by PlaylistModel
-    playlist = new QMediaPlaylist();
-    playlist->setMediaObject(player);
+    playlist = new QMediaPlaylist(this);
+    player->setPlaylist(playlist);
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
@@ -92,7 +91,7 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
     videoWidget = new VideoWidget(this);
-    videoWidget->setMediaObject(player);
+    player->setVideoOutput(videoWidget);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
@@ -108,7 +107,7 @@ Player::Player(QWidget *parent)
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
     
-    audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(player->service()->control(QAudioEndpointSelector_iid));
+    audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(player->service()->requestControl(QAudioEndpointSelector_iid));
     connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
 
 #ifndef Q_OS_SYMBIAN

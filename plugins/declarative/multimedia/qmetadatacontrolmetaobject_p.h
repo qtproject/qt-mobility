@@ -39,52 +39,54 @@
 **
 ****************************************************************************/
 
-#include "qt7playercontrol.h"
-#include "qt7videooutputcontrol.h"
-#include "qt7playersession.h"
-#include <QtCore/qdebug.h>
+#ifndef QMETADATACONTROLMETAOBJECT_P_H
+#define QMETADATACONTROLMETAOJBECT_P_H
 
-QT_USE_NAMESPACE
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists for the convenience
+// of other Qt classes.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QT7VideoOutputControl::QT7VideoOutputControl(QObject *parent)
-   :QVideoOutputControl(parent), 
-    m_session(0),
-    m_output(QVideoOutputControl::NoOutput)
-{    
-}
+#include <QtCore/qmetaobject.h>
+#include <qtmedianamespace.h>
 
-QT7VideoOutputControl::~QT7VideoOutputControl()
+#include <QtCore/private/qobject_p.h>
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
+class QMetaDataControl;
+
+class QMetaDataControlMetaObject : public QAbstractDynamicMetaObject
 {
-}
+public:
+    QMetaDataControlMetaObject(QMetaDataControl *control, QObject *object);
+    ~QMetaDataControlMetaObject();
 
-void QT7VideoOutputControl::setSession(QT7PlayerSession *session)
-{
-    m_session = session;
-}
+    int metaCall(QMetaObject::Call call, int _id, void **arguments);
+    int createProperty(const char *, const char *);
 
-QList<QVideoOutputControl::Output> QT7VideoOutputControl::availableOutputs() const
-{
-    return m_outputs;
-}
+    void metaDataChanged();
 
-void QT7VideoOutputControl::enableOutput(QVideoOutputControl::Output output)
-{
-    if (!m_outputs.contains(output))
-        m_outputs.append(output);
-}
+private:
+    QMetaDataControl *m_control;
+    QObject *m_object;
+    char *m_string;
+    uint *m_data;
 
-QVideoOutputControl::Output QT7VideoOutputControl::output() const
-{
-    return m_output;
-}
+    int m_propertyOffset;
+    int m_signalOffset;
+};
 
-void QT7VideoOutputControl::setOutput(Output output)
-{
-    if (m_output != output) {
-        m_output = output;
-        emit videoOutputChanged(m_output);
-    }
-}
+QT_END_NAMESPACE
 
-#include "moc_qt7videooutputcontrol.cpp"
+QT_END_HEADER
 
+#endif

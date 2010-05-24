@@ -39,34 +39,53 @@
 **
 ****************************************************************************/
 
-#include "qgstreamervideooutputcontrol.h"
+#include "qt7playercontrol.h"
+#include "qt7playersession.h"
+#include <QtCore/qdebug.h>
 
-QGstreamerVideoOutputControl::QGstreamerVideoOutputControl(QObject *parent)
-    : QVideoOutputControl(parent)
-    , m_output(NoOutput)
+QT_USE_NAMESPACE
+
+/*
+QT7VideoOutputControl::QT7VideoOutputControl(QObject *parent)
+   :QVideoOutputControl(parent), 
+    m_session(0),
+    m_output(QVideoOutputControl::NoOutput)
+{    
+}
+
+QT7VideoOutputControl::~QT7VideoOutputControl()
 {
 }
 
-QList<QVideoOutputControl::Output> QGstreamerVideoOutputControl::availableOutputs() const
+void QT7VideoOutputControl::setSession(QT7PlayerSession *session)
+{
+    m_session = session;
+}
+
+QList<QVideoOutputControl::Output> QT7VideoOutputControl::availableOutputs() const
 {
     return m_outputs;
 }
 
-void QGstreamerVideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
+void QT7VideoOutputControl::enableOutput(QVideoOutputControl::Output output)
 {
-    emit availableOutputsChanged(m_outputs = outputs);
+    if (!m_outputs.contains(output))
+        m_outputs.append(output);
 }
 
-QVideoOutputControl::Output QGstreamerVideoOutputControl::output() const
+QVideoOutputControl::Output QT7VideoOutputControl::output() const
 {
     return m_output;
 }
 
-void QGstreamerVideoOutputControl::setOutput(Output output)
+void QT7VideoOutputControl::setOutput(Output output)
 {
-    if (!m_outputs.contains(output))
-        output = NoOutput;
-
-    if (m_output != output)
-        emit outputChanged(m_output = output);
+    if (m_output != output) {
+        m_output = output;
+        emit videoOutputChanged(m_output);
+    }
 }
+
+#include "moc_qt7videooutputcontrol.cpp"
+
+*/

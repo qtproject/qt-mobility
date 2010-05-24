@@ -68,7 +68,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QMetaDataControl is \c com.nokia.Qt.QMetaDataControl/1.0 as
     defined in QMetaDataControl_iid.
 
-    \sa QMediaService::control(), QMediaObject
+    \sa QMediaService::requestControl(), QMediaObject
 */
 
 /*!

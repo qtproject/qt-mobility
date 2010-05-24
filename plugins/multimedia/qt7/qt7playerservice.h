@@ -43,6 +43,7 @@
 #define QT7PLAYERSERVICE_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qset.h>
 #include <qmediaservice.h>
 
 
@@ -53,7 +54,6 @@ class QMediaPlaylist;
 class QMediaPlaylistNavigator;
 class QT7PlayerControl;
 class QT7PlayerMetaDataControl;
-class QT7VideoOutputControl;
 class QT7VideoWindowControl;
 class QT7VideoWidgetControl;
 class QT7VideoRendererControl;
@@ -67,18 +67,13 @@ public:
     QT7PlayerService(QObject *parent = 0);
     ~QT7PlayerService();
 
-    QMediaControl *control(const char *name) const;
-
-private slots:
-    void updateVideoOutput();
+    QMediaControl* requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
 private:
     QT7PlayerSession *m_session;
-    QT7PlayerControl *m_control;    
-    QT7VideoOutputControl *m_videoOutputControl;
-    QT7VideoWindowControl *m_videoWidnowControl;
-    QT7VideoWidgetControl *m_videoWidgetControl;
-    QT7VideoRendererControl *m_videoRendererControl;
+    QT7PlayerControl *m_control;
+    QMediaControl * m_videoOutput;
     QT7PlayerMetaDataControl *m_playerMetaDataControl;
 };
 

@@ -53,7 +53,6 @@
 #include <qmediaobject.h>
 #include <qmediaservice.h>
 #include <qpaintervideosurface_p.h>
-#include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 
 #include <qvideosurfaceformat.h>
@@ -229,7 +228,6 @@ public:
         , surface(0)
         , mediaObject(0)
         , service(0)
-        , outputControl(0)
         , rendererControl(0)
         , savedViewportUpdateMode(QGraphicsView::FullViewportUpdate)
         , aspectRatioMode(Qt::KeepAspectRatio)
@@ -243,7 +241,6 @@ public:
     QXVideoSurface *surface;
     QMediaObject *mediaObject;
     QMediaService *service;
-    QVideoOutputControl *outputControl;
     QVideoRendererControl *rendererControl;
     QPointer<QGraphicsView> currentView;
     QGraphicsView::ViewportUpdateMode savedViewportUpdateMode;
@@ -272,15 +269,13 @@ public:
 
 void QGraphicsVideoItemPrivate::clearService()
 {
-    if (outputControl) {
-        outputControl->setOutput(QVideoOutputControl::NoOutput);
-        outputControl = 0;
-    }
     if (rendererControl) {
         surface->stop();
         rendererControl->setSurface(0);
+        service->releaseControl(rendererControl);
         rendererControl = 0;
     }
+
     if (service) {
         QObject::disconnect(service, SIGNAL(destroyed()), q_ptr, SLOT(_q_serviceDestroyed()));
         service = 0;
@@ -388,7 +383,6 @@ void QGraphicsVideoItemPrivate::_q_formatChanged(const QVideoSurfaceFormat &form
 void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
 {
     rendererControl = 0;
-    outputControl = 0;
     service = 0;
 
     surface->stop();
@@ -421,12 +415,10 @@ QGraphicsVideoItem::QGraphicsVideoItem(QGraphicsItem *parent)
 
 QGraphicsVideoItem::~QGraphicsVideoItem()
 {
-
-    if (d_ptr->outputControl)
-        d_ptr->outputControl->setOutput(QVideoOutputControl::NoOutput);
-
-    if (d_ptr->rendererControl)
+    if (d_ptr->rendererControl) {
         d_ptr->rendererControl->setSurface(0);
+        d_ptr->service->releaseControl(d_ptr->rendererControl);
+    }
 
     if (d_ptr->currentView)
         d_ptr->currentView->setViewportUpdateMode(d_ptr->savedViewportUpdateMode);
@@ -440,45 +432,34 @@ QMediaObject *QGraphicsVideoItem::mediaObject() const
     return d_func()->mediaObject;
 }
 
-void QGraphicsVideoItem::setMediaObject(QMediaObject *object)
+bool QGraphicsVideoItem::setMediaObject(QMediaObject *object)
 {
     Q_D(QGraphicsVideoItem);
 
     if (object == d->mediaObject)
-        return;
+        return true;
 
     d->clearService();
-
-    if (d->mediaObject) {
-        disconnect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
-        d->mediaObject->unbind(this);
-    }
 
     d->mediaObject = object;
 
     if (d->mediaObject) {
-        d->mediaObject->bind(this);
-
-        connect(d->mediaObject, SIGNAL(destroyed()), this, SLOT(_q_mediaObjectDestroyed()));
-
         d->service = d->mediaObject->service();
 
         if (d->service) {
-            connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
-
-            d->outputControl = qobject_cast<QVideoOutputControl *>(
-                    d->service->control(QVideoOutputControl_iid));
             d->rendererControl = qobject_cast<QVideoRendererControl *>(
-                    d->service->control(QVideoRendererControl_iid));
+                    d->service->requestControl(QVideoRendererControl_iid));
 
-            if (d->outputControl != 0 && d->rendererControl != 0) {
+            if (d->rendererControl != 0) {
+                connect(d->service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
                 d->rendererControl->setSurface(d->surface);
-
-                if (isVisible())
-                    d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
+                return true;
             }
+
         }
     }
+
+    return false;
 }
 
 Qt::AspectRatioMode QGraphicsVideoItem::aspectRatioMode() const
@@ -623,17 +604,7 @@ QVariant QGraphicsVideoItem::itemChange(GraphicsItemChange change, const QVarian
 {
     Q_D(QGraphicsVideoItem);
 
-    if (change == ItemVisibleChange && d->outputControl != 0 && d->rendererControl != 0) {
-        if (value.toBool()) {
-            d->outputControl->setOutput(QVideoOutputControl::RendererOutput);
-
-            return d->outputControl->output() == QVideoOutputControl::RendererOutput;
-        } else {
-            d->outputControl->setOutput(QVideoOutputControl::NoOutput);
-
-            return value;
-        }
-    } else if (change == ItemScenePositionHasChanged) {
+    if (change == ItemScenePositionHasChanged) {
         update(boundingRect());
     } else {
         return QGraphicsItem::itemChange(change, value);

@@ -69,7 +69,7 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
     , m_control(0)
     , m_metaData(0)
     , m_playlist(0)
-    , m_videoOutputControl(0)
+    , m_activeVideoOverlay(0)
     , m_oleVideoOverlay(0)
 #ifdef QWMP_EVR
     , m_evrVideoOverlay(0)
@@ -95,12 +95,7 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
         }
 
         if (m_embedMode == LocalEmbed) {
-            m_videoOutputControl = new QWmpVideoOutputControl;
-            m_videoOutputControl->setAvailableOutputs(QList<QVideoOutputControl::Output>()
-                    << QVideoOutputControl::WindowOutput);
-
-            connect(m_videoOutputControl, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-                    this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+            m_oleVideoOverlay = new QWmpVideoOverlay(m_player, m_oleObject, this);
 #ifdef QWMP_EVR
             IWMPVideoRenderConfig *config = 0;
             if (m_player->QueryInterface(
@@ -114,16 +109,8 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
 
                 config->Release();
             }
-
-            if (!m_evrVideoOverlay) {
-#else
-            {
 #endif
-                m_oleVideoOverlay = new QWmpVideoOverlay(m_player, m_oleObject, this);
-                m_player->put_uiMode(QAutoBStr(L"none"));
-            }
         }
-
         m_metaData = new QWmpMetaData(m_player, m_events);
         m_playlist = new QWmpPlaylistControl(m_player, m_events);
         m_control = new QWmpPlayerControl(m_player, m_events);
@@ -135,7 +122,6 @@ QWmpPlayerService::~QWmpPlayerService()
     delete m_control;
     delete m_metaData;
     delete m_playlist;
-    delete m_videoOutputControl;
     delete m_events;
 
     if (m_oleObject) {
@@ -155,7 +141,7 @@ QWmpPlayerService::~QWmpPlayerService()
     Q_ASSERT(m_ref == 1);
 }
 
-QMediaControl *QWmpPlayerService::control(const char *name) const
+QMediaControl *QWmpPlayerService::requestControl(const char *name)
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0) {
         return m_control;
@@ -163,36 +149,71 @@ QMediaControl *QWmpPlayerService::control(const char *name) const
         return m_metaData;
     } else if (qstrcmp(name, QMediaPlaylistControl_iid) == 0) {
         return m_playlist;
-    } else if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
-        return m_videoOutputControl;
-    } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+    } else if (qstrcmp(name, QVideoWindowControl_iid) == 0
+            && m_embedMode == LocalEmbed
+            && m_player
+            && !m_activeVideoOverlay) {
 #ifdef QWMP_EVR
-        if (m_evrVideoOverlay)
-            return m_evrVideoOverlay;
-#endif
-        return m_oleVideoOverlay;
-    } else {
-        return 0;
-    }
-}
-
-void QWmpPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
-{
-    if (m_oleVideoOverlay) {
-        m_oleVideoOverlay->setEnabled(output == QVideoOutputControl::WindowOutput);
-#ifdef QWMP_EVR
-    } else if (m_evrVideoOverlay) {
         IWMPVideoRenderConfig *config = 0;
         if (m_player->QueryInterface(
                 __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
-            if (output == QVideoOutputControl::WindowOutput)
-                config->put_presenterActivate(static_cast<IMFActivate *>(m_evrVideoOverlay));
-            else
-                config->put_presenterActivate(0);
+            if (HINSTANCE evrHwnd = LoadLibrary(L"evr")) {
+                m_evrVideoOverlay = new QEvrVideoOverlay(evrHwnd);
 
+                if (SUCCEEDED(config->put_presenterActivate(
+                        static_cast<IMFActivate *>(m_evrVideoOverlay)))) {
+                    connect(m_events, SIGNAL(OpenStateChange(long)),
+                            m_evrVideoOverlay, SLOT(openStateChanged(long)));
+                } else {
+                    delete m_evrVideoOverlay;
+
+                    m_evrVideoOverlay = 0;
+                }
+            }
             config->Release();
         }
+
+        if (m_evrVideoOverlay) {
+            m_activeVideoOverlay = m_evrVideoOverlay;
+
+            return m_evrVideoOverlay;
+        } else
 #endif
+        if (SUCCEEDED(m_player->put_uiMode(QAutoBStr(L"none")))) {
+            m_oleVideoOverlay->setEnabled(true);
+
+            m_activeVideoOverlay = m_oleVideoOverlay;
+
+            return m_oleVideoOverlay;
+        }
+    }
+    return 0;
+}
+
+void QWmpPlayerService::releaseControl(QMediaControl *control)
+{
+    if (!control) {
+        qWarning("QMediaService::releaseControl():"
+                " Attempted release of null control");
+#ifdef QWMP_EVR
+    } else if (control == m_evrVideoOverlay) {
+
+        IWMPVideoRenderConfig *config = 0;
+        if (m_player->QueryInterface(
+                __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
+            config->put_presenterActivate(0);
+            config->Release();
+        }
+
+        delete m_evrVideoOverlay;
+
+        m_evrVideoOverlay = 0;
+        m_activeVideoOverlay = 0;
+#endif
+    } else if (control == m_oleVideoOverlay) {
+        m_player->put_uiMode(QAutoBStr(L"invisible"));
+
+        m_activeVideoOverlay = 0;
     }
 }
 

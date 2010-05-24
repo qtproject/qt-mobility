@@ -106,13 +106,14 @@ public:
 }
 
 
-class QMediaRecorderPrivate : public QMediaObjectPrivate
+class QMediaRecorderPrivate
 {
     Q_DECLARE_NON_CONST_PUBLIC(QMediaRecorder)
 
 public:
     QMediaRecorderPrivate();
-    void initControls();
+
+    QMediaObject *mediaObject;
 
     QMediaRecorderControl *control;
     QMediaContainerControl *formatControl;
@@ -125,9 +126,13 @@ public:
 
     void _q_stateChanged(QMediaRecorder::State state);
     void _q_error(int error, const QString &errorString);
+    void _q_serviceDestroyed();
+
+    QMediaRecorder *q_ptr;
 };
 
 QMediaRecorderPrivate::QMediaRecorderPrivate():
+     mediaObject(0),
      control(0),
      formatControl(0),
      audioControl(0),
@@ -137,41 +142,18 @@ QMediaRecorderPrivate::QMediaRecorderPrivate():
 {
 }
 
-void QMediaRecorderPrivate::initControls()
-{
-    Q_Q(QMediaRecorder);
-
-    if (!service)
-        return;
-
-    control = qobject_cast<QMediaRecorderControl*>(service->control(QMediaRecorderControl_iid));
-    formatControl = qobject_cast<QMediaContainerControl *>(service->control(QMediaContainerControl_iid));
-    audioControl = qobject_cast<QAudioEncoderControl *>(service->control(QAudioEncoderControl_iid));
-    videoControl = qobject_cast<QVideoEncoderControl *>(service->control(QVideoEncoderControl_iid));
-
-    if (control) {
-        q->connect(control, SIGNAL(stateChanged(QMediaRecorder::State)),
-                q, SLOT(_q_stateChanged(QMediaRecorder::State)));
-
-        q->connect(control, SIGNAL(mutedChanged(bool)),
-                q, SIGNAL(mutedChanged(bool)));
-
-        q->connect(control, SIGNAL(error(int,QString)),
-                q, SLOT(_q_error(int,QString)));
-    }
-}
-
 #define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
-
 
 void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
 {
     Q_Q(QMediaRecorder);
 
+    /*
     if (ps == QMediaRecorder::RecordingState)
         q->addPropertyWatch("duration");
     else
         q->removePropertyWatch("duration");
+        */
 
 //    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
     if (state != ps) {
@@ -192,6 +174,11 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
     emit q->error(this->error);
 }
 
+void QMediaRecorderPrivate::_q_serviceDestroyed()
+{
+    q_func()->setMediaObject(0);
+}
+
 
 /*!
     Constructs a media recorder which records the media produced by \a mediaObject.
@@ -200,11 +187,12 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
 */
 
 QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
-    QMediaObject(*new QMediaRecorderPrivate, parent, mediaObject->service())
+    QObject(parent),
+    d_ptr(new QMediaRecorderPrivate)
 {
     Q_D(QMediaRecorder);
-
-    d->initControls();
+    d->q_ptr = this;
+    setMediaObject(mediaObject);
 }
 
 /*!
@@ -213,6 +201,92 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
 
 QMediaRecorder::~QMediaRecorder()
 {
+}
+
+QMediaObject *QMediaRecorder::mediaObject() const
+{
+    return d_func()->mediaObject;
+}
+
+bool QMediaRecorder::setMediaObject(QMediaObject *object)
+{
+    Q_D(QMediaRecorder);
+
+    if (object == d->mediaObject)
+        return true;
+
+    if (d->mediaObject) {
+        if (d->control) {
+            disconnect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)),
+                       this, SLOT(_q_stateChanged(QMediaRecorder::State)));
+
+            disconnect(d->control, SIGNAL(mutedChanged(bool)),
+                       this, SIGNAL(mutedChanged(bool)));
+
+            disconnect(d->control, SIGNAL(durationChanged(qint64)),
+                       this, SIGNAL(durationChanged(qint64)));
+
+            disconnect(d->control, SIGNAL(error(int,QString)),
+                       this, SLOT(_q_error(int,QString)));
+        }
+
+        QMediaService *service = d->mediaObject->service();
+
+        if (service) {
+            disconnect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+
+            if (d->control)
+                service->releaseControl(d->control);
+            if (d->formatControl)
+                service->releaseControl(d->formatControl);
+            if (d->audioControl)
+                service->releaseControl(d->audioControl);
+            if (d->videoControl)
+                service->releaseControl(d->videoControl);
+        }
+
+    }
+
+    d->control = 0;
+    d->formatControl = 0;
+    d->audioControl = 0;
+    d->videoControl = 0;
+
+    d->mediaObject = object;
+
+    if (d->mediaObject) {
+        QMediaService *service = d->mediaObject->service();
+
+        if (service) {
+            d->control = qobject_cast<QMediaRecorderControl*>(service->requestControl(QMediaRecorderControl_iid));
+
+            if (d->control) {
+                d->formatControl = qobject_cast<QMediaContainerControl *>(service->requestControl(QMediaContainerControl_iid));
+                d->audioControl = qobject_cast<QAudioEncoderControl *>(service->requestControl(QAudioEncoderControl_iid));
+                d->videoControl = qobject_cast<QVideoEncoderControl *>(service->requestControl(QVideoEncoderControl_iid));
+
+                connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)),
+                        this, SLOT(_q_stateChanged(QMediaRecorder::State)));
+
+                connect(d->control, SIGNAL(mutedChanged(bool)),
+                        this, SIGNAL(mutedChanged(bool)));
+
+                connect(d->control, SIGNAL(durationChanged(qint64)),
+                        this, SIGNAL(durationChanged(qint64)));
+
+                connect(d->control, SIGNAL(error(int,QString)),
+                        this, SLOT(_q_error(int,QString)));
+
+                connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+                return true;
+            }
+        }
+
+        d->mediaObject = 0;
+        return false;
+    }
+
+    return true;
 }
 
 /*!

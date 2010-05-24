@@ -114,19 +114,33 @@ QMediaService::~QMediaService()
 }
 
 /*!
-    \fn QMediaService::control(const char *interface) const
+    \fn QMediaService::requestControl(const char *interface)
 
     Returns a pointer to the media control implementing \a interface.
 
-    If the service does not implement the control a null pointer is returned instead.
+    If the service does not implement the control, or if it is unavailable a
+    null pointer is returned instead.
+
+    Controls must be returned to the service when no longer needed using the
+    releaseControl() function.
 */
 
 /*!
-    \fn QMediaService::control() const
+    \fn QMediaService::requestControl() const
 
     Returns a pointer to the media control of type T implemented by a media service.
 
-    If the service does not implment the control a null pointer is returned instead.
+    If the service does not implement the control, or if it is unavailable a
+    null pointer is returned instead.
+
+    Controls must be returned to the service when no longer needed using the
+    releaseControl() function.
+*/
+
+/*!
+    \fn QMediaService::releaseControl(QMediaControl *control);
+
+    Releases a \a control back to the service.
 */
 
 #include "moc_qmediaservice.cpp"

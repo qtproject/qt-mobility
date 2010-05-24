@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qt7engine)
+
 QT += opengl
 
 contains(QT_CONFIG,multimedia) {
@@ -34,14 +35,15 @@ DEPENDPATH += .
 HEADERS += \
     qt7backend.h \
     qt7playercontrol.h \
-    qt7videooutputcontrol.h \
+    qt7videooutput.h \
     qt7movieviewoutput.h \
     qt7movievideowidget.h \
     qt7movieviewrenderer.h \
     qt7playersession.h \
     qt7playerservice.h \
-    qt7serviceplugin.h \    
+    qt7serviceplugin.h \
     qt7movierenderer.h \
+    qt7ciimagevideobuffer.h \
     qt7playermetadata.h \
     qcvdisplaylink.h
 
@@ -56,7 +58,8 @@ OBJECTIVE_SOURCES += \
     qt7playermetadata.mm \
     qt7movierenderer.mm \
     qt7playercontrol.mm \
-    qt7videooutputcontrol.mm \
+    qt7videooutput.mm \
+    qt7ciimagevideobuffer.mm \
     qt7playerservice.mm \
     qcvdisplaylink.mm
 

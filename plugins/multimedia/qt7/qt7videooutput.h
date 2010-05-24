@@ -43,8 +43,8 @@
 #define QT7VIDEOOUTPUTCONTROL_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qsize.h>
 
-#include <qvideooutputcontrol.h>
 #include <qvideowindowcontrol.h>
 #include <qvideowidgetcontrol.h>
 #include <qvideorenderercontrol.h>
@@ -64,12 +64,18 @@ class QT7PlayerService;
 class QT7VideoOutput {
 public:
     virtual ~QT7VideoOutput() {}
-    virtual void setEnabled(bool enabled) = 0;
     virtual void setMovie(void *movie) = 0;
+    virtual void updateNaturalSize(const QSize &newSize) = 0;
 };
+
+#define QT7VideoOutput_iid \
+    "com.nokia.Qt.QT7VideoOutput/1.0"
+Q_DECLARE_INTERFACE(QT7VideoOutput, QT7VideoOutput_iid)
 
 class QT7VideoWindowControl : public QVideoWindowControl, public QT7VideoOutput
 {
+Q_OBJECT
+Q_INTERFACES(QT7VideoOutput)
 public:
     virtual ~QT7VideoWindowControl() {}
 
@@ -81,6 +87,8 @@ protected:
 
 class QT7VideoRendererControl : public QVideoRendererControl, public QT7VideoOutput
 {
+Q_OBJECT
+Q_INTERFACES(QT7VideoOutput)
 public:
     virtual ~QT7VideoRendererControl() {}
 
@@ -92,6 +100,8 @@ protected:
 
 class QT7VideoWidgetControl : public QVideoWidgetControl, public QT7VideoOutput
 {
+Q_OBJECT
+Q_INTERFACES(QT7VideoOutput)
 public:
     virtual ~QT7VideoWidgetControl() {}
 
@@ -99,30 +109,6 @@ protected:
     QT7VideoWidgetControl(QObject *parent)
         :QVideoWidgetControl(parent)
     {}
-};
-
-class QT7VideoOutputControl : public QVideoOutputControl
-{
-Q_OBJECT
-public:
-    QT7VideoOutputControl(QObject *parent = 0);
-    ~QT7VideoOutputControl();
-
-    void setSession(QT7PlayerSession *session);
-
-    QList<Output> availableOutputs() const;
-    void enableOutput(Output);
-
-    Output output() const;
-    void setOutput(Output output);
-
-signals:
-    void videoOutputChanged(QVideoOutputControl::Output);
-    
-private:
-    QT7PlayerSession *m_session;
-    Output m_output;
-    QList<Output> m_outputs;
 };
 
 QT_END_NAMESPACE

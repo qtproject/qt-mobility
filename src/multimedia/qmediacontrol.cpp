@@ -61,7 +61,7 @@ QT_BEGIN_NAMESPACE
     a number optional controls which expose any additional functionality.
 
     A pointer to a control implemented by a media service can be obtained using the
-    \l {QMediaService::control()}{control()} member of QMediaService.  If the service doesn't
+    \l {QMediaService::requestControl()}{control()} member of QMediaService.  If the service doesn't
     implement a control it will instead return a null pointer.
 
     \code
@@ -70,7 +70,7 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     Alternatively if the IId of the control has been declared using Q_MEDIA_DECLARE_CONTROL
-    the template version of QMediaService::control() can be used to request the service without
+    the template version of QMediaService::requestControl() can be used to request the service without
     explicitly passing the IId.
 
     \code
@@ -92,13 +92,13 @@ QT_BEGIN_NAMESPACE
     QMediaControl.
 
     Declaring an IId for a QMediaControl allows an instance of that control to be requested from
-    QMediaService::control() without explicitly passing the IId.
+    QMediaService::requestControl() without explicitly passing the IId.
 
     \code
     QMediaPlayerControl *control = service->control<QMediaPlayerControl *>();
     \endcode
 
-    \sa QMediaService::control()
+    \sa QMediaService::requestControl()
 */
 
 /*!

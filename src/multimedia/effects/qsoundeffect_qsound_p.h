@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,34 +39,64 @@
 **
 ****************************************************************************/
 
-#include "qwmpvideooutputcontrol.h"
+#ifndef QSOUNDEFFECT_QSOUND_H
+#define QSOUNDEFFECT_QSOUND_H
 
-QWmpVideoOutputControl::QWmpVideoOutputControl(QObject *parent)
-    : QVideoOutputControl(parent)
-    , m_output(NoOutput)
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+
+#include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
+
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
+class QSound;
+
+class QSoundEffectPrivate : public QObject
 {
-}
+    Q_OBJECT
+public:
+    explicit QSoundEffectPrivate(QObject* parent);
+    ~QSoundEffectPrivate();
 
-QList<QVideoOutputControl::Output> QWmpVideoOutputControl::availableOutputs() const
-{
-    return m_outputs;
-}
+    QUrl source() const;
+    void setSource(const QUrl &url);
+    int loopCount() const;
+    void setLoopCount(int loopCount);
+    int volume() const;
+    void setVolume(int volume);
+    bool isMuted() const;
+    void setMuted(bool muted);
 
-void QWmpVideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
-{
-    emit availableOutputsChanged(m_outputs = outputs);
-}
+public Q_SLOTS:
+    void play();
 
-QVideoOutputControl::Output QWmpVideoOutputControl::output() const
-{
-    return m_output;
-}
+Q_SIGNALS:
+    void volumeChanged();
+    void mutedChanged();
 
-void QWmpVideoOutputControl::setOutput(Output output)
-{
-    if (!m_outputs.contains(output))
-        output = NoOutput;
+private:
+    bool m_muted;
+    int m_loopCount;
+    int m_volume;
+    QSound *m_sound;
+    QUrl m_source;
+};
 
-    if (m_output != output)
-        emit outputChanged(m_output = output);
-}
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QSOUNDEFFECT_QSOUND_H

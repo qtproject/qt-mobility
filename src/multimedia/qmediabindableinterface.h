@@ -39,45 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QVIDEOOUTPUTCONTROL_H
-#define QVIDEOOUTPUTCONTROL_H
+#ifndef QMEDIABINDABLEINTERFACE_H
+#define QMEDIABINDABLEINTERFACE_H
 
-#include <qmediacontrol.h>
+#include <qmediaobject.h>
 
 QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QVideoOutputControl : public QMediaControl
+class QMediaObject;
+
+class Q_MEDIA_EXPORT QMediaBindableInterface
 {
-    Q_OBJECT
-
 public:
-    enum Output
-    {
-        NoOutput,
-        WindowOutput,
-        RendererOutput,
-        WidgetOutput,
-        UserOutput = 100,
-        MaxUserOutput = 1000
-    };
+    virtual ~QMediaBindableInterface();
 
-    ~QVideoOutputControl();
-
-    virtual QList<Output> availableOutputs() const = 0;
-
-    virtual Output output() const = 0;
-    virtual void setOutput(Output output) = 0;
-
-Q_SIGNALS:
-    void availableOutputsChanged(const QList<QVideoOutputControl::Output> &outputs);
+    virtual QMediaObject *mediaObject() const = 0;
 
 protected:
-    QVideoOutputControl(QObject *parent = 0);
+    friend class QMediaObject;
+    virtual bool setMediaObject(QMediaObject *object) = 0;
 };
 
-#define QVideoOutputControl_iid "com.nokia.Qt.QVideoOutputControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QVideoOutputControl, QVideoOutputControl_iid)
+#define QMediaBindableInterface_iid \
+    "com.nokia.Qt.QMediaBindableInterface/1.0"
+Q_DECLARE_INTERFACE(QMediaBindableInterface, QMediaBindableInterface_iid)
 
 QT_END_NAMESPACE
 
-#endif
+#endif  // QMEDIABINDABLEINTERFACE_H

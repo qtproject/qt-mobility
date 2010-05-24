@@ -55,7 +55,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QAudioEndpointSelector is \c com.nokia.Qt.QAudioEndpointSelector/1.0 as
     defined in QAudioEndpointSelector_iid.
 
-    \sa QMediaService::control()
+    \sa QMediaService::requestControl()
 */
 
 /*!

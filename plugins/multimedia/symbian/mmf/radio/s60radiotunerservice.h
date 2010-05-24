@@ -61,7 +61,8 @@ public:
     S60RadioTunerService(QObject *parent = 0);
     ~S60RadioTunerService();
 
-    QMediaControl *control(const char* name) const;
+    QMediaControl *requestControl(const char* name);
+    void releaseControl(QMediaControl *control);
 
 private:
     S60RadioTunerControl *m_playerControl;

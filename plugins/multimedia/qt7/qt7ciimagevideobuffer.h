@@ -39,30 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QWMPVIDEOOUTPUTCONTROL_H
-#define QWMPVIDEOOUTPUTCONTROL_H
+#ifndef QT7CIIMAGEVIDEOBUFFER_H
+#define QT7CIIMAGEVIDEOBUFFER_H
 
-#include <qvideooutputcontrol.h>
+#include "qt7backend.h"
+#import <QTKit/QTKit.h>
 
-QT_USE_NAMESPACE
-class QWmpVideoOutputControl : public QVideoOutputControl
+#include <QtCore/qvariant.h>
+#include <QtMultimedia/qabstractvideobuffer.h>
+
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+QT_BEGIN_NAMESPACE
+
+class QT7CIImageVideoBuffer : public QAbstractVideoBuffer
 {
-    Q_OBJECT
 public:
-    QWmpVideoOutputControl(QObject *parent = 0);
+    QT7CIImageVideoBuffer(CIImage *image);
 
-    QList<Output> availableOutputs() const;
-    void setAvailableOutputs(const QList<Output> &outputs);
+    virtual ~QT7CIImageVideoBuffer();
 
-    Output output() const;
-    void setOutput(Output output);
-
-Q_SIGNALS:
-    void outputChanged(QVideoOutputControl::Output output);
+    MapMode mapMode() const;
+    uchar *map(MapMode mode, int *numBytes, int *bytesPerLine);
+    void unmap();
+    QVariant handle() const;
 
 private:
-    QList<Output> m_outputs;
-    Output m_output;
+    CIImage *m_image;
+    NSBitmapImageRep *m_buffer;
+    MapMode m_mode;
 };
+
+
+QT_END_NAMESPACE
 
 #endif

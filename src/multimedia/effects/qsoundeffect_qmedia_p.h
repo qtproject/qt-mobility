@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,30 +39,65 @@
 **
 ****************************************************************************/
 
-#ifndef DIRECTSHOWVIDEOUTPUTCONTROL_H
-#define DIRECTSHOWVIDEOOUPUTCONTROL_H
+#ifndef QSOUNDEFFECT_QMEDIA_H
+#define QSOUNDEFFECT_QMEDIA_H
 
-#include <qvideooutputcontrol.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-QT_USE_NAMESPACE
 
-class DirectShowVideoOutputControl : public QVideoOutputControl
+#include <QtCore/qobject.h>
+#include <QtCore/qurl.h>
+#include "qmediaplayer.h"
+
+
+QT_BEGIN_HEADER
+
+QT_BEGIN_NAMESPACE
+
+
+class QSoundEffectPrivate : public QObject
 {
     Q_OBJECT
 public:
-    DirectShowVideoOutputControl(QObject *parent = 0);
-    ~DirectShowVideoOutputControl();
+    explicit QSoundEffectPrivate(QObject* parent);
+    ~QSoundEffectPrivate();
 
-    QList<Output> availableOutputs() const;
+    QUrl source() const;
+    void setSource(const QUrl &url);
+    int loopCount() const;
+    void setLoopCount(int loopCount);
+    int volume() const;
+    void setVolume(int volume);
+    bool isMuted() const;
+    void setMuted(bool muted);
 
-    Output output() const;
-    void setOutput(Output output);
+public Q_SLOTS:
+    void play();
 
 Q_SIGNALS:
-    void outputChanged();
+    void volumeChanged();
+    void mutedChanged();
+
+private Q_SLOTS:
+    void stateChanged(QMediaPlayer::State);
 
 private:
-    Output m_output;
+    int m_loopCount;
+    int m_runningCount;
+    QMediaPlayer *m_player;
 };
 
-#endif
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif // QSOUNDEFFECT_QMEDIA_H

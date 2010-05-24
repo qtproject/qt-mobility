@@ -56,7 +56,6 @@
 #include <qmobilityglobal.h>
 #include <qmediaservice.h>
 #include <qmediaimageviewer.h>
-#include <qvideooutputcontrol.h>
 #include <qvideorenderercontrol.h>
 #include <qvideowidget.h>
 #include <qvideowidgetcontrol.h>
@@ -79,14 +78,14 @@ public:
     explicit QMediaImageViewerService(QObject *parent = 0);
     ~QMediaImageViewerService();
 
-    QMediaControl *control(const char *name) const;
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *);
 
     QNetworkAccessManager *networkManager() const;
     void setNetworkManager(QNetworkAccessManager *manager);
 
 private:
     Q_DECLARE_PRIVATE(QMediaImageViewerService)
-    Q_PRIVATE_SLOT(d_func(), void _q_outputChanged(QVideoOutputControl::Output output))
     friend class QMediaImageViewerControl;
     friend class QMediaImageViewerControlPrivate;
 };
@@ -134,24 +133,6 @@ Q_SIGNALS:
 private:
     QAbstractVideoSurface *m_surface;
     QImage m_image;
-};
-
-class QMediaImageViewerOutputControl : public QVideoOutputControl
-{
-    Q_OBJECT
-public:
-    QMediaImageViewerOutputControl(QObject *parent = 0);
-
-    QList<Output> availableOutputs() const;
-
-    Output output() const { return m_output; }
-    void setOutput(Output output);
-
-Q_SIGNALS:
-    void outputChanged(QVideoOutputControl::Output output);
-
-private:
-    Output m_output;
 };
 
 QT_END_NAMESPACE

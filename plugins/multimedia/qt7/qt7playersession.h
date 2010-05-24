@@ -43,6 +43,7 @@
 #define QT7PLAYERSESSION_H
 
 #include <QtCore/qobject.h>
+#include <QtCore/qset.h>
 
 #include <qmediaplayercontrol.h>
 #include <qmediaplayer.h>
@@ -68,6 +69,7 @@ public:
     void *movie() const;
 
     void setControl(QT7PlayerControl *control);
+
     void setVideoOutput(QT7VideoOutput *output);
 
     QMediaPlayer::State state() const;
@@ -105,8 +107,9 @@ public slots:
     void setMuted(bool muted);
 
     void processEOS();
-    void processStateChange();
+    void processLoadStateChange();
     void processVolumeChange();
+    void processNaturalSizeChange();
 
 signals:
     void positionChanged(qint64 position);
@@ -128,13 +131,17 @@ private:
     QIODevice *m_mediaStream;
     QMediaContent m_resources;
 
-    QT7VideoOutput *m_videoOutput;
+    QT7VideoOutput * m_videoOutput;
 
     mutable qint64 m_currentTime;
 
     bool m_muted;
     int m_volume;
     qreal m_rate;
+
+    qint64 m_duration;
+    bool m_videoAvailable;
+    bool m_audioAvailable;
 };
 
 QT_END_NAMESPACE

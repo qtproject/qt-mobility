@@ -71,6 +71,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
     QMediaPlaylist is intended to be used with other media objects,
     like QMediaPlayer or QMediaImageViewer.
+
     QMediaPlaylist allows to access the service intrinsic playlist functionality
     if available, otherwise it provides the the local memory playlist implementation.
 
@@ -78,12 +79,13 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
     player = new QMediaPlayer;
 
     playlist = new QMediaPlaylist;
-    playlist->setMediaObject(player);
     playlist->append(QUrl("http://example.com/movie1.mp4"));
     playlist->append(QUrl("http://example.com/movie2.mp4"));
     playlist->append(QUrl("http://example.com/movie3.mp4"));
 
     playlist->setCurrentIndex(1);
+
+    player->setPlaylist(playlist);
 
     player->play();
 \endcode
@@ -104,7 +106,7 @@ Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
 
     \value CurrentItemInLoop  The current item is played in the loop.
 
-    \value Linear             Playback starts from the first to the last items and stops.
+    \value Sequential         Playback starts from the current to the last items and stops.
                               next item is a null item when the last one is currently playing.
 
     \value Loop               Playback continues from the first item after the last one finished playing.
@@ -153,12 +155,12 @@ QMediaObject *QMediaPlaylist::mediaObject() const
   If \a mediaObject is null or doesn't have an intrinsic playlist,
   internal local memory playlist source will be created.
 */
-void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
+bool QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
 {
     Q_D(QMediaPlaylist);
 
     if (mediaObject && mediaObject == d->mediaObject)
-        return;
+        return true;
 
     QMediaService *service = mediaObject
             ? mediaObject->service() : 0;
@@ -166,7 +168,7 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
     QMediaPlaylistControl *newControl = 0;
 
     if (service)
-        newControl = qobject_cast<QMediaPlaylistControl*>(service->control(QMediaPlaylistControl_iid));
+        newControl = qobject_cast<QMediaPlaylistControl*>(service->requestControl(QMediaPlaylistControl_iid));
 
     if (!newControl)
         newControl = d->localPlaylistControl;
@@ -193,6 +195,9 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
                     this, SIGNAL(currentIndexChanged(int)));
             disconnect(d->control, SIGNAL(currentMediaChanged(QMediaContent)),
                     this, SIGNAL(currentMediaChanged(QMediaContent)));
+
+            if (d->mediaObject)
+                d->mediaObject->service()->releaseControl(d->control);
         }
 
         d->control = newControl;
@@ -224,12 +229,9 @@ void QMediaPlaylist::setMediaObject(QMediaObject *mediaObject)
         }
     }
 
-    if (d->mediaObject)
-        d->mediaObject->unbind(this);
-
     d->mediaObject = mediaObject;
-    if (d->mediaObject)
-        d->mediaObject->bind(this);
+
+    return true;
 }
 
 /*!

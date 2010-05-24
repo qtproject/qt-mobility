@@ -58,16 +58,20 @@ class Q_MEDIA_EXPORT QMediaService : public QObject
 public:
     ~QMediaService();
 
-    virtual QMediaControl* control(const char *name) const = 0;
+    virtual QMediaControl* requestControl(const char *name) = 0;
 
 #ifndef QT_NO_MEMBER_TEMPLATES
-    template <typename T> inline T control() const {
-        if (QObject *object = control(qmediacontrol_iid<T>())) {
-            return qobject_cast<T>(object);
+    template <typename T> inline T requestControl() {
+        if (QMediaControl *control = requestControl(qmediacontrol_iid<T>())) {
+            if (T typedControl = qobject_cast<T>(control))
+                return typedControl;
+            releaseControl(control);
         }
         return 0;
     }
 #endif
+
+    virtual void releaseControl(QMediaControl *control) = 0;
 
 protected:
     QMediaService(QObject* parent);

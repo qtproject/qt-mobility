@@ -85,7 +85,7 @@ S60MediaPlayerService::~S60MediaPlayerService()
     delete m_videoOutput;
 }
 
-QMediaControl *S60MediaPlayerService::control(const char *name) const
+QMediaControl *S60MediaPlayerService::requestControl(const char *name)
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
@@ -133,6 +133,12 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
     return 0;
 
 }
+
+void S60MediaPlayerService::releaseControl(QMediaControl *control)
+{
+    Q_UNUSED(control)
+}
+
 
 void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
 {

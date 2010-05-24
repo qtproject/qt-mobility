@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QSOUNDEFFECT_H
-#define QSOUNDEFFECT_H
+#ifndef QPAINTERVIDEOSURFACE_MAC_P_H
+#define QPAINTERVIDEOSURFACE_MAC_P_H
 
 //
 //  W A R N I N G
@@ -53,64 +53,48 @@
 // We mean it.
 //
 
+#include "qpaintervideosurface_p.h"
+#include <QtMultimedia/qvideosurfaceformat.h>
+#include <QtMultimedia/qvideoframe.h>
 
-#include <QtCore/qobject.h>
-#include <QtCore/qurl.h>
-#include <qml.h>
+QT_BEGIN_HEADER
 
-class QSoundEffectPrivate;
-class QSoundEffect : public QObject
+QT_BEGIN_NAMESPACE
+
+class QVideoSurfaceCoreGraphicsPainter : public QVideoSurfacePainter
 {
-    Q_OBJECT
-    Q_PROPERTY(QUrl source READ source WRITE setSource NOTIFY sourceChanged)
-    Q_PROPERTY(int loopCount READ loopCount WRITE setLoopCount NOTIFY loopCountChanged)
-    Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
-    Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
-    Q_PROPERTY(int duration READ duration NOTIFY durationChanged)
-
 public:
-    explicit QSoundEffect(QObject *parent = 0);
-    ~QSoundEffect();
+    QVideoSurfaceCoreGraphicsPainter(bool glSupported);
+    ~QVideoSurfaceCoreGraphicsPainter();
 
-    QUrl source() const;
-    void setSource(const QUrl &url);
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+            QAbstractVideoBuffer::HandleType handleType) const;
 
-    int loopCount() const;
-    void setLoopCount(int loopCount);
+    bool isFormatSupported(
+            const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const;
 
-    int volume() const;
-    void setVolume(int volume);
-
-    bool isMuted() const;
-    void setMuted(bool muted);
-
-    int duration() const;
-
-signals:
-    void sourceChanged();
-    void loopCountChanged();
-    void volumeChanged();
-    void mutedChanged();
-    void durationChanged();
-
-public slots:
-    void play();
+    QAbstractVideoSurface::Error start(const QVideoSurfaceFormat &format);
     void stop();
 
-private slots:
-    void repeat();
+    QAbstractVideoSurface::Error setCurrentFrame(const QVideoFrame &frame);
+
+    QAbstractVideoSurface::Error paint(
+            const QRectF &target, QPainter *painter, const QRectF &source);
+
+    void updateColors(int brightness, int contrast, int hue, int saturation);
 
 private:
-    Q_DISABLE_COPY(QSoundEffect)
-
-    int m_loopCount;
-    int m_volume;
-    bool m_muted;
-    int m_runningCount;
-
-    QSoundEffectPrivate* d;
+    void* ciContext;
+    QList<QVideoFrame::PixelFormat> m_imagePixelFormats;
+    QVideoFrame m_frame;
+    QSize m_imageSize;
+    QImage::Format m_imageFormat;
+    QVector<QAbstractVideoBuffer::HandleType> m_supportedHandles;
+    QVideoSurfaceFormat::Direction m_scanLineDirection;
 };
 
-QML_DECLARE_TYPE(QSoundEffect)
+QT_END_NAMESPACE
 
-#endif // QSOUNDEFFECT_H
+QT_END_HEADER
+
+#endif
