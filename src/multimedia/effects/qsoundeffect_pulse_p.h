@@ -58,7 +58,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qdatetime.h>
-#include <QtMediaServices/qmediaplayer.h>
+#include <qmediaplayer.h>
 #include <pulse/pulseaudio.h>
 
 
