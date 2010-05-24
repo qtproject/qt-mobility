@@ -143,7 +143,18 @@ QT_BEGIN_NAMESPACE
     an error is encountered.  Connect to the stateChanged() signal to
     handle the error:
 
-    \snippet doc/src/snippets/audio/main.cpp 0
+    \code
+        void stateChanged(QAudio::State newState)
+        {
+            switch(newState) {
+            case QAudio::StopState:
+                if (input->error() != QAudio::NoError) {
+                    // Error handling
+                } else {
+
+                }
+                break;
+    \endcode
 
     \sa QAudioOutput, QAudioDeviceInfo
 

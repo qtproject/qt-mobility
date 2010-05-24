@@ -58,7 +58,6 @@ QT_BEGIN_NAMESPACE
     the class with the Q_EXPORT_PLUGIN2() macro.
 
     Unit tests are available to help in debugging new plugins.
-    tests\auto\qaudiooutput and tests\auto\qaudioinput
 
     \sa QAbstractAudioDeviceInfo, QAbstractAudioOutput, QAbstractAudioInput
 

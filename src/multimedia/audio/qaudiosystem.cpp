@@ -73,11 +73,6 @@ QT_BEGIN_NAMESPACE
 */
 
 /*!
-    \fn virtual QAudioFormat QAbstractAudioDeviceInfo::nearestFormat(const QAudioFormat& format) const
-    Returns the nearest settings available to \a format.
-*/
-
-/*!
     \fn virtual QString QAbstractAudioDeviceInfo::deviceName() const
     Returns the audio device name.
 */

@@ -145,7 +145,18 @@ QT_BEGIN_NAMESPACE
     You can check for errors by connecting to the stateChanged()
     signal:
 
-    \snippet doc/src/snippets/audio/main.cpp 3
+    \code
+        void stateChanged(QAudio::State newState)
+        {
+            switch (newState) {
+            case QAudio::StopState:
+                if (output->error() != QAudio::NoError) {
+                    // Perform error handling
+                } else {
+                    // Normal stop
+                }
+                break;
+    \endcode
 
     \sa QAudioInput, QAudioDeviceInfo
 */

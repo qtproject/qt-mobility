@@ -114,9 +114,19 @@ public:
     supported format that is as close as possible to the format with
     nearestFormat(). For instance:
 
-    \snippet doc/src/snippets/audio/main.cpp 1
+    \code
+        QAudioFormat format;
+        format.setFrequency(44100);
+    \endcode
     \dots 8
-    \snippet doc/src/snippets/audio/main.cpp 2
+    \code
+        format.setSampleType(QAudioFormat::SignedInt);
+
+        QAudioDeviceInfo info(QAudioDeviceInfo::defaultOutputDevice());
+
+        if (!info.isFormatSupported(format))
+            format = info.nearestFormat(format);
+    \endcode
 
     A QAudioDeviceInfo is used by Qt to construct
     classes that communicate with the device--such as
