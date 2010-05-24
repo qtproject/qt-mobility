@@ -51,7 +51,7 @@
 #include <qmediacontainercontrol.h>
 #include <qvideoencodercontrol.h>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 QT_USE_NAMESPACE
 class MockMediaContainerControl : public QMediaContainerControl

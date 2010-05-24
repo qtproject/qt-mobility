@@ -50,7 +50,7 @@
 
 #include <QtGui/qmacdefines_mac.h>
 #include "qt7videooutput.h"
-#include <QtMultimedia/qvideoframe.h>
+#include <qvideoframe.h>
 
 QT_BEGIN_NAMESPACE
 

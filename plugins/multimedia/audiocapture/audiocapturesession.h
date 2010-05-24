@@ -49,9 +49,9 @@
 #include "audioendpointselector.h"
 #include "audiomediarecordercontrol.h"
 
-#include <QtMultimedia/qaudioformat.h>
-#include <QtMultimedia/qaudioinput.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <qaudioformat.h>
+#include <qaudioinput.h>
+#include <qaudiodeviceinfo.h>
 
 QT_USE_NAMESPACE
 

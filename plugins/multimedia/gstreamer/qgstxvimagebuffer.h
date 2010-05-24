@@ -42,8 +42,8 @@
 #ifndef QGSTXVIMAGEBUFFER_H
 #define QGSTXVIMAGEBUFFER_H
 
-#include <QtMultimedia/qabstractvideobuffer.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideobuffer.h>
+#include <qvideosurfaceformat.h>
 #include <QtCore/qmutex.h>
 #include <QtCore/qwaitcondition.h>
 #include <QtCore/qqueue.h>

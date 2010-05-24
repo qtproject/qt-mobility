@@ -49,7 +49,7 @@
 #include <qaudioendpointselector.h>
 #include <qaudioencodercontrol.h>
 #include <qmediacontainercontrol.h>
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 #include <qaudiocapturesource.h>
 
 #define QTRY_COMPARE(a,e)                       \

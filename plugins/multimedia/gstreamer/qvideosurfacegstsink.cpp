@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include <QtMultimedia/QAbstractVideoSurface>
-#include <QtMultimedia/QVideoFrame>
+#include <qabstractvideosurface.h>
+#include <qvideoframe.h>
 #include <QDebug>
 #include <QMap>
 #include <QDebug>

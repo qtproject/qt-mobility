@@ -42,7 +42,7 @@
 #include "audioencodercontrol.h"
 #include "audiocapturesession.h"
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 #include <QtCore/qdebug.h>
 

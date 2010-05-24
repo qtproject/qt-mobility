@@ -41,7 +41,7 @@
 
 #include <QtTest/QtTest>
 
-#include <QtMultimedia/QVideoFrame>
+#include <qvideoframe.h>
 #include <QtGui/QImage>
 #include <QtCore/QPointer>
 

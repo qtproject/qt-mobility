@@ -42,7 +42,7 @@
 #ifndef QGSTVIDEOBUFFER_H
 #define QGSTVIDEOBUFFER_H
 
-#include <QtMultimedia/QAbstractVideoBuffer>
+#include <qabstractvideobuffer.h>
 #include <QtCore/qvariant.h>
 
 #include <gst/gst.h>

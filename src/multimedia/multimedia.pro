@@ -11,7 +11,7 @@ QT += network
 contains(QT_CONFIG, opengl): QT += opengl
 
 !static:DEFINES += QT_MAKEDLL
-DEFINES += QT_BUILD_MEDIA_LIB
+DEFINES += QT_BUILD_MULTIMEDIA_LIB
 !symbian:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)/plugins\\\"
 
 PRIVATE_HEADERS += \

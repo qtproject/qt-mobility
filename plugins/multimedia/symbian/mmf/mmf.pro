@@ -4,7 +4,7 @@ CONFIG += plugin
 TARGET = QtMobilityMmfEngine
 PLUGIN_SUBDIR = mediaservice
 include (../../../../common.pri)
-qtAddLibrary(QtMultimedia)
+#qtAddLibrary(QtMultimedia)
 
 #includes here so that all defines are added here also
 include (../common/symbiancommon.pri)
