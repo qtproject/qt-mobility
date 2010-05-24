@@ -375,18 +375,29 @@ void QGalleryAbstractRequest::execute()
         if (d_ptr->response) {
             d_ptr->result = d_ptr->response->result();
 
-            if (d_ptr->result == NoResult)
-                d_ptr->state = Active;
-            else if (d_ptr->response->isIdle())
-                d_ptr->state = Idle;
-            else
+            if (d_ptr->result > Succeeded) {
                 d_ptr->state = Inactive;
 
-            connect(d_ptr->response, SIGNAL(finished()), this, SLOT(_q_finished()));
-            connect(d_ptr->response, SIGNAL(progressChanged(int,int)),
-                    this, SLOT(_q_progressChanged(int,int)));
+                delete d_ptr->response;
+                d_ptr->response = 0;
 
-            setResponse(d_ptr->response);
+                if (oldResponse)
+                    setResponse(0);
+
+            } else {
+                if (d_ptr->result == NoResult)
+                    d_ptr->state = Active;
+                else if (d_ptr->response->isIdle())
+                    d_ptr->state = Idle;
+                else
+                    d_ptr->state = Inactive;
+
+                connect(d_ptr->response, SIGNAL(finished()), this, SLOT(_q_finished()));
+                connect(d_ptr->response, SIGNAL(progressChanged(int,int)),
+                        this, SLOT(_q_progressChanged(int,int)));
+
+                setResponse(d_ptr->response);
+            }
         } else {
             d_ptr->result = NotSupported;
             d_ptr->state = Inactive;

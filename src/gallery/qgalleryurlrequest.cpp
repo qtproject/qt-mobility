@@ -190,7 +190,7 @@ void QGalleryUrlRequest::setResponse(QGalleryAbstractResponse *response)
             connect(response, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
 
         if (!d->itemId.isNull() || !d->itemType.isNull()) {
-            d->itemId = QString();
+            d->itemId = QVariant();
             d->itemType = QString();
 
             emit itemChanged();

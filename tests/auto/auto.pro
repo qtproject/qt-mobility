@@ -147,6 +147,12 @@ contains(mobility_modules,sensors) {
 contains(mobility_modules,gallery) {
     SUBDIRS += \
         qgalleryabstractrequest \
-        qgalleryabstractresponse
+        qgalleryabstractresponse \
+        qgallerycontainerrequest \
+        qgallerycountrequest \
+        qgalleryfilterrequest \
+        qgalleryitemrequest \
+        qgalleryremoverequest \
+        qgalleryurlrequest
 }
 

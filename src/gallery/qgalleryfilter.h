@@ -58,16 +58,16 @@ class QGalleryUnionFilter;
 QTM_END_NAMESPACE
 
 #ifndef Q_QDOC
-bool operator ==(
+bool Q_GALLERY_EXPORT operator ==(
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
 
-bool operator !=(
+bool Q_GALLERY_EXPORT Q_GALLERY_EXPORT operator !=(
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
         const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2);
 #else
-bool operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
-bool operator !=(const QGalleryFilter &filter2, const QGalleryFilter &filter2);
+bool Q_GALLERY_EXPORT operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2);
+bool Q_GALLERY_EXPORT operator !=(const QGalleryFilter &filter2, const QGalleryFilter &filter2);
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -295,8 +295,8 @@ QTM_PREPEND_NAMESPACE(QGalleryIntersectionFilter) operator ||(
     return filter;
 }
 #else
-QGalleryUnionFilter operator &&(const QGalleryUnionFilter &filter1, const T &filter2);
-QGalleryIntersectionFilter operator ||(const QGalleryIntersectionFilter &filter1, const T &filter2);
+QGalleryUnionFilter Q_GALLERY_EXPORT operator &&(const QGalleryUnionFilter &filter1, const T &filter2);
+QGalleryIntersectionFilter Q_GALLERY_EXPORT operator ||(const QGalleryIntersectionFilter &filter1, const T &filter2);
 #endif
 
 
