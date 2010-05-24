@@ -1138,7 +1138,7 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
 
                     //emit m_messageQueries[index].privateService->messagesFound(m_messageQueries[index].ids);
                 } else {
-                    emit m_messageQueries[index].privateService->messagesCounted(m_messageQueries[index].count);
+                    m_messageQueries[index].privateService->messagesCounted(m_messageQueries[index].count);
                 }
             }
         } else {
@@ -1164,7 +1164,7 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
                 //emit m_messageQueries[index].privateService->messagesFound(ids);
                 m_messageQueries[index].privateService->messagesFound(ids, true, true);
             } else {
-                emit m_messageQueries[index].privateService->messagesCounted(ids.count());
+                m_messageQueries[index].privateService->messagesCounted(ids.count());
             }
         }
     } else {

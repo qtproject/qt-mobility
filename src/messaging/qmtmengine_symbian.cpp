@@ -1699,7 +1699,7 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                                                 iMessageQueries[index].limit);
                     iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids, true, true);
                 } else {
-                    emit iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
+                    iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
                 }
             }
         } else {
@@ -1724,7 +1724,7 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                 applyOffsetAndLimitToMsgIds(ids, iMessageQueries[index].offset, iMessageQueries[index].limit);
                 iMessageQueries[index].privateService->messagesFound(ids, true, true);
             } else {
-                emit iMessageQueries[index].privateService->messagesCounted(ids.count());
+                iMessageQueries[index].privateService->messagesCounted(ids.count());
             }
         }
     } else {
