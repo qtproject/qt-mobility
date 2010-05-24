@@ -43,7 +43,7 @@
 #include <QDebug>
 #include <QtGlobal>
 
-const char *dummyaccelerometer::id("dummy.accelerometer");
+char const * const dummyaccelerometer::id("dummy.accelerometer");
 
 dummyaccelerometer::dummyaccelerometer(QSensor *sensor)
     : dummycommon(sensor)

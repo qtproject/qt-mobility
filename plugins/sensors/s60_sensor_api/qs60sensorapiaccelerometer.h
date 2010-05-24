@@ -54,7 +54,7 @@ QTM_USE_NAMESPACE
 class QS60SensorApiAccelerometer : public QSensorBackend,  public MRRSensorDataListener
 {
 public:
-    static const char *id;
+    static char const * const id;
     
     QS60SensorApiAccelerometer(QSensor *sensor);
     virtual ~QS60SensorApiAccelerometer();

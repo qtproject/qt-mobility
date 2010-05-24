@@ -43,7 +43,7 @@
 #include <QDebug>
 #include <QtGlobal>
 
-const char *dummylightsensor::id("dummy.lightsensor");
+char const * const dummylightsensor::id("dummy.lightsensor");
 
 dummylightsensor::dummylightsensor(QSensor *sensor)
     : dummycommon(sensor)

@@ -44,8 +44,8 @@
 #include <QDebug>
 #include <time.h>
 
-const char *n900lightsensor::id("n900.ambientlight");
-const char *n900lightsensor::filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux");
+char const * const n900lightsensor::id("n900.ambientlight");
+char const * const n900lightsensor::filename("/sys/class/i2c-adapter/i2c-2/2-0029/lux");
 
 n900lightsensor::n900lightsensor(QSensor *sensor)
     : n900filebasedsensor(sensor)
