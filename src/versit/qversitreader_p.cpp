@@ -72,15 +72,15 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec, int chunkSize)
     mCodec(codec),
     mChunkSize(chunkSize),
     mCrlfList(*VersitUtils::newlineList(mCodec)),
-    mBuffer(VersitCursor(QByteArray())),
+    mBuffer(LByteArray(QByteArray())),
     mOdometer(0)
 {
 }
 
 /*!
-  Attempts to read a line and returns a VersitCursor containing the line.
+  Attempts to read a line and returns an LByteArray containing the line.
   */
-VersitCursor LineReader::readLine()
+LByteArray LineReader::readLine()
 {
     mBuffer.mStart = mBuffer.mEnd;
     mSearchFrom = mBuffer.mStart;
@@ -115,7 +115,7 @@ VersitCursor LineReader::readLine()
 }
 
 /*!
-  How many bytes have been returned in the VersitCursor in the lifetime of the LineReader.
+  How many bytes have been returned in the LByteArray in the lifetime of the LineReader.
  */
 int LineReader::odometer()
 {
@@ -145,9 +145,9 @@ QTextCodec* LineReader::codec()
  * sequences of newline-space from the retrieved line.  Skips over any newlines at the start of the
  * input.
  *
- * Returns a VersitCursor containing the line.
+ * Returns an LByteArray containing the line.
  */
-bool LineReader::tryReadLine(VersitCursor &cursor, bool atEnd)
+bool LineReader::tryReadLine(LByteArray &cursor, bool atEnd)
 {
     int crlfPos = -1;
 
@@ -432,7 +432,7 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
         QVersitDocument::VersitType versitType,
         LineReader& lineReader)
 {
-    VersitCursor cursor = lineReader.readLine();
+    LByteArray cursor = lineReader.readLine();
     if (cursor.isEmpty())
         return QVersitProperty();
 
@@ -460,7 +460,7 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
 /*!
  * Parses the property according to vCard 2.1 syntax.
  */
-void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitProperty& property,
+void QVersitReaderPrivate::parseVCard21Property(LByteArray& cursor, QVersitProperty& property,
                                                 LineReader& lineReader)
 {
     property.setParameters(extractVCard21PropertyParams(cursor, lineReader.codec()));
@@ -497,7 +497,7 @@ void QVersitReaderPrivate::parseVCard21Property(VersitCursor& cursor, QVersitPro
 /*!
  * Parses the property according to vCard 3.0 syntax.
  */
-void QVersitReaderPrivate::parseVCard30Property(VersitCursor& cursor, QVersitProperty& property,
+void QVersitReaderPrivate::parseVCard30Property(LByteArray& cursor, QVersitProperty& property,
                                                 LineReader& lineReader)
 {
     property.setParameters(extractVCard30PropertyParams(cursor, lineReader.codec()));
@@ -671,7 +671,7 @@ void QVersitReaderPrivate::decodeQuotedPrintable(QString& text) const
  * On exit, \a line will be updated to remove the groups and name
  */
 QPair<QStringList,QString>QVersitReaderPrivate::extractPropertyGroupsAndName(
-        VersitCursor& line, QTextCodec *codec) const
+        LByteArray& line, QTextCodec *codec) const
 {
     const QByteArray semicolon = VersitUtils::encode(';', codec);
     const QByteArray colon = VersitUtils::encode(':', codec);
@@ -710,7 +710,7 @@ QPair<QStringList,QString>QVersitReaderPrivate::extractPropertyGroupsAndName(
  * On exit, line will be updated to have the parameters removed.
  */
 QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard21PropertyParams(
-        VersitCursor& line, QTextCodec *codec) const
+        LByteArray& line, QTextCodec *codec) const
 {
     QMultiHash<QString,QString> result;
     QList<QByteArray> paramList = extractParams(line, codec);
@@ -732,7 +732,7 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard21PropertyParams(
  * On exit, line will be updated to have the parameters removed.
  */
 QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
-        VersitCursor& line, QTextCodec *codec) const
+        LByteArray& line, QTextCodec *codec) const
 {
     QMultiHash<QString,QString> result;
     QList<QByteArray> paramList = extractParams(line, codec);
@@ -757,7 +757,7 @@ QMultiHash<QString,QString> QVersitReaderPrivate::extractVCard30PropertyParams(
  * On entry \a line should contain the content line sans the group and name
  * On exit, \a line will be updated to only have the value remain
  */
-QList<QByteArray> QVersitReaderPrivate::extractParams(VersitCursor& line, QTextCodec *codec) const
+QList<QByteArray> QVersitReaderPrivate::extractParams(LByteArray& line, QTextCodec *codec) const
 {
     const QByteArray colon = VersitUtils::encode(':', codec);
     QList<QByteArray> params;
@@ -861,7 +861,7 @@ QString QVersitReaderPrivate::paramValue(const QByteArray& parameter, QTextCodec
  *
  * On entry, index must be >= 0
  *
- * T is either a QByteArray or VersitCursor
+ * T is either a QByteArray or LByteArray
  */
 template <class T> bool QVersitReaderPrivate::containsAt(const T& text, const QByteArray& match, int index)
 {

@@ -84,15 +84,15 @@ QTM_BEGIN_NAMESPACE
 static const int MAX_OLD_BYTES_TO_KEEP = 8192;
 
 /*
- * A VersitCursor has a subset of QByteArray's interface, plus an efficient chopLeft function
+ * An LByteArray has a subset of QByteArray's interface, plus an efficient chopLeft function
  * 
  * It stores a QByteArray internally, plus a marker of where it starts and where it ends.
  */
-class Q_AUTOTEST_EXPORT VersitCursor
+class Q_AUTOTEST_EXPORT LByteArray
 {
 public:
-    VersitCursor() : mStart(0), mEnd(0) {}
-    explicit VersitCursor(const QByteArray& d) :mData(d), mStart(0), mEnd(d.size()) {}
+    LByteArray() : mStart(0), mEnd(0) {}
+    explicit LByteArray(const QByteArray& d) :mData(d), mStart(0), mEnd(d.size()) {}
     bool isEmpty() const {
         return mEnd <= mStart;
     }
@@ -123,7 +123,7 @@ public:
     const char* constData() const {
         return mData.constData() + mStart;
     }
-    VersitCursor& operator=(const QByteArray& ba) {
+    LByteArray& operator=(const QByteArray& ba) {
         mData = ba;
         mStart = 0;
         mEnd = mData.size();
@@ -155,19 +155,19 @@ class Q_AUTOTEST_EXPORT LineReader
 {
 public:
     LineReader(QIODevice* device, QTextCodec* codec, int chunkSize = 1000);
-    VersitCursor readLine();
+    LByteArray readLine();
     int odometer();
     bool atEnd();
     QTextCodec* codec();
 
 private:
-    bool tryReadLine(VersitCursor& cursor, bool atEnd);
+    bool tryReadLine(LByteArray& cursor, bool atEnd);
 
     QIODevice* mDevice;
     QTextCodec* mCodec;
     int mChunkSize; // How many bytes to read in one go.
     QList<QByteArrayMatcher> mCrlfList;
-    VersitCursor mBuffer;
+    LByteArray mBuffer;
     int mOdometer;
     int mSearchFrom;
 };
@@ -207,12 +207,12 @@ public: // New functions
         LineReader& lineReader);
 
     void parseVCard21Property(
-        VersitCursor& text,
+        LByteArray& text,
         QVersitProperty& property,
         LineReader& lineReader);
 
     void parseVCard30Property(
-        VersitCursor& text,
+        LByteArray& text,
         QVersitProperty& property,
         LineReader& lineReader);
 
@@ -236,15 +236,15 @@ public: // New functions
 
 
     /* These functions operate on a cursor describing a single line */
-    QPair<QStringList,QString> extractPropertyGroupsAndName(VersitCursor& line, QTextCodec* codec)
+    QPair<QStringList,QString> extractPropertyGroupsAndName(LByteArray& line, QTextCodec* codec)
             const;
-    QMultiHash<QString,QString> extractVCard21PropertyParams(VersitCursor& line, QTextCodec* codec)
+    QMultiHash<QString,QString> extractVCard21PropertyParams(LByteArray& line, QTextCodec* codec)
             const;
-    QMultiHash<QString,QString> extractVCard30PropertyParams(VersitCursor& line, QTextCodec* codec)
+    QMultiHash<QString,QString> extractVCard30PropertyParams(LByteArray& line, QTextCodec* codec)
             const;
 
     // "Private" functions
-    QList<QByteArray> extractParams(VersitCursor& line, QTextCodec *codec) const;
+    QList<QByteArray> extractParams(LByteArray& line, QTextCodec *codec) const;
     QList<QByteArray> extractParts(const QByteArray& text, const QByteArray& separator,
                                    QTextCodec *codec) const;
     QByteArray extractPart(const QByteArray& text, int startPosition, int length=-1) const;
