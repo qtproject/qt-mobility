@@ -336,9 +336,9 @@ public:
                 }
                 break;
             case QMediaServiceProviderHint::ContentType: {
-                    QtMediaServices::SupportEstimate estimate = QtMediaServices::NotSupported;
+                    QtMultimedia::SupportEstimate estimate = QtMultimedia::NotSupported;
                     foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
-                        QtMediaServices::SupportEstimate currentEstimate = QtMediaServices::MaybeSupported;
+                        QtMultimedia::SupportEstimate currentEstimate = QtMultimedia::MaybeSupported;
                         QMediaServiceSupportedFormatsInterface *iface =
                                 qobject_cast<QMediaServiceSupportedFormatsInterface*>(currentPlugin);
 
@@ -349,7 +349,7 @@ public:
                             estimate = currentEstimate;
                             plugin = currentPlugin;
 
-                            if (currentEstimate == QtMediaServices::PreferredService)
+                            if (currentEstimate == QtMultimedia::PreferredService)
                                 break;
                         }
                     }
@@ -380,7 +380,7 @@ public:
         }
     }
 
-    QtMediaServices::SupportEstimate hasSupport(const QByteArray &serviceType,
+    QtMultimedia::SupportEstimate hasSupport(const QByteArray &serviceType,
                                      const QString &mimeType,
                                      const QStringList& codecs,
                                      int flags) const
@@ -388,10 +388,10 @@ public:
         QList<QObject*> instances = loader()->instances(serviceType);
 
         if (instances.isEmpty())
-            return QtMediaServices::NotSupported;
+            return QtMultimedia::NotSupported;
 
         bool allServicesProvideInterface = true;
-        QtMediaServices::SupportEstimate supportEstimate = QtMediaServices::NotSupported;
+        QtMultimedia::SupportEstimate supportEstimate = QtMultimedia::NotSupported;
 
         foreach(QObject *obj, instances) {
             QMediaServiceSupportedFormatsInterface *iface =
@@ -425,12 +425,12 @@ public:
         }
 
         //don't return PreferredService
-        supportEstimate = qMin(supportEstimate, QtMediaServices::ProbablySupported);
+        supportEstimate = qMin(supportEstimate, QtMultimedia::ProbablySupported);
 
         //Return NotSupported only if no services are available of serviceType
         //or all the services returned NotSupported, otherwise return at least MaybeSupported
         if (!allServicesProvideInterface)
-            supportEstimate = qMax(QtMediaServices::MaybeSupported, supportEstimate);
+            supportEstimate = qMax(QtMultimedia::MaybeSupported, supportEstimate);
 
         return supportEstimate;
     }
@@ -534,13 +534,13 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 */
 
 /*!
-    \fn QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
+    \fn QtMultimedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
 
     Returns how confident a media service provider is that is can provide a \a serviceType
     service that is able to play media of a specific \a mimeType that is encoded using the listed
     \a codecs while adhearing to constraints identified in \a flags.
 */
-QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
+QtMultimedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
                                                         const QString &mimeType,
                                                         const QStringList& codecs,
                                                         int flags) const
@@ -550,7 +550,7 @@ QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteAr
     Q_UNUSED(codecs);
     Q_UNUSED(flags);
 
-    return QtMediaServices::MaybeSupported;
+    return QtMultimedia::MaybeSupported;
 }
 
 /*!

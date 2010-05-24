@@ -79,7 +79,7 @@ QtMessaging
           QMessageFilter::byStandardFolder(QMessage::InboxFolder) &
           QMessageFilter::byType(QMessage::Mms))
 
-QtMedia
+QtMultimedia
 ------
 
  - API changes

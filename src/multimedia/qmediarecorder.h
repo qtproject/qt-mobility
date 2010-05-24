@@ -93,7 +93,7 @@ public:
     QMediaObject *mediaObject() const;
 
     bool isAvailable() const;
-    QtMediaServices::AvailabilityError availabilityError() const;
+    QtMultimedia::AvailabilityError availabilityError() const;
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);

@@ -49,7 +49,7 @@ QT_BEGIN_NAMESPACE
     \brief The QAudioSystemPlugin class provides an abstract base for audio plugins.
 
     \ingroup multimedia
-    \inmodule QtMedia
+    \inmodule QtMultimedia
     \ingroup  multimedia
     \since 4.8
 
@@ -64,7 +64,7 @@ QT_BEGIN_NAMESPACE
     \sa QAbstractAudioDeviceInfo, QAbstractAudioOutput, QAbstractAudioInput
 
     Qt supports win32, linux(alsa) and Mac OS X standard (builtin to the
-    QtMedia library at compile time).
+    QtMultimedia library at compile time).
 
     You can support other backends other than these predefined ones by
     creating a plugin subclassing QAudioSystemPlugin, QAbstractAudioDeviceInfo,
@@ -74,11 +74,11 @@ QT_BEGIN_NAMESPACE
     audio device to be provided by your plugin.
 
     -audio-backend configure option will force compiling in of the builtin backend
-    into the QtMedia library at compile time. This is automatic by default
+    into the QtMultimedia library at compile time. This is automatic by default
     and will only be compiled into the library if the dependencies are installed.
     eg. alsa-devel package installed for linux.
 
-    If the builtin backend is not compiled into the QtMedia library and
+    If the builtin backend is not compiled into the QtMultimedia library and
     no audio plugins are available a fallback dummy backend will be used.
     This should print out warnings if this is the case when you try and use QAudioInput or QAudioOutput. To fix this problem
     reconfigure Qt using -audio-backend or create your own plugin with a default

@@ -66,7 +66,7 @@ SOURCES += \
     xarecordsessionimpl.cpp
 
 LIBS += \
-    -lQtMedia \
+    -lQtMultimedia \
     -lopenmaxal \
     -lbafl
 

@@ -1,7 +1,7 @@
 TEMPLATE = lib
 
 # distinct from QtMultimedia
-TARGET = QtMedia
+TARGET = QtMultimedia
 
 include (../../common.pri)
 INCLUDEPATH+= .
@@ -131,7 +131,7 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
     load(data_caging_paths)
-    QtMediaDeployment.sources = QtMedia.dll
+    QtMediaDeployment.sources = QtMultimedia.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2002AC77

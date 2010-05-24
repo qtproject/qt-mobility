@@ -4,7 +4,7 @@ CONFIG += plugin
 TARGET = QtMobilityMmfEngine
 PLUGIN_SUBDIR = mediaservice
 include (../../../../common.pri)
-qtAddLibrary(QtMedia)
+qtAddLibrary(QtMultimedia)
 
 #includes here so that all defines are added here also
 include (../common/symbiancommon.pri)
@@ -49,7 +49,7 @@ pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_SUBDIR}
 DEPLOYMENT += pluginDep      
 
 #Media API spesific deployment
-QtMediaDeployment.sources = QtMedia.dll
+QtMediaDeployment.sources = QtMultimedia.dll
 QtMediaDeployment.path = /sys/bin
 
 DEPLOYMENT += QtMediaDeployment

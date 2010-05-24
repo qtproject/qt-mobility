@@ -79,7 +79,7 @@ public:
     ~QRadioTuner();
 
     bool isAvailable() const;
-    QtMediaServices::AvailabilityError availabilityError() const;
+    QtMultimedia::AvailabilityError availabilityError() const;
 
     State state() const;
 

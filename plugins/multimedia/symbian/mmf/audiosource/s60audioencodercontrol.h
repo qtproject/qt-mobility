@@ -74,8 +74,8 @@ private:
     bool setAudioCodec(const QString &codecName);
     int bitRate() const;
     void setBitRate(int);
-    QtMediaServices::EncodingQuality quality() const;
-    void setQuality(QtMediaServices::EncodingQuality);
+    QtMultimedia::EncodingQuality quality() const;
+    void setQuality(QtMultimedia::EncodingQuality);
     int sampleRate() const;
     void setSampleRate(int sampleRate);
     int channelCount() const;
@@ -84,7 +84,7 @@ private:
     void setSampleSize(int sampleSize);    
 private:
     S60AudioCaptureSession* m_session;
-    QtMediaServices::EncodingQuality m_quality;
+    QtMultimedia::EncodingQuality m_quality;
 };
 
 #endif

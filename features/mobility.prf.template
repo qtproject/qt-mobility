@@ -37,7 +37,7 @@ contains(MOBILITY, systeminfo) {
 }
 
 contains(MOBILITY, multimedia) {
-    qtAddLibrary(QtMedia)
+    qtAddLibrary(QtMultimedia)
 }
 
 contains(MOBILITY, contacts) {
