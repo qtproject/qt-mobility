@@ -58,17 +58,16 @@ isAbsPath() {
 # maemo we do not want to follow symbolic links that are 
 # introduced by scratchbox
 absPath() {
-    
     if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
         if [ `isAbsPath $1` = '1' ]; then
             echo $1;
         else
-            echo "Relative prefix paths are not supported for Maemo"
+            echo >&2 "Relative prefix/bin/lib/header/plugin paths are not supported for Maemo"
             exit 1;
         fi
     else
-        RESULT=`(cd "$1"; /bin/pwd)`
-        echo $RESULT
+        PATH=`$relpath/bin/pathhelper $1`
+        echo $PATH
     fi
 }
 
@@ -312,24 +311,20 @@ if [ -n "$LINUX_TARGET" ]; then
 fi
 
 #process PREFIX
-if [ -d "$QT_MOBILITY_PREFIX" ]; then
-    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
-else
-    mkdir -p "$QT_MOBILITY_PREFIX"
-    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_PREFIX"
+QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
+if [ "$?" -eq "1" ]; then
+    exit 1
 fi
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
 
 #process include path
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
     QT_MOBILITY_INCLUDE="$QT_MOBILITY_PREFIX/include"
-elif [ -d "$QT_MOBILITY_INCLUDE" ]; then
-    QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_INCLUDE"
     QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_INCLUDE"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 
@@ -337,36 +332,33 @@ echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 #process library path
 if [ -z "$QT_MOBILITY_LIB" ]; then
     QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/$LIB_PATH"
-elif [ -d "$QT_MOBILITY_LIB" ]; then
-    QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_LIB"
     QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_LIB"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 
 #process bin path
 if [ -z "$QT_MOBILITY_BIN" ]; then
     QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/$BIN_PATH"
-elif [ -d "$QT_MOBILITY_BIN" ]; then
-    QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_BIN"
     QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_BIN"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
 
 #process plugin path
 if [ -z "$QT_MOBILITY_PLUGINS" ]; then
     QT_MOBILITY_PLUGINS="$QT_MOBILITY_PREFIX/$PLUGIN_PATH"
-elif [ -d "$QT_MOBILITY_PLUGINS" ]; then
-    QT_MOBILITY_PLUGINS=`absPath $QT_MOBILITY_PLUGINS $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_PLUGINS"
     QT_MOBILITY_PLUGINS=`absPath $QT_MOBILITY_PLUGINS $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_PLUGINS"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_PLUGINS = $QT_MOBILITY_PLUGINS" >> "$CONFIG_IN"
 
