@@ -64,7 +64,7 @@ public:
     void setCoordinate(const QGeoCoordinate &coordinate);
 
 private:
-    Q_DECLARE_LANDMARKSORTORDER_PRIVATE(QLandmarkDistanceSort);
+    Q_DECLARE_LANDMARKSORTORDER_PRIVATE(QLandmarkDistanceSort)
 };
 
 QTM_END_NAMESPACE

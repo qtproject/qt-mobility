@@ -66,7 +66,7 @@ class QIODevice;
 #include <qgeoplace.h>
 #include <qgeoaddress.h>
 
-QTM_USE_NAMESPACE;
+QTM_USE_NAMESPACE
 
 class QGeoCodeXmlParser
 {

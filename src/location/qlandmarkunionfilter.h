@@ -66,7 +66,7 @@ public:
     QList<QLandmarkFilter> filters() const;
 
 private:
-    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkUnionFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkUnionFilter)
 };
 
 QTM_END_NAMESPACE

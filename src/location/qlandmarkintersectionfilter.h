@@ -66,7 +66,7 @@ public:
     QList<QLandmarkFilter> filters() const;
 
 private:
-    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkIntersectionFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkIntersectionFilter)
 };
 
 QTM_END_NAMESPACE

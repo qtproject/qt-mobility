@@ -67,7 +67,7 @@ class QIODevice;
 #include <qgeocoordinate.h>
 #include <qgeoboundingbox.h>
 
-QTM_USE_NAMESPACE;
+QTM_USE_NAMESPACE
 
 class QGeoRouteXmlParser
 {

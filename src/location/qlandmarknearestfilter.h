@@ -64,7 +64,7 @@ public:
     void setRadius(double radius);
 
 private:
-    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkNearestFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkNearestFilter)
 };
 
 QTM_END_NAMESPACE

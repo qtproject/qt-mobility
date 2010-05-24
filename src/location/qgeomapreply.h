@@ -89,7 +89,7 @@ protected:
 
 private:
     QGeoMapReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoMapReply);
+    Q_DISABLE_COPY(QGeoMapReply)
 };
 
 QTM_END_NAMESPACE
