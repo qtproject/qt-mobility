@@ -443,7 +443,6 @@ void QAudioOutputPrivate::start(QIODevice* device)
     if (!audioFormat.isValid() || !open()) {
         stateCode = QAudio::StoppedState;
         errorCode = QAudio::OpenError;
-        return audioIO;
     }
 
     reset();
