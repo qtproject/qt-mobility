@@ -6923,8 +6923,7 @@
             <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
-            <contents name="classes" title="Classes" level="1"/>
-            <contents name="mapping-the-vcard-constants" title="Mapping the vCard constants" level="1"/>
+            <contents name="main-classes" title="Main Classes" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="DECLARE_READING" href="qsensorreading.html#DECLARE_READING" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QSensorReading" type="" signature="DECLARE_READING( classname)">
             <parameter left="" right="" name="classname" default=""/>
@@ -7188,8 +7187,6 @@
             <page access="public" status="commendable" name="battery-charge/battery-publisher/main.cpp" href="battery-charge-battery-publisher-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="battery-charge/battery-publisher/main.cpp" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-charge.pro" href="battery-charge-battery-charge-pro.html" subtype="file" title="" fulltitle="battery-charge.pro Example File" subtitle="battery-charge/battery-charge.pro" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-publisher/battery-publisher.pro" href="battery-charge-battery-publisher-battery-publisher-pro.html" subtype="file" title="" fulltitle="battery-publisher.pro Example File" subtitle="battery-charge/battery-publisher/battery-publisher.pro" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-subscriber/battery-subscriber.pro" href="battery-charge-battery-subscriber-battery-subscriber-pro.html" subtype="file" title="" fulltitle="battery-subscriber.pro Example File" subtitle="battery-charge/battery-subscriber/battery-subscriber.pro" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-subscriber/battery-subscriber.qrc" href="battery-charge-battery-subscriber-battery-subscriber-qrc.html" subtype="file" title="" fulltitle="battery-subscriber.qrc Example File" subtitle="battery-charge/battery-subscriber/battery-subscriber.qrc" location=""/>
         </page>
         <page access="public" status="commendable" name="qmlcontacts" href="qmlcontacts.html" subtype="example" title="Sample QML-based Phonebook Example" fulltitle="Sample QML-based Phonebook Example" subtitle="" location="qmlcontacts.qdoc">
             <contents name="phone-book" title="Phone Book" level="1"/>

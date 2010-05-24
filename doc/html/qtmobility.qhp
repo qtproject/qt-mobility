@@ -3729,8 +3729,8 @@
             <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
             <file>audiorecorder-main-cpp.html</file>
-            <file>images/sensors-coordinates2.jpg</file>
             <file>qcontactrelationshipremoverequest-members.html</file>
+            <file>images/sensors-coordinates2.jpg</file>
             <file>images/sensors-rotation-anim.gif</file>
             <file>sfw-notes-sfwnotes-cpp.html</file>
             <file>weatherinfo-icons-weather-sunny-svg.html</file>
@@ -3776,7 +3776,6 @@
             <file>qgeopositioninfo.html</file>
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
-            <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
             <file>images/sensors-rotation2.jpg</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
@@ -3859,7 +3858,6 @@
             <file>qcontactremoverequest.html</file>
             <file>logfilepositionsource-logfilepositionsource-h.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialerplugin-cpp.html</file>
-            <file>battery-charge-battery-subscriber-battery-subscriber-qrc.html</file>
             <file>notesmanagerplugin-notesmanager-h.html</file>
             <file>qmediaplaylistnavigator.html</file>
             <file>qmediaresource-members.html</file>
