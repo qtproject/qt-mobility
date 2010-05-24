@@ -52,7 +52,7 @@ class QVideoSurfaceFormat;
 
 class QAbstractVideoSurfacePrivate;
 
-class Q_MEDIA_EXPORT QAbstractVideoSurface : public QObject
+class Q_MULTIMEDIA_EXPORT QAbstractVideoSurface : public QObject
 {
     Q_OBJECT
 

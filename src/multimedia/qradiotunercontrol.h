@@ -47,7 +47,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QRadioTunerControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QRadioTunerControl : public QMediaControl
 {
     Q_OBJECT
 

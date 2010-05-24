@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
 
 class QMediaObject;
 
-class Q_MEDIA_EXPORT QMediaBindableInterface
+class Q_MULTIMEDIA_EXPORT QMediaBindableInterface
 {
 public:
     virtual ~QMediaBindableInterface();

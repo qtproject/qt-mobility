@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 class QMediaObject;
 
 class QVideoWidgetPrivate;
-class Q_MEDIA_EXPORT QVideoWidget : public QWidget, public QMediaBindableInterface
+class Q_MULTIMEDIA_EXPORT QVideoWidget : public QWidget, public QMediaBindableInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaBindableInterface)

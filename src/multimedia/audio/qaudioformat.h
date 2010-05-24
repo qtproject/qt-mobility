@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 
 class QAudioFormatPrivate;
 
-class Q_MEDIA_EXPORT QAudioFormat
+class Q_MULTIMEDIA_EXPORT QAudioFormat
 {
 public:
     enum SampleType { Unknown, SignedInt, UnSignedInt, Float };

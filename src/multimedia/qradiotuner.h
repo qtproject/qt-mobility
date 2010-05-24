@@ -52,7 +52,7 @@
 QT_BEGIN_NAMESPACE
 
 class QRadioTunerPrivate;
-class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QRadioTuner : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)

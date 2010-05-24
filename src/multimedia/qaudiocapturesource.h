@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 
 class QAudioCaptureSourcePrivate;
 
-class Q_MEDIA_EXPORT QAudioCaptureSource : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QAudioCaptureSource : public QMediaObject
 {
     Q_OBJECT
 

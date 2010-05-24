@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 
 
 class QAudioEncoderSettingsPrivate;
-class Q_MEDIA_EXPORT QAudioEncoderSettings
+class Q_MULTIMEDIA_EXPORT QAudioEncoderSettings
 {
 public:
     QAudioEncoderSettings();
@@ -89,7 +89,7 @@ private:
 };
 
 class QVideoEncoderSettingsPrivate;
-class Q_MEDIA_EXPORT QVideoEncoderSettings
+class Q_MULTIMEDIA_EXPORT QVideoEncoderSettings
 {
 public:
     QVideoEncoderSettings();
@@ -127,7 +127,7 @@ private:
 };
 
 class QImageEncoderSettingsPrivate;
-class Q_MEDIA_EXPORT QImageEncoderSettings
+class Q_MULTIMEDIA_EXPORT QImageEncoderSettings
 {
 public:
     QImageEncoderSettings();

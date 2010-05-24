@@ -51,7 +51,7 @@
 QT_BEGIN_NAMESPACE
 
 class QMediaServicePrivate;
-class Q_MEDIA_EXPORT QMediaService : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaService : public QObject
 {
     Q_OBJECT
 

@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
 
 class QAbstractAudioOutput;
 
-class Q_MEDIA_EXPORT QAudioOutput : public QObject
+class Q_MULTIMEDIA_EXPORT QAudioOutput : public QObject
 {
     Q_OBJECT
 

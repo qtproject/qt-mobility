@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
 class QMediaPlaylistProvider;
 
 class QMediaPlaylistPrivate;
-class Q_MEDIA_EXPORT QMediaPlaylist : public QObject, public QMediaBindableInterface
+class Q_MULTIMEDIA_EXPORT QMediaPlaylist : public QObject, public QMediaBindableInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaBindableInterface)

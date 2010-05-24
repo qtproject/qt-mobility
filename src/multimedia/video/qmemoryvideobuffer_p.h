@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
 
 class QMemoryVideoBufferPrivate;
 
-class Q_MEDIA_EXPORT QMemoryVideoBuffer : public QAbstractVideoBuffer
+class Q_MULTIMEDIA_EXPORT QMemoryVideoBuffer : public QAbstractVideoBuffer
 {
     Q_DECLARE_PRIVATE(QMemoryVideoBuffer)
 public:

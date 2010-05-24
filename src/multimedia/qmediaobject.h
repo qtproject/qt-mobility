@@ -54,7 +54,7 @@ class QMediaService;
 class QMediaBindableInterface;
 
 class QMediaObjectPrivate;
-class Q_MEDIA_EXPORT QMediaObject : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)
