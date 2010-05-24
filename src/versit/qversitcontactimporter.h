@@ -73,6 +73,7 @@ public:
 class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandlerV2
 {
 public:
+    static QVersitContactImporterPropertyHandlerV2* createDefaultHandler();
     virtual ~QVersitContactImporterPropertyHandlerV2() {}
     virtual void propertyProcessed(const QVersitDocument& document,
                                    const QVersitProperty& property,
