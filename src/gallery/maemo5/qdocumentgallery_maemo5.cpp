@@ -135,7 +135,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
-    schema.resolveItemType(request->itemId().toString());
+    schema.resolveTypeFromItemId(request->itemId().toString());
 
     QString query = schema.buildIdQuery(&result, request->itemId().toString());
 
@@ -143,7 +143,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
         QGalleryAbstractResponse *response = 0;
-        if (schema.isFileType()) {
+        if (schema.isItemType()) {
             schema.setPropertyNames(request->propertyNames());
             schema.resolveColumns();
 
@@ -186,7 +186,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
         QGalleryAbstractResponse *response = 0;
-        if (schema.isFileType()) {
+        if (schema.isItemType()) {
             schema.setPropertyNames(request->propertyNames());
             schema.setSortPropertyNames(request->sortPropertyNames());
             schema.resolveColumns();
@@ -234,7 +234,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
-        if (schema.isFileType()) {
+        if (schema.isItemType()) {
             schema.setPropertyNames(request->propertyNames());
             schema.setSortPropertyNames(request->sortPropertyNames());
             schema.resolveColumns();
@@ -282,7 +282,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
-    } else if (schema.isFileType() || schema.isAggregateType()) {
+    } else if (schema.isItemType() || schema.isAggregateType()) {
         return new QGalleryTrackerCountResponse(metaDataInterface(), schema, query);
     }
 

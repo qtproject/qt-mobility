@@ -93,18 +93,6 @@ QVariant QGalleryTrackerPrefixColumn::value(QVector<QVariant>::const_iterator ro
     return m_prefix + (row + m_column)->toString();
 }
 
-QVariant QGalleryTrackerServicePrefixColumn::value(QVector<QVariant>::const_iterator row) const
-{
-    const QString service = (row + m_serviceColumn)->toString();
-
-    return QGalleryTrackerSchema::prefixFromService(service) + (row + m_uriColumn)->toString();
-}
-
-QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterator row) const
-{
-    return QGalleryTrackerSchema::typeFromService((row + m_serviceColumn)->toString());
-}
-
 QVariant QGalleryTrackerCompositeIdColumn::value(QVector<QVariant>::const_iterator row) const
 {
     QString fragment = (row + m_columns.at(0))->toString();

@@ -85,25 +85,17 @@ struct QGalleryTrackerSortCriteria
 class QGalleryTrackerSchema
 {
 public:
-    enum AggregateType
-    {
-        Count,
-        Sum,
-        Concatenation
-    };
-
-    typedef QString (*IdFunc)(const QStringList &row);
-
     QGalleryTrackerSchema();
     ~QGalleryTrackerSchema();
 
-    bool isFileType() const { return m_fileTypeIndex >= 0; }
-    bool isAggregateType() const { return m_aggregateTypeIndex >= 0; }
+    bool isItemType() const { return m_itemIndex >= 0; }
+    bool isAggregateType() const { return m_aggregateIndex >= 0; }
 
     QString itemType() const { return m_itemType; }
     void setItemType(const QString &type);
 
-    void resolveItemType(const QString &itemId);
+    void resolveTypeFromItemId(const QString &itemId);
+    void resolveTypeFromService(const QString &service);
 
     QString buildIdQuery(int *error, const QString &itemId);
     QString buildContainerQuery(int *error, const QString &containerId);
@@ -111,22 +103,14 @@ public:
             int *error, const QString &containerId, const QGalleryFilter &filter) const;
 
     static QString uriFromItemId(int *error, const QVariant &itemId);
+    QString itemIdFromUri(const QString &uri) const;
 
     QString service() const;
-    QString field(const QString &propertyName) const;
-
-    IdFunc idFunc() const;
 
     QStringList supportedPropertyNames() const;
     QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
     QStringList identityFields() const;
-    QStringList identityPropertyNames() const;
-
-    QPair<QString, AggregateType> aggregateField(const QString &propertyName) const;
-
-    static QString typeFromService(const QString &service);
-    static QString prefixFromService(const QString &service);
 
     QStringList propertyNames() const { return m_propertyNames; }
     void setPropertyNames(const QStringList &names);
@@ -134,13 +118,10 @@ public:
     QStringList sortPropertyNames() const { return m_sortPropertyNames; }
     void setSortPropertyNames(const QStringList &names);
 
-    int identityWidth() const { return m_fileTypeIndex >= 0 ? 2 : m_identityColumns.count(); }
-    int valueOffset() const { return m_fileTypeIndex >= 0 ? 2 : 0; }
+    int identityWidth() const { return m_itemIndex >= 0 ? 2 : m_identityColumns.count(); }
+    int valueOffset() const { return m_itemIndex >= 0 ? 2 : 0; }
 
     QStringList fields() const { return m_propertyFields; }
-    QStringList aggregations() const { return m_aggregations; }
-    QStringList aggregateFields() const { return m_aggregateFields; }
-    QStringList sortFields() const { return m_sortFields; }
     QVector<QGalleryProperty::Attributes> propertyAttributes() const {
         return m_propertyAttributes; }
 
@@ -165,8 +146,8 @@ private:
     int resolveFileColumns();
     int resolveAggregateColumns();
 
-    int m_fileTypeIndex;
-    int m_aggregateTypeIndex;
+    int m_itemIndex;
+    int m_aggregateIndex;
     QString m_itemType;
     QStringList m_propertyNames;
     QStringList m_sortPropertyNames;
