@@ -65,7 +65,7 @@ public:
 /*!
     \namespace QAudio
     \brief The QAudio namespace contains enums used by the audio classes.
-    \inmodule QtMedia
+    \inmodule QtMultimedia
     \ingroup multimedia
     \since 4.6
 */

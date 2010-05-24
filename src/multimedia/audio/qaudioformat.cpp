@@ -92,7 +92,7 @@ public:
     \class QAudioFormat
     \brief The QAudioFormat class stores audio parameter information.
 
-    \inmodule QtMedia
+    \inmodule QtMultimedia
     \ingroup  multimedia
     \since 4.6
 

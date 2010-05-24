@@ -656,7 +656,7 @@ void QMediaPlayer::unbind(QObject *obj)
     The \a flags argument allows additional requirements such as performance indicators to be
     specified.
 */
-QtMediaServices::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
+QtMultimedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
 {

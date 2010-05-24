@@ -345,12 +345,12 @@ bool S60RadioTunerControl::isAvailable() const
     return m_available;
 }
 
-QtMediaServices::AvailabilityError S60RadioTunerControl::availabilityError() const
+QtMultimedia::AvailabilityError S60RadioTunerControl::availabilityError() const
 {
     if (m_available)
-        return QtMediaServices::NoError;
+        return QtMultimedia::NoError;
     else
-        return QtMediaServices::ResourceError;
+        return QtMultimedia::ResourceError;
 }
 
 QRadioTuner::Error S60RadioTunerControl::error() const

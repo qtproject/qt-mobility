@@ -144,12 +144,12 @@ bool QRadioTuner::isAvailable() const
 /*!
     Returns the availability error state.
 */
-QtMediaServices::AvailabilityError QRadioTuner::availabilityError() const
+QtMultimedia::AvailabilityError QRadioTuner::availabilityError() const
 {
     if (d_func()->control != NULL)
         return d_func()->control->availabilityError();
     else
-        return QtMediaServices::ServiceMissingError;
+        return QtMultimedia::ServiceMissingError;
 }
 
 /*!

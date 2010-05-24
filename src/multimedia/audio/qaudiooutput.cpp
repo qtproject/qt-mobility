@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
     \class QAudioOutput
     \brief The QAudioOutput class provides an interface for sending audio data to an audio output device.
 
-    \inmodule QtMedia
+    \inmodule QtMultimedia
     \ingroup  multimedia
     \since 4.6
 

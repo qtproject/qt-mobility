@@ -60,16 +60,16 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMediaServices::MetaData key) const;
-    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
-    QList<QtMediaServices::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimedia::MetaData key) const;
+    void setMetaData(QtMultimedia::MetaData key, const QVariant &value);
+    QList<QtMultimedia::MetaData> availableMetaData() const;
     
     QVariant extendedMetaData(const QString &key) const ;
     void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
     
 private:
-    QString metaDataKeyAsString(QtMediaServices::MetaData key) const;
+    QString metaDataKeyAsString(QtMultimedia::MetaData key) const;
 
 private:
     MS60MediaPlayerResolver& m_mediaPlayerResolver;

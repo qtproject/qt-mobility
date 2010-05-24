@@ -12,7 +12,7 @@ PLUGIN_TYPE = mediaservice
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMedia)
+qtAddLibrary(QtMultimedia)
 
 LIBS += -framework AppKit -framework AudioUnit \
         -framework AudioToolbox -framework CoreAudio \

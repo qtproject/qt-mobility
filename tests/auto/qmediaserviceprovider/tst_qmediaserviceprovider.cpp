@@ -91,16 +91,16 @@ public:
         delete service;
     }
 
-    QtMediaServices::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const
+    QtMultimedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const
     {        
         if (codecs.contains(QLatin1String("mpeg4")))
-            return QtMediaServices::NotSupported;
+            return QtMultimedia::NotSupported;
 
         if (mimeType == "audio/ogg") {            
-            return QtMediaServices::ProbablySupported;
+            return QtMultimedia::ProbablySupported;
         }
 
-        return QtMediaServices::MaybeSupported;
+        return QtMultimedia::MaybeSupported;
     }
 
     QStringList supportedMimeTypes() const
@@ -149,14 +149,14 @@ public:
         delete service;
     }
 
-    QtMediaServices::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const
+    QtMultimedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const
     {
         Q_UNUSED(codecs);
 
         if (mimeType == "audio/wav")
-            return QtMediaServices::PreferredService;
+            return QtMultimedia::PreferredService;
 
-        return QtMediaServices::NotSupported;
+        return QtMultimedia::NotSupported;
     }
 
     QStringList supportedMimeTypes() const
@@ -244,15 +244,15 @@ public:
         delete service;
     }
 
-    QtMediaServices::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const
+    QtMultimedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const
     {
         if (codecs.contains(QLatin1String("jpeg2000")))
-            return QtMediaServices::NotSupported;
+            return QtMultimedia::NotSupported;
 
         if (supportedMimeTypes().contains(mimeType))
-            return QtMediaServices::ProbablySupported;
+            return QtMultimedia::ProbablySupported;
 
-        return QtMediaServices::MaybeSupported;
+        return QtMultimedia::MaybeSupported;
     }
 
     QStringList supportedMimeTypes() const
@@ -339,7 +339,7 @@ void tst_QMediaServiceProvider::testHasSupport()
 {
     MockMediaServiceProvider mockProvider;
     QCOMPARE(mockProvider.hasSupport(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/ogv", QStringList()),
-             QtMediaServices::MaybeSupported);
+             QtMultimedia::MaybeSupported);
 
     QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider();
 
@@ -347,44 +347,44 @@ void tst_QMediaServiceProvider::testHasSupport()
         QSKIP("No default provider", SkipSingle);
 
     QCOMPARE(provider->hasSupport(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/ogv", QStringList()),
-             QtMediaServices::MaybeSupported);
+             QtMultimedia::MaybeSupported);
 
     QCOMPARE(provider->hasSupport(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "audio/ogg", QStringList()),
-             QtMediaServices::ProbablySupported);
+             QtMultimedia::ProbablySupported);
 
     //while the service returns PreferredService, provider should return ProbablySupported
     QCOMPARE(provider->hasSupport(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "audio/wav", QStringList()),
-             QtMediaServices::ProbablySupported);
+             QtMultimedia::ProbablySupported);
 
     //even while all the plugins with "hasSupport" returned NotSupported,
     //MockServicePlugin3 has no "hasSupport" interface, so MaybeSupported
     QCOMPARE(provider->hasSupport(QByteArray(Q_MEDIASERVICE_MEDIAPLAYER), "video/avi",
                                   QStringList() << "mpeg4"),
-             QtMediaServices::MaybeSupported);
+             QtMultimedia::MaybeSupported);
 
     QCOMPARE(provider->hasSupport(QByteArray("non existing service"), "video/ogv", QStringList()),
-             QtMediaServices::NotSupported);
+             QtMultimedia::NotSupported);
 
-    QCOMPARE(QMediaPlayer::hasSupport("video/ogv"), QtMediaServices::MaybeSupported);    
-    QCOMPARE(QMediaPlayer::hasSupport("audio/ogg"), QtMediaServices::ProbablySupported);
-    QCOMPARE(QMediaPlayer::hasSupport("audio/wav"), QtMediaServices::ProbablySupported);
+    QCOMPARE(QMediaPlayer::hasSupport("video/ogv"), QtMultimedia::MaybeSupported);    
+    QCOMPARE(QMediaPlayer::hasSupport("audio/ogg"), QtMultimedia::ProbablySupported);
+    QCOMPARE(QMediaPlayer::hasSupport("audio/wav"), QtMultimedia::ProbablySupported);
 
     //test low latency flag support
     QCOMPARE(QMediaPlayer::hasSupport("audio/wav", QStringList(), QMediaPlayer::LowLatency),
-             QtMediaServices::ProbablySupported);
+             QtMultimedia::ProbablySupported);
     //plugin1 probably supports audio/ogg, it checked because it doesn't provide features iface
     QCOMPARE(QMediaPlayer::hasSupport("audio/ogg", QStringList(), QMediaPlayer::LowLatency),
-             QtMediaServices::ProbablySupported);
+             QtMultimedia::ProbablySupported);
     //Plugin4 is not checked here, sine it's known not support low latency
     QCOMPARE(QMediaPlayer::hasSupport("video/quicktime", QStringList(), QMediaPlayer::LowLatency),
-             QtMediaServices::MaybeSupported);
+             QtMultimedia::MaybeSupported);
 
     //test streaming flag support
     QCOMPARE(QMediaPlayer::hasSupport("video/quicktime", QStringList(), QMediaPlayer::StreamPlayback),
-             QtMediaServices::ProbablySupported);
+             QtMultimedia::ProbablySupported);
     //Plugin2 is not checked here, sine it's known not support streaming
     QCOMPARE(QMediaPlayer::hasSupport("audio/wav", QStringList(), QMediaPlayer::StreamPlayback),
-             QtMediaServices::MaybeSupported);
+             QtMultimedia::MaybeSupported);
 
     //ensure the correct media player plugin is choosen for mime type
     QMediaPlayer simplePlayer(0, QMediaPlayer::LowLatency);

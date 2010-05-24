@@ -116,7 +116,7 @@ symbian: {
     contains(mobility_modules, multimedia) {
 
         qtmobilitydeployment.sources += \
-            $$(EPOCROOT50)epoc32/release/armv5/urel/QtMedia.dll \
+            $$(EPOCROOT50)epoc32/release/armv5/urel/QtMultimedia.dll \
             $$(EPOCROOT50)epoc32/release/armv5/urel/m3u.dll
 
         multimedia = \

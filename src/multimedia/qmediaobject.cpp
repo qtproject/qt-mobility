@@ -97,9 +97,9 @@ QMediaObject::~QMediaObject()
     Returns the service availability error state.
 */
 
-QtMediaServices::AvailabilityError QMediaObject::availabilityError() const
+QtMultimedia::AvailabilityError QMediaObject::availabilityError() const
 {
-    return QtMediaServices::ServiceMissingError;
+    return QtMultimedia::ServiceMissingError;
 }
 
 /*!
@@ -324,7 +324,7 @@ bool QMediaObject::isMetaDataWritable() const
 /*!
     Returns the value associated with a meta-data \a key.
 */
-QVariant QMediaObject::metaData(QtMediaServices::MetaData key) const
+QVariant QMediaObject::metaData(QtMultimedia::MetaData key) const
 {
     Q_D(const QMediaObject);
 
@@ -336,7 +336,7 @@ QVariant QMediaObject::metaData(QtMediaServices::MetaData key) const
 /*!
     Sets a \a value for a meta-data \a key.
 */
-void QMediaObject::setMetaData(QtMediaServices::MetaData key, const QVariant &value)
+void QMediaObject::setMetaData(QtMultimedia::MetaData key, const QVariant &value)
 {
     Q_D(QMediaObject);
 
@@ -347,13 +347,13 @@ void QMediaObject::setMetaData(QtMediaServices::MetaData key, const QVariant &va
 /*!
     Returns a list of keys there is meta-data available for.
 */
-QList<QtMediaServices::MetaData> QMediaObject::availableMetaData() const
+QList<QtMultimedia::MetaData> QMediaObject::availableMetaData() const
 {
     Q_D(const QMediaObject);
 
     return d->metaDataControl
             ? d->metaDataControl->availableMetaData()
-            : QList<QtMediaServices::MetaData>();
+            : QList<QtMultimedia::MetaData>();
 }
 
 /*!
