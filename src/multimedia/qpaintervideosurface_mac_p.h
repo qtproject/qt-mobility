@@ -54,8 +54,8 @@
 //
 
 #include "qpaintervideosurface_p.h"
-#include <QtMultimedia/qvideosurfaceformat.h>
-#include <QtMultimedia/qvideoframe.h>
+#include <qvideosurfaceformat.h>
+#include <qvideoframe.h>
 
 QT_BEGIN_HEADER
 

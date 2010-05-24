@@ -51,7 +51,7 @@
 //
 
 #include <QtCore/qcoreapplication.h>
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 #include <QtNetwork>
 #include <QTime>
 

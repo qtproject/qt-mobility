@@ -47,7 +47,7 @@
 
 #include <qpainter.h>
 #include <qvariant.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #include <QtDebug>
 

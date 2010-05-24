@@ -54,7 +54,7 @@
 //
 
 #include <QtCore/qiodevice.h>
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 
 QT_BEGIN_HEADER
