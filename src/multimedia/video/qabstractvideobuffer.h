@@ -54,7 +54,7 @@ class QVariant;
 
 class QAbstractVideoBufferPrivate;
 
-class Q_MEDIA_EXPORT QAbstractVideoBuffer
+class Q_MULTIMEDIA_EXPORT QAbstractVideoBuffer
 {
 public:
     enum HandleType

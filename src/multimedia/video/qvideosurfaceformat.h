@@ -55,7 +55,7 @@ class QDebug;
 
 class QVideoSurfaceFormatPrivate;
 
-class Q_MEDIA_EXPORT QVideoSurfaceFormat
+class Q_MULTIMEDIA_EXPORT QVideoSurfaceFormat
 {
 public:
     enum Direction
@@ -129,7 +129,7 @@ private:
 };
 
 #ifndef QT_NO_DEBUG_STREAM
-Q_MEDIA_EXPORT QDebug operator<<(QDebug, const QVideoSurfaceFormat &);
+Q_MULTIMEDIA_EXPORT QDebug operator<<(QDebug, const QVideoSurfaceFormat &);
 #endif
 
 QT_END_NAMESPACE

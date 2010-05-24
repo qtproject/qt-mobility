@@ -62,7 +62,7 @@ class QAudioEncoderSettings;
 class QVideoEncoderSettings;
 
 class QMediaRecorderPrivate;
-class Q_MEDIA_EXPORT QMediaRecorder : public QObject, public QMediaBindableInterface
+class Q_MULTIMEDIA_EXPORT QMediaRecorder : public QObject, public QMediaBindableInterface
 {
     Q_OBJECT
     Q_INTERFACES(QMediaBindableInterface)

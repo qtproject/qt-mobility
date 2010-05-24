@@ -54,7 +54,7 @@ class QVariant;
 
 class QVideoFramePrivate;
 
-class Q_MEDIA_EXPORT QVideoFrame
+class Q_MULTIMEDIA_EXPORT QVideoFrame
 {
 public:
     enum FieldType

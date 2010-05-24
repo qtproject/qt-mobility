@@ -51,7 +51,7 @@ QT_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QMediaRecorderControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QMediaRecorderControl : public QMediaControl
 {
     Q_OBJECT
 

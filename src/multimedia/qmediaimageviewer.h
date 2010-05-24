@@ -50,7 +50,7 @@ QT_BEGIN_NAMESPACE
 class QMediaPlaylist;
 
 class QMediaImageViewerPrivate;
-class Q_MEDIA_EXPORT QMediaImageViewer : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QMediaImageViewer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)

@@ -56,7 +56,7 @@ class QGraphicsVideoItem;
 
 
 class QMediaPlayerPrivate;
-class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QMediaPlayer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(QMediaContent media READ media WRITE setMedia NOTIFY mediaChanged)

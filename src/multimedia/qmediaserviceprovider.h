@@ -52,7 +52,7 @@ QT_BEGIN_NAMESPACE
 class QMediaService;
 
 class QMediaServiceProviderHintPrivate;
-class Q_MEDIA_EXPORT QMediaServiceProviderHint
+class Q_MULTIMEDIA_EXPORT QMediaServiceProviderHint
 {
 public:
     enum Type { Null, ContentType, Device, SupportedFeatures };
@@ -93,7 +93,7 @@ private:
     QSharedDataPointer<QMediaServiceProviderHintPrivate> d;
 };
 
-class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaServiceProvider : public QObject
 {
     Q_OBJECT
 
