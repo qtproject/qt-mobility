@@ -83,8 +83,9 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
     mDefaultResourceHandler(new QVersitDefaultResourceHandler)
 {
     mResourceHandler = mDefaultResourceHandler;
+    mPropertyHandler = NULL;
     mPropertyHandler2 = mDefaultPropertyHandler;
-    mPropertyHandlerVersion = 2;
+    mPropertyHandlerVersion = mPropertyHandler2->version();
 
     // Contact detail mappings
     int versitPropertyCount =
@@ -157,12 +158,13 @@ bool QVersitContactImporterPrivate::importContact(
             importProperty(document, property, contactIndex, contact);
     }
 
+    contact->setType(QContactType::TypeContact);
+    QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
+
     if (mPropertyHandler2 && mPropertyHandlerVersion > 1) {
         mPropertyHandler2->documentProcessed(document, contact);
     }
 
-    contact->setType(QContactType::TypeContact);
-    QContactManagerEngine::setContactDisplayLabel(contact, QVersitContactImporterPrivate::synthesizedDisplayLabel(*contact));
     return true;
 }
 
@@ -179,7 +181,6 @@ void QVersitContactImporterPrivate::importProperty(
         mDetailMappings.value(property.name());
     QString detailDefinitionName = detailDefinition.first;
 
-    // To track X-NOKIA-QCONTACTFIELD properties to be grouped together in details
     QList<QContactDetail> updatedDetails;
 
     bool success = false;
