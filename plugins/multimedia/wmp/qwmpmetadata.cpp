@@ -244,6 +244,7 @@ QList<QtMultimedia::MetaData> QWmpMetaData::availableMetaData() const
                 if (dir.exists(albumArtLarge))
                     keys.append(QtMultimedia::CoverArtUrlLarge);
                 if (dir.exists(albumArtSmall))
+                    keys.append(QtMultimedia::CoverArtUrlSmall);
             }
         }
     }
