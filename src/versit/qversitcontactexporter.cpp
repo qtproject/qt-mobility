@@ -164,12 +164,12 @@ QTM_USE_NAMESPACE
 
   By associating a \l QVersitContactExporterDetailHandlerV2 with the exporter using
   setDetailHandler(), the client can pass in a handler to override the processing of details and/or
-  handle details that QVersitContactExporter doesn't support.  By default, this is set to a
-  QVersitContactExporterDefaultDetailHandler, which encodes details that the exporter doesn't
-  recognise.  The details are encoded in a format that can be decoded by a
-  QVersitContactImporterDefaultPropertyHandler.  This means that if a contact is exported and then
-  imported again, the resulting contact will be virtually identical to the original one, even if
-  there are non-standard details.
+  handle details that QVersitContactExporter doesn't support.  By default, this is set to a a
+  handler that encodes details that the exporter doesn't recognise (see \l
+  QVersitContactExporterDetailHandlerV2::createDefaultHandler()).  The details are encoded in a format
+  that can be decoded by a default handler associated with the QVersitContactImporter.  This means
+  that if a contact is exported and then imported again, the resulting contact will be virtually
+  identical to the original one, even if there are non-standard details.
 
 
   An example usage of QVersitContactExporter
@@ -190,7 +190,6 @@ QTM_USE_NAMESPACE
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export relationship example
 
   \sa QVersitDocument, QVersitProperty, QVersitResourceHandler, QVersitContactExporterDetailHandlerV2
-  \sa QVersitContactExporterDefaultDetailHandler
  */
 
 /*!
@@ -200,6 +199,55 @@ QTM_USE_NAMESPACE
   \value EmptyContactError One of the contacts was empty
   \value NoNameError One of the contacts has no QContactName field
   */
+
+
+/*!
+  \fn static QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createDefaultHandler()
+  Constructs a default detail handler and returns it.  The caller is responsible for deleting the
+  object.  If a QVersitContactExporter has not been explicitly associated with a detail handler,
+  it is associated with one created using this function.
+
+  This handler encodes details that the exporter doesn't recognise.  The format it uses to encode
+  the detail is as follows:
+  \list
+  \o All generated properties will have the name X-NOKIA-QCONTACTFIELD
+  \o All generated properties will have a single Versit group, and all properties generated from a
+     single detail will have the same group.
+  \o All generated properties will have at least the parameters DETAIL, which holds the definition
+     name of the QContactDetail from which it was generated, and FIELD, which holds the name of the
+     field within the detail from which it was generated.
+  \o If the field is of type QString or QByteArray, the property's value is set directly to the
+     value of the field.  (For a QByteArray value, the QVersitWriter will base-64 encode it.)
+  \o If the field is of some other type, the field value is encoded to a QByteArray via QDataStream
+     (and the resulting byte array is base-64 encoded by the QVersitWriter).  In this case, the
+     parameter DATATYPE=V is added to the Versit property.
+  \endlist
+
+  For example, a detail with definition name "Detail" and fields "Field1"="Value1" and
+  "Field2"=(int)42 will be exported to the vCard properties:
+  \code
+  G0.X-NOKIA-QCONTACTFIELD;DETAIL=Detail;FIELD=Field1:Value1
+  G0.X-NOKIA-QCONTACTFIELD;DETAIL=Detail;FIELD=Field2;DATATYPE=V;ENCODING=b:AAAAAgAAAAAq?
+  \endcode
+
+  And the next detail (say, "Detail" with a field "Field1"="Value3" will generate:
+  \code
+  G1.X-NOKIA-QCONTACTFIELD;DETAIL=Detail;FIELD=Field1:Value3
+  \endcode
+
+  The properties produced by this class can be imported by the default importer property handler
+  (created by QVersitContactImporterPropertyHandlerV2::createDefaultHandler()) to reproduce the
+  original \l{QContactDetail}{QContactDetails}.
+
+  Clients wishing to implement their own detail handler and also benefit from the functionality of
+  the default handler can use this function to construct one, and wrap a custom
+  QVersitContactExporterDetailHandlerV2 around it.  In the implementation of detailProcessed and
+  contactProcessed, the respective functions in the default handler should be called as the last
+  step.
+ */
+QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createDefaultHandler() {
+    return new QVersitContactExporterDefaultDetailHandler;
+}
 
 /*!
  * Constructs a new contact exporter

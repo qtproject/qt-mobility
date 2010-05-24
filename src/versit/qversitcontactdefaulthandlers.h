@@ -52,8 +52,24 @@ QTM_BEGIN_NAMESPACE
 class QContact;
 class QContactDetail;
 
-class QVersitContactImporterDefaultPropertyHandlerPrivate;
+/*
+ * This is a map from Versit group names to the details that were generated from properties with the
+ * said groups.  Multiple details can be associated with a single group.
+ */
+class DetailGroupMap
+{
+public:
+    QList<QContactDetail> detailsInGroup(const QString& groupName) const;
+    void insert(const QString& groupName, const QContactDetail& detail);
+    void update(const QContactDetail& detail);
+    void clear();
 
+private:
+    QHash<int, QString> mDetailGroupName; // detailid -> group name
+    QHash<int, QContactDetail> mDetailById; // detailid -> detail
+};
+
+/* See QVersitContactImporter::createDefaultHandler() */
 class Q_VERSIT_EXPORT QVersitContactImporterDefaultPropertyHandler
     : public QVersitContactImporterPropertyHandlerV2
 {
@@ -68,13 +84,12 @@ public:
                            QContact* contact);
 
 private:
-    QVersitContactImporterDefaultPropertyHandlerPrivate* d;
+    DetailGroupMap mDetailGroupMap; // remembers which details came from which groups
 
 };
 
-class QVersitContactExporterDefaultDetailHandlerPrivate;
-
-class Q_VERSIT_EXPORT QVersitContactExporterDefaultDetailHandler
+/* See QVersitContactExporter::createDefaultHandler() */
+class QVersitContactExporterDefaultDetailHandler
     : public QVersitContactExporterDetailHandlerV2
 {
 public:
@@ -88,7 +103,7 @@ public:
     void contactProcessed(const QContact& contact,
                           QVersitDocument* document);
 private:
-    QVersitContactExporterDefaultDetailHandlerPrivate* d;
+    int mDetailNumber;
 };
 
 QTM_END_NAMESPACE
