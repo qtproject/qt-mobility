@@ -189,29 +189,52 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     return QList<QOrganizerItem>();
 }
 
-QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount)
+QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
 {
     // If no endDateTime is given, we'll only generate items that occur within the next 4 years of periodStart.
-
-    QDate startDate = rrule.startDate();
-    QDate endDate = rrule.endDate();
-    int rCount = rrule.count();
-
-    bool useMaxCount = periodEnd.isNull();             // if no period end given, just return maxCount instances.
-    bool useRCount = (endDate.isNull() || rCount);     // if no end date is specified in the RRULE, use count
-
     QList<QDateTime> retn;
 
     // call nextMatchingDate here in a loop until maxCount or rCount is reached, or until our timelimit (4yrs+periodStart) is reached.
+    bool useMaxCount = periodEnd.isNull();             // if no period end given, just return maxCount instances.
+    QDate realPeriodEnd = (useMaxCount ? periodStart.addDays(1461).date() : periodEnd.date()); // periodStart + 4 years
+    QDate nextMatch = periodStart.date();
+    while (true) {
+        nextMatch = nextMatchingDate(nextMatch, realPeriodEnd, rrule);
+        if (!nextMatch.isNull()) {
+            QDateTime nmdt;
+            nmdt.setDate(nextMatch);
+            if (recurringItem.type() == QOrganizerItemType::TypeEvent) {
+                QOrganizerEvent evt = recurringItem;
+                nmdt.setTime(evt.startDateTime().time());
+            } else if (recurringItem.type() == QOrganizerItemType::TypeTodo) {
+                QOrganizerTodo todo = recurringItem;
+                nmdt.setTime(todo.notBeforeDateTime().time()); // XXX TODO: verify this is the right field to use..?
+            } else {
+                // erm... not a recurring item in our schema...
+                return QList<QDateTime>();
+            }
+
+            // XXX TODO: check that nmdt is within the required start and end times / period,
+            // because our instance date generation code merely checks dates, not datetimes.
+            retn.append(nmdt);
+        }
+
+        if (retn.size() == maxCount || nextMatch.isNull()) {
+            // we have reached our count of dates to return
+            // or there are no more matches in the given time period.
+            break;
+        }
+    }
 
     return retn;
 }
 
-QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule)
+QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule) const
 {
     // gets the next date (starting from currDate INCLUSIVE) which matches the rrule but is less than untilDate
     // if none found, returns an invalid, null QDate.
     // if currDate > untilDate OR currDate < rrule.dateStart, it will return an invalid, null QDate.
+    // XXX TODO: observe the rrule.count() as well as endDate!  requires generation from startDate of rrule... hrm....
 
     QDate startDate = rrule.startDate();
     if (currDate > untilDate || currDate < startDate)
@@ -327,8 +350,8 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
             continue;
         }
 
-        // this day didn't match.
-        tempDate.addDays(1);
+        // matches every criteria
+        return tempDate;
     }
 
     // no match.
@@ -382,9 +405,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     foreach (const QOrganizerItemRecurrenceRule& xrule, xrules) {
         if (!(xrule.endDate() < periodStart.date() || xrule.startDate() > periodEnd.date())) {
             // we cannot skip it, since it applies in the given time period.
-            // XXX TODO: transform from rule elements to real dates...
-
-            //xdates += theTransformedRuleDate;
+            xdates += generateDateTimes(generator, xrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
         }
     }
 
@@ -394,11 +415,12 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
         if (!(rrule.endDate() < periodStart.date() || rrule.startDate() > periodEnd.date())) {
             // we cannot skip it, since it applies in the given time period.
-            // XXX TODO: transform from rule elements to real dates...
-
-            //rdates += theTransformedRuleDate;
+            rdates += generateDateTimes(generator, rrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
         }
     }
+
+    // now order the contents of retn by date
+    qSort(rdates);
 
     // now for each rdate which isn't also an xdate
     foreach (const QDateTime& rdate, rdates) {
@@ -407,9 +429,6 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
             retn.append(generateInstance(generator, rdate));
         }
     }
-
-    // now order the contents of retn by date
-    // XXX TODO: sorting...
 
     // and return the first maxCount entries.
     return retn.mid(0, maxCount);

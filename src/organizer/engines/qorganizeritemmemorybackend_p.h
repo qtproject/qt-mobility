@@ -210,8 +210,8 @@ private:
 
     static QOrganizerItem generateInstance(const QOrganizerItem& generator, const QDateTime& rdate);
 
-    QList<QDateTime> generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount);
-    QDate nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule);
+    QList<QDateTime> generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const;
+    QDate nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule) const;
 
     QOrganizerItemMemoryEngineData* d;
     static QMap<QString, QOrganizerItemMemoryEngineData*> engineDatas;
