@@ -151,6 +151,12 @@ QTM_USE_NAMESPACE
   \l {QVersitDocument}{QVersitDocuments}.
   \ingroup versit
 
+  This class is used to convert lists of \l {QContact}{QContacts} (which may be stored in a
+  QContactManager) into lists of \l {QVersitDocument}{QVersitDocuments} (which may be written to
+  an I/O device using QVersitReader.  Unless there is an error, there is a one-to-one mapping
+  between contacts and Versit documents.  The exporter can be extended by clients by associating
+  resource and detail handlers.
+
   A \l QVersitResourceHandler is associated with the exporter to supply the behaviour for loading
   files from persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
   which supports basic resource loading from the file system.  An alternative resource handler
@@ -183,7 +189,7 @@ QTM_USE_NAMESPACE
 
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export relationship example
 
-  \sa QVersitDocument, QVersitProperty, QVersitContactExporterDetailHandlerV2, QVersitResourceHandler
+  \sa QVersitDocument, QVersitProperty, QVersitResourceHandler, QVersitContactExporterDetailHandlerV2
   \sa QVersitContactExporterDefaultDetailHandler
  */
 

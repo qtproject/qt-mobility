@@ -142,9 +142,16 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitContactImporter
-  \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
+  \brief The QVersitContactImporter class converts \l{QVersitDocument}{QVersitDocuments} to
+  \l{QContact}{QContacts}.
 
   \ingroup versit
+
+  This class is used to convert lists of \l{QVersitDocument}{QVersitDocuments} (which may be
+  produced by a QVersitReader) to lists of \l{QContact}{QContacts} (which may be saved into a
+  QContactManager.  Unless there is an error, there is a one-to-one mapping between Versit
+  documents and QContacts.  The importer is can be extended by clients by associating resource
+  and property handlers.
 
   A \l QVersitResourceHandler is associated with the importer to supply the behaviour for saving
   files to persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
@@ -174,7 +181,7 @@ QTM_USE_NAMESPACE
 
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import relationship example
 
-  \sa QVersitDocument, QVersitProperty, QVersitContactImporterPropertyHandlerV2, QVersitResourceHandler
+  \sa QVersitDocument, QVersitProperty, QVersitResourceHandler, QVersitContactImporterPropertyHandlerV2
   \sa QVersitContactImporterDefaultPropertyHandler
  */
 
