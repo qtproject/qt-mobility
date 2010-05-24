@@ -197,14 +197,23 @@ void QGeoPlacesManagerNokia::placesFinished()
 {
     QGeoPlacesReply *reply = qobject_cast<QGeoPlacesReply*>(sender());
 
+    if(receivers(SIGNAL(finished(QGeoPlacesReply*))) == 0) {
+        reply->deleteLater();
+        return;
+    }
+
     if (reply)
-        //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
         emit finished(reply);
 }
 
 void QGeoPlacesManagerNokia::placesError(QGeoPlacesReply::Error error, const QString &errorString)
 {
     QGeoPlacesReply *reply = qobject_cast<QGeoPlacesReply*>(sender());
+    
+    if(receivers(SIGNAL(finished(QGeoPlacesReply*, QGeoPlacesReply::Error, QString))) == 0) {
+        reply->deleteLater();
+        return;
+    }
 
     if (reply)
         emit this->error(reply, error, errorString);
