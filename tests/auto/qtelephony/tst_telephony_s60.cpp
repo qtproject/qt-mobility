@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,53 +38,52 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qtelephony.h"
-#include "qtelephony_linux_p.h"
+#include <qmobilityglobal.h>
+#include <QtTest/QtTest>
+#include <QtCore>
+#include <QDebug>
 
-QTM_BEGIN_NAMESPACE
+#define private public
+#include "../qsfwtestutil.h"
 
-////////
-QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
- : QObject(parent)
+#if defined(Q_OS_SYMBIAN)
+# define TESTDATA_DIR "."
+#endif
+
+class tst_Telephony: public QObject
 {
+    Q_OBJECT
+private slots:
+        void initTestCase();
+
+        //Test cases
+        void myFirstTest();
+        void mySecondTest();
+
+        void cleanupTestCase();
+};
+
+void tst_Telephony::initTestCase()
+{
+    qDebug("called before everything else");
 }
 
-QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
+//Test cases
+void tst_Telephony::myFirstTest()
 {
-
+    QVERIFY(1 == 1);
 }
 
-void QTelephonyCallListPrivate::startTestCase(const QString testcase, const QVariant param)
+void tst_Telephony::mySecondTest()
 {
-    if(testcase == "statusChanged"){
-        emit callstatusChanged(QCallInfo::UnknownStatus);
-    }
-    else if(testcase == "callsChanged"){
-        emit callsChanged();
-    }
+    QVERIFY(1 == 1);
 }
 
-QCallInfoPrivate::QCallInfoPrivate(QObject *parent)
- : QObject(parent)
+void tst_Telephony::cleanupTestCase()
 {
+    qDebug("called after myFirstTest and mySecondTest");
 }
 
-QCallInfoPrivate::~QCallInfoPrivate()
-{
+QTEST_MAIN(tst_Telephony)
 
-}
-
-QString QCallInfoPrivate::callIdentifier()
-{
-    return "not implemented!";
-}
-
-QList<quint32> QCallInfoPrivate::contacts()
-{
-    QList<quint32> ret;
-    return ret;
-}
-
-#include "moc_qtelephony_linux_p.cpp"
-
-QTM_END_NAMESPACE
+#include "tst_telephony_s60.moc"

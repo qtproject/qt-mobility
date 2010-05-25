@@ -1,6 +1,7 @@
 # #####################################################################
 # Telephony Mobility API
 # #####################################################################
+
 TEMPLATE = lib
 
 # Target gets fixed up in common.pri
@@ -11,27 +12,30 @@ include(../../common.pri)
 
 # Input
 PUBLIC_HEADERS += qtelephony.h \
-                qcallinfo.h
-SOURCES += qtelephony.cpp \
-                qcallinfo.cpp
+                  qcallinfo.h
+SOURCES +=        qtelephony.cpp \
+                  qcallinfo.cpp
 
 # Private Headers and sources
-win32 {
+win32: {
     HEADERS += qtelephony_win_p.h 
     SOURCES += qtelephony_win.cpp 
 }
-unix:!symbian {
-    maemo5|maemo6 {
-        HEADERS += qtelephony_maemo_p.h
-    } else {
+unix: {
+    !maemo*: {
         HEADERS += qtelephony_linux_p.h 
         SOURCES += qtelephony_linux.cpp
     }
+    maemo*: {
+        HEADERS += qtelephony_maemo_p.h
+        SOURCES += qtelephony_maemo.cpp
+    }
 }
-symbian{
+symbian: {
     HEADERS += qtelephony_s60_p.h 
+    SOURCES += qtelephony_s60.cpp 
 }
 
+HEADERS += $$PUBLIC_HEADERS
 
-HEADERS += $$PUBLIC_HEADERS 
 include (../../features/deploy.pri)

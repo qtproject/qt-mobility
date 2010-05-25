@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include "qtelephony.h"
-#include "qtelephony_linux_p.h"
+#include "qtelephony_s60_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -85,6 +85,6 @@ QList<quint32> QCallInfoPrivate::contacts()
     return ret;
 }
 
-#include "moc_qtelephony_linux_p.cpp"
+#include "moc_qtelephony_s60_p.cpp"
 
 QTM_END_NAMESPACE

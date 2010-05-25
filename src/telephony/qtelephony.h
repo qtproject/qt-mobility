@@ -48,6 +48,7 @@
 #include <QObject>
 #include <QList>
 #include <QString>
+#include <QVariant>
 
 QT_BEGIN_HEADER
 
@@ -62,8 +63,10 @@ public:
     QTelephonyCallList(QObject *parent = 0);
     virtual ~QTelephonyCallList();
 Q_SIGNALS:
-    void callstatusChanged(const QCallInfo::CallStatus status);
+    void callstatusChanged(const QCallInfo::CallStatus);
     void callsChanged();
+public slots:
+    void startTestCase(const QString, const QVariant);
 public:
     Q_PROPERTY(QCallInfo* currentCall READ currentCall)
     QCallInfo* currentCall();

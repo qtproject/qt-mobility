@@ -39,7 +39,6 @@
 **
 ****************************************************************************/
 #include "qtelephony.h"
-#include "qcallinfo.h"
 #include "qtelephony_win_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -48,12 +47,21 @@ QTM_BEGIN_NAMESPACE
 QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
  : QObject(parent)
 {
-    QCallInfo ci = new QCallInfo();
 }
 
 QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 {
 
+}
+
+void QTelephonyCallListPrivate::startTestCase(const QString testcase, const QVariant param)
+{
+    if(testcase == "statusChanged"){
+        emit callstatusChanged(QCallInfo::UnknownStatus);
+    }
+    else if(testcase == "callsChanged"){
+        emit callsChanged();
+    }
 }
 
 QCallInfoPrivate::QCallInfoPrivate(QObject *parent)

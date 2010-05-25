@@ -77,9 +77,10 @@ Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonycalllistprivate)
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent), d(telephonycalllistprivate())
 {
-    connect(d, SIGNAL(callstatusChanged(const QCallInfo::CallStatus status))
-        , this, SIGNAL(callstatusChanged(const QCallInfo::CallStatus status)));
-    connect(d, SIGNAL(callsChanged()), this, SIGNAL(callsChanged()));
+    connect(d, SIGNAL(callstatusChanged(const QCallInfo::CallStatus))
+        , this, SIGNAL(callstatusChanged(const QCallInfo::CallStatus)));
+    connect(d, SIGNAL(callsChanged())
+        , this, SIGNAL(callsChanged()));
 }
 
 /*!
@@ -173,6 +174,17 @@ QCallInfo::CallStatus QTelephonyCallList::currentCallStatus()
     if(d)
         d->currentCallStatus();
     return QCallInfo::UnknownStatus;
+}
+
+/*!
+    \fn QTelephonyCallList::startTestCase()
+    
+    Function that activates test cases.
+*/
+void QTelephonyCallList::startTestCase(const QString testcase, const QVariant param)
+{
+    if(d)
+        d->startTestCase(testcase, param);
 }
 
 #include "moc_qtelephony.cpp"

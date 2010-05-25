@@ -65,13 +65,19 @@ QTM_BEGIN_NAMESPACE
 
 class QTelephonyCallListPrivate : public QObject
 {
+    friend QTelephonyCallList;
     Q_OBJECT
+Q_SIGNALS:
+    void callstatusChanged(const QCallInfo::CallStatus);
+    void callsChanged();
 public:
     QTelephonyCallListPrivate(QObject *parent = 0);
     virtual ~QTelephonyCallListPrivate();
     QCallInfo* currentCall() { return 0; }
     QCallInfo::CallStatus currentCallStatus() { return QCallInfo::UnknownStatus; }
     QList<QCallInfo*> calls() { return calllist; }
+private:
+    void startTestCase(const QString testcase, const QVariant param);
 private:
     QList<QCallInfo*> calllist;
 };
