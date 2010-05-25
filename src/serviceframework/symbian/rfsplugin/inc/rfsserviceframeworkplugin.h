@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,34 +38,23 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef RFSSERVICEFRAMEWORKPLUGIN_H_
+#define RFSSERVICEFRAMEWORKPLUGIN_H_
 
-/*!
-    \namespace QService
-    \ingroup servicefw
+#include <rfsPlugin.h>
 
-    \brief The QService namespace contains miscellaneous identifiers used throughout the
-    Qt Service framework library.
-*/
+class CRfsServiceFrameworkPlugin : public CRFSPlugin
+    {
+    public:
+        static CRfsServiceFrameworkPlugin * NewL();
+        ~CRfsServiceFrameworkPlugin();
+        
+    public: // abstract methods from CRFSPlugin
+        void RestoreFactorySettingsL( const TRfsReason aType );
+        void GetScriptL( const TRfsReason aType, TDes& aPath );
+        void ExecuteCustomCommandL( const TRfsReason aType, TDesC& aCommand );
+    private:
+        CRfsServiceFrameworkPlugin();
+    };
 
-/*!
-    \enum QService::Scope
-    Defines the scope to be used when accessing services. Note that Symbian
-    does not distinguish scopes and therefore UserScope and SystemScope may
-    be used interchangeably.
-
-
-
-    \value UserScope When adding and removing services, uses a storage location
-    specific to the current user.
-    When searching for services and interface implementations, first searches in the
-    user-specific location; if the service or interface implementation
-    is not found, searches in the system-wide storage location (if the user has
-    sufficient permissions to do so).
-
-    \value SystemScope When adding and removing services, use a system-wide
-    storage location accessible to all users. When searching
-    for services and interface implementations, search only in the system-wide
-    storage location.
-*/
-
-
+#endif

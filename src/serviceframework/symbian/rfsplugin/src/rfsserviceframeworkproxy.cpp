@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -37,35 +37,26 @@
 **
 ** $QT_END_LICENSE$
 **
-****************************************************************************/
+****************************************************************************/ 
 
-/*!
-    \namespace QService
-    \ingroup servicefw
+//  Include Files
+#include <e32std.h>
+#include <ecom/implementationproxy.h>
 
-    \brief The QService namespace contains miscellaneous identifiers used throughout the
-    Qt Service framework library.
-*/
-
-/*!
-    \enum QService::Scope
-    Defines the scope to be used when accessing services. Note that Symbian
-    does not distinguish scopes and therefore UserScope and SystemScope may
-    be used interchangeably.
+#include "rfsserviceframeworkplugin.h"
+#include "rfsserviceframeworkplugin.hrh"
 
 
+// Map the interface UIDs to implementation factory functions
+const TImplementationProxy ImplementationTable[] =
+    {
+    IMPLEMENTATION_PROXY_ENTRY( KRfsServiceFrameworkPluginImplUid, CRfsServiceFrameworkPlugin::NewL )
+    };
 
-    \value UserScope When adding and removing services, uses a storage location
-    specific to the current user.
-    When searching for services and interface implementations, first searches in the
-    user-specific location; if the service or interface implementation
-    is not found, searches in the system-wide storage location (if the user has
-    sufficient permissions to do so).
-
-    \value SystemScope When adding and removing services, use a system-wide
-    storage location accessible to all users. When searching
-    for services and interface implementations, search only in the system-wide
-    storage location.
-*/
-
+// Function used to return an instance of the proxy table.
+EXPORT_C const TImplementationProxy* ImplementationGroupProxy( TInt& aTableCount )
+    {
+    aTableCount = sizeof( ImplementationTable ) / sizeof( TImplementationProxy );
+    return ImplementationTable;
+    }
 

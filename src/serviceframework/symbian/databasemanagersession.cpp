@@ -121,6 +121,9 @@ void CDatabaseManagerServerSession::DispatchMessageL(const RMessage2& aMessage)
             case EUnregisterServiceRequest:
                 User::LeaveIfError(UnregisterServiceL(aMessage));
                 break;
+            case EServiceInitializedRequest:
+                User::LeaveIfError(ServiceInitializedL(aMessage));
+                break;
             case EGetInterfacesRequest:
                 User::LeaveIfError(InterfacesL(aMessage));
                 break;
@@ -288,6 +291,44 @@ TInt CDatabaseManagerServerSession::UnregisterServiceL(const RMessage2& aMessage
 
     QString serviceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
     iDb->unregisterService(serviceName, securityToken);
+    
+    aMessage.Write(1, LastErrorCode());
+    delete serviceNameBuf;
+    
+    return ret;
+    }
+    
+TInt CDatabaseManagerServerSession::ServiceInitializedL(const RMessage2& aMessage)
+    {
+    QString securityToken;
+    
+    TVendorId vendorId = aMessage.VendorId();
+    if (vendorId != 0)
+    {
+        securityToken = QString::number(vendorId);
+    }
+    else
+    {
+        securityToken = QString::number(aMessage.SecureId().iId);
+    }
+    
+    TInt ret;
+    HBufC* serviceNameBuf = HBufC::New(aMessage.GetDesLength(0));
+    if (!serviceNameBuf)
+        return KErrNoMemory;
+
+    TPtr ptrToBuf(serviceNameBuf->Des());
+    TRAP(ret, aMessage.ReadL(0, ptrToBuf));
+    if (ret != KErrNone)
+        {
+        iDb->lastError().setError(DBError::UnknownError);
+        aMessage.Write(1, LastErrorCode());
+        delete serviceNameBuf;
+        return ret;
+        }
+
+    QString serviceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
+    iDb->serviceInitialized(serviceName, securityToken);
     
     aMessage.Write(1, LastErrorCode());
     delete serviceNameBuf;
@@ -571,6 +612,23 @@ void CDatabaseManagerServerSession::initDbPath()
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
+
+    // check if database is copied from Z drive; also valid for emulator
+    QFile dbFile(iDb->databasePath());
+    QFileInfo dbFileInfo(dbFile);
+    if (!dbFileInfo.exists()) {
+        // create folder first
+        if (!dbFileInfo.dir().exists()) 
+            QDir::root().mkpath(dbFileInfo.path());
+        // copy file from ROM
+        QFile romDb(QLatin1String("z:\\private\\2002ac7f\\") + dbFileInfo.fileName());
+        if (romDb.open(QIODevice::ReadOnly) && dbFile.open(QFile::WriteOnly)) {
+            QByteArray data = romDb.readAll();
+            dbFile.write(data);
+            dbFile.close();
+            romDb.close();
+        }
+    }
     
     openDb();
     }

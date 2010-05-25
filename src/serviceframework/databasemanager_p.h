@@ -57,6 +57,11 @@
 #include "servicedatabase_p.h"
 #include <QObject>
 
+#ifdef QT_SFW_SERVICEDATABASE_GENERATE
+#undef Q_AUTOTEST_EXPORT
+#define Q_AUTOTEST_EXPORT
+#endif
+
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
@@ -76,6 +81,7 @@ class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 
         bool registerService(ServiceMetaDataResults &service, DbScope scope);
         bool unregisterService(const QString &serviceName, DbScope scope);
+        bool serviceInitialized(const QString &serviceName, DbScope scope);
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, DbScope scope);
         QStringList getServiceNames(const QString &interfaceName, DbScope scope);

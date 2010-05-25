@@ -372,6 +372,30 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
 }
 
 /*
+    Removes the initialization specific information of \serviceName from the database
+    corresponding to a \scope.
+
+    Returns true if teh operation succeeded, false otherwise.
+    The last error is set when this function is called.
+  */
+bool DatabaseManager::serviceInitialized(const QString &serviceName, DbScope scope)
+{
+    ServiceDatabase *db = (scope == DatabaseManager::SystemScope) ? m_systemDb : m_userDb;
+
+    if (!openDb(scope)) {
+        return false;
+    } else {
+        if (!db->serviceInitialized(serviceName)) {
+            m_lastError = db->lastError();
+            return false;
+        } else {
+            m_lastError.setError(DBError::NoError);
+            return true;
+        }
+    }
+}
+
+/*
     Retrieves a list of interface descriptors that fulfill the constraints specified
     by \a filter at a given \a scope.
 

@@ -148,6 +148,18 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
 }
 
 /*
+    Removes the initialization specific information of \serviceName from the database.
+
+    Returns true if the operation succeeded, false otherwise.
+    The last error is set when this function is called.
+  */
+bool DatabaseManager::serviceInitialized(const QString &serviceName, DbScope scope)
+{
+    Q_UNUSED(scope);
+    return iSession.ServiceInitialized(serviceName);
+}
+
+/*
     \fn QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServiceFilter &filter, DbScope scope)
     
     Retrieves a list of interface descriptors that fulfill the constraints specified
@@ -387,6 +399,16 @@ bool RDatabaseManagerSession::UnregisterService(const QString& aServiceName)
     
     return (iError() == DBError::NoError);
     }
+
+bool RDatabaseManagerSession::ServiceInitialized(const QString& aServiceName)
+    {
+    TPtrC serviceNamePtr(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
+    TIpcArgs args(&serviceNamePtr, &iError);
+    SendReceive(EServiceInitializedRequest, args);
+    
+    return (iError() == DBError::NoError);
+    }
+    
 
 QList<QServiceInterfaceDescriptor> RDatabaseManagerSession::Interfaces(const QServiceFilter& aFilter)
     {

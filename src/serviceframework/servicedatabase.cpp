@@ -71,6 +71,7 @@
 #define SECURITY_TOKEN_KEY "SECURITYTOKEN"
 #endif
 #define INTERFACE_DESCRIPTION_KEY "DESCRIPTION"
+#define SERVICE_INITIALIZED_KEY SERVICE_INITIALIZED_ATTR
 #define INTERFACE_CAPABILITY_KEY "CAPABILITIES"
 
 QTM_BEGIN_NAMESPACE
@@ -357,6 +358,22 @@ bool ServiceDatabase::registerService(const ServiceMetaDataResults &service, con
 #endif
         return false;
     }
+
+#ifdef QT_SFW_SERVICEDATABASE_GENERATE
+    statement = "INSERT INTO ServiceProperty(ServiceId,Key,Value) VALUES(?,?,?)";
+    bindValues.clear();
+    bindValues.append(serviceID);
+    bindValues.append(SERVICE_INITIALIZED_KEY);
+    bindValues.append(QString("NO"));
+    if (!executeQuery(&query, statement, bindValues)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::registerService():-"
+                    << qPrintable(m_lastError.text());
+#endif
+        return false;
+    }
+#endif
     
 #ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
     // Insert a security token for the particular service
@@ -1625,6 +1642,108 @@ bool ServiceDatabase::unregisterService(const QString &serviceName, const QStrin
 }
 
 /*
+    Registers the service initialization into the database.
+*/
+bool ServiceDatabase::serviceInitialized(const QString &serviceName, const QString &securityToken)
+{
+#ifndef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    Q_UNUSED(securityToken);
+#endif
+
+    if (!checkConnection()) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << "Problem:" << qPrintable(m_lastError.text());
+#endif
+        return false;
+    }
+
+    QSqlDatabase database = QSqlDatabase::database(m_connectionName);
+    QSqlQuery query(database);
+
+    if(!beginTransaction(&query, Write)) {
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::serviceInitialized():-"
+                    << "Problem: Unable to begin transaction"
+                    << "\nReason:" << qPrintable(m_lastError.text());
+#endif
+        return false;
+    }
+
+    QString statement("SELECT Service.ID from Service WHERE Service.Name = ? COLLATE NOCASE");
+    QList<QVariant> bindValues;
+    bindValues.append(serviceName);
+    if(!executeQuery(&query, statement, bindValues)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::serviceInitialized():-"
+                    << qPrintable(m_lastError.text());
+#endif
+        return false;
+    }
+
+    QStringList serviceIDs;
+    while(query.next()) {
+        serviceIDs << query.value(EBindIndex).toString();
+    }
+
+
+#ifdef QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
+    statement = "SELECT Value FROM ServiceProperty WHERE ServiceID = ? AND Key = ?";
+    bindValues.clear();
+    bindValues.append(serviceName);
+    bindValues.append(SECURITY_TOKEN_KEY);
+    if(!executeQuery(&query, statement, bindValues)) {
+        rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+        qWarning() << "ServiceDatabase::unregisterService():-"
+                    << qPrintable(m_lastError.text());
+#endif
+        return false;
+    }
+
+    QStringList securityTokens;
+    while(query.next()) {
+        securityTokens << query.value(EBindIndex).toString();
+    }
+
+    if (!securityTokens.isEmpty() && (securityTokens.first() != securityToken)) {
+        QString errorText("Access denied: \"%1\"");
+             m_lastError.setError(DBError::NoWritePermissions, errorText.arg(serviceName));
+             rollbackTransaction(&query);
+     #ifdef QT_SFW_SERVICEDATABASE_DEBUG
+             qWarning() << "ServiceDatabase::serviceInitialized():-"
+                         << "Problem: Unable to update service initialization"
+                         << "\nReason:" << qPrintable(m_lastError.text());
+     #endif
+    }
+#endif
+
+    statement = "DELETE FROM ServiceProperty WHERE ServiceID = ? AND Key = ?";
+    foreach(const QString &serviceID, serviceIDs) {
+        bindValues.clear();
+        bindValues.append(serviceID);
+        bindValues.append(SERVICE_INITIALIZED_KEY);
+        if (!executeQuery(&query, statement, bindValues)) {
+            rollbackTransaction(&query);
+#ifdef QT_SFW_SERVICEDATABASE_DEBUG
+            qWarning() << "ServiceDatabase::serviceInitialized():-"
+                        << qPrintable(m_lastError.text());
+#endif
+            return false;
+        }
+    }
+
+    //databaseCommit
+    if (!commitTransaction(&query)) {
+        rollbackTransaction(&query);
+        return false;
+    }
+    m_lastError.setError(DBError::NoError);
+    return true;
+}
+
+/*
     Closes the database
 
     May set the following error codes:
@@ -2146,6 +2265,10 @@ bool ServiceDatabase::populateServiceProperties(QServiceInterfaceDescriptor *int
         if (attribute == SERVICE_DESCRIPTION_KEY) {
                 interface->d->attributes[QServiceInterfaceDescriptor::ServiceDescription]
                     = query.value(EBindIndex1).toString();
+        }
+        // fetch initialized and put it as a custom attribute
+        if (attribute == SERVICE_INITIALIZED_KEY) {
+            interface->d->customAttributes[attribute] = query.value(EBindIndex1).toString();
         }
     }
 
