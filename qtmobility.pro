@@ -78,6 +78,8 @@ contains(build_docs, yes) {
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
 
+SUBDIRS += translations
+
 # install Qt style headers
 qtmheaders.path = $${QT_MOBILITY_INCLUDE}
 
