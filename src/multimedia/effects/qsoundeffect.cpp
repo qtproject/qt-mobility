@@ -55,13 +55,13 @@ QT_BEGIN_NAMESPACE
     \qmlclass SoundEffect QSoundEffect
     \brief The SoundEffect element provides a way to play sound effects in QML.
 
-    This element is part of the \bold{QtMobility.multimedia 1.0} module.
+    This element is part of the \bold{Qt.multimedia 1.0} module.
 
     The following example plays a wav file on mouse click.
 
     \qml
     import Qt 4.7
-    import QtMobility.multimedia 1.0
+    import Qt.multimedia 1.0
 
     Text {
         text: "Click Me!";

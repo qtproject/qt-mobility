@@ -50,11 +50,11 @@ QT_BEGIN_NAMESPACE
     \qmlclass Audio QDeclarativeAudio
     \brief The Audio element allows you to add audio playback to a scene.
 
-    This element is part of the \bold{QtMobility.multimedia 1.0} module.
+    This element is part of the \bold{Qt.multimedia 1.0} module.
 
     \qml
     import Qt 4.7
-    import QtMobility.multimedia 1.0
+    import Qt.multimedia 1.0
 
     Text {
         text: "Click Me!";
