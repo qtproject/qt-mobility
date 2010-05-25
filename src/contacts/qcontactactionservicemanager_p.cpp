@@ -47,7 +47,28 @@
 
 #include "qservicemanager.h"
 
+#include <QMutexLocker>
+
 QTM_BEGIN_NAMESPACE
+
+Q_GLOBAL_STATIC(QMutex, contactActionServiceManagerGlobalMutex)
+QMutex* QContactActionServiceManager::m_instanceMutex = 0;
+QContactActionServiceManager* QContactActionServiceManager::m_instance = 0;
+
+QContactActionServiceManager::QContactActionServiceManagerCleaner::~QContactActionServiceManagerCleaner()
+{
+    // synchronize thread-initiated initialization
+    if (true) {
+        QMutexLocker locker(QContactActionServiceManager::m_instanceMutex);
+        if (m_instance) {
+            delete QContactActionServiceManager::m_instance;
+            QContactActionServiceManager::m_instance = 0;
+        }
+    }
+
+    //delete QContactActionServiceManager::m_instanceMutex; ?? Q_GLOBAL_STATIC should handle this.
+}
+
 
 /*!
   \internal
@@ -58,16 +79,18 @@ QTM_BEGIN_NAMESPACE
 
 QContactActionServiceManager* QContactActionServiceManager::instance()
 {
-    if (!m_instance)
-        m_instance = new QContactActionServiceManager;
+    m_instanceMutex = contactActionServiceManagerGlobalMutex();
+    QMutexLocker locker(m_instanceMutex);
+    m_instance = new QContactActionServiceManager;
     return m_instance;
 }
 
 QContactActionServiceManager::QContactActionServiceManager()
+    : QObject()
 {
     m_serviceManager = new QServiceManager;
-    connect(m_serviceManager, SIGNAL(serviceAdded(QString, QService::Scope)), this, SLOT(serviceAdded(QString, QService::Scope)));
-    connect(m_serviceManager, SIGNAL(serviceRemoved(QString, QService::Scope)), this, SLOT(serviceRemoved(QString, QService::Scope)));
+    connect(m_serviceManager, SIGNAL(serviceAdded(QString, QService::Scope)), this, SLOT(serviceAdded(QString)));
+    connect(m_serviceManager, SIGNAL(serviceRemoved(QString, QService::Scope)), this, SLOT(serviceRemoved(QString)));
 }
 
 QContactActionServiceManager::~QContactActionServiceManager()
@@ -76,6 +99,10 @@ QContactActionServiceManager::~QContactActionServiceManager()
     delete m_serviceManager;
     delete m_instance;
 }
+
+/* the following copy ctor and assignment operator should not work (or ever be called)! */
+QContactActionServiceManager::QContactActionServiceManager(const QContactActionServiceManager &) : QObject() {}
+QContactActionServiceManager& QContactActionServiceManager::operator=(const QContactActionServiceManager &) {return *this;}
 
 QList<QContactActionDescriptor> QContactActionServiceManager::actionDescriptors(const QString& actionName)
 {
@@ -90,7 +117,7 @@ QContactAction* QContactActionServiceManager::action(const QContactActionDescrip
     return m_actionHash.value(descriptor);
 }
 
-void QContactActionServiceManager::serviceAdded(const QString& serviceName, const QService::Scope scope)
+void QContactActionServiceManager::serviceAdded(const QString& serviceName)
 {
     QList<QServiceInterfaceDescriptor> sids = m_serviceManager->findInterfaces(serviceName);
     foreach (const QServiceInterfaceDescriptor& sid, sids) {
@@ -103,7 +130,7 @@ void QContactActionServiceManager::serviceAdded(const QString& serviceName, cons
     }
 }
 
-void QContactActionServiceManager::serviceRemoved(const QString& serviceName, const QService::Scope scope)
+void QContactActionServiceManager::serviceRemoved(const QString& serviceName)
 {
     QList<QServiceInterfaceDescriptor> sids = m_serviceManager->findInterfaces(serviceName);
     foreach (const QServiceInterfaceDescriptor& sid, sids) {

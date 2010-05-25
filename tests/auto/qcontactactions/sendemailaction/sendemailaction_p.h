@@ -54,7 +54,6 @@
 //
 
 #include "qcontactaction.h"
-#include "qcontactactionfactory.h"
 
 #include <QSharedData>
 #include <QString>
@@ -82,21 +81,6 @@ public:
 
 private slots:
     void performAction();
-};
-
-class QContactSendEmailActionFactory : public QContactActionFactory
-{
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QContactActionFactory)
-
-public:
-    QContactSendEmailActionFactory();
-    ~QContactSendEmailActionFactory();
-
-    QString name() const;
-    QList<QContactActionDescriptor> actionDescriptors() const;
-    QContactAction* instance(const QContactActionDescriptor& descriptor) const;
-    QVariantMap actionMetadata(const QContactActionDescriptor& descriptor) const;
 };
 
 #endif

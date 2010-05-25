@@ -136,8 +136,6 @@ void tst_QContactActions::testSendEmail()
 
     QVERIFY(QContactAction::availableActions().contains("SendEmail"));
     QVERIFY(QContactAction::availableActions("Test").contains("SendEmail"));
-    QVERIFY(QContactAction::availableActions("Test", 1).contains("SendEmail"));
-    QVERIFY(QContactAction::availableActions(QString(), -200).contains("SendEmail"));
 
     QList<QContactActionDescriptor> descrs = QContactAction::actionDescriptors();
     bool foundSendEmail = false;
@@ -149,10 +147,10 @@ void tst_QContactActions::testSendEmail()
     }
     QVERIFY(foundSendEmail);
 
-    descrs = QContactAction::actionDescriptors(QString(), "Test");
+    descrs = QContactAction::actionDescriptors(QString());
     foundSendEmail = false;
     for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).vendorName(), QString("Test"));
+        QCOMPARE(descrs.at(i).serviceName(), QString("Test"));
         if (descrs.at(i).actionName() == QString("SendEmail")) {
             foundSendEmail = true;
             break;
@@ -160,146 +158,38 @@ void tst_QContactActions::testSendEmail()
     }
     QVERIFY(foundSendEmail);
 
-    descrs = QContactAction::actionDescriptors(QString(), "Test", 1);
+    descrs = QContactAction::actionDescriptors(QString());
     foundSendEmail = false;
     for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).vendorName(), QString("Test"));
+        QCOMPARE(descrs.at(i).serviceName(), QString("Test"));
         QCOMPARE(descrs.at(i).implementationVersion(), 1);
         if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
+                && descrs.at(i).serviceName() == QString("Test")
                 && descrs.at(i).implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
     }
     QVERIFY(foundSendEmail);
-
-    descrs = QContactAction::actionDescriptors(QString(), "Test", -200); // shouldn't find any with this impl.version.
-    foundSendEmail = false;
-    for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).vendorName(), QString("Test"));
-        if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
-                && descrs.at(i).implementationVersion() == 1) {
-            foundSendEmail = true;
-            break;
-        }
-    }
-    QVERIFY(!foundSendEmail);
-
-    descrs = QContactAction::actionDescriptors(QString(), QString(), -200); // ignores implementation Version if empty vendor
-    foundSendEmail = false;
-    for (int i = 0; i < descrs.size(); i++) {
-        if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
-                && descrs.at(i).implementationVersion() == 1) {
-            foundSendEmail = true;
-            break;
-        }
-    }
-    QVERIFY(foundSendEmail);
-
-    descrs = QContactAction::actionDescriptors(QString(), "Nonexistent");
-    foundSendEmail = false;
-    for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).vendorName(), QString("Nonexistent"));
-        if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
-                && descrs.at(i).implementationVersion() == 1) {
-            foundSendEmail = true;
-            break;
-        }
-    }
-    QVERIFY(!foundSendEmail);
 
     descrs = QContactAction::actionDescriptors("SendEmail");
     foundSendEmail = false;
     for (int i = 0; i < descrs.size(); i++) {
         QCOMPARE(descrs.at(i).actionName(), QString("SendEmail"));
         if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
+                && descrs.at(i).serviceName() == QString("Test")
                 && descrs.at(i).implementationVersion() == 1) {
             foundSendEmail = true;
             break;
         }
     }
     QVERIFY(foundSendEmail);
-
-    descrs = QContactAction::actionDescriptors("SendEmail", "Test");
-    foundSendEmail = false;
-    for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).actionName(), QString("SendEmail"));
-        QCOMPARE(descrs.at(i).vendorName(), QString("Test"));
-        if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
-                && descrs.at(i).implementationVersion() == 1) {
-            foundSendEmail = true;
-            break;
-        }
-    }
-    QVERIFY(foundSendEmail);
-
-    descrs = QContactAction::actionDescriptors("SendEmail", "Test", 1);
-    foundSendEmail = false;
-    for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).actionName(), QString("SendEmail"));
-        QCOMPARE(descrs.at(i).vendorName(), QString("Test"));
-        QCOMPARE(descrs.at(i).implementationVersion(), 1);
-        if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
-                && descrs.at(i).implementationVersion() == 1) {
-            foundSendEmail = true;
-            break;
-        }
-    }
-    QVERIFY(foundSendEmail);
-
-    descrs = QContactAction::actionDescriptors("SendEmail", "Test", -200); // shouldn't find any with this impl.version.
-    foundSendEmail = false;
-    for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).actionName(), QString("SendEmail"));
-        QCOMPARE(descrs.at(i).vendorName(), QString("Test"));
-        if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
-                && descrs.at(i).implementationVersion() == 1) {
-            foundSendEmail = true;
-            break;
-        }
-    }
-    QVERIFY(!foundSendEmail);
-
-    descrs = QContactAction::actionDescriptors("SendEmail", QString(), -200); // ignores implementation Version if empty vendor
-    foundSendEmail = false;
-    for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).actionName(), QString("SendEmail"));
-        if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
-                && descrs.at(i).implementationVersion() == 1) {
-            foundSendEmail = true;
-            break;
-        }
-    }
-    QVERIFY(foundSendEmail);
-
-    descrs = QContactAction::actionDescriptors("SendEmail", "Nonexistent");
-    foundSendEmail = false;
-    for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).actionName(), QString("SendEmail"));
-        QCOMPARE(descrs.at(i).vendorName(), QString("Nonexistent"));
-        if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
-                && descrs.at(i).implementationVersion() == 1) {
-            foundSendEmail = true;
-            break;
-        }
-    }
-    QVERIFY(!foundSendEmail);
 
     descrs = QContactAction::actionDescriptors();
     QContactAction* sendEmail = 0;
     for (int i = 0; i < descrs.size(); i++) {
         if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).vendorName() == QString("Test")
+                && descrs.at(i).serviceName() == QString("Test")
                 && descrs.at(i).implementationVersion() == 1) {
             sendEmail = QContactAction::action(descrs.at(i));
             break;
@@ -309,7 +199,7 @@ void tst_QContactActions::testSendEmail()
 
     QVERIFY(!sendEmail->actionDescriptor().actionName().isEmpty());
     //QVERIFY(!sendEmail->metadata().isNull());
-    QVERIFY(!sendEmail->actionDescriptor().vendorName().isEmpty());
+    QVERIFY(!sendEmail->actionDescriptor().serviceName().isEmpty());
     QVERIFY(sendEmail->actionDescriptor().implementationVersion() != -1);
     QVERIFY(sendEmail->actionDescriptor().implementationVersion() != 0);
     //QVERIFY(!sendEmail->contactFilter().isEmpty());
@@ -334,8 +224,6 @@ void tst_QContactActions::testDescriptor()
 
     QVERIFY(QContactAction::availableActions().contains("SendEmail"));
     QVERIFY(QContactAction::availableActions("Test").contains("SendEmail"));
-    QVERIFY(QContactAction::availableActions("Test", 1).contains("SendEmail"));
-    QVERIFY(QContactAction::availableActions(QString(), -200).contains("SendEmail"));
 
     QList<QContactActionDescriptor> descrs = QContactAction::actionDescriptors();
     QContactAction* sendEmailAction = 0;
@@ -352,18 +240,18 @@ void tst_QContactActions::testDescriptor()
     // first, ensure that the descriptor identifies the correct action
     QContactActionDescriptor sendEmailDescriptor;
     sendEmailDescriptor.setActionName(sendEmailAction->actionDescriptor().actionName());
-    sendEmailDescriptor.setVendorName(sendEmailAction->actionDescriptor().vendorName());
+    sendEmailDescriptor.setServiceName(sendEmailAction->actionDescriptor().serviceName());
     sendEmailDescriptor.setImplementationVersion(sendEmailAction->actionDescriptor().implementationVersion());
 
     // secondly, test operator= and operator==, and copy constructor
     QContactActionDescriptor sendEmailDescriptor2 = sendEmailDescriptor;
     QContactActionDescriptor sendEmailDescriptor3(sendEmailDescriptor2);
     QContactActionDescriptor sendEmailDescriptor4 = sendEmailAction->actionDescriptor();
-    QContactActionDescriptor sendEmailDescriptor5 = QContactAction::actionDescriptors(sendEmailDescriptor.actionName(), sendEmailDescriptor.vendorName(), sendEmailDescriptor.implementationVersion()).at(0);
+    QContactActionDescriptor sendEmailDescriptor5 = QContactAction::actionDescriptors(sendEmailDescriptor.actionName()).at(0);
     QContactActionDescriptor sendEmailDescriptor6(sendEmailDescriptor);
     sendEmailDescriptor6 = sendEmailDescriptor5;
     QVERIFY(sendEmailDescriptor2.actionName() == sendEmailDescriptor.actionName());
-    QVERIFY(sendEmailDescriptor2.vendorName() == sendEmailDescriptor.vendorName());
+    QVERIFY(sendEmailDescriptor2.serviceName() == sendEmailDescriptor.serviceName());
     QVERIFY(sendEmailDescriptor2.implementationVersion() == sendEmailDescriptor.implementationVersion());
     QVERIFY(sendEmailDescriptor == sendEmailDescriptor2);
     QVERIFY(sendEmailDescriptor == sendEmailDescriptor3);
@@ -378,10 +266,10 @@ void tst_QContactActions::testDescriptor()
     sendEmailDescriptor2.setActionName(sendEmailDescriptor.actionName());
 
     QVERIFY(!sendEmailDescriptor2.isEmpty());
-    sendEmailDescriptor2.setVendorName("");
+    sendEmailDescriptor2.setServiceName("");
     QVERIFY(sendEmailDescriptor2 != sendEmailDescriptor);
     QVERIFY(sendEmailDescriptor2.isEmpty()); // without a vendor name, cannot uniquely identify an action impl
-    sendEmailDescriptor2.setVendorName(sendEmailDescriptor.vendorName());
+    sendEmailDescriptor2.setServiceName(sendEmailDescriptor.serviceName());
 
     QVERIFY(!sendEmailDescriptor2.isEmpty());
     sendEmailDescriptor2.setImplementationVersion(0);
@@ -408,22 +296,22 @@ void tst_QContactActions::testDescriptor()
 void tst_QContactActions::testDescriptorLessThan()
 {
     QContactActionDescriptor qcad1;
-    qcad1.setVendorName("a");
+    qcad1.setServiceName("a");
     qcad1.setActionName("a");
     qcad1.setImplementationVersion(1);
 
     QContactActionDescriptor qcad2;
-    qcad2.setVendorName("a");
+    qcad2.setServiceName("a");
     qcad2.setActionName("a");
     qcad2.setImplementationVersion(2);
 
     QContactActionDescriptor qcad3;
-    qcad3.setVendorName("a");
+    qcad3.setServiceName("a");
     qcad3.setActionName("b");
     qcad3.setImplementationVersion(1);
 
     QContactActionDescriptor qcad4;
-    qcad4.setVendorName("b");
+    qcad4.setServiceName("b");
     qcad4.setActionName("a");
     qcad4.setImplementationVersion(1);
 
@@ -435,17 +323,17 @@ void tst_QContactActions::testDescriptorLessThan()
 void tst_QContactActions::testDescriptorHash()
 {
     QContactActionDescriptor qcad1;
-    qcad1.setVendorName("a");
+    qcad1.setServiceName("a");
     qcad1.setActionName("a");
     qcad1.setImplementationVersion(1);
 
     QContactActionDescriptor qcad2;
-    qcad2.setVendorName("a");
+    qcad2.setServiceName("a");
     qcad2.setActionName("a");
     qcad2.setImplementationVersion(1);
 
     QContactActionDescriptor qcad3;
-    qcad3.setVendorName("a");
+    qcad3.setServiceName("a");
     qcad3.setActionName("a");
     qcad3.setImplementationVersion(2);
 

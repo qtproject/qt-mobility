@@ -2325,8 +2325,7 @@ void tst_QContactManagerFiltering::actionPlugins()
     QVERIFY(actions.contains("Boolean"));
     QVERIFY(actions.contains("Number"));
 
-    /* Ignore the version if the vendor is not set */
-    actions = QContactAction::availableActions(QString(), 555);
+    actions = QContactAction::availableActions(QString());
     QVERIFY(actions.contains("Boolean"));
     QVERIFY(actions.contains("Number"));
 
@@ -2341,30 +2340,12 @@ void tst_QContactManagerFiltering::actionPlugins()
     actions = QContactAction::availableActions("BooleanCo");
     QVERIFY(!actions.contains("Number"));
     QVERIFY(actions.contains("Boolean"));
-
-    actions = QContactAction::availableActions("IntegerCo", 5);
-    QVERIFY(actions.contains("Number"));
-    QVERIFY(!actions.contains("Boolean"));
-
-    actions = QContactAction::availableActions("IntegerCo", 3);
-    QVERIFY(!actions.contains("Number"));
-    QVERIFY(!actions.contains("Boolean"));
-
-    actions = QContactAction::availableActions("BooleanCo", 3);
-    QVERIFY(!actions.contains("Number"));
-    QVERIFY(actions.contains("Boolean"));
-
-    actions = QContactAction::availableActions("BooleanCo", 555);
-    QVERIFY(!actions.contains("Number"));
-    QVERIFY(!actions.contains("Boolean"));
 }
 
 void tst_QContactManagerFiltering::actionFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("actionName");
-    QTest::addColumn<QString>("vendorName");
-    QTest::addColumn<int>("version");
     QTest::addColumn<QVariant>("value");
     QTest::addColumn<QString>("expected");
 
@@ -2378,8 +2359,7 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> dateDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
 
-        newMRow("bad actionname", manager) << manager << "No such action" << es << -1 << ev << es;
-        newMRow("bad vendor", manager) << manager << es << "Vendor missing" << -1 << ev << es;
+        newMRow("bad actionname", manager) << manager << "No such action" << ev << es;
 
         QString expected;
         if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty())
@@ -2393,64 +2373,36 @@ void tst_QContactManagerFiltering::actionFiltering_data()
             expected = "ab";
         }
 
-        QTest::newRow("empty (any action matches)") << manager << es << es << -1 << ev << expected;
-        /* versions are ignored if vendors are not specified */
-        newMRow("ignored version", manager) << manager << es << es << 793434 << ev << expected;
+        QTest::newRow("empty (any action matches)") << manager << es << ev << expected;
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            newMRow("Number", manager) << manager << "Number" << es << -1 << ev << "abcd";
-            QTest::newRow("Number (IntegerCo)") << manager << "Number" << "IntegerCo" << -1 << ev << "abc";
-            QTest::newRow("Number (NumberCo)") << manager << "Number" << "NumberCo" << -1 << ev << "abcd";
-            QTest::newRow("Number (BooleanCo)") << manager << "Number" << "BooleanCo" << -1 << ev << es;
-
-            QTest::newRow("Number (IntegerCo, good version)") << manager << "Number" << "IntegerCo" << 5 << ev << "abc";
-            QTest::newRow("Number (NumberCo, good version)") << manager << "Number" << "NumberCo" << 42 << ev << "abcd";
-
-            QTest::newRow("Number (IntegerCo, bad version)") << manager << "Number" << "IntegerCo" << 345345 << ev << es;
-            QTest::newRow("Number (NumberCo, bad version)") << manager << "Number" << "NumberCo" << 7547544 << ev << es;
-
-            /* versions are ignored if vendors are not specified */
-            QTest::newRow("Number (ignored version)") << manager << "Number" << es << 345345 << ev << "abcd";
-
-            /* Vendor specific */
-            newMRow("NumberCo", manager) << manager << es << "NumberCo" << -1 << ev << "abcd";
-            QTest::newRow("NumberCo (good version)") << manager << es << "NumberCo" << 42 << ev << "abcd";
-            QTest::newRow("NumberCo (bad version)") << manager << es << "NumberCo" << 41 << ev << es;
-
-            newMRow("IntegerCo", manager) << manager << es << "IntegerCo" << -1 << ev << "abc";
-            QTest::newRow("IntegerCo (good version)") << manager << es << "IntegerCo" << 5 << ev << "abc";
-            QTest::newRow("IntegerCo (bad version)") << manager << es << "IntegerCo" << 41 << ev << es;
+            newMRow("Number", manager) << manager << "Number" << ev << "abcd";
+            QTest::newRow("Number (NumberCo)") << manager << "Number" << ev << "abcd";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
             /* Boolean testing */
-            newMRow("Boolean action", manager) << manager << "Boolean" << es << -1 << ev << "a";
-            newMRow("BooleanCo", manager) << manager << es << "BooleanCo" << -1 << ev << "a";
-            QTest::newRow("BooleanCo (good version)") << manager << es << "BooleanCo" << 3 << ev << "a";
-            QTest::newRow("BooleanCo (bad version)") << manager << es << "BooleanCo" << 3234243 << ev << es;
+            newMRow("Boolean action", manager) << manager << "Boolean" << ev << "a";
+            newMRow("BooleanCo", manager) << manager << es << ev << "a";
         }
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
             /* Value filtering */
-            QTest::newRow("Any action matching 20") << manager << es << es << -1 << QVariant(20) << "b";
-            QTest::newRow("Any action matching 4.0") << manager << es << es << -1 << QVariant(4.0) << "bc";
-            QTest::newRow("NumberCo with 20") << manager << es << "NumberCo" << -1 << QVariant(20) << "b";
-            QTest::newRow("NumberCo with 4.0") << manager << es << "NumberCo" << -1 << QVariant(4.0) << "bc";
-            QTest::newRow("IntegerCo with 20") << manager << es << "IntegerCo" << -1 << QVariant(20) << "b";
-            QTest::newRow("IntegerCo with 4.0") << manager << es << "IntegerCo" << -1 << QVariant(4.0) << es;
+            QTest::newRow("Any action matching 20") << manager << es << QVariant(20) << "b";
+            QTest::newRow("Any action matching 4.0") << manager << es << QVariant(4.0) << "bc";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
-            newMRow("Boolean action matching true", manager) << manager << es << "BooleanCo" << -1 << QVariant(true) << "a";
-            newMRow("Boolean action matching false", manager) << manager << es << "BooleanCo" << -1 << QVariant(false) << es;
+            newMRow("Boolean action matching true", manager) << manager << es << QVariant(true) << "a";
+            newMRow("Boolean action matching false", manager) << manager << es << QVariant(false) << es;
         }
 
         /* Recursive filtering */
-        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es << -1 << QVariant(false) << es;
-        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << es << -1 << QVariant(false) << es;
-        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << es << -1 << QVariant(false) << es;
-        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << es << -1 << QVariant(false) << es;
-        QTest::newRow("Recursive action 5") << manager << "Recursive" << es << -1 << QVariant(false) << es;
+        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << QVariant(false) << es;
+        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << QVariant(false) << es;
+        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << QVariant(false) << es;
+        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << QVariant(false) << es;
+        QTest::newRow("Recursive action 5") << manager << "Recursive" << QVariant(false) << es;
     }
 }
 
@@ -2458,8 +2410,6 @@ void tst_QContactManagerFiltering::actionFiltering()
 {
     QFETCH(QContactManager*, cm);
     QFETCH(QString, actionName);
-    QFETCH(QString, vendorName);
-    QFETCH(int, version);
     QFETCH(QVariant, value);
     QFETCH(QString, expected);
 
@@ -2469,7 +2419,6 @@ void tst_QContactManagerFiltering::actionFiltering()
         QContactActionFilter af;
         af.setActionName(actionName);
         af.setValue(value);
-        af.setVendor(vendorName, version);
 
         QList<QContactLocalId> ids = cm->contactIds(af);
         QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
@@ -3507,7 +3456,6 @@ public:
         /* Return a filter that selects us again.. */
         QContactActionFilter af;
         af.setActionName("Recursive");
-        af.setVendor("RecursiveCo", 3);
         af.setValue(value);
         return af;
     }
@@ -3657,7 +3605,7 @@ public:
     QContactAction* instance(const QContactActionDescriptor& descriptor) const
     {
         if (descriptor.actionName() == "Number") {
-            if (descriptor.vendorName() == "IntegerCo")
+            if (descriptor.serviceName() == "IntegerCo")
                 return new QIntegerAction;
             else
                 return new QNumberAction;

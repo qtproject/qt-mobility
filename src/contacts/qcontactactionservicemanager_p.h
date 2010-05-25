@@ -56,6 +56,7 @@
 
 #include <QMultiHash>
 #include <QHash>
+#include <QMutex>
 
 #include "qservice.h"
 
@@ -74,13 +75,22 @@ public:
     QContactAction* action(const QContactActionDescriptor& descriptor);
 
 public slots:
-    void serviceAdded(const QString& serviceName, const QService::Scope scope);
-    void serviceRemoved(const QString& serviceName, const QService::Scope scope);
+    void serviceAdded(const QString& serviceName);
+    void serviceRemoved(const QString& serviceName);
 
 private:
+    friend class QContactActionServiceManagerCleaner;
+    class QContactActionServiceManagerCleaner
+    {
+        ~QContactActionServiceManagerCleaner();
+    };
+
     QContactActionServiceManager();
     ~QContactActionServiceManager();
+    QContactActionServiceManager(const QContactActionServiceManager &);
+    QContactActionServiceManager & operator=(const QContactActionServiceManager &);
 
+    static QMutex* m_instanceMutex;
     static QContactActionServiceManager *m_instance;
 
     QServiceManager *m_serviceManager;

@@ -57,41 +57,6 @@
 #define makestr(x) (#x)
 #define makename(x) makestr(x)
 
-QContactSendEmailActionFactory::QContactSendEmailActionFactory()
-{
-}
-
-QContactSendEmailActionFactory::~QContactSendEmailActionFactory()
-{
-}
-
-QString QContactSendEmailActionFactory::name() const
-{
-    return QString(makename(ACTIONFACTORYPLUGINNAME));
-}
-Q_EXPORT_PLUGIN2(ACTIONFACTORYPLUGINTARGET, QContactSendEmailActionFactory);
-
-QList<QContactActionDescriptor> QContactSendEmailActionFactory::actionDescriptors() const
-{
-    return QList<QContactActionDescriptor>() << QContactActionDescriptor("SendEmail", "Test", 1);
-}
-
-QContactAction* QContactSendEmailActionFactory::instance(const QContactActionDescriptor& descriptor) const
-{
-    if (descriptor.actionName() != QString("SendEmail") || descriptor.vendorName() != QString("Test") || descriptor.implementationVersion() != 1)
-        return 0;
-    return new QContactSendEmailAction;
-}
-
-QVariantMap QContactSendEmailActionFactory::actionMetadata(const QContactActionDescriptor& descriptor) const
-{
-    if (descriptor.actionName() != "SendEmail")
-        return QVariantMap();
-
-    QVariantMap ret;
-    ret.insert("Label", "Email Contact!");
-    return ret;
-}
 
 QContactSendEmailAction::QContactSendEmailAction() : QContactAction()
 {
@@ -105,7 +70,7 @@ QContactActionDescriptor QContactSendEmailAction::actionDescriptor() const
 {
     QContactActionDescriptor ret;
     ret.setActionName("SendEmail");
-    ret.setVendorName("Test");
+    ret.setServiceName("tst_qcontactactions:sendemailaction");
     ret.setImplementationVersion(1);
     return ret;
 }

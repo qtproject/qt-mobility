@@ -430,13 +430,7 @@ void tst_QContact::actions()
     QVERIFY(availableActions.contains(descriptor));
     availableActions = c2.availableActions("Test");
     QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c2.availableActions("Test", 1);
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c2.availableActions("Test", 5);
-    QVERIFY(availableActions.isEmpty()); // should NOT contain SendEmail
-    availableActions = c2.availableActions(QString(), 1);
+    availableActions = c2.availableActions(QString());
     QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
     QVERIFY(availableActions.contains(descriptor));
 
@@ -452,12 +446,7 @@ void tst_QContact::actions()
     availableActions = c3.availableActions("Test");
     QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
     QVERIFY(availableActions.contains(descriptor));
-    availableActions = c3.availableActions("Test", 1);
-    QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
-    QVERIFY(availableActions.contains(descriptor));
-    availableActions = c3.availableActions("Test", 5);
-    QVERIFY(availableActions.isEmpty()); // should NOT contain SendEmail
-    availableActions = c3.availableActions(QString(), 1);
+    availableActions = c3.availableActions(QString());
     QVERIFY(!availableActions.isEmpty()); // should contain SendEmail
     QVERIFY(availableActions.contains(descriptor));
 
