@@ -164,7 +164,6 @@ void ServicesTab::listServiceProviders()
         else
             prop->setText(1, tr("false"));
 
-        // TODO: Release serviceProvider. Problem in plugin loader. 
-        //delete serviceProvider;
+        delete serviceProvider;
     }    
 }
