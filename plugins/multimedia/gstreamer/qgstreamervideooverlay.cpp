@@ -42,7 +42,7 @@
 #include "qgstreamervideooverlay.h"
 #include "qvideosurfacegstsink.h"
 
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #include "qx11videosurface.h"
 

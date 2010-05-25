@@ -4,7 +4,7 @@ TARGET = $$qtLibraryTarget(audioengine)
 PLUGIN_TYPE=mediaservice
 
 include (../../../common.pri)
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/audio
 
 CONFIG += mobility
 MOBILITY = multimedia

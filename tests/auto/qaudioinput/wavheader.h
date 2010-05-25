@@ -45,7 +45,7 @@
 
 #include <QtCore/qobject.h>
 #include <QtCore/qfile.h>
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 /**
  * Helper class for parsing WAV file headers.

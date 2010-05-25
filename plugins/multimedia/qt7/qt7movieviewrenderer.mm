@@ -51,9 +51,9 @@
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qcoreapplication.h>
 
-#include <QtMultimedia/qabstractvideobuffer.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideobuffer.h>
+#include <qabstractvideosurface.h>
+#include <qvideosurfaceformat.h>
 
 #include <QuartzCore/CIFilter.h>
 #include <QuartzCore/CIVector.h>

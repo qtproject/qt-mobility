@@ -8,7 +8,7 @@ PLUGIN_TYPE = mediaservice
 
 include (../../../common.pri)
 
-qtAddLibrary(QtMultimedia)
+#qtAddLibrary(QtMultimedia)
 
 LIBS += -framework AppKit -framework AudioUnit \
         -framework AudioToolbox -framework CoreAudio \
@@ -24,7 +24,7 @@ contains(QMAKE_MAC_XARCH, no) {
     LIBS += -Xarch_i386 -framework QuickTime -Xarch_ppc -framework QuickTime
 }
 
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/video
 
 DEPENDPATH += .
 

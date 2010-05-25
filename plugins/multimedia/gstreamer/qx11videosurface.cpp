@@ -42,7 +42,7 @@
 #include <QtCore/qvariant.h>
 #include <QtCore/qdebug.h>
 #include <QtGui/qx11info_x11.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qvideosurfaceformat.h>
 
 #ifndef QT_NO_XVIDEO
 

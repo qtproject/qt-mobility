@@ -41,7 +41,7 @@
 
 #include <QtTest/QtTest>
 
-#include <QtMultimedia/QVideoSurfaceFormat>
+#include <qvideosurfaceformat.h>
 
 class tst_QVideoSurfaceFormat : public QObject
 {

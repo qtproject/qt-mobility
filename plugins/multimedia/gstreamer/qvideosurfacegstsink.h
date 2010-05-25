@@ -49,9 +49,9 @@
 #include <QtCore/qqueue.h>
 #include <QtCore/qpointer.h>
 #include <QtCore/qwaitcondition.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
-#include <QtMultimedia/qvideoframe.h>
-#include <QtMultimedia/qabstractvideobuffer.h>
+#include <qvideosurfaceformat.h>
+#include <qvideoframe.h>
+#include <qabstractvideobuffer.h>
 
 QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;

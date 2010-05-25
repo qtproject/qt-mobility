@@ -53,9 +53,9 @@
 
 #include <QGLWidget>
 
-#include <QtMultimedia/qabstractvideobuffer.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideobuffer.h>
+#include <qabstractvideosurface.h>
+#include <qvideosurfaceformat.h>
 
 QT_USE_NAMESPACE
 

@@ -55,8 +55,8 @@
 #include <QtNetwork/qnetworkaccessmanager.h>
 #include <QtNetwork/qnetworkreply.h>
 
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideosurface.h>
+#include <qvideosurfaceformat.h>
 
 #if defined(Q_OS_SYMBIAN)
 # define TESTDATA_DIR "./tst_qmediaimageviewer_images"

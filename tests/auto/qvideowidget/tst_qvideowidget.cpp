@@ -51,8 +51,8 @@
 #include "qvideowidgetcontrol.h"
 
 #include "qvideorenderercontrol.h"
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideosurface.h>
+#include <qvideosurfaceformat.h>
 
 #include <QtGui/qapplication.h>
 

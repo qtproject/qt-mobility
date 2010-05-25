@@ -46,7 +46,7 @@
 #import <QTKit/QTKit.h>
 
 #include <QtCore/qvariant.h>
-#include <QtMultimedia/qabstractvideobuffer.h>
+#include <qabstractvideobuffer.h>
 
 
 //
