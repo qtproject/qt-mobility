@@ -50,6 +50,8 @@
 # define TESTDATA_DIR "."
 #endif
 
+//QTM_USE_NAMESPACE Will be needed as soon you use QtMobility objects
+
 class tst_Telephony: public QObject
 {
     Q_OBJECT

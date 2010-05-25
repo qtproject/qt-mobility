@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
 
 class QTelephonyCallListPrivate : public QObject
 {
-    friend QTelephonyCallList;
+    friend class QTelephonyCallList;
     Q_OBJECT
 Q_SIGNALS:
     void callstatusChanged(const QCallInfo::CallStatus);
