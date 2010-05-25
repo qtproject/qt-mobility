@@ -421,9 +421,9 @@ bool QMessageService::send(QMessage &message)
         }
 
         if (account.messageTypes() & QMessage::Sms) {
-            retVal = TelepathyEngine::instance()->sendMessage(message);
+            retVal = TelepathyEngine::instance()->sendMessage(outgoing);
         } else if (account.messageTypes() & QMessage::InstantMessage) {
-            retVal = TelepathyEngine::instance()->sendMessage(message);
+            retVal = TelepathyEngine::instance()->sendMessage(outgoing);
         } else if (account.messageTypes() & QMessage::Mms) {
             d_ptr->_error = QMessageManager::NotYetImplemented;
             qWarning() << "QMessageService::send not yet implemented for MMS";
