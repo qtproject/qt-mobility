@@ -996,7 +996,7 @@ void tst_QVersitReader::testExtractPropertyGroupsAndName()
     QPair<QStringList,QString> groupsAndName;
 
     // Empty string
-    VersitCursor cursor(QByteArray(" "));
+    LByteArray cursor(QByteArray(" "));
     groupsAndName = mReaderPrivate->extractPropertyGroupsAndName(cursor, mAsciiCodec);
     QCOMPARE(groupsAndName.first.count(),0);
     QCOMPARE(groupsAndName.second,QString());
@@ -1087,7 +1087,7 @@ void tst_QVersitReader::testExtractVCard21PropertyParams()
     QSKIP("Testing private API", SkipSingle);
 #else
     // No parameters
-    VersitCursor cursor(QByteArray(":123"));
+    LByteArray cursor(QByteArray(":123"));
     QCOMPARE(mReaderPrivate->extractVCard21PropertyParams(cursor, mAsciiCodec).count(), 0);
 
     // "Empty" parameter
@@ -1163,7 +1163,7 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
     QSKIP("Testing private API", SkipSingle);
 #else
     // No parameters
-    VersitCursor cursor(QByteArray(":123"));
+    LByteArray cursor(QByteArray(":123"));
     QCOMPARE(mReaderPrivate->extractVCard30PropertyParams(cursor, mAsciiCodec).count(), 0);
 
     // One parameter
@@ -1246,7 +1246,7 @@ void tst_QVersitReader::testExtractParams()
 #ifndef QT_BUILD_INTERNAL
     QSKIP("Testing private API", SkipSingle);
 #else
-    VersitCursor cursor;
+    LByteArray cursor;
     QByteArray data = ":123";
     cursor = data;
     QList<QByteArray> params = mReaderPrivate->extractParams(cursor, mAsciiCodec);
@@ -1299,16 +1299,31 @@ void tst_QVersitReader::testReadLine()
 
     LineReader lineReader(mInputDevice, codec, 10);
 
-    // Check that all expected lines are read.
+    QByteArray testLine("test pushed line");
+    // Check that all expected lines are read...
     foreach (QString expectedLine, expectedLines) {
+        // (test push a line and read it)
+        lineReader.pushLine(testLine);
+        QVERIFY(!lineReader.atEnd());
+        LByteArray line = lineReader.readLine();
+        QCOMPARE(line.toByteArray(), testLine);
+
+
         QByteArray expectedBytes(encoder->fromUnicode(expectedLine));
         QVERIFY(!lineReader.atEnd());
-        VersitCursor line = lineReader.readLine();
+        line = lineReader.readLine();
         QCOMPARE(line.toByteArray(), expectedBytes);
         QCOMPARE(line.size(), expectedBytes.length());
     }
-    // And that there are no more lines
-    VersitCursor line = lineReader.readLine();
+
+    // (test push a line to a line reader that's reached its end)
+    lineReader.pushLine(testLine);
+    QVERIFY(!lineReader.atEnd());
+    LByteArray line = lineReader.readLine();
+    QCOMPARE(line.toByteArray(), testLine);
+
+    // ...And that there are no more lines
+    line = lineReader.readLine();
     QVERIFY(line.isEmpty());
     QVERIFY(lineReader.atEnd());
 

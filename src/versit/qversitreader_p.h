@@ -156,6 +156,7 @@ class Q_AUTOTEST_EXPORT LineReader
 public:
     LineReader(QIODevice* device, QTextCodec* codec, int chunkSize = 1000);
     LByteArray readLine();
+    void pushLine(const QByteArray& line);
     int odometer();
     bool atEnd();
     QTextCodec* codec();
@@ -167,6 +168,7 @@ private:
     QTextCodec* mCodec;
     int mChunkSize; // How many bytes to read in one go.
     QList<QByteArrayMatcher> mCrlfList;
+    QByteArray mFirstLine; // Stores a line that has been "pushed" in front by pushLine
     LByteArray mBuffer;
     int mOdometer;
     int mSearchFrom;

@@ -82,6 +82,11 @@ LineReader::LineReader(QIODevice* device, QTextCodec *codec, int chunkSize)
   */
 LByteArray LineReader::readLine()
 {
+    if (!mFirstLine.isEmpty()) {
+        LByteArray retval(mFirstLine);
+        mFirstLine.clear();
+        return retval;
+    }
     mBuffer.mStart = mBuffer.mEnd;
     mSearchFrom = mBuffer.mStart;
 
@@ -115,6 +120,14 @@ LByteArray LineReader::readLine()
 }
 
 /*!
+  Push a line onto the front of the line reader so it will be returned on the next call to readLine().
+  */
+void LineReader::pushLine(const QByteArray& line)
+{
+    mFirstLine = line;
+}
+
+/*!
   How many bytes have been returned in the LByteArray in the lifetime of the LineReader.
  */
 int LineReader::odometer()
@@ -129,7 +142,7 @@ int LineReader::odometer()
  */
 bool LineReader::atEnd()
 {
-    return mDevice->atEnd() && mBuffer.mEnd == mBuffer.mData.size();
+    return mFirstLine.isEmpty() && mDevice->atEnd() && mBuffer.mEnd == mBuffer.mData.size();
 }
 
 /*!
