@@ -55,7 +55,6 @@ class Q_LOCATION_EXPORT QGeoRoutingManager : public QObject
 {
     Q_OBJECT
 public:
-    QGeoRoutingManager(QObject *parent = 0);
     virtual ~QGeoRoutingManager();
 
     virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) = 0;
@@ -73,6 +72,7 @@ signals:
     void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
 
 protected:
+    QGeoRoutingManager(QObject *parent = 0);
     void setSupportsRouteUpdates(bool supported);
     void setSupportsAlternativeRoutes(bool supported);
     void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);

@@ -56,21 +56,21 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-\fn bool QGeoServiceProviderPlugin::initialize(const QMap<QString, QString> &parameters,
+\fn QGeoPlacesManager* QGeoServiceProviderPlugin::createPlacesManager(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
-                                               QString *errorString)
+                                               QString *errorString) const
 */
 
 /*!
-\fn QGeoPlacesManager* QGeoServiceProviderPlugin::placesManager() const
+\fn QGeoMappingManager* QGeoServiceProviderPlugin::createMappingManager(const QMap<QString, QString> &parameters,
+                                               QGeoServiceProvider::Error *error,
+                                               QString *errorString) const
 */
 
 /*!
-\fn QGeoMappingManager* QGeoServiceProviderPlugin::mappingManager() const
-*/
-
-/*!
-\fn QGeoRoutingManager* QGeoServiceProviderPlugin::routingManager() const
+\fn QGeoRoutingManager* QGeoServiceProviderPlugin::createRoutingManager(const QMap<QString, QString> &parameters,
+                                               QGeoServiceProvider::Error *error,
+                                               QString *errorString) const
 */
 
 QTM_END_NAMESPACE

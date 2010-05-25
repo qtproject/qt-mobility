@@ -68,18 +68,15 @@ public:
 
     QString providerName() const;
 
-    bool initialize(const QMap<QString, QString> &parameters,
-                    QGeoServiceProvider::Error *error,
-                    QString *errorString);
-
-    QGeoPlacesManager* placesManager() const;
-    QGeoMappingManager* mappingManager() const;
-    QGeoRoutingManager* routingManager() const;
-
-private:
-    QGeoPlacesManager* m_placesManager;
-    QGeoMappingManager* m_mappingManager;
-    QGeoRoutingManager* m_routingManager;
+    QGeoPlacesManager* createPlacesManager(const QMap<QString, QString> &parameters,
+                                           QGeoServiceProvider::Error *error,
+                                           QString *errorString) const;
+    QGeoMappingManager* createMappingManager(const QMap<QString, QString> &parameters,
+                                             QGeoServiceProvider::Error *error,
+                                             QString *errorString) const;
+    QGeoRoutingManager* createRoutingManager(const QMap<QString, QString> &parameters,
+                                             QGeoServiceProvider::Error *error,
+                                             QString *errorString) const;
 };
 
 #endif

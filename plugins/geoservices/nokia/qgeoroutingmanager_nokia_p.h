@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include <qgeoserviceprovider.h>
 #include <qgeoroutingmanager.h>
 
 #include <QNetworkAccessManager>
@@ -63,13 +64,13 @@ class QGeoRoutingManagerNokia : public QGeoRoutingManager
 {
     Q_OBJECT
 public:
-    QGeoRoutingManagerNokia(QObject *parent = 0);
+    QGeoRoutingManagerNokia(const QMap<QString, QString> &parameters,
+                           QGeoServiceProvider::Error *error,
+                           QString *errorString);
     ~QGeoRoutingManagerNokia();
 
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
     QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
-    void setProxy(const QNetworkProxy &proxy);
-    void setHost(QString host);
 
 private slots:
     void routeFinished();

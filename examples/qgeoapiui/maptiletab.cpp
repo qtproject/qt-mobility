@@ -110,8 +110,8 @@ void MapTileTab::initialize(QGeoMappingManager *mapManager)
         QObject::connect(m_mapManager, SIGNAL(finished(QGeoMapReply*)), this,
             SLOT(replyFinished(QGeoMapReply*)));
         QObject::connect(m_mapManager,
-            SIGNAL(error(QGeoMapReply*,QGeoMapReply::ErrorCode,QString)), this,
-            SLOT(resultsError(QGeoMapReply*,QGeoMapReply::ErrorCode,QString)));
+            SIGNAL(error(QGeoMapReply*,QGeoMapReply::Error,QString)), this,
+            SLOT(resultsError(QGeoMapReply*,QGeoMapReply::Error,QString)));
     }
 }
 

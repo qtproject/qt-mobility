@@ -59,16 +59,36 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoPlacesManager;
+class QGeoRoutingManager;
+class QGeoMappingManager;
+
 class QGeoServiceProviderPlugin;
 
 class QGeoServiceProviderPrivate
 {
 public:
     QGeoServiceProviderPrivate();
+    ~QGeoServiceProviderPrivate();
 
     void loadPlugin(const QString &providerName, const QMap<QString,QString> &parameters);
 
     QGeoServiceProviderPlugin *plugin;
+
+    QMap<QString,QString> parameterMap;
+
+    QGeoPlacesManager *placesManager;
+    QGeoRoutingManager *routingManager;
+    QGeoMappingManager *mappingManager;
+
+    QGeoServiceProvider::Error placesError;
+    QGeoServiceProvider::Error routingError;
+    QGeoServiceProvider::Error mappingError;
+
+    QString placesErrorString;
+    QString routingErrorString;
+    QString mappingErrorString;
+
     QGeoServiceProvider::Error error;
     QString errorString;
 

@@ -47,24 +47,57 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  class doc
+    \class QGeoPlacesManager
+
+    \brief The QGeoPlacesManager class provides support for searching
+    operations related to geographic information.
+
+    \ingroup maps
+
+    Instances of QGeoPlacesManager primarily provide support for the
+    searching of geographical information, either through free text search or
+    by geocoding (finding coordinates from addresses).
+
+    The geocode(QGeoAddress), geocode(QGeoCoordinate) and placesSearch()
+    methods return QGeoPlacesReply objects, which manage these operations and
+    report on the result of the operations and any errors which may have
+    occurred.
+
+    The QGeoPlacesManager class also contains functions which provide
+    information on the capabilities and features supported by QGeoPlacesManager
+    instances. Those who write subclasses of QGeoPlacesManager should take care
+    to make sure that this capability information is set up correctly,
+    otherwise clients may be denied access to functionality they would
+    otherwise expect.
 */
 
 /*!
 \enum QGeoPlacesManager::SearchType
 
-\value SearchGeocodeOnly
-\value SearchLandmarksOnly
+Describes the type of search that should be performed by placesSearch().
+
+\value SearchNone
+    Do not use the search string.
+\value SearchGeocode
+    Use the search string as a textual address in a geocoding operation.
+\value SearchLandmarks
+    Use the search string for free-text search against the available landmark
+    information sources.
 \value SearchAll
+    All available information sources should be used as part of the search.
 */
 
 /*!
+    Constructs a new manager with the specified \a parent.
+
+    This should only ever be called from subclasses of QGeoPlacesManager.
 */
 QGeoPlacesManager::QGeoPlacesManager(QObject *parent)
     : QObject(parent),
     d_ptr(new QGeoPlacesManagerPrivate()) {}
 
 /*!
+    Destroys this manager.
 */
 QGeoPlacesManager::~QGeoPlacesManager()
 {
@@ -139,8 +172,39 @@ QGeoPlacesManager::~QGeoPlacesManager()
 /*!
 \fn QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 
+    Begins searching for a place matching \a searchString.  The value of
+    \a searchTypes will determine whether the search is for addresses only,
+    for landmarks only or for both.
 
+    A QGeoPlacesReply object will be returned, which can be used to manage the
+    geocoding operation and to return the results of the operation.
 
+    This manager and the returned QGeoPlacesReply object will emit signals
+    indicating if the operation completes or if errors occur.
+
+    If supportsGeocoding() returns false and \a searchTypes is
+    QGeoPlacesManager::SearchGeocode an
+    QGeoPlacesReply::UnsupportedOptionError will occur.
+
+    Once the operation has completed, QGeoPlacesReply::places() can be used to
+    retrieve the results, which will consist of a list of QGeoPlace objects.
+    These object represent a combination of coordinate and address data.
+
+    If any of the QGeoPlace instances in the results have landmark associated
+    data, QGeoPlace::type() will return QGeoPlace::LandmarkType and
+    QLandmark::QLandmark(const QGeoPlace &place) can be used to convert the
+    QGeoPlace instance into a QLandmark instance.
+
+    If \a searchTypes is QGeoPlacesManager::SearchLandmarks or
+    QGeoPlacesManager::SearchAll, a free text landmark search will be
+    performed. The results will be a combination of the backend specific
+    landmark search and the same free text search applied to each of the
+    QLandmarkManager instances in landmarkManagers().
+
+    If \a bounds is a valid QGeoBoundingBox it will be used to limit the
+    geocoding results to those that are contained by \a bounds. Note that \a
+    bounds will only be used for the geocoding part of the search if
+    supportsViewportBiasing() returns true.
 */
 
 /*!
@@ -234,30 +298,31 @@ void QGeoPlacesManager::addLandmarkManager(QLandmarkManager *landmarkManager)
 /*!
 \fn void QGeoPlacesManager::finished(QGeoPlacesReply* reply)
 
-This signal is emitted when \a reply has finished processing.
+    This signal is emitted when \a reply has finished processing.
 
-If reply::error() equals QGeoPlacesReply::NoError then the processing
-finished successfully.
+    If reply::error() equals QGeoPlacesReply::NoError then the processing
+    finished successfully.
 
-This signal and QGeoPlacesReply::finished() will be emitted at the same time.
+    This signal and QGeoPlacesReply::finished() will be emitted at the same
+    time.
 
-\note Do no delete the \a reply object in the slot connected to this signal.
-Use deleteLater() instead.
+    \note Do no delete the \a reply object in the slot connected to this
+    signal. Use deleteLater() instead.
 */
 
 /*!
 \fn void QGeoPlacesManager::error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString)
 
-This signal is emitted when an error has been detected in the processing of
-\a reply.  The QGeoPlacesManager::finished() signal will probably follow.
+    This signal is emitted when an error has been detected in the processing of
+    \a reply. The QGeoPlacesManager::finished() signal will probably follow.
 
-The error will be described by the error code \error.  If \a errorString is
-not empty it will contain a textual description of the error.
+    The error will be described by the error code \error. If \a errorString is
+    not empty it will contain a textual description of the error.
 
-This signal and QGeoPlacesReply::error() will be emitted at the same time.
+    This signal and QGeoPlacesReply::error() will be emitted at the same time.
 
-\note Do no delete the \a reply object in the slot connected to this signal.
-Use deleteLater() instead.
+    \note Do no delete the \a reply object in the slot connected to this
+    signal. Use deleteLater() instead.
 */
 
 /*******************************************************************************

@@ -67,10 +67,6 @@ QTM_BEGIN_NAMESPACE
         An error occurred which does not fit into any of the other categories.
 */
 
-QGeoRouteReply::QGeoRouteReply(Error error, const QString &errorString, QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoRouteReplyPrivate(error, errorString)) {}
-
 /*!
     Constructs a route reply object based on \a request, with parent \a parent.
 */
@@ -81,6 +77,12 @@ QGeoRouteReply::QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent)
 }
 
 /*!
+*/
+QGeoRouteReply::QGeoRouteReply(Error error, const QString &errorString, QObject *parent)
+    : QObject(parent),
+    d_ptr(new QGeoRouteReplyPrivate(error, errorString)) {}
+
+/*!
     Destroys the route reply object.
 */
 QGeoRouteReply::~QGeoRouteReply()
@@ -88,6 +90,8 @@ QGeoRouteReply::~QGeoRouteReply()
     delete d_ptr;
 }
 
+/*!
+*/
 void QGeoRouteReply::setFinished(bool finished)
 {
     d_ptr->isFinished = finished;
@@ -95,11 +99,15 @@ void QGeoRouteReply::setFinished(bool finished)
         emit this->finished();
 }
 
+/*!
+*/
 bool QGeoRouteReply::isFinished() const
 {
     return d_ptr->isFinished;
 }
 
+/*!
+*/
 void QGeoRouteReply::setError(QGeoRouteReply::Error error, const QString &errorString)
 {
     d_ptr->error = error;
@@ -108,11 +116,15 @@ void QGeoRouteReply::setError(QGeoRouteReply::Error error, const QString &errorS
     setFinished(true);
 }
 
+/*!
+*/
 QGeoRouteReply::Error QGeoRouteReply::error() const
 {
     return d_ptr->error;
 }
 
+/*!
+*/
 QString QGeoRouteReply::errorString() const
 {
     return d_ptr->errorString;
@@ -143,7 +155,9 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 }
 
 /*!
-    Cancels the route calculation operation if the reply hasn't been received already.
+    Cancels the operation.
+
+    This will do nothing if the reply is finished.
 */
 void QGeoRouteReply::abort() {}
 

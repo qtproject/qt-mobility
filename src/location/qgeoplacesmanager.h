@@ -59,13 +59,13 @@ class Q_LOCATION_EXPORT QGeoPlacesManager : public QObject
     Q_OBJECT
 public:
     enum SearchType {
-        SearchGeocodeOnly = 0x0001,
-        SearchLandmarksOnly = 0x0002,
+        SearchNone = 0x0000,
+        SearchGeocode = 0x0001,
+        SearchLandmarks = 0x0002,
         SearchAll = 0xFFFF
     };
     Q_DECLARE_FLAGS(SearchTypes, SearchType)
 
-    QGeoPlacesManager(QObject *parent = 0);
     virtual ~QGeoPlacesManager();
 
     virtual QGeoPlacesReply* geocode(const QGeoAddress &address,
@@ -90,6 +90,7 @@ signals:
     void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
 
 protected:
+    QGeoPlacesManager(QObject *parent = 0);
     void setSupportsViewportBiasing(bool supported);
     void setSupportsGeocoding(bool supported);
     void setSupportedSearchTypes(SearchTypes searchTypes);

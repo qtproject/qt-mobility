@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include <qgeoserviceprovider.h>
 #include <qgeomappingmanager.h>
 #include <qgeomaprequestoptions.h>
 
@@ -81,11 +82,10 @@ public:
     };
 
 public:
-    QGeoMappingManagerNokia();
+    QGeoMappingManagerNokia(const QMap<QString, QString> &parameters,
+                            QGeoServiceProvider::Error *error,
+                            QString *errorString);
     virtual ~QGeoMappingManagerNokia();
-
-    void setProxy(const QNetworkProxy &proxy);
-    void setHost(QString host);
 
     virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
                                      int zoomLevel,

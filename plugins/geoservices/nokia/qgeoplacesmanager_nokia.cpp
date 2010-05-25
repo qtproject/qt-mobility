@@ -46,33 +46,42 @@
 #include <qgeocoordinate.h>
 
 #include <QNetworkProxy>
+#include <QMap>
 
-QGeoPlacesManagerNokia::QGeoPlacesManagerNokia(QObject *parent)
-    : QGeoPlacesManager(parent)
+QGeoPlacesManagerNokia::QGeoPlacesManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+    : m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_networkManager = new QNetworkAccessManager(this);
-    setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-    setHost("loc.desktop.maps.svc.ovi.com");
+
+    QList<QString> keys = parameters.keys();
+
+    if(keys.contains("places.proxy")) {
+        QString proxy = parameters.value("places.proxy");
+        if(!proxy.isEmpty())
+            m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+    }
+
+    if(keys.contains("places.host")) {
+        QString host = parameters.value("places.host");
+        if(!host.isEmpty())
+            m_host = host;
+    }
 
     setSupportsGeocoding(true);
     setSupportsViewportBiasing(false);
 
     QGeoPlacesManager::SearchTypes supportedSearchTypes;
-    supportedSearchTypes |= QGeoPlacesManager::SearchGeocodeOnly;
+    supportedSearchTypes |= QGeoPlacesManager::SearchGeocode;
     setSupportedSearchTypes(supportedSearchTypes);
+
+    if (error)
+        *error = QGeoServiceProvider::NoError;
+
+    if (errorString)
+        *errorString = "";
 }
 
 QGeoPlacesManagerNokia::~QGeoPlacesManagerNokia() {}
-
-void QGeoPlacesManagerNokia::setProxy(const QNetworkProxy &proxy)
-{
-    m_networkManager->setProxy(proxy);
-}
-
-void QGeoPlacesManagerNokia::setHost(QString host)
-{
-    m_host = host;
-}
 
 QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
 {
@@ -215,7 +224,7 @@ void QGeoPlacesManagerNokia::placesError(QGeoPlacesReply::Error error, const QSt
     if (!reply)
         return;
 
-    if(receivers(SIGNAL(finished(QGeoPlacesReply*, QGeoPlacesReply::Error, QString))) == 0) {
+    if(receivers(SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString))) == 0) {
         reply->deleteLater();
         return;
     }

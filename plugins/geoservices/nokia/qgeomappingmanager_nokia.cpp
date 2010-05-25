@@ -51,26 +51,34 @@
 #define PI 3.14159265
 #include <math.h>
 
-QGeoMappingManagerNokia::QGeoMappingManagerNokia()
+QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+    : m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_nam = new QNetworkAccessManager(this);
-    setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-    setHost("loc.desktop.maps.svc.ovi.com");
+
+    QList<QString> keys = parameters.keys();
+
+    if(keys.contains("mapping.proxy")) {
+        QString proxy = parameters.value("mapping.proxy");
+        if(!proxy.isEmpty())
+            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
+    }
+    if(keys.contains("mapping.host")) {
+        QString host = parameters.value("mapping.host");
+        if(!host.isEmpty())
+            m_host = host;
+    }
+
+    if (error)
+        *error = QGeoServiceProvider::NoError;
+
+    if (errorString)
+        *errorString = "";
 }
 
 QGeoMappingManagerNokia::~QGeoMappingManagerNokia()
 {
     //delete m_cache;
-}
-
-void QGeoMappingManagerNokia::setProxy(const QNetworkProxy &proxy)
-{
-    m_nam->setProxy(proxy);
-}
-
-void QGeoMappingManagerNokia::setHost(QString host)
-{
-    m_host = host;
 }
 
 QGeoMapReply* QGeoMappingManagerNokia::requestTile(const QGeoCoordinate &onTile, int zoomLevel,

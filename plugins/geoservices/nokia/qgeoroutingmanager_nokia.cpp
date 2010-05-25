@@ -46,13 +46,24 @@
 
 #include <QNetworkProxy>
 
-QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(QObject *parent)
-    : QGeoRoutingManager(parent)
+QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+    : m_host("route.desktop.maps.svc.ovi.com")
 {
     m_networkManager = new QNetworkAccessManager(this);
-    
-    setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-    setHost("route.desktop.maps.svc.ovi.com");
+
+    QList<QString> keys = parameters.keys();
+
+    if(keys.contains("routing.proxy")) {
+        QString proxy = parameters.value("routing.proxy");
+        if(!proxy.isEmpty())
+            m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+    }
+
+    if(keys.contains("routing.host")) {
+        QString host = parameters.value("routing.host");
+        if(!host.isEmpty())
+            m_host = host;
+    }
 
     // TODO flip this over once we have support for updates
     setSupportsRouteUpdates(false);
@@ -81,19 +92,15 @@ QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(QObject *parent)
     travelModes |= QGeoRouteRequest::PedestrianTravel;
     travelModes |= QGeoRouteRequest::PublicTransitTravel;
     setSupportedTravelModes(travelModes);
+
+    if (error)
+        *error = QGeoServiceProvider::NoError;
+
+    if (errorString)
+        *errorString = "";
 }
 
 QGeoRoutingManagerNokia::~QGeoRoutingManagerNokia() {}
-
-void QGeoRoutingManagerNokia::setProxy(const QNetworkProxy &proxy)
-{
-    m_networkManager->setProxy(proxy);
-}
-
-void QGeoRoutingManagerNokia::setHost(QString host)
-{
-    m_host = host;
-}
 
 QString QGeoRoutingManagerNokia::requestString(const QGeoRouteRequest &request)
 {
@@ -145,10 +152,13 @@ QString QGeoRoutingManagerNokia::requestString(const QGeoRouteRequest &request)
     switch (request.routeOptimization()) {
     case QGeoRouteRequest::ShortestRoute:
         requestString += "shortest";
+        break;
     case QGeoRouteRequest::FastestRoute:
         requestString += "fastest";
+        break;
     case QGeoRouteRequest::MostEconomicRoute:
         requestString += "economic";
+        break;
     default:
         return "";
     }
@@ -157,10 +167,13 @@ QString QGeoRoutingManagerNokia::requestString(const QGeoRouteRequest &request)
     switch (request.travelModes()) {
     case QGeoRouteRequest::CarTravel:
         requestString += "car";
+        break;
     case QGeoRouteRequest::PedestrianTravel:
         requestString += "pedestrian";
+        break;
     case QGeoRouteRequest::PublicTransitTravel:
         requestString += "public transport";
+        break;
     default:
         return "";
     }
@@ -265,7 +278,7 @@ void QGeoRoutingManagerNokia::routeError(QGeoRouteReply::Error error, const QStr
     if (!reply)
         return;
 
-    if(receivers(SIGNAL(finished(QGeoRouteReply*, QGeoRouteReply::Error, QString))) == 0) {
+    if(receivers(SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString))) == 0) {
         reply->deleteLater();
         return;
     }

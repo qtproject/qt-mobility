@@ -84,7 +84,7 @@ signals:
 
 protected:
     QGeoPlacesReply(QObject *parent = 0);
-    QGeoPlacesReply(const QGeoBoundingBox &bounds, QObject *parent = 0);
+//    QGeoPlacesReply(const QGeoBoundingBox &bounds, QObject *parent = 0);
 
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);

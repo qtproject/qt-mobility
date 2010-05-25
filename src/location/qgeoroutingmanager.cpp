@@ -44,10 +44,40 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \class QGeoRoutingManager
+
+    \brief The QGeoRoutingManager class provides support for geographic routing
+    operations.
+
+    \ingroup maps
+
+    Instances of QGeoRoutingManager primarily provide support for the
+    calculation and updating of routes. The calculateRoute() and updateRoute()
+    methods return QGeoRouteReply objects, which manage these operations and
+    report on the result of the operations and any errors which may have
+    occurred.
+
+    The QGeoRoutingManager class also contains functions which provide
+    information on the capabilities and features supported by
+    QGeoRoutingManager instances. Those who write subclasses of
+    QGeoRoutingManager should take care to make sure that this capability
+    information is set up correctly, otherwise clients may be denied access to
+    functionality they would otherwise expect.
+*/
+
+/*!
+    Constructs a new manager with the specified \a parent.
+
+    This should only ever be called from subclasses of QGeoRoutingManager.
+*/
 QGeoRoutingManager::QGeoRoutingManager(QObject *parent)
     : QObject(parent),
     d_ptr(new QGeoRoutingManagerPrivate()) {}
 
+/*!
+    Destroys this manager.
+*/
 QGeoRoutingManager::~QGeoRoutingManager()
 {
     delete d_ptr;

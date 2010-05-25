@@ -58,13 +58,15 @@ public:
 
     virtual QString providerName() const = 0;
 
-    virtual bool initialize(const QMap<QString, QString> &parameters,
-                            QGeoServiceProvider::Error *error,
-                            QString *errorString) = 0;
-
-    virtual QGeoPlacesManager* placesManager() const = 0;
-    virtual QGeoMappingManager* mappingManager() const = 0;
-    virtual QGeoRoutingManager* routingManager() const = 0;
+    virtual QGeoPlacesManager* createPlacesManager(const QMap<QString, QString> &parameters,
+                                                   QGeoServiceProvider::Error *error,
+                                                   QString *errorString) const = 0;
+    virtual QGeoMappingManager* createMappingManager(const QMap<QString, QString> &parameters,
+                                                     QGeoServiceProvider::Error *error,
+                                                     QString *errorString) const = 0;
+    virtual QGeoRoutingManager* createRoutingManager(const QMap<QString, QString> &parameters,
+                                                     QGeoServiceProvider::Error *error,
+                                                     QString *errorString) const = 0;
 };
 
 QTM_END_NAMESPACE

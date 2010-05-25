@@ -136,8 +136,8 @@ void GeocodingTab::initialize(QGeoPlacesManager *placesManager)
         QObject::connect(m_placesManager, SIGNAL(finished(QGeoPlacesReply*)), this,
             SLOT(replyFinished(QGeoPlacesReply*)));
         QObject::connect(m_placesManager,
-            SIGNAL(error(QGeoPlacesReply*,QGeoCodingService::ErrorCode,QString)), this,
-            SLOT(resultsError(QGeoPlacesReply*,QGeoCodingService::ErrorCode,QString)));
+            SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)), this,
+            SLOT(resultsError(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)));
     }
 }
 
@@ -149,7 +149,7 @@ void GeocodingTab::on_btnRequest_clicked()
         m_resultTree->clear();
 
         if (!s.isEmpty()) {
-            m_placesManager->placesSearch(s, QGeoPlacesManager::SearchGeocodeOnly);
+            m_placesManager->placesSearch(s, QGeoPlacesManager::SearchGeocode);
         }
         else {
             QGeoAddress address;

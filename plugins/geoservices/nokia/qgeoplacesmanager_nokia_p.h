@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include <qgeoserviceprovider.h>
 #include <qgeoplacesmanager.h>
 
 #include <QNetworkAccessManager>
@@ -63,7 +64,9 @@ class QGeoPlacesManagerNokia : public QGeoPlacesManager
 {
     Q_OBJECT
 public:
-    QGeoPlacesManagerNokia(QObject *parent = 0);
+    QGeoPlacesManagerNokia(const QMap<QString, QString> &parameters,
+                           QGeoServiceProvider::Error *error,
+                           QString *errorString);
     ~QGeoPlacesManagerNokia();
 
     QGeoPlacesReply* geocode(const QGeoAddress &address,

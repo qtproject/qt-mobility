@@ -73,13 +73,17 @@ QGeoPlacesReply::QGeoPlacesReply(QObject *parent)
     : QObject(parent),
     d_ptr(new QGeoPlacesReplyPrivate()) {}
 
-QGeoPlacesReply::QGeoPlacesReply(const QGeoBoundingBox &bounds, QObject *parent)
+/*!
+*/
+/*QGeoPlacesReply::QGeoPlacesReply(const QGeoBoundingBox &bounds, QObject *parent)
     : QObject(parent),
     d_ptr(new QGeoPlacesReplyPrivate())
 {
     d_ptr->bounds = bounds;
-}
+}*/
 
+/*!
+*/
 QGeoPlacesReply::QGeoPlacesReply(Error error, const QString &errorString, QObject *parent)
     : QObject(parent),
     d_ptr(new QGeoPlacesReplyPrivate(error, errorString)) {}
@@ -92,6 +96,8 @@ QGeoPlacesReply::~QGeoPlacesReply()
     delete d_ptr;
 }
 
+/*!
+*/
 void QGeoPlacesReply::setFinished(bool finished)
 {
     d_ptr->isFinished = finished;
@@ -99,11 +105,15 @@ void QGeoPlacesReply::setFinished(bool finished)
         emit this->finished();
 }
 
+/*!
+*/
 bool QGeoPlacesReply::isFinished() const
 {
     return d_ptr->isFinished;
 }
 
+/*!
+*/
 void QGeoPlacesReply::setError(QGeoPlacesReply::Error error, const QString &errorString)
 {
     d_ptr->error = error;
@@ -112,21 +122,29 @@ void QGeoPlacesReply::setError(QGeoPlacesReply::Error error, const QString &erro
     setFinished(true);
 }
 
+/*!
+*/
 QGeoPlacesReply::Error QGeoPlacesReply::error() const
 {
     return d_ptr->error;
 }
 
+/*!
+*/
 QString QGeoPlacesReply::errorString() const
 {
     return d_ptr->errorString;
 }
 
+/*!
+*/
 void QGeoPlacesReply::setBounds(const QGeoBoundingBox &bounds)
 {
     d_ptr->bounds = bounds;
 }
 
+/*!
+*/
 QGeoBoundingBox QGeoPlacesReply::bounds() const
 {
     return d_ptr->bounds;
@@ -157,19 +175,39 @@ void QGeoPlacesReply::setPlaces(const QList<QGeoPlace> &places)
 }
 
 /*!
-    Cancels the receiving of this reply if the reply hasn't been received already.
+    Cancels the operation.
+
+    This will do nothing if the reply is finished.
 */
 void QGeoPlacesReply::abort() {}
 
 /*!
     \fn void QGeoPlacesReply::finished()
 
-    Indicates that the reply has been received and processed without error, and is ready to be used.
+    This signal is emitted when \a reply has finished processing.
+
+    If error() equals QGeoPlacesReply::NoError then the processing
+    finished successfully.
+
+    This signal and QGeoPlacesManager::finished(QGeoRouteReply *reply) will be
+    emitted at the same time.
+
+    \note Do no delete the \a reply object in the slot connected to this
+    signal. Use deleteLater() instead.
 */
 /*!
     \fn void QGeoPlacesReply::error(QGeoPlacesReply::Error error, const QString &errorString)
 
-    Indicates that an error occurred during the receiving or processing of the reply.
+    This signal is emitted when an error has been detected in the processing of
+    \a reply. The finished() signal will probably follow.
+
+    The error will be described by the error code \error. If \a errorString is
+    not empty it will contain a textual description of the error.
+
+    This signal and QGeoPlacesReply::error() will be emitted at the same time.
+
+    \note Do no delete the \a reply object in the slot connected to this
+    signal. Use deleteLater() instead.
 */
 
 /*******************************************************************************
