@@ -358,8 +358,7 @@ bool QVersitReaderPrivate::isCanceling()
 /*!
  * Parses a versit document. Returns true if the parsing was successful.
  */
-bool QVersitReaderPrivate::parseVersitDocument(LineReader& lineReader, QVersitDocument& document,
-                                               bool foundBegin)
+bool QVersitReaderPrivate::parseVersitDocument(LineReader& lineReader, QVersitDocument& document)
 {
     if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
         return false; // To prevent infinite recursion
@@ -369,31 +368,27 @@ bool QVersitReaderPrivate::parseVersitDocument(LineReader& lineReader, QVersitDo
 
     QVersitProperty property;
 
-    if (!foundBegin) {
-        property = parseNextVersitProperty(document.type(), lineReader);
-        QString propertyValue = property.value().trimmed().toUpper();
-        if (property.isEmpty()) {
-            // A blank document (or end of file) was found.
-            document = QVersitDocument();
-            return true;
-        } else if (property.name() == QLatin1String("BEGIN")) {
-            if (propertyValue == QLatin1String("VCARD")) {
-                document.setComponentType(propertyValue);
-                foundBegin = true;
-            } else if (propertyValue == QLatin1String("VCALENDAR")) {
-                document.setType(QVersitDocument::ICalendar20Type);
-                document.setComponentType(propertyValue);
-                foundBegin = true;
-            } else {
-                // Unknown document type
-                document = QVersitDocument();
-                return false;
-            }
+    property = parseNextVersitProperty(document.type(), lineReader);
+    QString propertyValue = property.value().trimmed().toUpper();
+    if (property.isEmpty()) {
+        // A blank document (or end of file) was found.
+        document = QVersitDocument();
+        return true;
+    } else if (property.name() == QLatin1String("BEGIN")) {
+        if (propertyValue == QLatin1String("VCARD")) {
+            document.setComponentType(propertyValue);
+        } else if (propertyValue == QLatin1String("VCALENDAR")) {
+            document.setType(QVersitDocument::ICalendar20Type);
+            document.setComponentType(propertyValue);
         } else {
-            // Some property other than BEGIN was found.
+            // Unknown document type
             document = QVersitDocument();
             return false;
         }
+    } else {
+        // Some property other than BEGIN was found.
+        document = QVersitDocument();
+        return false;
     }
 
     return parseVersitDocumentBody(lineReader, document);
@@ -409,12 +404,11 @@ bool QVersitReaderPrivate::parseVersitDocumentBody(LineReader& lineReader, QVers
         property = parseNextVersitProperty(document.type(), lineReader);
 
         /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
-        if (property.name() == QLatin1String("BEGIN") &&
-            QString::compare(property.value().trimmed(),
-                             QLatin1String("VCARD"), Qt::CaseInsensitive) == 0) {
+        if (property.name() == QLatin1String("BEGIN")) {
             parsingOk = false;
             QVersitDocument nestedDocument;
-            if (!parseVersitDocument(lineReader, nestedDocument, true))
+            nestedDocument.setComponentType(property.value().trimmed().toUpper());
+            if (!parseVersitDocumentBody(lineReader, nestedDocument))
                 break;
         }
 
@@ -481,16 +475,15 @@ void QVersitReaderPrivate::parseVCard21Property(LByteArray& cursor, QVersitPrope
     QByteArray value = cursor.toByteArray();
     if (property.valueType() == QVersitProperty::VersitDocumentType) {
         // Hack to handle cases where start of document is on the same or next line as "AGENT:"
-        bool foundBegin = false;
         if (value == "BEGIN:VCARD") {
-            foundBegin = true;
+            lineReader.pushLine(value);
         } else if (value.isEmpty()) {
         } else {
             property = QVersitProperty();
             return;
         }
         QVersitDocument subDocument;
-        if (!parseVersitDocument(lineReader, subDocument, foundBegin)) {
+        if (!parseVersitDocument(lineReader, subDocument)) {
             property = QVersitProperty();
         } else {
             property.setValue(QVariant::fromValue(subDocument));

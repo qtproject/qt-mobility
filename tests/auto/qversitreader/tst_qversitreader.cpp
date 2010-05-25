@@ -207,15 +207,11 @@ void tst_QVersitReader::testReading()
 
     // Valid documents and a grouped document between them
     const QByteArray& validDocumentsAndGroupedDocument =
-"BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\
-BEGIN:VCARD\r\n\
-X-GROUPING:pub gang\r\n\
-BEGIN:VCARD\r\nFN:Jeremy\r\nEND:VCARD\r\n\
-BEGIN:VCARD\r\nFN:Jeffery\r\nEND:VCARD\r\n\
-END:VCARD\r\n\
-BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n\
-BEGIN:VCARD\r\nFN:James\r\nEND:VCARD\r\n\
-BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
+"BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n"
+"BEGIN:VCARD\r\nX-GROUPING:pub gang\r\nBEGIN:VCARD\r\nFN:Jeremy\r\nEND:VCARD\r\nBEGIN:VCARD\r\nFN:Jeffery\r\nEND:VCARD\r\nEND:VCARD\r\n"
+"BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n"
+"BEGIN:VCARD\r\nFN:James\r\nEND:VCARD\r\n"
+"BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD\r\n";
     mInputDevice->close();
     mInputDevice->setData(validDocumentsAndGroupedDocument);
     mInputDevice->open(QBuffer::ReadWrite);

@@ -201,7 +201,7 @@ public: // New functions
     void setCanceling(bool cancelling);
     bool isCanceling();
 
-    bool parseVersitDocument(LineReader& device, QVersitDocument& document, bool foundBegin = false);
+    bool parseVersitDocument(LineReader& device, QVersitDocument& document);
     bool parseVersitDocumentBody(LineReader& device, QVersitDocument& document);
 
     QVersitProperty parseNextVersitProperty(
