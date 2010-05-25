@@ -10,6 +10,9 @@ DEFINES += QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 #DEFINES += QT_SFW_SERVICEDATABASE_DEBUG
 DEFINES += QT_BUILD_INTERNAL
 
+# for Symbian^3 we don't need to change the windows path
+DEFINES += QT_SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
+
 INCLUDEPATH += ../../src/serviceframework
 
 HEADERS += ../../src/serviceframework/servicedatabase_p.h

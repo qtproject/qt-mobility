@@ -7,8 +7,18 @@
 
 QTM_USE_NAMESPACE
 
+/*
+ * If the emulator supports per process writeable static
+ * data then we can use a separate server process and
+ * put the db in the same location as on a real
+ * device
+ */
+#define WINSCW_DES_DEPLOY_WSD   "epoc32/winscw/c/private/2002AC7F/des"
+#define WINSCW_DBPATH_WSD       "epoc32/winscw/c/private/2002AC7F"
+
 #define WINSCW_DES_DEPLOY       "epoc32/winscw/c/private/2002AC7F/des"
 #define WINSCW_DBPATH           "epoc32/winscw/c/data/temp/QtServiceFW"
+
 #define HW_DES_DEPLOY           "epoc32/data/z/private/2002AC7F/des"
 #define HW_DBPATH               "epoc32/data/z/private/2002AC7F"
 
@@ -69,6 +79,7 @@ private:
     QTextStream *stdoutStream;
     QMap<QString, QString> targetMap; // (target, platform)
     QMap<QString, GeneratorPaths> pathMap; // (platform, (databasePath, descriptorsPath))
+    QMap<QString, GeneratorPaths> wsdMap; // (platform, (databasePath, descriptorsPath))
 };
 
 CommandProcessor::CommandProcessor(QObject *parent)
@@ -92,6 +103,7 @@ bool CommandProcessor::initialize()
         *stdoutStream << "ERROR: EPOCROOT not set\n";
         return false;
     }
+
     targetMap["winscw"] = "emulator";
     targetMap["armv5"] = "hw";
     targetMap["armv6"] = "hw";
@@ -100,8 +112,17 @@ bool CommandProcessor::initialize()
     if (epocRoot.right(1) != QDir::separator())
         epocRoot += QDir::separator();
 
-    pathMap["emulator"] = GeneratorPaths(QDir::toNativeSeparators(epocRoot + WINSCW_DBPATH),
-                                         QDir::toNativeSeparators(epocRoot + WINSCW_DES_DEPLOY));
+    wsdMap["nowsd"] = GeneratorPaths(QDir::toNativeSeparators(epocRoot + WINSCW_DBPATH),
+                                     QDir::toNativeSeparators(epocRoot + WINSCW_DES_DEPLOY));
+
+    wsdMap["wsd"] = GeneratorPaths(QDir::toNativeSeparators(epocRoot + WINSCW_DBPATH_WSD),
+                                   QDir::toNativeSeparators(epocRoot + WINSCW_DES_DEPLOY_WSD));
+
+#ifdef QT_SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
+    pathMap["emulator"] = wsdMap["wsd"];
+#else
+    pathMap["emulator"] = wsdMap["nowsd"];
+#endif
     pathMap["hw"] = GeneratorPaths(QDir::toNativeSeparators(epocRoot + HW_DBPATH),
                                    QDir::toNativeSeparators(epocRoot + HW_DES_DEPLOY));
     return true;
@@ -109,15 +130,15 @@ bool CommandProcessor::initialize()
 
 void CommandProcessor::execute(const QStringList &options, const QString &cmd, const QStringList &args)
 {
-    if (cmd.isEmpty()) {
+    if(cmd.isEmpty())
         MESSAGE("Error: no command given\n\n");
-        showUsage();
-        return;
-    }
 
     // setup options and collect target(s)
+    // parse options, and fails if there's no cmd
+    // usage output includes paths and targets, so make
+    // sure to parse options that might change them
     QMap<QString, GeneratorPaths> targets;
-    if (!setOptions(options, targets)) {
+    if (!setOptions(options, targets) || cmd.isEmpty()) {
         showUsage();
         return;
     }
@@ -139,7 +160,7 @@ void CommandProcessor::execute(const QStringList &options, const QString &cmd, c
             MESSAGE("ERROR: database for " << target << " cannot be opened/created.\n");
             continue;
         }
-        MESSAGE("Database: " << db->databasePath() << '\n');
+        MESSAGE("Database[" << i.key() << "]: " << db->databasePath() << '\n');
         QStringList desList = (batchMode) ? targetServiceDescriptors(paths.descriptorsPath, args) : args;
         // register services
         metaObject()->method(methodIndex).invoke(this, Q_ARG(QStringList, desList), Q_ARG(ServiceDatabase*, db));
@@ -166,6 +187,7 @@ void CommandProcessor::showUsage()
             "\t        (see paths below).\n"
             "\t-c      Delete the service database, has effect only in batch mode. \n"
             "\t-i      The services require initialization upon first load.\n"
+            "\t-w<1|0> Override the default support for WSD in the emulator\n"
             "\n"
             "Supported targets and their database paths:";
     QMapIterator<QString, QString> i(targetMap);
@@ -225,13 +247,31 @@ bool CommandProcessor::setOptions(const QStringList &options, QMap<QString, Gene
             }
             i.remove();
         }
+        else if (option.startsWith("-w")) {
+            QString wsd = option.right(option.size() - 2).toLower();
+            if (wsd == "0") {
+                pathMap["emulator"] = wsdMap["nowsd"];
+            }
+            else if (wsd == "1"){
+                pathMap["emulator"] = wsdMap["wsd"];
+            }
+            else {
+                MESSAGE("ERROR: unknown parameter " << wsd << '\n');
+                return false;
+            }
+            if(targets.contains("emulator"))
+                targets["emulator"] = pathMap["emulator"];
+            i.remove();
+        }
     }
     if (!opts.isEmpty()) {
         MESSAGE("Bad options: " << opts.join(" ") << "\n\n");
         return false;
     }
-    if (targets.isEmpty())
+    if (targets.isEmpty()) {
+        MESSAGE("No options\n");
         targets = pathMap;
+    }
 
     return true;
 }
