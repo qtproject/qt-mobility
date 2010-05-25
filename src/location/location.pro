@@ -16,7 +16,7 @@ PUBLIC_HEADERS += \
                     qgeocoordinate.h \
                     qgeodistance.h \
                     qgeonavigationinstruction.h \
-                    qgeonavigator.h \
+                    #qgeonavigator.h \
                     qgeomappingmanager.h \
                     qgeomapreply.h \
                     qgeomaprequestoptions.h \
@@ -75,7 +75,7 @@ PRIVATE_HEADERS += \
                     qgeomapreply_p.h \
                     qgeomaprequestoptions_p.h \
                     qgeonavigationinstruction_p.h \
-                    qgeonavigator_p.h \
+                    #qgeonavigator_p.h \
                     qgeoplace_p.h \
                     qgeoplacesmanager_p.h \
                     qgeoplacesreply_p.h \
@@ -190,7 +190,7 @@ SOURCES += \
             qgeocoordinate.cpp \
             qgeodistance.cpp \
             qgeonavigationinstruction.cpp \
-            qgeonavigator.cpp \
+            #qgeonavigator.cpp \
             qgeomappingmanager.cpp \
             qgeomapreply.cpp \
             qgeomaprequestoptions.cpp \

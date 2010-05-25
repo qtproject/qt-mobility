@@ -185,7 +185,7 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
     } else {
         bool ok = false;
         QString s = m_reader->attributes().value("distance").toString();
-        route->setLength(QGeoDistance(s.toUInt(&ok), QGeoDistance::Metres));
+        route->setDistance(QGeoDistance(s.toUInt(&ok), QGeoDistance::Metres));
         if (!ok) {
             m_reader->raiseError(QString("The attribute \"distance\" was expected to have a value convertable to an unsigned int (value was \"%1\")").arg(s));
             return false;
@@ -539,7 +539,7 @@ bool QGeoRouteXmlParser::parseManeuver(QGeoRoute *route, QGeoRouteSegment *segme
     } else {
         bool ok = false;
         QString s = m_reader->attributes().value("distance").toString();
-        segment->setLength(QGeoDistance(s.toUInt(&ok), QGeoDistance::Metres));
+        segment->setDistance(QGeoDistance(s.toUInt(&ok), QGeoDistance::Metres));
 
         if (!ok) {
             m_reader->raiseError(QString("The attribute \"distance\" was expected to have a value convertable to an unsigned int (value was \"%1\")").arg(s));
@@ -555,7 +555,7 @@ bool QGeoRouteXmlParser::parseManeuver(QGeoRoute *route, QGeoRouteSegment *segme
         qint32 seconds;
         if (!duration.isEmpty() && !parseXsdDuration(duration, &seconds, "duration"))
             return false;
-        segment->setEstimatedTravelTime(seconds);
+        segment->setTravelTime(seconds);
     }
 
     /* // currently unused, might be used in a qgeoroutesegment subclass later
@@ -617,9 +617,9 @@ bool QGeoRouteXmlParser::parseManeuver(QGeoRoute *route, QGeoRouteSegment *segme
         if (!parseGeoPoints(m_reader->readElementText(), &wPoints, "wayPoints"))
             return false;
 
-        QList<QGeoCoordinate> routeOverview = route->routeOverview();
-        routeOverview.append(wPoints);
-        route->setRouteOverview(routeOverview);
+        QList<QGeoCoordinate> pathSummary = route->pathSummary();
+        pathSummary.append(wPoints);
+        route->setPathSummary(pathSummary);
 
         if (!m_reader->readNextStartElement()) {
             m_reader->raiseError(QString("The element \"maneuever\" expected this child element to be named \"maneuverPoints\"").arg(m_reader->name().toString()));
@@ -632,7 +632,7 @@ bool QGeoRouteXmlParser::parseManeuver(QGeoRoute *route, QGeoRouteSegment *segme
         if (!parseGeoPoints(m_reader->readElementText(), &mPoints, "maneuverPoints"))
             return false;
 
-        segment->setGeometry(mPoints);
+        segment->setPath(mPoints);
 
     } else {
         m_reader->raiseError(QString("The element \"maneuever\" was expected to have a child element named \"maneuverPoints\" (found an element named \"%1\")").arg(m_reader->name().toString()));

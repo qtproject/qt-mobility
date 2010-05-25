@@ -117,16 +117,16 @@ QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
     return d->type;
 }
 
-void QGeoRouteSegment::setTravellingTime(int secs)
+void QGeoRouteSegment::setTravelTime(int secs)
 {
     Q_D(QGeoRouteSegment);
-    d->travellingTime = secs;
+    d->travelTime = secs;
 }
 
-int QGeoRouteSegment::travellingTime() const
+int QGeoRouteSegment::travelTime() const
 {
     Q_D(const QGeoRouteSegment);
-    return d->travellingTime;
+    return d->travelTime;
 }
 
 void QGeoRouteSegment::setDistance(const QGeoDistance &distance)
@@ -195,7 +195,7 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
         : type(other.type),
-        travellingTime(other.travellingTime),
+        travelTime(other.travelTime),
         distance(other.distance),
         path(other.path),
         instruction(other.instruction) {}
@@ -205,7 +205,7 @@ QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate & other)
 {
     type = other.type;
-    travellingTime = other.travellingTime;
+    travelTime = other.travelTime;
     distance = other.distance;
     path = other.path;
     instruction = other.instruction;

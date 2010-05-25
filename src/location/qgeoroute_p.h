@@ -54,6 +54,7 @@
 //
 
 #include "qgeoroute.h"
+#include "qgeorouterequest.h"
 #include "qgeoboundingbox.h"
 #include "qgeodistance.h"
 
@@ -72,6 +73,7 @@ public:
     QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
 
     QString id;
+    QGeoRouteRequest request;
 
     QList<QGeoCoordinate> pathSummary;
     QGeoBoundingBox bounds;

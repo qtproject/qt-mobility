@@ -55,23 +55,74 @@ QGeoRoutingManager::~QGeoRoutingManager()
 
 /*!
 \fn QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
+
+    Begins the calculation of the route specified by \a request.
+
+    A QGeoRouteReply object will be returned, which can be used to manage the
+    routing operation and to return the results of the operation.
+
+    This manager and the returned QGeoRouteReply object will emit signals
+    indicating if the operation completes or if errors occur.
+
+    Once the operation has completed, QGeoRouteReply::routes can be used to
+    retrieve the calculated route or routes.
+
+    If \a request includes features which are not supported by this manager, as
+    reported by the methods in this manager, then a
+    QGeoRouteReply::UnsupportedOptionError will occur.
 */
 
 /*!
 \fn QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
+
+    Begins the process of updating \a route based on the current position \a
+    position.
+
+    A QGeoRouteReply object will be returned, which can be used to manage the
+    routing operation and to return the results of the operation.
+
+    This manager and the returned QGeoRouteReply object will emit signals
+    indicating if the operation completes or if errors occur.
+
+    If supportsRouteUpdates() returns false an
+    QGeoRouteReply::UnsupportedOptionError will occur.
+
+    Once the operation has completed, QGeoRouteReply::routes can be used to
+    retrieve the updated route.
+
+    The returned route could be entirely different to the original route,
+    especially if \a position is far enough away from the initial route.
+    Otherwise the route will be similar, although the remaining time and
+    distance will be updated and any segments of the original route which
+    have been traversed will be removed.
 */
 
+/*!
+    Sets whether this manager supports updating routes to \a supported.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it does not support updating routes.
+*/
 void QGeoRoutingManager::setSupportsRouteUpdates(bool supported)
 {
     d_ptr->supportsRouteUpdates = supported;
 }
 
+/*!
+    Returns whether this manager supports updating routes.
+*/
 bool QGeoRoutingManager::supportsRouteUpdates() const
 {
     return d_ptr->supportsRouteUpdates;
 }
 
 /*!
+    Sets whether this manager supports request for alternative routes to \a supported.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it does not support alternative routes.
 */
 void QGeoRoutingManager::setSupportsAlternativeRoutes(bool supported)
 {
@@ -79,6 +130,7 @@ void QGeoRoutingManager::setSupportsAlternativeRoutes(bool supported)
 }
 
 /*!
+    Returns whether this manager supports request for alternative routes.
 */
 bool QGeoRoutingManager::supportsAlternativeRoutes() const
 {
@@ -86,6 +138,11 @@ bool QGeoRoutingManager::supportsAlternativeRoutes() const
 }
 
 /*!
+    Sets the travel modes supported by this manager to \a travelModes.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it supports no travel modes at all.
 */
 void QGeoRoutingManager::setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes)
 {
@@ -93,6 +150,7 @@ void QGeoRoutingManager::setSupportedTravelModes(QGeoRouteRequest::TravelModes t
 }
 
 /*!
+    Returns the travel modes supported by this manager.
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 {
@@ -100,6 +158,11 @@ QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 }
 
 /*!
+    Sets the types of features that this manager can avoid during route planning to \a avoidFeatureTypes.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it does not support avoiding features.
 */
 void QGeoRoutingManager::setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
 {
@@ -107,6 +170,7 @@ void QGeoRoutingManager::setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFe
 }
 
 /*!
+    Returns the types of features that this manager can avoid during route planning.
 */
 QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTypes() const
 {
@@ -114,6 +178,11 @@ QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTyp
 }
 
 /*!
+    Sets the route optimizations supported by this manager to \a optimizations.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it supports no route optimizations at all.
 */
 void QGeoRoutingManager::setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations)
 {
@@ -121,6 +190,7 @@ void QGeoRoutingManager::setSupportedRouteOptimizations(QGeoRouteRequest::RouteO
 }
 
 /*!
+    Returns the route optimizations supported by this manager.
 */
 QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizations() const
 {
@@ -128,6 +198,11 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizat
 }
 
 /*!
+    Sets the levels of instruction details supported by this manager to \a intructionDetails.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it supports no instruction detail at all.
 */
 void QGeoRoutingManager::setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails)
 {
@@ -135,6 +210,7 @@ void QGeoRoutingManager::setSupportedInstructionDetails(QGeoRouteRequest::Instru
 }
 
 /*!
+    Returns the levels of instruction details supported by this manager.
 */
 QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDetails() const
 {
@@ -143,10 +219,31 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDet
 
 /*!
 \fn void QGeoRoutingService::finished(QGeoRouteReply* reply)
+
+This signal is emitted when \a reply has finished processing.
+
+If reply::error() equals QGeoRouteReply::NoError then the processing
+finished successfully.
+
+This signal and QGeoRouteReply::finished() will be emitted at the same time.
+
+\note Do no delete the \a reply object in the slot connected to this signal.
+Use deleteLater() instead.
 */
 
 /*!
 \fn void QGeoRoutingService::error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString
+
+This signal is emitted when an error has been detected in the processing of
+\a reply.  The QGeoRoutingManager::finished() signal will probably follow.
+
+The error will be described by the error code \error.  If \a errorString is
+not empty it will contain a textual description of the error.
+
+This signal and QGeoRouteReply::error() will be emitted at the same time.
+
+\note Do no delete the \a reply object in the slot connected to this signal.
+Use deleteLater() instead.
 */
 
 /*******************************************************************************

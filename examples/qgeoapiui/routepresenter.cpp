@@ -98,13 +98,13 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
 
     QTreeWidgetItem* prop = new QTreeWidgetItem(routeItem);
     prop->setText(0, "distance");
-    prop->setText(1, QString().setNum(route.length().convert(QGeoDistance::Metres)));
+    prop->setText(1, QString().setNum(route.distance().convert(QGeoDistance::Metres)));
 
     showBoundingBox(routeItem, route.bounds());
 
     QTreeWidgetItem* wayPointsItem = new QTreeWidgetItem(routeItem);
     wayPointsItem->setText(0, "route overview");
-    showPoints(wayPointsItem, route.routeOverview());
+    showPoints(wayPointsItem, route.pathSummary());
 
     const QList<const QGeoRouteSegment*> segments = route.routeSegments();
 
@@ -120,7 +120,7 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem *routeItem, const QGeoRout
 
     QTreeWidgetItem* propItem = new QTreeWidgetItem(maneuverItem);
     propItem->setText(0, "duration");
-    propItem->setText(1, QString().setNum(segment->estimatedTravelTime()));
+    propItem->setText(1, QString().setNum(segment->travelTime()));
 
     /*
     propItem = new QTreeWidgetItem(maneuverItem);
@@ -134,7 +134,7 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem *routeItem, const QGeoRout
 
     propItem = new QTreeWidgetItem(maneuverItem);
     propItem->setText(0, "distance");
-    propItem->setText(1, QString().setNum(segment->length().convert(QGeoDistance::Metres)));
+    propItem->setText(1, QString().setNum(segment->distance().convert(QGeoDistance::Metres)));
 
     /* // add back in when more qgeonavigationinstruction classes are made available
     QString s = segment->turn();
@@ -184,7 +184,7 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem *routeItem, const QGeoRout
 
     QTreeWidgetItem* maneuverPointsItem = new QTreeWidgetItem(maneuverItem);
     maneuverPointsItem->setText(0, "maneuver points");
-    showPoints(maneuverPointsItem, segment->geometry());
+    showPoints(maneuverPointsItem, segment->path());
 }
 
 void RoutePresenter::showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points)

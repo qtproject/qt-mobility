@@ -72,8 +72,8 @@ public:
 
     virtual SegmentType type() const;
 
-    void setTravellingTime(int secs) const;
-    int travellingTime() const;
+    void setTravelTime(int secs);
+    int travelTime() const;
 
     void setDistance(const QGeoDistance &distance);
     QGeoDistance distance() const;

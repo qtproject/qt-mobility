@@ -89,9 +89,9 @@ public:
     Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
 
     enum InstructionDetail {
-        NoInstructionss = 0x00001,
-        BasicInstructions = 0x0002,
-        DetailedInstructions = 0x0004
+        NoInstructionss = 0x00000,
+        BasicInstructions = 0x0001,
+        DetailedInstructions = 0x0002
     };
     Q_DECLARE_FLAGS(InstructionDetails, InstructionDetail)
 

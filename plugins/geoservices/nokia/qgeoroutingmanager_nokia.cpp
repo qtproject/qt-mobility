@@ -54,6 +54,9 @@ QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(QObject *parent)
     setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
     setHost("route.desktop.maps.svc.ovi.com");
 
+    // TODO flip this over once we have support for updates
+    setSupportsRouteUpdates(false);
+
     setSupportsAlternativeRoutes(true);
 
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatures;
@@ -229,6 +232,14 @@ QGeoRouteReply* QGeoRoutingManagerNokia::calculateRoute(const QGeoRouteRequest& 
             this,
             SLOT(routeError(QGeoRouteReply::Error,QString)));
 
+    return reply;
+}
+
+QGeoRouteReply* QGeoRoutingManagerNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
+{
+    // TODO flip this over once we have support for updates
+    QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "Route updates are not supported by this service provider.", this);
+    emit error(reply, reply->error(), reply->errorString());
     return reply;
 }
 

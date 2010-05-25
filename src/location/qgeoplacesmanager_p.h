@@ -70,7 +70,7 @@ public:
 
     QGeoPlacesManagerPrivate& operator= (const QGeoPlacesManagerPrivate &other);
 
-    //QList<QLandmarkManager> landmarkManagers;
+    QList<QLandmarkManager*> landmarkManagers;
 
     bool supportsViewportBiasing;
     bool supportsGeocoding;

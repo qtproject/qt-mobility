@@ -87,7 +87,7 @@ public:
 
     QList<const QGeoRouteSegment *> routeSegments() const;
 
-    void setTravellingTime(int secs) const;
+    void setTravellingTime(int secs);
     int travellingTime() const;
 
     void setDistance(const QGeoDistance &distance);

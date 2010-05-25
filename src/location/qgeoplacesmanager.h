@@ -58,7 +58,6 @@ class Q_LOCATION_EXPORT QGeoPlacesManager : public QObject
 {
     Q_OBJECT
 public:
-    // TODO change to flags, have a special value set for "all"?
     enum SearchType {
         SearchGeocodeOnly = 0x0001,
         SearchLandmarksOnly = 0x0002,
@@ -82,9 +81,9 @@ public:
     bool supportsGeocoding() const;
     SearchTypes supportedSearchTypes() const;
 
-//    void setLandmarkManagers(const QList<QLandmarkManager> &landmarkManagers);
-//    QList<QLandmarkManager> landmarkManagers() const;
-//    void addLandmarkManager(const QLandmarkManager &landmarkManager);
+    void setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
+    QList<QLandmarkManager *> landmarkManagers() const;
+    void addLandmarkManager(QLandmarkManager *landmarkManager);
 
 signals:
     void finished(QGeoPlacesReply* reply);

@@ -48,14 +48,26 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoPlace
-    \brief The QGeoPlace class represents a geolocation.
+    \brief The QGeoPlace class represents basic information about a place.
     \ingroup location
 
-    This class represent a geo location as returned by QSearchResponse::places().
+    A QGeoPlace contains a coordinate and the corresponding address, along
+    with an optional bounding box describing the minimum viewport necessary
+    to display the entirety of the place.
+
+    The subclasses of QGeoPlace can provide further place information.  It is
+    possible to convert instance of QGeoPlace subclasses to and from QGeoPlace
+    instances.
+
+    \sa type().
 */
 
+// TODO
+// Consider making the type enum and method protected
+// Provide a public bool isLandmark() const method instead
+
 /*!
-    Default constructor.
+    Constructs an empty place object.
 */
 QGeoPlace::QGeoPlace()
         : d_ptr(new QGeoPlacePrivate())
@@ -74,15 +86,15 @@ QGeoPlace::QGeoPlace(const QGeoPlace &other)
 }
 
 /*!
-    Destroys the location
+    Destroys this place.
 */
 QGeoPlace::~QGeoPlace()
 {
 }
 
 /*!
-    Assigns \a other to this location and returns a reference
-    to this location.
+    Assigns \a other to this place and returns a reference
+    to this place.
 */
 QGeoPlace &QGeoPlace::operator= (const QGeoPlace & other)
 {
@@ -101,7 +113,7 @@ inline const QGeoPlacePrivate* QGeoPlace::d_func() const
 }
 
 /*!
-    Returns true if \a other is equal to this location,
+    Returns true if \a other is equal to this place,
     otherwise returns false.
 */
 bool QGeoPlace::operator== (const QGeoPlace &other) const
@@ -110,7 +122,7 @@ bool QGeoPlace::operator== (const QGeoPlace &other) const
 }
 
 /*!
-    Returns true if \a other is not equal to this location,
+    Returns true if \a other is not equal to this place,
     otherwise returns false.
 */
 bool QGeoPlace::operator!= (const QGeoPlace &other) const
@@ -119,6 +131,18 @@ bool QGeoPlace::operator!= (const QGeoPlace &other) const
 }
 
 /*!
+    Returns type information about this place instance.
+
+    An instance of a subclass of QGeoPlace can be converted to a
+    QGeoPlace instance and back without losing any data.  The
+    QGeoPlace::PlaceType enum is used to indicate which subclass initially
+    created this QGeoPlace instance.
+
+    If the type corresponds to a subclass of QGeoPlace then this place
+    object can be converted back by using the subclass constructor which takes
+    a QGeoPlace object as an argument.  If the type is QGeoPlace::GeoPlaceType
+    then using this place in the same subclass constructor will only initialize
+    the coordinate, address and bounding box of the subclass.
 */
 QGeoPlace::PlaceType QGeoPlace::type() const
 {
@@ -126,10 +150,7 @@ QGeoPlace::PlaceType QGeoPlace::type() const
 }
 
 /*!
-    Returns the bounding box that completely encloses the location.
-
-    The x coordinates of the corner points represent longitudes,
-    the y coordinates represent latitudes.
+    Returns a bounding box that completely encloses this place.
 */
 QGeoBoundingBox QGeoPlace::boundingBox() const
 {
@@ -138,7 +159,9 @@ QGeoBoundingBox QGeoPlace::boundingBox() const
 }
 
 /*!
-    Sets the \a boundingBox of the location.
+    Sets the \a boundingBox of this place.
+
+    The \a boundingBox should completely enclose this place.
 */
 void QGeoPlace::setBoundingBox(const QGeoBoundingBox &boundingBox)
 {
@@ -147,7 +170,7 @@ void QGeoPlace::setBoundingBox(const QGeoBoundingBox &boundingBox)
 }
 
 /*!
-    Returns the geocoordinate of this location.
+    Returns the coordinate that this place is located at.
 */
 QGeoCoordinate QGeoPlace::coordinate() const
 {
@@ -156,7 +179,7 @@ QGeoCoordinate QGeoPlace::coordinate() const
 }
 
 /*!
-    Sets the \a coordinate of this location.
+    Sets the \a coordinate that this place is located at.
 */
 void QGeoPlace::setCoordinate(const QGeoCoordinate &coordinate)
 {
@@ -165,7 +188,7 @@ void QGeoPlace::setCoordinate(const QGeoCoordinate &coordinate)
 }
 
 /*!
-    Returns the address found.
+    Returns the address of this place.
 */
 QGeoAddress QGeoPlace::address() const
 {
@@ -174,7 +197,7 @@ QGeoAddress QGeoPlace::address() const
 }
 
 /*!
-    Sets the \a address of this location.
+    Sets the \a address of this place.
 */
 void QGeoPlace::setAddress(const QGeoAddress &address)
 {

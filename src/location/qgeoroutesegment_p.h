@@ -73,7 +73,7 @@ public:
     QGeoRouteSegmentPrivate& operator= (const QGeoRouteSegmentPrivate &other);
 
     QGeoRouteSegment::SegmentType type;
-    int travellingTime;
+    int travelTime;
     QGeoDistance distance;
     QList<QGeoCoordinate> path;
     const QGeoNavigationInstruction* instruction;

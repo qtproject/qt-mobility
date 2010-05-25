@@ -42,6 +42,8 @@
 #include "qgeoroutereply_nokia_p.h"
 #include "qgeoroutexmlparser_p.h"
 
+#include "qgeorouterequest.h"
+
 QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request, QNetworkReply *reply, QObject *parent)
     : QGeoRouteReply(request, parent),
     m_reply(reply)
@@ -79,6 +81,15 @@ void QGeoRouteReplyNokia::networkFinished()
 
     if (parser.parse(m_reply)) {
         setRoutes(parser.results());
+
+        // TODO push this into the parser
+        // potentially also add QGeoRoute(const QGeoRouteRequest &request)
+        // at the same time
+        QGeoRouteRequest request = this->request();
+        for (int i = 0; i < routes().size(); ++i) {
+            routes()[i].setRequest(request);
+        }
+
         setFinished(true);
     } else {
         // add a qWarning with the actual parser.errorString()

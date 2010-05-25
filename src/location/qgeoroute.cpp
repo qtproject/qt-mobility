@@ -115,6 +115,20 @@ QString QGeoRoute::routeId() const
     return d_ptr->id;
 }
 
+/*!
+*/
+void QGeoRoute::setRequest(const QGeoRouteRequest &request)
+{
+    d_ptr->request = request;
+}
+
+/*!
+*/
+QGeoRouteRequest QGeoRoute::request() const
+{
+    return d_ptr->request;
+}
+
 // TODO
 // this comes from the various specs
 // - won't this be highly dependent on zoom levels?
@@ -227,6 +241,7 @@ QGeoRoutePrivate::QGeoRoutePrivate() {}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         : id(other.id),
+        request(other.request),
         pathSummary(other.pathSummary),
         bounds(other.bounds),
         routeSegments(other.routeSegments),
@@ -238,6 +253,7 @@ QGeoRoutePrivate::~QGeoRoutePrivate() {}
 QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
 {
     id = other.id;
+    request = other.request;
     pathSummary = other.pathSummary;
     bounds = other.bounds;
     routeSegments = other.routeSegments;

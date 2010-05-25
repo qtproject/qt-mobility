@@ -67,6 +67,7 @@ public:
     ~QGeoRoutingManagerNokia();
 
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
+    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
     void setProxy(const QNetworkProxy &proxy);
     void setHost(QString host);
 
