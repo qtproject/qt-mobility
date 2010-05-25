@@ -103,6 +103,13 @@ SubscriberDialog::SubscriberDialog(QWidget *parent) :
 #endif
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
     changeSubscriberPath();
+
+    // if the default path does not exist reset it to /
+    QVariant value = subscriber->value();
+    if (!subscriber->value().isValid() && subscriber->subPaths().isEmpty()) {
+        ui->basePath->setText(QLatin1String("/"));
+        changeSubscriberPath();
+    }
 }
 
 SubscriberDialog::~SubscriberDialog()

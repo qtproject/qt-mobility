@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/" >
-        <file>battery-meter.qml</file>
-        <file>bubble.png</file>
-    </qresource>
-</RCC>

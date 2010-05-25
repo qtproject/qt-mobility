@@ -160,7 +160,7 @@ void tst_QVCard30Writer::testEncodeVersitProperty_data()
 
     // Value is base64 encoded.
     QByteArray value("value");
-    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=B:" + value.toBase64() + "\r\n";
+    expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=b:" + value.toBase64() + "\r\n";
     QStringList groups(QString::fromAscii("Springfield"));
     groups.append(QString::fromAscii("HOUSE"));
     property.setGroups(groups);

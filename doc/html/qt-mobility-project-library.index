@@ -6923,8 +6923,7 @@
             <contents name="namespace" title="Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="usage" title="Usage" level="1"/>
-            <contents name="classes" title="Classes" level="1"/>
-            <contents name="mapping-the-vcard-constants" title="Mapping the vCard constants" level="1"/>
+            <contents name="main-classes" title="Main Classes" level="1"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="DECLARE_READING" href="qsensorreading.html#DECLARE_READING" location="" virtual="non" meta="macrowithparams" const="false" static="false" overload="false" relates="QSensorReading" type="" signature="DECLARE_READING( classname)">
             <parameter left="" right="" name="classname" default=""/>
@@ -7188,18 +7187,14 @@
             <page access="public" status="commendable" name="battery-charge/battery-publisher/main.cpp" href="battery-charge-battery-publisher-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="battery-charge/battery-publisher/main.cpp" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-charge.pro" href="battery-charge-battery-charge-pro.html" subtype="file" title="" fulltitle="battery-charge.pro Example File" subtitle="battery-charge/battery-charge.pro" location=""/>
             <page access="public" status="commendable" name="battery-charge/battery-publisher/battery-publisher.pro" href="battery-charge-battery-publisher-battery-publisher-pro.html" subtype="file" title="" fulltitle="battery-publisher.pro Example File" subtitle="battery-charge/battery-publisher/battery-publisher.pro" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-subscriber/battery-subscriber.pro" href="battery-charge-battery-subscriber-battery-subscriber-pro.html" subtype="file" title="" fulltitle="battery-subscriber.pro Example File" subtitle="battery-charge/battery-subscriber/battery-subscriber.pro" location=""/>
-            <page access="public" status="commendable" name="battery-charge/battery-subscriber/battery-subscriber.qrc" href="battery-charge-battery-subscriber-battery-subscriber-qrc.html" subtype="file" title="" fulltitle="battery-subscriber.qrc Example File" subtitle="battery-charge/battery-subscriber/battery-subscriber.qrc" location=""/>
         </page>
         <page access="public" status="commendable" name="qmlcontacts" href="qmlcontacts.html" subtype="example" title="Sample QML-based Phonebook Example" fulltitle="Sample QML-based Phonebook Example" subtitle="" location="qmlcontacts.qdoc">
             <contents name="phone-book" title="Phone Book" level="1"/>
             <contents name="motivation" title="Motivation" level="2"/>
             <contents name="interface" title="Interface" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontact.cpp" href="qmlcontacts-qmlcontact-cpp.html" subtype="file" title="" fulltitle="qmlcontact.cpp Example File" subtitle="qmlcontacts/qmlcontact.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontact.h" href="qmlcontacts-qmlcontact-h.html" subtype="file" title="" fulltitle="qmlcontact.h Example File" subtitle="qmlcontacts/qmlcontact.h" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontacts.cpp" href="qmlcontacts-qmlcontacts-cpp.html" subtype="file" title="" fulltitle="qmlcontacts.cpp Example File" subtitle="qmlcontacts/qmlcontacts.cpp" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontactsa.h" href="qmlcontacts-qmlcontactsa-h.html" subtype="file" title="" fulltitle="qmlcontactsa.h Example File" subtitle="qmlcontacts/qmlcontactsa.h" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/qmlcontactmodel.cpp" href="qmlcontacts-qmlcontactmodel-cpp.html" subtype="file" title="" fulltitle="qmlcontactmodel.cpp Example File" subtitle="qmlcontacts/qmlcontactmodel.cpp" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/qmlcontactmodel.h" href="qmlcontacts-qmlcontactmodel-h.html" subtype="file" title="" fulltitle="qmlcontactmodel.h Example File" subtitle="qmlcontacts/qmlcontactmodel.h" location=""/>
             <page access="public" status="commendable" name="qmlcontacts/contents/default.svg" href="qmlcontacts-contents-default-svg.html" subtype="file" title="" fulltitle="default.svg Example File" subtitle="qmlcontacts/contents/default.svg" location=""/>
             <page access="public" status="commendable" name="qmlcontacts/main.cpp" href="qmlcontacts-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="qmlcontacts/main.cpp" location=""/>
             <page access="public" status="commendable" name="qmlcontacts/qmlcontacts.pro" href="qmlcontacts-qmlcontacts-pro.html" subtype="file" title="" fulltitle="qmlcontacts.pro Example File" subtitle="qmlcontacts/qmlcontacts.pro" location=""/>
@@ -7320,10 +7315,7 @@
             <contents name="what-s-special-from-the-security-perspective" title="What's special from the security perspective?" level="1"/>
             <contents name="directory-structure" title="Directory structure" level="1"/>
         </page>
-        <page access="public" status="commendable" name="future.html" href="future.html" subtype="page" title="Future Additional APIs" fulltitle="Future Additional APIs" subtitle="" location="future.qdoc">
-            <target name="management-of-versit-documents"/>
-            <contents name="management-of-versit-documents" title="Management of Versit Documents" level="1"/>
-        </page>
+        <page access="public" status="commendable" name="future.html" href="future.html" subtype="page" title="Future Additional APIs" fulltitle="Future Additional APIs" subtitle="" location="future.qdoc"/>
         <page access="public" status="commendable" name="serviceactions" href="serviceactions.html" subtype="example" title="Service Actions Example" fulltitle="Service Actions Example" subtitle="" location="serviceactions.qdoc">
             <contents name="send-and-compose" title="Send and Compose" level="1"/>
             <contents name="show" title="Show" level="1"/>

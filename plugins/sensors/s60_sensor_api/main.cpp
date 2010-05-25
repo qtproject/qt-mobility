@@ -55,13 +55,17 @@ class s60SensorApiSensorPlugin : public QObject, public QSensorPluginInterface, 
 public:
     void registerSensors()
     {
+#if !defined(HAS_NO_SENSOR_PROVISION)
         QSensorManager::registerBackend(QAccelerometer::type, QS60SensorApiAccelerometer::id, this);
+#endif
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
     {
+#if !defined(HAS_NO_SENSOR_PROVISION)
         if (sensor->identifier() == QS60SensorApiAccelerometer::id)
             return new QS60SensorApiAccelerometer(sensor);
+#endif
 
         return 0;
     }
