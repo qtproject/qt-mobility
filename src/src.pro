@@ -29,6 +29,11 @@ contains(mobility_modules,systeminfo): SUBDIRS += systeminfo
 contains(mobility_modules,versit): SUBDIRS += versit
 contains(mobility_modules,sensors): SUBDIRS += sensors
 
+# Contacts depends on ServiceFramework
+contacts.subdir=contacts
+contacts.target=sub-contacts
+contacts.depends=serviceframework
+
 # Versit depends on Contacts
 versit.subdir=versit
 versit.target=sub-versit

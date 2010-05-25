@@ -46,6 +46,7 @@
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
 #include "qcontactmanager_p.h"
+#include "qcontactactionservicemanager_p.h"
 #include "qcontactaction.h"
 
 QTM_BEGIN_NAMESPACE
@@ -895,16 +896,15 @@ QList<QContactRelationship> QContact::relationshipOrder() const
  * Each action that matches the above criteria will be tested to see if this contact is supported
  * by the action, and a list of the action descriptors that are supported will be returned.
  */
-QList<QContactActionDescriptor> QContact::availableActions(const QString& vendorName, int implementationVersion) const
+QList<QContactActionDescriptor> QContact::availableActions(const QString& serviceName) const
 {
     // check every action implementation to see if it supports me.
     QSet<QContactActionDescriptor> retn;
-    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
+    QList<QContactActionDescriptor> descriptors = QContactActionServiceManager::instance()->actionDescriptors();
     for (int i = 0; i < descriptors.size(); i++) {
         QContactActionDescriptor currDescriptor = descriptors.at(i);
-        if ((vendorName.isEmpty() || currDescriptor.vendorName() == vendorName) &&
-            (implementationVersion == -1 || currDescriptor.implementationVersion() == implementationVersion)) {
-            QScopedPointer<QContactAction> currImpl(QContactManagerData::action(currDescriptor));
+        if ((serviceName.isEmpty() || currDescriptor.serviceName() == serviceName)) {
+            QScopedPointer<QContactAction> currImpl(QContactActionServiceManager::instance()->action(currDescriptor));
             if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
                 retn.insert(currDescriptor);
             }

@@ -94,22 +94,6 @@ void QContactActionFilter::setValue(const QVariant& value)
 }
 
 /*!
- * Sets the vendor details criterion of the action whose availability is required to the given \a vendorName and \a implementationVersion
- * \sa vendorName(), implementationVersion()
- */
-void QContactActionFilter::setVendor(const QString& vendorName, int implementationVersion)
-{
-    Q_D(QContactActionFilter);
-    d->m_vendorName = vendorName;
-    if (!vendorName.isEmpty()) {
-        d->m_implementationVersion = implementationVersion;
-        return;
-    }
-
-    d->m_implementationVersion = -1;
-}
-
-/*!
  * Returns the action name criterion of the filter
  * \sa setActionName()
  */
@@ -127,26 +111,6 @@ QVariant QContactActionFilter::value() const
 {
     Q_D(const QContactActionFilter);
     return d->m_value;
-}
-
-/*!
- * Returns the vendor name criterion of the filter
- * \sa setVendor()
- */
-QString QContactActionFilter::vendorName() const
-{
-    Q_D(const QContactActionFilter);
-    return d->m_vendorName;
-}
-
-/*!
- * Returns the vendor-specified action implementation version criterion of the filter
- * \sa setVendor()
- */
-int QContactActionFilter::implementationVersion() const
-{
-    Q_D(const QContactActionFilter);
-    return d->m_implementationVersion;
 }
 
 QTM_END_NAMESPACE

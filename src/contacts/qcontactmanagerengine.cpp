@@ -57,6 +57,7 @@
 
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
+#include "qcontactactionservicemanager_p.h"
 
 #include <QMutex>
 #include <QMutexLocker>
@@ -549,7 +550,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
         {
             // Find any matching actions, and do a union filter on their filter objects
             QContactActionFilter af(filter);
-            QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+            QList<QContactActionDescriptor> descriptors = QContactActionServiceManager::instance()->actionDescriptors(af.actionName());
 
             QList<QContactFilter> filters;
             // There's a small wrinkle if there's a value specified in the action filter
@@ -2045,7 +2046,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             {
                 // Find any matching actions, and do a union filter on their filter objects
                 QContactActionFilter af(filter);
-                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
+                QList<QContactActionDescriptor> descriptors = QContactActionServiceManager::instance()->actionDescriptors(af.actionName());
 
                 // There's a small wrinkle if there's a value specified in the action filter
                 // we have to adjust any contained QContactDetailFilters to have that value
@@ -2056,7 +2057,6 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                     // Action filters are not allowed to return action filters, at all
                     // it's too annoying to check for recursion
                     QContactFilter d = action->contactFilter(af.value());
-                    delete action; // clean up.
                     if (!validateActionFilter(d))
                         return false;
 

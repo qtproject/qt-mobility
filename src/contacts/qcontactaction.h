@@ -61,10 +61,10 @@ class Q_CONTACTS_EXPORT QContactAction : public QObject
 
 public:
     /* return a list of names of actions which are available */
-    static QStringList availableActions(const QString& vendorName = QString(), int implementationVersion = -1);
+    static QStringList availableActions(const QString& serviceName = QString());
 
     /* return a list of descriptors for action implementations matching the given criteria */
-    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString(), const QString& vendorName = QString(), int implementationVersion = -1);
+    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
 
     /* return a pointer to an implementation of the action identified by the given descriptor */
     static QContactAction* action(const QContactActionDescriptor& descriptor);

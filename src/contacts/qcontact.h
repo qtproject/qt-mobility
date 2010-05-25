@@ -178,7 +178,7 @@ public:
     QList<QContactRelationship> Q_DECL_DEPRECATED relationshipOrder() const;
 
     /* Actions available to be performed on this contact */
-    QList<QContactActionDescriptor> availableActions(const QString& vendorName = QString(), int implementationVersion = -1) const;
+    QList<QContactActionDescriptor> availableActions(const QString& serviceName = QString()) const;
 
     /* Preferences (eg, set a particular detail preferred for the SMS action) - subject to change! */
     bool setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail);

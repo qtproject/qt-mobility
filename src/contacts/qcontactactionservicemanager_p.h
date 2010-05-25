@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,45 +40,56 @@
 ****************************************************************************/
 
 
-#ifndef QCONTACTACTIONDESCRIPTOR_H
-#define QCONTACTACTIONDESCRIPTOR_H
+#ifndef QCONTACTACTIONSERVICEMANAGER_P_H
+#define QCONTACTACTIONSERVICEMANAGER_P_H
 
-#include "qtcontactsglobal.h"
-#include <QString>
-#include <QSharedDataPointer>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <QMultiHash>
+#include <QHash>
+
+#include "qservice.h"
+
+#include "qtcontacts.h"
 
 QTM_BEGIN_NAMESPACE
+class QServiceManager;
 
-class QContactActionDescriptorPrivate;
-class Q_CONTACTS_EXPORT QContactActionDescriptor
+class QContactActionServiceManager : public QObject
 {
+    Q_OBJECT
 public:
-    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& serviceName = QString(), int vendorVersion = -1);
-    QContactActionDescriptor(const QContactActionDescriptor& other);
-    QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
-    ~QContactActionDescriptor();
+    static QContactActionServiceManager* instance();
 
-    bool isEmpty() const;
-    bool operator==(const QContactActionDescriptor& other) const;
-    bool operator!=(const QContactActionDescriptor& other) const;
-    bool operator<(const QContactActionDescriptor& other) const;
+    QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
+    QContactAction* action(const QContactActionDescriptor& descriptor);
 
-    void setActionName(const QString& actionName);
-    void setServiceName(const QString& serviceName);
-    void setImplementationVersion(int implementationVersion);
-
-    QString actionName() const;
-    QString serviceName() const;
-    int implementationVersion() const;
+public slots:
+    void serviceAdded(const QString& serviceName, const QService::Scope scope);
+    void serviceRemoved(const QString& serviceName, const QService::Scope scope);
 
 private:
-    QSharedDataPointer<QContactActionDescriptorPrivate> d;
-};
+    QContactActionServiceManager();
+    ~QContactActionServiceManager();
 
-Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
+    static QContactActionServiceManager *m_instance;
+
+    QServiceManager *m_serviceManager;
+
+    QHash<QContactActionDescriptor, QContactAction*> m_actionHash;   // descriptor to action ptr
+    QMultiHash<QString, QContactActionDescriptor> m_descriptorHash;  // action name to descriptor
+};
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactActionDescriptor), Q_MOVABLE_TYPE);
-
 #endif
+

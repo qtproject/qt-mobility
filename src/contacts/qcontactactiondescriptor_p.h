@@ -61,10 +61,10 @@ QTM_BEGIN_NAMESPACE
 class QContactActionDescriptorPrivate : public QSharedData
 {
 public:
-    QContactActionDescriptorPrivate(const QString& action, const QString& vendor, int version)
+    QContactActionDescriptorPrivate(const QString& action, const QString& service, int version)
             : QSharedData(),
             m_actionName(action),
-            m_vendorName(vendor),
+            m_serviceName(service),
             m_implementationVersion(version)
     {
     }
@@ -79,9 +79,9 @@ public:
         if (m_actionName < other.m_actionName)
             return true;
         if (m_actionName == other.m_actionName) {
-            if (m_vendorName < other.m_vendorName)
+            if (m_serviceName < other.m_serviceName)
                 return true;
-            else if (m_vendorName == other.m_vendorName) {
+            else if (m_serviceName == other.m_serviceName) {
                 if (m_implementationVersion < other.m_implementationVersion)
                     return true;
                 else if (m_implementationVersion == other.m_implementationVersion)
@@ -93,7 +93,7 @@ public:
     */
 
     QString m_actionName;
-    QString m_vendorName;
+    QString m_serviceName;
     int m_implementationVersion;
 };
 

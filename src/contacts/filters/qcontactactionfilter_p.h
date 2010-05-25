@@ -65,17 +65,14 @@ class QContactActionFilterPrivate : public QContactFilterPrivate
 {
 public:
     QContactActionFilterPrivate()
-        : QContactFilterPrivate(),
-        m_implementationVersion(-1)
+        : QContactFilterPrivate()
     {
     }
 
     QContactActionFilterPrivate(const QContactActionFilterPrivate& other)
         : QContactFilterPrivate(other),
         m_action(other.m_action),
-        m_value(other.m_value),
-        m_vendorName(other.m_vendorName),
-        m_implementationVersion(other.m_implementationVersion)
+        m_value(other.m_value)
     {
     }
 
@@ -86,10 +83,6 @@ public:
             return false;
         if (m_value != od->m_value)
             return false;
-        if (m_vendorName != od->m_vendorName)
-            return false;
-        if (m_implementationVersion != od->m_implementationVersion)
-            return false;
         return true;
     }
 
@@ -97,8 +90,6 @@ public:
 
     QString m_action;
     QVariant m_value;
-    QString m_vendorName;
-    int m_implementationVersion;
 };
 
 QTM_END_NAMESPACE

@@ -54,10 +54,10 @@ QTM_BEGIN_NAMESPACE
 
 /*!
  * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
- * of the given implementation \a vendorVersion, as implemented by the vendor identified by the given \a vendorName
+ * of the given implementation \a implementationVersion, as implemented by the service identified by the given \a serviceName
  */
-QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& vendorName, int vendorVersion)
-        : d(new QContactActionDescriptorPrivate(actionName, vendorName, vendorVersion))
+QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion)
+        : d(new QContactActionDescriptorPrivate(actionName, serviceName, implementationVersion))
 {
 }
 
@@ -94,15 +94,15 @@ void QContactActionDescriptor::setActionName(const QString& actionName)
 }
 
 /*!
- * Sets the name of the vendor of the action implementation identified by this action descriptor to \a vendorName
+ * Sets the name of the service of the action implementation identified by this action descriptor to \a serviceName
  */
-void QContactActionDescriptor::setVendorName(const QString& vendorName)
+void QContactActionDescriptor::setServiceName(const QString& serviceName)
 {
-    d->m_vendorName = vendorName;
+    d->m_serviceName = serviceName;
 }
 
 /*!
- * Sets the vendor-specified implementation version of the action implementation identified by this action descriptor to \a implementationVersion
+ * Sets the service-specified implementation version of the action implementation identified by this action descriptor to \a implementationVersion
  */
 void QContactActionDescriptor::setImplementationVersion(int implementationVersion)
 {
@@ -118,15 +118,15 @@ QString QContactActionDescriptor::actionName() const
 }
 
 /*!
- * Returns the name of the vendor of the action implementation which is identified by the action descriptor
+ * Returns the name of the service of the action implementation which is identified by the action descriptor
  */
-QString QContactActionDescriptor::vendorName() const
+QString QContactActionDescriptor::serviceName() const
 {
-    return d->m_vendorName;
+    return d->m_serviceName;
 }
 
 /*!
- * Returns the vendor-specified version of the action implementation which is identified by the action descriptor
+ * Returns the service-specified version of the action implementation which is identified by the action descriptor
  */
 int QContactActionDescriptor::implementationVersion() const
 {
@@ -134,14 +134,14 @@ int QContactActionDescriptor::implementationVersion() const
 }
 
 /*!
- * Returns true if either the name, vendor and version of the descriptor are missing from the descriptor.
+ * Returns true if either the name, service and version of the descriptor are missing from the descriptor.
  * An empty descriptor cannot uniquely identify an action.
  */
 bool QContactActionDescriptor::isEmpty() const
 {
     if (d->m_actionName.isEmpty())
         return true;
-    if (d->m_vendorName.isEmpty())
+    if (d->m_serviceName.isEmpty())
         return true;
     if (d->m_implementationVersion <= 0)
         return true;
@@ -149,18 +149,18 @@ bool QContactActionDescriptor::isEmpty() const
 }
 
 /*!
- * Returns true if the action name, vendor name and vendor-specified implementation version
+ * Returns true if the action name, service name and service-specified implementation version
  * specified by this action descriptor are equal to those specified by \a other
  */
 bool QContactActionDescriptor::operator==(const QContactActionDescriptor& other) const
 {
     return d->m_actionName == other.d->m_actionName
-            && d->m_vendorName == other.d->m_vendorName
+            && d->m_serviceName == other.d->m_serviceName
             && d->m_implementationVersion == other.d->m_implementationVersion;
 }
 
 /*!
- * Returns true if the action name, vendor name or vendor-specified implementation version
+ * Returns true if the action name, service name or service-specified implementation version
  * specified by this action descriptor are different to that specified by \a other
  */
 bool QContactActionDescriptor::operator!=(const QContactActionDescriptor& other) const
@@ -170,12 +170,12 @@ bool QContactActionDescriptor::operator!=(const QContactActionDescriptor& other)
 
 /*!
  * Returns true if the action descriptor is less than the \a other action descriptor.  The
- * comparison is performed first on the vendor name, then the action name, then the implementation
+ * comparison is performed first on the service name, then the action name, then the implementation
  * version.
  */
 bool QContactActionDescriptor::operator<(const QContactActionDescriptor& other) const
 {
-    int comp = d->m_vendorName.compare(other.d->m_vendorName);
+    int comp = d->m_serviceName.compare(other.d->m_serviceName);
     if (comp != 0)
         return comp < 0;
     comp = d->m_actionName.compare(other.d->m_actionName);
@@ -187,7 +187,7 @@ bool QContactActionDescriptor::operator<(const QContactActionDescriptor& other) 
 /*! Returns the hash value for \a key. */
 uint qHash(const QContactActionDescriptor& key)
 {
-    return QT_PREPEND_NAMESPACE(qHash)(key.vendorName())
+    return QT_PREPEND_NAMESPACE(qHash)(key.serviceName())
             + QT_PREPEND_NAMESPACE(qHash)(key.actionName())
             + QT_PREPEND_NAMESPACE(qHash)(key.implementationVersion());
 }

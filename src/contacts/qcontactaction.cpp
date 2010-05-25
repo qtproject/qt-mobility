@@ -43,6 +43,8 @@
 #include "qcontactmanager_p.h"
 #include "qcontactactiondescriptor.h"
 
+#include "qcontactactionservicemanager_p.h"
+
 #include <QSet>
 #include <QString>
 
@@ -188,45 +190,41 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
  */
 
 /*!
-  Returns a list of identifiers of the available actions which are provided by the given \a vendor and of the given \a implementationVersion.
-  If \a vendor is empty, actions from all vendors and of any implementation version are returned; if \a implementationVersion is empty,
-  any actions from the given \a vendor (regardless of implementation version) are returned.
+  Returns a list of identifiers of the available actions which are provided by the service provider with the given \a serviceName.
+  If \a serviceName is empty, actions from all service providers and of any implementation version are returned.
  */
-QStringList QContactAction::availableActions(const QString& vendor, int implementationVersion)
+QStringList QContactAction::availableActions(const QString& serviceName)
 {
     // SLOW naive implementation...
     QSet<QString> ret;
     QContactManagerData::loadFactories();
-    QList<QContactActionDescriptor> actionDescriptors = QContactManagerData::actionDescriptors(QString(), vendor, implementationVersion);
+    QList<QContactActionDescriptor> actionDescriptors = QContactActionServiceManager::instance()->actionDescriptors();
     for (int i = 0; i < actionDescriptors.size(); i++) {
         QContactActionDescriptor descriptor = actionDescriptors.at(i);
-        ret.insert(descriptor.actionName());
+        if (serviceName.isEmpty() || serviceName == descriptor.serviceName())
+            ret.insert(descriptor.actionName());
     }
 
     return ret.toList();
 }
 
 /*!
-  Returns a list of QContactActionDescriptor instances which identified implementations of the given \a actionName which are provided by the
-  given \a vendorName and are of the given \a implementationVersion.  If \a actionName is empty, descriptors for
-  implementations of all actions are returned; if \a vendorName is empty, descriptors for implementations provided by any vendor and
-  of any implementation version are returned; if \a implementationVersion is empty, descriptors for any implementations provided by the
-  given \a vendorName of the given \a actionName are returned.
+  Returns a list of QContactActionDescriptor instances which identified implementations of the given \a actionName.
  */
-QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName, const QString& vendorName, int implementationVersion)
+QList<QContactActionDescriptor> QContactAction::actionDescriptors(const QString& actionName)
 {
-    QContactManagerData::loadFactories();
-    return QContactManagerData::actionDescriptors(actionName, vendorName, implementationVersion);
+    QContactActionServiceManager* qcasm = QContactActionServiceManager::instance();
+    return qcasm->actionDescriptors(actionName);
 }
 
 /*!
   Returns a pointer to a new instance of the action implementation identified by the given \a descriptor.
-  The caller takes ownership of the action implementation and must delete it to avoid leaking memory.
+  The caller does NOT take ownership of the action implementation and must not delete it or undefined behaviour will occur.
  */
 QContactAction* QContactAction::action(const QContactActionDescriptor& descriptor)
 {
-    QContactManagerData::loadFactories();
-    return QContactManagerData::action(descriptor);
+    QContactActionServiceManager* qcasm = QContactActionServiceManager::instance();
+    return qcasm->action(descriptor);
 }
 
 #include "moc_qcontactaction.cpp"
