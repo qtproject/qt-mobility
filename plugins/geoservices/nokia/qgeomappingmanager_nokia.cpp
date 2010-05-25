@@ -42,8 +42,7 @@
 #include "qgeomappingmanager_nokia_p.h"
 #include "qgeomapreply_nokia_p.h"
 
-#include <qgeomappingmanager_p.h>
-
+#include <QNetworkProxy>
 #include <QSize>
 
 #define LARGE_TILE_DIMENSION 256
@@ -278,7 +277,7 @@ QPointF QGeoMappingManagerNokia::coordinateToScreenPosition(const QGeoCoordinate
     Q_D(const QGeoMappingManager);
 
     qint32 numColRow = 1;
-    numColRow <<= d->zoomLevel;
+    numColRow <<= zoomLevel();
     double lng = coordinate.longitude(); //x
     double lat = coordinate.latitude(); //y
 
@@ -309,7 +308,7 @@ QGeoCoordinate QGeoMappingManagerNokia::screenPositionToCoordinate(QPointF scree
     Q_D(const QGeoMappingManager);
 
     qint32 numColRow = 1;
-    numColRow <<= d->zoomLevel;
+    numColRow <<= zoomLevel();
     screenPosition += m_viewPort.topLeft();
     QPointF mercCoord(screenPosition.x() / (((qreal) numColRow) * ((qreal) m_tileSize.width())),
                       screenPosition.y() / (((qreal) numColRow) * ((qreal) m_tileSize.height())));
