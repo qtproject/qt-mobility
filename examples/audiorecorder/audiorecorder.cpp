@@ -156,7 +156,7 @@ AudioRecorder::AudioRecorder()
 
     layout->addWidget(codecLabel,2,0,Qt::AlignHCenter);
     connect(codecsBox,SIGNAL(activated(int)),SLOT(codecChanged(int)));
-    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);   
+    layout->addWidget(codecsBox,2,1,1,3,Qt::AlignLeft);    
     
     layout->addWidget(sampleRateLabel,3,0,Qt::AlignHCenter);
     connect(sampleRateBox,SIGNAL(activated(int)),SLOT(sampleRateChanged(int)));
@@ -301,17 +301,18 @@ void AudioRecorder::channelCountChanged(int idx)
 
 void AudioRecorder::qualityChanged(int idx)
 { 
-    QAudioEncoderSettings settings = capture->audioSettings();    
+    QAudioEncoderSettings settings = capture->audioSettings();
     
+    qDebug()<<"AudioRecorder::qualityChanged"<<settings.quality();
     switch(idx) {
-        case 0:
-            settings.setQuality(QtMediaServices::LowQuality);
-            break;
-        case 1:
-            settings.setQuality(QtMediaServices::NormalQuality);
-            break;
-        default:
-            settings.setQuality(QtMediaServices::HighQuality);
+    case 0:
+        settings.setQuality(QtMedia::LowQuality);
+        break;
+    case 1:
+        settings.setQuality(QtMedia::NormalQuality);
+        break;
+    default:
+        settings.setQuality(QtMedia::HighQuality);
     }
     capture->setEncodingSettings(settings);
 }
