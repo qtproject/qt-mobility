@@ -1,12 +1,12 @@
-    <?xml version="1.0" encoding="utf-8" ?>
-    <service>
-        <name>tst_QContactAction:sendemail</name>
-        <filepath>plugins/contacts/libcontacts_sendemailaction</filepath>
-        <description>This service provides the "send email" QContactAction for testing purposes</description>
-        <interface>
-            <name>com.nokia.qt.mobility.contacts.qcontactaction.sendemail</name>
-            <version>1.0</version>
-            <capabilities></capabilities>
-            <description>Interface which allows sending emails to a contact</description>
-        </interface>
-    </service>
+<?xml version="1.0" encoding="utf-8" ?>
+<service>
+    <name>tst_QContactAction:sendemail</name>
+    <filepath>plugins/contacts/libcontacts_sendemailaction</filepath>
+    <description>This service provides the "send email" QContactAction for testing purposes</description>
+    <interface>
+        <name>com.nokia.qt.mobility.contacts.qcontactaction.sendemail</name>
+        <version>1.0</version>
+        <capabilities></capabilities>
+        <description>Interface which allows sending emails to a contact</description>
+    </interface>
+</service>

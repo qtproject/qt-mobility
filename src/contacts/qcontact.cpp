@@ -904,7 +904,7 @@ QList<QContactActionDescriptor> QContact::availableActions(const QString& servic
     for (int i = 0; i < descriptors.size(); i++) {
         QContactActionDescriptor currDescriptor = descriptors.at(i);
         if ((serviceName.isEmpty() || currDescriptor.serviceName() == serviceName)) {
-            QScopedPointer<QContactAction> currImpl(QContactActionServiceManager::instance()->action(currDescriptor));
+            QContactAction* currImpl = QContactActionServiceManager::instance()->action(currDescriptor);
             if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
                 retn.insert(currDescriptor);
             }

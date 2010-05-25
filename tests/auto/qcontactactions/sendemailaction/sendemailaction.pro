@@ -21,4 +21,10 @@ DEFINES += ACTIONFACTORYPLUGINNAME=SendEmailActionFactory
 HEADERS += sendemailaction_p.h
 SOURCES += sendemailaction.cpp
 
+xml.path = $$DESTDIR/xmldata
+xml.files = sendemailservice.xml
+xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
+INSTALLS += xml
+build_pass:ALL_DEPS+=install_xml
+
 include(../../contacts_plugins.pri)
