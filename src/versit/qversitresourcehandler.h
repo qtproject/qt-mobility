@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 class QVersitDefaultResourceHandlerPrivate;
 class QVersitProperty;
 
-class QVersitResourceHandler
+class Q_VERSIT_EXPORT QVersitResourceHandler
 {
 public:
     virtual ~QVersitResourceHandler() {}
@@ -61,7 +61,7 @@ public:
                               QString* location) = 0;
 };
 
-class QVersitDefaultResourceHandler : public QVersitResourceHandler
+class Q_VERSIT_EXPORT QVersitDefaultResourceHandler : public QVersitResourceHandler
 {
 public:
     QVersitDefaultResourceHandler();

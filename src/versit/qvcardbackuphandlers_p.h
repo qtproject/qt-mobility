@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QVERSITCONTACTDEFAULTHANDLER_H
-#define QVERSITCONTACTDEFAULTHANDLER_H
+#ifndef QVCARDBACKUPHANDLERS_P_H
+#define QVCARDBACKUPHANDLERS_P_H
 
 #include <QList>
 #include <QSet>
@@ -69,12 +69,11 @@ private:
     QHash<int, QContactDetail> mDetailById; // detailid -> detail
 };
 
-/* See QVersitContactImporter::createDefaultHandler() */
-class QVersitContactImporterDefaultPropertyHandler
-    : public QVersitContactImporterPropertyHandlerV2
+/* See QVersitContactImporter::createBackupHandler() */
+class QVCardImporterBackupHandler : public QVersitContactImporterPropertyHandlerV2
 {
 public:
-    QVersitContactImporterDefaultPropertyHandler();
+    QVCardImporterBackupHandler();
     void propertyProcessed(const QVersitDocument& document,
                            const QVersitProperty& property,
                            bool alreadyProcessed,
@@ -88,12 +87,11 @@ private:
 
 };
 
-/* See QVersitContactExporter::createDefaultHandler() */
-class QVersitContactExporterDefaultDetailHandler
-    : public QVersitContactExporterDetailHandlerV2
+/* See QVersitContactExporter::createBackupHandler() */
+class QVCardExporterBackupHandler : public QVersitContactExporterDetailHandlerV2
 {
 public:
-    QVersitContactExporterDefaultDetailHandler();
+    QVCardExporterBackupHandler();
     void detailProcessed(const QContact& contact,
                          const QContactDetail& detail,
                          const QSet<QString>& processedFields,

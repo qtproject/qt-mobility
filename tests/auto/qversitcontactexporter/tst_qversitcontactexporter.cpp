@@ -42,6 +42,7 @@
 #include "tst_qversitcontactexporter.h"
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
+#include "qversitresourcehandler.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qversitdefs_p.h"

@@ -42,6 +42,7 @@
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
+#include "qvcardbackuphandlers_p.h"
 #include "qmobilityglobal.h"
 
 #include <qcontact.h>
@@ -167,7 +168,7 @@ QTM_USE_NAMESPACE
   setDetailHandler(), the client can pass in a handler to override the processing of details and/or
   handle details that QVersitContactExporter doesn't support.  By default, this is set to a a
   handler that encodes details that the exporter doesn't recognise (see \l
-  QVersitContactExporterDetailHandlerV2::createDefaultHandler()).  The details are encoded in a format
+  QVersitContactExporterDetailHandlerV2::createBackupHandler()).  The details are encoded in a format
   that can be decoded by a default handler associated with the QVersitContactImporter.  This means
   that if a contact is exported and then imported again, the resulting contact will be virtually
   identical to the original one, even if there are non-standard details.
@@ -203,7 +204,7 @@ QTM_USE_NAMESPACE
 
 
 /*!
-  \fn static QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createDefaultHandler()
+  \fn static QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createBackupHandler()
   Constructs a default detail handler and returns it.  The caller is responsible for deleting the
   object.  If a QVersitContactExporter has not been explicitly associated with a detail handler,
   it is associated with one created using this function.
@@ -237,7 +238,7 @@ QTM_USE_NAMESPACE
   \endcode
 
   The properties produced by this class can be imported by the default importer property handler
-  (created by QVersitContactImporterPropertyHandlerV2::createDefaultHandler()) to reproduce the
+  (created by QVersitContactImporterPropertyHandlerV2::createBackupHandler()) to reproduce the
   original \l{QContactDetail}{QContactDetails}.
 
   Clients wishing to implement their own detail handler and also benefit from the functionality of
@@ -246,8 +247,8 @@ QTM_USE_NAMESPACE
   contactProcessed, the respective functions in the default handler should be called as the last
   step (ensuring the arguments are correctly updated and passed through).
  */
-QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createDefaultHandler() {
-    return new QVersitContactExporterDefaultDetailHandler;
+QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createBackupHandler() {
+    return new QVCardExporterBackupHandler;
 }
 
 /*!

@@ -42,7 +42,7 @@
 #include <QList>
 #include <QString>
 #include <QTextStream>
-#include "qversitcontactdefaulthandlers.h"
+#include "qvcardbackuphandlers_p.h"
 #include "qcontact.h"
 #include "qcontactdetail.h"
 #include "qversitdocument.h"
@@ -106,11 +106,11 @@ void DetailGroupMap::clear()
 }
 
 
-QVersitContactImporterDefaultPropertyHandler::QVersitContactImporterDefaultPropertyHandler()
+QVCardImporterBackupHandler::QVCardImporterBackupHandler()
 {
 }
 
-void QVersitContactImporterDefaultPropertyHandler::propertyProcessed(
+void QVCardImporterBackupHandler::propertyProcessed(
         const QVersitDocument& document,
         const QVersitProperty& property,
         bool alreadyProcessed,
@@ -171,7 +171,7 @@ void QVersitContactImporterDefaultPropertyHandler::propertyProcessed(
     }
 }
 
-void QVersitContactImporterDefaultPropertyHandler::documentProcessed(
+void QVCardImporterBackupHandler::documentProcessed(
         const QVersitDocument& document,
         QContact* contact)
 {
@@ -180,12 +180,12 @@ void QVersitContactImporterDefaultPropertyHandler::documentProcessed(
     mDetailGroupMap.clear();
 }
 
-QVersitContactExporterDefaultDetailHandler::QVersitContactExporterDefaultDetailHandler()
+QVCardExporterBackupHandler::QVCardExporterBackupHandler()
     : mDetailNumber(0)
 {
 }
 
-void QVersitContactExporterDefaultDetailHandler::detailProcessed(
+void QVCardExporterBackupHandler::detailProcessed(
         const QContact& contact,
         const QContactDetail& detail,
         const QSet<QString>& processedFields,
@@ -237,7 +237,7 @@ void QVersitContactExporterDefaultDetailHandler::detailProcessed(
     }
 }
 
-void QVersitContactExporterDefaultDetailHandler::contactProcessed(
+void QVCardExporterBackupHandler::contactProcessed(
         const QContact& contact,
         QVersitDocument* document)
 {
