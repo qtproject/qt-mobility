@@ -75,6 +75,15 @@ typedef QPair<QContactLocalId, QContactLocalId> QOwnCardPair;
 #endif
 
 CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
+    : m_dataBase(0),
+      m_managerUri(0),
+      m_transformContact(0),
+      m_contactFilter(0),
+#ifndef SYMBIAN_BACKEND_USE_SQLITE
+      m_contactSorter(0),
+#endif
+      m_relationship(0),
+      m_displayLabel(0)
 {
     *error = QContactManager::NoError;
 
