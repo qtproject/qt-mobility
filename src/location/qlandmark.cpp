@@ -180,22 +180,12 @@ QLandmark::QLandmark(const QGeoPlace &other)
 {
     switch (other.type()) {
         case QGeoPlace::GeoPlaceType:
-        // The QGeoPlace copy construct will increase the reference count
-        // of other.d_ptr by 1.
-        // Deleting our copy of d_ptr will reverse this, allowing us
-        // to create a new d_ptr of a different type without breaking other
-        delete d_ptr;
         d_ptr = new QLandmarkPrivate(*(other.d_ptr.constData()));
         break;
     case QGeoPlace::LandmarkType:
         // nothing extra to do here
         break;
     default:
-        // The QGeoPlace copy construct will increase the reference count
-        // of other.d_ptr by 1.
-        // Deleting our copy of d_ptr will reverse this, allowing us
-        // to create a new d_ptr of a different type without breaking other
-        delete d_ptr;
         d_ptr = new QLandmarkPrivate();
         break;
     }
