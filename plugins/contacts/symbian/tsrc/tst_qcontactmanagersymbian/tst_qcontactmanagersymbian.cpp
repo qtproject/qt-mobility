@@ -157,7 +157,8 @@ void tst_QContactManagerSymbian::cleanup()
 {
     // If the following is commented out => the generated contacts are left into
     // the database
-    QVERIFY(m_cm->removeContact(m_contactId.localId()));
+    QList<QContactLocalId> ids = m_cm->contactIds();
+    QVERIFY(m_cm->removeContacts(ids, 0));
 }
 
 void tst_QContactManagerSymbian::signalEmission()
@@ -286,8 +287,52 @@ void tst_QContactManagerSymbian::signalEmission()
     contactsRemoved++;
     QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
-
-    // Add self contact
+    
+    // create a group + a contact and create a relationship3 
+    QContact group3 = createContact(QContactType::TypeGroup, "Outlaws", "");
+    QVERIFY(m_cm->saveContact(&group3));
+    contactsAdded++;
+    QContact contact3 = createContact(QContactType::TypeContact, "Jesse", "James");
+    QVERIFY(m_cm->saveContact(&contact3));
+    contactsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    QContactRelationship r3;
+    r3.setFirst(group3.id());
+    r3.setSecond(contact3.id());
+    r3.setRelationshipType(QContactRelationship::HasMember);
+    QVERIFY(m_cm->saveRelationship(&r3));
+    relationshipsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Remove contact from relationship3
+    QVERIFY(m_cm->removeContact(contact3.localId()));
+    contactsRemoved++;
+    relationshipsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Restore contact and relationship3
+    contact3.setId(QContactId());
+    QVERIFY(m_cm->saveContact(&contact3));
+    contactsAdded++;
+    r3.setSecond(contact3.id());
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    QVERIFY(m_cm->saveRelationship(&r3));
+    relationshipsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Remove group from relationship3
+    QVERIFY(m_cm->removeContact(group3.localId()));
+    contactsRemoved++;
+    relationshipsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Self contact
     QContact memyself = createContact(QContactType::TypeContact, "Kimi", "Raikkonen");
     QVERIFY(m_cm->saveContact(&memyself));
     contactsAdded++;
@@ -382,6 +427,23 @@ void tst_QContactManagerSymbian::signalEmissionWithContactModel()
     contactsRemoved++;
     relationshipsRemoved++;
     QTRY_COMPARE_SIGNAL_COUNTS();
+    
+    // restore contact and relationship
+    contact2.setId(QContactId());
+    QVERIFY(m_cm->saveContact(&contact2));
+    contactsAdded++;
+    r.setSecond(contact2.id());
+    QVERIFY(m_cm->saveRelationship(&r));
+    relationshipsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    
+    // Remove group from relationship
+    m_contactDatabase->DeleteContactL(group.localId());
+    contactsRemoved++;
+    relationshipsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+	
+   // TODO: Create a group which has members already
 }
 
 /*

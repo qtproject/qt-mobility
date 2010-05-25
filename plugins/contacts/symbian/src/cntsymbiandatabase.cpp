@@ -139,6 +139,7 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
     QContactChangeSet changeSet;
     TContactItemId id = aEvent.iContactId;
 
+#ifdef SYMBIAN_BACKEND_SIGNAL_EMISSION_TWEAK
     switch (aEvent.iType)
     {
     case EContactDbObserverEventContactAdded:
@@ -173,13 +174,10 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             changeSet.insertChangedContact(id);
         break;
     case EContactDbObserverEventGroupAdded:
-        if(m_contactsEmitted.contains(id)) {
-            // adding a group triggers also a "changed" event. The work-around
-            // is to leave the id to m_contactsEmitted
-        } else {
+        if(m_contactsEmitted.contains(id))
+            m_contactsEmitted.removeOne(id);
+        else 
             changeSet.insertAddedContact(id);
-            m_contactsEmitted.append(id);
-        }
         break;
     case EContactDbObserverEventGroupDeleted:
         if(m_contactsEmitted.contains(id))
@@ -191,29 +189,6 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
         if(m_contactsEmitted.contains(id))
             m_contactsEmitted.removeOne(id);
         else {
-#ifndef SYMBIAN_BACKEND_USE_SQLITE
-            // Contact DB observer API does not give information of contacts
-            // possibly added to or removed from the group
-            QSet<QContactLocalId> added;
-            QSet<QContactLocalId> removed;
-            TRAPD(err, updateGroupMembershipsL(id, added, removed));
-            if(err != KErrNone){
-                changeSet.setDataChanged(true);
-            } else if(removed.count()) {
-                // The group changed event was caused by removing contacts
-                // from the group
-                changeSet.insertRemovedRelationshipsContact(id);
-                changeSet.insertRemovedRelationshipsContacts(removed.toList());
-            } else if(added.count()) {
-                // The group changed event was caused by adding contacts
-                // to the group
-                changeSet.insertAddedRelationshipsContact(id);
-                changeSet.insertAddedRelationshipsContacts(added.toList());
-            } else {
-                // The group changed event was caused by modifying the group
-                changeSet.insertChangedContact(id);
-            }
-#else
             // Currently the group membership check is only used in pre-10.1
             // platforms. In 10.1 we need to check the performance penalty
             // caused in the instantiation of QContactManager. If the
@@ -224,7 +199,6 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             // EContactDbObserverEventGroupMembersRemoved need to be added to
             // MContactDbObserver.
             changeSet.insertChangedContact(id); //group is a contact
-#endif
         }
         break;
     case EContactDbObserverEventOwnCardChanged:
@@ -236,16 +210,103 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
                 //own card content was changed
                 changeSet.insertChangedContact(m_currentOwnCardId);
             }
-        
-            QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(id));
-            changeSet.setOldAndNewSelfContactId(ownCard);
-            m_currentOwnCardId = QContactLocalId(id);
         }
         break;
     default:
         break; // ignore other events
     }
+#else // SYMBIAN_BACKEND_SIGNAL_EMISSION_TWEAK
+    switch (aEvent.iType)
+    {
+    case EContactDbObserverEventContactAdded:
+        changeSet.insertAddedContact(id);
+        break;
+    case EContactDbObserverEventOwnCardDeleted:
+        {
+            // signal selfContactIdChanged (from id to zero)
+            QOwnCardPair ownCard(m_currentOwnCardId, QContactLocalId(0));
+            changeSet.setOldAndNewSelfContactId(ownCard);
+            // signal contactsRemoved (the self contact was deleted)
+            changeSet.insertRemovedContact(id);
+            // reset own card id
+            m_currentOwnCardId = QContactLocalId(0);
+        }
+        break;
+    case EContactDbObserverEventContactDeleted:
+        {
+            changeSet.insertRemovedContact(id);
 
+            // Check if contact was part of some group. 
+            // This check is needed because CContactDatabase will NOT
+            // provide EContactDbObserverEventGroupChanged event in this case!!!
+            QMap<QContactLocalId, QSet<QContactLocalId> >::iterator i;
+            for (i=m_groupContents.begin(); i!=m_groupContents.end(); i++ ) {
+                if (i->contains(id)) {
+                    changeSet.insertRemovedRelationshipsContact(i.key());
+                    changeSet.insertRemovedRelationshipsContacts(i->toList());
+                    i->remove(id);
+                }
+            }
+        }
+        break;
+    case EContactDbObserverEventContactChanged:
+        changeSet.insertChangedContact(id);
+        break;
+    case EContactDbObserverEventGroupAdded:
+        changeSet.insertAddedContact(id);
+        break;
+    case EContactDbObserverEventGroupDeleted:
+        {
+            changeSet.insertRemovedContact(id);
+            
+            // Check if there was any contacts in the group
+            if (m_groupContents.value(id).count()) {
+                changeSet.insertRemovedRelationshipsContact(id);
+                changeSet.insertRemovedRelationshipsContacts(m_groupContents.value(id).toList());
+            }
+            m_groupContents.remove(id);
+        }
+        break;
+    case EContactDbObserverEventGroupChanged:
+        {
+            // Contact DB observer API does not give information of contacts
+            // possibly added to or removed from the group
+            QSet<QContactLocalId> added;
+            QSet<QContactLocalId> removed;
+            TRAPD(err, updateGroupMembershipsL(id, added, removed));        
+            if(err != KErrNone)
+                changeSet.setDataChanged(true);
+
+            if (removed.count()) {
+                // The group changed event was caused by removing contacts
+                // from the group
+                changeSet.insertRemovedRelationshipsContact(id);
+                changeSet.insertRemovedRelationshipsContacts(removed.toList());
+            }
+            if (added.count()) {
+                // The group changed event was caused by adding contacts
+                // to the group
+                changeSet.insertAddedRelationshipsContact(id);
+                changeSet.insertAddedRelationshipsContacts(added.toList());
+            }
+            if (added.count() == 0 && removed.count() == 0) {
+                // The group changed event was caused by modifying the group
+                changeSet.insertChangedContact(id);
+            }
+        }
+        break;
+    case EContactDbObserverEventOwnCardChanged:
+        if (m_currentOwnCardId == QContactLocalId(id))
+            changeSet.insertChangedContact(m_currentOwnCardId);
+        else
+            changeSet.setOldAndNewSelfContactId(QOwnCardPair(m_currentOwnCardId, QContactLocalId(id)));
+        m_currentOwnCardId = QContactLocalId(id);
+        break;
+    default:
+        break; // ignore other events
+    }
+#endif // SYMBIAN_BACKEND_SIGNAL_EMISSION_TWEAK
+    
     changeSet.emitSignals(m_engine);
 }
 
@@ -276,15 +337,12 @@ void CntSymbianDatabase::updateGroupMembershipsL(
     QSet<QContactLocalId> groupMembersNew = groupMembersL(groupId);
     QSet<QContactLocalId> groupMembersOld = m_groupContents.value(groupId);
 
-    if(groupMembersOld.count() < groupMembersNew.count()) {
+    if(groupMembersOld.count() < groupMembersNew.count())
         added = groupMembersNew - groupMembersOld;
-        m_groupContents.remove(groupId);
-        m_groupContents.insert(groupId, groupMembersNew);
-    } else if(groupMembersOld.count() > groupMembersNew.count()) {
+    else if(groupMembersOld.count() > groupMembersNew.count())
         removed = groupMembersOld - groupMembersNew;
-        m_groupContents.remove(groupId);
-        m_groupContents.insert(groupId, groupMembersNew);
-    }
+
+    m_groupContents.insert(groupId, groupMembersNew);
 }
 
 /*
