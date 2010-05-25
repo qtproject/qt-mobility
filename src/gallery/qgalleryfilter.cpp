@@ -91,8 +91,8 @@ public:
 class QGalleryIntersectionFilterPrivate : public QGalleryFilterPrivate
 {
 public:
-    QGalleryIntersectionFilterPrivate()
-        : QGalleryFilterPrivate(QGalleryFilter::Intersection)
+    QGalleryIntersectionFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::Intersection)
+        : QGalleryFilterPrivate(type)
     {
     }
 
@@ -119,7 +119,8 @@ public:
 class QGalleryUnionFilterPrivate : public QGalleryFilterPrivate
 {
 public:
-    QGalleryUnionFilterPrivate() : QGalleryFilterPrivate(QGalleryFilter::Union) {}
+    QGalleryUnionFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::Union)
+        : QGalleryFilterPrivate(type) {}
 
     QGalleryUnionFilterPrivate(const QGalleryUnionFilterPrivate &other)
         : QGalleryFilterPrivate(other)
@@ -144,8 +145,8 @@ public:
 class QGalleryMetaDataFilterPrivate : public QGalleryFilterPrivate
 {
 public:
-    QGalleryMetaDataFilterPrivate()
-        : QGalleryFilterPrivate(QGalleryFilter::MetaData)
+    QGalleryMetaDataFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::MetaData)
+        : QGalleryFilterPrivate(type)
         , flags(0)
     {
     }
@@ -185,8 +186,8 @@ public:
 class QGalleryMetaDataRangeFilterPrivate : public QGalleryFilterPrivate
 {
 public:
-    QGalleryMetaDataRangeFilterPrivate()
-        : QGalleryFilterPrivate(QGalleryFilter::MetaDataRange)
+    QGalleryMetaDataRangeFilterPrivate(QGalleryFilter::Type type = QGalleryFilter::MetaDataRange)
+        : QGalleryFilterPrivate(type)
         , flags(0)
     {
     }
@@ -232,215 +233,6 @@ public:
     QVariant minimum;
     QVariant maximum;
 };
-
-/*!
-    \class QGalleryFilter
-
-    \ingroup gallery
-    \ingroup gallery-filters
-
-    \brief The QGalleryFilter class provides filtering criteria for gallery
-    requests.
-*/
-
-/*!
-    \enum QGalleryFilter::Type
-
-    Identifies the type of a filter.
-
-    \value Invalid
-    \value Intersection
-    \value Union
-    \value MetaData
-    \value MetaDataRange
-*/
-
-/*!
-    \enum QGalleryFilter::RangeFlag
-
-    Enumerates the comparisons made by QGalleryMetaDataRangeFilter.
-
-    \value EqualsMinimum
-    \value GreaterThanMinimum
-    \value GreaterThanEqualsMinimum
-    \value LessThanMaximum
-    \value EqualsMaximum
-    \value LessThanEqualsMaximum
-    \value InclusiveRange
-    \value ExclusiveRange
-*/
-
-/*!
-    Constructs a gallery filter of type \l Invalid.
-*/
-
-QGalleryFilter::QGalleryFilter()
-    : d(new QGalleryInvalidFilterPrivate)
-{
-}
-
-/*!
-    Constructs a copy of a gallery \a filter.
-*/
-
-QGalleryFilter::QGalleryFilter(const QGalleryFilter &filter)
-    : d(filter.d)
-{
-}
-
-/*!
-    Constructs a copy of a gallery intersection \a filter.
-*/
-
-QGalleryFilter::QGalleryFilter(const QGalleryIntersectionFilter &filter)
-    : d(const_cast<QGalleryIntersectionFilterPrivate *>(filter.d.constData()))
-{
-}
-
-/*!
-    Constructs a copy of a gallery union \a filter.
-*/
-
-QGalleryFilter::QGalleryFilter(const QGalleryUnionFilter &filter)
-    : d(const_cast<QGalleryUnionFilterPrivate *>(filter.d.constData()))
-{
-}
-
-/*!
-    Constructs a copy of a gallery meta-data \a filter.
-*/
-
-QGalleryFilter::QGalleryFilter(const QGalleryMetaDataFilter &filter)
-    : d(const_cast<QGalleryMetaDataFilterPrivate *>(filter.d.constData()))
-{
-}
-
-/*!
-    Constructs a copy of a gallery meta-data range \a filter.
-*/
-
-QGalleryFilter::QGalleryFilter(const QGalleryMetaDataRangeFilter &filter)
-    : d(const_cast<QGalleryMetaDataRangeFilterPrivate *>(filter.d.constData()))
-{
-}
-
-/*!
-    Destroys a gallery filter.
-*/
-
-QGalleryFilter::~QGalleryFilter()
-{
-}
-
-/*!
-    Assigns the value of \a filter to another filter.
-*/
-
-QGalleryFilter &QGalleryFilter::operator =(const QGalleryFilter &filter)
-{
-    d = filter.d;
-
-    return *this;
-}
-
-/*!
-    Returns the type of a filter.
-*/
-
-QGalleryFilter::Type QGalleryFilter::type() const
-{
-    return d->type;
-}
-
-/*!
-    Casts a filter to an intersection filter.  The filter must be of type
-    Intersection or this will return an Invalid filter.
-
-    Returns a QGalleryIntersectionFilter.
-*/
-
-QGalleryIntersectionFilter QGalleryFilter::toIntersectionFilter() const
-{
-    return d->type == Intersection
-            ? QGalleryIntersectionFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
-            : QGalleryIntersectionFilter();
-}
-
-/*!
-    Casts a filter to a union filter.  The filter must be of type Union or this
-    will return an Invalid filter.
-
-    Returns a QGalleryUnionFilter.
-*/
-
-QGalleryUnionFilter QGalleryFilter::toUnionFilter() const
-{
-    return d->type == Union
-            ? QGalleryUnionFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
-            : QGalleryUnionFilter();
-}
-
-/*!
-    Casts a filter to a meta-data filter.  The filter must be of type MetaData
-    or this will return an Invalid filter.
-
-    Returns a QGalleryMetaDataFilter.
-*/
-
-QGalleryMetaDataFilter QGalleryFilter::toMetaDataFilter() const
-{
-    return d && d->type == MetaData
-            ? QGalleryMetaDataFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
-            : QGalleryMetaDataFilter();
-}
-
-/*!
-    Casts a filter to a meta-data range filter.  The filter must be of type
-    MetaDataRange or this will return an Invalid filter.
-
-    Returns a QGalleryMetaDataRangeFilter.
-*/
-
-QGalleryMetaDataRangeFilter QGalleryFilter::toMetaDataRangeFilter() const
-{
-    return d && d->type == MetaDataRange
-            ? QGalleryMetaDataRangeFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
-            : QGalleryMetaDataRangeFilter();
-}
-
-QTM_END_NAMESPACE
-
-/*!
-    \fn operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
-
-    Compares \a filter1 to filter2.
-
-    Returns true if the filters are identical, and false otherwise.
-*/
-
-bool operator ==(
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2)
-{
-    return filter1.d == filter2.d || filter1.d->isEqual(*filter2.d);
-}
-
-/*!
-    \fn operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
-
-    Compares \a filter1 to filter2.
-
-    Returns true if the filters are not identical, and false otherwise.
-*/
-
-bool operator !=(
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
-        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2)
-{
-    return filter1.d != filter2.d && !filter1.d->isEqual(*filter2.d);
-}
-
-QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGalleryIntersectionFilter
@@ -504,8 +296,17 @@ QGalleryIntersectionFilter::QGalleryIntersectionFilter(const QGalleryIntersectio
     \internal
 */
 
-QGalleryIntersectionFilter::QGalleryIntersectionFilter(QGalleryFilterPrivate *d)
+inline QGalleryIntersectionFilter::QGalleryIntersectionFilter(QGalleryFilterPrivate *d)
     : d(static_cast<QGalleryIntersectionFilterPrivate *>(d))
+{
+}
+
+/*!
+    \internal
+*/
+
+inline QGalleryIntersectionFilter::QGalleryIntersectionFilter(QGalleryFilter::Type type)
+    : d(new QGalleryIntersectionFilterPrivate(type))
 {
 }
 
@@ -527,6 +328,19 @@ QGalleryIntersectionFilter &QGalleryIntersectionFilter::operator =(
     d = filter.d;
 
     return *this;
+}
+
+/*!
+    Returns true if the filter is a valid intersection filter.
+
+    An invalid filter can be obtained by casting a non
+    QGalleryFilter::Intersection type QGalleryFilter to
+    QGalleryIntersectionFilter.
+*/
+
+bool QGalleryIntersectionFilter::isValid() const
+{
+    return d->type == QGalleryFilter::Intersection;
 }
 
 /*!
@@ -747,6 +561,15 @@ QGalleryUnionFilter::QGalleryUnionFilter(QGalleryFilterPrivate *d)
 }
 
 /*!
+    \internal
+*/
+
+inline QGalleryUnionFilter::QGalleryUnionFilter(QGalleryFilter::Type type)
+    : d(new QGalleryUnionFilterPrivate(type))
+{
+}
+
+/*!
     Destroys a union filter.
 */
 
@@ -763,6 +586,18 @@ QGalleryUnionFilter &QGalleryUnionFilter::operator =(const QGalleryUnionFilter &
     d = filter.d;
 
     return *this;
+}
+
+/*!
+    Returns true if the filter is a valid union filter.
+
+    An invalid filter can be obtained by casting a non QGalleryFilter::Union
+    type QGalleryFilter to QGalleryUnionFilter.
+*/
+
+bool QGalleryUnionFilter::isValid() const
+{
+    return d->type == QGalleryFilter::Union;
 }
 
 /*!
@@ -948,6 +783,15 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter(QGalleryFilterPrivate *d)
 }
 
 /*!
+    \internal
+*/
+
+inline QGalleryMetaDataFilter::QGalleryMetaDataFilter(QGalleryFilter::Type type)
+    : d(new QGalleryMetaDataFilterPrivate(type))
+{
+}
+
+/*!
     Destroys a meta-data filter.
 */
 
@@ -964,6 +808,18 @@ QGalleryMetaDataFilter &QGalleryMetaDataFilter::operator =(const QGalleryMetaDat
     d = filter.d;
 
     return *this;
+}
+
+/*!
+    Returns true if the filter is a valid meta-data filter.
+
+    An invalid filter can be obtained by casting a non QGalleryFilter::MetaData
+    type QGalleryFilter to QGalleryMetaDataFilter.
+*/
+
+bool QGalleryMetaDataFilter::isValid() const
+{
+    return d->type == QGalleryFilter::MetaData;
 }
 
 /*!
@@ -1061,6 +917,15 @@ QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter(QGalleryFilterPrivate *
 }
 
 /*!
+    \internal
+*/
+
+inline QGalleryMetaDataRangeFilter::QGalleryMetaDataRangeFilter(QGalleryFilter::Type type)
+    : d(new QGalleryMetaDataRangeFilterPrivate(type))
+{
+}
+
+/*!
     Destroys a meta-data range filter.
 */
 
@@ -1078,6 +943,19 @@ QGalleryMetaDataRangeFilter &QGalleryMetaDataRangeFilter::operator =(
     d = filter.d;
 
     return *this;
+}
+
+/*!
+    Returns true if the filter is a valid meta-data range filter.
+
+    An invalid filter can be obtained by casting a non
+    QGalleryFilter::MetaDataRange type QGalleryFilter to
+    QGalleryMetaDataRangeFilter.
+*/
+
+bool QGalleryMetaDataRangeFilter::isValid() const
+{
+    return d->type == QGalleryFilter::MetaDataRange;
 }
 
 /*!
@@ -1184,4 +1062,219 @@ void QGalleryMetaDataRangeFilter::setGreaterThanEquals(const QVariant &value)
     d->setRange(value, QVariant(), QGalleryFilter::GreaterThanEqualsMinimum);
 }
 
+/*!
+    \class QGalleryFilter
+
+    \ingroup gallery
+    \ingroup gallery-filters
+
+    \brief The QGalleryFilter class provides filtering criteria for gallery
+    requests.
+*/
+
+/*!
+    \enum QGalleryFilter::Type
+
+    Identifies the type of a filter.
+
+    \value Invalid
+    \value Intersection
+    \value Union
+    \value MetaData
+    \value MetaDataRange
+*/
+
+/*!
+    \enum QGalleryFilter::RangeFlag
+
+    Enumerates the comparisons made by QGalleryMetaDataRangeFilter.
+
+    \value EqualsMinimum
+    \value GreaterThanMinimum
+    \value GreaterThanEqualsMinimum
+    \value LessThanMaximum
+    \value EqualsMaximum
+    \value LessThanEqualsMaximum
+    \value InclusiveRange
+    \value ExclusiveRange
+*/
+
+/*!
+    Constructs a gallery filter of type \l Invalid.
+*/
+
+QGalleryFilter::QGalleryFilter()
+    : d(new QGalleryInvalidFilterPrivate)
+{
+}
+
+/*!
+    Constructs a copy of a gallery \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryFilter &filter)
+    : d(filter.d)
+{
+}
+
+/*!
+    Constructs a copy of a gallery intersection \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryIntersectionFilter &filter)
+    : d(const_cast<QGalleryIntersectionFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery union \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryUnionFilter &filter)
+    : d(const_cast<QGalleryUnionFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery meta-data \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryMetaDataFilter &filter)
+    : d(const_cast<QGalleryMetaDataFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Constructs a copy of a gallery meta-data range \a filter.
+*/
+
+QGalleryFilter::QGalleryFilter(const QGalleryMetaDataRangeFilter &filter)
+    : d(const_cast<QGalleryMetaDataRangeFilterPrivate *>(filter.d.constData()))
+{
+}
+
+/*!
+    Destroys a gallery filter.
+*/
+
+QGalleryFilter::~QGalleryFilter()
+{
+}
+
+/*!
+    Assigns the value of \a filter to another filter.
+*/
+
+QGalleryFilter &QGalleryFilter::operator =(const QGalleryFilter &filter)
+{
+    d = filter.d;
+
+    return *this;
+}
+
+/*!
+    Returns the type of a filter.
+*/
+
+QGalleryFilter::Type QGalleryFilter::type() const
+{
+    return d->type;
+}
+
+/*!
+    Returns true if the type() of the filter is not equal to Invalid.
+*/
+
+bool QGalleryFilter::isValid() const
+{
+    return d->type != QGalleryFilter::Invalid;
+}
+
+/*!
+    Casts a filter to an intersection filter.  The filter must be of type
+    Intersection or this will return an Invalid filter.
+
+    Returns a QGalleryIntersectionFilter.
+*/
+
+QGalleryIntersectionFilter QGalleryFilter::toIntersectionFilter() const
+{
+    return d->type == Intersection
+            ? QGalleryIntersectionFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryIntersectionFilter(QGalleryFilter::Invalid);
+}
+
+/*!
+    Casts a filter to a union filter.  The filter must be of type Union or this
+    will return an Invalid filter.
+
+    Returns a QGalleryUnionFilter.
+*/
+
+QGalleryUnionFilter QGalleryFilter::toUnionFilter() const
+{
+    return d->type == Union
+            ? QGalleryUnionFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryUnionFilter(QGalleryFilter::Invalid);
+}
+
+/*!
+    Casts a filter to a meta-data filter.  The filter must be of type MetaData
+    or this will return an Invalid filter.
+
+    Returns a QGalleryMetaDataFilter.
+*/
+
+QGalleryMetaDataFilter QGalleryFilter::toMetaDataFilter() const
+{
+    return d && d->type == MetaData
+            ? QGalleryMetaDataFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryMetaDataFilter(QGalleryFilter::Invalid);
+}
+
+/*!
+    Casts a filter to a meta-data range filter.  The filter must be of type
+    MetaDataRange or this will return an Invalid filter.
+
+    Returns a QGalleryMetaDataRangeFilter.
+*/
+
+QGalleryMetaDataRangeFilter QGalleryFilter::toMetaDataRangeFilter() const
+{
+    return d && d->type == MetaDataRange
+            ? QGalleryMetaDataRangeFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
+            : QGalleryMetaDataRangeFilter(QGalleryFilter::Invalid);
+}
+
 QTM_END_NAMESPACE
+
+/*!
+    \fn operator ==(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
+
+    Compares \a filter1 to filter2.
+
+    Returns true if the filters are identical, and false otherwise.
+*/
+
+bool operator ==(
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2)
+{
+    return filter1.d == filter2.d || filter1.d->isEqual(*filter2.d);
+}
+
+/*!
+    \fn operator !=(const QGalleryFilter &filter1, const QGalleryFilter &filter2)
+
+    Compares \a filter1 to filter2.
+
+    Returns true if the filters are not identical, and false otherwise.
+*/
+
+bool operator !=(
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter1,
+        const QTM_PREPEND_NAMESPACE(QGalleryFilter) &filter2)
+{
+    return filter1.d != filter2.d && !filter1.d->isEqual(*filter2.d);
+}
+

@@ -111,6 +111,7 @@ public:
     QGalleryFilter &operator =(const QGalleryFilter &filter);
 
     Type type() const;
+    bool isValid() const;
 
     QGalleryIntersectionFilter toIntersectionFilter() const;
     QGalleryUnionFilter toUnionFilter() const;
@@ -138,6 +139,8 @@ public:
 
     QGalleryIntersectionFilter &operator =(const QGalleryIntersectionFilter &filter);
 
+    bool isValid() const;
+
     int filterCount() const;
     bool isEmpty() const;
 
@@ -161,7 +164,8 @@ public:
     void clear();
 
 private:
-    explicit QGalleryIntersectionFilter(QGalleryFilterPrivate *d);
+    explicit inline QGalleryIntersectionFilter(QGalleryFilterPrivate *d);
+    explicit inline QGalleryIntersectionFilter(QGalleryFilter::Type type);
 
     QSharedDataPointer<QGalleryIntersectionFilterPrivate> d;
 
@@ -180,6 +184,8 @@ public:
     ~QGalleryUnionFilter();
 
     QGalleryUnionFilter &operator =(const QGalleryUnionFilter &filter);
+
+    bool isValid() const;
 
     int filterCount() const;
     bool isEmpty() const;
@@ -201,7 +207,8 @@ public:
     void clear();
 
 private:
-    explicit QGalleryUnionFilter(QGalleryFilterPrivate *d);
+    explicit inline QGalleryUnionFilter(QGalleryFilterPrivate *d);
+    explicit inline QGalleryUnionFilter(QGalleryFilter::Type type);
 
     QSharedDataPointer<QGalleryUnionFilterPrivate> d;
 
@@ -223,6 +230,8 @@ public:
 
     QGalleryMetaDataFilter &operator =(const QGalleryMetaDataFilter &filter);
 
+    bool isValid() const;
+
     QString fieldName() const;
     void setFieldName(const QString &name);
 
@@ -233,7 +242,8 @@ public:
     void setMatchFlags(Qt::MatchFlags flags);
 
 private:
-    explicit QGalleryMetaDataFilter(QGalleryFilterPrivate *d);
+    explicit inline QGalleryMetaDataFilter(QGalleryFilterPrivate *d);
+    explicit inline QGalleryMetaDataFilter(QGalleryFilter::Type type);
 
     QSharedDataPointer<QGalleryMetaDataFilterPrivate> d;
 
@@ -251,6 +261,8 @@ public:
 
     QGalleryMetaDataRangeFilter &operator =(const QGalleryMetaDataRangeFilter &filter);
 
+    bool isValid() const;
+
     QString fieldName() const;
     void setFieldName(const QString &name);
 
@@ -267,7 +279,8 @@ public:
     void setGreaterThanEquals(const QVariant &value);
 
 private:
-    explicit QGalleryMetaDataRangeFilter(QGalleryFilterPrivate *d);
+    explicit inline QGalleryMetaDataRangeFilter(QGalleryFilterPrivate *d);
+    explicit inline QGalleryMetaDataRangeFilter(QGalleryFilter::Type type);
 
     QSharedDataPointer<QGalleryMetaDataRangeFilterPrivate> d;
 
