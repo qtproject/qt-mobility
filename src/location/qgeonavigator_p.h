@@ -55,10 +55,17 @@
 
 #include <qgeodistance.h>
 
+#include <QList>
+#include <QPair>
+#include <QDateTime>
+
 QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoPositionInfoSource;
 class QGeoRoutingManager;
+class QGeoRouteReply;
+class QGeoRoute;
 
 class QGeoNavigatorPrivate {
 public:
@@ -67,15 +74,28 @@ public:
     ~QGeoNavigatorPrivate();
     QGeoNavigatorPrivate& operator= (const QGeoNavigatorPrivate &other);
 
-    QGeoPositionInfoSource* positionSource;
     QGeoRoutingManager* routingManager;
-    QGeoDistance radius;
-    int elapsedTime;
-    QGeoDistance elapsedDistance;
-    int remainingTime;
-    QGeoDistance remainingDistance;
-    int timeNextInstruction;
-    QGeoDistance distanceNextInstruction;
+    QGeoRouteReply *routeReply;
+
+    QGeoDistance routeWidth;
+
+    QGeoRoute routeTravelled;
+    QGeoRoute routeRemaining;
+
+    QList<QGeoCoordinate> offRoutePath;
+
+    int nextWaypointIndex;
+
+    int currentSegmentIndex;
+    int currentSegmentPathIndex;
+
+    QDateTime currentSegmentStartTime;
+    QList<QPair<QGeoCoordinate, QGeoCoordinate> > currentSegmentCooridor;
+
+    //QDateTime departTime
+    // OR
+    // bool origin passed
+    //QDateTime originTime
 };
 
 QTM_END_NAMESPACE

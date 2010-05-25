@@ -69,7 +69,6 @@ public:
 
     QGeoRouteRequestPrivate& operator= (const QGeoRouteRequestPrivate &other);
 
-    bool updating;
     QList<QGeoCoordinate> waypoints;
     int numberAlternativeRoutes;
     QGeoRouteRequest::TravelModes travelModes;

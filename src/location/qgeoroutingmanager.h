@@ -59,7 +59,9 @@ public:
     virtual ~QGeoRoutingManager();
 
     virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) = 0;
+    virtual QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position) = 0;
 
+    bool supportsRouteUpdates() const;
     bool supportsAlternativeRoutes() const;
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
@@ -71,6 +73,7 @@ signals:
     void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
 
 protected:
+    void setSupportsRouteUpdates(bool supported);
     void setSupportsAlternativeRoutes(bool supported);
     void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);
     void setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);

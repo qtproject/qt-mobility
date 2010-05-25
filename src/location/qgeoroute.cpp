@@ -101,6 +101,20 @@ QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
     return *this;
 }
 
+/*!
+*/
+void QGeoRoute::setRouteId(const QString &id)
+{
+    d_ptr->id = id;
+}
+
+/*!
+*/
+QString QGeoRoute::routeId() const
+{
+    return d_ptr->id;
+}
+
 // TODO
 // this comes from the various specs
 // - won't this be highly dependent on zoom levels?
@@ -111,27 +125,27 @@ QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 
 /*!
     Sets the list of coordinates suitable for providing a graphical
-    overview of the route to \a routeOverview.
+    overview of the route to \a pathSummary.
 
     Acutal routing information may describe the geographic path of the route
     in much higher detail than is necessary to draw the route at most scales,
 
-    \sa QGeoRoute::routeOverview()
+    \sa QGeoRoute::pathSummary()
 */
-void QGeoRoute::setRouteOverview(const QList<QGeoCoordinate> &routeOverview)
+void QGeoRoute::setPathSummary(const QList<QGeoCoordinate> &pathSummary)
 {
-    d_ptr->routeOverview = routeOverview;
+    d_ptr->pathSummary = pathSummary;
 }
 
 /*!
     Returns a list of coordinates suitable for providing a graphical
     overview of the route.
 
-    \sa QGeoRoute::setRouteOverview()
+    \sa QGeoRoute::setPathSummary()
 */
-QList<QGeoCoordinate> QGeoRoute::routeOverview() const
+QList<QGeoCoordinate> QGeoRoute::pathSummary() const
 {
-    return d_ptr->routeOverview;
+    return d_ptr->pathSummary;
 }
 
 /*!
@@ -186,58 +200,24 @@ QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
     return d_ptr->routeSegments;
 }
 
-/*!
-    Sets an estimate of how long it will take to traverse the route to \a
-    travelTime seconds.
-
-    \sa QGeoRoute::estimatedTravelTime()
-*/
-void QGeoRoute::setEstimatedTravelTime(int travelTimeSeconds)
+void QGeoRoute::setTravellingTime(int secs)
 {
-    d_ptr->estimatedTravelTime = travelTimeSeconds;
+    d_ptr->travellingTime = secs;
 }
 
-/*!
-    Returns an estimate of how long it will take to travel the route in seconds.
-
-    \sa QGeoRoute::setEstimatedTravelTime()
-*/
-int QGeoRoute::estimatedTravelTime() const
+int QGeoRoute::travellingTime() const
 {
-    return d_ptr->estimatedTravelTime;
+    return d_ptr->travellingTime;
 }
 
-/*!
-    Sets the length of this route to \a length.
-
-    \sa QGeoRoute::length()
-*/
-void QGeoRoute::setLength(const QGeoDistance &length)
+void QGeoRoute::setDistance(const QGeoDistance &distance)
 {
-    d_ptr->length = length;
+    d_ptr->distance = distance;
 }
 
-/*!
-    Returns the length of this route.
-
-    \sa QGeoRoute::setLength()
-*/
-QGeoDistance QGeoRoute::length() const
+QGeoDistance QGeoRoute::distance() const
 {
-    return d_ptr->length;
-}
-
-/*!
-    Returns the point on the route which is closest to \a position.
-
-    If several points are equally close to \a position, the point that occurs
-    first in the ordering of the points on the route will be used.
-*/
-QGeoCoordinate QGeoRoute::closestPointOnRoute(const QGeoCoordinate &position) const
-{
-    // TODO implement
-    Q_UNUSED(position);
-    return QGeoCoordinate();
+    return d_ptr->distance;
 }
 
 /*******************************************************************************
@@ -246,21 +226,24 @@ QGeoCoordinate QGeoRoute::closestPointOnRoute(const QGeoCoordinate &position) co
 QGeoRoutePrivate::QGeoRoutePrivate() {}
 
 QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
-        : routeOverview(other.routeOverview),
+        : id(other.id),
+        pathSummary(other.pathSummary),
         bounds(other.bounds),
         routeSegments(other.routeSegments),
-        estimatedTravelTime(other.estimatedTravelTime),
-        length(other.length) {}
+        travellingTime(other.travellingTime),
+        distance(other.distance) {}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
 QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
 {
-    routeOverview = other.routeOverview;
+    id = other.id;
+    pathSummary = other.pathSummary;
     bounds = other.bounds;
     routeSegments = other.routeSegments;
-    estimatedTravelTime = other.estimatedTravelTime;
-    length = other.length;
+    travellingTime = other.travellingTime;
+    distance = other.distance;
+
     return *this;
 }
 

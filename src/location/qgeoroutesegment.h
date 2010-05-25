@@ -72,16 +72,14 @@ public:
 
     virtual SegmentType type() const;
 
-    void setEstimatedTravelTime(int travelTimeSeconds);
-    int estimatedTravelTime() const;
+    void setTravellingTime(int secs) const;
+    int travellingTime() const;
 
-    void setLength(const QGeoDistance &length);
-    QGeoDistance length() const;
+    void setDistance(const QGeoDistance &distance);
+    QGeoDistance distance() const;
 
-    // bounds per segment?  or is bounds per route enough?
-
-    void setGeometry(const QList<QGeoCoordinate> &geometry);
-    QList<QGeoCoordinate> geometry() const;
+    void setPath(const QList<QGeoCoordinate> &path);
+    QList<QGeoCoordinate> path() const;
 
     void setInstruction(const QGeoNavigationInstruction *instruction);
     const QGeoNavigationInstruction* instruction() const;

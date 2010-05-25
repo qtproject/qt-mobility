@@ -54,12 +54,12 @@ class QGeoBoundingBox;
 class QGeoDistance;
 class QGeoRouteSegment;
 class QGeoNavigationInstruction;
+class QGeoRouteRequest;
 
 class QGeoRoutePrivate;
 
 class Q_LOCATION_EXPORT QGeoRoute
 {
-
 public:
     QGeoRoute();
     QGeoRoute(const QGeoRoute &other);
@@ -67,22 +67,31 @@ public:
 
     QGeoRoute& operator = (const QGeoRoute &other);
 
-    void setRouteOverview(const QList<QGeoCoordinate> &routeOverview);
-    QList<QGeoCoordinate> routeOverview() const;
+    void setRouteId(const QString &id);
+    QString routeId() const;
+
+    void setRequest(const QGeoRouteRequest &request);
+    QGeoRouteRequest request() const;
+
+    // TODO potentially scratch this
+    // Should probably build / cache this per zoom level in
+    // the relevant map object
+    void setPathSummary(const QList<QGeoCoordinate> &pathSummary);
+    QList<QGeoCoordinate> pathSummary() const;
 
     void setBounds(const QGeoBoundingBox &bounds);
     QGeoBoundingBox bounds() const;
 
+    void appendRouteSegment(const QGeoRouteSegment* routeSegment);
     void setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments);
+
     QList<const QGeoRouteSegment *> routeSegments() const;
 
-    void setEstimatedTravelTime(int travelTimeSeconds);
-    int estimatedTravelTime() const;
+    void setTravellingTime(int secs) const;
+    int travellingTime() const;
 
-    void setLength(const QGeoDistance &length);
-    QGeoDistance length() const;
-
-    QGeoCoordinate closestPointOnRoute(const QGeoCoordinate &position) const;
+    void setDistance(const QGeoDistance &distance);
+    QGeoDistance distance() const;
 
 private:
     QGeoRoutePrivate* d_ptr;

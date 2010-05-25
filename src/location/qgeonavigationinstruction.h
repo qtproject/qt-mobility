@@ -42,7 +42,7 @@
 #ifndef QGEONAVIGATIONINSTRUCTION_H
 #define QGEONAVIGATIONINSTRUCTION_H
 
-#include "qmobilityglobal.h"
+#include "qgeodistance.h"
 
 class QString;
 
@@ -89,6 +89,12 @@ public:
 
     void setInstructionText(const QString &instructionText);
     QString instructionText() const;
+
+    void setTimeToNextInstruction(int secs);
+    int timeToNextInstruction() const;
+
+    void setDistanceToNextInstruction(const QGeoDistance &distance);
+    QGeoDistance distanceToNextInstruction() const;
 
 protected:
     QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr);

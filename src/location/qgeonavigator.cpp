@@ -45,6 +45,8 @@
 #include "qgeodistance.h"
 #include "qgeoroute.h"
 #include "qgeopositioninfo.h"
+#include "qgeopositioninfosource.h"
+#include "qgeoroutingmanager.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -75,7 +77,22 @@ QGeoNavigator& QGeoNavigator::operator = (const QGeoNavigator &other)
 
 void QGeoNavigator::setPositionSource(QGeoPositionInfoSource *positionSource)
 {
+    if (!positionSource)
+        return;
+
     d_ptr->positionSource = positionSource;
+
+    // TODO set update interval for the position source if none set so far?
+
+    connect(d_ptr->positionSource,
+            SIGNAL(positionUpdated(QGeoPositionInfo)),
+            this,
+            SLOT(positionUpdated(QGeoPositionInfo)));
+
+    connect(d_ptr->positionSource,
+            SIGNAL(updateTimeout()),
+            this,
+            SLOT(positionTimeout()));
 }
 
 QGeoPositionInfoSource* QGeoNavigator::positionSource() const
@@ -85,6 +102,9 @@ QGeoPositionInfoSource* QGeoNavigator::positionSource() const
 
 void QGeoNavigator::setRoutingManager(QGeoRoutingManager *routingManager)
 {
+    if (!routingManager)
+        return;
+
     d_ptr->routingManager = routingManager;
 }
 
@@ -135,31 +155,113 @@ QGeoDistance QGeoNavigator::distanceToNextInstruction(QGeoDistance) const
 
 void QGeoNavigator::calculate(const QGeoRouteRequest &request)
 {
+    if (!d_ptr->routingManager) {
+        // TODO error of some kind
+        return;
+    }
+
+    d_ptr->routeReply = d_ptr->routingManager->calculateRoute(request);
+    connect(d_ptr->routeReply,
+            SIGNAL(finished()),
+            this,
+            SLOT(calculateRouteFinished()));
+
+    connect(d_ptr->routeReply,
+            SIGNAL(error(QGeoRouteReply::Error,QString)),
+            this,
+            SLOT(calculateRouteError(QGeoRouteReply::Error,QString)));
 }
 
 void QGeoNavigator::depart()
 {
+    if (!d_ptr->routeReply) {
+        // TODO error of some kind
+        return;
+    }
+
+    if (!d_ptr->routeReply->isFinished()) {
+        // TODO error of some kind
+        return;
+    }
+
+    if (!d_ptr->positionSource) {
+        // TODO error of some kind
+        return;
+    }
+
+    d_ptr->positionSource->startUpdates();
 }
 
-void QGeoNavigator::updatePosition(const QGeoPositionInfo &positionInfo)
+void QGeoNavigator::positionUpdated(const QGeoPositionInfo &positionInfo)
 {
+    // if gps was out of range, notify the user that it's back
+
+    // update distance travelled
+    // check for
+    // - waypoint (or closest point on route) passed
+    // - instruction reached
+    // - end of route segment (update times)
+    //   - also check for end of route
+    // - off route beyond tolerance
+    //   - fire off an update request, update remaining time and distance on return
 }
 
-void QGeoNavigator::routeResultsAvailable()
+void QGeoNavigator::positionTimeout()
 {
+    // TODO notify the user somehow that they're out of gps range
+}
+
+void QGeoNavigator::calculateRouteFinished()
+{
+    // common to first request and to updates
+    // - grab the first route and put it somewhere
+    // - update the remaining time and distance
+}
+
+void QGeoNavigator::calculateRouteError(QGeoRouteReply::Error error, const QString &errorString)
+{
+    // TODO pass the error up
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoNavigatorPrivate::QGeoNavigatorPrivate() {}
+QGeoNavigatorPrivate::QGeoNavigatorPrivate()
+    : positionSource(0),
+    routingManager(0),
+    routeReply(0) {}
 
-QGeoNavigatorPrivate::QGeoNavigatorPrivate(const QGeoNavigatorPrivate &other) {}
+QGeoNavigatorPrivate::QGeoNavigatorPrivate(const QGeoNavigatorPrivate &other)
+    : positionSource(positionSource),
+    routingManager(routingManager),
+    routeReply(routeReply),
+    radius(radius),
+    elapsedTime(elapsedTime),
+    elapsedDistance(elapsedDistance),
+    remainingTime(remainingTime),
+    remainingDistance(remainingDistance),
+    timeNextInstruction(timeNextInstruction),
+    distanceNextInstruction(distanceNextInstruction) {}
 
-QGeoNavigatorPrivate::~QGeoNavigatorPrivate() {}
+QGeoNavigatorPrivate::~QGeoNavigatorPrivate()
+{
+    if (routeReply)
+        delete routeReply;
+}
 
 QGeoNavigatorPrivate& QGeoNavigatorPrivate::operator= (const QGeoNavigatorPrivate &other)
 {
+    positionSource = other.positionSource;
+    routingManager = other.routingManager;
+    routeReply = other.routeReply;
+    radius = other.radius;
+    elapsedTime = other.elapsedTime;
+    elapsedDistance = other.elapsedDistance;
+    remainingTime = other.remainingTime;
+    remainingDistance = other.remainingDistance;
+    timeNextInstruction = other.timeNextInstruction;
+    distanceNextInstruction = other.distanceNextInstruction;
+
     return *this;
 }
 

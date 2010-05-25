@@ -71,11 +71,14 @@ public:
 
     QGeoRoutePrivate& operator= (const QGeoRoutePrivate &other);
 
-    QList<QGeoCoordinate> routeOverview;
+    QString id;
+
+    QList<QGeoCoordinate> pathSummary;
     QGeoBoundingBox bounds;
     QList<const QGeoRouteSegment*> routeSegments;
-    int estimatedTravelTime;
-    QGeoDistance length;
+
+    int travellingTime;
+    QGeoDistance distance;
 };
 
 QTM_END_NAMESPACE

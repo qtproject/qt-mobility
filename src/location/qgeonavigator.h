@@ -67,35 +67,36 @@ class Q_LOCATION_EXPORT QGeoNavigator : public QObject
     Q_OBJECT
 
 public:
-    enum NavigationStatus {
-        OnRouteStatus,
-        OffRouteStatus,
-        ArrivedStatus
+    enum Error {
+        NoError,
+        RoutingError,
+        PositionError
     };
 
-    QGeoNavigator();
+    enum NavigationStatus {
+        NavigationNotDeparted,
+        NavigationOnRoute,
+        NavigationOffRoute,
+        NavigationCompleted
+    };
+
+    QGeoNavigator(const QGeoRoutingManager *routingManager);
     QGeoNavigator(const QGeoNavigator &other);
     ~QGeoNavigator();
 
     QGeoNavigator& operator = (const QGeoNavigator &other);
 
-    void setPositionSource(QGeoPositionInfoSource *positionSource);
-    QGeoPositionInfoSource* positionSource() const;
-
-    void setRoutingManager(QGeoRoutingManager *routingManager);
     QGeoRoutingManager* routingManager() const;
 
-    void setPositionTolerance(const QGeoDistance &radius);
-    QGeoDistance positionTolerance() const;
+    void setRouteWidth(const QGeoDistance &routeWidth);
+    QGeoDistance routeWidth() const;
 
-    int elapsedTime() const;
-    QGeoDistance elapsedDistance() const;
+    QGeoRoute routeTravelled() const;
+    QGeoRoute routeRemaining() const;
 
-    int remainingTime() const;
-    QGeoDistance remainingDistance() const;
+    int timeToNextSegment() const;
+    QGeoDistance distanceToNextSegment(QGeoDistance) const;
 
-    int timeToNextInstruction() const;
-    QGeoDistance distanceToNextInstruction(QGeoDistance) const;
 
     /*
      waypoints passed is internal, used to update the request if we go
@@ -123,27 +124,30 @@ public:
 
 public slots:
     void calculate(const QGeoRouteRequest &request);
-    void depart();
+    void updateRoute(const QGeoRoute &route);
 
-    // for use without gps?
-//    void getNextNavigationInstruction();
-//    void navigationInstructionPerformed(QGeoNavigationInstruction *instruction);
+    void depart();
+    void updateRoute();
 
 private slots:
-    void updatePosition(const QGeoPositionInfo &positionInfo);
-    void routeResultsAvailable();
+    void positionUpdated(const QGeoPositionInfo &positionInfo);
+    void positionTimeout();
+    void calculateRouteFinished();
+    void calculateRouteError(QGeoRouteReply::Error error, const QString &errorString);
 
 signals:
-    void waypointPassed(const QGeoCoordinate &coordinate);
-    void nextRouteSegment(QGeoRouteSegment *routeSegment);
-    void nextNavigationInstruction(QGeoNavigationInstruction *instruction);
-
-    void statusChanged(NavigationStatus status);
-
-    void routeUpdated(const QGeoRoute &route);
-    void routingError(QGeoRouteReply::Error error);
-
+    void departed();
+    void offCourse();
+    void onCourse();
     void arrived();
+
+    void waypointReached(const QGeoCoordinate &coordinate);
+    void instructionReached(QGeoNavigationInstruction *instruction);
+    void routeSegmentReached(QGeoRouteSegment *routeSegment);
+
+    void routeUpdated(const QList<QGeoRoute> &routes);
+
+    void error(QGeoNavigator::Error error, QString errorString);
 
 private:
     QGeoNavigatorPrivate* d_ptr;

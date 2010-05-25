@@ -198,21 +198,6 @@ QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest &other)
     return *this;
 }
 
-void QGeoRouteRequest::updateRoute(const QGeoCoordinate &currentPosition, const QList<QGeoCoordinate> &waypointsPassed)
-{
-    for (int i = 0; i < waypointsPassed.size(); ++i)
-        d_ptr->waypoints.removeAll(waypointsPassed.at(i));
-
-    d_ptr->waypoints.prepend(currentPosition);
-
-    d_ptr->updating = true;
-}
-
-bool QGeoRouteRequest::isUpdate() const
-{
-    return d_ptr->updating;
-}
-
 /*!
     Sets \a waypoints as the waypoints that the route should pass through.
 
@@ -338,7 +323,6 @@ QGeoRouteRequest::InstructionDetail QGeoRouteRequest::instructionDetail() const
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
         : QSharedData(),
-        updating(false),
         numberAlternativeRoutes(0),
         travelModes(QGeoRouteRequest::CarTravel),
         avoidFeatureTypes(QGeoRouteRequest::AvoidNothing),
@@ -347,7 +331,6 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
         : QSharedData(other),
-        updating(other.updating),
         waypoints(other.waypoints),
         numberAlternativeRoutes(other.numberAlternativeRoutes),
         travelModes(other.travelModes),
@@ -361,7 +344,6 @@ QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 
 QGeoRouteRequestPrivate& QGeoRouteRequestPrivate::operator= (const QGeoRouteRequestPrivate & other)
 {
-    updating = other.updating;
     waypoints = other.waypoints;
     numberAlternativeRoutes = other.numberAlternativeRoutes;
     travelModes = other.travelModes;

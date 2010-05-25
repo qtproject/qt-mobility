@@ -54,6 +54,7 @@
 //
 
 #include "qgeocoordinate.h"
+#include "qgeodistance.h"
 #include "qgeonavigationinstruction.h"
 
 #include <QString>
@@ -72,6 +73,8 @@ public:
     QGeoNavigationInstruction::InstructionType type;
     QGeoCoordinate position;
     QString text;
+    int timeToNextInstruction;
+    QGeoDistance distanceToNextInstruction;
 };
 
 QTM_END_NAMESPACE

@@ -117,56 +117,42 @@ QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
     return d->type;
 }
 
-/*!
-    Sets an estimate of how long it will take to traverse this
-    segment of the route to \a travelTime seconds.
-*/
-void QGeoRouteSegment::setEstimatedTravelTime(int travelTimeSeconds)
+void QGeoRouteSegment::setTravellingTime(int secs)
 {
     Q_D(QGeoRouteSegment);
-    d->estimatedTravelTime = travelTimeSeconds;
+    d->travellingTime = secs;
 }
 
-/*!
-    Returns an estimate of how long it will take to traverse this
-    segment of the route in seconds.
-*/
-int QGeoRouteSegment::estimatedTravelTime() const
+int QGeoRouteSegment::travellingTime() const
 {
     Q_D(const QGeoRouteSegment);
-    return d->estimatedTravelTime;
+    return d->travellingTime;
 }
 
-/*!
-    Sets the length of this segment of the route to \a length.
-*/
-void QGeoRouteSegment::setLength(const QGeoDistance &length)
+void QGeoRouteSegment::setDistance(const QGeoDistance &distance)
 {
     Q_D(QGeoRouteSegment);
-    d->length = length;
+    d->distance = distance;
 }
 
-/*!
-    Returns the length of this segment of the route.
-*/
-QGeoDistance QGeoRouteSegment::length() const
+QGeoDistance QGeoRouteSegment::distance() const
 {
     Q_D(const QGeoRouteSegment);
-    return d->length;
+    return d->distance;
 }
 
 // bounds per segment?  or is bounds per route enough?
 
 /*!
-    Sets the geometric shape of this segment of the route to \a geometry.
+    Sets the geometric shape of this segment of the route to \a path.
 
-    The coordinates in \a geometry should be listed in the order in which they
+    The coordinates in \a path should be listed in the order in which they
     would be traversed by someone travelling along this segment of the route.
 */
-void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
+void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
 {
     Q_D(QGeoRouteSegment);
-    d->geometry = geometry;
+    d->path = path;
 }
 
 /*!
@@ -175,10 +161,10 @@ void QGeoRouteSegment::setGeometry(const QList<QGeoCoordinate> &geometry)
     The coordinates should be listed in the order in which they
     would be traversed by someone travelling along this segment of the route.
 */
-QList<QGeoCoordinate> QGeoRouteSegment::geometry() const
+QList<QGeoCoordinate> QGeoRouteSegment::path() const
 {
     Q_D(const QGeoRouteSegment);
-    return d->geometry;
+    return d->path;
 }
 
 /*!
@@ -209,9 +195,9 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
         : type(other.type),
-        estimatedTravelTime(other.estimatedTravelTime),
-        length(other.length),
-        geometry(other.geometry),
+        travellingTime(other.travellingTime),
+        distance(other.distance),
+        path(other.path),
         instruction(other.instruction) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
@@ -219,9 +205,9 @@ QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate & other)
 {
     type = other.type;
-    estimatedTravelTime = other.estimatedTravelTime;
-    length = other.length;
-    geometry = other.geometry;
+    travellingTime = other.travellingTime;
+    distance = other.distance;
+    path = other.path;
     instruction = other.instruction;
     return *this;
 }

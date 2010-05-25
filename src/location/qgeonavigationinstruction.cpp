@@ -164,6 +164,30 @@ QString QGeoNavigationInstruction::instructionText() const
     return d->text;
 }
 
+void QGeoNavigationInstruction::setTimeToNextInstruction(int secs)
+{
+    Q_D(QGeoNavigationInstruction);
+    d->timeToNextInstruction = secs;
+}
+
+int QGeoNavigationInstruction::timeToNextInstruction() const
+{
+    Q_D(const QGeoNavigationInstruction);
+    return d->timeToNextInstruction;
+}
+
+void QGeoNavigationInstruction::setDistanceToNextInstruction(const QGeoDistance &distance)
+{
+    Q_D(QGeoNavigationInstruction);
+    d->distanceToNextInstruction = distance;
+}
+
+QGeoDistance QGeoNavigationInstruction::distanceToNextInstruction() const
+{
+    Q_D(const QGeoNavigationInstruction);
+    return d->distanceToNextInstruction;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -175,7 +199,9 @@ QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate()
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other)
         : type(other.type),
         position(other.position),
-        text(other.text) {}
+        text(other.text),
+        timeToNextInstruction(other.timeToNextInstruction),
+        distanceToNextInstruction(other.distanceToNextInstruction) {}
 
 QGeoNavigationInstructionPrivate::~QGeoNavigationInstructionPrivate() {}
 
@@ -184,6 +210,8 @@ QGeoNavigationInstructionPrivate& QGeoNavigationInstructionPrivate::operator= (c
     type = other.type;
     position = other.position;
     text = other.text;
+    timeToNextInstruction = other.timeToNextInstruction;
+    distanceToNextInstruction = other.distanceToNextInstruction;
 
     return *this;
 }

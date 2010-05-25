@@ -54,8 +54,22 @@ QGeoRoutingManager::~QGeoRoutingManager()
 }
 
 /*!
-\fn QGeoRouteReply* QGeoRoutingService::calculateRoute(const QGeoRouteRequest& request)
+\fn QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
 */
+
+/*!
+\fn QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
+*/
+
+void QGeoRoutingManager::setSupportsRouteUpdates(bool supported)
+{
+    d_ptr->supportsRouteUpdates = supported;
+}
+
+bool QGeoRoutingManager::supportsRouteUpdates() const
+{
+    return d_ptr->supportsRouteUpdates;
+}
 
 /*!
 */
@@ -139,10 +153,12 @@ QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDet
 *******************************************************************************/
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
-    : supportsAlternativeRoutes(false) {}
+    : supportsRouteUpdates(false),
+    supportsAlternativeRoutes(false) {}
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other)
-    : supportsAlternativeRoutes(other.supportsAlternativeRoutes),
+    : supportsRouteUpdates(other.supportsRouteUpdates),
+    supportsAlternativeRoutes(other.supportsAlternativeRoutes),
     supportedTravelModes(other.supportedTravelModes),
     supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
     supportedRouteOptimizations(other.supportedRouteOptimizations),
@@ -152,6 +168,7 @@ QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate() {}
 
 QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRoutingManagerPrivate &other)
 {
+    supportsRouteUpdates = other.supportsRouteUpdates;
     supportsAlternativeRoutes = other.supportsAlternativeRoutes;
     supportedTravelModes = other.supportedTravelModes;
     supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;

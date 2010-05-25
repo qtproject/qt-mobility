@@ -66,6 +66,7 @@ public:
 
     QGeoRoutingManagerPrivate& operator= (const QGeoRoutingManagerPrivate &other);
 
+    bool supportsRouteUpdates;
     bool supportsAlternativeRoutes;
     QGeoRouteRequest::TravelModes supportedTravelModes;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes;
