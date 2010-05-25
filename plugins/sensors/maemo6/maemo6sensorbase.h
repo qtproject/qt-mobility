@@ -44,9 +44,7 @@
 
 #include <qsensorbackend.h>
 #include <sensormanagerinterface.h>
-//#include "sensord/sensormanagerinterface.h"
 #include <abstractsensor_i.h>
-//#include "sensord/abstractsensor_i.h"
 
 
 QTM_USE_NAMESPACE
@@ -62,7 +60,6 @@ protected:
     virtual void start();
     virtual void stop();
     AbstractSensorChannelInterface* m_sensorInterface;
-//    bool m_sensorRunning;
 
     static const float GRAVITY_EARTH;
     static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
