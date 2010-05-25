@@ -1,6 +1,6 @@
 TARGET = tst_qmediaimageviewer
 CONFIG += testcase
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/video
 
 include (../../../common.pri)
 
