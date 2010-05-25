@@ -211,7 +211,7 @@ TInt CSensorBackendSym::SetDataRate()
 
 void CSensorBackendSym::SetProperties()
     {
-    if(sensor())
+    if(sensor()->outputRange() != -1)
         {
         //Set measurement range
         TInt err = SetMeasurementRange();
@@ -219,6 +219,9 @@ void CSensorBackendSym::SetProperties()
             {
             sensorError(err);
             }
+        }
+    if(sensor()->dataRate() != -1)
+        {
         //Set data rate
         err = SetDataRate();
         if(err != KErrNone)
@@ -323,8 +326,6 @@ void CSensorBackendSym::GetDataRate()
             //Set datarate as range
             addDataRate(min, max);
             list[0].GetValue(value);
-            //Set current datarate as default
-            sensor()->setDataRate(value);
             }
         //if list has more than one item, data rate will be having descrete values, agreed with DS team
         else                                
@@ -337,8 +338,6 @@ void CSensorBackendSym::GetDataRate()
                     //If array index is ESensrvArrayPropertyInfo, getting the value to get current datarate
                     list[i].GetValue(index);
                     list[index].GetValue(datarate);
-                    //Setting current datarate as default
-                    sensor()->setDataRate(datarate);
                     continue;
                     }     
                 list[i].GetValue(datarate);

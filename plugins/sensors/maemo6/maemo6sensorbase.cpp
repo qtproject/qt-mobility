@@ -67,16 +67,18 @@ void maemo6sensorbase::start()
         return;
     if (m_sensorInterface) {
         int dataRate = sensor()->dataRate();
-        int interval = 1000 / dataRate;
-        // for testing max speed
-        //interval = 1;
-        //dataRate = 1000;
-        if (dataRate > 0) {
-            qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << m_sensorInterface->id();
-            m_sensorInterface->setInterval(interval);
-        } else {
-            qDebug() << "Sensor data rate" << dataRate << "Hz";
+        if (dataRate == 0) {
+            if (sensor()->availableDataRates().count())
+                // Use the first available rate when 0 is chosen
+                dataRate = sensor()->availableDataRates().first().first;
+            else
+                dataRate = 1;
         }
+
+        int interval = 1000 / dataRate;
+
+        qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << m_sensorInterface->id();
+        m_sensorInterface->setInterval(interval);
         m_sensorInterface->start();
     }
     m_sensorRunning = true;
