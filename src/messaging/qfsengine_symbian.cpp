@@ -867,7 +867,6 @@ bool CFSEngine::retrieveBody(const QMessageId& id)
                         }
                     }
                 }
-                mailbox->Release();
                 break; // no need to continue
             }
             mailbox->Release();
