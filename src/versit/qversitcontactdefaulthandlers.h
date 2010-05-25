@@ -70,7 +70,7 @@ private:
 };
 
 /* See QVersitContactImporter::createDefaultHandler() */
-class Q_VERSIT_EXPORT QVersitContactImporterDefaultPropertyHandler
+class QVersitContactImporterDefaultPropertyHandler
     : public QVersitContactImporterPropertyHandlerV2
 {
 public:
