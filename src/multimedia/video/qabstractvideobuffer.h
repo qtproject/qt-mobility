@@ -48,6 +48,8 @@
 
 #include <QtCore/qmetatype.h>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
 
 class QVariant;
@@ -100,5 +102,7 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QAbstractVideoBuffer::HandleType)
 Q_DECLARE_METATYPE(QAbstractVideoBuffer::MapMode)
+
+QT_END_HEADER
 
 #endif

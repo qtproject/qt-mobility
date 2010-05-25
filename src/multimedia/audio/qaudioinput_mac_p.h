@@ -68,6 +68,8 @@
 #include <qaudioformat.h>
 #include <qaudiosystem.h>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
 
 class QTimer;
@@ -163,5 +165,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QAUDIOINPUT_MAC_P_H

@@ -49,6 +49,8 @@
 #include "qaudioformat.h"
 #include "qaudiodeviceinfo.h"
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
 
 class Q_MULTIMEDIA_EXPORT QAbstractAudioDeviceInfo : public QObject
@@ -128,5 +130,7 @@ Q_SIGNALS:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QAUDIOSYSTEM_H

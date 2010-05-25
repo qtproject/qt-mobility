@@ -47,6 +47,8 @@
 #include <QtGui/qimage.h>
 #include <qabstractvideobuffer.h>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
 
 class QSize;
@@ -158,6 +160,8 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QVideoFrame::FieldType)
 Q_DECLARE_METATYPE(QVideoFrame::PixelFormat)
+
+QT_END_HEADER
 
 #endif
 

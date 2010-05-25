@@ -45,6 +45,8 @@
 #include <QtCore/qobject.h>
 #include <qvideoframe.h>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
 
 class QRectF;
@@ -100,5 +102,7 @@ private:
 };
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif

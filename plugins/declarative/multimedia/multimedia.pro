@@ -6,7 +6,7 @@ INCLUDEPATH += ../../../src/multimedia \
 INCLUDEPATH += ../../../src/global
 
 TARGET  = declarative_multimedia
-TARGETPATH = QtMobility/multimedia
+TARGETPATH = Qt/multimedia
 include(../../qimportbase.pri)
 include(../../../common.pri)
 

@@ -48,6 +48,8 @@
 
 #include <QtCore/qmetatype.h>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
 
 namespace QAudio
@@ -58,6 +60,8 @@ namespace QAudio
 }
 
 QT_END_NAMESPACE
+
+QT_END_HEADER
 
 Q_DECLARE_METATYPE(QAudio::Error)
 Q_DECLARE_METATYPE(QAudio::State)

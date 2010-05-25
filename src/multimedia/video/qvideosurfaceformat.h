@@ -49,6 +49,8 @@
 #include <QtGui/qimage.h>
 #include <qvideoframe.h>
 
+QT_BEGIN_HEADER
+
 QT_BEGIN_NAMESPACE
 
 class QDebug;
@@ -136,6 +138,8 @@ QT_END_NAMESPACE
 
 Q_DECLARE_METATYPE(QVideoSurfaceFormat::Direction)
 Q_DECLARE_METATYPE(QVideoSurfaceFormat::YCbCrColorSpace)
+
+QT_END_HEADER
 
 #endif
 
