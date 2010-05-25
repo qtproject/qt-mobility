@@ -71,6 +71,7 @@
 #include "qorganizeritemdetaildefinition.h"
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
+#include "qorganizeritemrecurrencerule.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -208,6 +209,9 @@ private:
     void performAsynchronousOperation(QOrganizerItemAbstractRequest* request);
 
     static QOrganizerItem generateInstance(const QOrganizerItem& generator, const QDateTime& rdate);
+
+    QList<QDateTime> generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const;
+    QDate nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule) const;
 
     QOrganizerItemMemoryEngineData* d;
     static QMap<QString, QOrganizerItemMemoryEngineData*> engineDatas;

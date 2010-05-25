@@ -203,7 +203,7 @@ void QOrganizerItemManagerData::loadFactories()
     loadStaticFactories();
 
     QStringList plugins;
-    plugins = mobilityPlugins(QLatin1String("organizeritems"));
+    plugins = mobilityPlugins(QLatin1String("organizer"));
 
     if (!m_discovered || plugins != m_pluginPaths) {
         m_discovered = true;
@@ -217,17 +217,17 @@ void QOrganizerItemManagerData::loadFactories()
                 QString name = f->managerName();
 #if !defined QT_NO_DEBUG
                 if (showDebug)
-                    qDebug() << "Dynamic: found a organizeritem engine plugin" << f << "with name" << name;
+                    qDebug() << "Dynamic: found a organizer engine plugin" << f << "with name" << name;
 #endif
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     // we also need to ensure that we haven't already loaded this factory.
                     if (m_engines.keys().contains(name)) {
-                        qWarning() << "OrganizerItems plugin" << m_pluginPaths.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
+                        qWarning() << "Organizer plugin" << m_pluginPaths.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
                     } else {
                         m_engines.insertMulti(name, f);
                     }
                 } else {
-                    qWarning() << "OrganizerItems plugin" << m_pluginPaths.at(i) << "with reserved name" << name << "ignored";
+                    qWarning() << "Organizer plugin" << m_pluginPaths.at(i) << "with reserved name" << name << "ignored";
                 }
             }
 

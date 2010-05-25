@@ -131,8 +131,6 @@ class QOrganizerItemMaemo5Engine : public QOrganizerItemManagerEngine
     Q_OBJECT
 
 public:
-    static QOrganizerItemMaemo5Engine *createSkeletonEngine(const QMap<QString, QString>& parameters);
-
     ~QOrganizerItemMaemo5Engine();
 
     /* URI reporting */
@@ -163,6 +161,7 @@ public:
 private:
     // conversion functions
     QOrganizerEvent convertCEventToQEvent(CEvent* cevent, const QString& calendarName) const;
+    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const;
     QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const;
     QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
     QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const;
@@ -170,6 +169,12 @@ private:
     CEvent* convertQEventToCEvent(const QOrganizerEvent& event) const;
     CTodo* convertQTodoToCTodo(const QOrganizerTodo& todo) const;
     CJournal* convertQJournalToCJournal(const QOrganizerJournal& journal) const;
+
+    // ctor
+    QOrganizerItemMaemo5Engine();
+
+    // enumerate all items
+    QList<QOrganizerItem> enumerateAllItems(QOrganizerItemChangeSet *cs, QOrganizerItemManager::Error* error) const;
 
 private:
     QOrganizerItemMaemo5EngineData* d;
