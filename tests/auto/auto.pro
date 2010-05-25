@@ -155,6 +155,7 @@ contains(mobility_modules,gallery) {
         qgalleryitemlist \
         qgalleryitemrequest \
         qgalleryremoverequest \
+        qgalleryresource \
         qgalleryurlrequest
 }
 
