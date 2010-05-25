@@ -338,10 +338,12 @@ QMessageAccount QMessageStorePrivate::account(const QMessageAccountId &id) const
 
 QMessageManager::NotificationFilterId QMessageStorePrivate::registerNotificationFilter(const QMessageFilter &filter)
 {
+    QMessageManager::NotificationFilterId id = _mtmEngine->registerNotificationFilter(*this, filter);
 #ifdef FREESTYLEMAILUSED
-    _fsEngine->registerNotificationFilter(*this, filter);
-#endif
-    return _mtmEngine->registerNotificationFilter(*this, filter);
+    return _fsEngine->registerNotificationFilter(*this, filter, id);
+#else
+    return id;
+#endif   
 }
 
 void QMessageStorePrivate::unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId)

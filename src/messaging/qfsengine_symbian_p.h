@@ -141,7 +141,7 @@ public:
     bool exportUpdates(const QMessageAccountId &id);
     
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
-                                        const QMessageFilter& filter);
+                                        const QMessageFilter& filter, QMessageManager::NotificationFilterId aId);
     void unregisterNotificationFilter(QMessageManager::NotificationFilterId notificationFilterId);
 
     void filterAndOrderMessagesReady(bool success, int operationId, QMessageIdList ids, int numberOfHandledFilters,

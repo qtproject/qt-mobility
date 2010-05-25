@@ -332,6 +332,8 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
 {
     // TODO: add filter handling
     QMessageManager::NotificationFilterIdSet matchingFilters;
+    QMap<int, QMessageFilter> filters(m_filters);
+    QMap<int, QMessageFilter>::const_iterator it = filters.begin(), end = filters.end();  
     QMessageStorePrivate::NotificationType notificationType = QMessageStorePrivate::Removed;
     MEmailMailbox* mailbox = m_clientApi->MailboxL(aMailbox);
     MEmailFolder* folder = mailbox->FolderL(aParentFolderId); 
@@ -341,6 +343,10 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
             return;
     } 
     for (TInt i = 0; i < aDeletedMessages.Count(); i++) {
+        for ( ; it != end; ++it) {
+            // Empty filter matches to all messages
+            matchingFilters.insert(it.key());
+        }
         TMessageId messageId(aDeletedMessages[i]);
         ipMessageStorePrivate->messageNotification(notificationType, 
                             QMessageId(addIdPrefix(QString::number(messageId.iId), SymbianHelpers::EngineTypeFreestyle)), 
@@ -390,13 +396,15 @@ void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMes
             matchingFilters.insert(it.key());
         } else {
             if (message.type() == QMessage::NoType) {
+                matchingFilters.clear();
                 continue;
             }
-            QMessageFilterPrivate* privateMessageFilter = QMessageFilterPrivate::implementation(filter);
-            if (privateMessageFilter->filter(message)) {
-                matchingFilters.insert(it.key());
-            }
         }
+        QMessageFilterPrivate* privateMessageFilter = QMessageFilterPrivate::implementation(filter);
+        if (privateMessageFilter->filter(message)) {
+            matchingFilters.insert(it.key());
+        }
+        
     }
     int c = matchingFilters.count();
     QString id = realMessageId.toString();
@@ -835,16 +843,12 @@ bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentConta
 
 bool CFSEngine::retrieveBody(const QMessageId& id)
 {
-    qDebug() << "CFSEngine::retrieveBody";
     bool retVal = false;
     foreach (QMessageAccount account, m_accounts) {
-        qDebug() << "CFSEngine::retrieveBody, foreach start";
         MEmailMessage* message = NULL;
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
-        qDebug() << "CFSEngine::retrieveBody, mailboxid" << account.id().toString();
         MEmailMailbox* mailbox;
         TRAPD(mailBoxError, mailbox = m_clientApi->MailboxL(mailboxId));
-        qDebug() << "CFSEngine::retrieveBody mailboxError:" << mailBoxError;
         if (mailBoxError == KErrNone) {
             TMessageId messageId(
                 stripIdPrefix(id.toString()).toInt(),
@@ -852,31 +856,27 @@ bool CFSEngine::retrieveBody(const QMessageId& id)
                 mailboxId);
             
             TRAPD(err, message = mailbox->MessageL(messageId));
-            qDebug() << "CFSEngine::retrieveBody err:" << err;
             if (err == KErrNone) {
                 MEmailMessageContent* content;
                 TRAPD(contentError, content = message->ContentL());
-                qDebug() << "CFSEngine::retrieveBody contentError:" << contentError;
                 if (contentError == KErrNone) {
                     MEmailTextContent* textContent = content->AsTextContentOrNull();
                     if (textContent) {
-                        qDebug() << "CFSEngine::retrieveBody, textContent";
                         TInt availableSize = textContent->AvailableSize();
-                        qDebug() << "CFSEngine::retrieveBody size:" << availableSize;
                         if (!availableSize) {
                             TRAPD(textErr, textContent->FetchL(*this));
-                            qDebug() << "CFSEngine::retrieveBody textErr:" << textErr;
                             if (textErr == KErrNone) {
                                 retVal = true;
                             }
                         }
                     }
                 }
+                message->Release();
+                mailbox->Release();
                 break; // no need to continue
             }
             mailbox->Release();
         }
-    qDebug() << "CFSEngine::retrieveBody, foreach end";
     } 
     return retVal;
 }
@@ -889,7 +889,6 @@ bool CFSEngine::retrieveHeader(const QMessageId& id)
 
 void CFSEngine::DataFetchedL(const TInt aResult)
 {
-    qDebug() << "CFSEngine::DataFetchedL aResult:" << aResult;
     Q_UNUSED(aResult);       
 }
 
@@ -1315,12 +1314,14 @@ void CFSEngine::applyOffsetAndLimitToMsgIds(QMessageIdList& idList, int offset, 
 }
 
 QMessageManager::NotificationFilterId CFSEngine::registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
-                                                                           const QMessageFilter &filter)
+                                                                           const QMessageFilter &filter, QMessageManager::NotificationFilterId aId)
 {
     ipMessageStorePrivate = &aPrivateStore;
     iListenForNotifications = true;    
 
-    int filterId = ++m_filterId;
+    int filterId = aId;
+    if (filterId == 0)
+        filterId = ++m_filterId;
     m_filters.insert(filterId, filter);
     return filterId;
 }
@@ -1964,8 +1965,9 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
 
     // bodytext and attachment(s)
     MEmailMessageContent* content = aMessage->ContentL();
-    if (content)
-        AddContentToMessage(content, &message); 
+    if (content) {
+        AddContentToMessage(content, &message);
+    }
    
     REmailAttachmentArray attachments;                  
     CleanupResetAndRelease<MEmailAttachment>::PushL(attachments);
@@ -2051,9 +2053,9 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
 {
     MEmailMultipart* mPart = aContent->AsMultipartOrNull();
     if (mPart) {
-        TInt partCount = 0;
-        TRAPD(err, partCount = mPart->PartCountL());
-        if (err == KErrNone) {
+    TInt partCount = 0;
+    TRAPD(err, partCount = mPart->PartCountL());
+    if (err == KErrNone) {
             for (TInt i = 0; i < partCount; i++) {
                 MEmailMessageContent* content = NULL;
                 TRAPD(err2, content = mPart->PartByIndexL(i));
