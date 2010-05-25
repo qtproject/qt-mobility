@@ -53,8 +53,8 @@
 #include "qgalleryerrorresponse_p.h"
 #include "qgallerytrackeraggregateresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
-#include "qgallerytrackerfileremoveresponse_p.h"
 #include "qgallerytrackeritemresponse_p.h"
+#include "qgallerytrackerremoveresponse_p.h"
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackerurlresponse_p.h"
 
@@ -135,7 +135,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
     int result = QGalleryAbstractRequest::Succeeded;
 
     QGalleryTrackerSchema schema;
-    schema.resolveItemType(request->itemId().toString());
+    schema.resolveTypeFromItemId(request->itemId().toString());
 
     QString query = schema.buildIdQuery(&result, request->itemId().toString());
 
@@ -143,7 +143,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
         QGalleryAbstractResponse *response = 0;
-        if (schema.isFileType()) {
+        if (schema.isItemType()) {
             schema.setPropertyNames(request->propertyNames());
             schema.resolveColumns();
 
@@ -186,7 +186,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
         QGalleryAbstractResponse *response = 0;
-        if (schema.isFileType()) {
+        if (schema.isItemType()) {
             schema.setPropertyNames(request->propertyNames());
             schema.setSortPropertyNames(request->sortPropertyNames());
             schema.resolveColumns();
@@ -234,7 +234,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
     } else {
-        if (schema.isFileType()) {
+        if (schema.isItemType()) {
             schema.setPropertyNames(request->propertyNames());
             schema.setSortPropertyNames(request->sortPropertyNames());
             schema.resolveColumns();
@@ -282,7 +282,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         qWarning("Invalid Query %d, %s", result, qPrintable(query));
-    } else if (schema.isFileType() || schema.isAggregateType()) {
+    } else if (schema.isItemType() || schema.isAggregateType()) {
         return new QGalleryTrackerCountResponse(metaDataInterface(), schema, query);
     }
 
@@ -294,23 +294,16 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
 {
     int result = QGalleryAbstractRequest::Succeeded;
 
-    QGalleryTrackerSchema schema;
-    schema.setItemType(QDocumentGallery::File);
+    QString fileName = QGalleryTrackerSchema::uriFromItemId(&result, request->itemId());
 
-    QStringList fileNames = schema.urisFromItemIds(&result, request->itemIds());
-
-    if (fileNames.isEmpty()) {
+    if (fileName.isNull()) {
         if (result == QGalleryAbstractRequest::Succeeded)
             result = QGalleryAbstractRequest::InvalidItemError;
-    } else {
-        return new QGalleryTrackerFileRemoveResponse(
-                metaDataInterface(),
-                schema,
-                request->propertyNames(),
-                fileNames);
-    }
 
-    return new QGalleryErrorResponse(result);
+        return new QGalleryErrorResponse(result);
+    } else {
+        return new QGalleryTrackerRemoveResponse(fileInterface(), fileName);
+    }
 }
 
 QDocumentGallery::QDocumentGallery(QObject *parent)

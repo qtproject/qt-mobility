@@ -56,29 +56,14 @@ class Q_GALLERY_EXPORT QGalleryRemoveRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QGalleryRemoveRequest)
-    Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId NOTIFY itemIdsChanged);
-    Q_PROPERTY(QVariantList itemIds READ itemIds WRITE setItemIds NOTIFY itemIdsChanged)
-    Q_PROPERTY(QGalleryItemList *currentItem READ currentItem NOTIFY currentItemChanged)
+    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId);
 public:
     explicit QGalleryRemoveRequest(QObject *parent = 0);
     explicit QGalleryRemoveRequest(QAbstractGallery *gallery, QObject *parent = 0);
     ~QGalleryRemoveRequest();
 
-    QStringList propertyNames() const;
-    void setPropertyNames(const QStringList &names);
-
     QVariant itemId() const;
     void setItemId(const QVariant &id);
-
-    QVariantList itemIds() const;
-    void setItemIds(const QVariantList &id);
-
-    QGalleryItemList *currentItem() const;
-
-Q_SIGNALS:
-    void itemIdsChanged();
-    void currentItemChanged();
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);

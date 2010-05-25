@@ -39,41 +39,66 @@
 **
 ****************************************************************************/
 
-#include "qgallerytrackerfileremoveresponse_p.h"
+#ifndef QGALLERYTRACKERFILEREMOVERESPONSE_P_H
+#define QGALLERYTRACKERFILEREMOVERESPONSE_P_H
 
-#include <QtCore/qfile.h>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <qgalleryabstractresponse.h>
+
+#include "qgallerydbusinterface_p.h"
+
+QT_BEGIN_NAMESPACE
+class QDBusPendingCallWatcher;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-QGalleryTrackerFileRemoveResponse::QGalleryTrackerFileRemoveResponse(
-        const QGalleryDBusInterfacePointer &metaDataInterface,
-        const QGalleryTrackerSchema &schema,
-        const QStringList &properties,
-        const QStringList &fileNames,
-        QObject *parent)
-    : QGalleryTrackerFileEditResponse(metaDataInterface, schema, properties, fileNames, parent)
+class QGalleryTrackerRemoveResponsePrivate;
+
+class QGalleryTrackerRemoveResponse : public QGalleryAbstractResponse
 {
-}
+    Q_OBJECT
+public:
+    QGalleryTrackerRemoveResponse(
+            const QGalleryDBusInterfacePointer &fileInterface,
+            const QString &uri,
+            QObject *parent = 0);
+    ~QGalleryTrackerRemoveResponse();
 
-QGalleryTrackerFileRemoveResponse::~QGalleryTrackerFileRemoveResponse()
-{
+    QStringList propertyNames() const;
+    int propertyKey(const QString &name) const;
+    QGalleryProperty::Attributes propertyAttributes(int key) const;
 
-}
+    int count() const;
 
-bool QGalleryTrackerFileRemoveResponse::editFile(
-        int *error, const QString &path, const QString &fileName)
-{
-    QFile file(path + QLatin1Char('/') + fileName);
+    QVariant id(int index) const;
+    QUrl url(int index) const;
+    QString type(int index) const;
+    QList<QGalleryResource> resources(int index) const;
+    ItemStatus status(int index) const;
 
-    if (!file.remove() && file.exists()) {
-        *error = QGalleryAbstractRequest::PermissionsError;
+    QVariant metaData(int index, int key) const;
+    void setMetaData(int index, int key, const QVariant &value);
 
-        return false;
-    } else {
-        return true;
-    }
-}
+    void cancel();
 
-#include "moc_qgallerytrackerfileremoveresponse_p.cpp"
+    bool waitForFinished(int msecs);
+
+private:
+    Q_DECLARE_PRIVATE(QGalleryTrackerRemoveResponse)
+    Q_PRIVATE_SLOT(d_func(), void _q_removeFinished(QDBusPendingCallWatcher *))
+};
 
 QTM_END_NAMESPACE
+
+#endif

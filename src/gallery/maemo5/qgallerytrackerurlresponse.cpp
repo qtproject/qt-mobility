@@ -167,15 +167,11 @@ void QGalleryTrackerUrlResponse::callFinished(QDBusPendingCallWatcher *watcher)
 
         finish(QGalleryAbstractRequest::ConnectionError);
     } else {
-        QString service = QDBusPendingReply<QString>(*watcher).value();
-
         QGalleryTrackerSchema schema;
-        schema.setItemType(QGalleryTrackerSchema::typeFromService(service));
+        schema.resolveTypeFromService(QDBusPendingReply<QString>(*watcher).value());
 
-        if (schema.isFileType()) {
-            QStringList row = QStringList() << m_itemUrl.path() << service;
-
-            m_itemId = schema.idFunc()(row);
+        if (schema.isItemType()) {
+            m_itemId = schema.itemIdFromUri(m_itemUrl.path());
             m_itemType = schema.itemType();
 
             emit inserted(0, 1);

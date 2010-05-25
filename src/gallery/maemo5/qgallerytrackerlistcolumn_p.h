@@ -150,30 +150,6 @@ private:
     const QString m_prefix;
 };
 
-class QGalleryTrackerServicePrefixColumn : public QGalleryTrackerCompositeColumn
-{
-public:
-    QGalleryTrackerServicePrefixColumn(int uriColumn, int serviceColumn)
-        : m_uriColumn(uriColumn) , m_serviceColumn(serviceColumn) {}
-
-    QVariant value(QVector<QVariant>::const_iterator row) const;
-
-private:
-    const int m_uriColumn;
-    const int m_serviceColumn;
-};
-
-class QGalleryTrackerServiceTypeColumn : public QGalleryTrackerCompositeColumn
-{
-public:
-    QGalleryTrackerServiceTypeColumn(int serviceColumn) : m_serviceColumn(serviceColumn) {}
-
-    QVariant value(QVector<QVariant>::const_iterator row) const;
-
-private:
-    const int m_serviceColumn;
-};
-
 class QGalleryTrackerCompositeIdColumn : public QGalleryTrackerCompositeColumn
 {
 public:
