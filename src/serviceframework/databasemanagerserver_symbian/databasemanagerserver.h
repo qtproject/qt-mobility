@@ -38,29 +38,38 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef CDATABASEMANAGERSERVER_H_
+#define CDATABASEMANAGERSERVER_H_
 
 #include <qmobilityglobal.h>
-#include <QCoreApplication>
-#include <QFile>
-#include <QTextStream>
-#include <QDebug>
-#include "databasemanagerserver.h"
-#include "clientservercommon.h"
+#include <e32base.h>
+#include "databasemanagerserver.pan"
 
-QTM_USE_NAMESPACE
+//QTM_BEGIN_NAMESPACE
+namespace QtMobility {
 
-int main(int argc, char **argv)
-{
-    QCoreApplication app(argc, argv);
-    
-    CDatabaseManagerServer* server = new CDatabaseManagerServer;
-    TInt err = server->Start(KDatabaseManagerServerName);
-    if (err != KErrNone)
+// needed for creating server thread.
+const TUint KDefaultHeapSize = 0x10000;
+
+class CDatabaseManagerServer : public CServer2
     {
-        CDatabaseManagerServer::PanicServer(ESvrStartServer);
-    }
-    RProcess::Rendezvous(err);
+    public:
+        CDatabaseManagerServer();
+        CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
 
-    return app.exec();
+    public:
+        static void PanicServer(TDatabaseManagerSerververPanic aPanic);
+        
+        void IncreaseSessions();
+        void DecreaseSessions();
+        
+    private:
+        int iSessionCount;
+    };
+
+//QTM_END_NAMESPACE
 }
 
+#endif
+
+// End of File

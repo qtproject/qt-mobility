@@ -78,7 +78,7 @@ void DatabaseFileWatcher::restartDirMonitoring(const QString &dbPath, const QStr
     if (existing == dbPath) {
         ServiceDatabase *db = 0;
         DatabaseManager::DbScope scope;
-        if (dbPath == m_manager->m_userDb->databasePath()) {
+        if (m_manager->m_userDb && dbPath == m_manager->m_userDb->databasePath()) {
             db = m_manager->m_userDb;
             scope = DatabaseManager::UserOnlyScope;
         } else if (dbPath == m_manager->m_systemDb->databasePath()) {
@@ -146,7 +146,7 @@ void DatabaseFileWatcher::databaseDirectoryChanged(const QString &path)
 
 void DatabaseFileWatcher::databaseChanged(const QString &path)
 {
-    if (path == m_manager->m_userDb->databasePath())
+    if (m_manager->m_userDb && path == m_manager->m_userDb->databasePath())
         notifyChanges(m_manager->m_userDb, DatabaseManager::UserScope);
     else if (path == m_manager->m_systemDb->databasePath())
         notifyChanges(m_manager->m_systemDb, DatabaseManager::SystemScope);
@@ -158,6 +158,10 @@ void DatabaseFileWatcher::databaseChanged(const QString &path)
 
 void DatabaseFileWatcher::notifyChanges(ServiceDatabase *database, DatabaseManager::DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = DatabaseManager::SystemScope;
+    #endif
+
     QString dbPath = database->databasePath();
     if (!QFile::exists(dbPath)) {
         m_knownServices.remove(dbPath);
@@ -241,13 +245,16 @@ bool lessThan(const QServiceInterfaceDescriptor &d1,
    Constructor
 */
 DatabaseManager::DatabaseManager()
-    : m_userDb(new ServiceDatabase),
+    : m_userDb(NULL),
       m_systemDb(new ServiceDatabase),
       m_fileWatcher(0),
       m_hasAccessedUserDb(false),
       m_alreadyWarnedOpenError(false)
 {
-    initDbPath(UserScope);
+    #ifndef Q_OS_SYMBIAN
+        m_userDb = new ServiceDatabase;
+        initDbPath(UserScope);
+    #endif
     initDbPath(SystemScope);
 }
 
@@ -276,6 +283,10 @@ DatabaseManager::~DatabaseManager()
 */
 void DatabaseManager::initDbPath(DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     QSettings::Scope settingsScope;
     QString dbIdentifier;
     ServiceDatabase *db;
@@ -289,10 +300,14 @@ void DatabaseManager::initDbPath(DbScope scope)
         db = m_userDb;
     }
 
-    QSettings settings(QSettings::IniFormat, settingsScope,
-            QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
-    QFileInfo fi(settings.fileName());
-    QDir dir = fi.dir();
+    #ifdef Q_OS_SYMBIAN
+        QDir dir(QDir::toNativeSeparators("C:\\Data\\temp\\QtServiceFW"));
+    #else
+        QSettings settings(QSettings::IniFormat, settingsScope,
+                QLatin1String("Nokia"), QLatin1String("QtServiceFramework"));
+        QFileInfo fi(settings.fileName());
+        QDir dir = fi.dir();
+    #endif
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
@@ -308,6 +323,10 @@ void DatabaseManager::initDbPath(DbScope scope)
 */
 bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     if (scope == DatabaseManager::SystemScope) {
         if(!openDb(DatabaseManager::SystemScope)) {
             return false;
@@ -344,6 +363,10 @@ bool DatabaseManager::registerService(ServiceMetaDataResults &service, DbScope s
 */
 bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     if(scope == DatabaseManager::SystemScope) {
         if (!openDb(DatabaseManager::SystemScope))
             return false;
@@ -403,6 +426,10 @@ bool DatabaseManager::serviceInitialized(const QString &serviceName, DbScope sco
 */
 QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServiceFilter &filter, DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     QList<QServiceInterfaceDescriptor> descriptors;
 
     int userDescriptorCount = 0;
@@ -455,6 +482,10 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
 */
 QStringList DatabaseManager::getServiceNames(const QString &interfaceName, DatabaseManager::DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     QStringList serviceNames;
     if (scope == UserScope || scope == UserOnlyScope) {
         if(!openDb(DatabaseManager::UserScope))
@@ -504,6 +535,10 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
 */
 QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &interfaceName, DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     QServiceInterfaceDescriptor descriptor;
     if (scope == UserScope) {
         if (!openDb(UserScope))
@@ -568,7 +603,7 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
         if (scope == SystemScope) {
             m_lastError = m_systemDb->lastError();
             return QServiceInterfaceDescriptor();
-        } else if (scope == UserScope && m_userDb->lastError().code() == DBError::NotFound) {
+        } else if (scope == UserScope && m_userDb && m_userDb->lastError().code() == DBError::NotFound) {
             m_lastError = m_userDb->lastError();
             return QServiceInterfaceDescriptor();
         }
@@ -604,6 +639,10 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
 bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
         QString &interfaceName, DbScope scope) 
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     QList<QServiceInterfaceDescriptor> descriptors;
     QServiceFilter filter;
     filter.setServiceName(serviceName);
@@ -641,6 +680,10 @@ bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
 */
 bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     if (scope == UserScope) {
         if (!openDb(UserScope))
             return false;
@@ -700,6 +743,10 @@ bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &des
 */
 bool DatabaseManager::openDb(DbScope scope)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     if (scope == SystemScope && m_systemDb->isOpen() && !QFile::exists(m_systemDb->databasePath())) {
         delete m_systemDb;
         m_systemDb = new ServiceDatabase;
@@ -763,7 +810,7 @@ bool DatabaseManager::openDb(DbScope scope)
     //if we are opening the system database while the user database is open,
     //cleanup and reset any old external defaults
     //from the user scope database
-    if (scope == SystemScope && m_userDb->isOpen()) {
+    if (scope == SystemScope && m_userDb && m_userDb->isOpen()) {
         QList<QPair<QString,QString> > externalDefaultsInfo;
         externalDefaultsInfo = m_userDb->externalDefaultsInfo();
         QServiceInterfaceDescriptor descriptor;
@@ -814,6 +861,10 @@ QServiceInterfaceDescriptor DatabaseManager::latestDescriptor(
 */
 void DatabaseManager::setChangeNotificationsEnabled(DbScope scope, bool enabled)
 {
+    #ifdef Q_OS_SYMBIAN
+        scope = SystemScope;
+    #endif
+
     if (!m_fileWatcher) m_fileWatcher = new
     DatabaseFileWatcher(this); m_fileWatcher->setEnabled(scope == SystemScope ?
             m_systemDb : m_userDb, enabled);

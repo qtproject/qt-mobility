@@ -6,11 +6,7 @@ SUBDIRS += global
 contains(mobility_modules,serviceframework) {
     SUBDIRS += serviceframework
     symbian {
-        SUBDIRS = serviceframework/symbian/dll/databasemanagerserver_dll.pro \
-                  serviceframework/symbian/exe/databasemanagerserver_exe.pro \
-                  serviceframework/symbian/rfsplugin/rfsplugin.pro \
-                  $$SUBDIRS
-        CONFIG += ordered
+        SUBDIRS += serviceframework/databasemanagerserver_symbian/databasemanagerserver.pro
     }
 }
 
