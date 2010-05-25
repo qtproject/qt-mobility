@@ -46,11 +46,11 @@
     The Publish and Subscribe example shows how to use the Qt Publish and Subscribe API to
     publish and retrieve values from the platforms Publish and Subscribe system.
 
-    This example program can act either a publisher of Value Space content, a subscriber of a Value
-    Space content or both.  It can also optionally act as the Value Space Manager.  The behavior
-    is selected by passing a combination of three optional command line parameters when starting
-    the program.  If no parameters are supplied the program defaults to acting as both a publisher
-    and subscriber.
+    This example program can act as either a publisher of Value Space content, a subscriber of
+    Value Space content or both. It can also optionally act as the Value Space Manager. The
+    behavior is selected by passing a combination of three optional command line parameters when
+    starting the program. If no parameters are supplied the program defaults to acting as both a
+    publisher and a subscriber.
 
     \table
         \header
@@ -75,11 +75,12 @@
 
     When acting as a publisher of Value Space content the program creates a PublisherDialog.  This
     dialog contains a widget for setting the base path of the QValueSpacePublisher and
-    widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.
+    widgets for setting the value of the three fixed attributes 'intValue', 'stringValue' and
+   'byteArrayValue'.
 
     \image publish-subscribe-publisher.png
 
-    We declare three slots which we will use to respond to user input in the dialog.
+    We declare the slots which we will use to respond to user input in the dialog.
 
     \snippet publish-subscribe/publisherdialog.h 0
 
@@ -87,10 +88,10 @@
 
     \snippet publish-subscribe/publisherdialog.cpp 1
 
-    To publish values in the Value Space we first need to create a QValueSpacePublisher.  We do
-    this in the \c {createNewObject()} slot, which is also used to handle changes in the base path.
+    To publish values in the Value Space we first need to create a QValueSpacePublisher. This is
+    done in the \c {createNewObject()} slot, which is also used to handle changes in the base path.
     After the object is constructed we publish the initial values by explicitly calling the other
-    two slots.
+    slots.
 
     \snippet publish-subscribe/publisherdialog.cpp 2
 
@@ -119,7 +120,8 @@
     To read values from the Value Space we first create a QValueSpaceSubscriber and connect to the
     \c {contentsChanged()} signal.
 
-    We explicitly call our \c {itemChanged()} slot to populate the table with the initial values.
+    We explicitly call our \c {subscriberChanged()} slot to populate the table with the initial
+    values.
 
     \snippet publish-subscribe/subscriberdialog.cpp 0
 

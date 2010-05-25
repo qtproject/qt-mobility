@@ -11,7 +11,7 @@ QT += declarative
 HEADERS += qdeclarativeservice.h
 
 SOURCES += qdeclarativeservice.cpp \
-           serviceframework.cpp \
+           serviceframework.cpp 
 
 CONFIG += mobility
 MOBILITY += serviceframework

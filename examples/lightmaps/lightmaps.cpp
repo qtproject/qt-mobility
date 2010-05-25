@@ -333,15 +333,18 @@ public:
 
     ~LightMaps() {
         m_session->close();
-        m_location->stopUpdates();
+        if (m_location)
+            m_location->stopUpdates();
     }
 
     void stopPositioning() {
-        m_location->stopUpdates();
+        if (m_location)
+            m_location->stopUpdates();
     }
 
     void startPositioning() {
-        m_location->startUpdates();
+        if (m_location)
+            m_location->startUpdates();
     }
 
     void setCenter(qreal lat, qreal lng) {

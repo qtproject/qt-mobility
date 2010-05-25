@@ -103,15 +103,19 @@ void QContactDetailRangeFilter::setRange(const QVariant& min, const QVariant& ma
  * Not all flags are supported by a range filter.  The supported flags include:
  *
  * \list
- * \o QContactDetail::MatchExactly
- * \o QContactDetail::MatchFixedString
- * \o QContactDetail::MatchCaseSensitive
+ * \o QContactFilter::MatchExactly
+ * \o QContactFilter::MatchFixedString
+ * \o QContactFilter::MatchCaseSensitive
  * \endlist
+ *
+ * Unsupported flags will be ignored.
+ *
  * \sa matchFlags()
  */
 void QContactDetailRangeFilter::setMatchFlags(QContactFilter::MatchFlags flags)
 {
     Q_D(QContactDetailRangeFilter);
+    flags &= (QContactFilter::MatchExactly | QContactFilter::MatchFixedString | QContactFilter::MatchCaseSensitive);
     d->m_flags = flags;
 }
 

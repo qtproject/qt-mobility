@@ -118,6 +118,13 @@
     #endif
         connect(ui-&gt;connectButton, SIGNAL(clicked()), this, SLOT(changeSubscriberPath()));
         changeSubscriberPath();
+
+        <span class="comment">// if the default path does not exist reset it to /</span>
+        QVariant value = subscriber-&gt;value();
+        if (!subscriber-&gt;value().isValid() &amp;&amp; subscriber-&gt;subPaths().isEmpty()) {
+            ui-&gt;basePath-&gt;setText(QLatin1String(&quot;/&quot;));
+            changeSubscriberPath();
+        }
     }
 
     SubscriberDialog::~SubscriberDialog()

@@ -163,7 +163,7 @@ on which parts of an API is utilized by an application.
     \o ReadDeviceData
 \row
     \o \l {System Information}
-    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
+    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData
 \row
     \o \l {Versit API}
     \o No additional capabilities required.
