@@ -55,8 +55,7 @@ class maemo6orientationsensor : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static char const * const id;
-
+    static const char *id;
     maemo6orientationsensor(QSensor *sensor);
 
 private:
@@ -64,7 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotOrientationChanged(const Unsigned& orientation);
+    void slotDataAvailable(const Unsigned& orientation);
 };
 
 #endif

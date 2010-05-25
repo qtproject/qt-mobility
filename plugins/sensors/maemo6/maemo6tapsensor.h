@@ -55,13 +55,13 @@ class maemo6tapsensor : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static char const * const id;
-
+    static const char *id;
     maemo6tapsensor(QSensor *sensor);
 
 private:
     QTapReading m_reading;
     static bool m_initDone;
+    bool m_isDoubleTapSensor;
 
 private slots:
     void slotDataAvailable(const Tap&);

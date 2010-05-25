@@ -41,29 +41,21 @@
 
 #include "maemo6proximitysensor.h"
 
-char const * const maemo6proximitysensor::id("maemo6.proximity");
+const char *maemo6proximitysensor::id("maemo6.proximity");
 bool maemo6proximitysensor::m_initDone = false;
 
 maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
     const QString sensorName = "proximitysensor";
-    if (!m_initDone) {
-        //initSensor<ProximitySensorChannelInterface>("proximitysensor");
-        m_remoteSensorManager->loadPlugin(sensorName);
-        m_remoteSensorManager->registerSensorInterface<ProximitySensorChannelInterface>(sensorName);
-        m_initDone = true;
-    }
-    m_sensorInterface = ProximitySensorChannelInterface::controlInterface(sensorName);
-    if (!m_sensorInterface)
-        m_sensorInterface = const_cast<ProximitySensorChannelInterface*>(ProximitySensorChannelInterface::listenInterface(sensorName));
+    initSensor<ProximitySensorChannelInterface>(sensorName, m_initDone);
+
     if (m_sensorInterface)
         QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)), this, SLOT(slotDataAvailable(const Unsigned&)));
     else
-        qWarning() << "Unable to initialize proximity sensor.";
+        qWarning() << "Unable to initialize "<<sensorName;
     setReading<QProximityReading>(&m_reading);
     // metadata
-    addDataRate(0, 0);
     addDataRate(2, 2); // 2 Hz
     addOutputRange(0, 1, 1); // close definition in meters - may be used as metadata even the sensor gives true/false values
     setDescription(QLatin1String("Measures if a living object is in proximity or not"));
@@ -71,12 +63,7 @@ maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
 
 void maemo6proximitysensor::slotDataAvailable(const Unsigned& data)
 {
-    bool close;
-    if (data.x())
-        close = true;
-    else
-        close = false;
-    m_reading.setClose(close);
+    m_reading.setClose(data.x()? true: false);
     m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
 }
