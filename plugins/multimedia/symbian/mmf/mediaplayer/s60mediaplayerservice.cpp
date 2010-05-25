@@ -61,7 +61,6 @@
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     : QMediaService(parent)
     , m_control(NULL)
-    , m_mediaRecognizer(NULL)
     , m_videoOutput(NULL)
     , m_videoPlayerSession(NULL)
     , m_audioPlayerSession(NULL)
@@ -72,7 +71,6 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     , m_audioEndpointSelector(NULL)
 { 
     m_control = new S60MediaPlayerControl(*this, this);
-    m_mediaRecognizer = new S60MediaRecognizer(this);  
     m_metaData = new S60MediaMetaDataProvider(*this);
     m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);
 }
@@ -99,11 +97,6 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
             m_videoOutput = new S60VideoOutputControl;
             connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
                     this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-            m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
-//                        << QVideoOutputControl::RendererOutput
-//                        << QVideoOutputControl::WindowOutput
-                        << QVideoOutputControl::WidgetOutput);
-            
         }
         return m_videoOutput;
     }
@@ -170,9 +163,10 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     if (url.isEmpty() == true) {
         return NULL;
     }
-    
-    S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaType(url);
-    
+
+    S60MediaRecognizer *m_mediaRecognizer = new S60MediaRecognizer(this);
+    S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->mediaType(url);
+
     switch (mediaType) {
     	case S60MediaRecognizer::Video:
     	case S60MediaRecognizer::Url:

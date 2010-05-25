@@ -39,20 +39,39 @@
 **
 ****************************************************************************/
 
-#include "radio.h"
+#ifndef TST_QMEDIARECORDER_XA_MACROS_H
+#define TST_QMEDIARECORDER_XA_MACROS_H
 
-#include <QtGui>
+#define QTRY_COMPARE(a,e)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if ((a) == (e)) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QCOMPARE(a, e)
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+#define QTRY_VERIFY(a)                       \
+    for (int _i = 0; _i < 5000; _i += 100) {    \
+        if (a) break;                  \
+        QTest::qWait(100);                      \
+    }                                           \
+    QVERIFY(a)
 
-    Radio radio;
-#ifdef Q_OS_SYMBIAN
-    radio.showMaximized();
-#else
-    radio.show();
-#endif
+#define QTEST_MAIN_S60(TestObject) \
+    int main(int argc, char *argv[]) { \
+        char *new_argv[3]; \
+        QApplication app(argc, argv); \
+        \
+        QString str = "C:\\data\\" + QFileInfo(QCoreApplication::applicationFilePath()).baseName() + ".log"; \
+        QByteArray   bytes  = str.toAscii(); \
+        \
+        char arg1[] = "-o"; \
+        \
+        new_argv[0] = argv[0]; \
+        new_argv[1] = arg1; \
+        new_argv[2] = bytes.data(); \
+        \
+        TestObject tc; \
+        return QTest::qExec(&tc, 3, new_argv); \
+    }
 
-    return app.exec();
-};
+#endif /* TST_QMEDIARECORDER_XA_MACROS_H */

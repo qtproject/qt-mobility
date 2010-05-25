@@ -13,8 +13,8 @@ symbian {
 
 # Input parameters for qmake to make the dll a qt plugin
 # ------------------------------------------------------
-pluginstub.sources = qmakepluginstubs/xarecordservice.dll
-pluginstub.path = /resource/qt/plugins/mediaservice
+pluginstub.sources = qmakepluginstubs/qtmedia_xarecordservice.dll
+pluginstub.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 DEPLOYMENT += pluginstub
 
 # Input parameters for the generated bld.inf file

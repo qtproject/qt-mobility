@@ -66,7 +66,7 @@ public:
     QXARecodMediaService(QObject *parent = 0);
     ~QXARecodMediaService();
     QMediaControl *requestControl(const char *name);
-    void releaseControl(QMediaControl *control);
+    void releaseContro( QMediaControl *control);
 private:
     QXARecordSession *m_session;
     QXAMediaRecoderControl *m_control;

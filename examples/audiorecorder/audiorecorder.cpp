@@ -324,7 +324,8 @@ void AudioRecorder::toggleRecord()
             currentTime = 0;
         }
 #ifdef Q_OS_SYMBIAN    
-    capture->setOutputLocation(recordPathAudio(destination));
+    if (!paused)    
+        capture->setOutputLocation(recordPathAudio(destination));
 #endif
         capture->record();        
         active = true;
@@ -384,17 +385,8 @@ void AudioRecorder::updateSamplerates(int idx)
 }
 
 void AudioRecorder::updateChannelCount(int idx)
-{   
-    QMediaControl *control = audiosource->service()->requestControl(QAudioEncoderControl_iid);
-    if (!control)
-        return;
-
-    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(control);
-    if (!audioEncoder) {
-        audiosource->service()->releaseControl(control);
-        return;
-    }
-    
+{    
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
     channelBox->clear();
     QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
     QList<int> channels;
@@ -410,16 +402,7 @@ void AudioRecorder::updateChannelCount(int idx)
 
 void AudioRecorder::updateQuality(int idx)
 {    
-    QMediaControl *control = audiosource->service()->requestControl(QAudioEncoderControl_iid);
-    if (!control)
-        return;
-
-    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(control);
-    if (!audioEncoder) {
-        audiosource->service()->releaseControl(control);
-        return;
-    }
-
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
     qualityBox->clear();
     QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
     QList<int> channels;

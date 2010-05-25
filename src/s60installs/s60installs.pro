@@ -121,20 +121,15 @@ symbian: {
 
         multimedia = \
             "IF package(0x1028315F)" \
-            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
             "ELSEIF package(0x102752AE)" \
-            "   \"$$EPOCROOT32\epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+            "   \"$$EPOCROOT32\epoc32/release/armv5/urel/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
             "ELSEIF package(0x102032BE)" \
-            "   \"$$EPOCROOT31\epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
+            "   \"$$EPOCROOT31\epoc32/release/armv5/urel/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
             "ELSE" \
-            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtMobilityMultimediaEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMultimediaEngine.dll\"" \
-            "ENDIF"
-
-        qtmobilitydeployment.pkg_postrules += multimedia
-
-        pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/symbian/qmakepluginstubs/QtMobilityMultimediaEngine.qtplugin\" - \"!:\\resource\\qt\\plugins\\mediaservice\\QtMobilityMultimediaEngine.qtplugin\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/multimedia/m3u/qmakepluginstubs/m3u.qtplugin\"     - \"!:\\resource\\qt\\plugins\\playlistformats\\m3u.qtplugin\""
+            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtMobilityMmfEngine.dll\" - \"!:\\sys\\bin\\QtMobilityMmfEngine.dll\"" \
+            "IF package(0x20022E6D)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmedia_xarecordservice.dll\" - \"!:\\sys\\bin\\qtmedia_xarecordservice.dll\"" \
     }
 
     qtmobilitydeployment.pkg_postrules += pluginstubs

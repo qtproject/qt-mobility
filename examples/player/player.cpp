@@ -78,8 +78,9 @@ Player::Player(QWidget *parent)
 #endif
 {
     player = new QMediaPlayer(this);
-    playlist = new QMediaPlaylist(this);
-    player->setPlaylist(playlist);
+    // owned by PlaylistModel
+    playlist = new QMediaPlaylist();
+    playlist->setMediaObject(player);
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
@@ -107,8 +108,11 @@ Player::Player(QWidget *parent)
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
     
-    audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(player->service()->requestControl(QAudioEndpointSelector_iid));
-    connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
+    QMediaService *service = player->service();
+    if (service)
+        audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->requestControl(QAudioEndpointSelector_iid));
+    if (audioEndpointSelector)
+        connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
 
 #ifndef Q_OS_SYMBIAN
     QPushButton *openButton = new QPushButton(tr("Open"), this);
@@ -282,8 +286,8 @@ void Player::metaDataChanged()
             QUrl uri = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
             QPixmap pixmap = NULL;
 
-            if (uri.isEmpty()) {
-                QVariant picture = player->extendedMetaData("attachedpicture");
+            if (uri.isEmpty()) {                
+                QVariant picture = player->metaData(QtMediaServices::CoverArtImage);
                 // Load picture from metadata
                 if (!picture.isNull() && picture.canConvert<QByteArray>())
                     pixmap.loadFromData(picture.value<QByteArray>());
@@ -309,8 +313,10 @@ void Player::metaDataChanged()
                 // Load picture from file pointed by uri
             } else
                 pixmap.load(uri.toString());
-
+            
             coverLabel->setPixmap((!pixmap.isNull())?pixmap:QPixmap());
+            coverLabel->setAlignment(Qt::AlignCenter);            
+            coverLabel->setScaledContents(true);
             }
     hideOrShowCoverArt();
     }

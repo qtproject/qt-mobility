@@ -480,12 +480,14 @@ void S60AudioCaptureSession::populateAudioCodecsDataL()
 
 void S60AudioCaptureSession::applyAudioSettingsL()
 {      
-    if (!m_recorderUtility)
-        return;
+    if (!m_recorderUtility || m_format.codec() == "AMR")
+        return;   
     
     TFourCC fourCC = m_audioCodeclist.value(m_format.codec()).fourCC;    
     
-    //set destination datatype
+    if (m_format.codec() == "PCM")         
+        fourCC = determinePCMFormat();    
+    
     RArray<TFourCC> supportedDataTypes;
     CleanupClosePushL(supportedDataTypes);
     m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes);    
@@ -514,7 +516,7 @@ void S60AudioCaptureSession::applyAudioSettingsL()
     CleanupClosePushL(supportedChannels);
     m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);    
     for (TInt l = 0; l < supportedChannels.Count(); l++ ) {        
-        if (supportedChannels[l] == m_format.channels()) {
+        if (supportedChannels[l] == m_format.channels()) {            
             m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
             break;
         }

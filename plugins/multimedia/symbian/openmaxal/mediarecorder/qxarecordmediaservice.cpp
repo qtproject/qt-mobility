@@ -82,5 +82,5 @@ QMediaControl* QXARecodMediaService::requestControl(const char *name)
 
 void QXARecodMediaService::releaseControl(QMediaControl *control)
 {
-    Q_UNUSED(control)
+    Q_UNUSED(control);
 }
