@@ -105,33 +105,30 @@ void tst_Performance::validate()
 {
     QFETCH(QString, vcardFileName);
 
-    // TODO: what are the details that are always available?
-    QStringList detailsAlwaysAvailable;
-    detailsAlwaysAvailable << QContactType::DefinitionName;
-
     // Import contacts from the file into contacts database
-    int count(500);
+    int count(0);
     QVERIFY(importContacts(vcardFileName, count));
 
-    QContactFetchHint hint;
-
     // QContactName
-    hint.setDetailDefinitionsHint(QStringList() << QContactName::DefinitionName);
-    QList<QContact> contacts = m_cm->contacts(QList<QContactSortOrder>(), hint);
+    QContactFetchHint nameHint;
+    nameHint.setDetailDefinitionsHint(QStringList() << QContactName::DefinitionName);
+    QList<QContact> contacts = m_cm->contacts(QList<QContactSortOrder>(), nameHint);
     QCOMPARE(contacts.count(), count);
-    QVERIFY(detailsExist(contacts, detailsAlwaysAvailable << QContactName::DefinitionName));
+    QVERIFY(detailsExist(contacts, QStringList() << QContactName::DefinitionName));
 
     // QContactPhoneNumber
-    hint.setDetailDefinitionsHint(QStringList() << QContactPhoneNumber::DefinitionName);
-    contacts = m_cm->contacts(QList<QContactSortOrder>(), hint);
+    QContactFetchHint numberHint;
+    numberHint.setDetailDefinitionsHint(QStringList() << QContactPhoneNumber::DefinitionName);
+    contacts = m_cm->contacts(QList<QContactSortOrder>(), numberHint);
     QCOMPARE(contacts.count(), count);
-    QVERIFY(detailsExist(contacts, detailsAlwaysAvailable << QContactPhoneNumber::DefinitionName));
+    QVERIFY(detailsExist(contacts, QStringList() << QContactPhoneNumber::DefinitionName));
 
     // QContactAddress
-    hint.setDetailDefinitionsHint(QStringList() << QContactAddress::DefinitionName);
-    contacts = m_cm->contacts(QList<QContactSortOrder>(), hint);
+    QContactFetchHint addressHint;
+    addressHint.setDetailDefinitionsHint(QStringList() << QContactAddress::DefinitionName);
+    contacts = m_cm->contacts(QList<QContactSortOrder>(), addressHint);
     QCOMPARE(contacts.count(), count);
-    QVERIFY(detailsExist(contacts, detailsAlwaysAvailable << QContactAddress::DefinitionName));
+    QVERIFY(detailsExist(contacts, QStringList() << QContactAddress::DefinitionName));
 }
 
 void tst_Performance::fetch_data()
@@ -148,7 +145,7 @@ void tst_Performance::fetch()
     QFETCH(QString, vcardFileName);
 
     // Import contacts from the file into contacts database
-    int count(500);
+    int count(0);
     QVERIFY(importContacts(vcardFileName, count));
 
     // The actual benchmark measurements begin... We cannot use QBENCHMARK
@@ -262,20 +259,29 @@ bool tst_Performance::detailsExist(QList<QContact> contacts, QStringList definit
 {
     foreach(QContact contact, contacts) {
         foreach (QString definitionName, definitionNames) {
-            QContactDetail detail = contact.detail(definitionName);
-            if (detail.isEmpty()) {
+            QList<QContactDetail> details = contact.details(definitionName);
+            if (!details.count()) {
+                qDebug() << "Detail not found:" << definitionName;
                 return false;
             }
-            contact.removeDetail(&detail);
+            foreach (QContactDetail detail, details) {
+                contact.removeDetail(&detail);
+            }
         }
 
         // Verify that there were no extra details (this is important from
         // performance point of view; we don't want to waste time by giving
         // details that the client does not need.
-        if(contact.details().count() > 0) {
-            int count = contact.details().count();
-            qDebug() << "extra details, count: " << count;
-            //return false;
+        foreach (QContactDetail detail, contact.details()) {
+            // Skip "always on" details
+            if (detail.definitionName() != QContactDisplayLabel::DefinitionName
+                && detail.definitionName() != QContactType::DefinitionName
+                && detail.definitionName() != QContactGuid::DefinitionName
+                && detail.definitionName() != QContactTimestamp::DefinitionName) {
+                qDebug() << "Extra detail: " << detail.definitionName();
+                // displaylabel, type, guid, timestamp
+                return false;
+            }
         }
     }
     return true;
