@@ -386,7 +386,16 @@ void AudioRecorder::updateSamplerates(int idx)
 
 void AudioRecorder::updateChannelCount(int idx)
 {    
-    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
+    QMediaControl *control = audiosource->service()->requestControl(QAudioEncoderControl_iid);
+    if (!control)
+        return;
+
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(control);
+    if (!audioEncoder) {
+        audiosource->service()->releaseControl(control);
+        return;
+    }
+
     channelBox->clear();
     QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
     QList<int> channels;
@@ -402,7 +411,16 @@ void AudioRecorder::updateChannelCount(int idx)
 
 void AudioRecorder::updateQuality(int idx)
 {    
-    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
+    QMediaControl *control = audiosource->service()->requestControl(QAudioEncoderControl_iid);
+    if (!control)
+        return;
+
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(control);
+    if (!audioEncoder) {
+        audiosource->service()->releaseControl(control);
+        return;
+    }
+
     qualityBox->clear();
     QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
     QList<int> channels;
