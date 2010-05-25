@@ -71,7 +71,7 @@ public:
 class Q_VERSIT_EXPORT QVersitContactExporterDetailHandlerV2
 {
 public:
-    static QVersitContactExporterDetailHandlerV2* createDefaultHandler();
+    static QVersitContactExporterDetailHandlerV2* createBackupHandler();
     virtual ~QVersitContactExporterDetailHandlerV2() {}
     virtual void detailProcessed(const QContact& contact,
                                  const QContactDetail& detail,
@@ -96,8 +96,7 @@ public:
     QVersitContactExporter();
     ~QVersitContactExporter();
 
-    bool exportContacts(const QList<QContact>& contacts,
-        QVersitDocument::VersitType versitType);
+    bool exportContacts(const QList<QContact>& contacts, QVersitDocument::VersitType versitType);
     QList<QVersitDocument> documents() const;
     QMap<int, Error> errors() const;
 

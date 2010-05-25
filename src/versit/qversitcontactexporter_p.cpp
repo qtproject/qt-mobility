@@ -76,15 +76,13 @@ QTM_USE_NAMESPACE
  * Constructor.
  */
 QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
-    mDefaultDetailHandler(new QVersitContactExporterDefaultDetailHandler),
+    mDetailHandler(NULL),
+    mDetailHandler2(NULL),
+    mDetailHandlerVersion(0),
     mDefaultResourceHandler(new QVersitDefaultResourceHandler),
+    mResourceHandler(mDefaultResourceHandler),
     mVersitType(QVersitDocument::InvalidType)
 {
-    mResourceHandler = mDefaultResourceHandler;
-    mDetailHandler = NULL;
-    mDetailHandler2 = mDefaultDetailHandler;
-    mDetailHandlerVersion = mDetailHandler2->version();
-
     // Detail mappings
     int versitPropertyCount =
         sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
@@ -116,7 +114,6 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
  */
 QVersitContactExporterPrivate::~QVersitContactExporterPrivate()
 {
-    delete mDefaultDetailHandler;
     delete mDefaultResourceHandler;
 }
 
