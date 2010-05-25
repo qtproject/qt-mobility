@@ -169,8 +169,8 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 
     if (!d_ptr->mappingManager) {
         d_ptr->mappingManager = d_ptr->plugin->createMappingManager(d_ptr->parameterMap,
-                                                                  &(d_ptr->mappingError),
-                                                                  &(d_ptr->mappingErrorString));
+                                                                    &(d_ptr->mappingError),
+                                                                    &(d_ptr->mappingErrorString));
 
         if (d_ptr->mappingError != QGeoServiceProvider::NoError) {
             delete d_ptr->mappingManager;
@@ -181,6 +181,37 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
     }
 
     return d_ptr->mappingManager;
+}
+
+/*!
+    Returns the QGeoMappingManager that is responsible for the mapping
+    operations made available by the service provider.
+
+    This function will return 0 if the service provider does not provide
+    any mapping services.
+
+    TODO doc lazy loading, setting of error
+*/
+QGeoMapViewport* QGeoServiceProvider::mapViewport() const
+{
+    if (!d_ptr->plugin || (d_ptr->viewportError != QGeoServiceProvider::NoError))
+        return 0;
+
+    if (!d_ptr->mapViewport) {
+        d_ptr->mapViewport = d_ptr->plugin->createMapViewport(mappingManager(),
+                                                              d_ptr->parameterMap,
+                                                              &(d_ptr->viewportError),
+                                                              &(d_ptr->viewportErrorString));
+
+        if (d_ptr->viewportError != QGeoServiceProvider::NoError) {
+            delete d_ptr->mapViewport;
+            d_ptr->mapViewport = 0;
+            d_ptr->error = d_ptr->viewportError;
+            d_ptr->errorString = d_ptr->viewportErrorString;
+        }
+    }
+
+    return d_ptr->mapViewport;
 }
 
 /*!

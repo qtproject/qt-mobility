@@ -64,6 +64,10 @@ public:
     virtual QGeoMappingManager* createMappingManager(const QMap<QString, QString> &parameters,
                                                      QGeoServiceProvider::Error *error,
                                                      QString *errorString) const = 0;
+    virtual QGeoMapViewport* createMapViewport(QGeoMappingManager *manager,
+                                               const QMap<QString, QString> &parameters,
+                                               QGeoServiceProvider::Error *error,
+                                               QString *errorString) const = 0;
     virtual QGeoRoutingManager* createRoutingManager(const QMap<QString, QString> &parameters,
                                                      QGeoServiceProvider::Error *error,
                                                      QString *errorString) const = 0;

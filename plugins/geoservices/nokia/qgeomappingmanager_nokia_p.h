@@ -60,8 +60,6 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QHash>
-#include <QPair>
-#include <QRectF>
 
 QTM_USE_NAMESPACE
 
@@ -87,32 +85,21 @@ public:
                             QString *errorString);
     virtual ~QGeoMappingManagerNokia();
 
-    virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
-                                     int zoomLevel,
-                                     const QSize &size,
-                                     const QGeoMapRequestOptions &requestOptions);
-
-    virtual QGeoMapReply* requestTile(int row, int col, int zoomLevel,
+    virtual QGeoMapReply* getMapImage(const QGeoCoordinate &center,
+                                      qreal zoomLevel,
                                       const QSize &size,
                                       const QGeoMapRequestOptions &requestOptions);
 
-    virtual QGeoMapReply* requestTile(const QGeoCoordinate &onTile, int zoomLevel,
-                                      const QSize &size,
-                                      const QGeoMapRequestOptions &requestOptions);
+    virtual QGeoMapReply* getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
+                                       const QSize &size,
+                                       const QGeoMapRequestOptions &requestOptions);
 
-    //internal map state
-    virtual void setZoomLevel(int zoomLevel);
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
-    virtual void setCenter(const QGeoCoordinate &center);
-    virtual QGeoCoordinate center() const;
-    virtual void pan(int startX, int startY, int endX, int endY);
-    virtual QGeoBoundingBox viewBounds() const;
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
+    virtual void getTileQuadKey(const QGeoCoordinate& coordinate,
+                                qint32 zoomLevel,
+                                qint32* row, qint32* col);
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerNokia)
-    Q_DECLARE_PRIVATE(QGeoMappingManager)
 
     QString getRequestString(const QuadTileInfo &info) const;
 
@@ -134,12 +121,6 @@ private:
 
     QString m_token;
     QString m_referrer;
-
-    //internal map state
-
-    QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
-    QRectF m_viewPort;
-    QSize m_tileSize;
 };
 
 #endif

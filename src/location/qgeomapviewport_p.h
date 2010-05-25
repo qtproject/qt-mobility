@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGSERVICE_P_H
-#define QGEOMAPPINGSERVICE_P_H
+#ifndef QGEOMAPVIEWPORT_P_H
+#define QGEOMAPVIEWPORT_P_H
 
 //
 //  W A R N I N G
@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgeomappingmanager.h"
+#include "qgeomapviewport.h"
 //#include "qgeomapwidget.h"
 
 #include <QSize>
@@ -62,21 +62,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMappingManagerPrivate
+class QGeoMapViewportPrivate
 {
 public:
-    QGeoMappingManagerPrivate();
-    QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other);
-    ~QGeoMappingManagerPrivate();
+    QGeoMapViewportPrivate();
 
-    QGeoMappingManagerPrivate& operator= (const QGeoMappingManagerPrivate &other);
-
-    QList<QGeoMappingManager::MapType> supportedMapTypes;
-    QList<QString> supportedImageFormats;
-    qreal minimumZoomLevel;
-    qreal maximumZoomLevel;
-    QSize minimumSize;
-    QSize maximumSize;
+    int zoomLevel;
+    QSize viewportSize;
+    QGeoMappingManager *manager;
+//    QGeoMapWidget* mapWidget;
 };
 
 QTM_END_NAMESPACE
