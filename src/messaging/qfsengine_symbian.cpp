@@ -94,7 +94,12 @@ CFSEngine::CFSEngine()
 CFSEngine::~CFSEngine()
 {
     m_mtmAccountList.clear();
-    m_mailboxes.ResetAndDestroy();
+
+    for ( TInt i = 0; i < m_mailboxes.Count(); i++ )
+        {
+        m_mailboxes[i]->Release();
+        }
+    m_mailboxes.Reset();
     m_clientApi->Release();
     delete m_factory;
 }
