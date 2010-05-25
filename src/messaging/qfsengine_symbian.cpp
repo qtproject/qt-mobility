@@ -830,12 +830,16 @@ bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentConta
 
 bool CFSEngine::retrieveBody(const QMessageId& id)
 {
+    qDebug() << "CFSEngine::retrieveBody";
     bool retVal = false;
     foreach (QMessageAccount account, m_accounts) {
+        qDebug() << "CFSEngine::retrieveBody, foreach start";
         MEmailMessage* message = NULL;
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
+        qDebug() << "CFSEngine::retrieveBody, mailboxid" << account.id().toString();
         MEmailMailbox* mailbox;
         TRAPD(mailBoxError, mailbox = m_clientApi->MailboxL(mailboxId));
+        qDebug() << "CFSEngine::retrieveBody mailboxError:" << mailBoxError;
         if (mailBoxError == KErrNone) {
             TMessageId messageId(
                 stripIdPrefix(id.toString()).toInt(),
@@ -843,15 +847,20 @@ bool CFSEngine::retrieveBody(const QMessageId& id)
                 mailboxId);
             
             TRAPD(err, message = mailbox->MessageL(messageId));
+            qDebug() << "CFSEngine::retrieveBody err:" << err;
             if (err == KErrNone) {
                 MEmailMessageContent* content;
                 TRAPD(contentError, content = message->ContentL());
+                qDebug() << "CFSEngine::retrieveBody contentError:" << contentError;
                 if (contentError == KErrNone) {
                     MEmailTextContent* textContent = content->AsTextContentOrNull();
                     if (textContent) {
+                        qDebug() << "CFSEngine::retrieveBody, textContent";
                         TInt availableSize = textContent->AvailableSize();
+                        qDebug() << "CFSEngine::retrieveBody size:" << availableSize;
                         if (!availableSize) {
                             TRAPD(textErr, textContent->FetchL(*this));
+                            qDebug() << "CFSEngine::retrieveBody textErr:" << textErr;
                             if (textErr == KErrNone) {
                                 retVal = true;
                             }
@@ -864,6 +873,7 @@ bool CFSEngine::retrieveBody(const QMessageId& id)
             }
             mailbox->Release();
         }
+    qDebug() << "CFSEngine::retrieveBody, foreach end";
     } 
     return retVal;
 }
@@ -876,6 +886,7 @@ bool CFSEngine::retrieveHeader(const QMessageId& id)
 
 void CFSEngine::DataFetchedL(const TInt aResult)
 {
+    qDebug() << "CFSEngine::DataFetchedL aResult:" << aResult;
     Q_UNUSED(aResult);       
 }
 
