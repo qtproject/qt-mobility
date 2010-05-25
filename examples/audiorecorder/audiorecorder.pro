@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += example
 
-INCLUDEPATH += ../../src/multimedia
+INCLUDEPATH += ../../src/multimedia ../../src/multimedia/audio
 include(../examples.pri)
 
 CONFIG += mobility
