@@ -164,10 +164,9 @@ typedef enum {
 
 typedef enum {
     MessagingModestMessagePriorityNotDefined = 0,
-    MessagingModestMessageHighPriority       = 1<<9|1<<10,
+    MessagingModestMessageHighPriority       = 0<<9|1<<10,
     MessagingModestMessageNormalPriority     = 0<<9|0<<10,
-    MessagingModestMessageLowPriority        = 0<<9|1<<10,
-    MessagingModestMessageSuspendedPriority  = 1<<9|0<<10
+    MessagingModestMessageLowPriority        = 1<<9|0<<10,
 } MessagingModestMessagePriority;
 
 struct MessagingModestMimePart
@@ -322,6 +321,8 @@ private:
     QString localRootFolder() const;
     QString accountRootFolder(QMessageAccountId& accountId) const;
     void foldersFromModest(QList<MessagingModestFolder>& folders) const;
+    bool startObservingModestFolder(const QMessageFolderId& folderId) const;
+    bool stopObservingModestFolder(const QMessageFolderId& folderId) const;
     EmailProtocol accountEmailProtocol(QMessageAccountId& accountId) const;
     QString accountEmailProtocolAsString(const QMessageAccountId& accountId) const;
     QString accountUsername(QMessageAccountId& accountId) const;
@@ -388,6 +389,8 @@ private:
     uint getModestPriority(QMessage &message);
     ModestStringMap getModestHeaders(QMessage &message);
 
+    bool accountExists(const QMessageAccountId& accountId) const;
+
 private slots:
     void searchMessagesHeadersReceivedSlot(QDBusMessage msg);
     void searchMessagesHeadersFetchedSlot(QDBusMessage msg);
@@ -401,6 +404,7 @@ private slots:
     void addMessageCallEnded(QDBusPendingCallWatcher *watcher);
     void stateChanged(QMessageService::State newState);
     void returnQueryResultsSlot();
+    void modestFolderContentsChangedSlot(QDBusMessage msg);
 
 private: //Data
     GConfClient *m_gconfclient;
@@ -428,6 +432,8 @@ private: //Data
     mutable QMap<QString, QMessage> m_messageCache;
 
     mutable QMap<int, QMessageServicePrivate*> m_pending_downloads;
+
+    mutable QMessageFolderIdList m_observed_folders;
 
     // Following variables are used for sync queries
     mutable QMessageService m_service;
