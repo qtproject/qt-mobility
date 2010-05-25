@@ -52,23 +52,8 @@
 QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(QMutex, contactActionServiceManagerGlobalMutex)
-QMutex* QContactActionServiceManager::m_instanceMutex = 0;
+QMutex* QContactActionServiceManager::m_instanceMutex = contactActionServiceManagerGlobalMutex();
 QContactActionServiceManager* QContactActionServiceManager::m_instance = 0;
-
-QContactActionServiceManager::QContactActionServiceManagerCleaner::~QContactActionServiceManagerCleaner()
-{
-    // synchronize thread-initiated initialization
-    if (true) {
-        QMutexLocker locker(QContactActionServiceManager::m_instanceMutex);
-        if (m_instance) {
-            delete QContactActionServiceManager::m_instance;
-            QContactActionServiceManager::m_instance = 0;
-        }
-    }
-
-    //delete QContactActionServiceManager::m_instanceMutex; ?? Q_GLOBAL_STATIC should handle this.
-}
-
 
 /*!
   \internal
@@ -79,7 +64,6 @@ QContactActionServiceManager::QContactActionServiceManagerCleaner::~QContactActi
 
 QContactActionServiceManager* QContactActionServiceManager::instance()
 {
-    m_instanceMutex = contactActionServiceManagerGlobalMutex();
     QMutexLocker locker(m_instanceMutex);
     m_instance = new QContactActionServiceManager;
     return m_instance;
@@ -95,9 +79,14 @@ QContactActionServiceManager::QContactActionServiceManager()
 
 QContactActionServiceManager::~QContactActionServiceManager()
 {
+    // XXX TODO: when does m_instanceMutex get deleted?
+    QMutexLocker locker(QContactActionServiceManager::m_instanceMutex);
     qDeleteAll(m_actionHash);
     delete m_serviceManager;
-    delete m_instance;
+    if (m_instance) {
+        delete QContactActionServiceManager::m_instance;
+        QContactActionServiceManager::m_instance = 0;
+    }
 }
 
 /* the following copy ctor and assignment operator should not work (or ever be called)! */

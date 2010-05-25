@@ -79,12 +79,6 @@ public slots:
     void serviceRemoved(const QString& serviceName);
 
 private:
-    friend class QContactActionServiceManagerCleaner;
-    class QContactActionServiceManagerCleaner
-    {
-        ~QContactActionServiceManagerCleaner();
-    };
-
     QContactActionServiceManager();
     ~QContactActionServiceManager();
     QContactActionServiceManager(const QContactActionServiceManager &);
