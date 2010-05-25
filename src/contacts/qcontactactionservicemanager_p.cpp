@@ -65,7 +65,8 @@ QContactActionServiceManager* QContactActionServiceManager::m_instance = 0;
 QContactActionServiceManager* QContactActionServiceManager::instance()
 {
     QMutexLocker locker(m_instanceMutex);
-    m_instance = new QContactActionServiceManager;
+    if (!m_instance)
+        m_instance = new QContactActionServiceManager;
     return m_instance;
 }
 
