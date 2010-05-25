@@ -102,9 +102,9 @@ struct FSSearchOperation
 };
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
-class CFSEngine : public MMailboxContentObserver, public MMailboxSyncObserver
+class CFSEngine : public MMailboxContentObserver, public MMailboxSyncObserver, public MEmailFetchObserver
 #else
-class CFSEngine : public MMailboxSyncObserver
+class CFSEngine : public MMailboxSyncObserver, public MEmailFetchObserver
 #endif
 {
 public: 
@@ -161,6 +161,9 @@ public:
     void MessageChangedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aChangedMessages, const TFolderId& aParentFolderId);
     void MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMessageIdArray aDeletedMessages, const TFolderId& aParentFolderId);       
 #endif
+    
+public: // From MEmailFetchObserver
+    virtual void DataFetchedL(const TInt aResult);
         
 private:
 
@@ -203,6 +206,11 @@ private:
 
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
     void exportUpdatesL(const QMessageAccountId &id);
+
+#ifdef FREESTYLEMAILBOXOBSERVERUSED
+    void notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
+                        const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType);
+#endif
     
     friend class QMessageService;
     friend class CMessagesFindOperation;
@@ -231,24 +239,6 @@ private:
     mutable QMessageSortOrder m_currentMessageOrdering;
 
 
-};
-    
-class CFetchOperationWait : public CBase, public MEmailFetchObserver
-    {
-public:
-    static CFetchOperationWait* NewLC();
-    virtual ~CFetchOperationWait();        
-    void Wait();
-    
-public: // From MEmailFetchObserver
-    virtual void DataFetchedL(const TInt aResult);
-    
-private:
-    void ConstructL();
-    CFetchOperationWait();
-    
-private:               
-    CActiveSchedulerWait* iWait;
 };
 
 class CFSMessagesFindOperation : public QObject, MEmailSearchObserver
