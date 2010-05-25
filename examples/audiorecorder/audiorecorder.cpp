@@ -305,13 +305,13 @@ void AudioRecorder::qualityChanged(int idx)
     
     switch(idx) {
     case 0:
-        settings.setQuality(QtMedia::LowQuality);
+        settings.setQuality(QtMediaServices::LowQuality);
         break;
     case 1:
-        settings.setQuality(QtMedia::NormalQuality);
+        settings.setQuality(QtMediaServices::NormalQuality);
         break;
     default:
-        settings.setQuality(QtMedia::HighQuality);
+        settings.setQuality(QtMediaServices::HighQuality);
     }
     capture->setEncodingSettings(settings);
 }
