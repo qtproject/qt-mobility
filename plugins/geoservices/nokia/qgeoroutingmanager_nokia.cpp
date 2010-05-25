@@ -236,15 +236,29 @@ void QGeoRoutingManagerNokia::routeFinished()
 {
     QGeoRouteReply *reply = qobject_cast<QGeoRouteReply*>(sender());
 
-    if (reply)
-        emit finished(reply);
+    if (!reply)
+        return;
+
+    if(receivers(SIGNAL(finished(QGeoRouteReply*))) == 0) {
+        reply->deleteLater();
+        return;
+    }
+
+    emit finished(reply);
 }
 
 void QGeoRoutingManagerNokia::routeError(QGeoRouteReply::Error error, const QString &errorString)
 {
     QGeoRouteReply *reply = qobject_cast<QGeoRouteReply*>(sender());
 
-    if (reply)
-        emit this->error(reply, error, errorString);
+    if (!reply)
+        return;
+
+    if(receivers(SIGNAL(finished(QGeoRouteReply*, QGeoRouteReply::Error, QString))) == 0) {
+        reply->deleteLater();
+        return;
+    }
+
+    emit this->error(reply, error, errorString);
 }
 

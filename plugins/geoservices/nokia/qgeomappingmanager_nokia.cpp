@@ -134,35 +134,36 @@ void QGeoMappingManagerNokia::mapFinished()
 {
     QGeoMapReply *reply = qobject_cast<QGeoMapReply*>(sender());
 
-    if (reply) {
+    if (!reply)
+        return;
 
-        if (m_pendingReplies.contains(reply)) {
-            QuadTileInfo* info = m_pendingReplies.take(reply);
-            qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
-            m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
-            delete info;
+    if (m_pendingReplies.contains(reply)) {
+        QuadTileInfo* info = m_pendingReplies.take(reply);
+        qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
+        m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
+        delete info;
 //            reply->deleteLater();
 //        } else {
-            //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
-            emit finished(reply);
-        }
+        //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
+        emit finished(reply);
     }
+
 }
 
 void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString &errorString)
 {
     QGeoMapReply *reply = qobject_cast<QGeoMapReply*>(sender());
 
-    if (reply) {
+    if (!reply)
+        return;
 
-        if (m_pendingReplies.contains(reply)) {
-            QuadTileInfo* info = m_pendingReplies.take(reply);
-            delete info;
-            reply->deleteLater();
-        } else {
-            //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
-            emit this->error(reply, error, errorString);
-        }
+    if (m_pendingReplies.contains(reply)) {
+        QuadTileInfo* info = m_pendingReplies.take(reply);
+        delete info;
+        reply->deleteLater();
+    } else {
+        //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
+        emit this->error(reply, error, errorString);
     }
 }
 

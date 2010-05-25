@@ -197,24 +197,28 @@ void QGeoPlacesManagerNokia::placesFinished()
 {
     QGeoPlacesReply *reply = qobject_cast<QGeoPlacesReply*>(sender());
 
+    if (!reply)
+        return;
+
     if(receivers(SIGNAL(finished(QGeoPlacesReply*))) == 0) {
         reply->deleteLater();
         return;
     }
 
-    if (reply)
-        emit finished(reply);
+    emit finished(reply);
 }
 
 void QGeoPlacesManagerNokia::placesError(QGeoPlacesReply::Error error, const QString &errorString)
 {
     QGeoPlacesReply *reply = qobject_cast<QGeoPlacesReply*>(sender());
-    
+   
+    if (!reply)
+        return;
+
     if(receivers(SIGNAL(finished(QGeoPlacesReply*, QGeoPlacesReply::Error, QString))) == 0) {
         reply->deleteLater();
         return;
     }
 
-    if (reply)
-        emit this->error(reply, error, errorString);
+    emit this->error(reply, error, errorString);
 }
