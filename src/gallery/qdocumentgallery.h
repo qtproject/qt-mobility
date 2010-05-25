@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERY_H
-#define QGALLERY_H
+#ifndef QDOCUMENTGALLERY_H
+#define QDOCUMENTGALLERY_H
 
 #include <qabstractgallery.h>
 #include <qgalleryproperty.h>
