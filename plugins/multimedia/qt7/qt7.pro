@@ -2,13 +2,11 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qt7engine)
 
-QT += opengl
+QT += network opengl
 
 PLUGIN_TYPE = mediaservice
 
 include (../../../common.pri)
-
-#qtAddLibrary(QtMultimedia)
 
 LIBS += -framework AppKit -framework AudioUnit \
         -framework AudioToolbox -framework CoreAudio \
@@ -23,6 +21,8 @@ contains(QMAKE_MAC_XARCH, no) {
 } else {
     LIBS += -Xarch_i386 -framework QuickTime -Xarch_ppc -framework QuickTime
 }
+
+LIBS += -framework QtMultimedia
 
 INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/video
 
@@ -46,7 +46,7 @@ HEADERS += \
 
 OBJECTIVE_SOURCES += \
     qt7backend.mm \
-    qt7playersession.mm \    
+    qt7playersession.mm \
     qt7serviceplugin.mm \
     qt7movieviewoutput.mm \
     qt7movievideowidget.mm \
