@@ -71,12 +71,6 @@ QTM_USE_NAMESPACE
     QTRY_COMPARE(spySelfContactIdChanged.count(), selfContactIdChanged);
 
 #define QTRY_COMPARE_SIGNAL_COUNTS2() \
-    QTRY_COMPARE(spyContactsAdded.count(), contactsAdded); \
-    QTRY_COMPARE(spyContactsChanged.count(), contactsChanged); \
-    QTRY_COMPARE(spyContactsRemoved.count(), contactsRemoved); \
-    QTRY_COMPARE(spyRelationshipsAdded.count(), relationshipsAdded); \
-    QTRY_COMPARE(spyRelationshipsRemoved.count(), relationshipsRemoved); \
-    QTRY_COMPARE(spySelfContactIdChanged.count(), selfContactIdChanged); \
     QTRY_COMPARE(spyContactsAdded2.count(), contactsAdded); \
     QTRY_COMPARE(spyContactsChanged2.count(), contactsChanged); \
     QTRY_COMPARE(spyContactsRemoved2.count(), contactsRemoved); \
@@ -201,6 +195,7 @@ void tst_QContactManagerSymbian::signalEmission()
     QContact group = createContact(QContactType::TypeGroup, "Hesketh", "");
     QVERIFY(m_cm->saveContact(&group));
     contactsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 
     // change the group
@@ -209,27 +204,32 @@ void tst_QContactManagerSymbian::signalEmission()
     group.saveDetail(&name);
     QVERIFY(m_cm->saveContact(&group));
     contactsChanged++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 
     // remove the group
     QVERIFY(m_cm->removeContact(group.localId()));
     contactsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 
     // Add two contacts
     QContact contact1 = createContact(QContactType::TypeContact, "James", "Hunt");
     QVERIFY(m_cm->saveContact(&contact1));
     contactsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
     QContact contact2 = createContact(QContactType::TypeContact, "Jochen", "Mass");
     QVERIFY(m_cm->saveContact(&contact2));
     contactsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 
     // Add group 2
     QContact group2 = createContact(QContactType::TypeGroup, "McLaren", "");
     QVERIFY(m_cm->saveContact(&group2));
     contactsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 
     // Add a relationship
@@ -239,6 +239,7 @@ void tst_QContactManagerSymbian::signalEmission()
     r.setRelationshipType(QContactRelationship::HasMember);
     QVERIFY(m_cm->saveRelationship(&r));
     relationshipsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 
     // Create one more contact manager instance
@@ -253,11 +254,13 @@ void tst_QContactManagerSymbian::signalEmission()
     r2.setRelationshipType(QContactRelationship::HasMember);
     QVERIFY(m_cm->saveRelationship(&r2));
     relationshipsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 
     // Remove relationship 1
     QVERIFY(m_cm->removeRelationship(r));
     relationshipsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
     QTRY_COMPARE(spyRelationshipsAdded3.count(), 1);
     QTRY_COMPARE(spyRelationshipsRemoved3.count(), 1);
@@ -265,6 +268,7 @@ void tst_QContactManagerSymbian::signalEmission()
     // Remove relationship 2
     QVERIFY(m_cm->removeRelationship(r2));
     relationshipsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
     QTRY_COMPARE(spyRelationshipsAdded3.count(), 1);
     QTRY_COMPARE(spyRelationshipsRemoved3.count(), 2);
@@ -272,25 +276,42 @@ void tst_QContactManagerSymbian::signalEmission()
     // Remove contacts
     QVERIFY(m_cm->removeContact(contact1.localId()));
     contactsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
     QVERIFY(m_cm->removeContact(contact2.localId()));
     contactsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
     QVERIFY(m_cm->removeContact(group2.localId()));
     contactsRemoved++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 
-    // Self contact
+    // Add self contact
     QContact memyself = createContact(QContactType::TypeContact, "Kimi", "Raikkonen");
     QVERIFY(m_cm->saveContact(&memyself));
     contactsAdded++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
     QVERIFY(m_cm->setSelfContactId(memyself.localId()));
     selfContactIdChanged++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
+
+    // Modify self contact
+    QContactName myname = memyself.detail(QContactName::DefinitionName);
+    myname.setFirstName("Iceman");
+    memyself.saveDetail(&myname);
+    QVERIFY(m_cm->saveContact(&memyself));
+    contactsChanged++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+
+    // Remove self contact
     QVERIFY(m_cm->removeContact(memyself.localId()));
     contactsRemoved++;
     selfContactIdChanged++;
+    QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
 }
 
