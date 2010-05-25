@@ -27,7 +27,6 @@ PUBLIC_HEADERS += \
     qcontactabstractrequest.h \
     qcontactaction.h \
     qcontactactiondescriptor.h \
-    qcontactactionfactory.h \
     qcontactchangeset.h \
     qcontactdetail.h \
     qcontactdetaildefinition.h \
@@ -65,7 +64,6 @@ SOURCES += \
     qcontactabstractrequest.cpp \
     qcontactaction.cpp \
     qcontactactiondescriptor.cpp \
-    qcontactactionfactory.cpp \
     qcontactactionservicemanager_p.cpp \
     qcontactchangeset.cpp \
     qcontactdetail.cpp \

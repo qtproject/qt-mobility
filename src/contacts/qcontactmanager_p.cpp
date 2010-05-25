@@ -48,7 +48,6 @@
 
 #include "qcontactaction.h"
 #include "qcontactactiondescriptor.h"
-#include "qcontactactionfactory.h"
 
 #include <QSharedData>
 #include <QtPlugin>
@@ -59,6 +58,7 @@
 #include <QFile>
 
 #include <QApplication>
+
 
 #if defined(Q_OS_SYMBIAN)
 # include <f32file.h>
@@ -175,7 +175,6 @@ void QContactManagerData::loadStaticFactories()
         QObjectList staticPlugins = QPluginLoader::staticInstances();
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
-            QContactActionFactory *g = qobject_cast<QContactActionFactory*>(staticPlugins.at(i));
             if (f) {
                 QString name = f->managerName();
 #if !defined QT_NO_DEBUG

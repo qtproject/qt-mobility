@@ -71,6 +71,10 @@ class QContactActionServiceManager : public QObject
 public:
     static QContactActionServiceManager* instance();
 
+    // this is a private class, so despite being a singleton we make this ctor public.
+    QContactActionServiceManager();
+    ~QContactActionServiceManager();
+
     QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
     QContactAction* action(const QContactActionDescriptor& descriptor);
 
@@ -79,13 +83,9 @@ public slots:
     void serviceRemoved(const QString& serviceName);
 
 private:
-    QContactActionServiceManager();
-    ~QContactActionServiceManager();
-    QContactActionServiceManager(const QContactActionServiceManager &);
-    QContactActionServiceManager & operator=(const QContactActionServiceManager &);
+    void init();
 
-    static QMutex* m_instanceMutex;
-    static QContactActionServiceManager *m_instance;
+    QMutex m_instanceMutex;
 
     QServiceManager *m_serviceManager;
 
