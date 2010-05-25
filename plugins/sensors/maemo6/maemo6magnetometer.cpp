@@ -51,8 +51,11 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     initSensor<MagnetometerSensorChannelInterface>(sensorName, m_initDone);
 
 
-    if (m_sensorInterface)
-        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)), this, SLOT(slotDataAvailable(const MagneticField&)));
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)),
+                               this, SLOT(slotDataAvailable(const MagneticField&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
     else
         qWarning() << "Unable to initialize "<< sensorName;
 
@@ -62,7 +65,11 @@ maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
     addOutputRange(-0.000614, 0.000614, 0.0000003); // -600 ... 600 mikroteslas, 0.3 uT resolution
     setDescription(QLatin1String("Measures magnetic flux density in teslas"));
 
-    QVariant v = sensor->property("returnGeoValues");
+}
+
+void maemo6magnetometer::start(){
+    maemo6sensorbase::start();
+    QVariant v = sensor()->property("returnGeoValues");
     m_isGeoMagnetometer =  v.isValid() && v.toBool()? true: false;
 }
 

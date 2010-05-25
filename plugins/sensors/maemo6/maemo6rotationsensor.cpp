@@ -50,8 +50,11 @@ maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
     const QString sensorName = "rotationsensor";
     initSensor<RotationSensorChannelInterface>(sensorName, m_initDone);
 
-    if (m_sensorInterface)
-        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
+                               this, SLOT(slotDataAvailable(const XYZ&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
     else
         qWarning() << "Unable to initialize "<<sensorName;
     setReading<QRotationReading>(&m_reading);

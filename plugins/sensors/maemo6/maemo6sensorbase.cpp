@@ -57,7 +57,7 @@ maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
 
 maemo6sensorbase::~maemo6sensorbase()
 {
-   if (m_sensorInterface) {
+    if (m_sensorInterface) {
         stop();
         QObject::disconnect(m_sensorInterface);
         delete m_sensorInterface, m_sensorInterface = 0;
@@ -66,6 +66,7 @@ maemo6sensorbase::~maemo6sensorbase()
 
 void maemo6sensorbase::start()
 {
+
     if (m_sensorInterface) {
         int dataRate = sensor()->dataRate();
         if (dataRate > 0) {
@@ -78,10 +79,11 @@ void maemo6sensorbase::start()
         } else {
             qDebug() << "Data rate in don't care mode (interval" << m_sensorInterface->interval() << "ms) for" << m_sensorInterface->id();
         }
-        m_sensorInterface->start();
-    } else {
-        sensorStopped();
+        int returnCode = m_sensorInterface->start().error().type();
+        if (returnCode==0) return;
+        qWarning()<<"m_sensorInterface did not start, error code:"<<returnCode;
     }
+    sensorStopped();
 }
 
 void maemo6sensorbase::stop()

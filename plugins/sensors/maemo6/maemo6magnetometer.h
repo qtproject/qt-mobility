@@ -58,6 +58,9 @@ public:
     static const char *id;
     maemo6magnetometer(QSensor *sensor);
 
+protected:
+    virtual void start();
+
 private:
     QMagnetometerReading m_reading;
     static bool m_initDone;

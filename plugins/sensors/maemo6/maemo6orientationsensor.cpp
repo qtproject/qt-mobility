@@ -52,8 +52,11 @@ maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
     const QString sensorName = "orientationsensor";
     initSensor<OrientationSensorChannelInterface>(sensorName, m_initDone);
 
-    if (m_sensorInterface)
-        QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)), this, SLOT(slotDataAvailable(const Unsigned&)));
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
+                               this, SLOT(slotDataAvailable(const Unsigned&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
     else
         qWarning() << "Unable to initialize "<<sensorName;
 

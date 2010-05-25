@@ -58,6 +58,9 @@ public:
     static const char *id;
     maemo6tapsensor(QSensor *sensor);
 
+protected:
+    virtual void start();
+
 private:
     QTapReading m_reading;
     static bool m_initDone;

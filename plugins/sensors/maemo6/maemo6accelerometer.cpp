@@ -51,8 +51,11 @@ maemo6accelerometer::maemo6accelerometer(QSensor *sensor)
     initSensor<AccelerometerSensorChannelInterface>(sensorName, m_initDone);
 
 
-    if (m_sensorInterface)
-        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
+                               this, SLOT(slotDataAvailable(const XYZ&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
     else
         qWarning() << "Unable to initialize "<<sensorName;
 

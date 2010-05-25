@@ -50,8 +50,11 @@ maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     const QString sensorName = "proximitysensor";
     initSensor<ProximitySensorChannelInterface>(sensorName, m_initDone);
 
-    if (m_sensorInterface)
-        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)), this, SLOT(slotDataAvailable(const Unsigned&)));
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Unsigned&)),
+                               this, SLOT(slotDataAvailable(const Unsigned&)))))
+            qWarning() << "Unable to connect "<< sensorName;
+    }
     else
         qWarning() << "Unable to initialize "<<sensorName;
     setReading<QProximityReading>(&m_reading);
