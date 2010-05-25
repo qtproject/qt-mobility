@@ -274,8 +274,6 @@ qint64 QGeoMappingManagerNokia::getTileIndex(qint32 row, qint32 col, qint32 zoom
 */
 QPointF QGeoMappingManagerNokia::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
-    Q_D(const QGeoMappingManager);
-
     qint32 numColRow = 1;
     numColRow <<= zoomLevel();
     double lng = coordinate.longitude(); //x
@@ -305,8 +303,6 @@ qreal rmod(const qreal a, const qreal b)
 */
 QGeoCoordinate QGeoMappingManagerNokia::screenPositionToCoordinate(QPointF screenPosition) const
 {
-    Q_D(const QGeoMappingManager);
-
     qint32 numColRow = 1;
     numColRow <<= zoomLevel();
     screenPosition += m_viewPort.topLeft();

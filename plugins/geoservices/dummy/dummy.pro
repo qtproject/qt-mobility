@@ -19,6 +19,8 @@ SOURCES += qgeoplacesmanagerdummy.cpp \
            
 RESOURCES += geoservicesdummymaptiles.qrc
 
+!symbian {INCLUDEPATH += $$SOURCE_DIR/src/location }
+
 symbian {
     TARGET.CAPABILITY = ALL -TCB
     pluginDep.sources = $${TARGET}.dll

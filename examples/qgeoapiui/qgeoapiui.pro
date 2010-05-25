@@ -1,8 +1,9 @@
-
 QT += xml network
 
 TARGET = QGeoApiUI
 TEMPLATE = app thread
+
+!symbian {INCLUDEPATH += ../../src/location }
 
 SOURCES += main.cpp\
         routepresenter.cpp \
@@ -11,7 +12,7 @@ SOURCES += main.cpp\
         routetab.cpp \
         geocodingtab.cpp \
         revgeocodingtab.cpp \
-        maptiletab.cpp \ 
+        maptiletab.cpp \
         servicestab.cpp
 
 HEADERS  += routepresenter.h \

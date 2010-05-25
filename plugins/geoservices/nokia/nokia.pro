@@ -32,6 +32,7 @@ SOURCES += \
             qgeoroutingmanager_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
+!symbian {INCLUDEPATH += $$SOURCE_DIR/src/location }
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1

@@ -42,7 +42,7 @@
 #include "qgeoserviceproviderplugindummy.h"
 #include "qgeoplacesmanagerdummy.h"
 #include "qgeomappingmanagerdummy.h"
-#include <QGeoRoutingManager>
+#include <qgeoroutingmanager.h>
 
 QGeoServiceProviderPluginDummy::QGeoServiceProviderPluginDummy()
 {
