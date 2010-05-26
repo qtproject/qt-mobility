@@ -17,21 +17,21 @@ SOURCES +=        qtelephony.cpp \
                   qcallinfo.cpp
 
 # Private Headers and sources
-win32: {
+win32 {
     HEADERS += qtelephony_win_p.h 
     SOURCES += qtelephony_win.cpp 
 }
-unix: {
-    !maemo*: {
+unix:!symbiam {
+    !maemo* {
         HEADERS += qtelephony_linux_p.h 
         SOURCES += qtelephony_linux.cpp
     }
-    maemo*: {
+    maemo* {
         HEADERS += qtelephony_maemo_p.h
         SOURCES += qtelephony_maemo.cpp
     }
 }
-symbian: {
+symbian {
     HEADERS += qtelephony_s60_p.h 
     SOURCES += qtelephony_s60.cpp 
 }
