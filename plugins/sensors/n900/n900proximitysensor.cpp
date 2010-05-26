@@ -53,7 +53,6 @@ n900proximitysensor::n900proximitysensor(QSensor *sensor)
 {
     setReading<QProximityReading>(&m_reading);
     addDataRate(100, 100); // 100Hz
-    sensor->setDataRate(100); // default is 10Hz
 }
 
 void n900proximitysensor::start()

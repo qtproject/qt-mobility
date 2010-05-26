@@ -41,29 +41,25 @@
 
 #include "maemo6rotationsensor.h"
 
-char const * const maemo6rotationsensor::id("maemo6.rotationsensor");
+const char *maemo6rotationsensor::id("maemo6.rotationsensor");
 bool maemo6rotationsensor::m_initDone = false;
 
 maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
     const QString sensorName = "rotationsensor";
-    if (!m_initDone) {
-        //qDBusRegisterMetaType<XYZ>();        initSensor<RotationSensorChannelInterface>("rotationsensor");
-        m_remoteSensorManager->loadPlugin(sensorName);
-        m_remoteSensorManager->registerSensorInterface<RotationSensorChannelInterface>(sensorName);
-        m_initDone = true;
+    initSensor<RotationSensorChannelInterface>(sensorName, m_initDone);
+
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)),
+                               this, SLOT(slotDataAvailable(const XYZ&)))))
+            qWarning() << "Unable to connect "<< sensorName;
     }
-    m_sensorInterface = RotationSensorChannelInterface::controlInterface(sensorName);
-    if (!m_sensorInterface)
-        m_sensorInterface = const_cast<RotationSensorChannelInterface*>(RotationSensorChannelInterface::listenInterface(sensorName));
-    if (m_sensorInterface)
-        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
     else
-        qWarning() << "Unable to initialize rotation sensor.";
+        qWarning() << "Unable to initialize "<<sensorName;
     setReading<QRotationReading>(&m_reading);
     // metadata
-    addDataRate(0, 130); // 43 Hz
+    addDataRate(1, 130); // 43 Hz
     addOutputRange(-179, 180, 1);
     setDescription(QLatin1String("Measures x, y, and z axes rotation in degrees"));
     sensor->setProperty("hasZ", true);

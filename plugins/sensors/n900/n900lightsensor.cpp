@@ -55,7 +55,6 @@ n900lightsensor::n900lightsensor(QSensor *sensor)
     // a read of the /sys file (no interrupt/timing loop/etc. is used).
     // Since no continuous operation is possible, don't set a data rate.
     addDataRate(2, 2); // Close enough to 2 Hz
-    sensor->setDataRate(2);
     setDescription(QLatin1String("tsl2563"));
 }
 

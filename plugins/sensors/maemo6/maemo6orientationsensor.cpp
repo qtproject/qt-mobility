@@ -43,36 +43,32 @@
 
 #include <posedata.h>
 
-char const * const maemo6orientationsensor::id("maemo6.orientationsensor");
+const char *maemo6orientationsensor::id("maemo6.orientationsensor");
 bool maemo6orientationsensor::m_initDone = false;
 
 maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
     const QString sensorName = "orientationsensor";
-    if (!m_initDone) {
-        //initSensor<OrientationSensorChannelInterface>("orientationsensor");
-        m_remoteSensorManager->loadPlugin(sensorName);
-        m_remoteSensorManager->registerSensorInterface<OrientationSensorChannelInterface>(sensorName);
-        m_initDone = true;
+    initSensor<OrientationSensorChannelInterface>(sensorName, m_initDone);
+
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
+                               this, SLOT(slotDataAvailable(const Unsigned&)))))
+            qWarning() << "Unable to connect "<< sensorName;
     }
-    m_sensorInterface = OrientationSensorChannelInterface::controlInterface(sensorName);
-    if (!m_sensorInterface)
-        m_sensorInterface = const_cast<OrientationSensorChannelInterface*>(OrientationSensorChannelInterface::listenInterface(sensorName));
-    if (m_sensorInterface)
-        QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)), this, SLOT(slotOrientationChanged(const Unsigned&)));
     else
-        qWarning() << "Unable to initialize orientation sensor.";
+        qWarning() << "Unable to initialize "<<sensorName;
+
     setReading<QOrientationReading>(&m_reading);
     // metadata
-    addDataRate(0, 0);
     addDataRate(130, 130);
-    addDataRate(0, 130); // TODO: this is for testing only
+    addDataRate(1, 130); // TODO: this is for testing only
     addOutputRange(0, 6, 1);
-    setDescription(QLatin1String("Measures orientation of the device screen as 6 pre-defined levels"));
+    setDescription(QLatin1String("Measures orientation of the device screen as 6 pre-defined positions"));
 }
 
-void maemo6orientationsensor::slotOrientationChanged(const Unsigned& data)
+void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)
 {
     QOrientationReading::Orientation o;
     switch (data.x()) {
