@@ -114,7 +114,8 @@ void TabbedWindow::setProvider(QString providerId)
         parameters.insert("mapping.host", "maptile.svc.nokia.com.edgesuite.net");
     }    
     
-    // TODO: Release the old service provider if there is one
+    if(m_serviceProvider)
+        delete m_serviceProvider ;
     m_serviceProvider = new QGeoServiceProvider(providerId, parameters);
     if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("QGeoApiUI Example"), tr(

@@ -47,11 +47,7 @@
 #include "qgeomapreply.h"
 
 #include <QObject>
-#include <QPixmap>
-
-class QSize;
-class QPainter;
-class QStyleOptionGraphicsItem;
+#include <QSize>
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,18 +73,18 @@ public:
 
     virtual ~QGeoMappingManager();
 
-    virtual QGeoMapReply* requestMap(const QGeoCoordinate &center,
-                                     int zoomLevel,
-                                     const QSize &size,
-                                     const QGeoMapRequestOptions &requestOptions) = 0;
-
-    virtual QGeoMapReply* requestTile(int row, int col, int zoomLevel,
+    virtual QGeoMapReply* getMapImage(const QGeoCoordinate &center,
+                                      qreal zoomLevel,
                                       const QSize &size,
                                       const QGeoMapRequestOptions &requestOptions) = 0;
 
-    virtual QGeoMapReply* requestTile(const QGeoCoordinate &onTile, int zoomLevel,
-                                      const QSize &size,
-                                      const QGeoMapRequestOptions &requestOptions) = 0;
+    virtual QGeoMapReply* getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
+                                       const QSize &size,
+                                       const QGeoMapRequestOptions &requestOptions) = 0;
+
+    virtual void getTileQuadKey(const QGeoCoordinate& coordinate,
+                                qint32 zoomLevel,
+                                qint32* row, qint32* col) = 0;
 
     QList<MapType> supportedMapTypes() const;
     QList<QString> supportedImageFormats() const;
@@ -96,51 +92,28 @@ public:
     QSize minimumImageSize() const;
     QSize maximumImageSize() const;
 
-    int minimumZoomLevel() const;
-    int maximumZoomLevel() const;
-
-    //internal map state
-
-//    void setMapWidget(QGeoMapWidget *widget);
-
-    int zoomLevel() const;
-    virtual void setZoomLevel(int zoomLevel) = 0;
-
-    virtual void setViewPortSize(const QSize &size);
-    QSize viewPortSize() const;
-
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
-
-    virtual void setCenter(const QGeoCoordinate &center) = 0;
-    virtual QGeoCoordinate center() const = 0;
-
-    virtual void pan(int startX, int startY, int endX, int endY) = 0;
-
-    virtual QGeoBoundingBox viewBounds() const = 0;
-
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
+    qreal minimumZoomLevel() const;
+    qreal maximumZoomLevel() const;
 
 signals:
     void finished(QGeoMapReply* reply);
     void error(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString = QString());
 
 protected:
-    QGeoMappingManager(QGeoMappingManagerPrivate &dd);
     QGeoMappingManager();
 
     void setSupportedMapTypes(const QList<MapType> &mapTypes);
     void setSupportedImageFormats(const QList<QString> &imageFormats);
 
-    void setMinimumZoomLevel(int minimumZoom);
-    void setMaximumZoomLevel(int maximumZoom);
+    void setMinimumZoomLevel(qreal minimumZoom);
+    void setMaximumZoomLevel(qreal maximumZoom);
 
     void setMinimumSize(const QSize &minimumSize);
     void setMaximumSize(const QSize &maximumSize);
 
+private:
     QGeoMappingManagerPrivate* d_ptr;
 
-private:
     Q_DISABLE_COPY(QGeoMappingManager)
     Q_DECLARE_PRIVATE(QGeoMappingManager)
 };

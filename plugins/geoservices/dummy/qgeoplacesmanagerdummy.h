@@ -39,46 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGSERVICE_P_H
-#define QGEOMAPPINGSERVICE_P_H
+#ifndef QGEOPLACESMANAGER_DUMMY_H
+#define QGEOPLACESMANAGER_DUMMY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include <qgeoplacesmanager.h>
+#include <QTimer>
 
-#include "qgeomappingmanager.h"
-//#include "qgeomapwidget.h"
+QTM_USE_NAMESPACE
 
-#include <QSize>
-#include <QList>
-#include <QNetworkProxy>
-
-QTM_BEGIN_NAMESPACE
-
-class QGeoMappingManagerPrivate
+class QGeoPlacesReplyDummy : public QGeoPlacesReply
 {
+    Q_OBJECT
 public:
-    QGeoMappingManagerPrivate();
-    QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other);
-    ~QGeoMappingManagerPrivate();
+    QGeoPlacesReplyDummy(const QList<QGeoPlace> &places,QObject *parent = 0)
+        :QGeoPlacesReply(parent) 
+    { 
+        setPlaces(places);
+        QTimer::singleShot(0, this, SIGNAL(finished()));
+    }
+    ~QGeoPlacesReplyDummy(){}
 
-    QGeoMappingManagerPrivate& operator= (const QGeoMappingManagerPrivate &other);
-
-    QList<QGeoMappingManager::MapType> supportedMapTypes;
-    QList<QString> supportedImageFormats;
-    qreal minimumZoomLevel;
-    qreal maximumZoomLevel;
-    QSize minimumSize;
-    QSize maximumSize;
+    void abort() {}
 };
 
-QTM_END_NAMESPACE
+class QGeoPlacesManagerDummy : public QGeoPlacesManager
+{
+    Q_OBJECT
+public:
+    QGeoPlacesManagerDummy(QObject *parent = 0);
+    ~QGeoPlacesManagerDummy();
+    
+    QGeoPlacesReply* geocode(const QGeoAddress &address,
+                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
+    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
+                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
-#endif
+    QGeoPlacesReply* placesSearch(const QString &searchString,
+                                  SearchTypes searchTypes = SearchTypes(SearchAll),
+                                  const QGeoBoundingBox &bounds = QGeoBoundingBox());
+
+private slots:
+    void placesFinished();
+    void placesError(QGeoPlacesReply::Error error, const QString &errorString);
+};
+
+#endif // QGEOCODINGSERVICE_DUMMY_H

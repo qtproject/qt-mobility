@@ -39,45 +39,33 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin.h"
+#ifndef QGEOSERVICEPROVIDERDUMMY_H
+#define QGEOSERVICEPROVIDERDUMMY_H
 
-QTM_BEGIN_NAMESPACE
+#include <qgeoserviceproviderplugin.h>
+#include <QObject>
 
-/*!
-*/
+QTM_USE_NAMESPACE
 
-/*!
-\fn QGeoServiceProviderPlugin::~QGeoServiceProviderPlugin()
-*/
+class QGeoServiceProviderPluginDummy : public QObject, public QGeoServiceProviderPlugin
+{
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QGeoServiceProviderPlugin)
+public:
+    QGeoServiceProviderPluginDummy();
+    ~QGeoServiceProviderPluginDummy();
 
+    QString providerName() const;
+    
+    QGeoPlacesManager* createPlacesManager(const QMap<QString, QString> &parameters,
+                                           QGeoServiceProvider::Error *error,
+                                           QString *errorString) const;
+    QGeoMappingManager* createMappingManager(const QMap<QString, QString> &parameters,
+                                             QGeoServiceProvider::Error *error,
+                                             QString *errorString) const;
+    QGeoRoutingManager* createRoutingManager(const QMap<QString, QString> &parameters,
+                                             QGeoServiceProvider::Error *error,
+                                             QString *errorString) const;
+};
 
-/*!
-\fn QString QGeoServiceProviderPlugin::providerName() const
-*/
-
-/*!
-\fn QGeoPlacesManager* QGeoServiceProviderPlugin::createPlacesManager(const QMap<QString, QString> &parameters,
-                                               QGeoServiceProvider::Error *error,
-                                               QString *errorString) const
-*/
-
-/*!
-\fn QGeoMappingManager* QGeoServiceProviderPlugin::createMappingManager(const QMap<QString, QString> &parameters,
-                                               QGeoServiceProvider::Error *error,
-                                               QString *errorString) const
-*/
-
-/*!
-\fn QGeoMapViewport* QGeoServiceProviderPlugin::createMapViewport(QGeoMappingManager *manager,
-                                                                  const QMap<QString, QString> &parameters,
-                                                                  QGeoServiceProvider::Error *error,
-                                                                  QString *errorString) const
-*/
-
-/*!
-\fn QGeoRoutingManager* QGeoServiceProviderPlugin::createRoutingManager(const QMap<QString, QString> &parameters,
-                                               QGeoServiceProvider::Error *error,
-                                               QString *errorString) const
-*/
-
-QTM_END_NAMESPACE
+#endif // QGEOSERVICEPROVIDERDUMMY_H

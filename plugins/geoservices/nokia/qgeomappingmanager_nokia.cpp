@@ -42,13 +42,11 @@
 #include "qgeomappingmanager_nokia_p.h"
 #include "qgeomapreply_nokia_p.h"
 
-#include <qgeomappingmanager_p.h>
-
+#include <QNetworkProxy>
 #include <QSize>
 #include <QDir>
 
 #define LARGE_TILE_DIMENSION 256
-
 #define PI 3.14159265
 #include <math.h>
 
@@ -103,19 +101,9 @@ QGeoMappingManagerNokia::~QGeoMappingManagerNokia()
     //delete m_cache;
 }
 
-QGeoMapReply* QGeoMappingManagerNokia::requestTile(const QGeoCoordinate &onTile, int zoomLevel,
-                                                   const QSize &size,
-                                                   const QGeoMapRequestOptions &requestOptions)
-{
-    qint32 row;
-    qint32 col;
-    getMercatorTileIndex(onTile, zoomLevel, &row, &col);
-    return requestTile(row, col, zoomLevel, size, requestOptions);
-}
-
-QGeoMapReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoomLevel,
-                                                   const QSize &size,
-                                                   const QGeoMapRequestOptions &requestOptions)
+QGeoMapReply* QGeoMappingManagerNokia::getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
+                                                    const QSize &size,
+                                                    const QGeoMapRequestOptions &requestOptions)
 {
     QGeoMapReplyNokia::QuadTileInfo* info = new QGeoMapReplyNokia::QuadTileInfo;
     info->row = row;
@@ -227,9 +215,9 @@ QString QGeoMappingManagerNokia::getRequestString(const QGeoMapReplyNokia::QuadT
 
     \note This does not mean that the coordinate lies in the center of the calculated tile.
 */
-void QGeoMappingManagerNokia::getMercatorTileIndex(const QGeoCoordinate& coordinate, qint32 level, qint32* row, qint32* col)
+void QGeoMappingManagerNokia::getTileQuadKey(const QGeoCoordinate& coordinate, qint32 zoomLevel, qint32* row, qint32* col)
 {
-    qreal p = pow((double) 2, static_cast<int>(level));
+    qreal p = pow((double) 2, static_cast<int>(zoomLevel));
 
     double x = coordinate.longitude() / 360 + 0.5;
     double y = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * coordinate.latitude() / 180)) / PI) / 2;
@@ -278,113 +266,10 @@ qint64 QGeoMappingManagerNokia::getTileIndex(qint32 row, qint32 col, qint32 zoom
     return ((qint64) row) * numColRow + col;
 }
 
-/*!
-    Translates the input \a coordinate to a pixel representation in the view.
-    The pixel position is relative to the viewport (i.e. (0,0) defines the top left visible point in the map).
-*/
-QPointF QGeoMappingManagerNokia::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
-{
-    Q_D(const QGeoMappingManager);
-
-    qint32 numColRow = 1;
-    numColRow <<= d->zoomLevel;
-    double lng = coordinate.longitude(); //x
-    double lat = coordinate.latitude(); //y
-
-    lng = lng / 360.0 + 0.5;
-
-    lat = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * lat / 180.0)) / PI) / 2.0;
-    lat = qMax(0.0, lat);
-    lat = qMin(1.0, lat);
-
-    QPointF point(static_cast<qint64>(lng * ((qreal) numColRow) * ((qreal) m_tileSize.width())),
-                  static_cast<qint64>(lat * ((qreal) numColRow) * ((qreal) m_tileSize.height())));
-    point -= m_viewPort.topLeft();
-    return point;
-}
-
-qreal rmod(const qreal a, const qreal b)
-{
-    quint64 div = static_cast<quint64>(a / b);
-    return a - static_cast<qreal>(div) * b;
-}
-
-/*!
-    Translates the pixel \a screenPosition in the view to a geometric coordinate.
-    The pixel position is relative to the viewport (i.e. (0,0) defines the top left visible point in the map).
-*/
-QGeoCoordinate QGeoMappingManagerNokia::screenPositionToCoordinate(QPointF screenPosition) const
-{
-    Q_D(const QGeoMappingManager);
-
-    qint32 numColRow = 1;
-    numColRow <<= d->zoomLevel;
-    screenPosition += m_viewPort.topLeft();
-    QPointF mercCoord(screenPosition.x() / (((qreal) numColRow) * ((qreal) m_tileSize.width())),
-                      screenPosition.y() / (((qreal) numColRow) * ((qreal) m_tileSize.height())));
-
-    qreal x = mercCoord.x();
-    qreal y = mercCoord.y();
-
-    if (y < 0.0f)
-        y = 0.0f;
-    else if (y > 1.0f)
-        y = 1.0f;
-
-    qreal lat;
-
-    if (y == 0.0f)
-        lat = 90.0f;
-    else if (y == 1.0f)
-        lat = -90.0f;
-    else
-        lat = (180.0f / PI) * (2.0f * atan(exp(PI * (1.0f - 2.0f * y))) - (PI / 2.0f));
-
-    qreal lng;
-    if (x >= 0) {
-        lng = rmod(x, 1.0f);
-    } else {
-        lng = rmod(1.0f - rmod(-1.0f * x, 1.0f), 1.0f);
-    }
-
-    lng = lng * 360.0f - 180.0f;
-
-    return QGeoCoordinate(lat, lng);
-}
-
-QGeoMapReply* QGeoMappingManagerNokia::requestMap(const QGeoCoordinate &center,
-                                                  int zoomLevel,
-                                                  const QSize &size,
-                                                  const QGeoMapRequestOptions &requestOptions)
+QGeoMapReply* QGeoMappingManagerNokia::getMapImage(const QGeoCoordinate &center,
+                                                   qreal zoomLevel,
+                                                   const QSize &size,
+                                                   const QGeoMapRequestOptions &requestOptions)
 {
     return NULL;
 }
-
-void QGeoMappingManagerNokia::setZoomLevel(int zoomLevel)
-{
-}
-
-void QGeoMappingManagerNokia::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
-{
-}
-
-void QGeoMappingManagerNokia::setCenter(const QGeoCoordinate &center)
-{
-}
-
-QGeoCoordinate QGeoMappingManagerNokia::center() const
-{
-    return QGeoCoordinate();
-}
-
-void QGeoMappingManagerNokia::pan(int startX, int startY, int endX, int endY)
-{
-}
-
-QGeoBoundingBox QGeoMappingManagerNokia::viewBounds() const
-{
-    return QGeoBoundingBox();
-}
-
-
-

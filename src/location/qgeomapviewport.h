@@ -39,66 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_P_H
-#define QGEOSERVICEPROVIDER_P_H
+#ifndef QGEOMAPVIEWPORT_H
+#define QGEOMAPVIEWPORT_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 
-#include "qgeoserviceprovider.h"
-
-#include <QHash>
+#include <QObject>
+#include <QSize>
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManager;
-class QGeoRoutingManager;
+//class QGeoMapWidget;
 class QGeoMappingManager;
-class QGeoMapViewport;
+class QGeoMapViewportPrivate;
 
-class QGeoServiceProviderPlugin;
-
-class QGeoServiceProviderPrivate
+class Q_LOCATION_EXPORT QGeoMapViewport : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoServiceProviderPrivate();
-    ~QGeoServiceProviderPrivate();
+    QGeoMapViewport(QGeoMappingManager *manager = 0);
+    virtual ~QGeoMapViewport();
 
-    void loadPlugin(const QString &providerName, const QMap<QString,QString> &parameters);
+//    void setMapWidget(QGeoMapWidget *widget);
 
-    QGeoServiceProviderPlugin *plugin;
+    int zoomLevel() const;
+    virtual void setZoomLevel(int zoomLevel) = 0;
 
-    QMap<QString,QString> parameterMap;
+    virtual void setViewportSize(const QSize &size);
+    QSize viewportSize() const;
 
-    QGeoPlacesManager *placesManager;
-    QGeoRoutingManager *routingManager;
-    QGeoMappingManager *mappingManager;
-    QGeoMapViewport *mapViewport;
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
 
-    QGeoServiceProvider::Error placesError;
-    QGeoServiceProvider::Error routingError;
-    QGeoServiceProvider::Error mappingError;
-    QGeoServiceProvider::Error viewportError;
+    virtual void setCenter(const QGeoCoordinate &center) = 0;
+    virtual QGeoCoordinate center() const = 0;
 
-    QString placesErrorString;
-    QString routingErrorString;
-    QString mappingErrorString;
-    QString viewportErrorString;
+    virtual void pan(int startX, int startY, int endX, int endY) = 0;
 
-    QGeoServiceProvider::Error error;
-    QString errorString;
+    virtual QGeoBoundingBox viewBounds() const = 0;
 
-    static QHash<QString, QGeoServiceProviderPlugin*> plugins(bool reload = false);
-    static void loadDynamicPlugins (QHash<QString, QGeoServiceProviderPlugin*> *plugins);
-    static void loadStaticPlugins (QHash<QString, QGeoServiceProviderPlugin*> *plugins);
+    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
+
+private:
+    QGeoMapViewportPrivate* d_ptr;
+
+    Q_DISABLE_COPY(QGeoMapViewport)
+    Q_DECLARE_PRIVATE(QGeoMapViewport)
 };
 
 QTM_END_NAMESPACE

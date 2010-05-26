@@ -56,7 +56,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoPlacesManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
-
+class QGeoMapViewport;
 class QGeoServiceProviderPrivate;
 
 class Q_LOCATION_EXPORT QGeoServiceProvider
@@ -77,6 +77,7 @@ public:
     QGeoPlacesManager* placesManager() const;
     QGeoMappingManager* mappingManager() const;
     QGeoRoutingManager* routingManager() const;
+    QGeoMapViewport* mapViewport() const;
 
     Error error() const;
     QString errorString() const;

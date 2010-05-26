@@ -44,6 +44,7 @@
 #include "qgeoplacesmanager_nokia_p.h"
 #include "qgeoroutingmanager_nokia_p.h"
 #include "qgeomappingmanager_nokia_p.h"
+#include "qgeomapviewport_nokia_p.h"
 
 #include <QtPlugin>
 #include <QNetworkProxy>
@@ -150,6 +151,14 @@ QGeoRoutingManager* QGeoServiceProviderPluginNokia::createRoutingManager(const Q
                                                                          QString *errorString) const
 {
     return new QGeoRoutingManagerNokia(parameters, error, errorString);
+}
+
+QGeoMapViewport* QGeoServiceProviderPluginNokia::createMapViewport(QGeoMappingManager *manager,
+                                                                   const QMap<QString, QString> &parameters,
+                                                                   QGeoServiceProvider::Error *error,
+                                                                   QString *errorString) const
+{
+    return new QGeoMapViewportNokia(manager, parameters, error, errorString);
 }
 
 Q_EXPORT_PLUGIN2(qtgeoservices_nokia, QGeoServiceProviderPluginNokia)

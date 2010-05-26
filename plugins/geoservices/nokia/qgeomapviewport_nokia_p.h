@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_P_H
-#define QGEOSERVICEPROVIDER_P_H
+#ifndef QGEOMAPVIEWPORT_NOKIA_P_H
+#define QGEOMAPVIEWPORT_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -53,54 +53,44 @@
 // We mean it.
 //
 
-#include "qgeoserviceprovider.h"
+#include <qgeoserviceprovider.h>
+#include <qgeomapviewport.h>
 
 #include <QHash>
+#include <QRectF>
+#include <QMap>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QGeoPlacesManager;
-class QGeoRoutingManager;
-class QGeoMappingManager;
-class QGeoMapViewport;
+class QGeoMappingManagerNokia;
 
-class QGeoServiceProviderPlugin;
-
-class QGeoServiceProviderPrivate
+class QGeoMapViewportNokia : public QGeoMapViewport
 {
+    Q_OBJECT
+
 public:
-    QGeoServiceProviderPrivate();
-    ~QGeoServiceProviderPrivate();
+    QGeoMapViewportNokia(QGeoMappingManager *manager,
+                         const QMap<QString, QString> &parameters,
+                         QGeoServiceProvider::Error *error,
+                         QString *errorString);
+    virtual ~QGeoMapViewportNokia();
 
-    void loadPlugin(const QString &providerName, const QMap<QString,QString> &parameters);
+    virtual void setZoomLevel(int zoomLevel);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    virtual void setCenter(const QGeoCoordinate &center);
+    virtual QGeoCoordinate center() const;
+    virtual void pan(int startX, int startY, int endX, int endY);
+    virtual QGeoBoundingBox viewBounds() const;
+    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
-    QGeoServiceProviderPlugin *plugin;
+private:
+    Q_DISABLE_COPY(QGeoMapViewportNokia)
 
-    QMap<QString,QString> parameterMap;
-
-    QGeoPlacesManager *placesManager;
-    QGeoRoutingManager *routingManager;
-    QGeoMappingManager *mappingManager;
-    QGeoMapViewport *mapViewport;
-
-    QGeoServiceProvider::Error placesError;
-    QGeoServiceProvider::Error routingError;
-    QGeoServiceProvider::Error mappingError;
-    QGeoServiceProvider::Error viewportError;
-
-    QString placesErrorString;
-    QString routingErrorString;
-    QString mappingErrorString;
-    QString viewportErrorString;
-
-    QGeoServiceProvider::Error error;
-    QString errorString;
-
-    static QHash<QString, QGeoServiceProviderPlugin*> plugins(bool reload = false);
-    static void loadDynamicPlugins (QHash<QString, QGeoServiceProviderPlugin*> *plugins);
-    static void loadStaticPlugins (QHash<QString, QGeoServiceProviderPlugin*> *plugins);
+private:
+    QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
+    QRectF m_viewPort;
+    QSize m_tileSize;
 };
-
-QTM_END_NAMESPACE
 
 #endif

@@ -121,8 +121,12 @@ void MapTileTab::on_btnRequest_clicked()
         m_result->setText(tr("Loading map tile"));
 
         QGeoCoordinate coord(m_tileLat->text().toDouble(), m_tileLong->text().toDouble());
-        quint16 zoomLevel = m_tileZoomLevel->text().toInt();
-        if(!m_mapManager->requestTile(coord, zoomLevel, QSize(256,256), QGeoMapRequestOptions()))
+        qint32 zoomLevel = m_tileZoomLevel->text().toInt();
+        qint32 row;
+        qint32 col;
+        m_mapManager->getTileQuadKey(coord, zoomLevel, &row, &col);
+
+        if(!m_mapManager->getTileImage(row, col, zoomLevel, QSize(256,256), QGeoMapRequestOptions()))
             m_result->setText(tr("Error - requestMap returned NULL"));        
     }
     else {

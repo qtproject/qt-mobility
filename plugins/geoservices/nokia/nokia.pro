@@ -14,6 +14,7 @@ HEADERS += \
             qgeocodexmlparser_p.h \
             qgeomappingmanager_nokia_p.h \
             qgeomapreply_nokia_p.h \
+            qgeomapviewport_nokia_p.h \
             qgeoplacesmanager_nokia_p.h \
             qgeoplacesreply_nokia_p.h \
             qgeoroutereply_nokia_p.h \
@@ -25,6 +26,7 @@ SOURCES += \
             qgeocodexmlparser.cpp \
             qgeomappingmanager_nokia.cpp \
             qgeomapreply_nokia.cpp \
+            qgeomapviewport_nokia.cpp \
             qgeoplacesmanager_nokia.cpp \
             qgeoplacesreply_nokia.cpp \
             qgeoroutereply_nokia.cpp \
@@ -32,7 +34,7 @@ SOURCES += \
             qgeoroutingmanager_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
-INCLUDEPATH += $$SOURCE_DIR/src/location
+!symbian {INCLUDEPATH += $$SOURCE_DIR/src/location }
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
