@@ -449,6 +449,7 @@ endlocal&goto :EOF
 echo.
 echo Start of compile tests
 REM compile tests go here.
+for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
 if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
 if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
 goto noTests
