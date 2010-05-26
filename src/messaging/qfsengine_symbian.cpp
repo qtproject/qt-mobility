@@ -94,7 +94,7 @@ CFSEngine::CFSEngine()
 CFSEngine::~CFSEngine()
 {
     m_mtmAccountList.clear();
-
+    m_attachments.Close();
     for ( TInt i = 0; i < m_mailboxes.Count(); i++ )
         {
         m_mailboxes[i]->Release();
@@ -170,6 +170,7 @@ QMessageAccountIdList CFSEngine::queryAccounts(const QMessageAccountFilter &filt
     QMessageAccountIdList accountIds;
 
     TRAPD(err, updateEmailAccountsL());
+    Q_UNUSED(err);
     
     QMessageAccountFilterPrivate* privateMessageAccountFilter = QMessageAccountFilterPrivate::implementation(filter);
     if (filter.isEmpty()) {
@@ -564,7 +565,7 @@ MEmailMessage* CFSEngine::createFSMessageL(const QMessage &message, const MEmail
 bool CFSEngine::addMessage(QMessage* message)
 {
     TMailboxId mailboxId(stripIdPrefix(message->parentAccountId().toString()).toInt());
-    MEmailMailbox* mailbox;
+    MEmailMailbox* mailbox = NULL;
     TRAPD(mailerr, mailbox = m_clientApi->MailboxL(mailboxId));
     if (mailerr != KErrNone)
         return false;
@@ -757,7 +758,6 @@ bool CFSEngine::removeMessage(const QMessageId &id, QMessageManager::RemovalOpti
 
 bool CFSEngine::showMessage(const QMessageId &id)
 {
-    MEmailMessage* message = NULL;
     bool retVal = false;
     foreach (QMessageAccount account, m_accounts) {
         MEmailMessage* message = NULL;
@@ -787,7 +787,7 @@ bool CFSEngine::showMessage(const QMessageId &id)
 bool CFSEngine::composeMessage(const QMessage &message)
 {
     bool retVal = false;
-    MEmailMailbox* mailbox;
+    MEmailMailbox* mailbox = NULL;
     TMailboxId mailboxId(stripIdPrefix(message.parentAccountId().toString()).toInt());
     TRAPD(err, mailbox = m_clientApi->MailboxL(mailboxId));
     if (err == KErrNone) {
@@ -806,36 +806,27 @@ bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentConta
     foreach (QMessageAccount account, m_accounts) {
         MEmailMessage* message = NULL;
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
-        MEmailMailbox* mailbox = m_clientApi->MailboxL(mailboxId);
-        
-        TMessageId mId(
-            stripIdPrefix(messageId.toString()).toInt(),
-            0, 
-            mailboxId);
-        
-        TRAPD(err, message = mailbox->MessageL(mId));
-        if (err == KErrNone) {
-            MEmailMessageContent* content;
-            TRAPD(contentError, content = message->ContentL());
-            if (contentError == KErrNone) {
-                MEmailMultipart* mPart = content->AsMultipartOrNull();
-                for ( int i = 0; i < mPart->PartCountL(); i++) {
-                    MEmailAttachment* attContent;
-                    TRAPD(attContentErr, attContent = mPart->PartByIndexL(i)->AsAttachmentOrNull());
-                    if (attContent && attContentErr == KErrNone) {
-                        TInt availableSize = attContent->AvailableSize();
-                        if (!availableSize) {
-                            TRAPD(attErr, attContent->FetchL(*this));
-                            if (attErr == KErrNone) {
-                                retVal = true;
-                            }
+        MEmailMailbox* mailbox = NULL;
+        TRAPD(mailboxError, mailbox = m_clientApi->MailboxL(mailboxId));
+        if (mailboxError == KErrNone) {       
+            TMessageId mId(
+                stripIdPrefix(messageId.toString()).toInt(),
+                0, 
+                mailboxId);
+            
+            TRAPD(err, message = mailbox->MessageL(mId));
+            if (err == KErrNone) {
+                MEmailMessageContent* content = NULL;
+                TRAPD(contentError, content = message->ContentL());
+                if (contentError == KErrNone) {
+                    TRAPD(err, retrieveAttachmentsL(message));
+                        if (err == KErrNone)
+                            retVal = true;
                         }
-                    }
                 }
-            }
-            message->Release();
-            mailbox->Release();
-            break; // no need to continue
+                message->Release();
+                mailbox->Release();
+                break; // no need to continue
         }
         mailbox->Release();
     } 
@@ -848,7 +839,7 @@ bool CFSEngine::retrieveBody(const QMessageId& id)
     foreach (QMessageAccount account, m_accounts) {
         MEmailMessage* message = NULL;
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
-        MEmailMailbox* mailbox;
+        MEmailMailbox* mailbox = NULL;
         TRAPD(mailBoxError, mailbox = m_clientApi->MailboxL(mailboxId));
         if (mailBoxError == KErrNone) {
             TMessageId messageId(
@@ -858,7 +849,7 @@ bool CFSEngine::retrieveBody(const QMessageId& id)
             
             TRAPD(err, message = mailbox->MessageL(messageId));
             if (err == KErrNone) {
-                MEmailMessageContent* content;
+                MEmailMessageContent* content = NULL;
                 TRAPD(contentError, content = message->ContentL());
                 if (contentError == KErrNone) { 
                     TRAPD(err, retrieveTotalBodyL(content));
@@ -904,6 +895,20 @@ void CFSEngine::retrieveTotalBodyL(MEmailMessageContent* aContent)
         }      
     }   
     return;
+}
+
+void CFSEngine::retrieveAttachmentsL(MEmailMessage* aMessage)
+{
+    TInt count = aMessage->GetAttachmentsL(m_attachments);
+    for(TInt i = 0; i < count; i++) {
+        MEmailAttachment* att = m_attachments[i];
+        int totalSize = att->TotalSize();
+        int availableSize = att->AvailableSize();
+        if (totalSize > availableSize) {
+            TRAPD(err, att->FetchL(*this));
+            Q_UNUSED(err);
+        }
+    }
 }
 
 bool CFSEngine::retrieveHeader(const QMessageId& id)
@@ -1860,6 +1865,7 @@ QMessageFolderIdList CFSEngine::folderIdsByAccountIdL(const QMessageAccountId& a
 
 bool CFSEngine::fsFolderL(const QMessageFolderId& id, MEmailMailbox* mailbox, MEmailFolder* folder) const
 {
+    Q_UNUSED(folder);
     MEmailFolder* fsFolder = NULL;
     foreach (QMessageAccount account, m_accounts) {
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
@@ -1926,10 +1932,11 @@ QMessage CFSEngine::messageL(const QMessageId& id) const
 bool CFSEngine::sendEmail(QMessage &message)
 {
     TMailboxId mailboxId(stripIdPrefix(message.parentAccountId().toString()).toInt());
-    MEmailMailbox* mailbox;
+    MEmailMailbox* mailbox = NULL;
     TRAPD(mailerr, mailbox = m_clientApi->MailboxL(mailboxId));
-
-    MEmailMessage* fsMessage;
+    Q_UNUSED(mailerr);
+    
+    MEmailMessage* fsMessage = NULL;
     TRAPD(err,
         fsMessage = createFSMessageL(message, mailbox);
         fsMessage->SaveChangesL();
@@ -1991,7 +1998,7 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     // bodytext and attachment(s)
     MEmailMessageContent* content = aMessage->ContentL();
     if (content) {
-        AddContentToMessage(content, &message);
+       AddContentToMessage(content, &message);
     }
    
     REmailAttachmentArray attachments;                  
@@ -2003,7 +2010,7 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     for(TInt i = 0; i < count; i++) {
         TInt availableSize = attachments[i]->AvailableSize();       
         QByteArray name = QString::fromUtf16(attachments[i]->FileNameL().Ptr(), attachments[i]->FileNameL().Length()).toLocal8Bit();
-        QByteArray mimeType; // TODO: atts[i]->ContentType() is empty
+        QByteArray mimeType; // TODO: email client api doesn't offer information about attachment mimetype
         QByteArray mimeSubType; // TODO;
         int size = attachments[i]->TotalSize();
         QMessageContentContainer attachment = QMessageContentContainerPrivate::from(
@@ -2015,6 +2022,13 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     }
     CleanupStack::PopAndDestroy();
     attachments.Close();
+    
+    //from
+    TPtrC from = aMessage->SenderAddressL()->Address();
+    if (from.Length() > 0) {
+        message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
+        QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
+    }
     
     //to
     REmailAddressArray toRecipients;
@@ -2180,6 +2194,7 @@ CFSMessagesFindOperation::CFSMessagesFindOperation(CFSEngine& aOwner, int aOpera
             m_interfacePtr = m_factory->InterfaceL(KEmailClientApiInterface); 
             m_clientApi = static_cast<MEmailClientApi*>(m_interfacePtr); 
         );
+    Q_UNUSED(err);
 }
 
 CFSMessagesFindOperation::~CFSMessagesFindOperation()

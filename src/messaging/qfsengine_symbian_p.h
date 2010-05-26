@@ -208,6 +208,7 @@ private:
     void exportUpdatesL(const QMessageAccountId &id);
     
     void retrieveTotalBodyL(MEmailMessageContent* aContent);
+    void retrieveAttachmentsL(MEmailMessage* aMessage);
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
     void notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
@@ -233,6 +234,7 @@ private:
     QMap<QMessageManager::NotificationFilterId, QMessageFilter> m_filters;
     QMessageAccount m_account;
     RMailboxPtrArray m_mailboxes;
+    REmailAttachmentArray m_attachments;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
