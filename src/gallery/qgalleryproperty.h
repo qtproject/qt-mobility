@@ -72,7 +72,7 @@ public:
 
     inline operator QString() const { return name(); }
 
-    QGalleryMetaDataFilter matches(const QVariant &value, Qt::MatchFlags flags = 0);
+    QGalleryMetaDataFilter matches(const QVariant &value, Qt::MatchFlags flags = 0) const;
     QGalleryMetaDataRangeFilter isInRange(const QVariant &minimum, const QVariant &maximum) const;
 
     QGalleryMetaDataRangeFilter operator <(const QVariant &value) const;

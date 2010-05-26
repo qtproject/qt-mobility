@@ -87,7 +87,7 @@ QString QGalleryProperty::name() const
     The match \a flags identify the criteria for a match.
 */
 
-QGalleryMetaDataFilter QGalleryProperty::matches(const QVariant &value, Qt::MatchFlags flags)
+QGalleryMetaDataFilter QGalleryProperty::matches(const QVariant &value, Qt::MatchFlags flags) const
 {
     return QGalleryMetaDataFilter(name(), value, flags);
 }

@@ -1232,7 +1232,7 @@ QGalleryUnionFilter QGalleryFilter::toUnionFilter() const
 
 QGalleryMetaDataFilter QGalleryFilter::toMetaDataFilter() const
 {
-    return d && d->type == MetaData
+    return d->type == MetaData
             ? QGalleryMetaDataFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
             : QGalleryMetaDataFilter(QGalleryFilter::Invalid);
 }
@@ -1246,7 +1246,7 @@ QGalleryMetaDataFilter QGalleryFilter::toMetaDataFilter() const
 
 QGalleryMetaDataRangeFilter QGalleryFilter::toMetaDataRangeFilter() const
 {
-    return d && d->type == MetaDataRange
+    return d->type == MetaDataRange
             ? QGalleryMetaDataRangeFilter(const_cast<QGalleryFilterPrivate *>(d.constData()))
             : QGalleryMetaDataRangeFilter(QGalleryFilter::Invalid);
 }

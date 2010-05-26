@@ -62,6 +62,7 @@ private Q_SLOTS:
     void intersectionFilter();
     void assignment();
     void copy();
+    void copyOnWrite();
     void cast();
     void intersectionOperator();
     void unionOperator();
@@ -437,6 +438,114 @@ void tst_QGalleryFilter::copy()
     }
 }
 
+void tst_QGalleryFilter::copyOnWrite()
+{
+    QList<QGalleryFilter> filters;
+
+    QGalleryMetaDataFilter metaDataFilter;
+    QGalleryMetaDataRangeFilter metaDataRangeFilter;
+    QGalleryUnionFilter unionFilter;
+    QGalleryIntersectionFilter intersectionFilter;
+
+    {
+        QGalleryMetaDataFilter filter;
+        filter.setPropertyName(QLatin1String("albumTitle"));
+        filter.setValue(QLatin1String("Greatest Hits"));
+        filter.setMatchFlags(Qt::MatchCaseSensitive);
+
+        metaDataFilter = filter;
+
+        QGalleryMetaDataFilter filterCopy(filter);
+        filter.setPropertyName(QLatin1String("artist"));
+        filter.setValue(QLatin1String("Self Titled"));
+        filter.setMatchFlags(Qt::MatchContains);
+
+        QCOMPARE(filterCopy.propertyName(), QLatin1String("albumTitle"));
+        QCOMPARE(filterCopy.value(), QVariant(QLatin1String("Greatest Hits")));
+        QCOMPARE(filterCopy.matchFlags(), Qt::MatchCaseSensitive);
+
+        QCOMPARE(filter.propertyName(), QLatin1String("artist"));
+        QCOMPARE(filter.value(), QVariant(QLatin1String("Self Titled")));
+        QCOMPARE(filter.matchFlags(), Qt::MatchContains);
+    } {
+        QGalleryMetaDataRangeFilter filter;
+        filter.setPropertyName(QLatin1String("duration"));
+        filter.setGreaterThan(12044);
+
+        metaDataRangeFilter = filter;
+
+        QGalleryMetaDataRangeFilter filterCopy(filter);
+        filter.setPropertyName(QLatin1String("trackNumber"));
+        filter.setLessThanEquals(10);
+
+        QCOMPARE(filterCopy.propertyName(), QLatin1String("duration"));
+        QCOMPARE(filterCopy.minimumValue(), QVariant(12044));
+        QCOMPARE(filterCopy.maximumValue(), QVariant());
+        QCOMPARE(filterCopy.rangeFlags(), QGalleryFilter::GreaterThanMinimum);
+
+        QCOMPARE(filter.propertyName(), QLatin1String("trackNumber"));
+        QCOMPARE(filter.minimumValue(), QVariant());
+        QCOMPARE(filter.maximumValue(), QVariant(10));
+        QCOMPARE(filter.rangeFlags(), QGalleryFilter::LessThanEqualsMaximum);
+    } {
+        QGalleryUnionFilter filter;
+        filter.append(QGalleryMetaDataFilter());
+
+        unionFilter = filter;
+
+        QGalleryUnionFilter filterCopy(filter);
+        filter.append(QGalleryMetaDataRangeFilter());
+        filter.append(filterCopy);
+        filter.removeAt(0);
+
+        filters = filterCopy.filters();
+        QCOMPARE(filters.count(), 1);
+        QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaData);
+
+        filters = filter.filters();
+        QCOMPARE(filters.count(), 2);
+        QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaDataRange);
+        QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
+    } {
+        QGalleryIntersectionFilter filter;
+        filter.append(QGalleryMetaDataFilter());
+
+        intersectionFilter = filter;
+
+        QGalleryIntersectionFilter filterCopy(filter);
+        filter.append(QGalleryMetaDataRangeFilter());
+        filter.append(filterCopy);
+        filter.removeAt(0);
+
+        filters = filterCopy.filters();
+        QCOMPARE(filters.count(), 1);
+        QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaData);
+
+        filters = filter.filters();
+        QCOMPARE(filters.count(), 2);
+        QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaDataRange);
+        QCOMPARE(filters.at(1).type(), QGalleryFilter::MetaData);
+    }
+
+
+    QCOMPARE(metaDataFilter.propertyName(), QLatin1String("albumTitle"));
+    QCOMPARE(metaDataFilter.value(), QVariant(QLatin1String("Greatest Hits")));
+    QCOMPARE(metaDataFilter.matchFlags(), Qt::MatchCaseSensitive);
+
+    QCOMPARE(metaDataRangeFilter.propertyName(), QLatin1String("duration"));
+    QCOMPARE(metaDataRangeFilter.minimumValue(), QVariant(12044));
+    QCOMPARE(metaDataRangeFilter.maximumValue(), QVariant());
+    QCOMPARE(metaDataRangeFilter.rangeFlags(), QGalleryFilter::GreaterThanMinimum);
+
+    filters = unionFilter.filters();
+    QCOMPARE(filters.count(), 1);
+    QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaData);
+
+    filters = intersectionFilter.filters();
+    QCOMPARE(filters.count(), 1);
+    QCOMPARE(filters.at(0).type(), QGalleryFilter::MetaData);
+}
+
 void tst_QGalleryFilter::cast()
 {
     QGalleryFilter metaDataFilter = QGalleryMetaDataFilter();
@@ -473,6 +582,11 @@ void tst_QGalleryFilter::cast()
     QCOMPARE(intersectionFilter.toMetaDataRangeFilter().isValid(), false);
     QCOMPARE(intersectionFilter.toUnionFilter().isValid(), false);
     QCOMPARE(intersectionFilter.toIntersectionFilter().isValid(), true);
+
+    QCOMPARE(QGalleryFilter().toMetaDataFilter().isValid(), false);
+    QCOMPARE(QGalleryFilter().toMetaDataRangeFilter().isValid(), false);
+    QCOMPARE(QGalleryFilter().toUnionFilter().isValid(), false);
+    QCOMPARE(QGalleryFilter().toIntersectionFilter().isValid(), false);
 }
 
 void tst_QGalleryFilter::intersectionOperator()
@@ -579,6 +693,13 @@ void tst_QGalleryFilter::propertyOperators()
         QCOMPARE(filter.value(), albumTitle);
         QCOMPARE(filter.matchFlags(), Qt::MatchExactly);
     } {
+        QGalleryMetaDataFilter filter = albumProperty.matches(
+                QLatin1String("Self Titled"), Qt::MatchEndsWith);
+        QCOMPARE(filter.isValid(), true);
+        QCOMPARE(filter.propertyName(), albumProperty.name());
+        QCOMPARE(filter.value(), albumTitle);
+        QCOMPARE(filter.matchFlags(), Qt::MatchEndsWith);
+    } {
         QGalleryMetaDataRangeFilter filter = trackProperty >= 3;
         QCOMPARE(filter.isValid(), true);
         QCOMPARE(filter.propertyName(), trackProperty.name());
@@ -606,6 +727,13 @@ void tst_QGalleryFilter::propertyOperators()
         QCOMPARE(filter.minimumValue(), QVariant());
         QCOMPARE(filter.maximumValue(), track);
         QCOMPARE(filter.rangeFlags(), QGalleryFilter::LessThanMaximum);
+    } {
+        QGalleryMetaDataRangeFilter filter = trackProperty.isInRange(4, 12);
+        QCOMPARE(filter.isValid(), true);
+        QCOMPARE(filter.propertyName(), trackProperty.name());
+        QCOMPARE(filter.minimumValue(), QVariant(4));
+        QCOMPARE(filter.maximumValue(), QVariant(12));
+        QCOMPARE(filter.rangeFlags(), QGalleryFilter::InclusiveRange);
     }
 }
 
