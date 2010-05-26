@@ -78,8 +78,8 @@ contains(build_docs, yes) {
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
 
-#remove translations for now as this still does not work reliably
-#SUBDIRS += translations
+#updating and deployment of translations requires Qt 4.6.3/qtPrepareTool
+!symbian:defined(qtPrepareTool):SUBDIRS += translations
 
 # install Qt style headers
 qtmheaders.path = $${QT_MOBILITY_INCLUDE}
@@ -97,16 +97,6 @@ qtmheaders.path = $${QT_MOBILITY_INCLUDE}
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmSensors/*
     INSTALLS += qtmheaders
 } else {
-
-#    Can we assume the path exists?
-#    paths = $$MW_LAYER_PUBLIC_EXPORT_PATH("") \
-#            $$APP_LAYER_PUBLIC_EXPORT_PATH("")
-#    for(i, paths) {
-#        exportPath=$$EPOCROOT"."$$dirname($$i)
-#        nativePath=$$replace(exportPath, /,\)
-#        !exists($$nativePath):system($$QMAKE_MKDIR $$nativePath)
-#    }
-
     #absolute path does not work and so is shadow building for Symbian
     qtmAppHeaders = include/QtmContacts/* \
                           include/QtmVersit/*
