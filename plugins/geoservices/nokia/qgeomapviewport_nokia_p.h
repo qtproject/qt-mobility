@@ -122,13 +122,17 @@ public:
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
+    static qint64 getTileIndex(qint32 row, qint32 col, qint32 zoomLevel);
+
 private:
+    void requestTile(qint32 row, qint32 col);
+
     Q_DISABLE_COPY(QGeoMapViewportNokia)
 
 private:
     QHash<QGeoMapReply*, QuadTileInfo*> m_pendingReplies;
     QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
-    QRectF m_viewPort;
+    QRectF m_boundingBox;
     QSize m_tileSize;
 };
 

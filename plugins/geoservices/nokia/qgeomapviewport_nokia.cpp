@@ -66,6 +66,39 @@ void QGeoMapViewportNokia::setZoomLevel(int zoomLevel)
 
 void QGeoMapViewportNokia::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
 {
+    QSize vpSize = viewportSize();
+    int zLevel = zoomLevel();
+    painter->setClipRect(0, 0, vpSize.width() + 1, vpSize.height() + 1);
+    QRectF rect = option->exposedRect;
+    rect.translate(m_boundingBox.left(), m_boundingBox.top());
+    TileIterator it(rect, zLevel, m_tileSize);
+
+    while (it.hasNext()) {
+        it.next();
+
+        if (!it.isValid())
+            continue;
+
+        qint64 index = getTileIndex(it.row(), it.col(), zLevel);
+
+        if (m_mapTiles.contains(index)) {
+            QPair<QPixmap, bool>& tileData = m_mapTiles[index];
+            QPixmap& pixmap = tileData.first;
+            QPointF tileTopLeft = it.tileRect().topLeft();
+            tileTopLeft -= m_boundingBox.topLeft();
+            painter->drawPixmap(tileTopLeft, pixmap);
+            //painter->drawRect(tileTopLeft.x(), tileTopLeft.y(), TILE_WIDTH, TILE_HEIGHT);
+
+            if (!tileData.second)
+                requestTile(it.row(), it.col());
+        } else
+            requestTile(it.row(), it.col());
+    }
+    //TODO: paint map layers
+}
+
+void QGeoMapViewportNokia::requestTile(qint32 row, qint32 col)
+{
 }
 
 void QGeoMapViewportNokia::setCenter(const QGeoCoordinate &center)
@@ -105,7 +138,7 @@ QPointF QGeoMapViewportNokia::coordinateToScreenPosition(const QGeoCoordinate &c
 
     QPointF point(static_cast<qint64>(lng * ((qreal) numColRow) * ((qreal) m_tileSize.width())),
                   static_cast<qint64>(lat * ((qreal) numColRow) * ((qreal) m_tileSize.height())));
-    point -= m_viewPort.topLeft();
+    point -= m_boundingBox.topLeft();
     return point;
 }
 
@@ -123,7 +156,7 @@ QGeoCoordinate QGeoMapViewportNokia::screenPositionToCoordinate(QPointF screenPo
 {
     qint32 numColRow = 1;
     numColRow <<= zoomLevel();
-    screenPosition += m_viewPort.topLeft();
+    screenPosition += m_boundingBox.topLeft();
     QPointF mercCoord(screenPosition.x() / (((qreal) numColRow) * ((qreal) m_tileSize.width())),
                       screenPosition.y() / (((qreal) numColRow) * ((qreal) m_tileSize.height())));
 
@@ -154,6 +187,16 @@ QGeoCoordinate QGeoMapViewportNokia::screenPositionToCoordinate(QPointF screenPo
     lng = lng * 360.0f - 180.0f;
 
     return QGeoCoordinate(lat, lng);
+}
+
+/*!
+    Maps a map tile quad key (\a row, \a col, \a zoomLevel) onto a one-dimensional one.
+*/
+qint64 QGeoMapViewportNokia::getTileIndex(qint32 row, qint32 col, qint32 zoomLevel)
+{
+    qint64 numColRow = 1;
+    numColRow <<= zoomLevel;
+    return ((qint64) row) * numColRow + col;
 }
 
 /******************************************************************************************************
