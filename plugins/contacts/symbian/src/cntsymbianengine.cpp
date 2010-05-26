@@ -437,25 +437,55 @@ bool CntSymbianEngine::addContact(QContact& contact, QContactChangeSet& changeSe
  */
 int CntSymbianEngine::addContactL(QContact &contact)
 {
-    CContactItem* contactItem = 0;
+    int id(0);
 
-    // Check contact type
+    //handle normal contact
     if(contact.type() == QContactType::TypeContact)
-        contactItem = CContactCard::NewLC();
+    {
+        // Create a new contact card.
+        CContactItem* contactItem = CContactCard::NewLC();
+        m_transformContact->transformContactL(contact, *contactItem);
+
+        // Add to the database
+        id = m_dataBase->contactDatabase()->AddNewContactL(*contactItem);
+
+        // Reload contact item
+        CleanupStack::PopAndDestroy(contactItem);
+        contactItem = 0;
+        contactItem = m_dataBase->contactDatabase()->ReadContactLC(id);
+
+        // Transform details that are not available until the contact has been saved
+        m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
+        CleanupStack::PopAndDestroy(contactItem);
+    }
+    //group contact
     else if(contact.type() == QContactType::TypeGroup)
-        contactItem = CContactGroup::NewLC();
+    {
+        // Create a new group, which is added to the database
+        CContactItem* contactItem = m_dataBase->contactDatabase()->CreateContactGroupLC();
+
+        //set the id for the contact, needed by update
+        id = contactItem->Id();
+        QScopedPointer<QContactId> contactId(new QContactId());
+        contactId->setLocalId(QContactLocalId(id));
+        contactId->setManagerUri(m_managerUri);
+        contact.setId(*contactId);
+        CleanupStack::PopAndDestroy(contactItem);
+        contactItem = 0;
+
+        //update contact, will add the fields to the already saved group
+        updateContactL(contact);
+
+        // Transform details that are not available until the contact has been saved
+        contactItem = m_dataBase->contactDatabase()->ReadContactLC(id);
+        m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
+        CleanupStack::PopAndDestroy(contactItem);
+    }
+    // Leave with an error
     else
+    {
         User::Leave(KErrInvalidContactDetail);
-   
-    // Transform and add to database
-    m_transformContact->transformContactL(contact, *contactItem);
-    int id = m_dataBase->contactDatabase()->AddNewContactL(*contactItem);
-    CleanupStack::PopAndDestroy(contactItem);
-    
-    // Reload contact item and transform details that are not available until the contact has been saved
-    contactItem = m_dataBase->contactDatabase()->ReadContactLC(id);
-    m_transformContact->transformPostSaveDetailsL(*contactItem, contact, *m_dataBase->contactDatabase(), m_managerUri);
-    CleanupStack::PopAndDestroy(contactItem);
+    }
 
     // Return the new ID.
     return id;

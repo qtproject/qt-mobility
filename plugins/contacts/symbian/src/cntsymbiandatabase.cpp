@@ -174,10 +174,13 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             changeSet.insertChangedContact(id);
         break;
     case EContactDbObserverEventGroupAdded:
-        if(m_contactsEmitted.contains(id))
-            m_contactsEmitted.removeOne(id);
-        else 
+        if(m_contactsEmitted.contains(id)) {
+            // adding a group triggers also a "changed" event. The work-around
+            // is to leave the id to m_contactsEmitted
+        } else {
             changeSet.insertAddedContact(id);
+            m_contactsEmitted.append(id);
+        }
         break;
     case EContactDbObserverEventGroupDeleted:
         if(m_contactsEmitted.contains(id))
@@ -253,6 +256,8 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
         changeSet.insertChangedContact(id);
         break;
     case EContactDbObserverEventGroupAdded:
+        // Creating a group will cause two events.
+        // Emitting addedContact from EContactDbObserverEventGroupChanged.
         changeSet.insertAddedContact(id);
         break;
     case EContactDbObserverEventGroupDeleted:
@@ -269,6 +274,8 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
         break;
     case EContactDbObserverEventGroupChanged:
         {
+            bool isOldGroup = m_groupContents.contains(id);
+
             // Contact DB observer API does not give information of contacts
             // possibly added to or removed from the group
             QSet<QContactLocalId> added;
@@ -291,7 +298,11 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             }
             if (added.count() == 0 && removed.count() == 0) {
                 // The group changed event was caused by modifying the group
-                changeSet.insertChangedContact(id);
+                // NOTE: Do not emit this for a new group. Creating a group
+                // through the backend causes two events GroupAdded and 
+                // GroupChanged.
+                if (isOldGroup)
+                    changeSet.insertChangedContact(id);
             }
         }
         break;
