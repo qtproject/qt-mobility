@@ -117,7 +117,7 @@ symbian: {
 
         qtmobilitydeployment.sources += \
             $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/QtMultimedia.dll \
-            $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/m3u.dll
+            $$(EPOCROOT50)epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_m3u.dll
 
         multimedia = \
             "IF package(0x1028315F)" \
