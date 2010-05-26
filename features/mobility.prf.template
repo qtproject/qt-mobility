@@ -37,7 +37,9 @@ contains(MOBILITY, systeminfo) {
 }
 
 contains(MOBILITY, multimedia) {
-    LIBS += -L$${MOBILITY_LIB} -lQtMultimedia
+    QT += network
+    mac:LIBS += -framework QtMultimedia
+    else:LIBS += -lQtMultimedia
 }
 
 contains(MOBILITY, contacts) {
