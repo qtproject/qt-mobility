@@ -445,17 +445,14 @@ void QGalleryAbstractRequest::cancel()
 {
     switch (d_ptr->state) {
     case Active:
-        if (d_ptr->response) {
-            d_ptr->state = Cancelling;
-            d_ptr->response->cancel();
+        d_ptr->state = Cancelling;
+        d_ptr->response->cancel();
 
-            if (d_ptr->state == Cancelling)
-                emit stateChanged(d_ptr->state);
-        }
+        if (d_ptr->state == Cancelling)
+            emit stateChanged(d_ptr->state);
         break;
     case Idle:
-        if (d_ptr->response)
-            d_ptr->response->cancel();
+        d_ptr->response->cancel();
         break;
     default:
         break;
