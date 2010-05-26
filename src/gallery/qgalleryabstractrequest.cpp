@@ -167,8 +167,6 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
     \value Filter The request is a QGalleryFilterRequest.
     \value Count The request is a QGalleryCountRequest.
     \value Remove The request is a QGalleryRemoveRequest.
-    \value Copy The request is a QGalleryCopyRequest.
-    \value Move The request is a QGalleryMoveRequest.
 */
 
 /*!
