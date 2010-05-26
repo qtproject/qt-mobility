@@ -79,6 +79,33 @@ private:
         QGeoMapRequestOptions options;
     };
 
+    class TileIterator
+    {
+    public:
+        TileIterator(const QRectF &boundingBox, qint32 zoomLevel, const QSize &tileSize);
+
+        bool hasNext() const;
+        bool isValid() const;
+        void next();
+        qint32 col() const;
+        qint32 row() const;
+        qint64 index() const;
+        QRectF tileRect() const;
+
+    private:
+        QSize m_tileSize;
+        qint32 m_numColRow;
+        qint32 m_col;
+        qint32 m_row;
+        qint64 m_tileIndex;
+        bool m_hasNext;
+        QRectF m_boundingBox;
+        qint64 m_currX;
+        qint64 m_currY;
+        QRectF m_rect;
+        bool m_valid;
+    };
+
 public:
     QGeoMapViewportNokia(QGeoMappingManager *manager,
                          const QMap<QString, QString> &parameters,

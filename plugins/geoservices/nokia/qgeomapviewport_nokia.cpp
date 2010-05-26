@@ -155,3 +155,109 @@ QGeoCoordinate QGeoMapViewportNokia::screenPositionToCoordinate(QPointF screenPo
 
     return QGeoCoordinate(lat, lng);
 }
+
+/******************************************************************************************************
+ ******************************************************************************************************/
+
+/*!
+    \class QGeoMapViewportNokia::TileIterator
+    \brief The QGeoMapViewportNokia::TileIterator can be used to iterate through all map tiles that are
+    covered by a specified view port
+    \ingroup location
+
+    The iteration goes row by row
+    (top-down), with each row being walked from left to right.
+*/
+
+/*!
+    Constructs a TileIterator with its associated \a mapView and \a viewPort.
+*/
+QGeoMapViewportNokia::TileIterator::TileIterator(const QRectF &boundingBox, qint32 zoomLevel, const QSize &tileSize)
+    : m_hasNext(true),
+    m_boundingBox(boundingBox),
+    m_tileSize(tileSize),
+    m_rect(QPointF(), tileSize),
+    m_currX(static_cast<qint64>(boundingBox.left())),
+    m_currY(static_cast<qint64>(boundingBox.top())),
+    m_valid(false)
+{
+    m_numColRow = 1;
+    m_numColRow <<= zoomLevel;
+}
+
+/*!
+    Moves iterator to next tile.
+*/
+void QGeoMapViewportNokia::TileIterator::next()
+{
+    m_col = (m_currX / m_tileSize.width()) % m_numColRow;
+    qint64 left = (m_currX / m_tileSize.width()) * m_tileSize.width();
+    m_row = m_currY / m_tileSize.height();
+    m_tileIndex = ((qint64) m_row) * m_numColRow + m_col;
+
+    if (m_currY > 0) {
+        qint64 top = (m_currY / m_tileSize.height()) * m_tileSize.height();
+        m_rect.moveTopLeft(QPointF(left, top));
+        m_valid = true;
+    } else
+        m_valid = false;
+
+    m_currX += m_tileSize.width();
+    qint64 nextLeft = (m_currX / m_tileSize.width()) * m_tileSize.width();
+
+    if (nextLeft > m_boundingBox.right()) {
+        m_currX = m_boundingBox.left();
+        m_currY += m_tileSize.height();
+    }
+
+    qint64 nextTop = (m_currY / m_tileSize.height()) * m_tileSize.height();
+
+    if (nextTop > m_boundingBox.bottom())
+        m_hasNext = false;
+}
+
+/*!
+    Returns True (at least one more tile is available), False (last tile has been reached)
+*/
+bool QGeoMapViewportNokia::TileIterator::hasNext() const
+{
+    return m_hasNext;
+}
+
+/*!
+    Returns whether the current tile is valid,
+    invalid tiles occur beyond the north and south pole.
+*/
+bool QGeoMapViewportNokia::TileIterator::isValid() const
+{
+    return m_valid;
+}
+
+/*!
+    Returns the column index of the current map tile.
+*/
+qint32 QGeoMapViewportNokia::TileIterator::col() const
+{
+    return m_col;
+}
+
+/*!
+    Returns the row index of the current map tile.
+*/
+qint32 QGeoMapViewportNokia::TileIterator::row() const
+{
+    return m_row;
+}
+
+qint64 QGeoMapViewportNokia::TileIterator::index() const
+{
+    return m_tileIndex;
+}
+
+/*!
+    Returns the bounding box of the map tile (in map pixel coordinates).
+*/
+QRectF QGeoMapViewportNokia::TileIterator::tileRect() const
+{
+    return m_rect;
+}
