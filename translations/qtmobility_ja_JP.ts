@@ -23,22 +23,6 @@
     </message>
 </context>
 <context>
-    <name>DatabaseManagerSignalHandler</name>
-    <message>
-        <location filename="../src/serviceframework/symbian/databasemanagersignalhandler.h" line="+55"/>
-        <source>qwerty</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QContactDetailRangeFilter</name>
-    <message>
-        <location filename="../src/contacts/filters/qcontactdetailrangefilter.cpp" line="+81"/>
-        <source>ddddddddd</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>QGstreamerAudioEncode</name>
     <message>
         <location filename="../plugins/multimedia/gstreamer/mediacapture/maemo/qgstreameraudioencode_maemo.cpp" line="+68"/>
@@ -331,7 +315,13 @@
 <context>
     <name>QXARecordSession</name>
     <message>
-        <location filename="../plugins/multimedia/symbian/openmaxal/mediarecorder/qxarecordsession.cpp" line="+102"/>
+        <location filename="../plugins/multimedia/symbian/openmaxal/mediarecorder/qxarecordsession.cpp" line="+60"/>
+        <location line="+11"/>
+        <source>Service has not been started</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location line="+31"/>
         <source>Unable to start Service</source>
         <translation type="unfinished"></translation>
     </message>
