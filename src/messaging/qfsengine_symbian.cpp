@@ -2055,8 +2055,8 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
     if (mPart) {
     TInt partCount = 0;
     TRAPD(err, partCount = mPart->PartCountL());
-    if (err == KErrNone) {
-            for (TInt i = 0; i < partCount; i++) {
+        if (err == KErrNone) {
+            for (TInt i = 0; i < partCount-1; i++) {
                 MEmailMessageContent* content = NULL;
                 TRAPD(err2, content = mPart->PartByIndexL(i));
                 if (err2 == KErrNone) {
@@ -2067,19 +2067,24 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
         }
         return;
     }
-    
+ 
     MEmailTextContent* textContent = aContent->AsTextContentOrNull();
     if (textContent) { 
-        QByteArray mimeType;
         TInt availableSize = textContent->AvailableSize();
         TRAPD(err, 
-            TPtrC body = textContent->ContentL();
+            TPtrC body = textContent->ContentL(); 
             QString text = QString::fromUtf16(body.Ptr(), body.Length());
-            aMessage->setBody(text, mimeType);
+            if (textContent->TextType() == MEmailTextContent::EPlainText) {
+                aMessage->setBody(text, "text/plain");
+            }
+            else if (textContent->TextType() == MEmailTextContent::EHtmlText) {
+                aMessage->setBody(text, "text/html");
+            }
             );
         Q_UNUSED(err);
         return;
     }
+
 }
 
 void CFSEngine::addAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const
