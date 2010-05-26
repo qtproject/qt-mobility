@@ -167,9 +167,11 @@ void GeocodingTab::on_btnRequest_clicked()
 
 void GeocodingTab::replyFinished(QGeoPlacesReply* reply)
 {
-    PlacePresenter presenter(m_resultTree, reply);
-    presenter.show();
-    reply->deleteLater();
+    if (!isHidden()) {
+        PlacePresenter presenter(m_resultTree, reply);
+        presenter.show();
+        reply->deleteLater();
+    }
 }
 
 void GeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString)
