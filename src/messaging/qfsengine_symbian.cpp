@@ -859,16 +859,10 @@ bool CFSEngine::retrieveBody(const QMessageId& id)
             if (err == KErrNone) {
                 MEmailMessageContent* content;
                 TRAPD(contentError, content = message->ContentL());
-                if (contentError == KErrNone) {
-                    MEmailTextContent* textContent = content->AsTextContentOrNull();
-                    if (textContent) {
-                        TInt availableSize = textContent->AvailableSize();
-                        if (!availableSize) {
-                            TRAPD(textErr, textContent->FetchL(*this));
-                            if (textErr == KErrNone) {
-                                retVal = true;
-                            }
-                        }
+                if (contentError == KErrNone) { 
+                    TRAPD(err, retrieveTotalBodyL(content));
+                    if (err == KErrNone)
+                        retVal = true;
                     }
                 }
                 message->Release();
@@ -876,9 +870,39 @@ bool CFSEngine::retrieveBody(const QMessageId& id)
                 break; // no need to continue
             }
             mailbox->Release();
-        }
-    } 
+        } 
     return retVal;
+}
+
+void CFSEngine::retrieveTotalBodyL(MEmailMessageContent* aContent)
+{
+    MEmailMultipart* mPart = aContent->AsMultipartOrNull();
+    if (mPart) {
+        TInt partCount = 0;
+        TRAPD(err, partCount = mPart->PartCountL());
+            if (err == KErrNone) {
+                for (TInt i = 0; i < partCount; i++) {
+                    MEmailMessageContent* content = NULL;
+                    TRAPD(err2, content = mPart->PartByIndexL(i));
+                    if (err2 == KErrNone) {
+                        retrieveTotalBodyL(content);
+                        content->Release();
+                    }
+                }
+            }
+            return;
+        }
+ 
+    MEmailTextContent* textContent = aContent->AsTextContentOrNull();
+    if (textContent) { 
+        TInt availableSize = textContent->AvailableSize();
+        TInt totalSize = textContent->TotalSize();
+        if (totalSize > availableSize) {
+            TRAPD(textErr, textContent->FetchL(*this));
+            Q_UNUSED(textErr);
+        }      
+    }   
+    return;
 }
 
 bool CFSEngine::retrieveHeader(const QMessageId& id)
@@ -1990,13 +2014,6 @@ QMessage CFSEngine::CreateQMessageL(MEmailMessage* aMessage) const
     }
     CleanupStack::PopAndDestroy();
     attachments.Close();
-
-    //from
-   /* TPtrC from = aMessage->SenderAddressL()->Address();
-    if (from.Length() > 0) {
-        message.setFrom(QMessageAddress(QMessageAddress::Email, QString::fromUtf16(from.Ptr(), from.Length())));
-        QMessagePrivate::setSenderName(message, QString::fromUtf16(from.Ptr(), from.Length()));
-    }*/
     
     //to
     REmailAddressArray toRecipients;
@@ -2084,7 +2101,6 @@ void CFSEngine::AddContentToMessage(MEmailMessageContent* aContent, QMessage* aM
         Q_UNUSED(err);
         return;
     }
-
 }
 
 void CFSEngine::addAttachmentToMessage(QMessage& message, QMessageContentContainer& attachment) const

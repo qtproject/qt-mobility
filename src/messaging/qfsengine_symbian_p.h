@@ -206,6 +206,8 @@ private:
 
     void handleNestedFiltersFromMessageFilter(QMessageFilter &filter) const;
     void exportUpdatesL(const QMessageAccountId &id);
+    
+    void retrieveTotalBodyL(MEmailMessageContent* aContent);
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
     void notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
