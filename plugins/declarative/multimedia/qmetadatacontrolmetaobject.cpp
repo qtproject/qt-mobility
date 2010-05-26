@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qmetadatacontrolmetaobject_p.h"
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 
 
 QT_BEGIN_NAMESPACE
@@ -210,7 +210,7 @@ namespace
     };
 }
 
-QMetaDataControlMetaObject::QMetaDataControlMetaObject(QMetaDataControl *control, QObject *object)
+QMetaDataControlMetaObject::QMetaDataControlMetaObject(QMetaDataReaderControl *control, QObject *object)
     : m_control(control)
     , m_object(object)
     , m_string(0)
@@ -272,7 +272,7 @@ QMetaDataControlMetaObject::QMetaDataControlMetaObject(QMetaDataControl *control
         m_data[18 + 3 * i] = stringIndex;                                       // Name.
         m_data[19 + 3 * i] = qvariantIndex;                                     // Type.
         m_data[20 + 3 * i] 
-                = Readable | Writable | Notify | Dynamic | (0xffffffff << 24);  // Flags.
+                = Readable | Notify | Dynamic | (0xffffffff << 24);  // Flags.
         m_data[18 + propertyCount * 3 + i] = 0;                                 // Notify signal.
 
         stringIndex += qstrlen(qt_metaDataKeys[i].name) + 1;
@@ -336,12 +336,6 @@ int QMetaDataControlMetaObject::metaCall(QMetaObject::Call c, int id, void **a)
         int propId = id - m_propertyOffset;
 
         *reinterpret_cast<QVariant *>(a[0]) = m_control->metaData(qt_metaDataKeys[propId].key);
-
-        return -1;
-    } else if (c == QMetaObject::WriteProperty && id >= m_propertyOffset) {
-        int propId = id - m_propertyOffset;
-
-        m_control->setMetaData(qt_metaDataKeys[propId].key, *reinterpret_cast<QVariant *>(a[0]));
 
         return -1;
     } else {

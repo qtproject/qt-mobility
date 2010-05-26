@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
 class QMediaPlayerControl;
 class QMediaService;
 class QMediaServiceProvider;
-class QMetaDataControl;
+class QMetaDataReaderControl;
 class QMetaDataControlMetaObject;
 class QDeclarativeMediaBaseAnimation;
 
@@ -161,7 +161,7 @@ protected:
 
     QMediaObject *m_mediaObject;
     QMediaServiceProvider *m_mediaProvider;
-    QMetaDataControl *m_metaDataControl;
+    QMetaDataReaderControl *m_metaDataControl;
     QMetaDataControlMetaObject *m_metaObject;
     QDeclarativeMediaBaseAnimation *m_animation;
 

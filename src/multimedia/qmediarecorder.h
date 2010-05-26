@@ -71,6 +71,8 @@ class Q_MEDIA_EXPORT QMediaRecorder : public QObject, public QMediaBindableInter
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(QUrl outputLocation READ outputLocation WRITE setOutputLocation)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
+    Q_PROPERTY(bool metaDataAvailable READ isMetaDataAvailable NOTIFY metaDataAvailableChanged)
+    Q_PROPERTY(bool metaDataWritable READ isMetaDataWritable NOTIFY metaDataWritableChanged)
 public:
 
     enum State
@@ -133,6 +135,18 @@ public:
                              const QVideoEncoderSettings &videoSettings = QVideoEncoderSettings(),
                              const QString &containerMimeType = QString());
 
+
+    bool isMetaDataAvailable() const;
+    bool isMetaDataWritable() const;
+
+    QVariant metaData(QtMediaServices::MetaData key) const;
+    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
+    QList<QtMediaServices::MetaData> availableMetaData() const;
+
+    QVariant extendedMetaData(const QString &key) const;
+    void setExtendedMetaData(const QString &key, const QVariant &value);
+    QStringList availableExtendedMetaData() const;
+
 public Q_SLOTS:
     void record();
     void pause();
@@ -145,6 +159,10 @@ Q_SIGNALS:
     void mutedChanged(bool muted);
 
     void error(QMediaRecorder::Error error);
+
+    void metaDataAvailableChanged(bool available);
+    void metaDataWritableChanged(bool writable);
+    void metaDataChanged();
 
 protected:
     bool setMediaObject(QMediaObject *object);

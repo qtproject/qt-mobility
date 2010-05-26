@@ -145,7 +145,7 @@ QMediaControl *QWmpPlayerService::requestControl(const char *name)
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0) {
         return m_control;
-    } else if (qstrcmp(name, QMetaDataControl_iid) == 0) {
+    } else if (qstrcmp(name, QMetaDataReaderControl_iid) == 0) {
         return m_metaData;
     } else if (qstrcmp(name, QMediaPlaylistControl_iid) == 0) {
         return m_playlist;

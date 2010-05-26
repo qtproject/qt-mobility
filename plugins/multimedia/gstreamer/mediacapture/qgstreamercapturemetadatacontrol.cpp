@@ -120,7 +120,7 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
 };
 
 QGstreamerCaptureMetaDataControl::QGstreamerCaptureMetaDataControl(QObject *parent)
-    :QMetaDataControl(parent)
+    :QMetaDataWriterControl(parent)
 {
 }
 
@@ -148,7 +148,7 @@ void QGstreamerCaptureMetaDataControl::setMetaData(QtMediaServices::MetaData key
 
             m_values.insert(QByteArray::fromRawData(name, qstrlen(name)), value);
 
-            emit QMetaDataControl::metaDataChanged();
+            emit QMetaDataWriterControl::metaDataChanged();
             emit metaDataChanged(m_values);
 
             return;
@@ -184,7 +184,7 @@ QVariant QGstreamerCaptureMetaDataControl::extendedMetaData(QString const &name)
 void QGstreamerCaptureMetaDataControl::setExtendedMetaData(QString const &name, QVariant const &value)
 {
     m_values.insert(name.toLatin1(), value);
-    emit QMetaDataControl::metaDataChanged();
+    emit QMetaDataWriterControl::metaDataChanged();
     emit metaDataChanged(m_values);
 }
 

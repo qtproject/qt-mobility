@@ -45,6 +45,7 @@
 #include <qmediaobject_p.h>
 #include <qmediaservice.h>
 #include <qmediaserviceprovider.h>
+#include <qmetadatawritercontrol.h>
 #include <qaudioencodercontrol.h>
 #include <qvideoencodercontrol.h>
 #include <qmediacontainercontrol.h>
@@ -119,6 +120,7 @@ public:
     QMediaContainerControl *formatControl;
     QAudioEncoderControl *audioControl;
     QVideoEncoderControl *videoControl;
+    QMetaDataWriterControl *metaDataControl;
 
     QMediaRecorder::State state;
     QMediaRecorder::Error error;
@@ -137,6 +139,7 @@ QMediaRecorderPrivate::QMediaRecorderPrivate():
      formatControl(0),
      audioControl(0),
      videoControl(0),
+     metaDataControl(0),
      state(QMediaRecorder::StoppedState),
      error(QMediaRecorder::NoError)
 {
@@ -243,14 +246,24 @@ bool QMediaRecorder::setMediaObject(QMediaObject *object)
                 service->releaseControl(d->audioControl);
             if (d->videoControl)
                 service->releaseControl(d->videoControl);
-        }
+            if (d->metaDataControl) {
+                disconnect(d->metaDataControl, SIGNAL(metaDataChanged()),
+                        this, SIGNAL(metaDataChanged()));
+                disconnect(d->metaDataControl, SIGNAL(metaDataAvailableChanged(bool)),
+                        this, SIGNAL(metaDataAvailableChanged(bool)));
+                disconnect(d->metaDataControl, SIGNAL(writableChanged(bool)),
+                        this, SIGNAL(metaDataWritableChanged(bool)));
 
+                service->releaseControl(d->metaDataControl);
+            }
+        }
     }
 
     d->control = 0;
     d->formatControl = 0;
     d->audioControl = 0;
     d->videoControl = 0;
+    d->metaDataControl = 0;
 
     d->mediaObject = object;
 
@@ -265,6 +278,24 @@ bool QMediaRecorder::setMediaObject(QMediaObject *object)
                 d->audioControl = qobject_cast<QAudioEncoderControl *>(service->requestControl(QAudioEncoderControl_iid));
                 d->videoControl = qobject_cast<QVideoEncoderControl *>(service->requestControl(QVideoEncoderControl_iid));
 
+                QMediaControl *control = service->requestControl(QMetaDataWriterControl_iid);
+                if (control) {
+                    d->metaDataControl = qobject_cast<QMetaDataWriterControl *>(control);
+                    if (!d->metaDataControl) {
+                        service->releaseControl(control);
+                    } else {
+                        connect(d->metaDataControl,
+                                SIGNAL(metaDataChanged()),
+                                SIGNAL(metaDataChanged()));
+                        connect(d->metaDataControl,
+                                SIGNAL(metaDataAvailableChanged(bool)),
+                                SIGNAL(metaDataAvailableChanged(bool)));
+                        connect(d->metaDataControl,
+                                SIGNAL(writableChanged(bool)),
+                                SIGNAL(metaDataWritableChanged(bool)));
+                    }
+                }
+
                 connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)),
                         this, SLOT(_q_stateChanged(QMediaRecorder::State)));
 
@@ -278,6 +309,8 @@ bool QMediaRecorder::setMediaObject(QMediaObject *object)
                         this, SLOT(_q_error(int,QString)));
 
                 connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+
+                
                 return true;
             }
         }
@@ -656,6 +689,132 @@ void QMediaRecorder::stop()
     Signals that an \a error has occurred.
 */
 
+
+/*!
+    \property QMediaRecorder::metaDataAvailable
+    \brief whether access to a media object's meta-data is available.
+
+    If this is true there is meta-data available, otherwise there is no meta-data available.
+*/
+
+bool QMediaRecorder::isMetaDataAvailable() const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->isMetaDataAvailable()
+            : false;
+}
+
+/*!
+    \fn QMediaRecorder::metaDataAvailableChanged(bool available)
+
+    Signals that the \a available state of a media object's meta-data has changed.
+*/
+
+/*!
+    \property QMediaRecorder::metaDataWritable
+    \brief whether a media object's meta-data is writable.
+
+    If this is true the meta-data is writable, otherwise the meta-data is read-only.
+*/
+
+bool QMediaRecorder::isMetaDataWritable() const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->isWritable()
+            : false;
+}
+
+/*!
+    \fn QMediaRecorder::metaDataWritableChanged(bool writable)
+
+    Signals that the \a writable state of a media object's meta-data has changed.
+*/
+
+/*!
+    Returns the value associated with a meta-data \a key.
+*/
+QVariant QMediaRecorder::metaData(QtMediaServices::MetaData key) const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->metaData(key)
+            : QVariant();
+}
+
+/*!
+    Sets a \a value for a meta-data \a key.
+*/
+void QMediaRecorder::setMetaData(QtMediaServices::MetaData key, const QVariant &value)
+{
+    Q_D(QMediaRecorder);
+
+    if (d->metaDataControl)
+        d->metaDataControl->setMetaData(key, value);
+}
+
+/*!
+    Returns a list of keys there is meta-data available for.
+*/
+QList<QtMediaServices::MetaData> QMediaRecorder::availableMetaData() const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->availableMetaData()
+            : QList<QtMediaServices::MetaData>();
+}
+
+/*!
+    \fn QMediaRecorder::metaDataChanged()
+
+    Signals that a media object's meta-data has changed.
+*/
+
+/*!
+    Returns the value associated with a meta-data \a key.
+
+    The naming and type of extended meta-data is not standardized, so the values and meaning
+    of keys may vary between backends.
+*/
+QVariant QMediaRecorder::extendedMetaData(const QString &key) const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->extendedMetaData(key)
+            : QVariant();
+}
+
+/*!
+    Sets a \a value for a meta-data \a key.
+
+    The naming and type of extended meta-data is not standardized, so the values and meaning
+    of keys may vary between backends.
+*/
+void QMediaRecorder::setExtendedMetaData(const QString &key, const QVariant &value)
+{
+    Q_D(QMediaRecorder);
+
+    if (d->metaDataControl)
+        d->metaDataControl->setExtendedMetaData(key, value);
+}
+
+/*!
+    Returns a list of keys there is extended meta-data available for.
+*/
+QStringList QMediaRecorder::availableExtendedMetaData() const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->availableExtendedMetaData()
+            : QStringList();
+}
 
 #include "moc_qmediarecorder.cpp"
 QT_END_NAMESPACE

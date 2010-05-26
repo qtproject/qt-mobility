@@ -40,21 +40,21 @@
 ****************************************************************************/
 
 #include <qmediacontrol_p.h>
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 
 QT_BEGIN_NAMESPACE
 
 
 /*!
-    \class QMetaDataControl
+    \class QMetaDataReaderControl
     \ingroup multimedia-serv
 
     \preliminary
-    \brief The QMetaDataControl class provides access to the meta-data of a
-    QMediaService's media.
+    \brief The QMetaDataReaderControl class provides read access to the
+    meta-data of a QMediaService's media.
 
     If a QMediaService can provide read or write access to the meta-data of
-    its current media it will implement QMetaDataControl.  This control
+    its current media it will implement QMetaDataReaderControl.  This control
     provides functions for both retrieving and setting meta-data values.
     Meta-data may be addressed by the well defined keys in the
     QtMediaServices::MetaData enumeration using the metaData() functions, or by
@@ -63,30 +63,31 @@ QT_BEGIN_NAMESPACE
     The functionality provided by this control is exposed to application
     code by the meta-data members of QMediaObject, and so meta-data access
     is potentially available in any of the media object classes.  Any media
-    service may implement QMetaDataControl.
+    service may implement QMetaDataReaderControl.
 
-    The interface name of QMetaDataControl is \c com.nokia.Qt.QMetaDataControl/1.0 as
-    defined in QMetaDataControl_iid.
+    The interface name of QMetaDataReaderControl is
+    \c com.nokia.Qt.QMetaDataReaderControl/1.0 as defined in
+    QMetaDataReaderControl_iid.
 
     \sa QMediaService::requestControl(), QMediaObject
 */
 
 /*!
-    \macro QMetaDataControl_iid
+    \macro QMetaDataReaderControl_iid
 
-    \c com.nokia.Qt.QMetaDataControl/1.0
+    \c com.nokia.Qt.QMetaDataReaderControl/1.0
 
-    Defines the interface name of the QMetaDataControl class.
+    Defines the interface name of the QMetaDataReaderControl class.
 
-    \relates QMetaDataControl
+    \relates QMetaDataReaderControl
 */
 
 /*!
-    Construct a QMetaDataControl with \a parent. This class is meant as a base class
+    Construct a QMetaDataReaderControl with \a parent. This class is meant as a base class
     for service specific meta data providers so this constructor is protected.
 */
 
-QMetaDataControl::QMetaDataControl(QObject *parent):
+QMetaDataReaderControl::QMetaDataReaderControl(QObject *parent):
     QMediaControl(*new QMediaControlPrivate, parent)
 {
 }
@@ -95,12 +96,12 @@ QMetaDataControl::QMetaDataControl(QObject *parent):
     Destroy the meta-data object.
 */
 
-QMetaDataControl::~QMetaDataControl()
+QMetaDataReaderControl::~QMetaDataReaderControl()
 {
 }
 
 /*!
-    \fn bool QMetaDataControl::isMetaDataAvailable() const
+    \fn bool QMetaDataReaderControl::isMetaDataAvailable() const
 
     Identifies if meta-data is available from a media service.
 
@@ -108,33 +109,19 @@ QMetaDataControl::~QMetaDataControl()
 */
 
 /*!
-    \fn bool QMetaDataControl::isWritable() const
-
-    Identifies if a media service's meta-data can be edited.
-
-    Returns true if the meta-data is writable and false otherwise.
-*/
-
-/*!
-    \fn QVariant QMetaDataControl::metaData(QtMediaServices::MetaData key) const
+    \fn QVariant QMetaDataReaderControl::metaData(QtMediaServices::MetaData key) const
 
     Returns the meta-data for the given \a key.
 */
 
 /*!
-    \fn void QMetaDataControl::setMetaData(QtMediaServices::MetaData key, const QVariant &value)
-
-    Sets the \a value of the meta-data element with the given \a key.
-*/
-
-/*!
-    \fn QMetaDataControl::availableMetaData() const
+    \fn QMetaDataReaderControl::availableMetaData() const
 
     Returns a list of keys there is meta-data available for.
 */
 
 /*!
-    \fn QMetaDataControl::extendedMetaData(const QString &key) const
+    \fn QMetaDataReaderControl::extendedMetaData(const QString &key) const
 
     Returns the metaData for an abitrary string \a key.
 
@@ -143,41 +130,25 @@ QMetaDataControl::~QMetaDataControl()
 */
 
 /*!
-    \fn QMetaDataControl::setExtendedMetaData(const QString &key, const QVariant &value)
-
-    Change the value of the meta-data element with an abitrary string \a key to \a value.
-
-    The valid selection of keys for extended meta-data is determined by the provider and the meaning
-    and type may differ between providers.
-*/
-
-/*!
-    \fn QMetaDataControl::availableExtendedMetaData() const
+    \fn QMetaDataReaderControl::availableExtendedMetaData() const
 
     Returns a list of keys there is extended meta-data available for.
 */
 
 
 /*!
-    \fn void QMetaDataControl::metaDataChanged()
+    \fn void QMetaDataReaderControl::metaDataChanged()
 
     Signal the changes of meta-data.
 */
 
 /*!
-    \fn void QMetaDataControl::metaDataAvailableChanged(bool available)
+    \fn void QMetaDataReaderControl::metaDataAvailableChanged(bool available)
 
     Signal the availability of meta-data has changed, \a available will
     be true if the multimedia object has meta-data.
 */
 
-/*!
-    \fn void QMetaDataControl::writableChanged(bool writable)
-
-    Signal a change in the writable status of meta-data, \a writable will be
-    true if meta-data elements can be added or adjusted.
-*/
-
-#include "moc_qmetadatacontrol.cpp"
+#include "moc_qmetadatareadercontrol.cpp"
 QT_END_NAMESPACE
 

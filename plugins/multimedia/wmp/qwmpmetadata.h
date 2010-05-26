@@ -42,7 +42,7 @@
 #ifndef QWMPMETADATA_H
 #define QWMPMETADATA_H
 
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 #include <qmediaresource.h>
 
 #include <wmp.h>
@@ -55,7 +55,7 @@ class QWmpEvents;
 
 QT_USE_NAMESPACE
 
-class QWmpMetaData : public QMetaDataControl
+class QWmpMetaData : public QMetaDataReaderControl
 {
     Q_OBJECT
 public:
@@ -66,16 +66,13 @@ public:
     bool isWritable() const;
 
     QVariant metaData(QtMediaServices::MetaData key) const;
-    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
     QList<QtMediaServices::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
 
     static QStringList keys(IWMPMedia *media);
     static QVariant value(IWMPMedia *media, BSTR key);
-    static void setValue(IWMPMedia *media, BSTR key, const QVariant &value);
     static QMediaContent resources(IWMPMedia *media);
     static QVariant convertVariant(const VARIANT &variant);
     static QVariant albumArtUrl(IWMPMedia *media, const char *suffix);

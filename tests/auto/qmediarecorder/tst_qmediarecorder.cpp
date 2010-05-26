@@ -46,6 +46,7 @@
 #include <qmediaservice.h>
 #include <qmediarecordercontrol.h>
 #include <qmediarecorder.h>
+#include <qmetadatawritercontrol.h>
 #include <qaudioendpointselector.h>
 #include <qaudioencodercontrol.h>
 #include <qmediacontainercontrol.h>
@@ -365,6 +366,51 @@ public:
     bool m_muted;
 };
 
+
+class QtTestMetaDataProvider : public QMetaDataWriterControl
+{
+    Q_OBJECT
+public:
+    QtTestMetaDataProvider(QObject *parent = 0)
+        : QMetaDataWriterControl(parent)
+        , m_available(false)
+        , m_writable(false)
+    {
+    }
+
+    bool isMetaDataAvailable() const { return m_available; }
+    void setMetaDataAvailable(bool available) {
+        if (m_available != available)
+            emit metaDataAvailableChanged(m_available = available);
+    }
+    QList<QtMediaServices::MetaData> availableMetaData() const { return m_data.keys(); }
+
+    bool isWritable() const { return m_writable; }
+    void setWritable(bool writable) { emit writableChanged(m_writable = writable); }
+
+    QVariant metaData(QtMediaServices::MetaData key) const { return m_data.value(key); }
+    void setMetaData(QtMediaServices::MetaData key, const QVariant &value) {
+        m_data.insert(key, value); }
+
+    QVariant extendedMetaData(const QString &key) const { return m_extendedData.value(key); }
+    void setExtendedMetaData(const QString &key, const QVariant &value) {
+        m_extendedData.insert(key, value); }
+
+    QStringList availableExtendedMetaData() const { return m_extendedData.keys(); }
+
+    using QMetaDataWriterControl::metaDataChanged;
+
+    void populateMetaData()
+    {
+        m_available = true;
+    }
+
+    bool m_available;
+    bool m_writable;
+    QMap<QtMediaServices::MetaData, QVariant> m_data;
+    QMap<QString, QVariant> m_extendedData;
+};
+
 class MockService : public QMediaService
 {
     Q_OBJECT
@@ -378,6 +424,7 @@ public:
         mockAudioEncodeControl = new MockAudioEncodeProvider(parent);
         mockFormatControl = new MockMediaContainerControl(parent);
         mockVideoEncodeControl = new MockVideoEncodeProvider(parent);
+        mockMetaDataControl = new QtTestMetaDataProvider(parent);
     }
 
     QMediaControl* requestControl(const char *name)
@@ -392,6 +439,8 @@ public:
             return mockFormatControl;
         if(hasControls && qstrcmp(name,QVideoEncoderControl_iid) == 0)
             return mockVideoEncodeControl;
+        if (hasControls && qstrcmp(name, QMetaDataWriterControl_iid) == 0)
+            return mockMetaDataControl;
 
         return 0;
     }
@@ -403,6 +452,7 @@ public:
     QAudioEncoderControl    *mockAudioEncodeControl;
     QMediaContainerControl     *mockFormatControl;
     QVideoEncoderControl    *mockVideoEncodeControl;
+    QtTestMetaDataProvider *mockMetaDataControl;
     bool hasControls;
 };
 
@@ -438,6 +488,19 @@ private slots:
     void testEncodingSettings();
     void testAudioSettings();
     void testVideoSettings();
+
+    void nullMetaDataControl();
+    void isMetaDataAvailable();
+    void isWritable();
+    void metaDataChanged();
+    void metaData_data();
+    void metaData();
+    void setMetaData_data();
+    void setMetaData();
+    void extendedMetaData_data() { metaData_data(); }
+    void extendedMetaData();
+    void setExtendedMetaData_data() { extendedMetaData_data(); }
+    void setExtendedMetaData();
 
 private:
     QAudioEncoderControl* encode;
@@ -992,6 +1055,213 @@ void tst_QMediaRecorder::testVideoSettings()
     settings2.setFrameRate(2);
     QVERIFY(settings1 != settings2);
 }
+
+
+void tst_QMediaRecorder::nullMetaDataControl()
+{
+    const QString titleKey(QLatin1String("Title"));
+    const QString title(QLatin1String("Host of Seraphim"));
+
+    MockProvider recorderControl(0);
+    MockService service(0, &recorderControl);
+    service.hasControls = false;
+    MockObject object(0, &service);
+
+    QMediaRecorder recorder(&object);
+
+    QSignalSpy spy(&recorder, SIGNAL(metaDataChanged()));
+
+    QCOMPARE(recorder.isMetaDataAvailable(), false);
+    QCOMPARE(recorder.isMetaDataWritable(), false);
+
+    recorder.setMetaData(QtMediaServices::Title, title);
+    recorder.setExtendedMetaData(titleKey, title);
+
+    QCOMPARE(recorder.metaData(QtMediaServices::Title).toString(), QString());
+    QCOMPARE(recorder.extendedMetaData(titleKey).toString(), QString());
+    QCOMPARE(recorder.availableMetaData(), QList<QtMediaServices::MetaData>());
+    QCOMPARE(recorder.availableExtendedMetaData(), QStringList());
+    QCOMPARE(spy.count(), 0);
+}
+
+void tst_QMediaRecorder::isMetaDataAvailable()
+{
+    MockProvider recorderControl(0);
+    MockService service(0, &recorderControl);
+    service.mockMetaDataControl->setMetaDataAvailable(false);
+    MockObject object(0, &service);
+
+    QMediaRecorder recorder(&object);
+    QCOMPARE(recorder.isMetaDataAvailable(), false);
+
+    QSignalSpy spy(&recorder, SIGNAL(metaDataAvailableChanged(bool)));
+    service.mockMetaDataControl->setMetaDataAvailable(true);
+
+    QCOMPARE(recorder.isMetaDataAvailable(), true);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.at(0).at(0).toBool(), true);
+
+    service.mockMetaDataControl->setMetaDataAvailable(false);
+
+    QCOMPARE(recorder.isMetaDataAvailable(), false);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(spy.at(1).at(0).toBool(), false);
+}
+
+void tst_QMediaRecorder::isWritable()
+{
+    MockProvider recorderControl(0);
+    MockService service(0, &recorderControl);
+    service.mockMetaDataControl->setWritable(false);
+
+    MockObject object(0, &service);
+
+    QMediaRecorder recorder(&object);
+
+    QSignalSpy spy(&recorder, SIGNAL(metaDataWritableChanged(bool)));
+
+    QCOMPARE(recorder.isMetaDataWritable(), false);
+
+    service.mockMetaDataControl->setWritable(true);
+
+    QCOMPARE(recorder.isMetaDataWritable(), true);
+    QCOMPARE(spy.count(), 1);
+    QCOMPARE(spy.at(0).at(0).toBool(), true);
+
+    service.mockMetaDataControl->setWritable(false);
+
+    QCOMPARE(recorder.isMetaDataWritable(), false);
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(spy.at(1).at(0).toBool(), false);
+}
+
+void tst_QMediaRecorder::metaDataChanged()
+{
+    MockProvider recorderControl(0);
+    MockService service(0, &recorderControl);
+    MockObject object(0, &service);
+
+    QMediaRecorder recorder(&object);
+
+    QSignalSpy spy(&recorder, SIGNAL(metaDataChanged()));
+
+    service.mockMetaDataControl->metaDataChanged();
+    QCOMPARE(spy.count(), 1);
+
+    service.mockMetaDataControl->metaDataChanged();
+    QCOMPARE(spy.count(), 2);
+}
+
+void tst_QMediaRecorder::metaData_data()
+{
+    QTest::addColumn<QString>("artist");
+    QTest::addColumn<QString>("title");
+    QTest::addColumn<QString>("genre");
+
+    QTest::newRow("")
+            << QString::fromLatin1("Dead Can Dance")
+            << QString::fromLatin1("Host of Seraphim")
+            << QString::fromLatin1("Awesome");
+}
+
+void tst_QMediaRecorder::metaData()
+{
+    QFETCH(QString, artist);
+    QFETCH(QString, title);
+    QFETCH(QString, genre);
+
+    MockProvider recorderControl(0);
+    MockService service(0, &recorderControl);
+    service.mockMetaDataControl->populateMetaData();
+
+    MockObject object(0, &service);
+
+    QMediaRecorder recorder(&object);
+    QVERIFY(object.availableMetaData().isEmpty());
+
+    service.mockMetaDataControl->m_data.insert(QtMediaServices::AlbumArtist, artist);
+    service.mockMetaDataControl->m_data.insert(QtMediaServices::Title, title);
+    service.mockMetaDataControl->m_data.insert(QtMediaServices::Genre, genre);
+
+    QCOMPARE(recorder.metaData(QtMediaServices::AlbumArtist).toString(), artist);
+    QCOMPARE(recorder.metaData(QtMediaServices::Title).toString(), title);
+
+    QList<QtMediaServices::MetaData> metaDataKeys = recorder.availableMetaData();
+    QCOMPARE(metaDataKeys.size(), 3);
+    QVERIFY(metaDataKeys.contains(QtMediaServices::AlbumArtist));
+    QVERIFY(metaDataKeys.contains(QtMediaServices::Title));
+    QVERIFY(metaDataKeys.contains(QtMediaServices::Genre));
+}
+
+void tst_QMediaRecorder::setMetaData_data()
+{
+    QTest::addColumn<QString>("title");
+
+    QTest::newRow("")
+            << QString::fromLatin1("In the Kingdom of the Blind the One eyed are Kings");
+}
+
+void tst_QMediaRecorder::setMetaData()
+{
+    QFETCH(QString, title);
+
+    MockProvider recorderControl(0);
+    MockService service(0, &recorderControl);
+    service.mockMetaDataControl->populateMetaData();
+
+    MockObject object(0, &service);
+
+    QMediaRecorder recorder(&object);
+
+    recorder.setMetaData(QtMediaServices::Title, title);
+    QCOMPARE(recorder.metaData(QtMediaServices::Title).toString(), title);
+    QCOMPARE(service.mockMetaDataControl->m_data.value(QtMediaServices::Title).toString(), title);
+}
+
+void tst_QMediaRecorder::extendedMetaData()
+{
+    QFETCH(QString, artist);
+    QFETCH(QString, title);
+    QFETCH(QString, genre);
+
+    MockProvider recorderControl(0);
+    MockService service(0, &recorderControl);
+    MockObject object(0, &service);
+
+    QMediaRecorder recorder(&object);
+    QVERIFY(recorder.availableExtendedMetaData().isEmpty());
+
+    service.mockMetaDataControl->m_extendedData.insert(QLatin1String("Artist"), artist);
+    service.mockMetaDataControl->m_extendedData.insert(QLatin1String("Title"), title);
+    service.mockMetaDataControl->m_extendedData.insert(QLatin1String("Genre"), genre);
+
+    QCOMPARE(recorder.extendedMetaData(QLatin1String("Artist")).toString(), artist);
+    QCOMPARE(recorder.extendedMetaData(QLatin1String("Title")).toString(), title);
+
+    QStringList extendedKeys = recorder.availableExtendedMetaData();
+    QCOMPARE(extendedKeys.size(), 3);
+    QVERIFY(extendedKeys.contains(QLatin1String("Artist")));
+    QVERIFY(extendedKeys.contains(QLatin1String("Title")));
+    QVERIFY(extendedKeys.contains(QLatin1String("Genre")));
+}
+
+void tst_QMediaRecorder::setExtendedMetaData()
+{
+    MockProvider recorderControl(0);
+    MockService service(0, &recorderControl);
+    service.mockMetaDataControl->populateMetaData();
+
+    MockObject object(0, &service);
+
+    QMediaRecorder recorder(&object);
+
+    QString title(QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
+
+    recorder.setExtendedMetaData(QLatin1String("Title"), title);
+    QCOMPARE(recorder.extendedMetaData(QLatin1String("Title")).toString(), title);
+    QCOMPARE(service.mockMetaDataControl->m_extendedData.value(QLatin1String("Title")).toString(), title);
+}
+
 
 QTEST_MAIN(tst_QMediaRecorder)
 

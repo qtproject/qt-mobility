@@ -129,7 +129,7 @@ static const QWmpMetaDataKeyLookup qt_wmpMetaDataKeys[] =
 };
 
 QWmpMetaData::QWmpMetaData(IWMPCore3 *player, QWmpEvents *events, QObject *parent)
-    : QMetaDataControl(parent)
+    : QMetaDataReaderControl(parent)
     , m_media(0)
 {
     player->get_currentMedia(&m_media);
@@ -204,18 +204,6 @@ QVariant QWmpMetaData::metaData(QtMediaServices::MetaData key) const
     return QVariant();
 }
 
-void QWmpMetaData::setMetaData(QtMediaServices::MetaData key, const QVariant &value)
-{
-    static const int  count = sizeof(qt_wmpMetaDataKeys) / sizeof(QWmpMetaDataKeyLookup);
-
-    for (int i = 0; i < count; ++i) {
-        if (qt_wmpMetaDataKeys[i].key == key) {
-            setValue(m_media, QAutoBStr(qt_wmpMetaDataKeys[i].token), value);
-            return;
-        }
-    }
-}
-
 QList<QtMediaServices::MetaData> QWmpMetaData::availableMetaData() const
 {
     QList<QtMediaServices::MetaData> keys;
@@ -255,12 +243,6 @@ QVariant QWmpMetaData::extendedMetaData(const QString &key) const
 {
     return value(m_media, QAutoBStr(key));
 }
-
-void QWmpMetaData::setExtendedMetaData(const QString &key, const QVariant &value)
-{
-    setValue(m_media, QAutoBStr(key), value);
-}
-
 
 QStringList QWmpMetaData::availableExtendedMetaData() const
 {
@@ -357,12 +339,6 @@ QVariant QWmpMetaData::value(IWMPMedia *media, BSTR key)
     default:
         return values;
     }
-}
-
-void QWmpMetaData::setValue(IWMPMedia *media, BSTR key, const QVariant &value)
-{
-    if (qVariantCanConvert<QString>(value))
-        media->setItemInfo(key, QAutoBStr(value.toString()));
 }
 
 QMediaContent QWmpMetaData::resources(IWMPMedia *media)

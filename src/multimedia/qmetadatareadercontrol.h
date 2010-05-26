@@ -39,39 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QT7PLAYERMETADATACONTROL_H
-#define QT7PLAYERMETADATACONTROL_H
+#ifndef QMETADATAREADERCONTROL_H
+#define QMETADATAREADERCONTROL_H
 
-#include <qmetadatareadercontrol.h>
+#include <qmediacontrol.h>
+#include <qmediaobject.h>
+
+#include <qmediaresource.h>
 
 QT_BEGIN_NAMESPACE
 
-class QT7PlayerSession;
 
-class QT7PlayerMetaDataControl : public QMetaDataReaderControl
+class Q_MEDIA_EXPORT QMetaDataReaderControl : public QMediaControl
 {
     Q_OBJECT
 public:
-    QT7PlayerMetaDataControl(QT7PlayerSession *session, QObject *parent);
-    virtual ~QT7PlayerMetaDataControl();
+    ~QMetaDataReaderControl();
 
-    bool isMetaDataAvailable() const;
-    bool isWritable() const;
+    virtual bool isMetaDataAvailable() const = 0;
 
-    QVariant metaData(QtMediaServices::MetaData key) const;
-    QList<QtMediaServices::MetaData> availableMetaData() const;
+    virtual QVariant metaData(QtMediaServices::MetaData key) const = 0;
+    virtual QList<QtMediaServices::MetaData> availableMetaData() const = 0;
 
-    QVariant extendedMetaData(const QString &key) const ;
-    QStringList availableExtendedMetaData() const;
+    virtual QVariant extendedMetaData(const QString &key) const = 0;
+    virtual QStringList availableExtendedMetaData() const = 0;
 
-private slots:
-    void updateTags();
+Q_SIGNALS:
+    void metaDataChanged();
 
-private:
-    QT7PlayerSession *m_session;
-    QMap<QtMediaServices::MetaData, QVariant> m_tags;
+    void metaDataAvailableChanged(bool available);
+
+protected:
+    QMetaDataReaderControl(QObject *parent = 0);
 };
+
+#define QMetaDataReaderControl_iid "com.nokia.Qt.QMetaDataReaderControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMetaDataReaderControl, QMetaDataReaderControl_iid)
 
 QT_END_NAMESPACE
 
-#endif
+#endif  // QMETADATAPROVIDER_H

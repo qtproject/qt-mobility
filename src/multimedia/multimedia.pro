@@ -45,7 +45,8 @@ PUBLIC_HEADERS += \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
-    qmetadatacontrol.h \
+    qmetadatareadercontrol.h \
+    qmetadatawritercontrol.h \
     qmediastreamscontrol.h \
     qradiotuner.h \
     qradiotunercontrol.h \
@@ -85,7 +86,8 @@ SOURCES += qmediacontrol.cpp \
     qmediacontent.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
-    qmetadatacontrol.cpp \
+    qmetadatareadercontrol.cpp \
+    qmetadatawritercontrol.cpp \
     qmediastreamscontrol.cpp \
     qradiotuner.cpp \
     qradiotunercontrol.cpp \

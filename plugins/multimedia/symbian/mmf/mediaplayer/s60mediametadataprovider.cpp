@@ -44,7 +44,7 @@
 #include <QtCore/qdebug.h>
 
 S60MediaMetaDataProvider::S60MediaMetaDataProvider(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent)
-    : QMetaDataControl(parent)
+    : QMetaDataReaderControl(parent)
     , m_mediaPlayerResolver(mediaPlayerResolver)
     , m_session(NULL)
 {
@@ -75,11 +75,6 @@ QVariant S60MediaMetaDataProvider::metaData(QtMediaServices::MetaData key) const
     return QVariant();
 }
 
-void S60MediaMetaDataProvider::setMetaData(QtMediaServices::MetaData key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
 QList<QtMediaServices::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
@@ -103,12 +98,6 @@ QVariant S60MediaMetaDataProvider::extendedMetaData(const QString &key) const
     if (m_session && m_session->isMetadataAvailable())
         return m_session->metaData(key);
     return QVariant();
-}
-
-void S60MediaMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
 }
 
 QStringList S60MediaMetaDataProvider::availableExtendedMetaData() const

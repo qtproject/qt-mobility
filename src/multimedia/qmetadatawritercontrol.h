@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMETADATACONTROL_H
-#define QMETADATACONTROL_H
+#ifndef QMETADATAWRITERCONTROL_H
+#define QMETADATAWRITERCONTROL_H
 
 #include <qmediacontrol.h>
 #include <qmediaobject.h>
@@ -50,12 +50,11 @@
 QT_BEGIN_NAMESPACE
 
 
-class Q_MEDIA_EXPORT QMetaDataControl : public QMediaControl
+class Q_MEDIA_EXPORT QMetaDataWriterControl : public QMediaControl
 {
     Q_OBJECT
-
 public:
-    ~QMetaDataControl();
+    ~QMetaDataWriterControl();
 
     virtual bool isWritable() const = 0;
     virtual bool isMetaDataAvailable() const = 0;
@@ -76,12 +75,12 @@ Q_SIGNALS:
     void metaDataAvailableChanged(bool available);
 
 protected:
-    QMetaDataControl(QObject *parent = 0);
+    QMetaDataWriterControl(QObject *parent = 0);
 };
 
-#define QMetaDataControl_iid "com.nokia.Qt.QMetaDataControl/1.0"
-Q_MEDIA_DECLARE_CONTROL(QMetaDataControl, QMetaDataControl_iid)
+#define QMetaDataWriterControl_iid "com.nokia.Qt.QMetaDataWriterControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMetaDataWriterControl, QMetaDataWriterControl_iid)
 
 QT_END_NAMESPACE
 
-#endif  // QMETADATAPROVIDER_H
+#endif
