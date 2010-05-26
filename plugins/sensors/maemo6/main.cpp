@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -67,7 +67,7 @@ public:
         QSensorManager::registerBackend(QProximitySensor::type, maemo6proximitysensor::id, this);
         QSensorManager::registerBackend(QRotationSensor::type, maemo6rotationsensor::id, this);
         QSensorManager::registerBackend(QTapSensor::type, maemo6tapsensor::id, this);
-        qDebug() << "loaded the Maemo 6 plugin";
+        qDebug() << "Loaded the Maemo 6 plugin";
     }
 
     QSensorBackend *createBackend(QSensor *sensor)

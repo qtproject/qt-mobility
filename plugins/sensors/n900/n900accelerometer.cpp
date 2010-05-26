@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,10 +45,10 @@
 #include <time.h>
 #include <stdio.h>
 
-const char *n900accelerometer::id("n900.accelerometer");
-const char *n900accelerometer::filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord");
-const char *n900accelerometer::range("/sys/class/i2c-adapter/i2c-3/3-001d/scale");
-const char *n900accelerometer::rate("/sys/class/i2c-adapter/i2c-3/3-001d/rate");
+char const * const n900accelerometer::id("n900.accelerometer");
+char const * const n900accelerometer::filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord");
+char const * const n900accelerometer::range("/sys/class/i2c-adapter/i2c-3/3-001d/scale");
+char const * const n900accelerometer::rate("/sys/class/i2c-adapter/i2c-3/3-001d/rate");
 
 n900accelerometer::n900accelerometer(QSensor *sensor)
     : n900filebasedsensor(sensor)
