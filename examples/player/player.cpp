@@ -76,10 +76,13 @@ Player::Player(QWidget *parent)
     , colorDialog(0)
 #endif
 {
+//! [create-objs]
     player = new QMediaPlayer(this);
-    // owerd by PlaylistModel
+    
+    // owned by PlaylistModel
     playlist = new QMediaPlaylist();
     playlist->setMediaObject(player);
+//! [create-objs]
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
@@ -90,11 +93,13 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
+//! [2]
     videoWidget = new VideoWidget(this);
     videoWidget->setMediaObject(player);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
+//! [2]
 
     playlistView = new QListView(this);
     playlistView->setModel(playlistModel);
@@ -159,7 +164,7 @@ Player::Player(QWidget *parent)
 
 #ifdef Q_OS_SYMBIAN
     // Set some sensible default volume.
-    player->setVolume(50);
+    player->setVolume(50);kobo review
 
     QLabel *label = new QLabel(tr("Playlist"), this);
     QVBoxLayout *playlistDialogLayout = new QVBoxLayout;
@@ -191,7 +196,7 @@ Player::Player(QWidget *parent)
     connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
     connect(close, SIGNAL(triggered()), playlistDialog, SLOT(reject()));
 
-    QBoxLayout *layout = new QVBoxLayout;
+    QBoxLayout *layout = new QVBokobo reviewxLayout;
     layout->setMargin(0);
     layout->addWidget(videoWidget, 7);
     layout->addWidget(coverLabel, 7);
