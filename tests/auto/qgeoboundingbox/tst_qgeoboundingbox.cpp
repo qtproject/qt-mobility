@@ -67,12 +67,12 @@ private slots:
     void contains();
     void containsbbox_data();
     void containsbbox();
-    void getCenter_data();
-    void getCenter();
-    void getHeight_data();
-    void getHeight();
-    void getWidth_data();
-    void getWidth();
+    void center_data();
+    void center();
+    void height_data();
+    void height();
+    void width_data();
+    void width();
     void intersects_data();
     void intersects();
     void isEmpty_data();
@@ -120,9 +120,9 @@ void tst_QGeoBoundingBox::qgeoboundingbox()
     QCOMPARE(box.bottomRight(), QGeoCoordinate);
     QCOMPARE(box.contains(QGeoCoordinate const), false);
     QCOMPARE(box.contains(QGeoBoundingBox const), false);
-    QCOMPARE(box.getCenter(), QGeoCoordinate);
-    QCOMPARE(box.getHeight(), double);
-    QCOMPARE(box.getWidth(), double);
+    QCOMPARE(box.center(), QGeoCoordinate);
+    QCOMPARE(box.height(), double);
+    QCOMPARE(box.width(), double);
     QCOMPARE(box.intersects(QGeoBoundingBox const), false);
     QCOMPARE(box.isEmpty(), false);
     box.resizeToCenter(QGeoCoordinate const);
@@ -211,9 +211,9 @@ void tst_QGeoBoundingBox::containsbbox()
     QCOMPARE(box.contains(bbox), contains);
 }
 
-void tst_QGeoBoundingBox::getCenter_data()
+void tst_QGeoBoundingBox::center_data()
 {
-    QTest::addColumn<QGeoCoordinate>("getCenter");
+    QTest::addColumn<QGeoCoordinate>("center");
     QTest::addColumn<QGeoCoordinate>("topLeft");
     QTest::addColumn<QGeoCoordinate>("bottomRight");
     QTest::newRow("center1") << QGeoCoordinate(0.0, -0.0) << QGeoCoordinate(5.0, -5.0) << QGeoCoordinate(-5.0, 5.0);
@@ -222,59 +222,59 @@ void tst_QGeoBoundingBox::getCenter_data()
     QTest::newRow("center4") << QGeoCoordinate(-10.0, -30.0) << QGeoCoordinate(15.0, -50.0) << QGeoCoordinate(-35.0, -10.0);
 }
 
-// public QGeoCoordinate getCenter() const
-void tst_QGeoBoundingBox::getCenter()
+// public QGeoCoordinate center() const
+void tst_QGeoBoundingBox::center()
 {
-    QFETCH(QGeoCoordinate, getCenter);
+    QFETCH(QGeoCoordinate, center);
     QFETCH(QGeoCoordinate, topLeft);
     QFETCH(QGeoCoordinate, bottomRight);
     
     QGeoBoundingBox box(topLeft,bottomRight);
 
-    QCOMPARE(box.getCenter(), getCenter);
+    QCOMPARE(box.center(), center);
 }
 
 Q_DECLARE_METATYPE(double)
-void tst_QGeoBoundingBox::getHeight_data()
+void tst_QGeoBoundingBox::height_data()
 {
-    QTest::addColumn<double>("getHeight");
+    QTest::addColumn<double>("height");
     QTest::addColumn<QGeoCoordinate>("topLeft");
     QTest::addColumn<QGeoCoordinate>("bottomRight");
     QTest::newRow("height_10") << double(10) << QGeoCoordinate(5.0, -5.0) << QGeoCoordinate(-5.0, 5.0);
     QTest::newRow("height_100") << double(100) << QGeoCoordinate(80.0, 120.0) << QGeoCoordinate(-20.0,-120.0);
 }
 
-// public double getHeight() const
-void tst_QGeoBoundingBox::getHeight()
+// public double height() const
+void tst_QGeoBoundingBox::height()
 {
-    QFETCH(double, getHeight);
+    QFETCH(double, height);
     QFETCH(QGeoCoordinate, topLeft);
     QFETCH(QGeoCoordinate, bottomRight);
     
     QGeoBoundingBox box(topLeft,bottomRight);
 
-    QCOMPARE(box.getHeight(), getHeight);
+    QCOMPARE(box.height(), height);
 }
 
-void tst_QGeoBoundingBox::getWidth_data()
+void tst_QGeoBoundingBox::width_data()
 {
-    QTest::addColumn<double>("getWidth");
+    QTest::addColumn<double>("width");
     QTest::addColumn<QGeoCoordinate>("topLeft");
     QTest::addColumn<QGeoCoordinate>("bottomRight");
     QTest::newRow("width_10") << double(10) << QGeoCoordinate(5.0, -5.0) << QGeoCoordinate(-5.0, 5.0);
     QTest::newRow("widthOD_120") << double(120) << QGeoCoordinate(80.0, 120.0) << QGeoCoordinate(-20.0,-120.0);
 }
 
-// public double getWidth() const
-void tst_QGeoBoundingBox::getWidth()
+// public double width() const
+void tst_QGeoBoundingBox::width()
 {
-    QFETCH(double, getWidth);
+    QFETCH(double, width);
     QFETCH(QGeoCoordinate, topLeft);
     QFETCH(QGeoCoordinate, bottomRight);
     
     QGeoBoundingBox box(topLeft,bottomRight);
 
-    QCOMPARE(box.getWidth(), getWidth);
+    QCOMPARE(box.width(), width);
 }
 
 void tst_QGeoBoundingBox::intersects_data()
