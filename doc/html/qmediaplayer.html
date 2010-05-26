@@ -1,21 +1,35 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qmediaplayer.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaPlayer Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qmediaplayer.cpp -->
+  <title>Qt Mobility Project 1.1: QMediaPlayer Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
-<a name="//apple_ref/cpp/cl//QMediaPlayer"></a>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlayer Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qmediaplayer.html">QMediaPlayer</a></li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QMediaPlayer Class Reference</h1>
 <p>The QMediaPlayer class allows the playing of a media source. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMediaPlayer&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<pre class="highlightedCode">    #include &lt;QMediaPlayer&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediaobject.html">QMediaObject</a>.</p>
 <ul>
 <li><a href="qmediaplayer-members.html">List of all members, including inherited members</a></li>
@@ -23,119 +37,119 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#Error-enum">Error</a></b> { NoError, ResourceError, FormatError, NetworkError, AccessDeniedError, ServiceMissingError }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#Flag-enum">Flag</a></b> { LowLatency, StreamPlayback }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#Flag-enum">Flags</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#MediaStatus-enum">MediaStatus</a></b> { UnknownMediaStatus, NoMedia, LoadingMedia, LoadedMedia, ..., InvalidMedia }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#State-enum">State</a></b> { PlayingState, PausedState, StoppedState }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#Error-enum">Error</a></b> { NoError, ResourceError, FormatError, NetworkError, AccessDeniedError, ServiceMissingError }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#Flag-enum">Flag</a></b> { LowLatency, StreamPlayback }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> flags </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#Flag-enum">Flags</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#MediaStatus-enum">MediaStatus</a></b> { UnknownMediaStatus, NoMedia, LoadingMedia, LoadedMedia, ..., InvalidMedia }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#State-enum">State</a></b> { PlayingState, PausedState, StoppedState }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
-<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td width="45%" valign="top"><ul>
-<li><div class="fn"><b><a href="qmediaplayer.html#audioAvailable-prop">audioAvailable</a></b> : const bool</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#bufferStatus-prop">bufferStatus</a></b> : const int</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#duration-prop">duration</a></b> : const qint64</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#error-prop">error</a></b> : const QString</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#media-prop">media</a></b> : QMediaContent</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> : const MediaStatus</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#muted-prop">muted</a></b> : bool</div></li>
-</ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qmediaplayer.html#playbackRate-prop">playbackRate</a></b> : qreal</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#position-prop">position</a></b> : qint64</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#seekable-prop">seekable</a></b> : const bool</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#state-prop">state</a></b> : const State</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#videoAvailable-prop">videoAvailable</a></b> : const bool</div></li>
-<li><div class="fn"><b><a href="qmediaplayer.html#volume-prop">volume</a></b> : int</div></li>
+<table class="propsummary">
+<tr><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qmediaplayer.html#audioAvailable-prop">audioAvailable</a></b> : const bool</li>
+<li class="fn"><b><a href="qmediaplayer.html#bufferStatus-prop">bufferStatus</a></b> : const int</li>
+<li class="fn"><b><a href="qmediaplayer.html#duration-prop">duration</a></b> : const qint64</li>
+<li class="fn"><b><a href="qmediaplayer.html#error-prop">error</a></b> : const QString</li>
+<li class="fn"><b><a href="qmediaplayer.html#media-prop">media</a></b> : QMediaContent</li>
+<li class="fn"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> : const MediaStatus</li>
+<li class="fn"><b><a href="qmediaplayer.html#muted-prop">muted</a></b> : bool</li>
+</ul></td><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qmediaplayer.html#playbackRate-prop">playbackRate</a></b> : qreal</li>
+<li class="fn"><b><a href="qmediaplayer.html#position-prop">position</a></b> : qint64</li>
+<li class="fn"><b><a href="qmediaplayer.html#seekable-prop">seekable</a></b> : const bool</li>
+<li class="fn"><b><a href="qmediaplayer.html#state-prop">state</a></b> : const State</li>
+<li class="fn"><b><a href="qmediaplayer.html#videoAvailable-prop">videoAvailable</a></b> : const bool</li>
+<li class="fn"><b><a href="qmediaplayer.html#volume-prop">volume</a></b> : int</li>
 </ul>
 </td></tr>
-</table></p>
+</table>
 <ul>
-<li><div bar="2" class="fn"></div>3 properties inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">3 properties inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#QMediaPlayer">QMediaPlayer</a></b> ( QObject * <i>parent</i> = 0, Flags <i>flags</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#dtor.QMediaPlayer">~QMediaPlayer</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#bufferStatus-prop">bufferStatus</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#duration-prop">duration</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#error">error</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#error-prop">errorString</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#audioAvailable-prop">isAudioAvailable</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#muted-prop">isMuted</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#seekable-prop">isSeekable</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#videoAvailable-prop">isVideoAvailable</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#media-prop">media</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QIODevice * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaStream">mediaStream</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRate-prop">playbackRate</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#position-prop">position</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#state-prop">state</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volume-prop">volume</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#QMediaPlayer">QMediaPlayer</a></b> ( QObject * <i>parent</i> = 0, Flags <i>flags</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#dtor.QMediaPlayer">~QMediaPlayer</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#bufferStatus-prop">bufferStatus</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> qint64 </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#duration-prop">duration</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Error </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#error-prop">errorString</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#audioAvailable-prop">isAudioAvailable</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#muted-prop">isMuted</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#seekable-prop">isSeekable</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#videoAvailable-prop">isVideoAvailable</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QMediaContent </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#media-prop">media</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> MediaStatus </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const QIODevice * </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#mediaStream">mediaStream</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#playbackRate-prop">playbackRate</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> qint64 </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#position-prop">position</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#state-prop">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#volume-prop">volume</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">13 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#pause">pause</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#play">play</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#media-prop">setMedia</a></b> ( const QMediaContent &amp; <i>media</i>, QIODevice * <i>stream</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#muted-prop">setMuted</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRate-prop">setPlaybackRate</a></b> ( qreal <i>rate</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#position-prop">setPosition</a></b> ( qint64 <i>position</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#stop">stop</a></b> ()</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#pause">pause</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#play">play</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#media-prop">setMedia</a></b> ( const QMediaContent &amp; <i>media</i>, QIODevice * <i>stream</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#muted-prop">setMuted</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#playbackRate-prop">setPlaybackRate</a></b> ( qreal <i>rate</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#position-prop">setPosition</a></b> ( qint64 <i>position</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#stop">stop</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#audioAvailableChanged">audioAvailableChanged</a></b> ( bool <i>available</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int <i>percentFilled</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#error-2">error</a></b> ( QMediaPlayer::Error <i>error</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus <i>status</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#audioAvailableChanged">audioAvailableChanged</a></b> ( bool <i>available</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int <i>percentFilled</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#error-2">error</a></b> ( QMediaPlayer::Error <i>error</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus <i>status</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>5 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">5 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QtMedia::SupportEstimate </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#hasSupport">hasSupport</a></b> ( const QString &amp; <i>mimeType</i>, const QStringList &amp; <i>codecs</i> = QStringList(), Flags <i>flags</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#supportedMimeTypes">supportedMimeTypes</a></b> ( Flags <i>flags</i> = 0 )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> QtMediaServices::SupportEstimate </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#hasSupport">hasSupport</a></b> ( const QString &amp; <i>mimeType</i>, const QStringList &amp; <i>codecs</i> = QStringList(), Flags <i>flags</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#supportedMimeTypes">supportedMimeTypes</a></b> ( Flags <i>flags</i> = 0 )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -143,13 +157,13 @@
 <h2>Detailed Description</h2>
 <p>The QMediaPlayer class allows the playing of a media source.</p>
 <p>The QMediaPlayer class is a high level media playback class. It can be used to playback such content as songs, movies and internet radio. The content to playback is specified as a <a href="qmediacontent.html">QMediaContent</a>, which can be thought of as a main or canonical URL with addition information attached. When provided with a <a href="qmediacontent.html">QMediaContent</a> playback may be able to commence.</p>
-<pre>    player = new QMediaPlayer;
+<pre class="highlightedCode">    player = new QMediaPlayer;
     connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
     player-&gt;setMedia(QUrl::fromLocalFile(&quot;/Users/me/Music/coolsong.mp3&quot;));
     player-&gt;setVolume(50);
     player-&gt;play();</pre>
 <p><a href="qvideowidget.html">QVideoWidget</a> can be used with QMediaPlayer for video rendering and <a href="qmediaplaylist.html">QMediaPlaylist</a> for accessing playlist functionality.</p>
-<pre>    player = new QMediaPlayer;
+<pre class="highlightedCode">    player = new QMediaPlayer;
 
     playlist = new QMediaPlaylist;
     playlist-&gt;setMediaObject(player);
@@ -166,340 +180,261 @@
 <hr />
 <div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QMediaPlayer/Error"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/NoError"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/ResourceError"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/FormatError"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/NetworkError"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/AccessDeniedError"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/ServiceMissingError"></a>
 <h3 class="fn"><a name="Error-enum"></a>enum QMediaPlayer::Error</h3>
 <p>Defines a media player error condition.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaPlayer::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No error has occurred.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::ResourceError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">A media resource couldn't be resolved.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::FormatError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The format of a media resource isn't (fully) supported. Playback may still be possible, but without an audio or video component.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::NetworkError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">A network error occurred.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::AccessDeniedError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">There are not the appropriate permissions to play a media resource.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::ServiceMissingError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">A valid playback service was not found, playback cannot proceed.</td></tr>
-</table></p>
-<a name="//apple_ref/cpp/tag/QMediaPlayer/Flag"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/LowLatency"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/StreamPlayback"></a>
-<a name="//apple_ref/cpp/tdef/QMediaPlayer/Flags"></a>
-<h3 class="flags"><a name="Flag-enum"></a>enum QMediaPlayer::Flag<br />flags QMediaPlayer::Flags</h3>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaPlayer::LowLatency</tt></td><td align="center" valign="top"><tt>0x01</tt></td><td valign="top">The player is expected to be used with simple audio formats, but playback should start without significant delay. Such playback service can be used for beeps, ringtones, etc.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::StreamPlayback</tt></td><td align="center" valign="top"><tt>0x02</tt></td><td valign="top">The player is expected to play <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> based streams. If passed to <a href="qmediaplayer.html">QMediaPlayer</a> constructor, the service supporting streams playback will be choosen.</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">No error has occurred.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::ResourceError</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">A media resource couldn't be resolved.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::FormatError</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The format of a media resource isn't (fully) supported. Playback may still be possible, but without an audio or video component.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::NetworkError</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">A network error occurred.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::AccessDeniedError</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">There are not the appropriate permissions to play a media resource.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::ServiceMissingError</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">A valid playback service was not found, playback cannot proceed.</td></tr>
+</table>
+<h3 class="flags"><a name="Flag-enum"></a>enum QMediaPlayer::Flag<br/>flags QMediaPlayer::Flags</h3>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::LowLatency</tt></td><td class=" topAlign"><tt>0x01</tt></td><td  class="topAlign">The player is expected to be used with simple audio formats, but playback should start without significant delay. Such playback service can be used for beeps, ringtones, etc.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::StreamPlayback</tt></td><td class=" topAlign"><tt>0x02</tt></td><td  class="topAlign">The player is expected to play <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> based streams. If passed to <a href="qmediaplayer.html">QMediaPlayer</a> constructor, the service supporting streams playback will be choosen.</td></tr>
+</table>
 <p>The Flags type is a typedef for <a href="qflags.html">QFlags</a>&lt;Flag&gt;. It stores an OR combination of Flag values.</p>
-<a name="//apple_ref/cpp/tag/QMediaPlayer/MediaStatus"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/UnknownMediaStatus"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/NoMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/LoadingMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/LoadedMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/StalledMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/BufferingMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/BufferedMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/EndOfMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/InvalidMedia"></a>
 <h3 class="fn"><a name="MediaStatus-enum"></a>enum QMediaPlayer::MediaStatus</h3>
 <p>Defines the status of a media player's current media.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaPlayer::UnknownMediaStatus</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The status of the media cannot be determined.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::NoMedia</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The is no current media. The player is in the <a href="qmediaplayer.html#State-enum">StoppedState</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::LoadingMedia</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The current media is being loaded. The player may be in any state.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::LoadedMedia</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The current media has been loaded. The player is in the <a href="qmediaplayer.html#State-enum">StoppedState</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::StalledMedia</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Playback of the current media has stalled due to insufficient buffering or some other temporary interruption. The player is in the <a href="qmediaplayer.html#State-enum">PlayingState</a> or <a href="qmediaplayer.html#State-enum">PausedState</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::BufferingMedia</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">The player is buffering data but has enough data buffered for playback to continue for the immediate future. The player is in the <a href="qmediaplayer.html#State-enum">PlayingState</a> or <a href="qmediaplayer.html#State-enum">PausedState</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::BufferedMedia</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The player has fully buffered the current media. The player is in the <a href="qmediaplayer.html#State-enum">PlayingState</a> or <a href="qmediaplayer.html#State-enum">PausedState</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::EndOfMedia</tt></td><td align="center" valign="top"><tt>7</tt></td><td valign="top">Playback has reached the end of the current media. The player is in the <a href="qmediaplayer.html#State-enum">StoppedState</a>.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::InvalidMedia</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The current media cannot be played. The player is in the <a href="qmediaplayer.html#State-enum">StoppedState</a>.</td></tr>
-</table></p>
-<a name="//apple_ref/cpp/tag/QMediaPlayer/State"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/PlayingState"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/PausedState"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlayer/StoppedState"></a>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::UnknownMediaStatus</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The status of the media cannot be determined.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::NoMedia</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The is no current media. The player is in the <a href="qmediaplayer.html#State-enum">StoppedState</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::LoadingMedia</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The current media is being loaded. The player may be in any state.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::LoadedMedia</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The current media has been loaded. The player is in the <a href="qmediaplayer.html#State-enum">StoppedState</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::StalledMedia</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">Playback of the current media has stalled due to insufficient buffering or some other temporary interruption. The player is in the <a href="qmediaplayer.html#State-enum">PlayingState</a> or <a href="qmediaplayer.html#State-enum">PausedState</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::BufferingMedia</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">The player is buffering data but has enough data buffered for playback to continue for the immediate future. The player is in the <a href="qmediaplayer.html#State-enum">PlayingState</a> or <a href="qmediaplayer.html#State-enum">PausedState</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::BufferedMedia</tt></td><td class=" topAlign"><tt>6</tt></td><td  class="topAlign">The player has fully buffered the current media. The player is in the <a href="qmediaplayer.html#State-enum">PlayingState</a> or <a href="qmediaplayer.html#State-enum">PausedState</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::EndOfMedia</tt></td><td class=" topAlign"><tt>7</tt></td><td  class="topAlign">Playback has reached the end of the current media. The player is in the <a href="qmediaplayer.html#State-enum">StoppedState</a>.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::InvalidMedia</tt></td><td class=" topAlign"><tt>8</tt></td><td  class="topAlign">The current media cannot be played. The player is in the <a href="qmediaplayer.html#State-enum">StoppedState</a>.</td></tr>
+</table>
 <h3 class="fn"><a name="State-enum"></a>enum QMediaPlayer::State</h3>
 <p>Defines the current state of a media player.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaPlayer::PlayingState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The media player is currently playing content.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::PausedState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The media player has paused playback, playback of the current track will resume from the position the player was paused at.</td></tr>
-<tr><td valign="top"><tt>QMediaPlayer::StoppedState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The media player is not playing content, playback will begin from the start of the current track.</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::PlayingState</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The media player is currently playing content.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::PausedState</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The media player has paused playback, playback of the current track will resume from the position the player was paused at.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaPlayer::StoppedState</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The media player is not playing content, playback will begin from the start of the current track.</td></tr>
+</table>
 </div>
 <hr />
 <div class="prop"/>
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/isAudioAvailable"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/audioAvailableChanged"></a>
 <h3 class="fn"><a name="audioAvailable-prop"></a>audioAvailable : const bool</h3>
 <p>This property holds the audio availabilty status for the current media.</p>
 <p>As the life time of <a href="qmediaplayer.html">QMediaPlayer</a> can be longer than the playback of one <a href="qmediacontent.html">QMediaContent</a>, this property may change over time, the audioAvailableChanged signal can be used to monitor it's status.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isAudioAvailable</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isAudioAvailable</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#audioAvailableChanged">audioAvailableChanged</a></b> ( bool <i>available</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#audioAvailableChanged">audioAvailableChanged</a></b> ( bool <i>available</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/bufferStatus"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/bufferStatusChanged"></a>
 <h3 class="fn"><a name="bufferStatus-prop"></a>bufferStatus : const int</h3>
 <p>This property holds the percentage of the temporary buffer filled before playback begins.</p>
 <p>When the player object is buffering; this property holds the percentage of the temporary buffer that is filled. The buffer will need to reach 100% filled before playback can resume, at which time the <a href="qmediaplayer.html#MediaStatus-enum">MediaStatus</a> will be <a href="qmediaplayer.html#MediaStatus-enum">BufferedMedia</a>.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>bufferStatus</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>bufferStatus</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int <i>percentFilled</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#bufferStatusChanged">bufferStatusChanged</a></b> ( int <i>percentFilled</i> )</td></tr>
 </table>
 <p>See also <a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/duration"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/durationChanged"></a>
 <h3 class="fn"><a name="duration-prop"></a>duration : const <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a></h3>
 <p>This property holds the duration of the current media.</p>
 <p>The value is the total playback time in milliseconds of the current media. The value may change across the life time of the <a href="qmediaplayer.html">QMediaPlayer</a> object and may not be available when initial playback begins, connect to the <a href="qmediaplayer.html#durationChanged">durationChanged</a>() signal to receive status notifications.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b>duration</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> qint64 </td><td class="memItemRight bottomAlign"><b>duration</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#durationChanged">durationChanged</a></b> ( qint64 <i>duration</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/errorString"></a>
 <h3 class="fn"><a name="error-prop"></a>error : const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a></h3>
 <p>This property holds a string describing the last error condition.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b>errorString</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QString </td><td class="memItemRight bottomAlign"><b>errorString</b> () const</td></tr>
 </table>
 <p>See also <a href="qmediaplayer.html#error">error</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/media"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/setMedia"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mediaChanged"></a>
 <h3 class="fn"><a name="media-prop"></a>media : <a href="qmediacontent.html">QMediaContent</a></h3>
 <p>This property holds the active media source being used by the player object.</p>
 <p>The player object will use the <a href="qmediacontent.html">QMediaContent</a> for selection of the content to be played.</p>
 <p>By default this property has a null <a href="qmediacontent.html">QMediaContent</a>.</p>
 <p>Setting this property to a null <a href="qmediacontent.html">QMediaContent</a> will cause the player to discard all information relating to the current media source and to cease all I/O operations related to that media.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b>media</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMedia</b> ( const QMediaContent &amp; <i>media</i>, QIODevice * <i>stream</i> = 0 )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QMediaContent </td><td class="memItemRight bottomAlign"><b>media</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setMedia</b> ( const QMediaContent &amp; <i>media</i>, QIODevice * <i>stream</i> = 0 )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
 </table>
 <p>See also <a href="qmediacontent.html">QMediaContent</a>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mediaStatus"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mediaStatusChanged"></a>
 <h3 class="fn"><a name="mediaStatus-prop"></a>mediaStatus : const <a href="qmediaplayer.html#MediaStatus-enum">MediaStatus</a></h3>
 <p>This property holds the status of the current media stream.</p>
 <p>The stream status describes how the playback of the current stream is progressing.</p>
 <p>By default this property is <a href="qmediaplayer.html#MediaStatus-enum">QMediaPlayer::NoMedia</a></p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b>mediaStatus</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> MediaStatus </td><td class="memItemRight bottomAlign"><b>mediaStatus</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus <i>status</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaPlayer::MediaStatus <i>status</i> )</td></tr>
 </table>
 <p>See also <a href="qmediaplayer.html#state-prop">state</a>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/isMuted"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/setMuted"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mutedChanged"></a>
 <h3 class="fn"><a name="muted-prop"></a>muted : bool</h3>
 <p>This property holds the muted state of the current media.</p>
 <p>The value will be true if the playback volume is muted; otherwise false.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isMuted</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMuted</b> ( bool <i>muted</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isMuted</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setMuted</b> ( bool <i>muted</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/playbackRate"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/setPlaybackRate"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/playbackRateChanged"></a>
 <h3 class="fn"><a name="playbackRate-prop"></a>playbackRate : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a></h3>
 <p>This property holds the playback rate of the current media.</p>
 <p>This value is a multiplier applied to the media's standard play rate. By default this value is 1.0, indicating that the media is playing at the standard pace. Values higher than 1.0 will increase the rate of play. Values less than zero can be set and indicate the media will rewind at the multiplier of the standard pace.</p>
 <p>Not all playback services support change of the playback rate. It is framework defined as to the status and quality of audio and video while fast forwarding or rewinding.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b>playbackRate</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPlaybackRate</b> ( qreal <i>rate</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> qreal </td><td class="memItemRight bottomAlign"><b>playbackRate</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setPlaybackRate</b> ( qreal <i>rate</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#playbackRateChanged">playbackRateChanged</a></b> ( qreal <i>rate</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/position"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/setPosition"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/positionChanged"></a>
 <h3 class="fn"><a name="position-prop"></a>position : <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a></h3>
 <p>This property holds the playback position of the current media.</p>
 <p>The value is the current playback position, expressed in milliseconds since the beginning of the media. Periodically changes in the position will be indicated with the signal <a href="qmediaplayer.html#positionChanged">positionChanged</a>(), the interval between updates can be set with <a href="qmediaobject.html">QMediaObject</a>'s method <a href="qmediaobject.html#notifyInterval-prop">setNotifyInterval</a>().</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">qint64 </td><td class="memItemRight" valign="bottom"><b>position</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setPosition</b> ( qint64 <i>position</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> qint64 </td><td class="memItemRight bottomAlign"><b>position</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setPosition</b> ( qint64 <i>position</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#positionChanged">positionChanged</a></b> ( qint64 <i>position</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/isSeekable"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/seekableChanged"></a>
 <h3 class="fn"><a name="seekable-prop"></a>seekable : const bool</h3>
 <p>This property holds the seek-able status of the current media.</p>
 <p>If seeking is supported this property will be true; false otherwise. The status of this property may change across the life time of the <a href="qmediaplayer.html">QMediaPlayer</a> object, use the seekableChanged signal to monitor changes.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isSeekable</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isSeekable</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#seekableChanged">seekableChanged</a></b> ( bool <i>seekable</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/state"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/stateChanged"></a>
 <h3 class="fn"><a name="state-prop"></a>state : const <a href="qmediaplayer.html#State-enum">State</a></h3>
 <p>This property holds the media player's playback state.</p>
 <p>By default this property is QMediaPlayer::Stopped</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b>state</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> State </td><td class="memItemRight bottomAlign"><b>state</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#stateChanged">stateChanged</a></b> ( QMediaPlayer::State <i>state</i> )</td></tr>
 </table>
 <p>See also <a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a>(), <a href="qmediaplayer.html#play">play</a>(), <a href="qmediaplayer.html#pause">pause</a>(), and <a href="qmediaplayer.html#stop">stop</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/isVideoAvailable"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/videoAvailableChanged"></a>
 <h3 class="fn"><a name="videoAvailable-prop"></a>videoAvailable : const bool</h3>
 <p>This property holds the video availability status for the current media.</p>
 <p>If available, the <a href="qvideowidget.html">QVideoWidget</a> class can be used to view the video. As the life time of <a href="qmediaplayer.html">QMediaPlayer</a> can be longer than the playback of one <a href="qmediacontent.html">QMediaContent</a>, this property may change over time, the videoAvailableChanged signal can be used to monitor it's status.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isVideoAvailable</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isVideoAvailable</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#videoAvailableChanged">videoAvailableChanged</a></b> ( bool <i>videoAvailable</i> )</td></tr>
 </table>
 <p>See also <a href="qvideowidget.html">QVideoWidget</a> and <a href="qmediacontent.html">QMediaContent</a>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/volume"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/setVolume"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/volumeChanged"></a>
 <h3 class="fn"><a name="volume-prop"></a>volume : int</h3>
 <p>This property holds the current playback volume.</p>
 <p>The playback volume is a linear in effect and the value can range from 0 - 100, values outside this range will be clamped.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>volume</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setVolume</b> ( int <i>volume</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>volume</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setVolume</b> ( int <i>volume</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplayer.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
 </div>
 <hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/QMediaPlayer"></a>
 <h3 class="fn"><a name="QMediaPlayer"></a>QMediaPlayer::QMediaPlayer ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0, <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3>
 <p>Construct a <a href="qmediaplayer.html">QMediaPlayer</a> that uses the playback service from <i>provider</i>, parented to <i>parent</i> and with <i>flags</i>.</p>
 <p>If a playback service is not specified the system default will be used.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/~QMediaPlayer"></a>
 <h3 class="fn"><a name="dtor.QMediaPlayer"></a>QMediaPlayer::~QMediaPlayer ()</h3>
 <p>Destroys the player object.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/audioAvailableChanged"></a>
-<h3 class="fn"><a name="audioAvailableChanged"></a>void QMediaPlayer::audioAvailableChanged ( bool <i>available</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="audioAvailableChanged"></a>void QMediaPlayer::audioAvailableChanged ( bool <i>available</i> )<tt> [signal]</tt></h3>
 <p>Signals the availability of audio content has changed to <i>available</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/bufferStatusChanged"></a>
-<h3 class="fn"><a name="bufferStatusChanged"></a>void QMediaPlayer::bufferStatusChanged ( int <i>percentFilled</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="bufferStatusChanged"></a>void QMediaPlayer::bufferStatusChanged ( int <i>percentFilled</i> )<tt> [signal]</tt></h3>
 <p>Signal the amount of the local buffer filled as a percentage by <i>percentFilled</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/durationChanged"></a>
-<h3 class="fn"><a name="durationChanged"></a>void QMediaPlayer::durationChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> <i>duration</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="durationChanged"></a>void QMediaPlayer::durationChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> <i>duration</i> )<tt> [signal]</tt></h3>
 <p>Signal the duration of the content has changed to <i>duration</i>, expressed in milliseconds.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qmediaplayer.html#Error-enum">Error</a> QMediaPlayer::error () const</h3>
 <p>Returns the current error state.</p>
-<h3 class="fn"><a name="error-2"></a>void QMediaPlayer::error ( <a href="qmediaplayer.html#Error-enum">QMediaPlayer::Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="error-2"></a>void QMediaPlayer::error ( <a href="qmediaplayer.html#Error-enum">QMediaPlayer::Error</a> <i>error</i> )<tt> [signal]</tt></h3>
 <p>Signals that an <i>error</i> condition has occurred.</p>
 <p>See also <a href="qmediaplayer.html#error-prop">errorString</a>().</p>
-<a name="//apple_ref/cpp/clm/QMediaPlayer/hasSupport"></a>
-<h3 class="fn"><a name="hasSupport"></a><a href="qtmedia.html#SupportEstimate-enum">QtMedia::SupportEstimate</a> QMediaPlayer::hasSupport ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>mimeType</i>, const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>codecs</i> = QStringList(), <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="hasSupport"></a><a href="qtmediaservices.html#SupportEstimate-enum">QtMediaServices::SupportEstimate</a> QMediaPlayer::hasSupport ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>mimeType</i>, const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> &amp; <i>codecs</i> = QStringList(), <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0 )<tt> [static]</tt></h3>
 <p>Returns the level of support a media player has for a <i>mimeType</i> and a set of <i>codecs</i>.</p>
 <p>The <i>flags</i> argument allows additional requirements such as performance indicators to be specified.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mediaChanged"></a>
-<h3 class="fn"><a name="mediaChanged"></a>void QMediaPlayer::mediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="mediaChanged"></a>void QMediaPlayer::mediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )<tt> [signal]</tt></h3>
 <p>Signals that the current playing content will be obtained from <i>media</i>.</p>
 <p>See also <a href="qmediaplayer.html#media-prop">media</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mediaStatusChanged"></a>
-<h3 class="fn"><a name="mediaStatusChanged"></a>void QMediaPlayer::mediaStatusChanged ( <a href="qmediaplayer.html#MediaStatus-enum">QMediaPlayer::MediaStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="mediaStatusChanged"></a>void QMediaPlayer::mediaStatusChanged ( <a href="qmediaplayer.html#MediaStatus-enum">QMediaPlayer::MediaStatus</a> <i>status</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>status</i> of the current media has changed.</p>
 <p>See also <a href="qmediaplayer.html#mediaStatus-prop">mediaStatus</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mediaStream"></a>
 <h3 class="fn"><a name="mediaStream"></a>const <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * QMediaPlayer::mediaStream () const</h3>
 <p>Returns the stream source of media data.</p>
 <p>This is only valid if a stream was passed to <a href="qmediaplayer.html#media-prop">setMedia</a>().</p>
 <p>See also <a href="qmediaplayer.html#media-prop">setMedia</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/mutedChanged"></a>
-<h3 class="fn"><a name="mutedChanged"></a>void QMediaPlayer::mutedChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="mutedChanged"></a>void QMediaPlayer::mutedChanged ( bool <i>muted</i> )<tt> [signal]</tt></h3>
 <p>Signal the mute state has changed to <i>muted</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/pause"></a>
-<h3 class="fn"><a name="pause"></a>void QMediaPlayer::pause ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="pause"></a>void QMediaPlayer::pause ()<tt> [slot]</tt></h3>
 <p>Pause playing the current source.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/play"></a>
-<h3 class="fn"><a name="play"></a>void QMediaPlayer::play ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="play"></a>void QMediaPlayer::play ()<tt> [slot]</tt></h3>
 <p>Start or resume playing the current source.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/playbackRateChanged"></a>
-<h3 class="fn"><a name="playbackRateChanged"></a>void QMediaPlayer::playbackRateChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>rate</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="playbackRateChanged"></a>void QMediaPlayer::playbackRateChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>rate</i> )<tt> [signal]</tt></h3>
 <p>Signals the <a href="qmediaplayer.html#playbackRate-prop">playbackRate</a> has changed to <i>rate</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/positionChanged"></a>
-<h3 class="fn"><a name="positionChanged"></a>void QMediaPlayer::positionChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="positionChanged"></a>void QMediaPlayer::positionChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qint64-typedef">qint64</a> <i>position</i> )<tt> [signal]</tt></h3>
 <p>Signal the position of the content has changed to <i>position</i>, expressed in milliseconds.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/seekableChanged"></a>
-<h3 class="fn"><a name="seekableChanged"></a>void QMediaPlayer::seekableChanged ( bool <i>seekable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="seekableChanged"></a>void QMediaPlayer::seekableChanged ( bool <i>seekable</i> )<tt> [signal]</tt></h3>
 <p>Signals the <i>seekable</i> status of the player object has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/stateChanged"></a>
-<h3 class="fn"><a name="stateChanged"></a>void QMediaPlayer::stateChanged ( <a href="qmediaplayer.html#State-enum">QMediaPlayer::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="stateChanged"></a>void QMediaPlayer::stateChanged ( <a href="qmediaplayer.html#State-enum">QMediaPlayer::State</a> <i>state</i> )<tt> [signal]</tt></h3>
 <p>Signal the <i>state</i> of the Player object has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/stop"></a>
-<h3 class="fn"><a name="stop"></a>void QMediaPlayer::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="stop"></a>void QMediaPlayer::stop ()<tt> [slot]</tt></h3>
 <p>Stop playing, and reset the play position to the beginning.</p>
-<a name="//apple_ref/cpp/clm/QMediaPlayer/supportedMimeTypes"></a>
-<h3 class="fn"><a name="supportedMimeTypes"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaPlayer::supportedMimeTypes ( <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0 )&nbsp;&nbsp;<tt> [static]</tt></h3>
+<h3 class="fn"><a name="supportedMimeTypes"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaPlayer::supportedMimeTypes ( <a href="qmediaplayer.html#Flag-enum">Flags</a> <i>flags</i> = 0 )<tt> [static]</tt></h3>
 <p>Returns a list of MIME types supported by the media player.</p>
 <p>The <i>flags</i> argument causes the resultant list to be restricted to MIME types which can be supported given additional requirements, such as performance indicators.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/videoAvailableChanged"></a>
-<h3 class="fn"><a name="videoAvailableChanged"></a>void QMediaPlayer::videoAvailableChanged ( bool <i>videoAvailable</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="videoAvailableChanged"></a>void QMediaPlayer::videoAvailableChanged ( bool <i>videoAvailable</i> )<tt> [signal]</tt></h3>
 <p>Signal the availability of visual content has changed to <i>videoAvailable</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlayer/volumeChanged"></a>
-<h3 class="fn"><a name="volumeChanged"></a>void QMediaPlayer::volumeChanged ( int <i>volume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="volumeChanged"></a>void QMediaPlayer::volumeChanged ( int <i>volume</i> )<tt> [signal]</tt></h3>
 <p>Signal the playback volume has changed to <i>volume</i>.</p>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
-</tr></table></div></address></body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

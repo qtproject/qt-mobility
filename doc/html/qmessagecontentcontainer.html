@@ -1,48 +1,56 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qmessagecontentcontainer.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMessageContentContainer Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qmessagecontentcontainer.cpp -->
+  <title>Qt Mobility Project 1.1: QMessageContentContainer Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
-<a name="//apple_ref/cpp/cl//QMessageContentContainer"></a>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageContentContainer Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qmessagecontentcontainer.html">QMessageContentContainer</a></li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QMessageContentContainer Class Reference</h1>
 <p>The QMessageContentContainer class provides an interface for internet media (MIME) and Transport Neutral Encapsulation Format (TNEF) content that is possibly only partially retrieved. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMessageContentContainer&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherited by <a href="qmessage.html">QMessage</a>.</p>
+<pre class="highlightedCode">    #include &lt;QMessageContentContainer&gt;</pre><p>Inherited by <a href="qmessage.html">QMessage</a>.</p>
 <ul>
 <li><a href="qmessagecontentcontainer-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#QMessageContentContainer">QMessageContentContainer</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#QMessageContentContainer-2">QMessageContentContainer</a></b> ( const QMessageContentContainer &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#dtor.QMessageContentContainer">~QMessageContentContainer</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#contains">contains</a></b> ( const QMessageContentContainerId &amp; <i>id</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#content">content</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageContentContainerIdList </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#contentIds">contentIds</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#contentType">contentType</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMessageContentContainer </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#find">find</a></b> ( const QMessageContentContainerId &amp; <i>id</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#headerFieldValue">headerFieldValue</a></b> ( const QByteArray &amp; <i>name</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a></b> ( const QByteArray &amp; <i>name</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QByteArray&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#headerFields">headerFields</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#size">size</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QByteArray </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#suggestedFileName">suggestedFileName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#textContent">textContent</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#writeContent">writeContent</a></b> ( QDataStream &amp; <i>out</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmessagecontentcontainer.html#writeTextContent">writeTextContent</a></b> ( QTextStream &amp; <i>out</i> ) const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#QMessageContentContainer">QMessageContentContainer</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#QMessageContentContainer-2">QMessageContentContainer</a></b> ( const QMessageContentContainer &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#dtor.QMessageContentContainer">~QMessageContentContainer</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#contains">contains</a></b> ( const QMessageContentContainerId &amp; <i>id</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QByteArray </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#content">content</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QByteArray </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QMessageContentContainerIdList </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#contentIds">contentIds</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QByteArray </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QByteArray </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#contentType">contentType</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QMessageContentContainer </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#find">find</a></b> ( const QMessageContentContainerId &amp; <i>id</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#headerFieldValue">headerFieldValue</a></b> ( const QByteArray &amp; <i>name</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QStringList </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a></b> ( const QByteArray &amp; <i>name</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QList&lt;QByteArray&gt; </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#headerFields">headerFields</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#isContentAvailable">isContentAvailable</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#size">size</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QByteArray </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#suggestedFileName">suggestedFileName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#textContent">textContent</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#writeContent">writeContent</a></b> ( QDataStream &amp; <i>out</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmessagecontentcontainer.html#writeTextContent">writeTextContent</a></b> ( QTextStream &amp; <i>out</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -63,80 +71,63 @@
 <hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/QMessageContentContainer"></a>
 <h3 class="fn"><a name="QMessageContentContainer"></a>QMessageContentContainer::QMessageContentContainer ()</h3>
 <p>Constructs an empty container object.</p>
 <h3 class="fn"><a name="QMessageContentContainer-2"></a>QMessageContentContainer::QMessageContentContainer ( const QMessageContentContainer &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/~QMessageContentContainer"></a>
-<h3 class="fn"><a name="dtor.QMessageContentContainer"></a>QMessageContentContainer::~QMessageContentContainer ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QMessageContentContainer"></a>QMessageContentContainer::~QMessageContentContainer ()<tt> [virtual]</tt></h3>
 <p>Destroys the container object.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/contains"></a>
 <h3 class="fn"><a name="contains"></a>bool QMessageContentContainer::contains ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const</h3>
 <p>If the container contains content with the identifier <i>id</i>, either directly or recursively then returns true; otherwise returns false.</p>
 <p>See also <a href="qmessagecontentcontainer.html#find">find</a>() and <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/content"></a>
 <h3 class="fn"><a name="content"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QMessageContentContainer::content () const</h3>
 <p>Return the content after decoding any transfer encoding used to represent binary data using 7-bit ASCII characters, such as quoted-printable and base64.</p>
 <p>For textual content any text charset encoding such as Shift-JIS, ISO 2022-JP, KOI8-R, Windows-1251 etc will not be decoded.</p>
 <p>See also <a href="qmessagecontentcontainer.html#textContent">textContent</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/contentCharset"></a>
 <h3 class="fn"><a name="contentCharset"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QMessageContentContainer::contentCharset () const</h3>
 <p>Returns the internet media (MIME) content charset, when defined; otherwise an empty array is returned.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentType">contentType</a>() and <a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/contentIds"></a>
 <h3 class="fn"><a name="contentIds"></a>QMessageContentContainerIdList QMessageContentContainer::contentIds () const</h3>
 <p>For a multipart container returns a list of identifiers for all content directly contained by the container; otherwise returns an empty list.</p>
 <p>See also <a href="qmessagecontentcontainer.html#find">find</a>() and <a href="qmessagecontentcontainer.html#contains">contains</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/contentSubType"></a>
 <h3 class="fn"><a name="contentSubType"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QMessageContentContainer::contentSubType () const</h3>
 <p>Returns the internet media (MIME) subtype of the content.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentType">contentType</a>() and <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/contentType"></a>
 <h3 class="fn"><a name="contentType"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QMessageContentContainer::contentType () const</h3>
 <p>Returns the content type of the container. Common types are &quot;text&quot;, &quot;image&quot;, &quot;audio&quot;, &quot;video&quot;, &quot;application&quot;, &quot;message&quot; and &quot;multipart&quot;.</p>
 <p>The internet media (MIME) type of the container is &quot;multipart&quot; if the container directly contains multiple parts rather than directly contains media.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contentSubType">contentSubType</a>() and <a href="qmessagecontentcontainer.html#contentCharset">contentCharset</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/find"></a>
 <h3 class="fn"><a name="find"></a>QMessageContentContainer QMessageContentContainer::find ( const <a href="qmessagecontentcontainerid.html">QMessageContentContainerId</a> &amp; <i>id</i> ) const</h3>
 <p>If the container contains another container with identifier <i>id</i> either directly or recursively, then returns the value of that other container; otherwise returns an empty container constructed with the default constructor.</p>
 <p>See also <a href="qmessagecontentcontainer.html#contains">contains</a>() and <a href="qmessagecontentcontainer.html#contentIds">contentIds</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/headerFieldValue"></a>
 <h3 class="fn"><a name="headerFieldValue"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMessageContentContainer::headerFieldValue ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>name</i> ) const</h3>
 <p>Returns the value of the first header field of the container with the name <i>name</i>, if any; otherwise returns a null string.</p>
 <p>See also <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>() and <a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/headerFieldValues"></a>
 <h3 class="fn"><a name="headerFieldValues"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMessageContentContainer::headerFieldValues ( const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>name</i> ) const</h3>
 <p>Returns a list of values of header fields with the name <i>name</i>, if any; otherwise returns an empty list.</p>
 <p>See also <a href="qmessagecontentcontainer.html#headerFields">headerFields</a>() and <a href="qmessagecontentcontainer.html#headerFieldValue">headerFieldValue</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/headerFields"></a>
 <h3 class="fn"><a name="headerFields"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a>&gt; QMessageContentContainer::headerFields () const</h3>
 <p>Returns a list of names of header fields of the container.</p>
 <p>See also <a href="qmessagecontentcontainer.html#headerFieldValue">headerFieldValue</a>() and <a href="qmessagecontentcontainer.html#headerFieldValues">headerFieldValues</a>().</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/isContentAvailable"></a>
 <h3 class="fn"><a name="isContentAvailable"></a>bool QMessageContentContainer::isContentAvailable () const</h3>
 <p>Returns true if the entirety of the content contained is available on the device; otherwise returns false.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/size"></a>
 <h3 class="fn"><a name="size"></a>int QMessageContentContainer::size () const</h3>
 <p>If the size of the container is known then returns an indication of the size of the container on the originating server, including contents; otherwise returns 0.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/suggestedFileName"></a>
 <h3 class="fn"><a name="suggestedFileName"></a><a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> QMessageContentContainer::suggestedFileName () const</h3>
 <p>Returns the suggested filename for the attachment, when defined; otherwise an empty array is returned.</p>
 <p>The default is an empty array.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/textContent"></a>
 <h3 class="fn"><a name="textContent"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMessageContentContainer::textContent () const</h3>
 <p>For textual content encoded with a recognized charset, returns the content as a unicode string; otherwise a null string is returned.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/writeContent"></a>
 <h3 class="fn"><a name="writeContent"></a>void QMessageContentContainer::writeContent ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>out</i> ) const</h3>
 <p>For a non-multipart container, writes the content as returned by <a href="qmessagecontentcontainer.html#content">content</a>() to the stream <i>out</i>; otherwise does nothing.</p>
-<a name="//apple_ref/cpp/instm/QMessageContentContainer/writeTextContent"></a>
 <h3 class="fn"><a name="writeTextContent"></a>void QMessageContentContainer::writeTextContent ( <a href="http://qt.nokia.com/doc/4.6/qtextstream.html">QTextStream</a> &amp; <i>out</i> ) const</h3>
 <p>For a non-multipart container, writes the content as returned by <a href="qmessagecontentcontainer.html#textContent">textContent</a>() to the stream <i>out</i>; otherwise does nothing.</p>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
-</tr></table></div></address></body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

@@ -1,41 +1,54 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- sensors.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Sensors API (technology preview)</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- sensors.qdoc -->
+  <title>Qt Mobility Project 1.1: Sensors API</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Sensors API (technology preview)<br /><span class="subtitle"></span>
-</h1>
-<p><b>Warning:</b> This API should be considered in a technology preview state. It is under development and subject to change.</p>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="sensors-api.html">Sensors API</a></li><div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#namespace">Namespace</a></li>
+<li class="level1"><a href="#sensor-types">Sensor Types</a></li>
+<li class="level1"><a href="#common-conventions">Common Conventions</a></li>
+<li class="level1"><a href="#using-a-sensor">Using a Sensor</a></li>
+<li class="level1"><a href="#accessing-sensor-data-in-a-generic-fashion">Accessing sensor data in a generic fashion</a></li>
+<li class="level1"><a href="#front-end-back-end">Front end, back end</a></li>
+<li class="level1"><a href="#main-classes">Main Classes</a></li>
+<li class="level1"><a href="#reading-classes">Reading Classes</a></li>
+<li class="level1"><a href="#sensor-classes">Sensor Classes</a></li>
+<li class="level1"><a href="#filter-classes">Filter Classes</a></li>
+</ul>
+</div>
+<h1 class="title">Sensors API</h1>
+<span class="subtitle"></span>
+<div class="descr"/>
+<p><b>Warning:</b> This API should be considered in a beta state. It is under development and subject to change.</p>
 <p>The Sensors API provides access to sensors.</p>
 <p>This covers both high-level sensors such as screen orientation (portrait, landscape) and low-level, real-time sensors such as accelerometer data.</p>
-<ul><li><a href="#sensor-types">Sensor Types</a></li>
-<li><a href="#common-conventions">Common Conventions</a></li>
-<li><a href="#using-a-sensor">Using a Sensor</a></li>
-<li><a href="#accessing-sensor-data-in-a-generic-fashion">Accessing sensor data in a generic fashion</a></li>
-<li><a href="#front-end- back-end">Front end, back end</a></li>
-<li><a href="#main-classes">Main Classes</a></li>
-<li><a href="#reading-classes">Reading Classes</a></li>
-<li><a href="#sensor-classes">Sensor Classes</a></li>
-<li><a href="#filter-classes">Filter Classes</a></li>
-</ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="sensor-types"></a>
 <h3>Sensor Types</h3>
 <p>On a device there can be many types of sensors. Not all of the types that the Sensors API supports may be available. There may also be types available that are not defined in the Sensors API. You can find the sensor types available on a device using the <a href="qsensor.html#sensorTypes">QSensor::sensorTypes</a>() function.</p>
 <p>For a list of built-in sensor types, see the <a href="preview.html#sensor-classes">Sensor Classes</a> section below.</p>
 <a name="common-conventions"></a>
 <h3>Common Conventions</h3>
-<p>Unless otherwise specified, sensors shall use the <a href="http://en.wikipedia.org/wiki/Cartesian_coordinate_system">Right Hand Cartesian coordinate system</a>. An example of how the axes are arranged on a phone is included below.</p>
-<p align="center"><img src="images/axes.png" /></p><p>In general, sensor data is not reoriented to match the UI. Some specific sensors may reorient data to match the UI but most sensors will not do this.</p>
-<a name="using-a-sensor"></a>
+<p>Unless otherwise specified, sensors shall use the <a href="http://en.wikipedia.org/wiki/Cartesian_coordinate_system">Right Hand Cartesian coordinate system</a>.</p>
+<p class="centerAlign"><img src="images/sensors-coordinates.jpg" /></p><p>To allow for measurements in all 6 directions, negative values are used.</p>
+<p class="centerAlign"><img src="images/sensors-coordinates2.jpg" /></p><p>Where rotation around an axis is used, the rotation shall be expressed as a Right Hand rotation.</p>
+<p class="centerAlign"><img src="images/sensors-coordinates3.jpg" /></p><p>In general, sensor data is oriented to the top of the device. If values are to be displayed on the screen the values may need to be transformed so that they match the UI orientation. A sensor may define its data as being oriented to the UI. This will be noted in the documentation for the sensor.</p>
+<p class="centerAlign"><img src="images/sensors-sides2.jpg" /></p><a name="using-a-sensor"></a>
 <h3>Using a Sensor</h3>
 <p>The life cycle of a sensor is typically:</p>
 <ul>
@@ -46,7 +59,7 @@
 <li>Stop receiving values.</li>
 </ul>
 <p>Here is an example of creating a sensor on the heap and on the stack.</p>
-<pre><span class="comment">    // On the heap (deleted when this object is deleted)</span>
+<pre class="highlightedCode"><span class="comment">    // On the heap (deleted when this object is deleted)</span>
     QAccelerometer *sensor = new QAccelerometer(this);
 
 <span class="comment">    // On the stack (deleted when the current scope ends)</span>
@@ -61,7 +74,7 @@
 <li>The property type or a comparable type.</li>
 </ul>
 <p>For example, here is an example of how you can access a property of the accelerometer. This code does not require any compile-time links to <a href="qaccelerometer.html">QAccelerometer</a> or <a href="qaccelerometerreading.html">QAccelerometerReading</a>.</p>
-<pre><span class="comment">    // start the sensor</span>
+<pre class="highlightedCode"><span class="comment">    // start the sensor</span>
     QSensor sensor(&quot;QAccelerometer&quot;);
     sensor.start();
 
@@ -70,62 +83,64 @@
     qreal x = reading-&gt;property(&quot;x&quot;).value&lt;qreal&gt;();
     qreal y = reading-&gt;value(1).value&lt;qreal&gt;();</pre>
 <p>You can discover all of this information at runtime too. The sensor_explorer example shows you information about available sensors.</p>
-<a name="front-end- back-end"></a>
+<a name="front-end-back-end"></a>
 <h3>Front end, back end</h3>
 <p>The Sensors API has a front end, for application developers to use and a back end, where device implementors write code to access their hardware. As an application developer you do not need to access the back end though it may be useful to understand how it works.</p>
 <p>Commands from the application are delivered through <a href="qsensor.html">QSensor</a> and then down to the device plugin. Data comes back through the <a href="qsensorreading.html">QSensorReading</a> class.</p>
-<p align="center"><img src="images/sensors-overview.png" /></p><p>More information about the back end can be found in <a href="sensors-backend.html">Sensors Backend</a>.</p>
+<p class="centerAlign"><img src="images/sensors-overview.png" /></p><p>More information about the back end can be found in <a href="sensors-backend.html">Sensors Backend</a>.</p>
 <a name="main-classes"></a>
 <h3>Main Classes</h3>
 <p>The primary classes that make up the Sensors API.</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qsensor.html">QSensor</a></th><td>Represents a single hardware sensor</td></tr>
-<tr valign="top" class="even"><th><a href="qsensorfilter.html">QSensorFilter</a></th><td>Efficient callback facility for asynchronous notifications of sensor changes</td></tr>
-<tr valign="top" class="odd"><th><a href="qsensorreading.html">QSensorReading</a></th><td>Holds the readings from the sensor</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qsensor.html">QSensor</a></p></td><td><p>Represents a single hardware sensor</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qsensorfilter.html">QSensorFilter</a></p></td><td><p>Efficient callback facility for asynchronous notifications of sensor changes</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qsensorreading.html">QSensorReading</a></p></td><td><p>Holds the readings from the sensor</p></td></tr>
+</table>
 <a name="reading-classes"></a>
 <h3>Reading Classes</h3>
 <p>The best way to access sensor data is via one of these classes.</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qaccelerometerreading.html">QAccelerometerReading</a></th><td>Reports on linear acceleration along the X, Y and Z axes</td></tr>
-<tr valign="top" class="even"><th><a href="qambientlightreading.html">QAmbientLightReading</a></th><td>Represents one reading from the ambient light sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qcompassreading.html">QCompassReading</a></th><td>Represents one reading from a compass</td></tr>
-<tr valign="top" class="even"><th><a href="qmagnetometerreading.html">QMagnetometerReading</a></th><td>Represents one reading from the magnetometer</td></tr>
-<tr valign="top" class="odd"><th><a href="qorientationreading.html">QOrientationReading</a></th><td>Represents one reading from the orientation sensor</td></tr>
-<tr valign="top" class="even"><th><a href="qproximityreading.html">QProximityReading</a></th><td>Represents one reading from the proximity sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qrotationreading.html">QRotationReading</a></th><td>Represents one reading from the rotation sensor</td></tr>
-<tr valign="top" class="even"><th><a href="qtapreading.html">QTapReading</a></th><td>Represents one reading from the tap sensor</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qaccelerometerreading.html">QAccelerometerReading</a></p></td><td><p>Reports on linear acceleration along the X, Y and Z axes</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qambientlightreading.html">QAmbientLightReading</a></p></td><td><p>Represents one reading from the ambient light sensor</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcompassreading.html">QCompassReading</a></p></td><td><p>Represents one reading from a compass</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmagnetometerreading.html">QMagnetometerReading</a></p></td><td><p>Represents one reading from the magnetometer</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qorientationreading.html">QOrientationReading</a></p></td><td><p>Represents one reading from the orientation sensor</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qproximityreading.html">QProximityReading</a></p></td><td><p>Represents one reading from the proximity sensor</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qrotationreading.html">QRotationReading</a></p></td><td><p>Represents one reading from the rotation sensor</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qtapreading.html">QTapReading</a></p></td><td><p>Represents one reading from the tap sensor</p></td></tr>
+</table>
 <a name="sensor-classes"></a>
 <h3>Sensor Classes</h3>
 <p>These classes provide convenience wrappers that reduce the need for casting. Each of these classes represents a sensor type that the Sensors API knows about. Note that additional types may be made available at run-time. See <a href="#sensor-types">Sensor Types</a> for more information.</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qaccelerometer.html">QAccelerometer</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qambientlightsensor.html">QAmbientLightSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qcompass.html">QCompass</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qmagnetometer.html">QMagnetometer</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qorientationsensor.html">QOrientationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qproximitysensor.html">QProximitySensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qrotationsensor.html">QRotationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qtapsensor.html">QTapSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qaccelerometer.html">QAccelerometer</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qambientlightsensor.html">QAmbientLightSensor</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcompass.html">QCompass</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmagnetometer.html">QMagnetometer</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qorientationsensor.html">QOrientationSensor</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qproximitysensor.html">QProximitySensor</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qrotationsensor.html">QRotationSensor</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qtapsensor.html">QTapSensor</a></p></td><td><p>Convenience wrapper around QSensor</p></td></tr>
+</table>
 <a name="filter-classes"></a>
 <h3>Filter Classes</h3>
 <p>As with the sensor classes, these provide convenience wrappers that reduce the need for casting.</p>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qaccelerometerfilter.html">QAccelerometerFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qambientlightfilter.html">QAmbientLightFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="odd"><th><a href="qcompassfilter.html">QCompassFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qmagnetometerfilter.html">QMagnetometerFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="odd"><th><a href="qorientationfilter.html">QOrientationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qproximityfilter.html">QProximityFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="odd"><th><a href="qrotationfilter.html">QRotationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qtapfilter.html">QTapFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qaccelerometerfilter.html">QAccelerometerFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qambientlightfilter.html">QAmbientLightFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qcompassfilter.html">QCompassFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmagnetometerfilter.html">QMagnetometerFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qorientationfilter.html">QOrientationFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qproximityfilter.html">QProximityFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qrotationfilter.html">QRotationFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qtapfilter.html">QTapFilter</a></p></td><td><p>Convenience wrapper around QSensorFilter</p></td></tr>
+</table>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
-</tr></table></div></address></body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

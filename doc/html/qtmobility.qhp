@@ -64,18 +64,6 @@
                     <section ref="qcontactabstractrequest.html" title="QContactAbstractRequest Class Reference">
                         <section ref="qcontactabstractrequest-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qcontactaction.html" title="QContactAction Class Reference">
-                        <section ref="qcontactaction-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qcontactactiondescriptor.html" title="QContactActionDescriptor Class Reference">
-                        <section ref="qcontactactiondescriptor-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qcontactactionfactory.html" title="QContactActionFactory Class Reference">
-                        <section ref="qcontactactionfactory-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qcontactactionfilter.html" title="QContactActionFilter Class Reference">
-                        <section ref="qcontactactionfilter-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qcontactaddress.html" title="QContactAddress Class Reference">
                         <section ref="qcontactaddress-members.html" title="List of all members"/>
                     </section>
@@ -259,9 +247,6 @@
                     <section ref="qgallerycontainerrequest.html" title="QGalleryContainerRequest Class Reference">
                         <section ref="qgallerycontainerrequest-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qgallerycopyrequest.html" title="QGalleryCopyRequest Class Reference">
-                        <section ref="qgallerycopyrequest-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qgallerycountrequest.html" title="QGalleryCountRequest Class Reference">
                         <section ref="qgallerycountrequest-members.html" title="List of all members"/>
                     </section>
@@ -285,9 +270,6 @@
                     </section>
                     <section ref="qgallerymetadatarangefilter.html" title="QGalleryMetaDataRangeFilter Class Reference">
                         <section ref="qgallerymetadatarangefilter-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qgallerymoverequest.html" title="QGalleryMoveRequest Class Reference">
-                        <section ref="qgallerymoverequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgalleryproperty.html" title="QGalleryProperty Class Reference">
                         <section ref="qgalleryproperty-members.html" title="List of all members"/>
@@ -333,6 +315,9 @@
                     </section>
                     <section ref="qimageencodersettings.html" title="QImageEncoderSettings Class Reference">
                         <section ref="qimageencodersettings-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qlatin1constant.html" title="QLatin1Constant Class Reference">
+                        <section ref="qlatin1constant-members.html" title="List of all members"/>
                     </section>
                     <section ref="qmagnetometer.html" title="QMagnetometer Class Reference">
                         <section ref="qmagnetometer-members.html" title="List of all members"/>
@@ -655,7 +640,8 @@
                     <section ref="bearercloud.html" title="Bearer Cloud Example"/>
                     <section ref="bearermonitor.html" title="Bearer Monitor Example"/>
                     <section ref="bluetoothtransferplugin.html" title="Bluetooth Transfer Plugin Example"/>
-                    <section ref="declarative.html" title="Declarative Example"/>
+                    <section ref="declarative-sfw-dialer.html" title="Declarative Service Framework Example"/>
+                    <section ref="declarative-sfw-notes.html" title="Declarative Service Framework Notes Manager"/>
                     <section ref="documentmanager.html" title="Document Manager"/>
                     <section ref="documentshare.html" title="Document Sharing"/>
                     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example"/>
@@ -666,6 +652,7 @@
                     <section ref="logfilepositionsource.html" title="Log File Position Source Example"/>
                     <section ref="mediabrowser.html" title="Media Browser"/>
                     <section ref="player.html" title="Media Player Example"/>
+                    <section ref="notesmanagerplugin.html" title="Notes Manager Plugin Example"/>
                     <section ref="player.html" title="Player Example"/>
                     <section ref="publish-subscribe.html" title="Publish and Subscribe Example"/>
                     <section ref="querymessages.html" title="Query Messages Example"/>
@@ -676,7 +663,8 @@
                     <section ref="qmlcontacts.html" title="Sample QML-based Phonebook Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
                     <section ref="servicebrowser.html" title="Service Browser Example"/>
-                    <section ref="declarative.html" title="Service Framework using QML Example"/>
+                    <section ref="sfw-notes.html" title="Service Framework Notes Manager"/>
+                    <section ref="declarative-sfw-dialer.html" title="Service Framework using QML Example"/>
                     <section ref="slideshow.html" title="SlideShow Example"/>
                     <section ref="slideshow.html" title="Slideshow Example"/>
                     <section ref="sysinfo.html" title="System Information Example"/>
@@ -700,21 +688,18 @@
                     <section ref="gallery-filters.html" title="Document Gallery Filters"/>
                     <section ref="gallery-requests.html" title="Document Gallery Requests"/>
                     <section ref="future.html" title="Future Additional APIs"/>
-                    <section ref="gpl.html" title="GNU General Public License (GPL)"/>
                     <section ref="lgpl.html" title="GNU Lesser General Public License (LGPL)"/>
                     <section ref="hierarchy.html" title="Inheritance Hierarchy"/>
                     <section ref="installation.html" title="Installation Guide"/>
-                    <section ref="licenses-fonts.html" title="Licenses for Fonts Used in Qt for Embedded Linux"/>
-                    <section ref="licensing.html" title="Licensing Information"/>
                     <section ref="location-overview.html" title="Location"/>
                     <section ref="location.html" title="Location API"/>
                     <section ref="messaging.html" title="Messaging"/>
                     <section ref="multimedia.html" title="Mobility Multimedia"/>
                     <section ref="multimedia.html" title="Multimedia"/>
                     <section ref="opensourceedition.html" title="Open Source Versions of Qt"/>
-                    <section ref="licenses.html" title="Other Licenses Used in Qt"/>
                     <section ref="publ-subs.html" title="Publish and Subscribe"/>
                     <section ref="bearer.html" title="Qt Bearer Management API"/>
+                    <section ref="contactsengines.html" title="Qt Contacts Manager Engines"/>
                     <section ref="contactsschema.html" title="Qt Contacts Schema"/>
                     <section ref="editions.html" title="Qt Editions"/>
                     <section ref="examples.html" title="Qt Mobility Examples"/>
@@ -723,7 +708,7 @@
                     <section ref="service-frameworks.html" title="Qt Service Framework"/>
                     <section ref="service-framework-on-symbian.html" title="Qt Service Framework on Symbian"/>
                     <section ref="qtmobility-known-issues.html" title="Release Notes of the QtMobility Project"/>
-                    <section ref="sensors-api.html" title="Sensors API (technology preview)"/>
+                    <section ref="sensors-api.html" title="Sensors API"/>
                     <section ref="sensors-backend.html" title="Sensors Backend"/>
                     <section ref="servicefw.html" title="Service Frameworks Classes"/>
                     <section ref="systeminfo.html" title="System Information"/>
@@ -731,7 +716,7 @@
                     <section ref="preview.html" title="Technology Preview"/>
                     <section ref="3rdparty.html" title="Third-Party Licenses Used in Qt"/>
                     <section ref="trademarks.html" title="Trademarks"/>
-                    <section ref="versit.html" title="Versit API (technology preview)"/>
+                    <section ref="versit.html" title="Versit API"/>
                 </section>
             </section>
         </toc>
@@ -754,7 +739,8 @@
             <keyword name="Contacts Synchronous API" id="Contacts Synchronous API" ref="contactssync.html"/>
             <keyword name="Creating a sensor plugin" id="Creating a sensor plugin" ref="creating-a-sensor-plugin.html"/>
             <keyword name="DECLARE_READING" id="DECLARE_READING" ref="qsensorreading.html#DECLARE_READING"/>
-            <keyword name="Declarative Example" id="Declarative Example" ref="declarative.html"/>
+            <keyword name="Declarative Service Framework Example" id="Declarative Service Framework Example" ref="declarative-sfw-dialer.html"/>
+            <keyword name="Declarative Service Framework Notes Manager" id="Declarative Service Framework Notes Manager" ref="declarative-sfw-notes.html"/>
             <keyword name="Document Galleries." id="Document Galleries." ref="gallery-galleries.html"/>
             <keyword name="Document Gallery" id="Document Gallery" ref="gallery.html"/>
             <keyword name="Document Gallery Examples" id="Document Gallery Examples" ref="gallery-examples.html"/>
@@ -766,14 +752,11 @@
             <keyword name="File Manager Plugin Example" id="File Manager Plugin Example" ref="filemanagerplugin.html"/>
             <keyword name="Flickr Demo Example" id="Flickr Demo Example" ref="flickrdemo.html"/>
             <keyword name="Future Additional APIs" id="Future Additional APIs" ref="future.html"/>
-            <keyword name="GNU General Public License (GPL)" id="GNU General Public License (GPL)" ref="gpl.html"/>
             <keyword name="GNU Lesser General Public License (LGPL)" id="GNU Lesser General Public License (LGPL)" ref="lgpl.html"/>
             <keyword name="IMPLEMENT_READING" id="IMPLEMENT_READING" ref="qsensorreading.html#IMPLEMENT_READING"/>
             <keyword name="Inheritance Hierarchy" id="Inheritance Hierarchy" ref="hierarchy.html"/>
             <keyword name="Installation Guide" id="Installation Guide" ref="installation.html"/>
             <keyword name="Keep in Touch Example" id="Keep in Touch Example" ref="keepintouch.html"/>
-            <keyword name="Licenses for Fonts Used in Qt for Embedded Linux" id="Licenses for Fonts Used in Qt for Embedded Linux" ref="licenses-fonts.html"/>
-            <keyword name="Licensing Information" id="Licensing Information" ref="licensing.html"/>
             <keyword name="LightMap Example" id="LightMap Example" ref="lightmaps.html"/>
             <keyword name="Location" id="Location" ref="location-overview.html"/>
             <keyword name="Location API" id="Location API" ref="location.html"/>
@@ -783,8 +766,8 @@
             <keyword name="Messaging" id="Messaging" ref="messaging.html"/>
             <keyword name="Mobility Multimedia" id="Mobility Multimedia" ref="multimedia.html"/>
             <keyword name="Multimedia" id="Multimedia" ref="multimedia.html"/>
+            <keyword name="Notes Manager Plugin Example" id="Notes Manager Plugin Example" ref="notesmanagerplugin.html"/>
             <keyword name="Open Source Versions of Qt" id="Open Source Versions of Qt" ref="opensourceedition.html"/>
-            <keyword name="Other Licenses Used in Qt" id="Other Licenses Used in Qt" ref="licenses.html"/>
             <keyword name="Player Example" id="Player Example" ref="player.html"/>
             <keyword name="Publish and Subscribe" id="Publish and Subscribe" ref="publ-subs.html"/>
             <keyword name="Publish and Subscribe Example" id="Publish and Subscribe Example" ref="publish-subscribe.html"/>
@@ -910,28 +893,21 @@
             <keyword name="setAzimuth" id="QCompassReading::setAzimuth" ref="qcompassreading.html#setAzimuth"/>
             <keyword name="setCalibrationLevel" id="QCompassReading::setCalibrationLevel" ref="qcompassreading.html#setCalibrationLevel"/>
             <keyword name="QContact" id="QContact" ref="qcontact.html"/>
-            <keyword name="availableActions" id="QContact::availableActions" ref="qcontact.html#availableActions"/>
             <keyword name="clearDetails" id="QContact::clearDetails" ref="qcontact.html#clearDetails"/>
             <keyword name="detail" id="QContact::detail" ref="qcontact.html#detail"/>
-            <keyword name="detailWithAction" id="QContact::detailWithAction" ref="qcontact.html#detailWithAction"/>
             <keyword name="details" id="QContact::details" ref="qcontact.html#details"/>
-            <keyword name="detailsWithAction" id="QContact::detailsWithAction" ref="qcontact.html#detailsWithAction"/>
             <keyword name="displayLabel" id="QContact::displayLabel" ref="qcontact.html#displayLabel"/>
             <keyword name="id" id="QContact::id" ref="qcontact.html#id"/>
             <keyword name="isEmpty" id="QContact::isEmpty" ref="qcontact.html#isEmpty"/>
-            <keyword name="isPreferredDetail" id="QContact::isPreferredDetail" ref="qcontact.html#isPreferredDetail"/>
             <keyword name="localId" id="QContact::localId" ref="qcontact.html#localId"/>
             <keyword name="operator!=" id="QContact::operator!=" ref="qcontact.html#operator-not-eq"/>
             <keyword name="operator=" id="QContact::operator=" ref="qcontact.html#operator-eq"/>
             <keyword name="operator==" id="QContact::operator==" ref="qcontact.html#operator-eq-eq"/>
-            <keyword name="preferredDetail" id="QContact::preferredDetail" ref="qcontact.html#preferredDetail"/>
-            <keyword name="preferredDetails" id="QContact::preferredDetails" ref="qcontact.html#preferredDetails"/>
             <keyword name="relatedContacts" id="QContact::relatedContacts" ref="qcontact.html#relatedContacts"/>
             <keyword name="relationships" id="QContact::relationships" ref="qcontact.html#relationships"/>
             <keyword name="removeDetail" id="QContact::removeDetail" ref="qcontact.html#removeDetail"/>
             <keyword name="saveDetail" id="QContact::saveDetail" ref="qcontact.html#saveDetail"/>
             <keyword name="setId" id="QContact::setId" ref="qcontact.html#setId"/>
-            <keyword name="setPreferredDetail" id="QContact::setPreferredDetail" ref="qcontact.html#setPreferredDetail"/>
             <keyword name="setType" id="QContact::setType" ref="qcontact.html#setType"/>
             <keyword name="type" id="QContact::type" ref="qcontact.html#type"/>
             <keyword name="~QContact" id="QContact::~QContact" ref="qcontact.html#dtor.QContact"/>
@@ -968,54 +944,6 @@
             <keyword name="type" id="QContactAbstractRequest::type" ref="qcontactabstractrequest.html#type"/>
             <keyword name="waitForFinished" id="QContactAbstractRequest::waitForFinished" ref="qcontactabstractrequest.html#waitForFinished"/>
             <keyword name="~QContactAbstractRequest" id="QContactAbstractRequest::~QContactAbstractRequest" ref="qcontactabstractrequest.html#dtor.QContactAbstractRequest"/>
-            <keyword name="QContactAction" id="QContactAction" ref="qcontactaction.html"/>
-            <keyword name="QContactAction::State" id="QContactAction::State" ref="qcontactaction.html#State-enum"/>
-            <keyword name="QContactAction::InactiveState" id="QContactAction::InactiveState" ref="qcontactaction.html#State-enum"/>
-            <keyword name="QContactAction::ActiveState" id="QContactAction::ActiveState" ref="qcontactaction.html#State-enum"/>
-            <keyword name="QContactAction::FinishedState" id="QContactAction::FinishedState" ref="qcontactaction.html#State-enum"/>
-            <keyword name="QContactAction::FinishedDetachedState" id="QContactAction::FinishedDetachedState" ref="qcontactaction.html#State-enum"/>
-            <keyword name="QContactAction::FinishedWithErrorState" id="QContactAction::FinishedWithErrorState" ref="qcontactaction.html#State-enum"/>
-            <keyword name="action" id="QContactAction::action" ref="qcontactaction.html#action"/>
-            <keyword name="actionDescriptor" id="QContactAction::actionDescriptor" ref="qcontactaction.html#actionDescriptor"/>
-            <keyword name="actionDescriptors" id="QContactAction::actionDescriptors" ref="qcontactaction.html#actionDescriptors"/>
-            <keyword name="availableActions" id="QContactAction::availableActions" ref="qcontactaction.html#availableActions"/>
-            <keyword name="contactFilter" id="QContactAction::contactFilter" ref="qcontactaction.html#contactFilter"/>
-            <keyword name="invokeAction" id="QContactAction::invokeAction" ref="qcontactaction.html#invokeAction"/>
-            <keyword name="isDetailSupported" id="QContactAction::isDetailSupported" ref="qcontactaction.html#isDetailSupported"/>
-            <keyword name="metaData" id="QContactAction::metaData" ref="qcontactaction.html#metaData"/>
-            <keyword name="results" id="QContactAction::results" ref="qcontactaction.html#results"/>
-            <keyword name="resultsAvailable" id="QContactAction::resultsAvailable" ref="qcontactaction.html#resultsAvailable"/>
-            <keyword name="state" id="QContactAction::state" ref="qcontactaction.html#state"/>
-            <keyword name="stateChanged" id="QContactAction::stateChanged" ref="qcontactaction.html#stateChanged"/>
-            <keyword name="supportedDetails" id="QContactAction::supportedDetails" ref="qcontactaction.html#supportedDetails"/>
-            <keyword name="~QContactAction" id="QContactAction::~QContactAction" ref="qcontactaction.html#dtor.QContactAction"/>
-            <keyword name="QContactActionDescriptor" id="QContactActionDescriptor" ref="qcontactactiondescriptor.html"/>
-            <keyword name="actionName" id="QContactActionDescriptor::actionName" ref="qcontactactiondescriptor.html#actionName"/>
-            <keyword name="implementationVersion" id="QContactActionDescriptor::implementationVersion" ref="qcontactactiondescriptor.html#implementationVersion"/>
-            <keyword name="isEmpty" id="QContactActionDescriptor::isEmpty" ref="qcontactactiondescriptor.html#isEmpty"/>
-            <keyword name="operator!=" id="QContactActionDescriptor::operator!=" ref="qcontactactiondescriptor.html#operator-not-eq"/>
-            <keyword name="operator&lt;" id="QContactActionDescriptor::operator&lt;" ref="qcontactactiondescriptor.html#operator-lt"/>
-            <keyword name="operator=" id="QContactActionDescriptor::operator=" ref="qcontactactiondescriptor.html#operator-eq"/>
-            <keyword name="operator==" id="QContactActionDescriptor::operator==" ref="qcontactactiondescriptor.html#operator-eq-eq"/>
-            <keyword name="setActionName" id="QContactActionDescriptor::setActionName" ref="qcontactactiondescriptor.html#setActionName"/>
-            <keyword name="setImplementationVersion" id="QContactActionDescriptor::setImplementationVersion" ref="qcontactactiondescriptor.html#setImplementationVersion"/>
-            <keyword name="setVendorName" id="QContactActionDescriptor::setVendorName" ref="qcontactactiondescriptor.html#setVendorName"/>
-            <keyword name="vendorName" id="QContactActionDescriptor::vendorName" ref="qcontactactiondescriptor.html#vendorName"/>
-            <keyword name="~QContactActionDescriptor" id="QContactActionDescriptor::~QContactActionDescriptor" ref="qcontactactiondescriptor.html#dtor.QContactActionDescriptor"/>
-            <keyword name="QContactActionFactory" id="QContactActionFactory" ref="qcontactactionfactory.html"/>
-            <keyword name="actionDescriptors" id="QContactActionFactory::actionDescriptors" ref="qcontactactionfactory.html#actionDescriptors"/>
-            <keyword name="actionMetadata" id="QContactActionFactory::actionMetadata" ref="qcontactactionfactory.html#actionMetadata"/>
-            <keyword name="instance" id="QContactActionFactory::instance" ref="qcontactactionfactory.html#instance"/>
-            <keyword name="name" id="QContactActionFactory::name" ref="qcontactactionfactory.html#name"/>
-            <keyword name="~QContactActionFactory" id="QContactActionFactory::~QContactActionFactory" ref="qcontactactionfactory.html#dtor.QContactActionFactory"/>
-            <keyword name="QContactActionFilter" id="QContactActionFilter" ref="qcontactactionfilter.html"/>
-            <keyword name="actionName" id="QContactActionFilter::actionName" ref="qcontactactionfilter.html#actionName"/>
-            <keyword name="implementationVersion" id="QContactActionFilter::implementationVersion" ref="qcontactactionfilter.html#implementationVersion"/>
-            <keyword name="setActionName" id="QContactActionFilter::setActionName" ref="qcontactactionfilter.html#setActionName"/>
-            <keyword name="setValue" id="QContactActionFilter::setValue" ref="qcontactactionfilter.html#setValue"/>
-            <keyword name="setVendor" id="QContactActionFilter::setVendor" ref="qcontactactionfilter.html#setVendor"/>
-            <keyword name="value" id="QContactActionFilter::value" ref="qcontactactionfilter.html#value"/>
-            <keyword name="vendorName" id="QContactActionFilter::vendorName" ref="qcontactactionfilter.html#vendorName"/>
             <keyword name="QContactAddress" id="QContactAddress" ref="qcontactaddress.html"/>
             <keyword name="country" id="QContactAddress::country" ref="qcontactaddress.html#country"/>
             <keyword name="locality" id="QContactAddress::locality" ref="qcontactaddress.html#locality"/>
@@ -1093,7 +1021,6 @@
             <keyword name="QContactDetail::Irremovable" id="QContactDetail::Irremovable" ref="qcontactdetail.html#AccessConstraint-enum"/>
             <keyword name="QContactDetail::AccessConstraints" id="QContactDetail::AccessConstraints" ref="qcontactdetail.html#AccessConstraint-enum"/>
             <keyword name="accessConstraints" id="QContactDetail::accessConstraints" ref="qcontactdetail.html#accessConstraints"/>
-            <keyword name="assign" id="QContactDetail::assign" ref="qcontactdetail.html#assign"/>
             <keyword name="contexts" id="QContactDetail::contexts" ref="qcontactdetail.html#contexts"/>
             <keyword name="definitionName" id="QContactDetail::definitionName" ref="qcontactdetail.html#definitionName"/>
             <keyword name="detailUri" id="QContactDetail::detailUri" ref="qcontactdetail.html#detailUri"/>
@@ -1134,17 +1061,21 @@
             <keyword name="definitions" id="QContactDetailDefinitionFetchRequest::definitions" ref="qcontactdetaildefinitionfetchrequest.html#definitions"/>
             <keyword name="errorMap" id="QContactDetailDefinitionFetchRequest::errorMap" ref="qcontactdetaildefinitionfetchrequest.html#errorMap"/>
             <keyword name="setContactType" id="QContactDetailDefinitionFetchRequest::setContactType" ref="qcontactdetaildefinitionfetchrequest.html#setContactType"/>
+            <keyword name="setDefinitionName" id="QContactDetailDefinitionFetchRequest::setDefinitionName" ref="qcontactdetaildefinitionfetchrequest.html#setDefinitionName"/>
             <keyword name="setDefinitionNames" id="QContactDetailDefinitionFetchRequest::setDefinitionNames" ref="qcontactdetaildefinitionfetchrequest.html#setDefinitionNames"/>
             <keyword name="QContactDetailDefinitionRemoveRequest" id="QContactDetailDefinitionRemoveRequest" ref="qcontactdetaildefinitionremoverequest.html"/>
             <keyword name="contactType" id="QContactDetailDefinitionRemoveRequest::contactType" ref="qcontactdetaildefinitionremoverequest.html#contactType"/>
             <keyword name="definitionNames" id="QContactDetailDefinitionRemoveRequest::definitionNames" ref="qcontactdetaildefinitionremoverequest.html#definitionNames"/>
             <keyword name="errorMap" id="QContactDetailDefinitionRemoveRequest::errorMap" ref="qcontactdetaildefinitionremoverequest.html#errorMap"/>
+            <keyword name="setContactType" id="QContactDetailDefinitionRemoveRequest::setContactType" ref="qcontactdetaildefinitionremoverequest.html#setContactType"/>
+            <keyword name="setDefinitionName" id="QContactDetailDefinitionRemoveRequest::setDefinitionName" ref="qcontactdetaildefinitionremoverequest.html#setDefinitionName"/>
             <keyword name="setDefinitionNames" id="QContactDetailDefinitionRemoveRequest::setDefinitionNames" ref="qcontactdetaildefinitionremoverequest.html#setDefinitionNames"/>
             <keyword name="QContactDetailDefinitionSaveRequest" id="QContactDetailDefinitionSaveRequest" ref="qcontactdetaildefinitionsaverequest.html"/>
             <keyword name="contactType" id="QContactDetailDefinitionSaveRequest::contactType" ref="qcontactdetaildefinitionsaverequest.html#contactType"/>
             <keyword name="definitions" id="QContactDetailDefinitionSaveRequest::definitions" ref="qcontactdetaildefinitionsaverequest.html#definitions"/>
             <keyword name="errorMap" id="QContactDetailDefinitionSaveRequest::errorMap" ref="qcontactdetaildefinitionsaverequest.html#errorMap"/>
             <keyword name="setContactType" id="QContactDetailDefinitionSaveRequest::setContactType" ref="qcontactdetaildefinitionsaverequest.html#setContactType"/>
+            <keyword name="setDefinition" id="QContactDetailDefinitionSaveRequest::setDefinition" ref="qcontactdetaildefinitionsaverequest.html#setDefinition"/>
             <keyword name="setDefinitions" id="QContactDetailDefinitionSaveRequest::setDefinitions" ref="qcontactdetaildefinitionsaverequest.html#setDefinitions"/>
             <keyword name="QContactDetailFieldDefinition" id="QContactDetailFieldDefinition" ref="qcontactdetailfielddefinition.html"/>
             <keyword name="allowableValues" id="QContactDetailFieldDefinition::allowableValues" ref="qcontactdetailfielddefinition.html#allowableValues"/>
@@ -1195,7 +1126,6 @@
             <keyword name="QContactFetchHint::OptimizationHint" id="QContactFetchHint::OptimizationHint" ref="qcontactfetchhint.html#OptimizationHint-enum"/>
             <keyword name="QContactFetchHint::AllRequired" id="QContactFetchHint::AllRequired" ref="qcontactfetchhint.html#OptimizationHint-enum"/>
             <keyword name="QContactFetchHint::NoRelationships" id="QContactFetchHint::NoRelationships" ref="qcontactfetchhint.html#OptimizationHint-enum"/>
-            <keyword name="QContactFetchHint::NoActionPreferences" id="QContactFetchHint::NoActionPreferences" ref="qcontactfetchhint.html#OptimizationHint-enum"/>
             <keyword name="QContactFetchHint::NoBinaryBlobs" id="QContactFetchHint::NoBinaryBlobs" ref="qcontactfetchhint.html#OptimizationHint-enum"/>
             <keyword name="QContactFetchHint::OptimizationHints" id="QContactFetchHint::OptimizationHints" ref="qcontactfetchhint.html#OptimizationHint-enum"/>
             <keyword name="detailDefinitionsHint" id="QContactFetchHint::detailDefinitionsHint" ref="qcontactfetchhint.html#detailDefinitionsHint"/>
@@ -1220,7 +1150,6 @@
             <keyword name="QContactFilter::ContactDetailFilter" id="QContactFilter::ContactDetailFilter" ref="qcontactfilter.html#FilterType-enum"/>
             <keyword name="QContactFilter::ContactDetailRangeFilter" id="QContactFilter::ContactDetailRangeFilter" ref="qcontactfilter.html#FilterType-enum"/>
             <keyword name="QContactFilter::ChangeLogFilter" id="QContactFilter::ChangeLogFilter" ref="qcontactfilter.html#FilterType-enum"/>
-            <keyword name="QContactFilter::ActionFilter" id="QContactFilter::ActionFilter" ref="qcontactfilter.html#FilterType-enum"/>
             <keyword name="QContactFilter::RelationshipFilter" id="QContactFilter::RelationshipFilter" ref="qcontactfilter.html#FilterType-enum"/>
             <keyword name="QContactFilter::IntersectionFilter" id="QContactFilter::IntersectionFilter" ref="qcontactfilter.html#FilterType-enum"/>
             <keyword name="QContactFilter::UnionFilter" id="QContactFilter::UnionFilter" ref="qcontactfilter.html#FilterType-enum"/>
@@ -1328,7 +1257,6 @@
             <keyword name="QContactManager::InvalidContactTypeError" id="QContactManager::InvalidContactTypeError" ref="qcontactmanager.html#Error-enum"/>
             <keyword name="QContactManager::ManagerFeature" id="QContactManager::ManagerFeature" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::Groups" id="QContactManager::Groups" ref="qcontactmanager.html#ManagerFeature-enum"/>
-            <keyword name="QContactManager::ActionPreferences" id="QContactManager::ActionPreferences" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::MutableDefinitions" id="QContactManager::MutableDefinitions" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::Relationships" id="QContactManager::Relationships" ref="qcontactmanager.html#ManagerFeature-enum"/>
             <keyword name="QContactManager::ArbitraryRelationshipTypes" id="QContactManager::ArbitraryRelationshipTypes" ref="qcontactmanager.html#ManagerFeature-enum"/>
@@ -1376,7 +1304,8 @@
             <keyword name="setSelfContactId" id="QContactManager::setSelfContactId" ref="qcontactmanager.html#setSelfContactId"/>
             <keyword name="supportedContactTypes" id="QContactManager::supportedContactTypes" ref="qcontactmanager.html#supportedContactTypes"/>
             <keyword name="supportedDataTypes" id="QContactManager::supportedDataTypes" ref="qcontactmanager.html#supportedDataTypes"/>
-            <keyword name="synthesizedDisplayLabel" id="QContactManager::synthesizedDisplayLabel" ref="qcontactmanager.html#synthesizedDisplayLabel"/>
+            <keyword name="synthesizeContactDisplayLabel" id="QContactManager::synthesizeContactDisplayLabel" ref="qcontactmanager.html#synthesizeContactDisplayLabel"/>
+            <keyword name="synthesizedContactDisplayLabel" id="QContactManager::synthesizedContactDisplayLabel" ref="qcontactmanager.html#synthesizedContactDisplayLabel"/>
             <keyword name="~QContactManager" id="QContactManager::~QContactManager" ref="qcontactmanager.html#dtor.QContactManager"/>
             <keyword name="QContactManagerEngine" id="QContactManagerEngine" ref="qcontactmanagerengine.html"/>
             <keyword name="addSorted" id="QContactManagerEngine::addSorted" ref="qcontactmanagerengine.html#addSorted"/>
@@ -1439,7 +1368,6 @@
             <keyword name="updateRelationshipRemoveRequest" id="QContactManagerEngine::updateRelationshipRemoveRequest" ref="qcontactmanagerengine.html#updateRelationshipRemoveRequest"/>
             <keyword name="updateRelationshipSaveRequest" id="QContactManagerEngine::updateRelationshipSaveRequest" ref="qcontactmanagerengine.html#updateRelationshipSaveRequest"/>
             <keyword name="updateRequestState" id="QContactManagerEngine::updateRequestState" ref="qcontactmanagerengine.html#updateRequestState"/>
-            <keyword name="validateActionFilter" id="QContactManagerEngine::validateActionFilter" ref="qcontactmanagerengine.html#validateActionFilter"/>
             <keyword name="validateContact" id="QContactManagerEngine::validateContact" ref="qcontactmanagerengine.html#validateContact"/>
             <keyword name="validateDefinition" id="QContactManagerEngine::validateDefinition" ref="qcontactmanagerengine.html#validateDefinition"/>
             <keyword name="waitForRequestFinished" id="QContactManagerEngine::waitForRequestFinished" ref="qcontactmanagerengine.html#waitForRequestFinished"/>
@@ -1574,14 +1502,17 @@
             <keyword name="QContactRelationshipRemoveRequest" id="QContactRelationshipRemoveRequest" ref="qcontactrelationshipremoverequest.html"/>
             <keyword name="errorMap" id="QContactRelationshipRemoveRequest::errorMap" ref="qcontactrelationshipremoverequest.html#errorMap"/>
             <keyword name="relationships" id="QContactRelationshipRemoveRequest::relationships" ref="qcontactrelationshipremoverequest.html#relationships"/>
+            <keyword name="setRelationship" id="QContactRelationshipRemoveRequest::setRelationship" ref="qcontactrelationshipremoverequest.html#setRelationship"/>
             <keyword name="setRelationships" id="QContactRelationshipRemoveRequest::setRelationships" ref="qcontactrelationshipremoverequest.html#setRelationships"/>
             <keyword name="QContactRelationshipSaveRequest" id="QContactRelationshipSaveRequest" ref="qcontactrelationshipsaverequest.html"/>
             <keyword name="errorMap" id="QContactRelationshipSaveRequest::errorMap" ref="qcontactrelationshipsaverequest.html#errorMap"/>
             <keyword name="relationships" id="QContactRelationshipSaveRequest::relationships" ref="qcontactrelationshipsaverequest.html#relationships"/>
+            <keyword name="setRelationship" id="QContactRelationshipSaveRequest::setRelationship" ref="qcontactrelationshipsaverequest.html#setRelationship"/>
             <keyword name="setRelationships" id="QContactRelationshipSaveRequest::setRelationships" ref="qcontactrelationshipsaverequest.html#setRelationships"/>
             <keyword name="QContactRemoveRequest" id="QContactRemoveRequest" ref="qcontactremoverequest.html"/>
             <keyword name="contactIds" id="QContactRemoveRequest::contactIds" ref="qcontactremoverequest.html#contactIds"/>
             <keyword name="errorMap" id="QContactRemoveRequest::errorMap" ref="qcontactremoverequest.html#errorMap"/>
+            <keyword name="setContactId" id="QContactRemoveRequest::setContactId" ref="qcontactremoverequest.html#setContactId"/>
             <keyword name="setContactIds" id="QContactRemoveRequest::setContactIds" ref="qcontactremoverequest.html#setContactIds"/>
             <keyword name="QContactRingtone" id="QContactRingtone" ref="qcontactringtone.html"/>
             <keyword name="audioRingtoneUrl" id="QContactRingtone::audioRingtoneUrl" ref="qcontactringtone.html#audioRingtoneUrl"/>
@@ -1593,6 +1524,7 @@
             <keyword name="QContactSaveRequest" id="QContactSaveRequest" ref="qcontactsaverequest.html"/>
             <keyword name="contacts" id="QContactSaveRequest::contacts" ref="qcontactsaverequest.html#contacts"/>
             <keyword name="errorMap" id="QContactSaveRequest::errorMap" ref="qcontactsaverequest.html#errorMap"/>
+            <keyword name="setContact" id="QContactSaveRequest::setContact" ref="qcontactsaverequest.html#setContact"/>
             <keyword name="setContacts" id="QContactSaveRequest::setContacts" ref="qcontactsaverequest.html#setContacts"/>
             <keyword name="QContactSortOrder" id="QContactSortOrder" ref="qcontactsortorder.html"/>
             <keyword name="QContactSortOrder::BlankPolicy" id="QContactSortOrder::BlankPolicy" ref="qcontactsortorder.html#BlankPolicy-enum"/>
@@ -1645,7 +1577,8 @@
             <keyword name="QDocumentGallery" id="QDocumentGallery" ref="qdocumentgallery.html"/>
             <keyword name="createResponse" id="QDocumentGallery::createResponse" ref="qdocumentgallery.html#createResponse"/>
             <keyword name="isRequestSupported" id="QDocumentGallery::isRequestSupported" ref="qdocumentgallery.html#isRequestSupported"/>
-            <keyword name="itemTypes" id="QDocumentGallery::itemTypes" ref="qdocumentgallery.html#itemTypes-prop"/>
+            <keyword name="itemTypePropertyNames" id="QDocumentGallery::itemTypePropertyNames" ref="qdocumentgallery.html#itemTypePropertyNames"/>
+            <keyword name="propertyAttributes" id="QDocumentGallery::propertyAttributes" ref="qdocumentgallery.html#propertyAttributes"/>
             <keyword name="~QDocumentGallery" id="QDocumentGallery::~QDocumentGallery" ref="qdocumentgallery.html#dtor.QDocumentGallery"/>
             <keyword name="QGalleryAbstractRequest" id="QGalleryAbstractRequest" ref="qgalleryabstractrequest.html"/>
             <keyword name="QGalleryAbstractRequest::Result" id="QGalleryAbstractRequest::Result" ref="qgalleryabstractrequest.html#Result-enum"/>
@@ -1677,8 +1610,6 @@
             <keyword name="QGalleryAbstractRequest::Filter" id="QGalleryAbstractRequest::Filter" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Count" id="QGalleryAbstractRequest::Count" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Remove" id="QGalleryAbstractRequest::Remove" ref="qgalleryabstractrequest.html#Type-enum"/>
-            <keyword name="QGalleryAbstractRequest::Copy" id="QGalleryAbstractRequest::Copy" ref="qgalleryabstractrequest.html#Type-enum"/>
-            <keyword name="QGalleryAbstractRequest::Move" id="QGalleryAbstractRequest::Move" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="cancel" id="QGalleryAbstractRequest::cancel" ref="qgalleryabstractrequest.html#cancel"/>
             <keyword name="cancelled" id="QGalleryAbstractRequest::cancelled" ref="qgalleryabstractrequest.html#cancelled"/>
             <keyword name="clear" id="QGalleryAbstractRequest::clear" ref="qgalleryabstractrequest.html#clear"/>
@@ -1731,20 +1662,6 @@
             <keyword name="setSortPropertyNames" id="QGalleryContainerRequest::setSortPropertyNames" ref="qgallerycontainerrequest.html#sortPropertyNames-prop"/>
             <keyword name="sortPropertyNames" id="QGalleryContainerRequest::sortPropertyNames" ref="qgallerycontainerrequest.html#sortPropertyNames-prop"/>
             <keyword name="~QGalleryContainerRequest" id="QGalleryContainerRequest::~QGalleryContainerRequest" ref="qgallerycontainerrequest.html#dtor.QGalleryContainerRequest"/>
-            <keyword name="QGalleryCopyRequest" id="QGalleryCopyRequest" ref="qgallerycopyrequest.html"/>
-            <keyword name="currentItem" id="QGalleryCopyRequest::currentItem" ref="qgallerycopyrequest.html#currentItem-prop"/>
-            <keyword name="currentItemChanged" id="QGalleryCopyRequest::currentItemChanged" ref="qgallerycopyrequest.html#currentItemChanged"/>
-            <keyword name="destinationId" id="QGalleryCopyRequest::destinationId" ref="qgallerycopyrequest.html#destinationId-prop"/>
-            <keyword name="itemId" id="QGalleryCopyRequest::itemId" ref="qgallerycopyrequest.html#itemId-prop"/>
-            <keyword name="itemIds" id="QGalleryCopyRequest::itemIds" ref="qgallerycopyrequest.html#itemIds-prop"/>
-            <keyword name="itemIdsChanged" id="QGalleryCopyRequest::itemIdsChanged" ref="qgallerycopyrequest.html#itemIdsChanged"/>
-            <keyword name="propertyNames" id="QGalleryCopyRequest::propertyNames" ref="qgallerycopyrequest.html#propertyNames-prop"/>
-            <keyword name="setDestinationId" id="QGalleryCopyRequest::setDestinationId" ref="qgallerycopyrequest.html#destinationId-prop"/>
-            <keyword name="setItemId" id="QGalleryCopyRequest::setItemId" ref="qgallerycopyrequest.html#itemId-prop"/>
-            <keyword name="setItemIds" id="QGalleryCopyRequest::setItemIds" ref="qgallerycopyrequest.html#itemIds-prop"/>
-            <keyword name="setPropertyNames" id="QGalleryCopyRequest::setPropertyNames" ref="qgallerycopyrequest.html#propertyNames-prop"/>
-            <keyword name="setResponse" id="QGalleryCopyRequest::setResponse" ref="qgallerycopyrequest.html#setResponse"/>
-            <keyword name="~QGalleryCopyRequest" id="QGalleryCopyRequest::~QGalleryCopyRequest" ref="qgallerycopyrequest.html#dtor.QGalleryCopyRequest"/>
             <keyword name="QGalleryCountRequest" id="QGalleryCountRequest" ref="qgallerycountrequest.html"/>
             <keyword name="containerId" id="QGalleryCountRequest::containerId" ref="qgallerycountrequest.html#containerId-prop"/>
             <keyword name="count" id="QGalleryCountRequest::count" ref="qgallerycountrequest.html#count-prop"/>
@@ -1776,6 +1693,7 @@
             <keyword name="QGalleryFilter::Union" id="QGalleryFilter::Union" ref="qgalleryfilter.html#Type-enum"/>
             <keyword name="QGalleryFilter::MetaData" id="QGalleryFilter::MetaData" ref="qgalleryfilter.html#Type-enum"/>
             <keyword name="QGalleryFilter::MetaDataRange" id="QGalleryFilter::MetaDataRange" ref="qgalleryfilter.html#Type-enum"/>
+            <keyword name="isValid" id="QGalleryFilter::isValid" ref="qgalleryfilter.html#isValid"/>
             <keyword name="operator=" id="QGalleryFilter::operator=" ref="qgalleryfilter.html#operator-eq"/>
             <keyword name="toIntersectionFilter" id="QGalleryFilter::toIntersectionFilter" ref="qgalleryfilter.html#toIntersectionFilter"/>
             <keyword name="toMetaDataFilter" id="QGalleryFilter::toMetaDataFilter" ref="qgalleryfilter.html#toMetaDataFilter"/>
@@ -1812,6 +1730,7 @@
             <keyword name="filters" id="QGalleryIntersectionFilter::filters" ref="qgalleryintersectionfilter.html#filters"/>
             <keyword name="insert" id="QGalleryIntersectionFilter::insert" ref="qgalleryintersectionfilter.html#insert"/>
             <keyword name="isEmpty" id="QGalleryIntersectionFilter::isEmpty" ref="qgalleryintersectionfilter.html#isEmpty"/>
+            <keyword name="isValid" id="QGalleryIntersectionFilter::isValid" ref="qgalleryintersectionfilter.html#isValid"/>
             <keyword name="operator=" id="QGalleryIntersectionFilter::operator=" ref="qgalleryintersectionfilter.html#operator-eq"/>
             <keyword name="removeAt" id="QGalleryIntersectionFilter::removeAt" ref="qgalleryintersectionfilter.html#removeAt"/>
             <keyword name="replace" id="QGalleryIntersectionFilter::replace" ref="qgalleryintersectionfilter.html#replace"/>
@@ -1854,47 +1773,36 @@
             <keyword name="setResponse" id="QGalleryItemRequest::setResponse" ref="qgalleryitemrequest.html#setResponse"/>
             <keyword name="~QGalleryItemRequest" id="QGalleryItemRequest::~QGalleryItemRequest" ref="qgalleryitemrequest.html#dtor.QGalleryItemRequest"/>
             <keyword name="QGalleryMetaDataFilter" id="QGalleryMetaDataFilter" ref="qgallerymetadatafilter.html"/>
-            <keyword name="fieldName" id="QGalleryMetaDataFilter::fieldName" ref="qgallerymetadatafilter.html#fieldName"/>
+            <keyword name="isValid" id="QGalleryMetaDataFilter::isValid" ref="qgallerymetadatafilter.html#isValid"/>
             <keyword name="matchFlags" id="QGalleryMetaDataFilter::matchFlags" ref="qgallerymetadatafilter.html#matchFlags"/>
             <keyword name="operator=" id="QGalleryMetaDataFilter::operator=" ref="qgallerymetadatafilter.html#operator-eq"/>
-            <keyword name="setFieldName" id="QGalleryMetaDataFilter::setFieldName" ref="qgallerymetadatafilter.html#setFieldName"/>
+            <keyword name="propertyName" id="QGalleryMetaDataFilter::propertyName" ref="qgallerymetadatafilter.html#propertyName"/>
             <keyword name="setMatchFlags" id="QGalleryMetaDataFilter::setMatchFlags" ref="qgallerymetadatafilter.html#setMatchFlags"/>
+            <keyword name="setPropertyName" id="QGalleryMetaDataFilter::setPropertyName" ref="qgallerymetadatafilter.html#setPropertyName"/>
             <keyword name="setValue" id="QGalleryMetaDataFilter::setValue" ref="qgallerymetadatafilter.html#setValue"/>
             <keyword name="value" id="QGalleryMetaDataFilter::value" ref="qgallerymetadatafilter.html#value"/>
             <keyword name="~QGalleryMetaDataFilter" id="QGalleryMetaDataFilter::~QGalleryMetaDataFilter" ref="qgallerymetadatafilter.html#dtor.QGalleryMetaDataFilter"/>
             <keyword name="QGalleryMetaDataRangeFilter" id="QGalleryMetaDataRangeFilter" ref="qgallerymetadatarangefilter.html"/>
-            <keyword name="fieldName" id="QGalleryMetaDataRangeFilter::fieldName" ref="qgallerymetadatarangefilter.html#fieldName"/>
+            <keyword name="isValid" id="QGalleryMetaDataRangeFilter::isValid" ref="qgallerymetadatarangefilter.html#isValid"/>
             <keyword name="maximumValue" id="QGalleryMetaDataRangeFilter::maximumValue" ref="qgallerymetadatarangefilter.html#maximumValue"/>
             <keyword name="minimumValue" id="QGalleryMetaDataRangeFilter::minimumValue" ref="qgallerymetadatarangefilter.html#minimumValue"/>
             <keyword name="operator=" id="QGalleryMetaDataRangeFilter::operator=" ref="qgallerymetadatarangefilter.html#operator-eq"/>
+            <keyword name="propertyName" id="QGalleryMetaDataRangeFilter::propertyName" ref="qgallerymetadatarangefilter.html#propertyName"/>
             <keyword name="rangeFlags" id="QGalleryMetaDataRangeFilter::rangeFlags" ref="qgallerymetadatarangefilter.html#rangeFlags"/>
             <keyword name="setExclusiveRange" id="QGalleryMetaDataRangeFilter::setExclusiveRange" ref="qgallerymetadatarangefilter.html#setExclusiveRange"/>
-            <keyword name="setFieldName" id="QGalleryMetaDataRangeFilter::setFieldName" ref="qgallerymetadatarangefilter.html#setFieldName"/>
             <keyword name="setGreaterThan" id="QGalleryMetaDataRangeFilter::setGreaterThan" ref="qgallerymetadatarangefilter.html#setGreaterThan"/>
             <keyword name="setGreaterThanEquals" id="QGalleryMetaDataRangeFilter::setGreaterThanEquals" ref="qgallerymetadatarangefilter.html#setGreaterThanEquals"/>
             <keyword name="setInclusiveRange" id="QGalleryMetaDataRangeFilter::setInclusiveRange" ref="qgallerymetadatarangefilter.html#setInclusiveRange"/>
             <keyword name="setLessThan" id="QGalleryMetaDataRangeFilter::setLessThan" ref="qgallerymetadatarangefilter.html#setLessThan"/>
             <keyword name="setLessThanEquals" id="QGalleryMetaDataRangeFilter::setLessThanEquals" ref="qgallerymetadatarangefilter.html#setLessThanEquals"/>
+            <keyword name="setPropertyName" id="QGalleryMetaDataRangeFilter::setPropertyName" ref="qgallerymetadatarangefilter.html#setPropertyName"/>
             <keyword name="~QGalleryMetaDataRangeFilter" id="QGalleryMetaDataRangeFilter::~QGalleryMetaDataRangeFilter" ref="qgallerymetadatarangefilter.html#dtor.QGalleryMetaDataRangeFilter"/>
-            <keyword name="QGalleryMoveRequest" id="QGalleryMoveRequest" ref="qgallerymoverequest.html"/>
-            <keyword name="currentItem" id="QGalleryMoveRequest::currentItem" ref="qgallerymoverequest.html#currentItem-prop"/>
-            <keyword name="currentItemChanged" id="QGalleryMoveRequest::currentItemChanged" ref="qgallerymoverequest.html#currentItemChanged"/>
-            <keyword name="destinationId" id="QGalleryMoveRequest::destinationId" ref="qgallerymoverequest.html#destinationId-prop"/>
-            <keyword name="itemId" id="QGalleryMoveRequest::itemId" ref="qgallerymoverequest.html#itemId-prop"/>
-            <keyword name="itemIds" id="QGalleryMoveRequest::itemIds" ref="qgallerymoverequest.html#itemIds-prop"/>
-            <keyword name="itemIdsChanged" id="QGalleryMoveRequest::itemIdsChanged" ref="qgallerymoverequest.html#itemIdsChanged"/>
-            <keyword name="propertyNames" id="QGalleryMoveRequest::propertyNames" ref="qgallerymoverequest.html#propertyNames-prop"/>
-            <keyword name="setDestinationId" id="QGalleryMoveRequest::setDestinationId" ref="qgallerymoverequest.html#destinationId-prop"/>
-            <keyword name="setItemId" id="QGalleryMoveRequest::setItemId" ref="qgallerymoverequest.html#itemId-prop"/>
-            <keyword name="setItemIds" id="QGalleryMoveRequest::setItemIds" ref="qgallerymoverequest.html#itemIds-prop"/>
-            <keyword name="setPropertyNames" id="QGalleryMoveRequest::setPropertyNames" ref="qgallerymoverequest.html#propertyNames-prop"/>
-            <keyword name="setResponse" id="QGalleryMoveRequest::setResponse" ref="qgallerymoverequest.html#setResponse"/>
-            <keyword name="~QGalleryMoveRequest" id="QGalleryMoveRequest::~QGalleryMoveRequest" ref="qgallerymoverequest.html#dtor.QGalleryMoveRequest"/>
             <keyword name="QGalleryProperty" id="QGalleryProperty" ref="qgalleryproperty.html"/>
             <keyword name="QGalleryProperty::Attribute" id="QGalleryProperty::Attribute" ref="qgalleryproperty.html#Attribute-enum"/>
             <keyword name="QGalleryProperty::CanRead" id="QGalleryProperty::CanRead" ref="qgalleryproperty.html#Attribute-enum"/>
             <keyword name="QGalleryProperty::CanWrite" id="QGalleryProperty::CanWrite" ref="qgalleryproperty.html#Attribute-enum"/>
             <keyword name="QGalleryProperty::CanSort" id="QGalleryProperty::CanSort" ref="qgalleryproperty.html#Attribute-enum"/>
+            <keyword name="QGalleryProperty::CanFilter" id="QGalleryProperty::CanFilter" ref="qgalleryproperty.html#Attribute-enum"/>
             <keyword name="QGalleryProperty::Attributes" id="QGalleryProperty::Attributes" ref="qgalleryproperty.html#Attribute-enum"/>
             <keyword name="ascending" id="QGalleryProperty::ascending" ref="qgalleryproperty.html#ascending"/>
             <keyword name="descending" id="QGalleryProperty::descending" ref="qgalleryproperty.html#descending"/>
@@ -1908,15 +1816,8 @@
             <keyword name="operator&gt;" id="QGalleryProperty::operator&gt;" ref="qgalleryproperty.html#operator-gt"/>
             <keyword name="operator&gt;=" id="QGalleryProperty::operator&gt;=" ref="qgalleryproperty.html#operator-gt-eq"/>
             <keyword name="QGalleryRemoveRequest" id="QGalleryRemoveRequest" ref="qgalleryremoverequest.html"/>
-            <keyword name="currentItem" id="QGalleryRemoveRequest::currentItem" ref="qgalleryremoverequest.html#currentItem-prop"/>
-            <keyword name="currentItemChanged" id="QGalleryRemoveRequest::currentItemChanged" ref="qgalleryremoverequest.html#currentItemChanged"/>
             <keyword name="itemId" id="QGalleryRemoveRequest::itemId" ref="qgalleryremoverequest.html#itemId-prop"/>
-            <keyword name="itemIds" id="QGalleryRemoveRequest::itemIds" ref="qgalleryremoverequest.html#itemIds-prop"/>
-            <keyword name="itemIdsChanged" id="QGalleryRemoveRequest::itemIdsChanged" ref="qgalleryremoverequest.html#itemIdsChanged"/>
-            <keyword name="propertyNames" id="QGalleryRemoveRequest::propertyNames" ref="qgalleryremoverequest.html#propertyNames-prop"/>
             <keyword name="setItemId" id="QGalleryRemoveRequest::setItemId" ref="qgalleryremoverequest.html#itemId-prop"/>
-            <keyword name="setItemIds" id="QGalleryRemoveRequest::setItemIds" ref="qgalleryremoverequest.html#itemIds-prop"/>
-            <keyword name="setPropertyNames" id="QGalleryRemoveRequest::setPropertyNames" ref="qgalleryremoverequest.html#propertyNames-prop"/>
             <keyword name="setResponse" id="QGalleryRemoveRequest::setResponse" ref="qgalleryremoverequest.html#setResponse"/>
             <keyword name="~QGalleryRemoveRequest" id="QGalleryRemoveRequest::~QGalleryRemoveRequest" ref="qgalleryremoverequest.html#dtor.QGalleryRemoveRequest"/>
             <keyword name="QGalleryResource" id="QGalleryResource" ref="qgalleryresource.html"/>
@@ -1937,22 +1838,19 @@
             <keyword name="filters" id="QGalleryUnionFilter::filters" ref="qgalleryunionfilter.html#filters"/>
             <keyword name="insert" id="QGalleryUnionFilter::insert" ref="qgalleryunionfilter.html#insert"/>
             <keyword name="isEmpty" id="QGalleryUnionFilter::isEmpty" ref="qgalleryunionfilter.html#isEmpty"/>
+            <keyword name="isValid" id="QGalleryUnionFilter::isValid" ref="qgalleryunionfilter.html#isValid"/>
             <keyword name="operator=" id="QGalleryUnionFilter::operator=" ref="qgalleryunionfilter.html#operator-eq"/>
             <keyword name="removeAt" id="QGalleryUnionFilter::removeAt" ref="qgalleryunionfilter.html#removeAt"/>
             <keyword name="replace" id="QGalleryUnionFilter::replace" ref="qgalleryunionfilter.html#replace"/>
             <keyword name="~QGalleryUnionFilter" id="QGalleryUnionFilter::~QGalleryUnionFilter" ref="qgalleryunionfilter.html#dtor.QGalleryUnionFilter"/>
             <keyword name="QGalleryUrlRequest" id="QGalleryUrlRequest" ref="qgalleryurlrequest.html"/>
             <keyword name="create" id="QGalleryUrlRequest::create" ref="qgalleryurlrequest.html#create-prop"/>
-            <keyword name="isLive" id="QGalleryUrlRequest::isLive" ref="qgalleryurlrequest.html#live-prop"/>
-            <keyword name="item" id="QGalleryUrlRequest::item" ref="qgalleryurlrequest.html#item-prop"/>
             <keyword name="itemChanged" id="QGalleryUrlRequest::itemChanged" ref="qgalleryurlrequest.html#itemChanged"/>
+            <keyword name="itemId" id="QGalleryUrlRequest::itemId" ref="qgalleryurlrequest.html#itemId-prop"/>
+            <keyword name="itemType" id="QGalleryUrlRequest::itemType" ref="qgalleryurlrequest.html#itemType-prop"/>
             <keyword name="itemUrl" id="QGalleryUrlRequest::itemUrl" ref="qgalleryurlrequest.html#itemUrl-prop"/>
-            <keyword name="live" id="QGalleryUrlRequest::live" ref="qgalleryurlrequest.html#live-prop"/>
-            <keyword name="propertyNames" id="QGalleryUrlRequest::propertyNames" ref="qgalleryurlrequest.html#propertyNames-prop"/>
             <keyword name="setCreate" id="QGalleryUrlRequest::setCreate" ref="qgalleryurlrequest.html#create-prop"/>
             <keyword name="setItemUrl" id="QGalleryUrlRequest::setItemUrl" ref="qgalleryurlrequest.html#itemUrl-prop"/>
-            <keyword name="setLive" id="QGalleryUrlRequest::setLive" ref="qgalleryurlrequest.html#live-prop"/>
-            <keyword name="setPropertyNames" id="QGalleryUrlRequest::setPropertyNames" ref="qgalleryurlrequest.html#propertyNames-prop"/>
             <keyword name="setResponse" id="QGalleryUrlRequest::setResponse" ref="qgalleryurlrequest.html#setResponse"/>
             <keyword name="~QGalleryUrlRequest" id="QGalleryUrlRequest::~QGalleryUrlRequest" ref="qgalleryurlrequest.html#dtor.QGalleryUrlRequest"/>
             <keyword name="QGeoAreaMonitor" id="QGeoAreaMonitor" ref="qgeoareamonitor.html"/>
@@ -2091,6 +1989,10 @@
             <keyword name="setQuality" id="QImageEncoderSettings::setQuality" ref="qimageencodersettings.html#setQuality"/>
             <keyword name="setResolution" id="QImageEncoderSettings::setResolution" ref="qimageencodersettings.html#setResolution"/>
             <keyword name="~QImageEncoderSettings" id="QImageEncoderSettings::~QImageEncoderSettings" ref="qimageencodersettings.html#dtor.QImageEncoderSettings"/>
+            <keyword name="QLatin1Constant" id="QLatin1Constant" ref="qlatin1constant.html"/>
+            <keyword name="latin1" id="QLatin1Constant::latin1" ref="qlatin1constant.html#latin1"/>
+            <keyword name="operator!=" id="QLatin1Constant::operator!=" ref="qlatin1constant.html#operator-not-eq"/>
+            <keyword name="operator==" id="QLatin1Constant::operator==" ref="qlatin1constant.html#operator-eq-eq"/>
             <keyword name="QMagnetometer" id="QMagnetometer" ref="qmagnetometer.html"/>
             <keyword name="reading" id="QMagnetometer::reading" ref="qmagnetometer.html#reading"/>
             <keyword name="returnGeoValues" id="QMagnetometer::returnGeoValues" ref="qmagnetometer.html#returnGeoValues-prop"/>
@@ -3725,8 +3627,11 @@
             <keyword name="~QVideoWindowControl" id="QVideoWindowControl::~QVideoWindowControl" ref="qvideowindowcontrol.html#dtor.QVideoWindowControl"/>
             <keyword name="QVideoWindowControl_iid" id="QVideoWindowControl_iid" ref="qvideowindowcontrol.html#QVideoWindowControl_iid"/>
             <keyword name="Q_DECLARE_CUSTOM_CONTACT_DETAIL" id="Q_DECLARE_CUSTOM_CONTACT_DETAIL" ref="qcontactdetail.html#Q_DECLARE_CUSTOM_CONTACT_DETAIL"/>
+            <keyword name="Q_DECLARE_LATIN1_CONSTANT" id="Q_DECLARE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DECLARE_LATIN1_CONSTANT"/>
+            <keyword name="Q_DEFINE_LATIN1_CONSTANT" id="Q_DEFINE_LATIN1_CONSTANT" ref="qlatin1constant.html#Q_DEFINE_LATIN1_CONSTANT"/>
             <keyword name="Q_MEDIA_DECLARE_CONTROL" id="Q_MEDIA_DECLARE_CONTROL" ref="qmediacontrol.html#Q_MEDIA_DECLARE_CONTROL"/>
             <keyword name="Qt Bearer Management API" id="Qt Bearer Management API" ref="bearer.html"/>
+            <keyword name="Qt Contacts Manager Engines" id="Qt Contacts Manager Engines" ref="contactsengines.html"/>
             <keyword name="Qt Contacts Schema" id="Qt Contacts Schema" ref="contactsschema.html"/>
             <keyword name="Qt Editions" id="Qt Editions" ref="editions.html"/>
             <keyword name="Qt Mobility Examples" id="Qt Mobility Examples" ref="examples.html"/>
@@ -3734,102 +3639,105 @@
             <keyword name="Qt Mobility Project APIs Overview" id="Qt Mobility Project APIs Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
             <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
-            <keyword name="QtMedia" id="QtMedia" ref="qtmedia.html"/>
-            <keyword name="QtMedia::AvailabilityError" id="QtMedia::AvailabilityError" ref="qtmedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMedia::NoError" id="QtMedia::NoError" ref="qtmedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMedia::ServiceMissingError" id="QtMedia::ServiceMissingError" ref="qtmedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMedia::BusyError" id="QtMedia::BusyError" ref="qtmedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMedia::ResourceError" id="QtMedia::ResourceError" ref="qtmedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMedia::EncodingMode" id="QtMedia::EncodingMode" ref="qtmedia.html#EncodingMode-enum"/>
-            <keyword name="QtMedia::ConstantQualityEncoding" id="QtMedia::ConstantQualityEncoding" ref="qtmedia.html#EncodingMode-enum"/>
-            <keyword name="QtMedia::ConstantBitRateEncoding" id="QtMedia::ConstantBitRateEncoding" ref="qtmedia.html#EncodingMode-enum"/>
-            <keyword name="QtMedia::AverageBitRateEncoding" id="QtMedia::AverageBitRateEncoding" ref="qtmedia.html#EncodingMode-enum"/>
-            <keyword name="QtMedia::TwoPassEncoding" id="QtMedia::TwoPassEncoding" ref="qtmedia.html#EncodingMode-enum"/>
-            <keyword name="QtMedia::EncodingQuality" id="QtMedia::EncodingQuality" ref="qtmedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMedia::VeryLowQuality" id="QtMedia::VeryLowQuality" ref="qtmedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMedia::LowQuality" id="QtMedia::LowQuality" ref="qtmedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMedia::NormalQuality" id="QtMedia::NormalQuality" ref="qtmedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMedia::HighQuality" id="QtMedia::HighQuality" ref="qtmedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMedia::VeryHighQuality" id="QtMedia::VeryHighQuality" ref="qtmedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMedia::MetaData" id="QtMedia::MetaData" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Title" id="QtMedia::Title" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::SubTitle" id="QtMedia::SubTitle" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Author" id="QtMedia::Author" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Comment" id="QtMedia::Comment" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Description" id="QtMedia::Description" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Category" id="QtMedia::Category" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Genre" id="QtMedia::Genre" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Year" id="QtMedia::Year" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Date" id="QtMedia::Date" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::UserRating" id="QtMedia::UserRating" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Keywords" id="QtMedia::Keywords" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Language" id="QtMedia::Language" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Publisher" id="QtMedia::Publisher" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Copyright" id="QtMedia::Copyright" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ParentalRating" id="QtMedia::ParentalRating" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::RatingOrganisation" id="QtMedia::RatingOrganisation" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Size" id="QtMedia::Size" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::MediaType" id="QtMedia::MediaType" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Duration" id="QtMedia::Duration" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::AudioBitRate" id="QtMedia::AudioBitRate" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::AudioCodec" id="QtMedia::AudioCodec" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::AverageLevel" id="QtMedia::AverageLevel" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ChannelCount" id="QtMedia::ChannelCount" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::PeakValue" id="QtMedia::PeakValue" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::SampleRate" id="QtMedia::SampleRate" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::AlbumTitle" id="QtMedia::AlbumTitle" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::AlbumArtist" id="QtMedia::AlbumArtist" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ContributingArtist" id="QtMedia::ContributingArtist" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Composer" id="QtMedia::Composer" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Conductor" id="QtMedia::Conductor" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Lyrics" id="QtMedia::Lyrics" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Mood" id="QtMedia::Mood" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::TrackNumber" id="QtMedia::TrackNumber" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::TrackCount" id="QtMedia::TrackCount" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::CoverArtUrlSmall" id="QtMedia::CoverArtUrlSmall" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::CoverArtUrlLarge" id="QtMedia::CoverArtUrlLarge" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Resolution" id="QtMedia::Resolution" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::PixelAspectRatio" id="QtMedia::PixelAspectRatio" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::VideoFrameRate" id="QtMedia::VideoFrameRate" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::VideoBitRate" id="QtMedia::VideoBitRate" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::VideoCodec" id="QtMedia::VideoCodec" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::PosterUrl" id="QtMedia::PosterUrl" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ChapterNumber" id="QtMedia::ChapterNumber" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Director" id="QtMedia::Director" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::LeadPerformer" id="QtMedia::LeadPerformer" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Writer" id="QtMedia::Writer" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::CameraManufacturer" id="QtMedia::CameraManufacturer" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::CameraModel" id="QtMedia::CameraModel" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Event" id="QtMedia::Event" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Subject" id="QtMedia::Subject" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Orientation" id="QtMedia::Orientation" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ExposureTime" id="QtMedia::ExposureTime" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::FNumber" id="QtMedia::FNumber" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ExposureProgram" id="QtMedia::ExposureProgram" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ISOSpeedRatings" id="QtMedia::ISOSpeedRatings" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ExposureBiasValue" id="QtMedia::ExposureBiasValue" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::DateTimeOriginal" id="QtMedia::DateTimeOriginal" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::DateTimeDigitized" id="QtMedia::DateTimeDigitized" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::SubjectDistance" id="QtMedia::SubjectDistance" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::MeteringMode" id="QtMedia::MeteringMode" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::LightSource" id="QtMedia::LightSource" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Flash" id="QtMedia::Flash" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::FocalLength" id="QtMedia::FocalLength" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::ExposureMode" id="QtMedia::ExposureMode" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::WhiteBalance" id="QtMedia::WhiteBalance" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::DigitalZoomRatio" id="QtMedia::DigitalZoomRatio" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::FocalLengthIn35mmFilm" id="QtMedia::FocalLengthIn35mmFilm" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::SceneCaptureType" id="QtMedia::SceneCaptureType" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::GainControl" id="QtMedia::GainControl" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Contrast" id="QtMedia::Contrast" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Saturation" id="QtMedia::Saturation" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::Sharpness" id="QtMedia::Sharpness" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::DeviceSettingDescription" id="QtMedia::DeviceSettingDescription" ref="qtmedia.html#MetaData-enum"/>
-            <keyword name="QtMedia::SupportEstimate" id="QtMedia::SupportEstimate" ref="qtmedia.html#SupportEstimate-enum"/>
-            <keyword name="QtMedia::NotSupported" id="QtMedia::NotSupported" ref="qtmedia.html#SupportEstimate-enum"/>
-            <keyword name="QtMedia::MaybeSupported" id="QtMedia::MaybeSupported" ref="qtmedia.html#SupportEstimate-enum"/>
-            <keyword name="QtMedia::ProbablySupported" id="QtMedia::ProbablySupported" ref="qtmedia.html#SupportEstimate-enum"/>
-            <keyword name="QtMedia::PreferredService" id="QtMedia::PreferredService" ref="qtmedia.html#SupportEstimate-enum"/>
+            <keyword name="QtMediaServices" id="QtMediaServices" ref="qtmediaservices.html"/>
+            <keyword name="QtMediaServices::AvailabilityError" id="QtMediaServices::AvailabilityError" ref="qtmediaservices.html#AvailabilityError-enum"/>
+            <keyword name="QtMediaServices::NoError" id="QtMediaServices::NoError" ref="qtmediaservices.html#AvailabilityError-enum"/>
+            <keyword name="QtMediaServices::ServiceMissingError" id="QtMediaServices::ServiceMissingError" ref="qtmediaservices.html#AvailabilityError-enum"/>
+            <keyword name="QtMediaServices::BusyError" id="QtMediaServices::BusyError" ref="qtmediaservices.html#AvailabilityError-enum"/>
+            <keyword name="QtMediaServices::ResourceError" id="QtMediaServices::ResourceError" ref="qtmediaservices.html#AvailabilityError-enum"/>
+            <keyword name="QtMediaServices::EncodingMode" id="QtMediaServices::EncodingMode" ref="qtmediaservices.html#EncodingMode-enum"/>
+            <keyword name="QtMediaServices::ConstantQualityEncoding" id="QtMediaServices::ConstantQualityEncoding" ref="qtmediaservices.html#EncodingMode-enum"/>
+            <keyword name="QtMediaServices::ConstantBitRateEncoding" id="QtMediaServices::ConstantBitRateEncoding" ref="qtmediaservices.html#EncodingMode-enum"/>
+            <keyword name="QtMediaServices::AverageBitRateEncoding" id="QtMediaServices::AverageBitRateEncoding" ref="qtmediaservices.html#EncodingMode-enum"/>
+            <keyword name="QtMediaServices::TwoPassEncoding" id="QtMediaServices::TwoPassEncoding" ref="qtmediaservices.html#EncodingMode-enum"/>
+            <keyword name="QtMediaServices::EncodingQuality" id="QtMediaServices::EncodingQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
+            <keyword name="QtMediaServices::VeryLowQuality" id="QtMediaServices::VeryLowQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
+            <keyword name="QtMediaServices::LowQuality" id="QtMediaServices::LowQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
+            <keyword name="QtMediaServices::NormalQuality" id="QtMediaServices::NormalQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
+            <keyword name="QtMediaServices::HighQuality" id="QtMediaServices::HighQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
+            <keyword name="QtMediaServices::VeryHighQuality" id="QtMediaServices::VeryHighQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
+            <keyword name="QtMediaServices::MetaData" id="QtMediaServices::MetaData" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Title" id="QtMediaServices::Title" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::SubTitle" id="QtMediaServices::SubTitle" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Author" id="QtMediaServices::Author" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Comment" id="QtMediaServices::Comment" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Description" id="QtMediaServices::Description" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Category" id="QtMediaServices::Category" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Genre" id="QtMediaServices::Genre" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Year" id="QtMediaServices::Year" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Date" id="QtMediaServices::Date" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::UserRating" id="QtMediaServices::UserRating" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Keywords" id="QtMediaServices::Keywords" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Language" id="QtMediaServices::Language" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Publisher" id="QtMediaServices::Publisher" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Copyright" id="QtMediaServices::Copyright" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ParentalRating" id="QtMediaServices::ParentalRating" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::RatingOrganisation" id="QtMediaServices::RatingOrganisation" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Size" id="QtMediaServices::Size" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::MediaType" id="QtMediaServices::MediaType" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Duration" id="QtMediaServices::Duration" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::AudioBitRate" id="QtMediaServices::AudioBitRate" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::AudioCodec" id="QtMediaServices::AudioCodec" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::AverageLevel" id="QtMediaServices::AverageLevel" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ChannelCount" id="QtMediaServices::ChannelCount" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::PeakValue" id="QtMediaServices::PeakValue" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::SampleRate" id="QtMediaServices::SampleRate" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::AlbumTitle" id="QtMediaServices::AlbumTitle" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::AlbumArtist" id="QtMediaServices::AlbumArtist" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ContributingArtist" id="QtMediaServices::ContributingArtist" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Composer" id="QtMediaServices::Composer" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Conductor" id="QtMediaServices::Conductor" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Lyrics" id="QtMediaServices::Lyrics" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Mood" id="QtMediaServices::Mood" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::TrackNumber" id="QtMediaServices::TrackNumber" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::TrackCount" id="QtMediaServices::TrackCount" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::CoverArtUrlSmall" id="QtMediaServices::CoverArtUrlSmall" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::CoverArtUrlLarge" id="QtMediaServices::CoverArtUrlLarge" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Resolution" id="QtMediaServices::Resolution" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::PixelAspectRatio" id="QtMediaServices::PixelAspectRatio" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::VideoFrameRate" id="QtMediaServices::VideoFrameRate" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::VideoBitRate" id="QtMediaServices::VideoBitRate" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::VideoCodec" id="QtMediaServices::VideoCodec" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::PosterUrl" id="QtMediaServices::PosterUrl" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ChapterNumber" id="QtMediaServices::ChapterNumber" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Director" id="QtMediaServices::Director" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::LeadPerformer" id="QtMediaServices::LeadPerformer" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Writer" id="QtMediaServices::Writer" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::CameraManufacturer" id="QtMediaServices::CameraManufacturer" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::CameraModel" id="QtMediaServices::CameraModel" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Event" id="QtMediaServices::Event" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Subject" id="QtMediaServices::Subject" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Orientation" id="QtMediaServices::Orientation" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ExposureTime" id="QtMediaServices::ExposureTime" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::FNumber" id="QtMediaServices::FNumber" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ExposureProgram" id="QtMediaServices::ExposureProgram" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ISOSpeedRatings" id="QtMediaServices::ISOSpeedRatings" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ExposureBiasValue" id="QtMediaServices::ExposureBiasValue" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::DateTimeOriginal" id="QtMediaServices::DateTimeOriginal" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::DateTimeDigitized" id="QtMediaServices::DateTimeDigitized" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::SubjectDistance" id="QtMediaServices::SubjectDistance" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::MeteringMode" id="QtMediaServices::MeteringMode" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::LightSource" id="QtMediaServices::LightSource" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Flash" id="QtMediaServices::Flash" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::FocalLength" id="QtMediaServices::FocalLength" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ExposureMode" id="QtMediaServices::ExposureMode" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::WhiteBalance" id="QtMediaServices::WhiteBalance" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::DigitalZoomRatio" id="QtMediaServices::DigitalZoomRatio" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::FocalLengthIn35mmFilm" id="QtMediaServices::FocalLengthIn35mmFilm" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::SceneCaptureType" id="QtMediaServices::SceneCaptureType" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::GainControl" id="QtMediaServices::GainControl" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Contrast" id="QtMediaServices::Contrast" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Saturation" id="QtMediaServices::Saturation" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::Sharpness" id="QtMediaServices::Sharpness" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::DeviceSettingDescription" id="QtMediaServices::DeviceSettingDescription" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::PosterImage" id="QtMediaServices::PosterImage" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::CoverArtImage" id="QtMediaServices::CoverArtImage" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::ThumbnailImage" id="QtMediaServices::ThumbnailImage" ref="qtmediaservices.html#MetaData-enum"/>
+            <keyword name="QtMediaServices::SupportEstimate" id="QtMediaServices::SupportEstimate" ref="qtmediaservices.html#SupportEstimate-enum"/>
+            <keyword name="QtMediaServices::NotSupported" id="QtMediaServices::NotSupported" ref="qtmediaservices.html#SupportEstimate-enum"/>
+            <keyword name="QtMediaServices::MaybeSupported" id="QtMediaServices::MaybeSupported" ref="qtmediaservices.html#SupportEstimate-enum"/>
+            <keyword name="QtMediaServices::ProbablySupported" id="QtMediaServices::ProbablySupported" ref="qtmediaservices.html#SupportEstimate-enum"/>
+            <keyword name="QtMediaServices::PreferredService" id="QtMediaServices::PreferredService" ref="qtmediaservices.html#SupportEstimate-enum"/>
             <keyword name="Query Messages Example" id="Query Messages Example" ref="querymessages.html"/>
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
@@ -3838,11 +3746,12 @@
             <keyword name="Release Notes of the QtMobility Project" id="Release Notes of the QtMobility Project" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Sample QML-based Phonebook Example" id="Sample QML-based Phonebook Example" ref="qmlcontacts.html"/>
-            <keyword name="Sensors API (technology preview)" id="Sensors API (technology preview)" ref="sensors-api.html"/>
+            <keyword name="Sensors API" id="Sensors API" ref="sensors-api.html"/>
             <keyword name="Sensors Backend" id="Sensors Backend" ref="sensors-backend.html"/>
             <keyword name="Service Actions Example" id="Service Actions Example" ref="serviceactions.html"/>
             <keyword name="Service Browser Example" id="Service Browser Example" ref="servicebrowser.html"/>
-            <keyword name="Service Framework using QML Example" id="Service Framework using QML Example" ref="declarative.html"/>
+            <keyword name="Service Framework Notes Manager" id="Service Framework Notes Manager" ref="sfw-notes.html"/>
+            <keyword name="Service Framework using QML Example" id="Service Framework using QML Example" ref="declarative-sfw-dialer.html"/>
             <keyword name="Service Frameworks Classes" id="Service Frameworks Classes" ref="servicefw.html"/>
             <keyword name="SlideShow Example" id="SlideShow Example" ref="slideshow.html"/>
             <keyword name="Slideshow Example" id="Slideshow Example" ref="slideshow.html"/>
@@ -3852,7 +3761,7 @@
             <keyword name="Technology Preview" id="Technology Preview" ref="preview.html"/>
             <keyword name="Third-Party Licenses Used in Qt" id="Third-Party Licenses Used in Qt" ref="3rdparty.html"/>
             <keyword name="Trademarks" id="Trademarks" ref="trademarks.html"/>
-            <keyword name="Versit API (technology preview)" id="Versit API (technology preview)" ref="versit.html"/>
+            <keyword name="Versit API" id="Versit API" ref="versit.html"/>
             <keyword name="Weather Info Example" id="Weather Info Example" ref="weatherinfo.html"/>
             <keyword name="Write Message Example" id="Write Message Example" ref="writemessage.html"/>
             <keyword name="operator&amp;&amp;" id="operator&amp;&amp;" ref="qgalleryunionfilter.html#operator-and-and"/>
@@ -3888,6 +3797,7 @@
             <file>flickrdemo-xqlistwidget-cpp.html</file>
             <file>qversitdefaultresourcehandler-members.html</file>
             <file>qgalleryitemlist-members.html</file>
+            <file>mediabrowser-photoview-cpp.html</file>
             <file>qaudioendpointselector.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
             <file>messaging.html</file>
@@ -3896,9 +3806,9 @@
             <file>battery-charge-battery-publisher-battery-publisher-pro.html</file>
             <file>serviceactions-mainwindow-cpp.html</file>
             <file>documentshare.html</file>
-            <file>documentmanager-manager-h.html</file>
             <file>weatherinfo.html</file>
             <file>qproximitysensor-members.html</file>
+            <file>notesmanagerplugin-notesmanagerplugin-h.html</file>
             <file>lightmaps.html</file>
             <file>flickrdemo-flickr-icon-svg.html</file>
             <file>qsystemnetworkinfo-members.html</file>
@@ -3924,12 +3834,12 @@
             <file>samplephonebook-phonebook-h.html</file>
             <file>documentshare-sharewidget-h.html</file>
             <file>qmediaservicefeaturesinterface.html</file>
+            <file>images/sensors-orientation.jpg</file>
             <file>qmediaserviceproviderhint-members.html</file>
             <file>slideshow-slideshow-cpp.html</file>
             <file>qversitdocument.html</file>
             <file>player-videowidget-h.html</file>
             <file>qnetworkconfiguration.html</file>
-            <file>qcontactactionfilter-members.html</file>
             <file>logfilepositionsource-logfilepositionsource-pro.html</file>
             <file>hierarchy.html</file>
             <file>sysinfo-examples-qrc.html</file>
@@ -3946,10 +3856,12 @@
             <file>qmessagefoldersortorder-members.html</file>
             <file>qmediastreamscontrol.html</file>
             <file>lightmaps-lightmaps-pro.html</file>
+            <file>images/sensors-rotation3.jpg</file>
             <file>qversitcontactimporter-members.html</file>
             <file>qvideodevicecontrol-members.html</file>
             <file>qcontactthumbnail.html</file>
             <file>qversitcontactexporter.html</file>
+            <file>sfw-notes.html</file>
             <file>serviceactions-serviceactions-pro.html</file>
             <file>qcontactringtone-members.html</file>
             <file>qtapsensor.html</file>
@@ -3960,11 +3872,13 @@
             <file>qmessagefolderfilter-members.html</file>
             <file>battery-charge-battery-charge-pro.html</file>
             <file>qproximityfilter.html</file>
+            <file>declarative-sfw-dialer.html</file>
             <file>images/servicexmlgen.png</file>
             <file>qversitreader.html</file>
             <file>publish-subscribe-publisherdialog-cpp.html</file>
             <file>qsystemnetworkinfo.html</file>
             <file>filemanagerplugin-filemanagerstorage-h.html</file>
+            <file>images/sample-phonebook-2.png</file>
             <file>qtapfilter-members.html</file>
             <file>qversitcontactimporterpropertyhandler.html</file>
             <file>qmessageaccountid-members.html</file>
@@ -3982,13 +3896,15 @@
             <file>weatherinfo-icons-weather-sunny-very-few-clouds-svg.html</file>
             <file>battery-charge.html</file>
             <file>qmediaplaylistreader-members.html</file>
+            <file>sfw-notes-sfwnotes-h.html</file>
+            <file>images/sensors-coordinates3.jpg</file>
             <file>qmediaplaylistprovider-members.html</file>
+            <file>notesmanagerplugin-notesmanagerplugin-pro.html</file>
             <file>qcontactmemoryengine-members.html</file>
             <file>keepintouch-addressfinder-cpp.html</file>
             <file>future.html</file>
             <file>qcontactorganization-members.html</file>
             <file>qaudioencodersettings.html</file>
-            <file>qcontactactionfilter.html</file>
             <file>qcontactgeolocation-members.html</file>
             <file>qcontactthumbnail-members.html</file>
             <file>qcontactremoverequest-members.html</file>
@@ -4010,13 +3926,12 @@
             <file>qmediaplayercontrol-members.html</file>
             <file>qorientationreading.html</file>
             <file>qmessage-members.html</file>
+            <file>mediabrowser-photodelegate-h.html</file>
             <file>qgalleryfilterrequest.html</file>
             <file>qcontactemailaddress-members.html</file>
             <file>weatherinfo-icons-weather-showers-svg.html</file>
-            <file>qcontactactionfactory-members.html</file>
             <file>qmediarecordercontrol-members.html</file>
             <file>qcontactorganization.html</file>
-            <file>documentmanager-gallerymodel-cpp.html</file>
             <file>qvideoencodercontrol.html</file>
             <file>flickrdemo-flickrdemo-cpp.html</file>
             <file>qcompass.html</file>
@@ -4038,13 +3953,12 @@
             <file>trademarks.html</file>
             <file>qversitcontactexporterdetailhandler.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-h.html</file>
+            <file>images/sensors-sides2.jpg</file>
             <file>qservice.html</file>
             <file>qmessageaccount-members.html</file>
-            <file>qtmedia.html</file>
             <file>qgalleryabstractrequest-members.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
-            <file>qmlcontacts-qmlcontacts-cpp.html</file>
-            <file>documentmanager-main-cpp.html</file>
+            <file>declarative-sfw-dialer-landlinedialer-landlinedialer-h.html</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
             <file>images/slideshow-img1.png</file>
@@ -4054,6 +3968,8 @@
             <file>qrotationreading.html</file>
             <file>qvideoencodersettings.html</file>
             <file>quickstart-quickstart-pro.html</file>
+            <file>declarative-sfw-dialer-declarative-sfw-dialer-pro.html</file>
+            <file>images/sample-phonebook-4.png</file>
             <file>querymessages-main-cpp.html</file>
             <file>bearercloud-bearercloud-pro.html</file>
             <file>qgalleryabstractrequest.html</file>
@@ -4063,12 +3979,12 @@
             <file>qcontactchangelogfilter-members.html</file>
             <file>qmediacontent.html</file>
             <file>qmediacontrol-members.html</file>
+            <file>images/sensors-coordinates.jpg</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
             <file>qcontactgeolocation.html</file>
             <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>annotated.html</file>
             <file>qcontactmanagerenginefactory-members.html</file>
-            <file>documentmanager-manager-cpp.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
             <file>qcontactrelationshipsaverequest.html</file>
@@ -4077,6 +3993,7 @@
             <file>qvideowindowcontrol.html</file>
             <file>images/sensors-overview.png</file>
             <file>qsensorreading.html</file>
+            <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-cpp.html</file>
             <file>qcontactid.html</file>
             <file>qmessagefilter-members.html</file>
             <file>samplephonebook-contacteditor-cpp.html</file>
@@ -4094,11 +4011,11 @@
             <file>preview.html</file>
             <file>mediabrowser-artistdelegate-h.html</file>
             <file>samplephonebook-contactlistpage-cpp.html</file>
+            <file>qmlcontacts-qmlcontactmodel-cpp.html</file>
             <file>qdocumentgallery.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qcontactpresence.html</file>
             <file>documentshare-download-h.html</file>
-            <file>images/axes.png</file>
             <file>qvideowidget-members.html</file>
             <file>qcompassreading-members.html</file>
             <file>qimageencodercontrol-members.html</file>
@@ -4106,7 +4023,6 @@
             <file>qcontacturl.html</file>
             <file>qproximityreading.html</file>
             <file>samplephonebook-main-cpp.html</file>
-            <file>qcontactaction.html</file>
             <file>qtapreading-members.html</file>
             <file>sysinfo.html</file>
             <file>qserviceplugininterface-members.html</file>
@@ -4120,7 +4036,6 @@
             <file>player-main-cpp.html</file>
             <file>qgalleryresource-members.html</file>
             <file>qmediaplaylistioplugin.html</file>
-            <file>qmlcontacts-qmlcontactsa-h.html</file>
             <file>radio-radio-pro.html</file>
             <file>qgalleryintersectionfilter.html</file>
             <file>writemessage-messagesender-cpp.html</file>
@@ -4133,6 +4048,7 @@
             <file>qcontactsaverequest-members.html</file>
             <file>keepintouch-keepintouch-pro.html</file>
             <file>writemessage-messagesender-h.html</file>
+            <file>declarative-sfw-dialer-landlinedialer-landlinedialer-pro.html</file>
             <file>qvaluespacepublisher-members.html</file>
             <file>player-playercontrols-h.html</file>
             <file>qmessagefolderid.html</file>
@@ -4148,23 +4064,21 @@
             <file>qcontactintersectionfilter-members.html</file>
             <file>qsystemdeviceinfo.html</file>
             <file>mediabrowser-browser-h.html</file>
-            <file>qcontactdetail-members.html</file>
             <file>samplephonebook-filterpage-cpp.html</file>
+            <file>qcontactdetail-members.html</file>
             <file>qcontactfamily-members.html</file>
-            <file>qcontactactiondescriptor-members.html</file>
             <file>weatherinfo-icons-weather-fog-svg.html</file>
             <file>qversitresourcehandler.html</file>
             <file>qmediaplaylistioplugin-members.html</file>
             <file>bearermonitor.html</file>
-            <file>qcontact-members.html</file>
             <file>qgalleryurlrequest.html</file>
+            <file>qcontact-members.html</file>
             <file>keepintouch.html</file>
             <file>qgallerytype-members.html</file>
             <file>qgeocoordinate.html</file>
             <file>qcontactnote-members.html</file>
-            <file>qcontactactionfactory.html</file>
+            <file>declarative-sfw-dialer-voipdialer-voipdialer-h.html</file>
             <file>qcontactdetaildefinition-members.html</file>
-            <file>documentmanager-documentmanager-pro.html</file>
             <file>qmessageid.html</file>
             <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qsensorreading-members.html</file>
@@ -4173,20 +4087,22 @@
             <file>qimageencodersettings-members.html</file>
             <file>qsensorbackend.html</file>
             <file>documentshare-sharewidget-cpp.html</file>
-            <file>documentmanager-gallerymodel-h.html</file>
             <file>qmlcontacts.html</file>
             <file>qcontactbirthday.html</file>
             <file>qmessageaccountsortorder.html</file>
+            <file>declarative-sfw-dialer-declarative-sfw-dialer-content-qmldir.html</file>
             <file>qcontactdetailfielddefinition.html</file>
             <file>qgeosatelliteinfo-members.html</file>
             <file>qcontactrelationshipfetchrequest-members.html</file>
             <file>qvideowindowcontrol-members.html</file>
             <file>qsensorplugininterface-members.html</file>
+            <file>declarative-sfw-dialer-landlinedialer-landlinedialer-cpp.html</file>
             <file>qcontactchangeset.html</file>
             <file>images/keepintouch-example.png</file>
             <file>mediabrowser-albumdelegate-cpp.html</file>
             <file>qcontactdetailfilter-members.html</file>
             <file>qmediaplaylistwriter-members.html</file>
+            <file>declarative-sfw-notes.html</file>
             <file>weatherinfo-weatherinfo-cpp.html</file>
             <file>qgallerymetadatafilter-members.html</file>
             <file>audiorecorder.html</file>
@@ -4199,8 +4115,12 @@
             <file>player-player-cpp.html</file>
             <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
+            <file>documentshare-downloadcompletedialog-h.html</file>
             <file>audiorecorder-main-cpp.html</file>
+            <file>images/sensors-coordinates2.jpg</file>
             <file>qcontactrelationshipremoverequest-members.html</file>
+            <file>images/sensors-rotation-anim.gif</file>
+            <file>sfw-notes-sfwnotes-cpp.html</file>
             <file>weatherinfo-icons-weather-sunny-svg.html</file>
             <file>fetchgooglemaps-mapwindow-cpp.html</file>
             <file>qmessagefolderfilter.html</file>
@@ -4225,6 +4145,7 @@
             <file>qambientlightfilter.html</file>
             <file>flickrdemo-xqlistwidget-h.html</file>
             <file>qgalleryabstractresponse.html</file>
+            <file>notesmanagerplugin-notesmanager-cpp.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
             <file>qserviceinterfacedescriptor.html</file>
@@ -4238,7 +4159,6 @@
             <file>player-playlistmodel-h.html</file>
             <file>qcontactdisplaylabel.html</file>
             <file>qsensorfilter-members.html</file>
-            <file>declarative.html</file>
             <file>images/DialerServiceGUI.png</file>
             <file>qcontactdetailfielddefinition-members.html</file>
             <file>servicefw.html</file>
@@ -4250,8 +4170,7 @@
             <file>qgeopositioninfo.html</file>
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
-            <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
-            <file>qmlcontacts-qmlcontact-h.html</file>
+            <file>images/sensors-rotation2.jpg</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
             <file>qcontactmanager.html</file>
@@ -4269,8 +4188,8 @@
             <file>qcontactfetchrequest.html</file>
             <file>qradiotuner-members.html</file>
             <file>qversitreader-members.html</file>
-            <file>qgallerymoverequest.html</file>
             <file>fetchgooglemaps-fetchgooglemaps-pro.html</file>
+            <file>images/sensors-rotation.jpg</file>
             <file>qcontactintersectionfilter.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-cpp.html</file>
             <file>player-player-pro.html</file>
@@ -4288,10 +4207,11 @@
             <file>documentshare-main-cpp.html</file>
             <file>publish-subscribe-publish-subscribe-pro.html</file>
             <file>qmediaservice-members.html</file>
+            <file>qlatin1constant-members.html</file>
             <file>qabstractgallery.html</file>
             <file>examples.html</file>
+            <file>images/sensors-geo-vs-raw-magnetism.jpg</file>
             <file>qcontacttag.html</file>
-            <file>qcontactaction-members.html</file>
             <file>qcontactglobalpresence-members.html</file>
             <file>mediabrowser-galleryview-cpp.html</file>
             <file>qdocumentgallery-members.html</file>
@@ -4299,8 +4219,10 @@
             <file>qcontacttype.html</file>
             <file>qgallerymetadatafilter.html</file>
             <file>gallery-filters.html</file>
+            <file>declarative-sfw-dialer-voipdialer-voipdialer-cpp.html</file>
+            <file>documentshare-downloadcompletedialog-cpp.html</file>
             <file>bluetoothtransferplugin.html</file>
-            <file>licenses-fonts.html</file>
+            <file>qmlcontacts-qmlcontactmodel-h.html</file>
             <file>qsysteminfo.html</file>
             <file>audiorecorder-audiorecorder-cpp.html</file>
             <file>qmagnetometerreading-members.html</file>
@@ -4321,7 +4243,6 @@
             <file>mediabrowser-artistview-h.html</file>
             <file>qvideorenderercontrol.html</file>
             <file>qgalleryurlrequest-members.html</file>
-            <file>images/DialerServiceUML.png</file>
             <file>qgallerymetadatarangefilter.html</file>
             <file>bearer.html</file>
             <file>qcontactonlineaccount.html</file>
@@ -4347,14 +4268,16 @@
             <file>qmessagedatacomparator.html</file>
             <file>qcontactremoverequest.html</file>
             <file>logfilepositionsource-logfilepositionsource-h.html</file>
-            <file>battery-charge-battery-subscriber-battery-subscriber-qrc.html</file>
+            <file>declarative-sfw-dialer-landlinedialer-landlinedialerplugin-cpp.html</file>
+            <file>notesmanagerplugin-notesmanager-h.html</file>
+            <file>mediabrowser-photoview-h.html</file>
             <file>qmediaplaylistnavigator.html</file>
             <file>qmediaresource-members.html</file>
+            <file>sfw-notes-main-cpp.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
             <file>qgeosatelliteinfosource.html</file>
             <file>qcontactanniversary-members.html</file>
             <file>qmediaserviceproviderplugin-members.html</file>
-            <file>licenses.html</file>
             <file>qmediaserviceproviderplugin.html</file>
             <file>qgalleryitemrequest.html</file>
             <file>qcontactinvalidengine.html</file>
@@ -4364,6 +4287,7 @@
             <file>qambientlightfilter-members.html</file>
             <file>qgeoareamonitor.html</file>
             <file>qcontactphonenumber-members.html</file>
+            <file>images/sample-phonebook-1.png</file>
             <file>qmediatimeinterval.html</file>
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
@@ -4378,10 +4302,12 @@
             <file>qvaluespacesubscriber-members.html</file>
             <file>player.html</file>
             <file>qversitproperty.html</file>
+            <file>sfw-notes-sfw-notes-pro.html</file>
             <file>qtapfilter.html</file>
             <file>qcontactmemoryengine.html</file>
             <file>images/roaming-states.png</file>
             <file>qcontactemailaddress.html</file>
+            <file>declarative-sfw-dialer-landlinedialer-landlinedialerplugin-h.html</file>
             <file>qsystemdeviceinfo-members.html</file>
             <file>weatherinfo-weatherinfo-qrc.html</file>
             <file>lightmaps-lightmaps-cpp.html</file>
@@ -4408,8 +4334,9 @@
             <file>sysinfo-main-cpp.html</file>
             <file>installation.html</file>
             <file>qcontacttag-members.html</file>
-            <file>licensing.html</file>
+            <file>images/sysinfo.png</file>
             <file>qimageencodercontrol.html</file>
+            <file>images/sensors-sides.jpg</file>
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
             <file>quickstart.html</file>
@@ -4419,8 +4346,10 @@
             <file>player-player-h.html</file>
             <file>qmediaservice.html</file>
             <file>qcompassfilter-members.html</file>
+            <file>sfw-notes-sfwnotes-qrc.html</file>
             <file>gallery-requests.html</file>
             <file>qcontactrelationship-members.html</file>
+            <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
             <file>recorder.html</file>
@@ -4428,6 +4357,7 @@
             <file>qabstractgallery-members.html</file>
             <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>
+            <file>declarative-sfw-dialer-voipdialer-voipdialer-pro.html</file>
             <file>qsensorbackendfactory.html</file>
             <file>qnetworkconfiguration-members.html</file>
             <file>flickrdemo.html</file>
@@ -4436,6 +4366,7 @@
             <file>player-playlistmodel-cpp.html</file>
             <file>qsensor-members.html</file>
             <file>qmediaservicesupporteddevicesinterface-members.html</file>
+            <file>qlatin1constant.html</file>
             <file>qsystemscreensaver.html</file>
             <file>qgalleryunionfilter-members.html</file>
             <file>qcontactaddress-members.html</file>
@@ -4445,12 +4376,12 @@
             <file>qcontactid-members.html</file>
             <file>qvaluespacesubscriber.html</file>
             <file>mediabrowser-songview-h.html</file>
+            <file>qtmediaservices.html</file>
+            <file>images/sample-phonebook-3.png</file>
             <file>qcontactlocalidfetchrequest.html</file>
             <file>qrotationsensor.html</file>
             <file>qcontactinvalidengine-members.html</file>
             <file>qsensorbackend-members.html</file>
-            <file>qcontactactiondescriptor.html</file>
-            <file>images/Rotation_angles.png</file>
             <file>qcontactrelationshipsaverequest-members.html</file>
             <file>qmediaplaylistnavigator-members.html</file>
             <file>mediabrowser-gallerymodel-h.html</file>
@@ -4467,17 +4398,15 @@
             <file>qnetworksession.html</file>
             <file>qcontactmanagerengine.html</file>
             <file>qcontact.html</file>
-            <file>gpl.html</file>
             <file>editions.html</file>
             <file>samplephonebook-contactlistpage-h.html</file>
-            <file>qaudioencodercontrol-members.html</file>
+            <file>contactsengines.html</file>
             <file>documentshare-download-cpp.html</file>
+            <file>qaudioencodercontrol-members.html</file>
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
             <file>gallery-galleries.html</file>
-            <file>images/spb-screen.png</file>
-            <file>qmlcontacts-qmlcontact-cpp.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
             <file>images/flickr-demo.png</file>
@@ -4510,6 +4439,7 @@
             <file>slideshow-slideshow-h.html</file>
             <file>sysinfo-sysinfo-pro.html</file>
             <file>qcontacttype-members.html</file>
+            <file>notesmanagerplugin.html</file>
             <file>qmediacontainercontrol-members.html</file>
             <file>qorientationfilter-members.html</file>
             <file>qorientationsensor-members.html</file>
@@ -4517,6 +4447,7 @@
             <file>qrotationfilter-members.html</file>
             <file>location.html</file>
             <file>classlists.html</file>
+            <file>notesmanagerplugin-notesmanagerplugin-cpp.html</file>
             <file>slideshow-slideshow-pro.html</file>
             <file>qcontactgender.html</file>
             <file>qmessagecontentcontainerid-members.html</file>
@@ -4524,7 +4455,6 @@
             <file>qproximitysensor.html</file>
             <file>weatherinfo-icons-weather-sleet-svg.html</file>
             <file>qgeopositioninfo-members.html</file>
-            <file>qgallerymoverequest-members.html</file>
             <file>images/battery-subscriber.png</file>
             <file>qmessageservice.html</file>
             <file>qcontactfetchrequest-members.html</file>
@@ -4535,13 +4465,13 @@
             <file>qmediaimageviewer.html</file>
             <file>qrotationreading-members.html</file>
             <file>qaudiocapturesource-members.html</file>
-            <file>qgallerycopyrequest.html</file>
             <file>contactssync.html</file>
             <file>qcontactlocalidfilter.html</file>
             <file>mediabrowser-mediabrowser-pro.html</file>
             <file>qmediaplaylist.html</file>
             <file>service-frameworks.html</file>
             <file>qcompassfilter.html</file>
+            <file>notesmanagerplugin-note-h.html</file>
             <file>qvaluespacepublisher.html</file>
             <file>contactsusagehtml.html</file>
             <file>images/battery-publisher.png</file>
@@ -4557,37 +4487,49 @@
             <file>qversitcontactexporter-members.html</file>
             <file>radio.html</file>
             <file>qversitdefaultresourcehandler.html</file>
+            <file>mediabrowser-photodelegate-cpp.html</file>
             <file>qcontactguid-members.html</file>
             <file>qcontactfamily.html</file>
             <file>qcontactlocalidfilter-members.html</file>
-            <file>qgallerycopyrequest-members.html</file>
             <file>qvideoencodersettings-members.html</file>
-            <file>images/servicexmlgen.png</file>
-            <file>images/flickr-demo.png</file>
+            <file>images/sensors-coordinates2.jpg</file>
             <file>images/slideshow-img1.png</file>
-            <file>images/Rotation_angles.png</file>
-            <file>images/servicebrowser-attributes.png</file>
-            <file>images/sensors-overview.png</file>
-            <file>images/bearercloud-example.png</file>
-            <file>images/weatherinfo-bris.png</file>
-            <file>images/writemessage-example.png</file>
             <file>images/lightmaps-oslo.png</file>
-            <file>images/publish-subscribe-publisher.png</file>
-            <file>images/qtlogo.png</file>
-            <file>images/codeless.png</file>
-            <file>images/bearermonitor-example.png</file>
-            <file>images/publish-subscribe-subscriber.png</file>
+            <file>images/sample-phonebook-1.png</file>
+            <file>images/sysinfo.png</file>
+            <file>images/bearercloud-example.png</file>
+            <file>images/sensors-rotation-anim.gif</file>
+            <file>images/flickr-demo.png</file>
+            <file>images/sample-phonebook-4.png</file>
             <file>images/battery-subscriber.png</file>
-            <file>images/servicebrowser.png</file>
-            <file>images/battery-publisher.png</file>
-            <file>images/keepintouch-example.png</file>
-            <file>classic.css</file>
-            <file>images/spb-screen.png</file>
+            <file>images/publish-subscribe-subscriber.png</file>
+            <file>images/bearermonitor-example.png</file>
+            <file>images/sensors-orientation.jpg</file>
+            <file>images/sample-phonebook-3.png</file>
+            <file>images/sensors-coordinates3.jpg</file>
+            <file>images/codeless.png</file>
+            <file>images/sensors-rotation2.jpg</file>
+            <file>images/weatherinfo-bris.png</file>
             <file>images/roaming-states.png</file>
-            <file>images/DialerServiceUML.png</file>
-            <file>images/DialerServiceGUI.png</file>
+            <file>classic.css</file>
+            <file>images/sensors-sides2.jpg</file>
+            <file>images/sensors-geo-vs-raw-magnetism.jpg</file>
+            <file>images/battery-publisher.png</file>
+            <file>images/sensors-rotation.jpg</file>
+            <file>images/servicexmlgen.png</file>
+            <file>images/sensors-coordinates.jpg</file>
+            <file>images/sensors-sides.jpg</file>
+            <file>images/sensors-rotation3.jpg</file>
+            <file>images/publish-subscribe-publisher.png</file>
+            <file>images/servicebrowser.png</file>
+            <file>images/writemessage-example.png</file>
+            <file>images/sensors-overview.png</file>
             <file>images/qserviceinterfacedescriptor.png</file>
-            <file>images/axes.png</file>
+            <file>images/servicebrowser-attributes.png</file>
+            <file>images/qtlogo.png</file>
+            <file>images/DialerServiceGUI.png</file>
+            <file>images/sample-phonebook-2.png</file>
+            <file>images/keepintouch-example.png</file>
         </files>
     </filterSection>
 </QtHelpProject>

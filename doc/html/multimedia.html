@@ -1,35 +1,43 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- multimedia.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Multimedia</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- multimedia.qdoc -->
+  <title>Qt Mobility Project 1.1: Multimedia</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Multimedia<br /><span class="subtitle"></span>
-</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="multimedia.html">Multimedia</a></li><div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#namespace">Namespace</a></li>
+<li class="level1"><a href="#overview">Overview</a></li>
+<li class="level2"><a href="#audio">Audio</a></li>
+<li class="level2"><a href="#video">Video</a></li>
+<li class="level2"><a href="#radio">Radio</a></li>
+<li class="level1"><a href="#examples">Examples</a></li>
+<li class="level2"><a href="#record-a-sound-source">Record a Sound Source</a></li>
+<li class="level2"><a href="#play-a-media-file">Play a Media File</a></li>
+<li class="level2"><a href="#slide-show">Slide Show</a></li>
+<li class="level1"><a href="#reference-documentation">Reference documentation</a></li>
+<li class="level2"><a href="#main-classes">Main classes</a></li>
+<li class="level2"><a href="#classes-for-service-implementers">Classes for service implementers.</a></li>
+</ul>
+</div>
+<h1 class="title">Multimedia</h1>
+<span class="subtitle"></span>
+<div class="descr"/>
 <p>Multimedia provides a set of APIs that allow the developer to play, record and manage a collection of media content. It is dependent on the <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a> API. This API is planned to replace Phonon at a later stage.</p>
-<ul><li><a href="#overview">Overview</a></li>
-<ul><li><a href="#audio">Audio</a></li>
-<li><a href="#video">Video</a></li>
-<li><a href="#radio">Radio</a></li>
-</ul>
-<li><a href="#examples">Examples</a></li>
-<ul><li><a href="#record-a-sound-source">Record a Sound Source</a></li>
-<li><a href="#play-a-media-file">Play a Media File</a></li>
-<li><a href="#slide-show">Slide Show</a></li>
-</ul>
-<li><a href="#reference-documentation">Reference documentation</a></li>
-<ul><li><a href="#main-classes">Main classes</a></li>
-<li><a href="#classes-for-service-implementers">Classes for service implementers.</a></li>
-</ul>
-</ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>This library will require Qt 4.6&#x2e;</p>
@@ -40,14 +48,14 @@
 <h4>Audio</h4>
 <p>Looking at the Audio Recorder example we see that by creating a <a href="qmediarecorder.html">QMediaRecorder</a> object that is initialized with a newly created <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object we can now perform all the core actions necessary to record a sound source.</p>
 <p>To initialize the objects we create a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object. This will have a list of available devices to choose from so that we can identify the origin of the audio data. We then use the capture source object to initialize a <a href="qmediarecorder.html">QMediaRecorder</a> object</p>
-<pre>        audiosource = new QAudioCaptureSource;
+<pre class="highlightedCode">        audiosource = new QAudioCaptureSource;
         capture = new QMediaRecorder(audiosource);</pre>
 <p>The API now allows us to discover available devices and codecs as shown in the example. To actually do the recording we merely have to call the <a href="qmediarecorder.html#record">record()</a> function, and to stop call the <a href="qmediarecorder.html#stop">stop()</a> function. Saving to a file is done simply by calling <a href="qmediarecorder.html#outputLocation-prop">QMediaRecorder::setOutputLocation</a>() before starting to record.</p>
 <p>With a handful of functions and two classes we can implement a sound recording application, excluding the supporting user interface code.</p>
 <a name="video"></a>
 <h4>Video</h4>
 <p>For playing and manipulating video sources the API enables us to easily implement a player application. If we examine the <a href="player.html">Player</a> example we see that the implementation of a simple media player requires a <a href="qmediaplayer.html">QMediaPlayer</a> object, which is used to initialize a <a href="qmediaplaylist.html">QMediaPlaylist</a> object.</p>
-<pre>        player = new QMediaPlayer;
+<pre class="highlightedCode">        player = new QMediaPlayer;
         playlist = new QMediaPlaylist(player);</pre>
 <p>To display the playing video file we need a <a href="qvideowidget.html">QVideoWidget</a> object. However, instead of using a <a href="qvideowidget.html">QVideoWidget</a> object directly the Player example has a VideoWidget class that inherits from <a href="qvideowidget.html">QVideoWidget</a> so that functions can be added to go to full screen display, either on a double click or on a particular keypress.</p>
 <a name="radio"></a>
@@ -68,51 +76,53 @@
 <h3>Reference documentation</h3>
 <a name="main-classes"></a>
 <h4>Main classes</h4>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qaudiocapturesource.html">QAudioCaptureSource</a></th><td>Interface to query and select an audio input endpoint</td></tr>
-<tr valign="top" class="even"><th><a href="qaudioencodersettings.html">QAudioEncoderSettings</a></th><td>Set of audio encoder settings</td></tr>
-<tr valign="top" class="odd"><th><a href="qgraphicsvideoitem.html">QGraphicsVideoItem</a></th><td>Graphics item which display video produced by a QMediaObject</td></tr>
-<tr valign="top" class="even"><th><a href="qmediacontent.html">QMediaContent</a></th><td>Access to the resources relating to a media content</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaimageviewer.html">QMediaImageViewer</a></th><td>Means of viewing image media</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaobject.html">QMediaObject</a></th><td>Common base for multimedia objects</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaplayer.html">QMediaPlayer</a></th><td>Allows the playing of a media source</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaplaylist.html">QMediaPlaylist</a></th><td>List of media content to play</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediarecorder.html">QMediaRecorder</a></th><td>Used for the recording of media content</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaresource.html">QMediaResource</a></th><td>Description of a media resource</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediastreamscontrol.html">QMediaStreamsControl</a></th><td>Media stream selection control</td></tr>
-<tr valign="top" class="even"><th><a href="qmediatimeinterval.html">QMediaTimeInterval</a></th><td>Represents a time interval with integer precision</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediatimerange.html">QMediaTimeRange</a></th><td>Represents a set of zero or more disjoint time intervals</td></tr>
-<tr valign="top" class="even"><th><a href="qradiotuner.html">QRadioTuner</a></th><td>Interface to the systems analog radio device</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideowidget.html">QVideoWidget</a></th><td>Widget which presents video produced by a media object</td></tr>
-<tr valign="top" class="even"><th><a href="qtmedia.html">QtMedia</a></th><td>Contains miscellaneous identifiers used throughout the Qt Media library</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qaudiocapturesource.html">QAudioCaptureSource</a></p></td><td><p>Interface to query and select an audio input endpoint</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qaudioencodersettings.html">QAudioEncoderSettings</a></p></td><td><p>Set of audio encoder settings</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgraphicsvideoitem.html">QGraphicsVideoItem</a></p></td><td><p>Graphics item which display video produced by a QMediaObject</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediacontent.html">QMediaContent</a></p></td><td><p>Access to the resources relating to a media content</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediaimageviewer.html">QMediaImageViewer</a></p></td><td><p>Means of viewing image media</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediaobject.html">QMediaObject</a></p></td><td><p>Common base for multimedia objects</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediaplayer.html">QMediaPlayer</a></p></td><td><p>Allows the playing of a media source</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediaplaylist.html">QMediaPlaylist</a></p></td><td><p>List of media content to play</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediarecorder.html">QMediaRecorder</a></p></td><td><p>Used for the recording of media content</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediaresource.html">QMediaResource</a></p></td><td><p>Description of a media resource</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediastreamscontrol.html">QMediaStreamsControl</a></p></td><td><p>Media stream selection control</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediatimeinterval.html">QMediaTimeInterval</a></p></td><td><p>Represents a time interval with integer precision</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediatimerange.html">QMediaTimeRange</a></p></td><td><p>Represents a set of zero or more disjoint time intervals</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qradiotuner.html">QRadioTuner</a></p></td><td><p>Interface to the systems analog radio device</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qvideowidget.html">QVideoWidget</a></p></td><td><p>Widget which presents video produced by a media object</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qtmediaservices.html">QtMediaServices</a></p></td><td><p>Contains miscellaneous identifiers used throughout the Qt Media services library</p></td></tr>
+</table>
 <a name="classes-for-service-implementers"></a>
 <h4>Classes for service implementers.</h4>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></th><td>Access to the settings of a media service that performs audio encoding</td></tr>
-<tr valign="top" class="even"><th><a href="qaudioendpointselector.html">QAudioEndpointSelector</a></th><td>Audio endpoint selector media control</td></tr>
-<tr valign="top" class="odd"><th><a href="qimageencodercontrol.html">QImageEncoderControl</a></th><td>Access to the settings of a media service that performs image encoding</td></tr>
-<tr valign="top" class="even"><th><a href="qmediacontainercontrol.html">QMediaContainerControl</a></th><td>Access to the output container format of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaplayercontrol.html">QMediaPlayerControl</a></th><td>Access to the media playing functionality of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a></th><td>Access to the playlist functionality of a QMediaService</td></tr>
-<tr valign="top" class="even"><th><a href="qmediarecordercontrol.html">QMediaRecorderControl</a></th><td>Access to the recording functionality of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaservice.html">QMediaService</a></th><td>Common base class for media service implementations</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaserviceproviderhint.html">QMediaServiceProviderHint</a></th><td>Describes what is required of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediastreamscontrol.html">QMediaStreamsControl</a></th><td>Media stream selection control</td></tr>
-<tr valign="top" class="even"><th><a href="qmetadatacontrol.html">QMetaDataControl</a></th><td>Access to the meta-data of a QMediaService's media</td></tr>
-<tr valign="top" class="odd"><th><a href="qradiotunercontrol.html">QRadioTunerControl</a></th><td>Access to the radio tuning functionality of a QMediaService</td></tr>
-<tr valign="top" class="even"><th><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></th><td>Video device selector media control</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></th><td>Access to the settings of a media service that performs video encoding</td></tr>
-<tr valign="top" class="even"><th><a href="qvideooutputcontrol.html">QVideoOutputControl</a></th><td>Means of selecting the active video output control</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideorenderercontrol.html">QVideoRendererControl</a></th><td>Control for rendering to a video surface</td></tr>
-<tr valign="top" class="even"><th><a href="qvideowidgetcontrol.html">QVideoWidgetControl</a></th><td>Media control which implements a video widget</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideowindowcontrol.html">QVideoWindowControl</a></th><td>Media control for rendering video to a window</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></p></td><td><p>Access to the settings of a media service that performs audio encoding</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qaudioendpointselector.html">QAudioEndpointSelector</a></p></td><td><p>Audio endpoint selector media control</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qimageencodercontrol.html">QImageEncoderControl</a></p></td><td><p>Access to the settings of a media service that performs image encoding</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediacontainercontrol.html">QMediaContainerControl</a></p></td><td><p>Access to the output container format of a QMediaService</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediacontrol.html">QMediaControl</a></p></td><td><p>Base interface for media service controls</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediaplayercontrol.html">QMediaPlayerControl</a></p></td><td><p>Access to the media playing functionality of a QMediaService</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a></p></td><td><p>Access to the playlist functionality of a QMediaService</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediarecordercontrol.html">QMediaRecorderControl</a></p></td><td><p>Access to the recording functionality of a QMediaService</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediaservice.html">QMediaService</a></p></td><td><p>Common base class for media service implementations</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmediaserviceproviderhint.html">QMediaServiceProviderHint</a></p></td><td><p>Describes what is required of a QMediaService</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qmediastreamscontrol.html">QMediaStreamsControl</a></p></td><td><p>Media stream selection control</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qmetadatacontrol.html">QMetaDataControl</a></p></td><td><p>Access to the meta-data of a QMediaService's media</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qradiotunercontrol.html">QRadioTunerControl</a></p></td><td><p>Access to the radio tuning functionality of a QMediaService</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></p></td><td><p>Video device selector media control</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></p></td><td><p>Access to the settings of a media service that performs video encoding</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qvideooutputcontrol.html">QVideoOutputControl</a></p></td><td><p>Means of selecting the active video output control</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qvideorenderercontrol.html">QVideoRendererControl</a></p></td><td><p>Control for rendering to a video surface</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qvideowidgetcontrol.html">QVideoWidgetControl</a></p></td><td><p>Media control which implements a video widget</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qvideowindowcontrol.html">QVideoWindowControl</a></p></td><td><p>Media control for rendering video to a window</p></td></tr>
+</table>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
-</tr></table></div></address></body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

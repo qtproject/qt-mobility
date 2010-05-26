@@ -1,44 +1,50 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- sf.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Qt Service Framework</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- sf.qdoc -->
+  <title>Qt Mobility Project 1.1: Qt Service Framework</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Qt Service Framework<br /><span class="subtitle"></span>
-</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="service-frameworks.html">Qt Service Framework</a></li><div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#namespace">Namespace</a></li>
+<li class="level1"><a href="#introduction">Introduction</a></li>
+<li class="level1"><a href="#overview">Overview</a></li>
+<li class="level1"><a href="#using-the-framework">Using the Framework</a></li>
+<li class="level2"><a href="#verbose-lookup">Verbose Lookup</a></li>
+<li class="level2"><a href="#default-lookup">Default Lookup</a></li>
+<li class="level3"><a href="#qobject-based-services">QObject based services</a></li>
+<li class="level3"><a href="#typed-services">Typed services</a></li>
+<li class="level1"><a href="#service-scope">Service Scope</a></li>
+<li class="level2"><a href="#user-scope">User Scope</a></li>
+<li class="level2"><a href="#system-scope">System Scope</a></li>
+<li class="level1"><a href="#adding-and-removing-of-services">Adding and Removing of Services</a></li>
+<li class="level2"><a href="#xml-format">XML Format</a></li>
+<li class="level1"><a href="#tools-for-xml-generation">Tools for XML Generation</a></li>
+<li class="level1"><a href="#installing-the-service-at-runtime">Installing the Service at Runtime</a></li>
+<li class="level1"><a href="#identifying-services">Identifying Services</a></li>
+<li class="level2"><a href="#upgrading-services">Upgrading Services</a></li>
+<li class="level1"><a href="#examples">Examples</a></li>
+<li class="level1"><a href="#main-classes">Main Classes</a></li>
+</ul>
+</div>
+<h1 class="title">Qt Service Framework</h1>
+<span class="subtitle"></span>
+<div class="descr"/>
 <p>The Qt Service Framework allows clients to discover and instantiate arbitrary services.</p>
-<ul><li><a href="#introduction">Introduction</a></li>
-<li><a href="#overview">Overview</a></li>
-<li><a href="#using-the-framework">Using the Framework</a></li>
-<ul><li><a href="#verbose-lookup">Verbose Lookup</a></li>
-<li><a href="#default-lookup">Default Lookup</a></li>
-<ul><li><a href="#qobject-based-services">QObject based services</a></li>
-<li><a href="#typed-services">Typed services</a></li>
-</ul>
-</ul>
-<li><a href="#service-scope">Service Scope</a></li>
-<ul><li><a href="#user-scope">User Scope</a></li>
-<li><a href="#system-scope">System Scope</a></li>
-</ul>
-<li><a href="#adding-and-removing-of-services">Adding and Removing of Services</a></li>
-<ul><li><a href="#xml-format">XML Format</a></li>
-</ul>
-<li><a href="#tools-for-xml-generation">Tools for XML Generation</a></li>
-<li><a href="#installing-the-service-at-runtime">Installing the Service at Runtime</a></li>
-<li><a href="#identifying-services">Identifying Services</a></li>
-<ul><li><a href="#upgrading-services">Upgrading Services</a></li>
-</ul>
-<li><a href="#examples">Examples</a></li>
-<li><a href="#main-classes">Main Classes</a></li>
-</ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="introduction"></a>
 <h3>Introduction</h3>
 <p>The Qt Service Framework defines a unified way of finding, implementing and accessing services across multiple platforms.</p>
@@ -56,7 +62,7 @@
 <a name="verbose-lookup"></a>
 <h4>Verbose Lookup</h4>
 <p>The client code has precise knowledge of the service and its interfaces.</p>
-<pre>    QServiceManager manager;
+<pre class="highlightedCode">    QServiceManager manager;
     QServiceFilter filter(&quot;com.nokia.qt.examples.FileStorage&quot;);
     filter.setServiceName(&quot;FileStorage&quot;);
 
@@ -70,14 +76,15 @@
     fileStorage = manager.loadInterface(foundServices.at(0));</pre>
 <a name="default-lookup"></a>
 <h4>Default Lookup</h4>
-<p>It is assumed that the client has knowledge of the interface but does not really care about the specific type or version of the service implementing the interface. In such cases the default service lookup can be utilized to create a service object instance. If the same service provides multiple versions of the same interface the latest version is returned. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
-<pre>    QServiceManager manager;
+<p>It is assumed that the client has knowledge of the interface but does not really care about the specific type or version of the service implementing the interface. In such cases the default service lookup can be utilized to create a service object instance.</p>
+<pre class="highlightedCode">    QServiceManager manager;
     manager.setInterfaceDefault(&quot;FileStorageService&quot;, &quot;com.nokia.qt.examples.FileStorage&quot;);</pre>
-<p>The above call to <a href="qservicemanager.html#setInterfaceDefault">QServiceManager::setInterfaceDefault</a>() registers the <i>FileStorageService</i> as default implementation. Whenever a client asks for an implementation of <i>com.nokia.qt.examples.FileStorage</i> the <i>FileStorageService</i> service will be loaded. The current scope of the service manager object determines whether the default assignment is valid for all users or whether it is valid for the current user only. The system default is used if the user scope has not been defined. This enables users to customize their personal preferences. By default the first service installing a so far unknown interface becomes the system wide default selection.</p>
+<p>The above call to <a href="qservicemanager.html#setInterfaceDefault">QServiceManager::setInterfaceDefault</a>() registers the <i>FileStorageService</i> as default implementation. Whenever a client asks for an implementation of <i>com.nokia.qt.examples.FileStorage</i> the <i>FileStorageService</i> service will be loaded. If (at the time of this call) the <i>FileStorageService</i> provides multiple registered implementations/versions for the same interface the latest version becomes the default. Therefore subsequent versions of the same interface must always be binary compatible to previous versions.</p>
+<p>The current scope of the service manager object determines whether the default assignment is valid for all users or whether it is valid for the current user only. The system default is used if the user scope has not been defined. This enables users to customize their personal preferences. By default the first service installing a so far unknown interface becomes the system wide default selection.</p>
 <a name="qobject-based-services"></a>
 <h5>QObject based services</h5>
 <p>This is the most common way of interacting with services.</p>
-<pre>    storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);
+<pre class="highlightedCode">    storage = manager.loadInterface(&quot;com.nokia.qt.examples.FileStorage&quot;);
     if (storage)
         QMetaObject::invokeMethod(storage, &quot;deleteFile&quot;, Q_ARG(QString, &quot;/tmp/readme.txt&quot;));</pre>
 <p>The above invocation of the file storage object's deleteFile() function is done via the service's <a href="http://qt.nokia.com/doc/4.6/qmetaobject.html">QMetaObject</a>. The client does not require any knowledge of the objects actual type and therefore does not have to link against a service specific library.</p>
@@ -85,7 +92,7 @@
 <h5>Typed services</h5>
 <p>So far all lookup mechanism returned a <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> pointer. This pointer can be utilised by introspecting the object, using Qt's meta object system. However in some use cases it may be more convenient to directly interact with the service object by including the service header and/or linking against the service provider. The main advantage is compile time checking. Its disdvantage is that client and service must share the implementation of the service object via a library they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework principle of separating clients from service as changes of the service type may require changes to both, services and clients.</p>
 <p>The subsequent code snippet demonstrates how this may look like:</p>
-<pre>    #include &lt;filestorage.h&gt;
+<pre class="highlightedCode">    #include &lt;filestorage.h&gt;
     ...
     QServiceManager manager;
     FileStorage *storage = 0;
@@ -112,7 +119,7 @@
 <a name="xml-format"></a>
 <h4>XML Format</h4>
 <p>Services are installed via an XML file which describes the meta data and location of the service. The xml file can be described via the following DTD:</p>
-<pre>    &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
+<pre class="highlightedCode">    &lt;!ELEMENT service ( name, filepath, description?, interface+ ) &gt;
     &lt;!ELEMENT description ( #CDATA ) &gt;
     &lt;!ELEMENT filepath ( #PCDATA ) &gt;
     &lt;!ELEMENT interface ( name, version, description?, capabilities?, customproperty* ) &gt;
@@ -122,22 +129,22 @@
     &lt;!ELEMENT customproperty ( #CDATA ) &gt;
     &lt;!ATTLIST customproperty key NMTOKEN #REQUIRED &gt;</pre>
 <p>The elements and attributes have the following meanings:</p>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Element</th><th>SubElement</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>service</td><td></td><td>The <i>service</i> tag can contain an arbitrary number of <i>interface</i> tags and one description tag.</td></tr>
-<tr valign="top" class="even"><td>&quot;</td><td>description</td><td>A user readable description of the purpose of the service.</td></tr>
-<tr valign="top" class="odd"><td>&quot;</td><td>filepath</td><td>The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in name only is provided the standard library paths (see <a href="http://qt.nokia.com/doc/4.6/qcoreapplication.html#libraryPaths">QCoreApplication::libraryPaths</a>()) are used to find the plug-in. Note that if the plugin name is given only, platform specific parts such as the suffix &quot;.dll&quot; and &quot;.so&quot; or plugin prefix &quot;lib&quot; should be removed to enable cross platform resolution. <a href="http://qt.nokia.com/doc/4.6/qlibrary.html">QLibrary</a> is used to determine the platform specific parts of the plugin.</td></tr>
-<tr valign="top" class="even"><td>&quot;</td><td>name</td><td>The name of the service.</td></tr>
-<tr valign="top" class="odd"><td>interface</td><td></td><td>The <i>interface</i> describes the properties of the interface.</td></tr>
-<tr valign="top" class="even"><td>&quot;</td><td>capabilities</td><td>This property is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.</td></tr>
-<tr valign="top" class="odd"><td>&quot;</td><td>name</td><td>The name of the interface using the Java class name notation. (e.g&#x2e; com.nokia.qt.TestService)</td></tr>
-<tr valign="top" class="even"><td>&quot;</td><td>version</td><td>This property contains the interface and implementation version. The version tag follows the <i>major.minor</i> notation. The major version indicates the interface version the minor version the implementation version.<p>The version number <b>must</b> be greater than 1.0&#x2e; The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.</p>
-</td></tr>
-<tr valign="top" class="odd"><td>&quot;</td><td>description</td><td>A user readable description of the purpose of the interface.</td></tr>
-<tr valign="top" class="even"><td>&quot;</td><td>customproperty</td><td>An implementation specific key value pair which can be used for filtering or as description.</td></tr>
-</table></p>
+<table class="generic">
+<thead><tr class="qt-style topAlign"><th>Element</th><th>SubElement</th><th>Description</th></tr></thead>
+<tr class="odd topAlign"><td><p>service</p></td><td><p></p></td><td><p>The <i>service</i> tag can contain an arbitrary number of <i>interface</i> tags and one description tag.</p></td></tr>
+<tr class="even topAlign"><td><p>&quot;</p></td><td><p>description</p></td><td><p>A user readable description of the purpose of the service.</p></td></tr>
+<tr class="odd topAlign"><td><p>&quot;</p></td><td><p>filepath</p></td><td><p>The absolute path and name of the plug-in to be loaded when this service is requested. Alternatively if the plug-in name only is provided the standard library paths (see <a href="http://qt.nokia.com/doc/4.6/qcoreapplication.html#libraryPaths">QCoreApplication::libraryPaths</a>()) are used to find the plug-in. Note that if the plugin name is given only, platform specific parts such as the suffix &quot;.dll&quot; and &quot;.so&quot; or plugin prefix &quot;lib&quot; should be removed to enable cross platform resolution. <a href="http://qt.nokia.com/doc/4.6/qlibrary.html">QLibrary</a> is used to determine the platform specific parts of the plugin.</p></td></tr>
+<tr class="even topAlign"><td><p>&quot;</p></td><td><p>name</p></td><td><p>The name of the service.</p></td></tr>
+<tr class="odd topAlign"><td><p>interface</p></td><td><p></p></td><td><p>The <i>interface</i> describes the properties of the interface.</p></td></tr>
+<tr class="even topAlign"><td><p>&quot;</p></td><td><p>capabilities</p></td><td><p>This property is a list of arbitrary strings which are interpreted as permissions/capabilities. This list can be empty.</p></td></tr>
+<tr class="odd topAlign"><td><p>&quot;</p></td><td><p>name</p></td><td><p>The name of the interface using the Java class name notation. (e.g&#x2e; com.nokia.qt.TestService)</p></td></tr>
+<tr class="even topAlign"><td><p>&quot;</p></td><td><p>version</p></td><td><p>This property contains the interface and implementation version. The version tag follows the <i>major.minor</i> notation. The major version indicates the interface version the minor version the implementation version.<p>The version number <b>must</b> be greater than 1.0&#x2e; The version cannot be less than 1.0 because the Service Framework is dependent on the fact that services must be binary compatible between major versions, and services with versions less than 1.0 are unlikely to be binary compatible with later versions.</p>
+</p></td></tr>
+<tr class="odd topAlign"><td><p>&quot;</p></td><td><p>description</p></td><td><p>A user readable description of the purpose of the interface.</p></td></tr>
+<tr class="even topAlign"><td><p>&quot;</p></td><td><p>customproperty</p></td><td><p>An implementation specific key value pair which can be used for filtering or as description.</p></td></tr>
+</table>
 <p>An example for a valid XML service description could be the following <i>TestService</i>:</p>
-<pre>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
+<pre class="highlightedCode">    &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; ?&gt;
     &lt;service&gt;
         &lt;name&gt;TestService&lt;/name&gt;
         &lt;filepath&gt;testserviceplugin&lt;/filepath&gt;
@@ -167,7 +174,7 @@
 <h3>Tools for XML Generation</h3>
 <p>The framework includes a GUI tool under <tt>tools/servicexmlgen</tt> for generating and inspecting service XML files. This makes it easy to enter service metadata and interface details and generate the appropriate XML to describe the service. It can also be used to load and inspect existing service XML files.</p>
 <p>Here is a screenshot of the application, loaded with the <i>TestService</i> XML description provided above.</p>
-<p align="center"><img src="images/servicexmlgen.png" /></p><a name="installing-the-service-at-runtime"></a>
+<p class="centerAlign"><img src="images/servicexmlgen.png" /></p><a name="installing-the-service-at-runtime"></a>
 <h3>Installing the Service at Runtime</h3>
 <p>New services can be added and removed at any time via <a href="qservicemanager.html#addService">QServiceManager::addService</a>() and <a href="qservicemanager.html#removeService">QServiceManager::removeService</a>().</p>
 <p>On Symbian devices a service can be installed using the Symbian package installer. More details about this process can be found in the <a href="service-framework-on-symbian.html">Qt Service Framework on Symbian</a> documentation.</p>
@@ -175,7 +182,7 @@
 <h3>Identifying Services</h3>
 <p>Each implementation is identified by a service name, an interface name and its version. This information is encapsulated by <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> which can be used to request references to service objects.</p>
 <p><a href="qservicefilter.html">QServiceFilter</a> simplifies the lookup of already installed services. Developers specifies the criteria used during the meta data lookup. The subsequent example demonstrates the interaction between <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> and <a href="qservicefilter.html">QServiceFilter</a> by creating references to all services that implement the interface <i>com.nokia.qt.ILocation</i>:</p>
-<pre>    QServiceManager mgr;
+<pre class="highlightedCode">    QServiceManager mgr;
     QServiceFilter filter;
     filter.setInterfaceName(&quot;com.nokia.qt.ILocation&quot;);
     QList&lt;QServiceInterfaceDescriptor&gt; list = mgr.findInterfaces(filter);
@@ -201,19 +208,21 @@
 </ul>
 <a name="main-classes"></a>
 <h3>Main Classes</h3>
-<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qabstractsecuritysession.html">QAbstractSecuritySession</a></th><td>Generic mechanism to enable permission checks for services</td></tr>
-<tr valign="top" class="even"><th><a href="qservice.html">QService</a></th><td>Contains miscellaneous identifiers used throughout the Qt Service framework library</td></tr>
-<tr valign="top" class="odd"><th><a href="qservicecontext.html">QServiceContext</a></th><td>Context information to services</td></tr>
-<tr valign="top" class="even"><th><a href="qservicefilter.html">QServiceFilter</a></th><td>Defines criteria for defining a sub-set of all available services</td></tr>
-<tr valign="top" class="odd"><th><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a></th><td>Identifies a service implementation</td></tr>
-<tr valign="top" class="even"><th><a href="qservicemanager.html">QServiceManager</a></th><td>Enables the loading of service plugins and the (de)registration of services</td></tr>
-<tr valign="top" class="odd"><th><a href="qserviceplugininterface.html">QServicePluginInterface</a></th><td>Defines the interface that every plug-in based service must implement</td></tr>
-</table></p>
+<table class="annotated">
+<tr class="odd topAlign"><td><p><a href="qabstractsecuritysession.html">QAbstractSecuritySession</a></p></td><td><p>Generic mechanism to enable permission checks for services</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qservice.html">QService</a></p></td><td><p>Contains miscellaneous identifiers used throughout the Qt Service framework library</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qservicecontext.html">QServiceContext</a></p></td><td><p>Context information to services</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qservicefilter.html">QServiceFilter</a></p></td><td><p>Defines criteria for defining a sub-set of all available services</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a></p></td><td><p>Identifies a service implementation</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qservicemanager.html">QServiceManager</a></p></td><td><p>Enables the loading of service plugins and the (de)registration of services</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qserviceplugininterface.html">QServicePluginInterface</a></p></td><td><p>Defines the interface that every plug-in based service must implement</p></td></tr>
+</table>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
-</tr></table></div></address></body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

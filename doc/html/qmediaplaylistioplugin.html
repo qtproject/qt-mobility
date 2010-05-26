@@ -1,55 +1,64 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qmediaplaylistioplugin.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaPlaylistIOPlugin Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qmediaplaylistioplugin.cpp -->
+  <title>Qt Mobility Project 1.1: QMediaPlaylistIOPlugin Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
-<a name="//apple_ref/cpp/cl//QMediaPlaylistIOPlugin"></a>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlaylistIOPlugin Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qmediaplaylistioplugin.html">QMediaPlaylistIOPlugin</a></li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QMediaPlaylistIOPlugin Class Reference</h1>
 <p>The QMediaPlaylistIOPlugin class provides an interface for media playlist I/O plug-ins. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMediaPlaylistIOPlugin&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<pre class="highlightedCode">    #include &lt;QMediaPlaylistIOPlugin&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmediaplaylistioplugin-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#QMediaPlaylistIOPlugin">QMediaPlaylistIOPlugin</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#dtor.QMediaPlaylistIOPlugin">~QMediaPlaylistIOPlugin</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#keys">keys</a></b> () const = 0</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#QMediaPlaylistIOPlugin">QMediaPlaylistIOPlugin</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#dtor.QMediaPlaylistIOPlugin">~QMediaPlaylistIOPlugin</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QStringList </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#keys">keys</a></b> () const = 0</td></tr>
 </table>
 <hr />
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#canRead">canRead</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray() ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#canRead-2">canRead</a></b> ( const QUrl &amp; <i>location</i>, const QByteArray &amp; <i>format</i> = QByteArray() ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#canWrite">canWrite</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlaylistReader * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#createReader">createReader</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray() ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlaylistReader * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#createReader-2">createReader</a></b> ( const QUrl &amp; <i>location</i>, const QByteArray &amp; <i>format</i> = QByteArray() ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlaylistWriter * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistioplugin.html#createWriter">createWriter</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> ) = 0</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#canRead">canRead</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray() ) const = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#canRead-2">canRead</a></b> ( const QUrl &amp; <i>location</i>, const QByteArray &amp; <i>format</i> = QByteArray() ) const = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#canWrite">canWrite</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaPlaylistReader * </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#createReader">createReader</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> = QByteArray() ) = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaPlaylistReader * </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#createReader-2">createReader</a></b> ( const QUrl &amp; <i>location</i>, const QByteArray &amp; <i>format</i> = QByteArray() ) = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaPlaylistWriter * </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistioplugin.html#createWriter">createWriter</a></b> ( QIODevice * <i>device</i>, const QByteArray &amp; <i>format</i> ) = 0</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
@@ -60,42 +69,36 @@
 <hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/QMediaPlaylistIOPlugin"></a>
 <h3 class="fn"><a name="QMediaPlaylistIOPlugin"></a>QMediaPlaylistIOPlugin::QMediaPlaylistIOPlugin ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a media playlist I/O plug-in with the given <i>parent</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/~QMediaPlaylistIOPlugin"></a>
-<h3 class="fn"><a name="dtor.QMediaPlaylistIOPlugin"></a>QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QMediaPlaylistIOPlugin"></a>QMediaPlaylistIOPlugin::~QMediaPlaylistIOPlugin ()<tt> [virtual]</tt></h3>
 <p>Destroys a media playlist I/O plug-in.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/canRead"></a>
-<h3 class="fn"><a name="canRead"></a>bool QMediaPlaylistIOPlugin::canRead ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="canRead"></a>bool QMediaPlaylistIOPlugin::canRead ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() ) const<tt> [pure virtual]</tt></h3>
 <p>Identifies if plug-in can read <i>format</i> data from an I/O <i>device</i>.</p>
 <p>Returns true if the data can be read; and false otherwise.</p>
-<h3 class="fn"><a name="canRead-2"></a>bool QMediaPlaylistIOPlugin::canRead ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="canRead-2"></a>bool QMediaPlaylistIOPlugin::canRead ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() ) const<tt> [pure virtual]</tt></h3>
 <p>Identifies if a plug-in can read <i>format</i> data from a URL <i>location</i>.</p>
 <p>Returns true if the data can be read; and false otherwise.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/canWrite"></a>
-<h3 class="fn"><a name="canWrite"></a>bool QMediaPlaylistIOPlugin::canWrite ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="canWrite"></a>bool QMediaPlaylistIOPlugin::canWrite ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> ) const<tt> [pure virtual]</tt></h3>
 <p>Identifies if a plug-in can write <i>format</i> data to an I/O <i>device</i>.</p>
 <p>Returns true if the data can be written; and false otherwise.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/createReader"></a>
-<h3 class="fn"><a name="createReader"></a><a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> * QMediaPlaylistIOPlugin::createReader ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="createReader"></a><a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> * QMediaPlaylistIOPlugin::createReader ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )<tt> [pure virtual]</tt></h3>
 <p>Returns a new <a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> which reads <i>format</i> data from an I/O <i>device</i>.</p>
 <p>If the device is invalid or the format is unsupported this will return a null pointer.</p>
-<h3 class="fn"><a name="createReader-2"></a><a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> * QMediaPlaylistIOPlugin::createReader ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="createReader-2"></a><a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> * QMediaPlaylistIOPlugin::createReader ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )<tt> [pure virtual]</tt></h3>
 <p>Returns a new <a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> which reads <i>format</i> data from a URL <i>location</i>.</p>
 <p>If the location or the format is unsupported this will return a null pointer.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/createWriter"></a>
-<h3 class="fn"><a name="createWriter"></a><a href="qmediaplaylistwriter.html">QMediaPlaylistWriter</a> * QMediaPlaylistIOPlugin::createWriter ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="createWriter"></a><a href="qmediaplaylistwriter.html">QMediaPlaylistWriter</a> * QMediaPlaylistIOPlugin::createWriter ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> )<tt> [pure virtual]</tt></h3>
 <p>Returns a new <a href="qmediaplaylistwriter.html">QMediaPlaylistWriter</a> which writes <i>format</i> data to an I/O <i>device</i>.</p>
 <p>If the device is invalid or the format is unsupported this will return a null pointer.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/keys"></a>
-<h3 class="fn"><a name="keys"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaPlaylistIOPlugin::keys () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="keys"></a><a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a> QMediaPlaylistIOPlugin::keys () const<tt> [pure virtual]</tt></h3>
 <p>Returns a list of format keys supported by a plug-in.</p>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
-</tr></table></div></address></body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

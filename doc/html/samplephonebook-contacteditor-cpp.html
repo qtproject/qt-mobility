@@ -1,55 +1,57 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Qt Mobility Project 1.0: contacteditor.cpp Example File (samplephonebook/contacteditor.cpp)</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <title>Qt Mobility Project 1.1: contacteditor.cpp Example File (samplephonebook/contacteditor.cpp)</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">contacteditor.cpp Example File<br /><span class="small-subtitle">samplephonebook/contacteditor.cpp</span>
-</h1>
-<pre><span class="comment">    /****************************************************************************
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">contacteditor.cpp Example File</h1>
+<span class="small-subtitle">samplephonebook/contacteditor.cpp</span>
+<div class="descr"/>
+<pre class="highlightedCode"><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
     ** This file is part of the Qt Mobility Components.
     **
-    ** $QT_BEGIN_LICENSE:LGPL$
-    ** No Commercial Usage
-    ** This file contains pre-release code and may not be distributed.
-    ** You may use this file in accordance with the terms and conditions
-    ** contained in the Technology Preview License Agreement accompanying
-    ** this package.
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
     **
-    ** GNU Lesser General Public License Usage
-    ** Alternatively, this file may be used under the terms of the GNU Lesser
-    ** General Public License version 2.1 as published by the Free Software
-    ** Foundation and appearing in the file LICENSE.LGPL included in the
-    ** packaging of this file.  Please review the following information to
-    ** ensure the GNU Lesser General Public License version 2.1 requirements
-    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
     **
-    ** In addition, as a special exception, Nokia gives you certain additional
-    ** rights.  These rights are described in the Nokia Qt LGPL Exception
-    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-    **
-    ** If you have questions regarding the use of this file, please contact
-    ** Nokia at qt-info@nokia.com.
-    **
-    **
-    **
-    **
-    **
-    **
-    **
-    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
@@ -57,6 +59,8 @@
     #include &quot;contacteditor.h&quot;
 
     #include &lt;QtGui&gt;
+
+    const int MAX_AVATAR_DISPLAY_SIZE = 120;
 
     ContactEditor::ContactEditor(QWidget *parent)
             :QWidget(parent)
@@ -68,16 +72,21 @@
         m_phoneEdit = new QLineEdit(this);
         m_emailEdit = new QLineEdit(this);
         m_addrEdit = new QLineEdit(this);
-        m_avatarBtn = new QPushButton(tr(&quot;Add image&quot;), this);
-        m_avatarBtn-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_avatarBtn = new QPushButton(tr(&quot;Set picture&quot;), this);
+        m_clearAvatarBtn = new QPushButton(tr(&quot;Clear&quot;), this);
+        m_avatarView = new QLabel(this);
         connect(m_avatarBtn, SIGNAL(clicked()), this, SLOT(avatarClicked()));
+        connect(m_clearAvatarBtn, SIGNAL(clicked()), this, SLOT(clearAvatarClicked()));
 
         QFormLayout *detailsLayout = new QFormLayout;
         QLabel *nameLabel = new QLabel(tr(&quot;Name&quot;), this);
         QLabel *phoneLabel = new QLabel(tr(&quot;Phone&quot;), this);
         QLabel *emailLabel = new QLabel(tr(&quot;Email&quot;), this);
         QLabel *addressLabel = new QLabel(tr(&quot;Address&quot;), this);
-        QLabel *avatarLabel = new QLabel(tr(&quot;Avatar&quot;), this);
+        QLabel *avatarLabel = new QLabel(tr(&quot;Picture&quot;), this);
+        QHBoxLayout *avatarBtnLayout = new QHBoxLayout;
+        avatarBtnLayout-&gt;addWidget(m_avatarBtn);
+        avatarBtnLayout-&gt;addWidget(m_clearAvatarBtn);
         if (QApplication::desktop()-&gt;availableGeometry().width() &lt; 360) {
             <span class="comment">// Narrow screen: put label on separate line to textbox</span>
             detailsLayout-&gt;addRow(nameLabel);
@@ -89,14 +98,16 @@
             detailsLayout-&gt;addRow(addressLabel);
             detailsLayout-&gt;addRow(m_addrEdit);
             detailsLayout-&gt;addRow(avatarLabel);
-            detailsLayout-&gt;addRow(m_avatarBtn);
+            detailsLayout-&gt;addRow(avatarBtnLayout);
+            detailsLayout-&gt;addRow(m_avatarView);
         } else {
             <span class="comment">// Wide screen: put label on same line as textbox</span>
             detailsLayout-&gt;addRow(nameLabel, m_nameEdit);
             detailsLayout-&gt;addRow(phoneLabel, m_phoneEdit);
             detailsLayout-&gt;addRow(emailLabel, m_emailEdit);
             detailsLayout-&gt;addRow(addressLabel, m_addrEdit);
-            detailsLayout-&gt;addRow(avatarLabel, m_avatarBtn);
+            detailsLayout-&gt;addRow(avatarLabel, avatarBtnLayout);
+            detailsLayout-&gt;addRow(&quot;&quot;, m_avatarView);
         }
         detailsLayout-&gt;setFieldGrowthPolicy(QFormLayout::ExpandingFieldsGrow);
         detailsLayout-&gt;setSizeConstraint(QLayout::SetMinAndMaxSize);
@@ -150,8 +161,6 @@
         m_phoneEdit-&gt;clear();
         m_emailEdit-&gt;clear();
         m_addrEdit-&gt;clear();
-        m_avatarBtn-&gt;setText(&quot;Add image&quot;);
-        m_avatarBtn-&gt;setIcon(QIcon());
 
         if (manager == 0) {
             m_saveBtn-&gt;setEnabled(false);
@@ -172,7 +181,7 @@
         <span class="comment">// name</span>
         <span class="comment">//QContactName nm = curr.detail(QContactName::DefinitionName);</span>
         if (m_contactId != QContactLocalId(0))
-            m_nameEdit-&gt;setText(manager-&gt;synthesizedDisplayLabel(curr));
+            m_nameEdit-&gt;setText(manager-&gt;synthesizedContactDisplayLabel(curr));
 
         <span class="comment">// phonenumber</span>
         QContactPhoneNumber phn = curr.detail(QContactPhoneNumber::DefinitionName);
@@ -198,29 +207,29 @@
             m_addrEdit-&gt;setReadOnly(true);
         }
 
-        <span class="comment">// avatar button</span>
-        if (defs.contains(QContactAvatar::DefinitionName)) {
+        <span class="comment">// avatar viewer</span>
+        if (defs.contains(QContactAvatar::DefinitionName)
+            || defs.contains(QContactThumbnail::DefinitionName)) {
+            m_avatarBtn-&gt;setEnabled(true);
             QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
             QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
-            m_avatarBtn-&gt;setText(QString());
-            m_avatarBtn-&gt;setIcon(QIcon());
-            if (thumb.thumbnail().isNull()) {
-                if (av.imageUrl().isEmpty()) {
-                    m_avatarBtn-&gt;setText(&quot;Add image&quot;);
+            m_avatarView-&gt;clear();
+            m_newAvatarPath = av.imageUrl().toLocalFile();
+            m_thumbnail = thumb.thumbnail();
+            if (m_thumbnail.isNull()) {
+                if (m_newAvatarPath.isEmpty()) {
+                    m_avatarView-&gt;clear();
+                    m_clearAvatarBtn-&gt;setDisabled(true);
                 } else {
-                    m_avatarBtn-&gt;setIcon(QIcon(QPixmap(av.imageUrl().toLocalFile())));
+                    setAvatarPixmap(QPixmap(av.imageUrl().toLocalFile()));
                     m_thumbnail = QImage(av.imageUrl().toLocalFile());
                 }
             } else {
-                m_newAvatarPath = av.imageUrl().toLocalFile();
-                m_thumbnail = thumb.thumbnail();
-                m_avatarBtn-&gt;setIcon(QIcon(QPixmap::fromImage(thumb.thumbnail())));
+                setAvatarPixmap(QPixmap::fromImage(m_thumbnail));
             }
-            m_avatarBtn-&gt;setDisabled(false);
         } else {
-            m_avatarBtn-&gt;setIcon(QIcon());
-            m_avatarBtn-&gt;setText(&quot;&lt;not supported&gt;&quot;);
             m_avatarBtn-&gt;setDisabled(true);
+            m_clearAvatarBtn-&gt;setDisabled(true);
         }
     }
 
@@ -241,17 +250,36 @@
         }
     }
 
+    void ContactEditor::setAvatarPixmap(const QPixmap &amp;pixmap)
+    {
+        if (pixmap.isNull())
+            return;
+        QPixmap scaled = pixmap.scaled(QSize(MAX_AVATAR_DISPLAY_SIZE, MAX_AVATAR_DISPLAY_SIZE),
+                                       Qt::KeepAspectRatio,
+                                       Qt::SmoothTransformation);
+        m_avatarView-&gt;setPixmap(scaled);
+        m_avatarView-&gt;setMaximumSize(scaled.size());
+        m_clearAvatarBtn-&gt;setEnabled(true);
+    }
+
+    void ContactEditor::clearAvatarClicked()
+    {
+        m_avatarView-&gt;clear();
+        m_thumbnail = QImage();
+        m_newAvatarPath.clear();
+        m_clearAvatarBtn-&gt;setDisabled(true);
+    }
+
     void ContactEditor::avatarClicked()
     {
         <span class="comment">// put up a file dialog, and update the new avatar path.</span>
         QString fileName = QFileDialog::getOpenFileName(this,
-           tr(&quot;Select Avatar Image&quot;), &quot;.&quot;, tr(&quot;Image Files (*.png *.jpg *.bmp)&quot;));
+           tr(&quot;Select Contact Picture&quot;), &quot;.&quot;, tr(&quot;Image Files (*.png *.jpg *.bmp)&quot;));
 
         if (!fileName.isEmpty()) {
             m_newAvatarPath = fileName;
             m_thumbnail = QImage(m_newAvatarPath);
-            m_avatarBtn-&gt;setText(QString());
-            m_avatarBtn-&gt;setIcon(QIcon(m_newAvatarPath));
+            setAvatarPixmap(QPixmap::fromImage(m_thumbnail));
         }
     }
 
@@ -269,7 +297,7 @@
                 return;
             }
 
-            if (m_nameEdit-&gt;text() != m_manager-&gt;synthesizedDisplayLabel(curr)) {
+            if (m_nameEdit-&gt;text() != m_manager-&gt;synthesizedContactDisplayLabel(curr)) {
                 <span class="comment">// if the name has changed (ie, is different to the synthed label) then save it as a custom label.</span>
                 QString saveNameField = nameField();
                 if (!saveNameField.isEmpty()) {
@@ -306,6 +334,7 @@
                 curr.saveDetail(&amp;thumb);
             }
 
+            curr = m_manager-&gt;compatibleContact(curr);
             bool success = m_manager-&gt;saveContact(&amp;curr);
             if (!success)
                 QMessageBox::information(this, &quot;Failed!&quot;, QString(&quot;Failed to save contact!\n(error code %1)&quot;).arg(m_manager-&gt;error()));
@@ -318,10 +347,12 @@
     {
         emit showListPage();
     }</pre>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
-</tr></table></div></address></body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

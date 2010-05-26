@@ -1,121 +1,114 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qcontactdetails.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QContactName Class Reference</title>
-<meta http-equiv="Content-type" content="text/html; charset=ISO-8859-1" />  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qcontactdetails.cpp -->
+  <title>Qt Mobility Project 1.1: QContactName Class Reference</title>
+  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
-<a name="//apple_ref/cpp/cl//QContactName"></a>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactName Class Reference</h1>
-<p>The QContactName class contains the name of a contact. <a href="#details">More...</a></p>
-<pre>    #include &lt;QContactName&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qcontactname.html">QContactName</a></li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#static-public-members">Static Public Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QContactName Class Reference</h1>
+<p>The QContactName class contains a name of a contact. <a href="#details">More...</a></p>
+<pre class="highlightedCode">    #include &lt;QContactName&gt;</pre><p>Inherits <a href="qcontactdetail.html">QContactDetail</a>.</p>
 <ul>
 <li><a href="qcontactname-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#customLabel">customLabel</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#firstName">firstName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#lastName">lastName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#middleName">middleName</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#prefix">prefix</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#setCustomLabel">setCustomLabel</a></b> ( const QString &amp; <i>customLabel</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#setFirstName">setFirstName</a></b> ( const QString &amp; <i>firstName</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#setLastName">setLastName</a></b> ( const QString &amp; <i>lastName</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#setMiddleName">setMiddleName</a></b> ( const QString &amp; <i>middleName</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#setPrefix">setPrefix</a></b> ( const QString &amp; <i>prefix</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#setSuffix">setSuffix</a></b> ( const QString &amp; <i>suffix</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#suffix">suffix</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#customLabel">customLabel</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#firstName">firstName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#lastName">lastName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#middleName">middleName</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#prefix">prefix</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#setCustomLabel">setCustomLabel</a></b> ( const QString &amp; <i>customLabel</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#setFirstName">setFirstName</a></b> ( const QString &amp; <i>firstName</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#setLastName">setLastName</a></b> ( const QString &amp; <i>lastName</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#setMiddleName">setMiddleName</a></b> ( const QString &amp; <i>middleName</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#setPrefix">setPrefix</a></b> ( const QString &amp; <i>prefix</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#setSuffix">setSuffix</a></b> ( const QString &amp; <i>suffix</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#suffix">suffix</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>35 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
+<li class="fn">29 public functions inherited from <a href="qcontactdetail.html#public-functions">QContactDetail</a></li>
 </ul>
 <hr />
 <a name="static-public-members"></a>
 <h2>Static Public Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#DefinitionName-var">DefinitionName</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldCustomLabel-var">FieldCustomLabel</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldFirstName-var">FieldFirstName</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldLastName-var">FieldLastName</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldMiddleName-var">FieldMiddleName</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldPrefix-var">FieldPrefix</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldSuffix-var">FieldSuffix</a></b></td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContactFilter </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#match">match</a></b> ( const QString &amp; <i>name</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContactFilter </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#match-2">match</a></b> ( const QString &amp; <i>firstName</i>, const QString &amp; <i>lastName</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#DefinitionName-var">DefinitionName</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#FieldCustomLabel-var">FieldCustomLabel</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#FieldFirstName-var">FieldFirstName</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#FieldLastName-var">FieldLastName</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#FieldMiddleName-var">FieldMiddleName</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#FieldPrefix-var">FieldPrefix</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> const QLatin1Constant </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#FieldSuffix-var">FieldSuffix</a></b></td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QContactFilter </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#match">match</a></b> ( const QString &amp; <i>name</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QContactFilter </td><td class="memItemRight bottomAlign"><b><a href="qcontactname.html#match-2">match</a></b> ( const QString &amp; <i>firstName</i>, const QString &amp; <i>lastName</i> )</td></tr>
 </table>
-<h3>Additional Inherited Members</h3>
-<ul>
-<li><div class="fn"></div>2 protected functions inherited from <a href="qcontactdetail.html#protected-functions">QContactDetail</a></li>
-</ul>
 <a name="details"></a>
 <hr />
 <div class="descr"/>
 <h2>Detailed Description</h2>
-<p>The QContactName class contains the name of a contact.</p>
+<p>The QContactName class contains a name of a contact.</p>
 </div>
 <hr />
 <div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QContactName/customLabel"></a>
 <h3 class="fn"><a name="customLabel"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactName::customLabel () const</h3>
 <p>Returns the custom label of the name stored in this detail.</p>
 <p>See also <a href="qcontactname.html#setCustomLabel">setCustomLabel</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/firstName"></a>
 <h3 class="fn"><a name="firstName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactName::firstName () const</h3>
 <p>Returns the first (given) name segment of the name stored in this detail.</p>
 <p>See also <a href="qcontactname.html#setFirstName">setFirstName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/lastName"></a>
 <h3 class="fn"><a name="lastName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactName::lastName () const</h3>
 <p>Returns the last (family, or surname) name segment of the name stored in this detail.</p>
 <p>See also <a href="qcontactname.html#setLastName">setLastName</a>().</p>
-<a name="//apple_ref/cpp/clm/QContactName/match"></a>
-<h3 class="fn"><a name="match"></a><a href="qcontactfilter.html">QContactFilter</a> QContactName::match ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Returns a filter suitable for finding contacts with a name field (e.g&#x2e; first, last) that matches the supplied <i>name</i>.</p>
-<h3 class="fn"><a name="match-2"></a><a href="qcontactfilter.html">QContactFilter</a> QContactName::match ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>firstName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>lastName</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
-<p>Returns a filter suitable for finding contacts with a name matching the specified <i>firstName</i> and <i>lastName</i>. If either parameter is empty, any value will match that component.</p>
-<a name="//apple_ref/cpp/instm/QContactName/middleName"></a>
+<h3 class="fn"><a name="match"></a><a href="qcontactfilter.html">QContactFilter</a> QContactName::match ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )<tt> [static]</tt></h3>
+<p>Returns a filter suitable for finding contacts with any name field (e.g&#x2e; first, last) that contains the supplied <i>name</i>.</p>
+<h3 class="fn"><a name="match-2"></a><a href="qcontactfilter.html">QContactFilter</a> QContactName::match ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>firstName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>lastName</i> )<tt> [static]</tt></h3>
+<p>Returns a filter suitable for finding contacts with a name with a first name containing the specified <i>firstName</i> and a last name containing the specified <i>lastName</i>. If either parameter is empty, any value will match that component.</p>
 <h3 class="fn"><a name="middleName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactName::middleName () const</h3>
 <p>Returns the middle (additional, or other) name segment of the name stored in this detail.</p>
 <p>See also <a href="qcontactname.html#setMiddleName">setMiddleName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/prefix"></a>
 <h3 class="fn"><a name="prefix"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactName::prefix () const</h3>
 <p>Returns the prefix segment of the name stored in this detail.</p>
 <p>See also <a href="qcontactname.html#setPrefix">setPrefix</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/setCustomLabel"></a>
 <h3 class="fn"><a name="setCustomLabel"></a>void QContactName::setCustomLabel ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>customLabel</i> )</h3>
 <p>Sets the custom label of the name stored in this detail to <i>customLabel</i>.</p>
 <p>See also <a href="qcontactname.html#customLabel">customLabel</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/setFirstName"></a>
 <h3 class="fn"><a name="setFirstName"></a>void QContactName::setFirstName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>firstName</i> )</h3>
 <p>Sets the first name segment of the name stored in this detail to <i>firstName</i>.</p>
 <p>See also <a href="qcontactname.html#firstName">firstName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/setLastName"></a>
 <h3 class="fn"><a name="setLastName"></a>void QContactName::setLastName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>lastName</i> )</h3>
 <p>Sets the last name segment of the name stored in this detail to <i>lastName</i>.</p>
 <p>See also <a href="qcontactname.html#lastName">lastName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/setMiddleName"></a>
 <h3 class="fn"><a name="setMiddleName"></a>void QContactName::setMiddleName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>middleName</i> )</h3>
 <p>Sets the middle name segment of the name stored in this detail to <i>middleName</i>.</p>
 <p>See also <a href="qcontactname.html#middleName">middleName</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/setPrefix"></a>
 <h3 class="fn"><a name="setPrefix"></a>void QContactName::setPrefix ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>prefix</i> )</h3>
 <p>Sets the prefix segment of the name stored in this detail to <i>prefix</i>.</p>
 <p>See also <a href="qcontactname.html#prefix">prefix</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/setSuffix"></a>
 <h3 class="fn"><a name="setSuffix"></a>void QContactName::setSuffix ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>suffix</i> )</h3>
 <p>Sets the suffix segment of the name stored in this detail to <i>suffix</i>.</p>
 <p>See also <a href="qcontactname.html#suffix">suffix</a>().</p>
-<a name="//apple_ref/cpp/instm/QContactName/suffix"></a>
 <h3 class="fn"><a name="suffix"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactName::suffix () const</h3>
 <p>Returns the suffix segment of the name stored in this detail.</p>
 <p>See also <a href="qcontactname.html#setSuffix">setSuffix</a>().</p>
@@ -123,32 +116,32 @@
 <hr />
 <div class="vars"/>
 <h2>Member Variable Documentation</h2>
-<a name="//apple_ref/cpp/data/QContactName/DefinitionName"></a>
-<h3 class="fn"><a name="DefinitionName-var"></a>const QLatin1Constant QContactName::DefinitionName</h3>
-<p>The constant string which identifies the definition of details which are names.</p>
-<a name="//apple_ref/cpp/data/QContactName/FieldCustomLabel"></a>
-<h3 class="fn"><a name="FieldCustomLabel-var"></a>const QLatin1Constant QContactName::FieldCustomLabel</h3>
-<p>The constant key for which the custom name label value is stored in details of the <a href="qcontactname.html">QContactName</a> type, if supported.</p>
-<a name="//apple_ref/cpp/data/QContactName/FieldFirstName"></a>
-<h3 class="fn"><a name="FieldFirstName-var"></a>const QLatin1Constant QContactName::FieldFirstName</h3>
-<p>The constant key for which the first name value is stored in details of the <a href="qcontactname.html">QContactName</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactName/FieldLastName"></a>
-<h3 class="fn"><a name="FieldLastName-var"></a>const QLatin1Constant QContactName::FieldLastName</h3>
-<p>The constant key for which the last name value is stored in details of the <a href="qcontactname.html">QContactName</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactName/FieldMiddleName"></a>
-<h3 class="fn"><a name="FieldMiddleName-var"></a>const QLatin1Constant QContactName::FieldMiddleName</h3>
-<p>The constant key for which the middle name value is stored in details of the <a href="qcontactname.html">QContactName</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactName/FieldPrefix"></a>
-<h3 class="fn"><a name="FieldPrefix-var"></a>const QLatin1Constant QContactName::FieldPrefix</h3>
-<p>The constant key for which the name prefix value is stored in details of the <a href="qcontactname.html">QContactName</a> type.</p>
-<a name="//apple_ref/cpp/data/QContactName/FieldSuffix"></a>
-<h3 class="fn"><a name="FieldSuffix-var"></a>const QLatin1Constant QContactName::FieldSuffix</h3>
-<p>The constant key for which the name suffix value is stored in details of the <a href="qcontactname.html">QContactName</a> type.</p>
+<h3 class="fn"><a name="DefinitionName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::DefinitionName</h3>
+<p>The string constant for the definition name of <a href="qcontactname.html">QContactName</a> details.</p>
+<h3 class="fn"><a name="FieldCustomLabel-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldCustomLabel</h3>
+<p>The field key constant for the value containing a custom formatted label.</p>
+<p>See also <a href="qcontactname.html#customLabel">customLabel</a>() and <a href="qcontactname.html#setCustomLabel">setCustomLabel</a>().</p>
+<h3 class="fn"><a name="FieldFirstName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldFirstName</h3>
+<p>The field key constant for the value containing the first name part of the name.</p>
+<p>See also <a href="qcontactname.html#firstName">firstName</a>() and <a href="qcontactname.html#setFirstName">setFirstName</a>().</p>
+<h3 class="fn"><a name="FieldLastName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldLastName</h3>
+<p>The field key constant for the value containing the last name part of the name.</p>
+<p>See also <a href="qcontactname.html#lastName">lastName</a>() and <a href="qcontactname.html#setLastName">setLastName</a>().</p>
+<h3 class="fn"><a name="FieldMiddleName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldMiddleName</h3>
+<p>The field key constant for the value containing the middle name part of the name.</p>
+<p>See also <a href="qcontactname.html#middleName">middleName</a>() and <a href="qcontactname.html#setMiddleName">setMiddleName</a>().</p>
+<h3 class="fn"><a name="FieldPrefix-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldPrefix</h3>
+<p>The field key constant for the value containing the prefix part of the name.</p>
+<p>See also <a href="qcontactname.html#prefix">prefix</a>() and <a href="qcontactname.html#setPrefix">setPrefix</a>().</p>
+<h3 class="fn"><a name="FieldSuffix-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldSuffix</h3>
+<p>The field key constant for the value containing the suffix part of the name.</p>
+<p>See also <a href="qcontactname.html#suffix">suffix</a>() and <a href="qcontactname.html#setSuffix">setSuffix</a>().</p>
 </div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
-</tr></table></div></address></body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>
