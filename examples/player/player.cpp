@@ -287,7 +287,7 @@ void Player::metaDataChanged()
             QPixmap pixmap = NULL;
 
             if (uri.isEmpty()) {                
-                QVariant picture = player->metaData(QtMediaServices::CoverArtImage);
+                QVariant picture = player->metaData(QtMultimedia::CoverArtImage);
                 // Load picture from metadata
                 if (!picture.isNull() && picture.canConvert<QByteArray>())
                     pixmap.loadFromData(picture.value<QByteArray>());
