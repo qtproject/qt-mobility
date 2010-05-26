@@ -220,21 +220,24 @@ QTM_USE_NAMESPACE
      field within the detail from which it was generated.
   \o If the field is of type QString or QByteArray, the property's value is set directly to the
      value of the field.  (For a QByteArray value, the QVersitWriter will base-64 encode it.)
+  \o If the field is of type bool, int, uint, QDate, QTime, QDateTime or QUrl a the property's
+     value is set to a string representation of the field.  A parameter DATATYPE is added to the
+     property with value BOOL, INT, UINT, DATE, TIME or DATETIME depending on the type.
   \o If the field is of some other type, the field value is encoded to a QByteArray via QDataStream
      (and the resulting byte array is base-64 encoded by the QVersitWriter).  In this case, the
-     parameter DATATYPE=V is added to the Versit property.
+     parameter DATATYPE=VARIANT is added to the Versit property.
   \endlist
 
-  For example, a detail with definition name "Detail" and fields "Field1"="Value1" and
-  "Field2"=(int)42 will be exported to the vCard properties:
+  For example, a detail with definition name "Pet" and fields "Name"="Rex" and
+  "Age"=(int)14 will be exported to the vCard properties:
   \code
-  G0.X-NOKIA-QCONTACTFIELD;DETAIL=Detail;FIELD=Field1:Value1
-  G0.X-NOKIA-QCONTACTFIELD;DETAIL=Detail;FIELD=Field2;DATATYPE=V;ENCODING=b:AAAAAgAAAAAq?
+  G0.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Name:Rex
+  G0.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Age;DATATYPE=INT:14
   \endcode
 
-  And the next detail (say, "Detail" with a field "Field1"="Value3" will generate:
+  And the next detail (say, "Pet" with a field "Name"="Molly" will generate:
   \code
-  G1.X-NOKIA-QCONTACTFIELD;DETAIL=Detail;FIELD=Field1:Value3
+  G1.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Name:Molly
   \endcode
 
   The properties produced by this class can be imported by the default importer property handler

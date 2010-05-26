@@ -320,89 +320,59 @@ void tst_QVersit::testExportImport_data()
     }
 
     // Test of some non-string fields
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactDetail customDetail("CustomDetail");
-        customDetail.setValue(QLatin1String("CustomField"), QByteArray("blob"));
-        contact.saveDetail(&customDetail);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("binary field") << contact;
-    }
+    QContact contact;
+    QContactName name;
+    name.setCustomLabel(QLatin1String("name"));
+    contact.saveDetail(&name);
+    QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
+    QContactDetail customDetail("CustomDetail");
+    customDetail.setValue(QLatin1String("CustomField"), QByteArray("blob"));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("binary field") << contact;
 
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactDetail customDetail("CustomDetail");
-        customDetail.setValue(QLatin1String("CustomField"), (int)42);
-        contact.saveDetail(&customDetail);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("integer field") << contact;
-    }
+    customDetail.setValue(QLatin1String("CustomField"), QDate(2010, 5, 18));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("date field") << contact;
 
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactDetail customDetail("CustomDetail");
-        customDetail.setValue(QLatin1String("CustomField"), (bool)true);
-        contact.saveDetail(&customDetail);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("bool field") << contact;
-    }
+    customDetail.setValue(QLatin1String("CustomField"), QTime(11, 25));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("time field") << contact;
 
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactDetail customDetail("CustomDetail");
-        customDetail.setValue(QLatin1String("CustomField"), (double)3.14159265);
-        contact.saveDetail(&customDetail);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("double field") << contact;
-    }
+    customDetail.setValue(QLatin1String("CustomField"), QDateTime(QDate(2010, 5, 18), QTime(11, 25)));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("datetime field") << contact;
 
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactDetail customDetail("CustomDetail");
-        customDetail.setValue(QLatin1String("CustomField"), (float)3.14159265);
-        contact.saveDetail(&customDetail);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("float field") << contact;
-    }
+    customDetail.setValue(QLatin1String("CustomField"), (int)42);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("integer field") << contact;
 
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactDetail customDetail("CustomDetail");
-        customDetail.setValue(QLatin1String("CustomField"), QDateTime(QDate(2010, 5, 18), QTime(11, 25)));
-        contact.saveDetail(&customDetail);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("datetime field") << contact;
-    }
+    customDetail.setValue(QLatin1String("CustomField"), UINT_MAX);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("unsigned integer field") << contact;
 
-    {
-        QContact contact;
-        QContactName name;
-        name.setCustomLabel(QLatin1String("name"));
-        contact.saveDetail(&name);
-        QContactDetail customDetail("CustomDetail");
-        customDetail.setValue(QLatin1String("CustomField"), RED);
-        contact.saveDetail(&customDetail);
-        QContactManagerEngine::setContactDisplayLabel(&contact, QLatin1String("name"));
-        QTest::newRow("enum field") << contact;
-    }
+    customDetail.setValue(QLatin1String("CustomField"), QUrl(QLatin1String("http://www.nokia.com/")));
+    contact.saveDetail(&customDetail);
+    QTest::newRow("url field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (bool)true);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("bool field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (bool)false);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("false bool field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (double)3.14159265);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("double field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), (float)3.14159265);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("float field") << contact;
+
+    customDetail.setValue(QLatin1String("CustomField"), RED);
+    contact.saveDetail(&customDetail);
+    QTest::newRow("enum field") << contact;
 }
 
 QTEST_MAIN(tst_QVersit)

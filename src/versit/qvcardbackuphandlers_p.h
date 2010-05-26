@@ -83,6 +83,7 @@ public:
                            QContact* contact);
 
 private:
+    static QVariant deserializeValue(const QVersitProperty& property);
     DetailGroupMap mDetailGroupMap; // remembers which details came from which groups
 
 };
@@ -101,6 +102,7 @@ public:
     void contactProcessed(const QContact& contact,
                           QVersitDocument* document);
 private:
+    static void serializeValue(QVersitProperty* property, const QVariant& value);
     int mDetailNumber;
 };
 
