@@ -694,7 +694,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     }; /* switch (m_audioencodersettings.encodingMode()) */
 
     /* Validate and set bitrate only if encoding mode is other than quality encoding */
-    if (m_audioencodersettings.encodingMode() != QtMediaServices::ConstantQualityEncoding) {
+    if (m_audioencodersettings.encodingMode() != QtMultimedia::ConstantQualityEncoding) {
         if (m_audioencodersettings.sampleRate() == -1) {
             m_impl->setOptimalSampleRate();
         }
