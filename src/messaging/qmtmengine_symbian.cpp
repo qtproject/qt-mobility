@@ -1699,10 +1699,8 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                                                 iMessageQueries[index].limit);
                     iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids, true, true);
                 } else {
-                    emit iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
+                    iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
                 }
-                iMessageQueries[index].privateService->_active = false;
-                emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
             }
         } else {
             // There was only one single filter to handle
@@ -1726,17 +1724,14 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                 applyOffsetAndLimitToMsgIds(ids, iMessageQueries[index].offset, iMessageQueries[index].limit);
                 iMessageQueries[index].privateService->messagesFound(ids, true, true);
             } else {
-                emit iMessageQueries[index].privateService->messagesCounted(ids.count());
+                iMessageQueries[index].privateService->messagesCounted(ids.count());
             }
-            iMessageQueries[index].privateService->_active = false;
-            emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
         }
     } else {
         iMessageQueries[index].privateService->_active = false;
         if (iMessageQueries[index].privateService->_error == QMessageManager::NoError) {
             iMessageQueries[index].privateService->_error = QMessageManager::RequestIncomplete;
         }
-        emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
     }
 
     delete iMessageQueries[index].findOperation;
