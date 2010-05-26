@@ -42,6 +42,7 @@
 #include <QList>
 #include <QString>
 #include <QTextStream>
+#include <QUrl>
 #include "qvcardbackuphandlers_p.h"
 #include "qcontact.h"
 #include "qcontactdetail.h"
@@ -56,7 +57,14 @@ Q_DEFINE_LATIN1_CONSTANT(PropertyName, "X-NOKIA-QCONTACTFIELD");
 Q_DEFINE_LATIN1_CONSTANT(DetailDefinitionParameter, "DETAIL");
 Q_DEFINE_LATIN1_CONSTANT(FieldParameter, "FIELD");
 Q_DEFINE_LATIN1_CONSTANT(DatatypeParameter, "DATATYPE");
-Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterValue, "V");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterVariant, "VARIANT");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterDate, "DATE");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterDateTime, "DATETIME");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterTime, "TIME");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterBool, "BOOL");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterInt, "INT");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterUInt, "UINT");
+Q_DEFINE_LATIN1_CONSTANT(DatatypeParameterUrl, "URL");
 Q_DEFINE_LATIN1_CONSTANT(GroupPrefix, "G");
 
 QTM_END_NAMESPACE
@@ -141,17 +149,7 @@ void QVCardImporterBackupHandler::propertyProcessed(
         }
         // If not found, it's a new empty detail with the definitionName set.
 
-        // Import the field
-        if (parameters.contains(DatatypeParameter, DatatypeParameterValue)) {
-            // The value was stored as a QVariant serialized in a QByteArray
-            QDataStream stream(property.variantValue().toByteArray());
-            QVariant value;
-            stream >> value;
-            detail.setValue(fieldName, value);
-        } else {
-            // The value was stored as a QString or QByteArray
-            detail.setValue(fieldName, property.variantValue());
-        }
+        detail.setValue(fieldName, deserializeValue(property));
 
         // Replace the equivalent detail in updatedDetails with the new one
         QMutableListIterator<QContactDetail> it(*updatedDetails);
@@ -168,6 +166,42 @@ void QVCardImporterBackupHandler::propertyProcessed(
         foreach (const QContactDetail& detail, *updatedDetails) {
             mDetailGroupMap.insert(group, detail);
         }
+    }
+}
+
+QVariant QVCardImporterBackupHandler::deserializeValue(const QVersitProperty& property)
+{
+    // Import the field
+    if (property.parameters().contains(DatatypeParameter, DatatypeParameterVariant)) {
+        // The value was stored as a QVariant serialized in a QByteArray
+        QDataStream stream(property.variantValue().toByteArray());
+        QVariant value;
+        stream >> value;
+        return value;
+    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterDate)) {
+        // The value was a QDate serialized as a string
+        return QDate::fromString(property.value(), Qt::ISODate);
+    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterTime)) {
+        // The value was a QTime serialized as a string
+        return QTime::fromString(property.value(), Qt::ISODate);
+    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterDateTime)) {
+        // The value was a QDateTime serialized as a string
+        return QDateTime::fromString(property.value(), Qt::ISODate);
+    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterBool)) {
+        // The value was a bool serialized as a string
+        return property.value().toInt() != 0;
+    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterInt)) {
+        // The value was an int serialized as a string
+        return property.value().toInt();
+    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterUInt)) {
+        // The value was a uint serialized as a string
+        return property.value().toUInt();
+    } else if (property.parameters().contains(DatatypeParameter, DatatypeParameterUrl)) {
+        // The value was a QUrl serialized as a string
+        return QUrl(property.value());
+    } else {
+        // The value was stored as a QString or QByteArray
+        return property.variantValue();
     }
 }
 
@@ -210,19 +244,7 @@ void QVCardExporterBackupHandler::detailProcessed(
             property.insertParameter(DetailDefinitionParameter, detail.definitionName());
             property.insertParameter(FieldParameter, it.key());
 
-            // serialize the value
-            if (it.value().type() == QVariant::String
-                || it.value().type() == QVariant::ByteArray) {
-                // store QStrings and QByteArrays as-is
-                property.setValue(it.value());
-            } else {
-                // store other types by serializing the QVariant in a QByteArray
-                QByteArray valueBytes;
-                QDataStream stream(&valueBytes, QIODevice::WriteOnly);
-                stream << it.value();
-                property.insertParameter(DatatypeParameter, DatatypeParameterValue);
-                property.setValue(valueBytes);
-            }
+            serializeValue(&property, it.value());
 
             toBeAdded->append(property);
             propertiesSynthesized = true;
@@ -234,6 +256,58 @@ void QVCardExporterBackupHandler::detailProcessed(
             QVersitProperty& property = (*toBeAdded)[i];
             property.setGroups(property.groups() << detailGroup);
         }
+    }
+}
+
+void QVCardExporterBackupHandler::serializeValue(QVersitProperty* property, const QVariant& value)
+{
+    // serialize the value
+    if (value.type() == QVariant::String
+        || value.type() == QVariant::ByteArray) {
+        // store QStrings and QByteArrays as-is
+        property->setValue(value);
+    } else if (value.type() == QVariant::Date) {
+        // Store a QDate as a string
+        QString valueString(value.toDate().toString(Qt::ISODate));
+        property->insertParameter(DatatypeParameter, DatatypeParameterDate);
+        property->setValue(valueString);
+    } else if (value.type() == QVariant::Time) {
+        // Store a QTime as a string
+        QString valueString(value.toTime().toString(Qt::ISODate));
+        property->insertParameter(DatatypeParameter, DatatypeParameterTime);
+        property->setValue(valueString);
+    } else if (value.type() == QVariant::DateTime) {
+        // Store a QDateTime as a string
+        QString valueString(value.toDateTime().toString(Qt::ISODate));
+        property->insertParameter(DatatypeParameter, DatatypeParameterDateTime);
+        property->setValue(valueString);
+    } else if (value.type() == QVariant::Bool) {
+        // Store an int as a string
+        QString valueString(QString::number(value.toBool() ? 1 : 0));
+        property->insertParameter(DatatypeParameter, DatatypeParameterBool);
+        property->setValue(valueString);
+    } else if (value.type() == QVariant::Int) {
+        // Store an int as a string
+        QString valueString(QString::number(value.toInt()));
+        property->insertParameter(DatatypeParameter, DatatypeParameterInt);
+        property->setValue(valueString);
+    } else if (value.type() == QVariant::UInt) {
+        // Store a uint as a string
+        QString valueString(QString::number(value.toUInt()));
+        property->insertParameter(DatatypeParameter, DatatypeParameterUInt);
+        property->setValue(valueString);
+    } else if (value.type() == QVariant::Url) {
+        // Store a QUrl as a string
+        QString valueString(value.toUrl().toString());
+        property->insertParameter(DatatypeParameter, DatatypeParameterUrl);
+        property->setValue(valueString);
+    } else {
+        // Store other types by serializing the QVariant in a QByteArray
+        QByteArray valueBytes;
+        QDataStream stream(&valueBytes, QIODevice::WriteOnly);
+        stream << value;
+        property->insertParameter(DatatypeParameter, DatatypeParameterVariant);
+        property->setValue(valueBytes);
     }
 }
 
