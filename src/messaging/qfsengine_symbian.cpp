@@ -2254,6 +2254,9 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 break;
         }
         sortCriteria.iAscending = fieldOrder.second == Qt::AscendingOrder?true:false;
+    } else {
+        // This is a workaroud for getFolderSpecificMessagesL crashing when default TEmailSortCriteria (EDontCare) is set
+        sortCriteria.iField = TEmailSortCriteria::EByDate;
     }
 
     if ((filters.count() == 1) &&
