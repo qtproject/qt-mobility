@@ -110,7 +110,7 @@ public:
     void Q_DECL_DEPRECATED setDetailHandler(QVersitContactExporterDetailHandler* handler);
     QList<QVersitDocument> Q_DECL_DEPRECATED exportContacts(const QList<QContact>& contacts);
     /* deprecated and internal */
-    QVersitContactExporterDetailHandler* Q_DECL_DEPRECATED detailHandler() const;
+    Q_DECL_DEPRECATED QVersitContactExporterDetailHandler* detailHandler() const;
 
 private:
     QVersitContactExporterPrivate* d;
