@@ -53,11 +53,16 @@ QGeoMapViewportNokia::QGeoMapViewportNokia(QGeoMappingManager *manager,
         QString *errorString)
         : QGeoMapViewport(manager)
 {
+    connect(manager,
+            SIGNAL(QGeoMapReply*),
+            this,
+            SLOT(tileFinished(QGeoMapReply*)));
 }
 
 QGeoMapViewportNokia::~QGeoMapViewportNokia()
 {
     //delete m_cache;
+    //TODO: clear m_pendingReplies
 }
 
 void QGeoMapViewportNokia::setZoomLevel(int zoomLevel)
@@ -99,6 +104,57 @@ void QGeoMapViewportNokia::paint(QPainter *painter, const QStyleOptionGraphicsIt
 
 void QGeoMapViewportNokia::requestTile(qint32 row, qint32 col)
 {
+    QuadTileInfo* info = new QuadTileInfo;
+    info->row = row;
+    info->col = col;
+    info->zoomLevel = zoomLevel();
+    info->size = m_tileSize;
+
+    QGeoMapReply* reply = mappingManager()->getTileImage(row, col, info->zoomLevel,
+                                                         m_tileSize, info->options);
+    m_pendingReplies.insert(reply, info);
+}
+
+void QGeoMapViewportNokia::tileFinished(QGeoMapReply* reply)
+{
+    if (!reply)
+        return;
+
+    //Unknown reply?
+    if (!m_pendingReplies.contains(reply)) {
+        reply->deleteLater();
+        return; //discard
+    }
+
+    QuadTileInfo* info = m_pendingReplies.take(reply);
+
+    if (reply->error() != QGeoMapReply::NoError) {
+        delete info;
+        reply->deleteLater();
+        return;
+    }
+
+    qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
+
+    ////has map configuration changed in the meantime?
+    //if (request.zoomLevel() != d->currZoomLevel ||
+    //        request.format().id != d->mapFormat.id ||
+    //        request.resolution().id != d->mapResolution.id ||
+    //        request.scheme().id != d->mapSchmeme.id ||
+    //        request.version().id != d->mapVersion.id) {
+    //    delete reply;
+    //    return; //discard
+    //}
+
+    QPixmap tile = reply->mapImage();
+
+    if(!tile.isNull() && !tile.size().isEmpty()) {
+        m_mapTiles[tileIndex] = qMakePair(tile, true);
+        //TODO: call update on associated map widget
+    }
+
+    delete info;
+    reply->deleteLater();
 }
 
 void QGeoMapViewportNokia::setCenter(const QGeoCoordinate &center)

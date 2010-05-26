@@ -124,6 +124,9 @@ public:
 
     static qint64 getTileIndex(qint32 row, qint32 col, qint32 zoomLevel);
 
+private slots:
+    void tileFinished(QGeoMapReply* reply);
+
 private:
     void requestTile(qint32 row, qint32 col);
 

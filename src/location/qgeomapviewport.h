@@ -84,6 +84,9 @@ public:
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
 
+protected:
+    QGeoMappingManager* mappingManager() const;
+
 private:
     QGeoMapViewportPrivate* d_ptr;
 

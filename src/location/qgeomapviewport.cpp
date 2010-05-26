@@ -120,6 +120,12 @@ QSize QGeoMapViewport::viewportSize() const
     return d->viewportSize;
 }
 
+QGeoMappingManager* QGeoMapViewport::mappingManager() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->manager;
+}
+
 /*!
     Sets the map \a widget associated with this mapping service.
     Whenever the internal map representation changes,
