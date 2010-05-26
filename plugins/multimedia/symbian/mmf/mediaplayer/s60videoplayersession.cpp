@@ -449,6 +449,8 @@ void S60VideoPlayerSession::resetVideoDisplay()
                                        *m_window, 
                                        m_rect, 
                                        m_rect));
+        if (err == KErrNone)
+            m_dsaActive = true;
         setError(err);
         if(    mediaStatus() == QMediaPlayer::LoadedMedia 
             || mediaStatus() == QMediaPlayer::StalledMedia 
