@@ -135,7 +135,7 @@ private:
     CVideoPlayerUtility *m_player;
 #endif // MMF_VIDEO_SURFACES_SUPPORTED
     TRect m_rect;
-    QVideoOutputControl::Output m_output;
+    //QVideoOutputControl::Output m_output;
     WId m_windowId;
     bool m_dsaActive;
     bool m_dsaStopped;

@@ -50,8 +50,8 @@ void tst_QMediaRecorder::initTestCase()
     captureSource = new QAudioCaptureSource;
     audiocapture = new QMediaRecorder(captureSource);
 
-    audioEndpoint = qobject_cast<QAudioEndpointSelector*>(audiocapture->service()->control(QAudioEndpointSelector_iid));
-    audioEncoder = qobject_cast<QAudioEncoderControl*>(audiocapture->service()->control(QAudioEncoderControl_iid));
+    //FIXME audioEndpoint = qobject_cast<QAudioEndpointSelector*>(audiocapture->service()->requestControl(QAudioEndpointSelector_iid));
+    //FIXME audioEncoder = qobject_cast<QAudioEncoderControl*>(audiocapture->service()->requestControl(QAudioEncoderControl_iid));
 }
 
 void tst_QMediaRecorder::cleanupTestCase()

@@ -45,9 +45,9 @@
 #include <QtCore/qobject.h>
 
 #include <qmediaservice.h>
-// #include <qvideooutputcontrol.h>
+//FIXME #include <qvideooutputcontrol.h>
 
-// #include "s60videooutputcontrol.h"
+//FIXME #include "s60videooutputcontrol.h"
 #include "ms60mediaplayerresolver.h"
 
 #include "s60mediaplayeraudioendpointselector.h"
@@ -82,7 +82,7 @@ public:
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *control);
 
-// private slots:
+//FIXME  private slots:
 //    void videoOutputChanged(QVideoOutputControl::Output output);
 
 protected: // From MS60MediaPlayerResolver
@@ -92,7 +92,7 @@ protected: // From MS60MediaPlayerResolver
     
 private:
     S60MediaPlayerControl *m_control;
-//    mutable S60VideoOutputControl *m_videoOutput;
+//FIXME    mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
     mutable S60MediaMetaDataProvider *m_metaData;

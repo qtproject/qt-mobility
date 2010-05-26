@@ -58,7 +58,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     : S60MediaPlayerSession(service)
     , m_player(0)
     , m_rect(0, 0, 0, 0)
-    , m_output(QVideoOutputControl::NoOutput)
+//FIXME    , m_output(QVideoOutputControl::NoOutput)
     , m_windowId(0)
     , m_dsaActive(false)
     , m_dsaStopped(false)
@@ -147,7 +147,7 @@ qint64 S60VideoPlayerSession::doGetDurationL() const
 void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 {
     Q_UNUSED(videoOutput)
-    QVideoOutputControl *videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
+/*FIXME    QVideoOutputControl *videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
     
     //Renderer changes
     if (m_output != videoControl->output()) {
@@ -171,11 +171,12 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
         m_output = videoControl->output();
         resetVideoDisplay();
     }
+*/
 }
 
 bool S60VideoPlayerSession::resetNativeHandles()
 {
-    QVideoOutputControl* videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
+/*FIXME    QVideoOutputControl* videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
     WId newId = 0;
     TRect newRect = TRect(0,0,0,0);
     Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio;
@@ -212,6 +213,7 @@ bool S60VideoPlayerSession::resetNativeHandles()
         return true;
     }
     return false;
+*/    
 }
 
 bool S60VideoPlayerSession::isVideoAvailable() const
@@ -311,7 +313,7 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
-    setError(aError);
+/*FIXME    setError(aError);
     TRect rect;
     S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
     const QSize size = widgetControl->videoWidgetSize();
@@ -341,6 +343,7 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
     setError(err);
 #endif
     loaded();
+    */
 }
 #else
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
@@ -408,9 +411,9 @@ void S60VideoPlayerSession::resetVideoDisplay()
 {
     if (resetNativeHandles()) {
         TRect rect;
-        S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
-        const QSize size = widgetControl->videoWidgetSize();
-        rect.SetSize(TSize(size.width(), size.height()));
+//FIXME        S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
+//FIXME        const QSize size = widgetControl->videoWidgetSize();
+//FIXME        rect.SetSize(TSize(size.width(), size.height()));
         if (m_displayWindow)
             m_player->RemoveDisplayWindow(*m_displayWindow);
         RWindow *window = static_cast<RWindow *>(m_window);

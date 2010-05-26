@@ -61,7 +61,7 @@
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     : QMediaService(parent)
     , m_control(NULL)
-    , m_videoOutput(NULL)
+//  FIXME  , m_videoOutput(NULL)
     , m_videoPlayerSession(NULL)
     , m_audioPlayerSession(NULL)
     , m_metaData(NULL)
@@ -80,7 +80,7 @@ S60MediaPlayerService::~S60MediaPlayerService()
     delete m_videoWidget;
     delete m_videoRenderer;
     delete m_videoWindow;
-    delete m_videoOutput;
+// FIXME    delete m_videoOutput;
 }
 
 QMediaControl *S60MediaPlayerService::requestControl(const char *name)
@@ -92,14 +92,14 @@ QMediaControl *S60MediaPlayerService::requestControl(const char *name)
         return m_metaData;
     }
 
-    if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
-        if (!m_videoOutput) {
-            m_videoOutput = new S60VideoOutputControl;
-            connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-                    this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-        }
-        return m_videoOutput;
-    }
+//FIXME    if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
+//        if (!m_videoOutput) {
+//            m_videoOutput = new S60VideoOutputControl;
+//            connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+//                    this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+//        }
+//        return m_videoOutput;
+//    }
 
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
         if (!m_videoWidget)
@@ -132,7 +132,7 @@ void S60MediaPlayerService::releaseControl(QMediaControl *control)
     Q_UNUSED(control)
 }
 
-
+/*FIXME
 void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
 {
     switch (output) {
@@ -155,7 +155,7 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
         break;
     }
 }
-
+*/
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
     QUrl url = m_control->media().canonicalUrl();
