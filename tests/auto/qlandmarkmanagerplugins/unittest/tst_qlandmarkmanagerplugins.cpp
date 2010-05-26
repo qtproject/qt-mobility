@@ -80,7 +80,9 @@ Q_IMPORT_PLUGIN(landmarks_testdummystatic)
 
 void tst_QLandmarkManagerPlugins::testDummy()
 {
+#ifndef Q_OS_SYMBIAN
     QVERIFY(QLandmarkManager::availableManagers().contains("LandmarkManagerFactoryDummyStatic"));
+#endif
     QVERIFY(QLandmarkManager::availableManagers().contains("LandmarkManagerFactoryDummyDynamic"));
 #if !defined (Q_OS_SYMBIAN) && !defined(Q_OS_WINCE) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
 
