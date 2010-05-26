@@ -458,7 +458,13 @@ QMessageAccountId createImapAndSmtpAccountL(const TDesC& accountName, const TDes
     pImSmtpSettings->SetReplyToAddressL(fromAddress);
     pImSmtpSettings->SetReceiptAddressL(fromAddress);
     pImSmtpSettings->SetPort(25);
-    pEmailAccounts->CreateSmtpAccountL(imapAccount, *pImSmtpSettings, *pImIAPPreferences, EFalse);
+    TSmtpAccount smtpAccount = pEmailAccounts->CreateSmtpAccountL(imapAccount, *pImSmtpSettings, *pImIAPPreferences, EFalse);
+    
+    TSmtpAccount defaultAccount;
+    if (pEmailAccounts->DefaultSmtpAccountL(defaultAccount) == KErrNotFound)
+        {
+        pEmailAccounts->SetDefaultSmtpAccountL(smtpAccount);
+        }
 
     CleanupStack::PopAndDestroy(pImSmtpSettings);
     CleanupStack::PopAndDestroy(pImap4Settings);

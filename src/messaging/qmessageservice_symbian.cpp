@@ -308,10 +308,17 @@ void QMessageServicePrivate::messagesCounted(int count)
 
 bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
-  //  if (SymbianHelpers::isFreestyleMessage(id))
-  //      return CFSEngine::instance()->exportUpdates(id);
-  //  else
-        return CMTMEngine::instance()->exportUpdates(id);
+    switch (idType(id)) {
+            case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+                return CFSEngine::instance()->exportUpdates(id);
+#else
+                return false;
+#endif
+            case EngineTypeMTM:
+            default:
+                return CMTMEngine::instance()->exportUpdates(id);;
+    }
 }
 
 void QMessageServicePrivate::setFinished(bool successful)
