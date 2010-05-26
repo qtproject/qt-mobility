@@ -57,6 +57,7 @@ private Q_SLOTS:
     void attributes();
     void equality_data();
     void equality();
+    void copy();
 };
 
 void tst_QGalleryResource::null()
@@ -212,6 +213,47 @@ void tst_QGalleryResource::equality()
     QCOMPARE(resource1 != resource2, !isEqual);
     QCOMPARE(resource2 != resource1, !isEqual);
 }
+
+
+void tst_QGalleryResource::copy()
+{
+    const int sampleRateKey = 3;
+    const int audioCodecKey = 6;
+    const int videoCodecKey = 9;
+
+    const QUrl url1("file:///a/local/video/file.m4v");
+    const QUrl url2("http://example.com/video.mpg");
+
+    QMap<int, QVariant> attributes1;
+    attributes1.insert(sampleRateKey, 44100);
+    attributes1.insert(audioCodecKey, QLatin1String("aac"));
+    attributes1.insert(videoCodecKey,  QLatin1String("h264"));
+
+    QMap<int, QVariant> attributes2;
+    attributes2.insert(sampleRateKey, 22050);
+
+    QGalleryResource resource1(url1);
+    QGalleryResource resource2(url1, attributes1);
+    QGalleryResource resource3(url2, attributes2);
+
+    QCOMPARE(resource1.url(), url1);
+    QCOMPARE(resource1.attributes().isEmpty(), true);
+
+    QCOMPARE(resource2.url(), url1);
+    QCOMPARE(resource2.attributes(), attributes1);
+
+    QCOMPARE(resource3.url(), url2);
+    QCOMPARE(resource3.attributes(), attributes2);
+
+    resource1 = resource2;
+    QCOMPARE(resource1.url(), url1);
+    QCOMPARE(resource1.attributes(), attributes1);
+
+    resource2 = resource3;
+    QCOMPARE(resource2.url(), url2);
+    QCOMPARE(resource2.attributes(), attributes2);
+}
+
 
 QTEST_MAIN(tst_QGalleryResource)
 
