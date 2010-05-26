@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qmobilityglobal.h>
+//#include <qmobilityglobal.h>
 
 #include <QString>
 #include <QList>
@@ -61,10 +61,10 @@
 class QXmlStreamReader;
 class QIODevice;
 
-#include <qgeocoordinate.h>
-#include <qgeoboundingbox.h>
-#include <qgeoplace.h>
-#include <qgeoaddress.h>
+#include <QGeoCoordinate>
+#include <QGeoBoundingBox>
+#include <QGeoPlace>
+#include <QGeoAddress>
 
 QTM_USE_NAMESPACE
 

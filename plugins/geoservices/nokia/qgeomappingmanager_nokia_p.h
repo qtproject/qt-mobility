@@ -53,10 +53,9 @@
 // We mean it.
 //
 
-#include <qgeoserviceprovider.h>
-#include <qgeomappingmanager.h>
-#include <qgeomaprequestoptions.h>
-
+#include <QGeoServiceProvider>
+#include <QGeoMappingManager>
+#include <QGeoMapRequestOptions>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QHash>

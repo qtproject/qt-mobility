@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_NOKIA_P_H
-#define QGEOSERVICEPROVIDER_NOKIA_P_H
+#ifndef QGEOSERVICEPROVIDERPLUGIN_NOKIA_P_H
+#define QGEOSERVICEPROVIDERPLUGIN_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qgeoserviceproviderplugin.h>
+#include <QGeoServiceProviderPlugin>
 #include <QObject>
 
 QTM_USE_NAMESPACE
@@ -79,4 +79,4 @@ public:
                                              QString *errorString) const;
 };
 
-#endif
+#endif  // QGEOSERVICEPROVIDERPLUGIN_NOKIA_P_H

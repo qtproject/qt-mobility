@@ -42,9 +42,8 @@
 #include "qgeoplacesmanager_nokia_p.h"
 #include "qgeoplacesreply_nokia_p.h"
 
-#include <qgeoaddress.h>
-#include <qgeocoordinate.h>
-
+#include <QGeoAddress>
+#include <QGeoCoordinate>
 #include <QNetworkProxy>
 #include <QMap>
 

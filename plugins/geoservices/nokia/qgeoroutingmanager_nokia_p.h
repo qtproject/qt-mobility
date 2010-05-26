@@ -53,9 +53,8 @@
 // We mean it.
 //
 
-#include <qgeoserviceprovider.h>
-#include <qgeoroutingmanager.h>
-
+#include <QGeoServiceProvider>
+#include <QGeoRoutingManager>
 #include <QNetworkAccessManager>
 
 QTM_USE_NAMESPACE

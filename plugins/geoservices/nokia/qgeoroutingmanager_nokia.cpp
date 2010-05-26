@@ -43,7 +43,6 @@
 #include "qgeoroutereply_nokia_p.h"
 
 #include <QStringList>
-
 #include <QNetworkProxy>
 
 QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
