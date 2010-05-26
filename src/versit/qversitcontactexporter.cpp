@@ -209,8 +209,8 @@ QTM_USE_NAMESPACE
   object.  If a QVersitContactExporter has not been explicitly associated with a detail handler,
   it is associated with one created using this function.
 
-  This handler encodes details that the exporter doesn't recognise.  The format it uses to encode
-  the detail is as follows:
+  This handler encodes all writable details that the exporter doesn't recognise.  The format it uses
+  to encode the detail is as follows:
   \list
   \o All generated properties will have the name X-NOKIA-QCONTACTFIELD
   \o All generated properties will have a single Versit group, and all properties generated from a
