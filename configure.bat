@@ -362,25 +362,25 @@ setlocal
 
     for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
 
-    if %BUILDSYSTEM% == symbian-abld (
+    if "%BUILDSYSTEM%" == "symbian-abld" (
         call make -h >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... Symbian abld make found.
             set MAKE=make
         )
-    ) else if %BUILDSYSTEM% == symbian-sbsv2 (
+    ) else if "%BUILDSYSTEM%" == "symbian-sbsv2" (
         call make -h >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... Symbian sbsv2 make found.
             set MAKE=make
         )
-    ) else if %BUILDSYSTEM% == win32-nmake (
+    ) else if "%BUILDSYSTEM%" == "win32-nmake" (
         call nmake /? >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... nmake found.
             set MAKE=nmake
         )
-    ) else if %BUILDSYSTEM% == win32-mingw (
+    ) else if "%BUILDSYSTEM%" == "win32-mingw" (
         call mingw32-make -v >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... mingw32-make found.
@@ -418,10 +418,10 @@ setlocal
     call %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
 
     set FAILED=0
-    if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
+    if "%MOBILITY_BUILDSYSTEM%" == "symbian-sbsv2" (
         call %MOBILITY_MAKE% release-armv5 >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-armv5 SBS^="@sbs --check"') do set FAILED=1
-    ) else if %MOBILITY_BUILDSYSTEM% == symbian-abld (
+    ) else if "%MOBILITY_BUILDSYSTEM%" == "symbian-abld" (
         call %MOBILITY_MAKE% release-gcce >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
     ) else (
@@ -449,6 +449,11 @@ endlocal&goto :EOF
 echo.
 echo Start of compile tests
 REM compile tests go here.
+if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
+if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
+goto noTests
+
+:symbianTests
 call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
@@ -460,6 +465,8 @@ call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
 call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
+
+:noTests
 
 echo End of compile tests
 echo.
@@ -504,7 +511,7 @@ if %FIRST% == bearer (
         cd config.tests\qtmultimedia
     )
     for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\qtmultimedia\qtmultimedia.pro 2^>^&1 1^>NUL') do set QTMULTIMEDIA=%%i 
-    if NOT %QTMULTIMEDIA% == multimedia (
+    if NOT "%QTMULTIMEDIA%" == "multimedia" (
         perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
         perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\audio
         perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\video
