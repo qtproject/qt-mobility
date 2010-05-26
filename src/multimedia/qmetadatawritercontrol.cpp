@@ -47,23 +47,23 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMetaDataWriterControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
     \brief The QMetaDataWriterControl class provides write access to the
     meta-data of a QMediaService's media.
 
-    If a QMediaService can provide read or write access to the meta-data of
-    its current media it will implement QMetaDataWriterControl.  This control
+    If a QMediaService can provide write access to the meta-data of its
+    current media it will implement QMetaDataWriterControl.  This control
     provides functions for both retrieving and setting meta-data values.
     Meta-data may be addressed by the well defined keys in the
-    QtMediaServices::MetaData enumeration using the metaData() functions, or by
-    string keys using the extendedMetaData() functions.
+    QtMediaServices::MetaData enumeration using the metaData() functions, or
+    by string keys using the extendedMetaData() functions.
 
-    The functionality provided by this control is exposed to application
-    code by the meta-data members of QMediaObject, and so meta-data access
-    is potentially available in any of the media object classes.  Any media
-    service may implement QMetaDataWriterControl.
+    The functionality provided by this control is exposed to application code
+    by the meta-data members of QMediaObject, and so meta-data access is
+    potentially available in any of the media object classes.  Any media
+    service may implement QMetaDataControl.
 
     The interface name of QMetaDataWriterControl is \c com.nokia.Qt.QMetaDataWriterControl/1.0 as
     defined in QMetaDataWriterControl_iid.

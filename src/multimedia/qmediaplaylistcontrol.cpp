@@ -47,19 +47,20 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
-    \brief The QMediaPlaylistControl class provides access to the playlist functionality of a
-    QMediaService.
+    \brief The QMediaPlaylistControl class provides access to the playlist
+    functionality of a QMediaService.
 
-    If a QMediaService contains an internal playlist it will implement QMediaPlaylistControl.  This
-    control provides access to the contents of the \l {playlistProvider()}{playlist}, as well as the
-    \l {currentIndex()}{position} of the current media, and a means of navigating to the
-    \l {next()}{next} and \l {previous()}{previous} media.
+    If a QMediaService contains an internal playlist it will implement
+    QMediaPlaylistControl.  This control provides access to the contents of the
+    \l {playlistProvider()}{playlist}, as well as the \l
+    {currentIndex()}{position} of the current media, and a means of navigating
+    to the \l {next()}{next} and \l {previous()}{previous} media.
 
-    The functionality provided by the control is exposed to application code through the
-    QMediaPlaylist class.
+    The functionality provided by the control is exposed to application code
+    through the QMediaPlaylist class.
 
     The interface name of QMediaPlaylistControl is \c com.nokia.Qt.QMediaPlaylistControl/1.0 as
     defined in QMediaPlaylistControl_iid.
