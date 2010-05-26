@@ -4504,7 +4504,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
             matchingFilters.insert(it.key());
         } else {
             QMessageFilterPrivate* privateMessageFilter = QMessageFilterPrivate::implementation(filter);
-            if (privateMessageFilter->_field == QMessageFilterPrivate::Type) {
+            if (privateMessageFilter->_field == QMessageFilterPrivate::Type && aEvent != EMsvEntriesCreated) {
                 if (aMsgType == KUidMsgTypeSMS) {
                     message.setType(QMessage::Sms);
                 } else if (aMsgType == KUidMsgTypeMultimedia) {
@@ -4516,7 +4516,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 } else {
                     message.setType(QMessage::NoType);
                 }
-            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder) &&
+            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder && aEvent != EMsvEntriesCreated) &&
                        (aMsgType == KUidMsgTypeSMS || aMsgType == KUidMsgTypeMultimedia)) {
                 if (aFolderId == KMsvGlobalInBoxIndexEntryId) {
                     QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
