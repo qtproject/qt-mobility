@@ -1,5 +1,5 @@
 contains(QT_CONFIG, multimedia) {
-    message("TRUE")
+    message(multimedia)
 } else {
-    message("FALSE")
+    message(no-multimedia)
 } 
