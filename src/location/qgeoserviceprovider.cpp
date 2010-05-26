@@ -108,7 +108,7 @@ QStringList QGeoServiceProvider::availableServiceProviders()
     provide details about why this is the case.
 */
 QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters)
-    : d_ptr(new QGeoServiceProviderPrivate())
+        : d_ptr(new QGeoServiceProviderPrivate())
 {
     d_ptr->loadPlugin(providerName, parameters);
     d_ptr->parameterMap = parameters;
@@ -123,8 +123,8 @@ QGeoServiceProvider::~QGeoServiceProvider()
 }
 
 /*!
-    Returns the QGeoPlacesManager that is responsible for geocoding and 
-    string based landmark search operations made available by the service 
+    Returns the QGeoPlacesManager that is responsible for geocoding and
+    string based landmark search operations made available by the service
     provider.
 
     This function will return 0 if the service provider does not provide
@@ -139,8 +139,8 @@ QGeoPlacesManager* QGeoServiceProvider::placesManager() const
 
     if (!d_ptr->placesManager) {
         d_ptr->placesManager = d_ptr->plugin->createPlacesManager(d_ptr->parameterMap,
-                                                                  &(d_ptr->placesError),
-                                                                  &(d_ptr->placesErrorString));
+                               &(d_ptr->placesError),
+                               &(d_ptr->placesErrorString));
 
         if (d_ptr->placesError != QGeoServiceProvider::NoError) {
             delete d_ptr->placesManager;
@@ -169,8 +169,8 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 
     if (!d_ptr->mappingManager) {
         d_ptr->mappingManager = d_ptr->plugin->createMappingManager(d_ptr->parameterMap,
-                                                                    &(d_ptr->mappingError),
-                                                                    &(d_ptr->mappingErrorString));
+                                &(d_ptr->mappingError),
+                                &(d_ptr->mappingErrorString));
 
         if (d_ptr->mappingError != QGeoServiceProvider::NoError) {
             delete d_ptr->mappingManager;
@@ -199,9 +199,9 @@ QGeoMapViewport* QGeoServiceProvider::mapViewport() const
 
     if (!d_ptr->mapViewport) {
         d_ptr->mapViewport = d_ptr->plugin->createMapViewport(mappingManager(),
-                                                              d_ptr->parameterMap,
-                                                              &(d_ptr->viewportError),
-                                                              &(d_ptr->viewportErrorString));
+                             d_ptr->parameterMap,
+                             &(d_ptr->viewportError),
+                             &(d_ptr->viewportErrorString));
 
         if (d_ptr->viewportError != QGeoServiceProvider::NoError) {
             delete d_ptr->mapViewport;
@@ -230,8 +230,8 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 
     if (!d_ptr->routingManager) {
         d_ptr->routingManager = d_ptr->plugin->createRoutingManager(d_ptr->parameterMap,
-                                                                  &(d_ptr->routingError),
-                                                                  &(d_ptr->routingErrorString));
+                                &(d_ptr->routingError),
+                                &(d_ptr->routingErrorString));
 
         if (d_ptr->routingError != QGeoServiceProvider::NoError) {
             delete d_ptr->routingManager;
@@ -262,14 +262,14 @@ QString QGeoServiceProvider::errorString() const
 *******************************************************************************/
 
 QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
-    : plugin(0),
-    placesManager(0),
-    routingManager(0),
-    mappingManager(0),
-    placesError(QGeoServiceProvider::NoError),
-    routingError(QGeoServiceProvider::NoError),
-    mappingError(QGeoServiceProvider::NoError),
-    error(QGeoServiceProvider::NoError) {}
+        : plugin(0),
+        placesManager(0),
+        routingManager(0),
+        mappingManager(0),
+        placesError(QGeoServiceProvider::NoError),
+        routingError(QGeoServiceProvider::NoError),
+        mappingError(QGeoServiceProvider::NoError),
+        error(QGeoServiceProvider::NoError) {}
 
 QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
 {
@@ -283,7 +283,7 @@ QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()
         delete mappingManager;
 }
 
-void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString,QString> &parameters)
+void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const QMap<QString, QString> &parameters)
 {
     if (!QGeoServiceProviderPrivate::plugins().keys().contains(providerName)) {
         error = QGeoServiceProvider::NotSupportedError;
@@ -297,15 +297,14 @@ void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const Q
 
     QList<QGeoServiceProviderPlugin*> candidates = QGeoServiceProviderPrivate::plugins().values(providerName);
 
-    for (int i = 0; i < candidates.size(); ++i)
-    {
+    for (int i = 0; i < candidates.size(); ++i) {
         QGeoServiceProviderPlugin* p = candidates[i];
         if (p) {
             //if (p->initialize(parameters, &error, &errorString)) {
             //    error = QGeoServiceProvider::NoError;
             //    errorString = "";
-                plugin = p;
-                break;
+            plugin = p;
+            break;
             //}
         }
     }
@@ -327,13 +326,13 @@ QHash<QString, QGeoServiceProviderPlugin*> QGeoServiceProviderPrivate::plugins(b
     return plugins;
 }
 
-void QGeoServiceProviderPrivate::loadDynamicPlugins (QHash<QString, QGeoServiceProviderPlugin*> *plugins)
+void QGeoServiceProviderPrivate::loadDynamicPlugins(QHash<QString, QGeoServiceProviderPlugin*> *plugins)
 {
     QStringList paths;
     paths << mobilityPlugins(QLatin1String("geoservices"));
 
     QPluginLoader qpl;
-    for (int i=0;i < paths.count(); ++i) {
+    for (int i = 0;i < paths.count(); ++i) {
         qpl.setFileName(paths.at(i));
 
         QGeoServiceProviderPlugin *p = qobject_cast<QGeoServiceProviderPlugin*>(qpl.instance());
@@ -345,21 +344,21 @@ void QGeoServiceProviderPrivate::loadDynamicPlugins (QHash<QString, QGeoServiceP
             if (showDebug)
                 qDebug() << "Dynamic: found a service provider plugin with name" << name;
 #endif
-            plugins->insertMulti(name,p);
+            plugins->insertMulti(name, p);
         }
     }
 }
 
-void QGeoServiceProviderPrivate::loadStaticPlugins (QHash<QString, QGeoServiceProviderPlugin*> *plugins)
+void QGeoServiceProviderPrivate::loadStaticPlugins(QHash<QString, QGeoServiceProviderPlugin*> *plugins)
 {
 #if !defined QT_NO_DEBUG
     const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
 #endif
 
     QObjectList staticPlugins = QPluginLoader::staticInstances();
-    for(int i=0; i < staticPlugins.count(); ++i) {
+    for (int i = 0; i < staticPlugins.count(); ++i) {
         QGeoServiceProviderPlugin *p = qobject_cast<QGeoServiceProviderPlugin*>(staticPlugins.at(i));
-        if (p){
+        if (p) {
             QString name = p->providerName();
 
 #if !defined QT_NO_DEBUG
@@ -367,7 +366,7 @@ void QGeoServiceProviderPrivate::loadStaticPlugins (QHash<QString, QGeoServicePr
             if (showDebug)
                 qDebug() << "Static: found a service provider plugin with name" << name;
 #endif
-            if(!name.isEmpty()) {
+            if (!name.isEmpty()) {
                 plugins->insertMulti(name, p);
             }
         }

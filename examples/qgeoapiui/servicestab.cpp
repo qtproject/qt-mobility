@@ -54,7 +54,7 @@
 #include <qgeoserviceproviderplugin.h>
 
 ServicesTab::ServicesTab(QWidget *parent) :
-    QWidget(parent)
+        QWidget(parent)
 {
     m_requestBtn = new QPushButton(tr("Set Service Provider"));
     m_requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
@@ -86,15 +86,14 @@ void ServicesTab::initialize()
 {
     QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
     top->setText(0, tr("Loading Service Providers..."));
-    
+
     listServiceProviders();
 
     if (m_resultTree->topLevelItemCount() == 0) {
         m_requestBtn->setDisabled(true);
         QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
         top->setText(0, tr("No providers available"));
-    }
-    else {
+    } else {
         m_requestBtn->setDisabled(false);
         on_btnRequest_clicked();
     }
@@ -135,7 +134,7 @@ void ServicesTab::listServiceProviders()
     QList<QString> providers = QGeoServiceProvider::availableServiceProviders();
 
     QString providerId;
-    foreach(providerId,providers) {
+    foreach(providerId, providers) {
         QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
         top->setText(0, providerId);
         QGeoServiceProvider* serviceProvider = new QGeoServiceProvider(providerId);
@@ -165,5 +164,5 @@ void ServicesTab::listServiceProviders()
             prop->setText(1, tr("false"));
 
         delete serviceProvider;
-    }    
+    }
 }

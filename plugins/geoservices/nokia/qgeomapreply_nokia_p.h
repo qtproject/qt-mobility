@@ -65,8 +65,7 @@ class QGeoMapReplyNokia : public QGeoMapReply
     Q_OBJECT
 
 public:
-    struct QuadTileInfo
-    {
+    struct QuadTileInfo {
         int row;
         int col;
         int zoomLevel;

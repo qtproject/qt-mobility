@@ -108,6 +108,7 @@ private:
     QString m_host;
     QString m_token;
     QString m_referrer;
+    QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
 };
 
 #endif

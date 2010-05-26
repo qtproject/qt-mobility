@@ -53,9 +53,9 @@
 #include <qgeoaddress.h>
 
 GeocodingTab::GeocodingTab(QWidget *parent) :
-    QWidget(parent),
+        QWidget(parent),
         m_placesManager(NULL)
-{    
+{
     m_obloc = new QLineEdit("Deutschland, München");
     m_obloc->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
@@ -134,10 +134,10 @@ void GeocodingTab::initialize(QGeoPlacesManager *placesManager)
     m_placesManager = placesManager;
     if (m_placesManager) {
         QObject::connect(m_placesManager, SIGNAL(finished(QGeoPlacesReply*)), this,
-            SLOT(replyFinished(QGeoPlacesReply*)));
+                         SLOT(replyFinished(QGeoPlacesReply*)));
         QObject::connect(m_placesManager,
-            SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)), this,
-            SLOT(resultsError(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)));
+                         SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)), this,
+                         SLOT(resultsError(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)));
     }
 }
 
@@ -150,8 +150,7 @@ void GeocodingTab::on_btnRequest_clicked()
 
         if (!s.isEmpty()) {
             m_placesManager->placesSearch(s, QGeoPlacesManager::SearchGeocode);
-        }
-        else {
+        } else {
             QGeoAddress address;
             address.setCountry(m_country->text());
             address.setState(m_state->text());
@@ -161,8 +160,7 @@ void GeocodingTab::on_btnRequest_clicked()
             address.setThoroughfareNumber(m_streetNumber->text());
             m_placesManager->geocode(address);
         }
-    }
-    else {
+    } else {
         QMessageBox::warning(this, tr("Places"), tr("No places manager available."));
     }
 }
@@ -174,7 +172,7 @@ void GeocodingTab::replyFinished(QGeoPlacesReply* reply)
     reply->deleteLater();
 }
 
-void GeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode,QString errorString)
+void GeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString)
 {
     QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
     top->setText(0, tr("Error"));

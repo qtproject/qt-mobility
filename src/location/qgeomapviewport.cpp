@@ -77,9 +77,9 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoMapViewport object.
 */
 QGeoMapViewport::QGeoMapViewport(QGeoMappingManager *manager)
-    : d_ptr(new QGeoMapViewportPrivate)
+        : d_ptr(new QGeoMapViewportPrivate)
 {
-        d_ptr->manager = manager;
+    d_ptr->manager = manager;
 }
 
 /*!
@@ -101,7 +101,7 @@ int QGeoMapViewport::zoomLevel() const
 }
 
 /*!
-    Sets the \a size of the internal view port. This will usually be 
+    Sets the \a size of the internal view port. This will usually be
     set by the associated QGeoMapWidget to the size of its drawable
     rectangle.
 */
@@ -150,8 +150,8 @@ QSize QGeoMapViewport::viewportSize() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapViewportPrivate::QGeoMapViewportPrivate() 
-    : zoomLevel(0), manager(0)
+QGeoMapViewportPrivate::QGeoMapViewportPrivate()
+        : zoomLevel(0), manager(0)
 {}
 
 #include "moc_qgeomapviewport.cpp"

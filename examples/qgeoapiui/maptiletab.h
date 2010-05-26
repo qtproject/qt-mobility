@@ -57,7 +57,7 @@ class MapTileTab: public QWidget
 public:
     MapTileTab(QWidget *parent = 0);
     ~MapTileTab();
-    
+
 public slots:
     void initialize(QGeoMappingManager *mapManager);
 

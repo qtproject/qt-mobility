@@ -86,7 +86,7 @@ QTM_BEGIN_NAMESPACE
     Constructs a QGeoMappingManager object.
 */
 QGeoMappingManager::QGeoMappingManager()
-    : d_ptr(new QGeoMappingManagerPrivate) {}
+        : d_ptr(new QGeoMappingManagerPrivate) {}
 
 /*!
     Destroys this QGeoMappingManager object.
@@ -361,22 +361,22 @@ void QGeoMappingManager::setMaximumSize(const QSize &maximumSize)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingManagerPrivate::QGeoMappingManagerPrivate() 
+QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
 //    : mapWidget(0)
 {}
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other)
-    : supportedMapTypes(other.supportedMapTypes),
-    supportedImageFormats(other.supportedImageFormats),
-    minimumZoomLevel(other.minimumZoomLevel),
-    maximumZoomLevel(other.maximumZoomLevel),
-    minimumSize(other.minimumSize),
-    maximumSize(other.maximumSize)
+        : supportedMapTypes(other.supportedMapTypes),
+        supportedImageFormats(other.supportedImageFormats),
+        minimumZoomLevel(other.minimumZoomLevel),
+        maximumZoomLevel(other.maximumZoomLevel),
+        minimumSize(other.minimumSize),
+        maximumSize(other.maximumSize)
 {}
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate() {}
 
-QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate &other)
+QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate & other)
 {
     supportedMapTypes = other.supportedMapTypes;
     supportedImageFormats = other.supportedImageFormats;

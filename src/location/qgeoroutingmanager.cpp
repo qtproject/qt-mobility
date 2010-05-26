@@ -72,8 +72,8 @@ QTM_BEGIN_NAMESPACE
     This should only ever be called from subclasses of QGeoRoutingManager.
 */
 QGeoRoutingManager::QGeoRoutingManager(QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoRoutingManagerPrivate()) {}
+        : QObject(parent),
+        d_ptr(new QGeoRoutingManagerPrivate()) {}
 
 /*!
     Destroys this manager.
@@ -100,6 +100,11 @@ QGeoRoutingManager::~QGeoRoutingManager()
     If \a request includes features which are not supported by this manager, as
     reported by the methods in this manager, then a
     QGeoRouteReply::UnsupportedOptionError will occur.
+
+    The user is responsible for deleting the returned reply object, although
+    this can be done in the slot connected to QGeoRoutingManager::finished(),
+    QGeoRoutingManager::error(), QGeoRouteReply::finished() or
+    QGeoRouteReply::error() with deleteLater().
 */
 
 /*!
@@ -125,6 +130,11 @@ QGeoRoutingManager::~QGeoRoutingManager()
     Otherwise the route will be similar, although the remaining time and
     distance will be updated and any segments of the original route which
     have been traversed will be removed.
+
+    The user is responsible for deleting the returned reply object, although
+    this can be done in the slot connected to QGeoRoutingManager::finished(),
+    QGeoRoutingManager::error(), QGeoRouteReply::finished() or
+    QGeoRouteReply::error() with deleteLater().
 */
 
 /*!
@@ -280,20 +290,20 @@ Use deleteLater() instead.
 *******************************************************************************/
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
-    : supportsRouteUpdates(false),
-    supportsAlternativeRoutes(false) {}
+        : supportsRouteUpdates(false),
+        supportsAlternativeRoutes(false) {}
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other)
-    : supportsRouteUpdates(other.supportsRouteUpdates),
-    supportsAlternativeRoutes(other.supportsAlternativeRoutes),
-    supportedTravelModes(other.supportedTravelModes),
-    supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
-    supportedRouteOptimizations(other.supportedRouteOptimizations),
-    supportedInstructionDetails(other.supportedInstructionDetails) {}
+        : supportsRouteUpdates(other.supportsRouteUpdates),
+        supportsAlternativeRoutes(other.supportsAlternativeRoutes),
+        supportedTravelModes(other.supportedTravelModes),
+        supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
+        supportedRouteOptimizations(other.supportedRouteOptimizations),
+        supportedInstructionDetails(other.supportedInstructionDetails) {}
 
 QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate() {}
 
-QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRoutingManagerPrivate &other)
+QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRoutingManagerPrivate & other)
 {
     supportsRouteUpdates = other.supportsRouteUpdates;
     supportsAlternativeRoutes = other.supportsAlternativeRoutes;

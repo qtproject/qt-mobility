@@ -42,9 +42,9 @@
 #include "qgeomapreply_nokia_p.h"
 
 QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInfo, QObject *parent)
-    : QGeoMapReply(parent),
-    m_reply(reply),
-    m_tileInfo(tileInfo)
+        : QGeoMapReply(parent),
+        m_reply(reply),
+        m_tileInfo(tileInfo)
 {
     connect(m_reply,
             SIGNAL(finished()),
@@ -84,13 +84,13 @@ void QGeoMapReplyNokia::networkFinished()
     }
 
     QPixmap tile;
-    
+
     if (!tile.loadFromData(m_reply->readAll(), "PNG")) {
         // add a qWarning with the actual parser.errorString()
         setError(QGeoMapReply::ParseError, "The response from the service was not in a recognisable format.");
     }
 
-    if(!tile.isNull() && !tile.size().isEmpty()) {
+    if (!tile.isNull() && !tile.size().isEmpty()) {
         setMapImage(tile);
         setFinished(true);
     } else {

@@ -60,7 +60,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-        class QGeoRouteRequestPrivate : public QSharedData
+class QGeoRouteRequestPrivate : public QSharedData
 {
 public:
     QGeoRouteRequestPrivate();

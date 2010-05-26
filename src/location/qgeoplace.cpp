@@ -75,7 +75,7 @@ QGeoPlace::QGeoPlace()
 }
 
 QGeoPlace::QGeoPlace(QGeoPlacePrivate *dd)
-    : d_ptr(dd) {}
+        : d_ptr(dd) {}
 
 /*!
     Constructs a copy of \a other.
@@ -209,19 +209,19 @@ void QGeoPlace::setAddress(const QGeoAddress &address)
 *******************************************************************************/
 
 QGeoPlacePrivate::QGeoPlacePrivate()
-    : QSharedData(),
-    type(QGeoPlace::GeoPlaceType){}
+        : QSharedData(),
+        type(QGeoPlace::GeoPlaceType) {}
 
 QGeoPlacePrivate::QGeoPlacePrivate(const QGeoPlacePrivate &other)
-    : QSharedData(other),
-    type(other.type),
-    boundingBox(other.boundingBox),
-    coordinate(other.coordinate),
-    address(other.address) {}
+        : QSharedData(other),
+        type(other.type),
+        boundingBox(other.boundingBox),
+        coordinate(other.coordinate),
+        address(other.address) {}
 
-QGeoPlacePrivate::~QGeoPlacePrivate(){}
+QGeoPlacePrivate::~QGeoPlacePrivate() {}
 
-QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate &other)
+QGeoPlacePrivate& QGeoPlacePrivate::operator= (const QGeoPlacePrivate & other)
 {
     type = other.type;
     boundingBox = other.boundingBox;

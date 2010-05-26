@@ -102,6 +102,11 @@ QGeoRoute& QGeoRoute::operator= (const QGeoRoute & other)
 }
 
 /*!
+    Sets the ID of this route to \a id.
+
+    Service providers which support the updating of routes commonly assign
+    IDs to routes.  If this route came from such a service provider changing
+    the ID will probably cause route updates to stop working.
 */
 void QGeoRoute::setRouteId(const QString &id)
 {
@@ -109,6 +114,11 @@ void QGeoRoute::setRouteId(const QString &id)
 }
 
 /*!
+    Returns the ID of this route.
+
+    Service providers which support the updating of routes commonly assign
+    IDs to routes.  If this route did not come from such a service provider
+    the function will return an empty string.
 */
 QString QGeoRoute::routeId() const
 {
@@ -116,26 +126,22 @@ QString QGeoRoute::routeId() const
 }
 
 /*!
+    Sets the route request which describes the criteria used in the
+    calculcation of this route to \a request.
 */
-void QGeoRoute::setRequest(const QGeoRouteRequest &request)
+void QGeoRoute::setRequest(const QGeoRouteRequest &request) const
 {
     d_ptr->request = request;
 }
 
 /*!
+    Returns the route request which describes the criteria used in
+    the calculation of this route.
 */
 QGeoRouteRequest QGeoRoute::request() const
 {
     return d_ptr->request;
 }
-
-// TODO
-// this comes from the various specs
-// - won't this be highly dependent on zoom levels?
-// - could probably use the level of detail trick (min pixels distance)
-//   in order to generate a list of points per zoom level
-// - could then cache them in the route
-// - these methods would then me modified to have a zoom level parameter
 
 /*!
     Sets the list of coordinates suitable for providing a graphical
@@ -214,21 +220,35 @@ QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
     return d_ptr->routeSegments;
 }
 
-void QGeoRoute::setTravellingTime(int secs)
+/*!
+    Sets the estimated amount of time it will take to traverse this route,
+    in seconds, to \a secs.
+*/
+void QGeoRoute::setTravelTime(int secs)
 {
-    d_ptr->travellingTime = secs;
+    d_ptr->travelTime = secs;
 }
 
-int QGeoRoute::travellingTime() const
+/*!
+    Returns the estimated amount of time it will take to traverse this route,
+    in seconds.
+*/
+int QGeoRoute::travelTime() const
 {
-    return d_ptr->travellingTime;
+    return d_ptr->travelTime;
 }
 
+/*!
+    Sets the distance covered by this route to \a distance.
+*/
 void QGeoRoute::setDistance(const QGeoDistance &distance)
 {
     d_ptr->distance = distance;
 }
 
+/*!
+    Returns the distance covered by this route.
+*/
 QGeoDistance QGeoRoute::distance() const
 {
     return d_ptr->distance;
@@ -245,7 +265,7 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         pathSummary(other.pathSummary),
         bounds(other.bounds),
         routeSegments(other.routeSegments),
-        travellingTime(other.travellingTime),
+        travelTime(other.travelTime),
         distance(other.distance) {}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
@@ -257,7 +277,7 @@ QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
     pathSummary = other.pathSummary;
     bounds = other.bounds;
     routeSegments = other.routeSegments;
-    travellingTime = other.travellingTime;
+    travelTime = other.travelTime;
     distance = other.distance;
 
     return *this;

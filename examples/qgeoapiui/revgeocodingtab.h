@@ -58,14 +58,14 @@ class ReverseGeocodingTab: public QWidget
 public:
     ReverseGeocodingTab(QWidget *parent = 0);
     ~ReverseGeocodingTab();
-    
+
 public slots:
     void initialize(QGeoPlacesManager *placesManager);
 
 private slots:
     void on_btnRequest_clicked();
     void replyFinished(QGeoPlacesReply* reply);
-    void resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode,QString errorString);
+    void resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString);
 
 private:
     QGeoPlacesManager *m_placesManager;

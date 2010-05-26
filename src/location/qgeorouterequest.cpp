@@ -159,7 +159,7 @@ QTM_BEGIN_NAMESPACE
     The route will traverse the elements of \a waypoints in order.
 */
 QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
-    : d_ptr(new QGeoRouteRequestPrivate())
+        : d_ptr(new QGeoRouteRequestPrivate())
 {
     d_ptr->waypoints = waypoints;
 }
@@ -169,7 +169,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QList<QGeoCoordinate> &waypoints)
     \a destination.
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoordinate &destination)
-    : d_ptr(new QGeoRouteRequestPrivate())
+        : d_ptr(new QGeoRouteRequestPrivate())
 {
     d_ptr->waypoints.append(origin);
     d_ptr->waypoints.append(destination);
@@ -179,7 +179,7 @@ QGeoRouteRequest::QGeoRouteRequest(const QGeoCoordinate &origin, const QGeoCoord
     Constructs a route request object from the contents of \a other.
 */
 QGeoRouteRequest::QGeoRouteRequest(const QGeoRouteRequest &other)
-    : d_ptr(other.d_ptr) {}
+        : d_ptr(other.d_ptr) {}
 
 /*!
     Destroys the request.
@@ -192,7 +192,7 @@ QGeoRouteRequest::~QGeoRouteRequest()
     Assigns \a other to this route request object and then returns a reference
     to this route request object.
 */
-QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest &other)
+QGeoRouteRequest& QGeoRouteRequest::operator= (const QGeoRouteRequest & other)
 {
     d_ptr = other.d_ptr;
     return *this;

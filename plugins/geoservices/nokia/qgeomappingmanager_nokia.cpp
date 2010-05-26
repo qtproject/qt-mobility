@@ -51,7 +51,7 @@
 #include <math.h>
 
 QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-    : m_host("loc.desktop.maps.svc.ovi.com")
+        : m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_nam = new QNetworkAccessManager(this);
     m_cache = new QNetworkDiskCache(this);
@@ -62,15 +62,15 @@ QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &p
 
     QList<QString> keys = parameters.keys();
 
-    if(keys.contains("mapping.proxy")) {
+    if (keys.contains("mapping.proxy")) {
         QString proxy = parameters.value("mapping.proxy");
-        if(!proxy.isEmpty())
-            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
+        if (!proxy.isEmpty())
+            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
-    if(keys.contains("mapping.host")) {
+    if (keys.contains("mapping.host")) {
         QString host = parameters.value("mapping.host");
-        if(!host.isEmpty())
+        if (!host.isEmpty())
             m_host = host;
     }
 
@@ -102,8 +102,8 @@ QGeoMappingManagerNokia::~QGeoMappingManagerNokia()
 }
 
 QGeoMapReply* QGeoMappingManagerNokia::getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
-                                                    const QSize &size,
-                                                    const QGeoMapRequestOptions &requestOptions)
+        const QSize &size,
+        const QGeoMapRequestOptions &requestOptions)
 {
     QGeoMapReplyNokia::QuadTileInfo* info = new QGeoMapReplyNokia::QuadTileInfo;
     info->row = row;
@@ -126,9 +126,9 @@ QGeoMapReply* QGeoMappingManagerNokia::getTileImage(qint32 row, qint32 col, qint
             SLOT(mapFinished()));
 
     connect(mapReply,
-            SIGNAL(error(QGeoMapReply::Error,QString)),
+            SIGNAL(error(QGeoMapReply::Error, QString)),
             this,
-            SLOT(mapError(QGeoMapReply::Error,QString)));
+            SLOT(mapError(QGeoMapReply::Error, QString)));
 
     return mapReply;
 }
@@ -149,7 +149,7 @@ void QGeoMappingManagerNokia::mapFinished()
     qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
     m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
 
-    if(receivers(SIGNAL(finished(QGeoMapReply*))) == 0) {
+    if (receivers(SIGNAL(finished(QGeoMapReply*))) == 0) {
         reply->deleteLater();
         return;
     }
@@ -164,7 +164,7 @@ void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString 
     if (!reply)
         return;
 
-    if(receivers(SIGNAL(error(QGeoMapReply*, QGeoMapReply::Error, QString))) == 0) {
+    if (receivers(SIGNAL(error(QGeoMapReply*, QGeoMapReply::Error, QString))) == 0) {
         reply->deleteLater();
         return;
     }
@@ -235,7 +235,7 @@ void QGeoMappingManagerNokia::getTileQuadKey(const QGeoCoordinate& coordinate, q
 QString QGeoMappingManagerNokia::sizeToStr(const QSize &size)
 {
     if (size.height() >= LARGE_TILE_DIMENSION ||
-        size.width() >= LARGE_TILE_DIMENSION)
+            size.width() >= LARGE_TILE_DIMENSION)
         return "256";
     else
         return "128";
@@ -246,11 +246,9 @@ QString QGeoMappingManagerNokia::mapTypeToStr(MapType type)
     if (type == QGeoMappingManager::StreetMap)
         return "normal.day";
     else if (type == QGeoMappingManager::SatelliteMapDay ||
-             type == QGeoMappingManager::SatelliteMapNight)
-    {
+             type == QGeoMappingManager::SatelliteMapNight) {
         return "satellite.day";
-    }
-    else if (type == QGeoMappingManager::TerrainMap)
+    } else if (type == QGeoMappingManager::TerrainMap)
         return "terrain.day";
     else
         return "normal.day";
@@ -267,9 +265,9 @@ qint64 QGeoMappingManagerNokia::getTileIndex(qint32 row, qint32 col, qint32 zoom
 }
 
 QGeoMapReply* QGeoMappingManagerNokia::getMapImage(const QGeoCoordinate &center,
-                                                   qreal zoomLevel,
-                                                   const QSize &size,
-                                                   const QGeoMapRequestOptions &requestOptions)
+        qreal zoomLevel,
+        const QSize &size,
+        const QGeoMapRequestOptions &requestOptions)
 {
     return NULL;
 }

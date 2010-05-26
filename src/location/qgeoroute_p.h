@@ -79,7 +79,7 @@ public:
     QGeoBoundingBox bounds;
     QList<const QGeoRouteSegment*> routeSegments;
 
-    int travellingTime;
+    int travelTime;
     QGeoDistance distance;
 };
 

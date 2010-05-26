@@ -49,21 +49,21 @@
 #include <QMap>
 
 QGeoPlacesManagerNokia::QGeoPlacesManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-    : m_host("loc.desktop.maps.svc.ovi.com")
+        : m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_networkManager = new QNetworkAccessManager(this);
 
     QList<QString> keys = parameters.keys();
 
-    if(keys.contains("places.proxy")) {
+    if (keys.contains("places.proxy")) {
         QString proxy = parameters.value("places.proxy");
-        if(!proxy.isEmpty())
+        if (!proxy.isEmpty())
             m_networkManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
-    if(keys.contains("places.host")) {
+    if (keys.contains("places.host")) {
         QString host = parameters.value("places.host");
-        if(!host.isEmpty())
+        if (!host.isEmpty())
             m_host = host;
     }
 
@@ -151,7 +151,7 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::placesSearch(const QString &searchStrin
 {
 
     if ((searchTypes != QGeoPlacesManager::SearchTypes(QGeoPlacesManager::SearchAll))
-        && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
+            && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
 
         QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "The selected search type is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
@@ -183,9 +183,9 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::search(QString requestString)
             SLOT(placesFinished()));
 
     connect(reply,
-            SIGNAL(error(QGeoPlacesReply::Error,QString)),
+            SIGNAL(error(QGeoPlacesReply::Error, QString)),
             this,
-            SLOT(placesError(QGeoPlacesReply::Error,QString)));
+            SLOT(placesError(QGeoPlacesReply::Error, QString)));
 
     return reply;
 }
@@ -209,7 +209,7 @@ void QGeoPlacesManagerNokia::placesFinished()
     if (!reply)
         return;
 
-    if(receivers(SIGNAL(finished(QGeoPlacesReply*))) == 0) {
+    if (receivers(SIGNAL(finished(QGeoPlacesReply*))) == 0) {
         reply->deleteLater();
         return;
     }
@@ -220,11 +220,11 @@ void QGeoPlacesManagerNokia::placesFinished()
 void QGeoPlacesManagerNokia::placesError(QGeoPlacesReply::Error error, const QString &errorString)
 {
     QGeoPlacesReply *reply = qobject_cast<QGeoPlacesReply*>(sender());
-   
+
     if (!reply)
         return;
 
-    if(receivers(SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString))) == 0) {
+    if (receivers(SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString))) == 0) {
         reply->deleteLater();
         return;
     }

@@ -48,10 +48,10 @@
 #include <math.h>
 
 QGeoMapViewportNokia::QGeoMapViewportNokia(QGeoMappingManager *manager,
-                                           const QMap<QString, QString> &parameters, 
-                                           QGeoServiceProvider::Error *error, 
-                                           QString *errorString)
-    : QGeoMapViewport(manager)
+        const QMap<QString, QString> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString)
+        : QGeoMapViewport(manager)
 {
 }
 

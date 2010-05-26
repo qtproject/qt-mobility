@@ -43,8 +43,8 @@
 #include "qgeocodexmlparser_p.h"
 
 QGeoPlacesReplyNokia::QGeoPlacesReplyNokia(QNetworkReply *reply, QObject *parent)
-    : QGeoPlacesReply(parent),
-    m_reply(reply)
+        : QGeoPlacesReply(parent),
+        m_reply(reply)
 {
     connect(m_reply,
             SIGNAL(finished()),

@@ -52,47 +52,47 @@
 #include <qgeomappingmanager.h>
 #include <qgeomaprequestoptions.h>
 
-MapTileTab::MapTileTab(QWidget *parent) 
-    : QWidget(parent),
-    m_mapManager(NULL)
+MapTileTab::MapTileTab(QWidget *parent)
+        : QWidget(parent),
+        m_mapManager(NULL)
 {
     QLabel *coordlbl = new QLabel(tr("Coordinates:"));
     m_tileLong = new QLineEdit("-74");
-    m_tileLong->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_tileLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_tileLat = new QLineEdit("40.7");
-    m_tileLat->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_tileLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QLabel *zoomlbl = new QLabel(tr("Zoom:"));
     m_tileZoomLevel = new QLineEdit("8");
-    m_tileZoomLevel->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_tileZoomLevel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
     QPushButton *requestBtn = new QPushButton(tr("Request Map Tile"));
-    requestBtn->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed);
+    requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)), this, SLOT(on_btnRequest_clicked()));
-    
+
     m_result = new QLabel(tr("MapTile"));
 
     QHBoxLayout *firstrow = new QHBoxLayout;
     firstrow->setSpacing(0);
-    firstrow->setContentsMargins(0,0,0,0);
+    firstrow->setContentsMargins(0, 0, 0, 0);
     firstrow->addWidget(coordlbl);
     firstrow->addWidget(m_tileLong);
     firstrow->addWidget(m_tileLat);
-    
+
     QHBoxLayout *secondrow = new QHBoxLayout;
     secondrow->setSpacing(0);
-    secondrow->setContentsMargins(0,0,0,0);
+    secondrow->setContentsMargins(0, 0, 0, 0);
     secondrow->addWidget(zoomlbl);
     secondrow->addWidget(m_tileZoomLevel);
     secondrow->addWidget(requestBtn);
-    
+
     QHBoxLayout *resultrow = new QHBoxLayout;
     resultrow->setSpacing(0);
-    resultrow->setContentsMargins(0,0,0,0);
+    resultrow->setContentsMargins(0, 0, 0, 0);
     resultrow->addWidget(m_result);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(2);
-    mainLayout->setContentsMargins(2,1,2,1);
+    mainLayout->setContentsMargins(2, 1, 2, 1);
     mainLayout->addLayout(firstrow);
     mainLayout->addLayout(secondrow);
     mainLayout->addLayout(resultrow);
@@ -108,10 +108,10 @@ void MapTileTab::initialize(QGeoMappingManager *mapManager)
     m_mapManager = mapManager;
     if (m_mapManager) {
         QObject::connect(m_mapManager, SIGNAL(finished(QGeoMapReply*)), this,
-            SLOT(replyFinished(QGeoMapReply*)));
+                         SLOT(replyFinished(QGeoMapReply*)));
         QObject::connect(m_mapManager,
-            SIGNAL(error(QGeoMapReply*,QGeoMapReply::Error,QString)), this,
-            SLOT(resultsError(QGeoMapReply*,QGeoMapReply::Error,QString)));
+                         SIGNAL(error(QGeoMapReply*, QGeoMapReply::Error, QString)), this,
+                         SLOT(resultsError(QGeoMapReply*, QGeoMapReply::Error, QString)));
     }
 }
 
@@ -126,10 +126,9 @@ void MapTileTab::on_btnRequest_clicked()
         qint32 col;
         m_mapManager->getTileQuadKey(coord, zoomLevel, &row, &col);
 
-        if(!m_mapManager->getTileImage(row, col, zoomLevel, QSize(256,256), QGeoMapRequestOptions()))
-            m_result->setText(tr("Error - requestMap returned NULL"));        
-    }
-    else {
+        if (!m_mapManager->getTileImage(row, col, zoomLevel, QSize(256, 256), QGeoMapRequestOptions()))
+            m_result->setText(tr("Error - requestMap returned NULL"));
+    } else {
         QMessageBox::warning(this, tr("MapTile"), tr("No mapping manager available."));
     }
 }
@@ -142,6 +141,6 @@ void MapTileTab::replyFinished(QGeoMapReply* reply)
 
 void MapTileTab::resultsError(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString)
 {
-    m_result->setText(tr("Error ")+errorString);
+    m_result->setText(tr("Error ") + errorString);
     reply->deleteLater();
 }

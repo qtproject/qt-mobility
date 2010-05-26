@@ -45,51 +45,56 @@
 QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoPlacesReply
-    \brief The QGeoPlacesReply class represents the response from a geocoding service.
-    \ingroup location
 
-    This class represents the response from a geocoding service.
-    It also takes responsibility for any errors that happen while the request is
-    in submitted to and processed by the service.
+    \brief The QGeoPlacesReply class manages an operation started by an
+    instance of QGeoPlacesManager.
+
+    \ingroup maps
+
+    Instances of QGeoPlacesReply manage the state and results of these
+    operations.
+
+    The isFinished(), error() and errorString() methods provide information
+    on whether the operation has completed and if it completed succesfully.
+
+    If the operation completes successfully the results will be able to be
+    accessed with places().
 */
 
 /*!
-    \enum ErrorCode
+    \enum QGeoPlacesReply::Error
+
+    Describes an error which prevented the completion of the operation.
 
     \value NoError
         No error has occurred.
-    \value NetworkError
-        A networking error occurred.
-    \value NoContentError
-        The reply contained no content.
+    \value CommunicationError
+        An error occurred while communicating with the service provider.
+    \value ParseError
+        The response from the service provider was in an unrecognizable format.
+    \value UnsupportedOptionError
+        The requested operation or one of the options for the operation are not
+        supported by the service provider.
     \value UnknownError
         An error occurred which does not fit into any of the other categories.
 */
 
 /*!
-    Constructs a QGeoPlacesReply with parent \a parent.
+    Constructs a places reply with the specified \a parent.
 */
 QGeoPlacesReply::QGeoPlacesReply(QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoPlacesReplyPrivate()) {}
+        : QObject(parent),
+        d_ptr(new QGeoPlacesReplyPrivate()) {}
 
 /*!
-*/
-/*QGeoPlacesReply::QGeoPlacesReply(const QGeoBoundingBox &bounds, QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoPlacesReplyPrivate())
-{
-    d_ptr->bounds = bounds;
-}*/
-
-/*!
+    Constructs a places reply with a given \a error and \a errorString and the specified \a parent.
 */
 QGeoPlacesReply::QGeoPlacesReply(Error error, const QString &errorString, QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoPlacesReplyPrivate(error, errorString)) {}
+        : QObject(parent),
+        d_ptr(new QGeoPlacesReplyPrivate(error, errorString)) {}
 
 /*!
-    Destructor.
+    Destroys this places reply object.
 */
 QGeoPlacesReply::~QGeoPlacesReply()
 {
@@ -97,6 +102,14 @@ QGeoPlacesReply::~QGeoPlacesReply()
 }
 
 /*!
+    Sets whether or not this reply has finished to \a finished.
+
+    If \a finished is true, this will cause the finished() signal to be
+    emitted.
+
+    If the operation completed successfully, QGeoPlacesReply::setPlaces()
+    should be called before this function. If an error occured,
+    QGeoPlacesReply::setError() should be used instead.
 */
 void QGeoPlacesReply::setFinished(bool finished)
 {
@@ -106,6 +119,8 @@ void QGeoPlacesReply::setFinished(bool finished)
 }
 
 /*!
+    Return true if the operation completed successfully or encountered an
+    error which cause the operation to come to a halt.
 */
 bool QGeoPlacesReply::isFinished() const
 {
@@ -113,6 +128,11 @@ bool QGeoPlacesReply::isFinished() const
 }
 
 /*!
+    Sets the error state of this reply to \a error and the textual
+    representation of the error to \a errorString.
+
+    This wil also cause error() and finished() signals to be emitted, in that
+    order.
 */
 void QGeoPlacesReply::setError(QGeoPlacesReply::Error error, const QString &errorString)
 {
@@ -123,6 +143,9 @@ void QGeoPlacesReply::setError(QGeoPlacesReply::Error error, const QString &erro
 }
 
 /*!
+    Returns the error state of this reply.
+
+    If the result is QGeoPlacesReply::NoError then no error has occurred.
 */
 QGeoPlacesReply::Error QGeoPlacesReply::error() const
 {
@@ -130,6 +153,14 @@ QGeoPlacesReply::Error QGeoPlacesReply::error() const
 }
 
 /*!
+    Returns the textual representation of the error state of this reply.
+
+    If no error has occurred this will return an empty string.  It is possible
+    that an error occurred which has no associated textual representation, in
+    which case this will also return an empty string.
+
+    To determine whether an error has occurred, check to see if
+    QGeoPlacesReply::error() is equal to QGeoPlacesReply::NoError.
 */
 QString QGeoPlacesReply::errorString() const
 {
@@ -137,6 +168,7 @@ QString QGeoPlacesReply::errorString() const
 }
 
 /*!
+    Sets the viewport which contains the results to \a bounds.
 */
 void QGeoPlacesReply::setBounds(const QGeoBoundingBox &bounds)
 {
@@ -144,6 +176,10 @@ void QGeoPlacesReply::setBounds(const QGeoBoundingBox &bounds)
 }
 
 /*!
+    Returns the viewport which contains the results.
+
+    This function will return an invalid QGeoBoundingBox if no viewport bias
+    was specified in the QGeoPlacesManager function which created this reply.
 */
 QGeoBoundingBox QGeoPlacesReply::bounds() const
 {
@@ -151,7 +187,10 @@ QGeoBoundingBox QGeoPlacesReply::bounds() const
 }
 
 /*!
-    Returns a list of places corresponding to the request.
+    Returns a list of places.
+
+    The places are the results of the operation corresponding to the
+    QGeoPlacesManager function which created this reply.
 */
 QList<QGeoPlace> QGeoPlacesReply::places() const
 {
@@ -167,7 +206,7 @@ void QGeoPlacesReply::addPlace(const QGeoPlace &place)
 }
 
 /*!
-    Sets the list of places in the reply to \a places.
+    Sets the list of \a places in the reply.
 */
 void QGeoPlacesReply::setPlaces(const QList<QGeoPlace> &places)
 {
@@ -179,34 +218,38 @@ void QGeoPlacesReply::setPlaces(const QList<QGeoPlace> &places)
 
     This will do nothing if the reply is finished.
 */
-void QGeoPlacesReply::abort() {}
+void QGeoPlacesReply::abort()
+{
+    if (!isFinished())
+        setFinished(true);
+}
 
 /*!
     \fn void QGeoPlacesReply::finished()
 
-    This signal is emitted when \a reply has finished processing.
+    This signal is emitted when this reply has finished processing.
 
     If error() equals QGeoPlacesReply::NoError then the processing
     finished successfully.
 
-    This signal and QGeoPlacesManager::finished(QGeoRouteReply *reply) will be
+    This signal and QGeoPlacesManager::finished() will be
     emitted at the same time.
 
-    \note Do no delete the \a reply object in the slot connected to this
+    \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 /*!
     \fn void QGeoPlacesReply::error(QGeoPlacesReply::Error error, const QString &errorString)
 
     This signal is emitted when an error has been detected in the processing of
-    \a reply. The finished() signal will probably follow.
+    this reply. The finished() signal will probably follow.
 
     The error will be described by the error code \error. If \a errorString is
     not empty it will contain a textual description of the error.
 
-    This signal and QGeoPlacesReply::error() will be emitted at the same time.
+    This signal and QGeoPlacesManager::error() will be emitted at the same time.
 
-    \note Do no delete the \a reply object in the slot connected to this
+    \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 
@@ -214,25 +257,25 @@ void QGeoPlacesReply::abort() {}
 *******************************************************************************/
 
 QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate()
-    : error(QGeoPlacesReply::NoError),
-    errorString(""),
-    isFinished(false) {}
+        : error(QGeoPlacesReply::NoError),
+        errorString(""),
+        isFinished(false) {}
 
 QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate(QGeoPlacesReply::Error error, const QString &errorString)
-    : error(error),
-    errorString(errorString),
-    isFinished(true) {}
+        : error(error),
+        errorString(errorString),
+        isFinished(true) {}
 
 QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate(const QGeoPlacesReplyPrivate &other)
-    : error(error),
-    errorString(errorString),
-    isFinished(isFinished),
-    bounds(other.bounds),
-    places(other.places) {}
+        : error(error),
+        errorString(errorString),
+        isFinished(isFinished),
+        bounds(other.bounds),
+        places(other.places) {}
 
 QGeoPlacesReplyPrivate::~QGeoPlacesReplyPrivate() {}
 
-QGeoPlacesReplyPrivate& QGeoPlacesReplyPrivate::operator= (const QGeoPlacesReplyPrivate &other)
+QGeoPlacesReplyPrivate& QGeoPlacesReplyPrivate::operator= (const QGeoPlacesReplyPrivate & other)
 {
     error = other.error;
     errorString = other.errorString;
