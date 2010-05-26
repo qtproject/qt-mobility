@@ -58,29 +58,18 @@
 #include <qgeomaprequestoptions.h>
 
 #include <QNetworkAccessManager>
-#include <QNetworkReply>
+#include <QNetworkDiskCache>
 #include <QHash>
 #include <QPair>
 #include <QRectF>
 
-QTM_USE_NAMESPACE
+#include "qgeomapreply_nokia_p.h"
 
-class QGeoQuadTileCacheNokia;
+QTM_USE_NAMESPACE
 
 class QGeoMappingManagerNokia : public QGeoMappingManager
 {
     Q_OBJECT
-
-public:
-    struct QuadTileInfo
-    {
-        int row;
-        int col;
-        int zoomLevel;
-        QSize size;
-        QGeoMapRequestOptions options;
-    };
-
 public:
     QGeoMappingManagerNokia(const QMap<QString, QString> &parameters,
                             QGeoServiceProvider::Error *error,
@@ -114,7 +103,7 @@ private:
     Q_DISABLE_COPY(QGeoMappingManagerNokia)
     Q_DECLARE_PRIVATE(QGeoMappingManager)
 
-    QString getRequestString(const QuadTileInfo &info) const;
+    QString getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const;
 
 private slots:
     void mapFinished();
@@ -128,10 +117,8 @@ private:
 
 private:
     QNetworkAccessManager *m_nam;
+    QNetworkDiskCache *m_cache;
     QString m_host;
-    //QGeoQuadTileCacheNokia* m_cache;
-    QHash<QGeoMapReply*, QuadTileInfo*> m_pendingReplies;
-
     QString m_token;
     QString m_referrer;
 

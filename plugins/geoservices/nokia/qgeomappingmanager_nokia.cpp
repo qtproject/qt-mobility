@@ -45,6 +45,7 @@
 #include <qgeomappingmanager_p.h>
 
 #include <QSize>
+#include <QDir>
 
 #define LARGE_TILE_DIMENSION 256
 
@@ -55,6 +56,11 @@ QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &p
     : m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_nam = new QNetworkAccessManager(this);
+    m_cache = new QNetworkDiskCache(this);
+
+    QDir dir = QDir::temp();
+    dir.cd("maptiles");
+    m_cache->setCacheDirectory(dir.path());
 
     QList<QString> keys = parameters.keys();
 
@@ -63,11 +69,27 @@ QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &p
         if(!proxy.isEmpty())
             m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
     }
+
     if(keys.contains("mapping.host")) {
         QString host = parameters.value("mapping.host");
         if(!host.isEmpty())
             m_host = host;
     }
+
+    if (keys.contains("mapping.cache.directory")) {
+        QString cacheDir = parameters.value("mapping.cache.directory");
+        if (!cacheDir.isEmpty())
+            m_cache->setCacheDirectory(cacheDir);
+    }
+
+    if (keys.contains("mapping.cache.size")) {
+        bool ok = false;
+        qint64 cacheSize = parameters.value("mapping.cache.size").toLongLong(&ok);
+        if (ok)
+            m_cache->setMaximumCacheSize(cacheSize);
+    }
+
+    m_nam->setCache(m_cache);
 
     if (error)
         *error = QGeoServiceProvider::NoError;
@@ -95,67 +117,56 @@ QGeoMapReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoomLev
                                                    const QSize &size,
                                                    const QGeoMapRequestOptions &requestOptions)
 {
-    QuadTileInfo* info = new QuadTileInfo;
+    QGeoMapReplyNokia::QuadTileInfo* info = new QGeoMapReplyNokia::QuadTileInfo;
     info->row = row;
     info->col = col;
     info->zoomLevel = zoomLevel;
     info->size = size;
     info->options = requestOptions;
-    //check cache first
-    /*
-    QMapTileReplyNokia* tileReply = NULL;
 
-    if ((tileReply = m_cache->get(level, row, col, m_version, m_size, m_format, m_scheme))) {
-        connect(tileReply,
-                SIGNAL(finished()),
-                this,
-                SLOT(finishedReply()));
-        connect(tileReply,
-                SIGNAL(error(QMapTileReply::ErrorCode, QString)),
-                this,
-                SLOT(errorReply(QMapTileReply::ErrorCode, QString)));
-        tileReply->done();
-    } else {
-    */
-        QString rawRequest = getRequestString(*info);
-        QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
-        QNetworkReply* netReply = m_nam->get(netRequest);
-        QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, this);
-        m_pendingReplies.insert(mapReply, info);
+    QString rawRequest = getRequestString(*info);
 
-        connect(mapReply,
-                SIGNAL(finished()),
-                this,
-                SLOT(mapFinished()));
+    QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
+    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
 
-        connect(mapReply,
-                SIGNAL(error(QGeoMapReply::Error,QString)),
-                this,
-                SLOT(mapError(QGeoMapReply::Error,QString)));
+    QNetworkReply* netReply = m_nam->get(netRequest);
+    QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, info, this);
 
-    //}
+    connect(mapReply,
+            SIGNAL(finished()),
+            this,
+            SLOT(mapFinished()));
+
+    connect(mapReply,
+            SIGNAL(error(QGeoMapReply::Error,QString)),
+            this,
+            SLOT(mapError(QGeoMapReply::Error,QString)));
 
     return mapReply;
 }
 
 void QGeoMappingManagerNokia::mapFinished()
 {
-    QGeoMapReply *reply = qobject_cast<QGeoMapReply*>(sender());
+    QGeoMapReplyNokia *reply = qobject_cast<QGeoMapReplyNokia*>(sender());
 
     if (!reply)
         return;
 
-    if (m_pendingReplies.contains(reply)) {
-        QuadTileInfo* info = m_pendingReplies.take(reply);
-        qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
-        m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
-        delete info;
-//            reply->deleteLater();
-//        } else {
-        //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
-        emit finished(reply);
+    QGeoMapReplyNokia::QuadTileInfo* info = reply->tileInfo();
+    if (!info) {
+        reply->deleteLater();
+        return;
     }
 
+    qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
+    m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
+
+    if(receivers(SIGNAL(finished(QGeoMapReply*))) == 0) {
+        reply->deleteLater();
+        return;
+    }
+
+    emit finished(reply);
 }
 
 void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString &errorString)
@@ -165,17 +176,15 @@ void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString 
     if (!reply)
         return;
 
-    if (m_pendingReplies.contains(reply)) {
-        QuadTileInfo* info = m_pendingReplies.take(reply);
-        delete info;
+    if(receivers(SIGNAL(error(QGeoMapReply*, QGeoMapReply::Error, QString))) == 0) {
         reply->deleteLater();
-    } else {
-        //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
-        emit this->error(reply, error, errorString);
+        return;
     }
+
+    emit this->error(reply, error, errorString);
 }
 
-QString QGeoMappingManagerNokia::getRequestString(const QuadTileInfo &info) const
+QString QGeoMappingManagerNokia::getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const
 {
     QString request = "http://";
     request += m_host;
