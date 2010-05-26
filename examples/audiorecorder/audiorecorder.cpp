@@ -420,31 +420,45 @@ void AudioRecorder::updateSamplerates(int idx)
 
 void AudioRecorder::updateChannelCount(int idx)
 {    
-    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
-    channelBox->clear();
-    QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
-    QList<int> channels;
-    if (list.contains("channels"))
-        channels <<1<<2;
-    else
-        channels <<1;
-    for(int i = 0; i < channels.count(); i++) {        
-        QString channelString = QString("%1").arg(channels.at(i));
-        channelBox->addItem(channelString, QVariant(channels.at(i))); 
-    }        
+    QMediaControl *control = audiosource->service()->requestControl(QAudioEncoderControl_iid);
+    if (!control)
+        return;
+
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl *>(control);
+    if (audioEncoder) {
+        channelBox->clear();
+        QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
+        QList<int> channels;
+        if (list.contains("channels"))
+            channels <<1<<2;
+        else
+            channels <<1;
+        for(int i = 0; i < channels.count(); i++) {
+            QString channelString = QString("%1").arg(channels.at(i));
+            channelBox->addItem(channelString, QVariant(channels.at(i)));
+        }
+    }
+    audiosource->service()->releaseControl(control);
 }
 
 void AudioRecorder::updateQuality(int idx)
 {    
-    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl*>(capture->service()->control(QAudioEncoderControl_iid));
-    qualityBox->clear();
-    QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
-    QList<int> channels;
-    if (list.contains("quality")) {
-        qualityBox->addItem(tr("Low"));
-        qualityBox->addItem(tr("Medium"));
-        qualityBox->addItem(tr("High"));
-    }else {
-        qualityBox->addItem(tr("Low"));
-    }           
+    QMediaControl *control = audiosource->service()->requestControl(QAudioEncoderControl_iid);
+    if (!control)
+        return;
+
+    QAudioEncoderControl *audioEncoder = qobject_cast<QAudioEncoderControl *>(control);
+    if (audioEncoder) {
+        qualityBox->clear();
+        QStringList list = audioEncoder->supportedEncodingOptions(codecsBox->itemText(idx));
+        QList<int> channels;
+        if (list.contains("quality")) {
+            qualityBox->addItem(tr("Low"));
+            qualityBox->addItem(tr("Medium"));
+            qualityBox->addItem(tr("High"));
+        }else {
+            qualityBox->addItem(tr("Low"));
+        }
+    }
+    audiosource->service()->releaseControl(control);
 }
