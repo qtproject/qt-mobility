@@ -56,8 +56,11 @@
 #include "qlandmarkmanagerengine.h"
 
 #include <QSqlDatabase>
+#include <QHash>
 
 QTM_USE_NAMESPACE
+
+class QueryRun;
 
 class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
@@ -143,6 +146,11 @@ public:
     bool cancelRequest(QLandmarkAbstractRequest* request);
     bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs);
 
+public slots:
+    void updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
+            QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state);
+
 private:
     QList<QLandmarkId> landmarkIdsDefault(const QLandmarkFilter &filter,
                                           QLandmarkManager::Error *error,
@@ -208,6 +216,8 @@ private:
 
     QString m_dbFilename;
     QString m_dbConnectionName;
+    QHash<QLandmarkAbstractRequest *, QueryRun *> m_requestRunHash;
+    friend class QueryRun;
 };
 
 #endif // QLANDMARKMANAGERENGINE_SQLITE_P_H

@@ -71,7 +71,6 @@
 #include "qlandmarkproximityfilter.h"
 #include "qlandmarkunionfilter.h"
 
-
 #include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE

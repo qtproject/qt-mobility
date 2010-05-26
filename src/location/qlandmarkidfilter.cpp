@@ -91,21 +91,12 @@ void QLandmarkIdFilter::setLandmarkIds(const QList<QLandmarkId> &ids)
 }
 
 /*!
-    Prepends \a id to the list of landmark ids this filter searches for.
-*/
-void QLandmarkIdFilter::prepend(const QLandmarkId &id)
-{
-    Q_D(QLandmarkIdFilter);
-    d->landmarkIds.prepend(id);
-}
-
-/*!
-    Appends \a id to the list of landmark ids this filter searches for.
+    Adds \a id to the list of landmark ids this filter searches for.
 */
 void QLandmarkIdFilter::append(const QLandmarkId &id)
 {
     Q_D(QLandmarkIdFilter);
-    d->landmarkIds.prepend(id);
+    d->landmarkIds.append(id);
 }
 
 /*!
@@ -148,7 +139,7 @@ QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids
 
 QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QLandmarkIdFilterPrivate &other)
         : QLandmarkFilterPrivate(other),
-        landmarkIds(landmarkIds)
+        landmarkIds(other.landmarkIds)
 {
 }
 

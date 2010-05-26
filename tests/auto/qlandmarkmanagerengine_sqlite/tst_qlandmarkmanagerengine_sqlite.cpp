@@ -58,10 +58,14 @@
 #include <qlandmarkboxfilter.h>
 #include <qlandmarkintersectionfilter.h>
 #include <qlandmarkunionfilter.h>
+#include <qlandmarkidfilter.h>
 
 #include <qlandmarksortorder.h>
 #include <qlandmarknamesort.h>
 #include <qlandmarkdistancesort.h>
+
+#include <qlandmarkabstractrequest.h>
+#include <qlandmarkfetchrequest.h>
 
 #include <QMetaType>
 #include <QDebug>
@@ -80,6 +84,11 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QList<QLandmarkCategoryId>);
 Q_DECLARE_METATYPE(QList<QLandmarkId>);
+Q_DECLARE_METATYPE(QList<QLandmark>);
+Q_DECLARE_METATYPE(QLandmarkAbstractRequest::State)
+Q_DECLARE_METATYPE(QLandmarkAbstractRequest *)
+Q_DECLARE_METATYPE(QLandmarkFetchRequest *)
+Q_DECLARE_METATYPE(QLandmarkManager::Error)
 
 class tst_QLandmarkManagerEngineSqlite : public QObject
 {
@@ -89,6 +98,11 @@ public:
     tst_QLandmarkManagerEngineSqlite() {
         qRegisterMetaType<QList<QLandmarkCategoryId> >();
         qRegisterMetaType<QList<QLandmarkId> >();
+        qRegisterMetaType<QList<QLandmark> >();
+        qRegisterMetaType<QLandmarkAbstractRequest::State>();
+        qRegisterMetaType<QLandmarkAbstractRequest *>();
+        qRegisterMetaType<QLandmarkFetchRequest *>();
+        qRegisterMetaType<QLandmarkManager::Error>();
     }
 
 private:
@@ -208,6 +222,84 @@ private slots:
         id3.setManagerUri(m_manager->managerUri());
         id3.setLocalId(lm3.landmarkId().localId());
         QCOMPARE(lm3, m_manager->landmark(id3));
+    }
+
+    void retrieveLandmarkAsync() {
+
+        //test non-existent landmark id
+        QLandmarkId id1;
+        id1.setManagerUri(m_manager->managerUri());
+        id1.setLocalId("1");
+
+        QLandmarkFetchRequest fetchRequest(m_manager,this);
+        QLandmarkIdFilter idFilter;
+        idFilter.append(id1);
+        fetchRequest.setFilter(idFilter);
+
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.start();
+        QTest::qWait(2000);
+        QCOMPARE(spy.count(),2);
+
+        QCOMPARE(fetchRequest.landmarks().count(),0);
+        //QCOMPARE(fetchRequest.landmarks().at(0).landmarkId().isValid(), false);
+
+        //test retrieval of existing landmark via id
+        QLandmark lm2;
+        lm2.setName("LM2");
+        QVERIFY(m_manager->saveLandmark(&lm2));
+
+        QLandmarkId id2;
+        id2.setManagerUri(m_manager->managerUri());
+        id2.setLocalId(lm2.landmarkId().localId());
+        idFilter.clear();
+        idFilter.append(id2);
+        fetchRequest.setFilter(idFilter);
+        spy.clear();
+        fetchRequest.start();
+
+        QTest::qWait(2000);
+        QCOMPARE(spy.count(),2);
+
+        QCOMPARE(fetchRequest.landmarks().count(), 1);
+        QCOMPARE(lm2, fetchRequest.landmarks().at(0));
+
+        QLandmarkCategory cat3;
+        cat3.setName("CAT3");
+        QVERIFY(m_manager->saveCategory(&cat3));
+
+        //test retrieval of existing landmark
+        //that has categories via id
+        QLandmark lm3;
+        lm3.setName("LM3");
+        lm3.addCategoryId(cat3.categoryId());
+        QVERIFY(m_manager->saveLandmark(&lm3));
+
+        QLandmarkId id3;
+        id3.setManagerUri(m_manager->managerUri());
+        id3.setLocalId(lm3.landmarkId().localId());
+
+        idFilter.clear();
+        idFilter.append(id3);
+        fetchRequest.setFilter(idFilter);
+        spy.clear();
+        fetchRequest.start();
+
+        QTest::qWait(2000);
+        QCOMPARE(spy.count(),2);
+        QCOMPARE(fetchRequest.landmarks().count(), 1);
+        QCOMPARE(lm3, fetchRequest.landmarks().at(0));
+
+        //try a filter with no ids
+        idFilter.clear();
+        fetchRequest.setFilter(idFilter);
+        spy.clear();
+        fetchRequest.start();
+
+        QTest::qWait(2000);
+        QCOMPARE(spy.count(),2);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QCOMPARE(fetchRequest.landmarks().count(), 0);
     }
 
     void addCategoryId() {
