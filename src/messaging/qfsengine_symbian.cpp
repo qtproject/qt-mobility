@@ -359,6 +359,7 @@ void CFSEngine::MessageDeletedEventL(const TMailboxId& aMailbox, const REmailMes
 void CFSEngine::notificationL(const TMailboxId& aMailbox, const TMessageId& aMessageId, 
                                 const TFolderId& aParentFolderId, QMessageStorePrivate::NotificationType aNotificationType)
 {
+    Q_UNUSED(aParentFolderId);
     QMessageManager::NotificationFilterIdSet matchingFilters;
     // Copy the filter map to protect against modification during traversal
     QMap<int, QMessageFilter> filters(m_filters);
@@ -2765,7 +2766,6 @@ bool CFSMessagesFindOperation::fillsSearchKeyCriteria(QMessageId& messageId)
     switch (m_searchField) {
     case Sender: {
         return message.from().addressee().contains(m_searchKey, caseSensitivity);
-        break;
     }
     case Recipients: {
         foreach (QMessageAddress toRecipient, message.to()) {
@@ -2781,11 +2781,9 @@ bool CFSMessagesFindOperation::fillsSearchKeyCriteria(QMessageId& messageId)
                 return true;
         }
         return false;
-        break;
     }
     case Subject: {
         return message.subject().contains(m_searchKey, caseSensitivity);
-        break;
     }
     case Body: {
         if (message.bodyId() == QMessageContentContainerPrivate::bodyContentId()) {
