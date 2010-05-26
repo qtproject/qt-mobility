@@ -55,18 +55,35 @@
 
 #include "qcontactaction.h"
 
+#include "qserviceinterfacedescriptor.h"
+#include "qserviceplugininterface.h"
+#include "qservicecontext.h"
+#include "qabstractsecuritysession.h"
+
 #include <QSharedData>
 #include <QString>
 #include <QVariantMap>
 
 QTM_USE_NAMESPACE
 
+
+class QContactSendEmailActionPlugin : public QObject, public QServicePluginInterface
+{
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QServicePluginInterface)
+
+public:
+    QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
+                            QServiceContext* context,
+                            QAbstractSecuritySession* session);
+};
+
 class QContactSendEmailAction : public QContactAction
 {
     Q_OBJECT
 
 public:
-    QContactSendEmailAction();
+    QContactSendEmailAction(QObject* parent = 0);
     ~QContactSendEmailAction();
 
     QContactActionDescriptor actionDescriptor() const;

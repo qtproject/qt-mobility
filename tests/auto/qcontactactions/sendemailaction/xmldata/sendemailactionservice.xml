@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
-    <name>tst_QContactAction:sendemail</name>
+    <name>tst_qcontactactions:sendemailaction</name>
     <filepath>plugins/contacts/libcontacts_sendemailaction</filepath>
     <description>This service provides the "send email" QContactAction for testing purposes</description>
     <interface>

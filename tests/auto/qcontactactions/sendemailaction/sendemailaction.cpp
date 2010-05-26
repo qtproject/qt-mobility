@@ -57,8 +57,22 @@
 #define makestr(x) (#x)
 #define makename(x) makestr(x)
 
+QObject* QContactSendEmailActionPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor,
+                        QServiceContext* context,
+                        QAbstractSecuritySession* session)
+{
+    Q_UNUSED(context);
+    Q_UNUSED(session);
 
-QContactSendEmailAction::QContactSendEmailAction() : QContactAction()
+    if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.sendemail")
+        return new QContactSendEmailAction(this);
+    else
+        return 0;
+}
+
+Q_EXPORT_PLUGIN2(contacts_sendemailaction, QContactSendEmailActionPlugin);
+
+QContactSendEmailAction::QContactSendEmailAction(QObject* parent) : QContactAction(parent)
 {
 }
 

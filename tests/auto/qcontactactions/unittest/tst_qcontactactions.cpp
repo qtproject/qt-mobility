@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#define QT_STATICPLUGIN
 #include <QtTest/QtTest>
 #include <QApplication>
 
 #include "qtcontacts.h"
 #include "qcontactaction.h"
-#include "qcontactactionfactory.h"
 #include "qcontactactiondescriptor.h"
+
+#include "qservicemanager.h"
 
 QTM_USE_NAMESPACE 
 
@@ -69,54 +69,30 @@ private slots:
     void traits();
 };
 
-/* Test a static factory as well */
-class DummyStaticActionFactory : public QContactActionFactory
-{
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QContactActionFactory)
-
-public:
-    DummyStaticActionFactory() {}
-    ~DummyStaticActionFactory() {}
-
-    QString name() const
-    {
-        return QString("dummystaticactionfactory");
-    }
-
-    QList<QContactActionDescriptor> actionDescriptors() const
-    {
-        return QList<QContactActionDescriptor>();
-    }
-
-    QContactAction* instance(const QContactActionDescriptor&) const
-    {
-        return 0;
-    }
-
-    QVariantMap actionMetadata(const QContactActionDescriptor&) const
-    {
-        return QVariantMap();
-    }
-};
-
-/* Statically import it (and a duplicate copy of it, purely for testing purposes) */
-Q_EXPORT_PLUGIN2(contacts_testdummystaticactionfactory, DummyStaticActionFactory)
-Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactory)
-Q_EXPORT_PLUGIN2(contacts_testdummystaticactionfactorycopy, DummyStaticActionFactory)
-Q_IMPORT_PLUGIN(contacts_testdummystaticactionfactorycopy)
-
 tst_QContactActions::tst_QContactActions()
 {
     // set the correct path to look for plugins
     QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::addLibraryPath(path);
+
+    // and add the sendemail action to the service framework
+    QServiceManager sm;
+    qDebug() << sm.findServices();
+    if (!sm.removeService("tst_qcontactactions:sendemailaction"))
+        qDebug() << " tst_qca: ctor: cleaning up test services failed:" << sm.error();
+    qDebug() << QString(QCoreApplication::applicationDirPath() + "/plugins/xmldata/sendemailaction/sendemailactionservice.xml");
+    if (!sm.addService(QCoreApplication::applicationDirPath() + "/plugins/xmldata/sendemailaction/sendemailactionservice.xml"))
+        qDebug() << " tst_qca: ctor: unable to add service:" << sm.error();
 }
 
 tst_QContactActions::~tst_QContactActions()
 {
     QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::removeLibraryPath(path);
+
+    QServiceManager sm;
+    if (!sm.removeService("tst_qcontactactions:sendemailaction"))
+        qDebug() << " tst_qca: ctor: unable to remove service:" << sm.error();
 }
 
 void tst_QContactActions::init()
@@ -135,7 +111,7 @@ void tst_QContactActions::testSendEmail()
     c.saveDetail(&e);
 
     QVERIFY(QContactAction::availableActions().contains("SendEmail"));
-    QVERIFY(QContactAction::availableActions("Test").contains("SendEmail"));
+    QVERIFY(QContactAction::availableActions("tst_qcontactactions:sendemailaction").contains("SendEmail"));
 
     QList<QContactActionDescriptor> descrs = QContactAction::actionDescriptors();
     bool foundSendEmail = false;
@@ -150,7 +126,7 @@ void tst_QContactActions::testSendEmail()
     descrs = QContactAction::actionDescriptors(QString());
     foundSendEmail = false;
     for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).serviceName(), QString("Test"));
+        QCOMPARE(descrs.at(i).serviceName(), QString("tst_qcontactactions:sendemailaction"));
         if (descrs.at(i).actionName() == QString("SendEmail")) {
             foundSendEmail = true;
             break;
@@ -161,10 +137,10 @@ void tst_QContactActions::testSendEmail()
     descrs = QContactAction::actionDescriptors(QString());
     foundSendEmail = false;
     for (int i = 0; i < descrs.size(); i++) {
-        QCOMPARE(descrs.at(i).serviceName(), QString("Test"));
+        QCOMPARE(descrs.at(i).serviceName(), QString("tst_qcontactactions:sendemailaction"));
         QCOMPARE(descrs.at(i).implementationVersion(), 1);
         if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).serviceName() == QString("Test")
+                && descrs.at(i).serviceName() == QString("tst_qcontactactions:sendemailaction")
                 && descrs.at(i).implementationVersion() == 1) {
             foundSendEmail = true;
             break;
@@ -177,7 +153,7 @@ void tst_QContactActions::testSendEmail()
     for (int i = 0; i < descrs.size(); i++) {
         QCOMPARE(descrs.at(i).actionName(), QString("SendEmail"));
         if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).serviceName() == QString("Test")
+                && descrs.at(i).serviceName() == QString("tst_qcontactactions:sendemailaction")
                 && descrs.at(i).implementationVersion() == 1) {
             foundSendEmail = true;
             break;
@@ -189,7 +165,7 @@ void tst_QContactActions::testSendEmail()
     QContactAction* sendEmail = 0;
     for (int i = 0; i < descrs.size(); i++) {
         if (descrs.at(i).actionName() == QString("SendEmail")
-                && descrs.at(i).serviceName() == QString("Test")
+                && descrs.at(i).serviceName() == QString("tst_qcontactactions:sendemailaction")
                 && descrs.at(i).implementationVersion() == 1) {
             sendEmail = QContactAction::action(descrs.at(i));
             break;
@@ -207,8 +183,6 @@ void tst_QContactActions::testSendEmail()
     QVERIFY(sendEmail->supportedDetails(c).contains(e));
     //QVERIFY(sendEmail->performAction(c, e));
     //QVERIFY(sendEmail->performAction(c));
-
-    delete sendEmail;
 }
 
 void tst_QContactActions::testDescriptor()
@@ -223,7 +197,7 @@ void tst_QContactActions::testDescriptor()
     c.saveDetail(&e);
 
     QVERIFY(QContactAction::availableActions().contains("SendEmail"));
-    QVERIFY(QContactAction::availableActions("Test").contains("SendEmail"));
+    QVERIFY(QContactAction::availableActions("tst_qcontactactions:sendemailaction").contains("SendEmail"));
 
     QList<QContactActionDescriptor> descrs = QContactAction::actionDescriptors();
     QContactAction* sendEmailAction = 0;
@@ -236,6 +210,7 @@ void tst_QContactActions::testDescriptor()
         }
     }
     QVERIFY(foundSendEmail);
+    QVERIFY(sendEmailAction != 0);
 
     // first, ensure that the descriptor identifies the correct action
     QContactActionDescriptor sendEmailDescriptor;
@@ -279,18 +254,17 @@ void tst_QContactActions::testDescriptor()
 
     QVERIFY(sendEmailDescriptor2 == sendEmailDescriptor);
 
-    // ensure that the caller takes ownership of the action; ie, not singleton etc.
-    QContactAction *sendEmailAction2 = QContactAction::action(sendEmailAction->actionDescriptor());
-    QContactAction *sendEmailAction3 = QContactAction::action(sendEmailAction->actionDescriptor());
-    QVERIFY(sendEmailAction != sendEmailAction2);
-    QVERIFY(sendEmailAction != sendEmailAction3);
-    QVERIFY(sendEmailAction2 != sendEmailAction3);
-
-    delete sendEmailAction2;
-    delete sendEmailAction;
-
-    QVERIFY(sendEmailAction3->actionDescriptor() == sendEmailDescriptor);
-    delete sendEmailAction3;
+    // XXX TODO: ensure that the caller does not take ownership of the action
+    // old test: used to check that the caller DID take ownership...
+    //QContactAction *sendEmailAction2 = QContactAction::action(sendEmailAction->actionDescriptor());
+    //QContactAction *sendEmailAction3 = QContactAction::action(sendEmailAction->actionDescriptor());
+    //QVERIFY(sendEmailAction != sendEmailAction2);
+    //QVERIFY(sendEmailAction != sendEmailAction3);
+    //QVERIFY(sendEmailAction2 != sendEmailAction3);
+    //delete sendEmailAction;
+    //delete sendEmailAction2;
+    //QVERIFY(sendEmailAction3->actionDescriptor() == sendEmailDescriptor);
+    //delete sendEmailAction3;
 }
 
 void tst_QContactActions::testDescriptorLessThan()

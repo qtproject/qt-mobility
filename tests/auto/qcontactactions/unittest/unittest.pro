@@ -10,12 +10,13 @@ include(../../../../common.pri)
 INCLUDEPATH += ../../../../src/contacts \
                ../../../../src/contacts/details \
                ../../../../src/contacts/requests \
-               ../../../../src/contacts/filters
+               ../../../../src/contacts/filters \
+               ../../../../src/serviceframework
 
 INCLUDEPATH += ../../
 
 CONFIG += mobility
-MOBILITY = contacts
+MOBILITY = contacts serviceframework
 SOURCES  += tst_qcontactactions.cpp
 
 # App local deployment

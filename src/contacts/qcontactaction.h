@@ -70,6 +70,7 @@ public:
     static QContactAction* action(const QContactActionDescriptor& descriptor);
 
 public:
+    QContactAction(QObject *parent = 0) : QObject(parent) {}
     virtual ~QContactAction() = 0;
 
     virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action

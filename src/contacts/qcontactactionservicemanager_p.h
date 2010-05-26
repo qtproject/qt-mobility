@@ -59,11 +59,11 @@
 #include <QMutex>
 
 #include "qservice.h"
+#include "qservicemanager.h"
 
 #include "qtcontacts.h"
 
 QTM_BEGIN_NAMESPACE
-class QServiceManager;
 
 class QContactActionServiceManager : public QObject
 {
@@ -84,10 +84,10 @@ public slots:
 
 private:
     void init();
+    bool initLock;
 
     QMutex m_instanceMutex;
-
-    QServiceManager *m_serviceManager;
+    QServiceManager m_serviceManager;
 
     QHash<QContactActionDescriptor, QContactAction*> m_actionHash;   // descriptor to action ptr
     QMultiHash<QString, QContactActionDescriptor> m_descriptorHash;  // action name to descriptor
