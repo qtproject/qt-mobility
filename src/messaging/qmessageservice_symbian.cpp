@@ -190,6 +190,7 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
     }
     _pendingRequestCount = 0;
     _active = true;
+    _count = 0;
 
     _pendingRequestCount++;
     CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
@@ -289,6 +290,22 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
     }
 }
 
+void QMessageServicePrivate::messagesCounted(int count)
+{
+    _pendingRequestCount--;
+
+    _count += count;
+
+    if (_pendingRequestCount == 0) {
+
+        emit q_ptr->messagesCounted(_count);
+
+        setFinished(true);
+
+        _count = 0;
+    }
+}
+
 bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
   //  if (SymbianHelpers::isFreestyleMessage(id))
@@ -315,7 +332,7 @@ QMessageService::QMessageService(QObject *parent)
 {
 	connect(d_ptr, SIGNAL(stateChanged(QMessageService::State)), this, SIGNAL(stateChanged(QMessageService::State)));
 	connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)), this, SIGNAL(messagesFound(const QMessageIdList&)));
-    connect(d_ptr, SIGNAL(messagesCounted(int)), this, SIGNAL(messagesCounted(int)));
+    //connect(d_ptr, SIGNAL(messagesCounted(int)), this, SIGNAL(messagesCounted(int)));
 	connect(d_ptr, SIGNAL(progressChanged(uint, uint)), this, SIGNAL(progressChanged(uint, uint)));
 }
 

@@ -71,11 +71,12 @@ public:
     void setFinished(bool successful);
     
     void messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted);
+    void messagesCounted(int count);
 
 signals:
 	void stateChanged(QMessageService::State);
 	void messagesFound(const QMessageIdList&);
-    void messagesCounted(int count);
+    //void messagesCounted(int count);
 	void progressChanged(uint, uint);
 
 private:	
@@ -83,6 +84,7 @@ private:
     QMessageService::State _state;
     QMessageManager::Error _error;
     int _actionId;
+    int _count;
     mutable bool _active;
     mutable int _pendingRequestCount;
     QMessageIdList _ids;

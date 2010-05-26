@@ -1138,10 +1138,8 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
 
                     //emit m_messageQueries[index].privateService->messagesFound(m_messageQueries[index].ids);
                 } else {
-                    emit m_messageQueries[index].privateService->messagesCounted(m_messageQueries[index].count);
+                    m_messageQueries[index].privateService->messagesCounted(m_messageQueries[index].count);
                 }
-                m_messageQueries[index].privateService->_active = false;
-                emit m_messageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
             }
         } else {
             // There was only one single filter to handle
@@ -1166,17 +1164,14 @@ void CFSEngine::filterAndOrderMessagesReady(bool success, int operationId, QMess
                 //emit m_messageQueries[index].privateService->messagesFound(ids);
                 m_messageQueries[index].privateService->messagesFound(ids, true, true);
             } else {
-                emit m_messageQueries[index].privateService->messagesCounted(ids.count());
+                m_messageQueries[index].privateService->messagesCounted(ids.count());
             }
-            m_messageQueries[index].privateService->_active = false;
-            emit m_messageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
         }
     } else {
         m_messageQueries[index].privateService->_active = false;
         if (m_messageQueries[index].privateService->_error == QMessageManager::NoError) {
             m_messageQueries[index].privateService->_error = QMessageManager::RequestIncomplete;
         }
-        emit m_messageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
     }
 
     delete m_messageQueries[index].findOperation;
@@ -2072,7 +2067,11 @@ void CFSMessagesFindOperation::filterAndOrderMessages(const QMessageFilterPrivat
                                                     QMessageDataComparator::MatchFlags matchFlags)
 {
     TRAPD(err, filterAndOrderMessagesL(filters, sortOrder, body, matchFlags));
-    Q_UNUSED(err);
+    if (err != KErrNone) {
+        //something has failed -> return empty list
+        m_idList = QMessageIdList();
+        QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
+    }
 }
 
 void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPrivate::SortedMessageFilterList& filters,
@@ -2299,7 +2298,6 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                             getAccountSpecificMessagesL(value, sortCriteria);
                         }
                     }
-
                 }
             }
             break;
@@ -2362,6 +2360,7 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                             getAccountSpecificMessagesL(value, sortCriteria);
                         }
                     }
+
                 } else { // Excludes
                     foreach (QMessageAccount value, m_owner.m_accounts) {
                         if (!(value.messageTypes() & typeFlags)) {
@@ -2520,6 +2519,8 @@ void CFSMessagesFindOperation::filterAndOrderMessagesL(const QMessageFilterPriva
                 getAllMessagesL(sortCriteria);
         }
     }
+    if (m_activeSearchCount == 0)
+        QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
 }
 
 void CFSMessagesFindOperation::getAllMessagesL(TEmailSortCriteria& sortCriteria)
