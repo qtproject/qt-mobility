@@ -97,8 +97,8 @@ public:
     bool waitForFinished(int) { return false; }
 
 public Q_SLOTS:
-    void insert(const QVariant &itemId, const QString &itemType) {
-        m_itemId = itemId; m_itemType = itemType; m_count = 1; inserted(0, 1); }
+    void insert(int index, int count, const QVariant &itemId, const QString &itemType) {
+        m_itemId = itemId; m_itemType = itemType; m_count = 1; inserted(index, count); }
 
     void doFinish(int result, bool idle) { finish(result, idle); }
 
@@ -127,7 +127,7 @@ public:
 #ifdef Q_MOC_RUN
 Q_SIGNALS:
 #endif
-    void insert(const QVariant &itemId, const QString &itemType);
+    void insert(int index, int count, const QVariant &itemId, const QString &itemType);
     void finish(int result, bool idle);
 
 protected:
@@ -137,8 +137,8 @@ protected:
             QtGalleryTestResponse *response = new QtGalleryTestResponse(
                     m_count, m_itemId, m_itemType, m_result, m_idle);
 
-            connect(this, SIGNAL(insert(QVariant,QString)),
-                    response, SLOT(insert(QVariant,QString)));
+            connect(this, SIGNAL(insert(int,int,QVariant,QString)),
+                    response, SLOT(insert(int,int,QVariant,QString)));
             connect(this, SIGNAL(finish(int,bool)), response, SLOT(doFinish(int,bool)));
 
             return response;
@@ -162,12 +162,19 @@ void tst_QGalleryUrlRequest::properties()
     QGalleryUrlRequest request;
 
     QCOMPARE(request.itemUrl(), QUrl());
+    QCOMPARE(request.create(), false);
 
     request.setItemUrl(fileUrl);
     QCOMPARE(request.itemUrl(), fileUrl);
 
     request.setItemUrl(httpUrl);
     QCOMPARE(request.itemUrl(), httpUrl);
+
+    request.setCreate(true);
+    QCOMPARE(request.create(), true);
+
+    request.setCreate(false);
+    QCOMPARE(request.create(), false);
 }
 
 void tst_QGalleryUrlRequest::executeSynchronous()
@@ -205,6 +212,18 @@ void tst_QGalleryUrlRequest::executeSynchronous()
     QCOMPARE(spy.count(), 2);
     QCOMPARE(request.itemId(), QVariant());
     QCOMPARE(request.itemType(), QString());
+
+    gallery.setItemId(QVariant());
+    request.execute();
+    QCOMPARE(spy.count(), 3);
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(request.itemType(), itemType);
+
+    request.clear();
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(spy.count(), 4);
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(request.itemType(), QString());
 }
 
 void tst_QGalleryUrlRequest::executeAsynchronous()
@@ -227,7 +246,7 @@ void tst_QGalleryUrlRequest::executeAsynchronous()
     QCOMPARE(request.itemId(), QVariant());
     QCOMPARE(request.itemType(), QString());
 
-    gallery.insert(itemId, itemType);
+    gallery.insert(0, 1, itemId, itemType);
     QCOMPARE(spy.count(), 1);
     QCOMPARE(request.itemId(), itemId);
     QCOMPARE(request.itemType(), itemType);
@@ -240,6 +259,36 @@ void tst_QGalleryUrlRequest::executeAsynchronous()
 
     request.clear();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(request.itemType(), QString());
+
+    request.execute();
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(request.itemType(), QString());
+
+    QTest::ignoreMessage(
+            QtWarningMsg,
+            "QGalleryUrlRequest::insert: Response contained an irregular number of items."
+            "Index: 0, Count 5");
+
+    gallery.insert(0, 5, itemId, itemType);
+    gallery.finish(QGalleryAbstractRequest::Succeeded, true);
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(spy.count(), 2);
+    QCOMPARE(request.itemId(), QVariant());
+    QCOMPARE(request.itemType(), QString());
+
+    QTest::ignoreMessage(
+            QtWarningMsg,
+            "QGalleryUrlRequest::insert: Response contained an irregular number of items."
+            "Index: 3, Count 1");
+
+    gallery.insert(3, 1, itemId, itemType);
+    gallery.finish(QGalleryAbstractRequest::Succeeded, true);
+    QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(spy.count(), 2);
     QCOMPARE(request.itemId(), QVariant());
     QCOMPARE(request.itemType(), QString());
