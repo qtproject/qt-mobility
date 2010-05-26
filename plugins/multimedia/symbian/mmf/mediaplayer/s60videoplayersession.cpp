@@ -65,6 +65,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     , m_wsSession(CCoeEnv::Static()->WsSession())
     , m_screenDevice(*CCoeEnv::Static()->ScreenDevice())
     , m_window(0)
+    , m_displayWindow(0)
     , m_service(*service)
     , m_aspectRatioMode(Qt::KeepAspectRatio)
     , m_originalSize(1, 1)
@@ -75,6 +76,13 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
 #endif
 
     resetNativeHandles();
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+    QT_TRAP_THROWING(m_player = CVideoPlayerUtility2::NewL(
+        *this,
+        0,
+        EMdaPriorityPreferenceNone
+        ));
+#else
     QT_TRAP_THROWING(m_player = CVideoPlayerUtility::NewL(
         *this,
         0,
@@ -86,6 +94,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         m_rect));
     m_dsaActive = true;
     m_player->RegisterForVideoLoadingNotification(*this);
+#endif // MMF_VIDEO_SURFACES_SUPPORTED
 }
 
 S60VideoPlayerSession::~S60VideoPlayerSession()
@@ -140,7 +149,7 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
     Q_UNUSED(videoOutput)
     QVideoOutputControl *videoControl = qobject_cast<QVideoOutputControl *>(m_service.control(QVideoOutputControl_iid));
     
-    //Render changes
+    //Renderer changes
     if (m_output != videoControl->output()) {
         
         if (m_output == QVideoOutputControl::WidgetOutput) {
@@ -191,8 +200,9 @@ bool S60VideoPlayerSession::resetNativeHandles()
         Q_ASSERT(newId != 0);
     }
     
-    if (newRect == m_rect &&  newId == m_windowId && aspectRatioMode == m_aspectRatioMode) 
+    if (newRect == m_rect &&  newId == m_windowId && aspectRatioMode == m_aspectRatioMode) {
         return false;
+    }
     
     if (newId) {
         m_rect = newRect;
@@ -298,6 +308,41 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
     m_player->Prepare();
 }
 
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
+{
+    setError(aError);
+    TRect rect;
+    S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
+    const QSize size = widgetControl->videoWidgetSize();
+    rect.SetSize(TSize(size.width(), size.height()));
+
+    if (m_displayWindow)
+        m_player->RemoveDisplayWindow(*m_displayWindow);
+
+    RWindow *window = static_cast<RWindow *>(m_window);
+    if (window) {
+        window->SetBackgroundColor(TRgb(0, 0, 0, 255));
+        TRAPD(error,
+            m_player->AddDisplayWindowL(m_wsSession, m_screenDevice, *window, rect, rect);
+            TSize originalSize;
+            m_player->VideoFrameSizeL(originalSize);
+            m_originalSize = QSize(originalSize.iWidth, originalSize.iHeight);
+            m_player->SetScaleFactorL(*window, scaleFactor().first, scaleFactor().second));
+        setError(error);
+    }
+    m_displayWindow = window;
+#ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
+    TRAPD(err,
+        m_audioOutput = CAudioOutput::NewL(*m_player);
+        m_audioOutput->RegisterObserverL(*this);
+    );
+    setActiveEndpoint(m_audioEndpoint);
+    setError(err);
+#endif
+    loaded();
+}
+#else
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
     setError(aError);
@@ -324,6 +369,7 @@ void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 #endif
     loaded();
 }
+#endif // MMF_VIDEO_SURFACES_SUPPORTED
 
 void S60VideoPlayerSession::MvpuoFrameReady(CFbsBitmap &aFrame, TInt aError)
 {
@@ -357,7 +403,40 @@ void S60VideoPlayerSession::updateMetaDataEntriesL()
     }
     emit metaDataChanged();
 }
-
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+void S60VideoPlayerSession::resetVideoDisplay()
+{
+    if (resetNativeHandles()) {
+        TRect rect;
+        S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.control(QVideoWidgetControl_iid));
+        const QSize size = widgetControl->videoWidgetSize();
+        rect.SetSize(TSize(size.width(), size.height()));
+        if (m_displayWindow)
+            m_player->RemoveDisplayWindow(*m_displayWindow);
+        RWindow *window = static_cast<RWindow *>(m_window);
+        if (window) {
+            window->SetBackgroundColor(TRgb(0, 0, 0, 255));
+            TRAPD(err,
+               m_player->AddDisplayWindowL(m_wsSession,
+                                           m_screenDevice,
+                                           *window,
+                                           rect,
+                                           rect));
+            setError(err);
+        }
+        m_displayWindow = window;
+        if(    mediaStatus() == QMediaPlayer::LoadedMedia
+            || mediaStatus() == QMediaPlayer::StalledMedia
+            || mediaStatus() == QMediaPlayer::BufferingMedia
+            || mediaStatus() == QMediaPlayer::BufferedMedia
+            || mediaStatus() == QMediaPlayer::EndOfMedia) {
+            Q_ASSERT(m_displayWindow != 0);
+            TRAPD(err, m_player->SetScaleFactorL(*m_displayWindow, scaleFactor().first, scaleFactor().second));
+            setError(err);
+        }
+    }
+}
+#else
 void S60VideoPlayerSession::resetVideoDisplay()
 {
     if (resetNativeHandles()) {
@@ -378,6 +457,7 @@ void S60VideoPlayerSession::resetVideoDisplay()
         }
     }
 }
+#endif //MMF_VIDEO_SURFACES_SUPPORTED
 
 void S60VideoPlayerSession::suspendDirectScreenAccess()
 {

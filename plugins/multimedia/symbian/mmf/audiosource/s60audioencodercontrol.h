@@ -42,7 +42,7 @@
 #ifndef AUDIOENCODERCONTROL_H
 #define AUDIOENCODERCONTROL_H
 
-#include <QAudioEncoderControl>
+#include <qaudioencodercontrol.h>
 #include <QtCore/qstringlist.h>
 #include <QAudioFormat>
 

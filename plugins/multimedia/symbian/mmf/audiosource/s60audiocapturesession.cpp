@@ -136,8 +136,8 @@ bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 }
 
 QStringList S60AudioCaptureSession::supportedAudioCodecs() const
-{   
-    return m_audioCodeclist.keys();    
+{
+    return m_audioCodeclist.keys();
 }
 
 QStringList S60AudioCaptureSession::supportedAudioContainers() const
@@ -306,7 +306,7 @@ void S60AudioCaptureSession::setCaptureDevice(const QString &deviceName)
 
 void S60AudioCaptureSession::MoscoStateChangeEvent(CBase* aObject,
         TInt aPreviousState, TInt aCurrentState, TInt aErrorCode)
-{ 	    
+{
     if (aErrorCode==KErrNone) {
 	    TRAPD(err, MoscoStateChangeEventL(aObject, aPreviousState, aCurrentState, NULL));
 	    setError(err);

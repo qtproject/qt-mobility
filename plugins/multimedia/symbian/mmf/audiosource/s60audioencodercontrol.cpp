@@ -68,23 +68,12 @@ QStringList S60AudioEncoderControl::supportedAudioCodecs() const
     return m_session->supportedAudioCodecs();
 }
 
-QString S60AudioEncoderControl::audioCodec() const
-{
-    return m_session->format().codec();
-}
-
-bool S60AudioEncoderControl::setAudioCodec(const QString &codecName)
-{
-    QAudioFormat fmt = m_session->format();
-    fmt.setCodec(codecName);
-    return m_session->setFormat(fmt);
-}
-
 QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 {
 	return m_session->codecDescription(codecName);    
 }
 
+<<<<<<< HEAD
 int S60AudioEncoderControl::bitRate() const
 {
     return (m_session->format().frequency() * m_session->format().channels() * (m_session->format().sampleSize() / 8));
@@ -103,8 +92,6 @@ QtMultimedia::EncodingQuality S60AudioEncoderControl::quality() const
 
 void S60AudioEncoderControl::setQuality(QtMultimedia::EncodingQuality value)
 {
-    QAudioFormat fmt = m_session->format();
-
     switch (value) {
     case QtMultimedia::VeryLowQuality:
     case QtMultimedia::LowQuality:
@@ -127,13 +114,11 @@ void S60AudioEncoderControl::setQuality(QtMultimedia::EncodingQuality value)
         fmt.setSampleType(QAudioFormat::SignedInt);
         fmt.setSampleSize(16);
         fmt.setFrequency(44100);
-        fmt.setChannels(1);
+        fmt.setChannels(2);
         break;
     default:
         break;
     }
-    m_session->setFormat(fmt);
-    m_quality = value;  
 }
 
 QStringList S60AudioEncoderControl::supportedEncodingOptions(const QString &codec) const
@@ -150,10 +135,7 @@ QVariant S60AudioEncoderControl::encodingOption(const QString &codec, const QStr
     if (codec == "PCM") {
         QAudioFormat fmt = m_session->format();
         
-        if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
-            return QVariant(bitRate());
-        }
-        else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
+        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
             return QVariant(quality());
         }        
         else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
@@ -175,23 +157,12 @@ void S60AudioEncoderControl::setEncodingOption(
         } else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
             setQuality((QtMultimedia::EncodingQuality)value.toInt());
         } else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
-            setChannelCount(value.toInt());
+            fmt.setChannels(value.toInt());
         } else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0) {
-            setSampleRate(value.toInt());       
-        }        
+            fmt.setFrequency(value.toInt());
+        }
+        m_session->setFormat(fmt);
     }
-}
-
-int S60AudioEncoderControl::sampleRate() const
-{
-    return m_session->format().frequency();
-}
-
-void S60AudioEncoderControl::setSampleRate(int sampleRate)
-{
-    QAudioFormat fmt = m_session->format();
-    fmt.setFrequency(sampleRate);
-    m_session->setFormat(fmt);
 }
 
 QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSettings &settings, bool *continuous) const
@@ -202,39 +173,9 @@ QList<int> S60AudioEncoderControl::supportedSampleRates(const QAudioEncoderSetti
     return m_session->supportedAudioSampleRates(settings);       
 }
 
-int S60AudioEncoderControl::channelCount() const
-{
-    return m_session->format().channels();
-}
-
-void S60AudioEncoderControl::setChannelCount(int channels)
-{
-    QAudioFormat fmt = m_session->format();
-    fmt.setChannels(channels);
-    m_session->setFormat(fmt);
-}
-
-int S60AudioEncoderControl::sampleSize() const
-{
-    return m_session->format().sampleSize();
-}
-
-void S60AudioEncoderControl::setSampleSize(int sampleSize)
-{
-    QAudioFormat fmt = m_session->format();
-    fmt.setSampleSize(sampleSize);
-    m_session->setFormat(fmt);
-}
-
 QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 {
-    QAudioEncoderSettings settings;
-    settings.setCodec(audioCodec());
-    settings.setBitRate(bitRate());
-    settings.setQuality(quality());
-    settings.setSampleRate(sampleRate());
-    settings.setChannelCount(channelCount());
-    return settings;
+    return m_settings;
 }
 
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
@@ -245,10 +186,19 @@ void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &setti
         if (settings.sampleRate() > 0)
             setSampleRate(settings.sampleRate());   
         if (settings.channelCount() > 0)
-            setChannelCount(settings.channelCount());
-    }else {        
-        setAudioCodec(settings.codec());        
-        setSampleRate(settings.sampleRate());
-        setChannelCount(settings.channelCount());
-    }    
+            fmt.setChannels(settings.channelCount());
+    }else {
+        if (settings.sampleRate() == 8000) {
+            fmt.setSampleType(QAudioFormat::UnSignedInt);
+            fmt.setSampleSize(8);
+        } else {
+            fmt.setSampleType(QAudioFormat::SignedInt);
+            fmt.setSampleSize(16);
+        }
+        fmt.setCodec(settings.codec());
+        fmt.setFrequency(settings.sampleRate());
+        fmt.setChannels(settings.channelCount());
+    }
+    m_session->setFormat(fmt);
+    m_settings = settings;
 }

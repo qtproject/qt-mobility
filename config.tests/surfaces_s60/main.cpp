@@ -38,34 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <videoplayer2.h>
 
-#ifndef S60RADIOTUNERSERVICE_H
-#define S60RADIOTUNERSERVICE_H
 
-#include <QtCore/qobject.h>
-
-#include <qmediaservice.h>
-
-#ifdef TUNERLIBUSED
-#include "s60radiotunercontrol_31.h"
-#else
-#include "s60radiotunercontrol_since32.h"
-#endif
-
-QT_USE_NAMESPACE
-
-class S60RadioTunerService : public QMediaService
+int main(int, char**)
 {
-    Q_OBJECT
-public:
-    S60RadioTunerService(QObject *parent = 0);
-    ~S60RadioTunerService();
-
-    QMediaControl *requestControl(const char* name);
-    void releaseControl(QMediaControl *control);
-
-private:
-    S60RadioTunerControl *m_playerControl;
-};
-
-#endif
+    CVideoPlayerUtility2 *utility;
+    return 0;
+}
