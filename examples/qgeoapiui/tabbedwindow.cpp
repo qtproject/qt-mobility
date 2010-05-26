@@ -49,7 +49,7 @@
 #include <QMessageBox>
 
 #ifdef Q_OS_SYMBIAN
-#include <qnetworkconfigmanager.h>
+#include <QNetworkConfigurationManager>
 #endif
 
 TabbedWindow::TabbedWindow(QWidget *parent)

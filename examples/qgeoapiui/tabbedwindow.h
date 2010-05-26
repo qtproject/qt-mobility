@@ -52,10 +52,10 @@
 
 class QTabWidget;
 #ifdef Q_OS_SYMBIAN
-#include <qnetworksession.h>
+#include <QNetworkSession>
 #endif
 
-#include <qgeoserviceprovider.h>
+#include <QGeoServiceProvider>
 
 QTM_USE_NAMESPACE
 

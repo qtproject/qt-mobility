@@ -50,7 +50,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
-#include <qgeorouterequest.h>
+#include <QGeoRouteRequest>
 
 RouteTab::RouteTab(QWidget *parent) :
     QWidget(parent),

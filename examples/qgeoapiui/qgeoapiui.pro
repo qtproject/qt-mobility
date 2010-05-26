@@ -3,7 +3,8 @@ QT += xml network
 TARGET = QGeoApiUI
 TEMPLATE = app thread
 
-!symbian {INCLUDEPATH += ../../src/location }
+INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE/include/QtmLocation
+INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/location
 
 SOURCES += main.cpp\
         routepresenter.cpp \
@@ -31,5 +32,7 @@ MOBILITY = location
 
 symbian: {
     MOBILITY += bearer
+    INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE/include/QtmBearer
+    INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/bearer
     TARGET.CAPABILITY = Location NetworkServices ReadUserData WriteUserData
 }

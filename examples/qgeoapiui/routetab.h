@@ -44,7 +44,7 @@
 
 #include <QWidget>
 
-#include <qgeoroutingmanager.h>
+#include <QGeoRoutingManager>
 
 class QTreeWidget;
 class QLineEdit;

@@ -30,13 +30,17 @@ contains(mobility_modules,bearer) {
 #Location examples
 contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
-               satellitedialog 
+               satellitedialog
+    !symbian|contains(mobility_modules,bearer) {
+    	SUBDIRS += qgeoapiui
+                   #mapviewer (disable for now)
+
+    }
+
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
                    weatherinfo \
-                   lightmaps \
-                   #mapviewer (disable for now) 
-                   qgeoapiui
+                   lightmaps
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }

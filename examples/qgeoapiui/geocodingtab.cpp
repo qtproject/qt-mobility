@@ -50,7 +50,7 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
-#include <qgeoaddress.h>
+#include <QGeoAddress>
 
 GeocodingTab::GeocodingTab(QWidget *parent) :
     QWidget(parent),

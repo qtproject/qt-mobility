@@ -42,11 +42,9 @@
 #ifndef PLACEPRESENTER_H
 #define PLACEPRESENTER_H
 
-#include <QTreeWidget>
-
 #include "geopresenter.h"
-
-#include <qgeoplacesreply.h>
+#include <QGeoPlacesReply>
+#include <QTreeWidget>
 
 QTM_USE_NAMESPACE
 

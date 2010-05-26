@@ -49,8 +49,8 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QMessageBox>
-#include <qgeomappingmanager.h>
-#include <qgeomaprequestoptions.h>
+#include <QGeoMappingManager>
+#include <QGeoMapRequestOptions>
 
 MapTileTab::MapTileTab(QWidget *parent) 
     : QWidget(parent),
