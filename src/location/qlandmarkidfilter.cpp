@@ -96,7 +96,7 @@ void QLandmarkIdFilter::setLandmarkIds(const QList<QLandmarkId> &ids)
 void QLandmarkIdFilter::append(const QLandmarkId &id)
 {
     Q_D(QLandmarkIdFilter);
-    d->landmarkIds.prepend(id);
+    d->landmarkIds.append(id);
 }
 
 /*!
