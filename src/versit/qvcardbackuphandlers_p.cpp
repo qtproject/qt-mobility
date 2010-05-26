@@ -230,6 +230,8 @@ void QVCardExporterBackupHandler::detailProcessed(
     Q_UNUSED(contact)
     Q_UNUSED(document)
     Q_UNUSED(toBeRemoved)
+    if (detail.accessConstraints().testFlag(QContactDetail::ReadOnly))
+        return;
     QVariantMap fields = detail.variantValues();
     // fields from the same detail have the same group so the importer can collate them
     QString detailGroup = GroupPrefix + QString::number(mDetailNumber++);
