@@ -51,7 +51,7 @@ QGeoMappingManagerDummy::~QGeoMappingManagerDummy()
 {
 }
 
-QGeoMapReply* QGeoMappingManagerDummy::requestMap(const QGeoCoordinate &center, int zoomLevel,
+QGeoMapReply* QGeoMappingManagerDummy::getMapImage(const QGeoCoordinate &center, qreal zoomLevel,
     const QSize &size, const QGeoMapRequestOptions &requestOptions)
 {
     QGeoMapReplyDummy* reply = new QGeoMapReplyDummy(size);
@@ -63,7 +63,7 @@ QGeoMapReply* QGeoMappingManagerDummy::requestMap(const QGeoCoordinate &center, 
     return reply;
 }
 
-QGeoMapReply* QGeoMappingManagerDummy::requestTile(int row, int col, int zoomLevel,
+QGeoMapReply* QGeoMappingManagerDummy::getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
     const QSize &size, const QGeoMapRequestOptions &requestOptions)
 {
     QGeoMapReplyDummy* reply = new QGeoMapReplyDummy(size);
@@ -75,16 +75,10 @@ QGeoMapReply* QGeoMappingManagerDummy::requestTile(int row, int col, int zoomLev
     return reply;
 }
 
-QGeoMapReply* QGeoMappingManagerDummy::requestTile(const QGeoCoordinate &onTile, int zoomLevel,
-    const QSize &size, const QGeoMapRequestOptions &requestOptions)
+void QGeoMappingManagerDummy::getTileQuadKey(const QGeoCoordinate& coordinate,
+                                qint32 zoomLevel,
+                                qint32* row, qint32* col)
 {
-    QGeoMapReplyDummy* reply = new QGeoMapReplyDummy(size);
-    connect(reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(mappingFinished()));
-
-    return reply;
 }
 
 void QGeoMappingManagerDummy::mappingFinished()

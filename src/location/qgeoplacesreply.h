@@ -56,7 +56,6 @@ class Q_LOCATION_EXPORT QGeoPlacesReply : public QObject
     Q_OBJECT
 
 public:
-    // TODO populate this some more...
     enum Error {
         NoError,
         CommunicationError,
@@ -84,7 +83,6 @@ signals:
 
 protected:
     QGeoPlacesReply(QObject *parent = 0);
-//    QGeoPlacesReply(const QGeoBoundingBox &bounds, QObject *parent = 0);
 
     void setError(Error error, const QString &errorString);
     void setFinished(bool finished);

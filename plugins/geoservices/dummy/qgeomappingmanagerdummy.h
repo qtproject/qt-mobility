@@ -43,6 +43,7 @@
 #define QGEOMAPPINGMANAGER_DUMMY_H
 
 #include <QGeoMappingManager>
+#include <QStyleOptionGraphicsItem>
 #include <QTimer>
 
 QTM_USE_NAMESPACE
@@ -67,15 +68,18 @@ Q_OBJECT
 public:
     QGeoMappingManagerDummy();
     ~QGeoMappingManagerDummy();
+    QGeoMapReply* getMapImage(const QGeoCoordinate &center,
+                                      qreal zoomLevel,
+                                      const QSize &size,
+                                      const QGeoMapRequestOptions &requestOptions);
 
-    QGeoMapReply* requestMap(const QGeoCoordinate &center, int zoomLevel, const QSize &size,
-        const QGeoMapRequestOptions &requestOptions);
+    QGeoMapReply* getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
+                                       const QSize &size,
+                                       const QGeoMapRequestOptions &requestOptions);
 
-    QGeoMapReply* requestTile(int row, int col, int zoomLevel, const QSize &size,
-        const QGeoMapRequestOptions &requestOptions);
-
-    QGeoMapReply* requestTile(const QGeoCoordinate &onTile, int zoomLevel, const QSize &size,
-        const QGeoMapRequestOptions &requestOptions);
+    void getTileQuadKey(const QGeoCoordinate& coordinate,
+                                qint32 zoomLevel,
+                                qint32* row, qint32* col);
 
     void setZoomLevel(int zoomLevel) {};
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) {};

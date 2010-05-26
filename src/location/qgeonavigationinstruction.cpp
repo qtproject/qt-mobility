@@ -122,8 +122,6 @@ QGeoNavigationInstruction::InstructionType QGeoNavigationInstruction::type() con
 
 /*!
     Sets the position where the instructions should be provided to \a position.
-
-    \sa QGeoNavigationInstruction::position()
 */
 void QGeoNavigationInstruction::setPosition(const QGeoCoordinate &position)
 {
@@ -133,8 +131,6 @@ void QGeoNavigationInstruction::setPosition(const QGeoCoordinate &position)
 
 /*!
     Returns the position where the instructions should be provided.
-
-    \sa QGeoNavigationInstruction::setPosition()
 */
 QGeoCoordinate QGeoNavigationInstruction::position() const
 {
@@ -144,8 +140,6 @@ QGeoCoordinate QGeoNavigationInstruction::position() const
 
 /*!
     Sets the textual navigation instructions to \a instructionText.
-
-    \sa QGeoNavigationInstruction::instructionText()
 */
 void QGeoNavigationInstruction::setInstructionText(const QString &instructionText)
 {
@@ -155,8 +149,6 @@ void QGeoNavigationInstruction::setInstructionText(const QString &instructionTex
 
 /*!
     Returns the textual navigation instructions.
-
-    \sa QGeoNavigationInstruction::setInstructionText()
 */
 QString QGeoNavigationInstruction::instructionText() const
 {
@@ -164,24 +156,42 @@ QString QGeoNavigationInstruction::instructionText() const
     return d->text;
 }
 
+/*!
+    Sets the estimated time it will take to travel from the point at which this
+    instruction was issued and the point that the next instruction should be
+    issued, in seconds, to \a secs.
+*/
 void QGeoNavigationInstruction::setTimeToNextInstruction(int secs)
 {
     Q_D(QGeoNavigationInstruction);
     d->timeToNextInstruction = secs;
 }
 
+/*!
+    Returns the estimated time it will take to travel from the point at which
+    this instruction was issued and the point that the next instruction should
+    be issued, in seconds.
+*/
 int QGeoNavigationInstruction::timeToNextInstruction() const
 {
     Q_D(const QGeoNavigationInstruction);
     return d->timeToNextInstruction;
 }
 
+/*!
+    Sets the distance between the point at which this instruction was issued
+    and the point that the next instruction should be issued to \a distance.
+*/
 void QGeoNavigationInstruction::setDistanceToNextInstruction(const QGeoDistance &distance)
 {
     Q_D(QGeoNavigationInstruction);
     d->distanceToNextInstruction = distance;
 }
 
+/*!
+    Returns the distance between the point at which this instruction was issued
+    and the point that the next instruction should be issued.
+*/
 QGeoDistance QGeoNavigationInstruction::distanceToNextInstruction() const
 {
     Q_D(const QGeoNavigationInstruction);

@@ -43,6 +43,7 @@
 #include "qgeoplacesmanagerdummy.h"
 #include "qgeomappingmanagerdummy.h"
 #include <QGeoRoutingManager>
+#include <QGeoMapViewport>
 
 QGeoServiceProviderPluginDummy::QGeoServiceProviderPluginDummy()
 {
@@ -69,6 +70,14 @@ QGeoMappingManager* QGeoServiceProviderPluginDummy::createMappingManager(const Q
                                                                          QString *errorString)const
 {
     return new QGeoMappingManagerDummy();//parameters, error, errorString);
+}
+
+QGeoMapViewport* QGeoServiceProviderPluginDummy::createMapViewport(QGeoMappingManager *manager,
+        const QMap<QString, QString> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString) const
+{
+    return NULL;
 }
 
 QGeoRoutingManager* QGeoServiceProviderPluginDummy::createRoutingManager(const QMap<QString, QString> &parameters,

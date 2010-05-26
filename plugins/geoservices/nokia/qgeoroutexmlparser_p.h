@@ -64,12 +64,14 @@ class QIODevice;
 #include <QGeoCoordinate>
 #include <QGeoBoundingBox>
 
+#include <QGeoRouteRequest>
+
 QTM_USE_NAMESPACE
 
 class QGeoRouteXmlParser
 {
 public:
-    QGeoRouteXmlParser();
+    QGeoRouteXmlParser(const QGeoRouteRequest &request);
     ~QGeoRouteXmlParser();
 
     bool parse(QIODevice* source);
@@ -86,6 +88,7 @@ private:
     bool parseBoundingBox(QGeoBoundingBox *bounds);
     bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 
+    QGeoRouteRequest m_request;
     QXmlStreamReader *m_reader;
     QList<QGeoRoute> m_results;
     QString m_errorString;

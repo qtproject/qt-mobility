@@ -52,8 +52,8 @@
 #include <QMessageBox>
 
 ReverseGeocodingTab::ReverseGeocodingTab(QWidget *parent) :
-    QWidget(parent),
-    m_placesManager(NULL)
+        QWidget(parent),
+        m_placesManager(NULL)
 {
     QLabel *locationlbl = new QLabel(tr("Location:"));
     m_locLong = new QLineEdit("13.377");
@@ -97,10 +97,10 @@ void ReverseGeocodingTab::initialize(QGeoPlacesManager *placesManager)
     m_placesManager = placesManager;
     if (m_placesManager) {
         QObject::connect(m_placesManager, SIGNAL(finished(QGeoPlacesReply*)), this,
-            SLOT(replyFinished(QGeoPlacesReply*)));
+                         SLOT(replyFinished(QGeoPlacesReply*)));
         QObject::connect(m_placesManager,
-            SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)), this,
-            SLOT(resultsError(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)));
+                         SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)), this,
+                         SLOT(resultsError(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)));
     }
 }
 
@@ -112,8 +112,7 @@ void ReverseGeocodingTab::on_btnRequest_clicked()
         m_resultTree->clear();
 
         m_placesManager->geocode(coord);
-    }
-    else {
+    } else {
         QMessageBox::warning(this, tr("Reverse GeoCoding"), tr("No geocoding service available."));
     }
 }
@@ -127,7 +126,7 @@ void ReverseGeocodingTab::replyFinished(QGeoPlacesReply* reply)
     }
 }
 
-void ReverseGeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode,QString errorString)
+void ReverseGeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString)
 {
     if (!isHidden()) {
         QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);

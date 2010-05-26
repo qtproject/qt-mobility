@@ -39,39 +39,56 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_P_H
-#define QGEOMAPREPLY_P_H
+#ifndef QGEOMAPVIEWPORT_H
+#define QGEOMAPVIEWPORT_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 
-#include "qgeomapreply.h"
+#include <QObject>
+#include <QSize>
+#include <QPainter>
+#include <QStyleOptionGraphicsItem>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapReplyPrivate
+//class QGeoMapWidget;
+class QGeoMappingManager;
+class QGeoMapViewportPrivate;
+
+class Q_LOCATION_EXPORT QGeoMapViewport : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoMapReplyPrivate();
-    QGeoMapReplyPrivate(QGeoMapReply::Error error, const QString& errorString);
-    QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other);
-    ~QGeoMapReplyPrivate();
+    QGeoMapViewport(QGeoMappingManager *manager = 0);
+    virtual ~QGeoMapViewport();
 
-    QGeoMapReplyPrivate& operator= (const QGeoMapReplyPrivate &other);
+//    void setMapWidget(QGeoMapWidget *widget);
 
-    QGeoMapReply::Error error;
-    QString errorString;
-    bool isFinished;
+    int zoomLevel() const;
+    virtual void setZoomLevel(int zoomLevel) = 0;
 
-    QPixmap mapImage;
+    virtual void setViewportSize(const QSize &size);
+    QSize viewportSize() const;
+
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
+
+    virtual void setCenter(const QGeoCoordinate &center) = 0;
+    virtual QGeoCoordinate center() const = 0;
+
+    virtual void pan(int startX, int startY, int endX, int endY) = 0;
+
+    virtual QGeoBoundingBox viewBounds() const = 0;
+
+    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
+
+private:
+    QGeoMapViewportPrivate* d_ptr;
+
+    Q_DISABLE_COPY(QGeoMapViewport)
+    Q_DECLARE_PRIVATE(QGeoMapViewport)
 };
 
 QTM_END_NAMESPACE

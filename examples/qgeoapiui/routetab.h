@@ -58,7 +58,7 @@ class RouteTab: public QWidget
 public:
     RouteTab(QWidget *parent = 0);
     ~RouteTab();
-    
+
 public slots:
     void initialize(QGeoRoutingManager *routingManager);
 

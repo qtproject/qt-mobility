@@ -61,7 +61,7 @@ QTM_USE_NAMESPACE
 
 class TabbedWindow: public QMainWindow
 {
-Q_OBJECT
+    Q_OBJECT
 
 public:
     TabbedWindow(QWidget *parent = 0);

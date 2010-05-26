@@ -117,31 +117,43 @@ QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
     return d->type;
 }
 
+/*!
+    Sets the estimated amount of time it will take to traverse this segment of
+    the route, in seconds, to \a secs.
+*/
 void QGeoRouteSegment::setTravelTime(int secs)
 {
     Q_D(QGeoRouteSegment);
     d->travelTime = secs;
 }
 
+/*!
+    Returns the estimated amount of time it will take to traverse this segment
+    of the route, in seconds.
+*/
 int QGeoRouteSegment::travelTime() const
 {
     Q_D(const QGeoRouteSegment);
     return d->travelTime;
 }
 
+/*!
+    Sets the \a distance covered by this segment of the route.
+*/
 void QGeoRouteSegment::setDistance(const QGeoDistance &distance)
 {
     Q_D(QGeoRouteSegment);
     d->distance = distance;
 }
 
+/*!
+    Returns the distance covered by this segment of the route.
+*/
 QGeoDistance QGeoRouteSegment::distance() const
 {
     Q_D(const QGeoRouteSegment);
     return d->distance;
 }
-
-// bounds per segment?  or is bounds per route enough?
 
 /*!
     Sets the geometric shape of this segment of the route to \a path.

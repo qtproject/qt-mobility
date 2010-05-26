@@ -56,22 +56,22 @@ QTM_BEGIN_NAMESPACE
 /*!
 */
 QGeoBoundingBox::QGeoBoundingBox()
-    : d_ptr(new QGeoBoundingBoxPrivate()) {}
+        : d_ptr(new QGeoBoundingBoxPrivate()) {}
 
 /*!
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
-    : d_ptr(new QGeoBoundingBoxPrivate(center, degreesWidth, degreesHeight)) {}
+        : d_ptr(new QGeoBoundingBoxPrivate(center, degreesWidth, degreesHeight)) {}
 
 /*!
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
-    : d_ptr(new QGeoBoundingBoxPrivate(topLeft, bottomRight)) {}
+        : d_ptr(new QGeoBoundingBoxPrivate(topLeft, bottomRight)) {}
 
 /*!
 */
 QGeoBoundingBox::QGeoBoundingBox(const QGeoBoundingBox &other)
-    : d_ptr(other.d_ptr) {}
+        : d_ptr(other.d_ptr) {}
 
 /*!
 */
@@ -79,7 +79,7 @@ QGeoBoundingBox::~QGeoBoundingBox() {}
 
 /*!
 */
-QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox &other)
+QGeoBoundingBox& QGeoBoundingBox::operator = (const QGeoBoundingBox & other)
 {
     d_ptr = other.d_ptr;
     return *this;
@@ -104,8 +104,8 @@ bool QGeoBoundingBox::operator != (const QGeoBoundingBox &other) const
 bool QGeoBoundingBox::isValid() const
 {
     return ((d_ptr->center.isValid())
-                && (qIsFinite(d_ptr->width))
-                && (qIsFinite(d_ptr->height)));
+            && (qIsFinite(d_ptr->width))
+            && (qIsFinite(d_ptr->height)));
 }
 
 /*!
@@ -120,7 +120,7 @@ bool QGeoBoundingBox::isEmpty() const
 QGeoCoordinate QGeoBoundingBox::topLeft() const
 {
     return QGeoCoordinate(d_ptr->center.latitude() + (d_ptr->height / 2.0),
-                            d_ptr->center.longitude() - (d_ptr->width / 2.0));
+                          d_ptr->center.longitude() - (d_ptr->width / 2.0));
 }
 
 /*!
@@ -128,7 +128,7 @@ QGeoCoordinate QGeoBoundingBox::topLeft() const
 QGeoCoordinate QGeoBoundingBox::topRight() const
 {
     return QGeoCoordinate(d_ptr->center.latitude() + (d_ptr->height / 2.0),
-                            d_ptr->center.longitude() + (d_ptr->width / 2.0));
+                          d_ptr->center.longitude() + (d_ptr->width / 2.0));
 }
 
 /*!
@@ -136,7 +136,7 @@ QGeoCoordinate QGeoBoundingBox::topRight() const
 QGeoCoordinate QGeoBoundingBox::bottomLeft() const
 {
     return QGeoCoordinate(d_ptr->center.latitude() - (d_ptr->height / 2.0),
-                            d_ptr->center.longitude() - (d_ptr->width / 2.0));
+                          d_ptr->center.longitude() - (d_ptr->width / 2.0));
 }
 
 /*!
@@ -144,7 +144,7 @@ QGeoCoordinate QGeoBoundingBox::bottomLeft() const
 QGeoCoordinate QGeoBoundingBox::bottomRight() const
 {
     return QGeoCoordinate(d_ptr->center.latitude() - (d_ptr->height / 2.0),
-                            d_ptr->center.longitude() + (d_ptr->width / 2.0));
+                          d_ptr->center.longitude() + (d_ptr->width / 2.0));
 }
 
 /*!
@@ -290,7 +290,7 @@ QGeoBoundingBox QGeoBoundingBox::operator | (const QGeoBoundingBox &boundingBox)
 
 /*!
 */
-QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox &boundingBox)
+QGeoBoundingBox& QGeoBoundingBox::operator |= (const QGeoBoundingBox & boundingBox)
 {
     // TODO
     return *this;
@@ -315,7 +315,7 @@ QGeoBoundingBox QGeoBoundingBox::operator & (const QGeoBoundingBox &boundingBox)
 
 /*!
 */
-QGeoBoundingBox& QGeoBoundingBox::operator &= (const QGeoBoundingBox &boundingBox)
+QGeoBoundingBox& QGeoBoundingBox::operator &= (const QGeoBoundingBox & boundingBox)
 {
     // TODO
     return *this;
@@ -327,10 +327,10 @@ QGeoBoundingBox& QGeoBoundingBox::operator &= (const QGeoBoundingBox &boundingBo
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate() : QSharedData() {}
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &center, double degreesWidth, double degreesHeight)
-    : QSharedData(),
-    center(center),
-    width(degreesWidth),
-    height(degreesHeight)
+        : QSharedData(),
+        center(center),
+        width(degreesWidth),
+        height(degreesHeight)
 {
     if (degreesWidth > 360.0)
         width = 360.0;
@@ -339,10 +339,10 @@ QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &center, dou
 }
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight)
-    : QSharedData()
+        : QSharedData()
 {
     center = QGeoCoordinate((topLeft.latitude() + bottomRight.latitude()) / 2.0,
-                             (topLeft.longitude() + bottomRight.longitude()) / 2.0);
+                            (topLeft.longitude() + bottomRight.longitude()) / 2.0);
 
     width = degreesLeft(center.longitude(), topLeft.longitude())
             + degreesRight(center.longitude(), bottomRight.longitude());
@@ -351,10 +351,10 @@ QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoCoordinate &topLeft, co
 }
 
 QGeoBoundingBoxPrivate::QGeoBoundingBoxPrivate(const QGeoBoundingBoxPrivate &other)
-    : QSharedData(),
-    center(other.center),
-    width(other.width),
-    height(other.height) {}
+        : QSharedData(),
+        center(other.center),
+        width(other.width),
+        height(other.height) {}
 
 QGeoBoundingBoxPrivate::~QGeoBoundingBoxPrivate() {}
 

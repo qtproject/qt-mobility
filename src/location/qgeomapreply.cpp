@@ -76,8 +76,8 @@ QGeoMapReply::QGeoMapReply(QObject *parent)
 }
 
 QGeoMapReply::QGeoMapReply(Error error, const QString &errorString, QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoMapReplyPrivate(error, errorString)) {}
+        : QObject(parent),
+        d_ptr(new QGeoMapReplyPrivate(error, errorString)) {}
 
 /*!
     Destructor.
@@ -155,24 +155,24 @@ void QGeoMapReply::abort() {}
 *******************************************************************************/
 
 QGeoMapReplyPrivate::QGeoMapReplyPrivate()
-    : error(QGeoMapReply::NoError),
-    errorString(""),
-    isFinished(false) {}
+        : error(QGeoMapReply::NoError),
+        errorString(""),
+        isFinished(false) {}
 
 QGeoMapReplyPrivate::QGeoMapReplyPrivate(QGeoMapReply::Error error, const QString &errorString)
-    : error(error),
-    errorString(errorString),
-    isFinished(true) {}
+        : error(error),
+        errorString(errorString),
+        isFinished(true) {}
 
 QGeoMapReplyPrivate::QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other)
-    : error(error),
-    errorString(errorString),
-    isFinished(isFinished),
-    mapImage(other.mapImage) {}
+        : error(error),
+        errorString(errorString),
+        isFinished(isFinished),
+        mapImage(other.mapImage) {}
 
 QGeoMapReplyPrivate::~QGeoMapReplyPrivate() {}
 
-QGeoMapReplyPrivate& QGeoMapReplyPrivate::operator= (const QGeoMapReplyPrivate &other)
+QGeoMapReplyPrivate& QGeoMapReplyPrivate::operator= (const QGeoMapReplyPrivate & other)
 {
     error = other.error;
     errorString = other.errorString;

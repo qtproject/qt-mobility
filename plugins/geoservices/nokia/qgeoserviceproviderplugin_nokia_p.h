@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDERPLUGIN_NOKIA_P_H
-#define QGEOSERVICEPROVIDERPLUGIN_NOKIA_P_H
+#ifndef QGEOSERVICEPROVIDER_NOKIA_P_H
+#define QGEOSERVICEPROVIDER_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -72,11 +72,15 @@ public:
                                            QGeoServiceProvider::Error *error,
                                            QString *errorString) const;
     QGeoMappingManager* createMappingManager(const QMap<QString, QString> &parameters,
-                                             QGeoServiceProvider::Error *error,
-                                             QString *errorString) const;
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
+    QGeoMapViewport* createMapViewport(QGeoMappingManager *manager,
+                                       const QMap<QString, QString> &parameters,
+                                       QGeoServiceProvider::Error *error,
+                                       QString *errorString) const;
     QGeoRoutingManager* createRoutingManager(const QMap<QString, QString> &parameters,
-                                             QGeoServiceProvider::Error *error,
-                                             QString *errorString) const;
+            QGeoServiceProvider::Error *error,
+            QString *errorString) const;
 };
 
-#endif  // QGEOSERVICEPROVIDERPLUGIN_NOKIA_P_H
+#endif

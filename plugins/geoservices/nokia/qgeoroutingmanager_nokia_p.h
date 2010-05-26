@@ -64,8 +64,8 @@ class QGeoRoutingManagerNokia : public QGeoRoutingManager
     Q_OBJECT
 public:
     QGeoRoutingManagerNokia(const QMap<QString, QString> &parameters,
-                           QGeoServiceProvider::Error *error,
-                           QString *errorString);
+                            QGeoServiceProvider::Error *error,
+                            QString *errorString);
     ~QGeoRoutingManagerNokia();
 
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);

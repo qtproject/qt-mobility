@@ -41,9 +41,10 @@
 
 #include "qgeomapreply_nokia_p.h"
 
-QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, QObject *parent)
-    : QGeoMapReply(parent),
-    m_reply(reply)
+QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInfo, QObject *parent)
+        : QGeoMapReply(parent),
+        m_reply(reply),
+        m_tileInfo(tileInfo)
 {
     connect(m_reply,
             SIGNAL(finished()),
@@ -58,7 +59,14 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, QObject *parent)
 
 QGeoMapReplyNokia::~QGeoMapReplyNokia()
 {
+    if (m_tileInfo)
+        delete m_tileInfo;
     //TODO: possible mem leak -> m_reply->deleteLater() ?
+}
+
+QGeoMapReplyNokia::QuadTileInfo* QGeoMapReplyNokia::tileInfo() const
+{
+    return m_tileInfo;
 }
 
 void QGeoMapReplyNokia::abort()
@@ -76,13 +84,13 @@ void QGeoMapReplyNokia::networkFinished()
     }
 
     QPixmap tile;
-    
+
     if (!tile.loadFromData(m_reply->readAll(), "PNG")) {
         // add a qWarning with the actual parser.errorString()
         setError(QGeoMapReply::ParseError, "The response from the service was not in a recognisable format.");
     }
 
-    if(!tile.isNull() && !tile.size().isEmpty()) {
+    if (!tile.isNull() && !tile.size().isEmpty()) {
         setMapImage(tile);
         setFinished(true);
     } else {

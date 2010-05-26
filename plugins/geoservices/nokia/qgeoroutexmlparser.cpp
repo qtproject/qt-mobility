@@ -48,8 +48,9 @@
 #include <QStringList>
 #include <QString>
 
-QGeoRouteXmlParser::QGeoRouteXmlParser()
-        : m_reader(0)
+QGeoRouteXmlParser::QGeoRouteXmlParser(const QGeoRouteRequest &request)
+        : m_request(request),
+        m_reader(0)
 {
 }
 
@@ -144,6 +145,7 @@ bool QGeoRouteXmlParser::parseRootElement()
     while (m_reader->readNextStartElement()) {
         if (m_reader->name() == "route") {
             QGeoRoute route;
+            route.setRequest(m_request);
 
             if (!parseRoute(&route))
                 return false;

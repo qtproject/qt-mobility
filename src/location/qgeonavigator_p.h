@@ -67,7 +67,8 @@ class QGeoRoutingManager;
 class QGeoRouteReply;
 class QGeoRoute;
 
-class QGeoNavigatorPrivate {
+class QGeoNavigatorPrivate
+{
 public:
     QGeoNavigatorPrivate();
     QGeoNavigatorPrivate(const QGeoNavigatorPrivate &other);

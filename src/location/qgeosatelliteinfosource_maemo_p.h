@@ -73,7 +73,7 @@ private:
 private Q_SLOTS:
     void newSatellitesInView(const QList<QGeoSatelliteInfo> &update);
     void newSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
-    
+
 public Q_SLOTS:
     void startUpdates();
     void stopUpdates();

@@ -58,14 +58,14 @@ class ServicesTab: public QWidget
 public:
     ServicesTab(QWidget *parent = 0);
     ~ServicesTab();
-    
+
 private:
     void listServiceProviders();
 
 signals:
-    void serviceProviderChanged(QString providerId); 
+    void serviceProviderChanged(QString providerId);
 
-public slots:    
+public slots:
     void initialize();
 
 private slots:

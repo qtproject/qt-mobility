@@ -53,7 +53,7 @@
 #endif
 
 TabbedWindow::TabbedWindow(QWidget *parent)
-    : QMainWindow(parent), m_serviceProvider(NULL)
+        : QMainWindow(parent), m_serviceProvider(NULL)
 {
 
     setWindowTitle(tr("QGeoApiUI Example"));
@@ -75,24 +75,24 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     m_session->open();
     m_session->waitForOpened(-1);
 #endif
-    
+
     ServicesTab* servicesTab = new ServicesTab();
-    
+
     QObject::connect(servicesTab, SIGNAL(serviceProviderChanged(QString)), this,
-        SLOT(setProvider(QString)), Qt::QueuedConnection);
-    
+                     SLOT(setProvider(QString)), Qt::QueuedConnection);
+
     m_geocodingTab = new GeocodingTab();
     m_reverseTab = new ReverseGeocodingTab();
     m_routingTab = new RouteTab();
     m_mappingTab = new MapTileTab();
-    
+
     m_tabWidget = new QTabWidget;
     m_tabWidget->addTab(servicesTab, tr("Service Providers"));
     m_tabWidget->addTab(m_routingTab, tr("Route"));
     m_tabWidget->addTab(m_geocodingTab, tr("Geocoding"));
     m_tabWidget->addTab(m_reverseTab, tr("Reverse Geocoding"));
     m_tabWidget->addTab(m_mappingTab, tr("Map Tile"));
-    
+
     setCentralWidget(m_tabWidget);
     QTimer::singleShot(0, servicesTab, SLOT(initialize()));
 }
@@ -104,17 +104,17 @@ TabbedWindow::~TabbedWindow()
 
 void TabbedWindow::setProvider(QString providerId)
 {
-    QMap<QString,QString> parameters;
-    if(providerId=="nokia") {
+    QMap<QString, QString> parameters;
+    if (providerId == "nokia") {
         parameters.insert("places.proxy", "172.16.42.137");
         parameters.insert("places.host", "dev-a7.bln.gate5.de");
         parameters.insert("routing.proxy", "172.16.42.137");
         parameters.insert("routing.host", "172.24.32.155");
         parameters.insert("mapping.proxy", "172.16.42.40");
         parameters.insert("mapping.host", "maptile.svc.nokia.com.edgesuite.net");
-    }    
-    
-    if(m_serviceProvider)
+    }
+
+    if (m_serviceProvider)
         delete m_serviceProvider ;
     m_serviceProvider = new QGeoServiceProvider(providerId, parameters);
     if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {

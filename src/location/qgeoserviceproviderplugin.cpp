@@ -68,6 +68,13 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+\fn QGeoMapViewport* QGeoServiceProviderPlugin::createMapViewport(QGeoMappingManager *manager,
+                                                                  const QMap<QString, QString> &parameters,
+                                                                  QGeoServiceProvider::Error *error,
+                                                                  QString *errorString) const
+*/
+
+/*!
 \fn QGeoRoutingManager* QGeoServiceProviderPlugin::createRoutingManager(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const

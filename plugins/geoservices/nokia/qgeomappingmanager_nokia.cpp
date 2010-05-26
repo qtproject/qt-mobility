@@ -44,29 +44,50 @@
 
 #include <QNetworkProxy>
 #include <QSize>
+#include <QDir>
 
 #define LARGE_TILE_DIMENSION 256
-
 #define PI 3.14159265
 #include <math.h>
 
 QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-    : m_host("loc.desktop.maps.svc.ovi.com")
+        : m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_nam = new QNetworkAccessManager(this);
+    m_cache = new QNetworkDiskCache(this);
+
+    QDir dir = QDir::temp();
+    dir.cd("maptiles");
+    m_cache->setCacheDirectory(dir.path());
 
     QList<QString> keys = parameters.keys();
 
-    if(keys.contains("mapping.proxy")) {
+    if (keys.contains("mapping.proxy")) {
         QString proxy = parameters.value("mapping.proxy");
-        if(!proxy.isEmpty())
-            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
+        if (!proxy.isEmpty())
+            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
-    if(keys.contains("mapping.host")) {
+
+    if (keys.contains("mapping.host")) {
         QString host = parameters.value("mapping.host");
-        if(!host.isEmpty())
+        if (!host.isEmpty())
             m_host = host;
     }
+
+    if (keys.contains("mapping.cache.directory")) {
+        QString cacheDir = parameters.value("mapping.cache.directory");
+        if (!cacheDir.isEmpty())
+            m_cache->setCacheDirectory(cacheDir);
+    }
+
+    if (keys.contains("mapping.cache.size")) {
+        bool ok = false;
+        qint64 cacheSize = parameters.value("mapping.cache.size").toLongLong(&ok);
+        if (ok)
+            m_cache->setMaximumCacheSize(cacheSize);
+    }
+
+    m_nam->setCache(m_cache);
 
     if (error)
         *error = QGeoServiceProvider::NoError;
@@ -80,81 +101,60 @@ QGeoMappingManagerNokia::~QGeoMappingManagerNokia()
     //delete m_cache;
 }
 
-QGeoMapReply* QGeoMappingManagerNokia::requestTile(const QGeoCoordinate &onTile, int zoomLevel,
-                                                   const QSize &size,
-                                                   const QGeoMapRequestOptions &requestOptions)
+QGeoMapReply* QGeoMappingManagerNokia::getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
+        const QSize &size,
+        const QGeoMapRequestOptions &requestOptions)
 {
-    qint32 row;
-    qint32 col;
-    getMercatorTileIndex(onTile, zoomLevel, &row, &col);
-    return requestTile(row, col, zoomLevel, size, requestOptions);
-}
-
-QGeoMapReply* QGeoMappingManagerNokia::requestTile(int row, int col, int zoomLevel,
-                                                   const QSize &size,
-                                                   const QGeoMapRequestOptions &requestOptions)
-{
-    QuadTileInfo* info = new QuadTileInfo;
+    QGeoMapReplyNokia::QuadTileInfo* info = new QGeoMapReplyNokia::QuadTileInfo;
     info->row = row;
     info->col = col;
     info->zoomLevel = zoomLevel;
     info->size = size;
     info->options = requestOptions;
-    //check cache first
-    /*
-    QMapTileReplyNokia* tileReply = NULL;
 
-    if ((tileReply = m_cache->get(level, row, col, m_version, m_size, m_format, m_scheme))) {
-        connect(tileReply,
-                SIGNAL(finished()),
-                this,
-                SLOT(finishedReply()));
-        connect(tileReply,
-                SIGNAL(error(QMapTileReply::ErrorCode, QString)),
-                this,
-                SLOT(errorReply(QMapTileReply::ErrorCode, QString)));
-        tileReply->done();
-    } else {
-    */
-        QString rawRequest = getRequestString(*info);
-        QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
-        QNetworkReply* netReply = m_nam->get(netRequest);
-        QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, this);
-        m_pendingReplies.insert(mapReply, info);
+    QString rawRequest = getRequestString(*info);
 
-        connect(mapReply,
-                SIGNAL(finished()),
-                this,
-                SLOT(mapFinished()));
+    QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
+    netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
 
-        connect(mapReply,
-                SIGNAL(error(QGeoMapReply::Error,QString)),
-                this,
-                SLOT(mapError(QGeoMapReply::Error,QString)));
+    QNetworkReply* netReply = m_nam->get(netRequest);
+    QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, info, this);
 
-    //}
+    connect(mapReply,
+            SIGNAL(finished()),
+            this,
+            SLOT(mapFinished()));
+
+    connect(mapReply,
+            SIGNAL(error(QGeoMapReply::Error, QString)),
+            this,
+            SLOT(mapError(QGeoMapReply::Error, QString)));
 
     return mapReply;
 }
 
 void QGeoMappingManagerNokia::mapFinished()
 {
-    QGeoMapReply *reply = qobject_cast<QGeoMapReply*>(sender());
+    QGeoMapReplyNokia *reply = qobject_cast<QGeoMapReplyNokia*>(sender());
 
     if (!reply)
         return;
 
-    if (m_pendingReplies.contains(reply)) {
-        QuadTileInfo* info = m_pendingReplies.take(reply);
-        qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
-        m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
-        delete info;
-//            reply->deleteLater();
-//        } else {
-        //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
-        emit finished(reply);
+    QGeoMapReplyNokia::QuadTileInfo* info = reply->tileInfo();
+    if (!info) {
+        reply->deleteLater();
+        return;
     }
 
+    qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
+    m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
+
+    if (receivers(SIGNAL(finished(QGeoMapReply*))) == 0) {
+        reply->deleteLater();
+        return;
+    }
+
+    emit finished(reply);
 }
 
 void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString &errorString)
@@ -164,17 +164,15 @@ void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString 
     if (!reply)
         return;
 
-    if (m_pendingReplies.contains(reply)) {
-        QuadTileInfo* info = m_pendingReplies.take(reply);
-        delete info;
+    if (receivers(SIGNAL(error(QGeoMapReply*, QGeoMapReply::Error, QString))) == 0) {
         reply->deleteLater();
-    } else {
-        //TODO: what happens when no-one is connected to signal -> possible mem leak (reply) ?
-        emit this->error(reply, error, errorString);
+        return;
     }
+
+    emit this->error(reply, error, errorString);
 }
 
-QString QGeoMappingManagerNokia::getRequestString(const QuadTileInfo &info) const
+QString QGeoMappingManagerNokia::getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const
 {
     QString request = "http://";
     request += m_host;
@@ -217,9 +215,9 @@ QString QGeoMappingManagerNokia::getRequestString(const QuadTileInfo &info) cons
 
     \note This does not mean that the coordinate lies in the center of the calculated tile.
 */
-void QGeoMappingManagerNokia::getMercatorTileIndex(const QGeoCoordinate& coordinate, qint32 level, qint32* row, qint32* col)
+void QGeoMappingManagerNokia::getTileQuadKey(const QGeoCoordinate& coordinate, qint32 zoomLevel, qint32* row, qint32* col)
 {
-    qreal p = pow((double) 2, static_cast<int>(level));
+    qreal p = pow((double) 2, static_cast<int>(zoomLevel));
 
     double x = coordinate.longitude() / 360 + 0.5;
     double y = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * coordinate.latitude() / 180)) / PI) / 2;
@@ -237,7 +235,7 @@ void QGeoMappingManagerNokia::getMercatorTileIndex(const QGeoCoordinate& coordin
 QString QGeoMappingManagerNokia::sizeToStr(const QSize &size)
 {
     if (size.height() >= LARGE_TILE_DIMENSION ||
-        size.width() >= LARGE_TILE_DIMENSION)
+            size.width() >= LARGE_TILE_DIMENSION)
         return "256";
     else
         return "128";
@@ -248,11 +246,9 @@ QString QGeoMappingManagerNokia::mapTypeToStr(MapType type)
     if (type == QGeoMappingManager::StreetMap)
         return "normal.day";
     else if (type == QGeoMappingManager::SatelliteMapDay ||
-             type == QGeoMappingManager::SatelliteMapNight)
-    {
+             type == QGeoMappingManager::SatelliteMapNight) {
         return "satellite.day";
-    }
-    else if (type == QGeoMappingManager::TerrainMap)
+    } else if (type == QGeoMappingManager::TerrainMap)
         return "terrain.day";
     else
         return "normal.day";
@@ -268,109 +264,10 @@ qint64 QGeoMappingManagerNokia::getTileIndex(qint32 row, qint32 col, qint32 zoom
     return ((qint64) row) * numColRow + col;
 }
 
-/*!
-    Translates the input \a coordinate to a pixel representation in the view.
-    The pixel position is relative to the viewport (i.e. (0,0) defines the top left visible point in the map).
-*/
-QPointF QGeoMappingManagerNokia::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
-{
-    qint32 numColRow = 1;
-    numColRow <<= zoomLevel();
-    double lng = coordinate.longitude(); //x
-    double lat = coordinate.latitude(); //y
-
-    lng = lng / 360.0 + 0.5;
-
-    lat = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * lat / 180.0)) / PI) / 2.0;
-    lat = qMax(0.0, lat);
-    lat = qMin(1.0, lat);
-
-    QPointF point(static_cast<qint64>(lng * ((qreal) numColRow) * ((qreal) m_tileSize.width())),
-                  static_cast<qint64>(lat * ((qreal) numColRow) * ((qreal) m_tileSize.height())));
-    point -= m_viewPort.topLeft();
-    return point;
-}
-
-qreal rmod(const qreal a, const qreal b)
-{
-    quint64 div = static_cast<quint64>(a / b);
-    return a - static_cast<qreal>(div) * b;
-}
-
-/*!
-    Translates the pixel \a screenPosition in the view to a geometric coordinate.
-    The pixel position is relative to the viewport (i.e. (0,0) defines the top left visible point in the map).
-*/
-QGeoCoordinate QGeoMappingManagerNokia::screenPositionToCoordinate(QPointF screenPosition) const
-{
-    qint32 numColRow = 1;
-    numColRow <<= zoomLevel();
-    screenPosition += m_viewPort.topLeft();
-    QPointF mercCoord(screenPosition.x() / (((qreal) numColRow) * ((qreal) m_tileSize.width())),
-                      screenPosition.y() / (((qreal) numColRow) * ((qreal) m_tileSize.height())));
-
-    qreal x = mercCoord.x();
-    qreal y = mercCoord.y();
-
-    if (y < 0.0f)
-        y = 0.0f;
-    else if (y > 1.0f)
-        y = 1.0f;
-
-    qreal lat;
-
-    if (y == 0.0f)
-        lat = 90.0f;
-    else if (y == 1.0f)
-        lat = -90.0f;
-    else
-        lat = (180.0f / PI) * (2.0f * atan(exp(PI * (1.0f - 2.0f * y))) - (PI / 2.0f));
-
-    qreal lng;
-    if (x >= 0) {
-        lng = rmod(x, 1.0f);
-    } else {
-        lng = rmod(1.0f - rmod(-1.0f * x, 1.0f), 1.0f);
-    }
-
-    lng = lng * 360.0f - 180.0f;
-
-    return QGeoCoordinate(lat, lng);
-}
-
-QGeoMapReply* QGeoMappingManagerNokia::requestMap(const QGeoCoordinate &center,
-                                                  int zoomLevel,
-                                                  const QSize &size,
-                                                  const QGeoMapRequestOptions &requestOptions)
+QGeoMapReply* QGeoMappingManagerNokia::getMapImage(const QGeoCoordinate &center,
+        qreal zoomLevel,
+        const QSize &size,
+        const QGeoMapRequestOptions &requestOptions)
 {
     return NULL;
 }
-
-void QGeoMappingManagerNokia::setZoomLevel(int zoomLevel)
-{
-}
-
-void QGeoMappingManagerNokia::paint(QPainter *painter, const QStyleOptionGraphicsItem *option)
-{
-}
-
-void QGeoMappingManagerNokia::setCenter(const QGeoCoordinate &center)
-{
-}
-
-QGeoCoordinate QGeoMappingManagerNokia::center() const
-{
-    return QGeoCoordinate();
-}
-
-void QGeoMappingManagerNokia::pan(int startX, int startY, int endX, int endY)
-{
-}
-
-QGeoBoundingBox QGeoMappingManagerNokia::viewBounds() const
-{
-    return QGeoBoundingBox();
-}
-
-
-

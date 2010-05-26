@@ -93,8 +93,8 @@ Describes the type of search that should be performed by placesSearch().
     This should only ever be called from subclasses of QGeoPlacesManager.
 */
 QGeoPlacesManager::QGeoPlacesManager(QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoPlacesManagerPrivate()) {}
+        : QObject(parent),
+        d_ptr(new QGeoPlacesManagerPrivate()) {}
 
 /*!
     Destroys this manager.
@@ -132,6 +132,11 @@ QGeoPlacesManager::~QGeoPlacesManager()
     particularly useful if \a address is only partially filled out, as the
     service will attempt to geocode all matches for the specified data. Note
     that \a bounds will only be used if supportsViewportBiasing() returns true.
+
+    The user is responsible for deleting the returned reply object, although
+    this can be done in the slot connected to QGeoPlacesManager::finished(),
+    QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
+    QGeoPlacesReply::error() with deleteLater().
 */
 
 /*!
@@ -167,6 +172,11 @@ QGeoPlacesManager::~QGeoPlacesManager()
     If \a bounds is a valid QGeoBoundingBox it will be used to limit the
     geocoding results to those that are contained by \a bounds. Note that \a
     bounds will only be used if supportsViewportBiasing() returns true.
+
+    The user is responsible for deleting the returned reply object, although
+    this can be done in the slot connected to QGeoPlacesManager::finished(),
+    QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
+    QGeoPlacesReply::error() with deleteLater().
 */
 
 /*!
@@ -205,6 +215,11 @@ QGeoPlacesManager::~QGeoPlacesManager()
     geocoding results to those that are contained by \a bounds. Note that \a
     bounds will only be used for the geocoding part of the search if
     supportsViewportBiasing() returns true.
+
+    The user is responsible for deleting the returned reply object, although
+    this can be done in the slot connected to QGeoPlacesManager::finished(),
+    QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
+    QGeoPlacesReply::error() with deleteLater().
 */
 
 /*!
@@ -329,21 +344,21 @@ void QGeoPlacesManager::addLandmarkManager(QLandmarkManager *landmarkManager)
 *******************************************************************************/
 
 QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate()
-    : supportsViewportBiasing(false),
-    supportsGeocoding(false) {}
+        : supportsViewportBiasing(false),
+        supportsGeocoding(false) {}
 
 QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate(const QGeoPlacesManagerPrivate &other)
-    : landmarkManagers(other.landmarkManagers),
-    supportsViewportBiasing(other.supportsViewportBiasing),
-    supportsGeocoding(other.supportsGeocoding),
-    supportedSearchTypes(other.supportedSearchTypes) {}
+        : landmarkManagers(other.landmarkManagers),
+        supportsViewportBiasing(other.supportsViewportBiasing),
+        supportsGeocoding(other.supportsGeocoding),
+        supportedSearchTypes(other.supportedSearchTypes) {}
 
 QGeoPlacesManagerPrivate::~QGeoPlacesManagerPrivate()
 {
     qDeleteAll(landmarkManagers);
 }
 
-QGeoPlacesManagerPrivate& QGeoPlacesManagerPrivate::operator= (const QGeoPlacesManagerPrivate &other)
+QGeoPlacesManagerPrivate& QGeoPlacesManagerPrivate::operator= (const QGeoPlacesManagerPrivate & other)
 {
     landmarkManagers = other.landmarkManagers;
     supportsViewportBiasing = other.supportsViewportBiasing;

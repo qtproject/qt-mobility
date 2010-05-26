@@ -59,17 +59,17 @@ enum NavigationStatus {
 */
 
 QGeoNavigator::QGeoNavigator()
-    : d_ptr(new QGeoNavigatorPrivate()) {}
+        : d_ptr(new QGeoNavigatorPrivate()) {}
 
 QGeoNavigator::QGeoNavigator(const QGeoNavigator &other)
-    : d_ptr(new QGeoNavigatorPrivate(*(other.d_ptr))) {}
+        : d_ptr(new QGeoNavigatorPrivate(*(other.d_ptr))) {}
 
 QGeoNavigator::~QGeoNavigator()
 {
     delete d_ptr;
 }
 
-QGeoNavigator& QGeoNavigator::operator = (const QGeoNavigator &other)
+QGeoNavigator& QGeoNavigator::operator = (const QGeoNavigator & other)
 {
     *d_ptr = *(other.d_ptr);
     return *this;
@@ -167,9 +167,9 @@ void QGeoNavigator::calculate(const QGeoRouteRequest &request)
             SLOT(calculateRouteFinished()));
 
     connect(d_ptr->routeReply,
-            SIGNAL(error(QGeoRouteReply::Error,QString)),
+            SIGNAL(error(QGeoRouteReply::Error, QString)),
             this,
-            SLOT(calculateRouteError(QGeoRouteReply::Error,QString)));
+            SLOT(calculateRouteError(QGeoRouteReply::Error, QString)));
 }
 
 void QGeoNavigator::depart()
@@ -227,21 +227,21 @@ void QGeoNavigator::calculateRouteError(QGeoRouteReply::Error error, const QStri
 *******************************************************************************/
 
 QGeoNavigatorPrivate::QGeoNavigatorPrivate()
-    : positionSource(0),
-    routingManager(0),
-    routeReply(0) {}
+        : positionSource(0),
+        routingManager(0),
+        routeReply(0) {}
 
 QGeoNavigatorPrivate::QGeoNavigatorPrivate(const QGeoNavigatorPrivate &other)
-    : positionSource(positionSource),
-    routingManager(routingManager),
-    routeReply(routeReply),
-    radius(radius),
-    elapsedTime(elapsedTime),
-    elapsedDistance(elapsedDistance),
-    remainingTime(remainingTime),
-    remainingDistance(remainingDistance),
-    timeNextInstruction(timeNextInstruction),
-    distanceNextInstruction(distanceNextInstruction) {}
+        : positionSource(positionSource),
+        routingManager(routingManager),
+        routeReply(routeReply),
+        radius(radius),
+        elapsedTime(elapsedTime),
+        elapsedDistance(elapsedDistance),
+        remainingTime(remainingTime),
+        remainingDistance(remainingDistance),
+        timeNextInstruction(timeNextInstruction),
+        distanceNextInstruction(distanceNextInstruction) {}
 
 QGeoNavigatorPrivate::~QGeoNavigatorPrivate()
 {
@@ -249,7 +249,7 @@ QGeoNavigatorPrivate::~QGeoNavigatorPrivate()
         delete routeReply;
 }
 
-QGeoNavigatorPrivate& QGeoNavigatorPrivate::operator= (const QGeoNavigatorPrivate &other)
+QGeoNavigatorPrivate& QGeoNavigatorPrivate::operator= (const QGeoNavigatorPrivate & other)
 {
     positionSource = other.positionSource;
     routingManager = other.routingManager;

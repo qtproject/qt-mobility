@@ -46,29 +46,42 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRouteReply
-    \brief The QGeoRouteReply class represents the response from a routing service.
-    \ingroup location
 
-    This class represents the response from a routing service.
-    It also takes responsibility for any errors that happen while the request is
-    in submitted to and processed by the service.
+    \brief The QGeoRouteReply class manages an operation started by an instance
+    of QGeoRoutingManager.
+
+    \ingroup maps
+
+    Instances of QGeoRouteReply manage the state and results of these
+    operations.
+
+    The isFinished(), error() and errorString() methods provide information
+    on whether the operation has completed and if it completed succesfully.
+
+    If the operation completes successfully the results will be able to be
+    accessed with routes().
 */
 
 /*!
-    \enum ErrorCode
+    \enum QGeoRouteReply::Error
+
+    Describes an error which prevented the completion of the operation.
 
     \value NoError
         No error has occurred.
-    \value NetworkError
-        A networking error occurred.
-    \value NoContentError
-        The reply contained no content.
+    \value CommunicationError
+        An error occurred while communicating with the service provider.
+    \value ParseError
+        The response from the service provider was in an unrecognizable format.
+    \value UnsupportedOptionError
+        The requested operation or one of the options for the operation are not
+        supported by the service provider.
     \value UnknownError
         An error occurred which does not fit into any of the other categories.
 */
 
 /*!
-    Constructs a route reply object based on \a request, with parent \a parent.
+    Constructs a route reply object based on \a request, with the specified \a parent.
 */
 QGeoRouteReply::QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent)
         : QObject(parent),
@@ -77,13 +90,14 @@ QGeoRouteReply::QGeoRouteReply(const QGeoRouteRequest &request, QObject *parent)
 }
 
 /*!
+    Constructs a route reply with a given \a error and \a errorString and the specified \a parent.
 */
 QGeoRouteReply::QGeoRouteReply(Error error, const QString &errorString, QObject *parent)
-    : QObject(parent),
-    d_ptr(new QGeoRouteReplyPrivate(error, errorString)) {}
+        : QObject(parent),
+        d_ptr(new QGeoRouteReplyPrivate(error, errorString)) {}
 
 /*!
-    Destroys the route reply object.
+    Destroys this route reply object.
 */
 QGeoRouteReply::~QGeoRouteReply()
 {
@@ -91,6 +105,14 @@ QGeoRouteReply::~QGeoRouteReply()
 }
 
 /*!
+    Sets whether or not this reply has finished to \a finished.
+
+    If \a finished is true, this will cause the finished() signal to be
+    emitted.
+
+    If the operation completed successfully, QGeoRouteReply::setRoutes() should
+    be called before this function. If an error occured,
+    QGeoRouteReply::setError() should be used instead.
 */
 void QGeoRouteReply::setFinished(bool finished)
 {
@@ -100,6 +122,8 @@ void QGeoRouteReply::setFinished(bool finished)
 }
 
 /*!
+    Return true if the operation completed successfully or encountered an
+    error which cause the operation to come to a halt.
 */
 bool QGeoRouteReply::isFinished() const
 {
@@ -107,6 +131,11 @@ bool QGeoRouteReply::isFinished() const
 }
 
 /*!
+    Sets the error state of this reply to \a error and the textual
+    representation of the error to \a errorString.
+
+    This wil also cause error() and finished() signals to be emitted, in that
+    order.
 */
 void QGeoRouteReply::setError(QGeoRouteReply::Error error, const QString &errorString)
 {
@@ -117,6 +146,9 @@ void QGeoRouteReply::setError(QGeoRouteReply::Error error, const QString &errorS
 }
 
 /*!
+    Returns the error state of this reply.
+
+    If the result is QGeoRouteReply::NoError then no error has occurred.
 */
 QGeoRouteReply::Error QGeoRouteReply::error() const
 {
@@ -124,6 +156,14 @@ QGeoRouteReply::Error QGeoRouteReply::error() const
 }
 
 /*!
+    Returns the textual representation of the error state of this reply.
+
+    If no error has occurred this will return an empty string.  It is possible
+    that an error occurred which has no associated textual representation, in
+    which case this will also return an empty string.
+
+    To determine whether an error has occurred, check to see if
+    QGeoRouteReply::error() is equal to QGeoRouteReply::NoError.
 */
 QString QGeoRouteReply::errorString() const
 {
@@ -159,43 +199,65 @@ void QGeoRouteReply::setRoutes(const QList<QGeoRoute> &routes)
 
     This will do nothing if the reply is finished.
 */
-void QGeoRouteReply::abort() {}
+void QGeoRouteReply::abort()
+{
+    if (!isFinished())
+        setFinished(true);
+}
 
 /*!
     \fn void QGeoRouteReply::finished()
 
-    Indicates that the reply has been received and processed without error, and is ready to be used.
+    This signal is emitted when this reply has finished processing.
+
+    If error() equals QGeoRouteReply::NoError then the processing
+    finished successfully.
+
+    This signal and QGeoRoutingManager::finished() will be
+    emitted at the same time.
+
+    \note Do no delete this reply object in the slot connected to this
+    signal. Use deleteLater() instead.
 */
 /*!
     \fn void QGeoRouteReply::error(QGeoRouteReply::Error error, const QString &errorString)
 
-    Indicates that an error occurred during the receiving or processing of the reply.
+    This signal is emitted when an error has been detected in the processing of
+    this reply. The finished() signal will probably follow.
+
+    The error will be described by the error code \error. If \a errorString is
+    not empty it will contain a textual description of the error.
+
+    This signal and QGeoRoutingManager::error() will be emitted at the same time.
+
+    \note Do no delete this reply object in the slot connected to this
+    signal. Use deleteLater() instead.
 */
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteRequest &request)
-    : error(QGeoRouteReply::NoError),
-    errorString(""),
-    isFinished(false),
-    request(request) {}
+        : error(QGeoRouteReply::NoError),
+        errorString(""),
+        isFinished(false),
+        request(request) {}
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(QGeoRouteReply::Error error, QString errorString)
-    : error(error),
-    errorString(errorString),
-    isFinished(true) {}
+        : error(error),
+        errorString(errorString),
+        isFinished(true) {}
 
 QGeoRouteReplyPrivate::QGeoRouteReplyPrivate(const QGeoRouteReplyPrivate &other)
-    : error(other.error),
-    errorString(other.errorString),
-    isFinished(other.isFinished),
-    request(other.request),
-    routes(other.routes) {}
+        : error(other.error),
+        errorString(other.errorString),
+        isFinished(other.isFinished),
+        request(other.request),
+        routes(other.routes) {}
 
 QGeoRouteReplyPrivate::~QGeoRouteReplyPrivate() {}
 
-QGeoRouteReplyPrivate& QGeoRouteReplyPrivate::operator= (const QGeoRouteReplyPrivate &other)
+QGeoRouteReplyPrivate& QGeoRouteReplyPrivate::operator= (const QGeoRouteReplyPrivate & other)
 {
     error = other.error;
     errorString = other.errorString;

@@ -54,6 +54,7 @@
 //
 
 #include <QGeoMapReply>
+#include <QGeoMapRequestOptions>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE
@@ -63,8 +64,18 @@ class QGeoMapReplyNokia : public QGeoMapReply
     Q_OBJECT
 
 public:
-    QGeoMapReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    struct QuadTileInfo {
+        int row;
+        int col;
+        int zoomLevel;
+        QSize size;
+        QGeoMapRequestOptions options;
+    };
+
+    QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInfo, QObject *parent = 0);
     ~QGeoMapReplyNokia();
+
+    QuadTileInfo* tileInfo() const;
 
     void abort();
 
@@ -74,6 +85,7 @@ private slots:
 
 private:
     QNetworkReply *m_reply;
+    QuadTileInfo *m_tileInfo;
 };
 
 #endif

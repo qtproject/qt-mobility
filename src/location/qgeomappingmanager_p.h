@@ -42,6 +42,17 @@
 #ifndef QGEOMAPPINGSERVICE_P_H
 #define QGEOMAPPINGSERVICE_P_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qgeomappingmanager.h"
 //#include "qgeomapwidget.h"
 
@@ -62,16 +73,10 @@ public:
 
     QList<QGeoMappingManager::MapType> supportedMapTypes;
     QList<QString> supportedImageFormats;
-    int minimumZoomLevel;
-    int maximumZoomLevel;
+    qreal minimumZoomLevel;
+    qreal maximumZoomLevel;
     QSize minimumSize;
     QSize maximumSize;
-
-    //internal map state
-
-    int zoomLevel;
-    QSize viewPortSize;
-//    QGeoMapWidget* mapWidget;
 };
 
 QTM_END_NAMESPACE

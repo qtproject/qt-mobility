@@ -53,22 +53,22 @@
 #include <QGeoRouteRequest>
 
 RouteTab::RouteTab(QWidget *parent) :
-    QWidget(parent),
-    m_routingManager(NULL)
+        QWidget(parent),
+        m_routingManager(NULL)
 {
     QLabel *source = new QLabel(tr("Source:"));
     m_srcLong = new QLineEdit("10");
-    m_srcLong->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_srcLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_srcLat = new QLineEdit("50");
-    m_srcLat->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
-    
+    m_srcLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+
     QLabel *destination = new QLabel(tr("Destination:"));
     m_destLong = new QLineEdit("1");
-    m_destLong->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_destLong->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_destLat = new QLineEdit("48");
-    m_destLat->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Fixed);
+    m_destLat->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QPushButton *requestBtn = new QPushButton(tr("Request Route"));
-    requestBtn->setSizePolicy(QSizePolicy::Maximum,QSizePolicy::Fixed);
+    requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)),
                      this, SLOT(on_btnRequest_clicked()));
     m_resultTree = new QTreeWidget();
@@ -78,22 +78,22 @@ RouteTab::RouteTab(QWidget *parent) :
 
     QHBoxLayout *firstrow = new QHBoxLayout;
     firstrow->setSpacing(0);
-    firstrow->setContentsMargins(0,0,0,0);
+    firstrow->setContentsMargins(0, 0, 0, 0);
     firstrow->addWidget(source);
     firstrow->addWidget(m_srcLong);
     firstrow->addWidget(m_srcLat);
     firstrow->addWidget(requestBtn);
-  
+
     QHBoxLayout *secondrow = new QHBoxLayout;
     secondrow->setSpacing(0);
-    secondrow->setContentsMargins(0,0,0,0);
+    secondrow->setContentsMargins(0, 0, 0, 0);
     secondrow->addWidget(destination);
     secondrow->addWidget(m_destLong);
     secondrow->addWidget(m_destLat);
-    
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(2);
-    mainLayout->setContentsMargins(2,1,2,1);
+    mainLayout->setContentsMargins(2, 1, 2, 1);
     mainLayout->addLayout(firstrow);
     mainLayout->addLayout(secondrow);
     mainLayout->addWidget(m_resultTree);
@@ -109,10 +109,10 @@ void RouteTab::initialize(QGeoRoutingManager *routingManager)
     m_routingManager = routingManager;
     if (m_routingManager) {
         QObject::connect(m_routingManager, SIGNAL(finished(QGeoRouteReply*)), this,
-            SLOT(replyFinished(QGeoRouteReply*)));
+                         SLOT(replyFinished(QGeoRouteReply*)));
         QObject::connect(m_routingManager,
-            SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)), this,
-            SLOT(resultsError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+                         SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)), this,
+                         SLOT(resultsError(QGeoRouteReply*, QGeoRouteReply::Error, QString)));
     }
 }
 
@@ -127,8 +127,7 @@ void RouteTab::on_btnRequest_clicked()
         m_resultTree->clear();
 
         m_routingManager->calculateRoute(request);
-    }
-    else {
+    } else {
         QMessageBox::warning(this, tr("Routing"), tr("No routing manager available."));
     }
 }

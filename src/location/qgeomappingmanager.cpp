@@ -85,14 +85,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a QGeoMappingManager object.
 */
-QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerPrivate &dd)
-    : d_ptr(&dd) {}
-
-/*!
-    Constructs a QGeoMappingManager object.
-*/
 QGeoMappingManager::QGeoMappingManager()
-    : d_ptr(new QGeoMappingManagerPrivate) {}
+        : d_ptr(new QGeoMappingManagerPrivate) {}
 
 /*!
     Destroys this QGeoMappingManager object.
@@ -167,7 +161,7 @@ QList<QString> QGeoMappingManager::supportedImageFormats() const
     \sa QGeoMappingManager::setMinimumZoomLevel()
     \sa QGeoMappingManager::maximumZoomLevel()
 */
-int QGeoMappingManager::minimumZoomLevel() const
+qreal QGeoMappingManager::minimumZoomLevel() const
 {
     Q_D(const QGeoMappingManager);
     return d->minimumZoomLevel;
@@ -183,7 +177,7 @@ int QGeoMappingManager::minimumZoomLevel() const
     \sa QGeoMappingManager::setMaximumZoomLevel()
     \sa QGeoMappingManager::minimumZoomLevel()
 */
-int QGeoMappingManager::maximumZoomLevel() const
+qreal QGeoMappingManager::maximumZoomLevel() const
 
 {
     Q_D(const QGeoMappingManager);
@@ -263,7 +257,7 @@ void QGeoMappingManager::setSupportedImageFormats(const QList<QString> &imageFor
     \sa QGeoMappingManager::minimumZoomLevel()
     \sa QGeoMappingManager::setMaximumZoomLevel()
 */
-void QGeoMappingManager::setMinimumZoomLevel(int minimumZoom)
+void QGeoMappingManager::setMinimumZoomLevel(qreal minimumZoom)
 {
     Q_D(QGeoMappingManager);
     d->minimumZoomLevel = minimumZoom;
@@ -282,7 +276,7 @@ void QGeoMappingManager::setMinimumZoomLevel(int minimumZoom)
     \sa QGeoMappingManager::maximumZoomLevel()
     \sa QGeoMappingManager::setMinimumZoomLevel()
 */
-void QGeoMappingManager::setMaximumZoomLevel(int maximumZoom)
+void QGeoMappingManager::setMaximumZoomLevel(qreal maximumZoom)
 {
     Q_D(QGeoMappingManager);
     d->maximumZoomLevel = maximumZoom;
@@ -364,84 +358,25 @@ void QGeoMappingManager::setMaximumSize(const QSize &maximumSize)
     \sa QGeoMapReply::error()
 */
 
-/*!
-    Returns the current internal zoom level
-*/
-int QGeoMappingManager::zoomLevel() const
-{
-    Q_D(const QGeoMappingManager);
-    return d->zoomLevel;
-}
-
-/*!
-    Sets the \a size of the internal view port. This will usually be 
-    set by the associated QGeoMapWidget to the size of its drawable
-    rectangle.
-*/
-void QGeoMappingManager::setViewPortSize(const QSize &size)
-{
-    Q_D(QGeoMappingManager);
-    d->viewPortSize = size;
-}
-
-/*!
-    Returns the size of the internal view port.
-*/
-QSize QGeoMappingManager::viewPortSize() const
-{
-    Q_D(const QGeoMappingManager);
-    return d->viewPortSize;
-}
-
-/*!
-    Sets the map \a widget associated with this mapping service.
-    Whenever the internal map representation changes,
-    \a widget->update() will be called.
-*/
-//void QGeoMappingManager::setMapWidget(QGeoMapWidget *widget)
-//{
-//    Q_D(QGeoMappingManager);
-//    d->mapWidget = widget;
-//}
-
-/*!
-    \fn virtual void pan(int startX, int startY, int endX, int endY) = 0
-
-    Pans the internal map representation by the pixel delta
-    defined by \a start and \a end point.
-*/
-
-/*!
-    \fn virtual void paint(QPainter *painter) = 0
-
-    Paints the internal map representation into the
-    context of \a painter.
-    The internal view port is aligned with the top-left
-    corner of the \a painter.
-*/
-
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingManagerPrivate::QGeoMappingManagerPrivate() 
+QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
 //    : mapWidget(0)
 {}
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other)
-    : supportedMapTypes(other.supportedMapTypes),
-    supportedImageFormats(other.supportedImageFormats),
-    minimumZoomLevel(other.minimumZoomLevel),
-    maximumZoomLevel(other.maximumZoomLevel),
-    minimumSize(other.minimumSize),
-    maximumSize(other.maximumSize),
-    viewPortSize(other.viewPortSize),
-    zoomLevel(other.zoomLevel)
-//    mapWidget(other.mapWidget)
+        : supportedMapTypes(other.supportedMapTypes),
+        supportedImageFormats(other.supportedImageFormats),
+        minimumZoomLevel(other.minimumZoomLevel),
+        maximumZoomLevel(other.maximumZoomLevel),
+        minimumSize(other.minimumSize),
+        maximumSize(other.maximumSize)
 {}
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate() {}
 
-QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate &other)
+QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate & other)
 {
     supportedMapTypes = other.supportedMapTypes;
     supportedImageFormats = other.supportedImageFormats;
@@ -449,9 +384,6 @@ QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappi
     maximumZoomLevel = other.maximumZoomLevel;
     minimumSize = other.minimumSize;
     maximumSize = other.maximumSize;
-    viewPortSize = other.viewPortSize;
-    zoomLevel = other.zoomLevel;
-//    mapWidget = other.mapWidget;
     return *this;
 }
 

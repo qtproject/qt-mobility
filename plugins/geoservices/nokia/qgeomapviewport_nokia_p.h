@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_P_H
-#define QGEOMAPREPLY_P_H
+#ifndef QGEOMAPVIEWPORT_NOKIA_P_H
+#define QGEOMAPVIEWPORT_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -53,27 +53,44 @@
 // We mean it.
 //
 
-#include "qgeomapreply.h"
+#include <qgeoserviceprovider.h>
+#include <qgeomapviewport.h>
 
-QTM_BEGIN_NAMESPACE
+#include <QHash>
+#include <QRectF>
+#include <QMap>
 
-class QGeoMapReplyPrivate
+QTM_USE_NAMESPACE
+
+class QGeoMappingManagerNokia;
+
+class QGeoMapViewportNokia : public QGeoMapViewport
 {
+    Q_OBJECT
+
 public:
-    QGeoMapReplyPrivate();
-    QGeoMapReplyPrivate(QGeoMapReply::Error error, const QString& errorString);
-    QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other);
-    ~QGeoMapReplyPrivate();
+    QGeoMapViewportNokia(QGeoMappingManager *manager,
+                         const QMap<QString, QString> &parameters,
+                         QGeoServiceProvider::Error *error,
+                         QString *errorString);
+    virtual ~QGeoMapViewportNokia();
 
-    QGeoMapReplyPrivate& operator= (const QGeoMapReplyPrivate &other);
+    virtual void setZoomLevel(int zoomLevel);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option);
+    virtual void setCenter(const QGeoCoordinate &center);
+    virtual QGeoCoordinate center() const;
+    virtual void pan(int startX, int startY, int endX, int endY);
+    virtual QGeoBoundingBox viewBounds() const;
+    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
-    QGeoMapReply::Error error;
-    QString errorString;
-    bool isFinished;
+private:
+    Q_DISABLE_COPY(QGeoMapViewportNokia)
 
-    QPixmap mapImage;
+private:
+    QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
+    QRectF m_viewPort;
+    QSize m_tileSize;
 };
-
-QTM_END_NAMESPACE
 
 #endif

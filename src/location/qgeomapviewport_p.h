@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_P_H
-#define QGEOMAPREPLY_P_H
+#ifndef QGEOMAPVIEWPORT_P_H
+#define QGEOMAPVIEWPORT_P_H
 
 //
 //  W A R N I N G
@@ -53,25 +53,24 @@
 // We mean it.
 //
 
-#include "qgeomapreply.h"
+#include "qgeomapviewport.h"
+//#include "qgeomapwidget.h"
+
+#include <QSize>
+#include <QList>
+#include <QNetworkProxy>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapReplyPrivate
+class QGeoMapViewportPrivate
 {
 public:
-    QGeoMapReplyPrivate();
-    QGeoMapReplyPrivate(QGeoMapReply::Error error, const QString& errorString);
-    QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other);
-    ~QGeoMapReplyPrivate();
+    QGeoMapViewportPrivate();
 
-    QGeoMapReplyPrivate& operator= (const QGeoMapReplyPrivate &other);
-
-    QGeoMapReply::Error error;
-    QString errorString;
-    bool isFinished;
-
-    QPixmap mapImage;
+    int zoomLevel;
+    QSize viewportSize;
+    QGeoMappingManager *manager;
+//    QGeoMapWidget* mapWidget;
 };
 
 QTM_END_NAMESPACE
