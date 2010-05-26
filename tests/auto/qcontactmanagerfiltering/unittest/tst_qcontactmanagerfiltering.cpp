@@ -42,6 +42,7 @@
 #define QT_STATICPLUGIN
 #include <QtTest/QtTest>
 
+#include "qservicemanager.h"
 #include "qtcontacts.h"
 #include "qcontactmanagerdataholder.h" //QContactManagerDataHolder
 //TESTED_CLASS=
@@ -209,7 +210,25 @@ void tst_QContactManagerFiltering::initTestCase()
         }
     }
 
-    qDebug() << "Finished preparing each manager for test!";
+    qDebug() << "Finished preparing each manager for test!  About to load test actions:";
+    QServiceManager sm;
+    QStringList allServices = sm.findServices();
+    foreach(const QString& serv, allServices) {
+        if (serv.startsWith("tst_qcontactmanagerfiltering:")) {
+            if (!sm.removeService(serv)) {
+                qDebug() << " tst_qca: ctor: cleaning up test service" << serv << "failed:" << sm.error();
+            }
+        }
+    }
+    QStringList myServices;
+    myServices << "booleanaction" << "dateaction" << "integeraction" << "numberaction" << "phonenumberaction";
+    foreach (const QString& serv, myServices) {
+        QString builtPath = QCoreApplication::applicationDirPath() + "/plugins/xmldata/" + serv + "/" + serv + "service.xml";
+        if (!sm.addService(builtPath)) {
+            qDebug() << " tst_qca: ctor: unable to add" << serv << "service:" << sm.error();
+        }
+    }
+    qDebug() << "Done!";
 }
 
 void tst_QContactManagerFiltering::cleanupTestCase()
@@ -237,6 +256,17 @@ void tst_QContactManagerFiltering::cleanupTestCase()
 
     // And restore old contacts
     managerDataHolder.reset(0);
+
+    // clean up any actions/services.
+    QServiceManager sm;
+    QStringList allServices = sm.findServices();
+    foreach(const QString& serv, allServices) {
+        if (serv.startsWith("tst_qcontactmanagerfiltering:")) {
+            if (!sm.removeService(serv)) {
+                qDebug() << " tst_qca: ctor: cleaning up test service" << serv << "failed:" << sm.error();
+            }
+        }
+    }
 }
 
 QString tst_QContactManagerFiltering::convertIds(QList<QContactLocalId> allIds, QList<QContactLocalId> ids)

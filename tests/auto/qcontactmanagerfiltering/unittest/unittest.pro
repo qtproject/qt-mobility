@@ -6,6 +6,7 @@ CONFIG+=testcase
 include(../../../../common.pri)
 
 INCLUDEPATH += ../../../../src/global \
+               ../../../../src/serviceframework \
                ../../../../src/contacts \
                ../../../../src/contacts/details \
                ../../../../src/contacts/requests \
