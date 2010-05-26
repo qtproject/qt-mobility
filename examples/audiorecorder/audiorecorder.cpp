@@ -161,8 +161,8 @@ AudioRecorder::AudioRecorder()
 
     if (codecs.count() > 0) {
     QAudioEncoderSettings audioSettings;
-    audioSettings.setQuality(QtMediaServices::LowQuality);
-    audioSettings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimedia::LowQuality);
+    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
     audioSettings.setCodec(codecs.first());
     capture->setEncodingSettings(audioSettings,QVideoEncoderSettings(),
             containers.first());
@@ -348,13 +348,13 @@ void AudioRecorder::encmodeChanged(int idx)
 
     switch(idx) {
     case 0:
-        settings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
+        settings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
         break;
     case 1:
-        settings.setEncodingMode(QtMediaServices::ConstantBitRateEncoding);
+        settings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
         break;
     default:
-        settings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
+        settings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
     }
     capture->setEncodingSettings(settings);
 }
