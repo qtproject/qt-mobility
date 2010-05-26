@@ -83,8 +83,8 @@ public:
     \class QMediaServiceProviderHint
     \preliminary
     \brief The QMediaServiceProviderHint class describes what is required of a QMediaService.
-    
-    \ingroup multimedia-serv
+
+    \ingroup multimedia
 
     The QMediaServiceProvider class uses hints to select an appropriate media service.
 */
@@ -520,11 +520,14 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 /*!
     \fn QMediaServiceProvider::requestService(const QByteArray &type, const QMediaServiceProviderHint &hint)
 
-    Requests an instance of a \a type service which best matches the given \a hint.
+    Requests an instance of a \a type service which best matches the given \a
+    hint.
 
-    Returns a pointer to the requested service, or a null pointer if there is no suitable service.
+    Returns a pointer to the requested service, or a null pointer if there is
+    no suitable service.
 
-    The returned service must be released with releaseService when it is finished with.
+    The returned service must be released with releaseService when it is
+    finished with.
 */
 
 /*!
@@ -536,9 +539,10 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 /*!
     \fn QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
 
-    Returns how confident a media service provider is that is can provide a \a serviceType
-    service that is able to play media of a specific \a mimeType that is encoded using the listed
-    \a codecs while adhearing to constraints identified in \a flags.
+    Returns how confident a media service provider is that is can provide a \a
+    serviceType service that is able to play media of a specific \a mimeType
+    that is encoded using the listed \a codecs while adhering to constraints
+    identified in \a flags.
 */
 QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
                                                         const QString &mimeType,
@@ -556,9 +560,11 @@ QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteAr
 /*!
     \fn QStringList QMediaServiceProvider::supportedMimeTypes(const QByteArray &serviceType, int flags) const
 
-    Returns a list of MIME types supported by the service provider for the specified \a serviceType.
+    Returns a list of MIME types supported by the service provider for the
+    specified \a serviceType.
 
-    The resultant list is restricted to MIME types which can be supported given the constraints in \a flags.
+    The resultant list is restricted to MIME types which can be supported given
+    the constraints in \a flags.
 */
 QStringList QMediaServiceProvider::supportedMimeTypes(const QByteArray &serviceType, int flags) const
 {
@@ -578,8 +584,8 @@ QList<QByteArray> QMediaServiceProvider::devices(const QByteArray &service) cons
 }
 
 /*!
-    Returns the description of \a device related to \a serviceType,
-    suitable to be displayed to user.
+    Returns the description of \a device related to \a serviceType, suitable for use by
+    an application for display.
 */
 QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, const QByteArray &device)
 {
@@ -626,8 +632,9 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     plug-ins.
 
     A media service provider plug-in may implement one or more of
-    QMediaServiceSupportedFormatsInterface, QMediaServiceSupportedDevicesInterface,
-    and QMediaServiceFeaturesInterface to identify the features it supports.
+    QMediaServiceSupportedFormatsInterface,
+    QMediaServiceSupportedDevicesInterface, and QMediaServiceFeaturesInterface
+    to identify the features it supports.
 */
 
 /*!
@@ -668,7 +675,8 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 /*!
     \fn QMediaServiceSupportedFormatsInterface::hasSupport(const QString &mimeType, const QStringList& codecs) const
 
-    Returns the level of support a media service plug-in has for a \a mimeType and set of \a codecs.
+    Returns the level of support a media service plug-in has for a \a mimeType
+    and set of \a codecs.
 */
 
 /*!

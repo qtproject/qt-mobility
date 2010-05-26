@@ -48,7 +48,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlayerControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
     \brief The QMediaPlayerControl class provides access to the media playing
