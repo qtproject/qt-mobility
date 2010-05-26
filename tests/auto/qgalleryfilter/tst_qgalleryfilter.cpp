@@ -102,15 +102,15 @@ void tst_QGalleryFilter::metaDataFilter()
         QGalleryMetaDataFilter filter;
 
         QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.fieldName(), QString());
+        QCOMPARE(filter.propertyName(), QString());
         QCOMPARE(filter.value(), QVariant());
         QCOMPARE(filter.matchFlags(), Qt::MatchExactly);
 
-        filter.setFieldName(propertyName);
+        filter.setPropertyName(propertyName);
         filter.setValue(value);
         filter.setMatchFlags(flags);
 
-        QCOMPARE(filter.fieldName(), propertyName);
+        QCOMPARE(filter.propertyName(), propertyName);
         QCOMPARE(filter.value(), value);
         QCOMPARE(filter.matchFlags(), flags);
     }
@@ -120,7 +120,7 @@ void tst_QGalleryFilter::metaDataFilter()
 
         QCOMPARE(filter.isValid(), true);
 
-        QCOMPARE(filter.fieldName(), propertyName);
+        QCOMPARE(filter.propertyName(), propertyName);
         QCOMPARE(filter.value(), value);
         QCOMPARE(filter.matchFlags(), flags);
     }
@@ -148,13 +148,13 @@ void tst_QGalleryFilter::metaDataRangeFilter()
 
     QCOMPARE(filter.isValid(), true);
 
-    QCOMPARE(filter.fieldName(), QString());
+    QCOMPARE(filter.propertyName(), QString());
     QCOMPARE(filter.minimumValue(), QVariant());
     QCOMPARE(filter.maximumValue(), QVariant());
     QCOMPARE(filter.rangeFlags(), QGalleryFilter::RangeFlags());
 
-    filter.setFieldName(propertyName);
-    QCOMPARE(filter.fieldName(), propertyName);
+    filter.setPropertyName(propertyName);
+    QCOMPARE(filter.propertyName(), propertyName);
 
     filter.setExclusiveRange(minimum, maximum);
     QCOMPARE(filter.minimumValue(), minimum);
@@ -575,34 +575,34 @@ void tst_QGalleryFilter::propertyOperators()
     {
         QGalleryMetaDataFilter filter = albumProperty == QLatin1String("Self Titled");
         QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.fieldName(), albumProperty.name());
+        QCOMPARE(filter.propertyName(), albumProperty.name());
         QCOMPARE(filter.value(), albumTitle);
         QCOMPARE(filter.matchFlags(), Qt::MatchExactly);
     } {
         QGalleryMetaDataRangeFilter filter = trackProperty >= 3;
         QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.fieldName(), trackProperty.name());
+        QCOMPARE(filter.propertyName(), trackProperty.name());
         QCOMPARE(filter.minimumValue(), track);
         QCOMPARE(filter.maximumValue(), QVariant());
         QCOMPARE(filter.rangeFlags(), QGalleryFilter::GreaterThanEqualsMinimum);
     } {
         QGalleryMetaDataRangeFilter filter = trackProperty > 3;
         QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.fieldName(), trackProperty.name());
+        QCOMPARE(filter.propertyName(), trackProperty.name());
         QCOMPARE(filter.minimumValue(), track);
         QCOMPARE(filter.maximumValue(), QVariant());
         QCOMPARE(filter.rangeFlags(), QGalleryFilter::GreaterThanMinimum);
     } {
         QGalleryMetaDataRangeFilter filter = trackProperty <= 3;
         QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.fieldName(), trackProperty.name());
+        QCOMPARE(filter.propertyName(), trackProperty.name());
         QCOMPARE(filter.minimumValue(), QVariant());
         QCOMPARE(filter.maximumValue(), track);
         QCOMPARE(filter.rangeFlags(), QGalleryFilter::LessThanEqualsMaximum);
     } {
         QGalleryMetaDataRangeFilter filter = trackProperty < 3;
         QCOMPARE(filter.isValid(), true);
-        QCOMPARE(filter.fieldName(), trackProperty.name());
+        QCOMPARE(filter.propertyName(), trackProperty.name());
         QCOMPARE(filter.minimumValue(), QVariant());
         QCOMPARE(filter.maximumValue(), track);
         QCOMPARE(filter.rangeFlags(), QGalleryFilter::LessThanMaximum);

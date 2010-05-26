@@ -101,7 +101,7 @@ QGalleryMetaDataRangeFilter QGalleryProperty::isInRange(
         const QVariant &minimum, const QVariant &maximum) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(name());
+    filter.setPropertyName(name());
     filter.setInclusiveRange(minimum, maximum);
     return filter;
 }
@@ -114,7 +114,7 @@ QGalleryMetaDataRangeFilter QGalleryProperty::isInRange(
 QGalleryMetaDataRangeFilter QGalleryProperty::operator <(const QVariant &value) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(name());
+    filter.setPropertyName(name());
     filter.setLessThan(value);
     return filter;
 }
@@ -127,7 +127,7 @@ QGalleryMetaDataRangeFilter QGalleryProperty::operator <(const QVariant &value) 
 QGalleryMetaDataRangeFilter QGalleryProperty::operator <=(const QVariant &value) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(name());
+    filter.setPropertyName(name());
     filter.setLessThanEquals(value);
     return filter;
 }
@@ -149,7 +149,7 @@ QGalleryMetaDataFilter QGalleryProperty::operator ==(const QVariant &value) cons
 QGalleryMetaDataRangeFilter QGalleryProperty::operator >=(const QVariant &value) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(name());
+    filter.setPropertyName(name());
     filter.setGreaterThanEquals(value);
     return filter;
 }
@@ -162,7 +162,7 @@ QGalleryMetaDataRangeFilter QGalleryProperty::operator >=(const QVariant &value)
 QGalleryMetaDataRangeFilter QGalleryProperty::operator >(const QVariant &value) const
 {
     QGalleryMetaDataRangeFilter filter;
-    filter.setFieldName(name());
+    filter.setPropertyName(name());
     filter.setGreaterThan(value);
     return filter;
 }

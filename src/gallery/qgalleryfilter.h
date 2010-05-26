@@ -222,7 +222,7 @@ class Q_GALLERY_EXPORT QGalleryMetaDataFilter
 public:
     QGalleryMetaDataFilter();
     QGalleryMetaDataFilter(
-            const QString &fieldName,
+            const QString &propertyName,
             const QVariant &value,
             Qt::MatchFlags flags = Qt::MatchExactly);
     QGalleryMetaDataFilter(const QGalleryMetaDataFilter &other);
@@ -232,8 +232,8 @@ public:
 
     bool isValid() const;
 
-    QString fieldName() const;
-    void setFieldName(const QString &name);
+    QString propertyName() const;
+    void setPropertyName(const QString &name);
 
     QVariant value() const;
     void setValue(const QVariant &value);
@@ -263,8 +263,8 @@ public:
 
     bool isValid() const;
 
-    QString fieldName() const;
-    void setFieldName(const QString &name);
+    QString propertyName() const;
+    void setPropertyName(const QString &name);
 
     QVariant minimumValue() const;
     QVariant maximumValue() const;

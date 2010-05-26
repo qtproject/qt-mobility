@@ -154,7 +154,7 @@ public:
     QGalleryMetaDataFilterPrivate(const QGalleryMetaDataFilterPrivate &other)
         : QGalleryFilterPrivate(other)
         , flags(other.flags)
-        , field(other.field)
+        , property(other.property)
         , value(other.value)
     {
     }
@@ -171,7 +171,7 @@ public:
                     = static_cast<const QGalleryMetaDataFilterPrivate &>(other);
 
             return o.flags == flags
-                    && o.field == field
+                    && o.property == property
                     && o.value == value;
         } else {
             return false;
@@ -179,7 +179,7 @@ public:
     }
 
     Qt::MatchFlags flags;
-    QString field;
+    QString property;
     QVariant value;
 };
 
@@ -195,7 +195,7 @@ public:
     QGalleryMetaDataRangeFilterPrivate(const QGalleryMetaDataRangeFilterPrivate &other)
         : QGalleryFilterPrivate(other)
         , flags(other.flags)
-        , field(other.field)
+        , property(other.property)
         , minimum(other.minimum)
         , maximum(other.maximum)
     {
@@ -213,7 +213,7 @@ public:
                     = static_cast<const QGalleryMetaDataRangeFilterPrivate &>(other);
 
             return o.flags == flags
-                    && o.field == field
+                    && o.property == property
                     && o.minimum == minimum
                     && o.maximum == maximum;
         } else {
@@ -229,7 +229,7 @@ public:
     }
 
     QGalleryFilter::RangeFlags flags;
-    QString field;
+    QString property;
     QVariant minimum;
     QVariant maximum;
 };
@@ -735,8 +735,8 @@ void QGalleryUnionFilter::clear()
     \ingroup gallery
     \ingroup gallery-filters
 
-    \brief The QGalleryMetaDataFilter class provides a filter which matches
-    items with meta-data fields containing a specific value.
+    \brief The QGalleryMetaDataFilter class provides a filter which accepts
+    items with meta-data properties matching a specific value.
 */
 
 /*!
@@ -749,17 +749,17 @@ QGalleryMetaDataFilter::QGalleryMetaDataFilter()
 }
 
 /*!
-    Constructs a meta-data filter which matches items in which the value of
-    \a field matches \a value.
+    Constructs a meta-data filter which matches items with a \a property value
+    which matches \a value.
 
     The type of comparison made is determined by the match \a flags.
 */
 
 QGalleryMetaDataFilter::QGalleryMetaDataFilter(
-        const QString &field, const QVariant &value, Qt::MatchFlags flags)
+        const QString &property, const QVariant &value, Qt::MatchFlags flags)
             : d(new QGalleryMetaDataFilterPrivate)
 {
-    d->field = field;
+    d->property = property;
     d->value = value;
     d->flags = flags;
 }
@@ -823,25 +823,27 @@ bool QGalleryMetaDataFilter::isValid() const
 }
 
 /*!
-    Returns the name of the field a meta-data filter is compared against.
+    Returns the name of the property the value of a meta-data filter is
+    compared against.
 */
 
-QString QGalleryMetaDataFilter::fieldName() const
+QString QGalleryMetaDataFilter::propertyName() const
 {
-    return d->field;
+    return d->property;
 }
 
 /*!
-    Sets the \a name of the field a meta-data filter is compared against.
+    Sets the \a name of the property the value of meta-data filter is compared
+    against.
 */
 
-void QGalleryMetaDataFilter::setFieldName(const QString &name)
+void QGalleryMetaDataFilter::setPropertyName(const QString &name)
 {
-    d->field = name;
+    d->property = name;
 }
 
 /*!
-    Returns the value a field is expected to contain for a meta-data filter to
+    Returns the value a property is expected to match for a meta-data filter to
     pass.
 */
 
@@ -851,7 +853,7 @@ QVariant QGalleryMetaDataFilter::value() const
 }
 
 /*!
-    Sets the \a value a field is expected to contain for a meta-data filter to
+    Sets the \a value a property is expected to match for a meta-data filter to
     pass.
 */
 
@@ -870,7 +872,8 @@ Qt::MatchFlags QGalleryMetaDataFilter::matchFlags() const
 }
 
 /*!
-    Sets \a flags identifying the type of comparsion made by a meta-data filter.
+    Sets \a flags identifying the type of comparsion made by a meta-data
+    filter.
 */
 
 void QGalleryMetaDataFilter::setMatchFlags(Qt::MatchFlags flags)
@@ -885,7 +888,7 @@ void QGalleryMetaDataFilter::setMatchFlags(Qt::MatchFlags flags)
     \ingroup gallery-filters
 
     \brief The QGalleryMetaDataRangeFilter class provides a filter which matches
-    items with meta-data fields with values within a specified range.
+    items with meta-data properties with values within a specified range.
 */
 
 /*!
@@ -959,21 +962,23 @@ bool QGalleryMetaDataRangeFilter::isValid() const
 }
 
 /*!
-    Returns the name of the field a meta-data filter is compared against.
+    Returns the name of the property the value of a meta-data filter is
+    compared against.
 */
 
-QString QGalleryMetaDataRangeFilter::fieldName() const
+QString QGalleryMetaDataRangeFilter::propertyName() const
 {
-    return d->field;
+    return d->property;
 }
 
 /*!
-    Sets the \a name of the field a meta-data filter is compared against.
+    Sets the \a name of the property the value of a meta-data filter is
+    compared against.
 */
 
-void QGalleryMetaDataRangeFilter::setFieldName(const QString &name)
+void QGalleryMetaDataRangeFilter::setPropertyName(const QString &name)
 {
-    d->field = name;
+    d->property = name;
 }
 
 /*!

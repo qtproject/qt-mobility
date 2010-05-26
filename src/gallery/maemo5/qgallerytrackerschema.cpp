@@ -450,7 +450,7 @@ static bool qt_writeCondition(
         return false;
     }
 
-    if (qt_writePropertyName(error, xml, filter.fieldName(), properties)
+    if (qt_writePropertyName(error, xml, filter.propertyName(), properties)
             && qt_writeValue<QVariant>(error, xml, value)) {
         xml->writeEndElement();
 
@@ -468,7 +468,7 @@ static bool qt_writeCondition(
         const QGalleryMetaDataRangeFilter &filter,
         const QGalleryItemPropertyList &properties)
 {
-    const QString fieldName = filter.fieldName();
+    const QString propertyName = filter.propertyName();
     const QGalleryFilter::RangeFlags flags = filter.rangeFlags();
 
     bool isRange = (flags == QGalleryFilter::InclusiveRange || QGalleryFilter::ExclusiveRange);
@@ -482,7 +482,7 @@ static bool qt_writeCondition(
         else
             xml->writeStartElement(QLatin1String("rdfq:greaterThan"));
 
-        if (!qt_writePropertyName(error, xml, fieldName, properties)
+        if (!qt_writePropertyName(error, xml, propertyName, properties)
                 || !qt_writeValue<QVariant>(error, xml, filter.minimumValue())) {
             xml->writeEndElement();
             if (isRange)
@@ -498,7 +498,7 @@ static bool qt_writeCondition(
         else
             xml->writeStartElement(QLatin1String("rdfq:lessThan"));
 
-        if (!qt_writePropertyName(error, xml, fieldName, properties)
+        if (!qt_writePropertyName(error, xml, propertyName, properties)
                 || !qt_writeValue<QVariant>(error, xml, filter.maximumValue())) {
             xml->writeEndElement();
             if (isRange)
