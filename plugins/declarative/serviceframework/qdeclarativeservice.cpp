@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,23 +41,23 @@
 
 #include "qdeclarativeservice.h"
 
-QServiceWrapper::QServiceWrapper()
+QDeclarativeService::QDeclarativeService()
 : serviceInstance(0)
 {
     serviceManager = new QServiceManager();
 }
 
-QServiceWrapper::~QServiceWrapper()
+QDeclarativeService::~QDeclarativeService()
 {
     delete serviceInstance;
 }
 
-bool QServiceWrapper::isValid() const
+bool QDeclarativeService::isValid() const
 {
     return m_descriptor.isValid();
 }
 
-void QServiceWrapper::setInterfaceDesc(const QServiceInterfaceDescriptor &desc)
+void QDeclarativeService::setInterfaceDesc(const QServiceInterfaceDescriptor &desc)
 {
     if (desc == m_descriptor)
         return;
@@ -70,12 +70,12 @@ void QServiceWrapper::setInterfaceDesc(const QServiceInterfaceDescriptor &desc)
     serviceInstance = 0;
 }
 
-QServiceInterfaceDescriptor QServiceWrapper::interfaceDesc() const
+QServiceInterfaceDescriptor QDeclarativeService::interfaceDesc() const
 {
     return m_descriptor;
 }
 
-void QServiceWrapper::setInterfaceName(const QString &interface)
+void QDeclarativeService::setInterfaceName(const QString &interface)
 {
     m_descriptor = serviceManager->interfaceDefault(interface);
 
@@ -83,7 +83,7 @@ void QServiceWrapper::setInterfaceName(const QString &interface)
         qWarning() << "WARNING: No default service found for interface name: " << interface;
 }
 
-QString QServiceWrapper::interfaceName() const
+QString QDeclarativeService::interfaceName() const
 {
     if (isValid())
         return m_descriptor.interfaceName();
@@ -91,7 +91,7 @@ QString QServiceWrapper::interfaceName() const
         return "No Interface";
 }
 
-QString QServiceWrapper::serviceName() const
+QString QDeclarativeService::serviceName() const
 {
     if (isValid())
         return m_descriptor.serviceName();
@@ -99,7 +99,7 @@ QString QServiceWrapper::serviceName() const
         return "No Service";
 }
 
-QString QServiceWrapper::versionNumber() const
+QString QDeclarativeService::versionNumber() const
 {
     if (isValid())
         return (QString::number(m_descriptor.majorVersion())+"."+QString::number(m_descriptor.minorVersion()));
@@ -107,7 +107,7 @@ QString QServiceWrapper::versionNumber() const
         return "0.0";
 }
 
-QObject* QServiceWrapper::serviceObject()
+QObject* QDeclarativeService::serviceObject()
 {
     if (serviceInstance) {
         return serviceInstance;
@@ -123,47 +123,47 @@ QObject* QServiceWrapper::serviceObject()
     }
 }
 
-QServiceListWrapper::QServiceListWrapper()
+QDeclarativeServiceList::QDeclarativeServiceList()
 {
     serviceManager = new QServiceManager();
 }
 
-QServiceListWrapper::~QServiceListWrapper()
+QDeclarativeServiceList::~QDeclarativeServiceList()
 {
 }
 
-void QServiceListWrapper::setInterfaceName(const QString &interface)
+void QDeclarativeServiceList::setInterfaceName(const QString &interface)
 {
     m_interface = interface;
 
     // ![0]
-    QServiceWrapper *service;
+    QDeclarativeService *service;
     QServiceFilter filter(m_interface, m_version);
     QList<QServiceInterfaceDescriptor> list = serviceManager->findInterfaces(filter);
     for (int i = 0; i < list.size(); i++) {
-        service = new QServiceWrapper();
+        service = new QDeclarativeService();
         service->setInterfaceDesc(list.at(i));
         m_services.append(service);
     }
     // ![0]
 }
 
-QString QServiceListWrapper::interfaceName() const
+QString QDeclarativeServiceList::interfaceName() const
 {
     return m_interface;
 }
 
-void QServiceListWrapper::setMinVersion(const QString &version)
+void QDeclarativeServiceList::setMinVersion(const QString &version)
 {
     m_version = version;
 }
 
-QString QServiceListWrapper::minVersion() const
+QString QDeclarativeServiceList::minVersion() const
 {
     return m_version;
 }
 
-QDeclarativeListProperty<QServiceWrapper> QServiceListWrapper::services()
+QDeclarativeListProperty<QDeclarativeService> QDeclarativeServiceList::services()
 {
-    return QDeclarativeListProperty<QServiceWrapper>(this, m_services);
+    return QDeclarativeListProperty<QDeclarativeService>(this, m_services);
 }

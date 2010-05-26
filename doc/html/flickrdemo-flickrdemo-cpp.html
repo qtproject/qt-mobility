@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -471,7 +471,7 @@
         QTimer::singleShot(0, this, SLOT(clearPictureListRequest()));
     }
 
-    void FlickrDemo::pictureListError(QNetworkReply::NetworkError code)
+    void FlickrDemo::pictureListError(QNetworkReply::NetworkError <span class="comment">/*code*/</span>)
     {
         if (m_shuttingDown)
             return;
@@ -507,7 +507,7 @@
         downloadNextThumbnail();
     }
 
-    void FlickrDemo::thumbnailError(QNetworkReply::NetworkError code)
+    void FlickrDemo::thumbnailError(QNetworkReply::NetworkError <span class="comment">/*code*/</span>)
     {
         if (m_shuttingDown)
             return;
@@ -555,7 +555,7 @@
         QTimer::singleShot(0, this, SLOT(clearPictureRequest()));
     }
 
-    void FlickrDemo::pictureError(QNetworkReply::NetworkError code)
+    void FlickrDemo::pictureError(QNetworkReply::NetworkError <span class="comment">/*code*/</span>)
     {
         if (m_shuttingDown)
             return;

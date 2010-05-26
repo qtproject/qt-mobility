@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,9 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qorientationsensor.h>
-#include <qsensorbackend.h>
 
-#include <sensord/orientationsensor_i.h>
+#include <orientationsensor_i.h>
+#include <unsigned.h>
 
 QTM_USE_NAMESPACE
 
@@ -64,7 +64,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotOrientationChanged(const int& orientation); 
+    void slotOrientationChanged(const Unsigned& orientation);
 };
 
 #endif

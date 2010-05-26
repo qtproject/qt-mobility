@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,7 +64,8 @@
 #include <QTimer>
 #include <QtCore/qthread.h>
 #include <QtCore/qmutex.h>
- #include <QEventLoop>
+#include <QEventLoop>
+#include <IOKit/IOKitLib.h>
 
 #include <SystemConfiguration/SystemConfiguration.h>
 //#include <CoreFoundation/CoreFoundation.h>
@@ -110,7 +111,7 @@ private:
     static QSystemInfoPrivate *self;
 
 private Q_SLOTS:
- protected:
+protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
 
@@ -213,6 +214,7 @@ private:
 
 };
 
+class QBluetoothListenerThread;
 class QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -238,7 +240,9 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
-    static QSystemDeviceInfoPrivate *instance() {return self;}
+    static QSystemDeviceInfoPrivate *instance();
+
+    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -253,6 +257,12 @@ private:
     QSystemDeviceInfo::PowerState currentPowerStateCache;
     QSystemDeviceInfo::BatteryStatus batteryStatusCache;
     static QSystemDeviceInfoPrivate *self;
+    QBluetoothListenerThread *btThread;
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 };
 
 
@@ -287,7 +297,7 @@ public:
     QRunLoopThread(QObject *parent = 0);
     ~QRunLoopThread();
     bool keepRunning;
-    void quit();
+    void stop();
 
 protected:
     void run();
@@ -313,6 +323,33 @@ public:
 
 protected:
     void run();
+
+private:
+    QMutex mutex;
+private Q_SLOTS:
+};
+
+class QBluetoothListenerThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QBluetoothListenerThread(QObject *parent = 0);
+    ~QBluetoothListenerThread();
+    bool keepRunning;
+
+public Q_SLOTS:
+    void emitBtPower(bool);
+    void stop();
+
+Q_SIGNALS:
+    void bluetoothPower(bool);
+
+protected:
+    void run();
+    IONotificationPortRef port;
+    CFRunLoopRef rl;
+    CFRunLoopSourceRef rls;
 
 private:
     QMutex mutex;

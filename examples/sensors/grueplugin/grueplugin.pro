@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(sensors_grueplugin)
+TARGET = $$qtLibraryTarget(qtsensors_grueplugin)
 PLUGIN_TYPE = sensors
 
 INCLUDEPATH+=../../../src/sensors

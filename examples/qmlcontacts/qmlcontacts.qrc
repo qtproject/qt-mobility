@@ -5,5 +5,7 @@
         <file>ScrollBar.qml</file>
         <file>contents/example.vcf</file>
         <file alias="default.svg">contents/default.svg</file>
+        <file>contents/pics/button-pressed.png</file>
+        <file>contents/pics/button.png</file>
     </qresource>
 </RCC>
