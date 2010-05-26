@@ -6,7 +6,7 @@ PLUGIN_SUBDIR = mediaservice
 include (../../../../common.pri)
 
 #includes here so that all defines are added here also
-include (../common/symbiancommon.pri)
+# include (../common/symbiancommon.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
 

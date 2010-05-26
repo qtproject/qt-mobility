@@ -70,10 +70,13 @@ public:
     qint64 duration() const;
     void applySettings();
 
+    bool isMuted() const { return false; }
+
 public Q_SLOTS:
     void record();
     void pause();
     void stop();
+    void setMuted(bool) {}
 
 private:
     QXARecordSession *m_session;
