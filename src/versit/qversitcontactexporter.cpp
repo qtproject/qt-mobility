@@ -166,12 +166,7 @@ QTM_USE_NAMESPACE
 
   By associating a \l QVersitContactExporterDetailHandlerV2 with the exporter using
   setDetailHandler(), the client can pass in a handler to override the processing of details and/or
-  handle details that QVersitContactExporter doesn't support.  By default, this is set to a a
-  handler that encodes details that the exporter doesn't recognise (see \l
-  QVersitContactExporterDetailHandlerV2::createBackupHandler()).  The details are encoded in a format
-  that can be decoded by a default handler associated with the QVersitContactImporter.  This means
-  that if a contact is exported and then imported again, the resulting contact will be virtually
-  identical to the original one, even if there are non-standard details.
+  handle details that QVersitContactExporter doesn't support.
 
 
   An example usage of QVersitContactExporter
@@ -204,10 +199,8 @@ QTM_USE_NAMESPACE
 
 
 /*!
-  \fn static QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createBackupHandler()
-  Constructs a default detail handler and returns it.  The caller is responsible for deleting the
-  object.  If a QVersitContactExporter has not been explicitly associated with a detail handler,
-  it is associated with one created using this function.
+  Constructs and returns a detail handler that encodes all details not handled by the base exporter.
+  The caller is responsible for deleting the object.
 
   This handler encodes all writable details that the exporter doesn't recognise.  The format it uses
   to encode the detail is as follows:
@@ -240,14 +233,14 @@ QTM_USE_NAMESPACE
   G1.X-NOKIA-QCONTACTFIELD;DETAIL=Pet;FIELD=Name:Molly
   \endcode
 
-  The properties produced by this class can be imported by the default importer property handler
+  The properties produced by this class can be imported by the importer "backup" property handler
   (created by QVersitContactImporterPropertyHandlerV2::createBackupHandler()) to reproduce the
   original \l{QContactDetail}{QContactDetails}.
 
   Clients wishing to implement their own detail handler and also benefit from the functionality of
-  the default handler can use this function to construct one, and wrap a custom
+  the backup handler can use this function to construct one, and wrap a custom
   QVersitContactExporterDetailHandlerV2 around it.  In the implementation of detailProcessed and
-  contactProcessed, the respective functions in the default handler should be called as the last
+  contactProcessed, the respective functions in the backup handler should be called as the last
   step (ensuring the arguments are correctly updated and passed through).
  */
 QVersitContactExporterDetailHandlerV2* QVersitContactExporterDetailHandlerV2::createBackupHandler() {
