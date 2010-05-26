@@ -94,11 +94,13 @@ CFSEngine::CFSEngine()
 CFSEngine::~CFSEngine()
 {
     m_mtmAccountList.clear();
-    m_attachments.Close();
-    for ( TInt i = 0; i < m_mailboxes.Count(); i++ )
-        {
+    for (TInt i = 0; i < m_attachments.Count(); i++){
+        m_attachments[i]->Release();
+    }
+    m_attachments.Reset();
+    for (TInt i = 0; i < m_mailboxes.Count(); i++){
         m_mailboxes[i]->Release();
-        }
+    }
     m_mailboxes.Reset();
     m_clientApi->Release();
     delete m_factory;
@@ -899,6 +901,10 @@ void CFSEngine::retrieveTotalBodyL(MEmailMessageContent* aContent)
 
 void CFSEngine::retrieveAttachmentsL(MEmailMessage* aMessage)
 {
+    for (TInt i = 0; i < m_attachments.Count(); i++) {
+        m_attachments[i]->Release();
+    }
+    m_attachments.Reset();
     TInt count = aMessage->GetAttachmentsL(m_attachments);
     for(TInt i = 0; i < count; i++) {
         MEmailAttachment* att = m_attachments[i];
