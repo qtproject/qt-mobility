@@ -86,10 +86,15 @@ public:
     void setComponentType(QString componentType);
     QString componentType() const;
 
+    // The content
     void addProperty(const QVersitProperty& property);
     void removeProperty(const QVersitProperty& property);
     void removeProperties(const QString& name);
     QList<QVersitProperty> properties() const;
+
+    void addSubDocument(const QVersitDocument& document);
+    void setSubDocuments(const QList<QVersitDocument>& documents);
+    QList<QVersitDocument> subDocuments() const;
 
     bool isEmpty() const;
     void clear();

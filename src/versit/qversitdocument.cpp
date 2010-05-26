@@ -202,7 +202,32 @@ void QVersitDocument::removeProperties(const QString& name)
 void QVersitDocument::clear()
 {
     d->mProperties.clear();
+    d->mSubDocuments.clear();
     d->mVersitType = QVersitDocument::InvalidType;
+}
+
+/*!
+ * Adds \a subdocument to the Versit document.
+ */
+void QVersitDocument::addSubDocument(const QVersitDocument& document)
+{
+    d->mSubDocuments.append(document);
+}
+
+/*!
+ * Sets the list of subdocuments to \a documents.
+ */
+void QVersitDocument::setSubDocuments(const QList<QVersitDocument>& documents)
+{
+    d->mSubDocuments = documents;
+}
+
+/*!
+ * Returns the list of subdocuments contained within this Versit document.
+ */
+QList<QVersitDocument> QVersitDocument::subDocuments() const
+{
+    return d->mSubDocuments;
 }
 
 /*!
@@ -219,7 +244,9 @@ QList<QVersitProperty> QVersitDocument::properties() const
  */
 bool QVersitDocument::isEmpty() const
 {
-    return d->mProperties.count() == 0 && d->mVersitType == QVersitDocument::InvalidType;
+    return d->mProperties.isEmpty()
+        && d->mSubDocuments.isEmpty()
+        && d->mVersitType == QVersitDocument::InvalidType;
 }
 
 QTM_END_NAMESPACE
