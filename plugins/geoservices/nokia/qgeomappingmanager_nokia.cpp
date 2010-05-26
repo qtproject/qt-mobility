@@ -57,7 +57,7 @@ QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &p
     m_cache = new QNetworkDiskCache(this);
 
     QDir dir = QDir::temp();
-    dir.cd("maptiles");
+    dir.cd(".qtm_maptiles");
     m_cache->setCacheDirectory(dir.path());
 
     QList<QString> keys = parameters.keys();
@@ -102,23 +102,16 @@ QGeoMappingManagerNokia::~QGeoMappingManagerNokia()
 }
 
 QGeoMapReply* QGeoMappingManagerNokia::getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
-        const QSize &size,
-        const QGeoMapRequestOptions &requestOptions)
+                                                    const QSize &size,
+                                                    const QGeoMapRequestOptions &requestOptions)
 {
-    QGeoMapReplyNokia::QuadTileInfo* info = new QGeoMapReplyNokia::QuadTileInfo;
-    info->row = row;
-    info->col = col;
-    info->zoomLevel = zoomLevel;
-    info->size = size;
-    info->options = requestOptions;
-
-    QString rawRequest = getRequestString(*info);
+    QString rawRequest = getRequestString(row, col, zoomLevel, size, requestOptions);
 
     QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
 
     QNetworkReply* netReply = m_nam->get(netRequest);
-    QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, info, this);
+    QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, this);
 
     connect(mapReply,
             SIGNAL(finished()),
@@ -140,6 +133,7 @@ void QGeoMappingManagerNokia::mapFinished()
     if (!reply)
         return;
 
+/*
     QGeoMapReplyNokia::QuadTileInfo* info = reply->tileInfo();
     if (!info) {
         reply->deleteLater();
@@ -148,6 +142,7 @@ void QGeoMappingManagerNokia::mapFinished()
 
     qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
     m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
+*/
 
     if (receivers(SIGNAL(finished(QGeoMapReply*))) == 0) {
         reply->deleteLater();
@@ -172,22 +167,24 @@ void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString 
     emit this->error(reply, error, errorString);
 }
 
-QString QGeoMappingManagerNokia::getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const
+QString QGeoMappingManagerNokia::getRequestString(qint32 row, qint32 col, qint32 zoomLevel,
+                                                  const QSize &size,
+                                                  const QGeoMapRequestOptions &options) const
 {
     QString request = "http://";
     request += m_host;
     request += "/maptiler/maptile/newest/";
-    request += mapTypeToStr(info.options.mapType());
+    request += mapTypeToStr(options.mapType());
     request += '/';
-    request += QString::number(info.zoomLevel);
+    request += QString::number(zoomLevel);
     request += '/';
-    request += QString::number(info.col);
+    request += QString::number(col);
     request += '/';
-    request += QString::number(info.row);
+    request += QString::number(row);
     request += '/';
-    request += sizeToStr(info.size);
+    request += sizeToStr(size);
     request += '/';
-    request += info.options.imageFormat();
+    request += options.imageFormat();
 
     if (!m_token.isEmpty()) {
         request += "?token=";

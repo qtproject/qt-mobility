@@ -55,6 +55,7 @@
 
 #include <qgeoserviceprovider.h>
 #include <qgeomapviewport.h>
+#include <qgeomaprequestoptions.h>
 
 #include <QHash>
 #include <QRectF>
@@ -67,6 +68,16 @@ class QGeoMappingManagerNokia;
 class QGeoMapViewportNokia : public QGeoMapViewport
 {
     Q_OBJECT
+
+private:
+    struct QuadTileInfo
+    {
+        int row;
+        int col;
+        int zoomLevel;
+        QSize size;
+        QGeoMapRequestOptions options;
+    };
 
 public:
     QGeoMapViewportNokia(QGeoMappingManager *manager,
@@ -88,6 +99,7 @@ private:
     Q_DISABLE_COPY(QGeoMapViewportNokia)
 
 private:
+    QHash<QGeoMapReply*, QuadTileInfo*> m_pendingReplies;
     QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
     QRectF m_viewPort;
     QSize m_tileSize;

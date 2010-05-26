@@ -60,7 +60,6 @@
 #include <QGeoMapRequestOptions>
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>
-#include <QHash>
 
 QTM_USE_NAMESPACE
 
@@ -89,7 +88,9 @@ public:
 private:
     Q_DISABLE_COPY(QGeoMappingManagerNokia)
 
-    QString getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const;
+    QString getRequestString(qint32 row, qint32 col, qint32 zoomLevel,
+                             const QSize &size,
+                             const QGeoMapRequestOptions &options) const;
 
 private slots:
     void mapFinished();
@@ -107,7 +108,6 @@ private:
     QString m_host;
     QString m_token;
     QString m_referrer;
-    QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
 };
 
 #endif

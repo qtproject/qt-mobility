@@ -64,18 +64,8 @@ class QGeoMapReplyNokia : public QGeoMapReply
     Q_OBJECT
 
 public:
-    struct QuadTileInfo {
-        int row;
-        int col;
-        int zoomLevel;
-        QSize size;
-        QGeoMapRequestOptions options;
-    };
-
-    QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInfo, QObject *parent = 0);
+    QGeoMapReplyNokia(QNetworkReply *reply, QObject *parent = 0);
     ~QGeoMapReplyNokia();
-
-    QuadTileInfo* tileInfo() const;
 
     void abort();
 
@@ -85,7 +75,6 @@ private slots:
 
 private:
     QNetworkReply *m_reply;
-    QuadTileInfo *m_tileInfo;
 };
 
 #endif
