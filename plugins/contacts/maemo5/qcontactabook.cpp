@@ -1304,7 +1304,7 @@ QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) c
 {
   QContactOrganization* rtn = new QContactOrganization;
   QVariantMap map;
-  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_TITLE));
+  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_ORG));
   map[QContactOrganization::FieldTitle] = QString::fromUtf8(title);
   FREE(title);
   setDetailValues(map, rtn);
