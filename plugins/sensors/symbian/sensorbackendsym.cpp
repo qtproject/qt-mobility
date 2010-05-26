@@ -47,7 +47,6 @@
 const TInt KDesiredReadingCount = 1;
 const TInt KMaximumReadingCount = 1;
 const TInt KDefaultBufferingPeriod = 0;
-const TInt KInvalidDataRate = 123456;
 const TInt KAccuracyInvalid = -1;
 
 ///// Internal Functions
@@ -180,6 +179,7 @@ TInt CSensorBackendSym::SetMeasurementRange()
         {
         return SetProperty(KSensrvPropIdMeasureRange, ESensrvIntProperty, ESensrvArrayPropertyInfo, sensor()->outputRange());
         }       
+    return KErrNone;
     }
 
 TInt CSensorBackendSym::SetDataRate()
@@ -223,7 +223,7 @@ void CSensorBackendSym::SetProperties()
     if(sensor()->dataRate() != -1)
         {
         //Set data rate
-        err = SetDataRate();
+        TInt err = SetDataRate();
         if(err != KErrNone)
             {
             sensorError(err);
