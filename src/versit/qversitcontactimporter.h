@@ -111,7 +111,7 @@ public:
     QList<QContact> Q_DECL_DEPRECATED importContacts(const QList<QVersitDocument>& documents);
     void Q_DECL_DEPRECATED setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
     /* deprecated and internal */
-    QVersitContactImporterPropertyHandler* Q_DECL_DEPRECATED propertyHandler() const;
+    Q_DECL_DEPRECATED QVersitContactImporterPropertyHandler* propertyHandler() const;
 
 private:
     QVersitContactImporterPrivate* d;
