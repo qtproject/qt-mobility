@@ -66,6 +66,7 @@ QTM_BEGIN_NAMESPACE
 QLandmarkFetchRequest::QLandmarkFetchRequest(QLandmarkManager *manager, QObject *parent)
     : QLandmarkAbstractRequest(new QLandmarkFetchRequestPrivate(manager), parent)
 {
+    d_ptr->type = QLandmarkAbstractRequest::LandmarkFetchRequest;
 }
 
 /*!
