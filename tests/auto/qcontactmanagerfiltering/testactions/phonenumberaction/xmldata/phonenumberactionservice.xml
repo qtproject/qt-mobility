@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
-    <name>tst_qcontactaction:phonenumberaction</name>
+    <name>tst_qcontactmanagerfiltering:phonenumberaction</name>
     <filepath>plugins/contacts/libcontacts_phonenumberaction</filepath>
     <description>This service provides a QContactAction plugin for testing purposes - phonenumber</description>
     <interface>

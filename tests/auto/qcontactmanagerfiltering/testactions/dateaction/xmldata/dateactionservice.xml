@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <service>
-    <name>tst_qcontactaction:dateaction</name>
+    <name>tst_qcontactmanagerfiltering:dateaction</name>
     <filepath>plugins/contacts/libcontacts_dateaction</filepath>
     <description>This service provides a QContactAction plugin for testing purposes - date</description>
     <interface>

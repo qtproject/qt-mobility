@@ -80,9 +80,8 @@ tst_QContactActions::tst_QContactActions()
     qDebug() << sm.findServices();
     if (!sm.removeService("tst_qcontactactions:sendemailaction"))
         qDebug() << " tst_qca: ctor: cleaning up test services failed:" << sm.error();
-    qDebug() << QString(QCoreApplication::applicationDirPath() + "/plugins/xmldata/sendemailaction/sendemailactionservice.xml");
-    if (!sm.addService(QCoreApplication::applicationDirPath() + "/plugins/xmldata/sendemailaction/sendemailactionservice.xml"))
-        qDebug() << " tst_qca: ctor: unable to add service:" << sm.error();
+    if (!sm.addService(QCoreApplication::applicationDirPath() + "/plugins/contacts/xmldata/sendemailactionservice.xml"))
+        qDebug() << " tst_qca: ctor: unable to add SendEmail service:" << sm.error();
 }
 
 tst_QContactActions::~tst_QContactActions()

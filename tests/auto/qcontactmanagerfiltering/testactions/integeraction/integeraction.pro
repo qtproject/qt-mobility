@@ -22,7 +22,7 @@ DEFINES += ACTIONPLUGINNAME=IntegerAction
 HEADERS += integeraction_p.h
 
 xml.path = $$DESTDIR/xmldata
-xml.files = integeractionsservice.xml
+xml.files = xmldata/integeractionsservice.xml
 xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
 INSTALLS += xml
 build_pass:ALL_DEPS+=install_xml

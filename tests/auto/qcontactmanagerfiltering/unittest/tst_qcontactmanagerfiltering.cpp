@@ -221,9 +221,9 @@ void tst_QContactManagerFiltering::initTestCase()
         }
     }
     QStringList myServices;
-    myServices << "booleanaction" << "dateaction" << "integeraction" << "numberaction" << "phonenumberaction";
+    myServices << "BooleanAction" << "DateAction" << "IntegerAction" << "NumberAction" << "PhoneNumberAction";
     foreach (const QString& serv, myServices) {
-        QString builtPath = QCoreApplication::applicationDirPath() + "/plugins/xmldata/" + serv + "/" + serv + "service.xml";
+        QString builtPath = QCoreApplication::applicationDirPath() + "/plugins/contacts/xmldata/" + serv.toLower() + "service.xml";
         if (!sm.addService(builtPath)) {
             qDebug() << " tst_qca: ctor: unable to add" << serv << "service:" << sm.error();
         }
