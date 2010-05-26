@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,7 +48,7 @@
 #include <QMap>
 #include <QString>
 #include <QList>
-
+#include <QQueue>
 #include <QDebug>
 
 #include "qtcontacts.h"
@@ -58,6 +58,8 @@
 #define MAEMO5_ENGINE_VERSION 0.1
 
 QTM_USE_NAMESPACE
+
+Q_DEFINE_LATIN1_CONSTANT(AddressFieldExtension, "X-Maemo5-Extension");
 
 class Q_DECL_EXPORT ContactMaemo5Factory : public QObject, public QContactManagerEngineFactory
 {
@@ -105,6 +107,7 @@ class QContactMaemo5Engine : public QContactManagerEngine
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
     bool validateContact(const QContact&, QContactManager::Error* error) const;
     bool validateDefinition(const QContactDetailDefinition&, QContactManager::Error* error) const;
+    QContact compatibleContact(const QContact& contact, QContactManager::Error* error) const;
 
     /* "Self" contact id (MyCard) */
     QContactLocalId selfContactId(QContactManager::Error* errors) const;
@@ -134,26 +137,18 @@ class QContactMaemo5Engine : public QContactManagerEngine
     QList<QVariant::Type> supportedDataTypes() const;
     QStringList supportedContactTypes() const {return (QStringList() << QContactType::TypeContact);}
     
-    // XXX TODO: FIXME - these are pure virtual and so MUST be implemented by the backend.  Stubs here.
-    QMap<QString, QString> managerParameters() const {return QMap<QString,QString>();}
-
-    QContact compatibleContact(const QContact&, QContactManager::Error* error) const {*error =  QContactManager::NotSupportedError;return QContact();}
-
-    bool setSelfContactId(const QContactLocalId&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
-    bool saveDetailDefinition(const QContactDetailDefinition&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
-    bool removeDetailDefinition(const QString&, const QString&, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
-
-    void requestDestroyed(QContactAbstractRequest*) {}
-    bool startRequest(QContactAbstractRequest*) {return false;}
-    bool cancelRequest(QContactAbstractRequest*) {return false;}
-    bool waitForRequestFinished(QContactAbstractRequest*, int) {return false;}
+    /* Asynchronous Request Support - synchronous versions until thread worker is stable */
+    void requestDestroyed(QContactAbstractRequest *req);
+    bool startRequest(QContactAbstractRequest *req);
+    bool cancelRequest(QContactAbstractRequest *req);
+    bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
+    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
     
-    bool saveRelationships(QList<QContactRelationship>*, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
-    bool removeRelationships(const QList<QContactRelationship>&, QMap<int, QContactManager::Error>*, QContactManager::Error* error) {*error = QContactManager::NotSupportedError; return false;}
-    bool isRelationshipTypeSupported(const QString&, const QString&) const {return false;}
-    QList<QContactRelationship> relationships(const QString&, const QContactId&, QContactRelationship::Role, QContactManager::Error* error) const {*error = QContactManager::NotSupportedError; return QList<QContactRelationship>();}
-
-  private:
+  private slots:
+    void performAsynchronousOperation();
+    
+  private:  
+    QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
     QSharedDataPointer<QContactMaemo5EngineData> d;
 };
 

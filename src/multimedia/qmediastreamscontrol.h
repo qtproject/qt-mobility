@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,8 +45,9 @@
 
 #include "qmediacontrol.h"
 #include "qtmedianamespace.h"
+#include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class Q_MEDIA_EXPORT QMediaStreamsControl : public QMediaControl
 {
@@ -60,7 +61,7 @@ public:
     virtual int streamCount() = 0;
     virtual StreamType streamType(int streamNumber) = 0;
 
-    virtual QVariant metaData(int streamNumber, QtMedia::MetaData key) = 0;
+    virtual QVariant metaData(int streamNumber, QtMediaServices::MetaData key) = 0;
 
     virtual bool isActive(int streamNumber) = 0;
     virtual void setActive(int streamNumber, bool state) = 0;
@@ -76,7 +77,7 @@ protected:
 #define QMediaStreamsControl_iid "com.nokia.Qt.QMediaStreamsControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QMediaStreamsControl, QMediaStreamsControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif // QMEDIASTREAMSCONTROL_H
 

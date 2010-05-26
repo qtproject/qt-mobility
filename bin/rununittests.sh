@@ -1,7 +1,7 @@
 #!/bin/bash
 #############################################################################
 ##
-## Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+## Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ## All rights reserved.
 ## Contact: Nokia Corporation (qt-info@nokia.com)
 ##
@@ -142,7 +142,6 @@ a
 ./tst_qversitproperty
 ./tst_qversitreader
 ./tst_qversitwriter
-./tst_versitutils
 
 #QMessaging
 ./tst_qmessage

@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(gstengine)
+TARGET = $$qtLibraryTarget(qtmedia_gstengine)
 PLUGIN_TYPE=mediaservice
 
 include(../../../common.pri)
@@ -81,6 +81,3 @@ include(mediaplayer/mediaplayer.pri)
     include(mediacapture/maemo/mediacapture_maemo.pri)
     DEFINES += GST_USE_UNSTABLE_API #prevents warnings because of unstable photography API 
 }
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
-INSTALLS+=target

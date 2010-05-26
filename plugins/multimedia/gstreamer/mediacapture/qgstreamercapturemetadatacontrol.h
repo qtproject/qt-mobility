@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,7 +44,7 @@
 
 #include <qmetadatacontrol.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class QGstreamerCaptureMetaDataControl : public QMetaDataControl
 {
@@ -57,9 +57,9 @@ public:
     bool isMetaDataAvailable() const { return true; }
     bool isWritable() const { return true; }
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMediaServices::MetaData key) const;
+    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
+    QList<QtMediaServices::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(QString const &name) const;
     void setExtendedMetaData(QString const &name, QVariant const &value);

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -235,6 +235,7 @@ Q_GLOBAL_STATIC(ModestEngine,modestEngine);
 ModestEngine::ModestEngine()
  : m_queryIds(0)
 {
+    qWarning() << "ModestEngine::ModestEngine Starting to initialize";
     g_type_init();
     m_gconfclient = gconf_client_get_default();
     if (!m_gconfclient) {
@@ -243,12 +244,18 @@ ModestEngine::ModestEngine()
         updateEmailAccounts();
     }
 
+    qWarning() << "ModestEngine::ModestEngine Connecting to Modest DBus Interface";
     // Setup DBus Interface for Modest
     m_ModestDBusInterface = new QDBusInterface(MODEST_DBUS_SERVICE,
                                                MODEST_DBUS_OBJECT,
                                                MODEST_DBUS_IFACE,
                                                QDBusConnection::sessionBus(),
                                                this);
+    if (m_ModestDBusInterface->isValid()) {
+        qWarning() << "ModestEngine::ModestEngine Connected to Modest DBus Interface";
+    } else {
+        qWarning() << "ModestEngine::ModestEngine Unable to connect to Modest DBus Interface";
+    }
 
     // Get notifications of Incoming Messages
     m_ModestDBusInterface->connection().connect(MODEST_DBUS_SERVICE,
@@ -264,12 +271,19 @@ ModestEngine::ModestEngine()
                                                 MODEST_DBUS_SIGNAL_MSG_READ_CHANGED,
                                                this, SLOT(messageReadChangedSlot(QDBusMessage)));
 
+    qWarning() << "ModestEngine::ModestEngine Connecting to Qt Mobility Modest Plugin DBus Interface";
     // Setup Qt Mobility Modest Plugin based DBus Interface for Modest
     m_QtmPluginDBusInterface = new QDBusInterface(MODESTENGINE_QTM_PLUGIN_NAME,
                                                   MODESTENGINE_QTM_PLUGIN_PATH,
                                                   MODESTENGINE_QTM_PLUGIN_NAME,
                                                   QDBusConnection::sessionBus(),
                                                   this);
+
+    if (m_QtmPluginDBusInterface->isValid()) {
+        qWarning() << "ModestEngine::ModestEngine Connected to Qt Mobility Modest Plugin DBus Interface";
+    } else {
+        qWarning() << "ModestEngine::ModestEngine Unable to connect to Qt Mobility Modest Plugin DBus Interface";
+    }
 
     qDBusRegisterMetaType< ModestStringMap >();
     qDBusRegisterMetaType< ModestStringMapList >();
@@ -298,6 +312,7 @@ ModestEngine::ModestEngine()
     connect(pendingCallWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
             this, SLOT(pendingGetUnreadMessagesFinishedSlot(QDBusPendingCallWatcher*)));
 
+    qWarning() << "ModestEngine::ModestEngine Initialized successfully";
 }
 
 ModestEngine::~ModestEngine()
@@ -1720,7 +1735,9 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
                 if (cmp == QMessageDataComparator::Equal) {
                     if (pf->_value.toString().length() > 0) {
                         accountIds.append(modestAccountIdFromAccountId(pf->_value.toString()));
-                        msgQueryInfo.realAccountId = pf->_value.toString();
+                        // Local folders are not account specific
+                        // => Make sure that account specific messages are searched from local_folders account
+                        accountIds.append("local_folders");
                         handled = true;
                     }
                 }
@@ -1768,10 +1785,23 @@ bool ModestEngine::queryAndFilterMessages(MessageQueryInfo &msgQueryInfo) const
                 if (cmp == QMessageDataComparator::Equal) {
                     QMessage::StandardFolder standardFolder = static_cast<QMessage::StandardFolder>(pf->_value.toInt());
                     if (standardFolder == QMessage::SentFolder) {
+                        // Possible "real" accountIds can be ignored in this phase
+                        // because messages are searched from "local_folders" account
+                        // <=> Actual account filtering is done when search from Modest
+                        //     has finished
+                        accountIds.clear();
+
+                        accountIds.append("local_folders");
                         folderUris.append("sent");
-                        if (accountIds.count() == 0) {
-                            accountIds.append("local_folders");
-                        }
+                    } else if (standardFolder == QMessage::DraftsFolder) {
+                        // Possible "real" accountIds can be ignored in this phase
+                        // because messages are searched from "local_folders" account
+                        // <=> Actual account filtering is done when search from Modest
+                        //     has finished
+                        accountIds.clear();
+
+                        accountIds.append("local_folders");
+                        folderUris.append("drafts");
                     }
                     handled = true;
                 }

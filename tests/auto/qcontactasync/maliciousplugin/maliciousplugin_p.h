@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,12 +62,15 @@
 
 QTM_USE_NAMESPACE
 
+class QThread;
+class MaliciousThreadObject;
 class MaliciousAsyncManagerEngine : public QContactManagerEngine
 {
     Q_OBJECT
 
 public:
     MaliciousAsyncManagerEngine();
+    ~MaliciousAsyncManagerEngine();
 
     QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const;
     QString managerName() const;
@@ -167,7 +170,7 @@ public:
     }
 
     /* Asynchronous Request Support */
-    void requestDestroyed(QContactAbstractRequest* req) {QContactManagerEngine::requestDestroyed(req);}
+    void requestDestroyed(QContactAbstractRequest* req);
     bool waitForRequestFinished(QContactAbstractRequest* req, int msecs) {return QContactManagerEngine::waitForRequestFinished(req, msecs);}
 
     /* Capabilities reporting */
@@ -195,9 +198,15 @@ public:
         return QContactManagerEngine::supportedContactTypes();
     }
 
+signals:
+    void doStartRequest(QContactAbstractRequest *req);
+    void doFinishRequest(QContactAbstractRequest *req);
+private:
+    QThread* thread;
+    MaliciousThreadObject* threadObject;
 };
 
-class  Q_DECL_EXPORT MaliciousEngineFactory : public QObject, public QContactManagerEngineFactory
+class MaliciousEngineFactory : public QObject, public QContactManagerEngineFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QContactManagerEngineFactory)

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -1676,10 +1676,8 @@ QString ServiceDatabase::databasePath() const
 #elif defined(Q_OS_SYMBIAN)
         QString qtVersion(qVersion());
         qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
-        path = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() +
-                                        "\\Nokia\\" + "QtServiceFramework_" +
-                                        qtVersion + "_system" +
-                                        QLatin1String(".db"));
+        path = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "QtServiceFramework_" +
+                                        qtVersion + "_system" + QLatin1String(".db"));
 #else
         QSettings settings(QSettings::SystemScope, "Nokia", "Services");
         path = settings.value("ServicesDB/Path").toString();

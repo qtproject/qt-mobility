@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -152,7 +152,7 @@ is a reliable way to gather such information.
     \value EmergencyOnly          Emergency calls only.
     \value Searching              Searching for or connecting with the network.
     \value Busy                   Network is busy.
-    \value Connected              Connected to newtwork.
+    \value Connected              Connected to network.
     \value HomeNetwork            On Home Network.
     \value Denied                 Network access denied.
     \value Roaming                On Roaming network.
@@ -229,14 +229,14 @@ information from the system.
    /*!
   \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
 
-  This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
+  This signal is emitted when the power state has changed, such as when a phone gets plugged in to the wall.
   \a state is the new power state.
  */
 
 /*!
   \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
-  This signal is emitted whenever the network profile changes, specified by \a profile.
+  This signal is emitted whenever the users active profile changes, specified by \a profile.
 */
 
 
@@ -495,7 +495,7 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
 /*!
   \property QSystemNetworkInfo::cellId
   \brief The devices Cell ID
-    Returns the Cell ID of the connected tower or based station.
+    Returns the Cell ID of the connected tower or based station, or 0 if not connected.
 */
 int QSystemNetworkInfo::cellId()
 {
@@ -506,7 +506,7 @@ int QSystemNetworkInfo::cellId()
   \property QSystemNetworkInfo::locationAreaCode
   \brief The LAC.
 
-    Returns the Location Area Code. In the case of none such as a Desktop, an empty string.
+    Returns the Location Area Code. In the case of a Desktop computer, 0 is returned.
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
@@ -517,8 +517,8 @@ int QSystemNetworkInfo::locationAreaCode()
    \property QSystemNetworkInfo::currentMobileCountryCode
    \brief The current MCC.
 
-    Returns the current Mobile Country Code. In the case of none such as a Desktop, an empty string.
-/*/
+    Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
+*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
     return netInfoPrivate()->currentMobileCountryCode();
@@ -528,7 +528,7 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
   \property QSystemNetworkInfo::currentMobileNetworkCode
   \brief The current MNC.
 
-    Returns the current Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Returns the current Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
@@ -539,7 +539,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
   \property QSystemNetworkInfo::homeMobileCountryCode
   \brief The home MNC.
 
-    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -550,7 +550,9 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
   \property QSystemNetworkInfo::homeMobileNetworkCode
   \brief The home MCC.
 
-    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
+    Note: Some platforms don't support retrieving this info. In this case the Network Code is
+    returned only when the device is registered on home network.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
@@ -575,7 +577,7 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 }
 
 /*!
-  Returns the first found QNetworkInterface for type \a mode.
+  Returns the first found QNetworkInterface for type \a mode, or an invalid QNetworkInterface, if none is found.
   */
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
@@ -605,6 +607,8 @@ void QSystemNetworkInfo::connectNotify(const char *signal)
                                  networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
         netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
     }
+#else
+Q_UNUSED(signal)
 #endif
 }
 
@@ -625,6 +629,8 @@ void QSystemNetworkInfo::disconnectNotify(const char *signal)
                                  networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
         netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
     }
+#else
+Q_UNUSED(signal)
 #endif
 }
 
@@ -647,20 +653,23 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 }
 
 /*!
-    Returns the display brightness of \a screen in %, 1 - 100 scale.
+    Returns the display brightness of the screen with index \a screenNumber in %, 1 - 100 scale.
 
     Depending on platform, displayBrightness may not be available due to
     differing hardware, software or driver implementation. In which case this
     will return 0.
 
+    \sa QDesktopWidget::screenCount()
 */
-int QSystemDisplayInfo::displayBrightness(int screen)
+int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
-    return displayInfoPrivate()->displayBrightness(screen);
+    return displayInfoPrivate()->displayBrightness(screenNumber);
 }
 
 /*!
-    Returns the color depth of the screen \a screenNumber, in bits per pixel.
+    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel, or 0 if the screen is not found.
+
+    \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
@@ -706,7 +715,7 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
   \property QSystemStorageInfo::logicalDrives
   \brief The logical drives.
 
-    Returns a QStringList of volumes or partitions.
+    Returns a QStringList of volumes or partitions, or an empty list if no drives are found.
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
@@ -816,7 +825,7 @@ QString QSystemDeviceInfo::model()
   \property QSystemDeviceInfo::productName
   \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available,
+    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
 
 */
 QString QSystemDeviceInfo::productName()
@@ -902,7 +911,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
  /*!
    Constructs a QSystemScreenSaver object with the given \a parent.
 
-   On platforms where there is no one default screensaver mechanism, such as Linux, this class
+   On platforms where there is no default screensaver mechanism, such as Linux, this class
    may not be available.
  */
 
@@ -928,8 +937,9 @@ QSystemScreenSaver::~QSystemScreenSaver()
 /*!
     Temporarily inhibits the screensaver.
 
-    Will be reverted upon destruction of the QSystemScreenSaver object.
-    Returns true on success, otherwise false.
+    The screensaver will be set to a non inhibited state only when this QSystemScreenSaver object gets destroyed.
+
+    This is a non blocking function that will return true if the inhibit procedure was successful, otherwise false.
 
     On platforms that support it, if screensaver is secure by policy, the policy will be honored
     and this will fail.

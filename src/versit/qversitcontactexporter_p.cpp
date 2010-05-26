@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -257,7 +257,12 @@ void QVersitContactExporterPrivate::encodePhoneNumber(
     const QContactDetail& detail)
 {
     QContactPhoneNumber phoneNumber = static_cast<QContactPhoneNumber>(detail);
-    encodeParameters(property, phoneNumber.contexts(), phoneNumber.subTypes());
+    QStringList subTypes = phoneNumber.subTypes();
+    encodeParameters(property, phoneNumber.contexts(), subTypes);
+    if (subTypes.contains(QContactPhoneNumber::SubTypeAssistant))
+        property.setName(QLatin1String("X-ASSISTANT-TEL"));
+    else
+        property.setName(QLatin1String("TEL"));
     property.setValue(phoneNumber.number());
 }
 

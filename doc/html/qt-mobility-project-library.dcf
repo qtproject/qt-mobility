@@ -1,11 +1,13 @@
 <!DOCTYPE DCF>
 <DCF ref="index.html" icon="qt-mobility-project-library.png" imagedir="../../gif" title="Qt Mobility Project Library Reference Documentation">
 <section ref="classes.html" title="Classes">
-    <section ref="qabstractgallery.html" title="QAbstractGallery Class Reference">
-        <keyword ref="qabstractgallery.html">QAbstractGallery</keyword>
-        <keyword ref="qabstractgallery.html#createResponse">createResponse</keyword>
-        <keyword ref="qabstractgallery.html#isRequestSupported">isRequestSupported</keyword>
-        <section ref="qabstractgallery-members.html" title="List of all members"/>
+    <section ref="linereader.html" title="LineReader Class Reference">
+        <keyword ref="linereader.html">LineReader</keyword>
+        <keyword ref="linereader.html#atEnd">atEnd</keyword>
+        <keyword ref="linereader.html#codec">codec</keyword>
+        <keyword ref="linereader.html#odometer">odometer</keyword>
+        <keyword ref="linereader.html#readLine">readLine</keyword>
+        <section ref="linereader-members.html" title="List of all members"/>
     </section>
     <section ref="qabstractsecuritysession.html" title="QAbstractSecuritySession Class Reference">
         <keyword ref="qabstractsecuritysession.html">QAbstractSecuritySession</keyword>
@@ -239,13 +241,11 @@
         <keyword ref="qcontactaction.html#availableActions">availableActions</keyword>
         <keyword ref="qcontactaction.html#contactFilter">contactFilter</keyword>
         <keyword ref="qcontactaction.html#invokeAction">invokeAction</keyword>
-        <keyword ref="qcontactaction.html#isDetailSupported">isDetailSupported</keyword>
         <keyword ref="qcontactaction.html#metaData">metaData</keyword>
-        <keyword ref="qcontactaction.html#results">results</keyword>
-        <keyword ref="qcontactaction.html#resultsAvailable">resultsAvailable</keyword>
-        <keyword ref="qcontactaction.html#state">state</keyword>
-        <keyword ref="qcontactaction.html#stateChanged">stateChanged</keyword>
+        <keyword ref="qcontactaction.html#progress">progress</keyword>
+        <keyword ref="qcontactaction.html#result">result</keyword>
         <keyword ref="qcontactaction.html#supportedDetails">supportedDetails</keyword>
+        <keyword ref="qcontactaction.html#supportsDetail">supportsDetail</keyword>
         <section ref="qcontactaction-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactactiondescriptor.html" title="QContactActionDescriptor Class Reference">
@@ -429,6 +429,7 @@
     </section>
     <section ref="qcontactdetaildefinition.html" title="QContactDetailDefinition Class Reference">
         <keyword ref="qcontactdetaildefinition.html">QContactDetailDefinition</keyword>
+        <keyword ref="qcontactdetaildefinition.html#AccessConstraint-enum">AccessConstraint</keyword>
         <keyword ref="qcontactdetaildefinition.html#fields">fields</keyword>
         <keyword ref="qcontactdetaildefinition.html#insertField">insertField</keyword>
         <keyword ref="qcontactdetaildefinition.html#isEmpty">isEmpty</keyword>
@@ -472,6 +473,7 @@
     </section>
     <section ref="qcontactdetailfielddefinition.html" title="QContactDetailFieldDefinition Class Reference">
         <keyword ref="qcontactdetailfielddefinition.html">QContactDetailFieldDefinition</keyword>
+        <keyword ref="qcontactdetailfielddefinition.html#AccessConstraint-enum">AccessConstraint</keyword>
         <keyword ref="qcontactdetailfielddefinition.html#allowableValues">allowableValues</keyword>
         <keyword ref="qcontactdetailfielddefinition.html#dataType">dataType</keyword>
         <keyword ref="qcontactdetailfielddefinition.html#setAllowableValues">setAllowableValues</keyword>
@@ -543,10 +545,6 @@
         <keyword ref="qcontactfetchhint.html">QContactFetchHint</keyword>
         <keyword ref="qcontactfetchhint.html#OptimizationHint-enum">OptimizationHint</keyword>
         <keyword ref="qcontactfetchhint.html#OptimizationHint-enum">OptimizationHints</keyword>
-        <keyword ref="qcontactfetchhint.html#OptimizationHint-enum">QContactFetchHint::AllRequired</keyword>
-        <keyword ref="qcontactfetchhint.html#OptimizationHint-enum">QContactFetchHint::NoBinaryBlobs</keyword>
-        <keyword ref="qcontactfetchhint.html#OptimizationHint-enum">QContactFetchHint::NoActionPreferences</keyword>
-        <keyword ref="qcontactfetchhint.html#OptimizationHint-enum">QContactFetchHint::NoRelationships</keyword>
         <keyword ref="qcontactfetchhint.html#detailDefinitionsHint">detailDefinitionsHint</keyword>
         <keyword ref="qcontactfetchhint.html#optimizationHints">optimizationHints</keyword>
         <keyword ref="qcontactfetchhint.html#relationshipTypesHint">relationshipTypesHint</keyword>
@@ -656,7 +654,6 @@
         <keyword ref="qcontactglobalpresence.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactglobalpresence.html#FieldCustomMessage-var">FieldCustomMessage</keyword>
         <keyword ref="qcontactglobalpresence.html#FieldNickname-var">FieldNickname</keyword>
-        <keyword ref="qcontactglobalpresence.html#FieldPresenceState-var">FieldPresenceState</keyword>
         <keyword ref="qcontactglobalpresence.html#FieldPresenceStateImageUrl-var">FieldPresenceStateImageUrl</keyword>
         <keyword ref="qcontactglobalpresence.html#FieldPresenceStateText-var">FieldPresenceStateText</keyword>
         <keyword ref="qcontactglobalpresence.html#FieldTimestamp-var">FieldTimestamp</keyword>
@@ -695,7 +692,36 @@
     </section>
     <section ref="qcontactinvalidengine.html" title="QContactInvalidEngine Class Reference">
         <keyword ref="qcontactinvalidengine.html">QContactInvalidEngine</keyword>
+        <keyword ref="qcontactinvalidengine.html#cancelRequest">cancelRequest</keyword>
+        <keyword ref="qcontactinvalidengine.html#conformingContact">conformingContact</keyword>
+        <keyword ref="qcontactinvalidengine.html#contact">contact</keyword>
+        <keyword ref="qcontactinvalidengine.html#contactIds">contactIds</keyword>
+        <keyword ref="qcontactinvalidengine.html#contacts">contacts</keyword>
+        <keyword ref="qcontactinvalidengine.html#detailDefinition">detailDefinition</keyword>
+        <keyword ref="qcontactinvalidengine.html#detailDefinitions">detailDefinitions</keyword>
+        <keyword ref="qcontactinvalidengine.html#hasFeature">hasFeature</keyword>
+        <keyword ref="qcontactinvalidengine.html#isFilterSupported">isFilterSupported</keyword>
+        <keyword ref="qcontactinvalidengine.html#isRelationshipTypeSupported">isRelationshipTypeSupported</keyword>
         <keyword ref="qcontactinvalidengine.html#managerName">managerName</keyword>
+        <keyword ref="qcontactinvalidengine.html#managerParameters">managerParameters</keyword>
+        <keyword ref="qcontactinvalidengine.html#managerVersion">managerVersion</keyword>
+        <keyword ref="qcontactinvalidengine.html#relationships">relationships</keyword>
+        <keyword ref="qcontactinvalidengine.html#removeContacts">removeContacts</keyword>
+        <keyword ref="qcontactinvalidengine.html#removeDetailDefinition">removeDetailDefinition</keyword>
+        <keyword ref="qcontactinvalidengine.html#removeRelationships">removeRelationships</keyword>
+        <keyword ref="qcontactinvalidengine.html#requestDestroyed">requestDestroyed</keyword>
+        <keyword ref="qcontactinvalidengine.html#saveContacts">saveContacts</keyword>
+        <keyword ref="qcontactinvalidengine.html#saveDetailDefinition">saveDetailDefinition</keyword>
+        <keyword ref="qcontactinvalidengine.html#saveRelationships">saveRelationships</keyword>
+        <keyword ref="qcontactinvalidengine.html#selfContactId">selfContactId</keyword>
+        <keyword ref="qcontactinvalidengine.html#setSelfContactId">setSelfContactId</keyword>
+        <keyword ref="qcontactinvalidengine.html#startRequest">startRequest</keyword>
+        <keyword ref="qcontactinvalidengine.html#supportedContactTypes">supportedContactTypes</keyword>
+        <keyword ref="qcontactinvalidengine.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactinvalidengine.html#synthesizedDisplayLabel">synthesizedDisplayLabel</keyword>
+        <keyword ref="qcontactinvalidengine.html#validateContact">validateContact</keyword>
+        <keyword ref="qcontactinvalidengine.html#validateDefinition">validateDefinition</keyword>
+        <keyword ref="qcontactinvalidengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
         <section ref="qcontactinvalidengine-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactinvalidfilter.html" title="QContactInvalidFilter Class Reference">
@@ -744,6 +770,7 @@
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::Anonymous</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::ChangeLogs</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::DetailOrdering</keyword>
+        <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::RelationshipOrdering</keyword>
         <keyword ref="qcontactmanager.html#ManagerFeature-enum">QContactManager::MutableDefinitions</keyword>
         <keyword ref="qcontactmanager.html#availableManagers">availableManagers</keyword>
         <keyword ref="qcontactmanager.html#buildUri">buildUri</keyword>
@@ -866,24 +893,35 @@
     <section ref="qcontactmemoryengine.html" title="QContactMemoryEngine Class Reference">
         <keyword ref="qcontactmemoryengine.html">QContactMemoryEngine</keyword>
         <keyword ref="qcontactmemoryengine.html#cancelRequest">cancelRequest</keyword>
+        <keyword ref="qcontactmemoryengine.html#compatibleContact">compatibleContact</keyword>
         <keyword ref="qcontactmemoryengine.html#contact">contact</keyword>
+        <keyword ref="qcontactmemoryengine.html#contactIds">contactIds</keyword>
         <keyword ref="qcontactmemoryengine.html#contacts">contacts</keyword>
         <keyword ref="qcontactmemoryengine.html#createMemoryEngine">createMemoryEngine</keyword>
+        <keyword ref="qcontactmemoryengine.html#detailDefinition">detailDefinition</keyword>
+        <keyword ref="qcontactmemoryengine.html#detailDefinitions">detailDefinitions</keyword>
         <keyword ref="qcontactmemoryengine.html#hasFeature">hasFeature</keyword>
         <keyword ref="qcontactmemoryengine.html#isFilterSupported">isFilterSupported</keyword>
         <keyword ref="qcontactmemoryengine.html#isRelationshipTypeSupported">isRelationshipTypeSupported</keyword>
         <keyword ref="qcontactmemoryengine.html#managerName">managerName</keyword>
         <keyword ref="qcontactmemoryengine.html#managerParameters">managerParameters</keyword>
+        <keyword ref="qcontactmemoryengine.html#managerVersion">managerVersion</keyword>
         <keyword ref="qcontactmemoryengine.html#relationships">relationships</keyword>
         <keyword ref="qcontactmemoryengine.html#removeContacts">removeContacts</keyword>
         <keyword ref="qcontactmemoryengine.html#removeDetailDefinition">removeDetailDefinition</keyword>
         <keyword ref="qcontactmemoryengine.html#removeRelationships">removeRelationships</keyword>
         <keyword ref="qcontactmemoryengine.html#requestDestroyed">requestDestroyed</keyword>
         <keyword ref="qcontactmemoryengine.html#saveContacts">saveContacts</keyword>
+        <keyword ref="qcontactmemoryengine.html#saveDetailDefinition">saveDetailDefinition</keyword>
         <keyword ref="qcontactmemoryengine.html#saveRelationships">saveRelationships</keyword>
         <keyword ref="qcontactmemoryengine.html#selfContactId">selfContactId</keyword>
+        <keyword ref="qcontactmemoryengine.html#setSelfContactId">setSelfContactId</keyword>
         <keyword ref="qcontactmemoryengine.html#startRequest">startRequest</keyword>
+        <keyword ref="qcontactmemoryengine.html#supportedContactTypes">supportedContactTypes</keyword>
         <keyword ref="qcontactmemoryengine.html#supportedDataTypes">supportedDataTypes</keyword>
+        <keyword ref="qcontactmemoryengine.html#synthesizedDisplayLabel">synthesizedDisplayLabel</keyword>
+        <keyword ref="qcontactmemoryengine.html#validateContact">validateContact</keyword>
+        <keyword ref="qcontactmemoryengine.html#validateDefinition">validateDefinition</keyword>
         <keyword ref="qcontactmemoryengine.html#waitForRequestFinished">waitForRequestFinished</keyword>
         <section ref="qcontactmemoryengine-members.html" title="List of all members"/>
     </section>
@@ -1001,13 +1039,6 @@
     <section ref="qcontactpresence.html" title="QContactPresence Class Reference">
         <keyword ref="qcontactpresence.html">QContactPresence</keyword>
         <keyword ref="qcontactpresence.html#PresenceState-enum">PresenceState</keyword>
-        <keyword ref="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceAvailable</keyword>
-        <keyword ref="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceBusy</keyword>
-        <keyword ref="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceAway</keyword>
-        <keyword ref="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceHidden</keyword>
-        <keyword ref="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceExtendedAway</keyword>
-        <keyword ref="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceOffline</keyword>
-        <keyword ref="qcontactpresence.html#PresenceState-enum">QContactPresence::PresenceUnknown</keyword>
         <keyword ref="qcontactpresence.html#customMessage">customMessage</keyword>
         <keyword ref="qcontactpresence.html#nickname">nickname</keyword>
         <keyword ref="qcontactpresence.html#presenceState">presenceState</keyword>
@@ -1023,7 +1054,6 @@
         <keyword ref="qcontactpresence.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactpresence.html#FieldCustomMessage-var">FieldCustomMessage</keyword>
         <keyword ref="qcontactpresence.html#FieldNickname-var">FieldNickname</keyword>
-        <keyword ref="qcontactpresence.html#FieldPresenceState-var">FieldPresenceState</keyword>
         <keyword ref="qcontactpresence.html#FieldPresenceStateImageUrl-var">FieldPresenceStateImageUrl</keyword>
         <keyword ref="qcontactpresence.html#FieldPresenceStateText-var">FieldPresenceStateText</keyword>
         <keyword ref="qcontactpresence.html#FieldTimestamp-var">FieldTimestamp</keyword>
@@ -1096,16 +1126,16 @@
     </section>
     <section ref="qcontactringtone.html" title="QContactRingtone Class Reference">
         <keyword ref="qcontactringtone.html">QContactRingtone</keyword>
-        <keyword ref="qcontactringtone.html#audioRingtoneUrl">audioRingtoneUrl</keyword>
-        <keyword ref="qcontactringtone.html#setAudioRingtoneUrl">setAudioRingtoneUrl</keyword>
-        <keyword ref="qcontactringtone.html#setVibrationRingtoneUrl">setVibrationRingtoneUrl</keyword>
-        <keyword ref="qcontactringtone.html#setVideoRingtoneUrl">setVideoRingtoneUrl</keyword>
-        <keyword ref="qcontactringtone.html#vibrationRingtoneUrl">vibrationRingtoneUrl</keyword>
-        <keyword ref="qcontactringtone.html#videoRingtoneUrl">videoRingtoneUrl</keyword>
+        <keyword ref="qcontactringtone.html#audioRingtone">audioRingtone</keyword>
+        <keyword ref="qcontactringtone.html#setAudioRingtone">setAudioRingtone</keyword>
+        <keyword ref="qcontactringtone.html#setVibrationRingtone">setVibrationRingtone</keyword>
+        <keyword ref="qcontactringtone.html#setVideoRingtone">setVideoRingtone</keyword>
+        <keyword ref="qcontactringtone.html#vibrationRingtone">vibrationRingtone</keyword>
+        <keyword ref="qcontactringtone.html#videoRingtone">videoRingtone</keyword>
         <keyword ref="qcontactringtone.html#DefinitionName-var">DefinitionName</keyword>
-        <keyword ref="qcontactringtone.html#FieldAudioRingtoneUrl-var">FieldAudioRingtoneUrl</keyword>
-        <keyword ref="qcontactringtone.html#FieldVibrationRingtoneUrl-var">FieldVibrationRingtoneUrl</keyword>
-        <keyword ref="qcontactringtone.html#FieldVideoRingtoneUrl-var">FieldVideoRingtoneUrl</keyword>
+        <keyword ref="qcontactringtone.html#FieldAudioRingtone-var">FieldAudioRingtone</keyword>
+        <keyword ref="qcontactringtone.html#FieldVibrationRingtone-var">FieldVibrationRingtone</keyword>
+        <keyword ref="qcontactringtone.html#FieldVideoRingtone-var">FieldVideoRingtone</keyword>
         <section ref="qcontactringtone-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactsaverequest.html" title="QContactSaveRequest Class Reference">
@@ -1204,434 +1234,6 @@
         <keyword ref="qcontacturl.html#SubTypeHomePage-var">SubTypeHomePage</keyword>
         <section ref="qcontacturl-members.html" title="List of all members"/>
     </section>
-    <section ref="qdocumentgallery.html" title="QDocumentGallery Class Reference">
-        <keyword ref="qdocumentgallery.html">QDocumentGallery</keyword>
-        <keyword ref="qdocumentgallery.html#itemTypes-prop">itemTypes</keyword>
-        <keyword ref="qdocumentgallery.html#createResponse">createResponse</keyword>
-        <keyword ref="qdocumentgallery.html#isRequestSupported">isRequestSupported</keyword>
-        <keyword ref="qdocumentgallery.html#Album-var">Album</keyword>
-        <keyword ref="qdocumentgallery.html#AlbumArtist-var">AlbumArtist</keyword>
-        <keyword ref="qdocumentgallery.html#Artist-var">Artist</keyword>
-        <keyword ref="qdocumentgallery.html#Audio-var">Audio</keyword>
-        <keyword ref="qdocumentgallery.html#AudioGenre-var">AudioGenre</keyword>
-        <keyword ref="qdocumentgallery.html#Document-var">Document</keyword>
-        <keyword ref="qdocumentgallery.html#File-var">File</keyword>
-        <keyword ref="qdocumentgallery.html#Folder-var">Folder</keyword>
-        <keyword ref="qdocumentgallery.html#Image-var">Image</keyword>
-        <keyword ref="qdocumentgallery.html#PhotoAlbum-var">PhotoAlbum</keyword>
-        <keyword ref="qdocumentgallery.html#Playlist-var">Playlist</keyword>
-        <keyword ref="qdocumentgallery.html#Text-var">Text</keyword>
-        <keyword ref="qdocumentgallery.html#Video-var">Video</keyword>
-        <keyword ref="qdocumentgallery.html#albumArtist-varx">albumArtist</keyword>
-        <keyword ref="qdocumentgallery.html#albumTitle-var">albumTitle</keyword>
-        <keyword ref="qdocumentgallery.html#artist-varx">artist</keyword>
-        <keyword ref="qdocumentgallery.html#audioBitRate-var">audioBitRate</keyword>
-        <keyword ref="qdocumentgallery.html#audioCodec-var">audioCodec</keyword>
-        <keyword ref="qdocumentgallery.html#author-var">author</keyword>
-        <keyword ref="qdocumentgallery.html#cameraManufacturer-var">cameraManufacturer</keyword>
-        <keyword ref="qdocumentgallery.html#cameraModel-var">cameraModel</keyword>
-        <keyword ref="qdocumentgallery.html#channelCount-var">channelCount</keyword>
-        <keyword ref="qdocumentgallery.html#comments-var">comments</keyword>
-        <keyword ref="qdocumentgallery.html#composer-var">composer</keyword>
-        <keyword ref="qdocumentgallery.html#copyright-var">copyright</keyword>
-        <keyword ref="qdocumentgallery.html#created-var">created</keyword>
-        <keyword ref="qdocumentgallery.html#dateTaken-var">dateTaken</keyword>
-        <keyword ref="qdocumentgallery.html#description-var">description</keyword>
-        <keyword ref="qdocumentgallery.html#director-var">director</keyword>
-        <keyword ref="qdocumentgallery.html#discNumber-var">discNumber</keyword>
-        <keyword ref="qdocumentgallery.html#duration-var">duration</keyword>
-        <keyword ref="qdocumentgallery.html#exposureProgram-var">exposureProgram</keyword>
-        <keyword ref="qdocumentgallery.html#exposureTime-var">exposureTime</keyword>
-        <keyword ref="qdocumentgallery.html#fNumber-var">fNumber</keyword>
-        <keyword ref="qdocumentgallery.html#fileExtension-var">fileExtension</keyword>
-        <keyword ref="qdocumentgallery.html#fileName-var">fileName</keyword>
-        <keyword ref="qdocumentgallery.html#filePath-var">filePath</keyword>
-        <keyword ref="qdocumentgallery.html#fileSize-var">fileSize</keyword>
-        <keyword ref="qdocumentgallery.html#flashEnabled-var">flashEnabled</keyword>
-        <keyword ref="qdocumentgallery.html#focalLength-var">focalLength</keyword>
-        <keyword ref="qdocumentgallery.html#frameRate-var">frameRate</keyword>
-        <keyword ref="qdocumentgallery.html#genre-var">genre</keyword>
-        <keyword ref="qdocumentgallery.html#height-var">height</keyword>
-        <keyword ref="qdocumentgallery.html#keywords-var">keywords</keyword>
-        <keyword ref="qdocumentgallery.html#language-var">language</keyword>
-        <keyword ref="qdocumentgallery.html#lastAccessed-var">lastAccessed</keyword>
-        <keyword ref="qdocumentgallery.html#lastModified-var">lastModified</keyword>
-        <keyword ref="qdocumentgallery.html#lastPlayed-var">lastPlayed</keyword>
-        <keyword ref="qdocumentgallery.html#lyrics-var">lyrics</keyword>
-        <keyword ref="qdocumentgallery.html#meteringMode-var">meteringMode</keyword>
-        <keyword ref="qdocumentgallery.html#mimeType-var">mimeType</keyword>
-        <keyword ref="qdocumentgallery.html#orientation-var">orientation</keyword>
-        <keyword ref="qdocumentgallery.html#pageCount-var">pageCount</keyword>
-        <keyword ref="qdocumentgallery.html#path-var">path</keyword>
-        <keyword ref="qdocumentgallery.html#performer-var">performer</keyword>
-        <keyword ref="qdocumentgallery.html#photoAlbum-varx">photoAlbum</keyword>
-        <keyword ref="qdocumentgallery.html#playCount-var">playCount</keyword>
-        <keyword ref="qdocumentgallery.html#producer-var">producer</keyword>
-        <keyword ref="qdocumentgallery.html#rating-var">rating</keyword>
-        <keyword ref="qdocumentgallery.html#resumePosition-var">resumePosition</keyword>
-        <keyword ref="qdocumentgallery.html#sampleRate-var">sampleRate</keyword>
-        <keyword ref="qdocumentgallery.html#subject-var">subject</keyword>
-        <keyword ref="qdocumentgallery.html#thumbnail-var">thumbnail</keyword>
-        <keyword ref="qdocumentgallery.html#title-var">title</keyword>
-        <keyword ref="qdocumentgallery.html#trackCount-var">trackCount</keyword>
-        <keyword ref="qdocumentgallery.html#trackNumber-var">trackNumber</keyword>
-        <keyword ref="qdocumentgallery.html#videoBitRate-var">videoBitRate</keyword>
-        <keyword ref="qdocumentgallery.html#videoCodec-var">videoCodec</keyword>
-        <keyword ref="qdocumentgallery.html#whiteBalance-var">whiteBalance</keyword>
-        <keyword ref="qdocumentgallery.html#width-var">width</keyword>
-        <keyword ref="qdocumentgallery.html#wordCount-var">wordCount</keyword>
-        <section ref="qdocumentgallery-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryabstractrequest.html" title="QGalleryAbstractRequest Class Reference">
-        <keyword ref="qgalleryabstractrequest.html">QGalleryAbstractRequest</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">Result</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::Succeeded</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::NoGallery</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::NotSupported</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::InvalidPropertyError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::PropertyTypeError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::UnsupportedFilterOptionError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::InvalidItemError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::ItemTypeError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::PermissionsError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::InvalidDestinationError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::Cancelled</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::RequestError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::InvalidUrlError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::NoResult</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::ConnectionError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Result-enum">QGalleryAbstractRequest::UnsupportedFilterTypeError</keyword>
-        <keyword ref="qgalleryabstractrequest.html#State-enum">State</keyword>
-        <keyword ref="qgalleryabstractrequest.html#State-enum">QGalleryAbstractRequest::Cancelling</keyword>
-        <keyword ref="qgalleryabstractrequest.html#State-enum">QGalleryAbstractRequest::Idle</keyword>
-        <keyword ref="qgalleryabstractrequest.html#State-enum">QGalleryAbstractRequest::Active</keyword>
-        <keyword ref="qgalleryabstractrequest.html#State-enum">QGalleryAbstractRequest::Inactive</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">Type</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Item</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Move</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Copy</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Remove</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Filter</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Url</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Count</keyword>
-        <keyword ref="qgalleryabstractrequest.html#Type-enum">QGalleryAbstractRequest::Container</keyword>
-        <keyword ref="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</keyword>
-        <keyword ref="qgalleryabstractrequest.html#gallery-prop">gallery</keyword>
-        <keyword ref="qgalleryabstractrequest.html#gallery-prop">setGallery</keyword>
-        <keyword ref="qgalleryabstractrequest.html#maximumProgress-prop">maximumProgress</keyword>
-        <keyword ref="qgalleryabstractrequest.html#result-prop">result</keyword>
-        <keyword ref="qgalleryabstractrequest.html#state-prop">state</keyword>
-        <keyword ref="qgalleryabstractrequest.html#supported-prop">supported</keyword>
-        <keyword ref="qgalleryabstractrequest.html#supported-prop">isSupported</keyword>
-        <keyword ref="qgalleryabstractrequest.html#cancel">cancel</keyword>
-        <keyword ref="qgalleryabstractrequest.html#cancelled">cancelled</keyword>
-        <keyword ref="qgalleryabstractrequest.html#clear">clear</keyword>
-        <keyword ref="qgalleryabstractrequest.html#execute">execute</keyword>
-        <keyword ref="qgalleryabstractrequest.html#failed">failed</keyword>
-        <keyword ref="qgalleryabstractrequest.html#finished">finished</keyword>
-        <keyword ref="qgalleryabstractrequest.html#progressChanged">progressChanged</keyword>
-        <keyword ref="qgalleryabstractrequest.html#resultChanged">resultChanged</keyword>
-        <keyword ref="qgalleryabstractrequest.html#setResponse">setResponse</keyword>
-        <keyword ref="qgalleryabstractrequest.html#stateChanged">stateChanged</keyword>
-        <keyword ref="qgalleryabstractrequest.html#succeeded">succeeded</keyword>
-        <keyword ref="qgalleryabstractrequest.html#supportedChanged">supportedChanged</keyword>
-        <keyword ref="qgalleryabstractrequest.html#type">type</keyword>
-        <keyword ref="qgalleryabstractrequest.html#waitForFinished">waitForFinished</keyword>
-        <section ref="qgalleryabstractrequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryabstractresponse.html" title="QGalleryAbstractResponse Class Reference">
-        <keyword ref="qgalleryabstractresponse.html">QGalleryAbstractResponse</keyword>
-        <keyword ref="qgalleryabstractresponse.html#cancel">cancel</keyword>
-        <keyword ref="qgalleryabstractresponse.html#finish">finish</keyword>
-        <keyword ref="qgalleryabstractresponse.html#finished">finished</keyword>
-        <keyword ref="qgalleryabstractresponse.html#isIdle">isIdle</keyword>
-        <keyword ref="qgalleryabstractresponse.html#progressChanged">progressChanged</keyword>
-        <keyword ref="qgalleryabstractresponse.html#result">result</keyword>
-        <keyword ref="qgalleryabstractresponse.html#waitForFinished">waitForFinished</keyword>
-        <section ref="qgalleryabstractresponse-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgallerycontainerrequest.html" title="QGalleryContainerRequest Class Reference">
-        <keyword ref="qgallerycontainerrequest.html">QGalleryContainerRequest</keyword>
-        <keyword ref="qgallerycontainerrequest.html#containerId-prop">containerId</keyword>
-        <keyword ref="qgallerycontainerrequest.html#containerId-prop">setContainerId</keyword>
-        <keyword ref="qgallerycontainerrequest.html#initialCursorPosition-prop">initialCursorPosition</keyword>
-        <keyword ref="qgallerycontainerrequest.html#initialCursorPosition-prop">setInitialCursorPosition</keyword>
-        <keyword ref="qgallerycontainerrequest.html#itemType-prop">itemType</keyword>
-        <keyword ref="qgallerycontainerrequest.html#itemType-prop">setItemType</keyword>
-        <keyword ref="qgallerycontainerrequest.html#items-prop">items</keyword>
-        <keyword ref="qgallerycontainerrequest.html#live-prop">live</keyword>
-        <keyword ref="qgallerycontainerrequest.html#live-prop">isLive</keyword>
-        <keyword ref="qgallerycontainerrequest.html#live-prop">setLive</keyword>
-        <keyword ref="qgallerycontainerrequest.html#minimumPagedItems-prop">minimumPagedItems</keyword>
-        <keyword ref="qgallerycontainerrequest.html#minimumPagedItems-prop">setMinimumPagedItems</keyword>
-        <keyword ref="qgallerycontainerrequest.html#propertyNames-prop">propertyNames</keyword>
-        <keyword ref="qgallerycontainerrequest.html#propertyNames-prop">setPropertyNames</keyword>
-        <keyword ref="qgallerycontainerrequest.html#sortPropertyNames-prop">sortPropertyNames</keyword>
-        <keyword ref="qgallerycontainerrequest.html#sortPropertyNames-prop">setSortPropertyNames</keyword>
-        <keyword ref="qgallerycontainerrequest.html#itemsChanged">itemsChanged</keyword>
-        <keyword ref="qgallerycontainerrequest.html#setResponse">setResponse</keyword>
-        <section ref="qgallerycontainerrequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgallerycopyrequest.html" title="QGalleryCopyRequest Class Reference">
-        <keyword ref="qgallerycopyrequest.html">QGalleryCopyRequest</keyword>
-        <keyword ref="qgallerycopyrequest.html#currentItem-prop">currentItem</keyword>
-        <keyword ref="qgallerycopyrequest.html#destinationId-prop">destinationId</keyword>
-        <keyword ref="qgallerycopyrequest.html#destinationId-prop">setDestinationId</keyword>
-        <keyword ref="qgallerycopyrequest.html#itemId-prop">itemId</keyword>
-        <keyword ref="qgallerycopyrequest.html#itemId-prop">setItemId</keyword>
-        <keyword ref="qgallerycopyrequest.html#itemIds-prop">itemIds</keyword>
-        <keyword ref="qgallerycopyrequest.html#itemIds-prop">setItemIds</keyword>
-        <keyword ref="qgallerycopyrequest.html#propertyNames-prop">propertyNames</keyword>
-        <keyword ref="qgallerycopyrequest.html#propertyNames-prop">setPropertyNames</keyword>
-        <keyword ref="qgallerycopyrequest.html#currentItemChanged">currentItemChanged</keyword>
-        <keyword ref="qgallerycopyrequest.html#itemIdsChanged">itemIdsChanged</keyword>
-        <keyword ref="qgallerycopyrequest.html#setResponse">setResponse</keyword>
-        <section ref="qgallerycopyrequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgallerycountrequest.html" title="QGalleryCountRequest Class Reference">
-        <keyword ref="qgallerycountrequest.html">QGalleryCountRequest</keyword>
-        <keyword ref="qgallerycountrequest.html#containerId-prop">containerId</keyword>
-        <keyword ref="qgallerycountrequest.html#containerId-prop">setContainerId</keyword>
-        <keyword ref="qgallerycountrequest.html#count-prop">count</keyword>
-        <keyword ref="qgallerycountrequest.html#filter-prop">filter</keyword>
-        <keyword ref="qgallerycountrequest.html#filter-prop">setFilter</keyword>
-        <keyword ref="qgallerycountrequest.html#itemType-prop">itemType</keyword>
-        <keyword ref="qgallerycountrequest.html#itemType-prop">setItemType</keyword>
-        <keyword ref="qgallerycountrequest.html#live-prop">live</keyword>
-        <keyword ref="qgallerycountrequest.html#live-prop">isLive</keyword>
-        <keyword ref="qgallerycountrequest.html#live-prop">setLive</keyword>
-        <keyword ref="qgallerycountrequest.html#countChanged">countChanged</keyword>
-        <keyword ref="qgallerycountrequest.html#setResponse">setResponse</keyword>
-        <section ref="qgallerycountrequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryfilter.html" title="QGalleryFilter Class Reference">
-        <keyword ref="qgalleryfilter.html">QGalleryFilter</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">RangeFlag</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">RangeFlags</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">QGalleryFilter::LessThanEqualsMaximum</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">QGalleryFilter::EqualsMaximum</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">QGalleryFilter::InclusiveRange</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">QGalleryFilter::LessThanMaximum</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">QGalleryFilter::EqualsMinimum</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">QGalleryFilter::ExclusiveRange</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">QGalleryFilter::GreaterThanMinimum</keyword>
-        <keyword ref="qgalleryfilter.html#RangeFlag-enum">QGalleryFilter::GreaterThanEqualsMinimum</keyword>
-        <keyword ref="qgalleryfilter.html#Type-enum">Type</keyword>
-        <keyword ref="qgalleryfilter.html#Type-enum">QGalleryFilter::Invalid</keyword>
-        <keyword ref="qgalleryfilter.html#Type-enum">QGalleryFilter::MetaData</keyword>
-        <keyword ref="qgalleryfilter.html#Type-enum">QGalleryFilter::MetaDataRange</keyword>
-        <keyword ref="qgalleryfilter.html#Type-enum">QGalleryFilter::Intersection</keyword>
-        <keyword ref="qgalleryfilter.html#Type-enum">QGalleryFilter::Union</keyword>
-        <keyword ref="qgalleryfilter.html#toIntersectionFilter">toIntersectionFilter</keyword>
-        <keyword ref="qgalleryfilter.html#toMetaDataFilter">toMetaDataFilter</keyword>
-        <keyword ref="qgalleryfilter.html#toMetaDataRangeFilter">toMetaDataRangeFilter</keyword>
-        <keyword ref="qgalleryfilter.html#toUnionFilter">toUnionFilter</keyword>
-        <keyword ref="qgalleryfilter.html#type">type</keyword>
-        <keyword ref="qgalleryfilter.html#operator-eq">operator=</keyword>
-        <section ref="qgalleryfilter-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryfilterrequest.html" title="QGalleryFilterRequest Class Reference">
-        <keyword ref="qgalleryfilterrequest.html">QGalleryFilterRequest</keyword>
-        <keyword ref="qgalleryfilterrequest.html#containerId-prop">containerId</keyword>
-        <keyword ref="qgalleryfilterrequest.html#containerId-prop">setContainerId</keyword>
-        <keyword ref="qgalleryfilterrequest.html#filter-prop">filter</keyword>
-        <keyword ref="qgalleryfilterrequest.html#filter-prop">setFilter</keyword>
-        <keyword ref="qgalleryfilterrequest.html#initialCursorPosition-prop">initialCursorPosition</keyword>
-        <keyword ref="qgalleryfilterrequest.html#initialCursorPosition-prop">setInitialCursorPosition</keyword>
-        <keyword ref="qgalleryfilterrequest.html#itemType-prop">itemType</keyword>
-        <keyword ref="qgalleryfilterrequest.html#itemType-prop">setItemType</keyword>
-        <keyword ref="qgalleryfilterrequest.html#items-prop">items</keyword>
-        <keyword ref="qgalleryfilterrequest.html#live-prop">live</keyword>
-        <keyword ref="qgalleryfilterrequest.html#live-prop">isLive</keyword>
-        <keyword ref="qgalleryfilterrequest.html#live-prop">setLive</keyword>
-        <keyword ref="qgalleryfilterrequest.html#minimumPagedItems-prop">minimumPagedItems</keyword>
-        <keyword ref="qgalleryfilterrequest.html#minimumPagedItems-prop">setMinimumPagedItems</keyword>
-        <keyword ref="qgalleryfilterrequest.html#propertyNames-prop">propertyNames</keyword>
-        <keyword ref="qgalleryfilterrequest.html#propertyNames-prop">setPropertyNames</keyword>
-        <keyword ref="qgalleryfilterrequest.html#sortPropertyNames-prop">sortPropertyNames</keyword>
-        <keyword ref="qgalleryfilterrequest.html#sortPropertyNames-prop">setSortPropertyNames</keyword>
-        <keyword ref="qgalleryfilterrequest.html#itemsChanged">itemsChanged</keyword>
-        <keyword ref="qgalleryfilterrequest.html#setResponse">setResponse</keyword>
-        <section ref="qgalleryfilterrequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryintersectionfilter.html" title="QGalleryIntersectionFilter Class Reference">
-        <keyword ref="qgalleryintersectionfilter.html">QGalleryIntersectionFilter</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#append">append</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#clear">clear</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#filterCount">filterCount</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#filters">filters</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#insert">insert</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#removeAt">removeAt</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#replace">replace</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#operator-eq">operator=</keyword>
-        <keyword ref="qgalleryintersectionfilter.html#operator-7c-7c">operator||</keyword>
-        <section ref="qgalleryintersectionfilter-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryitemlist.html" title="QGalleryItemList Class Reference">
-        <keyword ref="qgalleryitemlist.html">QGalleryItemList</keyword>
-        <keyword ref="qgalleryitemlist.html#ItemStatusFlag-enum">ItemStatusFlag</keyword>
-        <keyword ref="qgalleryitemlist.html#ItemStatusFlag-enum">ItemStatus</keyword>
-        <keyword ref="qgalleryitemlist.html#ItemStatusFlag-enum">QGalleryItemList::OutOfRange</keyword>
-        <keyword ref="qgalleryitemlist.html#ItemStatusFlag-enum">QGalleryItemList::Reading</keyword>
-        <keyword ref="qgalleryitemlist.html#ItemStatusFlag-enum">QGalleryItemList::Writing</keyword>
-        <keyword ref="qgalleryitemlist.html#cursorPosition-prop">cursorPosition</keyword>
-        <keyword ref="qgalleryitemlist.html#cursorPosition-prop">setCursorPosition</keyword>
-        <keyword ref="qgalleryitemlist.html#minimumPagedItems-prop">minimumPagedItems</keyword>
-        <keyword ref="qgalleryitemlist.html#count">count</keyword>
-        <keyword ref="qgalleryitemlist.html#id">id</keyword>
-        <keyword ref="qgalleryitemlist.html#inserted">inserted</keyword>
-        <keyword ref="qgalleryitemlist.html#metaData">metaData</keyword>
-        <keyword ref="qgalleryitemlist.html#metaDataChanged">metaDataChanged</keyword>
-        <keyword ref="qgalleryitemlist.html#moved">moved</keyword>
-        <keyword ref="qgalleryitemlist.html#propertyAttributes">propertyAttributes</keyword>
-        <keyword ref="qgalleryitemlist.html#propertyKey">propertyKey</keyword>
-        <keyword ref="qgalleryitemlist.html#propertyNames">propertyNames</keyword>
-        <keyword ref="qgalleryitemlist.html#removed">removed</keyword>
-        <keyword ref="qgalleryitemlist.html#resources">resources</keyword>
-        <keyword ref="qgalleryitemlist.html#setMetaData">setMetaData</keyword>
-        <keyword ref="qgalleryitemlist.html#status">status</keyword>
-        <keyword ref="qgalleryitemlist.html#type">type</keyword>
-        <keyword ref="qgalleryitemlist.html#url">url</keyword>
-        <section ref="qgalleryitemlist-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryitemrequest.html" title="QGalleryItemRequest Class Reference">
-        <keyword ref="qgalleryitemrequest.html">QGalleryItemRequest</keyword>
-        <keyword ref="qgalleryitemrequest.html#item-prop">item</keyword>
-        <keyword ref="qgalleryitemrequest.html#itemId-prop">itemId</keyword>
-        <keyword ref="qgalleryitemrequest.html#itemId-prop">setItemId</keyword>
-        <keyword ref="qgalleryitemrequest.html#live-prop">live</keyword>
-        <keyword ref="qgalleryitemrequest.html#live-prop">isLive</keyword>
-        <keyword ref="qgalleryitemrequest.html#live-prop">setLive</keyword>
-        <keyword ref="qgalleryitemrequest.html#propertyNames-prop">propertyNames</keyword>
-        <keyword ref="qgalleryitemrequest.html#propertyNames-prop">setPropertyNames</keyword>
-        <keyword ref="qgalleryitemrequest.html#itemChanged">itemChanged</keyword>
-        <keyword ref="qgalleryitemrequest.html#setResponse">setResponse</keyword>
-        <section ref="qgalleryitemrequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgallerymetadatafilter.html" title="QGalleryMetaDataFilter Class Reference">
-        <keyword ref="qgallerymetadatafilter.html">QGalleryMetaDataFilter</keyword>
-        <keyword ref="qgallerymetadatafilter.html#fieldName">fieldName</keyword>
-        <keyword ref="qgallerymetadatafilter.html#matchFlags">matchFlags</keyword>
-        <keyword ref="qgallerymetadatafilter.html#setFieldName">setFieldName</keyword>
-        <keyword ref="qgallerymetadatafilter.html#setMatchFlags">setMatchFlags</keyword>
-        <keyword ref="qgallerymetadatafilter.html#setValue">setValue</keyword>
-        <keyword ref="qgallerymetadatafilter.html#value">value</keyword>
-        <keyword ref="qgallerymetadatafilter.html#operator-eq">operator=</keyword>
-        <section ref="qgallerymetadatafilter-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgallerymetadatarangefilter.html" title="QGalleryMetaDataRangeFilter Class Reference">
-        <keyword ref="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#fieldName">fieldName</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#maximumValue">maximumValue</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#minimumValue">minimumValue</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#rangeFlags">rangeFlags</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#setExclusiveRange">setExclusiveRange</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#setFieldName">setFieldName</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#setGreaterThan">setGreaterThan</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#setGreaterThanEquals">setGreaterThanEquals</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#setInclusiveRange">setInclusiveRange</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#setLessThan">setLessThan</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#setLessThanEquals">setLessThanEquals</keyword>
-        <keyword ref="qgallerymetadatarangefilter.html#operator-eq">operator=</keyword>
-        <section ref="qgallerymetadatarangefilter-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgallerymoverequest.html" title="QGalleryMoveRequest Class Reference">
-        <keyword ref="qgallerymoverequest.html">QGalleryMoveRequest</keyword>
-        <keyword ref="qgallerymoverequest.html#currentItem-prop">currentItem</keyword>
-        <keyword ref="qgallerymoverequest.html#destinationId-prop">destinationId</keyword>
-        <keyword ref="qgallerymoverequest.html#destinationId-prop">setDestinationId</keyword>
-        <keyword ref="qgallerymoverequest.html#itemId-prop">itemId</keyword>
-        <keyword ref="qgallerymoverequest.html#itemId-prop">setItemId</keyword>
-        <keyword ref="qgallerymoverequest.html#itemIds-prop">itemIds</keyword>
-        <keyword ref="qgallerymoverequest.html#itemIds-prop">setItemIds</keyword>
-        <keyword ref="qgallerymoverequest.html#propertyNames-prop">propertyNames</keyword>
-        <keyword ref="qgallerymoverequest.html#propertyNames-prop">setPropertyNames</keyword>
-        <keyword ref="qgallerymoverequest.html#currentItemChanged">currentItemChanged</keyword>
-        <keyword ref="qgallerymoverequest.html#itemIdsChanged">itemIdsChanged</keyword>
-        <keyword ref="qgallerymoverequest.html#setResponse">setResponse</keyword>
-        <section ref="qgallerymoverequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryproperty.html" title="QGalleryProperty Class Reference">
-        <keyword ref="qgalleryproperty.html">QGalleryProperty</keyword>
-        <keyword ref="qgalleryproperty.html#Attribute-enum">Attribute</keyword>
-        <keyword ref="qgalleryproperty.html#Attribute-enum">Attributes</keyword>
-        <keyword ref="qgalleryproperty.html#Attribute-enum">QGalleryProperty::CanSort</keyword>
-        <keyword ref="qgalleryproperty.html#Attribute-enum">QGalleryProperty::CanRead</keyword>
-        <keyword ref="qgalleryproperty.html#Attribute-enum">QGalleryProperty::CanWrite</keyword>
-        <keyword ref="qgalleryproperty.html#ascending">ascending</keyword>
-        <keyword ref="qgalleryproperty.html#descending">descending</keyword>
-        <keyword ref="qgalleryproperty.html#isInRange">isInRange</keyword>
-        <keyword ref="qgalleryproperty.html#matches">matches</keyword>
-        <keyword ref="qgalleryproperty.html#name">name</keyword>
-        <keyword ref="qgalleryproperty.html#operator-QString">operator QString</keyword>
-        <keyword ref="qgalleryproperty.html#operator-lt">operator&lt;</keyword>
-        <keyword ref="qgalleryproperty.html#operator-lt-eq">operator&lt;=</keyword>
-        <keyword ref="qgalleryproperty.html#operator-eq-eq">operator==</keyword>
-        <keyword ref="qgalleryproperty.html#operator-gt">operator&gt;</keyword>
-        <keyword ref="qgalleryproperty.html#operator-gt-eq">operator&gt;=</keyword>
-        <section ref="qgalleryproperty-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryremoverequest.html" title="QGalleryRemoveRequest Class Reference">
-        <keyword ref="qgalleryremoverequest.html">QGalleryRemoveRequest</keyword>
-        <keyword ref="qgalleryremoverequest.html#currentItem-prop">currentItem</keyword>
-        <keyword ref="qgalleryremoverequest.html#itemId-prop">itemId</keyword>
-        <keyword ref="qgalleryremoverequest.html#itemId-prop">setItemId</keyword>
-        <keyword ref="qgalleryremoverequest.html#itemIds-prop">itemIds</keyword>
-        <keyword ref="qgalleryremoverequest.html#itemIds-prop">setItemIds</keyword>
-        <keyword ref="qgalleryremoverequest.html#propertyNames-prop">propertyNames</keyword>
-        <keyword ref="qgalleryremoverequest.html#propertyNames-prop">setPropertyNames</keyword>
-        <keyword ref="qgalleryremoverequest.html#currentItemChanged">currentItemChanged</keyword>
-        <keyword ref="qgalleryremoverequest.html#itemIdsChanged">itemIdsChanged</keyword>
-        <keyword ref="qgalleryremoverequest.html#setResponse">setResponse</keyword>
-        <section ref="qgalleryremoverequest-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryresource.html" title="QGalleryResource Class Reference">
-        <keyword ref="qgalleryresource.html">QGalleryResource</keyword>
-        <keyword ref="qgalleryresource.html#attribute">attribute</keyword>
-        <keyword ref="qgalleryresource.html#attributes">attributes</keyword>
-        <keyword ref="qgalleryresource.html#url">url</keyword>
-        <keyword ref="qgalleryresource.html#operator-not-eq">operator!=</keyword>
-        <keyword ref="qgalleryresource.html#operator-eq">operator=</keyword>
-        <keyword ref="qgalleryresource.html#operator-eq-eq">operator==</keyword>
-        <section ref="qgalleryresource-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgallerytype.html" title="QGalleryType Class Reference">
-        <keyword ref="qgallerytype.html">QGalleryType</keyword>
-        <keyword ref="qgallerytype.html#name">name</keyword>
-        <keyword ref="qgallerytype.html#operator-QString">operator QString</keyword>
-        <section ref="qgallerytype-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryunionfilter.html" title="QGalleryUnionFilter Class Reference">
-        <keyword ref="qgalleryunionfilter.html">QGalleryUnionFilter</keyword>
-        <keyword ref="qgalleryunionfilter.html#append">append</keyword>
-        <keyword ref="qgalleryunionfilter.html#clear">clear</keyword>
-        <keyword ref="qgalleryunionfilter.html#filterCount">filterCount</keyword>
-        <keyword ref="qgalleryunionfilter.html#filters">filters</keyword>
-        <keyword ref="qgalleryunionfilter.html#insert">insert</keyword>
-        <keyword ref="qgalleryunionfilter.html#isEmpty">isEmpty</keyword>
-        <keyword ref="qgalleryunionfilter.html#removeAt">removeAt</keyword>
-        <keyword ref="qgalleryunionfilter.html#replace">replace</keyword>
-        <keyword ref="qgalleryunionfilter.html#operator-eq">operator=</keyword>
-        <keyword ref="qgalleryunionfilter.html#operator-and-and">operator&amp;&amp;</keyword>
-        <section ref="qgalleryunionfilter-members.html" title="List of all members"/>
-    </section>
-    <section ref="qgalleryurlrequest.html" title="QGalleryUrlRequest Class Reference">
-        <keyword ref="qgalleryurlrequest.html">QGalleryUrlRequest</keyword>
-        <keyword ref="qgalleryurlrequest.html#create-prop">create</keyword>
-        <keyword ref="qgalleryurlrequest.html#create-prop">setCreate</keyword>
-        <keyword ref="qgalleryurlrequest.html#item-prop">item</keyword>
-        <keyword ref="qgalleryurlrequest.html#itemUrl-prop">itemUrl</keyword>
-        <keyword ref="qgalleryurlrequest.html#itemUrl-prop">setItemUrl</keyword>
-        <keyword ref="qgalleryurlrequest.html#live-prop">live</keyword>
-        <keyword ref="qgalleryurlrequest.html#live-prop">isLive</keyword>
-        <keyword ref="qgalleryurlrequest.html#live-prop">setLive</keyword>
-        <keyword ref="qgalleryurlrequest.html#propertyNames-prop">propertyNames</keyword>
-        <keyword ref="qgalleryurlrequest.html#propertyNames-prop">setPropertyNames</keyword>
-        <keyword ref="qgalleryurlrequest.html#itemChanged">itemChanged</keyword>
-        <keyword ref="qgalleryurlrequest.html#setResponse">setResponse</keyword>
-        <section ref="qgalleryurlrequest-members.html" title="List of all members"/>
-    </section>
     <section ref="qgeoareamonitor.html" title="QGeoAreaMonitor Class Reference">
         <keyword ref="qgeoareamonitor.html">QGeoAreaMonitor</keyword>
         <keyword ref="qgeoareamonitor.html#center-prop">center</keyword>
@@ -1683,13 +1285,13 @@
         <keyword ref="qgeopositioninfo.html#Attribute-enum">QGeoPositionInfo::MagneticVariation</keyword>
         <keyword ref="qgeopositioninfo.html#attribute">attribute</keyword>
         <keyword ref="qgeopositioninfo.html#coordinate">coordinate</keyword>
+        <keyword ref="qgeopositioninfo.html#dateTime">dateTime</keyword>
         <keyword ref="qgeopositioninfo.html#hasAttribute">hasAttribute</keyword>
         <keyword ref="qgeopositioninfo.html#isValid">isValid</keyword>
         <keyword ref="qgeopositioninfo.html#removeAttribute">removeAttribute</keyword>
         <keyword ref="qgeopositioninfo.html#setAttribute">setAttribute</keyword>
         <keyword ref="qgeopositioninfo.html#setCoordinate">setCoordinate</keyword>
-        <keyword ref="qgeopositioninfo.html#setTimestamp">setTimestamp</keyword>
-        <keyword ref="qgeopositioninfo.html#timestamp">timestamp</keyword>
+        <keyword ref="qgeopositioninfo.html#setDateTime">setDateTime</keyword>
         <keyword ref="qgeopositioninfo.html#operator-not-eq">operator!=</keyword>
         <keyword ref="qgeopositioninfo.html#operator-eq">operator=</keyword>
         <keyword ref="qgeopositioninfo.html#operator-eq-eq">operator==</keyword>
@@ -2947,10 +2549,8 @@
         <keyword ref="qsensor.html#availableDataRates-prop">availableDataRates</keyword>
         <keyword ref="qsensor.html#busy-prop">busy</keyword>
         <keyword ref="qsensor.html#busy-prop">isBusy</keyword>
-        <keyword ref="qsensor.html#connectedToBackend-prop">connectedToBackend</keyword>
-        <keyword ref="qsensor.html#connectedToBackend-prop">isConnectedToBackend</keyword>
-        <keyword ref="qsensor.html#dataRate-prop">dataRate</keyword>
-        <keyword ref="qsensor.html#dataRate-prop">setDataRate</keyword>
+        <keyword ref="qsensor.html#connected-prop">connected</keyword>
+        <keyword ref="qsensor.html#connected-prop">isConnected</keyword>
         <keyword ref="qsensor.html#description-prop">description</keyword>
         <keyword ref="qsensor.html#error-prop">error</keyword>
         <keyword ref="qsensor.html#outputRange-prop">outputRange</keyword>
@@ -2961,9 +2561,11 @@
         <keyword ref="qsensor.html#sensorid-prop">identifier</keyword>
         <keyword ref="qsensor.html#sensorid-prop">setIdentifier</keyword>
         <keyword ref="qsensor.html#type-prop">type</keyword>
+        <keyword ref="qsensor.html#updateInterval-prop">updateInterval</keyword>
+        <keyword ref="qsensor.html#updateInterval-prop">setUpdateInterval</keyword>
         <keyword ref="qsensor.html#addFilter">addFilter</keyword>
         <keyword ref="qsensor.html#busyChanged">busyChanged</keyword>
-        <keyword ref="qsensor.html#connectToBackend">connectToBackend</keyword>
+        <keyword ref="qsensor.html#connect">connect</keyword>
         <keyword ref="qsensor.html#defaultSensorForType">defaultSensorForType</keyword>
         <keyword ref="qsensor.html#readingChanged">readingChanged</keyword>
         <keyword ref="qsensor.html#removeFilter">removeFilter</keyword>
@@ -3771,9 +3373,6 @@
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
     </section>
-    <section ref="contactsusagehtml.html" title="Contacts API Usage">
-        <keyword ref="contactsusagehtml.html">Contacts API Usage</keyword>
-    </section>
     <section ref="contactsasync.html" title="Contacts Asynchronous API">
         <keyword ref="contactsasync.html">Contacts Asynchronous API</keyword>
     </section>
@@ -3782,24 +3381,6 @@
     </section>
     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin">
         <keyword ref="creating-a-sensor-plugin.html">Creating a sensor plugin</keyword>
-    </section>
-    <section ref="gallery-galleries.html" title="Document Galleries.">
-        <keyword ref="gallery-galleries.html">Document Galleries.</keyword>
-    </section>
-    <section ref="gallery.html" title="Document Gallery">
-        <keyword ref="gallery.html">Document Gallery</keyword>
-    </section>
-    <section ref="gallery.html" title="Document Gallery">
-        <keyword ref="gallery.html">Document Gallery</keyword>
-    </section>
-    <section ref="gallery-examples.html" title="Document Gallery Examples">
-        <keyword ref="gallery-examples.html">Document Gallery Examples</keyword>
-    </section>
-    <section ref="gallery-filters.html" title="Document Gallery Filters">
-        <keyword ref="gallery-filters.html">Document Gallery Filters</keyword>
-    </section>
-    <section ref="gallery-requests.html" title="Document Gallery Requests">
-        <keyword ref="gallery-requests.html">Document Gallery Requests</keyword>
     </section>
     <section ref="future.html" title="Future Additional APIs">
         <keyword ref="future.html">Future Additional APIs</keyword>
@@ -3929,12 +3510,6 @@
     <section ref="declarative.html" title="Declarative Example">
         <keyword ref="declarative.html">Declarative Example</keyword>
     </section>
-    <section ref="documentmanager.html" title="Document Manager">
-        <keyword ref="documentmanager.html">Document Manager</keyword>
-    </section>
-    <section ref="documentshare.html" title="Document Sharing">
-        <keyword ref="documentshare.html">Document Sharing</keyword>
-    </section>
     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
         <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
     </section>
@@ -3952,9 +3527,6 @@
     </section>
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
-    </section>
-    <section ref="mediabrowser.html" title="Media Browser">
-        <keyword ref="mediabrowser.html">Media Browser</keyword>
     </section>
     <section ref="player.html" title="Media Player Example">
         <keyword ref="player.html">Media Player Example</keyword>

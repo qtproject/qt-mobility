@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,7 +53,7 @@
 class S60RadioTunerService;
 class CFMRadioEngineCallObserver;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class S60RadioTunerControl 
     : public QRadioTunerControl
@@ -96,7 +96,7 @@ public:
     bool isValid() const;
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMediaServices::AvailabilityError availabilityError() const;
     
     void start();
     void stop();

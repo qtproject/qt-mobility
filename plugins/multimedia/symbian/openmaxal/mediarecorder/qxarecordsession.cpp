@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -87,8 +87,8 @@ m_state(QMediaRecorder::StoppedState)
             m_containerMimeType = QString();
             m_audioencodersettings.setBitRate(0);
             m_audioencodersettings.setChannelCount(-1);
-            m_audioencodersettings.setEncodingMode(QtMedia::ConstantQualityEncoding);
-            m_audioencodersettings.setQuality(QtMedia::NormalQuality);
+            m_audioencodersettings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
+            m_audioencodersettings.setQuality(QtMediaServices::NormalQuality);
             m_audioencodersettings.setSampleRate(-1);
             QT_TRACE1("Initialized implementation");
         }
@@ -533,7 +533,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     m_impl->setContainerType(tempPtr);
 
     /* Validate and set bitrate only if encoding mode is other than quality encoding */
-    if (m_audioencodersettings.encodingMode() != QtMedia::ConstantQualityEncoding) {
+    if (m_audioencodersettings.encodingMode() != QtMediaServices::ConstantQualityEncoding) {
         if (m_audioencodersettings.bitRate() < 0 ) {
             emit error(QMediaRecorder::FormatError, tr("Invalid bitrate"));
             SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid bitrate\"))");
@@ -569,21 +569,21 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     }
 
     switch (m_audioencodersettings.encodingMode()) {
-    case QtMedia::ConstantQualityEncoding: {
+    case QtMediaServices::ConstantQualityEncoding: {
             switch (m_audioencodersettings.quality()) {
-            case QtMedia::VeryLowQuality:
+            case QtMediaServices::VeryLowQuality:
                 m_impl->setVeryLowQuality();
                 break;
-            case QtMedia::LowQuality:
+            case QtMediaServices::LowQuality:
                 m_impl->setLowQuality();
                 break;
-            case QtMedia::NormalQuality:
+            case QtMediaServices::NormalQuality:
                 m_impl->setNormalQuality();
                 break;
-            case QtMedia::HighQuality:
+            case QtMediaServices::HighQuality:
                 m_impl->setHighQuality();
                 break;
-            case QtMedia::VeryHighQuality:
+            case QtMediaServices::VeryHighQuality:
                 m_impl->setVeryHighQuality();
                 break;
             default:
@@ -593,7 +593,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }; /* end of switch (m_audioencodersettings.quality())*/
         }
         break;
-    case QtMedia::ConstantBitRateEncoding: {
+    case QtMediaServices::ConstantBitRateEncoding: {
             TInt32 status = m_impl->setCBRMode();
             if (status == KErrNotSupported) {
                 emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));
@@ -607,7 +607,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }
         }
         break;
-    case QtMedia::AverageBitRateEncoding: {
+    case QtMediaServices::AverageBitRateEncoding: {
             TInt32 status = m_impl->setVBRMode();
             if (status == KErrNotSupported) {
                 emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));
@@ -621,7 +621,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }
         }
         break;
-    case QtMedia::TwoPassEncoding:
+    case QtMediaServices::TwoPassEncoding:
         // fall through
     default: {
             emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));

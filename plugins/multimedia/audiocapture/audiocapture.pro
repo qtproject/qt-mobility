@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(audioengine)
+TARGET = $$qtLibraryTarget(qtmedia_audioengine)
 PLUGIN_TYPE=mediaservice
 
 QT += multimedia
@@ -29,10 +29,3 @@ SOURCES += audioencodercontrol.cpp \
     audiocaptureservice.cpp \
     audiocaptureserviceplugin.cpp \
     audiocapturesession.cpp
-
-symbian {
-    TARGET.CAPABILITY = ALL -TCB
-    TARGET.EPOCALLOWDLLDATA = 1
-}
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
-INSTALLS+=target

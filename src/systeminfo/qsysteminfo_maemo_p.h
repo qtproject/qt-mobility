@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,7 +62,7 @@
 #include "qsysteminfo.h"
 #include <qmobilityglobal.h>
 #if !defined(QT_NO_DBUS)
-#include <qhalservice_linux_p.h>
+#include "qhalservice_linux_p.h"
 
 typedef enum
 {
@@ -148,6 +148,7 @@ protected:
     void setupNetworkInfo();
 
 private Q_SLOTS:
+    void bluetoothNetworkStatusCheck();
     void cellNetworkSignalStrengthChanged(uchar,uchar);
     void icdStatusChanged(QString,QString,QString,QString);
     void networkModeChanged(int);
@@ -169,6 +170,7 @@ private:
     };
 
     int cellSignalStrength;
+    QSystemNetworkInfo::NetworkStatus currentBluetoothNetworkStatus;
     int currentCellId;
     int currentCellNetworkStatus;
     int currentEthernetSignalStrength;

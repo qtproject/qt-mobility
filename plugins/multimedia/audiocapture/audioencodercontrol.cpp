@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,12 +60,12 @@ AudioEncoderControl::AudioEncoderControl(QObject *parent)
     fmt.setByteOrder(QAudioFormat::LittleEndian);
     m_session->setFormat(fmt);
 
-    m_settings.setEncodingMode(QtMedia::ConstantQualityEncoding);
+    m_settings.setEncodingMode(QtMediaServices::ConstantQualityEncoding);
     m_settings.setCodec("audio/pcm");
     m_settings.setBitRate(8000);
     m_settings.setChannelCount(1);
     m_settings.setSampleRate(8000);
-    m_settings.setQuality(QtMedia::LowQuality);
+    m_settings.setQuality(QtMediaServices::LowQuality);
 }
 
 AudioEncoderControl::~AudioEncoderControl()
@@ -130,14 +130,14 @@ void AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings
 {
     QAudioFormat fmt = m_session->format();
 
-    if (settings.encodingMode() == QtMedia::ConstantQualityEncoding) {
-        if (settings.quality() == QtMedia::LowQuality) {
+    if (settings.encodingMode() == QtMediaServices::ConstantQualityEncoding) {
+        if (settings.quality() == QtMediaServices::LowQuality) {
             fmt.setSampleSize(8);
             fmt.setChannels(1);
             fmt.setFrequency(8000);
             fmt.setSampleType(QAudioFormat::UnSignedInt);
 
-        } else if (settings.quality() == QtMedia::NormalQuality) {
+        } else if (settings.quality() == QtMediaServices::NormalQuality) {
             fmt.setSampleSize(16);
             fmt.setChannels(1);
             fmt.setFrequency(22050);

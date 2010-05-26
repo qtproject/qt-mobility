@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,8 +41,11 @@
 
 #include "tst_qversitreader.h"
 #include "qversitreader.h"
+#include "qversitproperty.h"
+#ifdef QT_BUILD_INTERNAL
 #include "qversitreader_p.h"
 #include "versitutils_p.h"
+#endif
 #include <QtTest/QtTest>
 #include <QSignalSpy>
 
@@ -66,6 +69,15 @@
 // This says "NOKIA" in Katakana encoded with UTF-8
 const QByteArray KATAKANA_NOKIA("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2");
 
+const static QByteArray SAMPLE_GIF_BASE64(QByteArray(
+        "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
+        "wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw=="));
+
+const static QByteArray SAMPLE_GIF(QByteArray::fromBase64(SAMPLE_GIF_BASE64));
+
+Q_DECLARE_METATYPE(QVersitDocument::VersitType);
+Q_DECLARE_METATYPE(QVersitProperty);
+
 QTM_USE_NAMESPACE
 
 void tst_QVersitReader::init()
@@ -73,7 +85,9 @@ void tst_QVersitReader::init()
     mInputDevice = new QBuffer;
     mInputDevice->open(QBuffer::ReadWrite);
     mReader = new QVersitReader;
+#ifdef QT_BUILD_INTERNAL    
     mReaderPrivate = new QVersitReaderPrivate;
+#endif
     mSignalCatcher = new SignalCatcher;
     connect(mReader, SIGNAL(stateChanged(QVersitReader::State)),
             mSignalCatcher, SLOT(stateChanged(QVersitReader::State)));
@@ -84,7 +98,9 @@ void tst_QVersitReader::init()
 
 void tst_QVersitReader::cleanup()
 {
+#ifdef QT_BUILD_INTERNAL
     delete mReaderPrivate;
+#endif
     delete mReader;
     delete mInputDevice;
     delete mSignalCatcher;
@@ -116,6 +132,7 @@ void tst_QVersitReader::testDefaultCodec()
     mReader->setDefaultCodec(QTextCodec::codecForName("UTF-16BE"));
     QVERIFY(mReader->defaultCodec() == QTextCodec::codecForName("UTF-16BE"));
 }
+
 
 void tst_QVersitReader::testReading()
 {
@@ -149,8 +166,10 @@ void tst_QVersitReader::testReading()
 
     // Wide charset with no byte-order mark
     QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
+    QTextCodec::ConverterState converterState(QTextCodec::IgnoreHeader);
+    QString document = QString::fromAscii("BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n");
     const QByteArray& wideDocument =
-            VersitUtils::encode("BEGIN:VCARD\r\nVERSION:2.1\r\nFN:John\r\nEND:VCARD\r\n", codec);
+        codec->fromUnicode(document.data(), document.length(), &converterState);
     mInputDevice->close();
     mInputDevice->setData(wideDocument);
     mInputDevice->open(QBuffer::ReadOnly);
@@ -238,6 +257,8 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
     QCOMPARE(mReader->error(), QVersitReader::ParseError);
     QCOMPARE(mReader->results().count(),4);
 
+    qApp->processEvents(); // clean up before we start sniffing signals
+
     // Asynchronous reading
     mInputDevice->close();
     mInputDevice->setData(twoDocuments);
@@ -278,6 +299,9 @@ void tst_QVersitReader::testResult()
 
 void tst_QVersitReader::testSetVersionFromProperty()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QVersitDocument document;
 
     // Some other property than VERSION
@@ -309,337 +333,312 @@ void tst_QVersitReader::testSetVersionFromProperty()
     // VERSION property with BASE64 encoded not supported value
     property.setValue(QString::fromAscii(QByteArray("4.0").toBase64()));
     QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
+#endif
 }
 
-void tst_QVersitReader::testParseNextVersitPropertyVCard21()
+void tst_QVersitReader::testParseNextVersitProperty()
 {
-    QVersitDocument::VersitType type = QVersitDocument::VCard21Type;
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
+    QFETCH(QVersitDocument::VersitType, documentType);
+    QFETCH(QByteArray, input);
+    QFETCH(QVersitProperty, expectedProperty);
 
-    // Test a valid vCard 2.1 with properties having separate handling:
-    // AGENT property, ENCODING parameters (BASE64 and QUOTED-PRINTABLE) and CHARSET parameter
-    QTextCodec* codec = QTextCodec::codecForName("UTF-16BE");
-    QByteArray vCard("Begin:vcard\r\n");
-    vCard.append("VERSION:2.1\r\n");
-    vCard.append("FN:John\r\n");
-    // "NOTE:\;\,\:\\"
-    vCard.append("NOTE:\\;\\,\\:\\\\\r\n");
-    // "N:foo\;bar;foo\,bar;foo\:bar;foo\\bar;foo\\\;bar"
-    vCard.append("N:foo\\;bar;foo\\,bar;foo\\:bar;foo\\\\bar;foo\\\\\\;bar\r\n");
-    // missing structured value
-    vCard.append("ADR:\r\n");
-    // "NICKNAMES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
-    vCard.append("NICKNAMES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
-    // "CATEGORIES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
-    vCard.append("CATEGORIES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
-    vCard.append("ORG;CHARSET=UTF-8:");
-    vCard.append(KATAKANA_NOKIA);
-    vCard.append("\r\n");
-    // "NOKIA" in Katakana, UTF-8 encoded, then base-64 encoded:
-    vCard.append("NOTE;ENCODING=BASE64;CHARSET=UTF-8:");
-    vCard.append(KATAKANA_NOKIA.toBase64());
-    vCard.append("\r\n");
-    // The value here is "UXQgaXMgZ3JlYXQh", which is the base64 encoding of "Qt is great!".
-    vCard.append("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
+    QBuffer buffer(&input);
+    buffer.open(QIODevice::ReadOnly);
+    LineReader lineReader(&buffer, mAsciiCodec);
+    QVersitProperty property = mReaderPrivate->parseNextVersitProperty(documentType, lineReader);
+    if (property != expectedProperty) {
+        // compare each part of the property separately for easier debugging
+        QCOMPARE(property.groups(), expectedProperty.groups());
+        QCOMPARE(property.name(), expectedProperty.name());
+        QCOMPARE(property.valueType(), expectedProperty.valueType());
+
+        // QVariant doesn't support == on QVersitDocuments - do it manually
+        if (property.variantValue().userType() == qMetaTypeId<QVersitDocument>()) {
+            QVERIFY(expectedProperty.variantValue().userType() == qMetaTypeId<QVersitDocument>());
+            QCOMPARE(property.value<QVersitDocument>(), expectedProperty.value<QVersitDocument>());
+        }
+        else
+            QCOMPARE(property.variantValue(), expectedProperty.variantValue());
+
+        // Don't check parameters because the reader can add random parameters of its own (like CHARSET)
+        // QCOMPARE(property.parameters(), expectedProperty.parameters());
+    }
+#endif
+}
+
+void tst_QVersitReader::testParseNextVersitProperty_data()
+{
+#ifdef QT_BUILD_INTERNAL
+    QTest::addColumn<QVersitDocument::VersitType>("documentType");
+    QTest::addColumn<QByteArray>("input");
+    QTest::addColumn<QVersitProperty>("expectedProperty");
+
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("BEGIN"));
+        expectedProperty.setValue(QLatin1String("vcard"));
+        QTest::newRow("begin")
+            << QVersitDocument::VCard21Type
+            << QByteArray("Begin:vcard\r\n")
+            << expectedProperty;
+    }
+
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("VERSION"));
+        expectedProperty.setValue(QLatin1String("2.1"));
+        expectedProperty.setValueType(QVersitProperty::PlainType);
+        QTest::newRow("version")
+            << QVersitDocument::VCard21Type
+            << QByteArray("VERSION:2.1\r\n")
+            << expectedProperty;
+    }
+
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("FN"));
+        expectedProperty.setValue(QLatin1String("John"));
+        expectedProperty.setValueType(QVersitProperty::PlainType);
+        QTest::newRow("fn")
+            << QVersitDocument::VCard21Type
+            << QByteArray("FN:John\r\n")
+            << expectedProperty;
+    }
+
+    {
+        // "NOTE:\;\,\:\\"
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("NOTE"));
+        expectedProperty.setValue(QLatin1String("\\;\\,\\:\\\\"));
+        expectedProperty.setValueType(QVersitProperty::PlainType);
+        QTest::newRow("vcard21 note")
+            << QVersitDocument::VCard21Type
+            << QByteArray("NOTE:\\;\\,\\:\\\\\r\n")
+            << expectedProperty;
+
+        expectedProperty.setValue(QLatin1String(";,:\\"));
+        QTest::newRow("vcard30 note")
+            << QVersitDocument::VCard30Type
+            << QByteArray("NOTE:\\;\\,\\:\\\\\r\n")
+            << expectedProperty;
+    }
+
+    {
+        // "N:foo\;bar;foo\,bar;foo\:bar;foo\\bar;foo\\\;bar"
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("N"));
+        QStringList components;
+        components << QLatin1String("foo;bar")
+            << QLatin1String("foo\\,bar")
+            << QLatin1String("foo\\:bar")
+            << QLatin1String("foo\\\\bar")
+            << QLatin1String("foo\\\\;bar");
+        expectedProperty.setValue(components);
+        expectedProperty.setValueType(QVersitProperty::CompoundType);
+        QTest::newRow("vcard21 n")
+            << QVersitDocument::VCard21Type
+            << QByteArray("N:foo\\;bar;foo\\,bar;foo\\:bar;foo\\\\bar;foo\\\\\\;bar\r\n")
+            << expectedProperty;
+
+        components.clear();
+        components << QLatin1String("foo;bar")
+            << QLatin1String("foo,bar")
+            << QLatin1String("foo:bar")
+            << QLatin1String("foo\\bar")
+            << QLatin1String("foo\\;bar");
+        expectedProperty.setValue(components);
+        QTest::newRow("vcard30 n")
+            << QVersitDocument::VCard30Type
+            << QByteArray("N:foo\\;bar;foo\\,bar;foo\\:bar;foo\\\\bar;foo\\\\\\;bar\r\n")
+            << expectedProperty;
+    }
+
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("ADR"));
+        expectedProperty.setValue(QStringList(QString()));
+        expectedProperty.setValueType(QVersitProperty::CompoundType);
+        QTest::newRow("empty structured")
+            << QVersitDocument::VCard21Type
+            << QByteArray("ADR:\r\n")
+            << expectedProperty;
+    }
+
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("X-CHILDREN"));
+        expectedProperty.setValue(QStringList() << QLatin1String("Child1") << QLatin1String("Child2"));
+        expectedProperty.setValueType(QVersitProperty::ListType);
+        QTest::newRow("children")
+            << QVersitDocument::VCard21Type
+            << QByteArray("X-CHILDREN:Child1,Child2\r\n")
+            << expectedProperty;
+    }
+
+    {
+        // "NICKNAME:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("NICKNAME"));
+        QStringList components;
+        components << QLatin1String("foo\\;bar")
+            << QLatin1String("foo,bar")
+            << QLatin1String("foo\\:bar")
+            << QLatin1String("foo\\\\bar")
+            << QLatin1String("foo\\\\,bar");
+        expectedProperty.setValue(components);
+        expectedProperty.setValueType(QVersitProperty::ListType);
+        QTest::newRow("vcard21 nickname")
+            << QVersitDocument::VCard21Type
+            << QByteArray("NICKNAME:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n")
+            << expectedProperty;
+
+        components.clear();
+        components << QLatin1String("foo;bar")
+            << QLatin1String("foo,bar")
+            << QLatin1String("foo:bar")
+            << QLatin1String("foo\\bar")
+            << QLatin1String("foo\\,bar");
+        expectedProperty.setValue(components);
+        QTest::newRow("vcard30 nickname")
+            << QVersitDocument::VCard30Type
+            << QByteArray("NICKNAME:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n")
+            << expectedProperty;
+    }
+
+    {
+        // "CATEGORIES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("CATEGORIES"));
+        QStringList components;
+        components << QLatin1String("foo\\;bar")
+            << QLatin1String("foo,bar")
+            << QLatin1String("foo\\:bar")
+            << QLatin1String("foo\\\\bar")
+            << QLatin1String("foo\\\\,bar");
+        expectedProperty.setValue(components);
+        expectedProperty.setValueType(QVersitProperty::ListType);
+        QTest::newRow("vcard21 categories")
+            << QVersitDocument::VCard21Type
+            << QByteArray("CATEGORIES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n")
+            << expectedProperty;
+
+        components.clear();
+        components << QLatin1String("foo;bar")
+            << QLatin1String("foo,bar")
+            << QLatin1String("foo:bar")
+            << QLatin1String("foo\\bar")
+            << QLatin1String("foo\\,bar");
+        expectedProperty.setValue(components);
+        QTest::newRow("vcard30 categories")
+            << QVersitDocument::VCard30Type
+            << QByteArray("CATEGORIES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n")
+            << expectedProperty;
+
+        // "CATEGORIES:foobar\\,foobar\\\\,foo\\\\\,bar"
+        components.clear();
+        components << QLatin1String("foobar\\")
+            << QLatin1String("foobar\\\\")
+            << QLatin1String("foo\\\\,bar");
+        expectedProperty.setValue(components);
+        QTest::newRow("vcard30 unescaping")
+            << QVersitDocument::VCard30Type
+            << QByteArray("CATEGORIES:foobar\\\\,foobar\\\\\\\\,foo\\\\\\\\\\,bar")
+            << expectedProperty;
+    }
+
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("ORG"));
+        expectedProperty.setValue(QString::fromUtf8(KATAKANA_NOKIA));
+        expectedProperty.setValueType(QVersitProperty::CompoundType);
+        QTest::newRow("org utf8")
+            << QVersitDocument::VCard21Type
+            << QByteArray("ORG;CHARSET=UTF-8:" + KATAKANA_NOKIA + "\r\n")
+            << expectedProperty;
+    }
+
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("ORG"));
+        expectedProperty.setValue(QString::fromUtf8(KATAKANA_NOKIA));
+        expectedProperty.setValueType(QVersitProperty::CompoundType);
+        QTest::newRow("vcard21 org utf8 qp")
+            << QVersitDocument::VCard21Type
+            << QByteArray("ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2\r\n")
+            << expectedProperty;
+        QTest::newRow("vcard30 org utf8 qp")
+            << QVersitDocument::VCard30Type
+            << QByteArray("ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2\r\n")
+            << expectedProperty;
+    }
+
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("PHOTO"));
+        expectedProperty.setValue(SAMPLE_GIF);
+        expectedProperty.setValueType(QVersitProperty::BinaryType);
+        QTest::newRow("vcard21 photo1")
+            << QVersitDocument::VCard21Type
+            << QByteArray("PHOTO;ENCODING=BASE64:") + SAMPLE_GIF_BASE64 + QByteArray("\r\n\r\n")
+            << expectedProperty;
+
+        QTest::newRow("vcard30 photo1")
+            << QVersitDocument::VCard30Type
+            << QByteArray("PHOTO;ENCODING=B:") + SAMPLE_GIF_BASE64 + QByteArray("\r\n\r\n")
+            << expectedProperty;
+
     // Again, but without the explicit "ENCODING" parameter
-    vCard.append("PHOTO;BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n");
-    vCard.append("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n");
-    vCard.append("EMAIL;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-16BE:");
-    vCard.append(codec->fromUnicode(QLatin1String("john.citizen=40exam=\r\nple.com")));
-    vCard.append("\r\n");
-    vCard.append("AGENT:\r\nBEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n");
-    vCard.append("End:VCARD\r\n");
-    QBuffer buffer(&vCard);
-    buffer.open(QIODevice::ReadOnly);
-    LineReader lineReader(&buffer, mAsciiCodec);
+        QTest::newRow("vcard21 photo2")
+            << QVersitDocument::VCard21Type
+            << QByteArray("PHOTO;BASE64:") + SAMPLE_GIF_BASE64 + QByteArray("\r\n\r\n")
+            << expectedProperty;
 
-    QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.value(),QString::fromAscii("vcard"));
+        QTest::newRow("vcard30 photo2")
+            << QVersitDocument::VCard30Type
+            << QByteArray("PHOTO;B:") + SAMPLE_GIF_BASE64 + QByteArray("\r\n\r\n")
+            << expectedProperty;
+    }
 
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("VERSION"));
-    QCOMPARE(property.value(),QString::fromAscii("2.1"));
+    {
+        QVersitProperty expectedProperty;
+        expectedProperty.setGroups(QStringList() << QLatin1String("HOME") << QLatin1String("Springfield"));
+        expectedProperty.setName(QLatin1String("EMAIL"));
+        expectedProperty.setValue(QLatin1String("john.citizen@example.com"));
+        expectedProperty.setValueType(QVersitProperty::PlainType);
+        QTest::newRow("email qp")
+            << QVersitDocument::VCard21Type
+            << QByteArray("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n")
+            << expectedProperty;
+    }
 
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("FN"));
-    QCOMPARE(property.value(),QString::fromAscii("John"));
+    {
+        QVersitDocument subDocument;
+        subDocument.setType(QVersitDocument::VCard30Type);
+        QVersitProperty subProperty;
+        subProperty.setName(QLatin1String("FN"));
+        subProperty.setValue(QLatin1String("Jenny"));
+        subDocument.addProperty(subProperty);
 
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("NOTE"));
-    // Do not Unescape semicolons, commas, colons and backlashes
-    // "\;\,\:\\"
-    QCOMPARE(property.value(),QString::fromAscii("\\;\\,\\:\\\\"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("N"));
-    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
-    QCOMPARE(property.variantValue().type(), QVariant::StringList);
-    QStringList components = property.value<QStringList>();
-    QCOMPARE(components.size(), 5);
-    QCOMPARE(components.at(0), QLatin1String("foo;bar"));
-    QCOMPARE(components.at(1), QLatin1String("foo\\,bar"));
-    QCOMPARE(components.at(2), QLatin1String("foo\\:bar"));
-    QCOMPARE(components.at(3), QLatin1String("foo\\\\bar"));
-    QCOMPARE(components.at(4), QLatin1String("foo\\\\;bar"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("ADR"));
-    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
-    QCOMPARE(property.variantValue().type(), QVariant::StringList);
-    components = property.value<QStringList>();
-    QCOMPARE(components.size(), 1);
-    QVERIFY(components.at(0).isEmpty());
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("NICKNAMES"));
-    QCOMPARE(property.valueType(), QVersitProperty::ListType);
-    QCOMPARE(property.variantValue().type(), QVariant::StringList);
-    components = property.value<QStringList>();
-    QCOMPARE(components.size(), 5);
-    QCOMPARE(components.at(0), QLatin1String("foo\\;bar"));
-    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
-    QCOMPARE(components.at(2), QLatin1String("foo\\:bar"));
-    QCOMPARE(components.at(3), QLatin1String("foo\\\\bar"));
-    QCOMPARE(components.at(4), QLatin1String("foo\\\\,bar"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("CATEGORIES"));
-    QCOMPARE(property.valueType(), QVersitProperty::ListType);
-    QCOMPARE(property.variantValue().type(), QVariant::StringList);
-    components = property.value<QStringList>();
-    QCOMPARE(components.size(), 5);
-    QCOMPARE(components.at(0), QLatin1String("foo\\;bar"));
-    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
-    QCOMPARE(components.at(2), QLatin1String("foo\\:bar"));
-    QCOMPARE(components.at(3), QLatin1String("foo\\\\bar"));
-    QCOMPARE(components.at(4), QLatin1String("foo\\\\,bar"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("ORG"));
-    QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("NOTE"));
-    QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
-    // Linear whitespaces (SPACEs and TABs) removed from the value and base64 decoded:
-    QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
-    QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
-    // Ensure that base-64 encoded strings can be retrieved as strings.
-    QCOMPARE(property.value(), QLatin1String("Qt is great!"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
-    QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
-    QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
-    QCOMPARE(property.value(), QLatin1String("Qt is great!"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QStringList propertyGroup(QString::fromAscii("HOME"));
-    propertyGroup.append(QString::fromAscii("Springfield"));
-    QCOMPARE(property.groups(),propertyGroup);
-    QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
-    QCOMPARE(0,property.parameters().count());
-    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
-    // The encoding and charset parameters should be stripped by the reader.
-    QCOMPARE(property.parameters().count(), 0);
-    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QCOMPARE(property.value(),QString());
-    QVERIFY(property.variantValue().userType() == qMetaTypeId<QVersitDocument>());
-    QCOMPARE(property.value<QVersitDocument>().properties().count(), 1);
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("END"));
-    QCOMPARE(property.value(),QString::fromAscii("VCARD"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString());
-    QCOMPARE(property.value(),QString());
-
-    // Simulate a situation where the document nesting level is exceeded
-    // In practice this would mean a big number of nested AGENT properties
-    mReaderPrivate->mDocumentNestingLevel = 20;
-    QByteArray agentProperty("AGENT:BEGIN:VCARD\r\nN:Jenny\r\nEND:VCARD\r\n\r\n");
-    buffer.close();
-    buffer.setData(agentProperty);
-    buffer.open(QIODevice::ReadOnly);
-    LineReader agentLineReader(&buffer, mAsciiCodec);
-
-    property = mReaderPrivate->parseNextVersitProperty(type, agentLineReader);
-    QVERIFY(property.isEmpty());
-}
-
-void tst_QVersitReader::testParseNextVersitPropertyVCard30()
-{
-    QVersitDocument::VersitType type = QVersitDocument::VCard30Type;
-
-    // Test a valid vCard 3.0 with properties having separate handling:
-    // AGENT property and some other property
-    QByteArray vCard("Begin:vcard\r\n");
-    vCard.append("VERSION:3.0\r\n");
-    vCard.append("FN:John\r\n");
-    // "NOTE:\;\,\:\\"
-    vCard.append("NOTE:\\;\\,\\:\\\\\r\n");
-    // "N:foo\;bar;foo\,bar;foo\:bar;foo\\bar;foo\\\;bar"
-    vCard.append("N:foo\\;bar;foo\\,bar;foo\\:bar;foo\\\\bar;foo\\\\\\;bar\r\n");
-    // "NICKNAMES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
-    vCard.append("NICKNAMES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
-    // "CATEGORIES:foo\;bar,foo\,bar,foo\:bar,foo\\bar,foo\\\,bar"
-    vCard.append("CATEGORIES:foo\\;bar,foo\\,bar,foo\\:bar,foo\\\\bar,foo\\\\\\,bar\r\n");
-    // "CATEGORIES:foobar\\,foobar\\\\,foo\\\\\,bar"
-    vCard.append("CATEGORIES:foobar\\\\,foobar\\\\\\\\,foo\\\\\\\\\\,bar\r\n");
-    vCard.append("ORG;CHARSET=UTF-8:");
-    vCard.append(KATAKANA_NOKIA);
-    vCard.append("\r\n");
-    // "NOKIA" in Katakana, UTF-8 encoded, then base-64 encoded:
-    vCard.append("NOTE;ENCODING=B;CHARSET=UTF-8:");
-    vCard.append(KATAKANA_NOKIA.toBase64());
-    vCard.append("\r\n");
-    vCard.append("TEL;TYPE=PREF;HOME:123\r\n");
-    // The value here is "UXQgaXMgZ3JlYXQh", which is the base64 encoding of "Qt is great!".
-    vCard.append("PHOTO;ENCODING=B:UXQgaXMgZ3JlYXQh\r\n");
-    // Again, but without the explicity "ENCODING" parameter
-    vCard.append("PHOTO;B:UXQgaXMgZ3JlYXQh\r\n");
-    vCard.append("EMAIL:john.citizen@example.com\r\n");
-    vCard.append("AGENT:BEGIN:VCARD\\nFN:Jenny\\nEND:VCARD\\n\r\n");
-    vCard.append("End:VCARD\r\n");
-    QBuffer buffer(&vCard);
-    buffer.open(QIODevice::ReadOnly);
-    LineReader lineReader(&buffer, mAsciiCodec);
-
-    QVersitProperty property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("BEGIN"));
-    QCOMPARE(property.value(),QString::fromAscii("vcard"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("VERSION"));
-    QCOMPARE(property.value(),QString::fromAscii("3.0"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("FN"));
-    QCOMPARE(property.value(),QString::fromAscii("John"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("NOTE"));
-    QCOMPARE(property.valueType(), QVersitProperty::PlainType);
-    QCOMPARE(property.variantValue().type(), QVariant::String);
-    // Unescape semicolons, commas, colons and backlashes
-    QCOMPARE(property.value(), QString::fromAscii(";,:\\"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("N"));
-    QCOMPARE(property.valueType(), QVersitProperty::CompoundType);
-    QCOMPARE(property.variantValue().type(), QVariant::StringList);
-    QStringList components = property.value<QStringList>();
-    QCOMPARE(components.size(), 5);
-    QCOMPARE(components.at(0), QLatin1String("foo;bar"));
-    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
-    QCOMPARE(components.at(2), QLatin1String("foo:bar"));
-    QCOMPARE(components.at(3), QLatin1String("foo\\bar"));
-    QCOMPARE(components.at(4), QLatin1String("foo\\;bar"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("NICKNAMES"));
-    QCOMPARE(property.valueType(), QVersitProperty::ListType);
-    QCOMPARE(property.variantValue().type(), QVariant::StringList);
-    components = property.value<QStringList>();
-    QCOMPARE(components.size(), 5);
-    QCOMPARE(components.at(0), QLatin1String("foo;bar"));
-    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
-    QCOMPARE(components.at(2), QLatin1String("foo:bar"));
-    QCOMPARE(components.at(3), QLatin1String("foo\\bar"));
-    QCOMPARE(components.at(4), QLatin1String("foo\\,bar"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("CATEGORIES"));
-    QCOMPARE(property.valueType(), QVersitProperty::ListType);
-    QCOMPARE(property.variantValue().type(), QVariant::StringList);
-    components = property.value<QStringList>();
-    QCOMPARE(components.size(), 5);
-    QCOMPARE(components.at(0), QLatin1String("foo;bar"));
-    QCOMPARE(components.at(1), QLatin1String("foo,bar"));
-    QCOMPARE(components.at(2), QLatin1String("foo:bar"));
-    QCOMPARE(components.at(3), QLatin1String("foo\\bar"));
-    QCOMPARE(components.at(4), QLatin1String("foo\\,bar"));
-
-    // "CATEGORIES:foobar\\,foobar\\\\,foo\\\\\,bar"
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("CATEGORIES"));
-    QCOMPARE(property.valueType(), QVersitProperty::ListType);
-    QCOMPARE(property.variantValue().type(), QVariant::StringList);
-    components = property.value<QStringList>();
-    QCOMPARE(components.size(), 3);
-    QCOMPARE(components.at(0), QLatin1String("foobar\\"));
-    QCOMPARE(components.at(1), QLatin1String("foobar\\\\"));
-    QCOMPARE(components.at(2), QLatin1String("foo\\\\,bar"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("ORG"));
-    QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("NOTE"));
-    QCOMPARE(property.value(),QString::fromUtf8(KATAKANA_NOKIA));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("TEL"));
-    QCOMPARE(property.value(),QString::fromAscii("123"));
-    QCOMPARE(property.parameters().count(), 2);
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
-    QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
-    QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
-    // Ensure that base-64 encoded strings can be retrieved as strings.
-    QCOMPARE(property.value(), QLatin1String("Qt is great!"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("PHOTO"));
-    QCOMPARE(property.variantValue().type(), QVariant::ByteArray);
-    QCOMPARE(property.value<QByteArray>(), QByteArray("Qt is great!"));
-    QCOMPARE(property.value(), QLatin1String("Qt is great!"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("EMAIL"));
-    QCOMPARE(0,property.parameters().count());
-    QCOMPARE(property.value(),QString::fromAscii("john.citizen@example.com"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("AGENT"));
-    QVERIFY(property.variantValue().userType() == qMetaTypeId<QVersitDocument>());
-    QCOMPARE(property.value<QVersitDocument>().properties().count(), 1);
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString::fromAscii("END"));
-    QCOMPARE(property.value(),QString::fromAscii("VCARD"));
-
-    property = mReaderPrivate->parseNextVersitProperty(type, lineReader);
-    QCOMPARE(property.name(),QString());
-    QCOMPARE(property.value(),QString());
-
-    // Simulate a situation where the document nesting level is exceeded
-    // In practice this would mean a big number of nested AGENT properties
-    mReaderPrivate->mDocumentNestingLevel = 20;
-    QByteArray agentProperty("AGENT:BEGIN\\:VCARD\\nFN\\:Jenny\\nEND\\:VCARD\\n\r\n");
-    buffer.close();
-    buffer.setData(agentProperty);
-    buffer.open(QIODevice::ReadOnly);
-    LineReader agentLineReader(&buffer, mAsciiCodec);
-
-    property = mReaderPrivate->parseNextVersitProperty(type, agentLineReader);
-    QVERIFY(property.isEmpty());
+        QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("AGENT"));
+        expectedProperty.setValue(QVariant::fromValue(subDocument));
+        expectedProperty.setValueType(QVersitProperty::VersitDocumentType);
+        QTest::newRow("agent")
+            << QVersitDocument::VCard21Type
+            << QByteArray("AGENT:\r\nBEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n")
+            << expectedProperty;
+    }
+#endif
 }
 
 void tst_QVersitReader::testParseVersitDocument()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QFETCH(QByteArray, vCard);
     QFETCH(bool, expectedSuccess);
     QFETCH(int, expectedProperties);
@@ -652,10 +651,12 @@ void tst_QVersitReader::testParseVersitDocument()
     QCOMPARE(mReaderPrivate->parseVersitDocument(lineReader, document), expectedSuccess);
     QCOMPARE(document.properties().count(), expectedProperties);
     QCOMPARE(mReaderPrivate->mDocumentNestingLevel, 0);
+#endif
 }
 
 void tst_QVersitReader::testParseVersitDocument_data()
 {
+#ifdef QT_BUILD_INTERNAL
     QTest::addColumn<QByteArray>("vCard");
     QTest::addColumn<bool>("expectedSuccess");
     QTest::addColumn<int>("expectedProperties");
@@ -752,31 +753,75 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "END:VCARD")
             << false
             << 0;
+#endif
 }
 
 void tst_QVersitReader::testDecodeQuotedPrintable()
 {
-    // Soft line breaks
-    QString encoded(QLatin1String("This=\r\n is =\r\none line."));
-    QString decoded(QLatin1String("This is one line."));
-    mReaderPrivate->decodeQuotedPrintable(encoded);
-    QCOMPARE(encoded, decoded);
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
+    QFETCH(QByteArray, encoded);
 
-    // Characters recommended to be encoded according to RFC 1521:
-    encoded = QLatin1String("To be decoded: =0A=0D=21=22=23=24=3D=40=5B=5C=5D=5E=60=7B=7C=7D=7E");
-    decoded = QLatin1String("To be decoded: \n\r!\"#$=@[\\]^`{|}~");
+    QFETCH(QByteArray, decoded);
     mReaderPrivate->decodeQuotedPrintable(encoded);
     QCOMPARE(encoded, decoded);
+#endif
+}
 
-    // Other random characters encoded.
-    // Some implementation may encode these too, as it is allowed.
-    encoded = QLatin1String("=45=6E=63=6F=64=65=64 =64=61=74=61");
-    decoded = QLatin1String("Encoded data");
-    mReaderPrivate->decodeQuotedPrintable(encoded);
-    QCOMPARE(encoded, decoded);
+void tst_QVersitReader::testDecodeQuotedPrintable_data()
+{
+#ifdef QT_BUILD_INTERNAL
+    QTest::addColumn<QByteArray>("encoded");
+    QTest::addColumn<QByteArray>("decoded");
+
+
+    QTest::newRow("Soft line breaks")
+            << QByteArray("This=\r\n is =\r\none line.")
+            << QByteArray("This is one line.");
+
+    QTest::newRow("Characters recommended to be encoded according to RFC 1521")
+            << QByteArray("To be decoded: =0A=0D=21=22=23=24=3D=40=5B=5C=5D=5E=60=7B=7C=7D=7E")
+            << QByteArray("To be decoded: \n\r!\"#$=@[\\]^`{|}~");
+
+    QTest::newRow("Characters recommended to be encoded according to RFC 1521(lower case)")
+            << QByteArray("To be decoded: =0a=0d=21=22=23=24=3d=40=5b=5c=5d=5e=60=7b=7c=7d=7e")
+            << QByteArray("To be decoded: \n\r!\"#$=@[\\]^`{|}~");
+
+    QTest::newRow("random characters encoded")
+            << QByteArray("=45=6E=63=6F=64=65=64 =64=61=74=61")
+            << QByteArray("Encoded data");
+
+    QTest::newRow("short string1")
+            << QByteArray("-=_")
+            << QByteArray("-=_");
+
+    QTest::newRow("short string2")
+            << QByteArray("=0")
+            << QByteArray("=0");
+
+    QTest::newRow("short string2")
+            << QByteArray("\r")
+            << QByteArray("\r");
+
+    QTest::newRow("short string2")
+            << QByteArray("\n")
+            << QByteArray("\n");
+
+    QTest::newRow("short string2")
+            << QByteArray("\n\r")
+            << QByteArray("\n\r");
+
+    QTest::newRow("White spaces")
+            << QByteArray("=09=20")
+            << QByteArray("\t ");
+#endif
 }
 void tst_QVersitReader::testParamName()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // Empty value
     QByteArray param;
     QCOMPARE(mReaderPrivate->paramName(param, mAsciiCodec),QString());
@@ -803,11 +848,14 @@ void tst_QVersitReader::testParamName()
     param = codec->fromUnicode(QString::fromAscii("TIPE=WORK"));
     QCOMPARE(mReaderPrivate->paramName(param, codec),
              QString::fromAscii("TIPE"));
-
+#endif
 }
 
 void tst_QVersitReader::testParamValue()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // Empty value
     QByteArray param;
     QCOMPARE(mReaderPrivate->paramValue(param, mAsciiCodec),QString());
@@ -840,10 +888,14 @@ void tst_QVersitReader::testParamValue()
     param = codec->fromUnicode(QString::fromAscii("TYPE=WORK"));
     QCOMPARE(mReaderPrivate->paramValue(param, codec),
              QString::fromAscii("WORK"));
+#endif
 }
 
 void tst_QVersitReader::testExtractPart()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QByteArray originalStr;
 
     // Negative starting position
@@ -872,10 +924,14 @@ void tst_QVersitReader::testExtractPart()
     // Non-empty substring, from the middle to the end
     QCOMPARE(mReaderPrivate->extractPart(originalStr,29),
              QByteArray("ENCODING=8BIT"));
+#endif
 }
 
 void tst_QVersitReader::testExtractParts()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QList<QByteArray> parts;
 
     // Empty value
@@ -933,10 +989,14 @@ void tst_QVersitReader::testExtractParts()
     QCOMPARE(parts.count(),2);
     QCOMPARE(codec->toUnicode(parts[0]),QString::fromAscii("part1"));
     QCOMPARE(codec->toUnicode(parts[1]),QString::fromAscii("part2"));
+#endif
 }
 
 void tst_QVersitReader::testExtractPropertyGroupsAndName()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QPair<QStringList,QString> groupsAndName;
 
     // Empty string
@@ -1032,11 +1092,14 @@ void tst_QVersitReader::testExtractPropertyGroupsAndName()
     QCOMPARE(groupsAndName.first.takeFirst(),QString::fromAscii("group2"));
     QCOMPARE(groupsAndName.second,QString::fromAscii("TEL"));
     QCOMPARE(cursor.position, 36); // 2 bytes * 17 characters + 2 byte BOM.
-
+#endif
 }
 
 void tst_QVersitReader::testExtractVCard21PropertyParams()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // No parameters
     VersitCursor cursor(QByteArray(":123"));
     cursor.setSelection(cursor.data.size());
@@ -1115,10 +1178,14 @@ void tst_QVersitReader::testExtractVCard21PropertyParams()
     encodingParams = params.values(QString::fromAscii("CHARSET"));
     QCOMPARE(1, encodingParams.count());
     QCOMPARE(encodingParams[0],QString::fromAscii("UTF-16"));
+#endif
 }
 
 void tst_QVersitReader::testExtractVCard30PropertyParams()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // No parameters
     VersitCursor cursor(QByteArray(":123"));
     cursor.setSelection(cursor.data.size());
@@ -1204,10 +1271,14 @@ void tst_QVersitReader::testExtractVCard30PropertyParams()
     encodingParams = params.values(QString::fromAscii("CHARSET"));
     QCOMPARE(1, encodingParams.count());
     QCOMPARE(encodingParams[0],QString::fromAscii("UTF-16"));
+#endif
 }
 
 void tst_QVersitReader::testExtractParams()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     VersitCursor cursor;
     QByteArray data = ":123";
     cursor.setData(data);
@@ -1243,13 +1314,16 @@ void tst_QVersitReader::testExtractParams()
     params = mReaderPrivate->extractParams(cursor, codec);
     QCOMPARE(params.size(), 2);
     QCOMPARE(cursor.position, 8);
-
+#endif
 }
 
 Q_DECLARE_METATYPE(QList<QString>)
 
 void tst_QVersitReader::testReadLine()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     QFETCH(QByteArray, codecName);
     QFETCH(QString, data);
     QFETCH(QList<QString>, expectedLines);
@@ -1280,10 +1354,12 @@ void tst_QVersitReader::testReadLine()
     QVERIFY(lineReader.atEnd());
 
     delete encoder;
+#endif
 }
 
 void tst_QVersitReader::testReadLine_data()
 {
+#ifdef QT_BUILD_INTERNAL
     // Note: for this test, we set mLineReader to read 10 bytes at a time.  Lines of multiples of
     // 10 bytes are hence border cases.
     QTest::addColumn<QByteArray>("codecName");
@@ -1369,6 +1445,7 @@ void tst_QVersitReader::testReadLine_data()
                 << "one\rtwo\rthree\r"
                 << (QList<QString>() << QLatin1String("one") << QLatin1String("two") << QLatin1String("three"));
     }
+#endif
 }
 
 void tst_QVersitReader::testByteArrayInput()
@@ -1395,6 +1472,9 @@ void tst_QVersitReader::testByteArrayInput()
 
 void tst_QVersitReader::testRemoveBackSlashEscaping()
 {
+#ifndef QT_BUILD_INTERNAL
+    QSKIP("Testing private API", SkipSingle);
+#else
     // Empty string
     QString input;
     QVersitReaderPrivate::removeBackSlashEscaping(input);
@@ -1414,6 +1494,7 @@ void tst_QVersitReader::testRemoveBackSlashEscaping()
     input = QString::fromAscii("\"Quoted \\n \\N \\; \\,\"");
     QVersitReaderPrivate::removeBackSlashEscaping(input);
     QCOMPARE(input, QString::fromAscii("\"Quoted \\n \\N \\; \\,\""));
+#endif
 }
 
 QTEST_MAIN(tst_QVersitReader)

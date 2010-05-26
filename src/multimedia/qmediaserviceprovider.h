@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,7 +47,7 @@
 #include <qmobilityglobal.h>
 #include "qtmedianamespace.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaService;
 
@@ -101,7 +101,7 @@ public:
     virtual QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint = QMediaServiceProviderHint()) = 0;
     virtual void releaseService(QMediaService *service) = 0;
 
-    virtual QtMedia::SupportEstimate hasSupport(const QByteArray &serviceType,
+    virtual QtMediaServices::SupportEstimate hasSupport(const QByteArray &serviceType,
                                              const QString &mimeType,
                                              const QStringList& codecs,
                                              int flags = 0) const;
@@ -162,6 +162,6 @@ public:
 #define Q_MEDIASERVICE_RADIO "com.nokia.qt.radio"
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIASERVICEPROVIDER_H

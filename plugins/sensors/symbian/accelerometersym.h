@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -70,6 +70,8 @@ public:
      */
     ~CAccelerometerSensorSym();
     
+    void start();
+    
 private:
     /**
      * Default constructor
@@ -87,7 +89,7 @@ private:
      * Second phase constructor
      * Initialize the backend resources
      */
-    void ConstructL();    
+    void ConstructL();   
     
 public:
     /**
@@ -98,6 +100,7 @@ public:
 private:
     QAccelerometerReading iReading;
     TSensrvAccelerometerAxisData iData;
+    TInt iScaleRange, iUnit;
     };
 
 #endif //ACCELEROMETERSYM_H

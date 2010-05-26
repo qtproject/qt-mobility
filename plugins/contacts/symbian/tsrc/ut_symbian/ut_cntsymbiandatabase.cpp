@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -127,9 +127,10 @@ void TestCntSymbianDatabase::databaseEvents()
 #if 0
     TRAPD(err, db->m_contactDatabase->sendEventsL());
     QVERIFY(err == KErrNone);
+    delete db;
 #else
+    delete db;
     QFAIL("Mock database not currently compiled in, test meaningless?");
 #endif
-    delete db;
 }
 

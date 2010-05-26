@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 #include "qtmedianamespace.h"
 #include <QtCore/qshareddata.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaTimeRangePrivate;
 
@@ -124,6 +124,6 @@ Q_MEDIA_EXPORT QMediaTimeRange operator+(const QMediaTimeRange&, const QMediaTim
 Q_MEDIA_EXPORT QMediaTimeRange operator-(const QMediaTimeRange&, const QMediaTimeRange&);
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIATIMERANGE_H

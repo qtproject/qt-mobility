@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -288,12 +288,12 @@ bool S60RadioTunerControl::isAvailable() const
 	return m_available;
 }
 
-QtMedia::AvailabilityError S60RadioTunerControl::availabilityError() const
+QtMediaServices::AvailabilityError S60RadioTunerControl::availabilityError() const
 {
 	if (m_available)
-		return QtMedia::NoError;
+		return QtMediaServices::NoError;
 	else
-		return QtMedia::ResourceError;
+		return QtMediaServices::ResourceError;
 }
 
 void S60RadioTunerControl::start()

@@ -1,40 +1,39 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -47,6 +46,7 @@
 
 #include <qmediaservice.h>
 #include <qmediaplaylist.h>
+#include <qaudioendpointselector.h>
 
 #include <QtGui>
 
@@ -71,6 +71,7 @@ Player::Player(QWidget *parent)
     , toggleAspectRatio(0)
     , showYoutubeDialog(0)
     , youtubeDialog(0)
+    , audioEndpointSelector(0)
 #else
     , colorDialog(0)
 #endif
@@ -105,6 +106,9 @@ Player::Player(QWidget *parent)
     slider->setRange(0, player->duration() / 1000);
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
+    
+    audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(player->service()->control(QAudioEndpointSelector_iid));
+    connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
 
 #ifndef Q_OS_SYMBIAN
     QPushButton *openButton = new QPushButton(tr("Open"), this);
@@ -262,11 +266,11 @@ void Player::metaDataChanged()
         setTrackInfo(QString("(%1/%2) %3 - %4")
                 .arg(playlist->currentIndex()+1)
                 .arg(playlist->mediaCount())
-                .arg(player->metaData(QtMedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMedia::Title).toString()));
+                .arg(player->metaData(QtMediaServices::AlbumArtist).toString())
+                .arg(player->metaData(QtMediaServices::Title).toString()));
 
         if (!player->isVideoAvailable()) {
-            QUrl uri = player->metaData(QtMedia::CoverArtUrlLarge).value<QUrl>();
+            QUrl uri = player->metaData(QtMediaServices::CoverArtUrlLarge).value<QUrl>();
             QPixmap pixmap = NULL;
 
             if (uri.isEmpty()) {
@@ -302,14 +306,14 @@ void Player::metaDataChanged()
     hideOrShowCoverArt();
     }
 #else
-    //qDebug() << "update metadata" << player->metaData(QtMedia::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QtMediaServices::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(player->metaData(QtMedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMedia::Title).toString()));
+                .arg(player->metaData(QtMediaServices::AlbumArtist).toString())
+                .arg(player->metaData(QtMediaServices::Title).toString()));
 
         if (coverLabel) {
-            QUrl url = player->metaData(QtMedia::CoverArtUrlLarge).value<QUrl>();
+            QUrl url = player->metaData(QtMediaServices::CoverArtUrlLarge).value<QUrl>();
 
             coverLabel->setPixmap(!url.isEmpty()
                     ? QPixmap(url.toString())
@@ -494,6 +498,30 @@ void Player::createMenus()
     showYoutubeDialog = new QAction(tr("Youtube Search"), this);
     qobject_cast<QMainWindow *>(this->parent())->menuBar()->addAction(showYoutubeDialog);
     connect(showYoutubeDialog, SIGNAL(triggered()), this, SLOT(launchYoutubeDialog()));
+
+    setAudioOutputDefault = new QAction(tr("Default output"), this);
+    connect(setAudioOutputDefault, SIGNAL(triggered()), this, SLOT(handleAudioOutputDefault()));
+
+    setAudioOutputAll = new QAction(tr("All outputs"), this);
+    connect(setAudioOutputAll, SIGNAL(triggered()), this, SLOT(handleAudioOutputAll()));
+
+    setAudioOutputNone = new QAction(tr("No output"), this);
+    connect(setAudioOutputNone, SIGNAL(triggered()), this, SLOT(handleAudioOutputNone()));
+    
+    setAudioOutputEarphone = new QAction(tr("Earphone output"), this);
+    connect(setAudioOutputEarphone, SIGNAL(triggered()), this, SLOT(handleAudioOutputEarphone()));
+    
+    setAudioOutputSpeaker = new QAction(tr("Speaker output"), this);
+    connect(setAudioOutputSpeaker, SIGNAL(triggered()), this, SLOT(handleAudioOutputSpeaker()));
+
+    audioOutputMenu = new QMenu(tr("Set Audio Output"), this);
+    audioOutputMenu->addAction(setAudioOutputDefault);
+    audioOutputMenu->addAction(setAudioOutputAll);
+    audioOutputMenu->addAction(setAudioOutputNone);
+    audioOutputMenu->addAction(setAudioOutputEarphone);
+    audioOutputMenu->addAction(setAudioOutputSpeaker);
+
+    qobject_cast<QMainWindow *>(this->parent())->menuBar()->addMenu(audioOutputMenu);
 }
 
 void Player::handleFullScreen(bool isFullscreen)
@@ -520,6 +548,38 @@ void Player::handleAspectRatio(bool aspectRatio)
         toggleAspectRatio->setText(tr("Ignore Aspect Ratio"));
         videoWidget->setAspectRatioMode(Qt::KeepAspectRatio);
     }
+}
+
+void Player::handleAudioOutputDefault()
+{
+    audioEndpointSelector->setActiveEndpoint("Default");
+}
+
+void Player::handleAudioOutputAll()
+{
+    audioEndpointSelector->setActiveEndpoint("All");
+}
+
+void Player::handleAudioOutputNone()
+{
+    audioEndpointSelector->setActiveEndpoint("None");
+}
+
+void Player::handleAudioOutputEarphone()
+{
+    audioEndpointSelector->setActiveEndpoint("Earphone");
+}
+
+void Player::handleAudioOutputSpeaker()
+{
+    audioEndpointSelector->setActiveEndpoint("Speaker");
+}
+
+void Player::handleAudioOutputChangedSignal(const QString&)
+{
+    QMessageBox msgBox;
+    msgBox.setText("Output changed: " + audioEndpointSelector->activeEndpoint());
+    msgBox.exec();
 }
 
 void Player::hideOrShowCoverArt()

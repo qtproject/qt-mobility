@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,9 +57,10 @@ class Q_CONTACTS_EXPORT QContactRelationshipSaveRequest : public QContactAbstrac
     Q_OBJECT
 
 public:
-    QContactRelationshipSaveRequest();
+    QContactRelationshipSaveRequest(QObject* parent = 0);
 
     /* Selection */
+    void setRelationship(const QContactRelationship& contactRelationship);
     void setRelationships(const QList<QContactRelationship>& contactRelationships);
 
     /* Results */

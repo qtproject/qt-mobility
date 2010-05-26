@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,7 +47,7 @@
 #include "qmetadatacontrol.h"
 
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 void QMediaObjectPrivate::_q_notify()
 {
@@ -96,9 +96,9 @@ QMediaObject::~QMediaObject()
     Returns the service availability error state.
 */
 
-QtMedia::AvailabilityError QMediaObject::availabilityError() const
+QtMediaServices::AvailabilityError QMediaObject::availabilityError() const
 {
-    return QtMedia::ServiceMissingError;
+    return QtMediaServices::ServiceMissingError;
 }
 
 /*!
@@ -305,7 +305,7 @@ bool QMediaObject::isMetaDataWritable() const
 /*!
     Returns the value associated with a meta-data \a key.
 */
-QVariant QMediaObject::metaData(QtMedia::MetaData key) const
+QVariant QMediaObject::metaData(QtMediaServices::MetaData key) const
 {
     Q_D(const QMediaObject);
 
@@ -317,7 +317,7 @@ QVariant QMediaObject::metaData(QtMedia::MetaData key) const
 /*!
     Sets a \a value for a meta-data \a key.
 */
-void QMediaObject::setMetaData(QtMedia::MetaData key, const QVariant &value)
+void QMediaObject::setMetaData(QtMediaServices::MetaData key, const QVariant &value)
 {
     Q_D(QMediaObject);
 
@@ -328,13 +328,13 @@ void QMediaObject::setMetaData(QtMedia::MetaData key, const QVariant &value)
 /*!
     Returns a list of keys there is meta-data available for.
 */
-QList<QtMedia::MetaData> QMediaObject::availableMetaData() const
+QList<QtMediaServices::MetaData> QMediaObject::availableMetaData() const
 {
     Q_D(const QMediaObject);
 
     return d->metaDataControl
             ? d->metaDataControl->availableMetaData()
-            : QList<QtMedia::MetaData>();
+            : QList<QtMediaServices::MetaData>();
 }
 
 /*!
@@ -413,5 +413,5 @@ void QMediaObject::setupMetaData()
 
 
 #include "moc_qmediaobject.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

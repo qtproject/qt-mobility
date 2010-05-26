@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,8 +57,16 @@ QTM_BEGIN_NAMESPACE
   \brief The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.
   \ingroup contacts-main
  
-  This class provides adding, updating and removal of contacts.
-  It also provides definitions for details and fields that can be found in contacts.
+  This class provides an abstraction of a datastore or aggregation of datastores which contains contact information.
+  It provides methods to retrieve and manipulate contact information, contact relationship information, and
+  supported schema definitions.  It also provides metadata and error information reporting.
+
+  The functions provided by QContactManager are purely synchronous; to access the same functionality in an
+  asynchronous manner, clients should use the use-case-specific classes derived from QContactAbstractRequest.
+
+  Some functionality provided by QContactManager directly is not accessible using the asynchronous API; see
+  the \l{Contacts Synchronous API}{synchronous} and \l{Contacts Asynchronous API}{asynchronous} API
+  information from the \l{Contacts}{contacts module} API documentation.
  */
 
 /*!
@@ -332,6 +340,7 @@ QContactManager::Error QContactManager::error() const
  */
 QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder>& sortOrders) const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->contactIds(QContactFilter(), sortOrders, &d->m_error);
 }
 
@@ -341,6 +350,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QList<QContactSortOrder
  */
 QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders) const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->contactIds(filter, sortOrders, &d->m_error);
 }
 
@@ -348,7 +358,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
   Returns the list of contacts stored in the manager sorted according to the given list of \a sortOrders.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -358,6 +368,7 @@ QList<QContactLocalId> QContactManager::contactIds(const QContactFilter& filter,
  */
 QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint) const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->contacts(QContactFilter(), sortOrders, fetchHint, &d->m_error);
 }
 
@@ -368,7 +379,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
   contacts and testing them against the supplied filter - see the \l isFilterSupported() function.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -378,6 +389,7 @@ QList<QContact> QContactManager::contacts(const QList<QContactSortOrder>& sortOr
  */
 QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint) const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->contacts(filter, sortOrders, fetchHint, &d->m_error);
 }
 
@@ -388,7 +400,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
   and the error returned by \l error() will be \c QContactManager::DoesNotExistError.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching contact will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -398,6 +410,7 @@ QList<QContact> QContactManager::contacts(const QContactFilter& filter, const QL
  */
 QContact QContactManager::contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint) const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->contact(contactId, fetchHint, &d->m_error);
 }
 
@@ -440,6 +453,7 @@ QContact QContactManager::contact(const QContactLocalId& contactId, const QConta
 bool QContactManager::saveContact(QContact* contact)
 {
     if (contact) {
+        d->m_error = QContactManager::NoError;
         return d->m_engine->saveContact(contact, &d->m_error);
     } else {
         d->m_error = QContactManager::BadArgumentError;
@@ -455,6 +469,7 @@ bool QContactManager::saveContact(QContact* contact)
  */
 bool QContactManager::removeContact(const QContactLocalId& contactId)
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->removeContact(contactId, &d->m_error);
 }
 
@@ -482,6 +497,8 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
         d->m_error =QContactManager::BadArgumentError;
         return false;
     }
+
+    d->m_error = QContactManager::NoError;
     return d->m_engine->saveContacts(contacts, errorMap, &d->m_error);
 }
 
@@ -512,36 +529,70 @@ bool QContactManager::saveContacts(QList<QContact>* contacts, QMap<int, QContact
  */
 bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap)
 {
+    if (errorMap)
+        errorMap->clear();
     if (contactIds.isEmpty()) {
         d->m_error = QContactManager::BadArgumentError;
         return false;
     }
 
-    if (errorMap)
-        errorMap->clear();
+    d->m_error = QContactManager::NoError;
     return d->m_engine->removeContacts(contactIds, errorMap, &d->m_error);
 }
 
 /*!
-  \preliminary
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
   in the contact are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.
-
-  This function is preliminary and the behaviour is subject to change!
  */
 QContact QContactManager::compatibleContact(const QContact& original)
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->compatibleContact(original, &d->m_error);
 }
 
 /*!
-  Returns a display label for a \a contact which is synthesized from its details in a platform-specific manner
+  Returns a display label for a \a contact which is synthesized from its details in a manager specific
+  manner.
+
+  If you want to update the display label stored in the contact, use the synthesizeContactDisplayLabel()
+  function instead.
+
+  \sa synthesizeContactDisplayLabel()
  */
-QString QContactManager::synthesizedDisplayLabel(const QContact& contact) const
+QString QContactManager::synthesizedContactDisplayLabel(const QContact& contact) const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->synthesizedDisplayLabel(contact, &d->m_error);
+}
+
+/*!
+ * Updates the display label of the supplied \a contact, according to the formatting rules
+ * of this manager.
+ *
+ * Different managers can format the display label of a contact in different ways -
+ * some managers may only consider first or last name, or might put them in different
+ * orders.  Others might consider an organization, a nickname, or a freeform label.
+ *
+ * This function will update the QContactDisplayLabel of this contact, and the string
+ * returned by QContact::displayLabel().
+ *
+ * If \a contact is null, nothing will happen.
+ *
+ * See the following example for more information:
+ * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
+ *
+ * \sa synthesizedContactDisplayLabel(), QContact::displayLabel()
+ */
+void QContactManager::synthesizeContactDisplayLabel(QContact *contact) const
+{
+    if (contact) {
+        d->m_error = QContactManager::NoError;
+        QContactManagerEngine::setContactDisplayLabel(contact, d->m_engine->synthesizedDisplayLabel(*contact, &d->m_error));
+    } else {
+        d->m_error = QContactManager::BadArgumentError;
+    }
 }
 
 /*!
@@ -557,6 +608,7 @@ QString QContactManager::synthesizedDisplayLabel(const QContact& contact) const
  */
 bool QContactManager::setSelfContactId(const QContactLocalId& contactId)
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->setSelfContactId(contactId, &d->m_error);
 }
 
@@ -569,6 +621,7 @@ bool QContactManager::setSelfContactId(const QContactLocalId& contactId)
  */
 QContactLocalId QContactManager::selfContactId() const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->selfContactId(&d->m_error);
 }
 
@@ -579,6 +632,7 @@ QContactLocalId QContactManager::selfContactId() const
  */
 QList<QContactRelationship> QContactManager::relationships(const QContactId& participantId, QContactRelationship::Role role) const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->relationships(QString(), participantId, role, &d->m_error);
 }
 
@@ -589,6 +643,7 @@ QList<QContactRelationship> QContactManager::relationships(const QContactId& par
  */
 QList<QContactRelationship> QContactManager::relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role) const
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->relationships(relationshipType, participantId, role, &d->m_error);
 }
 
@@ -608,6 +663,7 @@ QList<QContactRelationship> QContactManager::relationships(const QString& relati
 bool QContactManager::saveRelationship(QContactRelationship* relationship)
 {
     if (relationship) {
+        d->m_error = QContactManager::NoError;
         return d->m_engine->saveRelationship(relationship, &d->m_error);
     } else {
         d->m_error =QContactManager::BadArgumentError;
@@ -623,13 +679,14 @@ bool QContactManager::saveRelationship(QContactRelationship* relationship)
  */
 bool QContactManager::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap)
 {
-    // check arguments
     if (errorMap)
         errorMap->clear();
     if (!relationships) {
         d->m_error =QContactManager::BadArgumentError;
         return false;
     }
+
+    d->m_error = QContactManager::NoError;
     return d->m_engine->saveRelationships(relationships, errorMap, &d->m_error);
 }
 
@@ -641,6 +698,7 @@ bool QContactManager::saveRelationships(QList<QContactRelationship>* relationshi
  */
 bool QContactManager::removeRelationship(const QContactRelationship& relationship)
 {
+    d->m_error = QContactManager::NoError;
     return d->m_engine->removeRelationship(relationship, &d->m_error);
 }
 
@@ -654,6 +712,7 @@ bool QContactManager::removeRelationships(const QList<QContactRelationship>& rel
 {
     if (errorMap)
         errorMap->clear();
+    d->m_error = QContactManager::NoError;
     return d->m_engine->removeRelationships(relationships, errorMap, &d->m_error);
 }
 
@@ -668,6 +727,7 @@ QMap<QString, QContactDetailDefinition> QContactManager::detailDefinitions(const
         return QMap<QString, QContactDetailDefinition>();
     }
 
+    d->m_error = QContactManager::NoError;
     return d->m_engine->detailDefinitions(contactType, &d->m_error);
 }
 
@@ -679,6 +739,7 @@ QContactDetailDefinition QContactManager::detailDefinition(const QString& defini
         return QContactDetailDefinition();
     }
 
+    d->m_error = QContactManager::NoError;
     return d->m_engine->detailDefinition(definitionName, contactType, &d->m_error);
 }
 
@@ -690,6 +751,7 @@ bool QContactManager::saveDetailDefinition(const QContactDetailDefinition& def, 
         return false;
     }
 
+    d->m_error = QContactManager::NoError;
     return d->m_engine->saveDetailDefinition(def, contactType, &d->m_error);
 }
 
@@ -701,14 +763,15 @@ bool QContactManager::removeDetailDefinition(const QString& definitionName, cons
         return false;
     }
 
+    d->m_error = QContactManager::NoError;
     return d->m_engine->removeDetailDefinition(definitionName, contactType, &d->m_error);
 }
 
 /*!
   \enum QContactManager::ManagerFeature
   This enum describes the possible features that a particular manager may support
-  \value Groups The manager supports all QContactGroup related operations, and emits the appropriate signals
-  \value ActionPreferences The manager supports saving preferred details per action per contact
+  \value Groups The manager supports saving contacts of the \c QContactType::TypeGroup type
+  \omitvalue ActionPreferences The manager supports saving preferred details per action per contact
   \value DetailOrdering When a contact is retrieved, the manager will return the details in the same order in which they were saved
   \value Relationships The manager supports at least some types of relationships between contacts
   \value ArbitraryRelationshipTypes The manager supports relationships of arbitrary types between contacts

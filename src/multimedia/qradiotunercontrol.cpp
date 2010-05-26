@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,7 @@
 #include "qradiotunercontrol.h"
 #include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -103,7 +103,7 @@ QRadioTunerControl::~QRadioTunerControl()
 */
 
 /*!
-    \fn QtMedia::AvailabilityError QRadioTunerControl::availabilityError() const
+    \fn QtMediaServices::AvailabilityError QRadioTunerControl::availabilityError() const
 
     Returns the error state of the radio service.
 */
@@ -323,5 +323,5 @@ QRadioTunerControl::~QRadioTunerControl()
 */
 
 #include "moc_qradiotunercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

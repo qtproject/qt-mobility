@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -79,7 +79,6 @@ class tst_QVersitReader : public QObject
      Q_OBJECT
 
 private slots: // Tests
-
     void init();
     void cleanup();
 
@@ -88,11 +87,12 @@ private slots: // Tests
     void testReading();
     void testResult();
     void testSetVersionFromProperty();
-    void testParseNextVersitPropertyVCard21();
-    void testParseNextVersitPropertyVCard30();
+    void testParseNextVersitProperty();
+    void testParseNextVersitProperty_data();
     void testParseVersitDocument();
     void testParseVersitDocument_data();
     void testDecodeQuotedPrintable();
+    void testDecodeQuotedPrintable_data();
     void testParamName();
     void testParamValue();
     void testExtractPart();
@@ -108,7 +108,9 @@ private slots: // Tests
 
 private: // Data
     QVersitReader* mReader;
+#ifdef QT_BUILD_INTERNAL
     QVersitReaderPrivate* mReaderPrivate;
+#endif
     QBuffer* mInputDevice;
     QTextCodec* mAsciiCodec;
     SignalCatcher* mSignalCatcher;

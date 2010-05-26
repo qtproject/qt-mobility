@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,10 +62,14 @@ QtMultimedia API. This API is planned to replace Phonon at a later stage.
 
 \tableofcontents
 
+\section1 Namespace
 
+The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility API's into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
 
 \section1 Overview
-
 
 This library will require Qt 4.6.
 
