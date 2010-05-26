@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef QMAPPINGSERVICE_DUMMY_H
-#define QMAPPINGSERVICE_DUMMY_H
+#ifndef QGEOMAPPINGMANAGER_DUMMY_H
+#define QGEOMAPPINGMANAGER_DUMMY_H
 
-#include <qgeomappingmanager.h>
+#include <QGeoMappingManager>
 #include <QTimer>
 
 QTM_USE_NAMESPACE
@@ -92,4 +92,4 @@ private slots:
 
 };
 
-#endif // QMAPPINGSERVICE_DUMMY_H
+#endif // QGEOMAPPINGMANAGER_DUMMY_H

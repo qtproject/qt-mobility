@@ -41,9 +41,9 @@
 
 #include "qgeoplacesmanagerdummy.h"
 #include <QTimer>
-#include <qgeocoordinate.h>
-#include <qgeoaddress.h>
-#include <qgeoplacesreply.h>
+#include <QGeoCoordinate>
+#include <QGeoAddress>
+#include <QGeoPlacesReply>
 
 QGeoPlacesManagerDummy::QGeoPlacesManagerDummy(QObject *parent)
         : QGeoPlacesManager(parent)

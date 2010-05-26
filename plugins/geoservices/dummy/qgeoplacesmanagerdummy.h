@@ -42,7 +42,7 @@
 #ifndef QGEOPLACESMANAGER_DUMMY_H
 #define QGEOPLACESMANAGER_DUMMY_H
 
-#include <qgeoplacesmanager.h>
+#include <QGeoPlacesManager>
 #include <QTimer>
 
 QTM_USE_NAMESPACE
@@ -83,4 +83,4 @@ private slots:
     void placesError(QGeoPlacesReply::Error error, const QString &errorString);
 };
 
-#endif // QGEOCODINGSERVICE_DUMMY_H
+#endif // QGEOPLACESMANAGER_DUMMY_H

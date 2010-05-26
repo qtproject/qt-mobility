@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include "qgeomappingmanagerdummy.h"
-#include <qgeocoordinate.h>
+#include <QGeoCoordinate>
 
 QGeoMappingManagerDummy::QGeoMappingManagerDummy()
         : QGeoMappingManager()

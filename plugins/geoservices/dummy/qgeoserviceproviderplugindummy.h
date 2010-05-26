@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDERDUMMY_H
-#define QGEOSERVICEPROVIDERDUMMY_H
+#ifndef QGEOSERVICEPROVIDERPLUGINDUMMY_H
+#define QGEOSERVICEPROVIDERPLUGINDUMMY_H
 
-#include <qgeoserviceproviderplugin.h>
+#include <QGeoServiceProviderPlugin>
 #include <QObject>
 
 QTM_USE_NAMESPACE
@@ -68,4 +68,4 @@ public:
                                              QString *errorString) const;
 };
 
-#endif // QGEOSERVICEPROVIDERDUMMY_H
+#endif // QGEOSERVICEPROVIDERPLUGINDUMMY_H
