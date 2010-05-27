@@ -770,6 +770,40 @@ void tst_QVersitReader::testParseVersitDocument_data()
             << true
             << expected;
     }
+
+    {
+        QVersitDocument expected(QVersitDocument::ICalendar20Type);
+        expected.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitProperty property;
+        property.setName(QLatin1String("PRODID"));
+        property.setValue(QLatin1String("-//hacksw/handcal//NONSGML v1.0//EN"));
+        expected.addProperty(property);
+        QVersitDocument nested(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VEVENT"));
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19970714T170000Z"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DTEND"));
+        property.setValue(QLatin1String("19970715T035959Z"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("Bastille Day Party"));
+        nested.addProperty(property);
+        expected.addSubDocument(nested);
+        QTest::newRow("iCalendar sample from spec")
+            << QByteArray(
+                    "BEGIN:VCALENDAR\r\n"
+                    "VERSION:2.0\r\n"
+                    "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n"
+                    "BEGIN:VEVENT\r\n"
+                    "DTSTART:19970714T170000Z\r\n"
+                    "DTEND:19970715T035959Z\r\n"
+                    "SUMMARY:Bastille Day Party\r\n"
+                    "END:VEVENT\r\n"
+                    "END:VCALENDAR\r\n")
+            << true
+            << expected;
+    }
 }
 
 void tst_QVersitReader::testDecodeQuotedPrintable()

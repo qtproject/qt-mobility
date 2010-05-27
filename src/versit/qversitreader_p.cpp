@@ -574,7 +574,7 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
     } else if ((document.componentType() == QLatin1String("VCALENDAR")
                 || document.type() == QVersitDocument::ICalendar20Type) // covers VEVENT, etc. when nested inside a VCALENDAR
             && value == QLatin1String("2.0")) {
-        document.setType(QVersitDocument::VCard30Type);
+        document.setType(QVersitDocument::ICalendar20Type);
     } else {
         return false;
     }
