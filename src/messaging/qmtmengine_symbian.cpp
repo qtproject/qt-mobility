@@ -963,307 +963,125 @@ bool CMTMEngine::composeEmailL(const QMessage &message)
     return true;
 }
 
-bool CMTMEngine::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
+bool CMTMEngine::retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id)
 {
-    TRAPD(err, retrieveL(messageId, id));
+    TRAPD(err, retrieveL(privateService, messageId, id));
         if (err != KErrNone)
             return false;
         else
             return true;
 }
 
-void CMTMEngine::retrieveL(const QMessageId &messageId, const QMessageContentContainerId& id)
+void CMTMEngine::retrieveL(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id)
 {
     Q_UNUSED(id); // all attachments are retrieved (cannot retrieve only one)
     
-    long int messId = SymbianHelpers::stripIdPrefix(messageId.toString()).toLong();
+    long int msgId = SymbianHelpers::stripIdPrefix(messageId.toString()).toLong();
     
-    CMsvEntry* pEntry = ipMsvSession->GetEntryL(messId);
+    CMsvEntry* pEntry = ipMsvSession->GetEntryL(msgId);
     CleanupStack::PushL(pEntry);
     
-    CMsvEntrySelection* sel = new(ELeave) CMsvEntrySelection;
-    CleanupStack::PushL(sel);
-    
+    CAsynchronousMTMOperation* pMTMOperation = NULL;
     if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4){    
-        QMTMWait mtmWait;
+        pMTMOperation = createAsynchronousMTMOperation(privateService,
+                                                       ipImap4Mtm,
+                                                       pEntry->OwningService());
+    } else if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
+        pMTMOperation = createAsynchronousMTMOperation(privateService,
+                                                       ipPop3Mtm,
+                                                       pEntry->OwningService());
+    }
 
-        TPckgBuf<TInt> parameter;
-        
-        ipImap4Mtm->SwitchCurrentEntryL(pEntry->OwningService());
-        
-        sel->AppendL(messId);
-
-        CMsvOperation* opConnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect,
-                                                                    *sel, parameter,
-                                                                    mtmWait.iStatus);
-        mtmWait.start();
-        delete opConnect;
-        
-        TImImap4GetPartialMailInfo info;
-        info.iPartialMailOptions = EAttachmentsOnly;
-        TPckg<TImImap4GetPartialMailInfo> bodyInfo(info);
-
-        CMsvOperation* opPopulate = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
-                                                                     *sel, bodyInfo,
-                                                                     mtmWait.iStatus);
-        mtmWait.start();
-        delete opPopulate;
-        
-        if (mtmWait.iStatus.Int() != KErrNone) { 
-            if (mtmWait.iStatus.Int() == KErrNotFound){
-                // TODO: set messagestatus removed
-            }
+    if (pMTMOperation) {
+        if (!pMTMOperation->retrieveMessageAttachments(msgId)) {
+            User::Leave(KErrAccessDenied);
         }
-        
-        CMsvOperation* opDisconnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect,
-                                                                       *sel, parameter,
-                                                                       mtmWait.iStatus);
-        mtmWait.start();
-        delete opDisconnect;
+    } else {
+        User::Leave(KErrArgument);
     }
     
-    if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
-        QMTMWait mtmWait;
-
-        TPckgBuf<TInt> parameter;
-
-        ipPop3Mtm->SwitchCurrentEntryL(pEntry->OwningService());    
-
-        sel->AppendL(pEntry->EntryId());
-
-        CMsvOperation* opConnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMConnect,
-                                                                   *sel, parameter,
-                                                                   mtmWait.iStatus);
-        mtmWait.start();
-        delete opConnect;
-
-        CImPop3Settings *popSettings = new (ELeave) CImPop3Settings;
-        CleanupStack::PushL(popSettings);
-        CEmailAccounts *emailAccounts = CEmailAccounts::NewLC();
-        TPopAccount account;
-        emailAccounts->GetPopAccountL(pEntry->OwningService(), account);
-        emailAccounts->LoadPopSettingsL(account, *popSettings);
-        // cannot retrieve only attachment, have to retrieve entire message
-        popSettings->SetGetMailOptions(EGetPop3EmailMessages);
-        emailAccounts->SavePopSettingsL(account,*popSettings);
-        CleanupStack::PopAndDestroy(emailAccounts);
-        CleanupStack::PopAndDestroy(popSettings);
-
-        CMsvOperation* opPopulate = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMPopulate,
-                                                                    *sel, parameter,
-                                                                    mtmWait.iStatus);
-        mtmWait.start();
-        delete opPopulate;
-
-        CMsvOperation* opDisconnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMDisconnect,
-                                                                      *sel, parameter,
-                                                                      mtmWait.iStatus);
-        mtmWait.start();
-        delete opDisconnect;
-    }
-    
-    CleanupStack::PopAndDestroy(sel);    
     CleanupStack::PopAndDestroy(pEntry);
 }
 
-bool CMTMEngine::retrieveBody(const QMessageId& id)
+bool CMTMEngine::retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id)
 {
-    TRAPD(err, retrieveBodyL(id));
+    TRAPD(err, retrieveBodyL(privateService, id));
         if (err != KErrNone)
             return false;
         else
             return true;
 }
 
-void CMTMEngine::retrieveBodyL(const QMessageId& id) const
+void CMTMEngine::retrieveBodyL(QMessageServicePrivate& privateService, const QMessageId& id)
 {
-    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
+    long int msgId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     
-    CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
+    CMsvEntry* pEntry = ipMsvSession->GetEntryL(msgId);
     CleanupStack::PushL(pEntry);
     
-    CMsvEntrySelection* sel = new(ELeave) CMsvEntrySelection;
-    CleanupStack::PushL(sel);
-    
+    CAsynchronousMTMOperation* pMTMOperation = NULL;
     if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4){    
-        QMTMWait mtmWait;
+        pMTMOperation = createAsynchronousMTMOperation(privateService,
+                                                       ipImap4Mtm,
+                                                       pEntry->OwningService());
+    } else if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
+        pMTMOperation = createAsynchronousMTMOperation(privateService,
+                                                       ipPop3Mtm,
+                                                       pEntry->OwningService());
+    }
 
-        TPckgBuf<TInt> parameter;
-
-        ipImap4Mtm->SwitchCurrentEntryL(pEntry->OwningService());
-
-        sel->AppendL(messageId);
-        
-        CMsvOperation* opConnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect,
-                                                                    *sel, parameter,
-                                                                    mtmWait.iStatus);
-        mtmWait.start();
-        delete opConnect;
-        
-        TImImap4GetPartialMailInfo info;
-        info.iPartialMailOptions = EBodyTextOnly;
-        TPckg<TImImap4GetPartialMailInfo> bodyInfo(info);
-
-        CMsvOperation* opPopulate = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
-                                                                     *sel, bodyInfo,
-                                                                     mtmWait.iStatus);
-        mtmWait.start();
-        delete opPopulate;
-        
-        if (mtmWait.iStatus.Int() != KErrNone) { 
-            if (mtmWait.iStatus.Int() == KErrNotFound){
-                // TODO: set messagestatus removed
-            }
+    if (pMTMOperation) {
+        if (!pMTMOperation->retrieveMessageBody(msgId)) {
+            User::Leave(KErrAccessDenied);
         }
-        
-        CMsvOperation* opDisconnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect,
-                                                                       *sel, parameter,
-                                                                       mtmWait.iStatus);
-        mtmWait.start();
-        delete opDisconnect;
+    } else {
+        User::Leave(KErrArgument);
     }
     
-    if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
-        QMTMWait mtmWait;
-
-        TPckgBuf<TInt> parameter;
-        
-        ipPop3Mtm->SwitchCurrentEntryL(pEntry->OwningService());    
-
-        sel->AppendL(pEntry->EntryId());
-        
-        CMsvOperation* opConnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMConnect,
-                                                                   *sel, parameter,
-                                                                   mtmWait.iStatus);
-        mtmWait.start();
-        delete opConnect;
-        
-        CImPop3Settings *popSettings = new (ELeave) CImPop3Settings;
-        CleanupStack::PushL(popSettings);
-        CEmailAccounts *emailAccounts = CEmailAccounts::NewLC();
-        TPopAccount account;
-        emailAccounts->GetPopAccountL(pEntry->OwningService(), account);
-        emailAccounts->LoadPopSettingsL(account, *popSettings);
-        // cannot retrieve only body, have to retrieve entire message
-        popSettings->SetGetMailOptions(EGetPop3EmailMessages);
-        emailAccounts->SavePopSettingsL(account,*popSettings);
-        CleanupStack::PopAndDestroy(emailAccounts);
-        CleanupStack::PopAndDestroy(popSettings);
-
-        CMsvOperation* opPopulate = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMPopulate,
-                                                                    *sel, parameter,
-                                                                    mtmWait.iStatus);
-        mtmWait.start();
-        delete opPopulate;
-        
-        CMsvOperation* opDisconnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMDisconnect,
-                                                                      *sel, parameter,
-                                                                      mtmWait.iStatus);
-        mtmWait.start();
-        delete opDisconnect;
-    }
-    
-    CleanupStack::PopAndDestroy(sel);    
     CleanupStack::PopAndDestroy(pEntry);
 }
 
-bool CMTMEngine::retrieveHeader(const QMessageId& id)
+bool CMTMEngine::retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id)
 {
-    TRAPD(err, retrieveHeaderL(id));
+    TRAPD(err, retrieveHeaderL(privateService, id));
         if (err != KErrNone)
             return false;
         else
             return true;
 }
 
-void CMTMEngine::retrieveHeaderL(const QMessageId& id) const
+void CMTMEngine::retrieveHeaderL(QMessageServicePrivate& privateService, const QMessageId& id)
 {
-    long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
+    long int msgId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
     
-    CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
+    CMsvEntry* pEntry = ipMsvSession->GetEntryL(msgId);
     CleanupStack::PushL(pEntry);
     
-    CMsvEntrySelection* sel = new(ELeave) CMsvEntrySelection;
-    CleanupStack::PushL(sel);
-    
+    CAsynchronousMTMOperation* pMTMOperation = NULL;
     if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4){    
-        QMTMWait mtmWait;
-
-        TPckgBuf<TInt> parameter;
-
-        ipImap4Mtm->SwitchCurrentEntryL(pEntry->OwningService());
-
-        sel->AppendL(messageId);
-
-        CMsvOperation* opConnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect,
-                                                                    *sel, parameter,
-                                                                    mtmWait.iStatus);
-        mtmWait.start();
-        delete opConnect;
-            
-        TImImap4GetMailInfo info;
-        info.iGetMailBodyParts = EGetImap4EmailHeaders;
-        TPckg<TImImap4GetMailInfo> bodyInfo(info);
-        
-        CMsvOperation* opPopulate = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
-                                                                     *sel, bodyInfo,
-                                                                     mtmWait.iStatus);
-        mtmWait.start();
-        delete opPopulate;
-        
-        CMsvOperation* opDisconnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect,
-                                                                       *sel, parameter,
-                                                                       mtmWait.iStatus);
-        mtmWait.start();
-        delete opDisconnect;
+        pMTMOperation = createAsynchronousMTMOperation(privateService,
+                                                       ipImap4Mtm,
+                                                       pEntry->OwningService());
+    } else if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
+        pMTMOperation = createAsynchronousMTMOperation(privateService,
+                                                       ipPop3Mtm,
+                                                       pEntry->OwningService());
     }
     
-    if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
-        QMTMWait mtmWait;
-
-        TPckgBuf<TInt> parameter;
-        
-        ipPop3Mtm->SwitchCurrentEntryL(pEntry->OwningService());    
-
-        sel->AppendL(pEntry->EntryId());
-        
-        CMsvOperation* opConnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMConnect,
-                                                                   *sel, parameter,
-                                                                   mtmWait.iStatus);
-        mtmWait.start();
-        delete opConnect;
-
-        CImPop3Settings *popSettings = new (ELeave) CImPop3Settings;
-        CleanupStack::PushL(popSettings);
-        CEmailAccounts *emailAccounts = CEmailAccounts::NewLC();
-        TPopAccount account;
-        emailAccounts->GetPopAccountL(pEntry->OwningService(), account);
-        emailAccounts->LoadPopSettingsL(account, *popSettings);
-        popSettings->SetGetMailOptions(EGetPop3EmailHeaders);
-        emailAccounts->SavePopSettingsL(account,*popSettings);
-        CleanupStack::PopAndDestroy(emailAccounts);
-        CleanupStack::PopAndDestroy(popSettings);
-
-        CMsvOperation* opPopulate = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMPopulate,
-                                                                    *sel, parameter,
-                                                                    mtmWait.iStatus);
-        mtmWait.start();
-        delete opPopulate;
-        
-        CMsvOperation* opDisconnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMDisconnect,
-                                                                      *sel, parameter,
-                                                                      mtmWait.iStatus);
-        mtmWait.start();
-        delete opDisconnect;
+    if (pMTMOperation) {
+        if (!pMTMOperation->retrieveMessageHeader(msgId)) {
+            User::Leave(KErrAccessDenied);
+        }
+    } else {
+        User::Leave(KErrArgument);
     }
     
-    CleanupStack::PopAndDestroy(sel);    
     CleanupStack::PopAndDestroy(pEntry);
 }
 
-bool CMTMEngine::exportUpdates(const QMessageAccountId &id)
+bool CMTMEngine::exportUpdates(QMessageServicePrivate& privateService, const QMessageAccountId &id)
 {
-    TRAPD(err, exportUpdatesL(id));
+    TRAPD(err, exportUpdatesL(privateService, id));
     if (err != KErrNone) {
         return false;
     } else {
@@ -1271,41 +1089,25 @@ bool CMTMEngine::exportUpdates(const QMessageAccountId &id)
     }
 }
 
-void CMTMEngine::exportUpdatesL(const QMessageAccountId &id) const
+void CMTMEngine::exportUpdatesL(QMessageServicePrivate& privateService, const QMessageAccountId &id)
 {
+    CAsynchronousMTMOperation* pMTMOperation = NULL;
     QMessageAccount account = this->account(id);
     CMsvEntry* pEntry = retrieveCMsvEntryAndPushToCleanupStack(account.d_ptr->_service1EntryId);
     if (!pEntry) {
         User::Leave(KErrNotFound);
     }
     if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4) {
-        QMTMWait mtmWait;
-    
-        TPckgBuf<TInt> parameter;
-        CMsvEntrySelection* pMsvEntrySelection = new(ELeave) CMsvEntrySelection;
-        CleanupStack::PushL(pMsvEntrySelection);
-
-        ipImap4Mtm->SwitchCurrentEntryL(account.d_ptr->_service1EntryId);
-        pMsvEntrySelection->AppendL(account.d_ptr->_service1EntryId);
-        
-        CMsvOperation* pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect, *pMsvEntrySelection,
-                                                                        parameter, mtmWait.iStatus);
-        mtmWait.start();
-        delete pMsvOperation;
-
-        pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMFullSync, *pMsvEntrySelection,
-                                                         parameter, mtmWait.iStatus);
-        mtmWait.start();
-        delete pMsvOperation;
-        
-        pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect, *pMsvEntrySelection,
-                                                         parameter, mtmWait.iStatus);
-        mtmWait.start();
-        delete pMsvOperation;
-        
-        CleanupStack::PopAndDestroy(pMsvEntrySelection);
+        pMTMOperation = createAsynchronousMTMOperation(privateService,
+                                                       ipImap4Mtm,
+                                                       account.d_ptr->_service1EntryId);
+        pMTMOperation->doFullSync();
     }
     releaseCMsvEntryAndPopFromCleanupStack(pEntry);
+    
+    if (!pMTMOperation) {
+        User::Leave(KErrArgument);
+    }
 }
 
 bool CMTMEngine::removeMessageL(const QMessageId &id, QMessageManager::RemovalOption /*option*/)
@@ -4721,6 +4523,24 @@ void CMTMEngine::HandleSessionEventL(TMsvSessionEvent aEvent, TAny* aArg1,
     }
 }
 
+CAsynchronousMTMOperation* CMTMEngine::createAsynchronousMTMOperation(QMessageServicePrivate& privateService,
+                                                                      CBaseMtm* mtm,
+                                                                      TMsvId serviceId)
+{
+    TInt operationId = ++iOperationIds;
+    CAsynchronousMTMOperation* op = new CAsynchronousMTMOperation((CMTMEngine&)*this,
+                                                                   privateService,
+                                                                   mtm,
+                                                                   serviceId,
+                                                                   operationId);
+    return op;
+}
+
+void CMTMEngine::deleteAsynchronousMTMOperation(CAsynchronousMTMOperation *apOperation)
+{
+    delete apOperation;
+}
+
 CMessagesFindOperation::CMessagesFindOperation(CMTMEngine& aOwner, CMsvSession* apMsvSession, int aOperationId)
     : CActive(CActive::EPriorityStandard), iOwner(aOwner), ipMsvSession(apMsvSession), iOperationId(aOperationId),
         iResultCorrectlyOrdered(false)
@@ -5632,6 +5452,280 @@ void QMTMWait::RunL()
 void QMTMWait::DoCancel()
 {
     Cancel();
+}
+
+CAsynchronousMTMOperation::CAsynchronousMTMOperation(CMTMEngine& aParent,
+                                                     QMessageServicePrivate& aPrivateService,
+                                                     CBaseMtm* apMTM,
+                                                     TMsvId aServiceId,
+                                                     TInt aOperationId)
+    : CActive(EPriorityStandard),
+      ipParent(&aParent),
+      iOperationId(aOperationId),
+      iServiceId(aServiceId),
+      ipPrivateService(&aPrivateService),
+      ipMTM(apMTM)
+{
+    CActiveScheduler::Add(this);
+}
+
+CAsynchronousMTMOperation::~CAsynchronousMTMOperation()
+{
+    ipParent = NULL;
+    Cancel();
+}
+
+bool CAsynchronousMTMOperation::retrieveMessageHeader(TMsvId aMessageId)
+{
+    if (!isActive) {
+        isActive = true;
+        iOperation = MTMOperationRetrieveMessageHeader;
+        iOperationStep = MTMOperationStepConnect;
+        
+        iMessageId = aMessageId;
+        
+        TRAPD(err, RunL());
+        if (err == KErrNone) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CAsynchronousMTMOperation::retrieveMessageBody(TMsvId aMessageId)
+{
+    if (!isActive) {
+        isActive = true;
+        iOperation = MTMOperationRetrieveMessageBody;
+        iOperationStep = MTMOperationStepConnect;
+        
+        iMessageId = aMessageId;
+        
+        TRAPD(err, RunL());
+        if (err == KErrNone) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CAsynchronousMTMOperation::retrieveMessageAttachments(TMsvId aMessageId)
+{
+    if (!isActive) {
+        isActive = true;
+        iOperation = MTMOperationRetrieveMessageAttachments;
+        iOperationStep = MTMOperationStepConnect;
+        
+        iMessageId = aMessageId;
+        
+        TRAPD(err, RunL());
+        if (err == KErrNone) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CAsynchronousMTMOperation::doFullSync()
+{
+    if (!isActive) {
+        isActive = true;
+        iOperation = MTMOperationFullSync;
+        iOperationStep = MTMOperationStepConnect;
+        TRAPD(err, RunL());
+        if (err == KErrNone) {
+            return true;
+        }
+    }
+    return false;
+}
+
+void CAsynchronousMTMOperation::RunL()
+{
+    if (iStatus.Int() != KErrNone && iOperationStep != MTMOperationStepDisconnect) {
+        delete ipMsvEntrySelection;
+        ipMsvEntrySelection = NULL;
+        delete ipMsvOperation;
+        ipMsvOperation = NULL;
+    
+        isActive = false;
+        ipPrivateService->setFinished(false);
+
+        if (ipParent) {
+            ipParent->deleteAsynchronousMTMOperation(this);
+        }
+        return;
+    }
+
+    ipMTM->SwitchCurrentEntryL(iServiceId);
+    
+    switch(iOperationStep) {
+    case CAsynchronousMTMOperation::MTMOperationStepConnect:
+        {
+        TPckgBuf<TInt> parameter;
+        ipMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+        ipMsvEntrySelection->AppendL(iServiceId);
+        
+        if (ipMTM->Type() == KUidMsgTypeIMAP4) {
+            ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KIMAP4MTMConnect,
+                                                         *ipMsvEntrySelection,
+                                                         parameter,
+                                                         iStatus);
+        } else if (ipMTM->Type() == KUidMsgTypePOP3) {
+            ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KPOP3MTMConnect,
+                                                         *ipMsvEntrySelection,
+                                                         parameter,
+                                                         iStatus);
+        }
+        iOperationStep = MTMOperationStepDoOperation;
+        SetActive();
+        }
+        break;
+    case CAsynchronousMTMOperation::MTMOperationStepDoOperation:
+        {
+        delete ipMsvEntrySelection;
+        ipMsvEntrySelection = NULL;
+        delete ipMsvOperation;
+        ipMsvOperation = NULL;
+        
+        if (iOperation == MTMOperationRetrieveMessageHeader) {
+            // Retrieve header
+            ipMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+            
+            if (ipMTM->Type() == KUidMsgTypeIMAP4) {
+                ipMsvEntrySelection->AppendL(iMessageId);
+                TImImap4GetMailInfo info;
+                info.iMaxEmailSize = KMaxTInt;
+                info.iGetMailBodyParts = EGetImap4EmailHeaders;
+                TPckg<TImImap4GetMailInfo> bodyInfo(info);
+                ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
+                                                             *ipMsvEntrySelection,
+                                                             bodyInfo,
+                                                             iStatus);
+            } else if (ipMTM->Type() == KUidMsgTypePOP3) {
+                ipMsvEntrySelection->AppendL(iServiceId);
+                ipMsvEntrySelection->AppendL(iMessageId);
+                TPckgBuf<TInt> parameter;
+                ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KPOP3MTMPopulate,
+                                                             *ipMsvEntrySelection,
+                                                             parameter,
+                                                             iStatus);
+            }
+        } else if (iOperation == MTMOperationRetrieveMessageBody) {
+            // Retrieve message body
+            ipMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+            
+            if (ipMTM->Type() == KUidMsgTypeIMAP4) {
+                ipMsvEntrySelection->AppendL(iMessageId);
+                TImImap4GetPartialMailInfo info;
+                info.iMaxEmailSize = KMaxTInt;
+                info.iTotalSizeLimit = KMaxTInt;
+                info.iBodyTextSizeLimit = KMaxTInt;
+                info.iPartialMailOptions = EBodyTextOnly;
+                TPckg<TImImap4GetPartialMailInfo> bodyInfo(info);
+                ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
+                                                             *ipMsvEntrySelection,
+                                                             bodyInfo,
+                                                             iStatus);
+            } else if (ipMTM->Type() == KUidMsgTypePOP3) {
+                ipMsvEntrySelection->AppendL(iServiceId);
+                ipMsvEntrySelection->AppendL(iMessageId);
+                TPckgBuf<TInt> parameter;
+                ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KPOP3MTMPopulate,
+                                                             *ipMsvEntrySelection,
+                                                             parameter,
+                                                             iStatus);
+            }
+        }  else if (iOperation == MTMOperationRetrieveMessageAttachments) {
+            // Retrieve message attachments
+            ipMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+            
+            if (ipMTM->Type() == KUidMsgTypeIMAP4) {
+                ipMsvEntrySelection->AppendL(iMessageId);
+                TImImap4GetPartialMailInfo info;
+                info.iMaxEmailSize = KMaxTInt;
+                info.iTotalSizeLimit = KMaxTInt;
+                info.iAttachmentSizeLimit = KMaxTInt;
+                info.iPartialMailOptions = EAttachmentsOnly;
+                TPckg<TImImap4GetPartialMailInfo> bodyInfo(info);
+                ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
+                                                             *ipMsvEntrySelection,
+                                                             bodyInfo,
+                                                             iStatus);
+            } else if (ipMTM->Type() == KUidMsgTypePOP3) {
+                ipMsvEntrySelection->AppendL(iServiceId);
+                ipMsvEntrySelection->AppendL(iMessageId);
+                TPckgBuf<TInt> parameter;
+                ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KPOP3MTMPopulate,
+                                                             *ipMsvEntrySelection,
+                                                             parameter,
+                                                             iStatus);
+            }
+        } else if (iOperation == MTMOperationFullSync) {
+            // Do full sync for IMAP Account
+            // <=> in addition to syncing messages from server to client
+            //     syncs also changes (like read statuses) from client to server
+            ipMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+            ipMsvEntrySelection->AppendL(iServiceId);
+            
+            TImImap4GetMailInfo imap4GetMailInfo;
+            imap4GetMailInfo.iMaxEmailSize = KMaxTInt;
+            imap4GetMailInfo.iDestinationFolder = iServiceId+1; // remote inbox
+            imap4GetMailInfo.iGetMailBodyParts = EGetImap4EmailHeaders;
+            TPckgBuf<TImImap4GetMailInfo> package(imap4GetMailInfo);
+            
+            ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KIMAP4MTMFullSync,
+                                                         *ipMsvEntrySelection,
+                                                         package,
+                                                         iStatus);
+            
+        
+        }
+        iOperationStep = MTMOperationStepDisconnect;
+        SetActive();
+        }
+        break;
+    case CAsynchronousMTMOperation::MTMOperationStepDisconnect:
+        {
+        delete ipMsvEntrySelection;
+        ipMsvEntrySelection = NULL;
+        delete ipMsvOperation;
+        ipMsvOperation = NULL;
+        
+        TPckgBuf<TInt> parameter;
+        ipMsvEntrySelection = new(ELeave) CMsvEntrySelection;
+        ipMsvEntrySelection->AppendL(iServiceId);
+        if (ipMTM->Type() == KUidMsgTypeIMAP4) {
+            ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KIMAP4MTMDisconnect,
+                                                         *ipMsvEntrySelection,
+                                                         parameter,
+                                                         iStatus);
+        } else if (ipMTM->Type() == KUidMsgTypePOP3) {
+            ipMsvOperation = ipMTM->InvokeAsyncFunctionL(KPOP3MTMDisconnect,
+                                                         *ipMsvEntrySelection,
+                                                         parameter,
+                                                         iStatus);
+        }
+        iOperationStep = MTMOperationStepFinished;
+        SetActive();
+        }
+        break;
+    case CAsynchronousMTMOperation::MTMOperationStepFinished:
+        delete ipMsvEntrySelection;
+        ipMsvEntrySelection = NULL;
+        delete ipMsvOperation;
+        ipMsvOperation = NULL;
+
+        isActive = false;
+        ipPrivateService->setFinished(true);
+        ipParent->deleteAsynchronousMTMOperation(this);
+        break;
+    }
+}
+
+void CAsynchronousMTMOperation::DoCancel()
+{
+    ipMsvOperation->Cancel();
 }
 
 QTM_END_NAMESPACE
