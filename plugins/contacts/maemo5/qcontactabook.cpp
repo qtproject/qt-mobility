@@ -587,12 +587,17 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
 
 const QString QContactABook::getDisplayName(const QContact& contact) const{
   //Get Osso ABook ID for the contact (stored as GUID detail)
-  const char* acontactID;
+  const char* acontactID = NULL;
   {
     QContactGuid g = contact.detail(QContactGuid::DefinitionName);
     acontactID = qPrintable(g.guid());
   }
   
+  if (!acontactID){
+    QCM5_DEBUG << "The contact has not been saved yet and it doesn't have any GUID";
+    return QString();
+  }
+    
   //Get OssoABookContact
   OssoABookContact *acontact= NULL;
   {
@@ -606,9 +611,10 @@ const QString QContactABook::getDisplayName(const QContact& contact) const{
     
   }
   
-  if (!acontact)
+  if (!acontact){
+    QCM5_DEBUG << "AContact with ID:" << acontactID << "is null";
     return QString();
-  
+  }
   //Get Display name;
   const char* displayName = osso_abook_contact_get_display_name(acontact);  
 

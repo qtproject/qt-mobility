@@ -99,9 +99,30 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
 {
   QString label;
   
+  // Try to get the display name from the OSSO-ABook Contact
   label = d->m_abook->getDisplayName(contact);
   
+  // Synthesise the display label for not saved contacts
+  // A. FirstName + LastName
+  if (label.isEmpty()){
+    QContactName name = contact.detail(QContactName::DefinitionName);
+    QStringList nameList;
+    
+    nameList << name.firstName();
+    if (name.lastName().count()){
+      nameList << name.lastName();
+    }
+    
+    label = nameList.join(QString(' '));
+  }
   
+  // B. Email
+  if (label.isEmpty()){
+    QContactEmailAddress email = contact.detail(QContactEmailAddress::DefinitionName);
+    label = email.emailAddress();
+  }
+  
+  // 
   if (label.isEmpty()){
     *error = QContactManager::UnspecifiedError;
     return QString("No name");
