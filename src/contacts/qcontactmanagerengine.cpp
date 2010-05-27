@@ -326,6 +326,9 @@ QList<QContactRelationship> QContactManagerEngine::relationships(const QString& 
   with the key being the index into the input relationships list, and the value being the error which
   occurred for that index.
 
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The overall operation error will be saved in \a error.
  */
 bool QContactManagerEngine::saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
@@ -400,6 +403,9 @@ bool QContactManagerEngine::removeRelationship(const QContactRelationship& relat
   For any relationship which was unable to be removed, an entry into the \a errorMap will be created,
   with the key being the index into the input relationships list, and the value being the error which
   occurred for that index.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
 
   The overall operation error will be saved in \a error.
  */
@@ -1419,6 +1425,10 @@ bool QContactManagerEngine::removeContact(const QContactLocalId& contactId, QCon
   The manager might populate \a errorMap (the map of indices of the \a contacts list to
   the error which occurred when saving the contact at that index) for
   every index for which the contact could not be saved, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The \l QContactManager::error() function will only return \c QContactManager::NoError
   if all contacts were saved successfully.
 
@@ -1450,6 +1460,10 @@ bool QContactManagerEngine::saveContacts(QList<QContact>* contacts, QMap<int, QC
   The manager might populate \a errorMap (the map of indices of the \a contactIds list to
   the error which occurred when saving the contact at that index) for every
   index for which the contact could not be removed, if it is able.
+
+  The supplied \a errorMap parameter may be null, if the client does not desire detailed error information.
+  If supplied, it will be empty upon entry to this function.
+
   The \l QContactManager::error() function will
   only return \c QContactManager::NoError if all contacts were removed
   successfully.
