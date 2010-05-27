@@ -802,6 +802,7 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
 
     QString phonedef = QContactPhoneNumber::DefinitionName;
     QString phonenum = QContactPhoneNumber::FieldNumber;
+    bool localeCapsFirst = (QString("aaa").localeAwareCompare(QString("AAA")) > 0);
 
     int csflag = (int)Qt::MatchCaseSensitive;
 
@@ -837,10 +838,19 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
 
         /* due to ascii sorting, most lower case parameters give all results, which is boring */
         newMRow("no max, cs, badcase, all results", manager) << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefghijk";
-        newMRow("no max, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "cdefghijk";
+        if(localeCapsFirst) {
+            newMRow("no max, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "bcdefghijk";
+        } else {
+            newMRow("no max, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "cdefghijk";
+        }
+
         newMRow("no max, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant("XAMBEZI") << QVariant() << false << 0 << true << csflag << "hijk";
         newMRow("no min, cs, badcase, all results", manager) << manager << namedef << firstname << QVariant() << QVariant("XAMBEZI") << false << 0 << true << csflag << "abcdefg";
-        newMRow("no min, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "ab";
+        if(localeCapsFirst) {
+            newMRow("no min, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "a";
+        } else {
+            newMRow("no min, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "ab";
+        }
         newMRow("no min, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
 
         /* 'a' has phone number ("5551212") */
