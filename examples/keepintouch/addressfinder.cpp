@@ -176,6 +176,9 @@ void AddressFinder::searchMessages()
     setSearchActionEnabled(false);
 
     contactList->clear();
+#ifdef Q_WS_MAEMO_5
+    contactList->setMinimumHeight(0);
+#endif
     messageCombo->clear();
     excludedAddresses.clear();
     addressList.clear();
@@ -333,6 +336,11 @@ void AddressFinder::continueSearch()
 
                     // Add the recipient to our visible list of contacts to keep in touch with
                     contactList->addItem(contactDisplayName(address));
+#ifdef Q_WS_MAEMO_5
+                    // Assume each row is the same height
+                    int length = contactList->sizeHintForRow(0) * contactList->count();
+                    contactList->setMinimumHeight(length);
+#endif
                 }
 
                 if (details.isEmpty()) {
