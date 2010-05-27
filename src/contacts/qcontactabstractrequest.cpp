@@ -66,11 +66,58 @@ QTM_BEGIN_NAMESPACE
   but should instead use the use-case-specific classes derived from this
   class.
 
-  After creating any sort of request, the client retains ownership and
-  must delete the request to avoid leaking memory.  The client may either
-  do this directly (if not within a slot connected to a signal emitted
-  by the request) or by using the deleteLater() slot to schedule the
-  request for deletion when control returns to the event loop.
+  All such request classes have a similar interface: clients set the
+  parameters of the asynchronous call, including which manager the
+  request will be made of, and then call the start() slot of the request.
+  The manager will then enqueue or begin to process the request, at which
+  point the request's state will transition from \c InactiveState to
+  \c ActiveState.  After any state transition, the request will emit the
+  stateChanged() signal.  The manager may periodically update the request
+  with results, at which point the request will emit the resultsAvailable()
+  signal.  These results are not guaranteed to have a stable ordering.
+  Error information is considered a result, so some requests will emit the
+  resultsAvailable() signal even if no results are possible from the request
+  (for example, a contact remove request) when the manager updates the request
+  with information about any errors which may have occurred.
+
+  Please see the class documentation of each of the use-case-specific
+  classes derived from this class for information about how to retrieve
+  the results of a request (including error information).  In all cases,
+  those functions are synchronous, and will return the cached result set with
+  which the manager has updated the request instance if the resultsAvailable()
+  signal has been emitted.
+
+  Clients can choose which signals they wish to handle from a request.
+  If the client is not interested in interim results, they can choose to
+  handle only the stateChanged() signal, and in the slot to which that
+  signal is connected, check whether the state has changed to either
+  \c FinishedState or \c CanceledState (both of which signify that the
+  manager has finished handling the request, and that the request will not
+  be updated with any more results).  If the client is not interested in
+  any results (including error information), they may choose to delete
+  the request after calling \l start(), or simply not connect the
+  request's signals to any slots.
+
+  Clients may choose how to construct a request, either on the stack
+  (scope-local or class member) or on the heap (allocated with operator
+  new).  If the request is allocated on the heap, the client must
+  delete the request when they are no longer using it in order to avoid
+  leaking memory.  That is, the client retains ownership of the request.
+
+  The client may delete a heap-allocated request in various ways:
+  by deleting it directly (but not within a slot connected to a signal
+  emitted by the request), or by using the deleteLater() slot to schedule
+  the request for deletion when control returns to the event loop (from
+  within a slot connected to a signal emitted by the request, for example
+  \l stateChanged()).
+
+  Because clients retain ownership of any request object, and may delete
+  a request object at any time, manager engine implementors must be careful
+  to ensure that they do not assume that a request has not been deleted
+  at some point during processing of a request, particularly if the engine
+  has a multithreaded implementation.  It is suggested that engine
+  implementors read the \l{Qt Contacts Manager Engines} documentation for
+  more information on this topic.
  */
 
 /*!
