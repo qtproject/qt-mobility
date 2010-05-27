@@ -44,7 +44,7 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediaservice.h>
+#include "../../../src/multimedia/qmediaservice.h"
 
 class AudioCaptureSession;
 class AudioEncoderControl;

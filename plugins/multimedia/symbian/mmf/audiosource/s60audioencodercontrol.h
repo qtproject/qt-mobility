@@ -69,21 +69,13 @@ public:
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);    
     
-private:    
-    QString audioCodec() const;
-    bool setAudioCodec(const QString &codecName);
-    int bitRate() const;
-    void setBitRate(int);
+private:
     QtMultimedia::EncodingQuality quality() const;
-    void setQuality(QtMultimedia::EncodingQuality);
-    int sampleRate() const;
-    void setSampleRate(int sampleRate);
-    int channelCount() const;
-    void setChannelCount(int channels);    
-    int sampleSize() const;
-    void setSampleSize(int sampleSize);    
+    void setQuality(QtMultimedia::EncodingQuality, QAudioFormat &format);
+
 private:
     S60AudioCaptureSession* m_session;
+    QAudioEncoderSettings m_settings;
     QtMultimedia::EncodingQuality m_quality;
 };
 

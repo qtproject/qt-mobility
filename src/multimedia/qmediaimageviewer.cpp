@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qmediaimageviewer.h>
+#include "qmediaimageviewer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaimageviewerservice_p.h>
+#include "qmediaobject_p.h"
+#include "qmediaimageviewerservice_p.h"
 
 #include <qmediaplaylist.h>
 #include <qmediaplaylistsourcecontrol.h>
@@ -52,7 +52,6 @@
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
 #include <QtCore/qdatetime.h>
-
 
 QT_BEGIN_NAMESPACE
 

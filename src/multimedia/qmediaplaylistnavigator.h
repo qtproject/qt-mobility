@@ -42,8 +42,8 @@
 #ifndef QMEDIAPLAYLISTNAVIGATOR_H
 #define QMEDIAPLAYLISTNAVIGATOR_H
 
-#include <qmediaplaylistprovider.h>
-#include <qmediaplaylist.h>
+#include "qmediaplaylistprovider.h"
+#include "qmediaplaylist.h"
 #include <QtCore/qobject.h>
 
 QT_BEGIN_NAMESPACE

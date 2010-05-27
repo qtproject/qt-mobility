@@ -42,7 +42,7 @@
 #ifndef VMR9VIDEOWINDOWCONTROL_H
 #define VMR9VIDEOWINDOWCONTROL_H
 
-#include <qvideowindowcontrol.h>
+#include "../../src/multimedia/qvideowindowcontrol.h"
 
 #include <dshow.h>
 #include <d3d9.h>

@@ -677,7 +677,27 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QDateTimeEdit" name="timestampdateTimeEdit"/>
+         <widget class="QDateTimeEdit" name="timestampdateTimeEdit">
+          <property name="dateTime">
+           <datetime>
+            <hour>0</hour>
+            <minute>0</minute>
+            <second>0</second>
+            <year>2000</year>
+            <month>1</month>
+            <day>1</day>
+           </datetime>
+          </property>
+          <property name="currentSection">
+           <enum>QDateTimeEdit::MonthSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>yyyy/MM/dd HH:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item row="4" column="0">
          <widget class="QPushButton" name="timestampButton">
@@ -757,7 +777,17 @@
          </widget>
         </item>
         <item row="3" column="0">
-         <widget class="QDateTimeEdit" name="receptiondateTimeEdit"/>
+         <widget class="QDateTimeEdit" name="receptiondateTimeEdit">
+          <property name="currentSection">
+           <enum>QDateTimeEdit::MonthSection</enum>
+          </property>
+          <property name="displayFormat">
+           <string>yyyy/MM/dd HH:mm</string>
+          </property>
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item row="4" column="0">
          <widget class="QPushButton" name="receptionButton">

@@ -73,7 +73,6 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 	return m_session->codecDescription(codecName);    
 }
 
-<<<<<<< HEAD
 int S60AudioEncoderControl::bitRate() const
 {
     return (m_session->format().frequency() * m_session->format().channels() * (m_session->format().sampleSize() / 8));
@@ -152,10 +151,10 @@ void S60AudioEncoderControl::setEncodingOption(
         const QString &codec, const QString &name, const QVariant &value)
 {
     if (codec == "PCM") {        
-        if(qstrcmp(name.toLocal8Bit().constData(), "bitrate") == 0) {
-            setBitRate(value.toInt());
-        } else if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
-            setQuality((QtMultimedia::EncodingQuality)value.toInt());
+        QAudioFormat fmt = m_session->format();
+
+        if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
+            setQuality((QtMultimedia::EncodingQuality)value.toInt(), fmt);
         } else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
             fmt.setChannels(value.toInt());
         } else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0) {
@@ -180,11 +179,13 @@ QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
-    if (settings.encodingMode() == QtMultimedia::ConstantQualityEncoding) {             
-        setAudioCodec(settings.codec());
-        setQuality(settings.quality());
-        if (settings.sampleRate() > 0)
-            setSampleRate(settings.sampleRate());   
+    QAudioFormat fmt = m_session->format();
+    if (settings.encodingMode() == QtMultimedia::ConstantQualityEncoding) {
+        fmt.setCodec(settings.codec());
+        setQuality(settings.quality(), fmt);
+        if (settings.sampleRate() > 0) {
+            fmt.setFrequency(settings.sampleRate());
+        }
         if (settings.channelCount() > 0)
             fmt.setChannels(settings.channelCount());
     }else {

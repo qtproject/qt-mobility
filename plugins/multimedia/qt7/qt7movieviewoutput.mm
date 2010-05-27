@@ -51,7 +51,6 @@
 #include <QuartzCore/CIFilter.h>
 #include <QuartzCore/CIVector.h>
 
-
 QT_USE_NAMESPACE
 
 #define VIDEO_TRANSPARENT(m) -(void)m:(NSEvent *)e{[[self superview] m:e];}

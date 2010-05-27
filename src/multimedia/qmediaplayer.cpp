@@ -46,7 +46,7 @@
 #include <QtCore/qpointer.h>
 
 
-#include <qmediaplayer.h>
+#include "qmediaplayer.h"
 
 #include <qmediaobject_p.h>
 #include <qmediaservice.h>

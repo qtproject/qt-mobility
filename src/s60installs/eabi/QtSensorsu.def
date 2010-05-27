@@ -169,18 +169,18 @@ EXPORTS
 	_ZN10QtMobility7QSensor11qt_metacastEPKc @ 168 NONAME
 	_ZN10QtMobility7QSensor11sensorErrorEi @ 169 NONAME
 	_ZN10QtMobility7QSensor11sensorTypesEv @ 170 NONAME
-	_ZN10QtMobility7QSensor12removeFilterEPNS_13QSensorFilterE @ 171 NONAME
-	_ZN10QtMobility7QSensor13setIdentifierERK10QByteArray @ 172 NONAME
-	_ZN10QtMobility7QSensor14readingChangedEv @ 173 NONAME
-	_ZN10QtMobility7QSensor14sensorsForTypeERK10QByteArray @ 174 NONAME
-	_ZN10QtMobility7QSensor14setOutputRangeEi @ 175 NONAME
-	_ZN10QtMobility7QSensor16staticMetaObjectE @ 176 NONAME DATA 16
-	_ZN10QtMobility7QSensor17setUpdateIntervalEi @ 177 NONAME
-	_ZN10QtMobility7QSensor19getStaticMetaObjectEv @ 178 NONAME
-	_ZN10QtMobility7QSensor20defaultSensorForTypeERK10QByteArray @ 179 NONAME
-	_ZN10QtMobility7QSensor4stopEv @ 180 NONAME
-	_ZN10QtMobility7QSensor5startEv @ 181 NONAME
-	_ZN10QtMobility7QSensor7connectEv @ 182 NONAME
+	_ZN10QtMobility7QSensor11setDataRateEi @ 171 NONAME
+	_ZN10QtMobility7QSensor12removeFilterEPNS_13QSensorFilterE @ 172 NONAME
+	_ZN10QtMobility7QSensor13setIdentifierERK10QByteArray @ 173 NONAME
+	_ZN10QtMobility7QSensor14readingChangedEv @ 174 NONAME
+	_ZN10QtMobility7QSensor14sensorsForTypeERK10QByteArray @ 175 NONAME
+	_ZN10QtMobility7QSensor14setOutputRangeEi @ 176 NONAME
+	_ZN10QtMobility7QSensor16connectToBackendEv @ 177 NONAME
+	_ZN10QtMobility7QSensor16staticMetaObjectE @ 178 NONAME DATA 16
+	_ZN10QtMobility7QSensor19getStaticMetaObjectEv @ 179 NONAME
+	_ZN10QtMobility7QSensor20defaultSensorForTypeERK10QByteArray @ 180 NONAME
+	_ZN10QtMobility7QSensor4stopEv @ 181 NONAME
+	_ZN10QtMobility7QSensor5startEv @ 182 NONAME
 	_ZN10QtMobility7QSensor9addFilterEPNS_13QSensorFilterE @ 183 NONAME
 	_ZN10QtMobility7QSensorC1ERK10QByteArrayP7QObject @ 184 NONAME
 	_ZN10QtMobility7QSensorC2ERK10QByteArrayP7QObject @ 185 NONAME
@@ -233,15 +233,15 @@ EXPORTS
 	_ZNK10QtMobility7QSensor10identifierEv @ 232 NONAME
 	_ZNK10QtMobility7QSensor10metaObjectEv @ 233 NONAME
 	_ZNK10QtMobility7QSensor11descriptionEv @ 234 NONAME
-	_ZNK10QtMobility7QSensor11isConnectedEv @ 235 NONAME
-	_ZNK10QtMobility7QSensor11outputRangeEv @ 236 NONAME
-	_ZNK10QtMobility7QSensor12outputRangesEv @ 237 NONAME
-	_ZNK10QtMobility7QSensor14updateIntervalEv @ 238 NONAME
-	_ZNK10QtMobility7QSensor18availableDataRatesEv @ 239 NONAME
-	_ZNK10QtMobility7QSensor4typeEv @ 240 NONAME
-	_ZNK10QtMobility7QSensor5errorEv @ 241 NONAME
-	_ZNK10QtMobility7QSensor6isBusyEv @ 242 NONAME
-	_ZNK10QtMobility7QSensor7readingEv @ 243 NONAME
+	_ZNK10QtMobility7QSensor11outputRangeEv @ 235 NONAME
+	_ZNK10QtMobility7QSensor12outputRangesEv @ 236 NONAME
+	_ZNK10QtMobility7QSensor18availableDataRatesEv @ 237 NONAME
+	_ZNK10QtMobility7QSensor20isConnectedToBackendEv @ 238 NONAME
+	_ZNK10QtMobility7QSensor4typeEv @ 239 NONAME
+	_ZNK10QtMobility7QSensor5errorEv @ 240 NONAME
+	_ZNK10QtMobility7QSensor6isBusyEv @ 241 NONAME
+	_ZNK10QtMobility7QSensor7readingEv @ 242 NONAME
+	_ZNK10QtMobility7QSensor8dataRateEv @ 243 NONAME
 	_ZNK10QtMobility7QSensor8isActiveEv @ 244 NONAME
 	_ZNK10QtMobility8QCompass10metaObjectEv @ 245 NONAME
 	_ZTIN10QtMobility10QTapSensorE @ 246 NONAME

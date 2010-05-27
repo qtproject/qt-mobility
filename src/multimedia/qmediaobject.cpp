@@ -41,7 +41,7 @@
 
 #include <QtCore/qmetaobject.h>
 
-#include <qmediaobject_p.h>
+#include "qmediaobject_p.h"
 
 #include <qmediaservice.h>
 #include <qmetadatareadercontrol.h>

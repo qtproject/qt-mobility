@@ -31,50 +31,50 @@ symbian: {
     isEmpty(epoc31) {
         EPOCROOT31 = $${EPOCROOT}
     } else {
-    EPOCROOT31 = $$(EPOCROOT31)
+        EPOCROOT31 = $$(EPOCROOT31)
     }
     isEmpty(epoc32) {
         EPOCROOT32 = $${EPOCROOT}
     }else {
-    EPOCROOT32 = $$(EPOCROOT32)
+        EPOCROOT32 = $$(EPOCROOT32)
     }
     isEmpty(epoc50) {
         EPOCROOT50 = $${EPOCROOT}
     } else {
-    EPOCROOT50 = $$(EPOCROOT50)
+        EPOCROOT50 = $$(EPOCROOT50)
     }
 
     contains(mobility_modules, messaging): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/QtMessaging.dll
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtMessaging.dll
 
     contains(mobility_modules, serviceframework): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/QtServiceFramework.dll \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/SFWDatabaseManagerServer.exe
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtServiceFramework.dll \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/SFWDatabaseManagerServer.exe
 
     contains(mobility_modules, location): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/QtLocation.dll
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtLocation.dll
 
     contains(mobility_modules, systeminfo): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/QtSystemInfo.dll
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtSystemInfo.dll
 
     contains(mobility_modules, publishsubscribe): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/QtPublishSubscribe.dll \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/PSPathMapperServer.exe
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtPublishSubscribe.dll \
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/PSPathMapperServer.exe
 
     contains(mobility_modules, versit): qtmobilitydeployment.sources += \
-        $$(EPOCROOT50)epoc32/release/armv5/urel/QtVersit.dll 
+        $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtVersit.dll
 
 
     contains(mobility_modules, bearer) {
         bearer = \
             "IF package(0x1028315F)" \
-            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
             "ELSEIF package(0x102752AE)" \
-            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
             "ELSEIF package(0x102032BE)" \
-            "   \"$$EPOCROOT31\epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
             "ELSE" \
-            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtBearer.dll\" - \"!:\\sys\\bin\\QtBearer.dll\"" \
             "ENDIF"
 
         qtmobilitydeployment.pkg_postrules += bearer
@@ -83,31 +83,39 @@ symbian: {
     contains(mobility_modules, contacts) {
 
         qtmobilitydeployment.sources += \
-            $$(EPOCROOT50)epoc32/release/armv5/urel/QtContacts.dll
+            $${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/QtContacts.dll
 
         contacts = \
             "IF package(0x1028315F)" \
-            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbian.dll\" - \"!:\\sys\\bin\\qtcontacts_symbian.dll\"" \
             "ELSEIF package(0x102752AE)" \
-            "   \"$$EPOCROOT32\epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbian.dll\" - \"!:\\sys\\bin\\qtcontacts_symbian.dll\"" \
             "ELSEIF package(0x102032BE)" \
-            "   \"$$EPOCROOT31\epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbian.dll\" - \"!:\\sys\\bin\\qtcontacts_symbian.dll\"" \
             "ELSE" \
-            "   \"$$EPOCROOT50\epoc32/release/armv5/urel/mobapicontactspluginsymbian.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbian.dll\"" \
-            "ENDIF" \
-            "\"$$EPOCROOT50\epoc32/release/armv5/urel/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\""
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbian.dll\" - \"!:\\sys\\bin\\qtcontacts_symbian.dll\"" \
+            "ENDIF"
 
         qtmobilitydeployment.pkg_postrules += contacts
 
         pluginstubs += \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/mobapicontactspluginsymbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbian.qtplugin\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbiansim/qmakepluginstubs/mobapicontactspluginsymbiansim.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbiansim.qtplugin\""
-
-        symbiancntsim = \
-            "\"$${EPOCROOT50}epoc32/release/armv5/urel/mobapicontactspluginsymbiansim.dll\" - \"!:\\sys\\bin\\mobapicontactspluginsymbiansim.dll\"" \
-            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbiansim/qmakepluginstubs/mobapicontactspluginsymbiansim.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\mobapicontactspluginsymbiansim.qtplugin\""
+            "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbian/qmakepluginstubs/qtcontacts_symbian.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbian.qtplugin\""
 
         contains(symbiancntsim_enabled, yes) {
+            pluginstubs += \
+                "\"$$QT_MOBILITY_BUILD_TREE/plugins/contacts/symbiansim/qmakepluginstubs/qtcontacts_symbiansim.qtplugin\"  - \"!:\\resource\\qt\\plugins\\contacts\\qtcontacts_symbiansim.qtplugin\""
+
+            symbiancntsim = \
+                "IF package(0x1028315F)" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbiansim.dll\" - \"!:\\sys\\bin\\qtcontacts_symbiansim.dll\"" \
+                "ELSEIF package(0x102752AE)" \
+                "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbiansim.dll\" - \"!:\\sys\\bin\\qtcontacts_symbiansim.dll\"" \
+                "ELSEIF package(0x102032BE)" \
+                "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbiansim.dll\" - \"!:\\sys\\bin\\qtcontacts_symbiansim.dll\"" \
+                "ELSE" \
+                "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtcontacts_symbiansim.dll\" - \"!:\\sys\\bin\\qtcontacts_symbiansim.dll\"" \
+                "ENDIF"
+
             qtmobilitydeployment.pkg_postrules += symbiancntsim
         }
 
@@ -128,7 +136,7 @@ symbian: {
             "   \"$$EPOCROOT31\epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimedia_mmfengine.dll\"" \
             "ELSE" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmedia_mmfengine.dll\"" \
-            "ENDIF" \
+            "ENDIF"
 
 
         qtmobilitydeployment.pkg_postrules += multimedia

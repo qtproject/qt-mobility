@@ -48,7 +48,7 @@
 #include <QtGui/qscrollbar.h>
 #include <QtGui/qx11info_x11.h>
 
-#include <qgraphicsvideoitem.h>
+#include "qgraphicsvideoitem.h"
 
 #include <qmediaobject.h>
 #include <qmediaservice.h>
@@ -57,7 +57,7 @@
 
 #include <qvideosurfaceformat.h>
 
-#include <qxvideosurface_maemo5_p.h>
+#include "qxvideosurface_maemo5_p.h"
 
 
 QT_BEGIN_NAMESPACE

@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qmediaencodersettings.h>
+#include "qmediaencodersettings.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -196,8 +196,9 @@ QtMultimedia::EncodingMode QAudioEncoderSettings::encodingMode() const
 /*!
     Sets the audio encoding \a mode setting.
 
-    If QtMultimedia::ConstantQualityEncoding is set, the quality encoding
-    parameter is used and bit rate is ignored, otherwise the bitrate is used.
+    If QtMultimedia::ConstantQualityEncoding is set, the quality
+    encoding parameter is used and bit rate is ignored,
+    otherwise the bitrate is used.
 
     The audio codec, channels count and sample rate settings are used in all
     the encoding modes.

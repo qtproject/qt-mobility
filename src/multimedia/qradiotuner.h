@@ -44,8 +44,8 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediaobject.h>
-#include <qmediaserviceprovider.h>
+#include "qmediaobject.h"
+#include "qmediaserviceprovider.h"
 
 #include <QPair>
 

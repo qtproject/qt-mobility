@@ -1,20 +1,20 @@
 TEMPLATE = lib
 CONFIG += plugin
 INCLUDEPATH += ../../../src/serviceframework
-TARGET = serviceframework_voipdialerservice
-include(../../examples.pri)
-
+HEADERS += voipdialer.h \
+           voipdialerplugin.h
+SOURCES += voipdialer.cpp \
+           voipdialerplugin.cpp
 QT += gui
+TARGET = serviceframework_voipdialerservice
+DESTDIR = .
 
-# Input 
-HEADERS += voipdialer.h voipdialerplugin.h
-SOURCES += voipdialer.cpp voipdialerplugin.cpp
-
+include(../../examples.pri)
 CONFIG += mobility
 MOBILITY = serviceframework
 
 symbian {
-    TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData UserEnvironment WriteUserData
+    TARGET.CAPABILITY = ALL -TCB
 }
 
 xml.path = $$DESTDIR/xmldata

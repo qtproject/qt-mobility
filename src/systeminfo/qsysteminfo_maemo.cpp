@@ -40,7 +40,6 @@
 ****************************************************************************/
 #include <qsysteminfo.h>
 #include <qsysteminfo_maemo_p.h>
-
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -208,6 +207,8 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxComm
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
+    if(wlanSignalStrengthTimer->isActive())
+        wlanSignalStrengthTimer->stop();
 }
 
 
@@ -441,6 +442,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
     currentCellNetworkStatus = QSystemNetworkInfo::UndefinedStatus;
+    currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
     currentEthernetState = "down";
     currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
     currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
@@ -450,7 +452,11 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
     currentMNC = "";
     cellSignalStrength = 0;
     currentOperatorName = "";
-    int radioAccessTechnology = 0;
+    radioAccessTechnology = 0;
+    iWlanStrengthCheckEnabled = 0;
+    wlanSignalStrengthTimer = new QTimer(this);
+
+    connect(wlanSignalStrengthTimer, SIGNAL(timeout()), this, SLOT(wlanSignalStrengthCheck()));
 
     QString devFile = "/sys/class/net/usb0/operstate";
     QFileInfo fi(devFile);
@@ -559,7 +565,20 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                               this, SLOT(usbCableAction())) ) {
         qWarning() << "unable to connect to usbCableAction (disconnect)";
     }
-
+    if(!systemDbusConnection.connect("org.freedesktop.Hal",
+                              "/org/freedesktop/Hal/Manager",
+                              "org.freedesktop.Hal.Manager",
+                              QLatin1String("DeviceAdded"),
+                              this, SLOT(bluetoothNetworkStatusCheck())) ) {
+        qWarning() << "unable to connect to bluetoothNetworkStatusCheck (1)";
+    }
+    if(!systemDbusConnection.connect("org.freedesktop.Hal",
+                              "/org/freedesktop/Hal/Manager",
+                              "org.freedesktop.Hal.Manager",
+                              QLatin1String("DeviceRemoved"),
+                              this, SLOT(bluetoothNetworkStatusCheck())) ) {
+        qWarning() << "unable to connect to bluetoothNetworkStatusCheck (2)";
+    }
 #endif
 }
 
@@ -640,10 +659,6 @@ void QSystemNetworkInfoPrivate::icdStatusChanged(QString, QString var2, QString,
     if (var2 == "WLAN_INFRA") {
         emit networkStatusChanged(QSystemNetworkInfo::WlanMode,
                                   networkStatus(QSystemNetworkInfo::WlanMode));
-        if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
-            currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
-            emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
-        }
     }
 }
 
@@ -680,6 +695,38 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
         return QSystemNetworkInfo::WcdmaMode;
 
     return QSystemNetworkInfo::UnknownMode;
+}
+
+void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
+{
+    if (currentWlanSignalStrength != networkSignalStrength(QSystemNetworkInfo::WlanMode)) {
+        currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
+        emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
+    }
+}
+
+void QSystemNetworkInfoPrivate::bluetoothNetworkStatusCheck()
+{
+    if (currentBluetoothNetworkStatus != networkStatus(QSystemNetworkInfo::BluetoothMode)) {
+        currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
+        emit networkStatusChanged(QSystemNetworkInfo::BluetoothMode, currentBluetoothNetworkStatus);
+    }
+}
+
+
+void QSystemNetworkInfoPrivate::setWlanSignalStrengthCheckEnabled(bool enabled)
+{
+    if (enabled) {
+        iWlanStrengthCheckEnabled++;
+        if (!wlanSignalStrengthTimer->isActive())
+            wlanSignalStrengthTimer->start(5000); //5 seconds interval
+    } else {
+        iWlanStrengthCheckEnabled--;
+        if (iWlanStrengthCheckEnabled <= 0) {
+            if(wlanSignalStrengthTimer->isActive())
+                wlanSignalStrengthTimer->stop();
+        }
+    }
 }
 
 QSystemDisplayInfoPrivate::QSystemDisplayInfoPrivate(QSystemDisplayInfoLinuxCommonPrivate *parent)

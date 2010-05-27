@@ -42,7 +42,7 @@
 #ifndef QLOCALMEDIAPAYLISTPROVIDER_H
 #define QLOCALMEDIAPAYLISTPROVIDER_H
 
-#include <qmediaplaylistprovider.h>
+#include "qmediaplaylistprovider.h"
 
 QT_BEGIN_NAMESPACE
 

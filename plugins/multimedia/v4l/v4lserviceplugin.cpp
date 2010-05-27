@@ -80,5 +80,5 @@ QString V4LServicePlugin::deviceDescription(const QByteArray &service, const QBy
 }
 
 
-Q_EXPORT_PLUGIN2(v4lengine, V4LServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_v4lengine, V4LServicePlugin);
 

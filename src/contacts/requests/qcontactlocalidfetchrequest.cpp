@@ -57,14 +57,9 @@ QTM_BEGIN_NAMESPACE
   \ingroup contacts-requests
  */
 
-/*! Constructs a new contact id fetch request */
-QContactLocalIdFetchRequest::QContactLocalIdFetchRequest()
-    : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate)
-{
-}
-
-/*! Cleans up the memory in use by this contact id fetch request */
-QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest()
+/*! Constructs a new contact id fetch request whose parent is the specified \a parent */
+QContactLocalIdFetchRequest::QContactLocalIdFetchRequest(QObject* parent)
+    : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate, parent)
 {
 }
 

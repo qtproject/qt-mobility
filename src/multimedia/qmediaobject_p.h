@@ -57,7 +57,7 @@
 #include <QtCore/qset.h>
 #include <QtCore/qtimer.h>
 
-#include <qmediaobject.h>
+#include "qmediaobject.h"
 
 QT_BEGIN_NAMESPACE
 

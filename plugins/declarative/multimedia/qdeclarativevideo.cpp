@@ -435,8 +435,6 @@ void QDeclarativeVideo::componentComplete()
         connect(m_playerControl, SIGNAL(videoAvailableChanged(bool)),
                 this, SIGNAL(hasVideoChanged()));
 
-        //m_graphicsItem->setMediaObject(m_mediaObject);
-        //m_mediaObject->setVideoOutput(m_graphicsItem)
         m_mediaObject->bind(m_graphicsItem);
 
     }

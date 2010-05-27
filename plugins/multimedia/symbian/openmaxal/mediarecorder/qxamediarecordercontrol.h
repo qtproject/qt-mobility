@@ -68,15 +68,14 @@ public:
     QMediaRecorder::State state() const;
 
     qint64 duration() const;
+    bool isMuted() const;
     void applySettings();
-
-    bool isMuted() const { return false; }
 
 public Q_SLOTS:
     void record();
     void pause();
     void stop();
-    void setMuted(bool) {}
+    void setMuted(bool);
 
 private:
     QXARecordSession *m_session;

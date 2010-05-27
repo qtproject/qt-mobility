@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qmediaimageviewerservice_p.h>
+#include "qmediaimageviewerservice_p.h"
 
-#include <qmediacontrol_p.h>
-#include <qmediaservice_p.h>
+#include "qmediacontrol_p.h"
+#include "qmediaservice_p.h"
 
 #include <qmediacontent.h>
 #include <qmediaresource.h>

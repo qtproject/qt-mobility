@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qmediarecorder.h>
+#include "qmediarecorder.h"
 
 #include <qmediarecordercontrol.h>
 #include <qmediaobject_p.h>
@@ -152,7 +152,7 @@ void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
         q->addPropertyWatch("duration");
     else
         q->removePropertyWatch("duration");
-        */
+    */
 
 //    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
     if (state != ps) {

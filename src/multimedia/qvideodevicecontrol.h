@@ -42,7 +42,7 @@
 #ifndef QVIDEODEVICECONTROL_H
 #define QVIDEODEVICECONTROL_H
 
-#include <qmediacontrol.h>
+#include "qmediacontrol.h"
 
 QT_BEGIN_NAMESPACE
 

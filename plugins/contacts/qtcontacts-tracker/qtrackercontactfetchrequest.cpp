@@ -40,7 +40,6 @@
 ****************************************************************************/
 
 #include "qtrackercontactfetchrequest.h"
-#include "qcontacttrackerbackend_p.h"
 
 #include <qtcontacts.h>
 
@@ -704,7 +703,7 @@ void QTrackerContactFetchRequest::contactsReady()
         QContactDisplayLabel dl = cont.detail(QContactDisplayLabel::DefinitionName);
         if (dl.label().isEmpty()) {
             QContactManager::Error synthError;
-            result[i] = QContactTrackerEngine::setContactDisplayLabel(engine->synthesizedDisplayLabel(cont, &synthError), cont);
+            QContactManagerEngine::setContactDisplayLabel(&cont, engine->synthesizedDisplayLabel(cont, &synthError));
         }
     }
     emitFinished();

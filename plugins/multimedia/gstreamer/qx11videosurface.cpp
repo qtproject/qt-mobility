@@ -46,6 +46,8 @@
 
 #ifndef QT_NO_XVIDEO
 
+#ifndef QT_NO_XVIDEO
+
 #include "qx11videosurface.h"
 
 Q_DECLARE_METATYPE(XvImage*);

@@ -42,7 +42,7 @@
 #include <qmobilityglobal.h>
 #include <QtTest/QtTest>
 
-#include "qvideowidget.h"
+#include "../../../src/multimedia/qvideowidget.h"
 
 #include "qmediaobject.h"
 #include "qmediaservice.h"

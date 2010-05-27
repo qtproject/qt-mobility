@@ -92,11 +92,11 @@ public:
     }
 
     QtMultimedia::SupportEstimate hasSupport(const QString &mimeType, const QStringList& codecs) const
-    {        
+    {
         if (codecs.contains(QLatin1String("mpeg4")))
             return QtMultimedia::NotSupported;
 
-        if (mimeType == "audio/ogg") {            
+        if (mimeType == "audio/ogg") {
             return QtMultimedia::ProbablySupported;
         }
 

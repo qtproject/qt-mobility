@@ -42,7 +42,7 @@
 #ifndef DIRECTSHOWVIDEORENDERERCONTROL_H
 #define DIRECTSHOWVIDEORENDERERCONTROL_H
 
-#include <qvideorenderercontrol.h>
+#include "../../src/multimedia/qvideorenderercontrol.h"
 
 #include <dshow.h>
 

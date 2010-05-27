@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qgraphicsvideoitem.h>
+#include "qgraphicsvideoitem.h"
 
 #include <qmediaobject.h>
 #include <qmediaservice.h>

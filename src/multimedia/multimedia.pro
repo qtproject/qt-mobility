@@ -108,9 +108,9 @@ SOURCES += qmediacontrol.cpp \
     qvideorenderercontrol.cpp \
     qmediatimerange.cpp
 
-    include(audio/audio.pri)
-    include(video/video.pri)
-    include(effects/effects.pri)
+include(audio/audio.pri)
+include(video/video.pri)
+include(effects/effects.pri)
 
 mac {
    HEADERS += qpaintervideosurface_mac_p.h

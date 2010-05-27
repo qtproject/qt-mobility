@@ -354,7 +354,7 @@ void tst_QMediaObject::availableExtendedMetaData()
         count = count-1;
         int i = 0;
         while(count >= i)
-            {            
+            {
             qWarning() << "metaDataKeys " << i <<". " << metaDataKeys.at(i);
             i++;
             }*/

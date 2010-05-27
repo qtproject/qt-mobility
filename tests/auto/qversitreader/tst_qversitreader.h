@@ -93,6 +93,7 @@ private slots: // Tests
     void testParseVersitDocument();
     void testParseVersitDocument_data();
     void testDecodeQuotedPrintable();
+    void testDecodeQuotedPrintable_data();
     void testParamName();
     void testParamValue();
     void testExtractPart();
@@ -104,6 +105,7 @@ private slots: // Tests
     void testReadLine();
     void testReadLine_data();
     void testByteArrayInput();
+    void testRemoveBackSlashEscaping();
 
 private: // Data
     QVersitReader* mReader;

@@ -72,12 +72,6 @@
 
 #include <QDebug>
 
-//UIDs for preferred (default) fields
-const int KDefaultFieldForCall = 0x10003E70;
-const int KDefaultFieldForVideoCall = 0x101F85A6;
-const int KDefaultFieldForEmail = 0x101F85A7;
-const int KDefaultFieldForMessage = 0x101f4cf1;
-
 CntTransformContact::CntTransformContact()
 {
 	initializeCntTransformContactData();
@@ -176,7 +170,6 @@ QContact CntTransformContact::transformContactL(CContactItem &contact, const QSt
             if(definitionRestrictions.isEmpty() || definitionRestrictions.contains(detail->definitionName())) 
             {
                 newQtContact.saveDetail(detail);
-                transformPreferredDetail(fields[i], *detail, newQtContact);
             }
             delete detail;
             detail = 0;
@@ -260,9 +253,6 @@ void CntTransformContact::transformContactL(
             QList<CContactItemField *> fieldList = transformDetailL(*detail);
             int fieldCount = fieldList.count();
             
-            // save preferred detail
-            transformPreferredDetailL(contact, detailList.at(i), fieldList);            
-            
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
@@ -342,6 +332,11 @@ void CntTransformContact::detailDefinitions(
         i.value()->detailDefinitions(defaultSchema, contactType);
         i++;
     }
+    
+#ifndef SYMBIAN_CNTMODEL_V2
+    // Cannot support timestamp
+    defaultSchema.remove(QContactTimestamp::DefinitionName);
+#endif
 }
 
 QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactDetail &detail) const
@@ -395,12 +390,8 @@ QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem 
 
 QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
 {
-    QContactTimestamp *timestampDetail = 0;
-
-    // NOTE: In S60 3.1 we cannot use ContactGuid::GetCreationDate() because
-    // it is not exported.
-    // TODO: Make sure SYMBIAN_CNTMODEL_V2 is the right flag for this.
 #ifdef SYMBIAN_CNTMODEL_V2
+    QContactTimestamp *timestampDetail = 0;
     HBufC* guidBuf = contactItem.UidStringL(contactDatabase.MachineId()).AllocLC();
     TPtr ptr = guidBuf->Des();
     if (ContactGuid::GetCreationDate(ptr, contactDatabase.MachineId()))
@@ -432,44 +423,13 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
         }
     }
     CleanupStack::PopAndDestroy(guidBuf);
-#endif
     return timestampDetail;
-}
-
-void CntTransformContact::transformPreferredDetailL(const QContact& contact,
-        const QContactDetail& detail, QList<CContactItemField*> &fieldList) const
-{
-    if (fieldList.count() == 0) {
-        return;
-    }
-
-    if (contact.isPreferredDetail("call", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForCall));
-    }
-    if (contact.isPreferredDetail("email", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForEmail));
-    }
-    if (contact.isPreferredDetail("videocall", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForVideoCall));
-    }
-    if (contact.isPreferredDetail("message", detail)) {
-        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForMessage));
-    }
-}
-
-void CntTransformContact::transformPreferredDetail(const CContactItemField& field,
-        const QContactDetail& detail, QContact& contact) const
-{
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForCall))) {
-        contact.setPreferredDetail("call", detail);
-    }
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForEmail))) {
-        contact.setPreferredDetail("email", detail);
-    }
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForVideoCall))) {
-        contact.setPreferredDetail("videocall", detail);
-    }
-    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
-        contact.setPreferredDetail("message", detail);
-    }
+#else
+    // NOTE: In S60 3.1 we cannot use ContactGuid::GetCreationDate() because
+    // it is not exported.
+    // TODO: Make sure SYMBIAN_CNTMODEL_V2 is the right flag for this.
+    Q_UNUSED(contactItem);
+    Q_UNUSED(contactDatabase)
+    return 0;
+#endif
 }

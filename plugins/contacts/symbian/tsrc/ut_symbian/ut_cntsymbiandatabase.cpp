@@ -59,7 +59,7 @@ void TestCntSymbianDatabase::ctor()
     QContactManagerEngine *engine = 0;
     QContactManager::Error error;
     CntSymbianDatabase *db = 0;
-    db = new CntSymbianDatabase(engine, error);
+    db = new CntSymbianDatabase(engine, &error);
     QVERIFY(db != 0);
     QVERIFY(db->m_engine == engine);
 #ifndef SYMBIAN_BACKEND_USE_SQLITE
@@ -74,7 +74,7 @@ void TestCntSymbianDatabase::contactDatabase()
     QContactManagerEngine *engine = 0;
     QContactManager::Error error;
     CntSymbianDatabase *db;
-    db = new CntSymbianDatabase(engine, error);
+    db = new CntSymbianDatabase(engine, &error);
     QVERIFY(db != 0);
     QVERIFY(error == QContactManager::NoError);
 
@@ -91,7 +91,7 @@ void TestCntSymbianDatabase::appendFunctions()
     QContactManagerEngine *engine = 0;
     QContactManager::Error error;
     CntSymbianDatabase *db;
-    db = new CntSymbianDatabase(engine, error);
+    db = new CntSymbianDatabase(engine, &error);
     QVERIFY(db != 0);
     QVERIFY(error == QContactManager::NoError);
 
@@ -120,16 +120,17 @@ void TestCntSymbianDatabase::databaseEvents()
     QContactManagerEngine *engine = 0;
     QContactManager::Error error;
     CntSymbianDatabase *db = 0;
-    db = new CntSymbianDatabase(engine, error);
+    db = new CntSymbianDatabase(engine, &error);
     QVERIFY(db != 0);
     QVERIFY(db->m_contactDatabase != 0);
     // This only defined when the mock database is used
 #if 0
     TRAPD(err, db->m_contactDatabase->sendEventsL());
     QVERIFY(err == KErrNone);
+    delete db;
 #else
+    delete db;
     QFAIL("Mock database not currently compiled in, test meaningless?");
 #endif
-    delete db;
 }
 

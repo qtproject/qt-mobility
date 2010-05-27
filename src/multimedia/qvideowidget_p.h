@@ -54,13 +54,13 @@
 //
 
 #include <qmobilityglobal.h>
-#include <qvideowidget.h>
+#include "qvideowidget.h"
 
 #ifndef QT_NO_OPENGL
 #include <QGLWidget>
 #endif
 
-#include <qpaintervideosurface_p.h>
+#include "qpaintervideosurface_p.h"
 
 #include <QtCore/qpointer.h>
 

@@ -62,7 +62,6 @@ public:
 
     QVariant metaData(QtMultimedia::MetaData key) const;
     QList<QtMultimedia::MetaData> availableMetaData() const;
-
     QVariant extendedMetaData(const QString &key) const ;
     QStringList availableExtendedMetaData() const;
 

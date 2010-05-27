@@ -40,8 +40,8 @@
 ****************************************************************************/
 
 #include <qmobilityglobal.h>
-#include <qradiotunercontrol.h>
-#include <qmediacontrol_p.h>
+#include "qradiotunercontrol.h"
+#include "qmediacontrol_p.h"
 
 QT_BEGIN_NAMESPACE
 

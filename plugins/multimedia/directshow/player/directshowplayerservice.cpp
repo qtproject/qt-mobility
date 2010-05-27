@@ -48,7 +48,7 @@
 #include "directshowvideorenderercontrol.h"
 #include "vmr9videowindowcontrol.h"
 
-#include <qmediacontent.h>
+#include "../../src/multimedia/qmediacontent.h"
 
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qdatetime.h>

@@ -15,6 +15,7 @@ mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
+    DEFINES += QT_MOBILITY_BEARER
     qtAddLibrary(QtBearer)
 }
 
@@ -38,6 +39,7 @@ contains(MOBILITY, systeminfo) {
 
 contains(MOBILITY, multimedia) {
     QT += network
+    contains(QT_CONFIG, opengl): QT += opengl
     mac:LIBS += -framework QtMultimedia
     else:LIBS += -lQtMultimedia
 }

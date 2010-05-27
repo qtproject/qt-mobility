@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qradiotuner.h>
-#include <qmediaservice.h>
-#include <qmediaobject_p.h>
-#include <qradiotunercontrol.h>
+#include "qradiotuner.h"
+#include "qmediaservice.h"
+#include "qmediaobject_p.h"
+#include "qradiotunercontrol.h"
 
 #include <QPair>
 

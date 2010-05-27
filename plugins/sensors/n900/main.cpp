@@ -75,7 +75,7 @@ public:
     }
 };
 
-Q_EXPORT_PLUGIN2(libsensors_n900, n900SensorPlugin)
+Q_EXPORT_PLUGIN2(qtsensors_n900, n900SensorPlugin)
 
 #include "main.moc"
 

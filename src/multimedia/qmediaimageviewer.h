@@ -42,8 +42,8 @@
 #ifndef QMEDIAIMAGEVIEWER_H
 #define QMEDIAIMAGEVIEWER_H
 
-#include <qmediaobject.h>
-#include <qmediacontent.h>
+#include "qmediaobject.h"
+#include "qmediacontent.h"
 
 QT_BEGIN_NAMESPACE
 

@@ -87,11 +87,12 @@ private slots: // Tests
     void testAvatarInvalid();
     void testGeo();
     void testNote();
+    void testCustomLabel();
+    void testDisplayLabel();
     void testOnlineAccount();
     void testFamily();
     void testSound();
     void testTag();
-    void testLabel();
     void testPref();
     void testPropertyHandler();
     void testInvalidDocument();

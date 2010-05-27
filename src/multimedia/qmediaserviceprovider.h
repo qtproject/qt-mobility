@@ -45,7 +45,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qshareddata.h>
 #include <qmobilityglobal.h>
-#include <qtmedianamespace.h>
+#include "qtmedianamespace.h"
 
 QT_BEGIN_NAMESPACE
 

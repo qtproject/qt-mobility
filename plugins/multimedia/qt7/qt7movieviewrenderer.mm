@@ -58,7 +58,6 @@
 #include <QuartzCore/CIFilter.h>
 #include <QuartzCore/CIVector.h>
 
-
 QT_USE_NAMESPACE
 
 class NSBitmapVideoBuffer : public QAbstractVideoBuffer

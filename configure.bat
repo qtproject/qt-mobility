@@ -56,6 +56,7 @@ set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DOCS=yes
+set BUILD_TOOLS=yes
 set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
@@ -84,6 +85,7 @@ if "%1" == "-examples"          goto exampleTag
 if "%1" == "-qt"                goto qtTag
 if "%1" == "-vc"                goto vcTag
 if "%1" == "-no-docs"           goto nodocsTag
+if "%1" == "-no-tools"          goto noToolsTag
 if "%1" == "-modules"           goto modulesTag
 if "%1" == "/?"                 goto usage
 if "%1" == "-h"                 goto usage
@@ -211,6 +213,11 @@ set BUILD_DOCS=no
 shift
 goto cmdline_parsing
 
+:noToolsTag
+set BUILD_TOOLS=no
+shift
+goto cmdline_parsing
+
 :modulesTag
 shift
 :: %1 can have leading/trailing quotes, so we can't use if "%1" == ""
@@ -316,6 +323,9 @@ set BUILD_EXAMPLES=
 echo build_docs = %BUILD_DOCS% >> %PROJECT_CONFIG%
 set BUILD_DOCS=
 
+echo build_tools = %BUILD_TOOLS% >> %PROJECT_CONFIG%
+set BUILD_TOOLS=
+
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
 echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
@@ -360,7 +370,10 @@ setlocal
         cd config.tests\make
     )
 
-    for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
+    for /f "tokens=2,3" %%a in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do (
+        if "%%a" == "MESSAGE:" (
+            set BUILDSYSTEM=%%b)
+    )
 
     if "%BUILDSYSTEM%" == "symbian-abld" (
         call make -h >> %PROJECT_LOG% 2>&1
@@ -424,7 +437,7 @@ setlocal
     ) else if "%MOBILITY_BUILDSYSTEM%" == "symbian-abld" (
         call %MOBILITY_MAKE% release-gcce >> %PROJECT_LOG% 2>&1
         for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
-    ) else (
+    ) else {
         REM Make for other builds
         call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
         REM have to check error level for windows / other builds to be sure.

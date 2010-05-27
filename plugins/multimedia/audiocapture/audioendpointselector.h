@@ -44,7 +44,7 @@
 
 #include <QStringList>
 
-#include <qaudioendpointselector.h>
+#include "../../../src/multimedia/qaudioendpointselector.h"
 
 class AudioCaptureSession;
 

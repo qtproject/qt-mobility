@@ -42,8 +42,8 @@
 #ifndef DIRECTSHOWPLAYERCONTROL_H
 #define DIRECTSHOWPLAYERCONTROL_H
 
-#include <qmediacontent.h>
-#include <qmediaplayercontrol.h>
+#include "../../src/multimedia/qmediacontent.h"
+#include "../../src/multimedia/qmediaplayercontrol.h"
 
 #include <QtCore/qcoreevent.h>
 

@@ -43,7 +43,7 @@
 #ifndef AUDIOCAPTURESERVICEPLUGIN_H
 #define AUDIOCAPTURESERVICEPLUGIN_H
 
-#include <qmediaserviceproviderplugin.h>
+#include "../../../src/multimedia/qmediaserviceproviderplugin.h"
 
 QT_USE_NAMESPACE
 

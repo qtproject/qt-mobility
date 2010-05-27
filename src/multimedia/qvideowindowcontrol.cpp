@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qvideowindowcontrol.h>
+#include "qvideowindowcontrol.h"
 
 QT_BEGIN_NAMESPACE
 

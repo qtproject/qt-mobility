@@ -46,7 +46,7 @@
 #include <QtCore/qstringlist.h>
 
 #include <qmobilityglobal.h>
-#include <qtmedianamespace.h>
+#include "qtmedianamespace.h"
 
 QT_BEGIN_NAMESPACE
 

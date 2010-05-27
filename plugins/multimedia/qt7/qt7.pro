@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qt7engine)
+TARGET = $$qtLibraryTarget(qqt7engine)
 
 QT += opengl
 

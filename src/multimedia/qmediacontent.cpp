@@ -42,7 +42,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-#include <qmediacontent.h>
+#include "qmediacontent.h"
 
 QT_BEGIN_NAMESPACE
 

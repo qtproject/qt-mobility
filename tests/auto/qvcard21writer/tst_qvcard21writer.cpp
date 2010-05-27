@@ -52,6 +52,8 @@ const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QVersitProperty)
+
 void tst_QVCard21Writer::init()
 {
     mWriter = new QVCard21Writer;
@@ -65,49 +67,73 @@ void tst_QVCard21Writer::cleanup()
 
 void tst_QVCard21Writer::testEncodeVersitProperty()
 {
+    QFETCH(QVersitProperty, property);
+    QFETCH(QByteArray, expectedResult);
+    QFETCH(QByteArray, codec);
+    QTextCodec* textCodec = QTextCodec::codecForName(codec);
     QByteArray encodedProperty;
     QBuffer buffer(&encodedProperty);
     mWriter->setDevice(&buffer);
+    mWriter->setCodec(textCodec);
     buffer.open(QIODevice::WriteOnly);
 
-    // No parameters
-    QByteArray expectedResult = "FN:John Citizen\r\n";
-    QVersitProperty property;
-    property.setName(QString::fromAscii("FN"));
-    property.setValue(QString::fromAscii("John Citizen"));
     mWriter->encodeVersitProperty(property);
     QCOMPARE(encodedProperty, expectedResult);
+}
+
+void tst_QVCard21Writer::testEncodeVersitProperty_data()
+{
+    QTest::addColumn<QVersitProperty>("property");
+    QTest::addColumn<QByteArray>("expectedResult");
+    QTest::addColumn<QByteArray>("codec");
+
+    QVersitProperty property;
+    QByteArray expectedResult;
+    QByteArray codec("ISO-8859_1");
+
+    // normal case
+    property.setName(QString::fromAscii("FN"));
+    property.setValue(QString::fromAscii("John Citizen"));
+    property.setValueType(QVersitProperty::PlainType);
+    expectedResult = "FN:John Citizen\r\n";
+    QTest::newRow("No parameters") << property << expectedResult << codec;
+
+    // Structured N - escaping should happen for semicolons, not for commas
+    property.setName(QLatin1String("N"));
+    property.setValue(QStringList()
+                      << QLatin1String("La;st")    // needs to be backslash escaped
+                      << QLatin1String("Fi,rst")
+                      << QLatin1String("Mi:ddle")
+                      << QLatin1String("Pr\\efix") // needs to be QP encoded
+                      << QLatin1String("Suffix"));
+    property.setValueType(QVersitProperty::CompoundType);
+    expectedResult = "N;ENCODING=QUOTED-PRINTABLE:La\\;st;Fi,rst;Mi:ddle;Pr=5Cefix;Suffix\r\n";
+    QTest::newRow("N property") << property << expectedResult << codec;
+
+    // Structured CATEGORIES - escaping should happen for commas, not semicolons
+    property.setName(QLatin1String("CATEGORIES"));
+    property.setValue(QStringList()
+                      << QLatin1String("re;d")
+                      << QLatin1String("gr,een")
+                      << QLatin1String("bl:ue"));
+    property.setValueType(QVersitProperty::ListType);
+    expectedResult = "CATEGORIES:re;d,gr\\,een,bl:ue\r\n";
+    QTest::newRow("CATEGORIES property") << property << expectedResult << codec;
 
     // With parameter(s). No special characters in the value.
     // -> No need to Quoted-Printable encode the value.
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedProperty.clear();
-    buffer.open(QIODevice::WriteOnly);
     expectedResult = "TEL;HOME:123\r\n";
     property.setName(QString::fromAscii("TEL"));
     property.setValue(QString::fromAscii("123"));
     property.insertParameter(QString::fromAscii("TYPE"),QString::fromAscii("HOME"));
-    mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    QTest::newRow("With parameters, plain value") << property << expectedResult << codec;
 
-    // With parameter(s). Special characters in the value.
-    // -> The value needs to be Quoted-Printable encoded.
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedProperty.clear();
-    buffer.open(QIODevice::WriteOnly);
     expectedResult = "EMAIL;HOME;ENCODING=QUOTED-PRINTABLE:john.citizen=40example.com\r\n";
     property.setName(QString::fromAscii("EMAIL"));
     property.setValue(QString::fromAscii("john.citizen@example.com"));
-    mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    QTest::newRow("With parameters, special value") << property << expectedResult << codec;
 
     // AGENT property with parameter
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedProperty.clear();
-    buffer.open(QIODevice::WriteOnly);
     expectedResult =
 "AGENT;X-PARAMETER=VALUE:\r\n\
 BEGIN:VCARD\r\n\
@@ -125,15 +151,10 @@ END:VCARD\r\n\
     embeddedProperty.setValue(QString::fromAscii("Secret Agent"));
     document.addProperty(embeddedProperty);
     property.setValue(QVariant::fromValue(document));
-    mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    QTest::newRow("AGENT property") << property << expectedResult << codec;
 
     // Value is base64 encoded.
     // Check that the extra folding and the line break are added
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedProperty.clear();
-    buffer.open(QIODevice::WriteOnly);
     QByteArray value("value");
     expectedResult = "Springfield.HOUSE.PHOTO;ENCODING=BASE64:\r\n " + value.toBase64() + "\r\n\r\n";
     QStringList groups(QString::fromAscii("Springfield"));
@@ -142,49 +163,31 @@ END:VCARD\r\n\
     property.setParameters(QMultiHash<QString,QString>());
     property.setName(QString::fromAscii("PHOTO"));
     property.setValue(value);
-    mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    QTest::newRow("base64 encoded") << property << expectedResult << codec;
 
     // Characters other than ASCII:
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedProperty.clear();
-    buffer.open(QIODevice::WriteOnly);
     expectedResult = "ORG;CHARSET=UTF-8:" + KATAKANA_NOKIA.toUtf8() + "\r\n";
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
-    mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    QTest::newRow("non-ASCII") << property << expectedResult << codec;
 
     // In Shift-JIS codec.
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedProperty.clear();
-    buffer.open(QIODevice::WriteOnly);
     QTextCodec* jisCodec = QTextCodec::codecForName("Shift-JIS");
     expectedResult = jisCodec->fromUnicode(
             QLatin1String("ORG:") + KATAKANA_NOKIA + QLatin1String("\r\n"));
     property = QVersitProperty();
     property.setName(QLatin1String("ORG"));
     property.setValue(KATAKANA_NOKIA);
-    mWriter->setCodec(jisCodec);
-    mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    QTest::newRow("JIS codec") << property << expectedResult << QByteArray("Shift-JIS");
 
     // CHARSET and QUOTED-PRINTABLE
-    mWriter->writeCrlf(); // so it doesn't start folding
-    buffer.close();
-    encodedProperty.clear();
-    buffer.open(QIODevice::WriteOnly);
     expectedResult = "EMAIL;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:john=40"
                      + KATAKANA_NOKIA.toUtf8() + ".com\r\n";
     property = QVersitProperty();
     property.setName(QLatin1String("EMAIL"));
     property.setValue(QString::fromAscii("john@%1.com").arg(KATAKANA_NOKIA));
-    mWriter->setCodec(QTextCodec::codecForName("ISO_8859-1"));
-    mWriter->encodeVersitProperty(property);
-    QCOMPARE(encodedProperty, expectedResult);
+    QTest::newRow("Charset and QP") << property << expectedResult << codec;
 }
 
 void tst_QVCard21Writer::testEncodeParameters()

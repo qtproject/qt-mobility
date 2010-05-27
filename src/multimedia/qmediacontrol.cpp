@@ -42,8 +42,8 @@
 #include <QtCore/qmetaobject.h>
 #include <QtCore/qtimer.h>
 
-#include <qmediacontrol.h>
-#include <qmediacontrol_p.h>
+#include "qmediacontrol.h"
+#include "qmediacontrol_p.h"
 
 
 

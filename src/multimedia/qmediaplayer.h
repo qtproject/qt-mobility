@@ -42,9 +42,9 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include <qmediaserviceprovider.h>
-#include <qmediaobject.h>
-#include <qmediacontent.h>
+#include "qmediaserviceprovider.h"
+#include "qmediaobject.h"
+#include "qmediacontent.h"
 
 QT_BEGIN_HEADER
 

@@ -89,7 +89,13 @@ private:
 
 void tst_DatabaseManager::initTestCase()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    // Wait a millisecond so that QServiceManagers are destroyed and release
+    // the database file (otherwise QFile::remove will get a permission denied -->
+    // in next case, the isEmpty() check fails).
+    QTest::qWait(1);
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
+#if !defined(__WINS__)
     QSfwTestUtil::removeDatabases();
 #endif
     m_dbm = new DatabaseManager;
@@ -116,7 +122,7 @@ void tst_DatabaseManager::registerService()
         QVERIFY(m_dbm->registerService(parseResults, DatabaseManager::UserScope));
     }
     
-    QSKIP("There is no difference between user and system scope in symbian", SkipAll);   
+    QSKIP("There is no difference between user and system scope in symbian", SkipAll);
     
     QStringList systemServiceFiles;
     systemServiceFiles << "ServiceOmni.xml" << "ServiceWayneEnt.xml"
@@ -562,8 +568,8 @@ void tst_DatabaseManager::CWRTXmlCompatability()
     QVERIFY(compareDescriptor(descriptors[0], "com.nokia.ILocation", "TestService", 1,0));
     QVERIFY(compareDescriptor(descriptors[1], "com.nokia.ILocation", "TestService1", 1,1));
     QVERIFY(compareDescriptor(descriptors[2], "com.nokia.ILocation", "TestService2", 1,2));
-   
-} 
+
+}
 
 void tst_DatabaseManager::modifyPermissionSet(QFile::Permissions &permsSet,
                                                     int perm)
@@ -613,7 +619,10 @@ void tst_DatabaseManager::modifyPermissionSet(QFile::Permissions &permsSet,
 
 void tst_DatabaseManager::cleanupTestCase()
 {
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
+    QTest::qWait(100);
+    QSfwTestUtil::removeTempUserDb();
+    QSfwTestUtil::removeTempSystemDb();
+#if !defined(__WINS__)
     QSfwTestUtil::removeDatabases();
 #endif
 }

@@ -596,7 +596,10 @@ bool QXARecordSession::setEncoderSettingsToImpl()
 
     /* Validate and set bitrate only if encoding mode is other than quality encoding */
     if (m_audioencodersettings.encodingMode() != QtMultimedia::ConstantQualityEncoding) {
-        if (m_audioencodersettings.bitRate() < 0 ) {
+        if (m_audioencodersettings.bitRate() == -1) {
+            m_impl->setOptimalBitRate();
+        }
+        else if (m_audioencodersettings.bitRate() < 0 ) {
             emit error(QMediaRecorder::FormatError, tr("Invalid bitrate"));
             SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::FormatError, tr(\"Invalid bitrate\"))");
             return false;

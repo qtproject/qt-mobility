@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qmediaplayercontrol.h>
-#include <qmediacontrol_p.h>
-#include <qmediaplayer.h>
+#include "qmediaplayercontrol.h"
+#include "qmediacontrol_p.h"
+#include "qmediaplayer.h"
 
 QT_BEGIN_NAMESPACE
 

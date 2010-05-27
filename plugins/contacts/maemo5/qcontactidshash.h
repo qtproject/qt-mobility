@@ -55,23 +55,21 @@ public:
   
   /* Append */
   QContactIDsHash& operator<< (const QByteArray& eContactId){
-    if (find(eContactId))
+    const QContactLocalId key = qChecksum(eContactId, eContactId.size());
+    if (m_localIds.contains(key))
       return (*this);
-    quint16 key = qChecksum(eContactId, eContactId.size());
     m_localIds[key] = eContactId;
     QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
-                                                        
     return (*this);
   };
   
   const QContactLocalId append(const QByteArray& eContactId){
-    uint id = find(eContactId);
-    if (id)
-      return id;
-    id = qChecksum(eContactId, eContactId.size());
-    m_localIds[id] = eContactId;
-    QCM5_DEBUG << "Add key:" << id << "eContactId:" << eContactId;
-    return id;
+    const QContactLocalId key = qChecksum(eContactId, eContactId.size());
+    if (m_localIds.contains(key))
+      return key;
+    m_localIds[key] = eContactId;
+    QCM5_DEBUG << "Add key:" << key << "eContactId:" << eContactId;
+    return key;
   };
   
   /* Find */
@@ -98,6 +96,9 @@ public:
     remove(hashKey);
     return hashKey;
   };
+
+  /* Keys */
+  const QList<QContactLocalId> keys() {return m_localIds.keys();}
   
 private:
   QHash<QContactLocalId, QByteArray> m_localIds; //[int/QContactLocalId Maemo5LocalId, QByteArray eContactID]

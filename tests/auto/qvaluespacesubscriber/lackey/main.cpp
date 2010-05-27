@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include <qvaluespacesubscriber.h>
-#include <qvaluespacepublisher.h>
+#include "../../../../src/publishsubscribe/qvaluespacesubscriber.h"
+#include "../../../../src/publishsubscribe/qvaluespacepublisher.h"
 
 #include <QCoreApplication>
 #include <QStringList>

@@ -39,9 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qlocalmediaplaylistprovider.h>
-#include <qmediaplaylistprovider_p.h>
-#include <qmediacontent.h>
+#include "qlocalmediaplaylistprovider.h"
+#include "qmediaplaylistprovider_p.h"
+#include "qmediacontent.h"
 
 QT_BEGIN_NAMESPACE
 

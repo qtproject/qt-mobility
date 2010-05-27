@@ -71,4 +71,4 @@ void QWmpServiceProviderPlugin::release(QMediaService *service)
 }
 
 
-Q_EXPORT_PLUGIN2(qwmp, QWmpServiceProviderPlugin);
+Q_EXPORT_PLUGIN2(qtmedia_wmp, QWmpServiceProviderPlugin);

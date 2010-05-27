@@ -75,6 +75,11 @@ QVariant S60MediaMetaDataProvider::metaData(QtMultimedia::MetaData key) const
     return QVariant();
 }
 
+void S60MediaMetaDataProvider::setMetaData(QtMultimedia::MetaData key, QVariant const &value)
+{
+    Q_UNUSED(key);
+    Q_UNUSED(value);
+}
 QList<QtMultimedia::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
@@ -84,7 +89,7 @@ QList<QtMultimedia::MetaData> S60MediaMetaDataProvider::availableMetaData() cons
             QString metaData = metaDataKeyAsString((QtMultimedia::MetaData)i);
             if (!metaData.isEmpty()) {
                 if (!m_session->metaData(metaData).toString().isEmpty()) {
-                    metaDataTags.append((QtMultimedia::MetaData)i);               
+                    metaDataTags.append((QtMultimedia::MetaData)i);
                 }
             }
         }

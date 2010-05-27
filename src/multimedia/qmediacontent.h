@@ -45,7 +45,7 @@
 #include <QtCore/qmetatype.h>
 #include <QtCore/qshareddata.h>
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
 #include <qmobilityglobal.h>
 

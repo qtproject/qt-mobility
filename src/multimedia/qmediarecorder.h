@@ -67,7 +67,7 @@ class Q_MULTIMEDIA_EXPORT QMediaRecorder : public QObject, public QMediaBindable
     Q_OBJECT
     Q_INTERFACES(QMediaBindableInterface)
     Q_ENUMS(State)
-    Q_ENUMS(Error)    
+    Q_ENUMS(Error)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(QUrl outputLocation READ outputLocation WRITE setOutputLocation)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)

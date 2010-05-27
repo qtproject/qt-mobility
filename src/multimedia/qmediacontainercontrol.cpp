@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 
-#include <qmediacontainercontrol.h>
+#include "qmediacontainercontrol.h"
 
 QT_BEGIN_NAMESPACE
 

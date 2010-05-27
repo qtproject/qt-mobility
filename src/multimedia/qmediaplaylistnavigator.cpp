@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qmediaplaylistnavigator.h>
-#include <qmediaplaylistprovider.h>
-#include <qmediaplaylist.h>
-#include <qmediaobject_p.h>
+#include "qmediaplaylistnavigator.h"
+#include "qmediaplaylistprovider.h"
+#include "qmediaplaylist.h"
+#include "qmediaobject_p.h"
 
 #include <QtCore/qdebug.h>
 

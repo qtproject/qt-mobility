@@ -42,7 +42,7 @@
 #ifndef AUDIOCONTAINERCONTROL_H
 #define AUDIOCONTAINERCONTROL_H
 
-#include <qmediacontainercontrol.h>
+#include "../../../src/multimedia/qmediacontainercontrol.h"
 
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmap.h>

@@ -69,8 +69,15 @@ struct cbSharedData{
   QContactABook *that;
 };
 
+struct jobSharedData{
+   QContactABook* that;
+   bool *result;
+   char *uid;
+   QContactManager::Error *error;
+};
+
 /* QContactABook */
-QContactABook::QContactABook(QObject* parent) :QObject(parent)
+QContactABook::QContactABook(QObject* parent) :QObject(parent), m_cbSD(0), m_deleteJobSD(0), m_saveJobSD(0)
 {
   //Initialize QContactDetail context list
   initAddressBook();
@@ -78,8 +85,22 @@ QContactABook::QContactABook(QObject* parent) :QObject(parent)
 
 QContactABook::~QContactABook()
 {
-  g_object_unref(m_abookAgregator);
-  delete cbSD;
+  OssoABookAggregator *roster = reinterpret_cast<OssoABookAggregator*>(m_abookAgregator);
+  if (g_signal_handler_is_connected(roster, m_contactAddedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactAddedHandlerId);
+  if (g_signal_handler_is_connected(roster, m_contactChangedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactChangedHandlerId);
+  if (g_signal_handler_is_connected(roster, m_contactRemovedHandlerId))
+      g_signal_handler_disconnect(roster, m_contactRemovedHandlerId);
+
+  // XXX FIXME: memory leak?
+  //g_object_unref(m_abookAgregator);
+  delete m_cbSD;
+  m_cbSD = 0;
+  delete m_deleteJobSD;
+  m_deleteJobSD = 0;
+  delete m_saveJobSD;
+  m_saveJobSD = 0;
 }
 
 static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
@@ -88,6 +109,11 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  if (!d){
+    //qWarning() << "d has been deleted";
+    return;
+  }
+  
   OssoABookContact **p;
   QList<QContactLocalId> contactIds;
   
@@ -102,7 +128,9 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
     if (id)
       contactIds << id;
   }
-  d->that->_contactsAdded(contactIds);
+
+  if (!contactIds.isEmpty())
+    d->that->_contactsAdded(contactIds);
 }
 
 static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contacts, gpointer data)
@@ -111,6 +139,11 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  if (!d){
+    //qWarning() << "d has been deleted";
+    return;
+  }
+  
   OssoABookContact **p;
   QList<QContactLocalId> contactIds;
   
@@ -124,7 +157,9 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
     if (id)
       contactIds << id;
   }
-  d->that->_contactsChanged(contactIds);
+
+  if (!contactIds.isEmpty())
+    d->that->_contactsChanged(contactIds);
 }
 
 static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointer data)
@@ -133,30 +168,35 @@ static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointe
   Q_UNUSED(roster)
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
+  if (!d){
+    //qWarning() << "d has been deleted";
+    return;
+  }
+  
   const char **p;
   QList<QContactLocalId> contactIds;
   
   for (p = ids; *p; ++p) {
-    QContactLocalId id = d->hash->take(*p);
-    if (id)
-      contactIds << id;
+      QContactLocalId id = d->hash->take(*p);
+      if (id) {
+        QCM5_DEBUG << "Contact" << id << "has been removed";
+        contactIds << id;
+      }
   }
   
-  d->that->_contactsRemoved(contactIds);
+  if (!contactIds.isEmpty())
+    d->that->_contactsRemoved(contactIds);
 }
 
 void QContactABook::initAddressBook(){
-  // Open AddressBook
+  /* Open AddressBook */
   GError *gError = NULL;
   OssoABookRoster* roster = NULL;
   
   roster = osso_abook_aggregator_get_default(&gError);
   FATAL_IF_ERROR(gError)
   
-  // Wait until is ready
-  osso_abook_waitable_run((OssoABookWaitable *) roster,
-			   g_main_context_default(),
-			   &gError);
+  osso_abook_waitable_run((OssoABookWaitable *) roster, g_main_context_default(), &gError);
   FATAL_IF_ERROR(gError)
   
   if (!osso_abook_waitable_is_ready ((OssoABookWaitable *) roster, &gError))
@@ -164,22 +204,24 @@ void QContactABook::initAddressBook(){
   
   m_abookAgregator = reinterpret_cast<OssoABookAggregator*>(roster);
   
+  /* Initialize local Id Hash */
   initLocalIdHash();
   
-  cbSD = new cbSharedData;
-  cbSD->hash = &m_localIds;
-  cbSD->that = this;
-  
-  //TODO Set up signals for added/changed eContact
-  g_signal_connect(roster, "contacts-added",
-                   G_CALLBACK (contactsAddedCB), cbSD);
-  g_signal_connect(roster, "contacts-changed",
-                   G_CALLBACK (contactsChangedCB), cbSD);
-  g_signal_connect(roster, "contacts-removed",
-                   G_CALLBACK (contactsRemovedCB), cbSD);
+  /* Initialize callbacks shared data */
+  m_cbSD = new cbSharedData;
+  m_cbSD->hash = &m_localIds;
+  m_cbSD->that = this;
+   
+  /* Setup signals */
+  m_contactAddedHandlerId = g_signal_connect(roster, "contacts-added",
+                   G_CALLBACK (contactsAddedCB), m_cbSD);
+  m_contactChangedHandlerId = g_signal_connect(roster, "contacts-changed",
+                   G_CALLBACK (contactsChangedCB), m_cbSD);
+  m_contactRemovedHandlerId = g_signal_connect(roster, "contacts-removed",
+                   G_CALLBACK (contactsRemovedCB), m_cbSD);
   
 #if 0
-  //TEST List of supported fields
+  //TEST List supported fields
   EBook *book = NULL;
   GList *l;
   book = osso_abook_roster_get_book(roster);
@@ -204,7 +246,7 @@ void QContactABook::initLocalIdHash()
    contactList = osso_abook_aggregator_list_master_contacts(m_abookAgregator);
 
    if (!contactList) {
-     qWarning() << "There are no Master contacts. LocalId hash is empty.";
+     //qWarning() << "There are no Master contacts. LocalId hash is empty.";
      return;
    }
    
@@ -217,7 +259,7 @@ void QContactABook::initLocalIdHash()
      QCM5_DEBUG << "eContactID " << eContactUID << "has been stored in m_localIDs with key" << m_localIds[eContactUID];
      
      // Useful for debugging.
-     e_vcard_dump_structure((EVCard*)contact);
+     if (QCM5_DEBUG_ENABLED) e_vcard_dump_structure((EVCard*)contact);
    }
    
    g_list_free(contactList);
@@ -226,8 +268,30 @@ void QContactABook::initLocalIdHash()
 QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
   QList<QContactLocalId> rtn;
-  
-  /* Sorting */
+
+  // do this naively for now...
+  *error = QContactManager::NoError;
+  QContactManager::Error tempError = QContactManager::NoError;
+  QList<QContactLocalId> allIds = m_localIds.keys();
+  QList<QContact> sortedAndFiltered;
+  QContact *curr = 0;
+  foreach (const QContactLocalId& currId, allIds) {
+    curr = getQContact(currId, &tempError);
+    if (tempError != QContactManager::NoError)
+      *error = tempError;
+    if (QContactManagerEngine::testFilter(filter, *curr)) {
+      QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
+    }
+    delete curr;
+  }
+
+  foreach (const QContact& contact, sortedAndFiltered) {
+    rtn.append(contact.localId());
+  }
+  return rtn;
+
+  /*
+  // Sorting
   //NOTE Native sorting is possible thanks to g_list_sort.
   //     It's limited just to one filter.
   //     Multi filters support need non native sorting.
@@ -261,44 +325,11 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     return QContactManagerEngine::sortContacts(contacts, sortOrders);
   }
   
-  /* Matching action filter */
-  //NOTE The code was not really tested */
-  if(filter.type() == QContactFilter::ActionFilter){
-    QContactActionFilter af(filter);
-    /* This looks a bit strange for me */
-    QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
-
-    GList *masterContacts = osso_abook_aggregator_list_master_contacts(m_abookAgregator);
-    for(; masterContacts; ){
-      OssoABookContact *masterContact = A_CONTACT(masterContacts->data);
-      bool match = contactActionsMatch(masterContact, descriptors);
-      if(!match) {
-        GList *rosterContacts = osso_abook_contact_get_roster_contacts(masterContact);
-        for(; rosterContacts && !match; ){
-          OssoABookContact *rosterContact = A_CONTACT(rosterContacts->data);
-          match = contactActionsMatch(rosterContact, descriptors);
-          rosterContacts = g_list_delete_link(rosterContacts, rosterContacts);
-        }
-        g_list_free(rosterContacts);
-      }
-      if(match){
-        EContact *contact = E_CONTACT(masterContact);
-        const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
-        QByteArray localId(data);
-        m_localIds << localId;
-        rtn.append(m_localIds[localId]);
-        QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
-      }
-      masterContacts = g_list_delete_link(masterContacts, masterContacts);
-    }
-    *error = QContactManager::NoError;
-    return  rtn;
-  }
-  
   EBookQuery* query = convert(filter);
   
   GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-  e_book_query_unref(query);
+  if (query)
+      e_book_query_unref(query);
   
   while (l){
     EContact *contact = E_CONTACT(l->data);
@@ -312,67 +343,176 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   
   *error = QContactManager::NoError;
   return rtn;
+  */
 }
 
 QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
   QContact *rtn;
-  OssoABookContact* aContact = getAContact(contactId);
+  OssoABookContact* aContact = getAContact(contactId, error);
   if (!aContact) {
-    qWarning() << "Unable to get a valid AContact";
-    *error = QContactManager::DoesNotExistError;
+    //qWarning() << "Unable to get a valid AContact";
     return new QContact;
   }
   
   //Convert aContact => qContact
   rtn = convert(E_CONTACT(aContact));
+  QContactId cId;
+  cId.setLocalId(contactId);
+  rtn->setId(cId);
   return rtn;
+}
+
+static QContactManager::Error getErrorFromStatus(const EBookStatus status){
+  switch (status) {
+    case E_BOOK_ERROR_OK:
+      return QContactManager::NoError;
+    case E_BOOK_ERROR_INVALID_ARG:
+      return QContactManager::BadArgumentError;
+    case E_BOOK_ERROR_BUSY:
+      return QContactManager::LockedError;        
+    case E_BOOK_ERROR_PERMISSION_DENIED:
+    case E_BOOK_ERROR_AUTHENTICATION_FAILED:
+    case E_BOOK_ERROR_AUTHENTICATION_REQUIRED:
+    //case E_BOOK_ERROR_UNSUPPORTED_AUTHENTICATION_METHOD: //Missing in current Maemo5 Ebook lib version
+      return QContactManager::PermissionsError;
+    case E_BOOK_ERROR_CONTACT_NOT_FOUND:
+      return QContactManager::DoesNotExistError;
+    case E_BOOK_ERROR_CONTACT_ID_ALREADY_EXISTS:
+      return QContactManager::AlreadyExistsError;
+    case E_BOOK_ERROR_NO_SPACE:
+      return QContactManager::OutOfMemoryError;
+#if 0
+    case E_BOOK_ERROR_REPOSITORY_OFFLINE:
+    case E_BOOK_ERROR_NO_SUCH_BOOK:
+    case E_BOOK_ERROR_NO_SELF_CONTACT:
+    case E_BOOK_ERROR_SOURCE_NOT_LOADED:
+    case E_BOOK_ERROR_SOURCE_ALREADY_LOADED:
+    case E_BOOK_ERROR_PROTOCOL_NOT_SUPPORTED:
+    case E_BOOK_ERROR_CANCELLED:
+    case E_BOOK_ERROR_COULD_NOT_CANCEL:
+    case E_BOOK_ERROR_TLS_NOT_AVAILABLE:
+    case E_BOOK_ERROR_CORBA_EXCEPTION:
+    case E_BOOK_ERROR_NO_SUCH_SOURCE:
+    case E_BOOK_ERROR_OFFLINE_UNAVAILABLE:
+    case E_BOOK_ERROR_OTHER_ERROR:
+    case E_BOOK_ERROR_INVALID_SERVER_VERSION:
+#endif
+    default:
+      return QContactManager::UnspecifiedError;
+  }
+}
+
+static void delContactCB(EBook *book, EBookStatus status, gpointer closure)
+{
+  Q_UNUSED(book);
+  QCM5_DEBUG << "Contact Removed";
+  
+  jobSharedData *sd = static_cast<jobSharedData*>(closure);
+  if (!sd)
+    return;
+  
+  *sd->result = (status != E_BOOK_ERROR_OK &&
+                 status != E_BOOK_ERROR_CONTACT_NOT_FOUND) ? false : true;
+  *sd->error = getErrorFromStatus(status);
+  
+  sd->that->_jobRemovingCompleted();
 }
 
 bool QContactABook::removeContact(const QContactLocalId& contactId, QContactManager::Error* error)
 {
   Q_UNUSED(error);
-  
+  QMutexLocker locker(&m_delContactMutex);
+
   bool ok = false;
-  OssoABookRoster* roster = A_ROSTER(m_abookAgregator);
+  
+  OssoABookRoster *roster = A_ROSTER(m_abookAgregator);
   EBook *book = osso_abook_roster_get_book(roster);
-  OssoABookContact* aContact = getAContact(contactId);
+  OssoABookContact *aContact = getAContact(contactId, error);
+  if (!OSSO_ABOOK_IS_CONTACT(aContact)){
+    //qWarning() << "Specified contact is not a valid ABook contact";
+    return false;
+  }
   
-  // Delete the contact itself with all its roster contacts and photo.
-  //NOTE This perform an async operation. If aContact exists, ok var will most probably be true.
-  ok = osso_abook_contact_delete(aContact, book, NULL);
+  // ASync => Sync
+  QEventLoop loop;                           
+  connect(this, SIGNAL(jobRemovingCompleted()), &loop, SLOT(quit()));
   
-#if 0
-  // This code works syncronously but doesn't remove any photo nor roster contacts
-  const char *id = m_localIds[contactId];
-  QCM5_DEBUG << "Deleting contact id:" << id;
-  GError *gError = NULL;
-  ok = e_book_remove_contact(book, id, &gError);
-  WARNING_IF_ERROR(gError);
-#endif  
+  // Prepare shared data
+  if (m_deleteJobSD){
+    delete m_deleteJobSD;
+    m_deleteJobSD = 0;
+  }
+  m_deleteJobSD = new jobSharedData;
+  m_deleteJobSD->that = this;
+  m_deleteJobSD->result = &ok;
+  m_deleteJobSD->error = error;
+  
+  //Remove photos
+  EContactPhoto *photo = NULL;
+  GFile *file = NULL;
+  photo = (EContactPhoto*) e_contact_get(E_CONTACT (aContact), E_CONTACT_PHOTO);
+  if (photo) {
+    if (photo->type == E_CONTACT_PHOTO_TYPE_URI && photo->data.uri) {
+      file = g_file_new_for_uri(photo->data.uri);
+      g_file_delete(file, NULL, NULL);
+      g_object_unref (file);
+    }
+    e_contact_photo_free (photo);
+  }
+  
+  //Remove all roster contacts from their roster
+  GList* rosterContacts = NULL;
+  rosterContacts = osso_abook_contact_get_roster_contacts(aContact);
+  const char *masterUid = CONST_CHAR(e_contact_get_const(E_CONTACT(aContact), E_CONTACT_UID));
+  char *contactUidCopy = strdup(masterUid);
+  while(rosterContacts){
+    OssoABookContact *rosterContact = A_CONTACT(rosterContacts->data);
+    osso_abook_contact_reject_for_uid(rosterContact, masterUid, NULL);
+    rosterContacts = rosterContacts->next;
+  }  
+  
+  // Remove contact
+  e_book_async_remove_contact(book, E_CONTACT(aContact),
+                              delContactCB, m_deleteJobSD);
+  
+  loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
+
+  // update our list of ids...
+  QContactLocalId id = m_localIds[contactUidCopy];
+  m_localIds.remove(contactUidCopy);
+  if (contactUidCopy)
+    free(contactUidCopy);
+  
+  if (id)
+    _contactsRemoved(QList<QContactLocalId>() << id);
   
   return ok;
 }
 
-struct svSharedData{
-   QContactABook* that;
-   bool *result;
-};
-
 static void commitContactCB(EBook* book, EBookStatus  status, gpointer user_data)
 {
   Q_UNUSED(book)
-  svSharedData *sd = static_cast<svSharedData*>(user_data);
+  jobSharedData *sd = static_cast<jobSharedData*>(user_data);
+  if (!sd)
+    return;
   
-  *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;  
-  sd->that->_savingJobFinished();
+  *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;
+  *sd->error = getErrorFromStatus(status);
+  sd->that->_jobSavingCompleted();
 }
 
 static void addContactCB(EBook* book, EBookStatus  status, const char  *uid, gpointer user_data)
 {
-  Q_UNUSED(uid);
+  jobSharedData *sd = static_cast<jobSharedData*>(user_data);
+  if (!sd)
+    return;
   
-  //osso_abook_contact_set_roster(OssoABookContact *contact, OssoABookRoster *roster)
+  if (uid)
+    sd->uid = strdup(uid);
+
+  //### FIXME IS THIS LINE REALLY NEEDED: osso_abook_contact_set_roster(OssoABookContact *contact, OssoABookRoster *roster)
+  *sd->result = (status == E_BOOK_ERROR_OK) ? true : false;
   commitContactCB(book, status, user_data);
 }
 
@@ -395,31 +535,47 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
     book = osso_abook_roster_get_book(roster);
   }
   
-  // Conver QContact to AContact
-  aContact = convert(contact);
+  // Convert QContact to AContact
+  aContact = convert(contact, error);
   if (!aContact){
-    *error = QContactManager::UnspecifiedError;
     return false;
   }  
 
   // ASync => Sync
   QEventLoop loop;
-  connect(this, SIGNAL(savingJobDone()), &loop, SLOT(quit()));
+  connect(this, SIGNAL(jobSavingCompleted()), &loop, SLOT(quit()));
 
   // Prepare shared data
-  svSharedData sd;
-  sd.that = this;
-  sd.result = &ok;
+  if (m_saveJobSD){
+    delete m_saveJobSD;
+    m_saveJobSD = 0;
+  }
+  m_saveJobSD = new jobSharedData;
+  m_saveJobSD->that = this;
+  m_saveJobSD->result = &ok;
+  m_saveJobSD->error = error;
+  m_saveJobSD->uid = 0;
   
   // Add/Commit the contact
   uid = CONST_CHAR(e_contact_get_const(E_CONTACT (aContact), E_CONTACT_UID)); 
   if (uid) {
-    osso_abook_contact_async_commit(aContact, book, commitContactCB, &sd);
+    m_saveJobSD->uid = strdup(uid);
+    osso_abook_contact_async_commit(aContact, book, commitContactCB, m_saveJobSD);
   } else {
-    osso_abook_contact_async_add(aContact, book, addContactCB, &sd);
+    osso_abook_contact_async_add(aContact, book, addContactCB, m_saveJobSD);
   }
   
   loop.exec(QEventLoop::AllEvents|QEventLoop::WaitForMoreEvents);
+
+  // save the newly saved contact's id in the hash.
+  m_localIds << m_saveJobSD->uid;
+
+  // set the id of the contact.
+  QContactId cId;
+  cId.setLocalId(m_localIds[m_saveJobSD->uid]);
+  contact->setId(cId);
+  if (m_saveJobSD->uid)
+      free(m_saveJobSD->uid);
   
   return ok;
 }
@@ -441,44 +597,12 @@ QContactLocalId QContactABook::selfContactId(QContactManager::Error* errors) con
       QCM5_DEBUG << "eContactID " << eContactUID << "has been stored in m_localIDs with key" << id;
     }
   } else {
-    qWarning() << "Cannot find self contact";
+    //qWarning() << "Cannot find self contact";
     *errors = QContactManager::DoesNotExistError;
     id = 0;
   }
   g_object_unref(self);
   return id;
-}
-
-bool QContactABook::contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const
-{
-  OssoABookCapsFlags capsFlags = osso_abook_caps_get_capabilities(OSSO_ABOOK_CAPS(contact));
-
-  if(capsFlags & OSSO_ABOOK_CAPS_NONE)
-    return false;
-
-  /* ActionNames could be incorrect */
-  OssoABookCapsFlags actionFlags = OSSO_ABOOK_CAPS_NONE;
-  for(int i = 0; i < descriptors.size(); i++){
-    QString actionName = descriptors.at(i).actionName();
-    QCM5_DEBUG << actionName;
-    if(!actionName.compare("Phone"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_PHONE);
-    else if(!actionName.compare("Voice"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VOICE);
-    else if(!actionName.compare("SendEmail"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_EMAIL);
-    else if(!actionName.compare("Chat"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_CHAT);
-    else if(!actionName.compare("ChatAdditional"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_CHAT_ADDITIONAL);
-    else if(!actionName.compare("VoiceAdditional"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VOICE_ADDITIONAL);
-    else if(!actionName.compare("Video"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_VIDEO);
-    else if(!actionName.compare("Addressbook"))
-      actionFlags = (OssoABookCapsFlags)(actionFlags | OSSO_ABOOK_CAPS_ADDRESSBOOK);
-  }
-  return ((actionFlags & capsFlags) == actionFlags);
 }
 
 EBookQuery* QContactABook::convert(const QContactFilter& filter) const
@@ -533,7 +657,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
         case QContactFilter::MatchEndsWith: queryStr = "endswith"; break;
         default:
           queryStr = "contains";
-          qWarning() << "Match flag not supported";
+          //qWarning() << "Match flag not supported";
       }
       static QHash<QString,QString> hash;
       if (hash.isEmpty()){
@@ -551,14 +675,13 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
   
       QString eDetail = hash[f.detailDefinitionName()];
       if (eDetail.isEmpty()){
-        qWarning() << "Unable to found an ebook detail for " << f.detailDefinitionName();
+        //qWarning() << "Unable to found an ebook detail for " << f.detailDefinitionName();
         return NULL;
       }
       queryStr = queryStr + " \"" + eDetail + "\" \"" + f.value().toString() + "\"";
       query = e_book_query_from_string(qPrintable(queryStr));
     } break;
     case QContactFilter::ActionFilter:
-      QCM5_DEBUG << "ActionFilter"; //eQuery doesn't support ActionFilter
       break;
     case QContactFilter::IntersectionFilter:
     {
@@ -569,7 +692,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
       foreach(i, fs){
         EBookQuery* q = convert(i);
         if (!q){
-          qWarning() << "Query is null";
+          //qWarning() << "Query is null";
           continue;
         }
         if (query)
@@ -587,7 +710,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
       foreach(i, fs){
         EBookQuery* q = convert(i);
         if (!q){
-          qWarning() << "Query is null";
+          //qWarning() << "Query is null";
           continue;
         }
         if (query)
@@ -603,6 +726,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
     } break;
     default:
       QCM5_DEBUG << "Filter not supported";
+      query = convert(QContactInvalidFilter());
   }
  
   //Debugging
@@ -685,7 +809,7 @@ QContact* QContactABook::convert(EContact *eContact) const
 
     ok = contact->saveDetail(detail);
     if (!ok){
-      qWarning() << "Detail can't be saved into QContact";
+      //qWarning() << "Detail can't be saved to QContact";
       delete detail;
       continue;
     }
@@ -719,13 +843,14 @@ bool QContactABook::setDetailValues(const QVariantMap& data, QContactDetail* det
   return true;
 }
 
-OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) const
+OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
   OssoABookContact* rtn = NULL;
 
   QCM5_DEBUG << "Getting aContact with id " << m_localIds[contactId] << "local contactId is" << contactId;
 
   if(QString(m_localIds[contactId]).compare("osso-abook-self") == 0) {
+    *error = QContactManager::NoError;
     rtn = A_CONTACT(osso_abook_self_contact_get_default());
   } else {
     EBookQuery* query;
@@ -733,12 +858,17 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId) c
 
     query = e_book_query_field_test(E_CONTACT_UID, E_BOOK_QUERY_IS, m_localIds[contactId]);
     contacts = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-    e_book_query_unref(query);
+    if (query)
+        e_book_query_unref(query);
 
     if (g_list_length(contacts) == 1) {
+      *error = QContactManager::NoError;
       rtn = A_CONTACT(contacts->data);
+    } else if (g_list_length(contacts) == 0) {
+      *error = QContactManager::DoesNotExistError;
     } else {
-      qWarning("List is empty or several contacts have the same UID or contactId belongs to a roster contact.");
+      //qWarning("Several contacts have the same UID or contactId belongs to a roster contact.");
+      *error = QContactManager::UnspecifiedError;
     }
     if (contacts)
       g_list_free(contacts);
@@ -756,7 +886,7 @@ QContactId QContactABook::getContactId(EContact *eContact) const
     const QByteArray eContactUID(data);
     QContactLocalId localId = m_localIds[eContactUID];
     if (!localId)
-      qWarning("Unable to get valid localId for the specified eContaact UID");
+      //qWarning("Unable to get valid localId for the specified eContaact UID");
     rtn.setLocalId(localId);
   }
   return rtn;
@@ -769,7 +899,7 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
   //Ordered list of Fields
   QStringList addressFields;
   addressFields << QContactAddress::FieldPostOfficeBox
-                << "Estension" //FIXME I'm not sure we have to use a new field 
+                << AddressFieldExtension //XXX FIXME I'm not sure we have to use a new field
                 << QContactAddress::FieldStreet
                 << QContactAddress::FieldLocality
                 << QContactAddress::FieldRegion 
@@ -839,7 +969,6 @@ QContactName* QContactABook::getNameDetail(EContact *eContact) const
     map[QContactName::FieldCustomLabel] = eContactName->additional;
     map[QContactName::FieldFirstName] = eContactName->given;
     map[QContactName::FieldLastName] = eContactName->family;
-    //map[QContactName::FieldMiddleName] = eContactName->
     map[QContactName::FieldPrefix] = eContactName->prefixes;
     map[QContactName::FieldSuffix] = eContactName->suffixes;
     e_contact_name_free (eContactName);
@@ -909,7 +1038,8 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
 }
 
 QContactAvatar* QContactABook::getAvatarDetail(EContact *eContact) const
-{  
+{
+    Q_UNUSED(eContact);
 // XXX TODO: FIXME
 //  QContactAvatar* rtn = new QContactAvatar;
 //  QVariantMap map;
@@ -1099,7 +1229,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
           attrIsOssoValid = paramName.contains("X-OSSO-VALID");
         
         if (!attrIsType && !attrIsOssoValid) {
-          qWarning () << "Skipping attribute parameter checking for" << paramName;
+          //qWarning () << "Skipping attribute parameter checking for" << paramName;
           continue;
         }
         
@@ -1110,7 +1240,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
           if (attrIsOssoValid) {
             ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
             if (!ossoValidIsOk) {
-              qWarning() << "X-OSSO-VALID is false.";
+              //qWarning() << "X-OSSO-VALID is false.";
               break;
             }
           } else if (type.isEmpty()) {
@@ -1138,7 +1268,7 @@ QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) c
 {
   QContactOrganization* rtn = new QContactOrganization;
   QVariantMap map;
-  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_TITLE));
+  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_ORG));
   map[QContactOrganization::FieldTitle] = title;
   FREE(title);
   setDetailValues(map, rtn);
@@ -1284,7 +1414,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
           attrIsOssoValid = paramName.contains("X-OSSO-VALID");
 
         if (!attrIsType && !attrIsOssoValid) {
-          qWarning () << "Skipping attribute parameter checking for" << paramName;
+          //qWarning () << "Skipping attribute parameter checking for" << paramName;
           continue;
         }
 
@@ -1295,7 +1425,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
           if (attrIsOssoValid) {
             ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
             if (!ossoValidIsOk) {
-              qWarning() << "X-OSSO-VALID is false.";
+              //qWarning() << "X-OSSO-VALID is false.";
               break;
             }
           } else if (type.isEmpty()) {
@@ -1396,7 +1526,7 @@ static void addAttributeToAContact(const OssoABookContact* contact,
       int pos =  g_list_position(attributeList, node);
       
       if (index > pos){
-        qWarning() << "Attribute doesn't found at position" << index;
+        //qWarning() << "Attribute doesn't found at position" << index;
         return;
       }
       
@@ -1473,26 +1603,17 @@ static void addAttributeToAContact(const OssoABookContact* contact,
   }
 }
 
-OssoABookContact* QContactABook::convert(const QContact *contact) const
+OssoABookContact* QContactABook::convert(const QContact *contact, QContactManager::Error* error) const
 {
   Q_CHECK_PTR(contact);
-  
+
   OssoABookContact* rtn;
   
   // Get aContact if it exists or create a new one if it doesn't
   QContactLocalId id = contact->localId();
   QCM5_DEBUG << "Converting QContact id:" << id << " to aContact";
-  if (id){
-    rtn = getAContact(id);
-    // It's not safe to commit changes to a contact that has been modified.
-    // This problem affects attributes with the same name and parameters such as
-    // EMail, Address...
-    QContactTimestamp* ts = getTimestampDetail(E_CONTACT(rtn));
-    if (*ts != contact->detail<QContactTimestamp>()){
-      delete ts;
-      return NULL;
-    }
-    delete ts;
+  if (id) {
+    rtn = getAContact(id, error);
   } else {
     rtn = osso_abook_contact_new();
   }
@@ -1576,7 +1697,7 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     QString key = i.key();
       
     if (key == QContactAddress::FieldPostOfficeBox) index = 0;
-    else if (key == "Estension") index = 1;
+    else if (key == AddressFieldExtension) index = 1;
     else if (key == QContactAddress::FieldStreet) index = 2;
     else if (key == QContactAddress::FieldLocality) index = 3;
     else if (key == QContactAddress::FieldRegion) index = 4;
@@ -1585,7 +1706,7 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     else if (key == QContactDetail::FieldContext) continue;
     else if (key == QContactDetail::FieldDetailUri) detailUri = i.value().toInt();
     else {
-      qWarning() << "Address contains an invalid field:" << key;
+      //qWarning() << "Address contains an invalid field:" << key;
       return;
     }
     
@@ -1637,6 +1758,10 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
     }
 
     QImage image = detail.thumbnail();
+    
+    if (image.isNull())
+      return;
+    
     if (image.format() != QImage::Format_ARGB32_Premultiplied)
         image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
@@ -1649,6 +1774,8 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
 
 void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QContactAvatar& detail) const
 {
+  Q_UNUSED(aContact)
+  Q_UNUSED(detail);
 // XXX TODO: FIXME
 //  if (!aContact) return;
 //
@@ -1722,16 +1849,16 @@ void QContactABook::setNameDetail(const OssoABookContact* aContact, const QConta
   // Save First and Last name in the N vcard attribute
   {  
     QStringList supportedDetailValues;
-    supportedDetailValues << QContactName::FieldFirstName << QContactName::FieldLastName;
+    supportedDetailValues << QContactName::FieldLastName << QContactName::FieldFirstName;
   
     foreach(QString key, supportedDetailValues){
       attrValues << detail.value(key);
     }
   
     //REMOVE ME - We don't want to support custom label
-    if (attrValues[0].isEmpty()){
-      qWarning() << "QContactName::FieldFirstName is empty";
-      attrValues[0] = detail.customLabel();
+    if (attrValues[1].isEmpty()){
+      //qWarning() << "QContactName::FieldFirstName is empty";
+      attrValues[1] = detail.customLabel();
     }
   
     addAttributeToAContact(aContact, EVC_N, attrValues);
@@ -1806,6 +1933,8 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
       QString value = i.value().toString();
       if (value == QContactPhoneNumber::SubTypeMobile)
         value = "CELL";
+      else if (value == QContactPhoneNumber::SubTypeVoice)
+        value = "VOICE";
       paramValues << value.toUpper();
     } else
       attrValues << i.value().toString();
@@ -1815,7 +1944,7 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
   if (paramValues.isEmpty())
     paramValues << "VOICE";
   
-  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
+  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, false, detail.detailUri().toInt());
 }
 
 void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const

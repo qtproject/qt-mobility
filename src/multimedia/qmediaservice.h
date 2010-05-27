@@ -46,7 +46,7 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qstringlist.h>
 
-#include <qmediacontrol.h>
+#include "qmediacontrol.h"
 
 QT_BEGIN_NAMESPACE
 
