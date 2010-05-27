@@ -5,6 +5,7 @@ TARGET = $$qtLibraryTarget(qtmultimedia_mmfengine)
 PLUGIN_SUBDIR = mediaservice
 include (../../../../common.pri)
 qtAddLibrary(QtMultimedia)
+
 #includes here so that all defines are added here also
 #FIXME include (../common/symbiancommon.pri)
 include(mediaplayer/mediaplayer_s60.pri)

@@ -39,24 +39,39 @@
 **
 ****************************************************************************/
 
+#ifndef S60MEDIAPLAYERAUDIOENDPOINTSELECTOR_H
+#define S60MEDIAPLAYERAUDIOENDPOINTSELECTOR_H
 
-#ifndef S60SERVICEPLUGIN_H
-#define S60SERVICEPLUGIN_H
+#include <QStringList>
 
-#include <QtCore/qobject.h>
-#include <qmediaservice.h>
-#include <qmediaserviceproviderplugin.h>
+#include <qaudioendpointselector.h>
 
 QT_USE_NAMESPACE
 
-class S60MediaServicePlugin : public QMediaServiceProviderPlugin
-{
-    Q_OBJECT
-public:
+class S60MediaPlayerControl;
+class S60MediaPlayerSession;
 
-    QStringList keys() const;
-    QMediaService* create(QString const& key);
-    void release(QMediaService *service);
+class S60MediaPlayerAudioEndpointSelector : public QAudioEndpointSelector
+{
+
+Q_OBJECT
+
+public:
+    S60MediaPlayerAudioEndpointSelector(QObject *control, QObject *parent = 0);
+    ~S60MediaPlayerAudioEndpointSelector();
+
+    QList<QString> availableEndpoints() const ;
+    QString endpointDescription(const QString& name) const;
+    QString defaultEndpoint() const;
+    QString activeEndpoint() const;
+
+public Q_SLOTS:
+    void setActiveEndpoint(const QString& name);
+
+private:
+    S60MediaPlayerControl* m_control;
+    QString m_audioInput;
+    QList<QString> m_audioEndpointNames;
 };
 
-#endif // S60SERVICEPLUGIN_H
+#endif // S60MEDIAPLAYERAUDIOENDPOINTSELECTOR_H

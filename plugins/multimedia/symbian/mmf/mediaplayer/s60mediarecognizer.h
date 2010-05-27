@@ -39,44 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6SENSORBASE_H
-#define MAEMO6SENSORBASE_H
+#ifndef S60MEDIARECOGNIZER_H_
+#define S60MEDIARECOGNIZER_H_
 
-#include <qsensorbackend.h>
-#include "sensord/sensormanagerinterface.h"
-#include "sensord/abstractsensor_i.h"
+#include <QtCore/qobject.h>
 
-QTM_USE_NAMESPACE
+#include <apgcli.h>
+#include <f32file.h>
 
-class maemo6sensorbase : public QSensorBackend
+class QUrl;
+
+class S60MediaRecognizer : public QObject
 {
+    Q_OBJECT
+    
 public:
-    maemo6sensorbase(QSensor *sensor);
-    virtual ~maemo6sensorbase();
-
-    virtual void start();
-    virtual void stop();
+    enum MediaType {
+        Audio,
+        Video,
+        Url,
+        NotSupported = -1
+    };
+        
+    S60MediaRecognizer(QObject *parent = 0);
+    ~S60MediaRecognizer();
+    
+    S60MediaRecognizer::MediaType mediaType(const QUrl &url);
+    S60MediaRecognizer::MediaType identifyMediaType(const QString& fileName);
 
 protected:
-    static SensorManagerInterface* m_remoteSensorManager;
-    AbstractSensorChannelInterface* m_sensorInterface;
-    bool m_sensorRunning;
+    TPtrC QString2TPtrC( const QString& string );
 
-    static const float GRAVITY_EARTH;
-    static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
-
-    template<typename T>
-    void initSensor(QString sensorName)
-    {
-        m_remoteSensorManager->loadPlugin(sensorName);
-        m_remoteSensorManager->registerSensorInterface<T>(sensorName);
-        m_sensorInterface = T::controlInterface(sensorName);
-        if (!m_sensorInterface) {
-            m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
-        }
-    }
-
-    qtimestamp createTimestamp();
+private:
+    RApaLsSession m_recognizer;
+    RFile m_file;
+    RFs m_fileServer;
 };
 
-#endif
+#endif /* S60MEDIARECOGNIZER_H_ */

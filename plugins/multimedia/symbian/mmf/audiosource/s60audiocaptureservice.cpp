@@ -38,32 +38,43 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <QDebug>
 
-#include <QString>
-#include "qxarecordmediaserviceproviderplugin.h"
-#include "qxarecordmediaservice.h"
-#include "qxacommon.h"
+#include "s60audiocaptureservice.h"
+#include "s60audiocapturesession.h"
+#include "s60audioendpointselector.h"
+#include "s60audioencodercontrol.h"
+#include "s60audiomediarecordercontrol.h"
+#include "S60audiocontainercontrol.h"
 
-QStringList QXARecordMediaServiceProviderPlugin::keys() const
-{
-    return QStringList()
-            << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE);
+S60AudioCaptureService::S60AudioCaptureService(QObject *parent):
+    QMediaService(parent)
+{    
+    m_session = new S60AudioCaptureSession(this);
+    m_encoderControl = new S60AudioEncoderControl(m_session,this);
+    m_recorderControl = new S60AudioMediaRecorderControl(m_session,this);
+    m_endpointSelector = new S60AudioEndpointSelector(m_session,this); 
+    m_containerControl = new S60AudioContainerControl(m_session, this);
 }
 
-QMediaService* QXARecordMediaServiceProviderPlugin::create(QString const& key)
+S60AudioCaptureService::~S60AudioCaptureService()
 {
-    if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
-        return new QXARecodMediaService;
-    else
-        QT_TRACE2("unsupported key:", key);
+}
+
+QMediaControl *S60AudioCaptureService::control(const char *name) const
+{    
+    if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
+        return m_recorderControl;
+
+    if (qstrcmp(name,QAudioEncoderControl_iid) == 0)
+        return m_encoderControl;
+
+    if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
+        return m_endpointSelector;
+    
+    if (qstrcmp(name,QMediaContainerControl_iid) == 0)
+        return m_containerControl;
+
     return 0;
 }
 
-void QXARecordMediaServiceProviderPlugin::release(QMediaService *service)
-{
-    QT_TRACE_FUNCTION_ENTRY;
-    delete service;
-    QT_TRACE_FUNCTION_EXIT;
-}
-
-Q_EXPORT_PLUGIN2(qtmedia_xarecordservice, QXARecordMediaServiceProviderPlugin);

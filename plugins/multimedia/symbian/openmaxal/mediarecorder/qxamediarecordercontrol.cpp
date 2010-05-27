@@ -39,48 +39,84 @@
 **
 ****************************************************************************/
 
-#include <QString>
-
-#include "qxarecordmediaservice.h"
-#include "qxarecordsession.h"
 #include "qxamediarecordercontrol.h"
-#include "qxaaudioendpointselector.h"
-#include "qxaaudioencodercontrol.h"
-#include "qxamediacontainercontrol.h"
+#include "qxarecordsession.h"
 #include "qxacommon.h"
 
-QXARecodMediaService::QXARecodMediaService(QObject *parent)
-:QMediaService(parent)
+QXAMediaRecoderControl::QXAMediaRecoderControl(QXARecordSession *session, QObject *parent)
+:QMediaRecorderControl(parent), m_session(session)
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    m_session = new QXARecordSession(this);
-    m_control = new QXAMediaRecoderControl(m_session, this);
-    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
-    m_encoder = new QXAAudioEncoderControl(m_session, this);
-    m_container = new QXAMediaContainerControl(m_session, this);
+    connect(m_session, SIGNAL(stateChanged(QMediaRecorder::State)),
+            this, SIGNAL(stateChanged(QMediaRecorder::State)));
+    connect(m_session, SIGNAL(error(int,QString)),
+        this,SIGNAL(error(int,QString)));
+    connect(m_session, SIGNAL(durationChanged(qint64)),
+        this, SIGNAL(durationChanged(qint64)));
 }
 
-QXARecodMediaService::~QXARecodMediaService()
+QXAMediaRecoderControl::~QXAMediaRecoderControl()
 {
     QT_TRACE_FUNCTION_ENTRY_EXIT;
 }
 
-QMediaControl* QXARecodMediaService::requestControl(const char *name)
+QUrl QXAMediaRecoderControl::outputLocation() const
 {
-    QT_TRACE_FUNCTION_ENTRY;
-    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
-        return m_control;
-    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
-        return m_endpoint;
-    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
-        return m_encoder;
-    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
-        return m_container;
-    QT_TRACE_FUNCTION_EXIT;
+    if (m_session)
+        return m_session->outputLocation();
+    return QUrl();
+}
+
+bool QXAMediaRecoderControl::setOutputLocation(const QUrl &location)
+{
+    if (m_session)
+        return m_session->setOutputLocation(location);
+    return false;
+}
+
+QMediaRecorder::State QXAMediaRecoderControl::state() const
+{
+    if (m_session)
+        return m_session->state();
+    return QMediaRecorder::StoppedState;
+}
+
+qint64 QXAMediaRecoderControl::duration() const
+{
+    if (m_session)
+        return m_session->duration();
     return 0;
 }
 
-void QXARecodMediaService::releaseControl(QMediaControl *control)
+void QXAMediaRecoderControl::record()
 {
-    Q_UNUSED(control);
+    if (m_session)
+        m_session->record();
+}
+
+void QXAMediaRecoderControl::pause()
+{
+    if (m_session)
+        m_session->pause();
+}
+
+void QXAMediaRecoderControl::stop()
+{
+    if (m_session)
+        m_session->stop();
+}
+
+void QXAMediaRecoderControl::applySettings()
+{
+    if (m_session)
+        m_session->applySettings();
+}
+
+bool QXAMediaRecoderControl::isMuted() const
+{
+    return false;
+}
+
+void QXAMediaRecoderControl::setMuted(bool)
+{
+
 }

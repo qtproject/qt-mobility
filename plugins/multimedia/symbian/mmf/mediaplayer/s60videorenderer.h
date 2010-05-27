@@ -39,39 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef QXAAUDIOENDPOINTSELECTOR_H
-#define QXAAUDIOENDPOINTSELECTOR_H
+#ifndef S60VIDEORENDERER_H
+#define S60VIDEORENDERER_H
 
-#include <qaudioendpointselector.h>
+#include <QtCore/qobject.h>
+#include <qvideorenderercontrol.h>
 
 QT_USE_NAMESPACE
 
-/*
- * This class implements QAudioEncoderControl interface.
- */
-class QXARecordSession;
-
-class QXAAudioEndpointSelector : public QAudioEndpointSelector
+class S60VideoRenderer : public QVideoRendererControl
 {
     Q_OBJECT
 
 public:
-    QXAAudioEndpointSelector(QXARecordSession *session, QObject *parent);
-    ~QXAAudioEndpointSelector();
+    S60VideoRenderer(QObject *parent = 0);
+    virtual ~S60VideoRenderer();
+    
+    QAbstractVideoSurface *surface() const;
+    void setSurface(QAbstractVideoSurface *surface);
 
-    QList<QString> availableEndpoints() const;
-    QString endpointDescription(const QString &name) const;
-    QString defaultEndpoint() const;
-    QString activeEndpoint() const;
+private:    
 
-public Q_SLOTS:
-    void setActiveEndpoint(const QString &name);
-
-private Q_SLOTS:
-    void availableAudioInputsChanged();
-
-private:
-    QXARecordSession *m_session;
+    QAbstractVideoSurface *m_surface;
 };
 
-#endif /* QXAAUDIOENDPOINTSELECTOR_H */
+#endif // S60VIDEORENDERER_H

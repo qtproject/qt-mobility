@@ -436,7 +436,6 @@ void QDeclarativeVideo::componentComplete()
                 this, SIGNAL(hasVideoChanged()));
 
         m_mediaObject->bind(m_graphicsItem);
-
     }
 }
 

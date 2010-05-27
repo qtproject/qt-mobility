@@ -39,37 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef S60AUDIOCAPTURESERVICE_H
-#define S60AUDIOCAPTURESERVICE_H
+#include "s60videooutputcontrol.h"
 
-#include <QtCore/qobject.h>
-
-#include <qmediaservice.h>
-
-QT_USE_NAMESPACE
-
-class S60AudioCaptureSession;
-class S60AudioEncoderControl;
-class S60AudioMediaRecorderControl;
-class S60AudioEndpointSelector;
-class S60AudioContainerControl;
-
-
-class S60AudioCaptureService : public QMediaService
+S60VideoOutputControl::S60VideoOutputControl(QObject *parent)
+    : QVideoOutputControl(parent)
+    , m_output(NoOutput)
 {
-    Q_OBJECT
-public:
-    S60AudioCaptureService(QObject *parent = 0);
-    ~S60AudioCaptureService();
+    setAvailableOutputs(QList<QVideoOutputControl::Output>()
+//                        << QVideoOutputControl::RendererOutput
+//                        << QVideoOutputControl::WindowOutput
+                        << QVideoOutputControl::WidgetOutput);
+}
 
-    QMediaControl *requestControl(const char *name);
-    void releaseControl(QMediaControl *control);
-private:
-    S60AudioCaptureSession       *m_session;
-    S60AudioEncoderControl       *m_encoderControl;
-    S60AudioEndpointSelector     *m_endpointSelector;
-    S60AudioMediaRecorderControl *m_recorderControl;
-    S60AudioContainerControl     *m_containerControl; 
-};
+QList<QVideoOutputControl::Output> S60VideoOutputControl::availableOutputs() const
+{
+    return m_outputs;
+}
 
-#endif // S60AUDIOCAPTURESERVICE_H
+void S60VideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
+{
+    emit availableOutputsChanged(m_outputs = outputs);
+}
+
+QVideoOutputControl::Output S60VideoOutputControl::output() const
+{
+    return m_output;
+}
+
+void S60VideoOutputControl::setOutput(Output output)
+{
+    if (!m_outputs.contains(output))
+        output = NoOutput;
+
+    if (m_output != output)
+        emit outputChanged(m_output = output);
+}
