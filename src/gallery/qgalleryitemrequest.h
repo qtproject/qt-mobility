@@ -75,7 +75,7 @@ public:
     QGalleryItemList *item() const;
 
 Q_SIGNALS:
-    void itemChanged();
+    void itemChanged(QGalleryItemList *item);
 
 protected:
     void setResponse(QGalleryAbstractResponse *response);

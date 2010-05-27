@@ -265,9 +265,9 @@ QGalleryItemList *QGalleryFilterRequest::items() const
 }
 
 /*!
-    \fn QGalleryFilterRequest::itemsChanged()
+    \fn QGalleryFilterRequest::itemsChanged(QGalleryItemList *items)
 
-    Signals that the items property has changed.
+    Signals that the list of \a items returned by a request has changed.
 */
 
 /*!
@@ -276,9 +276,7 @@ QGalleryItemList *QGalleryFilterRequest::items() const
 
 void QGalleryFilterRequest::setResponse(QGalleryAbstractResponse *response)
 {
-    Q_UNUSED(response);
-
-    emit itemsChanged();
+    emit itemsChanged(response);
 }
 
 #include "moc_qgalleryfilterrequest.cpp"

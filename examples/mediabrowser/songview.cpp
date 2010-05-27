@@ -95,9 +95,9 @@ SongView::~SongView()
 {
 }
 
-void SongView::mediaChanged()
+void SongView::mediaChanged(QGalleryItemList *media)
 {
-    model->setList(media());
+    model->setList(media);
 }
 
 void SongView::activated(const QModelIndex &index)

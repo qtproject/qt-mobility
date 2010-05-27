@@ -57,7 +57,7 @@ public:
     ~SongView();
 
 protected slots:
-    void mediaChanged();
+    void mediaChanged(QGalleryItemList *media);
 
 private slots:
     void activated(const QModelIndex &index);

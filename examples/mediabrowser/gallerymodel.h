@@ -75,7 +75,6 @@ public:
     void setColumnCount(int count);
 
     QGalleryItemList *list() const;
-    void setList(QGalleryItemList *list);
 
     QString columnName(int column) const;
     void setColumnName(int column, const QString &name);
@@ -88,6 +87,9 @@ public:
 
     QVector<QString> userRoleFields() const;
     void setUserRoleFields(const QVector<QString> &fields);
+
+public slots:
+    void setList(QGalleryItemList *list);
 
 private slots:
     void removed(int index, int count);

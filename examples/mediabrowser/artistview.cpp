@@ -86,9 +86,9 @@ ArtistView::~ArtistView()
 {
 }
 
-void ArtistView::mediaChanged()
+void ArtistView::mediaChanged(QGalleryItemList *media)
 {
-    model->setList(media());
+    model->setList(media);
 }
 
 void ArtistView::activated(const QModelIndex &index)

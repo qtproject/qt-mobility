@@ -48,9 +48,13 @@
 
 QTM_USE_NAMESPACE
 
+Q_DECLARE_METATYPE(QGalleryItemList*)
+
 class tst_QGalleryItemRequest : public QObject
 {
     Q_OBJECT
+public Q_SLOTS:
+    void initTestCase();
 
 private Q_SLOTS:
     void properties();
@@ -116,6 +120,11 @@ private:
     bool m_idle;
 };
 
+void tst_QGalleryItemRequest::initTestCase()
+{
+    qRegisterMetaType<QGalleryItemList*>();
+}
+
 void tst_QGalleryItemRequest::properties()
 {
     const QGalleryProperty titleProperty("title");
@@ -155,7 +164,7 @@ void tst_QGalleryItemRequest::executeSynchronous()
     QGalleryItemRequest request(&gallery);
     QVERIFY(request.item() == 0);
 
-    QSignalSpy spy(&request, SIGNAL(itemChanged()));
+    QSignalSpy spy(&request, SIGNAL(itemChanged(QGalleryItemList*)));
 
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::ConnectionError));
@@ -167,11 +176,13 @@ void tst_QGalleryItemRequest::executeSynchronous()
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(spy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.item()) != 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.item());
 
     request.clear();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(spy.count(), 2);
     QVERIFY(request.item() == 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.item());
 }
 
 void tst_QGalleryItemRequest::executeAsynchronous()
@@ -182,12 +193,13 @@ void tst_QGalleryItemRequest::executeAsynchronous()
     QGalleryItemRequest request(&gallery);
     QVERIFY(request.item() == 0);
 
-    QSignalSpy spy(&request, SIGNAL(itemChanged()));
+    QSignalSpy spy(&request, SIGNAL(itemChanged(QGalleryItemList*)));
 
     request.execute();
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(spy.count(), 1);
     QVERIFY(qobject_cast<QtGalleryTestResponse *>(request.item()) != 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.item());
 
     qobject_cast<QtGalleryTestResponse *>(request.item())->doFinish(
             QGalleryAbstractRequest::Succeeded, false);
@@ -199,6 +211,7 @@ void tst_QGalleryItemRequest::executeAsynchronous()
     QCOMPARE(request.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(spy.count(), 2);
     QVERIFY(request.item() == 0);
+    QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.item());
 }
 
 QTEST_MAIN(tst_QGalleryItemRequest)

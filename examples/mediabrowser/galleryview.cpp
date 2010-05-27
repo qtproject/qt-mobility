@@ -49,7 +49,8 @@ GalleryView::GalleryView(QWidget *parent)
     , request(new QGalleryFilterRequest(this))
     , countRequest(new QGalleryCountRequest(this))
 {
-    connect(request, SIGNAL(itemsChanged()), this, SLOT(mediaChanged()));
+    connect(request, SIGNAL(itemsChanged(QGalleryItemList*)),
+            this, SLOT(mediaChanged(QGalleryItemList*)));
     connect(countRequest, SIGNAL(countChanged()), this, SLOT(requestCountChanged()));
 }
 

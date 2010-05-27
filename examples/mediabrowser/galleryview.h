@@ -80,7 +80,7 @@ protected:
     QGalleryItemList *media() const;
 
 protected slots:
-    virtual void mediaChanged() = 0;
+    virtual void mediaChanged(QGalleryItemList *media) = 0;
 
 private slots:
     void requestCountChanged();

@@ -90,9 +90,9 @@ AlbumView::~AlbumView()
 {
 }
 
-void AlbumView::mediaChanged()
+void AlbumView::mediaChanged(QGalleryItemList *media)
 {
-    model->setList(media());
+    model->setList(media);
 }
 
 void AlbumView::activated(const QModelIndex &index)

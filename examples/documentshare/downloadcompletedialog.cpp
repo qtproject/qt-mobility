@@ -70,7 +70,7 @@ DownloadCompleteDialog::DownloadCompleteDialog(
             << QDocumentGallery::subject
             << QDocumentGallery::description);
 
-    connect(request, SIGNAL(itemChanged()), this, SLOT(itemChanged()));
+    connect(request, SIGNAL(itemChanged(QGalleryItemList*)), this, SLOT(itemChanged()));
 
     connect(this, SIGNAL(finished(int)), request, SLOT(clear()));
 

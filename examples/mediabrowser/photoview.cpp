@@ -86,9 +86,9 @@ PhotoView::~PhotoView()
 {
 }
 
-void PhotoView::mediaChanged()
+void PhotoView::mediaChanged(QGalleryItemList *media)
 {
-    model->setList(media());
+    model->setList(media);
 }
 
 void PhotoView::activated(const QModelIndex &index)
