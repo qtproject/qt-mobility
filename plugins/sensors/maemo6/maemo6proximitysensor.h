@@ -45,7 +45,8 @@
 #include "maemo6sensorbase.h"
 #include <qproximitysensor.h>
 
-#include <sensord/proximitysensor_i.h>
+#include <proximitysensor_i.h>
+#include <unsigned.h>
 
 QTM_USE_NAMESPACE
 
@@ -54,7 +55,7 @@ class maemo6proximitysensor : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
+    static char const * const id;
 
     maemo6proximitysensor(QSensor *sensor);
 
@@ -63,7 +64,7 @@ private:
     static bool m_initDone;
    
 private slots:
-    void slotDataAvailable(const int& data);
+    void slotDataAvailable(const Unsigned& data);
 };
 
 #endif

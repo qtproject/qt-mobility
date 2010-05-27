@@ -44,10 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qaccelerometer.h>
-#include <qsensorbackend.h>
 
-#include <sensord/accelerometersensor_i.h>
-#include <sensord/datatypes/xyz.h>
+#include <accelerometersensor_i.h>
+#include <datatypes/xyz.h>
 
 QTM_USE_NAMESPACE
 
@@ -56,7 +55,7 @@ class maemo6accelerometer : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
+    static char const * const id;
 
     maemo6accelerometer(QSensor *sensor);
 

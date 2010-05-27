@@ -346,6 +346,21 @@ private: // Data
     mutable RTimer iTimer;
 };
 
+class QMTMWait : public CActive
+{
+public:
+    QMTMWait(TInt aPriority = EPriorityStandard);
+    ~QMTMWait();
+
+    void start();
+
+protected: // From CActive
+    void RunL();
+    void DoCancel();
+    
+private: // Data
+    QEventLoop m_eventLoop;
+};
 
 QTM_END_NAMESPACE
 #endif // QMTMENGINE_SYMBIAN_H

@@ -91,7 +91,7 @@ public:
     explicit QMagnetometer(QObject *parent = 0) : QSensor(QMagnetometer::type, parent) {}
     virtual ~QMagnetometer() {}
     QMagnetometerReading *reading() const { return static_cast<QMagnetometerReading*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 
 QTM_END_NAMESPACE

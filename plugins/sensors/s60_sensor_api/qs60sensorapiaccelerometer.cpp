@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#if !defined(HAS_NO_SENSOR_PROVISION)
 //Symbian
 #include <e32std.h>
 #include <rrsensorapi.h>
@@ -48,7 +50,7 @@
 // Constants
 const int KAccelerometerSensorUID = 0x10273024;
 
-const char *QS60SensorApiAccelerometer::id("s60sensorapi.accelerometer");
+char const * const QS60SensorApiAccelerometer::id("s60sensorapi.accelerometer");
 
 QS60SensorApiAccelerometer::QS60SensorApiAccelerometer(QSensor *sensor)
     : QSensorBackend(sensor)
@@ -141,3 +143,4 @@ void QS60SensorApiAccelerometer::findAndCreateNativeSensorL()
     
     CleanupStack::PopAndDestroy(&sensorList);
 }
+#endif

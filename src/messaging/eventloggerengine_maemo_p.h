@@ -125,7 +125,6 @@ public:
 
     QMessageIdList m_ids;
 
-
 signals:
     void messagesFound(const QMessageIdList &,bool,bool);
     void stateChanged(QMessageService::State);

@@ -70,15 +70,6 @@ QContactDetail *CntTransformSyncTarget::transformItemField(const CContactItemFie
 	return syncTarget;
 }
 
-bool CntTransformSyncTarget::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldClass.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformSyncTarget::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -86,6 +77,12 @@ bool CntTransformSyncTarget::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformSyncTarget::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldClass;
 }
 
 QList<TUid> CntTransformSyncTarget::supportedSortingFieldTypes(QString detailFieldName) const

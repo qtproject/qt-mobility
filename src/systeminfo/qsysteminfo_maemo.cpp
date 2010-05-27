@@ -148,14 +148,8 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
     switch (feature) {
     case QSystemInfo::SimFeature :
         {
-            GConfItem locationValues("/system/nokia/location");
-            const QStringList locationKeys = locationValues.listEntries();
-
-            foreach (const QString str, locationKeys) {
-                if (str.contains("sim_imsi"))
-                    featureSupported = true;
-                break;
-            }
+            QSystemDeviceInfoPrivate d;
+            featureSupported = (d.simStatus() != QSystemDeviceInfo::SimNotAvailable);
         }
         break;
     case QSystemInfo::LocationFeature :
@@ -163,18 +157,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
             GConfItem locationValues("/system/nokia/location");
             const QStringList locationKeys = locationValues.listEntries();
             if(locationKeys.count()) {
-                featureSupported = true;
-            }
-        }
-        break;
-    case QSystemInfo::VideoOutFeature :
-        {
-            const QString sysPath = "/sys/class/video4linux/";
-            const QDir sysDir(sysPath);
-            QStringList filters;
-            filters << "*";
-            const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(sysList.contains("video0")) {
                 featureSupported = true;
             }
         }
@@ -321,11 +303,12 @@ QString QSystemNetworkInfoPrivate::currentMobileNetworkCode()
 
 QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 {
-    QString imsi = GConfItem("/system/nokia/location/sim_imsi").value().toString();
+    QSystemDeviceInfoPrivate d;
+    QString imsi = d.imsi();
     if (imsi.length() >= 3) {
         return imsi.left(3);
     }
-        return QString();
+    return "";
 }
 
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
@@ -1027,44 +1010,50 @@ QSystemDeviceInfo::Profile QSystemDeviceInfoPrivate::currentProfile()
 
 QString QSystemDeviceInfoPrivate::imei()
 {
- #if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.phone.SIM",
+#if !defined(QT_NO_DBUS)
+    #if defined(Q_WS_MAEMO_6)
+        QString dBusService = "com.nokia.csd.Info";
+    #else
+        /* Maemo 5 */
+        QString dBusService = "com.nokia.phone.SIM";
+    #endif
+    QDBusInterface connectionInterface(dBusService,
                                        "/com/nokia/csd/info",
                                        "com.nokia.csd.Info",
                                         QDBusConnection::systemBus());
-    if(!connectionInterface.isValid()) {
-        qWarning() << "interfacenot valid";
-    }
-
     QDBusReply< QString > reply = connectionInterface.call("GetIMEINumber");
     return reply.value();
-
 #endif
-        return "Not Available";
+    return "";
 }
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
+#if defined(Q_WS_MAEMO_6)
+    /* Maemo 6 */
+    #if !defined(QT_NO_DBUS)
+        QDBusInterface connectionInterface("com.nokia.csd.SIM",
+                                           "/com/nokia/csd/sim",
+                                           "com.nokia.csd.SIM.Identity",
+                                           QDBusConnection::systemBus());
+        QDBusReply< QString > reply = connectionInterface.call("GetIMSI");
+        return reply.value();
+    #endif
+    return "";
+#else
+    /* Maemo 5 */
     return GConfItem("/system/nokia/location/sim_imsi").value().toString();
+#endif
 }
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-    GConfItem locationValues("/system/nokia/location");
-    const QStringList locationKeys = locationValues.listEntries();
-    QStringList result;
-    int count = 0;
-    foreach (const QString str, locationKeys) {
-        if (str.contains("sim_imsi"))
-            count++;
+    QSystemDeviceInfo::SimStatus simStatus = QSystemDeviceInfo::SimNotAvailable;
+    QString imsi = QSystemDeviceInfoPrivate::imsi();
+    if (imsi.length() > 0) {
+        simStatus = QSystemDeviceInfo::SingleSimAvailable;
     }
-
-    if(count == 1) {
-        return QSystemDeviceInfo::SingleSimAvailable;
-    } else if (count == 2) {
-        return QSystemDeviceInfo::DualSimAvailable;
-    }
-    return QSystemDeviceInfo::SimNotAvailable;
+    return simStatus;
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
@@ -1225,6 +1214,7 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
     if (active) {
+        const QSystemDeviceInfo::Profile previousProfile = currentProfile();
         profileName = profile;
         foreach (const ProfileDataValue value, values) {
             if (value.key == "ringing.alert.type")
@@ -1234,8 +1224,9 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
             else if (value.key == "ringing.alert.volume")
                 ringingAlertVolume = value.val.toInt();
         }
-        if (changed)
-            emit currentProfileChanged(currentProfile());
+        QSystemDeviceInfo::Profile newProfile = currentProfile();
+        if (previousProfile != newProfile)
+           emit currentProfileChanged(newProfile);
     }
 }
 

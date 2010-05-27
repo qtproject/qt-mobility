@@ -45,8 +45,8 @@
 #include "maemo6sensorbase.h"
 #include <qmagnetometer.h>
 
-#include <sensord/magnetometersensor_i.h>
-#include <sensord/datatypes/magneticfield.h>
+#include <magnetometersensor_i.h>
+#include <magneticfield.h>
 
 QTM_USE_NAMESPACE
 
@@ -55,7 +55,7 @@ class maemo6magnetometer : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
+    static char const * const id;
 
     maemo6magnetometer(QSensor *sensor);
 

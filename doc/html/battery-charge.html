@@ -21,8 +21,6 @@
 <li><a href="battery-charge-battery-publisher-main-cpp.html">battery-charge/battery-publisher/main.cpp</a></li>
 <li><a href="battery-charge-battery-charge-pro.html">battery-charge/battery-charge.pro</a></li>
 <li><a href="battery-charge-battery-publisher-battery-publisher-pro.html">battery-charge/battery-publisher/battery-publisher.pro</a></li>
-<li><a href="battery-charge-battery-subscriber-battery-subscriber-pro.html">battery-charge/battery-subscriber/battery-subscriber.pro</a></li>
-<li><a href="battery-charge-battery-subscriber-battery-subscriber-qrc.html">battery-charge/battery-subscriber/battery-subscriber.qrc</a></li>
 </ul>
 <p>This examples shows how to access published context values from within QML. The example consists of two programs. The first, battery-publisher, is a standard Qt GUI application that is used to emulate a battery for the sole purpose of demonstrating the second program. It publishes the keys</p>
 <pre>    /power/battery/charge
@@ -33,46 +31,18 @@
 <p align="center"><img src="images/battery-subscriber.png" /></p><a name="battery-subscriber"></a>
 <h2>Battery Subscriber</h2>
 <p>The first step is to make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML so that our QML code can access the keys published by the battery-publisher. This is achieved by using the QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros. The following code makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML as ValueSpaceSubscriber.</p>
-<pre>    QML_DECLARE_TYPE(QValueSpaceSubscriber);</pre>
+<pre></pre>
 <a name="qml"></a>
 <h3>QML</h3>
 <p>Two ValueSpaceSubscriber instances are created, one for each of the battery values. We give each object a unique id so that we can reference it from elsewhere in the QML. We set the <i>path</i> properties to the Value Space path of the keys. Finally we set the <i>notify</i> properties to true to enable the emission of change notification signals.</p>
-<pre>        ValueSpaceSubscriber {
-            id: batteryCharge
-            path: &quot;/power/battery/charge&quot;
-        }
-        ValueSpaceSubscriber {
-            id: batteryCharging
-            path: &quot;/power/battery/charging&quot;
-        }</pre>
+<pre></pre>
 <p>The default state of the rectangle used to visualize the battery charge uses the <i>charge</i> property of our BatteryCharge class in the expression for its height.</p>
-<pre>            id: visualCharge
-            x: 12
-            y: 22 + 196 - height
-            width: 76
-            height: 196 * batteryCharge.value / 100
-            clip: true
-            color: &quot;green&quot;</pre>
+<pre></pre>
 <p>When the battery charge changes the height of the rectangle will automatically change.</p>
 <p>Next we define two additional states. The <i>low</i> state is entered when the battery charge drops below 25% and the battery is not being recharged. When in this state the color is set to red.</p>
-<pre>            State {
-                name: &quot;low&quot;
-                when: batteryCharge.value &lt; 25 &amp;&amp; !batteryCharging.value
-                PropertyChanges {
-                    target: visualCharge
-                    color: &quot;red&quot;
-                }
-            }</pre>
+<pre></pre>
 <p>The <i>charging</i> state is entered when the battery is being recharged. When in this state a particle effect animation is enabled.</p>
-<pre>            State {
-                name: &quot;charging&quot;
-                when: batteryCharging.value
-                PropertyChanges {
-                    target: bubbles
-                    count: batteryCharge.value / 5
-                    emissionRate: 5
-                }
-            },</pre>
+<pre></pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

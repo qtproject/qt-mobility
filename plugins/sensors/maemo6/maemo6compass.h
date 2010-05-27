@@ -44,9 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qcompass.h>
-#include <qsensorbackend.h>
 
-#include <sensord/compasssensor_i.h>
+#include <compasssensor_i.h>
+#include <compass.h>
 
 QTM_USE_NAMESPACE
 
@@ -55,7 +55,7 @@ class maemo6compass : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
+    static char const * const id;
     maemo6compass(QSensor *sensor);
 
 private:
@@ -63,8 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotLevelChanged(const int& level);
-    void slotDegreesChanged(const int& degrees);
+    void dataAvailable(const Compass& data);
 };
 
 #endif

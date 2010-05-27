@@ -154,7 +154,7 @@ Support is present for the following System Info API classes
 
 \section2 Messaging API
 \list
-    \o Messaging filtering and Sorting functions are not fully optimized.
+    \o Messaging filtering and sorting functions are not fully optimized.
     \o Fremantle: \c {QMessageService::compose} not supported for SMS type messages.
     \o Fremantle: queryMessages service action is synchronous for SMS type messages.
     \o Fremantle: \c {QMessageService::show} not supported for SMS type messages.
@@ -173,7 +173,7 @@ Support is present for the following System Info API classes
     \o Windows: \c {QMessageServiceAction::exportUpdates}: Performs no operation as changes are automatically synchronized with external servers when a connection is available.
     control of update progress.
     \o Windows desktop: \c {QMessageStore::instance} shows a blocking modal dialog if MAPI is not installed.
-    \o Windows mobile: \c {QMessageSerivceAction::retrieve}: Only retrieves content for messages bodies at present. Attachment retrieval
+    \o Windows mobile: \c {QMessageServiceAction::retrieve}: Only retrieves content for messages bodies at present. Attachment retrieval
     overridden by mapi/mail client settings.
     \o Windows mobile: \c {QMessageServiceAction::cancelOperation}: Async nature of native calls used to implement service actions means that cancelOperation will only operate on the ::retrieveBody service action.
 \endlist

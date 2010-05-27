@@ -80,7 +80,7 @@ public:
         UnknownTransaction
     };
     
-    XQCentralRepositoryUtils(XQSettingsManager& settingsManager, QObject* parent = 0);
+    explicit XQCentralRepositoryUtils(XQSettingsManager& settingsManager, QObject* parent = 0);
     ~XQCentralRepositoryUtils();
     bool createKey(const XQCentralRepositorySettingsKey& key, const QVariant& value);
     bool deleteKey(const XQCentralRepositorySettingsKey& key);

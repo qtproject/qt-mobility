@@ -43,12 +43,14 @@
 #include <QDebug>
 #include <QtGlobal>
 
-const char *dummylightsensor::id("dummy.lightsensor");
+char const * const dummylightsensor::id("dummy.lightsensor");
 
 dummylightsensor::dummylightsensor(QSensor *sensor)
     : dummycommon(sensor)
 {
     setReading<QAmbientLightReading>(&m_reading);
+    addDataRate(100,100);
+    sensor->setDataRate(100);
 }
 
 void dummylightsensor::poll()

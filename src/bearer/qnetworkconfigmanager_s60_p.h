@@ -101,6 +101,7 @@ Q_SIGNALS:
     
 public Q_SLOTS:
     void updateConfigurations();
+    void delayedConfigurationUpdate();
 
 private:
     void registerPlatformCapabilities();
@@ -126,7 +127,7 @@ private:
     void accessPointScanningReady(TBool scanSuccessful, TConnMonIapInfo iapInfo);
     void startCommsDatabaseNotifications();
     void stopCommsDatabaseNotifications();
-    void waitRandomTime();
+    void updateConfigurationsAfterRandomTime();
 
     QNetworkConfiguration defaultConfigurationL();
     TBool GetS60PlatformVersion(TUint& aMajor, TUint& aMinor) const;
@@ -163,9 +164,8 @@ private: // Data
     TBool              iOnline;
     TBool              iInitOk;
     TBool              iUpdateGoingOn;
-    TBool              iIgnoringUpdates;
+    TBool              iUpdatePending;
     TUint              iTimeToWait;
-    QEventLoop*        iIgnoreEventLoop;
 
     AccessPointsAvailabilityScanner* ipAccessPointsAvailabilityScanner;
     

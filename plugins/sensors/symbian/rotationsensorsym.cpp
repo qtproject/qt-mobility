@@ -45,7 +45,7 @@
 /**
  * set the id of the proximity sensor
  */
-const char *CRotationSensorSym::id("sym.rotation");
+char const * const CRotationSensorSym::id("sym.rotation");
 
 /**
  * Factory function, this is used to create the rotation sensor object
