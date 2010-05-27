@@ -1,17 +1,4 @@
-
-#This is a temporary workaround for internal Symbian builds
-#QT_MAJOR_VERSION et al are not set
-symbian {
-    isEmpty(QT_MAJOR_VERSION)  {
-         exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-           QT_MAJOR_VERSION=4;
-           QT_MINOR_VERSION=6;
-           QT_PATCH_VERSION=0;
-        }
-    }
-}
-
-# config.pri specifies the configure options
+# config.pri specifies the configure options and is pulled in via staticconfig.pri
 include(staticconfig.pri)
 !include($$QT_MOBILITY_BUILD_TREE/config.pri) {
     error("Please run configure script");
@@ -91,6 +78,9 @@ contains(build_docs, yes) {
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
 
+#updating and deployment of translations requires Qt 4.6.3/qtPrepareTool
+!symbian:defined(qtPrepareTool):SUBDIRS += translations
+
 # install Qt style headers
 qtmheaders.path = $${QT_MOBILITY_INCLUDE}
 
@@ -107,16 +97,6 @@ qtmheaders.path = $${QT_MOBILITY_INCLUDE}
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmSensors/*
     INSTALLS += qtmheaders
 } else {
-
-#    Can we assume the path exists?
-#    paths = $$MW_LAYER_PUBLIC_EXPORT_PATH("") \
-#            $$APP_LAYER_PUBLIC_EXPORT_PATH("")
-#    for(i, paths) {
-#        exportPath=$$EPOCROOT"."$$dirname($$i)
-#        nativePath=$$replace(exportPath, /,\)
-#        !exists($$nativePath):system($$QMAKE_MKDIR $$nativePath)
-#    }
-
     #absolute path does not work and so is shadow building for Symbian
     qtmAppHeaders = include/QtmContacts/* \
                           include/QtmVersit/*

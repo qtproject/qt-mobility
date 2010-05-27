@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -835,7 +835,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContact empty;
     QString label = m_engine->synthesizedDisplayLabel(empty, &err);
     QVERIFY(err == QContactManager::NoError);
-    QVERIFY(label == QString("Unnamed"));
+    QVERIFY(label == QString(""));
 
     QContact first;
     QContactName fn;

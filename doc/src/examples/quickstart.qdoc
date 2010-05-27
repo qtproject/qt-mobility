@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,11 +65,6 @@ This example uses the QSystemInfo headers to print out the
 system's current country code.  All the domain APIs are wrapped
 within a Qt Mobility namespace and thus developers 
 need to use the QTM_USE_NAMESPACE macro.
-(\bold{Note}:  If you are on the Symbian platform you will
-need to define the actual header file, in this case
-<qsysteminfo.h> rather than using the standard header form
-<QSystemInfo>, this is a known bug that is to be 
-addressed in a future release)
 
 In step 3, to specify that our project is using
 System Information we declare in the project file:
@@ -113,16 +108,30 @@ corresponding values that can be assigned to \c MOBILITY.
     \o \l {Qt Service Framework} {Service Framework}
     \o serviceframework
 \row
+    \o \l {Sensor API}
+    \o sensors
+\row
     \o \l {System Information}
     \o systeminfo
 \row
-    \o \l {Future Additional APIs}{Versit}
+    \o \l {Versit API}{Versit}
     \o versit
 \endtable
 
-When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model:
+When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model.
+This can be achieved with a line such as the following:
 
-\snippet quickstart/quickstart.pro 1
+\code
+    TARGET.CAPABILITIES = CAPABILITY_A CABAPILITY_B
+\endcode
+
+CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian
+capabilities and their availability to application developers can be found in the 
+\l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)}{Symbian capability documentation}.
+
+The subsequent table provides an overview of possibily required capabilities for each Mobility library.
+Note that not all capabilities are always required when using a particular API. The exact list depends
+on which parts of an API is utilized by an application.
 
 \table 
 \header
@@ -150,10 +159,17 @@ When developing on Symbian we will also need to add the required capabilites to 
     \o \l {Qt Service Framework} {Service Framework}
     \o No capabilities requried by itself, the plugins may have capability requirements.
 \row
-    \o \l {System Information}
-    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location TrustedUI ReadDeviceData
+    \o \l {Sensor API}
+    \o ReadDeviceData
 \row
+    \o \l {System Information}
+    \o LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData
+\row
+    \o \l {Versit API}
+    \o No additional capabilities required.
 \endtable
+
+The complete list of all Symbian capabilities and how they can be obtained can be found in the \l {http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)#Which_capabilities_can_I_access.3F}{Symbian developer documentation}. 
 
 And we're done.  If you are using the command line simply
 enter:

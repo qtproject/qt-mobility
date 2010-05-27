@@ -44,6 +44,7 @@
 <h3>Overview</h3>
 <a name="introducing-the-new-qt-apis"></a>
 <h4>Introducing the New Qt APIs</h4>
+<p>Qt Mobility covers a wide range of features and technologies so it best to regard it not as a single API but as a collection of APIs or frameworks.</p>
 <p>This release contains the following APIs:</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="bearer-management.html">Bearer Management</a></th><td>An API to control the system's connectivity state.</td></tr>
@@ -57,7 +58,7 @@
 <tr valign="top" class="odd"><th><a href="systeminfo.html">System Information</a></th><td>A set of APIs to discover system related information and capabilities.</td></tr>
 <tr valign="top" class="even"><th><a href="versit.html">Versit API</a></th><td>An API to manage Versit documents.</td></tr>
 </table></p>
-<p>These APIs give the developer a wide range of desirable functions for a mobile platform, but these now become possible on platforms not traditionally associated with some of the features. A mobile device using the Qt Mobility Project API would be able to</p>
+<p>These APIs give the developer a range of desirable functions for a mobile platform, but now these functions become possible on platforms not traditionally associated with some of the features. A mobile device using the Qt Mobility Project API would be able to</p>
 <ul>
 <li>Locate services on-board or remotely. Find an optimal connection to the network for the particular service.</li>
 <li>Services built on top of these APIs would include Internet applications such as email and web browsing.</li>
@@ -83,7 +84,7 @@
 <h3>The New Qt APIs</h3>
 <a name="bearer-management"></a>
 <h4>Bearer Management</h4>
-<p>Although not a network manager, this component manages the connectivity state to the network. So it does not manage network configurations, which are the role of the platform provider, but it does allow the user to start or stop network interfaces. Some higher level management of the connection session may also be possible as well depending on the platform.</p>
+<p>Although not a network manager, this component manages the connectivity state of the device to the network. So it does not manage network configurations, which are the role of the platform provider, but it does allow the user to start or stop network interfaces. Some higher level management of the connection session may also be possible as well depending on the platform.</p>
 <p>Some platforms can have a set of grouped access points perhaps based on a common purpose. Bearer Management allows comparison and prioritization of the access and use of these points.</p>
 <p>The aim of Bearer Management is to reduce the need for the developer to be concerned about trying to locate the best connection from a list of possible IP bearers and 3G connections. The user can select the best or it can be selected transparently so that WLAN roaming can occur seemlessly.</p>
 <p>Some examples of the Bearer Management functionality,</p>
@@ -217,7 +218,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="yellow">Backend available in w21</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -281,13 +282,13 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Multimedia**</td>
+    <td>Multimedia</td>
     <td>BETA</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
 
-    <td bgcolor="green"></td>
-    <td bgcolor="green"></td>
+    <td bgcolor="yellow">Player crashes</td>
+    <td bgcolor="yellow">Player crashes</td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="green"></td>
@@ -309,12 +310,12 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Sensors*</td>
+    <td>Sensors</td>
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
 
@@ -342,10 +343,9 @@
     </table>
     <br>
 
-    <p>[*] <i>These APIs are considered FINAL however there are some known issues with Symbian backends. These backend issues will be resolved in a future release. </i></p>
+    <p>[*] <i>These APIs are considered FINAL however there are some known issues with Symbian backends. These backend issues will be resolved in a future release.</i></p>
     <p>
-    <p>[**] <i>These APIs are considered BETA pending final API reviews. We anticipate moving the status to Final in a future release.</i></p>
-<a name="feedback-and-bug-reports"></a>
+    <a name="feedback-and-bug-reports"></a>
 <h3>Feedback and bug reports</h3>
 <p>Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com</p>
 <p>And please report any bugs you may find to <a href="http://bugreports.qt.nokia.com">http://bugreports.qt.nokia.com</a></p>
@@ -357,8 +357,8 @@
 </p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

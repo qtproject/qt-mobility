@@ -284,4 +284,11 @@ EXPORTS
 	_ZTVN10QtMobility21QAccelerometerReadingE @ 283 NONAME
 	_ZTVN10QtMobility7QSensorE @ 284 NONAME
 	_ZTVN10QtMobility8QCompassE @ 285 NONAME
+	_ZN10QtMobility14QSensorReading14copyValuesFromEPS0_ @ 286 NONAME
+	_ZN10QtMobility14QSensorReadingC1EP7QObjectPNS_21QSensorReadingPrivateE @ 287 NONAME
+	_ZN10QtMobility19QSensorPluginLoader4loadEv @ 288 NONAME
+	_ZN10QtMobility19QSensorPluginLoaderC1EPKcRK7QString @ 289 NONAME
+	_ZN10QtMobility19QSensorPluginLoaderC2EPKcRK7QString @ 290 NONAME
+	_ZN10QtMobility19QSensorPluginLoaderD1Ev @ 291 NONAME
+	_ZN10QtMobility19QSensorPluginLoaderD2Ev @ 292 NONAME
 

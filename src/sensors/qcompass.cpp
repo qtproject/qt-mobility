@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -133,7 +133,7 @@ void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
     \sa QSensorFilter::filter()
 */
 
-const char *QCompass::type("QCompass");
+char const * const QCompass::type("QCompass");
 
 /*!
     \class QCompass

@@ -22,6 +22,7 @@
 <li><a href="#building-on-windows">Building On Windows</a></li>
 <li><a href="#building-for-windows-ce">Building For Windows CE</a></li>
 <li><a href="#building-for-symbian-on-windows">Building For Symbian On Windows</a></li>
+<li><a href="#building-for-mac-os-x">Building For Mac OS X</a></li>
 <li><a href="#building-individual-qt-mobility-modules">Building Individual Qt Mobility Modules</a></li>
 </ul>
 <li><a href="#making-the-libraries-available-to-applications">Making the libraries available to applications</a></li>
@@ -79,7 +80,7 @@
 <h2>Building</h2>
 <p>Ensure that all compile time dependencies for your particular platform have been met before building.</p>
 <p>If Qt is installed for multiple platforms it is also important to ensure that the correct version of <tt>qmake</tt> is being used.</p>
-<p>bold{Note:} Static builds of Qt are not supported by Qt Mobility.</p>
+<p><b>Note:</b> Static builds of Qt are not supported by Qt Mobility.</p>
 <a name="building-on-unix"></a>
 <h3>Building On Unix</h3>
 <p>To configure the Qt Mobility libraries for your machine, run the <tt>./configure</tt> script in the package directory.</p>
@@ -122,6 +123,11 @@
 <p>To create the libraries and tools for a device run:</p>
 <pre>    make release-gcce</pre>
 <p>Note: <tt>make install</tt> has no meaning for building on Symbian. The libraries will be deployed into the SDK (when running make) and will be ready to use for compiling applications for the emulator and/or device.</p>
+<a name="building-for-mac-os-x"></a>
+<h3>Building For Mac OS X</h3>
+<p>The process is the same as for Unix, with the additional configuration option of <tt>-sdk /Developer/SDKs/MacOSX10.5.sdk</tt> to specify an Apple SDK version other than the default.</p>
+<p>Note: QtMobility currently has no support for building with Xcode.</p>
+<p>Note: QtMobility will be built using the same frameworks configuration option that Qt was built with.</p>
 <a name="building-individual-qt-mobility-modules"></a>
 <h3>Building Individual Qt Mobility Modules</h3>
 <p>Qt Mobility is comprised of several modules but all of these may not need to be built. To specify which modules should be built, use the <tt>-modules</tt> switch with the configure script when performing the configure step as outlined above.</p>
@@ -155,8 +161,8 @@
 <p>And now the installation is complete, we hope you enjoy using Qt Mobility.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

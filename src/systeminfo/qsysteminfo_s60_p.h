@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -178,7 +178,7 @@ private:
 class DeviceInfo;
 QTM_END_NAMESPACE
 
-#include <MProEngProfileActivationObserver.h>
+#include <mproengprofileactivationobserver.h>
 #include <cenrepnotifyhandler.h>
 
 class MProEngEngine;

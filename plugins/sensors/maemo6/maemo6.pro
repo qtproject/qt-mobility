@@ -1,32 +1,20 @@
-TEMPLATE = lib
-TARGET = maemo6sensorplugin
-DEPENDPATH += .
-INCLUDEPATH += .
+INCLUDEPATH+=../../../src/sensors
+
+include(version.pri)
+include(maemo6.pri)
+include(../../../common.pri)
+
 PLUGIN_TYPE = sensors
-QT += dbus
-QT += network
+
+TEMPLATE = lib
 CONFIG += plugin
-CONFIG += sensord
-CONFIG += link_pkgconfig
+TARGET = $$qtLibraryTarget(qtsensors_maemo6)
+
+QT = core dbus network
 CONFIG += mobility
-HEADERS += maemo6sensorbase.h \
-    maemo6accelerometer.h \
-    maemo6als.h \
-    maemo6compass.h \
-    maemo6magnetometer.h \
-    maemo6orientationsensor.h \
-    maemo6proximitysensor.h \
-    maemo6rotationsensor.h \
-    maemo6tapsensor.h
-SOURCES += maemo6sensorbase.cpp \
-    maemo6accelerometer.cpp \
-    maemo6als.cpp \
-    maemo6compass.cpp \
-    maemo6magnetometer.cpp \
-    maemo6orientationsensor.cpp \
-    maemo6proximitysensor.cpp \
-    maemo6rotationsensor.cpp \
-    maemo6tapsensor.cpp \
-    main.cpp
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
+MOBILITY += sensors
+CONFIG += link_pkgconfig
+PKGCONFIG += sensord
+
+target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
 INSTALLS += target

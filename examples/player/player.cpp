@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -76,10 +76,13 @@ Player::Player(QWidget *parent)
     , colorDialog(0)
 #endif
 {
+//! [create-objs]
     player = new QMediaPlayer(this);
-    // owerd by PlaylistModel
+    
+    // owned by PlaylistModel
     playlist = new QMediaPlaylist();
     playlist->setMediaObject(player);
+//! [create-objs]
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
@@ -90,11 +93,13 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
+//! [2]
     videoWidget = new VideoWidget(this);
     videoWidget->setMediaObject(player);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
+//! [2]
 
     playlistView = new QListView(this);
     playlistView->setModel(playlistModel);

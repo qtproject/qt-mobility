@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -142,12 +142,14 @@ bool QVersitContactImporterPrivate::importContact(
 
     // First, do the properties with PREF set so they appear first in the contact details
     foreach (const QVersitProperty& property, properties) {
-        if (property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
+        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+        if (typeParameters.contains(QLatin1String("PREF"), Qt::CaseInsensitive))
             importProperty(document, property, contactIndex, contact);
     }
     // ... then, do the rest of the properties.
     foreach (const QVersitProperty& property, properties) {
-        if (!property.parameters().contains(QLatin1String("TYPE"), QLatin1String("PREF")))
+        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+        if (!typeParameters.contains(QLatin1String("PREF"), Qt::CaseInsensitive))
             importProperty(document, property, contactIndex, contact);
     }
 
@@ -229,11 +231,21 @@ bool QVersitContactImporterPrivate::createName(
             || variant.type() != QVariant::StringList)
         return false;
     QStringList values = variant.toStringList();
-    name.setLastName(takeFirst(values));
-    name.setFirstName(takeFirst(values));
-    name.setMiddleName(takeFirst(values));
-    name.setPrefix(takeFirst(values));
-    name.setSuffix(takeFirst(values));
+    QString value(takeFirst(values));
+    if (!value.isEmpty())
+        name.setLastName(value);
+    value = takeFirst(values);
+    if (!value.isEmpty())
+        name.setFirstName(value);
+    value = takeFirst(values);
+    if (!value.isEmpty())
+        name.setMiddleName(value);
+    value = takeFirst(values);
+    if (!value.isEmpty())
+        name.setPrefix(value);
+    value = takeFirst(values);
+    if (!value.isEmpty())
+        name.setSuffix(value);
 
     saveDetailWithContext(contact, &name, extractContexts(property));
     return true;
@@ -268,15 +280,27 @@ bool QVersitContactImporterPrivate::createAddress(
             || variant.type() != QVariant::StringList)
         return false;
     QStringList addressParts = variant.toStringList();
-    address.setPostOfficeBox(takeFirst(addressParts));
+    QString value(takeFirst(addressParts));
+    if (!value.isEmpty())
+        address.setPostOfficeBox(value);
     // There is no setter for the Extended Address in QContactAddress:
     if (!addressParts.isEmpty())
         addressParts.removeFirst();
-    address.setStreet(takeFirst(addressParts));
-    address.setLocality(takeFirst(addressParts));
-    address.setRegion(takeFirst(addressParts));
-    address.setPostcode(takeFirst(addressParts));
-    address.setCountry(takeFirst(addressParts));
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setStreet(value);
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setLocality(value);
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setRegion(value);
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setPostcode(value);
+    value = takeFirst(addressParts);
+    if (!value.isEmpty())
+        address.setCountry(value);
     address.setSubTypes(extractSubTypes(property));
 
     saveDetailWithContext(contact, &address, extractContexts(property));
@@ -594,11 +618,10 @@ bool QVersitContactImporterPrivate::createCustomLabel(
 QStringList QVersitContactImporterPrivate::extractContexts(
     const QVersitProperty& property) const
 {
-    QStringList types =
-        property.parameters().values(QLatin1String("TYPE"));
+    QStringList types = property.parameters().values(QLatin1String("TYPE"));
     QStringList contexts;
     foreach (const QString& type, types) {
-        QString value = mContextMappings.value(type);
+        QString value = mContextMappings.value(type.toUpper());
         if (value.length() > 0)
             contexts.append(value);
     }
@@ -611,11 +634,10 @@ QStringList QVersitContactImporterPrivate::extractContexts(
 QStringList QVersitContactImporterPrivate::extractSubTypes(
     const QVersitProperty& property) const
 {
-    QStringList types =
-        property.parameters().values(QLatin1String("TYPE"));
+    QStringList types = property.parameters().values(QLatin1String("TYPE"));
     QStringList subTypes;
     foreach (const QString& type, types) {
-        QString subType = mSubTypeMappings.value(type);
+        QString subType = mSubTypeMappings.value(type.toUpper());
         if (subType.length() > 0)
             subTypes += subType;
     }

@@ -49,7 +49,7 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactDetailRangeFilter class provides a filter based around a detail value range criterion.</p>
-<p>It may be used to select contacts which contain a detail of a particular definition with a particular value</p>
+<p>It may be used to select contacts which contain a detail of a particular definition with a particular value that lies in a range (either open or closed).</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactDetailRangeFilter/RangeFlag"></a>
@@ -60,12 +60,12 @@
 <a name="//apple_ref/cpp/tdef/QContactDetailRangeFilter/RangeFlags"></a>
 <h3 class="flags"><a name="RangeFlag-enum"></a>enum QContactDetailRangeFilter::RangeFlag<br />flags QContactDetailRangeFilter::RangeFlags</h3>
 <p>Enumerates the semantics of the boundary conditions of the detail range filter</p>
-<p><table  class="valuelist" border="1" cellpadding="2" cellspacing="1" width="40%">
-<tr><th width="60%">Constant</th><th width="40%">Value</th></tr>
-<tr><td valign="top"><tt>QContactDetailRangeFilter::IncludeLower</tt></td><td align="center" valign="top"><tt>0</tt></td></tr>
-<tr><td valign="top"><tt>QContactDetailRangeFilter::IncludeUpper</tt></td><td align="center" valign="top"><tt>1</tt></td></tr>
-<tr><td valign="top"><tt>QContactDetailRangeFilter::ExcludeLower</tt></td><td align="center" valign="top"><tt>2</tt></td></tr>
-<tr><td valign="top"><tt>QContactDetailRangeFilter::ExcludeUpper</tt></td><td align="center" valign="top"><tt>0</tt></td></tr>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QContactDetailRangeFilter::IncludeLower</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The filter will match if the field value is equal to or greater than the minimum value</td></tr>
+<tr><td valign="top"><tt>QContactDetailRangeFilter::IncludeUpper</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The filter will match if the field value is equal to or less than the maximum value</td></tr>
+<tr><td valign="top"><tt>QContactDetailRangeFilter::ExcludeLower</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The filter will match if the field value is greater than the minimum value (but not equal)</td></tr>
+<tr><td valign="top"><tt>QContactDetailRangeFilter::ExcludeUpper</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The filter will match if the field value is less than the maximum value (but not equal)</td></tr>
 </table></p>
 <p>The RangeFlags type is a typedef for <a href="qflags.html">QFlags</a>&lt;RangeFlag&gt;. It stores an OR combination of RangeFlag values.</p>
 <hr />
@@ -85,15 +85,15 @@
 <p>See also <a href="qcontactdetailrangefilter.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/matchFlags"></a>
 <h3 class="fn"><a name="matchFlags"></a><a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> QContactDetailRangeFilter::matchFlags () const</h3>
-<p>Returns the match flags of the criterion, which define semantics such as case sensitivity, prefix matching, exact matching, etc.</p>
+<p>Returns the match flags of the criterion, which define semantics such as case sensitivity, and exact matching.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setMatchFlags">setMatchFlags</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/maxValue"></a>
 <h3 class="fn"><a name="maxValue"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetailRangeFilter::maxValue () const</h3>
-<p>Returns the upper bound of the value range criterion</p>
+<p>Returns the upper bound of the value range criterion If this value is null, there is no upper bound. If it is valid, the <a href="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</a>() determines whether this value is included in the valid values.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setRange">setRange</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/minValue"></a>
 <h3 class="fn"><a name="minValue"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QContactDetailRangeFilter::minValue () const</h3>
-<p>Returns the lower bound of the value range criterion</p>
+<p>Returns the lower bound of the value range criterion. If this value is null, there is no lower bound. If it is valid, the <a href="qcontactdetailrangefilter.html#rangeFlags">rangeFlags</a>() determines whether this value is included in the valid values.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#setRange">setRange</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/rangeFlags"></a>
 <h3 class="fn"><a name="rangeFlags"></a><a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> QContactDetailRangeFilter::rangeFlags () const</h3>
@@ -106,15 +106,23 @@
 <a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/setMatchFlags"></a>
 <h3 class="fn"><a name="setMatchFlags"></a>void QContactDetailRangeFilter::setMatchFlags ( <a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFlags</a> <i>flags</i> )</h3>
 <p>Sets the match flags of the filter criterion to <i>flags</i></p>
+<p>Not all flags are supported by a range filter. The supported flags include:</p>
+<ul>
+<li><a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchExactly</a></li>
+<li><a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchFixedString</a></li>
+<li><a href="qcontactfilter.html#MatchFlag-enum">QContactFilter::MatchCaseSensitive</a></li>
+</ul>
+<p>Unsupported flags will be ignored.</p>
 <p>See also <a href="qcontactdetailrangefilter.html#matchFlags">matchFlags</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactDetailRangeFilter/setRange"></a>
 <h3 class="fn"><a name="setRange"></a>void QContactDetailRangeFilter::setRange ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>min</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>max</i>, <a href="qcontactdetailrangefilter.html#RangeFlag-enum">RangeFlags</a> <i>flags</i> = 0 )</h3>
-<p>Sets the value range criterion of the filter to within <i>min</i> and <i>max</i>, with boundary conditions specified in the given <i>flags</i></p>
+<p>Sets the value range criterion of the filter to within <i>min</i> and <i>max</i>, with boundary conditions specified in the given <i>flags</i>. If <i>min</i> or <i>max</i> is a null variant, that condition will not be checked. For example, to check for fields with a value greater than 7, you would specify:</p>
+<pre>    filter.setRange(7, QVariant(), QContactDetailRangeFilter::ExcludeLower);</pre>
 <p>See also <a href="qcontactdetailrangefilter.html#minValue">minValue</a>() and <a href="qcontactdetailrangefilter.html#maxValue">maxValue</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

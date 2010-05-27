@@ -1,7 +1,7 @@
 #!/bin/sh
 #############################################################################
 ##
-## Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+## Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ## All rights reserved.
 ## Contact: Nokia Corporation (qt-info@nokia.com)
 ##
@@ -58,17 +58,16 @@ isAbsPath() {
 # maemo we do not want to follow symbolic links that are 
 # introduced by scratchbox
 absPath() {
-    
     if [ "$2" = "maemo5" -o "$2" = "maemo6" ]; then
         if [ `isAbsPath $1` = '1' ]; then
             echo $1;
         else
-            echo "Relative prefix paths are not supported for Maemo"
+            echo >&2 "Relative prefix/bin/lib/header/plugin paths are not supported for Maemo"
             exit 1;
         fi
     else
-        RESULT=`(cd "$1"; /bin/pwd)`
-        echo $RESULT
+        PATH=`$relpath/bin/pathhelper $1`
+        echo $PATH
     fi
 }
 
@@ -86,6 +85,7 @@ QT_MOBILITY_PREFIX=$shadowpath/install
 QT_MOBILITY_INCLUDE=
 QT_MOBILITY_LIB=
 QT_MOBILITY_BIN=
+QT_MOBILITY_PLUGINS=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
 BUILD_DOCS=yes
@@ -96,6 +96,7 @@ LINUX_TARGET=
 QMAKE_CACHE="$shadowpath/.qmake.cache"
 LIB_PATH="lib"
 BIN_PATH="bin"
+PLUGIN_PATH="plugins"
 MAC_SDK=
 MOBILITY_MODULES="bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors"
 MOBILITY_MODULES_UNPARSED=
@@ -119,6 +120,8 @@ usage()
     echo "                    (default PREFIX/lib)"
     echo "-bindir <dir> ..... Executables will be installed to <dir>"
     echo "                    (default PREFIX/bin)"
+    echo "-plugindir <dir> .. Plug-ins will be installed to <dir>"
+    echo "                    (default PREFIX/plugins)"
     echo "-debug ............ Build with debugging symbols"
     echo "-release .......... Build without debugging symbols"
     echo "-silent ........... Reduces build output"
@@ -169,6 +172,10 @@ while [ "$#" -gt 0 ]; do
             ;;
         -bindir)
             QT_MOBILITY_BIN="$2"
+            shift
+            ;;
+        -plugindir)
+            QT_MOBILITY_PLUGINS="$2"
             shift
             ;;
         -tests)
@@ -304,24 +311,20 @@ if [ -n "$LINUX_TARGET" ]; then
 fi
 
 #process PREFIX
-if [ -d "$QT_MOBILITY_PREFIX" ]; then
-    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
-else
-    mkdir -p "$QT_MOBILITY_PREFIX"
-    QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_PREFIX"
+QT_MOBILITY_PREFIX=`absPath $QT_MOBILITY_PREFIX $LINUX_TARGET`
+if [ "$?" -eq "1" ]; then
+    exit 1
 fi
 echo "QT_MOBILITY_PREFIX = $QT_MOBILITY_PREFIX" >> "$CONFIG_IN"
 
 #process include path
 if [ -z "$QT_MOBILITY_INCLUDE" ]; then
     QT_MOBILITY_INCLUDE="$QT_MOBILITY_PREFIX/include"
-elif [ -d "$QT_MOBILITY_INCLUDE" ]; then
-    QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_INCLUDE"
     QT_MOBILITY_INCLUDE=`absPath $QT_MOBILITY_INCLUDE $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_INCLUDE"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 
@@ -329,26 +332,36 @@ echo "QT_MOBILITY_INCLUDE = $QT_MOBILITY_INCLUDE" >> "$CONFIG_IN"
 #process library path
 if [ -z "$QT_MOBILITY_LIB" ]; then
     QT_MOBILITY_LIB="$QT_MOBILITY_PREFIX/$LIB_PATH"
-elif [ -d "$QT_MOBILITY_LIB" ]; then
-    QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_LIB"
     QT_MOBILITY_LIB=`absPath $QT_MOBILITY_LIB $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_LIB"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_LIB = $QT_MOBILITY_LIB" >> "$CONFIG_IN"
 
-#process binary path
+#process bin path
 if [ -z "$QT_MOBILITY_BIN" ]; then
     QT_MOBILITY_BIN="$QT_MOBILITY_PREFIX/$BIN_PATH"
-elif [ -d "$QT_MOBILITY_BIN" ]; then
-    QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
 else
-    mkdir -p "$QT_MOBILITY_BIN"
     QT_MOBILITY_BIN=`absPath $QT_MOBILITY_BIN $LINUX_TARGET`
-    rm -rf "$QT_MOBILITY_BIN"
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
 fi
 echo "QT_MOBILITY_BIN = $QT_MOBILITY_BIN" >> "$CONFIG_IN"
+
+#process plugin path
+if [ -z "$QT_MOBILITY_PLUGINS" ]; then
+    QT_MOBILITY_PLUGINS="$QT_MOBILITY_PREFIX/$PLUGIN_PATH"
+else
+    QT_MOBILITY_PLUGINS=`absPath $QT_MOBILITY_PLUGINS $LINUX_TARGET`
+    if [ "$?" -eq "1" ]; then
+        exit 1
+    fi
+fi
+echo "QT_MOBILITY_PLUGINS = $QT_MOBILITY_PLUGINS" >> "$CONFIG_IN"
+
 
 echo "QT_MOBILITY_SOURCE_TREE = $relpath" >> "$QMAKE_CACHE"
 echo "QT_MOBILITY_BUILD_TREE = $shadowpath" >> "$QMAKE_CACHE"
@@ -448,6 +461,12 @@ compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
 compileTest "Maemo ICD" maemo-icd
 compileTest "Maemo ICD WLAN" maemo-icd-network-wlan
+compileTest "Maemo5 contacts dependencies" maemo5-contacts
+if [ "$LINUX_TARGET" = maemo6 ]; then
+    compileTest sensord sensord
+else
+    echo "sensord_enabled = no" >> "$CONFIG_IN"
+fi
 
 # Now module selection
 # using 'expr match ....' should help a bit
