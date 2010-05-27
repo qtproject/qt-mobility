@@ -1,0 +1,44 @@
+Qt Mobility Messaging backend for maemo6 (Harmattan)
+
+Release date: 27.05.2010
+
+Description:
+Provide unified support of SMS and E-mail messaging under maemo6 (Harmattan) platform
+
+
+Features:
+ - Full support of E-mail messages based on QMF
+
+ - SMS support
+        - sending based on libtelepathy-qt4
+        - account management based on libtelepathy-qt4
+        - storage based on libcommhistory
+       
+Found issues:
+ - performance: SMS filtering and searching
+ - no error management in SMS StorageEngine 
+ - telepathyengine does not emit stateChanged() signal
+ - SMS message storing before(Outbox) and after(Sent) the sending
+ - no support for case-sensitive filtering for E-Mails
+ - no support of QMessageDataComparator::MatchFullWord flag in SMS and E-mail search
+ - integration and management of stateChanged() signal emitted by StorageEngine and QMFengine
+ - StorageEngine cannot handle multiple asynchronous queryMessages() or countMessages() requests
+ - cancel() operation is not implemented in telepathy engine
+
+
+
+Manual testing results:
+./messagingconsole send 
+Works
+
+Automatic testing results:
+./tst_smsservice:
+Totals: 4 passed, 0 failed, 0 skipped
+
+./tst_smsservice:
+Totals: 8 passed, 0 failed, 0 skipped
+
+
+How to build:
+>./configure -maemo6 -modules messaging
+>make 
