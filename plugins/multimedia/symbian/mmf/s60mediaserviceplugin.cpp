@@ -92,4 +92,4 @@ void S60MediaServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-Q_EXPORT_PLUGIN2(QtMobilityMmfEngine, S60MediaServicePlugin);
+Q_EXPORT_PLUGIN2(qtmultimedia_mmfengine, S60MediaServicePlugin);
