@@ -116,6 +116,7 @@ private:
     bool changeConfigurationStateAtMaxTo(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
                                           QNetworkConfiguration::StateFlags newState);
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    void updateMobileBearerToConfigs(TConnMonBearerInfo bearerInfo);
     QNetworkConfigurationPrivate* configFromConnectionMethodL(RCmConnectionMethod& connectionMethod);
 #else
     bool readNetworkConfigurationValuesFromCommsDb(

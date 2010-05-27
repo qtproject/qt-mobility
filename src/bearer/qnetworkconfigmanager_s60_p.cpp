@@ -89,6 +89,9 @@ QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
     }
 
     TRAP_IGNORE(iConnectionMonitor.ConnectL());
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE    
+    TRAP_IGNORE(iConnectionMonitor.SetUintAttribute(EBearerIdAll, 0, KBearerGroupThreshold, 1));
+#endif    
     TRAP_IGNORE(iConnectionMonitor.NotifyEventL(*this));
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
@@ -744,6 +747,31 @@ void QNetworkConfigurationManagerPrivate::updateStatesToSnaps()
     }    
 }
 
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
+void QNetworkConfigurationManagerPrivate::updateMobileBearerToConfigs(TConnMonBearerInfo bearerInfo)
+{
+    foreach (const QString &ii, accessPointConfigurations.keys()) {
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
+            accessPointConfigurations.value(ii);
+        if (p->bearer >= QNetworkConfigurationPrivate::Bearer2G &&
+            p->bearer <= QNetworkConfigurationPrivate::BearerHSPA) {
+            switch (bearerInfo) {
+            case EBearerInfoCSD:      p->bearer = QNetworkConfigurationPrivate::Bearer2G; break;  
+            case EBearerInfoWCDMA:    p->bearer = QNetworkConfigurationPrivate::BearerWCDMA; break;
+            case EBearerInfoCDMA2000: p->bearer = QNetworkConfigurationPrivate::BearerCDMA2000; break;
+            case EBearerInfoGPRS:     p->bearer = QNetworkConfigurationPrivate::Bearer2G; break;
+            case EBearerInfoHSCSD:    p->bearer = QNetworkConfigurationPrivate::Bearer2G; break;
+            case EBearerInfoEdgeGPRS: p->bearer = QNetworkConfigurationPrivate::Bearer2G; break;
+            case EBearerInfoWcdmaCSD: p->bearer = QNetworkConfigurationPrivate::BearerWCDMA; break;
+            case EBearerInfoHSDPA:    p->bearer = QNetworkConfigurationPrivate::BearerHSPA; break;
+            case EBearerInfoHSUPA:    p->bearer = QNetworkConfigurationPrivate::BearerHSPA; break;
+            case EBearerInfoHSxPA:    p->bearer = QNetworkConfigurationPrivate::BearerHSPA; break;
+            }
+        }
+    }
+}
+#endif
+
 bool QNetworkConfigurationManagerPrivate::changeConfigurationStateTo(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
                                                                      QNetworkConfiguration::StateFlags newState)
 {
@@ -870,6 +898,20 @@ void QNetworkConfigurationManagerPrivate::DoCancel()
 void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent)
 {
     switch (aEvent.EventType()) {
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE     
+    case EConnMonBearerInfoChange:
+        {
+        CConnMonBearerInfoChange* realEvent;
+        realEvent = (CConnMonBearerInfoChange*) &aEvent;
+        TUint connectionId = realEvent->ConnectionId();
+        if (connectionId == EBearerIdAll) {
+            //Network level event
+            TConnMonBearerInfo bearerInfo = (TConnMonBearerInfo)realEvent->BearerInfo();
+            updateMobileBearerToConfigs(bearerInfo);
+        }
+        break;
+        }
+#endif        
     case EConnMonConnectionStatusChange:
         {
         CConnMonConnectionStatusChange* realEvent;
