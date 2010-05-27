@@ -296,7 +296,6 @@ void CQMLBackendAO::requestUpdate(int aTimeout)
 
     mPositioner.SetUpdateOptions(aPosOption);
 
-    //setUpdateInterval(aTimeout);
     startUpdates();
 }
 
@@ -408,7 +407,6 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
     int minimumUpdateInterval = 0;
     TInt64 mUpdateInterval = 0 ;
 
-
     if (mRequester)
         minimumUpdateInterval = mRequester->minimumUpdateInterval();
     else
@@ -446,7 +444,7 @@ int CQMLBackendAO::setUpdateInterval(int aMilliSec)
     aPosOption.SetUpdateInterval(TTimeIntervalMicroSeconds(mUpdateInterval * 1000));
 
     // set the timeout to the smaller of 150% of interval or update interval + 10 seconds
-    TInt mUpdateTimeout = (mUpdateInterval * 3) / 2;
+    TInt64 mUpdateTimeout = (mUpdateInterval * 3) / 2;
     if (mUpdateTimeout > mUpdateInterval + 10000)
         mUpdateTimeout = mUpdateInterval + 10000;
 
