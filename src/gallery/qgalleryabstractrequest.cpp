@@ -481,6 +481,13 @@ void QGalleryAbstractRequest::clear()
 
         delete oldResponse;
 
+        if (d_ptr->currentProgress != 0 || d_ptr->maximumProgress != 0) {
+            d_ptr->currentProgress = 0;
+            d_ptr->maximumProgress = 0;
+
+            emit progressChanged(0, 0);
+        }
+
         if (wasFinished && d_ptr->result == NoResult)
             emit resultChanged();
 
