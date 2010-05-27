@@ -60,6 +60,7 @@
 #include <QHash>
 #include <QRectF>
 #include <QMap>
+#include <QTimer>
 
 QTM_USE_NAMESPACE
 
@@ -126,14 +127,17 @@ public:
 
 private slots:
     void tileFinished(QGeoMapReply* reply);
+    void releaseUnusedTiles();
 
 private:
     void requestTile(qint32 row, qint32 col);
     void requestMissingMapTiles();
+    QRectF getTileRect(qint32 row, qint32 col) const;
 
     Q_DISABLE_COPY(QGeoMapViewportNokia)
 
 private:
+    QTimer m_releaseTimer;
     QHash<QGeoMapReply*, QuadTileInfo*> m_pendingReplies;
     QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
     QRectF m_boundingBox;
