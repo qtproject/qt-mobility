@@ -45,6 +45,14 @@
 #include "winhelpers_p.h"
 #endif
 
+#define FOLDER_PREFIX_SMS   "SMS_"
+
+#define FOLDER_ID_INBOX     "SMS_InboxFolder"
+#define FOLDER_ID_OUTBOX    "SMS_OutboxFolder"
+#define FOLDER_ID_DRAFTS    "SMS_DraftsFolder"
+#define FOLDER_ID_SENT      "SMS_SentFolder"
+#define FOLDER_ID_TRASH     "SMS_TrashFolder"
+
 QTM_BEGIN_NAMESPACE
 
 class QMessageFolderIdPrivate

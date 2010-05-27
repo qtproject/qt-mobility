@@ -63,7 +63,8 @@ public:
 
     QMessageStore *q_ptr;
     QMessageStorePrivatePlatform *p_ptr;
-#ifdef Q_WS_MAEMO_5
+
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     enum NotificationType
     {
         Added,
@@ -72,6 +73,9 @@ public:
     };
     void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
                              const QMessageManager::NotificationFilterIdSet &matchingFilters);
+#endif
+#ifdef Q_WS_MAEMO_6
+    QMessageManager::Error error;
 #endif
 #ifdef Q_OS_WIN
     static QMutex* mutex(QMessageStore*);

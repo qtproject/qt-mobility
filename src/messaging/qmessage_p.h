@@ -137,9 +137,19 @@ public:
 
 #if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     QString _url;
-
     static QMessagePrivate* implementation(const QMessage &message);
     static QMessageContentContainerPrivate* containerImplementation(const QMessage &message);
+#endif
+
+#if defined(Q_WS_MAEMO_6)
+    QString _contentScheme;
+    QString _contentIdentifier;
+
+    typedef QMap<QMessage::StandardFolder, QMessageFolderId> StandardFolderMap;
+    Q_SCOPED_STATIC_DECLARE(StandardFolderMap,standardFolderMap);
+
+    static QMessageFolderId standardFolderId(QMessage::StandardFolder folder);
+    static QMessage::StandardFolder standardFolder(QMessageFolderId folderId);
 #endif
 
     static QMessage from(const QMessageId &id);

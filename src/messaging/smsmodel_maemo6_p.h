@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,39 +38,51 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEFOLDERSORTORDERPRIVATE_H
-#define QMESSAGEFOLDERSORTORDERPRIVATE_H
-#include "qmessagefoldersortorder.h"
-#include "qmessagefolder.h"
-#include "qpair.h"
 
-QTM_BEGIN_NAMESPACE
+#ifndef SMSMODEL_MAEMO6_P_H
+#define SMSMODEL_MAEMO6_P_H
 
-class QMessageFolderSortOrderPrivate
+#include <CommHistory/EventModel>
+#include <CommHistory/Event>
+
+class SMSModelPrivate;
+
+/*!
+ * \class SMSModel
+ *
+ * Model for accessing SMS messages. Initialize with getEvents().
+ */
+class SMSModel: public CommHistory::EventModel
 {
-    Q_DECLARE_PUBLIC(QMessageFolderSortOrder)
+    Q_OBJECT
 
 public:
-    enum Field { Name = 0, Path };
+    /*!
+     * Model constructor.
+     *
+     * \param parent Parent object.
+     */
+    SMSModel(QObject *parent = 0);
 
-    QMessageFolderSortOrderPrivate(QMessageFolderSortOrder *sortOrder)
-        :q_ptr(sortOrder)
-    {
-    }
+    /*!
+     * Destructor.
+     */
+    ~SMSModel();
 
-    QMessageFolderSortOrder *q_ptr;
-    QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
-    
-#if defined(Q_OS_WIN)
-    static bool lessthan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &left, const QMessageFolder &right);
-#endif
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    static bool lessThan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &folder1, const QMessageFolder &folder2);
-#endif
-#if defined(Q_WS_MAEMO_6)
-    static QMessageFolderSortOrderPrivate *implementation(const QMessageFolderSortOrder &sortOrder);
-#endif    
+    /*!
+     * Reset model and fetch draft events.
+     *
+     * \return true if successful, Sets lastError() on failure.
+     */
+    bool getEvents();
+
+signals:
+    void eventsAdded(const QList<CommHistory::Event> &events);
+    void eventsUpdated(const QList<CommHistory::Event> &events);
+    void eventDeleted(int id);
+
+private:
+    Q_DECLARE_PRIVATE(SMSModel);
 };
 
-QTM_END_NAMESPACE
-#endif
+#endif // SMSMODEL_MAEMO6_P_H

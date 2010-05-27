@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,39 +38,44 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEFOLDERSORTORDERPRIVATE_H
-#define QMESSAGEFOLDERSORTORDERPRIVATE_H
-#include "qmessagefoldersortorder.h"
-#include "qmessagefolder.h"
-#include "qpair.h"
 
-QTM_BEGIN_NAMESPACE
+#ifndef TPSESSIONCHANNEL_H
+#define TPSESSIONCHANNEL_H
 
-class QMessageFolderSortOrderPrivate
+#include <QObject>
+#include <TelepathyQt4/Types>
+#include <TelepathyQt4/Types>
+#include <TelepathyQt4/Message>
+#include <TelepathyQt4/PendingChannel>
+#include <TelepathyQt4/ChannelRequest>
+#include <TelepathyQt4/Channel>
+#include <TelepathyQt4/TextChannel>
+#include <TelepathyQt4/PendingReady>
+#include <TelepathyQt4/ContactManager>
+#include <TelepathyQt4/Connection>
+
+class TpSessionChannel : public QObject
 {
-    Q_DECLARE_PUBLIC(QMessageFolderSortOrder)
-
+    Q_OBJECT
 public:
-    enum Field { Name = 0, Path };
-
-    QMessageFolderSortOrderPrivate(QMessageFolderSortOrder *sortOrder)
-        :q_ptr(sortOrder)
-    {
-    }
-
-    QMessageFolderSortOrder *q_ptr;
-    QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
-    
-#if defined(Q_OS_WIN)
-    static bool lessthan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &left, const QMessageFolder &right);
-#endif
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    static bool lessThan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &folder1, const QMessageFolder &folder2);
-#endif
-#if defined(Q_WS_MAEMO_6)
-    static QMessageFolderSortOrderPrivate *implementation(const QMessageFolderSortOrder &sortOrder);
-#endif    
+    TpSessionChannel(Tp::TextChannelPtr);
+    TpSessionChannel(Tp::ConnectionPtr conn, const Tp::ContactPtr &contact);
+    bool sendMessage(const QString &message);
+    QString peerId() const;
+signals:
+    void channelReady(TpSessionChannel *);
+    void channelDestroyed(TpSessionChannel *);
+    void messageReceived(const Tp::ReceivedMessage &, TpSessionChannel *);
+    void messageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &, TpSessionChannel *);
+public slots:
+    void onChannelCreated(Tp::PendingOperation *op);
+    void onChannelReady(Tp::PendingOperation *op);
+    void onChannelDestroyed(QObject *);
+    void onMessageReceived(const Tp::ReceivedMessage &);
+    void onMessageSent(const Tp::Message &, Tp::MessageSendingFlags, const QString &);
+public:
+    Tp::ContactPtr peerContact;
+    Tp::TextChannelPtr channel;
 };
 
-QTM_END_NAMESPACE
-#endif
+#endif // TPSESSIONCHANNEL_H

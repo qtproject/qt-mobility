@@ -64,7 +64,10 @@ public:
 #endif
 #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     long int _folderEntryId;
-    static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);
+    static QMessageFolder from(const QMessageFolderId &id, const QMessageAccountId &accountId, const QMessageFolderId &parentId, const QString &name, const QString &path);    
+#endif
+#if defined(Q_WS_MAEMO_6)
+    void setParentAccountId(QMessageFolder &folder, const QMessageAccountId &accountId);
 #endif
 };
 

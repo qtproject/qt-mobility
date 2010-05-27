@@ -38,39 +38,13 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEFOLDERSORTORDERPRIVATE_H
-#define QMESSAGEFOLDERSORTORDERPRIVATE_H
-#include "qmessagefoldersortorder.h"
-#include "qmessagefolder.h"
-#include "qpair.h"
 
-QTM_BEGIN_NAMESPACE
+#ifndef _TELEPATHYHELPERS_MAEMO6_H_
+#define _TELEPATHYHELPERS_MAEMO6_H_
 
-class QMessageFolderSortOrderPrivate
-{
-    Q_DECLARE_PUBLIC(QMessageFolderSortOrder)
+#include <QDebug>
 
-public:
-    enum Field { Name = 0, Path };
+#define QDEBUG_FUNCTION_BEGIN qDebug() << __PRETTY_FUNCTION__ << "begin" << endl;
+#define QDEBUG_FUNCTION_END qDebug() << __PRETTY_FUNCTION__ << "end" << endl;
 
-    QMessageFolderSortOrderPrivate(QMessageFolderSortOrder *sortOrder)
-        :q_ptr(sortOrder)
-    {
-    }
-
-    QMessageFolderSortOrder *q_ptr;
-    QList<QPair<Field, Qt::SortOrder> > _fieldOrderList;
-    
-#if defined(Q_OS_WIN)
-    static bool lessthan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &left, const QMessageFolder &right);
-#endif
-#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-    static bool lessThan(const QMessageFolderSortOrder &sortOrder, const QMessageFolder &folder1, const QMessageFolder &folder2);
-#endif
-#if defined(Q_WS_MAEMO_6)
-    static QMessageFolderSortOrderPrivate *implementation(const QMessageFolderSortOrder &sortOrder);
-#endif    
-};
-
-QTM_END_NAMESPACE
-#endif
+#endif //_TELEPATHYHELPERS_MAEMO6_H_
