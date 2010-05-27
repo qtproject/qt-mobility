@@ -338,7 +338,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactOrganization::FieldDepartment);
     fields.remove(QContactOrganization::FieldLocation);
     fields.remove(QContactOrganization::FieldLogoUrl);
-    fields.remove(QContactOrganization::FieldName);
+    fields.remove(QContactOrganization::FieldTitle);
     fields.remove(QContactOrganization::FieldRole);
     defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
     
