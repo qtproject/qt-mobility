@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#include <qmediaplayercontrol.h>
-#include <qmediacontrol_p.h>
-#include <qmediaplayer.h>
+#include "qmediaplayercontrol.h"
+#include "qmediacontrol_p.h"
+#include "qmediaplayer.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
@@ -372,5 +372,5 @@ QMediaPlayerControl::QMediaPlayerControl(QObject *parent):
 */
 
 #include "moc_qmediaplayercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

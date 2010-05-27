@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,12 +44,12 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediarecorder.h>
-#include <qmediarecordercontrol.h>
+#include "../../../src/multimedia/qmediarecorder.h"
+#include "../../../src/multimedia/qmediarecordercontrol.h"
 
 class AudioCaptureSession;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioMediaRecorderControl : public QMediaRecorderControl
 {

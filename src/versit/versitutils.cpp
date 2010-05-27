@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,42 +51,6 @@ QTM_USE_NAMESPACE
 QTextCodec* VersitUtils::m_previousCodec = 0;
 QList<QByteArrayMatcher>* VersitUtils::m_newlineList = 0;
 QByteArray VersitUtils::m_encodingMap[256];
-
-/*!
- * Performs backslash escaping for line breaks (CRLFs), semicolons, backslashes and commas according
- * to RFC 2426.  This is called on parameter names and values and property values.
- * Colons ARE NOT escaped because the examples in RFC2426 suggest that they shouldn't be.
- */
-void VersitUtils::backSlashEscape(QString& text)
-{
-    /* replaces ; with \;
-                , with \,
-                \ with \\
-     */
-    text.replace(QRegExp(QLatin1String("([;,\\\\])")), QLatin1String("\\\\1"));
-    // replaces any CRLFs with \n
-    text.replace(QRegExp(QLatin1String("\r\n|\r|\n")), QLatin1String("\\n"));
-}
-
-/*!
- * Removes backslash escaping for line breaks (CRLFs), colons, semicolons, backslashes and commas
- * according to RFC 2426.  This is called on parameter names and values and property values.
- * Colons ARE unescaped because the text of RFC2426 suggests that they should be.
- */
-void VersitUtils::removeBackSlashEscaping(QString& text)
-{
-    if (!(text.startsWith(QLatin1Char('"')) && text.endsWith(QLatin1Char('"')))) {
-        /* replaces \; with ;
-                    \, with ,
-                    \: with :
-                    \\ with \
-         */
-        text.replace(QRegExp(QLatin1String("\\\\([;,:\\\\])")), QLatin1String("\\1"));
-        // replaces \n with a CRLF
-        text.replace(QLatin1String("\\n"), QLatin1String("\r\n"), Qt::CaseInsensitive);
-    }
-}
-
 
 /*!
  * Encode \a ch with \a codec, without adding an byte-order mark

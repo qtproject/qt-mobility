@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -115,17 +115,6 @@ QContactDetail *CntTransformThumbnail::transformItemField(const CContactItemFiel
     return thumbnail;
 }
 
-bool CntTransformThumbnail::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldPicture.iUid
-        // Used as "extra mapping/extra field type" by thumbnail data fields
-        || fieldType == KUidContactFieldVCardMapJPEG.iUid) {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformThumbnail::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -133,6 +122,14 @@ bool CntTransformThumbnail::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformThumbnail::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldPicture
+        // Used as "extra mapping/extra field type" by thumbnail data fields
+        << KUidContactFieldVCardMapJPEG;
 }
 
 QList<TUid> CntTransformThumbnail::supportedSortingFieldTypes(QString /*detailFieldName*/) const
@@ -148,7 +145,7 @@ QList<TUid> CntTransformThumbnail::supportedSortingFieldTypes(QString /*detailFi
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformThumbnail::supportsSubType(const QString& subType) const
+bool CntTransformThumbnail::supportsSubType(const QString& /*subType*/) const
 {
     // XXX todo
     return false;
@@ -160,7 +157,7 @@ bool CntTransformThumbnail::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformThumbnail::getIdForField(const QString& fieldName) const
+quint32 CntTransformThumbnail::getIdForField(const QString& /*fieldName*/) const
 {
     // XXX todo
     return 0;

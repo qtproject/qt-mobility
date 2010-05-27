@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMessageManager Class Reference</h1>
 <p>The QMessageManager class represents the main interface for storage and retrieval of messages, folders and accounts in the system message store. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMessageManager&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QMessageManager&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qmessagemanager-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -152,6 +151,8 @@
 <p>Adds a copy of the message indicated by <i>message</i> to the messaging store and modifies the message indicated by <i>message</i> to contain the identifier of the created message.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
 <p>To ensure the change is propagated to any affected external server <a href="qmessageservice.html#exportUpdates">QMessageService::exportUpdates</a>() should be subsequently called.</p>
+<p>On the Maemo 5 (Fremantle) platform for SMS type messages this function is not yet supported.</p>
+<p>Using this function to explicitly set a size or date is not currently supported on some platforms.</p>
 <p>See also <a href="qmessagemanager.html#message">message</a>(), <a href="qmessagemanager.html#updateMessage">updateMessage</a>(), <a href="qmessagemanager.html#removeMessage">removeMessage</a>(), and <a href="qmessageservice.html#exportUpdates">QMessageService::exportUpdates</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageManager/countAccounts"></a>
 <h3 class="fn"><a name="countAccounts"></a>int QMessageManager::countAccounts ( const <a href="qmessageaccountfilter.html">QMessageAccountFilter</a> &amp; <i>filter</i> = QMessageAccountFilter() ) const</h3>
@@ -164,6 +165,7 @@
 <a name="//apple_ref/cpp/instm/QMessageManager/countMessages"></a>
 <h3 class="fn"><a name="countMessages"></a>int QMessageManager::countMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> = QMessageFilter() ) const</h3>
 <p>Returns the number of messages which match the filtering criteria defined in <a href="qmessagefilter.html">QMessageFilter</a> <i>filter</i>. If <i>filter</i> is empty the count of all available messages is returned.</p>
+<p>The performance of counting messages is currently significantly less than optimal for some filters on some platforms.</p>
 <p>See also <a href="qmessagemanager.html#error">error</a>() and <a href="qmessagemanager.html#queryMessages">queryMessages</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageManager/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qmessagemanager.html#Error-enum">QMessageManager::Error</a> QMessageManager::error () const</h3>
@@ -177,6 +179,7 @@
 <a name="//apple_ref/cpp/instm/QMessageManager/messageAdded"></a>
 <h3 class="fn"><a name="messageAdded"></a>void QMessageManager::messageAdded ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, const <a href="qmessagemanager.html#NotificationFilterIdSet-typedef">QMessageManager::NotificationFilterIdSet</a> &amp; <i>matchingFilterIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal that is emitted when the message identified by <i>id</i> is added to the message store. <i>matchingFilterIds</i> contains a set of values identifiying registered notification filters that matched the message.</p>
+<p>Currently on the Maemo 5 (Fremantle) platform this signal is not reported for messages in the inbox when the inbox is open in modest.</p>
 <p>See also <a href="qmessagemanager.html#messageRemoved">messageRemoved</a>(), <a href="qmessagemanager.html#messageUpdated">messageUpdated</a>(), and <a href="qmessagemanager.html#registerNotificationFilter">registerNotificationFilter</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageManager/messageRemoved"></a>
 <h3 class="fn"><a name="messageRemoved"></a>void QMessageManager::messageRemoved ( const <a href="qmessageid.html">QMessageId</a> &amp; <i>id</i>, const <a href="qmessagemanager.html#NotificationFilterIdSet-typedef">QMessageManager::NotificationFilterIdSet</a> &amp; <i>matchingFilterIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -205,15 +208,19 @@
 <a name="//apple_ref/cpp/instm/QMessageManager/queryMessages"></a>
 <h3 class="fn"><a name="queryMessages"></a>QMessageIdList QMessageManager::queryMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> = QMessageFilter(), const <a href="qmessagesortorder.html">QMessageSortOrder</a> &amp; <i>sortOrder</i> = QMessageSortOrder(), <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>filter</i> is not empty only messages matching the parameters set by <i>filter</i> will be returned, otherwise identifiers for all messages will be returned. If <i>sortOrder</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortOrder</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
+<p>The performance of querying messages is currently significantly less than optimal for some querying criteria on some platforms.</p>
 <p>See also <a href="qmessagemanager.html#error">error</a>() and <a href="qmessagemanager.html#countMessages">countMessages</a>().</p>
 <h3 class="fn"><a name="queryMessages-2"></a>QMessageIdList QMessageManager::queryMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qmessagesortorder.html">QMessageSortOrder</a>&gt; &amp; <i>sortOrders</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>filter</i> is not empty only messages matching the parameters set by <i>filter</i> will be returned, otherwise identifiers for all messages will be returned. If <i>sortOrders</i> is not empty, then the identifiers will be sorted by applying each sort order element in sequence. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned.</p>
+<p>The performance of querying messages is currently significantly less than optimal for some querying criteria on some platforms.</p>
 <p>See also <a href="qmessagemanager.html#error">error</a>() and <a href="qmessagemanager.html#countMessages">countMessages</a>().</p>
 <h3 class="fn"><a name="queryMessages-3"></a>QMessageIdList QMessageManager::queryMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>body</i>, <a href="qmessagedatacomparator.html#MatchFlag-enum">QMessageDataComparator::MatchFlags</a> <i>matchFlags</i> = 0, const <a href="qmessagesortorder.html">QMessageSortOrder</a> &amp; <i>sortOrder</i> = QMessageSortOrder(), <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>filter</i> is not empty only messages matching the parameters set by <i>filter</i> and with a body containing the string <i>body</i> will be returned, otherwise identifiers for all messages with a body containing <i>body</i> will be returned. If <i>sortOrder</i> is not empty, then the identifiers will be sorted by the parameters set by <i>sortOrder</i>. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned. <i>matchFlags</i> specifies the matching method to use.</p>
+<p>The performance of querying messages is currently significantly less than optimal for some querying criteria on some platforms.</p>
 <p>See also <a href="qmessagemanager.html#error">error</a>() and <a href="qmessagemanager.html#countMessages">countMessages</a>().</p>
 <h3 class="fn"><a name="queryMessages-4"></a>QMessageIdList QMessageManager::queryMessages ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>body</i>, <a href="qmessagedatacomparator.html#MatchFlag-enum">QMessageDataComparator::MatchFlags</a> <i>matchFlags</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qmessagesortorder.html">QMessageSortOrder</a>&gt; &amp; <i>sortOrders</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>limit</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#uint-typedef">uint</a> <i>offset</i> = 0 ) const</h3>
 <p>Returns the <a href="qmessageid.html">QMessageId</a>s of messages in the messaging store. If <i>filter</i> is not empty only messages matching the parameters set by <i>filter</i> and with a body containing the string <i>body</i> will be returned, otherwise identifiers for all messages with a body containing <i>body</i> will be returned. If <i>sortOrders</i> is not empty, then the identifiers will be sorted by applying each sort order element in sequence. If <i>limit</i> is not zero, then <i>limit</i> places an upper bound on the number of ids in the list returned. <i>offset</i> specifies how many ids to skip at the beginning of the list returned. <i>matchFlags</i> specifies the matching method to use.</p>
+<p>The performance of querying messages is currently significantly less than optimal for some querying criteria on some platforms.</p>
 <p>See also <a href="qmessagemanager.html#error">error</a>() and <a href="qmessagemanager.html#countMessages">countMessages</a>().</p>
 <a name="//apple_ref/cpp/instm/QMessageManager/registerNotificationFilter"></a>
 <h3 class="fn"><a name="registerNotificationFilter"></a><a href="qmessagemanager.html#NotificationFilterId-typedef">NotificationFilterId</a> QMessageManager::registerNotificationFilter ( const <a href="qmessagefilter.html">QMessageFilter</a> &amp; <i>filter</i> )</h3>
@@ -250,11 +257,13 @@
 <p>Updates the messaging store so that the message whose identifier is contained by the message at <i>message</i> contains the content at <i>message</i>. If <i>message</i> does not contain a valid identifier, no changes will result. Internal data of the <a href="qmessage.html">QMessage</a> object at <i>message</i> can be modified by this operation.</p>
 <p>Returns <tt>true</tt> if the operation successfully updates the store; otherwise returns <tt>false</tt>.</p>
 <p>To ensure the change is propagated to any affected external server <a href="qmessageservice.html#exportUpdates">QMessageService::exportUpdates</a>() should be subsequently called.</p>
+<p>Using this function to explicitly set a size or date is not currently supported on some platforms.</p>
+<p>On the Maemo 5 (Fremantle) platform this function is not yet supported.</p>
 <p>See also <a href="qmessagemanager.html#addMessage">addMessage</a>(), <a href="qmessagemanager.html#removeMessage">removeMessage</a>(), and <a href="qmessageservice.html#exportUpdates">QMessageService::exportUpdates</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,8 +41,15 @@
 
 #include <QtTest/QtTest>
 #include "../qbearertestcommon.h"
-#include "qnetworkconfiguration.h"
-#include "qnetworkconfigmanager.h"
+#include "../../../src/bearer/qnetworkconfiguration.h"
+#include "../../../src/bearer/qnetworkconfigmanager.h"
+
+/*
+  Although this unit test doesn't use QNetworkAccessManager
+  this include is used to ensure that bearer continues to compile against
+  Qt 4.7+ which has a QNetworkConfiguration enabled QNetworkAccessManager
+*/
+#include <QNetworkAccessManager>
 
 #if defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include <stdio.h>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -70,7 +70,7 @@ public:
         NoRelationships = 0x1,
         NoActionPreferences = 0x2,
         NoBinaryBlobs = 0x4
-        // any other optimisation hints?
+        // any other optimization hints?
     };
     Q_DECLARE_FLAGS(OptimizationHints, OptimizationHint)
 
@@ -81,6 +81,9 @@ private:
     QSharedDataPointer<QContactFetchHintPrivate> d;
 };
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(QContactFetchHint::OptimizationHints);
+
 QTM_END_NAMESPACE
+
 
 #endif

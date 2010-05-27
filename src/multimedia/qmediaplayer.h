@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,12 +42,13 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include <qmediaserviceprovider.h>
-#include <qmediaobject.h>
-#include <qmediacontent.h>
+#include "qmediaserviceprovider.h"
+#include "qmediaobject.h"
+#include "qmediacontent.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_HEADER
 
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylist;
 
@@ -113,7 +114,7 @@ public:
     QMediaPlayer(QObject *parent = 0, Flags flags = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaPlayer();
 
-    static QtMedia::SupportEstimate hasSupport(const QString &mimeType,
+    static QtMediaServices::SupportEstimate hasSupport(const QString &mimeType,
                                             const QStringList& codecs = QStringList(),
                                             Flags flags = 0);
     static QStringList supportedMimeTypes(Flags flags = 0);
@@ -188,11 +189,12 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed())
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlayer::State))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlayer::MediaStatus))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlayer::Error))
+Q_DECLARE_METATYPE(QMediaPlayer::State)
+Q_DECLARE_METATYPE(QMediaPlayer::MediaStatus)
+Q_DECLARE_METATYPE(QMediaPlayer::Error)
 
+QT_END_HEADER
 
 #endif  // QMEDIAPLAYER_H

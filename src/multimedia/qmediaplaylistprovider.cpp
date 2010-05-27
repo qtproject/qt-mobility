@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,12 +39,12 @@
 **
 ****************************************************************************/
 
-#include <qmediaplaylistprovider.h>
-#include <qmediaplaylistprovider_p.h>
+#include "qmediaplaylistprovider.h"
+#include "qmediaplaylistprovider_p.h"
 
 #include <QtCore/qurl.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistProvider
@@ -301,5 +301,5 @@ void QMediaPlaylistProvider::shuffle()
 */
 
 #include "moc_qmediaplaylistprovider.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

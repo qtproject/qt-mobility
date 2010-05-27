@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,7 +59,6 @@ QList<QByteArray> charsets;
 /*!
     \class QMessage
 
-    \preliminary
     \brief The QMessage class provides a convenient interface for working with messages.
     
     \ingroup messaging
@@ -238,7 +237,7 @@ QList<QByteArray> charsets;
   
     Returns the standard folder of the message.
     
-    Defaults to InboxFolder.
+    Defaults to DraftsFolder.
 */
     
 /*!

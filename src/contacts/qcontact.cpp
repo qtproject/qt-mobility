@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,6 @@
 #include "qcontact_p.h"
 #include "qcontactdetail_p.h"
 #include "qcontactmanager_p.h"
-#include "qcontactaction.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -56,38 +55,78 @@ QTM_BEGIN_NAMESPACE
   \brief The QContact class represents an addressbook contact.
 
   \ingroup contacts-main
+
+  Individual contacts, groups, and other types of contacts are represented with
+  a QContact object.  In addition to the type, a QContact consists of information
+  that belongs to the contact and some information about the relationships that the
+  contact has.
+
+  A QContact object has a collection of details (like a name, phone numbers and
+  email addresses).  Each detail (which can have multiple fields) is stored
+  in an appropriate subclass of QContactDetail, and the QContact allows
+  retrieving these details in various ways.
+
+  A QContact may have zero or more relationships with other contacts.  For example,
+  a group contact would have a \c "HasMember" relationship with the QContacts that
+  are its members.  Spouses, managers and assistants can also be represented this
+  way.
  
-  A QContact consists of zero or more details.
- 
-  An instance of the QContact class represents an in-memory contact,
-  and may not reflect the state of that contact found in persistent
-  storage until the appropriate synchronization method is called
-  on the QContactManager (i.e., saveContact, removeContact).
+  A QContact instance represents the in-memory version of an addressbook contact,
+  and has no tie to a specific QContactManager.  It is possible for the contents
+  of a QContact to change independently of the contents that are stored persistently
+  in a QContactManager.  A QContact has an ID associated with it when it is first
+  retrieved from a QContactManager, or after it has been first saved, and this allows
+  clients to track changes using the signals in QContactManager.
+
+  A QContact has a number of mandatory details:
+  \list
+   \o A QContactType, with the type of the contact (individual contact, group etc)
+   \o A QContactDisplayLabel, representing the text to display
+  \endlist
+
+  If you have edited the contents of a QContact (via saving or removing details),
+  you will need to ask a specific QContactManager for the new display label for the
+  contact, since system settings (like the order of first or last names) can vary
+  between managers.
  
   \sa QContactManager, QContactDetail
  */
 
 /*!
  * \fn QList<T> QContact::details() const
- * Returns a list of details of the template type
+ * Returns a list of details of the template parameter type.  The type must be
+ * a subclass of QContactDetail.
+ *
+ * For example:
+ *  \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 3
  */
 
 /*!
  * \fn QList<T> QContact::details(const QString& fieldName, const QString& value) const
- * Returns a list of details of the template type which match the \a fieldName and \a value criteria
+ * Returns a list of details of the template parameter type which have field called \a fieldName, with matching \a value.
+ * The type must be a subclass of QContactDetail.
+ *
+ * For example:
+ *  \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 4
  */
 
 /*!
  * \fn T QContact::detail() const
- * Returns the first detail of the template type
+ * Returns the first detail of the template parameter type, as returned by the template details() function.
+ * The type must be a subclass of QContactDetail.
  */
 
 /*!
  * \fn QContact::operator!=(const QContact &other) const
- * Returns true if this contacts Id or details are different to those of the \a other contact
+ * Returns true if this contacts id or details are different to those of the \a other contact.
  */
 
-/*! Construct an empty contact. */
+/*!
+    Construct an empty contact.
+
+    The contact will have an empty display label, an empty id, and have type \l QContactType::TypeContact.
+    The isEmpty() function will return true.
+*/
 QContact::QContact()
     : d(new QContactData)
 {
@@ -153,13 +192,36 @@ QContact::~QContact()
 {
 }
 
-/*! Returns the QContactId that identifies this contact */
+/*!
+    Returns the QContactId that identifies this contact.
+
+    This may have been set when the contact was retrieved from
+    a particular manager, or when the contact was first saved
+    in a manager.  The QContactId is only valid with a specific
+    manager.  See \l QContactManager::saveContact() for more
+    information.
+
+    \sa localId()
+ */
 QContactId QContact::id() const
 {
     return d->m_id;
 }
 
-/*! Returns the QContactLocalId that identifies this contact within its manager */
+/*!
+    Returns the QContactLocalId that identifies this contact within its manager
+
+    This may have been set when the contact was retrieved from
+    a particular manager, or when the contact was first saved
+    in a manager.  The QContactLocalId is associated with a specific
+    manager, but other contacts with the same local id might exist in
+    different managers.
+
+    See \l QContactManager::saveContact() for more
+    information.
+
+   \sa id()
+*/
 QContactLocalId QContact::localId() const
 {
     return d->m_id.localId();
@@ -195,7 +257,7 @@ void QContact::setType(const QString& type)
 }
 
 /*!
- * Sets the type of the contact to the given \a type.
+ * Sets the type of the contact to the given \a type detail.
  */
 void QContact::setType(const QContactType& type)
 {
@@ -205,8 +267,20 @@ void QContact::setType(const QContactType& type)
 }
 
 /*!
- * Returns the read-only display label of this contact.
- * A contact which has been retrieved from a manager will have a display label synthesized for it.
+ * Returns the display label of this contact.
+ *
+ * A contact which has been retrieved from a manager will have a display label set when
+ * the contact is retrieved.
+ *
+ * The display label is usually read-only, since some managers do not support arbitrary
+ * labels (see also \l QContactName::setCustomLabel()).  If you modify the contact in a way
+ * that would affect the display label, you can call QContactManager::synthesizeContactDisplayLabel() to get an
+ * up-to-date display label.
+ *
+ * See the following example for more information:
+ * \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Updating the display label of a contact
+ *
+ * \sa QContactManager::synthesizeContactDisplayLabel()
  */
 QString QContact::displayLabel() const
 {
@@ -214,30 +288,76 @@ QString QContact::displayLabel() const
 }
 
 /*!
- * Sets the id of this contact to \a id.  Note that this only affects
- * this structure, not any corresponding structures stored
+ * Sets the id of this contact to \a id.
+ *
+ * Note that this only affects this object, not any corresponding structures stored
  * by a QContactManager.
  *
  * If you change the id of a contact and save the contact
  * in a manager, the previously existing contact will still
  * exist.  You can do this to create copies (possibly modified)
- * of an existing contact.
+ * of an existing contact, or to save a contact in a different manager.
  *
- * Returns true if the \a id was set successfully, otherwise
- * returns false.
+ * \sa QContactManager::saveContact()
  */
 void QContact::setId(const QContactId& id)
 {
     d->m_id = id;
 }
 
-/*! Returns the first detail stored in the contact which is of the given \a definitionName */
+/*!
+    \fn QContactDetail QContact::detail(const QLatin1Constant& definitionName) const
+    Returns the first detail stored in the contact which with the given \a definitionName.
+    The \a definitionName argument is typically the detail name constant provided by a
+    specific subclass of QContactDetail.  For example:
+
+    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 0
+
+    It would usually be more convenient to use the template version of this function, in
+    the following manner:
+
+    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 1
+*/
+
+/*!
+    \fn QList<QContactDetail> QContact::details(const QLatin1Constant& definitionName) const
+    Returns a list of details of the given \a definitionName.
+
+    The \a definitionName argument is typically the detail name constant provided by a
+    specific subclass of QContactDetail.  For example:
+
+    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 2
+
+    It would usually be more convenient to use the template version of this function, in
+    the following manner:
+
+    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 3
+*/
+
+/*!
+    \fn QList<QContactDetail> QContact::details(const QLatin1Constant& definitionName, const QLatin1Constant& fieldName, const QString& value)
+    Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
+*/
+
+/*!
+    \fn QList<T> QContact::details(const char* fieldName, const QString& value) const
+    \internal
+
+    Returns a list of details of the template type which match the \a fieldName and \a value criteria
+*/
+
+/*!
+    Returns the first detail stored in the contact with the given \a definitionName
+*/
 QContactDetail QContact::detail(const QString& definitionName) const
 {
+    if (definitionName.isEmpty())
+        return d->m_details.first();
+
     // build the sub-list of matching details.
     for (int i = 0; i < d->m_details.size(); i++) {
         const QContactDetail& existing = d->m_details.at(i);
-        if (definitionName.isEmpty() || definitionName == existing.definitionName()) {
+        if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName) {
             return existing;
         }
     }
@@ -245,7 +365,13 @@ QContactDetail QContact::detail(const QString& definitionName) const
     return QContactDetail();
 }
 
-/*! Returns a list of details of the given \a definitionName */
+/*! Returns a list of details with the given \a definitionName
+    The definitionName string can be determined by the DefinitionName attribute
+    of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
+    requesting a list of all the definition names using
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
+    asynchronous \l
+    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
 QList<QContactDetail> QContact::details(const QString& definitionName) const
 {
     // build the sub-list of matching details.
@@ -257,7 +383,7 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
             const QContactDetail& existing = d->m_details.at(i);
-            if (definitionName == existing.definitionName()) {
+            if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName) {
                 sublist.append(existing);
             }
         }
@@ -266,7 +392,14 @@ QList<QContactDetail> QContact::details(const QString& definitionName) const
     return sublist;
 }
 
-/*! Returns a list of details of the given \a definitionName, \a fieldName and field \a value*/
+/*!
+    Returns a list of details of the given \a definitionName, with fields named \a fieldName and with value \a value.
+    The definitionName string can be determined by the DefinitionName attribute
+    of defined objects (e.g. QContactPhoneNumber::DefinitionName) or by
+    requesting a list of all the definition names using
+    \l {QContactManager::detailDefinitions()}{detailDefinitions()} or the
+    asynchronous \l
+    {QContactDetailDefinitionFetchRequest::definitionNames()}{definitionNames()}.*/
 QList<QContactDetail> QContact::details(const QString& definitionName, const QString& fieldName, const QString& value) const
 {
     // build the sub-list of matching details.
@@ -278,7 +411,8 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
     } else {
         for (int i = 0; i < d->m_details.size(); i++) {
             const QContactDetail& existing = d->m_details.at(i);
-            if (definitionName == existing.definitionName() && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
+            if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName
+                && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
                 sublist.append(existing);
             }
         }
@@ -288,45 +422,117 @@ QList<QContactDetail> QContact::details(const QString& definitionName, const QSt
 }
 
 /*!
- * Saves the given \a detail in the list of stored details, and sets its Id.
- * If another detail of the same type and Id has been previously saved in
- * this contact, that detail is overwritten.  Otherwise, a new Id is generated
- * and set in the detail, and the detail is added to the list.
+    \internal
+    Returns the first detail stored in the contact which with the given \a definitionName
+*/
+QContactDetail QContact::detail(const char* definitionName) const
+{
+    if (definitionName == 0)
+        return d->m_details.first();
+
+    // build the sub-list of matching details.
+    for (int i = 0; i < d->m_details.size(); i++) {
+        const QContactDetail& existing = d->m_details.at(i);
+        if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName) {
+            return existing;
+        }
+    }
+
+    return QContactDetail();
+}
+
+/*!
+    \internal
+    Returns a list of details with the given \a definitionName
+*/
+QList<QContactDetail> QContact::details(const char* definitionName) const
+{
+    // build the sub-list of matching details.
+    QList<QContactDetail> sublist;
+
+    // special case
+    if (definitionName == 0) {
+        sublist = d->m_details;
+    } else {
+        for (int i = 0; i < d->m_details.size(); i++) {
+            const QContactDetail& existing = d->m_details.at(i);
+            if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName) {
+                sublist.append(existing);
+            }
+        }
+    }
+
+    return sublist;
+}
+
+/*!
+    \internal
+    Returns a list of details with the given \a definitionName, \a fieldName and field \a value
+*/
+QList<QContactDetail> QContact::details(const char* definitionName, const char* fieldName, const QString& value) const
+{
+    // build the sub-list of matching details.
+    QList<QContactDetail> sublist;
+
+    // special case
+    if (fieldName == 0) {
+        sublist = details(definitionName);
+    } else {
+        for (int i = 0; i < d->m_details.size(); i++) {
+            const QContactDetail& existing = d->m_details.at(i);
+            if (QContactDetailPrivate::detailPrivate(existing)->m_definitionName == definitionName
+                && existing.hasValue(fieldName) && value == existing.value(fieldName)) {
+                sublist.append(existing);
+            }
+        }
+    }
+
+    return sublist;
+}
+
+/*!
+ * Saves the given \a detail in the list of stored details, and sets the detail's id.
+ * If another detail of the same type and id has been previously saved in
+ * this contact, that detail is overwritten.  Otherwise, a new id is generated
+ * and set in the detail, and the detail is added to the contact.
  *
  * If the detail's access constraint includes \c QContactDetail::ReadOnly,
- * this function will return false.
+ * this function will return true and save the detail in the contact,
+ * however attempting to save the contact in a manager may fail (if that manager
+ * decides that the read only detail should not be updated).
+ * Details with the \c QContactDetail::ReadOnly constraint set are typically provided
+ * in a contact by the manager, and are usually information that is either
+ * synthesized, or not intended to be changed by the user (e.g. presence information
+ * for other contacts).
  *
- * If \a detail is a contact type, the existing contact type will
+ * If \a detail is a QContactType, the existing contact type will
  * be overwritten with \a detail.  There is never more than one contact type
- * in a contact.  The supplied \a detail will have its accessConstraint set to
- * QContactDetail::Irremovable.
+ * in a contact.
  *
- * If \a detail is a display label, the supplied \a detail will have its
- * accessConstraint set to QContactDetail::Irremovable | QContactDetail::ReadOnly,
- * and the function will return false.
+ * If \a detail is a QContactDisplayLabel, the contact will not be updated,
+ * and the function will return false.  Since the display label formatting is specific
+ * to each manager, use the QContactManager::synthesizeContactDisplayLabel() function
+ * instead.
  *
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
  * Note that the caller retains ownership of the detail.
+ * \sa QContactManager::synthesizeContactDisplayLabel()
  */
 bool QContact::saveDetail(QContactDetail* detail)
 {
     if (!detail)
         return false;
 
-    if (detail->accessConstraints() & QContactDetail::ReadOnly)
-        return false;
-
     /* Also handle contact type specially - only one of them. */
-    if (detail->definitionName() == QContactType::DefinitionName) {
-        detail->d->m_access = QContactDetail::Irremovable;
+    if (QContactDetailPrivate::detailPrivate(*detail)->m_definitionName == QContactType::DefinitionName.latin1()) {
+        detail->d->m_access |= QContactDetail::Irremovable;
         d->m_details[1] = *detail;
         return true;
     }
 
     /* And display label.. */
-    if (detail->definitionName() == QContactDisplayLabel::DefinitionName) {
-        detail->d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
+    if (QContactDetailPrivate::detailPrivate(*detail)->m_definitionName == QContactDisplayLabel::DefinitionName.latin1()) {
         return false;
     }
 
@@ -352,8 +558,8 @@ bool QContact::saveDetail(QContactDetail* detail)
  * Removes the \a detail from the contact.
  *
  * The detail in the contact which has the same key as that of the given \a detail
- * will be removed if it exists.  That is, the information in the detail may be different.
- * Any preference for the given field is also removed.
+ * will be removed if it exists.  Only the key is used for comparison - that is, the
+ * information in the detail may be different.
  *
  * If the detail's access constraint includes \c QContactDetail::Irremovable,
  * this function will return false.
@@ -386,16 +592,7 @@ bool QContact::removeDetail(QContactDetail* detail)
     if (!d->m_details.contains(*detail))
         return false;
 
-    // remove any preferences we may have stored for the detail.
-    QStringList keys = d->m_preferences.keys();
-    for (int i = 0; i < keys.size(); i++) {
-        QString prefKey = keys.at(i);
-        if (d->m_preferences.value(prefKey) == detail->d->m_id) {
-            d->m_preferences.remove(prefKey);
-        }
-    }
-
-    // then remove the detail.  // OLD BEHAVIOUR (24/12/2009): d->m_details.removeOne(*detail);
+    // then remove the detail.
     d->m_details.removeAt(removeIndex);
     return true;
 }
@@ -407,7 +604,10 @@ bool QContact::operator==(const QContact& other) const
         other.d->m_details == d->m_details;
 }
 
-/*! Returns the hash value for \a key. */
+/*!
+    \relates QContact
+    Returns the hash value for \a key.
+*/
 uint qHash(const QContact &key)
 {
     uint hash = qHash(key.id());
@@ -426,49 +626,18 @@ QDebug operator<<(QDebug dbg, const QContact& contact)
     return dbg.maybeSpace();
 }
 
-/*! Retrieve the first detail for which the given \a actionName is available */
-QContactDetail QContact::detailWithAction(const QString& actionName) const
-{
-    if (actionName.isEmpty())
-        return QContactDetail();
-
-    QList<QContactDetail> dets = detailsWithAction(actionName);
-    if (dets.isEmpty())
-        return QContactDetail();
-
-    QContactDetail retn = dets.first();
-    return retn;
-}
-
-/*! Retrieve any details for which the given \a actionName is available */
-QList<QContactDetail> QContact::detailsWithAction(const QString& actionName) const
-{
-    if (actionName.isEmpty())
-        return QList<QContactDetail>();
-
-    // ascertain which details are supported by any implementation of the given action
-    QList<QContactDetail> retn;
-    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors(actionName);
-    for (int i = 0; i < descriptors.size(); i++) {
-        QContactAction *currImpl = QContactManagerData::action(descriptors.at(i));
-        for (int i = 0; i < d->m_details.size(); i++) {
-            QContactDetail detail = d->m_details.at(i);
-            if (currImpl->supportsDetail(detail)) {
-                retn.append(detail);
-                break;
-            }
-        }
-
-        // clean up
-        delete currImpl;
-    }
-
-    return retn;
-}
-
 /*!
- * \preliminary
- * Returns a list of relationships of the given \a relationshipType in which the contact was a participant at the time that it was retrieved from the manager
+    Returns a list of relationships of the given \a relationshipType in which this contact is a participant.
+
+    If \a relationshipType is empty, all relationships will be returned.
+
+    \note This function only examines the relationships that were present when this contact
+    was retrieved from a manager.  You can also query the manager directly, if you require
+    the most up to date information.
+
+    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 5
+
+    \sa QContactRelationshipFetchRequest, QContactManager::relationships()
  */
 QList<QContactRelationship> QContact::relationships(const QString& relationshipType) const
 {
@@ -489,9 +658,18 @@ QList<QContactRelationship> QContact::relationships(const QString& relationshipT
 }
 
 /*!
-  Returns a list of ids of contacts which are related to this contact in a relationship of the
-  given \a relationshipType, where those other contacts participate in the relationship in the
-  given \a role.
+    Returns a list of the ids of contacts which have a relationship of the given \a relationshipType with this contact.
+    The \a role parameter describes the role that the related contacts have in the relationship.
+
+    If \a relationshipType is empty, relationships of all types will be considered.
+
+    \note This function only examines the relationships that were present when this contact
+    was retrieved from a manager.  You can also query the manager directly, if you require
+    the most up to date information.
+
+    \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp 6
+
+    \sa QContactRelationshipFetchRequest, QContactManager::relationships()
  */
 QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QContactRelationship::Role role) const
 {
@@ -527,123 +705,6 @@ QList<QContactId> QContact::relatedContacts(const QString& relationshipType, QCo
     }
 
     return retn;
-}
-
-/*!
- * Return a list of actions available to be performed on this contact which are offered
- * by the vendor whose name is the given \a vendorName, where the action instance has
- * the implementation version given by \a implementationVersion.
- * If \a vendorName is empty, actions from any vendor are supplied; if \a implementationVersion
- * is \c -1, action implementations of any version will be returned.
- */
-QList<QContactActionDescriptor> QContact::availableActions(const QString& vendorName, int implementationVersion) const
-{
-    // check every action implementation to see if it supports me.
-    QSet<QContactActionDescriptor> retn;
-    QList<QContactActionDescriptor> descriptors = QContactManagerData::actionDescriptors();
-    for (int i = 0; i < descriptors.size(); i++) {
-        QContactActionDescriptor currDescriptor = descriptors.at(i);
-        QContactAction *currImpl = QContactManagerData::action(currDescriptor);
-        if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
-            if ((vendorName.isEmpty() || currDescriptor.vendorName() == vendorName) &&
-                    (implementationVersion == -1 || currDescriptor.implementationVersion() == implementationVersion)) {
-                retn.insert(currDescriptor);
-            }
-        }
-
-        // clean up the implementation to avoid leak.
-        delete currImpl;
-    }
-
-    return retn.toList();
-}
-
-/*!
- * \preliminary
- * Set a particular detail as the \a preferredDetail for a given \a actionName.  Returns
- * true if the detail exists in the contact and was successfully set as the preferred detail for the action
- * identified by \a actionName, otherwise returns false.
- * Note that since QContact is a value class, no error checking is done on the action name
- * (to ensure that an action of that name is available) in this function.
- */
-bool QContact::setPreferredDetail(const QString& actionName, const QContactDetail& preferredDetail)
-{
-    // if the given action name is empty, bad argument.
-    if (actionName.isEmpty())
-        return false;
-
-    // check to see whether the the given preferredDetail is saved in this contact
-    if (!d->m_details.contains(preferredDetail))
-        return false;
-
-    // otherwise, save the preference.
-    d->m_preferences.insert(actionName, preferredDetail.d->m_id);
-    return true;
-}
-
-/*!
- * \preliminary
- *
- * Returns true if the given \a detail is a preferred detail for the given \a actionName, or for any action if the \a actionName is empty
- */
-bool QContact::isPreferredDetail(const QString& actionName, const QContactDetail& detail) const
-{
-    if (!d->m_details.contains(detail))
-        return false;
-
-    if (actionName.isEmpty())
-         return d->m_preferences.values().contains(detail.d->m_id);
-
-    QMap<QString, int>::const_iterator it = d->m_preferences.find(actionName);
-    if (it != d->m_preferences.end() && it.value() == detail.d->m_id)
-        return true;
-
-    return false;
-}
-
-/*!
- * \preliminary
- * Returns the preferred detail for a given \a actionName
- */
-QContactDetail QContact::preferredDetail(const QString& actionName) const
-{
-    // if the given action name is empty, bad argument.
-    if (actionName.isEmpty())
-        return QContactDetail();
-
-    if (!d->m_preferences.contains(actionName))
-        return QContactDetail();
-
-    QContactDetail retn;
-    int detId = d->m_preferences.value(actionName);
-    for (int i = 0; i < d->m_details.size(); i++) {
-        QContactDetail det = d->m_details.at(i);
-        if (det.d->m_id == detId) {
-            // found it.
-            retn = det;
-            break;
-        }
-    }
-
-    return retn;
-}
-
-
-
-/*!
- * \preliminary
- * Returns a map of action name to the preferred detail for the action of that name.
- */
-QMap<QString, QContactDetail> QContact::preferredDetails() const
-{
-    QMap<QString, QContactDetail> ret;
-    QMap<QString, int>::const_iterator it = d->m_preferences.constBegin();
-    while (it != d->m_preferences.constEnd()) {
-        ret.insert(it.key(), d->m_details.at(it.value()));
-        ++it;
-    }
-
-    return ret;
 }
 
 QTM_END_NAMESPACE

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,7 +51,7 @@
 #include <QMediaStreamsControl>
 #include <QVideoWidget>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 #define WAIT_FOR_CONDITION(a,e)            \
     for (int _i = 0; _i < 500; _i += 1) {  \

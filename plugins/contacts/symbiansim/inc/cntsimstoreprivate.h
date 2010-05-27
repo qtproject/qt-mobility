@@ -1,3 +1,4 @@
+
 /****************************************************************************
 **
 ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
@@ -72,14 +73,11 @@ public:
     static CntSimStorePrivate* NewL(CntSymbianSimEngine &engine, CntSimStore &simStore, const QString &storeName);
     ~CntSimStorePrivate();
     
-    QString storeName() { return m_storeName; }
-    TSimStoreInfo storeInfo() { return m_storeInfo; }
-
-    bool read(int index, int numSlots, QContactManager::Error* error);
-    bool write(const QContact &contact, QContactManager::Error* error);
-    bool remove(int index, QContactManager::Error* error);
-    bool getReservedSlots(QContactManager::Error* error);
-    
+    SimStoreInfo storeInfo() { return m_storeInfo; }
+    bool read(int index, int numSlots, QContactManager::Error *error);
+    bool write(const QContact &contact, QContactManager::Error *error);
+    bool remove(int index, QContactManager::Error *error);
+    bool getReservedSlots(QContactManager::Error *error);
     TInt lastAsyncError() { return m_asyncError; }
     
 private: 
@@ -93,8 +91,12 @@ private:
     void ConstructL();
     void convertStoreNameL(TDes &storeName);
     QList<QContact> decodeSimContactsL(TDes8& rawData) const;
-    QContact encodeSimContactL(const QContact* contact, TDes8& rawData) const;
+    void encodeSimContactL(QContact* contact, TDes8& rawData) const;
+    void putTagAndValueL(CPhoneBookBuffer* pbBuffer, TUint8 tag, QString data) const;
     QList<int> decodeReservedSlotsL(TDes8& rawData) const;
+    void writeL(QContact *contact);
+    void removeL(int index);
+    void updateStoreInfoL();
     
 private:
     State m_state;
@@ -104,15 +106,13 @@ private:
     RTelServer m_etelServer;
     RMobilePhone m_etelPhone;
     RMobilePhoneBookStore m_etelStore;
-    QString m_storeName;
-    bool m_readOnlyAccess;
-    TSimStoreInfo m_storeInfo;
-    TSimStoreInfoPckg m_storeInfoPckg;
+    SimStoreInfo m_storeInfo;
     RBuf8 m_buffer;
     QContact m_convertedContact;
     int m_writeIndex;
     CntSimStoreEventListener* m_listener;
     TInt m_asyncError;
+    bool m_extraDetailsChecked;
 };
 
 #endif // CNTSIMSTOREPRIVATE_H_

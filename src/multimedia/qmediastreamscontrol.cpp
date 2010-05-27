@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,7 +42,7 @@
 #include "qmediastreamscontrol.h"
 #include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaStreamsControl
@@ -111,11 +111,11 @@ QMediaStreamsControl::~QMediaStreamsControl()
 */
 
 /*!
-    \fn QMediaStreamsControl::metaData(int stream, QtMedia::MetaData key)
+    \fn QMediaStreamsControl::metaData(int stream, QtMediaServices::MetaData key)
 
     Returns the meta-data value of \a key for a given \a stream.
 
-    Useful metadata keya are QtMedia::Title, QtMedia::Description and QtMedia::Language.
+    Useful metadata keya are QtMediaServices::Title, QtMediaServices::Description and QtMediaServices::Language.
 */
 
 /*!
@@ -147,5 +147,5 @@ QMediaStreamsControl::~QMediaStreamsControl()
 */
 
 #include "moc_qmediastreamscontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

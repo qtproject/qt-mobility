@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QRotationReading Class Reference</h1>
 <p>The QRotationReading class represents one reading from the rotation sensor. <a href="#details">More...</a></p>
-<pre>    #include &lt;QRotationReading&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
+<pre>    #include &lt;QRotationReading&gt;</pre><p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
 <ul>
 <li><a href="qrotationreading-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -62,14 +61,19 @@
 <p>The QRotationReading class represents one reading from the rotation sensor.</p>
 <a name="qrotationreading-units"></a>
 <h3>QRotationReading Units</h3>
-<p>The rotation reading contains 3 angles, measured in degrees that define the orientation of the device in three-dimensional space. The three angles are applied to the device in the following order.</p>
+<p>The rotation reading contains 3 angles, measured in degrees that define the orientation of the device in three-dimensional space. These angles are similar to yaw, pitch and roll but are defined using only right hand rotation with axes as defined by the right hand cartesian coordinate system.</p>
+<p align="center"><img src="images/sensors-rotation.jpg" /></p><p>The three angles are applied to the device in the following order.</p>
 <ul>
-<li>Right-handed rotation z (-180, 180]. Starting from the x axis and incrementing towards the y axis.</li>
-<li>Right-handed rotation x (-90, 90]. Starting from the new (once-rotated) y axis and incrementing towards the z axis.</li>
-<li>Right-handed rotation y (-180, 180]. Starting from the new (twice-rotated) z axis and incrementing towards the x axis.</li>
+<li>Right-handed rotation z (-180, 180]. Starting from the y-axis and incrementing in the counter-clockwise direction.</li>
+<li>Right-handed rotation x [-90, 90]. Starting from the new (once-rotated) y-axis and incrementing towards the z-axis.</li>
+<li>Right-handed rotation y (-180, 180]. Starting from the new (twice-rotated) z-axis and incrementing towards the x-axis.</li>
 </ul>
-<p align="center"><img src="images/Rotation_angles.png" alt="Visual representation of the rotation angles." /></p><p>The 0 point for the z angle is defined as a fixed, external entity and is device-specific. While magnetic north is typically used as this reference point it may not be. Do not attempt to compare values for the z angle between devices or even on the same device if it has moved a significant distance. If the device cannot detect a fixed, external entity the z angle will always be 0 and the <a href="qrotationsensor.html#hasZ-prop">QRotationSensor::hasZ</a> property will be set to false.</p>
-<p>The 0 point for the x and y angles are defined as when the x and y axes of the device are oriented towards the horizon.</p>
+<p>Here is a visualisation showing the order in which angles are applied.</p>
+<p align="center"><img src="images/sensors-rotation-anim.gif" /></p><p>The 0 point for the z angle is defined as a fixed, external entity and is device-specific. While magnetic North is typically used as this reference point it may not be. Do not attempt to compare values for the z angle between devices or even on the same device if it has moved a significant distance.</p>
+<p>If the device cannot detect a fixed, external entity the z angle will always be 0 and the <a href="qrotationsensor.html#hasZ-prop">QRotationSensor::hasZ</a> property will be set to false.</p>
+<p>The 0 point for the x and y angles are defined as when the x and y axes of the device are oriented towards the horizon. Here is an example of how the x value will change with device movement.</p>
+<p align="center"><img src="images/sensors-rotation2.jpg" /></p><p>Here is an example of how the y value will change with device movement.</p>
+<p align="center"><img src="images/sensors-rotation3.jpg" /></p><p>Note that when x is 90 or -90, values for z and y achieve rotation around the same axis (due to the order of operations). In this case the y rotation will be 0.</p>
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QRotationReading/x"></a>
@@ -115,8 +119,8 @@
 <p>See also <a href="qrotationreading.html#z-prop">z</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

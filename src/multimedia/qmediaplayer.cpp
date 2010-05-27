@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,18 +46,18 @@
 #include <QtCore/qpointer.h>
 
 
-#include <qmediaplayer.h>
+#include "qmediaplayer.h"
 
-#include <qmediaobject_p.h>
-#include <qmediaservice.h>
-#include <qmediaplayercontrol.h>
-#include <qmediaserviceprovider.h>
-#include <qmediaplaylist.h>
-#include <qmediaplaylistcontrol.h>
-#include <qvideowidget.h>
-#include <qgraphicsvideoitem.h>
+#include "qmediaobject_p.h"
+#include "qmediaservice.h"
+#include "qmediaplayercontrol.h"
+#include "qmediaserviceprovider.h"
+#include "qmediaplaylist.h"
+#include "qmediaplaylistcontrol.h"
+#include "qvideowidget.h"
+#include "qgraphicsvideoitem.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlayer
@@ -649,7 +649,7 @@ void QMediaPlayer::unbind(QObject *obj)
     The \a flags argument allows additional requirements such as performance indicators to be
     specified.
 */
-QtMedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
+QtMediaServices::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
 {
@@ -957,5 +957,5 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
 */
 
 #include "moc_qmediaplayer.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

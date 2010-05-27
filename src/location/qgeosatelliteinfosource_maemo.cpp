@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,81 +45,63 @@ QTM_BEGIN_NAMESPACE
 
 QGeoSatelliteInfoSourceMaemo::QGeoSatelliteInfoSourceMaemo(QObject *parent) : QGeoSatelliteInfoSource(parent)
 {
-    client_id_ = -1;
+    registered = false;
 }
+
 
 int QGeoSatelliteInfoSourceMaemo::init()
 {
-    int status;
-
     dbusComm = new DBusComm();
-    status = dbusComm->init();
+    int status = dbusComm->init();
 
-    QObject::connect(dbusComm, SIGNAL(npeMessage(const QByteArray &)),
-                     this, SLOT(npeMessages(const QByteArray &)));
+    if (status == 0) {
+        QObject::connect(dbusComm, SIGNAL(receivedSatellitesInView(const QList<QGeoSatelliteInfo> &)),
+                         this, SLOT(newSatellitesInView(const QList<QGeoSatelliteInfo> &)));
+        QObject::connect(dbusComm, SIGNAL(receivedSatellitesInUse(const QList<QGeoSatelliteInfo> &)),
+                         this, SLOT(newSatellitesInUse(const QList<QGeoSatelliteInfo> &)));
+    }
 
     return status;
-}
-
-// This method receives messages from DBus.
-
-void QGeoSatelliteInfoSourceMaemo::dbusMessages(const QByteArray &msg)
-{
-    Q_UNUSED(msg)
-
-    return;
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::startUpdates()
 {
-#if 0
-    int len = npe.NewStartTrackingMsg(&msg, client_id_, NpeIf::MethodAll,
-                                      NpeIf::OptionNone , 1);
+    if (registered == false)
+        registered = dbusComm->sendDBusRegister();
 
-    // cout << "ISI Message len " << len << "\n";
-    dbusComm->sendIsiMessage(msg, len);
-    delete [] msg;
-#endif
-
-#if 0 // Test !
-    QList<QGeoSatelliteInfo> list;
-    QGeoSatelliteInfo tmp;
-
-    tmp.setPrnNumber(33);
-    tmp.setSignalStrength(15);
-    tmp.setProperty(QGeoSatelliteInfo::Azimuth, 45.0);
-    tmp.setProperty(QGeoSatelliteInfo::Elevation, 25.5);
-    list.append(tmp);
-    list.append(tmp);
-    list.append(tmp);
-
-    emit satellitesInViewUpdated(list);
-    emit satellitesInUseUpdated(list);
-#endif
-
-
+    dbusComm->sendConfigRequest(DBusComm::CommandSatStart, 0, 0);
 }
 
 
 void QGeoSatelliteInfoSourceMaemo::stopUpdates()
 {
+    if (registered == false)
+        registered = dbusComm->sendDBusRegister();
 
-
+    dbusComm->sendConfigRequest(DBusComm::CommandSatStop, 0, 0);
 }
+
 
 void QGeoSatelliteInfoSourceMaemo::requestUpdate(int timeout)
 {
-    int a;
-    a = timeout + 1;
+    if (registered == false)
+        registered = dbusComm->sendDBusRegister();
 
+    dbusComm->sendConfigRequest(DBusComm::CommandSatOneShot, 0, timeout);
 }
 
-#if 0
-void satellitesInViewUpdated(const QList<QGeoSatelliteInfo> &satellites);
-void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
-void requestTimeout();
-#endif
+
+void QGeoSatelliteInfoSourceMaemo::newSatellitesInView(const QList<QGeoSatelliteInfo> &update)
+{
+    emit satellitesInViewUpdated(update);
+}
+
+
+void QGeoSatelliteInfoSourceMaemo::newSatellitesInUse(const QList<QGeoSatelliteInfo> &update)
+{
+    emit satellitesInUseUpdated(update);
+}
 
 #include "moc_qgeosatelliteinfosource_maemo_p.cpp"
 QTM_END_NAMESPACE

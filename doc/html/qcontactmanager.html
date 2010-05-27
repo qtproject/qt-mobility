@@ -24,7 +24,7 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#Error-enum">Error</a></b> { NoError, DoesNotExistError, AlreadyExistsError, InvalidDetailError, ..., UnspecifiedError }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#ManagerFeature-enum">ManagerFeature</a></b> { Groups, ActionPreferences, DetailOrdering, Relationships, ..., Anonymous }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#ManagerFeature-enum">ManagerFeature</a></b> { Groups, DetailOrdering, Relationships, ArbitraryRelationshipTypes, ..., Anonymous }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -34,7 +34,7 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#QContactManager-2">QContactManager</a></b> ( const QString &amp; <i>managerName</i>, int <i>implementationVersion</i>, const QMap&lt;QString, QString&gt; &amp; <i>parameters</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#QContactManager-3">QContactManager</a></b> ( QObject * <i>parent</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#dtor.QContactManager">~QContactManager</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#compatibleContact">compatibleContact</a></b> ( const QContact &amp; <i>original</i> )&nbsp;&nbsp;<tt> (preliminary)</tt></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#compatibleContact">compatibleContact</a></b> ( const QContact &amp; <i>original</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QContact </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contact">contact</a></b> ( const QContactLocalId &amp; <i>contactId</i>, const QContactFetchHint &amp; <i>fetchHint</i> = QContactFetchHint() ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactIds">contactIds</a></b> ( const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QContactLocalId&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#contactIds-2">contactIds</a></b> ( const QContactFilter &amp; <i>filter</i>, const QList&lt;QContactSortOrder&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</td></tr>
@@ -66,7 +66,8 @@
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#setSelfContactId">setSelfContactId</a></b> ( const QContactLocalId &amp; <i>contactId</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QStringList </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#supportedContactTypes">supportedContactTypes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QVariant::Type&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#supportedDataTypes">supportedDataTypes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#synthesizedDisplayLabel">synthesizedDisplayLabel</a></b> ( const QContact &amp; <i>contact</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a></b> ( QContact * <i>contact</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactmanager.html#synthesizedContactDisplayLabel">synthesizedContactDisplayLabel</a></b> ( const QContact &amp; <i>contact</i> ) const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -110,7 +111,9 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QContactManager class provides an interface which allows clients with access to contact information stored in a particular backend.</p>
-<p>This class provides adding, updating and removal of contacts. It also provides definitions for details and fields that can be found in contacts.</p>
+<p>This class provides an abstraction of a datastore or aggregation of datastores which contains contact information. It provides methods to retrieve and manipulate contact information, contact relationship information, and supported schema definitions. It also provides metadata and error information reporting.</p>
+<p>The functions provided by QContactManager are purely synchronous; to access the same functionality in an asynchronous manner, clients should use the use-case-specific classes derived from <a href="qcontactabstractrequest.html">QContactAbstractRequest</a>.</p>
+<p>Some functionality provided by QContactManager directly is not accessible using the asynchronous API; see the <a href="contactssync.html">synchronous</a> and <a href="contactsasync.html">asynchronous</a> API information from the <a href="contacts.html">contacts module</a> API documentation.</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QContactManager/Error"></a>
@@ -155,7 +158,6 @@
 <a name="//apple_ref/cpp/econst/QContactManager/DetailOrdering"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/Relationships"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/ArbitraryRelationshipTypes"></a>
-<a name="//apple_ref/cpp/econst/QContactManager/RelationshipOrdering"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/MutableDefinitions"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/SelfContact"></a>
 <a name="//apple_ref/cpp/econst/QContactManager/ChangeLogs"></a>
@@ -164,12 +166,10 @@
 <p>This enum describes the possible features that a particular manager may support</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QContactManager::Groups</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager supports all QContactGroup related operations, and emits the appropriate signals</td></tr>
-<tr><td valign="top"><tt>QContactManager::ActionPreferences</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The manager supports saving preferred details per action per contact</td></tr>
+<tr><td valign="top"><tt>QContactManager::Groups</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The manager supports saving contacts of the <tt>QContactType::TypeGroup</tt> type The manager supports saving preferred details per action per contact</td></tr>
 <tr><td valign="top"><tt>QContactManager::DetailOrdering</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">When a contact is retrieved, the manager will return the details in the same order in which they were saved</td></tr>
 <tr><td valign="top"><tt>QContactManager::Relationships</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The manager supports at least some types of relationships between contacts</td></tr>
 <tr><td valign="top"><tt>QContactManager::ArbitraryRelationshipTypes</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The manager supports relationships of arbitrary types between contacts</td></tr>
-<tr><td valign="top"><tt>QContactManager::RelationshipOrdering</tt></td><td align="center" valign="top">?</td><td valign="top">The manager supports relationships (re)ordering</td></tr>
 <tr><td valign="top"><tt>QContactManager::MutableDefinitions</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The manager supports saving, updating or removing detail definitions. Some built-in definitions may still be immutable</td></tr>
 <tr><td valign="top"><tt>QContactManager::SelfContact</tt></td><td align="center" valign="top"><tt>6</tt></td><td valign="top">The manager supports the concept of saving a contact which represents the current user</td></tr>
 <tr><td valign="top"><tt>QContactManager::ChangeLogs</tt></td><td align="center" valign="top"><tt>8</tt></td><td valign="top">The manager supports reporting of timestamps of changes, and filtering and sorting by those timestamps</td></tr>
@@ -199,14 +199,12 @@
 <p>Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given <i>managerName</i>, <i>params</i> and an optional <i>implementationVersion</i></p>
 <a name="//apple_ref/cpp/instm/QContactManager/compatibleContact"></a>
 <h3 class="fn"><a name="compatibleContact"></a><a href="qcontact.html">QContact</a> QContactManager::compatibleContact ( const <a href="qcontact.html">QContact</a> &amp; <i>original</i> )</h3>
-<p><b>This function is under development and is subject to change.</b></p>
 <p>Returns a pruned or modified version of the <i>original</i> contact which is valid and can be saved in the manager. The returned contact might have entire details removed or arbitrarily changed. The cache of relationships in the contact are ignored entirely when considering compatibility with the backend, as they are saved and validated separately.</p>
-<p>This function is preliminary and the behaviour is subject to change!</p>
 <a name="//apple_ref/cpp/instm/QContactManager/contact"></a>
 <h3 class="fn"><a name="contact"></a><a href="qcontact.html">QContact</a> QContactManager::contact ( const <a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a> &amp; <i>contactId</i>, const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3>
 <p>Returns the contact in the database identified by <i>contactId</i>.</p>
 <p>If the contact does not exist, an empty, default constructed <a href="qcontact.html">QContact</a> will be returned, and the error returned by <a href="qcontactmanager.html#error">error</a>() will be <tt>QContactManager::DoesNotExistError</tt>.</p>
-<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details, relationships and action preferences in the matching contact will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
+<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details and relationships in the matching contact will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
 <p>See also <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
 <a name="//apple_ref/cpp/instm/QContactManager/contactIds"></a>
 <h3 class="fn"><a name="contactIds"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; QContactManager::contactIds ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; () ) const</h3>
@@ -216,12 +214,12 @@
 <a name="//apple_ref/cpp/instm/QContactManager/contacts"></a>
 <h3 class="fn"><a name="contacts"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; QContactManager::contacts ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; (), const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3>
 <p>Returns the list of contacts stored in the manager sorted according to the given list of <i>sortOrders</i>.</p>
-<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details, relationships and action preferences in the matching contacts will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
+<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details and relationships in the matching contacts will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
 <p>See also <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
 <h3 class="fn"><a name="contacts-2"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt; QContactManager::contacts ( const <a href="qcontactfilter.html">QContactFilter</a> &amp; <i>filter</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt; &amp; <i>sortOrders</i> = QList&lt;QContactSortOrder&gt; (), const <a href="qcontactfetchhint.html">QContactFetchHint</a> &amp; <i>fetchHint</i> = QContactFetchHint() ) const</h3>
 <p>Returns a list of contacts that match the given <i>filter</i>, sorted according to the given list of <i>sortOrders</i>.</p>
 <p>Depending on the manager implementation, this filtering operation might be slow and involve retrieving all the contacts and testing them against the supplied filter - see the <a href="qcontactmanager.html#isFilterSupported">isFilterSupported</a>() function.</p>
-<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details, relationships and action preferences in the matching contacts will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
+<p>The <i>fetchHint</i> parameter describes the optimization hints that a manager may take. If the <i>fetchHint</i> is the default constructed hint, all existing details and relationships in the matching contacts will be returned. A client should not make changes to a contact which has been retrieved using a fetch hint other than the default fetch hint. Doing so will result in information loss when saving the contact back to the manager (as the &quot;new&quot; restricted contact will replace the previously saved contact in the backend).</p>
 <p>See also <a href="qcontactfetchhint.html">QContactFetchHint</a>.</p>
 <a name="//apple_ref/cpp/instm/QContactManager/contactsAdded"></a>
 <h3 class="fn"><a name="contactsAdded"></a>void QContactManager::contactsAdded ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt; &amp; <i>contactIds</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -292,6 +290,7 @@
 <p>Remove every contact whose id is contained in the list of contacts ids <i>contactIds</i>. Returns true if all contacts were removed successfully, otherwise false.</p>
 <p>Any contact that was removed successfully will have the relationships in which it was involved removed also.</p>
 <p>The manager might populate <i>errorMap</i> (the map of indices of the <i>contactIds</i> list to the error which occurred when saving the contact at that index) for every index for which the contact could not be removed, if it is able. The <a href="qcontactmanager.html#error">QContactManager::error</a>() function will only return <tt>QContactManager::NoError</tt> if all contacts were removed successfully.</p>
+<p>If the given list of contact ids <i>contactIds</i> is empty, the function will return false and calling <a href="qcontactmanager.html#error">error</a>() will return <tt>QContactManager::BadArgumentError</tt>. If the list is non-empty and contains ids which do not identify a valid contact in the manager, the function will remove any contacts which are identified by ids in the <i>contactIds</i> list, insert <tt>QContactManager::DoesNotExist</tt> entries into the <i>errorMap</i> for the indices of invalid ids in the <i>contactIds</i> list, return false, and set the overall operation error to <tt>QContactManager::DoesNotExistError</tt>.</p>
 <p>See also <a href="qcontactmanager.html#removeContact">QContactManager::removeContact</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactManager/removeDetailDefinition"></a>
 <h3 class="fn"><a name="removeDetailDefinition"></a>bool QContactManager::removeDetailDefinition ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>contactType</i> = QContactType::TypeContact )</h3>
@@ -344,13 +343,36 @@
 <a name="//apple_ref/cpp/instm/QContactManager/supportedDataTypes"></a>
 <h3 class="fn"><a name="supportedDataTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qvariant.html#Type-enum">QVariant::Type</a>&gt; QContactManager::supportedDataTypes () const</h3>
 <p>Returns the list of data types supported by the manager</p>
-<a name="//apple_ref/cpp/instm/QContactManager/synthesizedDisplayLabel"></a>
-<h3 class="fn"><a name="synthesizedDisplayLabel"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactManager::synthesizedDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const</h3>
-<p>Returns a display label for a <i>contact</i> which is synthesized from its details in a platform-specific manner</p>
+<a name="//apple_ref/cpp/instm/QContactManager/synthesizeContactDisplayLabel"></a>
+<h3 class="fn"><a name="synthesizeContactDisplayLabel"></a>void QContactManager::synthesizeContactDisplayLabel ( <a href="qcontact.html">QContact</a> * <i>contact</i> ) const</h3>
+<p>Updates the display label of the supplied <i>contact</i>, according to the formatting rules of this manager.</p>
+<p>Different managers can format the display label of a contact in different ways - some managers may only consider first or last name, or might put them in different orders. Others might consider an organization, a nickname, or a freeform label.</p>
+<p>This function will update the <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a> of this contact, and the string returned by <a href="qcontact.html#displayLabel">QContact::displayLabel</a>().</p>
+<p>If <i>contact</i> is null, nothing will happen.</p>
+<p>See the following example for more information:</p>
+<pre>        <span class="comment">/* Retrieve a contact */</span>
+        QContact c = manager-&gt;contact(myId);
+        qDebug() &lt;&lt; &quot;Current display label&quot; &lt;&lt; c.displayLabel();
+
+        <span class="comment">/* Update some fields that might influence the display label */</span>
+        QContactName name = c.detail&lt;QContactName&gt;();
+        name.setFirstName(&quot;Abigail&quot;);
+        name.setLastName(&quot;Arkansas&quot;);
+        c.saveDetail(&amp;name);
+
+        <span class="comment">/* Update the display label */</span>
+        manager-&gt;synthesizeContactDisplayLabel(&amp;c);
+        qDebug() &lt;&lt; &quot;Now the label is:&quot; &lt;&lt; c.displayLabel();</pre>
+<p>See also <a href="qcontactmanager.html#synthesizedContactDisplayLabel">synthesizedContactDisplayLabel</a>() and <a href="qcontact.html#displayLabel">QContact::displayLabel</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactManager/synthesizedContactDisplayLabel"></a>
+<h3 class="fn"><a name="synthesizedContactDisplayLabel"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactManager::synthesizedContactDisplayLabel ( const <a href="qcontact.html">QContact</a> &amp; <i>contact</i> ) const</h3>
+<p>Returns a display label for a <i>contact</i> which is synthesized from its details in a manager specific manner.</p>
+<p>If you want to update the display label stored in the contact, use the <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>() function instead.</p>
+<p>See also <a href="qcontactmanager.html#synthesizeContactDisplayLabel">synthesizeContactDisplayLabel</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

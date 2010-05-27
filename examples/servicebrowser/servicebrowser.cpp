@@ -1,40 +1,39 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
+** $QT_BEGIN_LICENSE:BSD$
+** You may use this file under the terms of the BSD license as follows:
 **
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 2.1 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPL included in the
-** packaging of this file.  Please review the following information to
-** ensure the GNU Lesser General Public License version 2.1 requirements
-** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+** "Redistribution and use in source and binary forms, with or without
+** modification, are permitted provided that the following conditions are
+** met:
+**   * Redistributions of source code must retain the above copyright
+**     notice, this list of conditions and the following disclaimer.
+**   * Redistributions in binary form must reproduce the above copyright
+**     notice, this list of conditions and the following disclaimer in
+**     the documentation and/or other materials provided with the
+**     distribution.
+**   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+**     the names of its contributors may be used to endorse or promote
+**     products derived from this software without specific prior written
+**     permission.
 **
-** In addition, as a special exception, Nokia gives you certain additional
-** rights.  These rights are described in the Nokia Qt LGPL Exception
-** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-**
-** If you have questions regarding the use of this file, please contact
-** Nokia at qt-info@nokia.com.
-**
-**
-**
-**
-**
-**
-**
-**
+** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
@@ -77,7 +76,11 @@ void ServiceBrowser::currentInterfaceImplChanged(QListWidgetItem *current, QList
 
     QServiceInterfaceDescriptor descriptor = current->data(Qt::UserRole).value<QServiceInterfaceDescriptor>();
     if (descriptor.isValid()) {
-        defaultInterfaceButton->setText(tr("Set as default implementation for %1") 
+#if defined(Q_WS_MAEMO_5)
+        defaultInterfaceButton->setText(tr("Set as default implementation for \n%1")
+#else
+        defaultInterfaceButton->setText(tr("Set as default implementation for %1")
+#endif
                 .arg(descriptor.interfaceName()));
         defaultInterfaceButton->setEnabled(true);
     }
@@ -226,7 +229,7 @@ void ServiceBrowser::initWidgets()
     attributesListWidget = new QListWidget;
     attributesListWidget->addItem(tr("(Select an interface implementation)"));
 
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5)
     interfacesListWidget->setMinimumWidth(450);
 #endif
 
@@ -265,12 +268,22 @@ void ServiceBrowser::initWidgets()
     attributesGroup = new QGroupBox(tr("Invokable attributes"));
     QVBoxLayout *attributesLayout = new QVBoxLayout;
     attributesLayout->addWidget(attributesListWidget);
+#if !defined(Q_WS_MAEMO_5)
+    // No space on the screen to show following title in Maemo
     attributesLayout->addWidget(new QLabel(tr("Show attributes for:")));
+#endif
     attributesLayout->addWidget(selectedImplRadioButton);
     attributesLayout->addWidget(defaultImplRadioButton);
     attributesGroup->setLayout(attributesLayout);
 
-#ifndef Q_OS_SYMBIAN
+#if defined(Q_WS_MAEMO_5)
+    // Maemo 5 style doesn't take group box titles into account.
+    int spacingHack = QFontMetrics(QFont()).height();
+    interfacesLayout->setContentsMargins(0, spacingHack, 0, 0);
+    attributesLayout->setContentsMargins(0, spacingHack, 0, 0);
+    servicesLayout->setContentsMargins(0, spacingHack, 0, 0);
+#endif
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5)
     QGridLayout *layout = new QGridLayout;
     layout->addWidget(servicesGroup, 0, 0);
     layout->addWidget(attributesGroup, 0, 1, 2, 1);

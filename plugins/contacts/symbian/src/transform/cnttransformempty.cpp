@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,16 +55,15 @@ QContactDetail *CntTransformEmpty::transformItemField(const CContactItemField& f
 	return new QContactDetail();
 }
 
-bool CntTransformEmpty::supportsField(TUint32 fieldType) const
-{
-    Q_UNUSED(fieldType);
-    return false;
-}
-
 bool CntTransformEmpty::supportsDetail(QString detailName) const
 {
     Q_UNUSED(detailName);
     return false;
+}
+
+QList<TUid> CntTransformEmpty::supportedFields() const
+{
+    return QList<TUid>();
 }
 
 QList<TUid> CntTransformEmpty::supportedSortingFieldTypes(QString detailFieldName) const
@@ -114,10 +113,13 @@ void CntTransformEmpty::detailDefinitions(QMap<QString, QContactDetailDefinition
     if(definitions.contains(QContactGeoLocation::DefinitionName)) {
         definitions.remove(QContactGeoLocation::DefinitionName);
     }
-    if(definitions.contains(QContactOnlineAccount::DefinitionName)) {
-        definitions.remove(QContactOnlineAccount::DefinitionName);
-    }
     if(definitions.contains(QContactTag::DefinitionName)) {
         definitions.remove(QContactTag::DefinitionName);
+    }
+    if(definitions.contains(QContactGlobalPresence::DefinitionName)) {
+        definitions.remove(QContactGlobalPresence::DefinitionName);
+    }
+    if(definitions.contains(QContactPresence::DefinitionName)) {
+        definitions.remove(QContactPresence::DefinitionName);
     }
 }

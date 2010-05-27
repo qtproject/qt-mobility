@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -70,7 +70,6 @@ void tst_QVersitWriter::init()
     mOutputDevice = new QBuffer;
     mWriter = new QVersitWriter;
     mSignalCatcher = new SignalCatcher;
-    qRegisterMetaType<QVersitWriter::State>("QVersitWriter::State");
     connect(mWriter, SIGNAL(stateChanged(QVersitWriter::State)),
             mSignalCatcher, SLOT(stateChanged(QVersitWriter::State)));
 }
@@ -223,7 +222,9 @@ END:VCARD\r\n");
     mOutputDevice->seek(0);
     QByteArray result(mOutputDevice->readAll());
     QCOMPARE(result, vCard30);
-
+    
+    qApp->processEvents(); // clean up before we start sniffing signals
+    
     // Asynchronous writing
     mOutputDevice->reset();
     mSignalCatcher->mReceived.clear();

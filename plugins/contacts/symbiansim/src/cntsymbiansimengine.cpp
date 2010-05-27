@@ -53,7 +53,17 @@
 #include <QTimer>
 #include <QDebug>
 
-const int KRequestTimeout = 30000; // in ms
+#include <centralrepository.h>
+
+// Telephony Configuration API
+// Keys under this category are used in defining telephony configuration.
+const TUid KCRUidTelConfiguration = {0x102828B8};
+// Amount of digits to be used in contact matching.
+// This allows a customer to variate the amount of digits to be matched.
+const TUint32 KTelMatchDigits                               = 0x00000001;
+// Default match length
+const TInt KDefaultMatchLength(7);
+
 
 CntSymbianSimEngineData::CntSymbianSimEngineData()
     :m_simStore(0)
@@ -85,11 +95,15 @@ CntSymbianSimEngine::CntSymbianSimEngine(const QMap<QString, QString>& parameter
         //qDebug() << "Failed to open SIM store" << error;
         return;
     }
+    
+    // Get phone number match length from cenrep
+    d->m_phoneNumberMatchLen = KDefaultMatchLength;
+    TRAP_IGNORE(getMatchLengthL(d->m_phoneNumberMatchLen)); // ignore error and use default value
 
-    if(d->m_simStore->storeName() == KParameterValueSimStoreNameSdn) {
+    if(d->m_simStore->storeInfo().m_storeName == KParameterValueSimStoreNameSdn) {
         // In case of SDN store we need to check if any SDN contacts exist to
         // determine if the store is supported or not
-        if(d->m_simStore->storeInfo().iUsedEntries == 0)
+        if(d->m_simStore->storeInfo().m_usedEntries == 0)
             *error = QContactManager::NotSupportedError;
     }    
 }
@@ -163,8 +177,7 @@ QString CntSymbianSimEngine::synthesizedDisplayLabel(const QContact& contact, QC
     if(!name.customLabel().isEmpty()) {
         return name.customLabel();
     } else {
-        // TODO: localize unnamed
-        return QString("Unnamed");
+        return QString("");
     }
 }
 
@@ -222,7 +235,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     }
 
     // Get store information
-    TSimStoreInfo storeInfo = d->m_simStore->storeInfo();
+    SimStoreInfo storeInfo = d->m_simStore->storeInfo();
 
     // the map we will eventually return
     QMap<QString, QContactDetailDefinition> retn;
@@ -285,8 +298,7 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     retn.insert(def.name(), def);
 
     // email support needs to be checked run-time, because it is SIM specific
-#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    if (storeInfo.iMaxEmailAddr > 0) {
+    if (storeInfo.m_emailSupported) {
         def.setName(QContactEmailAddress::DefinitionName);
         fields.clear();
         f.setDataType(QVariant::String);
@@ -296,7 +308,6 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         def.setUnique(true);
         retn.insert(def.name(), def);
     }
-#endif
 
     // phone number
     def.setName(QContactPhoneNumber::DefinitionName);
@@ -306,23 +317,17 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
     fields.insert(QContactPhoneNumber::FieldNumber, f);
     // TODO: subtypes supported in case a sim contact can have multiple phone numbers?
     def.setFields(fields);
-#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    if (storeInfo.iMaxAdditionalNumbers > 0) {
+    if (storeInfo.m_additionalNumberSupported) {
         // multiple numbers supported
         def.setUnique(false);
     } else {
         // only one phone number allowed
         def.setUnique(true);
     }
-#else
-    // only one phone number allowed
-    def.setUnique(true);
-#endif
     retn.insert(def.name(), def);
 
     // nickname support needs to be checked run-time, because it is SIM specific
-#ifndef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1
-    if (storeInfo.iMaxSecondNames > 0) {
+    if (storeInfo.m_secondNameSupported) {
         def.setName(QContactNickname::DefinitionName);
         fields.clear();
         f.setDataType(QVariant::String);
@@ -332,7 +337,6 @@ QMap<QString, QContactDetailDefinition> CntSymbianSimEngine::detailDefinitions(c
         def.setUnique(true);
         retn.insert(def.name(), def);
     }
-#endif
 
     // name
     def.setName(QContactName::DefinitionName);
@@ -469,6 +473,23 @@ bool CntSymbianSimEngine::hasFeature(QContactManager::ManagerFeature feature, co
 }
 
 /*!
+  Returns a whether the supplied \a filter can be implemented
+  natively by this engine.  If not, the base class implementation
+  will emulate the functionality.
+ */
+bool CntSymbianSimEngine::isFilterSupported(const QContactFilter& filter) const
+{
+    if (filter.type() == QContactFilter::ContactDetailFilter) {
+        QContactDetailFilter f(filter);
+        if (f.detailDefinitionName() == QContactPhoneNumber::DefinitionName && 
+            f.detailFieldName() == QContactPhoneNumber::FieldNumber &&
+            f.matchFlags() == QContactFilter::MatchPhoneNumber)
+            return true;
+    }
+    return false;
+}
+
+/*!
  * Returns the list of data types supported by the manager
  */
 QStringList CntSymbianSimEngine::supportedContactTypes() const
@@ -482,13 +503,43 @@ void CntSymbianSimEngine::updateDisplayLabel(QContact& contact) const
     QContactManager::Error error(QContactManager::NoError);
     QString label = synthesizedDisplayLabel(contact, &error);
     if(error == QContactManager::NoError) {
-        contact = setContactDisplayLabel(label, contact);
+        setContactDisplayLabel(&contact, label);
     }
 }
 
 void CntSymbianSimEngine::setReadOnlyAccessConstraint(QContactDetail* detail) const
 {
     setDetailAccessConstraints(detail, QContactDetail::ReadOnly); 
+}
+
+
+/*!
+  Returns true if the supplied contact \a contact matches the supplied filter \a filter.
+ */
+bool CntSymbianSimEngine::filter(const QContactFilter &filter, const QContact &contact)
+{
+    // Special handling for phonenumber matching:
+    // Matching is done from the right by using a configurable number of digits.
+    // Default number of digits is 7. So for example if we filter with number
+    // +358505555555 the filter should match to +358505555555 and 0505555555.
+    if (filter.type() == QContactFilter::ContactDetailFilter) 
+    {
+        QContactDetailFilter f(filter);
+        if (f.detailDefinitionName() == QContactPhoneNumber::DefinitionName && 
+            f.detailFieldName() == QContactPhoneNumber::FieldNumber &&
+            f.matchFlags() == QContactFilter::MatchPhoneNumber) 
+        {
+            QString matchNumber = f.value().toString().right(d->m_phoneNumberMatchLen);
+            QList<QContactPhoneNumber> pns = contact.details<QContactPhoneNumber>();
+            foreach (QContactPhoneNumber pn, pns) {
+                QString number = pn.number().right(d->m_phoneNumberMatchLen);
+                if (number == matchNumber)
+                    return true;
+            }
+            return false;
+        }
+    }
+    return QContactManagerEngine::testFilter(filter, contact);
 }
 
 /*!
@@ -517,8 +568,8 @@ bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactM
     if (!engine.startRequest(req)) {
         *qtError = QContactManager::LockedError;
     } else {
-        if (!engine.waitForRequestFinished(req, KRequestTimeout))
-            *qtError = QContactManager::UnspecifiedError; // timeout occurred
+        if (!engine.waitForRequestFinished(req, 0)) // no timeout
+            *qtError = QContactManager::UnspecifiedError;
     }
     engine.requestDestroyed(req);
     
@@ -526,6 +577,20 @@ bool CntSymbianSimEngine::executeRequest(QContactAbstractRequest *req, QContactM
         *qtError = req->error();
     
     return (*qtError == QContactManager::NoError);
+}
+
+/*
+ * Get the match length setting used in MatchPhoneNumber type filtering.
+ * \a matchLength Phone number digits to be used in matching (counted from
+ * right).
+ */
+void CntSymbianSimEngine::getMatchLengthL(int &matchLength)
+{
+    //Get number of digits used to match
+    CRepository* repository = CRepository::NewL(KCRUidTelConfiguration);
+    CleanupStack::PushL(repository);
+    User::LeaveIfError(repository->Get(KTelMatchDigits, matchLength));
+    CleanupStack::PopAndDestroy(repository);
 }
 
 QContactManagerEngine* CntSymbianSimFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
@@ -543,4 +608,4 @@ QString CntSymbianSimFactory::managerName() const
     return CNT_SYMBIANSIM_MANAGER_NAME;
 }
 
-Q_EXPORT_PLUGIN2(mobapicontactspluginsymbiansim, CntSymbianSimFactory);
+Q_EXPORT_PLUGIN2(qtcontacts_symbiansim, CntSymbianSimFactory);

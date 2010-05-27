@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -238,6 +238,26 @@ TInt CQGeoSatelliteInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aB
             }
         }
     }
+
+    if (index != -1)
+        return index;
+
+    bool minSet = false;
+    microSeconds = 0;
+
+    for (TInt i = 0 ; i < mListSize; i++) {
+        if (mList[i].mIsAvailable
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
+                && (((aBits >> i) & 1))) {
+            if (!minSet || (mList[i].mTimeToFirstFix < microSeconds)) {
+                index = i;
+                minSet = true;
+                microSeconds = mList[i].mTimeToFirstFix;
+            }
+        }
+    }
+
     return index;
 }
 

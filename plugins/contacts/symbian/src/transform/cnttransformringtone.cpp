@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,34 +50,18 @@ QList<CContactItemField *> CntTransformRingtone::transformDetailL(const QContact
 
     QList<CContactItemField *> fieldList;
 
-    //cast to ringtone
     const QContactRingtone &ringtone(static_cast<const QContactRingtone&>(detail));
 
-	//create new field
-    if (ringtone.audioRingtone().isValid()) {
-        TPtrC fieldText(reinterpret_cast<const TUint16*>(ringtone.audioRingtone().toString().utf16()));
-
-        TUid uid(KUidContactFieldRingTone);
-	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
-
-	    newField->SetMapping(KUidContactFieldVCardMapUnknown);
-	    newField->TextStorage()->SetTextL(fieldText);
-
-	    fieldList.append(newField);
-	    CleanupStack::Pop(newField);
+    if (ringtone.audioRingtoneUrl().isValid()) {
+        transformToTextFieldL(detail, fieldList,
+            ringtone.audioRingtoneUrl().toString(), KUidContactFieldRingTone,
+            KUidContactFieldVCardMapUnknown, false);
 	}
 
-    if (ringtone.videoRingtone().isValid()) {
-        TPtrC fieldText(reinterpret_cast<const TUint16*>(ringtone.videoRingtone().toString().utf16()));
-
-        TUid uid(KUidContactFieldVideoRingTone);
-        CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, uid);
-
-        newField->SetMapping(KUidContactFieldVCardMapUnknown);
-        newField->TextStorage()->SetTextL(fieldText);
-
-        fieldList.append(newField);
-        CleanupStack::Pop(newField);
+    if (ringtone.videoRingtoneUrl().isValid()) {
+        transformToTextFieldL(detail, fieldList,
+            ringtone.videoRingtoneUrl().toString(), KUidContactFieldVideoRingTone,
+            KUidContactFieldVCardMapUnknown, false);
     }
 
 	return fieldList;
@@ -92,25 +76,15 @@ QContactDetail *CntTransformRingtone::transformItemField(const CContactItemField
     QString ringtoneString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 
     if (field.ContentType().ContainsFieldType(KUidContactFieldRingTone)) {
-        ringtone->setAudioRingtone(ringtoneString);
+        ringtone->setAudioRingtoneUrl(ringtoneString);
 	}
     else if (field.ContentType().ContainsFieldType(KUidContactFieldVideoRingTone)) {
-        ringtone->setVideoRingtone(ringtoneString);
+        ringtone->setVideoRingtoneUrl(ringtoneString);
     }
 
     // XXX need to remove old one somehow
 
     return ringtone;
-}
-
-bool CntTransformRingtone::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldRingTone.iUid ||
-        fieldType == KUidContactFieldVideoRingTone.iUid) {
-        ret = true;
-    }
-    return ret;
 }
 
 bool CntTransformRingtone::supportsDetail(QString detailName) const
@@ -120,6 +94,13 @@ bool CntTransformRingtone::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformRingtone::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldRingTone
+        << KUidContactFieldVideoRingTone;
 }
 
 QList<TUid> CntTransformRingtone::supportedSortingFieldTypes(QString /*detailFieldName*/) const
@@ -135,7 +116,7 @@ QList<TUid> CntTransformRingtone::supportedSortingFieldTypes(QString /*detailFie
  * \a subType The subtype to be checked
  * \return True if this subtype is supported
  */
-bool CntTransformRingtone::supportsSubType(const QString& subType) const
+bool CntTransformRingtone::supportsSubType(const QString& /*subType*/) const
 {
     // XXX todo
     return false;
@@ -147,7 +128,7 @@ bool CntTransformRingtone::supportsSubType(const QString& subType) const
  * \a fieldName The name of the supported field
  * \return fieldId for the fieldName, 0  if not supported
  */
-quint32 CntTransformRingtone::getIdForField(const QString& fieldName) const
+quint32 CntTransformRingtone::getIdForField(const QString& /*fieldName*/) const
 {
     // XXX todo
     return 0;
@@ -172,7 +153,7 @@ void CntTransformRingtone::detailDefinitions(QMap<QString, QContactDetailDefinit
         // Context not supported in symbian back-end, remove
         fields.remove(QContactRingtone::FieldContext);
         // nor vibe thingy
-        fields.remove(QContactRingtone::FieldVibrationRingtone);
+        fields.remove(QContactRingtone::FieldVibrationRingtoneUrl);
 
         d.setFields(fields);
         d.setUnique(true);

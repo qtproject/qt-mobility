@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -51,7 +51,6 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitContactExporterDetailHandler
-  \preliminary
   \brief The QVersitContactExporterDetailHandler class is an interface for clients wishing to
   implement custom export behaviour for certain contact details.
   \ingroup versit
@@ -90,7 +89,6 @@ QTM_USE_NAMESPACE
 
 /*!
  * \class QVersitContactExporter
- * \preliminary
  * \brief The QVersitContactExporter class converts \l {QContact}{QContacts} into
  * \l {QVersitDocument}{QVersitDocuments}.
  * \ingroup versit
@@ -104,7 +102,7 @@ QTM_USE_NAMESPACE
  * setDetailHandler(), the client can pass in a handler to override the processing of details and/or
  * handle details that QVersitContactExporter doesn't support.
  *
- * An example detail handler that logs unknown properties:
+ * An example detail handler that encodes all unknown details as nonstandard vCard propreties:
  * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Detail handler
  *
  * An example usage of QVersitContactExporter
@@ -155,7 +153,7 @@ QVersitContactExporter::~QVersitContactExporter()
  * Converts \a contacts into a list of corresponding QVersitDocuments, using the format given by
  * \a versitType.
  * Returns true on success.  If any of the contacts could not be exported, false is returned and
- * errors() will return a list describing the errors that occured.  The successfully exported
+ * errors() will return a list describing the errors that occurred.  The successfully exported
  * documents will still be available via documents().
  */
 bool QVersitContactExporter::exportContacts(
@@ -194,7 +192,7 @@ QList<QVersitDocument> QVersitContactExporter::documents() const
 
 /*!
  * Returns the map of errors encountered in the most recent call to exportContacts().  The key is
- * the index into the input list of contacts and the value is the error that occured on that
+ * the index into the input list of contacts and the value is the error that occurred on that
  * contact.
  *
  * \sa exportContacts()

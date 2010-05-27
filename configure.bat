@@ -1,6 +1,6 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-:: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+:: Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 :: All rights reserved.
 :: Contact: Nokia Corporation (qt-info@nokia.com)
 ::
@@ -48,23 +48,24 @@ cd /D %SOURCE_PATH%
 set SOURCE_PATH=%CD%
 cd /D %BUILD_PATH%
 
-set PROJECT_CONFIG= %BUILD_PATH%\config.in
-set PROJECT_LOG= %BUILD_PATH%\config.log
+set PROJECT_CONFIG=%BUILD_PATH%\config.in
+set PROJECT_LOG=%BUILD_PATH%\config.log
 set RELEASEMODE=release
 set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
 set BUILD_DOCS=yes
+set BUILD_TOOLS=yes
 set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
 set MOBILITY_MODULES_UNPARSED=
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 
-if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
-if exist "%PROJECT_LOG%" del %PROJECT_LOG%
-if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
+if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
+if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
+if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
 
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
@@ -79,11 +80,13 @@ if "%1" == "-prefix"            goto prefixTag
 if "%1" == "-libdir"            goto libTag
 if "%1" == "-bindir"            goto binTag
 if "%1" == "-headerdir"         goto headerTag
+if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-qt"                goto qtTag
 if "%1" == "-vc"                goto vcTag
 if "%1" == "-no-docs"           goto nodocsTag
+if "%1" == "-no-tools"          goto noToolsTag
 if "%1" == "-modules"           goto modulesTag
 if "%1" == "/?"                 goto usage
 if "%1" == "-h"                 goto usage
@@ -110,6 +113,8 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/lib)
     echo -bindir (dir) ..... Executables will be installed to dir
     echo                     (default PREFIX/bin)
+    echo -plugindir (dir) .. Plug-ins will be installed to dir
+    echo                     (default PREFIX/plugins)
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
@@ -179,6 +184,13 @@ echo QT_MOBILITY_INCLUDE = %1 >> %PROJECT_CONFIG%
 shift
 goto cmdline_parsing
 
+:pluginTag
+shift
+echo QT_MOBILITY_PLUGINS = %1 >> %PROJECT_CONFIG%
+shift
+echo
+goto cmdline_parsing
+
 :unfrozenTag
 REM Should never be used in release builds
 REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the 
@@ -208,6 +220,11 @@ goto cmdline_parsing
 
 :nodocsTag
 set BUILD_DOCS=no
+shift
+goto cmdline_parsing
+
+:noToolsTag
+set BUILD_TOOLS=no
 shift
 goto cmdline_parsing
 
@@ -316,11 +333,15 @@ set BUILD_EXAMPLES=
 echo build_docs = %BUILD_DOCS% >> %PROJECT_CONFIG%
 set BUILD_DOCS=
 
+echo build_tools = %BUILD_TOOLS% >> %PROJECT_CONFIG%
+set BUILD_TOOLS=
+
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
 echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 REM no Sysinfo support on Maemo yet
@@ -360,7 +381,10 @@ setlocal
         cd config.tests\make
     )
 
-    for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
+    for /f "tokens=2,3" %%a in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do (
+        if "%%a" == "MESSAGE:" (
+            set BUILDSYSTEM=%%b)
+    )
 
     if %BUILDSYSTEM% == symbian-abld (
         call make -h >> %PROJECT_LOG% 2>&1
@@ -403,6 +427,7 @@ goto errorTag
 
 :compileTest
 setlocal
+    @echo off
     echo Checking %1
     set CURRENT_PWD=%CD%
 
@@ -416,16 +441,24 @@ setlocal
     )
 
     call %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
-    call %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
-    call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
 
     set FAILED=0
     if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
-        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% SBS^="@sbs --check"') do set FAILED=1
+        call %MOBILITY_MAKE% clean release-gcce >> %PROJECT_LOG% 2>&1
+        call %MOBILITY_MAKE% release-armv5 >> %PROJECT_LOG% 2>&1
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-armv5 SBS^="@sbs --check"') do set FAILED=1
     ) else if %MOBILITY_BUILDSYSTEM% == symbian-abld (
-        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
-    ) else if errorlevel 1 (
-        set FAILED=1
+        call %MOBILITY_MAKE% clean release-gcce >> %PROJECT_LOG% 2>&1
+        call %MOBILITY_MAKE% release-gcce  >> %PROJECT_LOG% 2>&1
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
+    ) else (
+        REM Make for other builds
+        call %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
+        call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
+        REM have to check error level for windows / other builds to be sure.
+        if errorlevel 1 (
+           set FAILED=1
+        )
     )
 
     if %FAILED% == 0 (
@@ -448,6 +481,8 @@ call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
 call :compileTest SymbianContactSIM symbiancntsim
+call :compileTest S60_Sensor_API sensors_s60_31
+call :compileTest Symbian_Sensor_Framework sensors_symbian
 echo End of compile tests
 echo.
 echo.
@@ -470,34 +505,33 @@ for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
 )
 
 if %FIRST% == bearer (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmBearer %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == location (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmLocation %SOURCE_PATH%\src\location
 ) else if %FIRST% == messaging (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\experimental
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMedia %SOURCE_PATH%\src\multimedia
 ) else if %FIRST% == publishsubscribe (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\publishsubscribe
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmPubSub %SOURCE_PATH%\src\publishsubscribe
 ) else if %FIRST% == systeminfo (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\systeminfo
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmSystemInfo %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\serviceframework
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == versit (
     REM versit implies contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\versit
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmVersit %SOURCE_PATH%\src\versit
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == sensors (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\sensors
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmSensors %SOURCE_PATH%\src\sensors
 )
 
 if "%REMAINING%" == "" (

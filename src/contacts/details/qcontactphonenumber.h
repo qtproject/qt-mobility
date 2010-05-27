@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,21 +57,21 @@ class Q_CONTACTS_EXPORT QContactPhoneNumber : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldNumber;
-    const char* FieldSubTypes;
-    const char* SubTypeLandline;
-    const char* SubTypeMobile;
-    const char* SubTypeFax;
-    const char* SubTypePager;
-    const char* SubTypeVoice;
-    const char* SubTypeModem;
-    const char* SubTypeVideo;
-    const char* SubTypeCar;
-    const char* SubTypeBulletinBoardSystem;
-    const char* SubTypeMessagingCapable;
-    const char* SubTypeAssistant;
-    const char* SubTypeDtmfMenu;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldNumber;
+    static const QLatin1Constant FieldSubTypes;
+    static const QLatin1Constant SubTypeLandline;
+    static const QLatin1Constant SubTypeMobile;
+    static const QLatin1Constant SubTypeFax;
+    static const QLatin1Constant SubTypePager;
+    static const QLatin1Constant SubTypeVoice;
+    static const QLatin1Constant SubTypeModem;
+    static const QLatin1Constant SubTypeVideo;
+    static const QLatin1Constant SubTypeCar;
+    static const QLatin1Constant SubTypeBulletinBoardSystem;
+    static const QLatin1Constant SubTypeMessagingCapable;
+    static const QLatin1Constant SubTypeAssistant;
+    static const QLatin1Constant SubTypeDtmfMenu;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactPhoneNumber, "PhoneNumber")
     Q_DECLARE_LATIN1_CONSTANT(FieldNumber, "PhoneNumber");

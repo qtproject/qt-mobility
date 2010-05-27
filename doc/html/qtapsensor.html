@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QTapSensor Class Reference</h1>
 <p>The QTapSensor class is a convenience wrapper around <a href="qsensor.html">QSensor</a>. <a href="#details">More...</a></p>
-<pre>    #include &lt;QTapSensor&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="qsensor.html">QSensor</a>.</p>
+<pre>    #include &lt;QTapSensor&gt;</pre><p>Inherits <a href="qsensor.html">QSensor</a>.</p>
 <ul>
 <li><a href="qtapsensor-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -66,7 +65,8 @@
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="returnDoubleTapEvents-prop"></a>returnDoubleTapEvents : const bool</h3>
 <p>This property holds a value indicating if double tap events should be reported.</p>
-<p>Set to true (the default) to have the sensor report on double tap events. Set to false to have the sensor report on individual tap events.</p>
+<p>Set to true (the default) to have the sensor report only on double tap events. Set to false to have the sensor report only on individual tap events.</p>
+<p>It is not possible to have the sensor report both single and double tap events. If both are needed the app should create 2 sensor objects.</p>
 <p>Note that you must access this property via <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>() and <a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">QObject::setProperty</a>(). The property must be set before calling <a href="qsensor.html#start">start</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -82,8 +82,8 @@
 <p>See also <a href="qsensor.html#reading-prop">QSensor::reading</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

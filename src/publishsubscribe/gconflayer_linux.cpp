@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -191,7 +191,7 @@ QSet<QString> GConfLayer::children(Handle handle)
     GConfItem gconfItem(sh->path);
 
     QSet<QString> ret;
-    foreach (const QString child, gconfItem.listEntries() + gconfItem.listDirs()) {
+    foreach (const QString &child, gconfItem.listEntries() + gconfItem.listDirs()) {
         const int index = child.lastIndexOf(QLatin1Char('/'), -1);
         ret += child.mid(index + 1);
     }

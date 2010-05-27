@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -83,7 +83,7 @@ bool DummyNmeaPositionInfoSource::parsePosInfoFromNmeaData(const char* data,
     Q_UNUSED(size);
 
     posInfo->setCoordinate(QGeoCoordinate(callCount * 1.0, callCount * 1.0, callCount * 1.0));
-    posInfo->setDateTime(QDateTime::currentDateTime().toUTC());
+    posInfo->setTimestamp(QDateTime::currentDateTime().toUTC());
     *hasFix = true;
     ++callCount;
 

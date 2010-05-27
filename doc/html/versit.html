@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- versit.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Versit API (technology preview)</title>
+  <title>Qt Mobility Project 1.0: Versit API</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -12,14 +12,16 @@
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Versit API (technology preview)<br /><span class="subtitle"></span>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Versit API<br /><span class="subtitle"></span>
 </h1>
-<p><b>Warning:</b> This API should be considered in a technology preview state. It is under development and subject to change.</p>
-<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#namespace">Namespace</a></li>
+<li><a href="#overview">Overview</a></li>
 <li><a href="#usage">Usage</a></li>
-<li><a href="#classes">Classes</a></li>
-<li><a href="#mapping-the-vcard-constants">Mapping the vCard constants</a></li>
+<li><a href="#main-classes">Main Classes</a></li>
 </ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>Versit API provides a set of methods to parse/read (<a href="qversitreader.html">QVersitReader</a>) and encode/write (<a href="qversitwriter.html">QVersitWriter</a>) Versit <sup>&reg;</sup> documents such as vCards (<a href="http://www.imc.org/pdi/">http://www.imc.org/pdi/</a>). Currently <a href="qversitreader.html">QVersitReader</a> and <a href="qversitwriter.html">QVersitWriter</a> support reading and writing vCard 2.1 and 3.0 formats.</p>
@@ -69,8 +71,8 @@
         <span class="comment">// Read the vCard back to a QByteArray</span>
         output.seek(0);
         QByteArray outputVCard(output.readAll());</pre>
-<a name="classes"></a>
-<h3>Classes</h3>
+<a name="main-classes"></a>
+<h3>Main Classes</h3>
 <ul>
 <li><a href="qversitproperty.html">QVersitProperty</a></li>
 <li><a href="qversitdocument.html">QVersitDocument</a></li>
@@ -79,94 +81,10 @@
 <li><a href="qversitcontactimporter.html">QVersitContactImporter</a></li>
 <li><a href="qversitcontactexporter.html">QVersitContactExporter</a></li>
 </ul>
-<a name="mapping-the-vcard-constants"></a>
-<h3>Mapping the vCard constants</h3>
-<p>vCard properties are mapped to QContactDetails as follows:</p>
-<pre><span class="comment">    // Mappings from versit property names to Qt contact details</span>
-    const VersitContactDetailMapping versitContactDetailMappings[] = {
-        {&quot;ADR&quot;,           QContactAddress::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;BDAY&quot;,          QContactBirthday::DefinitionName.str,
-                          QContactBirthday::FieldBirthday.str},
-        {&quot;CATEGORIES&quot;,    QContactTag::DefinitionName.str,
-                          QContactTag::FieldTag.str},
-        {&quot;FN&quot;,            QContactDisplayLabel::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;GEO&quot;,           QContactGeoLocation::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;EMAIL&quot;,         QContactEmailAddress::DefinitionName.str,
-                          QContactEmailAddress::FieldEmailAddress.str},
-        {&quot;IMPP&quot;,          QContactOnlineAccount::DefinitionName.str,
-                          QContactOnlineAccount::SubTypeImpp.str},
-        {&quot;LOGO&quot;,          QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldLogoUrl.str},
-        {&quot;N&quot;,             QContactName::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;NICKNAME&quot;,      QContactNickname::DefinitionName.str,
-                          QContactNickname::FieldNickname.str},
-        {&quot;NOTE&quot;,          QContactNote::DefinitionName.str,
-                          QContactNote::FieldNote.str},
-        {&quot;ORG&quot;,           QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldName.str},
-        {&quot;PHOTO&quot;,         QContactThumbnail::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;REV&quot;,           QContactTimestamp::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;ROLE&quot;,          QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldRole.str},
-        {&quot;SOUND&quot;,         QContactRingtone::DefinitionName.str,
-                          QContactRingtone::FieldAudioRingtone.str},
-        {&quot;TEL&quot;,           QContactPhoneNumber::DefinitionName.str,
-                          QContactPhoneNumber::FieldNumber.str},
-        {&quot;TITLE&quot;,         QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldTitle.str},
-        {&quot;UID&quot;,           QContactGuid::DefinitionName.str,
-                          QContactGuid::FieldGuid.str},
-        {&quot;URL&quot;,           QContactUrl::DefinitionName.str,
-                          QContactUrl::FieldUrl.str},
-        {&quot;X-ANNIVERSARY&quot;, QContactAnniversary::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;X-ASSISTANT&quot;,   QContactOrganization::DefinitionName.str,
-                          QContactOrganization::FieldAssistantName.str},
-        {&quot;X-CHILDREN&quot;,    QContactFamily::DefinitionName.str,
-                          QContactFamily::FieldChildren.str},
-        {&quot;X-EPOCSECONDNAME&quot;,QContactNickname::DefinitionName.str,
-                          QContactNickname::FieldNickname.str},
-        {&quot;X-GENDER&quot;,      QContactGender::DefinitionName.str,
-                          QContactGender::FieldGender.str},
-        {&quot;X-IMPP&quot;,        QContactOnlineAccount::DefinitionName.str,
-                          QContactOnlineAccount::SubTypeImpp.str},
-        {&quot;X-JABBER&quot;,      QContactOnlineAccount::DefinitionName.str,
-                          QContactOnlineAccount::SubTypeImpp.str},
-        {&quot;X-NICKNAME&quot;,    QContactNickname::DefinitionName.str,
-                          QContactNickname::FieldNickname.str},
-        {&quot;X-SIP&quot;,         QContactOnlineAccount::DefinitionName.str,
-                          &quot;&quot;},
-        {&quot;X-SPOUSE&quot;,      QContactFamily::DefinitionName.str,
-                          QContactFamily::FieldSpouse.str}
-    };</pre>
-<p>vCard type parameters are mapped to subtypes in QContactDetails as follows:</p>
-<pre><span class="comment">    // Mappings from versit TYPE parameters to Qt contact detail subtypes</span>
-    const VersitMapping versitSubTypeMappings[] = {
-        {&quot;DOM&quot;,    QContactAddress::SubTypeDomestic.str},
-        {&quot;INTL&quot;,   QContactAddress::SubTypeInternational.str},
-        {&quot;POSTAL&quot;, QContactAddress::SubTypePostal.str},
-        {&quot;PARCEL&quot;, QContactAddress::SubTypeParcel.str},
-        {&quot;VOICE&quot;,  QContactPhoneNumber::SubTypeVoice.str},
-        {&quot;CELL&quot;,   QContactPhoneNumber::SubTypeMobile.str},
-        {&quot;MODEM&quot;,  QContactPhoneNumber::SubTypeModem.str},
-        {&quot;CAR&quot;,    QContactPhoneNumber::SubTypeCar.str},
-        {&quot;VIDEO&quot;,  QContactPhoneNumber::SubTypeVideo.str},
-        {&quot;FAX&quot;,    QContactPhoneNumber::SubTypeFax.str},
-        {&quot;BBS&quot;,    QContactPhoneNumber::SubTypeBulletinBoardSystem.str},
-        {&quot;PAGER&quot;,  QContactPhoneNumber::SubTypePager.str},
-        {&quot;SWIS&quot;,   QContactOnlineAccount::SubTypeVideoShare.str},
-        {&quot;VOIP&quot;,   QContactOnlineAccount::SubTypeSipVoip.str}
-    };</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

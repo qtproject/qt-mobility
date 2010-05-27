@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,6 @@ IMPLEMENT_READING(QMagnetometerReading)
     \class QMagnetometerReading
     \ingroup sensors_reading
 
-    \preliminary
     \brief The QMagnetometerReading class represents one reading from the
            magnetometer.
 
@@ -58,25 +57,7 @@ IMPLEMENT_READING(QMagnetometerReading)
     The magnetometer returns magnetic flux density values along 3 axes.
     The scale of the values is teslas. The axes are arranged as follows.
 
-\code
-             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            //|--/--- / |
-           // | /   //  /
-          //  |/   //  /
-         //   '--------------- +x
-        //       //  /
-       //       //  /
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/
-\endcode
+    \image sensors-coordinates2.jpg
 
     The magnetometer can report on either raw magnetic flux values or geomagnetic flux values.
     By default it returns raw magnetic flux values. The QMagnetometer::returnGeoValues property
@@ -86,6 +67,11 @@ IMPLEMENT_READING(QMagnetometerReading)
     is done to eliminate local magnetic interference from the geomagnetic values so they
     represent only the effect of the Earth's magnetic field. This process is not perfect
     and the accuracy of each reading may change.
+
+    The image below shows the difference between geomagnetic (on the left) and raw (on the right)
+    readings for a phone that is being subjected to magnetic interference.
+
+    \image sensors-geo-vs-raw-magnetism.jpg
 
     The accuracy of each reading is measured as a number from 0 to 1.
     A value of 1 is the highest level that the device can support and 0 is
@@ -185,7 +171,6 @@ void QMagnetometerReading::setCalibrationLevel(qreal calibrationLevel)
     \class QMagnetometerFilter
     \ingroup sensors_filter
 
-    \preliminary
     \brief The QMagnetometerFilter class is a convenience wrapper around QSensorFilter.
 
     The only difference is that the filter() method features a pointer to QMagnetometerReading
@@ -206,7 +191,6 @@ const char *QMagnetometer::type("QMagnetometer");
     \class QMagnetometer
     \ingroup sensors_type
 
-    \preliminary
     \brief The QMagnetometer class is a convenience wrapper around QSensor.
 
     The only behavioural difference is that this class sets the type properly.

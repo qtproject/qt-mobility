@@ -1,6 +1,6 @@
 /****************************************************************************
  **
- ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  ** All rights reserved.
  ** Contact: Nokia Corporation (qt-info@nokia.com)
  **
@@ -41,6 +41,9 @@
 
 // Internal Headers
 #include "accelerometersym.h"
+#include <sensrvgeneralproperties.h>
+
+#define GRAVITATION_CONSTANT 9.812865328        //According to wikipedia link http://en.wikipedia.org/wiki/Standard_gravity
 
 /**
  * set the id of the accelerometer sensor
@@ -73,7 +76,9 @@ CAccelerometerSensorSym::~CAccelerometerSensorSym()
 /**
  * Default constructor
  */
-CAccelerometerSensorSym::CAccelerometerSensorSym(QSensor *sensor):CSensorBackendSym(sensor)
+CAccelerometerSensorSym::CAccelerometerSensorSym(QSensor *sensor):CSensorBackendSym(sensor),
+        iScale(0),
+        iUnit(0)
         {
         setReading<QAccelerometerReading>(&iReading);
         iBackendData.iSensorType = KSensrvChannelTypeIdAccelerometerXYZAxisData;    
@@ -95,12 +100,28 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
         // If there is no reading available, return without setting
         return;
         }
+    TReal x = iData.iAxisX;
+    TReal y = iData.iAxisY;
+    TReal z = iData.iAxisZ;
+    //Converting unit to m/s^2
+    qoutputrangelist rangeList = sensor()->outputRanges();
+    TReal maxValue = rangeList[sensor()->outputRange()].maximum;
+    if(iScale && iUnit == ESensevChannelUnitAcceleration)
+        {
+        x = (x/iScale) * maxValue;
+        y = (y/iScale) * maxValue;
+        z = (z/iScale) * maxValue;
+        }
+    else if(iUnit == ESensrvChannelUnitGravityConstant)
+        {
+        //conversion is yet to done
+        }
     // Get a lock on the reading data
     iBackendData.iReadingLock.Wait();
     // Set qt mobility accelerometer reading with data from sensor server
-    iReading.setX(iData.iAxisX);
-    iReading.setY(iData.iAxisY);
-    iReading.setZ(iData.iAxisZ);
+    iReading.setX(x);
+    iReading.setY(y);
+    iReading.setZ(z);
     // Set the timestamp
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Release the lock
@@ -114,6 +135,24 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
 void CAccelerometerSensorSym::ConstructL()
     {
     //Initialize the backend resources
-    InitializeL();
+    InitializeL(); 
+    
+    TSensrvProperty unitProperty;
+    TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelUnit, ESensrvSingleProperty, unitProperty));
+    if(err == KErrNone)
+        {
+        unitProperty.GetValue(iUnit);
+        }
+    
+    TSensrvProperty dataFormatProperty;
+    iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelDataFormat, ESensrvSingleProperty, dataFormatProperty);
+    TInt dataFormat;
+    dataFormatProperty.GetValue(dataFormat);
+    if(dataFormat == ESensrvChannelDataFormatScaled)
+        {
+        TSensrvProperty scaleRangeProperty;
+        TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, ESensrvSingleProperty, scaleRangeProperty));         //Slight confusion
+        scaleRangeProperty.GetMaxValue(iScale);
+        }
     }
 

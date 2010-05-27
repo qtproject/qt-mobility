@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,25 +55,25 @@ class Q_CONTACTS_EXPORT QContactRingtone : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldAudioRingtone;
-    const char* FieldVideoRingtone;
-    const char* FieldVibrationRingtone;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldAudioRingtoneUrl;
+    static const QLatin1Constant FieldVideoRingtoneUrl;
+    static const QLatin1Constant FieldVibrationRingtoneUrl;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactRingtone, "Ringtone")
-    Q_DECLARE_LATIN1_CONSTANT(FieldAudioRingtone, "AudioRingtone");
-    Q_DECLARE_LATIN1_CONSTANT(FieldVideoRingtone, "VideoRingtone");
-    Q_DECLARE_LATIN1_CONSTANT(FieldVibrationRingtone, "VibrationRingtone");
+    Q_DECLARE_LATIN1_CONSTANT(FieldAudioRingtoneUrl, "AudioRingtoneUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldVideoRingtoneUrl, "VideoRingtoneUrl");
+    Q_DECLARE_LATIN1_CONSTANT(FieldVibrationRingtoneUrl, "VibrationRingtoneUrl");
 #endif
 
-    void setAudioRingtone(const QUrl& audioRingtone) {setValue(FieldAudioRingtone, audioRingtone);}
-    QUrl audioRingtone() const {return value(FieldAudioRingtone);}
+    void setAudioRingtoneUrl(const QUrl& audioRingtoneUrl) {setValue(FieldAudioRingtoneUrl, audioRingtoneUrl);}
+    QUrl audioRingtoneUrl() const {return value(FieldAudioRingtoneUrl);}
 
-    void setVideoRingtone(const QUrl& videoRingtone) {setValue(FieldVideoRingtone, videoRingtone);}
-    QUrl videoRingtone() const {return value(FieldVideoRingtone);}
+    void setVideoRingtoneUrl(const QUrl& videoRingtoneUrl) {setValue(FieldVideoRingtoneUrl, videoRingtoneUrl);}
+    QUrl videoRingtoneUrl() const {return value(FieldVideoRingtoneUrl);}
 
-    void setVibrationRingtone(const QUrl& vibrationRingtone) {setValue(FieldVibrationRingtone, vibrationRingtone);}
-    QUrl vibrationRingtone() const {return value(FieldVibrationRingtone);}
+    void setVibrationRingtoneUrl(const QUrl& vibrationRingtoneUrl) {setValue(FieldVibrationRingtoneUrl, vibrationRingtoneUrl);}
+    QUrl vibrationRingtoneUrl() const {return value(FieldVibrationRingtoneUrl);}
 };
 
 QTM_END_NAMESPACE

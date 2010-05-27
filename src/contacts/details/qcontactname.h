@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,13 +55,13 @@ class Q_CONTACTS_EXPORT QContactName : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldPrefix;
-    const char* FieldFirstName;
-    const char* FieldMiddleName;
-    const char* FieldLastName;
-    const char* FieldSuffix;
-    const char* FieldCustomLabel;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldPrefix;
+    static const QLatin1Constant FieldFirstName;
+    static const QLatin1Constant FieldMiddleName;
+    static const QLatin1Constant FieldLastName;
+    static const QLatin1Constant FieldSuffix;
+    static const QLatin1Constant FieldCustomLabel;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactName, "Name")
     Q_DECLARE_LATIN1_CONSTANT(FieldPrefix, "Prefix");

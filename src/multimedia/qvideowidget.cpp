@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#include <qvideowidget_p.h>
+#include "qvideowidget_p.h"
 
-#include <qmediaobject.h>
-#include <qmediaservice.h>
-#include <qvideooutputcontrol.h>
-#include <qvideowindowcontrol.h>
-#include <qvideowidgetcontrol.h>
+#include "qmediaobject.h"
+#include "qmediaservice.h"
+#include "qvideooutputcontrol.h"
+#include "qvideowindowcontrol.h"
+#include "qvideowidgetcontrol.h"
 
-#include <qpaintervideosurface_p.h>
-#include <qvideorenderercontrol.h>
+#include "qpaintervideosurface_p.h"
+#include "qvideorenderercontrol.h"
 #include <QtMultimedia/qvideosurfaceformat.h>
 #include <qpainter.h>
 
@@ -60,7 +60,7 @@
 
 using namespace Qt;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QVideoWidgetControlBackend::QVideoWidgetControlBackend(
         QVideoWidgetControl *control, QWidget *widget)
@@ -219,13 +219,23 @@ void QRendererVideoWidgetBackend::paintEvent(QPaintEvent *event)
 {
     QPainter painter(m_widget);
 
+    if (m_widget->testAttribute(Qt::WA_OpaquePaintEvent)) {
+        QRegion borderRegion = event->region();
+        borderRegion = borderRegion.subtracted(m_boundingRect);
+
+        QBrush brush = m_widget->palette().window();
+
+        QVector<QRect> rects = borderRegion.rects();
+        for (QVector<QRect>::iterator it = rects.begin(), end = rects.end(); it != end; ++it) {
+            painter.fillRect(*it, brush);
+        }
+    }
+
     if (m_surface->isActive() && m_boundingRect.intersects(event->rect())) {
         m_surface->paint(&painter, m_boundingRect, m_sourceRect);
 
         m_surface->setReady(true);
     } else {
-        painter.fillRect(event->rect(), m_widget->palette().background());
-
  #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
         if (m_updatePaintDevice && (painter.paintEngine()->type() == QPaintEngine::OpenGL
                 || painter.paintEngine()->type() == QPaintEngine::OpenGL2)) {
@@ -240,6 +250,7 @@ void QRendererVideoWidgetBackend::paintEvent(QPaintEvent *event)
         }
 #endif
     }
+
 }
 
 void QRendererVideoWidgetBackend::formatChanged(const QVideoSurfaceFormat &format)
@@ -249,6 +260,7 @@ void QRendererVideoWidgetBackend::formatChanged(const QVideoSurfaceFormat &forma
     updateRects();
 
     m_widget->updateGeometry();
+    m_widget->update();
 }
 
 void QRendererVideoWidgetBackend::frameChanged()
@@ -365,6 +377,12 @@ void QWindowVideoWidgetBackend::resizeEvent(QResizeEvent *)
 
 void QWindowVideoWidgetBackend::paintEvent(QPaintEvent *event)
 {
+    if (m_widget->testAttribute(Qt::WA_OpaquePaintEvent)) {
+        QPainter painter(m_widget);
+
+        painter.fillRect(event->rect(), m_widget->palette().window());
+    }
+
     m_windowControl->repaint();
 
     event->accept();
@@ -505,6 +523,7 @@ void QVideoWidgetPrivate::_q_fullScreenChanged(bool fullScreen)
 void QVideoWidgetPrivate::_q_dimensionsChanged()
 {
     q_func()->updateGeometry();
+    q_func()->update();
 }
 
 /*!
@@ -546,10 +565,6 @@ QVideoWidget::QVideoWidget(QWidget *parent)
     , d_ptr(new QVideoWidgetPrivate)
 {
     d_ptr->q_ptr = this;
-
-    QPalette palette = QWidget::palette();
-    palette.setColor(QPalette::Background, Qt::black);
-    setPalette(palette);
 }
 
 /*!
@@ -914,11 +929,16 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 {
     Q_D(QVideoWidget);
 
-    if (d->currentBackend)
+    if (d->currentBackend) {
         d->currentBackend->paintEvent(event);
+    } else if (testAttribute(Qt::WA_OpaquePaintEvent)) {
+        QPainter painter(this);
+
+        painter.fillRect(event->rect(), palette().window());
+    }
 }
 
 #include "moc_qvideowidget.cpp"
 #include "moc_qvideowidget_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

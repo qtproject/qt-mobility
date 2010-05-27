@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qimageencodercontrol.h>
+#include "qimageencodercontrol.h"
 #include <QtCore/qstringlist.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QImageEncoderControl
@@ -127,5 +127,5 @@ QImageEncoderControl::~QImageEncoderControl()
 */
 
 #include "moc_qimageencodercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

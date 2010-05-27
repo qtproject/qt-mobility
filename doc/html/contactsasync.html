@@ -55,8 +55,8 @@
 <ul>
 <li>contactIds(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
 <li>contactIds(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
-<li>contacts(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a>&amp; definitionRestrictions = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QStringList</a>()) const</li>
-<li>contacts(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="http://qt.nokia.com/doc/4.6/qstringlist.html">QStringList</a>&amp; definitionRestrictions = <a href="http://qt.nokia.com/doc/4.6/porting4.html">QStringList</a>()) const</li>
+<li>contacts(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
+<li>contacts(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; sortOrders = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;(), const <a href="qcontactfetchhint.html">QContactFetchHint</a>&amp; fetchHint = QContactFetchHint()) const</li>
 <li>saveContacts(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontact.html">QContact</a>&gt;* contacts, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt;* errorMap)</li>
 <li>removeContacts(<a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactid.html#QContactLocalId-typedef">QContactLocalId</a>&gt;* contactIds, <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;int, <a href="qcontactmanager.html#Error-enum">QContactManager::Error</a>&gt;* errorMap)</li>
 </ul>
@@ -146,8 +146,8 @@
 <p>All other asynchronous operations are performed in a similar manner to the previous example. A request of the desired type (which is derived from <a href="qcontactabstractrequest.html">QContactAbstractRequest</a>) is created, certain criteria are set which determine the intent of the request, and the signals of the request are connected to slots which deals with the results. The request can then be started.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

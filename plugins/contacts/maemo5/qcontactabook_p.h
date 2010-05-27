@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,15 +48,18 @@
 #include "qtcontacts.h"
 #include "qcontactmaemo5debug_p.h"
 
+#undef signals
+#include <libosso-abook/osso-abook.h>
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
-#include "osso-abook-workaround.h"
 #include "qcontactidshash.h"
 
 QTM_USE_NAMESPACE
 
-//Contains Data shared with contact changes/added/removed callbacks
+/* Data shared with contact changes/added/removed callbacks */
 struct cbSharedData;
+/* Data shared with job callbacks */
+struct jobSharedData;
 
 class QContactABook : public QObject
 {
@@ -72,20 +75,24 @@ public:
   bool removeContact(const QContactLocalId& contactId, QContactManager::Error* error);
   bool saveContact(QContact* contact, QContactManager::Error* error);
 
+  const QString getDisplayName(const QContact& contact) const;
+  
   QContactLocalId selfContactId(QContactManager::Error* errors) const;
 
 Q_SIGNALS:
-  void savingJobDone();
   void contactsAdded(const QList<QContactLocalId>& contactIds);
   void contactsChanged(const QList<QContactLocalId>& contactIds);
   void contactsRemoved(const QList<QContactLocalId>& contactIds);
+  void jobSavingCompleted();
+  void jobRemovingCompleted();
   
 public:
-  // Members used by callbacks
+  /* Members used by callbacks */
   void _contactsAdded(const QList<QContactLocalId>& contactIds ){ emit contactsAdded(contactIds); };
   void _contactsRemoved(const QList<QContactLocalId>& contactIds ){ emit contactsRemoved(contactIds); };
   void _contactsChanged(const QList<QContactLocalId>& contactIds ){ emit contactsChanged(contactIds); };
-  void _savingJobFinished(){ emit savingJobDone(); };
+  void _jobSavingCompleted(){ emit jobSavingCompleted(); };
+  void _jobRemovingCompleted(){ emit jobRemovingCompleted(); };
   
 private:
   void initAddressBook();
@@ -93,10 +100,9 @@ private:
   
   bool setDetailValues(const QVariantMap& data, QContactDetail* detail) const;
   
-  OssoABookContact* getAContact(const QContactLocalId& contactId) const;
+  OssoABookContact* getAContact(const QContactLocalId& contactId, QContactManager::Error* error) const;
   
   /* Filtering */
-  bool contactActionsMatch(OssoABookContact *contact, QList<QContactActionDescriptor> descriptors) const;
   EBookQuery* convert(const QContactFilter& filter) const;
   
   /* Reading - eContact/abookContact to QContact methods */
@@ -121,7 +127,7 @@ private:
   QContactUrl* getUrlDetail(EContact *eContact) const;
   
   /* Saving - QContact to abookContact */
-  OssoABookContact* convert(const QContact *contact) const;
+  OssoABookContact* convert(const QContact *contact, QContactManager::Error* error) const;
   
   /* Save QDetails in OssoABookContact attributes */
   void setAddressDetail(const OssoABookContact* aContact, const QContactAddress& detail) const;
@@ -140,10 +146,19 @@ private:
   void setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const;
   
   /* Internal Vars */
+  gulong m_contactAddedHandlerId;
+  gulong m_contactChangedHandlerId;
+  gulong m_contactRemovedHandlerId;
+  
   OssoABookAggregator *m_abookAgregator;
   mutable QContactIDsHash m_localIds; //Converts QLocalId <=> eContactId
+  
   QMutex m_saveContactMutex;
-  cbSharedData *cbSD;
+  QMutex m_delContactMutex;
+  
+  cbSharedData *m_cbSD;
+  jobSharedData *m_deleteJobSD;
+  jobSharedData *m_saveJobSD;
 };
 
 #endif

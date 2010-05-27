@@ -15,41 +15,40 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
     ** This file is part of the Qt Mobility Components.
     **
-    ** $QT_BEGIN_LICENSE:LGPL$
-    ** No Commercial Usage
-    ** This file contains pre-release code and may not be distributed.
-    ** You may use this file in accordance with the terms and conditions
-    ** contained in the Technology Preview License Agreement accompanying
-    ** this package.
+    ** $QT_BEGIN_LICENSE:BSD$
+    ** You may use this file under the terms of the BSD license as follows:
     **
-    ** GNU Lesser General Public License Usage
-    ** Alternatively, this file may be used under the terms of the GNU Lesser
-    ** General Public License version 2.1 as published by the Free Software
-    ** Foundation and appearing in the file LICENSE.LGPL included in the
-    ** packaging of this file.  Please review the following information to
-    ** ensure the GNU Lesser General Public License version 2.1 requirements
-    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    ** &quot;Redistribution and use in source and binary forms, with or without
+    ** modification, are permitted provided that the following conditions are
+    ** met:
+    **   * Redistributions of source code must retain the above copyright
+    **     notice, this list of conditions and the following disclaimer.
+    **   * Redistributions in binary form must reproduce the above copyright
+    **     notice, this list of conditions and the following disclaimer in
+    **     the documentation and/or other materials provided with the
+    **     distribution.
+    **   * Neither the name of Nokia Corporation and its Subsidiary(-ies) nor
+    **     the names of its contributors may be used to endorse or promote
+    **     products derived from this software without specific prior written
+    **     permission.
     **
-    ** In addition, as a special exception, Nokia gives you certain additional
-    ** rights.  These rights are described in the Nokia Qt LGPL Exception
-    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
-    **
-    ** If you have questions regarding the use of this file, please contact
-    ** Nokia at qt-info@nokia.com.
-    **
-    **
-    **
-    **
-    **
-    **
-    **
-    **
+    ** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+    ** &quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+    ** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+    ** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+    ** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+    ** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+    ** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+    ** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+    ** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+    ** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+    ** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.&quot;
     ** $QT_END_LICENSE$
     **
     ****************************************************************************/</span>
@@ -64,57 +63,112 @@
 
     #include &lt;QtGui&gt;
 
-    ContactListPage::ContactListPage(QWidget *parent)
-            : QWidget(parent)
+    ContactListPage::ContactListPage(QMainWindow *mainWindow, QWidget *parent)
+            : QWidget(parent), m_mainWindow(mainWindow)
     {
         m_manager = 0;
         m_currentFilter = QContactFilter();
 
         m_backendsCombo = new QComboBox(this);
         QStringList availableManagers = QContactManager::availableManagers();
+        availableManagers.removeAll(&quot;invalid&quot;);
+        foreach(QString managerName, availableManagers) {
+
+            QMap&lt;QString, QString&gt; params;
+            QString managerUri = QContactManager::buildUri(managerName, params);
+
+            <span class="comment">// Add some parameters to SIM backend so that we can use</span>
+            <span class="comment">// all the stores.</span>
+            if (managerName == &quot;symbiansim&quot;) {
+                availableManagers.removeAll(&quot;symbiansim&quot;);
+
+                availableManagers.append(&quot;symbiansim:adn&quot;);
+                params.insert(&quot;store&quot;, &quot;ADN&quot;);
+                managerUri = QContactManager::buildUri(managerName, params);
+                m_availableManagers.insert(availableManagers.last(), managerUri);
+
+                availableManagers.append(&quot;symbiansim:fdn&quot;);
+                params.clear();
+                params.insert(&quot;store&quot;, &quot;FDN&quot;);
+                managerUri = QContactManager::buildUri(managerName, params);
+                m_availableManagers.insert(availableManagers.last(), managerUri);
+
+                availableManagers.append(&quot;symbiansim:sdn&quot;);
+                params.clear();
+                params.insert(&quot;store&quot;, &quot;SDN&quot;);
+                managerUri = QContactManager::buildUri(managerName, params);
+                m_availableManagers.insert(availableManagers.last(), managerUri);
+            }
+            else {
+                m_availableManagers.insert(managerName, managerUri);
+            }
+        }
         m_backendsCombo-&gt;addItems(availableManagers);
         connect(m_backendsCombo, SIGNAL(currentIndexChanged(QString)), this, SLOT(backendSelected()));
-        m_filterActiveLabel = new QLabel(&quot;Inactive&quot;);
+        m_filterActiveLabel = new QLabel(tr(&quot;Filter active&quot;));
         m_filterActiveLabel-&gt;setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
-        m_contactsList = new QListWidget(this);
-
-        QPushButton* m_addContactBtn = new QPushButton(&quot;Add&quot;, this);
-        connect(m_addContactBtn, SIGNAL(clicked()), this, SLOT(addContactClicked()));
-        QPushButton* m_editBtn = new QPushButton(&quot;Edit&quot;, this);
-        connect(m_editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
-        QPushButton* m_deleteBtn = new QPushButton(&quot;Delete&quot;, this);
-        connect(m_deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
-        QPushButton* m_filterBtn = new QPushButton(&quot;Filter&quot;, this);
-        connect(m_filterBtn, SIGNAL(clicked()), this, SLOT(filterClicked()));
-        QPushButton* m_importBtn = new QPushButton(&quot;Import&quot;);
-        connect(m_importBtn, SIGNAL(clicked()), this, SLOT(importClicked()));
-        QPushButton* m_exportBtn = new QPushButton(&quot;Export&quot;);
-        connect(m_exportBtn, SIGNAL(clicked()), this, SLOT(exportClicked()));
-
-        QFormLayout *backendLayout = new QFormLayout;
-        backendLayout-&gt;addRow(&quot;Store:&quot;, m_backendsCombo);
-        backendLayout-&gt;addRow(&quot;Filter:&quot;, m_filterActiveLabel);
-
-        QHBoxLayout *btnLayout1 = new QHBoxLayout;
-        btnLayout1-&gt;addWidget(m_addContactBtn);
-        btnLayout1-&gt;addWidget(m_editBtn);
-        btnLayout1-&gt;addWidget(m_deleteBtn);
-        btnLayout1-&gt;addWidget(m_filterBtn);
-
-        QHBoxLayout *btnLayout2 = new QHBoxLayout;
-        btnLayout2-&gt;addWidget(m_importBtn);
-        btnLayout2-&gt;addWidget(m_exportBtn);
-
         QVBoxLayout *bookLayout = new QVBoxLayout;
+        QFormLayout *backendLayout = new QFormLayout;
+        backendLayout-&gt;addRow(tr(&quot;Store:&quot;), m_backendsCombo);
+        backendLayout-&gt;addRow(m_filterActiveLabel);
         bookLayout-&gt;addLayout(backendLayout);
+
+        m_contactsList = new QListWidget(this);
         bookLayout-&gt;addWidget(m_contactsList);
+
+        <span class="comment">// Action buttons at the bottom</span>
+        QHBoxLayout *btnLayout1 = new QHBoxLayout;
+
+        QPushButton* addBtn = new QPushButton(tr(&quot;&amp;Add&quot;), this);
+        connect(addBtn, SIGNAL(clicked()), this, SLOT(addClicked()));
+        btnLayout1-&gt;addWidget(addBtn);
+
+        QPushButton* editBtn = new QPushButton(tr(&quot;&amp;Edit&quot;), this);
+        connect(editBtn, SIGNAL(clicked()), this, SLOT(editClicked()));
+        btnLayout1-&gt;addWidget(editBtn);
+
+        QPushButton* deleteBtn = new QPushButton(tr(&quot;&amp;Delete&quot;), this);
+        connect(deleteBtn, SIGNAL(clicked()), this, SLOT(deleteClicked()));
+        btnLayout1-&gt;addWidget(deleteBtn);
+
         bookLayout-&gt;addLayout(btnLayout1);
-    #ifdef BUILD_VERSIT
-        bookLayout-&gt;addLayout(btnLayout2);
-    #endif
 
         setLayout(bookLayout);
+
+        <span class="comment">// Add items to the menu</span>
+        if (m_mainWindow) {
+    #if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_OS_WINCE)
+            <span class="comment">// These platforms need their menu items added directly to the menu bar.</span>
+            QMenuBar *optionsMenu = m_mainWindow-&gt;menuBar();
+    #else
+            QMenu *optionsMenu = new QMenu(tr(&quot;&amp;Contacts&quot;), this);
+            m_mainWindow-&gt;menuBar()-&gt;addMenu(optionsMenu);
+    #endif
+            QAction* filterAction = new QAction(tr(&quot;Apply &amp;Filter...&quot;), this);
+            connect(filterAction, SIGNAL(triggered()), this, SLOT(filterClicked()));
+            optionsMenu-&gt;addAction(filterAction);
+            QAction* clearFilterAction = new QAction(tr(&quot;&amp;Clear Filter&quot;), this);
+            connect(clearFilterAction, SIGNAL(triggered()), this, SIGNAL(clearFilter()));
+            optionsMenu-&gt;addAction(clearFilterAction);
+            optionsMenu-&gt;addSeparator();
+
+    #ifdef BUILD_VERSIT
+            QAction* importAction = new QAction(tr(&quot;&amp;Import contacts...&quot;), this);
+            connect(importAction, SIGNAL(triggered()), this, SLOT(importClicked()));
+            optionsMenu-&gt;addAction(importAction);
+            QAction* exportAction = new QAction(tr(&quot;Ex&amp;port contacts...&quot;), this);
+            connect(exportAction, SIGNAL(triggered()), this, SLOT(exportClicked()));
+            optionsMenu-&gt;addAction(exportAction);
+            optionsMenu-&gt;addSeparator();
+    #endif
+    #if !(defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+            <span class="comment">// Maemo applications don't have an Exit button in the menu.</span>
+            QAction* exitAction = new QAction(tr(&quot;E&amp;xit&quot;), this);
+            connect(exitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+            optionsMenu-&gt;addAction(exitAction);
+    #endif
+        }
 
         <span class="comment">// force update to backend.</span>
         QTimer::singleShot(0, this, SLOT(backendSelected()));
@@ -131,18 +185,24 @@
 
     void ContactListPage::backendSelected()
     {
-        QString backend = m_backendsCombo-&gt;currentText();
+        QString managerUri = m_availableManagers.value(m_backendsCombo-&gt;currentText());
 
         <span class="comment">// first, check to see if they reselected the same backend.</span>
-        if (m_manager &amp;&amp; m_manager-&gt;managerName() == backend)
+        if (m_manager &amp;&amp; m_manager-&gt;managerUri() == managerUri)
             return;
 
         <span class="comment">// the change is real.  update.</span>
-        if (m_initialisedManagers.contains(backend)) {
-            m_manager = m_initialisedManagers.value(backend);
+        if (m_initialisedManagers.contains(managerUri)) {
+            m_manager = m_initialisedManagers.value(managerUri);
         } else {
-            m_manager = new QContactManager(backend);
-            m_initialisedManagers.insert(backend, m_manager);
+            m_manager = QContactManager::fromUri(managerUri);
+            if (m_manager-&gt;error()) {
+                QMessageBox::information(this, tr(&quot;Failed!&quot;), QString(&quot;Failed to open store!\n(error code %1)&quot;).arg(m_manager-&gt;error()));
+                delete m_manager;
+                m_manager = 0;
+                return;
+            }
+            m_initialisedManagers.insert(managerUri, m_manager);
         }
 
         <span class="comment">// signal that the manager has changed.</span>
@@ -154,30 +214,26 @@
 
     void ContactListPage::rebuildList(const QContactFilter&amp; filter)
     {
-        <span class="comment">// first, check to see whether the filter does anything</span>
-        if (filter == QContactFilter())
-            m_filterActiveLabel-&gt;setText(&quot;Inactive&quot;);
-        else
-            m_filterActiveLabel-&gt;setText(&quot;Active&quot;);
+        m_currentFilter = QContactManagerEngine::canonicalizedFilter(filter);
 
-        QContact currContact;
-        m_currentFilter = filter;
+        m_filterActiveLabel-&gt;setVisible(m_currentFilter != QContactFilter());
+
         m_contactsList-&gt;clear();
         m_idToListIndex.clear();
-        QList&lt;QContactLocalId&gt; contactIds = m_manager-&gt;contactIds(m_currentFilter);
-        foreach (const QContactLocalId&amp; id, contactIds) {
+        m_contacts = m_manager-&gt;contacts(m_currentFilter);
+        foreach (QContact contact, m_contacts) {
             QListWidgetItem *currItem = new QListWidgetItem;
-            currContact = m_manager-&gt;contact(id);
-            currItem-&gt;setData(Qt::DisplayRole, currContact.displayLabel());
-            currItem-&gt;setData(Qt::UserRole, currContact.localId()); <span class="comment">// also store the id of the contact.</span>
-            m_idToListIndex.insert(currContact.localId(), m_contactsList-&gt;count());
+            currItem-&gt;setData(Qt::DisplayRole, contact.displayLabel());
+            currItem-&gt;setData(Qt::UserRole, contact.localId()); <span class="comment">// also store the id of the contact.</span>
+            m_idToListIndex.insert(contact.localId(), m_contactsList-&gt;count());
             m_contactsList-&gt;addItem(currItem);
         }
     }
 
-    void ContactListPage::addContactClicked()
+    void ContactListPage::addClicked()
     {
-        emit showEditorPage(QContactLocalId(0));
+        if (m_manager)
+            emit showEditorPage(QContactLocalId(0));
     }
 
     void ContactListPage::editClicked()
@@ -189,7 +245,8 @@
 
     void ContactListPage::filterClicked()
     {
-        emit showFilterPage(m_currentFilter);
+        if (m_manager)
+            emit showFilterPage(m_currentFilter);
     }
 
     void ContactListPage::deleteClicked()
@@ -208,7 +265,6 @@
         bool success = m_manager-&gt;removeContact(contactId);
         if (success) {
             delete m_contactsList-&gt;takeItem(m_contactsList-&gt;currentRow());
-            QMessageBox::information(this, &quot;Success!&quot;, &quot;Contact deleted successfully!&quot;);
         }
         else
             QMessageBox::information(this, &quot;Failed!&quot;, &quot;Failed to delete contact!&quot;);
@@ -233,6 +289,11 @@
                 if (importer.importDocuments(reader.results())) {
                     QList&lt;QContact&gt; contacts = importer.contacts();
                     QMap&lt;int, QContactManager::Error&gt; errorMap;
+                    QList&lt;QContact&gt;::iterator it = contacts.begin();
+                    while (it != contacts.end()) {
+                        *it = m_manager-&gt;compatibleContact(*it);
+                        it++;
+                    }
                     m_manager-&gt;saveContacts(&amp;contacts, &amp;errorMap);
                     rebuildList(m_currentFilter);
                 }
@@ -245,10 +306,9 @@
     {
     #ifdef BUILD_VERSIT
         if (!m_manager) {
-            qWarning() &lt;&lt; &quot;No manager selected; cannot import&quot;;
+            qWarning() &lt;&lt; &quot;No manager selected; cannot export&quot;;
             return;
         }
-        QList&lt;QContact&gt; contacts = m_manager-&gt;contacts(QList&lt;QContactSortOrder&gt;(), QContactFetchHint());
         QString fileName = QFileDialog::getSaveFileName(this, tr(&quot;Save vCard&quot;),
                                                         &quot;./contacts.vcf&quot;,
                                                         tr(&quot;vCards (*.vcf)&quot;));
@@ -256,7 +316,7 @@
         file.open(QIODevice::WriteOnly);
         if (file.isWritable()) {
             QVersitContactExporter exporter;
-            if(exporter.exportContacts(contacts, QVersitDocument::VCard30Type)) {
+            if(exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type)) {
                 QList&lt;QVersitDocument&gt; documents = exporter.documents();
                 QVersitWriter writer;
                 writer.setDevice(&amp;file);
@@ -268,8 +328,8 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

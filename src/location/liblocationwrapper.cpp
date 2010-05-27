@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -148,7 +148,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
     if (device) {
         if (device->fix) {
             if (device->fix->fields & LOCATION_GPS_DEVICE_TIME_SET) {
-                posInfo.setDateTime(QDateTime::fromTime_t(device->fix->time));
+                posInfo.setTimestamp(QDateTime::fromTime_t(device->fix->time));
             }
 
             if (device->fix->fields & LOCATION_GPS_DEVICE_LATLONG_SET) {
@@ -295,7 +295,7 @@ QGeoPositionInfo LiblocationWrapper::lastKnownPosition(bool fromSatellitePositio
 
     // Only positions with time (3D) are provided.
     if (time) {
-        posInfo.setDateTime(QDateTime::fromTime_t(time));
+        posInfo.setTimestamp(QDateTime::fromTime_t(time));
         return posInfo;
     }
 

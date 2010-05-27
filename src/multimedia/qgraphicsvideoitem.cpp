@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <qgraphicsvideoitem.h>
+#include "qgraphicsvideoitem.h"
 
-#include <qmediaobject.h>
-#include <qmediaservice.h>
-#include <qpaintervideosurface_p.h>
-#include <qvideooutputcontrol.h>
-#include <qvideorenderercontrol.h>
+#include "qmediaobject.h"
+#include "qmediaservice.h"
+#include "qpaintervideosurface_p.h"
+#include "qvideooutputcontrol.h"
+#include "qvideorenderercontrol.h"
 
 #include <QtCore/qcoreevent.h>
 
@@ -55,7 +55,7 @@
 #include <QtOpenGL/qgl.h>
 #endif
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QGraphicsVideoItemPrivate
 {
@@ -420,4 +420,4 @@ void QGraphicsVideoItem::timerEvent(QTimerEvent *event)
 }
 
 #include "moc_qgraphicsvideoitem.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE

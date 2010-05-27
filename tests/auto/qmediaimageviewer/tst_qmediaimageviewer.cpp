@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,13 +44,13 @@
 
 #include <QtCore/qdir.h>
 
-#include <qmediaimageviewer.h>
-#include <qmediaimageviewerservice_p.h>
-#include <qmediaplaylist.h>
-#include <qmediaservice.h>
-#include <qvideooutputcontrol.h>
-#include <qvideorenderercontrol.h>
-#include <qvideowidgetcontrol.h>
+#include "../../../src/multimedia/qmediaimageviewer.h"
+#include "../../../src/multimedia/qmediaimageviewerservice_p.h"
+#include "../../../src/multimedia/qmediaplaylist.h"
+#include "../../../src/multimedia/qmediaservice.h"
+#include "../../../src/multimedia/qvideooutputcontrol.h"
+#include "../../../src/multimedia/qvideorenderercontrol.h"
+#include "../../../src/multimedia/qvideowidgetcontrol.h"
 
 #include <QtCore/qfile.h>
 #include <QtNetwork/qnetworkaccessmanager.h>
@@ -63,7 +63,7 @@
 # define TESTDATA_DIR "./tst_qmediaimageviewer_images"
 #endif
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QtTestNetworkAccessManager;
 
 class tst_QMediaImageViewer : public QObject

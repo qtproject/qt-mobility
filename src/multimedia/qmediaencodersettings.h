@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,9 +46,9 @@
 #include <QtCore/qstring.h>
 #include <QtCore/qsize.h>
 #include <qmobilityglobal.h>
-#include <qtmedianamespace.h>
+#include "qtmedianamespace.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 class QAudioEncoderSettingsPrivate;
@@ -66,8 +66,8 @@ public:
 
     bool isNull() const;
 
-    QtMedia::EncodingMode encodingMode() const;
-    void setEncodingMode(QtMedia::EncodingMode);
+    QtMediaServices::EncodingMode encodingMode() const;
+    void setEncodingMode(QtMediaServices::EncodingMode);
 
     QString codec() const;
     void setCodec(const QString& codec);
@@ -81,8 +81,8 @@ public:
     int sampleRate() const;
     void setSampleRate(int rate);
 
-    QtMedia::EncodingQuality quality() const;
-    void setQuality(QtMedia::EncodingQuality quality);
+    QtMediaServices::EncodingQuality quality() const;
+    void setQuality(QtMediaServices::EncodingQuality quality);
 
 private:
     QSharedDataPointer<QAudioEncoderSettingsPrivate> d;
@@ -103,8 +103,8 @@ public:
 
     bool isNull() const;
 
-    QtMedia::EncodingMode encodingMode() const;
-    void setEncodingMode(QtMedia::EncodingMode);
+    QtMediaServices::EncodingMode encodingMode() const;
+    void setEncodingMode(QtMediaServices::EncodingMode);
 
     QString codec() const;
     void setCodec(const QString &);
@@ -119,8 +119,8 @@ public:
     int bitRate() const;
     void setBitRate(int bitrate);
 
-    QtMedia::EncodingQuality quality() const;
-    void setQuality(QtMedia::EncodingQuality quality);
+    QtMediaServices::EncodingQuality quality() const;
+    void setQuality(QtMediaServices::EncodingQuality quality);
 
 private:
     QSharedDataPointer<QVideoEncoderSettingsPrivate> d;
@@ -148,13 +148,13 @@ public:
     void setResolution(const QSize &);
     void setResolution(int width, int height);
 
-    QtMedia::EncodingQuality quality() const;
-    void setQuality(QtMedia::EncodingQuality quality);
+    QtMediaServices::EncodingQuality quality() const;
+    void setQuality(QtMediaServices::EncodingQuality quality);
 
 private:
     QSharedDataPointer<QImageEncoderSettingsPrivate> d;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

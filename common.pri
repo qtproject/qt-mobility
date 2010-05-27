@@ -92,8 +92,14 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
             DESTDIR = $$OUTPUT_DIR/bin
         }
     } else {
-        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
-        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
+        testplugin {
+            DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
+        } else {
+            #check that plugin_type is set or warn otherwise
+            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
+            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+            INSTALLS += target
+        }
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -169,3 +175,4 @@ LIBS += -L$$OUTPUT_DIR/lib
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
+!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PLUGINS, \\\\, /)\\\"

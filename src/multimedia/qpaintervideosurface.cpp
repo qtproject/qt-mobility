@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include <qpaintervideosurface_p.h>
+#include "qpaintervideosurface_p.h"
 
 #include <qmath.h>
 
@@ -52,7 +52,7 @@
 #endif
 
 #include <QtDebug>
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QVideoSurfacePainter
 {
@@ -1575,6 +1575,6 @@ void QPainterVideoSurface::createPainter()
 }
 
 #include "moc_qpaintervideosurface_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 

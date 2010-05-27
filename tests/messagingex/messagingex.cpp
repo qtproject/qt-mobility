@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,7 +54,7 @@ MessagingEx::MessagingEx(QWidget* parent)
     connect(&m_service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     m_accountList = m_manager.queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
-        QMessageAccount account = QMessageAccount(m_accountList[i]);
+        QMessageAccount account = m_accountList[i];
         accountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
         accountComboBox_2->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
         folderAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
@@ -67,6 +67,9 @@ MessagingEx::MessagingEx(QWidget* parent)
         priorityAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
     }
     connect(accountComboBox_2,SIGNAL(currentIndexChanged(int)),this,SLOT(sortParentAccountId()));
+
+    timestampdateTimeEdit->setDateTime(QDateTime::currentDateTime());
+    receptiondateTimeEdit->setDateTime(QDateTime::currentDateTime());
 }
 
 void MessagingEx::createMenus()
@@ -233,6 +236,19 @@ void MessagingEx::composeEmail()
 {
     QMessage message;
     message.setType(QMessage::Email);
+    int index = accountComboBox->currentIndex();
+    m_account = QMessageAccount(m_accountList[index]).id();
+    QMessage::TypeFlags types = m_account.messageTypes();
+    
+    if (!emailAddressEdit->text().isEmpty()){
+        message.setTo(QMessageAddress(QMessageAddress::Email, emailAddressEdit->text()));
+    }
+    
+    message.setParentAccountId(m_account.id());
+    message.setSubject(subjectEdit->text());
+   
+    message.setBody(QString(emailMessageEdit->toPlainText()));
+    message.appendAttachments(m_attachments);
     m_service.compose(message);
 }
 
@@ -286,7 +302,7 @@ void MessagingEx::on_sendSmsButton_clicked()
     
     if (!QString(phoneNumberEdit->text()).isEmpty())
     {
-        if (!m_service.send(message))
+        if (m_service.send(message))
         {
             QMessageBox msgBox;
             msgBox.setStandardButtons(QMessageBox::Close);
@@ -318,7 +334,7 @@ void MessagingEx::on_sendMmsButton_clicked()
     
     if (!QString(mmsPhoneNumberEdit->text()).isEmpty())
     {
-        if (!m_service.send(message))
+        if (m_service.send(message))
         {
             QMessageBox msgBox;
             msgBox.setStandardButtons(QMessageBox::Close);
@@ -690,7 +706,7 @@ void MessagingEx::sortParentAccountId()
         QMessageFolder folder;
         folder = m_manager.folder(ids[i]);
         QString name = folder.name();
-        folderComboBox->addItem(name, folder.id().toString());    
+        folderComboBox->addItem(name, folder.id().toString());
     }
 }
 
