@@ -18,7 +18,5 @@ SOURCES  += tst_qcontactfilter.cpp
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData
+                        WriteUserData
 }

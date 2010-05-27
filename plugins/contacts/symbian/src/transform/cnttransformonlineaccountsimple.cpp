@@ -195,6 +195,15 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
         fields.remove(QContactOnlineAccount::FieldServiceProvider);
         fields.remove(QContactOnlineAccount::FieldContext);
 
+        // Support only certain subtypes 
+        f.setDataType(QVariant::StringList);
+        QVariantList subTypes;
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSip));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSipVoip));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeVideoShare));
+        f.setAllowableValues(subTypes);
+        fields[QContactOnlineAccount::FieldSubTypes] = f;
+
         d.setFields(fields);
 
         // Replace original definitions

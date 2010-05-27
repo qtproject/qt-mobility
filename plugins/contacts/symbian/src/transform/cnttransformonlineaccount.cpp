@@ -283,6 +283,16 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
         QContactDetailDefinition d = definitions.value(QContactOnlineAccount::DefinitionName);
         QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
         QContactDetailFieldDefinition f;
+        
+        // Support only certain subtypes 
+        f.setDataType(QVariant::StringList);
+        QVariantList subTypes;
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSip));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSipVoip));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeImpp));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeVideoShare));
+        f.setAllowableValues(subTypes);
+        fields[QContactOnlineAccount::FieldSubTypes] = f;        
 
         // Don't support "ContextOther"
         f.setDataType(QVariant::StringList);
