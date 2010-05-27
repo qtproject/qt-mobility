@@ -473,6 +473,10 @@ QStringList QXARecordSession::supportedEncodingOptions(const QString &codec)
         {
         options << "bitrate";
         }
+    else
+        {
+        options << "quality";
+        }
 
     QT_TRACE_FUNCTION_EXIT;
     return options;
