@@ -293,12 +293,10 @@ void tst_QMessageStore::testMessage()
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
-    /*
     QCOMPARE(catcher.added.count(), 1);
     QCOMPARE(catcher.added.first().first, messageId);
     QCOMPARE(catcher.added.first().second.count(), 2);
     QCOMPARE(catcher.added.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
-    */
 
     QMessage message(messageId);
     QCOMPARE(message.id(), messageId);
@@ -382,7 +380,7 @@ void tst_QMessageStore::testMessage()
     bodySize = replacementText.size();
     QAPPROXIMATECOMPARE(body.size(), bodySize, bodySize/2);
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_5)
     // Update does not yet work in Maemo
     QDateTime dt(QDateTime::fromString("1980-12-31T23:59:59Z", Qt::ISODate));
     dt.setTimeSpec(Qt::UTC);
@@ -394,12 +392,12 @@ void tst_QMessageStore::testMessage()
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
 
-    /*
+
     QVERIFY(catcher.updated.count() > 0);
     QCOMPARE(catcher.updated.first().first, messageId);
     QCOMPARE(catcher.updated.first().second.count(), 2);
     QCOMPARE(catcher.updated.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
-    */
+
     QMessage updated(message.id());
 
     QCOMPARE(updated.id(), message.id());
@@ -457,4 +455,7 @@ void tst_QMessageStore::testMessage()
 #endif
 #endif
     */
+    QCOMPARE(removeCatcher.removed.first().second.count(), 1);
+    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter3->id);
+
 }
