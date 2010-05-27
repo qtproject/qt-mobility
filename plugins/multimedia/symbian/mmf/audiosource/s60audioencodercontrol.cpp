@@ -73,7 +73,7 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 	return m_session->codecDescription(codecName);    
 }
 
-QtMediaServices::EncodingQuality S60AudioEncoderControl::quality() const
+QtMultimedia::EncodingQuality S60AudioEncoderControl::quality() const
 {
     return m_quality;
 }
