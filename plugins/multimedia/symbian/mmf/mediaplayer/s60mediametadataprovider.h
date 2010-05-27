@@ -42,17 +42,17 @@
 #ifndef S60MEDIAMETADATAPROVIDER_H
 #define S60MEDIAMETADATAPROVIDER_H
 
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 #include "ms60mediaplayerresolver.h"
 
 QT_USE_NAMESPACE
 
 class S60MediaPlayerSession;
 
-class S60MediaMetaDataProvider : public QMetaDataControl
+class S60MediaMetaDataProvider : public QMetaDataReaderControl
 {
     Q_OBJECT
-    
+
 public:
     S60MediaMetaDataProvider(MS60MediaPlayerResolver& mediaPlayerResolver, QObject *parent = 0);
     ~S60MediaMetaDataProvider();
@@ -61,13 +61,11 @@ public:
     bool isWritable() const;
 
     QVariant metaData(QtMultimedia::MetaData key) const;
-    void setMetaData(QtMultimedia::MetaData key, const QVariant &value);
     QList<QtMultimedia::MetaData> availableMetaData() const;
-    
+
     QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
-    
+
 private:
     QString metaDataKeyAsString(QtMultimedia::MetaData key) const;
 

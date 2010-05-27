@@ -81,7 +81,7 @@ QMediaControl *QT7PlayerService::requestControl(const char *name)
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name, QMetaDataControl_iid) == 0)
+    if (qstrcmp(name, QMetaDataReaderControl_iid) == 0)
         return m_playerMetaDataControl;
 
     if (!m_videoOutput) {

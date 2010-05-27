@@ -221,7 +221,7 @@ QMediaControl *QGstreamerCaptureService::requestControl(const char *name)
     if (qstrcmp(name,QMediaContainerControl_iid) == 0)
         return m_captureSession->mediaContainerControl();
 
-    if (qstrcmp(name,QMetaDataControl_iid) == 0)
+    if (qstrcmp(name,QMetaDataWriterControl_iid) == 0)
         return m_metaDataControl;
 
     if (!m_videoOutput) {

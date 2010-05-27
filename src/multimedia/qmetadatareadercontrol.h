@@ -39,55 +39,48 @@
 **
 ****************************************************************************/
 
-#ifndef DIRECTSHOWMETADATACONTROL_H
-#define DIRECTSHOWMETADATACONTROL_H
+#ifndef QMETADATAREADERCONTROL_H
+#define QMETADATAREADERCONTROL_H
 
-#include <qmetadatareadercontrol.h>
+#include <qmediacontrol.h>
+#include <qmediaobject.h>
 
-#include "directshowglobal.h"
+#include <qmediaresource.h>
 
-#include <qnetwork.h>
 
-#ifndef QT_NO_WMSDK
-#include <wmsdk.h>
-#endif
+QT_BEGIN_HEADER
 
-#include <QtCore/qcoreevent.h>
+QT_BEGIN_NAMESPACE
 
-class DirectShowPlayerService;
 
-QT_USE_NAMESPACE
-
-class DirectShowMetaDataControl : public QMetaDataReaderControl
+class Q_MULTIMEDIA_EXPORT QMetaDataReaderControl : public QMediaControl
 {
     Q_OBJECT
 public:
-    DirectShowMetaDataControl(QObject *parent = 0);
-    ~DirectShowMetaDataControl();
+    ~QMetaDataReaderControl();
 
-    bool isMetaDataAvailable() const;
+    virtual bool isMetaDataAvailable() const = 0;
 
-    QVariant metaData(QtMultimedia::MetaData key) const;
-    QList<QtMultimedia::MetaData> availableMetaData() const;
+    virtual QVariant metaData(QtMultimedia::MetaData key) const = 0;
+    virtual QList<QtMultimedia::MetaData> availableMetaData() const = 0;
 
-    QVariant extendedMetaData(const QString &key) const;
-    QStringList availableExtendedMetaData() const;
+    virtual QVariant extendedMetaData(const QString &key) const = 0;
+    virtual QStringList availableExtendedMetaData() const = 0;
 
-    void updateGraph(IFilterGraph2 *graph, IBaseFilter *source);
+Q_SIGNALS:
+    void metaDataChanged();
+
+    void metaDataAvailableChanged(bool available);
 
 protected:
-    void customEvent(QEvent *event);
-
-private:
-    enum Event
-    {
-        MetaDataChanged = QEvent::User
-    };
-
-    IAMMediaContent *m_content;
-#ifndef QT_NO_WMSDK
-    IWMHeaderInfo *m_headerInfo;
-#endif
+    QMetaDataReaderControl(QObject *parent = 0);
 };
 
-#endif
+#define QMetaDataReaderControl_iid "com.nokia.Qt.QMetaDataReaderControl/1.0"
+Q_MEDIA_DECLARE_CONTROL(QMetaDataReaderControl, QMetaDataReaderControl_iid)
+
+QT_END_NAMESPACE
+
+QT_END_HEADER
+
+#endif  // QMETADATAPROVIDER_H

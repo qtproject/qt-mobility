@@ -48,20 +48,20 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QRadioTunerControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
     \brief The QRadioTunerControl class provides access to the radio tuning
     functionality of a QMediaService.
 
-    If a QMediaService can tune an anolog radio device it will implement
-    QRadioTunerControl.  This control provides a means to tune a radio
-    device to a specific \l {setFrequency()}{frequency} as well as search
-    \l {searchForward()}{forwards} and \l {searchBackward()}{backwards}
-    for a signal.
+    If a QMediaService can tune an analog radio device it will implement
+    QRadioTunerControl.  This control provides a means to tune a radio device
+    to a specific \l {setFrequency()}{frequency} as well as search \l
+    {searchForward()}{forwards} and \l {searchBackward()}{backwards} for a
+    signal.
 
-    The functionality provided by this control is exposed to application
-    code through the QRadioTuner class.
+    The functionality provided by this control is exposed to application code
+    through the QRadioTuner class.
 
     The interface name of QRadioTunerControl is \c com.nokia.Qt.QRadioTunerControl/1.0 as
     defined in QRadioTunerControl_iid.

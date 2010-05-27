@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \class QMediaService
     \brief The QMediaService class provides a common base class for media
     service implementations.
-    \ingroup multimedia-serv
+    \ingroup multimedia
     \preliminary
 
     Media services provide implementations of the functionality promised
@@ -66,12 +66,12 @@ QT_BEGIN_NAMESPACE
     the media object, or features of a secondary media object or peripheral
     object.
 
-    A pointer to media service's QMediaControl implementation can be
-    obtained by passing the control's interface name to the control() function.
+    A pointer to media service's QMediaControl implementation can be obtained
+    by passing the control's interface name to the requestControl() function.
 
     \code
     QMediaPlayerControl *control = qobject_cast<QMediaPlayerControl *>(
-            service->control("com.nokia.Qt.QMediaPlayerControl/1.0"));
+            service->requestControl("com.nokia.Qt.QMediaPlayerControl/1.0"));
     \endcode
 
     Media objects can use services loaded dynamically from plug-ins or

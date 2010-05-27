@@ -228,7 +228,7 @@ static QVariant getValue(IWMHeaderInfo *header, const wchar_t *key)
 #endif
 
 DirectShowMetaDataControl::DirectShowMetaDataControl(QObject *parent)
-    : QMetaDataControl(parent)
+    : QMetaDataReaderControl(parent)
     , m_content(0)
 #ifndef QT_NO_WMSDK
     , m_headerInfo(0)
@@ -238,11 +238,6 @@ DirectShowMetaDataControl::DirectShowMetaDataControl(QObject *parent)
 
 DirectShowMetaDataControl::~DirectShowMetaDataControl()
 {
-}
-
-bool DirectShowMetaDataControl::isWritable() const
-{
-    return false;
 }
 
 bool DirectShowMetaDataControl::isMetaDataAvailable() const
@@ -302,10 +297,6 @@ QVariant DirectShowMetaDataControl::metaData(QtMultimedia::MetaData key) const
     return value;
 }
 
-void DirectShowMetaDataControl::setMetaData(QtMultimedia::MetaData, const QVariant &)
-{
-}
-
 QList<QtMultimedia::MetaData> DirectShowMetaDataControl::availableMetaData() const
 {
     return QList<QtMultimedia::MetaData>();
@@ -314,10 +305,6 @@ QList<QtMultimedia::MetaData> DirectShowMetaDataControl::availableMetaData() con
 QVariant DirectShowMetaDataControl::extendedMetaData(const QString &) const
 {
     return QVariant();
-}
-
-void DirectShowMetaDataControl::setExtendedMetaData(const QString &, const QVariant &)
-{
 }
 
 QStringList DirectShowMetaDataControl::availableExtendedMetaData() const
@@ -360,6 +347,6 @@ void DirectShowMetaDataControl::customEvent(QEvent *event)
         emit metaDataAvailableChanged(m_content);
 #endif
     } else {
-        QMetaDataControl::customEvent(event);
+        QMetaDataReaderControl::customEvent(event);
     }
 }

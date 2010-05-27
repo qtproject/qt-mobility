@@ -88,10 +88,10 @@ private:
     \ingroup multimedia
 
     A audio encoder settings object is used to specify the audio encoder
-    settings used by QMediaRecorder.  Audio encoder settings are selected
-    by constructing a QAudioEncoderSettings object, setting the desired
-    properties and then passing it to a QMediaRecorder instance using
-    the QMediaRecorder::setEncodingSettings() function.
+    settings used by QMediaRecorder.  Audio encoder settings are selected by
+    constructing a QAudioEncoderSettings object, setting the desired properties
+    and then passing it to a QMediaRecorder instance using the
+    QMediaRecorder::setEncodingSettings() function.
 
     \code
     QAudioEncoderSettings audioSettings;
@@ -140,10 +140,11 @@ QAudioEncoderSettings& QAudioEncoderSettings::operator=(const QAudioEncoderSetti
 }
 
 /*!
-    Determines if \a other is of equal value to an audio encoder settings object.
+    Determines if \a other is of equal value to an audio encoder settings
+    object.
 
-    Returns true if the settings objects are of equal value, and true if they are not of equal
-    value.
+    Returns true if the settings objects are of equal value, and false if they
+    are not of equal value.
 */
 
 bool QAudioEncoderSettings::operator==(const QAudioEncoderSettings &other) const
@@ -159,10 +160,11 @@ bool QAudioEncoderSettings::operator==(const QAudioEncoderSettings &other) const
 }
 
 /*!
-    Determines if \a other is of equal value to an audio encoder settings object.
+    Determines if \a other is of equal value to an audio encoder settings
+    object.
 
-    Returns true if the settings objects are not of equal value, and true if they are of equal
-    value.
+    Returns true if the settings objects are not of equal value, and true if
+    they are of equal value.
 */
 
 bool QAudioEncoderSettings::operator!=(const QAudioEncoderSettings &other) const
@@ -194,12 +196,11 @@ QtMultimedia::EncodingMode QAudioEncoderSettings::encodingMode() const
 /*!
     Sets the audio encoding \a mode setting.
 
-    If QtMultimedia::ConstantQualityEncoding is set,
-    the quality encoding parameter is used and bit rate is ignored,
-    otherwise the bitrate is used.
+    If QtMultimedia::ConstantQualityEncoding is set, the quality encoding
+    parameter is used and bit rate is ignored, otherwise the bitrate is used.
 
-    The audio codec, channels count and sample rate settings
-    are used in all the encoding modes.
+    The audio codec, channels count and sample rate settings are used in all
+    the encoding modes.
 
     \sa encodingMode(), QtMultimedia::EncodingMode
 */
@@ -244,8 +245,8 @@ int QAudioEncoderSettings::channelCount() const
 /*!
     Sets the number of audio \a channels.
 
-    A value of -1 indicates the encoder should make an optimal choice based on what is available
-    from the audio source and the limitations of the codec.
+    A value of -1 indicates the encoder should make an optimal choice based on
+    what is available from the audio source and the limitations of the codec.
 */
 void QAudioEncoderSettings::setChannelCount(int channels)
 {
@@ -347,10 +348,11 @@ private:
     \preliminary
     \brief The QVideoEncoderSettings class provides a set of video encoder settings.
 
-    A video encoder settings object is used to specify the video encoder settings used by
-    QMediaRecorder.  Video encoder settings are selected by constructing a QVideoEncoderSettings
-    object, setting the desired properties and then passing it to a QMediaRecorder instance using
-    the QMediaRecorder::setEncodingSettings() function.
+    A video encoder settings object is used to specify the video encoder
+    settings used by QMediaRecorder.  Video encoder settings are selected by
+    constructing a QVideoEncoderSettings object, setting the desired properties
+    and then passing it to a QMediaRecorder instance using the
+    QMediaRecorder::setEncodingSettings() function.
 
     \code
     QVideoEncoderSettings videoSettings;
@@ -401,8 +403,8 @@ QVideoEncoderSettings &QVideoEncoderSettings::operator=(const QVideoEncoderSetti
 /*!
     Determines if \a other is of equal value to a video encoder settings object.
 
-    Returns true if the settings objects are of equal value, and true if they are not of equal
-    value.
+    Returns true if the settings objects are of equal value, and false if they
+    are not of equal value.
 */
 bool QVideoEncoderSettings::operator==(const QVideoEncoderSettings &other) const
 {
@@ -419,8 +421,8 @@ bool QVideoEncoderSettings::operator==(const QVideoEncoderSettings &other) const
 /*!
     Determines if \a other is of equal value to a video encoder settings object.
 
-    Returns true if the settings objects are not of equal value, and true if they are of equal
-    value.
+    Returns true if the settings objects are not of equal value, and false if
+    they are of equal value.
 */
 bool QVideoEncoderSettings::operator!=(const QVideoEncoderSettings &other) const
 {
@@ -535,8 +537,8 @@ QSize QVideoEncoderSettings::resolution() const
 /*!
     Sets the \a resolution of the encoded video.
 
-    An empty QSize indicates the encoder should make an optimal choice based on what is available
-    from the video source and the limitations of the codec.
+    An empty QSize indicates the encoder should make an optimal choice based on
+    what is available from the video source and the limitations of the codec.
 */
 
 void QVideoEncoderSettings::setResolution(const QSize &resolution)
@@ -574,6 +576,9 @@ QtMultimedia::EncodingQuality QVideoEncoderSettings::quality() const
 
     The \a quality settings parameter is only used in the
     \l {QtMultimedia::ConstantQualityEncoding}{constant quality} \l{encodingMode()}{encoding mode}.
+    The \a quality settings parameter is only used in the \l
+    {QtMultimedia::ConstantQualityEncoding}{constant quality}
+    \l{encodingMode()}{encoding mode}.
 */
 
 void QVideoEncoderSettings::setQuality(QtMultimedia::EncodingQuality quality)
@@ -615,14 +620,13 @@ private:
     \class QImageEncoderSettings
     \preliminary
 
-    \brief The QImageEncoderSettings class provides a set of image
-    encoder settings.
+    \brief The QImageEncoderSettings class provides a set of image encoder
+    settings.
 
-    A image encoder settings object is used to specify the image
-    encoder settings used by QStillImageCapture.  Image encoder
-    settings are selected by constructing a QImageEncoderSettings
-    object, setting the desired properties and then passing it to a
-    QStillImageCapture instance using the
+    A image encoder settings object is used to specify the image encoder
+    settings used by QStillImageCapture.  Image encoder settings are selected
+    by constructing a QImageEncoderSettings object, setting the desired
+    properties and then passing it to a QStillImageCapture instance using the
     QStillImageCapture::setImageSettings() function.
 
     \code
@@ -672,10 +676,11 @@ QImageEncoderSettings &QImageEncoderSettings::operator=(const QImageEncoderSetti
 }
 
 /*!
-    Determines if \a other is of equal value to a image encoder settings object.
+    Determines if \a other is of equal value to a image encoder settings
+    object.
 
-    Returns true if the settings objects are of equal value, and true if they are not of equal
-    value.
+    Returns true if the settings objects are of equal value, and false if they
+    are not of equal value.
 */
 bool QImageEncoderSettings::operator==(const QImageEncoderSettings &other) const
 {
@@ -688,10 +693,11 @@ bool QImageEncoderSettings::operator==(const QImageEncoderSettings &other) const
 }
 
 /*!
-    Determines if \a other is of equal value to a image encoder settings object.
+    Determines if \a other is of equal value to a image encoder settings
+    object.
 
-    Returns true if the settings objects are not of equal value, and true if they are of equal
-    value.
+    Returns true if the settings objects are not of equal value, and false if
+    they are of equal value.
 */
 bool QImageEncoderSettings::operator!=(const QImageEncoderSettings &other) const
 {
@@ -738,8 +744,8 @@ QSize QImageEncoderSettings::resolution() const
 /*!
     Sets the \a resolution of the encoded image.
 
-    An empty QSize indicates the encoder should make an optimal choice based on what is available
-    from the image source and the limitations of the codec.
+    An empty QSize indicates the encoder should make an optimal choice based on
+    what is available from the image source and the limitations of the codec.
 */
 
 void QImageEncoderSettings::setResolution(const QSize &resolution)

@@ -47,7 +47,7 @@
 #include <qmediaplayercontrol.h>
 #include <qmediaservice.h>
 #include <qmediaserviceprovider.h>
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 #include "qmetadatacontrolmetaobject_p.h"
 
 
@@ -269,8 +269,8 @@ void QDeclarativeMediaBase::setObject(QObject *object)
         if ((m_mediaService = m_mediaProvider->requestService(Q_MEDIASERVICE_MEDIAPLAYER))) {
             m_playerControl = qobject_cast<QMediaPlayerControl *>(
                     m_mediaService->requestControl(QMediaPlayerControl_iid));
-            m_metaDataControl = qobject_cast<QMetaDataControl *>(
-                    m_mediaService->requestControl(QMetaDataControl_iid));
+            m_metaDataControl = qobject_cast<QMetaDataReaderControl *>(
+                    m_mediaService->requestControl(QMetaDataReaderControl_iid));
             m_mediaObject = new QDeclarativeMediaBaseObject(m_mediaService);
         }
     }

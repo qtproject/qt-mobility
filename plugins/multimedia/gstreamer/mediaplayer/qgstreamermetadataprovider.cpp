@@ -121,7 +121,7 @@ static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
 };
 
 QGstreamerMetaDataProvider::QGstreamerMetaDataProvider(QGstreamerPlayerSession *session, QObject *parent)
-    :QMetaDataControl(parent), m_session(session)
+    :QMetaDataReaderControl(parent), m_session(session)
 {
     connect(m_session, SIGNAL(tagsChanged()), SLOT(updateTags()));
 }
@@ -152,12 +152,6 @@ QVariant QGstreamerMetaDataProvider::metaData(QtMultimedia::MetaData key) const
     return QVariant();
 }
 
-void QGstreamerMetaDataProvider::setMetaData(QtMultimedia::MetaData key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
-
 QList<QtMultimedia::MetaData> QGstreamerMetaDataProvider::availableMetaData() const
 {
     static QMap<QByteArray, QtMultimedia::MetaData> keysMap;
@@ -181,12 +175,6 @@ QList<QtMultimedia::MetaData> QGstreamerMetaDataProvider::availableMetaData() co
 QVariant QGstreamerMetaDataProvider::extendedMetaData(const QString &key) const
 {
     return m_session->tags().value(key.toLatin1());
-}
-
-void QGstreamerMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
 }
 
 QStringList QGstreamerMetaDataProvider::availableExtendedMetaData() const

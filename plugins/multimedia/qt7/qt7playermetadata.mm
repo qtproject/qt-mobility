@@ -54,7 +54,7 @@
 QT_USE_NAMESPACE
 
 QT7PlayerMetaDataControl::QT7PlayerMetaDataControl(QT7PlayerSession *session, QObject *parent)
-    :QMetaDataControl(parent), m_session(session)
+    :QMetaDataReaderControl(parent), m_session(session)
 {
 }
 
@@ -77,12 +77,6 @@ QVariant QT7PlayerMetaDataControl::metaData(QtMultimedia::MetaData key) const
     return m_tags.value(key);
 }
 
-void QT7PlayerMetaDataControl::setMetaData(QtMultimedia::MetaData key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
-
 QList<QtMultimedia::MetaData> QT7PlayerMetaDataControl::availableMetaData() const
 {
     return m_tags.keys();
@@ -92,12 +86,6 @@ QVariant QT7PlayerMetaDataControl::extendedMetaData(const QString &key) const
 {
     Q_UNUSED(key);
     return QVariant();
-}
-
-void QT7PlayerMetaDataControl::setExtendedMetaData(const QString &key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
 }
 
 QStringList QT7PlayerMetaDataControl::availableExtendedMetaData() const

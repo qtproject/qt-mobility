@@ -46,7 +46,7 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaRecorderControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
     \brief The QMediaRecorderControl class provides access to the recording

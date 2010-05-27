@@ -47,20 +47,21 @@ QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaPlaylistSourceControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
     \brief The QMediaPlaylistSourceControl class provides access to the playlist playback
     functionality of a QMediaService.
 
     This control allows QMediaPlaylist to be passed directly to the service
-    instead of playing media sources one by one.
-    This control should be implemented if backend benefits from knowing the
-    next media source to be played, for example for preloading, cross fading or gapeless playback.
+    instead of playing media sources one by one.  This control should be
+    implemented if backend benefits from knowing the next media source to be
+    played, for example for preloading, cross fading or gap-less playback.
 
-    If QMediaPlaylistSourceControl is provided, the backend must
-    listen for current playlist item changes to load corresponding media source and
-    advance the playlist  with QMediaPlaylist::next() when playback of the current media is finished.
+    If QMediaPlaylistSourceControl is provided, the backend must listen for
+    current playlist item changes to load corresponding media source and
+    advance the playlist  with QMediaPlaylist::next() when playback of the
+    current media is finished.
 
     The interface name of QMediaPlaylistSourceControl is \c com.nokia.Qt.QMediaPlaylistSourceControl/1.0 as
     defined in QMediaPlaylistSourceControl_iid.

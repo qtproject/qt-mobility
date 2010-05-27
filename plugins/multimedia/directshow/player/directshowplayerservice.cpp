@@ -146,7 +146,7 @@ QMediaControl *DirectShowPlayerService::requestControl(const char *name)
         return m_playerControl;
     } else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0) {
         return m_audioEndpointControl;
-    } else if (qstrcmp(name, QMetaDataControl_iid) == 0) {
+    } else if (qstrcmp(name, QMetaDataReaderControl_iid) == 0) {
         return m_metaDataControl;
     } else if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
         if (!m_videoRendererControl && !m_videoWindowControl) {

@@ -62,12 +62,12 @@ QT_BEGIN_HEADER
 
 QT_BEGIN_NAMESPACE
 
-class QMetaDataControl;
+class QMetaDataReaderControl;
 
 class QMetaDataControlMetaObject : public QAbstractDynamicMetaObject
 {
 public:
-    QMetaDataControlMetaObject(QMetaDataControl *control, QObject *object);
+    QMetaDataControlMetaObject(QMetaDataReaderControl *control, QObject *object);
     ~QMetaDataControlMetaObject();
 
     int metaCall(QMetaObject::Call call, int _id, void **arguments);
@@ -76,7 +76,7 @@ public:
     void metaDataChanged();
 
 private:
-    QMetaDataControl *m_control;
+    QMetaDataReaderControl *m_control;
     QObject *m_object;
     char *m_string;
     uint *m_data;

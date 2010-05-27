@@ -180,8 +180,8 @@ void QGraphicsVideoItemPrivate::_q_serviceDestroyed()
     player = new QMediaPlayer(this);
 
     QGraphicsVideoItem *item = new QGraphicsVideoItem;
-    player->addVideoOutput(item);
-    graphicsView->scence()->addItem(item);
+    player->setVideoOutput(item);
+    graphicsView->scene()->addItem(item);
     graphicsView->show();
 
     player->setMedia(video);

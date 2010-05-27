@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QMediaStreamsControl
     \preliminary
-    \ingroup multimedia-serv
+    \ingroup multimedia
     \brief The QMediaStreamsControl class provides a media stream selection control.
 
     \ingroup multimedia

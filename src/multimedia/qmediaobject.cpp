@@ -44,7 +44,7 @@
 #include <qmediaobject_p.h>
 
 #include <qmediaservice.h>
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 #include <qmediabindableinterface.h>
 
 
@@ -300,28 +300,6 @@ bool QMediaObject::isMetaDataAvailable() const
 */
 
 /*!
-    \property QMediaObject::metaDataWritable
-    \brief whether a media object's meta-data is writable.
-
-    If this is true the meta-data is writable, otherwise the meta-data is read-only.
-*/
-
-bool QMediaObject::isMetaDataWritable() const
-{
-    Q_D(const QMediaObject);
-
-    return d->metaDataControl
-            ? d->metaDataControl->isWritable()
-            : false;
-}
-
-/*!
-    \fn QMediaObject::metaDataWritableChanged(bool writable)
-
-    Signals that the \a writable state of a media object's meta-data has changed.
-*/
-
-/*!
     Returns the value associated with a meta-data \a key.
 */
 QVariant QMediaObject::metaData(QtMultimedia::MetaData key) const
@@ -331,17 +309,6 @@ QVariant QMediaObject::metaData(QtMultimedia::MetaData key) const
     return d->metaDataControl
             ? d->metaDataControl->metaData(key)
             : QVariant();
-}
-
-/*!
-    Sets a \a value for a meta-data \a key.
-*/
-void QMediaObject::setMetaData(QtMultimedia::MetaData key, const QVariant &value)
-{
-    Q_D(QMediaObject);
-
-    if (d->metaDataControl)
-        d->metaDataControl->setMetaData(key, value);
 }
 
 /*!
@@ -378,20 +345,6 @@ QVariant QMediaObject::extendedMetaData(const QString &key) const
 }
 
 /*!
-    Sets a \a value for a meta-data \a key.
-
-    The naming and type of extended meta-data is not standardized, so the values and meaning
-    of keys may vary between backends.
-*/
-void QMediaObject::setExtendedMetaData(const QString &key, const QVariant &value)
-{
-    Q_D(QMediaObject);
-
-    if (d->metaDataControl)
-        d->metaDataControl->setExtendedMetaData(key, value);
-}
-
-/*!
     Returns a list of keys there is extended meta-data available for.
 */
 QStringList QMediaObject::availableExtendedMetaData() const
@@ -409,17 +362,14 @@ void QMediaObject::setupMetaData()
     Q_D(QMediaObject);
 
     if (d->service != 0) {
-        d->metaDataControl =
-            qobject_cast<QMetaDataControl*>(d->service->requestControl(QMetaDataControl_iid));
+        d->metaDataControl = qobject_cast<QMetaDataReaderControl*>(
+                d->service->requestControl(QMetaDataReaderControl_iid));
 
         if (d->metaDataControl) {
             connect(d->metaDataControl, SIGNAL(metaDataChanged()), SIGNAL(metaDataChanged()));
             connect(d->metaDataControl,
                     SIGNAL(metaDataAvailableChanged(bool)),
                     SIGNAL(metaDataAvailableChanged(bool)));
-            connect(d->metaDataControl,
-                    SIGNAL(writableChanged(bool)),
-                    SIGNAL(metaDataWritableChanged(bool)));
         }
     }
 }

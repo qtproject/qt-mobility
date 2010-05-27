@@ -42,13 +42,13 @@
 #ifndef QT7PLAYERMETADATACONTROL_H
 #define QT7PLAYERMETADATACONTROL_H
 
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 
 QT_BEGIN_NAMESPACE
 
 class QT7PlayerSession;
 
-class QT7PlayerMetaDataControl : public QMetaDataControl
+class QT7PlayerMetaDataControl : public QMetaDataReaderControl
 {
     Q_OBJECT
 public:
@@ -59,11 +59,9 @@ public:
     bool isWritable() const;
 
     QVariant metaData(QtMultimedia::MetaData key) const;
-    void setMetaData(QtMultimedia::MetaData key, const QVariant &value);
     QList<QtMultimedia::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
 
 private slots:

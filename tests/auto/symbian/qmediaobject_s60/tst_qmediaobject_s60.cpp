@@ -45,7 +45,6 @@
 
 #include <qmediaobject.h>
 #include <qmediaservice.h>
-#include <qmetadatacontrol.h>
 #include <qmediaplayer.h>
 
 QT_USE_NAMESPACE
@@ -65,10 +64,8 @@ private slots:
     void isWritable();
     void metaData();
     void availableMetaData();
-    void setMetaData();
     void extendedMetaData();
     void availableExtendedMetaData();
-    void setExtendedMetaData();
 
 private:
     QString metaDataKeyAsString(QtMultimedia::MetaData key) const;
@@ -277,18 +274,6 @@ void tst_QMediaObject::isMetaDataAvailable()
     QVERIFY(player.isMetaDataAvailable() == metaDataAvailable);
 }
 
-void tst_QMediaObject::isWritable()
-{
-    QFETCH_GLOBAL(bool, metaDataWritable);
-    QFETCH_GLOBAL(QMediaContent, mediaContent);
-//    qWarning() << mediaContent.canonicalUrl();
-    QMediaPlayer player;
-
-    player.setMedia(mediaContent);
-    QTest::qWait(700);
-    QVERIFY(player.isMetaDataWritable() == metaDataWritable);
-}
-
 void tst_QMediaObject::metaData()
 {
     QFETCH_GLOBAL(QMediaContent, mediaContent);
@@ -328,22 +313,6 @@ void tst_QMediaObject::availableMetaData()
         QVERIFY(metaDataKeys.contains(QtMultimedia::AlbumArtist));
         QEXPECT_FAIL("", "metaDataKeys.contains(QtMultimedia::Title) failed: ", Continue);
         QVERIFY(metaDataKeys.contains(QtMultimedia::Title));
-    }
-}
-
-void tst_QMediaObject::setMetaData()
-{
-    QFETCH_GLOBAL(QMediaContent, mediaContent);
-//    qWarning() << mediaContent.canonicalUrl();
-    QMediaPlayer player;
-
-    player.setMedia(mediaContent);
-    QTest::qWait(700); 
-
-    QString title("Titletest");
-    if (player.isMetaDataWritable()) {
-        player.setMetaData(QtMultimedia::Title, title); 
-        QCOMPARE(player.metaData(QtMultimedia::Title).toString(), title);
     }
 }
 
@@ -393,22 +362,6 @@ void tst_QMediaObject::availableExtendedMetaData()
         QVERIFY(metaDataKeys.contains(metaDataKeyAsString(QtMultimedia::AlbumArtist)));
         QEXPECT_FAIL("", "metaDataKeys.contains(QtMultimedia::AlbumArtist) failed: ", Continue);
         QVERIFY(metaDataKeys.contains(metaDataKeyAsString(QtMultimedia::Title)));
-    }
-}
-
-void tst_QMediaObject::setExtendedMetaData()
-{
-    QFETCH_GLOBAL(QMediaContent, mediaContent);
-//    qWarning() << mediaContent.canonicalUrl();
-    QMediaPlayer player;
-
-    player.setMedia(mediaContent);
-    QTest::qWait(700);
-    const QString title(QLatin1String("Titletest"));
-
-    if (player.isMetaDataWritable()) {
-        player.setExtendedMetaData(metaDataKeyAsString(QtMultimedia::Title), title);  
-        QCOMPARE(player.metaData(QtMultimedia::Title).toString(), title);
     }
 }
 

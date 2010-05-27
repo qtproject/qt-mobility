@@ -554,9 +554,10 @@ void QVideoWidgetPrivate::_q_dimensionsChanged()
     \code
         player = new QMediaPlayer;
 
-        widget = new QVideoWidget(player);
+        widget = new QVideoWidget;
         widget->show();
 
+        player->setVideoOutput(widget);
         player->setMedia(QUrl("http://example.com/movie.mp4"));
         player->play();
     \endcode
