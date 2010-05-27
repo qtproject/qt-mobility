@@ -72,7 +72,6 @@ QS60SensorApiAccelerometer::QS60SensorApiAccelerometer(QSensor *sensor)
     
     // 2G - mode
     addDataRate(100, 100);
-    sensor->setDataRate(100);
     addOutputRange(-22.418, 22.418, 0.17651);
     setDescription(QLatin1String("lis302dl"));
     

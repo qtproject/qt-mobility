@@ -1,6 +1,6 @@
 TEMPLATE = subdirs
 
-symbian: {
+isEmpty(QT_LIBINFIX):symbian {
     include(../../staticconfig.pri)
     load(data_caging_paths)
     include($$QT_MOBILITY_BUILD_TREE/config.pri)
@@ -185,4 +185,6 @@ symbian: {
     qtmobilitydeployment.path = /sys/bin
 
     DEPLOYMENT += qtmobilitydeployment
+} else {
+    message(Deployment of infixed library names not supported)
 }

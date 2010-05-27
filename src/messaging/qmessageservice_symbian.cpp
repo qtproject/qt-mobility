@@ -190,6 +190,7 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
     }
     _pendingRequestCount = 0;
     _active = true;
+    _count = 0;
 
     _pendingRequestCount++;
     CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
@@ -213,7 +214,7 @@ bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessag
             break;
         case EngineTypeMTM:
         default:
-            return CMTMEngine::instance()->retrieve(messageId, id);
+            return CMTMEngine::instance()->retrieve(*this, messageId, id);
             break;
     }
 }
@@ -230,7 +231,7 @@ bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
             break;
         case EngineTypeMTM:
         default:
-            return CMTMEngine::instance()->retrieveBody(id);
+            return CMTMEngine::instance()->retrieveBody(*this, id);
             break;
     }
 }
@@ -247,7 +248,7 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
             break;
         case EngineTypeMTM:
         default:
-            return CMTMEngine::instance()->retrieveHeader(id);
+            return CMTMEngine::instance()->retrieveHeader(*this, id);
             break;
     }
 }
@@ -289,12 +290,35 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
     }
 }
 
+void QMessageServicePrivate::messagesCounted(int count)
+{
+    _pendingRequestCount--;
+
+    _count += count;
+
+    if (_pendingRequestCount == 0) {
+
+        emit q_ptr->messagesCounted(_count);
+
+        setFinished(true);
+
+        _count = 0;
+    }
+}
+
 bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
-  //  if (SymbianHelpers::isFreestyleMessage(id))
-  //      return CFSEngine::instance()->exportUpdates(id);
-  //  else
-        return CMTMEngine::instance()->exportUpdates(id);
+    switch (idType(id)) {
+            case EngineTypeFreestyle:
+#ifdef FREESTYLEMAILUSED
+                return CFSEngine::instance()->exportUpdates(id);
+#else
+                return false;
+#endif
+            case EngineTypeMTM:
+            default:
+                return CMTMEngine::instance()->exportUpdates(*this, id);
+    }
 }
 
 void QMessageServicePrivate::setFinished(bool successful)
@@ -315,7 +339,7 @@ QMessageService::QMessageService(QObject *parent)
 {
 	connect(d_ptr, SIGNAL(stateChanged(QMessageService::State)), this, SIGNAL(stateChanged(QMessageService::State)));
 	connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)), this, SIGNAL(messagesFound(const QMessageIdList&)));
-    connect(d_ptr, SIGNAL(messagesCounted(int)), this, SIGNAL(messagesCounted(int)));
+    //connect(d_ptr, SIGNAL(messagesCounted(int)), this, SIGNAL(messagesCounted(int)));
 	connect(d_ptr, SIGNAL(progressChanged(uint, uint)), this, SIGNAL(progressChanged(uint, uint)));
 }
 
@@ -511,8 +535,10 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieveHeader(id);
+	if (retVal == false) {
+	    d_ptr->setFinished(retVal);
+	}
 	
-    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -535,8 +561,10 @@ bool QMessageService::retrieveBody(const QMessageId& id)
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieveBody(id);
+	if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
 	
-    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -559,8 +587,10 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieve(messageId, id);
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
 	
-    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -607,8 +637,10 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     emit stateChanged(d_ptr->_state);
     
     retVal = d_ptr->exportUpdates(id);
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
     
-    d_ptr->setFinished(retVal);
     return retVal;
 }
 
