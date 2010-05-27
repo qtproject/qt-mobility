@@ -42,18 +42,15 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <qgeomappingmanager.h>
+#include <qgeomapwidget.h>
+#include <qgeomapviewport.h>
+#include <qgeoserviceprovider.h>
+
 #include <QMainWindow>
 #include <QResizeEvent>
-#include <QSlider>
-#include <QMenu>
-#include <QAction>
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
-
-#include "qmapview.h"
-#include "qgeoroutereply.h"
-#include "qgeoroutingservice.h"
-#include "qmaptileservice.h"
 
 namespace Ui
 {
@@ -79,42 +76,18 @@ protected:
     virtual void resizeEvent(QResizeEvent* event);
 
 private:
-    void createMenus();
-
-private slots:
-    void mapClicked(QGeoCoordinate geoCoord, QGraphicsSceneMouseEvent* mouseEvent);
-    void mapObjectSelected(QMapObject* mapObject);
-    void routeReplyFinished(QGeoRouteReply* reply);
-    void setRtFromTo(bool checked);
-    void zoomLevelChanged(quint16 oldZoomLevel, quint16 newZoomLevel);
-    void setScheme(bool checked);
-    void addMarker(bool checked);
-    void addIconMarker(bool checked);
-    void drawLine(bool checked);
-    void drawRect(bool checked);
-    void drawEllipse(bool checked);
-    void drawPolygon(bool checked);
-    void drawPixmap(bool checked);
-    void customContextMenuRequest(const QPoint&);
-    void delayedInit();
-
-private:
     Ui::MainWindow *ui;
 
+    void setProvider(QString providerId);
+
 private:
+    QGeoServiceProvider *m_serviceProvider;
+    QGeoMappingManager *m_mapManager;
+    QGeoMapWidget *m_mapWidget;
+    QGeoMapViewport *m_mapViewport;
+
     QGraphicsView* qgv;
-    QMapTileService *mapService;
-    QGeoRoutingService *routingService;
-    QMapView* mapView;
-    QSlider* slider;
-    QMenu* popupMenu;
-    QAction* mnDay;
-    QAction* mnSat;
-    QAction* mnTer;
 
-    QGeoCoordinate lastClicked;
-
-    QList<const QMapMarker*> selectedMarkers;
 #ifdef Q_OS_SYMBIAN
     QNetworkSession *session;
 #endif
