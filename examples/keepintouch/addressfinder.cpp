@@ -407,11 +407,11 @@ void AddressFinder::setupUi()
     filterLayout->setContentsMargins(0, spacingHack, 0, 0);
 #endif
 
-    QLabel *includeLabel = new QLabel(tr("Contacted this"));
+    QLabel *includeLabel = new QLabel(tr("Contacted in the last"));
     filterLayout->addWidget(includeLabel, 0, 0);
     filterLayout->setAlignment(includeLabel, Qt::AlignRight);
 
-    excludeCheckBox = new QCheckBox(tr("But not last"));
+    excludeCheckBox = new QCheckBox(tr("But not in the last"));
 #ifdef Q_WS_MAEMO_5
     // Maemo 5 style cuts off check box text.
     excludeCheckBox->setText(excludeCheckBox->text() + "  ");
