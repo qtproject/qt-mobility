@@ -73,37 +73,37 @@ namespace impacts on application development.
 
 This library will require Qt 4.6.
 
-This API delivers an easy to use interface to multimedia functions whether
-the developer wants to show an image, a video, record sound or play a
+This API delivers an easy to use interface to multimedia functions. The 
+developer can use the API to display an image, or a video, record sound or play a
 multimedia stream.
 
-There are several benefits from that this API brings to Qt. Firstly, the
+There are several benefits this API brings to Qt. Firstly, the
 developer can now implement fundamental multimedia functions with minimal
 code, mostly because they are already implemented. Also there is a great
-deal of flexibility with the source or generated multimedia. The source file
-does not need to be local to the device, it could be streamed from a remote
-location and identified by a URL. Many different codecs are supported 'out
+deal of flexibility with the media source or the generated multimedia. The
+source file does not need to be local to the device, it could be streamed from a remote location and identified by a URL. Finally, many different codecs are supported 'out
 of the box'.
 
 The supplied examples give a good idea at the ease of use of the API. When
 the supporting user interface code is ignored we can see that functionality
-is immediately available with minimal code.
+is immediately available with minimal effort.
 
 \section2 Audio
 
-Looking at the Audio Recorder example we see that by creating a QMediaRecorder
-object that is initialized with a newly created QAudioCaptureSource object
-we can now perform all the core actions necessary to record a sound source.
+The Audio Recorder example introduces the basic use of the API. The idea
+is to create a QMediaRecorder object that is initialized with a newly created
+QAudioCaptureSource object that can now perform all the core actions necessary
+to record a sound source.
 
 To initialize the objects we create a QAudioCaptureSource object. This will
 have a list of available devices to choose from so that we can identify the
-origin of the audio data. We then use the capture source object to
+origin of the audio data. Then use the \i {capture} source object to
 initialize a QMediaRecorder object
 
 \snippet snippets/multimedia-snippets/audiorecorder.cpp create-objs-1
 
 The API now allows us to discover available devices and codecs as shown in
-the example. To actually do the recording we merely have to call the
+the example. To actually do the recording it is only necessary to call the
 \l{QMediaRecorder::record()}{record()} function, and to stop call the
 \l{QMediaRecorder::stop()}{stop()} function. Saving to a file is done simply by
 calling QMediaRecorder::setOutputLocation() before starting to record.
@@ -118,15 +118,25 @@ For playing and manipulating video sources the API enables us to easily
 implement a player application. If we examine the \l{player}{Player}
 example we see that the implementation of a simple media player requires a
 QMediaPlayer object, which is used to initialize a QMediaPlaylist object.
+The following code is from the \l{player}{Player} Example, it includes part of
+the constructor of the Player class, derived from QWidget,
 
-\snippet snippets/multimedia-snippets/player.cpp  create-objs
+\code
+        QMediaPlayer *player;
+\endcode
+    \dots
+\snippet ../../examples/player/player.cpp  create-objs
 
 To display the playing video file we need a QVideoWidget object. However,
-instead of using a QVideoWidget object directly the Player example has a
-VideoWidget class that inherits from QVideoWidget so that functions can be
-added to go to full screen display, either on a double click or on a
+instead of using a QVideoWidget object directly, the Player example has a
+VideoWidget class that inherits from QVideoWidget. This means that functions
+can be added to go to full screen display, either on a double click or on a
 particular keypress.
 
+\snippet ../../examples/player/player.cpp  2
+
+Signals from various user interface objects can be connect to slots on the QVideoWidget and QMediaPlayer instances to control the play and appearance
+of the video.
 
 \section2 Radio
 
