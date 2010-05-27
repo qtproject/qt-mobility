@@ -6979,7 +6979,6 @@
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs Overview" fulltitle="Qt Mobility Project APIs Overview" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
-            <contents name="namespace" title="Namespace" level="1"/>
             <contents name="getting-started" title="Getting Started" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
             <contents name="the-new-qt-apis" title="The New Qt APIs" level="1"/>
