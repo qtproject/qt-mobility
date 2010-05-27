@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -68,6 +68,12 @@
 
 // This says "NOKIA" in Katakana encoded with UTF-8
 const QByteArray KATAKANA_NOKIA("\xe3\x83\x8e\xe3\x82\xad\xe3\x82\xa2");
+
+const static QByteArray SAMPLE_GIF_BASE64(QByteArray(
+        "R0lGODlhEgASAIAAAAAAAP///yH5BAEAAAEALAAAAAASABIAAAIdjI+py+0G"
+        "wEtxUmlPzRDnzYGfN3KBaKGT6rDmGxQAOw=="));
+
+const static QByteArray SAMPLE_GIF(QByteArray::fromBase64(SAMPLE_GIF_BASE64));
 
 Q_DECLARE_METATYPE(QVersitDocument::VersitType);
 Q_DECLARE_METATYPE(QVersitProperty);
@@ -552,34 +558,43 @@ void tst_QVersitReader::testParseNextVersitProperty_data()
 
     {
         QVersitProperty expectedProperty;
+        expectedProperty.setName(QLatin1String("ORG"));
+        expectedProperty.setValue(QString::fromUtf8(KATAKANA_NOKIA));
+        expectedProperty.setValueType(QVersitProperty::CompoundType);
+        QTest::newRow("vcard21 org utf8 qp")
+            << QVersitDocument::VCard21Type
+            << QByteArray("ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2\r\n")
+            << expectedProperty;
+        QTest::newRow("vcard30 org utf8 qp")
+            << QVersitDocument::VCard30Type
+            << QByteArray("ORG;CHARSET=UTF-8;ENCODING=QUOTED-PRINTABLE:=E3=83=8E=E3=82=AD=E3=82=A2\r\n")
+            << expectedProperty;
+    }
+
+    {
+        QVersitProperty expectedProperty;
         expectedProperty.setName(QLatin1String("PHOTO"));
-        expectedProperty.setValue(QLatin1String("Qt is great!"));
+        expectedProperty.setValue(SAMPLE_GIF);
         expectedProperty.setValueType(QVersitProperty::BinaryType);
         QTest::newRow("vcard21 photo1")
             << QVersitDocument::VCard21Type
-            << QByteArray("PHOTO;ENCODING=BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n")
+            << QByteArray("PHOTO;ENCODING=BASE64:") + SAMPLE_GIF_BASE64 + QByteArray("\r\n\r\n")
             << expectedProperty;
 
         QTest::newRow("vcard30 photo1")
             << QVersitDocument::VCard30Type
-            << QByteArray("PHOTO;ENCODING=B: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n")
+            << QByteArray("PHOTO;ENCODING=B:") + SAMPLE_GIF_BASE64 + QByteArray("\r\n\r\n")
             << expectedProperty;
-    }
 
     // Again, but without the explicit "ENCODING" parameter
-    {
-        QVersitProperty expectedProperty;
-        expectedProperty.setName(QLatin1String("PHOTO"));
-        expectedProperty.setValue(QLatin1String("Qt is great!"));
-        expectedProperty.setValueType(QVersitProperty::BinaryType);
-        QTest::newRow("photo2")
+        QTest::newRow("vcard21 photo2")
             << QVersitDocument::VCard21Type
-            << QByteArray("PHOTO;BASE64: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n")
+            << QByteArray("PHOTO;BASE64:") + SAMPLE_GIF_BASE64 + QByteArray("\r\n\r\n")
             << expectedProperty;
 
-        QTest::newRow("photo2")
+        QTest::newRow("vcard30 photo2")
             << QVersitDocument::VCard30Type
-            << QByteArray("PHOTO;B: U\t XQgaX MgZ\t3Jl YXQh\r\n\r\n")
+            << QByteArray("PHOTO;B:") + SAMPLE_GIF_BASE64 + QByteArray("\r\n\r\n")
             << expectedProperty;
     }
 
@@ -592,17 +607,6 @@ void tst_QVersitReader::testParseNextVersitProperty_data()
         QTest::newRow("email qp")
             << QVersitDocument::VCard21Type
             << QByteArray("HOME.Springfield.EMAIL;Encoding=Quoted-Printable:john.citizen=40exam=\r\nple.com\r\n")
-            << expectedProperty;
-    }
-
-    {
-        QVersitProperty expectedProperty;
-        expectedProperty.setName(QLatin1String("EMAIL"));
-        expectedProperty.setValue(QLatin1String("john.citizen@example.com"));
-        expectedProperty.setValueType(QVersitProperty::PlainType);
-        QTest::newRow("email qp utf16")
-            << QVersitDocument::VCard21Type
-            << QByteArray("EMAIL;ENCODING=QUOTED-PRINTABLE;CHARSET=UTF-16BE:" + QTextCodec::codecForName("UTF-16BE")->fromUnicode(QLatin1String("john.citizen=40exam=\r\nple.com")) + "\r\n")
             << expectedProperty;
     }
 
@@ -753,9 +757,9 @@ void tst_QVersitReader::testDecodeQuotedPrintable()
 #ifndef QT_BUILD_INTERNAL
     QSKIP("Testing private API", SkipSingle);
 #else
-    QFETCH(QString, encoded);
+    QFETCH(QByteArray, encoded);
 
-    QFETCH(QString, decoded);
+    QFETCH(QByteArray, decoded);
     mReaderPrivate->decodeQuotedPrintable(encoded);
     QCOMPARE(encoded, decoded);
 #endif
@@ -764,49 +768,49 @@ void tst_QVersitReader::testDecodeQuotedPrintable()
 void tst_QVersitReader::testDecodeQuotedPrintable_data()
 {
 #ifdef QT_BUILD_INTERNAL
-    QTest::addColumn<QString>("encoded");
-    QTest::addColumn<QString>("decoded");
+    QTest::addColumn<QByteArray>("encoded");
+    QTest::addColumn<QByteArray>("decoded");
 
 
     QTest::newRow("Soft line breaks")
-            << QString::fromLatin1("This=\r\n is =\r\none line.")
-            << QString::fromLatin1("This is one line.");
+            << QByteArray("This=\r\n is =\r\none line.")
+            << QByteArray("This is one line.");
 
     QTest::newRow("Characters recommended to be encoded according to RFC 1521")
-            << QString::fromLatin1("To be decoded: =0A=0D=21=22=23=24=3D=40=5B=5C=5D=5E=60=7B=7C=7D=7E")
-            << QString::fromLatin1("To be decoded: \n\r!\"#$=@[\\]^`{|}~");
+            << QByteArray("To be decoded: =0A=0D=21=22=23=24=3D=40=5B=5C=5D=5E=60=7B=7C=7D=7E")
+            << QByteArray("To be decoded: \n\r!\"#$=@[\\]^`{|}~");
 
     QTest::newRow("Characters recommended to be encoded according to RFC 1521(lower case)")
-            << QString::fromLatin1("To be decoded: =0a=0d=21=22=23=24=3d=40=5b=5c=5d=5e=60=7b=7c=7d=7e")
-            << QString::fromLatin1("To be decoded: \n\r!\"#$=@[\\]^`{|}~");
+            << QByteArray("To be decoded: =0a=0d=21=22=23=24=3d=40=5b=5c=5d=5e=60=7b=7c=7d=7e")
+            << QByteArray("To be decoded: \n\r!\"#$=@[\\]^`{|}~");
 
     QTest::newRow("random characters encoded")
-            << QString::fromLatin1("=45=6E=63=6F=64=65=64 =64=61=74=61")
-            << QString::fromLatin1("Encoded data");
+            << QByteArray("=45=6E=63=6F=64=65=64 =64=61=74=61")
+            << QByteArray("Encoded data");
 
     QTest::newRow("short string1")
-            << QString::fromLatin1("-=_")
-            << QString::fromLatin1("-=_");
+            << QByteArray("-=_")
+            << QByteArray("-=_");
 
     QTest::newRow("short string2")
-            << QString::fromLatin1("=0")
-            << QString::fromLatin1("=0");
+            << QByteArray("=0")
+            << QByteArray("=0");
 
     QTest::newRow("short string2")
-            << QString::fromLatin1("\r")
-            << QString::fromLatin1("\r");
+            << QByteArray("\r")
+            << QByteArray("\r");
 
     QTest::newRow("short string2")
-            << QString::fromLatin1("\n")
-            << QString::fromLatin1("\n");
+            << QByteArray("\n")
+            << QByteArray("\n");
 
     QTest::newRow("short string2")
-            << QString::fromLatin1("\n\r")
-            << QString::fromLatin1("\n\r");
+            << QByteArray("\n\r")
+            << QByteArray("\n\r");
 
     QTest::newRow("White spaces")
-            << QString::fromLatin1("=09=20")
-            << QString::fromLatin1("\t ");
+            << QByteArray("=09=20")
+            << QByteArray("\t ");
 #endif
 }
 void tst_QVersitReader::testParamName()

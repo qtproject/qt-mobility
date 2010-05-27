@@ -45,8 +45,11 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#DefinitionName-var">DefinitionName</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldCustomLabel-var">FieldCustomLabel</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldFirst-var">FieldFirst</a></b>&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldFirstName-var">FieldFirstName</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldLast-var">FieldLast</a></b>&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldLastName-var">FieldLastName</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldMiddle-var">FieldMiddle</a></b>&nbsp;&nbsp;<tt> (deprecated)</tt></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldMiddleName-var">FieldMiddleName</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldPrefix-var">FieldPrefix</a></b></td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">const QLatin1Constant </td><td class="memItemRight" valign="bottom"><b><a href="qcontactname.html#FieldSuffix-var">FieldSuffix</a></b></td></tr>
@@ -121,14 +124,26 @@
 <h3 class="fn"><a name="FieldCustomLabel-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldCustomLabel</h3>
 <p>The field key constant for the value containing a custom formatted label.</p>
 <p>See also <a href="qcontactname.html#customLabel">customLabel</a>() and <a href="qcontactname.html#setCustomLabel">setCustomLabel</a>().</p>
+<a name="//apple_ref/cpp/data/QContactName/FieldFirst"></a>
+<h3 class="fn"><a name="FieldFirst-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldFirst</h3>
+<p>This documentation is deprecated.</p>
+<p>The constant key for which the first name value is stored in details of the <a href="qcontactname.html">QContactName</a> type. Deprecated (to be removed) - use <a href="qcontactname.html#FieldFirstName-var">FieldFirstName</a> instead.</p>
 <a name="//apple_ref/cpp/data/QContactName/FieldFirstName"></a>
 <h3 class="fn"><a name="FieldFirstName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldFirstName</h3>
 <p>The field key constant for the value containing the first name part of the name.</p>
 <p>See also <a href="qcontactname.html#firstName">firstName</a>() and <a href="qcontactname.html#setFirstName">setFirstName</a>().</p>
+<a name="//apple_ref/cpp/data/QContactName/FieldLast"></a>
+<h3 class="fn"><a name="FieldLast-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldLast</h3>
+<p>This documentation is deprecated.</p>
+<p>The constant key for which the last name value is stored in details of the <a href="qcontactname.html">QContactName</a> type. Deprecated (to be removed) - use <a href="qcontactname.html#FieldLastName-var">FieldLastName</a> instead.</p>
 <a name="//apple_ref/cpp/data/QContactName/FieldLastName"></a>
 <h3 class="fn"><a name="FieldLastName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldLastName</h3>
 <p>The field key constant for the value containing the last name part of the name.</p>
 <p>See also <a href="qcontactname.html#lastName">lastName</a>() and <a href="qcontactname.html#setLastName">setLastName</a>().</p>
+<a name="//apple_ref/cpp/data/QContactName/FieldMiddle"></a>
+<h3 class="fn"><a name="FieldMiddle-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldMiddle</h3>
+<p>This documentation is deprecated.</p>
+<p>The constant key for which the middle name value is stored in details of the <a href="qcontactname.html">QContactName</a> type. Deprecated (to be removed) - use <a href="qcontactname.html#FieldMiddleName-var">FieldMiddleName</a> instead.</p>
 <a name="//apple_ref/cpp/data/QContactName/FieldMiddleName"></a>
 <h3 class="fn"><a name="FieldMiddleName-var"></a>const <a href="qlatin1constant.html">QLatin1Constant</a> QContactName::FieldMiddleName</h3>
 <p>The field key constant for the value containing the middle name part of the name.</p>
@@ -143,8 +158,8 @@
 <p>See also <a href="qcontactname.html#suffix">suffix</a>() and <a href="qcontactname.html#setSuffix">setSuffix</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

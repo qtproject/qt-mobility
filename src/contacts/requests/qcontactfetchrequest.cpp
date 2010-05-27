@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -67,6 +67,7 @@ QContactFetchRequest::QContactFetchRequest(QObject* parent)
 void QContactFetchRequest::setFilter(const QContactFilter& filter)
 {
     Q_D(QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_filter = filter;
 }
 
@@ -74,6 +75,7 @@ void QContactFetchRequest::setFilter(const QContactFilter& filter)
 void QContactFetchRequest::setSorting(const QList<QContactSortOrder>& sorting)
 {
     Q_D(QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_sorting = sorting;
 }
 
@@ -88,13 +90,29 @@ void QContactFetchRequest::setSorting(const QList<QContactSortOrder>& sorting)
 void QContactFetchRequest::setFetchHint(const QContactFetchHint &fetchHint)
 {
     Q_D(QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_fetchHint = fetchHint;
+}
+
+/*!
+  \deprecated
+  Sets the list of allowable detail definition names to \a definitionNames.  Any contacts retrieved
+  by the request will have any details whose definition name is not on the restricted list
+  removed prior to being returned.
+  This function is deprecated and will be removed after the transition period has been elapsed.  Use setFetchHint() instead.
+ */
+void QContactFetchRequest::setDefinitionRestrictions(const QStringList& definitionNames)
+{
+    //Q_D(QContactFetchRequest);
+    Q_UNUSED(definitionNames);
+    qWarning("QContactFetchRequest::setDefinitionRestrictions() This function is deprecated and will be removed once the transition period has elapsed.  Use setFetchHint() instead!");
 }
 
 /*! Returns the filter that will be used to select contacts to be returned */
 QContactFilter QContactFetchRequest::filter() const
 {
     Q_D(const QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_filter;
 }
 
@@ -102,6 +120,7 @@ QContactFilter QContactFetchRequest::filter() const
 QList<QContactSortOrder> QContactFetchRequest::sorting() const
 {
     Q_D(const QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_sorting;
 }
 
@@ -116,13 +135,27 @@ QList<QContactSortOrder> QContactFetchRequest::sorting() const
 QContactFetchHint QContactFetchRequest::fetchHint() const
 {
     Q_D(const QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_fetchHint;
+}
+
+/*!
+  \deprecated
+  Returns the list of definition names which define which details contacts in the result list will be limited to.
+  This function is deprecated and will be removed after the transition period has been elapsed.  Use fetchHint() instead.
+ */
+QStringList QContactFetchRequest::definitionRestrictions() const
+{
+    //Q_D(const QContactFetchRequest);
+    qWarning("QContactFetchRequest::definitionRestrictions() This function is deprecated and will be removed once the transition period has elapsed.  Use fetchHint() instead!");
+    return QStringList();
 }
 
 /*! Returns the list of contacts retrieved by this request */
 QList<QContact> QContactFetchRequest::contacts() const
 {
     Q_D(const QContactFetchRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contacts;
 }
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -267,6 +267,21 @@ synchronous API only.
 
 For more detailed documentation on the synchronous API, see the \l{Contacts Synchronous API}.
 
+\section2 Actions
+
+Clients can perform \l{QContactAction}{actions} on contacts which support
+them.  Actions are things like "Send Email" or "Dial", and can be provided
+from various sources including Qt Plugins or the Qt Mobility Service
+Framework. Every action implementation is uniquely identified by a
+combination of its name, the name of the vendor which provided the
+implementation, and the version of the implementation according to the
+vendor.  These pieces of data may be encapsulated in a
+\l{QContactActionDescriptor} which can be used to retrieve an instance of the
+implementation from a \l{QContactActionFactory}.
+
+When an instance of a \l{QContactAction} is created, the caller takes
+ownership of the instance, and must delete it after use.
+
 \section1 Non-Client-Facing API
 
 The non-client-facing API allows third party developers to implement a manager
@@ -342,6 +357,12 @@ criteria:
 
 A client can also request that the results of such a selection be sorted,
 by passing a \l{QContactSortOrder} (or list of sort orders) to the manager.
+
+\section2 Actions
+
+Actions are described by descriptors and are instantiated by factories.
+
+\annotatedlist contacts-actions
 
 \section2 Implementing Backends
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,6 +55,7 @@ static void queryManagerCapabilities();
 static void contactDetailManipulation();
 static void contactManipulation();
 static void addContact(QContactManager*);
+static void callContact(QContactManager*);
 static void matchCall(QContactManager*, const QString&);
 static void viewSpecificDetail(QContactManager*);
 static void viewDetails(QContactManager*);
@@ -73,6 +74,7 @@ int stopCompilerWarnings()
     // synchronous API examples
     QContactManager* cm = new QContactManager();
     addContact(cm);
+    callContact(cm);
     matchCall(cm, "111-222-333"); // unknown number.
     matchCall(cm, "12345678");    // alice's number.
     viewSpecificDetail(cm);
@@ -291,6 +293,7 @@ void addContact(QContactManager* cm)
     number.setSubTypes(QContactPhoneNumber::SubTypeMobile);
     number.setNumber("12345678");
     alice.saveDetail(&number);
+    alice.setPreferredDetail("DialAction", number);
 
     /* Add a second phone number */
     QContactPhoneNumber number2;
@@ -306,6 +309,30 @@ void addContact(QContactManager* cm)
 }
 //! [Creating a new contact]
 
+void callContact(QContactManager* cm)
+{
+    QList<QContactLocalId> contactIds = cm->contactIds();
+    QContact a = cm->contact(contactIds.first());
+
+    /* Get this contact's first phone number */
+    QContact contact;
+
+    //! [Details with action]
+    // Get the first "Call" action
+    QContactAction* action = QContactAction::action(QContactAction::actionDescriptors("Call").value(0));
+    QList<QContactDetail> details = contact.detailsWithAction(action);
+
+    if (details.count() == 0) {
+        // Can't call this contact
+    } else if (details.count() == 1) {
+        // Just call this specific detail
+        action->invokeAction(contact, details.first());
+    } else {
+        // Offer the user the choice of details to call
+        // ...
+    }
+    //! [Details with action]
+}
 
 //! [Filtering by definition and value]
 void matchCall(QContactManager* cm, const QString& incomingCallNbr)
@@ -583,6 +610,17 @@ void shortsnippets()
             QList<QContactId> therapists = contact.relatedContacts("HasTherapist", QContactRelationship::Second);
         }
         //! [6]
+        //! [Getting all tags]
+        QSet<QString> tags;
+        foreach(const QContactTag& tag, contact.details<QContactTag>()) {
+             tags.insert(tag.tag());
+        }
+        //! [Getting all tags]
+        //! [Checking for a specific tag]
+        if (contact.details<QContactTag>(QContactTag::FieldTag, "MyTag").count() > 0) {
+            // Do something with it
+        }
+        //! [Checking for a specific tag]
     }
 }
 

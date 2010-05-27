@@ -11,7 +11,7 @@ Rectangle {
     property bool validService: false
 
     // ![1]
-    property var notesManager: notesService.serviceObject
+    property variant notesManager: notesService.serviceObject
     // ![1]
 
     id: mainWindow

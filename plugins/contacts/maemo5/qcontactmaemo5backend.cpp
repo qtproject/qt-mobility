@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -97,17 +97,30 @@ QString QContactMaemo5Engine::managerName() const
 /* Synthesise the display label of a contact */
 QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
-  Q_UNUSED(error)
-  QString label = QContactManagerEngine::synthesizedDisplayLabel(contact, error);
+  QString label;
   
-  if (label.isEmpty()) {
-    QContactNickname n = contact.detail(QContactNickname::DefinitionName);
-    label = n.nickname();
+  // Try to get the display name from the OSSO-ABook Contact
+  label = d->m_abook->getDisplayName(contact);
+  
+  // If the contact has not been saved let's try to create it from QContact details
+  // FirstName + LastName
+  if (label.isEmpty()){
+    QContactName name = contact.detail(QContactName::DefinitionName);
+    QStringList nameList;
+    
+    nameList << name.firstName();
+    if (name.lastName().count()) 
+      nameList << name.lastName();
+    
+    label = nameList.join(QString(' '));
   }
   
-  if (label.isEmpty())
-    label = "No name";
+  if (label.isEmpty()){
+    *error = QContactManager::UnspecifiedError;
+    return QString("No name");
+  }
   
+  *error = QContactManager::NoError;
   return label;
 }
 

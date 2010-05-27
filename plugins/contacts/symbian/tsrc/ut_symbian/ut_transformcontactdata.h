@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,9 +62,11 @@ private slots:
 	void executeCntTransformBithday();
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
 	void executeCntTransformOnlineAccount();
+	void executeCntTransformPresence();	
 #endif
 	void executeCntTransformOrganisation();
 	void executeCntTransformAvatar();
+	void executeCntTransformRingtone();
 	void executeCntTransformSyncTarget();
 	void executeCntTransformGender();
 	void executeCntTransformAnniversary();
@@ -93,18 +95,20 @@ private:
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     void validateCntTransformOnlineAccountL(
         TPtrC16 sipField, QString sipDetail,
-        TPtrC16 providerField, QString providerDetail,
-        TPtrC16 presenceField, QString presenceDetail,
-        TPtrC16 statusField, QString statusDetail);
+        TPtrC16 providerField, QString providerDetail);
+    void validateCntTransformPresenceL(TPtrC16 presenceStateField, QString presenceStateDetail,
+                                 TPtrC16 presenceStatusMsgField, QString presenceStatusMsgDetail);
 #endif
     void validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
                                        TPtrC16 departmentField, QStringList departmentDetail,
                                        TPtrC16 jobtitleField, QString jobtitleDetail,
                                        TPtrC16 assistantField, QString assistantDetail);
     void validateCntTransformAvatarL(TPtrC16 field, QString detail);
+    void validateCntTransformRingtoneL(TPtrC16 audioRingtoneField, QString audioRingtoneDetail,
+                                       TPtrC16 videoRingtoneField, QString videoRingtoneDetail);
     void validateCntTransformSyncTargetL(TPtrC16 field, QString detail);
     void validateCntTransformGenderL(TPtrC16 field, QString detail);
-    void validateCntTransformAnniversaryL(TPtrC16 field, QDate dateDetail, QString eventDetail);
+    void validateCntTransformAnniversaryL(TTime dateField, QDate dateDetail, TPtrC16 eventField, QString eventDetail);
     void validateCntTransformGeolocationL(TPtrC16 field, double latitudeDetail, double longitudeDetail);
     void validateCntTransformNoteL(TPtrC16 field, QString detail);
     void validateCntTransformFamilyL(TPtrC16 spouseField, QString spouseDetail,

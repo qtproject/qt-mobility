@@ -22,6 +22,7 @@ symbian:
     		   testrunner.h \
                ut_cntsymbianengine.h \
                ut_cntfiltering.h \
+               ut_matchphonenumber.h \
                ut_cntrelationship.h \
                ut_cntsymbiandatabase.h \
                #mock_cntdb.h \
@@ -33,6 +34,7 @@ symbian:
     		   main.cpp \
                ut_cntsymbianengine.cpp \
                ut_cntfiltering.cpp \
+               ut_matchphonenumber.cpp \
                ut_cntrelationship.cpp \
                ut_cntsymbiandatabase.cpp \
                #mock_cntdb.cpp \
@@ -42,7 +44,8 @@ symbian:
     CONFIG += mobility
     MOBILITY = contacts
 
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData
 
     LIBS += $$SYMBIAN_LIBS
     

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -76,6 +76,12 @@ const TUid KUidContactFieldVideoRingTone={KUidContactFieldVideoRingToneValue};
  * Gender field type.
  */
 const TUid KUidContactFieldGender={KUidContactFieldGenderValue};
+
+/**
+ * Phonebook custom Field value.
+ * Anniversary event field type.
+ */
+const TUid KUidContactFieldAnniversaryEvent={KUidContactFieldAnniversaryEventValue};
 
 /* This is a workaround to avoid OS version specific checks.. */
 #if defined(Q_HAD_TO_DECLARE_GEO_VALUE)

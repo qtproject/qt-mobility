@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -93,6 +93,13 @@ Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::HasMember, "HasMember");
  * The relationship type which identifies the first contact as aggregating the second contact into a metacontact
  */
 Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Aggregates, "Aggregates");
+
+/*!
+ * \variable QContactRelationship::Is
+ * \deprecated
+ * Deprecated - use QContactRelationship::IsSameAs instead.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QContactRelationship::Is, "IsSameAs");
 
 /*!
  * \variable QContactRelationship::IsSameAs

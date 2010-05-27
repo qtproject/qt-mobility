@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -184,6 +184,96 @@ void TestSymbianEngine::saveContact()
     QVERIFY(g.id() != empty);
     QVERIFY(g.localId() != 0);
     QVERIFY(g.id().managerUri().contains(uri, Qt::CaseInsensitive));
+}
+
+void TestSymbianEngine::saveContactWithPreferredDetails()
+{
+    QContactManager::Error err;
+
+    //save a contact with preferred details
+    QContact c;
+    c.setType(QContactType::TypeContact);
+
+    QContactPhoneNumber number1;
+    number1.setNumber("123");
+    number1.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    c.saveDetail(&number1);
+    c.setPreferredDetail("call", number1);
+
+    QContactPhoneNumber number2;
+    number2.setNumber("456");
+    number2.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    c.saveDetail(&number2);
+    c.setPreferredDetail("videocall", number2);
+
+    QContactPhoneNumber number3;
+    number3.setNumber("789");
+    number3.setSubTypes(QContactPhoneNumber::SubTypeMobile);
+    c.saveDetail(&number3);
+    c.setPreferredDetail("message", number3);
+
+    QContactEmailAddress email;
+    email.setEmailAddress("dummyemail");
+    c.saveDetail(&email);
+    c.setPreferredDetail("email", email);
+
+    QVERIFY(m_engine->saveContact(&c, &err));
+    QVERIFY(err == QContactManager::NoError);
+
+    //fetch the saved contact and check preferred details
+    QContactFetchHint hint = QContactFetchHint();
+    QContact fetched = m_engine->contact(c.localId(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+
+    QContactDetail callDetail1 = fetched.preferredDetail("call");
+    QVERIFY(callDetail1.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber1 = static_cast<QContactPhoneNumber>(callDetail1);
+    QVERIFY(fetchedNumber1.number() == "123");
+
+    QContactDetail callDetail2 = fetched.preferredDetail("videocall");
+    QVERIFY(callDetail2.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber2 = static_cast<QContactPhoneNumber>(callDetail2);
+    QVERIFY(fetchedNumber2.number() == "456");
+
+    QContactDetail callDetail3 = fetched.preferredDetail("message");
+    QVERIFY(callDetail3.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber3 = static_cast<QContactPhoneNumber>(callDetail3);
+    QVERIFY(fetchedNumber3.number() == "789");
+
+    QContactDetail emailDetail = fetched.preferredDetail("email");
+    QVERIFY(emailDetail.definitionName() == QContactEmailAddress::DefinitionName);
+    QContactEmailAddress fetchedEmail = static_cast<QContactEmailAddress>(emailDetail);
+    QVERIFY(fetchedEmail.emailAddress() == "dummyemail");
+
+    //save a contact with one preferred details for several actions
+    QContact c2;
+    c2.setType(QContactType::TypeContact);
+    c2.saveDetail(&number1);
+    c2.setPreferredDetail("call", number1);
+    c2.setPreferredDetail("videocall", number1);
+    c2.setPreferredDetail("message", number1);
+
+    QVERIFY(m_engine->saveContact(&c2, &err));
+    QVERIFY(err == QContactManager::NoError);
+
+    //fetch the saved contact and check preferred details
+    QContact fetched2 = m_engine->contact(c2.localId(), hint, &err);
+    QVERIFY(err == QContactManager::NoError);
+
+    QContactDetail callDetail4 = fetched2.preferredDetail("call");
+    QVERIFY(callDetail4.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber4 = static_cast<QContactPhoneNumber>(callDetail4);
+    QVERIFY(fetchedNumber4.number() == "123");
+
+    QContactDetail callDetail5 = fetched2.preferredDetail("videocall");
+    QVERIFY(callDetail5.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber5 = static_cast<QContactPhoneNumber>(callDetail5);
+    QVERIFY(fetchedNumber5.number() == "123");
+
+    QContactDetail callDetail6 = fetched2.preferredDetail("message");
+    QVERIFY(callDetail6.definitionName() == QContactPhoneNumber::DefinitionName);
+    QContactPhoneNumber fetchedNumber6 = static_cast<QContactPhoneNumber>(callDetail6);
+    QVERIFY(fetchedNumber6.number() == "123");
 }
 
 void TestSymbianEngine::saveContacts()
@@ -403,6 +493,94 @@ void TestSymbianEngine::retrieveContacts()
     QContactFilter filter;
     contactList = m_engine->contacts(filter, sortOrders, hint, &err);
     QVERIFY(err == QContactManager::NoError);
+}
+
+void TestSymbianEngine::retrieveName()
+{
+    QContactManager::Error err;
+    QContactFetchHint hint = QContactFetchHint();
+    QStringList hints;
+    hints << QContactDisplayLabel::DefinitionName;
+    hint.setDetailDefinitionsHint(hints);
+
+    QContact alice;
+    alice.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("Alice");
+    name.setLastName("Wonders");
+    alice.saveDetail(&name);
+    QVERIFY(m_engine->saveContact(&alice, &err));
+    QVERIFY(err == QContactManager::NoError);
+
+    // Retrieve name of "non contact"
+    QContact c = m_engine->contact(0, hint, &err);
+    QVERIFY(&c != NULL);
+    QVERIFY(c.localId() == 0);
+    QVERIFY(err == QContactManager::DoesNotExistError);
+
+    // Retrieve name of valid existing contact
+    QContactLocalId aid = alice.localId();
+    c = m_engine->contact(aid, hint, &err);
+    QVERIFY(&c != NULL);
+    QVERIFY(c.localId() == aid);
+    QVERIFY(c.displayLabel() == alice.displayLabel());
+    QVERIFY(err == QContactManager::NoError);
+}
+
+void TestSymbianEngine::retrieveNames()
+{
+    QContactManager::Error err;
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactType::DefinitionName);
+    filter.setValue(QContactType::TypeContact);
+
+    QList<QContactSortOrder> sortOrders;
+
+    QContactFetchHint hint = QContactFetchHint();
+    QStringList hints;
+    hints << QContactDisplayLabel::DefinitionName;
+    hint.setDetailDefinitionsHint(hints);
+
+    QContact alice;
+    alice.setType(QContactType::TypeContact);
+    QContactName name;
+    name.setFirstName("Alice");
+    name.setLastName("Wonders");
+    alice.saveDetail(&name);
+    QVERIFY(m_engine->saveContact(&alice, &err));
+    QVERIFY(err == QContactManager::NoError);
+
+    QContact charlie;
+    charlie.setType(QContactType::TypeContact);
+    name.setFirstName("Charlie");
+    name.setLastName("Choco");
+    charlie.saveDetail(&name);
+    QVERIFY(m_engine->saveContact(&charlie, &err));
+    QVERIFY(err == QContactManager::NoError);
+
+    int numContacts = m_engine->contactIds(filter, sortOrders, &err).count();
+
+    // Retrieve names
+    QList<QContact> contacts = m_engine->contacts(filter, sortOrders, hint, &err);
+    QVERIFY(contacts.count() == numContacts);
+
+    int verifiedContacts = 0;
+    foreach (QContact contact, contacts) {
+        if (contact.localId() == alice.localId()) {
+            TInt contactId = contact.localId();
+            TInt aliceId = alice.localId();
+            QString contactName = contact.displayLabel();
+            QString aliceName = alice.displayLabel();
+            QVERIFY(contact.displayLabel() == alice.displayLabel());  
+            ++verifiedContacts;
+        }
+        if (contact.localId() == charlie.localId()) {
+            QVERIFY(contact.displayLabel() == charlie.displayLabel());
+            ++verifiedContacts;
+        }
+    }
+
+    QVERIFY(verifiedContacts == 2);
 }
 
 void TestSymbianEngine::updateContact()
@@ -835,7 +1013,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContact empty;
     QString label = m_engine->synthesizedDisplayLabel(empty, &err);
     QVERIFY(err == QContactManager::NoError);
-    QVERIFY(label == QString("Unnamed"));
+    QVERIFY(label == QString(""));
 
     QContact first;
     QContactName fn;

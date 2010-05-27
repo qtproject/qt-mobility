@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -119,6 +119,7 @@ void SymbianPluginPerfomance::createComplexContacts()
         number.setSubTypes("Mobile");
         number.setNumber("12345678");
         alice.saveDetail(&number);
+        alice.setPreferredDetail("DialAction", number);
 
         QContactPhoneNumber number2;
         number2.setContexts("Work");
@@ -211,6 +212,17 @@ void SymbianPluginPerfomance::sortContacts()
             "Sorting with last name, first name sort order with",
             QContactInvalidFilter(),
             sortOrders);
+}
+
+void SymbianPluginPerfomance::fetchAllNames()
+{
+    QContactDetailFilter filter;
+    filter.setDetailDefinitionName(QContactType::DefinitionName);
+    filter.setValue(QContactType::TypeContact);
+    
+    measureNamesFetch(
+            "Fetching the names of all contacts with",
+            filter);
 }
 
 void SymbianPluginPerfomance::filterContacts()
@@ -399,6 +411,35 @@ int SymbianPluginPerfomance::measureContactsFetch(
     return cnt_ids.count();
 }
 
+int SymbianPluginPerfomance::measureNamesFetch(
+        QString debugMessage,
+        const QContactFilter &filter,
+        const QList<QContactSortOrder>& sortOrders)
+{
+    QList<QContact> contacts;
+    TInt before, after;
+    
+    QStringList definitionRestrictions;
+    definitionRestrictions.append(QContactDisplayLabel::DefinitionName);
+    QContactFetchHint fh;
+    fh.setDetailDefinitionsHint(definitionRestrictions);
+
+    User::AllocSize(before);
+    mTime.restart();
+
+    contacts = mCntMng->contacts(filter, sortOrders, fh);
+
+    int elapsed = mTime.elapsed();
+    User::AllocSize(after);
+
+    qDebug() << debugMessage
+             << mCntMng->contactIds().count() << "contacts, gave" << contacts.count() << "contact names."
+             << "Time taken:" << elapsed / 1000 << "s" << elapsed % 1000 << "ms"
+             << "Memory used:" << (after - before) / 1024 << "KB";
+
+    return contacts.count();
+}
+
 void SymbianPluginPerfomance::createComplexContactsWithOnlineAccount()
 {
     QList<QContact> contactsList;
@@ -416,6 +457,7 @@ void SymbianPluginPerfomance::createComplexContactsWithOnlineAccount()
         number.setSubTypes("Mobile");
         number.setNumber("12345678");
         alice.saveDetail(&number);
+        alice.setPreferredDetail("DialAction", number);
         QContactPhoneNumber number2;
         number2.setContexts("Work");
         number2.setSubTypes("Landline");

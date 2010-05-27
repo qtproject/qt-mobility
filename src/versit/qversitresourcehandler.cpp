@@ -41,7 +41,6 @@
 
 #include "qversitresourcehandler.h"
 #include "qversitproperty.h"
-#include "qversitdefaultresourcehandler_p.h"
 #include "qversitdefs_p.h"
 #include <QFile>
 
@@ -93,6 +92,14 @@ QTM_USE_NAMESPACE
  
   \sa QVersitContactImporter, QVersitContactExporter, QVersitResourceHandler
  */
+
+
+QTM_BEGIN_NAMESPACE
+class QVersitDefaultResourceHandlerPrivate {
+public:
+    QMap<QString,QString> mFileExtensionMapping;
+};
+QTM_END_NAMESPACE
 
 /*!
   Constructs a QVersitDefaultResourceHandler.

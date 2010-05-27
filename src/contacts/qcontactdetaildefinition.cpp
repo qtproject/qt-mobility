@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -157,5 +157,6 @@ void QContactDetailDefinition::removeField(const QString& key)
 {
     d->m_fields.remove(key);
 }
+
 
 QTM_END_NAMESPACE

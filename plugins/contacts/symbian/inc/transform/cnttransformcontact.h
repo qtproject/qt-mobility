@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -67,7 +67,7 @@ public:
 	virtual ~CntTransformContact();
 
 public:
-	QContact transformContactL(CContactItem &contact, const QStringList& definitionRestrictions = QStringList()) const;
+	QContact transformContactL(CContactItem &contact);
 	void transformPostSaveDetailsL(
 	        const CContactItem& contactItem,
 	        QContact& contact,
@@ -77,6 +77,7 @@ public:
 	        QContact &contact,
 	        CContactItem &contactItem) const;
 	QList<TUid> supportedSortingFieldTypes( QString detailDefinitionName, QString detailFieldName );
+	QList<TUid> itemFieldUidsL(const QString detailDefinitionName) const;
     TUint32 GetIdForDetailL(const QContactDetailFilter& detailFilter,bool& isSubtype) const;
     void detailDefinitions(QMap<QString, QContactDetailDefinition>& defaultSchema, const QString& contactType, QContactManager::Error* error) const;
     QContactDetail *transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const;
@@ -91,6 +92,7 @@ private:
 		Address,
 		URL,
 		OnlineAccount,
+		Presence,
 		Birthday,
 		Organisation,
 		Avatar,
@@ -107,10 +109,15 @@ private:
 
 	void initializeCntTransformContactData();
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail) const;
-	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact) const;
+	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
+	void transformPreferredDetailL(const QContact& contact, const QContactDetail& detail, QList<CContactItemField*> &fieldList) const;
+	void transformPreferredDetail(const CContactItemField& field, const QContactDetail& detail, QContact& contact) const;
+	void resetTransformObjects() const;
+	
 
 private:
 	QMap<ContactData, CntTransformContactData*> m_transformContactData;
+	QHash<TUint32, CntTransformContactData*> m_fieldTypeToTransformContact;
 	CTzConverter* m_tzConverter;
 	RTz m_tzoneServer;
 };

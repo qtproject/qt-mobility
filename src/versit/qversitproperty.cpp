@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -162,7 +162,6 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     QStringList groups = property.groups();
     QString name = property.name();
     QMultiHash<QString,QString> parameters = property.parameters();
-    QString value = property.value();
     dbg.nospace() << "QVersitProperty(";
     foreach (const QString& group, groups) {
         dbg.nospace() << group << '.';
@@ -172,7 +171,7 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     for (it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
         dbg.nospace() << ';' << it.key() << '=' << it.value();
     }
-    dbg.nospace() << ':' << value;
+    dbg.nospace() << ':' << property.variantValue();
     dbg.nospace() << ')';
     return dbg.maybeSpace();
 }
@@ -240,7 +239,7 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
  */
 void QVersitProperty::insertParameter(const QString& name, const QString& value)
 {
-    d->mParameters.insert(name.toUpper(), value.toUpper());
+    d->mParameters.insert(name.toUpper(), value);
 }
 
 /*!
@@ -250,7 +249,7 @@ void QVersitProperty::insertParameter(const QString& name, const QString& value)
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
-    d->mParameters.remove(name.toUpper(), value.toUpper());
+    d->mParameters.remove(name.toUpper(), value);
 }
 
 /*!

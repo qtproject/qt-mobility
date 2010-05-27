@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,6 +59,9 @@ public:
     QContactRemoveRequest(QObject* parent = 0);
 
     /* Selection */
+    void Q_DECL_DEPRECATED setFilter(const QContactFilter& filter); // deprecated, replaced by explicit list of contacts to remove
+    QContactFilter Q_DECL_DEPRECATED filter() const;                // deprecated, replaced by explicit list of contacts to remove
+
     void setContactId(const QContactLocalId& contactId);
     void setContactIds(const QList<QContactLocalId>& contactIds);
     QList<QContactLocalId> contactIds() const;

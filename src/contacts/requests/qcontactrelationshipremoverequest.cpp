@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,6 +65,81 @@ QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* pa
 }
 
 /*!
+  \deprecated
+   Sets the first contact criterion of the remove request to \a firstId.
+   If \a firstId is the default-constructed id, or the first contact is not set,
+   the request will remove relationships involving any first contact.
+
+   This function is obsolete; set the list of relationships to remove by calling setRelationships() instead.
+ */
+void QContactRelationshipRemoveRequest::setFirst(const QContactId& firstId)
+{
+    Q_D(QContactRelationshipRemoveRequest);
+    d->m_first = firstId;
+}
+
+/*!
+  \deprecated
+  Returns the first contact criterion of the remove request.
+  This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
+ */
+QContactId QContactRelationshipRemoveRequest::first() const
+{
+    Q_D(const QContactRelationshipRemoveRequest);
+    return d->m_first;
+}
+
+/*!
+  \deprecated
+   Sets the relationship type criterion of the remove request to \a relationshipType.
+   If \a relationshipType is empty, or the relationship type is not set,
+   the request will remove relationships of any type.
+
+   This function is obsolete; set the list of relationships to remove by calling setRelationships() instead.
+ */
+void QContactRelationshipRemoveRequest::setRelationshipType(const QString& relationshipType)
+{
+    Q_D(QContactRelationshipRemoveRequest);
+    d->m_relationshipType = relationshipType;
+}
+
+/*!
+  \deprecated
+  Returns the relationship type criterion of the fetch request.
+  This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
+ */
+QString QContactRelationshipRemoveRequest::relationshipType() const
+{
+    Q_D(const QContactRelationshipRemoveRequest);
+    return d->m_relationshipType;
+}
+
+/*!
+  \deprecated
+  Sets the second contact criterion of the remove request to \a secondId.
+  If \a secondId is the default-constructed id, or the second contact is not set,
+  the request will remove relationships involving any second contact.
+
+   This function is obsolete; set the list of relationships to remove by calling setRelationships() instead.
+ */
+void QContactRelationshipRemoveRequest::setSecond(const QContactId& secondId)
+{
+    Q_D(QContactRelationshipRemoveRequest);
+    d->m_second = secondId;
+}
+
+/*!
+  \deprecated
+  Returns the second contact criterion of the remove request.
+  This function is obsolete; retrieve the lists of relationships that will be removed by calling relationships() instead.
+ */
+QContactId QContactRelationshipRemoveRequest::second() const
+{
+    Q_D(const QContactRelationshipRemoveRequest);
+    return d->m_second;
+}
+
+/*!
   Sets the relationship which will be removed to \a relationship.
   Equivalent to calling:
   \code
@@ -74,6 +149,7 @@ QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* pa
 void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationship& relationship)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships.clear();
     d->m_relationships.append(relationship);
 }
@@ -82,6 +158,7 @@ void QContactRelationshipRemoveRequest::setRelationship(const QContactRelationsh
 void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRelationship>& relationships)
 {
     Q_D(QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_relationships = relationships;
 }
 
@@ -89,6 +166,7 @@ void QContactRelationshipRemoveRequest::setRelationships(const QList<QContactRel
 QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_relationships;
 }
 
@@ -96,6 +174,7 @@ QList<QContactRelationship> QContactRelationshipRemoveRequest::relationships() c
 QMap<int, QContactManager::Error> QContactRelationshipRemoveRequest::errorMap() const
 {
     Q_D(const QContactRelationshipRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

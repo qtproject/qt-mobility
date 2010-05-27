@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -479,6 +479,28 @@ QDebug operator<<(QDebug dbg, const QContactDetail& detail)
     return dbg.maybeSpace();
 }
 #endif
+
+/*!
+ * \deprecated
+ * Sets the preferred actions for this detail to be the given list of \a preferredActions.
+ * This functionality may not be supported on all backends.
+ * This function is deprecated and will be removed after the transition period has elapsed.
+ */
+void QContactDetail::setPreferredActions(const QList<QContactActionDescriptor>& preferredActions)
+{
+    d->m_preferredActions = preferredActions;
+}
+
+/*!
+ * \deprecated
+ * Returns the list of preferred actions for this detail.
+ * This functionality may not be supported on all backends.
+ * This function is deprecated and will be removed after the transition period has elapsed.
+ */
+QList<QContactActionDescriptor> QContactDetail::preferredActions() const
+{
+    return d->m_preferredActions;
+}
 
 /*!
     Returns true if no values are contained in this detail.  Note that context is stored as a value; hence, if a context is set, this function will return false.

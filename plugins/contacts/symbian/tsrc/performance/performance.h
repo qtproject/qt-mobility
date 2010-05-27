@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,6 +61,7 @@ private slots:  // Test cases
     void removeSimpleContacts();
     void createComplexContacts();
     void sortContacts();
+    void fetchAllNames();
     void filterContacts();
     void filterUnions();
     void filterNameListStyle();
@@ -85,6 +86,10 @@ private slots:  // Test cases
     void removeComplextContactsWithOnlineAccount();   
 private:
     int measureContactsFetch(
+            QString debugMessage,
+            const QContactFilter &filter,
+            const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>());
+    int measureNamesFetch(
             QString debugMessage,
             const QContactFilter &filter,
             const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>());

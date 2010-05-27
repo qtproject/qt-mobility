@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,6 +52,7 @@
 #define STRING_r_cntui_new_field_defns12 "Video ringtone" 
 #define STRING_r_cntui_new_field_defns13 "Sync target" 
 #define STRING_r_cntui_new_field_defns14 "Gender" 
+#define STRING_r_cntui_new_field_defns15 "Anniversary event"
 
 //d:Label text for "first name" memory entry item
 //l:list_single_graphic_pane_t1_cp2

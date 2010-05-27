@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,6 +65,15 @@ public:
 
     void setDataChanged(bool dataChanged);
     bool dataChanged();
+
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & addedContacts();
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & changedContacts();
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & removedContacts();
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & addedRelationshipsContacts();
+    QSet<QContactLocalId> Q_DECL_DEPRECATED & removedRelationshipsContacts();
+    QPair<QContactLocalId, QContactLocalId> Q_DECL_DEPRECATED & oldAndNewSelfContactId();
+
+    void Q_DECL_DEPRECATED clear();
 
     QSet<QContactLocalId> addedContacts() const;
     void insertAddedContact(QContactLocalId addedContactId);

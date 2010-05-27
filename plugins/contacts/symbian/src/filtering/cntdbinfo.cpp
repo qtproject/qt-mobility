@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,46 +40,45 @@
 ****************************************************************************/
 #include <cntdef.h>
 #include "cntdbinfo.h"
-#include "cntmodelextuids.h"
 #include "cntfilterdetail.h"
-#include "cnttransformcontact.h"
 
 
-CntDbInfo::CntDbInfo()       
+CntDbInfo::CntDbInfo(QContactManagerEngine* engine):
+    m_engine(engine)
 {
+    QString id("%1.%2");
+    contactsTableIdColumNameMapping.insert(id.arg(QContactName::DefinitionName, QContactName::FieldFirstName), "first_name");
+    contactsTableIdColumNameMapping.insert(id.arg(QContactName::DefinitionName, QContactName::FieldLastName), "last_name");
+    contactsTableIdColumNameMapping.insert(id.arg(QContactOrganization::DefinitionName, QContactOrganization::FieldName), "company_name");
+    contactsTableIdColumNameMapping.insert(id.arg(QContactName::DefinitionName, QContactName::FieldCustomLabel), "text_fields");
 
-    contactsTableIdColumNameMapping.insert(KUidContactFieldGivenName.iUid,"first_name" );
-    contactsTableIdColumNameMapping.insert(KUidContactFieldGivenNamePronunciation.iUid,"firstname_prn" );
-    contactsTableIdColumNameMapping.insert(KUidContactFieldFamilyName.iUid,"last_name" );
-    contactsTableIdColumNameMapping.insert(KUidContactFieldFamilyNamePronunciation.iUid,"lastname_prn" );
-    contactsTableIdColumNameMapping.insert(KUidContactFieldCompanyName.iUid,"company_name" );
-    contactsTableIdColumNameMapping.insert(KUidContactFieldCompanyNamePronunciation.iUid,"companyname_prn" );
-    
-    commAddrTableIdColumNameMapping.insert(KUidContactFieldSIPID.iUid,ESipAddress );
-    commAddrTableIdColumNameMapping.insert(KUidContactFieldVCardMapVOIP.iUid,ESipAddress );
-    commAddrTableIdColumNameMapping.insert(KUidContactFieldVCardMapSWIS.iUid,ESipAddress );
-    commAddrTableIdColumNameMapping.insert(KUidContactFieldIMPP.iUid,ESipAddress );
-    commAddrTableIdColumNameMapping.insert(KUidContactFieldEMail.iUid,EEmailAddress );
-    commAddrTableIdColumNameMapping.insert(KUidContactFieldPhoneNumber.iUid,EPhoneNumber );
+    commAddrTableIdColumNameMapping.insert(id.arg(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldSubTypes), QPair<int,bool>(ESipAddress,true));
+    commAddrTableIdColumNameMapping.insert(id.arg(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress), QPair<int,bool>(EEmailAddress,false));
+    commAddrTableIdColumNameMapping.insert(id.arg(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes), QPair<int,bool>(EPhoneNumber,true));
 }
 
 CntDbInfo::~CntDbInfo()
 {
-
     contactsTableIdColumNameMapping.clear();
     commAddrTableIdColumNameMapping.clear();
 }
 
-bool CntDbInfo::SupportsUid(int uid)
-    {
-    if(contactsTableIdColumNameMapping.contains(uid) )
+QContactManagerEngine* CntDbInfo::engine()
+{
+    return m_engine;
+}
+
+bool CntDbInfo::SupportsDetail(QString definitionName, QString fieldName)
+{
+    QString fieldId = QString("%1.%2").arg(definitionName, fieldName);
+    if (contactsTableIdColumNameMapping.contains(fieldId))
         return true;
-    else if (commAddrTableIdColumNameMapping.contains(uid))
+    else if (commAddrTableIdColumNameMapping.contains(fieldId))
         return true;
     else
         return false;
-    
-    }
+}
+
 /*!
  * Converts filed id to column name of the database table.
  * QContactManager::contacts function.
@@ -87,35 +86,37 @@ bool CntDbInfo::SupportsUid(int uid)
  * \a fieldId field id representing the detail field name
  * \a sqlDbTableColumnName On return,contains the column name in the database
  */
-void CntDbInfo::getDbTableAndColumnName( const quint32 fieldId ,
-                                                  QString& tableName,
-                                                  QString& columnName ) const
+void CntDbInfo::getDbTableAndColumnName( const QString definitionName,
+                                         const QString fieldName,
+                                         QString& tableName,
+                                         QString& columnName,
+                                         bool& isSubType) const
 {
-    //Uncomment later
-    
-
     //check contacts table
+    QString fieldId = definitionName + "." + fieldName;
+
     columnName = "";
     tableName = "";
+    isSubType = false;
 
     if (contactsTableIdColumNameMapping.contains(fieldId)){
          columnName = contactsTableIdColumNameMapping.value(fieldId);
          tableName = "contact";
      }
 
-    if( (columnName.isEmpty())  || (tableName.isEmpty())){
+    if (columnName.isEmpty() || tableName.isEmpty()) {
         //Search comm Addr table
-        if (commAddrTableIdColumNameMapping.contains(fieldId)){
-                // communication address table has slightly differnt format, so we make the column name as
-                //  "type = <type> and value "
-                int typeval = commAddrTableIdColumNameMapping.value(fieldId) ;
-                columnName =  QString(" TYPE = %1").arg(typeval);
-                columnName += " and value " ;
-                tableName = "comm_addr";
-             }
-
+        if (commAddrTableIdColumNameMapping.contains(fieldId)) {
+            // communication address table has slightly differnt format, so we make the column name as
+            //  "type = <type> and value "
+            QPair<int,bool> val = commAddrTableIdColumNameMapping.value(fieldId);
+            int typeval = val.first;
+            isSubType = val.second;
+            columnName =  QString(" TYPE = %1").arg(typeval);
+            columnName += " and value " ;
+            tableName = "comm_addr";
+        }
     }
-
 }
 
 QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
@@ -130,65 +131,52 @@ QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
         QList<QString> list;
         foreach(const QContactSortOrder& s, sortOrders )
             {
-            // Find uids for sortings
-            // Get the field id for the detail field name
-            bool isSubType;
             QString tableName;
             QString columnName;
-            CntTransformContact transformContact;
-            QContactDetailFilter filter;
-            
+            bool isSubType;
+
             // Get column names for sort order
-            filter.setDetailDefinitionName(s.detailDefinitionName(), s.detailFieldName());
-            quint32 fieldId  = transformContact.GetIdForDetailL(filter, isSubType);
-            getDbTableAndColumnName(fieldId,tableName,columnName);
+            getDbTableAndColumnName(s.detailDefinitionName(), s.detailFieldName(), tableName, columnName, isSubType);
             
-            if (tableName.compare("contact") != 0
-                || columnName.isEmpty())
-                {
+            if (tableName.compare("contact") != 0 || columnName.isEmpty()) {
                 // Skip invalid sort clause
                 continue;
-                }
-            else
-                {
-                if( s.direction() == Qt::DescendingOrder )
-                    {
+            }
+            else {
+                if (s.direction() == Qt::DescendingOrder) {
                     QString col;
-                    if(s.caseSensitivity() == Qt::CaseInsensitive)
-                        col= ' ' + columnName + ' ' + "COLLATE NOCASE DESC";
+                    if (s.caseSensitivity() == Qt::CaseInsensitive)
+                        col = ' ' + columnName + ' ' + "COLLATE NOCASE DESC";
                     else
-                        col= ' ' + columnName + ' ' + "DESC";
+                        col = ' ' + columnName + ' ' + "DESC";
                     list.append(col);
-                    }
-                else
-                    {
+                }
+                else {
                     // Default sort order
                     QString col;
                     if(s.caseSensitivity() == Qt::CaseInsensitive)
-                        col= ' ' + columnName + ' ' + "COLLATE NOCASE ASC";
+                        col= ' ' + columnName + ' ' + "COLLATE CompareC3";
                     else
                         col= ' ' + columnName + ' ' + "ASC";
                     list.append(col);
-                    }
                 }
             }
+        }
         
-        if(list.count() > 0)
-            {
+        if (list.count() > 0) {
             // Recreate query
             // SELECT DISTINCT contact_id FROM contact WHERE contact_id in (
             //      SELECT ..
             // )  ORDER BY  <field> <order>
             sortQuery = " SELECT DISTINCT contact_id FROM contact WHERE contact_id in (";
             QString clause = " ORDER BY " + list.at(0);
-            for (int i = 1; i < list.size(); ++i)
-                {
+            for (int i = 1; i < list.size(); ++i) {
                 clause += " ," + list.at(i);
-                }
+            }
             sortQuery += selectQuery + ')';
             sortQuery += clause;
-            }
         }
+    }
     
     return sortQuery;
 }

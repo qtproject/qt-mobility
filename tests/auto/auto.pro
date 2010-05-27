@@ -68,6 +68,7 @@ contains(mobility_modules,systeminfo) {
 contains(mobility_modules,contacts) {
     #Contacts
     SUBDIRS +=  qcontact \
+            qcontactactions \
             qcontactasync \
             qcontactdetail \
             qcontactdetaildefinition \

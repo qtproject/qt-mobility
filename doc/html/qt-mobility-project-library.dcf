@@ -270,8 +270,16 @@
         <keyword ref="qcontactavatar.html#setVideoUrl">setVideoUrl</keyword>
         <keyword ref="qcontactavatar.html#videoUrl">videoUrl</keyword>
         <keyword ref="qcontactavatar.html#DefinitionName-var">DefinitionName</keyword>
+        <keyword ref="qcontactavatar.html#FieldAvatar-var">FieldAvatar</keyword>
+        <keyword ref="qcontactavatar.html#FieldAvatarPixmap-var">FieldAvatarPixmap</keyword>
         <keyword ref="qcontactavatar.html#FieldImageUrl-var">FieldImageUrl</keyword>
+        <keyword ref="qcontactavatar.html#FieldSubType-var">FieldSubType</keyword>
         <keyword ref="qcontactavatar.html#FieldVideoUrl-var">FieldVideoUrl</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeAudioRingtone-var">SubTypeAudioRingtone</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeImage-var">SubTypeImage</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeTexturedMesh-var">SubTypeTexturedMesh</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeVideo-var">SubTypeVideo</keyword>
+        <keyword ref="qcontactavatar.html#SubTypeVideoRingtone-var">SubTypeVideoRingtone</keyword>
         <section ref="qcontactavatar-members.html" title="List of all members"/>
     </section>
     <section ref="qcontactbirthday.html" title="QContactBirthday Class Reference">
@@ -833,8 +841,11 @@
         <keyword ref="qcontactname.html#suffix">suffix</keyword>
         <keyword ref="qcontactname.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactname.html#FieldCustomLabel-var">FieldCustomLabel</keyword>
+        <keyword ref="qcontactname.html#FieldFirst-var">FieldFirst</keyword>
         <keyword ref="qcontactname.html#FieldFirstName-var">FieldFirstName</keyword>
+        <keyword ref="qcontactname.html#FieldLast-var">FieldLast</keyword>
         <keyword ref="qcontactname.html#FieldLastName-var">FieldLastName</keyword>
+        <keyword ref="qcontactname.html#FieldMiddle-var">FieldMiddle</keyword>
         <keyword ref="qcontactname.html#FieldMiddleName-var">FieldMiddleName</keyword>
         <keyword ref="qcontactname.html#FieldPrefix-var">FieldPrefix</keyword>
         <keyword ref="qcontactname.html#FieldSuffix-var">FieldSuffix</keyword>
@@ -869,8 +880,18 @@
         <keyword ref="qcontactonlineaccount.html#DefinitionName-var">DefinitionName</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldAccountUri-var">FieldAccountUri</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldCapabilities-var">FieldCapabilities</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldNickname-var">FieldNickname</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldPresence-var">FieldPresence</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldServiceProvider-var">FieldServiceProvider</keyword>
+        <keyword ref="qcontactonlineaccount.html#FieldStatusMessage-var">FieldStatusMessage</keyword>
         <keyword ref="qcontactonlineaccount.html#FieldSubTypes-var">FieldSubTypes</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceAvailable-var">PresenceAvailable</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceAway-var">PresenceAway</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceBusy-var">PresenceBusy</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceExtendedAway-var">PresenceExtendedAway</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceHidden-var">PresenceHidden</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceOffline-var">PresenceOffline</keyword>
+        <keyword ref="qcontactonlineaccount.html#PresenceUnknown-var">PresenceUnknown</keyword>
         <keyword ref="qcontactonlineaccount.html#SubTypeImpp-var">SubTypeImpp</keyword>
         <keyword ref="qcontactonlineaccount.html#SubTypeSip-var">SubTypeSip</keyword>
         <keyword ref="qcontactonlineaccount.html#SubTypeSipVoip-var">SubTypeSipVoip</keyword>
@@ -882,12 +903,14 @@
         <keyword ref="qcontactorganization.html#assistantName">assistantName</keyword>
         <keyword ref="qcontactorganization.html#department">department</keyword>
         <keyword ref="qcontactorganization.html#location">location</keyword>
+        <keyword ref="qcontactorganization.html#logo">logo</keyword>
         <keyword ref="qcontactorganization.html#logoUrl">logoUrl</keyword>
         <keyword ref="qcontactorganization.html#name">name</keyword>
         <keyword ref="qcontactorganization.html#role">role</keyword>
         <keyword ref="qcontactorganization.html#setAssistantName">setAssistantName</keyword>
         <keyword ref="qcontactorganization.html#setDepartment">setDepartment</keyword>
         <keyword ref="qcontactorganization.html#setLocation">setLocation</keyword>
+        <keyword ref="qcontactorganization.html#setLogo">setLogo</keyword>
         <keyword ref="qcontactorganization.html#setLogoUrl">setLogoUrl</keyword>
         <keyword ref="qcontactorganization.html#setName">setName</keyword>
         <keyword ref="qcontactorganization.html#setRole">setRole</keyword>
@@ -897,6 +920,7 @@
         <keyword ref="qcontactorganization.html#FieldAssistantName-var">FieldAssistantName</keyword>
         <keyword ref="qcontactorganization.html#FieldDepartment-var">FieldDepartment</keyword>
         <keyword ref="qcontactorganization.html#FieldLocation-var">FieldLocation</keyword>
+        <keyword ref="qcontactorganization.html#FieldLogo-var">FieldLogo</keyword>
         <keyword ref="qcontactorganization.html#FieldLogoUrl-var">FieldLogoUrl</keyword>
         <keyword ref="qcontactorganization.html#FieldName-var">FieldName</keyword>
         <keyword ref="qcontactorganization.html#FieldRole-var">FieldRole</keyword>
@@ -917,6 +941,7 @@
         <keyword ref="qcontactphonenumber.html#SubTypeBulletinBoardSystem-var">SubTypeBulletinBoardSystem</keyword>
         <keyword ref="qcontactphonenumber.html#SubTypeCar-var">SubTypeCar</keyword>
         <keyword ref="qcontactphonenumber.html#SubTypeDtmfMenu-var">SubTypeDtmfMenu</keyword>
+        <keyword ref="qcontactphonenumber.html#SubTypeFacsimile-var">SubTypeFacsimile</keyword>
         <keyword ref="qcontactphonenumber.html#SubTypeFax-var">SubTypeFax</keyword>
         <keyword ref="qcontactphonenumber.html#SubTypeLandline-var">SubTypeLandline</keyword>
         <keyword ref="qcontactphonenumber.html#SubTypeMessagingCapable-var">SubTypeMessagingCapable</keyword>
@@ -978,6 +1003,7 @@
         <keyword ref="qcontactrelationship.html#HasManager-var">HasManager</keyword>
         <keyword ref="qcontactrelationship.html#HasMember-var">HasMember</keyword>
         <keyword ref="qcontactrelationship.html#HasSpouse-var">HasSpouse</keyword>
+        <keyword ref="qcontactrelationship.html#Is-var">Is</keyword>
         <keyword ref="qcontactrelationship.html#IsSameAs-var">IsSameAs</keyword>
         <section ref="qcontactrelationship-members.html" title="List of all members"/>
     </section>
@@ -994,6 +1020,10 @@
     </section>
     <section ref="qcontactrelationshipfilter.html" title="QContactRelationshipFilter Class Reference">
         <keyword ref="qcontactrelationshipfilter.html">QContactRelationshipFilter</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#Role-enum">Role</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Second</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::Either</keyword>
+        <keyword ref="qcontactrelationshipfilter.html#Role-enum">QContactRelationshipFilter::First</keyword>
         <keyword ref="qcontactrelationshipfilter.html#relatedContactId">relatedContactId</keyword>
         <keyword ref="qcontactrelationshipfilter.html#relatedContactRole">relatedContactRole</keyword>
         <keyword ref="qcontactrelationshipfilter.html#relationshipType">relationshipType</keyword>
@@ -3335,6 +3365,9 @@
     </section>
     <section ref="bearer.html" title="Qt Bearer Management API">
         <keyword ref="bearer.html">Qt Bearer Management API</keyword>
+    </section>
+    <section ref="contactsengines.html" title="Qt Contacts Manager Engines">
+        <keyword ref="contactsengines.html">Qt Contacts Manager Engines</keyword>
     </section>
     <section ref="contactsschema.html" title="Qt Contacts Schema">
         <keyword ref="contactsschema.html">Qt Contacts Schema</keyword>

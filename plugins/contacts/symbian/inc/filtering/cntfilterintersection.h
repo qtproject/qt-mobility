@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -68,6 +68,9 @@ public:
     void createSelectQuery(const QContactFilter& filter,
                                  QString& selectquery,
                                  QContactManager::Error* error);
+#ifdef PBK_UNIT_TEST
+    void emulateBestMatching();
+#endif //PBK_UNIT_TEST
 
 private:
     void getSelectQueryforFilter(const QContactFilter& filter,QString& sqlSelectQuery,QContactManager::Error* error);
@@ -76,6 +79,7 @@ protected:
     CContactDatabase& m_contactdatabase;
     CntSymbianSrvConnection &m_srvConnection;
     CntDbInfo& m_dbInfo;
+    bool m_emulateBestMatching; //PBK_UNIT_TEST
 };
 
 #endif /* CNTFILTERINTERSECTION_H_ */

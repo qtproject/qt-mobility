@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,6 +44,13 @@
 #include "cntmodelextuids.h"
 #include "qcontactpresence.h"
 
+const int KMaxDetailCounterLength = 16;
+
+CntTransformOnlineAccount::CntTransformOnlineAccount() :
+m_detailCounter(0)
+{
+}
+
 QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QContactDetail &detail)
 {
     if(detail.definitionName() != QContactOnlineAccount::DefinitionName)
@@ -60,6 +67,9 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	//create new field
 	TPtrC fieldText(reinterpret_cast<const TUint16*>(onlineAccount.accountUri().utf16()));
 	if(fieldText.Length()) {
+        HBufC* detailCount = HBufC::NewLC(KMaxDetailCounterLength);
+        detailCount->Des().AppendNum(m_detailCounter);
+	
 	    CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText);
 	    newField->TextStorage()->SetTextL(fieldText);
 
@@ -108,51 +118,52 @@ QList<CContactItemField *> CntTransformOnlineAccount::transformDetailL(const QCo
 	    //contexts
 	    setContextsL(onlineAccount, *newField);
 
+	    newField->SetLabelL(*detailCount);
 	    fieldList.append(newField);
 	    CleanupStack::Pop(newField);
 	    
         // Transform Service Provider Text
 	    TPtrC ServiceProviderText(reinterpret_cast<const TUint16*>(onlineAccount.serviceProvider().utf16()));
-	         if(ServiceProviderText.Length()) {
-	             CContactItemField* serviceProviderField = CContactItemField::NewLC(KStorageTypeText);
-	             serviceProviderField->TextStorage()->SetTextL(ServiceProviderText);
-	             serviceProviderField->AddFieldTypeL(KUidContactFieldServiceProvider);
-	             fieldList.append(serviceProviderField);
-	             CleanupStack::Pop(serviceProviderField);
-	         }
-	         
-                 //FIXME:no presence in onlineaccount anymore..
-//	     // Transform presence informaiton
-//        TPtrC presenceText(reinterpret_cast<const TUint16*>(onlineAccount.presence().utf16()));
-//            if(presenceText.Length()) {
-//                QString presence = QString::number(encodePresence(onlineAccount.presence()));
-//                CContactItemField* presenceField = CContactItemField::NewLC(KStorageTypeText);
-//                TPtrC presenceEncodedText(reinterpret_cast<const TUint16*>(presence.utf16()));
-//                presenceField->TextStorage()->SetTextL(presenceEncodedText);
-//                presenceField->AddFieldTypeL(KUidContactFieldPresence);
-//                fieldList.append(presenceField);
-//                CleanupStack::Pop(presenceField);
-//            }
-	         
-//	     // Transform statusMessage
-//	     TPtrC statusMsgText(reinterpret_cast<const TUint16*>(onlineAccount.statusMessage().utf16()));
-//	         if(statusMsgText.Length()) {
-//	             CContactItemField* statusMsgField = CContactItemField::NewLC(KStorageTypeText);
-//	             statusMsgField->TextStorage()->SetTextL(statusMsgText);
-//	             statusMsgField->AddFieldTypeL(KUidContactFieldStatusMsg);
-//	             fieldList.append(statusMsgField);
-//	             CleanupStack::Pop(statusMsgField);
-//	         }
+	    if(ServiceProviderText.Length()) {
+            CContactItemField* serviceProviderField = CContactItemField::NewLC(KStorageTypeText);
+	        serviceProviderField->TextStorage()->SetTextL(ServiceProviderText);
+	        serviceProviderField->AddFieldTypeL(KUidContactFieldServiceProvider);
+	        serviceProviderField->SetLabelL(*detailCount);
+	        fieldList.append(serviceProviderField);
+	        CleanupStack::Pop(serviceProviderField);
+	    }
+	    CleanupStack::PopAndDestroy(detailCount);
 	}
 
+	if(fieldList.count() > 0) {
+        m_detailCounter++;
+	}
+	    
 	return fieldList;
 }
 
 QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-    Q_UNUSED(contact);
+    QList<QContactDetail> onlineAccounts = contact.details(QContactOnlineAccount::DefinitionName);
+    TLex label(field.Label());
+    int counter = -1;
+    if (label.Val(counter) != KErrNone) {
+        return NULL;
+    }
+    
+    //check what online account detail the provided field belongs to. if there is no such detail yet,
+    //let's create it.
+    if (onlineAccounts.count() <= counter) {
+        for (int i = onlineAccounts.count(); i <= counter; i++) {
+            QContactOnlineAccount *account = new QContactOnlineAccount();
+            QContact& currentContact = const_cast<QContact&>(contact);
+            currentContact.saveDetail(account);
+            delete account;
+        }
+        onlineAccounts = contact.details(QContactOnlineAccount::DefinitionName);
+    }
+    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount(onlineAccounts.at(counter));
 
-    QContactOnlineAccount *onlineAccount = new QContactOnlineAccount();
 	CContactTextField* storage = field.TextStorage();
 	QString onlineAccountString = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
 
@@ -180,15 +191,6 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
         else if (field.ContentType().FieldType(i) == KUidContactFieldServiceProvider) {
             onlineAccount->setServiceProvider(onlineAccountString);
         }
-        //Presence
-        else if (field.ContentType().FieldType(i) == KUidContactFieldPresence) {
-            QString presenceInfo = decodePresence(onlineAccountString.toInt());
-//            onlineAccount->setPresence(presenceInfo);
-        }
-        //Status Message
-        else if (field.ContentType().FieldType(i) == KUidContactFieldStatusMsg) {
-//            onlineAccount->setStatusMessage(onlineAccountString);
-        }
     }
 
     // set context
@@ -199,20 +201,6 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
 	return onlineAccount;
 }
 
-bool CntTransformOnlineAccount::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldSIPID.iUid ||
-        fieldType == KUidContactFieldIMPP.iUid  ||
-        fieldType == KUidContactFieldServiceProvider.iUid  ||
-        fieldType == KUidContactFieldPresence.iUid  ||
-        fieldType == KUidContactFieldStatusMsg.iUid )         
-    {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -220,6 +208,16 @@ bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformOnlineAccount::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldSIPID
+        << KUidContactFieldIMPP
+        << KUidContactFieldServiceProvider
+        << KUidContactFieldPresence
+        << KUidContactFieldStatusMsg;
 }
 
 QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const
@@ -285,6 +283,16 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
         QContactDetailDefinition d = definitions.value(QContactOnlineAccount::DefinitionName);
         QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
         QContactDetailFieldDefinition f;
+        
+        // Support only certain subtypes 
+        f.setDataType(QVariant::StringList);
+        QVariantList subTypes;
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSip));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSipVoip));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeImpp));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeVideoShare));
+        f.setAllowableValues(subTypes);
+        fields[QContactOnlineAccount::FieldSubTypes] = f;        
 
         // Don't support "ContextOther"
         f.setDataType(QVariant::StringList);
@@ -299,54 +307,12 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
     }
 }
 
-
 /*!
- * Encode the presence information.
- * \a aPresence
+ * Reset internal variables.
  */
-quint32 CntTransformOnlineAccount::encodePresence(QString aPresence)
+void CntTransformOnlineAccount::reset()
 {
-    //FIXME:presence
-//    if (QContactPresence::PresenceAvailable  == aPresence)
-//        return CntTransformOnlineAccount::EPresenceAvailable;
-//    else if (QContactPresence::PresenceHidden == aPresence)
-//        return CntTransformOnlineAccount::EPresenceHidden;
-//    else if (QContactPresence::PresenceBusy == aPresence)
-//        return CntTransformOnlineAccount::EPresenceBusy;
-//    else if (QContactPresence::PresenceAway == aPresence)
-//        return CntTransformOnlineAccount::EPresenceAway;
-//    else if (QContactPresence::PresenceExtendedAway == aPresence)
-//        return CntTransformOnlineAccount::EPresenceExtendedAway;
-//    else if (QContactPresence::PresenceUnknown == aPresence)
-//        return CntTransformOnlineAccount::EPresenceUnknown;
-//    else
-        return CntTransformOnlineAccount::EPresenceOffline;
-}
-
-
-
-/*!
- * Decode the presence information.
- * \a aPresence
- */
-QString CntTransformOnlineAccount::decodePresence(quint32 aPresence)
-{
-    //FIXME:presence
-//    if (CntTransformOnlineAccount::EPresenceAvailable  == aPresence)
-//        return QContactPresence::PresenceAvailable;
-//    else if (CntTransformOnlineAccount::EPresenceHidden == aPresence)
-//        return QContactPresence::PresenceHidden;
-//    else if (CntTransformOnlineAccount::EPresenceBusy == aPresence)
-//        return QContactPresence::PresenceBusy;
-//    else if ( CntTransformOnlineAccount::EPresenceAway == aPresence)
-//        return QContactPresence::PresenceAway;
-//    else if ( CntTransformOnlineAccount::EPresenceExtendedAway == aPresence)
-//        return QContactPresence::PresenceExtendedAway;
-//    else if ( CntTransformOnlineAccount::EPresenceUnknown == aPresence)
-//        return QContactPresence::PresenceUnknown;
-//    else
-//        return QContactPresence::PresenceOffline;
-    return QString();
+    m_detailCounter = 0;
 }
 
 #endif // SYMBIAN_BACKEND_USE_SQLITE

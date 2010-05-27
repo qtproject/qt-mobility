@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -71,8 +71,9 @@ class QContactChangeSet;
 class QContactAbstractRequest;
 QTM_END_NAMESPACE
 class CntSymbianDatabase;
+class CntSymbianSrvConnection;
 class CntTransformContact;
-class CntAbstractContactFilter;
+class CntSymbianFilter;
 class CntAbstractContactSorter;
 class CntRelationship;
 class CntDisplayLabel;
@@ -136,7 +137,7 @@ private:
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error* error);
 
-    QContact fetchContactL(const QContactLocalId &localId, const QStringList& definitionRestrictions) const;
+    QContact fetchContactL(const QContactLocalId &localId, const QStringList& detailDefinitionsHint) const;
 
     /* Add contact */
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error* qtError);
@@ -148,7 +149,7 @@ private:
 
     /* Remove contact */
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error* qtError);
-    int removeContactL(QContactLocalId id);
+    void removeContactL(QContactLocalId id);
 
     void updateDisplayLabel(QContact& contact) const;
 
@@ -164,9 +165,10 @@ private slots:
 
 private:
     CntSymbianDatabase *m_dataBase;
+    CntSymbianSrvConnection *m_srvConnection;
     QString m_managerUri;
     CntTransformContact *m_transformContact;
-    CntAbstractContactFilter *m_contactFilter;
+    CntSymbianFilter *m_contactFilter;
 #ifndef SYMBIAN_BACKEND_USE_SQLITE    
     CntAbstractContactSorter *m_contactSorter;
 #endif    

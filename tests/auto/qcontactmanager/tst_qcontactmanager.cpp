@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -1988,11 +1988,11 @@ void tst_QContactManager::signalEmission()
 
     /* Batch modifies */
     QContactName modifiedName = c.detail(QContactName::DefinitionName);
-    saveContactName(&c, nameDef, &modifiedName, "This is modified number 1");
+    saveContactName(&c, nameDef, &modifiedName, "Modified number 1");
     modifiedName = c2.detail(QContactName::DefinitionName);
-    saveContactName(&c2, nameDef, &modifiedName, "This is modified number 2");
+    saveContactName(&c2, nameDef, &modifiedName, "Modified number 2");
     modifiedName = c3.detail(QContactName::DefinitionName);
-    saveContactName(&c3, nameDef, &modifiedName, "This is modified number 3");
+    saveContactName(&c3, nameDef, &modifiedName, "Modified number 3");
 
     batchAdd.clear();
     batchAdd << c << c2 << c3;
@@ -2012,6 +2012,20 @@ void tst_QContactManager::signalEmission()
     QTRY_COMPARE(spyCM.count(), 0);
 
     QScopedPointer<QContactManager> m2(QContactManager::fromUri(uri));
+    
+    // During construction SIM backend (m2) will try writing contacts with 
+    // nickname, email and additional number to find out if the SIM card
+    // will support these fields. The other backend (m1) will then receive
+    // signals about that. These need to be caught so they don't interfere
+    // with the tests. (This trial and error method is used because existing
+    // API for checking the availability of these fields is not public.)
+	// NOTE: This applies only to pre 10.1 platforms (S60 3.1, 3.2, ect.)
+    if (uri.contains("symbiansim")) {
+        QTest::qWait(0);
+        spyCA.clear();
+        spyCM.clear();
+        spyCR.clear();
+    }
 
     QVERIFY(m1->hasFeature(QContactManager::Anonymous) ==
         m2->hasFeature(QContactManager::Anonymous));
@@ -2363,8 +2377,16 @@ void tst_QContactManager::actionPreferences()
     c.saveDetail(&p3);
     c.saveDetail(&u);
 
+    // set a preference for dialing a particular saved phonenumber.
+    c.setPreferredDetail("Dial", p2);
+
     QVERIFY(cm->saveContact(&c));          // save the contact
     QContact loaded = cm->contact(c.id().localId()); // reload the contact
+
+    // test that the preference was saved correctly.
+    QContactDetail pref = loaded.preferredDetail("Dial");
+    QVERIFY(pref == p2);
+
     cm->removeContact(c.id().localId());
 }
 

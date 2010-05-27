@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -490,13 +490,15 @@ void QVersitReaderPrivate::parseVCard21Property(LByteArray& cursor, QVersitPrope
         }
     } else {
         QTextCodec* codec;
-        QVariant valueVariant(decodeCharset(value, property, lineReader.codec(), &codec));
-        bool isBinary = unencode(valueVariant, property, codec, lineReader);
-        property.setValue(valueVariant);
-        if (isBinary)
+        bool isBinary = unencode(value, property, lineReader);
+        if (isBinary) {
+            property.setValue(value);
             property.setValueType(QVersitProperty::BinaryType);
-        else
+        }
+        else {
+            property.setValue(decodeCharset(value, property, lineReader.codec(), &codec));
             splitStructuredValue(property, false);
+        }
     }
 }
 
@@ -511,9 +513,9 @@ void QVersitReaderPrivate::parseVCard30Property(LByteArray& cursor, QVersitPrope
     QByteArray value = cursor.toByteArray();
 
     QTextCodec* codec;
-    QString valueString(decodeCharset(value, property, lineReader.codec(), &codec));
 
     if (property.valueType() == QVersitProperty::VersitDocumentType) {
+        QString valueString(decodeCharset(value, property, lineReader.codec(), &codec));
         removeBackSlashEscaping(valueString);
         // Make a line reader from the value of the property.
         QByteArray subDocumentValue(codec->fromUnicode(valueString));
@@ -529,12 +531,12 @@ void QVersitReaderPrivate::parseVCard30Property(LByteArray& cursor, QVersitPrope
             property.setValue(QVariant::fromValue(subDocument));
         }
     } else {
-        QVariant valueVariant(valueString);
-        bool isBinary = unencode(valueVariant, property, codec, lineReader);
-        property.setValue(valueVariant);
+        bool isBinary = unencode(value, property, lineReader);
         if (isBinary) {
+            property.setValue(value);
             property.setValueType(QVersitProperty::BinaryType);
         } else {
+            property.setValue(decodeCharset(value, property, lineReader.codec(), &codec));
             bool isList = splitStructuredValue(property, true);
             // Do backslash unescaping
             if (isList) {
@@ -560,8 +562,10 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
     bool valid = true;
     if (property.name() == QLatin1String("VERSION")) {
         QString value = property.value().trimmed();
-        if (property.parameters().contains(QLatin1String("ENCODING"),QLatin1String("BASE64"))
-            || property.parameters().contains(QLatin1String("TYPE"),QLatin1String("BASE64")))
+        QStringList encodingParameters = property.parameters().values(QLatin1String("ENCODING"));
+        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+        if (encodingParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+            || typeParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive))
             value = QLatin1String(QByteArray::fromBase64(value.toAscii()));
         if (value == QLatin1String("2.1")) {
             document.setType(QVersitDocument::VCard21Type);
@@ -575,43 +579,36 @@ bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, con
 }
 
 /*!
- * On entry, \a value should hold a QString.  On exit, it may be either a QString or a QByteArray.
- * Returns true if and only if the property value is turned into a QByteArray.
+ * On entry, \a value should be the byte array to unencode.  It is modified to be the unencoded
+ * version.  Returns true if and only if the value was base-64 encoded.
+ * \a lineReader is supplied in case more lines need to be read (for quoted-printable).  The
+ * \a property is supplied so we know what kind of encoding was used.
  */
-bool QVersitReaderPrivate::unencode(QVariant& value,
+bool QVersitReaderPrivate::unencode(QByteArray& value,
                                     QVersitProperty& property,
-                                    QTextCodec* codec,
                                     LineReader& lineReader) const
 {
-    Q_ASSERT(value.type() == QVariant::String);
-
-    QString valueString = value.toString();
-
-    if (property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("QUOTED-PRINTABLE"))) {
+    QStringList encodingParameters = property.parameters().values(QLatin1String("ENCODING"));
+    QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
+    if (encodingParameters.contains(QLatin1String("QUOTED-PRINTABLE"), Qt::CaseInsensitive)) {
         // At this point, we need to accumulate bytes until we hit a real line break (no = before
         // it) value already contains everything up to the character before the newline
-        while (valueString.endsWith(QLatin1Char('='))) {
-            valueString.chop(1); // Get rid of '='
+        while (value.endsWith('=')) {
+            value.chop(1); // Get rid of '='
             // We add each line (minus the escaped = and newline chars)
-            QString line = codec->toUnicode(lineReader.readLine().toByteArray());
-            valueString.append(line);
+            value.append(lineReader.readLine().toByteArray());
         }
-        decodeQuotedPrintable(valueString);
+        decodeQuotedPrintable(value);
         // Remove the encoding parameter as the value is now decoded
         property.removeParameters(QLatin1String("ENCODING"));
-        value.setValue(valueString);
         return false;
-    } else if (property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("BASE64"))
-        || property.parameters().contains(QLatin1String("ENCODING"), QLatin1String("B"))
-        || property.parameters().contains(QLatin1String("TYPE"), QLatin1String("BASE64"))
-        || property.parameters().contains(QLatin1String("TYPE"), QLatin1String("B"))) {
-        value.setValue(QByteArray::fromBase64(valueString.toAscii()));
+    } else if (encodingParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+        || encodingParameters.contains(QLatin1String("B"), Qt::CaseInsensitive)
+        || typeParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
+        || typeParameters.contains(QLatin1String("B"), Qt::CaseInsensitive)) {
+        value = QByteArray::fromBase64(value);
         // Remove the encoding parameter as the value is now decoded
         property.removeParameters(QLatin1String("ENCODING"));
-        // Hack: add the charset parameter back in (even if there wasn't one to start with and
-        // the default codec was used).  This will help later on if someone calls valueString()
-        // on the property.
-        property.insertParameter(QLatin1String("CHARSET"), QLatin1String(codec->name()));
         return true;
     }
     return false;
@@ -645,13 +642,13 @@ QString QVersitReaderPrivate::decodeCharset(const QByteArray& value,
 /*!
  * Decodes Quoted-Printable encoded (RFC 1521) characters in /a text.
  */
-void QVersitReaderPrivate::decodeQuotedPrintable(QString& text) const
+void QVersitReaderPrivate::decodeQuotedPrintable(QByteArray& text) const
 {
     for (int i=0; i < text.length(); i++) {
-        QChar current = text.at(i);
-        if (current == QLatin1Char('=') && i+2 < text.length()) {
-            int next = text.at(i+1).unicode();
-            int nextAfterNext = text.at(i+2).unicode();
+        char current = text.at(i);
+        if (current == '=' && i+2 < text.length()) {
+            char next = text.at(i+1);
+            char nextAfterNext = text.at(i+2);
             if (((next >= 'a' && next <= 'f') ||
                  (next >= 'A' && next <= 'F') ||
                  (next >= '0' && next <= '9')) &&
@@ -659,9 +656,11 @@ void QVersitReaderPrivate::decodeQuotedPrintable(QString& text) const
                  (nextAfterNext >= 'A' && nextAfterNext <= 'F') ||
                  (nextAfterNext >= '0' && nextAfterNext <= '9'))) {
                 bool ok;
-                QChar decodedChar(text.mid(i+1, 2).toInt(&ok,16));
-                if (ok)
-                    text.replace(i, 3, decodedChar);
+                char decodedChar(text.mid(i+1, 2).toInt(&ok,16));
+                if (ok) {
+                    text[i] = decodedChar;
+                    text.remove(i+1, 2);
+                }
             } else if (next == '\r' && nextAfterNext == '\n') {
                 // Newlines can still be found here if they are encoded in a non-default charset.
                 text.remove(i, 3);

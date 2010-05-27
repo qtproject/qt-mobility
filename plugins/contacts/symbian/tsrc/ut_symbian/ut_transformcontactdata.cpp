@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,6 +57,8 @@
 #include "cnttransformgeolocation.h"
 #include "cnttransformnote.h"
 #include "cnttransformfamily.h"
+#include "cnttransformringtone.h"
+#include "cnttransformpresence.h"
 
 #include "cntmodelextuids.h"
 
@@ -154,14 +156,21 @@ void TestCntTransformContactData::executeCntTransformBithday()
 void TestCntTransformContactData::executeCntTransformOnlineAccount()
 {
     TRAPD(err, validateCntTransformOnlineAccountL(_L("dummysip"), QString("dummysip"),
-                                                  _L("nokia"), QString("nokia"),
-                                                  _L("Available"), QString("Available"),
-                                                  _L("Sleeping.."), QString("Sleeping.."));
+                                                  _L("nokia"), QString("nokia"));
     
         validateCntTransformOnlineAccountL(_L(""), QString(""),
-                                           _L(""), QString(""),
-                                           _L(""), QString(""),
                                            _L(""), QString(""));
+        );
+    QVERIFY(err == 0);
+}
+
+void TestCntTransformContactData::executeCntTransformPresence()
+{
+    TRAPD(err, validateCntTransformPresenceL(_L("1"), QString("1"),
+                                             _L("Sleeping.."), QString("Sleeping.."));
+    
+        validateCntTransformPresenceL(_L(""), QString("0"),
+                                      _L(""), QString(""));
         );
     QVERIFY(err == 0);
 }
@@ -190,6 +199,15 @@ void TestCntTransformContactData::executeCntTransformAvatar()
     QVERIFY(err == 0);
 }
 
+void TestCntTransformContactData::executeCntTransformRingtone()
+{
+    TRAPD(err, validateCntTransformRingtoneL(_L("dummyaudioringtone"), QString("dummyaudioringtone"),
+                                             _L("dummyvideoringtone"), QString("dummyvideoringtone"));
+        validateCntTransformRingtoneL(_L(""), QString(""), _L(""), QString(""));
+        );
+    QVERIFY(err == 0);
+}
+
 void TestCntTransformContactData::executeCntTransformSyncTarget()
 {
     TRAPD(err, validateCntTransformSyncTargetL(_L("dummysynctarget"), QString("dummysynctarget"));
@@ -208,9 +226,11 @@ void TestCntTransformContactData::executeCntTransformGender()
 
 void TestCntTransformContactData::executeCntTransformAnniversary()
 {
-    QDate dateDetail(2009, 9, 28);
-    TRAPD(err, validateCntTransformAnniversaryL(_L("2009-09-28,dummyevent"), dateDetail, QString("dummyevent"));
-        validateCntTransformAnniversaryL(_L("dummyevent"), QDate(), QString("dummyevent"));
+    TDateTime dateTime(2009, ESeptember, 27, 0, 0, 0, 0);
+    TTime field(dateTime);
+    QDate detail(2009, 9, 28);
+    
+    TRAPD(err, validateCntTransformAnniversaryL(field, detail, _L("dummyevent"), QString("dummyevent"));
         );
     QVERIFY(err == 0);
 }
@@ -1030,9 +1050,7 @@ void TestCntTransformContactData::validateCntTransformBirthdayL(TTime field, QDa
 
 void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     TPtrC16 sipField, QString sipDetail,
-    TPtrC16 providerField, QString providerDetail,
-    TPtrC16 /*presenceField*/, QString presenceDetail,
-    TPtrC16 statusField, QString statusDetail)
+    TPtrC16 providerField, QString providerDetail)
 {
 	CntTransformContactData* transformOnlineAccount = new CntTransformOnlineAccount();
     QVERIFY(transformOnlineAccount != 0);
@@ -1189,6 +1207,74 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     delete transformOnlineAccount;
 }
 
+void TestCntTransformContactData::validateCntTransformPresenceL(TPtrC16 presenceStateField, QString presenceStateDetail,
+    TPtrC16 presenceStatusMsgField, QString presenceStatusMsgDetail)
+{
+    CntTransformContactData* transformPresence = new CntTransformPresence();
+    QVERIFY(transformPresence != 0);
+    QVERIFY(transformPresence->supportsField(KUidContactFieldPresence.iUid));
+    QVERIFY(transformPresence->supportsField(KUidContactFieldStatusMsg.iUid));
+    QVERIFY(!(transformPresence->supportsField(0))); //Test for Wrong value
+    QVERIFY(transformPresence->supportsDetail(QContactPresence::DefinitionName));
+    QVERIFY(!(transformPresence->supportsDetail("WrongValue")));
+     
+    validateGetIdForField(*transformPresence, QContactPresence::FieldPresenceState,KUidContactFieldPresence.iUid);
+    validateGetIdForField(*transformPresence, QContactPresence::FieldPresenceStateText,KUidContactFieldStatusMsg.iUid);
+    validateGetIdForField(*transformPresence, "WrongValue", 0);
+    QVERIFY( !(transformPresence->supportsSubType("WrongValue")));
+     
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    validateSupportedSortingFieldTypes(*transformPresence,"WrongValue",uidsToVerify);
+     
+    validateContextsL(transformPresence);
+     
+    bool ok = false;
+    QContactPresence presence;
+    presence.setPresenceState((QContactPresence::PresenceState)presenceStateDetail.toInt(&ok));
+    presence.setPresenceStateText(presenceStatusMsgDetail);
+     
+    QList<CContactItemField *> fields = transformPresence->transformDetailL(presence);
+    if(presenceStatusMsgDetail.isEmpty()) {
+        QVERIFY(fields.count() == 0);
+    } else {
+        QVERIFY(fields.count() == 2);
+         
+        QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldPresence));
+        QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(presenceStateField), 0);
+     
+        QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldStatusMsg));
+        QCOMPARE(fields.at(1)->TextStorage()->Text(), presenceStatusMsgField );
+    }
+     
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPresence);
+    newField->TextStorage()->SetTextL(presenceStateField);
+    QContact contact;
+    QContactDetail* contactDetail = transformPresence->transformItemField(*newField, contact);
+    const QContactPresence* presenceDetail1(static_cast<const QContactPresence*>(contactDetail));
+    
+    
+    
+    QCOMPARE(QString::number(presenceDetail1->presenceState()), presenceStateDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+     
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldStatusMsg);
+    newField->TextStorage()->SetTextL(presenceStatusMsgField);
+    contactDetail = transformPresence->transformItemField(*newField, contact);
+    const QContactPresence* presenceDetail2(static_cast<const QContactPresence*>(contactDetail));
+    QCOMPARE(presenceDetail2->presenceStateText(), presenceStatusMsgDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+     
+    delete transformPresence;
+    }
 #endif // SYMBIAN_BACKEND_USE_SQLITE
 
 void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 companyField, QString companyDetail,
@@ -1311,28 +1397,18 @@ void TestCntTransformContactData::validateCntTransformOrganisationL(TPtrC16 comp
     delete transformOrganisation;
 }
 
-void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 /*field*/, QString /*detail*/)
+void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 field, QString detail)
 {
-    QFAIL("Refactor test to match new api!");
-    /*
     CntTransformContactData* transformAvatar = new CntTransformAvatar();
     QVERIFY(transformAvatar != 0);
     QVERIFY(transformAvatar->supportsField(KUidContactFieldCodImage.iUid));
-    QVERIFY(transformAvatar->supportsField(KUidContactFieldRingTone.iUid));
-    QVERIFY(transformAvatar->supportsField(KUidContactFieldVideoRingTone.iUid));
     QVERIFY(!(transformAvatar->supportsField(0))); //Test for Wrong value
     QVERIFY(transformAvatar->supportsDetail(QContactAvatar::DefinitionName));
     QVERIFY(!(transformAvatar->supportsDetail("WrongValue")));
 
-    validateGetIdForField(*transformAvatar, QContactAvatar::FieldAvatar,0);
-    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeImage,0);
-    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeVideo,0);
-    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeTexturedMesh,0);
-    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeAudioRingtone,0);
-    validateGetIdForField(*transformAvatar, QContactAvatar::SubTypeVideoRingtone,0);
+    validateGetIdForField(*transformAvatar, QContactAvatar::FieldImageUrl,0);
     validateGetIdForField(*transformAvatar, "WrongValue", 0);
-    QVERIFY(transformAvatar->supportsSubType(QContactAvatar::FieldSubType));
-    QVERIFY( !(transformAvatar->supportsSubType("WrongValue")));
+    QVERIFY(!(transformAvatar->supportsSubType("WrongValue")));
 
     //Test supportedSortingFieldTypes
     QList<TUid> uidsToVerify;
@@ -1340,10 +1416,9 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 /*field*/,
 
     validateContextsL(transformAvatar);
 
-    QContactAvatar avatar1;
-    avatar1.setAvatar(detail);
-    avatar1.setSubType(QContactAvatar::SubTypeImage);
-    QList<CContactItemField *> fields = transformAvatar->transformDetailL(avatar1);
+    QContactAvatar avatar;
+    avatar.setImageUrl(detail);
+    QList<CContactItemField *> fields = transformAvatar->transformDetailL(avatar);
     if(detail.isEmpty()) {
         QVERIFY(fields.count() == 0);
     } else {
@@ -1353,68 +1428,80 @@ void TestCntTransformContactData::validateCntTransformAvatarL(TPtrC16 /*field*/,
         QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
     }
 
-    QContactAvatar avatar2;
-    avatar2.setAvatar(detail);
-    avatar2.setSubType(QContactAvatar::SubTypeAudioRingtone);
-    fields = transformAvatar->transformDetailL(avatar2);
-    if(detail.isEmpty()) {
-        QVERIFY(fields.count() == 0);
-    } else {
-        QVERIFY(fields.count() == 1);
-        QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
-        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldRingTone));
-        QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    }
-
-    QContactAvatar avatar3;
-    avatar2.setAvatar(detail);
-    avatar2.setSubType(QContactAvatar::SubTypeVideoRingtone);
-    fields = transformAvatar->transformDetailL(avatar2);
-    if(detail.isEmpty()) {
-        QVERIFY(fields.count() == 0);
-    } else {
-        QVERIFY(fields.count() == 1);
-        QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
-        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldVideoRingTone));
-        QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
-    }
-
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldCodImage);
     newField->TextStorage()->SetTextL(field);
     QContact contact;
     QContactDetail* contactDetail = transformAvatar->transformItemField(*newField, contact);
     const QContactAvatar* avatarInfo1(static_cast<const QContactAvatar*>(contactDetail));
-    QCOMPARE(avatarInfo1->avatar(), detail);
-    QVERIFY(avatarInfo1->subType().contains(QContactAvatar::SubTypeImage));
-    delete contactDetail;
-    contactDetail = 0;
-    delete newField;
-    newField = 0;
-
-    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldRingTone);
-    newField->TextStorage()->SetTextL(field);
-    contactDetail = transformAvatar->transformItemField(*newField, contact);
-    const QContactAvatar* avatarInfo2(static_cast<const QContactAvatar*>(contactDetail));
-    QCOMPARE(avatarInfo2->avatar(), detail);
-    QVERIFY(avatarInfo2->subType().contains(QContactAvatar::SubTypeAudioRingtone));
-    delete contactDetail;
-    contactDetail = 0;
-    delete newField;
-    newField = 0;
-
-    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldVideoRingTone);
-    newField->TextStorage()->SetTextL(field);
-    contactDetail = transformAvatar->transformItemField(*newField, contact);
-    const QContactAvatar* avatarInfo3(static_cast<const QContactAvatar*>(contactDetail));
-    QCOMPARE(avatarInfo3->avatar(), detail);
-    QVERIFY(avatarInfo3->subType().contains(QContactAvatar::SubTypeVideoRingtone));
+    QCOMPARE(avatarInfo1->imageUrl().toString(), detail);
     delete contactDetail;
     contactDetail = 0;
     delete newField;
     newField = 0;
 
     delete transformAvatar;
-    */
+}
+
+void TestCntTransformContactData::validateCntTransformRingtoneL(TPtrC16 audioRingtoneField, QString audioRingtoneDetail,
+                                   TPtrC16 videoRingtoneField, QString videoRingtoneDetail)
+{
+    CntTransformContactData* transformRingtone = new CntTransformRingtone();
+    QVERIFY(transformRingtone != 0);
+    QVERIFY(transformRingtone->supportsField(KUidContactFieldRingTone.iUid));
+    QVERIFY(transformRingtone->supportsField(KUidContactFieldVideoRingTone.iUid));
+    QVERIFY(!(transformRingtone->supportsField(0))); //Test for Wrong value
+    QVERIFY(transformRingtone->supportsDetail(QContactRingtone::DefinitionName));
+    QVERIFY(!(transformRingtone->supportsDetail("WrongValue")));
+
+    validateGetIdForField(*transformRingtone, QContactRingtone::FieldAudioRingtoneUrl,0);
+    validateGetIdForField(*transformRingtone, QContactRingtone::FieldVideoRingtoneUrl,0);
+    validateGetIdForField(*transformRingtone, "WrongValue", 0);
+    QVERIFY( !(transformRingtone->supportsSubType("WrongValue")));
+
+    //Test supportedSortingFieldTypes
+    QList<TUid> uidsToVerify;
+    validateSupportedSortingFieldTypes(*transformRingtone,"WrongValue",uidsToVerify);
+
+    validateContextsL(transformRingtone);
+
+    QContactRingtone ringtone;
+    ringtone.setAudioRingtoneUrl(audioRingtoneDetail);
+    ringtone.setVideoRingtoneUrl(videoRingtoneDetail);
+    QList<CContactItemField *> fields = transformRingtone->transformDetailL(ringtone);
+    if(audioRingtoneDetail.isEmpty() && videoRingtoneDetail.isEmpty()) {
+        QVERIFY(fields.count() == 0);
+    } else {
+        QVERIFY(fields.count() == 2);
+        QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldRingTone));
+        QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(audioRingtoneField), 0);
+        QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+        QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldVideoRingTone));
+        QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(videoRingtoneField), 0);
+    }
+
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldRingTone);
+    newField->TextStorage()->SetTextL(audioRingtoneField);
+    QContact contact;
+    QContactDetail* contactDetail = transformRingtone->transformItemField(*newField, contact);
+    const QContactRingtone* ringtoneInfo1(static_cast<const QContactRingtone*>(contactDetail));
+    QCOMPARE(ringtoneInfo1->audioRingtoneUrl().toString(), audioRingtoneDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldVideoRingTone);
+    newField->TextStorage()->SetTextL(videoRingtoneField);
+    contactDetail = transformRingtone->transformItemField(*newField, contact);
+    const QContactRingtone* ringtoneInfo2(static_cast<const QContactRingtone*>(contactDetail));
+    QCOMPARE(ringtoneInfo2->videoRingtoneUrl().toString(), videoRingtoneDetail);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+
+    delete transformRingtone;
 }
 
 void TestCntTransformContactData::validateCntTransformSyncTargetL(TPtrC16 field, QString detail)
@@ -1511,7 +1598,7 @@ void TestCntTransformContactData::validateCntTransformGenderL(TPtrC16 field, QSt
     delete transformGender;
 }
 
-void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field, QDate dateDetail, QString eventDetail)
+void TestCntTransformContactData::validateCntTransformAnniversaryL(TTime dateField, QDate dateDetail, TPtrC16 eventField, QString eventDetail)
 {
     CntTransformContactData* transformAnniversary = new CntTransformAnniversary();
     QVERIFY(transformAnniversary != 0);
@@ -1542,20 +1629,36 @@ void TestCntTransformContactData::validateCntTransformAnniversaryL(TPtrC16 field
     anniversary.setOriginalDate(dateDetail);
     anniversary.setEvent(eventDetail);
     QList<CContactItemField *> fields = transformAnniversary->transformDetailL(anniversary);
-    QVERIFY(fields.count() == 1);
-    QVERIFY(fields.at(0)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.count() == 2);
+    
+    QVERIFY(fields.at(0)->StorageType() == KStorageTypeDateTime);
     QVERIFY(fields.at(0)->ContentType().ContainsFieldType(KUidContactFieldAnniversary));
-    QCOMPARE(fields.at(0)->TextStorage()->Text().CompareF(field), 0);
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Year(), dateDetail.year());
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Month() + 1, dateDetail.month());
+    QCOMPARE(fields.at(0)->DateTimeStorage()->Time().DateTime().Day() + 1, dateDetail.day());
+    
+    QVERIFY(fields.at(1)->StorageType() == KStorageTypeText);
+    QVERIFY(fields.at(1)->ContentType().ContainsFieldType(KUidContactFieldAnniversaryEvent));
+    QCOMPARE(fields.at(1)->TextStorage()->Text().CompareF(eventField), 0);
 
-    CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAnniversary);
-    newField->TextStorage()->SetTextL(field);
+    CContactItemField* newField = CContactItemField::NewL(KStorageTypeDateTime, KUidContactFieldAnniversary);
+    newField->DateTimeStorage()->SetTime(dateField);
     QContact contact;
     QContactDetail* contactDetail = transformAnniversary->transformItemField(*newField, contact);
     const QContactAnniversary* anniversaryInfo(static_cast<const QContactAnniversary*>(contactDetail));
-    QCOMPARE(anniversaryInfo->event(), eventDetail);
-    if (dateDetail.isValid()) {
-        QCOMPARE(anniversaryInfo->originalDate(), dateDetail);
-    }
+    QCOMPARE(anniversaryInfo->originalDate().year(), dateField.DateTime().Year());
+    QCOMPARE(anniversaryInfo->originalDate().month(), dateField.DateTime().Month() + 1);
+    QCOMPARE(anniversaryInfo->originalDate().day(), dateField.DateTime().Day() + 1);
+    delete contactDetail;
+    contactDetail = 0;
+    delete newField;
+    newField = 0;
+    
+    newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldAnniversaryEvent);
+    newField->TextStorage()->SetTextL(eventField);
+    contactDetail = transformAnniversary->transformItemField(*newField, contact);
+    const QContactAnniversary* anniversaryInfo2(static_cast<const QContactAnniversary*>(contactDetail));
+    QCOMPARE(anniversaryInfo2->event(), eventDetail);
 
     delete contactDetail;
     delete newField;

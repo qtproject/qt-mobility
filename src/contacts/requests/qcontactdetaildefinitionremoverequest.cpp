@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,6 +64,15 @@ QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest(QOb
 }
 
 /*!
+  \deprecated
+*/
+void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QString& contactType, const QStringList& definitionNames)
+{
+    setDefinitionNames(definitionNames);
+    setContactType(contactType);
+}
+
+/*!
   Sets the name of the detail definition to remove from the manager to \a definitionName.
   Managers may store different definitions which are valid for different contact types, and so attempting to remove definitions with certain names may fail if no such
   definitions exist for contacts of the given contact type, specified via setContactType().
@@ -77,6 +86,7 @@ QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest(QOb
 void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& definitionName)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names.clear();
     d->m_names.append(definitionName);
 }
@@ -90,6 +100,7 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionName(const QString& def
 void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList& names)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_names = names;
 }
 
@@ -97,6 +108,7 @@ void QContactDetailDefinitionRemoveRequest::setDefinitionNames(const QStringList
 QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_names;
 }
 
@@ -106,6 +118,7 @@ QStringList QContactDetailDefinitionRemoveRequest::definitionNames() const
 void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contactType)
 {
     Q_D(QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     d->m_contactType = contactType;
 }
 
@@ -113,6 +126,7 @@ void QContactDetailDefinitionRemoveRequest::setContactType(const QString& contac
 QString QContactDetailDefinitionRemoveRequest::contactType() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_contactType;
 }
 
@@ -120,6 +134,7 @@ QString QContactDetailDefinitionRemoveRequest::contactType() const
 QMap<int, QContactManager::Error> QContactDetailDefinitionRemoveRequest::errorMap() const
 {
     Q_D(const QContactDetailDefinitionRemoveRequest);
+    QMutexLocker ml(&d->m_mutex);
     return d->m_errors;
 }
 

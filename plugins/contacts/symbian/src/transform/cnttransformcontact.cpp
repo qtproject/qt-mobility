@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,7 +49,9 @@
 #include "cnttransformaddress.h"
 #include "cnttransformbirthday.h"
 #include "cnttransformonlineaccount.h"
+#include "cnttransformonlineaccountsimple.h"
 #include "cnttransformorganisation.h"
+#include "cnttransformpresence.h"
 #include "cnttransformavatar.h"
 #include "cnttransformringtone.h"
 #include "cnttransformthumbnail.h"
@@ -72,6 +74,12 @@
 
 #include <QDebug>
 
+//UIDs for preferred (default) fields
+const int KDefaultFieldForCall = 0x10003E70;
+const int KDefaultFieldForVideoCall = 0x101F85A6;
+const int KDefaultFieldForEmail = 0x101F85A7;
+const int KDefaultFieldForMessage = 0x101f4cf1;
+
 CntTransformContact::CntTransformContact() :
     m_tzConverter(0)
 {
@@ -82,6 +90,8 @@ CntTransformContact::~CntTransformContact()
 {
     delete m_tzConverter;
     m_tzoneServer.Close();
+
+    m_fieldTypeToTransformContact.clear();
 
     QMap<ContactData, CntTransformContactData*>::iterator itr;
 
@@ -123,6 +133,9 @@ void CntTransformContact::initializeCntTransformContactData()
     // 3.2.3 and 5.0 releases), it may be safer not to include online account
     // at all.
     m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
+    
+    // not supported on pre-10.1
+    m_transformContactData.insert(Presence, new CntTransformPresence);
 
 #else
     // Empty transform class for removing unsupported detail definitions
@@ -132,6 +145,7 @@ void CntTransformContact::initializeCntTransformContactData()
 
     // variated transform classes
     m_transformContactData.insert(Anniversary, new CntTransformAnniversarySimple);
+    m_transformContactData.insert(OnlineAccount, new CntTransformOnlineAccount);
 #endif
 }
 
@@ -143,7 +157,7 @@ void CntTransformContact::initializeCntTransformContactData()
  * \param contact A reference to a symbian contact item to be converted.
  * \return Qt Contact
  */
-QContact CntTransformContact::transformContactL(CContactItem &contact, const QStringList& definitionRestrictions) const
+QContact CntTransformContact::transformContactL(CContactItem &contact)
 {
     // Create a new QContact
     QContact newQtContact;
@@ -170,11 +184,8 @@ QContact CntTransformContact::transformContactL(CContactItem &contact, const QSt
 
         if(detail)
         {
-            // add detail if user requested it.
-            if(definitionRestrictions.isEmpty() || definitionRestrictions.contains(detail->definitionName())) 
-            {
-                newQtContact.saveDetail(detail);
-            }
+            newQtContact.saveDetail(detail);
+            transformPreferredDetail(fields[i], *detail, newQtContact);
             delete detail;
             detail = 0;
         }
@@ -257,6 +268,9 @@ void CntTransformContact::transformContactL(
             QList<CContactItemField *> fieldList = transformDetailL(*detail);
             int fieldCount = fieldList.count();
             
+            // save preferred detail
+            transformPreferredDetailL(contact, detailList.at(i), fieldList);            
+            
             for (int j = 0; j < fieldCount; j++)
             {
                 //Add field to fieldSet
@@ -269,6 +283,8 @@ void CntTransformContact::transformContactL(
 	    }
 	}
 
+	resetTransformObjects();
+	
 	contactItem.UpdateFieldSet(fieldSet);
 	CleanupStack::Pop(fieldSet);
 }
@@ -286,6 +302,25 @@ QList<TUid> CntTransformContact::supportedSortingFieldTypes( QString detailDefin
         ++i;
     }
     return uids;
+}
+
+QList<TUid> CntTransformContact::itemFieldUidsL(const QString detailDefinitionName) const
+{
+    QList<TUid> fieldUids;
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+
+    while (i != m_transformContactData.constEnd()) {
+        if (i.value()->supportsDetail(detailDefinitionName)) {
+            // The leaf class supports this detail, so check which field type
+            // uids it supports, use empty field name to get all the supported uids
+            fieldUids << i.value()->supportedFields();
+
+            // Assume there are no more leaf classes for this detail
+            break;
+        }
+        i++;
+    }
+    return fieldUids;
 }
 
 TUint32 CntTransformContact::GetIdForDetailL(const QContactDetailFilter& detailFilter, bool& isSubtype) const
@@ -359,24 +394,34 @@ QList<CContactItemField *> CntTransformContact::transformDetailL(const QContactD
 	return itemFieldList;
 }
 
-QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact) const
+QContactDetail *CntTransformContact::transformItemField(const CContactItemField& field, const QContact &contact)
 {
 	QContactDetail *detail(0);
 
-	if(field.ContentType().FieldTypeCount()) {
-	    TUint32 fieldType(field.ContentType().FieldType(0).iUid);
+    if(field.ContentType().FieldTypeCount()) {
+        TUint32 fieldType(field.ContentType().FieldType(0).iUid);
 
-	    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
-	    while (i != m_transformContactData.constEnd()) {
-	        if (i.value()->supportsField(fieldType)) {
-	            detail = i.value()->transformItemField(field, contact);
-	            break;
-	        }
-	        ++i;
-	     }
-	}
+        // Check if the mapping from field type to transform class pointer is available
+        // (this is faster than iterating through all the transform classes)
+        if (m_fieldTypeToTransformContact.contains(fieldType)) {
+            detail = m_fieldTypeToTransformContact[fieldType]->transformItemField(field, contact);
+        } else {
+            // Mapping from field type to transform class pointer not found,
+            // find the correct transform class by iterating through all the
+            // transform classes
+            QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+            while (i != m_transformContactData.constEnd()) {
+                if (i.value()->supportsField(fieldType)) {
+                    detail = i.value()->transformItemField(field, contact);
+                    m_fieldTypeToTransformContact.insert(fieldType, i.value());
+                    break;
+                }
+                i++;
+            }
+        }
+    }
 
-	return detail;
+    return detail;
 }
 
 QContactDetail* CntTransformContact::transformGuidItemFieldL(const CContactItem &contactItem, const CContactDatabase &contactDatabase) const
@@ -446,4 +491,51 @@ QContactDetail* CntTransformContact::transformTimestampItemFieldL(const CContact
     Q_UNUSED(contactDatabase)
     return 0;
 #endif
+}
+
+void CntTransformContact::transformPreferredDetailL(const QContact& contact,
+        const QContactDetail& detail, QList<CContactItemField*> &fieldList) const
+{
+    if (fieldList.count() == 0) {
+        return;
+    }
+
+    if (contact.isPreferredDetail("call", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForCall));
+    }
+    if (contact.isPreferredDetail("email", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForEmail));
+    }
+    if (contact.isPreferredDetail("videocall", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForVideoCall));
+    }
+    if (contact.isPreferredDetail("message", detail)) {
+        fieldList.at(0)->AddFieldTypeL(TFieldType::Uid(KDefaultFieldForMessage));
+    }
+}
+
+void CntTransformContact::transformPreferredDetail(const CContactItemField& field,
+        const QContactDetail& detail, QContact& contact) const
+{
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForCall))) {
+        contact.setPreferredDetail("call", detail);
+    }
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForEmail))) {
+        contact.setPreferredDetail("email", detail);
+    }
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForVideoCall))) {
+        contact.setPreferredDetail("videocall", detail);
+    }
+    if (field.ContentType().ContainsFieldType(TFieldType::Uid(KDefaultFieldForMessage))) {
+        contact.setPreferredDetail("message", detail);
+    }
+}
+
+void CntTransformContact::resetTransformObjects() const
+{
+    QMap<ContactData, CntTransformContactData*>::const_iterator i = m_transformContactData.constBegin();
+    while (i != m_transformContactData.constEnd()) {
+        i.value()->reset();
+        ++i;
+    }
 }

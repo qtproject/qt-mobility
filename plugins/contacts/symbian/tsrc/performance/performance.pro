@@ -27,7 +27,8 @@ symbian:
     CONFIG += mobility
     MOBILITY = contacts
 
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData
 
     LIBS += $$SYMBIAN_LIBS
 }

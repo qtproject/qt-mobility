@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -529,7 +529,7 @@ QTM_BEGIN_NAMESPACE
         __ASSERT_ALWAYS(dbManagerServer != NULL, CDatabaseManagerServer::PanicServer(ESrvCreateServer));
 
         TInt err = dbManagerServer->Start(KDatabaseManagerServerName);
-        if (err != KErrNone)
+        if (err != KErrNone && err != KErrAlreadyExists)
         {
             CDatabaseManagerServer::PanicServer(ESvrStartServer);
         }

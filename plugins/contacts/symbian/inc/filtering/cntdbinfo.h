@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,7 @@
 #include <qcontactfilter.h>
 #include <qcontactmanager.h>
 #include <qcontactsortorder.h>
+#include <QPair>
 
 QTM_USE_NAMESPACE
 
@@ -56,6 +57,7 @@ class CntDbInfo : public QObject
 {
     Q_OBJECT
     
+public:
     enum TCommAddrType
             {
             EPhoneNumber,
@@ -63,21 +65,25 @@ class CntDbInfo : public QObject
             ESipAddress
             };
 public:
-    CntDbInfo();
+    CntDbInfo(QContactManagerEngine* engine);
     virtual ~CntDbInfo();
     
-    void getDbTableAndColumnName( const quint32 fieldId ,
-                                      QString& tableName,
-                                      QString& columnName ) const;
-    bool SupportsUid(int uid);
-    
+    void getDbTableAndColumnName( const QString definitionName,
+                                  const QString fieldName,
+                                  QString& tableName,
+                                  QString& columnName,
+                                  bool& isSubType) const;
+    bool SupportsDetail(QString definitionName, QString fieldName);
+
     QString getSortQuery(const QList<QContactSortOrder> &sortOrders,
                          const QString& selectQuery,
                          QContactManager::Error* error);
+    QContactManagerEngine* engine();
 
 private:
-    QHash<int,QString> contactsTableIdColumNameMapping;
-    QHash<int,int> commAddrTableIdColumNameMapping;
+    QHash<QString,QString> contactsTableIdColumNameMapping;
+    QHash<QString,QPair<int,bool> > commAddrTableIdColumNameMapping;
+    QContactManagerEngine* m_engine; // not owned
 };
 
 #endif /* CNTDBINFO_H_ */

@@ -40,7 +40,9 @@ symbian: {
         inc/transform/cnttransformurl.h \
         inc/transform/cnttransformbirthday.h \
         inc/transform/cnttransformonlineaccount.h \
+        inc/transform/cnttransformonlineaccountsimple.h \
         inc/transform/cnttransformorganisation.h \
+        inc/transform/cnttransformpresence.h \
         inc/transform/cnttransformringtone.h \
         inc/transform/cnttransformthumbnail.h \
         inc/transform/cnttransformavatar.h \
@@ -60,10 +62,6 @@ symbian: {
         inc/filtering/cntfilterdefault.h \
         inc/filtering/cntfilterintersection.h \
         inc/filtering/cntfilterunion.h \
-        inc/filtering/cntfilterinvalid.h \
-        inc/filtering/cntfilterlocalid.h \
-				inc/filtering/cntfilterchangelog.h \
-				inc/filtering/cntfilterdetailrange.h \
         inc/filtering/cntabstractcontactsorter.h \
         inc/filtering/cntabstractcontactfilter.h \
         inc/filtering/cntsymbianfilterdbms.h \
@@ -73,7 +71,7 @@ symbian: {
         inc/filtering/cntdisplaylabelsqlfilter.h \
         inc/filtering/cntsqlsearch.h
         
-    SOURCES += \       
+    SOURCES += \
         src/transform/cnttransformcontact.cpp \
         src/transform/cnttransformcontactdata.cpp \
         src/transform/cnttransformname.cpp \
@@ -84,7 +82,9 @@ symbian: {
         src/transform/cnttransformurl.cpp \
         src/transform/cnttransformbirthday.cpp \
         src/transform/cnttransformonlineaccount.cpp \
+        src/transform/cnttransformonlineaccountsimple.cpp \
         src/transform/cnttransformorganisation.cpp \
+        src/transform/cnttransformpresence.cpp \
         src/transform/cnttransformringtone.cpp \
         src/transform/cnttransformthumbnail.cpp \
         src/transform/cnttransformavatar.cpp \
@@ -95,7 +95,7 @@ symbian: {
         src/transform/cnttransformanniversarysimple.cpp \
         src/transform/cnttransformgeolocation.cpp \
         src/transform/cnttransformnote.cpp \
-        src/transform/cnttransformfamily.cpp \  
+        src/transform/cnttransformfamily.cpp \
         src/transform/cnttransformempty.cpp \
         src/filtering/cntfilterrelationship.cpp \
         src/filtering/cntfilterdetaildisplaylabel.cpp \
@@ -104,17 +104,13 @@ symbian: {
         src/filtering/cntfilterdefault.cpp \
         src/filtering/cntfilterintersection.cpp \
         src/filtering/cntfilterunion.cpp \
-        src/filtering/cntfilterinvalid.cpp \
-        src/filtering/cntfilterlocalid.cpp \
-				src/filtering/cntfilterchangelog.cpp \
-				src/filtering/cntfilterdetailrange.cpp \
         src/filtering/cntsymbianfilterdbms.cpp \
         src/filtering/cntsymbianfiltersql.cpp \
         src/filtering/cntsymbiansorterdbms.cpp \
         src/filtering/cntsymbiansrvconnection.cpp \
         src/filtering/cntdisplaylabelsqlfilter.cpp \
         src/filtering/cntsqlsearch.cpp \
-    	src/cntsymbianengine.cpp \
+        src/cntsymbianengine.cpp \
         src/cntabstractrelationship.cpp \
         src/cntrelationshipgroup.cpp \
         src/cntsymbiantransformerror.cpp \
@@ -152,7 +148,3 @@ symbian: {
     symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 }
-
-target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
-maemo6:target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
-INSTALLS+=target

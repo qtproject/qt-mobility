@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,6 +56,7 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
+#include "qvcardbackuphandlers_p.h"
 
 #include <QHash>
 #include <QObject>
@@ -75,29 +76,100 @@ public:
 
 protected:
     static bool documentContainsName(const QVersitDocument& document);
-    void encodeName(QVersitProperty& property, const QContactDetail& detail);
-    void encodePhoneNumber(QVersitProperty& property, const QContactDetail& detail);
-    void encodeEmail(QVersitProperty& property, const QContactDetail& detail);
-    void encodeAddress(QVersitProperty& property, const QContactDetail& detail);
-    void encodeUrl(QVersitProperty& property, const QContactDetail& detail);
-    void encodeUid(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeRev(QVersitProperty& property, const QContactDetail& detail);
-    void encodeBirthDay(QVersitProperty& property, const QContactDetail& detail);
-    void encodeNote(QVersitProperty& property, const QContactDetail& detail);
-    void encodeGeoLocation(QVersitProperty& property, const QContactDetail& detail);
-    void encodeOrganization(QVersitDocument& document, const QContactDetail& detail);
-    void encodeGender(QVersitProperty& property, const QContactDetail& detail);
-    void encodeNickname(QVersitDocument& document, const QContactDetail& detail);
-    void encodeTag(QVersitDocument& document, const QContactDetail& detail);
-    void encodeAnniversary(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeOnlineAccount(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeFamily(QVersitDocument& document, const QContactDetail& detail);
-    bool encodeRingtone(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeThumbnail(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeAvatar(QVersitProperty& property, const QContactDetail& detail);
-    bool encodeDisplayLabel(QVersitProperty& property,
-        const QContactDetail& detail,
-        const QContact& contact);
+    void encodeName(
+            const QContactDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodePhoneNumber(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeEmail(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeAddress(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeUrl(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeUid(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeRev(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeBirthDay(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeNote(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeGeoLocation(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeOrganization(
+            const QContactDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeRingtone(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeThumbnail(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeAvatar(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeGender(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeNickname(
+            const QContactDetail &detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeTag(
+            const QContactDetail &detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeAnniversary(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeOnlineAccount(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeFamily(
+            const QContactDetail &detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeDisplayLabel(
+            const QContactDetail &detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    QVersitProperty takeProperty(const QVersitDocument& document, const QString& propertyName,
+                                 QList<QVersitProperty>* toBeRemoved);
     bool isValidRemoteUrl(const QString& resourceIdentifier);
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
@@ -108,6 +180,8 @@ public: // Data
     QList<QVersitDocument> mDocuments;
     QMap<int, QVersitContactExporter::Error> mErrors;
     QVersitContactExporterDetailHandler* mDetailHandler;
+    QVersitContactExporterDetailHandlerV2* mDetailHandler2;
+    int mDetailHandlerVersion;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
     QHash<QString,QString> mPropertyMappings;

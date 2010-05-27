@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,10 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qtapsensor.h>
-#include <qsensorbackend.h>
 
-#include <sensord/tapsensor_i.h>
-#include <sensord/datatypes/tap.h>
+#include <tapsensor_i.h>
+#include <tap.h>
 
 QTM_USE_NAMESPACE
 
@@ -63,7 +62,6 @@ public:
 private:
     QTapReading m_reading;
     static bool m_initDone;
-    QSensor *m_sensor;
 
 private slots:
     void slotDataAvailable(const Tap&);

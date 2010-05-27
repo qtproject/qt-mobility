@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,8 +39,7 @@
 **
 ****************************************************************************/
 #include "cnttransformanniversary.h"
-
-const char separator = ',';
+#include "cntmodelextuids.h"
 
 QList<CContactItemField *> CntTransformAnniversary::transformDetailL(const QContactDetail &detail)
 {
@@ -52,64 +51,38 @@ QList<CContactItemField *> CntTransformAnniversary::transformDetailL(const QCont
 	//cast to anniversary
 	const QContactAnniversary &anniversary(static_cast<const QContactAnniversary&>(detail));
 
-	//create new field
-	QString formattedAnniversary;
-	if (anniversary.originalDate().isValid()) {
-        formattedAnniversary = anniversary.originalDate().toString(Qt::ISODate);
-	}
-	if (formattedAnniversary.length() > 0) {
-        formattedAnniversary.append(separator);
-	}
-	formattedAnniversary.append(anniversary.event());
+    //date field
+	TDateTime dateTime(anniversary.originalDate().year(),
+	    TMonth(anniversary.originalDate().month() - 1),
+	    anniversary.originalDate().day() - 1, 0, 0, 0, 0);
+    CContactItemField* dateField = CContactItemField::NewLC(KStorageTypeDateTime, KUidContactFieldAnniversary);
+    dateField->DateTimeStorage()->SetTime(dateTime);
+    dateField->SetMapping(KUidContactFieldVCardMapAnniversary);
+    fieldList.append(dateField);
+    CleanupStack::Pop(dateField);
 
-	TPtrC fieldText(reinterpret_cast<const TUint16*>(formattedAnniversary.utf16()));
-	CContactItemField* newField = CContactItemField::NewLC(KStorageTypeText, KUidContactFieldAnniversary);
- 	newField->TextStorage()->SetTextL(fieldText);
-	newField->SetMapping(KUidContactFieldVCardMapAnniversary);
-
-	fieldList.append(newField);
-	CleanupStack::Pop(newField);
-
+    //event field
+    transformToTextFieldL(anniversary, fieldList, anniversary.event(), KUidContactFieldAnniversaryEvent, KUidContactFieldVCardMapUnknown, false);
+    
 	return fieldList;
 }
 
 QContactDetail *CntTransformAnniversary::transformItemField(const CContactItemField& field, const QContact &contact)
 {
-	Q_UNUSED(contact);
-
-	QContactAnniversary *anniversary = new QContactAnniversary();
-
-	CContactTextField* storage = field.TextStorage();
-	QString unformattedAnniversary = QString::fromUtf16(storage->Text().Ptr(), storage->Text().Length());
-	int separatorPos = unformattedAnniversary.indexOf(separator);
-	bool dateFound = false;
-	if (separatorPos != -1) {
-        // date is probably included
-        QDate date = QDate::fromString(unformattedAnniversary.left(separatorPos), Qt::ISODate);
-        if (date.isValid()) {
-            anniversary->setOriginalDate(date);
-            dateFound = true;
-        }
-	}
-
-	if (dateFound) {
-        if (unformattedAnniversary.length()-separatorPos-1 > 0) {
-            anniversary->setEvent(unformattedAnniversary.right(unformattedAnniversary.length()-separatorPos-1));
-        }
-	}
-	else {
-        anniversary->setEvent(unformattedAnniversary);
-	}
-	return anniversary;
-}
-
-bool CntTransformAnniversary::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldAnniversary.iUid) {
-        ret = true;
+    QContactAnniversary *anniversaryDetail = new QContactAnniversary(contact.detail<QContactAnniversary>());
+    if (field.StorageType() == KStorageTypeDateTime) {
+        CContactDateField* date = field.DateTimeStorage();
+        TTime time(date->Time());
+        QDate qDate(time.DateTime().Year(), time.DateTime().Month() + 1, time.DateTime().Day() + 1);
+        anniversaryDetail->setOriginalDate(qDate);
     }
-    return ret;
+    else if (field.StorageType() == KStorageTypeText) {
+        CContactTextField* event = field.TextStorage();
+        QString eventString = QString::fromUtf16(event->Text().Ptr(), event->Text().Length());
+        anniversaryDetail->setEvent(eventString);
+    }
+
+	return anniversaryDetail;
 }
 
 bool CntTransformAnniversary::supportsDetail(QString detailName) const
@@ -119,6 +92,12 @@ bool CntTransformAnniversary::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformAnniversary::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldAnniversary;
 }
 
 QList<TUid> CntTransformAnniversary::supportedSortingFieldTypes(QString /*detailFieldName*/) const

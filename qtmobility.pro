@@ -1,17 +1,4 @@
-
-#This is a temporary workaround for internal Symbian builds
-#QT_MAJOR_VERSION et al are not set
-symbian {
-    isEmpty(QT_MAJOR_VERSION)  {
-         exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-           QT_MAJOR_VERSION=4;
-           QT_MINOR_VERSION=6;
-           QT_PATCH_VERSION=0;
-        }
-    }
-}
-
-# config.pri specifies the configure options
+# config.pri specifies the configure options and is pulled in via staticconfig.pri
 include(staticconfig.pri)
 !include($$QT_MOBILITY_BUILD_TREE/config.pri) {
     error("Please run configure script");

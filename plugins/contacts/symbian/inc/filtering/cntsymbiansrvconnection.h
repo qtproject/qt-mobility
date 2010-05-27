@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,7 @@
 #include <e32std.h>
 #include <cntdb.h>
 #include <qcontactmanager.h>
+#include <qcontactmanagerengine.h>
 
 // User includes
 
@@ -59,25 +60,30 @@ class CntSymbianSrvConnection : public RSessionBase
 {
 public:
     /*Constructor and destructor*/
-    CntSymbianSrvConnection();
+    CntSymbianSrvConnection(QContactManagerEngine* engine);
     ~CntSymbianSrvConnection();
     
 public:
     /* QT like functions */
     QList<QContactLocalId> searchContacts(const QString& searchQuery, 
-                                         QContactManager::Error* error);
+                                          QContactManager::Error* error);
+    QContact searchContactName(QContactLocalId contactId,
+                               QContactManager::Error* error);
+    QList<QContact> searchAllContactNames(QContactManager::Error* error);
 
 private:
     /* Symbian Leaving functions */
-    QList<QContactLocalId> searchContactsL(const TDesC& aSearchQuery);
+    QList<QContactLocalId> searchContactIdsL(const TDesC& aSqlQuery);
+    QList<QContact> searchContactNamesL(const TDesC& aSqlQuery);
+    void readContactsToBufferL(const TDesC& aSqlQuery);
     void ConnectSrvL();
     void OpenDatabaseL();
     TVersion Version() const;
     TDes8& GetReceivingBufferL(TInt aSize=0);
-    QList<QContactLocalId> UnpackCntIdArrayL();
 
 private:
     /* member varibles */ 
+    QContactManagerEngine* m_manager;
     CBufFlat* m_buffer;
     TInt m_maxBufferSize;
     TPtr8 m_bufPtr;

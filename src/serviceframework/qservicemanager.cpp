@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -63,7 +63,10 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
         return libNameOrPath;
 
     // try to find plug-in via QLibrary
-    const QStringList paths = QCoreApplication::libraryPaths();
+    QStringList paths = QCoreApplication::libraryPaths();
+#ifdef QTM_PLUGIN_PATH
+    paths << QLatin1String(QTM_PLUGIN_PATH)+QLatin1String("/serviceframework");
+#endif
     for (int i=0; i<paths.count(); i++) {
         QString libPath = QDir::toNativeSeparators(paths[i]) + QDir::separator() + libNameOrPath;
         
