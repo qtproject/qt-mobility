@@ -45,10 +45,20 @@ examples/radio/radio
 examples/samplephonebook/samplephonebook
 examples/satellitedialog/satellitedialog
 examples/sensors/accel/accel
+examples/sensors/arrowkeys/arrowkeys
 examples/sensors/cubehouse/cubehouse
 examples/sensors/grueapp/grueapp
+examples/sensors/metadata/metadata
 examples/sensors/reading_perf/reading_perf
 examples/sensors/sensor_explorer/sensor_explorer
+examples/sensors/show_acceleration/show_acceleration
+examples/sensors/show_als/show_als
+examples/sensors/show_compass/show_compass
+examples/sensors/show_magneticflux/show_magneticflux
+examples/sensors/show_orientation/show_orientation
+examples/sensors/show_proximity/show_proximity
+examples/sensors/show_rotation/show_rotation
+examples/sensors/show_tap/show_tap
 examples/sensors/small_screen_sensors/SmallSensors
 examples/servicebrowser/servicebrowser
 examples/sfw-notes/sfw-notes
@@ -61,6 +71,7 @@ config.tests/networkmanager/networkmanager
 config.tests/qmf/qmf
 config.tests/maemo5-contacts/maemo5-contacts
 .qmake.cache
+translations/qtmobility_*.qm
 
 #Symbian specific
 *.mmp

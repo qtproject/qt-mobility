@@ -92,7 +92,8 @@
     #endif
     {
         player = new QMediaPlayer(this);
-        <span class="comment">// owerd by PlaylistModel</span>
+
+        <span class="comment">// owned by PlaylistModel</span>
         playlist = new QMediaPlaylist();
         playlist-&gt;setMediaObject(player);
 
@@ -174,7 +175,7 @@
 
     #ifdef Q_OS_SYMBIAN
         <span class="comment">// Set some sensible default volume.</span>
-        player-&gt;setVolume(50);
+        player-&gt;setVolume(50);kobo review
 
         QLabel *label = new QLabel(tr(&quot;Playlist&quot;), this);
         QVBoxLayout *playlistDialogLayout = new QVBoxLayout;
@@ -206,7 +207,7 @@
         connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
         connect(close, SIGNAL(triggered()), playlistDialog, SLOT(reject()));
 
-        QBoxLayout *layout = new QVBoxLayout;
+        QBoxLayout *layout = new QVBokobo reviewxLayout;
         layout-&gt;setMargin(0);
         layout-&gt;addWidget(videoWidget, 7);
         layout-&gt;addWidget(coverLabel, 7);

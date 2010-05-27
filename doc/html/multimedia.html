@@ -37,23 +37,34 @@
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>This library will require Qt 4.6&#x2e;</p>
-<p>This API delivers an easy to use interface to multimedia functions whether the developer wants to show an image, a video, record sound or play a multimedia stream.</p>
-<p>There are several benefits from that this API brings to Qt. Firstly, the developer can now implement fundamental multimedia functions with minimal code, mostly because they are already implemented. Also there is a great deal of flexibility with the source or generated multimedia. The source file does not need to be local to the device, it could be streamed from a remote location and identified by a URL. Many different codecs are supported 'out of the box'.</p>
-<p>The supplied examples give a good idea at the ease of use of the API. When the supporting user interface code is ignored we can see that functionality is immediately available with minimal code.</p>
+<p>This API delivers an easy to use interface to multimedia functions. The developer can use the API to display an image, or a video, record sound or play a multimedia stream.</p>
+<p>There are several benefits this API brings to Qt. Firstly, the developer can now implement fundamental multimedia functions with minimal code, mostly because they are already implemented. Also there is a great deal of flexibility with the media source or the generated multimedia. The source file does not need to be local to the device, it could be streamed from a remote location and identified by a URL. Finally, many different codecs are supported 'out of the box'.</p>
+<p>The supplied examples give a good idea at the ease of use of the API. When the supporting user interface code is ignored we can see that functionality is immediately available with minimal effort.</p>
 <a name="audio"></a>
 <h4>Audio</h4>
-<p>Looking at the Audio Recorder example we see that by creating a <a href="qmediarecorder.html">QMediaRecorder</a> object that is initialized with a newly created <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object we can now perform all the core actions necessary to record a sound source.</p>
-<p>To initialize the objects we create a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object. This will have a list of available devices to choose from so that we can identify the origin of the audio data. We then use the capture source object to initialize a <a href="qmediarecorder.html">QMediaRecorder</a> object</p>
+<p>The Audio Recorder example introduces the basic use of the API. The idea is to create a <a href="qmediarecorder.html">QMediaRecorder</a> object that is initialized with a newly created <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object that can now perform all the core actions necessary to record a sound source.</p>
+<p>To initialize the objects we create a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object. This will have a list of available devices to choose from so that we can identify the origin of the audio data. Then use the <i>capture</i> source object to initialize a <a href="qmediarecorder.html">QMediaRecorder</a> object</p>
 <pre>        audiosource = new QAudioCaptureSource;
         capture = new QMediaRecorder(audiosource);</pre>
-<p>The API now allows us to discover available devices and codecs as shown in the example. To actually do the recording we merely have to call the <a href="qmediarecorder.html#record">record()</a> function, and to stop call the <a href="qmediarecorder.html#stop">stop()</a> function. Saving to a file is done simply by calling <a href="qmediarecorder.html#outputLocation-prop">QMediaRecorder::setOutputLocation</a>() before starting to record.</p>
+<p>The API now allows us to discover available devices and codecs as shown in the example. To actually do the recording it is only necessary to call the <a href="qmediarecorder.html#record">record()</a> function, and to stop call the <a href="qmediarecorder.html#stop">stop()</a> function. Saving to a file is done simply by calling <a href="qmediarecorder.html#outputLocation-prop">QMediaRecorder::setOutputLocation</a>() before starting to record.</p>
 <p>With a handful of functions and two classes we can implement a sound recording application, excluding the supporting user interface code.</p>
 <a name="video"></a>
 <h4>Video</h4>
-<p>For playing and manipulating video sources the API enables us to easily implement a player application. If we examine the <a href="player.html">Player</a> example we see that the implementation of a simple media player requires a <a href="qmediaplayer.html">QMediaPlayer</a> object, which is used to initialize a <a href="qmediaplaylist.html">QMediaPlaylist</a> object.</p>
-<pre>        player = new QMediaPlayer;
-        playlist = new QMediaPlaylist(player);</pre>
-<p>To display the playing video file we need a <a href="qvideowidget.html">QVideoWidget</a> object. However, instead of using a <a href="qvideowidget.html">QVideoWidget</a> object directly the Player example has a VideoWidget class that inherits from <a href="qvideowidget.html">QVideoWidget</a> so that functions can be added to go to full screen display, either on a double click or on a particular keypress.</p>
+<p>For playing and manipulating video sources the API enables us to easily implement a player application. If we examine the <a href="player.html">Player</a> example we see that the implementation of a simple media player requires a <a href="qmediaplayer.html">QMediaPlayer</a> object, which is used to initialize a <a href="qmediaplaylist.html">QMediaPlaylist</a> object. The following code is from the <a href="player.html">Player</a> Example, it includes part of the constructor of the Player class, derived from <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a>,</p>
+<pre>    QMediaPlayer *player;</pre>
+<pre>        ...
+        player = new QMediaPlayer(this);
+
+        <span class="comment">// owned by PlaylistModel</span>
+        playlist = new QMediaPlaylist();
+        playlist-&gt;setMediaObject(player);</pre>
+<p>To display the playing video file we need a <a href="qvideowidget.html">QVideoWidget</a> object. However, instead of using a <a href="qvideowidget.html">QVideoWidget</a> object directly, the Player example has a VideoWidget class that inherits from <a href="qvideowidget.html">QVideoWidget</a>. This means that functions can be added to go to full screen display, either on a double click or on a particular keypress.</p>
+<pre>        videoWidget = new VideoWidget(this);
+        videoWidget-&gt;setMediaObject(player);
+
+        playlistModel = new PlaylistModel(this);
+        playlistModel-&gt;setPlaylist(playlist);</pre>
+<p>Signals from various user interface objects can be connect to slots on the <a href="qvideowidget.html">QVideoWidget</a> and <a href="qmediaplayer.html">QMediaPlayer</a> instances to control the play and appearance of the video.</p>
 <a name="radio"></a>
 <h4>Radio</h4>
 <p><a href="qradiotunercontrol.html">QRadioTunerControl</a> is a pure virtual base class that will be the basis for any platform specific radio device control. When the functions are implemented the developer will be able to quickly produce an application that supports the typical uses of an FM radio including tuning, volume, start, stop and various other controls.</p>
