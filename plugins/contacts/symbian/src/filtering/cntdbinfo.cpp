@@ -52,7 +52,7 @@ CntDbInfo::CntDbInfo(QContactManagerEngine* engine):
     contactsTableIdColumNameMapping.insert(id.arg(QContactOrganization::DefinitionName, QContactOrganization::FieldName), "company_name");
     contactsTableIdColumNameMapping.insert(id.arg(QContactName::DefinitionName, QContactName::FieldCustomLabel), "text_fields");
 
-    commAddrTableIdColumNameMapping.insert(id.arg(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldSubTypes), QPair<int,bool>(ESipAddress,true));
+    commAddrTableIdColumNameMapping.insert(id.arg(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldAccountUri), QPair<int,bool>(ESipAddress,false));
     commAddrTableIdColumNameMapping.insert(id.arg(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress), QPair<int,bool>(EEmailAddress,false));
     commAddrTableIdColumNameMapping.insert(id.arg(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldSubTypes), QPair<int,bool>(EPhoneNumber,true));
 }
