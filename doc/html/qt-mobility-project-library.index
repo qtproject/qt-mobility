@@ -6871,7 +6871,7 @@
         </page>
         <page access="public" status="commendable" name="multimedia" href="multimedia.html" subtype="group" title="Mobility Multimedia" fulltitle="Mobility Multimedia" subtitle="" location="multimedia.qdoc"/>
         <page access="public" status="commendable" name="multimedia.html" href="multimedia.html" subtype="page" title="Multimedia" fulltitle="Multimedia" subtitle="" location="multimedia.qdoc">
-            <contents name="namespace" title="Namespace" level="1"/>
+            <contents name="no-special-namespace" title="No Special Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="audio" title="Audio" level="2"/>
             <contents name="video" title="Video" level="2"/>
@@ -6979,7 +6979,8 @@
         <page access="public" status="commendable" name="index.html" href="index.html" subtype="page" title="Qt Mobility Project APIs Overview" fulltitle="Qt Mobility Project APIs Overview" subtitle="" location="index.qdoc">
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
-            <contents name="getting-started" title="Getting Started" level="2"/>
+            <contents name="namespace" title="Namespace" level="1"/>
+            <contents name="getting-started" title="Getting Started" level="1"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
             <contents name="the-new-qt-apis" title="The New Qt APIs" level="1"/>
             <contents name="bearer-management" title="Bearer Management" level="2"/>

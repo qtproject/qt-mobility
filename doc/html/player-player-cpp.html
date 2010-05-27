@@ -175,7 +175,7 @@
 
     #ifdef Q_OS_SYMBIAN
         <span class="comment">// Set some sensible default volume.</span>
-        player-&gt;setVolume(50);kobo review
+        player-&gt;setVolume(50);
 
         QLabel *label = new QLabel(tr(&quot;Playlist&quot;), this);
         QVBoxLayout *playlistDialogLayout = new QVBoxLayout;
@@ -207,7 +207,7 @@
         connect(mediaKeysObserver, SIGNAL(mediaKeyPressed(MediaKeysObserver::MediaKeys)), this, SLOT(handleMediaKeyEvent(MediaKeysObserver::MediaKeys)));
         connect(close, SIGNAL(triggered()), playlistDialog, SLOT(reject()));
 
-        QBoxLayout *layout = new QVBokobo reviewxLayout;
+        QBoxLayout *layout = new QVBoxLayout;
         layout-&gt;setMargin(0);
         layout-&gt;addWidget(videoWidget, 7);
         layout-&gt;addWidget(coverLabel, 7);
