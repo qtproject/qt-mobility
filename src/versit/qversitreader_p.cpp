@@ -363,8 +363,9 @@ bool QVersitReaderPrivate::parseVersitDocument(LineReader& lineReader, QVersitDo
     if (mDocumentNestingLevel >= MAX_VERSIT_DOCUMENT_NESTING_DEPTH)
         return false; // To prevent infinite recursion
 
-    // We don't know what type it is: just assume it's a vCard 3.0
-    document.setType(QVersitDocument::VCard30Type);
+    // If we don't know what type it is, just assume it's a vCard 3.0
+    if (document.type() == QVersitDocument::InvalidType)
+        document.setType(QVersitDocument::VCard30Type);
 
     QVersitProperty property;
 
@@ -486,7 +487,7 @@ void QVersitReaderPrivate::parseVCard21Property(LByteArray& cursor, QVersitPrope
             property = QVersitProperty();
             return;
         }
-        QVersitDocument subDocument;
+        QVersitDocument subDocument(QVersitDocument::VCard21Type);
         if (!parseVersitDocument(lineReader, subDocument)) {
             property = QVersitProperty();
         } else {

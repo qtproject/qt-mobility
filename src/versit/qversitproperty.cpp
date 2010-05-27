@@ -171,7 +171,10 @@ QDebug operator<<(QDebug dbg, const QVersitProperty& property)
     for (it = parameters.constBegin(); it != parameters.constEnd(); ++it) {
         dbg.nospace() << ';' << it.key() << '=' << it.value();
     }
-    dbg.nospace() << ':' << property.variantValue();
+    if (property.valueType() == QVersitProperty::VersitDocumentType)
+        dbg.nospace() << ':' << property.value<QVersitDocument>();
+    else
+        dbg.nospace() << ':' << property.variantValue();
     dbg.nospace() << ')';
     return dbg.maybeSpace();
 }
@@ -351,6 +354,7 @@ void QVersitProperty::clear()
     d->mName.clear();
     d->mValue.clear();
     d->mParameters.clear();
+    d->mValueType = QVersitProperty::PlainType;
 }
 
 QTM_END_NAMESPACE

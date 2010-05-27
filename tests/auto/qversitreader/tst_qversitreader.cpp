@@ -549,7 +549,7 @@ void tst_QVersitReader::testParseNextVersitProperty_data()
 
     {
         QVersitDocument subDocument;
-        subDocument.setType(QVersitDocument::VCard30Type);
+        subDocument.setType(QVersitDocument::VCard21Type);
         QVersitProperty subProperty;
         subProperty.setName(QLatin1String("FN"));
         subProperty.setValue(QLatin1String("Jenny"));
@@ -571,7 +571,7 @@ void tst_QVersitReader::testParseVersitDocument()
 {
     QFETCH(QByteArray, vCard);
     QFETCH(bool, expectedSuccess);
-    QFETCH(int, expectedProperties);
+    QFETCH(QVersitDocument, expectedDocument);
 
     QBuffer buffer(&vCard);
     buffer.open(QIODevice::ReadOnly);
@@ -585,17 +585,26 @@ void tst_QVersitReader::testParseVersitDocument()
         QList<QVersitDocument> documents = mReader->results();
         QCOMPARE(documents.size(), 1);
         QVersitDocument document = documents.at(0);
-        QCOMPARE(document.properties().count(), expectedProperties);
+        if (document != expectedDocument) {
+            qDebug() << "Expected: " << expectedDocument;
+            qDebug() << "Actual: " << document;
+            QCOMPARE(document, expectedDocument);
+        }
     }
 }
 
 void tst_QVersitReader::testParseVersitDocument_data()
 {
-#ifdef QT_BUILD_INTERNAL
     QTest::addColumn<QByteArray>("vCard");
     QTest::addColumn<bool>("expectedSuccess");
-    QTest::addColumn<int>("expectedProperties");
+    QTest::addColumn<QVersitDocument>("expectedDocument");
 
+    {
+    QVersitDocument expected(QVersitDocument::VCard21Type);
+    QVersitProperty property;
+    property.setName(QLatin1String("FN"));
+    property.setValue(QLatin1String("John"));
+    expected.addProperty(property);
     QTest::newRow("Basic vCard 2.1")
             << QByteArray(
                     "BEGIN:VCARD\r\n"
@@ -603,29 +612,68 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "FN:John\r\n"
                     "END:VCARD\r\n")
             << true
-            << 1;
+            << expected;
+    }
 
+    {
+    QVersitDocument expected(QVersitDocument::VCard21Type);
+    QVersitProperty property;
+    property.setName(QLatin1String("FN"));
+    property.setValue(QLatin1String("John"));
+    expected.addProperty(property);
+    QVersitDocument agent(QVersitDocument::VCard21Type);
+    property.setValue(QLatin1String("Jenny"));
+    agent.addProperty(property);
+    property.clear();
+    property.setName(QLatin1String("AGENT"));
+    property.setValue(QVariant::fromValue(agent));
+    property.setValueType(QVersitProperty::VersitDocumentType);
+    expected.addProperty(property);
+    property.clear();
+    property.setName(QLatin1String("EMAIL"));
+    property.setValue(QLatin1String("john.citizen@example.com"));
+    expected.addProperty(property);
     QTest::newRow("vCard 2.1 with Agent")
             << QByteArray(
                     "BEGIN:VCARD\r\n"
                     "VERSION:2.1\r\n"
                     "FN:John\r\n"
-                    "AGENT:BEGIN:VCARD\r\nN:Jenny\r\nEND:VCARD\r\n\r\n"
+                    "AGENT:BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\r\n"
                     "EMAIL;ENCODING=QUOTED-PRINTABLE:john.citizen=40exam=\r\nple.com\r\n"
                     "END:VCARD\r\n")
             << true
-            << 3;
+            << expected;
+    }
 
+    {
+    QVersitDocument expected(QVersitDocument::VCard30Type);
+    QVersitProperty property;
+    property.setName(QLatin1String("FN"));
+    property.setValue(QLatin1String("John"));
+    expected.addProperty(property);
+    QVersitDocument agent(QVersitDocument::VCard30Type);
+    property.setValue(QLatin1String("Jenny"));
+    agent.addProperty(property);
+    property.clear();
+    property.setName(QLatin1String("AGENT"));
+    property.setValue(QVariant::fromValue(agent));
+    property.setValueType(QVersitProperty::VersitDocumentType);
+    expected.addProperty(property);
+    property.clear();
+    property.setName(QLatin1String("EMAIL"));
+    property.setValue(QLatin1String("john.citizen@example.com"));
+    expected.addProperty(property);
     QTest::newRow("vCard 3.0 with Agent")
             << QByteArray(
                     "BEGIN:VCARD\r\n"
                     "VERSION:3.0\r\n"
                     "FN:John\r\n"
-                    "AGENT:BEGIN\\:VCARD\\nN\\:Jenny\\nEND\\:VCARD\\n\r\n"
+                    "AGENT:BEGIN\\:VCARD\\nFN\\:Jenny\\nEND\\:VCARD\\n\r\n"
                     "EMAIL:john.citizen@example.com\r\n"
                     "END:VCARD\r\n")
             << true
-            << 3;
+            << expected;
+    }
 
     QTest::newRow("No BEGIN found")
             << QByteArray(
@@ -634,14 +682,14 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "FN:Nobody\r\n"
                     "END:VCARD\r\n")
             << false
-            << 0;
+            << QVersitDocument();
 
     QTest::newRow("Wrong card type")
             << QByteArray(
                     "BEGIN:VCAL\r\n"
                     "END:VCAL\r\n")
             << false
-            << 0;
+            << QVersitDocument();
 
     QTest::newRow("Wrong version")
             << QByteArray(
@@ -650,8 +698,14 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "FN:Nobody\r\n"
                     "END:VCARD\r\n")
             << false
-            << 0;
+            << QVersitDocument();
 
+    {
+    QVersitDocument expected(QVersitDocument::VCard21Type);
+    QVersitProperty property;
+    property.setName(QLatin1String("FN"));
+    property.setValue(QLatin1String("Nobody"));
+    expected.addProperty(property);
     QTest::newRow("No trailing crlf")
             << QByteArray(
                     "BEGIN:VCARD\r\n"
@@ -659,7 +713,8 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "FN:Nobody\r\n"
                     "END:VCARD")
             << true
-            << 1;
+            << expected;
+    }
 
     QTest::newRow("No end")
             << QByteArray(
@@ -667,7 +722,25 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "VERSION:2.1\r\n"
                     "FN:Nobody\r\n")
             << false
-            << 0;
+            << QVersitDocument();
+
+    {
+    QVersitDocument expected(QVersitDocument::VCard21Type);
+    QVersitProperty property;
+    property.setName(QLatin1String("X-EXAMPLES"));
+    property.setValue(QLatin1String("Family vCard"));
+    expected.addProperty(property);
+
+    QVersitDocument nested(QVersitDocument::VCard21Type);
+    property.setName(QLatin1String("FN"));
+    property.setValue(QLatin1String("John"));
+    nested.addProperty(property);
+    expected.addSubDocument(nested);
+
+    nested.clear();
+    property.setValue(QLatin1String("Jenny"));
+    nested.addProperty(property);
+    expected.addSubDocument(nested);
 
     QTest::newRow("Grouped vCard")
             << QByteArray(
@@ -676,19 +749,16 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "X-EXAMPLES:Family vCard\r\n"
                     "BEGIN:VCARD\r\n"
                     "VERSION:2.1\r\n"
-                    "N:Citizen;John\r\n"
-                    "TEL;CELL:1111\r\n"
-                    "EMAIL;ENCODING=QUOTED-PRINTABLE:john.citizen=40example.com\r\n"
+                    "FN:John\r\n"
                     "END:VCARD\r\n"
                     "BEGIN:VCARD\r\n"
                     "VERSION:2.1\r\n"
-                    "N:Citizen;Jenny\r\n"
-                    "TEL;CELL:7777\r\n"
+                    "FN:Jenny\r\n"
                     "END:VCARD\r\n"
                     "END:VCARD")
             << true
-            << 1;
-#endif
+            << expected;
+    }
 }
 
 void tst_QVersitReader::testDecodeQuotedPrintable()
