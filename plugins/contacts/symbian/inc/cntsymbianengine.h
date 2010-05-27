@@ -149,7 +149,7 @@ private:
 
     /* Remove contact */
     bool removeContact(const QContactLocalId &id, QContactChangeSet& changeSet, QContactManager::Error* qtError);
-    int removeContactL(QContactLocalId id);
+    void removeContactL(QContactLocalId id);
 
     void updateDisplayLabel(QContact& contact) const;
 

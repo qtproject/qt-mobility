@@ -3106,10 +3106,14 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     i = cm->compatibleContact(i);
     j = cm->compatibleContact(j);
     k = cm->compatibleContact(k);
-    Q_ASSERT(cm->saveContact(&h));
-    Q_ASSERT(cm->saveContact(&i));
-    Q_ASSERT(cm->saveContact(&j));
-    Q_ASSERT(cm->saveContact(&k));
+    successfulSave = cm->saveContact(&h);
+    Q_ASSERT(successfulSave);
+    successfulSave = cm->saveContact(&i);
+    Q_ASSERT(successfulSave);
+    successfulSave = cm->saveContact(&j);
+    Q_ASSERT(successfulSave);
+    successfulSave = cm->saveContact(&k);
+    Q_ASSERT(successfulSave);
 
     /* Ensure the last modified times are different */
     QTest::qSleep(napTime);
