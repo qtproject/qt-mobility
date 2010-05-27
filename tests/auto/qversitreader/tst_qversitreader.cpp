@@ -226,32 +226,8 @@ void tst_QVersitReader::testReading()
     QVERIFY(mReader->waitForFinished());
     results = mReader->results();
     QCOMPARE(mReader->state(), QVersitReader::FinishedState);
-    // An error is logged because one failed, but the rest are readable.
-    QCOMPARE(mReader->error(), QVersitReader::ParseError);
-    QCOMPARE(results.count(),4);
-
-    // Valid documents and a grouped document between them
-    const QByteArray& validDocumentsAndGroupedDocument2 =
-"BEGIN:VCARD\r\nFN:Jenny\r\nEND:VCARD\r\n\
-BEGIN:VCARD\r\n\
-X-GROUPING:pub gang\r\n\
-BEGIN:VCARD\r\nFN:Jeremy\r\nEND:VCARD\r\n\
-BEGIN:VCARD\r\nFN:Jeffery\r\nEND:VCARD\r\n\
-END:VCARD\r\n\
-BEGIN:VCARD\r\nFN:Jake\r\nEND:VCARD\r\n\
-BEGIN:VCARD\r\nFN:James\r\nEND:VCARD\r\n\
-BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
-    mInputDevice->close();
-    mInputDevice->setData(validDocumentsAndGroupedDocument2);
-    mInputDevice->open(QBuffer::ReadWrite);
-    mInputDevice->seek(0);
-    QVERIFY(mReader->startReading());
-    QVERIFY(mReader->waitForFinished());
-    results = mReader->results();
-    QCOMPARE(mReader->state(), QVersitReader::FinishedState);
-    // An error is logged because one failed, but the rest are readable.
-    QCOMPARE(mReader->error(), QVersitReader::ParseError);
-    QCOMPARE(mReader->results().count(),4);
+    QCOMPARE(mReader->error(), QVersitReader::NoError);
+    QCOMPARE(results.count(),5);
 
     qApp->processEvents(); // clean up before we start sniffing signals
 
@@ -291,45 +267,6 @@ BEGIN:VCARD\r\nFN:Jane\r\nEND:VCARD";
 void tst_QVersitReader::testResult()
 {
     QCOMPARE(mReader->results().count(),0);
-}
-
-void tst_QVersitReader::testSetVersionFromProperty()
-{
-#ifndef QT_BUILD_INTERNAL
-    QSKIP("Testing private API", SkipSingle);
-#else
-    QVersitDocument document;
-
-    // Some other property than VERSION
-    QVersitProperty property;
-    property.setName(QString::fromAscii("N"));
-    QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-
-    // VERSION property with 2.1
-    property.setName(QString::fromAscii("VERSION"));
-    property.setValue(QString::fromAscii("2.1"));
-    QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.type() == QVersitDocument::VCard21Type);
-
-    // VERSION property with 3.0
-    property.setValue(QString::fromAscii("3.0"));
-    QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.type() == QVersitDocument::VCard30Type);
-
-    // VERSION property with a not supported value
-    property.setValue(QString::fromAscii("4.0"));
-    QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
-
-    // VERSION property with BASE64 encoded supported value
-    property.setValue(QString::fromAscii(QByteArray("2.1").toBase64()));
-    property.insertParameter(QString::fromAscii("ENCODING"),QString::fromAscii("BASE64"));
-    QVERIFY(mReaderPrivate->setVersionFromProperty(document,property));
-    QVERIFY(document.type() == QVersitDocument::VCard21Type);
-
-    // VERSION property with BASE64 encoded not supported value
-    property.setValue(QString::fromAscii(QByteArray("4.0").toBase64()));
-    QVERIFY(!mReaderPrivate->setVersionFromProperty(document,property));
-#endif
 }
 
 void tst_QVersitReader::testParseNextVersitProperty()
@@ -632,9 +569,6 @@ void tst_QVersitReader::testParseNextVersitProperty_data()
 
 void tst_QVersitReader::testParseVersitDocument()
 {
-#ifndef QT_BUILD_INTERNAL
-    QSKIP("Testing private API", SkipSingle);
-#else
     QFETCH(QByteArray, vCard);
     QFETCH(bool, expectedSuccess);
     QFETCH(int, expectedProperties);
@@ -643,11 +577,16 @@ void tst_QVersitReader::testParseVersitDocument()
     buffer.open(QIODevice::ReadOnly);
     LineReader lineReader(&buffer, QTextCodec::codecForName("UTF-8"));
 
-    QVersitDocument document;
-    QCOMPARE(mReaderPrivate->parseVersitDocument(lineReader, document), expectedSuccess);
-    QCOMPARE(document.properties().count(), expectedProperties);
-    QCOMPARE(mReaderPrivate->mDocumentNestingLevel, 0);
-#endif
+    mReader->setDevice(&buffer);
+    QVERIFY(mReader->startReading());
+    QVERIFY(mReader->waitForFinished());
+    QCOMPARE(mReader->error(), expectedSuccess ? QVersitReader::NoError : QVersitReader::ParseError);
+    if (expectedSuccess) {
+        QList<QVersitDocument> documents = mReader->results();
+        QCOMPARE(documents.size(), 1);
+        QVersitDocument document = documents.at(0);
+        QCOMPARE(document.properties().count(), expectedProperties);
+    }
 }
 
 void tst_QVersitReader::testParseVersitDocument_data()
@@ -730,7 +669,7 @@ void tst_QVersitReader::testParseVersitDocument_data()
             << false
             << 0;
 
-    QTest::newRow("Grouped vCards are not supported. The whole vCard will be discarded.")
+    QTest::newRow("Grouped vCard")
             << QByteArray(
                     "BEGIN:VCARD\r\n"
                     "VERSION:2.1\r\n"
@@ -747,8 +686,8 @@ void tst_QVersitReader::testParseVersitDocument_data()
                     "TEL;CELL:7777\r\n"
                     "END:VCARD\r\n"
                     "END:VCARD")
-            << false
-            << 0;
+            << true
+            << 1;
 #endif
 }
 

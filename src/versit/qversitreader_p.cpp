@@ -398,33 +398,36 @@ bool QVersitReaderPrivate::parseVersitDocumentBody(LineReader& lineReader, QVers
 {
     mDocumentNestingLevel++;
     bool parsingOk = true;
-    QVersitProperty property;
-    do {
+    while (true) {
         /* Grab it */
-        property = parseNextVersitProperty(document.type(), lineReader);
+        QVersitProperty property = parseNextVersitProperty(document.type(), lineReader);
 
-        /* Discard embedded vcard documents - not supported yet.  Discard the entire vCard */
         if (property.name() == QLatin1String("BEGIN")) {
-            parsingOk = false;
-            QVersitDocument nestedDocument;
-            nestedDocument.setComponentType(property.value().trimmed().toUpper());
-            if (!parseVersitDocumentBody(lineReader, nestedDocument))
+            // Nested Versit document
+            QVersitDocument subDocument;
+            subDocument.setType(document.type());
+            subDocument.setComponentType(property.value().trimmed().toUpper());
+            if (!parseVersitDocumentBody(lineReader, subDocument))
                 break;
-        }
-
-        // See if this is a version property and continue parsing under that version
-        if (!setVersionFromProperty(document, property)) {
+            document.addSubDocument(subDocument);
+        } else if (property.name() == QLatin1String("VERSION")) {
+            // A version property
+            if (!setVersionFromProperty(document, property)) {
+                parsingOk = false;
+                break;
+            }
+        } else if (property.name() == QLatin1String("END")) {
+            // End of document
+            break;
+        } else if (property.name().isEmpty()) {
+            // End of input or some other error
             parsingOk = false;
             break;
-        }
-
-        /* Nope, something else.. just add it */
-        if (property.name() != QLatin1String("VERSION") &&
-            property.name() != QLatin1String("END"))
+        } else {
+            // A normal property - just add it.
             document.addProperty(property);
-    } while (property.name().length() > 0 && property.name() != QLatin1String("END"));
-    if (property.name() != QLatin1String("END"))
-        parsingOk = false;
+        }
+    }
     if (!parsingOk)
         document = QVersitDocument();
     mDocumentNestingLevel--;
@@ -458,7 +461,8 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
 
     if (versitType == QVersitDocument::VCard21Type)
         parseVCard21Property(cursor, property, lineReader);
-    else if (versitType == QVersitDocument::VCard30Type)
+    else if (versitType == QVersitDocument::VCard30Type
+            || versitType == QVersitDocument::ICalendar20Type)
         parseVCard30Property(cursor, property, lineReader);
 
     return property;
@@ -559,23 +563,21 @@ void QVersitReaderPrivate::parseVCard30Property(LByteArray& cursor, QVersitPrope
  */
 bool QVersitReaderPrivate::setVersionFromProperty(QVersitDocument& document, const QVersitProperty& property) const
 {
-    bool valid = true;
-    if (property.name() == QLatin1String("VERSION")) {
-        QString value = property.value().trimmed();
-        QStringList encodingParameters = property.parameters().values(QLatin1String("ENCODING"));
-        QStringList typeParameters = property.parameters().values(QLatin1String("TYPE"));
-        if (encodingParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive)
-            || typeParameters.contains(QLatin1String("BASE64"), Qt::CaseInsensitive))
-            value = QLatin1String(QByteArray::fromBase64(value.toAscii()));
-        if (value == QLatin1String("2.1")) {
-            document.setType(QVersitDocument::VCard21Type);
-        } else if (value == QLatin1String("3.0")) {
-            document.setType(QVersitDocument::VCard30Type);
-        } else {
-            valid = false;
-        }
+    QString value = property.value().trimmed();
+    if (document.componentType() == QLatin1String("VCARD")
+            && value == QLatin1String("2.1")) {
+        document.setType(QVersitDocument::VCard21Type);
+    } else if (document.componentType() == QLatin1String("VCARD")
+            && value == QLatin1String("3.0")) {
+        document.setType(QVersitDocument::VCard30Type);
+    } else if ((document.componentType() == QLatin1String("VCALENDAR")
+                || document.type() == QVersitDocument::ICalendar20Type) // covers VEVENT, etc. when nested inside a VCALENDAR
+            && value == QLatin1String("2.0")) {
+        document.setType(QVersitDocument::VCard30Type);
+    } else {
+        return false;
     }
-    return valid;
+    return true;
 }
 
 /*!
