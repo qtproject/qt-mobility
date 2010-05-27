@@ -70,7 +70,7 @@ public:
     int zoomLevel;
     QSize viewportSize;
     QGeoMappingManager *manager;
-//    QGeoMapWidget* mapWidget;
+    QGeoMapWidget *mapWidget;
 };
 
 QTM_END_NAMESPACE

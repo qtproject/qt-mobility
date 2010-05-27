@@ -162,7 +162,7 @@ void QGeoMapViewportNokia::tileFinished(QGeoMapReply* reply)
 
     if(!tile.isNull() && !tile.size().isEmpty()) {
         m_mapTiles[tileIndex] = qMakePair(tile, true);
-        //TODO: call update on associated map widget
+        updateMapWidget();
     }
 
     delete info;
@@ -202,6 +202,14 @@ QGeoCoordinate QGeoMapViewportNokia::center() const
     return QGeoCoordinate();
 }
 
+void QGeoMapViewportNokia::updateMapWidget() const
+{
+    QGeoMapWidget *map = mapWidget();
+
+    if (map)
+        map->update();
+}
+
 void QGeoMapViewportNokia::pan(int startX, int startY, int endX, int endY)
 {
     int deltaX = endX - startX;
@@ -221,8 +229,7 @@ void QGeoMapViewportNokia::pan(int startX, int startY, int endX, int endY)
         m_boundingBox.moveLeft(((qint64) m_boundingBox.left()) % ((qint64) pixelPerXAxis));
 
     requestMissingMapTiles();
-    //update();
-    //emit centerChanged();
+    updateMapWidget();
 }
 
 QGeoBoundingBox QGeoMapViewportNokia::viewBounds() const

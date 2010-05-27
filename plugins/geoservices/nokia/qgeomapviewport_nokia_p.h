@@ -56,6 +56,7 @@
 #include <qgeoserviceprovider.h>
 #include <qgeomapviewport.h>
 #include <qgeomaprequestoptions.h>
+#include <qgeomapwidget.h>
 
 #include <QHash>
 #include <QRectF>
@@ -133,6 +134,7 @@ private:
     void requestTile(qint32 row, qint32 col);
     void requestMissingMapTiles();
     QRectF getTileRect(qint32 row, qint32 col) const;
+    void updateMapWidget() const;
 
     Q_DISABLE_COPY(QGeoMapViewportNokia)
 

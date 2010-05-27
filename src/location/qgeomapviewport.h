@@ -52,7 +52,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-//class QGeoMapWidget;
+class QGeoMapWidget;
 class QGeoMappingManager;
 class QGeoMapViewportPrivate;
 
@@ -64,7 +64,7 @@ public:
     QGeoMapViewport(QGeoMappingManager *manager = 0);
     virtual ~QGeoMapViewport();
 
-//    void setMapWidget(QGeoMapWidget *widget);
+    void setMapWidget(QGeoMapWidget *widget);
 
     int zoomLevel() const;
     virtual void setZoomLevel(int zoomLevel) = 0;
@@ -86,6 +86,7 @@ public:
 
 protected:
     QGeoMappingManager* mappingManager() const;
+    QGeoMapWidget* mapWidget() const;
 
 private:
     QGeoMapViewportPrivate* d_ptr;
