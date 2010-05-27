@@ -464,7 +464,7 @@ QVersitProperty QVersitReaderPrivate::parseNextVersitProperty(
         parseVCard21Property(cursor, property, lineReader);
     else if (versitType == QVersitDocument::VCard30Type
             || versitType == QVersitDocument::ICalendar20Type)
-        parseVCard30Property(cursor, property, lineReader);
+        parseVCard30Property(versitType, cursor, property, lineReader);
 
     return property;
 }
@@ -508,9 +508,11 @@ void QVersitReaderPrivate::parseVCard21Property(LByteArray& cursor, QVersitPrope
 }
 
 /*!
- * Parses the property according to vCard 3.0 syntax.
+ * Parses the property according to vCard 3.0 syntax.  This function is called for both vCard 3.0
+ * and iCalendar properties.
  */
-void QVersitReaderPrivate::parseVCard30Property(LByteArray& cursor, QVersitProperty& property,
+void QVersitReaderPrivate::parseVCard30Property(QVersitDocument::VersitType versitType,
+                                                LByteArray& cursor, QVersitProperty& property,
                                                 LineReader& lineReader)
 {
     property.setParameters(extractVCard30PropertyParams(cursor, lineReader.codec()));
@@ -529,7 +531,7 @@ void QVersitReaderPrivate::parseVCard30Property(LByteArray& cursor, QVersitPrope
         subDocumentData.seek(0);
         LineReader subDocumentLineReader(&subDocumentData, codec);
 
-        QVersitDocument subDocument;
+        QVersitDocument subDocument(versitType);
         if (!parseVersitDocument(subDocumentLineReader, subDocument)) {
             property = QVersitProperty();
         } else {

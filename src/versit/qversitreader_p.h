@@ -214,6 +214,7 @@ public: // New functions
         LineReader& lineReader);
 
     void parseVCard30Property(
+        QVersitDocument::VersitType versitType,
         LByteArray& text,
         QVersitProperty& property,
         LineReader& lineReader);
