@@ -120,19 +120,6 @@ QAudioCaptureSource::QAudioCaptureSource(QObject *parent, QMediaServiceProvider 
 }
 
 /*!
-    Construct a QAudioCaptureSource using the QMediaObject \a mediaObject, with \a parent.
-*/
-
-QAudioCaptureSource::QAudioCaptureSource(QMediaObject *mediaObject, QObject *parent)
-    :QMediaObject(*new QAudioCaptureSourcePrivate, parent, mediaObject->service())
-{
-    Q_D(QAudioCaptureSource);
-
-    d->provider = 0;
-    d->initControls();
-}
-
-/*!
     Destroys the audiocapturesource object.
 */
 
