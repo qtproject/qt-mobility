@@ -39,39 +39,36 @@
 **
 ****************************************************************************/
 
-#ifndef QXAAUDIOENDPOINTSELECTOR_H
-#define QXAAUDIOENDPOINTSELECTOR_H
+#ifndef S60AUDIOCAPTURESERVICE_H
+#define S60AUDIOCAPTURESERVICE_H
 
-#include <qaudioendpointselector.h>
+#include <QtCore/qobject.h>
+
+#include <qmediaservice.h>
 
 QT_USE_NAMESPACE
 
-/*
- * This class implements QAudioEncoderControl interface.
- */
-class QXARecordSession;
+class S60AudioCaptureSession;
+class S60AudioEncoderControl;
+class S60AudioMediaRecorderControl;
+class S60AudioEndpointSelector;
+class S60AudioContainerControl;
 
-class QXAAudioEndpointSelector : public QAudioEndpointSelector
+
+class S60AudioCaptureService : public QMediaService
 {
     Q_OBJECT
-
 public:
-    QXAAudioEndpointSelector(QXARecordSession *session, QObject *parent);
-    ~QXAAudioEndpointSelector();
+    S60AudioCaptureService(QObject *parent = 0);
+    ~S60AudioCaptureService();
 
-    QList<QString> availableEndpoints() const;
-    QString endpointDescription(const QString &name) const;
-    QString defaultEndpoint() const;
-    QString activeEndpoint() const;
-
-public Q_SLOTS:
-    void setActiveEndpoint(const QString &name);
-
-private Q_SLOTS:
-    void availableAudioInputsChanged();
-
+    QMediaControl *control(const char *name) const;
 private:
-    QXARecordSession *m_session;
+    S60AudioCaptureSession       *m_session;
+    S60AudioEncoderControl       *m_encoderControl;
+    S60AudioEndpointSelector     *m_endpointSelector;
+    S60AudioMediaRecorderControl *m_recorderControl;
+    S60AudioContainerControl     *m_containerControl; 
 };
 
-#endif /* QXAAUDIOENDPOINTSELECTOR_H */
+#endif // S60AUDIOCAPTURESERVICE_H

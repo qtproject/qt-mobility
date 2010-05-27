@@ -73,18 +73,7 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 	return m_session->codecDescription(codecName);    
 }
 
-int S60AudioEncoderControl::bitRate() const
-{
-    return (m_session->format().frequency() * m_session->format().channels() * (m_session->format().sampleSize() / 8));
-}
-
-void S60AudioEncoderControl::setBitRate(int value)
-{
-    Q_UNUSED(value)
-    //Note: None of the default codecs provided in the MMF support the setting of bit rates.                
-}
-
-QtMultimedia::EncodingQuality S60AudioEncoderControl::quality() const
+QtMediaServices::EncodingQuality S60AudioEncoderControl::quality() const
 {
     return m_quality;
 }
