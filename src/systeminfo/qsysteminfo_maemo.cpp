@@ -331,6 +331,21 @@ QString QSystemNetworkInfoPrivate::homeMobileCountryCode()
 QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
 {
 #if !defined(QT_NO_DBUS)
+    #if defined(Q_WS_MAEMO_6)
+    QDBusInterface connectionInterface("com.nokia.csd.SIM",
+                                       "/com/nokia/csd/sim",
+                                       "com.nokia.csd.SIM.Identity",
+                                       QDBusConnection::systemBus());
+    QDBusMessage reply = connectionInterface.call(QLatin1String("GetHPLMN"));
+    if (reply.errorName().isEmpty()) {
+        QList<QVariant> args = reply.arguments();
+        // The first attribute should be MCC and the 2nd one MNC
+        if (args.size() == 2) {
+            return args.at(1).toString();
+        }
+    }
+    #else
+    /* Maemo 5 */
     QDBusInterface connectionInterface("com.nokia.phone.SIM",
                                        "/com/nokia/phone/SIM",
                                        "Phone.Sim",
@@ -361,8 +376,9 @@ QString QSystemNetworkInfoPrivate::homeMobileNetworkCode()
         homeMobileNetworkCode.prepend(mnc1);
         return homeMobileNetworkCode;
     }
+    #endif
 #endif
-    return QString();
+    return "";
 }
 
 QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode mode)
