@@ -129,6 +129,7 @@ private slots:
 
 private:
     void requestTile(qint32 row, qint32 col);
+    void requestMissingMapTiles();
 
     Q_DISABLE_COPY(QGeoMapViewportNokia)
 
@@ -137,6 +138,8 @@ private:
     QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
     QRectF m_boundingBox;
     QSize m_tileSize;
+    int m_horizontalPadding;
+    int m_verticalPadding;
 };
 
 #endif

@@ -157,6 +157,30 @@ void QGeoMapViewportNokia::tileFinished(QGeoMapReply* reply)
     reply->deleteLater();
 }
 
+void QGeoMapViewportNokia::requestMissingMapTiles()
+{
+    QRectF paddedViewport = QRectF(m_boundingBox.x() - m_horizontalPadding,
+                                   m_boundingBox.y() - m_verticalPadding,
+                                   m_boundingBox.width() + (2*m_horizontalPadding),
+                                   m_boundingBox.height() + (2*m_verticalPadding));
+    int zLevel = zoomLevel();
+    TileIterator it(paddedViewport, zLevel, m_tileSize);
+    
+    while (it.hasNext()) {
+        it.next();
+        if (!it.isValid())
+            continue;
+        qint64 index = getTileIndex(it.row(), it.col(), zLevel);
+
+        if (m_mapTiles.contains(index)) {
+            QPair<QPixmap, bool>& tileData = m_mapTiles[index];
+            if (!tileData.second)
+                requestTile(it.row(), it.col());
+        } else
+            requestTile(it.row(), it.col());
+    }
+}
+
 void QGeoMapViewportNokia::setCenter(const QGeoCoordinate &center)
 {
 }
@@ -168,6 +192,25 @@ QGeoCoordinate QGeoMapViewportNokia::center() const
 
 void QGeoMapViewportNokia::pan(int startX, int startY, int endX, int endY)
 {
+    int deltaX = endX - startX;
+    int deltaY = endY - startY;
+    qint32 numColRow = 1;
+    numColRow <<= zoomLevel();
+    qreal pixelPerXAxis = numColRow * m_tileSize.width();
+    m_boundingBox.translate(deltaX, deltaY);
+
+    //have we gone past the left edge?
+    while (m_boundingBox.left() < 0) {
+        m_boundingBox.translate(pixelPerXAxis, 0);
+    }
+
+    //have we gone past the right edge?
+    if (m_boundingBox.left() >= pixelPerXAxis)
+        m_boundingBox.moveLeft(((qint64) m_boundingBox.left()) % ((qint64) pixelPerXAxis));
+
+    requestMissingMapTiles();
+    //update();
+    //emit centerChanged();
 }
 
 QGeoBoundingBox QGeoMapViewportNokia::viewBounds() const
