@@ -98,9 +98,7 @@ QTM_BEGIN_NAMESPACE
   the request after calling \l start(), or simply not connect the
   request's signals to any slots.
 
-  Clients may choose how to construct a request, either on the stack
-  (scope-local or class member) or on the heap (allocated with operator
-  new).  If the request is allocated on the heap, the client must
+  If the request is allocated via operator new, the client must
   delete the request when they are no longer using it in order to avoid
   leaking memory.  That is, the client retains ownership of the request.
 
@@ -110,6 +108,10 @@ QTM_BEGIN_NAMESPACE
   the request for deletion when control returns to the event loop (from
   within a slot connected to a signal emitted by the request, for example
   \l stateChanged()).
+
+  An active request may be deleted by the client, but the client will not
+  receive any notifications about whether the request succeeded or not,
+  nor any results of the request.
 
   Because clients retain ownership of any request object, and may delete
   a request object at any time, manager engine implementors must be careful
