@@ -265,30 +265,13 @@ void QContactABook::initLocalIdHash()
    g_list_free(contactList);
 }
 
+//TODO Use native filters
 QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
-  QList<QContactLocalId> rtn;
-
-  // do this naively for now...
+  Q_UNUSED(sortOrders)
+  Q_UNUSED(filter);
   *error = QContactManager::NoError;
-  QContactManager::Error tempError = QContactManager::NoError;
-  QList<QContactLocalId> allIds = m_localIds.keys();
-  QList<QContact> sortedAndFiltered;
-  QContact *curr = 0;
-  foreach (const QContactLocalId& currId, allIds) {
-    curr = getQContact(currId, &tempError);
-    if (tempError != QContactManager::NoError)
-      *error = tempError;
-    if (QContactManagerEngine::testFilter(filter, *curr)) {
-      QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
-    }
-    delete curr;
-  }
-
-  foreach (const QContact& contact, sortedAndFiltered) {
-    rtn.append(contact.localId());
-  }
-  return rtn;
+  return m_localIds.keys();
 
   /*
   // Sorting
@@ -350,6 +333,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   return rtn;
   */
 }
+#include "qcontactdetail_p.h"
 
 QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
@@ -362,9 +346,20 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   
   //Convert aContact => qContact
   rtn = convert(E_CONTACT(aContact));
+  
   QContactId cId;
   cId.setLocalId(contactId);
   rtn->setId(cId);
+  
+  //TEST BEGIN
+  
+/*
+  QContactDisplayLabel dl;
+  dl.setValue(QContactDisplayLabel::FieldLabel, "LABEL");
+  QContactDetailPrivate::setAccessConstraints(&dl, QContactDetail::Irremovable | QContactDetail::ReadOnly);
+  rtn->d->m_details.replace(0, dl);
+*/
+  //TEST END
   return rtn;
 }
 

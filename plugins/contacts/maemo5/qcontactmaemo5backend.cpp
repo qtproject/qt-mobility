@@ -165,8 +165,26 @@ QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& fi
 {
   Q_CHECK_PTR(d->m_abook);
   
-  //return QContactManagerEngine::contactIds(filter, sortOrders, error);
-  return d->m_abook->contactIds(filter, sortOrders, error);
+  QList<QContactLocalId> rtn;
+
+  // do this naively for now...
+  QContactManager::Error tempError = QContactManager::NoError;
+  QList<QContactLocalId> allIds = d->m_abook->contactIds(filter, sortOrders, error);
+  QList<QContact> sortedAndFiltered;
+  
+  foreach (const QContactLocalId& currId, allIds) {
+    QContact curr = contact(currId, QContactFetchHint(), &tempError);
+    if (tempError != QContactManager::NoError)
+      *error = tempError;
+    if (QContactManagerEngine::testFilter(filter, curr)) {
+      QContactManagerEngine::addSorted(&sortedAndFiltered, curr, sortOrders);
+    }
+  }
+
+  foreach (const QContact& contact, sortedAndFiltered) {
+    rtn.append(contact.localId());
+  }
+  return rtn;
 }
 
 QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, const QList<QContactSortOrder> & sortOrders, const QContactFetchHint & fetchHint,
@@ -187,6 +205,7 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   Q_UNUSED(fetchHint); //TODO
   Q_CHECK_PTR(d->m_abook);
   
+  //NOTE getQContact can't set the displayLabel
   QContact *contact = d->m_abook->getQContact(contactId, error);
   QContact rtn(*contact);
   delete contact;
