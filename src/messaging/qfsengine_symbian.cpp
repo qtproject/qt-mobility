@@ -2695,6 +2695,8 @@ void CFSMessagesFindOperation::getAllMessagesL(TEmailSortCriteria& sortCriteria)
     foreach (QMessageAccount value, m_owner.m_accounts) {
         getAccountSpecificMessagesL(value, sortCriteria);
     }
+    if (m_activeSearchCount == 0)
+        QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
 }
 
 void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria)
