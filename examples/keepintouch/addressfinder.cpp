@@ -416,7 +416,6 @@ void AddressFinder::setupUi()
     // Maemo 5 style cuts off check box text.
     excludeCheckBox->setText(excludeCheckBox->text() + "  ");
 #endif
-    excludeCheckBox->setCheckState(Qt::Checked);
     connect(excludeCheckBox, SIGNAL(stateChanged(int)), this, SLOT(excludePeriodEnabled(int)));
     filterLayout->addWidget(excludeCheckBox, 1, 0);
     filterLayout->setAlignment(excludeCheckBox, Qt::AlignRight);
@@ -435,6 +434,7 @@ void AddressFinder::setupUi()
     excludePeriod = new QComboBox;
     excludePeriod->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     filterLayout->addWidget(excludePeriod, 1, 1);
+    excludePeriod->setEnabled(false);
 
 #ifdef USE_SEARCH_BUTTON
     searchButton = new QPushButton(tr("Search"));
