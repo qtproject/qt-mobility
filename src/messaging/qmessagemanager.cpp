@@ -504,7 +504,8 @@ bool QMessageManager::addMessage(QMessage *m)
 
     Using this function to explicitly set a size or date is not currently supported on some platforms.
     
-    On the Maemo 5 (Fremantle) platform this function is not yet supported.
+    On the Maemo 5 (Fremantle) platform this function may only be used to update the priority and 
+    status of email type messages.
     
     \sa addMessage(), removeMessage(), QMessageService::exportUpdates()
 */
@@ -580,9 +581,6 @@ void QMessageManager::unregisterNotificationFilter(NotificationFilterId notifica
     \a matchingFilterIds contains a set of values identifiying registered notification filters 
     that matched the message.
     
-    Currently on the Maemo 5 (Fremantle) platform this signal is not reported for messages in the 
-    inbox when the inbox is open in modest.
-
     \sa messageRemoved(), messageUpdated(), registerNotificationFilter()
 */
 
