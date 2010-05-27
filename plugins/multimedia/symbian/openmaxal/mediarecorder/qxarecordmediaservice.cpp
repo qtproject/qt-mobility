@@ -39,39 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QXAAUDIOENDPOINTSELECTOR_H
-#define QXAAUDIOENDPOINTSELECTOR_H
+#include <QString>
 
-#include <qaudioendpointselector.h>
+#include "qxarecordmediaservice.h"
+#include "qxarecordsession.h"
+#include "qxamediarecordercontrol.h"
+#include "qxaaudioendpointselector.h"
+#include "qxaaudioencodercontrol.h"
+#include "qxamediacontainercontrol.h"
+#include "qxacommon.h"
 
-QT_USE_NAMESPACE
-
-/*
- * This class implements QAudioEncoderControl interface.
- */
-class QXARecordSession;
-
-class QXAAudioEndpointSelector : public QAudioEndpointSelector
+QXARecodMediaService::QXARecodMediaService(QObject *parent)
+:QMediaService(parent)
 {
-    Q_OBJECT
+    QT_TRACE_FUNCTION_ENTRY;
+    m_session = new QXARecordSession(this);
+    m_control = new QXAMediaRecoderControl(m_session, this);
+    m_endpoint = new QXAAudioEndpointSelector(m_session, this);
+    m_encoder = new QXAAudioEncoderControl(m_session, this);
+    m_container = new QXAMediaContainerControl(m_session, this);
+}
 
-public:
-    QXAAudioEndpointSelector(QXARecordSession *session, QObject *parent);
-    ~QXAAudioEndpointSelector();
+QXARecodMediaService::~QXARecodMediaService()
+{
+    QT_TRACE_FUNCTION_ENTRY_EXIT;
+}
 
-    QList<QString> availableEndpoints() const;
-    QString endpointDescription(const QString &name) const;
-    QString defaultEndpoint() const;
-    QString activeEndpoint() const;
+QMediaControl* QXARecodMediaService::control(const char *name) const
+{
+    QT_TRACE_FUNCTION_ENTRY;
+    if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
+        return m_control;
+    else if (qstrcmp(name, QAudioEndpointSelector_iid) == 0)
+        return m_endpoint;
+    else if (qstrcmp(name, QAudioEncoderControl_iid) == 0)
+        return m_encoder;
+    else if (qstrcmp(name, QMediaContainerControl_iid) == 0)
+        return m_container;
+    QT_TRACE_FUNCTION_EXIT;
+    return 0;
+}
 
-public Q_SLOTS:
-    void setActiveEndpoint(const QString &name);
-
-private Q_SLOTS:
-    void availableAudioInputsChanged();
-
-private:
-    QXARecordSession *m_session;
-};
-
-#endif /* QXAAUDIOENDPOINTSELECTOR_H */

@@ -43,21 +43,8 @@
 #include "qxarecordsession.h"
 #include "qxacommon.h"
 
-<<<<<<< HEAD:plugins/multimedia/symbian/openmaxal/mediarecorder/qxamediacontainercontrol.cpp
 QXAMediaContainerControl::QXAMediaContainerControl(QXARecordSession *session, QObject *parent)
 :QMediaContainerControl(parent), m_session(session)
-=======
-QT_USE_NAMESPACE
-
-QT7VideoOutputControl::QT7VideoOutputControl(QObject *parent)
-   :QVideoOutputControl(parent), 
-    m_session(0),
-    m_output(QVideoOutputControl::NoOutput)
-{    
-}
-
-QT7VideoOutputControl::~QT7VideoOutputControl()
->>>>>>> 51509540960f75b3081a288526da21cbf198e9b5:plugins/multimedia/qt7/qt7videooutputcontrol.mm
 {
 }
 

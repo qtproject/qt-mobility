@@ -39,38 +39,24 @@
 **
 ****************************************************************************/
 
-#include "S60audiocontainercontrol.h"
-#include "s60audiocapturesession.h"
-#include <QtCore/qdebug.h>
 
-S60AudioContainerControl::S60AudioContainerControl(QObject *parent)
-    : QMediaContainerControl(parent)
+#ifndef S60SERVICEPLUGIN_H
+#define S60SERVICEPLUGIN_H
+
+#include <QtCore/qobject.h>
+#include <qmediaservice.h>
+#include <qmediaserviceproviderplugin.h>
+
+QT_USE_NAMESPACE
+
+class S60MediaServicePlugin : public QMediaServiceProviderPlugin
 {
-}
+    Q_OBJECT
+public:
 
-S60AudioContainerControl::S60AudioContainerControl(QObject *session, QObject *parent)
-   : QMediaContainerControl(parent)
-{
-    m_session = qobject_cast<S60AudioCaptureSession*>(session);   
-}
+    QStringList keys() const;
+    QMediaService* create(QString const& key);
+    void release(QMediaService *service);
+};
 
-QStringList S60AudioContainerControl::supportedContainers() const
-{
-    return m_session->supportedAudioContainers();
-}
-
-QString S60AudioContainerControl::containerMimeType() const
-{    
-    return m_session->audioContainer();    
-}
-
-void S60AudioContainerControl::setContainerMimeType(const QString &containerMimeType)
-{
-    m_session->setAudioContainer(containerMimeType);
-}
-
-QString S60AudioContainerControl::containerDescription(const QString &containerMimeType) const
-{
-    return m_session->audioContainerDescription(containerMimeType);
-}
-
+#endif // S60SERVICEPLUGIN_H
