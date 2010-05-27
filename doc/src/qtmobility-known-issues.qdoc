@@ -161,17 +161,12 @@ Support is present for the following System Info API classes
 \section2 Messaging API
 \list
     \o Messaging filtering and sorting functions are not fully optimized.
-    \o Fremantle: \c {QMessageService::compose} not supported for SMS type messages.
-    \o Fremantle: queryMessages service action is synchronous for SMS type messages.
     \o Fremantle: \c {QMessageService::show} not supported for SMS type messages.
-    \o Fremantle: \c {QMessageManager::messageAdded} signal is not reported for messages in inbox when inbox is open in modest.
     \o Fremantle: \c {QMessageManager::updateMessage} is not supported.
     \o Fremantle: \c {QMessageManager::addMessage} is not supported for SMS type messages.
-    \o Fremantle: \c {QMessageManager::addMessage} can not be used to set priority and status of email messages.
     \o Fremantle and Windows: \c {QMessageServiceAction::send}: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's disgression.
     \o Fremantle, S60 and Windows: \c {QMessageManager::addMessage} can not be used to set size of messages.
     \o Fremantle and Windows: \c {QMessageManager::addMessage} can not be used to set the date of messages.
-    \o S60: Exporting POP3 Message Updates from client to server is not supported.
     \o S60: Only one level of folders is supported <=> Symbian/S60 applications do not use nested folders
     \o S60: ReceptionTimeStamp is not supported in filtering <=> Symbian reports only one date for SMS & MMS which means that \c {QMessage::date()} field is used, not \c {receivedDate()})
     \o S60: Local services messages, for example bluetooth, are listed/read in Inbox
