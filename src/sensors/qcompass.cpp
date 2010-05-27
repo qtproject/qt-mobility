@@ -133,7 +133,7 @@ void QCompassReading::setCalibrationLevel(qreal calibrationLevel)
     \sa QSensorFilter::filter()
 */
 
-const char *QCompass::type("QCompass");
+char const * const QCompass::type("QCompass");
 
 /*!
     \class QCompass

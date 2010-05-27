@@ -56,7 +56,6 @@ class maemo6accelerometer : public maemo6sensorbase
 
 public:
     static const char *id;
-
     maemo6accelerometer(QSensor *sensor);
 
 private:

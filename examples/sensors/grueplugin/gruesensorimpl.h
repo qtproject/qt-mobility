@@ -50,7 +50,7 @@ QTM_USE_NAMESPACE
 class gruesensorimpl : public QSensorBackend, public QAmbientLightFilter
 {
 public:
-    static const char *id;
+    static char const * const id;
 
     gruesensorimpl(QSensor *sensor);
 

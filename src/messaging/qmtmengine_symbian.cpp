@@ -1699,10 +1699,8 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                                                 iMessageQueries[index].limit);
                     iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids, true, true);
                 } else {
-                    emit iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
+                    iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
                 }
-                iMessageQueries[index].privateService->_active = false;
-                emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
             }
         } else {
             // There was only one single filter to handle
@@ -1726,17 +1724,14 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                 applyOffsetAndLimitToMsgIds(ids, iMessageQueries[index].offset, iMessageQueries[index].limit);
                 iMessageQueries[index].privateService->messagesFound(ids, true, true);
             } else {
-                emit iMessageQueries[index].privateService->messagesCounted(ids.count());
+                iMessageQueries[index].privateService->messagesCounted(ids.count());
             }
-            iMessageQueries[index].privateService->_active = false;
-            emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
         }
     } else {
         iMessageQueries[index].privateService->_active = false;
         if (iMessageQueries[index].privateService->_error == QMessageManager::NoError) {
             iMessageQueries[index].privateService->_error = QMessageManager::RequestIncomplete;
         }
-        emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
     }
 
     delete iMessageQueries[index].findOperation;
@@ -4509,7 +4504,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
             matchingFilters.insert(it.key());
         } else {
             QMessageFilterPrivate* privateMessageFilter = QMessageFilterPrivate::implementation(filter);
-            if (privateMessageFilter->_field == QMessageFilterPrivate::Type) {
+            if (privateMessageFilter->_field == QMessageFilterPrivate::Type && aEvent != EMsvEntriesCreated) {
                 if (aMsgType == KUidMsgTypeSMS) {
                     message.setType(QMessage::Sms);
                 } else if (aMsgType == KUidMsgTypeMultimedia) {
@@ -4521,7 +4516,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 } else {
                     message.setType(QMessage::NoType);
                 }
-            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder) &&
+            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder && aEvent != EMsvEntriesCreated) &&
                        (aMsgType == KUidMsgTypeSMS || aMsgType == KUidMsgTypeMultimedia)) {
                 if (aFolderId == KMsvGlobalInBoxIndexEntryId) {
                     QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);

@@ -71,6 +71,7 @@ config.tests/networkmanager/networkmanager
 config.tests/qmf/qmf
 config.tests/maemo5-contacts/maemo5-contacts
 .qmake.cache
+translations/qtmobility_*.qm
 
 #Symbian specific
 *.mmp
