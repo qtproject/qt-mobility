@@ -176,9 +176,6 @@ void AddressFinder::searchMessages()
     setSearchActionEnabled(false);
 
     contactList->clear();
-#ifdef Q_WS_MAEMO_5
-    contactList->setMinimumHeight(0);
-#endif
     messageCombo->clear();
     excludedAddresses.clear();
     addressList.clear();
@@ -336,11 +333,6 @@ void AddressFinder::continueSearch()
 
                     // Add the recipient to our visible list of contacts to keep in touch with
                     contactList->addItem(contactDisplayName(address));
-#ifdef Q_WS_MAEMO_5
-                    // Assume each row is the same height
-                    int length = contactList->sizeHintForRow(0) * contactList->count();
-                    contactList->setMinimumHeight(length);
-#endif
                 }
 
                 if (details.isEmpty()) {
@@ -362,9 +354,21 @@ void AddressFinder::continueSearch()
         tabChanged(1);
 #endif
 
-        if (contactList->currentItem()) {
+        if (
+#ifdef USE_CONTACTS_COMBOBOX
+                contactList->currentIndex() != -1
+#else
+                contactList->currentItem()
+#endif
+                ) {
             // Select the first address automatically
-            addressSelected(contactList->currentItem()->text());
+            addressSelected(
+#ifdef USE_CONTACTS_COMBOBOX
+                    contactList->currentText()
+#else
+                    contactList->currentItem()->text()
+#endif
+                    );
         }
     }
 }
@@ -451,8 +455,13 @@ void AddressFinder::setupUi()
     filterLayout->addWidget(searchButton, 2, 1);
 #endif
 
+#ifdef USE_CONTACTS_COMBOBOX
+    contactList = new QComboBox(this);
+    connect(contactList, SIGNAL(currentIndexChanged(QString)), this, SLOT(addressSelected(QString)));
+#else
     contactList = new QListWidget(this);
     connect(contactList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
+#endif
 
 #ifndef USE_SEARCH_BUTTON
     QWidget* resultsWidget = new QWidget(this);
@@ -554,7 +563,13 @@ void AddressFinder::showMessage()
     int index = messageCombo->currentIndex();
     if (index != -1) {
         // Find the address currently selected
-        const QString &selectedAddress(addressList[contactList->currentRow()]);
+        const QString &selectedAddress(addressList[
+#ifdef USE_CONTACTS_COMBOBOX
+                contactList->currentIndex()
+#else
+                contactList->currentRow()
+#endif
+                ]);
 
         // Show the message selected
         QMessageId &messageId((addressMessages[selectedAddress])[index].second);
@@ -569,7 +584,13 @@ void AddressFinder::forwardMessage()
     int index = messageCombo->currentIndex();
     if (index != -1) {
         // Find the address currently selected
-        const QString &selectedAddress(addressList[contactList->currentRow()]);
+        const QString &selectedAddress(addressList[
+#ifdef USE_CONTACTS_COMBOBOX
+                contactList->currentIndex()
+#else
+                contactList->currentRow()
+#endif
+                ]);
 
         // Find the selected message
         QMessageId &messageId((addressMessages[selectedAddress])[index].second);
