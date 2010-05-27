@@ -42,16 +42,18 @@
 #ifndef QGEOMAPPINGMANAGER_H
 #define QGEOMAPPINGMANAGER_H
 
-#include "qgeocoordinate.h"
-#include "qgeoboundingbox.h"
+#include "qgeomapwidget.h"
 #include "qgeomapreply.h"
 
 #include <QObject>
 #include <QSize>
+#include <QPair>
 
 QTM_BEGIN_NAMESPACE
 
-//class QGeoMapWidget;
+class QGeoBoundingBox;
+class QGeoCoordinate;
+class QGeoMapViewport;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 
@@ -64,29 +66,16 @@ public:
         NoError
     };
 
-    enum MapType {
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap
-    };
-
     virtual ~QGeoMappingManager();
 
-    virtual QGeoMapReply* getMapImage(const QGeoCoordinate &center,
-                                      qreal zoomLevel,
-                                      const QSize &size,
-                                      const QGeoMapRequestOptions &requestOptions) = 0;
+    virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget) = 0;
 
-    virtual QGeoMapReply* getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
-                                       const QSize &size,
-                                       const QGeoMapRequestOptions &requestOptions) = 0;
+    virtual void updateMapImage(const QGeoMapViewport &viewport) = 0;
 
-    virtual void getTileQuadKey(const QGeoCoordinate& coordinate,
-                                qint32 zoomLevel,
-                                qint32* row, qint32* col) = 0;
+    virtual QPointF coordinateToScreenPosition(const QGeoMapViewport *viewport, const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoCoordinate screenPositionToCoordinate(const QGeoMapViewport *viewport, QPointF screenPosition) const = 0;
 
-    QList<MapType> supportedMapTypes() const;
+    QList<QGeoMapWidget::MapType> supportedMapTypes() const;
     QList<QString> supportedImageFormats() const;
 
     QSize minimumImageSize() const;
@@ -102,20 +91,31 @@ signals:
 protected:
     QGeoMappingManager();
 
-    void setSupportedMapTypes(const QList<MapType> &mapTypes);
+    void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
     void setSupportedImageFormats(const QList<QString> &imageFormats);
 
     void setMinimumZoomLevel(qreal minimumZoom);
     void setMaximumZoomLevel(qreal maximumZoom);
 
-    void setMinimumSize(const QSize &minimumSize);
-    void setMaximumSize(const QSize &maximumSize);
+    void setMinimumImageSize(const QSize &minimumSize);
+    void setMaximumImageSize(const QSize &maximumSize);
+
+//    // Tile related functions
+
+//    void setTileSize(const QSize &tileSize);
+//    QSize tileSize() const;
+
+//    // TODO better way of returning these results
+//    virtual void coordinateToTileIndices(const QGeoCoordinate &coordinate, qint32 zoomLevel, qint32 *rowIndex, qint32 *columnIndex);
+//    virtual QGeoCoordinate tileIndicesToUpperLeftCoordinate(qint32 zoomLevel, qint32 rowIndex, qint32 columIndex);
+//    virtual QGeoBoundingBox getTileBounds(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex);
+
+//    // TODO create a QGeoMapTileRequest object to make this saner?
+//    virtual QGeoMapReply* getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat);
 
 private:
     QGeoMappingManagerPrivate* d_ptr;
-
     Q_DISABLE_COPY(QGeoMappingManager)
-    Q_DECLARE_PRIVATE(QGeoMappingManager)
 };
 
 QTM_END_NAMESPACE

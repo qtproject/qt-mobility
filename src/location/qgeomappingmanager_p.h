@@ -53,12 +53,10 @@
 // We mean it.
 //
 
-#include "qgeomappingmanager.h"
-//#include "qgeomapwidget.h"
+#include "qgeomapwidget.h"
 
 #include <QSize>
 #include <QList>
-#include <QNetworkProxy>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,12 +69,12 @@ public:
 
     QGeoMappingManagerPrivate& operator= (const QGeoMappingManagerPrivate &other);
 
-    QList<QGeoMappingManager::MapType> supportedMapTypes;
+    QList<QGeoMapWidget::MapType> supportedMapTypes;
     QList<QString> supportedImageFormats;
     qreal minimumZoomLevel;
     qreal maximumZoomLevel;
-    QSize minimumSize;
-    QSize maximumSize;
+    QSize minimumImageSize;
+    QSize maximumImageSize;
 };
 
 QTM_END_NAMESPACE

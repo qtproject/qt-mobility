@@ -93,8 +93,7 @@ QGeoMappingManager::QGeoMappingManager()
 */
 QGeoMappingManager::~QGeoMappingManager()
 {
-    Q_D(QGeoMappingManager);
-    delete d;
+    delete d_ptr;
 }
 
 /*!
@@ -130,13 +129,12 @@ sizes, which can be queried with other methods in this class.
     Returns a list of the map types supported by this QGeoMappingManager
     instance.
 
-    \sa QGeoMappingManager::MapType
+    \sa QGeoMapWidget::MapType
     \sa QGeoMappingManager::setSupportedMapTypes()
 */
-QList<QGeoMappingManager::MapType> QGeoMappingManager::supportedMapTypes() const
+QList<QGeoMapWidget::MapType> QGeoMappingManager::supportedMapTypes() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->supportedMapTypes;
+    return d_ptr->supportedMapTypes;
 }
 
 /*!
@@ -147,8 +145,7 @@ QList<QGeoMappingManager::MapType> QGeoMappingManager::supportedMapTypes() const
 */
 QList<QString> QGeoMappingManager::supportedImageFormats() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->supportedImageFormats;
+    return d_ptr->supportedImageFormats;
 }
 
 /*!
@@ -163,8 +160,7 @@ QList<QString> QGeoMappingManager::supportedImageFormats() const
 */
 qreal QGeoMappingManager::minimumZoomLevel() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->minimumZoomLevel;
+    return d_ptr->minimumZoomLevel;
 }
 
 /*!
@@ -180,8 +176,7 @@ qreal QGeoMappingManager::minimumZoomLevel() const
 qreal QGeoMappingManager::maximumZoomLevel() const
 
 {
-    Q_D(const QGeoMappingManager);
-    return d->maximumZoomLevel;
+    return d_ptr->maximumZoomLevel;
 }
 
 /*!
@@ -191,13 +186,12 @@ qreal QGeoMappingManager::maximumZoomLevel() const
     An invalid size indicates that this QGeoMappingManager instance places
     no restrictions on the minimum size of the map image.
 
-    \sa QGeoMappingManager::setMinimumSize()
+    \sa QGeoMappingManager::setMinimumImageSize()
     \sa QGeoMappingManager::maximumImageSize()
 */
 QSize QGeoMappingManager::minimumImageSize() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->minimumSize;
+    return d_ptr->minimumImageSize;
 }
 
 /*!
@@ -209,8 +203,7 @@ QSize QGeoMappingManager::minimumImageSize() const
 */
 QSize QGeoMappingManager::maximumImageSize() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->maximumSize;
+    return d_ptr->maximumImageSize;
 }
 
 /*!
@@ -220,13 +213,12 @@ QSize QGeoMappingManager::maximumImageSize() const
     Subclasses of QGeoCodingService should use this function to ensure that
     supportedMapTypes() provides accurate information.
 
-    \sa QGeoMappingManager::MapType
+    \sa QGeoMapWidget::MapType
     \sa QGeoMappingManager::supportedMapTypes()
 */
-void QGeoMappingManager::setSupportedMapTypes(const QList<MapType> &mapTypes)
+void QGeoMappingManager::setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes)
 {
-    Q_D(QGeoMappingManager);
-    d->supportedMapTypes = mapTypes;
+    d_ptr->supportedMapTypes = mapTypes;
 }
 
 /*!
@@ -240,8 +232,7 @@ void QGeoMappingManager::setSupportedMapTypes(const QList<MapType> &mapTypes)
 */
 void QGeoMappingManager::setSupportedImageFormats(const QList<QString> &imageFormats)
 {
-    Q_D(QGeoMappingManager);
-    d->supportedImageFormats = imageFormats;
+    d_ptr->supportedImageFormats = imageFormats;
 }
 
 /*!
@@ -259,8 +250,7 @@ void QGeoMappingManager::setSupportedImageFormats(const QList<QString> &imageFor
 */
 void QGeoMappingManager::setMinimumZoomLevel(qreal minimumZoom)
 {
-    Q_D(QGeoMappingManager);
-    d->minimumZoomLevel = minimumZoom;
+    d_ptr->minimumZoomLevel = minimumZoom;
 }
 
 /*!
@@ -278,8 +268,7 @@ void QGeoMappingManager::setMinimumZoomLevel(qreal minimumZoom)
 */
 void QGeoMappingManager::setMaximumZoomLevel(qreal maximumZoom)
 {
-    Q_D(QGeoMappingManager);
-    d->maximumZoomLevel = maximumZoom;
+    d_ptr->maximumZoomLevel = maximumZoom;
 }
 
 /*!
@@ -293,12 +282,11 @@ void QGeoMappingManager::setMaximumZoomLevel(qreal maximumZoom)
     minimumImageSize() provides accurate information.
 
     \sa QGeoMappingManager::minimumImageSize()
-    \sa QGeoMappingManager::setMaximumSize()
+    \sa QGeoMappingManager::setMaximumImageSize()
 */
-void QGeoMappingManager::setMinimumSize(const QSize &minimumSize)
+void QGeoMappingManager::setMinimumImageSize(const QSize &minimumImageSize)
 {
-    Q_D(QGeoMappingManager);
-    d->minimumSize = minimumSize;
+    d_ptr->minimumImageSize = minimumImageSize;
 }
 
 /*!
@@ -312,13 +300,42 @@ void QGeoMappingManager::setMinimumSize(const QSize &minimumSize)
     maximumImageSize() provides accurate information.
 
     \sa QGeoMappingManager::maximumImageSize()
-    \sa QGeoMappingManager::setMinimumSize()
+    \sa QGeoMappingManager::setMinimumImageSize()
 */
-void QGeoMappingManager::setMaximumSize(const QSize &maximumSize)
+void QGeoMappingManager::setMaximumImageSize(const QSize &maximumImageSize)
 {
-    Q_D(QGeoMappingManager);
-    d->maximumSize = maximumSize;
+    d_ptr->maximumImageSize = maximumImageSize;
 }
+
+//QGeoMapViewport* QGeoMappingManager::createViewport(QGeoMapWidget *widget)
+//{
+//    return new QGeoMapViewport(widget);
+//}
+
+//void QGeoMappingManager::updateMapImage(const QGeoMapViewport &viewport)
+//{
+//}
+
+//QPointF QGeoMappingManager::coordinateToScreenPosition(const QGeoMapViewport *viewport, const QGeoCoordinate &coordinate) const
+//{
+//    return QPointF();
+//}
+
+//QGeoCoordinate QGeoMappingManager::screenPositionToCoordinate(const QGeoMapViewport *viewport, QPointF screenPosition) const
+//{
+//    return QGeoCoordinate();
+//}
+
+//void QGeoMappingManager::setTileSize(const QSize &tileSize);
+//QSize QGeoMappingManager::tileSize() const;
+
+//// TODO better way of returning these results
+//void QGeoMappingManager::coordinateToTileIndices(const QGeoCoordinate &coordinate, qint32 zoomLevel, qint32 *rowIndex, qint32 *columnIndex);
+//QGeoCoordinate QGeoMappingManager::tileIndicesToUpperLeftCoordinate(qint32 zoomLevel, qint32 rowIndex, qint32 columIndex);
+//QGeoBoundingBox QGeoMappingManager::getTileBounds(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex);
+
+//// TODO create a QGeoMapTileRequest object to make this saner?
+//QGeoMapReply* QGeoMappingManager::getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat);
 
 /*!
     \fn void QGeoMappingManager::replyFinished(QGeoMapReply *reply)
@@ -361,18 +378,15 @@ void QGeoMappingManager::setMaximumSize(const QSize &maximumSize)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
-//    : mapWidget(0)
-{}
+QGeoMappingManagerPrivate::QGeoMappingManagerPrivate() {}
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other)
         : supportedMapTypes(other.supportedMapTypes),
         supportedImageFormats(other.supportedImageFormats),
         minimumZoomLevel(other.minimumZoomLevel),
         maximumZoomLevel(other.maximumZoomLevel),
-        minimumSize(other.minimumSize),
-        maximumSize(other.maximumSize)
-{}
+        minimumImageSize(other.minimumImageSize),
+        maximumImageSize(other.maximumImageSize) {}
 
 QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate() {}
 
@@ -382,11 +396,11 @@ QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappi
     supportedImageFormats = other.supportedImageFormats;
     minimumZoomLevel = other.minimumZoomLevel;
     maximumZoomLevel = other.maximumZoomLevel;
-    minimumSize = other.minimumSize;
-    maximumSize = other.maximumSize;
+    minimumImageSize = other.minimumImageSize;
+    maximumImageSize = other.maximumImageSize;
+
     return *this;
 }
-
 
 #include "moc_qgeomappingmanager.cpp"
 

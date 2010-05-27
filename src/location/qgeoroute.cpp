@@ -129,7 +129,7 @@ QString QGeoRoute::routeId() const
     Sets the route request which describes the criteria used in the
     calculcation of this route to \a request.
 */
-void QGeoRoute::setRequest(const QGeoRouteRequest &request) const
+void QGeoRoute::setRequest(const QGeoRouteRequest &request)
 {
     d_ptr->request = request;
 }

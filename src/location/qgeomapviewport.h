@@ -42,8 +42,7 @@
 #ifndef QGEOMAPVIEWPORT_H
 #define QGEOMAPVIEWPORT_H
 
-#include "qgeocoordinate.h"
-#include "qgeoboundingbox.h"
+#include "qgeomapwidget.h"
 
 #include <QObject>
 #include <QSize>
@@ -52,43 +51,38 @@
 
 QTM_BEGIN_NAMESPACE
 
-//class QGeoMapWidget;
+class QGeoCoordinate;
+class QGeoBoundingBox;
 class QGeoMappingManager;
 class QGeoMapViewportPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapViewport : public QObject
+class Q_LOCATION_EXPORT QGeoMapViewport
 {
-    Q_OBJECT
-
 public:
-    QGeoMapViewport(QGeoMappingManager *manager = 0);
+    QGeoMapViewport(QGeoMapWidget *widget);
     virtual ~QGeoMapViewport();
 
-//    void setMapWidget(QGeoMapWidget *widget);
+    void setZoomLevel(qreal zoomLevel);
+    qreal zoomLevel() const;
 
-    int zoomLevel() const;
-    virtual void setZoomLevel(int zoomLevel) = 0;
+    void setCenter(const QGeoCoordinate &center);
+    QGeoCoordinate center() const;
 
-    virtual void setViewportSize(const QSize &size);
+    void setViewportSize(const QSize &size);
     QSize viewportSize() const;
 
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
+    void setImageFormat(const QString &imageFormat);
+    QString imageFormat() const;
 
-    virtual void setCenter(const QGeoCoordinate &center) = 0;
-    virtual QGeoCoordinate center() const = 0;
+    void setMapType(QGeoMapWidget::MapType mapType);
+    QGeoMapWidget::MapType mapType() const;
 
-    virtual void pan(int startX, int startY, int endX, int endY) = 0;
-
-    virtual QGeoBoundingBox viewBounds() const = 0;
-
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
+    void setMapImage(const QPixmap &mapImage);
+    QPixmap mapImage() const;
 
 private:
     QGeoMapViewportPrivate* d_ptr;
-
     Q_DISABLE_COPY(QGeoMapViewport)
-    Q_DECLARE_PRIVATE(QGeoMapViewport)
 };
 
 QTM_END_NAMESPACE
