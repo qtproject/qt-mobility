@@ -98,6 +98,9 @@ QList<QContactLocalId> CntSymbianFilter::contacts(const QContactFilter& filter,
         ids = ( m_filterMap.value(filter.type()))->contacts(filter,sortOrders,filterSupported,error);
         return ids;   
     }
+    else {
+        filterSupported = false;
+    }
     *error = QContactManager::NotSupportedError;
     return ids;
 }

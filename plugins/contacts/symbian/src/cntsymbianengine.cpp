@@ -142,6 +142,11 @@ QList<QContactLocalId> CntSymbianEngine::contactIds(
         // Remove possible false positives
         if(!filterSupported && *error == QContactManager::NotSupportedError)
             {
+            //fetch all contacts
+            *error = QContactManager::NoError;
+            result = m_contactFilter->contacts(QContactFilter(),sortOrders, filterSupported, error);
+            
+            //slow filtering
             result = slowFilter(filter, result, error);
             
             //slow sorting until it's supported in SQL requests
