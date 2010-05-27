@@ -549,6 +549,7 @@ void tst_QVersitReader::testParseNextVersitProperty_data()
 
     {
         QVersitDocument subDocument;
+        subDocument.setComponentType(QLatin1String("VCARD"));
         subDocument.setType(QVersitDocument::VCard21Type);
         QVersitProperty subProperty;
         subProperty.setName(QLatin1String("FN"));
@@ -601,6 +602,7 @@ void tst_QVersitReader::testParseVersitDocument_data()
 
     {
     QVersitDocument expected(QVersitDocument::VCard21Type);
+    expected.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QLatin1String("FN"));
     property.setValue(QLatin1String("John"));
@@ -617,11 +619,13 @@ void tst_QVersitReader::testParseVersitDocument_data()
 
     {
     QVersitDocument expected(QVersitDocument::VCard21Type);
+    expected.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QLatin1String("FN"));
     property.setValue(QLatin1String("John"));
     expected.addProperty(property);
     QVersitDocument agent(QVersitDocument::VCard21Type);
+    agent.setComponentType(QLatin1String("VCARD"));
     property.setValue(QLatin1String("Jenny"));
     agent.addProperty(property);
     property.clear();
@@ -647,11 +651,13 @@ void tst_QVersitReader::testParseVersitDocument_data()
 
     {
     QVersitDocument expected(QVersitDocument::VCard30Type);
+    expected.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QLatin1String("FN"));
     property.setValue(QLatin1String("John"));
     expected.addProperty(property);
     QVersitDocument agent(QVersitDocument::VCard30Type);
+    agent.setComponentType(QLatin1String("VCARD"));
     property.setValue(QLatin1String("Jenny"));
     agent.addProperty(property);
     property.clear();
@@ -702,6 +708,7 @@ void tst_QVersitReader::testParseVersitDocument_data()
 
     {
     QVersitDocument expected(QVersitDocument::VCard21Type);
+    expected.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QLatin1String("FN"));
     property.setValue(QLatin1String("Nobody"));
@@ -726,21 +733,25 @@ void tst_QVersitReader::testParseVersitDocument_data()
 
     {
     QVersitDocument expected(QVersitDocument::VCard21Type);
+    expected.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QLatin1String("X-EXAMPLES"));
     property.setValue(QLatin1String("Family vCard"));
     expected.addProperty(property);
 
-    QVersitDocument nested(QVersitDocument::VCard21Type);
+    QVersitDocument nested1(QVersitDocument::VCard21Type);
+    nested1.setComponentType(QLatin1String("VCARD"));
     property.setName(QLatin1String("FN"));
     property.setValue(QLatin1String("John"));
-    nested.addProperty(property);
-    expected.addSubDocument(nested);
+    nested1.addProperty(property);
+    expected.addSubDocument(nested1);
 
-    nested.clear();
+    QVersitDocument nested2(QVersitDocument::VCard21Type);
+    nested2.setComponentType(QLatin1String("VCARD"));
+    property.setName(QLatin1String("FN"));
     property.setValue(QLatin1String("Jenny"));
-    nested.addProperty(property);
-    expected.addSubDocument(nested);
+    nested2.addProperty(property);
+    expected.addSubDocument(nested2);
 
     QTest::newRow("Grouped vCard")
             << QByteArray(

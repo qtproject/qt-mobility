@@ -103,7 +103,9 @@ QVersitDocument& QVersitDocument::operator=(const QVersitDocument& other)
 bool QVersitDocument::operator==(const QVersitDocument& other) const
 {
     return d->mVersitType == other.d->mVersitType &&
-            d->mProperties == other.d->mProperties;
+            d->mProperties == other.d->mProperties &&
+            d->mSubDocuments == other.d->mSubDocuments &&
+            d->mComponentType == other.d->mComponentType;
 }
 
 /*! Returns true if this is not equal to \a other; false otherwise. */
@@ -128,6 +130,9 @@ QDebug operator<<(QDebug dbg, const QVersitDocument& document)
     dbg.nospace() << "QVersitDocument(" << document.type() << ')';
     foreach (const QVersitProperty& property, document.properties()) {
         dbg.space() << '\n' << property;
+    }
+    foreach (const QVersitDocument& nested, document.subDocuments()) {
+        dbg.space() << '\n' << nested;
     }
     return dbg.maybeSpace();
 }
