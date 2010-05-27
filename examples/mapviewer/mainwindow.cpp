@@ -105,7 +105,7 @@ void MainWindow::setProvider(QString providerId)
     if (m_serviceProvider->error() != QGeoServiceProvider::NoError) {
         QMessageBox::information(this, tr("MapViewer Example"), tr(
                                      "Unable to find the %1 geoservices plugin.").arg(providerId));
-        QTimer::singleShot(0, qApp, SLOT(quit()));
+        qApp->quit();
         return;
     }
 
