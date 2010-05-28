@@ -475,6 +475,26 @@ fi
 #    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
 #fi
 
+# Test if able to build multimedia
+for module in $MOBILITY_MODULES; do
+    case "$module" in
+        multimedia)
+            echo "contains(QT_CONFIG,multimedia):message(1)" > 1.pro
+            SOMETHING=`qmake 1.pro 2>&1`
+            if [ "$SOMETHING" == "Project MESSAGE: 1" ]; then
+                MOBILITY_MODULES="$(echo $MOBILITY_MODULES | sed 's:multimedia::g')"
+                echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
+            fi
+            rm 1.pro
+            ;;
+    esac
+done
+
+if [ -z "$MOBILITY_MODULES" ]; then
+    echo "No module available to build."
+    exit 1
+fi
+
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
@@ -513,19 +533,9 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
             ;;
         multimedia)
-            echo "contains(QT_CONFIG,multimedia):message(1)" > 1.pro
-            SOMETHING=`qmake 1.pro 2>&1`
-            if [ "$SOMETHING" != "Project MESSAGE: 1" ]; then
-                $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-                $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/audio
-                $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/video
-            else
-                echo "Only one multimedia module allowed, cannot continue."
-                echo "option 1: configure without multimedia module"
-                echo "option 2: compile Qt with -no-multimedia"
-                exit 1
-            fi
-            rm 1.pro
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/audio
+            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/video
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
