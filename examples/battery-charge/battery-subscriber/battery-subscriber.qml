@@ -1,5 +1,7 @@
 import Qt 4.7
+//! [4]
 import QtMobility.publishsubscribe 1.0
+//! [4]
 import Qt.labs.particles 1.0
 import "content"
 
