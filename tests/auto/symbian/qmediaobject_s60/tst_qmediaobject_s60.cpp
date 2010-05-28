@@ -61,7 +61,6 @@ public slots:
 
 private slots:
     void isMetaDataAvailable();
-    void isWritable();
     void metaData();
     void availableMetaData();
     void extendedMetaData();
