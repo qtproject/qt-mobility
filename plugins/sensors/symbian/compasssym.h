@@ -108,7 +108,7 @@ public:
     /**
      * Holds the id of the compass
      */
-    static const char *id;
+    static char const * const id;
     
 private:     
     QCompassReading iReading;

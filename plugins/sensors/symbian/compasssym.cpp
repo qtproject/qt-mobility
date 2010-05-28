@@ -44,7 +44,7 @@
 /**
  * set the id of the accelerometer sensor
  */
-const char *CCompassSym::id("sym.compass");
+char const * const CCompassSym::id("sym.compass");
 
 /**
  * Factory function, this is used to create the compass object

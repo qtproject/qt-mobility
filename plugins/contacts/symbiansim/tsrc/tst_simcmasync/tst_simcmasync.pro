@@ -16,6 +16,9 @@ symbian: {
 	        ../../../../../src/contacts/requests
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     SOURCES  += tst_simcmasync.cpp
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData \
+                        ReadDeviceData \
+                        WriteDeviceData
     LIBS += -lqtcontacts
 }

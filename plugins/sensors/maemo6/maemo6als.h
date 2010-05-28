@@ -56,7 +56,6 @@ class maemo6als : public maemo6sensorbase
 
 public:
     static const char *id;
-
     maemo6als(QSensor *sensor);
 
 private:

@@ -52,9 +52,7 @@
 // We mean it.
 //
 
-#include "qsensor_p.h"
-
-class GrueSensorReadingPrivate : public QSensorReadingPrivate
+class GrueSensorReadingPrivate
 {
 public:
     GrueSensorReadingPrivate()

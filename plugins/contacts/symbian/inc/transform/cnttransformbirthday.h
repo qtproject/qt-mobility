@@ -50,9 +50,9 @@ class CntTransformBirthday : public CntTransformContactData
 protected:
 	QList<CContactItemField *> transformDetailL(const QContactDetail &detail);
 	QContactDetail *transformItemField(const CContactItemField& field, const QContact &contact);
-	bool supportsField(TUint32 fieldType) const;
 	bool supportsDetail(QString detailName) const;
-	QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
+	QList<TUid> supportedFields() const;
+    QList<TUid> supportedSortingFieldTypes(QString detailFieldName) const;
     bool supportsSubType(const QString& subType) const;
     quint32 getIdForField(const QString& fieldName) const;
     void detailDefinitions(QMap<QString, QContactDetailDefinition> &definitions, const QString& contactType) const;

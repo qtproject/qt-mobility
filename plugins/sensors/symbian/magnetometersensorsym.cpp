@@ -45,7 +45,7 @@
 /**
  * set the id of the magnetometer sensor
  */
-const char *CMagnetometerSensorSym::id("sym.magnetometer");
+char const * const CMagnetometerSensorSym::id("sym.magnetometer");
 
 /**
  * Factory function, this is used to create the magnetometer sensor object

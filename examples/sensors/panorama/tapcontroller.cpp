@@ -48,6 +48,7 @@ void TapController::update()
     case QTapReading::Z_Pos:
     case QTapReading::Z_Neg:
     default:
+        m_dx = 0; m_dy = 0;
         return;
     }    
 
