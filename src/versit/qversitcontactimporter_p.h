@@ -78,7 +78,6 @@ public:
 
     bool importContact(const QVersitDocument& versitDocument, int contactIndex,
                        QContact* contact, QVersitContactImporter::Error* error);
-    QList<QVersitProperty> unconvertedVersitProperties();
 
     static QString synthesizedDisplayLabel(const QContact& contact);
 

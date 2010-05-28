@@ -8,7 +8,7 @@ include(../../common.pri)
 DEFINES += QT_BUILD_VERSIT_LIB QT_MAKEDLL QT_ASCII_CAST_WARNINGS
 
 CONFIG += mobility
-MOBILITY = contacts
+MOBILITY = contacts organizer
 
 # Contacts Includepath
 INCLUDEPATH += . \
@@ -25,6 +25,7 @@ PUBLIC_HEADERS +=  \
     qversitwriter.h \
     qversitcontactexporter.h \
     qversitcontactimporter.h \
+    qversitorganizerimporter.h \
     qversitresourcehandler.h
 
 # Private Headers
@@ -39,6 +40,7 @@ PRIVATE_HEADERS += \
     qvcard30writer_p.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h \
+    qversitorganizerimporter_p.h \
     qversitdefs_p.h \
     versitutils_p.h
 
@@ -57,6 +59,8 @@ SOURCES += qversitdocument.cpp \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
     qversitcontactimporter_p.cpp \
+    qversitorganizerimporter.cpp
+    qversitorganizerimporter_p.cpp
     qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
     versitutils.cpp
