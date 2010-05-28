@@ -56,8 +56,13 @@ QtContacts
 QtLocation
 ------
 
- - foo
-    * bar
+ - Several bugs on the Symbian platform have been fixed.
+    * Using INT_MAX for the update interval no longer causes crashes.
+    * The default preferred positioning methods for a new position source 
+      are now reported accurately.
+    * The last known position now respects the 
+      fromSatellitePositioningMethodsOnly parameter correctly across 
+      changes to the preferred position method.
 
 QtMessaging
 ------
