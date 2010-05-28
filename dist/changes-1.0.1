@@ -145,6 +145,13 @@ QtSensors
 ------
  - Bug fixes
     * correct cubehouse example to avoid extreem camera angle being used.
+ - Added support for Symbian 3.2 and newer devices using the Symbian Sensor Framework.
+ - Fixed rotation definition to be -90 < X < 90 so that the complete range of motion can be represented.
+ - Corrected the rotation definition for the Z axis (it starts from the Y axis, not the X axis).
+ - Clarify that the tap sensor cannot report on single and double tap events at the same time.
+ - Remove the need for new sensor types to include qsensor_p.h.
+ - Backends should no longer set a data rate and should treat the default (0) as "app does not care".
+ - Backends should no longer set an output range and should treat the default (-1) as "app does not care".
 
 QtServiceFramework
 ------
