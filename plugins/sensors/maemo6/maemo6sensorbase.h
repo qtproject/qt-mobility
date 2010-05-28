@@ -39,31 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6ROTATION_H
-#define MAEMO6ROTATION_H
+#ifndef MAEMO6SENSORBASE_H
+#define MAEMO6SENSORBASE_H
 
-#include "maemo6sensorbase.h"
-#include <qrotationsensor.h>
+#include <qsensorbackend.h>
+#include <sensormanagerinterface.h>
+#include <abstractsensor_i.h>
 
-#include <rotationsensor_i.h>
-#include <xyz.h>
 
 QTM_USE_NAMESPACE
 
-class maemo6rotationsensor : public maemo6sensorbase
+class maemo6sensorbase : public QSensorBackend
 {
-    Q_OBJECT
-
 public:
-    static const char *id;
-    maemo6rotationsensor(QSensor *sensor);
+    maemo6sensorbase(QSensor *sensor);
+    virtual ~maemo6sensorbase();
+
+
+protected:
+    virtual void start();
+    virtual void stop();
+    AbstractSensorChannelInterface* m_sensorInterface;
+
+    static const float GRAVITY_EARTH;
+    static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
+
+    template<typename T>
+    void initSensor(QString sensorName, bool &initDone)
+    {
+
+        if (!initDone) {
+            m_remoteSensorManager->loadPlugin(sensorName);
+            m_remoteSensorManager->registerSensorInterface<T>(sensorName);
+        }
+        m_sensorInterface = T::controlInterface(sensorName);
+        if (!m_sensorInterface) {
+            m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
+
+        }
+        initDone = true;
+    };
 
 private:
-    QRotationReading m_reading;
-    static bool m_initDone;
+    static SensorManagerInterface* m_remoteSensorManager;
 
-private slots:
-    void slotDataAvailable(const XYZ& data);
 };
 
 #endif

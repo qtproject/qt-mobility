@@ -39,31 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef MAEMO6ROTATION_H
-#define MAEMO6ROTATION_H
+#ifndef MAEMO6COMPASS_H
+#define MAEMO6COMPASS_H
 
 #include "maemo6sensorbase.h"
-#include <qrotationsensor.h>
+#include <qcompass.h>
 
-#include <rotationsensor_i.h>
-#include <xyz.h>
+#include <compasssensor_i.h>
+#include <compass.h>
 
 QTM_USE_NAMESPACE
 
-class maemo6rotationsensor : public maemo6sensorbase
+class maemo6compass : public maemo6sensorbase
 {
     Q_OBJECT
 
 public:
     static const char *id;
-    maemo6rotationsensor(QSensor *sensor);
+    maemo6compass(QSensor *sensor);
 
 private:
-    QRotationReading m_reading;
+    QCompassReading m_reading;
     static bool m_initDone;
 
 private slots:
-    void slotDataAvailable(const XYZ& data);
+    void slotDataAvailable(const Compass& data);
 };
 
 #endif
