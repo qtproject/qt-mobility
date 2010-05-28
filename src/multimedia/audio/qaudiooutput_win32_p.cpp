@@ -266,7 +266,7 @@ bool QAudioOutputPrivate::open()
         if(waveOutGetDevCaps(ii, &woc, sizeof(WAVEOUTCAPS))
 	    == MMSYSERR_NOERROR) {
 	    QString tmp;
-	    tmp = QString((const QChar *)woc.szPname);
+            tmp = QString::fromWCharArray(woc.szPname);
             if(tmp.compare(QLatin1String(m_device)) == 0) {
 	        devId = ii;
 		break;
