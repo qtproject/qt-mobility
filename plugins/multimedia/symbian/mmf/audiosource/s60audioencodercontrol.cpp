@@ -78,9 +78,8 @@ QtMultimedia::EncodingQuality S60AudioEncoderControl::quality() const
     return m_quality;
 }
 
-void S60AudioEncoderControl::setQuality(QtMultimedia::EncodingQuality value)
+void S60AudioEncoderControl::setQuality(QtMultimedia::EncodingQuality value, QAudioFormat &fmt)
 {
-    QAudioFormat fmt = m_session->format();
     switch (value) {
     case QtMultimedia::VeryLowQuality:
     case QtMultimedia::LowQuality:
