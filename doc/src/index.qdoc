@@ -422,11 +422,11 @@
     <tr>
     <td>Multimedia</td>
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
 
-    <td bgcolor="yellow"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="green"></td>
@@ -483,9 +483,6 @@
 
     \endraw
 
-    \note The FINAL Multimedia API does not have binary compatibility with
-    the Beta version of the Qt Multimedia library as introduced in the Mobility 1.0.0 release.
-    
     \raw HTML
     <p>
     \endraw
