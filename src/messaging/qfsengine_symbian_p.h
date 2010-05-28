@@ -135,9 +135,9 @@ public:
     QMessage message(const QMessageId& id) const;
     bool sendEmail(QMessage &message);
    
-    bool retrieve(const QMessageId &messageId, const QMessageContentContainerId& id);
-    bool retrieveBody(const QMessageId& id);
-    bool retrieveHeader(const QMessageId& id);
+    bool retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
+    bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
+    bool retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id);
     bool exportUpdates(const QMessageAccountId &id);
     
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
@@ -235,6 +235,7 @@ private:
     QMessageAccount m_account;
     RMailboxPtrArray m_mailboxes;
     REmailAttachmentArray m_attachments;
+    QMessageServicePrivate* m_privateService;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
