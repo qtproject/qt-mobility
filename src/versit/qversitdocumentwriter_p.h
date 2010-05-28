@@ -76,7 +76,7 @@ public:
 
     virtual void encodeVersitProperty(const QVersitProperty& property) = 0;
     virtual void encodeParameters(const QMultiHash<QString,QString>& parameters) = 0;
-    void encodeVersitDocument(const QVersitDocument& document);
+    void encodeVersitDocument(const QVersitDocument& document, bool encodeVersion = true);
     void encodeGroupsAndName(const QVersitProperty& property);
 
     void writeString(const QString& string, bool useUtf8 = false);

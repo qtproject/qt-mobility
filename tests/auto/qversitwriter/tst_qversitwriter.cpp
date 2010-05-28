@@ -113,6 +113,7 @@ void tst_QVersitWriter::testFold()
             " 234567890123456789012\r\n"
             "END:VCARD\r\n");
     QVersitDocument document;
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QLatin1String("FN"));
     property.setValue(longString);
@@ -140,6 +141,7 @@ VERSION:2.1\r\n\
 FN:John\r\n\
 END:VCARD\r\n");
     QVersitDocument document;
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QString(QString::fromAscii("FN")));
     property.setValue(QString::fromAscii("John"));
@@ -199,6 +201,7 @@ FN:John\r\n\
 END:VCARD\r\n");
 
     QVersitDocument document;
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QString(QString::fromAscii("FN")));
     property.setValue(QString::fromAscii("John"));
@@ -261,6 +264,7 @@ void tst_QVersitWriter::testByteArrayOutput()
     QVERIFY(mWriter->device() == 0);
 
     QVersitDocument document(QVersitDocument::VCard30Type);
+    document.setComponentType(QLatin1String("VCARD"));
     QVersitProperty property;
     property.setName(QString(QString::fromAscii("FN")));
     property.setValue(QString::fromAscii("John"));
@@ -303,6 +307,7 @@ void tst_QVersitWriter::testWritingDocument_data()
             "END:VCARD\r\n"
             );
 
+    document.setComponentType(QLatin1String("VCARD"));
     document.setType(QVersitDocument::VCard30Type);
     QTest::newRow("basic vCard 3.0") << document << QByteArray(
             "BEGIN:VCARD\r\n"

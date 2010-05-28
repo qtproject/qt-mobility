@@ -102,35 +102,42 @@ void QVersitDocumentWriter::setDevice(QIODevice *device)
 }
 
 /*!
-* Encodes the \a document and writes it to the device
-*/
-void QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document)
+ * Encodes the \a document and writes it to the device.  A "VERSION:" line is added iff \a
+ * encodeVersion is true.
+ */
+void QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document, bool encodeVersion)
 {
     mSuccessful = true;
-    QList<QVersitProperty> properties = document.properties();
 
     writeString(QLatin1String("BEGIN:") + document.componentType());
     writeCrlf();
-    switch (document.type()) {
-    case QVersitDocument::VCard21Type:
-        writeString(QLatin1String("VERSION:2.1"));
-        writeCrlf();
-        break;
-    case QVersitDocument::VCard30Type:
-        writeString(QLatin1String("VERSION:3.0"));
-        writeCrlf();
-        break;
-    case QVersitDocument::ICalendar20Type:
-        writeString(QLatin1String("VERSION:2.0"));
-        writeCrlf();
-        break;
-    default:
-        ; // don't print version
+    if (encodeVersion) {
+        switch (document.type()) {
+        case QVersitDocument::VCard21Type:
+            writeString(QLatin1String("VERSION:2.1"));
+            writeCrlf();
+            break;
+        case QVersitDocument::VCard30Type:
+            writeString(QLatin1String("VERSION:3.0"));
+            writeCrlf();
+            break;
+        case QVersitDocument::ICalendar20Type:
+            writeString(QLatin1String("VERSION:2.0"));
+            writeCrlf();
+            break;
+        default:
+            ; // don't print version
+        }
     }
 
-    foreach (const QVersitProperty& property, properties) {
+    foreach (const QVersitProperty& property, document.properties()) {
         encodeVersitProperty(property);
     }
+
+    foreach (const QVersitDocument& document, document.subDocuments()) {
+        encodeVersitDocument(document, false);
+    }
+
     writeString(QLatin1String("END:") + document.componentType());
     writeCrlf();
 }
