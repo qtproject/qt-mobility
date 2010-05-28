@@ -165,8 +165,9 @@ Support is present for the following System Info API classes
     \o S60: Only one level of folders is supported <=> Symbian/S60 applications do not use nested folders
     \o S60: ReceptionTimeStamp is not supported in filtering <=> Symbian reports only one date for SMS & MMS which means that \c {QMessage::date()} field is used, not \c {receivedDate()})
     \o S60: Local services messages, for example bluetooth, are listed/read in Inbox
+    \o Symbian^3: \c {QMessageService::retrieveBody} is not supported.
     \o Windows: \c {QMessageServiceAction::queryMessages} does not incrementally emit matching message identifiers or progress information.
-    \o Windows: \c {QMessageServiceAction::exportUpdates}: Performs no operation as changes are automatically synchronized with external servers when a connection is available.
+    \o Windows: \c {QMessageServiceAction::exportUpdates} performs no operation as changes are automatically synchronized with external servers when a connection is available.
     control of update progress.
     \o Windows desktop: \c {QMessageStore::instance} shows a blocking modal dialog if MAPI is not installed.
     \o Windows mobile: \c {QMessageServiceAction::retrieve}: Only retrieves content for messages bodies at present. Attachment retrieval
