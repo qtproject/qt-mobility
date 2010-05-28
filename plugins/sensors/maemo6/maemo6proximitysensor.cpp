@@ -47,7 +47,7 @@ bool maemo6proximitysensor::m_initDone = false;
 maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "proximitysensor";
+    char const * const maemo6proximitysensor::id("maemo6.proximity");
     initSensor<ProximitySensorChannelInterface>(sensorName, m_initDone);
 
     if (m_sensorInterface){

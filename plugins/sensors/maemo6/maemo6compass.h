@@ -55,7 +55,7 @@ class maemo6compass : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
+    static char const * const id;
     maemo6compass(QSensor *sensor);
 
 private:

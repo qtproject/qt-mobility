@@ -47,7 +47,7 @@ bool maemo6tapsensor::m_initDone = false;
 maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "tapsensor";
+    char const * const maemo6tapsensor::id("maemo6.tapsensor");
     initSensor<TapSensorChannelInterface>(sensorName, m_initDone);
 
     if (m_sensorInterface){

@@ -47,7 +47,7 @@ bool maemo6rotationsensor::m_initDone = false;
 maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "rotationsensor";
+    char const * const maemo6rotationsensor::id("maemo6.rotationsensor");
     initSensor<RotationSensorChannelInterface>(sensorName, m_initDone);
 
     if (m_sensorInterface){

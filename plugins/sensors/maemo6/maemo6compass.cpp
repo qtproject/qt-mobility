@@ -47,7 +47,7 @@ bool maemo6compass::m_initDone = false;
 maemo6compass::maemo6compass(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    const QString sensorName = "compasssensor";
+    char const * const maemo6compass::id("maemo6.compass");
     initSensor<CompassSensorChannelInterface>(sensorName, m_initDone);
 
     if (m_sensorInterface){
