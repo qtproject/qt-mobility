@@ -177,4 +177,13 @@ QVideoWidget classes.
 
 \annotatedlist multimedia-serv
 
+\section2 QML multimedia elements
+\o
+\list
+\o \l {SoundEffect}{SoundEffect: Low Latency Sound Effects}
+\o \l {Audio}{Audio: Music playback}
+\o \l {Video}{Video: Video playback}
+\endlist
 */
+
+

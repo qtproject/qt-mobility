@@ -45,7 +45,7 @@
 
 #include <qmediaobject.h>
 #include <qmediaservice.h>
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 
 QT_USE_NAMESPACE
 class tst_QMediaObject : public QObject
@@ -61,30 +61,24 @@ private slots:
 
     void nullMetaDataControl();
     void isMetaDataAvailable();
-    void isWritable();
     void metaDataChanged();
     void metaData_data();
     void metaData();
-    void setMetaData_data();
-    void setMetaData();
     void extendedMetaData_data() { metaData_data(); }
     void extendedMetaData();
-    void setExtendedMetaData_data() { extendedMetaData_data(); }
-    void setExtendedMetaData();
 
 
 private:
     void setupNotifyTests();
 };
 
-class QtTestMetaDataProvider : public QMetaDataControl
+class QtTestMetaDataProvider : public QMetaDataReaderControl
 {
     Q_OBJECT
 public:
     QtTestMetaDataProvider(QObject *parent = 0)
-        : QMetaDataControl(parent)
+        : QMetaDataReaderControl(parent)
         , m_available(false)
-        , m_writable(false)
     {
     }
 
@@ -93,22 +87,16 @@ public:
         if (m_available != available)
             emit metaDataAvailableChanged(m_available = available);
     }
-    QList<QtMediaServices::MetaData> availableMetaData() const { return m_data.keys(); }
+    QList<QtMultimedia::MetaData> availableMetaData() const { return m_data.keys(); }
 
-    bool isWritable() const { return m_writable; }
-    void setWritable(bool writable) { emit writableChanged(m_writable = writable); }
 
-    QVariant metaData(QtMediaServices::MetaData key) const { return m_data.value(key); }
-    void setMetaData(QtMediaServices::MetaData key, const QVariant &value) {
-        m_data.insert(key, value); }
+    QVariant metaData(QtMultimedia::MetaData key) const { return m_data.value(key); }
 
     QVariant extendedMetaData(const QString &key) const { return m_extendedData.value(key); }
-    void setExtendedMetaData(const QString &key, const QVariant &value) {
-        m_extendedData.insert(key, value); }
 
     QStringList availableExtendedMetaData() const { return m_extendedData.keys(); }
 
-    using QMetaDataControl::metaDataChanged;
+    using QMetaDataReaderControl::metaDataChanged;
 
     void populateMetaData()
     {
@@ -116,8 +104,7 @@ public:
     }
 
     bool m_available;
-    bool m_writable;
-    QMap<QtMediaServices::MetaData, QVariant> m_data;
+    QMap<QtMultimedia::MetaData, QVariant> m_data;
     QMap<QString, QVariant> m_extendedData;
 };
 
@@ -125,22 +112,26 @@ class QtTestMetaDataService : public QMediaService
 {
     Q_OBJECT
 public:
-    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent), hasMetaData(true)
+    QtTestMetaDataService(QObject *parent = 0):QMediaService(parent), metaDataRef(0), hasMetaData(true)
     {
     }
 
-    QMediaControl *control(const char *iid) const
+    QMediaControl *requestControl(const char *iid)
     {
-        if (hasMetaData && qstrcmp(iid, QMetaDataControl_iid) == 0)
-            return const_cast<QtTestMetaDataProvider *>(&metaData);
+        if (hasMetaData && qstrcmp(iid, QMetaDataReaderControl_iid) == 0)
+            return &metaData;
         else
             return 0;
     }
 
+    void releaseControl(QMediaControl *)
+    {
+    }
+
     QtTestMetaDataProvider metaData;
+    int metaDataRef;
     bool hasMetaData;
 };
-
 
 class QtTestMediaObject : public QMediaObject
 {
@@ -374,14 +365,10 @@ void tst_QMediaObject::nullMetaDataControl()
     QSignalSpy spy(&object, SIGNAL(metaDataChanged()));
 
     QCOMPARE(object.isMetaDataAvailable(), false);
-    QCOMPARE(object.isMetaDataWritable(), false);
 
-    object.setMetaData(QtMediaServices::Title, title);
-    object.setExtendedMetaData(titleKey, title);
-
-    QCOMPARE(object.metaData(QtMediaServices::Title).toString(), QString());
+    QCOMPARE(object.metaData(QtMultimedia::Title).toString(), QString());
     QCOMPARE(object.extendedMetaData(titleKey).toString(), QString());
-    QCOMPARE(object.availableMetaData(), QList<QtMediaServices::MetaData>());
+    QCOMPARE(object.availableMetaData(), QList<QtMultimedia::MetaData>());
     QCOMPARE(object.availableExtendedMetaData(), QStringList());
     QCOMPARE(spy.count(), 0);
 }
@@ -404,30 +391,6 @@ void tst_QMediaObject::isMetaDataAvailable()
     service.metaData.setMetaDataAvailable(false);
 
     QCOMPARE(object.isMetaDataAvailable(), false);
-    QCOMPARE(spy.count(), 2);
-    QCOMPARE(spy.at(1).at(0).toBool(), false);
-}
-
-void tst_QMediaObject::isWritable()
-{
-    QtTestMetaDataService service;
-    service.metaData.setWritable(false);
-
-    QtTestMediaObject object(&service);
-
-    QSignalSpy spy(&object, SIGNAL(metaDataWritableChanged(bool)));
-
-    QCOMPARE(object.isMetaDataWritable(), false);
-
-    service.metaData.setWritable(true);
-
-    QCOMPARE(object.isMetaDataWritable(), true);
-    QCOMPARE(spy.count(), 1);
-    QCOMPARE(spy.at(0).at(0).toBool(), true);
-
-    service.metaData.setWritable(false);
-
-    QCOMPARE(object.isMetaDataWritable(), false);
     QCOMPARE(spy.count(), 2);
     QCOMPARE(spy.at(1).at(0).toBool(), false);
 }
@@ -470,40 +433,18 @@ void tst_QMediaObject::metaData()
     QtTestMediaObject object(&service);
     QVERIFY(object.availableMetaData().isEmpty());
 
-    service.metaData.m_data.insert(QtMediaServices::AlbumArtist, artist);
-    service.metaData.m_data.insert(QtMediaServices::Title, title);
-    service.metaData.m_data.insert(QtMediaServices::Genre, genre);
+    service.metaData.m_data.insert(QtMultimedia::AlbumArtist, artist);
+    service.metaData.m_data.insert(QtMultimedia::Title, title);
+    service.metaData.m_data.insert(QtMultimedia::Genre, genre);
 
-    QCOMPARE(object.metaData(QtMediaServices::AlbumArtist).toString(), artist);
-    QCOMPARE(object.metaData(QtMediaServices::Title).toString(), title);
+    QCOMPARE(object.metaData(QtMultimedia::AlbumArtist).toString(), artist);
+    QCOMPARE(object.metaData(QtMultimedia::Title).toString(), title);
 
-    QList<QtMediaServices::MetaData> metaDataKeys = object.availableMetaData();
+    QList<QtMultimedia::MetaData> metaDataKeys = object.availableMetaData();
     QCOMPARE(metaDataKeys.size(), 3);
-    QVERIFY(metaDataKeys.contains(QtMediaServices::AlbumArtist));
-    QVERIFY(metaDataKeys.contains(QtMediaServices::Title));
-    QVERIFY(metaDataKeys.contains(QtMediaServices::Genre));
-}
-
-void tst_QMediaObject::setMetaData_data()
-{
-    QTest::addColumn<QString>("title");
-
-    QTest::newRow("")
-            << QString::fromLatin1("In the Kingdom of the Blind the One eyed are Kings");
-}
-
-void tst_QMediaObject::setMetaData()
-{
-    QFETCH(QString, title);
-
-    QtTestMetaDataService service;
-    service.metaData.populateMetaData();
-
-    QtTestMediaObject object(&service);
-
-    object.setMetaData(QtMediaServices::Title, title);
-    QCOMPARE(object.metaData(QtMediaServices::Title).toString(), title);
-    QCOMPARE(service.metaData.m_data.value(QtMediaServices::Title).toString(), title);
+    QVERIFY(metaDataKeys.contains(QtMultimedia::AlbumArtist));
+    QVERIFY(metaDataKeys.contains(QtMultimedia::Title));
+    QVERIFY(metaDataKeys.contains(QtMultimedia::Genre));
 }
 
 void tst_QMediaObject::extendedMetaData()
@@ -530,19 +471,6 @@ void tst_QMediaObject::extendedMetaData()
     QVERIFY(extendedKeys.contains(QLatin1String("Genre")));
 }
 
-void tst_QMediaObject::setExtendedMetaData()
-{
-    QtTestMetaDataService service;
-    service.metaData.populateMetaData();
-
-    QtTestMediaObject object(&service);
-
-    QString title(QLatin1String("In the Kingdom of the Blind the One eyed are Kings"));
-
-    object.setExtendedMetaData(QLatin1String("Title"), title);
-    QCOMPARE(object.extendedMetaData(QLatin1String("Title")).toString(), title);
-    QCOMPARE(service.metaData.m_extendedData.value(QLatin1String("Title")).toString(), title);
-}
 
 QTEST_MAIN(tst_QMediaObject)
 

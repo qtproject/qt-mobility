@@ -48,7 +48,7 @@
 #include <rotationsensor_i.h>
 #include <xyz.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class maemo6rotationsensor : public maemo6sensorbase
 {

@@ -111,7 +111,7 @@ QtMessaging
    * For forwards compatibility.
 
 
-QtMedia
+QtMultimedia
 ------
  - Symbian backend improvements
     * AudioCapture

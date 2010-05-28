@@ -78,10 +78,9 @@ Player::Player(QWidget *parent)
 {
 //! [create-objs]
     player = new QMediaPlayer(this);
-    
     // owned by PlaylistModel
     playlist = new QMediaPlaylist();
-    playlist->setMediaObject(player);
+    player->setPlaylist(playlist);
 //! [create-objs]
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
@@ -95,7 +94,7 @@ Player::Player(QWidget *parent)
 
 //! [2]
     videoWidget = new VideoWidget(this);
-    videoWidget->setMediaObject(player);
+    player->setVideoOutput(videoWidget);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
@@ -112,8 +111,11 @@ Player::Player(QWidget *parent)
 
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
     
-    audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(player->service()->control(QAudioEndpointSelector_iid));
-    connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
+    QMediaService *service = player->service();
+    if (service)
+        audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->requestControl(QAudioEndpointSelector_iid));
+    if (audioEndpointSelector)
+        connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
 
 #ifndef Q_OS_SYMBIAN
     QPushButton *openButton = new QPushButton(tr("Open"), this);
@@ -231,13 +233,22 @@ Player::Player(QWidget *parent)
 
     metaDataChanged();
 
-    QStringList fileNames = qApp->arguments();
-    fileNames.removeAt(0);
-    foreach (QString const &fileName, fileNames) {
-        if (fileName.startsWith(QLatin1String("http://")))
-            playlist->addMedia(QUrl(fileName));
-        else if (QFileInfo(fileName).exists())
-            playlist->addMedia(QUrl::fromLocalFile(fileName));
+    QStringList arguments = qApp->arguments();
+    arguments.removeAt(0);
+    foreach (QString const &argument, arguments) {
+        QFileInfo fileInfo(argument);
+        if (fileInfo.exists()) {
+            QUrl url = QUrl::fromLocalFile(fileInfo.absoluteFilePath());
+            if (fileInfo.suffix().toLower() == QLatin1String("m3u")) {
+                playlist->load(url);
+            } else
+                playlist->addMedia(url);
+        } else {
+            QUrl url(argument);
+            if (url.isValid()) {
+                playlist->addMedia(url);
+            }
+        }
     }
 }
 
@@ -271,15 +282,15 @@ void Player::metaDataChanged()
         setTrackInfo(QString("(%1/%2) %3 - %4")
                 .arg(playlist->currentIndex()+1)
                 .arg(playlist->mediaCount())
-                .arg(player->metaData(QtMediaServices::AlbumArtist).toString())
-                .arg(player->metaData(QtMediaServices::Title).toString()));
+                .arg(player->metaData(QtMultimedia::AlbumArtist).toString())
+                .arg(player->metaData(QtMultimedia::Title).toString()));
 
         if (!player->isVideoAvailable()) {
-            QUrl uri = player->metaData(QtMediaServices::CoverArtUrlLarge).value<QUrl>();
+            QUrl uri = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
             QPixmap pixmap = NULL;
 
-            if (uri.isEmpty()) {
-                QVariant picture = player->extendedMetaData("attachedpicture");
+            if (uri.isEmpty()) {                
+                QVariant picture = player->metaData(QtMultimedia::CoverArtImage);
                 // Load picture from metadata
                 if (!picture.isNull() && picture.canConvert<QByteArray>())
                     pixmap.loadFromData(picture.value<QByteArray>());
@@ -305,20 +316,22 @@ void Player::metaDataChanged()
                 // Load picture from file pointed by uri
             } else
                 pixmap.load(uri.toString());
-
+            
             coverLabel->setPixmap((!pixmap.isNull())?pixmap:QPixmap());
+            coverLabel->setAlignment(Qt::AlignCenter);            
+            coverLabel->setScaledContents(true);
             }
     hideOrShowCoverArt();
     }
 #else
-    //qDebug() << "update metadata" << player->metaData(QtMediaServices::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QtMultimedia::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(player->metaData(QtMediaServices::AlbumArtist).toString())
-                .arg(player->metaData(QtMediaServices::Title).toString()));
+                .arg(player->metaData(QtMultimedia::AlbumArtist).toString())
+                .arg(player->metaData(QtMultimedia::Title).toString()));
 
         if (coverLabel) {
-            QUrl url = player->metaData(QtMediaServices::CoverArtUrlLarge).value<QUrl>();
+            QUrl url = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
 
             coverLabel->setPixmap(!url.isEmpty()
                     ? QPixmap(url.toString())

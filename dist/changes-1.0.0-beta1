@@ -243,7 +243,7 @@ QtMessaging
     * MMS Message content retrieval bug fixed (related to QByteArray QMessageContentContainer::content() const; bug)
 
 
-QtMedia
+QtMultimedia
 ------
 
  - Added Audio and Video QML elements.

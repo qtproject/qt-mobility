@@ -51,44 +51,39 @@
 QT_BEGIN_NAMESPACE
 
 class QMediaService;
+class QMediaBindableInterface;
 
 class QMediaObjectPrivate;
-class Q_MEDIA_EXPORT QMediaObject : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaObject : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(int notifyInterval READ notifyInterval WRITE setNotifyInterval NOTIFY notifyIntervalChanged)
-    Q_PROPERTY(bool metaDataAvailable READ isMetaDataAvailable NOTIFY metaDataAvailableChanged)
-    Q_PROPERTY(bool metaDataWritable READ isMetaDataWritable NOTIFY metaDataWritableChanged)
 public:
     ~QMediaObject();
 
     virtual bool isAvailable() const;
-    virtual QtMediaServices::AvailabilityError availabilityError() const;
+    virtual QtMultimedia::AvailabilityError availabilityError() const;
 
     virtual QMediaService* service() const;
 
     int notifyInterval() const;
     void setNotifyInterval(int milliSeconds);
 
-    virtual void bind(QObject*);
-    virtual void unbind(QObject*);
+    virtual bool bind(QObject *);
+    virtual void unbind(QObject *);
 
     bool isMetaDataAvailable() const;
-    bool isMetaDataWritable() const;
 
-    QVariant metaData(QtMediaServices::MetaData key) const;
-    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
-    QList<QtMediaServices::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimedia::MetaData key) const;
+    QList<QtMultimedia::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
 
 Q_SIGNALS:
     void notifyIntervalChanged(int milliSeconds);
 
     void metaDataAvailableChanged(bool available);
-    void metaDataWritableChanged(bool writable);
     void metaDataChanged();
 
     void availabilityChanged(bool available);
