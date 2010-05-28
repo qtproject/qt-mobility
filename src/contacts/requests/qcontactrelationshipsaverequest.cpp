@@ -54,6 +54,9 @@ QTM_BEGIN_NAMESPACE
   relationships (which may be retrieved by calling relationships()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
   \ingroup contacts-requests
  */
 
