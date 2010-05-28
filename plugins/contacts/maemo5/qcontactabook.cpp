@@ -265,30 +265,13 @@ void QContactABook::initLocalIdHash()
    g_list_free(contactList);
 }
 
+//TODO Use native filters
 QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
-  QList<QContactLocalId> rtn;
-
-  // do this naively for now...
+  Q_UNUSED(sortOrders)
+  Q_UNUSED(filter);
   *error = QContactManager::NoError;
-  QContactManager::Error tempError = QContactManager::NoError;
-  QList<QContactLocalId> allIds = m_localIds.keys();
-  QList<QContact> sortedAndFiltered;
-  QContact *curr = 0;
-  foreach (const QContactLocalId& currId, allIds) {
-    curr = getQContact(currId, &tempError);
-    if (tempError != QContactManager::NoError)
-      *error = tempError;
-    if (QContactManagerEngine::testFilter(filter, *curr)) {
-      QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
-    }
-    delete curr;
-  }
-
-  foreach (const QContact& contact, sortedAndFiltered) {
-    rtn.append(contact.localId());
-  }
-  return rtn;
+  return m_localIds.keys();
 
   /*
   // Sorting
@@ -350,6 +333,7 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
   return rtn;
   */
 }
+#include "qcontactdetail_p.h"
 
 QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
@@ -362,9 +346,20 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   
   //Convert aContact => qContact
   rtn = convert(E_CONTACT(aContact));
+  
   QContactId cId;
   cId.setLocalId(contactId);
   rtn->setId(cId);
+  
+  //TEST BEGIN
+  
+/*
+  QContactDisplayLabel dl;
+  dl.setValue(QContactDisplayLabel::FieldLabel, "LABEL");
+  QContactDetailPrivate::setAccessConstraints(&dl, QContactDetail::Irremovable | QContactDetail::ReadOnly);
+  rtn->d->m_details.replace(0, dl);
+*/
+  //TEST END
   return rtn;
 }
 
@@ -587,12 +582,17 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
 
 const QString QContactABook::getDisplayName(const QContact& contact) const{
   //Get Osso ABook ID for the contact (stored as GUID detail)
-  const char* acontactID;
+  const char* acontactID = NULL;
   {
     QContactGuid g = contact.detail(QContactGuid::DefinitionName);
     acontactID = qPrintable(g.guid());
   }
   
+  if (!acontactID){
+    QCM5_DEBUG << "The contact has not been saved yet and it doesn't have any GUID";
+    return QString();
+  }
+    
   //Get OssoABookContact
   OssoABookContact *acontact= NULL;
   {
@@ -606,9 +606,10 @@ const QString QContactABook::getDisplayName(const QContact& contact) const{
     
   }
   
-  if (!acontact)
+  if (!acontact){
+    QCM5_DEBUG << "AContact with ID:" << acontactID << "is null";
     return QString();
-  
+  }
   //Get Display name;
   const char* displayName = osso_abook_contact_get_display_name(acontact);  
 
@@ -735,7 +736,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
         hash[QContactName::DefinitionName] = "full-name";
         hash[QContactNickname::DefinitionName] = "nickname";
         hash[QContactNote::DefinitionName] = "note";
-        hash[QContactOrganization::DefinitionName] = "title";
+        hash[QContactOrganization::DefinitionName] = "org";
         hash[QContactPhoneNumber::DefinitionName] = "phone";
         hash[QContactUrl::DefinitionName] = "homepage-url";
       }
@@ -1337,9 +1338,9 @@ QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) c
 {
   QContactOrganization* rtn = new QContactOrganization;
   QVariantMap map;
-  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_ORG));
-  map[QContactOrganization::FieldTitle] = QString::fromUtf8(title);
-  FREE(title);
+  const char* org = CONST_CHAR(e_contact_get(eContact, E_CONTACT_ORG));
+  map[QContactOrganization::FieldName] = QString::fromUtf8(org);
+  FREE(org);
   setDetailValues(map, rtn);
   return rtn;
 }
@@ -1976,7 +1977,7 @@ void QContactABook::setOrganizationDetail(const OssoABookContact* aContact, cons
   if (!aContact) return;
   
   QStringList attrValues;
-  attrValues << detail.value(QContactOrganization::FieldTitle);
+  attrValues << detail.value(QContactOrganization::FieldName);
   
   addAttributeToAContact(aContact, EVC_ORG, attrValues);
 }

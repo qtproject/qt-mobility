@@ -1034,6 +1034,10 @@ void tst_QContactManager::batch()
     QVERIFY(contacts.at(1).detail(QContactName::DefinitionName) == nb);
     QVERIFY(contacts.at(2).detail(QContactName::DefinitionName) == nc);
 
+    /* Save again, with a null error map */
+    QVERIFY(cm->saveContacts(&contacts, NULL));
+    QVERIFY(cm->error() == QContactManager::NoError);
+
     /* Now make an update to them all */
     QContactPhoneNumber number;
     number.setNumber("1234567");
@@ -1091,6 +1095,10 @@ void tst_QContactManager::batch()
     QVERIFY(errorMap.values().at(0) == QContactManager::DoesNotExistError);
     QVERIFY(errorMap.values().at(1) == QContactManager::DoesNotExistError);
     QVERIFY(errorMap.values().at(2) == QContactManager::DoesNotExistError);
+
+    /* And again with a null error map */
+    QVERIFY(!cm->removeContacts(ids, NULL));
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
 
     /* Try adding some new ones again, this time one with an error */
     contacts.clear();
@@ -2968,8 +2976,13 @@ void tst_QContactManager::relationships()
     }
     
     // Cleanup a bit
-    QVERIFY(cm->removeRelationship(customRelationshipOne));
-    QVERIFY(cm->removeRelationship(customRelationshipTwo));
+    QMap<int, QContactManager::Error> errorMap;
+    QList<QContactRelationship> moreRels;
+
+    moreRels << customRelationshipOne << customRelationshipTwo;
+    errorMap.insert(5, QContactManager::BadArgumentError);
+    QVERIFY(cm->removeRelationships(moreRels, &errorMap));
+    QVERIFY(errorMap.count() == 0);
 
     // test batch API and ordering in contacts
     QList<QContactRelationship> currentRelationships = cm->relationships(source.id(), QContactRelationship::First);
@@ -3079,7 +3092,14 @@ void tst_QContactManager::relationships()
     customRelationshipOne.setFirst(source.id());
     customRelationshipOne.setSecond(dest2.id());
     customRelationshipOne.setRelationshipType(availableRelationshipTypes.at(0));
-    QVERIFY(cm->saveRelationship(&customRelationshipOne));
+
+    // Test batch save with an error map
+    moreRels.clear();
+    moreRels << customRelationshipOne;
+    errorMap.insert(0, QContactManager::BadArgumentError);
+    QVERIFY(cm->saveRelationships(&moreRels, &errorMap));
+    QVERIFY(cm->error() == QContactManager::NoError);
+    QVERIFY(errorMap.count() == 0); // should be reset
     source = cm->contact(source.localId());
     dest2 = cm->contact(dest2.localId());
     QVERIFY(cm->removeContact(dest2.localId())); // remove dest2, the relationship should be removed

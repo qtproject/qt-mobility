@@ -176,14 +176,12 @@ void QContact::clearDetails()
     // insert the contact's display label detail.
     QContactDisplayLabel contactLabel;
     contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
-    contactLabel.d->m_id = 1;
     contactLabel.d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
     d->m_details.insert(0, contactLabel);
 
     // and the contact type detail.
     QContactType contactType;
     contactType.setType(QContactType::TypeContact);
-    contactType.d->m_id = 2;
     contactType.d->m_access = QContactDetail::Irremovable;
     d->m_details.insert(1, contactType);
 }
