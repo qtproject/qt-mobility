@@ -64,8 +64,8 @@ QXARecodMediaService::~QXARecodMediaService()
 {
     QT_TRACE_FUNCTION_ENTRY_EXIT;
 }
-
-QMediaControl* QXARecodMediaService::control(const char *name) const
+//FIXME
+QMediaControl* QXARecodMediaService::requestControl(const char *name)
 {
     QT_TRACE_FUNCTION_ENTRY;
     if (qstrcmp(name, QMediaRecorderControl_iid) == 0)
@@ -79,4 +79,8 @@ QMediaControl* QXARecodMediaService::control(const char *name) const
     QT_TRACE_FUNCTION_EXIT;
     return 0;
 }
-
+//FIXME
+void QXARecodMediaService::releaseControl(QMediaControl *control)
+{
+    Q_UNUSED(control)
+}
