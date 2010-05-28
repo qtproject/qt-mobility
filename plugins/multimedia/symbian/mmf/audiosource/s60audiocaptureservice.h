@@ -63,7 +63,7 @@ public:
     ~S60AudioCaptureService();
 
     QMediaControl *requestControl(const char *name);
-    voiid releaseControl(QMediaControl *control);
+    void releaseControl(QMediaControl *control);
 private:
     S60AudioCaptureSession       *m_session;
     S60AudioEncoderControl       *m_encoderControl;
