@@ -67,6 +67,14 @@
 #include <qaudiodeviceinfo.h>
 #include <qaudiosystem.h>
 
+// For compat with 4.6
+#if !defined(QT_WIN_CALLBACK)
+#  if defined(Q_CC_MINGW)
+#    define QT_WIN_CALLBACK CALLBACK __attribute__ ((force_align_arg_pointer))
+#  else
+#    define QT_WIN_CALLBACK CALLBACK
+#  endif
+#endif
 
 QT_BEGIN_NAMESPACE
 
