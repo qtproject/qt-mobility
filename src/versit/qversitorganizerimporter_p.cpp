@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qversitorganizeritemimporter_p.h"
+#include "qversitorganizerimporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
@@ -47,14 +47,14 @@
 
 QTM_USE_NAMESPACE
 
-QVersitOrganizerImporterPropertyHandler::QVersitOrganizerImporterPropertyHandler() :
+QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
     mPropertyHandler(NULL),
     mDefaultResourceHandler(new QVersitDefaultResourceHandler),
     mResourceHandler(mDefaultResourceHandler)
 {
 }
 
-QVersitOrganizerImporterPropertyHandler::~QVersitOrganizerImporterPropertyHandler()
+QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
 {
     delete mDefaultResourceHandler;
 }

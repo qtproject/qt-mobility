@@ -64,8 +64,8 @@ class QVersitDocument;
 class Q_AUTOTEST_EXPORT QVersitOrganizerImporterPrivate
 {
 public:
-    QVersitOrganizerImporterPropertyHandler();
-    ~QVersitOrganizerImporterPropertyHandler();
+    QVersitOrganizerImporterPrivate();
+    ~QVersitOrganizerImporterPrivate();
     bool importItem(const QVersitDocument& versitDocument,
                     QOrganizerItem* item,
                     QVersitOrganizerImporter::Error* error);
@@ -76,5 +76,7 @@ public:
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
 };
+
+QTM_END_NAMESPACE
 
 #endif

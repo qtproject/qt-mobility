@@ -15,7 +15,12 @@ INCLUDEPATH += . \
                ../contacts \
                ../contacts/requests \
                ../contacts/filters \
-               ../contacts/details
+               ../contacts/details \
+               ../organizer \
+               ../organizer/requests \
+               ../organizer/filters \
+               ../organizer/details \
+               ../organizer/items
 
 # Input
 PUBLIC_HEADERS +=  \
@@ -59,8 +64,8 @@ SOURCES += qversitdocument.cpp \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
     qversitcontactimporter_p.cpp \
-    qversitorganizerimporter.cpp
-    qversitorganizerimporter_p.cpp
+    qversitorganizerimporter.cpp \
+    qversitorganizerimporter_p.cpp \
     qvcardbackuphandlers_p.cpp \
     qversitresourcehandler.cpp \
     versitutils.cpp

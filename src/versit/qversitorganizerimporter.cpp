@@ -49,8 +49,10 @@
 
 QTM_USE_NAMESPACE
 
-QVersitOrganizerImporterPropertyHandler* QVersitOrganizerImporterPropertyHandler::createBackupHandler() {
-    return new QVCardImporterBackupHandler;
+QVersitOrganizerImporterPropertyHandler* QVersitOrganizerImporterPropertyHandler::createBackupHandler()
+{
+    // TODO
+    return NULL;
 }
 
 /*! Constructs a new importer */
@@ -76,7 +78,7 @@ QVersitOrganizerImporter::~QVersitOrganizerImporter()
  *
  * \sa items(), errors()
  */
-bool QVersitOrganizerItems::importDocuments(const QList<QVersitDocument>& documents)
+bool QVersitOrganizerImporter::importDocuments(const QList<QVersitDocument>& documents)
 {
     int documentIndex = 0;
     d->mItems.clear();
@@ -114,7 +116,7 @@ QList<QOrganizerItem> QVersitOrganizerImporter::items() const
  *
  * \sa importDocuments()
  */
-QMap<int, QOrganizerImporter::Error> QOrganizerImporter::errors() const
+QMap<int, QVersitOrganizerImporter::Error> QVersitOrganizerImporter::errors() const
 {
     return d->mErrors;
 }
@@ -125,9 +127,8 @@ QMap<int, QOrganizerImporter::Error> QOrganizerImporter::errors() const
  * Does not take ownership of the handler.  The client should ensure the handler remains valid for
  * the lifetime of the exporter.
  */
-void QOrganizerImporter::setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler)
+void QVersitOrganizerImporter::setPropertyHandler(QVersitOrganizerImporterPropertyHandler* handler)
 {
-    d->mPropertyHandlerVersion = 1;
     d->mPropertyHandler = handler;
 }
 
@@ -137,7 +138,7 @@ void QOrganizerImporter::setPropertyHandler(QVersitOrganizerImporterPropertyHand
  * Does not take ownership of the handler.  The client should ensure the handler remains valid for
  * the lifetime of the exporter.
  */
-void QOrganizerImporter::setResourceHandler(QVersitResourceHandler* handler)
+void QVersitOrganizerImporter::setResourceHandler(QVersitResourceHandler* handler)
 {
     d->mResourceHandler = handler;
 }
@@ -145,7 +146,7 @@ void QOrganizerImporter::setResourceHandler(QVersitResourceHandler* handler)
 /*!
  * Returns the associated resource handler.
  */
-QVersitResourceHandler* QOrganizerImporter::resourceHandler() const
+QVersitResourceHandler* QVersitOrganizerImporter::resourceHandler() const
 {
     return d->mResourceHandler;
 }
