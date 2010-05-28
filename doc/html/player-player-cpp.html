@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -92,7 +92,8 @@
     #endif
     {
         player = new QMediaPlayer(this);
-        <span class="comment">// owerd by PlaylistModel</span>
+
+        <span class="comment">// owned by PlaylistModel</span>
         playlist = new QMediaPlaylist();
         playlist-&gt;setMediaObject(player);
 

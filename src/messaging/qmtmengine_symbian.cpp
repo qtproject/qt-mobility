@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -276,13 +276,13 @@ QMessageAccountIdList CMTMEngine::queryAccounts(const QMessageAccountFilter &fil
             }
         }
     }
-    
+
     if (!sortOrder.isEmpty()) {
         orderAccounts(accountIds, sortOrder);
     }
-    
+
     applyOffsetAndLimitToAccountIds(accountIds, offset, limit);
-        
+    
     return accountIds;
 }
 
@@ -703,27 +703,33 @@ bool CMTMEngine::showMessage(const QMessageId &id)
 void CMTMEngine::showMessageL(const QMessageId &id)
 {
     long int messageId = SymbianHelpers::stripIdPrefix(id.toString()).toLong();
-    
+
     CMsvEntry* pEntry = ipMsvSession->GetEntryL(messageId);
     CleanupStack::PushL(pEntry);
-    CBaseMtm* mtm = ipClientMtmReg->NewMtmL(pEntry->Entry().iMtm);
-    CleanupStack::PushL(mtm);
-    
-    CMtmUiRegistry* mtmUiRegistry = CMtmUiRegistry::NewL(*ipMsvSession);
-    CleanupStack::PushL(mtmUiRegistry); 
 
-    CBaseMtmUi* ui = mtmUiRegistry->NewMtmUiL(*mtm); 
-    CleanupStack::PushL(ui);
+    CBaseMtm* pMtm = ipClientMtmReg->NewMtmL(pEntry->Entry().iMtm);
+    CleanupStack::PushL(pMtm);
     
-    ui->BaseMtm().SwitchCurrentEntryL(messageId);
-    CMsvOperationWait* waiter = CMsvOperationWait::NewLC();
-    waiter->Start(); 
-    CMsvOperation* op = ui->OpenL(waiter->iStatus);
-    CleanupStack::PushL(op);
-    
-    CActiveScheduler::Start();
+    CMtmUiRegistry* pMtmUiRegistry = CMtmUiRegistry::NewL(*ipMsvSession);
+    CleanupStack::PushL(pMtmUiRegistry); 
 
-    CleanupStack::PopAndDestroy(6); // op,waiter,ui,mtmuiregistry,mtm,pEntry
+    CBaseMtmUi* pMtmUi = pMtmUiRegistry->NewMtmUiL(*pMtm); 
+    CleanupStack::PushL(pMtmUi);
+    
+    pMtmUi->BaseMtm().SwitchCurrentEntryL(messageId);
+
+    QMTMWait mtmWait;
+    
+    CMsvOperation* pMsvOperation = pMtmUi->OpenL(mtmWait.iStatus);
+    
+    mtmWait.start();
+
+    delete pMsvOperation;
+    
+    CleanupStack::PopAndDestroy(pMtmUi);
+    CleanupStack::PopAndDestroy(pMtmUiRegistry);
+    CleanupStack::PopAndDestroy(pMtm);
+    CleanupStack::PopAndDestroy(pEntry);
 }
 
 bool CMTMEngine::composeMessage(const QMessage &message)
@@ -978,61 +984,59 @@ void CMTMEngine::retrieveL(const QMessageId &messageId, const QMessageContentCon
     CMsvEntrySelection* sel = new(ELeave) CMsvEntrySelection;
     CleanupStack::PushL(sel);
     
-    CMsvOperationWait* wait = CMsvOperationWait::NewLC();
-
     if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4){    
+        QMTMWait mtmWait;
+
         TPckgBuf<TInt> parameter;
         
         ipImap4Mtm->SwitchCurrentEntryL(pEntry->OwningService());
         
         sel->AppendL(messId);
-        
+
         CMsvOperation* opConnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opConnect);
-        wait->Start();
-        CActiveScheduler::Start();    
+                                                                    *sel, parameter,
+                                                                    mtmWait.iStatus);
+        mtmWait.start();
+        delete opConnect;
         
         TImImap4GetPartialMailInfo info;
         info.iPartialMailOptions = EAttachmentsOnly;
         TPckg<TImImap4GetPartialMailInfo> bodyInfo(info);
 
         CMsvOperation* opPopulate = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
-                                                    *sel, bodyInfo, wait->iStatus);
-        CleanupStack::PushL(opPopulate);
-        wait->Start();
-        CActiveScheduler::Start();
+                                                                     *sel, bodyInfo,
+                                                                     mtmWait.iStatus);
+        mtmWait.start();
+        delete opPopulate;
         
-        if (wait->iStatus.Int() != KErrNone) { 
-            if (wait->iStatus.Int() == KErrNotFound){
+        if (mtmWait.iStatus.Int() != KErrNone) { 
+            if (mtmWait.iStatus.Int() == KErrNotFound){
                 // TODO: set messagestatus removed
             }
         }
         
         CMsvOperation* opDisconnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opDisconnect);
-        
-        wait->Start();
-        CActiveScheduler::Start();    
-        
-        CleanupStack::PopAndDestroy(3);
+                                                                       *sel, parameter,
+                                                                       mtmWait.iStatus);
+        mtmWait.start();
+        delete opDisconnect;
     }
     
     if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
+        QMTMWait mtmWait;
+
         TPckgBuf<TInt> parameter;
-        
+
         ipPop3Mtm->SwitchCurrentEntryL(pEntry->OwningService());    
 
         sel->AppendL(pEntry->EntryId());
-        
+
         CMsvOperation* opConnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMConnect,
-                                                    *sel, parameter, wait->iStatus);
-        
-        CleanupStack::PushL(opConnect);
-        wait->Start();
-        CActiveScheduler::Start();    
-        
+                                                                   *sel, parameter,
+                                                                   mtmWait.iStatus);
+        mtmWait.start();
+        delete opConnect;
+
         CImPop3Settings *popSettings = new (ELeave) CImPop3Settings;
         CleanupStack::PushL(popSettings);
         CEmailAccounts *emailAccounts = CEmailAccounts::NewLC();
@@ -1046,22 +1050,18 @@ void CMTMEngine::retrieveL(const QMessageId &messageId, const QMessageContentCon
         CleanupStack::PopAndDestroy(popSettings);
 
         CMsvOperation* opPopulate = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMPopulate,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opPopulate);
-        wait->Start();
-        CActiveScheduler::Start();
-        
+                                                                    *sel, parameter,
+                                                                    mtmWait.iStatus);
+        mtmWait.start();
+        delete opPopulate;
+
         CMsvOperation* opDisconnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMDisconnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opDisconnect);
-        
-        wait->Start();
-        CActiveScheduler::Start();    
-        CleanupStack::PopAndDestroy(3);
-        
+                                                                      *sel, parameter,
+                                                                      mtmWait.iStatus);
+        mtmWait.start();
+        delete opDisconnect;
     }
     
-    CleanupStack::PopAndDestroy(wait);
     CleanupStack::PopAndDestroy(sel);    
     CleanupStack::PopAndDestroy(pEntry);
 }
@@ -1085,48 +1085,47 @@ void CMTMEngine::retrieveBodyL(const QMessageId& id) const
     CMsvEntrySelection* sel = new(ELeave) CMsvEntrySelection;
     CleanupStack::PushL(sel);
     
-    CMsvOperationWait* wait = CMsvOperationWait::NewLC();
-
     if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4){    
+        QMTMWait mtmWait;
+
         TPckgBuf<TInt> parameter;
-        
+
         ipImap4Mtm->SwitchCurrentEntryL(pEntry->OwningService());
-        
+
         sel->AppendL(messageId);
         
         CMsvOperation* opConnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opConnect);
-        wait->Start();
-        CActiveScheduler::Start();    
+                                                                    *sel, parameter,
+                                                                    mtmWait.iStatus);
+        mtmWait.start();
+        delete opConnect;
         
         TImImap4GetPartialMailInfo info;
         info.iPartialMailOptions = EBodyTextOnly;
         TPckg<TImImap4GetPartialMailInfo> bodyInfo(info);
 
         CMsvOperation* opPopulate = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
-                                                    *sel, bodyInfo, wait->iStatus);
-        CleanupStack::PushL(opPopulate);
-        wait->Start();
-        CActiveScheduler::Start();
+                                                                     *sel, bodyInfo,
+                                                                     mtmWait.iStatus);
+        mtmWait.start();
+        delete opPopulate;
         
-        if (wait->iStatus.Int() != KErrNone) { 
-            if (wait->iStatus.Int() == KErrNotFound){
+        if (mtmWait.iStatus.Int() != KErrNone) { 
+            if (mtmWait.iStatus.Int() == KErrNotFound){
                 // TODO: set messagestatus removed
             }
         }
         
         CMsvOperation* opDisconnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opDisconnect);
-        
-        wait->Start();
-        CActiveScheduler::Start();    
-        
-        CleanupStack::PopAndDestroy(3);
+                                                                       *sel, parameter,
+                                                                       mtmWait.iStatus);
+        mtmWait.start();
+        delete opDisconnect;
     }
     
     if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
+        QMTMWait mtmWait;
+
         TPckgBuf<TInt> parameter;
         
         ipPop3Mtm->SwitchCurrentEntryL(pEntry->OwningService());    
@@ -1134,11 +1133,10 @@ void CMTMEngine::retrieveBodyL(const QMessageId& id) const
         sel->AppendL(pEntry->EntryId());
         
         CMsvOperation* opConnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMConnect,
-                                                    *sel, parameter, wait->iStatus);
-        
-        CleanupStack::PushL(opConnect);
-        wait->Start();
-        CActiveScheduler::Start();    
+                                                                   *sel, parameter,
+                                                                   mtmWait.iStatus);
+        mtmWait.start();
+        delete opConnect;
         
         CImPop3Settings *popSettings = new (ELeave) CImPop3Settings;
         CleanupStack::PushL(popSettings);
@@ -1153,22 +1151,18 @@ void CMTMEngine::retrieveBodyL(const QMessageId& id) const
         CleanupStack::PopAndDestroy(popSettings);
 
         CMsvOperation* opPopulate = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMPopulate,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opPopulate);
-        wait->Start();
-        CActiveScheduler::Start();
+                                                                    *sel, parameter,
+                                                                    mtmWait.iStatus);
+        mtmWait.start();
+        delete opPopulate;
         
         CMsvOperation* opDisconnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMDisconnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opDisconnect);
-        
-        wait->Start();
-        CActiveScheduler::Start();    
-        CleanupStack::PopAndDestroy(3);
-        
+                                                                      *sel, parameter,
+                                                                      mtmWait.iStatus);
+        mtmWait.start();
+        delete opDisconnect;
     }
     
-    CleanupStack::PopAndDestroy(wait);
     CleanupStack::PopAndDestroy(sel);    
     CleanupStack::PopAndDestroy(pEntry);
 }
@@ -1192,42 +1186,41 @@ void CMTMEngine::retrieveHeaderL(const QMessageId& id) const
     CMsvEntrySelection* sel = new(ELeave) CMsvEntrySelection;
     CleanupStack::PushL(sel);
     
-    CMsvOperationWait* wait = CMsvOperationWait::NewLC();
-
     if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4){    
+        QMTMWait mtmWait;
+
         TPckgBuf<TInt> parameter;
-        
+
         ipImap4Mtm->SwitchCurrentEntryL(pEntry->OwningService());
-        
+
         sel->AppendL(messageId);
-        
+
         CMsvOperation* opConnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opConnect);
-        wait->Start();
-        CActiveScheduler::Start();    
+                                                                    *sel, parameter,
+                                                                    mtmWait.iStatus);
+        mtmWait.start();
+        delete opConnect;
             
         TImImap4GetMailInfo info;
         info.iGetMailBodyParts = EGetImap4EmailHeaders;
         TPckg<TImImap4GetMailInfo> bodyInfo(info);
         
         CMsvOperation* opPopulate = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMPopulate,
-                                                    *sel, bodyInfo, wait->iStatus);
-        CleanupStack::PushL(opPopulate);
-        wait->Start();
-        CActiveScheduler::Start();
+                                                                     *sel, bodyInfo,
+                                                                     mtmWait.iStatus);
+        mtmWait.start();
+        delete opPopulate;
         
         CMsvOperation* opDisconnect = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opDisconnect);
-        
-        wait->Start();
-        CActiveScheduler::Start();    
-        
-        CleanupStack::PopAndDestroy(3);
+                                                                       *sel, parameter,
+                                                                       mtmWait.iStatus);
+        mtmWait.start();
+        delete opDisconnect;
     }
     
     if (pEntry->Entry().iMtm == KUidMsgTypePOP3){
+        QMTMWait mtmWait;
+
         TPckgBuf<TInt> parameter;
         
         ipPop3Mtm->SwitchCurrentEntryL(pEntry->OwningService());    
@@ -1235,11 +1228,11 @@ void CMTMEngine::retrieveHeaderL(const QMessageId& id) const
         sel->AppendL(pEntry->EntryId());
         
         CMsvOperation* opConnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMConnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opConnect);
-        wait->Start();
-        CActiveScheduler::Start();    
-        
+                                                                   *sel, parameter,
+                                                                   mtmWait.iStatus);
+        mtmWait.start();
+        delete opConnect;
+
         CImPop3Settings *popSettings = new (ELeave) CImPop3Settings;
         CleanupStack::PushL(popSettings);
         CEmailAccounts *emailAccounts = CEmailAccounts::NewLC();
@@ -1252,23 +1245,18 @@ void CMTMEngine::retrieveHeaderL(const QMessageId& id) const
         CleanupStack::PopAndDestroy(popSettings);
 
         CMsvOperation* opPopulate = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMPopulate,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opPopulate);
-        wait->Start();
-        CActiveScheduler::Start();
+                                                                    *sel, parameter,
+                                                                    mtmWait.iStatus);
+        mtmWait.start();
+        delete opPopulate;
         
         CMsvOperation* opDisconnect = ipPop3Mtm->InvokeAsyncFunctionL(KPOP3MTMDisconnect,
-                                                    *sel, parameter, wait->iStatus);
-        CleanupStack::PushL(opDisconnect);
-        
-        wait->Start();
-        CActiveScheduler::Start();    
-        
-        CleanupStack::PopAndDestroy(3);
-        
+                                                                      *sel, parameter,
+                                                                      mtmWait.iStatus);
+        mtmWait.start();
+        delete opDisconnect;
     }
     
-    CleanupStack::PopAndDestroy(wait);
     CleanupStack::PopAndDestroy(sel);    
     CleanupStack::PopAndDestroy(pEntry);
 }
@@ -1291,36 +1279,30 @@ void CMTMEngine::exportUpdatesL(const QMessageAccountId &id) const
         User::Leave(KErrNotFound);
     }
     if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4) {
+        QMTMWait mtmWait;
+    
         TPckgBuf<TInt> parameter;
         CMsvEntrySelection* pMsvEntrySelection = new(ELeave) CMsvEntrySelection;
         CleanupStack::PushL(pMsvEntrySelection);
-        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
-        
+
         ipImap4Mtm->SwitchCurrentEntryL(account.d_ptr->_service1EntryId);
         pMsvEntrySelection->AppendL(account.d_ptr->_service1EntryId);
         
         CMsvOperation* pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMConnect, *pMsvEntrySelection,
-                                                                        parameter, pMsvOperationWait->iStatus);
-        CleanupStack::PushL(pMsvOperation);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
-        CleanupStack::PopAndDestroy(pMsvOperation);
+                                                                        parameter, mtmWait.iStatus);
+        mtmWait.start();
+        delete pMsvOperation;
 
         pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMFullSync, *pMsvEntrySelection,
-                                                         parameter, pMsvOperationWait->iStatus);
-        CleanupStack::PushL(pMsvOperation);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
-        CleanupStack::PopAndDestroy(pMsvOperation);
+                                                         parameter, mtmWait.iStatus);
+        mtmWait.start();
+        delete pMsvOperation;
         
         pMsvOperation = ipImap4Mtm->InvokeAsyncFunctionL(KIMAP4MTMDisconnect, *pMsvEntrySelection,
-                                                         parameter, pMsvOperationWait->iStatus);
-        CleanupStack::PushL(pMsvOperation);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
-        CleanupStack::PopAndDestroy(pMsvOperation);
+                                                         parameter, mtmWait.iStatus);
+        mtmWait.start();
+        delete pMsvOperation;
         
-        CleanupStack::PopAndDestroy(pMsvOperationWait);
         CleanupStack::PopAndDestroy(pMsvEntrySelection);
     }
     releaseCMsvEntryAndPopFromCleanupStack(pEntry);
@@ -1359,26 +1341,20 @@ bool CMTMEngine::removeMessageL(const QMessageId &id, QMessageManager::RemovalOp
         ipImap4Mtm->SwitchCurrentEntryL(messageId);
         TMsvId parent = ipImap4Mtm->Entry().Entry().Parent();
         ipImap4Mtm->SwitchCurrentEntryL(parent);
-        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
-        CMsvOperation* pMsvOperation = ipImap4Mtm->Entry().DeleteL(messageId, pMsvOperationWait->iStatus);
-        CleanupStack::PushL(pMsvOperation);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
-        CleanupStack::PopAndDestroy(pMsvOperation);
-        CleanupStack::PopAndDestroy(pMsvOperationWait);
+        QMTMWait mtmWait;
+        CMsvOperation* pMsvOperation = ipImap4Mtm->Entry().DeleteL(messageId, mtmWait.iStatus);
+        mtmWait.start();
+        delete pMsvOperation;
     } else if (pEntry->Entry().iMtm == KUidMsgTypePOP3) {
         if (!ipPop3Mtm)
             return false;
         ipPop3Mtm->SwitchCurrentEntryL(messageId);
         TMsvId parent = ipPop3Mtm->Entry().Entry().Parent();
         ipPop3Mtm->SwitchCurrentEntryL(parent);
-        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
-        CMsvOperation* pMsvOperation = ipPop3Mtm->Entry().DeleteL(messageId, pMsvOperationWait->iStatus);
-        CleanupStack::PushL(pMsvOperation);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
-        CleanupStack::PopAndDestroy(pMsvOperation);
-        CleanupStack::PopAndDestroy(pMsvOperationWait);
+        QMTMWait mtmWait;
+        CMsvOperation* pMsvOperation = ipPop3Mtm->Entry().DeleteL(messageId, mtmWait.iStatus);
+        mtmWait.start();
+        delete pMsvOperation;
     } 
     
     CleanupStack::PopAndDestroy(pEntry);
@@ -1721,12 +1697,10 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                     applyOffsetAndLimitToMsgIds(iMessageQueries[index].ids,
                                                 iMessageQueries[index].offset,
                                                 iMessageQueries[index].limit);
-                    emit iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids);
+                    iMessageQueries[index].privateService->messagesFound(iMessageQueries[index].ids, true, true);
                 } else {
-                    emit iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
+                    iMessageQueries[index].privateService->messagesCounted(iMessageQueries[index].count);
                 }
-                iMessageQueries[index].privateService->_active = false;
-                emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
             }
         } else {
             // There was only one single filter to handle
@@ -1748,19 +1722,16 @@ void CMTMEngine::filterAndOrderMessagesReady(bool success, int operationId, QMes
                 }
                 // Handle offest & limit
                 applyOffsetAndLimitToMsgIds(ids, iMessageQueries[index].offset, iMessageQueries[index].limit);
-                emit iMessageQueries[index].privateService->messagesFound(ids);
+                iMessageQueries[index].privateService->messagesFound(ids, true, true);
             } else {
-                emit iMessageQueries[index].privateService->messagesCounted(ids.count());
+                iMessageQueries[index].privateService->messagesCounted(ids.count());
             }
-            iMessageQueries[index].privateService->_active = false;
-            emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
         }
     } else {
         iMessageQueries[index].privateService->_active = false;
         if (iMessageQueries[index].privateService->_error == QMessageManager::NoError) {
             iMessageQueries[index].privateService->_error = QMessageManager::RequestIncomplete;
         }
-        emit iMessageQueries[index].privateService->stateChanged(QMessageService::FinishedState);
     }
 
     delete iMessageQueries[index].findOperation;
@@ -2319,25 +2290,20 @@ QMessage CMTMEngine::messageL(const QMessageId& id) const
     CleanupStack::PushL(pEntry);
     
     if (pEntry->Entry().iMtm == KUidMsgTypeSMS) {
-        if (!ipSmsMtm)
-            return message;
-        message = smsMessageL(*pEntry, messageId);
+        if (ipSmsMtm)
+            message = smsMessageL(*pEntry, messageId);
     } else if (pEntry->Entry().iMtm == KUidMsgTypeMultimedia) {
-        if (!ipMmsMtm)
-            return message;
-        message = mmsMessageL(*pEntry, messageId);
+        if (ipMmsMtm)
+            message = mmsMessageL(*pEntry, messageId);
     }  else if (pEntry->Entry().iMtm == KUidMsgTypeSMTP) {
-        if (!ipSmtpMtm)
-            return message;
-        message = emailMessageL(*pEntry, messageId);
+        if (ipSmtpMtm)
+            message = emailMessageL(*pEntry, messageId);
     } else if (pEntry->Entry().iMtm == KUidMsgTypeIMAP4) {
-        if (!ipImap4Mtm)
-            return message;
-        message = emailMessageL(*pEntry, messageId);
+        if (ipImap4Mtm)
+            message = emailMessageL(*pEntry, messageId);
     } else if (pEntry->Entry().iMtm == KUidMsgTypePOP3) {
-        if (!ipPop3Mtm)
-            return message;
-        message = emailMessageL(*pEntry, messageId);
+        if (ipPop3Mtm)
+            message = emailMessageL(*pEntry, messageId);
     }
 
     CleanupStack::PopAndDestroy(pEntry);
@@ -2603,7 +2569,7 @@ void CMTMEngine::sendSMSL(QMessage &message)
 
     // Update message sending state
     entry.SetSendingState(KMsvSendStateWaiting);
-    
+
     // Set SMS Service & delivery settings to the SMS header
     CSmsHeader& smsHeader = ipSmsMtm->SmsHeader();
     CSmsSettings* pSmsSettings = CSmsSettings::NewL();
@@ -2617,7 +2583,9 @@ void CMTMEngine::sendSMSL(QMessage &message)
     if (smsHeader.Message().ServiceCenterAddress().Length() == 0) {
         CSmsSettings* pSmsServiceSettings = &(ipSmsMtm->ServiceSettings());
         if (!pSmsServiceSettings->ServiceCenterCount()) {
+#ifndef Q_CC_NOKIAX86
             User::Leave(KErrNotReady);
+#endif
         } else {
             CSmsNumber* pSmsCenterNumber = CSmsNumber::NewL();
             CleanupStack::PushL(pSmsCenterNumber);
@@ -2640,14 +2608,13 @@ void CMTMEngine::sendSMSL(QMessage &message)
         // Switch current SMS MTM context to SMS message parent folder entry
         ipSmsMtm->SwitchCurrentEntryL(ipSmsMtm->Entry().Entry().Parent());
         
-        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+        QMTMWait mtmWait;
     
         // Move SMS Message to Outbox
         CMsvOperation* pMsvOperation = ipSmsMtm->Entry().MoveL(messageId,
                                                                KMsvGlobalOutBoxIndexEntryId,
-                                                               pMsvOperationWait->iStatus);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
+                                                               mtmWait.iStatus);
+        mtmWait.start();
         delete pMsvOperation;
         
         // Send SMS Message
@@ -2662,14 +2629,11 @@ void CMTMEngine::sendSMSL(QMessage &message)
         pMsvOperation = ipSmsMtm->InvokeAsyncFunctionL(ESmsMtmCommandScheduleCopy,
                                                        *pMsvEntrySelection,
                                                        dummyParams,
-                                                       pMsvOperationWait->iStatus);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
+                                                       mtmWait.iStatus);
+        mtmWait.start();
         delete pMsvOperation;    
      
         CleanupStack::PopAndDestroy(pMsvEntrySelection);    
-    
-        CleanupStack::PopAndDestroy(pMsvOperationWait);
     } else {
         User::Leave(KErrCorrupt);
     }
@@ -2689,22 +2653,21 @@ void CMTMEngine::storeMMSL(QMessage &message)
         // => Message will be created into defined standard Folder (Default value is Drafts Folder)
         destinationFolderId =  standardFolderId(message.standardFolder());
     }
-        
-    CMsvOperationWait* wait = CMsvOperationWait::NewLC();
-    wait->Start();
-    CMsvOperation* operation = ipMmsMtm->CreateNewEntryL(destinationFolderId, wait->iStatus);
-    CleanupStack::PushL(operation);
-    CActiveScheduler::Start();
-    if (wait->iStatus.Int() != KErrNone){ 
-    //TODO: handle error
-    }
-    TPckgBuf<TMsvId> pkg;
-    pkg.Copy( operation->ProgressL());
-    TMsvId indexEntry= pkg();
-    CleanupStack::PopAndDestroy(2); // operation and wait
-    ipMmsMtm->SwitchCurrentEntryL(indexEntry);
-    ipMmsMtm->LoadMessageL();
-            
+    
+    // Switch current MMS MTM context to folder entry    
+    ipMmsMtm->SwitchCurrentEntryL(destinationFolderId);
+
+    // Create a new MMS message entry as a child of the current context
+    // Note: CreateMessageL switches current MMS MTM context to
+    //       a new MMS message context
+    ipMmsMtm->CreateMessageL(ipMmsMtm->DefaultServiceL());    
+
+    // Get the current context (new message context)
+    CMsvEntry& newMessageContext = ipMmsMtm->Entry();
+
+    // Copy entry values from the new message context index entry
+    TMsvEntry entry = newMessageContext.Entry();
+
     // Add receivers
     QList<QMessageAddress> list(message.to());
     TPtrC16 receiver(KNullDesC);
@@ -2720,30 +2683,33 @@ void CMTMEngine::storeMMSL(QMessage &message)
     TPtrC16 sbj(reinterpret_cast<const TUint16*>(subject.utf16()));
     ipMmsMtm->SetSubjectL(sbj); 
     
-    TMsvEntry ent = ipMmsMtm->Entry().Entry();       
-    ent.SetInPreparation(EFalse); 
-    ent.SetVisible(ETrue);
+    entry.SetInPreparation(EFalse); 
+    entry.SetVisible(ETrue);
     
     switch (message.priority()) {
     case QMessage::HighPriority:
-        ent.SetPriority(EMsvHighPriority);
+        entry.SetPriority(EMsvHighPriority);
         break;
     case QMessage::NormalPriority:
-        ent.SetPriority(EMsvMediumPriority);
+        entry.SetPriority(EMsvMediumPriority);
         break;
     case QMessage::LowPriority:
-        ent.SetPriority(EMsvLowPriority);
+        entry.SetPriority(EMsvLowPriority);
         break;
     }
     if (message.status() & QMessage::Read) { 
-        ent.SetUnread(false);
-        ent.SetNew(false);
+        entry.SetUnread(false);
+        entry.SetNew(false);
     } else {
-        ent.SetUnread(true);
-        ent.SetNew(true);
+        entry.SetUnread(true);
+        entry.SetNew(true);
     }
-    ipMmsMtm->Entry().ChangeL(ent); 
-    // Save the changes    
+    
+    // Set new message's context's index entry to the specified values.
+    // <=> Changes are set into cache only
+    newMessageContext.ChangeL(entry);
+
+    // Commit cached changes to the storage
     ipMmsMtm->SaveMessageL();
     
     CMsvStore* store = ipMmsMtm->Entry().EditStoreL();    
@@ -2865,13 +2831,13 @@ void CMTMEngine::storeMMSL(QMessage &message)
     CleanupStack::PopAndDestroy(); // store    
     
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(indexEntry,SymbianHelpers::EngineTypeMTM)));
+    privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(entry.Id()),SymbianHelpers::EngineTypeMTM));
     // Save the changes
     ipMmsMtm->SaveMessageL();
     
     if (!message.receivedDate().isNull() || !message.date().isNull()) {
         // Change the date to given date
-        CMsvEntry* pEntry = ipMsvSession->GetEntryL(indexEntry);
+        CMsvEntry* pEntry = ipMsvSession->GetEntryL(entry.Id());
         CleanupStack::PushL(pEntry);
         TMsvEntry changedEntry = pEntry->Entry();
         if (!message.date().isNull()) {
@@ -3218,17 +3184,15 @@ void CMTMEngine::updateEmailL(QMessage &message)
     if (mtmUid == KUidMsgTypeSMTP) {
         ipSmtpMtm->Entry().ChangeL(msvEntry);
     } else {
-        CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+        QMTMWait mtmWait;
         CMsvOperation* pMsvOperation = NULL;
         if (mtmUid == KUidMsgTypePOP3) {
-            pMsvOperation = ipPop3Mtm->Entry().ChangeL(msvEntry, pMsvOperationWait->iStatus);
+            pMsvOperation = ipPop3Mtm->Entry().ChangeL(msvEntry, mtmWait.iStatus);
         } else {
-            pMsvOperation = ipImap4Mtm->Entry().ChangeL(msvEntry, pMsvOperationWait->iStatus);
+            pMsvOperation = ipImap4Mtm->Entry().ChangeL(msvEntry, mtmWait.iStatus);
         }
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
+        mtmWait.start();
         delete pMsvOperation;
-        CleanupStack::PopAndDestroy(pMsvOperationWait);
     }
     
     // Save the changes    
@@ -3238,8 +3202,6 @@ void CMTMEngine::updateEmailL(QMessage &message)
     CleanupStack::PushL(entry);
     
     CImEmailMessage* mailMsg = CImEmailMessage::NewLC(*entry); 
-    
-    CMsvOperationWait* waiter = CMsvOperationWait::NewLC();
     
     CImMimeHeader* mime = CImMimeHeader::NewLC(); 
     
@@ -3269,9 +3231,9 @@ void CMTMEngine::updateEmailL(QMessage &message)
             QString fileName = QString(name);
             CleanupStack::PushL(attachmentInfo);  
             attachmentInfo->SetAttachmentNameL(TPtrC(reinterpret_cast<const TUint16*>(fileName.utf16())));
-            mailMsg->AttachmentManager().AddAttachmentL(attachment, attachmentInfo, waiter->iStatus);
-            waiter->Start();
-            CActiveScheduler::Start();
+            QMTMWait mtmWait;
+            mailMsg->AttachmentManager().AddAttachmentL(attachment, attachmentInfo, mtmWait.iStatus);
+            mtmWait.start();
             CleanupStack::Pop(attachmentInfo);
             CleanupStack::Pop(&attachment); // close file
         } else if (pPrivateContainer->_id == message.bodyId()) { // content is body text
@@ -3302,10 +3264,9 @@ void CMTMEngine::updateEmailL(QMessage &message)
             }
             // Insert the contents of a buffer into the document at specified position
             bodyText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
-            mailMsg->StoreBodyTextWithMimeHeaderL(messageId, *bodyText, *mime, waiter->iStatus);
-            
-            waiter->Start();
-            CActiveScheduler::Start();
+            QMTMWait mtmWait;
+            mailMsg->StoreBodyTextWithMimeHeaderL(messageId, *bodyText, *mime, mtmWait.iStatus);
+            mtmWait.start();
                     
             CleanupStack::PopAndDestroy(3); // bodyText, characterFormatLayer, paragraphFormatLayer
         }
@@ -3342,9 +3303,9 @@ void CMTMEngine::updateEmailL(QMessage &message)
         
         // Insert the contents of a buffer into the document at specified position
         bodyText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
-        mailMsg->StoreBodyTextWithMimeHeaderL(messageId, *bodyText, *mime, waiter->iStatus);
-        waiter->Start();
-        CActiveScheduler::Start();
+        QMTMWait mtmWait;
+        mailMsg->StoreBodyTextWithMimeHeaderL(messageId, *bodyText, *mime, mtmWait.iStatus);
+        mtmWait.start();
         CleanupStack::PopAndDestroy(3);
         //bodyText, characterFormatLayer, paragraphFormatLayer,
     }
@@ -3393,7 +3354,7 @@ void CMTMEngine::updateEmailL(QMessage &message)
     // Store the changes permanently
     store->CommitL();
     
-    CleanupStack::PopAndDestroy(6, entry); 
+    CleanupStack::PopAndDestroy(5, entry); 
     // mailMsg, emailEntry, store, waiter, entry, mime   
 
     if (!message.receivedDate().isNull() || !message.date().isNull()) {
@@ -3409,17 +3370,15 @@ void CMTMEngine::updateEmailL(QMessage &message)
         if (mtmUid == KUidMsgTypeSMTP) {
             ipSmtpMtm->Entry().ChangeL(changedEntry);
         } else {
-            CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+            QMTMWait mtmWait;
             CMsvOperation* pMsvOperation = NULL;
             if (mtmUid == KUidMsgTypePOP3) {
-                pMsvOperation = ipPop3Mtm->Entry().ChangeL(changedEntry, pMsvOperationWait->iStatus);
+                pMsvOperation = ipPop3Mtm->Entry().ChangeL(changedEntry, mtmWait.iStatus);
             } else {
-                pMsvOperation = ipImap4Mtm->Entry().ChangeL(changedEntry, pMsvOperationWait->iStatus);
+                pMsvOperation = ipImap4Mtm->Entry().ChangeL(changedEntry, mtmWait.iStatus);
             }
-            pMsvOperationWait->Start();
-            CActiveScheduler::Start();
+            mtmWait.start();
             delete pMsvOperation;
-            CleanupStack::PopAndDestroy(pMsvOperationWait);
         }
         CleanupStack::PopAndDestroy(pEntry);
     }
@@ -3444,14 +3403,14 @@ void CMTMEngine::sendMMSL(QMessage &message)
     }
 
     CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
-    CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+
+    QMTMWait mtmWait;
     
     CMsvOperation* pMsvOperation = NULL;
     if (!messageCreated) {
         ipMmsMtm->SwitchCurrentEntryL(pMsvEntry->Entry().Parent());
-        pMsvOperation = ipMmsMtm->Entry().CopyL(messageId, KMsvGlobalOutBoxIndexEntryId, pMsvOperationWait->iStatus);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
+        pMsvOperation = ipMmsMtm->Entry().CopyL(messageId, KMsvGlobalOutBoxIndexEntryId, mtmWait.iStatus);
+        mtmWait.start();
         delete pMsvOperation;
         pMsvOperation = NULL;
     }
@@ -3460,16 +3419,10 @@ void CMTMEngine::sendMMSL(QMessage &message)
     CMsvEntrySelection* pMsvEntrySelection = new(ELeave) CMsvEntrySelection;
     pMsvEntrySelection->AppendL(messageId);
     ipMmsMtm->SwitchCurrentEntryL(KMsvGlobalOutBoxIndexEntryId);
-    pMsvOperation = ipMmsMtm->SendL(*pMsvEntrySelection, pMsvOperationWait->iStatus);
-    pMsvOperationWait->Start();
-    CActiveScheduler::Start();
-    delete pMsvOperation;
-   
-    while (pMsvOperationWait->iStatus == KRequestPending) {
-         CActiveScheduler::Start();
-    }
+    pMsvOperation = ipMmsMtm->SendL(*pMsvEntrySelection, mtmWait.iStatus);
+    mtmWait.start();
     
-    CleanupStack::PopAndDestroy(pMsvOperationWait);
+    delete pMsvOperation;
     releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);    
 }
 
@@ -3521,8 +3474,9 @@ void CMTMEngine::storeEmailL(QMessage &message)
     }
     
     QMessageAccount messageAccount = this->account(message.parentAccountId());
+
+    QMTMWait mtmWait;
     
-    CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
     TMsvEmailTypeList msvEmailTypeList = 0;
     TMsvPartList msvPartList = 0;
     if (message.status() & QMessage::HasAttachments == QMessage::HasAttachments) {
@@ -3530,12 +3484,11 @@ void CMTMEngine::storeEmailL(QMessage &message)
     } else {
         msvPartList = KMsvMessagePartBody;
     }
-    CImEmailOperation* pImEmailOperation = CImEmailOperation::CreateNewL(pMsvOperationWait->iStatus, *ipMsvSession, destinationFolderId,
+    CImEmailOperation* pImEmailOperation = CImEmailOperation::CreateNewL(mtmWait.iStatus, *ipMsvSession, destinationFolderId,
                                                                          messageAccount.d_ptr->_service2EntryId, msvPartList,
                                                                          msvEmailTypeList, KUidMsgTypeSMTP);
     CleanupStack::PushL(pImEmailOperation);
-    pMsvOperationWait->Start();
-    CActiveScheduler::Start();
+    mtmWait.start();
     
     TMsvId newMessageId;
     TPckgC<TMsvId> paramPack(newMessageId);
@@ -3606,9 +3559,8 @@ void CMTMEngine::storeEmailL(QMessage &message)
             pBodyRichText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(message.textContent().utf16())));
             // Note: Email message MIME header is same as Body MIME header
             pImEmailMessage->StoreBodyTextWithMimeHeaderL(newMessageId, *pBodyRichText, *pImMimeHeader,
-                                                          pMsvOperationWait->iStatus);
-            pMsvOperationWait->Start();
-            CActiveScheduler::Start();
+                                                          mtmWait.iStatus);
+            mtmWait.start();
             
             CleanupStack::PopAndDestroy(pBodyRichText);
             CleanupStack::PopAndDestroy(pCharFormatLayer);
@@ -3651,9 +3603,10 @@ void CMTMEngine::storeEmailL(QMessage &message)
                     pBodyRichText->InsertL(0, TPtrC(reinterpret_cast<const TUint16*>(container.textContent().utf16())));
             
                     // Store MIME Header and Body text to message
-                    pImEmailMessage->StoreBodyTextWithMimeHeaderL(newMessageId, *pBodyRichText, *pBodyImMimeHeader, pMsvOperationWait->iStatus);
-                    pMsvOperationWait->Start();
-                    CActiveScheduler::Start();
+                    pImEmailMessage->StoreBodyTextWithMimeHeaderL(newMessageId, *pBodyRichText,
+                                                                  *pBodyImMimeHeader,
+                                                                  mtmWait.iStatus);
+                    mtmWait.start();
                     
                     CleanupStack::PopAndDestroy(pBodyRichText);
                     CleanupStack::PopAndDestroy(pCharFormatLayer);
@@ -3690,9 +3643,10 @@ void CMTMEngine::storeEmailL(QMessage &message)
                 CleanupStack::PushL(pMsvAttachment);  
                 pMsvAttachment->SetAttachmentNameL(TPtrC(reinterpret_cast<const TUint16*>(fileName.utf16())));
                 // Note: Following call transfers ownership of attachmentFile and pMsvAttachment to AttachmentManager
-                pImEmailMessage->AttachmentManager().AddAttachmentL(attachmentFile, pMsvAttachment, pMsvOperationWait->iStatus);
-                pMsvOperationWait->Start();
-                CActiveScheduler::Start();
+                pImEmailMessage->AttachmentManager().AddAttachmentL(attachmentFile, pMsvAttachment,
+                                                                    mtmWait.iStatus);
+                mtmWait.start();
+
                 CleanupStack::Pop(pMsvAttachment); // Pop attachment from CleanupStack
                 CleanupStack::Pop(&attachmentFile); // Pop file from CleanupStack
             }        
@@ -3770,17 +3724,13 @@ void CMTMEngine::storeEmailL(QMessage &message)
         TMsvId parent = pMsvEntry->Entry().Parent();
         ipImap4Mtm->SwitchCurrentEntryL(parent);        
         CMsvOperation* pMsvOperation = ipImap4Mtm->Entry().MoveL(newMessageId, imapDestinationFolderId,
-                                                                 pMsvOperationWait->iStatus);
-        CleanupStack::PushL(pMsvOperation);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
-        CleanupStack::PopAndDestroy(pMsvOperation);
+                                                                 mtmWait.iStatus);
+        mtmWait.start();
+        delete pMsvOperation;
     }
     
     releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);
 
-    CleanupStack::PopAndDestroy(pMsvOperationWait);
-    
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
     privateMessage->_id = QMessageId(SymbianHelpers::addIdPrefix(QString::number(newMessageId),SymbianHelpers::EngineTypeMTM));
 }
@@ -3817,28 +3767,28 @@ void CMTMEngine::sendEmailL(QMessage &message)
     }    
 
     CMsvEntry* pMsvEntry = retrieveCMsvEntryAndPushToCleanupStack(messageId);
-    CMsvOperationWait* pMsvOperationWait = CMsvOperationWait::NewLC();
+    
+    QMTMWait mtmWait;
     
     CMsvOperation* pMsvOperation = NULL;
     if (!messageCreated) {
         // Sending (old) message that's in message store
         // => Copy message from its original location to Outbox folder
         ipSmtpMtm->SwitchCurrentEntryL(pMsvEntry->Entry().Parent());
-        pMsvOperation = ipSmtpMtm->Entry().CopyL(messageId, KMsvGlobalOutBoxIndexEntryId, pMsvOperationWait->iStatus);
-        pMsvOperationWait->Start();
-        CActiveScheduler::Start();
+        pMsvOperation = ipSmtpMtm->Entry().CopyL(messageId,
+                                                 KMsvGlobalOutBoxIndexEntryId,
+                                                 mtmWait.iStatus);
+        mtmWait.start();
         delete pMsvOperation;
         pMsvOperation = NULL;
     }    
     
     ipSmtpMtm->SwitchCurrentEntryL(pMsvEntry->Entry().Parent());
     // Following sends Email and _moves_ Email from Outbox Folder to Sent Folder
-    pMsvOperation = ipSmtpMtm->Entry().CopyL(messageId, messageAccount.d_ptr->_service2EntryId, pMsvOperationWait->iStatus);
-    pMsvOperationWait->Start();
-    CActiveScheduler::Start();
+    pMsvOperation = ipSmtpMtm->Entry().CopyL(messageId, messageAccount.d_ptr->_service2EntryId, mtmWait.iStatus);
+    mtmWait.start();
     delete pMsvOperation;    
     
-    CleanupStack::PopAndDestroy(pMsvOperationWait);
     releaseCMsvEntryAndPopFromCleanupStack(pMsvEntry);   
 }
 
@@ -4554,7 +4504,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
             matchingFilters.insert(it.key());
         } else {
             QMessageFilterPrivate* privateMessageFilter = QMessageFilterPrivate::implementation(filter);
-            if (privateMessageFilter->_field == QMessageFilterPrivate::Type) {
+            if (privateMessageFilter->_field == QMessageFilterPrivate::Type && aEvent != EMsvEntriesCreated) {
                 if (aMsgType == KUidMsgTypeSMS) {
                     message.setType(QMessage::Sms);
                 } else if (aMsgType == KUidMsgTypeMultimedia) {
@@ -4566,7 +4516,7 @@ void CMTMEngine::notification(TMsvSessionEvent aEvent, TUid aMsgType, TMsvId aFo
                 } else {
                     message.setType(QMessage::NoType);
                 }
-            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder) &&
+            } else if ((privateMessageFilter->_field == QMessageFilterPrivate::StandardFolder && aEvent != EMsvEntriesCreated) &&
                        (aMsgType == KUidMsgTypeSMS || aMsgType == KUidMsgTypeMultimedia)) {
                 if (aFolderId == KMsvGlobalInBoxIndexEntryId) {
                     QMessagePrivate::setStandardFolder(message,QMessage::InboxFolder);
@@ -5657,5 +5607,31 @@ void CMessagesFindOperation::getServiceSpecificMessagesFromFolderL(TMsvId servic
     }
 }
 
+QMTMWait::QMTMWait(TInt priority)
+    : CActive(priority)
+{
+    CActiveScheduler::Add(this);
+}
+
+QMTMWait::~QMTMWait()
+{
+    Cancel();
+}
+
+void QMTMWait::start()
+{
+    SetActive();
+    m_eventLoop.exec();
+}
+
+void QMTMWait::RunL()
+{
+    m_eventLoop.quit();
+}
+
+void QMTMWait::DoCancel()
+{
+    Cancel();
+}
 
 QTM_END_NAMESPACE

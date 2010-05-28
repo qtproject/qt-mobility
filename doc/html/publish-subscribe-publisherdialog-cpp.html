@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -130,16 +130,20 @@
         publisher-&gt;setValue(&quot;byteArrayValue&quot;, ui-&gt;byteArrayValue-&gt;text().toAscii());
     }
 
-
     void PublisherDialog::createNewObject()
     {
         if (publisher)
             delete publisher;
 
-        publisher = new QValueSpacePublisher(ui-&gt;basePath-&gt;text());
-        intValueChanged(ui-&gt;intValue-&gt;value());
-        setStringValue();
-        setByteArrayValue();
+        publisher = new QValueSpacePublisher(QValueSpace::WritableLayer, ui-&gt;basePath-&gt;text());
+        if (publisher-&gt;isConnected()) {
+            ui-&gt;setters-&gt;setEnabled(true);
+            intValueChanged(ui-&gt;intValue-&gt;value());
+            setStringValue();
+            setByteArrayValue();
+        } else {
+            ui-&gt;setters-&gt;setEnabled(false);
+        }
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

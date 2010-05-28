@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -421,9 +421,9 @@ bool QMessageService::send(QMessage &message)
         }
 
         if (account.messageTypes() & QMessage::Sms) {
-            retVal = TelepathyEngine::instance()->sendMessage(message);
+            retVal = TelepathyEngine::instance()->sendMessage(outgoing);
         } else if (account.messageTypes() & QMessage::InstantMessage) {
-            retVal = TelepathyEngine::instance()->sendMessage(message);
+            retVal = TelepathyEngine::instance()->sendMessage(outgoing);
         } else if (account.messageTypes() & QMessage::Mms) {
             d_ptr->_error = QMessageManager::NotYetImplemented;
             qWarning() << "QMessageService::send not yet implemented for MMS";
@@ -484,15 +484,68 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 
 bool QMessageService::retrieveBody(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->stateChanged(QMessageService::ActiveState);
+
+    if (id.toString().startsWith("MO_")) {
+        retVal = ModestEngine::instance()->retrieveBody(*this, id);
+        if (retVal == true) {
+            d_ptr->_pendingRequestCount = 1;
+        }
+    } else {
+        retVal = false;
+    }
+
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
+
+    return retVal;
 }
 
 bool QMessageService::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
-    Q_UNUSED(messageId)
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->stateChanged(QMessageService::ActiveState);
+
+    if (messageId.toString().startsWith("MO_")) {
+        retVal = ModestEngine::instance()->retrieve(*this, messageId, id, NULL);
+        if (retVal == true) {
+            d_ptr->_pendingRequestCount = 1;
+        }
+    } else {
+        retVal = false;
+    }
+
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
+
+    return retVal;
 }
 
 bool QMessageService::show(const QMessageId& id)
