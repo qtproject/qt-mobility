@@ -84,8 +84,45 @@ QtLocation
 QtMessaging
 ------
 
- - foo
-    * bar
+ - API changes
+    * None.
+ - Symbian^3 backend implemented
+    * SMS and Email message types supported.
+ - Symbian specific fixes
+    * Fix for SMS message sending failed in some cases.
+    * Fix for simultaneous calls to QMessageService::send(...) causing crash.
+    * messagesAdded signal is now emitted only when message is ready to be 
+      read.
+    * retrieve* and exportUpdates functions are now asynchronous (MTM).
+      Before this fix these functions always hanged for the whole operation 
+      time.
+ - Maemo 5 (Fremantle) specific fixes
+    Latest version of libtpsession and qtm-modest-plugin is required for 
+      these fixes.
+    * Fix for SMS sending not working with defaultAccount.
+    * Fix for multiple recipients not supported for SMS messages.
+    * Fix for sending successive SMS did not send later queued ones.
+    * Fix for queryMessages service action is synchronous for SMS messages.
+    * Fix for messageAdded signal is not emitted for email messages in inbox 
+      when inbox is open in modest.
+    * QMessageManager::updateMessage implemented for email messages,
+      only status and priority fields may be updated.
+    * Status & priority handling has been fixed for addMessage, getMessage & 
+      queryMessages functionality.
+    * Multipart message handling has been improved.
+    * Content CharacterSet reporting has been fixed to return correct MIME
+      header value.
+    * Body handling has been improved, text/html body is returned if text/html 
+      body can be found.
+    * Unicode character support (for example scandinavian
+      characters work correctly now in both HTML & plain text body).
+    * Attachment & body download (retrieve functions) fixes.
+      Modest automatically retrieves small messages and attachments,
+      now retrieveBody() & retrieve() can correctly be used to retrieve 
+      large messages from the server.
+    * Folder name localization support.
+ - Windows specific fixes
+    * None
 
 QtMedia
 ------
