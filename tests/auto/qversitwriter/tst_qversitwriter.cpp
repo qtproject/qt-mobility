@@ -186,11 +186,6 @@ END:VCARD\r\n");
     mOutputDevice->seek(0);
     result = mOutputDevice->readAll();
     QByteArray expected(utf16->fromUnicode(QLatin1String(vCard21.data())));
-    QString out;
-    for (int i = 0; i < result.length(); i++) {
-        QString t;
-        out += t.sprintf("%02X ", (unsigned char)result.at(i));
-    }
     QCOMPARE(result, expected);
 }
 
@@ -273,7 +268,79 @@ void tst_QVersitWriter::testByteArrayOutput()
     QVERIFY(mWriter->startWriting(QList<QVersitDocument>() << document));
     QVERIFY(mWriter->waitForFinished());
     QCOMPARE(output, vCard30);
+}
 
+void tst_QVersitWriter::testWritingDocument()
+{
+    QFETCH(QVersitDocument, document);
+    QFETCH(QByteArray, expected);
+
+    mOutputDevice->open(QBuffer::ReadWrite);
+    mWriter->setDevice(mOutputDevice);
+    QVERIFY(mWriter->startWriting(QList<QVersitDocument>() << document));
+    QVERIFY(mWriter->waitForFinished());
+    mOutputDevice->seek(0);
+    QByteArray result(mOutputDevice->readAll());
+
+    QCOMPARE(result, expected);
+}
+
+void tst_QVersitWriter::testWritingDocument_data()
+{
+    QTest::addColumn<QVersitDocument>("document");
+    QTest::addColumn<QByteArray>("expected");
+
+    QVersitDocument document(QVersitDocument::VCard21Type);
+    document.setComponentType(QLatin1String("VCARD"));
+    QVersitProperty property;
+    property.setName(QLatin1String("FN"));
+    property.setValue(QLatin1String("Bob"));
+    document.addProperty(property);
+    QTest::newRow("basic vCard 2.1") << document << QByteArray(
+            "BEGIN:VCARD\r\n"
+            "VERSION:2.1\r\n"
+            "FN:Bob\r\n"
+            "END:VCARD\r\n"
+            );
+
+    document.setType(QVersitDocument::VCard30Type);
+    QTest::newRow("basic vCard 3.0") << document << QByteArray(
+            "BEGIN:VCARD\r\n"
+            "VERSION:3.0\r\n"
+            "FN:Bob\r\n"
+            "END:VCARD\r\n"
+            );
+
+    {
+    QVersitDocument document(QVersitDocument::ICalendar20Type);
+    document.setComponentType(QLatin1String("VCALENDAR"));
+    QVersitProperty property;
+    property.setName(QLatin1String("PRODID"));
+    property.setValue(QLatin1String("-//hacksw/handcal//NONSGML v1.0//EN"));
+    document.addProperty(property);
+    QVersitDocument nested(QVersitDocument::ICalendar20Type);
+    nested.setComponentType(QLatin1String("VEVENT"));
+    property.setName(QLatin1String("DTSTART"));
+    property.setValue(QLatin1String("19970714T170000Z"));
+    nested.addProperty(property);
+    property.setName(QLatin1String("DTEND"));
+    property.setValue(QLatin1String("19970715T035959Z"));
+    nested.addProperty(property);
+    property.setName(QLatin1String("SUMMARY"));
+    property.setValue(QLatin1String("Bastille Day Party"));
+    nested.addProperty(property);
+    document.addSubDocument(nested);
+    QTest::newRow("iCalendar 2.0 from spec") << document << QByteArray(
+                    "BEGIN:VCALENDAR\r\n"
+                    "VERSION:2.0\r\n"
+                    "PRODID:-//hacksw/handcal//NONSGML v1.0//EN\r\n"
+                    "BEGIN:VEVENT\r\n"
+                    "DTSTART:19970714T170000Z\r\n"
+                    "DTEND:19970715T035959Z\r\n"
+                    "SUMMARY:Bastille Day Party\r\n"
+                    "END:VEVENT\r\n"
+                    "END:VCALENDAR\r\n");
+    }
 }
 
 QTEST_MAIN(tst_QVersitWriter)

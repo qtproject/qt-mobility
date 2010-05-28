@@ -60,12 +60,8 @@ QTM_USE_NAMESPACE
  * \a version is the version of the Versit format, as printed on the VERSION line of output.
  * eg. "2.1"
  */
-QVersitDocumentWriter::QVersitDocumentWriter(
-    const QByteArray& documentType,
-    const QByteArray& version)
-    : mDocumentType(documentType),
-    mVersion(version),
-    mCodec(0),
+QVersitDocumentWriter::QVersitDocumentWriter()
+    : mCodec(0),
     mEncoder(0),
     mUtf8Encoder(QTextCodec::codecForName("UTF-8")->makeEncoder()),
     mSuccessful(true),
@@ -113,14 +109,29 @@ void QVersitDocumentWriter::encodeVersitDocument(const QVersitDocument& document
     mSuccessful = true;
     QList<QVersitProperty> properties = document.properties();
 
-    writeString(QLatin1String("BEGIN:" + mDocumentType));
+    writeString(QLatin1String("BEGIN:") + document.componentType());
     writeCrlf();
-    writeString(QLatin1String("VERSION:" + mVersion));
-    writeCrlf();
+    switch (document.type()) {
+    case QVersitDocument::VCard21Type:
+        writeString(QLatin1String("VERSION:2.1"));
+        writeCrlf();
+        break;
+    case QVersitDocument::VCard30Type:
+        writeString(QLatin1String("VERSION:3.0"));
+        writeCrlf();
+        break;
+    case QVersitDocument::ICalendar20Type:
+        writeString(QLatin1String("VERSION:2.0"));
+        writeCrlf();
+        break;
+    default:
+        ; // don't print version
+    }
+
     foreach (const QVersitProperty& property, properties) {
         encodeVersitProperty(property);
     }
-    writeString(QLatin1String("END:" + mDocumentType));
+    writeString(QLatin1String("END:") + document.componentType());
     writeCrlf();
 }
 

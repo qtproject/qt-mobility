@@ -68,7 +68,7 @@ QTM_BEGIN_NAMESPACE
 class Q_AUTOTEST_EXPORT QVersitDocumentWriter
 {
 public:
-    QVersitDocumentWriter(const QByteArray& documentType, const QByteArray& version);
+    QVersitDocumentWriter();
     virtual ~QVersitDocumentWriter();
 
     void setCodec(QTextCodec* codec);
@@ -82,8 +82,6 @@ public:
     void writeString(const QString& string, bool useUtf8 = false);
     void writeCrlf();
 
-    QByteArray mDocumentType;
-    QByteArray mVersion;
     QIODevice* mDevice;
     QTextCodec* mCodec;
     QTextEncoder* mEncoder;
