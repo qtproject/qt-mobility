@@ -71,6 +71,15 @@
 
 QT_BEGIN_NAMESPACE
 
+// For compat with 4.6
+#if !defined(QT_WIN_CALLBACK)
+#  if defined(Q_CC_MINGW)
+#    define QT_WIN_CALLBACK CALLBACK __attribute__ ((force_align_arg_pointer))
+#  else
+#    define QT_WIN_CALLBACK CALLBACK
+#  endif
+#endif
+
 class QAudioInputPrivate : public QAbstractAudioInput
 {
     Q_OBJECT
