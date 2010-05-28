@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -286,6 +286,9 @@ A manager backend may be implemented by subclassing
 \l{QContactManagerEngine}, and providing a \l{QContactManagerEngineFactory}
 which can instantiate it when required.
 
+See \l{Qt Contacts Manager Engines} for more information on available engines
+and how to write your own engine.
+
 \section1 Using the API
 
 Some examples of common usage of the API may be found
@@ -346,9 +349,12 @@ A backend implementor must implement the following interfaces:
 
 \annotatedlist contacts-backends
 
+For more information on this topic, see please see the documentation on
+\l{Qt Contacts Manager Engines}{implementing manager engines}.
+
 \section2 Synchronization and Serialization
 
-The contacts API is used by another Qt Mobility module: the \l {Versit API (technology preview)} {Versit}* module.  It allows
+The contacts API is used by another Qt Mobility module: the \l {Versit API} {Versit}* module.  It allows
 serialization of a QContact into a vCard document, and vice versa.
 
 [*] Versit \reg is a trademark of the Internet Mail Consortium.

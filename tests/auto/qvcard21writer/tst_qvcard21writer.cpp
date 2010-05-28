@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,7 +40,9 @@
 ****************************************************************************/
 
 #include "tst_qvcard21writer.h"
+#ifdef QT_BUILD_INTERNAL
 #include "qvcard21writer_p.h"
+#endif
 #include "qversitproperty.h"
 #include "qversitdocument.h"
 #include <QtTest/QtTest>
@@ -53,7 +55,7 @@ const QString KATAKANA_NOKIA(QString::fromUtf8("\xe3\x83\x8e\xe3\x82\xad\xe3\x82
 QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QVersitProperty)
-
+#ifdef QT_BUILD_INTERNAL
 void tst_QVCard21Writer::init()
 {
     mWriter = new QVCard21Writer;
@@ -343,6 +345,6 @@ void tst_QVCard21Writer::testQuotedPrintableEncode()
     QVERIFY(mWriter->quotedPrintableEncode(inputOutput));
     QCOMPARE(inputOutput, QLatin1String("=7E"));
 }
-
+#endif
 QTEST_MAIN(tst_QVCard21Writer)
 

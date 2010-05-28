@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -337,6 +337,21 @@ void tst_QVersitContactExporter::testEncodePhoneNumber()
         QString::fromAscii("TYPE"),QString::fromAscii("CELL")));
     // Check value
     QCOMPARE(property.value(), phoneNumber.number());
+
+    QContactPhoneNumber assistantNumber;
+    assistantNumber.setNumber(QLatin1String("4321"));
+    assistantNumber.setContexts(QContactDetail::ContextWork);
+    assistantNumber.setSubTypes(QContactPhoneNumber::SubTypeAssistant);
+    contact.saveDetail(&assistantNumber);
+    QVERIFY(mExporter->exportContacts(QList<QContact>() << contact, QVersitDocument::VCard30Type));
+    document = mExporter->documents().first();
+    QCOMPARE(document.properties().count(), BASE_PROPERTY_COUNT+2);
+    property = findPropertyByName(document, QLatin1String("X-ASSISTANT-TEL"));
+    QVERIFY(!property.isEmpty());
+    QCOMPARE(property.parameters().count(), 1);
+    QVERIFY(property.parameters().contains(
+        QString::fromAscii("TYPE"),QString::fromAscii("WORK")));
+    QCOMPARE(property.value(), assistantNumber.number());
 }
 
 void tst_QVersitContactExporter::testEncodeEmailAddress()

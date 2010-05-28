@@ -15,9 +15,6 @@ SOURCES += \
         qcontactmaemo5backend.cpp \
 
 INCLUDEPATH += $$SOURCE_DIR/src/contacts $$SOURCE_DIR/src/contacts/details $$SOURCE_DIR/src/contacts/filters $$SOURCE_DIR/src/contacts/requests
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
-INSTALLS += target
 CONFIG += mobility link_pkgconfig
 MOBILITY = contacts
 PKGCONFIG += libosso-abook-1.0

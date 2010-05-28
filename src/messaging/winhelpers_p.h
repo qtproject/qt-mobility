@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,12 +54,6 @@
 #include <QEvent>
 
 QTM_BEGIN_NAMESPACE
-
-namespace WinHelpers {
-	QString addIdPrefix(const QString& id);
-	QString stripIdPrefix(const QString& id);
-	static const char* idPrefix = "WIN_";
-};
 
 QTM_END_NAMESPACE
 

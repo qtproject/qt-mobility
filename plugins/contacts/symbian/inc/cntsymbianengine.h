@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -87,7 +87,6 @@ class CntSymbianEngine : public QContactManagerEngine
 
 public:
     CntSymbianEngine(const QMap<QString, QString>& parameters, QContactManager::Error* error);
-    CntSymbianEngine(const CntSymbianEngine& other);
     ~CntSymbianEngine();
     
     /* URI reporting */
@@ -95,6 +94,7 @@ public:
 
     /* XXX TODO - implement these correctly */
     int managerVersion() const { return 1;}
+    QContact compatibleContact(const QContact& contact, QContactManager::Error* error) const {return QContactManagerEngine::compatibleContact(contact, error);}
 
     /* Functions that are optional in the base API */
     bool saveRelationship(QContactRelationship* relationship, QContactManager::Error* error);
@@ -136,7 +136,7 @@ private:
     QList<QContactLocalId> slowSort(const QList<QContactLocalId>& contactIds, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
     bool doSaveContact(QContact* contact, QContactChangeSet& changeSet, QContactManager::Error* error);
 
-    QContact fetchContactL(const QContactLocalId &localId, const QStringList& definitionRestrictions) const;
+    QContact fetchContactL(const QContactLocalId &localId, const QStringList& detailDefinitionsHint) const;
 
     /* Add contact */
     bool addContact(QContact& contact, QContactChangeSet& changeSet, QContactManager::Error* qtError);
@@ -167,7 +167,9 @@ private:
     QString m_managerUri;
     CntTransformContact *m_transformContact;
     CntAbstractContactFilter *m_contactFilter;
+#ifndef SYMBIAN_BACKEND_USE_SQLITE    
     CntAbstractContactSorter *m_contactSorter;
+#endif    
     CntRelationship *m_relationship;
     CntDisplayLabel *m_displayLabel;
 

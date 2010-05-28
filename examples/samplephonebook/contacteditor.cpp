@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -191,7 +191,7 @@ void ContactEditor::setCurrentContact(QContactManager* manager, QContactLocalId 
 
     // avatar viewer
     if (defs.contains(QContactAvatar::DefinitionName)
-        && defs.contains(QContactThumbnail::DefinitionName)) {
+        || defs.contains(QContactThumbnail::DefinitionName)) {
         m_avatarBtn->setEnabled(true);
         QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
         QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
@@ -316,6 +316,7 @@ void ContactEditor::saveClicked()
             curr.saveDetail(&thumb);
         }
 
+        curr = m_manager->compatibleContact(curr);
         bool success = m_manager->saveContact(&curr);
         if (!success)
             QMessageBox::information(this, "Failed!", QString("Failed to save contact!\n(error code %1)").arg(m_manager->error()));

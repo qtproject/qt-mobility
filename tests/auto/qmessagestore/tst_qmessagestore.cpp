@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -222,7 +222,7 @@ void tst_QMessageStore::testAccount()
     QVERIFY(accountId.isValid());
     QVERIFY(accountId != QMessageAccountId());
     QCOMPARE(manager->countAccounts(), originalCount + 1);
-    
+
     QMessageAccount account(accountId);
     QCOMPARE(account.id(), accountId);
     QCOMPARE(account.name(), name);

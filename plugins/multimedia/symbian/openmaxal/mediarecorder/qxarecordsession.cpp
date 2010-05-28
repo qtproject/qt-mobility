@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,7 +57,7 @@ Q_DECLARE_METATYPE(QList<int>)
 
 #define RETURN_s_IF_m_impl_IS_NULL(s) \
     if (!m_impl) { \
-        emit error(QMediaRecorder::ResourceError, tr("Service has not been started")); \
+        emit error(QMediaRecorder::ResourceError, QXARecordSession::tr("Service has not been started")); \
         SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ResourceError, tr(\"Service has not been started\"))"); \
         return s; \
         }
@@ -68,7 +68,7 @@ Q_DECLARE_METATYPE(QList<int>)
  */
 #define RETURN_IF_m_impl_IS_NULL \
     if (!m_impl) { \
-        emit error(QMediaRecorder::ResourceError, tr("Service has not been started")); \
+        emit error(QMediaRecorder::ResourceError, QXARecordSession::tr("Service has not been started")); \
         SIGNAL_EMIT_TRACE1("emit error(QMediaRecorder::ResourceError, tr(\"Service has not been started\"))"); \
         return; \
         }

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,14 +50,14 @@ QTM_BEGIN_NAMESPACE
 
 class QMessageIdPrivate;
 
-class Q_MESSAGING_EXPORT QMessageId 
+class Q_MESSAGING_EXPORT QMessageId
 {
     friend class QMessageIdPrivate;
 
 public:
     QMessageId();
     QMessageId(const QMessageId &other);
-    QMessageId(const QString &id);
+    QMessageId(const QString& id);
     ~QMessageId();
 
     QMessageId& operator=(const QMessageId &other);

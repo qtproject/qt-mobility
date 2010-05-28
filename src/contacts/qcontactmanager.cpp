@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -541,13 +541,10 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
 }
 
 /*!
-  \preliminary
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
   in the contact are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.
-
-  This function is preliminary and the behaviour is subject to change!
  */
 QContact QContactManager::compatibleContact(const QContact& original)
 {
