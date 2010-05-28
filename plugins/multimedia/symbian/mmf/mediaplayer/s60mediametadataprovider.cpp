@@ -75,11 +75,6 @@ QVariant S60MediaMetaDataProvider::metaData(QtMultimedia::MetaData key) const
     return QVariant();
 }
 
-void S60MediaMetaDataProvider::setMetaData(QtMultimedia::MetaData key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
 QList<QtMultimedia::MetaData> S60MediaMetaDataProvider::availableMetaData() const
 {
     m_session = m_mediaPlayerResolver.PlayerSession();
