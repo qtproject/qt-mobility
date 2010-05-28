@@ -1,6 +1,6 @@
 /****************************************************************************
  **
- ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+ ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
  ** All rights reserved.
  ** Contact: Nokia Corporation (qt-info@nokia.com)
  **
@@ -45,7 +45,7 @@
 /**
  * set the id of the proximity sensor
  */
-const char *CProximitySensorSym::id("sym.proximity");
+char const * const CProximitySensorSym::id("sym.proximity");
 
 /**
  * Factory function, this is used to create the proximity sensor object

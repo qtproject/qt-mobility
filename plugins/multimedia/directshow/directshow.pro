@@ -3,7 +3,7 @@ TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(dsengine)
 
-PLUGIN_TYPE = mediaservice
+PLUGIN_TYPE=mediaservice
 
 include (../../../common.pri)
 INCLUDEPATH+=../../../src/multimedia \
@@ -21,7 +21,3 @@ SOURCES += dsserviceplugin.cpp
 !contains(TMP_REQUIRED_HEADERS, wmsdk.h): DEFINES += QT_NO_WMSDK
 
 include (player/player.pri)
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
-INSTALLS+=target
-

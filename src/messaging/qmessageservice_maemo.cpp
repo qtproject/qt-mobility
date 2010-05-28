@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,8 +45,12 @@
 #include "modestengine_maemo_p.h"
 #include "telepathyengine_maemo_p.h"
 #include "eventloggerengine_maemo_p.h"
+#include <QUrl>
+#include "hildon-uri.h"
 
 QTM_BEGIN_NAMESPACE
+#define EVENTLOGGER_THREAD
+
 
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
@@ -55,6 +59,10 @@ QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
    _active(false), _actionId(-1),
    _pendingRequestCount(0)
 {
+#ifdef EVENTLOGGER_THREAD
+    connect(EventLoggerEngine::instance(),SIGNAL(messagesFound(const QMessageIdList &,bool,bool)),this,SLOT(messagesFound(const QMessageIdList &,bool,bool)));
+
+#endif
 }
 
 QMessageServicePrivate::~QMessageServicePrivate()
@@ -89,8 +97,12 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     _pendingRequestCount = 0;
 
     if (enginesToCall & EnginesToCallTelepathy) {
-        _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+#ifndef EVENTLOGGER_THREAD
+      _ids = EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+#else
+        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,QString(),QMessageDataComparator::MatchFlags());
+#endif
         _pendingRequestCount++;
     }
 
@@ -139,8 +151,12 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
     _pendingRequestCount = 0;
 
     if (enginesToCall & EnginesToCallTelepathy) {
+#ifndef EVENTLOGGER_THREAD
         _ids= EventLoggerEngine::instance()->filterAndOrderMessages(filter,sortOrder,body,matchFlags); 
         QMetaObject::invokeMethod(this, "messagesFoundSlot", Qt::QueuedConnection);
+#else
+        EventLoggerEngine::instance()->filterMessages(_filter,sortOrder,body,matchFlags);
+#endif
         _pendingRequestCount++;
     }
 
@@ -327,7 +343,7 @@ bool QMessageService::countMessages(const QMessageFilter &filter)
 
 bool QMessageService::send(QMessage &message)
 {
-  //  qDebug() << "QMessageService::send";
+   qDebug() << "QMessageService::send";
     if (d_ptr->_active) {
         return false;
     }
@@ -405,9 +421,9 @@ bool QMessageService::send(QMessage &message)
         }
 
         if (account.messageTypes() & QMessage::Sms) {
-            retVal = TelepathyEngine::instance()->sendMessage(message);
+            retVal = TelepathyEngine::instance()->sendMessage(outgoing);
         } else if (account.messageTypes() & QMessage::InstantMessage) {
-            retVal = TelepathyEngine::instance()->sendMessage(message);
+            retVal = TelepathyEngine::instance()->sendMessage(outgoing);
         } else if (account.messageTypes() & QMessage::Mms) {
             d_ptr->_error = QMessageManager::NotYetImplemented;
             qWarning() << "QMessageService::send not yet implemented for MMS";
@@ -418,11 +434,13 @@ bool QMessageService::send(QMessage &message)
     }
 
     d_ptr->setFinished(retVal);
+    qDebug() << "send returns=" << retVal;
     return retVal;
 }
 
 bool QMessageService::compose(const QMessage &message)
 {
+  //  qDebug() << "qMessageService::compose";
     if (d_ptr->_active) {
         return false;
     }
@@ -430,14 +448,19 @@ bool QMessageService::compose(const QMessage &message)
     d_ptr->_active = true;
     d_ptr->_error = QMessageManager::NoError;
 
-    bool retVal = true;
+    bool retVal=false;
     d_ptr->_state = QMessageService::ActiveState;
     emit stateChanged(d_ptr->_state);
+    qDebug() << "qMessageService::compose stateChanged";
 
-    if (message.type() == QMessage::Sms) {
-        d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
-        qWarning() << "QMessageService::compose not yet implemented for SMS";
-        retVal = false;
+    if (message.type() == QMessage::Sms && !message.to().isEmpty() && !message.to().first().addressee().isEmpty()) {
+      QUrl smsUrl((QString("sms:%1").arg(message.to().first().addressee())));
+      smsUrl.addQueryItem("body",message.textContent());
+      //      qDebug() << "compose SMS url=" << smsUrl.toString();
+      hildon_uri_open(smsUrl.toString().toStdString().c_str(),NULL,NULL);
+      retVal = true;
+
+
     } else if (message.type() == QMessage::Mms) {
         d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
         qWarning() << "QMessageService::compose not yet implemented for MMS";
@@ -446,9 +469,12 @@ bool QMessageService::compose(const QMessage &message)
         retVal = ModestEngine::instance()->composeEmail(message);
     }
 
-    d_ptr->setFinished(retVal);
+    d_ptr->setFinished(retVal); 
+    //    qDebug() << "compose returns=" << retVal;
     return retVal;
 }
+
+
 
 bool QMessageService::retrieveHeader(const QMessageId& id)
 {
@@ -458,15 +484,68 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 
 bool QMessageService::retrieveBody(const QMessageId& id)
 {
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->stateChanged(QMessageService::ActiveState);
+
+    if (id.toString().startsWith("MO_")) {
+        retVal = ModestEngine::instance()->retrieveBody(*this, id);
+        if (retVal == true) {
+            d_ptr->_pendingRequestCount = 1;
+        }
+    } else {
+        retVal = false;
+    }
+
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
+
+    return retVal;
 }
 
 bool QMessageService::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
 {
-    Q_UNUSED(messageId)
-    Q_UNUSED(id)
-    return false; // stub
+    if (d_ptr->_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        d_ptr->_error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    d_ptr->_active = true;
+    d_ptr->_error = QMessageManager::NoError;
+
+    bool retVal = true;
+    d_ptr->stateChanged(QMessageService::ActiveState);
+
+    if (messageId.toString().startsWith("MO_")) {
+        retVal = ModestEngine::instance()->retrieve(*this, messageId, id, NULL);
+        if (retVal == true) {
+            d_ptr->_pendingRequestCount = 1;
+        }
+    } else {
+        retVal = false;
+    }
+
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
+
+    return retVal;
 }
 
 bool QMessageService::show(const QMessageId& id)

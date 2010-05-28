@@ -67,7 +67,7 @@ unix: {
             #Qt GConf wrapper added here until a proper place is found for it.
             CONFIG += link_pkgconfig
             SOURCES += qsysteminfo_maemo.cpp gconfitem.cpp
-            HEADERS += qsysteminfo_maemo_p.h gconfitem.h
+            HEADERS += qsysteminfo_maemo_p.h gconfitem_p.h
         contains(QT_CONFIG,dbus): {
                 QT += dbus
                 SOURCES += qhalservice_linux.cpp
@@ -85,7 +85,8 @@ unix: {
         HEADERS += qsysteminfo_mac_p.h
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices -framework Foundation \
-         -framework CoreServices -framework ScreenSaver -framework QTKit
+         -framework CoreServices -framework ScreenSaver -framework QTKit \
+         -framework IOBluetooth
 
             contains(corewlan_enabled, yes) {
                      isEmpty(QMAKE_MAC_SDK) {
@@ -97,13 +98,13 @@ unix: {
                  }
             
                 !isEmpty(SDK6) {
-                        LIBS += -framework CoreWLAN  -framework IOBluetooth -framework CoreLocation
+                        LIBS += -framework CoreWLAN  -framework CoreLocation
                         DEFINES += MAC_SDK_10_6
                 }
            } else {
                CONFIG += no_keywords
            }
-    
+
     TEMPLATE = lib
     }
 

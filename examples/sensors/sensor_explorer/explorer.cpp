@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -92,6 +92,15 @@ void Explorer::loadSensors()
         }
     }
 
+    if (ui.sensors->topLevelItemCount() == 0) {
+        QTreeWidgetItem *item = new QTreeWidgetItem(QStringList() << tr("No Sensors Found"));
+        item->setData(0, Qt::UserRole, QString());
+        ui.sensors->addTopLevelItem(item);
+    }
+
+    ui.sensors->setCurrentItem(0);
+    ui.scrollArea->hide();
+
     resizeSensors();
 }
 
@@ -113,6 +122,7 @@ void Explorer::on_sensors_currentItemChanged()
     }
     clearSensorProperties();
     clearReading();
+    ui.scrollArea->hide();
 
     // Check that we've selected an item
     QTreeWidgetItem *item = ui.sensors->currentItem();
@@ -123,6 +133,12 @@ void Explorer::on_sensors_currentItemChanged()
 
     QByteArray type = item->data(0, Qt::UserRole).toString().toLatin1();
     QByteArray identifier = item->data(0, Qt::DisplayRole).toString().toLatin1();
+
+    if (type.isEmpty()) {
+        // Uh oh, there aren't any sensors.
+        // The user has clicked the dummy list entry so just ignore it.
+        return;
+    }
 
     // Connect to the sensor so we can probe it
     m_sensor = new QSensor(type, this);
@@ -135,6 +151,7 @@ void Explorer::on_sensors_currentItemChanged()
         return;
     }
 
+    ui.scrollArea->show();
     loadSensorProperties();
     loadReading();
 

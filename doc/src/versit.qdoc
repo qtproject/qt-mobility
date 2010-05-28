@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,12 +42,9 @@
 /*!
 
 \page versit.html
-\title Versit API (technology preview)
+\title Versit API
 \brief An API to manage Versit documents.
 \ingroup mobility
-
-\warning This API should be considered in a technology preview state. It is
-under development and subject to change.
 
 \tableofcontents
 
@@ -74,7 +71,7 @@ Versit \reg is a trademark of the Internet Mail Consortium.
 \section1 Usage
 \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example
 
-\section1 Classes
+\section1 Main Classes
 \list
     \o \l{QVersitProperty}
     \o \l{QVersitDocument}    
@@ -83,12 +80,4 @@ Versit \reg is a trademark of the Internet Mail Consortium.
     \o \l{QVersitContactImporter}
     \o \l{QVersitContactExporter}
 \endlist
-
-\section1 Mapping the vCard constants
-
-vCard properties are mapped to QContactDetails as follows:
-\snippet ../../src/versit/qversitdefs_p.h Property name mappings
-
-vCard type parameters are mapped to subtypes in QContactDetails as follows:
-\snippet ../../src/versit/qversitdefs_p.h Property type parameter mappings
 */

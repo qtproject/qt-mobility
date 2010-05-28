@@ -12,7 +12,6 @@ contains(QT_CONFIG, opengl): QT += opengl
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MULTIMEDIA_LIB
-!symbian:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)/plugins\\\"
 
 PRIVATE_HEADERS += \
     qmediacontrol_p.h \
@@ -138,6 +137,7 @@ symbian {
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2002AC77
     TARGET.CAPABILITY = ALL -TCB
+    LIBS += -lefsrv
 }
 
 CONFIG += middleware

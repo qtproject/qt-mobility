@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,11 +55,13 @@ testsensorimpl::testsensorimpl(QSensor *sensor)
     QString doThis = sensor->property("doThis").toString();
     if (doThis == "rates(0)") {
         setDataRates(0);
+    } else if (doThis == "rates(nodef)") {
+        addDataRate(100,100);
     } else if (doThis == "rates") {
-        setDataRates(new QAccelerometer(this));
-        if (sensor->availableDataRates().count()) {
-            sensor->setDataRate(sensor->availableDataRates().first().first);
-        } else {
+        QAccelerometer *acc = new QAccelerometer(this);
+        acc->connectToBackend();
+        setDataRates(acc);
+        if (!sensor->availableDataRates().count()) {
             addDataRate(100, 100);
             sensor->setDataRate(100);
         }

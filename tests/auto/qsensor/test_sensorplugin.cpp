@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,7 @@
 #include <qsensormanager.h>
 #include <QFile>
 #include <QDebug>
+#include "dummyaccelerometer.h"
 
 QTM_USE_NAMESPACE
 
@@ -57,12 +58,16 @@ public:
     {
         QSensorManager::registerBackend(TestSensor::type, testsensorimpl::id, this);
         QSensorManager::registerBackend(TestSensor::type, "test sensor 2", this);
+        QSensorManager::registerBackend(QAccelerometer::type, dummyaccelerometer::id, this);
     }
 
     QSensorBackend *createBackend(QSensor *sensor)
     {
         if (sensor->identifier() == testsensorimpl::id) {
             return new testsensorimpl(sensor);
+        }
+        if (sensor->identifier() == dummyaccelerometer::id) {
+            return new dummyaccelerometer(sensor);
         }
 
         qWarning() << "Can't create backend" << sensor->identifier();

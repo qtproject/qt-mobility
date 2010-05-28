@@ -9,6 +9,7 @@ DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += $${EPOCROOT}epoc32\include\LBTHeaders
+
 # Input
 SOURCES += main.cpp
 

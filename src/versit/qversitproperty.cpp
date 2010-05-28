@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QVersitProperty
-  \preliminary
   \brief The QVersitProperty class stores the name, value, groups and parameters of a Versit property.
   \ingroup versit
 
@@ -120,10 +119,19 @@ QVersitProperty& QVersitProperty::operator=(const QVersitProperty& other)
 /*! Returns true if this is equal to \a other; false otherwise. */
 bool QVersitProperty::operator==(const QVersitProperty& other) const
 {
-    return d->mGroups == other.d->mGroups &&
+    bool equal = d->mGroups == other.d->mGroups &&
             d->mName == other.d->mName &&
             d->mParameters == other.d->mParameters &&
-            d->mValue == other.d->mValue;
+            d->mValueType == other.d->mValueType;
+    if (!equal)
+        return false;
+
+    // QVariant doesn't support == on QVersitDocuments - do it manually
+    if (d->mValue.userType() == qMetaTypeId<QVersitDocument>())
+        return  other.d->mValue.userType() == qMetaTypeId<QVersitDocument>()
+            && d->mValue.value<QVersitDocument>() == other.d->mValue.value<QVersitDocument>();
+    else
+        return d->mValue == other.d->mValue;
 }
 
 /*! Returns true if this is not equal to \a other; false otherwise. */
@@ -232,7 +240,7 @@ void QVersitProperty::setParameters(const QMultiHash<QString,QString>& parameter
  */
 void QVersitProperty::insertParameter(const QString& name, const QString& value)
 {
-    d->mParameters.insert(name.toUpper(), value.toUpper());
+    d->mParameters.insert(name.toUpper(), value);
 }
 
 /*!
@@ -242,7 +250,7 @@ void QVersitProperty::insertParameter(const QString& name, const QString& value)
  */
 void QVersitProperty::removeParameter(const QString& name, const QString& value)
 {
-    d->mParameters.remove(name.toUpper(), value.toUpper());
+    d->mParameters.remove(name.toUpper(), value);
 }
 
 /*!

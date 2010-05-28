@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,10 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qrotationsensor.h>
-#include <qsensorbackend.h>
 
-#include <sensord/rotationsensor_i.h>
-#include <sensord/datatypes/xyz.h>
+#include <rotationsensor_i.h>
+#include <xyz.h>
 
 QT_USE_NAMESPACE
 
@@ -57,7 +56,6 @@ class maemo6rotationsensor : public maemo6sensorbase
 
 public:
     static const char *id;
-
     maemo6rotationsensor(QSensor *sensor);
 
 private:

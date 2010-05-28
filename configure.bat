@@ -1,6 +1,6 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
-:: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+:: Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 :: All rights reserved.
 :: Contact: Nokia Corporation (qt-info@nokia.com)
 ::
@@ -80,6 +80,7 @@ if "%1" == "-prefix"            goto prefixTag
 if "%1" == "-libdir"            goto libTag
 if "%1" == "-bindir"            goto binTag
 if "%1" == "-headerdir"         goto headerTag
+if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-qt"                goto qtTag
@@ -112,6 +113,8 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/lib)
     echo -bindir (dir) ..... Executables will be installed to dir
     echo                     (default PREFIX/bin)
+    echo -plugindir (dir) .. Plug-ins will be installed to dir
+    echo                     (default PREFIX/plugins)
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
@@ -179,6 +182,13 @@ goto cmdline_parsing
 shift
 echo QT_MOBILITY_INCLUDE = %1 >> %PROJECT_CONFIG%
 shift
+goto cmdline_parsing
+
+:pluginTag
+shift
+echo QT_MOBILITY_PLUGINS = %1 >> %PROJECT_CONFIG%
+shift
+echo
 goto cmdline_parsing
 
 :unfrozenTag
@@ -331,6 +341,7 @@ echo qmf_enabled = no >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 REM no Sysinfo support on Maemo yet
@@ -416,6 +427,7 @@ goto errorTag
 
 :compileTest
 setlocal
+    @echo off
     echo Checking %1
     set CURRENT_PWD=%CD%
 
@@ -504,16 +516,16 @@ for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
 )
 
 if %FIRST% == bearer (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmBearer %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == location (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\location
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmLocation %SOURCE_PATH%\src\location
 ) else if %FIRST% == messaging (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\messaging
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
     set CURRENT_PWD=%CD%
     if %BUILD_PATH% == %SOURCE_PATH% (
@@ -537,20 +549,20 @@ if %FIRST% == bearer (
     )
     cd /D %CURRENTDIR%
 ) else if %FIRST% == publishsubscribe (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\publishsubscribe
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmPubSub %SOURCE_PATH%\src\publishsubscribe
 ) else if %FIRST% == systeminfo (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\systeminfo
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmSystemInfo %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\serviceframework
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == versit (
     REM versit implies contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\versit
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmVersit %SOURCE_PATH%\src\versit
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == sensors (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\sensors
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmSensors %SOURCE_PATH%\src\sensors
 )
 
 if "%REMAINING%" == "" (
