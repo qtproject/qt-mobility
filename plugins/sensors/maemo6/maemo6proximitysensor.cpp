@@ -41,13 +41,13 @@
 
 #include "maemo6proximitysensor.h"
 
-const char *maemo6proximitysensor::id("maemo6.proximity");
+char const * const maemo6proximitysensor::id("maemo6.proximity");
 bool maemo6proximitysensor::m_initDone = false;
 
 maemo6proximitysensor::maemo6proximitysensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    char const * const maemo6proximitysensor::id("maemo6.proximity");
+    const QString sensorName = "proximitysensor";
     initSensor<ProximitySensorChannelInterface>(sensorName, m_initDone);
 
     if (m_sensorInterface){

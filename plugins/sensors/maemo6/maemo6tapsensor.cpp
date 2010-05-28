@@ -41,13 +41,13 @@
 
 #include "maemo6tapsensor.h"
 
-const char *maemo6tapsensor::id("maemo6.tapsensor");
+char const * const maemo6tapsensor::id("maemo6.tapsensor");
 bool maemo6tapsensor::m_initDone = false;
 
 maemo6tapsensor::maemo6tapsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    char const * const maemo6tapsensor::id("maemo6.tapsensor");
+    const QString sensorName = "tapsensor";
     initSensor<TapSensorChannelInterface>(sensorName, m_initDone);
 
     if (m_sensorInterface){

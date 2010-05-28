@@ -41,13 +41,13 @@
 
 #include "maemo6compass.h"
 
-const char *maemo6compass::id("maemo6.compass");
+char const * const maemo6compass::id("maemo6.compass");
 bool maemo6compass::m_initDone = false;
 
 maemo6compass::maemo6compass(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    char const * const maemo6compass::id("maemo6.compass");
+    const QString sensorName = "compasssensor";
     initSensor<CompassSensorChannelInterface>(sensorName, m_initDone);
 
     if (m_sensorInterface){

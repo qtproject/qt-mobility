@@ -41,13 +41,13 @@
 
 #include "maemo6rotationsensor.h"
 
-const char *maemo6rotationsensor::id("maemo6.rotationsensor");
+char const * const maemo6rotationsensor::id("maemo6.rotationsensor");
 bool maemo6rotationsensor::m_initDone = false;
 
 maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    char const * const maemo6rotationsensor::id("maemo6.rotationsensor");
+    const QString sensorName = "rotationsensor";
     initSensor<RotationSensorChannelInterface>(sensorName, m_initDone);
 
     if (m_sensorInterface){
