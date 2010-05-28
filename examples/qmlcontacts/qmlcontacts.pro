@@ -26,8 +26,5 @@ OTHER_FILES += example.qml \
     contents/MediaButton.qml \
     ScrollBar.qml
 symbian::TARGET.CAPABILITY = ReadUserData \
-    WriteUserData \
-    ReadDeviceData \
-    WriteDeviceData \
-    SwEvent
+    WriteUserData
 include(../examples.pri)

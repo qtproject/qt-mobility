@@ -52,6 +52,9 @@ QTM_USE_NAMESPACE
 class CntAbstractContactFilter
 {
 public:
+    virtual ~CntAbstractContactFilter(){};
+
+public:
     enum FilterSupport {
         /* The filter is not supported */
         NotSupported = 0,
