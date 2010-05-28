@@ -18,7 +18,5 @@ HEADERS += ../qcontactmanagerdataholder.h
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData
+                        WriteUserData
 }
