@@ -50,6 +50,9 @@
 #define QTORGANIZER_IMPLEMENTATION_VERSION_NAME "com.nokia.qt.mobility.organizer.implementation.version"
 #define QTORGANIZER_VERSION 1
 
+// TODO: QLatin1Constant should be defined in some global module
+#ifndef QLATIN1CONSTANT_DEFINED
+#define QLATIN1CONSTANT_DEFINED
 QTM_BEGIN_NAMESPACE
 
 /*
@@ -163,5 +166,6 @@ template<int N> bool operator!=(const QString& b, const QLatin1Constant<N>& a)
 #define Q_DEFINE_LATIN1_CONSTANT(varname, str) const QLatin1Constant<sizeof(str)> varname = {str}
 
 QTM_END_NAMESPACE
+#endif // QLATIN1CONSTANT_DEFINED
 
 #endif
