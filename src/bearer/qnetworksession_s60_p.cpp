@@ -877,7 +877,7 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
         //              clone of the one of the IAPs of the used SNAP
         //              => If mappingName matches, clone has been found
         QNetworkConfiguration pt;
-        pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QString::number(qHash(iapId)));
+        pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(iapId)));
         if (pt.d) {
             for (int i=0; i < children.count(); i++) {
                 if (children[i].d.data()->mappingName == pt.d.data()->mappingName) {
@@ -900,7 +900,7 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
         if (publicConfig.d.data()->manager) {
             QNetworkConfiguration pt;
             // Try to found User Selected IAP from known IAPs (accessPointConfigurations)
-            pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QString::number(qHash(iapId)));
+            pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(iapId)));
             if (pt.d) {
                 return pt;
             } else {

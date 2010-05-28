@@ -49,15 +49,37 @@ QtBearer
 
 QtContacts
 ------
+ - Documentation clarifications
+ - Several bugs on several platforms fixed
+    * Several signal emission related issues for Symbian
+    * Handling of phone numbers
+    * Handling of organization fields on Maemo 5
+    * Deleting a request in a resultsAvailable() slot should not crash any more
+ - Performance improvements when fallback sorting code is used
+ - Performance improvements with Symbian engine in specific common cases
+ - Performance improvements with Maemo 5 engine when fetching ids
+ - Fix compilation errors on Maemo 5 when required libraries are not installed
+ - Better thread support for the request class (for multi threaded engines)
+ - Use locale aware string comparisons when fallback filtering or sortind code is used
+ - Missing QFlag operators for two flags added
+ - Symbian capabilities for samplephonebook example should be less restrictive
 
- - foo
-    * bar
+QtVersit
+------
+ - Properties with both ENCODING and CHARSET are properly handled now
+ - Better round tripping of property names
+ - Removed empty contact fields generated during import.
 
 QtLocation
 ------
 
- - foo
-    * bar
+ - Several bugs on the Symbian platform have been fixed.
+    * Using INT_MAX for the update interval no longer causes crashes.
+    * The default preferred positioning methods for a new position source 
+      are now reported accurately.
+    * The last known position now respects the 
+      fromSatellitePositioningMethodsOnly parameter correctly across 
+      changes to the preferred position method.
 
 QtMessaging
 ------

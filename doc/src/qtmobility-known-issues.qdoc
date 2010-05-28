@@ -175,7 +175,6 @@ Support is present for the following System Info API classes
 
 \section2 Multimedia API
 \list
-    \o \bold {Multimedia API is in beta state.}
     \o S60: Audio capture does not support currently any special features like format, encoding etc.
     \o S60: seeking is not working properly
     \o S60: video size does not remain constant in repeated plays

@@ -66,6 +66,9 @@
 // Uncomment and compile QtBearer to gain detailed state tracing
 // #define QT_BEARERMGMT_SYMBIAN_DEBUG
 
+#define QT_BEARERMGMT_CONFIGURATION_SNAP_PREFIX "S_"
+#define QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX  "I_"
+
 class CCommsDatabase;
 class QEventLoop;
 
@@ -113,6 +116,7 @@ private:
     bool changeConfigurationStateAtMaxTo(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
                                           QNetworkConfiguration::StateFlags newState);
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
+    void updateMobileBearerToConfigs(TConnMonBearerInfo bearerInfo);
     QNetworkConfigurationPrivate* configFromConnectionMethodL(RCmConnectionMethod& connectionMethod);
 #else
     bool readNetworkConfigurationValuesFromCommsDb(
