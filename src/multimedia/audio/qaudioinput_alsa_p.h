@@ -61,7 +61,6 @@
 #include <QtCore/qtimer.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qstringlist.h>
-#include <QtCore/qelapsedtimer.h>
 #include <QtCore/qdatetime.h>
 
 #include "qaudio.h"
@@ -119,8 +118,8 @@ private:
     void drain();
 
     QTimer* timer;
-    QElapsedTimer timeStamp;
-    QElapsedTimer clockStamp;
+    QTime timeStamp;
+    QTime clockStamp;
     qint64 elapsedTimeOffset;
     int intervalTime;
     char* audioBuffer;
