@@ -39,58 +39,31 @@
 **
 ****************************************************************************/
 
-#include "test_sensorimpl.h"
-#include <qaccelerometer.h>
-#include <QDebug>
+#ifndef MAEMO6COMPASS_H
+#define MAEMO6COMPASS_H
 
-const char *testsensorimpl::id("test sensor impl");
+#include "maemo6sensorbase.h"
+#include <qcompass.h>
 
-testsensorimpl::testsensorimpl(QSensor *sensor)
-    : QSensorBackend(sensor)
+#include <compasssensor_i.h>
+#include <compass.h>
+
+QTM_USE_NAMESPACE
+
+class maemo6compass : public maemo6sensorbase
 {
-    setReading<TestSensorReading>(&m_reading);
-    setDescription("sensor description");
-    addOutputRange(0, 1, 0.5);
-    addOutputRange(0, 2, 1);
-    QString doThis = sensor->property("doThis").toString();
-    if (doThis == "rates(0)") {
-        setDataRates(0);
-    } else if (doThis == "rates(nodef)") {
-        addDataRate(100,100);
-    } else if (doThis == "rates") {
-        QAccelerometer *acc = new QAccelerometer(this);
-        acc->connectToBackend();
-        setDataRates(acc);
-        if (!sensor->availableDataRates().count()) {
-            addDataRate(100, 100);
-        }
-    } else {
-        addDataRate(100, 100);
-    }
-    reading();
-}
+    Q_OBJECT
 
-void testsensorimpl::start()
-{
-    QString doThis = sensor()->property("doThis").toString();
-    if (doThis == "busy")
-        sensorBusy();
-    else if (doThis == "stop")
-        sensorStopped();
-    else if (doThis == "error")
-        sensorError(1);
-    else if (doThis == "setFalse") {
-        m_reading.setTimestamp(1);
-        m_reading.setTest(false);
-        newReadingAvailable();
-    } else {
-        m_reading.setTimestamp(2);
-        m_reading.setTest(true);
-        newReadingAvailable();
-    }
-}
+public:
+    static const char *id;
+    maemo6compass(QSensor *sensor);
 
-void testsensorimpl::stop()
-{
-}
+private:
+    QCompassReading m_reading;
+    static bool m_initDone;
 
+private slots:
+    void slotDataAvailable(const Compass& data);
+};
+
+#endif

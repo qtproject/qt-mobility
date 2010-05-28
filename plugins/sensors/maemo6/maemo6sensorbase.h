@@ -39,58 +39,50 @@
 **
 ****************************************************************************/
 
-#include "test_sensorimpl.h"
-#include <qaccelerometer.h>
-#include <QDebug>
+#ifndef MAEMO6SENSORBASE_H
+#define MAEMO6SENSORBASE_H
 
-const char *testsensorimpl::id("test sensor impl");
+#include <qsensorbackend.h>
+#include <sensormanagerinterface.h>
+#include <abstractsensor_i.h>
 
-testsensorimpl::testsensorimpl(QSensor *sensor)
-    : QSensorBackend(sensor)
+
+QTM_USE_NAMESPACE
+
+class maemo6sensorbase : public QSensorBackend
 {
-    setReading<TestSensorReading>(&m_reading);
-    setDescription("sensor description");
-    addOutputRange(0, 1, 0.5);
-    addOutputRange(0, 2, 1);
-    QString doThis = sensor->property("doThis").toString();
-    if (doThis == "rates(0)") {
-        setDataRates(0);
-    } else if (doThis == "rates(nodef)") {
-        addDataRate(100,100);
-    } else if (doThis == "rates") {
-        QAccelerometer *acc = new QAccelerometer(this);
-        acc->connectToBackend();
-        setDataRates(acc);
-        if (!sensor->availableDataRates().count()) {
-            addDataRate(100, 100);
+public:
+    maemo6sensorbase(QSensor *sensor);
+    virtual ~maemo6sensorbase();
+
+
+protected:
+    virtual void start();
+    virtual void stop();
+    AbstractSensorChannelInterface* m_sensorInterface;
+
+    static const float GRAVITY_EARTH;
+    static const float GRAVITY_EARTH_THOUSANDTH;    //for speed
+
+    template<typename T>
+    void initSensor(QString sensorName, bool &initDone)
+    {
+
+        if (!initDone) {
+            m_remoteSensorManager->loadPlugin(sensorName);
+            m_remoteSensorManager->registerSensorInterface<T>(sensorName);
         }
-    } else {
-        addDataRate(100, 100);
-    }
-    reading();
-}
+        m_sensorInterface = T::controlInterface(sensorName);
+        if (!m_sensorInterface) {
+            m_sensorInterface = const_cast<T*>(T::listenInterface(sensorName));
 
-void testsensorimpl::start()
-{
-    QString doThis = sensor()->property("doThis").toString();
-    if (doThis == "busy")
-        sensorBusy();
-    else if (doThis == "stop")
-        sensorStopped();
-    else if (doThis == "error")
-        sensorError(1);
-    else if (doThis == "setFalse") {
-        m_reading.setTimestamp(1);
-        m_reading.setTest(false);
-        newReadingAvailable();
-    } else {
-        m_reading.setTimestamp(2);
-        m_reading.setTest(true);
-        newReadingAvailable();
-    }
-}
+        }
+        initDone = true;
+    };
 
-void testsensorimpl::stop()
-{
-}
+private:
+    static SensorManagerInterface* m_remoteSensorManager;
 
+};
+
+#endif
