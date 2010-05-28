@@ -129,11 +129,25 @@ QtMessaging
     * Windows Mobile: Fix QMessageService::retrieve for attachments larger 
       than 4KB on Windows.
 
-QtMedia
+QtMedia/QtMultimedia
 ------
 
- - foo
-    * bar
+ - The QtMedia library has been merged with the QtMultimedia library from Qt.
+   The new QtMultimedia library in QtMobility replaces both the QtMedia libary
+   from QtMobility and the QtMultimedia library from Qt.
+
+ - Meta-data related API changes
+     * Meta-data on QMediaObject is now read-only.  The isWritable(), 
+       setMetaData() and setExtendedMetaData() function have been removed.
+     * The meta-data editing functions removed from QMediaObject have been
+       added to QMediaRecorder. 
+     * QMetaDataControl has been split into two controls, the read-only
+       QMetaDataReaderControl and the writable QMetaDataWriterControl.
+ - Media Service API changes.
+     * The API for requesting a control from a QMediaService has been split
+       into request and release steps, allowing services to allocate and
+       release resources on demand.  This removes the QMediaService
+       control() function and adds requestControl(), and releaseControl().
 
 QtPublishSubscribe
 ------
