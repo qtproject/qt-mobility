@@ -62,6 +62,10 @@ QT_END_NAMESPACE
 #define USE_SEARCH_BUTTON
 #endif
 
+#ifdef Q_WS_MAEMO_5
+#define USE_CONTACTS_COMBOBOX
+#endif
+
 QTM_USE_NAMESPACE
 
 class AddressFinder : public QMainWindow
@@ -100,7 +104,11 @@ private:
     QAction *searchAction;
     QPushButton *searchButton;
 
+#ifdef USE_CONTACTS_COMBOBOX
+    QComboBox *contactList;
+#else
     QListWidget *contactList;
+#endif
     QComboBox *messageCombo;
     QPushButton *showButton;
     QPushButton *forwardButton;
