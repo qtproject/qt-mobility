@@ -61,7 +61,7 @@ S60AudioCaptureService::~S60AudioCaptureService()
 {
 }
 
-QMediaControl *S60AudioCaptureService::requestControl(const char *name)
+QMediaControl *S60AudioCaptureService::control(const char *name) const
 {    
     if (qstrcmp(name,QMediaRecorderControl_iid) == 0)
         return m_recorderControl;
@@ -78,7 +78,3 @@ QMediaControl *S60AudioCaptureService::requestControl(const char *name)
     return 0;
 }
 
-void S60AudioCaptureService::releaseControl(QMediaControl *control)
-{
-    Q_UNUSED(control)
-}    

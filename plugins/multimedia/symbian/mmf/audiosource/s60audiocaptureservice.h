@@ -62,8 +62,7 @@ public:
     S60AudioCaptureService(QObject *parent = 0);
     ~S60AudioCaptureService();
 
-    QMediaControl *requestControl(const char *name);
-    void releaseControl(QMediaControl *control);
+    QMediaControl *control(const char *name) const;
 private:
     S60AudioCaptureSession       *m_session;
     S60AudioEncoderControl       *m_encoderControl;
