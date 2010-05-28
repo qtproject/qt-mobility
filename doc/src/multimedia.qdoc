@@ -56,8 +56,6 @@
 collection of media content.
 \ingroup mobility
 
-\note The FINAL Multimedia API does not have binary compatibility with the Beta version of the Qt Multimedia library as introduced in the Mobility 1.0.0 release.
-
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
 QtMultimedia API. This API is planned to replace Phonon at a later stage.
