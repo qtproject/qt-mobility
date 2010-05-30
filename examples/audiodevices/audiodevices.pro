@@ -16,3 +16,6 @@ SOURCES       = audiodevices.cpp \
 
 FORMS        += audiodevicesbase.ui
 
+symbian {
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData
+}
