@@ -42,11 +42,11 @@
 #ifndef QGSTREAMERCAPTUREMETADATACONTROL_H
 #define QGSTREAMERCAPTUREMETADATACONTROL_H
 
-#include <qmetadatacontrol.h>
+#include <qmetadatawritercontrol.h>
 
 QT_USE_NAMESPACE
 
-class QGstreamerCaptureMetaDataControl : public QMetaDataControl
+class QGstreamerCaptureMetaDataControl : public QMetaDataWriterControl
 {
     Q_OBJECT
 public:

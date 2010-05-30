@@ -48,7 +48,6 @@
 #include "qgstreamerbushelper.h"
 #include "qgstreamercapturemetadatacontrol_maemo.h"
 
-#include "qgstreamervideooutputcontrol.h"
 #include "qgstreameraudioinputendpointselector.h"
 #include "qgstreamervideoinputdevicecontrol.h"
 
@@ -137,7 +136,6 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
     m_audioInputEndpointSelector = 0;
     m_videoInputDevice = 0;
 
-    m_videoOutput = 0;
     m_videoRenderer = 0;
     m_videoRendererFactory = 0;
     m_videoWindow = 0;
@@ -164,10 +162,6 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
         //TODO:if (m_videoInputDevice->deviceCount())
         //    m_cameraControl->setDevice(m_videoInputDevice->deviceName(m_videoInputDevice->selectedDevice()));
 
-        m_videoOutput = new QGstreamerVideoOutputControl(this);
-        connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-                this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-
         m_videoRenderer = new QGstreamerVideoRenderer(this);
         m_videoRendererFactory = new QGstreamerVideoRendererWrapper(m_videoRenderer);
         m_videoWindow = new QGstreamerVideoOverlay(this);
@@ -176,10 +170,6 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
         m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
         m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
 
-        m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>()
-                                           << QVideoOutputControl::RendererOutput
-                                           << QVideoOutputControl::WindowOutput
-                                           << QVideoOutputControl::WidgetOutput);
     }
     
     if (!m_captureSession) {
@@ -202,11 +192,8 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 {
 }
 
-QMediaControl *QGstreamerCaptureService::control(const char *name) const
+QMediaControl *QGstreamerCaptureService::requestControl(const char *name)
 {
-    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
-        return m_videoOutput;
-
     if (qstrcmp(name, QVideoRendererControl_iid) == 0)
         return m_videoRenderer;
 
@@ -234,31 +221,18 @@ QMediaControl *QGstreamerCaptureService::control(const char *name) const
     if (qstrcmp(name,QMediaContainerControl_iid) == 0)
         return m_captureSession->mediaContainerControl();
 
-    if (qstrcmp(name,QMetaDataControl_iid) == 0)
+    if (qstrcmp(name,QMetaDataWriterControl_iid) == 0)
         return m_metaDataControl;
 
     return 0;
 }
 
-void QGstreamerCaptureService::videoOutputChanged(QVideoOutputControl::Output output)
+void QGstreamerCaptureService::releaseControl(QMediaControl *control)
 {
-    switch (output) {
-    case QVideoOutputControl::NoOutput:
+    if (control && control == m_videoOutput) {
+        m_videoOutput = 0;
         m_captureSession->setVideoPreview(0);
-        break;
-    case QVideoOutputControl::RendererOutput:
-        m_captureSession->setVideoPreview(m_videoRendererFactory);
-        break;
-    case QVideoOutputControl::WindowOutput:
-        m_captureSession->setVideoPreview(m_videoWindowFactory);
-        break;
-    case QVideoOutputControl::WidgetOutput:
-        m_captureSession->setVideoPreview(m_videoWidgetFactory);
-        break;
-    default:
-        qWarning("Invalid video output selection");
-        m_captureSession->setVideoPreview(0);
-        break;
     }
 }
+
 
