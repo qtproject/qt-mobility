@@ -68,6 +68,7 @@ QNetworkSessionPrivate::QNetworkSessionPrivate()
     if (iOpenCLibrary.Load(_L("libc")) == KErrNone) {
         iDynamicUnSetdefaultif = (TOpenCUnSetdefaultifFunction)iOpenCLibrary.Lookup(597);
     }
+
     TRAP_IGNORE(iConnectionMonitor.ConnectL());
 }
 
@@ -90,6 +91,7 @@ QNetworkSessionPrivate::~QNetworkSessionPrivate()
         iMobility = NULL;
     }
 #endif
+
     iConnection.Close();
     iSocketServ.Close();
     
@@ -414,6 +416,10 @@ void QNetworkSessionPrivate::open()
         }
     } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
 #ifdef OCC_FUNCTIONALITY_AVAILABLE
+        // On Symbian^3 if service network is not reachable, it triggers a UI (aka EasyWLAN) where
+        // user can create new IAPs. To detect this, we need to store the number of IAPs
+        // there was before connection was started.
+        iKnownConfigsBeforeConnectionStart = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.keys();
         TConnPrefList snapPref;
         TExtendedConnPref prefs;
         prefs.SetSnapId(publicConfig.d.data()->numericId);
@@ -492,7 +498,11 @@ void QNetworkSessionPrivate::close(bool allowSignals)
     iClosedByUser = true;
 
     isOpen = false;
+#ifndef OCC_FUNCTIONALITY_AVAILABLE
+    // On Symbian^3 we need to keep track of active configuration longer
+    // in case of empty-SNAP-triggered EasyWLAN.
     activeConfig = QNetworkConfiguration();
+#endif
     serviceConfig = QNetworkConfiguration();
     
     Cancel();
@@ -874,7 +884,7 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
         _LIT(KSetting, "IAP\\Id");
         iConnection.GetIntSetting(KSetting, iapId);
     }
- 
+
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
         // Try to search IAP from the used SNAP using IAP Id
@@ -903,17 +913,54 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
                 }
             }
         } else {
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+            // On Symbian^3 (only, not earlier or Symbian^4) if the SNAP was not reachable, it triggers
+            // user choice type of activity (EasyWLAN). As a result, a new IAP may be created, and
+            // hence if was not found yet. Therefore update configurations and see if there is something new.
+            // 1. Update knowledge from the databases.
+            ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->updateConfigurations();
+            // 2. Check if new configuration was created during connection creation
+            QList<QString> knownConfigs = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.keys();
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+            qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                    << "opened configuration was not known beforehand, looking for new.";
+#endif
+            if (knownConfigs.count() > iKnownConfigsBeforeConnectionStart.count()) {
+                // Configuration count increased => new configuration was created
+                // => Search new, created configuration
+                QString newIapId;
+                for (int i=0; i < iKnownConfigsBeforeConnectionStart.count(); i++) {
+                    if (knownConfigs[i] != iKnownConfigsBeforeConnectionStart[i]) {
+                        newIapId = knownConfigs[i];
+                        break;
+                    }
+                }
+                if (newIapId.isEmpty()) {
+                    newIapId = knownConfigs[knownConfigs.count()-1];
+                }
+                pt.d = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.value(newIapId);
+                if (pt.d) {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+                    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                            << "new configuration was found, name, IAP id: " << pt.name() << pt.identifier();
+#endif
+                    return pt;
+                }
+            }
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+            qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                    << "configuration was not found, returning invalid.";
+#endif
+#endif // OCC_FUNCTIONALITY_AVAILABLE
             // Given IAP Id was not found from known IAPs array
             return QNetworkConfiguration();
         }
-
         // Matching IAP was not found from used SNAP
         // => IAP from another SNAP is returned
         //    (Note: Returned IAP matches to given IAP Id)
         return pt;
     }
 #endif
-    
     if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
         if (publicConfig.d.data()->manager) {
             QNetworkConfiguration pt;
@@ -955,6 +1002,10 @@ QNetworkConfiguration QNetworkSessionPrivate::activeConfiguration(TUint32 iapId)
 
 void QNetworkSessionPrivate::RunL()
 {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+            << "RConnection::RunL with status code: " << iStatus.Int();
+#endif
     TInt statusCode = iStatus.Int();
 
     switch (statusCode) {
@@ -1157,6 +1208,7 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
                         QNetworkConfiguration config = bestConfigFromSNAP(publicConfig);
                         if ((config.state() == QNetworkConfiguration::Defined) ||
                             (config.state() == QNetworkConfiguration::Discovered)) {
+                            activeConfig = QNetworkConfiguration();
                             state = newState;
 #ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
                             qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "===> EMIT State changed E  to: " << state;
@@ -1177,6 +1229,21 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
                     }
                 }
             }
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+            // If the retVal is not true here, it means that the status update may apply to an IAP outside of
+            // SNAP (session is based on SNAP but follows IAP outside of it), which may occur on Symbian^3 EasyWlan.
+            if (retVal == false && activeConfig.d.data() && activeConfig.d.data()->numericId == accessPointId) {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+                qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "===> EMIT State changed G  to: " << state;
+#endif
+                if (newState == QNetworkSession::Disconnected) {
+                    activeConfig = QNetworkConfiguration();
+                }
+                state = newState;
+                emit q->stateChanged(state);
+                retVal = true;
+            }
+#endif
         }
     }
     
@@ -1189,8 +1256,11 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
         // considerably later (almost a second). Connection id is an increasing
         // number, so this does not affect next _real_ 'conneting/connected' states.
         iDeprecatedConnectionId = publicConfig.d.data()->connectionId;
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+        // Just in case clear activeConfiguration.
+        activeConfig = QNetworkConfiguration();
+#endif
     }
-
     return retVal;
 }
 
