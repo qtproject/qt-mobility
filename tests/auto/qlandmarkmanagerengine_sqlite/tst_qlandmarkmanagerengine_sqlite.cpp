@@ -225,7 +225,6 @@ private slots:
     }
 
     void retrieveLandmarkAsync() {
-
         //test non-existent landmark id
         QLandmarkId id1;
         id1.setManagerUri(m_manager->managerUri());
@@ -238,11 +237,10 @@ private slots:
 
         QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         fetchRequest.start();
-        QTest::qWait(2000);
+        QTest::qWait(1000);
         QCOMPARE(spy.count(),2);
 
         QCOMPARE(fetchRequest.landmarks().count(),0);
-        //QCOMPARE(fetchRequest.landmarks().at(0).landmarkId().isValid(), false);
 
         //test retrieval of existing landmark via id
         QLandmark lm2;
@@ -978,6 +976,78 @@ private slots:
         filter.setName("No match");
         QList<QLandmarkId> ids3 = m_manager->landmarkIds(filter);
         QCOMPARE(ids3.size(), 0);
+    }
+
+     void filterLandmarksNameAsync() {
+        QLandmark lm1;
+        lm1.setName("test");
+        QVERIFY(m_manager->saveLandmark(&lm1));
+
+        QLandmark lm2;
+        lm2.setName("junk1");
+        QVERIFY(m_manager->saveLandmark(&lm2));
+
+        QLandmark lm3;
+        lm3.setName("TEST");
+        QVERIFY(m_manager->saveLandmark(&lm3));
+
+        QLandmark lm4;
+        lm4.setName("junk2");
+        QVERIFY(m_manager->saveLandmark(&lm4));
+
+        QLandmark lm5;
+        lm5.setName("tEsT");
+        QVERIFY(m_manager->saveLandmark(&lm5));
+
+        QLandmark lm6;
+        lm6.setName("junk3");
+        QVERIFY(m_manager->saveLandmark(&lm6));
+
+        QLandmarkNameFilter filter("TEST");
+        filter.setCaseSensitivity(Qt::CaseInsensitive);
+
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        fetchRequest.setFilter(filter);
+
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.start();
+        QTest::qWait(1000);
+        QCOMPARE(spy.count(),2);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QCOMPARE(fetchRequest.errorString(), QString());
+
+        QList<QLandmark> lms1 = fetchRequest.landmarks();
+
+        QCOMPARE(lms1.size(), 3);
+        QCOMPARE(lms1.at(0).landmarkId(), lm1.landmarkId());
+        QCOMPARE(lms1.at(1).landmarkId(), lm3.landmarkId());
+        QCOMPARE(lms1.at(2).landmarkId(), lm5.landmarkId());
+
+        filter.setCaseSensitivity(Qt::CaseSensitive);
+        fetchRequest.setFilter(filter);
+        spy.clear();
+        fetchRequest.start();
+        QTest::qWait(1000);
+        QCOMPARE(spy.count(),2);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QCOMPARE(fetchRequest.errorString(), QString());
+
+        QList<QLandmark> lms2 = fetchRequest.landmarks();
+
+        QCOMPARE(lms2.size(), 1);
+        QCOMPARE(lms2.at(0).landmarkId(), lm3.landmarkId());
+
+        filter.setName("No match");
+        fetchRequest.setFilter(filter);
+        spy.clear();
+        fetchRequest.start();
+        QTest::qWait(1000);
+        QCOMPARE(spy.count(),2);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QCOMPARE(fetchRequest.errorString(), QString());
+
+        QList<QLandmark> lms3 = fetchRequest.landmarks();
+        QCOMPARE(lms3.size(), 0);
     }
 
     void filterLandmarksProximity() {

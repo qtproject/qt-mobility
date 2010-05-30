@@ -630,7 +630,7 @@ void QLandmarkManagerEngine::updateLandmarkIdFetchRequest(QLandmarkIdFetchReques
         return;
     QLandmarkIdFetchRequestPrivate * rd = static_cast<QLandmarkIdFetchRequestPrivate*>(req->d_ptr);
     rd->error = error;
-    rd->errorString = error;
+    rd->errorString = errorString;
     rd->landmarkIds = result;
     bool emitState = rd->state != newState;
     rd->state =newState;
@@ -658,7 +658,7 @@ void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* r
         return;
     QLandmarkFetchRequestPrivate * rd = static_cast<QLandmarkFetchRequestPrivate*>(req->d_ptr);
     rd->error = error;
-    rd->errorString = error;
+    rd->errorString = errorString;
     rd->landmarks = result;
     bool emitState = rd->state != newState;
     rd->state =newState;

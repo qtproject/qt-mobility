@@ -408,15 +408,15 @@ QLandmark retrieveLandmark(const QString &connectionName, const QLandmarkId &lan
     return lm;
 }
 
-/*
-QString landmarkIdsNameQueryString(const QLandmarkNameFilter &filter) {
 
+QString landmarkIdsNameQueryString(const QLandmarkNameFilter &filter)
+{
 
     if (filter.caseSensitivity() == Qt::CaseSensitive)
-        return QString("SELECT id FROM landmark WHERE name = \"%1\" ").arg(filter.name()));
+        return QString("SELECT id FROM landmark WHERE name = \"%1\" ").arg(filter.name());
     else
-        return QString("SELECT id FROM landmark WHERE name LIKE \"%1\" ").arg(filter.name()));
-}*/
+        return QString("SELECT id FROM landmark WHERE name LIKE \"%1\" ").arg(filter.name());
+}
 
 QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFilter& filter,
         const QList<QLandmarkSortOrder>& sortOrders,
@@ -451,7 +451,8 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             break;
         case QLandmarkFilter::NameFilter: {
                 QLandmarkNameFilter nameFilter;
-                //queryString = landmarkIdsNameQueryString(nameFilter);
+                nameFilter = filter;
+                queryString = landmarkIdsNameQueryString(nameFilter);
                 break;
             }
         case QLandmarkFilter::ProximityFilter:
