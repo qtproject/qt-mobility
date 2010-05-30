@@ -2424,7 +2424,7 @@ bool QLandmarkManagerEngineSqlite::startRequest(QLandmarkAbstractRequest* reques
     }
 
     QThreadPool::globalInstance()->start(queryRun);
-
+    return true;
 }
 
 bool QLandmarkManagerEngineSqlite::cancelRequest(QLandmarkAbstractRequest* request)
