@@ -50,7 +50,9 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <qgeomappingmanager.h>
-#include <qgeomaprequestoptions.h>
+
+#include <qgeomapviewport.h>
+#include <qgeotiledmappingmanager.h>
 
 MapTileTab::MapTileTab(QWidget *parent)
         : QWidget(parent),
@@ -101,6 +103,7 @@ MapTileTab::MapTileTab(QWidget *parent)
 
 MapTileTab::~MapTileTab()
 {
+    delete m_viewport;
 }
 
 void MapTileTab::initialize(QGeoMappingManager *mapManager)
@@ -112,6 +115,7 @@ void MapTileTab::initialize(QGeoMappingManager *mapManager)
         QObject::connect(m_mapManager,
                          SIGNAL(error(QGeoMapReply*, QGeoMapReply::Error, QString)), this,
                          SLOT(resultsError(QGeoMapReply*, QGeoMapReply::Error, QString)));
+        m_viewport = m_mapManager->createViewport(0);
     }
 }
 
@@ -124,10 +128,17 @@ void MapTileTab::on_btnRequest_clicked()
         qint32 zoomLevel = m_tileZoomLevel->text().toInt();
         qint32 row;
         qint32 col;
-        m_mapManager->getTileQuadKey(coord, zoomLevel, &row, &col);
 
-        if (!m_mapManager->getTileImage(row, col, zoomLevel, QSize(256, 256), QGeoMapRequestOptions()))
+        m_viewport->setViewportSize(QSizeF(300, 300));
+        m_viewport->setZoomLevel(zoomLevel);
+        m_viewport->setCenter(coord);
+
+        QGeoTiledMappingManager *tiledManager = static_cast<QGeoTiledMappingManager *>(m_mapManager);
+        QPoint tile = tiledManager->screenPositionToTilePosition(m_viewport, QPointF(m_viewport->viewportSize().width() / 2.0, m_viewport->viewportSize().height() / 2.0));
+
+        if (!tiledManager->getTileImage(zoomLevel, tile.y(), tile.x(), QGeoMapWidget::StreetMap, "png"))
             m_result->setText(tr("Error - requestMap returned NULL"));
+
     } else {
         QMessageBox::warning(this, tr("MapTile"), tr("No mapping manager available."));
     }

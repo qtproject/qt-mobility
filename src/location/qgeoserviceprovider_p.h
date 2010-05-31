@@ -62,7 +62,6 @@ QTM_BEGIN_NAMESPACE
 class QGeoPlacesManager;
 class QGeoRoutingManager;
 class QGeoMappingManager;
-class QGeoMapViewport;
 
 class QGeoServiceProviderPlugin;
 
@@ -81,17 +80,14 @@ public:
     QGeoPlacesManager *placesManager;
     QGeoRoutingManager *routingManager;
     QGeoMappingManager *mappingManager;
-    QGeoMapViewport *mapViewport;
 
     QGeoServiceProvider::Error placesError;
     QGeoServiceProvider::Error routingError;
     QGeoServiceProvider::Error mappingError;
-    QGeoServiceProvider::Error viewportError;
 
     QString placesErrorString;
     QString routingErrorString;
     QString mappingErrorString;
-    QString viewportErrorString;
 
     QGeoServiceProvider::Error error;
     QString errorString;

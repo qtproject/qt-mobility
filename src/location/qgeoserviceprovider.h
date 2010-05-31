@@ -77,7 +77,6 @@ public:
     QGeoPlacesManager* placesManager() const;
     QGeoMappingManager* mappingManager() const;
     QGeoRoutingManager* routingManager() const;
-    QGeoMapViewport* mapViewport() const;
 
     Error error() const;
     QString errorString() const;

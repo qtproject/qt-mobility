@@ -88,42 +88,22 @@ QTM_BEGIN_NAMESPACE
 QGeoMappingManager::QGeoMappingManager()
         : d_ptr(new QGeoMappingManagerPrivate) {}
 
+QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerPrivate *dd)
+        : d_ptr(dd) {}
+
 /*!
     Destroys this QGeoMappingManager object.
 */
 QGeoMappingManager::~QGeoMappingManager()
 {
-    delete d_ptr;
+    Q_D(QGeoMappingManager);
+    delete d;
 }
 
-/*!
-    \fn QGeoMapReply* QGeoMappingManager::requestMap(const QGeoCoordinate &center,
-                                                     int zoomLevel,
-                                                     const QSize &size,
-                                                     const QGeoMapRequestOptions &requestOptions)
-
-Requests a map image centered at the coordinate \a center with a zoom level
-\a zoomLevel and an image size \a size.
-
-The return value is a QGeoMapReply object, which manages the result of the
-request.  If the request completes successfully then the QGeoMapReply object
-will emit the QGeoMapReply::finished() signal and this QGeoMappingManager
-instance will emit the QGeoMappingManager::finished() signal.
-
-The results can then be retreived with QGeoMapReply::mapImage().
-
-If an error occurs then the QGeoMapReply object will emit QGeoMapReply::error()
-and this QGeoMappingManager instance will emit QGeoMappingManager::error().
-
-Additional options can also be set with \a requestOptions.  The
-supportedMapTypes() and supportedImageFormats() methods provide information
-on the acceptable values that can be used inside a QGeoMapRequestOptions object.
-
-The service may impose restrictions on the allowable zoom levels and image
-sizes, which can be queried with other methods in this class.
-
-\sa QGeoMapRequestOptions
-*/
+void QGeoMappingManager::removeViewport(QGeoMapViewport *viewport)
+{
+    Q_UNUSED(viewport)
+}
 
 /*!
     Returns a list of the map types supported by this QGeoMappingManager
@@ -134,18 +114,8 @@ sizes, which can be queried with other methods in this class.
 */
 QList<QGeoMapWidget::MapType> QGeoMappingManager::supportedMapTypes() const
 {
-    return d_ptr->supportedMapTypes;
-}
-
-/*!
-    Returns a list of the image formats supported by this QGeoMappingManager
-    instance.
-
-    \sa QGeoMappingManager::setSupportedImageFormats()
-*/
-QList<QString> QGeoMappingManager::supportedImageFormats() const
-{
-    return d_ptr->supportedImageFormats;
+    Q_D(const QGeoMappingManager);
+    return d->supportedMapTypes;
 }
 
 /*!
@@ -160,7 +130,8 @@ QList<QString> QGeoMappingManager::supportedImageFormats() const
 */
 qreal QGeoMappingManager::minimumZoomLevel() const
 {
-    return d_ptr->minimumZoomLevel;
+    Q_D(const QGeoMappingManager);
+    return d->minimumZoomLevel;
 }
 
 /*!
@@ -176,7 +147,8 @@ qreal QGeoMappingManager::minimumZoomLevel() const
 qreal QGeoMappingManager::maximumZoomLevel() const
 
 {
-    return d_ptr->maximumZoomLevel;
+    Q_D(const QGeoMappingManager);
+    return d->maximumZoomLevel;
 }
 
 /*!
@@ -191,7 +163,8 @@ qreal QGeoMappingManager::maximumZoomLevel() const
 */
 QSize QGeoMappingManager::minimumImageSize() const
 {
-    return d_ptr->minimumImageSize;
+    Q_D(const QGeoMappingManager);
+    return d->minimumImageSize;
 }
 
 /*!
@@ -203,7 +176,8 @@ QSize QGeoMappingManager::minimumImageSize() const
 */
 QSize QGeoMappingManager::maximumImageSize() const
 {
-    return d_ptr->maximumImageSize;
+    Q_D(const QGeoMappingManager);
+    return d->maximumImageSize;
 }
 
 /*!
@@ -218,21 +192,8 @@ QSize QGeoMappingManager::maximumImageSize() const
 */
 void QGeoMappingManager::setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes)
 {
-    d_ptr->supportedMapTypes = mapTypes;
-}
-
-/*!
-    Sets the list of image formats supported by this QGeoMappingManager
-    instance to \a imageFormats.
-
-    Subclasses of QGeoCodingService should use this function to ensure that
-    supportedImageFormats() provides accurate information.
-
-    \sa QGeoMappingManager::supportedImageFormats()
-*/
-void QGeoMappingManager::setSupportedImageFormats(const QList<QString> &imageFormats)
-{
-    d_ptr->supportedImageFormats = imageFormats;
+    Q_D(QGeoMappingManager);
+    d->supportedMapTypes = mapTypes;
 }
 
 /*!
@@ -250,7 +211,8 @@ void QGeoMappingManager::setSupportedImageFormats(const QList<QString> &imageFor
 */
 void QGeoMappingManager::setMinimumZoomLevel(qreal minimumZoom)
 {
-    d_ptr->minimumZoomLevel = minimumZoom;
+    Q_D(QGeoMappingManager);
+    d->minimumZoomLevel = minimumZoom;
 }
 
 /*!
@@ -268,7 +230,8 @@ void QGeoMappingManager::setMinimumZoomLevel(qreal minimumZoom)
 */
 void QGeoMappingManager::setMaximumZoomLevel(qreal maximumZoom)
 {
-    d_ptr->maximumZoomLevel = maximumZoom;
+    Q_D(QGeoMappingManager);
+    d->maximumZoomLevel = maximumZoom;
 }
 
 /*!
@@ -286,7 +249,8 @@ void QGeoMappingManager::setMaximumZoomLevel(qreal maximumZoom)
 */
 void QGeoMappingManager::setMinimumImageSize(const QSize &minimumImageSize)
 {
-    d_ptr->minimumImageSize = minimumImageSize;
+    Q_D(QGeoMappingManager);
+    d->minimumImageSize = minimumImageSize;
 }
 
 /*!
@@ -304,76 +268,10 @@ void QGeoMappingManager::setMinimumImageSize(const QSize &minimumImageSize)
 */
 void QGeoMappingManager::setMaximumImageSize(const QSize &maximumImageSize)
 {
-    d_ptr->maximumImageSize = maximumImageSize;
+    Q_D(QGeoMappingManager);
+    d->maximumImageSize = maximumImageSize;
 }
 
-//QGeoMapViewport* QGeoMappingManager::createViewport(QGeoMapWidget *widget)
-//{
-//    return new QGeoMapViewport(widget);
-//}
-
-//void QGeoMappingManager::updateMapImage(const QGeoMapViewport &viewport)
-//{
-//}
-
-//QPointF QGeoMappingManager::coordinateToScreenPosition(const QGeoMapViewport *viewport, const QGeoCoordinate &coordinate) const
-//{
-//    return QPointF();
-//}
-
-//QGeoCoordinate QGeoMappingManager::screenPositionToCoordinate(const QGeoMapViewport *viewport, QPointF screenPosition) const
-//{
-//    return QGeoCoordinate();
-//}
-
-//void QGeoMappingManager::setTileSize(const QSize &tileSize);
-//QSize QGeoMappingManager::tileSize() const;
-
-//// TODO better way of returning these results
-//void QGeoMappingManager::coordinateToTileIndices(const QGeoCoordinate &coordinate, qint32 zoomLevel, qint32 *rowIndex, qint32 *columnIndex);
-//QGeoCoordinate QGeoMappingManager::tileIndicesToUpperLeftCoordinate(qint32 zoomLevel, qint32 rowIndex, qint32 columIndex);
-//QGeoBoundingBox QGeoMappingManager::getTileBounds(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex);
-
-//// TODO create a QGeoMapTileRequest object to make this saner?
-//QGeoMapReply* QGeoMappingManager::getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat);
-
-/*!
-    \fn void QGeoMappingManager::replyFinished(QGeoMapReply *reply)
-
-    Indicates that a request handled by this QGeoMappingManager object has
-    finished successfully.  The result of the request will be in \a reply.
-
-    Note that \a reply will be the same object returned by this
-    QGeoMappingManager instance when the request was issued, and that the
-    QGeoMapReply::finished() signal can be used instead of this signal if it
-    is more convinient to do so.
-
-    Do not delete the QGeoMapReply object in a slot connected to this signal
-    - use deleteLater() if it is necessary to do so.
-
-    \sa QGeoMapReply::finished()
-*/
-
-/*!
-    \fn void QGeoMappingManager::replyError(QGeoMapReply *reply,
-                                            QGeoMappingManager::ErrorCode errorCode,
-                                            QString errorString);
-
-    Indicates that a request handled by this QGeoMappingManager object has
-    failed.  The error is described by \a errorCode and \a errorString, and \a
-    reply is the QGeoMapReply object which was managing the result of the
-    corresponding service request.
-
-    Note that \a reply will be the same object returned by this
-    QGeoMappingManager instance when the request was issued, and that the
-    QGeoMapReply::error() signal can be used instead of this signal if it is
-    more convinient to do so.
-
-    Do not delete the QGeoMapReply object in a slot connected to this signal
-    - use deleteLater() if it is necessary to do so.
-
-    \sa QGeoMapReply::error()
-*/
 
 /*******************************************************************************
 *******************************************************************************/
@@ -382,7 +280,6 @@ QGeoMappingManagerPrivate::QGeoMappingManagerPrivate() {}
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other)
         : supportedMapTypes(other.supportedMapTypes),
-        supportedImageFormats(other.supportedImageFormats),
         minimumZoomLevel(other.minimumZoomLevel),
         maximumZoomLevel(other.maximumZoomLevel),
         minimumImageSize(other.minimumImageSize),
@@ -393,7 +290,6 @@ QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate() {}
 QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate & other)
 {
     supportedMapTypes = other.supportedMapTypes;
-    supportedImageFormats = other.supportedImageFormats;
     minimumZoomLevel = other.minimumZoomLevel;
     maximumZoomLevel = other.maximumZoomLevel;
     minimumImageSize = other.minimumImageSize;

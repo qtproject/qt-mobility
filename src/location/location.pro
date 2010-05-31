@@ -35,6 +35,8 @@ PUBLIC_HEADERS += \
                     qgeosatelliteinfosource.h \
                     qgeoserviceprovider.h \
                     qgeoserviceproviderplugin.h \
+                    qgeotiledmappingmanager.h \
+                    qgeotiledmapviewport.h \
                     qlandmark.h \
                     qlandmarkabstractrequest.h \
                     qlandmarkattributefilter.h \
@@ -87,6 +89,8 @@ PRIVATE_HEADERS += \
                     qgeoroutesegment_p.h \
                     qgeoroutingmanager_p.h \
                     qgeoserviceprovider_p.h \
+                    qgeotiledmappingmanager_p.h \
+                    qgeotiledmapviewport_p.h \
                     qlandmark_p.h \
                     qlandmarkabstractrequest_p.h \
                     qlandmarkboxfilter_p.h \
@@ -211,6 +215,8 @@ SOURCES += \
             qgeosatelliteinfosource.cpp \
             qgeoserviceprovider.cpp \
             qgeoserviceproviderplugin.cpp \
+            qgeotiledmappingmanager.cpp \
+            qgeotiledmapviewport.cpp \
             qlandmark.cpp \
             qlandmarkabstractrequest.cpp \
             qlandmarkattributefilter.cpp \

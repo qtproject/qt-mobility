@@ -68,6 +68,7 @@ private slots:
 
 private:
     QGeoMappingManager *m_mapManager;
+    QGeoMapViewport *m_viewport;
     QLineEdit *m_tileLong;
     QLineEdit *m_tileLat;
     QLineEdit *m_tileZoomLevel;

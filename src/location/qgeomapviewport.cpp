@@ -77,7 +77,7 @@ QTM_BEGIN_NAMESPACE
 //QGeoMapViewport::QGeoMapViewport(QGeoMappingManager *manager)
 //        : d_ptr(new QGeoMapViewportPrivate)
 //{
-//    d_ptr->manager = manager;
+//    d->manager = manager;
 //}
 
 ///*!
@@ -145,75 +145,116 @@ QTM_BEGIN_NAMESPACE
 //    corner of the \a painter.
 
 
-QGeoMapViewport::QGeoMapViewport(QGeoMapWidget *widget)
+QGeoMapViewport::QGeoMapViewport(QGeoMappingManager *manager, QGeoMapWidget *widget)
     : d_ptr(new QGeoMapViewportPrivate())
 {
-    d_ptr->widget = widget;
+    Q_D(QGeoMapViewport);
+    d->widget = widget;
+    d->manager = manager;
+}
+
+QGeoMapViewport::QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManager *manager, QGeoMapWidget *widget)
+    : d_ptr(dd)
+{
+    Q_D(QGeoMapViewport);
+    d->widget = widget;
+    d->manager = manager;
 }
 
 QGeoMapViewport::~QGeoMapViewport()
 {
-    delete d_ptr;
+    Q_D(QGeoMapViewport);
+
+    if (d->manager)
+        d->manager->removeViewport(this);
+
+    delete d;
+}
+
+QGeoMapWidget* QGeoMapViewport::widget() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->widget;
+}
+
+QGeoMappingManager* QGeoMapViewport::manager() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->manager;
 }
 
 void QGeoMapViewport::setZoomLevel(qreal zoomLevel)
 {
-    d_ptr->zoomLevel = zoomLevel;
+    Q_D(QGeoMapViewport);
+    d->zoomLevel = zoomLevel;
 }
 
 qreal QGeoMapViewport::zoomLevel() const
 {
-    return d_ptr->zoomLevel;
+    Q_D(const QGeoMapViewport);
+    return d->zoomLevel;
 }
 
 void QGeoMapViewport::setCenter(const QGeoCoordinate &center)
 {
-    d_ptr->center = center;
+    Q_D(QGeoMapViewport);
+    d->center = center;
 }
 
 QGeoCoordinate QGeoMapViewport::center() const
 {
-    return d_ptr->center;
+    Q_D(const QGeoMapViewport);
+    return d->center;
 }
 
-void QGeoMapViewport::setViewportSize(const QSize &size)
+void QGeoMapViewport::setViewportSize(const QSizeF &size)
 {
-    d_ptr->viewportSize = size;
+    Q_D(QGeoMapViewport);
+    d->viewportSize = size;
 }
 
-QSize QGeoMapViewport::viewportSize() const
+QSizeF QGeoMapViewport::viewportSize() const
 {
-    return d_ptr->viewportSize;
-}
-
-void QGeoMapViewport::setImageFormat(const QString &imageFormat)
-{
-    d_ptr->imageFormat = imageFormat;
-}
-
-QString QGeoMapViewport::imageFormat() const
-{
-    return d_ptr->imageFormat;
+    Q_D(const QGeoMapViewport);
+    return d->viewportSize;
 }
 
 void QGeoMapViewport::setMapType(QGeoMapWidget::MapType mapType)
 {
-    d_ptr->mapType = mapType;
+    Q_D(QGeoMapViewport);
+    d->mapType = mapType;
 }
 
 QGeoMapWidget::MapType QGeoMapViewport::mapType() const
 {
-    return d_ptr->mapType;
+    Q_D(const QGeoMapViewport);
+    return d->mapType;
+}
+
+void QGeoMapViewport::setImageChangesTriggerUpdates(bool trigger)
+{
+    Q_D(QGeoMapViewport);
+    d->imageChangesTriggerUpdates = trigger;
+}
+
+bool QGeoMapViewport::imageChangesTriggerUpdates() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->imageChangesTriggerUpdates;
 }
 
 void QGeoMapViewport::setMapImage(const QPixmap &mapImage)
 {
-    d_ptr->mapImage = mapImage;
+    Q_D(QGeoMapViewport);
+    d->mapImage = mapImage;
+    if (d->imageChangesTriggerUpdates)
+        d->widget->mapImageUpdated();
 }
 
-QPixmap QGeoMapViewport::mapImage() const
+QPixmap QGeoMapViewport::mapImage()
 {
-    return d_ptr->mapImage;
+    Q_D(QGeoMapViewport);
+    return d->mapImage;
 }
 
 /*******************************************************************************
@@ -223,11 +264,12 @@ QGeoMapViewportPrivate::QGeoMapViewportPrivate() {}
 
 QGeoMapViewportPrivate::QGeoMapViewportPrivate(const QGeoMapViewportPrivate &other)
     : widget(other.widget),
+    manager(other.manager),
     zoomLevel(other.zoomLevel),
     center(other.center),
     viewportSize(other.viewportSize),
-    imageFormat(other.imageFormat),
     mapType(other.mapType),
+    imageChangesTriggerUpdates(other.imageChangesTriggerUpdates),
     mapImage(other.mapImage) {}
 
 QGeoMapViewportPrivate::~QGeoMapViewportPrivate() {}
@@ -235,11 +277,12 @@ QGeoMapViewportPrivate::~QGeoMapViewportPrivate() {}
 QGeoMapViewportPrivate& QGeoMapViewportPrivate::operator= (const QGeoMapViewportPrivate &other)
 {
     widget = other.widget;
+    manager = other.manager;
     zoomLevel = other.zoomLevel;
     center = other.center;
     viewportSize = other.viewportSize;
-    imageFormat = other.imageFormat;
     mapType = other.mapType;
+    imageChangesTriggerUpdates = other.imageChangesTriggerUpdates;
     mapImage = other.mapImage;
 
     return *this;

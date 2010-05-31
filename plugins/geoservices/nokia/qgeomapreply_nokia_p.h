@@ -54,8 +54,7 @@
 //
 
 #include <qgeomapreply.h>
-#include <qgeomaprequestoptions.h>
-
+#include <qgeomapwidget.h>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE
@@ -70,7 +69,8 @@ public:
         int col;
         int zoomLevel;
         QSize size;
-        QGeoMapRequestOptions options;
+        QGeoMapWidget::MapType mapType;
+        QString imageFormat;
     };
 
     QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInfo, QObject *parent = 0);

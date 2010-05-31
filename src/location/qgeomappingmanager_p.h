@@ -65,12 +65,11 @@ class QGeoMappingManagerPrivate
 public:
     QGeoMappingManagerPrivate();
     QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other);
-    ~QGeoMappingManagerPrivate();
+    virtual ~QGeoMappingManagerPrivate();
 
     QGeoMappingManagerPrivate& operator= (const QGeoMappingManagerPrivate &other);
 
     QList<QGeoMapWidget::MapType> supportedMapTypes;
-    QList<QString> supportedImageFormats;
     qreal minimumZoomLevel;
     qreal maximumZoomLevel;
     QSize minimumImageSize;

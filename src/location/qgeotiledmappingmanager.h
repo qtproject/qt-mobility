@@ -39,60 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPWIDGET_H
-#define QGEOMAPWIDGET_H
+#ifndef QGEOTILEDMAPPINGMANAGER_H
+#define QGEOTILEDMAPPINGMANAGER_H
 
-#include "qgeocoordinate.h"
-#include <QGraphicsWidget>
+#include "qgeomappingmanager.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMappingManager;
-class QGeoBoundingBox;
+class QGeoTiledMappingManagerPrivate;
 
-class QGeoMapWidgetPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
+class Q_LOCATION_EXPORT QGeoTiledMappingManager : public QGeoMappingManager
 {
     Q_OBJECT
+
 public:
-    enum MapType {
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap
+    enum ErrorCode {
+        NoError
     };
 
-    QGeoMapWidget(QGeoMappingManager *manager);
-    ~QGeoMapWidget();
+    virtual ~QGeoTiledMappingManager();
 
-    QPainterPath shape() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
+    virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget);
 
-    qreal minimumZoomLevel() const;
-    qreal maximumZoomLevel() const;
+    virtual void updateMapImage(QGeoMapViewport *viewport);
 
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
+    virtual QPoint screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const;
 
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
+    virtual QGeoMapReply* getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat) const = 0;
 
-    void setMapType(MapType mapType);
-    MapType mapType() const;
+    QList<QString> supportedImageFormats() const;
+    QSize tileSize() const;
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
+    //    // TODO better way of returning these results
+    //    virtual void coordinateToTileIndices(const QGeoCoordinate &coordinate, qint32 zoomLevel, qint32 *rowIndex, qint32 *columnIndex);
+    //    virtual QGeoCoordinate tileIndicesToUpperLeftCoordinate(qint32 zoomLevel, qint32 rowIndex, qint32 columIndex);
+    //    virtual QGeoBoundingBox getTileBounds(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex);
+
+
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
+    QGeoTiledMappingManager();
+
+    void setSupportedImageFormats(const QList<QString> &imageFormats);
+    void setTileSize(const QSize &tileSize);
+
+signals:
+    void finished(QGeoMapReply* reply);
+    void error(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString = QString());
 
 private:
-    void mapImageUpdated();
 
-    QGeoMapWidgetPrivate *d_ptr;
-
-    friend class QGeoMapViewport;
+    Q_DECLARE_PRIVATE(QGeoTiledMappingManager)
+    Q_DISABLE_COPY(QGeoTiledMappingManager)
 };
 
 QTM_END_NAMESPACE

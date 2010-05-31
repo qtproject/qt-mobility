@@ -39,60 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPWIDGET_H
-#define QGEOMAPWIDGET_H
+#ifndef QGEOTILEDMAPVIEWPORT_P_H
+#define QGEOTILEDMAPVIEWPORT_P_H
 
-#include "qgeocoordinate.h"
-#include <QGraphicsWidget>
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qgeomapviewport_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMappingManager;
-class QGeoBoundingBox;
-
-class QGeoMapWidgetPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
+class QGeoTiledMapViewportPrivate : public QGeoMapViewportPrivate
 {
-    Q_OBJECT
 public:
-    enum MapType {
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap
-    };
+    QGeoTiledMapViewportPrivate();
+    QGeoTiledMapViewportPrivate(const QGeoTiledMapViewportPrivate &other);
+    ~QGeoTiledMapViewportPrivate();
+    QGeoTiledMapViewportPrivate& operator= (const QGeoTiledMapViewportPrivate &other);
 
-    QGeoMapWidget(QGeoMappingManager *manager);
-    ~QGeoMapWidget();
-
-    QPainterPath shape() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
-
-    qreal minimumZoomLevel() const;
-    qreal maximumZoomLevel() const;
-
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
-
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
-
-    void setMapType(MapType mapType);
-    MapType mapType() const;
-
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
-
-protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
-
-private:
-    void mapImageUpdated();
-
-    QGeoMapWidgetPrivate *d_ptr;
-
-    friend class QGeoMapViewport;
+    qulonglong x;
+    qulonglong y;
+    qulonglong width;
+    qulonglong height;
+    qulonglong zoomFactorX;
+    qulonglong zoomFactorY;
 };
 
 QTM_END_NAMESPACE

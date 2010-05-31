@@ -54,6 +54,7 @@
 //
 
 #include "qgeomapwidget.h"
+#include "qgeomappingmanager.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -62,18 +63,18 @@ class QGeoMapViewportPrivate
 public:
     QGeoMapViewportPrivate();
     QGeoMapViewportPrivate(const QGeoMapViewportPrivate &other);
-    ~QGeoMapViewportPrivate();
+    virtual ~QGeoMapViewportPrivate();
     QGeoMapViewportPrivate& operator= (const QGeoMapViewportPrivate &other);
 
     QGeoMapWidget *widget;
+    QGeoMappingManager *manager;
 
     qreal zoomLevel;
     QGeoCoordinate center;
-    QSize viewportSize;
-
-    QString imageFormat;
+    QSizeF viewportSize;
     QGeoMapWidget::MapType mapType;
 
+    bool imageChangesTriggerUpdates;
     QPixmap mapImage;
 };
 

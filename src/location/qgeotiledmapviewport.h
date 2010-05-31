@@ -39,60 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPWIDGET_H
-#define QGEOMAPWIDGET_H
+#ifndef QGEOTILEDMAPVIEWPORT_H
+#define QGEOTILEDMAPVIEWPORT_H
 
-#include "qgeocoordinate.h"
-#include <QGraphicsWidget>
+#include "qgeomapviewport.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMappingManager;
-class QGeoBoundingBox;
+class QGeoTiledMapViewportPrivate;
 
-class QGeoMapWidgetPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
+class Q_LOCATION_EXPORT QGeoTiledMapViewport : public QGeoMapViewport
 {
-    Q_OBJECT
 public:
-    enum MapType {
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap
-    };
+    QGeoTiledMapViewport(QGeoMappingManager *manager, QGeoMapWidget *widget);
+    virtual ~QGeoTiledMapViewport();
 
-    QGeoMapWidget(QGeoMappingManager *manager);
-    ~QGeoMapWidget();
-
-    QPainterPath shape() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
-
-    qreal minimumZoomLevel() const;
-    qreal maximumZoomLevel() const;
-
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
+    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
-    void setMapType(MapType mapType);
-    MapType mapType() const;
+    void setZoomLevel(qreal zoomLevel);
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
+    void setTopLeftMapPixelX(qulonglong x);
+    qulonglong topLeftMapPixelX() const;
+
+    void setTopLeftMapPixelY(qulonglong y);
+    qulonglong topLeftMapPixelY() const;
+
+    qulonglong zoomFactorX() const;
+    qulonglong zoomFactorY() const;
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
+    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
+    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
 
 private:
-    void mapImageUpdated();
-
-    QGeoMapWidgetPrivate *d_ptr;
-
-    friend class QGeoMapViewport;
+    Q_DECLARE_PRIVATE(QGeoTiledMapViewport);
+    Q_DISABLE_COPY(QGeoTiledMapViewport)
 };
 
 QTM_END_NAMESPACE

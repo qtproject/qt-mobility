@@ -54,8 +54,7 @@
 //
 
 #include <qgeoserviceprovider.h>
-#include <qgeomappingmanager.h>
-#include <qgeomaprequestoptions.h>
+#include <qgeotiledmappingmanager.h>
 
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>
@@ -65,7 +64,7 @@
 
 QTM_USE_NAMESPACE
 
-class QGeoMappingManagerNokia : public QGeoMappingManager
+class QGeoMappingManagerNokia : public QGeoTiledMappingManager
 {
     Q_OBJECT
 public:
@@ -74,18 +73,7 @@ public:
                             QString *errorString);
     virtual ~QGeoMappingManagerNokia();
 
-    virtual QGeoMapReply* getMapImage(const QGeoCoordinate &center,
-                                      qreal zoomLevel,
-                                      const QSize &size,
-                                      const QGeoMapRequestOptions &requestOptions);
-
-    virtual QGeoMapReply* getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
-                                       const QSize &size,
-                                       const QGeoMapRequestOptions &requestOptions);
-
-    virtual void getTileQuadKey(const QGeoCoordinate& coordinate,
-                                qint32 zoomLevel,
-                                qint32* row, qint32* col);
+    QGeoMapReply* getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat) const;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerNokia)
@@ -98,7 +86,7 @@ private slots:
 
 private:
     static QString sizeToStr(const QSize &size);
-    static QString mapTypeToStr(MapType type);
+    static QString mapTypeToStr(QGeoMapWidget::MapType type);
     static void getMercatorTileIndex(const QGeoCoordinate& coordinate, qint32 level, qint32* row, qint32* col);
     static qint64 getTileIndex(qint32 row, qint32 col, qint32 zoomLevel);
 
