@@ -58,6 +58,7 @@ public:
 
     QList<QByteArray> devices(const QByteArray &service) const;
     QString deviceDescription(const QByteArray &service, const QByteArray &device);
+    QVariant deviceProperty(const QByteArray &service, const QByteArray &device, const QByteArray &property);
 };
 
 #endif // V4LSERVICEPLUGIN_H
