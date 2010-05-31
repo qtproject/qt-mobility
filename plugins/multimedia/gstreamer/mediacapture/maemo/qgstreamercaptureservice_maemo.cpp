@@ -169,7 +169,6 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
 
         m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
         m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
-
     }
     
     if (!m_captureSession) {
@@ -194,14 +193,24 @@ QGstreamerCaptureService::~QGstreamerCaptureService()
 
 QMediaControl *QGstreamerCaptureService::requestControl(const char *name)
 {
-    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
-        return m_videoRenderer;
+    if (!m_captureSession)
+        return 0;
 
-    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
-        return m_videoWindow;
+    if (!m_videoOutput) {
+        if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+            m_videoOutput = m_videoRenderer;
+            m_captureSession->setVideoPreview(m_videoRendererFactory);
+        } else if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+            m_videoOutput = m_videoWindow;
+            m_captureSession->setVideoPreview(m_videoWindowFactory);
+        } else if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
+            m_captureSession->setVideoPreview(m_videoWidgetFactory);
+            m_videoOutput = m_videoWidgetControl;
+        }
 
-    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
-        return m_videoWidgetControl;
+        if (m_videoOutput)
+            return m_videoOutput;
+    }
 
     if (qstrcmp(name,QAudioEndpointSelector_iid) == 0)
         return m_audioInputEndpointSelector;
@@ -234,5 +243,4 @@ void QGstreamerCaptureService::releaseControl(QMediaControl *control)
         m_captureSession->setVideoPreview(0);
     }
 }
-
 
