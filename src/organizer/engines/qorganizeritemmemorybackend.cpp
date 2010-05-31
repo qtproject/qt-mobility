@@ -270,9 +270,15 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
         switch (freq) {
             case QOrganizerItemRecurrenceRule::Yearly:
             {
+                if (tempDate.day() != startDate.day() || tempDate.month() != startDate.month()) {
+                    // we haven't reached the right day of the year yet.
+                    tempDate = tempDate.addDays(1);
+                    continue;
+                }
+
                 int yearsDelta = tempDate.year() - startDate.year();
                 if (yearsDelta % interval > 0) {
-                    // this year doesn't match.
+                    // this year doesn't match the interval.
                     tempDate = tempDate.addDays(tempDate.daysInYear() - tempDate.dayOfYear());
                     continue;
                 }
@@ -281,6 +287,12 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
 
             case QOrganizerItemRecurrenceRule::Monthly:
             {
+                if (tempDate.day() != startDate.day()) {
+                    // we haven't reached the right day of the month yet.
+                    tempDate = tempDate.addDays(1);
+                    continue;
+                }
+
                 int monthsDelta = tempDate.month() - startDate.month() + (12 * (tempDate.year() - startDate.year()));
                 if (monthsDelta % interval > 0) {
                     // this month doesn't match.
