@@ -4,7 +4,6 @@ INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/audio
 
 include (../../../common.pri)
 
-DEFINES += SRCDIR=\\\"$$PWD/\\\"
 
 SOURCES += tst_qaudiodeviceinfo.cpp
 
