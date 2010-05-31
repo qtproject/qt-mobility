@@ -59,7 +59,7 @@
 QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
-        (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
+        (QMediaPlaylistIOInterface_iid, QLatin1String("playlistformats"), Qt::CaseInsensitive))
 
 
 /*!
