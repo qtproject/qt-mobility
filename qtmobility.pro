@@ -43,17 +43,25 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
     win32:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
     symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
 
+    PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
+    system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
+
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
         FORMATDIR=$$[QT_INSTALL_DATA]\mkspecs\features
         FORMATDIR=$$replace(FORMATDIR,/,\\ )
         system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobility.prf $$FORMATDIR")
+        system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobilityconfig.prf $$FORMATDIR")
     }
+
+    # install config file
+    config.path = $$[QT_INSTALL_DATA]/mkspecs/features
+    config.files = $$QT_MOBILITY_BUILD_TREE/features/mobilityconfig.prf
 
     # install feature file
     feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
     feature.files = $$QT_MOBILITY_BUILD_TREE/features/mobility.prf
-    INSTALLS += feature
+    INSTALLS += feature config
 }
 
 TEMPLATE = subdirs
