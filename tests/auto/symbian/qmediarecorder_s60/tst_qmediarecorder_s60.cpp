@@ -101,8 +101,8 @@ void tst_QMediaRecorder::initTestCase()
     captureSource = new QAudioCaptureSource;
     audiocapture = new QMediaRecorder(captureSource);
 
-    audioEndpoint = qobject_cast<QAudioEndpointSelector*>(audiocapture->service()->control(QAudioEndpointSelector_iid));
-    audioEncoder = qobject_cast<QAudioEncoderControl*>(audiocapture->service()->control(QAudioEncoderControl_iid));
+    audioEndpoint = qobject_cast<QAudioEndpointSelector*>(captureSource->service()->requestControl(QAudioEndpointSelector_iid));
+    audioEncoder = qobject_cast<QAudioEncoderControl*>(captureSource->service()->requestControl(QAudioEncoderControl_iid));
 }
 
 void tst_QMediaRecorder::cleanupTestCase()
