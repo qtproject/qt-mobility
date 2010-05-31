@@ -82,7 +82,7 @@ public:
     QVersitOrganizerImporter();
     ~QVersitOrganizerImporter();
 
-    bool importDocuments(const QList<QVersitDocument>& documents);
+    bool importDocument(const QVersitDocument& documents);
     QList<QOrganizerItem> items() const;
     QMap<int, Error> errors() const;
 

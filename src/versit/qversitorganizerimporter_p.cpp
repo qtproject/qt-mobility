@@ -43,6 +43,7 @@
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
+#include "qtorganizer.h"
 
 
 QTM_USE_NAMESPACE
@@ -59,11 +60,104 @@ QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
     delete mDefaultResourceHandler;
 }
 
-bool QVersitOrganizerImporterPrivate::importItem(
-        const QVersitDocument& versitDocument,
+bool QVersitOrganizerImporterPrivate::importDocument(
+        const QVersitDocument& document,
         QOrganizerItem* item,
         QVersitOrganizerImporter::Error* error)
 {
-    // TODO
+    if (document.componentType() == QLatin1String("VEVENT")) {
+        item->setType(QOrganizerItemType::TypeEvent);
+    } else {
+        *error = QVersitOrganizerImporter::InvalidDocumentError;
+        return false;
+    }
+    const QList<QVersitProperty> properties = document.properties();
+    if (properties.isEmpty()) {
+        *error = QVersitOrganizerImporter::EmptyDocumentError;
+        return false;
+    }
+
+    foreach (const QVersitProperty& property, properties) {
+        importProperty(document, property, item);
+    }
     return true;
+}
+
+void QVersitOrganizerImporterPrivate::importProperty(
+        const QVersitDocument& document,
+        const QVersitProperty& property,
+        QOrganizerItem* item)
+{
+    QList<QOrganizerItemDetail> updatedDetails;
+
+    bool success = false;
+    if (property.name() == QLatin1String("SUMMARY")) {
+        success = createDisplayLabel(property, item, &updatedDetails);
+    }
+
+    if (document.componentType() == QLatin1String("VEVENT")) {
+        if (property.name() == QLatin1String("DTSTART")) {
+            success = createStartDateTime(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("DTEND")) {
+            success = createEndDateTime(property, item, &updatedDetails);
+        }
+    }
+
+    foreach (QOrganizerItemDetail detail, updatedDetails) {
+        item->saveDetail(&detail);
+    }
+}
+
+bool QVersitOrganizerImporterPrivate::createDisplayLabel(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails)
+{
+    if (property.value().isEmpty())
+        return false;
+    QOrganizerItemDisplayLabel displayLabel(item->detail<QOrganizerItemDisplayLabel>());
+    displayLabel.setLabel(property.value());
+    updatedDetails->append(displayLabel);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createStartDateTime(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QDateTime datetime = parseDateTime(property.value());
+    if (!datetime.isValid())
+        return false;
+    QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
+    etr.setStartDateTime(datetime);
+    updatedDetails->append(etr);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createEndDateTime(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QDateTime datetime = parseDateTime(property.value());
+    if (!datetime.isValid())
+        return false;
+    QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
+    etr.setEndDateTime(datetime);
+    updatedDetails->append(etr);
+    return true;
+}
+
+QDateTime QVersitOrganizerImporterPrivate::parseDateTime(QString str)
+{
+    bool utc = str.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive);
+    if (utc)
+        str.chop(1); // take away z from end;
+    QDateTime dt(QDateTime::fromString(str, QLatin1String("yyyyMMddTHHmmss")));
+    if (utc)
+        dt.setTimeSpec(Qt::UTC);
+    return dt;
 }

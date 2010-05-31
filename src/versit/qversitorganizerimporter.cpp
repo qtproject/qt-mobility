@@ -68,26 +68,38 @@ QVersitOrganizerImporter::~QVersitOrganizerImporter()
 }
 
 /*!
- * Converts \a documents into a corresponding list of QOrganizerItems.  After calling this, the
+ * Converts \a document into a corresponding list of QOrganizerItems.  After calling this, the
  * converted organizer items can be retrieved by calling items().
  *
- * Returns true on success.  If any of the documents cannot be imported as organizer items (eg. they
- * don't conform to the iCalendar format), false is returned and errors() will return a list
- * describing the errors that occurred.  The successfully imported documents will still be available
- * via items().
+ * Returns true on success.  The document should contain at least one subdocument.  In the
+ * importing process, each subdocument roughly corresponds to a QOrganizerItem.  If any of the
+ * subdocuments cannot be imported as organizer items (eg. they don't conform to the iCalendar
+ * format), false is returned and errors() will return a list describing the errors that occurred.
+ * The successfully imported items will still be available via items().
  *
  * \sa items(), errors()
  */
-bool QVersitOrganizerImporter::importDocuments(const QList<QVersitDocument>& documents)
+bool QVersitOrganizerImporter::importDocument(const QVersitDocument& document)
 {
-    int documentIndex = 0;
     d->mItems.clear();
     d->mErrors.clear();
     bool ok = true;
-    foreach (const QVersitDocument& document, documents) {
+    if (document.type() != QVersitDocument::ICalendar20Type
+        || document.componentType() != QLatin1String("VCALENDAR")) {
+        d->mErrors.insert(-1, QVersitOrganizerImporter::InvalidDocumentError);
+        return false;
+    }
+    const QList<QVersitDocument> subDocuments = document.subDocuments();
+    if (subDocuments.isEmpty()) {
+        d->mErrors.insert(-1, QVersitOrganizerImporter::EmptyDocumentError);
+        return false;
+    }
+
+    int documentIndex = 0;
+    foreach (const QVersitDocument& subDocument, subDocuments) {
         QOrganizerItem item;
         QVersitOrganizerImporter::Error error;
-        if (d->importItem(document, &item, &error)) {
+        if (d->importDocument(subDocument, &item, &error)) {
             d->mItems.append(item);
         } else {
             d->mErrors.insert(documentIndex, error);

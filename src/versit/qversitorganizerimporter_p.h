@@ -66,15 +66,30 @@ class Q_AUTOTEST_EXPORT QVersitOrganizerImporterPrivate
 public:
     QVersitOrganizerImporterPrivate();
     ~QVersitOrganizerImporterPrivate();
-    bool importItem(const QVersitDocument& versitDocument,
-                    QOrganizerItem* item,
-                    QVersitOrganizerImporter::Error* error);
+    bool importDocument(const QVersitDocument& versitDocument,
+                        QOrganizerItem* item,
+                        QVersitOrganizerImporter::Error* error);
+    void importProperty(const QVersitDocument& document,
+                        const QVersitProperty& property,
+                        QOrganizerItem* item);
 
     QList<QOrganizerItem> mItems;
     QMap<int, QVersitOrganizerImporter::Error> mErrors;
     QVersitOrganizerImporterPropertyHandler* mPropertyHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
+
+private:
+    bool createDisplayLabel(const QVersitProperty& property,
+                            QOrganizerItem* item,
+                            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createStartDateTime(const QVersitProperty& property,
+                             QOrganizerItem* item,
+                             QList<QOrganizerItemDetail>* updatedDetails);
+    bool createEndDateTime(const QVersitProperty& property,
+                           QOrganizerItem* item,
+                           QList<QOrganizerItemDetail>* updatedDetails);
+    QDateTime parseDateTime(QString str);
 };
 
 QTM_END_NAMESPACE
