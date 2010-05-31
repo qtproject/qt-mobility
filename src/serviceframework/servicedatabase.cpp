@@ -1672,7 +1672,7 @@ QString ServiceDatabase::databasePath() const
 #ifdef Q_OS_SYMBIAN
         QString qtVersion(qVersion());
         qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
-        path = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "QtServiceFramework_" +
+        path = QDir::toNativeSeparators(QCoreApplication::applicationDirPath() + "/QtServiceFramework_" +
             qtVersion + "_system" + QLatin1String(".db"));
 #else
         QSettings settings(QSettings::SystemScope, "Nokia", "Services");

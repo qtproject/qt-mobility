@@ -1245,7 +1245,7 @@ void tst_QServiceManager::setInterfaceDefault_descriptor()
 
     QCOMPARE(mgr.interfaceDefault(interfaceName), desc);
 
-#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+#if defined(Q_OS_SYMBIAN)
     QCOMPARE(mgr.interfaceDefault(interfaceName).isValid(), expectFound);
 #else
     QServiceManager mgrWithOtherScope(scope_find);
