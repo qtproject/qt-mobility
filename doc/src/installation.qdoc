@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -200,7 +200,7 @@ platform have been met before building.
 If Qt is installed for multiple platforms it is also important 
 to ensure that the correct version of \c{qmake} is being used.
 
-bold{Note:} Static builds of Qt are not supported by Qt Mobility.
+\bold{Note:} Static builds of Qt are not supported by Qt Mobility.
 
 \section2 Building On Unix
 

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,8 @@
 #include <qsensorbackend.h>
 #include <qaccelerometer.h>
 
+#if !defined(HAS_NO_SENSOR_PROVISION)
+
 // symbian
 #include <rrsensorapi.h>
 
@@ -75,5 +77,7 @@ private:
     QAccelerometerReading m_reading;
     qreal m_sampleFactor;
 };
+
+#endif // !HAS_NO_SENSOR_PROVISION
 
 #endif // QS60SENSORAPIACCELEROMETER_H

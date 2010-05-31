@@ -3588,7 +3588,6 @@
             <file>qservice.html</file>
             <file>qmessageaccount-members.html</file>
             <file>servicebrowser-servicebrowser-h.html</file>
-            <file>qmlcontacts-qmlcontacts-cpp.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialer-h.html</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
@@ -3638,6 +3637,7 @@
             <file>qgraphicsvideoitem.html</file>
             <file>preview.html</file>
             <file>samplephonebook-contactlistpage-cpp.html</file>
+            <file>qmlcontacts-qmlcontactmodel-cpp.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qcontactpresence.html</file>
             <file>qvideowidget-members.html</file>
@@ -3658,7 +3658,6 @@
             <file>qcontactaddress.html</file>
             <file>player-main-cpp.html</file>
             <file>qmediaplaylistioplugin.html</file>
-            <file>qmlcontacts-qmlcontactsa-h.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
             <file>flickrdemo-connectivityhelper-cpp.html</file>
@@ -3730,8 +3729,8 @@
             <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
             <file>audiorecorder-main-cpp.html</file>
-            <file>images/sensors-coordinates2.jpg</file>
             <file>qcontactrelationshipremoverequest-members.html</file>
+            <file>images/sensors-coordinates2.jpg</file>
             <file>images/sensors-rotation-anim.gif</file>
             <file>sfw-notes-sfwnotes-cpp.html</file>
             <file>weatherinfo-icons-weather-sunny-svg.html</file>
@@ -3777,9 +3776,7 @@
             <file>qgeopositioninfo.html</file>
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
-            <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
             <file>images/sensors-rotation2.jpg</file>
-            <file>qmlcontacts-qmlcontact-h.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
             <file>qcontactmanager.html</file>
@@ -3821,6 +3818,7 @@
             <file>qcontacttype.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-cpp.html</file>
             <file>bluetoothtransferplugin.html</file>
+            <file>qmlcontacts-qmlcontactmodel-h.html</file>
             <file>qsysteminfo.html</file>
             <file>audiorecorder-audiorecorder-cpp.html</file>
             <file>qmagnetometerreading-members.html</file>
@@ -3860,7 +3858,6 @@
             <file>qcontactremoverequest.html</file>
             <file>logfilepositionsource-logfilepositionsource-h.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialerplugin-cpp.html</file>
-            <file>battery-charge-battery-subscriber-battery-subscriber-qrc.html</file>
             <file>notesmanagerplugin-notesmanager-h.html</file>
             <file>qmediaplaylistnavigator.html</file>
             <file>qmediaresource-members.html</file>
@@ -3931,8 +3928,8 @@
             <file>player-player-h.html</file>
             <file>qmediaservice.html</file>
             <file>qcompassfilter-members.html</file>
-            <file>sfw-notes-sfwnotes-qrc.html</file>
             <file>qcontactrelationship-members.html</file>
+            <file>sfw-notes-sfwnotes-qrc.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
@@ -3981,7 +3978,6 @@
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
-            <file>qmlcontacts-qmlcontact-cpp.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
             <file>images/flickr-demo.png</file>

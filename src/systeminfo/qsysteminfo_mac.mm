@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -525,9 +525,9 @@ void networkChangeCallback(SCDynamicStoreRef /*dynamicStore*/, CFArrayRef change
 }
 
 #ifdef MAC_SDK_10_6
+QtMLangListener *langListener;
 #endif
 
-QtMLangListener *langListener;
 
 QLangLoopThread::QLangLoopThread(QObject *parent)
     :QThread(parent)
@@ -543,7 +543,9 @@ void QLangLoopThread::quit()
     mutex.lock();
     keepRunning = false;
     CFRunLoopStop(CFRunLoopGetCurrent());
+#ifdef MAC_SDK_10_6
     [langListener release];
+#endif
     mutex.unlock();
     wait();
 }

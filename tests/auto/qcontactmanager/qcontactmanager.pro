@@ -20,6 +20,5 @@ symbian: {
     TARGET.CAPABILITY = ReadUserData \
                         WriteUserData \
                         ReadDeviceData \
-                        WriteDeviceData \
-                        AllFiles
+                        WriteDeviceData
 }

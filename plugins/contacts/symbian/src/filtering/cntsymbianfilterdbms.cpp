@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -148,6 +148,11 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
         }
         // The resulting filter is handled with a recursive function call
         result = contacts(intersectionFilter, sortOrders, filterSupportedFlag, error);
+    } else if (filter == QContactFilter()) {
+        // Empty filter -> don't do any filtering and tell the caller to not
+        // to do any filtering either
+        filterSupportedFlag = true;
+        result = filterContacts(QContactInvalidFilter(), error);
     } else {
         FilterSupport filterSupport = filterSupportLevel(filter);
         if (filterSupport == Supported) {
@@ -283,7 +288,6 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
             }            
         // display label, this is a special case that contains several name
         // fields and company name
-        //TODO: "unnamed" display label is not supported currently
         } else if (defName == QContactDisplayLabel::DefinitionName) {
             
             if (matchFlags == QContactFilter::MatchStartsWith) {

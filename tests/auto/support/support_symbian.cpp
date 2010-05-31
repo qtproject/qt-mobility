@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -342,7 +342,7 @@ QMessageAccountId createPopAndSmtpAccountL(const TDesC& accountName, const TDesC
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-    return QMessageAccountId(addIdPrefix(QString::number(popAccount.iPopService)));
+    return QMessageAccountId(addIdPrefix(QString::number(popAccount.iPopService), SymbianHelpers::EngineTypeMTM));
 }
 
 QMessageAccountId createPopAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
@@ -465,7 +465,7 @@ QMessageAccountId createImapAndSmtpAccountL(const TDesC& accountName, const TDes
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-    return QMessageAccountId(addIdPrefix(QString::number(imapAccount.iImapService)));
+    return QMessageAccountId(addIdPrefix(QString::number(imapAccount.iImapService), SymbianHelpers::EngineTypeMTM));
 }
 
 QMessageAccountId createImapAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
@@ -520,7 +520,7 @@ QMessageFolderId addFolderL(const TDesC& symbianAccountName, const TDesC& symbia
     serviceEntryIdString = nullString.left(8-serviceEntryIdString.length()) + serviceEntryIdString;
     QString folderIdString = QString::number(folderId);
     folderIdString = nullString.left(8-folderIdString.length()) + folderIdString;
-    return addIdPrefix(serviceEntryIdString+folderIdString);
+    return addIdPrefix(serviceEntryIdString+folderIdString, SymbianHelpers::EngineTypeMTM);
 }
 
 QMessageFolderId addFolder(const Parameters &params)
