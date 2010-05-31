@@ -142,7 +142,7 @@ on which parts of an API is utilized by an application.
     \o ReadUserData NetworkServices (NetworkControl for QNetworkSession::stop())
 \row
     \o \l {Contacts}
-    \o ReadUserData WriteUserData SwEvent ReadDeviceData WriteDeviceData
+    \o ReadUserData WriteUserData
 \row
     \o \l {Location}
     \o Location
