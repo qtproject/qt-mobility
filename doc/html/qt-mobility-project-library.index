@@ -6876,6 +6876,8 @@
             <contents name="audio" title="Audio" level="2"/>
             <contents name="video" title="Video" level="2"/>
             <contents name="radio" title="Radio" level="2"/>
+            <contents name="extending-for-symbian-and-maemo" title="Extending for Symbian and Maemo" level="1"/>
+            <contents name="adding-a-media-service-provider" title="Adding a Media Service Provider" level="2"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="record-a-sound-source" title="Record a Sound Source" level="2"/>
             <contents name="play-a-media-file" title="Play a Media File" level="2"/>
