@@ -408,6 +408,10 @@ QLandmark retrieveLandmark(const QString &connectionName, const QLandmarkId &lan
     return lm;
 }
 
+QString landmarkIdsDefaultQueryString()
+{
+    return QString("SELECT id FROM landmark ");
+}
 
 QString landmarkIdsNameQueryString(const QLandmarkNameFilter &filter)
 {
@@ -448,6 +452,7 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         case QLandmarkFilter::InvalidFilter:
             break;
         case QLandmarkFilter::DefaultFilter:
+            queryString = landmarkIdsDefaultQueryString();
             break;
         case QLandmarkFilter::NameFilter: {
                 QLandmarkNameFilter nameFilter;
@@ -487,15 +492,19 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
 
         if (sortOrders.length() == 1 && sortOrders.at(0).type() == QLandmarkSortOrder::NameSort) {
             QLandmarkNameSort nameSort = sortOrders.at(0);
-            if (nameSort.direction() == Qt::AscendingOrder) {
-                queryString.append("ORDER BY name ASC");
-            } else {
-                queryString.append("ORDER BY nameDesc");
-            }
+
+            queryString.append("ORDER BY name ");
+
+            if (nameSort.caseSensitivity() == Qt::CaseInsensitive)
+                queryString.append("COLLATE NOCASE ");
+
+            if (nameSort.direction() == Qt::AscendingOrder)
+                queryString.append("ASC ");
+            else
+                queryString.append("DESC ");
         }
 
         queryString.append(";");
-
         QSqlQuery query(db);
         if (!query.exec(queryString)) {
             if (error)

@@ -234,12 +234,12 @@ private slots:
         QLandmarkIdFilter idFilter;
         idFilter.append(id1);
         fetchRequest.setFilter(idFilter);
-
         QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
         fetchRequest.start();
+
         QTest::qWait(1000);
         QCOMPARE(spy.count(),2);
-
+        spy.clear();
         QCOMPARE(fetchRequest.landmarks().count(),0);
 
         //test retrieval of existing landmark via id
@@ -1867,6 +1867,119 @@ private slots:
         QLandmarkNameSort sortDescending(Qt::DescendingOrder);
 
         lms = m_manager->landmarks(filter, sortDescending);
+        QCOMPARE(lms, expectedDescending);
+    }
+
+    void sortLandmarksNameAsync() {
+        QLandmark lm1;
+        lm1.setName("b");
+        QVERIFY(m_manager->saveLandmark(&lm1));
+
+        QLandmark lm2;
+        lm2.setName("a");
+        QVERIFY(m_manager->saveLandmark(&lm2));
+
+        QLandmark lm3;
+        lm3.setName("c");
+        QVERIFY(m_manager->saveLandmark(&lm3));
+
+        QLandmark lm4;
+        lm4.setName("C");
+        QVERIFY(m_manager->saveLandmark(&lm4));
+
+        QLandmark lm5;
+        lm5.setName("A");
+        QVERIFY(m_manager->saveLandmark(&lm5));
+
+        QLandmark lm6;
+        lm6.setName("B");
+        QVERIFY(m_manager->saveLandmark(&lm6));
+
+        QList<QLandmark> expectedAscending;
+        expectedAscending << lm2;
+        expectedAscending << lm5;
+        expectedAscending << lm1;
+        expectedAscending << lm6;
+        expectedAscending << lm3;
+        expectedAscending << lm4;
+
+        QList<QLandmark> expectedDescending;
+        expectedDescending << lm3;
+        expectedDescending << lm4;
+        expectedDescending << lm1;
+        expectedDescending << lm6;
+        expectedDescending << lm2;
+        expectedDescending << lm5;
+
+        //test case insensitive ascending order
+        QLandmarkFilter filter;
+        QLandmarkNameSort sortAscending(Qt::AscendingOrder);
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        fetchRequest.setSorting(sortAscending);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.start();
+
+        QTest::qWait(1000);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+        QList<QLandmark> lms = fetchRequest.landmarks();
+        QCOMPARE(lms, expectedAscending);
+
+        //test case insensitive descending order
+        QLandmarkNameSort sortDescending(Qt::DescendingOrder);
+        fetchRequest.setSorting(sortDescending);
+        fetchRequest.start();
+
+        QTest::qWait(1000);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+        lms = fetchRequest.landmarks();
+        QCOMPARE(lms, expectedDescending);
+
+        //test case sensitive ascending order
+        expectedAscending.clear();
+        expectedAscending << lm5;
+        expectedAscending << lm6;
+        expectedAscending << lm4;
+        expectedAscending << lm2;
+        expectedAscending << lm1;
+        expectedAscending << lm3;
+
+        sortAscending.setCaseSensitivity(Qt::CaseSensitive);
+        fetchRequest.setSorting(sortAscending);
+        fetchRequest.start();
+
+        QTest::qWait(1000);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+        lms = fetchRequest.landmarks();
+        QCOMPARE(lms, expectedAscending);
+
+        //test case sensitive descending order
+        expectedDescending.clear();
+        expectedDescending << lm3;
+        expectedDescending << lm1;
+        expectedDescending << lm2;
+        expectedDescending << lm4;
+        expectedDescending << lm6;
+        expectedDescending << lm5;
+
+        sortDescending.setCaseSensitivity(Qt::CaseSensitive);
+        fetchRequest.setSorting(sortDescending);
+        fetchRequest.start();
+
+        QTest::qWait(1000);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+        lms = fetchRequest.landmarks();
         QCOMPARE(lms, expectedDescending);
     }
 
