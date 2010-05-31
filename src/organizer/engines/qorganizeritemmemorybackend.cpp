@@ -332,7 +332,7 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
                 int daysDelta = startDate.daysTo(tempDate);
                 if (daysDelta % interval > 0) {
                     // this day doesn't match.
-                    tempDate = tempDate.addDays(tempDate.daysInMonth() - tempDate.day());
+                    tempDate = tempDate.addDays(daysDelta % interval);
                     continue;
                 }
             }
