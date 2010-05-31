@@ -293,19 +293,23 @@ QDate QOrganizerItemMemoryEngine::nextMatchingDate(const QDate& currDate, const 
             case QOrganizerItemRecurrenceRule::Weekly:
             {
                 // Weekly is a tricky one, because of ISO week stuff.
+                // first, get the tempDate to fall on a "7 days-from-startdate" multiple
+                while (startDate.daysTo(tempDate) % 7 > 0)
+                    tempDate = tempDate.addDays(1);
+
                 int weekCount = 0;
                 QDate weeklyDate = startDate;
                 while (weeklyDate < tempDate) {
                     int weeklyDateWeek = weeklyDate.weekNumber();
-                    weeklyDate.addDays(1);
+                    weeklyDate = weeklyDate.addDays(1);
                     if (weeklyDate.weekNumber() > weeklyDateWeek) {
                         weekCount += 1;
                     }
                 }
 
                 if (weekCount % interval > 0) {
-                    // this week doesn't match.  only add one because it's tricky to calculate the next week boundary.
-                    tempDate = tempDate.addDays(1);
+                    // this week doesn't match.
+                    tempDate = tempDate.addDays(7);
                     continue;
                 }
             }
