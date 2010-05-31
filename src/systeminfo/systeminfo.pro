@@ -113,6 +113,7 @@ unix: {
             DEFINES += SYMBIAN_3_1
         }        
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+        INCLUDEPATH += symbian/stubs
         DEPENDPATH += symbian
         
         SOURCES += qsysteminfo_s60.cpp \
