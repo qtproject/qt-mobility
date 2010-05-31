@@ -471,11 +471,13 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     }
 
     // XXX TODO: something better than this linear search...
-    // Grab all details from the generator except the recurrence information.
+    // Grab all details from the generator except the recurrence information, and event/todo time range
     QList<QOrganizerItemDetail> allDets = generator.details();
     QList<QOrganizerItemDetail> occDets;
     foreach (const QOrganizerItemDetail& det, allDets) {
-        if (det.definitionName() != QOrganizerItemRecurrence::DefinitionName) {
+        if (det.definitionName() != QOrganizerItemRecurrence::DefinitionName
+                && det.definitionName() != QOrganizerItemEventTimeRange::DefinitionName
+                && det.definitionName() != QOrganizerItemTodoTimeRange::DefinitionName) {
             occDets.append(det);
         }
     }
@@ -490,6 +492,30 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     foreach (const QOrganizerItemDetail& det, occDets) {
         QOrganizerItemDetail modifiable = det;
         instanceItem.saveDetail(&modifiable);
+    }
+
+    // and update the time range in the instance based on the current instance date
+    if (generator.type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerItemEventTimeRange etr = generator.detail<QOrganizerItemEventTimeRange>();
+        QDateTime temp = etr.startDateTime();
+        temp.setDate(rdate.date());
+        etr.setStartDateTime(temp);
+        temp = etr.endDateTime();
+        temp.setDate(rdate.date());
+        etr.setEndDateTime(temp);
+        instanceItem.saveDetail(&etr);
+    }
+
+    // for todo's?
+    if (generator.type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerItemTodoTimeRange ttr = generator.detail<QOrganizerItemTodoTimeRange>();
+        QDateTime temp = ttr.dueDateTime();
+        temp.setDate(rdate.date());
+        ttr.setDueDateTime(temp);
+        temp = ttr.notBeforeDateTime();
+        temp.setDate(rdate.date());
+        ttr.setNotBeforeDateTime(temp);
+        instanceItem.saveDetail(&ttr);
     }
 
     return instanceItem;
