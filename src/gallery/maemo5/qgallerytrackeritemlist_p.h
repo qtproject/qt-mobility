@@ -98,6 +98,12 @@ public:
 
     bool event(QEvent *event);
 
+public Q_SLOTS:
+    void refresh(int serviceId = -1);
+
+Q_SIGNALS:
+    void itemEdited(const QString &service);
+
 protected:
     QGalleryTrackerItemList(
             QGalleryTrackerItemListPrivate &dd,

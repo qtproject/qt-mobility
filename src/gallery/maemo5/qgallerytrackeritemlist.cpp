@@ -52,6 +52,9 @@ QTM_BEGIN_NAMESPACE
 
 void QGalleryTrackerItemListPrivate::update(int index)
 {
+    flags &= ~Refresh;
+    updateTimer.stop();
+
     aCache.index = rCache.index;
     aCache.count = rCache.count;
     aCache.offset = rCache.index;
@@ -383,14 +386,16 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished()
     }
 
     q_func()->setCursorPosition(cursorPosition);
+
+    if (flags & Refresh)
+        update(rCache.index);
 }
 
 void QGalleryTrackerItemListPrivate::_q_editFinished(QGalleryTrackerMetaDataEdit *edit)
 {
     edit->deleteLater();
 
-    if (queryWatcher.isFinished())
-        update(rCache.index);
+    emit q_func()->itemEdited(edit->service());
 }
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
@@ -408,6 +413,7 @@ QGalleryTrackerItemList::QGalleryTrackerItemList(
 
     d->cursorPosition = cursorPosition;
     d->minimumPagedItems = (minimumPagedItems + 15) & ~15;
+    d->updateMask = schema.updateMask();
     d->identityWidth = schema.identityWidth();
     d->valueOffset = schema.valueOffset();
     d->queryInterface = queryInterface;
@@ -733,8 +739,32 @@ bool QGalleryTrackerItemList::event(QEvent *event)
 
             return true;
         }
+    case QEvent::Timer: {
+            Q_D(QGalleryTrackerItemList);
+
+            QTimerEvent *timerEvent = static_cast<QTimerEvent *>(event);
+
+            if (timerEvent->timerId() == d->updateTimer.timerId()) {
+                d->updateTimer.stop();
+
+                d->update(d->rCache.index);
+            }
+            return true;
+        }
     default:
         return QGalleryAbstractResponse::event(event);
+    }
+}
+
+void QGalleryTrackerItemList::refresh(int updateId)
+{
+    Q_D(QGalleryTrackerItemList);
+
+    if ((d->updateMask & updateId) && !d->updateTimer.isActive()) {
+        d->flags |= QGalleryTrackerItemListPrivate::Refresh;
+
+        if (d->queryWatcher.isFinished())
+            d->updateTimer.start(100, this);
     }
 }
 

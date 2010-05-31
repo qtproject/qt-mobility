@@ -80,6 +80,7 @@ class QGalleryDBusInterfaceFactory
 public:
     virtual ~QGalleryDBusInterfaceFactory() {}
 
+    virtual QGalleryDBusInterfacePointer daemonInterface() = 0;
     virtual QGalleryDBusInterfacePointer metaDataInterface() = 0;
     virtual QGalleryDBusInterfacePointer searchInterface() = 0;
     virtual QGalleryDBusInterfacePointer fileInterface() = 0;

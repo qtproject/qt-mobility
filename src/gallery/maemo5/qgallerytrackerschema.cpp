@@ -91,6 +91,37 @@ namespace
     typedef QGalleryPropertyList<QGalleryAggregateProperty> QGalleryAggregatePropertyList;
     typedef QGalleryPropertyList<QGalleryThumbnailProperty> QGalleryThumbnailPropertyList;
 
+    enum UpdateId
+    {
+        FileId          = 0x0001,
+        FolderId        = 0x0002,
+        DocumentId      = 0x0004,
+        AudioId         = 0x0008,
+        ImageId         = 0x0010,
+        VideoId         = 0x0020,
+        PlaylistId      = 0x0040,
+        TextId          = 0x0080
+    };
+
+    enum UpdateMask
+    {
+        FileMask        = FileId
+                        | FolderId
+                        | DocumentId
+                        | AudioId
+                        | ImageId
+                        | VideoId
+                        | PlaylistId
+                        | TextId,
+        FolderMask      = FolderId,
+        DocumentMask    = DocumentId,
+        AudioMask       = AudioId,
+        ImageMask       = ImageId,
+        VideoMask       = VideoId,
+        PlaylistMask    = PlaylistId,
+        TextMask        = TextId
+    };
+
     struct QGalleryTypePrefix : public QLatin1String
     {
         template <int N> QGalleryTypePrefix(const char (&prefix)[N])
@@ -109,6 +140,8 @@ namespace
         QGalleryTypePrefix prefix;
         QGalleryItemPropertyList itemProperties;
         QGalleryThumbnailPropertyList thumbnailProperties;
+        int updateId;
+        int updateMask;
     };
 
     struct QGalleryAggregateType
@@ -120,6 +153,7 @@ namespace
         QGalleryItemPropertyList properties;
         QGalleryAggregatePropertyList aggregateProperties;
         void (*writeIdCondition)(int *error, QXmlStreamWriter *xml, const QStringRef &itemId);
+        int updateMask;
     };
 
     template <typename T>
@@ -229,9 +263,11 @@ namespace
     QGalleryTypePrefix(#Prefix"::"), \
     QGalleryItemPropertyList(ItemProperties), \
     QGalleryThumbnailPropertyList(qt_galleryFileThumbnailPropertyList), \
+    Type##Id, \
+    Type##Mask \
 }
 
-#define QT_GALLERY_AGGREGATE_TYPE(Type, Service, Prefix) \
+#define QT_GALLERY_AGGREGATE_TYPE(Type, Service, Prefix, UpdateMask) \
 { \
     QLatin1String(#Type), \
     QLatin1String(#Service), \
@@ -240,6 +276,7 @@ namespace
     QGalleryItemPropertyList(qt_gallery##Type##PropertyList),\
     QGalleryAggregatePropertyList(qt_gallery##Type##AggregateList), \
     qt_write##Type##IdCondition, \
+    UpdateMask \
 }
 
 static bool qt_writePropertyName(
@@ -926,11 +963,11 @@ static void qt_writePhotoAlbumIdCondition(int *, QXmlStreamWriter *xml, const QS
 
 static const QGalleryAggregateType qt_galleryAggregateTypeList[] =
 {
-    QT_GALLERY_AGGREGATE_TYPE(Artist     , Music , artist),
-    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, Music , albumArtist),
-    QT_GALLERY_AGGREGATE_TYPE(Album      , Music , album),
-    QT_GALLERY_AGGREGATE_TYPE(AudioGenre , Music , audioGenre),
-    QT_GALLERY_AGGREGATE_TYPE(PhotoAlbum , Images, photoAlbum)
+    QT_GALLERY_AGGREGATE_TYPE(Artist     , Music , artist     , AudioMask),
+    QT_GALLERY_AGGREGATE_TYPE(AlbumArtist, Music , albumArtist, AudioMask),
+    QT_GALLERY_AGGREGATE_TYPE(Album      , Music , album      , AudioMask),
+    QT_GALLERY_AGGREGATE_TYPE(AudioGenre , Music , audioGenre , AudioMask),
+    QT_GALLERY_AGGREGATE_TYPE(PhotoAlbum , Images, photoAlbum , ImageMask)
 
 };
 
@@ -1175,6 +1212,25 @@ QString QGalleryTrackerSchema::service() const
         return qt_galleryAggregateTypeList[m_aggregateIndex].service;
     else
         return QString();
+}
+
+int QGalleryTrackerSchema::updateMask() const
+{
+    if (m_itemIndex >= 0)
+        return qt_galleryItemTypeList[m_itemIndex].updateMask;
+    else if (m_aggregateIndex >= 0)
+        return qt_galleryAggregateTypeList[m_aggregateIndex].updateMask;
+    else
+        return 0;
+}
+
+int QGalleryTrackerSchema::serviceUpdateId(const QString &service)
+{
+    QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
+
+    int index = itemTypes.indexOfService(service);
+
+    return index != -1 ? itemTypes[index].updateId : FileId;
 }
 
 QStringList QGalleryTrackerSchema::supportedPropertyNames() const

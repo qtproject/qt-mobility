@@ -3,6 +3,8 @@ INCLUDEPATH += $$PWD
 
 QT += dbus
 
+DEFINES += QT_DOCUMENT_GALLERY_MAEMO_5
+
 HEADERS += \
         $$PWD/qgallerydbusinterface_p.h \
         $$PWD/qgallerytrackeraggregateresponse_p.h \

@@ -107,6 +107,10 @@ public:
 
     QString service() const;
 
+    int updateMask() const;
+
+    static int serviceUpdateId(const QString &service);
+
     QStringList supportedPropertyNames() const;
     QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
@@ -139,6 +143,7 @@ public:
             QGalleryDBusInterfaceFactory *dbus) const;
 
     QVector<QGalleryTrackerSortCriteria> sortCriteria() const { return m_sortCriteria; }
+
 
     int resolveColumns();
 

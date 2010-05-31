@@ -58,11 +58,27 @@
 #include "qgallerytrackerschema_p.h"
 #include "qgallerytrackerurlresponse_p.h"
 
+#include <QtCore/qmetaobject.h>
 #include <QtDBus/qdbusmetatype.h>
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
+
+class QDocumentGalleryRefreshManager : public QObject
+{
+    Q_OBJECT
+Q_SIGNALS:
+    void refresh(int updateId);
+
+public Q_SLOTS:
+    void itemEdited(const QString &service);
+};
+
+void QDocumentGalleryRefreshManager::itemEdited(const QString &service)
+{
+    emit refresh(QGalleryTrackerSchema::serviceUpdateId(service));
+}
 
 class QDocumentGalleryPrivate : public QAbstractGalleryPrivate, public QGalleryDBusInterfaceFactory
 {
@@ -75,16 +91,33 @@ public:
     QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 
 private:
+    QGalleryDBusInterfacePointer daemonInterface();
     QGalleryDBusInterfacePointer metaDataInterface();
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
     QGalleryDBusInterfacePointer thumbnailInterface();
 
+    void _q_statisticsReady(const QVector<QStringList> &statistics);
+    void _q_statisticsChanged(const QVector<QStringList> &statistics);
+
+    QGalleryDBusInterfacePointer daemonService;
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
     QGalleryDBusInterfacePointer fileService;
     QGalleryDBusInterfacePointer thumbnailService;
+    QDocumentGalleryRefreshManager refreshManager;
 };
+
+QGalleryDBusInterfacePointer QDocumentGalleryPrivate::daemonInterface()
+{
+    if (!daemonService) {
+        daemonService = new QGalleryDBusInterface(
+                QLatin1String("org.freedesktop.Tracker"),
+                QLatin1String("/org/freedesktop/Tracker"),
+                QLatin1String("org.freedesktop.Tracker"));
+    }
+    return daemonService;
+}
 
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::metaDataInterface()
 {
@@ -147,6 +180,17 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
             schema.setPropertyNames(request->propertyNames());
             schema.resolveColumns();
 
+            if (request->isLive()) {
+                QObject::connect(
+                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
+                        response, SLOT(refresh()));
+                QObject::connect(
+                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
+                QObject::connect(
+                        response, SIGNAL(itemEdited(QString)),
+                        &refreshManager, SLOT(itemEdited(QString)));
+            }
+
             response = new QGalleryTrackerItemResponse(this, schema, query, 0, 1);
 
             return response;
@@ -155,6 +199,17 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
             schema.resolveColumns();
 
             response = new QGalleryTrackerAggregateResponse(this, schema, query, 0, 1);
+
+            if (request->isLive()) {
+                QObject::connect(
+                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
+                        response, SLOT(refresh()));
+                QObject::connect(
+                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
+                QObject::connect(
+                        response, SIGNAL(itemEdited(QString)),
+                        &refreshManager, SLOT(itemEdited(QString)));
+            }
 
             return response;
         } else {
@@ -198,6 +253,17 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
                     request->initialCursorPosition(),
                     request->minimumPagedItems());
 
+            if (request->isLive()) {
+                QObject::connect(
+                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
+                        response, SLOT(refresh()));
+                QObject::connect(
+                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
+                QObject::connect(
+                        response, SIGNAL(itemEdited(QString)),
+                        &refreshManager, SLOT(itemEdited(QString)));
+            }
+
             return response;
         } else if (schema.isAggregateType()) {
             schema.setPropertyNames(request->propertyNames());
@@ -210,6 +276,17 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
                     query,
                     request->initialCursorPosition(),
                     request->minimumPagedItems());
+
+            if (request->isLive()) {
+                QObject::connect(
+                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
+                        response, SLOT(refresh()));
+                QObject::connect(
+                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
+                QObject::connect(
+                        response, SIGNAL(itemEdited(QString)),
+                        &refreshManager, SLOT(itemEdited(QString)));
+            }
 
             return response;
         } else {
@@ -246,6 +323,17 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
                     request->initialCursorPosition(),
                     request->minimumPagedItems());
 
+            if (request->isLive()) {
+                QObject::connect(
+                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
+                        response, SLOT(refresh()));
+                QObject::connect(
+                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
+                QObject::connect(
+                        response, SIGNAL(itemEdited(QString)),
+                        &refreshManager, SLOT(itemEdited(QString)));
+            }
+
             return response;
         } else if (schema.isAggregateType()) {
             schema.setPropertyNames(request->propertyNames());
@@ -259,6 +347,17 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
                     request->initialCursorPosition(),
                     request->minimumPagedItems());
             response->setCursorPosition(request->initialCursorPosition());
+
+            if (request->isLive()) {
+                QObject::connect(
+                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
+                        response, SLOT(refresh()));
+                QObject::connect(
+                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
+                QObject::connect(
+                        response, SIGNAL(itemEdited(QString)),
+                        &refreshManager, SLOT(itemEdited(QString)));
+            }
 
             return response;
         } else {
@@ -371,6 +470,7 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
 }
 
 #include "moc_qdocumentgallery.cpp"
+#include "qdocumentgallery_maemo5.moc"
 
 QTM_END_NAMESPACE
 

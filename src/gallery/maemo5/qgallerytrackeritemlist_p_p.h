@@ -61,6 +61,7 @@
 #include "qgallerytrackermetadataedit_p.h"
 #include "qgallerytrackerschema_p.h"
 
+#include <QtCore/qbasictimer.h>
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qfuturewatcher.h>
 
@@ -156,6 +157,13 @@ public:
 
     typedef QVector<QGalleryTrackerSortCriteria>::const_iterator sort_iterator;
 
+    enum Flag
+    {
+        Refresh = 0x01
+    };
+
+    Q_DECLARE_FLAGS(Flags, Flag)
+
     ~QGalleryTrackerItemListPrivate()
     {
         delete idColumn;
@@ -166,10 +174,12 @@ public:
         qDeleteAll(imageColumns);
     }
 
+    Flags flags;
     QGalleryTrackerCompositeColumn *idColumn;
     QGalleryTrackerCompositeColumn *urlColumn;
     QGalleryTrackerCompositeColumn *typeColumn;
 
+    int updateMask;
     int identityWidth;
     int valueOffset;
     union
@@ -199,6 +209,7 @@ public:
 
     QFutureWatcher<int> queryWatcher;
     QList<QGalleryTrackerMetaDataEdit *> edits;
+    QBasicTimer updateTimer;
 
     void update(int index);
 
@@ -235,3 +246,6 @@ template <> inline void qSwap<QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPriva
 }
 
 #endif
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(QTM_PREPEND_NAMESPACE(QGalleryTrackerItemListPrivate::Flags))
+
