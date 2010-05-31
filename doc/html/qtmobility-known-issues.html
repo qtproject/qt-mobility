@@ -129,22 +129,19 @@
 <h3>Messaging API</h3>
 <ul>
 <li>Messaging filtering and sorting functions are not fully optimized.</li>
-<li>Fremantle: <tt>QMessageService::compose</tt> not supported for SMS type messages.</li>
-<li>Fremantle: queryMessages service action is synchronous for SMS type messages.</li>
+<li>Fremantle: <tt>modest</tt> process must be restarted before Fremantle backend is fully operational. This can be achieved by restarting the device.</li>
 <li>Fremantle: <tt>QMessageService::show</tt> not supported for SMS type messages.</li>
-<li>Fremantle: <tt>QMessageManager::messageAdded</tt> signal is not reported for messages in inbox when inbox is open in modest.</li>
 <li>Fremantle: <tt>QMessageManager::updateMessage</tt> is not supported.</li>
 <li>Fremantle: <tt>QMessageManager::addMessage</tt> is not supported for SMS type messages.</li>
-<li>Fremantle: <tt>QMessageManager::addMessage</tt> can not be used to set priority and status of email messages.</li>
 <li>Fremantle and Windows: <tt>QMessageServiceAction::send</tt>: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's disgression.</li>
 <li>Fremantle, S60 and Windows: <tt>QMessageManager::addMessage</tt> can not be used to set size of messages.</li>
 <li>Fremantle and Windows: <tt>QMessageManager::addMessage</tt> can not be used to set the date of messages.</li>
-<li>S60: Exporting POP3 Message Updates from client to server is not supported.</li>
 <li>S60: Only one level of folders is supported &lt;=&gt; Symbian/S60 applications do not use nested folders</li>
 <li>S60: ReceptionTimeStamp is not supported in filtering &lt;=&gt; Symbian reports only one date for SMS &amp; MMS which means that <tt>QMessage::date()</tt> field is used, not <tt>receivedDate()</tt>)</li>
 <li>S60: Local services messages, for example bluetooth, are listed/read in Inbox</li>
+<li>Symbian^3: <tt>QMessageService::retrieveBody</tt> is not supported.</li>
 <li>Windows: <tt>QMessageServiceAction::queryMessages</tt> does not incrementally emit matching message identifiers or progress information.</li>
-<li>Windows: <tt>QMessageServiceAction::exportUpdates</tt>: Performs no operation as changes are automatically synchronized with external servers when a connection is available. control of update progress.</li>
+<li>Windows: <tt>QMessageServiceAction::exportUpdates</tt> performs no operation as changes are automatically synchronized with external servers when a connection is available. control of update progress.</li>
 <li>Windows desktop: <tt>QMessageStore::instance</tt> shows a blocking modal dialog if MAPI is not installed.</li>
 <li>Windows mobile: <tt>QMessageServiceAction::retrieve</tt>: Only retrieves content for messages bodies at present. Attachment retrieval overridden by mapi/mail client settings.</li>
 <li>Windows mobile: <tt>QMessageServiceAction::cancelOperation</tt>: Async nature of native calls used to implement service actions means that cancelOperation will only operate on the ::retrieveBody service action.</li>
