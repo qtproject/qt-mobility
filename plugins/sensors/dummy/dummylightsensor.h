@@ -50,7 +50,7 @@ QTM_USE_NAMESPACE
 class dummylightsensor : public dummycommon
 {
 public:
-    static const char *id;
+    static char const * const id;
 
     dummylightsensor(QSensor *sensor);
 

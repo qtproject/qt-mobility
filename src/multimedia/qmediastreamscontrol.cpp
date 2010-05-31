@@ -47,7 +47,7 @@ QT_BEGIN_NAMESPACE
 /*!
     \class QMediaStreamsControl
     \preliminary
-    \ingroup multimedia-serv
+    \ingroup multimedia
     \brief The QMediaStreamsControl class provides a media stream selection control.
 
     \ingroup multimedia
@@ -58,7 +58,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QMediaStreamsControl is \c com.nokia.Qt.MediaStreamsControl as
     defined in QMediaStreamsControl_iid.
 
-    \sa QMediaService::control()
+    \sa QMediaService::requestControl()
 */
 
 /*!
@@ -111,11 +111,11 @@ QMediaStreamsControl::~QMediaStreamsControl()
 */
 
 /*!
-    \fn QMediaStreamsControl::metaData(int stream, QtMediaServices::MetaData key)
+    \fn QMediaStreamsControl::metaData(int stream, QtMultimedia::MetaData key)
 
     Returns the meta-data value of \a key for a given \a stream.
 
-    Useful metadata keya are QtMediaServices::Title, QtMediaServices::Description and QtMediaServices::Language.
+    Useful metadata keya are QtMultimedia::Title, QtMultimedia::Description and QtMultimedia::Language.
 */
 
 /*!

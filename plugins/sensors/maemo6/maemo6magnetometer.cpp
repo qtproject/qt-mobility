@@ -45,33 +45,38 @@ const char *maemo6magnetometer::id("maemo6.magnetometer");
 bool maemo6magnetometer::m_initDone = false;
 
 maemo6magnetometer::maemo6magnetometer(QSensor *sensor)
-    : maemo6sensorbase(sensor), m_sensor(sensor)
+    : maemo6sensorbase(sensor)
 {
-    setReading<QMagnetometerReading>(&m_reading);
+    const QString sensorName = "magnetometersensor";
+    initSensor<MagnetometerSensorChannelInterface>(sensorName, m_initDone);
 
-    if (!m_initDone) {
-        qDBusRegisterMetaType<MagneticField>();
-        initSensor<MagnetometerSensorChannelInterface>("magnetometersensor");
 
-        if (m_sensorInterface)
-            QObject::connect(static_cast<const MagnetometerSensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const MagneticField&)), this, SLOT(slotDataAvailable(const MagneticField&)));
-        else
-            qWarning() << "Unable to initialize magnetometer sensor.";
-
-        // metadata
-        addDataRate(43, 43); // 43Hz
-        sensor->setDataRate(43);
-        addOutputRange(-0.000614, 0.000614, 0.0000003); // -600 ... 600 mikroteslas, 0.3 uT resolution
-        setDescription(QLatin1String("Magnetic flux density measured in teslas"));
-
-        m_initDone = true;
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const MagneticField&)),
+                               this, SLOT(slotDataAvailable(const MagneticField&)))))
+            qWarning() << "Unable to connect "<< sensorName;
     }
+    else
+        qWarning() << "Unable to initialize "<< sensorName;
+
+    setReading<QMagnetometerReading>(&m_reading);
+    // metadata
+    addDataRate(1, 130); // 43 Hz
+    addOutputRange(-0.000614, 0.000614, 0.0000003); // -600 ... 600 mikroteslas, 0.3 uT resolution
+    setDescription(QLatin1String("Measures magnetic flux density in teslas"));
+
+}
+
+void maemo6magnetometer::start(){
+    maemo6sensorbase::start();
+    QVariant v = sensor()->property("returnGeoValues");
+    m_isGeoMagnetometer =  v.isValid() && v.toBool()? true: false;
 }
 
 void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
 {
-    QVariant v = m_sensor->property("returnGeoValues");
-    if (v.isValid() && v.toBool()) {
+
+    if (m_isGeoMagnetometer){
         m_reading.setX( 0.0000003 * data.x() );
         m_reading.setY( 0.0000003 * data.y() );
         m_reading.setZ( 0.0000003 * data.z() );
@@ -82,7 +87,6 @@ void maemo6magnetometer::slotDataAvailable(const MagneticField& data)
         m_reading.setZ( 0.0000003 * data.rz() );
         m_reading.setCalibrationLevel(1);
     }
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.timestamp());
     newReadingAvailable();
 }

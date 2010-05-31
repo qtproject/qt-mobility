@@ -47,48 +47,34 @@ bool maemo6compass::m_initDone = false;
 maemo6compass::maemo6compass(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    setReading<QCompassReading>(&m_reading);
+    const QString sensorName = "compasssensor";
+    initSensor<CompassSensorChannelInterface>(sensorName, m_initDone);
 
-    if (!m_initDone) {
-        initSensor<CompassSensorChannelInterface>("compasssensor");
-
-        if (m_sensorInterface) {
-            QObject::connect(static_cast<CompassSensorChannelInterface*>(m_sensorInterface), SIGNAL(levelChanged(const int&)), this, SLOT(slotLevelChanged(const int&)));
-            QObject::connect(static_cast<CompassSensorChannelInterface*>(m_sensorInterface), SIGNAL(degreesChanged(const int&)), this, SLOT(slotDegreesChanged(const int&)));
-        } else {
-            qWarning() << "Unable to initialize compass sensor.";            
-        }
-
-        // metadata TODO accuracy
-        addDataRate(43, 43); // 43Hz
-        sensor->setDataRate(43);
-        addOutputRange(0, 359, 1);
-        setDescription(QLatin1String("Measures compass north in degrees"));
- 
-        m_initDone = true;
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const Compass&)),
+                               this, SLOT(slotDataAvailable(const Compass&)))))
+            qWarning() << "Unable to connect "<< sensorName;
     }
+    else
+        qWarning() << "Unable to initialize "<<sensorName;
+
+    setReading<QCompassReading>(&m_reading);
+    // metadata
+    addDataRate(1, 130); // 43 Hz
+    addOutputRange(0, 359, 1);
+    setDescription(QLatin1String("Measures compass north in degrees"));
 }
 
-void maemo6compass::slotLevelChanged(const int& level)
+void maemo6compass::slotDataAvailable(const Compass& data)
 {
     // The scale for level is [0,3], where 3 is the best
     // Qt: Measured as a value from 0 to 1 with higher values being better.
-    float l = ((float) level) / 3.0;
+    m_reading.setCalibrationLevel(((float) data.level()) / 3.0);
 
-    qreal calibrationLevel = l;
-    m_reading.setCalibrationLevel(calibrationLevel);
-    //m_reading.setTimestamp(level.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
-    newReadingAvailable();
-}
-
-void maemo6compass::slotDegreesChanged(const int& degrees)
-{
     // The scale for degrees from sensord is [0,359]
     // Value can be directly used as azimuth
-    qreal azimuth = degrees;
-    m_reading.setAzimuth(azimuth);
-    //m_reading.setTimestamp(degrees.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setAzimuth(data.degrees());
+
+    m_reading.setTimestamp(data.data().timestamp_);
     newReadingAvailable();
 }

@@ -67,7 +67,7 @@ public:
         QSensorManager::registerBackend(QProximitySensor::type, maemo6proximitysensor::id, this);
         QSensorManager::registerBackend(QRotationSensor::type, maemo6rotationsensor::id, this);
         QSensorManager::registerBackend(QTapSensor::type, maemo6tapsensor::id, this);
-        qDebug() << "loaded the Maemo 6 plugin";
+        qDebug() << "Loaded the Maemo 6 sensor plugin";
     }
 
     QSensorBackend *createBackend(QSensor *sensor)

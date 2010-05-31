@@ -25,7 +25,7 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#dtor.QRadioTunerControl">~QRadioTunerControl</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QtMediaServices::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#availabilityError">availabilityError</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMultimedia::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#availabilityError">availabilityError</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QRadioTuner::Band </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#band">band</a></b> () const = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#cancelSearch">cancelSearch</a></b> () = 0</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QRadioTuner::Error </td><td class="memItemRight" valign="bottom"><b><a href="qradiotunercontrol.html#error">error</a></b> () const = 0</td></tr>
@@ -99,10 +99,10 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QRadioTunerControl class provides access to the radio tuning functionality of a <a href="qmediaservice.html">QMediaService</a>.</p>
-<p>If a <a href="qmediaservice.html">QMediaService</a> can tune an anolog radio device it will implement QRadioTunerControl. This control provides a means to tune a radio device to a specific <a href="qradiotunercontrol.html#setFrequency">frequency</a> as well as search <a href="qradiotunercontrol.html#searchForward">forwards</a> and <a href="qradiotunercontrol.html#searchBackward">backwards</a> for a signal.</p>
+<p>If a <a href="qmediaservice.html">QMediaService</a> can tune an analog radio device it will implement QRadioTunerControl. This control provides a means to tune a radio device to a specific <a href="qradiotunercontrol.html#setFrequency">frequency</a> as well as search <a href="qradiotunercontrol.html#searchForward">forwards</a> and <a href="qradiotunercontrol.html#searchBackward">backwards</a> for a signal.</p>
 <p>The functionality provided by this control is exposed to application code through the <a href="qradiotuner.html">QRadioTuner</a> class.</p>
 <p>The interface name of QRadioTunerControl is <tt>com.nokia.Qt.QRadioTunerControl/1.0</tt> as defined in <a href="qradiotunercontrol.html#QRadioTunerControl_iid">QRadioTunerControl_iid</a>.</p>
-<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>() and <a href="qradiotuner.html">QRadioTuner</a>.</p>
+<p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() and <a href="qradiotuner.html">QRadioTuner</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/QRadioTunerControl"></a>
@@ -112,7 +112,7 @@
 <h3 class="fn"><a name="dtor.QRadioTunerControl"></a>QRadioTunerControl::~QRadioTunerControl ()</h3>
 <p>Destroys a radio tuner control.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/availabilityError"></a>
-<h3 class="fn"><a name="availabilityError"></a><a href="qtmediaservices.html#AvailabilityError-enum">QtMediaServices::AvailabilityError</a> QRadioTunerControl::availabilityError () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmultimedia.html#AvailabilityError-enum">QtMultimedia::AvailabilityError</a> QRadioTunerControl::availabilityError () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the error state of the radio service.</p>
 <a name="//apple_ref/cpp/instm/QRadioTunerControl/band"></a>
 <h3 class="fn"><a name="band"></a><a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> QRadioTunerControl::band () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>

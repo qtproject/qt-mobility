@@ -123,8 +123,8 @@ public:
     bool filterMessages(const QMessageFilter &filter, const QMessageSortOrder& sortOrder,
 				      QString body, QMessageDataComparator::MatchFlags matchFlags);
 
+    void addEvent(QMessage &message);
     QMessageIdList m_ids;
-
 
 signals:
     void messagesFound(const QMessageIdList &,bool,bool);

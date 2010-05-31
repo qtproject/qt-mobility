@@ -45,7 +45,8 @@
 #include "maemo6sensorbase.h"
 #include <qambientlightsensor.h>
 
-#include <sensord/alssensor_i.h>
+#include <alssensor_i.h>
+#include <unsigned.h>
 
 QTM_USE_NAMESPACE
 
@@ -55,7 +56,6 @@ class maemo6als : public maemo6sensorbase
 
 public:
     static const char *id;
-
     maemo6als(QSensor *sensor);
 
 private:
@@ -63,7 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotDataAvailable(const int& data);
+    void slotDataAvailable(const Unsigned& data);
 };
 
 #endif

@@ -88,7 +88,7 @@ void EventLoggerEngine::newEvent(int event_id,
 {
   Q_UNUSED(local_uid); Q_UNUSED(remote_uid);Q_UNUSED(remote_ebook_uid);
   Q_UNUSED(group_uid);Q_UNUSED(service);
-   QString eventIds=QString::number(event_id);
+   QString eventIds=QString("el")+QString::number(event_id);
     QMessageId id(eventIds);
 
 
@@ -145,17 +145,42 @@ QMessage EventLoggerEngine::eventToMessage(RTComElEvent & ev)
     message.setTo(messageAddresslist);
     message.setBody(QString(ev.fld_free_text));
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(QString::number(ev.fld_id));
+    privateMessage->_id = QMessageId(QString("el")+QString::number(ev.fld_id));
     privateMessage->_modified = false;
     // qDebug() << "id:" << message.id().toString() << "From:" << message.from().addressee() << "Text:" << message.textContent();
     return message;
 
 }
+void EventLoggerEngine::addEvent(QMessage &message)
+{
+    qDebug() << "EventLoggerEngine::addEvent()\n";
+    RTComElEvent *ev = rtcom_el_event_new();
 
+    if (message.type()==QMessage::Sms) {
+        RTCOM_EL_EVENT_SET_FIELD(ev,service,(gchar *)"RTCOM_EL_SERVICE_SMS");
+    }
+    else if (message.type()==QMessage::InstantMessage) {
+        RTCOM_EL_EVENT_SET_FIELD(ev,service,(gchar *)"RTCOM_EL_SERVICE_CHAT");
+        RTCOM_EL_EVENT_SET_FIELD(ev,remote_uid,(gchar *)message.from().addressee().toStdString().c_str());
+        RTCOM_EL_EVENT_SET_FIELD(ev,group_uid,(gchar *)message.from().addressee().toStdString().c_str());
+    }
+    else return; // Invalid messge type
+
+    RTCOM_EL_EVENT_SET_FIELD(ev,event_type,(gchar *)"RTCOM_EL_EVENTTYPE_SMS_INBOUND");
+    RTCOM_EL_EVENT_SET_FIELD(ev,local_uid,(gchar *)"ring/tel/ring");
+    RTCOM_EL_EVENT_SET_FIELD(ev,local_name,(gchar *)"<SelfHandle>");
+    RTCOM_EL_EVENT_SET_FIELD(ev,remote_uid,(gchar *)message.from().addressee().toStdString().c_str());
+    RTCOM_EL_EVENT_SET_FIELD(ev,group_uid,(gchar *)message.from().addressee().toStdString().c_str());
+    RTCOM_EL_EVENT_SET_FIELD(ev,start_time,time(NULL));
+    RTCOM_EL_EVENT_SET_FIELD(ev,remote_ebook_uid,(gchar *)"1");
+    RTCOM_EL_EVENT_SET_FIELD(ev,free_text,(gchar *)message.textContent().toStdString().c_str());
+    rtcom_el_add_event(el,ev,NULL);
+    rtcom_el_event_free(ev);
+}
 
 bool EventLoggerEngine::deleteMessage(const QMessageId& id)
 {
-  int status=rtcom_el_delete_event(el,id.toString().toInt(),NULL);
+  int status=rtcom_el_delete_event(el,id.toString().remove("el").toInt(),NULL);
   return status==0;
 }
 
@@ -169,7 +194,7 @@ QMessage EventLoggerEngine::message(const QMessageId& id)
     RTComElEvent ev;
     bzero(&ev,sizeof(ev));
     RTComElQuery *q=rtcom_el_query_new(el);
-    rtcom_el_query_prepare(q,"id",id.toString().toInt(),RTCOM_EL_OP_EQUAL,NULL);
+    rtcom_el_query_prepare(q,"id",id.toString().remove("el").toInt(),RTCOM_EL_OP_EQUAL,NULL);
     RTComElIter *iter=rtcom_el_get_events(el,q);
     g_object_unref(q);
     if(iter && rtcom_el_iter_first(iter))
@@ -269,7 +294,7 @@ void EventLoggerEngine::notification(int eventId, QString service,QMessageStoreP
                 }
             }
             else if (!messageRetrieved) {
-                msg = this->message(QMessageId(QString::number(eventId)));
+                msg = this->message(QMessageId(QString("el")+QString::number(eventId)));
                 if (msg.type() == QMessage::NoType) {
                     matchingFilters.clear();
                     break;
@@ -285,7 +310,7 @@ void EventLoggerEngine::notification(int eventId, QString service,QMessageStoreP
 
     if (matchingFilters.count() > 0) {
             ipMessageStorePrivate->messageNotification(notificationType,
-                                                       QMessageId(QString::number(eventId)),
+                                                       QMessageId(QString("el")+QString::number(eventId)),
                                                        matchingFilters);
         }
 

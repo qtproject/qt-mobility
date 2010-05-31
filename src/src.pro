@@ -43,6 +43,6 @@ simulator|contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
 }
 
 symbian {
-    SUBDIRS += s60installs/s60installs.pro
+    SUBDIRS += s60installs
 }
 

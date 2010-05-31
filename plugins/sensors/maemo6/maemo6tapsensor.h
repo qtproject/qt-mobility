@@ -44,10 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qtapsensor.h>
-#include <qsensorbackend.h>
 
-#include <sensord/tapsensor_i.h>
-#include <sensord/datatypes/tap.h>
+#include <tapsensor_i.h>
+#include <tap.h>
 
 QTM_USE_NAMESPACE
 
@@ -57,13 +56,15 @@ class maemo6tapsensor : public maemo6sensorbase
 
 public:
     static const char *id;
-
     maemo6tapsensor(QSensor *sensor);
+
+protected:
+    virtual void start();
 
 private:
     QTapReading m_reading;
     static bool m_initDone;
-    QSensor *m_sensor;
+    bool m_isDoubleTapSensor;
 
 private slots:
     void slotDataAvailable(const Tap&);

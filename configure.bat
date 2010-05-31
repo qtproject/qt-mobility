@@ -48,8 +48,8 @@ cd /D %SOURCE_PATH%
 set SOURCE_PATH=%CD%
 cd /D %BUILD_PATH%
 
-set PROJECT_CONFIG= %BUILD_PATH%\config.in
-set PROJECT_LOG= %BUILD_PATH%\config.log
+set PROJECT_CONFIG=%BUILD_PATH%\config.in
+set PROJECT_LOG=%BUILD_PATH%\config.log
 set RELEASEMODE=release
 set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
@@ -59,17 +59,34 @@ set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
 set MOBILITY_MODULES=bearer location contacts systeminfo publishsubscribe versit messaging sensors serviceframework
 set MOBILITY_MODULES_UNPARSED=
+set MOBILITY_MULTIMEDIA=yes
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
 
-if exist "%QMAKE_CACHE%" del %QMAKE_CACHE%
-if exist "%PROJECT_LOG%" del %PROJECT_LOG%
-if exist "%PROJECT_CONFIG%" del %PROJECT_CONFIG%
+if exist "%QMAKE_CACHE%" del /Q %QMAKE_CACHE%
+if exist "%PROJECT_LOG%" del /Q %PROJECT_LOG%
+if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
 
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
+
+if %BUILD_PATH% == %SOURCE_PATH% (
+    cd %SOURCE_PATH%\config.tests\qtmultimedia
+    if exist make del qtmultimedia
+) else (
+    rmdir /S /Q config.tests\qtmultimedia
+    mkdir config.tests\qtmultimedia
+    cd config.tests\qtmultimedia
+)
+for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\qtmultimedia\qtmultimedia.pro 2^>^&1 1^>NUL') do set QTMULTIMEDIA=%%i 
+if %QTMULTIMEDIA% == no-multimedia (
+    set MOBILITY_MULTIMEDIA=yes
+) else (
+    set MOBILITY_MULTIMEDIA=no
+)
+cd /D %BUILD_PATH%
 
 :cmdline_parsing
 if "%1" == ""                   goto startProcessing
@@ -119,7 +136,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
     echo -tests ............ Build unit tests (not build by default)
-    echo                     Note, this adds test symbols to all libraries 
+    echo                     Note, this adds test symbols to all libraries
     echo                     and should not be used for release builds.
     echo -examples ......... Build example applications
     echo -no-docs .......... Do not build documentation (build by default)
@@ -193,10 +210,10 @@ goto cmdline_parsing
 
 :unfrozenTag
 REM Should never be used in release builds
-REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the 
+REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the
 REM libraries are frozen. This breaks unit tests relying on the auto test exports
 REM This flag unfreezes the SYMBIAN libraries for the purpose of unit test building.
-REM Ideally this should be connected to '-tests' option but that would prevent 
+REM Ideally this should be connected to '-tests' option but that would prevent
 REM integration testing for frozen symbols as the CI system should test unit tests
 REM and frozen symbol compliance.
 echo symbian_symbols_unfrozen = 1 >> %PROJECT_CONFIG%
@@ -250,8 +267,8 @@ set MOBILITY_MODULES=
 echo Checking selected modules:
 :modulesTag2
 
-for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do ( 
-    set FIRST=%%a 
+for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
+    set FIRST=%%a
     set REMAINING=%%b
 )
 
@@ -282,7 +299,16 @@ if %FIRST% == bearer (
     goto errorTag
 )
 
-set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+if %FIRST% == multimedia (
+    if %MOBILITY_MULTIMEDIA% == yes (
+        set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+    ) else (
+        echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
+    )
+) else (
+    set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+)
+
 if "%REMAINING%" == "" (
     shift
 ) else (
@@ -294,7 +320,40 @@ SET REMAINING=
 SET FIRST=
 goto cmdline_parsing
 
+:removeMultimedia
+set MOBILITY_MODULES_TEMP=%MOBILITY_MODULES%
+set MOBILITY_MODULES=
+
+:removeMultimedia2
+
+for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_TEMP%") do (
+    set FIRST=%%a
+    set REMAINING=%%b
+)
+if NOT %FIRST% == multimedia (
+    set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+)
+if "%REMAINING%" == "" (
+    goto startProcessing2
+) else (
+    set MOBILITY_MODULES_TEMP=%REMAINING%
+    goto removeMultimedia2
+)
+
+goto startProcessing2
+
 :startProcessing
+
+for %%a in (%MOBILITY_MODULES%) do (
+    if %%a == multimedia (
+        if %MOBILITY_MULTIMEDIA% == no (
+            echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
+            goto removeMultimedia
+        )
+    )
+)
+
+:startProcessing2
 
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
 echo CONFIG_WIN32 += %WIN32_RELEASEMODE% %RELEASEMODE% >> %PROJECT_CONFIG%
@@ -386,25 +445,25 @@ setlocal
             set BUILDSYSTEM=%%b)
     )
 
-    if %BUILDSYSTEM% == symbian-abld (
+    if "%BUILDSYSTEM%" == "symbian-abld" (
         call make -h >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... Symbian abld make found.
             set MAKE=make
         )
-    ) else if %BUILDSYSTEM% == symbian-sbsv2 (
+    ) else if "%BUILDSYSTEM%" == "symbian-sbsv2" (
         call make -h >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... Symbian sbsv2 make found.
             set MAKE=make
         )
-    ) else if %BUILDSYSTEM% == win32-nmake (
+    ) else if "%BUILDSYSTEM%" == "win32-nmake" (
         call nmake /? >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... nmake found.
             set MAKE=nmake
         )
-    ) else if %BUILDSYSTEM% == win32-mingw (
+    ) else if "%BUILDSYSTEM%" == "win32-mingw" (
         call mingw32-make -v >> %PROJECT_LOG% 2>&1
         if not errorlevel 1 (
             echo ... mingw32-make found.
@@ -427,6 +486,7 @@ goto errorTag
 
 :compileTest
 setlocal
+    @echo off
     echo Checking %1
     set CURRENT_PWD=%CD%
 
@@ -440,16 +500,21 @@ setlocal
     )
 
     call %QT_PATH%qmake %SOURCE_PATH%\config.tests\%2\%2.pro >> %PROJECT_LOG% 2>&1
-    call %MOBILITY_MAKE% clean >> %PROJECT_LOG% 2>&1
-    call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
 
     set FAILED=0
-    if %MOBILITY_BUILDSYSTEM% == symbian-sbsv2 (
-        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% SBS^="@sbs --check"') do set FAILED=1
-    ) else if %MOBILITY_BUILDSYSTEM% == symbian-abld (
-        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
-    ) else if errorlevel 1 (
-        set FAILED=1
+    if "%MOBILITY_BUILDSYSTEM%" == "symbian-sbsv2" (
+        call %MOBILITY_MAKE% release-armv5 >> %PROJECT_LOG% 2>&1
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-armv5 SBS^="@sbs --check"') do set FAILED=1
+    ) else if "%MOBILITY_BUILDSYSTEM%" == "symbian-abld" (
+        call %MOBILITY_MAKE% release-gcce >> %PROJECT_LOG% 2>&1
+        for /f "tokens=2" %%i in ('%MOBILITY_MAKE% release-gcce ABLD^="@ABLD.BAT -c" 2^>^&1') do if not %%i == bldfiles set FAILED=1
+    ) else {
+        REM Make for other builds
+        call %MOBILITY_MAKE% >> %PROJECT_LOG% 2>&1
+        REM have to check error level for windows / other builds to be sure.
+        if errorlevel 1 (
+           set FAILED=1
+        )
     )
 
     if %FAILED% == 0 (
@@ -468,12 +533,26 @@ endlocal&goto :EOF
 echo.
 echo Start of compile tests
 REM compile tests go here.
+for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\make\make.pro 2^>^&1 1^>NUL') do set BUILDSYSTEM=%%i
+if "%BUILDSYSTEM%" == "symbian-abld" goto symbianTests
+if "%BUILDSYSTEM%" == "symbian-sbsv2" goto symbianTests
+goto noTests
+
+:symbianTests
 call :compileTest LBT lbt
 call :compileTest SNAP snap
 call :compileTest OCC occ
 call :compileTest SymbianContactSIM symbiancntsim
 call :compileTest S60_Sensor_API sensors_s60_31
 call :compileTest Symbian_Sensor_Framework sensors_symbian
+call :compileTest Audiorouting_s60 audiorouting_s60
+call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
+call :compileTest RadioUtility_for_post_3.1 radioutility_s60
+call :compileTest OpenMaxAl_support openmaxal_symbian
+call :compileTest Surfaces_s60 surfaces_s60
+
+:noTests
+
 echo End of compile tests
 echo.
 echo.
@@ -490,8 +569,8 @@ set MODULES_TEMP=%MOBILITY_MODULES%
 
 :generateHeaders
 
-for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do ( 
-    set FIRST=%%a 
+for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
+    set FIRST=%%a
     set REMAINING=%%b
 )
 
@@ -507,7 +586,11 @@ if %FIRST% == bearer (
 ) else if %FIRST% == messaging (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMedia %SOURCE_PATH%\src\multimedia
+    if %MOBILITY_MULTIMEDIA% == yes (
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\audio
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\video
+    )
 ) else if %FIRST% == publishsubscribe (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmPubSub %SOURCE_PATH%\src\publishsubscribe
 ) else if %FIRST% == systeminfo (

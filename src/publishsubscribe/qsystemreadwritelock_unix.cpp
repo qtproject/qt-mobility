@@ -160,7 +160,7 @@ QString makePlatformSafeKey(const QString &key,
     QString result = prefix;
 
     QString part1 = key;
-    part1.replace(QRegExp(QLatin1String("[^A-Za-z]")), QString());
+    part1.remove(QRegExp(QLatin1String("[^A-Za-z]")));
     result.append(part1);
 
     QByteArray hex = QCryptographicHash::hash(key.toUtf8(), QCryptographicHash::Sha1).toHex();
@@ -236,7 +236,7 @@ QSystemReadWriteLock::QSystemReadWriteLock(const QString &key, AccessMode mode)
     if (built == -1) {
         d->setError(QObject::tr("QSystemReadWriteLock::QSystemReadWriteLock: "
                     "unable to make key file for key: %1(%2)")
-                    .arg(key).arg(strerror(errno)));
+                    .arg(key).arg(QString::fromLatin1(strerror(errno))));
         return;
     }
 
@@ -245,7 +245,7 @@ QSystemReadWriteLock::QSystemReadWriteLock(const QString &key, AccessMode mode)
     if (d->id == -1) {
         d->setError(QObject::tr("QSystemReadWriteLock::QSystemReadWriteLock: "
                         "ftok failed for key %1(%2)")
-                        .arg(key).arg(strerror(errno)));
+                    .arg(key).arg(QString::fromLatin1(strerror(errno))));
         return;
     }
 
@@ -258,13 +258,13 @@ QSystemReadWriteLock::QSystemReadWriteLock(const QString &key, AccessMode mode)
             if (d->semId == -1) {
                 d->setError(QObject::tr("QSystemReadWriteLock::QSystemReadWriteLock: "
                                     "Unable to access semaphore set for key %1(%2)")
-                                    .arg(key).arg(::strerror(errno)));
+                            .arg(key).arg(QString::fromLatin1(strerror(errno))));
                 return;
             }
         } else {
             d->setError(QObject::tr("QSystemReadWriteLock:QSystemReadWriteLock: "
                         "Unable to access semaphore set for key %1(%2)")
-                        .arg(key).arg(::strerror(errno)));
+                        .arg(key).arg(QString::fromLatin1(strerror(errno))));
             return;
         }
     } else {
@@ -296,7 +296,7 @@ QSystemReadWriteLock::QSystemReadWriteLock(const QString &key, AccessMode mode)
         {
             d->setError(QObject::tr("QSystemReadWriteLock::QSystemReadWriteLock: "
                         "Unable to reset semaphore set for key %1(%2)")
-                        .arg(key).arg(::strerror(errno)));
+                        .arg(key).arg(QString::fromLatin1(strerror(errno))));
             QFile::remove(d->keyFileName);
             ::semctl(d->semId, 0, IPC_RMID);
             d->semId = -1;
@@ -312,7 +312,7 @@ QSystemReadWriteLock::QSystemReadWriteLock(const QString &key, AccessMode mode)
     if (semoprv == -1) {
         d->setError(QObject::tr("QSystemReadWriteLock::QSystemReadWriteLock: "
                             "Unable to increment NumInstances semaphore "
-                            "for key%1(%2)").arg(key).arg(::strerror(errno)));
+                            "for key%1(%2)").arg(key).arg(QString::fromLatin1(strerror(errno))));
         d->semId = -1;
         return;
     }
@@ -340,23 +340,23 @@ QSystemReadWriteLock::~QSystemReadWriteLock()
         int semoprv  = ::semop(d->semId, ops, 2);
         if (semoprv == 0) {
             if(::semctl(d->semId, 0, IPC_RMID) == -1) {
-                qWarning(QObject::tr("QSystemReadWriteLock::~QSystemReadWriteLock: "
-                            "Unable to remove semaphore %1(%2)")
-                            .arg(d->key).arg(::strerror(errno)).toLatin1());
+                qWarning("QSystemReadWriteLock::~QSystemReadWriteLock: "
+                         "Unable to remove semaphore %s(%s)",
+                         d->key.toLocal8Bit().constData(), strerror(errno));
             }
             QFile::remove(d->keyFileName);
         } else {
             if (errno == EAGAIN) {
                 //wasn't 0 instances so just decrement the NumInstances semaphore
                 if (::semop(d->semId, ops, 1) == -1) {
-                    qWarning(QObject::tr("QSystemReadWriteLock::~QSystemReadWriteLock: unable "
-                                "to decrement NumInstances semaphore for key %1(%2)")
-                                .arg(d->key).arg(::strerror(errno)).toLatin1());
+                    qWarning("QSystemReadWriteLock::~QSystemReadWriteLock: "
+                             "Unable to decrement NumInstances semaphore for key %s(%s)",
+                             d->key.toLocal8Bit().constData(), strerror(errno));
                 }
             } else {
-                qWarning(QObject::tr("QSystemReadWriteLock::~QSystemReadWriteLock: unable "
-                            "to decrement and check NumInstances semaphore for key %1(%2)")
-                            .arg(d->key).arg(::strerror(errno)).toLatin1());
+                qWarning("QSystemReadWriteLock::~QSystemReadWriteLock: "
+                         "Unable to decrement and check NumInstances semaphore for key %s(%s)",
+                         d->key.toLocal8Bit().constData(), strerror(errno));
                 ::semop(d->semId, ops, 1);//try decrement anyway
             }
         }
@@ -383,8 +383,9 @@ QString QSystemReadWriteLock::key() const
 bool QSystemReadWriteLock::lockForRead()
 {
     if (d->semId == -1) {
-        d->errorString = QObject::tr("QSystemReadWriteLock::lockForRead: unable to lock for read for key %1(%2)")
-                .arg(d->key).arg("Lock had not been correctly initialized");
+        d->errorString = QObject::tr("QSystemReadWriteLock::lockForRead: "
+                                     "Unable to lock for read for key %1"
+                                     "(Lock had not been correctly initialized)").arg(d->key);
         d->error = UnknownError;
         return false;
     }
@@ -400,11 +401,12 @@ bool QSystemReadWriteLock::lockForRead()
     ops[1].sem_flg = 0;
 
     if (-1 == ::semop(d->semId, ops, 2)) {
-        d->setError(QObject::tr("QSystemReadWriteLock::lockForRead: unable to lock for read for key %1(%2)")
-                .arg(d->key).arg(::strerror(errno)));
+        d->setError(QObject::tr("QSystemReadWriteLock::lockForRead: "
+                                "Unable to lock for read for key %1(%2)")
+                    .arg(d->key).arg(QString::fromLatin1(strerror(errno))));
         return false;
     } else {
-        d->errorString = "";
+        d->errorString.clear();
         d->error = NoError;
         return true;
     }
@@ -418,8 +420,8 @@ bool QSystemReadWriteLock::lockForWrite()
 {
     if (d->semId == -1) {
         d->errorString = QObject::tr("QSystemReadWriteLock::lockForWrite: "
-                                    "unable to lock for write for key %1(%2)")
-                                    .arg(d->key).arg("Lock had not been correctly initialized");
+                                     "Unable to lock for write for key %1"
+                                     "(Lock had not been correctly initialized)").arg(d->key);
         d->error = UnknownError;
         return false;
     }
@@ -432,8 +434,8 @@ bool QSystemReadWriteLock::lockForWrite()
     int semoprv = ::semop(d->semId, &op, 1);
     if (semoprv == -1) {
         d->setError(QObject::tr("QSystemReadWriteLock::lockForWrite: "
-                    "Could not increment TotalWriters semaphore for key %1(%2)")
-                    .arg(d->key).arg(::strerror(errno)));
+                                "Could not increment TotalWriters semaphore for key %1(%2)")
+                    .arg(d->key).arg(QString::fromLatin1(strerror(errno))));
         return false;
     }
 
@@ -443,8 +445,8 @@ bool QSystemReadWriteLock::lockForWrite()
     semoprv = ::semop(d->semId, &op, 1);
     if (semoprv == -1) {
         d->setError(QObject::tr("QSystemReadWriteLock::lockForWrite: "
-                    "Could not detect if all readers were finished for key %1(%2)")
-                    .arg(d->key).arg(::strerror(errno)));
+                                "Could not detect if all readers were finished for key %1(%2)")
+                    .arg(d->key).arg(QString::fromLatin1(strerror(errno))));
 
         // Decrement our write lock
         op.sem_num = QSystemReadWriteLockPrivate::TotalWriters;
@@ -460,8 +462,8 @@ bool QSystemReadWriteLock::lockForWrite()
 
         if (semoprv == -1) {
             d->setError(QObject::tr("QSystemReadWriteLock::lockForWrite: "
-                            "Could not decrement ActiveWriterSem semaphore for key %1(%2)")
-                        .arg(d->key).arg(::strerror(errno)));
+                                    "Could not decrement ActiveWriterSem semaphore for key %1(%2)")
+                        .arg(d->key).arg(QString::fromLatin1(strerror(errno))));
 
             op.sem_num = QSystemReadWriteLockPrivate::TotalWriters;
             op.sem_op = -1;
@@ -469,7 +471,7 @@ bool QSystemReadWriteLock::lockForWrite()
             ::semop(d->semId, &op, 1);
             return false;
         }
-        d->errorString ="";
+        d->errorString.clear();
         d->error = NoError;
         return true;
     }
@@ -481,8 +483,9 @@ bool QSystemReadWriteLock::lockForWrite()
 void QSystemReadWriteLock::unlock()
 {
     if (d->semId == -1) {
-        d->errorString = QObject::tr("QSystemReadWriteLock::unlock: unable to unlock for key %1(%2)")
-                                    .arg(d->key).arg("Lock had not been correctly initialized");
+        d->errorString = QObject::tr("QSystemReadWriteLock::unlock: "
+                                     "Unable to unlock for key %1"
+                                     "(Lock had not been correctly initialized)").arg(d->key);
         d->error = UnknownError;
         return;
     }
@@ -509,21 +512,21 @@ void QSystemReadWriteLock::unlock()
 
             if (::semop(d->semId, ops, 3) == -1) {
                 if (errno != EAGAIN) {
-                    d->setError(QObject::tr("QSystemSemaphoreWriteLock::unlock: unable to check and "
-                                "update writer semaphores for key %1(%2)")
-                            .arg(d->key).arg(::strerror(errno)));
+                    d->setError(QObject::tr("QSystemSemaphoreWriteLock::unlock: "
+                                            "Unable to check and update writer semaphores for key %1(%2)")
+                                .arg(d->key).arg(QString::fromLatin1(strerror(errno))));
                     return;
                 } //Note: EAGAIN indicates that ActiveWriterSem is has a non zero value
                   //indicating there is no current writer, so nothing needs to be done
             }
     } else {
         //error in decrementing readers
-        d->setError(QObject::tr("QSystemReadWriteLock::unlock: unable to decrement "
-                    "ActiveReaders semaphore for key %1(%2)")
-                .arg(d->key).arg(::strerror(errno)));
+        d->setError(QObject::tr("QSystemReadWriteLock::unlock: "
+                                "Unable to decrement ActiveReaders semaphore for key %1(%2)")
+                    .arg(d->key).arg(QString::fromLatin1(strerror(errno))));
         return;
     }
-    d->errorString="";
+    d->errorString.clear();
     d->error = NoError;
 }
 

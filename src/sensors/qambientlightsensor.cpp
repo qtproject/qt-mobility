@@ -113,7 +113,7 @@ void QAmbientLightReading::setLightLevel(QAmbientLightReading::LightLevel lightL
     \sa QSensorFilter::filter()
 */
 
-const char *QAmbientLightSensor::type("QAmbientLightSensor");
+char const * const QAmbientLightSensor::type("QAmbientLightSensor");
 
 /*!
     \class QAmbientLightSensor

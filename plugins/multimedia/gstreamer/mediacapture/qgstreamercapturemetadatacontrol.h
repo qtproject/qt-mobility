@@ -42,11 +42,11 @@
 #ifndef QGSTREAMERCAPTUREMETADATACONTROL_H
 #define QGSTREAMERCAPTUREMETADATACONTROL_H
 
-#include <qmetadatacontrol.h>
+#include <qmetadatawritercontrol.h>
 
 QT_USE_NAMESPACE
 
-class QGstreamerCaptureMetaDataControl : public QMetaDataControl
+class QGstreamerCaptureMetaDataControl : public QMetaDataWriterControl
 {
     Q_OBJECT
 public:
@@ -57,9 +57,9 @@ public:
     bool isMetaDataAvailable() const { return true; }
     bool isWritable() const { return true; }
 
-    QVariant metaData(QtMediaServices::MetaData key) const;
-    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
-    QList<QtMediaServices::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimedia::MetaData key) const;
+    void setMetaData(QtMultimedia::MetaData key, const QVariant &value);
+    QList<QtMultimedia::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(QString const &name) const;
     void setExtendedMetaData(QString const &name, QVariant const &value);

@@ -211,6 +211,7 @@ void S60RadioTunerControl::setVolume(int volume)
 {
 	if (m_playerUtility) {
 		m_vol = volume;
+		volume *= m_volMultiplier;
 		m_playerUtility->SetVolume(volume);
 		emit volumeChanged(m_vol);
 	}
@@ -269,6 +270,8 @@ bool S60RadioTunerControl::initRadio()
 		m_radioUtility = CRadioUtility::NewL(ETrue);
 		// Get a tuner utility
 		m_fmTunerUtility = &m_radioUtility->RadioFmTunerUtilityL(*this);
+		// we want to listen radio in offline mode too
+		m_fmTunerUtility->EnableTunerInOfflineMode(ETrue);
 		// Get a player utility
 		m_playerUtility = &m_radioUtility->RadioPlayerUtilityL(*this);
 	);
@@ -288,16 +291,16 @@ bool S60RadioTunerControl::isAvailable() const
 	return m_available;
 }
 
-QtMediaServices::AvailabilityError S60RadioTunerControl::availabilityError() const
+QtMultimedia::AvailabilityError S60RadioTunerControl::availabilityError() const
 {
 	if (m_available)
-		return QtMediaServices::NoError;
+		return QtMultimedia::NoError;
 	else
-		return QtMediaServices::ResourceError;
+		return QtMultimedia::ResourceError;
 }
 
 void S60RadioTunerControl::start()
-{	
+{
 	if (!m_tunerControl) {
 		m_fmTunerUtility->RequestTunerControl();
 		m_apiTunerState = QRadioTuner::ActiveState;
@@ -362,6 +365,7 @@ void S60RadioTunerControl::MrftoRequestTunerControlComplete(TInt aError)
 {
 	if (aError == KErrNone) {
 		m_playerUtility->GetMaxVolume(m_maxVolume);
+		m_volMultiplier = float(m_maxVolume)/float(100);
 		m_radioError = QRadioTuner::NoError;
 		m_tunerControl = true;
 		m_available = true;

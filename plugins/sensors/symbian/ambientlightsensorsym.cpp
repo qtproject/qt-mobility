@@ -44,7 +44,7 @@
 /**
  * set the id of the ambient light sensor
  */
-const char *CAmbientLightSensorSym::id("sym.ambientlight");
+char const * const CAmbientLightSensorSym::id("sym.ambientlight");
 
 /**
  * Factory function, this is used to create the ambient light sensor object

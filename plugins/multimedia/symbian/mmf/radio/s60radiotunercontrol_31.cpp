@@ -63,7 +63,7 @@ S60RadioTunerControl::S60RadioTunerControl(QObject *parent)
     , m_currentBand(QRadioTuner::FM)
     , m_currentFreq(87500000)
     , m_scanning(false)
-    , m_vol(100)
+    , m_vol(50)
 {
     initRadio();   
 }
@@ -109,7 +109,6 @@ bool S60RadioTunerControl::initRadio()
 	m_tunerUtility->NotifyChange(*this);
 	m_tunerUtility->NotifyStereoChange(*this);
 	m_tunerUtility->NotifySignalStrength(*this);
-	setVolume(m_audioPlayerUtility->MaxVolume()/2);
 	
 	TFrequency freq(m_currentFreq);
 	m_tunerUtility->Tune(freq);
@@ -280,7 +279,7 @@ void S60RadioTunerControl::setVolume(int volume)
 {
     if (m_audioPlayerUtility) {
 		m_vol = volume;
-		TInt error = m_audioPlayerUtility->SetVolume(m_vol);
+		TInt error = m_audioPlayerUtility->SetVolume(volume/10);
 		emit volumeChanged(m_vol);
     }
 }
@@ -345,12 +344,12 @@ bool S60RadioTunerControl::isAvailable() const
     return m_available;
 }
 
-QtMediaServices::AvailabilityError S60RadioTunerControl::availabilityError() const
+QtMultimedia::AvailabilityError S60RadioTunerControl::availabilityError() const
 {
     if (m_available)
-        return QtMediaServices::NoError;
+        return QtMultimedia::NoError;
     else
-        return QtMediaServices::ResourceError;
+        return QtMultimedia::ResourceError;
 }
 
 QRadioTuner::Error S60RadioTunerControl::error() const

@@ -45,9 +45,6 @@
 \brief The Sensors API provides access to sensors.
 \ingroup mobility
 
-\warning This API should be considered in a beta state. It is
-under development and subject to change.
-
 The Sensors API provides access to sensors.
 
 This covers both high-level sensors such as screen orientation (portrait, landscape)

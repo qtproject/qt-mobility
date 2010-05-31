@@ -44,10 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qrotationsensor.h>
-#include <qsensorbackend.h>
 
-#include <sensord/rotationsensor_i.h>
-#include <sensord/datatypes/xyz.h>
+#include <rotationsensor_i.h>
+#include <xyz.h>
 
 QTM_USE_NAMESPACE
 
@@ -57,7 +56,6 @@ class maemo6rotationsensor : public maemo6sensorbase
 
 public:
     static const char *id;
-
     maemo6rotationsensor(QSensor *sensor);
 
 private:

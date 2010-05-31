@@ -44,9 +44,9 @@
 
 #include "maemo6sensorbase.h"
 #include <qorientationsensor.h>
-#include <qsensorbackend.h>
 
-#include <sensord/orientationsensor_i.h>
+#include <orientationsensor_i.h>
+#include <unsigned.h>
 
 QTM_USE_NAMESPACE
 
@@ -56,7 +56,6 @@ class maemo6orientationsensor : public maemo6sensorbase
 
 public:
     static const char *id;
-
     maemo6orientationsensor(QSensor *sensor);
 
 private:
@@ -64,7 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void slotOrientationChanged(const int& orientation); 
+    void slotDataAvailable(const Unsigned& orientation);
 };
 
 #endif

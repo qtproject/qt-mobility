@@ -22,8 +22,8 @@
 <ul><li><a href="#introducing-the-new-qt-apis">Introducing the New Qt APIs</a></li>
 </ul>
 <li><a href="#namespace">Namespace</a></li>
-<ul><li><a href="#getting-started">Getting Started</a></li>
-<li><a href="#known-issues">Known Issues</a></li>
+<li><a href="#getting-started">Getting Started</a></li>
+<ul><li><a href="#known-issues">Known Issues</a></li>
 </ul>
 <li><a href="#the-new-qt-apis">The New Qt APIs</a></li>
 <ul><li><a href="#bearer-management">Bearer Management</a></li>
@@ -46,6 +46,7 @@
 <h3>Overview</h3>
 <a name="introducing-the-new-qt-apis"></a>
 <h4>Introducing the New Qt APIs</h4>
+<p>Qt Mobility covers a wide range of features and technologies so it best to regard it not as a single API but as a collection of APIs or frameworks.</p>
 <p>This release contains the following APIs:</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="bearer-management.html">Bearer Management</a></th><td>An API to control the system's connectivity state.</td></tr>
@@ -59,7 +60,7 @@
 <tr valign="top" class="odd"><th><a href="systeminfo.html">System Information</a></th><td>A set of APIs to discover system related information and capabilities.</td></tr>
 <tr valign="top" class="even"><th><a href="versit.html">Versit API</a></th><td>An API to manage Versit documents.</td></tr>
 </table></p>
-<p>These APIs give the developer a wide range of desirable functions for a mobile platform, but these now become possible on platforms not traditionally associated with some of the features. A mobile device using the Qt Mobility Project API would be able to</p>
+<p>These APIs give the developer a range of desirable functions for a mobile platform, but now these functions become possible on platforms not traditionally associated with some of the features. A mobile device using the Qt Mobility Project API would be able to</p>
 <ul>
 <li>Locate services on-board or remotely. Find an optimal connection to the network for the particular service.</li>
 <li>Services built on top of these APIs would include Internet applications such as email and web browsing.</li>
@@ -70,9 +71,10 @@
 <p>The New Qt APIs deliver to developers an enabling package. It will be used by developers to build a variety of applications and services that are mobile capable or familiar to mobile users, irrespective of whether the platform is mobile or not. This means that there is the possibility of easy transfer of user experience from PC to phone or vice versa.</p>
 <a name="namespace"></a>
 <h3>Namespace</h3>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
+<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace, with the important exception of Multimedia. This is done to facilitate the future migration of Mobility API's into Qt.</p>
+<p>See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="getting-started"></a>
-<h4>Getting Started</h4>
+<h3>Getting Started</h3>
 <p>To get started with Qt Mobility see the</p>
 <ul>
 <li><a href="installation.html">Installation Guide</a></li>
@@ -88,7 +90,7 @@
 <h3>The New Qt APIs</h3>
 <a name="bearer-management"></a>
 <h4>Bearer Management</h4>
-<p>Although not a network manager, this component manages the connectivity state to the network. So it does not manage network configurations, which are the role of the platform provider, but it does allow the user to start or stop network interfaces. Some higher level management of the connection session may also be possible as well depending on the platform.</p>
+<p>Although not a network manager, this component manages the connectivity state of the device to the network. So it does not manage network configurations, which are the role of the platform provider, but it does allow the user to start or stop network interfaces. Some higher level management of the connection session may also be possible as well depending on the platform.</p>
 <p>Some platforms can have a set of grouped access points perhaps based on a common purpose. Bearer Management allows comparison and prioritization of the access and use of these points.</p>
 <p>The aim of Bearer Management is to reduce the need for the developer to be concerned about trying to locate the best connection from a list of possible IP bearers and 3G connections. The user can select the best or it can be selected transparently so that WLAN roaming can occur seemlessly.</p>
 <p>Some examples of the Bearer Management functionality,</p>
@@ -119,7 +121,7 @@
 <a name="multimedia"></a>
 <h4>Multimedia</h4>
 <p>An API to play audio and video of various formats. Record audio. The playing and managing of an FM radio. This includes the typical functionality you would find on a music and video player, combined with an FM radio.</p>
-<p><b>Note:</b> The Multimedia API, together with <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a>, is intended to eventually replace the Phonon API.</p>
+<p><b>Note:</b> The Multimedia API, together with <a href="qtmultimedia.html">QtMultimedia</a>, is intended to eventually replace the Phonon API.</p>
 <p>For more details see the <a href="multimedia.html">Multimedia API overview</a>.</p>
 <a name="sensors"></a>
 <h4>Sensors</h4>
@@ -258,10 +260,10 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Contacts*</td>
+    <td>Contacts</td>
 
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -286,8 +288,8 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Multimedia**</td>
-    <td>BETA</td>
+    <td>Multimedia</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
 
@@ -314,12 +316,12 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Sensors*</td>
+    <td>Sensors</td>
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
 
@@ -347,10 +349,8 @@
     </table>
     <br>
 
-    <p>[*] <i>These APIs are considered FINAL however there are some known issues with Symbian backends. These backend issues will be resolved in a future release. </i></p>
-    <p>
-    <p>[**] <i>These APIs are considered BETA pending final API reviews. We anticipate moving the status to Final in a future release.</i></p>
-<a name="feedback-and-bug-reports"></a>
+        <p>
+    <a name="feedback-and-bug-reports"></a>
 <h3>Feedback and bug reports</h3>
 <p>Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com</p>
 <p>And please report any bugs you may find to <a href="http://bugreports.qt.nokia.com">http://bugreports.qt.nokia.com</a></p>
