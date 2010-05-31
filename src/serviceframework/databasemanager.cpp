@@ -403,6 +403,12 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
 QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServiceFilter &filter, DbScope scope)
 {
     #ifdef Q_OS_SYMBIAN
+        QService::Scope requestedScope;
+        if (scope == UserScope) {
+            requestedScope = QService::UserScope;
+        } else {
+            requestedScope = QService::SystemScope;
+        }
         scope = SystemScope;
     #endif
 
@@ -435,7 +441,11 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
         }
 
         for (int i = userDescriptorCount; i < descriptors.count(); ++i) {
-            descriptors[i].d->scope = QService::SystemScope;
+            #ifdef Q_OS_SYMBIAN
+                descriptors[i].d->scope = requestedScope;
+            #else
+                descriptors[i].d->scope = QService::SystemScope;
+            #endif
         }
     } else {
         if ( scope == SystemScope) {
@@ -512,6 +522,12 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
 QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &interfaceName, DbScope scope)
 {
     #ifdef Q_OS_SYMBIAN
+        QService::Scope requestedScope;
+        if (scope == UserScope) {
+            requestedScope = QService::UserScope;
+        } else {
+            requestedScope = QService::SystemScope;
+        }
         scope = SystemScope;
     #endif
 
@@ -586,7 +602,11 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
     } else {
         descriptor = m_systemDb->interfaceDefault(interfaceName);
         if (m_systemDb->lastError().code() == DBError::NoError) {
-            descriptor.d->scope = QService::SystemScope;
+            #ifdef Q_OS_SYMBIAN
+                descriptor.d->scope = requestedScope;
+            #else
+                descriptor.d->scope = QService::SystemScope;
+            #endif
             return descriptor;
         } else if (m_systemDb->lastError().code() == DBError::NotFound) {
             m_lastError = m_systemDb->lastError();
