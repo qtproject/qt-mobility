@@ -196,6 +196,7 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerI
 
     // call nextMatchingDate here in a loop until maxCount or rCount is reached, or until our timelimit (4yrs+periodStart) is reached.
     bool useMaxCount = periodEnd.isNull();             // if no period end given, just return maxCount instances.
+    bool useRCount = rrule.count() > 0;                // if an rrule count is given, use it (as well or instead of, depending on which comes first) rrule.endDate().
     QDate realPeriodEnd = (useMaxCount ? periodStart.addDays(1461).date() : periodEnd.date()); // periodStart + 4 years
     QDate nextMatch = periodStart.date();
     while (true) {
@@ -216,10 +217,21 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerI
 
             // XXX TODO: check that nmdt is within the required start and end times / period,
             // because our instance date generation code merely checks dates, not datetimes.
-            retn.append(nmdt);
+
+            // now ensure that we aren't overfilling our return set (depending on rCount and maxCount)
+            bool lessThanMaxCount = false;
+            if (!useMaxCount || (useMaxCount && retn.size() < maxCount))
+                lessThanMaxCount = true;
+
+            bool lessThanRCount = false;
+            if (!useRCount || (useRCount && retn.size() < rrule.count()))
+                lessThanRCount = true;
+
+            if (lessThanMaxCount && lessThanRCount)
+                retn.append(nmdt);
         }
 
-        if (retn.size() == maxCount || nextMatch.isNull()) {
+        if ((useMaxCount && retn.size() == maxCount) || (useRCount && retn.size() == rrule.count()) || nextMatch.isNull()) {
             // we have reached our count of dates to return
             // or there are no more matches in the given time period.
             break;
