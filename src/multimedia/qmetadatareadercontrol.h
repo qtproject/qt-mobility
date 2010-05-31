@@ -50,8 +50,6 @@
 #include <qmobilityglobal.h>
 #include "qtmedianamespace.h"
 
-QT_BEGIN_HEADER
-
 QT_BEGIN_NAMESPACE
 
 
@@ -82,7 +80,5 @@ protected:
 Q_MEDIA_DECLARE_CONTROL(QMetaDataReaderControl, QMetaDataReaderControl_iid)
 
 QT_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif  // QMETADATAPROVIDER_H
