@@ -68,6 +68,8 @@ class QGalleryTrackerMetaDataEdit;
 class QGalleryTrackerSchema;
 class QGalleryUrlRequest;
 
+class QGalleryTrackerUrlResponsePrivate;
+
 class QGalleryTrackerUrlResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
@@ -100,15 +102,10 @@ public:
 
     bool waitForFinished(int msecs);
 
-private Q_SLOTS:
-    void callFinished(QDBusPendingCallWatcher *watcher);
-
 private:
-    QDBusPendingCallWatcher *m_watcher;
-    QGalleryDBusInterfacePointer m_fileInterface;
-    QUrl m_itemUrl;
-    QVariant m_itemId;
-    QString m_itemType;
+    Q_DECLARE_PRIVATE(QGalleryTrackerUrlResponse)
+    Q_PRIVATE_SLOT(d_func(), void _q_callFinished(QDBusPendingCallWatcher *))
+
 };
 
 QTM_END_NAMESPACE

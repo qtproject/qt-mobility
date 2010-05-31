@@ -51,30 +51,83 @@
 #include <QtCore/qdatetime.h>
 #include <QtDBus/qdbuspendingreply.h>
 
+#include "qgalleryabstractresponse_p.h"
+
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
+
+class QGalleryTrackerUrlResponsePrivate : public QGalleryAbstractResponsePrivate
+{
+    Q_DECLARE_PUBLIC(QGalleryTrackerUrlResponse)
+public:
+    QGalleryTrackerUrlResponsePrivate(
+            const QGalleryDBusInterfacePointer &fileInterface,
+            const QUrl &itemUrl,
+            bool create)
+        : create(create)
+        , watcher(0)
+        , fileInterface(fileInterface)
+        , itemUrl(itemUrl)
+    {
+    }
+
+    void _q_callFinished(QDBusPendingCallWatcher *call);
+
+    const bool create;
+    QDBusPendingCallWatcher *watcher;
+    QGalleryDBusInterfacePointer fileInterface;
+    const QUrl itemUrl;
+    QVariant itemId;
+    QString itemType;
+};
+
+void QGalleryTrackerUrlResponsePrivate::_q_callFinished(QDBusPendingCallWatcher *call)
+{
+    Q_ASSERT(call == watcher);
+
+    call->deleteLater();
+    watcher = 0;
+
+    if (call->isError()) {
+        qWarning("DBUS error %s", qPrintable(call->error().message()));
+
+        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+    } else {
+        QGalleryTrackerSchema schema;
+        schema.resolveTypeFromService(QDBusPendingReply<QString>(*call).value());
+
+        if (schema.isItemType()) {
+            itemId = schema.itemIdFromUri(itemUrl.path());
+            itemType = schema.itemType();
+
+            emit q_func()->inserted(0, 1);
+
+            q_func()->finish(QGalleryAbstractRequest::Succeeded);
+        } else {
+            q_func()->finish(QGalleryAbstractRequest::ItemTypeError);
+        }
+    }
+}
 
 QGalleryTrackerUrlResponse::QGalleryTrackerUrlResponse(
         const QGalleryDBusInterfacePointer &fileInterface,
         const QUrl &itemUrl,
         bool create,
         QObject *parent)
-    : QGalleryAbstractResponse(parent)
-    , m_watcher(0)
-    , m_fileInterface(fileInterface)
-    , m_itemUrl(itemUrl)
+    : QGalleryAbstractResponse(
+            *new QGalleryTrackerUrlResponsePrivate(fileInterface, itemUrl, create), parent)
 {
-    Q_UNUSED(create);
+    Q_D(QGalleryTrackerUrlResponse);
 
-    m_watcher = new QDBusPendingCallWatcher(
-            m_fileInterface->asyncCall(QLatin1String("GetServiceType"), m_itemUrl.path()), this);
+    d->watcher = new QDBusPendingCallWatcher(
+            d->fileInterface->asyncCall(QLatin1String("GetServiceType"), d->itemUrl.path()), this);
 
-    if (m_watcher->isFinished()) {
-        callFinished(m_watcher);
+    if (d->watcher->isFinished()) {
+        d->_q_callFinished(d->watcher);
     } else {
-        connect(m_watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                this, SLOT(callFinished(QDBusPendingCallWatcher*)));
+        connect(d->watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                this, SLOT(_q_callFinished(QDBusPendingCallWatcher*)));
     }
 }
 
@@ -104,22 +157,22 @@ QGalleryProperty::Attributes QGalleryTrackerUrlResponse::propertyAttributes(int)
 
 int QGalleryTrackerUrlResponse::count() const
 {
-    return !m_itemId.isNull() ? 1 : 0;
+    return !d_func()->itemId.isNull() ? 1 : 0;
 }
 
 QVariant QGalleryTrackerUrlResponse::id(int) const
 {
-    return m_itemId;
+    return d_func()->itemId;
 }
 
 QUrl QGalleryTrackerUrlResponse::url(int) const
 {
-    return m_itemUrl;
+    return d_func()->itemUrl;
 }
 
 QString QGalleryTrackerUrlResponse::type(int) const
 {
-    return m_itemType;
+    return d_func()->itemType;
 }
 
 QList<QGalleryResource> QGalleryTrackerUrlResponse::resources(int) const
@@ -147,40 +200,14 @@ void QGalleryTrackerUrlResponse::cancel()
 
 bool QGalleryTrackerUrlResponse::waitForFinished(int)
 {
-    if (m_watcher) {
-        m_watcher->waitForFinished();
+    Q_D(QGalleryTrackerUrlResponse);
 
-        callFinished(m_watcher);
+    if (d->watcher) {
+        d->watcher->waitForFinished();
+
+        d->_q_callFinished(d->watcher);
     }
     return true;
-}
-
-void QGalleryTrackerUrlResponse::callFinished(QDBusPendingCallWatcher *watcher)
-{
-    Q_ASSERT(watcher == m_watcher);
-
-    watcher->deleteLater();
-    m_watcher = 0;
-
-    if (watcher->isError()) {
-        qWarning("DBUS error %s", qPrintable(watcher->error().message()));
-
-        finish(QGalleryAbstractRequest::ConnectionError);
-    } else {
-        QGalleryTrackerSchema schema;
-        schema.resolveTypeFromService(QDBusPendingReply<QString>(*watcher).value());
-
-        if (schema.isItemType()) {
-            m_itemId = schema.itemIdFromUri(m_itemUrl.path());
-            m_itemType = schema.itemType();
-
-            emit inserted(0, 1);
-
-            finish(QGalleryAbstractRequest::Succeeded);
-        } else {
-            finish(QGalleryAbstractRequest::ItemTypeError);
-        }
-    }
 }
 
 #include "moc_qgallerytrackerurlresponse_p.cpp"
