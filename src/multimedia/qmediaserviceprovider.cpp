@@ -260,7 +260,7 @@ QMediaServiceProviderHint::Features QMediaServiceProviderHint::features() const
 
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
-        (QMediaServiceProviderFactoryInterface_iid, QLatin1String("/mediaservice"), Qt::CaseInsensitive))
+        (QMediaServiceProviderFactoryInterface_iid, QLatin1String("mediaservice"), Qt::CaseInsensitive))
 
 
 class QPluginServiceProvider : public QMediaServiceProvider
