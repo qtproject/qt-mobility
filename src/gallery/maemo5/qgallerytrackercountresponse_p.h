@@ -64,6 +64,8 @@ QTM_BEGIN_NAMESPACE
 
 class QGalleryTrackerSchema;
 
+class QGalleryTrackerCountResponsePrivate;
+
 class QGalleryTrackerCountResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
@@ -94,27 +96,9 @@ public:
 
     bool waitForFinished(int msecs);
 
-private Q_SLOTS:
-    void callFinished(QDBusPendingCallWatcher *watcher);
-
 private:
-    void queryCount();
-
-    enum
-    {
-        MaximumFetchSize = 512
-    };
-
-    int m_count;
-    int m_workingCount;
-    int m_currentOffset;
-    QDBusPendingCallWatcher *m_call;
-    QGalleryDBusInterfacePointer m_metaDataInterface;
-    QString m_query;
-    QString m_service;
-    QString m_countField;
-    QStringList m_identityFields;
-
+    Q_DECLARE_PRIVATE(QGalleryTrackerCountResponse)
+    Q_PRIVATE_SLOT(d_func(), void _q_callFinished(QDBusPendingCallWatcher *))
 };
 
 QTM_END_NAMESPACE
