@@ -281,6 +281,7 @@ bool QVersitContactExporter::exportContacts(
     foreach (const QContact& contact, contacts) {
         QVersitDocument versitDocument;
         versitDocument.setType(versitType);
+        versitDocument.setComponentType(QLatin1String("VCARD"));
         QVersitContactExporter::Error error;
         if (d->exportContact(contact, versitDocument, &error)) {
             d->mDocuments.append(versitDocument);
