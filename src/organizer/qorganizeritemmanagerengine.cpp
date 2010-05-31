@@ -599,7 +599,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemRecurrence::FieldExceptionDates, f);
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceDates, f);
-    f.setDataType(QVariant::Map);
     fields.insert(QOrganizerItemRecurrence::FieldExceptionRules, f);
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceRules, f);
     d.setFields(fields);
@@ -811,7 +810,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemRecurrence::FieldExceptionDates, f);
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceDates, f);
-    f.setDataType(QVariant::Map);
     fields.insert(QOrganizerItemRecurrence::FieldExceptionRules, f);
     fields.insert(QOrganizerItemRecurrence::FieldRecurrenceRules, f);
     d.setFields(fields);

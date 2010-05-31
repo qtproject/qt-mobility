@@ -126,8 +126,12 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldWeekStart, "WeekStart");
 #endif
 
-    // enums
+    QOrganizerItemRecurrenceRule();
+    ~QOrganizerItemRecurrenceRule();
+    QOrganizerItemRecurrenceRule(const QOrganizerItemRecurrenceRule& other);
+    QOrganizerItemRecurrenceRule& operator=(const QOrganizerItemRecurrenceRule& other);
 
+    // enums
     enum Frequency {
         NoRegularFrequency = 0, // eg: setMonths(<Jan, Feb>), setDaysOfMonth(15,-3)); // doesn't occur monthly, so no freq.
         Daily,

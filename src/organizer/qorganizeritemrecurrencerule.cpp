@@ -61,6 +61,26 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeeksOfYear, "WeeksO
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldPosition, "Position");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStart");
 
+QOrganizerItemRecurrenceRule::QOrganizerItemRecurrenceRule()
+    : d(new QOrganizerItemRecurrenceRulePrivate)
+{
+}
+
+QOrganizerItemRecurrenceRule::~QOrganizerItemRecurrenceRule()
+{
+}
+
+QOrganizerItemRecurrenceRule::QOrganizerItemRecurrenceRule(const QOrganizerItemRecurrenceRule& other)
+    : d(other.d)
+{
+}
+
+QOrganizerItemRecurrenceRule& QOrganizerItemRecurrenceRule::operator=(const QOrganizerItemRecurrenceRule& other)
+{
+    this->d = other.d;
+    return *this;
+}
+
 // Compulsory for a valid rule
 void QOrganizerItemRecurrenceRule::setStartDate(const QDate& startDate)
 {
