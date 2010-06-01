@@ -64,8 +64,6 @@
 #include <bttypes.h>
 #include <etel3rdparty.h>
 #include <aknkeylock.h>
-#include <startupdomainpskeys.h>
-#include <simutils.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -911,19 +909,7 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-    TInt lockStatus = 0;
-    TInt err = RProperty::Get(KPSUidStartup, KStartupSimLockStatus, lockStatus);
-    if (err == KErrNone && (TPSSimLockStatus)lockStatus != ESimLockOk) {
-        return QSystemDeviceInfo::SimLocked;
-    }
-
-    TInt simStatus = 0;
-    err = RProperty::Get(KPSUidStartup, KPSSimStatus, simStatus);
-    if (err == KErrNone && TPSSimStatus(simStatus) == ESimUsable) {
-        return QSystemDeviceInfo::SingleSimAvailable;
-    }
-
-    return QSystemDeviceInfo::SimNotAvailable;
+    return QSystemDeviceInfo::SimNotAvailable;  //Not available in public SDKs
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
