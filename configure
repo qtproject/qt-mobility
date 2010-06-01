@@ -366,6 +366,7 @@ compileTest()
 compileTest QMF qmf
 compileTest NetworkManager networkmanager
 compileTest "CoreWLAN (MacOS 10.6)" corewlan
+compileTest Immersion immersion
 
 # Now module selection
 # using 'expr match ....' should help a bit

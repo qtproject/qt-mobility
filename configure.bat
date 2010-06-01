@@ -426,6 +426,7 @@ echo Start of compile tests
 REM compile tests go here.
 call :compileTest LBT lbt
 call :compileTest SNAP snap
+call :compileTest IMMERSION immersion
 echo End of compile tests
 echo.
 echo.
