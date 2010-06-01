@@ -1,0 +1,152 @@
+Qt Mobility 1.0.1 is a patch release. It contains a number of
+improvements and bug fixes since the Qt Mobility 1.0.0 release. For
+more details, please refer to the online documentation included in this
+distribution. The documentation is also available online:
+
+  http://qt.nokia.com/doc/qtmobility-1.0
+
+Some of the changes listed in this file include issue tracking numbers
+corresponding to tasks in the Qt Bug Tracker or the Merge Request queue
+of the public source repository.
+
+Qt Bug Tracker: http://bugreports.qt.nokia.com
+Merge Request:  http://qt.gitorious.org
+
+
+****************************************************************************
+*                           General                                        *
+****************************************************************************
+
+New features
+------
+
+ - MOBILITY-991: Translation file support added
+
+Other changes/optimizations
+------
+
+ - QTMOBILITY-50, QTMOBILITY-264, MOBILITY-971 fixed: various configure -prefix bugs fixed
+ - configure tests on Symbian are based on arm builds (rather than winscw)
+ - MOBILITY-908 fixed: -plugindir parameter added to configure.[sh|bat]
+ - plugin project files simplified
+ - MOBILITY-717 fixed: plug-in loading across all API's using plug-ins unified
+   and fixed. This includes addition of PREFIX/plugins to standard plugin
+   path lookup.
+ - QTMOBILITY-129 fixed: namespace related documentation improved
+ - MOBILITY-625 fixed: RPATH support for examples and third party code
+
+****************************************************************************
+*                   Important Behavior Changes                             *
+****************************************************************************
+
+ - building of Mobility requires "make install" step as binaries
+   such as plug-ins and examples are not automatically deployed to BUILDDIR/plugins,
+   BUILDDIR/bin or BUILDDIR/bin/examples anymore. Rpath values have been
+   adjusted accordingly.
+
+
+****************************************************************************
+*                          Library                                         *
+****************************************************************************
+
+QtBearer
+------
+
+ - tests/networkmanager test application has been removed
+ - MOBILITY-810 fixed: crash in bearermonitor example fixed
+
+QtContacts
+------
+
+ - foo
+    * bar
+
+QtLocation
+------
+
+ - MOBILITY-858 fixed: Crash in lightmaps example fixed
+    * bar
+
+QtMessaging
+------
+
+ - foo
+    * bar
+
+QtMedia
+------
+
+ - foo
+    * bar
+
+QtPublishSubscribe
+------
+
+ - foo
+    * bar
+
+QtServiceFramework
+------
+
+ - MOBILITY-873 fixed: default interface documentation improved
+
+QtSystemInfo
+------
+
+ - foo
+    * bar
+
+Qt Mobility Plugins
+------
+
+ - foo
+    * bar
+
+
+****************************************************************************
+*                      Platform Specific Changes                           *
+****************************************************************************
+
+Qt Mobility for Embedded Linux
+------
+
+ -
+
+Qt Mobility for Unix (X11 and Mac OS X)
+------
+
+ - 
+
+Qt Mobility for Linux/X11
+------
+
+ -
+
+Qt Mobility for Windows
+------
+
+ -
+
+Qt Mobility for Mac OS X
+------
+
+ -
+
+
+Qt Mobility for Windows CE
+------
+
+ -
+
+Qt Mobility for Symbian
+------
+
+ - Symbian capability documentation improved
+ - QTMOBILITY-30 fixed: convenience headers supported on Symbian
+
+****************************************************************************
+*                          Tools                                           *
+****************************************************************************
+
+ - tool
+    * foo

@@ -163,6 +163,7 @@
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/setManager"></a>
 <h3 class="fn"><a name="setManager"></a>void QContactAbstractRequest::setManager ( <a href="qcontactmanager.html">QContactManager</a> * <i>manager</i> )</h3>
 <p>Sets the manager of which this request instance requests operations to <i>manager</i></p>
+<p>If the request is currently active, this function will return without updating the <i>manager</i> object.</p>
 <p>See also <a href="qcontactabstractrequest.html#manager">manager</a>().</p>
 <a name="//apple_ref/cpp/instm/QContactAbstractRequest/start"></a>
 <h3 class="fn"><a name="start"></a>bool QContactAbstractRequest::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
@@ -181,8 +182,8 @@
 <p>Blocks until the request has been completed by the manager engine, or until <i>msecs</i> milliseconds has elapsed. If <i>msecs</i> is zero, this function will block indefinitely. Returns true if the request was cancelled or completed successfully within the given period, otherwise false. Some backends are unable to support this operation safely, and will return false immediately.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

@@ -34,5 +34,6 @@ symbian:TARGET.CAPABILITY = NetworkServices \
     WriteUserData \
     UserEnvironment \
     ReadDeviceData \
-    WriteDeviceData
+    WriteDeviceData \
+    SwEvent
     

@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -206,7 +206,7 @@
 
         <span class="comment">// avatar viewer</span>
         if (defs.contains(QContactAvatar::DefinitionName)
-            &amp;&amp; defs.contains(QContactThumbnail::DefinitionName)) {
+            || defs.contains(QContactThumbnail::DefinitionName)) {
             m_avatarBtn-&gt;setEnabled(true);
             QContactAvatar av = curr.detail(QContactAvatar::DefinitionName);
             QContactThumbnail thumb = curr.detail(QContactThumbnail::DefinitionName);
@@ -331,6 +331,7 @@
                 curr.saveDetail(&amp;thumb);
             }
 
+            curr = m_manager-&gt;compatibleContact(curr);
             bool success = m_manager-&gt;saveContact(&amp;curr);
             if (!success)
                 QMessageBox::information(this, &quot;Failed!&quot;, QString(&quot;Failed to save contact!\n(error code %1)&quot;).arg(m_manager-&gt;error()));
@@ -345,8 +346,8 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
 </tr></table></div></address></body>
 </html>

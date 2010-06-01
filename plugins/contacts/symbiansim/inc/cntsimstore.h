@@ -53,13 +53,17 @@
 
 QTM_USE_NAMESPACE
 
-#ifdef SYMBIANSIM_BACKEND_PHONEBOOKINFOV1    
-typedef RMobilePhoneBookStore::TMobilePhoneBookInfoV1 TSimStoreInfo;
-typedef RMobilePhoneBookStore::TMobilePhoneBookInfoV1Pckg TSimStoreInfoPckg;
-#else
-typedef RMobilePhoneBookStore::TMobilePhoneBookInfoV5 TSimStoreInfo;
-typedef RMobilePhoneBookStore::TMobilePhoneBookInfoV5Pckg TSimStoreInfoPckg;
-#endif
+struct SimStoreInfo{
+    QString m_storeName;
+    int m_totalEntries;
+    int m_usedEntries;
+    bool m_readOnlyAccess;
+    bool m_numberSupported;
+    bool m_nameSupported;
+    bool m_secondNameSupported;
+    bool m_additionalNumberSupported;
+    bool m_emailSupported;
+};
 
 class CntSimStorePrivate;
 class CntSymbianSimEngine;
@@ -71,17 +75,13 @@ public:
     CntSimStore(CntSymbianSimEngine* engine, QString storeName, QContactManager::Error* error);
     ~CntSimStore();
     
-    QString storeName();
-    TSimStoreInfo storeInfo();
-    
+    SimStoreInfo storeInfo();
     bool read(int index, int numSlots, QContactManager::Error* error);
     bool write(const QContact &contact, QContactManager::Error* error);
     bool remove(int index, QContactManager::Error* error);
     bool getReservedSlots(QContactManager::Error* error);
-    
     void cancel();
     bool isBusy();
-    
     TInt lastAsyncError();
 
 signals:

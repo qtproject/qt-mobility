@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -74,12 +74,15 @@
 
     \section2 Introducing the New Qt APIs
 
+    Qt Mobility covers a wide range of features and technologies so it best
+    to regard it not as a single API but as a collection of APIs or frameworks.
+
     This release contains the following APIs:
 
     \annotatedlist  mobility
 
-    These APIs give the developer a wide range of desirable functions for a
-    mobile platform, but these now become possible on platforms not
+    These APIs give the developer a range of desirable functions for a
+    mobile platform, but now these functions become possible on platforms not
     traditionally associated with some of the features. A mobile device
     using the Qt Mobility Project API would be able to
         \list
@@ -101,8 +104,17 @@
     irrespective of whether the platform is mobile or not. This means that
     there is the possibility of easy transfer of user experience from PC to
     phone or vice versa.
+    
+    \section1 Namespace
 
-    \section2 Getting Started
+    The QtMobility API's are placed into the \i{QtMobility} namespace, with
+    the important exception of Multimedia. This is done to facilitate the
+    future migration of Mobility API's into Qt.
+    
+    See the \l {Quickstart Example}{Quickstart guide} for an example on how
+    the  namespace impacts on application development.
+
+    \section1 Getting Started
     To get started with Qt Mobility see the
     \list
         \o \l {Installation Guide}
@@ -124,10 +136,11 @@
     \section2 Bearer Management
 
     Although not a network manager, this component manages the connectivity
-    state to the network. So it does not manage network configurations, which
-    are the role of the platform provider, but it does allow the user to start
-    or stop network interfaces. Some higher level management of the connection
-    session may also be possible as well depending on the platform.
+    state of the device to the network. So it does not manage network
+    configurations, which are the role of the platform provider, but it does
+    allow the user to start or stop network interfaces. Some higher level
+    management of the connection session may also be possible as well
+    depending on the platform.
 
     Some platforms can have a set of grouped access points perhaps based on a
     common purpose. Bearer Management allows comparison and prioritization
@@ -379,10 +392,10 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Contacts*</td>
+    <td>Contacts</td>
 
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -407,8 +420,8 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Multimedia**</td>
-    <td>BETA</td>
+    <td>Multimedia</td>
+    <td>FINAL</td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
 
@@ -435,12 +448,12 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Sensors*</td>
+    <td>Sensors</td>
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
-    <td bgcolor="lightgray"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
 
@@ -470,14 +483,9 @@
 
     \endraw
 
-    [*] \i {These APIs are considered FINAL however there are some known
-    issues with Symbian backends. These backend issues will be resolved
-    in a future release. }
     \raw HTML
     <p>
     \endraw
-    [**] \i {These APIs are considered BETA pending final API reviews. We
-    anticipate moving the status to Final in a future release.}
 
     \section1 Feedback and bug reports
     Email any inquiries and feedback about Qt Mobility to qt-mobility-feedback@trolltech.com

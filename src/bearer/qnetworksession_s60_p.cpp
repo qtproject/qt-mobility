@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,15 +52,17 @@
 QTM_BEGIN_NAMESPACE
 
 QNetworkSessionPrivate::QNetworkSessionPrivate()
-    : CActive(CActive::EPriorityStandard), state(QNetworkSession::Invalid),
-      isOpen(false), ipConnectionNotifier(0), iError(QNetworkSession::UnknownSessionError),
-      iALREnabled(0), iConnectInBackground(false)
+    : CActive(CActive::EPriorityUserInput), state(QNetworkSession::Invalid),
+      isOpen(false), ipConnectionNotifier(0), iHandleStateNotificationsFromManager(false),
+      iFirstSync(true), iStoppedByUser(false), iClosedByUser(false), iDeprecatedConnectionId(0),
+      iError(QNetworkSession::UnknownSessionError), iALREnabled(0), iConnectInBackground(false)
 {
     CActiveScheduler::Add(this);
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
     iMobility = NULL;
 #endif
+
     TRAP_IGNORE(iConnectionMonitor.ConnectL());
 }
 
@@ -89,9 +91,43 @@ QNetworkSessionPrivate::~QNetworkSessionPrivate()
     
     // Close global 'Open C' RConnection
     setdefaultif(0);
-
-    iConnectionMonitor.CancelNotifications();
+    
     iConnectionMonitor.Close();
+}
+
+void QNetworkSessionPrivate::configurationStateChanged(TUint32 accessPointId, TUint32 connMonId, QNetworkSession::State newState)
+{
+    if (iHandleStateNotificationsFromManager) {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+        qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                << "configurationStateChanged from manager for IAP : " << QString::number(accessPointId)
+                << "configurationStateChanged connMon ID : " << QString::number(connMonId)
+                << " : to a state: " << newState
+                << " whereas my current state is: " << state;
+#endif
+        if (connMonId == iDeprecatedConnectionId) {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+            qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                    << "however status update from manager ignored because it related to already closed connection.";
+#endif
+            return;
+        }
+        this->newState(newState, accessPointId);
+    }
+}
+
+void QNetworkSessionPrivate::configurationRemoved(const QNetworkConfiguration& config)
+{
+    if (!publicConfig.d.data()) {
+        return;
+    }
+    if (config.d.data()->numericId == publicConfig.d.data()->numericId) {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+        qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                 << "configurationRemoved IAP: " << QString::number(publicConfig.d.data()->numericId) << " : going to State: Invalid";
+#endif
+        this->newState(QNetworkSession::Invalid, publicConfig.d.data()->numericId);
+    }
 }
 
 void QNetworkSessionPrivate::syncStateWithInterface()
@@ -100,8 +136,17 @@ void QNetworkSessionPrivate::syncStateWithInterface()
         return;
     }
 
-    // Start monitoring changes in IAP states
-    TRAP_IGNORE(iConnectionMonitor.NotifyEventL(*this));
+    if (iFirstSync && publicConfig.d.data()) {
+        QObject::connect(((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager), SIGNAL(configurationStateChanged(TUint32, TUint32, QNetworkSession::State)),
+                         this, SLOT(configurationStateChanged(TUint32, TUint32, QNetworkSession::State)));
+        // Listen to configuration removals, so that in case the configuration
+        // this session is based on is removed, session knows to enter Invalid -state.
+        QObject::connect(((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager),
+                         SIGNAL(configurationRemoved(QNetworkConfiguration)),
+                         this, SLOT(configurationRemoved(QNetworkConfiguration)));
+    }
+    // Start listening IAP state changes from QNetworkConfigurationManagerPrivate
+    iHandleStateNotificationsFromManager = true;    
 
     // Check open connections to see if there is already
     // an open connection to selected IAP or SNAP
@@ -137,11 +182,7 @@ void QNetworkSessionPrivate::syncStateWithInterface()
     }
 
     if (state != QNetworkSession::Connected) {
-        // There were no open connections to used IAP or SNAP
-        if (iError == QNetworkSession::InvalidConfigurationError) {
-            newState(QNetworkSession::Invalid);
-        }
-        else if ((publicConfig.d.data()->state & QNetworkConfiguration::Discovered) ==
+        if ((publicConfig.d.data()->state & QNetworkConfiguration::Discovered) ==
             QNetworkConfiguration::Discovered) {
             newState(QNetworkSession::Disconnected);
         } else {
@@ -242,13 +283,18 @@ QNetworkSession::SessionError QNetworkSessionPrivate::error() const
 
 void QNetworkSessionPrivate::open()
 {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+        qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                << "open() called, session state is: " << state << " and isOpen is: "
+                << isOpen;
+#endif
     if (isOpen || (state == QNetworkSession::Connecting)) {
         return;
     }
-
-    // Cancel notifications from RConnectionMonitor
+    
+    // Stop handling IAP state change signals from QNetworkConfigurationManagerPrivate
     // => RConnection::ProgressNotification will be used for IAP/SNAP monitoring
-    iConnectionMonitor.CancelNotifications();
+    iHandleStateNotificationsFromManager = false;
 
     // Configuration may have been invalidated after session creation by platform
     // (e.g. configuration has been deleted).
@@ -256,19 +302,25 @@ void QNetworkSessionPrivate::open()
         newState(QNetworkSession::Invalid);
         iError = QNetworkSession::InvalidConfigurationError;
         emit q->error(iError);
-        syncStateWithInterface();
         return;
     }
-    // If opening a (un)defined configuration, session emits error and enters
-    // NotAvailable -state.
-    if (publicConfig.state() == QNetworkConfiguration::Undefined ||
-        publicConfig.state() == QNetworkConfiguration::Defined) {
+    // If opening a undefined configuration, session emits error and enters
+    // NotAvailable -state. Note that we will try ones in 'defined' state to avoid excessive
+    // need for WLAN scans (via updateConfigurations()), because user may have walked
+    // into a WLAN range, but periodic background scan has not occurred yet -->
+    // we don't want to force application to make frequent updateConfigurations() calls
+    // to be able to try if e.g. home WLAN is available.
+    if (publicConfig.state() == QNetworkConfiguration::Undefined) {
         newState(QNetworkSession::NotAvailable);
         iError = QNetworkSession::InvalidConfigurationError;
         emit q->error(iError);
         return;
     }
-    
+    // Clear possible previous states
+    iStoppedByUser = false;
+    iClosedByUser = false;
+    iDeprecatedConnectionId = 0;
+
     TInt error = iSocketServ.Connect();
     if (error != KErrNone) {
         // Could not open RSocketServ
@@ -420,11 +472,19 @@ TUint QNetworkSessionPrivate::iapClientCount(TUint aIAPId) const
 
 void QNetworkSessionPrivate::close(bool allowSignals)
 {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+            << "close() called, session state is: " << state << " and isOpen is : "
+            << isOpen;
+#endif
     if (!isOpen) {
         return;
     }
+    // Mark this session as closed-by-user so that we are able to report
+    // distinguish between stop() and close() state transitions
+    // when reporting.
+    iClosedByUser = true;
 
-    TUint activeIap = activeConfig.d.data()->numericId;
     isOpen = false;
     activeConfig = QNetworkConfiguration();
     serviceConfig = QNetworkConfiguration();
@@ -437,8 +497,10 @@ void QNetworkSessionPrivate::close(bool allowSignals)
     }
 #endif
 
-    if (ipConnectionNotifier) {
+    if (ipConnectionNotifier && !iHandleStateNotificationsFromManager) {
         ipConnectionNotifier->StopNotifications();
+        // Start handling IAP state change signals from QNetworkConfigurationManagerPrivate
+        iHandleStateNotificationsFromManager = true;
     }
     
     iConnection.Close();
@@ -447,29 +509,31 @@ void QNetworkSessionPrivate::close(bool allowSignals)
     // Close global 'Open C' RConnection
     setdefaultif(0);
 
-#ifdef Q_CC_NOKIAX86
-    if ((allowSignals && iapClientCount(activeIap) <= 0) ||
-#else
-    if ((allowSignals && iapClientCount(activeIap) <= 1) ||
-#endif
-        (publicConfig.type() == QNetworkConfiguration::UserChoice)) {
+    if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
         newState(QNetworkSession::Closing);
+        newState(QNetworkSession::Disconnected);
     }
     
-    syncStateWithInterface();
     if (allowSignals) {
-        if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
-            newState(QNetworkSession::Disconnected);
-        }
         emit q->closed();
     }
 }
 
 void QNetworkSessionPrivate::stop()
 {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+            << "stop() called, session state is: " << state << " and isOpen is : "
+            << isOpen;
+#endif
     if (!isOpen &&
         publicConfig.isValid() &&
         publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+            << "since session is not open, using RConnectionMonitor to stop() the interface";
+#endif
+        iStoppedByUser = true;
         // If the publicConfig is type of IAP, enumerate through connections at
         // connection monitor. If publicConfig is active in that list, stop it.
         // Otherwise there is nothing to stop. Note: because this QNetworkSession is not open,
@@ -483,7 +547,7 @@ void QNetworkSessionPrivate::stop()
         }
         TUint numSubConnections; // Not used but needed by GetConnectionInfo i/f
         TUint connectionId;
-        for (TInt i = 1; i <= count; ++i) {
+        for (TUint i = 1; i <= count; ++i) {
             // Get (connection monitor's assigned) connection ID
             TInt ret = iConnectionMonitor.GetConnectionInfo(i, connectionId, numSubConnections);            
             if (ret == KErrNone) {
@@ -495,11 +559,25 @@ void QNetworkSessionPrivate::stop()
                                                               ETrue);
                 }
             }
+            // Enter disconnected state right away since the session is not even open.
+            // Symbian^3 connection monitor does not emit KLinkLayerClosed when
+            // connection is stopped via connection monitor.
+            newState(QNetworkSession::Disconnected);
         }
     } else if (isOpen) {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+            << "since session is open, using RConnection to stop() the interface";
+#endif
         // Since we are open, use RConnection to stop the interface
         isOpen = false;
+        iStoppedByUser = true;
         newState(QNetworkSession::Closing);
+        if (ipConnectionNotifier) {
+            ipConnectionNotifier->StopNotifications();
+            // Start handling IAP state change signals from QNetworkConfigurationManagerPrivate
+            iHandleStateNotificationsFromManager = true;
+        }
         iConnection.Stop(RConnection::EStopAuthoritative);
         isOpen = true;
         close(false);
@@ -592,7 +670,15 @@ void QNetworkSessionPrivate::PreferredCarrierAvailable(TAccessPointInfo aOldAPIn
         QList<QNetworkConfiguration> configs = publicConfig.children();
         for (int i=0; i < configs.count(); i++) {
             if (configs[i].d.data()->numericId == aNewAPInfo.AccessPoint()) {
-                emit q->preferredConfigurationChanged(configs[i],aIsSeamless);
+                // Any slot connected to the signal might throw an std::exception,
+                // which must not propagate into Symbian code (this function is a callback
+                // from platform). We could convert exception to a symbian Leave, but since the
+                // prototype of this function bans this (no trailing 'L'), we just catch
+                // and drop.
+                QT_TRY {
+                    emit q->preferredConfigurationChanged(configs[i],aIsSeamless);
+                }
+                QT_CATCH (std::exception&) {}
             }
         }
     } else {
@@ -603,7 +689,10 @@ void QNetworkSessionPrivate::PreferredCarrierAvailable(TAccessPointInfo aOldAPIn
 void QNetworkSessionPrivate::NewCarrierActive(TAccessPointInfo /*aNewAPInfo*/, TBool /*aIsSeamless*/)
 {
     if (iALREnabled > 0) {
-        emit q->newConfigurationActivated();
+        QT_TRY {
+            emit q->newConfigurationActivated();
+        }
+        QT_CATCH (std::exception&) {}
     } else {
         accept();
     }
@@ -611,6 +700,10 @@ void QNetworkSessionPrivate::NewCarrierActive(TAccessPointInfo /*aNewAPInfo*/, T
 
 void QNetworkSessionPrivate::Error(TInt /*aError*/)
 {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+            << "roaming Error() occured";
+#endif
     if (isOpen) {
         isOpen = false;
         activeConfig = QNetworkConfiguration();
@@ -621,13 +714,24 @@ void QNetworkSessionPrivate::Error(TInt /*aError*/)
         if (ipConnectionNotifier) {
             ipConnectionNotifier->StopNotifications();
         }
-        syncStateWithInterface();
-        // In some cases IAP is still in Connected state when
-        // syncStateWithInterface(); is called
-        // => Following call makes sure that Session state
-        //    changes immediately to Disconnected.
-        newState(QNetworkSession::Disconnected);
-        emit q->closed();
+        QT_TRY {
+            syncStateWithInterface();
+            // In some cases IAP is still in Connected state when
+            // syncStateWithInterface(); is called
+            // => Following call makes sure that Session state
+            //    changes immediately to Disconnected.
+            newState(QNetworkSession::Disconnected);
+            emit q->closed();
+        }
+        QT_CATCH (std::exception&) {}
+    } else if (iStoppedByUser) {
+        // If the user of this session has called the stop() and
+        // configuration is based on internet SNAP, this needs to be
+        // done here because platform might roam.
+        QT_TRY {
+            newState(QNetworkSession::Disconnected);
+        }
+        QT_CATCH (std::exception&) {}
     }
 }
 #endif
@@ -854,12 +958,12 @@ void QNetworkSessionPrivate::RunL()
             if (error != KErrNone) {
                 isOpen = false;
                 iError = QNetworkSession::UnknownSessionError;
-                emit q->error(iError);
+                QT_TRYCATCH_LEAVING(emit q->error(iError));
                 Cancel();
                 if (ipConnectionNotifier) {
                     ipConnectionNotifier->StopNotifications();
                 }
-                syncStateWithInterface();
+                QT_TRYCATCH_LEAVING(syncStateWithInterface());
                 return;
             }
  
@@ -880,8 +984,10 @@ void QNetworkSessionPrivate::RunL()
             
             startTime = QDateTime::currentDateTime();
 
-            newState(QNetworkSession::Connected);
-            emit quitPendingWaitsForOpened();
+            QT_TRYCATCH_LEAVING({
+                    newState(QNetworkSession::Connected);
+                    emit quitPendingWaitsForOpened();
+                });
             }
             break;
         case KErrNotFound: // Connection failed
@@ -889,12 +995,12 @@ void QNetworkSessionPrivate::RunL()
             activeConfig = QNetworkConfiguration();
             serviceConfig = QNetworkConfiguration();
             iError = QNetworkSession::InvalidConfigurationError;
-            emit q->error(iError);
+            QT_TRYCATCH_LEAVING(emit q->error(iError));
             Cancel();
             if (ipConnectionNotifier) {
                 ipConnectionNotifier->StopNotifications();
             }
-            syncStateWithInterface();
+            QT_TRYCATCH_LEAVING(syncStateWithInterface());
             break;
         case KErrCancel: // Connection attempt cancelled
         case KErrAlreadyExists: // Connection already exists
@@ -902,13 +1008,18 @@ void QNetworkSessionPrivate::RunL()
             isOpen = false;
             activeConfig = QNetworkConfiguration();
             serviceConfig = QNetworkConfiguration();
-            iError = QNetworkSession::UnknownSessionError;
-            emit q->error(iError);
+            if (publicConfig.state() == QNetworkConfiguration::Undefined ||
+                publicConfig.state() == QNetworkConfiguration::Defined) {
+                iError = QNetworkSession::InvalidConfigurationError;
+            } else {
+                iError = QNetworkSession::UnknownSessionError;
+            }
+            QT_TRYCATCH_LEAVING(emit q->error(iError));
             Cancel();
             if (ipConnectionNotifier) {
                 ipConnectionNotifier->StopNotifications();
             }
-            syncStateWithInterface();
+            QT_TRYCATCH_LEAVING(syncStateWithInterface());
             break;
     }
 }
@@ -918,8 +1029,16 @@ void QNetworkSessionPrivate::DoCancel()
     iConnection.Close();
 }
 
+// Enters newState if feasible according to current state.
+// AccessPointId may be given as parameter. If it is zero, state-change is assumed to
+// concern this session's configuration. If non-zero, the configuration is looked up
+// and checked if it matches the configuration this session is based on.
 bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint accessPointId)
 {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+             << "NEW STATE, IAP ID : " << QString::number(accessPointId) << " , newState : " << QString::number(newState);
+#endif
     // Make sure that activeConfig is always updated when SNAP is signaled to be
     // connected.
     if (isOpen && publicConfig.type() == QNetworkConfiguration::ServiceNetwork &&
@@ -937,9 +1056,29 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
     if (state == QNetworkSession::Roaming && newState == QNetworkSession::Connecting) {
         return false;
     }
+    
+    // Make sure that Connected state is not reported when Connection is
+    // already Closing.
+    // Note: Stopping connection results sometimes KLinkLayerOpen
+    //       to be reported first (just before KLinkLayerClosed).
+    if (state == QNetworkSession::Closing && newState == QNetworkSession::Connected) {
+        return false;
+    }
+
+    // Make sure that some lagging 'closing' state-changes do not overwrite
+    // if we are already disconnected or closed.
+    if (state == QNetworkSession::Disconnected && newState == QNetworkSession::Closing) {
+        return false;
+    }
 
     bool emitSessionClosed = false;
-    if (isOpen && state == QNetworkSession::Connected && newState == QNetworkSession::Disconnected) {
+
+    // If we abruptly go down and user hasn't closed the session, we've been aborted.
+    // Note that session may be in 'closing' state and not in 'connected' state, because
+    // depending on platform the platform may report KConfigDaemonStartingDeregistration
+    // event before KLinkLayerClosed
+    if ((isOpen && state == QNetworkSession::Connected && newState == QNetworkSession::Disconnected) ||
+        (isOpen && !iClosedByUser && newState == QNetworkSession::Disconnected)) {
         // Active & Connected state should change directly to Disconnected state
         // only when something forces connection to close (eg. when another
         // application or session stops connection or when network drops
@@ -953,26 +1092,35 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
         if (ipConnectionNotifier) {
             ipConnectionNotifier->StopNotifications();
         }
-        // Start monitoring changes in IAP states
-        TRAP_IGNORE(iConnectionMonitor.NotifyEventL(*this));
+        // Start handling IAP state change signals from QNetworkConfigurationManagerPrivate
+        iHandleStateNotificationsFromManager = true;
         emitSessionClosed = true; // Emit SessionClosed after state change has been reported
     }
 
     bool retVal = false;
     if (accessPointId == 0) {
         state = newState;
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+        qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "===> EMIT State changed A to: " << state;
+#endif
         emit q->stateChanged(state);
         retVal = true;
     } else {
         if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
             if (publicConfig.d.data()->numericId == accessPointId) {
                 state = newState;
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+                qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "===> EMIT State changed B to: " << state;
+#endif
                 emit q->stateChanged(state);
                 retVal = true;
             }
         } else if (publicConfig.type() == QNetworkConfiguration::UserChoice && isOpen) {
             if (activeConfig.d.data()->numericId == accessPointId) {
                 state = newState;
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+                qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "===> EMIT State changed C to: " << state;
+#endif
                 emit q->stateChanged(state);
                 retVal = true;
             }
@@ -980,26 +1128,33 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
             QList<QNetworkConfiguration> subConfigurations = publicConfig.children();
             for (int i = 0; i < subConfigurations.count(); i++) {
                 if (subConfigurations[i].d.data()->numericId == accessPointId) {
-                    if (newState == QNetworkSession::Connected) {
-                        // Make sure that when AccessPoint is reported to be Connected
-                        // also state of the related configuration changes to Active.
-                        subConfigurations[i].d.data()->state = QNetworkConfiguration::Active;
-    
+                    if (newState != QNetworkSession::Disconnected) {
                         state = newState;
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+                        qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "===> EMIT State changed D  to: " << state;
+#endif
                         emit q->stateChanged(state);
                         retVal = true;
                     } else {
-                        if (newState == QNetworkSession::Disconnected) {
-                            // Make sure that when AccessPoint is reported to be disconnected
-                            // also state of the related configuration changes from Active to Defined.
-                            subConfigurations[i].d.data()->state = QNetworkConfiguration::Defined;
-                        }
                         QNetworkConfiguration config = bestConfigFromSNAP(publicConfig);
                         if ((config.state() == QNetworkConfiguration::Defined) ||
                             (config.state() == QNetworkConfiguration::Discovered)) {
                             state = newState;
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+                            qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "===> EMIT State changed E  to: " << state;
+#endif
                             emit q->stateChanged(state);
                             retVal = true;
+                        } else if (config.state() == QNetworkConfiguration::Active) {
+                            // Connection to used IAP was closed, but there is another
+                            // IAP that's active in used SNAP
+                            // => Change state back to Connected
+                            state =  QNetworkSession::Connected;
+                            emit q->stateChanged(state);
+                            retVal = true;
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+                            qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "===> EMIT State changed F  to: " << state;
+#endif
                         }
                     }
                 }
@@ -1010,6 +1165,13 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
     if (emitSessionClosed) {
         emit q->closed();
     }
+    if (state == QNetworkSession::Disconnected) {
+        // The connection has gone down, and processing of status updates must be
+        // stopped. Depending on platform, there may come 'connecting/connected' states
+        // considerably later (almost a second). Connection id is an increasing
+        // number, so this does not affect next _real_ 'conneting/connected' states.
+        iDeprecatedConnectionId = publicConfig.d.data()->connectionId;
+    }
 
     return retVal;
 }
@@ -1018,6 +1180,9 @@ void QNetworkSessionPrivate::handleSymbianConnectionStatusChange(TInt aConnectio
                                                                  TInt aError,
                                                                  TUint accessPointId)
 {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - " << QString::number(accessPointId) << " , status : " << QString::number(aConnectionStatus);
+#endif
     switch (aConnectionStatus)
         {
         // Connection unitialised
@@ -1056,6 +1221,7 @@ void QNetworkSessionPrivate::handleSymbianConnectionStatusChange(TInt aConnectio
         case KCsdGotLoginInfo:
             break;
 
+        case KConfigDaemonStartingRegistration:
         // Creating connection (e.g. GPRS activation)
         case KCsdStartingConnect:
         case KCsdFinishedConnect:
@@ -1082,6 +1248,7 @@ void QNetworkSessionPrivate::handleSymbianConnectionStatusChange(TInt aConnectio
         case KDataTransferTemporarilyBlocked:
             break;
 
+        case KConfigDaemonStartingDeregistration:
         // Hangup or GRPS deactivation
         case KConnectionStartingClose:
             newState(QNetworkSession::Closing,accessPointId);
@@ -1089,110 +1256,27 @@ void QNetworkSessionPrivate::handleSymbianConnectionStatusChange(TInt aConnectio
 
         // Connection closed
         case KConnectionClosed:
-            break;
-
         case KLinkLayerClosed:
             newState(QNetworkSession::Disconnected,accessPointId);
+            // Report manager about this to make sure this event
+            // is received by all interseted parties (mediated by
+            // manager because it does always receive all events from
+            // connection monitor).
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+            qDebug() << "QNS this : " << QString::number((uint)this) << " - " << "reporting disconnection to manager.";
+#endif
+            if (publicConfig.d.data()) {
+                ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->configurationStateChangeReport(publicConfig.d.data()->numericId, QNetworkSession::Disconnected);
+            }
             break;
-
         // Unhandled state
         default:
             break;
         }
 }
 
-void QNetworkSessionPrivate::EventL(const CConnMonEventBase& aEvent)
-{
-    switch (aEvent.EventType())
-    {
-        case EConnMonConnectionStatusChange:
-            {
-            CConnMonConnectionStatusChange* realEvent;
-            realEvent = (CConnMonConnectionStatusChange*) &aEvent;
-
-            TUint connectionId = realEvent->ConnectionId();
-            TInt connectionStatus = realEvent->ConnectionStatus();
-
-            // Try to Find IAP Id using connection Id
-            TUint apId = 0;
-            if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-                QList<QNetworkConfiguration> subConfigurations = publicConfig.children();
-                for (int i = 0; i < subConfigurations.count(); i++ ) {
-                    if (subConfigurations[i].d.data()->connectionId == connectionId) {
-                        apId = subConfigurations[i].d.data()->numericId;
-                        break;
-                    }
-                }
-            } else if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
-                if (publicConfig.d.data()->connectionId == connectionId) {
-                    apId = publicConfig.d.data()->numericId;
-                }
-            }
-
-            if (apId > 0) {
-                handleSymbianConnectionStatusChange(connectionStatus, KErrNone, apId);
-            }
-            }
-            break;
-
-        case EConnMonCreateConnection:
-            {
-            CConnMonCreateConnection* realEvent;
-            realEvent = (CConnMonCreateConnection*) &aEvent;
-            TUint apId;
-            TUint connectionId = realEvent->ConnectionId();
-            TRequestStatus status;
-            iConnectionMonitor.GetUintAttribute(connectionId, 0, KIAPId, apId, status);
-            User::WaitForRequest(status);
-            if (status.Int() == KErrNone) {
-                // Store connection id to related AccessPoint Configuration
-                if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-                    QList<QNetworkConfiguration> subConfigurations = publicConfig.children();
-                    for (int i = 0; i < subConfigurations.count(); i++ ) {
-                        if (subConfigurations[i].d.data()->numericId == apId) {
-                            subConfigurations[i].d.data()->connectionId = connectionId;
-                            break;
-                        }
-                    }
-                } else if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
-                    if (publicConfig.d.data()->numericId == apId) {
-                        publicConfig.d.data()->connectionId = connectionId;
-                    }
-                }
-            }
-            }
-            break;
-
-        case EConnMonDeleteConnection:
-            {
-            CConnMonDeleteConnection* realEvent;
-            realEvent = (CConnMonDeleteConnection*) &aEvent;
-            TUint connectionId = realEvent->ConnectionId();
-            // Remove connection id from related AccessPoint Configuration
-            if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
-                QList<QNetworkConfiguration> subConfigurations = publicConfig.children();
-                for (int i = 0; i < subConfigurations.count(); i++ ) {
-                    if (subConfigurations[i].d.data()->connectionId == connectionId) {
-                        subConfigurations[i].d.data()->connectionId = 0;
-                        break;
-                    }
-                }
-            } else if (publicConfig.type() == QNetworkConfiguration::InternetAccessPoint) {
-                if (publicConfig.d.data()->connectionId == connectionId) {
-                    publicConfig.d.data()->connectionId = 0;
-                }
-            }
-            }
-            break;
-
-        default:
-            // For unrecognized events
-            break;
-    }
-}
-
 ConnectionProgressNotifier::ConnectionProgressNotifier(QNetworkSessionPrivate& owner, RConnection& connection)
-    : CActive(CActive::EPriorityStandard), iOwner(owner), iConnection(connection)
+    : CActive(CActive::EPriorityUserInput), iOwner(owner), iConnection(connection)
 {
     CActiveScheduler::Add(this);
 }
@@ -1223,7 +1307,7 @@ void ConnectionProgressNotifier::DoCancel()
 void ConnectionProgressNotifier::RunL()
 {
     if (iStatus == KErrNone) {
-        iOwner.handleSymbianConnectionStatusChange(iProgress().iStage, iProgress().iError);
+        QT_TRYCATCH_LEAVING(iOwner.handleSymbianConnectionStatusChange(iProgress().iStage, iProgress().iError));
     
         SetActive();
         iConnection.ProgressNotification(iProgress, iStatus);

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -1921,31 +1921,34 @@ bool SharedMemoryLayer::startup(Type type)
 
     if(Server == type) {
         shm = new QSharedMemory(socket(), this);
-        bool created = shm->create(SHMLAYER_SIZE);
-        if (!created)  {
-            //qDebug() << "Reattaching to existing memory";
+        // create or reattach to existing shared memory
+        if (!shm->create(SHMLAYER_SIZE))
             shm->attach();
+
+        if (shm->error() != QSharedMemory::NoError) {
+            qFatal("SharedMemoryLayer: Unable to create or access shared resource. %d(%s)",
+                   shm->error(),
+                   shm->errorString().toLatin1().constData());
         }
-        lock = new QSystemReadWriteLock(socket() + "_lock", QSystemReadWriteLock::Create);
+        lock = new QSystemReadWriteLock(socket() + QLatin1String("_lock"),
+                                        QSystemReadWriteLock::Create);
     } else {
         shm = new QSharedMemory(socket(), this);
         shm->attach(QSharedMemory::ReadOnly);
+        if (shm->error() != QSharedMemory::NoError) {
+            qFatal("SharedMemoryLayer: Unable to access shared memory. %d(%s)",
+                   shm->error(), shm->errorString().toLatin1().constData());
+        }
+
         qsrand(QTime(0,0,0).secsTo(QTime::currentTime())+QCoreApplication::applicationPid());
         subShm = new QSharedMemory(socket()+QString::number(qrand()), this);
         if (!subShm->create((VERSION_TABLE_ENTRIES + 7) / 8, QSharedMemory::ReadWrite)) {
-            qWarning() << "SharedMemoryLayer client cannot create clientIndex:"
-                       << subShm->errorString() << subShm->key();
+            qWarning("SharedMemoryLayer: client cannot create clientIndex: %s %s",
+                     subShm->errorString().toLatin1().constData(), subShm->key().toLatin1().constData());
         }
 
-        lock = new QSystemReadWriteLock(socket() + "_lock", QSystemReadWriteLock::Open);
-    }
-
-    if (shm->error() != QSharedMemory::NoError ||
-        ((!subShm || subShm->error()!= QSharedMemory::NoError) && Server != type)) {
-        qFatal("SharedMemoryLayer: Unable to create or access shared resources. (%s - %s)",
-               shm->errorString().toLatin1().constData(),
-               subShm->errorString().toLatin1().constData());
-        return false;
+        lock = new QSystemReadWriteLock(socket() + QLatin1String("_lock"),
+                                        QSystemReadWriteLock::Open);
     }
 
     if (subShm)
@@ -2080,7 +2083,7 @@ void SharedMemoryLayer::disconnected()
         owner.data2 = 0xFFFFFFFF;
 
         connections.remove(protocol);
-        if(layer->remove("/", owner)) {
+        if (layer->remove("/", owner)) {
             QPacket others;
             others << (quint8)SHMLAYER_SYNC << (unsigned int)0;
             for(QSet<QPacketProtocol *>::ConstIterator iter = connections.begin();
@@ -2857,7 +2860,7 @@ bool SharedMemoryLayer::setWatch(NodeWatch watch, const QByteArray &path)
 {
     QMutexLocker locker(&localLock);
 
-    if(path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
+    if (path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
         return false;
     Q_ASSERT(layer);
 
@@ -2932,7 +2935,7 @@ bool SharedMemoryLayer::setItem(NodeOwner owner, const QByteArray &path,
 {
     QMutexLocker locker(&localLock);
 
-    if(path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
+    if (path.count() > MAX_PATH_SIZE || path.startsWith("/.ValueSpace") || !valid)
         return false;
     Q_ASSERT(layer);
     bool changed = false;
@@ -3304,7 +3307,7 @@ bool SharedMemoryLayer::setValue(QValueSpacePublisher *creator, Handle handle, c
     if (!fullPath.endsWith('/') && path != QLatin1String("/"))
         fullPath.append('/');
 
-    fullPath.append(path.mid(1));
+    fullPath.append(path.mid(1).toUtf8());
 
     return setItem(owner, fullPath, data);
 }
@@ -3332,7 +3335,7 @@ bool SharedMemoryLayer::removeValue(QValueSpacePublisher *creator,
     while (index < path.length() && path[index] == QLatin1Char('/'))
         ++index;
 
-    fullPath.append(path.mid(index));
+    fullPath.append(path.mid(index).toUtf8());
 
     return remItems(owner, fullPath);
 }
