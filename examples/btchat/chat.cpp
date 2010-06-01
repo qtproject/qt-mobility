@@ -58,6 +58,7 @@ static const QLatin1String serviceUuid("e8e10f95-1a70-4b27-9ccf-02010264e9c8");
 Chat::Chat(QWidget *parent)
 : QDialog(parent), ui(new Ui_Chat)
 {
+    //! [Construct UI]
     ui->setupUi(this);
 
 #if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
@@ -67,14 +68,20 @@ Chat::Chat(QWidget *parent)
     connect(ui->quitButton, SIGNAL(clicked()), this, SLOT(accept()));
     connect(ui->connectButton, SIGNAL(clicked()), this, SLOT(connectClicked()));
     connect(ui->sendButton, SIGNAL(clicked()), this, SLOT(sendClicked()));
+    //! [Construct UI]
 
+    //! [Create Chat Server]
     server = new ChatServer(this);
     connect(server, SIGNAL(clientConnected(QString)), this, SLOT(clientConnected(QString)));
+    connect(server, SIGNAL(clientDisconnected(QString)), this, SLOT(clientDisconnected(QString)));
     connect(server, SIGNAL(messageReceived(QString,QString)),
             this, SLOT(showMessage(QString,QString)));
     server->startServer();
+    //! [Create Chat Server]
 
+    //! [Get local device name]
     localName = QBluetoothLocalDevice::defaultDevice().name();
+    //! [Get local device name]
 }
 
 Chat::~Chat()
@@ -83,16 +90,26 @@ Chat::~Chat()
     delete server;
 }
 
+//! [clientConnected clientDisconnected]
 void Chat::clientConnected(const QString &name)
 {
     ui->chat->insertPlainText(QString::fromLatin1("%1 has joined chat.").arg(name));
 }
 
+void Chat::clientDisconnected(const QString &name)
+{
+    ui->chat->insertPlainText(QString::fromLatin1("%1 has left.").arg(name));
+}
+//! [clientConnected clientDisconnected]
+
+//! [connected]
 void Chat::connected(const QString &name)
 {
     ui->chat->insertPlainText(QString::fromLatin1("Joined chat with %1.").arg(name));
 }
+//! [connected]
 
+//! [clientDisconnected]
 void Chat::clientDisconnected()
 {
     ChatClient *client = qobject_cast<ChatClient *>(sender());
@@ -101,14 +118,16 @@ void Chat::clientDisconnected()
         client->deleteLater();
     }
 }
+//! [clientDisconnected]
 
+//! [Connect to remote service]
 void Chat::connectClicked()
 {
     ui->connectButton->setEnabled(false);
 
     // scan for services
     RemoteSelector remoteSelector;
-    remoteSelector.startDiscovery(QBluetoothUuid(/*serviceUuid*/));
+    remoteSelector.startDiscovery(QBluetoothUuid(serviceUuid));
     if (remoteSelector.exec() == QDialog::Accepted) {
         QBluetoothServiceInfo service = remoteSelector.service();
 
@@ -131,7 +150,9 @@ void Chat::connectClicked()
 
     ui->connectButton->setEnabled(true);
 }
+//! [Connect to remote service]
 
+//! [sendClicked]
 void Chat::sendClicked()
 {
     ui->sendButton->setEnabled(false);
@@ -145,8 +166,11 @@ void Chat::sendClicked()
     ui->sendText->setEnabled(true);
     ui->sendButton->setEnabled(true);
 }
+//! [sendClicked]
 
+//! [showMessage]
 void Chat::showMessage(const QString &sender, const QString &message)
 {
     ui->chat->insertPlainText(QString::fromLatin1("%1: %2\n").arg(sender, message));
 }
+//! [showMessage]

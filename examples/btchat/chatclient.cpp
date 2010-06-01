@@ -52,6 +52,7 @@ ChatClient::~ChatClient()
     stopClient();
 }
 
+//! [startClient]
 void ChatClient::startClient(const QBluetoothServiceInfo &remoteService)
 {
     if (socket)
@@ -65,13 +66,17 @@ void ChatClient::startClient(const QBluetoothServiceInfo &remoteService)
     connect(socket, SIGNAL(connected()), this, SLOT(connected()));
     connect(socket, SIGNAL(disconnected()), this, SIGNAL(disconnected()));
 }
+//! [startClient]
 
+//! [stopClient]
 void ChatClient::stopClient()
 {
     delete socket;
     socket = 0;
 }
+//! [stopClient]
 
+//! [readSocket]
 void ChatClient::readSocket()
 {
     if (!socket)
@@ -83,14 +88,19 @@ void ChatClient::readSocket()
                              QString::fromUtf8(line.constData(), line.length()));
     }
 }
+//! [readSocket]
 
+//! [sendMessage]
 void ChatClient::sendMessage(const QString &message)
 {
-    QString text = message + QLatin1Char('\n');
-    socket->write(text.toUtf8());
+    QByteArray text = message.toUtf8() + '\n';
+    socket->write(text);
 }
+//! [sendMessage]
 
+//! [connected]
 void ChatClient::connected()
 {
     emit connected(socket->peerName());
 }
+//! [connected]

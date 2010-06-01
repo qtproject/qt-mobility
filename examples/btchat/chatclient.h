@@ -51,6 +51,7 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
+//! [declaration]
 class ChatClient : public QObject
 {
     Q_OBJECT
@@ -77,5 +78,6 @@ private slots:
 private:
     QBluetoothSocket *socket;
 };
+//! [declaration]
 
 #endif // CHATCLIENT_H

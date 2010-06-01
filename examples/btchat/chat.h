@@ -56,6 +56,7 @@ QTM_USE_NAMESPACE
 class ChatServer;
 class ChatClient;
 
+//! [declaration]
 class Chat : public QDialog
 {
     Q_OBJECT
@@ -74,6 +75,7 @@ private slots:
     void showMessage(const QString &sender, const QString &message);
 
     void clientConnected(const QString &name);
+    void clientDisconnected(const QString &name);
     void clientDisconnected();
     void connected(const QString &name);
 
@@ -85,3 +87,4 @@ private:
 
     QString localName;
 };
+//! [declaration]

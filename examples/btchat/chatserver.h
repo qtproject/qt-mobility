@@ -53,6 +53,7 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
+//! [declaration]
 class ChatServer : public QObject
 {
     Q_OBJECT
@@ -70,6 +71,7 @@ public slots:
 signals:
     void messageReceived(const QString &sender, const QString &message);
     void clientConnected(const QString &name);
+    void clientDisconnected(const QString &name);
 
 private slots:
     void clientConnected();
@@ -81,5 +83,6 @@ private:
     QBluetoothServiceInfo serviceInfo;
     QList<QBluetoothSocket *> clientSockets;
 };
+//! [declaration]
 
 #endif // CHATSERVER_H
