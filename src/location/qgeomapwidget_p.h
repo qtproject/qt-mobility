@@ -68,6 +68,7 @@ public:
 
     QGeoMappingManager *manager;
     QGeoMapViewport *viewport;
+    bool panActive;
 };
 
 QTM_END_NAMESPACE

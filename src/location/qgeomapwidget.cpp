@@ -75,6 +75,27 @@ void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
     event->accept();
 }
 
+void QGeoMapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+        d_ptr->panActive = true;
+}
+
+void QGeoMapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+        d_ptr->panActive = false;
+}
+
+void QGeoMapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (d_ptr->panActive) {
+        int deltaLeft = event->lastPos().x() - event->pos().x();
+        int deltaTop  = event->lastPos().y() - event->pos().y();
+        pan(deltaLeft, deltaTop);
+    }
+}
+
 QPainterPath QGeoMapWidget::shape() const
 {
     QPainterPath path;
@@ -182,11 +203,13 @@ void QGeoMapWidget::mapImageUpdated()
 
 QGeoMapWidgetPrivate::QGeoMapWidgetPrivate(QGeoMappingManager *manager)
     : manager(manager),
-    viewport(0) {}
+    viewport(0), panActive(false)
+{}
 
 QGeoMapWidgetPrivate::QGeoMapWidgetPrivate(const QGeoMapWidgetPrivate &other)
     : manager(other.manager),
-    viewport(other.viewport) {}
+    viewport(other.viewport), panActive(other.panActive)
+{}
 
 QGeoMapWidgetPrivate::~QGeoMapWidgetPrivate() {}
 
@@ -194,6 +217,7 @@ QGeoMapWidgetPrivate& QGeoMapWidgetPrivate::operator= (const QGeoMapWidgetPrivat
 {
     manager = other.manager;
     viewport = other.viewport;
+    panActive = other.panActive;
 
     return *this;
 }
