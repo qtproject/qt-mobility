@@ -50,7 +50,6 @@
 
 QTM_BEGIN_NAMESPACE
 QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
 
 class tst_QVersitOrganizerImporter : public QObject
 {
@@ -59,6 +58,9 @@ class tst_QVersitOrganizerImporter : public QObject
 private slots:
     void testImport();
     void testImport_data();
+
+    void testImportEventProperties();
+    void testImportEventProperties_data();
 };
 
 #endif

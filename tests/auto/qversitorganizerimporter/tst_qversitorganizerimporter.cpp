@@ -42,7 +42,10 @@
 #include "tst_qversitorganizerimporter.h"
 #include <QtTest/QtTest>
 
+QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QList<QOrganizerItem>);
+Q_DECLARE_METATYPE(QList<QOrganizerItemDetail>);
+Q_DECLARE_METATYPE(QList<QVersitProperty>);
 
 void tst_QVersitOrganizerImporter::testImport()
 {
@@ -93,6 +96,74 @@ void tst_QVersitOrganizerImporter::testImport_data()
     items << static_cast<QOrganizerItem>(event);
 
     QTest::newRow("sample event") << document << items;
+}
+
+void tst_QVersitOrganizerImporter::testImportEventProperties()
+{
+    QFETCH(QList<QVersitProperty>, properties);
+    QFETCH(QList<QOrganizerItemDetail>, expectedDetails);
+
+    QVersitDocument document(QVersitDocument::ICalendar20Type);
+    document.setComponentType(QLatin1String("VCALENDAR"));
+    QVersitDocument nested(QVersitDocument::ICalendar20Type);
+    nested.setComponentType(QLatin1String("VEVENT"));
+    foreach (const QVersitProperty& property, properties) {
+        nested.addProperty(property);
+    }
+    document.addSubDocument(nested);
+
+    QVersitOrganizerImporter importer;
+    QVERIFY(importer.importDocument(document));
+    QVERIFY(importer.errors().isEmpty());
+    QList<QOrganizerItem> items = importer.items();
+    QCOMPARE(items.size(), 1);
+
+    foreach (const QOrganizerItemDetail& expectedDetail, expectedDetails) {
+        QOrganizerItemDetail actualDetail = items.first().detail(expectedDetail.definitionName());
+        if (actualDetail != expectedDetail) {
+            qDebug() << "Actual:" << actualDetail;
+            qDebug() << "Expected:" << expectedDetail;
+            QCOMPARE(actualDetail, expectedDetail);
+        }
+    } 
+}
+
+void tst_QVersitOrganizerImporter::testImportEventProperties_data()
+{
+    QTest::addColumn<QList<QVersitProperty> >("properties");
+    QTest::addColumn<QList<QOrganizerItemDetail> >("expectedDetails");
+
+    {
+        QVersitProperty property;
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("jabberwocky"));
+        QOrganizerItemDisplayLabel displayLabel;
+        displayLabel.setLabel(QLatin1String("jabberwocky"));
+        QTest::newRow("one summary") << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << displayLabel);
+    }
+
+    {
+        QList<QVersitProperty> properties;
+        QVersitProperty dtstart;
+        dtstart.setName(QLatin1String("DTSTART"));
+        dtstart.setValue(QLatin1String("20100102T030405"));
+        properties << dtstart;
+        QVersitProperty dtend;
+        dtend.setName(QLatin1String("DTEND"));
+        dtend.setValue(QLatin1String("20100102T030406"));
+        properties << dtend;
+        QOrganizerItemEventTimeRange etr;
+        etr.setStartDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5)));
+        etr.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 6)));
+        QTest::newRow("dtstart and dtend") << properties
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        dtend.setValue(QLatin1String("20100102T235959"));
+        properties.prepend(dtend);
+        QTest::newRow("multiple dtstart and dtend") << properties
+            << (QList<QOrganizerItemDetail>() << etr); // last takes precedence
+    }
 }
 
 QTEST_MAIN(tst_QVersitOrganizerImporter)

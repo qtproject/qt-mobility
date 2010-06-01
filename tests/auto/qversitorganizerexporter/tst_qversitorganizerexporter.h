@@ -50,6 +50,7 @@
 
 QTM_BEGIN_NAMESPACE
 QTM_END_NAMESPACE
+
 QTM_USE_NAMESPACE
 
 class tst_QVersitOrganizerExporter : public QObject
@@ -59,6 +60,11 @@ class tst_QVersitOrganizerExporter : public QObject
 private slots:
     void testExport();
     void testExport_data();
+
+    void testExportEventDetails();
+    void testExportEventDetails_data();
+
+    static QVersitProperty findPropertyByName(const QVersitDocument &document, const QString &propertyName);
 };
 
 #endif

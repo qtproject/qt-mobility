@@ -42,7 +42,11 @@
 #include "tst_qversitorganizerexporter.h"
 #include <QtTest/QtTest>
 
+QTM_USE_NAMESPACE
+
 Q_DECLARE_METATYPE(QList<QOrganizerItem>);
+Q_DECLARE_METATYPE(QList<QOrganizerItemDetail>);
+Q_DECLARE_METATYPE(QList<QVersitProperty>);
 
 void tst_QVersitOrganizerExporter::testExport()
 {
@@ -90,6 +94,75 @@ void tst_QVersitOrganizerExporter::testExport_data()
     items << static_cast<QOrganizerItem>(event);
 
     QTest::newRow("sample event") << items << document;
+}
+
+void tst_QVersitOrganizerExporter::testExportEventDetails()
+{
+    QFETCH(QList<QOrganizerItemDetail>, details);
+    QFETCH(QList<QVersitProperty>, expectedProperties);
+
+    QVersitOrganizerExporter exporter;
+    QOrganizerEvent item;
+    foreach (QOrganizerItemDetail detail, details) {
+        item.saveDetail(&detail);
+    }
+    QVERIFY(exporter.exportItems(QList<QOrganizerItem>() << item, QVersitDocument::ICalendar20Type));
+    QVERIFY(exporter.errors().isEmpty());
+    QVersitDocument document = exporter.document();
+    QList<QVersitDocument> subDocuments = document.subDocuments();
+    QCOMPARE(subDocuments.size(), 1);
+
+    foreach(const QVersitProperty& expectedProperty, expectedProperties) {
+        QVersitProperty actualProperty = findPropertyByName(subDocuments.first(), expectedProperty.name());
+        if (actualProperty != expectedProperty) {
+            qDebug() << "Actual:" << actualProperty;
+            qDebug() << "Expected:" << expectedProperty;
+            QCOMPARE(actualProperty, expectedProperty);
+        }
+    }
+}
+
+void tst_QVersitOrganizerExporter::testExportEventDetails_data()
+{
+    QTest::addColumn<QList<QOrganizerItemDetail> >("details");
+    QTest::addColumn<QList<QVersitProperty> >("expectedProperties");
+
+    {
+        QVersitProperty property;
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("jabberwocky"));
+        QOrganizerItemDisplayLabel displayLabel;
+        displayLabel.setLabel(QLatin1String("jabberwocky"));
+        QTest::newRow("one summary") << (QList<QOrganizerItemDetail>() << displayLabel)
+            << (QList<QVersitProperty>() << property);
+    }
+
+    {
+        QList<QVersitProperty> properties;
+        QVersitProperty dtstart;
+        dtstart.setName(QLatin1String("DTSTART"));
+        dtstart.setValue(QLatin1String("20100102T030405"));
+        properties << dtstart;
+        QVersitProperty dtend;
+        dtend.setName(QLatin1String("DTEND"));
+        dtend.setValue(QLatin1String("20100102T030406"));
+        properties << dtend;
+        QOrganizerItemEventTimeRange etr;
+        etr.setStartDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5)));
+        etr.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 6)));
+        QTest::newRow("dtstart and dtend") << (QList<QOrganizerItemDetail>() << etr)
+            << properties;
+    }
+}
+
+QVersitProperty tst_QVersitOrganizerExporter::findPropertyByName(
+        const QVersitDocument &document, const QString &propertyName)
+{
+    foreach (const QVersitProperty& property, document.properties()) {
+        if (property.name() == propertyName)
+            return property;
+    }
+    return QVersitProperty();
 }
 
 QTEST_MAIN(tst_QVersitOrganizerExporter)
