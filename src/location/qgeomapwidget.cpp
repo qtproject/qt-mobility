@@ -194,8 +194,7 @@ QGeoCoordinate QGeoMapWidget::screenPositionToCoordinate(QPointF screenPosition)
 
 void QGeoMapWidget::mapImageUpdated()
 {
-    hide();
-    show();
+    this->update();
 }
 
 /*******************************************************************************
