@@ -81,6 +81,10 @@ public:
 
     int travelTime;
     QGeoDistance distance;
+    
+    QGeoRouteRequest::TravelMode travelMode;
+    QGeoRouteRequest::RouteOptimization optimization;
+
 };
 
 QTM_END_NAMESPACE

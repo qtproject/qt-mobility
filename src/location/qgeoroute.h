@@ -43,6 +43,7 @@
 #define QGEOROUTE_H
 
 #include "qgeocoordinate.h"
+#include "qgeorouterequest.h"
 
 #include <QList>
 
@@ -54,7 +55,6 @@ class QGeoBoundingBox;
 class QGeoDistance;
 class QGeoRouteSegment;
 class QGeoNavigationInstruction;
-class QGeoRouteRequest;
 
 class QGeoRoutePrivate;
 
@@ -93,6 +93,12 @@ public:
     void setDistance(const QGeoDistance &distance);
     QGeoDistance distance() const;
 
+    void setTravelMode(const QGeoRouteRequest::TravelMode mode);
+    void setOptimization(const QGeoRouteRequest::RouteOptimization optimization);
+    
+    QGeoRouteRequest::TravelMode travelMode() const;
+    QGeoRouteRequest::RouteOptimization optimization() const;
+    
 private:
     QGeoRoutePrivate* d_ptr;
 };

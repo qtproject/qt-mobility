@@ -81,6 +81,11 @@ public:
 private:
     bool parseRootElement();
     bool parseRoute(QGeoRoute *route);
+    bool parseWaypoint(QGeoRoute *route);
+    bool parseCoordinates(QGeoCoordinate &coord);
+    bool parseMode(QGeoRoute *route);
+    bool parseSummary(QGeoRoute *route);
+
     //bool parseXsdDateTime(const QString& strDateTime, QDateTime *dateTime, const QString &attributeName);
     bool parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName);
     bool parseManeuver(QGeoRoute *route, QGeoRouteSegment *routeSegment);

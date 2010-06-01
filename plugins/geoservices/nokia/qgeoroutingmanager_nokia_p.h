@@ -76,7 +76,12 @@ private slots:
     void routeError(QGeoRouteReply::Error error, const QString &errorString);
 
 private:
-    QString requestString(const QGeoRouteRequest &request);
+    QString calculateRouteRequestString(const QGeoRouteRequest &request);
+    QString updateRouteRequestString(const QGeoRoute &route, const QGeoRouteRequest &request);
+    QString routeRequestString(const QGeoRouteRequest &request);
+    QString modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
+                               QGeoRouteRequest::TravelModes travelModes,
+                               QGeoRouteRequest::AvoidFeatureTypes avoid);
     static QString trimDouble(qreal degree, int decimalDigits = 10);
 
     QNetworkAccessManager *m_networkManager;

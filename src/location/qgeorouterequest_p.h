@@ -57,6 +57,7 @@
 
 #include <QList>
 #include <QSharedData>
+#include <QDateTime>
 
 QTM_BEGIN_NAMESPACE
 
@@ -73,8 +74,10 @@ public:
     int numberAlternativeRoutes;
     QGeoRouteRequest::TravelModes travelModes;
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;
-    QGeoRouteRequest::RouteOptimization routeOptimization;
+    QGeoRouteRequest::RouteOptimizations routeOptimization;
     QGeoRouteRequest::InstructionDetail instructionDetail;
+    QDateTime departureTime;
+    QDateTime arrivalTime;
 
     // defaults to empty - no subclass required yet
     // this is how we handle private / public / truck attributes

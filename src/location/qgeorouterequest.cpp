@@ -283,7 +283,7 @@ QGeoRouteRequest::AvoidFeatureTypes QGeoRouteRequest::avoidFeatureTypes() const
 
     The default value is QGeoRouteRequest::FastestRoute.
 */
-void QGeoRouteRequest::setRouteOptimization(QGeoRouteRequest::RouteOptimization optimization)
+void QGeoRouteRequest::setRouteOptimization(QGeoRouteRequest::RouteOptimizations optimization)
 {
     d_ptr->routeOptimization = optimization;
 }
@@ -292,7 +292,7 @@ void QGeoRouteRequest::setRouteOptimization(QGeoRouteRequest::RouteOptimization 
     Returns the optimization criteria which this request specifies should be
     used while planning the route.
 */
-QGeoRouteRequest::RouteOptimization QGeoRouteRequest::routeOptimization() const
+QGeoRouteRequest::RouteOptimizations QGeoRouteRequest::routeOptimization() const
 {
     return d_ptr->routeOptimization;
 }
@@ -316,6 +316,37 @@ void QGeoRouteRequest::setInstructionDetail(QGeoRouteRequest::InstructionDetail 
 QGeoRouteRequest::InstructionDetail QGeoRouteRequest::instructionDetail() const
 {
     return d_ptr->instructionDetail;
+}
+/*!
+    Sets the planned time of departure to \a tod.
+*/
+
+void QGeoRouteRequest::setDepartureTime(const QDateTime& departureTime)
+{
+    d_ptr->departureTime = departureTime;
+}
+
+/*!
+    Returns the planned time of departure.
+*/
+QDateTime QGeoRouteRequest::departureTime() const
+{
+    return d_ptr->departureTime;
+}
+/*!
+    Sets the planned time of arrival to \a toa.
+*/
+void QGeoRouteRequest::setArrivalTime(const QDateTime& arrivalTime)
+{
+    d_ptr->arrivalTime = arrivalTime;
+}
+
+/*!
+    Returns the planned time of departure.
+*/
+QDateTime QGeoRouteRequest::arrivalTime() const
+{
+    return d_ptr->arrivalTime;
 }
 
 /*******************************************************************************

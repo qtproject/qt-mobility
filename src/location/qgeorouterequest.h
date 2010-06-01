@@ -46,6 +46,7 @@
 
 #include <QList>
 #include <QSharedDataPointer>
+#include <QDateTime>
 
 QT_BEGIN_HEADER
 
@@ -63,7 +64,7 @@ public:
         PedestrianTravel = 0x0002,
         BicycleTravel = 0x0004,
         PublicTransitTravel = 0x0008,
-        TruckTravel = 0x000F
+        TruckTravel = 0x0010
     };
     Q_DECLARE_FLAGS(TravelModes, TravelMode)
 
@@ -73,10 +74,10 @@ public:
         AvoidHighways = 0x00000002,
         AvoidPublicTransit = 0x00000004,
         AvoidFerries = 0x00000008,
-        AvoidTunnels = 0x0000000F,
-        AvoidDirtRoads = 0x00000010,
-        AvoidPark = 0x00000020,
-        AvoidMotorPoolLanes = 0x00000040
+        AvoidTunnels = 0x00000010,
+        AvoidDirtRoads = 0x00000020,
+        AvoidPark = 0x00000040,
+        AvoidMotorPoolLanes = 0x00000080
     };
     Q_DECLARE_FLAGS(AvoidFeatureTypes, AvoidFeatureType)
 
@@ -84,7 +85,8 @@ public:
         ShortestRoute = 0x0001,
         FastestRoute = 0x0002,
         MostEconomicRoute = 0x0004,
-        MostScenicRoute = 0x0008
+        MostScenicRoute = 0x0008,
+        DirectRoute = 0x0010
     };
     Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
 
@@ -120,12 +122,18 @@ public:
     AvoidFeatureTypes avoidFeatureTypes() const;
 
     // defaults to OptimizeFastest
-    void setRouteOptimization(RouteOptimization optimization);
-    RouteOptimization routeOptimization() const;
+    void setRouteOptimization(RouteOptimizations optimization);
+    RouteOptimizations routeOptimization() const;
 
     // default to NoInstructions
     void setInstructionDetail(InstructionDetail instructionDetail);
     InstructionDetail instructionDetail() const;
+
+    void setDepartureTime(const QDateTime& departureTime);
+    QDateTime departureTime() const;
+
+    void setArrivalTime(const QDateTime& arrivalTime);
+    QDateTime arrivalTime() const;
 
     // defaults to empty - no subclass required yet
     // this is how we handle private / public / truck attributes

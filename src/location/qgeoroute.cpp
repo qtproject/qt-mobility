@@ -253,6 +253,25 @@ QGeoDistance QGeoRoute::distance() const
 {
     return d_ptr->distance;
 }
+void QGeoRoute::setTravelMode(const QGeoRouteRequest::TravelMode mode)
+{
+    d_ptr->travelMode = mode;
+}
+
+QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
+{
+    return d_ptr->travelMode;
+}
+
+void QGeoRoute::setOptimization(const QGeoRouteRequest::RouteOptimization optimization)
+{
+    d_ptr->optimization = optimization;
+}
+
+QGeoRouteRequest::RouteOptimization QGeoRoute::optimization() const
+{
+    return d_ptr->optimization;
+}
 
 /*******************************************************************************
 *******************************************************************************/
