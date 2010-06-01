@@ -30,6 +30,7 @@ PUBLIC_HEADERS +=  \
     qversitwriter.h \
     qversitcontactexporter.h \
     qversitcontactimporter.h \
+    qversitorganizerexporter.h \
     qversitorganizerimporter.h \
     qversitresourcehandler.h
 
@@ -45,6 +46,7 @@ PRIVATE_HEADERS += \
     qvcard30writer_p.h \
     qversitcontactexporter_p.h \
     qversitcontactimporter_p.h \
+    qversitorganizerexporter_p.h \
     qversitorganizerimporter_p.h \
     qversitdefs_p.h \
     versitutils_p.h
@@ -64,6 +66,8 @@ SOURCES += qversitdocument.cpp \
     qversitcontactexporter_p.cpp \
     qversitcontactimporter.cpp \
     qversitcontactimporter_p.cpp \
+    qversitorganizerexporter.cpp \
+    qversitorganizerexporter_p.cpp \
     qversitorganizerimporter.cpp \
     qversitorganizerimporter_p.cpp \
     qvcardbackuphandlers_p.cpp \

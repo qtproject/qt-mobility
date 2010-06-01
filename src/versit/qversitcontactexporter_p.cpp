@@ -80,8 +80,7 @@ QVersitContactExporterPrivate::QVersitContactExporterPrivate() :
     mDetailHandler2(NULL),
     mDetailHandlerVersion(0),
     mDefaultResourceHandler(new QVersitDefaultResourceHandler),
-    mResourceHandler(mDefaultResourceHandler),
-    mVersitType(QVersitDocument::InvalidType)
+    mResourceHandler(mDefaultResourceHandler)
 {
     // Detail mappings
     int versitPropertyCount =
@@ -126,15 +125,12 @@ bool QVersitContactExporterPrivate::exportContact(
     QVersitDocument& document,
     QVersitContactExporter::Error* error)
 {
-    mVersitType = document.type();
     QList<QContactDetail> allDetails = contact.details();
     if (allDetails.isEmpty()) {
         *error = QVersitContactExporter::EmptyContactError;
         return false;
     }
-    for (int i = 0; i < allDetails.size(); i++) {
-        QContactDetail detail = allDetails.at(i);
-
+    foreach (const QContactDetail& detail, allDetails) {
         // If the custom detail handler handles it, we don't have to.
         if (mDetailHandler
             && mDetailHandler->preProcessDetail(contact, detail, &document))
@@ -261,7 +257,8 @@ void QVersitContactExporterPrivate::encodeName(
 
     // Generate an FN field if none is already there
     // Don't override previously exported FN properties (eg. exported by a DisplayLabel detail)
-    QVersitProperty fnProperty = takeProperty(document, QLatin1String("FN"), removedProperties);
+    QVersitProperty fnProperty =
+        VersitUtils::takeProperty(document, QLatin1String("FN"), removedProperties);
     if (fnProperty.value().isEmpty()) {
         fnProperty.setName(QLatin1String("FN"));
         if (!contactName.customLabel().isEmpty()) {
@@ -630,7 +627,8 @@ void QVersitContactExporterPrivate::encodeNickname(
     QSet<QString>* processedFields)
 {
     QContactNickname nicknameDetail = static_cast<QContactNickname>(detail);
-    QVersitProperty property = takeProperty(document, QLatin1String("X-NICKNAME"), removedProperties);
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("X-NICKNAME"), removedProperties);
     property.setName(QLatin1String("X-NICKNAME"));
     QStringList value(property.variantValue().toStringList());
     value.append(nicknameDetail.nickname());
@@ -651,7 +649,8 @@ void QVersitContactExporterPrivate::encodeTag(
     QSet<QString>* processedFields)
 {
     QContactTag tagDetail = static_cast<QContactTag>(detail);
-    QVersitProperty property = takeProperty(document, QLatin1String("CATEGORIES"), removedProperties);
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("CATEGORIES"), removedProperties);
     property.setName(QLatin1String("CATEGORIES"));
     QStringList value(property.variantValue().toStringList());
     value.append(tagDetail.tag());
@@ -745,7 +744,8 @@ void QVersitContactExporterPrivate::encodeDisplayLabel(
     QSet<QString>* processedFields)
 {
     // Override any previous FN property
-    QVersitProperty property = takeProperty(document, QLatin1String("FN"), removedProperties);
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("FN"), removedProperties);
     property.setName(mPropertyMappings.value(detail.definitionName()));
     QContactDisplayLabel displayLabel = static_cast<QContactDisplayLabel>(detail);
     if (!displayLabel.label().isEmpty()) {
@@ -753,21 +753,6 @@ void QVersitContactExporterPrivate::encodeDisplayLabel(
         *generatedProperties << property;
         *processedFields << QContactDisplayLabel::FieldLabel;
     }
-}
-
-/*!
- * Finds a property in the \a document with the given \a propertyName, removes it and returns it.
- */
-QVersitProperty QVersitContactExporterPrivate::takeProperty(const QVersitDocument& document,
-                                                            const QString& propertyName,
-                                                            QList<QVersitProperty>* toBeRemoved) {
-    foreach (const QVersitProperty& currentProperty, document.properties()) {
-        if (currentProperty.name() == propertyName) {
-            *toBeRemoved << currentProperty;
-            return currentProperty;
-        }
-    }
-    return QVersitProperty();
 }
 
 /*!

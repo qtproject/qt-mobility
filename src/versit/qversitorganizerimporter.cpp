@@ -39,10 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qorganizeritemmanagerengine.h"
 #include "qversitorganizerimporter.h"
 #include "qversitorganizerimporter_p.h"
-#include "qvcardbackuphandlers_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"

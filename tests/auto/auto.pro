@@ -92,6 +92,7 @@ contains(mobility_modules,versit) {
             qversitcontactexporter \
             qversitcontactimporter \
             qversitdocument \
+            qversitorganizerexporter \
             qversitorganizerimporter \
             qversitproperty \
             qversitreader \

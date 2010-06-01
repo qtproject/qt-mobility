@@ -168,8 +168,7 @@ protected:
             QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
-    QVersitProperty takeProperty(const QVersitDocument& document, const QString& propertyName,
-                                 QList<QVersitProperty>* toBeRemoved);
+
     bool isValidRemoteUrl(const QString& resourceIdentifier);
     void encodeParameters(QVersitProperty& property,
         const QStringList& contexts,
@@ -186,7 +185,6 @@ public: // Data
     QVersitResourceHandler* mResourceHandler;
     QHash<QString,QString> mPropertyMappings;
     QHash<QString,QString> mParameterMappings;
-    QVersitDocument::VersitType mVersitType;
 };
 
 QTM_END_NAMESPACE

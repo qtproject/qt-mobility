@@ -39,55 +39,26 @@
 **
 ****************************************************************************/
 
+#ifndef tst_QVERSITORGANIZEREXPORTER_H
+#define tst_QVERSITORGANIZEREXPORTER_H
 
-#ifndef VERSITUTILS_P_H
-#define VERSITUTILS_P_H
-
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
-
-#include "qmobilityglobal.h"
-
-#include <QByteArray>
-#include <QByteArrayMatcher>
-#include <QPair>
-#include <QString>
-#include <QStringList>
-#include <QMultiHash>
+#include <QObject>
+#include "qversitorganizerexporter.h"
+#include "qversitdocument.h"
+#include "qversitproperty.h"
+#include "qtorganizer.h"
 
 QTM_BEGIN_NAMESPACE
-class QVersitDocument;
-class QVersitProperty;
+QTM_END_NAMESPACE
+QTM_USE_NAMESPACE
 
-class Q_AUTOTEST_EXPORT VersitUtils
+class tst_QVersitOrganizerExporter : public QObject
 {
-public:
-    static QByteArray encode(const QByteArray& ba, QTextCodec* codec);
-    static QByteArray encode(char ch, QTextCodec* codec);
-    static QList<QByteArrayMatcher>* newlineList(QTextCodec* codec);
-    static void changeCodec(QTextCodec* codec);
-    static QVersitProperty takeProperty(const QVersitDocument& document,
-                                        const QString& propertyName,
-                                        QList<QVersitProperty>* toBeRemoved);
+    Q_OBJECT
 
-private:
-    // These are caches for performance:
-    // The previous codec that encode(char, QTextCodec) was called with
-    static QTextCodec* m_previousCodec;
-    // The QByteArray corresponding to each char from 0-255, encoded with m_previousCodec
-    static QByteArray m_encodingMap[256];
-    // List of different newline delimeters, encoded with m_previousCodec
-    static QList<QByteArrayMatcher>* m_newlineList;
+private slots:
+    void testExport();
+    void testExport_data();
 };
 
-QTM_END_NAMESPACE
-
-#endif // VERSITUTILS_P_H
+#endif
