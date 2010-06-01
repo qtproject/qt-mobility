@@ -172,7 +172,13 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
                 bool success = parseMode(route); //TODO: Check return
             }
             else if (m_reader->name() == "Shape") {
-                // TODO:  Route Shape
+                QString elementName = m_reader->name().toString();
+                m_reader->readNext();
+                if (m_reader->tokenType() == QXmlStreamReader::Characters) {
+                    QList<QGeoCoordinate> path;
+                    parseGeoPoints(m_reader->text().toString(), &path, elementName);
+                    route->setPath(path);
+                }
             }
             else if (m_reader->name() == "Maneuver") {
                 // TODO:  Route Maneuver
@@ -327,104 +333,6 @@ bool QGeoRouteXmlParser::parseCoordinates(QGeoCoordinate &coord)
     return true;
 }
 
-/*
-bool QGeoRouteXmlParser::parseXsdDateTime(const QString& strDateTime, QDateTime *dateTime, const QString &attributeName)
-{
-    QTime utcDiff(0, 0, 0, 0);
-    QString dt;
-    int milliseconds = 0;
-    int change = 0;
-
-    QString errorString = QString("The attribute \"%1\" has a bady formatted xsd:datetime string (string is \"%2\")").arg(attributeName).arg(strDateTime);
-
-    if (!strDateTime.endsWith("Z")) {
-        int plusIndex = strDateTime.lastIndexOf("+");
-        int minusIndex = strDateTime.lastIndexOf("-");
-
-        if ((plusIndex == -1) && (minusIndex == -1)) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        if ((plusIndex != -1) && (minusIndex != -1)) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        QString diff;
-        int index = 0;
-
-        if (plusIndex != -1) {
-            index = plusIndex;
-            change = 1;
-        }
-
-        if (minusIndex != -1) {
-            index = minusIndex;
-            change = -1;
-        }
-
-        dt = strDateTime.left(plusIndex);
-        diff = strDateTime.right(strDateTime.length() - plusIndex - 1);
-
-        // deal with milliseconds in utc offset datetime string here
-        int dotIndex = diff.indexOf(".");
-        if (dotIndex != -1) {
-            QString fraction = diff.right(diff.length() - dotIndex);
-            fraction.insert(0, '0');
-
-            bool ok = false;
-            milliseconds = qRound(1000.0 * fraction.toDouble(&ok));
-
-            if (!ok) {
-                m_reader->raiseError(errorString);
-                return false;
-            }
-        }
-
-        utcDiff = QTime::fromString(diff, "hh::mm::ss");
-
-        if (!utcDiff.isValid()) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        utcDiff.addMSecs(milliseconds);
-    } else {
-        dt = strDateTime.left(strDateTime.length() - 1);
-    }
-
-    QTime zeroTime(0, 0, 0, 0);
-    milliseconds = change * zeroTime.msecsTo(utcDiff);
-
-    // deal with milliseconds in main datetime string here
-    int dotIndex = dt.indexOf(".");
-    if (dotIndex != -1) {
-        QString fraction = dt.right(dt.length() - dotIndex);
-        fraction.insert(0, '0');
-
-        bool ok = false;
-        milliseconds += qRound(1000.0 * fraction.toDouble(&ok));
-
-        if (!ok) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-    }
-
-    *dateTime = QDateTime::fromString(dt, "yyyy-MM-ddThh:mm:ss");
-
-    if (!dateTime->isValid()) {
-        m_reader->raiseError(errorString);
-        return false;
-    }
-
-    dateTime->addMSecs(milliseconds);
-    dateTime->setTimeSpec(Qt::UTC);
-
-    return true;
-}
-*/
 
 bool QGeoRouteXmlParser::parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName)
 {

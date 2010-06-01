@@ -273,6 +273,28 @@ QGeoRouteRequest::RouteOptimization QGeoRoute::optimization() const
     return d_ptr->optimization;
 }
 
+/*!
+    Sets the geometric shape of the route to \a path.
+
+    The coordinates in \a path should be listed in the order in which they
+    would be traversed by someone travelling along this segment of the route.
+*/
+void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
+{
+    d_ptr->path = path;
+}
+
+/*!
+    Returns the geometric shape of the route.
+
+    The coordinates should be listed in the order in which they
+    would be traversed by someone travelling along this segment of the route.
+*/
+QList<QGeoCoordinate> QGeoRoute::path() const
+{
+    return d_ptr->path;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 

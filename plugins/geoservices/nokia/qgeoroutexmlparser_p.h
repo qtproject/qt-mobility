@@ -85,11 +85,10 @@ private:
     bool parseCoordinates(QGeoCoordinate &coord);
     bool parseMode(QGeoRoute *route);
     bool parseSummary(QGeoRoute *route);
+    bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
 
-    //bool parseXsdDateTime(const QString& strDateTime, QDateTime *dateTime, const QString &attributeName);
     bool parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName);
     bool parseManeuver(QGeoRoute *route, QGeoRouteSegment *routeSegment);
-    bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
     bool parseBoundingBox(QGeoBoundingBox *bounds);
     bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 

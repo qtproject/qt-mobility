@@ -95,10 +95,13 @@ public:
 
     void setTravelMode(const QGeoRouteRequest::TravelMode mode);
     void setOptimization(const QGeoRouteRequest::RouteOptimization optimization);
-    
+
     QGeoRouteRequest::TravelMode travelMode() const;
     QGeoRouteRequest::RouteOptimization optimization() const;
-    
+
+    void setPath(const QList<QGeoCoordinate> &path);
+    QList<QGeoCoordinate> path() const;
+
 private:
     QGeoRoutePrivate* d_ptr;
 };
