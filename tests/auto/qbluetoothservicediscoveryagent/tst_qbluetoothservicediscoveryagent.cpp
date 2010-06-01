@@ -83,6 +83,7 @@ tst_QBluetoothServiceDiscoveryAgent::tst_QBluetoothServiceDiscoveryAgent()
     qRegisterMetaType<QBluetoothDeviceInfo>("QBluetoothDeviceInfo");
     qRegisterMetaType<QBluetoothServiceInfo>("QBluetoothServiceInfo");
     qRegisterMetaType<QList<QBluetoothUuid> >("QList<QBluetoothUuid>");
+    qRegisterMetaType<QBluetoothServiceDiscoveryAgent::Error>("QBluetoothServiceDiscoveryAgent::Error");
 }
 
 tst_QBluetoothServiceDiscoveryAgent::~tst_QBluetoothServiceDiscoveryAgent()
@@ -99,7 +100,8 @@ void tst_QBluetoothServiceDiscoveryAgent::initTestCase()
 #if 0
     QBluetoothDeviceDiscoveryAgent discoveryAgent;
 
-    QSignalSpy finishedSpy(&discoveryAgent, SIGNAL(finished(bool)));
+    QSignalSpy finishedSpy(&discoveryAgent, SIGNAL(finished()));
+    QSignalSpy errorSpy(&discoveryAgent, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)));
     QSignalSpy discoveredSpy(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)));
     connect(&discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
             this, SLOT(deviceDiscoveryDebug(const QBluetoothDeviceInfo&)));
@@ -116,7 +118,7 @@ void tst_QBluetoothServiceDiscoveryAgent::initTestCase()
 
     // Expect finished signal with no error
     QVERIFY(finishedSpy.count() == 1);
-    QVERIFY(finishedSpy.takeFirst().at(0).toBool() == false);
+    QVERIFY(errorSpy.isEmpty());
 
     devices = discoveryAgent.discoveredDevices();
 #else
@@ -126,9 +128,14 @@ void tst_QBluetoothServiceDiscoveryAgent::initTestCase()
 
 void tst_QBluetoothServiceDiscoveryAgent::serviceDiscoveryDebug(const QBluetoothServiceInfo &info)
 {
-    qDebug() << "Discovered service:" << info.serviceName();
-    qDebug() << '\t' << info.attribute(QBluetoothServiceInfo::ServiceDescription).toString();
-    qDebug() << '\t' << info.attribute(QBluetoothServiceInfo::ServiceProvider).toString();
+    qDebug() << "Discovered service on"
+             << info.device().name() << info.device().address().toString();
+    qDebug() << "\tService name:" << info.serviceName();
+    qDebug() << "\tDescription:"
+             << info.attribute(QBluetoothServiceInfo::ServiceDescription).toString();
+    qDebug() << "\tProvider:" << info.attribute(QBluetoothServiceInfo::ServiceProvider).toString();
+    qDebug() << "\tL2CAP protocol service multiplexer:" << info.protocolServiceMultiplexer();
+    qDebug() << "\tRFCOMM server channel:" << info.serverChannel();
 }
 
 void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery_data()
@@ -235,10 +242,11 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery()
 
     QVERIFY(discoveryAgent.uuidFilter() == uuidFilter);
 
-    QSignalSpy finishedSpy(&discoveryAgent, SIGNAL(finished(bool)));
-    QSignalSpy discoveredSpy(&discoveryAgent, SIGNAL(serviceDiscovered(const QBluetoothServiceInfo&)));
-    connect(&discoveryAgent, SIGNAL(serviceDiscovered(const QBluetoothServiceInfo&)),
-            this, SLOT(serviceDiscoveryDebug(const QBluetoothServiceInfo&)));
+    QSignalSpy finishedSpy(&discoveryAgent, SIGNAL(finished()));
+    QSignalSpy errorSpy(&discoveryAgent, SIGNAL(error(QBluetoothServiceDiscoveryAgent::Error)));
+    QSignalSpy discoveredSpy(&discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)));
+    connect(&discoveryAgent, SIGNAL(serviceDiscovered(QBluetoothServiceInfo)),
+            this, SLOT(serviceDiscoveryDebug(QBluetoothServiceInfo)));
 
     discoveryAgent.start();
 
@@ -254,20 +262,31 @@ void tst_QBluetoothServiceDiscoveryAgent::tst_serviceDiscovery()
 
     // Expect finished signal with no error
     QVERIFY(finishedSpy.count() == 1);
-    QVERIFY(finishedSpy.takeFirst().at(0).toBool() == false);
+    QVERIFY(errorSpy.isEmpty());
 
     // All returned QBluetoothServiceInfo should be valid.
     while (!discoveredSpy.isEmpty()) {
-        const QBluetoothServiceInfo info = qvariant_cast<QBluetoothServiceInfo>(discoveredSpy.takeFirst().at(0));
+        const QVariant v = discoveredSpy.takeFirst().at(0);
 
-        QVERIFY(info.isValid());
+        // Work around limitation in QMetaType and moc.
+        // QBluetoothServiceInfo is registered with metatype as QtMobility::QBluetoothServiceInfo
+        // moc sees it as the unqualified QBluetoothServiceInfo.
+        if (qstrcmp(v.typeName(), "QBluetoothServiceInfo") == 0) {
+            const QBluetoothServiceInfo info =
+                *reinterpret_cast<const QBluetoothServiceInfo*>(v.constData());
 
-        qDebug() << info.serviceName();
-        if (info.protocolServiceMultiplexer() >= 0)
-            qDebug() << "\tL2CAP protocol service multiplexer:" << info.protocolServiceMultiplexer();
-        if (info.serverChannel() >= 0)
-            qDebug() << "\tRFCOMM server channel:" << info.serverChannel();
-        //dumpServiceInfoAttributes(info);
+            QVERIFY(info.isValid());
+
+#if 0
+            qDebug() << info.device().name() << info.device().address().toString();
+            qDebug() << "\tService name:" << info.serviceName();
+            if (info.protocolServiceMultiplexer() >= 0)
+                qDebug() << "\tL2CAP protocol service multiplexer:" << info.protocolServiceMultiplexer();
+            if (info.serverChannel() >= 0)
+                qDebug() << "\tRFCOMM server channel:" << info.serverChannel();
+            //dumpServiceInfoAttributes(info);
+#endif
+        }
     }
 }
 

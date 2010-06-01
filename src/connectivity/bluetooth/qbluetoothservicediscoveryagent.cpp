@@ -265,8 +265,8 @@ void QBluetoothServiceDiscoveryAgentPrivate::startDeviceDiscovery()
 
     if (!deviceDiscoveryAgent) {
         deviceDiscoveryAgent = new QBluetoothDeviceDiscoveryAgent;
-        QObject::connect(deviceDiscoveryAgent, SIGNAL(finished(bool)),
-                         q, SLOT(_q_deviceDiscoveryFinished(bool)));
+        QObject::connect(deviceDiscoveryAgent, SIGNAL(finished()),
+                         q, SLOT(_q_deviceDiscoveryFinished()));
     }
 
     setDiscoveryState(DeviceDiscovery);
