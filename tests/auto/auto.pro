@@ -83,6 +83,11 @@ contains(mobility_modules,contacts) {
     linux*: SUBDIRS += qcontactmemusage
 }
 
+contains(mobility_modules,organizer) {
+    # Organizer
+    SUBDIRS += qorganizeritemmanager
+}
+
 contains(mobility_modules,versit) {
     # Versit module
     SUBDIRS += \
