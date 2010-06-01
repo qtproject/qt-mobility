@@ -118,8 +118,12 @@ bool QVersitDocument::operator!=(const QVersitDocument& other) const
 uint qHash(const QVersitDocument &key)
 {
     int hash = QT_PREPEND_NAMESPACE(qHash)(key.type());
+    hash += QT_PREPEND_NAMESPACE(qHash)(key.componentType());
     foreach (const QVersitProperty& property, key.properties()) {
         hash += qHash(property);
+    }
+    foreach (const QVersitDocument& nested, key.subDocuments()) {
+        hash += qHash(nested);
     }
     return hash;
 }
@@ -127,7 +131,7 @@ uint qHash(const QVersitDocument &key)
 #ifndef QT_NO_DEBUG_STREAM
 QDebug operator<<(QDebug dbg, const QVersitDocument& document)
 {
-    dbg.nospace() << "QVersitDocument(" << document.type() << ')';
+    dbg.nospace() << "QVersitDocument(" << document.type() << ", " << document.componentType() << ')';
     foreach (const QVersitProperty& property, document.properties()) {
         dbg.space() << '\n' << property;
     }
