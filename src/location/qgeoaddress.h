@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QLOCATION_GEOADDRESS_H
-#define QLOCATION_GEOADDRESS_H
+#ifndef QGEOADDRESS_H
+#define QGEOADDRESS_H
 
 #include "qmobilityglobal.h"
 #include <QSharedDataPointer>

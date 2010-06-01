@@ -126,6 +126,18 @@ QGeoMappingManager* QGeoMapViewport::mappingManager() const
     return d->manager;
 }
 
+void QGeoMapViewport::setMapWidget(QGeoMapWidget *widget)
+{
+    Q_D(QGeoMapViewport);
+    d->mapWidget = widget;
+}
+
+QGeoMapWidget* QGeoMapViewport::mapWidget() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->mapWidget;
+}
+
 /*!
     Sets the map \a widget associated with this mapping service.
     Whenever the internal map representation changes,
@@ -157,7 +169,7 @@ QGeoMappingManager* QGeoMapViewport::mappingManager() const
 *******************************************************************************/
 
 QGeoMapViewportPrivate::QGeoMapViewportPrivate()
-        : zoomLevel(0), manager(0)
+        : zoomLevel(0), manager(0), mapWidget(0)
 {}
 
 #include "moc_qgeomapviewport.cpp"

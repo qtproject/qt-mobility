@@ -44,19 +44,31 @@
 
 #include <QNetworkProxy>
 
+#define RELEASE_INTERVAL 5000
 #define PI 3.14159265
 #include <math.h>
 
 QGeoMapViewportNokia::QGeoMapViewportNokia(QGeoMappingManager *manager,
-        const QMap<QString, QString> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString)
-        : QGeoMapViewport(manager)
+                                           const QMap<QString, QString> &parameters,
+                                           QGeoServiceProvider::Error *error,
+                                           QString *errorString)
+    : QGeoMapViewport(manager),
+    m_horizontalPadding(0),
+    m_verticalPadding(0)
 {
     connect(manager,
             SIGNAL(QGeoMapReply*),
             this,
             SLOT(tileFinished(QGeoMapReply*)));
+
+    //The period timer that triggers the removal of
+    //map tiles that are not currently covered by the viewport
+    connect(&m_releaseTimer,
+            SIGNAL(timeout()),
+            this,
+            SLOT(releaseUnusedTiles()));
+
+    m_releaseTimer.start(RELEASE_INTERVAL);
 }
 
 QGeoMapViewportNokia::~QGeoMapViewportNokia()
@@ -150,11 +162,35 @@ void QGeoMapViewportNokia::tileFinished(QGeoMapReply* reply)
 
     if(!tile.isNull() && !tile.size().isEmpty()) {
         m_mapTiles[tileIndex] = qMakePair(tile, true);
-        //TODO: call update on associated map widget
+        updateMapWidget();
     }
 
     delete info;
     reply->deleteLater();
+}
+
+void QGeoMapViewportNokia::requestMissingMapTiles()
+{
+    QRectF paddedViewport = QRectF(m_boundingBox.x() - m_horizontalPadding,
+                                   m_boundingBox.y() - m_verticalPadding,
+                                   m_boundingBox.width() + (2*m_horizontalPadding),
+                                   m_boundingBox.height() + (2*m_verticalPadding));
+    int zLevel = zoomLevel();
+    TileIterator it(paddedViewport, zLevel, m_tileSize);
+    
+    while (it.hasNext()) {
+        it.next();
+        if (!it.isValid())
+            continue;
+        qint64 index = getTileIndex(it.row(), it.col(), zLevel);
+
+        if (m_mapTiles.contains(index)) {
+            QPair<QPixmap, bool>& tileData = m_mapTiles[index];
+            if (!tileData.second)
+                requestTile(it.row(), it.col());
+        } else
+            requestTile(it.row(), it.col());
+    }
 }
 
 void QGeoMapViewportNokia::setCenter(const QGeoCoordinate &center)
@@ -166,8 +202,34 @@ QGeoCoordinate QGeoMapViewportNokia::center() const
     return QGeoCoordinate();
 }
 
+void QGeoMapViewportNokia::updateMapWidget() const
+{
+    QGeoMapWidget *map = mapWidget();
+
+    if (map)
+        map->update();
+}
+
 void QGeoMapViewportNokia::pan(int startX, int startY, int endX, int endY)
 {
+    int deltaX = endX - startX;
+    int deltaY = endY - startY;
+    qint32 numColRow = 1;
+    numColRow <<= zoomLevel();
+    qreal pixelPerXAxis = numColRow * m_tileSize.width();
+    m_boundingBox.translate(deltaX, deltaY);
+
+    //have we gone past the left edge?
+    while (m_boundingBox.left() < 0) {
+        m_boundingBox.translate(pixelPerXAxis, 0);
+    }
+
+    //have we gone past the right edge?
+    if (m_boundingBox.left() >= pixelPerXAxis)
+        m_boundingBox.moveLeft(((qint64) m_boundingBox.left()) % ((qint64) pixelPerXAxis));
+
+    requestMissingMapTiles();
+    updateMapWidget();
 }
 
 QGeoBoundingBox QGeoMapViewportNokia::viewBounds() const
@@ -253,6 +315,43 @@ qint64 QGeoMapViewportNokia::getTileIndex(qint32 row, qint32 col, qint32 zoomLev
     qint64 numColRow = 1;
     numColRow <<= zoomLevel;
     return ((qint64) row) * numColRow + col;
+}
+
+/*!
+    Releases all map tiles that are not currently covered by the viewport.
+*/
+void QGeoMapViewportNokia::releaseUnusedTiles()
+{
+    qint32 numColRow = 1;
+    numColRow <<= zoomLevel();
+    QMutableHashIterator<qint64, QPair<QPixmap, bool> > it(m_mapTiles);
+    QRectF paddedViewPort = QRectF(m_boundingBox.x() - m_horizontalPadding,
+                                   m_boundingBox.y() - m_verticalPadding,
+                                   m_boundingBox.width() + (2 * m_horizontalPadding),
+                                   m_boundingBox.height() + (2 * m_verticalPadding));
+
+    while (it.hasNext()) {
+        it.next();
+        qint64 tileIndex = it.key();
+        qint32 row = tileIndex / numColRow;
+        qint32 col = tileIndex % numColRow;
+        QRectF tileRect = getTileRect(row, col);
+
+        if (tileRect.intersects(paddedViewPort))
+            continue;
+        
+        it.remove();
+    }
+}
+
+/*!
+    Returns the bounding box of the map tile given by its \a row and \a col index.
+*/
+QRectF QGeoMapViewportNokia::getTileRect(qint32 row, qint32 col) const
+{
+    QPointF topLeft(static_cast<qint64>(col) * m_tileSize.width(),
+                    static_cast<qint64>(row) * m_tileSize.height());
+    return QRectF(topLeft, m_tileSize);
 }
 
 /******************************************************************************************************

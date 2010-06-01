@@ -39,60 +39,33 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPVIEWPORT_H
-#define QGEOMAPVIEWPORT_H
+#ifndef QGEOMAPWIDGET_H
+#define QGEOMAPWIDGET_H
 
-#include "qgeocoordinate.h"
-#include "qgeoboundingbox.h"
-
-#include <QObject>
-#include <QSize>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include "qmobilityglobal.h"
+#include <QGraphicsWidget>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapWidget;
-class QGeoMappingManager;
-class QGeoMapViewportPrivate;
+class QGeoMapViewport;
+class QGeoMapWidgetPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapViewport : public QObject
+class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
 {
     Q_OBJECT
 
 public:
-    QGeoMapViewport(QGeoMappingManager *manager = 0);
-    virtual ~QGeoMapViewport();
+    QGeoMapWidget(QGeoMapViewport *viewport, QGraphicsItem *parent = 0);
+    virtual ~QGeoMapWidget();
 
-    void setMapWidget(QGeoMapWidget *widget);
 
-    int zoomLevel() const;
-    virtual void setZoomLevel(int zoomLevel) = 0;
-
-    virtual void setViewportSize(const QSize &size);
-    QSize viewportSize() const;
-
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
-
-    virtual void setCenter(const QGeoCoordinate &center) = 0;
-    virtual QGeoCoordinate center() const = 0;
-
-    virtual void pan(int startX, int startY, int endX, int endY) = 0;
-
-    virtual QGeoBoundingBox viewBounds() const = 0;
-
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
-
-protected:
-    QGeoMappingManager* mappingManager() const;
-    QGeoMapWidget* mapWidget() const;
+public: //overridden virtual methods
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 private:
-    QGeoMapViewportPrivate* d_ptr;
+    QGeoMapWidgetPrivate *d_ptr;
 
-    Q_DISABLE_COPY(QGeoMapViewport)
-    Q_DECLARE_PRIVATE(QGeoMapViewport)
+    Q_DISABLE_COPY(QGeoMapWidget)
 };
 
 QTM_END_NAMESPACE

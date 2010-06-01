@@ -39,62 +39,52 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPVIEWPORT_H
-#define QGEOMAPVIEWPORT_H
-
-#include "qgeocoordinate.h"
-#include "qgeoboundingbox.h"
-
-#include <QObject>
-#include <QSize>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include "qgeomapwidget.h"
+#include "qgeomapwidget_p.h"
+#include "qgeomapviewport.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapWidget;
-class QGeoMappingManager;
-class QGeoMapViewportPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapViewport : public QObject
+/*!
+    Constructs a QGeoMapWidget with a \a viewport and a \a parent.
+    The map widget takes ownership of the \a viewport.
+*/
+QGeoMapWidget::QGeoMapWidget(QGeoMapViewport *viewport, QGraphicsItem *parent)
+    : QGraphicsWidget(parent),
+    d_ptr(new QGeoMapWidgetPrivate(viewport))
 {
-    Q_OBJECT
+    viewport->setMapWidget(this);
+    viewport->setViewportSize(this->boundingRect().size().toSize());
+    viewport->setCenter(QGeoCoordinate(52.5, 13.4));
+}
 
-public:
-    QGeoMapViewport(QGeoMappingManager *manager = 0);
-    virtual ~QGeoMapViewport();
+/*!
+    Destructor.
+*/
+QGeoMapWidget::~QGeoMapWidget()
+{
+    delete d_ptr;
+}
 
-    void setMapWidget(QGeoMapWidget *widget);
+void QGeoMapWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+{
+    if (d_ptr->viewport)
+        d_ptr->viewport->paint(painter, option);
+}
 
-    int zoomLevel() const;
-    virtual void setZoomLevel(int zoomLevel) = 0;
+/******************************************************************************
+ ******************************************************************************/
 
-    virtual void setViewportSize(const QSize &size);
-    QSize viewportSize() const;
+QGeoMapWidgetPrivate::QGeoMapWidgetPrivate(QGeoMapViewport *viewport)
+    : viewport(viewport)
+{
+}
 
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
+QGeoMapWidgetPrivate::~QGeoMapWidgetPrivate()
+{
+    delete viewport;
+}
 
-    virtual void setCenter(const QGeoCoordinate &center) = 0;
-    virtual QGeoCoordinate center() const = 0;
-
-    virtual void pan(int startX, int startY, int endX, int endY) = 0;
-
-    virtual QGeoBoundingBox viewBounds() const = 0;
-
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
-
-protected:
-    QGeoMappingManager* mappingManager() const;
-    QGeoMapWidget* mapWidget() const;
-
-private:
-    QGeoMapViewportPrivate* d_ptr;
-
-    Q_DISABLE_COPY(QGeoMapViewport)
-    Q_DECLARE_PRIVATE(QGeoMapViewport)
-};
+#include "moc_qgeomapwidget.cpp"
 
 QTM_END_NAMESPACE
-
-#endif

@@ -39,60 +39,31 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPVIEWPORT_H
-#define QGEOMAPVIEWPORT_H
+#ifndef QGEOMAPWIDGET_P_H
+#define QGEOMAPWIDGET_P_H
 
-#include "qgeocoordinate.h"
-#include "qgeoboundingbox.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QSize>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include "qgeomapwidget.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapWidget;
-class QGeoMappingManager;
-class QGeoMapViewportPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapViewport : public QObject
+class QGeoMapWidgetPrivate
 {
-    Q_OBJECT
-
 public:
-    QGeoMapViewport(QGeoMappingManager *manager = 0);
-    virtual ~QGeoMapViewport();
+    QGeoMapWidgetPrivate(QGeoMapViewport *viewport);
+    ~QGeoMapWidgetPrivate();
 
-    void setMapWidget(QGeoMapWidget *widget);
-
-    int zoomLevel() const;
-    virtual void setZoomLevel(int zoomLevel) = 0;
-
-    virtual void setViewportSize(const QSize &size);
-    QSize viewportSize() const;
-
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
-
-    virtual void setCenter(const QGeoCoordinate &center) = 0;
-    virtual QGeoCoordinate center() const = 0;
-
-    virtual void pan(int startX, int startY, int endX, int endY) = 0;
-
-    virtual QGeoBoundingBox viewBounds() const = 0;
-
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
-
-protected:
-    QGeoMappingManager* mappingManager() const;
-    QGeoMapWidget* mapWidget() const;
-
-private:
-    QGeoMapViewportPrivate* d_ptr;
-
-    Q_DISABLE_COPY(QGeoMapViewport)
-    Q_DECLARE_PRIVATE(QGeoMapViewport)
+    QGeoMapViewport *viewport;
 };
 
 QTM_END_NAMESPACE
