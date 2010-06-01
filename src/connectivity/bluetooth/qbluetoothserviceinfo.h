@@ -63,6 +63,7 @@ class Q_CONNECTIVITY_EXPORT QBluetoothServiceInfo
 {
 public:
     enum AttributeId {
+        ServiceClassIds = 0x0001,
         ServiceId = 0x0003,
         ProtocolDescriptorList = 0x0004,
         BrowseGroupList = 0x0005,
@@ -124,6 +125,8 @@ public:
     inline void setServiceUuid(const QBluetoothUuid &uuid);
     inline QBluetoothUuid serviceUuid() const;
 
+    inline QList<QBluetoothUuid> serviceClassUuids() const;
+
     QBluetoothServiceInfo &operator=(const QBluetoothServiceInfo &other);
 
     bool isRegistered() const;
@@ -142,9 +145,10 @@ private:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QBluetoothServiceInfo))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QBluetoothServiceInfo::Sequence))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QBluetoothServiceInfo::Alternative))
+Q_DECLARE_METATYPE(QtMobility::QBluetoothServiceInfo)
+Q_DECLARE_METATYPE(QtMobility::QBluetoothServiceInfo::Sequence)
+Q_DECLARE_METATYPE(QtMobility::QBluetoothServiceInfo::Alternative)
+Q_DECLARE_METATYPE(QList<QtMobility::QBluetoothUuid>)
 
 QTM_BEGIN_NAMESPACE
 
@@ -211,6 +215,11 @@ inline void QBluetoothServiceInfo::setServiceUuid(const QBluetoothUuid &uuid)
 inline QBluetoothUuid QBluetoothServiceInfo::serviceUuid() const
 {
     return attribute(ServiceId).value<QBluetoothUuid>();
+}
+
+inline QList<QBluetoothUuid> QBluetoothServiceInfo::serviceClassUuids() const
+{
+    return attribute(ServiceClassIds).value<QList<QBluetoothUuid> >();
 }
 
 QTM_END_NAMESPACE
