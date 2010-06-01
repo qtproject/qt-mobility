@@ -66,7 +66,6 @@ class QBluetoothSocketPrivate
 
 public:
     QBluetoothSocketPrivate();
-    QBluetoothSocketPrivate(QBluetoothSocket::SocketType socketType);
     ~QBluetoothSocketPrivate();
 
     void connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode);

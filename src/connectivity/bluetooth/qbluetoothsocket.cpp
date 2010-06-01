@@ -214,9 +214,12 @@ QTM_BEGIN_NAMESPACE
     Constructs a Bluetooth socket of \a socketType type, with \a parent.
 */
 QBluetoothSocket::QBluetoothSocket(QBluetoothSocket::SocketType socketType, QObject *parent)
-: QIODevice(parent), d_ptr(new QBluetoothSocketPrivate(socketType))
+: QIODevice(parent), d_ptr(new QBluetoothSocketPrivate)
 {
-    d_ptr->q_ptr = this;
+    Q_D(QBluetoothSocket);
+
+    d->q_ptr = this;
+    d->ensureNativeSocket(socketType);
 
     setOpenMode(QIODevice::ReadWrite);
 }

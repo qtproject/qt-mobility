@@ -87,17 +87,6 @@ QBluetoothSocketPrivate::QBluetoothSocketPrivate()
     socketError(QBluetoothSocket::UnknownSocketError),
     socket(0)
 {
-    //socket = CBluetoothSocket::NewL(*this, getSocketServer()->socketServer);
-}
-
-QBluetoothSocketPrivate::QBluetoothSocketPrivate(QBluetoothSocket::SocketType socketType)
-:   rxOffset(0), rxDescriptor(0, 0),
-    socketType(socketType),
-    state(QBluetoothSocket::UnconnectedState),
-    socketError(QBluetoothSocket::UnknownSocketError),
-    socket(0)
-{
-    ensureNativeSocket(socketType);
 }
 
 QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
