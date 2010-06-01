@@ -83,6 +83,7 @@ public:
     virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *) = 0;
     virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *) = 0;
 
+    virtual void play(QFeedbackEffect::InstantEffect) = 0;
 
     static QFeedbackInterface *instance();
 

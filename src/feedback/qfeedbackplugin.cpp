@@ -69,6 +69,9 @@ public:
     QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty) { return QFeedbackEffect::UnknownError; }
     QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *) { return QFeedbackEffect::UnknownError; }
     QAbstractAnimation::State actualEffectState(const QFeedbackEffect *) { return QAbstractAnimation::Stopped; }
+
+    virtual void play(QFeedbackEffect::InstantEffect effect) { Q_UNUSED(effect); }
+
 };
 
 QFeedbackInterface *QFeedbackInterface::instance()

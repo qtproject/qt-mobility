@@ -38,58 +38,63 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef QFEEDBACK_SYMBIAN_H
+#define QFEEDBACK_SYMBIA_H
 
-#ifndef QFEEDBACKEFFECT_P_H
-#define QFEEDBACKEFFECT_P_H
+#include <QtGui/QWidget>
 
-#include "qfeedbackeffect.h"
-#include "qfeedbackdevice.h"
-#include <private/qabstractanimation_p.h>
+#include <qmobilityglobal.h>
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists for the convenience
-// of QAbstractItemModel*.  This header file may change from version
-// to version without notice, or even be removed.
-//
-// We mean it.
-//
-//
+#include <qfeedbackplugin.h>
 
-class CHWRMVibra;
+#include <hwrmvibra.h>
+#include <touchfeedback.h>
 
-QTM_BEGIN_NAMESPACE
+
+QT_BEGIN_HEADER
+QTM_USE_NAMESPACE
 
 class QTouchFeedback;
 
-class QFeedbackEffectPrivate : public QAbstractAnimationPrivate
+class QFeedbackSymbian : public QObject, public QFeedbackInterface
 {
+    Q_OBJECT
+    Q_INTERFACES(QtMobility::QFeedbackInterface)
 public:
-    QFeedbackEffectPrivate() : duration(250),
-                    intensity(1), attackTime(0), attackIntensity(0), fadeTime(0),
-                    period(-1), device(QFeedbackDevice::defaultDevice())
-    {
+    QFeedbackSymbian();
+    virtual ~QFeedbackSymbian();
 
-    }
+    virtual QFeedbackDevice defaultDevice(QFeedbackDevice::Type);
+    virtual QList<QFeedbackDevice> devices();
+
+    //for device handling
+    virtual QString deviceName(const QFeedbackDevice &);
+    virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &);
+    virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &);
+    virtual QFeedbackDevice::Type type(const QFeedbackDevice &);
+    virtual bool isEnabled(const QFeedbackDevice &);
+    virtual void setEnabled(const QFeedbackDevice &, bool);
+
+    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty);
+    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
+
+    virtual void play(QFeedbackEffect::InstantEffect);
+
+private:
+    CHWRMVibra *vibra();
 
 
-    int duration;
-    qreal intensity;
-    int attackTime;
-    qreal attackIntensity;
-    int fadeTime;
-    qreal fadeIntensity;
-    int period;
-    QFeedbackDevice device;
-    
-   Q_DECLARE_PUBLIC(QFeedbackEffect)
+    static CCoeControl *defaultWidget();
+    TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::InstantEffect effect);
+
+    bool m_vibraActive;
+    CHWRMVibra *m_vibra;
+
+
 };
 
 
-
-QTM_END_NAMESPACE
-
+QT_END_HEADER
 
 #endif
