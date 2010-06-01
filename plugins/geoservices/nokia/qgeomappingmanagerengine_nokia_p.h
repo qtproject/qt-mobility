@@ -54,7 +54,7 @@
 //
 
 #include <qgeoserviceprovider.h>
-#include <qgeotiledmappingmanager.h>
+#include <qgeotiledmappingmanagerengine.h>
 
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>
