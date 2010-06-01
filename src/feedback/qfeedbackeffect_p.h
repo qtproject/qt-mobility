@@ -69,11 +69,9 @@ class QFeedbackEffectPrivate : public QAbstractAnimationPrivate
 public:
     QFeedbackEffectPrivate() : duration(250),
                     intensity(1), attackTime(0), attackIntensity(0), fadeTime(0),
-                    period(-1), device(QFeedbackDevice::defaultDevice()),
+                    period(-1), device(QFeedbackDevice::defaultDevice())
 #ifdef Q_OS_SYMBIAN
-                  m_feedback(0), m_vibra(0)
-#else
-                  m_hEffect(0)
+                  , m_feedback(0), m_vibra(0)
 #endif
     {
 
@@ -100,10 +98,6 @@ public:
 protected:
     QTouchFeedback *m_feedback;
     CHWRMVibra *m_vibra;
-#else
-    //for Immersion
-    void checkUpdateEffect();
-    qint32 m_hEffect;
 #endif
 
    Q_DECLARE_PUBLIC(QFeedbackEffect)

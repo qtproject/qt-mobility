@@ -41,6 +41,10 @@
 
 #include "qfeedbackeffect.h"
 #include "qfeedbackeffect_p.h"
+#include "qfeedbackplugin.h"
+
+#include <QtCore/QCoreApplication>
+
 
 QTM_BEGIN_NAMESPACE
 
@@ -82,6 +86,14 @@ int QFeedbackEffect::duration() const
 {
     return d_func()->duration;
 }
+void QFeedbackEffect::setDuration(int msecs)
+{
+    Q_D(QFeedbackEffect);
+    if (d->duration == msecs)
+        return;
+    d->duration = msecs;
+    QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::Duration);
+}
 
 /*!
     \property QFeedbackEffect::intensity
@@ -94,6 +106,14 @@ qreal QFeedbackEffect::intensity() const
 {
     return d_func()->intensity;
 }
+void QFeedbackEffect::setIntensity(qreal intensity)
+{
+    Q_D(QFeedbackEffect);
+    if (d->intensity == intensity)
+        return;
+    d->intensity = intensity;
+    QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::Intensity);
+}
 
 /*!
     \property QFeedbackEffect::attackTime
@@ -104,6 +124,14 @@ qreal QFeedbackEffect::intensity() const
 int QFeedbackEffect::attackTime() const
 {
     return d_func()->attackTime;
+}
+void QFeedbackEffect::setAttackTime(int msecs)
+{
+    Q_D(QFeedbackEffect);
+    if (d->attackTime == msecs)
+        return;
+    d->attackTime = msecs;
+    QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::AttackTime);
 }
 
 /*!
@@ -117,6 +145,14 @@ qreal QFeedbackEffect::attackIntensity() const
 {
     return d_func()->attackIntensity;
 }
+void QFeedbackEffect::setAttackIntensity(qreal intensity)
+{
+    Q_D(QFeedbackEffect);
+    if (d->attackIntensity == intensity)
+        return;
+    d->attackIntensity = intensity;
+    QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::AttackIntensity);
+}
 
 /*!
     \property QFeedbackEffect::fadeTime
@@ -127,6 +163,14 @@ qreal QFeedbackEffect::attackIntensity() const
 int QFeedbackEffect::fadeTime() const
 {
     return d_func()->fadeTime;
+}
+void QFeedbackEffect::setFadeTime(int msecs)
+{
+    Q_D(QFeedbackEffect);
+    if (d->fadeTime == msecs)
+        return;
+    d->fadeTime = msecs;
+    QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::FadeTime);
 }
 
 /*!
@@ -140,6 +184,14 @@ qreal QFeedbackEffect::fadeIntensity() const
 {
     return d_func()->fadeIntensity;
 }
+void QFeedbackEffect::setFadeIntensity(qreal intensity)
+{
+    Q_D(QFeedbackEffect);
+    if (d->fadeIntensity == intensity)
+        return;
+    d->fadeIntensity = intensity;
+    QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::FadeIntensity);
+}
 
 /*!
     \property QFeedbackEffect::device
@@ -147,6 +199,10 @@ qreal QFeedbackEffect::fadeIntensity() const
 
     This property defines the device on which the effect operates.
 */
+QFeedbackDevice QFeedbackEffect::device() const
+{
+    return d_func()->device;
+}
 void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
 {
     if (state() != Stopped) {
@@ -157,11 +213,6 @@ void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
     d_func()->device = device;
 }
 
-QFeedbackDevice QFeedbackEffect::device() const
-{
-    return d_func()->device;
-}
-
 /*!
     \property QFeedbackEffect::period
     \brief set the period for the effect.
@@ -169,7 +220,10 @@ QFeedbackDevice QFeedbackEffect::device() const
     It has a default value of -1, which mean that it is not a periodic effect.
     Note: not all devices can support periodic effects
 */
-
+int QFeedbackEffect::period() const
+{
+    return d_func()->period;
+}
 void QFeedbackEffect::setPeriod(int msecs)
 {
     if (state() != Stopped) {
@@ -179,11 +233,35 @@ void QFeedbackEffect::setPeriod(int msecs)
     d_func()->period = msecs;
 }
 
-int QFeedbackEffect::period() const
+/*
+    \reimp
+*/
+void QFeedbackEffect::updateCurrentTime(int /*currentTime*/)
 {
-    return d_func()->period;
+    switch(QFeedbackInterface::instance()->actualEffectState(this))
+    {
+    case QAbstractAnimation::Running:
+        start();
+        break;
+    case QAbstractAnimation::Paused:
+        pause();
+        break;
+    case QAbstractAnimation::Stopped:
+        stop();
+        break;
+    }
 }
 
+/*
+    \reimp
+*/
+void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+{
+    ErrorType e = QFeedbackInterface::instance()->updateEffectState(this);
+    QAbstractAnimation::updateState(newState, oldState);
+    if (e != NoError)
+        emit error(e);
+}
 
 /*!
     \fn void QFeedbackDevice::play(InstantEffect effect)
@@ -192,6 +270,12 @@ int QFeedbackEffect::period() const
 
     That feedback is defined by the theme of the system.
 */
+void QFeedbackEffect::play(InstantEffect effect)
+{
+    //TODO: we should use the platform/theme APIs for that
+    Q_UNUSED(effect);
+}
+
 
 #include "moc_qfeedbackeffect.cpp"
 

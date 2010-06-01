@@ -12,26 +12,12 @@ include(../../common.pri)
 INCLUDEPATH += .
 
 # Input
-PUBLIC_HEADERS += qfeedbackdevice.h qfeedbackeffect.h
+PUBLIC_HEADERS += qfeedbackdevice.h qfeedbackeffect.h qfeedbackplugin.h
 PRIVATE_HEADERS += qfeedbackeffect_p.h
 
-for(p, INCLUDEPATH):exists("$$p/ImmVibe.h"):CONFIG+=immersion
-
-# Private Headers
-SOURCES += qfeedbackdevice.cpp qfeedbackeffect.cpp
+SOURCES += qfeedbackdevice.cpp qfeedbackeffect.cpp qfeedbackplugin.cpp
 HEADERS += $$PUBLIC_HEADERS \
     $$PRIVATE_HEADERS
-
-contains(CONFIG, immersion) {
-    SOURCES += qfeedbackeffect_immersion.cpp qfeedbackdevice_immersion.cpp
-    LIBS += -lImmVibe
-} else:symbian {
-    SOURCES += qfeedbackdevice_symbian.cpp qfeedbackeffect_symbian.cpp
-    LIBS += -ltouchfeedback -lhwrmvibraclient
-} else {
-    SOURCES += qfeedbackdevice_stub.cpp qfeedbackeffect_stub.cpp
-}
-
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1

@@ -38,69 +38,62 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QFEEDBACKDEVICE_H
-#define QFEEDBACKDEVICE_H
+
+#ifndef QFEEDBACKPLUGIN_H
+#define QFEEDBACKPLUGIN_H
 
 #include <qmobilityglobal.h>
-#include <QtCore/QList>
-#include <QtCore/QObject>
+#include "qfeedbackdevice.h"
+#include "qfeedbackeffect.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QFeedbackEffect;
-
-class Q_FEEDBACK_EXPORT QFeedbackDevice
+class Q_FEEDBACK_EXPORT QFeedbackInterface
 {
-    Q_GADGET
-    Q_ENUMS(Type)
 public:
-    enum Type {
-        //should we have different type for actuators: vibra, motor...
-        None,
-        Vibra,
-        Touch
+    enum EffectProperty
+    {
+        Duration,
+        Intensity,
+        AttackTime,
+        AttackIntensity,
+        FadeTime,
+        FadeIntensity,
+        Period,
+        Device
     };
+    virtual ~QFeedbackInterface() { }
 
-    enum Capability {
-        //this might need to be extended
-        Envelope = 1,
-        Period = 2
-    };
-    Q_DECLARE_FLAGS(Capabilities, Capability)
+    //static members for devices management
+    virtual QFeedbackDevice defaultDevice(QFeedbackDevice::Type) = 0;
+    virtual QList<QFeedbackDevice> devices() = 0;
+
+    //for device handling
+    virtual QString deviceName(const QFeedbackDevice &) = 0;
+    virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &) = 0;
+    virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &) = 0;
+    virtual QFeedbackDevice::Type type(const QFeedbackDevice &) = 0;
+    virtual bool isEnabled(const QFeedbackDevice &) = 0;
+    virtual void setEnabled(const QFeedbackDevice &, bool) = 0;
+
+    //effects
+    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty) = 0;
+    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *) = 0;
+    virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *) = 0;
 
 
-    enum State {
-        Busy,
-        Ready,
-        Unknown
-    };
+    static QFeedbackInterface *instance();
 
-    QFeedbackDevice();
-
-    int id() const;
-    bool isValid() const;
-
-    QString name() const;
-    State state() const;
-
-    Capabilities supportedCapabilities() const;
-    Type type() const;
-
-    bool isEnabled() const;
-    void setEnabled(bool);
-
-    static QFeedbackDevice defaultDevice();
-    static QFeedbackDevice defaultDevice(Type t);
-    static QList<QFeedbackDevice> devices();
-
-private:
-    friend class QFeedbackInterface;
-    int m_id;
+protected:
+    //utility function for the backends
+    QFeedbackDevice createFeedbackDevice(int id);
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_INTERFACE(QtMobility::QFeedbackInterface, "com.nokia.qt.QFeedbackInterface")
 
 QT_END_HEADER
 

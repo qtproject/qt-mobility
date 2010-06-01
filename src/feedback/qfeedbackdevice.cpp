@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 #include "qfeedbackdevice.h"
+#include "qfeedbackplugin.h"
 
 QTM_BEGIN_NAMESPACE
-
 
         /*!
             \class QFeedbackDevice
@@ -162,6 +162,48 @@ QFeedbackDevice QFeedbackDevice::defaultDevice()
 
     return ret.first();
 }
+
+
+QString QFeedbackDevice::name() const
+{
+    return QFeedbackInterface::instance()->deviceName(*this);
+}
+
+QFeedbackDevice::State QFeedbackDevice::state() const
+{
+    return QFeedbackInterface::instance()->deviceState(*this);
+}
+
+QFeedbackDevice::Capabilities QFeedbackDevice::supportedCapabilities() const
+{
+    return QFeedbackInterface::instance()->supportedCapabilities(*this);
+}
+
+QFeedbackDevice::Type QFeedbackDevice::type() const
+{
+    return QFeedbackInterface::instance()->type(*this);
+}
+
+bool QFeedbackDevice::isEnabled() const
+{
+    return QFeedbackInterface::instance()->isEnabled(*this);
+}
+
+void QFeedbackDevice::setEnabled(bool enabled)
+{
+    QFeedbackInterface::instance()->setEnabled(*this, enabled);
+}
+
+QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
+{
+    return QFeedbackInterface::instance()->defaultDevice(t);
+}
+
+QList<QFeedbackDevice> QFeedbackDevice::devices()
+{
+    return QFeedbackInterface::instance()->devices();
+}
+
 
 #include "moc_qfeedbackdevice.cpp"
 

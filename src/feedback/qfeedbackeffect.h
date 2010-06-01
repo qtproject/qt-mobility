@@ -46,28 +46,21 @@
 #include <QtCore/QAbstractAnimation>
 
 
+QT_BEGIN_HEADER
+    
 QTM_BEGIN_NAMESPACE
 
 class QFeedbackDevice;
 class QFeedbackEffectPrivate;
 
 
-//TODO: what to do with this enum
-//continous
-enum ContinuousEffect {
-    ContinuousNone, ContinuousSmooth, ContinuousSlider, ContinuousPopup,
-    ContinuousInput, ContinuousPinch, NumberOfContinuousFeedbacks, NoContinuousOverride,
-    ContinuousUser = 1000, ContinuousMaxUser = 65535
-};
-
-
-//instant
-
-
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
     Q_OBJECT
     Q_ENUMS(InstantEffect)
+    Q_ENUMS(EffectStyle)
+    Q_ENUMS(ErrorType)
+
 public:
     Q_PROPERTY(int duration READ duration WRITE setDuration)
     Q_PROPERTY(qreal intensity READ intensity WRITE setIntensity)
@@ -95,10 +88,19 @@ public:
         InstantUser = 65535
     };
 
+    //what TODO with the effect style (Immersion and s60 are ay different)
+    /*enum EffectStyle {
+        StyleNone, ContinuousSmooth, ContinuousSlider, ContinuousPopup,
+        ContinuousInput, ContinuousPinch, NumberOfContinuousFeedbacks, NoContinuousOverride,
+        ContinuousUser = 1000, ContinuousMaxUser = 65535
+    };*/
+
+
     enum ErrorType {
         //to be completed
+        NoError,
+        UnknownError,
         DeviceBusy
-
     };
 
     QFeedbackEffect(QObject *parent = 0);
@@ -132,7 +134,7 @@ public:
     QFeedbackDevice device() const;
 
 signals:
-    void error(ErrorType); //the feedback could not be played (name should be better)
+    void error(ErrorType); //the feedback could not be played
 
 protected:
     //virtual methods from QAbstractAnimation
@@ -143,7 +145,8 @@ private:
     Q_DECLARE_PRIVATE(QFeedbackEffect)
 };
 
-
 QTM_END_NAMESPACE
+
+QT_END_HEADER
 
 #endif // QFEEDBACKEFFECT_H
