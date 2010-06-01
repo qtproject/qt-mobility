@@ -224,7 +224,14 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
         QGalleryUrlRequest *request)
 {
-    return new QGalleryTrackerUrlResponse(fileInterface(), request->itemUrl(), request->create());
+    QGalleryTrackerUrlResponse *response = new QGalleryTrackerUrlResponse(
+            fileInterface(), request->itemUrl(), request->create());
+
+    QObject::connect(
+            daemonInterface().data(), SIGNAL(IndexFinished(double)),
+            response, SLOT(indexingFinished()));
+
+    return response;
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(

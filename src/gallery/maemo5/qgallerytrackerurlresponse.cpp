@@ -66,36 +66,83 @@ public:
             const QUrl &itemUrl,
             bool create)
         : create(create)
-        , watcher(0)
+        , cancelled(false)
+        , timeout(10000)
+        , getServiceTypeWatcher(0)
+        , existWatcher(0)
         , fileInterface(fileInterface)
         , itemUrl(itemUrl)
     {
     }
 
-    void _q_callFinished(QDBusPendingCallWatcher *call);
+    void getServiceType();
+    void _q_getServiceTypeFinished(QDBusPendingCallWatcher *watcher);
+    void getServiceTypeFinished(const QDBusPendingCall &call);
+
+    void exist();
+    void _q_existFinished(QDBusPendingCallWatcher *call);
+    void existFinished(const QDBusPendingCall &call);
 
     const bool create;
-    QDBusPendingCallWatcher *watcher;
+    bool cancelled;
+    int timeout;
+    QDBusPendingCallWatcher *getServiceTypeWatcher;
+    QDBusPendingCallWatcher *existWatcher;
     QGalleryDBusInterfacePointer fileInterface;
+    QBasicTimer createTimer;
+    QTime createTime;
     const QUrl itemUrl;
     QVariant itemId;
     QString itemType;
 };
 
-void QGalleryTrackerUrlResponsePrivate::_q_callFinished(QDBusPendingCallWatcher *call)
+void QGalleryTrackerUrlResponsePrivate::getServiceType()
 {
-    Q_ASSERT(call == watcher);
+    QDBusPendingCall getServiceTypeCall = fileInterface->asyncCall(
+            QLatin1String("GetServiceType"), itemUrl.path());
 
-    call->deleteLater();
-    watcher = 0;
+    if (getServiceTypeCall.isFinished()) {
+        getServiceTypeFinished(getServiceTypeCall);
+    } else {
+        getServiceTypeWatcher = new QDBusPendingCallWatcher(getServiceTypeCall, q_func());
 
-    if (call->isError()) {
-        qWarning("DBUS error %s", qPrintable(call->error().message()));
+        QObject::connect(
+                getServiceTypeWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                q_func(), SLOT(_q_getServiceTypeFinished(QDBusPendingCallWatcher*)));
+    }
+}
 
-        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+void QGalleryTrackerUrlResponsePrivate::_q_getServiceTypeFinished(QDBusPendingCallWatcher *watcher)
+{
+    if (watcher == getServiceTypeWatcher) {
+        getServiceTypeWatcher->deleteLater();
+        getServiceTypeWatcher = 0;
+
+        getServiceTypeFinished(*watcher);
+    } else {
+        qWarning("%s Finished signal emitted from within waitForFinished", Q_FUNC_INFO);
+    }
+}
+
+void QGalleryTrackerUrlResponsePrivate::getServiceTypeFinished(const QDBusPendingCall &call)
+{
+    if (call.isError()) {
+        QDBusError error = call.error();
+
+        if (error.type() == QDBusError::Other) {
+            // Url may not be in database.
+            if (!cancelled)
+                exist();
+            else
+                q_func()->finish(QGalleryAbstractRequest::Cancelled);
+        } else {
+            qWarning("QGalleryUrlRequest DBUS error: %s", qPrintable(error.message()));
+
+            q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+        }
     } else {
         QGalleryTrackerSchema schema;
-        schema.resolveTypeFromService(QDBusPendingReply<QString>(*call).value());
+        schema.resolveTypeFromService(QDBusPendingReply<QString>(call).value());
 
         if (schema.isItemType()) {
             itemId = schema.itemIdFromUri(itemUrl.path());
@@ -110,6 +157,59 @@ void QGalleryTrackerUrlResponsePrivate::_q_callFinished(QDBusPendingCallWatcher 
     }
 }
 
+void QGalleryTrackerUrlResponsePrivate::exist()
+{
+    QDBusPendingCall existCall = fileInterface->asyncCall(
+            QLatin1String("Exist"), itemUrl.path(), false);
+
+    if (existCall.isFinished()) {
+        existFinished(existCall);
+    } else {
+        existWatcher = new QDBusPendingCallWatcher(existCall, q_func());
+
+        QObject::connect(
+                existWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                q_func(), SLOT(_q_existFinished(QDBusPendingCallWatcher*)));
+    }
+}
+
+void QGalleryTrackerUrlResponsePrivate::_q_existFinished(QDBusPendingCallWatcher *watcher)
+{
+    if (watcher == existWatcher) {
+        existWatcher->deleteLater();
+        existWatcher = 0;
+
+        existFinished(*watcher);
+    } else {
+        qWarning("%s Finished signal emitted from within waitForFinished", Q_FUNC_INFO);
+    }
+}
+
+void QGalleryTrackerUrlResponsePrivate::existFinished(const QDBusPendingCall &call)
+{
+    if (call.isError()) {
+        QDBusError error = call.error();
+
+        qWarning("QGalleryUrlRequest DBUS error: %s", qPrintable(error.message()));
+
+        q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+    } else {
+        QDBusPendingReply<bool> reply(call);
+
+        if (reply.value()) {
+            if (!cancelled)
+                getServiceType();
+            else
+                q_func()->finish(QGalleryAbstractRequest::Cancelled);
+        } else if (create && timeout > 0) {
+            createTimer.start(timeout, q_func());
+            createTime.start();
+        } else {
+            q_func()->finish(QGalleryAbstractRequest::InvalidUrlError);
+        }
+    }
+}
+
 QGalleryTrackerUrlResponse::QGalleryTrackerUrlResponse(
         const QGalleryDBusInterfacePointer &fileInterface,
         const QUrl &itemUrl,
@@ -118,17 +218,7 @@ QGalleryTrackerUrlResponse::QGalleryTrackerUrlResponse(
     : QGalleryAbstractResponse(
             *new QGalleryTrackerUrlResponsePrivate(fileInterface, itemUrl, create), parent)
 {
-    Q_D(QGalleryTrackerUrlResponse);
-
-    d->watcher = new QDBusPendingCallWatcher(
-            d->fileInterface->asyncCall(QLatin1String("GetServiceType"), d->itemUrl.path()), this);
-
-    if (d->watcher->isFinished()) {
-        d->_q_callFinished(d->watcher);
-    } else {
-        connect(d->watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                this, SLOT(_q_callFinished(QDBusPendingCallWatcher*)));
-    }
+    d_func()->getServiceType();
 }
 
 QGalleryTrackerUrlResponse::~QGalleryTrackerUrlResponse()
@@ -196,18 +286,83 @@ void QGalleryTrackerUrlResponse::setMetaData(int, int, const QVariant &)
 
 void QGalleryTrackerUrlResponse::cancel()
 {
+    Q_D(QGalleryTrackerUrlResponse);
+
+    if (d->createTimer.isActive()) {
+        d->createTimer.stop();
+
+        finish(QGalleryAbstractRequest::Cancelled);
+    } else {
+        d->cancelled = true;
+    }
 }
 
-bool QGalleryTrackerUrlResponse::waitForFinished(int)
+bool QGalleryTrackerUrlResponse::waitForFinished(int msecs)
 {
     Q_D(QGalleryTrackerUrlResponse);
 
-    if (d->watcher) {
-        d->watcher->waitForFinished();
+    QTime time;
+    time.start();
 
-        d->_q_callFinished(d->watcher);
+    do {
+        if (QDBusPendingCallWatcher *watcher = d->getServiceTypeWatcher) {
+            d->getServiceTypeWatcher = 0;
+
+            watcher->waitForFinished();
+
+            d->getServiceTypeFinished(*watcher);
+
+            delete watcher;
+
+            if (d->result != QGalleryAbstractRequest::NoResult)
+                return true;
+        } else if (QDBusPendingCallWatcher *watcher = d->existWatcher) {
+            d->existWatcher = 0;
+
+            watcher->waitForFinished();
+
+            d->existFinished(*watcher);
+
+            delete watcher;
+
+            if (d->result != QGalleryAbstractRequest::NoResult)
+                return true;
+        } else if (d->createTimer.isActive()) {
+            // This will poll tracker aggressively.  A sleep may be advisable.
+            d->createTimer.stop();
+            d->timeout -= d->createTime.elapsed();
+
+            d->exist();
+        } else {
+            return true;
+        }
+    } while ((msecs -= time.restart()) > 0);
+
+    return false;
+}
+
+void QGalleryTrackerUrlResponse::indexingFinished()
+{
+    Q_D(QGalleryTrackerUrlResponse);
+
+    if (d->createTimer.isActive()) {
+        d->createTimer.stop();
+        d->timeout = 0;
+
+        d->exist();
     }
-    return true;
+}
+
+void QGalleryTrackerUrlResponse::timerEvent(QTimerEvent *event)
+{
+    Q_D(QGalleryTrackerUrlResponse);
+
+    if (event->timerId() == d->createTimer.timerId()) {
+        d->createTimer.stop();
+        d->timeout = 0;
+
+        d->exist();
+    }
 }
 
 #include "moc_qgallerytrackerurlresponse_p.cpp"

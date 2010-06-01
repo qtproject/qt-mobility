@@ -86,12 +86,8 @@ public:
 
 void QGalleryTrackerCountResponsePrivate::_q_callFinished(QDBusPendingCallWatcher *watcher)
 {
-    if (watcher != call) {
-        // This shouldn't ever happen.
-        Q_ASSERT(false);
+    Q_ASSERT(watcher == call);
 
-        return;
-    }
     call = 0;
 
     watcher->deleteLater();

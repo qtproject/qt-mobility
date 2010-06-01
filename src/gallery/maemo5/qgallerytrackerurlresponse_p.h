@@ -102,9 +102,16 @@ public:
 
     bool waitForFinished(int msecs);
 
+public Q_SLOTS:
+    void indexingFinished();
+
+protected:
+    void timerEvent(QTimerEvent *event);
+
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerUrlResponse)
-    Q_PRIVATE_SLOT(d_func(), void _q_callFinished(QDBusPendingCallWatcher *))
+    Q_PRIVATE_SLOT(d_func(), void _q_getServiceTypeFinished(QDBusPendingCallWatcher *))
+    Q_PRIVATE_SLOT(d_func(), void _q_existFinished(QDBusPendingCallWatcher *))
 
 };
 

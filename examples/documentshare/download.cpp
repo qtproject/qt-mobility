@@ -58,6 +58,7 @@ Download::Download(QNetworkReply *networkReply, QDocumentGallery *gallery, QObje
     connect(networkReply, SIGNAL(finished()), this, SLOT(networkFinished()));
 
     urlRequest = new QGalleryUrlRequest(gallery, this);
+    urlRequest->setCreate(true);
     connect(urlRequest, SIGNAL(finished(int)), this, SLOT(urlRequestFinished(int)));
 }
 
@@ -159,9 +160,12 @@ void Download::networkFinished()
 
 void Download::urlRequestFinished(int result)
 {
-    if (result == QGalleryAbstractRequest::Succeeded)
+    if (result == QGalleryAbstractRequest::Succeeded) {
         emit succeeded(this);
-    else
+    } else {
+        qWarning("URL request failed %d", result);
+
         emit failed(this);
+    }
 }
 
