@@ -10,13 +10,20 @@ MOBILITY = connectivity
 
 SOURCES = \
     main.cpp \
-    dialog.cpp
+    chat.cpp \
+    remoteselector.cpp \
+    chatserver.cpp \
+    chatclient.cpp
 
 HEADERS = \
-    dialog.h
+    chat.h \
+    remoteselector.h \
+    chatserver.h \
+    chatclient.h
 
 FORMS = \
-    dialog.ui
+    chat.ui \
+    remoteselector.ui
 
 symbian {
     TARGET.CAPABILITY = LocalServices UserEnvironment ReadUserData WriteUserData NetworkServices

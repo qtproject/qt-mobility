@@ -38,20 +38,44 @@
 **
 ****************************************************************************/
 
-#include "chat.h"
+#ifndef CHATCLIENT_H
+#define CHATCLIENT_H
 
-#include <QApplication>
+#include <bluetooth/qbluetoothserviceinfo.h>
 
-int main(int argc, char *argv[])
+#include <QtCore/QObject>
+
+QTM_BEGIN_NAMESPACE
+class QBluetoothSocket;
+QTM_END_NAMESPACE
+
+QTM_USE_NAMESPACE
+
+class ChatClient : public QObject
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
 
-    Chat d;
-    QObject::connect(&d, SIGNAL(accepted()), &app, SLOT(quit()));
-    d.show();
+public:
+    explicit ChatClient(QObject *parent = 0);
+    ~ChatClient();
 
-    app.exec();
+    void startClient(const QBluetoothServiceInfo &remoteService);
+    void stopClient();
 
-    return 0;
-}
+public slots:
+    void sendMessage(const QString &message);
 
+signals:
+    void messageReceived(const QString &sender, const QString &message);
+    void connected(const QString &name);
+    void disconnected();
+
+private slots:
+    void readSocket();
+    void connected();
+
+private:
+    QBluetoothSocket *socket;
+};
+
+#endif // CHATCLIENT_H

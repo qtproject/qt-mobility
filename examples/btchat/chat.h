@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-#include "ui_dialog.h"
+#include "ui_chat.h"
 
 #include <QDialog>
 
@@ -47,44 +47,41 @@
 
 #include <QDebug>
 
-QTM_USE_NAMESPACE
-
 QTM_BEGIN_NAMESPACE
 class QRfcommServer;
 QTM_END_NAMESPACE
 
-class Dialog : public QDialog, public Ui_Dialog
-{
-    friend class BluetoothSocketNotifier;
+QTM_USE_NAMESPACE
 
+class ChatServer;
+class ChatClient;
+
+class Chat : public QDialog
+{
     Q_OBJECT
 
 public:
-    Dialog(QWidget *parent = 0);
-    ~Dialog();
+    Chat(QWidget *parent = 0);
+    ~Chat();
+
+signals:
+    void sendMessage(const QString &message);
 
 private slots:
     void connectClicked();
     void sendClicked();
-    void bytesWritten();
-    void readSocket();
 
-    void closeSockets();
+    void showMessage(const QString &sender, const QString &message);
 
-    /* server only slots */
-    void clientConnected();
+    void clientConnected(const QString &name);
     void clientDisconnected();
-
-    /* client only slots */
-    void connectedToServer();
-    void disconnectedFromServer();
+    void connected(const QString &name);
 
 private:
-    bool m_connected;
+    Ui_Chat *ui;
 
-    QBluetoothServiceInfo serviceInfo;
+    ChatServer *server;
+    QList<ChatClient *> clients;
 
-    QRfcommServer *rfcommServer;
-    QList<QBluetoothSocket *> activeSockets;
-    QList<QBluetoothSocket *> waitForSend;
+    QString localName;
 };

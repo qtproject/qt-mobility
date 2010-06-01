@@ -38,20 +38,46 @@
 **
 ****************************************************************************/
 
-#include "chat.h"
+#ifndef REMOTESELECTOR_H
+#define REMOTESELECTOR_H
 
-#include <QApplication>
+#include <QtGui/QDialog>
 
-int main(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
+#include <bluetooth/qbluetoothuuid.h>
+#include <bluetooth/qbluetoothserviceinfo.h>
+#include <bluetooth/qbluetoothservicediscoveryagent.h>
 
-    Chat d;
-    QObject::connect(&d, SIGNAL(accepted()), &app, SLOT(quit()));
-    d.show();
+QT_FORWARD_DECLARE_CLASS(QModelIndex)
+QT_FORWARD_DECLARE_CLASS(QListWidgetItem)
 
-    app.exec();
+QTM_USE_NAMESPACE
 
-    return 0;
+namespace Ui {
+    class RemoteSelector;
 }
 
+class RemoteSelector : public QDialog
+{
+    Q_OBJECT
+
+public:
+    explicit RemoteSelector(QWidget *parent = 0);
+    ~RemoteSelector();
+
+    void startDiscovery(const QBluetoothUuid &uuid);
+    QBluetoothServiceInfo service() const;
+
+private:
+    Ui::RemoteSelector *ui;
+
+    QBluetoothServiceDiscoveryAgent *m_discoveryAgent;
+    QBluetoothServiceInfo m_service;
+    QMap<QListWidgetItem *, QBluetoothServiceInfo> m_discoveredServices;
+
+private slots:
+    void serviceDiscovered(const QBluetoothServiceInfo &serviceInfo);
+    void discoveryFinished();
+    void on_remoteDevices_itemActivated(QListWidgetItem *item);
+};
+
+#endif // REMOTESELECTOR_H
