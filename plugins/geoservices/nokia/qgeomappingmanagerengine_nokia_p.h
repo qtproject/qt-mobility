@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTINGMANAGER_NOKIA_P_H
-#define QGEOROUTINGMANAGER_NOKIA_P_H
+#ifndef QGEOMAPPINGMANAGERENGINE_NOKIA_P_H
+#define QGEOMAPPINGMANAGERENGINE_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -54,34 +54,47 @@
 //
 
 #include <qgeoserviceprovider.h>
-#include <qgeoroutingmanager.h>
+#include <qgeotiledmappingmanager.h>
 
 #include <QNetworkAccessManager>
+#include <QNetworkDiskCache>
+#include <QHash>
+
+#include "qgeomapreply_nokia_p.h"
 
 QTM_USE_NAMESPACE
 
-class QGeoRoutingManagerNokia : public QGeoRoutingManager
+class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoRoutingManagerNokia(const QMap<QString, QString> &parameters,
+    QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters,
                             QGeoServiceProvider::Error *error,
                             QString *errorString);
-    ~QGeoRoutingManagerNokia();
+    virtual ~QGeoMappingManagerEngineNokia();
 
-    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
-    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
-
-private slots:
-    void routeFinished();
-    void routeError(QGeoRouteReply::Error error, const QString &errorString);
+    QGeoMapReply* getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat) const;
 
 private:
-    QString requestString(const QGeoRouteRequest &request);
-    static QString trimDouble(qreal degree, int decimalDigits = 10);
+    Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
 
-    QNetworkAccessManager *m_networkManager;
+    QString getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const;
+
+private slots:
+    void mapFinished();
+    void mapError(QGeoMapReply::Error error, const QString &errorString);
+
+private:
+    static QString sizeToStr(const QSize &size);
+    static QString mapTypeToStr(QGeoMapWidget::MapType type);
+
+private:
+    QNetworkAccessManager *m_nam;
+    QNetworkDiskCache *m_cache;
     QString m_host;
+    QString m_token;
+    QString m_referrer;
+    QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
 };
 
 #endif

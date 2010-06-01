@@ -12,26 +12,26 @@ MOBILITY = location
 
 HEADERS += \
             qgeocodexmlparser_p.h \
-            qgeomappingmanager_nokia_p.h \
+            qgeomappingmanagerengine_nokia_p.h \
             qgeomapreply_nokia_p.h \
             #qgeomapviewport_nokia_p.h \
-            qgeoplacesmanager_nokia_p.h \
+            qgeoplacesmanagerengine_nokia_p.h \
             qgeoplacesreply_nokia_p.h \
             qgeoroutereply_nokia_p.h \
             qgeoroutexmlparser_p.h \
-            qgeoroutingmanager_nokia_p.h \
+            qgeoroutingmanagerengine_nokia_p.h \
             qgeoserviceproviderplugin_nokia_p.h
 
 SOURCES += \
             qgeocodexmlparser.cpp \
-            qgeomappingmanager_nokia.cpp \
+            qgeomappingmanagerengine_nokia.cpp \
             qgeomapreply_nokia.cpp \
             #qgeomapviewport_nokia.cpp \
-            qgeoplacesmanager_nokia.cpp \
+            qgeoplacesmanagerengine_nokia.cpp \
             qgeoplacesreply_nokia.cpp \
             qgeoroutereply_nokia.cpp \
             qgeoroutexmlparser.cpp \
-            qgeoroutingmanager_nokia.cpp \
+            qgeoroutingmanagerengine_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
 !symbian {INCLUDEPATH += $$SOURCE_DIR/src/location }

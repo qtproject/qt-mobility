@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGSERVICE_P_H
-#define QGEOMAPPINGSERVICE_P_H
+#ifndef QGEOMAPPINGMANAGER_P_H
+#define QGEOMAPPINGMANAGER_P_H
 
 //
 //  W A R N I N G
@@ -60,20 +60,18 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoMappingManagerEngine;
+
 class QGeoMappingManagerPrivate
 {
 public:
     QGeoMappingManagerPrivate();
     QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other);
-    virtual ~QGeoMappingManagerPrivate();
+    ~QGeoMappingManagerPrivate();
 
     QGeoMappingManagerPrivate& operator= (const QGeoMappingManagerPrivate &other);
 
-    QList<QGeoMapWidget::MapType> supportedMapTypes;
-    qreal minimumZoomLevel;
-    qreal maximumZoomLevel;
-    QSize minimumImageSize;
-    QSize maximumImageSize;
+    QGeoMappingManagerEngine *engine;
 };
 
 QTM_END_NAMESPACE

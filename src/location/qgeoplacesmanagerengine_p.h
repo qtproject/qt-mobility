@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGER_P_H
-#define QGEOTILEDMAPPINGMANAGER_P_H
+#ifndef QGEOPLACESMANAGERENGINE_P_H
+#define QGEOPLACESMANAGERENGINE_P_H
 
 //
 //  W A R N I N G
@@ -53,60 +53,28 @@
 // We mean it.
 //
 
-#include "qgeomappingmanager_p.h"
+#include "qgeoplacesmanagerengine.h"
 
-#include "qgeomapreply.h"
-
-#include <QSize>
 #include <QList>
-#include <QSet>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapViewport;
-class QGeoMapTileReplyContainer;
+class QLandmarkManager;
 
-class QGeoTiledMappingManagerPrivate : public QGeoMappingManagerPrivate
+class QGeoPlacesManagerEnginePrivate
 {
 public:
-    QGeoTiledMappingManagerPrivate();
-    QGeoTiledMappingManagerPrivate(const QGeoTiledMappingManagerPrivate &other);
-    ~QGeoTiledMappingManagerPrivate();
+    QGeoPlacesManagerEnginePrivate();
+    QGeoPlacesManagerEnginePrivate(const QGeoPlacesManagerEnginePrivate &other);
+    ~QGeoPlacesManagerEnginePrivate();
 
-    QGeoTiledMappingManagerPrivate& operator= (const QGeoTiledMappingManagerPrivate &other);
+    QGeoPlacesManagerEnginePrivate& operator= (const QGeoPlacesManagerEnginePrivate &other);
 
-    QList<QString> supportedImageFormats;
-    QSize tileSize;
-    QHash<QGeoMapViewport*, QGeoMapTileReplyContainer*> replies;
-};
+    QList<QLandmarkManager*> landmarkManagers;
 
-class QGeoMapTileReply {
-public:
-    QGeoMapTileReply(QGeoMapReply *reply, const QRectF &source, const QRectF &dest);
-    ~QGeoMapTileReply();
-
-    QGeoMapReply *m_reply;
-    QRectF m_source;
-    QRectF m_dest;
-};
-
-class QGeoMapTileReplyContainer : public QObject
-{
-    Q_OBJECT
-public:
-    QGeoMapTileReplyContainer(QGeoMapViewport *viewport);
-    ~QGeoMapTileReplyContainer();
-
-    void cancelAllReplies();
-    void addReply(QGeoMapTileReply *reply);
-
-private slots:
-    void replyFinished();
-    void replyError(QGeoMapReply::Error, const QString &errorString);
-
-private:
-    QGeoMapViewport *m_viewport;
-    QHash<QGeoMapReply*, QGeoMapTileReply*> m_replies;
+    bool supportsViewportBiasing;
+    bool supportsGeocoding;
+    QGeoPlacesManager::SearchTypes supportedSearchTypes;
 };
 
 QTM_END_NAMESPACE

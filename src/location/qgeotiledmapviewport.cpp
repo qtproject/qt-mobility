@@ -42,7 +42,7 @@
 #include "qgeotiledmapviewport.h"
 #include "qgeotiledmapviewport_p.h"
 
-#include "qgeotiledmappingmanager.h"
+#include "qgeotiledmappingmanagerengine.h"
 
 #include <QDebug>
 
@@ -51,13 +51,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoTiledMapViewport::QGeoTiledMapViewport(QGeoMappingManager *manager, QGeoMapWidget *widget)
-    : QGeoMapViewport(new QGeoTiledMapViewportPrivate(), manager, widget)
+QGeoTiledMapViewport::QGeoTiledMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
+    : QGeoMapViewport(new QGeoTiledMapViewportPrivate(), engine, widget)
 {
     Q_D(QGeoTiledMapViewport);
-    QGeoTiledMappingManager *tileManager = static_cast<QGeoTiledMappingManager *>(d->manager);
-    d->width = (1 << qRound(manager->maximumZoomLevel())) * tileManager->tileSize().width();
-    d->height = (1 << qRound(manager->maximumZoomLevel())) * tileManager->tileSize().height();
+    QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(d->engine);
+    d->width = (1 << qRound(engine->maximumZoomLevel())) * tileEngine->tileSize().width();
+    d->height = (1 << qRound(engine->maximumZoomLevel())) * tileEngine->tileSize().height();
     setZoomLevel(0.0);
 }
 
@@ -150,9 +150,6 @@ QGeoCoordinate QGeoTiledMapViewport::worldPixelToCoordinate(qulonglong x, qulong
 void QGeoTiledMapViewport::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoTiledMapViewport);
-
-    QGeoTiledMappingManager *tileManager = static_cast<QGeoTiledMappingManager *>(d->manager);
-
     coordinateToWorldPixel(center, &(d->x), &(d->y));
     d->x -= qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
     d->y -= qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));
@@ -174,12 +171,10 @@ void QGeoTiledMapViewport::setZoomLevel(qreal zoomLevel)
 
     QGeoMapViewport::setZoomLevel(zoomLevel);
 
-    QGeoTiledMappingManager *tileManager = static_cast<QGeoTiledMappingManager *>(d->manager);
-
     qulonglong cx = d->x + qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
     qulonglong cy = d->y + qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));
 
-    d->zoomFactor = 1 << qRound64(d->manager->maximumZoomLevel() - d->zoomLevel);
+    d->zoomFactor = 1 << qRound64(d->engine->maximumZoomLevel() - d->zoomLevel);
 
     d->x = cx - qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
     d->y = cy - qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));
@@ -222,7 +217,7 @@ void QGeoTiledMapViewport::setViewportSize(const QSizeF &size)
     if (!d->mapImage.isNull())
         p.drawPixmap(d->mapImage.rect(), d->mapImage, d->mapImage.rect());
     d->mapImage = pm;
-    d->manager->updateMapImage(this);
+    d->engine->updateMapImage(this);
 }
 
 void QGeoTiledMapViewport::pan(int dx, int dy)

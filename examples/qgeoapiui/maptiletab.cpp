@@ -133,11 +133,11 @@ void MapTileTab::on_btnRequest_clicked()
         m_viewport->setZoomLevel(zoomLevel);
         m_viewport->setCenter(coord);
 
-        QGeoTiledMappingManager *tiledManager = static_cast<QGeoTiledMappingManager *>(m_mapManager);
-        QPoint tile = tiledManager->screenPositionToTilePosition(m_viewport, QPointF(m_viewport->viewportSize().width() / 2.0, m_viewport->viewportSize().height() / 2.0));
+        //QGeoTiledMappingManager *tiledManager = static_cast<QGeoTiledMappingManager *>(m_mapManager);
+        //QPoint tile = tiledManager->screenPositionToTilePosition(m_viewport, QPointF(m_viewport->viewportSize().width() / 2.0, m_viewport->viewportSize().height() / 2.0));
 
-        if (!tiledManager->getTileImage(zoomLevel, tile.y(), tile.x(), QGeoMapWidget::StreetMap, "png"))
-            m_result->setText(tr("Error - requestMap returned NULL"));
+        //if (!tiledManager->getTileImage(zoomLevel, tile.y(), tile.x(), QGeoMapWidget::StreetMap, "png"))
+        //    m_result->setText(tr("Error - requestMap returned NULL"));
 
     } else {
         QMessageBox::warning(this, tr("MapTile"), tr("No mapping manager available."));

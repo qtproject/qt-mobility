@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgeomappingmanager_nokia_p.h"
+#include "qgeomappingmanagerengine_nokia_p.h"
 #include "qgeomapreply_nokia_p.h"
 
 #include <QNetworkProxy>
@@ -51,7 +51,7 @@
 #define PI 3.14159265
 #include <math.h>
 
-QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_nam = new QNetworkAccessManager(this);
@@ -102,12 +102,11 @@ QGeoMappingManagerNokia::QGeoMappingManagerNokia(const QMap<QString, QString> &p
         *errorString = "";
 }
 
-QGeoMappingManagerNokia::~QGeoMappingManagerNokia()
+QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia()
 {
-    //delete m_cache;
 }
 
-QGeoMapReply* QGeoMappingManagerNokia::getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat) const
+QGeoMapReply* QGeoMappingManagerEngineNokia::getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat) const
 {
     QGeoMapReplyNokia::QuadTileInfo* info = new QGeoMapReplyNokia::QuadTileInfo;
     info->row = rowIndex;
@@ -140,7 +139,7 @@ QGeoMapReply* QGeoMappingManagerNokia::getTileImage(qint32 zoomLevel, qint32 row
     return mapReply;
 }
 
-void QGeoMappingManagerNokia::mapFinished()
+void QGeoMappingManagerEngineNokia::mapFinished()
 {
     QGeoMapReplyNokia *reply = qobject_cast<QGeoMapReplyNokia*>(sender());
 
@@ -150,16 +149,6 @@ void QGeoMappingManagerNokia::mapFinished()
     if (reply->error() != QGeoMapReply::NoError)
         m_cache->remove(reply->networkReply()->request().url());
 
-    /*
-    QGeoMapReplyNokia::QuadTileInfo* info = reply->tileInfo();
-    if (!info) {
-        reply->deleteLater();
-        return;
-    }
-
-    //qint64 tileIndex = getTileIndex(info->row, info->col, info->zoomLevel);
-    //m_mapTiles[tileIndex] = qMakePair(reply->mapImage(), true);
-*/
     if (receivers(SIGNAL(finished(QGeoMapReply*))) == 0) {
         reply->deleteLater();
         return;
@@ -168,7 +157,7 @@ void QGeoMappingManagerNokia::mapFinished()
     emit finished(reply);
 }
 
-void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString &errorString)
+void QGeoMappingManagerEngineNokia::mapError(QGeoMapReply::Error error, const QString &errorString)
 {
     QGeoMapReply *reply = qobject_cast<QGeoMapReply*>(sender());
 
@@ -183,7 +172,7 @@ void QGeoMappingManagerNokia::mapError(QGeoMapReply::Error error, const QString 
     emit this->error(reply, error, errorString);
 }
 
-QString QGeoMappingManagerNokia::getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const
+QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const
 {
     QString request = "http://";
     request += m_host;
@@ -216,34 +205,7 @@ QString QGeoMappingManagerNokia::getRequestString(const QGeoMapReplyNokia::QuadT
     return request;
 }
 
-///*!
-//    The map tile server uses a Mercator projection to map geo coordinates into a 2D map.
-//    For each zoom level, that map is then split into 2^zoomLevel x 2^zoomLevel map tiles.
-
-//    For the given \a zoomLevel, this function  determines the row and column indices of the
-//    map tile from the 2D map which contains the geo coordinate \a coordinate and stores
-//    the indices in \a row and \a col respectively.
-
-//    \note This does not mean that the coordinate lies in the center of the calculated tile.
-//*/
-//void QGeoMappingManagerNokia::getTileQuadKey(const QGeoCoordinate& coordinate, qint32 zoomLevel, qint32* row, qint32* col)
-//{
-//    qreal p = pow((double) 2, static_cast<int>(zoomLevel));
-
-//    double x = coordinate.longitude() / 360 + 0.5;
-//    double y = 0.5 - (log(tan((PI / 4.0) + (PI / 2.0) * coordinate.latitude() / 180)) / PI) / 2;
-
-//    if (y < 0)
-//        y = 0;
-
-//    if (y > 1)
-//        y = 1;
-
-//    *col = (qint32)(x * p);
-//    *row = (qint32)(y * p);
-//}
-
-QString QGeoMappingManagerNokia::sizeToStr(const QSize &size)
+QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
 {
     if (size.height() >= LARGE_TILE_DIMENSION ||
             size.width() >= LARGE_TILE_DIMENSION)
@@ -252,7 +214,7 @@ QString QGeoMappingManagerNokia::sizeToStr(const QSize &size)
         return "128";
 }
 
-QString QGeoMappingManagerNokia::mapTypeToStr(QGeoMapWidget::MapType type)
+QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGeoMapWidget::MapType type)
 {
     if (type == QGeoMapWidget::StreetMap)
         return "normal.day";
@@ -265,12 +227,3 @@ QString QGeoMappingManagerNokia::mapTypeToStr(QGeoMapWidget::MapType type)
         return "normal.day";
 }
 
-/*!
-    Coverts a quad key (\a row, \a col, \a zoomLevel) into a one-dimensional tile index.
-*/
-qint64 QGeoMappingManagerNokia::getTileIndex(qint32 row, qint32 col, qint32 zoomLevel)
-{
-    qint32 numColRow = 1;
-    numColRow <<= zoomLevel;
-    return ((qint64) row) * numColRow + col;
-}

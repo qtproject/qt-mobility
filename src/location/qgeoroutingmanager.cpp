@@ -41,6 +41,7 @@
 
 #include "qgeoroutingmanager.h"
 #include "qgeoroutingmanager_p.h"
+#include "qgeoroutingmanagerengine.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,9 +72,25 @@ QTM_BEGIN_NAMESPACE
 
     This should only ever be called from subclasses of QGeoRoutingManager.
 */
-QGeoRoutingManager::QGeoRoutingManager(QObject *parent)
+QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoRoutingManagerPrivate()) {}
+        d_ptr(new QGeoRoutingManagerPrivate())
+{
+    d_ptr->engine = engine;
+    if (d_ptr->engine) {
+        d_ptr->engine->setParent(this);
+
+        connect(d_ptr->engine,
+                SIGNAL(finished(QGeoRouteReply*)),
+                this,
+                SIGNAL(finished(QGeoRouteReply*)));
+
+        connect(d_ptr->engine,
+                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+                this,
+                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+    }
+}
 
 /*!
     Destroys this manager.
@@ -84,8 +101,6 @@ QGeoRoutingManager::~QGeoRoutingManager()
 }
 
 /*!
-\fn QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
-
     Begins the calculation of the route specified by \a request.
 
     A QGeoRouteReply object will be returned, which can be used to manage the
@@ -106,10 +121,15 @@ QGeoRoutingManager::~QGeoRoutingManager()
     QGeoRoutingManager::error(), QGeoRouteReply::finished() or
     QGeoRouteReply::error() with deleteLater().
 */
+QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
+{
+    if (!d_ptr->engine)
+        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
+
+    return d_ptr->engine->calculateRoute(request);
+}
 
 /*!
-\fn QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
-
     Begins the process of updating \a route based on the current position \a
     position.
 
@@ -136,17 +156,12 @@ QGeoRoutingManager::~QGeoRoutingManager()
     QGeoRoutingManager::error(), QGeoRouteReply::finished() or
     QGeoRouteReply::error() with deleteLater().
 */
-
-/*!
-    Sets whether this manager supports updating routes to \a supported.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it does not support updating routes.
-*/
-void QGeoRoutingManager::setSupportsRouteUpdates(bool supported)
+QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-    d_ptr->supportsRouteUpdates = supported;
+    if (!d_ptr->engine)
+        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
+
+    return d_ptr->engine->updateRoute(route, position);
 }
 
 /*!
@@ -154,19 +169,10 @@ void QGeoRoutingManager::setSupportsRouteUpdates(bool supported)
 */
 bool QGeoRoutingManager::supportsRouteUpdates() const
 {
-    return d_ptr->supportsRouteUpdates;
-}
+    if (!d_ptr->engine)
+        return false;
 
-/*!
-    Sets whether this manager supports request for alternative routes to \a supported.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it does not support alternative routes.
-*/
-void QGeoRoutingManager::setSupportsAlternativeRoutes(bool supported)
-{
-    d_ptr->supportsAlternativeRoutes = supported;
+    return d_ptr->engine->supportsRouteUpdates();
 }
 
 /*!
@@ -174,19 +180,10 @@ void QGeoRoutingManager::setSupportsAlternativeRoutes(bool supported)
 */
 bool QGeoRoutingManager::supportsAlternativeRoutes() const
 {
-    return d_ptr->supportsAlternativeRoutes;
-}
+    if (!d_ptr->engine)
+        return false;
 
-/*!
-    Sets the travel modes supported by this manager to \a travelModes.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it supports no travel modes at all.
-*/
-void QGeoRoutingManager::setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes)
-{
-    d_ptr->supportedTravelModes = travelModes;
+    return d_ptr->engine->supportsAlternativeRoutes();
 }
 
 /*!
@@ -194,19 +191,10 @@ void QGeoRoutingManager::setSupportedTravelModes(QGeoRouteRequest::TravelModes t
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 {
-    return d_ptr->supportedTravelModes;
-}
+    if (!d_ptr->engine)
+        return QGeoRouteRequest::TravelModes();
 
-/*!
-    Sets the types of features that this manager can avoid during route planning to \a avoidFeatureTypes.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it does not support avoiding features.
-*/
-void QGeoRoutingManager::setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
-{
-    d_ptr->supportedAvoidFeatureTypes = avoidFeatureTypes;
+    return d_ptr->engine->supportedTravelModes();
 }
 
 /*!
@@ -214,19 +202,10 @@ void QGeoRoutingManager::setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFe
 */
 QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTypes() const
 {
-    return d_ptr->supportedAvoidFeatureTypes;
-}
+    if (!d_ptr->engine)
+        return QGeoRouteRequest::AvoidFeatureTypes();
 
-/*!
-    Sets the route optimizations supported by this manager to \a optimizations.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it supports no route optimizations at all.
-*/
-void QGeoRoutingManager::setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations)
-{
-    d_ptr->supportedRouteOptimizations = optimizations;
+    return d_ptr->engine->supportedAvoidFeatureTypes();
 }
 
 /*!
@@ -234,19 +213,10 @@ void QGeoRoutingManager::setSupportedRouteOptimizations(QGeoRouteRequest::RouteO
 */
 QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizations() const
 {
-    return d_ptr->supportedRouteOptimizations;
-}
+    if (!d_ptr->engine)
+        return QGeoRouteRequest::RouteOptimizations();
 
-/*!
-    Sets the levels of instruction details supported by this manager to \a intructionDetails.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it supports no instruction detail at all.
-*/
-void QGeoRoutingManager::setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails)
-{
-    d_ptr->supportedInstructionDetails = instructionDetails;
+    return d_ptr->engine->supportedRouteOptimizations();
 }
 
 /*!
@@ -254,11 +224,14 @@ void QGeoRoutingManager::setSupportedInstructionDetails(QGeoRouteRequest::Instru
 */
 QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDetails() const
 {
-    return d_ptr->supportedInstructionDetails;
+    if (!d_ptr->engine)
+        return QGeoRouteRequest::InstructionDetails();
+
+    return d_ptr->engine->supportedInstructionDetails();
 }
 
 /*!
-\fn void QGeoRoutingService::finished(QGeoRouteReply* reply)
+\fn void QGeoRoutingManager::finished(QGeoRouteReply* reply)
 
 This signal is emitted when \a reply has finished processing.
 
@@ -272,7 +245,7 @@ Use deleteLater() instead.
 */
 
 /*!
-\fn void QGeoRoutingService::error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString
+\fn void QGeoRoutingManager::error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString
 
 This signal is emitted when an error has been detected in the processing of
 \a reply.  The QGeoRoutingManager::finished() signal will probably follow.
@@ -290,27 +263,19 @@ Use deleteLater() instead.
 *******************************************************************************/
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate()
-        : supportsRouteUpdates(false),
-        supportsAlternativeRoutes(false) {}
+        : engine(0) {}
 
 QGeoRoutingManagerPrivate::QGeoRoutingManagerPrivate(const QGeoRoutingManagerPrivate &other)
-        : supportsRouteUpdates(other.supportsRouteUpdates),
-        supportsAlternativeRoutes(other.supportsAlternativeRoutes),
-        supportedTravelModes(other.supportedTravelModes),
-        supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
-        supportedRouteOptimizations(other.supportedRouteOptimizations),
-        supportedInstructionDetails(other.supportedInstructionDetails) {}
+        : engine(other.engine) {}
 
-QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate() {}
+QGeoRoutingManagerPrivate::~QGeoRoutingManagerPrivate()
+{
+    delete engine;
+}
 
 QGeoRoutingManagerPrivate& QGeoRoutingManagerPrivate::operator= (const QGeoRoutingManagerPrivate & other)
 {
-    supportsRouteUpdates = other.supportsRouteUpdates;
-    supportsAlternativeRoutes = other.supportsAlternativeRoutes;
-    supportedTravelModes = other.supportedTravelModes;
-    supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;
-    supportedRouteOptimizations = other.supportedRouteOptimizations;
-    supportedInstructionDetails = other.supportedInstructionDetails;
+    engine = other.engine;
 
     return *this;
 }

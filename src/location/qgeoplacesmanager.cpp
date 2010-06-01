@@ -41,6 +41,7 @@
 
 #include "qgeoplacesmanager.h"
 #include "qgeoplacesmanager_p.h"
+#include "qgeoplacesmanagerengine.h"
 
 #include "qlandmarkmanager.h"
 
@@ -92,9 +93,26 @@ Describes the type of search that should be performed by placesSearch().
 
     This should only ever be called from subclasses of QGeoPlacesManager.
 */
-QGeoPlacesManager::QGeoPlacesManager(QObject *parent)
+QGeoPlacesManager::QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoPlacesManagerPrivate()) {}
+        d_ptr(new QGeoPlacesManagerPrivate())
+{
+    d_ptr->engine = engine;
+    if (d_ptr->engine) {
+        d_ptr->engine->setParent(this);
+
+        connect(d_ptr->engine,
+                SIGNAL(finished(QGeoPlacesReply*)),
+                this,
+                SIGNAL(finished(QGeoPlacesReply*)));
+
+        connect(d_ptr->engine,
+                SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)),
+                this,
+                SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)));
+    }
+}
+
 
 /*!
     Destroys this manager.
@@ -105,8 +123,6 @@ QGeoPlacesManager::~QGeoPlacesManager()
 }
 
 /*!
-\fn QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
-
     Begins the geocoding of \a address. Geocoding is the process of finding a
     coordinate that corresponds to a given address.
 
@@ -138,10 +154,16 @@ QGeoPlacesManager::~QGeoPlacesManager()
     QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
     QGeoPlacesReply::error() with deleteLater().
 */
+QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
+{
+    if (!d_ptr->engine)
+        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
+
+    return d_ptr->engine->geocode(address, bounds);
+}
+
 
 /*!
-\fn QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
-
     Begins the reverse geocoding of \a coordinate. Reverse geocoding is the
     process of finding an address that corresponds to a given coordinate.
 
@@ -178,10 +200,15 @@ QGeoPlacesManager::~QGeoPlacesManager()
     QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
     QGeoPlacesReply::error() with deleteLater().
 */
+QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
+{
+    if (!d_ptr->engine)
+        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
+
+    return d_ptr->engine->geocode(coordinate, bounds);
+}
 
 /*!
-\fn QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
-
     Begins searching for a place matching \a searchString.  The value of
     \a searchTypes will determine whether the search is for addresses only,
     for landmarks only or for both.
@@ -221,18 +248,12 @@ QGeoPlacesManager::~QGeoPlacesManager()
     QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
     QGeoPlacesReply::error() with deleteLater().
 */
-
-/*!
-    Sets whether this manager supports viewport biasing to \a supported.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it does not support viewport biasing.
-
-*/
-void QGeoPlacesManager::setSupportsViewportBiasing(bool supported)
+QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
-    d_ptr->supportsViewportBiasing = supported;
+    if (!d_ptr->engine)
+        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
+
+    return d_ptr->engine->placesSearch(searchString, searchTypes, bounds);
 }
 
 /*!
@@ -240,19 +261,10 @@ void QGeoPlacesManager::setSupportsViewportBiasing(bool supported)
 */
 bool QGeoPlacesManager::supportsViewportBiasing() const
 {
-    return d_ptr->supportsViewportBiasing;
-}
+    if (!d_ptr->engine)
+        return false;
 
-/*!
-    Sets whether this manager supports geocoding operations to \a supported.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it does not support geocoding operations.
-*/
-void QGeoPlacesManager::setSupportsGeocoding(bool supported)
-{
-    d_ptr->supportsGeocoding = supported;
+    return d_ptr->engine->supportsViewportBiasing();
 }
 
 /*!
@@ -260,19 +272,10 @@ void QGeoPlacesManager::setSupportsGeocoding(bool supported)
 */
 bool QGeoPlacesManager::supportsGeocoding() const
 {
-    return d_ptr->supportsGeocoding;
-}
+    if (!d_ptr->engine)
+        return false;
 
-/*!
-    Sets the search types supported by the placesSearch() with this manager to \a searchTypes.
-
-    It is important that subclasses use this method to ensure that the manager
-    reports its capabilities correctly.  If this function is not used the
-    manager will report that it does not support any search types.
-*/
-void QGeoPlacesManager::setSupportedSearchTypes(QGeoPlacesManager::SearchTypes searchTypes)
-{
-    d_ptr->supportedSearchTypes = searchTypes;
+    return d_ptr->engine->supportsGeocoding();
 }
 
 /*!
@@ -280,7 +283,10 @@ void QGeoPlacesManager::setSupportedSearchTypes(QGeoPlacesManager::SearchTypes s
 */
 QGeoPlacesManager::SearchTypes QGeoPlacesManager::supportedSearchTypes() const
 {
-    return d_ptr->supportedSearchTypes;
+    if (!d_ptr->engine)
+        return QGeoPlacesManager::SearchTypes();
+
+    return d_ptr->engine->supportedSearchTypes();
 }
 
 /*!
@@ -288,9 +294,8 @@ QGeoPlacesManager::SearchTypes QGeoPlacesManager::supportedSearchTypes() const
 */
 void QGeoPlacesManager::setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
 {
-    for (int i = 0; i < landmarkManagers.size(); ++i)
-        if (landmarkManagers.at(i))
-            d_ptr->landmarkManagers.append(landmarkManagers.at(i));
+    if (d_ptr->engine)
+        d_ptr->engine->setLandmarkManagers(landmarkManagers);
 }
 
 /*!
@@ -298,7 +303,10 @@ void QGeoPlacesManager::setLandmarkManagers(const QList<QLandmarkManager *> &lan
 */
 QList<QLandmarkManager *> QGeoPlacesManager::landmarkManagers() const
 {
-    return d_ptr->landmarkManagers;
+    if (!d_ptr->engine)
+        return QList<QLandmarkManager *>();
+
+    return d_ptr->engine->landmarkManagers();
 }
 
 /*!
@@ -306,8 +314,8 @@ QList<QLandmarkManager *> QGeoPlacesManager::landmarkManagers() const
 */
 void QGeoPlacesManager::addLandmarkManager(QLandmarkManager *landmarkManager)
 {
-    if (landmarkManager)
-        d_ptr->landmarkManagers.append(landmarkManager);
+    if (d_ptr->engine && landmarkManager)
+        d_ptr->engine->addLandmarkManager(landmarkManager);
 }
 
 /*!
@@ -344,26 +352,19 @@ void QGeoPlacesManager::addLandmarkManager(QLandmarkManager *landmarkManager)
 *******************************************************************************/
 
 QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate()
-        : supportsViewportBiasing(false),
-        supportsGeocoding(false) {}
+        : engine(0) {}
 
 QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate(const QGeoPlacesManagerPrivate &other)
-        : landmarkManagers(other.landmarkManagers),
-        supportsViewportBiasing(other.supportsViewportBiasing),
-        supportsGeocoding(other.supportsGeocoding),
-        supportedSearchTypes(other.supportedSearchTypes) {}
+        : engine(other.engine) {}
 
 QGeoPlacesManagerPrivate::~QGeoPlacesManagerPrivate()
 {
-    qDeleteAll(landmarkManagers);
+    delete engine;
 }
 
 QGeoPlacesManagerPrivate& QGeoPlacesManagerPrivate::operator= (const QGeoPlacesManagerPrivate & other)
 {
-    landmarkManagers = other.landmarkManagers;
-    supportsViewportBiasing = other.supportsViewportBiasing;
-    supportsGeocoding = other.supportsGeocoding;
-    supportedSearchTypes = other.supportedSearchTypes;
+    engine = other.engine;
 
     return *this;
 }

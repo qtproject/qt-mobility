@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#include "qgeotiledmappingmanager.h"
-#include "qgeotiledmappingmanager_p.h"
+#include "qgeotiledmappingmanagerengine.h"
+#include "qgeotiledmappingmanagerengine_p.h"
 
 #include "qgeotiledmapviewport.h"
 
@@ -51,29 +51,29 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    Constructs a QGeoTiledMappingManager object.
+    Constructs a QGeoTiledMappingManagerEngine object.
 */
-QGeoTiledMappingManager::QGeoTiledMappingManager()
-        : QGeoMappingManager(new QGeoTiledMappingManagerPrivate)
+QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine()
+        : QGeoMappingManagerEngine(new QGeoTiledMappingManagerEnginePrivate)
 {
     setTileSize(QSize(128, 128));
 }
 
 /*!
-    Destroys this QGeoTiledMappingManager object.
+    Destroys this QGeoTiledMappingManagerEngine object.
 */
-QGeoTiledMappingManager::~QGeoTiledMappingManager()
+QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
 {
 }
 
-QGeoMapViewport* QGeoTiledMappingManager::createViewport(QGeoMapWidget *widget)
+QGeoMapViewport* QGeoTiledMappingManagerEngine::createViewport(QGeoMapWidget *widget)
 {
     return new QGeoTiledMapViewport(this, widget);
 }
 
-void QGeoTiledMappingManager::updateMapImage(QGeoMapViewport *viewport)
+void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
 {
-    Q_D(QGeoTiledMappingManager);
+    Q_D(QGeoTiledMappingManagerEngine);
 
     if (!viewport)
         return;
@@ -187,7 +187,7 @@ void QGeoTiledMappingManager::updateMapImage(QGeoMapViewport *viewport)
     tiledViewport->clearProtectedRegion();
 }
 
-QPoint QGeoTiledMappingManager::screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const
+QPoint QGeoTiledMappingManagerEngine::screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const
 {
     // TODO checking mechanism for viewport type
     const QGeoTiledMapViewport *tiledViewport = static_cast<const QGeoTiledMapViewport*>(viewport);
@@ -214,52 +214,52 @@ QPoint QGeoTiledMappingManager::screenPositionToTilePosition(const QGeoMapViewpo
 }
 
 /*!
-    Returns a list of the image formats supported by this QGeoTiledMappingManager
+    Returns a list of the image formats supported by this QGeoTiledMappingManagerEngine
     instance.
 
-    \sa QGeoTiledMappingManager::setSupportedImageFormats()
+    \sa QGeoTiledMappingManagerEngine::setSupportedImageFormats()
 */
-QList<QString> QGeoTiledMappingManager::supportedImageFormats() const
+QList<QString> QGeoTiledMappingManagerEngine::supportedImageFormats() const
 {
-    Q_D(const QGeoTiledMappingManager);
+    Q_D(const QGeoTiledMappingManagerEngine);
     return d->supportedImageFormats;
 }
 
-QSize QGeoTiledMappingManager::tileSize() const
+QSize QGeoTiledMappingManagerEngine::tileSize() const
 {
-    Q_D(const QGeoTiledMappingManager);
+    Q_D(const QGeoTiledMappingManagerEngine);
     return d->tileSize;
 }
 
 /*!
-    Sets the list of image formats supported by this QGeoTiledMappingManager
+    Sets the list of image formats supported by this QGeoTiledMappingManagerEngine
     instance to \a imageFormats.
 
     Subclasses of QGeoCodingService should use this function to ensure that
     supportedImageFormats() provides accurate information.
 
-    \sa QGeoTiledMappingManager::supportedImageFormats()
+    \sa QGeoTiledMappingManagerEngine::supportedImageFormats()
 */
-void QGeoTiledMappingManager::setSupportedImageFormats(const QList<QString> &imageFormats)
+void QGeoTiledMappingManagerEngine::setSupportedImageFormats(const QList<QString> &imageFormats)
 {
-    Q_D(QGeoTiledMappingManager);
+    Q_D(QGeoTiledMappingManagerEngine);
     d->supportedImageFormats = imageFormats;
 }
 
-void QGeoTiledMappingManager::setTileSize(const QSize &tileSize)
+void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 {
-    Q_D(QGeoTiledMappingManager);
+    Q_D(QGeoTiledMappingManagerEngine);
     d->tileSize = tileSize;
 }
 
 /*!
-    \fn void QGeoTiledMappingManager::replyFinished(QGeoMapReply *reply)
+    \fn void QGeoTiledMappingManagerEngine::replyFinished(QGeoMapReply *reply)
 
-    Indicates that a request handled by this QGeoTiledMappingManager object has
+    Indicates that a request handled by this QGeoTiledMappingManagerEngine object has
     finished successfully.  The result of the request will be in \a reply.
 
     Note that \a reply will be the same object returned by this
-    QGeoTiledMappingManager instance when the request was issued, and that the
+    QGeoTiledMappingManagerEngine instance when the request was issued, and that the
     QGeoMapReply::finished() signal can be used instead of this signal if it
     is more convinient to do so.
 
@@ -270,17 +270,17 @@ void QGeoTiledMappingManager::setTileSize(const QSize &tileSize)
 */
 
 /*!
-    \fn void QGeoTiledMappingManager::replyError(QGeoMapReply *reply,
-                                            QGeoTiledMappingManager::ErrorCode errorCode,
+    \fn void QGeoTiledMappingManagerEngine::replyError(QGeoMapReply *reply,
+                                            QGeoTiledMappingManagerEngine::ErrorCode errorCode,
                                             QString errorString);
 
-    Indicates that a request handled by this QGeoTiledMappingManager object has
+    Indicates that a request handled by this QGeoTiledMappingManagerEngine object has
     failed.  The error is described by \a errorCode and \a errorString, and \a
     reply is the QGeoMapReply object which was managing the result of the
     corresponding service request.
 
     Note that \a reply will be the same object returned by this
-    QGeoTiledMappingManager instance when the request was issued, and that the
+    QGeoTiledMappingManagerEngine instance when the request was issued, and that the
     QGeoMapReply::error() signal can be used instead of this signal if it is
     more convinient to do so.
 
@@ -293,19 +293,19 @@ void QGeoTiledMappingManager::setTileSize(const QSize &tileSize)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMappingManagerPrivate::QGeoTiledMappingManagerPrivate()
-    : QGeoMappingManagerPrivate() {}
+QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
+    : QGeoMappingManagerEnginePrivate() {}
 
-QGeoTiledMappingManagerPrivate::QGeoTiledMappingManagerPrivate(const QGeoTiledMappingManagerPrivate &other)
-        : QGeoMappingManagerPrivate(other),
+QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other)
+        : QGeoMappingManagerEnginePrivate(other),
         supportedImageFormats(other.supportedImageFormats),
         tileSize(other.tileSize) {}
 
-QGeoTiledMappingManagerPrivate::~QGeoTiledMappingManagerPrivate() {}
+QGeoTiledMappingManagerEnginePrivate::~QGeoTiledMappingManagerEnginePrivate() {}
 
-QGeoTiledMappingManagerPrivate& QGeoTiledMappingManagerPrivate::operator= (const QGeoTiledMappingManagerPrivate & other)
+QGeoTiledMappingManagerEnginePrivate& QGeoTiledMappingManagerEnginePrivate::operator= (const QGeoTiledMappingManagerEnginePrivate & other)
 {
-    QGeoMappingManagerPrivate::operator =(other);
+    QGeoMappingManagerEnginePrivate::operator =(other);
 
     supportedImageFormats = other.supportedImageFormats;
     tileSize = other.tileSize;
@@ -406,7 +406,7 @@ void QGeoMapTileReplyContainer::replyError(QGeoMapReply::Error, const QString &e
         delete reply;
 }
 
-#include "moc_qgeotiledmappingmanager.cpp"
-#include "moc_qgeotiledmappingmanager_p.cpp"
+#include "moc_qgeotiledmappingmanagerengine.cpp"
+#include "moc_qgeotiledmappingmanagerengine_p.cpp"
 
 QTM_END_NAMESPACE

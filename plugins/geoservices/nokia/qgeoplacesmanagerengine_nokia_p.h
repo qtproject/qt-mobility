@@ -54,32 +54,29 @@
 //
 
 #include <qgeoserviceprovider.h>
-#include <qgeoplacesmanager.h>
+#include <qgeoplacesmanagerengine.h>
 
 #include <QNetworkAccessManager>
 
 QTM_USE_NAMESPACE
 
-class QGeoPlacesManagerNokia : public QGeoPlacesManager
+class QGeoPlacesManagerEngineNokia : public QGeoPlacesManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoPlacesManagerNokia(const QMap<QString, QString> &parameters,
+    QGeoPlacesManagerEngineNokia(const QMap<QString, QString> &parameters,
                            QGeoServiceProvider::Error *error,
                            QString *errorString);
-    ~QGeoPlacesManagerNokia();
+    ~QGeoPlacesManagerEngineNokia();
 
     QGeoPlacesReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
+                             const QGeoBoundingBox &bounds);
     QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
+                             const QGeoBoundingBox &bounds);
 
     QGeoPlacesReply* placesSearch(const QString &searchString,
-                                  SearchTypes searchTypes = SearchTypes(SearchAll),
-                                  const QGeoBoundingBox &bounds = QGeoBoundingBox());
-
-    void setProxy(const QNetworkProxy &proxy);
-    void setHost(QString host);
+                                  QGeoPlacesManager::SearchTypes searchTypes,
+                                  const QGeoBoundingBox &bounds);
 
 private slots:
     void placesFinished();

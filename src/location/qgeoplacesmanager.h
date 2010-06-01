@@ -52,6 +52,7 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
 
+class QGeoPlacesManagerEngine;
 class QGeoPlacesManagerPrivate;
 
 class Q_LOCATION_EXPORT QGeoPlacesManager : public QObject
@@ -66,16 +67,17 @@ public:
     };
     Q_DECLARE_FLAGS(SearchTypes, SearchType)
 
-    virtual ~QGeoPlacesManager();
+    QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent = 0);
+    ~QGeoPlacesManager();
 
-    virtual QGeoPlacesReply* geocode(const QGeoAddress &address,
-                                     const QGeoBoundingBox &bounds = QGeoBoundingBox()) = 0;
-    virtual QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
-                                     const QGeoBoundingBox &bounds = QGeoBoundingBox()) = 0;
+    QGeoPlacesReply* geocode(const QGeoAddress &address,
+                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
+    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
+                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
-    virtual QGeoPlacesReply* placesSearch(const QString &searchString,
-                                          SearchTypes searchTypes = SearchTypes(SearchAll),
-                                          const QGeoBoundingBox &bounds = QGeoBoundingBox()) = 0;
+    QGeoPlacesReply* placesSearch(const QString &searchString,
+                                  SearchTypes searchTypes = SearchTypes(SearchAll),
+                                  const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
     bool supportsViewportBiasing() const;
     bool supportsGeocoding() const;
@@ -88,12 +90,6 @@ public:
 signals:
     void finished(QGeoPlacesReply* reply);
     void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
-
-protected:
-    QGeoPlacesManager(QObject *parent = 0);
-    void setSupportsViewportBiasing(bool supported);
-    void setSupportsGeocoding(bool supported);
-    void setSupportedSearchTypes(SearchTypes searchTypes);
 
 private:
     QGeoPlacesManagerPrivate *d_ptr;

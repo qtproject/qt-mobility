@@ -77,7 +77,7 @@ QTM_BEGIN_NAMESPACE
 //QGeoMapViewport::QGeoMapViewport(QGeoMappingManager *manager)
 //        : d_ptr(new QGeoMapViewportPrivate)
 //{
-//    d->manager = manager;
+//    d->engine = manager;
 //}
 
 ///*!
@@ -145,28 +145,28 @@ QTM_BEGIN_NAMESPACE
 //    corner of the \a painter.
 
 
-QGeoMapViewport::QGeoMapViewport(QGeoMappingManager *manager, QGeoMapWidget *widget)
+QGeoMapViewport::QGeoMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
     : d_ptr(new QGeoMapViewportPrivate())
 {
     Q_D(QGeoMapViewport);
     d->widget = widget;
-    d->manager = manager;
+    d->engine = engine;
 }
 
-QGeoMapViewport::QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManager *manager, QGeoMapWidget *widget)
+QGeoMapViewport::QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
     : d_ptr(dd)
 {
     Q_D(QGeoMapViewport);
     d->widget = widget;
-    d->manager = manager;
+    d->engine = engine;
 }
 
 QGeoMapViewport::~QGeoMapViewport()
 {
     Q_D(QGeoMapViewport);
 
-    if (d->manager)
-        d->manager->removeViewport(this);
+    if (d->engine)
+        d->engine->removeViewport(this);
 
     delete d;
 }
@@ -177,10 +177,10 @@ QGeoMapWidget* QGeoMapViewport::widget() const
     return d->widget;
 }
 
-QGeoMappingManager* QGeoMapViewport::manager() const
+QGeoMappingManagerEngine* QGeoMapViewport::engine() const
 {
     Q_D(const QGeoMapViewport);
-    return d->manager;
+    return d->engine;
 }
 
 void QGeoMapViewport::setZoomLevel(qreal zoomLevel)
@@ -270,7 +270,7 @@ QGeoMapViewportPrivate::QGeoMapViewportPrivate() {}
 
 QGeoMapViewportPrivate::QGeoMapViewportPrivate(const QGeoMapViewportPrivate &other)
     : widget(other.widget),
-    manager(other.manager),
+    engine(other.engine),
     zoomLevel(other.zoomLevel),
     center(other.center),
     viewportSize(other.viewportSize),
@@ -283,7 +283,7 @@ QGeoMapViewportPrivate::~QGeoMapViewportPrivate() {}
 QGeoMapViewportPrivate& QGeoMapViewportPrivate::operator= (const QGeoMapViewportPrivate &other)
 {
     widget = other.widget;
-    manager = other.manager;
+    engine = other.engine;
     zoomLevel = other.zoomLevel;
     center = other.center;
     viewportSize = other.viewportSize;

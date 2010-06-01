@@ -53,13 +53,13 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
 class QGeoBoundingBox;
-class QGeoMappingManager;
+class QGeoMappingManagerEngine;
 class QGeoMapViewportPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapViewport
 {
 public:
-    QGeoMapViewport(QGeoMappingManager *manager, QGeoMapWidget *widget);
+    QGeoMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoMapViewport();
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
@@ -86,10 +86,10 @@ public:
     QPixmap mapImage();
 
 protected:
-    QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManager *manager, QGeoMapWidget *widget);
+    QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
 
     QGeoMapWidget* widget() const;
-    QGeoMappingManager* manager() const;
+    QGeoMappingManagerEngine* engine() const;
 
     QGeoMapViewportPrivate* d_ptr;
 

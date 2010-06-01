@@ -39,53 +39,63 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPVIEWPORT_H
-#define QGEOTILEDMAPVIEWPORT_H
+#ifndef QGEOMAPPINGMANAGERENGINE_H
+#define QGEOMAPPINGMANAGERENGINE_H
 
-#include "qgeomapviewport.h"
+#include "qgeomapwidget.h"
+#include "qgeomapreply.h"
+
+#include <QObject>
+#include <QSize>
+#include <QPair>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapViewportPrivate;
+class QGeoBoundingBox;
+class QGeoCoordinate;
+class QGeoMapViewport;
+class QGeoMappingManagerPrivate;
+class QGeoMapRequestOptions;
 
-class Q_LOCATION_EXPORT QGeoTiledMapViewport : public QGeoMapViewport
+class QGeoMappingManagerEnginePrivate;
+
+class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoTiledMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoTiledMapViewport();
+    virtual ~QGeoMappingManagerEngine();
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
+    virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget) = 0;
+    virtual void removeViewport(QGeoMapViewport *viewport);
 
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
+    virtual void updateMapImage(QGeoMapViewport *viewport) = 0;
 
-    void setZoomLevel(qreal zoomLevel);
-    void setViewportSize(const QSizeF &size);
-    void pan(int dx, int dy);
+    QList<QGeoMapWidget::MapType> supportedMapTypes() const;
 
-    // TODO WorldPixel a better name?
-    void setTopLeftMapPixelX(qulonglong x);
-    qulonglong topLeftMapPixelX() const;
+    QSize minimumImageSize() const;
+    QSize maximumImageSize() const;
 
-    void setTopLeftMapPixelY(qulonglong y);
-    qulonglong topLeftMapPixelY() const;
-
-    qulonglong width() const;
-    qulonglong height() const;
-
-    qulonglong zoomFactor() const;
-
-    QRectF protectedRegion() const;
-    void clearProtectedRegion();
+    qreal minimumZoomLevel() const;
+    qreal maximumZoomLevel() const;
 
 protected:
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
+    QGeoMappingManagerEngine();
+    QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd);
+
+    void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
+
+    void setMinimumZoomLevel(qreal minimumZoom);
+    void setMaximumZoomLevel(qreal maximumZoom);
+
+    void setMinimumImageSize(const QSize &minimumSize);
+    void setMaximumImageSize(const QSize &maximumSize);
+
+    QGeoMappingManagerEnginePrivate* d_ptr;
 
 private:
-    Q_DECLARE_PRIVATE(QGeoTiledMapViewport);
-    Q_DISABLE_COPY(QGeoTiledMapViewport)
+    Q_DECLARE_PRIVATE(QGeoMappingManagerEngine)
+    Q_DISABLE_COPY(QGeoMappingManagerEngine)
 };
 
 QTM_END_NAMESPACE

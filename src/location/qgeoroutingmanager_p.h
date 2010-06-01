@@ -53,9 +53,11 @@
 // We mean it.
 //
 
-#include "qgeorouterequest.h"
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoRoutingManagerEngine;
 
 class QGeoRoutingManagerPrivate
 {
@@ -66,12 +68,7 @@ public:
 
     QGeoRoutingManagerPrivate& operator= (const QGeoRoutingManagerPrivate &other);
 
-    bool supportsRouteUpdates;
-    bool supportsAlternativeRoutes;
-    QGeoRouteRequest::TravelModes supportedTravelModes;
-    QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes;
-    QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;
-    QGeoRouteRequest::InstructionDetails supportedInstructionDetails;
+    QGeoRoutingManagerEngine *engine;
 };
 
 QTM_END_NAMESPACE

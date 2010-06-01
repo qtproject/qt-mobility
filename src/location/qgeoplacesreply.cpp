@@ -68,6 +68,8 @@ QTM_BEGIN_NAMESPACE
 
     \value NoError
         No error has occurred.
+    \value EngineNotSetError
+        The places manager that was used did not have a QGeoPlacesManagerEngine instance associated with it.
     \value CommunicationError
         An error occurred while communicating with the service provider.
     \value ParseError

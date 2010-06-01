@@ -39,16 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGER_H
-#define QGEOTILEDMAPPINGMANAGER_H
+#ifndef QGEOTILEDMAPPINGMANAGERENGINE_H
+#define QGEOTILEDMAPPINGMANAGERENGINE_H
 
-#include "qgeomappingmanager.h"
+#include "qgeomappingmanagerengine.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMappingManagerPrivate;
+class QGeoTiledMappingManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT QGeoTiledMappingManager : public QGeoMappingManager
+class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
 {
     Q_OBJECT
 
@@ -57,7 +57,7 @@ public:
         NoError
     };
 
-    virtual ~QGeoTiledMappingManager();
+    virtual ~QGeoTiledMappingManagerEngine();
 
     virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget);
 
@@ -75,10 +75,8 @@ public:
     //    virtual QGeoCoordinate tileIndicesToUpperLeftCoordinate(qint32 zoomLevel, qint32 rowIndex, qint32 columIndex);
     //    virtual QGeoBoundingBox getTileBounds(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex);
 
-
-
 protected:
-    QGeoTiledMappingManager();
+    QGeoTiledMappingManagerEngine();
 
     void setSupportedImageFormats(const QList<QString> &imageFormats);
     void setTileSize(const QSize &tileSize);
@@ -88,9 +86,8 @@ signals:
     void error(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString = QString());
 
 private:
-
-    Q_DECLARE_PRIVATE(QGeoTiledMappingManager)
-    Q_DISABLE_COPY(QGeoTiledMappingManager)
+    Q_DECLARE_PRIVATE(QGeoTiledMappingManagerEngine)
+    Q_DISABLE_COPY(QGeoTiledMappingManagerEngine)
 };
 
 QTM_END_NAMESPACE

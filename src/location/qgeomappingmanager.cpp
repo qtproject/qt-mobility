@@ -41,6 +41,7 @@
 
 #include "qgeomappingmanager.h"
 #include "qgeomappingmanager_p.h"
+#include "qgeomappingmanagerengine.h"
 
 #include <QNetworkProxy>
 
@@ -85,37 +86,64 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a QGeoMappingManager object.
 */
-QGeoMappingManager::QGeoMappingManager()
-        : d_ptr(new QGeoMappingManagerPrivate) {}
+QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent)
+        : QObject(parent),
+        d_ptr(new QGeoMappingManagerPrivate)
+{
+    d_ptr->engine = engine;
+    if (d_ptr->engine) {
+        d_ptr->engine->setParent(this);
 
-QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerPrivate *dd)
-        : d_ptr(dd) {}
+        connect(d_ptr->engine,
+                SIGNAL(finished(QGeoMapReply*)),
+                this,
+                SIGNAL(finished(QGeoMapReply*)));
+
+        connect(d_ptr->engine,
+                SIGNAL(error(QGeoMapReply*,QGeoMapReply::Error,QString)),
+                this,
+                SIGNAL(error(QGeoMapReply*,QGeoMapReply::Error,QString)));
+    }
+}
 
 /*!
     Destroys this QGeoMappingManager object.
 */
 QGeoMappingManager::~QGeoMappingManager()
 {
-    Q_D(QGeoMappingManager);
-    delete d;
+    delete d_ptr;
+}
+
+QGeoMapViewport* QGeoMappingManager::createViewport(QGeoMapWidget *widget)
+{
+    if (!d_ptr->engine)
+        return 0;
+
+    return d_ptr->engine->createViewport(widget);
 }
 
 void QGeoMappingManager::removeViewport(QGeoMapViewport *viewport)
 {
-    Q_UNUSED(viewport)
+    if (d_ptr->engine)
+        d_ptr->engine->removeViewport(viewport);
+}
+
+void QGeoMappingManager::updateMapImage(QGeoMapViewport *viewport)
+{
+    if (d_ptr->engine)
+        d_ptr->engine->updateMapImage(viewport);
 }
 
 /*!
     Returns a list of the map types supported by this QGeoMappingManager
     instance.
-
-    \sa QGeoMapWidget::MapType
-    \sa QGeoMappingManager::setSupportedMapTypes()
 */
 QList<QGeoMapWidget::MapType> QGeoMappingManager::supportedMapTypes() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->supportedMapTypes;
+    if (!d_ptr->engine)
+        return QList<QGeoMapWidget::MapType>();
+
+    return d_ptr->engine->supportedMapTypes();
 }
 
 /*!
@@ -124,14 +152,14 @@ QList<QGeoMapWidget::MapType> QGeoMappingManager::supportedMapTypes() const
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
-
-    \sa QGeoMappingManager::setMinimumZoomLevel()
-    \sa QGeoMappingManager::maximumZoomLevel()
 */
 qreal QGeoMappingManager::minimumZoomLevel() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->minimumZoomLevel;
+    // TODO document this behaviour
+    if (!d_ptr->engine)
+        return -1.0;
+
+    return d_ptr->engine->minimumZoomLevel();
 }
 
 /*!
@@ -140,15 +168,15 @@ qreal QGeoMappingManager::minimumZoomLevel() const
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
-
-    \sa QGeoMappingManager::setMaximumZoomLevel()
-    \sa QGeoMappingManager::minimumZoomLevel()
 */
 qreal QGeoMappingManager::maximumZoomLevel() const
 
 {
-    Q_D(const QGeoMappingManager);
-    return d->maximumZoomLevel;
+    // TODO document this behaviour
+    if (!d_ptr->engine)
+        return -1.0;
+
+    return d_ptr->engine->maximumZoomLevel();
 }
 
 /*!
@@ -157,14 +185,13 @@ qreal QGeoMappingManager::maximumZoomLevel() const
 
     An invalid size indicates that this QGeoMappingManager instance places
     no restrictions on the minimum size of the map image.
-
-    \sa QGeoMappingManager::setMinimumImageSize()
-    \sa QGeoMappingManager::maximumImageSize()
 */
 QSize QGeoMappingManager::minimumImageSize() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->minimumImageSize;
+    if (!d_ptr->engine)
+        return QSize();
+
+    return d_ptr->engine->minimumImageSize();
 }
 
 /*!
@@ -176,124 +203,29 @@ QSize QGeoMappingManager::minimumImageSize() const
 */
 QSize QGeoMappingManager::maximumImageSize() const
 {
-    Q_D(const QGeoMappingManager);
-    return d->maximumImageSize;
+    if (!d_ptr->engine)
+        return QSize();
+
+    return d_ptr->engine->maximumImageSize();
 }
-
-/*!
-    Sets the list of map types supported by this QGeoMappingManager instance to
-    \a mapTypes.
-
-    Subclasses of QGeoCodingService should use this function to ensure that
-    supportedMapTypes() provides accurate information.
-
-    \sa QGeoMapWidget::MapType
-    \sa QGeoMappingManager::supportedMapTypes()
-*/
-void QGeoMappingManager::setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes)
-{
-    Q_D(QGeoMappingManager);
-    d->supportedMapTypes = mapTypes;
-}
-
-/*!
-    Sets the minimum zoom level supported by this QGeoMappingManager
-    instance.
-
-    Larger values of the zoom level correspond to more detailed views of the
-    map.
-
-    Subclasses of QGeoCodingService should use this function to ensure that
-    minimumZoomLevel() provides accurate information.
-
-    \sa QGeoMappingManager::minimumZoomLevel()
-    \sa QGeoMappingManager::setMaximumZoomLevel()
-*/
-void QGeoMappingManager::setMinimumZoomLevel(qreal minimumZoom)
-{
-    Q_D(QGeoMappingManager);
-    d->minimumZoomLevel = minimumZoom;
-}
-
-/*!
-    Sets the maximum zoom level supported by this QGeoMappingManager
-    instance.
-
-    Larger values of the zoom level correspond to more detailed views of the
-    map.
-
-    Subclasses of QGeoCodingService should use this function to ensure that
-    maximumZoomLevel() provides accurate information.
-
-    \sa QGeoMappingManager::maximumZoomLevel()
-    \sa QGeoMappingManager::setMinimumZoomLevel()
-*/
-void QGeoMappingManager::setMaximumZoomLevel(qreal maximumZoom)
-{
-    Q_D(QGeoMappingManager);
-    d->maximumZoomLevel = maximumZoom;
-}
-
-/*!
-    Sets the size of the smallest map image which is supported by this
-    QGeoMappingManager instance.
-
-    An invalid size indicates that this QGeoMappingManager instance places
-    no restrictions on the minimum size of the map image.
-
-    Subclasses of QGeoCodingService should use this function to ensure that
-    minimumImageSize() provides accurate information.
-
-    \sa QGeoMappingManager::minimumImageSize()
-    \sa QGeoMappingManager::setMaximumImageSize()
-*/
-void QGeoMappingManager::setMinimumImageSize(const QSize &minimumImageSize)
-{
-    Q_D(QGeoMappingManager);
-    d->minimumImageSize = minimumImageSize;
-}
-
-/*!
-    Sets the size of the largest map image which is supported by this
-    QGeoMappingManager instance.
-
-    An invalid size indicates that this QGeoMappingManager instance places
-    no restrictions on the maximum size of the map image.
-
-    Subclasses of QGeoCodingService should use this function to ensure that
-    maximumImageSize() provides accurate information.
-
-    \sa QGeoMappingManager::maximumImageSize()
-    \sa QGeoMappingManager::setMinimumImageSize()
-*/
-void QGeoMappingManager::setMaximumImageSize(const QSize &maximumImageSize)
-{
-    Q_D(QGeoMappingManager);
-    d->maximumImageSize = maximumImageSize;
-}
-
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingManagerPrivate::QGeoMappingManagerPrivate() {}
+QGeoMappingManagerPrivate::QGeoMappingManagerPrivate()
+    : engine(0) {}
 
 QGeoMappingManagerPrivate::QGeoMappingManagerPrivate(const QGeoMappingManagerPrivate &other)
-        : supportedMapTypes(other.supportedMapTypes),
-        minimumZoomLevel(other.minimumZoomLevel),
-        maximumZoomLevel(other.maximumZoomLevel),
-        minimumImageSize(other.minimumImageSize),
-        maximumImageSize(other.maximumImageSize) {}
+        : engine(other.engine) {}
 
-QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate() {}
+QGeoMappingManagerPrivate::~QGeoMappingManagerPrivate()
+{
+    delete engine;
+}
 
 QGeoMappingManagerPrivate& QGeoMappingManagerPrivate::operator= (const QGeoMappingManagerPrivate & other)
 {
-    supportedMapTypes = other.supportedMapTypes;
-    minimumZoomLevel = other.minimumZoomLevel;
-    maximumZoomLevel = other.maximumZoomLevel;
-    minimumImageSize = other.minimumImageSize;
-    maximumImageSize = other.maximumImageSize;
+    engine = other.engine;
 
     return *this;
 }

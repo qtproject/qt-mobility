@@ -58,6 +58,7 @@ class Q_LOCATION_EXPORT QGeoPlacesReply : public QObject
 public:
     enum Error {
         NoError,
+        EngineNotSetError,
         CommunicationError,
         ParseError,
         UnsupportedOptionError,

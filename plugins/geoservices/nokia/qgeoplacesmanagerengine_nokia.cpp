@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qgeoplacesmanager_nokia_p.h"
+#include "qgeoplacesmanagerengine_nokia_p.h"
 #include "qgeoplacesreply_nokia_p.h"
 
 #include <qgeoaddress.h>
@@ -48,7 +48,7 @@
 #include <QNetworkProxy>
 #include <QMap>
 
-QGeoPlacesManagerNokia::QGeoPlacesManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoPlacesManagerEngineNokia::QGeoPlacesManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_networkManager = new QNetworkAccessManager(this);
@@ -81,9 +81,9 @@ QGeoPlacesManagerNokia::QGeoPlacesManagerNokia(const QMap<QString, QString> &par
         *errorString = "";
 }
 
-QGeoPlacesManagerNokia::~QGeoPlacesManagerNokia() {}
+QGeoPlacesManagerEngineNokia::~QGeoPlacesManagerEngineNokia() {}
 
-QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
+QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
 {
     if (!supportsGeocoding()) {
         QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "Geocoding is not supported by this service provider.", this);
@@ -130,7 +130,7 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoAddress &address, con
     return search(requestString);
 }
 
-QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
+QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
 {
     QString requestString = "http://";
     requestString += m_host;
@@ -147,7 +147,7 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::geocode(const QGeoCoordinate &coordinat
     return search(requestString);
 }
 
-QGeoPlacesReply* QGeoPlacesManagerNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+QGeoPlacesReply* QGeoPlacesManagerEngineNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
 
     if ((searchTypes != QGeoPlacesManager::SearchTypes(QGeoPlacesManager::SearchAll))
@@ -172,7 +172,7 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::placesSearch(const QString &searchStrin
     return search(requestString);
 }
 
-QGeoPlacesReply* QGeoPlacesManagerNokia::search(QString requestString)
+QGeoPlacesReply* QGeoPlacesManagerEngineNokia::search(QString requestString)
 {
     QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(requestString)));
     QGeoPlacesReplyNokia *reply = new QGeoPlacesReplyNokia(networkReply, this);
@@ -190,7 +190,7 @@ QGeoPlacesReply* QGeoPlacesManagerNokia::search(QString requestString)
     return reply;
 }
 
-QString QGeoPlacesManagerNokia::trimDouble(qreal degree, int decimalDigits)
+QString QGeoPlacesManagerEngineNokia::trimDouble(qreal degree, int decimalDigits)
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 
@@ -202,7 +202,7 @@ QString QGeoPlacesManagerNokia::trimDouble(qreal degree, int decimalDigits)
         return QString::number(degree, 'g', decimalDigits + index);
 }
 
-void QGeoPlacesManagerNokia::placesFinished()
+void QGeoPlacesManagerEngineNokia::placesFinished()
 {
     QGeoPlacesReply *reply = qobject_cast<QGeoPlacesReply*>(sender());
 
@@ -217,7 +217,7 @@ void QGeoPlacesManagerNokia::placesFinished()
     emit finished(reply);
 }
 
-void QGeoPlacesManagerNokia::placesError(QGeoPlacesReply::Error error, const QString &errorString)
+void QGeoPlacesManagerEngineNokia::placesError(QGeoPlacesReply::Error error, const QString &errorString)
 {
     QGeoPlacesReply *reply = qobject_cast<QGeoPlacesReply*>(sender());
 

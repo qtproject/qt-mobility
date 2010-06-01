@@ -54,7 +54,7 @@
 //
 
 #include "qgeomapwidget.h"
-#include "qgeomappingmanager.h"
+#include "qgeomappingmanagerengine.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,7 +67,7 @@ public:
     QGeoMapViewportPrivate& operator= (const QGeoMapViewportPrivate &other);
 
     QGeoMapWidget *widget;
-    QGeoMappingManager *manager;
+    QGeoMappingManagerEngine *engine;
 
     qreal zoomLevel;
     QGeoCoordinate center;
