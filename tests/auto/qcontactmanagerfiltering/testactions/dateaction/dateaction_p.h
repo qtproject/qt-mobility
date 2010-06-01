@@ -71,7 +71,14 @@ public:
 
     QVariantMap metaData() const {return QVariantMap();}
 
-    bool invokeAction(const QContact&, const QContactDetail&, const QVariantMap&)
+    bool invokeAction(const QContactActionTarget&, const QVariantMap&)
+    {
+        // Well, do something
+        emit stateChanged(QContactAction::FinishedState);
+        return true;
+    }
+
+    bool invokeAction(const QList<QContactActionTarget>&, const QVariantMap&)
     {
         // Well, do something
         emit stateChanged(QContactAction::FinishedState);
@@ -108,8 +115,12 @@ public:
         return df;
     }
 
-    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
+    bool isTargetSupported(const QContactActionTarget &target) const
     {
+        if (target.details().size() != 1 || !target.isValid())
+            return false;
+
+        QContactDetail detail = target.details().at(0);
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Date to this function...
         return (detail.definitionName() == QString(QLatin1String("DateDefinition")) && detail.hasValue("DateField"));
     }

@@ -102,9 +102,12 @@ QContactFilter QContactSendEmailAction::contactFilter(const QVariant& value) con
     return retn;
 }
 
-bool QContactSendEmailAction::isDetailSupported(const QContactDetail &detail, const QContact &) const
+bool QContactSendEmailAction::isTargetSupported(const QContactActionTarget &target) const
 {
-    return (detail.definitionName() == QContactEmailAddress::DefinitionName);
+    QList<QContactDetail> dets = target.details();
+    if (dets.size() != 1 || !target.isValid())
+        return false;
+    return (dets.at(0).definitionName() == QContactEmailAddress::DefinitionName);
 }
 
 QList<QContactDetail> QContactSendEmailAction::supportedDetails(const QContact& contact) const
@@ -112,10 +115,23 @@ QList<QContactDetail> QContactSendEmailAction::supportedDetails(const QContact& 
     return contact.details(QContactEmailAddress::DefinitionName);
 }
 
-bool QContactSendEmailAction::invokeAction(const QContact& contact, const QContactDetail& detail, const QVariantMap& )
+bool QContactSendEmailAction::invokeAction(const QContactActionTarget& target, const QVariantMap& )
 {
-    Q_UNUSED(contact);
-    Q_UNUSED(detail);
+    if (!isTargetSupported(target))
+        return false;
+
+    QTimer::singleShot(1, this, SLOT(performAction()));
+    return true;
+}
+
+bool QContactSendEmailAction::invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& )
+{
+    foreach (const QContactActionTarget& target, targets) {
+        if (!isTargetSupported(target)) {
+            return false;
+        }
+    }
+
     QTimer::singleShot(1, this, SLOT(performAction()));
     return true;
 }

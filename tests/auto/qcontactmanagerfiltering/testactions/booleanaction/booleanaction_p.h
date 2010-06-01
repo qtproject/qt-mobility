@@ -71,7 +71,14 @@ public:
 
     QVariantMap metaData() const {return QVariantMap();}
 
-    bool invokeAction(const QContact&, const QContactDetail&, const QVariantMap&)
+    bool invokeAction(const QContactActionTarget&, const QVariantMap&)
+    {
+        // Well, do something
+        emit stateChanged(QContactAction::FinishedState);
+        return true;
+    }
+
+    bool invokeAction(const QList<QContactActionTarget>&, const QVariantMap&)
     {
         // Well, do something
         emit stateChanged(QContactAction::FinishedState);
@@ -112,10 +119,13 @@ public:
             return QContactInvalidFilter();
         }
     }
-    bool isDetailSupported(const QContactDetail &detail, const QContact &) const
+    bool isTargetSupported(const QContactActionTarget &target) const
     {
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Bool to this function...
-        return (detail.definitionName() == QString(QLatin1String(("BooleanDefinition"))) && detail.hasValue("BooleanField"));
+        if (target.details().size() != 1 || !target.isValid())
+            return false;
+        return (target.details().at(0).definitionName() == QString(QLatin1String(("BooleanDefinition")))
+                && target.details().at(0).hasValue("BooleanField"));
     }
     QList<QContactDetail> supportedDetails(const QContact& contact) const
     {

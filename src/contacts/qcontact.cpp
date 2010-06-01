@@ -680,10 +680,10 @@ QContactDetail QContact::detailWithAction(QContactAction* action) const
 {
     if (action) {
         QContactDetail pref = preferredDetail(action->actionDescriptor().actionName());
-        if (!pref.isEmpty() && action->isDetailSupported(pref, *this))
+        if (!pref.isEmpty() && action->isTargetSupported(QContactActionTarget(*this, pref)))
             return pref;
         foreach (const QContactDetail& detail, d->m_details) {
-            if (action->isDetailSupported(detail, *this)) {
+            if (action->isTargetSupported(QContactActionTarget(*this, detail))) {
                 return detail;
             }
         }
@@ -711,7 +711,7 @@ QList<QContactDetail> QContact::detailsWithAction(QContactAction* action) const
     if (action) {
         QContactDetail preferred = preferredDetail(action->actionDescriptor().actionName());
         foreach (const QContactDetail& detail, d->m_details) {
-            if (action->isDetailSupported(detail, *this)) {
+            if (action->isTargetSupported(QContactActionTarget(*this, detail))) {
                 if (detail == preferred)
                     retn.prepend(detail);
                 else

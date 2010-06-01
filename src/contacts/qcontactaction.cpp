@@ -113,12 +113,15 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::isDetailSupported(const QContactDetail &detail, const QContact &contact = QContact()) const
-  Returns true if the provided \a detail contains the fields required for this action to be
+  \fn QContactAction::isTargetSupported(const QContactActionTarget& target) const
+  Returns true if the provided \a target contains the information required for this action to be
   performed on it; otherwise, returns false.
-  Some actions may require other information to be available in order to complete successfully; in that case,
-  the action will also inspect the given \a contact to ensure that it contains the information required.
-  If the contact contains the required information, the function will return true; otherwise, returns false.
+  Some actions may require no details to be specified (e.g., serialize entire contact), some may require
+  exactly one detail (e.g., email this specific email account of the given contact), some may require
+  zero or one detail (e.g., email exactly on email account of the given contact, but the action can choose
+  which email account to email), some may require multiple details (e.g., email all specified email accounts
+  of the given contact).  In all cases, it is the action which decides how much information it needs.
+  If the target contains the required information, the function will return true; otherwise, returns false.
  */
 
 /*!
@@ -134,7 +137,7 @@ QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) 
     QList<QContactDetail> ret;
     QList<QContactDetail> details = contact.details();
     for (int j=0; j < details.count(); j++) {
-        if (isDetailSupported(details.at(j), contact))
+        if (isTargetSupported(QContactActionTarget(contact, details.at(j))))
             ret.append(details.at(j));
     }
     return ret;

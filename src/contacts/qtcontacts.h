@@ -61,6 +61,7 @@
 #include "qcontactsortorder.h"                  // contact sorting
 #include "qcontactaction.h"                     // actions
 #include "qcontactactiondescriptor.h"           // action descriptors
+#include "qcontactactiontarget.h"               // action target (contact + detail(s))
 #include "qcontactabstractrequest.h"            // asynchronous request
 #include "qcontactrequests.h"                   // request leaf classes
 #include "qcontactrelationship.h"               // contact relationships

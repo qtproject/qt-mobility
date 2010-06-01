@@ -48,6 +48,7 @@
 #include "qcontactfilter.h"
 #include "qcontactdetail.h"
 #include "qcontact.h"
+#include "qcontactactiontarget.h"
 
 #include <QObject>
 
@@ -77,11 +78,14 @@ public:
     virtual QVariantMap metaData() const = 0;                               // label, icon etc - under discussion! - replaces the above
 
     virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
-    virtual bool isDetailSupported(const QContactDetail &detail, const QContact &contact = QContact()) const = 0;
+    virtual bool isTargetSupported(const QContactActionTarget& target) const = 0;
     virtual QList<QContactDetail> supportedDetails(const QContact& contact) const = 0;
 
-    /* Initiate the asynchronous action on the given contact (and optionally detail) */
-    virtual bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) = 0;
+    /* Initiate the asynchronous action on the given contact (and optionally detail) with the given parameters */
+    virtual bool invokeAction(const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) = 0;
+
+    /* Initiate the asynchronous action on the given list of contacts (and optionally, per-contact-details) with the given parameters */
+    virtual bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) = 0;
 
     /* The possible states of an action */
     enum State {

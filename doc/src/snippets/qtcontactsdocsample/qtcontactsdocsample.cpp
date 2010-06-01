@@ -326,7 +326,7 @@ void callContact(QContactManager* cm)
         // Can't call this contact
     } else if (details.count() == 1) {
         // Just call this specific detail
-        action->invokeAction(contact, details.first());
+        action->invokeAction(QContactActionTarget(contact, details.first()));
     } else {
         // Offer the user the choice of details to call
         // ...

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSENDEMAILACTION_P_H
-#define QCONTACTSENDEMAILACTION_P_H
+#ifndef QCONTACTACTIONTARGET_P_H
+#define QCONTACTACTIONTARGET_P_H
 
 //
 //  W A R N I N G
@@ -53,52 +53,39 @@
 // We mean it.
 //
 
-#include "qcontactaction.h"
-
-#include "qserviceinterfacedescriptor.h"
-#include "qserviceplugininterface.h"
-#include "qservicecontext.h"
-#include "qabstractsecuritysession.h"
-
 #include <QSharedData>
 #include <QString>
-#include <QVariantMap>
 
-QTM_USE_NAMESPACE
+#include "qcontact.h"
+#include "qcontactdetail.h"
 
+QTM_BEGIN_NAMESPACE
 
-class QContactSendEmailActionPlugin : public QObject, public QServicePluginInterface
+class QContactActionTargetPrivate : public QSharedData
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QServicePluginInterface)
-
 public:
-    QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
-                            QServiceContext* context,
-                            QAbstractSecuritySession* session);
+    QContactActionTargetPrivate(const QContact& contact, const QList<QContactDetail>& details)
+            : QSharedData(),
+            m_contact(contact),
+            m_details(details)
+    {
+    }
+
+    ~QContactActionTargetPrivate()
+    {
+    }
+
+    QContactActionTargetPrivate(const QContactActionTargetPrivate& other)
+        : QSharedData(),
+        m_contact(other.m_contact),
+        m_details(other.m_details)
+    {
+    }
+
+    QContact m_contact;
+    QList<QContactDetail> m_details;
 };
 
-class QContactSendEmailAction : public QContactAction
-{
-    Q_OBJECT
-
-public:
-    QContactSendEmailAction(QObject* parent = 0);
-    ~QContactSendEmailAction();
-
-    QContactActionDescriptor actionDescriptor() const;
-    QVariantMap metaData() const;
-
-    QContactFilter contactFilter(const QVariant& value) const;
-    bool isTargetSupported(const QContactActionTarget& target) const;
-    QList<QContactDetail> supportedDetails(const QContact& contact) const;
-    bool invokeAction(const QContactActionTarget& target, const QVariantMap& params = QVariantMap());
-    bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& params = QVariantMap());
-    QVariantMap results() const;
-    State state() const {return QContactAction::FinishedState;}
-
-private slots:
-    void performAction();
-};
+QTM_END_NAMESPACE
 
 #endif
