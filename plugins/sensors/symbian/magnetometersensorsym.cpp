@@ -48,6 +48,8 @@
 // Internal Headers
 #include "magnetometersensorsym.h"
 
+#include <sensrvgeneralproperties.h>
+
 /**
  * set the id of the magnetometer sensor
  */
@@ -80,7 +82,8 @@ CMagnetometerSensorSym::~CMagnetometerSensorSym()
  * Default constructor
  */
 CMagnetometerSensorSym::CMagnetometerSensorSym(QSensor *sensor):CSensorBackendSym(sensor),
-        iCalibrationLevel(0.0)
+        iCalibrationLevel(0.0),
+        iScaleRange(0)
     {
     if(sensor)
         {
@@ -107,9 +110,10 @@ void CMagnetometerSensorSym::start()
         QVariant v = sensor()->property("returnGeoValues");
         iReturnGeoValues = (v.isValid() && v.toBool()); // if the property isn't set it's false
         }
+    TInt err;
     // get current property value for calibration and set it to reading
     TSensrvProperty calibration;
-    TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropCalibrationLevel,ESensrvSingleProperty, calibration));
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropCalibrationLevel, ESensrvSingleProperty, calibration));
     // If error in getting the calibration level, continue to start the sensor
     // as it is not a fatal error
     if ( err == KErrNone )
@@ -120,6 +124,64 @@ void CMagnetometerSensorSym::start()
         }
     // Call backend start
     CSensorBackendSym::start();
+    
+    
+    TSensrvProperty dataFormatProperty;
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelDataFormat, ESensrvSingleProperty, dataFormatProperty));
+    if(err == KErrNone)
+        {
+        TInt dataFormat;
+        dataFormatProperty.GetValue(dataFormat);
+        if(dataFormat == ESensrvChannelDataFormatScaled)
+            {
+            TSensrvProperty scaleRangeProperty;
+            TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty)); 
+            if(err == KErrNone)
+                {
+                if(scaleRangeProperty.GetArrayIndex() == ESensrvSingleProperty)
+                    {
+                    if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                        {
+                        scaleRangeProperty.GetMaxValue(iScaleRange);
+                        }
+                    else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                        {
+                        TReal realScale;
+                        scaleRangeProperty.GetMaxValue(realScale);
+                        iScaleRange = realScale;
+                        }
+                    }
+                else if(scaleRangeProperty.GetArrayIndex() == ESensrvArrayPropertyInfo)
+                    {
+                    TInt index;
+                    if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                        {              
+                        scaleRangeProperty.GetValue(index);
+                        }
+                    else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                        {
+                        TReal realIndex;              
+                        scaleRangeProperty.GetValue(realIndex);
+                        index = realIndex;
+                        }
+                    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, index, scaleRangeProperty));
+                    if(err == KErrNone)
+                        {
+                        if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                            {
+                            scaleRangeProperty.GetMaxValue(iScaleRange);
+                            }
+                        else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                            {
+                            TReal realScaleRange;
+                            scaleRangeProperty.GetMaxValue(realScaleRange);
+                            iScaleRange = realScaleRange;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
 /*
@@ -136,22 +198,36 @@ void CMagnetometerSensorSym::RecvData(CSensrvChannel &aChannel)
         // If there is no reading available, return without setting
         return;
         }
-    // Get a lock on the reading data
-    iBackendData.iReadingLock.Wait();
+    
+    TReal x, y, z;
     // If Geo values are requested set it
     if(iReturnGeoValues)
         {
-        iReading.setX(iData.iAxisXCalibrated);
-        iReading.setY(iData.iAxisYCalibrated);
-        iReading.setZ(iData.iAxisZCalibrated);
+        x = iData.iAxisXCalibrated;
+        y = iData.iAxisYCalibrated;
+        z = iData.iAxisZCalibrated;
         }
     // If Raw values are requested set it
     else
         {
-        iReading.setX(iData.iAxisXRaw);
-        iReading.setY(iData.iAxisYRaw);
-        iReading.setZ(iData.iAxisZRaw);
-        }
+        x = iData.iAxisXRaw;
+        y = iData.iAxisYRaw;
+        z = iData.iAxisZRaw;
+        }   
+    // Scale adjustments
+    if(iScaleRange)
+	{
+	qoutputrangelist rangeList = sensor()->outputRanges();
+	TReal maxValue = rangeList[sensor()->outputRange()].maximum;
+	x = (x/iScaleRange) * maxValue;
+	y = (y/iScaleRange) * maxValue;
+	z = (z/iScaleRange) * maxValue;
+	}
+	// Get a lock on the reading data
+    iBackendData.iReadingLock.Wait();
+    iReading.setX(x);
+    iReading.setY(y);
+    iReading.setZ(z);
     // Set the timestamp
     iReading.setTimestamp(iData.iTimeStamp.Int64());
     // Set the calibration level
@@ -195,5 +271,6 @@ qreal CMagnetometerSensorSym::GetCalibrationLevel()
 void CMagnetometerSensorSym::ConstructL()
     {
     InitializeL();
+    
     }
 

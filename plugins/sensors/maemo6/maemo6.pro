@@ -15,6 +15,3 @@ CONFIG += mobility
 MOBILITY += sensors
 CONFIG += link_pkgconfig
 PKGCONFIG += sensord
-
-target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
-INSTALLS += target

@@ -47,7 +47,7 @@
 
 #include "maemo6als.h"
 
-const char *maemo6als::id("maemo6.als");
+char const * const maemo6als::id("maemo6.als");
 bool maemo6als::m_initDone = false;
 
 maemo6als::maemo6als(QSensor *sensor)

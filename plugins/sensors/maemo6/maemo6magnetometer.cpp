@@ -47,7 +47,7 @@
 
 #include "maemo6magnetometer.h"
 
-const char *maemo6magnetometer::id("maemo6.magnetometer");
+char const * const maemo6magnetometer::id("maemo6.magnetometer");
 bool maemo6magnetometer::m_initDone = false;
 
 maemo6magnetometer::maemo6magnetometer(QSensor *sensor)

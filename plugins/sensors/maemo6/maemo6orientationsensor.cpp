@@ -49,7 +49,7 @@
 
 #include <posedata.h>
 
-const char *maemo6orientationsensor::id("maemo6.orientationsensor");
+char const * const maemo6orientationsensor::id("maemo6.orientationsensor");
 bool maemo6orientationsensor::m_initDone = false;
 
 maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)

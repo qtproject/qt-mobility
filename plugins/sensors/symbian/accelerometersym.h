@@ -76,6 +76,8 @@ public:
      */
     ~CAccelerometerSensorSym();
     
+    void start();
+    
 private:
     /**
      * Default constructor
@@ -93,7 +95,7 @@ private:
      * Second phase constructor
      * Initialize the backend resources
      */
-    void ConstructL();    
+    void ConstructL();   
     
 public:
     /**
@@ -104,7 +106,7 @@ public:
 private:
     QAccelerometerReading iReading;
     TSensrvAccelerometerAxisData iData;
-    TInt iScale, iUnit;
+    TInt iScaleRange, iUnit;
     };
 
 #endif //ACCELEROMETERSYM_H

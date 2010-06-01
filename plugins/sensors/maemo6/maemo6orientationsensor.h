@@ -61,7 +61,7 @@ class maemo6orientationsensor : public maemo6sensorbase
     Q_OBJECT
 
 public:
-    static const char *id;
+    static char const * const id;
     maemo6orientationsensor(QSensor *sensor);
 
 private:

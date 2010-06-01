@@ -83,7 +83,7 @@ CAccelerometerSensorSym::~CAccelerometerSensorSym()
  * Default constructor
  */
 CAccelerometerSensorSym::CAccelerometerSensorSym(QSensor *sensor):CSensorBackendSym(sensor),
-        iScale(0),
+        iScaleRange(0),
         iUnit(0)
         {
         setReading<QAccelerometerReading>(&iReading);
@@ -91,6 +91,68 @@ CAccelerometerSensorSym::CAccelerometerSensorSym(QSensor *sensor):CSensorBackend
         //Disable property listening
         SetListening(ETrue, EFalse);
         }
+
+void CAccelerometerSensorSym::start()
+{
+    TSensrvProperty dataFormatProperty;
+    TInt err;
+    CSensorBackendSym::start();
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelDataFormat, ESensrvSingleProperty, dataFormatProperty));
+    if(err == KErrNone)
+        {
+        TInt dataFormat;
+        dataFormatProperty.GetValue(dataFormat);
+        if(dataFormat == ESensrvChannelDataFormatScaled)
+            {
+            TSensrvProperty scaleRangeProperty;
+            TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty)); 
+            if(err == KErrNone)
+                {
+                if(scaleRangeProperty.GetArrayIndex() == ESensrvSingleProperty)
+                    {
+                    if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                        {
+                        scaleRangeProperty.GetMaxValue(iScaleRange);
+                        }
+                    else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                        {
+                        TReal realScale;
+                        scaleRangeProperty.GetMaxValue(realScale);
+                        iScaleRange = realScale;
+                        }
+                    }
+                else if(scaleRangeProperty.GetArrayIndex() == ESensrvArrayPropertyInfo)
+                    {
+                    TInt index;
+                    if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                        {               
+                        scaleRangeProperty.GetValue(index);
+                        }
+                    else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                        {
+                        TReal realIndex;           
+                        scaleRangeProperty.GetValue(realIndex);
+                        index = realIndex;
+                        }
+                    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, index, scaleRangeProperty));
+                    if(err == KErrNone)
+                        {
+                        if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                            {
+                            scaleRangeProperty.GetMaxValue(iScaleRange);
+                            }
+                        else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                            {
+                            TReal realScaleRange;
+                            scaleRangeProperty.GetMaxValue(realScaleRange);
+                            iScaleRange = realScaleRange;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+}
 
 /*
  * RecvData is used to retrieve the sensor reading from sensor server
@@ -110,13 +172,13 @@ void CAccelerometerSensorSym::RecvData(CSensrvChannel &aChannel)
     TReal y = iData.iAxisY;
     TReal z = iData.iAxisZ;
     //Converting unit to m/s^2
-    qoutputrangelist rangeList = sensor()->outputRanges();
-    TReal maxValue = rangeList[sensor()->outputRange()].maximum;
-    if(iScale && iUnit == ESensevChannelUnitAcceleration)
+    if(iScaleRange && iUnit == ESensevChannelUnitAcceleration)
         {
-        x = (x/iScale) * maxValue;
-        y = (y/iScale) * maxValue;
-        z = (z/iScale) * maxValue;
+	qoutputrangelist rangeList = sensor()->outputRanges();
+	TReal maxValue = rangeList[sensor()->outputRange()].maximum;
+        x = (x/iScaleRange) * maxValue;
+        y = (y/iScaleRange) * maxValue;
+        z = (z/iScaleRange) * maxValue;        
         }
     else if(iUnit == ESensrvChannelUnitGravityConstant)
         {
@@ -143,22 +205,12 @@ void CAccelerometerSensorSym::ConstructL()
     //Initialize the backend resources
     InitializeL(); 
     
+    TInt err;
     TSensrvProperty unitProperty;
-    TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelUnit, ESensrvSingleProperty, unitProperty));
+    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelUnit, ESensrvSingleProperty, unitProperty));
     if(err == KErrNone)
         {
         unitProperty.GetValue(iUnit);
-        }
-    
-    TSensrvProperty dataFormatProperty;
-    iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelDataFormat, ESensrvSingleProperty, dataFormatProperty);
-    TInt dataFormat;
-    dataFormatProperty.GetValue(dataFormat);
-    if(dataFormat == ESensrvChannelDataFormatScaled)
-        {
-        TSensrvProperty scaleRangeProperty;
-        TRAPD(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, ESensrvSingleProperty, scaleRangeProperty));         //Slight confusion
-        scaleRangeProperty.GetMaxValue(iScale);
         }
     }
 

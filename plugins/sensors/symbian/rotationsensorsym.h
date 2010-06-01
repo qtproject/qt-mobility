@@ -95,6 +95,13 @@ private:
      */
     void ConstructL();
     
+    /**
+     * Overriding this method in rotation sensor to hard code value of 
+     * mesurement range from -180 to 180 as Qt want
+     * Symbian provides measurement range from 0 to 359
+     */
+    void GetMeasurementrangeAndAccuracy();
+    
 public:
     /**
      * Holds the id of the proximity sensor

@@ -47,7 +47,7 @@
 
 #include "maemo6accelerometer.h"
 
-const char *maemo6accelerometer::id("maemo6.accelerometer");
+char const * const maemo6accelerometer::id("maemo6.accelerometer");
 bool maemo6accelerometer::m_initDone = false;
 
 maemo6accelerometer::maemo6accelerometer(QSensor *sensor)
