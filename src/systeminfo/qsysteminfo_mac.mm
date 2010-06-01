@@ -312,7 +312,7 @@ Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, qsystemDeviceInfoPrivate)
 QSystemInfoPrivate *QSystemInfoPrivate::self = 0;
 
 QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
- : QObject(parent)
+ : QObject(parent),langloopThread(0),langThreadOk(0)
 {
     if(!self)
         self = this;
@@ -320,8 +320,8 @@ QSystemInfoPrivate::QSystemInfoPrivate(QObject *parent)
 
 QSystemInfoPrivate::~QSystemInfoPrivate()
 {
-    if(langloopThread->isRunning()) {
-        langloopThread->quit();
+    if(langThreadOk && langloopThread->isRunning()) {
+        langloopThread->stop();
     }
 }
 
@@ -362,6 +362,7 @@ void QSystemInfoPrivate::connectNotify(const char *signal)
     if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
         langloopThread = new QLangLoopThread(this);
         langloopThread->start();
+        langThreadOk = true;
     }
 }
 
@@ -369,8 +370,7 @@ void QSystemInfoPrivate::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(currentLanguageChanged(QString))) {
         if(langloopThread->isRunning()) {
-            langloopThread->quit();
-            langloopThread->wait();
+            langloopThread->stop();
         }
     }
 }
@@ -538,33 +538,39 @@ QLangLoopThread::~QLangLoopThread()
 {
 }
 
-void QLangLoopThread::quit()
+void QLangLoopThread::stop()
 {
-    mutex.lock();
+    QMutexLocker locker(&mutex);
+    locker.unlock();
     keepRunning = false;
-    CFRunLoopStop(CFRunLoopGetCurrent());
+    locker.relock();
 #ifdef MAC_SDK_10_6
     [langListener release];
 #endif
-    mutex.unlock();
+    if(currentThread() != this) {
+        QMetaObject::invokeMethod(this, "quit",
+                                  Qt::QueuedConnection);
+    } else {
+        quit();
+    }
     wait();
 }
 
 void QLangLoopThread::run()
 {
 #ifdef MAC_SDK_10_6
-    mutex.lock();
+    QMutexLocker locker(&mutex);
+    locker.unlock();
     keepRunning = true;
-    mutex.unlock();
+    locker.relock();
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     langListener = [[QtMLangListener alloc] init];
-
-    NSDate *loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+    SInt32 result;
     while (keepRunning &&
-        [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode beforeDate: loopUntil]) {
-        loopUntil = [NSDate dateWithTimeIntervalSinceNow:1.0];
+           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,5, YES))) {
     }
+    CFRunLoopStop(CFRunLoopGetCurrent());
     [pool release];
 #endif
 }
@@ -584,9 +590,10 @@ QRunLoopThread::~QRunLoopThread()
 
 void QRunLoopThread::stop()
 {
-    mutex.lock();
+    QMutexLocker locker(&mutex);
+    locker.unlock();
     keepRunning = false;
-    mutex.unlock();
+    locker.relock();
 #ifdef MAC_SDK_10_6
     [listener release];
     [delegate release];
@@ -1535,15 +1542,15 @@ QStringList QSystemStorageInfoPrivate::logicalDrives()
     return drivesList;
 }
 
-void powerInfoChanged(void* runLoopInfo)
+void powerInfoChanged(void* context)
 {
-    Q_UNUSED(runLoopInfo)
-    QSystemDeviceInfoPrivate::instance()->batteryLevel();
-    QSystemDeviceInfoPrivate::instance()->currentPowerState();
+    QSystemDeviceInfoPrivate *sys = reinterpret_cast<QSystemDeviceInfoPrivate *>(context);
+    sys->batteryLevel();
+    sys->currentPowerState();
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent),btThread(0)
+        : QObject(parent),btThread(0), btThreadOk(0)
 {
     batteryLevelCache = 0;
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
@@ -1552,7 +1559,8 @@ QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
 
 QSystemDeviceInfoPrivate::~QSystemDeviceInfoPrivate()
 {
-    btThread->stop();
+    if( btThreadOk && btThread->isRunning())
+        btThread->stop();
 }
 
 QSystemDeviceInfoPrivate *QSystemDeviceInfoPrivate::instance()
@@ -1567,6 +1575,7 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
             btThread = new QBluetoothListenerThread(this);
             btThread->start();
             connect(btThread,SIGNAL(bluetoothPower(bool)), this, SIGNAL(bluetoothStateChanged(bool)));
+             btThreadOk = true;
         }
     }
 
