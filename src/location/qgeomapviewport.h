@@ -66,13 +66,15 @@ public:
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
 
     virtual void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
+    virtual qreal zoomLevel() const;
+
+    virtual void pan(int dx, int dy);
 
     virtual void setCenter(const QGeoCoordinate &center);
     virtual QGeoCoordinate center() const;
 
-    void setViewportSize(const QSizeF &size);
-    QSizeF viewportSize() const;
+    virtual void setViewportSize(const QSizeF &size);
+    virtual QSizeF viewportSize() const;
 
     void setMapType(QGeoMapWidget::MapType mapType);
     QGeoMapWidget::MapType mapType() const;

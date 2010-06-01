@@ -147,6 +147,9 @@ void QGeoMappingManagerNokia::mapFinished()
     if (!reply)
         return;
 
+    if (reply->error() != QGeoMapReply::NoError)
+        m_cache->remove(reply->networkReply()->request().url());
+
     /*
     QGeoMapReplyNokia::QuadTileInfo* info = reply->tileInfo();
     if (!info) {

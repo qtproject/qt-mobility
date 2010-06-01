@@ -80,6 +80,8 @@ public:
 
     void abort();
 
+    QNetworkReply* networkReply() const;
+
 private slots:
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);

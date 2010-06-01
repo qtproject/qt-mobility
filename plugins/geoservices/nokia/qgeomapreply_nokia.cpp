@@ -41,6 +41,8 @@
 
 #include "qgeomapreply_nokia_p.h"
 
+#include <QDebug>
+
 QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInfo, QObject *parent)
         : QGeoMapReply(parent),
         m_reply(reply),
@@ -69,17 +71,27 @@ QGeoMapReplyNokia::QuadTileInfo* QGeoMapReplyNokia::tileInfo() const
     return m_tileInfo;
 }
 
+QNetworkReply* QGeoMapReplyNokia::networkReply() const
+{
+    return m_reply;
+}
+
 void QGeoMapReplyNokia::abort()
 {
-    m_reply->abort();
+    //m_reply->abort();
     m_reply->deleteLater();
 }
 
 void QGeoMapReplyNokia::networkFinished()
 {
     if (m_reply->error() != QNetworkReply::NoError) {
-        setError(QGeoMapReply::CommunicationError, m_reply->errorString());
+
+        /*
+        if (m_reply->error() != QNetworkReply::OperationCanceledError)
+            setError(QGeoMapReply::CommunicationError, m_reply->errorString());
+
         m_reply->deleteLater();
+        */
         return;
     }
 
@@ -103,6 +115,7 @@ void QGeoMapReplyNokia::networkFinished()
 
 void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    setError(QGeoMapReply::CommunicationError, m_reply->errorString());
+    if (m_reply->error() != QNetworkReply::OperationCanceledError)
+        setError(QGeoMapReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }

@@ -44,6 +44,8 @@
 
 #include "qgeotiledmappingmanager.h"
 
+#include <QDebug>
+
 #define PI 3.14159265
 #include <math.h>
 
@@ -72,8 +74,8 @@ QPointF QGeoTiledMapViewport::coordinateToScreenPosition(const QGeoCoordinate &c
 
     coordinateToWorldPixel(coordinate, &worldX, &worldY);
 
-    qreal screenX = (qreal(worldX) - qreal(d->x)) / d->zoomFactorX;
-    qreal screenY = (qreal(worldY)- qreal(d->y)) / d->zoomFactorY;
+    qreal screenX = (qreal(worldX) - qreal(d->x)) / d->zoomFactor;
+    qreal screenY = (qreal(worldY)- qreal(d->y)) / d->zoomFactor;
 
     return QPointF(screenX, screenY);
 }
@@ -82,8 +84,8 @@ QGeoCoordinate QGeoTiledMapViewport::screenPositionToCoordinate(const QPointF &s
 {
     Q_D(const QGeoTiledMapViewport);
 
-    qulonglong worldX = d->x + qRound64(screenPosition.x() * d->zoomFactorX);
-    qulonglong worldY = d->y + qRound64(screenPosition.y() * d->zoomFactorY);
+    qulonglong worldX = (d->x + qRound64(screenPosition.x() * d->zoomFactor)) % d->width;
+    qulonglong worldY = (d->y + qRound64(screenPosition.y() * d->zoomFactor)) % d->height;
 
     return worldPixelToCoordinate(worldX, worldY);
 }
@@ -152,35 +154,125 @@ void QGeoTiledMapViewport::setCenter(const QGeoCoordinate &center)
     QGeoTiledMappingManager *tileManager = static_cast<QGeoTiledMappingManager *>(d->manager);
 
     coordinateToWorldPixel(center, &(d->x), &(d->y));
-    d->x -= qRound(d->zoomFactorX * (d->viewportSize.width() / 2.0));
-    d->y -= qRound(d->zoomFactorY * (d->viewportSize.height() / 2.0));
+    d->x -= qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
+    d->y -= qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));
 }
 
 QGeoCoordinate QGeoTiledMapViewport::center() const
 {
     Q_D(const QGeoTiledMapViewport);
 
-    qulonglong cx = d->x + qRound(d->zoomFactorX * (d->viewportSize.width() / 2.0));
-    qulonglong cy = d->y + qRound(d->zoomFactorY * (d->viewportSize.height() / 2.0));
+    qulonglong cx = d->x + qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
+    qulonglong cy = d->y + qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));
     return worldPixelToCoordinate(cx, cy);
 }
 
 void QGeoTiledMapViewport::setZoomLevel(qreal zoomLevel)
 {
-    QGeoMapViewport::setZoomLevel(zoomLevel);
-
     Q_D(QGeoTiledMapViewport);
+    int zoomDiff = qRound(zoomLevel - QGeoMapViewport::zoomLevel());
+
+    QGeoMapViewport::setZoomLevel(zoomLevel);
 
     QGeoTiledMappingManager *tileManager = static_cast<QGeoTiledMappingManager *>(d->manager);
 
-    qulonglong cx = d->x + qRound(d->zoomFactorX * (d->viewportSize.width() / 2.0));
-    qulonglong cy = d->y + qRound(d->zoomFactorY * (d->viewportSize.height() / 2.0));
+    qulonglong cx = d->x + qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
+    qulonglong cy = d->y + qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));
 
-    d->zoomFactorX = 1 << qRound64(d->manager->maximumZoomLevel() - d->zoomLevel);
-    d->zoomFactorY = d->zoomFactorX;
+    d->zoomFactor = 1 << qRound64(d->manager->maximumZoomLevel() - d->zoomLevel);
 
-    d->x = cx - qRound(d->zoomFactorX * (d->viewportSize.width() / 2.0));
-    d->y = cy - qRound(d->zoomFactorY * (d->viewportSize.height() / 2.0));
+    d->x = cx - qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
+    d->y = cy - qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));
+
+    if (zoomDiff == 0)
+        return;
+
+    QRectF target = d->mapImage.rect();
+    qreal width = target.width() / (1 << qAbs(zoomDiff));
+    qreal height = target.width() / (1 << qAbs(zoomDiff));
+    qreal x = target.x() + ((target.width() - width) / 2.0);
+    qreal y = target.y() + ((target.height() - height) / 2.0);
+    QRectF source = QRectF(x, y, width, height);
+
+    QPixmap pm(d->mapImage.size());
+    QPainter *painter = new QPainter(&pm);
+
+    if (zoomDiff < 0) {
+        painter->drawPixmap(source, d->mapImage, target);
+    } else {
+        painter->drawPixmap(target, d->mapImage, source);
+    }
+
+    delete painter;
+
+    setImageChangesTriggerUpdates(true);
+    setMapImage(pm);
+}
+
+void QGeoTiledMapViewport::setViewportSize(const QSizeF &size)
+{
+    Q_D(QGeoTiledMapViewport);
+
+    QGeoMapViewport::setViewportSize(size);
+
+    d->protectRegion = QRectF(0.0, 0.0, size.width(), size.height());
+
+    QPixmap pm(size.toSize());
+    QPainter p(&pm);
+    if (!d->mapImage.isNull())
+        p.drawPixmap(d->mapImage.rect(), d->mapImage, d->mapImage.rect());
+    d->mapImage = pm;
+    d->manager->updateMapImage(this);
+}
+
+void QGeoTiledMapViewport::pan(int dx, int dy)
+{
+    Q_D(QGeoTiledMapViewport);
+
+    if (dx < 0 && (d->x < -1 * dx * d->zoomFactor))
+        d->x += d->width;
+    d->x += dx * d->zoomFactor;
+    d->x = d->x % d->width;
+
+    if (dy < 0 && (d->y < -1 * dy * d->zoomFactor))
+        d->y += d->height;
+    d->y += dy * d->zoomFactor;
+    d->y = d->y % d->height;
+
+    qreal width = d->mapImage.width() - qAbs(dx);
+    qreal height = d->mapImage.height() - qAbs(dy);
+
+    qreal sx;
+    qreal sy;
+    qreal tx;
+    qreal ty;
+
+    if (dx < 0) {
+        sx = 0.0;
+        tx = qAbs(dx);
+    } else {
+        sx = dx;
+        tx = 0.0;
+    }
+
+    if (dy < 0) {
+        sy = 0.0;
+        ty = qAbs(dy);
+    } else {
+        sy = dy;
+        ty = 0.0;
+    }
+
+    QRectF source = QRectF(sx, sy, width, height);
+    QRectF target = QRectF(tx, ty, width, height);
+
+    QPixmap pm(d->mapImage.size());
+    QPainter p(&pm);
+    if (!d->mapImage.isNull()) {
+        p.drawPixmap(target, d->mapImage, source);
+        d->protectRegion = target;
+        setMapImage(pm);
+    }
 }
 
 void QGeoTiledMapViewport::setTopLeftMapPixelX(qulonglong x)
@@ -207,16 +299,34 @@ qulonglong QGeoTiledMapViewport::topLeftMapPixelY() const
     return d->y;
 }
 
-qulonglong QGeoTiledMapViewport::zoomFactorX() const
+qulonglong QGeoTiledMapViewport::width() const
 {
     Q_D(const QGeoTiledMapViewport);
-    return d->zoomFactorX;
+    return d->width;
 }
 
-qulonglong QGeoTiledMapViewport::zoomFactorY() const
+qulonglong QGeoTiledMapViewport::height() const
 {
     Q_D(const QGeoTiledMapViewport);
-    return d->zoomFactorY;
+    return d->height;
+}
+
+qulonglong QGeoTiledMapViewport::zoomFactor() const
+{
+    Q_D(const QGeoTiledMapViewport);
+    return d->zoomFactor;
+}
+
+QRectF QGeoTiledMapViewport::protectedRegion() const
+{
+    Q_D(const QGeoTiledMapViewport);
+    return d->protectRegion;
+}
+
+void QGeoTiledMapViewport::clearProtectedRegion()
+{
+    Q_D(QGeoTiledMapViewport);
+    d->protectRegion = QRectF();
 }
 
 /*******************************************************************************
@@ -231,8 +341,8 @@ QGeoTiledMapViewportPrivate::QGeoTiledMapViewportPrivate(const QGeoTiledMapViewp
     y(other.y),
     width(other.width),
     height(other.height),
-    zoomFactorX(other.zoomFactorX),
-    zoomFactorY(other.zoomFactorY){}
+    zoomFactor(other.zoomFactor),
+    protectRegion(other.protectRegion) {}
 
 QGeoTiledMapViewportPrivate::~QGeoTiledMapViewportPrivate() {}
 
@@ -244,8 +354,8 @@ QGeoTiledMapViewportPrivate& QGeoTiledMapViewportPrivate::operator= (const QGeoT
     y = other.y;
     width = other.width;
     height = other.height;
-    zoomFactorX = other.zoomFactorX;
-    zoomFactorY = other.zoomFactorY;
+    zoomFactor = other.zoomFactor;
+    protectRegion = other.protectRegion;
 
     return *this;
 }

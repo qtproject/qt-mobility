@@ -74,6 +74,10 @@ QGeoMapViewport* QGeoTiledMappingManager::createViewport(QGeoMapWidget *widget)
 void QGeoTiledMappingManager::updateMapImage(QGeoMapViewport *viewport)
 {
     Q_D(QGeoTiledMappingManager);
+
+    if (!viewport)
+        return;
+
     QGeoMapTileReplyContainer *container = d->replies.value(viewport, 0);
 
     // TODO delete and remove in removeviewport
@@ -98,15 +102,15 @@ void QGeoTiledMappingManager::updateMapImage(QGeoMapViewport *viewport)
     int tileMinY = tileIndicesTopLeft.y();
     int tileMaxY = tileIndicesBottomRight.y();
 
-    int tiles = 1 << qRound(viewport->zoomLevel());
+    int numTiles = 1 << qRound(viewport->zoomLevel());
 
     QList<int> cols;
 
-    if (tileMinX <= tileMinX) {
+    if (tileMinX <= tileMaxX) {
         for (int i = tileMinX; i <= tileMaxX; ++i)
             cols << i;
     } else {
-        for (int i = tileMinX; i < tiles; ++i)
+        for (int i = tileMinX; i < numTiles; ++i)
             cols << i;
         for (int i = 0; i <= tileMaxX; ++i)
             cols << i;
@@ -114,11 +118,11 @@ void QGeoTiledMappingManager::updateMapImage(QGeoMapViewport *viewport)
 
     QList<int> rows;
 
-    if (tileMinY <= tileMinY) {
+    if (tileMinY <= tileMaxY) {
         for (int i = tileMinY; i <= tileMaxY; ++i)
             rows << i;
     } else {
-        for (int i = tileMinY; i < tiles; ++i)
+        for (int i = tileMinY; i < numTiles; ++i)
             rows << i;
         for (int i = 0; i <= tileMaxY; ++i)
             rows << i;
@@ -127,36 +131,60 @@ void QGeoTiledMappingManager::updateMapImage(QGeoMapViewport *viewport)
     int tileHeight = tileSize().height();
     int tileWidth = tileSize().width();
 
-    const QGeoTiledMapViewport *tiledViewport = static_cast<const QGeoTiledMapViewport*>(viewport);
+    QGeoTiledMapViewport *tiledViewport = static_cast<QGeoTiledMapViewport*>(viewport);
 
     QRectF screenRect = QRectF(
-            tiledViewport->topLeftMapPixelX() /  tiledViewport->zoomFactorX(),
-            tiledViewport->topLeftMapPixelY() / tiledViewport->zoomFactorY(),
+            tiledViewport->topLeftMapPixelX() /  tiledViewport->zoomFactor(),
+            tiledViewport->topLeftMapPixelY() / tiledViewport->zoomFactor(),
             viewport->viewportSize().width(),
             viewport->viewportSize().height());
+
+    QRectF protectedRegion = tiledViewport->protectedRegion().translated(QPointF(screenRect.x(), screenRect.y()));
+
+    QList<QPair<int, int> > tiles;
 
     // TODO from centre out
     // TODO request excess tiles around border
     for (int x = 0; x < cols.size(); ++x) {
         for (int y = 0; y < rows.size(); ++y) {
-            int col = cols.at(x);
-            int row = rows.at(y);
-            // determine bound rectangles
-
-            // intersected with relative translation
-            QRectF tileRect = QRectF(col * tileWidth, row * tileHeight, tileWidth, tileHeight);
-            QRectF overlap = tileRect.intersected(screenRect);
-
-            QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
-            QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 *screenRect.y());
-
-            // create replies
-            QGeoMapReply *mapReply = getTileImage(viewport->zoomLevel(), row, col, viewport->mapType(), "png");
-            // create wrappers and add to container
-            QGeoMapTileReply *reply = new QGeoMapTileReply(mapReply, source, dest);
-            container->addReply(reply);
+            tiles.append(qMakePair(cols.at(x), rows.at(y)));
         }
     }
+
+    int protectedTiles = 0;
+    for (int i = 0; i < tiles.size(); ++i) {
+        int col = tiles.at(i).first;
+        int row = tiles.at(i).second;
+
+        int colOffset = 0;
+        if ((tileMinX > tileMaxX) && col <= tileMaxX)
+            colOffset = numTiles;
+
+        // intersected with relative translation
+        QRectF tileRect = QRectF((col + colOffset) * tileWidth, row * tileHeight, tileWidth, tileHeight);
+
+        if (i + protectedTiles < tiles.size()) {
+            if (!protectedRegion.isNull() && protectedRegion.contains(tileRect)) {
+                tiles.move(i, tiles.size() - 1);
+                ++protectedTiles;
+                --i;
+                continue;
+            }
+        }
+
+        QRectF overlap = tileRect.intersected(screenRect);
+
+        QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
+        QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 *screenRect.y());
+
+        // create replies
+        QGeoMapReply *mapReply = getTileImage(viewport->zoomLevel(), row, col, viewport->mapType(), "png");
+        // create wrappers and add to container
+        QGeoMapTileReply *reply = new QGeoMapTileReply(mapReply, source, dest);
+        container->addReply(reply);
+    }
+
+    tiledViewport->clearProtectedRegion();
 }
 
 QPoint QGeoTiledMappingManager::screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const
@@ -164,13 +192,23 @@ QPoint QGeoTiledMappingManager::screenPositionToTilePosition(const QGeoMapViewpo
     // TODO checking mechanism for viewport type
     const QGeoTiledMapViewport *tiledViewport = static_cast<const QGeoTiledMapViewport*>(viewport);
 
-    qreal x = tiledViewport->topLeftMapPixelX() / qreal(tiledViewport->zoomFactorX());
-    x += screenPosition.x();
-    int tileX = x / tileSize().width();
+    qulonglong x = tiledViewport->topLeftMapPixelX();
+    x += qRound64(screenPosition.x() * tiledViewport->zoomFactor());
+    x = x % tiledViewport->width();
+    qreal rx = qreal(x) / tiledViewport->zoomFactor();
 
-    qreal y = tiledViewport->topLeftMapPixelY() / qreal(tiledViewport->zoomFactorY());
-    y += screenPosition.y();
-    int tileY = y / tileSize().height();
+    int tileX = rx / tileSize().width();
+
+//    qreal y = tiledViewport->topLeftMapPixelY() / qreal(tiledViewport->zoomFactor());
+//    y += screenPosition.y();
+//    int tileY = y / tileSize().height();
+
+    qulonglong y = tiledViewport->topLeftMapPixelY();
+    y += qRound64(screenPosition.y() * tiledViewport->zoomFactor());
+    y = y % tiledViewport->height();
+    qreal ry = qreal(y) / tiledViewport->zoomFactor();
+
+    int tileY = ry / tileSize().height();
 
     return QPoint(tileX, tileY);
 }
@@ -359,7 +397,7 @@ void QGeoMapTileReplyContainer::replyError(QGeoMapReply::Error, const QString &e
 
     QGeoMapTileReply *reply = m_replies.value(mapReply, 0);
 
-    qWarning() << QString("Error getting reply: ") << errorString;
+    //qWarning() << QString("Error getting reply: ") << errorString;
 
     m_replies.remove(mapReply);
     mapReply->deleteLater();

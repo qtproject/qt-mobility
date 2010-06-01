@@ -59,6 +59,7 @@
 
 #include <QSize>
 #include <QList>
+#include <QSet>
 
 QTM_BEGIN_NAMESPACE
 

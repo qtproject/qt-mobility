@@ -195,6 +195,12 @@ qreal QGeoMapViewport::zoomLevel() const
     return d->zoomLevel;
 }
 
+void QGeoMapViewport::pan(int dx, int dy)
+{
+    QPointF pos = coordinateToScreenPosition(center());
+    setCenter(screenPositionToCoordinate(QPointF(pos.x() + dx, pos.y() + dy)));
+}
+
 void QGeoMapViewport::setCenter(const QGeoCoordinate &center)
 {
     Q_D(QGeoMapViewport);

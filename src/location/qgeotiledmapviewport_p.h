@@ -55,6 +55,8 @@
 
 #include "qgeomapviewport_p.h"
 
+#include <QRectF>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoTiledMapViewportPrivate : public QGeoMapViewportPrivate
@@ -69,8 +71,8 @@ public:
     qulonglong y;
     qulonglong width;
     qulonglong height;
-    qulonglong zoomFactorX;
-    qulonglong zoomFactorY;
+    qulonglong zoomFactor;
+    QRectF protectRegion;
 };
 
 QTM_END_NAMESPACE

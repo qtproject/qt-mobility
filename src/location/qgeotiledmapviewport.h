@@ -61,15 +61,23 @@ public:
     QGeoCoordinate center() const;
 
     void setZoomLevel(qreal zoomLevel);
+    void setViewportSize(const QSizeF &size);
+    void pan(int dx, int dy);
 
+    // TODO WorldPixel a better name?
     void setTopLeftMapPixelX(qulonglong x);
     qulonglong topLeftMapPixelX() const;
 
     void setTopLeftMapPixelY(qulonglong y);
     qulonglong topLeftMapPixelY() const;
 
-    qulonglong zoomFactorX() const;
-    qulonglong zoomFactorY() const;
+    qulonglong width() const;
+    qulonglong height() const;
+
+    qulonglong zoomFactor() const;
+
+    QRectF protectedRegion() const;
+    void clearProtectedRegion();
 
 protected:
     virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;

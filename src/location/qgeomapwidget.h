@@ -75,6 +75,8 @@ public:
     void setZoomLevel(qreal zoomLevel);
     qreal zoomLevel() const;
 
+    void pan(int dx, int dy);
+
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 

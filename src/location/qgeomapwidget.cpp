@@ -69,11 +69,6 @@ void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
     QGraphicsWidget::resizeEvent(event);
     if (d_ptr->viewport) {
         d_ptr->viewport->setViewportSize(event->newSize());
-        QPixmap pm(event->newSize().toSize());
-        QPainter p(&pm);
-        p.drawPixmap(d_ptr->viewport->mapImage().rect(), d_ptr->viewport->mapImage(), d_ptr->viewport->mapImage().rect());
-        p.end();
-        d_ptr->viewport->setMapImage(pm);
     }
     if (d_ptr->manager)
         d_ptr->manager->updateMapImage(d_ptr->viewport);
@@ -123,6 +118,14 @@ qreal QGeoMapWidget::zoomLevel() const
         return d_ptr->viewport->zoomLevel();
 
     return -1;
+}
+
+void QGeoMapWidget::pan(int dx, int dy)
+{
+    if (d_ptr->viewport)
+        d_ptr->viewport->pan(dx, dy);
+    if (d_ptr->manager)
+        d_ptr->manager->updateMapImage(d_ptr->viewport);
 }
 
 void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
