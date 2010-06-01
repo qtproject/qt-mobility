@@ -481,7 +481,7 @@ for module in $MOBILITY_MODULES; do
         multimedia)
             echo "contains(QT_CONFIG,multimedia):message(1)" > 1.pro
             SOMETHING=`qmake 1.pro 2>&1`
-            if [ "$SOMETHING" == "Project MESSAGE: 1" ]; then
+            if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
                 MOBILITY_MODULES="$(echo $MOBILITY_MODULES | sed 's:multimedia::g')"
                 echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
             fi
