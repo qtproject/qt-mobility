@@ -427,6 +427,12 @@ bool DatabaseManager::serviceInitialized(const QString &serviceName, DbScope sco
 QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServiceFilter &filter, DbScope scope)
 {
     #ifdef Q_OS_SYMBIAN
+        QService::Scope requestedScope;
+        if (scope == UserScope) {
+            requestedScope = QService::UserScope;
+        } else {
+            requestedScope = QService::SystemScope;
+        }
         scope = SystemScope;
     #endif
 
@@ -459,7 +465,11 @@ QList<QServiceInterfaceDescriptor>  DatabaseManager::getInterfaces(const QServic
         }
 
         for (int i = userDescriptorCount; i < descriptors.count(); ++i) {
-            descriptors[i].d->scope = QService::SystemScope;
+            #ifdef Q_OS_SYMBIAN
+                descriptors[i].d->scope = requestedScope;
+            #else
+                descriptors[i].d->scope = QService::SystemScope;
+            #endif
         }
     } else {
         if ( scope == SystemScope) {
@@ -536,6 +546,12 @@ QStringList DatabaseManager::getServiceNames(const QString &interfaceName, Datab
 QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &interfaceName, DbScope scope)
 {
     #ifdef Q_OS_SYMBIAN
+        QService::Scope requestedScope;
+        if (scope == UserScope) {
+            requestedScope = QService::UserScope;
+        } else {
+            requestedScope = QService::SystemScope;
+        }
         scope = SystemScope;
     #endif
 
@@ -610,7 +626,11 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
     } else {
         descriptor = m_systemDb->interfaceDefault(interfaceName);
         if (m_systemDb->lastError().code() == DBError::NoError) {
-            descriptor.d->scope = QService::SystemScope;
+            #ifdef Q_OS_SYMBIAN
+                descriptor.d->scope = requestedScope;
+            #else
+                descriptor.d->scope = QService::SystemScope;
+            #endif
             return descriptor;
         } else if (m_systemDb->lastError().code() == DBError::NotFound) {
             m_lastError = m_systemDb->lastError();
@@ -639,10 +659,6 @@ QServiceInterfaceDescriptor DatabaseManager::interfaceDefault(const QString &int
 bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
         QString &interfaceName, DbScope scope) 
 {
-    #ifdef Q_OS_SYMBIAN
-        scope = SystemScope;
-    #endif
-
     QList<QServiceInterfaceDescriptor> descriptors;
     QServiceFilter filter;
     filter.setServiceName(serviceName);
@@ -681,59 +697,70 @@ bool DatabaseManager::setInterfaceDefault(const QString &serviceName, const
 bool DatabaseManager::setInterfaceDefault(const QServiceInterfaceDescriptor &descriptor, DbScope scope)
 {
     #ifdef Q_OS_SYMBIAN
-        scope = SystemScope;
-    #endif
-
-    if (scope == UserScope) {
-        if (!openDb(UserScope))
+        Q_UNUSED(scope);
+        if (!openDb(SystemScope)) {
             return false;
-        if (descriptor.scope() == QService::UserScope) { //if a user scope descriptor, just set it in the user db
-            if(m_userDb->setInterfaceDefault(descriptor)) {
+        } else {
+            if (m_systemDb->setInterfaceDefault(descriptor)) {
                 m_lastError.setError(DBError::NoError);
                 return true;
             } else {
-                m_lastError = m_userDb->lastError();
+                m_lastError = m_systemDb->lastError();
                 return false;
             }
-        } else { //otherwise we need to get the interfaceID from the system db and set this
-                 //as an external default interface ID in the user db
-            if (!openDb(SystemScope))
+        }
+    #else
+        if (scope == UserScope) {
+            if (!openDb(UserScope))
                 return false;
-
-            QString interfaceDescriptorID = m_systemDb->getInterfaceID(descriptor);
-            if (m_systemDb->lastError().code() == DBError::NoError) {
-                if(m_userDb->setInterfaceDefault(descriptor, interfaceDescriptorID)) {
+            if (descriptor.scope() == QService::UserScope) { //if a user scope descriptor, just set it in the user db
+                if(m_userDb->setInterfaceDefault(descriptor)) {
                     m_lastError.setError(DBError::NoError);
                     return true;
                 } else {
                     m_lastError = m_userDb->lastError();
                     return false;
                 }
-            } else {
-                m_lastError = m_systemDb->lastError();
-                return false;
-            }
-        }
-    } else {  //scope == SystemScope
-        if (descriptor.scope() == QService::UserScope) {
-            QString errorText("Cannot set default service at system scope with a user scope "
-                                "interface descriptor");
-            m_lastError.setError(DBError::InvalidDescriptorScope, errorText);
-            return false;
-        } else {
-            if (!openDb(SystemScope)) {
-                return false;
-            } else {
-                if (m_systemDb->setInterfaceDefault(descriptor)) {
-                    m_lastError.setError(DBError::NoError);
-                    return true;
+            } else { //otherwise we need to get the interfaceID from the system db and set this
+                     //as an external default interface ID in the user db
+                if (!openDb(SystemScope))
+                    return false;
+
+                QString interfaceDescriptorID = m_systemDb->getInterfaceID(descriptor);
+                if (m_systemDb->lastError().code() == DBError::NoError) {
+                    if(m_userDb->setInterfaceDefault(descriptor, interfaceDescriptorID)) {
+                        m_lastError.setError(DBError::NoError);
+                        return true;
+                    } else {
+                        m_lastError = m_userDb->lastError();
+                        return false;
+                    }
                 } else {
                     m_lastError = m_systemDb->lastError();
                     return false;
                 }
             }
+        } else {  //scope == SystemScope
+            if (descriptor.scope() == QService::UserScope) {
+                QString errorText("Cannot set default service at system scope with a user scope "
+                                    "interface descriptor");
+                m_lastError.setError(DBError::InvalidDescriptorScope, errorText);
+                return false;
+            } else {
+                if (!openDb(SystemScope)) {
+                    return false;
+                } else {
+                    if (m_systemDb->setInterfaceDefault(descriptor)) {
+                        m_lastError.setError(DBError::NoError);
+                        return true;
+                    } else {
+                        m_lastError = m_systemDb->lastError();
+                        return false;
+                    }
+                }
+            }
         }
-    }
+    #endif
 }
 
 /*

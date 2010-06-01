@@ -302,8 +302,8 @@ void tst_QServiceManager::initTestCase()
 
     QSfwTestUtil::setupTempUserDb();
     QSfwTestUtil::setupTempSystemDb();
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
+#if defined(Q_OS_SYMBIAN)
+    QSfwTestUtil::removeDatabases_symbian();
 #endif
 }
 
@@ -317,8 +317,8 @@ void tst_QServiceManager::init()
 #endif
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
+#if defined(Q_OS_SYMBIAN)
+    QSfwTestUtil::removeDatabases_symbian();
 #endif
     QSettings settings("com.nokia.qt.serviceframework.tests", "SampleServicePlugin");
     settings.setValue("installed", false);
@@ -328,8 +328,8 @@ void tst_QServiceManager::cleanupTestCase()
 {
     QSfwTestUtil::removeTempUserDb();
     QSfwTestUtil::removeTempSystemDb();
-#if defined(Q_OS_SYMBIAN) && !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
+#if defined(Q_OS_SYMBIAN)
+    QSfwTestUtil::removeDatabases_symbian();
 #endif
     //use QEventLopp::DeferredDeletion
     //QServiceManager::loadInterface makes use of deleteLater() when
@@ -1245,7 +1245,7 @@ void tst_QServiceManager::setInterfaceDefault_descriptor()
 
     QCOMPARE(mgr.interfaceDefault(interfaceName), desc);
 
-#if defined(Q_OS_SYMBIAN) && defined(__WINS__)
+#if defined(Q_OS_SYMBIAN)
     QCOMPARE(mgr.interfaceDefault(interfaceName).isValid(), expectFound);
 #else
     QServiceManager mgrWithOtherScope(scope_find);

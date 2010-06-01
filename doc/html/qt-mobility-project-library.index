@@ -84,7 +84,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QAmbientLightSensor" fullname="QAmbientLightSensor::~QAmbientLightSensor" href="qambientlightsensor.html#dtor.QAmbientLightSensor" location="qambientlightsensor.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAmbientLightSensor()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QAmbientLightSensor::reading" href="qambientlightsensor.html#reading" location="qambientlightsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QAmbientLightReading *" signature="reading() const"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAmbientLightSensor::type" href="qambientlightsensor.html#type-var" location="qambientlightsensor.h" type="const char *" static="true"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAmbientLightSensor::type" href="qambientlightsensor.html#type-var" location="qambientlightsensor.h" type="char const * const" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html" location="qversitcontactexporter.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QVersitContactExporterDetailHandler" fullname="QVersitContactExporterDetailHandler::~QVersitContactExporterDetailHandler" href="qversitcontactexporterdetailhandler.html#dtor.QVersitContactExporterDetailHandler" location="qversitcontactexporter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QVersitContactExporterDetailHandler()"/>
@@ -154,7 +154,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QOrientationSensor" fullname="QOrientationSensor::~QOrientationSensor" href="qorientationsensor.html#dtor.QOrientationSensor" location="qorientationsensor.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QOrientationSensor()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QOrientationSensor::reading" href="qorientationsensor.html#reading" location="qorientationsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QOrientationReading *" signature="reading() const"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QOrientationSensor::type" href="qorientationsensor.html#type-var" location="qorientationsensor.h" type="const char *" static="true"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QOrientationSensor::type" href="qorientationsensor.html#type-var" location="qorientationsensor.h" type="char const * const" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractValueSpaceLayer" href="qabstractvaluespacelayer.html" location="qvaluespace_p.h" bases="QObject" module="">
             <typedef access="public" threadsafety="unspecified" status="commendable" name="Handle" fullname="QAbstractValueSpaceLayer::Handle" href="qabstractvaluespacelayer.html#Handle-typedef" location="qvaluespace_p.h"/>
@@ -1128,7 +1128,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QTapSensor" fullname="QTapSensor::~QTapSensor" href="qtapsensor.html#dtor.QTapSensor" location="qtapsensor.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QTapSensor()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QTapSensor::reading" href="qtapsensor.html#reading" location="qtapsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QTapReading *" signature="reading() const"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QTapSensor::type" href="qtapsensor.html#type-var" location="qtapsensor.h" type="const char *" static="true"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QTapSensor::type" href="qtapsensor.html#type-var" location="qtapsensor.h" type="char const * const" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaPlaylistReader" href="qmediaplaylistreader.html" location="qmediaplaylistioplugin.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaPlaylistReader" fullname="QMediaPlaylistReader::~QMediaPlaylistReader" href="qmediaplaylistreader.html#dtor.QMediaPlaylistReader" location="qmediaplaylistioplugin.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaPlaylistReader()"/>
@@ -1236,7 +1236,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QRotationSensor" fullname="QRotationSensor::~QRotationSensor" href="qrotationsensor.html#dtor.QRotationSensor" location="qrotationsensor.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QRotationSensor()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QRotationSensor::reading" href="qrotationsensor.html#reading" location="qrotationsensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QRotationReading *" signature="reading() const"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QRotationSensor::type" href="qrotationsensor.html#type-var" location="qrotationsensor.h" type="const char *" static="true"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QRotationSensor::type" href="qrotationsensor.html#type-var" location="qrotationsensor.h" type="char const * const" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QValueSpacePublisher" href="qvaluespacepublisher.html" location="qvaluespacepublisher.h" bases="QObject" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QValueSpacePublisher" fullname="QValueSpacePublisher::QValueSpacePublisher" href="qvaluespacepublisher.html#QValueSpacePublisher" location="qvaluespacepublisher.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QValueSpacePublisher(const QString &amp; path, QObject * parent)">
@@ -3494,7 +3494,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QProximitySensor" fullname="QProximitySensor::~QProximitySensor" href="qproximitysensor.html#dtor.QProximitySensor" location="qproximitysensor.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QProximitySensor()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QProximitySensor::reading" href="qproximitysensor.html#reading" location="qproximitysensor.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QProximityReading *" signature="reading() const"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QProximitySensor::type" href="qproximitysensor.html#type-var" location="qproximitysensor.h" type="const char *" static="true"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QProximitySensor::type" href="qproximitysensor.html#type-var" location="qproximitysensor.h" type="char const * const" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactPresence" href="qcontactpresence.html" location="qcontactpresence.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactPresence::DefinitionName" href="qcontactpresence.html#DefinitionName-var" location="qcontactpresence.h" type="const QLatin1Constant" static="true"/>
@@ -4829,7 +4829,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QCompass" fullname="QCompass::~QCompass" href="qcompass.html#dtor.QCompass" location="qcompass.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QCompass()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QCompass::reading" href="qcompass.html#reading" location="qcompass.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QCompassReading *" signature="reading() const"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QCompass::type" href="qcompass.html#type-var" location="qcompass.h" type="const char *" static="true"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QCompass::type" href="qcompass.html#type-var" location="qcompass.h" type="char const * const" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactOnlineAccount" href="qcontactonlineaccount.html" location="qcontactonlineaccount.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactOnlineAccount::DefinitionName" href="qcontactonlineaccount.html#DefinitionName-var" location="qcontactonlineaccount.h" type="const QLatin1Constant" static="true"/>
@@ -5083,7 +5083,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QAccelerometer" fullname="QAccelerometer::~QAccelerometer" href="qaccelerometer.html#dtor.QAccelerometer" location="qaccelerometer.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QAccelerometer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QAccelerometer::reading" href="qaccelerometer.html#reading" location="qaccelerometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QAccelerometerReading *" signature="reading() const"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAccelerometer::type" href="qaccelerometer.html#type-var" location="qaccelerometer.h" type="const char *" static="true"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QAccelerometer::type" href="qaccelerometer.html#type-var" location="qaccelerometer.h" type="char const * const" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QMagnetometerReading" href="qmagnetometerreading.html" location="qmagnetometer.h" bases="QSensorReading" module="">
             <contents name="qmagnetometerreading-units" title="QMagnetometerReading Units" level="2"/>
@@ -5128,7 +5128,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMagnetometer" fullname="QMagnetometer::~QMagnetometer" href="qmagnetometer.html#dtor.QMagnetometer" location="qmagnetometer.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMagnetometer()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="reading" fullname="QMagnetometer::reading" href="qmagnetometer.html#reading" location="qmagnetometer.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QMagnetometerReading *" signature="reading() const"/>
-            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMagnetometer::type" href="qmagnetometer.html#type-var" location="qmagnetometer.h" type="const char *" static="true"/>
+            <variable access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QMagnetometer::type" href="qmagnetometer.html#type-var" location="qmagnetometer.h" type="char const * const" static="true"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QMediaContent" href="qmediacontent.html" location="qmediacontent.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QMediaContent" fullname="QMediaContent::QMediaContent" href="qmediacontent.html#QMediaContent" location="qmediacontent.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaContent()"/>
@@ -6871,11 +6871,13 @@
         </page>
         <page access="public" status="commendable" name="multimedia" href="multimedia.html" subtype="group" title="Mobility Multimedia" fulltitle="Mobility Multimedia" subtitle="" location="multimedia.qdoc"/>
         <page access="public" status="commendable" name="multimedia.html" href="multimedia.html" subtype="page" title="Multimedia" fulltitle="Multimedia" subtitle="" location="multimedia.qdoc">
-            <contents name="namespace" title="Namespace" level="1"/>
+            <contents name="no-special-namespace" title="No Special Namespace" level="1"/>
             <contents name="overview" title="Overview" level="1"/>
             <contents name="audio" title="Audio" level="2"/>
             <contents name="video" title="Video" level="2"/>
             <contents name="radio" title="Radio" level="2"/>
+            <contents name="extending-for-symbian-and-maemo" title="Extending for Symbian and Maemo" level="1"/>
+            <contents name="adding-a-media-service-provider" title="Adding a Media Service Provider" level="2"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="record-a-sound-source" title="Record a Sound Source" level="2"/>
             <contents name="play-a-media-file" title="Play a Media File" level="2"/>
@@ -6980,7 +6982,7 @@
             <contents name="overview" title="Overview" level="1"/>
             <contents name="introducing-the-new-qt-apis" title="Introducing the New Qt APIs" level="2"/>
             <contents name="namespace" title="Namespace" level="1"/>
-            <contents name="getting-started" title="Getting Started" level="2"/>
+            <contents name="getting-started" title="Getting Started" level="1"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
             <contents name="the-new-qt-apis" title="The New Qt APIs" level="1"/>
             <contents name="bearer-management" title="Bearer Management" level="2"/>

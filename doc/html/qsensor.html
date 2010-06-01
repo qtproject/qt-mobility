@@ -174,8 +174,11 @@
 <h3 class="fn"><a name="dataRate-prop"></a>dataRate : int</h3>
 <p>This property holds the data rate that the sensor should be run at.</p>
 <p>Measured in Hertz.</p>
-<p>The default value is determined by the backend.</p>
+<p>The data rate is the maximum frequency at which the sensor can detect changes.</p>
+<p>Setting this property is not portable and can cause conflicts with other applications. Check with the sensor backend and platform documentation for any policy regarding multiple applications requesting a data rate.</p>
+<p>The default value (0) means that the app does not care what the data rate is. Applications should consider using a timer-based poll of the current value or ensure that the code that processes values can run very quickly as the platform may provide updates hundreds of times each second.</p>
 <p>This should be set before calling <a href="qsensor.html#start">start</a>() because the sensor may not notice changes to this value while it is running.</p>
+<p>Note that there is no mechanism to determine the current data rate in use by the platform.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>dataRate</b> () const</td></tr>
@@ -206,7 +209,10 @@
 <a name="//apple_ref/cpp/instm/QSensor/setOutputRange"></a>
 <h3 class="fn"><a name="outputRange-prop"></a>outputRange : int</h3>
 <p>This property holds the output range in use by the sensor.</p>
-<p>A sensor may have more than one output range. Typically this is done to give a greater measurement range at the cost of lowering accuracy.</p>
+<p>This value represents the index in the <a href="qsensor.html#outputRanges-prop">QSensor::outputRanges</a> list to use.</p>
+<p>Setting this property is not portable and can cause conflicts with other applications. Check with the sensor backend and platform documentation for any policy regarding multiple applications requesting an output range.</p>
+<p>The default value (-1) means that the app does not care what the output range is.</p>
+<p>Note that there is no mechanism to determine the current output range in use by the platform.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>outputRange</b> () const</td></tr>

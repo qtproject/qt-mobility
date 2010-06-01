@@ -63,7 +63,7 @@ private:
     static bool m_initDone;
 
 private slots:
-    void dataAvailable(const Compass& data);
+    void slotDataAvailable(const Compass& data);
 };
 
 #endif

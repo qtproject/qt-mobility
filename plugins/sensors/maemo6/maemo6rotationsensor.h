@@ -56,7 +56,6 @@ class maemo6rotationsensor : public maemo6sensorbase
 
 public:
     static const char *id;
-
     maemo6rotationsensor(QSensor *sensor);
 
 private:

@@ -20,21 +20,29 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
- - SomeClass, SomeOtherClass
-    * New classes for foo, bar and baz
+ - MOBILITY-991: Translation file support added
 
-Optimizations
+Other changes/optimizations
 ------
 
- - Optimized foo in QSomeClass
-    * See list of Important Behavior Changes below
-
+ - QTMOBILITY-50, QTMOBILITY-264, MOBILITY-971 fixed: various configure -prefix bugs fixed
+ - configure tests on Symbian are based on arm builds (rather than winscw)
+ - MOBILITY-908 fixed: -plugindir parameter added to configure.[sh|bat]
+ - plugin project files simplified
+ - MOBILITY-717 fixed: plug-in loading across all API's using plug-ins unified
+   and fixed. This includes addition of PREFIX/plugins to standard plugin
+   path lookup.
+ - QTMOBILITY-129 fixed: namespace related documentation improved
+ - MOBILITY-625 fixed: RPATH support for examples and third party code
 
 ****************************************************************************
 *                   Important Behavior Changes                             *
 ****************************************************************************
 
- -
+ - building of Mobility requires "make install" step as binaries
+   such as plug-ins and examples are not automatically deployed to BUILDDIR/plugins,
+   BUILDDIR/bin or BUILDDIR/bin/examples anymore. Rpath values have been
+   adjusted accordingly.
 
 
 ****************************************************************************
@@ -44,8 +52,8 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - tests/networkmanager test application has been removed
+ - MOBILITY-810 fixed: crash in bearermonitor example fixed
 
 QtContacts
 ------
@@ -56,7 +64,7 @@ QtContacts
 QtLocation
 ------
 
- - foo
+ - MOBILITY-858 fixed: Crash in lightmaps example fixed
     * bar
 
 QtMessaging
@@ -80,8 +88,7 @@ QtPublishSubscribe
 QtServiceFramework
 ------
 
- - foo
-    * bar
+ - MOBILITY-873 fixed: default interface documentation improved
 
 QtSystemInfo
 ------
@@ -126,12 +133,16 @@ Qt Mobility for Mac OS X
  -
 
 
-
 Qt Mobility for Windows CE
 ------
 
  -
 
+Qt Mobility for Symbian
+------
+
+ - Symbian capability documentation improved
+ - QTMOBILITY-30 fixed: convenience headers supported on Symbian
 
 ****************************************************************************
 *                          Tools                                           *

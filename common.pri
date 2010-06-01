@@ -161,6 +161,9 @@ wince* {
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
+    
+    #This is supposed to be defined in symbian_os.hrh
+    #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
 }
 
 # Add the output dirs to the link path too
