@@ -40,6 +40,9 @@
 ****************************************************************************/
 
 #include "qbluetoothlocaldevice.h"
+#include "qbluetoothaddress.h"
+
+#include <QtCore/QString>
 
 QT_BEGIN_HEADER
 
@@ -158,6 +161,22 @@ void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
 QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
 {
     return HostConnectable;
+}
+
+/*!
+    Returns the name of this local Bluetooth device.
+*/
+QString QBluetoothLocalDevice::name() const
+{
+    return QString();
+}
+
+/*!
+    Returns the address of this local Bluetooth device.
+*/
+QBluetoothAddress QBluetoothLocalDevice::address() const
+{
+    return QBluetoothAddress();
 }
 
 /*!

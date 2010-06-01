@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
 
-class QBluetoothLocalDevice
+class Q_CONNECTIVITY_EXPORT QBluetoothLocalDevice
 {
 public:
     enum Pairing {
@@ -85,6 +85,10 @@ public:
 
     void setHostMode(QBluetoothLocalDevice::HostMode mode);
     HostMode hostMode() const;
+
+    QString name() const;
+
+    QBluetoothAddress address() const;
 
     static QBluetoothLocalDevice defaultDevice();
     static QList<QBluetoothLocalDevice> allDevices();
