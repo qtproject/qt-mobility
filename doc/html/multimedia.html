@@ -21,7 +21,7 @@
 <li><a href="#video">Video</a></li>
 <li><a href="#radio">Radio</a></li>
 </ul>
-<li><a href="#extending-for-symbian-and-maemo">Extending for Symbian and Maemo</a></li>
+<li><a href="#extending-the-api-for-symbian-and-maemo">Extending the API for Symbian and Maemo</a></li>
 <ul><li><a href="#adding-a-media-service-provider">Adding a Media Service Provider</a></li>
 </ul>
 <li><a href="#examples">Examples</a></li>
@@ -108,13 +108,13 @@
 <a name="radio"></a>
 <h4>Radio</h4>
 <p><a href="qradiotunercontrol.html">QRadioTunerControl</a> is a pure virtual base class that will be the basis for any platform specific radio device control. When the functions are implemented the developer will be able to quickly produce an application that supports the typical uses of an FM radio including tuning, volume, start, stop and various other controls.</p>
-<a name="extending-for-symbian-and-maemo"></a>
-<h3>Extending for Symbian and Maemo</h3>
+<a name="extending-the-api-for-symbian-and-maemo"></a>
+<h3>Extending the API for Symbian and Maemo</h3>
 <a name="adding-a-media-service-provider"></a>
 <h4>Adding a Media Service Provider</h4>
 <p>The base class for creating new service providers is <a href="qmediaserviceprovider.html">QMediaServiceProvider</a>. The user must implement the <a href="qmediaserviceprovider.html#requestService">requestService()</a> function</p>
 <pre>    QMediaService* requestService(const QByteArray &amp;type, const QMediaServiceProviderHint &amp;hint);</pre>
-<p>The details of implementation will depend on the provider. Looking at the class <a href="qmediaserviceproviderplugin.html">QMediaServiceProviderPlugin</a> for the default implementation. Notice that requestService() uses the <a href="qmediaserviceproviderhint.html">QMediaServiceProviderHint</a> to look for the appropriate plugin and then to insert it into the plugin map. However, for a specific service provider there is probably no need for this approach, it will simply depend on what the developer wants to implement.</p>
+<p>The details of implementation will depend on the provider. Looking at the class <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> for the default implementation. Notice that <a href="qmediaserviceprovider.html#requestService">requestService()</a> uses the <a href="qmediaserviceproviderhint.html">QMediaServiceProviderHint</a> to look for the appropriate plugin and then to insert it into the plugin map. However, for a specific service provider there is probably no need for this approach, it will simply depend on what the developer wants to implement.</p>
 <p>Other methods that may be overloaded</p>
 <pre>    void releaseService(QMediaService *service);
 

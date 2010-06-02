@@ -598,7 +598,6 @@
                     <section ref="querymessages.html" title="Query Messages Example"/>
                     <section ref="quickstart.html" title="Quickstart Example"/>
                     <section ref="radio.html" title="Radio Example"/>
-                    <section ref="recorder.html" title="Recorder Example"/>
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
                     <section ref="qmlcontacts.html" title="Sample QML-based Phonebook Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
@@ -3386,7 +3385,6 @@
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
-            <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Release Notes of the QtMobility Project" id="Release Notes of the QtMobility Project" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Sample QML-based Phonebook Example" id="Sample QML-based Phonebook Example" ref="qmlcontacts.html"/>
@@ -3933,7 +3931,6 @@
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
-            <file>recorder.html</file>
             <file>qmetadatacontrol-members.html</file>
             <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>

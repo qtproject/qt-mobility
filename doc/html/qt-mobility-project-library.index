@@ -6737,7 +6737,6 @@
             <page access="public" status="commendable" name="radio/main.cpp" href="radio-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="radio/main.cpp" location=""/>
             <page access="public" status="commendable" name="radio/radio.pro" href="radio-radio-pro.html" subtype="file" title="" fulltitle="radio.pro Example File" subtitle="radio/radio.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="recorder" href="recorder.html" subtype="example" title="Recorder Example" fulltitle="Recorder Example" subtitle="" location="undocumented.qdoc"/>
         <page access="public" status="commendable" name="writemessage" href="writemessage.html" subtype="example" title="Write Message Example" fulltitle="Write Message Example" subtitle="" location="undocumented.qdoc">
             <page access="public" status="commendable" name="writemessage/messagesender.cpp" href="writemessage-messagesender-cpp.html" subtype="file" title="" fulltitle="messagesender.cpp Example File" subtitle="writemessage/messagesender.cpp" location=""/>
             <page access="public" status="commendable" name="writemessage/messagesender.h" href="writemessage-messagesender-h.html" subtype="file" title="" fulltitle="messagesender.h Example File" subtitle="writemessage/messagesender.h" location=""/>
@@ -6876,7 +6875,7 @@
             <contents name="audio" title="Audio" level="2"/>
             <contents name="video" title="Video" level="2"/>
             <contents name="radio" title="Radio" level="2"/>
-            <contents name="extending-for-symbian-and-maemo" title="Extending for Symbian and Maemo" level="1"/>
+            <contents name="extending-the-api-for-symbian-and-maemo" title="Extending the API for Symbian and Maemo" level="1"/>
             <contents name="adding-a-media-service-provider" title="Adding a Media Service Provider" level="2"/>
             <contents name="examples" title="Examples" level="1"/>
             <contents name="record-a-sound-source" title="Record a Sound Source" level="2"/>
