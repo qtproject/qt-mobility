@@ -90,18 +90,31 @@ protected:
     QFeedbackDevice createFeedbackDevice(int id);
 };
 
-class QThemedFeedbackInterface
+class QThemeFeedbackInterface
 {
 public:
     virtual void play(QFeedbackEffect::InstantEffect) = 0;
-    static QThemedFeedbackInterface *instance();
+    static QThemeFeedbackInterface *instance();
+};
+
+class QFileFeedbackInterface
+{
+public:
+    virtual void setLoaded(const QFileFeedbackEffect*, bool) = 0;
+    virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *) = 0;
+    virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *) = 0;
+    virtual int effectDuration(const QFileFeedbackEffect*) = 0;
+    virtual QStringList supportedFileSuffixes() = 0;
+
+    static QFileFeedbackInterface *instance();
 };
 
 
 QTM_END_NAMESPACE
 
 Q_DECLARE_INTERFACE(QtMobility::QFeedbackInterface, "com.nokia.qt.QFeedbackInterface")
-Q_DECLARE_INTERFACE(QtMobility::QThemedFeedbackInterface, "com.nokia.qt.QThemedFeedbackInterface")
+Q_DECLARE_INTERFACE(QtMobility::QThemeFeedbackInterface, "com.nokia.qt.QThemeFeedbackInterface")
+Q_DECLARE_INTERFACE(QtMobility::QFileFeedbackInterface, "com.nokia.qt.QFileFeedbackInterface")
 
 QT_END_HEADER
 

@@ -42,6 +42,8 @@
 #include <qfeedbackdevice.h>
 #include "qfeedback.h"
 #include <QtCore/QtPlugin>
+#include <QtCore/QDebug>
+#include <QtCore/QStringlist>
 
 Q_EXPORT_PLUGIN2(feedback_immersion, QFeedbackImmersion)
 
@@ -53,7 +55,7 @@ QFeedbackImmersion::QFeedbackImmersion()
     if (VIBE_FAILED(ImmVibeInitialize(VIBE_CURRENT_VERSION_NUMBER))) {
         //that should be done once
         //error management
-        qWarning("the Immersion library could not be initialized");
+        qWarning() << "the Immersion library could not be initialized";
     }
 
     //looking for the default devices
@@ -169,26 +171,31 @@ VibeInt32 QFeedbackImmersion::convertedDuration(int duration)
 
 VibeInt32 QFeedbackImmersion::handleForDevice(const QFeedbackDevice &device)
 {
-    if (!device.isValid())
+    return handleForDevice(device.id());
+}
+
+VibeInt32 QFeedbackImmersion::handleForDevice(int devId)
+{
+    if (devId < 0)
         return VIBE_INVALID_DEVICE_HANDLE_VALUE;
 
     //we avoid locking too much (it will only lock if the device is not yet open
-    if (deviceHandles.size() <= device.id()) {
+    if (deviceHandles.size() <= devId) {
         QMutexLocker locker(&mutex);
-        while (deviceHandles.size() <= device.id())
+        while (deviceHandles.size() <= devId)
             deviceHandles.append(VIBE_INVALID_DEVICE_HANDLE_VALUE);
     }
 
-    if (VIBE_IS_INVALID_DEVICE_HANDLE(deviceHandles.at(device.id()))) {
+    if (VIBE_IS_INVALID_DEVICE_HANDLE(deviceHandles.at(devId))) {
         QMutexLocker locker(&mutex);
-        if (VIBE_IS_INVALID_DEVICE_HANDLE(deviceHandles.at(device.id()))) {
-            ImmVibeOpenDevice(device.id(), &deviceHandles[device.id()] );
+        if (VIBE_IS_INVALID_DEVICE_HANDLE(deviceHandles.at(devId))) {
+            ImmVibeOpenDevice(devId, &deviceHandles[devId] );
 
             //temporary solution: provide a proto dev licence key
-            ImmVibeSetDevicePropertyString(deviceHandles.at(device.id()), VIBE_DEVPROPTYPE_LICENSE_KEY, "IMWPROTOSJZF4EH6KWVUK8HAP5WACT6Q");
+            ImmVibeSetDevicePropertyString(deviceHandles.at(devId), VIBE_DEVPROPTYPE_LICENSE_KEY, "IMWPROTOSJZF4EH6KWVUK8HAP5WACT6Q");
         }
     }
-    return deviceHandles.at(device.id());
+    return deviceHandles.at(devId);
 }
 
 QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QFeedbackEffect *effect, EffectProperty)
@@ -228,9 +235,10 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFeedback
     switch (effect->state())
     {
     case QAbstractAnimation::Stopped:
-        Q_ASSERT(VIBE_IS_VALID_EFFECT_HANDLE(effectHandle));
-        status = ImmVibeStopPlayingEffect(handleForDevice(effect->device()), effectHandle);
-        effectHandles.remove(effect);
+        if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
+            status = ImmVibeStopPlayingEffect(handleForDevice(effect->device()), effectHandle);
+            effectHandles.remove(effect);
+        }
         break;
     case QAbstractAnimation::Paused:
         Q_ASSERT(VIBE_IS_VALID_EFFECT_HANDLE(effectHandle));
@@ -286,4 +294,103 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackE
     default:
         return QAbstractAnimation::Stopped;
     }
+}
+
+void QFeedbackImmersion::setLoaded(const QFileFeedbackEffect *effect, bool load)
+{
+    const QFileInfo info = effect->file();
+
+    FileContent &fc = fileData[info];
+    if (load) {
+        if (fc.refCount == 0) {
+            //we need to load the file
+            QFile file(info.absoluteFilePath());
+            if (file.open(QIODevice::ReadOnly)) {
+                fc.ba = file.readAll();
+            }
+        }
+
+        fc.refCount++;
+    } else {
+        //unload
+        fc.refCount--;
+        if (fc.refCount == 0)
+            fileData.remove(info);
+    }
+
+}
+
+QFileFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFileFeedbackEffect *effect)
+{
+    VibeStatus status = VIBE_S_SUCCESS;
+    VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
+
+    VibeInt32 dev = handleForDevice(0); //we always use the default (first) device
+
+    switch (effect->state())
+    {
+    case QAbstractAnimation::Stopped:
+        if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
+            status = ImmVibeStopPlayingEffect(dev, effectHandle);
+            effectHandles.remove(effect);
+        }
+        break;
+    case QAbstractAnimation::Paused:
+        Q_ASSERT(VIBE_IS_VALID_EFFECT_HANDLE(effectHandle));
+        status = ImmVibePausePlayingEffect(dev, effectHandle);
+        break;
+    case QAbstractAnimation::Running:
+        //if the effect handle exists, the feedback must be paused 
+        if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
+            status = ImmVibeResumePausedEffect(dev, effectHandle);
+        } else {
+            //we need to start the effect and create the handle
+            Q_ASSERT(fileData.contains(effect->file()));
+            status = ImmVibePlayIVTEffect(dev, fileData[effect->file()].constData(), 0, &effectHandle);
+            if (VIBE_SUCCEEDED(status))
+                effectHandles.insert(effect, effectHandle);
+        }
+        break;
+    }
+
+    if (VIBE_FAILED(status))
+        return QFileFeedbackEffect::UnknownError;
+
+    return QFileFeedbackEffect::NoError;
+}
+
+QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFileFeedbackEffect *effect)
+{
+    VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
+    if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
+        return QAbstractAnimation::Stopped; // the effect is simply not running
+
+    VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
+    ImmVibeGetEffectState(handleForDevice(0), effectHandle, &effectState);
+
+    //here we detect changes in the state of the effect
+    switch(effectState)
+    {
+    case VIBE_EFFECT_STATE_PAUSED:
+        return QAbstractAnimation::Paused;
+    case VIBE_EFFECT_STATE_PLAYING:
+        return QAbstractAnimation::Running;
+    case VIBE_EFFECT_STATE_NOT_PLAYING:
+    default:
+        return QAbstractAnimation::Stopped;
+    }
+}
+
+int QFeedbackImmersion::effectDuration(const QFileFeedbackEffect *effect)
+{
+    VibeInt32 ret = 0;
+    if (fileData.contains(effect->file()))
+        ImmVibeGetIVTEffectDuration(fileData[effect->file()].constData(), 0, &ret);
+
+    return ret;
+}
+
+QStringList QFeedbackImmersion::supportedFileSuffixes()
+{
+    return QStringList() << QLatin1String("ivt");
 }

@@ -44,6 +44,7 @@
 #include "qfeedbackplugin.h"
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QDebug>
 
 
 QTM_BEGIN_NAMESPACE
@@ -272,7 +273,7 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
 */
 void QFeedbackEffect::playThemeEffect(InstantEffect effect)
 {
-    if (QThemedFeedbackInterface *iface = QThemedFeedbackInterface::instance())
+    if (QThemeFeedbackInterface *iface = QThemeFeedbackInterface::instance())
         iface->play(effect);
     else
         qWarning("QFeedbackEffect::playThemeEffect: playing themed effects not supported");
@@ -280,7 +281,105 @@ void QFeedbackEffect::playThemeEffect(InstantEffect effect)
 
 bool QFeedbackEffect::supportsThemeEffect()
 {
-    return QThemedFeedbackInterface::instance() != 0;
+    return QThemeFeedbackInterface::instance() != 0;
+}
+
+
+QFileFeedbackEffect::QFileFeedbackEffect(QObject *parent) : QAbstractAnimation(*new QFileFeedbackEffectPrivate, parent)
+{
+}
+
+QFileFeedbackEffect::~QFileFeedbackEffect()
+{
+    setLoaded(false); //ensures we unload the file and frees resources
+}
+
+int QFileFeedbackEffect::duration() const
+{
+    if (QFileFeedbackInterface *iface = QFileFeedbackInterface::instance())
+        return iface->effectDuration(this);
+    else
+        return 0; //there is no backend available
+}
+
+QFileInfo QFileFeedbackEffect::file() const
+{
+    return d_func()->info;
+}
+void QFileFeedbackEffect::setFile(const QFileInfo &info)
+{
+    if (state() != QAbstractAnimation::Stopped) {
+        qWarning("QFileFeedbackEffect::setFile: can't set the file while the feedback is running");
+        return;
+    }
+    setLoaded(false);
+    d_func()->info = info;
+}
+
+bool QFileFeedbackEffect::loaded() const
+{
+    return d_func()->loaded;
+}
+
+void QFileFeedbackEffect::setLoaded(bool load)
+{
+    Q_D(QFileFeedbackEffect);
+    if (d->loaded == load)
+        return;
+
+    if (state() != QAbstractAnimation::Stopped) {
+        qWarning() << "QFileFeedbackEffect::setLoaded: can't load /unload a file while the effect is not stopped";
+        return;
+    }
+
+    QFileFeedbackInterface *iface = QFileFeedbackInterface::instance();
+    if (!iface) {
+        qWarning() << "QFileFeedbackEffect::setLoaded: no backend supports loading/unloading of files";
+        return;
+    }
+
+    if (!d->info.isReadable()) {
+        qWarning() << "QFileFeedbackEffect::setLoaded: file" << d->info.absoluteFilePath() << "is not readable";
+        return;
+    }
+
+    iface->setLoaded(this, load);
+}
+
+QStringList QFileFeedbackEffect::supportedFileSuffixes()
+{
+    if (QFileFeedbackInterface *iface = QFileFeedbackInterface::instance())
+        return iface->supportedFileSuffixes();
+
+    return QStringList();
+}
+
+void QFileFeedbackEffect::updateCurrentTime(int /*currentTime*/)
+{
+    switch(QFileFeedbackInterface::instance()->actualEffectState(this))
+    {
+    case QAbstractAnimation::Running:
+        start();
+        break;
+    case QAbstractAnimation::Paused:
+        pause();
+        break;
+    case QAbstractAnimation::Stopped:
+        stop();
+        break;
+    }
+}
+
+void QFileFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+{
+    QFileFeedbackInterface *iface = QFileFeedbackInterface::instance();
+    if (!iface)
+        qWarning("QFileFeedbackEffect::updateState: no backend supports loading/unloading of files");
+
+    ErrorType e = iface->updateEffectState(this);
+    QAbstractAnimation::updateState(newState, oldState);
+    if (e != NoError)
+        emit error(e);
 }
 
 #include "moc_qfeedbackeffect.cpp"

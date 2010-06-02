@@ -73,12 +73,20 @@ private Q_SLOTS:
     void periodChanged(int value);
     void periodToggled(bool on);
 
+    //High-level API
     void instantPlayClicked();
+
+    //File API
+    void browseClicked();
+    void filePlayPauseClicked();
+    void fileStopClicked();
+    void fileEffectStateChanged(QAbstractAnimation::State newState);
 
 private:
     QFeedbackDevice currentDevice() const;
     Ui_Dialog ui;
     QFeedbackEffect effect;
+    QFileFeedbackEffect fileEffect;
 };
 
 #endif

@@ -58,11 +58,8 @@
 //
 //
 
-class CHWRMVibra;
 
 QTM_BEGIN_NAMESPACE
-
-class QTouchFeedback;
 
 class QFeedbackEffectPrivate : public QAbstractAnimationPrivate
 {
@@ -83,11 +80,18 @@ public:
     qreal fadeIntensity;
     int period;
     QFeedbackDevice device;
-    
-   Q_DECLARE_PUBLIC(QFeedbackEffect)
 };
 
+class QFileFeedbackEffectPrivate : public QAbstractAnimationPrivate
+{
+public:
+    QFileFeedbackEffectPrivate() : loaded(false)
+    {
+    }
 
+    QFileInfo info;
+    bool loaded;
+};
 
 QTM_END_NAMESPACE
 

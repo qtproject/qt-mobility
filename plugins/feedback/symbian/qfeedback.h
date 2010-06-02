@@ -56,11 +56,11 @@ QTM_USE_NAMESPACE
 
 class QTouchFeedback;
 
-class QFeedbackSymbian : public QObject, public QFeedbackInterface, public QThemedFeedbackInterface
+class QFeedbackSymbian : public QObject, public QFeedbackInterface, public QThemeFeedbackInterface
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QFeedbackInterface)
-    Q_INTERFACES(QtMobility::QThemedFeedbackInterface)
+    Q_INTERFACES(QtMobility::QThemeFeedbackInterface)
 public:
     QFeedbackSymbian();
     virtual ~QFeedbackSymbian();

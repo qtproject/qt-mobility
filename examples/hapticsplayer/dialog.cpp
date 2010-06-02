@@ -43,6 +43,8 @@
 
 #include <QtCore/qmetaobject.h>
 
+#include <QtGui/QFileDialog>
+
 static const char ENUM_INSTANT_EFFECT[] = "InstantEffect";
 static const char ENUM_DEVICE_TYPE[] = "Type";
 static const char ENUM_ANIMATION_STATE[] = "State";
@@ -71,6 +73,12 @@ Dialog::Dialog()
 
     connect(ui.instantPlay, SIGNAL(clicked()), SLOT(instantPlayClicked()));
 
+    //file API
+    connect(ui.browse, SIGNAL(clicked()), SLOT(browseClicked()));
+    connect(ui.filePlayPause, SIGNAL(clicked()), SLOT(filePlayPauseClicked()));
+    connect(ui.fileStop, SIGNAL(clicked()), SLOT(fileStopClicked()));
+    connect(&fileEffect, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), SLOT(fileEffectStateChanged(QAbstractAnimation::State)));
+
     foreach(const QFeedbackDevice &dev, QFeedbackDevice::devices()) {
         ui.devices->addItem(dev.name());
     }
@@ -91,8 +99,10 @@ Dialog::Dialog()
     attackIntensityChanged(ui.attackIntensity->value());
     fadeTimeChanged(ui.fadeTime->value());
     fadeIntensityChanged(ui.fadeIntensity->value());
+    fileEffectStateChanged(fileEffect.state());
 
     ui.tabWidget->setTabEnabled(1, QFeedbackEffect::supportsThemeEffect());
+    ui.tabWidget->setTabEnabled(2, !QFileFeedbackEffect::supportedFileSuffixes().isEmpty());
 }
 
 QFeedbackDevice Dialog::currentDevice() const
@@ -196,5 +206,39 @@ void Dialog::instantPlayClicked()
     QFeedbackEffect::playThemeEffect(QFeedbackEffect::InstantEffect(me.keyToValue(ui.instantEffect->currentText().toLatin1())));
 }
 
+void Dialog::browseClicked()
+{
+    fileEffect.stop();
+    QString filename = QFileDialog::getOpenFileName(this, tr("feedback file"));
+    QFileInfo info(filename);
+    bool ok = info.isReadable();
+    if (ok) {
+        ui.filename->setText(QDir::toNativeSeparators(filename));
+        fileEffect.setFile(filename);
+        fileEffect.setLoaded(true);
+    }
+    ui.filePlayPause->setEnabled(ok);
+    ui.fileStop->setEnabled(false);
+}
+
+void Dialog::filePlayPauseClicked()
+{
+    if (fileEffect.state() == QAbstractAnimation::Running)
+        fileEffect.pause();
+    else
+        fileEffect.start();
+}
+
+void Dialog::fileStopClicked()
+{
+    fileEffect.stop();
+}
+
+void Dialog::fileEffectStateChanged(QAbstractAnimation::State newState)
+{
+    const QMetaObject *mo = fileEffect.metaObject();
+    ui.fileEffectState->setText(mo->enumerator(mo->indexOfEnumerator(ENUM_ANIMATION_STATE)).key(newState));
+    ui.fileStop->setEnabled(newState != QAbstractAnimation::Stopped);
+}
 
 #include "moc_dialog.cpp"

@@ -57,10 +57,14 @@
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QFeedbackImmersion : public QObject, public QFeedbackInterface
+inline uint qHash(const QFileInfo &info)
+{ return qHash(info.absoluteFilePath()); }
+
+class QFeedbackImmersion : public QObject, public QFeedbackInterface, public QFileFeedbackInterface
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QFeedbackInterface)
+    Q_INTERFACES(QtMobility::QFileFeedbackInterface)
 public:
     QFeedbackImmersion();
     virtual ~QFeedbackImmersion();
@@ -76,20 +80,37 @@ public:
     virtual bool isEnabled(const QFeedbackDevice &);
     virtual void setEnabled(const QFeedbackDevice &, bool);
 
-    VibeInt32 handleForDevice(const QFeedbackDevice &device);
-
     virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty);
     virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *);
     virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
 
+    //for loading files
+    virtual void setLoaded(const QFileFeedbackEffect*, bool);
+    virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *);
+    virtual int effectDuration(const QFileFeedbackEffect *);
+    virtual QStringList supportedFileSuffixes();
+
 private:
+    VibeInt32 handleForDevice(const QFeedbackDevice &device);
+    VibeInt32 handleForDevice(int devId);
     static QFeedbackDevice::Type convert(VibeInt32 t);
     static VibeInt32 convertedDuration(int duration);
 
     QMutex mutex;
     int defaultDevices[DEVICE_COUNT];
     QVector<VibeInt32> deviceHandles;
-    QHash<const QFeedbackEffect*, VibeInt32> effectHandles;
+    QHash<const QAbstractAnimation*, VibeInt32> effectHandles;
+
+    struct FileContent {
+        FileContent() : refCount(0) { }
+        FileContent(const QByteArray &arr) : ba(arr), refCount(1) { }
+        const VibeUInt8 *constData() const {return reinterpret_cast<const VibeUInt8 *>(ba.constData()); }
+
+        QByteArray ba;
+        int refCount;
+    };
+    QHash<const QFileInfo, FileContent> fileData;
 };
 
 

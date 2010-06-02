@@ -44,6 +44,8 @@
 
 #include <qmobilityglobal.h>
 #include <QtCore/QAbstractAnimation>
+#include <QtCore/QFileInfo>
+#include <QtCore/QStringList>
 
 
 QT_BEGIN_HEADER
@@ -52,6 +54,7 @@ QTM_BEGIN_NAMESPACE
 
 class QFeedbackDevice;
 class QFeedbackEffectPrivate;
+class QFileFeedbackEffectPrivate;
 
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
@@ -144,6 +147,46 @@ protected:
 
 private:
     Q_DECLARE_PRIVATE(QFeedbackEffect)
+};
+
+class Q_FEEDBACK_EXPORT QFileFeedbackEffect : public QAbstractAnimation
+{
+    Q_OBJECT
+    Q_PROPERTY(bool loaded READ loaded WRITE setLoaded)
+    Q_PROPERTY(QFileInfo file READ file WRITE setFile)
+
+public:
+    enum ErrorType {
+        //to be completed
+        NoError,
+        UnknownError,
+        DeviceBusy
+    };
+
+    QFileFeedbackEffect(QObject *parent = 0);
+    ~QFileFeedbackEffect();
+
+    int duration() const;
+
+    bool loaded() const;
+    void setLoaded(bool);
+
+    QFileInfo file() const;
+    void setFile(const QFileInfo &);
+
+    static QStringList supportedFileSuffixes();
+
+signals:
+    void error(ErrorType); //the feedback could not be played
+
+protected:
+    //virtual methods from QAbstractAnimation
+    void updateCurrentTime(int currentTime);
+    void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
+
+
+private:
+    Q_DECLARE_PRIVATE(QFileFeedbackEffect);
 };
 
 QTM_END_NAMESPACE
