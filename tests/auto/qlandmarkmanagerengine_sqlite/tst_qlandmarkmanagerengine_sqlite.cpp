@@ -1573,6 +1573,253 @@ private slots:
         QCOMPARE(testSet5, inBoxSet5);
     }
 
+    void filterLandmarksBoxAsync() {
+        QList<QGeoCoordinate> outBox;
+
+        QList<QGeoCoordinate> inBox1;
+
+        inBox1 << QGeoCoordinate(-5.0, -5.0);
+        inBox1 << QGeoCoordinate(-5.0, 0.0);
+        inBox1 << QGeoCoordinate(-5.0, 5.0);
+        inBox1 << QGeoCoordinate(0.0, -5.0);
+        inBox1 << QGeoCoordinate(0.0, 0.0);
+        inBox1 << QGeoCoordinate(0.0, 5.0);
+        inBox1 << QGeoCoordinate(5.0, -5.0);
+        inBox1 << QGeoCoordinate(5.0, 0.0);
+        inBox1 << QGeoCoordinate(5.0, 5.0);
+
+        outBox << QGeoCoordinate(-5.0, -6.0);
+        outBox << QGeoCoordinate(5.0, -6.0);
+        outBox << QGeoCoordinate(-6.0, -5.0);
+        outBox << QGeoCoordinate(6.0, -5.0);
+        outBox << QGeoCoordinate(-6.0, 5.0);
+        outBox << QGeoCoordinate(6.0, 5.0);
+        outBox << QGeoCoordinate(-5.0, 6.0);
+        outBox << QGeoCoordinate(5.0, 6.0);
+
+        QList<QGeoCoordinate> inBox2;
+
+        inBox2 << QGeoCoordinate(-5.0, 10.0);
+        inBox2 << QGeoCoordinate(-5.0, 15.0);
+        inBox2 << QGeoCoordinate(-5.0, 20.0);
+        inBox2 << QGeoCoordinate(0.0, 10.0);
+        inBox2 << QGeoCoordinate(0.0, 15.0);
+        inBox2 << QGeoCoordinate(0.0, 20.0);
+        inBox2 << QGeoCoordinate(5.0, 10.0);
+        inBox2 << QGeoCoordinate(5.0, 15.0);
+        inBox2 << QGeoCoordinate(5.0, 20.0);
+
+        outBox << QGeoCoordinate(-5.0, 9.0);
+        outBox << QGeoCoordinate(5.0,  9.0);
+        outBox << QGeoCoordinate(-6.0, 10.0);
+        outBox << QGeoCoordinate(6.0,  10.0);
+        outBox << QGeoCoordinate(-6.0, 20.0);
+        outBox << QGeoCoordinate(6.0, 20.0);
+        outBox << QGeoCoordinate(-5.0, 21.0);
+        outBox << QGeoCoordinate(5.0, 21.0);
+
+        QList<QGeoCoordinate> inBox3;
+
+        inBox3 << QGeoCoordinate(10.0, -5.0);
+        inBox3 << QGeoCoordinate(10.0, 0.0);
+        inBox3 << QGeoCoordinate(10.0, 5.0);
+        inBox3 << QGeoCoordinate(15.0, -5.0);
+        inBox3 << QGeoCoordinate(15.0, 0.0);
+        inBox3 << QGeoCoordinate(15.0, 5.0);
+        inBox3 << QGeoCoordinate(20.0, -5.0);
+        inBox3 << QGeoCoordinate(20.0, 0.0);
+        inBox3 << QGeoCoordinate(20.0, 5.0);
+
+        outBox << QGeoCoordinate(10.0, -6.0);
+        outBox << QGeoCoordinate(20.0, -6.0);
+        outBox << QGeoCoordinate(9.0, -5.0);
+        outBox << QGeoCoordinate(21.0, -5.0);
+        outBox << QGeoCoordinate(9.0, 5.0);
+        outBox << QGeoCoordinate(21.0, 5.0);
+        outBox << QGeoCoordinate(10.0, 6.0);
+        outBox << QGeoCoordinate(20.0, 6.0);
+
+        QList<QGeoCoordinate> inBox4;
+
+        inBox4 << QGeoCoordinate(10.0, 10.0);
+        inBox4 << QGeoCoordinate(10.0, 15.0);
+        inBox4 << QGeoCoordinate(10.0, 20.0);
+        inBox4 << QGeoCoordinate(15.0, 10.0);
+        inBox4 << QGeoCoordinate(15.0, 15.0);
+        inBox4 << QGeoCoordinate(15.0, 20.0);
+        inBox4 << QGeoCoordinate(20.0, 10.0);
+        inBox4 << QGeoCoordinate(20.0, 15.0);
+        inBox4 << QGeoCoordinate(20.0, 20.0);
+
+        outBox << QGeoCoordinate(10.0, 9.0);
+        outBox << QGeoCoordinate(20.0, 9.0);
+        outBox << QGeoCoordinate(9.0, 10.0);
+        outBox << QGeoCoordinate(21.0, 10.0);
+        outBox << QGeoCoordinate(9.0, 20.0);
+        outBox << QGeoCoordinate(21.0, 20.0);
+        outBox << QGeoCoordinate(10.0, 21.0);
+        outBox << QGeoCoordinate(20.0, 21.0);
+
+        QList<QGeoCoordinate> inBox5;
+
+        inBox5 << QGeoCoordinate(-5.0, 175.0);
+        inBox5 << QGeoCoordinate(-5.0, 180.0);
+        inBox5 << QGeoCoordinate(-5.0, -175.0);
+        inBox5 << QGeoCoordinate(0.0, 175.0);
+        inBox5 << QGeoCoordinate(0.0, 180.0);
+        inBox5 << QGeoCoordinate(0.0, -175.0);
+        inBox5 << QGeoCoordinate(5.0, 175.0);
+        inBox5 << QGeoCoordinate(5.0, 180.0);
+        inBox5 << QGeoCoordinate(5.0, -175.0);
+
+        outBox << QGeoCoordinate(-6.0, 175.0);
+        outBox << QGeoCoordinate(-6.0, -175.0);
+        outBox << QGeoCoordinate(-5.0, 174.0);
+        outBox << QGeoCoordinate(-5.0, -174.0);
+        outBox << QGeoCoordinate(5.0, 174.0);
+        outBox << QGeoCoordinate(5.0, -174.0);
+        outBox << QGeoCoordinate(6.0, 175.0);
+        outBox << QGeoCoordinate(6.0, -175.0);
+
+        QList<QGeoCoordinate> coords = outBox;
+        coords.append(inBox1);
+        coords.append(inBox2);
+        coords.append(inBox3);
+        coords.append(inBox4);
+        coords.append(inBox5);
+
+        for (int i = 0; i < coords.size(); ++i) {
+            QLandmark lm;
+            lm.setCoordinate(coords.at(i));
+            QVERIFY(m_manager->saveLandmark(&lm));
+        }
+
+        QLandmarkBoxFilter filter1(QGeoCoordinate(5.0, -5.0), QGeoCoordinate(-5.0, 5.0));
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        fetchRequest.setFilter(filter1);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        QCOMPARE(fetchRequest.state(), QLandmarkAbstractRequest::InactiveState);
+        fetchRequest.start();
+
+        QTest::qWait(500);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.state(), QLandmarkAbstractRequest::FinishedState);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+        QList<QLandmark> lms1 = fetchRequest.landmarks();
+
+        QCOMPARE(lms1.size(), inBox1.size());
+
+        QSet<QString> testSet1;
+        for (int i = 0; i < lms1.size(); ++i)
+            testSet1.insert(lms1.at(i).coordinate().toString());
+
+        QSet<QString> inBoxSet1;
+        for (int i = 0; i < inBox1.size(); ++i)
+            inBoxSet1.insert(inBox1.at(i).toString());
+
+        QCOMPARE(testSet1, inBoxSet1);
+
+        QLandmarkBoxFilter filter2(QGeoCoordinate(5.0, 10.0), QGeoCoordinate(-5.0, 20.0));
+        fetchRequest.setFilter(filter2);
+        fetchRequest.start();
+
+        QTest::qWait(500);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.state(), QLandmarkAbstractRequest::FinishedState);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+
+        QList<QLandmark> lms2 = fetchRequest.landmarks();
+
+        QCOMPARE(lms2.size(), inBox2.size());
+
+        QSet<QString> testSet2;
+        for (int i = 0; i < lms2.size(); ++i)
+            testSet2.insert(lms2.at(i).coordinate().toString());
+
+        QSet<QString> inBoxSet2;
+        for (int i = 0; i < inBox2.size(); ++i)
+            inBoxSet2.insert(inBox2.at(i).toString());
+
+        QCOMPARE(testSet2, inBoxSet2);
+
+        QLandmarkBoxFilter filter3(QGeoCoordinate(20.0, -5.0), QGeoCoordinate(10.0, 5.0));
+        fetchRequest.setFilter(filter3);
+        fetchRequest.start();
+
+        QTest::qWait(500);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.state(), QLandmarkAbstractRequest::FinishedState);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+
+        QList<QLandmark> lms3 = fetchRequest.landmarks();
+
+        QCOMPARE(lms3.size(), inBox3.size());
+
+        QSet<QString> testSet3;
+        for (int i = 0; i < lms3.size(); ++i)
+            testSet3.insert(lms3.at(i).coordinate().toString());
+
+        QSet<QString> inBoxSet3;
+        for (int i = 0; i < inBox3.size(); ++i)
+            inBoxSet3.insert(inBox3.at(i).toString());
+
+        QCOMPARE(testSet3, inBoxSet3);
+
+        QLandmarkBoxFilter filter4(QGeoCoordinate(20.0, 10.0), QGeoCoordinate(10.0, 20.0));
+        fetchRequest.setFilter(filter4);
+        fetchRequest.start();
+
+        QTest::qWait(500);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.state(), QLandmarkAbstractRequest::FinishedState);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+
+        QList<QLandmark> lms4 = fetchRequest.landmarks();
+        QCOMPARE(lms4.size(), inBox4.size());
+
+        QSet<QString> testSet4;
+        for (int i = 0; i < lms4.size(); ++i)
+            testSet4.insert(lms4.at(i).coordinate().toString());
+
+        QSet<QString> inBoxSet4;
+        for (int i = 0; i < inBox4.size(); ++i)
+            inBoxSet4.insert(inBox4.at(i).toString());
+
+        QCOMPARE(testSet4, inBoxSet4);
+
+        QLandmarkBoxFilter filter5(QGeoCoordinate(5.0, 175.0), QGeoCoordinate(-5.0, -175.0));
+        fetchRequest.setFilter(filter5);
+        fetchRequest.start();
+
+        QTest::qWait(500);
+        QCOMPARE(spy.count(), 2);
+        spy.clear();
+        QCOMPARE(fetchRequest.state(), QLandmarkAbstractRequest::FinishedState);
+        QCOMPARE(fetchRequest.error(), QLandmarkManager::NoError);
+        QVERIFY(fetchRequest.errorString().isEmpty());
+
+        QList<QLandmark> lms5 = fetchRequest.landmarks();
+        QCOMPARE(lms5.size(), inBox5.size());
+
+        QSet<QString> testSet5;
+        for (int i = 0; i < lms5.size(); ++i)
+            testSet5.insert(lms5.at(i).coordinate().toString());
+
+        QSet<QString> inBoxSet5;
+        for (int i = 0; i < inBox5.size(); ++i)
+            inBoxSet5.insert(inBox5.at(i).toString());
+
+        QCOMPARE(testSet5, inBoxSet5);
+    }
+
     void filterLandmarksIntersection() {
         QLandmarkCategory cat1;
         cat1.setName("CAT1");
