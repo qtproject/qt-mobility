@@ -115,6 +115,8 @@ public:
     QVersitOrganizerImporterPropertyHandler* mPropertyHandler;
     QVersitDefaultResourceHandler* mDefaultResourceHandler;
     QVersitResourceHandler* mResourceHandler;
+    bool mDurationSpecified; // true iff a valid DURATION property has been seen in the current
+                             // document with no subsequent DTEND property
 
 private:
     bool createDisplayLabel(const QVersitProperty& property,

@@ -51,7 +51,8 @@ QTM_USE_NAMESPACE
 QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
     mPropertyHandler(NULL),
     mDefaultResourceHandler(new QVersitDefaultResourceHandler),
-    mResourceHandler(mDefaultResourceHandler)
+    mResourceHandler(mDefaultResourceHandler),
+    mDurationSpecified(false)
 {
 }
 
@@ -157,17 +158,35 @@ bool QVersitOrganizerImporterPrivate::createTimestampModified(
     return true;
 }
 
+/*! Set the startDateTime field of the EventTimeRange detail.  If the end date has been set from a
+ * DURATION, it will be updated.
+ */
 bool QVersitOrganizerImporterPrivate::createStartDateTime(
         const QVersitProperty& property,
         QOrganizerItem* item,
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime datetime = parseDateTime(property.value());
-    if (!datetime.isValid())
+    QDateTime newStart = parseDateTime(property.value());
+    if (!newStart.isValid())
         return false;
     QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
-    etr.setStartDateTime(datetime);
+    if (mDurationSpecified) {
+        // Need to fix up the end date to match the duration of the event
+        QDateTime start = etr.startDateTime();
+        QDateTime end = etr.endDateTime();
+        if (!start.isValid()) {
+            // not having a start date set is treated as a start date of epoch
+            start = QDateTime(QDate(1970, 1, 1));
+        }
+        // newEnd = end + (newStart - start)
+        int durationDays = start.daysTo(newStart);
+        QDateTime newEnd = end.addDays(durationDays);
+        int durationSecs = start.addDays(durationDays).secsTo(newStart);
+        newEnd = newEnd.addSecs(durationSecs);
+        etr.setEndDateTime(newEnd);
+    }
+    etr.setStartDateTime(newStart);
     updatedDetails->append(etr);
     return true;
 }
@@ -178,15 +197,18 @@ bool QVersitOrganizerImporterPrivate::createEndDateTime(
         QList<QOrganizerItemDetail>* updatedDetails) {
     if (property.value().isEmpty())
         return false;
-    QDateTime datetime = parseDateTime(property.value());
-    if (!datetime.isValid())
+    QDateTime newEnd = parseDateTime(property.value());
+    if (!newEnd.isValid())
         return false;
     QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
-    etr.setEndDateTime(datetime);
+    etr.setEndDateTime(newEnd);
     updatedDetails->append(etr);
+    mDurationSpecified = false;
     return true;
 }
 
+/*! Sets the endDateTime field of the EventTimeRange detail using a DURATION property.
+ */
 bool QVersitOrganizerImporterPrivate::createDuration(
         const QVersitProperty& property,
         QOrganizerItem* item,
@@ -198,12 +220,15 @@ bool QVersitOrganizerImporterPrivate::createDuration(
         return false;
     QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
     QDateTime startTime = etr.startDateTime();
-    if (!startTime.isValid()) // TODO allow setting duration before start time
-        return false;
+    if (!startTime.isValid()) {
+        // not having a start date set is treated as a start date of epoch
+        startTime = QDateTime(QDate(1970, 1, 1));
+    }
     etr.setEndDateTime(
             startTime.addDays(7*duration.weeks() + duration.days())
                      .addSecs(3600*duration.hours() + 60*duration.minutes() + duration.seconds()));
     updatedDetails->append(etr);
+    mDurationSpecified = true;
     return true;
 }
 
@@ -218,7 +243,8 @@ QDateTime QVersitOrganizerImporterPrivate::parseDateTime(QString str)
     return dt;
 }
 
-/*! Parse the iCalendar duration string in an RDP fashion with a two symbol lookahead. */
+/*! Parse the iCalendar duration string \a str in an RDP fashion with a two symbol lookahead, and
+ * returns a Duration that represents it. */
 Duration Duration::parseDuration(QString str)
 {
     QString token = nextToken(&str);
@@ -276,6 +302,9 @@ Duration Duration::parseDuration(QString str)
 
 }
 
+/*! Parse a duration string starting from after the "T" character.  Removes parsed part from \a str
+ * and updates \a dur with the findings.
+ */
 void Duration::parseDurationTime(QString* str, Duration* dur)
 {
     QString token = nextToken(str);
@@ -298,6 +327,9 @@ void Duration::parseDurationTime(QString* str, Duration* dur)
     }
 }
 
+/*! Parse a duration string starting from the part describing the number of minutes.  Removes parsed
+ * part from \a str and updates \a dur with the findings.
+ */
 void Duration::parseDurationMinutes(QString* str, Duration* dur)
 {
     QString token = nextToken(str);
@@ -311,11 +343,14 @@ void Duration::parseDurationMinutes(QString* str, Duration* dur)
         return;
     }
     dur->setMinutes(value);
-    
+
     if (!str->isEmpty())
         parseDurationSeconds(str, dur);
 }
 
+/*! Parse a duration string starting from the part describing the number of seconds.  Removes parsed
+ * part from \a str and updates \a dur with the findings.
+ */
 void Duration::parseDurationSeconds(QString* str, Duration* dur)
 {
     QString token = nextToken(str);
@@ -331,6 +366,11 @@ void Duration::parseDurationSeconds(QString* str, Duration* dur)
     dur->setSeconds(value);
 }
 
+/*! Removes and returns a "token" from the start of an iCalendar DURATION string, \a str.  A token
+ * is either a single +, - or upper-case letter, or a string of digits.  If \a str is empty, an
+ * empty string is returned.  If \a str is not empty but starts with an invalid character, a null
+ * string is returned.
+ */
 QString Duration::nextToken(QString* str)
 {
     int len = str->length();
