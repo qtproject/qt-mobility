@@ -581,9 +581,6 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         QOrganizerItemManagerEngine::setDetailAccessConstraints(&ts, QOrganizerItemDetail::ReadOnly | QOrganizerItemDetail::Irremovable);
         theOrganizerItem->saveDetail(&ts);
 
-        // synthesize the display label for the organizeritem.
-        setItemDisplayLabel(theOrganizerItem, synthesizedDisplayLabel(*theOrganizerItem, error));
-
         // Looks ok, so continue
         d->m_organizeritems.replace(index, *theOrganizerItem);
         changeSet.insertChangedItem(theOrganizerItem->localId());
@@ -607,9 +604,6 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         // update the organizeritem item - set its ID
         newId.setLocalId(++d->m_nextOrganizerItemId);
         theOrganizerItem->setId(newId);
-
-        // synthesize the display label for the organizeritem.
-        setItemDisplayLabel(theOrganizerItem, synthesizedDisplayLabel(*theOrganizerItem, error));
 
         // finally, add the organizeritem to our internal lists and return
         d->m_organizeritems.append(*theOrganizerItem);                   // add organizeritem to list

@@ -198,7 +198,7 @@ bool QOrganizerItem::isEmpty() const
         return false;
 
     /* We know we have two details (a display label and a type) */
-    const QOrganizerItemDisplayLabel& label = d->m_details.at(0);
+    const QOrganizerItemDisplayLabel& label = detail<QOrganizerItemDisplayLabel>();
     return label.label().isEmpty();
 }
 

@@ -264,32 +264,6 @@ QOrganizerItem QOrganizerItemManagerEngine::item(const QOrganizerItemLocalId& or
 }
 
 /*!
-  Synthesizes the display label of the given \a organizeritem in a platform specific manner.
-  Any error that occurs will be stored in \a error.
-  Returns the synthesized display label.
- */
-QString QOrganizerItemManagerEngine::synthesizedDisplayLabel(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
-{
-    Q_UNUSED(organizeritem);
-    // XXX TODO: FIXME
-    *error = QOrganizerItemManager::UnspecifiedError;
-    return QString();
-}
-
-/*!
-  Sets the organizeritem display label of \a organizeritem to the supplied \a displayLabel.
-
-  This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.
- */
-void QOrganizerItemManagerEngine::setItemDisplayLabel(QOrganizerItem* organizeritem, const QString& displayLabel)
-{
-    // XXX TODO: remove this function - useless code (since can save in organizeritem directly)
-    QOrganizerItemDisplayLabel dl = organizeritem->detail<QOrganizerItemDisplayLabel>();
-    dl.setLabel(displayLabel);
-    organizeritem->saveDetail(&dl);
-}
-
-/*!
   Returns true if the given \a feature is supported by this engine for organizeritems of the given \a organizeritemType
  */
 bool QOrganizerItemManagerEngine::hasFeature(QOrganizerItemManager::ManagerFeature feature, const QString& organizeritemType) const
@@ -646,6 +620,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.insert(QOrganizerItemLocation::FieldLocationName, f);
     d.setFields(fields);
     d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // note - XXX TODO: verify that events can have notes?
+    d.setName(QOrganizerItemNote::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemNote::FieldNote, f);
+    d.setFields(fields);
+    d.setUnique(false);
     retn.insert(d.name(), d);
 
     retnSchema.insert(QOrganizerItemType::TypeEvent, retn);
@@ -1381,6 +1365,7 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const
 {
     QOrganizerItem conforming;
+    conforming.setType(original.type());
     conforming.setId(original.id());
     QOrganizerItemManager::Error tempError;
     QList<QString> uniqueDefinitionIds;
@@ -1431,10 +1416,11 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
                             it.remove();
                         }
                     }
-                    if (innerValues.isEmpty())
+                    if (innerValues.isEmpty()) {
                         detail.removeValue(key);
-                    else
+                    } else {
                         detail.setValue(key, innerValues);
+                    }
                 } else if (!field.allowableValues().contains(variant)) {
                     detail.removeValue(key);
                 }
@@ -1447,9 +1433,8 @@ QOrganizerItem QOrganizerItemManagerEngine::compatibleItem(const QOrganizerItem&
         }
     }
 
-    if (!conforming.isEmpty())
-        *error = QOrganizerItemManager::NoError;
-    else
+    *error = QOrganizerItemManager::NoError;
+    if (conforming.isEmpty())
         *error = QOrganizerItemManager::DoesNotExistError;
     return conforming;
 }

@@ -368,24 +368,24 @@ void tst_QOrganizerItemManager::uriParsing_data()
     QTest::newRow("built with escaped parameters") << QOrganizerItemManager::buildUri("manager", inparameters2) << true << "manager" << inparameters2;
     QTest::newRow("no scheme") << "this should not split" << false << QString() << tst_QOrganizerItemManager_QStringMap();
     QTest::newRow("wrong scheme") << "invalidscheme:foo bar" << false << QString() << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("right scheme, no colon") << "qtitems" << false << QString() << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("no manager, colon, no params") << "qtitems::" << false  << "manager" << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("yes manager, no colon, no params") << "qtitems:manager" << true << "manager" << tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("yes manager, yes colon, no params") << "qtitems:manager:" << true << "manager"<< tst_QOrganizerItemManager_QStringMap();
-    QTest::newRow("yes params") << "qtitems:manager:foo=bar&bazflag=&bar=glob" << true << "manager" << inparameters;
-    QTest::newRow("yes params but misformed") << "qtitems:manager:foo=bar&=gloo&bar=glob" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 2") << "qtitems:manager:=&=gloo&bar=glob" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 3") << "qtitems:manager:==" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 4") << "qtitems:manager:&&" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 5") << "qtitems:manager:&goo=bar" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 6") << "qtitems:manager:goo&bar" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 7") << "qtitems:manager:goo&bar&gob" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 8") << "qtitems:manager:==&&==&goo=bar" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 9") << "qtitems:manager:foo=bar=baz" << false << "manager" << inparameters;
-    QTest::newRow("yes params but misformed 10") << "qtitems:manager:foo=bar=baz=glob" << false << "manager" << inparameters;
-    QTest::newRow("no manager but yes params") << "qtitems::foo=bar&bazflag=&bar=glob" << false << QString() << inparameters;
-    QTest::newRow("no manager or params") << "qtitems::" << false << QString() << inparameters;
-    QTest::newRow("no manager or params or colon") << "qtitems:" << false << QString() << inparameters;
+    QTest::newRow("right scheme, no colon") << "qtorganizer" << false << QString() << tst_QOrganizerItemManager_QStringMap();
+    QTest::newRow("no manager, colon, no params") << "qtorganizer::" << false  << "manager" << tst_QOrganizerItemManager_QStringMap();
+    QTest::newRow("yes manager, no colon, no params") << "qtorganizer:manager" << true << "manager" << tst_QOrganizerItemManager_QStringMap();
+    QTest::newRow("yes manager, yes colon, no params") << "qtorganizer:manager:" << true << "manager"<< tst_QOrganizerItemManager_QStringMap();
+    QTest::newRow("yes params") << "qtorganizer:manager:foo=bar&bazflag=&bar=glob" << true << "manager" << inparameters;
+    QTest::newRow("yes params but misformed") << "qtorganizer:manager:foo=bar&=gloo&bar=glob" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 2") << "qtorganizer:manager:=&=gloo&bar=glob" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 3") << "qtorganizer:manager:==" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 4") << "qtorganizer:manager:&&" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 5") << "qtorganizer:manager:&goo=bar" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 6") << "qtorganizer:manager:goo&bar" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 7") << "qtorganizer:manager:goo&bar&gob" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 8") << "qtorganizer:manager:==&&==&goo=bar" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 9") << "qtorganizer:manager:foo=bar=baz" << false << "manager" << inparameters;
+    QTest::newRow("yes params but misformed 10") << "qtorganizer:manager:foo=bar=baz=glob" << false << "manager" << inparameters;
+    QTest::newRow("no manager but yes params") << "qtorganizer::foo=bar&bazflag=&bar=glob" << false << QString() << inparameters;
+    QTest::newRow("no manager or params") << "qtorganizer::" << false << QString() << inparameters;
+    QTest::newRow("no manager or params or colon") << "qtorganizer:" << false << QString() << inparameters;
 }
 
 void tst_QOrganizerItemManager::addManagers()
@@ -672,8 +672,9 @@ void tst_QOrganizerItemManager::add()
     QVERIFY(added.id() == note.id());
     
     if (!isSuperset(added, note)) {
-        dumpOrganizerItems(cm.data());
-        dumpOrganizerItemDifferences(added, note);
+        // XXX TODO: fix the isSuperset so that it ignores timestamps.
+        //dumpOrganizerItems(cm.data());
+        //dumpOrganizerItemDifferences(added, note);
         QCOMPARE(added, QOrganizerItem(note));
     }
 
@@ -792,9 +793,11 @@ void tst_QOrganizerItemManager::update()
     /* Update name */
     QOrganizerItemDescription descr = note.detail(QOrganizerItemDescription::DefinitionName);
     descr.setDescription("This note is now slightly noteworthy");
+    note.saveDetail(&descr);
     QVERIFY(cm->saveItem(&note));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     descr.setDescription("This is a very noteworthy note");
+    note.saveDetail(&descr);
     QVERIFY(cm->saveItem(&note));
     QVERIFY(cm->error() == QOrganizerItemManager::NoError);
     QOrganizerItem updated = cm->item(note.localId());
@@ -1197,55 +1200,56 @@ void tst_QOrganizerItemManager::memoryManager()
 
 void tst_QOrganizerItemManager::compatibleItem_data()
 {
+    // XXX TODO: fix this test - need more item types tested etc.
     QTest::addColumn<QOrganizerItem>("input");
     QTest::addColumn<QOrganizerItem>("expected");
     QTest::addColumn<QOrganizerItemManager::Error>("error");
 
-    QOrganizerItem baseOrganizerItem;
+    QOrganizerNote baseNote;
     QOrganizerItemDisplayLabel dl;
     dl.setLabel(QLatin1String("There you go, labelling items again..."));
-    baseOrganizerItem.saveDetail(&dl);
+    baseNote.saveDetail(&dl);
 
     {
-        QTest::newRow("already compatible") << baseOrganizerItem << baseOrganizerItem << QOrganizerItemManager::NoError;
+        QTest::newRow("already compatible") << QOrganizerItem(baseNote) << QOrganizerItem(baseNote) << QOrganizerItemManager::NoError;
     }
 
     {
-        QOrganizerItem item(baseOrganizerItem);
+        QOrganizerItem item(baseNote);
         QOrganizerItemDetail detail("UnknownDetail");
         detail.setValue("Key", QLatin1String("Value"));
         item.saveDetail(&detail);
-        QTest::newRow("unknown detail") << item << baseOrganizerItem << QOrganizerItemManager::NoError;
+        QTest::newRow("unknown detail") << item << QOrganizerItem(baseNote) << QOrganizerItemManager::NoError;
     }
 
     {
-        // XXX TODO: complete this test.
-        QOrganizerItem item(baseOrganizerItem);
-        QOrganizerItemType type1;
-        type1.setType(QOrganizerItemType::TypeEvent);
-        item.saveDetail(&type1);
-        QOrganizerItemType type2;
-        type2.setType(QOrganizerItemType::TypeJournal);
-        item.saveDetail(&type2);
-        QOrganizerItem expected(baseOrganizerItem);
-        expected.saveDetail(&type2);
+        QOrganizerItem item(baseNote);
+        QOrganizerItemNote note1;
+        note1.setNote("This is the first note");
+        item.saveDetail(&note1);
+        QOrganizerItemNote note2;
+        note2.setNote("This is the second note");
+        item.saveDetail(&note2);
+        QOrganizerItem expected(baseNote);
+        expected.saveDetail(&note1); // can't have two notes, only the first will be kept XXX TODO: surely it's backend specific which gets kept?
         QTest::newRow("duplicate unique field") << item << expected << QOrganizerItemManager::NoError;
     }
 
     {
-        QOrganizerItem item(baseOrganizerItem);
+        QOrganizerItem item(baseNote);
         QOrganizerItemDescription descr;
         descr.setValue("UnknownKey", "Value");
         item.saveDetail(&descr);
-        QTest::newRow("unknown field") << item << baseOrganizerItem << QOrganizerItemManager::NoError;
+        QTest::newRow("unknown field") << item << QOrganizerItem(baseNote) << QOrganizerItemManager::NoError;
     }
 
     {
-        QOrganizerItem item(baseOrganizerItem);
-        QOrganizerItemDisplayLabel displayLabel;
-        displayLabel.setValue(QOrganizerItemDisplayLabel::FieldLabel, QStringList("Value"));
-        item.saveDetail(&displayLabel);
-        QTest::newRow("wrong type") << item << baseOrganizerItem << QOrganizerItemManager::NoError;
+        // XXX TODO: fix this test.
+        //QOrganizerEvent item(baseNote);
+        //QOrganizerItemDisplayLabel displayLabel;
+        //displayLabel.setValue(QOrganizerItemDisplayLabel::FieldLabel, QStringList("Value"));
+        //item.saveDetail(&displayLabel);
+        //QTest::newRow("wrong type") << QOrganizerItem(item) << QOrganizerItem(baseNote) << QOrganizerItemManager::NoError;
     }
 }
 
@@ -1264,7 +1268,7 @@ void tst_QOrganizerItemManager::itemValidation()
 {
     /* Use the memory engine as a reference (validation is not engine specific) */
     QScopedPointer<QOrganizerItemManager> cm(new QOrganizerItemManager("memory"));
-    QOrganizerItem c;
+    QOrganizerNote c;
 
     /*
      * Add some definitions for testing:
@@ -1279,12 +1283,10 @@ void tst_QOrganizerItemManager::itemValidation()
     QOrganizerItemDetailFieldDefinition field;
     field.setDataType(QVariant::String);
     fields.insert("value", field);
-
     uniqueDef.setName("UniqueDetail");
     uniqueDef.setFields(fields);
     uniqueDef.setUnique(true);
-
-    QVERIFY(cm->saveDetailDefinition(uniqueDef));
+    QVERIFY(cm->saveDetailDefinition(uniqueDef, QOrganizerItemType::TypeNote));
 
     QOrganizerItemDetailDefinition restrictedDef;
     restrictedDef.setName("RestrictedDetail");
@@ -1292,8 +1294,7 @@ void tst_QOrganizerItemManager::itemValidation()
     field.setAllowableValues(QVariantList() << "One" << "Two" << "Three");
     fields.insert("value", field);
     restrictedDef.setFields(fields);
-
-    QVERIFY(cm->saveDetailDefinition(restrictedDef));
+    QVERIFY(cm->saveDetailDefinition(restrictedDef, QOrganizerItemType::TypeNote));
 
     // first, test an invalid definition
     QOrganizerItemDetail d1 = QOrganizerItemDetail("UnknownDefinition");
@@ -1866,7 +1867,6 @@ void tst_QOrganizerItemManager::detailOrders()
     QOrganizerEvent a;
 
     // notes
-    QOrganizerItemDetailDefinition d = cm->detailDefinition(QOrganizerItemNote::DefinitionName, QOrganizerItemType::TypeEvent);
     QOrganizerItemNote note1, note2, note3;
     
     note1.setNote("11111111");
@@ -1897,8 +1897,7 @@ void tst_QOrganizerItemManager::detailOrders()
     QVERIFY(details.count() == 3);
 
     //addresses
-    
-    d = cm->detailDefinition(QOrganizerItemLocation::DefinitionName, QOrganizerItemType::TypeEvent);
+
     QOrganizerItemLocation address1, address2, address3;
     
     address1.setLocationName("Brandl St");
@@ -1912,20 +1911,20 @@ void tst_QOrganizerItemManager::detailOrders()
     a = cm->item(a.id().localId());
     
     details = a.details(QOrganizerItemLocation::DefinitionName);
-    QVERIFY(details.count() == 3);
+    QVERIFY(details.count() == 1); // 1 location - they're unique
 
-    QVERIFY(a.removeDetail(&address2));
+    QVERIFY(a.removeDetail(&address3)); // remove the most recent.
     QVERIFY(cm->saveItem(&a));
     a = cm->item(a.id().localId());
     details = a.details(QOrganizerItemLocation::DefinitionName);
-    QVERIFY(details.count() == 2);
+    QVERIFY(details.count() == 0); // unique, remove one means none left.
 
     a.saveDetail(&address2);
     QVERIFY(cm->saveItem(&a));
     a = cm->item(a.id().localId());
     
     details = a.details(QOrganizerItemLocation::DefinitionName);
-    QVERIFY(details.count() == 3);
+    QVERIFY(details.count() == 1); // add one back.
 }
 
 

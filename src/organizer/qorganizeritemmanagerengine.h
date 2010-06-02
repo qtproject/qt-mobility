@@ -103,9 +103,6 @@ public:
     /* Return a pruned or modified item which is valid and can be saved in the backend */
     virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const;
 
-    /* Synthesize the display label of a item */
-    virtual QString synthesizedDisplayLabel(const QOrganizerItem& item, QOrganizerItemManager::Error* error) const;
-
     /* Validation for saving */
     virtual bool validateItem(const QOrganizerItem& item, QOrganizerItemManager::Error* error) const;
     virtual bool validateDefinition(const QOrganizerItemDetailDefinition& def, QOrganizerItemManager::Error* error) const;
@@ -152,7 +149,6 @@ public:
 
     // Other protected area update functions
     static void setDetailAccessConstraints(QOrganizerItemDetail* detail, QOrganizerItemDetail::AccessConstraints constraints);
-    static void setItemDisplayLabel(QOrganizerItem* item, const QString& displayLabel);
 
     /* Helper functions */
     static int compareItem(const QOrganizerItem& a, const QOrganizerItem& b, const QList<QOrganizerItemSortOrder>& sortOrders);

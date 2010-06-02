@@ -132,10 +132,6 @@ public:
     /* Return a pruned or modified item which is valid and can be saved in the manager */
     QOrganizerItem compatibleItem(const QOrganizerItem& original); // Preliminary function!
 
-    /* Synthesize the display label of a item */
-    QString synthesizedItemDisplayLabel(const QOrganizerItem& item) const;
-    void synthesizeItemDisplayLabel(QOrganizerItem* item) const;
-
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType = QOrganizerItemType::TypeEvent) const;
     QOrganizerItemDetailDefinition detailDefinition(const QString& definitionName, const QString& itemType = QOrganizerItemType::TypeEvent) const;

@@ -127,7 +127,7 @@ QStringList QOrganizerItemManager::availableManagers()
  */
 bool QOrganizerItemManager::parseUri(const QString& uri, QString* pManagerId, QMap<QString, QString>* pParams)
 {
-    // Format: qtorganizeritems:<managerid>:<key>=<value>&<key>=<value>
+    // Format: qtorganizer:<managerid>:<key>=<value>&<key>=<value>
     // 1) parameters are currently a qstringlist.. should they be a map?
     // 2) is the uri going to be escaped?  my guess would be "probably not"
     // 3) hence, do we assume that the prefix, managerid and storeid cannot contain `:'
@@ -136,7 +136,7 @@ bool QOrganizerItemManager::parseUri(const QString& uri, QString* pManagerId, QM
     QStringList colonSplit = uri.split(QLatin1Char(':'));
     QString prefix = colonSplit.value(0);
 
-    if (prefix != QLatin1String("qtorganizeritems"))
+    if (prefix != QLatin1String("qtorganizer"))
         return false;
 
     QString managerName = colonSplit.value(1);
@@ -183,7 +183,7 @@ bool QOrganizerItemManager::parseUri(const QString& uri, QString* pManagerId, QM
 /*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerName, \a params and an optional \a implementationVersion */
 QString QOrganizerItemManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion)
 {
-    QString ret(QLatin1String("qtorganizeritems:%1:%2"));
+    QString ret(QLatin1String("qtorganizer:%1:%2"));
     // we have to escape each param
     QStringList escapedParams;
     QStringList keys = params.keys();
@@ -543,50 +543,6 @@ QOrganizerItem QOrganizerItemManager::compatibleItem(const QOrganizerItem& origi
     d->m_error = QOrganizerItemManager::NoError;
     return d->m_engine->compatibleItem(original, &d->m_error);
 }
-
-/*!
-  Returns a display label for a \a organizeritem which is synthesized from its details in a manager specific
-  manner.
-
-  If you want to update the display label stored in the organizeritem, use the synthesizeOrganizerItemDisplayLabel()
-  function instead.
-
-  \sa synthesizeItemDisplayLabel()
- */
-QString QOrganizerItemManager::synthesizedItemDisplayLabel(const QOrganizerItem& organizeritem) const
-{
-    d->m_error = QOrganizerItemManager::NoError;
-    return d->m_engine->synthesizedDisplayLabel(organizeritem, &d->m_error);
-}
-
-/*!
- * Updates the display label of the supplied \a organizeritem, according to the formatting rules
- * of this manager.
- *
- * Different managers can format the display label of a organizeritem in different ways -
- * some managers may only consider first or last name, or might put them in different
- * orders.  Others might consider an organization, a nickname, or a freeform label.
- *
- * This function will update the QOrganizerItemDisplayLabel of this organizeritem, and the string
- * returned by QOrganizerItem::displayLabel().
- *
- * If \a organizeritem is null, nothing will happen.
- *
- * See the following example for more information:
- * \snippet doc/src/snippets/qtorganizeritemsdocsample/qtorganizeritemsdocsample.cpp Updating the display label of a organizeritem
- *
- * \sa synthesizedItemDisplayLabel(), QOrganizerItem::displayLabel()
- */
-void QOrganizerItemManager::synthesizeItemDisplayLabel(QOrganizerItem *organizeritem) const
-{
-    if (organizeritem) {
-        d->m_error = QOrganizerItemManager::NoError;
-        QOrganizerItemManagerEngine::setItemDisplayLabel(organizeritem, d->m_engine->synthesizedDisplayLabel(*organizeritem, &d->m_error));
-    } else {
-        d->m_error = QOrganizerItemManager::BadArgumentError;
-    }
-}
-
 
 /*!
   Returns a map of identifier to detail definition for the registered detail definitions which are valid for organizeritems whose type is the given \a organizeritemType

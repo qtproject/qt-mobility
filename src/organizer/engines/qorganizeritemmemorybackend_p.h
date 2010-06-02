@@ -154,12 +154,6 @@ public:
     }
 
     /*! \reimp */
-    virtual QString synthesizedDisplayLabel(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
-    {
-        return QOrganizerItemManagerEngine::synthesizedDisplayLabel(organizeritem, error);
-    }
-
-    /*! \reimp */
     virtual bool validateItem(const QOrganizerItem& organizeritem, QOrganizerItemManager::Error* error) const
     {
         return QOrganizerItemManagerEngine::validateItem(organizeritem, error);
