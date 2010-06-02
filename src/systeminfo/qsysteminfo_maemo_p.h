@@ -195,6 +195,8 @@ private:
     int radioAccessTechnology;
     int iWlanStrengthCheckEnabled;
     QTimer *wlanSignalStrengthTimer;
+
+    QMap<QString,int> csStatusMaemo6;
 };
 
 class QSystemDisplayInfoPrivate : public QSystemDisplayInfoLinuxCommonPrivate
