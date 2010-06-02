@@ -278,7 +278,7 @@ EXPORTS
 	_ZN11QAudioInput5startEv @ 277 NONAME
 	_ZN11QVideoFrame26imageFormatFromPixelFormatENS_11PixelFormatE @ 278 NONAME
 	_ZN11QVideoFrame26pixelFormatFromImageFormatEN6QImage6FormatE @ 279 NONAME
-	_ZN12QAudioOutput5startEv @ 280 NONAME ABSENT
+	_ZN12QAudioOutput5startEv @ 280 NONAME
 	_ZN16QAudioDeviceInfo16availableDevicesEN6QAudio4ModeE @ 281 NONAME
 	_ZN19QVideoSurfaceFormat12setFrameRateEf @ 282 NONAME
 	_ZN19QVideoSurfaceFormat12setFrameSizeERK5QSize @ 283 NONAME
