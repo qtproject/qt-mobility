@@ -95,6 +95,8 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeDisplayLabel(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemEventTimeRange::DefinitionName) {
         encodeTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    } else if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName) {
+        encodeTimestamp(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     }
 
     foreach(const QVersitProperty& property, removedProperties) {
@@ -142,6 +144,29 @@ void QVersitOrganizerExporterPrivate::encodeTimeRange(
     *generatedProperties << property;
     *processedFields << QOrganizerItemEventTimeRange::FieldStartDateTime
                      << QOrganizerItemEventTimeRange::FieldEndDateTime;
+}
+
+void QVersitOrganizerExporterPrivate::encodeTimestamp(
+        const QOrganizerItemDetail& detail,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* removedProperties,
+        QList<QVersitProperty>* generatedProperties,
+        QSet<QString>* processedFields)
+{
+    QOrganizerItemTimestamp timestamp = static_cast<QOrganizerItemTimestamp>(detail);
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("CREATED"), removedProperties);
+    property.setName(QLatin1String("CREATED"));
+    property.setValue(encodeDateTime(timestamp.created().toUTC()));
+    *generatedProperties << property;
+
+    property =
+        VersitUtils::takeProperty(document, QLatin1String("LAST-MODIFIED"), removedProperties);
+    property.setName(QLatin1String("LAST-MODIFIED"));
+    property.setValue(encodeDateTime(timestamp.lastModified().toUTC()));
+    *generatedProperties << property;
+    *processedFields << QOrganizerItemTimestamp::FieldCreationTimestamp
+                     << QOrganizerItemTimestamp::FieldModificationTimestamp;
 }
 
 QString QVersitOrganizerExporterPrivate::encodeDateTime(const QDateTime& dateTime)

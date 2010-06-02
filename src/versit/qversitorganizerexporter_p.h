@@ -68,6 +68,11 @@ public:
                          QList<QVersitProperty>* removedProperties,
                          QList<QVersitProperty>* generatedProperties,
                          QSet<QString>* processedFields);
+    void encodeTimestamp(const QOrganizerItemDetail& detail,
+                         const QVersitDocument& document,
+                         QList<QVersitProperty>* removedProperties,
+                         QList<QVersitProperty>* generatedProperties,
+                         QSet<QString>* processedFields);
 
     QString encodeDateTime(const QDateTime& dateTime);
 

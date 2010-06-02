@@ -83,6 +83,12 @@ private:
     bool createDisplayLabel(const QVersitProperty& property,
                             QOrganizerItem* item,
                             QList<QOrganizerItemDetail>* updatedDetails);
+    bool createTimestampCreated(const QVersitProperty& property,
+                                QOrganizerItem* item,
+                                QList<QOrganizerItemDetail>* updatedDetails);
+    bool createTimestampModified(const QVersitProperty& property,
+                                 QOrganizerItem* item,
+                                 QList<QOrganizerItemDetail>* updatedDetails);
     bool createStartDateTime(const QVersitProperty& property,
                              QOrganizerItem* item,
                              QList<QOrganizerItemDetail>* updatedDetails);

@@ -164,6 +164,23 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         QTest::newRow("multiple dtstart and dtend") << properties
             << (QList<QOrganizerItemDetail>() << etr); // last takes precedence
     }
+
+    {
+        QList<QVersitProperty> properties;
+        QVersitProperty created;
+        created.setName(QLatin1String("CREATED"));
+        created.setValue(QLatin1String("20100102T030405Z"));
+        properties << created;
+        QVersitProperty modified;
+        modified.setName(QLatin1String("LAST-MODIFIED"));
+        modified.setValue(QLatin1String("20100102T030406Z"));
+        properties << modified;
+        QOrganizerItemTimestamp timestamp;
+        timestamp.setCreated(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5), Qt::UTC));
+        timestamp.setLastModified(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 6), Qt::UTC));
+        QTest::newRow("created and last modified") << properties
+            << (QList<QOrganizerItemDetail>() << timestamp);
+    }
 }
 
 QTEST_MAIN(tst_QVersitOrganizerImporter)

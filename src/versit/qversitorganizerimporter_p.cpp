@@ -93,6 +93,10 @@ void QVersitOrganizerImporterPrivate::importProperty(
     bool success = false;
     if (property.name() == QLatin1String("SUMMARY")) {
         success = createDisplayLabel(property, item, &updatedDetails);
+    } else if (property.name() == QLatin1String("CREATED")) {
+        success = createTimestampCreated(property, item, &updatedDetails);
+    } else if (property.name() == QLatin1String("LAST-MODIFIED")) {
+        success = createTimestampModified(property, item, &updatedDetails);
     }
 
     if (document.componentType() == QLatin1String("VEVENT")) {
@@ -118,6 +122,36 @@ bool QVersitOrganizerImporterPrivate::createDisplayLabel(
     QOrganizerItemDisplayLabel displayLabel(item->detail<QOrganizerItemDisplayLabel>());
     displayLabel.setLabel(property.value());
     updatedDetails->append(displayLabel);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createTimestampCreated(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QDateTime datetime = parseDateTime(property.value());
+    if (!datetime.isValid())
+        return false;
+    QOrganizerItemTimestamp timestamp(item->detail<QOrganizerItemTimestamp>());
+    timestamp.setCreated(datetime);
+    updatedDetails->append(timestamp);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createTimestampModified(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QDateTime datetime = parseDateTime(property.value());
+    if (!datetime.isValid())
+        return false;
+    QOrganizerItemTimestamp timestamp(item->detail<QOrganizerItemTimestamp>());
+    timestamp.setLastModified(datetime);
+    updatedDetails->append(timestamp);
     return true;
 }
 

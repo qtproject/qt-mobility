@@ -153,6 +153,25 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
         QTest::newRow("dtstart and dtend") << (QList<QOrganizerItemDetail>() << etr)
             << properties;
     }
+
+    {
+        QList<QVersitProperty> properties;
+        QVersitProperty created;
+        created.setName(QLatin1String("CREATED"));
+        created.setValue(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5)).toUTC().toString(
+                    QLatin1String("yyyyMMddTHHmmssZ")));
+        properties << created;
+        QVersitProperty modified;
+        modified.setName(QLatin1String("LAST-MODIFIED"));
+        modified.setValue(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 6)).toUTC().toString(
+                    QLatin1String("yyyyMMddTHHmmssZ")));
+        properties << modified;
+        QOrganizerItemTimestamp timestamp;
+        timestamp.setCreated(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5)));
+        timestamp.setLastModified(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 6)));
+        QTest::newRow("created and last modified") << (QList<QOrganizerItemDetail>() << timestamp)
+            << properties;
+    }
 }
 
 QVersitProperty tst_QVersitOrganizerExporter::findPropertyByName(
