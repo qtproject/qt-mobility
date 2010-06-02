@@ -106,7 +106,8 @@ public:
     QFeedbackEffect(QObject *parent = 0);
     ~QFeedbackEffect();
 
-    static void play(InstantEffect effect);
+    static bool supportsThemeEffect();
+    static void playThemeEffect(InstantEffect effect);
 
     void setDuration(int msecs);
     int duration() const;

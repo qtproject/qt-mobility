@@ -91,6 +91,8 @@ Dialog::Dialog()
     attackIntensityChanged(ui.attackIntensity->value());
     fadeTimeChanged(ui.fadeTime->value());
     fadeIntensityChanged(ui.fadeIntensity->value());
+
+    ui.tabWidget->setTabEnabled(1, QFeedbackEffect::supportsThemeEffect());
 }
 
 QFeedbackDevice Dialog::currentDevice() const
@@ -191,7 +193,7 @@ void Dialog::instantPlayClicked()
 {
     const QMetaObject &mo = QFeedbackEffect::staticMetaObject;
     const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_INSTANT_EFFECT));
-    QFeedbackEffect::play(QFeedbackEffect::InstantEffect(me.keyToValue(ui.instantEffect->currentText().toLatin1())));
+    QFeedbackEffect::playThemeEffect(QFeedbackEffect::InstantEffect(me.keyToValue(ui.instantEffect->currentText().toLatin1())));
 }
 
 

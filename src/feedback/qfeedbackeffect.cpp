@@ -264,18 +264,24 @@ void QFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractA
 }
 
 /*!
-    \fn void QFeedbackDevice::play(InstantEffect effect)
+    \fn void QFeedbackDevice::playThemeEffect(InstantEffect effect)
 
     plays instant feedback.
 
     That feedback is defined by the theme of the system.
 */
-void QFeedbackEffect::play(InstantEffect effect)
+void QFeedbackEffect::playThemeEffect(InstantEffect effect)
 {
-    //TODO: we should use the platform/theme APIs for that
-    Q_UNUSED(effect);
+    if (QThemedFeedbackInterface *iface = QThemedFeedbackInterface::instance())
+        iface->play(effect);
+    else
+        qWarning("QFeedbackEffect::playThemeEffect: playing themed effects not supported");
 }
 
+bool QFeedbackEffect::supportsThemeEffect()
+{
+    return QThemedFeedbackInterface::instance() != 0;
+}
 
 #include "moc_qfeedbackeffect.cpp"
 

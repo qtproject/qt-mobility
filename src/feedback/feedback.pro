@@ -13,7 +13,7 @@ INCLUDEPATH += .
 
 # Input
 PUBLIC_HEADERS += qfeedbackdevice.h qfeedbackeffect.h qfeedbackplugin.h
-PRIVATE_HEADERS += qfeedbackeffect_p.h
+PRIVATE_HEADERS += qfeedbackeffect_p.h qfeedbackplugin_p.h
 
 SOURCES += qfeedbackdevice.cpp qfeedbackeffect.cpp qfeedbackplugin.cpp
 HEADERS += $$PUBLIC_HEADERS \

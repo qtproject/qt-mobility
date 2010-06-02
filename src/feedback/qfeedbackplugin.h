@@ -83,8 +83,6 @@ public:
     virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *) = 0;
     virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *) = 0;
 
-    virtual void play(QFeedbackEffect::InstantEffect) = 0;
-
     static QFeedbackInterface *instance();
 
 protected:
@@ -92,9 +90,18 @@ protected:
     QFeedbackDevice createFeedbackDevice(int id);
 };
 
+class QThemedFeedbackInterface
+{
+public:
+    virtual void play(QFeedbackEffect::InstantEffect) = 0;
+    static QThemedFeedbackInterface *instance();
+};
+
+
 QTM_END_NAMESPACE
 
 Q_DECLARE_INTERFACE(QtMobility::QFeedbackInterface, "com.nokia.qt.QFeedbackInterface")
+Q_DECLARE_INTERFACE(QtMobility::QThemedFeedbackInterface, "com.nokia.qt.QThemedFeedbackInterface")
 
 QT_END_HEADER
 

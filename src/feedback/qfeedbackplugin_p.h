@@ -38,63 +38,45 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QFEEDBACK_SYMBIAN_H
-#define QFEEDBACK_SYMBIA_H
 
-#include <QtGui/QWidget>
+#ifndef QFEEDBACKPLUGIN_P_H
+#define QFEEDBACKPLUGIN_P_H
 
 #include <qmobilityglobal.h>
+#include "qfeedbackdevice.h"
+#include "qfeedbackeffect.h"
+#include "qfeedbackplugin.h"
 
-#include <qfeedbackplugin.h>
-
-#include <hwrmvibra.h>
-#include <touchfeedback.h>
-
+#include <QtCore/QCoreApplication>
 
 QT_BEGIN_HEADER
-QTM_USE_NAMESPACE
 
-class QTouchFeedback;
+QTM_BEGIN_NAMESPACE
 
-class QFeedbackSymbian : public QObject, public QFeedbackInterface, public QThemedFeedbackInterface
+class QDummyBackend : QObject, public QFeedbackInterface
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QFeedbackInterface)
-    Q_INTERFACES(QtMobility::QThemedFeedbackInterface)
 public:
-    QFeedbackSymbian();
-    virtual ~QFeedbackSymbian();
+    QDummyBackend() : QObject(qApp) { }
 
-    virtual QFeedbackDevice defaultDevice(QFeedbackDevice::Type);
-    virtual QList<QFeedbackDevice> devices();
+    QFeedbackDevice defaultDevice(QFeedbackDevice::Type) { return QFeedbackDevice(); }
+    QList<QFeedbackDevice> devices() { return QList<QFeedbackDevice>(); }
 
-    //for device handling
-    virtual QString deviceName(const QFeedbackDevice &);
-    virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &);
-    virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &);
-    virtual QFeedbackDevice::Type type(const QFeedbackDevice &);
-    virtual bool isEnabled(const QFeedbackDevice &);
-    virtual void setEnabled(const QFeedbackDevice &, bool);
+    QString deviceName(const QFeedbackDevice &) { return QString(); }
+    QFeedbackDevice::State deviceState(const QFeedbackDevice &) { return QFeedbackDevice::Unknown; }
+    QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &) { return 0; }
+    QFeedbackDevice::Type type(const QFeedbackDevice &) { return QFeedbackDevice::None; }
+    bool isEnabled(const QFeedbackDevice &) { return false; }
+    void setEnabled(const QFeedbackDevice &, bool) { }
 
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty);
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
+    QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty) { return QFeedbackEffect::UnknownError; }
+    QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *) { return QFeedbackEffect::UnknownError; }
+    QAbstractAnimation::State actualEffectState(const QFeedbackEffect *) { return QAbstractAnimation::Stopped; }
 
-    virtual void play(QFeedbackEffect::InstantEffect);
-
-private:
-    CHWRMVibra *vibra();
-
-
-    static CCoeControl *defaultWidget();
-    TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::InstantEffect effect);
-
-    bool m_vibraActive;
-    CHWRMVibra *m_vibra;
-
+    virtual void play(QFeedbackEffect::InstantEffect effect) { Q_UNUSED(effect); }
 
 };
 
+QTM_END_NAMESPACE
 
 QT_END_HEADER
 

@@ -82,8 +82,6 @@ public:
     virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *);
     virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
 
-    virtual void play(QFeedbackEffect::InstantEffect);
-
 private:
     static QFeedbackDevice::Type convert(VibeInt32 t);
     static VibeInt32 convertedDuration(int duration);

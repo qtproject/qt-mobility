@@ -266,12 +266,6 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFeedback
     return QFeedbackEffect::NoError;
 }
 
-void QFeedbackImmersion::play(QFeedbackEffect::InstantEffect)
-{
-    qWarning("QFeedbackImmersion::play: playing instant effect not supported by that backend");
-}
-
-
 QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackEffect *effect)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);

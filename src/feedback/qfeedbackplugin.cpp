@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "qfeedbackplugin.h"
+#include "qfeedbackplugin_p.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QStringList>
@@ -48,40 +49,13 @@
 
 QTM_BEGIN_NAMESPACE
 
+static QFeedbackInterface *backend = 0;
+static QThemedFeedbackInterface *themedBackend = 0;
 
-class DummyBackend : QObject, public QFeedbackInterface
+static void initBackends()
 {
-public:
-    DummyBackend() : QObject(qApp)
-    {
-    }
-
-    QFeedbackDevice defaultDevice(QFeedbackDevice::Type) { return QFeedbackDevice(); }
-    QList<QFeedbackDevice> devices() { return QList<QFeedbackDevice>(); }
-
-    QString deviceName(const QFeedbackDevice &) { return QString(); }
-    QFeedbackDevice::State deviceState(const QFeedbackDevice &) { return QFeedbackDevice::Unknown; }
-    QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &) { return 0; }
-    QFeedbackDevice::Type type(const QFeedbackDevice &) { return QFeedbackDevice::None; }
-    bool isEnabled(const QFeedbackDevice &) { return false; }
-    void setEnabled(const QFeedbackDevice &, bool) { }
-
-    QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty) { return QFeedbackEffect::UnknownError; }
-    QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *) { return QFeedbackEffect::UnknownError; }
-    QAbstractAnimation::State actualEffectState(const QFeedbackEffect *) { return QAbstractAnimation::Stopped; }
-
-    virtual void play(QFeedbackEffect::InstantEffect effect) { Q_UNUSED(effect); }
-
-};
-
-QFeedbackInterface *QFeedbackInterface::instance()
-{
-    static QFeedbackInterface *backend = 0;
-    if (backend)
-        return backend;
-
     const QStringList paths = QCoreApplication::libraryPaths();
-    for (int i = 0; i < paths.size() && !backend; ++i) {
+    for (int i = 0; i < paths.size() && !(backend && themedBackend); ++i) {
 
         QDir pluginDir(paths.at(i));
         if (!pluginDir.cd(QLatin1String("feedback")))
@@ -90,21 +64,28 @@ QFeedbackInterface *QFeedbackInterface::instance()
 
         foreach (const QFileInfo &pluginLib, pluginDir.entryInfoList(QDir::Files)) {
             QPluginLoader loader(pluginLib.absoluteFilePath());
+            bool usedPlugin = false;
 
-            backend = qobject_cast<QFeedbackInterface*>(loader.instance());
-            if (backend)
-                break; //we only load one plugin
+            if (!backend) {
+                backend = qobject_cast<QFeedbackInterface*>(loader.instance());
+                usedPlugin = backend != 0;
+            }
 
-            //impossible to load the plugin
-            delete backend;
-            loader.unload();
+            if (!themedBackend) {
+                themedBackend = qobject_cast<QThemedFeedbackInterface*>(loader.instance());
+                usedPlugin = usedPlugin || backend != 0;
+            }
+
+            if (!usedPlugin)
+                loader.unload();
+
+            if (backend && themedBackend)
+                break; //we already found our plugins
         }
     }
 
     if (!backend)
-        backend = new DummyBackend;
-
-    return backend;
+        backend = new QDummyBackend;
 }
 
 QFeedbackDevice QFeedbackInterface::createFeedbackDevice(int id)
@@ -112,6 +93,22 @@ QFeedbackDevice QFeedbackInterface::createFeedbackDevice(int id)
     QFeedbackDevice dev;
     dev.m_id = id;
     return dev;
+}
+
+QFeedbackInterface *QFeedbackInterface::instance()
+{
+    if (!backend)
+        initBackends();
+    return backend;
+
+}
+
+QThemedFeedbackInterface *QThemedFeedbackInterface::instance()
+{
+    if (!backend)
+        initBackends();
+    return themedBackend;
+
 }
 
 QTM_END_NAMESPACE
