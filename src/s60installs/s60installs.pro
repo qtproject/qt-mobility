@@ -129,11 +129,11 @@ symbian: {
 
         multimedia = \
             "IF package(0x1028315F)" \
-            "   \"$$EPOCROOT50\epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimedia_mmfengine.dll\"" \
+            "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimedia_mmfengine.dll\"" \
             "ELSEIF package(0x102752AE)" \
-            "   \"$$EPOCROOT32\epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimedia_mmfengine.dll\"" \
+            "   \"$${EPOCROOT32}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimedia_mmfengine.dll\"" \
             "ELSEIF package(0x102032BE)" \
-            "   \"$$EPOCROOT31\epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimedia_mmfengine.dll\"" \
+            "   \"$${EPOCROOT31}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimedia_mmfengine.dll\"" \
             "ELSE" \
             "   \"$${EPOCROOT50}epoc32/release/$(PLATFORM)/$(TARGET)/qtmultimedia_mmfengine.dll\" - \"!:\\sys\\bin\\qtmultimedia_mmfengine.dll\"" \
             "ENDIF"
