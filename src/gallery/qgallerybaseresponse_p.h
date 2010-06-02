@@ -61,7 +61,7 @@ class Q_AUTOTEST_EXPORT QGalleryBaseResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:
-    explicit QGalleryBaseResponse(QObject *parent = 0);
+    explicit QGalleryBaseResponse(QObject *parent = 0) : QGalleryAbstractResponse(parent) {}
     explicit QGalleryBaseResponse(int result, QObject *parent = 0);
     ~QGalleryBaseResponse();
 
@@ -74,7 +74,6 @@ public:
     QVariant id(int index) const;
     QUrl url(int index) const;
     QString type(int index) const;
-    QString parentId(int index) const;
     QList<QGalleryResource> resources(int index) const;
     ItemStatus status(int index) const;
 

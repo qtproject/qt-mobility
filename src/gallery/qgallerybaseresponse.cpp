@@ -87,11 +87,6 @@ QString QGalleryBaseResponse::type(int) const
     return QString();
 }
 
-QString QGalleryBaseResponse::parentId(int) const
-{
-    return QString();
-}
-
 QList<QGalleryResource> QGalleryBaseResponse::resources(int) const
 {
     return QList<QGalleryResource>();

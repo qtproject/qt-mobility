@@ -147,6 +147,7 @@ contains(mobility_modules,gallery) {
     SUBDIRS += \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
+        qgallerybaseresponse \
         qgallerycontainerrequest \
         qgallerycountrequest \
         qgalleryfilter \
