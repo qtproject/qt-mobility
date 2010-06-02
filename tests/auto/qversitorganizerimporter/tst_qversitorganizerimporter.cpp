@@ -166,6 +166,75 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
     }
 
     {
+        QVersitProperty dtstart;
+        dtstart.setName(QLatin1String("DTSTART"));
+        dtstart.setValue(QLatin1String("20091231T000000")); // equivalent to 2010, day zero
+
+        QVersitProperty duration;
+        duration.setName(QLatin1String("DURATION"));
+        duration.setValue(QLatin1String("P15DT5H7M20S"));
+        QOrganizerItemEventTimeRange etr;
+        etr.setStartDateTime(QDateTime(QDate(2009, 12, 31), QTime(0, 0, 0)));
+        etr.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(5, 7, 20)));
+        QTest::newRow("dtstart and duration: days hours minutes seconds")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+        QTest::newRow("duration and dtstart")
+            << (QList<QVersitProperty>() << duration << dtstart)
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        duration.setValue(QLatin1String("PT5H7M20S"));
+        etr.setEndDateTime(QDateTime(QDate(2009, 12, 31), QTime(5, 7, 20)));
+        QTest::newRow("dtstart and duration: hours minutes seconds")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        duration.setValue(QLatin1String("PT7M20S"));
+        etr.setEndDateTime(QDateTime(QDate(2009, 12, 31), QTime(0, 7, 20)));
+        QTest::newRow("dtstart and duration: minutes seconds")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        duration.setValue(QLatin1String("PT20S"));
+        etr.setEndDateTime(QDateTime(QDate(2009, 12, 31), QTime(0, 0, 20)));
+        QTest::newRow("dtstart and duration: seconds")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        duration.setValue(QLatin1String("P15DT5H7M"));
+        etr.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(5, 7, 0)));
+        QTest::newRow("dtstart and duration: days hours minutes")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        duration.setValue(QLatin1String("P15DT5H"));
+        etr.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(5, 0, 0)));
+        QTest::newRow("dtstart and duration: days hours")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        duration.setValue(QLatin1String("P15D"));
+        etr.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(0, 0, 0)));
+        QTest::newRow("dtstart and duration: days")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        duration.setValue(QLatin1String("P7W"));
+        etr.setEndDateTime(QDateTime(QDate(2010, 2, 18), QTime(0, 0, 0)));
+        QTest::newRow("dtstart and duration: weeks")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+
+        dtstart.setValue(QLatin1String("20100115T050720"));
+        duration.setValue(QLatin1String("-P15DT5H7M20S"));
+        etr.setStartDateTime(QDateTime(QDate(2010, 1, 15), QTime(5, 7, 20)));
+        etr.setEndDateTime(QDateTime(QDate(2009, 12, 31), QTime(0, 0, 0)));
+        QTest::newRow("dtstart and duration: negative")
+            << (QList<QVersitProperty>() << dtstart << duration)
+            << (QList<QOrganizerItemDetail>() << etr);
+    }
+
+    {
         QList<QVersitProperty> properties;
         QVersitProperty created;
         created.setName(QLatin1String("CREATED"));

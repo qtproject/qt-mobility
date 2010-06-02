@@ -61,6 +61,43 @@ class QOrganizerItemDetail;
 class QVersitProperty;
 class QVersitDocument;
 
+class Duration
+{
+    public:
+        Duration() :
+            mNegative(false), mWeeks(0), mDays(0), mHours(0), mMinutes(0), mSeconds(0), mValid(true)
+            {}
+        static Duration invalidDuration() { Duration d; d.setValid(false); return d; }
+        static Duration parseDuration(QString str);
+        static void parseDurationTime(QString* str, Duration* dur);
+        static void parseDurationMinutes(QString* str, Duration* dur);
+        static void parseDurationSeconds(QString* str, Duration* dur);
+        static QString nextToken(QString* str);
+
+        void setNegative(bool neg) { mNegative = neg; }
+        void setWeeks(int weeks) { mWeeks = weeks; }
+        void setDays(int days) { mDays = days; }
+        void setHours(int hours) { mHours = hours; }
+        void setMinutes(int minutes) { mMinutes = minutes; }
+        void setSeconds(int seconds) { mSeconds = seconds; }
+        void setValid(bool val) { mValid = val; }
+        int weeks() { return mNegative ? -mWeeks : mWeeks; }
+        int days() { return mNegative ? -mDays : mDays; }
+        int hours() { return mNegative ? -mHours : mHours; }
+        int minutes() { return mNegative ? -mMinutes : mMinutes; }
+        int seconds() { return mNegative ? -mSeconds : mSeconds; }
+        bool isValid() { return mValid; }
+
+    private:
+        bool mNegative;
+        int mWeeks;
+        int mDays;
+        int mHours;
+        int mMinutes;
+        int mSeconds;
+        bool mValid;
+};
+
 class Q_AUTOTEST_EXPORT QVersitOrganizerImporterPrivate
 {
 public:
@@ -95,6 +132,9 @@ private:
     bool createEndDateTime(const QVersitProperty& property,
                            QOrganizerItem* item,
                            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createDuration(const QVersitProperty& property,
+                        QOrganizerItem* item,
+                        QList<QOrganizerItemDetail>* updatedDetails);
     QDateTime parseDateTime(QString str);
 };
 

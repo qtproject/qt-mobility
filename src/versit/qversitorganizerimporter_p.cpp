@@ -104,6 +104,8 @@ void QVersitOrganizerImporterPrivate::importProperty(
             success = createStartDateTime(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("DTEND")) {
             success = createEndDateTime(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("DURATION")) {
+            success = createDuration(property, item, &updatedDetails);
         }
     }
 
@@ -185,6 +187,26 @@ bool QVersitOrganizerImporterPrivate::createEndDateTime(
     return true;
 }
 
+bool QVersitOrganizerImporterPrivate::createDuration(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    Duration duration = Duration::parseDuration(property.value());
+    if (!duration.isValid())
+        return false;
+    QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
+    QDateTime startTime = etr.startDateTime();
+    if (!startTime.isValid()) // TODO allow setting duration before start time
+        return false;
+    etr.setEndDateTime(
+            startTime.addDays(7*duration.weeks() + duration.days())
+                     .addSecs(3600*duration.hours() + 60*duration.minutes() + duration.seconds()));
+    updatedDetails->append(etr);
+    return true;
+}
+
 QDateTime QVersitOrganizerImporterPrivate::parseDateTime(QString str)
 {
     bool utc = str.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive);
@@ -194,4 +216,140 @@ QDateTime QVersitOrganizerImporterPrivate::parseDateTime(QString str)
     if (utc)
         dt.setTimeSpec(Qt::UTC);
     return dt;
+}
+
+/*! Parse the iCalendar duration string in an RDP fashion with a two symbol lookahead. */
+Duration Duration::parseDuration(QString str)
+{
+    QString token = nextToken(&str);
+    if (token.isEmpty())
+        return invalidDuration();
+
+    Duration dur;
+    // Accept a + or - if present
+    if (token == QLatin1String("+")) {
+        token = nextToken(&str);
+    } else if (token == QLatin1String("-")) {
+        dur.setNegative(true);
+        token = nextToken(&str);
+    } else if (token.isEmpty()) {
+        return invalidDuration();
+    } else {
+        // There was no + or - so keep parsing
+    }
+
+    // Accept a P
+    if (token != QLatin1String("P")) {
+        return invalidDuration();
+    }
+
+    token = nextToken(&str);
+    if (token.isEmpty()) {
+        return invalidDuration();
+    } else if (token == QLatin1String("T")) {
+        // we see a time
+        parseDurationTime(&str, &dur);
+    } else if (token.at(0).isDigit()) {
+        // it's either a date or a week - we're not sure yet
+        int value = token.toInt(); // always succeeds because nextToken next returns a mix of digits/nondigits
+        token = nextToken(&str);
+        if (token == QLatin1String("D")) {
+            // it's a date
+            dur.setDays(value);
+            token = nextToken(&str);
+            // dates optionally define a time
+            if (token == QLatin1String("T"))
+                parseDurationTime(&str, &dur);
+        } else if (token == QLatin1String("W")) {
+            dur.setWeeks(value);
+        } else {
+            return invalidDuration();
+        }
+    } else {
+        return invalidDuration();
+    }
+
+    // check that there aren't extra characters on the end
+    if (!str.isEmpty())
+        dur.setValid(false);
+    return dur;
+
+}
+
+void Duration::parseDurationTime(QString* str, Duration* dur)
+{
+    QString token = nextToken(str);
+    if (token.isEmpty() || !token.at(0).isDigit())
+        dur->setValid(false);
+
+    int value = token.toInt(); // always succeeds
+
+    token = nextToken(str);
+    if (token == QLatin1String("H")) {
+        dur->setHours(value);
+        if (!str->isEmpty())
+            parseDurationMinutes(str, dur);
+    } else if (token == QLatin1String("M")) {
+        dur->setMinutes(value);
+        if (!str->isEmpty())
+            parseDurationSeconds(str, dur);
+    } else if (token == QLatin1String("S")) {
+        dur->setSeconds(value);
+    }
+}
+
+void Duration::parseDurationMinutes(QString* str, Duration* dur)
+{
+    QString token = nextToken(str);
+    if (token.isEmpty() || !token.at(0).isDigit())
+        dur->setValid(false);
+
+    int value = token.toInt(); // always succeeds
+    token = nextToken(str);
+    if (token != QLatin1String("M")) {
+        dur->setValid(false);
+        return;
+    }
+    dur->setMinutes(value);
+    
+    if (!str->isEmpty())
+        parseDurationSeconds(str, dur);
+}
+
+void Duration::parseDurationSeconds(QString* str, Duration* dur)
+{
+    QString token = nextToken(str);
+    if (token.isEmpty() || !token.at(0).isDigit())
+        dur->setValid(false);
+
+    int value = token.toInt(); // always succeeds
+    token = nextToken(str);
+    if (token != QLatin1String("S")) {
+        dur->setValid(false);
+        return;
+    }
+    dur->setSeconds(value);
+}
+
+QString Duration::nextToken(QString* str)
+{
+    int len = str->length();
+    if (len == 0)
+        return QString::fromAscii(""); // empty (not null) QString
+    QChar first = str->at(0);
+    if (first == QLatin1Char('+') || first == QLatin1Char('-') || first.isUpper()) {
+        QString ret(str->left(1));
+        *str = str->mid(1);
+        return ret;
+    } else if (first.isDigit()) {
+        // find the largest n such that the leftmost n characters are digits
+        int n = 1;
+        for (n = 1; n < len && str->at(n).isDigit(); n++) {
+        }
+        QString ret = str->left(n);
+        *str = str->mid(n);
+        return ret;
+    } else {
+        return QString(); // null QString
+    }
 }
