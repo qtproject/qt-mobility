@@ -154,11 +154,21 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::LocationFeature :
         {
+#if defined(Q_WS_MAEMO_6)
+            GConfItem satellitePositioning("/system/osso/location/settings/satellitePositioning");
+            GConfItem networkPositioning("/system/osso/location/settings/networkPositioning");
+
+            bool satellitePositioningAvailable = satellitePositioning.value(false).toBool();
+            bool networkPositioningAvailable   = networkPositioning.value(false).toBool();
+
+            featureSupported = (satellitePositioningAvailable || networkPositioningAvailable);
+#else /* Maemo 5 */
             GConfItem locationValues("/system/nokia/location");
             const QStringList locationKeys = locationValues.listEntries();
             if(locationKeys.count()) {
                 featureSupported = true;
             }
+#endif /* Maemo 5 */
         }
         break;
     case QSystemInfo::HapticsFeature:
