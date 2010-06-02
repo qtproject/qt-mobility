@@ -144,11 +144,6 @@ bool QGeoRouteXmlParser::parseRootElement()
         }
     }
 
-    if (m_reader->readNextStartElement()) {
-        m_reader->raiseError(QString("A single root element named \"routes\" was expected (second root element was named \"%1\")").arg(m_reader->name().toString()));
-        return false;
-    }
-
     return true;
 }
 
@@ -181,14 +176,18 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
                 }
             }
             else if (m_reader->name() == "Maneuver") {
-                // TODO:  Route Maneuver
+                parseManeuver(route);
             }
             else if (m_reader->name() == "Link") {
-                // TODO:  Route Link
+                //TODO: parseLink
+                m_reader->skipCurrentElement();
             }
             else if (m_reader->name() == "Summary") {
                 if(!parseSummary(route))
                     return false;
+            }
+            else {
+                m_reader->skipCurrentElement();
             }
         }
         m_reader->readNext();
@@ -212,12 +211,11 @@ bool QGeoRouteXmlParser::parseWaypoint(QGeoRoute *route)
                 path.append(coordinates);
             }
             else if (m_reader->name() == "OriginalPosition") {
-            // TODO: Waypoint OriginalPosition
-                QGeoCoordinate coordinates;
-                parseCoordinates(coordinates);
+                // TODO: Waypoint OriginalPosition
+                m_reader->skipCurrentElement();
             }
             else {
-                return false;
+                m_reader->skipCurrentElement();
             }
         }
         m_reader->readNext();
@@ -234,40 +232,33 @@ bool QGeoRouteXmlParser::parseMode(QGeoRoute *route)
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Mode")) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == "Type") {
-                m_reader->readNext();
-                if (m_reader->tokenType() == QXmlStreamReader::Characters) {
-                    QString value = m_reader->text().toString();
-                    if(value=="shortest")
-                        route->setOptimization(QGeoRouteRequest::ShortestRoute);
-                    else if(value=="fastestNow")
-                        route->setOptimization(QGeoRouteRequest::FastestRoute);
-                    else if(value=="economic")
-                        route->setOptimization(QGeoRouteRequest::MostEconomicRoute);
-                    else if(value=="scenic")
-                        route->setOptimization(QGeoRouteRequest::MostScenicRoute);
-                    else if(value=="directDrive")
-                        route->setOptimization(QGeoRouteRequest::DirectRoute);
-                    else
-                        return false;
-                }
+                QString value = m_reader->readElementText();
+                if (value == "shortest")
+                    route->setOptimization(QGeoRouteRequest::ShortestRoute);
+                else if (value == "fastestNow")
+                    route->setOptimization(QGeoRouteRequest::FastestRoute);
+                else if (value == "economic")
+                    route->setOptimization(QGeoRouteRequest::MostEconomicRoute);
+                else if (value == "scenic")
+                    route->setOptimization(QGeoRouteRequest::MostScenicRoute);
+                else if (value == "directDrive")
+                    route->setOptimization(QGeoRouteRequest::DirectRoute);
             }
             else if (m_reader->name() == "TransportModes") {
-                m_reader->readNext();
-                if (m_reader->tokenType() == QXmlStreamReader::Characters) {
-                    QString value = m_reader->text().toString();
-                    if(value=="car")
-                        route->setTravelMode(QGeoRouteRequest::CarTravel);
-                    else if(value=="pedestrian")
-                        route->setTravelMode(QGeoRouteRequest::PedestrianTravel);
-                    else if(value=="publicTransport")
-                        route->setTravelMode(QGeoRouteRequest::PublicTransitTravel);
-                    else if(value=="bicycle")
-                        route->setTravelMode(QGeoRouteRequest::BicycleTravel);
-                    else if(value=="truck")
-                        route->setTravelMode(QGeoRouteRequest::TruckTravel);
-                    else
-                        return false;
-                }
+                QString value = m_reader->readElementText();
+                if (value == "car")
+                    route->setTravelMode(QGeoRouteRequest::CarTravel);
+                else if (value == "pedestrian")
+                    route->setTravelMode(QGeoRouteRequest::PedestrianTravel);
+                else if (value == "publicTransport")
+                    route->setTravelMode(QGeoRouteRequest::PublicTransitTravel);
+                else if (value == "bicycle")
+                    route->setTravelMode(QGeoRouteRequest::BicycleTravel);
+                else if (value == "truck")
+                    route->setTravelMode(QGeoRouteRequest::TruckTravel);
+            }
+            else {
+                m_reader->skipCurrentElement();
             }
         }
         m_reader->readNext();
@@ -284,23 +275,18 @@ bool QGeoRouteXmlParser::parseSummary(QGeoRoute *route)
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Summary")) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == "Distance") {
-                m_reader->readNext();
-                if (m_reader->tokenType() == QXmlStreamReader::Characters) {
-                    QGeoDistance dist(m_reader->text().toString().toDouble());
-                    route->setDistance(dist);
-                }
+                QString value = m_reader->readElementText();
+                route->setDistance(value.toDouble());
             }
             else if (m_reader->name() == "TrafficTime") {
-                m_reader->readNext();
-                if (m_reader->tokenType() == QXmlStreamReader::Characters) {
-                    route->setTravelTime(m_reader->text().toString().toInt());
-                }
+                QString value = m_reader->readElementText();
+                route->setTravelTime(value.toDouble());
             }
             else if (m_reader->name() == "BaseTime") {
-            // TODO: Summary BaseTime
+                m_reader->skipCurrentElement();
             }
             else {
-                return false;
+                m_reader->skipCurrentElement();
             }
         }
         m_reader->readNext();
@@ -317,320 +303,54 @@ bool QGeoRouteXmlParser::parseCoordinates(QGeoCoordinate &coord)
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == currentElement)) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             QString name = m_reader->name().toString();
-            m_reader->readNext();
-            if (m_reader->tokenType() == QXmlStreamReader::Characters) {
-                QString value = m_reader->text().toString();
-                if(name == "Latitude")
-                    coord.setLatitude(value.toDouble());
-                else if(name == "Longitude")
-                    coord.setLongitude(value.toDouble());
-                else
-                    return false;
+            QString value = m_reader->readElementText();
+            if(name == "Latitude")
+                coord.setLatitude(value.toDouble());
+            else if(name == "Longitude")
+                coord.setLongitude(value.toDouble());
+        }
+        m_reader->readNext();
+    }
+
+    return true;
+}
+
+bool QGeoRouteXmlParser::parseManeuver(QGeoRoute *route)
+{
+    Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "Maneuver");
+
+    if (!m_reader->attributes().hasAttribute("id")) {
+        m_reader->raiseError("The element \"Maneuver\" did not have the required attribute \"id\".");
+        return false;
+    }
+
+    QGeoNavigationInstruction* instruction = new QGeoNavigationInstruction();
+    instruction->setId(m_reader->attributes().value("id").toString());
+
+    m_reader->readNext();
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Maneuver")) {
+        if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
+            if (m_reader->name() == "Position") {
+                QGeoCoordinate coordinates;
+                if(parseCoordinates(coordinates))
+                    instruction->setPosition(coordinates);
+            }
+            else if (m_reader->name() == "Instruction") {
+                instruction->setInstructionText(m_reader->readElementText());
+            }
+            else if (m_reader->name() == "ToLink") {
+                instruction->setToSegmentId(m_reader->readElementText());
+            }
+            else if (m_reader->name() == "FromLink") {
+                instruction->setFromSegmentId(m_reader->readElementText());
+            }
+            else {
+                m_reader->skipCurrentElement();
             }
         }
         m_reader->readNext();
     }
-    return true;
-}
-
-
-bool QGeoRouteXmlParser::parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName)
-{
-    QString dur = strDuration;
-    QString errorString = QString("The attribute \"%1\" has a bady formatted xsd:duration string (string is \"%2\")").arg(attributeName).arg(strDuration);
-
-    bool ok = false;
-    int years = 0;
-    int months = 0;
-    int days = 0;
-    int hours = 0;
-    int minutes = 0;
-    int seconds = 0;
-
-    int pIndex = dur.indexOf("P");
-    if (pIndex != 0) {
-        m_reader->raiseError(errorString);
-        return false;
-    }
-
-    dur.remove(0, 1);
-
-    int yearIndex = dur.indexOf("Y");
-
-    if (yearIndex != -1) {
-        years = dur.left(yearIndex).toUInt(&ok);
-
-        if (!ok) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        dur.remove(0, yearIndex + 1);
-    }
-
-    int monthIndex = dur.indexOf("M");
-
-    if (monthIndex != -1) {
-        months = dur.left(monthIndex).toUInt(&ok);
-
-        if (!ok) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        dur.remove(0, monthIndex + 1);
-    }
-
-    int dayIndex = dur.indexOf("D");
-
-    if (dayIndex != -1) {
-        days = dur.left(dayIndex).toUInt(&ok);
-
-        if (!ok) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        dur.remove(0, dayIndex + 1);
-    }
-
-    double doubleDays = years * 365.25 ;
-    doubleDays += (months * 365.25) / 12.0;
-    doubleDays += days * 1.0;
-
-    if (dur.length() == 0) {
-        *durationSeconds = qRound(doubleDays * 24 * 60 * 60);
-        return true;
-    }
-
-    int timeIndex = dur.indexOf("T");
-
-    if (timeIndex != 0) {
-        m_reader->raiseError(errorString);
-        return false;
-    }
-
-    dur.remove(0, 1);
-
-    int hourIndex = dur.indexOf("H");
-
-    if (hourIndex != -1) {
-        hours = dur.left(hourIndex).toUInt(&ok);
-
-        if (!ok) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        dur.remove(0, hourIndex + 1);
-    }
-
-    int minuteIndex = dur.indexOf("M");
-
-    if (minuteIndex != -1) {
-        minutes = dur.left(minuteIndex).toUInt(&ok);
-
-        if (!ok) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        dur.remove(0, minuteIndex + 1);
-    }
-
-    int secondIndex = dur.indexOf("S");
-
-    if (secondIndex != -1) {
-        seconds = dur.left(secondIndex).toUInt(&ok);
-
-        if (!ok) {
-            m_reader->raiseError(errorString);
-            return false;
-        }
-
-        dur.remove(0, secondIndex + 1);
-    }
-
-    if (dur.length() != 0) {
-        m_reader->raiseError(errorString);
-        return false;
-    }
-
-    minutes += 60 * hours;
-    seconds += 60 * minutes ;
-    seconds += qRound(doubleDays * 24 * 60 * 60);
-
-    *durationSeconds = seconds;
-
-    return true;
-}
-
-bool QGeoRouteXmlParser::parseManeuver(QGeoRoute *route, QGeoRouteSegment *segment)
-{
-    /*
-    <xsd:complexType name="Maneuver">
-        <xsd:sequence>
-            <xsd:element minOccurs="0" maxOccurs="1" name="wayPoints" type="rt:GeoPoints"/>
-            <xsd:element minOccurs="1" maxOccurs="1" name="maneuverPoints" type="rt:GeoPoints"/>
-        </xsd:sequence>
-        <xsd:attribute name="description" type="xsd:string" use="required"/>
-        <xsd:attribute name="action" type="xsd:string" use="required"/>
-        <xsd:attribute name="distance" type="xsd:nonNegativeInteger" use="required"/>
-        <xsd:attribute name="duration" type="xsd:duration" use="required"/>
-        <xsd:attribute name="turn" type="xsd:string"/>
-        <xsd:attribute name="streetName" type="xsd:string"/>
-        <xsd:attribute name="routeName" type="xsd:string"/>
-        <xsd:attribute name="nextStreetName" type="xsd:string"/>
-        <xsd:attribute name="signPost" type="xsd:string"/>
-        <xsd:attribute name="trafficDirection" type="xsd:long"/>
-        <xsd:attribute name="icon" type="xsd:long"/>
-    </xsd:complexType>
-
-    <xsd:simpleType name="GeoPoints">
-        <xsd:list itemType="rt:GeoPoint"/>
-    </xsd:simpleType>
-
-    <xsd:simpleType name="GeoPoint">
-        <xsd:restriction base="xsd:string">
-            <!--
-                 Pattern for [-90.0,90.0]","[-180.0,180.0] (Lat/Long as String as there is no XSD alternative this short)
-            -->
-            <xsd:pattern value="^-?((90(\.0{1,})?)|(([1-8]\d)|(\d))(\.\d+)?),-?((180(\.0{1,})?)|((1[0-7]\d)|(\d{1,2}))(\.\d+)?)$"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    */
-
-    Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "maneuver");
-
-    if (!m_reader->attributes().hasAttribute("description")) {
-        m_reader->raiseError("The element \"maneuver\" did not have the required attribute \"description\".");
-        return false;
-    } else {
-        QGeoNavigationInstruction *instruction = new QGeoNavigationInstruction();
-        instruction->setInstructionText(m_reader->attributes().value("description").toString());
-        segment->setInstruction(instruction);
-    }
-
-    /* // currently unused, might be used in a qgeoroutesegment subclass later
-    if (!m_reader->attributes().hasAttribute("action")) {
-        m_reader->raiseError("The element \"maneuver\" did not have the required attribute \"action\".");
-        return false;
-    } else {
-        maneuver->setAction(m_reader->attributes().value("action").toString());
-    }
-    */
-
-    if (!m_reader->attributes().hasAttribute("distance")) {
-        m_reader->raiseError("The element \"maneuver\" did not have the required attribute \"distance\".");
-        return false;
-    } else {
-        bool ok = false;
-        QString s = m_reader->attributes().value("distance").toString();
-        segment->setDistance(QGeoDistance(s.toUInt(&ok), QGeoDistance::Metres));
-
-        if (!ok) {
-            m_reader->raiseError(QString("The attribute \"distance\" was expected to have a value convertable to an unsigned int (value was \"%1\")").arg(s));
-            return false;
-        }
-    }
-
-    if (!m_reader->attributes().hasAttribute("duration")) {
-        m_reader->raiseError("The element \"maneuver\" did not have the required attribute \"duration\".");
-        return false;
-    } else {
-        QString duration = m_reader->attributes().value("duration").toString();
-        qint32 seconds;
-        if (!duration.isEmpty() && !parseXsdDuration(duration, &seconds, "duration"))
-            return false;
-        segment->setTravelTime(seconds);
-    }
-
-    /* // currently unused, might be used in a qgeoroutesegment subclass later
-    if (m_reader->attributes().hasAttribute("turn")) {
-        maneuver->setTurn(m_reader->attributes().value("turn").toString());
-    }
-
-    if (m_reader->attributes().hasAttribute("streetName")) {
-        maneuver->setStreetName(m_reader->attributes().value("streetName").toString());
-    }
-
-    if (m_reader->attributes().hasAttribute("routeName")) {
-        maneuver->setRouteName(m_reader->attributes().value("routeName").toString());
-    }
-
-    if (m_reader->attributes().hasAttribute("nextStreetName")) {
-        maneuver->setNextStreetName(m_reader->attributes().value("nextStreetName").toString());
-    }
-
-    if (m_reader->attributes().hasAttribute("signPost")) {
-        maneuver->setSignPost(m_reader->attributes().value("signPost").toString());
-    }
-    */
-
-    /*
-     // currently broken at the services side
-    if (m_reader->attributes().hasAttribute("trafficDirection")) {
-        bool ok = false;
-        QString s = m_reader->attributes().value("trafficDirection").toString();
-        maneuver->setTrafficDirection(s.toLong(&ok));
-
-        if (!ok) {
-            m_reader->raiseError(QString("The attribute \"trafficDirection\" was expected to have a value convertable to a long integer (value was \"%1\")").arg(s));
-            return false;
-        }
-    }
-    */
-
-    /* // not likely to be used
-    if (m_reader->attributes().hasAttribute("icon")) {
-        bool ok = false;
-        QString s = m_reader->attributes().value("icon").toString();
-        maneuver->setIcon(s.toLong(&ok));
-
-        if (!ok) {
-            m_reader->raiseError(QString("The attribute \"icon\" was expected to have a value convertable to a long integer (value was \"%1\")").arg(s));
-            return false;
-        }
-    }
-    */
-
-    if (!m_reader->readNextStartElement()) {
-        m_reader->raiseError("The element \"maneuever\" was expected to have a child element named \"maneuverPoints\"");
-        return false;
-    }
-
-    if (m_reader->name() == "wayPoints") {
-        QList<QGeoCoordinate> wPoints;
-        if (!parseGeoPoints(m_reader->readElementText(), &wPoints, "wayPoints"))
-            return false;
-
-        QList<QGeoCoordinate> pathSummary = route->pathSummary();
-        pathSummary.append(wPoints);
-        route->setPathSummary(pathSummary);
-
-        if (!m_reader->readNextStartElement()) {
-            m_reader->raiseError(QString("The element \"maneuever\" expected this child element to be named \"maneuverPoints\"").arg(m_reader->name().toString()));
-            return false;
-        }
-    }
-
-    if (m_reader->name() == "maneuverPoints") {
-        QList<QGeoCoordinate> mPoints;
-        if (!parseGeoPoints(m_reader->readElementText(), &mPoints, "maneuverPoints"))
-            return false;
-
-        segment->setPath(mPoints);
-
-    } else {
-        m_reader->raiseError(QString("The element \"maneuever\" was expected to have a child element named \"maneuverPoints\" (found an element named \"%1\")").arg(m_reader->name().toString()));
-        return false;
-    }
-
-    if (m_reader->readNextStartElement()) {
-        m_reader->raiseError(QString("The element \"maneuver\" did not expect the child element \"%1\" at this point (unknown child element or child element out of order).").arg(m_reader->name().toString()));
-        return false;
-    }
-
+    route->appendNavigationInstruction(instruction);
     return true;
 }
 

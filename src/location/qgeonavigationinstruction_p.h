@@ -71,10 +71,13 @@ public:
     QGeoNavigationInstructionPrivate& operator= (const QGeoNavigationInstructionPrivate &other);
 
     QGeoNavigationInstruction::InstructionType type;
+    QString id;
     QGeoCoordinate position;
     QString text;
     int timeToNextInstruction;
     QGeoDistance distanceToNextInstruction;
+    QString toSegmentId;
+    QString fromSegmentId;
 };
 
 QTM_END_NAMESPACE

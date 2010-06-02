@@ -46,6 +46,7 @@
 #include "qgeorouterequest.h"
 
 #include <QList>
+#include <QHash>
 
 QT_BEGIN_HEADER
 
@@ -83,9 +84,14 @@ public:
     QGeoBoundingBox bounds() const;
 
     void appendRouteSegment(const QGeoRouteSegment* routeSegment);
-    void setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments);
+    void setRouteSegments(const QHash<QString, const QGeoRouteSegment *> &routeSegments);
 
-    QList<const QGeoRouteSegment *> routeSegments() const;
+    QHash<QString,const QGeoRouteSegment *> routeSegments() const;
+
+    void appendNavigationInstruction(const QGeoNavigationInstruction* instruction);
+    void setNavigationInstructions(const QList<const QGeoNavigationInstruction *> &instructions);
+
+    QList<const QGeoNavigationInstruction *> navigationInstructions() const;
 
     void setTravelTime(int secs);
     int travelTime() const;

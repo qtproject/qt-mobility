@@ -57,6 +57,7 @@
 #include "qgeodistance.h"
 
 #include <QList>
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
@@ -76,7 +77,7 @@ public:
     int travelTime;
     QGeoDistance distance;
     QList<QGeoCoordinate> path;
-    const QGeoNavigationInstruction* instruction;
+    QString id;
 };
 
 QTM_END_NAMESPACE

@@ -77,7 +77,8 @@ public:
 
     QList<QGeoCoordinate> pathSummary;
     QGeoBoundingBox bounds;
-    QList<const QGeoRouteSegment*> routeSegments;
+    QHash<QString, const QGeoRouteSegment*> routeSegments;
+    QList<const QGeoNavigationInstruction*> navigationInstructions;
 
     int travelTime;
     QGeoDistance distance;

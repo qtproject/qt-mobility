@@ -72,6 +72,9 @@ public:
 
     virtual SegmentType type() const;
 
+    void setId(QString id);
+    QString id() const;
+
     void setTravelTime(int secs);
     int travelTime() const;
 
@@ -80,9 +83,6 @@ public:
 
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
-
-    void setInstruction(const QGeoNavigationInstruction *instruction);
-    const QGeoNavigationInstruction* instruction() const;
 
 protected:
     QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr);

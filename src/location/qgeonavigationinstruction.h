@@ -84,6 +84,9 @@ public:
 
     virtual InstructionType type() const;
 
+    void setId(QString id);
+    QString id() const;
+
     void setPosition(const QGeoCoordinate &position);
     QGeoCoordinate position() const;
 
@@ -95,6 +98,12 @@ public:
 
     void setDistanceToNextInstruction(const QGeoDistance &distance);
     QGeoDistance distanceToNextInstruction() const;
+
+    void setToSegmentId(const QString segmentId);
+    QString toSegmentId() const;
+
+    void setFromSegmentId(const QString segmentId);
+    QString fromSegmentId() const;
 
 protected:
     QGeoNavigationInstruction(QGeoNavigationInstructionPrivate *d_ptr);

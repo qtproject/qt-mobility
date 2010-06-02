@@ -117,6 +117,18 @@ QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
     return d->type;
 }
 
+void QGeoRouteSegment::setId(QString id)
+{
+    Q_D(QGeoRouteSegment);
+    d->id = id;
+}
+
+QString QGeoRouteSegment::id() const
+{
+    Q_D(const QGeoRouteSegment);
+    return d->id;
+}
+
 /*!
     Sets the estimated amount of time it will take to traverse this segment of
     the route, in seconds, to \a secs.
@@ -179,24 +191,6 @@ QList<QGeoCoordinate> QGeoRouteSegment::path() const
     return d->path;
 }
 
-/*!
-    Sets the instruction for this route segement to \a instruction.
-*/
-void QGeoRouteSegment::setInstruction(const QGeoNavigationInstruction *instruction)
-{
-    Q_D(QGeoRouteSegment);
-    d->instruction = instruction;
-}
-
-/*!
-    Returns the instruction for this route segment.
-*/
-const QGeoNavigationInstruction* QGeoRouteSegment::instruction() const
-{
-    Q_D(const QGeoRouteSegment);
-    return d->instruction;
-}
-
 /*******************************************************************************
 *******************************************************************************/
 
@@ -207,20 +201,20 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
         : type(other.type),
+        id(other.id),
         travelTime(other.travelTime),
         distance(other.distance),
-        path(other.path),
-        instruction(other.instruction) {}
+        path(other.path) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 
 QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate & other)
 {
     type = other.type;
+    id = other.id;
     travelTime = other.travelTime;
     distance = other.distance;
     path = other.path;
-    instruction = other.instruction;
     return *this;
 }
 

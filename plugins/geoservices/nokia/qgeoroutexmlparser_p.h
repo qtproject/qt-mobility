@@ -86,9 +86,8 @@ private:
     bool parseMode(QGeoRoute *route);
     bool parseSummary(QGeoRoute *route);
     bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
+    bool parseManeuver(QGeoRoute *route);
 
-    bool parseXsdDuration(const QString& strDuration, qint32 *durationSeconds, const QString &attributeName);
-    bool parseManeuver(QGeoRoute *route, QGeoRouteSegment *routeSegment);
     bool parseBoundingBox(QGeoBoundingBox *bounds);
     bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 
