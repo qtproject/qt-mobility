@@ -336,6 +336,9 @@ void QScanThread::getUserProfiles()
     for(uint row=0; row < [wifiInterfaces count]; row++ ) {
 
         CWInterface *wifiInterface = [CWInterface interfaceWithName: [wifiInterfaces objectAtIndex:row]];
+        if (![wifiInterface power])
+            continue;
+
         NSString *nsInterfaceName = [wifiInterface name];
 // add user configured system networks
         SCDynamicStoreRef dynRef = SCDynamicStoreCreate(kCFAllocatorSystemDefault, (CFStringRef)@"Qt corewlan", nil, nil);
