@@ -215,7 +215,7 @@ QGalleryTrackerUrlResponse::QGalleryTrackerUrlResponse(
         const QUrl &itemUrl,
         bool create,
         QObject *parent)
-    : QGalleryAbstractResponse(
+    : QGalleryBaseResponse(
             *new QGalleryTrackerUrlResponsePrivate(fileInterface, itemUrl, create), parent)
 {
     d_func()->getServiceType();
@@ -228,21 +228,6 @@ QGalleryTrackerUrlResponse::~QGalleryTrackerUrlResponse()
 int QGalleryTrackerUrlResponse::minimumPagedItems() const
 {
     return 1;
-}
-
-QStringList QGalleryTrackerUrlResponse::propertyNames() const
-{
-    return QStringList();
-}
-
-int QGalleryTrackerUrlResponse::propertyKey(const QString &) const
-{
-    return -1;
-}
-
-QGalleryProperty::Attributes QGalleryTrackerUrlResponse::propertyAttributes(int) const
-{
-    return QGalleryProperty::CanRead;
 }
 
 int QGalleryTrackerUrlResponse::count() const
@@ -263,25 +248,6 @@ QUrl QGalleryTrackerUrlResponse::url(int) const
 QString QGalleryTrackerUrlResponse::type(int) const
 {
     return d_func()->itemType;
-}
-
-QList<QGalleryResource> QGalleryTrackerUrlResponse::resources(int) const
-{
-    return QList<QGalleryResource>();
-}
-
-QGalleryItemList::ItemStatus QGalleryTrackerUrlResponse::status(int) const
-{
-    return ItemStatus();
-}
-
-QVariant QGalleryTrackerUrlResponse::metaData(int, int) const
-{
-    return QVariant();
-}
-
-void QGalleryTrackerUrlResponse::setMetaData(int, int, const QVariant &)
-{
 }
 
 void QGalleryTrackerUrlResponse::cancel()

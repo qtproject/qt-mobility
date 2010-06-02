@@ -12,7 +12,7 @@ PRIVATE_HEADERS = \
         qabstractgallery_p.h \
         qgalleryabstractrequest_p.h \
         qgalleryabstractresponse_p.h \
-        qgalleryerrorresponse_p.h \
+        qgallerybaseresponse_p.h \
         qgalleryitemlist_p.h
 
 PUBLIC_HEADERS = \
@@ -38,7 +38,7 @@ SOURCES = \
         qgalleryabstractresponse.cpp \
         qgallerycontainerrequest.cpp \
         qgallerycountrequest.cpp \
-        qgalleryerrorresponse.cpp \
+        qgallerybaseresponse.cpp \
         qgalleryfilter.cpp \
         qgalleryfilterrequest.cpp \
         qgalleryitemlist.cpp \

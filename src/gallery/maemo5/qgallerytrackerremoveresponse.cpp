@@ -77,7 +77,7 @@ public:
 
 QGalleryTrackerRemoveResponse::QGalleryTrackerRemoveResponse(
         const QGalleryDBusInterfacePointer &fileInterface, const QString &uri, QObject *parent)
-    : QGalleryAbstractResponse(*new QGalleryTrackerRemoveResponsePrivate, parent)
+    : QGalleryBaseResponse(*new QGalleryTrackerRemoveResponsePrivate, parent)
 {
     Q_D(QGalleryTrackerRemoveResponse);
 
@@ -98,60 +98,6 @@ QGalleryTrackerRemoveResponse::QGalleryTrackerRemoveResponse(
 QGalleryTrackerRemoveResponse::~QGalleryTrackerRemoveResponse()
 {
     delete d_func()->removeWatcher;
-}
-
-QStringList QGalleryTrackerRemoveResponse::propertyNames() const
-{
-    return QStringList();
-}
-
-int QGalleryTrackerRemoveResponse::propertyKey(const QString &) const
-{
-    return -1;
-}
-
-QGalleryProperty::Attributes QGalleryTrackerRemoveResponse::propertyAttributes(int) const
-{
-    return QGalleryProperty::Attributes();
-}
-
-int QGalleryTrackerRemoveResponse::count() const
-{
-    return 0;
-}
-
-QVariant QGalleryTrackerRemoveResponse::id(int) const
-{
-    return QVariant();
-}
-
-QUrl QGalleryTrackerRemoveResponse::url(int) const
-{
-    return QUrl();
-}
-
-QString QGalleryTrackerRemoveResponse::type(int) const
-{
-    return QString();
-}
-
-QList<QGalleryResource> QGalleryTrackerRemoveResponse::resources(int) const
-{
-    return QList<QGalleryResource>();
-}
-
-QGalleryItemList::ItemStatus QGalleryTrackerRemoveResponse::status(int) const
-{
-    return QGalleryItemList::ItemStatus();
-}
-
-QVariant QGalleryTrackerRemoveResponse::metaData(int, int) const
-{
-    return QVariant();
-}
-
-void QGalleryTrackerRemoveResponse::setMetaData(int, int, const QVariant &)
-{
 }
 
 void QGalleryTrackerRemoveResponse::cancel()

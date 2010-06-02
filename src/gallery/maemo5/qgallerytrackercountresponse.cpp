@@ -164,7 +164,7 @@ void QGalleryTrackerCountResponsePrivate::queryCount()
 QGalleryTrackerCountResponse::QGalleryTrackerCountResponse(
         const QGalleryTrackerCountResponseArguments &arguments,
         QObject *parent)
-    : QGalleryAbstractResponse(*new QGalleryTrackerCountResponsePrivate(arguments), parent)
+    : QGalleryBaseResponse(*new QGalleryTrackerCountResponsePrivate(arguments), parent)
 
 {
     Q_D(QGalleryTrackerCountResponse);
@@ -176,59 +176,9 @@ QGalleryTrackerCountResponse::~QGalleryTrackerCountResponse()
 {
 }
 
-
-QStringList QGalleryTrackerCountResponse::propertyNames() const
-{
-    return QStringList();
-}
-
-int QGalleryTrackerCountResponse::propertyKey(const QString &) const
-{
-    return -1;
-}
-
-QGalleryProperty::Attributes QGalleryTrackerCountResponse::propertyAttributes(int) const
-{
-    return QGalleryProperty::Attributes();
-}
-
 int QGalleryTrackerCountResponse::count() const
 {
     return d_func()->count;
-}
-
-QVariant QGalleryTrackerCountResponse::id(int) const
-{
-    return QVariant();
-}
-
-QUrl QGalleryTrackerCountResponse::url(int) const
-{
-    return QUrl();
-}
-
-QString QGalleryTrackerCountResponse::type(int) const
-{
-    return QString();
-}
-
-QList<QGalleryResource> QGalleryTrackerCountResponse::resources(int) const
-{
-    return QList<QGalleryResource>();
-}
-
-QGalleryItemList::ItemStatus QGalleryTrackerCountResponse::status(int) const
-{
-    return ItemStatus();
-}
-
-QVariant QGalleryTrackerCountResponse::metaData(int, int) const
-{
-    return QVariant();
-}
-
-void QGalleryTrackerCountResponse::setMetaData(int, int, const QVariant &)
-{
 }
 
 void QGalleryTrackerCountResponse::cancel()

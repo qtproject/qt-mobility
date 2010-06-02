@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include "qgalleryabstractresponse.h"
+#include "qgallerybaseresponse_p.h"
 
 #include "qgallerydbusinterface_p.h"
 
@@ -74,7 +74,7 @@ struct QGalleryTrackerCountResponseArguments
 
 class QGalleryTrackerCountResponsePrivate;
 
-class QGalleryTrackerCountResponse : public QGalleryAbstractResponse
+class QGalleryTrackerCountResponse : public QGalleryBaseResponse
 {
     Q_OBJECT
 public:
@@ -82,20 +82,7 @@ public:
             const QGalleryTrackerCountResponseArguments &arguments, QObject *parent = 0);
     ~QGalleryTrackerCountResponse();
 
-    QStringList propertyNames() const;
-    int propertyKey(const QString &name) const;
-    QGalleryProperty::Attributes propertyAttributes(int key) const;
-
     int count() const;
-
-    QVariant id(int index) const;
-    QUrl url(int index) const;
-    QString type(int index) const;
-    QList<QGalleryResource> resources(int index) const;
-    ItemStatus status(int index) const;
-
-    QVariant metaData(int index, int key) const;
-    void setMetaData(int index, int key, const QVariant &value);
 
     void cancel();
 

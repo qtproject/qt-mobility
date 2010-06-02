@@ -39,83 +39,83 @@
 **
 ****************************************************************************/
 
-#include "qgalleryerrorresponse_p.h"
+#include "qgallerybaseresponse_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGalleryErrorResponse::QGalleryErrorResponse(int result, QObject *parent)
+QGalleryBaseResponse::QGalleryBaseResponse(int result, QObject *parent)
     : QGalleryAbstractResponse(parent)
 {
     finish(result);
 }
 
-QGalleryErrorResponse::~QGalleryErrorResponse()
+QGalleryBaseResponse::~QGalleryBaseResponse()
 {
 }
 
-QStringList QGalleryErrorResponse::propertyNames() const
+QStringList QGalleryBaseResponse::propertyNames() const
 {
     return QStringList();
 }
 
-int QGalleryErrorResponse::propertyKey(const QString &) const
+int QGalleryBaseResponse::propertyKey(const QString &) const
 {
     return -1;
 }
-QGalleryProperty::Attributes QGalleryErrorResponse::propertyAttributes(int) const
+QGalleryProperty::Attributes QGalleryBaseResponse::propertyAttributes(int) const
 {
     return QGalleryProperty::Attributes();
 }
 
-int QGalleryErrorResponse::count() const
+int QGalleryBaseResponse::count() const
 {
     return 0;
 }
 
-QVariant QGalleryErrorResponse::id(int) const
+QVariant QGalleryBaseResponse::id(int) const
 {
     return QVariant();
 }
 
-QUrl QGalleryErrorResponse::url(int) const
+QUrl QGalleryBaseResponse::url(int) const
 {
     return QUrl();
 }
 
-QString QGalleryErrorResponse::type(int) const
+QString QGalleryBaseResponse::type(int) const
 {
     return QString();
 }
 
-QString QGalleryErrorResponse::parentId(int) const
+QString QGalleryBaseResponse::parentId(int) const
 {
     return QString();
 }
 
-QList<QGalleryResource> QGalleryErrorResponse::resources(int) const
+QList<QGalleryResource> QGalleryBaseResponse::resources(int) const
 {
     return QList<QGalleryResource>();
 }
 
-QGalleryItemList::ItemStatus QGalleryErrorResponse::status(int) const
+QGalleryItemList::ItemStatus QGalleryBaseResponse::status(int) const
 {
     return ItemStatus();
 }
-QVariant QGalleryErrorResponse::metaData(int, int) const
+QVariant QGalleryBaseResponse::metaData(int, int) const
 {
     return QVariant();
 }
 
-void QGalleryErrorResponse::setMetaData(int, int, const QVariant &)
+void QGalleryBaseResponse::setMetaData(int, int, const QVariant &)
 {
 }
 
-bool QGalleryErrorResponse::waitForFinished(int)
+bool QGalleryBaseResponse::waitForFinished(int)
 {
     return true;
 }
 
-#include "moc_qgalleryerrorresponse_p.cpp"
+#include "moc_qgallerybaseresponse_p.cpp"
 
 QTM_END_NAMESPACE
 

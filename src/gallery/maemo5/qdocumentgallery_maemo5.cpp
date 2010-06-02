@@ -50,7 +50,7 @@
 #include "qgalleryremoverequest.h"
 #include "qgalleryurlrequest.h"
 
-#include "qgalleryerrorresponse_p.h"
+#include "qgallerybaseresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerremoveresponse_p.h"
@@ -209,7 +209,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryIt
             &arguments, this, request->itemId().toString(), request->propertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryErrorResponse(result);
+        return new QGalleryBaseResponse(result);
     } else {
         return createItemListResponse(arguments, 0, 1, schema.isItemType(), request->isLive());
     }
@@ -243,7 +243,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
             request->sortPropertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryErrorResponse(result);
+        return new QGalleryBaseResponse(result);
     } else {
         return createItemListResponse(
                 arguments,
@@ -270,7 +270,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
             request->sortPropertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryErrorResponse(result);
+        return new QGalleryBaseResponse(result);
     } else {
         return createItemListResponse(
                 arguments,
@@ -292,7 +292,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
             &arguments, this, request->containerId().toString(), request->filter());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryErrorResponse(result);
+        return new QGalleryBaseResponse(result);
     } else {
         return new QGalleryTrackerCountResponse(arguments);
     }
@@ -309,7 +309,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
         if (result == QGalleryAbstractRequest::Succeeded)
             result = QGalleryAbstractRequest::InvalidItemError;
 
-        return new QGalleryErrorResponse(result);
+        return new QGalleryBaseResponse(result);
     } else {
         return new QGalleryTrackerRemoveResponse(fileInterface(), fileName);
     }

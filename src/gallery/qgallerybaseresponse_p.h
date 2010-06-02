@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYERRORRESPONSE_P_H
-#define QGALLERYERRORRESPONSE_P_H
+#ifndef QGALLERYBASERESPONSE_P_H
+#define QGALLERYBASERESPONSE_P_H
 
 //
 //  W A R N I N G
@@ -57,12 +57,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryErrorResponse : public QGalleryAbstractResponse
+class Q_AUTOTEST_EXPORT QGalleryBaseResponse : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:
-    QGalleryErrorResponse(int result, QObject *parent = 0);
-    ~QGalleryErrorResponse();
+    explicit QGalleryBaseResponse(QObject *parent = 0);
+    explicit QGalleryBaseResponse(int result, QObject *parent = 0);
+    ~QGalleryBaseResponse();
 
     QStringList propertyNames() const;
     int propertyKey(const QString &name) const;
@@ -81,6 +82,10 @@ public:
     void setMetaData(int index, int key, const QVariant &value);
 
     bool waitForFinished(int msecs);
+
+protected:
+    QGalleryBaseResponse(QGalleryAbstractResponsePrivate &dd, QObject *parent)
+        : QGalleryAbstractResponse(dd, parent) {}
 };
 
 QTM_END_NAMESPACE

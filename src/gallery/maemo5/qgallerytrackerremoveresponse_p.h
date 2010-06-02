@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <qgalleryabstractresponse.h>
+#include "qgallerybaseresponse_p.h"
 
 #include "qgallerydbusinterface_p.h"
 
@@ -65,7 +65,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGalleryTrackerRemoveResponsePrivate;
 
-class QGalleryTrackerRemoveResponse : public QGalleryAbstractResponse
+class QGalleryTrackerRemoveResponse : public QGalleryBaseResponse
 {
     Q_OBJECT
 public:
@@ -74,21 +74,6 @@ public:
             const QString &uri,
             QObject *parent = 0);
     ~QGalleryTrackerRemoveResponse();
-
-    QStringList propertyNames() const;
-    int propertyKey(const QString &name) const;
-    QGalleryProperty::Attributes propertyAttributes(int key) const;
-
-    int count() const;
-
-    QVariant id(int index) const;
-    QUrl url(int index) const;
-    QString type(int index) const;
-    QList<QGalleryResource> resources(int index) const;
-    ItemStatus status(int index) const;
-
-    QVariant metaData(int index, int key) const;
-    void setMetaData(int index, int key, const QVariant &value);
 
     void cancel();
 
