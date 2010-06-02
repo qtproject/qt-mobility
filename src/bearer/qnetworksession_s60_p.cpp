@@ -53,9 +53,10 @@ QTM_BEGIN_NAMESPACE
 
 QNetworkSessionPrivate::QNetworkSessionPrivate()
     : CActive(CActive::EPriorityUserInput), state(QNetworkSession::Invalid),
-      isOpen(false), ipConnectionNotifier(0), iHandleStateNotificationsFromManager(false),
-      iFirstSync(true), iStoppedByUser(false), iClosedByUser(false), iDeprecatedConnectionId(0),
-      iError(QNetworkSession::UnknownSessionError), iALREnabled(0), iConnectInBackground(false)
+      isOpen(false), iDynamicUnSetdefaultif(0), ipConnectionNotifier(0),
+      iHandleStateNotificationsFromManager(false), iFirstSync(true), iStoppedByUser(false),
+      iClosedByUser(false), iDeprecatedConnectionId(0), iError(QNetworkSession::UnknownSessionError),
+      iALREnabled(0), iConnectInBackground(false)
 {
     CActiveScheduler::Add(this);
 
@@ -68,6 +69,13 @@ QNetworkSessionPrivate::QNetworkSessionPrivate()
     if (iOpenCLibrary.Load(_L("libc")) == KErrNone) {
         iDynamicUnSetdefaultif = (TOpenCUnSetdefaultifFunction)iOpenCLibrary.Lookup(597);
     }
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - ";
+    if (iDynamicUnSetdefaultif)
+        qDebug() << "dynamic setdefaultif() resolution succeeded. ";
+    else
+        qDebug() << "dynamic setdefaultif() resolution failed. ";
+#endif
 
     TRAP_IGNORE(iConnectionMonitor.ConnectL());
 }
@@ -505,8 +513,14 @@ void QNetworkSessionPrivate::close(bool allowSignals)
     if (publicConfig.type() == QNetworkConfiguration::UserChoice || state == QNetworkSession::Connecting) {
 #ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
     qDebug() << "QNS this : " << QString::number((uint)this) << " - "
-             << "going Disconnected because session was Connecting.";
+            << "going Disconnected right away. Deprecating connection monitor ID: " << publicConfig.d.data()->connectionId;
 #endif
+
+        // The connection has gone down, and processing of status updates must be
+        // stopped. Depending on platform, there may come 'connecting/connected' states
+        // considerably later (almost a second). Connection id is an increasing
+        // number, so this does not affect next _real_ 'conneting/connected' states.
+        iDeprecatedConnectionId = publicConfig.d.data()->connectionId;
         newState(QNetworkSession::Closing);
         newState(QNetworkSession::Disconnected);
     }
