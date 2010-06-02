@@ -119,7 +119,7 @@ public:
                              // document with no subsequent DTEND property
 
 private:
-    bool createDisplayLabel(const QVersitProperty& property,
+    bool createBasicDetail(const QVersitProperty& property,
                             QOrganizerItem* item,
                             QList<QOrganizerItemDetail>* updatedDetails);
     bool createTimestampCreated(const QVersitProperty& property,
@@ -138,6 +138,9 @@ private:
                         QOrganizerItem* item,
                         QList<QOrganizerItemDetail>* updatedDetails);
     QDateTime parseDateTime(QString str);
+
+    // versit property name -> <definition name, field name>:
+    QMap<QString, QPair<QString, QString> > mPropertyMappings;
 };
 
 QTM_END_NAMESPACE

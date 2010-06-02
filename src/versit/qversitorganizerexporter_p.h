@@ -55,14 +55,17 @@ public:
     bool exportItem(const QOrganizerItem& item,
                     QVersitDocument* document,
                     QVersitOrganizerExporter::Error* error);
+
+    QVersitDocument mResult;
+    QMap<int, QVersitOrganizerExporter::Error> mErrors;
+    QVersitOrganizerExporterDetailHandler* mDetailHandler;
+    QVersitDefaultResourceHandler* mDefaultResourceHandler;
+    QVersitResourceHandler* mResourceHandler;
+
+private:
     void exportDetail(const QOrganizerItem& item,
                       const QOrganizerItemDetail& detail,
                       QVersitDocument* document);
-    void encodeDisplayLabel(const QOrganizerItemDetail& detail,
-                            const QVersitDocument& document,
-                            QList<QVersitProperty>* removedProperties,
-                            QList<QVersitProperty>* generatedProperties,
-                            QSet<QString>* processedFields);
     void encodeTimeRange(const QOrganizerItemDetail& detail,
                          const QVersitDocument& document,
                          QList<QVersitProperty>* removedProperties,
@@ -73,14 +76,15 @@ public:
                          QList<QVersitProperty>* removedProperties,
                          QList<QVersitProperty>* generatedProperties,
                          QSet<QString>* processedFields);
-
+    void encodeSimpleProperty(const QOrganizerItemDetail& detail,
+                              const QVersitDocument& document,
+                              QList<QVersitProperty>* removedProperties,
+                              QList<QVersitProperty>* generatedProperties,
+                              QSet<QString>* processedFields);
     QString encodeDateTime(const QDateTime& dateTime);
 
-    QVersitDocument mResult;
-    QMap<int, QVersitOrganizerExporter::Error> mErrors;
-    QVersitOrganizerExporterDetailHandler* mDetailHandler;
-    QVersitDefaultResourceHandler* mDefaultResourceHandler;
-    QVersitResourceHandler* mResourceHandler;
+    // definition name -> <field name, versit property name>:
+    QMap<QString, QPair<QString, QString> > mPropertyMappings;
 };
 
 QTM_END_NAMESPACE

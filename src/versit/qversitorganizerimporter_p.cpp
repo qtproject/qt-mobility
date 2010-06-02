@@ -44,6 +44,7 @@
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
 #include "qtorganizer.h"
+#include "qversitdefs_p.h"
 
 
 QTM_USE_NAMESPACE
@@ -54,6 +55,15 @@ QVersitOrganizerImporterPrivate::QVersitOrganizerImporterPrivate() :
     mResourceHandler(mDefaultResourceHandler),
     mDurationSpecified(false)
 {
+    int versitPropertyCount =
+        sizeof(versitOrganizerDetailMappings)/sizeof(VersitDetailMapping);
+    for (int i = 0; i < versitPropertyCount; i++) {
+        mPropertyMappings.insert(
+                QLatin1String(versitOrganizerDetailMappings[i].versitPropertyName),
+                QPair<QString,QString>(
+                    QLatin1String(versitOrganizerDetailMappings[i].detailDefinitionName),
+                    QLatin1String(versitOrganizerDetailMappings[i].detailFieldName)));
+    }
 }
 
 QVersitOrganizerImporterPrivate::~QVersitOrganizerImporterPrivate()
@@ -92,15 +102,13 @@ void QVersitOrganizerImporterPrivate::importProperty(
     QList<QOrganizerItemDetail> updatedDetails;
 
     bool success = false;
-    if (property.name() == QLatin1String("SUMMARY")) {
-        success = createDisplayLabel(property, item, &updatedDetails);
-    } else if (property.name() == QLatin1String("CREATED")) {
+    if (property.name() == QLatin1String("CREATED")) {
         success = createTimestampCreated(property, item, &updatedDetails);
     } else if (property.name() == QLatin1String("LAST-MODIFIED")) {
         success = createTimestampModified(property, item, &updatedDetails);
-    }
-
-    if (document.componentType() == QLatin1String("VEVENT")) {
+    } else if (mPropertyMappings.contains(property.name())) {
+        success = createBasicDetail(property, item, &updatedDetails);
+    } else if (document.componentType() == QLatin1String("VEVENT")) {
         if (property.name() == QLatin1String("DTSTART")) {
             success = createStartDateTime(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("DTEND")) {
@@ -115,16 +123,21 @@ void QVersitOrganizerImporterPrivate::importProperty(
     }
 }
 
-bool QVersitOrganizerImporterPrivate::createDisplayLabel(
+bool QVersitOrganizerImporterPrivate::createBasicDetail(
         const QVersitProperty& property,
         QOrganizerItem* item,
         QList<QOrganizerItemDetail>* updatedDetails)
 {
     if (property.value().isEmpty())
         return false;
-    QOrganizerItemDisplayLabel displayLabel(item->detail<QOrganizerItemDisplayLabel>());
-    displayLabel.setLabel(property.value());
-    updatedDetails->append(displayLabel);
+    QPair<QString, QString> mapping = mPropertyMappings[property.name()];
+    QString definitionName = mapping.first;
+    QString fieldName = mapping.second;
+    QOrganizerItemDetail detail(item->detail(definitionName));
+    if (detail.isEmpty())
+        detail = QOrganizerItemDetail(definitionName);
+    detail.setValue(fieldName, property.value());
+    updatedDetails->append(detail);
     return true;
 }
 

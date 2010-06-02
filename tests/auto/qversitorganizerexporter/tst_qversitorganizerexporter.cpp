@@ -138,6 +138,16 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
     }
 
     {
+        QVersitProperty property;
+        property.setName(QLatin1String("DESCRIPTION"));
+        property.setValue(QLatin1String("Twinkle, twinkle, little bat! How I wonder what you're at."));
+        QOrganizerItemDescription description;
+        description.setDescription(QLatin1String("Twinkle, twinkle, little bat! How I wonder what you're at."));
+        QTest::newRow("one description") << (QList<QOrganizerItemDetail>() << description)
+            << (QList<QVersitProperty>() << property);
+    }
+
+    {
         QList<QVersitProperty> properties;
         QVersitProperty dtstart;
         dtstart.setName(QLatin1String("DTSTART"));

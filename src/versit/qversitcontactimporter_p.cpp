@@ -86,15 +86,15 @@ QVersitContactImporterPrivate::QVersitContactImporterPrivate() :
 {
     // Contact detail mappings
     int versitPropertyCount =
-        sizeof(versitContactDetailMappings)/sizeof(VersitContactDetailMapping);
+        sizeof(versitContactDetailMappings)/sizeof(VersitDetailMapping);
     for (int i=0; i < versitPropertyCount; i++) {
         QString versitPropertyName =
             QLatin1String(versitContactDetailMappings[i].versitPropertyName);
         QPair<QString,QString> contactDetail;
         contactDetail.first =
-            QLatin1String(versitContactDetailMappings[i].contactDetailDefinitionName);
+            QLatin1String(versitContactDetailMappings[i].detailDefinitionName);
         contactDetail.second =
-            QLatin1String(versitContactDetailMappings[i].contactDetailValueKey);
+            QLatin1String(versitContactDetailMappings[i].detailFieldName);
         mDetailMappings.insert(versitPropertyName,contactDetail);
     }
 

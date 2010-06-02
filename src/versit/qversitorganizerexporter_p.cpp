@@ -43,6 +43,7 @@
 #include "qversitorganizerexporter_p.h"
 #include "qtorganizer.h"
 #include "versitutils_p.h"
+#include "qversitdefs_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 
@@ -53,6 +54,15 @@ QVersitOrganizerExporterPrivate::QVersitOrganizerExporterPrivate() :
     mDefaultResourceHandler(new QVersitDefaultResourceHandler),
     mResourceHandler(mDefaultResourceHandler)
 {
+    int versitPropertyCount =
+        sizeof(versitOrganizerDetailMappings)/sizeof(VersitDetailMapping);
+    for (int i = 0; i < versitPropertyCount; i++) {
+        mPropertyMappings.insert(
+                QLatin1String(versitOrganizerDetailMappings[i].detailDefinitionName),
+                QPair<QString,QString>(
+                    QLatin1String(versitOrganizerDetailMappings[i].detailFieldName),
+                    QLatin1String(versitOrganizerDetailMappings[i].versitPropertyName)));
+    }
 }
 
 QVersitOrganizerExporterPrivate::~QVersitOrganizerExporterPrivate()
@@ -91,12 +101,12 @@ void QVersitOrganizerExporterPrivate::exportDetail(
     QList<QVersitProperty> generatedProperties;
     QSet<QString> processedFields;
 
-    if (detail.definitionName() == QOrganizerItemDisplayLabel::DefinitionName) {
-        encodeDisplayLabel(detail, *document, &removedProperties, &generatedProperties, &processedFields);
-    } else if (detail.definitionName() == QOrganizerItemEventTimeRange::DefinitionName) {
+    if (detail.definitionName() == QOrganizerItemEventTimeRange::DefinitionName) {
         encodeTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName) {
         encodeTimestamp(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    } else if (mPropertyMappings.contains(detail.definitionName())) {
+        encodeSimpleProperty(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     }
 
     foreach(const QVersitProperty& property, removedProperties) {
@@ -105,22 +115,6 @@ void QVersitOrganizerExporterPrivate::exportDetail(
     foreach(const QVersitProperty& property, generatedProperties) {
         document->addProperty(property);
     }
-}
-
-void QVersitOrganizerExporterPrivate::encodeDisplayLabel(
-        const QOrganizerItemDetail& detail,
-        const QVersitDocument& document,
-        QList<QVersitProperty>* removedProperties,
-        QList<QVersitProperty>* generatedProperties,
-        QSet<QString>* processedFields)
-{
-    QOrganizerItemDisplayLabel displayLabel = static_cast<QOrganizerItemDisplayLabel>(detail);
-    QVersitProperty property =
-        VersitUtils::takeProperty(document, QLatin1String("SUMMARY"), removedProperties);
-    property.setName(QLatin1String("SUMMARY"));
-    property.setValue(displayLabel.label());
-    *generatedProperties << property;
-    *processedFields << QOrganizerItemDisplayLabel::FieldLabel;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTimeRange(
@@ -175,4 +169,22 @@ QString QVersitOrganizerExporterPrivate::encodeDateTime(const QDateTime& dateTim
         return dateTime.toString(QLatin1String("yyyyMMddTHHmmssZ"));
     else
         return dateTime.toString(QLatin1String("yyyyMMddTHHmmss"));
+}
+
+void QVersitOrganizerExporterPrivate::encodeSimpleProperty(
+        const QOrganizerItemDetail& detail,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* removedProperties,
+        QList<QVersitProperty>* generatedProperties,
+        QSet<QString>* processedFields)
+{
+    QPair<QString, QString> fieldPropertyMap = mPropertyMappings[detail.definitionName()];
+    const QString& fieldName = fieldPropertyMap.first;
+    const QString& propertyName = fieldPropertyMap.second;
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, propertyName, removedProperties);
+    property.setName(propertyName);
+    property.setValue(detail.value(fieldName));
+    *generatedProperties << property;
+    *processedFields << fieldName;
 }

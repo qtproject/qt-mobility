@@ -55,42 +55,21 @@
 //
 
 #include "qmobilityglobal.h"
-
-#include <qcontactdetail.h>
-#include <qcontactname.h>
-#include <qcontactemailaddress.h>
-#include <qcontactphonenumber.h>
-#include "qcontactaddress.h"
-#include <qcontacturl.h>
-#include <qcontactguid.h>
-#include <qcontactorganization.h>
-#include <qcontacttimestamp.h>
-#include <qcontactbirthday.h>
-#include <qcontactnote.h>
-#include <qcontactgeolocation.h>
-#include <qcontactavatar.h>
-#include <qcontactgender.h>
-#include <qcontactnickname.h>
-#include <qcontactanniversary.h>
-#include <qcontactonlineaccount.h>
-#include <qcontactfamily.h>
-#include <qcontactdisplaylabel.h>
-#include <qcontacttag.h>
-#include <qcontactringtone.h>
-#include <qcontactthumbnail.h>
+#include "qtcontacts.h"
+#include "qtorganizer.h"
 
 QTM_BEGIN_NAMESPACE
 
 // Mapping between a string in versit specifications and Qt contact details
-struct VersitContactDetailMapping {
+struct VersitDetailMapping {
     const char* versitPropertyName;
-    const char* contactDetailDefinitionName;
-    const char* contactDetailValueKey;
+    const char* detailDefinitionName;
+    const char* detailFieldName;
 };
 
 //! [Property name mappings]
 // Mappings from versit property names to Qt contact details
-const VersitContactDetailMapping versitContactDetailMappings[] = {
+const VersitDetailMapping versitContactDetailMappings[] = {
     {"ADR",           QContactAddress::DefinitionName.latin1(),
                       ""},
     {"BDAY",          QContactBirthday::DefinitionName.latin1(),
@@ -155,6 +134,15 @@ const VersitContactDetailMapping versitContactDetailMappings[] = {
                       QContactFamily::FieldSpouse.latin1()}
 };
 //! [Property name mappings]
+
+// Only put simple mappings in this table; ie. where a Versit property maps to a specific detail's
+// specific field (and that detail has no other fields of interest)
+const VersitDetailMapping versitOrganizerDetailMappings[] = {
+    {"SUMMARY",       QOrganizerItemDisplayLabel::DefinitionName.latin1(),
+                      QOrganizerItemDisplayLabel::FieldLabel.latin1()},
+    {"DESCRIPTION",   QOrganizerItemDescription::DefinitionName.latin1(),
+                      QOrganizerItemDescription::FieldDescription.latin1()}
+};
 
 // Mapping between a string in versit specifications and Qt contacts
 struct VersitMapping {
