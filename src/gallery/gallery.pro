@@ -50,7 +50,7 @@ SOURCES = \
 
 HEADERS = $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
-unix: include (maemo5/maemo5.pri)
+unix: contains(QT_CONFIG, dbus): include (maemo5/maemo5.pri)
 else: DEFINES += QT_DOCUMENT_GALLERY_NULL
 
 symbian {

@@ -145,6 +145,7 @@ contains(mobility_modules,sensors) {
 #Document Gallery
 contains(mobility_modules,gallery) {
     SUBDIRS += \
+        qdocumentgallery \
         qgalleryabstractrequest \
         qgalleryabstractresponse \
         qgallerybaseresponse \

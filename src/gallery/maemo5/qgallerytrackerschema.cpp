@@ -693,7 +693,7 @@ static const QGalleryItemProperty qt_galleryAudioPropertyList[] =
 //    QT_GALLERY_ITEM_PROPERTY(""          , "Audio:AlbumPeakGain", QGalleryProperty::Attributes()),
     QT_GALLERY_ITEM_PROPERTY("description" , "Audio:Comment"      , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("audioCodec"  , "Audio:Codec"        , CanRead | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY(""            , "Audio:CodecVersion" , CanRead | CanSort | CanFilter),
+//  QT_GALLERY_ITEM_PROPERTY(""            , "Audio:CodecVersion" , CanRead | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("sampleRate"  , "Audio:SampleRate"   , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("audioBitRate", "Audio:Bitrate"      , CanRead | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("channelCount", "Audio:Channels"     , CanRead | CanSort | CanFilter),
