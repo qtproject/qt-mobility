@@ -164,6 +164,39 @@ public:
 
     Q_DECLARE_FLAGS(Flags, Flag)
 
+    QGalleryTrackerItemListPrivate(
+            const QGalleryTrackerItemListArguments &arguments,
+            int cursorPosition,
+            int minimumPagedItems)
+        : idColumn(arguments.idColumn)
+        , urlColumn(arguments.urlColumn)
+        , typeColumn(arguments.typeColumn)
+        , updateMask(arguments.updateMask)
+        , identityWidth(arguments.identityWidth)
+        , valueOffset(arguments.valueOffset)
+        , compositeOffset(arguments.valueOffset + arguments.valueColumns.count())
+        , aliasOffset(compositeOffset + arguments.compositeColumns.count())
+        , imageOffset(aliasOffset + arguments.aliasColumns.count())
+        , columnCount(imageOffset + arguments.imageColumns.count())
+        , rowCount(0)
+        , queryLimit(qMax(256, (4 * minimumPagedItems + 63) & ~63))
+        , imageCacheIndex(0)
+        , imageCacheCount(0)
+        , queryInterface(arguments.queryInterface)
+        , queryMethod(arguments.queryMethod)
+        , queryArguments(arguments.queryArguments)
+        , propertyNames(arguments.propertyNames)
+        , propertyAttributes(arguments.propertyAttributes)
+        , valueColumns(arguments.valueColumns)
+        , compositeColumns(arguments.compositeColumns)
+        , aliasColumns(arguments.aliasColumns)
+        , imageColumns(arguments.imageColumns)
+        , sortCriteria(arguments.sortCriteria)
+    {
+        QGalleryItemListPrivate::cursorPosition = cursorPosition;
+        QGalleryItemListPrivate::minimumPagedItems = (minimumPagedItems + 15) & ~15;
+    }
+
     ~QGalleryTrackerItemListPrivate()
     {
         delete idColumn;
@@ -179,31 +212,31 @@ public:
     QGalleryTrackerCompositeColumn *urlColumn;
     QGalleryTrackerCompositeColumn *typeColumn;
 
-    int updateMask;
-    int identityWidth;
-    int valueOffset;
-    union
+    const int updateMask;
+    const int identityWidth;
+    const int valueOffset;
+    const union
     {
         int compositeOffset;
         int tableWidth;
     };
-    int aliasOffset;
-    int imageOffset;
-    int columnCount;
+    const int aliasOffset;
+    const int imageOffset;
+    const int columnCount;
     int rowCount;
-    int queryLimit;
+    const int queryLimit;
     int imageCacheIndex;
     int imageCacheCount;
     QGalleryDBusInterfacePointer queryInterface;
-    QString queryMethod;
-    QVariantList queryArguments;
-    QStringList propertyNames;
-    QVector<QGalleryProperty::Attributes> propertyAttributes;
-    QVector<QGalleryTrackerValueColumn *> valueColumns;
-    QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
-    QVector<int> aliasColumns;
-    QVector<QGalleryTrackerImageColumn *> imageColumns;
-    QVector<QGalleryTrackerSortCriteria> sortCriteria;
+    const QString queryMethod;
+    const QVariantList queryArguments;
+    const QStringList propertyNames;
+    const QVector<QGalleryProperty::Attributes> propertyAttributes;
+    const QVector<QGalleryTrackerValueColumn *> valueColumns;
+    const QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
+    const QVector<int> aliasColumns;
+    const QVector<QGalleryTrackerImageColumn *> imageColumns;
+    const QVector<QGalleryTrackerSortCriteria> sortCriteria;
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 

@@ -7,7 +7,6 @@ DEFINES += QT_DOCUMENT_GALLERY_MAEMO_5
 
 HEADERS += \
         $$PWD/qgallerydbusinterface_p.h \
-        $$PWD/qgallerytrackeraggregateresponse_p.h \
         $$PWD/qgallerytrackercountresponse_p.h \
         $$PWD/qgallerytrackeritemlist_p.h \
         $$PWD/qgallerytrackeritemlist_p_p.h \
@@ -21,7 +20,6 @@ HEADERS += \
 
 SOURCES += \
         $$PWD/qdocumentgallery_maemo5.cpp \
-        $$PWD/qgallerytrackeraggregateresponse.cpp \
         $$PWD/qgallerytrackercountresponse.cpp \
         $$PWD/qgallerytrackeritemlist.cpp \
         $$PWD/qgallerytrackeritemresponse.cpp \

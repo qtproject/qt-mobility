@@ -100,7 +100,7 @@ void SongView::mediaChanged(QGalleryItemList *media)
     model->setList(media);
 }
 
-void SongView::activated(const QModelIndex &index)
+void SongView::activated(const QModelIndex &)
 {
 }
 

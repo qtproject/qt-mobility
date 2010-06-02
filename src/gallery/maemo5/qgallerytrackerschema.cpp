@@ -42,6 +42,9 @@
 #include "qgallerytrackerschema_p.h"
 
 #include "qgalleryabstractrequest.h"
+#include "qgallerydbusinterface_p.h"
+#include "qgallerytrackercountresponse_p.h"
+#include "qgallerytrackeritemlist_p.h"
 #include "qgallerytrackerthumbnailcolumn_p.h"
 
 #include <QtCore/qmetatype.h>
@@ -1011,9 +1014,11 @@ QVariant QGalleryTrackerServiceTypeColumn::value(QVector<QVariant>::const_iterat
 
 }
 
-QGalleryTrackerSchema::QGalleryTrackerSchema()
-    : m_itemIndex(-1)
-    , m_aggregateIndex(-1)
+QGalleryTrackerSchema::QGalleryTrackerSchema(const QString &itemType)
+    : m_itemIndex(QGalleryItemTypeList(qt_galleryItemTypeList).indexOfType(itemType))
+    , m_aggregateIndex(m_itemIndex == -1
+            ? QGalleryAggregateTypeList(qt_galleryAggregateTypeList).indexOfType(itemType)
+            : -1)
 {
 }
 
@@ -1021,163 +1026,44 @@ QGalleryTrackerSchema::~QGalleryTrackerSchema()
 {
 }
 
-void QGalleryTrackerSchema::setItemType(const QString &type)
+QGalleryTrackerSchema QGalleryTrackerSchema::fromItemId(const QString &itemId)
 {
-    m_itemType = type;
-    m_itemIndex = QGalleryItemTypeList(qt_galleryItemTypeList).indexOfType(type);
-    m_aggregateIndex = m_itemIndex == -1
-            ? QGalleryAggregateTypeList(qt_galleryAggregateTypeList).indexOfType(type)
-            : -1;
-}
+    const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
 
-void QGalleryTrackerSchema::resolveTypeFromItemId(const QString &itemId)
-{
-    QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
-    m_itemIndex = itemTypes.indexOfItemId(itemId);
+    const int itemIndex = itemTypes.indexOfItemId(itemId);
 
-    if (m_itemIndex != -1) {
-        m_itemType = itemTypes[m_itemIndex].itemType;
-        m_aggregateIndex = -1;
+    if (itemIndex != -1) {
+        return QGalleryTrackerSchema(itemIndex, -1);
     } else {
         QGalleryAggregateTypeList aggregateTypes(qt_galleryAggregateTypeList);
-        m_aggregateIndex = aggregateTypes.indexOfItemId((itemId));
 
-        if (m_aggregateIndex != -1) {
-            m_itemType = aggregateTypes[m_aggregateIndex].itemType;
-        } else {
-            m_itemType = QString();
-        }
+        const int aggregateIndex = aggregateTypes.indexOfItemId(itemId);
+
+        return aggregateIndex != -1
+                ? QGalleryTrackerSchema(-1, aggregateIndex)
+                : QGalleryTrackerSchema(-1, -1);
     }
 }
 
-void QGalleryTrackerSchema::resolveTypeFromService(const QString &service)
+QGalleryTrackerSchema QGalleryTrackerSchema::fromService(const QString &service)
 {
-    QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
+    const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
 
-    m_itemIndex = itemTypes.indexOfService(service);
-    m_aggregateIndex = -1;
+    const int itemIndex = itemTypes.indexOfService(service);
 
-    if (m_itemIndex != -1)
-        m_itemType = itemTypes[m_itemIndex].itemType;
+    return itemIndex != -1
+            ? QGalleryTrackerSchema(itemIndex, -1)
+            : QGalleryTrackerSchema(-1, -1);
 }
 
-QString QGalleryTrackerSchema::buildIdQuery(int *error, const QString &itemId)
+QString QGalleryTrackerSchema::itemType() const
 {
-    QString query;
-
-    if (m_itemIndex >= 0) {
-        QXmlStreamWriter xml(&query);
-        xml.writeStartElement(QLatin1String("rdfq:Condition"));
-
-        qt_writeFileIdCondition(
-                error ,&xml, qt_galleryItemTypeList[m_itemIndex].prefix.strip(itemId));
-
-        xml.writeEndElement();
-    } else if (m_aggregateIndex >= 0) {
-        QXmlStreamWriter xml(&query);
-        xml.writeStartElement(QLatin1String("rdfq:Condition"));
-
-        qt_galleryAggregateTypeList[m_aggregateIndex].writeIdCondition(
-                error, &xml, qt_galleryAggregateTypeList[m_aggregateIndex].prefix.strip(itemId));
-
-        xml.writeEndElement();
-    } else {
-        *error = QGalleryAbstractRequest::InvalidItemError;
-    }
-
-    return query;
-}
-
-QString QGalleryTrackerSchema::buildContainerQuery(int *error, const QString &containerId)
-{
-    QString query;
-
-    QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
-    int index = itemTypes.indexOfItemId(containerId);
-
-    if (index != -1) {
-        QXmlStreamWriter xml(&query);
-        xml.writeStartElement(QLatin1String("rdfq:Condition"));
-
-        qt_writeFileContainerCondition(error, &xml, itemTypes[index].prefix.strip(containerId));
-
-        xml.writeEndElement();
-    } else {
-        QGalleryAggregateTypeList aggregateTypes(qt_galleryAggregateTypeList);
-        index = aggregateTypes.indexOfItemId(containerId);
-
-        if (index != -1) {
-            QXmlStreamWriter xml(&query);
-            xml.writeStartElement(QLatin1String("rdfq:Condition"));
-
-            aggregateTypes[index].writeIdCondition(
-                    error, &xml, aggregateTypes[index].prefix.strip(containerId));
-
-            xml.writeEndElement();
-        } else {
-            *error = QGalleryAbstractRequest::InvalidItemError;
-        }
-    }
-
-    return query;
-}
-
-QString QGalleryTrackerSchema::buildFilterQuery(
-        int *error, const QString &containerId, const QGalleryFilter &filter) const
-{    
-    QString query;
-
-    if (containerId.isEmpty() && filter.type() == QGalleryFilter::Invalid)
-        return query;
-
-    QXmlStreamWriter xml(&query);
-    xml.writeStartElement(QLatin1String("rdfq:Condition"));
-
-    if (!containerId.isEmpty()) {
-        xml.writeStartElement(QLatin1String("rdfq:and"));
-
-        QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
-        int index = itemTypes.indexOfItemId(containerId);
-
-        if (index != -1) {
-            qt_writeFileScopeCondition(error, &xml, itemTypes[index].prefix.strip(containerId));
-        } else {
-            QGalleryAggregateTypeList aggregateTypes(qt_galleryAggregateTypeList);
-            index = aggregateTypes.indexOfItemId((containerId));
-
-            if (index != -1) {
-                aggregateTypes[index].writeIdCondition(
-                        error, &xml, aggregateTypes[index].prefix.strip(containerId));
-            } else {
-                *error = QGalleryAbstractRequest::InvalidItemError;
-            }
-        }
-    }
-
-    if (filter.type() != QGalleryFilter::Invalid) {
-        if (m_itemIndex >= 0) {
-            qt_writeCondition(
-                    error,
-                    &xml,
-                    filter,
-                    qt_galleryItemTypeList[m_itemIndex].itemProperties);
-        } else if (m_aggregateIndex >= 0) {
-            qt_writeCondition(
-                    error,
-                    &xml,
-                    filter,
-                    qt_galleryAggregateTypeList[m_aggregateIndex].properties);
-        } else {
-            *error = QGalleryAbstractRequest::ItemTypeError;
-        }
-    }
-
-    if (!containerId.isEmpty())
-        xml.writeEndElement();
-
-    xml.writeEndElement();
-
-    return query;
+    if (m_itemIndex >= 0)
+        return qt_galleryItemTypeList[m_itemIndex].itemType;
+    else if (m_aggregateIndex >= 0)
+        return qt_galleryAggregateTypeList[m_aggregateIndex].itemType;
+    else
+        return QString();
 }
 
 QString QGalleryTrackerSchema::uriFromItemId(int *error, const QVariant &itemId)
@@ -1202,26 +1088,6 @@ QString QGalleryTrackerSchema::itemIdFromUri(const QString &uri) const
     return m_itemIndex >= 0
             ? qt_galleryItemTypeList[m_itemIndex].prefix + uri
             : QString();
-}
-
-QString QGalleryTrackerSchema::service() const
-{
-    if (m_itemIndex >= 0)
-        return qt_galleryItemTypeList[m_itemIndex].service;
-    else if (m_aggregateIndex >= 0)
-        return qt_galleryAggregateTypeList[m_aggregateIndex].service;
-    else
-        return QString();
-}
-
-int QGalleryTrackerSchema::updateMask() const
-{
-    if (m_itemIndex >= 0)
-        return qt_galleryItemTypeList[m_itemIndex].updateMask;
-    else if (m_aggregateIndex >= 0)
-        return qt_galleryAggregateTypeList[m_aggregateIndex].updateMask;
-    else
-        return 0;
 }
 
 int QGalleryTrackerSchema::serviceUpdateId(const QString &service)
@@ -1278,226 +1144,301 @@ QGalleryProperty::Attributes QGalleryTrackerSchema::propertyAttributes(
     return QGalleryProperty::Attributes();
 }
 
-
-QStringList QGalleryTrackerSchema::identityFields() const
-{
-    QStringList fields;
-
-    if (m_aggregateIndex >= 0) {
-        const QGalleryItemPropertyList &identity
-                = qt_galleryAggregateTypeList[m_aggregateIndex].identity;
-
-        for (int i = 0; i < identity.count; ++i)
-            fields.append(identity[i].field);
-    }
-    return fields;
-}
-
-void QGalleryTrackerSchema::setPropertyNames(const QStringList &names)
-{
-    m_propertyNames = names;
-}
-
-void QGalleryTrackerSchema::setSortPropertyNames(const QStringList &names)
-{
-    m_sortPropertyNames = names;
-}
-
-QString QGalleryTrackerSchema::queryMethod() const
-{
-    if (m_itemIndex >= 0)
-        return QLatin1String("Query");
-    else if (m_aggregateIndex >= 0)
-        return QLatin1String("GetUniqueValuesWithAggregates");
-    else
-        return QString();
-}
-
-QVariantList QGalleryTrackerSchema::queryArguments(const QString &query) const
+int QGalleryTrackerSchema::prepareIdResponse(
+        QGalleryTrackerItemListArguments *arguments,
+        QGalleryDBusInterfaceFactory *dbus,
+        const QString &itemId,
+        const QStringList &propertyNames) const
 {
     if (m_itemIndex >= 0) {
-        const int liveQueryId = 0;
-        const QString service = qt_galleryItemTypeList[m_itemIndex].service;
-        const QString searchText;
-        const QStringList keywords;
-        const bool sortByService = false;
-        const bool descendingSortOrder = !m_sortCriteria.isEmpty()
-                && m_sortCriteria.first().flags & QGalleryTrackerSortCriteria::Descending;
+        int result = QGalleryAbstractRequest::Succeeded;
 
-        return QVariantList()
-                << liveQueryId
-                << service
-                << m_propertyFields
-                << searchText
-                << keywords
-                << query
-                << sortByService
-                << m_sortFields
-                << descendingSortOrder;
+        QString query;
+        {
+            QXmlStreamWriter xml(&query);
+            xml.writeStartElement(QLatin1String("rdfq:Condition"));
+
+            qt_writeFileIdCondition(
+                    &result ,&xml, qt_galleryItemTypeList[m_itemIndex].prefix.strip(itemId));
+
+            xml.writeEndElement();
+        }
+
+        if (result == QGalleryAbstractRequest::Succeeded)
+            populateItemArguments(arguments, dbus, query, propertyNames, QStringList());
+
+        return result;
     } else if (m_aggregateIndex >= 0) {
-        const QString service = qt_galleryAggregateTypeList[m_aggregateIndex].service;
-        const bool descendingSortOrder = !m_sortCriteria.isEmpty()
-                && m_sortCriteria.first().flags & QGalleryTrackerSortCriteria::Descending;
+        int result = QGalleryAbstractRequest::Succeeded;
 
-        return QVariantList()
-                << service
-                << m_propertyFields
-                << query
-                << m_aggregations
-                << m_aggregateFields
-                << descendingSortOrder;
+        QString query;
+        {
+            QXmlStreamWriter xml(&query);
+            xml.writeStartElement(QLatin1String("rdfq:Condition"));
+
+            qt_galleryAggregateTypeList[m_aggregateIndex].writeIdCondition(
+                    &result,
+                    &xml,
+                    qt_galleryAggregateTypeList[m_aggregateIndex].prefix.strip(itemId));
+
+            xml.writeEndElement();
+        }
+
+        if (result == QGalleryAbstractRequest::Succeeded)
+            populateAggregateArguments(arguments, dbus, query, propertyNames, QStringList());
+
+        return result;
     } else {
-        return QVariantList();
+        return QGalleryAbstractRequest::InvalidItemError;
     }
 }
 
-QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createIdColumn() const
+int QGalleryTrackerSchema::prepareContainerResponse(
+        QGalleryTrackerItemListArguments *arguments,
+        QGalleryDBusInterfaceFactory *dbus,
+        const QString &containerId,
+        const QStringList &propertyNames,
+        const QStringList &sortPropertyNames) const
 {
-    if (m_itemIndex >= 0) {
-        return new QGalleryTrackerServicePrefixColumn;
+    int result = QGalleryAbstractRequest::Succeeded;
+
+    QString query;
+
+    QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
+    int index = itemTypes.indexOfItemId(containerId);
+
+    if (index != -1) {
+        QXmlStreamWriter xml(&query);
+        xml.writeStartElement(QLatin1String("rdfq:Condition"));
+
+        qt_writeFileContainerCondition(&result, &xml, itemTypes[index].prefix.strip(containerId));
+
+        xml.writeEndElement();
+    } else {
+        QGalleryAggregateTypeList aggregateTypes(qt_galleryAggregateTypeList);
+        index = aggregateTypes.indexOfItemId(containerId);
+
+        if (index != -1) {
+            QXmlStreamWriter xml(&query);
+            xml.writeStartElement(QLatin1String("rdfq:Condition"));
+
+            aggregateTypes[index].writeIdCondition(
+                    &result, &xml, aggregateTypes[index].prefix.strip(containerId));
+
+            xml.writeEndElement();
+        } else {
+            result = QGalleryAbstractRequest::InvalidItemError;
+        }
+    }
+
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        return result;
+    } else if (m_itemIndex >= 0) {
+        populateItemArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
+
+        return QGalleryAbstractRequest::Succeeded;
+    } else if (m_aggregateIndex >= 0) {
+        populateAggregateArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
+
+        return QGalleryAbstractRequest::Succeeded;
+    } else {
+        return QGalleryAbstractRequest::ItemTypeError;
+    }
+}
+
+int QGalleryTrackerSchema::prepareFilterResponse(
+        QGalleryTrackerItemListArguments *arguments,
+        QGalleryDBusInterfaceFactory *dbus,
+        const QString &containerId,
+        const QGalleryFilter &filter,
+        const QStringList &propertyNames,
+        const QStringList &sortPropertyNames) const
+{
+    int result = QGalleryAbstractRequest::Succeeded;
+
+    QString query;
+
+    if (!containerId.isEmpty() || filter.isValid())
+        result = buildFilterQuery(&query, containerId, filter);
+
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        return result;
+    } else if (m_itemIndex >= 0) {
+        populateItemArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
+
+        return QGalleryAbstractRequest::Succeeded;
+    } else if (m_aggregateIndex >= 0) {
+        populateAggregateArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
+
+        return QGalleryAbstractRequest::Succeeded;
+    } else {
+        return QGalleryAbstractRequest::ItemTypeError;
+    }
+}
+
+int QGalleryTrackerSchema::prepareCountResponse(
+        QGalleryTrackerCountResponseArguments *arguments,
+        QGalleryDBusInterfaceFactory *dbus,
+        const QString &containerId,
+        const QGalleryFilter &filter) const
+{
+    int result = QGalleryAbstractRequest::Succeeded;
+
+    QString query;
+
+    if (!containerId.isEmpty() || filter.isValid())
+        result = buildFilterQuery(&query, containerId, filter);
+
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        return result;
+    } else if (m_itemIndex >= 0) {
+        arguments->accumulative = false;
+        arguments->queryInterface = dbus->metaDataInterface();
+        arguments->queryMethod = QLatin1String("GetCount");
+        arguments->queryArguments = QVariantList()
+                << qt_galleryItemTypeList[m_itemIndex].service
+                << QLatin1String("*")
+                << query;
+
+        return QGalleryAbstractRequest::Succeeded;
     } else if (m_aggregateIndex >= 0) {
         const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
 
         if (type.identity.count == 1) {
-            return new QGalleryTrackerPrefixColumn(0, type.prefix);
-        } else if (type.identity.count == 2) {
-            return new QGalleryTrackerCompositeIdColumn(m_identityColumns, type.prefix);
-        }
-    }
-    return new QGalleryTrackerStaticColumn(QVariant());
-}
+            const QString countField = type.identity[0].field;
 
-QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createUrlColumn() const
-{
-    if (m_itemIndex >= 0) {
-        return new QGalleryTrackerFileUrlColumn(0);
+            arguments->accumulative = false;
+            arguments->queryInterface = dbus->metaDataInterface();
+            arguments->queryMethod = QLatin1String("GetCount");
+            arguments->queryArguments = QVariantList()
+                    << type.service
+                    << countField
+                    << query;
+        } else {
+            QStringList identity;
+            for (int i = 0; i < type.identity.count - 1; ++i)
+                identity.append(type.identity[i].field);
+            const QString countField = type.identity[type.identity.count - 1].field;
+            const bool descending = false;
+
+            arguments->accumulative = true;
+            arguments->queryInterface = dbus->metaDataInterface();
+            arguments->queryMethod = QLatin1String("GetUniqueValuesWithCount");
+            arguments->queryArguments = QVariantList()
+                    << type.service
+                    << identity
+                    << query
+                    << countField
+                    << descending;
+        }
+
+        return QGalleryAbstractRequest::Succeeded;
     } else {
-        return new QGalleryTrackerStaticColumn(QUrl());
-    }
-}
-
-QGalleryTrackerCompositeColumn *QGalleryTrackerSchema::createTypeColumn() const
-{
-    if (m_itemIndex >= 0) {
-        return new QGalleryTrackerServiceTypeColumn;
-    } else if (m_aggregateIndex >= 0) {
-        return new QGalleryTrackerStaticColumn(QString(
-                qt_galleryAggregateTypeList[m_aggregateIndex].itemType));
-    } else {
-        return new QGalleryTrackerStaticColumn(QVariant());
-    }
-}
-
-QVector<QGalleryTrackerValueColumn *> QGalleryTrackerSchema::createValueColumns() const
-{
-    QVector<QGalleryTrackerValueColumn *> columns;
-
-    columns.reserve(m_valueTypes.count());
-
-    for (int i = 0, count = m_valueTypes.count(); i < count; ++i) {
-        switch (m_valueTypes.at(i)) {
-        case QVariant::String:
-            columns.append(new QGalleryTrackerStringColumn);
-            break;
-        case QVariant::Int:
-            columns.append(new QGalleryTrackerStringColumn);
-            break;
-        case QVariant::Double:
-            columns.append(new QGalleryTrackerStringColumn);
-            break;
-        case QVariant::DateTime:
-            columns.append(new QGalleryTrackerStringColumn);
-            break;
-        default:
-            Q_ASSERT(false);
-            break;
-        }
-    }
-
-    return columns;
-}
-
-QVector<QGalleryTrackerCompositeColumn *> QGalleryTrackerSchema::createCompositeColumns() const
-{
-    QVector<QGalleryTrackerCompositeColumn *> columns;
-
-    return columns;
-}
-
-QVector<int> QGalleryTrackerSchema::aliasColumns() const
-{
-    return m_aliasColumns;
-}
-
-QVector<QGalleryTrackerImageColumn *> QGalleryTrackerSchema::createImageColumns(
-        QGalleryDBusInterfaceFactory *dbus) const
-{
-    QVector<QGalleryTrackerImageColumn *> columns;
-    columns.reserve(m_thumbnailTypes.count());
-
-    for (int i = 0, count = m_thumbnailTypes.count(); i < count; ++i) {
-        switch (m_thumbnailTypes.at(i)) {
-        case QVariant::Image:
-            columns.append(new QGalleryTrackerThumbnailImageColumn(dbus->thumbnailInterface(), i));
-            break;
-        case QVariant::Pixmap:
-            columns.append(new QGalleryTrackerThumbnailPixmapColumn(dbus->thumbnailInterface(), i));
-            break;
-        default:
-            break;
-        }
-    }
-
-    return columns;
-}
-
-int QGalleryTrackerSchema::resolveColumns()
-{
-    if (m_itemIndex >= 0)
-        return resolveFileColumns();
-    else if (m_aggregateIndex >= 0)
-        return resolveAggregateColumns();
-    else
         return QGalleryAbstractRequest::ItemTypeError;
+    }
 }
 
-int QGalleryTrackerSchema::resolveFileColumns()
+int QGalleryTrackerSchema::buildFilterQuery(
+        QString *query, const QString &containerId, const QGalleryFilter &filter) const
 {
-    QStringList propertyFields;
+    const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
+    const QGalleryAggregateTypeList aggregateTypes(qt_galleryAggregateTypeList);
+
+    int result = QGalleryAbstractRequest::Succeeded;
+
+    QXmlStreamWriter xml(query);
+    xml.writeStartElement(QLatin1String("rdfq:Condition"));
+
+    if (!containerId.isEmpty()) {
+        if (filter.isValid())
+            xml.writeStartElement(QLatin1String("rdfq:and"));
+
+        int index;
+
+        if ((index = itemTypes.indexOfItemId(containerId)) != -1) {
+            qt_writeFileScopeCondition(
+                    &result,
+                    &xml,
+                    itemTypes[index].prefix.strip(containerId));
+        } else if ((index = aggregateTypes.indexOfItemId((containerId))) != -1) {
+            aggregateTypes[index].writeIdCondition(
+                    &result, &xml, aggregateTypes[index].prefix.strip(containerId));
+        } else {
+            result = QGalleryAbstractRequest::InvalidItemError;
+        }
+    }
+
+    if (filter.isValid()) {
+        if (m_itemIndex != -1) {
+            qt_writeCondition(
+                    &result,
+                    &xml,
+                    filter,
+                    itemTypes[m_itemIndex].itemProperties);
+        } else if (m_aggregateIndex != -1) {
+            qt_writeCondition(
+                    &result,
+                    &xml,
+                    filter,
+                    aggregateTypes[m_aggregateIndex].properties);
+        } else {
+            result = QGalleryAbstractRequest::ItemTypeError;
+        }
+    }
+
+    if (!containerId.isEmpty() && filter.isValid())
+        xml.writeEndElement();
+
+    xml.writeEndElement();
+
+    return result;
+}
+
+void QGalleryTrackerSchema::populateItemArguments(
+        QGalleryTrackerItemListArguments *arguments,
+        QGalleryDBusInterfaceFactory *dbus,
+        const QString &query,
+        const QStringList &propertyNames,
+        const QStringList &sortPropertyNames) const
+{
+    const int liveQueryId = 0;
+    const QString service = qt_galleryItemTypeList[m_itemIndex].service;
+    const QString searchText;
+    const QStringList keywords;
+    const bool sortByService = false;
+
     QStringList valueNames;
     QStringList aliasNames;
     QStringList thumbnailNames;
+    QStringList sortFieldNames;
     QVector<QGalleryProperty::Attributes> valueAttributes;
     QVector<QGalleryProperty::Attributes> aliasAttributes;
     QVector<QGalleryProperty::Attributes> thumbnailAttributes;
     QVector<QVariant::Type> valueTypes;
-    QVector<int> aliasColumns;
     QVector<QVariant::Type> thumbnailTypes;
-    QVector<QGalleryTrackerSortCriteria> sortCriteria;
 
     const QGalleryItemPropertyList &itemProperties
             = qt_galleryItemTypeList[m_itemIndex].itemProperties;
     const QGalleryThumbnailPropertyList &thumbnailProperties
             = qt_galleryItemTypeList[m_itemIndex].thumbnailProperties;
 
-    m_propertyNames.removeDuplicates();
+    for (QStringList::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
+        if (qFind(propertyNames.begin(), it, *it) != it)    // Skip duplicates.
+            continue;
 
-    for (QStringList::const_iterator it = m_propertyNames.constBegin();
-            it != m_propertyNames.constEnd();
-            ++it) {
         int propertyIndex = itemProperties.indexOfProperty(*it);
 
         if (propertyIndex >= 0) {
             const QString field = itemProperties[propertyIndex].field;
 
-            int fieldIndex = propertyFields.indexOf(field);
+            int fieldIndex = arguments->fieldNames.indexOf(field);
 
             if (fieldIndex >= 0) {
-                aliasColumns.append(fieldIndex + 2);
+                arguments->aliasColumns.append(fieldIndex + 2);
                 aliasNames.append(*it);
                 aliasAttributes.append(itemProperties[propertyIndex].attributes);
             } else {
-                propertyFields.append(field);
+                arguments->fieldNames.append(field);
                 valueNames.append(*it);
                 valueAttributes.append(itemProperties[propertyIndex].attributes);
                 valueTypes.append(QVariant::String);
@@ -1507,7 +1448,7 @@ int QGalleryTrackerSchema::resolveFileColumns()
             thumbnailNames.append(*it);
             thumbnailAttributes.append(QGalleryProperty::CanRead);
         } else if (*it == QLatin1String("filePath")) {
-            aliasColumns.append(0);
+            arguments->aliasColumns.append(0);
             aliasNames.append(*it);
             aliasAttributes.append(QGalleryProperty::CanRead);
         } else {
@@ -1515,11 +1456,11 @@ int QGalleryTrackerSchema::resolveFileColumns()
         }
     }
 
-    bool descending = !m_sortPropertyNames.isEmpty()
-            && m_sortPropertyNames.first().startsWith(QLatin1Char('-'));
+    const bool descending = !sortPropertyNames.isEmpty()
+            && sortPropertyNames.first().startsWith(QLatin1Char('-'));
 
-    for (QStringList::const_iterator it = m_sortPropertyNames.constBegin();
-            it != m_sortPropertyNames.constEnd();
+    for (QStringList::const_iterator it = sortPropertyNames.constBegin();
+            it != sortPropertyNames.constEnd();
             ++it) {
         int sortFlags = QGalleryTrackerSortCriteria::Ascending;
 
@@ -1547,35 +1488,51 @@ int QGalleryTrackerSchema::resolveFileColumns()
                 && itemProperties[propertyIndex].attributes & QGalleryProperty::CanSort) {
             const QString field = itemProperties[propertyIndex].field;
 
-            int fieldIndex = propertyFields.indexOf(field);
+            int fieldIndex = arguments->fieldNames.indexOf(field);
 
             if (fieldIndex < 0) {
-                fieldIndex = propertyFields.count();
-                propertyFields.append(field);
+                fieldIndex = arguments->fieldNames.count();
+                arguments->fieldNames.append(field);
                 valueNames.append(propertyName);
                 valueAttributes.append(itemProperties[propertyIndex].attributes);
                 valueTypes.append(QVariant::String);
             }
 
-            sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex + 2, sortFlags));
+            sortFieldNames.append(field);
+            arguments->sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex + 2, sortFlags));
         }
     }
 
-    m_propertyFields = propertyFields;
-    m_aggregateFields = QStringList();
-    m_aggregations = QStringList();
-    m_propertyNames = valueNames + aliasNames + thumbnailNames;
-    m_propertyAttributes = valueAttributes + aliasAttributes + thumbnailAttributes;
-    m_valueTypes = valueTypes;
-    m_compositeColumns = QVector<int>();
-    m_aliasColumns = aliasColumns;
-    m_thumbnailTypes = thumbnailTypes;
-    m_sortCriteria = sortCriteria;
-
-    return QGalleryAbstractRequest::Succeeded;
+    arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
+    arguments->identityWidth = 2;
+    arguments->valueOffset = 2;
+    arguments->queryInterface = dbus->searchInterface();
+    arguments->queryMethod = QLatin1String("Query");
+    arguments->queryArguments = QVariantList()
+            << liveQueryId
+            << service
+            << arguments->fieldNames
+            << searchText
+            << keywords
+            << query
+            << sortByService
+            << sortFieldNames
+            << descending;
+    arguments->idColumn = new QGalleryTrackerServicePrefixColumn;
+    arguments->urlColumn = new QGalleryTrackerFileUrlColumn(0);
+    arguments->typeColumn = new QGalleryTrackerServiceTypeColumn;
+    arguments->valueColumns = createValueColumns(valueTypes);
+    arguments->imageColumns = createImageColumns(dbus, thumbnailTypes);
+    arguments->propertyNames = valueNames + aliasNames + thumbnailNames;
+    arguments->propertyAttributes = valueAttributes + aliasAttributes + thumbnailAttributes;
 }
 
-int QGalleryTrackerSchema::resolveAggregateColumns()
+void QGalleryTrackerSchema::populateAggregateArguments(
+        QGalleryTrackerItemListArguments *arguments,
+        QGalleryDBusInterfaceFactory *dbus,
+        const QString &query,
+        const QStringList &propertyNames,
+        const QStringList &sortPropertyNames) const
 {
     QStringList identityFields;
     QStringList aggregateFields;
@@ -1589,25 +1546,15 @@ int QGalleryTrackerSchema::resolveAggregateColumns()
     QVector<QVariant::Type> identityTypes;
     QVector<QVariant::Type> aggregateTypes;
     QVector<int> identityColumns;
-    QVector<int> aliasColumns;
-    QVector<QGalleryTrackerSortCriteria> sortCriteria;
-
 
     const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
     const QGalleryItemPropertyList &properties = type.properties;
     const QGalleryAggregatePropertyList &aggregateProperties = type.aggregateProperties;
 
-    m_propertyNames.removeDuplicates();
+    for (int i = 0; i < type.identity.count; ++i)
+        identityNames.append(type.identity[i].name);
 
-    for (int i = 0; i < type.identity.count; ++i) {
-        const QString propertyName = type.identity[i].name;
-
-        identityNames.append(propertyName);
-
-        m_propertyNames.removeAll(propertyName);
-    }
-
-    qSort(identityNames.begin(), identityNames.end(), QGalleryReorderLessThan(m_sortPropertyNames));
+    qSort(identityNames.begin(), identityNames.end(), QGalleryReorderLessThan(sortPropertyNames));
 
     for (int i = 0; i < type.identity.count; ++i)
         identityColumns.append(identityNames.indexOf(type.identity[i].name));
@@ -1626,9 +1573,12 @@ int QGalleryTrackerSchema::resolveAggregateColumns()
         identityTypes.append(QVariant::String);
     }
 
-    for (QStringList::const_iterator it = m_propertyNames.constBegin();
-            it != m_propertyNames.constEnd();
+    for (QStringList::const_iterator it = propertyNames.constBegin();
+            it != propertyNames.constEnd();
             ++it) {
+        if (qFind(propertyNames.begin(), it, *it) != it || identityNames.contains(*it))
+            continue;    // Skip duplicates.
+
         int propertyIndex = properties.indexOfProperty(*it);
 
         if (propertyIndex >= 0) {
@@ -1637,7 +1587,7 @@ int QGalleryTrackerSchema::resolveAggregateColumns()
             int fieldIndex = identityFields.indexOf(field);
             Q_ASSERT(fieldIndex != -1);
 
-            aliasColumns.append(fieldIndex);
+            arguments->aliasColumns.append(fieldIndex);
             aliasNames.append(*it);
             aliasAttributes.append(properties[propertyIndex].attributes);
         } else if ((propertyIndex = aggregateProperties.indexOfProperty(*it)) >= 0) {
@@ -1649,11 +1599,11 @@ int QGalleryTrackerSchema::resolveAggregateColumns()
         }
     }
 
-    bool descending = !m_sortPropertyNames.isEmpty()
-            && m_sortPropertyNames.first().startsWith(QLatin1Char('-'));
+    const bool descending = !sortPropertyNames.isEmpty()
+            && sortPropertyNames.first().startsWith(QLatin1Char('-'));
 
-    for (QStringList::const_iterator it = m_sortPropertyNames.constBegin();
-            it != m_sortPropertyNames.constEnd();
+    for (QStringList::const_iterator it = sortPropertyNames.begin();
+            it != sortPropertyNames.end();
             ++it) {
         int sortFlags = QGalleryTrackerSortCriteria::Ascending;
 
@@ -1678,22 +1628,82 @@ int QGalleryTrackerSchema::resolveAggregateColumns()
         int fieldIndex = identityNames.indexOf(propertyName);
 
         if (fieldIndex >= 0)
-            sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex, sortFlags));
+            arguments->sortCriteria.append(QGalleryTrackerSortCriteria(fieldIndex, sortFlags));
     }
 
-    m_propertyFields = identityFields;
-    m_aggregateFields = aggregateFields;
-    m_aggregations = aggregates;
-    m_propertyNames = identityNames + aggregateNames + aliasNames;
-    m_propertyAttributes = identityAttributes + aggregateAttributes + aliasAttributes;
-    m_valueTypes = identityTypes + aggregateTypes;
-    m_identityColumns = identityColumns;
-    m_compositeColumns = QVector<int>();
-    m_aliasColumns = aliasColumns;
-    m_thumbnailTypes = QVector<QVariant::Type>();
-    m_sortCriteria = sortCriteria;
+    arguments->updateMask = qt_galleryAggregateTypeList[m_aggregateIndex].updateMask;
+    arguments->identityWidth = identityColumns.count();
+    arguments->valueOffset = 0;
+    arguments->queryInterface = dbus->metaDataInterface();
+    arguments->queryMethod = QLatin1String("GetUniqueValuesWithAggregates");
+    arguments->queryArguments = QVariantList()
+            << type.service
+            << identityFields
+            << query
+            << aggregates
+            << aggregateFields
+            << descending;
+    if (type.identity.count == 1)
+        arguments->idColumn = new QGalleryTrackerPrefixColumn(0, type.prefix);
+    else
+        arguments->idColumn = new QGalleryTrackerCompositeIdColumn(identityColumns, type.prefix);
+    arguments->urlColumn = new QGalleryTrackerStaticColumn(QVariant());
+    arguments->typeColumn = new QGalleryTrackerStaticColumn(type.itemType);
+    arguments->valueColumns = createValueColumns(identityTypes + aggregateTypes);
+    arguments->propertyNames = identityNames + aggregateNames + aliasNames;
+    arguments->propertyAttributes = identityAttributes + aggregateAttributes + aliasAttributes;
+}
 
-    return QGalleryAbstractRequest::Succeeded;
+QVector<QGalleryTrackerValueColumn *> QGalleryTrackerSchema::createValueColumns(
+        const QVector<QVariant::Type> &types) const
+{
+    QVector<QGalleryTrackerValueColumn *> columns;
+
+    columns.reserve(types.count());
+
+    for (int i = 0, count = types.count(); i < count; ++i) {
+        switch (types.at(i)) {
+        case QVariant::String:
+            columns.append(new QGalleryTrackerStringColumn);
+            break;
+        case QVariant::Int:
+            columns.append(new QGalleryTrackerStringColumn);
+            break;
+        case QVariant::Double:
+            columns.append(new QGalleryTrackerStringColumn);
+            break;
+        case QVariant::DateTime:
+            columns.append(new QGalleryTrackerStringColumn);
+            break;
+        default:
+            Q_ASSERT(false);
+            break;
+        }
+    }
+
+    return columns;
+}
+
+QVector<QGalleryTrackerImageColumn *> QGalleryTrackerSchema::createImageColumns(
+        QGalleryDBusInterfaceFactory *dbus, const QVector<QVariant::Type> &types) const
+{
+    QVector<QGalleryTrackerImageColumn *> columns;
+    columns.reserve(types.count());
+
+    for (int i = 0, count = types.count(); i < count; ++i) {
+        switch (types.at(i)) {
+        case QVariant::Image:
+            columns.append(new QGalleryTrackerThumbnailImageColumn(dbus->thumbnailInterface(), i));
+            break;
+        case QVariant::Pixmap:
+            columns.append(new QGalleryTrackerThumbnailPixmapColumn(dbus->thumbnailInterface(), i));
+            break;
+        default:
+            break;
+        }
+    }
+
+    return columns;
 }
 
 QTM_END_NAMESPACE

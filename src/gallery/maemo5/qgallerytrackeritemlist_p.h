@@ -59,20 +59,71 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+class QGalleryDBusInterfaceFactory;
+class QGalleryTrackerCompositeColumn;
+class QGalleryTrackerImageColumn;
 class QGalleryTrackerSchema;
+class QGalleryTrackerValueColumn;
+
+struct QGalleryTrackerSortCriteria
+{
+    enum Flag
+    {
+        Sorted        = 0x01,
+        ReverseSorted = 0x02,
+        Ascending     = 0x04,
+        Descending    = 0x08
+    };
+
+    QGalleryTrackerSortCriteria() : column(0), flags(0) {}
+    QGalleryTrackerSortCriteria(short column, short flags) : column(column), flags(flags) {}
+
+    short column;
+    short flags;
+};
 
 class QGalleryTrackerItemListPrivate;
+
+struct QGalleryTrackerItemListArguments
+{
+    QGalleryTrackerItemListArguments()
+        : idColumn(0)
+        , urlColumn(0)
+        , typeColumn(0)
+        , updateMask(0)
+        , identityWidth(0)
+    {
+    }
+
+    QGalleryTrackerCompositeColumn *idColumn;
+    QGalleryTrackerCompositeColumn *urlColumn;
+    QGalleryTrackerCompositeColumn *typeColumn;
+    int updateMask;
+    int identityWidth;
+    int valueOffset;
+    QGalleryDBusInterfacePointer queryInterface;
+    QString queryMethod;
+    QVariantList queryArguments;
+    QStringList propertyNames;
+    QStringList fieldNames;
+    QVector<QGalleryProperty::Attributes> propertyAttributes;
+    QVector<QGalleryTrackerValueColumn *> valueColumns;
+    QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
+    QVector<int> aliasColumns;
+    QVector<QGalleryTrackerImageColumn *> imageColumns;
+    QVector<QGalleryTrackerSortCriteria> sortCriteria;
+};
 
 class QGalleryTrackerItemList : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:
-    enum UpdateState
-    {
-        UpToDate,
-        Updating
-    };
-
+    QGalleryTrackerItemList(
+            const QGalleryTrackerItemListArguments &arguments,
+            int cursorPosition,
+            int minimumPagedItems,
+            QObject *parent = 0);
     ~QGalleryTrackerItemList();
 
     QStringList propertyNames() const;
@@ -105,15 +156,7 @@ Q_SIGNALS:
     void itemEdited(const QString &service);
 
 protected:
-    QGalleryTrackerItemList(
-            QGalleryTrackerItemListPrivate &dd,
-            QGalleryDBusInterfaceFactory *dbus,
-            const QGalleryTrackerSchema &schema,
-            const QGalleryDBusInterfacePointer &queryInterface,
-            const QString &query,
-            int cursorPosition,
-            int minimumPagedItems,
-            QObject *parent);
+    QGalleryTrackerItemList(QGalleryTrackerItemListPrivate &dd, QObject *parent);
 
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemList)

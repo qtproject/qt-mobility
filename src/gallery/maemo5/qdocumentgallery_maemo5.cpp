@@ -51,7 +51,6 @@
 #include "qgalleryurlrequest.h"
 
 #include "qgalleryerrorresponse_p.h"
-#include "qgallerytrackeraggregateresponse_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerremoveresponse_p.h"
@@ -96,6 +95,13 @@ private:
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
     QGalleryDBusInterfacePointer thumbnailInterface();
+
+    QGalleryAbstractResponse *createItemListResponse(
+            const QGalleryTrackerItemListArguments &arguments,
+            int cursorPosition,
+            int minimumPagedItems,
+            bool isItemType,
+            bool isLive);
 
     void _q_statisticsReady(const QVector<QStringList> &statistics);
     void _q_statisticsChanged(const QVector<QStringList> &statistics);
@@ -163,63 +169,51 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::thumbnailInterface()
     return thumbnailService;
 }
 
-QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
+        const QGalleryTrackerItemListArguments &arguments,
+        int cursorPosition,
+        int minimumPagedItems,
+        bool isItemType,
+        bool isLive)
 {
-    int result = QGalleryAbstractRequest::Succeeded;
+    QGalleryTrackerItemList *response = 0;
 
-    QGalleryTrackerSchema schema;
-    schema.resolveTypeFromItemId(request->itemId().toString());
-
-    QString query = schema.buildIdQuery(&result, request->itemId().toString());
-
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        qWarning("Invalid Query %d, %s", result, qPrintable(query));
+    if (isItemType) {
+        response = new QGalleryTrackerItemResponse(
+                arguments, metaDataInterface(), cursorPosition, minimumPagedItems);
     } else {
-        QGalleryAbstractResponse *response = 0;
-        if (schema.isItemType()) {
-            schema.setPropertyNames(request->propertyNames());
-            schema.resolveColumns();
-
-            if (request->isLive()) {
-                QObject::connect(
-                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
-                        response, SLOT(refresh()));
-                QObject::connect(
-                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
-                QObject::connect(
-                        response, SIGNAL(itemEdited(QString)),
-                        &refreshManager, SLOT(itemEdited(QString)));
-            }
-
-            response = new QGalleryTrackerItemResponse(this, schema, query, 0, 1);
-
-            return response;
-        } else if (schema.isAggregateType()) {
-            schema.setPropertyNames(request->propertyNames());
-            schema.resolveColumns();
-
-            response = new QGalleryTrackerAggregateResponse(this, schema, query, 0, 1);
-
-            if (request->isLive()) {
-                QObject::connect(
-                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
-                        response, SLOT(refresh()));
-                QObject::connect(
-                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
-                QObject::connect(
-                        response, SIGNAL(itemEdited(QString)),
-                        &refreshManager, SLOT(itemEdited(QString)));
-            }
-
-            return response;
-        } else {
-            result = QGalleryAbstractRequest::InvalidItemError;
-        }
+        response = new QGalleryTrackerItemList(arguments, cursorPosition, minimumPagedItems);
     }
 
-    return new QGalleryErrorResponse(result);
+    if (isLive) {
+        QObject::connect(
+                daemonInterface().data(), SIGNAL(IndexFinished(double)),
+                response, SLOT(refresh()));
+        QObject::connect(
+                &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
+        QObject::connect(
+                response, SIGNAL(itemEdited(QString)),
+                &refreshManager, SLOT(itemEdited(QString)));
+    }
+
+    return response;
 }
 
+QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemResponse(QGalleryItemRequest *request)
+{
+    QGalleryTrackerSchema schema = QGalleryTrackerSchema::fromItemId(request->itemId().toString());
+
+    QGalleryTrackerItemListArguments arguments;
+
+    int result = schema.prepareIdResponse(
+            &arguments, this, request->itemId().toString(), request->propertyNames());
+
+    if (result != QGalleryAbstractRequest::Succeeded) {
+        return new QGalleryErrorResponse(result);
+    } else {
+        return createItemListResponse(arguments, 0, 1, schema.isItemType(), request->isLive());
+    }
+}
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
         QGalleryUrlRequest *request)
@@ -237,162 +231,71 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
         QGalleryContainerRequest *request)
 {
-    int result = QGalleryAbstractRequest::Succeeded;
+    QGalleryTrackerSchema schema(request->itemType());
 
-    QGalleryTrackerSchema schema;
-    schema.setItemType(request->itemType());
+    QGalleryTrackerItemListArguments arguments;
 
-    QString query = schema.buildContainerQuery(&result, request->containerId().toString());
+    int result = schema.prepareContainerResponse(
+            &arguments,
+            this,
+            request->containerId().toString(),
+            request->propertyNames(),
+            request->sortPropertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
-        qWarning("Invalid Query %d, %s", result, qPrintable(query));
+        return new QGalleryErrorResponse(result);
     } else {
-        QGalleryAbstractResponse *response = 0;
-        if (schema.isItemType()) {
-            schema.setPropertyNames(request->propertyNames());
-            schema.setSortPropertyNames(request->sortPropertyNames());
-            schema.resolveColumns();
-
-            response = new QGalleryTrackerItemResponse(
-                    this,
-                    schema,
-                    query,
-                    request->initialCursorPosition(),
-                    request->minimumPagedItems());
-
-            if (request->isLive()) {
-                QObject::connect(
-                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
-                        response, SLOT(refresh()));
-                QObject::connect(
-                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
-                QObject::connect(
-                        response, SIGNAL(itemEdited(QString)),
-                        &refreshManager, SLOT(itemEdited(QString)));
-            }
-
-            return response;
-        } else if (schema.isAggregateType()) {
-            schema.setPropertyNames(request->propertyNames());
-            schema.setSortPropertyNames(request->sortPropertyNames());
-            schema.resolveColumns();
-
-            response = new QGalleryTrackerAggregateResponse(
-                    this,
-                    schema,
-                    query,
-                    request->initialCursorPosition(),
-                    request->minimumPagedItems());
-
-            if (request->isLive()) {
-                QObject::connect(
-                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
-                        response, SLOT(refresh()));
-                QObject::connect(
-                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
-                QObject::connect(
-                        response, SIGNAL(itemEdited(QString)),
-                        &refreshManager, SLOT(itemEdited(QString)));
-            }
-
-            return response;
-        } else {
-            result = QGalleryAbstractRequest::ItemTypeError;
-        }
+        return createItemListResponse(
+                arguments,
+                request->initialCursorPosition(),
+                request->minimumPagedItems(),
+                schema.isItemType(),
+                request->isLive());
     }
-
-    return new QGalleryErrorResponse(result);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
         QGalleryFilterRequest *request)
 {
-    int result = QGalleryAbstractRequest::Succeeded;
+    QGalleryTrackerSchema schema(request->itemType());
 
-    QGalleryTrackerSchema schema;
-    schema.setItemType(request->itemType());
+    QGalleryTrackerItemListArguments arguments;
 
-    QString query = schema.buildFilterQuery(
-            &result, request->containerId().toString(), request->filter());
+    int result = schema.prepareFilterResponse(
+            &arguments,
+            this,
+            request->containerId().toString(),
+            request->filter(),
+            request->propertyNames(),
+            request->sortPropertyNames());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
-        qWarning("Invalid Query %d, %s", result, qPrintable(query));
+        return new QGalleryErrorResponse(result);
     } else {
-        if (schema.isItemType()) {
-            schema.setPropertyNames(request->propertyNames());
-            schema.setSortPropertyNames(request->sortPropertyNames());
-            schema.resolveColumns();
-
-            QGalleryAbstractResponse *response = new QGalleryTrackerItemResponse(
-                    this,
-                    schema,
-                    query,
-                    request->initialCursorPosition(),
-                    request->minimumPagedItems());
-
-            if (request->isLive()) {
-                QObject::connect(
-                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
-                        response, SLOT(refresh()));
-                QObject::connect(
-                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
-                QObject::connect(
-                        response, SIGNAL(itemEdited(QString)),
-                        &refreshManager, SLOT(itemEdited(QString)));
-            }
-
-            return response;
-        } else if (schema.isAggregateType()) {
-            schema.setPropertyNames(request->propertyNames());
-            schema.setSortPropertyNames(request->sortPropertyNames());
-            schema.resolveColumns();
-
-            QGalleryAbstractResponse *response = new QGalleryTrackerAggregateResponse(
-                    this,
-                    schema,
-                    query,
-                    request->initialCursorPosition(),
-                    request->minimumPagedItems());
-            response->setCursorPosition(request->initialCursorPosition());
-
-            if (request->isLive()) {
-                QObject::connect(
-                        daemonInterface().data(), SIGNAL(IndexFinished(double)),
-                        response, SLOT(refresh()));
-                QObject::connect(
-                        &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
-                QObject::connect(
-                        response, SIGNAL(itemEdited(QString)),
-                        &refreshManager, SLOT(itemEdited(QString)));
-            }
-
-            return response;
-        } else {
-            result = QGalleryAbstractRequest::ItemTypeError;
-        }
+        return createItemListResponse(
+                arguments,
+                request->initialCursorPosition(),
+                request->minimumPagedItems(),
+                schema.isItemType(),
+                request->isLive());
     }
-
-    return new QGalleryErrorResponse(result);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
         QGalleryCountRequest *request)
 {
-    int result = QGalleryAbstractRequest::Succeeded;
+    QGalleryTrackerSchema schema(request->itemType());
 
-    QGalleryTrackerSchema schema;
-    schema.setItemType(request->itemType());
+    QGalleryTrackerCountResponseArguments arguments;
 
-    QString query = schema.buildFilterQuery(
-            &result, request->containerId().toString(), request->filter());
+    int result = schema.prepareCountResponse(
+            &arguments, this, request->containerId().toString(), request->filter());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
-        qWarning("Invalid Query %d, %s", result, qPrintable(query));
-    } else if (schema.isItemType() || schema.isAggregateType()) {
-        return new QGalleryTrackerCountResponse(metaDataInterface(), schema, query);
+        return new QGalleryErrorResponse(result);
+    } else {
+        return new QGalleryTrackerCountResponse(arguments);
     }
-
-    return new QGalleryErrorResponse(result);
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createRemoveResponse(
@@ -439,19 +342,13 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
 
 QStringList QDocumentGallery::itemTypePropertyNames(const QString &itemType) const
 {
-    QGalleryTrackerSchema schema;
-    schema.setItemType(itemType);
-
-    return schema.supportedPropertyNames();
+    return QGalleryTrackerSchema(itemType).supportedPropertyNames();
 }
 
 QGalleryProperty::Attributes QDocumentGallery::propertyAttributes(
         const QString &propertyName, const QString &itemType) const
 {
-    QGalleryTrackerSchema schema;
-    schema.setItemType(itemType);
-
-    return schema.propertyAttributes(propertyName);
+    return QGalleryTrackerSchema(itemType).propertyAttributes(propertyName);
 }
 
 QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractRequest *request)

@@ -140,7 +140,7 @@ QList<QGalleryResource> QGalleryTrackerRemoveResponse::resources(int) const
     return QList<QGalleryResource>();
 }
 
-QGalleryItemList::ItemStatus QGalleryTrackerRemoveResponse::status(int index) const
+QGalleryItemList::ItemStatus QGalleryTrackerRemoveResponse::status(int) const
 {
     return QGalleryItemList::ItemStatus();
 }

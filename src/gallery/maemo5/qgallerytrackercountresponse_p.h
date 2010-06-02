@@ -62,7 +62,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerSchema;
+struct QGalleryTrackerCountResponseArguments
+{
+    QGalleryTrackerCountResponseArguments() : accumulative(false) {}
+
+    bool accumulative;
+    QGalleryDBusInterfacePointer queryInterface;
+    QString queryMethod;
+    QVariantList queryArguments;
+};
 
 class QGalleryTrackerCountResponsePrivate;
 
@@ -71,10 +79,7 @@ class QGalleryTrackerCountResponse : public QGalleryAbstractResponse
     Q_OBJECT
 public:
     QGalleryTrackerCountResponse(
-            const QGalleryDBusInterfacePointer &metaDataInterface,
-            const QGalleryTrackerSchema &schema,
-            const QString &query,
-            QObject *parent = 0);
+            const QGalleryTrackerCountResponseArguments &arguments, QObject *parent = 0);
     ~QGalleryTrackerCountResponse();
 
     QStringList propertyNames() const;
@@ -98,7 +103,7 @@ public:
 
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerCountResponse)
-    Q_PRIVATE_SLOT(d_func(), void _q_callFinished(QDBusPendingCallWatcher *))
+    Q_PRIVATE_SLOT(d_func(), void _q_queryFinished(QDBusPendingCallWatcher *))
 };
 
 QTM_END_NAMESPACE

@@ -60,113 +60,92 @@
 
 QTM_BEGIN_NAMESPACE
 
+
 class QGalleryDBusInterfaceFactory;
-class QGalleryTrackerCompositeColumn;
 class QGalleryTrackerImageColumn;
 class QGalleryTrackerValueColumn;
 
-struct QGalleryTrackerSortCriteria
-{
-    enum Flag
-    {
-        Sorted        = 0x01,
-        ReverseSorted = 0x02,
-        Ascending     = 0x04,
-        Descending    = 0x08
-    };
-
-    QGalleryTrackerSortCriteria() : column(0), flags(0) {}
-    QGalleryTrackerSortCriteria(short column, short flags) : column(column), flags(flags) {}
-
-    short column;
-    short flags;
-};
+struct QGalleryTrackerItemListArguments;
+struct QGalleryTrackerCountResponseArguments;
 
 class QGalleryTrackerSchema
 {
 public:
-    QGalleryTrackerSchema();
+    QGalleryTrackerSchema(const QString &itemType);
     ~QGalleryTrackerSchema();
+
+    static QGalleryTrackerSchema fromItemId(const QString &itemId);
+    static QGalleryTrackerSchema fromService(const QString &service);
 
     bool isItemType() const { return m_itemIndex >= 0; }
     bool isAggregateType() const { return m_aggregateIndex >= 0; }
 
-    QString itemType() const { return m_itemType; }
-    void setItemType(const QString &type);
-
-    void resolveTypeFromItemId(const QString &itemId);
-    void resolveTypeFromService(const QString &service);
-
-    QString buildIdQuery(int *error, const QString &itemId);
-    QString buildContainerQuery(int *error, const QString &containerId);
-    QString buildFilterQuery(
-            int *error, const QString &containerId, const QGalleryFilter &filter) const;
+    QString itemType() const;
 
     static QString uriFromItemId(int *error, const QVariant &itemId);
     QString itemIdFromUri(const QString &uri) const;
-
-    QString service() const;
-
-    int updateMask() const;
 
     static int serviceUpdateId(const QString &service);
 
     QStringList supportedPropertyNames() const;
     QGalleryProperty::Attributes propertyAttributes(const QString &propertyName) const;
 
-    QStringList identityFields() const;
+    int prepareIdResponse(
+            QGalleryTrackerItemListArguments *arguments,
+            QGalleryDBusInterfaceFactory *dbus,
+            const QString &itemId,
+            const QStringList &propertyNames) const;
 
-    QStringList propertyNames() const { return m_propertyNames; }
-    void setPropertyNames(const QStringList &names);
+    int prepareContainerResponse(
+            QGalleryTrackerItemListArguments *arguments,
+            QGalleryDBusInterfaceFactory *dbus,
+            const QString &containerId,
+            const QStringList &propertyNames,
+            const QStringList &sortPropertyNames) const;
 
-    QStringList sortPropertyNames() const { return m_sortPropertyNames; }
-    void setSortPropertyNames(const QStringList &names);
+    int prepareFilterResponse(
+            QGalleryTrackerItemListArguments *arguments,
+            QGalleryDBusInterfaceFactory *dbus,
+            const QString &containerId,
+            const QGalleryFilter &filter,
+            const QStringList &propertyNames,
+            const QStringList &sortPropertyNames) const;
 
-    int identityWidth() const { return m_itemIndex >= 0 ? 2 : m_identityColumns.count(); }
-    int valueOffset() const { return m_itemIndex >= 0 ? 2 : 0; }
-
-    QStringList fields() const { return m_propertyFields; }
-    QVector<QGalleryProperty::Attributes> propertyAttributes() const {
-        return m_propertyAttributes; }
-
-    QString queryMethod() const;
-    QVariantList queryArguments(const QString &query) const;
-
-    QGalleryTrackerCompositeColumn *createIdColumn() const;
-    QGalleryTrackerCompositeColumn *createUrlColumn() const;
-    QGalleryTrackerCompositeColumn *createTypeColumn() const;
-
-    QVector<QGalleryTrackerValueColumn *> createValueColumns() const;
-    QVector<QGalleryTrackerCompositeColumn *> createCompositeColumns() const;
-    QVector<int> aliasColumns() const;
-    QVector<QGalleryTrackerImageColumn *> createImageColumns(
-            QGalleryDBusInterfaceFactory *dbus) const;
-
-    QVector<QGalleryTrackerSortCriteria> sortCriteria() const { return m_sortCriteria; }
-
-
-    int resolveColumns();
+    int prepareCountResponse(
+            QGalleryTrackerCountResponseArguments *arguments,
+            QGalleryDBusInterfaceFactory *dbus,
+            const QString &containerId,
+            const QGalleryFilter &filter) const;
 
 private:
-    int resolveFileColumns();
-    int resolveAggregateColumns();
+    QGalleryTrackerSchema(int itemIndex, int aggregateIndex)
+        : m_itemIndex(itemIndex), m_aggregateIndex(aggregateIndex) {}
+
+    int buildFilterQuery(
+            QString *query,
+            const QString &containerId,
+            const QGalleryFilter &filter) const;
+
+    void populateItemArguments(
+            QGalleryTrackerItemListArguments *arguments,
+            QGalleryDBusInterfaceFactory *dbus,
+            const QString &query,
+            const QStringList &propertyNames,
+            const QStringList &sortPropertyNames) const;
+    void populateAggregateArguments(
+            QGalleryTrackerItemListArguments *arguments,
+            QGalleryDBusInterfaceFactory *dbus,
+            const QString &query,
+            const QStringList &propertyNames,
+            const QStringList &sortPropertyNames) const;
+
+    QVector<QGalleryTrackerValueColumn *> createValueColumns(
+            const QVector<QVariant::Type> &types) const;
+    QVector<QGalleryTrackerImageColumn *> createImageColumns(
+            QGalleryDBusInterfaceFactory *dbus, const QVector<QVariant::Type> &types) const;
 
     int m_itemIndex;
     int m_aggregateIndex;
-    QString m_itemType;
-    QStringList m_propertyNames;
-    QStringList m_sortPropertyNames;
-    QStringList m_propertyFields;
-    QStringList m_aggregations;
-    QStringList m_aggregateFields;
-    QStringList m_sortFields;
-    QVector<QGalleryProperty::Attributes> m_propertyAttributes;
-    QVector<QVariant::Type> m_valueTypes;
-    QVector<int> m_identityColumns;
-    QVector<int> m_compositeColumns;
-    QVector<int> m_aliasColumns;
-    QVector<QVariant::Type> m_thumbnailTypes;
-    QVector<QGalleryTrackerSortCriteria> m_sortCriteria;
 };
 
 QTM_END_NAMESPACE

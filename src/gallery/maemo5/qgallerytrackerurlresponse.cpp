@@ -141,8 +141,8 @@ void QGalleryTrackerUrlResponsePrivate::getServiceTypeFinished(const QDBusPendin
             q_func()->finish(QGalleryAbstractRequest::ConnectionError);
         }
     } else {
-        QGalleryTrackerSchema schema;
-        schema.resolveTypeFromService(QDBusPendingReply<QString>(call).value());
+        QGalleryTrackerSchema schema = QGalleryTrackerSchema::fromService(
+                QDBusPendingReply<QString>(call).value());
 
         if (schema.isItemType()) {
             itemId = schema.itemIdFromUri(itemUrl.path());

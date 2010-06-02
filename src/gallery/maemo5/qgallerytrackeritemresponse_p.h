@@ -66,9 +66,8 @@ class QGalleryTrackerItemResponse : public QGalleryTrackerItemList
     Q_OBJECT
 public:
     QGalleryTrackerItemResponse(
-            QGalleryDBusInterfaceFactory *dbus,
-            const QGalleryTrackerSchema &schema,
-            const QString &query,
+            const QGalleryTrackerItemListArguments &arguments,
+            const QGalleryDBusInterfacePointer &metaDataInterface,
             int cursorPosition,
             int minimumPagedItems,
             QObject *parent = 0);

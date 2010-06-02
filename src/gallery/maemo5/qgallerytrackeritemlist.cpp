@@ -399,52 +399,38 @@ void QGalleryTrackerItemListPrivate::_q_editFinished(QGalleryTrackerMetaDataEdit
 }
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
-        QGalleryTrackerItemListPrivate &dd,
-        QGalleryDBusInterfaceFactory *dbus,
-        const QGalleryTrackerSchema &schema,
-        const QGalleryDBusInterfacePointer &queryInterface,
-        const QString &query,
+        const QGalleryTrackerItemListArguments &arguments,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
-    : QGalleryAbstractResponse(dd, parent)
+    : QGalleryAbstractResponse(
+            *new QGalleryTrackerItemListPrivate(arguments, cursorPosition, minimumPagedItems),
+            parent)
 {
     Q_D(QGalleryTrackerItemList);
-
-    d->cursorPosition = cursorPosition;
-    d->minimumPagedItems = (minimumPagedItems + 15) & ~15;
-    d->updateMask = schema.updateMask();
-    d->identityWidth = schema.identityWidth();
-    d->valueOffset = schema.valueOffset();
-    d->queryInterface = queryInterface;
-    d->queryMethod = schema.queryMethod();
-    d->queryArguments = schema.queryArguments(query);
-    d->idColumn = schema.createIdColumn();
-    d->urlColumn = schema.createUrlColumn();
-    d->typeColumn = schema.createTypeColumn();
-    d->valueColumns = schema.createValueColumns();
-    d->compositeColumns = schema.createCompositeColumns();
-    d->aliasColumns = schema.aliasColumns();
-    d->imageColumns = schema.createImageColumns(dbus);
-    d->sortCriteria = schema.sortCriteria();
-    d->propertyNames = schema.propertyNames();
-    d->propertyAttributes = schema.propertyAttributes();
-
-    d->imageCacheIndex = 0;
-    d->imageCacheCount = 0;
 
     for (int i = 0; i < d->imageColumns.count(); ++i) {
         connect(d->imageColumns.at(i), SIGNAL(imagesChanged(int,int,QList<int>)),
                 this, SIGNAL(metaDataChanged(int,int,QList<int>)));
     }
 
-    d->compositeOffset = d->valueOffset + d->valueColumns.count();
-    d->aliasOffset = d->tableWidth + d->compositeColumns.count();
-    d->imageOffset = d->aliasOffset + d->aliasColumns.count();
-    d->columnCount = d->imageOffset + d->imageColumns.count();
+    connect(&d->queryWatcher, SIGNAL(finished()), this, SLOT(_q_queryFinished()));
 
-    d->rowCount = 0;
-    d->queryLimit = qMax(256, 4 * d->minimumPagedItems);
+    d->queryWatcher.setFuture(QtConcurrent::run(
+            d, &QGalleryTrackerItemListPrivate::queryRows, qMax(0, d->cursorPosition) & ~63));
+}
+
+QGalleryTrackerItemList::QGalleryTrackerItemList(
+        QGalleryTrackerItemListPrivate &dd,
+        QObject *parent)
+    : QGalleryAbstractResponse(dd, parent)
+{
+    Q_D(QGalleryTrackerItemList);
+
+    for (int i = 0; i < d->imageColumns.count(); ++i) {
+        connect(d->imageColumns.at(i), SIGNAL(imagesChanged(int,int,QList<int>)),
+                this, SIGNAL(metaDataChanged(int,int,QList<int>)));
+    }
 
     connect(&d->queryWatcher, SIGNAL(finished()), this, SLOT(_q_queryFinished()));
 
@@ -504,7 +490,7 @@ void QGalleryTrackerItemList::setCursorPosition(int position)
     }
 
     if (d->rCache.cutoff > 0 && d->imageColumns.count() > 0) {
-        typedef QVector<QGalleryTrackerImageColumn *>::iterator iterator;
+        typedef QVector<QGalleryTrackerImageColumn *>::const_iterator iterator;
 
         const int absoluteIndex = qMax(
                 d->rCache.index, qMin(d->rCache.count - d->minimumPagedItems, position & ~7));

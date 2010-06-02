@@ -43,6 +43,7 @@
 
 #include "qgallerytrackerschema_p.h"
 
+#include <QtCore/qdatetime.h>
 #include <QtDBus/qdbuspendingreply.h>
 
 #include "qgalleryabstractresponse_p.h"
@@ -55,15 +56,20 @@ class QGalleryTrackerCountResponsePrivate : public QGalleryAbstractResponsePriva
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerCountResponse)
 public:
-    QGalleryTrackerCountResponsePrivate()
-        : count(0)
+    QGalleryTrackerCountResponsePrivate(const QGalleryTrackerCountResponseArguments &arguments)
+        : accumulative(arguments.accumulative)
+        , count(0)
         , workingCount(0)
         , currentOffset(0)
-        , call(0)
+        , queryWatcher(0)
+        , queryInterface(arguments.queryInterface)
+        , queryMethod(arguments.queryMethod)
+        , queryArguments(arguments.queryArguments)
     {
     }
 
-    void _q_callFinished(QDBusPendingCallWatcher *watcher);
+    void _q_queryFinished(QDBusPendingCallWatcher *watcher);
+    void queryFinished(const QDBusPendingCall &call);
 
     void queryCount();
 
@@ -72,46 +78,48 @@ public:
         MaximumFetchSize = 512
     };
 
+    const bool accumulative;
     int count;
     int workingCount;
     int currentOffset;
-    QDBusPendingCallWatcher *call;
-    QGalleryDBusInterfacePointer metaDataInterface;
-    QString query;
-    QString service;
-    QString countField;
-    QStringList identityFields;
+    QDBusPendingCallWatcher *queryWatcher;
+    QGalleryDBusInterfacePointer queryInterface;
+    const QString queryMethod;
+    const QVariantList queryArguments;
 };
 
-
-void QGalleryTrackerCountResponsePrivate::_q_callFinished(QDBusPendingCallWatcher *watcher)
+void QGalleryTrackerCountResponsePrivate::_q_queryFinished(QDBusPendingCallWatcher *watcher)
 {
-    Q_ASSERT(watcher == call);
+    if (queryWatcher == watcher) {
+        queryWatcher->deleteLater();
+        queryWatcher = 0;
 
-    call = 0;
+        watcher->deleteLater();
 
-    watcher->deleteLater();
+        queryFinished(*watcher);
+    }
+}
 
-    int oldCount = count;
+void QGalleryTrackerCountResponsePrivate::queryFinished(const QDBusPendingCall &call)
+{
+    const int oldCount = count;
 
-    if (watcher->isError()) {
+    if (call.isError()) {
         q_func()->finish(QGalleryAbstractRequest::ConnectionError);
 
         return;
-    } else if (identityFields.isEmpty()) {
-        QDBusPendingReply<int> reply(*watcher);
+    } else if (!accumulative) {
+        QDBusPendingReply<int> reply(call);
 
         count = reply.value();
     } else {
-        QDBusPendingReply<QVector<QStringList> > reply(*watcher);
+        QDBusPendingReply<QVector<QStringList> > reply(call);
 
         const QVector<QStringList> counts = reply.value();
 
-        for (QVector<QStringList>::const_iterator it = counts.begin(), end = counts.end();
-                it != end;
-                ++it) {
+        typedef QVector<QStringList>::const_iterator iterator;
+        for (iterator it = counts.begin(), end = counts.end(); it != end; ++it)
             workingCount += it->value(1).toInt();
-        }
 
         currentOffset += counts.count();
 
@@ -130,55 +138,36 @@ void QGalleryTrackerCountResponsePrivate::_q_callFinished(QDBusPendingCallWatche
     else if (count < oldCount)
         emit q_func()->removed(count, oldCount - count);
 
-    if (!call)
+    if (!queryWatcher)
         q_func()->finish(QGalleryAbstractRequest::Succeeded);
 }
 
 void QGalleryTrackerCountResponsePrivate::queryCount()
 {
-    if (countField.isEmpty()) {
-        call = new QDBusPendingCallWatcher(metaDataInterface->asyncCall(
-                QLatin1String("GetCount"), service, QLatin1String("*"), query), q_func());
-    } else if (identityFields.isEmpty()) {
-        call = new QDBusPendingCallWatcher(metaDataInterface->asyncCall(
-                QLatin1String("GetCount"), service, countField, query), q_func());
-    } else {
-        call = new QDBusPendingCallWatcher(metaDataInterface->asyncCall(
-                QLatin1String("GetUniqueValuesWithCount"),
-                service,
-                identityFields,
-                query,
-                countField,
-                false,
-                currentOffset,
-                MaximumFetchSize), q_func());
-    }
+    QVariantList arguments = queryArguments;
 
-    if (call->isFinished()) {
-        _q_callFinished(call);
+    if (accumulative)
+        arguments << currentOffset << int(MaximumFetchSize);
+
+    QDBusPendingCall call = queryInterface->asyncCallWithArgumentList(queryMethod, arguments);
+
+    if (call.isFinished()) {
+        queryFinished(call);
     } else {
-        QObject::connect(call, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                q_func(), SLOT(_q_callFinished(QDBusPendingCallWatcher*)));
+        queryWatcher = new QDBusPendingCallWatcher(call, q_func());
+
+        QObject::connect(queryWatcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
+                q_func(), SLOT(_q_queryFinished(QDBusPendingCallWatcher*)));
     }
 }
 
-
 QGalleryTrackerCountResponse::QGalleryTrackerCountResponse(
-        const QGalleryDBusInterfacePointer &metaDataInterface,
-        const QGalleryTrackerSchema &schema,
-        const QString &query,
+        const QGalleryTrackerCountResponseArguments &arguments,
         QObject *parent)
-    : QGalleryAbstractResponse(*new QGalleryTrackerCountResponsePrivate, parent)
+    : QGalleryAbstractResponse(*new QGalleryTrackerCountResponsePrivate(arguments), parent)
 
 {
     Q_D(QGalleryTrackerCountResponse);
-
-    d->metaDataInterface = metaDataInterface;
-    d->query = query;
-    d->service = schema.service();
-    d->identityFields  = schema.identityFields();
-    if (!d->identityFields.isEmpty())
-        d->countField = d->identityFields.takeLast();
 
     d->queryCount();
 }
@@ -247,19 +236,30 @@ void QGalleryTrackerCountResponse::cancel()
 
 }
 
-bool QGalleryTrackerCountResponse::waitForFinished(int)
+bool QGalleryTrackerCountResponse::waitForFinished(int msecs)
 {
     Q_D(QGalleryTrackerCountResponse);
 
-    if (d->call) {
-        d->call->waitForFinished();
+    QTime timer;
+    timer.start();
+    do {
+        if (QDBusPendingCallWatcher *watcher = d->queryWatcher) {
+            d->queryWatcher = 0;
 
-        d->_q_callFinished(d->call);
+            watcher->waitForFinished();
 
-        return true;
-    } else {
-        return false;
-    }
+            d->queryFinished(*watcher);
+
+            delete watcher;
+
+            if (d->result != QGalleryAbstractRequest::NoResult)
+                return true;
+        } else {
+            return true;
+        }
+    } while ((msecs -= timer.restart()) > 0);
+
+    return false;
 }
 
 #include "moc_qgallerytrackercountresponse_p.cpp"

@@ -55,32 +55,32 @@ class QGalleryTrackerItemResponsePrivate : public QGalleryTrackerItemListPrivate
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerItemResponse)
 public:
+    QGalleryTrackerItemResponsePrivate(
+            const QGalleryTrackerItemListArguments &arguments,
+            const QGalleryDBusInterfacePointer &metaDataInterface,
+            int cursorPosition,
+            int minimumPagedItems)
+        : QGalleryTrackerItemListPrivate(arguments, cursorPosition, minimumPagedItems)
+        , metaDataInterface(metaDataInterface)
+        , fieldNames(arguments.fieldNames)
+    {
+    }
+
     QGalleryDBusInterfacePointer metaDataInterface;
-    QStringList fieldNames;
+    const QStringList fieldNames;
 };
 
-
 QGalleryTrackerItemResponse::QGalleryTrackerItemResponse(
-        QGalleryDBusInterfaceFactory *dbus,
-        const QGalleryTrackerSchema &schema,
-        const QString &query,
+        const QGalleryTrackerItemListArguments &arguments,
+        const QGalleryDBusInterfacePointer &metaDataInterface,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
     : QGalleryTrackerItemList(
-            *new QGalleryTrackerItemResponsePrivate,
-            dbus,
-            schema,
-            dbus->searchInterface(),
-            query,
-            cursorPosition,
-            minimumPagedItems,
+            *new QGalleryTrackerItemResponsePrivate(
+                    arguments, metaDataInterface, cursorPosition, minimumPagedItems),
             parent)
 {
-    Q_D(QGalleryTrackerItemResponse);
-
-    d->metaDataInterface = dbus->metaDataInterface();
-    d->fieldNames = schema.fields();
 }
 
 QGalleryTrackerItemResponse::~QGalleryTrackerItemResponse()

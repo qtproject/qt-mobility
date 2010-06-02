@@ -278,6 +278,9 @@ void QGalleryTrackerThumbnailColumn::dbusWatcherFinished(QDBusPendingCallWatcher
 void QGalleryTrackerThumbnailColumn::dbusError(
         uint id, const QStringList &uris, int error, const QString &errorString)
 {
+    Q_UNUSED(id);
+    Q_UNUSED(uris);
+
     qWarning("Thumbnail Error %d, %s", error, qPrintable(errorString));
 }
 
