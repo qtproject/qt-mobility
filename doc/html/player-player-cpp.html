@@ -86,8 +86,8 @@
         , toggleAspectRatio(0)
         , showYoutubeDialog(0)
         , youtubeDialog(0)
-        , audioEndpointSelector(0)
     #else
+        , audioEndpointSelector(0)
         , colorDialog(0)
     #endif
     {
@@ -123,10 +123,18 @@
         connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
         QMediaService *service = player-&gt;service();
-        if (service)
-            audioEndpointSelector = qobject_cast&lt;QAudioEndpointSelector*&gt;(service-&gt;requestControl(QAudioEndpointSelector_iid));
-        if (audioEndpointSelector)
-            connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&amp;)), this, SLOT(handleAudioOutputChangedSignal(const QString&amp;)));
+        if (service) {
+            QMediaControl *control = service-&gt;requestControl(QAudioEndpointSelector_iid);
+            if (control) {
+                audioEndpointSelector = qobject_cast&lt;QAudioEndpointSelector*&gt;(control);
+                if (audioEndpointSelector) {
+                    connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&amp;)),
+                            this, SLOT(handleAudioOutputChangedSignal(const QString&amp;)));
+                } else {
+                    service-&gt;releaseControl(control);
+                }
+            }
+        }
 
     #ifndef Q_OS_SYMBIAN
         QPushButton *openButton = new QPushButton(tr(&quot;Open&quot;), this);
