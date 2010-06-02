@@ -314,7 +314,7 @@ QList<QNetworkConfigurationPrivate *> QScanThread::getConfigurations()
         config->isValid = fetchedConfigurations.at(i)->isValid;
         config->id = fetchedConfigurations.at(i)->id;
         config->state = fetchedConfigurations.at(i)->state;
-
+        config->bearer = fetchedConfigurations.at(i)->bearer;
         config->type = fetchedConfigurations.at(i)->type;
         config->roamingSupported = fetchedConfigurations.at(i)->roamingSupported;
         config->purpose = fetchedConfigurations.at(i)->purpose;
