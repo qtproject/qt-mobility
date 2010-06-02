@@ -533,6 +533,62 @@ bool QOrganizerItemManager::removeItems(const QList<QOrganizerItemLocalId>& orga
 }
 
 /*!
+  Returns the default collection managed by this manager
+ */
+QOrganizerItemCollection QOrganizerItemManager::defaultCollection() const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->defaultCollection(&d->m_error);
+}
+
+/*!
+  Returns all of the collections managed by this manager
+ */
+QList<QOrganizerItemCollection> QOrganizerItemManager::collections() const
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->collections(&d->m_error);
+}
+
+/*!
+  Saves the given \a collection in the manager.
+  Returns true on success, false on failure.
+
+  Some managers do not allow modifications to collections,
+  and thus attempting to save a collection will always fail
+  when attempted in such a manager.
+
+  Some managers do not allow adding new collections,
+  and thus attempting to save a new collection will always fail
+  when attempted in such a manager.
+ */
+bool QOrganizerItemManager::saveCollection(QOrganizerItemCollection* collection)
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->saveCollection(collection, &d->m_error);
+}
+
+/*!
+  Removes the given \a collection from the manager if it exists.
+  Returns true on success, false on failure.
+
+  XXX TODO: define the semantics of this function.
+  Removes all items which are in this collection (or are only this
+  collection, since items can be in more than one at once) ?
+  Moves all items to the default collection?
+
+  What happens if you attempt to remove the default collection?
+  Fails?  Or sets next collection to be the default?  Or..?
+  Do we need functions: setDefaultCollection(collection)?
+  etc.
+ */
+bool QOrganizerItemManager::removeCollection(const QOrganizerItemCollection& collection)
+{
+    d->m_error = QOrganizerItemManager::NoError;
+    return d->m_engine->removeCollection(collection, &d->m_error);
+}
+
+/*!
   Returns a pruned or modified version of the \a original organizeritem which is valid and can be saved in the manager.
   The returned organizeritem might have entire details removed or arbitrarily changed.  The cache of relationships
   in the organizeritem are ignored entirely when considering compatibility with the backend, as they are

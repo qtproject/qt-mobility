@@ -1357,6 +1357,44 @@ bool QOrganizerItemManagerEngine::removeItems(const QList<QOrganizerItemLocalId>
 }
 
 /*!
+  XXX TODO
+ */
+QOrganizerItemCollection QOrganizerItemManagerEngine::defaultCollection(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QOrganizerItemCollection();
+}
+
+/*!
+  XXX TODO
+ */
+QList<QOrganizerItemCollection> QOrganizerItemManagerEngine::collections(QOrganizerItemManager::Error* error) const
+{
+    *error = QOrganizerItemManager::NotSupportedError;
+    return QList<QOrganizerItemCollection>();
+}
+
+/*!
+  XXX TODO
+ */
+bool QOrganizerItemManagerEngine::saveCollection(QOrganizerItemCollection* collection, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collection);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+/*!
+  XXX TODO
+ */
+bool QOrganizerItemManagerEngine::removeCollection(const QOrganizerItemCollection& collection, QOrganizerItemManager::Error* error)
+{
+    Q_UNUSED(collection);
+    *error = QOrganizerItemManager::NotSupportedError;
+    return false;
+}
+
+/*!
   Returns a pruned or modified version of the \a original organizeritem which is valid and can be saved in the manager.
   The returned organizeritem might have details removed or arbitrarily changed.  The cache of relationships
   in the organizeritem are ignored entirely when considering compatibility with the backend, as they are

@@ -56,6 +56,9 @@
 #include "qorganizeritemdisplaylabel.h"
 #include "qorganizeritemdescription.h"
 
+#include "qorganizeritemcollections.h"
+#include "qorganizeritemcollection.h"
+
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemManager;
@@ -94,6 +97,15 @@ public:
     QString description() const;
     void setDescription(const QString& description);
     void setDescription(const QOrganizerItemDescription& description);
+
+    /* The collections in which an item belongs */
+    QList<QOrganizerItemId> collections() const;
+    void setCollections(const QList<QOrganizerItemId>& collections);
+    void setCollections(const QOrganizerItemCollections& collections);
+    void addToCollection(const QOrganizerItemCollection& collection);
+    void addToCollection(const QOrganizerItemId& collectionId);
+    void removeFromCollection(const QOrganizerItemCollection& collection);
+    void removeFromCollection(const QOrganizerItemId& collectionId);
 
     /* Is this an empty organizeritem? */
     bool isEmpty() const;

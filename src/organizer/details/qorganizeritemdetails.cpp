@@ -88,9 +88,25 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeContactUri, "Atten
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatus, "AttendeeParticipationStatus");
 
 
+/* ==================== QOrganizerItemCollections ======================= */
+/*!
+   \class QOrganizerItemCollections
+   \brief The QOrganizerItemCollections class contains the id of every collection to which the item belongs.
+ */
 
+/*!
+   \variable QOrganizerItemCollections::DefinitionName
+   The constant string which identifies the definition of details which contain the information about which collections an item belongs to.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemCollections::DefinitionName, "Collections");
 
+/*!
+   \variable QOrganizerItemCollections::FieldAttendeeDisplayLabel
 
+   The constant key for which the display label value of the attendee is stored in
+   details of the QOrganizerItemAttendee type.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemCollections::FieldCollectionIds, "CollectionIds");
 
 
 

@@ -338,6 +338,67 @@ void QOrganizerItem::setDescription(const QOrganizerItemDescription& description
     saveDetail(&descr);
 }
 
+/*!
+  Note: only returns meaningful list of ids if it has been saved in a manager.
+      An item always belongs to at least one collection (default, if not set).
+ */
+QList<QOrganizerItemId> QOrganizerItem::collections() const
+{
+    return detail<QOrganizerItemCollections>().collectionIds();
+}
+
+void QOrganizerItem::setCollections(const QList<QOrganizerItemId>& collections)
+{
+    QOrganizerItemCollections cols = detail<QOrganizerItemCollections>();
+    cols.setCollectionIds(collections);
+    saveDetail(&cols);
+}
+
+void QOrganizerItem::setCollections(const QOrganizerItemCollections& collections)
+{
+    QOrganizerItemCollections cols = collections;
+    saveDetail(&cols);
+}
+
+void QOrganizerItem::addToCollection(const QOrganizerItemCollection& collection)
+{
+    QOrganizerItemCollections cols = detail<QOrganizerItemCollections>();
+    QList<QOrganizerItemId> collectionIds = cols.collectionIds();
+    if (!collectionIds.contains(collection.id()))
+        collectionIds.append(collection.id());
+    cols.setCollectionIds(collectionIds);
+    saveDetail(&cols);
+}
+
+void QOrganizerItem::addToCollection(const QOrganizerItemId& collectionId)
+{
+    QOrganizerItemCollections cols = detail<QOrganizerItemCollections>();
+    QList<QOrganizerItemId> collectionIds = cols.collectionIds();
+    if (!collectionIds.contains(collectionId))
+        collectionIds.append(collectionId);
+    cols.setCollectionIds(collectionIds);
+    saveDetail(&cols);
+}
+
+void QOrganizerItem::removeFromCollection(const QOrganizerItemCollection& collection)
+{
+    QOrganizerItemCollections cols = detail<QOrganizerItemCollections>();
+    QList<QOrganizerItemId> collectionIds = cols.collectionIds();
+    if (collectionIds.contains(collection.id()))
+        collectionIds.removeOne(collection.id());
+    cols.setCollectionIds(collectionIds);
+    saveDetail(&cols);
+}
+
+void QOrganizerItem::removeFromCollection(const QOrganizerItemId& collectionId)
+{
+    QOrganizerItemCollections cols = detail<QOrganizerItemCollections>();
+    QList<QOrganizerItemId> collectionIds = cols.collectionIds();
+    if (collectionIds.contains(collectionId))
+        collectionIds.removeOne(collectionId);
+    cols.setCollectionIds(collectionIds);
+    saveDetail(&cols);
+}
 
 /*!
  * Sets the id of this organizeritem to \a id.

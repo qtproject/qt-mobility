@@ -58,6 +58,8 @@
 #include "qorganizeritemfetchhint.h"
 #include "qorganizeritemfilter.h"
 
+#include "qorganizeritemcollection.h"
+
 QTM_BEGIN_NAMESPACE
 
 class QOrganizerItemAction;
@@ -128,6 +130,12 @@ public:
     bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap);
     bool removeItem(const QOrganizerItemLocalId& itemId);
     bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap);
+
+    /* Collections - every item belongs to one or more collections */
+    QOrganizerItemCollection defaultCollection() const;
+    QList<QOrganizerItemCollection> collections() const;
+    bool saveCollection(QOrganizerItemCollection* collection);
+    bool removeCollection(const QOrganizerItemCollection& collection);
 
     /* Return a pruned or modified item which is valid and can be saved in the manager */
     QOrganizerItem compatibleItem(const QOrganizerItem& original); // Preliminary function!

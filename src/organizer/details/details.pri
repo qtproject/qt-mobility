@@ -3,6 +3,7 @@ INCLUDEPATH += details \
 
 PUBLIC_HEADERS += \
     details/qorganizeritemattendee.h \
+    details/qorganizeritemcollections.h \
     details/qorganizeritemdescription.h \
     details/qorganizeritemdisplaylabel.h \
     details/qorganizeritemeventtimerange.h \

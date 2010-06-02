@@ -100,6 +100,12 @@ public:
     virtual bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
     virtual bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
 
+    /* Collections - every item belongs to one or more collections */
+    virtual QOrganizerItemCollection defaultCollection(QOrganizerItemManager::Error* error) const;
+    virtual QList<QOrganizerItemCollection> collections(QOrganizerItemManager::Error* error) const;
+    virtual bool saveCollection(QOrganizerItemCollection* collection, QOrganizerItemManager::Error* error);
+    virtual bool removeCollection(const QOrganizerItemCollection& collection, QOrganizerItemManager::Error* error);
+
     /* Return a pruned or modified item which is valid and can be saved in the backend */
     virtual QOrganizerItem compatibleItem(const QOrganizerItem& original, QOrganizerItemManager::Error* error) const;
 

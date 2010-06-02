@@ -39,30 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMDETAILS_H
-#define QORGANIZERITEMDETAILS_H
+#ifndef QORGANIZERITEMCOLLECTIONS_H
+#define QORGANIZERITEMCOLLECTIONS_H
 
-// this file includes all of the leaf detail classes
-// provided by the Qt Organizer API.
+#include <QString>
 
-#include "qorganizeritemattendee.h"
-#include "qorganizeritemcollections.h"
-#include "qorganizeritemdescription.h"
-#include "qorganizeritemdisplaylabel.h"
-#include "qorganizeritemeventtimerange.h"
-#include "qorganizeritemguid.h"
-#include "qorganizeriteminstanceorigin.h"
-#include "qorganizeritemjournaltimerange.h"
-#include "qorganizeritemlocation.h"
-#include "qorganizeritemnote.h"
-#include "qorganizeritemparticipation.h"
-#include "qorganizeritempriority.h"
-#include "qorganizeritemprovenance.h"
-#include "qorganizeritemrecurrence.h"
-#include "qorganizeritemrsvpinfo.h"
-#include "qorganizeritemtimestamp.h"
-#include "qorganizeritemtodoprogress.h"
-#include "qorganizeritemtodotimerange.h"
-#include "qorganizeritemtype.h"
+#include "qtorganizerglobal.h"
+#include "qorganizeritemdetail.h"
+#include "qorganizeritem.h"
+
+QTM_BEGIN_NAMESPACE
+
+/* Leaf class */
+class Q_ORGANIZER_EXPORT QOrganizerItemCollections : public QOrganizerItemDetail
+{
+public:
+#ifdef Q_QDOC
+    const char* DefinitionName;
+    const char* FieldCollectionIds;
+#else
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemCollections, "Collections")
+    Q_DECLARE_LATIN1_CONSTANT(FieldCollectionIds, "CollectionIds");
+#endif
+
+    // XXX TODO: add this to the schema, register mapping from id to variant.
+
+    void setCollectionIds(const QList<QOrganizerItemId>& collectionIds)
+    {
+        Q_UNUSED(collectionIds);
+        // XXX TODO
+    }
+
+    QList<QOrganizerItemId> collectionIds() const
+    {
+        return QList<QOrganizerItemId>();
+        // XXX TODO
+    }
+};
+
+QTM_END_NAMESPACE
 
 #endif
+

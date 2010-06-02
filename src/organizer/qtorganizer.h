@@ -48,6 +48,7 @@
 #include "qtorganizerglobal.h"                        // global exports
 
 #include "qorganizeritemabstractrequest.h"            // asynchronous request
+#include "qorganizeritemcollection.h"                 // collection of items
 #include "qorganizeritemdetail.h"                     // organizeritem detail
 #include "qorganizeritemdetaildefinition.h"           // detail definition
 #include "qorganizeritemdetailfielddefinition.h"      // field in a detail definition
