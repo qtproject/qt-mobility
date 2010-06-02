@@ -41,7 +41,7 @@
 <h4>Migration to Qt 4.7 or higher</h4>
 <p>The Bearer API has been migrated to the Qt 4.7 <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a> library. This enables connection manager and roaming support for <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a>. Starting with Qt 4.7 the Mobility version has been deprecated in favor of Qt's Bearer API. Furthermore the roaming enabled <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a> cannot be used in connection with Mobility's Bearer API.</p>
 <p>The porting effort from Mobility Bearer to Qt Bearer is minimal as the relevant classes are source compatible. The only exception is the removal of the QtMobility namespace. Already deployed applications will continue to work but cannot make use of the new features in Qt 4.7 and <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a>.</p>
-<p>An application can select the Bearer API to be used via its project file. As long as the MOBILITY variable contains the <tt>bearer</tt> string the project will link Mobility's bearer library (even if the project links against <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a>)</p>
+<p>An application can select the Bearer API to be used via its project file. As long as the MOBILITY variable contains the <tt>bearer</tt> string the project will link Mobility's bearer library (even if the project links against <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a> at the same time).</p>
 <pre>    MOBILITY+=bearer   #choose Mobility bearer</pre>
 <a name="the-api-in-detail"></a>
 <h4>The API in Detail</h4>

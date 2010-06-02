@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 
-class QServiceWrapper : public QObject {
+class QDeclarativeService : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName);
     Q_PROPERTY(QString serviceName READ serviceName);
@@ -61,8 +61,8 @@ class QServiceWrapper : public QObject {
     Q_PROPERTY(QObject* serviceObject READ serviceObject NOTIFY serviceObjectChanged);
 
 public:
-    QServiceWrapper();
-    ~QServiceWrapper();
+    QDeclarativeService();
+    ~QDeclarativeService();
 
     void setInterfaceDesc(const QServiceInterfaceDescriptor& desc);
     QServiceInterfaceDescriptor interfaceDesc() const;
@@ -86,19 +86,19 @@ private:
     QObject* serviceInstance;
 };
 
-QML_DECLARE_TYPE(QServiceWrapper)
+QML_DECLARE_TYPE(QDeclarativeService)
 
-class QServiceListWrapper : public QObject {
+class QDeclarativeServiceList : public QObject {
     Q_OBJECT
     Q_PROPERTY(QString interfaceName READ interfaceName WRITE setInterfaceName);
     Q_PROPERTY(QString minVersion READ minVersion WRITE setMinVersion);
-    Q_PROPERTY(QDeclarativeListProperty<QServiceWrapper> services READ services NOTIFY servicesChanged);
+    Q_PROPERTY(QDeclarativeListProperty<QDeclarativeService> services READ services NOTIFY servicesChanged);
 
 public:
-    QServiceListWrapper();
-    ~QServiceListWrapper();
+    QDeclarativeServiceList();
+    ~QDeclarativeServiceList();
 
-    QDeclarativeListProperty<QServiceWrapper> services();
+    QDeclarativeListProperty<QDeclarativeService> services();
     
     void setInterfaceName(const QString& interface);
     QString interfaceName() const;
@@ -108,15 +108,15 @@ public:
     
 private:
     QServiceManager* serviceManager;
-    QList<QServiceWrapper *> m_services;
+    QList<QDeclarativeService *> m_services;
     QString m_interface;
     QString m_version;
 
 Q_SIGNALS:
-    void servicesChanged(const QDeclarativeListProperty<QServiceWrapper>&);
+    void servicesChanged(const QDeclarativeListProperty<QDeclarativeService>&);
 };
 
-QML_DECLARE_TYPE(QServiceListWrapper)
+QML_DECLARE_TYPE(QDeclarativeServiceList)
 
 #endif
 

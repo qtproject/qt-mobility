@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,32 +41,31 @@
 
 #include "maemo6rotationsensor.h"
 
-const char *maemo6rotationsensor::id("maemo6.rotationsensor");
+char const * const maemo6rotationsensor::id("maemo6.rotationsensor");
 bool maemo6rotationsensor::m_initDone = false;
 
 maemo6rotationsensor::maemo6rotationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    setReading<QRotationReading>(&m_reading);
-
+    const QString sensorName = "rotationsensor";
     if (!m_initDone) {
-        qDBusRegisterMetaType<XYZ>();
-
-        initSensor<RotationSensorChannelInterface>("rotationsensor");
-
-        if (m_sensorInterface)
-            QObject::connect(static_cast<RotationSensorChannelInterface*>(m_sensorInterface), SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
-        else
-            qWarning() << "Unable to initialize rotation sensor.";
-
-        // metadata
-        addDataRate(23, 23); // 23Hz
-        sensor->setDataRate(23);
-        addOutputRange(-180, 180, 1);
-        setDescription(QLatin1String("Measures x, y, and z axes rotation"));
-
+        //qDBusRegisterMetaType<XYZ>();        initSensor<RotationSensorChannelInterface>("rotationsensor");
+        m_remoteSensorManager->loadPlugin(sensorName);
+        m_remoteSensorManager->registerSensorInterface<RotationSensorChannelInterface>(sensorName);
         m_initDone = true;
     }
+    m_sensorInterface = RotationSensorChannelInterface::controlInterface(sensorName);
+    if (!m_sensorInterface)
+        m_sensorInterface = const_cast<RotationSensorChannelInterface*>(RotationSensorChannelInterface::listenInterface(sensorName));
+    if (m_sensorInterface)
+        QObject::connect(m_sensorInterface, SIGNAL(dataAvailable(const XYZ&)), this, SLOT(slotDataAvailable(const XYZ&)));
+    else
+        qWarning() << "Unable to initialize rotation sensor.";
+    setReading<QRotationReading>(&m_reading);
+    // metadata
+    addDataRate(0, 130); // 43 Hz
+    addOutputRange(-179, 180, 1);
+    setDescription(QLatin1String("Measures x, y, and z axes rotation in degrees"));
     sensor->setProperty("hasZ", true);
 }
 
@@ -75,7 +74,6 @@ void maemo6rotationsensor::slotDataAvailable(const XYZ& data)
     m_reading.setX(data.x());
     m_reading.setY(data.y());
     m_reading.setZ(data.z());
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.XYZData().timestamp_);
     newReadingAvailable();
 }

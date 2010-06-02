@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -346,6 +346,21 @@ private: // Data
     mutable RTimer iTimer;
 };
 
+class QMTMWait : public CActive
+{
+public:
+    QMTMWait(TInt aPriority = EPriorityStandard);
+    ~QMTMWait();
+
+    void start();
+
+protected: // From CActive
+    void RunL();
+    void DoCancel();
+    
+private: // Data
+    QEventLoop m_eventLoop;
+};
 
 QTM_END_NAMESPACE
 #endif // QMTMENGINE_SYMBIAN_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -71,6 +71,7 @@
 QTM_BEGIN_NAMESPACE
 
 class ConnectionProgressNotifier;
+typedef void (*TOpenCUnSetdefaultifFunction)();
 
 class QNetworkSessionPrivate : public QObject, public CActive
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
@@ -161,6 +162,9 @@ private: // data
 
     QNetworkSession* q;
     QDateTime startTime;
+
+    RLibrary iOpenCLibrary;
+    TOpenCUnSetdefaultifFunction iDynamicUnSetdefaultif;
 
     mutable RSocketServ iSocketServ;
     mutable RConnection iConnection;

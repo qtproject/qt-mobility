@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,8 +45,8 @@
 #include <string.h>
 #include <time.h>
 
-const char *n900proximitysensor::id("n900.proximity");
-const char *n900proximitysensor::filename("/sys/bus/platform/devices/proximity/state");
+char const * const n900proximitysensor::id("n900.proximity");
+char const * const n900proximitysensor::filename("/sys/bus/platform/devices/proximity/state");
 
 n900proximitysensor::n900proximitysensor(QSensor *sensor)
     : n900filebasedsensor(sensor)

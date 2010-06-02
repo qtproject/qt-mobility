@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,8 @@
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 
+#include <QMutex>
+#include <QMutexLocker>
 
 QTM_BEGIN_NAMESPACE
 /*!
@@ -131,7 +133,9 @@ QContactAbstractRequest::QContactAbstractRequest(QContactAbstractRequestPrivate*
 QContactAbstractRequest::~QContactAbstractRequest()
 {
     if (d_ptr) {
+        QMutexLocker ml(&d_ptr->m_mutex);
         QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
+        ml.unlock();
         if (engine) {
             engine->requestDestroyed(this);
         }
@@ -147,6 +151,7 @@ QContactAbstractRequest::~QContactAbstractRequest()
  */
 bool QContactAbstractRequest::isInactive() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QContactAbstractRequest::InactiveState);
 }
 
@@ -157,6 +162,7 @@ bool QContactAbstractRequest::isInactive() const
  */
 bool QContactAbstractRequest::isActive() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QContactAbstractRequest::ActiveState);
 }
 
@@ -167,6 +173,7 @@ bool QContactAbstractRequest::isActive() const
  */
 bool QContactAbstractRequest::isFinished() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QContactAbstractRequest::FinishedState);
 }
 
@@ -177,12 +184,14 @@ bool QContactAbstractRequest::isFinished() const
  */
 bool QContactAbstractRequest::isCanceled() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return (d_ptr->m_state == QContactAbstractRequest::CanceledState);
 }
 
 /*! Returns the overall error of the most recent asynchronous operation */
 QContactManager::Error QContactAbstractRequest::error() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_error;
 }
 
@@ -191,6 +200,7 @@ QContactManager::Error QContactAbstractRequest::error() const
  */
 QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->type();
 }
 
@@ -199,18 +209,28 @@ QContactAbstractRequest::RequestType QContactAbstractRequest::type() const
  */
 QContactAbstractRequest::State QContactAbstractRequest::state() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_state;
 }
 
 /*! Returns a pointer to the manager of which this request instance requests operations */
 QContactManager* QContactAbstractRequest::manager() const
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     return d_ptr->m_manager;
 }
 
-/*! Sets the manager of which this request instance requests operations to \a manager */
+/*!
+    Sets the manager of which this request instance requests operations to \a manager
+
+    If the request is currently active, this function will return without updating the \a manager object.
+*/
 void QContactAbstractRequest::setManager(QContactManager* manager)
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
+    // In theory we might have been active and the manager didn't cancel/finish us
+    if (d_ptr->m_state == QContactAbstractRequest::ActiveState && d_ptr->m_manager)
+        return;
     d_ptr->m_manager = manager;
 }
 
@@ -218,10 +238,12 @@ void QContactAbstractRequest::setManager(QContactManager* manager)
     or if the request was unable to be performed by the manager engine; otherwise returns true. */
 bool QContactAbstractRequest::start()
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine && (d_ptr->m_state == QContactAbstractRequest::CanceledState
                    || d_ptr->m_state == QContactAbstractRequest::FinishedState
                    || d_ptr->m_state == QContactAbstractRequest::InactiveState)) {
+        ml.unlock();
         return engine->startRequest(this);
     }
 
@@ -232,8 +254,10 @@ bool QContactAbstractRequest::start()
     or if the request is unable to be cancelled by the manager engine; otherwise returns true. */
 bool QContactAbstractRequest::cancel()
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
-    if (engine && state() == QContactAbstractRequest::ActiveState) {
+    if (engine && d_ptr->m_state == QContactAbstractRequest::ActiveState) {
+        ml.unlock();
         return engine->cancelRequest(this);
     }
 
@@ -247,10 +271,12 @@ bool QContactAbstractRequest::cancel()
  */
 bool QContactAbstractRequest::waitForFinished(int msecs)
 {
+    QMutexLocker ml(&d_ptr->m_mutex);
     QContactManagerEngine *engine = QContactManagerData::engine(d_ptr->m_manager);
     if (engine) {
         switch (d_ptr->m_state) {
         case QContactAbstractRequest::ActiveState:
+            ml.unlock();
             return engine->waitForRequestFinished(this, msecs);
         case QContactAbstractRequest::CanceledState:
         case QContactAbstractRequest::FinishedState:

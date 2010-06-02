@@ -89,7 +89,7 @@ to work but cannot make use of the new features in Qt 4.7 and QNetworkAccessMana
 
 An application can select the Bearer API to be used via its project file.
 As long as the MOBILITY variable contains the \c bearer string the project
-will link Mobility's bearer library (even if the project links against QtNetwork)
+will link Mobility's bearer library (even if the project links against QtNetwork at the same time).
 
 \code
     MOBILITY+=bearer   #choose Mobility bearer
