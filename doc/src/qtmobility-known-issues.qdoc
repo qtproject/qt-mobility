@@ -156,6 +156,7 @@ Support is present for the following System Info API classes
 \list
     \o Messaging filtering and sorting functions are not fully optimized.
     \o Fremantle: \c modest process must be restarted before Fremantle backend is fully operational. This can be achieved by restarting the device.
+    \o Fremantle: \c SMS sending is failing when using MessagingEx example. Regression wrt 1.0.0 release. serviceactions and writemessage work OK.
     \o Fremantle: \c {QMessageService::show} not supported for SMS type messages.
     \o Fremantle: \c {QMessageManager::updateMessage} is not supported.
     \o Fremantle: \c {QMessageManager::addMessage} is not supported for SMS type messages.
