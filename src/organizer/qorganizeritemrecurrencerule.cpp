@@ -44,6 +44,7 @@
 #include <QList>
 
 #include "qtorganizerglobal.h"
+#include "qorganizeritemrecurrencerule_p.h"
 #include "qorganizeritemrecurrencerule.h"
 
 QTM_BEGIN_NAMESPACE
