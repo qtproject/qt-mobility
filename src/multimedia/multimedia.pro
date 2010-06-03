@@ -135,7 +135,7 @@ symbian {
     QtMediaDeployment.sources = QtMultimediaKit.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
-    TARGET.UID3=0x2001E627
+    TARGET.UID3=0x2002AC77
     TARGET.CAPABILITY = ALL -TCB
     LIBS += -lefsrv
 }
