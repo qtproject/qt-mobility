@@ -73,6 +73,7 @@ class QGeoNavigationInstructionContainer
 {
 public:
     QGeoNavigationInstruction* instruction;
+    QString id;
     QString toId;
     QString fromId;
 };
@@ -81,6 +82,7 @@ class QGeoRouteSegmentContainer
 {
 public:
     QGeoRouteSegment* segment;
+    QString id;
     QString nextId;
     QString instructionId;
 };
@@ -113,8 +115,8 @@ private:
     QXmlStreamReader *m_reader;
     QList<QGeoRoute> m_results;
     QString m_errorString;
-    QMap<QString, QGeoNavigationInstructionContainer> instructions;
-    QMap<QString, QGeoRouteSegmentContainer> segments;
+    QList<QGeoNavigationInstructionContainer> instructions;
+    QList<QGeoRouteSegmentContainer> segments;
 };
 
 #endif

@@ -199,46 +199,51 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
 bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
 {
     QList<QGeoRouteSegment*> routesegments;
-    QMapIterator<QString, QGeoRouteSegmentContainer> iSeg(segments);
-    while (iSeg.hasNext()) {
-        iSeg.next();
-        QGeoRouteSegment* segment = iSeg.value().segment;
-        if (instructions.contains(iSeg.value().instructionId))
-            segment->setInstruction(instructions.value(iSeg.value().instructionId).instruction);
 
+    for (int i=0;i<segments.length();++i) {
+        QGeoRouteSegment* segment = segments[i].segment;
+        for (int j=0;j<instructions.length();++j) {
+            if(instructions[j].id==segments[i].instructionId) {
+                segment->setInstruction(instructions[j].instruction);
+                break;
+                }
+        }
         routesegments.append(segment);
     }
 
-    QMapIterator<QString, QGeoNavigationInstructionContainer> iInst(instructions);
-    while (iInst.hasNext()) {
-        iInst.next();
-        QGeoNavigationInstruction* instruction = iInst.value().instruction;
-        if (segments.contains(iInst.value().toId)) {
-            QGeoRouteSegment* segment = segments.value(iInst.value().toId).segment;
-            if (segment->instruction()) {
-                if (segment->instruction() != instruction) {
-                    QGeoRouteSegment* segment = new QGeoRouteSegment();
-                    segment->setInstruction(instruction);
-                    routesegments.append(segment);
+    for (int i=0;i<instructions.length();++i) {
+        QGeoNavigationInstruction* instruction = instructions[i].instruction;
+        bool found=false;
+        for (int j=0;j<segments.length();++j) {
+            if(instructions[i].toId==segments[j].id) {
+                QGeoRouteSegment* segment=segments[j].segment;
+                if (segment->instruction()) {
+                    if (segment->instruction() != instruction) {
+                        QGeoRouteSegment* segment = new QGeoRouteSegment();
+                        segment->setInstruction(instruction);
+                        routesegments.append(segment);
+                    }
                 }
-            }
-            else {
-                segment->setInstruction(instruction);
+                else {
+                    segment->setInstruction(instruction);
+                }
+                found=true;
+                break;
             }
         }
-        else {
-            if(iInst.value().toId != 0) {
+        if (!found) {
+            if(instructions[i].toId != 0) {
                 QGeoRouteSegment* segment = new QGeoRouteSegment();
                 segment->setInstruction(instruction);
                 routesegments.append(segment);
             }
             else {
                 bool found = false;
-                QMapIterator<QString, QGeoRouteSegmentContainer> iSeg(segments);
-                while (iSeg.hasNext() && !found) {
-                    iSeg.next();
-                    if (iSeg.value().instructionId == iInst.key())
+                for (int j=0;j<segments.length();++j) {
+                    if (segments[j].instructionId == instructions[i].id) {
                         found = true;
+                        break;
+                    }
                 }
                 if (!found) {
                     //Add orphan instruction into new empty segment
@@ -248,9 +253,10 @@ bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
                 }
             }
         }
+
     }
 
-    for (int i = 0; i < routesegments.length(); i++) {
+    for (int i = 0; i < routesegments.length(); ++i) {
         route->appendRouteSegment(routesegments[i]);
     }
 
@@ -387,11 +393,12 @@ bool QGeoRouteXmlParser::parseManeuver()
         m_reader->raiseError("The element \"Maneuver\" did not have the required attribute \"id\".");
         return false;
     }
-    QString id = m_reader->attributes().value("id").toString();
-
     QGeoNavigationInstructionContainer instructionContainer;
     QGeoNavigationInstruction* instruction = new QGeoNavigationInstruction();
+
+    instructionContainer.id = m_reader->attributes().value("id").toString();
     instructionContainer.instruction = instruction;
+
     m_reader->readNext();
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Maneuver")) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
@@ -416,7 +423,7 @@ bool QGeoRouteXmlParser::parseManeuver()
         m_reader->readNext();
     }
 
-    instructions.insert(id,instructionContainer);
+    instructions.append(instructionContainer);
     return true;
 }
 
@@ -427,12 +434,11 @@ bool QGeoRouteXmlParser::parseLink()
 
     QGeoRouteSegmentContainer segmentContainer;
     segmentContainer.segment = new QGeoRouteSegment();
-    QString id;
 
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Link")) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == "LinkId") {
-                id = m_reader->readElementText();
+                segmentContainer.id = m_reader->readElementText();
             }
             else if (m_reader->name() == "Shape") {
                 QString elementName = m_reader->name().toString();
@@ -460,7 +466,7 @@ bool QGeoRouteXmlParser::parseLink()
         }
         m_reader->readNext();
     }
-    segments.insert(id,segmentContainer);
+    segments.append(segmentContainer);
     return true;
 }
 
