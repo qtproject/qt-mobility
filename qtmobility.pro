@@ -97,7 +97,7 @@ qtmheaders.path = $${QT_MOBILITY_INCLUDE}
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmContacts/* \
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmLocation/* \
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmMessaging/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtMultimedia/* \
+                         $${QT_MOBILITY_BUILD_TREE}/include/QtMultimediaKit/* \
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmPubSub/* \
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmServiceFramework/* \
                          $${QT_MOBILITY_BUILD_TREE}/include/QtmVersit/* \
@@ -112,7 +112,7 @@ qtmheaders.path = $${QT_MOBILITY_INCLUDE}
     qtmMwHeaders = include/QtmBearer/* \
                        include/QtmLocation/* \
                        include/QtmMessaging/* \
-                       include/QtMultimedia/* \
+                       include/QtMultimediaKit/* \
                        include/QtmPubSub/* \
                        include/QtmServiceFramework/* \
                        include/QtmSystemInfo/* \
