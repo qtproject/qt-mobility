@@ -8,6 +8,7 @@ MOBILITY = gallery
 QT += network webkit
 
 INCLUDEPATH += ../../src/gallery
+DEPENDPATH += ../../src/gallery
 
 HEADERS = \
     download.h \

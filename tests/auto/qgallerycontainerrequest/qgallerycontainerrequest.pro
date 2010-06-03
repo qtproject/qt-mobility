@@ -1,5 +1,6 @@
 TARGET = tst_qgallerycontainerrequest
 INCLUDEPATH += ../../../src/gallery
+DEPENDPATH += ../../src/gallery
 CONFIG += testcase
 
 include (../../../common.pri)
