@@ -23,6 +23,7 @@ config.pri
 config.in
 config.log
 mobility.prf
+mobilityconfig.prf
 bin/servicexmlgen*
 bin/servicefw*
 bin/vsexplorer*
