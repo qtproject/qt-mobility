@@ -39,17 +39,12 @@
 **
 ****************************************************************************/
 
-
 #include "qcontactmanager.h"
 #include "qcontactmanager_p.h"
 #include "qcontactmanagerengine.h"
 #include "qcontactmanagerenginefactory.h"
 
 #include "qcontact_p.h"
-
-#include "qcontactaction.h"
-#include "qcontactactiondescriptor.h"
-#include "qcontactactionfactory.h"
 
 #include <QSharedData>
 #include <QtPlugin>
@@ -67,16 +62,12 @@
 
 #include "qcontactmemorybackend_p.h"
 #include "qcontactinvalidbackend_p.h"
+#include "qmobilitypluginsearch.h"
 
 QTM_BEGIN_NAMESPACE
 
 /* Shared QContactManager stuff here, default engine stuff below */
-QList<QContactActionFactory*> QContactManagerData::m_actionfactories; // list of all factories
-QList<QContactActionDescriptor> QContactManagerData::m_descriptors;
 QHash<QString, QContactManagerEngineFactory*> QContactManagerData::m_engines;
-QContactManagerData::DescriptorHash QContactManagerData::m_descriptormap;
-QHash<QString, int> QContactManagerData::m_vendormap;
-QHash<QString, int> QContactManagerData::m_actionmap;
 
 bool QContactManagerData::m_discovered;
 bool QContactManagerData::m_discoveredStatic;
@@ -86,20 +77,10 @@ static void qContactsCleanEngines()
 {
     QContactManagerData::m_discovered = false;
     QList<QContactManagerEngineFactory*> factories = QContactManagerData::m_engines.values();
-    QList<QContactActionFactory*> actionfactories = QContactManagerData::m_actionfactories;
-
     for (int i=0; i < factories.count(); i++) {
         delete factories.at(i);
     }
-    for(int i=0; i < actionfactories.count(); i++) {
-        delete actionfactories.at(i);
-    }
     QContactManagerData::m_engines.clear();
-    QContactManagerData::m_actionfactories.clear();
-    QContactManagerData::m_descriptors.clear();
-    QContactManagerData::m_descriptormap.clear();
-    QContactManagerData::m_actionmap.clear();
-    QContactManagerData::m_vendormap.clear();
 }
 
 
@@ -189,7 +170,6 @@ void QContactManagerData::loadStaticFactories()
         QObjectList staticPlugins = QPluginLoader::staticInstances();
         for (int i=0; i < staticPlugins.count(); i++ ){
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(staticPlugins.at(i));
-            QContactActionFactory *g = qobject_cast<QContactActionFactory*>(staticPlugins.at(i));
             if (f) {
                 QString name = f->managerName();
 #if !defined QT_NO_DEBUG
@@ -207,90 +187,10 @@ void QContactManagerData::loadStaticFactories()
                     qWarning() << "Static contacts plugin with reserved name" << name << "ignored";
                 }
             }
-
-            if (g) {
-                QString name = g->name();
-#if !defined QT_NO_DEBUG
-                if (showDebug)
-                    qDebug() << "Static: found an action factory" << g << "with name" << name;
-#endif
-                if (m_actionfactories.contains(g)) {
-                    qWarning() << "Static contacts plugin" << name << "has the same name as currently loaded plugin; ignored";
-                } else {
-                    m_actionfactories.append(g);
-
-                    QList<QContactActionDescriptor> actions = g->actionDescriptors();
-                    QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
-                    for (int j = 0; j < actions.size(); j++) {
-                        QContactActionDescriptor desc = actions.at(j);
-                        m_descriptormap.insert(desc, g);
-                        m_descriptors.append(desc);
-                        m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
-                        m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
-                    }
-                }
-            }
         }
     }
 }
 
-class DirChecker
-{
-public:
-    DirChecker();
-    ~DirChecker();
-    bool checkDir(const QDir& dir);
-
-private:
-#if defined(Q_OS_SYMBIAN)
-    RFs rfs;
-#endif
-};
-
-#if defined(Q_OS_SYMBIAN)
-DirChecker::DirChecker()
-{
-    qt_symbian_throwIfError(rfs.Connect());
-}
-
-bool DirChecker::checkDir(const QDir& dir)
-{
-    bool pathFound = false;
-    // In Symbian, going cdUp() in a c:/private/<uid3>/ will result in *platsec* error at fileserver (requires AllFiles capability)
-    // Also, trying to cd() to a nonexistent directory causes *platsec* error. This does not cause functional harm, but should
-    // nevertheless be changed to use native Symbian methods to avoid unnecessary platsec warnings (as per qpluginloader.cpp).
-    // Use native Symbian code to check for directory existence, because checking
-    // for files from under non-existent protected dir like E:/private/<uid> using
-    // QDir::exists causes platform security violations on most apps.
-    QString nativePath = QDir::toNativeSeparators(dir.absolutePath());
-    TPtrC ptr = TPtrC16(static_cast<const TUint16*>(nativePath.utf16()), nativePath.length());
-    TUint attributes;
-    TInt err = rfs.Att(ptr, attributes);
-    if (err == KErrNone) {
-        // yes, the directory exists.
-        pathFound = true;
-    }
-    return pathFound;
-}
-
-DirChecker::~DirChecker()
-{
-    rfs.Close();
-}
-#else
-DirChecker::DirChecker()
-{
-}
-
-DirChecker::~DirChecker()
-{
-}
-
-bool DirChecker::checkDir(const QDir &dir)
-{
-    return dir.exists();
-}
-#endif
 
 /* Plugin loader */
 void QContactManagerData::loadFactories()
@@ -302,68 +202,17 @@ void QContactManagerData::loadFactories()
     // Always do this..
     loadStaticFactories();
 
-    if (!m_discovered || QApplication::libraryPaths() != m_pluginPaths) {
+    QStringList plugins;
+    plugins = mobilityPlugins(QLatin1String("contacts"));
+
+    if (!m_discovered || plugins != m_pluginPaths) {
         m_discovered = true;
-        m_pluginPaths = QApplication::libraryPaths();
-
-        /* Discover a bunch o plugins */
-        QStringList plugins;
-
-        QStringList paths;
-        QSet<QString> processed;
-
-        paths << QApplication::applicationDirPath() << QApplication::libraryPaths();
-#if !defined QT_NO_DEBUG
-        if (showDebug)
-            qDebug() << "Plugin paths:" << paths;
-#endif
-
-        DirChecker dirChecker;
-
-        /* Enumerate our plugin paths */
-        for (int i=0; i < paths.count(); i++) {
-            if (processed.contains(paths.at(i)))
-                continue;
-            processed.insert(paths.at(i));
-            QDir pluginsDir(paths.at(i));
-            if (!dirChecker.checkDir(pluginsDir))
-                continue;
-
-#if defined(Q_OS_WIN)
-            if (pluginsDir.dirName().toLower() == QLatin1String("debug") || pluginsDir.dirName().toLower() == QLatin1String("release"))
-                pluginsDir.cdUp();
-#elif defined(Q_OS_MAC)
-            if (pluginsDir.dirName() == QLatin1String("MacOS")) {
-                pluginsDir.cdUp();
-                pluginsDir.cdUp();
-                pluginsDir.cdUp();
-            }
-#endif
-
-            QString subdir(QLatin1String("plugins/contacts"));
-            if (pluginsDir.path().endsWith(QLatin1String("/plugins"))
-                || pluginsDir.path().endsWith(QLatin1String("/plugins/")))
-                subdir = QLatin1String("contacts");
-
-            if (dirChecker.checkDir(QDir(pluginsDir.path() + QLatin1Char('/') + subdir))) {
-                pluginsDir.cd(subdir);
-                const QStringList& files = pluginsDir.entryList(QDir::Files);
-#if !defined QT_NO_DEBUG
-                if (showDebug)
-                    qDebug() << "Looking for contacts plugins in" << pluginsDir.path() << files;
-#endif
-                for (int j=0; j < files.count(); j++) {
-                    plugins <<  pluginsDir.absoluteFilePath(files.at(j));
-                }
-            }
-        }
+        m_pluginPaths = plugins;
 
         /* Now discover the dynamic plugins */
-        for (int i=0; i < plugins.count(); i++) {
-            QPluginLoader qpl(plugins.at(i));
+        for (int i=0; i < m_pluginPaths.count(); i++) {
+            QPluginLoader qpl(m_pluginPaths.at(i));
             QContactManagerEngineFactory *f = qobject_cast<QContactManagerEngineFactory*>(qpl.instance());
-            QContactActionFactory *g = qobject_cast<QContactActionFactory*>(qpl.instance());
-
             if (f) {
                 QString name = f->managerName();
 #if !defined QT_NO_DEBUG
@@ -373,42 +222,18 @@ void QContactManagerData::loadFactories()
                 if (name != QLatin1String("memory") && name != QLatin1String("invalid") && !name.isEmpty()) {
                     // we also need to ensure that we haven't already loaded this factory.
                     if (m_engines.keys().contains(name)) {
-                        qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
+                        qWarning() << "Contacts plugin" << m_pluginPaths.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
                     } else {
                         m_engines.insertMulti(name, f);
                     }
                 } else {
-                    qWarning() << "Contacts plugin" << plugins.at(i) << "with reserved name" << name << "ignored";
-                }
-            }
-
-            if (g) {
-                QString name = g->name();
-#if !defined QT_NO_DEBUG
-                if (showDebug)
-                    qDebug() << "Dynamic: found a contact action factory" << g << "with name" << name;
-#endif
-                // we also need to ensure that we haven't already loaded this factory.
-                if (m_actionfactories.contains(g)) {
-                    qWarning() << "Contacts plugin" << plugins.at(i) << "has the same name as currently loaded plugin" << name << "; ignored";
-                } else {
-                    m_actionfactories.append(g);
-
-                    QList<QContactActionDescriptor> actions = g->actionDescriptors();
-                    QMap<QContactActionDescriptor, QContactActionFactory*>::iterator it;
-                    for (int j = 0; j < actions.size(); j++) {
-                        const QContactActionDescriptor& desc = actions.at(j);
-                        m_descriptormap.insert(desc, g);
-                        m_descriptors.append(desc);
-                        m_actionmap.insertMulti(desc.actionName(), m_descriptors.count() - 1);
-                        m_vendormap.insertMulti(desc.vendorName(), m_descriptors.count() - 1);
-                    }
+                    qWarning() << "Contacts plugin" << m_pluginPaths.at(i) << "with reserved name" << name << "ignored";
                 }
             }
 
             /* Debugging */
 #if !defined QT_NO_DEBUG
-            if (showDebug && !f && !g) {
+            if (showDebug && !f) {
                 qDebug() << "Unknown plugin:" << qpl.errorString();
                 if (qpl.instance()) {
                     qDebug() << "[qobject:" << qpl.instance() << "]";
@@ -428,63 +253,9 @@ void QContactManagerData::loadFactories()
 #if !defined QT_NO_DEBUG
         if (showDebug) {
             qDebug() << "Found engines:" << engineNames;
-            qDebug() << "Found actions:" << m_actionmap.keys();
         }
 #endif
     }
-}
-
-QList<QContactActionDescriptor> QContactManagerData::actionDescriptors(const QString& actionName, const QString& vendorName, int implementationVersion)
-{
-    loadFactories();
-
-    bool restrict = false;
-    QSet<int> subset;
-    QList<QContactActionDescriptor> descriptors;
-
-    // Go through our list of descriptors, looking for a match
-    if (!actionName.isEmpty()) {
-        subset = m_actionmap.values(actionName).toSet();
-        restrict = true;
-    }
-
-    if (!vendorName.isEmpty()) {
-        if (restrict)
-            subset &= m_vendormap.values(vendorName).toSet();
-        else
-            subset = m_vendormap.values(vendorName).toSet();
-        restrict = true;
-
-        /* We still have to check versions, since we don't hash that */
-        if (implementationVersion != -1) {
-            QMutableSetIterator<int> it(subset);
-            while(it.hasNext()) {
-                if (m_descriptors.at(it.next()).implementationVersion() != implementationVersion)
-                    it.remove();
-            }
-        }
-    }
-
-    if (restrict) {
-        QSetIterator<int> it(subset);
-        while(it.hasNext()) {
-            descriptors << m_descriptors.at(it.next());
-        }
-    } else {
-        /* No restrictions, just iterate over all descriptors and return all actions (!) */
-        descriptors = m_descriptors;
-    }
-
-    return descriptors;
-}
-
-QContactAction* QContactManagerData::action(const QContactActionDescriptor& actionDescriptor)
-{
-    loadFactories();
-    QContactActionFactory* actionFactory = m_descriptormap.value(actionDescriptor, 0);
-    if (actionFactory)
-        return actionFactory->instance(actionDescriptor);
-    return 0;
 }
 
 // trampoline for private classes

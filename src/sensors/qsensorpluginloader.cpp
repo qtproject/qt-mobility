@@ -45,6 +45,7 @@
 #include <QtCore/qdebug.h>
 
 #include "qsensorplugin.h"
+#include "qmobilitypluginsearch.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -69,37 +70,31 @@ void QSensorPluginLoader::load()
     if (!m_plugins.isEmpty())
         return;
 
-    QStringList     paths = QCoreApplication::libraryPaths();
+    QStringList plugins;
+    plugins = mobilityPlugins(QLatin1String("sensors"));
 
-    Q_FOREACH (QString const &path, paths) {
-        QString pluginPathName(path + m_location);
-        QDir pluginDir(pluginPathName);
+    /* Now discover the dynamic plugins */
+    for (int i=0; i < plugins.count(); i++) {
+        QPluginLoader *loader = new QPluginLoader(plugins.at(i));
 
-        if (!pluginDir.exists())
-            continue;
-
-        Q_FOREACH (QString pluginLib, pluginDir.entryList(QDir::Files)) {
-            QPluginLoader *loader = new QPluginLoader(pluginPathName + pluginLib);
-
-            QObject *o = loader->instance();
-            if (o != 0 && o->qt_metacast(m_iid) != 0) {
-                QSensorPluginInterface *p = qobject_cast<QSensorPluginInterface*>(o);
-                if (p != 0) {
-                    m_plugins << p;
-                    m_loaders << loader;
-                } else {
-                    loader->unload();
-                    delete loader;
-                }
-
-                continue;
+        QObject *o = loader->instance();
+        if (o != 0 && o->qt_metacast(m_iid) != 0) {
+            QSensorPluginInterface *p = qobject_cast<QSensorPluginInterface*>(o);
+            if (p != 0) {
+                m_plugins << p;
+                m_loaders << loader;
             } else {
-                qWarning() << "QSensorPluginLoader: Failed to load plugin: " << pluginLib << loader->errorString();
+                loader->unload();
+                delete loader;
             }
-            delete o;
-            loader->unload();
-            delete loader;
+
+            continue;
+        } else {
+            qWarning() << "QSensorPluginLoader: Failed to load plugin: " << plugins.at(i) << loader->errorString();
         }
+        delete o;
+        loader->unload();
+        delete loader;
     }
 }
 

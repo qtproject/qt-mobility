@@ -41,6 +41,7 @@
 #include "qmessageaccountid.h"
 #include "qmessageaccountid_p.h"
 #include <qhash.h>
+#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -91,7 +92,7 @@ QMessageAccountId& QMessageAccountId::operator=(const QMessageAccountId& other)
             d_ptr = 0;
         }
     }
-    
+
     return *this;
 }
 
@@ -100,12 +101,12 @@ bool QMessageAccountId::operator<(const QMessageAccountId& other) const
     long left = 0;
     long right = 0;
     if (d_ptr) {
-        left = d_ptr->_id.toLong();
+        left = SymbianHelpers::stripIdPrefix(d_ptr->_id).toLong();
     }
     if (other.d_ptr) {
-        right = other.d_ptr->_id.toLong();
+        right = SymbianHelpers::stripIdPrefix(other.d_ptr->_id).toLong();
     }
-    
+
     return (left < right);
 }
 

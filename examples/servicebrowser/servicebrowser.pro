@@ -22,3 +22,10 @@ symbian {
 
     TARGET.CAPABILITY = ReadUserData WriteUserData
 }
+
+mac {
+    addFiles.sources = ../filemanagerplugin/filemanagerservice.xml
+    addFiles.sources += ../bluetoothtransferplugin/bluetoothtransferservice.xml
+    addFiles.path = servicebrowser.app/Contents/MacOS/xmldata
+    DEPLOYMENT += addFiles
+}

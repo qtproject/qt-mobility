@@ -330,8 +330,8 @@ TInt RDatabaseManagerSession::StartServer()
         iServerThread->wait(1);
 #else
         TRequestStatus status;
-        RProcess dbServer;
-        ret = dbServer.Create(KDatabaseManagerServerName, KNullDesC);
+        RProcess dbServer;	    
+        ret = dbServer.Create(KDatabaseManagerServerProcess, KNullDesC);
         if(ret != KErrNone)
             {
             return ret;

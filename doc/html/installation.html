@@ -48,15 +48,17 @@
 <p>While not supported for this release the desktop Windows backend requires that a MAPI subsystem is installed. Note that messaging functionality will not work if you are using the MinGW compiler.</p>
 <p>The messaging API SMS/MMS functionality requires that the platform provides SMS/MMS facilities. Email functionality requires that an email account is available on the platform.</p>
 </td><td>N</td><td>Y</td></tr>
-<tr valign="top" class="odd"><td>Multimedia</td><td>On all platforms, <a href="qtmedia.html">QtMedia</a> depends on <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a> and <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a>.<p>On all platforms, QML elements for sound effects and music and video playing are exported if <a href="http://qt.nokia.com/doc/4.6/qtdeclarative.html">QtDeclarative</a> (auto-detected) is available.</p>
+<tr valign="top" class="odd"><td>Multimedia</td><td>On all platforms, QtMedia depends on <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a> and <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a>.<p>On all platforms, QML elements for sound effects and music and video playing are exported if <a href="http://qt.nokia.com/doc/4.6/qtdeclarative.html">QtDeclarative</a> (auto-detected) is available.</p>
 <p>On all platforms, additional rendering paths are enabled of <a href="http://qt.nokia.com/doc/4.6/qtopengl.html">QtOpenGL</a> (auto-detected) is available.</p>
 </td><td></td><td></td></tr>
 <tr valign="top" class="even"><td>Multimedia mediaservice plugins</td><td>The audioengine plugin for Unix depends on <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a>.<p>The dsengine plugin for desktop Windows depends on <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a>.</p>
 <p>The gstengine plugin for Linux and Maemo depends on gstreamer-0.10 (&gt;= 0.10.19), gstreamer-audio-0.10 (&gt;= 0.10.19), gstreamer-base-0.10 (&gt;= 0.10.19), gstreamer-interfaces-0.10 (&gt;= 0.10.19) and gstreamer-video-0.10 (&gt;= 0.10.19). If asound (auto-detected) is available, ALSA device detection will be enabled.</p>
-<p>The QtMobilityMultimediaEngine for Symbian depends on <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a>. To enable all mediaservices on symbian one must download sdk plugins. Sdk plugins are available at <a href="http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in">http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in</a> For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features: MediaPlayerEngine (MediaPlayerUtilityAPI for 3rd FP2), AudioRoutingAPI , Tuner Utility (only for 3rd FP1) Radio Utility API (for 3rd FP2 and 5th ed).</p>
+<p>The mmf plugin for Symbian depends on <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a>. To enable all mediaservices on symbian one must download sdk plugins. Sdk plugins are available at <a href="http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in">http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in</a> For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features: MediaPlayerEngine (MediaPlayerUtilityAPI for 3rd FP2), AudioRoutingAPI , Tuner Utility (only for 3rd FP1) Radio Utility API (for 3rd FP2 and 5th ed).</p>
 </td><td>Y</td><td>N</td></tr>
 <tr valign="top" class="odd"><td>Publish &amp; Subscribe</td><td>On Linux, QtPublishSubscribe depends on <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a>.<p>On Maemo 6, it depends on contextsubscriber-1.0 from <a href="http://maemo.gitorious.org/maemo-af/contextkit">Context Kit</a></p>
 </td><td>Y</td><td>N</td></tr>
+<tr valign="top" class="even"><td>Sensors</td><td>The QtSensors s60_sensor_api plugin for S60 3.1 depends on the <a href="http://www.forum.nokia.com/info/sw.nokia.com/id/4284ae69-d37a-4319-bdf0-d4acdab39700/Sensor_plugin_S60_3rd_ed.html">Sensor API Plug-in</a></td><td>Y</td><td>N</td></tr>
+<tr valign="top" class="odd"><td></td><td>The QtSensors symbian plugin for S60 3.2 depends on the backported <a href="http://www.forum.nokia.com/info/sw.nokia.com/id/8059e8ae-8c22-4684-be6b-d40d443d7efc/Sensor_API_Plug_in_S60_3rd_FP2.html">Sensor API Plug-in</a></td><td>Y</td><td>N</td></tr>
 <tr valign="top" class="even"><td>Service Framework</td><td>On all platforms, QtServiceFramework depends on <a href="http://qt.nokia.com/doc/4.6/qtsql.html">QtSql</a>. <a href="http://qt.nokia.com/doc/4.6/qtsql.html">QtSql</a> also needs the SQLite 3 driver (enabled by default) at runtime.</td><td>N</td><td>Y</td></tr>
 <tr valign="top" class="odd"><td>System Information</td><td>On all platforms, QtSystemInfo depends on <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a>.<p>On Linux, it depends on <a href="http://qt.nokia.com/doc/4.6/qtdbus.html">QtDBus</a> (auto-detected), HAL and <a href="http://projects.gnome.org/NetworkManager/">NetworkManager</a>, although System Information will compile without them, there will be reduced functionality. It also depends on <a href="http://qt.nokia.com/doc/4.6/qtgui.html">QtGui</a>.</p>
 <p>On Mac, it depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile with older SDK's but there will be reduced functionality.</p>
@@ -72,11 +74,12 @@
     tar xvf %DISTNAME%.tar          #unpack it</pre>
 <p>This creates the directory <tt>/tmp/%DISTNAME%</tt> containing the files from the archive. We only support the GNU version of the tar archiving utility. Note on some systems it is called gtar.</p>
 <p>On windows, uncompress the zip file into the directory you want Qt Mobility Project installed, extracting to <tt>C:\QtMobility</tt> will create the directory <tt>C:\QtMobility\%DISTNAME%</tt></p>
-<p>NOTE: The install path must not contain any spaces.</p>
+<p>NOTE: The install path(prefix) must not contain any spaces.</p>
 <a name="building"></a>
 <h2>Building</h2>
 <p>Ensure that all compile time dependencies for your particular platform have been met before building.</p>
 <p>If Qt is installed for multiple platforms it is also important to ensure that the correct version of <tt>qmake</tt> is being used.</p>
+<p>bold{Note:} Static builds of Qt are not supported by Qt Mobility.</p>
 <a name="building-on-unix"></a>
 <h3>Building On Unix</h3>
 <p>To configure the Qt Mobility libraries for your machine, run the <tt>./configure</tt> script in the package directory.</p>
@@ -146,9 +149,9 @@
 <p>For newer versions of windows, PATH can be extended through &quot;Start-&gt;Settings-&gt;Control Panel-&gt;System-&gt;Advanced-&gt; Environment variables&quot; and for older versions by editing <tt>C:\autoexec.bat</tt></p>
 <a name="making-the-libraries-available-on-windows-ce"></a>
 <h3>Making the libraries available on Windows CE</h3>
-<p>Environment variables do not exist on Windows CE, and so users of Qt Mobility for Windows CE have to do things slightly differently.</p>
+<p>Environment variables do not exist on Windows CE, and so users of Qt Mobility for Windows CE have to do things slightly differently. A pre-requisite for Qt Mobility applications is that the Qt libraries and plugins have been deployed as per Qt's documentation.</p>
 <p>The deployment of the libraries to the device is normally done with Microsoft Visual Studio or Microsoft ActiveSync.</p>
-<p>The libraries can be made globally available by deploying them to <tt>c:\Windows</tt> on the device, or can be deployed once per application by copying them into the same directory as the executable.</p>
+<p>The libraries can be made globally available by deploying them to <tt>C:\Windows</tt> on the device, or can be deployed once per application by copying them into the same directory as the executable. Mobility expects plug-ins in the subdirecty <tt>plugins/&lt;APIname&gt;</tt> in one of the locations specified by <a href="http://qt.nokia.com/doc/4.6/qcoreapplication.html#libraryPaths">QCoreApplication::libraryPaths</a>() which includes <tt>C:\Windows</tt> and the Mobility application's directory.</p>
 <p>And now the installation is complete, we hope you enjoy using Qt Mobility.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

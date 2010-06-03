@@ -6,7 +6,8 @@
 
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(mobapicontactspluginsymbiansim)
+TARGET = $$qtLibraryTarget(qtcontacts_symbiansim)
+PLUGIN_TYPE=contacts
 
 include(../../../common.pri)
 include(symbiansim_defines.pri)
@@ -62,7 +63,7 @@ symbian: {
     INSTALLS += target
 
     symbianplugin.sources = $${TARGET}.dll
-    symbianplugin.path = /resource/qt/plugins/contacts
+    symbianplugin.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += symbianplugin
 
 }

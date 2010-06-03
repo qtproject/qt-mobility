@@ -60,7 +60,7 @@
 
 using namespace Qt;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 QVideoWidgetControlBackend::QVideoWidgetControlBackend(
         QVideoWidgetControl *control, QWidget *widget)
@@ -940,5 +940,5 @@ void QVideoWidget::paintEvent(QPaintEvent *event)
 
 #include "moc_qvideowidget.cpp"
 #include "moc_qvideowidget_p.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

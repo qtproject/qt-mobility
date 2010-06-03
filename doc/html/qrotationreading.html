@@ -15,8 +15,7 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QRotationReading Class Reference</h1>
 <p>The QRotationReading class represents one reading from the rotation sensor. <a href="#details">More...</a></p>
-<pre>    #include &lt;QRotationReading&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
+<pre>    #include &lt;QRotationReading&gt;</pre><p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
 <ul>
 <li><a href="qrotationreading-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -62,14 +61,17 @@
 <p>The QRotationReading class represents one reading from the rotation sensor.</p>
 <a name="qrotationreading-units"></a>
 <h3>QRotationReading Units</h3>
-<p>The rotation reading contains 3 angles, measured in degrees that define the orientation of the device in three-dimensional space. The three angles are applied to the device in the following order.</p>
+<p>The rotation reading contains 3 angles, measured in degrees that define the orientation of the device in three-dimensional space. The rotations should not be confused with relative rotations such as yaw and pitch. These rotations are of the devices axes relative to the external reference points that define the reference co-ordinate axes: X, Y and Z in the diagram.</p>
+<p>The three angles are applied to the device in the following order.</p>
 <ul>
-<li>Right-handed rotation z (-180, 180]. Starting from the x axis and incrementing towards the y axis.</li>
-<li>Right-handed rotation x (-90, 90]. Starting from the new (once-rotated) y axis and incrementing towards the z axis.</li>
-<li>Right-handed rotation y (-180, 180]. Starting from the new (twice-rotated) z axis and incrementing towards the x axis.</li>
+<li>Right-handed rotation z (-180, 180]. Starting from the x-axis and incrementing in the direction of the y-axis.</li>
+<li>Right-handed rotation x [-90, 90]. Starting from the new (once-rotated) y-axis and incrementing towards the z-axis.</li>
+<li>Right-handed rotation y (-180, 180]. Starting from the new (twice-rotated) z-axis and incrementing towards the x-axis.</li>
 </ul>
-<p align="center"><img src="images/Rotation_angles.png" alt="Visual representation of the rotation angles." /></p><p>The 0 point for the z angle is defined as a fixed, external entity and is device-specific. While magnetic north is typically used as this reference point it may not be. Do not attempt to compare values for the z angle between devices or even on the same device if it has moved a significant distance. If the device cannot detect a fixed, external entity the z angle will always be 0 and the <a href="qrotationsensor.html#hasZ-prop">QRotationSensor::hasZ</a> property will be set to false.</p>
+<p align="center"><img src="images/Rotation_angles.png" alt="Visual representation of the rotation angles." /></p><p>The 0 point for the z angle is defined as a fixed, external entity and is device-specific. While magnetic North is typically used as this reference point it may not be. Do not attempt to compare values for the z angle between devices or even on the same device if it has moved a significant distance.</p>
+<p>If the device cannot detect a fixed, external entity the z angle will always be 0 and the <a href="qrotationsensor.html#hasZ-prop">QRotationSensor::hasZ</a> property will be set to false.</p>
 <p>The 0 point for the x and y angles are defined as when the x and y axes of the device are oriented towards the horizon.</p>
+<p>Note that when x is 90 or -90, values for z and y achieve rotation around the same axis (due to the order of operations). In this case the y rotation will be 0.</p>
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QRotationReading/x"></a>

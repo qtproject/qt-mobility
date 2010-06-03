@@ -46,7 +46,7 @@
 
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaObject;
 
@@ -120,6 +120,6 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

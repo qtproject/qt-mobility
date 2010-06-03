@@ -1,7 +1,6 @@
 INCLUDEPATH += filters
 
 PUBLIC_HEADERS += \
-    filters/qcontactactionfilter.h \
     filters/qcontactchangelogfilter.h \
     filters/qcontactdetailfilter.h \
     filters/qcontactdetailrangefilter.h \
@@ -13,7 +12,6 @@ PUBLIC_HEADERS += \
     filters/qcontactunionfilter.h
 
 PRIVATE_HEADERS += \
-    filters/qcontactactionfilter_p.h \
     filters/qcontactchangelogfilter_p.h \
     filters/qcontactdetailfilter_p.h \
     filters/qcontactdetailrangefilter_p.h \
@@ -23,7 +21,6 @@ PRIVATE_HEADERS += \
     filters/qcontactunionfilter_p.h
 
 SOURCES += \
-    filters/qcontactactionfilter.cpp \
     filters/qcontactchangelogfilter.cpp \
     filters/qcontactdetailfilter.cpp \
     filters/qcontactdetailrangefilter.cpp \

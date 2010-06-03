@@ -53,6 +53,10 @@
 #include <QQueue>
 #include <QEvent>
 
+QTM_BEGIN_NAMESPACE
+
+QTM_END_NAMESPACE
+
 #ifndef _WIN32_WCE
 
 #define USES_IID_IMAPIForm
@@ -128,6 +132,7 @@ typedef QSharedPointer<MapiStore> MapiStorePtr;
 typedef QSharedPointer<MapiSession> MapiSessionPtr;
 
 namespace WinHelpers {
+
 
 enum SavePropertyOption { DontSavePropertyChanges = 0, SavePropertyChanges };
 

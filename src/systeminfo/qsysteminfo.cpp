@@ -539,7 +539,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
   \property QSystemNetworkInfo::homeMobileCountryCode
   \brief The home MNC.
 
-    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -550,7 +550,9 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
   \property QSystemNetworkInfo::homeMobileNetworkCode
   \brief The home MCC.
 
-    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Note: Some platforms don't support retrieving this info. In this case the Network Code is
+    returned only when the device is registered on home network.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
@@ -647,20 +649,23 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 }
 
 /*!
-    Returns the display brightness of \a screen in %, 1 - 100 scale.
+    Returns the display brightness of the screen with index \a screenNumber in %, 1 - 100 scale.
 
     Depending on platform, displayBrightness may not be available due to
     differing hardware, software or driver implementation. In which case this
     will return 0.
 
+    \sa QDesktopWidget::screenCount()
 */
-int QSystemDisplayInfo::displayBrightness(int screen)
+int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
-    return displayInfoPrivate()->displayBrightness(screen);
+    return displayInfoPrivate()->displayBrightness(screenNumber);
 }
 
 /*!
-    Returns the color depth of the screen \a screenNumber, in bits per pixel.
+    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel.
+
+    \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {

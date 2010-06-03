@@ -97,7 +97,6 @@ static void loadPlugins()
     \class QSensorManager
     \ingroup sensors_backend
 
-    \preliminary
     \brief The QSensorManager class handles registration and creation of sensor backends.
 
     Sensor plugins register backends using the registerBackend() function.
@@ -192,10 +191,7 @@ QSensorBackend *QSensorManager::createBackend(QSensor *sensor)
     return 0;
 
 gotbackend:
-    if (sensor->availableDataRates().count() == 0) {
-        qWarning() << sensor->identifier() << "backend does not support any data rates. It cannot be used.";
-    }
-    if (sensor->dataRate() == 0) {
+    if (sensor->availableDataRates().count() != 0 && sensor->dataRate() == 0) {
         qWarning() << sensor->identifier() << "backend did not supply default data rate.";
     }
     return backend;
@@ -266,7 +262,6 @@ QByteArray QSensor::defaultSensorForType(const QByteArray &type)
     \class QSensorBackendFactory
     \ingroup sensors_backend
 
-    \preliminary
     \brief The QSensorBackendFactory class instantiates instances of
            QSensorBackend.
 

@@ -47,7 +47,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QT7PlayerControl::QT7PlayerControl(QObject *parent)
    : QMediaPlayerControl(parent)

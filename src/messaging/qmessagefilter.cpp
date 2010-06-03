@@ -46,7 +46,6 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageFilter
 
-    \preliminary
     \brief The QMessageFilter class defines the parameters used for querying a subset of
     all available messages from the messaging store.
     \ingroup messaging
@@ -321,7 +320,7 @@ bool QMessageFilter::operator!=(const QMessageFilter& other) const
     \fn QMessageFilter::byPriority(QMessage::Priority value, QMessageDataComparator::EqualityComparator cmp)
   
     Returns a filter matching messages whose priority matches \a value, according to \a cmp.
-
+    
     \sa QMessage::priority()
 */
 

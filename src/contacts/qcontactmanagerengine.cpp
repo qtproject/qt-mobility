@@ -46,8 +46,6 @@
 #include "qcontactdetails.h"
 #include "qcontactsortorder.h"
 #include "qcontactfilters.h"
-#include "qcontactaction.h"
-#include "qcontactactiondescriptor.h"
 #include "qcontactabstractrequest.h"
 #include "qcontactabstractrequest_p.h"
 #include "qcontactrequests.h"
@@ -62,7 +60,6 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \class QContactManagerEngine
-  \preliminary
   \brief The QContactManagerEngine class provides the interface for all
   implementations of the contact manager backend functionality.
   \ingroup contacts-backends
@@ -228,7 +225,7 @@ QList<QContactLocalId> QContactManagerEngine::contactIds(const QContactFilter& f
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching contacts will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -254,7 +251,7 @@ QList<QContact> QContactManagerEngine::contacts(const QContactFilter& filter, co
   Any operation error which occurs will be saved in \a error.
 
   The \a fetchHint parameter describes the optimization hints that a manager may take.
-  If the \a fetchHint is the default constructed hint, all existing details, relationships and action preferences
+  If the \a fetchHint is the default constructed hint, all existing details and relationships
   in the matching contact will be returned.  A client should not make changes to a contact which has
   been retrieved using a fetch hint other than the default fetch hint.  Doing so will result in information
   loss when saving the contact back to the manager (as the "new" restricted contact will
@@ -489,7 +486,7 @@ void QContactManagerEngine::setContactDisplayLabel(QContact* contact, const QStr
 {
     QContactDisplayLabel dl;
     dl.setValue(QContactDisplayLabel::FieldLabel, displayLabel);
-    setDetailAccessConstraints(&dl, QContactDetail::Irremovable);
+    setDetailAccessConstraints(&dl, QContactDetail::Irremovable | QContactDetail::ReadOnly);
     contact->d->m_details.replace(0, dl);
 }
 
@@ -509,8 +506,6 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 
   Some of the following transformations may be applied:
   \list
-   \o Any QContactActionFilters are transformed into the corresponding
-     QContactFilters returned by matching actions
    \o Any QContactInvalidFilters contained in a union filter will be removed
    \o Any default QContactFilters contained in an intersection filter will be removed
    \o Any QContactIntersectionFilters with a QContactInvalidFilter contained will be
@@ -528,40 +523,6 @@ bool QContactManagerEngine::hasFeature(QContactManager::ManagerFeature feature, 
 QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &filter)
 {
     switch(filter.type()) {
-        case QContactFilter::ActionFilter:
-        {
-            // Find any matching actions, and do a union filter on their filter objects
-            QContactActionFilter af(filter);
-            QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
-
-            QList<QContactFilter> filters;
-            // There's a small wrinkle if there's a value specified in the action filter
-            // we have to adjust any contained QContactDetailFilters to have that value
-            // or test if a QContactDetailRangeFilter contains this value already
-            for (int j = 0; j < descriptors.count(); j++) {
-                QContactAction* action = QContactAction::action(descriptors.at(j));
-
-                // Action filters are not allowed to return action filters, at all
-                // it's too annoying to check for recursion
-                QContactFilter d = action->contactFilter(af.value());
-                delete action; // clean up.
-                if (!validateActionFilter(d))
-                    continue;
-
-                filters.append(d);
-            }
-
-            if (filters.count() == 0)
-                return QContactInvalidFilter();
-            if (filters.count() == 1)
-                return filters.first();
-
-            QContactUnionFilter f;
-            f.setFilters(filters);
-            return canonicalizedFilter(f);
-        }
-        break;
-
         case QContactFilter::IntersectionFilter:
         {
             QContactIntersectionFilter f(filter);
@@ -589,7 +550,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             f.setFilters(filters);
             return f;
         }
-        break;
+        // unreachable
 
         case QContactFilter::UnionFilter:
         {
@@ -618,7 +579,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
             f.setFilters(filters);
             return f;
         }
-        break;
+        // unreachable
 
         case QContactFilter::LocalIdFilter:
         {
@@ -1182,10 +1143,9 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
     QList<QString> uniqueDefinitionIds;
 
     // check that each detail conforms to its definition as supported by this manager.
-    for (int i=0; i < contact.details().count(); i++) {
-        const QContactDetail& d = contact.details().at(i);
-        QVariantMap values = d.variantValues();
-        QContactDetailDefinition def = detailDefinition(d.definitionName(), contact.type(), error);
+    foreach (const QContactDetail& detail, contact.details()) {
+        QVariantMap values = detail.variantValues();
+        QContactDetailDefinition def = detailDefinition(detail.definitionName(), contact.type(), error);
         // check that the definition is supported
         if (*error != QContactManager::NoError) {
             *error = QContactManager::InvalidDetailError;
@@ -1201,9 +1161,11 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
             uniqueDefinitionIds.append(def.name());
         }
 
-        QList<QString> keys = values.keys();
-        for (int i=0; i < keys.count(); i++) {
-            const QString& key = keys.at(i);
+        QMapIterator<QString,QVariant> fieldIt(values);
+        while (fieldIt.hasNext()) {
+            fieldIt.next();
+            const QString& key = fieldIt.key();
+            const QVariant& variant = fieldIt.value();
             // check that no values exist for nonexistent fields.
             if (!def.fields().contains(key)) {
                 *error = QContactManager::InvalidDetailError;
@@ -1212,7 +1174,7 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
 
             QContactDetailFieldDefinition field = def.fields().value(key);
             // check that the type of each value corresponds to the allowable field type
-            if (static_cast<int>(field.dataType()) != values.value(key).userType()) {
+            if (static_cast<int>(field.dataType()) != variant.userType()) {
                 *error = QContactManager::InvalidDetailError;
                 return false; // type doesn't match.
             }
@@ -1222,14 +1184,15 @@ bool QContactManagerEngine::validateContact(const QContact& contact, QContactMan
             if (!field.allowableValues().isEmpty()) {
                 // if the field datatype is a list, check that it contains only allowable values
                 if (field.dataType() == QVariant::List || field.dataType() == QVariant::StringList) {
-                    QList<QVariant> innerValues = values.value(key).toList();
-                    for (int i = 0; i < innerValues.size(); i++) {
-                        if (!field.allowableValues().contains(innerValues.at(i))) {
+                    QList<QVariant> innerValues = variant.toList();
+                    QListIterator<QVariant> it(innerValues);
+                    while (it.hasNext()) {
+                        if (!field.allowableValues().contains(it.next())) {
                             *error = QContactManager::InvalidDetailError;
                             return false; // value not allowed.
                         }
                     }
-                } else if (!field.allowableValues().contains(values.value(key))) {
+                } else if (!field.allowableValues().contains(variant)) {
                     // the datatype is not a list; the value wasn't allowed.
                     *error = QContactManager::InvalidDetailError;
                     return false; // value not allowed.
@@ -1508,26 +1471,24 @@ bool QContactManagerEngine::removeContacts(const QList<QContactLocalId>& contact
 
 /*!
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
-  The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
+  The returned contact might have details removed or arbitrarily changed.  The cache of relationships
   in the contact are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.  Any error which occurs will be saved to \a error.
  */
 QContact QContactManagerEngine::compatibleContact(const QContact& original, QContactManager::Error* error) const
 {
     QContact conforming;
+    conforming.setId(original.id());
     QContactManager::Error tempError;
     QList<QString> uniqueDefinitionIds;
-    QList<QContactDetail> allDetails = original.details();
-    QMap<QString, QContactDetailDefinition> defs = detailDefinitions(original.type(), &tempError);
-    for (int j = 0; j < allDetails.size(); j++) {
+    foreach (QContactDetail detail, original.details()) {
         // check that the detail conforms to the definition in this manager.
         // if so, then add it to the conforming contact to be returned.  if not, prune it.
-        const QContactDetail& d = allDetails.at(j);
 
-        QVariantMap values = d.variantValues();
-        QContactDetailDefinition def = detailDefinition(d.definitionName(), original.type(), &tempError);
+        QVariantMap values = detail.variantValues();
+        QContactDetailDefinition def = detailDefinition(detail.definitionName(), original.type(), &tempError);
         // check that the definition is supported
-        if (*error != QContactManager::NoError) {
+        if (tempError != QContactManager::NoError) {
             continue; // this definition is not supported.
         }
 
@@ -1539,48 +1500,47 @@ QContact QContactManagerEngine::compatibleContact(const QContact& original, QCon
             uniqueDefinitionIds.append(def.name());
         }
 
-        bool addToConforming = true;
-        QList<QString> keys = values.keys();
-        for (int i=0; i < keys.count(); i++) {
-            const QString& key = keys.at(i);
-            // check that no values exist for nonexistent fields.
+        QMapIterator<QString,QVariant> fieldIt(values);
+        while (fieldIt.hasNext()) {
+            fieldIt.next();
+            const QString& key = fieldIt.key();
+            const QVariant& variant = fieldIt.value();
+            // prune values for nonexistent fields.
             if (!def.fields().contains(key)) {
-                addToConforming = false;
-                break; // value for nonexistent field.
+                detail.removeValue(key);
             }
 
             QContactDetailFieldDefinition field = def.fields().value(key);
-            // check that the type of each value corresponds to the allowable field type
-            if (static_cast<int>(field.dataType()) != values.value(key).userType()) {
-                addToConforming = false;
-                break; // type doesn't match.
+            // prune values that do not correspond to the allowable field type
+            if (static_cast<int>(field.dataType()) != variant.userType()) {
+                detail.removeValue(key);
             }
 
             // check that the value is allowable
             // if the allowable values is an empty list, any are allowed.
             if (!field.allowableValues().isEmpty()) {
-                // if the field datatype is a list, check that it contains only allowable values
+                // if the field datatype is a list, remove non-allowable values
                 if (field.dataType() == QVariant::List || field.dataType() == QVariant::StringList) {
-                    QList<QVariant> innerValues = values.value(key).toList();
-                    for (int i = 0; i < innerValues.size(); i++) {
-                        if (!field.allowableValues().contains(innerValues.at(i))) {
-                            addToConforming = false;
-                            break; // value not allowed.
+                    QList<QVariant> innerValues = variant.toList();
+                    QMutableListIterator<QVariant> it(innerValues);
+                    while (it.hasNext()) {
+                        if (!field.allowableValues().contains(it.next())) {
+                            it.remove();
                         }
                     }
-                } else if (!field.allowableValues().contains(values.value(key))) {
-                    // the datatype is not a list; the value wasn't allowed.
-                    addToConforming = false;
-                    break; // value not allowed.
+                    if (innerValues.isEmpty())
+                        detail.removeValue(key);
+                    else
+                        detail.setValue(key, innerValues);
+                } else if (!field.allowableValues().contains(variant)) {
+                    detail.removeValue(key);
                 }
             }
         }
 
-        // if it conforms to this manager's schema, save it in the conforming contact
-        // else, ignore it (prune it out of the conforming contact).
-        if (addToConforming) {
-            QContactDetail saveCopy = d;
-            conforming.saveDetail(&saveCopy);
+        // if it hasn't been pruned away to nothing, save it in the conforming contact
+        if (!detail.isEmpty()) {
+            conforming.saveDetail(&detail);
         }
     }
 
@@ -1662,6 +1622,7 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 {
     switch(filter.type()) {
         case QContactFilter::InvalidFilter:
+        case QContactFilter::ActionFilter:
             return false;
 
         case QContactFilter::DefaultFilter:
@@ -1990,33 +1951,6 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
             }
             break;
 
-        case QContactFilter::ActionFilter:
-            {
-                // Find any matching actions, and do a union filter on their filter objects
-                QContactActionFilter af(filter);
-                QList<QContactActionDescriptor> descriptors = QContactAction::actionDescriptors(af.actionName(), af.vendorName(), af.implementationVersion());
-
-                // There's a small wrinkle if there's a value specified in the action filter
-                // we have to adjust any contained QContactDetailFilters to have that value
-                // or test if a QContactDetailRangeFilter contains this value already
-                for (int j = 0; j < descriptors.count(); j++) {
-                    QContactAction* action = QContactAction::action(descriptors.at(j));
-
-                    // Action filters are not allowed to return action filters, at all
-                    // it's too annoying to check for recursion
-                    QContactFilter d = action->contactFilter(af.value());
-                    delete action; // clean up.
-                    if (!validateActionFilter(d))
-                        return false;
-
-                    // Check for values etc...
-                    if (testFilter(d, contact))
-                        return true;
-                }
-                // Fall through to end
-            }
-            break;
-
         case QContactFilter::IntersectionFilter:
             {
                 /* XXX In theory we could reorder the terms to put the native tests first */
@@ -2055,40 +1989,11 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
 }
 
 /*!
-  Given a QContactFilter \a filter retrieved from a QContactAction,
-  check that it is valid and cannot cause infinite recursion.
-
-  In particular, a filter from a QContactAction cannot contain
-  any instances of a QContactActionFilter.
-
-  Returns true if \a filter seems ok, or false otherwise.
- */
-
-bool QContactManagerEngine::validateActionFilter(const QContactFilter& filter)
-{
-    QList<QContactFilter> toVerify;
-    toVerify << filter;
-
-    while(toVerify.count() > 0) {
-        QContactFilter f = toVerify.takeFirst();
-        if (f.type() == QContactFilter::ActionFilter)
-            return false;
-        if (f.type() == QContactFilter::IntersectionFilter)
-            toVerify.append(QContactIntersectionFilter(f).filters());
-        if (f.type() == QContactFilter::UnionFilter)
-            toVerify.append(QContactUnionFilter(f).filters());
-    }
-
-    return true;
-}
-
-/*!
   Sets the cached relationships in the given \a contact to \a relationships
  */
 void QContactManagerEngine::setContactRelationships(QContact* contact, const QList<QContactRelationship>& relationships)
 {
     contact->d->m_relationshipsCache = relationships;
-    contact->d->m_reorderedRelationshipsCache = relationships;
 }
 
 
@@ -2110,10 +2015,23 @@ int QContactManagerEngine::compareContact(const QContact& a, const QContact& b, 
         const QVariant& aVal = a.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
         const QVariant& bVal = b.detail(sortOrder.detailDefinitionName()).variantValue(sortOrder.detailFieldName());
 
+        bool aIsNull = false;
+        bool bIsNull = false;
+
+        // treat empty strings as null qvariants.
+        if ((aVal.type() == QVariant::String && aVal.toString().isEmpty()) || aVal.isNull()) {
+            aIsNull = true;
+        }
+        if ((bVal.type() == QVariant::String && bVal.toString().isEmpty()) || bVal.isNull()) {
+            bIsNull = true;
+        }
+
         // early exit error checking
-        if (aVal.isNull())
+        if (aIsNull && bIsNull)
+            continue; // use next sort criteria.
+        if (aIsNull)
             return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? -1 : 1);
-        if (bVal.isNull())
+        if (bIsNull)
             return (sortOrder.blankPolicy() == QContactSortOrder::BlanksFirst ? 1 : -1);
 
         // real comparison

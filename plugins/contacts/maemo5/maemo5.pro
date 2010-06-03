@@ -6,6 +6,7 @@ PLUGIN_TYPE=contacts
 include(../../../common.pri)
 
 HEADERS += \
+        qcontactidshash.h \
         qcontactabook_p.h \
         qcontactmaemo5backend_p.h \
         qcontactmaemo5debug_p.h 
@@ -15,7 +16,7 @@ SOURCES += \
 
 INCLUDEPATH += $$SOURCE_DIR/src/contacts $$SOURCE_DIR/src/contacts/details $$SOURCE_DIR/src/contacts/filters $$SOURCE_DIR/src/contacts/requests
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/contacts
+target.path=$${QT_MOBILITY_PREFIX}/plugins/$${PLUGIN_TYPE}
 INSTALLS += target
 CONFIG += mobility link_pkgconfig
 MOBILITY = contacts

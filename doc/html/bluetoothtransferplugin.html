@@ -23,6 +23,18 @@
 <li><a href="bluetoothtransferplugin-bluetoothtransferplugin-pro.html">bluetoothtransferplugin/bluetoothtransferplugin.pro</a></li>
 </ul>
 <p>This example shows how to write a service plugin for the <a href="service-frameworks.html">Service Framework</a>.</p>
+<a name="registering-the-service"></a>
+<h2>Registering the Service</h2>
+<p>The service can be registered by using the function <a href="qservicemanager.html#addService">addService()</a>, this takes a path to the XML file that describes the service, <i>bluetoothtransferservice.xml</i>.</p>
+<a name="writing-the-plugin"></a>
+<h2>Writing the Plugin</h2>
+<p>To implement a plugin it is necessary to create a new plugin class derived from <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> and <a href="qserviceplugininterface.html">QServicePluginInterface</a>. The function <a href="qserviceplugininterface.html#createInstance">QServicePluginInterface::createInstance</a>() is implemented to return the appropriate instantiated object based on the interface name passed into the function. Since there is only one interface name for this example there is no test involved, so we can simply create the object implementing the service and return its pointer.</p>
+<pre>        return new BluetoothTransfer(this);</pre>
+<p>The implementation of the service BluetoothTransfer is simply a test function for this example. The BluetoothTransfer class is very simple, with only an empty constructor and the sendFile() function</p>
+<pre>    void BluetoothTransfer::sendFile(const QString &amp;path)
+    {
+        qDebug() &lt;&lt; &quot;BluetoothTransfer::sendFile()&quot; &lt;&lt; path;
+    }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>

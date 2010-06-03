@@ -55,7 +55,7 @@
 #include <QMapIterator>
 
 #if !defined(QT_NO_DBUS)
-#include "gconfitem.h" // Temporarily here.
+#include "gconfitem_p.h" // Temporarily here.
 #endif
 
 #ifdef Q_WS_X11
@@ -442,6 +442,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
     currentCellNetworkStatus = QSystemNetworkInfo::UndefinedStatus;
+    currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
     currentEthernetState = "down";
     currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
     currentWlanSignalStrength = networkSignalStrength(QSystemNetworkInfo::WlanMode);
@@ -563,6 +564,20 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
                               QLatin1String("charger_disconnected"),
                               this, SLOT(usbCableAction())) ) {
         qWarning() << "unable to connect to usbCableAction (disconnect)";
+    }
+    if(!systemDbusConnection.connect("org.freedesktop.Hal",
+                              "/org/freedesktop/Hal/Manager",
+                              "org.freedesktop.Hal.Manager",
+                              QLatin1String("DeviceAdded"),
+                              this, SLOT(bluetoothNetworkStatusCheck())) ) {
+        qWarning() << "unable to connect to bluetoothNetworkStatusCheck (1)";
+    }
+    if(!systemDbusConnection.connect("org.freedesktop.Hal",
+                              "/org/freedesktop/Hal/Manager",
+                              "org.freedesktop.Hal.Manager",
+                              QLatin1String("DeviceRemoved"),
+                              this, SLOT(bluetoothNetworkStatusCheck())) ) {
+        qWarning() << "unable to connect to bluetoothNetworkStatusCheck (2)";
     }
 #endif
 }
@@ -689,6 +704,15 @@ void QSystemNetworkInfoPrivate::wlanSignalStrengthCheck()
         emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode, currentWlanSignalStrength);
     }
 }
+
+void QSystemNetworkInfoPrivate::bluetoothNetworkStatusCheck()
+{
+    if (currentBluetoothNetworkStatus != networkStatus(QSystemNetworkInfo::BluetoothMode)) {
+        currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
+        emit networkStatusChanged(QSystemNetworkInfo::BluetoothMode, currentBluetoothNetworkStatus);
+    }
+}
+
 
 void QSystemNetworkInfoPrivate::setWlanSignalStrengthCheckEnabled(bool enabled)
 {

@@ -43,7 +43,6 @@
 /*!
     \class QMessageAccount
 
-    \preliminary
     \brief The QMessageAccount class represents a messaging account in the messaging store.
     
     \ingroup messaging
@@ -108,7 +107,7 @@
 /*!
     \fn QMessageAccount::messageTypes() const
     
-    Returns the types of messages this account deals with.
+    Returns the types of messages this account handles.
 */
 
 /*!

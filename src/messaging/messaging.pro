@@ -42,7 +42,8 @@ PRIVATE_HEADERS += addresshelper_p.h \
     qmessagefilter_p.h \
     qmessagesortorder_p.h \
     qmessagestore.h \
-    qmessagestore_p.h
+    qmessagestore_p.h \
+    messagingutil_p.h
 SOURCES += qmessageid.cpp \
     qmessagecontentcontainerid.cpp \
     qmessagefolderid.cpp \
@@ -61,7 +62,8 @@ SOURCES += qmessageid.cpp \
     qmessagemanager.cpp \
     qmessagesortorder.cpp \
     qmessagestore.cpp \
-    qmessageservice.cpp
+    qmessageservice.cpp \
+    messagingutil.cpp
 symbian|win32|maemo6|maemo5|mac { 
     mac|maemo6: SOURCES += qmessageid_stub.cpp \
         qmessagecontentcontainerid_stub.cpp \
@@ -85,6 +87,7 @@ symbian|win32|maemo6|maemo5|mac {
         PUBLIC_HEADERS -= qmessagecontentcontainer_p.h
         PRIVATE_HEADERS -= qmessagecontentcontainer_p.h
         HEADERS += qmessagecontentcontainer_maemo_p.h \
+            qmessageservice_maemo_p.h \
             modestengine_maemo_p.h \
             telepathyengine_maemo_p.h \
             maemohelpers_p.h\
@@ -131,10 +134,7 @@ symbian|win32|maemo6|maemo5|mac {
         pkgconfig.files = QtMessaging.pc
         INSTALLS += pkgconfig \
             documentation
-        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4
-    }
-    maemo5 { 
-        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4
+        LIBS += -lgconf-2 -lrtcom-eventlogger -lmodest-dbus-client-1.0 -losso -ldbus-glib-1 -ldbus-1 -lgobject-2.0 -lglib-2.0 -ltpsession -ltelepathy-qt4 -lhildonmime
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
