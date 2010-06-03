@@ -468,33 +468,6 @@ else
     echo "sensord_enabled = no" >> "$CONFIG_IN"
 fi
 
-# Now module selection
-# using 'expr match ....' should help a bit
-#if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
-    # In theory we should do some sanity checking here.
-#    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
-#fi
-
-# Test if able to build multimedia
-for module in $MOBILITY_MODULES; do
-    case "$module" in
-        multimedia)
-            echo "contains(QT_CONFIG,multimedia):message(1)" > 1.pro
-            SOMETHING=`qmake 1.pro 2>&1`
-            if [ "$SOMETHING" = "Project MESSAGE: 1" ]; then
-                MOBILITY_MODULES="$(echo $MOBILITY_MODULES | sed 's:multimedia::g')"
-                echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
-            fi
-            rm 1.pro
-            ;;
-    esac
-done
-
-if [ -z "$MOBILITY_MODULES" ]; then
-    echo "No module available to build."
-    exit 1
-fi
-
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"

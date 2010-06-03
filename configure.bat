@@ -59,7 +59,6 @@ set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
 set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
 set MOBILITY_MODULES_UNPARSED=
-set MOBILITY_MULTIMEDIA=yes
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
@@ -71,22 +70,6 @@ if exist "%PROJECT_CONFIG%" del /Q %PROJECT_CONFIG%
 echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
-
-if %BUILD_PATH% == %SOURCE_PATH% (
-    cd %SOURCE_PATH%\config.tests\qtmultimedia
-    if exist make del qtmultimedia
-) else (
-    rmdir /S /Q config.tests\qtmultimedia
-    mkdir config.tests\qtmultimedia
-    cd config.tests\qtmultimedia
-)
-for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\qtmultimedia\qtmultimedia.pro 2^>^&1 1^>NUL') do set QTMULTIMEDIA=%%i 
-if %QTMULTIMEDIA% == no-multimedia (
-    set MOBILITY_MULTIMEDIA=yes
-) else (
-    set MOBILITY_MULTIMEDIA=no
-)
-cd /D %BUILD_PATH%
 
 :cmdline_parsing
 if "%1" == ""                   goto startProcessing
@@ -263,7 +246,6 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 
 REM reset default modules as we expect a modules list
 set MOBILITY_MODULES=
-set /a MODULE_COUNT=0
 
 echo Checking selected modules:
 :modulesTag2
@@ -300,23 +282,9 @@ if %FIRST% == bearer (
     goto errorTag
 )
 
-if %FIRST% == multimedia (
-    if %MOBILITY_MULTIMEDIA% == yes (
-        set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
-        set /a MODULE_COUNT+=1
-    ) else (
-        echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
-    )
-) else (
-    set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
-    set /a MODULE_COUNT+=1
-)
+set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
 
 if "%REMAINING%" == "" (
-    if "%MODULE_COUNT%" == "0" (
-        echo "No modules to build, exiting..."
-        exit /b 1
-    )
     shift
 ) else (
     set MOBILITY_MODULES_UNPARSED=%REMAINING%
@@ -327,40 +295,7 @@ SET REMAINING=
 SET FIRST=
 goto cmdline_parsing
 
-:removeMultimedia
-set MOBILITY_MODULES_TEMP=%MOBILITY_MODULES%
-set MOBILITY_MODULES=
-
-:removeMultimedia2
-
-for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_TEMP%") do (
-    set FIRST=%%a
-    set REMAINING=%%b
-)
-if NOT %FIRST% == multimedia (
-    set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
-)
-if "%REMAINING%" == "" (
-    goto startProcessing2
-) else (
-    set MOBILITY_MODULES_TEMP=%REMAINING%
-    goto removeMultimedia2
-)
-
-goto startProcessing2
-
 :startProcessing
-
-for %%a in (%MOBILITY_MODULES%) do (
-    if %%a == multimedia (
-        if %MOBILITY_MULTIMEDIA% == no (
-            echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
-            goto removeMultimedia
-        )
-    )
-)
-
-:startProcessing2
 
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
 echo CONFIG_WIN32 += %WIN32_RELEASEMODE% %RELEASEMODE% >> %PROJECT_CONFIG%
@@ -593,11 +528,9 @@ if %FIRST% == bearer (
 ) else if %FIRST% == messaging (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
-    if %MOBILITY_MULTIMEDIA% == yes (
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\audio
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\video
-    )
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\audio
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\video
 ) else if %FIRST% == publishsubscribe (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmPubSub %SOURCE_PATH%\src\publishsubscribe
 ) else if %FIRST% == systeminfo (
