@@ -15,7 +15,8 @@ symbian:
 { 
 #    load(data_caging_paths)
     INCLUDEPATH += $$SYMBIAN_PATHS
-    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+    INCLUDEPATH += \epoc32\include\app
+	INCLUDEPATH += \epoc32\include\platform\app
     
     # Input
     HEADERS += $$SYMBIAN_HEADERS \

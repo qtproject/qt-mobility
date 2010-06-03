@@ -8,7 +8,9 @@ TEMPLATE = app
 TARGET = 
 DEPENDPATH += 
 INCLUDEPATH += .
-INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+INCLUDEPATH += \epoc32\include\app
+INCLUDEPATH += \epoc32\include\platform\app
+INCLUDEPATH += \epoc32\include\app\loc 
 
 SOURCES += main.cpp
 

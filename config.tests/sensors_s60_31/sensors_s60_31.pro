@@ -4,6 +4,8 @@ TEMPLATE = app
 # Input
 SOURCES += main.cpp
 
-#INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
+INCLUDEPATH += \epoc32\include\app
+INCLUDEPATH += \epoc32\include\platform\app
+INCLUDEPATH += \epoc32\include\app\loc 
 LIBS += -lRRSensorApi
 
