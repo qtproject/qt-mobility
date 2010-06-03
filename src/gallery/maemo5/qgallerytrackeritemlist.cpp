@@ -98,12 +98,13 @@ int QGalleryTrackerItemListPrivate::queryRows(int offset)
         }
 
         if (!values.isEmpty()) {
-            correctRows(
-                    row_iterator(values.begin(), tableWidth),
-                    row_iterator(values.end(), tableWidth),
-                    sortCriteria.constBegin(),
-                    sortCriteria.constEnd());
-
+            if (!sortCriteria.isEmpty()) {
+                correctRows(
+                        row_iterator(values.begin(), tableWidth),
+                        row_iterator(values.end(), tableWidth),
+                        sortCriteria.constBegin(),
+                        sortCriteria.constEnd());
+            }
             synchronize();
         }
 
