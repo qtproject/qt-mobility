@@ -42,7 +42,7 @@
 #include "s60audiocapturesession.h"
 #include "s60audioendpointselector.h"
 
-#include <QtMultimediaKit/qaudiodeviceinfo.h>
+#include <qaudiodeviceinfo.h>
 
 S60AudioEndpointSelector::S60AudioEndpointSelector(QObject *session, QObject *parent)
     :QAudioEndpointSelector(parent)
