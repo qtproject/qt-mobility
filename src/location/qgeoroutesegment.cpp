@@ -117,42 +117,6 @@ QGeoRouteSegment::SegmentType QGeoRouteSegment::type() const
     return d->type;
 }
 
-void QGeoRouteSegment::setId(QString id)
-{
-    Q_D(QGeoRouteSegment);
-    d->id = id;
-}
-
-QString QGeoRouteSegment::id() const
-{
-    Q_D(const QGeoRouteSegment);
-    return d->id;
-}
-
-void QGeoRouteSegment::setNextSegmentId(const QString segmentId)
-{
-    Q_D(QGeoRouteSegment);
-    d->nextId = segmentId;
-}
-
-QString QGeoRouteSegment::nextSegmentId() const
-{
-    Q_D(const QGeoRouteSegment);
-    return d->nextId;
-}
-
-void QGeoRouteSegment::setNavigationInstructionId(const QString instructionId)
-{
-    Q_D(QGeoRouteSegment);
-    d->instructionId = instructionId;
-}
-
-QString QGeoRouteSegment::navigationInstructionId() const
-{
-    Q_D(const QGeoRouteSegment);
-    return d->instructionId;
-}
-
 /*!
     Sets the estimated amount of time it will take to traverse this segment of
     the route, in seconds, to \a secs.
@@ -209,40 +173,55 @@ void QGeoRouteSegment::setPath(const QList<QGeoCoordinate> &path)
     The coordinates should be listed in the order in which they
     would be traversed by someone travelling along this segment of the route.
 */
+
 QList<QGeoCoordinate> QGeoRouteSegment::path() const
 {
     Q_D(const QGeoRouteSegment);
     return d->path;
+}
+/*!
+    Sets the instruction for this route segement to \a instruction.
+*/
+void QGeoRouteSegment::setInstruction(const QGeoNavigationInstruction *instruction)
+{
+    Q_D(QGeoRouteSegment);
+    d->instruction = instruction;
+}
+
+/*!
+    Returns the instruction for this route segment.
+*/
+const QGeoNavigationInstruction* QGeoRouteSegment::instruction() const
+{
+    Q_D(const QGeoRouteSegment);
+    return d->instruction;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
+    : instruction(NULL)
 {
     type = QGeoRouteSegment::NormalSegment;
 }
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &other)
         : type(other.type),
-        id(other.id),
         travelTime(other.travelTime),
         distance(other.distance),
         path(other.path),
-        nextId(other.nextId),
-        instructionId(other.instructionId) {}
+        instruction(other.instruction) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 
 QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegmentPrivate & other)
 {
     type = other.type;
-    id = other.id;
     travelTime = other.travelTime;
     distance = other.distance;
     path = other.path;
-    nextId = other.nextId;
-    instructionId = other.instructionId;
+    instruction = other.instruction;
     return *this;
 }
 

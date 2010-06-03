@@ -55,7 +55,6 @@ QTM_BEGIN_NAMESPACE
 class QGeoBoundingBox;
 class QGeoDistance;
 class QGeoRouteSegment;
-class QGeoNavigationInstruction;
 
 class QGeoRoutePrivate;
 
@@ -84,14 +83,9 @@ public:
     QGeoBoundingBox bounds() const;
 
     void appendRouteSegment(const QGeoRouteSegment* routeSegment);
-    void setRouteSegments(const QHash<QString, const QGeoRouteSegment *> &routeSegments);
+    void setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments);
 
-    QHash<QString,const QGeoRouteSegment *> routeSegments() const;
-
-    void appendNavigationInstruction(const QGeoNavigationInstruction* instruction);
-    void setNavigationInstructions(const QList<const QGeoNavigationInstruction *> &instructions);
-
-    QList<const QGeoNavigationInstruction *> navigationInstructions() const;
+    QList<const QGeoRouteSegment *> routeSegments() const;
 
     void setTravelTime(int secs);
     int travelTime() const;

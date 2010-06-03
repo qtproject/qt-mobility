@@ -77,9 +77,7 @@ public:
     int travelTime;
     QGeoDistance distance;
     QList<QGeoCoordinate> path;
-    QString id;
-    QString nextId;
-    QString instructionId;
+    const QGeoNavigationInstruction* instruction;
 };
 
 QTM_END_NAMESPACE

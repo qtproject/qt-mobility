@@ -120,18 +120,6 @@ QGeoNavigationInstruction::InstructionType QGeoNavigationInstruction::type() con
     return d->type;
 }
 
-void QGeoNavigationInstruction::setId(QString id)
-{
-    Q_D(QGeoNavigationInstruction);
-    d->id = id;
-}
-
-QString QGeoNavigationInstruction::id() const
-{
-    Q_D(const QGeoNavigationInstruction);
-    return d->id;
-}
-
 /*!
     Sets the position where the instructions should be provided to \a position.
 */
@@ -210,30 +198,6 @@ QGeoDistance QGeoNavigationInstruction::distanceToNextInstruction() const
     return d->distanceToNextInstruction;
 }
 
-void QGeoNavigationInstruction::setToSegmentId(const QString segmentId)
-{
-    Q_D(QGeoNavigationInstruction);
-    d->toSegmentId = segmentId;
-}
-
-QString QGeoNavigationInstruction::toSegmentId() const
-{
-    Q_D(const QGeoNavigationInstruction);
-    return d->toSegmentId;
-}
-
-void QGeoNavigationInstruction::setFromSegmentId(const QString segmentId)
-{
-    Q_D(QGeoNavigationInstruction);
-    d->fromSegmentId = segmentId;
-}
-
-QString QGeoNavigationInstruction::fromSegmentId() const
-{
-    Q_D(const QGeoNavigationInstruction);
-    return d->fromSegmentId;
-}
-
 /*******************************************************************************
 *******************************************************************************/
 
@@ -244,26 +208,20 @@ QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate()
 
 QGeoNavigationInstructionPrivate::QGeoNavigationInstructionPrivate(const QGeoNavigationInstructionPrivate &other)
         : type(other.type),
-        id(other.id),
         position(other.position),
         text(other.text),
         timeToNextInstruction(other.timeToNextInstruction),
-        distanceToNextInstruction(other.distanceToNextInstruction),
-        toSegmentId(other.toSegmentId),
-        fromSegmentId(other.fromSegmentId){}
+        distanceToNextInstruction(other.distanceToNextInstruction) {}
 
 QGeoNavigationInstructionPrivate::~QGeoNavigationInstructionPrivate() {}
 
 QGeoNavigationInstructionPrivate& QGeoNavigationInstructionPrivate::operator= (const QGeoNavigationInstructionPrivate & other)
 {
     type = other.type;
-    id = other.id;
     position = other.position;
     text = other.text;
     timeToNextInstruction = other.timeToNextInstruction;
     distanceToNextInstruction = other.distanceToNextInstruction;
-    toSegmentId = other.toSegmentId;
-    fromSegmentId = other.fromSegmentId;
 
     return *this;
 }

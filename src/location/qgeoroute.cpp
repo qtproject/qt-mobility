@@ -200,7 +200,7 @@ QGeoBoundingBox QGeoRoute::bounds() const
     \sa QGeoRouteSegment
     \sa QGeoRoute::routeSegments()
 */
-void QGeoRoute::setRouteSegments(const QHash<QString, const QGeoRouteSegment *> &routeSegments)
+void QGeoRoute::setRouteSegments(const QList<const QGeoRouteSegment *> &routeSegments)
 {
     d_ptr->routeSegments = routeSegments;
 }
@@ -216,42 +216,14 @@ void QGeoRoute::setRouteSegments(const QHash<QString, const QGeoRouteSegment *> 
     \sa QGeoRouteSegment
     \sa QGeoRoute::setRouteSegments()
 */
-QHash<QString, const QGeoRouteSegment *> QGeoRoute::routeSegments() const
+QList<const QGeoRouteSegment *> QGeoRoute::routeSegments() const
 {
     return d_ptr->routeSegments;
 }
 
 void QGeoRoute::appendRouteSegment(const QGeoRouteSegment* routeSegment)
 {
-    d_ptr->routeSegments.insert(routeSegment->id(), routeSegment);
-}
-
-void QGeoRoute::appendNavigationInstruction(const QGeoNavigationInstruction* instruction)
-{
-    d_ptr->navigationInstructions.append(instruction);
-}
-
-
-/*!
-    Sets the list of navigation to \a navigationInstructions.
-
-    \sa QGeoNavigationInstruction
-    \sa QGeoRoute::navigationInstructions()
-*/
-void QGeoRoute::setNavigationInstructions(const QList<const QGeoNavigationInstruction *> &instruction)
-{
-    d_ptr->navigationInstructions = instruction;
-}
-
-/*!
-    Returns the list of navigation instructions.
-
-    \sa QGeoNavigationInstruction
-    \sa QGeoRoute::setNavigationInstructions()
-*/
-QList<const QGeoNavigationInstruction *> QGeoRoute::navigationInstructions() const
-{
-    return d_ptr->navigationInstructions;
+    d_ptr->routeSegments.append(routeSegment);
 }
 
 /*!
@@ -340,7 +312,6 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         pathSummary(other.pathSummary),
         bounds(other.bounds),
         routeSegments(other.routeSegments),
-        navigationInstructions(other.navigationInstructions),
         travelTime(other.travelTime),
         distance(other.distance) {}
 
@@ -353,7 +324,6 @@ QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
     pathSummary = other.pathSummary;
     bounds = other.bounds;
     routeSegments = other.routeSegments;
-    navigationInstructions = other.navigationInstructions;
     travelTime = other.travelTime;
     distance = other.distance;
 

@@ -61,7 +61,6 @@ public:
 private:
     QTreeWidgetItem* showRoutes();
     void showRoute(QTreeWidgetItem* top, const QGeoRoute& route);
-    void showRouteInstructions(QTreeWidgetItem *routeItem, const QGeoNavigationInstruction *instruction);
     void showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment *segment);
     void showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points);
 

@@ -54,6 +54,7 @@
 //
 
 #include <QList>
+#include <QMap>
 #include <QString>
 
 class QXmlStreamReader;
@@ -63,10 +64,26 @@ class QIODevice;
 #include <QGeoRouteSegment>
 #include <QGeoCoordinate>
 #include <QGeoBoundingBox>
-
 #include <QGeoRouteRequest>
+#include <QGeoNavigationInstruction>
 
 QTM_USE_NAMESPACE
+
+class QGeoNavigationInstructionContainer
+{
+public:
+    QGeoNavigationInstruction* instruction;
+    QString toId;
+    QString fromId;
+};
+
+class QGeoRouteSegmentContainer
+{
+public:
+    QGeoRouteSegment* segment;
+    QString nextId;
+    QString instructionId;
+};
 
 class QGeoRouteXmlParser
 {
@@ -86,8 +103,9 @@ private:
     bool parseMode(QGeoRoute *route);
     bool parseSummary(QGeoRoute *route);
     bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
-    bool parseManeuver(QGeoRoute *route);
-    bool parseLink(QGeoRoute *route);
+    bool parseManeuver();
+    bool parseLink();
+    bool postProcessRoute(QGeoRoute *route);
 
     bool parseBoundingBox(QGeoBoundingBox *bounds);
 
@@ -95,6 +113,8 @@ private:
     QXmlStreamReader *m_reader;
     QList<QGeoRoute> m_results;
     QString m_errorString;
+    QMap<QString, QGeoNavigationInstructionContainer> instructions;
+    QMap<QString, QGeoRouteSegmentContainer> segments;
 };
 
 #endif
