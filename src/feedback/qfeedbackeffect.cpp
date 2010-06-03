@@ -296,10 +296,7 @@ QFileFeedbackEffect::~QFileFeedbackEffect()
 
 int QFileFeedbackEffect::duration() const
 {
-    if (QFileFeedbackInterface *iface = QFileFeedbackInterface::instance())
-        return iface->effectDuration(this);
-    else
-        return 0; //there is no backend available
+    return QFileFeedbackInterface::instance()->effectDuration(this);
 }
 
 QFileInfo QFileFeedbackEffect::file() const
@@ -314,6 +311,7 @@ void QFileFeedbackEffect::setFile(const QFileInfo &info)
     }
     setLoaded(false);
     d_func()->info = info;
+    setLoaded(true);
 }
 
 bool QFileFeedbackEffect::loaded() const
@@ -332,26 +330,18 @@ void QFileFeedbackEffect::setLoaded(bool load)
         return;
     }
 
-    QFileFeedbackInterface *iface = QFileFeedbackInterface::instance();
-    if (!iface) {
-        qWarning() << "QFileFeedbackEffect::setLoaded: no backend supports loading/unloading of files";
-        return;
-    }
-
     if (!d->info.isReadable()) {
         qWarning() << "QFileFeedbackEffect::setLoaded: file" << d->info.absoluteFilePath() << "is not readable";
         return;
     }
 
-    iface->setLoaded(this, load);
+    if (QFileFeedbackInterface::instance()->setLoaded(this, load))
+        d->loaded = load;
 }
 
 QStringList QFileFeedbackEffect::supportedFileSuffixes()
 {
-    if (QFileFeedbackInterface *iface = QFileFeedbackInterface::instance())
-        return iface->supportedFileSuffixes();
-
-    return QStringList();
+    return QFileFeedbackInterface::instance()->supportedMimeTypes();
 }
 
 void QFileFeedbackEffect::updateCurrentTime(int /*currentTime*/)
@@ -372,11 +362,7 @@ void QFileFeedbackEffect::updateCurrentTime(int /*currentTime*/)
 
 void QFileFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
 {
-    QFileFeedbackInterface *iface = QFileFeedbackInterface::instance();
-    if (!iface)
-        qWarning("QFileFeedbackEffect::updateState: no backend supports loading/unloading of files");
-
-    ErrorType e = iface->updateEffectState(this);
+    ErrorType e = QFileFeedbackInterface::instance()->updateEffectState(this);
     QAbstractAnimation::updateState(newState, oldState);
     if (e != NoError)
         emit error(e);

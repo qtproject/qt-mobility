@@ -58,10 +58,27 @@ class FileBackend : public QFileFeedbackInterface
 public:
     //this class is used to redirect the calls to all the file backends available
 
-    virtual void setLoaded(const QFileFeedbackEffect *effect, bool load)
+    virtual bool setLoaded(const QFileFeedbackEffect *effect, bool load)
     {
-        if (QFileFeedbackInterface *subBackend = getBackend(effect))
-            subBackend->setLoaded(effect, load);
+        if (load) {
+            //let's try to find the right backend to load
+            for (int i = 0; i < subBackends.count(); ++i) {
+                if (subBackends.at(i)->setLoaded(effect, load)) {
+                    backendUsed[effect] = subBackends.at(i);
+                    return true;
+                }
+            }
+        } else {
+            //unload
+            if (QFileFeedbackInterface *subBackend = getBackend(effect)) {
+                backendUsed.remove(effect);
+                return subBackend->setLoaded(effect, load);
+            }
+
+        }
+
+        //if we get here, the file was not (un)loaded
+        return false;
     }
 
     virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *effect)
@@ -88,9 +105,12 @@ public:
         return 0;
    }
 
-    virtual QStringList supportedFileSuffixes()
+    virtual QStringList supportedMimeTypes()
     {
-        return subBackends.keys();
+        QStringList ret;
+        for (int i = 0; i < subBackends.count(); ++i)
+            ret += subBackends.at(i)->supportedMimeTypes();
+        return ret;
     }
 
     static FileBackend *instance()
@@ -101,19 +121,16 @@ public:
 
     void addFileBackend(QFileFeedbackInterface *backend)
     {
-        QStringList exts = backend->supportedFileSuffixes();
-        for (int i = 0; i < exts.count(); ++i)
-            instance()->subBackends.insert(exts.at(i), backend);
-
+        subBackends.append(backend);
     }
 
-    QHash<QString, QFileFeedbackInterface*> subBackends; 
+    QHash<const QFileFeedbackEffect*, QFileFeedbackInterface*> backendUsed;
+    QList<QFileFeedbackInterface*> subBackends; 
 
 private:
     QFileFeedbackInterface *getBackend(const QFileFeedbackEffect *effect)
     {
-        QFileInfo info = effect->file();
-        return subBackends.value(info.suffix(), 0);
+        return backendUsed.value(effect, 0);
     }
 };
 
@@ -170,7 +187,6 @@ QFeedbackInterface *QFeedbackInterface::instance()
     if (!backend)
         initBackends();
     return backend;
-
 }
 
 QThemeFeedbackInterface *QThemeFeedbackInterface::instance()
@@ -178,7 +194,6 @@ QThemeFeedbackInterface *QThemeFeedbackInterface::instance()
     if (!backend)
         initBackends();
     return themeBackend;
-
 }
 
 QFileFeedbackInterface *QFileFeedbackInterface::instance()

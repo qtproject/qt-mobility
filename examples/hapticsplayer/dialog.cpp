@@ -215,9 +215,9 @@ void Dialog::browseClicked()
     if (ok) {
         ui.filename->setText(QDir::toNativeSeparators(filename));
         fileEffect.setFile(filename);
-        fileEffect.setLoaded(true);
     }
-    ui.filePlayPause->setEnabled(ok);
+    ui.fileStatus->setText( fileEffect.loaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );
+    ui.filePlayPause->setEnabled(ok && fileEffect.loaded());
     ui.fileStop->setEnabled(false);
 }
 

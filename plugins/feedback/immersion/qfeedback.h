@@ -85,11 +85,11 @@ public:
     virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
 
     //for loading files
-    virtual void setLoaded(const QFileFeedbackEffect*, bool);
+    virtual bool setLoaded(const QFileFeedbackEffect*, bool);
     virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *);
     virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *);
     virtual int effectDuration(const QFileFeedbackEffect *);
-    virtual QStringList supportedFileSuffixes();
+    virtual QStringList supportedMimeTypes();
 
 private:
     VibeInt32 handleForDevice(const QFeedbackDevice &device);

@@ -45,6 +45,8 @@
 #include <QtCore/QDebug>
 #include <QtCore/QStringlist>
 
+#define MAX_FILE_SIZE (1 << 14) //16KB
+
 Q_EXPORT_PLUGIN2(feedback_immersion, QFeedbackImmersion)
 
 QFeedbackImmersion::QFeedbackImmersion()
@@ -296,20 +298,27 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackE
     }
 }
 
-void QFeedbackImmersion::setLoaded(const QFileFeedbackEffect *effect, bool load)
+bool QFeedbackImmersion::setLoaded(const QFileFeedbackEffect *effect, bool load)
 {
     const QFileInfo info = effect->file();
+    Q_ASSERT(load || fileData.contains(info));
 
     FileContent &fc = fileData[info];
     if (load) {
         if (fc.refCount == 0) {
             //we need to load the file
             QFile file(info.absoluteFilePath());
-            if (file.open(QIODevice::ReadOnly)) {
-                fc.ba = file.readAll();
+            if (file.size() > MAX_FILE_SIZE)
+                return false;
+            if (!file.open(QIODevice::ReadOnly))
+                return false;
+            fc.ba = file.readAll();
+            //now let's try to check the file content with immersion
+            if (VIBE_FAILED(ImmVibeGetIVTEffectCount(fc.constData()))) {
+                fileData.remove(info); 
+                return false;
             }
         }
-
         fc.refCount++;
     } else {
         //unload
@@ -317,7 +326,7 @@ void QFeedbackImmersion::setLoaded(const QFileFeedbackEffect *effect, bool load)
         if (fc.refCount == 0)
             fileData.remove(info);
     }
-
+    return true;
 }
 
 QFileFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFileFeedbackEffect *effect)
@@ -390,7 +399,7 @@ int QFeedbackImmersion::effectDuration(const QFileFeedbackEffect *effect)
     return ret;
 }
 
-QStringList QFeedbackImmersion::supportedFileSuffixes()
+QStringList QFeedbackImmersion::supportedMimeTypes()
 {
-    return QStringList() << QLatin1String("ivt");
+    return QStringList() << QLatin1String("vibra/ivt");
 }

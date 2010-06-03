@@ -100,11 +100,11 @@ public:
 class QFileFeedbackInterface
 {
 public:
-    virtual void setLoaded(const QFileFeedbackEffect*, bool) = 0;
+    virtual bool setLoaded(const QFileFeedbackEffect*, bool) = 0;
     virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *) = 0;
     virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *) = 0;
     virtual int effectDuration(const QFileFeedbackEffect*) = 0;
-    virtual QStringList supportedFileSuffixes() = 0;
+    virtual QStringList supportedMimeTypes() = 0;
 
     static QFileFeedbackInterface *instance();
 };
