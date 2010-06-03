@@ -73,7 +73,6 @@ Player::Player(QWidget *parent)
     , showYoutubeDialog(0)
     , youtubeDialog(0)
 #else
-    , audioEndpointSelector(0)
     , colorDialog(0)
 #endif
 {
