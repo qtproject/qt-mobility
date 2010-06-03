@@ -56,14 +56,14 @@ QTM_USE_NAMESPACE
 
 class DeviceDiscoveryDialog : public QDialog, public Ui_DeviceDiscovery
 {
-	Q_OBJECT
+    Q_OBJECT
 
 public:
     DeviceDiscoveryDialog(QWidget *parent = 0);
-	~DeviceDiscoveryDialog();
+    ~DeviceDiscoveryDialog();
 
 public slots:
-	void addDevice(const QBluetoothDeviceInfo&);
+    void addDevice(const QBluetoothDeviceInfo&);
 
 private slots:
     void startScan();

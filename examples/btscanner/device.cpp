@@ -50,14 +50,14 @@ DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
     setupUi(this);
 
     connect(inquiryType, SIGNAL(toggled(bool)), this, SLOT(setGeneralUnlimited(bool)));
-	connect(scan, SIGNAL(clicked()), this, SLOT(startScan()));
+    connect(scan, SIGNAL(clicked()), this, SLOT(startScan()));
 
-	connect(discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
+    connect(discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
             this, SLOT(addDevice(const QBluetoothDeviceInfo&)));
-	connect(discoveryAgent, SIGNAL(finished(bool)),
+    connect(discoveryAgent, SIGNAL(finished(bool)),
             this, SLOT(scanFinished()));
 
-	connect(list, SIGNAL(itemActivated(QListWidgetItem*)),
+    connect(list, SIGNAL(itemActivated(QListWidgetItem*)),
             this, SLOT(itemActivated(QListWidgetItem*)));
 }
 
@@ -68,7 +68,7 @@ DeviceDiscoveryDialog::~DeviceDiscoveryDialog()
 
 void DeviceDiscoveryDialog::addDevice(const QBluetoothDeviceInfo &info)
 {
-	list->addItem(QString("%1 %2").arg(info.address().toString()).arg(info.name()));
+    list->addItem(QString("%1 %2").arg(info.address().toString()).arg(info.name()));
 }
 
 void DeviceDiscoveryDialog::startScan()

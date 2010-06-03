@@ -374,7 +374,7 @@ int QBluetoothUuid::minimumSize() const
     Returns the 16 bit representation of this UUID. If \a ok is passed it is set to true if the
     conversion is possible otherwise it is set to false. The return value is undefined if \a ok is
     set to false.
- */
+*/
 quint16 QBluetoothUuid::toUInt16(bool *ok) const
 {
     Q_D(const QBluetoothUuid);

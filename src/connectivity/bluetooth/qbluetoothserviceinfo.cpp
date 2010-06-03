@@ -122,7 +122,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-   \fn bool QBluetoothServiceInfo::registerService() const
+    \fn bool QBluetoothServiceInfo::registerService() const
 
     Registers this service with the platforms service discovery protocol (SDP) implementation,
     making it findable by other devices when they perform service discovery.  Returns true if the
