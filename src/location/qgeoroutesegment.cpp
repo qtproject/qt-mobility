@@ -201,7 +201,7 @@ const QGeoNavigationInstruction* QGeoRouteSegment::instruction() const
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
-    : instruction(NULL)
+    : instruction(NULL),travelTime(0)
 {
     type = QGeoRouteSegment::NormalSegment;
 }
