@@ -129,6 +129,30 @@ QString QGeoRouteSegment::id() const
     return d->id;
 }
 
+void QGeoRouteSegment::setNextSegmentId(const QString segmentId)
+{
+    Q_D(QGeoRouteSegment);
+    d->nextId = segmentId;
+}
+
+QString QGeoRouteSegment::nextSegmentId() const
+{
+    Q_D(const QGeoRouteSegment);
+    return d->nextId;
+}
+
+void QGeoRouteSegment::setNavigationInstructionId(const QString instructionId)
+{
+    Q_D(QGeoRouteSegment);
+    d->instructionId = instructionId;
+}
+
+QString QGeoRouteSegment::navigationInstructionId() const
+{
+    Q_D(const QGeoRouteSegment);
+    return d->instructionId;
+}
+
 /*!
     Sets the estimated amount of time it will take to traverse this segment of
     the route, in seconds, to \a secs.
@@ -204,7 +228,9 @@ QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate(const QGeoRouteSegmentPrivate &
         id(other.id),
         travelTime(other.travelTime),
         distance(other.distance),
-        path(other.path) {}
+        path(other.path),
+        nextId(other.nextId),
+        instructionId(other.instructionId) {}
 
 QGeoRouteSegmentPrivate::~QGeoRouteSegmentPrivate() {}
 
@@ -215,6 +241,8 @@ QGeoRouteSegmentPrivate& QGeoRouteSegmentPrivate::operator= (const QGeoRouteSegm
     travelTime = other.travelTime;
     distance = other.distance;
     path = other.path;
+    nextId = other.nextId;
+    instructionId = other.instructionId;
     return *this;
 }
 

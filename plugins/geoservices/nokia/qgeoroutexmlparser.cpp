@@ -155,32 +155,30 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Route")) {
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == "RouteId") {
-                m_reader->readNext();
-                if(m_reader->tokenType() == QXmlStreamReader::Characters)
-                    route->setRouteId(m_reader->text().toString());
+                route->setRouteId(m_reader->readElementText());
             }
             else if (m_reader->name() == "Waypoint") {
                 if(!parseWaypoint(route))
                     return false;
             }
             else if (m_reader->name() == "Mode") {
-                bool success = parseMode(route); //TODO: Check return
+                if(!parseMode(route))
+                    return false;
             }
             else if (m_reader->name() == "Shape") {
                 QString elementName = m_reader->name().toString();
-                m_reader->readNext();
-                if (m_reader->tokenType() == QXmlStreamReader::Characters) {
-                    QList<QGeoCoordinate> path;
-                    parseGeoPoints(m_reader->text().toString(), &path, elementName);
-                    route->setPath(path);
-                }
+                QList<QGeoCoordinate> path;
+                if(!parseGeoPoints(m_reader->readElementText(), &path, elementName))
+                    return false;
+                route->setPath(path);
             }
             else if (m_reader->name() == "Maneuver") {
-                parseManeuver(route);
+                if(!parseManeuver(route))
+                    return false;
             }
             else if (m_reader->name() == "Link") {
-                //TODO: parseLink
-                m_reader->skipCurrentElement();
+                if(!parseLink(route))
+                    return false;
             }
             else if (m_reader->name() == "Summary") {
                 if(!parseSummary(route))
@@ -276,13 +274,14 @@ bool QGeoRouteXmlParser::parseSummary(QGeoRoute *route)
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == "Distance") {
                 QString value = m_reader->readElementText();
-                route->setDistance(value.toDouble());
+                route->setDistance(QGeoDistance(value.toDouble()));
             }
             else if (m_reader->name() == "TrafficTime") {
                 QString value = m_reader->readElementText();
                 route->setTravelTime(value.toDouble());
             }
             else if (m_reader->name() == "BaseTime") {
+                //TODO: Sumary base time
                 m_reader->skipCurrentElement();
             }
             else {
@@ -354,6 +353,48 @@ bool QGeoRouteXmlParser::parseManeuver(QGeoRoute *route)
     return true;
 }
 
+bool QGeoRouteXmlParser::parseLink(QGeoRoute *route)
+{
+    Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "Link");
+    m_reader->readNext();
+
+    QGeoRouteSegment* segment = new QGeoRouteSegment();
+
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Link")) {
+        if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
+            if (m_reader->name() == "LinkId") {
+                segment->setId(m_reader->readElementText());
+            }
+            else if (m_reader->name() == "Shape") {
+                QString elementName = m_reader->name().toString();
+                QList<QGeoCoordinate> path;
+                parseGeoPoints(m_reader->readElementText(), &path, elementName);
+                segment->setPath(path);
+            }
+            else if (m_reader->name() == "Length") {
+
+                segment->setDistance(QGeoDistance(m_reader->readElementText().toDouble()));
+            }
+            else if (m_reader->name() == "AdditionalData ") {
+                // TODO:  Link additional data
+                m_reader->skipCurrentElement();
+            }
+            else if (m_reader->name() == "NextLink") {
+                segment->setNextSegmentId(m_reader->readElementText());
+            }
+            else if (m_reader->name() == "Maneuver") {
+                segment->setNavigationInstructionId(m_reader->readElementText());
+            }
+            else {
+                m_reader->skipCurrentElement();
+            }
+        }
+        m_reader->readNext();
+    }
+    route->appendRouteSegment(segment);
+    return true;
+}
+
 bool QGeoRouteXmlParser::parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName)
 {
     QStringList rawPoints = strPoints.split(' ');
@@ -392,17 +433,8 @@ bool QGeoRouteXmlParser::parseGeoPoints(const QString& strPoints, QList<QGeoCoor
 
 bool QGeoRouteXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
 {
-    /*
-    <xsd:complexType name="GeoBox">
-        <xsd:sequence>
-            <xsd:element name="northWest" type="gc:GeoCoord"/>
-            <xsd:element name="southEast" type="gc:GeoCoord"/>
-        </xsd:sequence>
-    </xsd:complexType>
-    */
-
     Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "boundingBox");
-
+/*
     if (!m_reader->readNextStartElement()) {
         m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (0 found)");
         return false;
@@ -439,94 +471,6 @@ bool QGeoRouteXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
     }
 
     *bounds = QGeoBoundingBox(nw, se);
-
+*/
     return true;
 }
-
-bool QGeoRouteXmlParser::parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName)
-{
-    /*
-    <xsd:complexType name="GeoCoord">
-        <xsd:sequence>
-            <xsd:element name="latitude" type="gc:Latitude"/>
-            <xsd:element name="longitude" type="gc:Longitude"/>
-        </xsd:sequence>
-    </xsd:complexType>
-
-    <xsd:simpleType name="Latitude">
-        <xsd:restriction base="xsd:float">
-            <xsd:minInclusive value="-90.0"/>
-            <xsd:maxInclusive value="90.0"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-
-    <xsd:simpleType name="Longitude">
-        <xsd:restriction base="xsd:float">
-            <xsd:minInclusive value="-180.0"/>
-            <xsd:maxInclusive value="180.0"/>
-        </xsd:restriction>
-    </xsd:simpleType>
-    */
-
-    Q_ASSERT(m_reader->isStartElement() && m_reader->name() == elementName);
-
-    if (!m_reader->readNextStartElement()) {
-        m_reader->raiseError(QString("The element \"%1\" was expected to have 2 child elements (0 found)").arg(elementName));
-        return false;
-    }
-
-    if (m_reader->name() == "latitude") {
-        bool ok = false;
-        QString s = m_reader->readElementText();
-        double lat = s.toDouble(&ok);
-
-        if (!ok) {
-            m_reader->raiseError(QString("The element \"latitude\" expected a value convertable to type float (value was \"%1\")").arg(s));
-            return false;
-        }
-
-        if (lat < -90.0 || 90.0 < lat) {
-            m_reader->raiseError(QString("The element \"latitude\" expected a value between -90.0 and 90.0 inclusive (value was %1)").arg(lat));
-            return false;
-        }
-
-        coordinate->setLatitude(lat);
-    } else {
-        m_reader->raiseError(QString("The element \"%1\" expected this child element to be named \"latitude\" (found an element named \"%2\")").arg(elementName).arg(m_reader->name().toString()));
-        return false;
-    }
-
-    if (!m_reader->readNextStartElement()) {
-        m_reader->raiseError(QString("The element \"%1\" was expected to have 2 child elements (1 found)").arg(elementName));
-        return false;
-    }
-
-    if (m_reader->name() == "longitude") {
-        bool ok = false;
-        QString s = m_reader->readElementText();
-        double lng = s.toDouble(&ok);
-
-        if (!ok) {
-            m_reader->raiseError(QString("The element \"longitude\" expected a value convertable to type float (value was \"%1\")").arg(s));
-            return false;
-        }
-
-        if (lng < -180.0 || 180.0 < lng) {
-            m_reader->raiseError(QString("The element \"longitude\" expected a value between -180.0 and 180.0 inclusive (value was %1)").arg(lng));
-            return false;
-        }
-
-        coordinate->setLongitude(lng);
-    } else {
-        m_reader->raiseError(QString("The element \"%1\" expected this child element to be named \"longitude\" (found an element named \"%2\")").arg(elementName).arg(m_reader->name().toString()));
-        return false;
-    }
-
-    if (m_reader->readNextStartElement()) {
-        m_reader->raiseError(QString("The element \"%1\" was expected to have 2 child elements (more than 2 found)").arg(elementName));
-        return false;
-    }
-
-    return true;
-}
-

@@ -78,6 +78,8 @@ public:
     QGeoDistance distance;
     QList<QGeoCoordinate> path;
     QString id;
+    QString nextId;
+    QString instructionId;
 };
 
 QTM_END_NAMESPACE

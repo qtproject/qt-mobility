@@ -84,6 +84,12 @@ public:
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
 
+    void setNextSegmentId(const QString segmentId);
+    QString nextSegmentId() const;
+
+    void setNavigationInstructionId(const QString instructionId);
+    QString navigationInstructionId() const;
+
 protected:
     QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr);
     QGeoRouteSegmentPrivate* d_ptr;

@@ -114,6 +114,14 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     for (int i = 0; i < instructions.length(); i++) {
         showRouteInstructions(instructionsItem, instructions[i]);
     }
+
+    QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
+    segmentsItem->setText(0, "Segments");
+
+    const QList<const QGeoRouteSegment*> segments = route.routeSegments().values();
+    for (int i = 0; i < segments.length(); i++) {
+        showRouteSegment(segmentsItem, segments[i]);
+    }
 }
 
 
@@ -142,28 +150,21 @@ void RoutePresenter::showRouteInstructions(QTreeWidgetItem *routeItem, const QGe
     propItem->setText(1, instruction->fromSegmentId());
 }
 
-/*void showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment *segment);
+void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRouteSegment *segment)
 {
     QTreeWidgetItem* maneuverItem = new QTreeWidgetItem(routeItem);
-    maneuverItem->setText(0, "maneuver");
+    maneuverItem->setText(0, "segment");
 
     QTreeWidgetItem* propItem = new QTreeWidgetItem(maneuverItem);
     propItem->setText(0, "duration");
     propItem->setText(1, QString().setNum(segment->travelTime()));
 
     propItem = new QTreeWidgetItem(maneuverItem);
-    propItem->setText(0, "description");
-    propItem->setText(1, segment->description());
-
-    propItem = new QTreeWidgetItem(maneuverItem);
-    propItem->setText(0, "action");
-    propItem->setText(1, segment->action());
-
-    propItem = new QTreeWidgetItem(maneuverItem);
     propItem->setText(0, "distance");
     propItem->setText(1, QString().setNum(segment->distance().convert(QGeoDistance::Metres)));
 
     // add back in when more qgeonavigationinstruction classes are made available
+/*
     QString s = segment->turn();
 
     if (!s.isEmpty()) {
@@ -207,12 +208,11 @@ void RoutePresenter::showRouteInstructions(QTreeWidgetItem *routeItem, const QGe
     propItem = new QTreeWidgetItem(maneuverItem);
     propItem->setText(0, "traffic direction");
     propItem->setText(1, QString().setNum(segment->trafficDirection()));
-
+*/
     QTreeWidgetItem* maneuverPointsItem = new QTreeWidgetItem(maneuverItem);
-    maneuverPointsItem->setText(0, "maneuver points");
+    maneuverPointsItem->setText(0, "segment points");
     showPoints(maneuverPointsItem, segment->path());
 }
-*/
 
 void RoutePresenter::showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points)
 {

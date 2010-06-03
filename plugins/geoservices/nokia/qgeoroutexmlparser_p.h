@@ -87,9 +87,9 @@ private:
     bool parseSummary(QGeoRoute *route);
     bool parseGeoPoints(const QString& strPoints, QList<QGeoCoordinate> *geoPoints, const QString &elementName);
     bool parseManeuver(QGeoRoute *route);
+    bool parseLink(QGeoRoute *route);
 
     bool parseBoundingBox(QGeoBoundingBox *bounds);
-    bool parseCoordinate(QGeoCoordinate *coordinate, const QString &elementName);
 
     QGeoRouteRequest m_request;
     QXmlStreamReader *m_reader;
