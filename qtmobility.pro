@@ -90,33 +90,87 @@ contains(build_examples, yes):SUBDIRS+=examples
 !symbian:defined(qtPrepareTool):SUBDIRS += translations
 
 # install Qt style headers
-qtmheaders.path = $${QT_MOBILITY_INCLUDE}
 
 !symbian {
-    qtmheaders.files = $${QT_MOBILITY_BUILD_TREE}/include/QtmBearer/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmContacts/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmLocation/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmMessaging/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtMultimediaKit/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmPubSub/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmServiceFramework/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmVersit/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmSystemInfo/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmSensors/*
-    INSTALLS += qtmheaders
-} else {
-    #absolute path does not work and so is shadow building for Symbian
-    qtmAppHeaders = include/QtmContacts/* \
-                          include/QtmVersit/*
+    contains(mobility_modules,bearer) {
+        qtmheadersbearer.path = $${QT_MOBILITY_INCLUDE}/QtBearer
+        qtmheadersbearer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtBearer/*
+        INSTALLS += qtmheadersbearer
+    }
 
-    qtmMwHeaders = include/QtmBearer/* \
-                       include/QtmLocation/* \
-                       include/QtmMessaging/* \
+    contains(mobility_modules,contacts) {
+        qtmheaderscontacts.path = $${QT_MOBILITY_INCLUDE}/QtContacts
+        qtmheaderscontacts.files = $${QT_MOBILITY_BUILD_TREE}/include/QtContacts/*
+        INSTALLS += qtmheaderscontacts
+    }
+
+    contains(mobility_modules,location) {
+        qtmheaderslocation.path = $${QT_MOBILITY_INCLUDE}/QtLocation
+        qtmheaderslocation.files = $${QT_MOBILITY_BUILD_TREE}/include/QtLocation/*
+        INSTALLS += qtmheaderslocation
+    }
+
+    contains(mobility_modules,messaging) {
+        qtmheadersmessaging.path = $${QT_MOBILITY_INCLUDE}/QtMessaging
+        qtmheadersmessaging.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMessaging/*
+        INSTALLS += qtmheadersmessaging
+    }
+
+    contains(mobility_modules,multimedia) {
+        qtmheadersmultimedia.path = $${QT_MOBILITY_INCLUDE}/QtMultimediaKit
+        qtmheadersmultimedia.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMultimediaKit/*
+        INSTALLS += qtmheadersmultimedia
+    }
+
+    contains(mobility_modules,publishsubscribe) {
+        qtmheaderspubsub.path = $${QT_MOBILITY_INCLUDE}/QtPublishSubscribe
+        qtmheaderspubsub.files = $${QT_MOBILITY_BUILD_TREE}/include/QtPublishSubscribe/*
+        INSTALLS += qtmheaderspubsub
+    }
+
+    contains(mobility_modules,serviceframework) {
+        qtmheaderssfw.path = $${QT_MOBILITY_INCLUDE}/QtServiceFramework
+        qtmheaderssfw.files = $${QT_MOBILITY_BUILD_TREE}/include/QtServiceFramework/*
+        INSTALLS += qtmheaderssfw
+    }
+
+    contains(mobility_modules,versit) {
+        qtmheadersversit.path = $${QT_MOBILITY_INCLUDE}/QtVersit
+        qtmheadersversit.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersit/*
+        INSTALLS += qtmheadersversit
+    }
+
+    contains(mobility_modules,systeminfo) {
+        qtmheaderssysteminfo.path = $${QT_MOBILITY_INCLUDE}/QtSystemInfo
+        qtmheaderssysteminfo.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSystemInfo/*
+        INSTALLS += qtmheaderssysteminfo
+    }
+
+    contains(mobility_modules,systeminfo) {
+        qtmheaderssysteminfo.path = $${QT_MOBILITY_INCLUDE}/QtSystemInfo
+        qtmheaderssysteminfo.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSystemInfo/*
+        INSTALLS += qtmheaderssysteminfo
+    }
+
+    contains(mobility_modules,sensors) {
+        qtmheaderssensors.path = $${QT_MOBILITY_INCLUDE}/QtSensors
+        qtmheaderssensors.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSensors/*
+        INSTALLS += qtmheaderssensors
+    }
+} else {
+    #absolute path does not work and 
+    #include <QtMyLibrary/class.h> style does not work either
+    qtmAppHeaders = include/QtContacts/* \
+                          include/QtVersit/*
+
+    qtmMwHeaders = include/QtBearer/* \
+                       include/QtLocation/* \
+                       include/QtMessaging/* \
                        include/QtMultimediaKit/* \
-                       include/QtmPubSub/* \
-                       include/QtmServiceFramework/* \
-                       include/QtmSystemInfo/* \
-                       include/QtmSensors/*
+                       include/QtPublishSubscribe/* \
+                       include/QtServiceFramework/* \
+                       include/QtSystemInfo/* \
+                       include/QtSensors/*
 
     contains(mobility_modules,contacts|versit) {
         for(api, qtmAppHeaders) {
