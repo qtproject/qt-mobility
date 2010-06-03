@@ -103,8 +103,7 @@ Q_GLOBAL_STATIC(QTelephonyCallInfoPrivate, callinfoprivate)
 
     Constructor of a call info object.
 */
-QTelephonyCallInfo::QTelephonyCallInfo(QObject *parent)
-    : QObject(parent), d(callinfoprivate())
+QTelephonyCallInfo::QTelephonyCallInfo()
 {
 }
 
@@ -172,7 +171,5 @@ QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
         return d->status();
     return UnknownStatus;
 }
-
-#include "moc_qtelephonycallinfo.cpp"
 
 QTM_END_NAMESPACE

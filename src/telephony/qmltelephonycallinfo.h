@@ -39,55 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
+#ifndef QMLTELEPHONYCALLINFO_H
+#define QMLTELEPHONYCALLINFO_H
 
 #include "qmobilityglobal.h"
+#include "qtelephonycallinfo.h"
 
 #include <QList>
 #include <QString>
+#include <QObject>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+//class QTelephonyCallInfo;
+class Q_TELEPHONY_EXPORT QMLTelephonyCallInfo : public QObject
 {
+    Q_OBJECT
+    Q_ENUMS(QTelephonyCallInfo::CallType QTelephonyCallInfo::CallStatus)
+    Q_PROPERTY(QString callIdentifier READ callIdentifier)
+    Q_PROPERTY(QList<quint32> contacts READ contacts)
+    Q_PROPERTY(CallType type READ type)
+    Q_PROPERTY(CallStatus status READ status)
+
 public:
     enum CallType {
-        UnknownType = 0,
-        VOIP,
-        Voice,
-        Video
+        UnknownType = QTelephonyCallInfo::UnknownType,
+        VOIP = QTelephonyCallInfo::VOIP,
+        Voice = QTelephonyCallInfo::Voice,
+        Video = QTelephonyCallInfo::Video
     };
 
     enum CallStatus {
-        UnknownStatus = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
+        UnknownStatus = QTelephonyCallInfo::UnknownStatus,
+        NoCall = QTelephonyCallInfo::NoCall,
+        Ringing = QTelephonyCallInfo::Ringing,
+        InProgress = QTelephonyCallInfo::InProgress,
+        OnHold = QTelephonyCallInfo::OnHold,
+        Dropped = QTelephonyCallInfo::Dropped
     };
 
-public:
-    QTelephonyCallInfo();
-    virtual ~QTelephonyCallInfo();
+    QMLTelephonyCallInfo(QTelephonyCallInfo *parent = 0);
+
+    virtual ~QMLTelephonyCallInfo() {};
+
     QString callIdentifier() const;
     QList<quint32> contacts() const;
-    CallType type() const;
-    CallStatus status() const;
+
+    QMLTelephonyCallInfo::CallType type() const;
+    QMLTelephonyCallInfo::CallStatus status() const;
 
 private:
-    QTelephonyCallInfoPrivate *d;
+    QTelephonyCallInfo* pqtelephonyCallInfo;
 };
-
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-
+#endif /*QMLTELEPHONYCALLINFO_H*/

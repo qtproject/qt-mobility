@@ -39,55 +39,35 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFO_H
-#define QTELEPHONYCALLINFO_H
-
-#include "qmobilityglobal.h"
-
-#include <QList>
-#include <QString>
-
-QT_BEGIN_HEADER
+#include "qmltelephonycallinfo.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfo
+QMLTelephonyCallInfo::QMLTelephonyCallInfo(QTelephonyCallInfo *parent)
 {
-public:
-    enum CallType {
-        UnknownType = 0,
-        VOIP,
-        Voice,
-        Video
-    };
+    pqtelephonyCallInfo = parent;
+}
 
-    enum CallStatus {
-        UnknownStatus = 0,
-        NoCall,
-        Ringing,
-        InProgress,
-        OnHold,
-        Dropped
-    };
+QString QMLTelephonyCallInfo::callIdentifier() const
+{
+    return pqtelephonyCallInfo->callIdentifier();
+}
 
-public:
-    QTelephonyCallInfo();
-    virtual ~QTelephonyCallInfo();
-    QString callIdentifier() const;
-    QList<quint32> contacts() const;
-    CallType type() const;
-    CallStatus status() const;
+QList<quint32> QMLTelephonyCallInfo::contacts() const
+{
+    return pqtelephonyCallInfo->contacts();
+}
 
-private:
-    QTelephonyCallInfoPrivate *d;
-};
+QMLTelephonyCallInfo::CallType QMLTelephonyCallInfo::type() const
+{
+    return (QMLTelephonyCallInfo::CallType)pqtelephonyCallInfo->type();
+}
 
+QMLTelephonyCallInfo::CallStatus QMLTelephonyCallInfo::status() const
+{
+    return (QMLTelephonyCallInfo::CallStatus)pqtelephonyCallInfo->status();
+}
+
+#include "moc_qmltelephonycallinfo.cpp"
 
 QTM_END_NAMESPACE
-QT_END_HEADER
-
-#endif /*QTELEPHONYCALLINFO_H*/
-
-// End of file
-
