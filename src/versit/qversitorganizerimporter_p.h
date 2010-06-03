@@ -119,7 +119,7 @@ public:
                              // document with no subsequent DTEND property
 
 private:
-    bool createBasicDetail(const QVersitProperty& property,
+    bool createSimpleDetail(const QVersitProperty& property,
                             QOrganizerItem* item,
                             QList<QOrganizerItemDetail>* updatedDetails);
     bool createTimestampCreated(const QVersitProperty& property,

@@ -107,7 +107,7 @@ void QVersitOrganizerImporterPrivate::importProperty(
     } else if (property.name() == QLatin1String("LAST-MODIFIED")) {
         success = createTimestampModified(property, item, &updatedDetails);
     } else if (mPropertyMappings.contains(property.name())) {
-        success = createBasicDetail(property, item, &updatedDetails);
+        success = createSimpleDetail(property, item, &updatedDetails);
     } else if (document.componentType() == QLatin1String("VEVENT")) {
         if (property.name() == QLatin1String("DTSTART")) {
             success = createStartDateTime(property, item, &updatedDetails);
@@ -123,7 +123,7 @@ void QVersitOrganizerImporterPrivate::importProperty(
     }
 }
 
-bool QVersitOrganizerImporterPrivate::createBasicDetail(
+bool QVersitOrganizerImporterPrivate::createSimpleDetail(
         const QVersitProperty& property,
         QOrganizerItem* item,
         QList<QOrganizerItemDetail>* updatedDetails)
