@@ -52,7 +52,7 @@
 
 An up-to-date list of known issues with the release can be found via the \l {QtMobility Project Bug Tracker} on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility Project.
 
-The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {Platform Compatability}.
+The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {Platform Compatibility}.
 
 \tableofcontents
 
