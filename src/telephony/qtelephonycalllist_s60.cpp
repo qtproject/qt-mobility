@@ -53,22 +53,22 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 
 }
 
-QCallInfoPrivate::QCallInfoPrivate(QObject *parent)
+QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(QObject *parent)
  : QObject(parent)
 {
 }
 
-QCallInfoPrivate::~QCallInfoPrivate()
+QTelephonyCallInfoPrivate::~QTelephonyCallInfoPrivate()
 {
 
 }
 
-QString QCallInfoPrivate::callIdentifier()
+QString QTelephonyCallInfoPrivate::callIdentifier()
 {
     return "not implemented!";
 }
 
-QList<quint32> QCallInfoPrivate::contacts()
+QList<quint32> QTelephonyCallInfoPrivate::contacts()
 {
     QList<quint32> ret;
     return ret;
