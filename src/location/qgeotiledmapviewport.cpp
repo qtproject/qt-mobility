@@ -190,15 +190,13 @@ void QGeoTiledMapViewport::setZoomLevel(qreal zoomLevel)
     QRectF source = QRectF(x, y, width, height);
 
     QPixmap pm(d->mapImage.size());
-    QPainter *painter = new QPainter(&pm);
+    QPainter painter(&pm);
 
     if (zoomDiff < 0) {
-        painter->drawPixmap(source, d->mapImage, target);
+        painter.drawPixmap(source, d->mapImage, target);
     } else {
-        painter->drawPixmap(target, d->mapImage, source);
+        painter.drawPixmap(target, d->mapImage, source);
     }
-
-    delete painter;
 
     setImageChangesTriggerUpdates(true);
     setMapImage(pm);
