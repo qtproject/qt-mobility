@@ -533,9 +533,9 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
             ;;
         multimedia)
-            $relpath/bin/syncheaders $shadowpath/include/QtMultimedia $relpath/src/multimedia
-            $relpath/bin/syncheaders $shadowpath/include/QtMultimedia $relpath/src/multimedia/audio
-            $relpath/bin/syncheaders $shadowpath/include/QtMultimedia $relpath/src/multimedia/video
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia/audio
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia/video
             ;;
         messaging)
             $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging

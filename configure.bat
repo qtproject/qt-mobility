@@ -594,9 +594,9 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
     if %MOBILITY_MULTIMEDIA% == yes (
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimedia %SOURCE_PATH%\src\multimedia
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimedia %SOURCE_PATH%\src\multimedia\audio
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimedia %SOURCE_PATH%\src\multimedia\video
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\audio
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\video
     )
 ) else if %FIRST% == publishsubscribe (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmPubSub %SOURCE_PATH%\src\publishsubscribe
