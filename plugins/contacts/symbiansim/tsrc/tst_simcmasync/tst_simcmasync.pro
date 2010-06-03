@@ -14,8 +14,7 @@ symbian: {
 	        ../../../../../src/contacts/details \
 	        ../../../../../src/contacts/filters \
 	        ../../../../../src/contacts/requests
-    INCLUDEPATH += \epoc32\include\app
-	INCLUDEPATH += \epoc32\include\platform\app
+    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     SOURCES  += tst_simcmasync.cpp
     TARGET.CAPABILITY = ReadUserData \
                         WriteUserData

@@ -19,8 +19,7 @@ symbian: {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.UID3 = 0x2002AC85
 
-    INCLUDEPATH += \epoc32\include\app
-	INCLUDEPATH += \epoc32\include\platform\app
+    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
     INCLUDEPATH += inc
     INCLUDEPATH += rss

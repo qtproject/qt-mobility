@@ -15,8 +15,7 @@ INCLUDEPATH += .
 symbian:
  { 
     INCLUDEPATH += $$SYMBIAN_PATHS
-   INCLUDEPATH += \epoc32\include\app
-	INCLUDEPATH += \epoc32\include\platform\app
+   INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
     # Input
     HEADERS += $$SYMBIAN_HEADERS \

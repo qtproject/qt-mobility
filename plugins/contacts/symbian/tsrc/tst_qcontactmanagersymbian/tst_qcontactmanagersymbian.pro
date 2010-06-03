@@ -8,8 +8,7 @@ include(../tsrc.pri)
 symbian: {
     INCLUDEPATH += .\inc
     INCLUDEPATH += $$SYMBIAN_PATHS
-    INCLUDEPATH += \epoc32\include\app
-	INCLUDEPATH += \epoc32\include\platform\app
+    INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     SOURCES  += tst_qcontactmanagersymbian.cpp
     TARGET.CAPABILITY = ReadUserData \
