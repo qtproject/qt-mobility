@@ -1,0 +1,194 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+#ifndef GALLERYFILTERREQUEST_H
+#define GALLERYFILTERREQUEST_H
+
+#include <qgalleryitemlist.h>
+#include <qgalleryfilterrequest.h>
+
+#include <QtCore/qpointer.h>
+#include <QtDeclarative/qdeclarative.h>
+
+#include "galleryitemlistmodel.h"
+
+QT_BEGIN_NAMESPACE
+class QAbstractItemModel;
+QT_END_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+
+class GalleryFilterBase;
+
+class GalleryFilterRequest : public QObject, public QDeclarativeParserStatus
+{
+    Q_OBJECT
+    Q_INTERFACES(QDeclarativeParserStatus)
+    Q_ENUMS(State)
+    Q_ENUMS(Result)
+    Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
+    Q_PROPERTY(bool supported READ isSupported NOTIFY supportedChanged)
+    Q_PROPERTY(State state READ state NOTIFY stateChanged)
+    Q_PROPERTY(Result result READ result NOTIFY resultChanged)
+    Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
+    Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
+    Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
+    Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames)
+    Q_PROPERTY(bool live READ isLive WRITE setLive)
+    Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition NOTIFY cursorPositionChanged)
+    Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
+    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
+    Q_PROPERTY(GalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
+    Q_PROPERTY(QVariant containerId READ containerId WRITE setContainerId)
+    Q_PROPERTY(QObject *model READ model NOTIFY modelChanged)
+    Q_CLASSINFO("DefaultProperty", "model")
+public:
+    enum State
+    {
+        Inactive    = QGalleryAbstractRequest::Inactive,
+        Active      = QGalleryAbstractRequest::Active,
+        Cancelling  = QGalleryAbstractRequest::Cancelling,
+        Idle        = QGalleryAbstractRequest::Idle
+    };
+
+    enum Result
+    {
+        NoResult                        = QGalleryAbstractRequest::NoResult,
+        Succeeded                       = QGalleryAbstractRequest::NoResult,
+        Cancelled                       = QGalleryAbstractRequest::NoResult,
+        NoGallery                       = QGalleryAbstractRequest::NoResult,
+        NotSupported                    = QGalleryAbstractRequest::NoResult,
+        ConnectionError                 = QGalleryAbstractRequest::NoResult,
+        InvalidItemError                = QGalleryAbstractRequest::NoResult,
+        ItemTypeError                   = QGalleryAbstractRequest::NoResult,
+        InvalidPropertyError            = QGalleryAbstractRequest::NoResult,
+        PropertyTypeError               = QGalleryAbstractRequest::NoResult,
+        UnsupportedFilterTypeError      = QGalleryAbstractRequest::NoResult,
+        UnsupportedFilterOptionError    = QGalleryAbstractRequest::NoResult,
+        PermissionsError                = QGalleryAbstractRequest::NoResult,
+        InvalidDestinationError         = QGalleryAbstractRequest::NoResult,
+        InvalidUrlError                 = QGalleryAbstractRequest::NoResult,
+    };
+
+    GalleryFilterRequest(QObject *parent = 0);
+    ~GalleryFilterRequest();
+
+    QAbstractGallery *gallery() const { return m_request.gallery(); }
+    void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
+
+    bool isSupported() const { return m_request.isSupported(); }
+
+    State state() const { return State(m_request.state()); }
+    Result result() const { return Result(m_request.result()); }
+
+    int currentProgress() const { return m_request.currentProgress(); }
+    int maximumProgress() const { return m_request.maximumProgress(); }
+
+    QStringList propertyNames() { return m_request.propertyNames(); }
+    void setPropertyNames(const QStringList &names) { m_request.setPropertyNames(names); }
+
+    QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
+    void setSortPropertyNames(const QStringList &names) { m_request.setSortPropertyNames(names); }
+
+    bool isLive() const { return m_request.isLive(); }
+    void setLive(bool live) { m_request.setLive(live); }
+
+    int minimumPagedItems() const { return m_request.minimumPagedItems(); }
+    void setMinimumPagedItems(int items) { m_request.setMinimumPagedItems(items); }
+
+    int cursorPosition() const {
+        return m_items ? m_items->cursorPosition() : m_request.initialCursorPosition(); }
+    void setCursorPosition(int position)
+    {
+        if (m_items)
+            m_items->setCursorPosition(position);
+        else
+            m_request.setInitialCursorPosition(position);
+        emit cursorPositionChanged();
+    }
+
+    QString itemType() const { return m_request.itemType(); }
+    void setItemType(const QString &itemType) { m_request.setItemType(itemType); }
+
+    QVariant containerId() const { return m_request.containerId(); }
+    void setContainerId(const QVariant &containerId) { m_request.setContainerId(containerId); }
+
+    GalleryFilterBase *filter() const { return m_filter; }
+    void setFilter(GalleryFilterBase *filter) { m_filter = filter; }
+
+    QObject *model() const { return m_model; }
+
+    void classBegin();
+    void componentComplete();
+
+public Q_SLOTS:
+    void reload();
+    void cancel() { m_request.cancel(); }
+    void clear() { m_request.clear(); }
+
+Q_SIGNALS:
+    void supportedChanged();
+    void succeeded();
+    void cancelled();
+    void failed(int result);
+    void finished(int result);
+    void stateChanged();
+    void resultChanged();
+    void progressChanged();
+    void cursorPositionChanged();
+    void modelChanged();
+
+private Q_SLOTS:
+    void _q_itemsChanged(QGalleryItemList *items);
+
+private:
+    QGalleryFilterRequest m_request;
+    QPointer<GalleryFilterBase> m_filter;
+    QGalleryItemList *m_items;
+    GalleryItemListModel *m_model;
+};
+
+QTM_END_NAMESPACE
+
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterRequest))
+
+#endif
+
