@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONY_LINUX_H
-#define QTELEPHONY_LINUX_H
+#ifndef QTELEPHONY_MAEMO_H
+#define QTELEPHONY_MAEMO_H
 
 
 //
@@ -56,8 +56,8 @@
 
 
 #include <QObject>
-#include "qtelephony.h"
-#include "qcallinfo.h"
+#include "qtelephonycalllist.h"
+#include "qtelephonycallinfo.h"
 #include "qmobilityglobal.h"
 
 QT_BEGIN_HEADER
@@ -68,34 +68,32 @@ class QTelephonyCallListPrivate : public QObject
     friend class QTelephonyCallList;
     Q_OBJECT
 Q_SIGNALS:
-    void callstatusChanged(const QCallInfo::CallStatus);
+    void callstatusChanged(const QTelephonyCallInfo::CallStatus);
     void callsChanged();
 public:
     QTelephonyCallListPrivate(QObject *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QCallInfo* currentCall() { return 0; }
-    QCallInfo::CallStatus currentCallStatus() { return QCallInfo::UnknownStatus; }
-    QList<QCallInfo*> calls() { return calllist; }
+    QTelephonyCallInfo* currentCall() { return 0; }
+    QTelephonyCallInfo::CallStatus currentCallStatus() { return QTelephonyCallInfo::UnknownStatus; }
+    QList<QTelephonyCallInfo*> calls() { return calllist; }
 private:
-    void startTestCase(const QString testcase, const QVariant param);
-private:
-    QList<QCallInfo*> calllist;
+    QList<QTelephonyCallInfo*> calllist;
 };
 
-class QCallInfoPrivate : public QObject
+class QTelephonyCallInfoPrivate : public QObject
 {
     Q_OBJECT
 public:
-    QCallInfoPrivate(QObject *parent = 0);
-    virtual ~QCallInfoPrivate();
+    QTelephonyCallInfoPrivate(QObject *parent = 0);
+    virtual ~QTelephonyCallInfoPrivate();
     QString callIdentifier();
     QList<quint32> contacts();
-    QCallInfo::CallType type() { return QCallInfo::UnknownType; }
-    QCallInfo::CallStatus status() { return QCallInfo::UnknownStatus; }
+    QTelephonyCallInfo::CallType type() { return QTelephonyCallInfo::UnknownType; }
+    QTelephonyCallInfo::CallStatus status() { return QTelephonyCallInfo::UnknownStatus; }
 
 public: //Declaration of properties (just an example)
-    Q_PROPERTY(int contactBufferSize READ contactBufferSize)
-    int contactBufferSize() const { return 124; };
+    Q_PROPERTY(int contactMaemoBufferSize READ contactMaemoBufferSize)
+    int contactMaemoBufferSize() const { return 124; };
 };
 
 QTM_END_NAMESPACE

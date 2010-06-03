@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 #include <qmobilityglobal.h>
-#include <qtelephony_win_p.h>
+#include <qtelephonycalllist_win_p.h>
 #include <QtTest/QtTest>
 #include <QtCore>
 #include <QDebug>
@@ -63,11 +63,7 @@ private slots:
     //Test cases
     void myFirstTest();
     void mySecondTest();
-
     void cleanupTestCase();
-
-Q_SIGNALS:
-    void startTestCase(const QString, const QVariant);
 
 private:
     QTelephonyCallList* pTelephonyCallList;
@@ -77,7 +73,6 @@ void tst_Telephony::initTestCase()
 {
     qRegisterMetaType<QCallInfo::CallStatus>("QCallInfo::CallStatus");
     pTelephonyCallList = new QTelephonyCallList();
-    connect(this, SIGNAL(startTestCase(const QString, const QVariant)) , pTelephonyCallList, SLOT(startTestCase(const QString, const QVariant)));
     qDebug("called before everything else");
 }
 
@@ -85,14 +80,12 @@ void tst_Telephony::initTestCase()
 void tst_Telephony::myFirstTest()
 {
     QSignalSpy spy(pTelephonyCallList, SIGNAL(callstatusChanged(const QCallInfo::CallStatus)));
-    emit startTestCase("statusChanged", QVariant(0));
     QCOMPARE(spy.count(), 1); // make sure the signal was emitted exactly one time
 }
 
 void tst_Telephony::mySecondTest()
 {
     QSignalSpy spy(pTelephonyCallList, SIGNAL(callsChanged()));
-    emit startTestCase("callsChanged", QVariant(0));
     QCOMPARE(spy.count(), 1); // make sure the signal was emitted exactly one time
 }
 

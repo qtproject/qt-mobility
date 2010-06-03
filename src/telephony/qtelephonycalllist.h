@@ -38,53 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qtelephony.h"
-#include "qtelephony_linux_p.h"
+
+#ifndef QTELEPHONYCALLLIST_H
+#define QTELEPHONYCALLLIST_H
+
+#include "qmobilityglobal.h"
+#include "qtelephonycallinfo.h"
+
+#include <QObject>
+#include <QList>
+#include <QString>
+#include <QVariant>
+
+QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-////////
-QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
- : QObject(parent)
+class QTelephonyCallListPrivate;
+class QTelephonyCallInfo;
+class Q_TELEPHONY_EXPORT QTelephonyCallList : public QObject
 {
-}
+    Q_OBJECT
+    Q_PROPERTY(QTelephonyCallInfo* currentCall READ currentCall)
 
-QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
-{
-
-}
-
-void QTelephonyCallListPrivate::startTestCase(const QString testcase, const QVariant param)
-{
-    if(testcase == "statusChanged"){
-        emit callstatusChanged(QCallInfo::UnknownStatus);
-    }
-    else if(testcase == "callsChanged"){
-        emit callsChanged();
-    }
-}
-
-QCallInfoPrivate::QCallInfoPrivate(QObject *parent)
- : QObject(parent)
-{
-}
-
-QCallInfoPrivate::~QCallInfoPrivate()
-{
-
-}
-
-QString QCallInfoPrivate::callIdentifier()
-{
-    return "not implemented!";
-}
-
-QList<quint32> QCallInfoPrivate::contacts()
-{
-    QList<quint32> ret;
-    return ret;
-}
-
-#include "moc_qtelephony_linux_p.cpp"
+public:
+    QTelephonyCallList(QObject *parent = 0);
+    virtual ~QTelephonyCallList();
+Q_SIGNALS:
+    void callstatusChanged(const QTelephonyCallInfo::CallStatus& status);
+    void callsChanged();
+public:
+    QTelephonyCallInfo* currentCall();
+    Q_INVOKABLE QList<QTelephonyCallInfo*> calls() const;
+    Q_INVOKABLE QList<QTelephonyCallInfo*> calls(const QTelephonyCallInfo::CallType& calltype) const;
+    Q_INVOKABLE QList<QTelephonyCallInfo*> calls(const QTelephonyCallInfo::CallStatus& callstatus) const;
+    Q_INVOKABLE QList<QTelephonyCallInfo*> calls(const QTelephonyCallInfo::CallType& calltype, const QTelephonyCallInfo::CallStatus& callStatus) const;
+private:
+    QTelephonyCallListPrivate *d;
+};
 
 QTM_END_NAMESPACE
+QT_END_HEADER
+
+#endif /*QTELEPHONY_H*/
+
+// End of file
+

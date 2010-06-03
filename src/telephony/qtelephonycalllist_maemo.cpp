@@ -38,8 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qtelephony.h"
-#include "qtelephony_win_p.h"
+#include "qtelephonycalllist_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,37 +53,27 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 
 }
 
-void QTelephonyCallListPrivate::startTestCase(const QString testcase, const QVariant param)
-{
-    if(testcase == "statusChanged"){
-        emit callstatusChanged(QCallInfo::UnknownStatus);
-    }
-    else if(testcase == "callsChanged"){
-        emit callsChanged();
-    }
-}
-
-QCallInfoPrivate::QCallInfoPrivate(QObject *parent)
+QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(QObject *parent)
  : QObject(parent)
 {
 }
 
-QCallInfoPrivate::~QCallInfoPrivate()
+QTelephonyCallInfoPrivate::~QTelephonyCallInfoPrivate()
 {
 
 }
 
-QString QCallInfoPrivate::callIdentifier()
+QString QTelephonyCallInfoPrivate::callIdentifier()
 {
     return "not implemented!";
 }
 
-QList<quint32> QCallInfoPrivate::contacts()
+QList<quint32> QTelephonyCallInfoPrivate::contacts()
 {
     QList<quint32> ret;
     return ret;
 }
 
-#include "moc_qtelephony_win_p.cpp"
+#include "moc_qtelephonycalllist_maemo_p.cpp"
 
 QTM_END_NAMESPACE

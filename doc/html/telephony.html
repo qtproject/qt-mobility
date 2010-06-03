@@ -20,8 +20,6 @@
 <ul><li><a href="#main-classes">Main classes</a></li>
 </ul>
 <li><a href="#information-and-events-of-calls">Information and Events of Calls</a></li>
-<li><a href="#call-status">Call Status</a></li>
-<li><a href="#call-type">Call Type</a></li>
 </ul>
 <a name="overview"></a>
 <h3>Overview</h3>
@@ -31,42 +29,14 @@
 <a name="main-classes"></a>
 <h4>Main classes</h4>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qcallinfo.html">QCallInfo</a></th><td>Represents a call including the type, status and other information of the call</td></tr>
+<tr valign="top" class="odd"><th><a href="qtelephonycallinfo.html">QTelephonyCallInfo</a></th><td>Represents a call including the type, status and other information of the call</td></tr>
 <tr valign="top" class="even"><th><a href="qtelephonycalllist.html">QTelephonyCallList</a></th><td>Represents the call list container and the notifier about call changes</td></tr>
 </table></p>
 <a name="information-and-events-of-calls"></a>
 <h3>Information and Events of Calls</h3>
-<p>The library provides a number of classes and signals to assist with the access of the call data. Furthermore the library provides a couple of signals to provide notification of call changes.</p>
-<p>Classes and to assist sending call status change notification and reading the call information:</p>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>Class</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>QTelephonyEvent</td><td>Represents the call list container and the notifier about call changes.</td></tr>
-<tr valign="top" class="even"><td><a href="qcallinfo.html">QCallInfo</a></td><td>Represents a call including the type, status and other information of the call.</td></tr>
-</table></p>
-<a name="call-status"></a>
-<h3>Call Status</h3>
-<p>The library provides an enumerator to define the status of a call.</p>
-<p>Enum values relating to call status:</p>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>enum</th><th>value</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>CallStatus::</td><td>UnknownStatus</td><td>The status of the call is unknown.</td></tr>
-<tr valign="top" class="even"><td>CallStatus::</td><td>NoCall</td><td>No active calls are available.</td></tr>
-<tr valign="top" class="odd"><td>CallStatus::</td><td>Ringing</td><td>Call is ringing.</td></tr>
-<tr valign="top" class="even"><td>CallStatus::</td><td>InProgress</td><td>Call is in progress (dialing).</td></tr>
-<tr valign="top" class="odd"><td>CallStatus::</td><td>OnHold</td><td>Call is on hold.</td></tr>
-</table></p>
-<a name="call-type"></a>
-<h3>Call Type</h3>
-<p>The library provides an enumerator to differ between types of calls.</p>
-<p>Enum values relating to call types:</p>
-<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
-<thead><tr valign="top" class="qt-style"><th>enum</th><th>value</th><th>Description</th></tr></thead>
-<tr valign="top" class="odd"><td>CallType::</td><td>UnknownType</td><td>The type of the call is unknown.</td></tr>
-<tr valign="top" class="even"><td>CallType::</td><td>VOIP</td><td>The call is a VOIP call.</td></tr>
-<tr valign="top" class="odd"><td>CallType::</td><td>Voice</td><td>The call is a voice call.</td></tr>
-<tr valign="top" class="even"><td>CallType::</td><td>Video</td><td>The call is a video call.</td></tr>
-</table></p>
-<p /><address><hr /><div align="center">
+<p>The library provides a number of classes and signals and properties to assist with the access of the calls in a mobile system.</p>
+<p align="center"><img src="images/telephonycd.png" /></p><p>Another application can use this library to get informed about incomming calls, accessing calls information and more of the current system. The following image demonstrate the responsibility of the telephony API. Basically the library provides an easy access of call information of different OS system (here it is Linux and the DBus system).</p>
+<p align="center"><img src="images/telephonyapp.png" /></p><p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>

@@ -46,9 +46,6 @@
                     <section ref="qaudioendpointselector.html" title="QAudioEndpointSelector Class Reference">
                         <section ref="qaudioendpointselector-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qcallinfo.html" title="QCallInfo Class Reference">
-                        <section ref="qcallinfo-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qcompass.html" title="QCompass Class Reference">
                         <section ref="qcompass-members.html" title="List of all members"/>
                     </section>
@@ -517,6 +514,9 @@
                     <section ref="qtapsensor.html" title="QTapSensor Class Reference">
                         <section ref="qtapsensor-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qtelephonycallinfo.html" title="QTelephonyCallInfo Class Reference">
+                        <section ref="qtelephonycallinfo-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qtelephonycalllist.html" title="QTelephonyCallList Class Reference">
                         <section ref="qtelephonycalllist-members.html" title="List of all members"/>
                     </section>
@@ -812,12 +812,6 @@
             <keyword name="setActiveEndpoint" id="QAudioEndpointSelector::setActiveEndpoint" ref="qaudioendpointselector.html#setActiveEndpoint"/>
             <keyword name="~QAudioEndpointSelector" id="QAudioEndpointSelector::~QAudioEndpointSelector" ref="qaudioendpointselector.html#dtor.QAudioEndpointSelector"/>
             <keyword name="QAudioEndpointSelector_iid" id="QAudioEndpointSelector_iid" ref="qaudioendpointselector.html#QAudioEndpointSelector_iid"/>
-            <keyword name="QCallInfo" id="QCallInfo" ref="qcallinfo.html"/>
-            <keyword name="callIdentifier" id="QCallInfo::callIdentifier" ref="qcallinfo.html#callIdentifier-prop"/>
-            <keyword name="contacts" id="QCallInfo::contacts" ref="qcallinfo.html#contacts-prop"/>
-            <keyword name="status" id="QCallInfo::status" ref="qcallinfo.html#status-prop"/>
-            <keyword name="type" id="QCallInfo::type" ref="qcallinfo.html#type-prop"/>
-            <keyword name="~QCallInfo" id="QCallInfo::~QCallInfo" ref="qcallinfo.html#dtor.QCallInfo"/>
             <keyword name="QCompass" id="QCompass" ref="qcompass.html"/>
             <keyword name="reading" id="QCompass::reading" ref="qcompass.html#reading"/>
             <keyword name="~QCompass" id="QCompass::~QCompass" ref="qcompass.html#dtor.QCompass"/>
@@ -2977,12 +2971,29 @@
             <keyword name="reading" id="QTapSensor::reading" ref="qtapsensor.html#reading"/>
             <keyword name="returnDoubleTapEvents" id="QTapSensor::returnDoubleTapEvents" ref="qtapsensor.html#returnDoubleTapEvents-prop"/>
             <keyword name="~QTapSensor" id="QTapSensor::~QTapSensor" ref="qtapsensor.html#dtor.QTapSensor"/>
+            <keyword name="QTelephonyCallInfo" id="QTelephonyCallInfo" ref="qtelephonycallinfo.html"/>
+            <keyword name="QTelephonyCallInfo::CallStatus" id="QTelephonyCallInfo::CallStatus" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::UnknownStatus" id="QTelephonyCallInfo::UnknownStatus" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::NoCall" id="QTelephonyCallInfo::NoCall" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Ringing" id="QTelephonyCallInfo::Ringing" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::InProgress" id="QTelephonyCallInfo::InProgress" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::OnHold" id="QTelephonyCallInfo::OnHold" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::Dropped" id="QTelephonyCallInfo::Dropped" ref="qtelephonycallinfo.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfo::CallType" id="QTelephonyCallInfo::CallType" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::UnknownType" id="QTelephonyCallInfo::UnknownType" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::VOIP" id="QTelephonyCallInfo::VOIP" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Voice" id="QTelephonyCallInfo::Voice" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfo::Video" id="QTelephonyCallInfo::Video" ref="qtelephonycallinfo.html#CallType-enum"/>
+            <keyword name="callIdentifier" id="QTelephonyCallInfo::callIdentifier" ref="qtelephonycallinfo.html#callIdentifier-prop"/>
+            <keyword name="contacts" id="QTelephonyCallInfo::contacts" ref="qtelephonycallinfo.html#contacts-prop"/>
+            <keyword name="status" id="QTelephonyCallInfo::status" ref="qtelephonycallinfo.html#status-prop"/>
+            <keyword name="type" id="QTelephonyCallInfo::type" ref="qtelephonycallinfo.html#type-prop"/>
+            <keyword name="~QTelephonyCallInfo" id="QTelephonyCallInfo::~QTelephonyCallInfo" ref="qtelephonycallinfo.html#dtor.QTelephonyCallInfo"/>
             <keyword name="QTelephonyCallList" id="QTelephonyCallList" ref="qtelephonycalllist.html"/>
             <keyword name="calls" id="QTelephonyCallList::calls" ref="qtelephonycalllist.html#calls"/>
             <keyword name="callsChanged" id="QTelephonyCallList::callsChanged" ref="qtelephonycalllist.html#callsChanged"/>
             <keyword name="callstatusChanged" id="QTelephonyCallList::callstatusChanged" ref="qtelephonycalllist.html#callstatusChanged"/>
             <keyword name="currentCall" id="QTelephonyCallList::currentCall" ref="qtelephonycalllist.html#currentCall-prop"/>
-            <keyword name="currentCallStatus" id="QTelephonyCallList::currentCallStatus" ref="qtelephonycalllist.html#currentCallStatus"/>
             <keyword name="~QTelephonyCallList" id="QTelephonyCallList::~QTelephonyCallList" ref="qtelephonycalllist.html#dtor.QTelephonyCallList"/>
             <keyword name="QVALUESPACE_AUTO_INSTALL_LAYER" id="QVALUESPACE_AUTO_INSTALL_LAYER" ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER"/>
             <keyword name="QVALUESPACE_CONTEXTKIT_LAYER" id="QVALUESPACE_CONTEXTKIT_LAYER" ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER"/>
@@ -3495,7 +3506,6 @@
             <file>qversitdocument.html</file>
             <file>player-videowidget-h.html</file>
             <file>qnetworkconfiguration.html</file>
-            <file>qcallinfo-members.html</file>
             <file>logfilepositionsource-logfilepositionsource-pro.html</file>
             <file>hierarchy.html</file>
             <file>sysinfo-examples-qrc.html</file>
@@ -3532,7 +3542,6 @@
             <file>images/servicexmlgen.png</file>
             <file>qversitreader.html</file>
             <file>publish-subscribe-publisherdialog-cpp.html</file>
-            <file>qcallinfo.html</file>
             <file>qsystemnetworkinfo.html</file>
             <file>filemanagerplugin-filemanagerstorage-h.html</file>
             <file>images/sample-phonebook-2.png</file>
@@ -3682,6 +3691,7 @@
             <file>qcontactaddress.html</file>
             <file>player-main-cpp.html</file>
             <file>qmediaplaylistioplugin.html</file>
+            <file>qtelephonycallinfo-members.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
             <file>flickrdemo-connectivityhelper-cpp.html</file>
@@ -3784,6 +3794,7 @@
             <file>qmessageid-members.html</file>
             <file>qserviceinterfacedescriptor.html</file>
             <file>index.html</file>
+            <file>qtelephonycallinfo.html</file>
             <file>bearercloud.html</file>
             <file>publish-subscribe-main-cpp.html</file>
             <file>bearercloud-bearercloud-h.html</file>
@@ -3892,9 +3903,11 @@
             <file>sfw-notes-main-cpp.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
             <file>qgeosatelliteinfosource.html</file>
+            <file>images/telephonycd.png</file>
             <file>qcontactanniversary-members.html</file>
             <file>qmediaserviceproviderplugin-members.html</file>
             <file>qmediaserviceproviderplugin.html</file>
+            <file>images/telephonyapp.png</file>
             <file>qcontactinvalidengine.html</file>
             <file>qmediaplayer.html</file>
             <file>qambientlightfilter-members.html</file>
@@ -4099,6 +4112,7 @@
             <file>images/bearermonitor-example.png</file>
             <file>images/sensors-orientation.jpg</file>
             <file>images/sample-phonebook-3.png</file>
+            <file>images/telephonycd.png</file>
             <file>images/sensors-coordinates3.jpg</file>
             <file>images/codeless.png</file>
             <file>images/sensors-rotation2.jpg</file>
@@ -4122,6 +4136,7 @@
             <file>images/qtlogo.png</file>
             <file>images/DialerServiceGUI.png</file>
             <file>images/sample-phonebook-2.png</file>
+            <file>images/telephonyapp.png</file>
             <file>images/keepintouch-example.png</file>
         </files>
     </filterSection>

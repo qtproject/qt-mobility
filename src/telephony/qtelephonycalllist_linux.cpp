@@ -38,52 +38,42 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#ifndef QTELEPHONY_H
-#define QTELEPHONY_H
-
-#include "qmobilityglobal.h"
-#include "qcallinfo.h"
-
-#include <QObject>
-#include <QList>
-#include <QString>
-#include <QVariant>
-
-QT_BEGIN_HEADER
+#include "qtelephonycalllist_linux_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallListPrivate;
-class QCallInfo;
-class Q_TELEPHONY_EXPORT QTelephonyCallList : public QObject
+////////
+QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
+ : QObject(parent)
 {
-    Q_OBJECT
-public:
-    QTelephonyCallList(QObject *parent = 0);
-    virtual ~QTelephonyCallList();
-Q_SIGNALS:
-    void callstatusChanged(const QCallInfo::CallStatus);
-    void callsChanged();
-public slots:
-    void startTestCase(const QString, const QVariant);
-public:
-    Q_PROPERTY(QCallInfo* currentCall READ currentCall)
-    QCallInfo* currentCall();
-    Q_INVOKABLE QList<QCallInfo*> calls() const;
-    Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallType& calltype) const;
-    Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallStatus& callstatus) const;
-    Q_INVOKABLE QList<QCallInfo*> calls(const QCallInfo::CallType& calltype, const QCallInfo::CallStatus& callStatus) const;
-    //can't do Q_PROPERTY because of QCallInfo::CallStatus created parse error in moc
-    Q_INVOKABLE QCallInfo::CallStatus currentCallStatus();
-private:
-    QTelephonyCallListPrivate *d;
-};
+}
+
+QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
+{
+
+}
+
+QCallInfoPrivate::QCallInfoPrivate(QObject *parent)
+ : QObject(parent)
+{
+}
+
+QCallInfoPrivate::~QCallInfoPrivate()
+{
+
+}
+
+QString QCallInfoPrivate::callIdentifier()
+{
+    return "not implemented!";
+}
+
+QList<quint32> QCallInfoPrivate::contacts()
+{
+    QList<quint32> ret;
+    return ret;
+}
+
+#include "moc_qtelephonycalllist_linux_p.cpp"
 
 QTM_END_NAMESPACE
-QT_END_HEADER
-
-#endif /*QTELEPHONY_H*/
-
-// End of file
-

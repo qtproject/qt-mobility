@@ -74,45 +74,15 @@ The Application can query call information using this API. e.g. call type, phone
 
 \section1 Information and Events of Calls
 
-The library provides a number of classes and signals to assist with the access of the call data.
-Furthermore the library provides a couple of signals to provide notification of call changes.
+The library provides a number of classes and signals and properties to assist with the access of the calls in a mobile system.
 
-Classes and to assist sending call status change notification and reading the call information:
+\image telephonycd.png
 
-\table
-\header \o Class \o Description
-\row \o QTelephonyEvent \o Represents the call list container and the notifier about call changes.
-\row \o QCallInfo \o Represents a call including the type, status and other information of the call.
-\endtable
+Another application can use this library to get informed about incomming calls, accessing calls information and more of the current system.
+The following image demonstrate the responsibility of the telephony API.
+Basically the library provides an easy access of call information of different OS system (here it is Linux and the DBus system).
 
-\section1 Call Status
-
-The library provides an enumerator to define the status of a call.
-
-Enum values relating to call status:
-
-\table
-\header \o enum \o value \o Description
-\row \o CallStatus:: \o UnknownStatus \o The status of the call is unknown.
-\row \o CallStatus:: \o NoCall \o No active calls are available.
-\row \o CallStatus:: \o Ringing \o Call is ringing.
-\row \o CallStatus:: \o InProgress \o Call is in progress (dialing).
-\row \o CallStatus:: \o OnHold \o Call is on hold.
-\endtable
-
-\section1 Call Type
-
-The library provides an enumerator to differ between types of calls.
-
-Enum values relating to call types:
-
-\table
-\header \o enum \o value \o Description
-\row \o CallType:: \o UnknownType \o The type of the call is unknown.
-\row \o CallType:: \o VOIP \o The call is a VOIP call.
-\row \o CallType:: \o Voice \o The call is a voice call.
-\row \o CallType:: \o Video \o The call is a video call.
-\endtable
+\image telephonyapp.png
 
 */
 

@@ -38,8 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qtelephony.h"
-#include "qtelephony_s60_p.h"
+#include "qtelephonycalllist_s60_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -52,16 +51,6 @@ QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
 QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 {
 
-}
-
-void QTelephonyCallListPrivate::startTestCase(const QString testcase, const QVariant param)
-{
-    if(testcase == "statusChanged"){
-        emit callstatusChanged(QCallInfo::UnknownStatus);
-    }
-    else if(testcase == "callsChanged"){
-        emit callsChanged();
-    }
 }
 
 QCallInfoPrivate::QCallInfoPrivate(QObject *parent)
@@ -85,6 +74,6 @@ QList<quint32> QCallInfoPrivate::contacts()
     return ret;
 }
 
-#include "moc_qtelephony_s60_p.cpp"
+#include "moc_qtelephonycalllist_s60_p.cpp"
 
 QTM_END_NAMESPACE

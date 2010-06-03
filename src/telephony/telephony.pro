@@ -11,29 +11,29 @@ DEFINES += QT_BUILD_TELEPHONY_LIB QT_MAKEDLL
 include(../../common.pri)
 
 # Input
-PUBLIC_HEADERS += qtelephony.h \
-                  qcallinfo.h
-SOURCES +=        qtelephony.cpp \
-                  qcallinfo.cpp
+PUBLIC_HEADERS += qtelephonycalllist.h \
+                  qtelephonycallinfo.h
+SOURCES +=        qtelephonycalllist.cpp \
+                  qtelephonycallinfo.cpp
 
 # Private Headers and sources
 win32: {
-    HEADERS += qtelephony_win_p.h 
-    SOURCES += qtelephony_win.cpp 
+    HEADERS += qtelephonycalllist_win_p.h 
+    SOURCES += qtelephonycalllist_win.cpp 
 }
 
 symbian: {
-    HEADERS += qtelephony_s60_p.h 
-    SOURCES += qtelephony_s60.cpp 
+    HEADERS += qtelephonycalllist_s60_p.h 
+    SOURCES += qtelephonycalllist_s60.cpp 
 } else {
     unix: {
         !maemo* {
-            HEADERS += qtelephony_linux_p.h 
-            SOURCES += qtelephony_linux.cpp
+            HEADERS += qtelephonycalllist_linux_p.h 
+            SOURCES += qtelephonycalllist_linux.cpp
         }
         maemo* {
-            HEADERS += qtelephony_maemo_p.h
-            SOURCES += qtelephony_maemo.cpp
+            HEADERS += qtelephonycalllist_maemo_p.h
+            SOURCES += qtelephonycalllist_maemo.cpp
         }
     }
 }

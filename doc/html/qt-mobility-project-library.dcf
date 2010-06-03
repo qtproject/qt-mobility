@@ -138,14 +138,6 @@
         <keyword ref="qaudioendpointselector.html#QAudioEndpointSelector_iid">QAudioEndpointSelector_iid</keyword>
         <section ref="qaudioendpointselector-members.html" title="List of all members"/>
     </section>
-    <section ref="qcallinfo.html" title="QCallInfo Class Reference">
-        <keyword ref="qcallinfo.html">QCallInfo</keyword>
-        <keyword ref="qcallinfo.html#callIdentifier-prop">callIdentifier</keyword>
-        <keyword ref="qcallinfo.html#contacts-prop">contacts</keyword>
-        <keyword ref="qcallinfo.html#status-prop">status</keyword>
-        <keyword ref="qcallinfo.html#type-prop">type</keyword>
-        <section ref="qcallinfo-members.html" title="List of all members"/>
-    </section>
     <section ref="qcompass.html" title="QCompass Class Reference">
         <keyword ref="qcompass.html">QCompass</keyword>
         <keyword ref="qcompass.html#reading">reading</keyword>
@@ -2827,13 +2819,32 @@
         <keyword ref="qtapsensor.html#reading">reading</keyword>
         <section ref="qtapsensor-members.html" title="List of all members"/>
     </section>
+    <section ref="qtelephonycallinfo.html" title="QTelephonyCallInfo Class Reference">
+        <keyword ref="qtelephonycallinfo.html">QTelephonyCallInfo</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallStatus-enum">CallStatus</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallStatus-enum">QTelephonyCallInfo::UnknownStatus</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallStatus-enum">QTelephonyCallInfo::Dropped</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallStatus-enum">QTelephonyCallInfo::Ringing</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallStatus-enum">QTelephonyCallInfo::InProgress</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallStatus-enum">QTelephonyCallInfo::OnHold</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallStatus-enum">QTelephonyCallInfo::NoCall</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallType-enum">CallType</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallType-enum">QTelephonyCallInfo::VOIP</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallType-enum">QTelephonyCallInfo::UnknownType</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallType-enum">QTelephonyCallInfo::Video</keyword>
+        <keyword ref="qtelephonycallinfo.html#CallType-enum">QTelephonyCallInfo::Voice</keyword>
+        <keyword ref="qtelephonycallinfo.html#callIdentifier-prop">callIdentifier</keyword>
+        <keyword ref="qtelephonycallinfo.html#contacts-prop">contacts</keyword>
+        <keyword ref="qtelephonycallinfo.html#status-prop">status</keyword>
+        <keyword ref="qtelephonycallinfo.html#type-prop">type</keyword>
+        <section ref="qtelephonycallinfo-members.html" title="List of all members"/>
+    </section>
     <section ref="qtelephonycalllist.html" title="QTelephonyCallList Class Reference">
         <keyword ref="qtelephonycalllist.html">QTelephonyCallList</keyword>
         <keyword ref="qtelephonycalllist.html#currentCall-prop">currentCall</keyword>
         <keyword ref="qtelephonycalllist.html#calls">calls</keyword>
         <keyword ref="qtelephonycalllist.html#callsChanged">callsChanged</keyword>
         <keyword ref="qtelephonycalllist.html#callstatusChanged">callstatusChanged</keyword>
-        <keyword ref="qtelephonycalllist.html#currentCallStatus">currentCallStatus</keyword>
         <section ref="qtelephonycalllist-members.html" title="List of all members"/>
     </section>
     <section ref="qtmediaservices.html" title="QtMediaServices Namespace Reference">

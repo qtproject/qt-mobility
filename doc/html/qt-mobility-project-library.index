@@ -526,6 +526,42 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="ids" fullname="QContactLocalIdFilter::ids" href="qcontactlocalidfilter.html#ids" location="qcontactlocalidfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactLocalId&gt;" signature="ids() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QTelephonyCallInfo" href="qtelephonycallinfo.html" location="qtelephonycallinfo.h" bases="QObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="callIdentifier" fullname="QTelephonyCallInfo::callIdentifier" href="qtelephonycallinfo.html#callIdentifier-prop" location="qtelephonycallinfo.h" type="QString">
+                <getter name="callIdentifier"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QTelephonyCallInfo::contacts" href="qtelephonycallinfo.html#contacts-prop" location="qtelephonycallinfo.h" type="QList&lt;quint32&gt;">
+                <getter name="contacts"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QTelephonyCallInfo::type" href="qtelephonycallinfo.html#type-prop" location="qtelephonycallinfo.h" type="CallType">
+                <getter name="type"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="status" fullname="QTelephonyCallInfo::status" href="qtelephonycallinfo.html#status-prop" location="qtelephonycallinfo.h" type="CallStatus">
+                <getter name="status"/>
+            </property>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="CallType" fullname="QTelephonyCallInfo::CallType" href="qtelephonycallinfo.html#CallType-enum" location="qtelephonycallinfo.h">
+                <value name="UnknownType" value="0"/>
+                <value name="VOIP" value="1"/>
+                <value name="Voice" value="2"/>
+                <value name="Video" value="3"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="CallStatus" fullname="QTelephonyCallInfo::CallStatus" href="qtelephonycallinfo.html#CallStatus-enum" location="qtelephonycallinfo.h">
+                <value name="UnknownStatus" value="0"/>
+                <value name="NoCall" value="1"/>
+                <value name="Ringing" value="2"/>
+                <value name="InProgress" value="3"/>
+                <value name="OnHold" value="4"/>
+                <value name="Dropped" value="5"/>
+            </enum>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="QTelephonyCallInfo" fullname="QTelephonyCallInfo::QTelephonyCallInfo" href="qtelephonycallinfo.html#QTelephonyCallInfo" location="qtelephonycallinfo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QTelephonyCallInfo(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QTelephonyCallInfo" fullname="QTelephonyCallInfo::~QTelephonyCallInfo" href="qtelephonycallinfo.html#dtor.QTelephonyCallInfo" location="qtelephonycallinfo.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QTelephonyCallInfo()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="callIdentifier" fullname="QTelephonyCallInfo::callIdentifier" href="qtelephonycallinfo.html#callIdentifier-prop" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="callIdentifier" type="QString" signature="callIdentifier() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QTelephonyCallInfo::contacts" href="qtelephonycallinfo.html#contacts-prop" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="contacts" type="QList&lt;quint32&gt;" signature="contacts() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QTelephonyCallInfo::type" href="qtelephonycallinfo.html#type-prop" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="type" type="CallType" signature="type() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="status" fullname="QTelephonyCallInfo::status" href="qtelephonycallinfo.html#status-prop" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="status" type="CallStatus" signature="status() const"/>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactThumbnail" href="qcontactthumbnail.html" location="qcontactthumbnail.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactThumbnail::DefinitionName" href="qcontactthumbnail.html#DefinitionName-var" location="qcontactthumbnail.h" type="const QLatin1Constant" static="true"/>
             <variable access="public" threadsafety="unspecified" status="commendable" name="FieldThumbnail" fullname="QContactThumbnail::FieldThumbnail" href="qcontactthumbnail.html#FieldThumbnail-var" location="qcontactthumbnail.h" type="const QLatin1Constant" static="true"/>
@@ -1940,32 +1976,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="isValid" fullname="QMessageId::isValid" href="qmessageid.html#isValid" location="qmessageid_stub.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isValid() const"/>
         </class>
         <typedef access="public" threadsafety="unspecified" status="commendable" name="QMessageIdList" href="#QMessageIdList-typedef" location="qmessageid.h"/>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QTelephonyCallList" href="qtelephonycalllist.html" location="qtelephony.h" bases="QObject" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QTelephonyCallList" fullname="QTelephonyCallList::QTelephonyCallList" href="qtelephonycalllist.html#QTelephonyCallList" location="qtelephony.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QTelephonyCallList(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QTelephonyCallList" fullname="QTelephonyCallList::~QTelephonyCallList" href="qtelephonycalllist.html#dtor.QTelephonyCallList" location="qtelephony.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QTelephonyCallList()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="callstatusChanged" fullname="QTelephonyCallList::callstatusChanged" href="qtelephonycalllist.html#callstatusChanged" location="qtelephony.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="callstatusChanged(const QCallInfo::CallStatus status)">
-                <parameter left="const QCallInfo::CallStatus" right="" name="status" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="callsChanged" fullname="QTelephonyCallList::callsChanged" href="qtelephonycalllist.html#callsChanged" location="qtelephony.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="callsChanged()"/>
-            <property access="public" threadsafety="unspecified" status="commendable" name="currentCall" fullname="QTelephonyCallList::currentCall" href="qtelephonycalllist.html#currentCall-prop" location="qtelephony.h" type="QCallInfo *">
-                <getter name="currentCall"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentCall" fullname="QTelephonyCallList::currentCall" href="qtelephonycalllist.html#currentCall-prop" location="qtelephony.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="currentCall" type="QCallInfo *" signature="currentCall()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calls" fullname="QTelephonyCallList::calls" href="qtelephonycalllist.html#calls" location="qtelephony.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QCallInfo *&gt;" signature="calls() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calls" fullname="QTelephonyCallList::calls" href="qtelephonycalllist.html#calls-2" location="qtelephony.cpp" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QList&lt;QCallInfo *&gt;" signature="calls(const QCallInfo::CallType &amp; calltype) const">
-                <parameter left="const QCallInfo::CallType &amp;" right="" name="calltype" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calls" fullname="QTelephonyCallList::calls" href="qtelephonycalllist.html#calls-3" location="qtelephony.cpp" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QList&lt;QCallInfo *&gt;" signature="calls(const QCallInfo::CallStatus &amp; callstatus) const">
-                <parameter left="const QCallInfo::CallStatus &amp;" right="" name="callstatus" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="calls" fullname="QTelephonyCallList::calls" href="qtelephonycalllist.html#calls-4" location="qtelephony.cpp" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="4" type="QList&lt;QCallInfo *&gt;" signature="calls(const QCallInfo::CallType &amp; calltype, const QCallInfo::CallStatus &amp; callstatus) const">
-                <parameter left="const QCallInfo::CallType &amp;" right="" name="calltype" default=""/>
-                <parameter left="const QCallInfo::CallStatus &amp;" right="" name="callstatus" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="currentCallStatus" fullname="QTelephonyCallList::currentCallStatus" href="qtelephonycalllist.html#currentCallStatus" location="qtelephony.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="QCallInfo::CallStatus" signature="currentCallStatus()"/>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactChangeLogFilter" href="qcontactchangelogfilter.html" location="qcontactchangelogfilter.h" bases="QContactFilter" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="EventType" fullname="QContactChangeLogFilter::EventType" href="qcontactchangelogfilter.html#EventType-enum" location="qcontactchangelogfilter.h">
                 <value name="EventAdded" value="0"/>
@@ -2940,28 +2950,6 @@
                 <parameter left="const QContactLocalId &amp;" right="" name="oldId" default=""/>
                 <parameter left="const QContactLocalId &amp;" right="" name="newId" default=""/>
             </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QCallInfo" href="qcallinfo.html" location="qcallinfo.h" bases="QObject" module="">
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QCallInfo" fullname="QCallInfo::QCallInfo" href="qcallinfo.html#QCallInfo" location="qcallinfo.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QCallInfo(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QCallInfo" fullname="QCallInfo::~QCallInfo" href="qcallinfo.html#dtor.QCallInfo" location="qcallinfo.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QCallInfo()"/>
-            <property access="public" threadsafety="unspecified" status="commendable" name="callIdentifier" fullname="QCallInfo::callIdentifier" href="qcallinfo.html#callIdentifier-prop" location="qcallinfo.h" type="QString">
-                <getter name="callIdentifier"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="callIdentifier" fullname="QCallInfo::callIdentifier" href="qcallinfo.html#callIdentifier-prop" location="qcallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="callIdentifier" type="QString" signature="callIdentifier() const"/>
-            <property access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QCallInfo::contacts" href="qcallinfo.html#contacts-prop" location="qcallinfo.h" type="QList&lt;quint32&gt;">
-                <getter name="contacts"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QCallInfo::contacts" href="qcallinfo.html#contacts-prop" location="qcallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="contacts" type="QList&lt;quint32&gt;" signature="contacts() const"/>
-            <property access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QCallInfo::type" href="qcallinfo.html#type-prop" location="qcallinfo.h" type="CallType">
-                <getter name="type"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QCallInfo::type" href="qcallinfo.html#type-prop" location="qcallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="type" type="CallType" signature="type() const"/>
-            <property access="public" threadsafety="unspecified" status="commendable" name="status" fullname="QCallInfo::status" href="qcallinfo.html#status-prop" location="qcallinfo.h" type="CallStatus">
-                <getter name="status"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="status" fullname="QCallInfo::status" href="qcallinfo.html#status-prop" location="qcallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="status" type="CallStatus" signature="status() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailFieldDefinition" href="qcontactdetailfielddefinition.html" location="qcontactdetailfielddefinition.h" bases="" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailFieldDefinition" fullname="QContactDetailFieldDefinition::QContactDetailFieldDefinition" href="qcontactdetailfielddefinition.html#QContactDetailFieldDefinition" location="qcontactdetailfielddefinition.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailFieldDefinition()"/>
@@ -5774,6 +5762,31 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="subType" fullname="QContactAnniversary::subType" href="qcontactanniversary.html#subType" location="qcontactanniversary.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="subType() const"/>
         </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QTelephonyCallList" href="qtelephonycalllist.html" location="qtelephonycalllist.h" bases="QObject" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="currentCall" fullname="QTelephonyCallList::currentCall" href="qtelephonycalllist.html#currentCall-prop" location="qtelephonycalllist.h" type="QTelephonyCallInfo *">
+                <getter name="currentCall"/>
+            </property>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QTelephonyCallList" fullname="QTelephonyCallList::QTelephonyCallList" href="qtelephonycalllist.html#QTelephonyCallList" location="qtelephonycalllist.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QTelephonyCallList(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QTelephonyCallList" fullname="QTelephonyCallList::~QTelephonyCallList" href="qtelephonycalllist.html#dtor.QTelephonyCallList" location="qtelephonycalllist.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QTelephonyCallList()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="callstatusChanged" fullname="QTelephonyCallList::callstatusChanged" href="qtelephonycalllist.html#callstatusChanged" location="qtelephonycalllist.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="callstatusChanged(const QTelephonyCallInfo::CallStatus &amp; status)">
+                <parameter left="const QTelephonyCallInfo::CallStatus &amp;" right="" name="status" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="callsChanged" fullname="QTelephonyCallList::callsChanged" href="qtelephonycalllist.html#callsChanged" location="qtelephonycalllist.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="callsChanged()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="currentCall" fullname="QTelephonyCallList::currentCall" href="qtelephonycalllist.html#currentCall-prop" location="qtelephonycalllist.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="currentCall" type="QTelephonyCallInfo *" signature="currentCall()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calls" fullname="QTelephonyCallList::calls" href="qtelephonycalllist.html#calls" location="qtelephonycalllist.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QTelephonyCallInfo *&gt;" signature="calls() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calls" fullname="QTelephonyCallList::calls" href="qtelephonycalllist.html#calls-2" location="qtelephonycalllist.cpp" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="2" type="QList&lt;QTelephonyCallInfo *&gt;" signature="calls(const QTelephonyCallInfo::CallType &amp; calltype) const">
+                <parameter left="const QTelephonyCallInfo::CallType &amp;" right="" name="calltype" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calls" fullname="QTelephonyCallList::calls" href="qtelephonycalllist.html#calls-3" location="qtelephonycalllist.cpp" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="3" type="QList&lt;QTelephonyCallInfo *&gt;" signature="calls(const QTelephonyCallInfo::CallStatus &amp; callstatus) const">
+                <parameter left="const QTelephonyCallInfo::CallStatus &amp;" right="" name="callstatus" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="calls" fullname="QTelephonyCallList::calls" href="qtelephonycalllist.html#calls-4" location="qtelephonycalllist.cpp" virtual="non" meta="plain" const="true" static="false" overload="true" overload-number="4" type="QList&lt;QTelephonyCallInfo *&gt;" signature="calls(const QTelephonyCallInfo::CallType &amp; calltype, const QTelephonyCallInfo::CallStatus &amp; callstatus) const">
+                <parameter left="const QTelephonyCallInfo::CallType &amp;" right="" name="calltype" default=""/>
+                <parameter left="const QTelephonyCallInfo::CallStatus &amp;" right="" name="callstatus" default=""/>
+            </function>
+        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QServiceFilter" href="qservicefilter.html" location="qservicefilter.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="VersionMatchRule" fullname="QServiceFilter::VersionMatchRule" href="qservicefilter.html#VersionMatchRule-enum" location="qservicefilter.h">
                 <value name="ExactVersionMatch" value="0"/>
@@ -6865,8 +6878,6 @@
             <contents name="reference-documentation" title="Reference documentation" level="1"/>
             <contents name="main-classes" title="Main classes" level="2"/>
             <contents name="information-and-events-of-calls" title="Information and Events of Calls" level="1"/>
-            <contents name="call-status" title="Call Status" level="1"/>
-            <contents name="call-type" title="Call Type" level="1"/>
         </page>
         <page access="public" status="commendable" name="classlists" href="classlists.html" subtype="group" title="Class and Function Documentation" fulltitle="Class and Function Documentation" subtitle="" location="classes.qdoc">
             <contents name="class-lists" title="Class Lists" level="2"/>
