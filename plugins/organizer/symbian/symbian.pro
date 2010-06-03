@@ -19,15 +19,16 @@ symbian: {
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.EPOCALLOWDLLDATA = 1
-#    TARGET.UID3 = 0x2002AC7B
+    TARGET.UID3 = 0x2002BFC8
   
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
-  
+
     HEADERS += \
         qorganizersymbian_p.h
     SOURCES += \
         qorganizersymbian.cpp
+    LIBS += -lcalinterimapi
 
     target.path = /sys/bin
     INSTALLS += target
