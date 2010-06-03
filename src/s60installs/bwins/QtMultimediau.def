@@ -1319,4 +1319,15 @@ EXPORTS
 	?getStaticMetaObject@QMetaDataWriterControl@@SAABUQMetaObject@@XZ @ 1318 NONAME ; struct QMetaObject const & QMetaDataWriterControl::getStaticMetaObject(void)
 	?removeInterval@QMediaTimeRange@@QAEX_J0@Z @ 1319 NONAME ; void QMediaTimeRange::removeInterval(long long, long long)
 	?setQuality@QAudioEncoderSettings@@QAEXW4EncodingQuality@QtMultimedia@@@Z @ 1320 NONAME ; void QAudioEncoderSettings::setQuality(enum QtMultimedia::EncodingQuality)
+	??0QMediaTimeInterval@@QAE@XZ @ 1321 NONAME ; QMediaTimeInterval::QMediaTimeInterval(void)
+	?isEmpty@QMediaPlaylist@@QBE_NXZ @ 1322 NONAME ; bool QMediaPlaylist::isEmpty(void) const
+	?insertMedia@QMediaPlaylist@@QAE_NHABV?$QList@VQMediaContent@@@@@Z @ 1323 NONAME ; bool QMediaPlaylist::insertMedia(int, class QList<class QMediaContent> const &)
+	?tr@QMediaObject@@SA?AVQString@@PBD0@Z @ 1324 NONAME ; class QString QMediaObject::tr(char const *, char const *)
+	?trUtf8@QMediaPlaylistControl@@SA?AVQString@@PBD0H@Z @ 1325 NONAME ; class QString QMediaPlaylistControl::trUtf8(char const *, char const *, int)
+	?unbind@QMediaPlayer@@UAEXPAVQObject@@@Z @ 1326 NONAME ; void QMediaPlayer::unbind(class QObject *)
+	?removeMedia@QLocalMediaPlaylistProvider@@UAE_NH@Z @ 1327 NONAME ; bool QLocalMediaPlaylistProvider::removeMedia(int)
+	?mutedChanged@QMediaPlayerControl@@IAEX_N@Z @ 1328 NONAME ; void QMediaPlayerControl::mutedChanged(bool)
+	?getStaticMetaObject@QMediaServiceProviderPlugin@@SAABUQMetaObject@@XZ @ 1329 NONAME ; struct QMetaObject const & QMediaServiceProviderPlugin::getStaticMetaObject(void)
+	?qt_metacall@QMediaServiceProviderPlugin@@UAEHW4Call@QMetaObject@@HPAPAX@Z @ 1330 NONAME ; int QMediaServiceProviderPlugin::qt_metacall(enum QMetaObject::Call, int, void * *)
+	?tr@QVideoRendererControl@@SA?AVQString@@PBD0H@Z @ 1331 NONAME ; class QString QVideoRendererControl::tr(char const *, char const *, int)
 

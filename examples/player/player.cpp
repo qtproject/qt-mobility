@@ -65,6 +65,7 @@ Player::Player(QWidget *parent)
     , videoWidget(0)
     , coverLabel(0)
     , slider(0)
+    , audioEndpointSelector(0)
 #ifdef Q_OS_SYMBIAN
     , mediaKeysObserver(0)
     , playlistDialog(0)
@@ -72,7 +73,6 @@ Player::Player(QWidget *parent)
     , showYoutubeDialog(0)
     , youtubeDialog(0)
 #else
-    , audioEndpointSelector(0)
     , colorDialog(0)
 #endif
 {
@@ -615,8 +615,9 @@ void Player::hideOrShowCoverArt()
         videoWidget->show();
         videoWidget->repaint();
     } else {
-        coverLabel->show();
         videoWidget->hide();
+        QApplication::setActiveWindow(this);
+        coverLabel->show();
     }
 }
 
