@@ -108,6 +108,33 @@ public:
 private:
     QLandmarkManager *m_manager;
 
+    bool waitForAsync(QSignalSpy &spy, QLandmarkAbstractRequest *request) {
+        bool ret = true;
+        QTest::qWait(500);
+        if (spy.count() != 2) {
+            qWarning() << "Spy count mismatch, expected = " << 2 << ", actual = " << spy.count();
+            ret = false;
+        }
+
+        if (request->error() != QLandmarkManager::NoError) {
+            qWarning() << "Error mismatch, expected = " << QLandmarkManager::NoError
+                                       << ", actual=" << request->error();
+            ret = false;
+        }
+
+        if (!request->errorString().isEmpty()) {
+            qWarning() << "Error string is not empty as expected, error string = " << request->errorString();
+            ret = false;
+        }
+
+        if (request->state() != QLandmarkAbstractRequest::FinishedState) {
+            qWarning() << "Request State mismatch, expected = " << QLandmarkAbstractRequest::FinishedState
+                                               << ", actual =" << request->state();
+            ret = false;
+        }
+        return ret;
+    }
+
     void createDb() {
         QMap<QString, QString> map;
         map["filename"] = "test.db";
@@ -1360,6 +1387,72 @@ private slots:
         QLandmarkCategoryFilter filter(cat2.categoryId());
 
         QList<QLandmark> lms = m_manager->landmarks(filter);
+
+        QCOMPARE(lms.size(), 3);
+
+        QSet<QString> names;
+        for (int i = 0; i < lms.size(); ++i) {
+            names.insert(lms.at(i).name());
+        }
+
+        QSet<QString> expectedNames;
+        expectedNames.insert("LM2");
+        expectedNames.insert("LM3");
+        expectedNames.insert("LM4");
+
+        QCOMPARE(names, expectedNames);
+    }
+
+    void filterLandmarksCategoryAsync() {
+        QLandmarkCategory cat1;
+        cat1.setName("CAT1");
+        QVERIFY(m_manager->saveCategory(&cat1));
+
+        QLandmarkCategory cat2;
+        cat2.setName("CAT2");
+        QVERIFY(m_manager->saveCategory(&cat2));
+
+        QLandmarkCategory cat3;
+        cat3.setName("CAT3");
+        QVERIFY(m_manager->saveCategory(&cat3));
+
+        QLandmark lm1;
+        lm1.setName("LM1");
+        lm1.addCategoryId(cat1.categoryId());
+        QVERIFY(m_manager->saveLandmark(&lm1));
+
+        QLandmark lm2;
+        lm2.setName("LM2");
+        lm2.addCategoryId(cat1.categoryId());
+        lm2.addCategoryId(cat2.categoryId());
+        QVERIFY(m_manager->saveLandmark(&lm2));
+
+        QLandmark lm3;
+        lm3.setName("LM3");
+        lm3.addCategoryId(cat1.categoryId());
+        lm3.addCategoryId(cat2.categoryId());
+        lm3.addCategoryId(cat3.categoryId());
+        QVERIFY(m_manager->saveLandmark(&lm3));
+
+        QLandmark lm4;
+        lm4.setName("LM4");
+        lm4.addCategoryId(cat2.categoryId());
+        lm4.addCategoryId(cat3.categoryId());
+        QVERIFY(m_manager->saveLandmark(&lm4));
+
+        QLandmark lm5;
+        lm5.setName("LM5");
+        lm5.addCategoryId(cat3.categoryId());
+        QVERIFY(m_manager->saveLandmark(&lm5));
+
+        QLandmarkCategoryFilter filter(cat2.categoryId());
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        fetchRequest.setFilter(filter);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        QList<QLandmark> lms = fetchRequest.landmarks();
 
         QCOMPARE(lms.size(), 3);
 

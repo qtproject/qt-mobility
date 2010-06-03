@@ -460,6 +460,11 @@ QString landmarkIdsNameQueryString(const QLandmarkNameFilter &filter)
         return QString("SELECT id FROM landmark WHERE name LIKE \"%1\" ").arg(filter.name());
 }
 
+QString landmarkIdsCategoryQueryString(const QLandmarkCategoryFilter &filter)
+{
+    return QString("SELECT landmark_id FROM landmark_category WHERE category_id=%1 ").arg(filter.categoryId().localId());
+}
+
 QString landmarkIdsBoxQueryString(const QLandmarkBoxFilter &filter)
 {
     double tly = filter.topLeftCoordinate().latitude();
@@ -546,8 +551,11 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         break;
     case QLandmarkFilter::NearestFilter:
         break;
-    case QLandmarkFilter::CategoryFilter:
+    case QLandmarkFilter::CategoryFilter: {
+        QLandmarkCategoryFilter categoryFilter = filter;
+        queryString = landmarkIdsCategoryQueryString(categoryFilter);
         break;
+        }
     case QLandmarkFilter::BoxFilter: {
             QLandmarkBoxFilter boxFilter;
             boxFilter = filter;
