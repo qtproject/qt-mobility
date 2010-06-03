@@ -62,9 +62,9 @@ public:
     virtual bool isWritable() const = 0;
     virtual bool isMetaDataAvailable() const = 0;
 
-    virtual QVariant metaData(QtMultimedia::MetaData key) const = 0;
-    virtual void setMetaData(QtMultimedia::MetaData key, const QVariant &value) = 0;
-    virtual QList<QtMultimedia::MetaData> availableMetaData() const = 0;
+    virtual QVariant metaData(QtMultimediaKit::MetaData key) const = 0;
+    virtual void setMetaData(QtMultimediaKit::MetaData key, const QVariant &value) = 0;
+    virtual QList<QtMultimediaKit::MetaData> availableMetaData() const = 0;
 
     virtual QVariant extendedMetaData(const QString &key) const = 0;
     virtual void setExtendedMetaData(const QString &key, const QVariant &value) = 0;

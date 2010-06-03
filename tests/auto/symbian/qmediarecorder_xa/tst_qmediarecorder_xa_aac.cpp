@@ -72,7 +72,7 @@ void tst_QMediaRecorder::testAudioMpegBr32kSr8kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br32kSr8kHz", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(32000);
     audioSettings.setSampleRate(8000);
     audioSettings.setChannelCount(1);
@@ -99,7 +99,7 @@ void tst_QMediaRecorder::testAudioMpegBr32kbpsSr8kHzStereo()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br32kSr8kHzStereo", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(32000);
     audioSettings.setSampleRate(8000);
     audioSettings.setChannelCount(2);
@@ -126,7 +126,7 @@ void tst_QMediaRecorder::testAudioMpegBr128kbpsSr16kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br128kSr16kHz", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(128000);
     audioSettings.setSampleRate(16000);
     audioSettings.setChannelCount(1);
@@ -153,7 +153,7 @@ void tst_QMediaRecorder::testAudioMpegBr128kbpsSr16kHzStereo()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br128kSr16kHzStereo", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(128000);
     audioSettings.setSampleRate(16000);
     audioSettings.setChannelCount(2);
@@ -180,7 +180,7 @@ void tst_QMediaRecorder::testAudioMpegBr192kbpsSr32kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br192kSr32kHz", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(192000);
     audioSettings.setSampleRate(32000);
     audioSettings.setChannelCount(1);
@@ -207,7 +207,7 @@ void tst_QMediaRecorder::testAudioMpegBr192kbpsSr32kHzStereo()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br192kSr32kHzStereo", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(192000);
     audioSettings.setSampleRate(32000);
     audioSettings.setChannelCount(2);
@@ -234,7 +234,7 @@ void tst_QMediaRecorder::testAudioMpegBr256kbpsSr48kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br256kSr48kHz", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(256000);
     audioSettings.setSampleRate(48000);
     audioSettings.setChannelCount(1);
@@ -261,7 +261,7 @@ void tst_QMediaRecorder::testAudioMpegBr256kbpsSr48kHzStereo()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br256kSr48kHzStereo", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(256000);
     audioSettings.setSampleRate(48000);
     audioSettings.setChannelCount(2);
@@ -288,8 +288,8 @@ void tst_QMediaRecorder::testAudioMpegQualityVeryLow()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "VeryLowQuality", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::VeryLowQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::VeryLowQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/mpeg"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -313,8 +313,8 @@ void tst_QMediaRecorder::testAudioMpegQualityLow()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "LowQuality", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::LowQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::LowQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/mpeg"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -338,8 +338,8 @@ void tst_QMediaRecorder::testAudioMpegQualityNormal()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "NormalQuality", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::NormalQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::NormalQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/mpeg"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -363,8 +363,8 @@ void tst_QMediaRecorder::testAudioMpegQualityHigh()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "HighQuality", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::HighQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::HighQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/mpeg"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -388,8 +388,8 @@ void tst_QMediaRecorder::testAudioMpegQualityVeryHigh()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "VeryHighQuality", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::VeryHighQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::VeryHighQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/mpeg"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -413,7 +413,7 @@ void tst_QMediaRecorder::testAudioMpegBr16kSr8kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Br16kHzSr8kHz", "mp4"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("aac");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setBitRate(16000);
     audioSettings.setSampleRate(8000);
     QVideoEncoderSettings videoSettings;

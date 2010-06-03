@@ -1,10 +1,10 @@
 TEMPLATE = lib
 
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtmultimedia_mmfengine)
+TARGET = $$qtLibraryTarget(qtmultimediakit_mmfengine)
 PLUGIN_SUBDIR = mediaservice
 include (../../../../common.pri)
-qtAddLibrary(QtMultimedia)
+qtAddLibrary(QtMultimediaKit)
 
 #includes here so that all defines are added here also
 #FIXME include (../common/symbiancommon.pri)
@@ -45,7 +45,7 @@ pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 DEPLOYMENT += pluginDep      
 
 #Media API spesific deployment
-QtMediaDeployment.sources = QtMultimedia.dll
+QtMediaDeployment.sources = QtMultimediaKit.dll
 QtMediaDeployment.path = /sys/bin
 
 DEPLOYMENT += QtMediaDeployment

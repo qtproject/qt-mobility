@@ -45,9 +45,9 @@ contains(MOBILITY, systeminfo) {
 contains(MOBILITY, multimedia) {
     QT += network
     contains(QT_CONFIG, opengl): QT += opengl
-    mac:LIBS += -framework QtMultimedia
-    else:win32:contains(QT_CONFIG, debug):LIBS += -lQtMultimediad
-    else:LIBS += -lQtMultimedia
+    mac:LIBS += -framework QtMultimediaKit
+    else:win32:contains(QT_CONFIG, debug):LIBS += -lQtMultimediaKitd
+    else:LIBS += -lQtMultimediaKit
 }
 
 contains(MOBILITY, contacts) {

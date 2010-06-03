@@ -263,6 +263,7 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 
 REM reset default modules as we expect a modules list
 set MOBILITY_MODULES=
+set /a MODULE_COUNT=0
 
 echo Checking selected modules:
 :modulesTag2
@@ -302,14 +303,20 @@ if %FIRST% == bearer (
 if %FIRST% == multimedia (
     if %MOBILITY_MULTIMEDIA% == yes (
         set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+        set /a MODULE_COUNT+=1
     ) else (
         echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
     )
 ) else (
     set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+    set /a MODULE_COUNT+=1
 )
 
 if "%REMAINING%" == "" (
+    if "%MODULE_COUNT%" == "0" (
+        echo "No modules to build, exiting..."
+        exit /b 1
+    )
     shift
 ) else (
     set MOBILITY_MODULES_UNPARSED=%REMAINING%
@@ -587,9 +594,9 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
     if %MOBILITY_MULTIMEDIA% == yes (
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimedia %SOURCE_PATH%\src\multimedia
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimedia %SOURCE_PATH%\src\multimedia\audio
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimedia %SOURCE_PATH%\src\multimedia\video
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\audio
+        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\video
     )
 ) else if %FIRST% == publishsubscribe (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmPubSub %SOURCE_PATH%\src\publishsubscribe
