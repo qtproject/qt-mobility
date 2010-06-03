@@ -133,7 +133,6 @@ public:
 
     // enums
     enum Frequency {
-        NoRegularFrequency = 0, // eg: setMonths(<Jan, Feb>), setDaysOfMonth(15,-3)); // doesn't occur monthly, so no freq.
         Daily,
         Weekly,
         Monthly,
