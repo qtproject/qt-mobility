@@ -6,6 +6,7 @@ CONFIG += mobility
 MOBILITY = gallery
 
 INCLUDEPATH += ../../src/gallery
+DEPENDPATH += ../../src/gallery
 
 HEADERS = \
     albumdelegate.h \
