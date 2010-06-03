@@ -94,6 +94,7 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
     if (d_ptr->engine) {
         d_ptr->engine->setParent(this);
 
+        /*
         connect(d_ptr->engine,
                 SIGNAL(finished(QGeoMapReply*)),
                 this,
@@ -103,6 +104,7 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
                 SIGNAL(error(QGeoMapReply*,QGeoMapReply::Error,QString)),
                 this,
                 SIGNAL(error(QGeoMapReply*,QGeoMapReply::Error,QString)));
+        */
     }
 }
 

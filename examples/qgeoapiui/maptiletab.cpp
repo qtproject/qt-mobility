@@ -52,7 +52,7 @@
 #include <qgeomappingmanager.h>
 
 #include <qgeomapviewport.h>
-#include <qgeotiledmappingmanager.h>
+//#include <qgeotiledmappingmanager.h>
 
 MapTileTab::MapTileTab(QWidget *parent)
         : QWidget(parent),
@@ -110,12 +110,14 @@ void MapTileTab::initialize(QGeoMappingManager *mapManager)
 {
     m_mapManager = mapManager;
     if (m_mapManager) {
+        /*
         QObject::connect(m_mapManager, SIGNAL(finished(QGeoMapReply*)), this,
                          SLOT(replyFinished(QGeoMapReply*)));
         QObject::connect(m_mapManager,
                          SIGNAL(error(QGeoMapReply*, QGeoMapReply::Error, QString)), this,
                          SLOT(resultsError(QGeoMapReply*, QGeoMapReply::Error, QString)));
         m_viewport = m_mapManager->createViewport(0);
+        */
     }
 }
 
@@ -144,6 +146,7 @@ void MapTileTab::on_btnRequest_clicked()
     }
 }
 
+/*
 void MapTileTab::replyFinished(QGeoMapReply* reply)
 {
     m_result->setPixmap(reply->mapImage());
@@ -155,3 +158,4 @@ void MapTileTab::resultsError(QGeoMapReply* reply, QGeoMapReply::Error error, QS
     m_result->setText(tr("Error ") + errorString);
     reply->deleteLater();
 }
+*/

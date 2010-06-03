@@ -85,11 +85,13 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a QGeoMappingManagerEngine object.
 */
-QGeoMappingManagerEngine::QGeoMappingManagerEngine()
-        : d_ptr(new QGeoMappingManagerEnginePrivate) {}
+QGeoMappingManagerEngine::QGeoMappingManagerEngine(QObject *parent)
+        : QObject(parent),
+        d_ptr(new QGeoMappingManagerEnginePrivate) {}
 
-QGeoMappingManagerEngine::QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd)
-        : d_ptr(dd) {}
+QGeoMappingManagerEngine::QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent)
+        : QObject(parent),
+        d_ptr(dd) {}
 
 /*!
     Destroys this QGeoMappingManagerEngine object.

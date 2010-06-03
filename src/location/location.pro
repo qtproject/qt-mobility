@@ -19,7 +19,6 @@ PUBLIC_HEADERS += \
                     #qgeonavigator.h \
                     qgeomappingmanager.h \
                     qgeomappingmanagerengine.h \
-                    qgeomapreply.h \
                     qgeomapviewport.h \
                     qgeomapwidget.h \
                     qgeoplace.h \
@@ -39,6 +38,9 @@ PUBLIC_HEADERS += \
                     qgeoserviceprovider.h \
                     qgeoserviceproviderplugin.h \
                     qgeotiledmappingmanagerengine.h \
+                    qgeotiledmappingmanagerthread.h \
+                    qgeotiledmapreply.h \
+                    qgeotiledmaprequest.h \
                     qgeotiledmapviewport.h \
                     qlandmark.h \
                     qlandmarkabstractrequest.h \
@@ -79,7 +81,6 @@ PRIVATE_HEADERS += \
                     qgeodistance_p.h \
                     qgeomappingmanager_p.h \
                     qgeomappingmanagerengine_p.h \
-                    qgeomapreply_p.h \
                     qgeomapviewport_p.h \
                     qgeomapwidget_p.h \
                     qgeonavigationinstruction_p.h \
@@ -96,6 +97,9 @@ PRIVATE_HEADERS += \
                     qgeoroutingmanagerengine_p.h \
                     qgeoserviceprovider_p.h \
                     qgeotiledmappingmanagerengine_p.h \
+                    qgeotiledmappingmanagerthread_p.h \
+                    qgeotiledmapreply_p.h \
+                    qgeotiledmaprequest_p.h \
                     qgeotiledmapviewport_p.h \
                     qlandmark_p.h \
                     qlandmarkabstractrequest_p.h \
@@ -205,7 +209,6 @@ SOURCES += \
             #qgeonavigator.cpp \
             qgeomappingmanager.cpp \
             qgeomappingmanagerengine.cpp \
-            qgeomapreply.cpp \
             qgeomapviewport.cpp \
             qgeomapwidget.cpp \
             qgeoplace.cpp \
@@ -225,6 +228,9 @@ SOURCES += \
             qgeoserviceprovider.cpp \
             qgeoserviceproviderplugin.cpp \
             qgeotiledmappingmanagerengine.cpp \
+            qgeotiledmappingmanagerthread.cpp \
+            qgeotiledmapreply.cpp \
+            qgeotiledmaprequest.cpp \
             qgeotiledmapviewport.cpp \
             qlandmark.cpp \
             qlandmarkabstractrequest.cpp \

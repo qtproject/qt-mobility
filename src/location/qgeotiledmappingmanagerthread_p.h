@@ -39,56 +39,68 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPPINGMANAGERENGINE_H
-#define QGEOTILEDMAPPINGMANAGERENGINE_H
+#ifndef QGEOTILEDMAPPINGMANAGERTHREAD_P_H
+#define QGEOTILEDMAPPINGMANAGERTHREAD_P_H
 
-#include "qgeomappingmanagerengine.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qgeotiledmapreply.h"
-
-class QNetworkAccessManager;
-class QNetworkProxy;
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoTiledMapRequest;
 class QGeoTiledMapViewport;
-
 class QGeoTiledMappingManagerThread;
-class QGeoTiledMappingManagerEnginePrivate;
+class QGeoTiledMappingManagerEngine;
 
-class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManagerEngine
+class QGeoTiledMapRequestHandler : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~QGeoTiledMappingManagerEngine();
+    QGeoTiledMapRequestHandler(QGeoTiledMappingManagerThread *thread, QGeoTiledMapViewport *viewport);
+    ~QGeoTiledMapRequestHandler();
 
-    virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget);
-
-    virtual void updateMapImage(QGeoMapViewport *viewport);
-
-    virtual QPoint screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const;
-
-    QList<QString> supportedImageFormats() const;
-    QSize tileSize() const;
+public slots:
+    void setRequests(const QList<QGeoTiledMapRequest> &requests);
 
 private slots:
-    void init();
-    void tileFinished(QGeoTiledMapReply *reply);
-    void tileError(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
+    void sendNextRequest();
+
+    void tileFinished();
+    void tileError(QGeoTiledMapReply::Error, const QString &errorString);
 
 signals:
-    void tileRequestsPrepared(QGeoTiledMapViewport* viewport, const QList<QGeoTiledMapRequest> &requests);
-
-protected:
-    QGeoTiledMappingManagerEngine(QObject *parent = 0);
-    virtual QGeoTiledMappingManagerThread* createTileManagerThread() = 0;
-
-    void setSupportedImageFormats(const QList<QString> &imageFormats);
-    void setTileSize(const QSize &tileSize);
+    void finished(QGeoTiledMapReply *reply);
+    void error(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
 
 private:
-    Q_DECLARE_PRIVATE(QGeoTiledMappingManagerEngine)
-    Q_DISABLE_COPY(QGeoTiledMappingManagerEngine)
+    QGeoTiledMappingManagerThread *thread;
+    QGeoTiledMapViewport *viewport;
+    QList<QGeoTiledMapRequest> queue;
+    QSet<QGeoTiledMapReply*> replies;
+};
+
+class QGeoTiledMappingManagerThreadPrivate
+{
+
+public:
+    QGeoTiledMappingManagerThreadPrivate();
+    QGeoTiledMappingManagerThreadPrivate(const QGeoTiledMappingManagerThreadPrivate &other);
+    ~QGeoTiledMappingManagerThreadPrivate();
+
+    QGeoTiledMappingManagerThreadPrivate& operator= (const QGeoTiledMappingManagerThreadPrivate &other);
+
+    QGeoTiledMappingManagerEngine *engine;
+    QHash<QGeoTiledMapViewport*, QGeoTiledMapRequestHandler*> handlers;
 };
 
 QTM_END_NAMESPACE

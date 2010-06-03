@@ -43,7 +43,6 @@
 #define QGEOMAPPINGMANAGER_H
 
 #include "qgeomapwidget.h"
-#include "qgeomapreply.h"
 
 #include <QObject>
 #include <QSize>

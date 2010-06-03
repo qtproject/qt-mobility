@@ -68,6 +68,7 @@ MainWindow::MainWindow(QWidget *parent) :
     qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     qgv->setVisible(true);
     qgv->setGeometry(QRect(0, 0, width(), height()));
+    qgv->setInteractive(true);
 
     QGraphicsScene* scene = new QGraphicsScene(0, 0, width(), height());
     qgv->setScene(scene);

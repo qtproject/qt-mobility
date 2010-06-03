@@ -43,7 +43,6 @@
 #define QGEOMAPPINGMANAGERENGINE_H
 
 #include "qgeomapwidget.h"
-#include "qgeomapreply.h"
 
 #include <QObject>
 #include <QSize>
@@ -80,8 +79,8 @@ public:
     qreal maximumZoomLevel() const;
 
 protected:
-    QGeoMappingManagerEngine();
-    QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd);
+    QGeoMappingManagerEngine(QObject *parent = 0);
+    QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
     void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
 

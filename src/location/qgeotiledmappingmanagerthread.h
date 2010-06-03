@@ -39,67 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPWIDGET_H
-#define QGEOMAPWIDGET_H
+#ifndef QGEOTILEDMAPPINGMANAGERTHREAD_H
+#define QGEOTILEDMAPPINGMANAGERTHREAD_H
 
-#include "qgeocoordinate.h"
-#include <QGraphicsWidget>
+#include "qgeomapwidget.h"
+#include "qgeotiledmapreply.h"
+
+#include <QThread>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMappingManager;
-class QGeoBoundingBox;
+class QGeoTiledMapRequest;
+class QGeoTiledMapViewport;
+class QGeoTiledMappingManagerEngine;
 
-class QGeoMapWidgetPrivate;
+class QGeoTiledMappingManagerThreadPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
+class Q_LOCATION_EXPORT QGeoTiledMappingManagerThread : public QThread
 {
     Q_OBJECT
 public:
-    enum MapType {
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap
-    };
+    QGeoTiledMappingManagerThread(QGeoTiledMappingManagerEngine* engine, QObject *parent = 0);
+    virtual ~QGeoTiledMappingManagerThread();
 
-    QGeoMapWidget(QGeoMappingManager *manager);
-    ~QGeoMapWidget();
+    virtual void initialize();
 
-    QPainterPath shape() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
-
-    qreal minimumZoomLevel() const;
-    qreal maximumZoomLevel() const;
-
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
-
-    void pan(int dx, int dy);
-
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
-
-    void setMapType(MapType mapType);
-    MapType mapType() const;
-
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
+    virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
+    void removeViewport(QGeoTiledMapViewport* viewport);
 
 protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
+    void run();
+
+public slots:
+    void setRequests(QGeoTiledMapViewport* viewport, const QList<QGeoTiledMapRequest> &requests);
+
+signals:
+    void tileFinished(QGeoTiledMapReply *reply);
+    void tileError(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
 
 private:
-    void mapImageUpdated();
-
-    QGeoMapWidgetPrivate *d_ptr;
-
-    friend class QGeoMapViewport;
+    QGeoTiledMappingManagerThreadPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoTiledMappingManagerThread)
 };
 
 QTM_END_NAMESPACE

@@ -43,10 +43,9 @@
 
 #include <QDebug>
 
-QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInfo, QObject *parent)
-        : QGeoMapReply(parent),
-        m_reply(reply),
-        m_tileInfo(tileInfo)
+QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent)
+        : QGeoTiledMapReply(request, parent),
+        m_reply(reply)
 {
     connect(m_reply,
             SIGNAL(finished()),
@@ -61,15 +60,11 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInf
 
 QGeoMapReplyNokia::~QGeoMapReplyNokia()
 {
-    if (m_tileInfo)
-        delete m_tileInfo;
+    m_reply->abort();
     //TODO: possible mem leak -> m_reply->deleteLater() ?
+    m_reply->deleteLater();
 }
 
-QGeoMapReplyNokia::QuadTileInfo* QGeoMapReplyNokia::tileInfo() const
-{
-    return m_tileInfo;
-}
 
 QNetworkReply* QGeoMapReplyNokia::networkReply() const
 {
@@ -78,20 +73,13 @@ QNetworkReply* QGeoMapReplyNokia::networkReply() const
 
 void QGeoMapReplyNokia::abort()
 {
-    //m_reply->abort();
+    m_reply->abort();
     m_reply->deleteLater();
 }
 
 void QGeoMapReplyNokia::networkFinished()
 {
     if (m_reply->error() != QNetworkReply::NoError) {
-
-        /*
-        if (m_reply->error() != QNetworkReply::OperationCanceledError)
-            setError(QGeoMapReply::CommunicationError, m_reply->errorString());
-
-        m_reply->deleteLater();
-        */
         return;
     }
 
@@ -99,7 +87,7 @@ void QGeoMapReplyNokia::networkFinished()
 
     if (!tile.loadFromData(m_reply->readAll(), "PNG")) {
         // add a qWarning with the actual parser.errorString()
-        setError(QGeoMapReply::ParseError, "The response from the service was not in a recognisable format.");
+        setError(QGeoTiledMapReply::ParseError, "The response from the service was not in a recognisable format.");
     }
 
     if (!tile.isNull() && !tile.size().isEmpty()) {
@@ -107,7 +95,7 @@ void QGeoMapReplyNokia::networkFinished()
         setFinished(true);
     } else {
         // add a qWarning with the actual parser.errorString()
-        setError(QGeoMapReply::ParseError, "The map image is empty.");
+        setError(QGeoTiledMapReply::ParseError, "The map image is empty.");
     }
 
     m_reply->deleteLater();
@@ -116,6 +104,6 @@ void QGeoMapReplyNokia::networkFinished()
 void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
     if (m_reply->error() != QNetworkReply::OperationCanceledError)
-        setError(QGeoMapReply::CommunicationError, m_reply->errorString());
+        setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }

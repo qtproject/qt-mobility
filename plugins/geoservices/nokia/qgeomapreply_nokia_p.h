@@ -53,30 +53,19 @@
 // We mean it.
 //
 
-#include <qgeomapreply.h>
+#include <qgeotiledmapreply.h>
 #include <qgeomapwidget.h>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE
 
-class QGeoMapReplyNokia : public QGeoMapReply
+class QGeoMapReplyNokia : public QGeoTiledMapReply
 {
     Q_OBJECT
 
 public:
-    struct QuadTileInfo {
-        int row;
-        int col;
-        int zoomLevel;
-        QSize size;
-        QGeoMapWidget::MapType mapType;
-        QString imageFormat;
-    };
-
-    QGeoMapReplyNokia(QNetworkReply *reply, QuadTileInfo *tileInfo, QObject *parent = 0);
+    QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
     ~QGeoMapReplyNokia();
-
-    QuadTileInfo* tileInfo() const;
 
     void abort();
 
@@ -88,7 +77,6 @@ private slots:
 
 private:
     QNetworkReply *m_reply;
-    QuadTileInfo *m_tileInfo;
 };
 
 #endif

@@ -55,14 +55,44 @@
 
 #include <qgeoserviceprovider.h>
 #include <qgeotiledmappingmanagerengine.h>
+#include <qgeotiledmappingmanagerthread.h>
 
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>
-#include <QHash>
 
 #include "qgeomapreply_nokia_p.h"
 
 QTM_USE_NAMESPACE
+
+class QGeoMappingManagerEngineNokia;
+
+class QGeoMappingManagerThreadNokia : public QGeoTiledMappingManagerThread
+{
+    Q_OBJECT
+public:
+    QGeoMappingManagerThreadNokia(QGeoMappingManagerEngineNokia* engine,
+                                  const QMap<QString, QString> &parameters);
+    ~QGeoMappingManagerThreadNokia();
+
+    void initialize();
+    QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
+
+private:
+    Q_DISABLE_COPY(QGeoMappingManagerThreadNokia)
+
+    QString getRequestString(const QGeoTiledMapRequest &request) const;
+
+    static QString sizeToStr(const QSize &size);
+    static QString mapTypeToStr(QGeoMapWidget::MapType type);
+
+    QGeoMappingManagerEngineNokia* m_engine;
+    QMap<QString, QString> m_parameters;
+    QNetworkAccessManager *m_nam;
+    QNetworkDiskCache *m_cache;
+    QString m_host;
+    QString m_token;
+    QString m_referrer;
+};
 
 class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
 {
@@ -73,28 +103,12 @@ public:
                             QString *errorString);
     virtual ~QGeoMappingManagerEngineNokia();
 
-    QGeoMapReply* getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat) const;
+protected:
+    QGeoTiledMappingManagerThread* createTileManagerThread();
 
 private:
+    QMap<QString, QString> parameters;
     Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
-
-    QString getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const;
-
-private slots:
-    void mapFinished();
-    void mapError(QGeoMapReply::Error error, const QString &errorString);
-
-private:
-    static QString sizeToStr(const QSize &size);
-    static QString mapTypeToStr(QGeoMapWidget::MapType type);
-
-private:
-    QNetworkAccessManager *m_nam;
-    QNetworkDiskCache *m_cache;
-    QString m_host;
-    QString m_token;
-    QString m_referrer;
-    QHash<qint64, QPair<QPixmap, bool> > m_mapTiles;
 };
 
 #endif

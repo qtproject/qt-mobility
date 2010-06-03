@@ -42,6 +42,8 @@
 #include "qgeomappingmanagerengine_nokia_p.h"
 #include "qgeomapreply_nokia_p.h"
 
+#include <qgeotiledmaprequest.h>
+
 #include <QNetworkProxy>
 #include <QSize>
 #include <QDir>
@@ -51,8 +53,15 @@
 #define PI 3.14159265
 #include <math.h>
 
-QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-        : m_host("loc.desktop.maps.svc.ovi.com")
+QGeoMappingManagerThreadNokia::QGeoMappingManagerThreadNokia(QGeoMappingManagerEngineNokia* engine, const QMap<QString, QString> &parameters)
+        : QGeoTiledMappingManagerThread(engine),
+        m_engine(engine),
+        m_parameters(parameters),
+        m_host("loc.desktop.maps.svc.ovi.com") {}
+
+QGeoMappingManagerThreadNokia::~QGeoMappingManagerThreadNokia() {}
+
+void QGeoMappingManagerThreadNokia::initialize()
 {
     m_nam = new QNetworkAccessManager(this);
     m_cache = new QNetworkDiskCache(this);
@@ -63,149 +72,82 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
 
     m_cache->setCacheDirectory(dir.path());
 
-    QList<QString> keys = parameters.keys();
+    QList<QString> keys = m_parameters.keys();
 
     if (keys.contains("mapping.proxy")) {
-        QString proxy = parameters.value("mapping.proxy");
+        QString proxy = m_parameters.value("mapping.proxy");
         if (!proxy.isEmpty())
             m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
     }
 
     if (keys.contains("mapping.host")) {
-        QString host = parameters.value("mapping.host");
+        QString host = m_parameters.value("mapping.host");
         if (!host.isEmpty())
             m_host = host;
     }
 
     if (keys.contains("mapping.cache.directory")) {
-        QString cacheDir = parameters.value("mapping.cache.directory");
+        QString cacheDir = m_parameters.value("mapping.cache.directory");
         if (!cacheDir.isEmpty())
             m_cache->setCacheDirectory(cacheDir);
     }
 
     if (keys.contains("mapping.cache.size")) {
         bool ok = false;
-        qint64 cacheSize = parameters.value("mapping.cache.size").toLongLong(&ok);
+        qint64 cacheSize = m_parameters.value("mapping.cache.size").toLongLong(&ok);
         if (ok)
             m_cache->setMaximumCacheSize(cacheSize);
     }
-
-    m_nam->setCache(m_cache);
-
-    setMinimumZoomLevel(0.0);
-    setMaximumZoomLevel(18.0);
-
-    if (error)
-        *error = QGeoServiceProvider::NoError;
-
-    if (errorString)
-        *errorString = "";
 }
 
-QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia()
+QGeoTiledMapReply* QGeoMappingManagerThreadNokia::getTileImage(const QGeoTiledMapRequest &request)
 {
-}
-
-QGeoMapReply* QGeoMappingManagerEngineNokia::getTileImage(qint32 zoomLevel, qint32 rowIndex, qint32 columnIndex, QGeoMapWidget::MapType mapType, const QString &imageFormat) const
-{
-    QGeoMapReplyNokia::QuadTileInfo* info = new QGeoMapReplyNokia::QuadTileInfo;
-    info->row = rowIndex;
-    info->col = columnIndex;
-    info->zoomLevel = zoomLevel;
-    info->imageFormat = imageFormat;
-    info->mapType = mapType;
-    info->size = tileSize();
-
-    QString rawRequest = getRequestString(*info);
+    QString rawRequest = getRequestString(request);
 
     QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
-    m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
+    //m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 
     QNetworkReply* netReply = m_nam->get(netRequest);
-    //QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, info, this);
-    QGeoMapReply* mapReply = new QGeoMapReplyNokia(netReply, info);
-
-    connect(mapReply,
-            SIGNAL(finished()),
-            this,
-            SLOT(mapFinished()));
-
-    connect(mapReply,
-            SIGNAL(error(QGeoMapReply::Error, QString)),
-            this,
-            SLOT(mapError(QGeoMapReply::Error, QString)));
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
 
     return mapReply;
 }
 
-void QGeoMappingManagerEngineNokia::mapFinished()
+QString QGeoMappingManagerThreadNokia::getRequestString(const QGeoTiledMapRequest &request) const
 {
-    QGeoMapReplyNokia *reply = qobject_cast<QGeoMapReplyNokia*>(sender());
-
-    if (!reply)
-        return;
-
-    if (reply->error() != QGeoMapReply::NoError)
-        m_cache->remove(reply->networkReply()->request().url());
-
-    if (receivers(SIGNAL(finished(QGeoMapReply*))) == 0) {
-        reply->deleteLater();
-        return;
-    }
-
-    emit finished(reply);
-}
-
-void QGeoMappingManagerEngineNokia::mapError(QGeoMapReply::Error error, const QString &errorString)
-{
-    QGeoMapReply *reply = qobject_cast<QGeoMapReply*>(sender());
-
-    if (!reply)
-        return;
-
-    if (receivers(SIGNAL(error(QGeoMapReply*, QGeoMapReply::Error, QString))) == 0) {
-        reply->deleteLater();
-        return;
-    }
-
-    emit this->error(reply, error, errorString);
-}
-
-QString QGeoMappingManagerEngineNokia::getRequestString(const QGeoMapReplyNokia::QuadTileInfo &info) const
-{
-    QString request = "http://";
-    request += m_host;
-    request += "/maptiler/maptile/newest/";
-    request += mapTypeToStr(info.mapType);
-    request += '/';
-    request += QString::number(info.zoomLevel);
-    request += '/';
-    request += QString::number(info.col);
-    request += '/';
-    request += QString::number(info.row);
-    request += '/';
-    request += sizeToStr(tileSize());
-    request += '/';
-    request += info.imageFormat;
+    QString requestString = "http://";
+    requestString += m_host;
+    requestString += "/maptiler/maptile/newest/";
+    requestString += mapTypeToStr(request.mapType());
+    requestString += '/';
+    requestString += QString::number(request.zoomLevel());
+    requestString += '/';
+    requestString += QString::number(request.column());
+    requestString += '/';
+    requestString += QString::number(request.row());
+    requestString += '/';
+    requestString += sizeToStr(m_engine->tileSize());
+    requestString += '/';
+    requestString += "png";
 
     if (!m_token.isEmpty()) {
-        request += "?token=";
-        request += m_token;
+        requestString += "?token=";
+        requestString += m_token;
 
         if (!m_referrer.isEmpty()) {
-            request += "&referrer=";
-            request += m_referrer;
+            requestString += "&referrer=";
+            requestString += m_referrer;
         }
     } else if (!m_referrer.isEmpty()) {
-        request += "?referrer=";
-        request += m_referrer;
+        requestString += "?referrer=";
+        requestString += m_referrer;
     }
 
-    return request;
+    return requestString;
 }
 
-QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
+QString QGeoMappingManagerThreadNokia::sizeToStr(const QSize &size)
 {
     if (size.height() >= LARGE_TILE_DIMENSION ||
             size.width() >= LARGE_TILE_DIMENSION)
@@ -214,7 +156,7 @@ QString QGeoMappingManagerEngineNokia::sizeToStr(const QSize &size)
         return "128";
 }
 
-QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGeoMapWidget::MapType type)
+QString QGeoMappingManagerThreadNokia::mapTypeToStr(QGeoMapWidget::MapType type)
 {
     if (type == QGeoMapWidget::StreetMap)
         return "normal.day";
@@ -225,5 +167,22 @@ QString QGeoMappingManagerEngineNokia::mapTypeToStr(QGeoMapWidget::MapType type)
         return "terrain.day";
     else
         return "normal.day";
+}
+
+QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+    : parameters(parameters)
+{
+    setTileSize(QSize(128, 128));
+    setMinimumZoomLevel(0.0);
+    setMaximumZoomLevel(18.0);
+}
+
+QGeoMappingManagerEngineNokia::~QGeoMappingManagerEngineNokia()
+{
+}
+
+QGeoTiledMappingManagerThread* QGeoMappingManagerEngineNokia::createTileManagerThread()
+{
+    return new QGeoMappingManagerThreadNokia(this, parameters);
 }
 

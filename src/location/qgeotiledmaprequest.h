@@ -39,67 +39,44 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPWIDGET_H
-#define QGEOMAPWIDGET_H
+#ifndef QGEOTILEDMAPREQUEST_H
+#define QGEOTILEDMAPREQUEST_H
 
-#include "qgeocoordinate.h"
-#include <QGraphicsWidget>
+#include "qgeomapwidget.h"
+
+#include <QRectF>
+#include <QSharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMappingManager;
-class QGeoBoundingBox;
+class QGeoTiledMapViewport;
+class QGeoTiledMapRequestPrivate;
 
-class QGeoMapWidgetPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
+class Q_LOCATION_EXPORT QGeoTiledMapRequest
 {
-    Q_OBJECT
 public:
-    enum MapType {
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap
-    };
+    // TODO add isValid method, set to false for default constructor
+    QGeoTiledMapRequest();
+    QGeoTiledMapRequest(QGeoTiledMapViewport *viewport,
+                        int row,
+                        int column,
+                        const QRectF &tileRectZoomWorldCoordinates);
+    QGeoTiledMapRequest(const QGeoTiledMapRequest &other);
+    ~QGeoTiledMapRequest();
 
-    QGeoMapWidget(QGeoMappingManager *manager);
-    ~QGeoMapWidget();
+    QGeoTiledMapRequest& operator= (const QGeoTiledMapRequest &other);
 
-    QPainterPath shape() const;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
+    QGeoTiledMapViewport *viewport() const;
 
-    qreal minimumZoomLevel() const;
-    qreal maximumZoomLevel() const;
+    QGeoMapWidget::MapType mapType() const;
+    int zoomLevel() const;
 
-    void setZoomLevel(qreal zoomLevel);
-    qreal zoomLevel() const;
-
-    void pan(int dx, int dy);
-
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
-
-    void setMapType(MapType mapType);
-    MapType mapType() const;
-
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
-
-protected:
-    void resizeEvent(QGraphicsSceneResizeEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
+    int row() const;
+    int column() const;
+    QRectF zoomedWorldRect() const;
 
 private:
-    void mapImageUpdated();
-
-    QGeoMapWidgetPrivate *d_ptr;
-
-    friend class QGeoMapViewport;
+    QSharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

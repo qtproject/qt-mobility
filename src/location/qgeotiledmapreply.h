@@ -39,39 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_P_H
-#define QGEOMAPREPLY_P_H
+#ifndef QGEOTILEDMAPREPLY_H
+#define QGEOTILEDMAPREPLY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qmobilityglobal.h"
 
-#include "qgeomapreply.h"
+#include <QObject>
+#include <QPixmap>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapReplyPrivate
+class QGeoTiledMapRequest;
+class QGeoTiledMapReplyPrivate;
+
+class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoMapReplyPrivate();
-    QGeoMapReplyPrivate(QGeoMapReply::Error error, const QString& errorString);
-    QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other);
-    ~QGeoMapReplyPrivate();
+    // TODO populate this some more...
+    enum Error {
+        NoError,
+        CommunicationError,
+        ParseError,
+        UnknownError
+    };
 
-    QGeoMapReplyPrivate& operator= (const QGeoMapReplyPrivate &other);
+    QGeoTiledMapReply(const QGeoTiledMapRequest &request, QObject *parent = 0);
+    QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent = 0);
+    virtual ~QGeoTiledMapReply();
 
-    QGeoMapReply::Error error;
-    QString errorString;
-    bool isFinished;
+    bool isFinished() const;
+    Error error() const;
+    QString errorString() const;
 
-    QPixmap mapImage;
+    QGeoTiledMapRequest request() const;
+    QPixmap mapImage() const;
+
+public slots:
+    virtual void abort();
+
+signals:
+    void finished();
+    void error(QGeoTiledMapReply::Error error, const QString &errorString = QString());
+
+protected:
+    void setError(Error error, const QString &errorString);
+    void setFinished(bool finished);
+
+    void setMapImage(const QPixmap &image);
+
+private:
+    QGeoTiledMapReplyPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoTiledMapReply)
 };
 
 QTM_END_NAMESPACE

@@ -44,12 +44,17 @@
 
 #include <QGraphicsSceneResizeEvent>
 
+#include <QDebug>
+
 QTM_BEGIN_NAMESPACE
 
 QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager)
     : d_ptr(new QGeoMapWidgetPrivate(manager))
 {
     d_ptr->viewport = d_ptr->manager->createViewport(this);
+
+    setFlag(QGraphicsItem::ItemIsFocusable);
+    setFocus();
 
     setMinimumSize(QSizeF(0, 0));
     setPreferredSize(QSizeF(500, 500));
@@ -77,23 +82,62 @@ void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 
 void QGeoMapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
+    qWarning() << QString("mouse press");
+    setFocus();
     if (event->button() == Qt::LeftButton)
         d_ptr->panActive = true;
+    event->accept();
 }
 
 void QGeoMapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
+    qWarning() << QString("mouse release");
     if (event->button() == Qt::LeftButton)
         d_ptr->panActive = false;
+    event->accept();
 }
 
 void QGeoMapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
+    qWarning() << QString("mouse move");
     if (d_ptr->panActive) {
         int deltaLeft = event->lastPos().x() - event->pos().x();
         int deltaTop  = event->lastPos().y() - event->pos().y();
         pan(deltaLeft, deltaTop);
     }
+    event->accept();
+}
+
+void QGeoMapWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    qWarning() << QString("mouse double click");
+    setFocus();
+    if (!d_ptr->manager || !d_ptr->viewport) {
+        return;
+    }
+
+    pan(event->lastPos().x() -  size().width() / 2.0, event->lastPos().y() - size().height() / 2.0);
+    if (d_ptr->viewport->zoomLevel() < d_ptr->manager->maximumZoomLevel())
+        setZoomLevel(d_ptr->viewport->zoomLevel() + 1);
+    d_ptr->manager->updateMapImage(d_ptr->viewport);
+    event->accept();
+}
+
+void QGeoMapWidget::keyPressEvent(QKeyEvent *event)
+{
+    qWarning() << QString("key press");
+    if (!d_ptr->manager || !d_ptr->viewport) {
+        return;
+    }
+
+    if (event->key() == Qt::Key_Minus) {
+        if (d_ptr->viewport->zoomLevel() > d_ptr->manager->minimumZoomLevel())
+            setZoomLevel(d_ptr->viewport->zoomLevel() - 1);
+    } else if (event->key() == Qt::Key_Plus) {
+        if (d_ptr->viewport->zoomLevel() < d_ptr->manager->maximumZoomLevel())
+            setZoomLevel(d_ptr->viewport->zoomLevel() + 1);
+    }
+    event->accept();
 }
 
 QPainterPath QGeoMapWidget::shape() const
