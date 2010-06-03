@@ -1507,8 +1507,7 @@ QContactThumbnail* QContactABook::getThumbnailDetail(EContact *eContact) const
   if (!aContact)
     return rtn;
 
-  //GdkPixbuf* pixbuf = osso_abook_contact_get_avatar_pixbuf(aContact, NULL, NULL);
-  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), 64, 64, true, 4, NULL);
+  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), -1, -1, false, 0, NULL);
   if (!GDK_IS_PIXBUF(pixbuf)){
     FREE(pixbuf);
     return rtn;
@@ -1518,7 +1517,10 @@ QContactThumbnail* QContactABook::getThumbnailDetail(EContact *eContact) const
   QSize bsize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
 
   //Convert GdkPixbuf to QPixmap
-  QImage converted(bdata, bsize.width(), bsize.height(), QImage::Format_ARGB32_Premultiplied);
+  QImage::Format format = gdk_pixbuf_get_has_alpha(pixbuf) ? QImage::Format_ARGB32 : QImage::Format_RGB32;
+  int stride = gdk_pixbuf_get_rowstride(pixbuf);
+  QImage converted(bdata, bsize.width(), bsize.height(), stride, format);
+  converted = converted.rgbSwapped();
   map[QContactThumbnail::FieldThumbnail] = converted;
   g_object_unref(pixbuf);
   setDetailValues(map, rtn);
@@ -1798,13 +1800,19 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
     
     if (image.isNull())
       return;
-    
-    if (image.format() != QImage::Format_ARGB32_Premultiplied)
-        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
+    if (image.hasAlphaChannel()) {
+        image = image.convertToFormat(QImage::Format_ARGB32);
+        image = image.rgbSwapped();
+    } else {
+        image = image.convertToFormat(QImage::Format_RGB888);
+    }
+
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
                                                  image.hasAlphaChannel(), 8,
                                                  image.width(), image.height(),
                                                  image.bytesPerLine(), 0, 0);
+
     osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, 0, 0);
     g_object_unref(pixbuf);
 }
