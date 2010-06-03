@@ -72,7 +72,6 @@ Player::Player(QWidget *parent)
     , toggleAspectRatio(0)
     , showYoutubeDialog(0)
     , youtubeDialog(0)
-    , audioEndpointSelector(0)
 #else
     , colorDialog(0)
 #endif
