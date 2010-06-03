@@ -54,6 +54,7 @@
 //
 
 #include "qgeotiledmapreply.h"
+#include "qgeomapwidget.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -85,6 +86,10 @@ signals:
 private:
     QGeoTiledMappingManagerThread *thread;
     QGeoTiledMapViewport *viewport;
+
+    qreal lastZoomLevel;
+    QGeoMapWidget::MapType lastMapType;
+
     QList<QGeoTiledMapRequest> queue;
     QSet<QGeoTiledMapReply*> replies;
 };

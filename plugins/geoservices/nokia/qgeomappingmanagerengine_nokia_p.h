@@ -99,8 +99,8 @@ class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
     Q_OBJECT
 public:
     QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters,
-                            QGeoServiceProvider::Error *error,
-                            QString *errorString);
+                                  QGeoServiceProvider::Error *error,
+                                  QString *errorString);
     virtual ~QGeoMappingManagerEngineNokia();
 
 protected:

@@ -47,12 +47,12 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapRequest::QGeoTiledMapRequest()
-    : d_ptr(new QGeoTiledMapRequestPrivate()) {}
+        : d_ptr(new QGeoTiledMapRequestPrivate()) {}
 
 /*!
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapViewport *viewport, int row, int column, const QRectF &tileRectZoomWorldCoordinates)
-    : d_ptr(new QGeoTiledMapRequestPrivate())
+        : d_ptr(new QGeoTiledMapRequestPrivate())
 {
     d_ptr->viewport = viewport;
     d_ptr->row = row;
@@ -67,7 +67,7 @@ QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapViewport *viewport, int row
 /*!
 */
 QGeoTiledMapRequest::QGeoTiledMapRequest(const QGeoTiledMapRequest &other)
-    : d_ptr(other.d_ptr) {}
+        : d_ptr(other.d_ptr) {}
 
 /*!
 */
@@ -75,7 +75,7 @@ QGeoTiledMapRequest::~QGeoTiledMapRequest() {}
 
 /*!
 */
-QGeoTiledMapRequest& QGeoTiledMapRequest::operator= (const QGeoTiledMapRequest &other)
+QGeoTiledMapRequest& QGeoTiledMapRequest::operator= (const QGeoTiledMapRequest & other)
 {
     d_ptr = other.d_ptr;
 
@@ -128,21 +128,21 @@ QRectF QGeoTiledMapRequest::zoomedWorldRect() const
 *******************************************************************************/
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate()
-    : QSharedData(),
-    viewport(0) {}
+        : QSharedData(),
+        viewport(0) {}
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate(const QGeoTiledMapRequestPrivate &other)
-    : QSharedData(other),
-    viewport(other.viewport),
-    mapType(other.mapType),
-    zoomLevel(other.zoomLevel),
-    row(other.row),
-    column(other.column),
-    zoomedWorldRect(other.zoomedWorldRect) {}
+        : QSharedData(other),
+        viewport(other.viewport),
+        mapType(other.mapType),
+        zoomLevel(other.zoomLevel),
+        row(other.row),
+        column(other.column),
+        zoomedWorldRect(other.zoomedWorldRect) {}
 
 QGeoTiledMapRequestPrivate::~QGeoTiledMapRequestPrivate() {}
 
-QGeoTiledMapRequestPrivate& QGeoTiledMapRequestPrivate::operator= (const QGeoTiledMapRequestPrivate &other)
+QGeoTiledMapRequestPrivate& QGeoTiledMapRequestPrivate::operator= (const QGeoTiledMapRequestPrivate & other)
 {
     viewport = viewport;
     mapType = mapType;

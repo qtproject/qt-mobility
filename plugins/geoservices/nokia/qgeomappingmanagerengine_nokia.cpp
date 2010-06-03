@@ -98,6 +98,8 @@ void QGeoMappingManagerThreadNokia::initialize()
         if (ok)
             m_cache->setMaximumCacheSize(cacheSize);
     }
+
+    m_nam->setCache(m_cache);
 }
 
 QGeoTiledMapReply* QGeoMappingManagerThreadNokia::getTileImage(const QGeoTiledMapRequest &request)
@@ -106,7 +108,7 @@ QGeoTiledMapReply* QGeoMappingManagerThreadNokia::getTileImage(const QGeoTiledMa
 
     QNetworkRequest netRequest = QNetworkRequest(QUrl(rawRequest));
     netRequest.setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
-    //m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
+    m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 
     QNetworkReply* netReply = m_nam->get(netRequest);
     QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
@@ -170,7 +172,7 @@ QString QGeoMappingManagerThreadNokia::mapTypeToStr(QGeoMapWidget::MapType type)
 }
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-    : parameters(parameters)
+        : parameters(parameters)
 {
     setTileSize(QSize(128, 128));
     setMinimumZoomLevel(0.0);

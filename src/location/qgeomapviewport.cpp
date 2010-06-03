@@ -146,7 +146,7 @@ QTM_BEGIN_NAMESPACE
 
 
 QGeoMapViewport::QGeoMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-    : d_ptr(new QGeoMapViewportPrivate())
+        : d_ptr(new QGeoMapViewportPrivate())
 {
     Q_D(QGeoMapViewport);
     d->widget = widget;
@@ -154,7 +154,7 @@ QGeoMapViewport::QGeoMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget
 }
 
 QGeoMapViewport::QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-    : d_ptr(dd)
+        : d_ptr(dd)
 {
     Q_D(QGeoMapViewport);
     d->widget = widget;
@@ -269,18 +269,18 @@ QPixmap QGeoMapViewport::mapImage()
 QGeoMapViewportPrivate::QGeoMapViewportPrivate() {}
 
 QGeoMapViewportPrivate::QGeoMapViewportPrivate(const QGeoMapViewportPrivate &other)
-    : widget(other.widget),
-    engine(other.engine),
-    zoomLevel(other.zoomLevel),
-    center(other.center),
-    viewportSize(other.viewportSize),
-    mapType(other.mapType),
-    imageChangesTriggerUpdates(other.imageChangesTriggerUpdates),
-    mapImage(other.mapImage) {}
+        : widget(other.widget),
+        engine(other.engine),
+        zoomLevel(other.zoomLevel),
+        center(other.center),
+        viewportSize(other.viewportSize),
+        mapType(other.mapType),
+        imageChangesTriggerUpdates(other.imageChangesTriggerUpdates),
+        mapImage(other.mapImage) {}
 
 QGeoMapViewportPrivate::~QGeoMapViewportPrivate() {}
 
-QGeoMapViewportPrivate& QGeoMapViewportPrivate::operator= (const QGeoMapViewportPrivate &other)
+QGeoMapViewportPrivate& QGeoMapViewportPrivate::operator= (const QGeoMapViewportPrivate & other)
 {
     widget = other.widget;
     engine = other.engine;

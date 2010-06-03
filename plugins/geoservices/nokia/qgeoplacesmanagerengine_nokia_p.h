@@ -65,8 +65,8 @@ class QGeoPlacesManagerEngineNokia : public QGeoPlacesManagerEngine
     Q_OBJECT
 public:
     QGeoPlacesManagerEngineNokia(const QMap<QString, QString> &parameters,
-                           QGeoServiceProvider::Error *error,
-                           QString *errorString);
+                                 QGeoServiceProvider::Error *error,
+                                 QString *errorString);
     ~QGeoPlacesManagerEngineNokia();
 
     QGeoPlacesReply* geocode(const QGeoAddress &address,

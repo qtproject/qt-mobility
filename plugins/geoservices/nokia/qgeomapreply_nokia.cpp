@@ -47,6 +47,7 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapReq
         : QGeoTiledMapReply(request, parent),
         m_reply(reply)
 {
+    cleanedUp = false;
     connect(m_reply,
             SIGNAL(finished()),
             this,
@@ -60,9 +61,11 @@ QGeoMapReplyNokia::QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapReq
 
 QGeoMapReplyNokia::~QGeoMapReplyNokia()
 {
-    m_reply->abort();
+    //m_reply->abort();
     //TODO: possible mem leak -> m_reply->deleteLater() ?
-    m_reply->deleteLater();
+    if (!cleanedUp)
+        delete m_reply;
+    //m_reply->deleteLater();
 }
 
 
@@ -75,6 +78,7 @@ void QGeoMapReplyNokia::abort()
 {
     m_reply->abort();
     m_reply->deleteLater();
+    cleanedUp = true;
 }
 
 void QGeoMapReplyNokia::networkFinished()
@@ -99,6 +103,7 @@ void QGeoMapReplyNokia::networkFinished()
     }
 
     m_reply->deleteLater();
+    cleanedUp = true;
 }
 
 void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
@@ -106,4 +111,5 @@ void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
     if (m_reply->error() != QNetworkReply::OperationCanceledError)
         setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
+    cleanedUp = true;
 }

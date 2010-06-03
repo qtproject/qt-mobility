@@ -94,7 +94,7 @@ void QGeoTiledMappingManagerEngine::init()
             this,
             SLOT(tileError(QGeoTiledMapReply*,QGeoTiledMapReply::Error,QString)),
             Qt::QueuedConnection);
-*/
+    */
 
     d->thread->start();
 }
@@ -190,14 +190,15 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
 
 //        if (!protectedRegion.isNull() && protectedRegion.contains(tileRect))
 //            continue;
-        if (i + protectedTiles < tiles.size()) {
-            if (!protectedRegion.isNull() && protectedRegion.contains(tileRect)) {
-                tiles.move(i, tiles.size() - 1);
-                ++protectedTiles;
-                --i;
-                continue;
-            }
-        }
+
+//        if (i + protectedTiles < tiles.size()) {
+//            if (!protectedRegion.isNull() && protectedRegion.contains(tileRect)) {
+//                tiles.move(i, tiles.size() - 1);
+//                ++protectedTiles;
+//                --i;
+//                continue;
+//            }
+//        }
 
         requests.append(QGeoTiledMapRequest(tiledViewport, row, col, tileRect));
     }
@@ -251,13 +252,11 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
 
 void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
 {
-    qWarning() << QString("QGeoTiledMappingManagerEngine::tileFinished") << (int) QThread::currentThreadId();
-
     if (!reply)
         return;
 
     if (reply->error() != QGeoTiledMapReply::NoError) {
-        reply->deleteLater();
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
     }
 
@@ -265,27 +264,27 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
 
     if ((viewport->zoomLevel() != reply->request().zoomLevel())
             || (viewport->mapType() != reply->request().mapType())) {
-        reply->deleteLater();
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
     }
 
     QRectF screenRect = QRectF(
-            viewport->topLeftMapPixelX() /  viewport->zoomFactor(),
-            viewport->topLeftMapPixelY() / viewport->zoomFactor(),
-            viewport->viewportSize().width(),
-            viewport->viewportSize().height());
+                            viewport->topLeftMapPixelX() /  viewport->zoomFactor(),
+                            viewport->topLeftMapPixelY() / viewport->zoomFactor(),
+                            viewport->viewportSize().width(),
+                            viewport->viewportSize().height());
 
     QRectF tileRect = reply->request().zoomedWorldRect();
 
     QRectF overlap = tileRect.intersected(screenRect);
 
     if (overlap.isEmpty()) {
-        reply->deleteLater();
+        QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
     }
 
     QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
-    QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 *screenRect.y());
+    QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 * screenRect.y());
 
     QPixmap pm = viewport->mapImage();
     QPainter *painter = new QPainter(&pm);
@@ -293,12 +292,12 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
     viewport->setMapImage(pm);
     delete painter;
 
-    reply->deleteLater();
+    QTimer::singleShot(10, reply, SLOT(deleteLater()));
 }
 
 void QGeoTiledMappingManagerEngine::tileError(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString)
 {
-    qWarning() << QString("error");
+    qWarning() << errorString;
 }
 
 QPoint QGeoTiledMappingManagerEngine::screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const
@@ -408,7 +407,7 @@ void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 *******************************************************************************/
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
-    : QGeoMappingManagerEnginePrivate() {}
+        : QGeoMappingManagerEnginePrivate() {}
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other)
         : QGeoMappingManagerEnginePrivate(other),

@@ -76,6 +76,7 @@ private slots:
     void networkError(QNetworkReply::NetworkError error);
 
 private:
+    bool cleanedUp;
     QNetworkReply *m_reply;
 };
 

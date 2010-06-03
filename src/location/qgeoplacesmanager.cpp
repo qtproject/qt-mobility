@@ -107,9 +107,9 @@ QGeoPlacesManager::QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *p
                 SIGNAL(finished(QGeoPlacesReply*)));
 
         connect(d_ptr->engine,
-                SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)),
+                SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)),
                 this,
-                SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)));
+                SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)));
     }
 }
 

@@ -86,9 +86,9 @@ QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject
                 SIGNAL(finished(QGeoRouteReply*)));
 
         connect(d_ptr->engine,
-                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+                SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)),
                 this,
-                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+                SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)));
     }
 }
 

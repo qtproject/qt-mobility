@@ -52,7 +52,7 @@
 QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapViewport::QGeoTiledMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-    : QGeoMapViewport(new QGeoTiledMapViewportPrivate(), engine, widget)
+        : QGeoMapViewport(new QGeoTiledMapViewportPrivate(), engine, widget)
 {
     Q_D(QGeoTiledMapViewport);
     QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(d->engine);
@@ -75,7 +75,7 @@ QPointF QGeoTiledMapViewport::coordinateToScreenPosition(const QGeoCoordinate &c
     coordinateToWorldPixel(coordinate, &worldX, &worldY);
 
     qreal screenX = (qreal(worldX) - qreal(d->x)) / d->zoomFactor;
-    qreal screenY = (qreal(worldY)- qreal(d->y)) / d->zoomFactor;
+    qreal screenY = (qreal(worldY) - qreal(d->y)) / d->zoomFactor;
 
     return QPointF(screenX, screenY);
 }
@@ -328,20 +328,20 @@ void QGeoTiledMapViewport::clearProtectedRegion()
 *******************************************************************************/
 
 QGeoTiledMapViewportPrivate::QGeoTiledMapViewportPrivate()
-    : QGeoMapViewportPrivate() {}
+        : QGeoMapViewportPrivate() {}
 
 QGeoTiledMapViewportPrivate::QGeoTiledMapViewportPrivate(const QGeoTiledMapViewportPrivate &other)
-    : QGeoMapViewportPrivate(other),
-    x(other.x),
-    y(other.y),
-    width(other.width),
-    height(other.height),
-    zoomFactor(other.zoomFactor),
-    protectRegion(other.protectRegion) {}
+        : QGeoMapViewportPrivate(other),
+        x(other.x),
+        y(other.y),
+        width(other.width),
+        height(other.height),
+        zoomFactor(other.zoomFactor),
+        protectRegion(other.protectRegion) {}
 
 QGeoTiledMapViewportPrivate::~QGeoTiledMapViewportPrivate() {}
 
-QGeoTiledMapViewportPrivate& QGeoTiledMapViewportPrivate::operator= (const QGeoTiledMapViewportPrivate &other)
+QGeoTiledMapViewportPrivate& QGeoTiledMapViewportPrivate::operator= (const QGeoTiledMapViewportPrivate & other)
 {
     QGeoMapViewportPrivate::operator =(other);
 
