@@ -1343,4 +1343,27 @@ EXPORTS
 	_ZneRK15QMediaTimeRangeS1_ @ 1342 NONAME
 	_ZneRK18QMediaTimeIntervalS1_ @ 1343 NONAME
 	_ZplRK15QMediaTimeRangeS1_ @ 1344 NONAME
+	_ZN11QRadioTuner11qt_metacastEPKc @ 1345 NONAME
+	_ZN11QRadioTuner12cancelSearchEv @ 1346 NONAME
+	_ZN12QMediaObject21notifyIntervalChangedEi @ 1347 NONAME
+	_ZN12QMediaObject24metaDataAvailableChangedEb @ 1348 NONAME
+	_ZN12QMediaObject4bindEP7QObject @ 1349 NONAME
+	_ZN12QMediaObject6unbindEP7QObject @ 1350 NONAME
+	_ZN12QMediaObjectC1EP7QObjectP13QMediaService @ 1351 NONAME
+	_ZN12QMediaPlayer19getStaticMetaObjectEv @ 1352 NONAME
+	_ZN12QSoundEffect13sourceChangedEv @ 1353 NONAME
+	_ZN12QSoundEffect4playEv @ 1354 NONAME
+	_ZN12QVideoWidget11setContrastEi @ 1355 NONAME
+	_ZN12QVideoWidget16staticMetaObjectE @ 1356 NONAME DATA 16
+	_ZN12QVideoWidget9showEventEP10QShowEvent @ 1357 NONAME
+	_ZN12QVideoWidgetD2Ev @ 1358 NONAME
+	_ZN13QMediaControl11qt_metacallEN11QMetaObject4CallEiPPv @ 1359 NONAME
+	_ZN13QMediaControlD0Ev @ 1360 NONAME
+	_ZN14QMediaPlaylist11qt_metacastEPKc @ 1361 NONAME
+	_ZN14QMediaPlaylist11removeMediaEii @ 1362 NONAME
+	_ZN14QMediaPlaylist15setCurrentIndexEi @ 1363 NONAME
+	_ZN14QMediaPlaylist21mediaAboutToBeRemovedEii @ 1364 NONAME
+	_ZN14QMediaPlaylist4nextEv @ 1365 NONAME
+	_ZN14QMediaPlaylist8addMediaERK5QListI13QMediaContentE @ 1366 NONAME
+	_ZN14QMediaPlaylist8previousEv @ 1367 NONAME
 
