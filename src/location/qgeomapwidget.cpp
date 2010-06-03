@@ -139,6 +139,26 @@ void QGeoMapWidget::keyPressEvent(QKeyEvent *event)
     event->accept();
 }
 
+void QGeoMapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
+{
+    if (!d_ptr->manager || !d_ptr->viewport) {
+        return;
+    }
+
+    if (event->delta() > 0) { //zoom in
+        if (d_ptr->viewport->zoomLevel() > d_ptr->manager->minimumZoomLevel()) {
+            setZoomLevel(d_ptr->viewport->zoomLevel() + 1);
+            d_ptr->manager->updateMapImage(d_ptr->viewport);
+        }
+    } else { //zoom out
+        if (d_ptr->viewport->zoomLevel() < d_ptr->manager->maximumZoomLevel()) {
+            setZoomLevel(d_ptr->viewport->zoomLevel() - 1);
+            d_ptr->manager->updateMapImage(d_ptr->viewport);
+        }
+    }
+    event->accept();
+}
+
 QPainterPath QGeoMapWidget::shape() const
 {
     QPainterPath path;

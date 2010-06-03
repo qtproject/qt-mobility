@@ -174,7 +174,7 @@ void QGeoTiledMapViewport::setZoomLevel(qreal zoomLevel)
     qulonglong cx = d->x + qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
     qulonglong cy = d->y + qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));
 
-    d->zoomFactor = 1 << qRound64(d->engine->maximumZoomLevel() - d->zoomLevel);
+    d->zoomFactor = static_cast<qulonglong>(1) << qRound64(d->engine->maximumZoomLevel() - d->zoomLevel);
 
     d->x = cx - qRound(d->zoomFactor * (d->viewportSize.width() / 2.0));
     d->y = cy - qRound(d->zoomFactor * (d->viewportSize.height() / 2.0));

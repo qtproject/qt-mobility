@@ -161,6 +161,7 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
     int tileHeight = tileSize().height();
     int tileWidth = tileSize().width();
 
+    //TODO: need to have some form of type checking in here
     QGeoTiledMapViewport *tiledViewport = static_cast<QGeoTiledMapViewport*>(viewport);
 
     QList<QGeoTiledMapRequest> requests;

@@ -93,6 +93,7 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
     void keyPressEvent(QKeyEvent *event);
+    void wheelEvent(QGraphicsSceneWheelEvent* event);
 
 private:
     void mapImageUpdated();
