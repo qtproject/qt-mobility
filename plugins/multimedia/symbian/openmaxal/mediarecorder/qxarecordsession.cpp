@@ -89,8 +89,8 @@ m_previousState(QMediaRecorder::StoppedState)
             m_audioencodersettings.setCodec("pcm");
             m_audioencodersettings.setBitRate(0);
             m_audioencodersettings.setChannelCount(-1);
-            m_audioencodersettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-            m_audioencodersettings.setQuality(QtMultimedia::NormalQuality);
+            m_audioencodersettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+            m_audioencodersettings.setQuality(QtMultimediaKit::NormalQuality);
             m_audioencodersettings.setSampleRate(-1);
             QT_TRACE1("Initialized implementation");
         }
@@ -595,7 +595,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     m_impl->setContainerType(tempPtr);
 
     /* Validate and set bitrate only if encoding mode is other than quality encoding */
-    if (m_audioencodersettings.encodingMode() != QtMultimedia::ConstantQualityEncoding) {
+    if (m_audioencodersettings.encodingMode() != QtMultimediaKit::ConstantQualityEncoding) {
         if (m_audioencodersettings.bitRate() == -1) {
             m_impl->setOptimalBitRate();
         }
@@ -635,21 +635,21 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     }
 
     switch (m_audioencodersettings.encodingMode()) {
-    case QtMultimedia::ConstantQualityEncoding: {
+    case QtMultimediaKit::ConstantQualityEncoding: {
             switch (m_audioencodersettings.quality()) {
-            case QtMultimedia::VeryLowQuality:
+            case QtMultimediaKit::VeryLowQuality:
                 m_impl->setVeryLowQuality();
                 break;
-            case QtMultimedia::LowQuality:
+            case QtMultimediaKit::LowQuality:
                 m_impl->setLowQuality();
                 break;
-            case QtMultimedia::NormalQuality:
+            case QtMultimediaKit::NormalQuality:
                 m_impl->setNormalQuality();
                 break;
-            case QtMultimedia::HighQuality:
+            case QtMultimediaKit::HighQuality:
                 m_impl->setHighQuality();
                 break;
-            case QtMultimedia::VeryHighQuality:
+            case QtMultimediaKit::VeryHighQuality:
                 m_impl->setVeryHighQuality();
                 break;
             default:
@@ -659,7 +659,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }; /* end of switch (m_audioencodersettings.quality())*/
         }
         break;
-    case QtMultimedia::ConstantBitRateEncoding: {
+    case QtMultimediaKit::ConstantBitRateEncoding: {
             TInt32 status = m_impl->setCBRMode();
             if (status == KErrNotSupported) {
                 emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));
@@ -673,7 +673,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }
         }
         break;
-    case QtMultimedia::AverageBitRateEncoding: {
+    case QtMultimediaKit::AverageBitRateEncoding: {
             TInt32 status = m_impl->setVBRMode();
             if (status == KErrNotSupported) {
                 emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));
@@ -687,7 +687,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
             }
         }
         break;
-    case QtMultimedia::TwoPassEncoding:
+    case QtMultimediaKit::TwoPassEncoding:
         // fall through
     default: {
             emit error(QMediaRecorder::FormatError, tr("Invalid encoding mode setting"));
@@ -697,7 +697,7 @@ bool QXARecordSession::setEncoderSettingsToImpl()
     }; /* switch (m_audioencodersettings.encodingMode()) */
 
     /* Validate and set bitrate only if encoding mode is other than quality encoding */
-    if (m_audioencodersettings.encodingMode() != QtMultimedia::ConstantQualityEncoding) {
+    if (m_audioencodersettings.encodingMode() != QtMultimediaKit::ConstantQualityEncoding) {
         if (m_audioencodersettings.sampleRate() == -1) {
             m_impl->setOptimalSampleRate();
         }

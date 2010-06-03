@@ -90,7 +90,7 @@ public:
 /*!
     \class QAudioDeviceInfo
     \brief The QAudioDeviceInfo class provides an interface to query audio devices and their functionality.
-    \inmodule QtMultimedia
+    \inmodule QtMultimediaKit
     \ingroup multimedia
 
     \since 4.6

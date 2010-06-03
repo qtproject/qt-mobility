@@ -95,7 +95,7 @@ public:
     bool isValid() const;
 
     bool isAvailable() const;
-    QtMultimedia::AvailabilityError availabilityError() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
     
     void start();
     void stop();
