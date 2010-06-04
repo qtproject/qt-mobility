@@ -43,10 +43,17 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass GalleryRemoveRequest GalleryRemoveRequest
+    \brief The GalleryUrlRequest element allows you to find the id and type
+    of an item from its URL.
+
+    This is element is part of the \bold {QtMobility.gallery 1.0} module.
+*/
+
 GalleryUrlRequest::GalleryUrlRequest(QObject *parent)
     : QObject(parent)
 {
-    connect(&m_request, SIGNAL(supportedChanged()), this, SIGNAL(supportedChanged()));
     connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
     connect(&m_request, SIGNAL(cancelled()), this, SIGNAL(cancelled()));
     connect(&m_request, SIGNAL(stateChanged(QGalleryAbstractRequest::State)),
@@ -58,6 +65,96 @@ GalleryUrlRequest::GalleryUrlRequest(QObject *parent)
     connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
     connect(&m_request, SIGNAL(itemChanged()), this, SIGNAL(itemChanged()));
 }
+
+/*!
+    \qmlproperty gallery GalleryRemoveRequest::gallery
+
+    This property holds the gallery a request should return results from.
+*/
+
+/*!
+    \qmlproperty enum GalleryRemoveRequest::state
+
+    This property holds the state of a request.
+*/
+
+/*!
+    \qmlproperty enum GalleryRemoveRequest::result
+
+    The property holds the result of a request.
+*/
+
+/*!
+    \qmlproperty int GalleryRemoveRequest::currentProgress
+
+    This property holds the current progress value.
+*/
+
+/*!
+    \qmlproperty int GalleryRemoveRequest::maximumProgress
+
+    This property holds the maximum progress value.
+*/
+
+/*!
+    \qmlproperty url GalleryRemoveRequest::itemUrl
+
+    This property holds the url to find the id and type of.
+*/
+
+/*!
+    \qmlpropery galleryId GalleryRemoveRequest::itemId
+
+    This property holds the id of the item identified by itemUrl.
+*/
+
+/*!
+    \qmlproperty string GalleryRemoveRequest::itemType
+
+    This property holds the type of the item identified by itemUrl.
+*/
+
+/*!
+    \qmlmethod GalleryRemoveRequest::execute()
+
+    Executes a remove request.
+*/
+
+/*!
+    \qmlmethod GalleryRemoveRequest::cancel()
+
+    Cancels an executing request.
+*/
+
+/*!
+    \qmlmethod GalleryRemoveRequest::clear()
+
+    Clears the results of a request.
+*/
+
+/*!
+    \qmlsignal GalleryRemoveRequest::onSucceeded()
+
+    Signals that a request has finished successfully.
+*/
+
+/*!
+    \qmlsignal GalleryRemoveRequest::onCancelled()
+
+    Signals that a request was cancelled.
+*/
+
+/*!
+    \qmlsignal GalleryRemoveRequest::onFailed(error)
+
+    Signals that a request failed with the given \a error.
+*/
+
+/*!
+    \qmlsignal GalleryRemoveRequest::onFinished(result)
+
+    Signals that a request finished with the given \a result.
+*/
 
 void GalleryUrlRequest::classBegin()
 {

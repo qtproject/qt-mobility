@@ -45,6 +45,37 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+    \qmlclass GalleryFilter GalleryFilter
+    \brief The GalleryFilter element provides filtering criteria for a gallery
+    query.
+
+    \qml
+    GalleryFilter {
+        property: "keywords"
+        value: "holiday"
+    }
+    \endqml
+*/
+
+/*!
+    \qmlproperty GalleryFilter::property
+
+    This property holds the name of the property to filter against.
+*/
+
+/*!
+    \qmlproperty GalleryFilter::value
+
+    This property holds the value to filter using.
+*/
+
+/*!
+    \qmlproperty GalleryFilter::matchFlags
+
+    This property holds how a value is filtered against a property.
+*/
+
 QGalleryFilter GalleryFilter::filter() const
 {
     QGalleryMetaDataFilter filter;
@@ -54,6 +85,24 @@ QGalleryFilter GalleryFilter::filter() const
     return filter;
 }
 
+/*!
+    \qmlclass GalleryPropertyLessThan GalleryFilterLessThan
+    \brief The GalleryPropertyLessThan element provides a gallery filter which
+    tests if a property value is less than a value.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyLessThan::property
+
+    This property holds the name of the property the filter tests.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyLessThan::value
+
+    This property holds the value the filter tests against.
+*/
+
 QGalleryFilter GalleryFilterLessThan::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
@@ -61,6 +110,24 @@ QGalleryFilter GalleryFilterLessThan::filter() const
     filter.setLessThan(m_value);
     return filter;
 }
+
+/*!
+    \qmlclass GalleryPropertyLessThan GalleryFilterLessEqualsThan
+    \brief The GalleryPropertyLessEqualThan element provides a gallery filter
+    which tests if a property value is less than or equals a value.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyLessThan::property
+
+    This property holds the name of the property the filter tests.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyLessThan::value
+
+    This property holds the value the filter tests against.
+*/
 
 QGalleryFilter GalleryFilterLessThanEquals::filter() const
 {
@@ -70,6 +137,24 @@ QGalleryFilter GalleryFilterLessThanEquals::filter() const
     return filter;
 }
 
+/*!
+    \qmlclass GalleryPropertyGreaterThan GalleryFilterGreaterThan
+    \brief The GalleryPropertyGreaterThan element provides a gallery filter
+    which tests if a property value is greater than a value.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyGreaterThan::property
+
+    This property holds the name of the property the filter tests.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyGreaterThan::value
+
+    This property holds the value the filter tests against.
+*/
+
 QGalleryFilter GalleryFilterGreaterThan::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
@@ -77,6 +162,24 @@ QGalleryFilter GalleryFilterGreaterThan::filter() const
     filter.setGreaterThan(m_value);
     return filter;
 }
+
+/*!
+    \qmlclass GalleryPropertyGreaterThanEquals GalleryFilterGreaterThanEquals
+    \brief The GalleryPropertyGreaterThanEquals element provides a gallery filter which
+    tests if a property value is greater than or equals a value.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyGreaterThanEquals::property
+
+    This property holds the name of the property the filter tests.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyGreaterThanEquals::value
+
+    This property holds the value the filter tests against.
+*/
 
 QGalleryFilter GalleryFilterGreaterThanEquals::filter() const
 {
@@ -86,6 +189,30 @@ QGalleryFilter GalleryFilterGreaterThanEquals::filter() const
     return filter;
 }
 
+/*!
+    \qmlclass GalleryPropertyExclusiveRange GalleryFilterExclusiveRange
+    \brief The GalleryPropertyExclusiveRange element provides a gallery filter
+    which tests if a property value is between but not equal to two values.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyExclusiveRange::property
+
+    This property holds the name of the property the filter tests.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyExclusiveRange::minimum
+
+    This property holds the minimum value the filter tests against.
+*/
+
+/*!
+    \qmlproperty GalleryPropertyExclusiveRange::maximum
+    
+    This property holds the maximum value the filter tests against.
+*/
+
 QGalleryFilter GalleryFilterExclusiveRange::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
@@ -94,6 +221,30 @@ QGalleryFilter GalleryFilterExclusiveRange::filter() const
     return filter;
 }
 
+/*!
+    \qmlclass GalleryInclusivePropertyRange GalleryFilterInclusiveRange
+    \brief The GalleryInclusivePropertyRange element provides a gallery filter
+    which tests if a property value is between or equal to two values.
+*/
+
+/*!
+    \qmlproperty GalleryInclusivePropertyRange::property
+
+    This property holds the name of the property the filter tests.
+*/
+
+/*!
+    \qmlproperty GalleryInclusivePropertyRange::minimum
+
+    This property holds the minimum value the filter tests against.
+*/
+
+/*!
+    \qmlproperty GalleryInclusivePropertyRange::maximum
+    
+    This property holds the maximum value the filter tests against.
+*/
+
 QGalleryFilter GalleryFilterInclusiveRange::filter() const
 {
     QGalleryMetaDataRangeFilter filter;
@@ -101,6 +252,17 @@ QGalleryFilter GalleryFilterInclusiveRange::filter() const
     filter.setInclusiveRange(m_minimumValue, m_maximumValue);
     return filter;
 }
+
+/*!
+    \qmlclass GalleryFilterUnion GalleryFilterUnion
+    \brief The GalleryFilterUnion elements provides a union of gallery filters.
+*/
+
+/*!
+    \qmlproperty filterlist GalleryFilterUnion::filters
+
+    This property holds the children of a union filter.
+*/
 
 QGalleryFilter GalleryFilterUnion::filter() const
 {
@@ -125,6 +287,18 @@ QGalleryFilter GalleryFilterUnion::filter() const
     }
     return unionFilter;
 }
+
+/*!
+    \qmlclass GalleryFilterIntersection GalleryFilterIntersection
+    \brief The GalleryFilterIntersection elements provides a intersection of
+    gallery filters.
+*/
+
+/*!
+    \qmlproperty filterlist GalleryFilterIntersection::filters
+
+    This property holds the children of a intersection filter.
+*/
 
 QGalleryFilter GalleryFilterIntersection::filter() const
 {
