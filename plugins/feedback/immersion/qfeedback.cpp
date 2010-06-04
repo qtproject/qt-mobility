@@ -158,9 +158,9 @@ QFeedbackDevice::Type QFeedbackImmersion::convert(VibeInt32 t)
     case VIBE_DEVACTUATORTYPE_PIEZO_WAVE:
     case VIBE_DEVACTUATORTYPE_PIEZO:
     case VIBE_DEVACTUATORTYPE_ERM:
-        return QFeedbackDevice::Touch;
+        return QFeedbackDevice::PrimaryDisplay;
     default:
-        return QFeedbackDevice::Vibra;
+        return QFeedbackDevice::Device;
     }
 }
 

@@ -185,7 +185,7 @@ protected:
 
 
 private:
-    Q_DECLARE_PRIVATE(QFileFeedbackEffect);
+    Q_DECLARE_PRIVATE(QFileFeedbackEffect)
 };
 
 QTM_END_NAMESPACE

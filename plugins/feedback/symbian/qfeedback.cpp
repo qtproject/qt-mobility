@@ -115,9 +115,9 @@ QFeedbackDevice QFeedbackSymbian::defaultDevice(QFeedbackDevice::Type t)
 QList<QFeedbackDevice> QFeedbackSymbian::devices()
 {
     QList<QFeedbackDevice> ret;
-    ret << createFeedbackDevice(QFeedbackDevice::Vibra);
+    ret << createFeedbackDevice(QFeedbackDevice::Device);
     if (QTouchFeedback::Instance()->TouchFeedbackSupported()) {
-        ret << createFeedbackDevice(QFeedbackDevice::Touch);
+        ret << createFeedbackDevice(QFeedbackDevice::PrimaryDisplay);
     }
     return ret;
 }
@@ -126,10 +126,10 @@ QString QFeedbackSymbian::deviceName(const QFeedbackDevice &dev)
 {
     switch(dev.id())
     {
-    case QFeedbackDevice::Vibra:
-        return QLatin1String("Vibra");
-    case QFeedbackDevice::Touch:
-        return QLatin1String("Touch");
+    case QFeedbackDevice::Device:
+        return QLatin1String("Whole Device");
+    case QFeedbackDevice::PrimaryDisplay:
+        return QLatin1String("Primary Display");
     }
     return QString();
 }
@@ -139,7 +139,7 @@ QFeedbackDevice::State QFeedbackSymbian::deviceState(const QFeedbackDevice &dev)
     QFeedbackDevice::State ret = QFeedbackDevice::Unknown;
     switch(dev.id())
     {
-    case QFeedbackDevice::Vibra:
+    case QFeedbackDevice::Device:
         switch (vibra()->VibraStatus())
         {
         case CHWRMVibra::EVibraStatusStopped:
@@ -152,7 +152,7 @@ QFeedbackDevice::State QFeedbackSymbian::deviceState(const QFeedbackDevice &dev)
             break;
         }
         break;
-    case QFeedbackDevice::Touch:
+    case QFeedbackDevice::PrimaryDisplay:
         //there is no way of getting the state of the device!
         break;
     default:
@@ -175,9 +175,9 @@ bool QFeedbackSymbian::isEnabled(const QFeedbackDevice &dev)
 {
     switch(dev.id())
     {
-    case QFeedbackDevice::Vibra:
+    case QFeedbackDevice::Device:
         return m_vibraActive;
-    case QFeedbackDevice::Touch:
+    case QFeedbackDevice::PrimaryDisplay:
         return QTouchFeedback::Instance()->FeedbackEnabledForThisApp();
     }
     return false;
@@ -187,10 +187,10 @@ void QFeedbackSymbian::setEnabled(const QFeedbackDevice &dev, bool enabled)
 {
     switch(dev.id())
     {
-    case QFeedbackDevice::Vibra:
+    case QFeedbackDevice::Device:
         m_vibraActive = enabled;
         break;
-    case QFeedbackDevice::Touch:
+    case QFeedbackDevice::PrimaryDisplay:
         return QTouchFeedback::Instance()->SetFeedbackEnabledForThisApp(enabled);
     }
 }
@@ -206,10 +206,10 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QFeedbac
 
         switch(effect->device().id())
         {
-        case QFeedbackDevice::Vibra:
+        case QFeedbackDevice::Device:
             vibra()->StartVibraL(effect->duration() - effect->currentTime(), qRound(100 * effect->intensity()));
             break;
-        case QFeedbackDevice::Touch:
+        case QFeedbackDevice::PrimaryDisplay:
             QTouchFeedback::Instance()->ModifyFeedback(defaultWidget(), qRound(100 * effect->intensity()));
             break;
         default:
@@ -227,7 +227,7 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QFeedbackEf
 {
     switch(effect->device().id())
     {
-    case QFeedbackDevice::Vibra:
+    case QFeedbackDevice::Device:
         switch(effect->state())
         {
         case QAbstractAnimation::Stopped:
@@ -241,7 +241,7 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QFeedbackEf
         break;
 
         break;
-    case QFeedbackDevice::Touch:
+    case QFeedbackDevice::PrimaryDisplay:
         switch(effect->state())
         {
         case QAbstractAnimation::Paused:

@@ -331,7 +331,9 @@ bool QFileFeedbackEffect::setLoaded(bool load)
         return ret;
     }
 
-    if (ret = QFileFeedbackInterface::instance()->setLoaded(this, load))
+
+    ret = QFileFeedbackInterface::instance()->setLoaded(this, load);
+    if (ret)
         d->loaded = load;
 
     return ret;

@@ -55,12 +55,14 @@ class Q_FEEDBACK_EXPORT QFeedbackDevice
 {
     Q_GADGET
     Q_ENUMS(Type)
+    Q_ENUMS(Capability)
+    Q_ENUMS(State)
 public:
     enum Type {
         //should we have different type for actuators: vibra, motor...
         None,
-        Vibra,
-        Touch
+        Device,
+        PrimaryDisplay
     };
 
     enum Capability {
