@@ -69,7 +69,6 @@ Rectangle {
 
     Item {
         id: content
-        transformOrigin: Item.Center
         anchors.centerIn: parent
         Text {
             id: text
@@ -122,9 +121,8 @@ Rectangle {
         ]
 
         transitions: Transition {
-            NumberAnimation { matchProperties: "rotation"; easing: "InOutQuad"; duration: 400 }
+            NumberAnimation { properties: "rotation"; easing.type: Easing.OutBounce; duration: 400 }
         }
     }
-
-
 }
+
