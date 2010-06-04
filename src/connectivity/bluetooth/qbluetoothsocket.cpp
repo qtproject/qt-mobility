@@ -244,6 +244,14 @@ QBluetoothSocket::~QBluetoothSocket()
 }
 
 /*!
+    \reimp
+*/
+bool QBluetoothSocket::isSequential() const
+{
+    return true;
+}
+
+/*!
     Returns the number of incoming bytes that are waiting to be read.
 
     \sa bytesToWrite(), read()

@@ -94,6 +94,8 @@ public:
     void abort();
     virtual void close();
 
+    bool isSequential() const;
+
     virtual qint64 bytesAvailable() const;
     virtual qint64 bytesToWrite() const;
 
