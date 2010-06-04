@@ -260,6 +260,172 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         QTest::newRow("created and last modified") << properties
             << (QList<QOrganizerItemDetail>() << timestamp);
     }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=DAILY"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule daily")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=WEEKLY"));
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule weekly")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=MONTHLY"));
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule monthly")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=YEARLY"));
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule yearly")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+
+        rrule.setValue(QLatin1String("FREQ=MONTHLY;INTERVAL=2;BYDAY=TU"));
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+        recurrenceRule.setInterval(2);
+        recurrenceRule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Tuesday);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule monthly")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=MONTHLY;BYMONTHDAY=1,-3"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+        recurrenceRule.setDaysOfMonth(QList<int>() << 1 << -3);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule bymonthday")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=YEARLY;BYWEEKNO=1,-3"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        recurrenceRule.setWeeksOfYear(QList<int>() << 1 << -3);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule byweekno")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=YEARLY;BYMONTH=1,10"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        recurrenceRule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+                << QOrganizerItemRecurrenceRule::January
+                << QOrganizerItemRecurrenceRule::October);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule bymonth")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=YEARLY;BYYEARDAY=1,366,-1"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+        recurrenceRule.setDaysOfYear(QList<int>() << 1 << 366 << -1);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule byyearday")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=WEEKLY;COUNT=4;INTERVAL=2;BYDAY=TU,SU;WKST=SU"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        recurrenceRule.setInterval(2);
+        recurrenceRule.setCount(4);
+        recurrenceRule.setDaysOfWeek(QList<Qt::DayOfWeek>() << Qt::Tuesday << Qt::Sunday);
+        recurrenceRule.setWeekStart(Qt::Sunday);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule wkst")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+        recurrenceRule.setDaysOfWeek(QList<Qt::DayOfWeek>()
+                << Qt::Monday << Qt::Tuesday << Qt::Wednesday << Qt::Thursday << Qt::Friday);
+        recurrenceRule.setPosition(QList<int>() << -1);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule setbypos")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=DAILY;UNTIL=20000131;BYMONTH=1"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        recurrenceRule.setEndDate(QDate(2000, 1, 31));
+        recurrenceRule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+                << QOrganizerItemRecurrenceRule::January);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule until")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
+
+    {
+        QVersitProperty rrule;
+        rrule.setName(QLatin1String("RRULE"));
+        rrule.setValue(QLatin1String("FREQ=DAILY;COUNT=5;BYMONTH=1"));
+        QOrganizerItemRecurrence recurrence;
+        QOrganizerItemRecurrenceRule recurrenceRule;
+        recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Daily);
+        recurrenceRule.setCount(5);
+        recurrenceRule.setMonths(QList<QOrganizerItemRecurrenceRule::Month>()
+                << QOrganizerItemRecurrenceRule::January);
+        recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+        QTest::newRow("rrule count")
+            << (QList<QVersitProperty>() << rrule)
+            << (QList<QOrganizerItemDetail>() << recurrence);
+    }
 }
 
 QTEST_MAIN(tst_QVersitOrganizerImporter)

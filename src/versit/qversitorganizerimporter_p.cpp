@@ -115,6 +115,10 @@ void QVersitOrganizerImporterPrivate::importProperty(
             success = createEndDateTime(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("DURATION")) {
             success = createDuration(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("RRULE")) {
+            success = createRecurrenceRule(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("EXRULE")) {
+            success = createRecurrenceRule(property, item, &updatedDetails);
         }
     }
 
@@ -204,6 +208,8 @@ bool QVersitOrganizerImporterPrivate::createStartDateTime(
     return true;
 }
 
+/*! Set the endDateTime field of the EventTimeRange detail.
+ */
 bool QVersitOrganizerImporterPrivate::createEndDateTime(
         const QVersitProperty& property,
         QOrganizerItem* item,
@@ -219,6 +225,7 @@ bool QVersitOrganizerImporterPrivate::createEndDateTime(
     mDurationSpecified = false;
     return true;
 }
+
 
 /*! Sets the endDateTime field of the EventTimeRange detail using a DURATION property.
  */
@@ -245,6 +252,9 @@ bool QVersitOrganizerImporterPrivate::createDuration(
     return true;
 }
 
+/*! Parses \a str as an ISO 8601 datetime in basic format, either in UTC timezone or floating
+ * timezone.  Returns an invalid QDateTime if the string cannot be parsed.
+ */
 QDateTime QVersitOrganizerImporterPrivate::parseDateTime(QString str)
 {
     bool utc = str.endsWith(QLatin1Char('Z'), Qt::CaseInsensitive);
@@ -254,6 +264,190 @@ QDateTime QVersitOrganizerImporterPrivate::parseDateTime(QString str)
     if (utc)
         dt.setTimeSpec(Qt::UTC);
     return dt;
+}
+
+/*!
+ * Imports a RRULE, EXRULE, RDATE or EXDATE property
+ */
+bool QVersitOrganizerImporterPrivate::createRecurrenceRule(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QOrganizerItemRecurrenceRule rule;
+    if (!parseRecurRule(property.value(), &rule))
+        return false;
+    QOrganizerItemRecurrence detail(item->detail<QOrganizerItemRecurrence>());
+    if (property.name() == QLatin1String("RRULE")) {
+        detail.setRecurrenceRules(detail.recurrenceRules() << rule);
+    } else if (property.name() == QLatin1String("EXRULE")) {
+        detail.setExceptionRules(detail.exceptionRules() << rule);
+    } 
+    updatedDetails->append(detail);
+    return true;
+}
+
+/*!
+ * Parses an iCalendar recurrence rule string \a str and puts the result in \a rule.
+ * Return true on success, false on failure.
+ */
+bool QVersitOrganizerImporterPrivate::parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule)
+{
+    QStringList parts = str.split(QLatin1Char(';'));
+    if (parts.size() == 0)
+        return false;
+    
+    QString freqPart = parts.takeFirst();
+    QStringList freqParts = freqPart.split(QLatin1Char('='));
+    if (freqParts.size() != 2)
+        return false;
+    if (freqParts.at(0) != QLatin1String("FREQ"))
+        return false;
+    QString freqValue = freqParts.at(1);
+    if (freqValue == QLatin1String("DAILY")) {
+        rule->setFrequency(QOrganizerItemRecurrenceRule::Daily);
+    } else if (freqValue == QLatin1String("WEEKLY")) {
+        rule->setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+    } else if (freqValue == QLatin1String("MONTHLY")) {
+        rule->setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    } else if (freqValue == QLatin1String("YEARLY")) {
+        rule->setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    } else {
+        return false;
+    }
+
+    foreach (const QString& part, parts) {
+        QStringList keyValue = part.split(QLatin1Char('='));
+        if (keyValue.size() != 2)
+            return false;
+        parseRecurFragment(keyValue.at(0), keyValue.at(1), rule);
+    }
+    return true;
+}
+
+/*!
+ * Parses a fragment of an iCalendar string (the part between the semicolons) and updates \a rule.
+ * \a key is the part of the fragment before the equals sign and \a value is the part after.
+ */
+void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, const QString& value,
+                                                         QOrganizerItemRecurrenceRule* rule)
+{
+    if (key == QLatin1String("INTERVAL")) {
+        bool ok;
+        int n = value.toInt(&ok);
+        if (ok && n >= 1)
+            rule->setInterval(n);
+    } else if (key == QLatin1String("COUNT")) {
+        bool ok;
+        int count = value.toInt(&ok);
+        if (ok && count >= 0) {
+            rule->setCount(count);
+        }
+    } else if (key == QLatin1String("UNTIL")) {
+        QDate date;
+        if (value.contains(QLatin1Char('T'))) {
+            QDateTime dt = parseDateTime(value);
+            date = dt.date();
+        } else {
+            date = QDate::fromString(value, QLatin1String("yyyyMMdd"));
+        }
+        if (date.isValid())
+            rule->setEndDate(date);
+    } else if (key == QLatin1String("BYDAY")) {
+        QList<Qt::DayOfWeek> days;
+        QStringList dayParts = value.split(QLatin1Char(','));
+        foreach (const QString& dayStr, dayParts) {
+            int day = parseDayOfWeek(dayStr);
+            if (day != -1) {
+                days << (Qt::DayOfWeek)day;
+            }
+        }
+        if (!days.isEmpty()) {
+            rule->setDaysOfWeek(days);
+        }
+    } else if (key == QLatin1String("BYMONTHDAY")) {
+        QList<int> days = parseIntList(value, -31, 31);
+        if (!days.isEmpty()) {
+            rule->setDaysOfMonth(days);
+        }
+    } else if (key == QLatin1String("BYWEEKNO")) {
+        QList<int> weeks = parseIntList(value, -53, 53);
+        if (!weeks.isEmpty()) {
+            rule->setWeeksOfYear(weeks);
+        }
+    } else if (key == QLatin1String("BYMONTH")) {
+        QList<QOrganizerItemRecurrenceRule::Month> months;
+        QStringList monthParts = value.split(QLatin1Char(','));
+        foreach (const QString& monthParts, monthParts) {
+            bool ok;
+            int month = monthParts.toInt(&ok);
+            if (ok && month >= 1 && month <= 12) {
+                months << (QOrganizerItemRecurrenceRule::Month)month;
+            }
+        }
+        if (!months.isEmpty()) {
+            rule->setMonths(months);
+        }
+    } else if (key == QLatin1String("BYYEARDAY")) {
+        QList<int> days = parseIntList(value, -366, 366);
+        if (!days.isEmpty()) {
+            rule->setDaysOfYear(days);
+        }
+    } else if (key == QLatin1String("BYSETPOS")) {
+        QList<int> poss = parseIntList(value, -366, 366);
+        if (!poss.isEmpty()) {
+            rule->setPosition(poss);
+        }
+    } else if (key == QLatin1String("WKST")) {
+        int day = parseDayOfWeek(value);
+        if (day != -1) {
+            rule->setWeekStart((Qt::DayOfWeek)day);
+        }
+    }
+}
+
+/*!
+ * Parses and returns a comma-separated list of integers.  Only non-zero values between \a min and
+ * \a max (inclusive) are added
+ */
+QList<int> QVersitOrganizerImporterPrivate::parseIntList(const QString& str, int min, int max)
+{
+    QList<int> values;
+    QStringList parts = str.split(QLatin1Char(','));
+    foreach (const QString& part, parts) {
+        bool ok;
+        int value = part.toInt(&ok);
+        if (ok && value >= min && value <= max && value != 0) {
+            values << value;
+        }
+    }
+    return values;
+}
+
+/*!
+ * Parses an iCalendar two-character string representing a day of week and returns an int
+ * corresponding to Qt::DayOfWeek.  Returns -1 on parse failure.
+ */
+int QVersitOrganizerImporterPrivate::parseDayOfWeek(const QString& str)
+{
+    if (str == QLatin1String("MO")) {
+        return Qt::Monday;
+    } else if (str == QLatin1String("TU")) {
+        return Qt::Tuesday;
+    } else if (str == QLatin1String("WE")) {
+        return Qt::Wednesday;
+    } else if (str == QLatin1String("TH")) {
+        return Qt::Thursday;
+    } else if (str == QLatin1String("FR")) {
+        return Qt::Friday;
+    } else if (str == QLatin1String("SA")) {
+        return Qt::Saturday;
+    } else if (str == QLatin1String("SU")) {
+        return Qt::Sunday;
+    } else {
+        return -1;
+    }
 }
 
 /*! Parse the iCalendar duration string \a str in an RDP fashion with a two symbol lookahead, and

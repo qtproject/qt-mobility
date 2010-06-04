@@ -54,6 +54,7 @@
 
 #include "qmobilityglobal.h"
 #include "qversitorganizerimporter.h"
+#include "qorganizeritemrecurrence.h"
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItem;
@@ -119,25 +120,41 @@ public:
                              // document with no subsequent DTEND property
 
 private:
-    bool createSimpleDetail(const QVersitProperty& property,
-                            QOrganizerItem* item,
-                            QList<QOrganizerItemDetail>* updatedDetails);
-    bool createTimestampCreated(const QVersitProperty& property,
-                                QOrganizerItem* item,
-                                QList<QOrganizerItemDetail>* updatedDetails);
-    bool createTimestampModified(const QVersitProperty& property,
-                                 QOrganizerItem* item,
-                                 QList<QOrganizerItemDetail>* updatedDetails);
-    bool createStartDateTime(const QVersitProperty& property,
-                             QOrganizerItem* item,
-                             QList<QOrganizerItemDetail>* updatedDetails);
-    bool createEndDateTime(const QVersitProperty& property,
-                           QOrganizerItem* item,
-                           QList<QOrganizerItemDetail>* updatedDetails);
-    bool createDuration(const QVersitProperty& property,
-                        QOrganizerItem* item,
-                        QList<QOrganizerItemDetail>* updatedDetails);
+    bool createSimpleDetail(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createTimestampCreated(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createTimestampModified(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createStartDateTime(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createEndDateTime(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createDuration(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
     QDateTime parseDateTime(QString str);
+
+    bool createRecurrenceRule(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool parseRecurRule(const QString& str, QOrganizerItemRecurrenceRule* rule);
+    void parseRecurFragment(const QString& key, const QString& value,
+                            QOrganizerItemRecurrenceRule* rule);
+    QList<int> parseIntList(const QString& str, int min, int max);
+    int parseDayOfWeek(const QString& str);
 
     // versit property name -> <definition name, field name>:
     QMap<QString, QPair<QString, QString> > mPropertyMappings;

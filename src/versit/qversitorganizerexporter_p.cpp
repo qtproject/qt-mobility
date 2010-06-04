@@ -199,6 +199,7 @@ void QVersitOrganizerExporterPrivate::encodeRecurrence(
     }
 }
 
+/*! Encodes an iCalendar recurrence specification from \a rule. */
 void QVersitOrganizerExporterPrivate::encodeRecurRule(
         const QString& propertyName,
         const QOrganizerItemRecurrenceRule& rule,
@@ -277,6 +278,8 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
     *generatedProperties << property;
 }
 
+/*! Joins \a list together with commas and appends the result to \a str.
+ */
 void QVersitOrganizerExporterPrivate::appendIntList(QString* str, const QList<int>& list) {
     bool first = true;
     foreach (int n, list) {
@@ -287,6 +290,7 @@ void QVersitOrganizerExporterPrivate::appendIntList(QString* str, const QList<in
     }
 }
 
+/*! Converts \a day to a two-character iCalendar string */
 QString QVersitOrganizerExporterPrivate::weekString(Qt::DayOfWeek day) {
     switch (day) {
         case Qt::Monday:
@@ -335,6 +339,7 @@ void QVersitOrganizerExporterPrivate::encodeSimpleProperty(
     *processedFields << fieldName;
 }
 
+/*! Formats \a dateTime in ISO 8601 basic format */
 QString QVersitOrganizerExporterPrivate::encodeDateTime(const QDateTime& dateTime)
 {
     if (dateTime.timeSpec() == Qt::UTC)
