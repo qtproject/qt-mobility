@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGALLERYFILTERREQUEST_H
-#define QGALLERYFILTERREQUEST_H
+#ifndef QGALLERYQUERYREQUEST_H
+#define QGALLERYQUERYREQUEST_H
 
 #include "qgalleryabstractrequest.h"
 
@@ -50,12 +50,12 @@ QTM_BEGIN_NAMESPACE
 
 class QGalleryItemList;
 
-class QGalleryFilterRequestPrivate;
+class QGalleryQueryRequestPrivate;
 
-class Q_GALLERY_EXPORT QGalleryFilterRequest : public QGalleryAbstractRequest
+class Q_GALLERY_EXPORT QGalleryQueryRequest : public QGalleryAbstractRequest
 {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(QGalleryFilterRequest)
+    Q_DECLARE_PRIVATE(QGalleryQueryRequest)
     Q_PROPERTY(QStringList propertyNames READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(QStringList sortPropertyNames READ sortPropertyNames WRITE setSortPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
@@ -67,9 +67,9 @@ class Q_GALLERY_EXPORT QGalleryFilterRequest : public QGalleryAbstractRequest
     Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
     Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
 public:
-    explicit QGalleryFilterRequest(QObject *parent = 0);
-    explicit QGalleryFilterRequest(QAbstractGallery *gallery, QObject *parent = 0);
-    ~QGalleryFilterRequest();
+    explicit QGalleryQueryRequest(QObject *parent = 0);
+    explicit QGalleryQueryRequest(QAbstractGallery *gallery, QObject *parent = 0);
+    ~QGalleryQueryRequest();
 
     QStringList propertyNames() const;
     void setPropertyNames(const QStringList &names);

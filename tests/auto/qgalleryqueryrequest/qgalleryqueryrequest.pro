@@ -1,11 +1,11 @@
-TARGET = tst_qgalleryfilterrequest
+TARGET = tst_qgalleryqueryrequest
 INCLUDEPATH += ../../../src/gallery
 DEPENDPATH += ../../src/gallery
 CONFIG += testcase
 
 include (../../../common.pri)
 
-SOURCES += tst_qgalleryfilterrequest.cpp
+SOURCES += tst_qgalleryqueryrequest.cpp
 
 CONFIG += mobility
 MOBILITY = gallery
