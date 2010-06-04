@@ -115,6 +115,7 @@ private:
             qWarning() << "Spy count mismatch, expected = " << 2 << ", actual = " << spy.count();
             ret = false;
         }
+        spy.clear();
 
         if (request->error() != QLandmarkManager::NoError) {
             qWarning() << "Error mismatch, expected = " << QLandmarkManager::NoError
@@ -1471,6 +1472,161 @@ private slots:
         QLandmarkNearestFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
 
         lms = m_manager->landmarks(filter2);
+        QCOMPARE(lms.size(), 0);
+    }
+
+    void filterLandmarksNearestAsync() {
+        QList<QGeoCoordinate> greenwhichFilterCoords;
+        QList<QGeoCoordinate> datelineFilterCoords;
+        QList<QGeoCoordinate> northPoleFilterCoords;
+        QList<QGeoCoordinate> southPoleFilterCoords;
+        QList<QGeoCoordinate> northFilterCoords;
+        QList<QGeoCoordinate> eastFilterCoords;
+        QList<QGeoCoordinate> northeastFilterCoords;
+
+        QList<QGeoCoordinate> greenwhichLmCoords;
+        QList<QGeoCoordinate> datelineLmCoords;
+        QList<QGeoCoordinate> northPoleLmCoords;
+        QList<QGeoCoordinate> southPoleLmCoords;
+        QList<QGeoCoordinate> northLmCoords;
+        QList<QGeoCoordinate> eastLmCoords;
+        QList<QGeoCoordinate> northeastLmCoords;
+
+        greenwhichFilterCoords << QGeoCoordinate(-0.1, -0.1);
+        greenwhichFilterCoords << QGeoCoordinate(0.1, -0.1);
+        greenwhichFilterCoords << QGeoCoordinate(-0.1, 0.1);
+        greenwhichFilterCoords << QGeoCoordinate(0.1, 0.1);
+
+        datelineFilterCoords << QGeoCoordinate(-0.1, -179.9);
+        datelineFilterCoords << QGeoCoordinate(0.1, -179.9);
+        datelineFilterCoords << QGeoCoordinate(-0.1, 179.9);
+        datelineFilterCoords << QGeoCoordinate(0.1, 179.9);
+
+        northPoleFilterCoords << QGeoCoordinate(89.9, -179.9);
+        northPoleFilterCoords << QGeoCoordinate(89.9, -0.1);
+        northPoleFilterCoords << QGeoCoordinate(89.9, 0.1);
+        northPoleFilterCoords << QGeoCoordinate(89.9, 179.9);
+
+        southPoleFilterCoords << QGeoCoordinate(-89.9, -179.9);
+        southPoleFilterCoords << QGeoCoordinate(-89.9, -0.1);
+        southPoleFilterCoords << QGeoCoordinate(-89.9, 0.1);
+        southPoleFilterCoords << QGeoCoordinate(-89.9, 179.9);
+
+        eastFilterCoords << QGeoCoordinate(-0.1, 10.0);
+        eastFilterCoords << QGeoCoordinate(0.1, 10.0);
+        northFilterCoords << QGeoCoordinate(10.0, -0.1);
+        northFilterCoords << QGeoCoordinate(10.0, 0.1);
+        northeastFilterCoords << QGeoCoordinate(10.0, 10.0);
+
+        greenwhichLmCoords << QGeoCoordinate(-1.0, -1.0);
+        greenwhichLmCoords << QGeoCoordinate(1.0, -1.0);
+        greenwhichLmCoords << QGeoCoordinate(-1.0, 1.0);
+        greenwhichLmCoords << QGeoCoordinate(1.0, 1.0);
+
+        datelineLmCoords << QGeoCoordinate(-1.0, -179.0);
+        datelineLmCoords << QGeoCoordinate(1.0, -179.0);
+        datelineLmCoords << QGeoCoordinate(-1.0, 179.0);
+        datelineLmCoords << QGeoCoordinate(1.0, 179.0);
+
+        northPoleLmCoords << QGeoCoordinate(89.0, -179.0);
+        northPoleLmCoords << QGeoCoordinate(89.0, -1.0);
+        northPoleLmCoords << QGeoCoordinate(89.0, 1.0);
+        northPoleLmCoords << QGeoCoordinate(89.0, 179.0);
+
+        southPoleLmCoords << QGeoCoordinate(-89.0, -179.0);
+        southPoleLmCoords << QGeoCoordinate(-89.0, -1.0);
+        southPoleLmCoords << QGeoCoordinate(-89.0, 1.0);
+        southPoleLmCoords << QGeoCoordinate(-89.0, 179.0);
+
+        eastLmCoords << QGeoCoordinate(-1.0, 11.0);
+        eastLmCoords << QGeoCoordinate(1.0, 11.0);
+        northLmCoords << QGeoCoordinate(11.0, -1.0);
+        northLmCoords << QGeoCoordinate(11.0, 1.0);
+        northeastLmCoords << QGeoCoordinate(11.0, 11.0);
+
+        QList<QList<QGeoCoordinate> > coords;
+        coords << greenwhichLmCoords;
+        coords << datelineLmCoords;
+        coords << northPoleLmCoords;
+        coords << southPoleLmCoords;
+        coords << eastLmCoords;
+        coords << northLmCoords;
+        coords << northeastLmCoords;
+
+        for (int i = 0; i < coords.size(); ++i) {
+            QList<QGeoCoordinate> c = coords.at(i);
+            for (int j = 0; j < c.size(); ++j) {
+                QLandmark lm;
+                lm.setCoordinate(c.at(j));
+                QVERIFY(m_manager->saveLandmark(&lm));
+            }
+        }
+
+        QList<QPair<QGeoCoordinate, QGeoCoordinate> > testSets;
+
+        for (int i = 0; i < greenwhichFilterCoords.size(); ++i) {
+            testSets << QPair<QGeoCoordinate, QGeoCoordinate>(greenwhichFilterCoords.at(i), greenwhichLmCoords.at(i));
+        }
+
+        for (int i = 0; i < datelineFilterCoords.size(); ++i) {
+            testSets << QPair<QGeoCoordinate, QGeoCoordinate>(datelineFilterCoords.at(i), datelineLmCoords.at(i));
+        }
+
+        for (int i = 0; i < northPoleFilterCoords.size(); ++i) {
+            testSets << QPair<QGeoCoordinate, QGeoCoordinate>(northPoleFilterCoords.at(i), northPoleLmCoords.at(i));
+        }
+
+        for (int i = 0; i < southPoleFilterCoords.size(); ++i) {
+            testSets << QPair<QGeoCoordinate, QGeoCoordinate>(southPoleFilterCoords.at(i), southPoleLmCoords.at(i));
+        }
+
+        for (int i = 0; i < northFilterCoords.size(); ++i) {
+            testSets << QPair<QGeoCoordinate, QGeoCoordinate>(northFilterCoords.at(i), northLmCoords.at(i));
+        }
+
+        for (int i = 0; i < eastFilterCoords.size(); ++i) {
+            testSets << QPair<QGeoCoordinate, QGeoCoordinate>(eastFilterCoords.at(i), eastLmCoords.at(i));
+        }
+
+        for (int i = 0; i < northeastFilterCoords.size(); ++i) {
+            testSets << QPair<QGeoCoordinate, QGeoCoordinate>(northeastFilterCoords.at(i), northeastLmCoords.at(i));
+        }
+
+        for (int i = 0; i < testSets.size(); ++i) {
+            QGeoCoordinate filterCoord = testSets.at(i).first;
+            QGeoCoordinate lmCoord = testSets.at(i).second;
+            QLandmarkNearestFilter filter(filterCoord);
+            QLandmarkFetchRequest fetchRequest(m_manager);
+            fetchRequest.setFilter(filter);
+            QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+            fetchRequest.start();
+
+            QVERIFY(waitForAsync(spy, &fetchRequest));
+            QList<QLandmark> lms = fetchRequest.landmarks();
+
+            QCOMPARE(lms.size(), 1);
+            QCOMPARE(lms.at(0).coordinate(), lmCoord);
+        }
+
+        QLandmarkNearestFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
+
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        fetchRequest.setFilter(filter1);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        QList<QLandmark> lms = fetchRequest.landmarks();
+
+        QCOMPARE(lms.size(), 1);
+        QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
+
+        QLandmarkNearestFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
+        fetchRequest.setFilter(filter2);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        lms = fetchRequest.landmarks();
         QCOMPARE(lms.size(), 0);
     }
 
