@@ -1193,63 +1193,11 @@ int QGalleryTrackerSchema::prepareIdResponse(
     }
 }
 
-int QGalleryTrackerSchema::prepareContainerResponse(
-        QGalleryTrackerItemListArguments *arguments,
-        QGalleryDBusInterfaceFactory *dbus,
-        const QString &containerId,
-        const QStringList &propertyNames,
-        const QStringList &sortPropertyNames) const
-{
-    int result = QGalleryAbstractRequest::Succeeded;
-
-    QString query;
-
-    QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
-    int index = itemTypes.indexOfItemId(containerId);
-
-    if (index != -1) {
-        QXmlStreamWriter xml(&query);
-        xml.writeStartElement(QLatin1String("rdfq:Condition"));
-
-        qt_writeFileContainerCondition(&result, &xml, itemTypes[index].prefix.strip(containerId));
-
-        xml.writeEndElement();
-    } else {
-        QGalleryAggregateTypeList aggregateTypes(qt_galleryAggregateTypeList);
-        index = aggregateTypes.indexOfItemId(containerId);
-
-        if (index != -1) {
-            QXmlStreamWriter xml(&query);
-            xml.writeStartElement(QLatin1String("rdfq:Condition"));
-
-            aggregateTypes[index].writeIdCondition(
-                    &result, &xml, aggregateTypes[index].prefix.strip(containerId));
-
-            xml.writeEndElement();
-        } else {
-            result = QGalleryAbstractRequest::InvalidItemError;
-        }
-    }
-
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return result;
-    } else if (m_itemIndex >= 0) {
-        populateItemArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
-
-        return QGalleryAbstractRequest::Succeeded;
-    } else if (m_aggregateIndex >= 0) {
-        populateAggregateArguments(arguments, dbus, query, propertyNames, sortPropertyNames);
-
-        return QGalleryAbstractRequest::Succeeded;
-    } else {
-        return QGalleryAbstractRequest::ItemTypeError;
-    }
-}
-
 int QGalleryTrackerSchema::prepareFilterResponse(
         QGalleryTrackerItemListArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
-        const QString &containerId,
+        QGalleryAbstractRequest::Scope scope,
+        const QString &scopeItemId,
         const QGalleryFilter &filter,
         const QStringList &propertyNames,
         const QStringList &sortPropertyNames) const
@@ -1258,8 +1206,8 @@ int QGalleryTrackerSchema::prepareFilterResponse(
 
     QString query;
 
-    if (!containerId.isEmpty() || filter.isValid())
-        result = buildFilterQuery(&query, containerId, filter);
+    if (!scopeItemId.isEmpty() || filter.isValid())
+        result = buildFilterQuery(&query, scope, scopeItemId, filter);
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return result;
@@ -1279,15 +1227,16 @@ int QGalleryTrackerSchema::prepareFilterResponse(
 int QGalleryTrackerSchema::prepareCountResponse(
         QGalleryTrackerCountResponseArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
-        const QString &containerId,
+        QGalleryAbstractRequest::Scope scope,
+        const QString &scopeItemId,
         const QGalleryFilter &filter) const
 {
     int result = QGalleryAbstractRequest::Succeeded;
 
     QString query;
 
-    if (!containerId.isEmpty() || filter.isValid())
-        result = buildFilterQuery(&query, containerId, filter);
+    if (!scopeItemId.isEmpty() || filter.isValid())
+        result = buildFilterQuery(&query, scope, scopeItemId, filter);
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return result;
@@ -1339,7 +1288,10 @@ int QGalleryTrackerSchema::prepareCountResponse(
 }
 
 int QGalleryTrackerSchema::buildFilterQuery(
-        QString *query, const QString &containerId, const QGalleryFilter &filter) const
+        QString *query,
+        QGalleryAbstractRequest::Scope scope,
+        const QString &scopeItemId,
+        const QGalleryFilter &filter) const
 {
     const QGalleryItemTypeList itemTypes(qt_galleryItemTypeList);
     const QGalleryAggregateTypeList aggregateTypes(qt_galleryAggregateTypeList);
@@ -1349,20 +1301,29 @@ int QGalleryTrackerSchema::buildFilterQuery(
     QXmlStreamWriter xml(query);
     xml.writeStartElement(QLatin1String("rdfq:Condition"));
 
-    if (!containerId.isEmpty()) {
+    if (!scopeItemId.isEmpty()) {
         if (filter.isValid())
             xml.writeStartElement(QLatin1String("rdfq:and"));
 
         int index;
 
-        if ((index = itemTypes.indexOfItemId(containerId)) != -1) {
-            qt_writeFileScopeCondition(
-                    &result,
-                    &xml,
-                    itemTypes[index].prefix.strip(containerId));
-        } else if ((index = aggregateTypes.indexOfItemId((containerId))) != -1) {
+        if ((index = itemTypes.indexOfItemId(scopeItemId)) != -1) {
+            switch (scope) {
+            case QGalleryAbstractRequest::AllDescendants:
+                qt_writeFileScopeCondition(
+                        &result, &xml, itemTypes[index].prefix.strip(scopeItemId));
+                break;
+            case QGalleryAbstractRequest::DirectDescendants:
+                qt_writeFileContainerCondition(
+                        &result, &xml, itemTypes[index].prefix.strip(scopeItemId));
+                break;
+            default:
+                result = QGalleryAbstractRequest::InvalidPropertyError;
+                break;
+            }
+        } else if ((index = aggregateTypes.indexOfItemId((scopeItemId))) != -1) {
             aggregateTypes[index].writeIdCondition(
-                    &result, &xml, aggregateTypes[index].prefix.strip(containerId));
+                    &result, &xml, aggregateTypes[index].prefix.strip(scopeItemId));
         } else {
             result = QGalleryAbstractRequest::InvalidItemError;
         }
@@ -1386,7 +1347,7 @@ int QGalleryTrackerSchema::buildFilterQuery(
         }
     }
 
-    if (!containerId.isEmpty() && filter.isValid())
+    if (!scopeItemId.isEmpty() && filter.isValid())
         xml.writeEndElement();
 
     xml.writeEndElement();

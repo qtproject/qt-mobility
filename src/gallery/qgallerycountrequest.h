@@ -59,7 +59,8 @@ class Q_GALLERY_EXPORT QGalleryCountRequest : public QGalleryAbstractRequest
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QVariant containerId READ containerId WRITE setContainerId)
+    Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
+    Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
     explicit QGalleryCountRequest(QObject *parent = 0);
@@ -75,8 +76,11 @@ public:
     QGalleryFilter filter() const;
     void setFilter(const QGalleryFilter &filter);
 
-    QVariant containerId() const;
-    void setContainerId(const QVariant &id);
+    QGalleryAbstractRequest::Scope scope() const;
+    void setScope(QGalleryAbstractRequest::Scope scope);
+
+    QVariant scopeItemId() const;
+    void setScopeItemId(const QVariant &id);
 
     int count() const;
 

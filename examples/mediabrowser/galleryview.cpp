@@ -73,10 +73,10 @@ void GalleryView::setGallery(QAbstractGallery *gallery)
 
 void GalleryView::showChildren(const QVariant &containerId)
 {
-    request->setContainerId(containerId);
+    request->setScopeItemId(containerId);
     request->execute();
 
-    countRequest->setContainerId(containerId);
+    countRequest->setScopeItemId(containerId);
     countRequest->execute();
 }
 

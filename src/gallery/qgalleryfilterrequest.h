@@ -63,7 +63,8 @@ class Q_GALLERY_EXPORT QGalleryFilterRequest : public QGalleryAbstractRequest
     Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
     Q_PROPERTY(QGalleryFilter filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QVariant containerId READ containerId WRITE setContainerId)
+    Q_PROPERTY(QGalleryAbstractRequest::Scope scope READ scope WRITE setScope)
+    Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
     Q_PROPERTY(QGalleryItemList* items READ items NOTIFY itemsChanged)
 public:
     explicit QGalleryFilterRequest(QObject *parent = 0);
@@ -88,8 +89,11 @@ public:
     QString itemType() const;
     void setItemType(const QString &type);
 
-    QVariant containerId() const;
-    void setContainerId(const QVariant &id);
+    QGalleryAbstractRequest::Scope scope() const;
+    void setScope(QGalleryAbstractRequest::Scope scope);
+
+    QVariant scopeItemId() const;
+    void setScopeItemId(const QVariant &id);
 
     QGalleryFilter filter() const;
     void setFilter(const QGalleryFilter &filter);

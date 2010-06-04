@@ -52,6 +52,7 @@ public:
     QGalleryCountRequestPrivate(QAbstractGallery *gallery)
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Count)
         , count(0)
+        , scope(QGalleryAbstractRequest::AllDescendants)
         , live(false)
     {
     }
@@ -59,9 +60,10 @@ public:
     void _q_itemsChanged();
 
     int count;
+    QGalleryAbstractRequest::Scope scope;
     bool live;
     QString itemType;
-    QVariant containerId;
+    QVariant scopeItemId;
     QGalleryFilter filter;
 };
 
@@ -149,21 +151,38 @@ void QGalleryCountRequest::setItemType(const QString &type)
 }
 
 /*!
-    \property QGalleryCountRequest::containerId
+    \property QGalleryCountRequest::scope
 
-    \brief The ID of a container item a request should count the descendents
-    of.
-
+    \brief whether all descendants of the scopeItemId should be counted by
+    a request or just the direct descendants.
 */
 
-QVariant QGalleryCountRequest::containerId() const
+QGalleryAbstractRequest::Scope QGalleryCountRequest::scope() const
 {
-    return d_func()->containerId;
+    return d_func()->scope;
 }
 
-void QGalleryCountRequest::setContainerId(const QVariant &id)
+void QGalleryCountRequest::setScope(QGalleryAbstractRequest::Scope scope)
 {
-    d_func()->containerId = id;
+    d_func()->scope = scope;
+}
+
+/*!
+    \property QGalleryCountRequest::scopeItemId
+
+    \brief The ID of an item a request should count the descendants of.
+
+    \sa scope
+*/
+
+QVariant QGalleryCountRequest::scopeItemId() const
+{
+    return d_func()->scopeItemId;
+}
+
+void QGalleryCountRequest::setScopeItemId(const QVariant &id)
+{
+    d_func()->scopeItemId = id;
 }
 
 /*!

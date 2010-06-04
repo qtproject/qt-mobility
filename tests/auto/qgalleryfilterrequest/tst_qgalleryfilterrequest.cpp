@@ -144,7 +144,8 @@ void tst_QGalleryFilterRequest::properties()
     QCOMPARE(request.initialCursorPosition(), 0);
     QCOMPARE(request.minimumPagedItems(), 200);
     QCOMPARE(request.itemType(), QString());
-    QCOMPARE(request.containerId(), QVariant());
+    QCOMPARE(request.scope(), QGalleryAbstractRequest::AllDescendants);
+    QCOMPARE(request.scopeItemId(), QVariant());
     QCOMPARE(request.filter(), QGalleryFilter());
 
     request.setPropertyNames(QStringList()
@@ -190,11 +191,14 @@ void tst_QGalleryFilterRequest::properties()
     request.setItemType(videoType.name());
     QCOMPARE(request.itemType(), QString::fromLatin1("Video"));
 
-    request.setContainerId(QVariant(76));
-    QCOMPARE(request.containerId(), QVariant(76));
+    request.setScope(QGalleryAbstractRequest::DirectDescendants);
+    QCOMPARE(request.scope(), QGalleryAbstractRequest::DirectDescendants);
 
-    request.setContainerId(QVariant(QLatin1String("65")));
-    QCOMPARE(request.containerId(), QVariant(QLatin1String("65")));
+    request.setScopeItemId(QVariant(76));
+    QCOMPARE(request.scopeItemId(), QVariant(76));
+
+    request.setScopeItemId(QVariant(QLatin1String("65")));
+    QCOMPARE(request.scopeItemId(), QVariant(QLatin1String("65")));
 
     request.setFilter(filter);
     QCOMPARE(request.filter(), filter);

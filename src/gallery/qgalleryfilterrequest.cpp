@@ -52,17 +52,19 @@ public:
         : QGalleryAbstractRequestPrivate(gallery, QGalleryAbstractRequest::Filter)
         , initialCursorPosition(0)
         , minimumPagedItems(200)
+        , scope(QGalleryAbstractRequest::AllDescendants)
         , live(false)
     {
     }
 
     int initialCursorPosition;
     int minimumPagedItems;
+    QGalleryAbstractRequest::Scope scope;
     bool live;
     QStringList propertyNames;
     QStringList sortPropertyNames;
     QString itemType;
-    QVariant containerId;
+    QVariant scopeItemId;
     QGalleryFilter filter;
 };
 
@@ -218,22 +220,40 @@ void QGalleryFilterRequest::setItemType(const QString &type)
 }
 
 /*!
-    \property QGalleryFilterRequest::containerId
+    \property QGalleryFilterRequest::scope
 
-    \brief The ID of a container item a request should return the descendents
-    of.
-
+    \brief whether all descendants of the scopeItemId should be returned by
+    a request or just the direct descendants.
 */
 
-QVariant QGalleryFilterRequest::containerId() const
+QGalleryAbstractRequest::Scope QGalleryFilterRequest::scope() const
 {
-    return d_func()->containerId;
+    return d_func()->scope;
 }
 
-void QGalleryFilterRequest::setContainerId(const QVariant &id)
+void QGalleryFilterRequest::setScope(QGalleryAbstractRequest::Scope scope)
 {
-    d_func()->containerId = id;
+    d_func()->scope = scope;
 }
+
+/*!
+    \property QGalleryFilterRequest::scopeItemId
+
+    \brief The ID of an item a request should return the descendants of.
+
+    \sa scope
+*/
+
+QVariant QGalleryFilterRequest::scopeItemId() const
+{
+    return d_func()->scopeItemId;
+}
+
+void QGalleryFilterRequest::setScopeItemId(const QVariant &id)
+{
+    d_func()->scopeItemId = id;
+}
+
 /*!
     \property QGalleryFilterRequest::filter
 

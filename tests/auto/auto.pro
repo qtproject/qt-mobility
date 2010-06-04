@@ -149,7 +149,6 @@ contains(mobility_modules,gallery) {
         qgalleryabstractrequest \
         qgalleryabstractresponse \
         qgallerybaseresponse \
-        qgallerycontainerrequest \
         qgallerycountrequest \
         qgalleryfilter \
         qgalleryfilterrequest \
