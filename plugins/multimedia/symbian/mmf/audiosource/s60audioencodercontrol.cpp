@@ -42,7 +42,7 @@
 #include "s60audioencodercontrol.h"
 #include "s60audiocapturesession.h"
 
-#include <QAudioFormat>
+#include "qaudioformat.h"
 
 #include <QtCore/qdebug.h>
 

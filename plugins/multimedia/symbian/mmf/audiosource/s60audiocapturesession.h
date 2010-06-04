@@ -48,7 +48,7 @@
 #include <QUrl>
 #include <QList>
 #include <QHash>
-#include <QAudioFormat>
+#include "qaudioformat.h"
 #include <qmediarecorder.h>
 
 #include <Mda\Common\Audio.h>
