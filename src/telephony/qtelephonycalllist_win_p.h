@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONY_WIN_H
-#define QTELEPHONY_WIN_H
+#ifndef QTELEPHONYCALLLISTPRIVATE_WIN_H
+#define QTELEPHONYCALLLISTPRIVATE_WIN_H
 
 
 //
@@ -76,14 +76,14 @@ public:
     QTelephonyCallInfo::CallStatus currentCallStatus() { return QTelephonyCallInfo::UnknownStatus; }
     QList<QTelephonyCallInfo*> calls() { return calllist; }
 private:
+    QTelephonyCallInfo* createCallInfo();
     QList<QTelephonyCallInfo*> calllist;
 };
 
-class QTelephonyCallInfoPrivate : public QObject
+class QTelephonyCallInfoPrivate
 {
-    Q_OBJECT
 public:
-    QTelephonyCallInfoPrivate(QObject *parent = 0);
+    QTelephonyCallInfoPrivate();
     virtual ~QTelephonyCallInfoPrivate();
     QString callIdentifier();
     QList<quint32> contacts();
@@ -91,7 +91,6 @@ public:
     QTelephonyCallInfo::CallStatus status() { return QTelephonyCallInfo::UnknownStatus; }
 
 public: //Declaration of properties (just an example)
-    Q_PROPERTY(int contactBufferSize READ contactBufferSize)
     int contactBufferSize() const { return 124; };
 };
 
@@ -99,7 +98,7 @@ QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif
+#endif // QTELEPHONYCALLLISTPRIVATE_WIN_H
 
 // End of file
 

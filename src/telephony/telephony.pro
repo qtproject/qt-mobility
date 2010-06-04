@@ -12,11 +12,11 @@ include(../../common.pri)
 
 # Input
 PUBLIC_HEADERS += qtelephonycalllist.h \
-                  qmltelephonycallinfo.h \
+                  qtelephonycallinfoproperty.h \
                   qtelephonycallinfo.h
 				  
 SOURCES +=        qtelephonycalllist.cpp \
-                  qmltelephonycallinfo.cpp \
+                  qtelephonycallinfoproperty.cpp \
                   qtelephonycallinfo.cpp
 
 # Private Headers and sources

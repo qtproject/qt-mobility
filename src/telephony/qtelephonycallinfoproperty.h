@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QMLTELEPHONYCALLINFO_H
-#define QMLTELEPHONYCALLINFO_H
+#ifndef QTELEPHONYCALLINFOPROPERTY_H
+#define QTELEPHONYCALLINFOPROPERTY_H
 
 #include "qmobilityglobal.h"
 #include "qtelephonycallinfo.h"
@@ -54,7 +54,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 //class QTelephonyCallInfo;
-class Q_TELEPHONY_EXPORT QMLTelephonyCallInfo : public QObject
+class Q_TELEPHONY_EXPORT QTelephonyCallInfoProperty : public QObject
 {
     Q_OBJECT
     Q_ENUMS(QTelephonyCallInfo::CallType QTelephonyCallInfo::CallStatus)
@@ -80,15 +80,15 @@ public:
         Dropped = QTelephonyCallInfo::Dropped
     };
 
-    QMLTelephonyCallInfo(QTelephonyCallInfo *parent = 0);
+    QTelephonyCallInfoProperty(QTelephonyCallInfo *parent = 0);
 
-    virtual ~QMLTelephonyCallInfo() {};
+    virtual ~QTelephonyCallInfoProperty() {};
 
     QString callIdentifier() const;
     QList<quint32> contacts() const;
 
-    QMLTelephonyCallInfo::CallType type() const;
-    QMLTelephonyCallInfo::CallStatus status() const;
+    QTelephonyCallInfoProperty::CallType type() const;
+    QTelephonyCallInfoProperty::CallStatus status() const;
 
 private:
     QTelephonyCallInfo* pqtelephonyCallInfo;
@@ -97,4 +97,4 @@ private:
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QMLTELEPHONYCALLINFO_H*/
+#endif /*QTELEPHONYCALLINFOPROPERTY_H*/

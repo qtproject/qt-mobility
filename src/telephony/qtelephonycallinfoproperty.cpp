@@ -39,35 +39,35 @@
 **
 ****************************************************************************/
 
-#include "qmltelephonycallinfo.h"
+#include "qtelephonycallinfoproperty.h"
 
 QTM_BEGIN_NAMESPACE
 
-QMLTelephonyCallInfo::QMLTelephonyCallInfo(QTelephonyCallInfo *parent)
+QTelephonyCallInfoProperty::QTelephonyCallInfoProperty(QTelephonyCallInfo *parent)
 {
     pqtelephonyCallInfo = parent;
 }
 
-QString QMLTelephonyCallInfo::callIdentifier() const
+QString QTelephonyCallInfoProperty::callIdentifier() const
 {
     return pqtelephonyCallInfo->callIdentifier();
 }
 
-QList<quint32> QMLTelephonyCallInfo::contacts() const
+QList<quint32> QTelephonyCallInfoProperty::contacts() const
 {
     return pqtelephonyCallInfo->contacts();
 }
 
-QMLTelephonyCallInfo::CallType QMLTelephonyCallInfo::type() const
+QTelephonyCallInfoProperty::CallType QTelephonyCallInfoProperty::type() const
 {
-    return (QMLTelephonyCallInfo::CallType)pqtelephonyCallInfo->type();
+    return (QTelephonyCallInfoProperty::CallType)pqtelephonyCallInfo->type();
 }
 
-QMLTelephonyCallInfo::CallStatus QMLTelephonyCallInfo::status() const
+QTelephonyCallInfoProperty::CallStatus QTelephonyCallInfoProperty::status() const
 {
-    return (QMLTelephonyCallInfo::CallStatus)pqtelephonyCallInfo->status();
+    return (QTelephonyCallInfoProperty::CallStatus)pqtelephonyCallInfo->status();
 }
 
-#include "moc_qmltelephonycallinfo.cpp"
+#include "moc_qtelephonycallinfoproperty.cpp"
 
 QTM_END_NAMESPACE

@@ -94,17 +94,14 @@ QTM_BEGIN_NAMESPACE
     \brief The QTelephonyCallInfo class represents a call including the type, status and other information of the call.
 */
 
-Q_GLOBAL_STATIC(QTelephonyCallInfoPrivate, callinfoprivate)
-
 /*!
-    \fn  QTelephonyCallInfo::QTelephonyCallInfo(QObject *parent)
-
-    \a parent The parent of this object. Default is 0.
+    \fn  QTelephonyCallInfo::QTelephonyCallInfo()
 
     Constructor of a call info object.
 */
 QTelephonyCallInfo::QTelephonyCallInfo()
 {
+    d = new QTelephonyCallInfoPrivate();
 }
 
 /*!
@@ -114,6 +111,7 @@ QTelephonyCallInfo::QTelephonyCallInfo()
 */
 QTelephonyCallInfo::~QTelephonyCallInfo()
 {
+    delete d;
 }
 
 /*!

@@ -53,6 +53,8 @@
 # include "qtelephonycalllist_s60_p.h"
 #endif
 
+#include "qtelephonycallinfoproperty.h"
+
 QTM_BEGIN_NAMESPACE
 
 /*! 
@@ -123,6 +125,16 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls() const
     return ret;
 }
 
+QList<QTelephonyCallInfoProperty*> QTelephonyCallList::callsProperty() const
+{
+    QList<QTelephonyCallInfoProperty* > ret;
+    QList<QTelephonyCallInfo* > calllist = calls();
+    for( int i = 0; i < calllist.count(); i++){
+        ret.push_back(new QTelephonyCallInfoProperty(calllist.at(i)));
+    }
+    return ret;
+}
+
 /*!
     \fn QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallType& calltype) const
 
@@ -180,15 +192,25 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 }
 
 /*!
-    \property QTelephonyCallList::currentCall
+    \property QTelephonyCallList::currentCall const
     \brief the current call.
 
     Note that the caller retains ownership of the QTelephonyCallInfo pointer
 */
-QTelephonyCallInfo* QTelephonyCallList::currentCall()
+QTelephonyCallInfo* QTelephonyCallList::currentCall() const
 {
     if(d)
         return d->currentCall();
+    return 0; 
+}
+
+QTelephonyCallInfoProperty* QTelephonyCallList::currentCallProperty() const
+{
+    QTelephonyCallInfo* pti = 0;
+    if(d)
+        pti = d->currentCall();
+    if(pti)
+        return new QTelephonyCallInfoProperty(pti);
     return 0; 
 }
 

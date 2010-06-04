@@ -54,8 +54,7 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 
 }
 
-QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(QObject *parent)
- : QObject(parent)
+QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate()
 {
 }
 
