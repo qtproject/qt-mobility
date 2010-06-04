@@ -76,8 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     m_mapWidget = new QGeoMapWidget(m_mapManager);
     qgv->scene()->addItem(m_mapWidget);
     m_mapWidget->setGeometry(0, 0, width(), height());
-    m_mapWidget->setZoomLevel(8);
-    m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
+    //m_mapWidget->setZoomLevel(8);
+    //m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
 
     setWindowTitle(tr("Map Viewer Demo"));
 

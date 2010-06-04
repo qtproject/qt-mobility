@@ -109,6 +109,7 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
 
     int numTiles = 1 << qRound(viewport->zoomLevel());
 
+    //TODO: replace this QList-based implementation with a more mem-lightweight solution like a la TileIterator
     QList<int> cols;
 
     if (tileMinX <= tileMaxX) {
