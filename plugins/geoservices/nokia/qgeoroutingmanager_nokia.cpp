@@ -64,9 +64,7 @@ QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(const QMap<QString, QString> &p
             m_host = host;
     }
 
-    // TODO flip this over once we have support for updates
-    setSupportsRouteUpdates(false);
-
+    setSupportsRouteUpdates(true);
     setSupportsAlternativeRoutes(true);
 
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatures;
@@ -129,9 +127,28 @@ QGeoRouteReply* QGeoRoutingManagerNokia::calculateRoute(const QGeoRouteRequest& 
 
 QGeoRouteReply* QGeoRoutingManagerNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-    // TODO flip this over once we have support for updates
-    QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "Route updates are not supported by this service provider.", this);
-    emit error(reply, reply->error(), reply->errorString());
+    QString reqString = updateRouteRequestString(route,position);
+
+    if (reqString.isEmpty()) {
+        QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The give route request options are not supported by this service provider.", this);
+        emit error(reply, reply->error(), reply->errorString());
+        return reply;
+    }
+
+    QNetworkReply *networkReply = m_networkManager->get(QNetworkRequest(QUrl(reqString)));
+    //TODO: request for the reply
+    QGeoRouteReplyNokia *reply = new QGeoRouteReplyNokia(QGeoRouteRequest(), networkReply, this);
+
+    connect(reply,
+            SIGNAL(finished()),
+            this,
+            SLOT(routeFinished()));
+
+    connect(reply,
+            SIGNAL(error(QGeoRouteReply::Error, QString)),
+            this,
+            SLOT(routeError(QGeoRouteReply::Error, QString)));
+
     return reply;
 }
 
@@ -198,7 +215,7 @@ QString QGeoRoutingManagerNokia::calculateRouteRequestString(const QGeoRouteRequ
     return requestString;
 }
 
-QString QGeoRoutingManagerNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoRouteRequest &request)
+QString QGeoRoutingManagerNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
 {
     QString requestString = "http://";
     requestString += m_host;
@@ -210,8 +227,11 @@ QString QGeoRoutingManagerNokia::updateRouteRequestString(const QGeoRoute &route
     requestString += "&routeid=";
     requestString += route.routeId();
 
-    //TODO:  CurrentPosition
-    //requestString += "&pos=";
+    //TODO:  CurrentPosition <Point.Position> + “;” + <Point.Heading>? + “;” + <Point.TransitRadius>?
+    requestString += "&pos=";
+    requestString += QString::number(position.latitude());
+    requestString += ",";
+    requestString += QString::number(position.longitude());
 
     //TODO: Avoid areas
     //requestString += "&avoidareas=";
@@ -219,6 +239,8 @@ QString QGeoRoutingManagerNokia::updateRouteRequestString(const QGeoRoute &route
     //TODO: AvoidLinks
     //requestString += "&avoidlinks=";
 
+    //TODO: Get original request info
+    QGeoRouteRequest request;
     requestString += modesRequestString(route.optimization(),route.travelMode(),request.avoidFeatureTypes());
     requestString += routeRequestString(request);
 
@@ -304,7 +326,6 @@ QString QGeoRoutingManagerNokia::routeRequestString(const QGeoRouteRequest &requ
         requestString += request.arrivalTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
     }
 
-
     // TODO: PublicTransportProfile
     // TODO: TruckProfile
 
@@ -320,9 +341,11 @@ QString QGeoRoutingManagerNokia::routeRequestString(const QGeoRouteRequest &requ
         requestString += "overview";
 
     // TODO: “&routeattributes=”  Allowed values: "waypoints", "summary", "summaryByCountry", "shape", "boundingBox", "maneuvers", "links"
-    requestString += "&routeattributes=waypoints,summary,shape,maneuvers,links";
+    requestString += "&routeattributes=waypoints,summary,shape,maneuvers,links,boundingBox";
     // TODO: “&maneuverattributes=”  Allowed values: "position", "link", "publicTransportLine", "platform", "obstacles", "lane", "streetName", "nextStreetName", "routeName", "nextRouteName", "routeTemplate", "signPost"
+    requestString += "&maneuverattributes=position,link,routeName,nextRouteName";
     // TODO: “&linkattributes=”  LinkAttributeType?? Allowed values: "shape", "length", "speedLimit", "dynamicSpeedInfo", "incidents", "truckRestrictions", "obstacles", "externalResources", "flags", "street", "freewayExit", "city", "corridorLevel", "nextLink", "stubs", "publicTransportLine", "TMCCodes", "jamFactor", "jamFactorTrend", "confidence"
+    requestString += "&linkattributes=shape,length,nextLink";
     // TODO: “&corridordepth=” xs:int
 
     return requestString;

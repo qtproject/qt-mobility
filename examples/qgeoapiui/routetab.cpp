@@ -71,6 +71,10 @@ RouteTab::RouteTab(QWidget *parent) :
     requestBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
     QObject::connect(requestBtn, SIGNAL(clicked(bool)),
                      this, SLOT(on_btnRequest_clicked()));
+    QPushButton *updateBtn = new QPushButton(tr("Update Route"));
+    updateBtn->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
+    QObject::connect(updateBtn, SIGNAL(clicked(bool)),
+                     this, SLOT(on_btnUpdate_clicked()));
     m_resultTree = new QTreeWidget();
     QStringList labels;
     labels << tr("Elements") << tr("Value");
@@ -90,6 +94,7 @@ RouteTab::RouteTab(QWidget *parent) :
     secondrow->addWidget(destination);
     secondrow->addWidget(m_destLong);
     secondrow->addWidget(m_destLat);
+    secondrow->addWidget(updateBtn);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->setSpacing(2);
@@ -132,8 +137,21 @@ void RouteTab::on_btnRequest_clicked()
     }
 }
 
+void RouteTab::on_btnUpdate_clicked()
+{
+    if (m_routingManager && routes.count()>0) {
+        QGeoCoordinate src(m_srcLat->text().toDouble(), m_srcLong->text().toDouble());
+        m_resultTree->clear();
+
+        m_routingManager->updateRoute(routes[0],src);
+    } else {
+        QMessageBox::warning(this, tr("Routing"), tr("Route update not available."));
+    }
+}
+
 void RouteTab::replyFinished(QGeoRouteReply* reply)
 {
+    routes = reply->routes();
     RoutePresenter presenter(m_resultTree, reply);
     presenter.show();
     reply->deleteLater();

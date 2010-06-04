@@ -102,6 +102,14 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     prop->setText(1, route.routeId());
 
     prop = new QTreeWidgetItem(routeItem);
+    prop->setText(0, "optimization");
+    prop->setText(1, QString().setNum(route.optimization()));
+
+    prop = new QTreeWidgetItem(routeItem);
+    prop->setText(0, "travel mode");
+    prop->setText(1, QString().setNum(route.travelMode()));
+
+    prop = new QTreeWidgetItem(routeItem);
     prop->setText(0, "distance");
     prop->setText(1, QString().setNum(route.distance().convert(QGeoDistance::Metres)));
 

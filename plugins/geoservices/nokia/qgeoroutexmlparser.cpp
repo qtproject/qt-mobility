@@ -92,8 +92,8 @@ bool QGeoRouteXmlParser::parseRootElement()
         return false;
     }
 
-    if (m_reader->name() != "CalculateRoute") {
-        m_reader->raiseError(QString("The root element is expected to have the name \"CalculateRoute\" (root element was named \"%1\").").arg(m_reader->name().toString()));
+    if ( m_reader->name() != "CalculateRoute" && m_reader->name() != "GetRoute" )  {
+        m_reader->raiseError(QString("The root element is expected to have the name \"CalculateRoute\" or \"GetRoute\" (root element was named \"%1\").").arg(m_reader->name().toString()));
         return false;
     }
 
@@ -112,14 +112,20 @@ bool QGeoRouteXmlParser::parseRootElement()
             return false;
         }
         else {
+            m_reader->readNext();
             while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
                      && m_reader->name() == "MetaInfo")) {
                 if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
                     if (m_reader->name() == "RequestId") {
                         // TODO:  MetaInfo RequestId
+                        m_reader->skipCurrentElement();
                     }
                     else if (m_reader->name() == "Timestamp") {
                         // TODO:  MetaInfo Timestamp
+                        m_reader->skipCurrentElement();
+                    }
+                    else {
+                        m_reader->skipCurrentElement();
                     }
                 }
                 m_reader->readNext();
@@ -128,7 +134,6 @@ bool QGeoRouteXmlParser::parseRootElement()
     }
 
     while (m_reader->readNextStartElement()) {
-        QString str = m_reader->name().toString();
         if (m_reader->name() == "Route") {
             QGeoRoute route;
             route.setRequest(m_request);
@@ -137,8 +142,14 @@ bool QGeoRouteXmlParser::parseRootElement()
                 return false;
 
             m_results.append(route);
-        } else {
-            m_reader->raiseError(QString("Did not expect a child element named \"%1\".").arg(m_reader->name().toString()));
+        }
+        else if (m_reader->name() == "Progress") {
+            //TODO: updated route progress
+            m_reader->skipCurrentElement();
+        }
+        else {
+            m_reader->raiseError(QString("Did not expect a child element named \"%1\".").arg(
+                m_reader->name().toString()));
             return false;
         }
     }

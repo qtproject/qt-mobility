@@ -77,7 +77,7 @@ private slots:
 
 private:
     QString calculateRouteRequestString(const QGeoRouteRequest &request);
-    QString updateRouteRequestString(const QGeoRoute &route, const QGeoRouteRequest &request);
+    QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
     QString routeRequestString(const QGeoRouteRequest &request);
     QString modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
                                QGeoRouteRequest::TravelModes travelModes,

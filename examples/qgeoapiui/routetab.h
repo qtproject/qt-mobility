@@ -64,6 +64,7 @@ public slots:
 
 private slots:
     void on_btnRequest_clicked();
+    void on_btnUpdate_clicked();
     void replyFinished(QGeoRouteReply* reply);
     void resultsError(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString);
 
@@ -74,5 +75,6 @@ private:
     QLineEdit *m_destLong;
     QLineEdit *m_destLat;
     QTreeWidget *m_resultTree;
+    QList<QGeoRoute> routes;
 };
 #endif /* ROUTETAB_H_ */
