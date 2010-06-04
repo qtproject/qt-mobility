@@ -55,7 +55,6 @@ class GalleryUrlRequest : public QObject, public QDeclarativeParserStatus
     Q_ENUMS(State)
     Q_ENUMS(Result)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
-    Q_PROPERTY(bool supported READ isSupported NOTIFY supportedChanged)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
     Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
@@ -95,8 +94,6 @@ public:
     QAbstractGallery *gallery() const { return m_request.gallery(); }
     void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
 
-    bool isSupported() const { return m_request.isSupported(); }
-
     State state() const { return State(m_request.state()); }
     Result result() const { return Result(m_request.result()); }
 
@@ -118,7 +115,6 @@ public Q_SLOTS:
     void clear() { m_request.clear(); }
 
 Q_SIGNALS:
-    void supportedChanged();
     void succeeded();
     void cancelled();
     void failed(int result);
