@@ -922,9 +922,11 @@ void tst_QContactManager::update()
     saveContactName(&alice, nameDef, &name, "updated");
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
     saveContactName(&alice, nameDef, &name, "updated2");
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
     QContact updated = cm->contact(alice.localId());
     QContactName updatedName = updated.detail(QContactName::DefinitionName);
     QCOMPARE(updatedName, name);
@@ -935,15 +937,18 @@ void tst_QContactManager::update()
     phn.setContexts(QContactDetail::ContextHome);
     alice.saveDetail(&phn);
     QVERIFY(cm->saveContact(&alice));
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
     QVERIFY(alice.detail<QContactPhoneNumber>().contexts().contains(QContactDetail::ContextHome)); // check context saved.
     phn.setContexts(QStringList()); // remove context field.
     alice.saveDetail(&phn);
     QVERIFY(cm->saveContact(&alice));
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
     QVERIFY(alice.detail<QContactPhoneNumber>().contexts().isEmpty()); // check context removed.
 
     /* Test that removal of details works */
     alice.removeDetail(&phn);
     QVERIFY(cm->saveContact(&alice));
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
     QVERIFY(alice.details<QContactPhoneNumber>().isEmpty()); // no such detail.
 
     if (cm->hasFeature(QContactManager::Groups)) {
