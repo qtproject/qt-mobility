@@ -90,7 +90,7 @@ public:
     /**
      * Holds the id of the magnetometer
      */	
-    static const char *id;
+    static char const * const id;
     
 private:
     QTapReading iReading;

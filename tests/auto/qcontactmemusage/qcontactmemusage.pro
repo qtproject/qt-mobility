@@ -17,7 +17,5 @@ SOURCES  += tst_qcontactmemusage.cpp
 
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData
+                        WriteUserData
 }

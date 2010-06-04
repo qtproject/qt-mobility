@@ -51,6 +51,8 @@ class QAbstractVideoSurface;
 QT_END_NAMESPACE
 class QX11VideoSurface;
 
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+
 QT_USE_NAMESPACE
 
 class QGstreamerVideoOverlay : public QVideoWindowControl, public QGstreamerVideoRendererInterface
@@ -93,6 +95,9 @@ public:
 
     GstElement *videoSink();
 
+signals:
+    void sinkChanged();
+
 private slots:
     void surfaceFormatChanged();
 
@@ -105,5 +110,7 @@ private:
     QRect m_displayRect;
     bool m_fullScreen;
 };
+
+#endif //QT_NO_XVIDEO
 
 #endif

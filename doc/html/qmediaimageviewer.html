@@ -42,7 +42,7 @@
 </td></tr>
 </table></p>
 <ul>
-<li><div bar="2" class="fn"></div>3 properties inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
@@ -54,11 +54,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaStatus-prop">mediaStatus</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylist * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#playlist">playlist</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#state-prop">state</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#timeout-prop">timeout</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>13 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>12 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
@@ -68,6 +69,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#pause">pause</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#play">play</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#media-prop">setMedia</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#setPlaylist">setPlaylist</a></b> ( QMediaPlaylist * <i>playlist</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#timeout-prop">setTimeout</a></b> ( int <i>timeout</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#stop">stop</a></b> ()</td></tr>
 </table>
@@ -84,7 +86,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#stateChanged">stateChanged</a></b> ( QMediaImageViewer::State <i>state</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>5 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
@@ -103,7 +105,7 @@
 <pre>    viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
-    display-&gt;setMediaObject(viewer);
+    viewer-&gt;addVideoOutput(display);
     display-&gt;show();</pre>
 <p>QMediaImageViewer can be paired with a <a href="qmediaplaylist.html">QMediaPlaylist</a> to create a slide show of images. Constructing a <a href="qmediaplaylist.html">QMediaPlaylist</a> with a pointer to an instance of QMediaImageViewer will attach it to the image viewer; changing the playlist's selection will then change the media displayed by the image viewer. With a playlist attached QMediaImageViewer's <a href="qmediaimageviewer.html#play">play</a>(), <a href="qmediaimageviewer.html#pause">pause</a>(), and <a href="qmediaimageviewer.html#stop">stop</a>() slots can be control the progression of the playlist. The <a href="qmediaimageviewer.html#timeout-prop">timeout</a> property determines how long an image is displayed for before progressing to the next in the playlist, and the <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> property holds how the duration the current image has been displayed for.</p>
 <pre>    playlist = new QMediaPlaylist(this);
@@ -234,6 +236,12 @@
 <p>Starts a slide show.</p>
 <p>If the playlist has no current media this will start at the beginning of the playlist, otherwise it will resume from the current media.</p>
 <p>If no playlist is attached to an image viewer this will do nothing.</p>
+<a name="//apple_ref/cpp/instm/QMediaImageViewer/playlist"></a>
+<h3 class="fn"><a name="playlist"></a><a href="qmediaplaylist.html">QMediaPlaylist</a> * QMediaImageViewer::playlist () const</h3>
+<p>See also <a href="qmediaimageviewer.html#setPlaylist">setPlaylist</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaImageViewer/setPlaylist"></a>
+<h3 class="fn"><a name="setPlaylist"></a>void QMediaImageViewer::setPlaylist ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>See also <a href="qmediaimageviewer.html#playlist">playlist</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaImageViewer/stateChanged"></a>
 <h3 class="fn"><a name="stateChanged"></a>void QMediaImageViewer::stateChanged ( <a href="qmediaimageviewer.html#State-enum">QMediaImageViewer::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that the playlist control <i>state</i> of an image viewer has changed.</p>

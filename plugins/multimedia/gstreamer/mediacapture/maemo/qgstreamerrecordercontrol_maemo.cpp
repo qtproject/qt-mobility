@@ -222,3 +222,13 @@ void QGstreamerRecorderControl::applySettings()
         }
     }
 }
+
+bool QGstreamerRecorderControl::isMuted() const
+{
+    return false;
+}
+
+void QGstreamerRecorderControl::setMuted(bool)
+{
+
+}

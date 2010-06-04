@@ -49,7 +49,7 @@
 #include <QList>
 #include <QHash>
 #include <QAudioFormat>
-#include <QMediaRecorder>
+#include <qmediarecorder.h>
 
 #include <Mda\Common\Audio.h>
 #include <Mda\Common\Resource.h>

@@ -55,14 +55,13 @@
 #include "s60videorenderer.h"
 #include "s60mediaplayeraudioendpointselector.h"
 
-#include <QMediaPlaylistNavigator>
-#include <QMediaPlaylist>
+#include <qmediaplaylistnavigator.h>
+#include <qmediaplaylist.h>
 
 S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     : QMediaService(parent)
     , m_control(NULL)
-    , m_mediaRecognizer(NULL)
-    , m_videoOutput(NULL)
+//  FIXME  , m_videoOutput(NULL)
     , m_videoPlayerSession(NULL)
     , m_audioPlayerSession(NULL)
     , m_metaData(NULL)
@@ -72,7 +71,6 @@ S60MediaPlayerService::S60MediaPlayerService(QObject *parent)
     , m_audioEndpointSelector(NULL)
 { 
     m_control = new S60MediaPlayerControl(*this, this);
-    m_mediaRecognizer = new S60MediaRecognizer(this);  
     m_metaData = new S60MediaMetaDataProvider(*this);
     m_audioEndpointSelector = new S60MediaPlayerAudioEndpointSelector(m_control, this);
 }
@@ -82,31 +80,26 @@ S60MediaPlayerService::~S60MediaPlayerService()
     delete m_videoWidget;
     delete m_videoRenderer;
     delete m_videoWindow;
-    delete m_videoOutput;
+// FIXME    delete m_videoOutput;
 }
 
-QMediaControl *S60MediaPlayerService::control(const char *name) const
+QMediaControl *S60MediaPlayerService::requestControl(const char *name)
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name, QMetaDataControl_iid) == 0) {
+    if (qstrcmp(name, QMetaDataReaderControl_iid) == 0) {
         return m_metaData;
     }
 
-    if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
-        if (!m_videoOutput) {
-            m_videoOutput = new S60VideoOutputControl;
-            connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
-                    this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
-            m_videoOutput->setAvailableOutputs(QList<QVideoOutputControl::Output>() 
-//                        << QVideoOutputControl::RendererOutput
-//                        << QVideoOutputControl::WindowOutput
-                        << QVideoOutputControl::WidgetOutput);
-            
-        }
-        return m_videoOutput;
-    }
+//FIXME    if (qstrcmp(name, QVideoOutputControl_iid) == 0) {
+//        if (!m_videoOutput) {
+//            m_videoOutput = new S60VideoOutputControl;
+//            connect(m_videoOutput, SIGNAL(outputChanged(QVideoOutputControl::Output)),
+//                    this, SLOT(videoOutputChanged(QVideoOutputControl::Output)));
+//        }
+//        return m_videoOutput;
+//    }
 
     if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
         if (!m_videoWidget)
@@ -134,6 +127,12 @@ QMediaControl *S60MediaPlayerService::control(const char *name) const
 
 }
 
+void S60MediaPlayerService::releaseControl(QMediaControl *control)
+{
+    Q_UNUSED(control)
+}
+
+/*FIXME
 void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output output)
 {
     switch (output) {
@@ -156,7 +155,7 @@ void S60MediaPlayerService::videoOutputChanged(QVideoOutputControl::Output outpu
         break;
     }
 }
-
+*/
 S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
 {
     QUrl url = m_control->media().canonicalUrl();
@@ -164,9 +163,10 @@ S60MediaPlayerSession* S60MediaPlayerService::PlayerSession()
     if (url.isEmpty() == true) {
         return NULL;
     }
-    
-    S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->IdentifyMediaType(url);
-    
+
+    S60MediaRecognizer *m_mediaRecognizer = new S60MediaRecognizer(this);
+    S60MediaRecognizer::MediaType mediaType = m_mediaRecognizer->mediaType(url);
+
     switch (mediaType) {
     	case S60MediaRecognizer::Video:
     	case S60MediaRecognizer::Url:
