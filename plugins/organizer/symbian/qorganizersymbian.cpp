@@ -42,6 +42,9 @@
 #include "qorganizersymbian_p.h"
 #include "qtorganizer.h"
 
+#include <calsession.h>
+#include <calentryview.h>
+
 //QTM_USE_NAMESPACE
 
 QOrganizerItemManagerEngine* QOrganizerItemSymbianFactory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
@@ -62,10 +65,31 @@ QString QOrganizerItemSymbianFactory::managerName() const
 }
 Q_EXPORT_PLUGIN2(qtorganizer_symbian, QOrganizerItemSymbianFactory);
 
+QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
+    QOrganizerItemManagerEngine(),
+    m_calSession(0),
+    m_entryView(0),
+    m_activeSchedulerWait(0),
+    m_entrycount(0)
+{
+    // TODO: using CCal api stuff might be more readable if it was refactored into a separate class
+
+    // Open calendar session and open default file
+    m_calSession = CCalSession::NewL();
+    m_calSession->OpenL(KNullDesC);
+
+    // Create entry view (creation is synchronized with CActiveSchedulerWait)
+    m_entryView = CCalEntryView::NewL(*m_calSession, *this);
+    m_activeSchedulerWait = new CActiveSchedulerWait();
+    m_activeSchedulerWait->Start();
+}
 
 QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
 {
     /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
+    delete m_activeSchedulerWait;
+    delete m_entryView;
+    delete m_calSession;
 }
 
 QString QOrganizerItemSymbianEngine::managerName() const
@@ -188,7 +212,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::item(const QOrganizerItemLocalId& it
     return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
 }
 
-bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
+bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
@@ -204,8 +228,72 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem>* items, QMap<i
 
         The item passed in should be validated according to the schema.
     */
-    return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
+    for (int i(0); i < items->count(); i++) {
+        QOrganizerItem item = items->at(i);
+        saveItem(&item, error);
+        if (*error != QOrganizerItemManager::NoError) {
+            errorMap->insert(i, *error);
+        } else {
+            items->replace(i, item);
+        }
+    }
 
+    // TODO: set possible errors
+    return true;
+    //return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
+}
+
+bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemManager::Error* error)
+{
+    // TODO: Validate item according to the schema
+
+    TRAPD(err, saveItemL(item));
+    if (err != KErrNone) {
+        // TODO: convert symbian err into qt error
+        *error = QOrganizerItemManager::UnspecifiedError;
+    }
+
+    return *error == QOrganizerItemManager::NoError;
+}
+
+void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
+{
+    // TODO: convert item
+
+    HBufC8 *uid = HBufC8::NewLC(30);
+    m_entrycount++;
+    uid->Des().Num(m_entrycount);
+    // TODO: global UID?
+    // TODO: sequence number?
+    // TODO: recurrence id?
+    // TODO: recurrence range?
+    // TODO: type? (given as parameter)
+    CCalEntry::TType type = CCalEntry::ETodo;
+    CleanupStack::Pop(uid); // TODO: what if the following leaves, is uid deleted?
+    CCalEntry *entry = CCalEntry::NewL(type, uid, CCalEntry::EMethodAdd, 0);
+    CleanupStack::PushL(entry);
+
+    RPointerArray<CCalEntry> entries;
+    CleanupClosePushL(entries);
+    entries.AppendL(entry);
+    TInt numSuccessfulEntry(0);
+    m_entryView->StoreL(entries, numSuccessfulEntry);
+    if (numSuccessfulEntry != 1) {
+        // The documentation states about numSuccessfulEntry "On return, this
+        // contains the number of entries which were successfully stored".
+        // So it is not clear which error caused storing the entry to fail
+        // -> let's use the "one-error-fits-all" error code KErrGeneral.
+        User::Leave(KErrGeneral);
+    }
+    TCalLocalUid localUid = entry->LocalUidL();
+    CleanupStack::PopAndDestroy(&entries);
+    CleanupStack::PopAndDestroy(entry);
+
+    // Update the id of the organizer item to match the id of the entry
+    QOrganizerItemId itemId;
+    itemId.setLocalId(localUid);
+    // TODO: itemId.setManagerUri();
+    item->setId(itemId);
 }
 
 bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
@@ -392,4 +480,31 @@ QStringList QOrganizerItemSymbianEngine::supportedItemTypes() const
     ret << QOrganizerItemType::TypeTodoOccurrence;
 
     return ret;
+}
+
+/*!
+ * From MCalProgressCallBack
+ */
+void QOrganizerItemSymbianEngine::Progress(TInt /*aPercentageCompleted*/)
+{
+}
+
+/*!
+ * From MCalProgressCallBack
+ */
+void QOrganizerItemSymbianEngine::Completed(TInt aError)
+{
+    // TODO: How to handle aError?
+
+    // Let's continue the operation that started the calendar operation
+    m_activeSchedulerWait->AsyncStop();
+}
+
+/*!
+ * From MCalProgressCallBack
+ */
+TBool QOrganizerItemSymbianEngine::NotifyProgress()
+{
+    // No 
+    return EFalse;
 }

@@ -47,6 +47,8 @@
 
 QTM_USE_NAMESPACE
 
+const QString managerName("symbian");
+
 class tst_SymbianOm : public QObject
 {
     Q_OBJECT
@@ -57,8 +59,11 @@ private slots:  // Init & cleanup
 
 private slots:  // Test cases
     void addSimpleEvent();
+
+private:
+    // TODO: enable the following test cases by moving them to "private slots"
+    // when the required functionality has been implemented in symbian backend
     void addWithIllegalParameters();
-    //void fetchSimpleEvent();
     void addItem_data();
     void addItem();
     void fetchItem_data();
@@ -75,15 +80,17 @@ private:
 
 void tst_SymbianOm::initTestCase()
 {
-    m_om = new QOrganizerItemManager("symbian");
-    //m_om = new QOrganizerItemManager("memory");
+    // You could also use the override without the manager name; that should
+    // default to the platform specific default manager
+    m_om = new QOrganizerItemManager(managerName);
+
     // Remove all organizer items first (Note: ignores possible errors)
     //m_om->removeItems(m_om->itemIds(), 0);
 }
 
 void tst_SymbianOm::cleanupTestCase()
 {
-    //m_om->remove
+    //m_om->removeItems
     delete m_om;
 }
 
@@ -96,19 +103,28 @@ void tst_SymbianOm::addSimpleEvent()
     // Save
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(item.id() != QOrganizerItemId());
+    QVERIFY(item.id().localId() != 0);
+    //TODO: QVERIFY(item.id().managerUri().contains(managerName));
 
     // Save with list parameter
     QList<QOrganizerItem> items;
     items.append(item);
     QVERIFY(m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    foreach (QOrganizerItem listitem, items) {
+        QVERIFY(listitem.id().localId() != 0);
+        //TODO: QVERIFY(item.id().managerUri().contains(managerName));
+    }
 
     // Save with list parameter and error map parameter
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QVERIFY(m_om->saveItems(&items, &errorMap));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(errorMap.count() == 0);
+    foreach (QOrganizerItem listitem2, items) {
+        QVERIFY(listitem2.id().localId() != 0);
+        //TODO: QVERIFY(item.id().managerUri().contains(managerName));
+    }
 }
 
 void tst_SymbianOm::addWithIllegalParameters()

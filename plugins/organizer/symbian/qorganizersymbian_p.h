@@ -73,6 +73,8 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
+#include <calprogresscallback.h> // MCalProgressCallBack
+
 QTM_USE_NAMESPACE
 
 class QOrganizerItemSymbianFactory : public QObject, public QOrganizerItemManagerEngineFactory
@@ -102,13 +104,18 @@ public:
     }
 };
 
-class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine
+class CCalSession;
+class CCalEntryView;
+class CActiveSchedulerWait;
+
+class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, public MCalProgressCallBack
 {
     Q_OBJECT
 
 public:
     static QOrganizerItemSymbianEngine *createSkeletonEngine(const QMap<QString, QString>& parameters);
 
+    QOrganizerItemSymbianEngine();
     ~QOrganizerItemSymbianEngine();
 
     /* URI reporting */
@@ -121,8 +128,10 @@ public:
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
-    bool saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
-    bool removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error);
+    bool saveItem(QOrganizerItem *item, QOrganizerItemManager::Error *error);
+
+    bool saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
+    bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
 
     /* Definitions - Accessors and Mutators */
     QMap<QString, QOrganizerItemDetailDefinition> detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const;
@@ -142,8 +151,21 @@ public:
     bool cancelRequest(QOrganizerItemAbstractRequest* req);
     bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
 
+public: // MCalProgressCallBack
+    void Progress(TInt aPercentageCompleted);
+    void Completed(TInt aError);
+    TBool NotifyProgress();
+
 private:
-    QOrganizerItemSymbianEngineData* d;
+    void saveItemL(QOrganizerItem *item);
+
+private:
+    QOrganizerItemSymbianEngineData *d;
+    CCalSession *m_calSession;
+    CCalEntryView *m_entryView;
+    CActiveSchedulerWait *m_activeSchedulerWait;
+    // TODO: replace this with an algorithm that generates the calendar entry UID
+    int m_entrycount;
 
     friend class QOrganizerItemSymbianFactory;
 };
