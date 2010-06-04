@@ -74,6 +74,7 @@ class CDatabaseManagerServerSession : public CSession2
         
         TInt RegisterServiceL(const RMessage2& aMessage);
         TInt UnregisterServiceL(const RMessage2& aMessage);
+        TInt ServiceInitializedL(const RMessage2& aMessage);
         TInt InterfacesL(const RMessage2& aMessage);
         TInt ServiceNamesL(const RMessage2& aMessage);
         TInt InterfaceDefaultL(const RMessage2& aMessage);

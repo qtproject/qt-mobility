@@ -435,7 +435,7 @@ void QVideoFrame::setFieldType(QVideoFrame::FieldType field)
     Returns true if the contents of the video frame are mapped to system memory, and false
     otherwise.
 
-    \sa mapMode() QAbstractVideoBuffer::MapMode
+    \sa mapMode(), QAbstractVideoBuffer::MapMode
 */
 
 bool QVideoFrame::isMapped() const

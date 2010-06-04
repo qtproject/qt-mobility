@@ -63,7 +63,7 @@ QT_BEGIN_NAMESPACE
     its current media it will implement QMetaDataReaderControl.  This control
     provides functions for both retrieving and setting meta-data values.
     Meta-data may be addressed by the well defined keys in the
-    QtMultimedia::MetaData enumeration using the metaData() functions, or by
+    QtMultimediaKit::MetaData enumeration using the metaData() functions, or by
     string keys using the extendedMetaData() functions.
 
     The functionality provided by this control is exposed to application
@@ -115,7 +115,7 @@ QMetaDataReaderControl::~QMetaDataReaderControl()
 */
 
 /*!
-    \fn QVariant QMetaDataReaderControl::metaData(QtMultimedia::MetaData key) const
+    \fn QVariant QMetaDataReaderControl::metaData(QtMultimediaKit::MetaData key) const
 
     Returns the meta-data for the given \a key.
 */

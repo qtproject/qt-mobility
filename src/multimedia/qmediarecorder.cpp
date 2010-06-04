@@ -83,7 +83,7 @@ QT_BEGIN_NAMESPACE
 
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("audio/vorbis");
-    audioSettings.setQuality(QtMultimedia::HighQuality);
+    audioSettings.setQuality(QtMultimediaKit::HighQuality);
 
     recorder->setEncodingSettings(audioSettings);
 
@@ -348,12 +348,12 @@ bool QMediaRecorder::isAvailable() const
 /*!
     Returns the availability error code.
 */
-QtMultimedia::AvailabilityError QMediaRecorder::availabilityError() const
+QtMultimediaKit::AvailabilityError QMediaRecorder::availabilityError() const
 {
     if (d_func()->control != NULL)
-        return QtMultimedia::NoError;
+        return QtMultimediaKit::NoError;
     else
-        return QtMultimedia::ServiceMissingError;
+        return QtMultimediaKit::ServiceMissingError;
 }
 
 QUrl QMediaRecorder::outputLocation() const
@@ -744,7 +744,7 @@ bool QMediaRecorder::isMetaDataWritable() const
 /*!
     Returns the value associated with a meta-data \a key.
 */
-QVariant QMediaRecorder::metaData(QtMultimedia::MetaData key) const
+QVariant QMediaRecorder::metaData(QtMultimediaKit::MetaData key) const
 {
     Q_D(const QMediaRecorder);
 
@@ -756,7 +756,7 @@ QVariant QMediaRecorder::metaData(QtMultimedia::MetaData key) const
 /*!
     Sets a \a value for a meta-data \a key.
 */
-void QMediaRecorder::setMetaData(QtMultimedia::MetaData key, const QVariant &value)
+void QMediaRecorder::setMetaData(QtMultimediaKit::MetaData key, const QVariant &value)
 {
     Q_D(QMediaRecorder);
 
@@ -767,13 +767,13 @@ void QMediaRecorder::setMetaData(QtMultimedia::MetaData key, const QVariant &val
 /*!
     Returns a list of keys there is meta-data available for.
 */
-QList<QtMultimedia::MetaData> QMediaRecorder::availableMetaData() const
+QList<QtMultimediaKit::MetaData> QMediaRecorder::availableMetaData() const
 {
     Q_D(const QMediaRecorder);
 
     return d->metaDataControl
             ? d->metaDataControl->availableMetaData()
-            : QList<QtMultimedia::MetaData>();
+            : QList<QtMultimediaKit::MetaData>();
 }
 
 /*!

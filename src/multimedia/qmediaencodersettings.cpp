@@ -54,11 +54,11 @@ class QAudioEncoderSettingsPrivate  : public QSharedData
 public:
     QAudioEncoderSettingsPrivate() :
         isNull(true),
-        encodingMode(QtMultimedia::ConstantQualityEncoding),
+        encodingMode(QtMultimediaKit::ConstantQualityEncoding),
         bitrate(-1),
         sampleRate(-1),
         channels(-1),
-        quality(QtMultimedia::NormalQuality)
+        quality(QtMultimediaKit::NormalQuality)
     {
     }
 
@@ -75,12 +75,12 @@ public:
     }
 
     bool isNull;
-    QtMultimedia::EncodingMode encodingMode;
+    QtMultimediaKit::EncodingMode encodingMode;
     QString codec;
     int bitrate;
     int sampleRate;
     int channels;
-    QtMultimedia::EncodingQuality quality;
+    QtMultimediaKit::EncodingQuality quality;
 
 private:
     QAudioEncoderSettingsPrivate& operator=(const QAudioEncoderSettingsPrivate &other);
@@ -192,9 +192,9 @@ bool QAudioEncoderSettings::isNull() const
 /*!
     Returns the audio encoding mode.
 
-    \sa QtMultimedia::EncodingMode
+    \sa QtMultimediaKit::EncodingMode
 */
-QtMultimedia::EncodingMode QAudioEncoderSettings::encodingMode() const
+QtMultimediaKit::EncodingMode QAudioEncoderSettings::encodingMode() const
 {
     return d->encodingMode;
 }
@@ -202,16 +202,16 @@ QtMultimedia::EncodingMode QAudioEncoderSettings::encodingMode() const
 /*!
     Sets the audio encoding \a mode setting.
 
-    If QtMultimedia::ConstantQualityEncoding is set, the quality
+    If QtMultimediaKit::ConstantQualityEncoding is set, the quality
     encoding parameter is used and bit rate is ignored,
     otherwise the bitrate is used.
 
     The audio codec, channels count and sample rate settings are used in all
     the encoding modes.
 
-    \sa encodingMode(), QtMultimedia::EncodingMode
+    \sa encodingMode(), QtMultimediaKit::EncodingMode
 */
-void QAudioEncoderSettings::setEncodingMode(QtMultimedia::EncodingMode mode)
+void QAudioEncoderSettings::setEncodingMode(QtMultimediaKit::EncodingMode mode)
 {
     d->encodingMode = mode;
 }
@@ -294,7 +294,7 @@ void QAudioEncoderSettings::setSampleRate(int rate)
     Returns the audio encoding quality.
 */
 
-QtMultimedia::EncodingQuality QAudioEncoderSettings::quality() const
+QtMultimediaKit::EncodingQuality QAudioEncoderSettings::quality() const
 {
     return d->quality;
 }
@@ -306,9 +306,9 @@ QtMultimedia::EncodingQuality QAudioEncoderSettings::quality() const
     set of encoding parameters to achieve the desired quality level.
 
     The \a quality settings parameter is only used in the
-    \l {QtMultimedia::ConstantQualityEncoding}{constant quality} \l{encodingMode()}{encoding mode}.
+    \l {QtMultimediaKit::ConstantQualityEncoding}{constant quality} \l{encodingMode()}{encoding mode}.
 */
-void QAudioEncoderSettings::setQuality(QtMultimedia::EncodingQuality quality)
+void QAudioEncoderSettings::setQuality(QtMultimediaKit::EncodingQuality quality)
 {
     d->isNull = false;
     d->quality = quality;
@@ -319,10 +319,10 @@ class QVideoEncoderSettingsPrivate  : public QSharedData
 public:
     QVideoEncoderSettingsPrivate() :
         isNull(true),
-        encodingMode(QtMultimedia::ConstantQualityEncoding),
+        encodingMode(QtMultimediaKit::ConstantQualityEncoding),
         bitrate(-1),
         frameRate(0),
-        quality(QtMultimedia::NormalQuality)
+        quality(QtMultimediaKit::NormalQuality)
     {
     }
 
@@ -339,12 +339,12 @@ public:
     }
 
     bool isNull;
-    QtMultimedia::EncodingMode encodingMode;
+    QtMultimediaKit::EncodingMode encodingMode;
     QString codec;
     int bitrate;
     QSize resolution;
     qreal frameRate;
-    QtMultimedia::EncodingQuality quality;
+    QtMultimediaKit::EncodingQuality quality;
 
 private:
     QVideoEncoderSettingsPrivate& operator=(const QVideoEncoderSettingsPrivate &other);
@@ -449,9 +449,9 @@ bool QVideoEncoderSettings::isNull() const
 /*!
     Returns the video encoding mode.
 
-    \sa QtMultimedia::EncodingMode
+    \sa QtMultimediaKit::EncodingMode
 */
-QtMultimedia::EncodingMode QVideoEncoderSettings::encodingMode() const
+QtMultimediaKit::EncodingMode QVideoEncoderSettings::encodingMode() const
 {
     return d->encodingMode;
 }
@@ -459,15 +459,15 @@ QtMultimedia::EncodingMode QVideoEncoderSettings::encodingMode() const
 /*!
     Sets the video encoding \a mode.
 
-    If QtMultimedia::ConstantQualityEncoding is set,
+    If QtMultimediaKit::ConstantQualityEncoding is set,
     the quality encoding parameter is used and bit rate is ignored,
     otherwise the bitrate is used.
 
     The rest of encoding settings are respected regardless of encoding mode.
 
-    \sa QtMultimedia::EncodingMode
+    \sa QtMultimediaKit::EncodingMode
 */
-void QVideoEncoderSettings::setEncodingMode(QtMultimedia::EncodingMode mode)
+void QVideoEncoderSettings::setEncodingMode(QtMultimediaKit::EncodingMode mode)
 {
     d->isNull = false;
     d->encodingMode = mode;
@@ -570,7 +570,7 @@ void QVideoEncoderSettings::setResolution(int width, int height)
     Returns the video encoding quality.
 */
 
-QtMultimedia::EncodingQuality QVideoEncoderSettings::quality() const
+QtMultimediaKit::EncodingQuality QVideoEncoderSettings::quality() const
 {
     return d->quality;
 }
@@ -582,13 +582,13 @@ QtMultimedia::EncodingQuality QVideoEncoderSettings::quality() const
     set of encoding parameters to achieve the desired quality level.
 
     The \a quality settings parameter is only used in the
-    \l {QtMultimedia::ConstantQualityEncoding}{constant quality} \l{encodingMode()}{encoding mode}.
+    \l {QtMultimediaKit::ConstantQualityEncoding}{constant quality} \l{encodingMode()}{encoding mode}.
     The \a quality settings parameter is only used in the \l
-    {QtMultimedia::ConstantQualityEncoding}{constant quality}
+    {QtMultimediaKit::ConstantQualityEncoding}{constant quality}
     \l{encodingMode()}{encoding mode}.
 */
 
-void QVideoEncoderSettings::setQuality(QtMultimedia::EncodingQuality quality)
+void QVideoEncoderSettings::setQuality(QtMultimediaKit::EncodingQuality quality)
 {
     d->isNull = false;
     d->quality = quality;
@@ -601,7 +601,7 @@ class QImageEncoderSettingsPrivate  : public QSharedData
 public:
     QImageEncoderSettingsPrivate() :
         isNull(true),
-        quality(QtMultimedia::NormalQuality)
+        quality(QtMultimediaKit::NormalQuality)
     {
     }
 
@@ -617,7 +617,7 @@ public:
     bool isNull;
     QString codec;
     QSize resolution;
-    QtMultimedia::EncodingQuality quality;
+    QtMultimediaKit::EncodingQuality quality;
 
 private:
     QImageEncoderSettingsPrivate& operator=(const QImageEncoderSettingsPrivate &other);
@@ -777,7 +777,7 @@ void QImageEncoderSettings::setResolution(int width, int height)
     Returns the image encoding quality.
 */
 
-QtMultimedia::EncodingQuality QImageEncoderSettings::quality() const
+QtMultimediaKit::EncodingQuality QImageEncoderSettings::quality() const
 {
     return d->quality;
 }
@@ -786,7 +786,7 @@ QtMultimedia::EncodingQuality QImageEncoderSettings::quality() const
     Sets the image encoding \a quality.
 */
 
-void QImageEncoderSettings::setQuality(QtMultimedia::EncodingQuality quality)
+void QImageEncoderSettings::setQuality(QtMultimediaKit::EncodingQuality quality)
 {
     d->isNull = false;
     d->quality = quality;

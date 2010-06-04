@@ -59,7 +59,7 @@ QT_BEGIN_NAMESPACE
     \class QAudioInput
     \brief The QAudioInput class provides an interface for receiving audio data from an audio input device.
 
-    \inmodule QtMultimedia
+    \inmodule QtMultimediaKit
     \ingroup  multimedia
     \since 4.6
 

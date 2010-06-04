@@ -77,7 +77,7 @@ void tst_QMediaRecorder::testAudioWavSr8kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr8kHz", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(8000);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
@@ -106,7 +106,7 @@ void tst_QMediaRecorder::testAudioWavSr16kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr16kHz", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(16000);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
@@ -135,7 +135,7 @@ void tst_QMediaRecorder::testAudioWavSr32kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr32kHz", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(32000);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
@@ -164,7 +164,7 @@ void tst_QMediaRecorder::testAudioWavSr96kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr32kHz", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(96000);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
@@ -193,7 +193,7 @@ void tst_QMediaRecorder::testAudioWavSr8kHzStereo()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr8kHzStereo", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(8000);
     audioSettings.setChannelCount(2);
     QVideoEncoderSettings videoSettings;
@@ -223,7 +223,7 @@ void tst_QMediaRecorder::testAudioWavSr16kHzStereo()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr16kHzStereo", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(16000);
     audioSettings.setChannelCount(2);
     QVideoEncoderSettings videoSettings;
@@ -253,7 +253,7 @@ void tst_QMediaRecorder::testAudioWavSr32kHzStereo()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr32kHzStereo", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(32000);
     audioSettings.setChannelCount(2);
     QVideoEncoderSettings videoSettings;
@@ -283,7 +283,7 @@ void tst_QMediaRecorder::testAudioWavSr96kHzStereo()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr32kHzStereo", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(96000);
     audioSettings.setChannelCount(2);
     QVideoEncoderSettings videoSettings;
@@ -313,8 +313,8 @@ void tst_QMediaRecorder::testAudioWavQualityVeryLow()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "VeryLowQuality", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::VeryLowQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::VeryLowQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -342,8 +342,8 @@ void tst_QMediaRecorder::testAudioWavQualityLow()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "LowQuality", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::LowQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::LowQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -371,8 +371,8 @@ void tst_QMediaRecorder::testAudioWavQualityNormal()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "NormalQuality", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::NormalQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::NormalQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -400,8 +400,8 @@ void tst_QMediaRecorder::testAudioWavQualityHigh()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "HighQuality", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::HighQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::HighQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -429,8 +429,8 @@ void tst_QMediaRecorder::testAudioWavQualityVeryHigh()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "VeryHighQuality", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
-    audioSettings.setQuality(QtMultimedia::VeryHighQuality);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
+    audioSettings.setQuality(QtMultimediaKit::VeryHighQuality);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
     QCOMPARE(audiocapture->state(), QMediaRecorder::StoppedState);
@@ -458,7 +458,7 @@ void tst_QMediaRecorder::testAudioWavSr4kHz()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr441kHz", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(4000);
     QVideoEncoderSettings videoSettings;
     audiocapture->setEncodingSettings(audioSettings, videoSettings, QString("audio/wav"));
@@ -476,7 +476,7 @@ void tst_QMediaRecorder::testAudioWavSr8kHz5Channel()
     audiocapture->setOutputLocation(nextFileName(QDir::rootPath(), "Sr441kHz", "wav"));
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("pcm");
-    audioSettings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+    audioSettings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
     audioSettings.setSampleRate(8000);
     audioSettings.setChannelCount(6);
     QVideoEncoderSettings videoSettings;

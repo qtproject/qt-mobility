@@ -66,6 +66,8 @@
 
 QTM_BEGIN_NAMESPACE
 
+#define SERVICE_INITIALIZED_ATTR    "INITIALIZED"
+
 class QServiceInterfaceDescriptorPrivate
 {
 public:

@@ -121,7 +121,7 @@
     In particular:
     \list
         \o The example only exercises the synchronous API of QtContacts.  For most real applications, the
-           asynchronous API is the preferred interface to use as it does not block the UI while a query
+           asynchronous API is the preferred interface to use as it does not block the GUI while a query
            is made to the contacts backend.
         \o Detail subtypes and contexts are not supported by the interface.
         \o Duplicate contacts are not filtered out - importing the same contact twice results in two

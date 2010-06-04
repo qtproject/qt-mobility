@@ -54,7 +54,7 @@ QT_BEGIN_NAMESPACE
     \brief The QAbstractAudioDeviceInfo class is a base class for audio backends.
 
     \ingroup multimedia
-    \inmodule QtMultimedia
+    \inmodule QtMultimediaKit
     \internal
 
     This class implements the audio functionality for
@@ -118,7 +118,7 @@ QT_BEGIN_NAMESPACE
     \brief The QAbstractAudioOutput class is a base class for audio backends.
 
     \ingroup multimedia
-    \inmodule QtMultimedia
+    \inmodule QtMultimediaKit
     \internal
 
     QAbstractAudioOutput implements audio functionality for
@@ -247,7 +247,7 @@ QT_BEGIN_NAMESPACE
     device provided by the plugin.
 
     \ingroup multimedia
-    \inmodule QtMultimedia
+    \inmodule QtMultimediaKit
     \internal
 
     QAudioDeviceInput keeps an instance of QAbstractAudioInput and

@@ -69,7 +69,7 @@
 QT_BEGIN_NAMESPACE
 
 
-namespace QtMultimediaInternal
+namespace QtMultimediaKitInternal
 {
 
 static const int default_buffer_size = 4 * 1024;
@@ -531,7 +531,7 @@ QAudioInputPrivate::QAudioInputPrivate(const QByteArray& device)
         startTime = 0;
         totalFrames = 0;
         audioBuffer = 0;
-        internalBufferSize = QtMultimediaInternal::default_buffer_size;
+        internalBufferSize = QtMultimediaKitInternal::default_buffer_size;
         clockFrequency = AudioGetHostClockFrequency() / 1000;
         errorCode = QAudio::NoError;
         stateCode = QAudio::StoppedState;
@@ -682,13 +682,13 @@ bool QAudioInputPrivate::open()
     else
         internalBufferSize -= internalBufferSize % streamFormat.mBytesPerFrame;
 
-    audioBuffer = new QtMultimediaInternal::QAudioInputBuffer(internalBufferSize,
+    audioBuffer = new QtMultimediaKitInternal::QAudioInputBuffer(internalBufferSize,
                                         periodSizeBytes,
                                         deviceFormat,
                                         streamFormat,
                                         this);
 
-    audioIO = new QtMultimediaInternal::MacInputDevice(audioBuffer, this);
+    audioIO = new QtMultimediaKitInternal::MacInputDevice(audioBuffer, this);
 
     // Init
     if (AudioUnitInitialize(audioUnit) != noErr) {

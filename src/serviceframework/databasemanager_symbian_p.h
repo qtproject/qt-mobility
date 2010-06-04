@@ -45,8 +45,8 @@
 **
 ****************************************************************************/
 
-#ifndef DATABASEMANAGER_S60_H_
-#define DATABASEMANAGER_S60_H_
+#ifndef DATABASEMANAGER_SYMBIAN_P_H
+#define DATABASEMANAGER_SYMBIAN_P_H
 
 //
 //  W A R N I N G
@@ -58,6 +58,12 @@
 //
 // We mean it.
 //
+
+#if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
+//Use DatabaseManager "directly" in emulators where per process WSD is not
+//supported.
+#include "databasemanager_p.h"
+#else //defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
 
 #include "qmobilityglobal.h"
 #include <QObject>
@@ -90,6 +96,7 @@ class RDatabaseManagerSession : public RSessionBase
 
         bool RegisterService(ServiceMetaDataResults& aService);
         bool UnregisterService(const QString& aServiceName);
+        bool ServiceInitialized(const QString& aServiceName);
 
         QList<QServiceInterfaceDescriptor> Interfaces(const QServiceFilter& aFilter);
         QStringList ServiceNames(const QString& aInterfaceName);
@@ -115,9 +122,6 @@ class RDatabaseManagerSession : public RSessionBase
     private:
         TIpcArgs iArgs;
         TError iError;
-#ifdef __WINS__
-        CDatabaseManagerServerThread* iServerThread;
-#endif
     };
 
 class DatabaseManagerSignalMonitor;
@@ -133,6 +137,7 @@ class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
 
         bool registerService(ServiceMetaDataResults &service, DbScope scope);
         bool unregisterService(const QString &serviceName, DbScope scope);
+        bool serviceInitialized(const QString &serviceName, DbScope scope);
 
         QList<QServiceInterfaceDescriptor> getInterfaces(const QServiceFilter &filter, DbScope scope);
         QStringList getServiceNames(const QString &interfaceName, DbScope scope);
@@ -160,21 +165,6 @@ class Q_AUTOTEST_EXPORT DatabaseManager : public QObject
         QServiceInterfaceDescriptor latestDescriptor(const QList<QServiceInterfaceDescriptor> &descriptors);
 };
 
-#ifdef __WINS__
-QTM_END_NAMESPACE
-    #include "databasemanagerserver_global.h"
-    #include <QThread>
-QTM_BEGIN_NAMESPACE
-    class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServerThread : public QThread
-        {
-        public:
-            CDatabaseManagerServerThread();
-
-        protected:
-            void run();
-        };
-#endif
-
 class DatabaseManagerSignalMonitor : public CActive
 {
     public:
@@ -195,4 +185,5 @@ class DatabaseManagerSignalMonitor : public CActive
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif
+#endif //defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
+#endif //DATABASEMANAGER_SYMBIAN_P_H

@@ -48,6 +48,7 @@
 #ifndef QSERVICEINTERFACEDESCRIPTOR_H
 #define QSERVICEINTERFACEDESCRIPTOR_H
 
+#include "qmobilityglobal.h"
 #include <QString>
 #include <QVariant>
 #include "qservice.h"

@@ -97,11 +97,11 @@ CDatabaseManagerServerSession::CDatabaseManagerServerSession(CDatabaseManagerSer
 
 CDatabaseManagerServerSession::~CDatabaseManagerServerSession()
     {
-    iServer.DecreaseSessions();
     delete iDatabaseManagerSignalHandler;
     delete iDb;
     delete iByteArray;
     delete m_watcher;
+    iServer.DecreaseSessions();
     }
 
 void CDatabaseManagerServerSession::ServiceL(const RMessage2& aMessage)
@@ -126,6 +126,9 @@ void CDatabaseManagerServerSession::DispatchMessageL(const RMessage2& aMessage)
                 break;
             case EUnregisterServiceRequest:
                 User::LeaveIfError(UnregisterServiceL(aMessage));
+                break;
+            case EServiceInitializedRequest:
+                User::LeaveIfError(ServiceInitializedL(aMessage));
                 break;
             case EGetInterfacesRequest:
                 User::LeaveIfError(InterfacesL(aMessage));
@@ -294,6 +297,44 @@ TInt CDatabaseManagerServerSession::UnregisterServiceL(const RMessage2& aMessage
 
     QString serviceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
     iDb->unregisterService(serviceName, securityToken);
+    
+    aMessage.Write(1, LastErrorCode());
+    delete serviceNameBuf;
+    
+    return ret;
+    }
+    
+TInt CDatabaseManagerServerSession::ServiceInitializedL(const RMessage2& aMessage)
+    {
+    QString securityToken;
+    
+    TVendorId vendorId = aMessage.VendorId();
+    if (vendorId != 0)
+    {
+        securityToken = QString::number(vendorId);
+    }
+    else
+    {
+        securityToken = QString::number(aMessage.SecureId().iId);
+    }
+    
+    TInt ret;
+    HBufC* serviceNameBuf = HBufC::New(aMessage.GetDesLength(0));
+    if (!serviceNameBuf)
+        return KErrNoMemory;
+
+    TPtr ptrToBuf(serviceNameBuf->Des());
+    TRAP(ret, aMessage.ReadL(0, ptrToBuf));
+    if (ret != KErrNone)
+        {
+        iDb->lastError().setError(DBError::UnknownError);
+        aMessage.Write(1, LastErrorCode());
+        delete serviceNameBuf;
+        return ret;
+        }
+
+    QString serviceName = QString::fromUtf16(ptrToBuf.Ptr(), ptrToBuf.Length());
+    iDb->serviceInitialized(serviceName, securityToken);
     
     aMessage.Write(1, LastErrorCode());
     delete serviceNameBuf;
@@ -563,20 +604,28 @@ void CDatabaseManagerServerSession::initDbPath()
     {
     QString dbIdentifier = "_system";
     ServiceDatabase *db = iDb;
-#ifdef __WINS__
-    // In emulator use commmon place for service database
-    // instead of server's private directory (on emulator the server runs in the application's
-    // process - using private dir would mean that each application has its own storage, which others
-    // can't see.
-    QDir dir(QDir::toNativeSeparators("C:\\Data\\temp\\QtServiceFW"));
-#else
-    // On hardware, use this DB server's private directory (C:/Private/<UID3>)    
     QDir dir(QDir::toNativeSeparators(QCoreApplication::applicationDirPath()));
-#endif
     QString qtVersion(qVersion());
     qtVersion = qtVersion.left(qtVersion.size() -2); //strip off patch version
     QString dbName = QString("QtServiceFramework_") + qtVersion + dbIdentifier + QLatin1String(".db");
     db->setDatabasePath(dir.path() + QDir::separator() + dbName);
+
+    // check if database is copied from Z drive; also valid for emulator
+    QFile dbFile(iDb->databasePath());
+    QFileInfo dbFileInfo(dbFile);
+    if (!dbFileInfo.exists()) {
+        // create folder first
+        if (!dbFileInfo.dir().exists()) 
+            QDir::root().mkpath(dbFileInfo.path());
+        // copy file from ROM
+        QFile romDb(QLatin1String("z:\\private\\2002ac7f\\") + dbFileInfo.fileName());
+        if (romDb.open(QIODevice::ReadOnly) && dbFile.open(QFile::WriteOnly)) {
+            QByteArray data = romDb.readAll();
+            dbFile.write(data);
+            dbFile.close();
+            romDb.close();
+        }
+    }
     
     openDb();
     }

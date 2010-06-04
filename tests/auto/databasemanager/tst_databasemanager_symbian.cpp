@@ -46,13 +46,14 @@
 ****************************************************************************/
 #include <QtTest/QtTest>
 #include <QtCore>
+#include <QThread>
 #define private public
 #include <qserviceinterfacedescriptor.h>
 #include "qserviceinterfacedescriptor_p.h"
 #include <qservicefilter.h>
 #include "../qsfwtestutil.h"
 #include "servicemetadata_p.h"
-#include "databasemanager_s60_p.h"
+#include "databasemanager_symbian_p.h"
 
 QTM_USE_NAMESPACE
 class tst_DatabaseManager: public QObject
@@ -60,6 +61,7 @@ class tst_DatabaseManager: public QObject
     Q_OBJECT
 private slots:
         void initTestCase();
+        void multipleInstances();   //Must be executed first
         void registerService();
         void getInterfaces();
         void getServiceNames();
@@ -99,16 +101,16 @@ void tst_DatabaseManager::initTestCase()
     // the database file (otherwise QFile::remove will get a permission denied -->
     // in next case, the isEmpty() check fails).
     QTest::qWait(1);
-    QSfwTestUtil::removeTempUserDb();
-    QSfwTestUtil::removeTempSystemDb();
-#if !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
-    m_dbm = new DatabaseManager;
+    QSfwTestUtil::removeDatabases_symbian();
+    m_dbm = NULL;
 }
 
 void tst_DatabaseManager::registerService()
 {
+    if (!m_dbm) {
+        m_dbm = new DatabaseManager;
+    }
+
     m_testdir = QDir(QDir::currentPath() + "/testdata");
     ServiceMetaData parser("");
 
@@ -145,6 +147,9 @@ void tst_DatabaseManager::registerService()
 
 void tst_DatabaseManager::getInterfaces()
 {
+    if (!m_dbm)
+        m_dbm = new DatabaseManager;
+
     QSKIP("There is no difference between user and system scope in symbian", SkipAll);
     
     QString iface("com.omni.device.accelerometer");
@@ -217,6 +222,9 @@ void tst_DatabaseManager::getInterfaces()
 
 void tst_DatabaseManager::getServiceNames()
 {
+    if (!m_dbm)
+        m_dbm = new DatabaseManager;
+
     QSKIP("There is no difference between user and system scope in symbian", SkipAll);
     
     //try getting a lost of service names only in user database
@@ -257,6 +265,9 @@ void tst_DatabaseManager::getServiceNames()
 
 void tst_DatabaseManager::defaultService()
 {
+    if (!m_dbm)
+        m_dbm = new DatabaseManager;
+
     QSKIP("There is no difference between user and system scope in symbian", SkipAll);
     
     QServiceInterfaceDescriptor descriptor;
@@ -385,6 +396,9 @@ void tst_DatabaseManager::defaultService()
 
 void tst_DatabaseManager::unregisterService()
 {
+    if (!m_dbm)
+        m_dbm = new DatabaseManager;
+
     QSKIP("There is no difference between user and system scope in symbian", SkipAll);
 
     //try remove a service that only exists in the user database
@@ -433,9 +447,7 @@ void tst_DatabaseManager::unregisterService()
     QVERIFY(!m_dbm->unregisterService("; drop table Interface;", DatabaseManager::UserScope));
     QCOMPARE(m_dbm->lastError().code(), DBError::NotFound);
 
-#if !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
+    QSfwTestUtil::removeDatabases_symbian();
 }
 
 bool tst_DatabaseManager::compareDescriptor(QServiceInterfaceDescriptor interface,
@@ -577,6 +589,45 @@ void tst_DatabaseManager::CWRTXmlCompatability()
 
 }
 
+class DatabaseManagerThread : QThread
+{
+public:
+    DatabaseManagerThread() : m_dbm(NULL)
+    {
+        start();
+    }
+    
+    ~DatabaseManagerThread()
+    {
+        wait();
+        delete m_dbm;
+    }
+
+    void run()
+    {
+        m_dbm = new DatabaseManager;
+        QEventLoop loop;
+        QTimer::singleShot(100, &loop, SLOT(quit()));
+        loop.exec();
+    }
+
+private:
+    DatabaseManager *m_dbm;
+};
+
+void tst_DatabaseManager::multipleInstances()
+{
+    QVERIFY(!m_dbm);
+    DatabaseManagerThread *threads[5];
+    for (int i = 0; i < 5; ++i) {
+        threads[i] = new DatabaseManagerThread;
+    }
+    
+    for (int i = 0; i < 5; ++i) {
+        delete threads[i];
+    }
+}
+
 void tst_DatabaseManager::modifyPermissionSet(QFile::Permissions &permsSet,
                                                     int perm)
 {
@@ -626,14 +677,11 @@ void tst_DatabaseManager::modifyPermissionSet(QFile::Permissions &permsSet,
 void tst_DatabaseManager::cleanupTestCase()
 {
     QTest::qWait(100);
-    QSfwTestUtil::removeTempUserDb();
-    QSfwTestUtil::removeTempSystemDb();
-#if !defined(__WINS__)
-    QSfwTestUtil::removeDatabases();
-#endif
+    delete m_dbm;
+    QSfwTestUtil::removeDatabases_symbian();
 }
 
 QTEST_MAIN(tst_DatabaseManager)
 
-#include "tst_databasemanager_s60.moc"
+#include "tst_databasemanager_symbian.moc"
 

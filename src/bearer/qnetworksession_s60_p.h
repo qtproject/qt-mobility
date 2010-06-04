@@ -77,6 +77,7 @@
 QTM_BEGIN_NAMESPACE
 
 class ConnectionProgressNotifier;
+typedef void (*TOpenCUnSetdefaultifFunction)();
 
 class QNetworkSessionPrivate : public QObject, public CActive
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
@@ -167,6 +168,9 @@ private: // data
 
     QNetworkSession* q;
     QDateTime startTime;
+
+    RLibrary iOpenCLibrary;
+    TOpenCUnSetdefaultifFunction iDynamicUnSetdefaultif;
 
     mutable RSocketServ iSocketServ;
     mutable RConnection iConnection;

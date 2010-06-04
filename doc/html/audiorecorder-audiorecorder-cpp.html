@@ -71,8 +71,8 @@
 
         if (capture-&gt;supportedAudioCodecs().size() &gt; 0) {
             QAudioEncoderSettings audioSettings;
-            audioSettings.setQuality(QtMultimedia::LowQuality);
-            audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
+            audioSettings.setQuality(QtMultimediaKit::LowQuality);
+            audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
             audioSettings.setCodec(capture-&gt;supportedAudioCodecs().first());
             capture-&gt;setEncodingSettings(audioSettings,QVideoEncoderSettings(),
                     capture-&gt;supportedContainers().first());
@@ -175,8 +175,8 @@
 
         if (codecs.count() &gt; 0) {
         QAudioEncoderSettings audioSettings;
-        audioSettings.setQuality(QtMultimedia::LowQuality);
-        audioSettings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
+        audioSettings.setQuality(QtMultimediaKit::LowQuality);
+        audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
         audioSettings.setCodec(codecs.first());
         capture-&gt;setEncodingSettings(audioSettings,QVideoEncoderSettings(),
                 containers.first());
@@ -345,13 +345,13 @@
 
         switch(idx) {
         case 0:
-            settings.setQuality(QtMultimedia::LowQuality);
+            settings.setQuality(QtMultimediaKit::LowQuality);
             break;
         case 1:
-            settings.setQuality(QtMultimedia::NormalQuality);
+            settings.setQuality(QtMultimediaKit::NormalQuality);
             break;
         default:
-            settings.setQuality(QtMultimedia::HighQuality);
+            settings.setQuality(QtMultimediaKit::HighQuality);
         }
         capture-&gt;setEncodingSettings(settings);
     }
@@ -362,13 +362,13 @@
 
         switch(idx) {
         case 0:
-            settings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
+            settings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
             break;
         case 1:
-            settings.setEncodingMode(QtMultimedia::ConstantBitRateEncoding);
+            settings.setEncodingMode(QtMultimediaKit::ConstantBitRateEncoding);
             break;
         default:
-            settings.setEncodingMode(QtMultimedia::ConstantQualityEncoding);
+            settings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
         }
         capture-&gt;setEncodingSettings(settings);
     }

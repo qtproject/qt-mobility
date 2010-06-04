@@ -72,8 +72,8 @@ related information and capabilities.
 
 \section1 Namespace
 
-The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility API's into Qt. See the
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -91,8 +91,8 @@ of WebKit, Qt and the Service Framework.
 
 \section3 Features (hardware)
 
-This lists the supported hardware on the device. Feautures include items
-such as the camera, bluetooth, GPS, fm radio etc.
+This lists the supported hardware on the device. Features include items
+such as the camera, bluetooth, GPS, FM radio etc.
 
 
 \section3 Network

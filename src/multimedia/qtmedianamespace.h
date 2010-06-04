@@ -55,7 +55,7 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace QtMultimedia
+namespace QtMultimediaKit
 {
     enum MetaData
     {

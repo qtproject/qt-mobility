@@ -57,7 +57,7 @@
 
 The \l{Contacts}{Qt Contacts API} makes use of detail leaf classes
 which provide certain well-known functionality.  In order to develop a backend engine which
-can service clients or provide synchronisation to other backends, the schema must be
+can service clients or provide synchronization to other backends, the schema must be
 known.
 
 \section1 Schema Definition

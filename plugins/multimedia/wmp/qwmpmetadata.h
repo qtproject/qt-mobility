@@ -71,8 +71,8 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMultimedia::MetaData key) const;
-    QList<QtMultimedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
     QStringList availableExtendedMetaData() const;

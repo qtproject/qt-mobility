@@ -76,7 +76,7 @@
 QT_BEGIN_NAMESPACE
 
 
-namespace QtMultimediaInternal
+namespace QtMultimediaKitInternal
 {
 
 static const int default_buffer_size = 8 * 1024;
@@ -243,7 +243,7 @@ class MacOutputDevice : public QIODevice
     Q_OBJECT
 
 public:
-    MacOutputDevice(QtMultimediaInternal::QAudioOutputBuffer* audioBuffer, QObject* parent):
+    MacOutputDevice(QtMultimediaKitInternal::QAudioOutputBuffer* audioBuffer, QObject* parent):
         QIODevice(parent),
         m_audioBuffer(audioBuffer)
     {
@@ -269,7 +269,7 @@ public:
     }
 
 private:
-    QtMultimediaInternal::QAudioOutputBuffer*    m_audioBuffer;
+    QtMultimediaKitInternal::QAudioOutputBuffer*    m_audioBuffer;
 };
 
 
@@ -290,7 +290,7 @@ QAudioOutputPrivate::QAudioOutputPrivate(const QByteArray& device)
         startTime = 0;
         totalFrames = 0;
         audioBuffer = 0;
-        internalBufferSize = QtMultimediaInternal::default_buffer_size;
+        internalBufferSize = QtMultimediaKitInternal::default_buffer_size;
         clockFrequency = AudioGetHostClockFrequency() / 1000;
         errorCode = QAudio::NoError;
         stateCode = QAudio::StoppedState;
@@ -404,7 +404,7 @@ bool QAudioOutputPrivate::open()
     else
         internalBufferSize -= internalBufferSize % streamFormat.mBytesPerFrame;
 
-    audioBuffer = new QtMultimediaInternal::QAudioOutputBuffer(internalBufferSize, periodSizeBytes, audioFormat);
+    audioBuffer = new QtMultimediaKitInternal::QAudioOutputBuffer(internalBufferSize, periodSizeBytes, audioFormat);
     connect(audioBuffer, SIGNAL(readyRead()), SLOT(inputReady()));  // Pull
 
     audioIO = new MacOutputDevice(audioBuffer, this);

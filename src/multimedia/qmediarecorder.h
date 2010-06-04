@@ -101,7 +101,7 @@ public:
     QMediaObject *mediaObject() const;
 
     bool isAvailable() const;
-    QtMultimedia::AvailabilityError availabilityError() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
 
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl &location);
@@ -145,9 +145,9 @@ public:
     bool isMetaDataAvailable() const;
     bool isMetaDataWritable() const;
 
-    QVariant metaData(QtMultimedia::MetaData key) const;
-    void setMetaData(QtMultimedia::MetaData key, const QVariant &value);
-    QList<QtMultimedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    void setMetaData(QtMultimediaKit::MetaData key, const QVariant &value);
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const;
     void setExtendedMetaData(const QString &key, const QVariant &value);

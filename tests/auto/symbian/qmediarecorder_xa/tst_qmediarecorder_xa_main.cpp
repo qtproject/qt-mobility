@@ -115,8 +115,8 @@ void tst_QMediaRecorder::testDefaultAudioEncodingSettings()
     QCOMPARE(audiocapture->containerMimeType(), QString("audio/wav"));
     QCOMPARE(audioSettings.bitRate(), 0);
     QCOMPARE(audioSettings.channelCount(), 1);
-    QCOMPARE(audioSettings.encodingMode(), QtMultimedia::ConstantQualityEncoding);
-    QCOMPARE(audioSettings.quality(), QtMultimedia::VeryLowQuality);
+    QCOMPARE(audioSettings.encodingMode(), QtMultimediaKit::ConstantQualityEncoding);
+    QCOMPARE(audioSettings.quality(), QtMultimediaKit::VeryLowQuality);
     QCOMPARE(audioSettings.sampleRate(), 8000);
 }
 

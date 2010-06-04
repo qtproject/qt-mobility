@@ -155,6 +155,9 @@ private:
     // For QNetworkSessionPrivate to indicate about state changes
     void configurationStateChangeReport(TUint32 accessPointId,
                                    QNetworkSession::State newState);
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+    QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> configurationFromEasyWlan(TUint32 apId, TUint connectionId);
+#endif
 
 public: // Data
     //this table contains an up to date list of all configs at any time.

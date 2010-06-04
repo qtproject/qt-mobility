@@ -45,7 +45,18 @@
 **
 ****************************************************************************/
 
-#include "databasemanager_s60_p.h"
+#if defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
+//Use DatabaseManager "directly" in emulators where per process WSD is not
+//supported.
+#include "databasemanager.cpp"
+#include "servicedatabase.cpp"
+#else //defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
+
+#ifdef QTM_BUILD_UNITTESTS
+#include "servicedatabase.cpp"
+#endif
+
+#include "databasemanager_symbian_p.h"
 #include "clientservercommon.h"
 #include <qserviceinterfacedescriptor_p.h>
 #include <qserviceinterfacedescriptor.h>
@@ -53,7 +64,6 @@
 #include <QProcess>
 #include <QDebug>
 #include <s32mem.h>
-
 
 QTM_BEGIN_NAMESPACE
 
@@ -97,18 +107,10 @@ QTM_BEGIN_NAMESPACE
 */
 DatabaseManager::DatabaseManager()
 {
-    int err = iSession.Connect();
-    
-    int i = 0;
-    while (err != KErrNone) {
-        if (i > 10)
-            qt_symbian_throwIfError(err);
-        
-        User::After(50);
-        err = iSession.Connect();
-        i++;
-    }
-    
+    TInt err = iSession.Connect();
+    if (err != KErrNone)
+        qt_symbian_throwIfError(err);
+
     iDatabaseManagerSignalMonitor = new DatabaseManagerSignalMonitor(*this, iSession);
 }
 
@@ -151,6 +153,18 @@ bool DatabaseManager::unregisterService(const QString &serviceName, DbScope scop
 {
     Q_UNUSED(scope);
     return iSession.UnregisterService(serviceName);
+}
+
+/*
+    Removes the initialization specific information of \serviceName from the database.
+
+    Returns true if the operation succeeded, false otherwise.
+    The last error is set when this function is called.
+  */
+bool DatabaseManager::serviceInitialized(const QString &serviceName, DbScope scope)
+{
+    Q_UNUSED(scope);
+    return iSession.ServiceInitialized(serviceName);
 }
 
 /*
@@ -302,9 +316,6 @@ void DatabaseManagerSignalMonitor::RunL()
 RDatabaseManagerSession::RDatabaseManagerSession()
     : RSessionBase()
     {
-#ifdef __WINS__
-    iServerThread = NULL;
-#endif
     }
 
 TVersion RDatabaseManagerSession::Version() const
@@ -314,12 +325,18 @@ TVersion RDatabaseManagerSession::Version() const
 
 TInt RDatabaseManagerSession::Connect()
     {
-    TInt err = StartServer();
-    if (err == KErrNone)
-    {
-        err = CreateSession(KDatabaseManagerServerName, Version()); //Default message slots
-    }
-    return err;
+    TInt retryCount = 2;
+    for (;;)
+        {
+        TInt err = CreateSession(KDatabaseManagerServerName, TVersion(), 8, EIpcSession_Sharable);
+        if (err != KErrNotFound && err != KErrServerTerminated)
+            return err;
+        if (--retryCount == 0)
+            return err;
+        err = StartServer();
+        if (err != KErrNone && err != KErrAlreadyExists)
+            return err;
+        }
     }
 
 TInt RDatabaseManagerSession::StartServer()
@@ -330,11 +347,6 @@ TInt RDatabaseManagerSession::StartServer()
 
     if (findServer.Next(name) != KErrNone)
     {
-#ifdef __WINS__
-        iServerThread = new CDatabaseManagerServerThread();
-        iServerThread->start();
-        iServerThread->wait(1);
-#else
         TRequestStatus status;
         RProcess dbServer;	    
         ret = dbServer.Create(KDatabaseManagerServerProcess, KNullDesC);
@@ -361,7 +373,6 @@ TInt RDatabaseManagerSession::StartServer()
             return status.Int();
             }
         dbServer.Close();
-#endif
     }
 
     return ret;
@@ -393,6 +404,16 @@ bool RDatabaseManagerSession::UnregisterService(const QString& aServiceName)
     
     return (iError() == DBError::NoError);
     }
+
+bool RDatabaseManagerSession::ServiceInitialized(const QString& aServiceName)
+    {
+    TPtrC serviceNamePtr(reinterpret_cast<const TUint16*>(aServiceName.utf16()));
+    TIpcArgs args(&serviceNamePtr, &iError);
+    SendReceive(EServiceInitializedRequest, args);
+    
+    return (iError() == DBError::NoError);
+    }
+    
 
 QList<QServiceInterfaceDescriptor> RDatabaseManagerSession::Interfaces(const QServiceFilter& aFilter)
     {
@@ -519,34 +540,8 @@ void RDatabaseManagerSession::CancelNotifyServiceSignal() const
     SendReceive(ECancelNotifyServiceSignalRequest, TIpcArgs(NULL));
     }
 
-
-#ifdef __WINS__
-QTM_END_NAMESPACE
-    #include "databasemanagerserver.h"
-QTM_BEGIN_NAMESPACE
-
-    CDatabaseManagerServerThread::CDatabaseManagerServerThread()
-    {
-    }
-
-    void CDatabaseManagerServerThread::run()
-    {
-        CDatabaseManagerServer *dbManagerServer = new CDatabaseManagerServer();
-        __ASSERT_ALWAYS(dbManagerServer != NULL, CDatabaseManagerServer::PanicServer(ESrvCreateServer));
-
-        TInt err = dbManagerServer->Start(KDatabaseManagerServerName);
-        if (err != KErrNone && err != KErrAlreadyExists)
-        {
-            CDatabaseManagerServer::PanicServer(ESvrStartServer);
-        }
-        RThread::Rendezvous(KErrNone);
-
-        exec();
-        
-        delete dbManagerServer;
-    }
-#endif
-
-#include "moc_databasemanager_s60_p.cpp"
+#include "moc_databasemanager_symbian_p.cpp"
 
 QTM_END_NAMESPACE
+
+#endif //defined(__WINS__) && !defined(SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD)
