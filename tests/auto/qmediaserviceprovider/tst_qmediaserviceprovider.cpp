@@ -371,7 +371,7 @@ void tst_QMediaServiceProvider::testHasSupport()
     QCOMPARE(provider->hasSupport(QByteArray("non existing service"), "video/ogv", QStringList()),
              QtMultimediaKit::NotSupported);
 
-    QCOMPARE(QMediaPlayer::hasSupport("video/ogv"), QtMultimediaKit::MaybeSupported);    
+    QCOMPARE(QMediaPlayer::hasSupport("video/ogv"), QtMultimediaKit::MaybeSupported);
     QCOMPARE(QMediaPlayer::hasSupport("audio/ogg"), QtMultimediaKit::ProbablySupported);
     QCOMPARE(QMediaPlayer::hasSupport("audio/wav"), QtMultimediaKit::ProbablySupported);
 

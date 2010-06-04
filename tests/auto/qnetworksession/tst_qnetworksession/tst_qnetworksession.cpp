@@ -93,7 +93,7 @@ private slots:
     void sessionStop();
 
     void roamingErrorCodes();
-    
+
     void sessionProperties_data();
     void sessionProperties();
 

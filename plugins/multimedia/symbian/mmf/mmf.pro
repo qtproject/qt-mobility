@@ -2,7 +2,7 @@ TEMPLATE = lib
 
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtmultimediakit_mmfengine)
-PLUGIN_SUBDIR = mediaservice
+PLUGIN_TYPE = mediaservice
 include (../../../../common.pri)
 qtAddLibrary(QtMultimediaKit)
 
@@ -21,7 +21,8 @@ DEPENDPATH += .
 INCLUDEPATH += . \
     $${SOURCE_DIR}/include \
     $${SOURCE_DIR}/src/multimedia \
-    $${SOURCE_DIR}/src/multimedia/experimental \
+    $${SOURCE_DIR}/src/multimedia/audio \
+    $${SOURCE_DIR}/src/multimedia/video \
     $${SOURCE_DIR}
 
 
