@@ -93,7 +93,7 @@ README for further details.
 
 As you can see we register the services using a xml file.
 This xml file basically contains all information to register the shared library in the 
-Service Framework enviroment.
+Service Framework environment.
 For more information please read more about the Qt Service Framework 
 \l {service-frameworks.html#adding-and-removing-of-services}{XML Format}
  
@@ -110,7 +110,7 @@ In our case we only need to overwrite the virtual function createInstance.
 
 As you can see the createInstance function create the appropriate dialer object
 and returns it.
-The Q_EXPORT_PLUGIN2 macro provides the neccessary implementation for a plugin.
+The Q_EXPORT_PLUGIN2 macro provides the necessary implementation for a plugin.
 See \l{How to Create Qt Plugins} for more details.
 
 The last thing we need to provide in our services are
@@ -141,7 +141,7 @@ Delegate property:
 \snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialerList.qml 1
 
 In this component you can define how you want to draw one ListView item.
-You can acces insite of this component the current ListWiew item by using the variable modelData.
+You can access inside of this component the current ListWiew item by using the variable modelData.
 In our example we are using two text lines. Furthermore we can define whats happening if we click
 on a ListView item by using the MouseRegion.
 
@@ -163,11 +163,11 @@ Both function are implemented in the service \l {voipdialer_h_0} { (see voipdial
 \snippet declarative-sfw-dialer/declarative-sfw-dialer/declarative-sfw-dialer.qml 0
 
 In DialScreen.qml the dial and the hangup signals are defined.
-The hangup signal will be emited if the HangUpButton was clicked:
+The hangup signal will be emitted if the HangUpButton was clicked:
 
 \snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialScreen.qml 1
 
-The dial signal will be emited if the CallButton was clicked:
+The dial signal will be emitted if the CallButton was clicked:
 
 \snippet declarative-sfw-dialer/declarative-sfw-dialer/content/DialScreen.qml 2
 

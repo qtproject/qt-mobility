@@ -56,7 +56,7 @@
         if((methods &amp; QSystemDeviceInfo::Keypad)) {
             inputs &lt;&lt; &quot;Keypad&quot;;
         }</pre>
-<p>Various capabilities of the device can be found by testing for features. In the example a Feature combo box, on the General tab, has a hard coded list of features. When a listed featue is selected the getFeature() function is called with the index which is handled by applying a test to the corresponding feaure.</p>
+<p>Various capabilities of the device can be found by testing for features. In the example a Feature combo box, on the General tab, has a hard coded list of features. When a listed feature is selected the getFeature() function is called with the index which is handled by applying a test to the corresponding feature.</p>
 <pre>        QSystemInfo::Feature feature;
         switch(index) {
         ...

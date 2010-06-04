@@ -162,7 +162,7 @@ Support is present for the following System Info API classes
     \o Fremantle: \c {QMessageManager::updateMessage} is not supported.
     \o Fremantle: \c {QMessageManager::addMessage} is not supported for SMS type messages.
     \o Fremantle: \c {QMessageManager::addMessage} can not be used to set priority and status of email messages.
-    \o Fremantle and Windows: \c {QMessageServiceAction::send}: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's disgression.
+    \o Fremantle and Windows: \c {QMessageServiceAction::send}: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's digression.
     \o Fremantle, S60 and Windows: \c {QMessageManager::addMessage} can not be used to set size of messages.
     \o Fremantle and Windows: \c {QMessageManager::addMessage} can not be used to set the date of messages.
     \o S60: Exporting POP3 Message Updates from client to server is not supported.
