@@ -84,7 +84,7 @@ for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\qtmult
 if %QTMULTIMEDIA% == no-multimedia (
     set MOBILITY_MULTIMEDIA=yes
 ) else (
-    set MOBILITY_MULTIMEDIA=no
+    set MOBILITY_MULTIMEDIA=yes
 )
 cd /D %BUILD_PATH%
 
