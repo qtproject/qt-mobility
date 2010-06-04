@@ -50,7 +50,7 @@
 
 #include <qaudioencodercontrol.h>
 #include <QtCore/qstringlist.h>
-#include <QAudioFormat>
+#include "qaudioformat.h"
 
 QT_USE_NAMESPACE
 

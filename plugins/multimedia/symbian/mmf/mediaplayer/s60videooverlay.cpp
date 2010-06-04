@@ -45,7 +45,7 @@
 **
 ****************************************************************************/
 
-#include <QVideoSurfaceFormat>
+#include "qvideosurfaceformat.h"
 #include "s60videooverlay.h"
 #include "s60videosurface.h"
 
