@@ -313,7 +313,9 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         bounds(other.bounds),
         routeSegments(other.routeSegments),
         travelTime(other.travelTime),
-        distance(other.distance) {}
+        distance(other.distance),
+        optimization(other.optimization),
+        travelMode(other.travelMode){}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 
@@ -326,6 +328,8 @@ QGeoRoutePrivate& QGeoRoutePrivate::operator= (const QGeoRoutePrivate & other)
     routeSegments = other.routeSegments;
     travelTime = other.travelTime;
     distance = other.distance;
+    optimization = other.optimization;
+    travelMode = other.travelMode;
 
     return *this;
 }
