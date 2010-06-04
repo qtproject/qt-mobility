@@ -104,7 +104,7 @@ public:
     virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *) = 0;
     virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *) = 0;
     virtual int effectDuration(const QFileFeedbackEffect*) = 0;
-    virtual QStringList supportedMimeTypes() = 0;
+    virtual QStringList mimeTypes() = 0;
 
     static QFileFeedbackInterface *instance();
 };

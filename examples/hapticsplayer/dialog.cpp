@@ -76,7 +76,7 @@ Dialog::Dialog()
     //file API
     connect(ui.browse, SIGNAL(clicked()), SLOT(browseClicked()));
     connect(ui.filePlayPause, SIGNAL(clicked()), SLOT(filePlayPauseClicked()));
-    connect(ui.fileStop, SIGNAL(clicked()), SLOT(fileStopClicked()));
+    connect(ui.fileStop, SIGNAL(clicked()), &fileEffect, SLOT(stop()));
     connect(&fileEffect, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), SLOT(fileEffectStateChanged(QAbstractAnimation::State)));
 
     foreach(const QFeedbackDevice &dev, QFeedbackDevice::devices()) {
@@ -102,7 +102,7 @@ Dialog::Dialog()
     fileEffectStateChanged(fileEffect.state());
 
     ui.tabWidget->setTabEnabled(1, QFeedbackEffect::supportsThemeEffect());
-    ui.tabWidget->setTabEnabled(2, !QFileFeedbackEffect::supportedFileSuffixes().isEmpty());
+    ui.tabWidget->setTabEnabled(2, !QFileFeedbackEffect::mimeTypes().isEmpty());
 }
 
 QFeedbackDevice Dialog::currentDevice() const
@@ -210,15 +210,14 @@ void Dialog::browseClicked()
 {
     fileEffect.stop();
     QString filename = QFileDialog::getOpenFileName(this, tr("feedback file"));
-    QFileInfo info(filename);
-    bool ok = info.isReadable();
+    bool ok = !filename.isEmpty();
     if (ok) {
         ui.filename->setText(QDir::toNativeSeparators(filename));
-        fileEffect.setFile(filename);
+        fileEffect.setFileName(filename);
+        ui.fileStatus->setText( fileEffect.isLoaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );
+        ui.filePlayPause->setEnabled(fileEffect.isLoaded());
+        ui.fileStop->setEnabled(false);
     }
-    ui.fileStatus->setText( fileEffect.loaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );
-    ui.filePlayPause->setEnabled(ok && fileEffect.loaded());
-    ui.fileStop->setEnabled(false);
 }
 
 void Dialog::filePlayPauseClicked()
@@ -227,11 +226,6 @@ void Dialog::filePlayPauseClicked()
         fileEffect.pause();
     else
         fileEffect.start();
-}
-
-void Dialog::fileStopClicked()
-{
-    fileEffect.stop();
 }
 
 void Dialog::fileEffectStateChanged(QAbstractAnimation::State newState)

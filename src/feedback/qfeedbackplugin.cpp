@@ -105,11 +105,11 @@ public:
         return 0;
    }
 
-    virtual QStringList supportedMimeTypes()
+    virtual QStringList mimeTypes()
     {
         QStringList ret;
         for (int i = 0; i < subBackends.count(); ++i)
-            ret += subBackends.at(i)->supportedMimeTypes();
+            ret += subBackends.at(i)->mimeTypes();
         return ret;
     }
 

@@ -57,9 +57,6 @@
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-inline uint qHash(const QFileInfo &info)
-{ return qHash(info.absoluteFilePath()); }
-
 class QFeedbackImmersion : public QObject, public QFeedbackInterface, public QFileFeedbackInterface
 {
     Q_OBJECT
@@ -89,7 +86,7 @@ public:
     virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *);
     virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *);
     virtual int effectDuration(const QFileFeedbackEffect *);
-    virtual QStringList supportedMimeTypes();
+    virtual QStringList mimeTypes();
 
 private:
     VibeInt32 handleForDevice(const QFeedbackDevice &device);
@@ -110,7 +107,7 @@ private:
         QByteArray ba;
         int refCount;
     };
-    QHash<const QFileInfo, FileContent> fileData;
+    QHash<QString, FileContent> fileData;
 };
 
 

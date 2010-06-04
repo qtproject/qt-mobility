@@ -299,49 +299,47 @@ int QFileFeedbackEffect::duration() const
     return QFileFeedbackInterface::instance()->effectDuration(this);
 }
 
-QFileInfo QFileFeedbackEffect::file() const
+QString QFileFeedbackEffect::fileName() const
 {
-    return d_func()->info;
+    return d_func()->fileName;
 }
-void QFileFeedbackEffect::setFile(const QFileInfo &info)
+void QFileFeedbackEffect::setFileName(const QString &fileName)
 {
     if (state() != QAbstractAnimation::Stopped) {
-        qWarning("QFileFeedbackEffect::setFile: can't set the file while the feedback is running");
+        qWarning("QFileFeedbackEffect::setFileName: can't set the file while the feedback is running");
         return;
     }
     setLoaded(false);
-    d_func()->info = info;
+    d_func()->fileName = fileName;
     setLoaded(true);
 }
 
-bool QFileFeedbackEffect::loaded() const
+bool QFileFeedbackEffect::isLoaded() const
 {
     return d_func()->loaded;
 }
 
-void QFileFeedbackEffect::setLoaded(bool load)
+bool QFileFeedbackEffect::setLoaded(bool load)
 {
     Q_D(QFileFeedbackEffect);
+    bool ret = false;
     if (d->loaded == load)
-        return;
+        return ret;
 
     if (state() != QAbstractAnimation::Stopped) {
         qWarning() << "QFileFeedbackEffect::setLoaded: can't load /unload a file while the effect is not stopped";
-        return;
+        return ret;
     }
 
-    if (!d->info.isReadable()) {
-        qWarning() << "QFileFeedbackEffect::setLoaded: file" << d->info.absoluteFilePath() << "is not readable";
-        return;
-    }
-
-    if (QFileFeedbackInterface::instance()->setLoaded(this, load))
+    if (ret = QFileFeedbackInterface::instance()->setLoaded(this, load))
         d->loaded = load;
+
+    return ret;
 }
 
-QStringList QFileFeedbackEffect::supportedFileSuffixes()
+QStringList QFileFeedbackEffect::mimeTypes()
 {
-    return QFileFeedbackInterface::instance()->supportedMimeTypes();
+    return QFileFeedbackInterface::instance()->mimeTypes();
 }
 
 void QFileFeedbackEffect::updateCurrentTime(int /*currentTime*/)

@@ -44,7 +44,6 @@
 
 #include <qmobilityglobal.h>
 #include <QtCore/QAbstractAnimation>
-#include <QtCore/QFileInfo>
 #include <QtCore/QStringList>
 
 
@@ -152,8 +151,8 @@ private:
 class Q_FEEDBACK_EXPORT QFileFeedbackEffect : public QAbstractAnimation
 {
     Q_OBJECT
-    Q_PROPERTY(bool loaded READ loaded WRITE setLoaded)
-    Q_PROPERTY(QFileInfo file READ file WRITE setFile)
+    Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded)
+    Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
 
 public:
     enum ErrorType {
@@ -168,13 +167,13 @@ public:
 
     int duration() const;
 
-    bool loaded() const;
-    void setLoaded(bool);
+    bool isLoaded() const;
+    bool setLoaded(bool);
 
-    QFileInfo file() const;
-    void setFile(const QFileInfo &);
+    QString fileName() const;
+    void setFileName(const QString &);
 
-    static QStringList supportedFileSuffixes();
+    static QStringList mimeTypes();
 
 signals:
     void error(ErrorType); //the feedback could not be played

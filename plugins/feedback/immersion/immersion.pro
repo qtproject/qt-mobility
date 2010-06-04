@@ -1,5 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
+QT = core
 TARGET = $$qtLibraryTarget(qtfeedback_immersion)
 PLUGIN_TYPE=feedback
 

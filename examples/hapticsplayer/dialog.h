@@ -79,7 +79,6 @@ private Q_SLOTS:
     //File API
     void browseClicked();
     void filePlayPauseClicked();
-    void fileStopClicked();
     void fileEffectStateChanged(QAbstractAnimation::State newState);
 
 private:

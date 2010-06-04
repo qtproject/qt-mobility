@@ -89,7 +89,7 @@ public:
     {
     }
 
-    QFileInfo info;
+    QString fileName;
     bool loaded;
 };
 

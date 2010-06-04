@@ -3,6 +3,8 @@
 # #####################################################################
 TEMPLATE = lib
 
+QT = core
+
 # Target gets fixed up in common.pri
 TARGET = QtFeedback
 DEFINES += QT_BUILD_FEEDBACK_LIB \
