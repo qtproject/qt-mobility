@@ -1,4 +1,4 @@
-QT += xml network
+QT += network
 
 TARGET = QGeoApiUI
 TEMPLATE = app thread
