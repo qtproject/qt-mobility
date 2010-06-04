@@ -239,8 +239,6 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QFeedbackEf
             break;
         }
         break;
-
-        break;
     case QFeedbackDevice::PrimaryDisplay:
         switch(effect->state())
         {

@@ -50,9 +50,6 @@
 
 QTM_BEGIN_NAMESPACE
 
-static QFeedbackInterface *backend = 0;
-static QThemeFeedbackInterface *themeBackend = 0;
-
 class FileBackend : public QFileFeedbackInterface
 {
 public:
@@ -113,12 +110,6 @@ public:
         return ret;
     }
 
-    static FileBackend *instance()
-    {
-        static FileBackend fileBackend;
-        return &fileBackend;
-    }
-
     void addFileBackend(QFileFeedbackInterface *backend)
     {
         subBackends.append(backend);
@@ -135,45 +126,53 @@ private:
 };
 
 
-static void initBackends()
+struct BackendManager
 {
-    const QStringList paths = QCoreApplication::libraryPaths();
-    for (int i = 0; i < paths.size(); ++i) {
+    BackendManager() : backend(0), themeBackend(0)
+    {
+        const QStringList paths = QCoreApplication::libraryPaths();
+        for (int i = 0; i < paths.size(); ++i) {
 
-        QDir pluginDir(paths.at(i));
-        if (!pluginDir.cd(QLatin1String("feedback")))
-            continue;
+            QDir pluginDir(paths.at(i));
+            if (!pluginDir.cd(QLatin1String("feedback")))
+                continue;
 
 
-        foreach (const QFileInfo &pluginLib, pluginDir.entryInfoList(QDir::Files)) {
-            QPluginLoader loader(pluginLib.absoluteFilePath());
-            bool usedPlugin = false;
+            foreach (const QFileInfo &pluginLib, pluginDir.entryInfoList(QDir::Files)) {
+                QPluginLoader loader(pluginLib.absoluteFilePath());
+                bool usedPlugin = false;
 
-            if (!backend) {
-                backend = qobject_cast<QFeedbackInterface*>(loader.instance());
-                usedPlugin = backend != 0;
+                if (!backend) {
+                    backend = qobject_cast<QFeedbackInterface*>(loader.instance());
+                    usedPlugin = backend != 0;
+                }
+
+                if (!themeBackend) {
+                    themeBackend = qobject_cast<QThemeFeedbackInterface*>(loader.instance());
+                    usedPlugin = usedPlugin || themeBackend != 0;
+                }
+
+                QFileFeedbackInterface *fileBackend = qobject_cast<QFileFeedbackInterface*>(loader.instance());
+                if (fileBackend) {
+                    this->fileBackend.addFileBackend(fileBackend);
+                    usedPlugin = true;
+                }
+
+                if (!usedPlugin)
+                    loader.unload();
             }
-
-            if (!themeBackend) {
-                themeBackend = qobject_cast<QThemeFeedbackInterface*>(loader.instance());
-                usedPlugin = usedPlugin || themeBackend != 0;
-            }
-
-            QFileFeedbackInterface *fileBackend = qobject_cast<QFileFeedbackInterface*>(loader.instance());
-            if (fileBackend) {
-                FileBackend::instance()->addFileBackend(fileBackend);
-                usedPlugin = true;
-            }
-
-
-            if (!usedPlugin)
-                loader.unload();
         }
+
+        if (!backend)
+            backend = new QDummyBackend;
     }
 
-    if (!backend)
-        backend = new QDummyBackend;
-}
+    QFeedbackInterface *backend;
+    QThemeFeedbackInterface *themeBackend;
+    FileBackend fileBackend;
+};
+
+Q_GLOBAL_STATIC(BackendManager, backendManager);
 
 QFeedbackDevice QFeedbackInterface::createFeedbackDevice(int id)
 {
@@ -184,23 +183,17 @@ QFeedbackDevice QFeedbackInterface::createFeedbackDevice(int id)
 
 QFeedbackInterface *QFeedbackInterface::instance()
 {
-    if (!backend)
-        initBackends();
-    return backend;
+    return backendManager()->backend;
 }
 
 QThemeFeedbackInterface *QThemeFeedbackInterface::instance()
 {
-    if (!backend)
-        initBackends();
-    return themeBackend;
+    return backendManager()->themeBackend;
 }
 
 QFileFeedbackInterface *QFileFeedbackInterface::instance()
 {
-    if (!backend)
-        initBackends();
-    return FileBackend::instance();
+    return &backendManager()->fileBackend;
 }
 
 

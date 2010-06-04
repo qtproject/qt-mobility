@@ -17,3 +17,9 @@ LIBS += -lImmVibe -lQtFeedback
 CONFIG += mobility
 MOBILITY = feedback
 
+symbian: {
+    TARGET.EPOCALLOWDLLDATA=1
+    TARGET.CAPABILITY = All -Tcb
+    TARGET = $${TARGET}$${QT_LIBINFIX}
+    load(armcc_warnings)
+}

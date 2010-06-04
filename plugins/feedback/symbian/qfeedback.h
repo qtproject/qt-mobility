@@ -86,13 +86,11 @@ private:
     CHWRMVibra *vibra();
 
 
-    static CCoeControl *defaultWidget();
+    CCoeControl *defaultWidget();
     TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::InstantEffect effect);
 
-    bool m_vibraActive;
     CHWRMVibra *m_vibra;
-
-
+    bool m_vibraActive;
 };
 
 
