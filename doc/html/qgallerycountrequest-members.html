@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qgallerycountrequest.cpp -->
   <title>Qt Mobility Project 1.1: List of All Members for QGalleryCountRequest</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
   <script src="scripts/jquery.js" type="text/javascript"></script>
   <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
@@ -20,6 +20,7 @@
 <table class="propsummary">
 <tr><td  class="topAlign"><ul>
 <li class="fn">enum <b><a href="qgalleryabstractrequest.html#Result-enum">Result</a></b></li>
+<li class="fn">enum <b><a href="qgalleryabstractrequest.html#Scope-enum">Scope</a></b></li>
 <li class="fn">enum <b><a href="qgalleryabstractrequest.html#State-enum">State</a></b></li>
 <li class="fn">enum <b><a href="qgalleryabstractrequest.html#Type-enum">Type</a></b></li>
 <li class="fn"><b><a href="qgallerycountrequest.html#QGalleryCountRequest">QGalleryCountRequest</a></b> ( QObject * )</li>
@@ -34,7 +35,6 @@
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</li>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</li>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</li>
-<li class="fn"><b><a href="qgallerycountrequest.html#containerId-prop">containerId</a></b> () const : QVariant</li>
 <li class="fn"><b><a href="qgallerycountrequest.html#count-prop">count</a></b> () const : int</li>
 <li class="fn"><b><a href="qgallerycountrequest.html#countChanged">countChanged</a></b> ()</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#currentProgress-prop">currentProgress</a></b> () const : int</li>
@@ -60,9 +60,9 @@
 <li class="fn"><b><a href="qgalleryabstractrequest.html#finished">finished</a></b> ( int )</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#gallery-prop">gallery</a></b> () const : QAbstractGallery *</li>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</li>
-</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</li>
 <li class="fn"><b><a href="qgallerycountrequest.html#live-prop">isLive</a></b> () const : bool</li>
+</ul></td><td class="topAlign"><ul>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#supported-prop">isSupported</a></b> () const : bool</li>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#isWidgetType">isWidgetType</a></b> () const</li>
 <li class="fn"><b><a href="qgallerycountrequest.html#itemType-prop">itemType</a></b> () const : QString</li>
@@ -78,8 +78,9 @@
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#result-prop">result</a></b> () const : int</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#resultChanged">resultChanged</a></b> ()</li>
+<li class="fn"><b><a href="qgallerycountrequest.html#scope-prop">scope</a></b> () const : QGalleryAbstractRequest::Scope</li>
+<li class="fn"><b><a href="qgallerycountrequest.html#scopeItemId-prop">scopeItemId</a></b> () const : QVariant</li>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#sender">sender</a></b> () const</li>
-<li class="fn"><b><a href="qgallerycountrequest.html#containerId-prop">setContainerId</a></b> ( const QVariant &amp; )</li>
 <li class="fn"><b><a href="qgallerycountrequest.html#filter-prop">setFilter</a></b> ( const QGalleryFilter &amp; )</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#gallery-prop">setGallery</a></b> ( QAbstractGallery * )</li>
 <li class="fn"><b><a href="qgallerycountrequest.html#itemType-prop">setItemType</a></b> ( const QString &amp; )</li>
@@ -88,6 +89,8 @@
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#setParent">setParent</a></b> ( QObject * )</li>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</li>
 <li class="fn"><b><a href="qgallerycountrequest.html#setResponse">setResponse</a></b> ( QGalleryAbstractResponse * )</li>
+<li class="fn"><b><a href="qgallerycountrequest.html#scope-prop">setScope</a></b> ( QGalleryAbstractRequest::Scope )</li>
+<li class="fn"><b><a href="qgallerycountrequest.html#scopeItemId-prop">setScopeItemId</a></b> ( const QVariant &amp; )</li>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#signalsBlocked">signalsBlocked</a></b> () const</li>
 <li class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#startTimer">startTimer</a></b> ( int )</li>
 <li class="fn"><b><a href="qgalleryabstractrequest.html#state-prop">state</a></b> () const : State</li>

@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- gallery.qdoc -->
   <title>Qt Mobility Project 1.1: Document Gallery</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
   <script src="scripts/jquery.js" type="text/javascript"></script>
   <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
@@ -28,23 +28,22 @@
 <span class="subtitle"></span>
 <div class="descr"/>
 <a name="overview"></a>
-<h3>Overview</h3>
+<h2>Overview</h2>
 <p>The Document Gallery provides a meta-data focused API for managing collections of documents and media.</p>
 <p>The primary interface to items in a gallery is the <a href="qgalleryitemlist.html">QGalleryItemList</a> class which provides accessors for reading and writing the meta-data of a set of items.</p>
 <p>A <a href="qgalleryitemlist.html">QGalleryItemList</a> cannot be created directly, instead an instance must be requested from a gallery using one of the gallery request classes.</p>
 <a name="requests"></a>
-<h4>Requests</h4>
+<h3>Requests</h3>
 <p>The gallery request classes inherit from <a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a> and are used to fetch items from a gallery, or to initiate service provided by a gallery.</p>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qgalleryabstractrequest.html">QGalleryAbstractRequest</a></p></td><td><p>Base class for gallery requests</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgallerycontainerrequest.html">QGalleryContainerRequest</a></p></td><td><p>Request for the immediate children of an item in a gallery</p></td></tr>
-<tr class="odd topAlign"><td><p><a href="qgallerycountrequest.html">QGalleryCountRequest</a></p></td><td><p>Request for the number of items in a gallery matching some criteria</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgalleryfilterrequest.html">QGalleryFilterRequest</a></p></td><td><p>Request for a set of items from a gallery</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgallerycountrequest.html">QGalleryCountRequest</a></p></td><td><p>Request for the number of items in a gallery matching some criteria</p></td></tr>
 <tr class="odd topAlign"><td><p><a href="qgalleryitemrequest.html">QGalleryItemRequest</a></p></td><td><p>Request for an item from a gallery</p></td></tr>
-<tr class="even topAlign"><td><p><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></p></td><td><p>Request which removes items from a gallery</p></td></tr>
+<tr class="even topAlign"><td><p><a href="qgalleryqueryrequest.html">QGalleryQueryRequest</a></p></td><td><p>Request for a set of items from a gallery</p></td></tr>
+<tr class="odd topAlign"><td><p><a href="qgalleryremoverequest.html">QGalleryRemoveRequest</a></p></td><td><p>Request which removes items from a gallery</p></td></tr>
 </table>
 <a name="filters"></a>
-<h4>Filters</h4>
+<h3>Filters</h3>
 <p>The filter classes provide a way to describe meta-data criteria items must satisfy to be included in the results of some requests.</p>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qgalleryfilter.html">QGalleryFilter</a></p></td><td><p>Filtering criteria for gallery requests</p></td></tr>
@@ -54,14 +53,14 @@
 <tr class="odd topAlign"><td><p><a href="qgalleryunionfilter.html">QGalleryUnionFilter</a></p></td><td><p>Filter which matches the union of two or more meta-data filters</p></td></tr>
 </table>
 <a name="galleries"></a>
-<h4>Galleries</h4>
+<h3>Galleries</h3>
 <p>The gallery classes provide instances of different gallery types. Currently the only gallery type is the Document Gallery.</p>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qabstractgallery.html">QAbstractGallery</a></p></td><td><p>Base class for gallery implementations</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qdocumentgallery.html">QDocumentGallery</a></p></td><td><p>Gallery of documents</p></td></tr>
 </table>
 <a name="examples"></a>
-<h3>Examples</h3>
+<h2>Examples</h2>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="documentmanager.html">Document Manager</a></p></td><td><p></p></td></tr>
 <tr class="even topAlign"><td><p><a href="documentshare.html">Document Sharing</a></p></td><td><p></p></td></tr>
