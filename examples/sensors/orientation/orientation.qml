@@ -38,7 +38,8 @@
 **
 ****************************************************************************/
 
-import Qt 4.6
+import Qt 4.7
+import QtMobility.sensors 1.0
 
 Rectangle {
     width: 800
