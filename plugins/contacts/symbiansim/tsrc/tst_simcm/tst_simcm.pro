@@ -17,8 +17,6 @@ symbian: {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     SOURCES  += tst_simcm.cpp
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData
+                        WriteUserData
     LIBS += -lqtcontacts
 }

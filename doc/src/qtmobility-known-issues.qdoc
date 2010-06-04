@@ -52,7 +52,7 @@
 
 An up-to-date list of known issues with the release can be found via the \l {QtMobility Project Bug Tracker} on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility Project.
 
-The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {Platform Compatability}.
+The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see \l {Platform Compatibility}.
 
 \tableofcontents
 
@@ -143,6 +143,7 @@ Support is present for the following System Info API classes
 \list
     \o Qt Mobility does not compile if Qt using a namespace.
     \o Not all example applications will display(fit) well on small screens.
+    \o Prefixed paths in includes such as \code #include <QtLibrary/MyClass> \endcode or \code #include <QtLibrary/myclass.h> \endcode do not currently work on Symbian.
 \endlist
 
 \section2 Contacts API
@@ -155,22 +156,21 @@ Support is present for the following System Info API classes
 \section2 Messaging API
 \list
     \o Messaging filtering and sorting functions are not fully optimized.
-    \o Fremantle: \c {QMessageService::compose} not supported for SMS type messages.
-    \o Fremantle: queryMessages service action is synchronous for SMS type messages.
+    \o Fremantle: \c modest process must be restarted before Fremantle backend is fully operational. This can be achieved by restarting the device.
+    \o Fremantle: \c SMS sending is failing when using MessagingEx example. Regression wrt 1.0.0 release. serviceactions and writemessage work OK.
     \o Fremantle: \c {QMessageService::show} not supported for SMS type messages.
-    \o Fremantle: \c {QMessageManager::messageAdded} signal is not reported for messages in inbox when inbox is open in modest.
     \o Fremantle: \c {QMessageManager::updateMessage} is not supported.
     \o Fremantle: \c {QMessageManager::addMessage} is not supported for SMS type messages.
     \o Fremantle: \c {QMessageManager::addMessage} can not be used to set priority and status of email messages.
-    \o Fremantle and Windows: \c {QMessageServiceAction::send}: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's digression.
+    \o Fremantle and Windows: \c {QMessageServiceAction::send}: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's discretion.
     \o Fremantle, S60 and Windows: \c {QMessageManager::addMessage} can not be used to set size of messages.
     \o Fremantle and Windows: \c {QMessageManager::addMessage} can not be used to set the date of messages.
-    \o S60: Exporting POP3 Message Updates from client to server is not supported.
     \o S60: Only one level of folders is supported <=> Symbian/S60 applications do not use nested folders
     \o S60: ReceptionTimeStamp is not supported in filtering <=> Symbian reports only one date for SMS & MMS which means that \c {QMessage::date()} field is used, not \c {receivedDate()})
     \o S60: Local services messages, for example bluetooth, are listed/read in Inbox
+    \o Symbian^3: \c {QMessageService::retrieveBody} is not supported.
     \o Windows: \c {QMessageServiceAction::queryMessages} does not incrementally emit matching message identifiers or progress information.
-    \o Windows: \c {QMessageServiceAction::exportUpdates}: Performs no operation as changes are automatically synchronized with external servers when a connection is available.
+    \o Windows: \c {QMessageServiceAction::exportUpdates} performs no operation as changes are automatically synchronized with external servers when a connection is available.
     control of update progress.
     \o Windows desktop: \c {QMessageStore::instance} shows a blocking modal dialog if MAPI is not installed.
     \o Windows mobile: \c {QMessageServiceAction::retrieve}: Only retrieves content for messages bodies at present. Attachment retrieval

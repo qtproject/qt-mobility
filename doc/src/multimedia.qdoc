@@ -58,7 +58,7 @@ collection of media content.
 
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
-QtMultimedia API. This API is planned to replace Phonon at a later stage.
+QtMultimediaKit module. This API is planned to replace Phonon at a later stage.
 
 \tableofcontents
 
@@ -273,4 +273,12 @@ QVideoWidget classes.
 
 \annotatedlist multimedia-serv
 
+\section2 QML multimedia elements
+\list
+\o \l {SoundEffect}{SoundEffect: Low Latency Sound Effects}
+\o \l {Audio}{Audio: Music playback}
+\o \l {Video}{Video: Video playback}
+\endlist
 */
+
+

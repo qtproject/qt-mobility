@@ -53,7 +53,7 @@
 QT_BEGIN_NAMESPACE
 
 class QMediaContentPrivate;
-class Q_MEDIA_EXPORT QMediaContent
+class Q_MULTIMEDIA_EXPORT QMediaContent
 {
 public:
     QMediaContent();

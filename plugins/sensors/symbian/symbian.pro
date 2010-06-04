@@ -1,4 +1,4 @@
-INCLUDEPATH+=$$(EPOCROOT)\epoc32\include\osextensions
+INCLUDEPATH+=$$(EPOCROOT)epoc32\include\osextensions
 
 PLUGIN_TYPE = sensors
 

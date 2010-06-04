@@ -41,7 +41,7 @@
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <qaudiodeviceinfo.h>
 
 #include "../../../src/multimedia/qmediarecorder.h"
 
