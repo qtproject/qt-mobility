@@ -911,11 +911,15 @@ void tst_QContactManager::update()
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
+    int contactCount = cm->contacts().size();
+
     /* Save a new contact first */
     QContactDetailDefinition nameDef = cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
     QContact alice = createContact(nameDef, "Alice", "inWonderland", "1234567");
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
+    contactCount += 1; // added a new contact.
+    QCOMPARE(cm->contacts().size(), contactCount);
 
     /* Update name */
     QContactName name = alice.detail(QContactName::DefinitionName);
@@ -930,6 +934,19 @@ void tst_QContactManager::update()
     QContact updated = cm->contact(alice.localId());
     QContactName updatedName = updated.detail(QContactName::DefinitionName);
     QCOMPARE(updatedName, name);
+    QCOMPARE(cm->contacts().size(), contactCount); // contact count should be the same, no new contacts
+
+    /* Test that adding a new detail doesn't cause unwanted side effects */
+    int detailCount = alice.details().size();
+    QContactEmailAddress email;
+    email.setEmailAddress("test@example.com");
+    alice.saveDetail(&email);
+    QVERIFY(cm->saveContact(&alice));
+    QCOMPARE(cm->contacts().size(), contactCount); // contact count shoudl be the same, no new contacts
+
+    // This test is dangerous, since backends can add timestamps etc...
+    detailCount += 1;
+    QCOMPARE(detailCount, alice.details().size()); // adding a detail should cause the detail count to increase by one.
 
     /* Test that removal of fields in a detail works */
     QContactPhoneNumber phn = alice.detail<QContactPhoneNumber>();
@@ -944,12 +961,21 @@ void tst_QContactManager::update()
     QVERIFY(cm->saveContact(&alice));
     alice = cm->contact(alice.localId()); // force reload of (persisted) alice
     QVERIFY(alice.detail<QContactPhoneNumber>().contexts().isEmpty()); // check context removed.
+    QCOMPARE(cm->contacts().size(), contactCount); // removal of a field of a detail shouldn't affect the contact count
+
+    // This test is dangerous, since backends can add timestamps etc...
+    QCOMPARE(detailCount, alice.details().size()); // removing a field from a detail should affect the detail count
 
     /* Test that removal of details works */
     alice.removeDetail(&phn);
     QVERIFY(cm->saveContact(&alice));
     alice = cm->contact(alice.localId()); // force reload of (persisted) alice
     QVERIFY(alice.details<QContactPhoneNumber>().isEmpty()); // no such detail.
+    QCOMPARE(cm->contacts().size(), contactCount); // removal of a detail shouldn't affect the contact count
+
+    // This test is dangerous, since backends can add timestamps etc...
+    detailCount -= 1;
+    QCOMPARE(detailCount, alice.details().size()); // removing a detail should cause the detail count to decrease by one.
 
     if (cm->hasFeature(QContactManager::Groups)) {
         // Try changing types - not allowed
