@@ -57,6 +57,8 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
+    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
+
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
@@ -64,17 +66,7 @@ public:
     void setViewportSize(const QSizeF &size);
     void pan(int dx, int dy);
 
-    // TODO WorldPixel a better name?
-    void setTopLeftMapPixelX(qulonglong x);
-    qulonglong topLeftMapPixelX() const;
-
-    void setTopLeftMapPixelY(qulonglong y);
-    qulonglong topLeftMapPixelY() const;
-
-    qulonglong width() const;
-    qulonglong height() const;
-
-    qulonglong zoomFactor() const;
+    QRectF screenRect() const;
 
     QRectF protectedRegion() const;
     void clearProtectedRegion();

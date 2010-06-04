@@ -111,6 +111,7 @@ QGeoTiledMapReply* QGeoMappingManagerThreadNokia::getTileImage(const QGeoTiledMa
     m_cache->metaData(netRequest.url()).setLastModified(QDateTime::currentDateTime());
 
     QNetworkReply* netReply = m_nam->get(netRequest);
+
     QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
 
     return mapReply;

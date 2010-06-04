@@ -75,7 +75,7 @@ public:
     int zoomLevel;
     int row;
     int column;
-    QRectF zoomedWorldRect;
+    QRectF tileRect;
 };
 
 QTM_END_NAMESPACE

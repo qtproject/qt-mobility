@@ -51,13 +51,13 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
 
 /*!
 */
-QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapViewport *viewport, int row, int column, const QRectF &tileRectZoomWorldCoordinates)
+QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapViewport *viewport, int row, int column, const QRectF &tileRect)
         : d_ptr(new QGeoTiledMapRequestPrivate())
 {
     d_ptr->viewport = viewport;
     d_ptr->row = row;
     d_ptr->column = column;
-    d_ptr->zoomedWorldRect = tileRectZoomWorldCoordinates;
+    d_ptr->tileRect = tileRect;
 
     d_ptr->zoomLevel = viewport->zoomLevel();
     d_ptr->mapType = viewport->mapType();
@@ -119,9 +119,9 @@ int QGeoTiledMapRequest::column() const
 
 /*!
 */
-QRectF QGeoTiledMapRequest::zoomedWorldRect() const
+QRectF QGeoTiledMapRequest::tileRect() const
 {
-    return d_ptr->zoomedWorldRect;
+    return d_ptr->tileRect;
 }
 
 /*******************************************************************************
@@ -138,18 +138,18 @@ QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate(const QGeoTiledMapRequest
         zoomLevel(other.zoomLevel),
         row(other.row),
         column(other.column),
-        zoomedWorldRect(other.zoomedWorldRect) {}
+        tileRect(other.tileRect) {}
 
 QGeoTiledMapRequestPrivate::~QGeoTiledMapRequestPrivate() {}
 
 QGeoTiledMapRequestPrivate& QGeoTiledMapRequestPrivate::operator= (const QGeoTiledMapRequestPrivate & other)
 {
-    viewport = viewport;
-    mapType = mapType;
-    zoomLevel = zoomLevel;
-    row = row;
-    column = column;
-    zoomedWorldRect = zoomedWorldRect;
+    viewport = other.viewport;
+    mapType = other.mapType;
+    zoomLevel = other.zoomLevel;
+    row = other.row;
+    column = other.column;
+    tileRect = other.tileRect;
 
     return *this;
 }

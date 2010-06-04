@@ -60,7 +60,7 @@ public:
     QGeoTiledMapRequest(QGeoTiledMapViewport *viewport,
                         int row,
                         int column,
-                        const QRectF &tileRectZoomWorldCoordinates);
+                        const QRectF &tileRect);
     QGeoTiledMapRequest(const QGeoTiledMapRequest &other);
     ~QGeoTiledMapRequest();
 
@@ -73,7 +73,7 @@ public:
 
     int row() const;
     int column() const;
-    QRectF zoomedWorldRect() const;
+    QRectF tileRect() const;
 
 private:
     QSharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;

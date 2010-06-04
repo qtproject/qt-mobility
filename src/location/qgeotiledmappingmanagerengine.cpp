@@ -56,16 +56,12 @@
 
 QTM_BEGIN_NAMESPACE
 
-//Q_DECLARE_METATYPE(QList<QGeoTiledMapRequest>);
-
 /*!
     Constructs a QGeoTiledMappingManagerEngine object.
 */
 QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine(QObject *parent)
         : QGeoMappingManagerEngine(new QGeoTiledMappingManagerEnginePrivate(), parent)
 {
-    //qRegisterMetaType<QList<QGeoTiledMapRequest> >();
-
     setTileSize(QSize(128, 128));
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -75,27 +71,6 @@ void QGeoTiledMappingManagerEngine::init()
     Q_D(QGeoTiledMappingManagerEngine);
 
     d->thread = createTileManagerThread();
-
-    /*
-    connect(this,
-            SIGNAL(tileRequestsPrepared(QGeoTiledMapViewport*,QList<QGeoTiledMapRequest>)),
-            d->thread,
-            SLOT(setRequests(QGeoTiledMapViewport*,QList<QGeoTiledMapRequest>)),
-            Qt::QueuedConnection);
-
-    connect(d->thread,
-            SIGNAL(tileFinished(QGeoTiledMapReply*)),
-            this,
-            SLOT(tileFinished(QGeoTiledMapReply*)),
-            Qt::QueuedConnection);
-
-    connect(d->thread,
-            SIGNAL(tileError(QGeoTiledMapReply*,QGeoTiledMapReply::Error,QString)),
-            this,
-            SLOT(tileError(QGeoTiledMapReply*,QGeoTiledMapReply::Error,QString)),
-            Qt::QueuedConnection);
-    */
-
     d->thread->start();
 }
 
@@ -168,9 +143,9 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
 
     QList<QPair<int, int> > tiles;
 
-    QRectF protectedRegion = tiledViewport->protectedRegion().translated(QPointF(tiledViewport->topLeftMapPixelX(), tiledViewport->topLeftMapPixelY()));
+    QRectF protectedRegion = tiledViewport->protectedRegion();
 
-    // TODO from centre out
+    // TODO order in direction of travel if panning
     // TODO request excess tiles around border
     for (int x = 0; x < cols.size(); ++x) {
         for (int y = 0; y < rows.size(); ++y) {
@@ -178,7 +153,6 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
         }
     }
 
-    int protectedTiles = 0;
     for (int i = 0; i < tiles.size(); ++i) {
         int col = tiles.at(i).first;
         int row = tiles.at(i).second;
@@ -189,66 +163,17 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
 
         QRectF tileRect = QRectF((col + colOffset) * tileWidth, row * tileHeight, tileWidth, tileHeight);
 
-//        if (!protectedRegion.isNull() && protectedRegion.contains(tileRect))
-//            continue;
-
-//        if (i + protectedTiles < tiles.size()) {
-//            if (!protectedRegion.isNull() && protectedRegion.contains(tileRect)) {
-//                tiles.move(i, tiles.size() - 1);
-//                ++protectedTiles;
-//                --i;
-//                continue;
-//            }
-//        }
-
-        requests.append(QGeoTiledMapRequest(tiledViewport, row, col, tileRect));
+        // Protected region is the area that was on the screen before the
+        // start of a resize or pan.
+        // We shouldn't request tiles that are entirely contained in this
+        // region.
+        if (protectedRegion.isNull() || !protectedRegion.contains(tileRect))
+            requests.append(QGeoTiledMapRequest(tiledViewport, row, col, tileRect));
     }
 
     emit tileRequestsPrepared(tiledViewport, requests);
 
     tiledViewport->clearProtectedRegion();
-
-//    QRectF screenRect = QRectF(
-//            tiledViewport->topLeftMapPixelX() /  tiledViewport->zoomFactor(),
-//            tiledViewport->topLeftMapPixelY() / tiledViewport->zoomFactor(),
-//            viewport->viewportSize().width(),
-//            viewport->viewportSize().height());
-
-//    QRectF protectedRegion = tiledViewport->protectedRegion().translated(QPointF(screenRect.x(), screenRect.y()));
-
-
-//    int protectedTiles = 0;
-//    for (int i = 0; i < tiles.size(); ++i) {
-//        int col = tiles.at(i).first;
-//        int row = tiles.at(i).second;
-
-//        int colOffset = 0;
-//        if ((tileMinX > tileMaxX) && col <= tileMaxX)
-//            colOffset = numTiles;
-
-//        // intersected with relative translation
-//        QRectF tileRect = QRectF((col + colOffset) * tileWidth, row * tileHeight, tileWidth, tileHeight);
-
-//        if (i + protectedTiles < tiles.size()) {
-//            if (!protectedRegion.isNull() && protectedRegion.contains(tileRect)) {
-//                tiles.move(i, tiles.size() - 1);
-//                ++protectedTiles;
-//                --i;
-//                continue;
-//            }
-//        }
-
-//        QRectF overlap = tileRect.intersected(screenRect);
-
-//        QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
-//        QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 *screenRect.y());
-
-//        // create replies
-//        QGeoMapReply *mapReply = getTileImage(viewport->zoomLevel(), row, col, viewport->mapType(), "png");
-//        // create wrappers and add to container
-//        QGeoMapTileReply *reply = new QGeoMapTileReply(mapReply, source, dest);
-//        container->addReply(reply);
-//    }
 }
 
 void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
@@ -269,14 +194,8 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
         return;
     }
 
-    QRectF screenRect = QRectF(
-                            viewport->topLeftMapPixelX() /  viewport->zoomFactor(),
-                            viewport->topLeftMapPixelY() / viewport->zoomFactor(),
-                            viewport->viewportSize().width(),
-                            viewport->viewportSize().height());
-
-    QRectF tileRect = reply->request().zoomedWorldRect();
-
+    QRectF screenRect = viewport->screenRect();
+    QRectF tileRect = reply->request().tileRect();
     QRectF overlap = tileRect.intersected(screenRect);
 
     if (overlap.isEmpty()) {
@@ -293,7 +212,7 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
     viewport->setMapImage(pm);
     delete painter;
 
-    QTimer::singleShot(10, reply, SLOT(deleteLater()));
+    QTimer::singleShot(0, reply, SLOT(deleteLater()));
 }
 
 void QGeoTiledMappingManagerEngine::tileError(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString)
@@ -303,28 +222,9 @@ void QGeoTiledMappingManagerEngine::tileError(QGeoTiledMapReply *reply, QGeoTile
 
 QPoint QGeoTiledMappingManagerEngine::screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const
 {
-    // TODO checking mechanism for viewport type
+    // TODO checking mechanism for viewport type?
     const QGeoTiledMapViewport *tiledViewport = static_cast<const QGeoTiledMapViewport*>(viewport);
-
-    qulonglong x = tiledViewport->topLeftMapPixelX();
-    x += qRound64(screenPosition.x() * tiledViewport->zoomFactor());
-    x = x % tiledViewport->width();
-    qreal rx = qreal(x) / tiledViewport->zoomFactor();
-
-    int tileX = rx / tileSize().width();
-
-//    qreal y = tiledViewport->topLeftMapPixelY() / qreal(tiledViewport->zoomFactor());
-//    y += screenPosition.y();
-//    int tileY = y / tileSize().height();
-
-    qulonglong y = tiledViewport->topLeftMapPixelY();
-    y += qRound64(screenPosition.y() * tiledViewport->zoomFactor());
-    y = y % tiledViewport->height();
-    qreal ry = qreal(y) / tiledViewport->zoomFactor();
-
-    int tileY = ry / tileSize().height();
-
-    return QPoint(tileX, tileY);
+    return tiledViewport->screenPositionToTileIndices(screenPosition);
 }
 
 /*!
@@ -431,38 +331,6 @@ QGeoTiledMappingManagerEnginePrivate& QGeoTiledMappingManagerEnginePrivate::oper
 
 ///*******************************************************************************
 //*******************************************************************************/
-
-
-//void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoMapTileRequest*> &requests)
-//{
-//    qWarning() << QString("requests and replies size") << m_queue.size() << m_replies.size();
-
-//    // clear replies
-
-//    QList<QGeoMapReply*> keys = m_replies.keys();
-
-//    for (int i = 0; i < keys.size(); ++i) {
-//        QGeoMapTileResponse *reply = m_replies.value(keys.at(i));
-//        // this triggers finished which deletes both reply and reply->m_reply
-//        // it also remove the entry from the m_replies
-//        if (!reply->m_reply->isFinished())
-//            reply->m_reply->abort();
-//    }
-
-//    m_replies.clear();
-
-//    bool wasEmpty = (m_queue.size() == 0);
-
-//    // clear queue
-
-//    qDeleteAll(m_queue);
-//    m_queue.clear();
-//    m_queue.append(requests);
-
-//    if (wasEmpty)
-//        QTimer::singleShot(0, this, SLOT(sendNextRequest()));
-//}
-
 
 #include "moc_qgeotiledmappingmanagerengine.cpp"
 

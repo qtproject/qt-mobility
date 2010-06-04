@@ -74,8 +74,6 @@ public slots:
     void setRequests(const QList<QGeoTiledMapRequest> &requests);
 
 private slots:
-    void sendNextRequest();
-
     void tileFinished();
     void tileError(QGeoTiledMapReply::Error, const QString &errorString);
 

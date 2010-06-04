@@ -73,7 +73,9 @@ QGeoTiledMappingManagerThread::~QGeoTiledMappingManagerThread()
     delete d_ptr;
 }
 
-//virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) const = 0;
+/*!
+\fn QGeoTiledMapReply* QGeoTiledMappingManagerThread::getTileImage(const QGeoTiledMapRequest &request) const
+*/
 
 void QGeoTiledMappingManagerThread::removeViewport(QGeoTiledMapViewport* viewport)
 {
@@ -147,7 +149,11 @@ QGeoTiledMapRequestHandler::QGeoTiledMapRequestHandler(QGeoTiledMappingManagerTh
 
 QGeoTiledMapRequestHandler::~QGeoTiledMapRequestHandler()
 {
-    // TODO abort and delete everything in replies
+    QList<QGeoTiledMapReply*> replyList = replies.toList();
+    for (int i = 0; i < replyList.size(); ++i) {
+        replyList.at(i)->abort();
+        replyList.at(i)->deleteLater();
+    }
 }
 
 void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &requests)
@@ -156,91 +162,80 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
 
     queue.clear();
 
-//    if (lastZoomLevel != -1.0) {
-//        // TODO make the viewport access thread-safe
-//        if ((lastZoomLevel != viewport->zoomLevel()) || (lastMapType != viewport->mapType())) {
+    if (lastZoomLevel != -1.0) {
+        // TODO make the viewport access thread-safe
+        if ((lastZoomLevel != viewport->zoomLevel()) || (lastMapType != viewport->mapType())) {
 
-    // clear all replies
+            // clear all replies
 
-//            QList<QGeoTiledMapReply*> replyList = replies.toList();
+            QList<QGeoTiledMapReply*> replyList = replies.toList();
 
-//            for (int i = 0; i < replyList.size(); ++i) {
-//                replyList.at(i)->abort();
-//                replyList.at(i)->deleteLater();
-//            }
-//            replies.clear();
+            for (int i = 0; i < replyList.size(); ++i) {
+                replyList.at(i)->abort();
+                replyList.at(i)->deleteLater();
+            }
+            replies.clear();
 
-    queue.append(requests);
+            // use all of the requests
 
-//        } else {
+            queue.append(requests);
 
-//            QRectF screenRect = QRectF(
-//                    viewport->topLeftMapPixelX() /  viewport->zoomFactor(),
-//                    viewport->topLeftMapPixelY() / viewport->zoomFactor(),
-//                    viewport->viewportSize().width(),
-//                    viewport->viewportSize().height());
+        } else {
 
-//            // abort all replies that are offscreen
+            QRectF screenRect = viewport->screenRect();
 
-//            QList<QGeoTiledMapReply*> replyList = replies.toList();
+            // abort all replies that are off screen
 
-//            // TODO replace with a set - too busy to stop and write a qHash overload for rects
-//            QList<QRectF> replyRects;
+            QList<QGeoTiledMapReply*> replyList = replies.toList();
 
-//            for (int i = 0; i < replyList.size(); ++i) {
-//                replyRects.append(replyList.at(i)->request().zoomedWorldRect());
-//                if (!replyList.at(i)->isFinished()) {
-//                    if (screenRect.intersected(replyList.at(i)->request().zoomedWorldRect()).isEmpty()) {
-//                        replyList.at(i)->abort();
-//                        replies.remove(replyList.at(i));
-//                    }
-//                }
-//            }
+            // TODO replace with a set - too busy to stop and write a qHash overload for rects
+            QList<QRectF> replyRects;
 
-//            // don't add the requests which have pending replies
-//            for (int i = 0; i < requests.size(); ++i) {
-//                if (!replyRects.contains(requests.at(i).zoomedWorldRect()))
-//                    queue.append(requests.at(i));
-//            }
-//        }
-//    }
+            for (int i = 0; i < replyList.size(); ++i) {
+                if (screenRect.intersected(replyList.at(i)->request().tileRect()).isEmpty()) {
+                    replyList.at(i)->abort();
+                    replyList.at(i)->deleteLater();
+                    replies.remove(replyList.at(i));
+                } else {
+                    if (replyList.at(i)->error() == QGeoTiledMapReply::NoError)
+                        replyRects.append(replyList.at(i)->request().tileRect());
+                }
+            }
+
+            // Do not use the requests which have pending replies
+            for (int i = 0; i < requests.size(); ++i) {
+                if (!replyRects.contains(requests.at(i).tileRect()))
+                    queue.append(requests.at(i));
+            }
+        }
+    }
 
     lastZoomLevel = viewport->zoomLevel();
     lastMapType = viewport->mapType();
 
-    if (wasEmpty && queue.size() != 0)
-        QTimer::singleShot(0, this, SLOT(sendNextRequest()));
-}
+    for (int i = 0; i < queue.size(); ++i) {
+        QGeoTiledMapReply *reply = thread->getTileImage(queue.at(i));
+        if (!reply)
+            continue;
 
-void QGeoTiledMapRequestHandler::sendNextRequest()
-{
-    if (queue.size() == 0)
-        return;
+        connect(reply,
+                SIGNAL(finished()),
+                this,
+                SLOT(tileFinished()));
 
-    QGeoTiledMapReply *reply = thread->getTileImage(queue.takeFirst());
+        connect(reply,
+                SIGNAL(error(QGeoTiledMapReply::Error, QString)),
+                this,
+                SLOT(tileError(QGeoTiledMapReply::Error, QString)));
 
-    if (!reply) {
-        QTimer::singleShot(0, this, SLOT(sendNextRequest()));
-        return;
+        if (reply->error() == QGeoTiledMapReply::NoError) {
+            replies.insert(reply);
+        } else {
+            emit error(reply, reply->error(), reply->errorString());
+        }
     }
 
-    connect(reply,
-            SIGNAL(finished()),
-            this,
-            SLOT(tileFinished()));
-
-    connect(reply,
-            SIGNAL(error(QGeoTiledMapReply::Error, QString)),
-            this,
-            SLOT(tileError(QGeoTiledMapReply::Error, QString)));
-
-    if (reply->error() == QGeoTiledMapReply::NoError) {
-        replies.insert(reply);
-    } else {
-        emit error(reply, reply->error(), reply->errorString());
-    }
-
-    QTimer::singleShot(0, this, SLOT(sendNextRequest()));
+    queue.clear();
 }
 
 void QGeoTiledMapRequestHandler::tileFinished()
