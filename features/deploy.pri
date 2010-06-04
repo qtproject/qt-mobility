@@ -36,3 +36,5 @@ mac:contains(QT_CONFIG,qt_framework) {
     FRAMEWORK_HEADERS.path = Headers
     QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
 }
+
+CONFIG+= create_prl

@@ -221,9 +221,6 @@
     and managing of an FM radio. This includes the typical functionality you
     would find on a music and video player, combined with an FM radio.
 
-    \note The Multimedia API, together with QtMultimedia, is intended to
-    eventually replace the Phonon API.
-
     For more details see the \l {Multimedia} {Multimedia API overview}.
     
     \section2 Sensors
