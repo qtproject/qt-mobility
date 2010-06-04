@@ -130,7 +130,7 @@
     For a list of known issues and an additional details on feature supported see 
     \l {Release Notes of the QtMobility Project}.
 
-    For a overview of Platform Compatability see \l {Platform Compatability}.
+    For a overview of Platform Compatibility see \l {Platform Compatibility}.
     
     \section1 The New Qt APIs
     \section2 Bearer Management
@@ -221,9 +221,6 @@
     and managing of an FM radio. This includes the typical functionality you
     would find on a music and video player, combined with an FM radio.
 
-    \note The Multimedia API, together with QtMultimedia, is intended to
-    eventually replace the Phonon API.
-
     For more details see the \l {Multimedia} {Multimedia API overview}.
     
     \section2 Sensors
@@ -273,7 +270,7 @@
     the namespace impacts on application development.
 
 
-    \section1 Platform Compatability
+    \section1 Platform Compatibility
 
 
     \raw HTML
@@ -356,7 +353,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>

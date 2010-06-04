@@ -801,9 +801,10 @@ bool CFSEngine::composeMessage(const QMessage &message)
     return retVal;
 }
 
-bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
+bool CFSEngine::retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id)
 {
     Q_UNUSED(id);
+    m_privateService = &privateService;
     bool retVal = false;
     foreach (QMessageAccount account, m_accounts) {
         MEmailMessage* message = NULL;
@@ -835,9 +836,10 @@ bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentConta
     return retVal;
 }
 
-bool CFSEngine::retrieveBody(const QMessageId& id)
+bool CFSEngine::retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id)
 {
     bool retVal = false;
+    m_privateService = &privateService;
     foreach (QMessageAccount account, m_accounts) {
         MEmailMessage* message = NULL;
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
@@ -917,15 +919,19 @@ void CFSEngine::retrieveAttachmentsL(MEmailMessage* aMessage)
     }
 }
 
-bool CFSEngine::retrieveHeader(const QMessageId& id)
+bool CFSEngine::retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id)
 {
     Q_UNUSED(id);
+    Q_UNUSED(privateService);
     return false;
 }
 
 void CFSEngine::DataFetchedL(const TInt aResult)
 {
-    Q_UNUSED(aResult);       
+    if (aResult == KErrNone)
+        m_privateService->setFinished(true);
+    else
+        m_privateService->setFinished(false);      
 }
 
 bool CFSEngine::exportUpdates(const QMessageAccountId &id)
@@ -2695,6 +2701,8 @@ void CFSMessagesFindOperation::getAllMessagesL(TEmailSortCriteria& sortCriteria)
     foreach (QMessageAccount value, m_owner.m_accounts) {
         getAccountSpecificMessagesL(value, sortCriteria);
     }
+    if (m_activeSearchCount == 0)
+        QMetaObject::invokeMethod(this, "SearchCompleted", Qt::QueuedConnection);
 }
 
 void CFSMessagesFindOperation::getAccountSpecificMessagesL(QMessageAccount& messageAccount, TEmailSortCriteria& sortCriteria)

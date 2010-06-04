@@ -80,22 +80,21 @@
         , videoWidget(0)
         , coverLabel(0)
         , slider(0)
+        , audioEndpointSelector(0)
     #ifdef Q_OS_SYMBIAN
         , mediaKeysObserver(0)
         , playlistDialog(0)
         , toggleAspectRatio(0)
         , showYoutubeDialog(0)
         , youtubeDialog(0)
-        , audioEndpointSelector(0)
     #else
         , colorDialog(0)
     #endif
     {
         player = new QMediaPlayer(this);
-
         <span class="comment">// owned by PlaylistModel</span>
         playlist = new QMediaPlaylist();
-        playlist-&gt;setMediaObject(player);
+        player-&gt;setPlaylist(playlist);
 
         connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
         connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
@@ -107,7 +106,7 @@
         connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
         videoWidget = new VideoWidget(this);
-        videoWidget-&gt;setMediaObject(player);
+        player-&gt;setVideoOutput(videoWidget);
 
         playlistModel = new PlaylistModel(this);
         playlistModel-&gt;setPlaylist(playlist);
@@ -123,8 +122,19 @@
 
         connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
 
-        audioEndpointSelector = qobject_cast&lt;QAudioEndpointSelector*&gt;(player-&gt;service()-&gt;control(QAudioEndpointSelector_iid));
-        connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&amp;)), this, SLOT(handleAudioOutputChangedSignal(const QString&amp;)));
+        QMediaService *service = player-&gt;service();
+        if (service) {
+            QMediaControl *control = service-&gt;requestControl(QAudioEndpointSelector_iid);
+            if (control) {
+                audioEndpointSelector = qobject_cast&lt;QAudioEndpointSelector*&gt;(control);
+                if (audioEndpointSelector) {
+                    connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&amp;)),
+                            this, SLOT(handleAudioOutputChangedSignal(const QString&amp;)));
+                } else {
+                    service-&gt;releaseControl(control);
+                }
+            }
+        }
 
     #ifndef Q_OS_SYMBIAN
         QPushButton *openButton = new QPushButton(tr(&quot;Open&quot;), this);
@@ -242,13 +252,22 @@
 
         metaDataChanged();
 
-        QStringList fileNames = qApp-&gt;arguments();
-        fileNames.removeAt(0);
-        foreach (QString const &amp;fileName, fileNames) {
-            if (fileName.startsWith(QLatin1String(&quot;http:<span class="comment">//&quot;)))</span>
-                playlist-&gt;addMedia(QUrl(fileName));
-            else if (QFileInfo(fileName).exists())
-                playlist-&gt;addMedia(QUrl::fromLocalFile(fileName));
+        QStringList arguments = qApp-&gt;arguments();
+        arguments.removeAt(0);
+        foreach (QString const &amp;argument, arguments) {
+            QFileInfo fileInfo(argument);
+            if (fileInfo.exists()) {
+                QUrl url = QUrl::fromLocalFile(fileInfo.absoluteFilePath());
+                if (fileInfo.suffix().toLower() == QLatin1String(&quot;m3u&quot;)) {
+                    playlist-&gt;load(url);
+                } else
+                    playlist-&gt;addMedia(url);
+            } else {
+                QUrl url(argument);
+                if (url.isValid()) {
+                    playlist-&gt;addMedia(url);
+                }
+            }
         }
     }
 
@@ -282,15 +301,15 @@
             setTrackInfo(QString(&quot;(%1/%2) %3 - %4&quot;)
                     .arg(playlist-&gt;currentIndex()+1)
                     .arg(playlist-&gt;mediaCount())
-                    .arg(player-&gt;metaData(QtMediaServices::AlbumArtist).toString())
-                    .arg(player-&gt;metaData(QtMediaServices::Title).toString()));
+                    .arg(player-&gt;metaData(QtMultimediaKit::AlbumArtist).toString())
+                    .arg(player-&gt;metaData(QtMultimediaKit::Title).toString()));
 
             if (!player-&gt;isVideoAvailable()) {
-                QUrl uri = player-&gt;metaData(QtMediaServices::CoverArtUrlLarge).value&lt;QUrl&gt;();
+                QUrl uri = player-&gt;metaData(QtMultimediaKit::CoverArtUrlLarge).value&lt;QUrl&gt;();
                 QPixmap pixmap = NULL;
 
                 if (uri.isEmpty()) {
-                    QVariant picture = player-&gt;extendedMetaData(&quot;attachedpicture&quot;);
+                    QVariant picture = player-&gt;metaData(QtMultimediaKit::CoverArtImage);
                     <span class="comment">// Load picture from metadata</span>
                     if (!picture.isNull() &amp;&amp; picture.canConvert&lt;QByteArray&gt;())
                         pixmap.loadFromData(picture.value&lt;QByteArray&gt;());
@@ -318,18 +337,20 @@
                     pixmap.load(uri.toString());
 
                 coverLabel-&gt;setPixmap((!pixmap.isNull())?pixmap:QPixmap());
+                coverLabel-&gt;setAlignment(Qt::AlignCenter);
+                coverLabel-&gt;setScaledContents(true);
                 }
         hideOrShowCoverArt();
         }
     #else
-        <span class="comment">//qDebug() &lt;&lt; &quot;update metadata&quot; &lt;&lt; player-&gt;metaData(QtMediaServices::Title).toString();</span>
+        <span class="comment">//qDebug() &lt;&lt; &quot;update metadata&quot; &lt;&lt; player-&gt;metaData(QtMultimediaKit::Title).toString();</span>
         if (player-&gt;isMetaDataAvailable()) {
             setTrackInfo(QString(&quot;%1 - %2&quot;)
-                    .arg(player-&gt;metaData(QtMediaServices::AlbumArtist).toString())
-                    .arg(player-&gt;metaData(QtMediaServices::Title).toString()));
+                    .arg(player-&gt;metaData(QtMultimediaKit::AlbumArtist).toString())
+                    .arg(player-&gt;metaData(QtMultimediaKit::Title).toString()));
 
             if (coverLabel) {
-                QUrl url = player-&gt;metaData(QtMediaServices::CoverArtUrlLarge).value&lt;QUrl&gt;();
+                QUrl url = player-&gt;metaData(QtMultimediaKit::CoverArtUrlLarge).value&lt;QUrl&gt;();
 
                 coverLabel-&gt;setPixmap(!url.isEmpty()
                         ? QPixmap(url.toString())
@@ -604,8 +625,9 @@
             videoWidget-&gt;show();
             videoWidget-&gt;repaint();
         } else {
-            coverLabel-&gt;show();
             videoWidget-&gt;hide();
+            QApplication::setActiveWindow(this);
+            coverLabel-&gt;show();
         }
     }
 

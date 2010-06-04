@@ -78,14 +78,15 @@ bool TelepathyEngine::sendMessage(QMessage &message)
   QString cm=type == QMessage::Sms ? "ring" :  type == QMessage::InstantMessage ? account.toString() : "";
   QMessageAddressList toList=message.to();
   TpSessionAccount *tpsa=tpSession->getAccount(account.toString());
-   qDebug() << "sendMessage account:" << account.toString() << tpsa;
+  // qDebug() << "sendMessage account:" << account.toString() << tpsa;
   if(!tpsa) return false;
   if(!cm.isEmpty()) {
     foreach(QMessageAddress to,toList) {
       connect(tpsa,SIGNAL(messageQueued(TpSessionAccount *,bool)),SLOT(onMessageQueued(TpSessionAccount *,bool)));
+      opBusy=true;
       tpsa->sendMessageToAddress(to.addressee(),message.textContent());
-      loop.exec(); // Wait untill this message has been queued to sent next one
-      qDebug() << "sendMessage loop exit";
+      if(opBusy) loop.exec(); // Wait untill this message has been queued to sent next one
+     // qDebug() << "sendMessage loop exit";
       retVal=true;
     };
   }
@@ -97,13 +98,15 @@ bool TelepathyEngine::sendMessage(QMessage &message)
 
  void TelepathyEngine::onMessageSent(const Tp::Message &,TpSessionAccount *)
  {
-
+    qDebug() << "onMessageSent:" ;
+    // loop.quit();
  };
 
  void TelepathyEngine::onMessageQueued(TpSessionAccount *,bool status)
  {
-     qDebug() << "onMessageQueued:" << status;
-     loop.quit();
+     //qDebug() << "onMessageQueued:" << status;
+     opBusy=false;
+     loop.quit(); // If queuinf failed, exit loop
  };
 
 
@@ -126,14 +129,17 @@ void TelepathyEngine::updateImAccounts() const
                                                                        accountName,
                                                                        QMessageAddress(QMessageAddress::Phone, accountAddress),
                                                                        QMessage::Sms);
-                 qDebug() << "updateImAccounts Sms id:" << accountId << " accountName:" << accountName << "accountAddress" << accountAddress;
+               //  qDebug() << "updateImAccounts Sms id:" << accountId << " accountName:" << accountName << "accountAddress" << accountAddress;
                 iAccounts.insert(accountId, account);
                 defaultSmsAccountId=accountId;
             } else {
                 QString accountId = tpacc->acc->uniqueIdentifier();
                 QString accountName = tpacc->acc->normalizedName();
                 QString accountAddress = tpacc->acc->normalizedName();
-                qDebug() << "updateImAccounts InstantMessage id:" << accountId << " accountName:" << accountName << "accountAddress" << accountAddress;
+                // Some ugly hardcoded hacks
+                if(tpacc->acc->protocol()=="skype") accountName+=QString("@skype");
+                if(!accountName.contains("@")) accountName+=QString("@")+tpacc->acc->parameters()["server"].toString();
+                // qDebug() << "updateImAccounts InstantMessage id:" << accountId << " accountName:" << accountName << "accountAddress" << accountAddress;
                 QMessageAccount account = QMessageAccountPrivate::from(QMessageAccountId(accountId),
                                                                        accountName,
                                                                        QMessageAddress(QMessageAddress::InstantMessage, accountAddress),

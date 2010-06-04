@@ -207,14 +207,14 @@ bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessag
     switch (idType(messageId)) {
         case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieve(messageId, id);
+            return CFSEngine::instance()->retrieve(*this, messageId, id);
 #else
             return false;
 #endif
             break;
         case EngineTypeMTM:
         default:
-            return CMTMEngine::instance()->retrieve(messageId, id);
+            return CMTMEngine::instance()->retrieve(*this, messageId, id);
             break;
     }
 }
@@ -224,14 +224,14 @@ bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
     switch (idType(id)) {
         case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveBody(id);
+            return CFSEngine::instance()->retrieveBody(*this, id);
 #else
             return false;
 #endif
             break;
         case EngineTypeMTM:
         default:
-            return CMTMEngine::instance()->retrieveBody(id);
+            return CMTMEngine::instance()->retrieveBody(*this, id);
             break;
     }
 }
@@ -241,14 +241,14 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
     switch (idType(id)) {
         case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveHeader(id);
+            return CFSEngine::instance()->retrieveHeader(*this, id);
 #else
             return false;
 #endif
             break;
         case EngineTypeMTM:
         default:
-            return CMTMEngine::instance()->retrieveHeader(id);
+            return CMTMEngine::instance()->retrieveHeader(*this, id);
             break;
     }
 }
@@ -317,7 +317,7 @@ bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 #endif
             case EngineTypeMTM:
             default:
-                return CMTMEngine::instance()->exportUpdates(id);;
+                return CMTMEngine::instance()->exportUpdates(*this, id);
     }
 }
 
@@ -535,8 +535,10 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieveHeader(id);
+	if (retVal == false) {
+	    d_ptr->setFinished(retVal);
+	}
 	
-    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -559,8 +561,10 @@ bool QMessageService::retrieveBody(const QMessageId& id)
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieveBody(id);
+	if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
 	
-    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -583,8 +587,10 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 	emit stateChanged(d_ptr->_state);
 
 	retVal = d_ptr->retrieve(messageId, id);
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
 	
-    d_ptr->setFinished(retVal);
     return retVal;
 }
 
@@ -631,8 +637,10 @@ bool QMessageService::exportUpdates(const QMessageAccountId &id)
     emit stateChanged(d_ptr->_state);
     
     retVal = d_ptr->exportUpdates(id);
+    if (retVal == false) {
+        d_ptr->setFinished(retVal);
+    }
     
-    d_ptr->setFinished(retVal);
     return retVal;
 }
 

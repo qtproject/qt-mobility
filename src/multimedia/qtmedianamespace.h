@@ -49,7 +49,7 @@
 
 QT_BEGIN_NAMESPACE
 
-namespace QtMediaServices
+namespace QtMultimediaKit
 {
     enum MetaData
     {

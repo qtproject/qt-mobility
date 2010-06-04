@@ -22,9 +22,7 @@ symbian:
     MOBILITY = contacts
 
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData
+                        WriteUserData
     
     LIBS += $$SYMBIAN_LIBS
 }
