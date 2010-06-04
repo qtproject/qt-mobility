@@ -7,7 +7,6 @@ include (../../../../common.pri)
 qtAddLibrary(QtMultimediaKit)
 
 #includes here so that all defines are added here also
-#FIXME include (../common/symbiancommon.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
 
