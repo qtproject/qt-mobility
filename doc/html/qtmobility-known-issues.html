@@ -117,6 +117,11 @@
 <ul>
 <li>Qt Mobility does not compile if Qt using a namespace.</li>
 <li>Not all example applications will display(fit) well on small screens.</li>
+<li>Prefixed paths in includes such as<pre>    #include &lt;QtLibrary/MyClass&gt;</pre>
+<p>or</p>
+<pre>    #include &lt;QtLibrary/myclass.h&gt;</pre>
+<p>do not currently work on Symbian.</p>
+</li>
 </ul>
 <a name="contacts-api"></a>
 <h3>Contacts API</h3>

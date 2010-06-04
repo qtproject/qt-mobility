@@ -143,6 +143,7 @@ Support is present for the following System Info API classes
 \list
     \o Qt Mobility does not compile if Qt using a namespace.
     \o Not all example applications will display(fit) well on small screens.
+    \o Prefixed paths in includes such as \code #include <QtLibrary/MyClass> \endcode or \code #include <QtLibrary/myclass.h> \endcode do not currently work on Symbian.
 \endlist
 
 \section2 Contacts API
