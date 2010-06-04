@@ -45,19 +45,22 @@
 #include <bluetooth/qbluetoothdevicediscoveryagent.h>
 
 DeviceDiscoveryDialog::DeviceDiscoveryDialog(QWidget *parent)
-: QDialog(parent), discoveryAgent(new QBluetoothDeviceDiscoveryAgent)
+:   QDialog(parent), discoveryAgent(new QBluetoothDeviceDiscoveryAgent), ui(new Ui_DeviceDiscovery)
 {
-    setupUi(this);
+    ui->setupUi(this);
 
-    connect(inquiryType, SIGNAL(toggled(bool)), this, SLOT(setGeneralUnlimited(bool)));
-    connect(scan, SIGNAL(clicked()), this, SLOT(startScan()));
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    setWindowState(Qt::WindowMaximized);
+#endif
+
+    connect(ui->inquiryType, SIGNAL(toggled(bool)), this, SLOT(setGeneralUnlimited(bool)));
+    connect(ui->scan, SIGNAL(clicked()), this, SLOT(startScan()));
 
     connect(discoveryAgent, SIGNAL(deviceDiscovered(const QBluetoothDeviceInfo&)),
             this, SLOT(addDevice(const QBluetoothDeviceInfo&)));
-    connect(discoveryAgent, SIGNAL(finished(bool)),
-            this, SLOT(scanFinished()));
+    connect(discoveryAgent, SIGNAL(finished()), this, SLOT(scanFinished()));
 
-    connect(list, SIGNAL(itemActivated(QListWidgetItem*)),
+    connect(ui->list, SIGNAL(itemActivated(QListWidgetItem*)),
             this, SLOT(itemActivated(QListWidgetItem*)));
 }
 
@@ -68,20 +71,20 @@ DeviceDiscoveryDialog::~DeviceDiscoveryDialog()
 
 void DeviceDiscoveryDialog::addDevice(const QBluetoothDeviceInfo &info)
 {
-    list->addItem(QString("%1 %2").arg(info.address().toString()).arg(info.name()));
+    ui->list->addItem(QString("%1 %2").arg(info.address().toString()).arg(info.name()));
 }
 
 void DeviceDiscoveryDialog::startScan()
 {
     discoveryAgent->start();
-    scan->setEnabled(false);
-    inquiryType->setEnabled(false);
+    ui->scan->setEnabled(false);
+    ui->inquiryType->setEnabled(false);
 }
 
 void DeviceDiscoveryDialog::scanFinished()
 {
-    scan->setEnabled(true);
-    inquiryType->setEnabled(true);
+    ui->scan->setEnabled(true);
+    ui->inquiryType->setEnabled(true);
 }
 
 void DeviceDiscoveryDialog::setGeneralUnlimited(bool unlimited)
@@ -105,7 +108,6 @@ void DeviceDiscoveryDialog::itemActivated(QListWidgetItem *item)
     QString name(text.mid(index + 1));
 
     ServiceDiscoveryDialog d(name, address);
-    d.showFullScreen();
     d.exec();
 }
 

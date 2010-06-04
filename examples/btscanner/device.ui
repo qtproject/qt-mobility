@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Bt Scanner</string>
+   <string>Bluetooth Scanner</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

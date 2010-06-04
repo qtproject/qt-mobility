@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
 
     DeviceDiscoveryDialog d;
     QObject::connect(&d, SIGNAL(accepted()), &app, SLOT(quit()));
-    d.showFullScreen();
+    d.show();
 
     app.exec();
 

@@ -55,7 +55,7 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
-class ServiceDiscoveryDialog : public QDialog, public Ui_ServiceDiscovery
+class ServiceDiscoveryDialog : public QDialog
 {
     Q_OBJECT
 
@@ -68,6 +68,7 @@ public slots:
 
 private:
     QBluetoothServiceDiscoveryAgent *discoveryAgent;
+    Ui_ServiceDiscovery *ui;
 };
 
 #endif

@@ -11,18 +11,18 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string/>
+   <string>Available Services</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Available services</string>
-     </property>
-    </widget>
+    <widget class="QListWidget" name="list"/>
    </item>
    <item>
-    <widget class="QListWidget" name="list"/>
+    <widget class="QLabel" name="status">
+     <property name="text">
+      <string>Querying...</string>
+     </property>
+    </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

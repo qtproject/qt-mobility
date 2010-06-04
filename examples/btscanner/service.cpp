@@ -45,15 +45,22 @@
 #include <bluetooth/qbluetoothserviceinfo.h>
 
 
-ServiceDiscoveryDialog::ServiceDiscoveryDialog(const QString &name, const QBluetoothAddress &address, QWidget *parent)
-: QDialog(parent), discoveryAgent(new QBluetoothServiceDiscoveryAgent(address))
+ServiceDiscoveryDialog::ServiceDiscoveryDialog(const QString &name,
+                                               const QBluetoothAddress &address, QWidget *parent)
+:   QDialog(parent), discoveryAgent(new QBluetoothServiceDiscoveryAgent(address)),
+    ui(new Ui_ServiceDiscovery)
 {
-    setupUi(this);
+    ui->setupUi(this);
+
+#if defined (Q_OS_SYMBIAN) || defined(Q_OS_WINCE) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    setWindowState(Qt::WindowMaximized);
+#endif
 
     setWindowTitle(name);
 
     connect(discoveryAgent, SIGNAL(serviceDiscovered(const QBluetoothServiceInfo&)),
             this, SLOT(addService(const QBluetoothServiceInfo&)));
+    connect(discoveryAgent, SIGNAL(finished()), ui->status, SLOT(hide()));
 
     discoveryAgent->start();
 }
@@ -61,6 +68,7 @@ ServiceDiscoveryDialog::ServiceDiscoveryDialog(const QString &name, const QBluet
 ServiceDiscoveryDialog::~ServiceDiscoveryDialog()
 {
     delete discoveryAgent;
+    delete ui;
 }
 
 void ServiceDiscoveryDialog::addService(const QBluetoothServiceInfo &info)
@@ -68,8 +76,8 @@ void ServiceDiscoveryDialog::addService(const QBluetoothServiceInfo &info)
     if (info.serviceName().isEmpty())
         return;
 
-    list->addItem(QString("%1\n\t%2\n\t%3").arg(info.serviceName())
-                                           .arg(info.attribute(QBluetoothServiceInfo::ServiceDescription).toString())
-                                           .arg(info.attribute(QBluetoothServiceInfo::ServiceProvider).toString()));
+    ui->list->addItem(QString("%1\n\t%2\n\t%3").arg(info.serviceName(),
+            info.attribute(QBluetoothServiceInfo::ServiceDescription).toString(),
+            info.attribute(QBluetoothServiceInfo::ServiceProvider).toString()));
 }
 
