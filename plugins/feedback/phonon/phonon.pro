@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtfeedback_symbian)
+TARGET = $$qtLibraryTarget(qtfeedback_phonon)
 PLUGIN_TYPE=feedback
 
 include(../../../common.pri)
@@ -12,13 +12,12 @@ INCLUDEPATH += $$SOURCE_DIR/src/feedback
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
 INSTALLS+=target
-LIBS += -lQtFeedback -ltouchfeedback -lhwrmvibraclient
+QT += phonon
+LIBS += -lQtFeedback
 CONFIG += mobility
 MOBILITY = feedback
 
-
-symbian {
-    contains(S60_VERSION, 5.2): DEFINES += ADVANCED_TACTILE_SUPPORT
+symbian: {
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
     TARGET = $${TARGET}$${QT_LIBINFIX}

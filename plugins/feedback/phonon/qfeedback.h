@@ -39,58 +39,36 @@
 **
 ****************************************************************************/
 #ifndef QFEEDBACK_SYMBIAN_H
-#define QFEEDBACK_SYMBIAN_H
-
-#include <QtGui/QWidget>
+#define QFEEDBACK_SYMBIA_H
 
 #include <qmobilityglobal.h>
 
 #include <qfeedbackplugin.h>
 
-#include <hwrmvibra.h>
-#include <touchfeedback.h>
-
+#include <phonon/mediaobject.h>
 
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
 class QTouchFeedback;
 
-class QFeedbackSymbian : public QObject, public QFeedbackInterface, public QThemeFeedbackInterface
+class QFeedbackPhonon : public QObject, public QFileFeedbackInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QFeedbackInterface)
-    Q_INTERFACES(QtMobility::QThemeFeedbackInterface)
+    Q_INTERFACES(QtMobility::QFileFeedbackInterface)
 public:
-    QFeedbackSymbian();
-    virtual ~QFeedbackSymbian();
+    QFeedbackPhonon();
+    virtual ~QFeedbackPhonon();
 
-    virtual QFeedbackDevice defaultDevice(QFeedbackDevice::Type);
-    virtual QList<QFeedbackDevice> devices();
-
-    //for device handling
-    virtual QString deviceName(const QFeedbackDevice &);
-    virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &);
-    virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &);
-    virtual QFeedbackDevice::Type type(const QFeedbackDevice &);
-    virtual bool isEnabled(const QFeedbackDevice &);
-    virtual void setEnabled(const QFeedbackDevice &, bool);
-
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty);
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
-
-    virtual void play(QFeedbackEffect::InstantEffect);
+    virtual bool setLoaded(const QFileFeedbackEffect*, bool);
+    virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *);
+    virtual int effectDuration(const QFileFeedbackEffect*);
+    virtual QStringList mimeTypes();
 
 private:
-    CHWRMVibra *vibra();
 
-
-    CCoeControl *defaultWidget();
-    TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::InstantEffect effect);
-
-    CHWRMVibra *m_vibra;
-    bool m_vibraActive;
+    QHash<const QFileFeedbackEffect *, Phonon::MediaObject*> audioPlayers;
 };
 
 
