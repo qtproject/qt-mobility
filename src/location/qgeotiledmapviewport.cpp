@@ -60,8 +60,6 @@ QGeoTiledMapViewport::QGeoTiledMapViewport(QGeoMappingManagerEngine *engine, QGe
     QGeoMapViewport::setZoomLevel(DEFAULT_ZOOMLEVEL);
     d->width = (1 << DEFAULT_ZOOMLEVEL) * tileEngine->tileSize().width();
     d->height = (1 << DEFAULT_ZOOMLEVEL) * tileEngine->tileSize().height();
-    d->screenRect.setLeft(15000);
-    d->screenRect.setTop(10000);
 }
 
 QGeoTiledMapViewport::~QGeoTiledMapViewport()
@@ -175,7 +173,6 @@ void QGeoTiledMapViewport::setCenter(const QGeoCoordinate &center)
     qulonglong y;
     coordinateToWorldPixel(center, &x, &y);
     d->screenRect.moveCenter(QPointF(x, y));
-    //TODO: update image
 }
 
 QGeoCoordinate QGeoTiledMapViewport::center() const
@@ -268,6 +265,7 @@ void QGeoTiledMapViewport::pan(int dx, int dy)
     qreal tx;
     qreal ty;
 
+    //TODO: make this work in case we wrapped around the date line
     if (deltaX >= 0) {
         sx = 0.0;
         tx = deltaX;
