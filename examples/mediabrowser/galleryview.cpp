@@ -41,12 +41,12 @@
 #include "galleryview.h"
 
 #include <qgallerycountrequest.h>
-#include <qgalleryfilterrequest.h>
 #include <qgalleryitemlist.h>
+#include <qgalleryqueryrequest.h>
 
 GalleryView::GalleryView(QWidget *parent)
     : QWidget(parent)
-    , request(new QGalleryFilterRequest(this))
+    , request(new QGalleryQueryRequest(this))
     , countRequest(new QGalleryCountRequest(this))
 {
     request->setLive(true);

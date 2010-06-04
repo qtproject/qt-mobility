@@ -151,9 +151,9 @@ contains(mobility_modules,gallery) {
         qgallerybaseresponse \
         qgallerycountrequest \
         qgalleryfilter \
-        qgalleryfilterrequest \
         qgalleryitemlist \
         qgalleryitemrequest \
+        qgalleryqueryrequest \
         qgalleryremoverequest \
         qgalleryresource \
         qgalleryurlrequest

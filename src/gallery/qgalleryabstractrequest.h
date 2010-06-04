@@ -101,7 +101,7 @@ public:
     {
         Item,
         Url,
-        Filter,
+        Query,
         Count,
         Remove
     };

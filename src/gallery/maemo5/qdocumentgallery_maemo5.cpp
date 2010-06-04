@@ -44,8 +44,8 @@
 #include "qabstractgallery_p.h"
 
 #include "qgallerycountrequest.h"
-#include "qgalleryfilterrequest.h"
 #include "qgalleryitemrequest.h"
+#include "qgalleryqueryrequest.h"
 #include "qgalleryremoverequest.h"
 #include "qgalleryurlrequest.h"
 
@@ -83,7 +83,7 @@ class QDocumentGalleryPrivate : public QAbstractGalleryPrivate, public QGalleryD
 public:
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
     QGalleryAbstractResponse *createUrlResponse(QGalleryUrlRequest *request);
-    QGalleryAbstractResponse *createFilterResponse(QGalleryFilterRequest *request);
+    QGalleryAbstractResponse *createFilterResponse(QGalleryQueryRequest *request);
     QGalleryAbstractResponse *createCountResponse(QGalleryCountRequest *request);
     QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 
@@ -227,7 +227,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
-        QGalleryFilterRequest *request)
+        QGalleryQueryRequest *request)
 {
     QGalleryTrackerSchema schema(request->itemType());
 
@@ -307,7 +307,7 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
     switch (type) {
     case QGalleryAbstractRequest::Item:
     case QGalleryAbstractRequest::Url:
-    case QGalleryAbstractRequest::Filter:
+    case QGalleryAbstractRequest::Query:
     case QGalleryAbstractRequest::Count:
     case QGalleryAbstractRequest::Remove:
         return true;
@@ -336,8 +336,8 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
     case QGalleryAbstractRequest::Url:
         return d->createUrlResponse(static_cast<QGalleryUrlRequest *>(request));
-    case QGalleryAbstractRequest::Filter:
-        return d->createFilterResponse(static_cast<QGalleryFilterRequest *>(request));
+    case QGalleryAbstractRequest::Query:
+        return d->createFilterResponse(static_cast<QGalleryQueryRequest *>(request));
     case QGalleryAbstractRequest::Count:
         return d->createCountResponse(static_cast<QGalleryCountRequest *>(request));
     case QGalleryAbstractRequest::Remove:

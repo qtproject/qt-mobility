@@ -41,7 +41,7 @@
 
 #include <QtTest/QtTest>
 
-#include <qgalleryfilterrequest.h>
+#include <qgalleryqueryrequest.h>
 
 #include <qabstractgallery.h>
 #include <qgalleryabstractresponse.h>
@@ -51,7 +51,7 @@ QTM_USE_NAMESPACE
 
 Q_DECLARE_METATYPE(QGalleryItemList*)
 
-class tst_QGalleryFilterRequest : public QObject
+class tst_QGalleryQueryRequest : public QObject
 {
     Q_OBJECT
 public Q_SLOTS:
@@ -103,7 +103,7 @@ public:
     QtTestGallery() : m_result(QGalleryAbstractRequest::NoResult), m_idle(false) {}
 
     bool isRequestSupported(QGalleryAbstractRequest::Type type) const {
-        return type == QGalleryAbstractRequest::Filter; }
+        return type == QGalleryAbstractRequest::Query; }
 
     void setResult(int result) { m_result = result; }
     void setIdle(bool idle) { m_idle = idle; }
@@ -111,7 +111,7 @@ public:
 protected:
     QGalleryAbstractResponse *createResponse(QGalleryAbstractRequest *request)
     {
-        if (request->type() == QGalleryAbstractRequest::Filter)
+        if (request->type() == QGalleryAbstractRequest::Query)
             return new QtGalleryTestResponse(m_result, m_idle);
         return 0;
     }
@@ -121,12 +121,12 @@ private:
     bool m_idle;
 };
 
-void tst_QGalleryFilterRequest::initTestCase()
+void tst_QGalleryQueryRequest::initTestCase()
 {
     qRegisterMetaType<QGalleryItemList*>();
 }
 
-void tst_QGalleryFilterRequest::properties()
+void tst_QGalleryQueryRequest::properties()
 {
     const QGalleryProperty titleProperty("title");
     const QGalleryProperty artistProperty("artist");
@@ -136,7 +136,7 @@ void tst_QGalleryFilterRequest::properties()
 
     const QGalleryFilter filter = QGalleryMetaDataFilter(QLatin1String("trackNumber"), 12);
 
-    QGalleryFilterRequest request;
+    QGalleryQueryRequest request;
 
     QCOMPARE(request.propertyNames(), QStringList());
     QCOMPARE(request.sortPropertyNames(), QStringList());
@@ -204,12 +204,12 @@ void tst_QGalleryFilterRequest::properties()
     QCOMPARE(request.filter(), filter);
 }
 
-void tst_QGalleryFilterRequest::executeSynchronous()
+void tst_QGalleryQueryRequest::executeSynchronous()
 {
     QtTestGallery gallery;
     gallery.setResult(QGalleryAbstractRequest::ConnectionError);
 
-    QGalleryFilterRequest request(&gallery);
+    QGalleryQueryRequest request(&gallery);
     QVERIFY(request.items() == 0);
 
     QSignalSpy spy(&request, SIGNAL(itemsChanged(QGalleryItemList*)));
@@ -233,12 +233,12 @@ void tst_QGalleryFilterRequest::executeSynchronous()
     QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.items());
 }
 
-void tst_QGalleryFilterRequest::executeAsynchronous()
+void tst_QGalleryQueryRequest::executeAsynchronous()
 {
     QtTestGallery gallery;
     gallery.setResult(QGalleryAbstractRequest::NoResult);
 
-    QGalleryFilterRequest request(&gallery);
+    QGalleryQueryRequest request(&gallery);
     QVERIFY(request.items() == 0);
 
     QSignalSpy spy(&request, SIGNAL(itemsChanged(QGalleryItemList*)));
@@ -262,6 +262,6 @@ void tst_QGalleryFilterRequest::executeAsynchronous()
     QCOMPARE(spy.last().at(0).value<QGalleryItemList*>(), request.items());
 }
 
-QTEST_MAIN(tst_QGalleryFilterRequest)
+QTEST_MAIN(tst_QGalleryQueryRequest)
 
-#include "tst_qgalleryfilterrequest.moc"
+#include "tst_qgalleryqueryrequest.moc"

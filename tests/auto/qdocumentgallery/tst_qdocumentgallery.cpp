@@ -70,7 +70,7 @@ void tst_QDocumentGallery::isRequestSupported()
 #endif
 
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Item), platformSupported);
-    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Filter), platformSupported);
+    QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Query), platformSupported);
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Count), platformSupported);
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Url), platformSupported);
     QCOMPARE(gallery.isRequestSupported(QGalleryAbstractRequest::Remove), platformSupported);

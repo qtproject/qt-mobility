@@ -22,10 +22,10 @@ PUBLIC_HEADERS = \
         qgalleryabstractresponse.h \
         qgallerycountrequest.h \
         qgalleryfilter.h \
-        qgalleryfilterrequest.h \
         qgalleryitemlist.h \
         qgalleryitemrequest.h \
         qgalleryproperty.h \
+        qgalleryqueryrequest.h \
         qgalleryremoverequest.h \
         qgallerytype.h \
         qgalleryurlrequest.h
@@ -38,10 +38,10 @@ SOURCES = \
         qgallerycountrequest.cpp \
         qgallerybaseresponse.cpp \
         qgalleryfilter.cpp \
-        qgalleryfilterrequest.cpp \
         qgalleryitemlist.cpp \
         qgalleryitemrequest.cpp \
         qgalleryproperty.cpp \
+        qgalleryqueryrequest.cpp \
         qgalleryremoverequest.cpp \
         qgallerytype.cpp \
         qgalleryurlrequest.cpp
