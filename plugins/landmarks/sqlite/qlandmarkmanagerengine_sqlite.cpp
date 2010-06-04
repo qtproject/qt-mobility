@@ -86,8 +86,15 @@
 #include <QSqlError>
 #include <QThreadPool>
 #include <QUuid>
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
 
 QTM_USE_NAMESPACE
+
+static const double EARTH_MEAN_RADIUS = 6371.0072;
 
 class QueryRun : public QRunnable
 {
@@ -128,6 +135,45 @@ bool outside(double value, double min, double max)
         return true;
     else
         return false;
+}
+
+double normalizeLongitude(double degrees)
+{
+    int newDegree = degrees;
+    while (newDegree <= -180) newDegree += 360;
+    while (newDegree > 180) newDegree -= 360;
+    return newDegree;
+}
+
+double normalizeLatitude(double degrees)
+{
+    int newDegree = degrees;
+    while (newDegree < -90) newDegree = -90;
+    while (newDegree > 90) newDegree = 90;
+    return newDegree;
+}
+
+void shiftCoordinate(QGeoCoordinate *coord,double bearing, double distance)
+{
+    if (!coord)
+        return;
+
+    //convert from degrees to radians
+    double lat1= coord->latitude() * M_PI / 180;
+    double long1 = coord->longitude() * M_PI / 180;
+    double bear = bearing * M_PI / 180;
+
+    double lat2 = asin(sin(lat1) * cos(distance/(EARTH_MEAN_RADIUS *1000))
+                    + cos(lat1) * sin(distance/(EARTH_MEAN_RADIUS*1000)) * cos(bear));
+    double long2 = long1 + atan2(sin(bear) * sin(distance/(EARTH_MEAN_RADIUS*1000)) * cos(lat1),
+                                            cos(distance/(EARTH_MEAN_RADIUS * 1000)) - sin(lat1) * sin(lat2));
+
+    //convert from radians to degrees
+    lat2 = lat2 * 180.0 / M_PI;
+    long2 = long2 * 180.0 / M_PI;
+
+    coord->setLatitude(normalizeLatitude(lat2));
+    coord->setLongitude(normalizeLongitude(long2));
 }
 
 QLandmark retrieveLandmark(const QString &connectionName, const QLandmarkId &landmarkId,
@@ -547,8 +593,6 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             }
             break;
         }
-    case QLandmarkFilter::ProximityFilter:
-        break;
     case QLandmarkFilter::NearestFilter:
         break;
     case QLandmarkFilter::CategoryFilter: {
@@ -556,9 +600,30 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         queryString = landmarkIdsCategoryQueryString(categoryFilter);
         break;
         }
+    case QLandmarkFilter::ProximityFilter:
     case QLandmarkFilter::BoxFilter: {
             QLandmarkBoxFilter boxFilter;
-            boxFilter = filter;
+            if (filter.type() == QLandmarkFilter::ProximityFilter) {
+                QLandmarkProximityFilter proximityFilter;
+                proximityFilter = filter;
+                QGeoCoordinate center = proximityFilter.coordinate();
+                double radius = proximityFilter.radius();
+
+                QGeoCoordinate topLeft = center;
+                shiftCoordinate(&topLeft, 0, radius+1000);
+                shiftCoordinate(&topLeft, 270, radius+1000);
+
+                QGeoCoordinate bottomRight = center;
+                shiftCoordinate(&bottomRight, 180, radius+1000);
+                shiftCoordinate(&bottomRight, 90, radius+1000);
+
+                boxFilter.setTopLeftCoordinate(topLeft);
+                boxFilter.setBottomRightCoordinate(bottomRight);
+
+                //TODO: handle poles
+            } else {
+                boxFilter = filter;
+            }
 
             if (!boxFilter.topLeftCoordinate().isValid()) {
                 if (error)
@@ -582,12 +647,11 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                 < boxFilter.bottomRightCoordinate().latitude()) {
                 if (error)
                     *error = QLandmarkManager::BadArgumentError;
-                else
+                if (errorString)
                     *errorString = QString("Box filter top left coordinate latitude, %1,  is less than "
                                            "bottom right coordinate latitude, %2")
                             .arg(boxFilter.topLeftCoordinate().latitude())
                             .arg(boxFilter.bottomRightCoordinate().latitude());
-
             }
 
             queryString = landmarkIdsBoxQueryString(boxFilter);
@@ -672,6 +736,29 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                         result << id;
                     }
                 } while (query.next());
+            } else if ( filter.type() == QLandmarkFilter::ProximityFilter) {
+                QLandmarkProximityFilter proximityFilter;
+                proximityFilter = filter;
+                qreal distance = proximityFilter.radius();
+                QGeoCoordinate center = proximityFilter.coordinate();
+                QGeoCoordinate coordinate;
+
+                do {
+                    if (queryRun && queryRun->isCanceled) {
+                        return QList<QLandmarkId>();
+                    }
+
+                    coordinate.setLatitude(query.value(1).toDouble());
+                    coordinate.setLongitude(query.value(2).toDouble());
+
+                    if (coordinate.distanceTo(center) < distance || qFuzzyCompare(coordinate.distanceTo(center),distance))
+                    {
+                        id.setManagerUri(managerUri);
+                        id.setLocalId(QString::number(query.value(0).toInt()));
+                        result << id;
+                    }
+                } while (query.next());
+
             } else {
                 id.setManagerUri(managerUri);
                 id.setLocalId(QString::number(query.value(0).toInt()));

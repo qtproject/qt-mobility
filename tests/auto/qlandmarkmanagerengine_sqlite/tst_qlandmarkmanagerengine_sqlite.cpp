@@ -1200,6 +1200,138 @@ private slots:
         }
     }
 
+    void filterLandmarksProximityAsync() {
+        QList<QGeoCoordinate> greenwhichFilterCoords;
+        QList<QGeoCoordinate> datelineFilterCoords;
+        QList<QGeoCoordinate> northPoleFilterCoords;
+        QList<QGeoCoordinate> southPoleFilterCoords;
+        QList<QGeoCoordinate> northFilterCoords;
+        QList<QGeoCoordinate> eastFilterCoords;
+        QList<QGeoCoordinate> northeastFilterCoords;
+
+        QList<QGeoCoordinate> greenwhichLmCoords;
+        QList<QGeoCoordinate> datelineLmCoords;
+        QList<QGeoCoordinate> northPoleLmCoords;
+        QList<QGeoCoordinate> southPoleLmCoords;
+        QList<QGeoCoordinate> northLmCoords;
+        QList<QGeoCoordinate> eastLmCoords;
+        QList<QGeoCoordinate> northeastLmCoords;
+
+        greenwhichFilterCoords << QGeoCoordinate(-0.1, -0.1);
+        greenwhichFilterCoords << QGeoCoordinate(0.1, -0.1);
+        greenwhichFilterCoords << QGeoCoordinate(-0.1, 0.1);
+        greenwhichFilterCoords << QGeoCoordinate(0.1, 0.1);
+
+        datelineFilterCoords << QGeoCoordinate(-0.1, -179.9);
+        datelineFilterCoords << QGeoCoordinate(0.1, -179.9);
+        datelineFilterCoords << QGeoCoordinate(-0.1, 179.9);
+        datelineFilterCoords << QGeoCoordinate(0.1, 179.9);
+
+        northPoleFilterCoords << QGeoCoordinate(89.9, -179.9);
+        northPoleFilterCoords << QGeoCoordinate(89.9, -0.1);
+        northPoleFilterCoords << QGeoCoordinate(89.9, 0.1);
+        northPoleFilterCoords << QGeoCoordinate(89.9, 179.9);
+
+        southPoleFilterCoords << QGeoCoordinate(-89.9, -179.9);
+        southPoleFilterCoords << QGeoCoordinate(-89.9, -0.1);
+        southPoleFilterCoords << QGeoCoordinate(-89.9, 0.1);
+        southPoleFilterCoords << QGeoCoordinate(-89.9, 179.9);
+
+        eastFilterCoords << QGeoCoordinate(-0.1, 10.0);
+        eastFilterCoords << QGeoCoordinate(0.1, 10.0);
+        northFilterCoords << QGeoCoordinate(10.0, -0.1);
+        northFilterCoords << QGeoCoordinate(10.0, 0.1);
+        northeastFilterCoords << QGeoCoordinate(10.0, 10.0);
+
+        greenwhichLmCoords << QGeoCoordinate(-1.0, -1.0);
+        greenwhichLmCoords << QGeoCoordinate(1.0, -1.0);
+        greenwhichLmCoords << QGeoCoordinate(-1.0, 1.0);
+        greenwhichLmCoords << QGeoCoordinate(1.0, 1.0);
+
+        datelineLmCoords << QGeoCoordinate(-1.0, -179.0);
+        datelineLmCoords << QGeoCoordinate(1.0, -179.0);
+        datelineLmCoords << QGeoCoordinate(-1.0, 179.0);
+        datelineLmCoords << QGeoCoordinate(1.0, 179.0);
+
+
+        //TODO: test poles
+        //northPoleLmCoords << QGeoCoordinate(89.0, -179.0);
+        //northPoleLmCoords << QGeoCoordinate(89.0, -1.0);
+        //northPoleLmCoords << QGeoCoordinate(89.0, 1.0);
+        //northPoleLmCoords << QGeoCoordinate(89.0, 179.0);
+
+        //southPoleLmCoords << QGeoCoordinate(-89.0, -179.0);
+        //southPoleLmCoords << QGeoCoordinate(-89.0, -1.0);
+        //southPoleLmCoords << QGeoCoordinate(-89.0, 1.0);
+        //southPoleLmCoords << QGeoCoordinate(-89.0, 179.0);
+
+        eastLmCoords << QGeoCoordinate(-1.0, 11.0);
+        eastLmCoords << QGeoCoordinate(1.0, 11.0);
+        northLmCoords << QGeoCoordinate(11.0, -1.0);
+        northLmCoords << QGeoCoordinate(11.0, 1.0);
+        northeastLmCoords << QGeoCoordinate(11.0, 11.0);
+
+        QList<QList<QGeoCoordinate> > coords;
+        coords << greenwhichLmCoords;
+        coords << datelineLmCoords;
+        coords << northPoleLmCoords;
+        coords << southPoleLmCoords;
+        coords << eastLmCoords;
+        coords << northLmCoords;
+        coords << northeastLmCoords;
+
+        for (int i = 0; i < coords.size(); ++i) {
+            QList<QGeoCoordinate> c = coords.at(i);
+            for (int j = 0; j < c.size(); ++j) {
+                QLandmark lm;
+                lm.setCoordinate(c.at(j));
+                QVERIFY(m_manager->saveLandmark(&lm));
+            }
+        }
+
+        QList<QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> > > testSets;
+        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(greenwhichFilterCoords, greenwhichLmCoords);
+        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(datelineFilterCoords, datelineLmCoords);
+        //TODO: test poles
+        //testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northPoleFilterCoords, northPoleLmCoords);
+        //testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(southPoleFilterCoords, southPoleLmCoords);
+        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northFilterCoords, northLmCoords);
+        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(eastFilterCoords, eastLmCoords);
+        testSets << QPair<QList<QGeoCoordinate>, QList<QGeoCoordinate> >(northeastFilterCoords, northeastLmCoords);
+
+        double dist = QGeoCoordinate(0.0, 0.0).distanceTo(QGeoCoordinate(5.0, 5.0));
+
+        for (int i = 0; i < testSets.size(); ++i) {
+            QList<QGeoCoordinate> filterCoords = testSets.at(i).first;
+            QList<QGeoCoordinate> lmCoords = testSets.at(i).second;
+
+            for (int j = 0; j < filterCoords.size(); ++j) {
+                QLandmarkProximityFilter filter(filterCoords.at(j), dist);
+                QLandmarkFetchRequest fetchRequest(m_manager);
+                fetchRequest.setFilter(filter);
+                QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+                QCOMPARE(fetchRequest.state(), QLandmarkAbstractRequest::InactiveState);
+                fetchRequest.start();
+
+                QVERIFY(waitForAsync(spy, &fetchRequest));
+                QList<QLandmark>lms = fetchRequest.landmarks();
+
+                if (lms.size() != lmCoords.size()) {
+                    for (int k = 0; k < lms.size(); ++k)
+                        qWarning() << "lms" << lms.at(k).coordinate().toString();
+                    for (int k = 0; k < lmCoords.size(); ++k)
+                        qWarning() << "lmCoords" << lmCoords.at(k).toString();
+                }
+
+                QCOMPARE(lms.size(), lmCoords.size());
+
+                for (int k = 0; k < lms.size(); ++k) {
+                    QVERIFY(lmCoords.contains(lms.at(k).coordinate()));
+                }
+            }
+        }
+    }
+
     void filterLandmarksNearest() {
         QList<QGeoCoordinate> greenwhichFilterCoords;
         QList<QGeoCoordinate> datelineFilterCoords;
