@@ -60,6 +60,9 @@ public:
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.gallery"));
 
+        qmlRegisterType<GalleryFilterBase>();
+        qmlRegisterType<GalleryFilterUnionItem>();
+        qmlRegisterType<GalleryFilterIntersectionItem>();
         qmlRegisterType<GalleryFilter>(uri, 1, 0, "GalleryFilter");
         qmlRegisterType<GalleryFilterLessThan>(uri, 1, 0, "GalleryPropertyLessThan");
         qmlRegisterType<GalleryFilterLessThanEquals>(uri, 1, 0, "GalleryPropertyLessThanEquals");
