@@ -144,9 +144,6 @@ protected:
 
     void setSocketState(SocketState state);
     void setSocketError(SocketError error);
-
-protected:
-    QBluetoothSocketPrivate *d_ptr;
 };
 
 #ifndef QT_NO_DEBUG_STREAM

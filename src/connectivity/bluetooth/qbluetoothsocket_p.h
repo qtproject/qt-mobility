@@ -45,6 +45,7 @@
 #include "qbluetoothsocket.h"
 
 #include <QtGlobal>
+#include <QtCore/private/qiodevice_p.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <es_sock.h>
@@ -57,9 +58,9 @@ QTM_BEGIN_NAMESPACE
 
 class QBluetoothSocket;
 
-class QBluetoothSocketPrivate
+class QBluetoothSocketPrivate : public QIODevicePrivate
 #ifdef Q_OS_SYMBIAN
-: public MBluetoothSocketNotifier
+                              , public MBluetoothSocketNotifier
 #endif
 {
     Q_DECLARE_PUBLIC(QBluetoothSocket)
@@ -101,9 +102,6 @@ public:
     TPtr8 rxDescriptor;
     TSockXfrLength rxLength;
 #endif
-
-protected:
-    QBluetoothSocket *q_ptr;
 };
 
 QTM_END_NAMESPACE
