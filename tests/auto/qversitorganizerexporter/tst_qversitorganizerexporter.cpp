@@ -349,6 +349,50 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
             << (QList<QOrganizerItemDetail>() << recurrence)
             << (QList<QVersitProperty>() << rrule);
     }
+
+    {
+        QVersitProperty rdate;
+        rdate.setName(QLatin1String("RDATE"));
+        rdate.setValue(QLatin1String("19970304"));
+        QOrganizerItemEventTimeRange etr;
+        etr.setStartDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
+        etr.setEndDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
+        QOrganizerItemRecurrence recurrence;
+        QList<QDateTime> recurrenceDates;
+        recurrenceDates << QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)) ;
+        recurrence.setRecurrenceDates(recurrenceDates);
+        QTest::newRow("rdate")
+            << (QList<QOrganizerItemDetail>() << etr << recurrence)
+            << (QList<QVersitProperty>() << rdate);
+
+        // last one needs time specified because it differs from the start time
+        rdate.setValue(QLatin1String("19970304,19970504,19970704T120000"));
+        recurrenceDates.clear();
+        recurrenceDates
+            << QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0))
+            << QDateTime(QDate(1997, 5, 4), QTime(11, 0, 0))
+            << QDateTime(QDate(1997, 7, 4), QTime(12, 0, 0));
+        recurrence.setRecurrenceDates(recurrenceDates);
+        QTest::newRow("multiple rdates")
+            << (QList<QOrganizerItemDetail>() << etr << recurrence)
+            << (QList<QVersitProperty>() << rdate);
+    }
+
+    {
+        QVersitProperty rdate;
+        rdate.setName(QLatin1String("EXDATE"));
+        rdate.setValue(QLatin1String("19970304"));
+        QOrganizerItemEventTimeRange etr;
+        etr.setStartDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
+        etr.setEndDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
+        QOrganizerItemRecurrence recurrence;
+        QList<QDateTime> exceptionDates;
+        exceptionDates << QDateTime(QDate(1997, 3, 4), QTime(0, 0, 0)); // time should be ignored
+        recurrence.setExceptionDates(exceptionDates);
+        QTest::newRow("exdate")
+            << (QList<QOrganizerItemDetail>() << etr << recurrence)
+            << (QList<QVersitProperty>() << rdate);
+    }
 }
 
 QVersitProperty tst_QVersitOrganizerExporter::findPropertyByName(

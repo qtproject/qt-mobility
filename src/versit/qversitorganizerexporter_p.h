@@ -81,6 +81,7 @@ private:
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
     void encodeRecurrence(
+            const QOrganizerItem& item,
             const QOrganizerItemDetail& detail,
             const QVersitDocument& document,
             QList<QVersitProperty>* removedProperties,
@@ -94,6 +95,7 @@ private:
     QString weekString(Qt::DayOfWeek day);
     void encodeRecurDates(
             const QString& propertyName,
+            const QOrganizerItem& item,
             const QList<QDateTime>& dates,
             const QVersitDocument& document,
             QList<QVersitProperty>* removedProperties,

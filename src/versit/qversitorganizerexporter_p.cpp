@@ -106,7 +106,7 @@ void QVersitOrganizerExporterPrivate::exportDetail(
     } else if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName) {
         encodeTimestamp(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemRecurrence::DefinitionName) {
-        encodeRecurrence(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+        encodeRecurrence(item, detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (mPropertyMappings.contains(detail.definitionName())) {
         encodeSimpleProperty(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     }
@@ -166,6 +166,7 @@ void QVersitOrganizerExporterPrivate::encodeTimestamp(
 }
 
 void QVersitOrganizerExporterPrivate::encodeRecurrence(
+        const QOrganizerItem& item,
         const QOrganizerItemDetail& detail,
         const QVersitDocument& document,
         QList<QVersitProperty>* removedProperties,
@@ -190,11 +191,11 @@ void QVersitOrganizerExporterPrivate::encodeRecurrence(
         *processedFields << QOrganizerItemRecurrence::FieldExceptionRules;
     }
     if (!rdates.isEmpty()) {
-        encodeRecurDates(QLatin1String("RDATE"), rdates, document, removedProperties, generatedProperties);
+        encodeRecurDates(QLatin1String("RDATE"), item, rdates, document, removedProperties, generatedProperties);
         *processedFields << QOrganizerItemRecurrence::FieldRecurrenceDates;
     }
     if (!exdates.isEmpty()) {
-        encodeRecurDates(QLatin1String("EXDATE"), exdates, document, removedProperties, generatedProperties);
+        encodeRecurDates(QLatin1String("EXDATE"), item, exdates, document, removedProperties, generatedProperties);
         *processedFields << QOrganizerItemRecurrence::FieldExceptionDates;
     }
 }
@@ -314,11 +315,35 @@ QString QVersitOrganizerExporterPrivate::weekString(Qt::DayOfWeek day) {
 
 void QVersitOrganizerExporterPrivate::encodeRecurDates(
         const QString& propertyName,
+        const QOrganizerItem& item,
         const QList<QDateTime>& dates,
         const QVersitDocument& document,
         QList<QVersitProperty>* removedProperties,
         QList<QVersitProperty>* generatedProperties)
 {
+    QVersitProperty property;
+    property = VersitUtils::takeProperty(document, propertyName, removedProperties);
+    property.setName(propertyName);
+    QString value = property.value();
+    bool valueIsEmpty = value.isEmpty();
+
+    foreach (const QDateTime& dt, dates) {
+        QString str;
+        QTime eventTime = static_cast<QOrganizerEvent>(item).startDateTime().time();
+        if (dt.date().isValid()) {
+            if (dt.time().isValid() && eventTime.isValid() && dt.time() != eventTime
+                    && propertyName != QLatin1String("EXDATE")) // exdate should never include time
+                str = encodeDateTime(dt);
+            else
+                str = dt.date().toString(QLatin1String("yyyyMMdd"));
+            if (!valueIsEmpty)
+                value += QLatin1Char(',');
+            value += str;
+            valueIsEmpty = false;
+        }
+    }
+    property.setValue(value);
+    *generatedProperties << property;
 }
 
 void QVersitOrganizerExporterPrivate::encodeSimpleProperty(
