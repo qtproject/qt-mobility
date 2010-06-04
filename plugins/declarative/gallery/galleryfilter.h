@@ -91,14 +91,14 @@ class GalleryFilter : public GalleryFilterIntersectionItem
 public:
     enum MatchFlag
     {
-        MatchExactly        = Qt::MatchExactly,
-        MatchContains       = Qt::MatchContains,
-        MatchStartsWith     = Qt::MatchStartsWith,
-        MatchEndsWith       = Qt::MatchEndsWith,
-        MatchRegExp         = Qt::MatchRegExp,
-        MatchWildcard       = Qt::MatchWildcard,
-        MatchFixedString    = Qt::MatchFixedString,
-        MatchCaseSensitive  = Qt::MatchCaseSensitive,
+        MatchExactly    = Qt::MatchExactly,
+        Contains        = Qt::MatchContains,
+        StartsWith      = Qt::MatchStartsWith,
+        EndsWith        = Qt::MatchEndsWith,
+        RegExp          = Qt::MatchRegExp,
+        Wildcard        = Qt::MatchWildcard,
+        FixedString     = Qt::MatchFixedString,
+        CaseSensitive   = Qt::MatchCaseSensitive,
     };
 
     Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
