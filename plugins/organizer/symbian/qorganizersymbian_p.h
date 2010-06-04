@@ -157,6 +157,7 @@ public: // MCalProgressCallBack
     TBool NotifyProgress();
 
 private:
+    void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item);
 
 private:

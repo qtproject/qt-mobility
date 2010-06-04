@@ -48,6 +48,7 @@
 QTM_USE_NAMESPACE
 
 const QString managerName("symbian");
+//const QString managerName("memory");
 
 class tst_SymbianOm : public QObject
 {
@@ -59,15 +60,14 @@ private slots:  // Init & cleanup
 
 private slots:  // Test cases
     void addSimpleEvent();
+    void fetchSimpleEvent();
+    void addItem_data();
+    void addItem();
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
     // when the required functionality has been implemented in symbian backend
     void addWithIllegalParameters();
-    void addItem_data();
-    void addItem();
-    void fetchItem_data();
-    void fetchItem();
     void fetchItemIds();
 
 private:
@@ -104,7 +104,7 @@ void tst_SymbianOm::addSimpleEvent()
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(item.id().localId() != 0);
-    //TODO: QVERIFY(item.id().managerUri().contains(managerName));
+    QVERIFY(item.id().managerUri().contains(managerName));
 
     // Save with list parameter
     QList<QOrganizerItem> items;
@@ -113,7 +113,7 @@ void tst_SymbianOm::addSimpleEvent()
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem listitem, items) {
         QVERIFY(listitem.id().localId() != 0);
-        //TODO: QVERIFY(item.id().managerUri().contains(managerName));
+        QVERIFY(item.id().managerUri().contains(managerName));
     }
 
     // Save with list parameter and error map parameter
@@ -123,8 +123,26 @@ void tst_SymbianOm::addSimpleEvent()
     QVERIFY(errorMap.count() == 0);
     foreach (QOrganizerItem listitem2, items) {
         QVERIFY(listitem2.id().localId() != 0);
-        //TODO: QVERIFY(item.id().managerUri().contains(managerName));
+        QVERIFY(item.id().managerUri().contains(managerName));
     }
+}
+
+void tst_SymbianOm::fetchSimpleEvent()
+{
+    // Create item
+    QOrganizerItem item;
+    item.setType(QOrganizerItemType::TypeEvent);
+
+    // Save
+    QVERIFY(m_om->saveItem(&item));
+    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().managerUri().contains(managerName));
+
+    // Fetch
+    QOrganizerItem fetchedItem = m_om->item(item.localId());
+    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+    QCOMPARE(fetchedItem.id(), item.id());
+    QVERIFY(fetchedItem.type() == QOrganizerItemType::TypeEvent);
 }
 
 void tst_SymbianOm::addWithIllegalParameters()
@@ -149,15 +167,18 @@ void tst_SymbianOm::addItem_data()
     QTest::newRow("Item type Event")
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent));
+/* TODO: enable and implement these details
     QTest::newRow("Item type EventOccurrence")
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEventOccurrence));
     QTest::newRow("Item type Journal")
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeJournal));
+*/
     QTest::newRow("Item type Todo")
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo));
+/* TODO: enable and implement these details
     QTest::newRow("Item type TodoOccurrence")
         << (QStringList()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodoOccurrence));
@@ -180,6 +201,7 @@ void tst_SymbianOm::addItem_data()
             << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote)
             << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
             << detailToQString(QOrganizerItemNote::DefinitionName, QOrganizerItemNote::FieldNote, QString("Remember to wear blue jeans")));
+*/
 
     // TODO: recurrence and exceptions
     // TODO: timestamps
@@ -193,8 +215,6 @@ void tst_SymbianOm::addItem_data()
 
 void tst_SymbianOm::addItem()
 {
-    QFAIL("TODO");
-    /*  
     QFETCH(QStringList, detailsString);
     QList<QOrganizerItemDetail> details(QList<QOrganizerItemDetail>());
     QVERIFY(parseDetails(detailsString, details));
@@ -203,51 +223,25 @@ void tst_SymbianOm::addItem()
     QOrganizerItem item;
     foreach(QOrganizerItemDetail detail, details) {
         QVERIFY(item.saveDetail(&detail));
+        /* TODO: enable the following and implement detail definitions to symbian backend 
         QOrganizerItemDetailDefinition def = m_om->detailDefinition(detail.definitionName(), item.type());
         if (m_om->error() != QOrganizerItemManager::NoError) {
             // this detail is not supported, skip the test case
             QString skipMsg = QString("Detail ") + detail.definitionName() + QString(" not supported for item type " + item.type());
             QSKIP(skipMsg.toAscii(), SkipSingle);
         }
+        */
     }
 
     // Save
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(item.id() != QOrganizerItemId());
+    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().managerUri().contains(managerName));
 
     // Fetch item to verify everything was saved successfully
     QOrganizerItem savedItem = m_om->item(item.localId());
     QVERIFY(verifyDetails(savedItem.details(), details));
-    */
-}
-
-void tst_SymbianOm::fetchItem_data()
-{
-    QTest::addColumn<QString>("itemType");
-
-    QTest::newRow("Item type Event") << QString("Event");
-    QTest::newRow("Item type Journal") << QString("Journal");
-    QTest::newRow("Item type Todo") << QString("Todo");
-    QTest::newRow("Item type Note") << QString("Note");
-}
-
-void tst_SymbianOm::fetchItem()
-{
-    // Create item
-    QOrganizerItem item;
-    item.setType(QString("Event"));
-    /*item.setDescription(itemDescription);
-    item.set*/
-
-    // Save
-    QVERIFY(m_om->saveItem(&item));
-    QVERIFY(item.id() != QOrganizerItemId());
-
-    // Fetch
-    QOrganizerItem fetchedItem = m_om->item(item.localId());
-    QVERIFY(fetchedItem.id() != QOrganizerItemId());
-    // TODO: TDD cases for other verifications
 }
 
 void tst_SymbianOm::fetchItemIds()

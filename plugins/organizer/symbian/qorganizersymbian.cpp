@@ -200,47 +200,57 @@ QList<QOrganizerItem> QOrganizerItemSymbianEngine::items(const QOrganizerItemFil
 
 QOrganizerItem QOrganizerItemSymbianEngine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    /*
-        TODO
+    QOrganizerItem item;
+    TRAPD(err, itemL(itemId, &item, fetchHint));
+    if (err != KErrNone) {
+        // TODO: convert symbian err into qt error
+        *error = QOrganizerItemManager::UnspecifiedError;
+    }
+    return item;
+}
 
-        Fetch a single item by id.
+void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const
+{
+    // TODO: use fetch hint to optimize performance and/or memory consumption?
+        /* The fetch hint suggests how much of the item to fetch.
+        You can ignore the fetch hint and fetch everything (but you must
+        fetch at least what is mentioned in the fetch hint). */
 
-        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
-        fetch at least what is mentioned in the fetch hint).
-
-    */
-    return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
+    TCalLocalUid uid(itemId);
+    CCalEntry *calEntry = m_entryView->FetchL(uid);
+    CleanupStack::PushL(calEntry);
+    QOrganizerItemId id;
+    id.setLocalId(itemId);
+    id.setManagerUri(managerUri());
+    item->setId(id);
+    // TODO: other types
+    switch (calEntry->EntryTypeL()) {
+    case CCalEntry::EEvent:
+        item->setType(QOrganizerItemType::TypeEvent);
+        break;
+    case CCalEntry::ETodo:
+        item->setType(QOrganizerItemType::TypeTodo);
+        break;
+    default:
+        User::Leave(KErrGeneral);
+    }
+    CleanupStack::PopAndDestroy(calEntry);
 }
 
 bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
-
-        Save a list of items.
-
-        For each item, convert it to your local type, assign an item id, and update the
-        QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
-
-        If you encounter an error (e.g. converting to local type, or saving), insert an entry into
-        the map above at the corresponding index (e.g. errorMap->insert(idx, QOIM::InvalidDetailError).
-        You should set the "error" variable as well (first, last, most serious error etc).
-
-        The item passed in should be validated according to the schema.
-    */
     for (int i(0); i < items->count(); i++) {
         QOrganizerItem item = items->at(i);
         saveItem(&item, error);
         if (*error != QOrganizerItemManager::NoError) {
             errorMap->insert(i, *error);
         } else {
+            // Update the item with the data that is available after save
             items->replace(i, item);
         }
     }
 
-    // TODO: set possible errors
-    return true;
-    //return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
+    return *error == QOrganizerItemManager::NoError;
 }
 
 bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemManager::Error* error)
@@ -258,27 +268,34 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemM
 
 void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
 {
-    // TODO: convert item
-
     HBufC8 *uid = HBufC8::NewLC(30);
     m_entrycount++;
     uid->Des().Num(m_entrycount);
-    // TODO: global UID?
-    // TODO: sequence number?
-    // TODO: recurrence id?
-    // TODO: recurrence range?
-    // TODO: type? (given as parameter)
-    CCalEntry::TType type = CCalEntry::ETodo;
+
+    // TODO: conversions of the details, here is a draft version of converting type
+    CCalEntry::TType type(CCalEntry::ETodo);
+    if (item->type() == QOrganizerItemType::TypeEvent) {
+        type = CCalEntry::EEvent;
+    } else if (item->type() == QOrganizerItemType::TypeTodo) {
+        type = CCalEntry::ETodo;
+    } else {
+        User::Leave(KErrGeneral);
+    }
     CleanupStack::Pop(uid); // TODO: what if the following leaves, is uid deleted?
     CCalEntry *entry = CCalEntry::NewL(type, uid, CCalEntry::EMethodAdd, 0);
     CleanupStack::PushL(entry);
 
+    // TODO: sequence number?
+    // TODO: recurrence id?
+    // TODO: recurrence range?
+        
     RPointerArray<CCalEntry> entries;
     CleanupClosePushL(entries);
     entries.AppendL(entry);
     TInt numSuccessfulEntry(0);
     m_entryView->StoreL(entries, numSuccessfulEntry);
-    if (numSuccessfulEntry != 1) {
+    const TInt expectedCount(1);
+    if (numSuccessfulEntry != expectedCount) {
         // The documentation states about numSuccessfulEntry "On return, this
         // contains the number of entries which were successfully stored".
         // So it is not clear which error caused storing the entry to fail
@@ -289,10 +306,10 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
     CleanupStack::PopAndDestroy(&entries);
     CleanupStack::PopAndDestroy(entry);
 
-    // Update the id of the organizer item to match the id of the entry
+    // Update the id of the organizer item
     QOrganizerItemId itemId;
     itemId.setLocalId(localUid);
-    // TODO: itemId.setManagerUri();
+    itemId.setManagerUri(managerUri());
     item->setId(itemId);
 }
 
