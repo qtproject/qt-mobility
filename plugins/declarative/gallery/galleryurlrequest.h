@@ -39,26 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef GALLERYFILTERREQUEST_H
-#define GALLERYFILTERREQUEST_H
+#ifndef GALLERYURLREQUEST_H
+#define GALLERYURLREQUEST_H
 
-#include <qgalleryitemlist.h>
-#include <qgalleryfilterrequest.h>
+#include <qgalleryurlrequest.h>
 
-#include <QtCore/qpointer.h>
 #include <QtDeclarative/qdeclarative.h>
-
-#include "galleryitemlistmodel.h"
-
-QT_BEGIN_NAMESPACE
-class QAbstractItemModel;
-QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
-class GalleryFilterBase;
-
-class GalleryFilterRequest : public QObject, public QDeclarativeParserStatus
+class GalleryUrlRequest : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -70,22 +60,15 @@ class GalleryFilterRequest : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
     Q_PROPERTY(int currentProgress READ currentProgress NOTIFY progressChanged)
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
-    Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
-    Q_PROPERTY(QStringList sortProperties READ sortPropertyNames WRITE setSortPropertyNames)
-    Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition NOTIFY cursorPositionChanged)
-    Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
-    Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
-    Q_PROPERTY(GalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QVariant containerId READ containerId WRITE setContainerId)
-    Q_PROPERTY(QObject *model READ model NOTIFY modelChanged)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl WRITE setItemUrl)
+    Q_PROPERTY(QVariant itemId READ itemId NOTIFY itemChanged)
+    Q_PROPERTY(QString itemType READ itemType NOTIFY itemChanged)
 public:
     enum State
     {
         Inactive    = QGalleryAbstractRequest::Inactive,
         Active      = QGalleryAbstractRequest::Active,
-        Cancelling  = QGalleryAbstractRequest::Cancelling,
-        Idle        = QGalleryAbstractRequest::Idle
+        Cancelling  = QGalleryAbstractRequest::Cancelling
     };
 
     enum Result
@@ -107,8 +90,7 @@ public:
         InvalidUrlError                 = QGalleryAbstractRequest::NoResult,
     };
 
-    GalleryFilterRequest(QObject *parent = 0);
-    ~GalleryFilterRequest();
+    GalleryUrlRequest(QObject *parent = 0);
 
     QAbstractGallery *gallery() const { return m_request.gallery(); }
     void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
@@ -121,45 +103,17 @@ public:
     int currentProgress() const { return m_request.currentProgress(); }
     int maximumProgress() const { return m_request.maximumProgress(); }
 
-    QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) { m_request.setPropertyNames(names); }
+    QUrl itemUrl() const { return m_request.itemUrl(); }
+    void setItemUrl(const QUrl &url) { m_request.setItemUrl(url); }
 
-    QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
-    void setSortPropertyNames(const QStringList &names) { m_request.setSortPropertyNames(names); }
-
-    bool isLive() const { return m_request.isLive(); }
-    void setLive(bool live) { m_request.setLive(live); }
-
-    int minimumPagedItems() const { return m_request.minimumPagedItems(); }
-    void setMinimumPagedItems(int items) { m_request.setMinimumPagedItems(items); }
-
-    int cursorPosition() const {
-        return m_items ? m_items->cursorPosition() : m_request.initialCursorPosition(); }
-    void setCursorPosition(int position)
-    {
-        if (m_items)
-            m_items->setCursorPosition(position);
-        else
-            m_request.setInitialCursorPosition(position);
-        emit cursorPositionChanged();
-    }
-
+    QVariant itemId() const { return m_request.itemId(); }
     QString itemType() const { return m_request.itemType(); }
-    void setItemType(const QString &itemType) { m_request.setItemType(itemType); }
-
-    QVariant containerId() const { return m_request.containerId(); }
-    void setContainerId(const QVariant &containerId) { m_request.setContainerId(containerId); }
-
-    GalleryFilterBase *filter() const { return m_filter; }
-    void setFilter(GalleryFilterBase *filter) { m_filter = filter; }
-
-    QObject *model() const { return m_model; }
 
     void classBegin();
     void componentComplete();
 
 public Q_SLOTS:
-    void reload();
+    void reload() { m_request.execute(); }
     void cancel() { m_request.cancel(); }
     void clear() { m_request.clear(); }
 
@@ -172,22 +126,15 @@ Q_SIGNALS:
     void stateChanged();
     void resultChanged();
     void progressChanged();
-    void cursorPositionChanged();
-    void modelChanged();
-
-private Q_SLOTS:
-    void _q_itemsChanged(QGalleryItemList *items);
+    void itemChanged();
 
 private:
-    QGalleryFilterRequest m_request;
-    QPointer<GalleryFilterBase> m_filter;
-    QGalleryItemList *m_items;
-    GalleryItemListModel *m_model;
+    QGalleryUrlRequest m_request;
 };
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterRequest))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryUrlRequest))
 
 #endif
 
