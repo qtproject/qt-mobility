@@ -929,6 +929,23 @@ void tst_QContactManager::update()
     QContactName updatedName = updated.detail(QContactName::DefinitionName);
     QCOMPARE(updatedName, name);
 
+    /* Test that removal of fields in a detail works */
+    QContactPhoneNumber phn = alice.detail<QContactPhoneNumber>();
+    phn.setNumber("1234567");
+    phn.setContexts(QContactDetail::ContextHome);
+    alice.saveDetail(&phn);
+    QVERIFY(cm->saveContact(&alice));
+    QVERIFY(alice.detail<QContactPhoneNumber>().contexts().contains(QContactDetail::ContextHome)); // check context saved.
+    phn.setContexts(QStringList()); // remove context field.
+    alice.saveDetail(&phn);
+    QVERIFY(cm->saveContact(&alice));
+    QVERIFY(alice.detail<QContactPhoneNumber>().contexts().isEmpty()); // check context removed.
+
+    /* Test that removal of details works */
+    alice.removeDetail(&phn);
+    QVERIFY(cm->saveContact(&alice));
+    QVERIFY(alice.details<QContactPhoneNumber>().isEmpty()); // no such detail.
+
     if (cm->hasFeature(QContactManager::Groups)) {
         // Try changing types - not allowed
         // from contact -> group
