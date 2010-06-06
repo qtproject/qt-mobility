@@ -42,7 +42,7 @@
 #include "s60audioencodercontrol.h"
 #include "s60audiocapturesession.h"
 
-#include <QAudioFormat>
+#include "qaudioformat.h"
 
 #include <QtCore/qdebug.h>
 
@@ -97,7 +97,7 @@ void S60AudioEncoderControl::setQuality(QtMultimediaKit::EncodingQuality value, 
         fmt.setChannels(1);
         break;
     case QtMultimediaKit::HighQuality:
-    case QtMultimediaKit::VeryHighQuality:    
+    case QtMultimediaKit::VeryHighQuality:
         // high, 44100Hz mono S16
         fmt.setSampleType(QAudioFormat::SignedInt);
         fmt.setSampleSize(16);
