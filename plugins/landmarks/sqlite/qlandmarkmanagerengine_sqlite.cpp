@@ -139,7 +139,7 @@ bool outside(double value, double min, double max)
 
 double normalizeLongitude(double degrees)
 {
-    int newDegree = degrees;
+    double newDegree = degrees;
     while (newDegree <= -180) newDegree += 360;
     while (newDegree > 180) newDegree -= 360;
     return newDegree;
@@ -147,7 +147,7 @@ double normalizeLongitude(double degrees)
 
 double normalizeLatitude(double degrees)
 {
-    int newDegree = degrees;
+    double newDegree = degrees;
     while (newDegree < -90) newDegree = -90;
     while (newDegree > 90) newDegree = 90;
     return newDegree;
@@ -553,7 +553,7 @@ QString landmarkIdsNearestQueryString(const QLandmarkNearestFilter &filter)
 QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFilter& filter,
         const QList<QLandmarkSortOrder>& sortOrders,
         QLandmarkManager::Error *error,
-        QString *errorString, QString managerUri, QueryRun * queryRun =0)
+        QString *errorString, const QString &managerUri, QueryRun * queryRun =0)
 {
     QList<QLandmarkId> result;
     bool alreadySorted = false;
@@ -672,12 +672,56 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                                            "bottom right coordinate latitude, %2")
                             .arg(boxFilter.topLeftCoordinate().latitude())
                             .arg(boxFilter.bottomRightCoordinate().latitude());
+                 return result;
             }
 
             queryString = landmarkIdsBoxQueryString(boxFilter);
             break;
         }
-    case QLandmarkFilter::IntersectionFilter:
+    case QLandmarkFilter::IntersectionFilter: {
+            QLandmarkIntersectionFilter intersectionFilter = filter;
+            QList<QLandmarkFilter> filters = intersectionFilter.filters();
+
+            if (filters.size() == 0) {
+                //do nothing
+            } else if (filters.size() == 1) {
+                result = ::landmarkIds( connectionName, filters.at(0),
+                                QList<QLandmarkSortOrder>(), error, errorString, managerUri,queryRun);
+                if (*error != QLandmarkManager::NoError) {
+                    result.clear();
+                    return result;
+                }
+            } else  {
+                QSet<QString> ids;
+                QList<QLandmarkId> firstResult = landmarkIds(connectionName,filters.at(0),
+                                                QList<QLandmarkSortOrder>(), error, errorString, managerUri, queryRun);
+                for (int j = 0; j < firstResult.size(); ++j) {
+                    if (firstResult.at(j).isValid())
+                        ids.insert(firstResult.at(j).localId());
+                }
+
+                for (int i = 1; i < filters.size(); ++i) {
+                    QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
+                                                QList<QLandmarkSortOrder>(), error, errorString, managerUri, queryRun);
+                    QSet<QString> subIds;
+
+                    for (int j = 0; j < subResult.size(); ++j) {
+                        if (subResult.at(j).isValid())
+                            subIds.insert(subResult.at(j).localId());
+                    }
+                    ids &= subIds;
+                }
+
+                QList<QString> idList = ids.toList();
+                for (int i = 0; i < idList.size(); ++i) {
+                    QLandmarkId id;
+                    id.setManagerUri(managerUri);
+                    id.setLocalId(idList.at(i));
+                    result << id;
+                }
+            }
+            idsFound = true;
+        }
         break;
     case QLandmarkFilter::UnionFilter:
         break;

@@ -2312,6 +2312,130 @@ private slots:
         }
     }
 
+    void filterLandmarksIntersectionAsync() {
+        QLandmarkCategory cat1;
+        cat1.setName("CAT1");
+        QVERIFY(m_manager->saveCategory(&cat1));
+
+        QLandmarkCategory cat2;
+        cat2.setName("CAT2");
+        QVERIFY(m_manager->saveCategory(&cat2));
+
+        QLandmarkCategory cat3;
+        cat3.setName("CAT3");
+        QVERIFY(m_manager->saveCategory(&cat3));
+
+        QList<QLandmarkCategoryId> ids;
+        ids << cat1.categoryId();
+        ids << cat2.categoryId();
+        ids << cat3.categoryId();
+
+        QList<QString> names;
+        names << "LM1";
+        names << "LM2";
+        names << "LM3";
+
+        QList<QGeoCoordinate> coords;
+        coords << QGeoCoordinate(0.0, 0.0);
+        coords << QGeoCoordinate(25.0, 25.0);
+        coords << QGeoCoordinate(50.0, 50.0);
+
+        QList<QLandmark> lmPool;
+
+        for (int i = 0; i < ids.size(); ++i) {
+            for (int j = 0; j < names.size(); ++j) {
+                for (int k = 0; k < coords.size(); ++k) {
+                    QLandmark lm;
+                    lm.addCategoryId(ids.at(i));
+                    lm.setName(names.at(j));
+                    lm.setCoordinate(coords.at(k));
+                    QVERIFY(m_manager->saveLandmark(&lm));
+                    lmPool << lm;
+                }
+            }
+        }
+
+        QLandmarkCategoryFilter f1(cat2.categoryId());
+        QLandmarkNameFilter f2("LM2");
+        QLandmarkProximityFilter f3(QGeoCoordinate(25.0, 25.0), 5.0);
+
+        QLandmarkIntersectionFilter filter;
+        filter << f1 << f2 << f3;
+
+        QLandmarkFetchRequest fetchRequest(m_manager);
+        fetchRequest.setFilter(filter);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        QCOMPARE(fetchRequest.state(), QLandmarkAbstractRequest::InactiveState);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        QList<QLandmark>lms = fetchRequest.landmarks();
+
+        QCOMPARE(lms.size(), 1);
+
+        QSet<QString> idSet;
+        for (int i = 0; i < lms.size(); ++i)
+            idSet.insert(lms.at(i).landmarkId().localId());
+
+        for (int i = 0; i < lmPool.size(); ++i) {
+            QLandmark lm = lmPool.at(i);
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
+                    && (lm.name() == "LM2")
+                    && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
+                QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
+            } else {
+                QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
+            }
+        }
+
+        filter.remove(f2);
+        fetchRequest.setFilter(filter);
+        fetchRequest.start();
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+
+        lms = fetchRequest.landmarks();
+
+        QCOMPARE(lms.size(), 3);
+
+        idSet.clear();
+        for (int i = 0; i < lms.size(); ++i)
+            idSet.insert(lms.at(i).landmarkId().localId());
+
+        for (int i = 0; i < lmPool.size(); ++i) {
+            QLandmark lm = lmPool.at(i);
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
+                    && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
+                QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
+            } else {
+                QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
+            }
+        }
+
+        filter.prepend(f2);
+
+        fetchRequest.setFilter(filter);
+        fetchRequest.start();
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        lms = fetchRequest.landmarks();
+
+        QCOMPARE(lms.size(), 1);
+
+        idSet.clear();
+        for (int i = 0; i < lms.size(); ++i)
+            idSet.insert(lms.at(i).landmarkId().localId());
+
+        for (int i = 0; i < lmPool.size(); ++i) {
+            QLandmark lm = lmPool.at(i);
+            if ((lm.categoryIds().at(0) == cat2.categoryId())
+                    && (lm.name() == "LM2")
+                    && (lm.coordinate() == QGeoCoordinate(25.0, 25.0))) {
+                QCOMPARE(idSet.contains(lm.landmarkId().localId()), true);
+            } else {
+                QCOMPARE(idSet.contains(lm.landmarkId().localId()), false);
+            }
+        }
+    }
+
     void filterLandmarksUnion() {
         QLandmarkCategory cat1;
         cat1.setName("CAT1");
