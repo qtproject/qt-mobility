@@ -694,7 +694,8 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             } else  {
                 QSet<QString> ids;
                 QList<QLandmarkId> firstResult = landmarkIds(connectionName,filters.at(0),
-                                                QList<QLandmarkSortOrder>(), error, errorString, managerUri, queryRun);
+                                                QList<QLandmarkSortOrder>(), error, errorString,
+                                                managerUri, queryRun);
                 for (int j = 0; j < firstResult.size(); ++j) {
                     if (firstResult.at(j).isValid())
                         ids.insert(firstResult.at(j).localId());
@@ -702,9 +703,14 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
 
                 for (int i = 1; i < filters.size(); ++i) {
                     QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
-                                                QList<QLandmarkSortOrder>(), error, errorString, managerUri, queryRun);
-                    QSet<QString> subIds;
+                                                QList<QLandmarkSortOrder>(), error, errorString,
+                                                managerUri, queryRun);
 
+                    if (*error != QLandmarkManager::NoError) {
+                        result.clear();
+                        return result;
+                    }
+                    QSet<QString> subIds;
                     for (int j = 0; j < subResult.size(); ++j) {
                         if (subResult.at(j).isValid())
                             subIds.insert(subResult.at(j).localId());
@@ -723,7 +729,48 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             idsFound = true;
         }
         break;
-    case QLandmarkFilter::UnionFilter:
+    case QLandmarkFilter::UnionFilter: {
+            QLandmarkUnionFilter unionFilter = filter;
+            QSet<QString> ids;
+            QList<QLandmarkFilter> filters = unionFilter.filters();
+
+            if (filters.size() == 0) {
+                //do nothing
+            } else if (filters.size() == 1) {
+                result =  ::landmarkIds(connectionName, filters.at(0),
+                                        QList<QLandmarkSortOrder>(), error, errorString,
+                                        managerUri, queryRun);
+                if (*error != QLandmarkManager::NoError) {
+                    result.clear();
+                    return result;
+                }
+            } else {
+                for (int i = 0; i < filters.size(); ++i) {
+                    QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
+                                                               QList<QLandmarkSortOrder>(), error, errorString,
+                                                               managerUri, queryRun);
+
+                    if (*error != QLandmarkManager::NoError) {
+                        result.clear();
+                        return result;
+                    }
+
+                    for (int j = 0; j < subResult.size(); ++j) {
+                        if (subResult.at(j).isValid())
+                            ids.insert(subResult.at(j).localId());
+                    }
+                }
+
+                QList<QString> idList = ids.toList();
+                for (int i = 0; i < idList.size(); ++i) {
+                    QLandmarkId id;
+                    id.setManagerUri(managerUri);
+                    id.setLocalId(idList.at(i));
+                    result << id;
+                }
+            }
+            idsFound = true;
+        }
         break;
     case QLandmarkFilter::AttributeFilter:
         break;
