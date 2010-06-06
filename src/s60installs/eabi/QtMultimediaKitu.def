@@ -1280,4 +1280,58 @@ EXPORTS
 	_ZneRK15QMediaTimeRangeS1_ @ 1279 NONAME
 	_ZneRK18QMediaTimeIntervalS1_ @ 1280 NONAME
 	_ZplRK15QMediaTimeRangeS1_ @ 1281 NONAME
+	_ZN18QMediaPluginLoader16setStaticPluginsERK7QStringRK5QListIP7QObjectE @ 1282 NONAME
+	_ZN18QMediaPluginLoader4loadEv @ 1283 NONAME
+	_ZN18QMediaPluginLoader8instanceERK7QString @ 1284 NONAME
+	_ZN18QMediaPluginLoader9instancesERK7QString @ 1285 NONAME
+	_ZN18QMediaPluginLoaderC1EPKcRK7QStringN2Qt15CaseSensitivityE @ 1286 NONAME
+	_ZN18QMediaPluginLoaderC2EPKcRK7QStringN2Qt15CaseSensitivityE @ 1287 NONAME
+	_ZN20QPainterVideoSurface11qt_metacallEN11QMetaObject4CallEiPPv @ 1288 NONAME
+	_ZN20QPainterVideoSurface11qt_metacastEPKc @ 1289 NONAME
+	_ZN20QPainterVideoSurface11setContrastEi @ 1290 NONAME
+	_ZN20QPainterVideoSurface12frameChangedEv @ 1291 NONAME
+	_ZN20QPainterVideoSurface13createPainterEv @ 1292 NONAME
+	_ZN20QPainterVideoSurface13setBrightnessEi @ 1293 NONAME
+	_ZN20QPainterVideoSurface13setSaturationEi @ 1294 NONAME
+	_ZN20QPainterVideoSurface16staticMetaObjectE @ 1295 NONAME DATA 16
+	_ZN20QPainterVideoSurface19getStaticMetaObjectEv @ 1296 NONAME
+	_ZN20QPainterVideoSurface4stopEv @ 1297 NONAME
+	_ZN20QPainterVideoSurface5paintEP8QPainterRK6QRectFS4_ @ 1298 NONAME
+	_ZN20QPainterVideoSurface5startERK19QVideoSurfaceFormat @ 1299 NONAME
+	_ZN20QPainterVideoSurface6setHueEi @ 1300 NONAME
+	_ZN20QPainterVideoSurface7presentERK11QVideoFrame @ 1301 NONAME
+	_ZN20QPainterVideoSurface8setReadyEb @ 1302 NONAME
+	_ZN20QPainterVideoSurfaceC1EP7QObject @ 1303 NONAME
+	_ZN20QPainterVideoSurfaceC2EP7QObject @ 1304 NONAME
+	_ZN20QPainterVideoSurfaceD0Ev @ 1305 NONAME
+	_ZN20QPainterVideoSurfaceD1Ev @ 1306 NONAME
+	_ZN20QPainterVideoSurfaceD2Ev @ 1307 NONAME
+	_ZN21QMediaServiceProvider25setDefaultServiceProviderEPS_ @ 1308 NONAME
+	_ZN24QMediaImageViewerService11qt_metacallEN11QMetaObject4CallEiPPv @ 1309 NONAME
+	_ZN24QMediaImageViewerService11qt_metacastEPKc @ 1310 NONAME
+	_ZN24QMediaImageViewerService14releaseControlEP13QMediaControl @ 1311 NONAME
+	_ZN24QMediaImageViewerService14requestControlEPKc @ 1312 NONAME
+	_ZN24QMediaImageViewerService16staticMetaObjectE @ 1313 NONAME DATA 16
+	_ZN24QMediaImageViewerService17setNetworkManagerEP21QNetworkAccessManager @ 1314 NONAME
+	_ZN24QMediaImageViewerService19getStaticMetaObjectEv @ 1315 NONAME
+	_ZN24QMediaImageViewerServiceC1EP7QObject @ 1316 NONAME
+	_ZN24QMediaImageViewerServiceC2EP7QObject @ 1317 NONAME
+	_ZN24QMediaImageViewerServiceD0Ev @ 1318 NONAME
+	_ZN24QMediaImageViewerServiceD1Ev @ 1319 NONAME
+	_ZN24QMediaImageViewerServiceD2Ev @ 1320 NONAME
+	_ZNK18QMediaPluginLoader4keysEv @ 1321 NONAME
+	_ZNK20QPainterVideoSurface10brightnessEv @ 1322 NONAME
+	_ZNK20QPainterVideoSurface10metaObjectEv @ 1323 NONAME
+	_ZNK20QPainterVideoSurface10saturationEv @ 1324 NONAME
+	_ZNK20QPainterVideoSurface17isFormatSupportedERK19QVideoSurfaceFormatPS0_ @ 1325 NONAME
+	_ZNK20QPainterVideoSurface21supportedPixelFormatsEN20QAbstractVideoBuffer10HandleTypeE @ 1326 NONAME
+	_ZNK20QPainterVideoSurface3hueEv @ 1327 NONAME
+	_ZNK20QPainterVideoSurface7isReadyEv @ 1328 NONAME
+	_ZNK20QPainterVideoSurface8contrastEv @ 1329 NONAME
+	_ZNK24QMediaImageViewerService10metaObjectEv @ 1330 NONAME
+	_ZNK24QMediaImageViewerService14networkManagerEv @ 1331 NONAME
+	_ZTI20QPainterVideoSurface @ 1332 NONAME
+	_ZTI24QMediaImageViewerService @ 1333 NONAME
+	_ZTV20QPainterVideoSurface @ 1334 NONAME
+	_ZTV24QMediaImageViewerService @ 1335 NONAME
 
