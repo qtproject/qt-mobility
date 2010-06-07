@@ -66,8 +66,8 @@ public:
     bool autoUpdateCursorPosition() const;
     void setAutoUpdateCursorPosition(bool enabled);
 
-    QHash<int, QString> roleProperties(int column = 0) const;
-    void setRoleProperties(const QHash<int, QString> &properties, int column = 0);
+    QHash<int, QString> roleProperties(int column) const;
+    void setRoleProperties(int column, const QHash<int, QString> &properties);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 

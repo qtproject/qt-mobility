@@ -197,9 +197,19 @@ void QGalleryItemListModelPrivate::_q_metaDataChanged(int index, int count, cons
 
 /*!
     \class QGalleryItemListModel
+
+    \ingroup gallery
+
+    \brief The QGalleryItemListModel class provides a QAbstractItemModel
+    wrapper for  QGalleryItemList.
+
+    \sa QGalleryItemList
 */
 
 /*!
+    Constructs a new gallery item list model.
+
+    The \a parent is passed to QObject.
 */
 
 QGalleryItemListModel::QGalleryItemListModel(QObject *parent)
@@ -210,6 +220,7 @@ QGalleryItemListModel::QGalleryItemListModel(QObject *parent)
 }
 
 /*!
+    Destroys a gallert item list model.
 */
 
 QGalleryItemListModel::~QGalleryItemListModel()
@@ -218,6 +229,8 @@ QGalleryItemListModel::~QGalleryItemListModel()
 
 /*!
     \property QGalleryItemListModel::itemList
+
+    \brief The gallery item list a model wraps.
 */
 
 QGalleryItemList *QGalleryItemListModel::itemList() const
@@ -264,6 +277,12 @@ void QGalleryItemListModel::setItemList(QGalleryItemList *list)
 
 /*!
     \property QGalleryItemListModel::autoUpdateCursorPosition
+
+    \brief Whether a model should update the QGalleryItemList::cursorPosition
+    property.
+
+    If enabled the model will attempt to infer an appropriate cursorPosition
+    from index() calls.
 */
 
 bool QGalleryItemListModel::autoUpdateCursorPosition() const
@@ -277,7 +296,8 @@ void QGalleryItemListModel::setAutoUpdateCursorPosition(bool enabled)
 }
 
 /*!
-
+    Returns the gallery properties mapped to item model roles for a
+    \a column.
 */
 
 QHash<int, QString> QGalleryItemListModel::roleProperties(int column) const
@@ -286,10 +306,11 @@ QHash<int, QString> QGalleryItemListModel::roleProperties(int column) const
 }
 
 /*!
-
+    Sets the gallery \a properties mapped to item model roles for a
+    \a column.
 */
 
-void QGalleryItemListModel::setRoleProperties(const QHash<int, QString> &properties, int column)
+void QGalleryItemListModel::setRoleProperties(int column, const QHash<int, QString> &properties)
 {
     Q_D(QGalleryItemListModel);
 
@@ -304,24 +325,8 @@ void QGalleryItemListModel::setRoleProperties(const QHash<int, QString> &propert
 }
 
 /*!
-    \reimp
-*/
-
-int QGalleryItemListModel::rowCount(const QModelIndex &parent) const
-{
-    return !parent.isValid() ? d_func()->rowCount : 0;
-}
-
-/*!
-    \reimp
-*/
-
-int QGalleryItemListModel::columnCount(const QModelIndex &parent) const
-{
-    return !parent.isValid() ? d_func()->columnCount : 0;
-}
-
-/*!
+    Add a new column to a model with the given \a properties mapped to item
+    model roles.
 */
 
 void QGalleryItemListModel::addColumn(const QHash<int, QString> &properties)
@@ -342,6 +347,8 @@ void QGalleryItemListModel::addColumn(const QHash<int, QString> &properties)
 }
 
 /*!
+    Adds a new column to a model with \a property mapped to an item model
+    \a role.
 */
 
 void QGalleryItemListModel::addColumn(const QString &property, int role)
@@ -354,7 +361,10 @@ void QGalleryItemListModel::addColumn(const QString &property, int role)
 }
 
 /*!
+    Inserts a new column into a model at \a index with the given
+    \a properties mapped to item model roles.
 */
+
 
 void QGalleryItemListModel::insertColumn(int index, const QHash<int, QString> &properties)
 {
@@ -374,7 +384,8 @@ void QGalleryItemListModel::insertColumn(int index, const QHash<int, QString> &p
 }
 
 /*!
-
+    Inserts a new column into a model at \a index with \a property mapped to
+    an item model \a role.
 */
 
 void QGalleryItemListModel::insertColumn(int index, const QString &property, int role)
@@ -387,7 +398,7 @@ void QGalleryItemListModel::insertColumn(int index, const QString &property, int
 }
 
 /*!
-
+    Removes the column at \a index from a model.
 */
 
 void QGalleryItemListModel::removeColumn(int index)
@@ -411,6 +422,24 @@ void QGalleryItemListModel::removeColumn(int index)
         d->columnOffsets[i] -= difference;
 
     endRemoveColumns();
+}
+
+/*!
+    \reimp
+*/
+
+int QGalleryItemListModel::rowCount(const QModelIndex &parent) const
+{
+    return !parent.isValid() ? d_func()->rowCount : 0;
+}
+
+/*!
+    \reimp
+*/
+
+int QGalleryItemListModel::columnCount(const QModelIndex &parent) const
+{
+    return !parent.isValid() ? d_func()->columnCount : 0;
 }
 
 /*!
