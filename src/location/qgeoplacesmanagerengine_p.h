@@ -64,13 +64,18 @@ class QLandmarkManager;
 class QGeoPlacesManagerEnginePrivate
 {
 public:
-    QGeoPlacesManagerEnginePrivate();
+    QGeoPlacesManagerEnginePrivate(const QMap<QString, QString> &parameters);
     QGeoPlacesManagerEnginePrivate(const QGeoPlacesManagerEnginePrivate &other);
     ~QGeoPlacesManagerEnginePrivate();
 
     QGeoPlacesManagerEnginePrivate& operator= (const QGeoPlacesManagerEnginePrivate &other);
 
-    QList<QLandmarkManager*> landmarkManagers;
+    QString managerName;
+    QMap<QString, QString> managerParameters;
+    int managerVersion;
+
+    QLandmarkManager *defaultLandmarkManager;
+    QList<QLandmarkManager*> additionalLandmarkManagers;
 
     bool supportsViewportBiasing;
     bool supportsGeocoding;

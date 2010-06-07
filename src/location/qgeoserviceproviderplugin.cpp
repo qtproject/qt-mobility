@@ -44,6 +44,9 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+  \class QGeoServiceProviderPlugin
+  \brief The QGeoServiceProviderPlugin class is.
+  \group maps-impl
 */
 
 /*!

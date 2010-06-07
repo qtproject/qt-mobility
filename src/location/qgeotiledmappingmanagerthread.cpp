@@ -53,17 +53,15 @@
 
 QTM_BEGIN_NAMESPACE
 
-Q_DECLARE_METATYPE(QList<QGeoTiledMapRequest>);
-Q_DECLARE_METATYPE(QGeoTiledMapReply::Error);
-
 QGeoTiledMappingManagerThread::QGeoTiledMappingManagerThread(QGeoTiledMappingManagerEngine* engine, QObject *parent)
         : QThread(),
         d_ptr(new QGeoTiledMappingManagerThreadPrivate())
 {
-    moveToThread(this);
+    qRegisterMetaType<QGeoTiledMapRequest>("QGeoTiledMapRequest");
+    qRegisterMetaType<QList<QGeoTiledMapRequest> >("QList<QGeoTiledMapRequest>");
+    qRegisterMetaType<QGeoTiledMapReply::Error>("QGeoTiledMapReply::Error");
 
-    qRegisterMetaType<QList<QGeoTiledMapRequest> >();
-    qRegisterMetaType<QGeoTiledMapReply::Error>();
+    moveToThread(this);
 
     d_ptr->engine = engine;
 }
@@ -92,6 +90,9 @@ void QGeoTiledMappingManagerThread::run()
 {
     initialize();
 
+    qRegisterMetaType<QGeoTiledMapRequest>();
+    qRegisterMetaType<QList<QGeoTiledMapRequest> >();
+    qRegisterMetaType<QGeoTiledMapReply::Error>();
     connect(d_ptr->engine,
             SIGNAL(tileRequestsPrepared(QGeoTiledMapViewport*, QList<QGeoTiledMapRequest>)),
             this,

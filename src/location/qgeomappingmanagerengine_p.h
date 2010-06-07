@@ -63,11 +63,15 @@ QTM_BEGIN_NAMESPACE
 class QGeoMappingManagerEnginePrivate
 {
 public:
-    QGeoMappingManagerEnginePrivate();
+    QGeoMappingManagerEnginePrivate(const QMap<QString, QString> &parameters);
     QGeoMappingManagerEnginePrivate(const QGeoMappingManagerEnginePrivate &other);
     virtual ~QGeoMappingManagerEnginePrivate();
 
     QGeoMappingManagerEnginePrivate& operator= (const QGeoMappingManagerEnginePrivate &other);
+
+    QString managerName;
+    QMap<QString, QString> managerParameters;
+    int managerVersion;
 
     QList<QGeoMapWidget::MapType> supportedMapTypes;
     qreal minimumZoomLevel;

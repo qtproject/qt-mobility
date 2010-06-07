@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
     \class QGeoRouteRequest
     \brief The QGeoRouteRequest class handles asynchronous requests
     for geographical routing information.
-    \ingroup maps
+    \ingroup maps-routing
 
     Describes a route travelling along waypoints().
 
@@ -298,6 +298,20 @@ QGeoRouteRequest::RouteOptimizations QGeoRouteRequest::routeOptimization() const
 }
 
 /*!
+*/
+void QGeoRouteRequest::setSegmentDetail(QGeoRouteRequest::SegmentDetail segmentDetail)
+{
+    d_ptr->segmentDetail = segmentDetail;
+}
+
+/*!
+*/
+QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
+{
+    return d_ptr->segmentDetail;
+}
+
+/*!
     Sets the level of the detail to use when representing routing instructions
     to \a instructionsDetail.
 
@@ -358,6 +372,7 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
         travelModes(QGeoRouteRequest::CarTravel),
         avoidFeatureTypes(QGeoRouteRequest::AvoidNothing),
         routeOptimization(QGeoRouteRequest::FastestRoute),
+        segmentDetail(QGeoRouteRequest::BasicSegmentData),
         instructionDetail(QGeoRouteRequest::BasicInstructions) {}
 
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
@@ -367,6 +382,7 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &
         travelModes(other.travelModes),
         avoidFeatureTypes(other.avoidFeatureTypes),
         routeOptimization(other.routeOptimization),
+        segmentDetail(other.segmentDetail),
         instructionDetail(other.instructionDetail)
         //transitOptions(other.transitOptions)
 {}
@@ -380,6 +396,7 @@ QGeoRouteRequestPrivate& QGeoRouteRequestPrivate::operator= (const QGeoRouteRequ
     travelModes = other.travelModes;
     avoidFeatureTypes = other.avoidFeatureTypes;
     routeOptimization = other.routeOptimization;
+    segmentDetail = other.segmentDetail;
     instructionDetail = other.instructionDetail;
     //transitOptions = other.transitOptions
 

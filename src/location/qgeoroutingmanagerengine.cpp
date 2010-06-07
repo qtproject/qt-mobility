@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRoutingManagerEngine class provides support for geographic routing
     operations.
 
-    \ingroup maps
+    \ingroup maps-impl
 
     Instances of QGeoRoutingManagerEngine primarily provide support for the
     calculation and updating of routes. The calculateRoute() and updateRoute()
@@ -71,9 +71,9 @@ QTM_BEGIN_NAMESPACE
 
     This should only ever be called from subclasses of QGeoRoutingManagerEngine.
 */
-QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(QObject *parent)
+QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoRoutingManagerEnginePrivate()) {}
+        d_ptr(new QGeoRoutingManagerEnginePrivate(parameters)) {}
 
 /*!
     Destroys this manager.
@@ -81,6 +81,41 @@ QGeoRoutingManagerEngine::QGeoRoutingManagerEngine(QObject *parent)
 QGeoRoutingManagerEngine::~QGeoRoutingManagerEngine()
 {
     delete d_ptr;
+}
+
+/*!
+*/
+void QGeoRoutingManagerEngine::setManagerName(const QString &managerName)
+{
+    d_ptr->managerName = managerName;
+}
+
+/*!
+*/
+QString QGeoRoutingManagerEngine::managerName() const
+{
+    return d_ptr->managerName;
+}
+
+/*!
+*/
+QMap<QString, QString> QGeoRoutingManagerEngine::managerParameters() const
+{
+    return d_ptr->managerParameters;
+}
+
+/*!
+*/
+void QGeoRoutingManagerEngine::setManagerVersion(int managerVersion)
+{
+    d_ptr->managerVersion = managerVersion;
+}
+
+/*!
+*/
+int QGeoRoutingManagerEngine::managerVersion() const
+{
+    return d_ptr->managerVersion;
 }
 
 /*!
@@ -238,6 +273,18 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManagerEngine::supportedRouteOpt
 }
 
 /*!
+*/
+void QGeoRoutingManagerEngine::setSupportedSegmentDetails(QGeoRouteRequest::SegmentDetails segmentDetails)
+{
+    d_ptr->supportedSegmentDetails = supportedSegmentDetails();
+}
+
+QGeoRouteRequest::SegmentDetails QGeoRoutingManagerEngine::supportedSegmentDetails() const
+{
+    return d_ptr->supportedSegmentDetails;
+}
+
+/*!
     Sets the levels of instruction details supported by this manager to \a intructionDetails.
 
     It is important that subclasses use this method to ensure that the manager
@@ -289,27 +336,37 @@ Use deleteLater() instead.
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate()
-        : supportsRouteUpdates(false),
+QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QMap<QString, QString> &parameters)
+        : managerParameters(parameters),
+        managerVersion(-1),
+        supportsRouteUpdates(false),
         supportsAlternativeRoutes(false) {}
 
 QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other)
-        : supportsRouteUpdates(other.supportsRouteUpdates),
+        : managerName(other.managerName),
+        managerParameters(other.managerParameters),
+        managerVersion(other.managerVersion),
+        supportsRouteUpdates(other.supportsRouteUpdates),
         supportsAlternativeRoutes(other.supportsAlternativeRoutes),
         supportedTravelModes(other.supportedTravelModes),
         supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
         supportedRouteOptimizations(other.supportedRouteOptimizations),
+        supportedSegmentDetails(other.supportedSegmentDetails),
         supportedInstructionDetails(other.supportedInstructionDetails) {}
 
 QGeoRoutingManagerEnginePrivate::~QGeoRoutingManagerEnginePrivate() {}
 
 QGeoRoutingManagerEnginePrivate& QGeoRoutingManagerEnginePrivate::operator= (const QGeoRoutingManagerEnginePrivate & other)
 {
+    managerName = other.managerName;
+    managerParameters = other.managerParameters;
+    managerVersion = other.managerVersion;
     supportsRouteUpdates = other.supportsRouteUpdates;
     supportsAlternativeRoutes = other.supportsAlternativeRoutes;
     supportedTravelModes = other.supportedTravelModes;
     supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;
     supportedRouteOptimizations = other.supportedRouteOptimizations;
+    supportedSegmentDetails = other.supportedSegmentDetails;
     supportedInstructionDetails = other.supportedInstructionDetails;
 
     return *this;

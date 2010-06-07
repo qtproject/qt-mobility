@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRoutingManager class provides support for geographic routing
     operations.
 
-    \ingroup maps
+    \ingroup maps-routing
 
     Instances of QGeoRoutingManager primarily provide support for the
     calculation and updating of routes. The calculateRoute() and updateRoute()
@@ -98,6 +98,36 @@ QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject
 QGeoRoutingManager::~QGeoRoutingManager()
 {
     delete d_ptr;
+}
+
+/*!
+*/
+QString QGeoRoutingManager::managerName() const
+{
+    if (!d_ptr->engine)
+        return QString();
+
+    return d_ptr->engine->managerName();
+}
+
+/*!
+*/
+QMap<QString, QString> QGeoRoutingManager::managerParameters() const
+{
+    if (!d_ptr->engine)
+        return QMap<QString, QString>();
+
+    return d_ptr->engine->managerParameters();
+}
+
+/*!
+*/
+int QGeoRoutingManager::managerVersion() const
+{
+    if (!d_ptr->engine)
+        return -1;
+
+    return d_ptr->engine->managerVersion();
 }
 
 /*!
@@ -217,6 +247,16 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizat
         return QGeoRouteRequest::RouteOptimizations();
 
     return d_ptr->engine->supportedRouteOptimizations();
+}
+
+/*!
+*/
+QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() const
+{
+    if (!d_ptr->engine)
+        return QGeoRouteRequest::SegmentDetails();
+
+    return d_ptr->engine->supportedSegmentDetails();
 }
 
 /*!

@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoRoute
     \brief The QGeoRoute class represents a route between two points.
-    \ingroup maps
+    \ingroup maps-routing
 
     A QGeoRoute object contains high level information about a route, such
     as the length the route, the estimated travel time for the route,

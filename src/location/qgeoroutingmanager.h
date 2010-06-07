@@ -46,6 +46,7 @@
 #include "qgeoroutereply.h"
 
 #include <QObject>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
@@ -59,6 +60,10 @@ public:
     QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent = 0);
     ~QGeoRoutingManager();
 
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
+    int managerVersion() const;
+
     QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
     QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
@@ -67,6 +72,7 @@ public:
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
+    QGeoRouteRequest::SegmentDetails supportedSegmentDetails() const;
     QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
 
 signals:

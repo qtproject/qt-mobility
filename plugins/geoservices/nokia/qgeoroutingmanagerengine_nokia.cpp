@@ -46,7 +46,8 @@
 #include <QNetworkProxy>
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-        : m_host("route.desktop.maps.svc.ovi.com")
+        : QGeoRoutingManagerEngine(parameters),
+        m_host("route.desktop.maps.svc.ovi.com")
 {
     m_networkManager = new QNetworkAccessManager(this);
 

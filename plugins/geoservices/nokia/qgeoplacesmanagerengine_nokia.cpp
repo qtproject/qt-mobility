@@ -48,7 +48,8 @@
 #include <QMap>
 
 QGeoPlacesManagerEngineNokia::QGeoPlacesManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-        : m_host("loc.desktop.maps.svc.ovi.com")
+        : QGeoPlacesManagerEngine(parameters),
+        m_host("loc.desktop.maps.svc.ovi.com")
 {
     m_networkManager = new QNetworkAccessManager(this);
 

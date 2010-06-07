@@ -59,8 +59,8 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a QGeoTiledMappingManagerEngine object.
 */
-QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine(QObject *parent)
-        : QGeoMappingManagerEngine(new QGeoTiledMappingManagerEnginePrivate(), parent)
+QGeoTiledMappingManagerEngine::QGeoTiledMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
+        : QGeoMappingManagerEngine(new QGeoTiledMappingManagerEnginePrivate(parameters), parent)
 {
     setTileSize(QSize(128, 128));
     QTimer::singleShot(0, this, SLOT(init()));
@@ -307,8 +307,8 @@ void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate()
-        : QGeoMappingManagerEnginePrivate() {}
+QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate(const QMap<QString, QString> &parameters)
+        : QGeoMappingManagerEnginePrivate(parameters) {}
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other)
         : QGeoMappingManagerEnginePrivate(other),

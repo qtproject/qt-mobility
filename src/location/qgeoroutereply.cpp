@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoRouteReply class manages an operation started by an instance
     of QGeoRoutingManager.
 
-    \ingroup maps
+    \ingroup maps-routing
 
     Instances of QGeoRouteReply manage the state and results of these
     operations.

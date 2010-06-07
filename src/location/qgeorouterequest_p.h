@@ -75,6 +75,7 @@ public:
     QGeoRouteRequest::TravelModes travelModes;
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;
     QGeoRouteRequest::RouteOptimizations routeOptimization;
+    QGeoRouteRequest::SegmentDetail segmentDetail;
     QGeoRouteRequest::InstructionDetail instructionDetail;
     QDateTime departureTime;
     QDateTime arrivalTime;

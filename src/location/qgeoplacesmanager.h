@@ -47,6 +47,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
@@ -70,6 +71,10 @@ public:
     QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent = 0);
     ~QGeoPlacesManager();
 
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
+    int managerVersion() const;
+
     QGeoPlacesReply* geocode(const QGeoAddress &address,
                              const QGeoBoundingBox &bounds = QGeoBoundingBox());
     QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
@@ -83,9 +88,11 @@ public:
     bool supportsGeocoding() const;
     SearchTypes supportedSearchTypes() const;
 
-    void setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
-    QList<QLandmarkManager *> landmarkManagers() const;
-    void addLandmarkManager(QLandmarkManager *landmarkManager);
+    QLandmarkManager* defaultLandmarkManager() const;
+
+    void setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
+    QList<QLandmarkManager *> additionalLandmarkManagers() const;
+    void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
 signals:
     void finished(QGeoPlacesReply* reply);

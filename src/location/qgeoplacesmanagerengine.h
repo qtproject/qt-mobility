@@ -59,8 +59,12 @@ class Q_LOCATION_EXPORT QGeoPlacesManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    QGeoPlacesManagerEngine(QObject *parent = 0);
+    QGeoPlacesManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
     virtual ~QGeoPlacesManagerEngine();
+
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
+    int managerVersion() const;
 
     virtual QGeoPlacesReply* geocode(const QGeoAddress &address,
                                      const QGeoBoundingBox &bounds) = 0;
@@ -75,15 +79,20 @@ public:
     bool supportsGeocoding() const;
     QGeoPlacesManager::SearchTypes supportedSearchTypes() const;
 
-    void setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
-    QList<QLandmarkManager *> landmarkManagers() const;
-    void addLandmarkManager(QLandmarkManager *landmarkManager);
+    QLandmarkManager* defaultLandmarkManager() const;
+
+    void setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
+    QList<QLandmarkManager *> additionalLandmarkManagers() const;
+    void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
 signals:
     void finished(QGeoPlacesReply* reply);
     void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
 
 protected:
+    void setManagerName(const QString &managerName);
+    void setManagerVersion(int managerVersion);
+
     void setSupportsViewportBiasing(bool supported);
     void setSupportsGeocoding(bool supported);
     void setSupportedSearchTypes(QGeoPlacesManager::SearchTypes searchTypes);

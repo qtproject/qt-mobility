@@ -50,7 +50,7 @@ QTM_BEGIN_NAMESPACE
     \class QGeoMappingManagerEngine
     \brief The QGeoMappingManagerEngine class manages requests to and replies from
     a geographical map image service.
-    \ingroup maps
+    \ingroup maps-impl
 
     The request functions return a QGeoMapReply instance, which is responsible
     for delivering the status and results of the request.
@@ -85,9 +85,9 @@ QTM_BEGIN_NAMESPACE
 /*!
     Constructs a QGeoMappingManagerEngine object.
 */
-QGeoMappingManagerEngine::QGeoMappingManagerEngine(QObject *parent)
+QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoMappingManagerEnginePrivate) {}
+        d_ptr(new QGeoMappingManagerEnginePrivate(parameters)) {}
 
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent)
         : QObject(parent),
@@ -100,6 +100,41 @@ QGeoMappingManagerEngine::~QGeoMappingManagerEngine()
 {
     Q_D(QGeoMappingManagerEngine);
     delete d;
+}
+
+/*!
+*/
+void QGeoMappingManagerEngine::setManagerName(const QString &managerName)
+{
+    d_ptr->managerName = managerName;
+}
+
+/*!
+*/
+QString QGeoMappingManagerEngine::managerName() const
+{
+    return d_ptr->managerName;
+}
+
+/*!
+*/
+QMap<QString, QString> QGeoMappingManagerEngine::managerParameters() const
+{
+    return d_ptr->managerParameters;
+}
+
+/*!
+*/
+void QGeoMappingManagerEngine::setManagerVersion(int managerVersion)
+{
+    d_ptr->managerVersion = managerVersion;
+}
+
+/*!
+*/
+int QGeoMappingManagerEngine::managerVersion() const
+{
+    return d_ptr->managerVersion;
 }
 
 void QGeoMappingManagerEngine::removeViewport(QGeoMapViewport *viewport)
@@ -254,10 +289,15 @@ void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate() {}
+QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate(const QMap<QString, QString> &parameters)
+        : managerParameters(parameters),
+        managerVersion(-1) {}
 
 QGeoMappingManagerEnginePrivate::QGeoMappingManagerEnginePrivate(const QGeoMappingManagerEnginePrivate &other)
-        : supportedMapTypes(other.supportedMapTypes),
+        : managerName(other.managerName),
+        managerParameters(other.managerParameters),
+        managerVersion(other.managerVersion),
+        supportedMapTypes(other.supportedMapTypes),
         minimumZoomLevel(other.minimumZoomLevel),
         maximumZoomLevel(other.maximumZoomLevel),
         minimumImageSize(other.minimumImageSize),
@@ -267,6 +307,9 @@ QGeoMappingManagerEnginePrivate::~QGeoMappingManagerEnginePrivate() {}
 
 QGeoMappingManagerEnginePrivate& QGeoMappingManagerEnginePrivate::operator= (const QGeoMappingManagerEnginePrivate & other)
 {
+    managerName = other.managerName;
+    managerParameters = other.managerParameters;
+    managerVersion = other.managerVersion;
     supportedMapTypes = other.supportedMapTypes;
     minimumZoomLevel = other.minimumZoomLevel;
     maximumZoomLevel = other.maximumZoomLevel;

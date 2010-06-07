@@ -45,6 +45,12 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+  \class QGeoMapViewport
+  \brief The QGeoMapViewport class is.
+  \group maps-mapping
+ */
+
 //!
 //    \class QGeoMapViewport
 //    \brief The QGeoMapviewport class manages requests to and replies from

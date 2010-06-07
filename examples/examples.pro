@@ -40,7 +40,6 @@ contains(mobility_modules,location) {
     contains(mobility_modules,bearer) {
     	SUBDIRS += flickrdemo \
                    weatherinfo \
-                   lightmaps
                    lightmaps \
                    mapviewer \
                    qgeoapiui

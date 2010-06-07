@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoPlacesReply class manages an operation started by an
     instance of QGeoPlacesManager.
 
-    \ingroup maps
+    \ingroup maps-places
 
     Instances of QGeoPlacesReply manage the state and results of these
     operations.

@@ -46,6 +46,7 @@
 #include "qgeoroutereply.h"
 
 #include <QObject>
+#include <QMap>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,8 +56,12 @@ class Q_LOCATION_EXPORT QGeoRoutingManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    QGeoRoutingManagerEngine(QObject *parent = 0);
+    QGeoRoutingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
     virtual ~QGeoRoutingManagerEngine();
+
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
+    int managerVersion() const;
 
     virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) = 0;
     virtual QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position) = 0;
@@ -66,6 +71,7 @@ public:
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
+    QGeoRouteRequest::SegmentDetails supportedSegmentDetails() const;
     QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
 
 signals:
@@ -73,11 +79,15 @@ signals:
     void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
 
 protected:
+    void setManagerName(const QString &managerName);
+    void setManagerVersion(int managerVersion);
+
     void setSupportsRouteUpdates(bool supported);
     void setSupportsAlternativeRoutes(bool supported);
     void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);
     void setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
     void setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations);
+    void setSupportedSegmentDetails(QGeoRouteRequest::SegmentDetails segmentDetails);
     void setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails);
 
 private:

@@ -235,11 +235,9 @@ QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
         placesManager(0),
         routingManager(0),
         mappingManager(0),
-        mapViewport(0),
         placesError(QGeoServiceProvider::NoError),
         routingError(QGeoServiceProvider::NoError),
         mappingError(QGeoServiceProvider::NoError),
-        viewportError(QGeoServiceProvider::NoError),
         error(QGeoServiceProvider::NoError) {}
 
 QGeoServiceProviderPrivate::~QGeoServiceProviderPrivate()

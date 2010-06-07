@@ -44,12 +44,12 @@
 
 #include "qgeomapwidget.h"
 #include "qgeotiledmapreply.h"
+#include "qgeotiledmaprequest.h"
 
 #include <QThread>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapRequest;
 class QGeoTiledMapViewport;
 class QGeoTiledMappingManagerEngine;
 
@@ -83,5 +83,9 @@ private:
 };
 
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoTiledMapRequest))
+Q_DECLARE_METATYPE(QList < QTM_PREPEND_NAMESPACE(QGeoTiledMapRequest >))
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QGeoTiledMapReply::Error))
 
 #endif

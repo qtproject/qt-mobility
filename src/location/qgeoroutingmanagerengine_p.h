@@ -60,17 +60,22 @@ QTM_BEGIN_NAMESPACE
 class QGeoRoutingManagerEnginePrivate
 {
 public:
-    QGeoRoutingManagerEnginePrivate();
+    QGeoRoutingManagerEnginePrivate(const QMap<QString, QString> &parameters);
     QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other);
     ~QGeoRoutingManagerEnginePrivate();
 
     QGeoRoutingManagerEnginePrivate& operator= (const QGeoRoutingManagerEnginePrivate &other);
+
+    QString managerName;
+    QMap<QString, QString> managerParameters;
+    int managerVersion;
 
     bool supportsRouteUpdates;
     bool supportsAlternativeRoutes;
     QGeoRouteRequest::TravelModes supportedTravelModes;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;
+    QGeoRouteRequest::SegmentDetails supportedSegmentDetails;
     QGeoRouteRequest::InstructionDetails supportedInstructionDetails;
 };
 

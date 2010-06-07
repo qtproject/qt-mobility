@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoPlacesManager class provides support for searching
     operations related to geographic information.
 
-    \ingroup maps
+    \ingroup maps-places
 
     Instances of QGeoPlacesManager primarily provide support for the
     searching of geographical information, either through free text search or
@@ -120,6 +120,46 @@ QGeoPlacesManager::QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *p
 QGeoPlacesManager::~QGeoPlacesManager()
 {
     delete d_ptr;
+}
+
+/*!
+    Returns the name of the plugin implementation which provides the
+    functionality for this places manager.
+
+    The combination of managerName() and managerVersion() shoudl be unique
+    amongst plugin implementations.
+*/
+QString QGeoPlacesManager::managerName() const
+{
+    if (!d_ptr->engine)
+        return QString();
+
+    return d_ptr->engine->managerName();
+}
+
+/*!
+    Returns the parameters used in the creation of this places manager.
+*/
+QMap<QString, QString> QGeoPlacesManager::managerParameters() const
+{
+    if (!d_ptr->engine)
+        return QMap<QString, QString>();
+
+    return d_ptr->engine->managerParameters();
+}
+
+/*!
+    Returns the version of this places manager.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
+*/
+int QGeoPlacesManager::managerVersion() const
+{
+    if (!d_ptr->engine)
+        return -1;
+
+    return d_ptr->engine->managerVersion();
 }
 
 /*!
@@ -290,32 +330,42 @@ QGeoPlacesManager::SearchTypes QGeoPlacesManager::supportedSearchTypes() const
 }
 
 /*!
+*/
+QLandmarkManager* QGeoPlacesManager::defaultLandmarkManager() const
+{
+    if (!d_ptr->engine)
+        return 0;
+
+    return d_ptr->engine->defaultLandmarkManager();
+}
+
+/*!
     Sets the landmark managers to be used with placesSearch() to \a landmarkManagers.
 */
-void QGeoPlacesManager::setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
+void QGeoPlacesManager::setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
 {
     if (d_ptr->engine)
-        d_ptr->engine->setLandmarkManagers(landmarkManagers);
+        d_ptr->engine->setAdditionalLandmarkManagers(landmarkManagers);
 }
 
 /*!
     Returns the landmark managers that will be used with placesSearch().
 */
-QList<QLandmarkManager *> QGeoPlacesManager::landmarkManagers() const
+QList<QLandmarkManager *> QGeoPlacesManager::additionalLandmarkManagers() const
 {
     if (!d_ptr->engine)
         return QList<QLandmarkManager *>();
 
-    return d_ptr->engine->landmarkManagers();
+    return d_ptr->engine->additionalLandmarkManagers();
 }
 
 /*!
     Adds \a landmarkManager to the list of landmark managers that will be used with placesSearch().
 */
-void QGeoPlacesManager::addLandmarkManager(QLandmarkManager *landmarkManager)
+void QGeoPlacesManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkManager)
 {
     if (d_ptr->engine && landmarkManager)
-        d_ptr->engine->addLandmarkManager(landmarkManager);
+        d_ptr->engine->addAdditionalLandmarkManager(landmarkManager);
 }
 
 /*!

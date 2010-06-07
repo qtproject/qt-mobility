@@ -90,8 +90,15 @@ public:
     };
     Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
 
+    enum SegmentDetail {
+        NoSegmentData = 0x0000,
+        BasicSegmentData = 0x0001,
+        DetailedSegmentData = 0x0002
+    };
+    Q_DECLARE_FLAGS(SegmentDetails, SegmentDetail);
+
     enum InstructionDetail {
-        NoInstructionss = 0x00000,
+        NoInstructions = 0x0000,
         BasicInstructions = 0x0001,
         DetailedInstructions = 0x0002
     };
@@ -125,7 +132,11 @@ public:
     void setRouteOptimization(RouteOptimizations optimization);
     RouteOptimizations routeOptimization() const;
 
-    // default to NoInstructions
+    // defaults to BasicSegmentData
+    void setSegmentDetail(SegmentDetail segmentDetail);
+    SegmentDetail segmentDetail() const;
+
+    // default to BasicInstructions
     void setInstructionDetail(InstructionDetail instructionDetail);
     InstructionDetail instructionDetail() const;
 
@@ -147,6 +158,7 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::TravelModes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::AvoidFeatureTypes)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::RouteOptimizations)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::SegmentDetails)
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoRouteRequest::InstructionDetails)
 
 QTM_END_NAMESPACE

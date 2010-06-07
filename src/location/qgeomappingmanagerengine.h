@@ -63,7 +63,12 @@ class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
     Q_OBJECT
 
 public:
+    QGeoMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
     virtual ~QGeoMappingManagerEngine();
+
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
+    int managerVersion() const;
 
     virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget) = 0;
     virtual void removeViewport(QGeoMapViewport *viewport);
@@ -79,8 +84,11 @@ public:
     qreal maximumZoomLevel() const;
 
 protected:
-    QGeoMappingManagerEngine(QObject *parent = 0);
+    // TODO remove this - going to move the tiling manager to the plugin in the short term
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
+
+    void setManagerName(const QString &managerName);
+    void setManagerVersion(int managerVersion);
 
     void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
 

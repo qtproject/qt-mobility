@@ -66,6 +66,10 @@ public:
     QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
     ~QGeoMappingManager();
 
+    QString managerName() const;
+    QMap<QString, QString> managerParameters() const;
+    int managerVersion() const;
+
     QGeoMapViewport* createViewport(QGeoMapWidget *widget);
     void removeViewport(QGeoMapViewport *viewport);
 

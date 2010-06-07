@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
     \brief The QGeoPlacesManagerEngine class provides support for searching
     operations related to geographic information.
 
-    \ingroup maps
+    \ingroup maps-impl
 
     Instances of QGeoPlacesManagerEngine primarily provide support for the
     searching of geographical information, either through free text search or
@@ -76,9 +76,9 @@ QTM_BEGIN_NAMESPACE
 
     This should only ever be called from subclasses of QGeoPlacesManagerEngine.
 */
-QGeoPlacesManagerEngine::QGeoPlacesManagerEngine(QObject *parent)
+QGeoPlacesManagerEngine::QGeoPlacesManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoPlacesManagerEnginePrivate()) {}
+        d_ptr(new QGeoPlacesManagerEnginePrivate(parameters)) {}
 
 /*!
     Destroys this manager.
@@ -86,6 +86,41 @@ QGeoPlacesManagerEngine::QGeoPlacesManagerEngine(QObject *parent)
 QGeoPlacesManagerEngine::~QGeoPlacesManagerEngine()
 {
     delete d_ptr;
+}
+
+/*!
+*/
+void QGeoPlacesManagerEngine::setManagerName(const QString &managerName)
+{
+    d_ptr->managerName = managerName;
+}
+
+/*!
+*/
+QString QGeoPlacesManagerEngine::managerName() const
+{
+    return d_ptr->managerName;
+}
+
+/*!
+*/
+QMap<QString, QString> QGeoPlacesManagerEngine::managerParameters() const
+{
+    return d_ptr->managerParameters;
+}
+
+/*!
+*/
+void QGeoPlacesManagerEngine::setManagerVersion(int managerVersion)
+{
+    d_ptr->managerVersion = managerVersion;
+}
+
+/*!
+*/
+int QGeoPlacesManagerEngine::managerVersion() const
+{
+    return d_ptr->managerVersion;
 }
 
 /*!
@@ -268,30 +303,37 @@ QGeoPlacesManager::SearchTypes QGeoPlacesManagerEngine::supportedSearchTypes() c
 }
 
 /*!
+*/
+QLandmarkManager* QGeoPlacesManagerEngine::defaultLandmarkManager() const
+{
+    return d_ptr->defaultLandmarkManager;
+}
+
+/*!
     Sets the landmark managers to be used with placesSearch() to \a landmarkManagers.
 */
-void QGeoPlacesManagerEngine::setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
+void QGeoPlacesManagerEngine::setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
 {
     for (int i = 0; i < landmarkManagers.size(); ++i)
         if (landmarkManagers.at(i))
-            d_ptr->landmarkManagers.append(landmarkManagers.at(i));
+            d_ptr->additionalLandmarkManagers.append(landmarkManagers.at(i));
 }
 
 /*!
     Returns the landmark managers that will be used with placesSearch().
 */
-QList<QLandmarkManager *> QGeoPlacesManagerEngine::landmarkManagers() const
+QList<QLandmarkManager *> QGeoPlacesManagerEngine::additionalLandmarkManagers() const
 {
-    return d_ptr->landmarkManagers;
+    return d_ptr->additionalLandmarkManagers;
 }
 
 /*!
     Adds \a landmarkManager to the list of landmark managers that will be used with placesSearch().
 */
-void QGeoPlacesManagerEngine::addLandmarkManager(QLandmarkManager *landmarkManager)
+void QGeoPlacesManagerEngine::addAdditionalLandmarkManager(QLandmarkManager *landmarkManager)
 {
     if (landmarkManager)
-        d_ptr->landmarkManagers.append(landmarkManager);
+        d_ptr->additionalLandmarkManagers.append(landmarkManager);
 }
 
 /*!
@@ -327,24 +369,38 @@ void QGeoPlacesManagerEngine::addLandmarkManager(QLandmarkManager *landmarkManag
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoPlacesManagerEnginePrivate::QGeoPlacesManagerEnginePrivate()
-        : supportsViewportBiasing(false),
+QGeoPlacesManagerEnginePrivate::QGeoPlacesManagerEnginePrivate(const QMap<QString, QString> &parameters)
+        : managerParameters(parameters),
+        managerVersion(-1),
+        defaultLandmarkManager(0),
+        supportsViewportBiasing(false),
         supportsGeocoding(false) {}
 
 QGeoPlacesManagerEnginePrivate::QGeoPlacesManagerEnginePrivate(const QGeoPlacesManagerEnginePrivate &other)
-        : landmarkManagers(other.landmarkManagers),
+        : managerName(other.managerName),
+        managerParameters(other.managerParameters),
+        managerVersion(other.managerVersion),
+        defaultLandmarkManager(other.defaultLandmarkManager),
+        additionalLandmarkManagers(other.additionalLandmarkManagers),
         supportsViewportBiasing(other.supportsViewportBiasing),
         supportsGeocoding(other.supportsGeocoding),
         supportedSearchTypes(other.supportedSearchTypes) {}
 
 QGeoPlacesManagerEnginePrivate::~QGeoPlacesManagerEnginePrivate()
 {
-    qDeleteAll(landmarkManagers);
+    if (defaultLandmarkManager)
+        delete defaultLandmarkManager;
+    // TODO check for null? or do that in the setter?
+    qDeleteAll(additionalLandmarkManagers);
 }
 
 QGeoPlacesManagerEnginePrivate& QGeoPlacesManagerEnginePrivate::operator= (const QGeoPlacesManagerEnginePrivate & other)
 {
-    landmarkManagers = other.landmarkManagers;
+    managerName = other.managerName;
+    managerParameters = other.managerParameters;
+    managerVersion = other.managerVersion;
+    defaultLandmarkManager = other.defaultLandmarkManager;
+    additionalLandmarkManagers = other.additionalLandmarkManagers;
     supportsViewportBiasing = other.supportsViewportBiasing;
     supportsGeocoding = other.supportsGeocoding;
     supportedSearchTypes = other.supportedSearchTypes;

@@ -49,6 +49,14 @@
 
 QTM_BEGIN_NAMESPACE
 
+/*!
+  \class QGeoMapWidget
+  \brief The QGeoMapWidget class is.
+  \group maps-mapping
+*/
+
+/*!
+*/
 QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager)
         : d_ptr(new QGeoMapWidgetPrivate(manager))
 {
@@ -62,11 +70,15 @@ QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager)
     d_ptr->viewport->setViewportSize(QSizeF(300, 300));
 }
 
+/*!
+*/
 QGeoMapWidget::~QGeoMapWidget()
 {
     delete d_ptr;
 }
 
+/*!
+*/
 void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
 {
     QGraphicsWidget::resizeEvent(event);
@@ -78,6 +90,8 @@ void QGeoMapWidget::resizeEvent(QGraphicsSceneResizeEvent *event)
     event->accept();
 }
 
+/*!
+*/
 void QGeoMapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
     setFocus();
@@ -87,6 +101,8 @@ void QGeoMapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
     event->accept();
 }
 
+/*!
+*/
 void QGeoMapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
 {
     if (event->button() == Qt::LeftButton)
@@ -95,6 +111,8 @@ void QGeoMapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
     event->accept();
 }
 
+/*!
+*/
 void QGeoMapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
 {
     if (d_ptr->panActive) {
@@ -106,6 +124,8 @@ void QGeoMapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
     event->accept();
 }
 
+/*!
+*/
 void QGeoMapWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
     setFocus();
@@ -119,6 +139,8 @@ void QGeoMapWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     event->accept();
 }
 
+/*!
+*/
 void QGeoMapWidget::keyPressEvent(QKeyEvent *event)
 {
     if (!d_ptr->manager || !d_ptr->viewport)
@@ -137,6 +159,8 @@ void QGeoMapWidget::keyPressEvent(QKeyEvent *event)
     event->accept();
 }
 
+/*!
+*/
 void QGeoMapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
     if (!d_ptr->manager || !d_ptr->viewport)
@@ -154,6 +178,8 @@ void QGeoMapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
     event->accept();
 }
 
+/*!
+*/
 QPainterPath QGeoMapWidget::shape() const
 {
     QPainterPath path;
@@ -161,12 +187,16 @@ QPainterPath QGeoMapWidget::shape() const
     return path;
 }
 
+/*!
+*/
 void QGeoMapWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *)
 {
     d_ptr->viewport->mapImage().rect();
     painter->drawPixmap(d_ptr->viewport->mapImage().rect(), d_ptr->viewport->mapImage(), d_ptr->viewport->mapImage().rect());
 }
 
+/*!
+*/
 qreal QGeoMapWidget::minimumZoomLevel() const
 {
     if (d_ptr->manager)
@@ -175,6 +205,8 @@ qreal QGeoMapWidget::minimumZoomLevel() const
     return -1;
 }
 
+/*!
+*/
 qreal QGeoMapWidget::maximumZoomLevel() const
 {
     if (d_ptr->manager)
@@ -183,6 +215,8 @@ qreal QGeoMapWidget::maximumZoomLevel() const
     return -1;
 }
 
+/*!
+*/
 void QGeoMapWidget::setZoomLevel(qreal zoomLevel)
 {
     if (d_ptr->viewport && d_ptr->manager) {
@@ -191,6 +225,8 @@ void QGeoMapWidget::setZoomLevel(qreal zoomLevel)
     }
 }
 
+/*!
+*/
 qreal QGeoMapWidget::zoomLevel() const
 {
     if (d_ptr->viewport)
@@ -199,6 +235,8 @@ qreal QGeoMapWidget::zoomLevel() const
     return -1;
 }
 
+/*!
+*/
 void QGeoMapWidget::pan(int dx, int dy)
 {
     if (d_ptr->viewport && d_ptr->manager) {
@@ -207,6 +245,8 @@ void QGeoMapWidget::pan(int dx, int dy)
     }
 }
 
+/*!
+*/
 void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
 {
     if (d_ptr->viewport && d_ptr->manager) {
@@ -215,6 +255,8 @@ void QGeoMapWidget::setCenter(const QGeoCoordinate &center)
     }
 }
 
+/*!
+*/
 QGeoCoordinate QGeoMapWidget::center() const
 {
     if (d_ptr->viewport)
@@ -223,6 +265,8 @@ QGeoCoordinate QGeoMapWidget::center() const
     return QGeoCoordinate();
 }
 
+/*!
+*/
 void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
 {
     if (d_ptr->viewport && d_ptr->manager) {
@@ -231,11 +275,15 @@ void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
     }
 }
 
+/*!
+*/
 QGeoMapWidget::MapType QGeoMapWidget::mapType() const
 {
     return d_ptr->viewport->mapType();
 }
 
+/*!
+*/
 QPointF QGeoMapWidget::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
     if (d_ptr->viewport)
@@ -244,6 +292,8 @@ QPointF QGeoMapWidget::coordinateToScreenPosition(const QGeoCoordinate &coordina
     return QPointF();
 }
 
+/*!
+*/
 QGeoCoordinate QGeoMapWidget::screenPositionToCoordinate(QPointF screenPosition) const
 {
     if (d_ptr->viewport)
@@ -252,6 +302,7 @@ QGeoCoordinate QGeoMapWidget::screenPositionToCoordinate(QPointF screenPosition)
     return QGeoCoordinate();
 }
 
+// TODO remove this - just call update from the viewport
 void QGeoMapWidget::mapImageUpdated()
 {
     this->update();

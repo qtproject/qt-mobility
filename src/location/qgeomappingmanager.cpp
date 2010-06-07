@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
     \class QGeoMappingManager
     \brief The QGeoMappingManager class manages requests to and replies from
     a geographical map image service.
-    \ingroup maps
+    \ingroup maps-mapping
 
     The request functions return a QGeoMapReply instance, which is responsible
     for delivering the status and results of the request.
@@ -116,6 +116,38 @@ QGeoMappingManager::~QGeoMappingManager()
     delete d_ptr;
 }
 
+/*!
+*/
+QString QGeoMappingManager::managerName() const
+{
+    if (!d_ptr->engine)
+        return QString();
+
+    return d_ptr->engine->managerName();
+}
+
+/*!
+*/
+QMap<QString, QString> QGeoMappingManager::managerParameters() const
+{
+    if (!d_ptr->engine)
+        return QMap<QString, QString>();
+
+    return d_ptr->engine->managerParameters();
+}
+
+/*!
+*/
+int QGeoMappingManager::managerVersion() const
+{
+    if (!d_ptr->engine)
+        return -1;
+
+    return d_ptr->engine->managerVersion();
+}
+
+/*!
+*/
 QGeoMapViewport* QGeoMappingManager::createViewport(QGeoMapWidget *widget)
 {
     if (!d_ptr->engine)
@@ -124,12 +156,16 @@ QGeoMapViewport* QGeoMappingManager::createViewport(QGeoMapWidget *widget)
     return d_ptr->engine->createViewport(widget);
 }
 
+/*!
+*/
 void QGeoMappingManager::removeViewport(QGeoMapViewport *viewport)
 {
     if (d_ptr->engine)
         d_ptr->engine->removeViewport(viewport);
 }
 
+/*!
+*/
 void QGeoMappingManager::updateMapImage(QGeoMapViewport *viewport)
 {
     if (d_ptr->engine)

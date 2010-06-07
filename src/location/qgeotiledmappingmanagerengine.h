@@ -45,6 +45,8 @@
 #include "qgeomappingmanagerengine.h"
 #include "qgeotiledmapreply.h"
 
+#include <QMap>
+
 class QNetworkAccessManager;
 class QNetworkProxy;
 
@@ -80,7 +82,7 @@ signals:
     void tileRequestsPrepared(QGeoTiledMapViewport* viewport, const QList<QGeoTiledMapRequest> &requests);
 
 protected:
-    QGeoTiledMappingManagerEngine(QObject *parent = 0);
+    QGeoTiledMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
     virtual QGeoTiledMappingManagerThread* createTileManagerThread() = 0;
 
     void setSupportedImageFormats(const QList<QString> &imageFormats);

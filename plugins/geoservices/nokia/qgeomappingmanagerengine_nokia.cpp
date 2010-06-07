@@ -175,7 +175,8 @@ QString QGeoMappingManagerThreadNokia::mapTypeToStr(QGeoMapWidget::MapType type)
 }
 
 QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-        : parameters(parameters)
+        : QGeoTiledMappingManagerEngine(parameters),
+        parameters(parameters)
 {
     setTileSize(QSize(128, 128));
     setMinimumZoomLevel(0.0);
