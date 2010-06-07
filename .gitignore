@@ -36,7 +36,9 @@ install/*
 lib/*
 doc/src/snippets/sensors/sensors
 demos/player/player
+demos/lightmaps/lightmaps_with_location
 demos/small_screen_sensors/SmallSensors
+demos/weatherinfo/weatherinfo_with_location
 examples/audiodevices/audiodevices
 examples/audioinput/audioinput
 examples/audiooutput/audiooutput
@@ -44,7 +46,6 @@ examples/audiorecorder/audiorecorder
 examples/bearercloud/bearercloud
 examples/bearermonitor/bearermonitor
 examples/flickrdemo/flickrdemo
-examples/lightmaps/lightmaps_with_location
 examples/logfilepositionsource/logfilepositionsource
 examples/publish-subscribe/publish-subscribe
 examples/radio/radio
@@ -71,7 +72,6 @@ examples/slideshow/slideshow
 examples/sysinfo/sysinfo
 examples/videographicsitem/videographicsitem
 examples/videowidget/videowidget
-examples/weatherinfo/weatherinfo_with_location
 examples/qmlcontacts/qmlcontacts
 *.app
 config.tests/networkmanager/networkmanager

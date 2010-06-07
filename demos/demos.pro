@@ -21,3 +21,10 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
 contains(mobility_modules, sensors) {
     SUBDIRS += small_screen_sensors
 }
+
+contains(mobility_modules,location) {
+    contains(mobility_modules,bearer) {
+    	SUBDIRS += weatherinfo \
+		   lightmaps
+    }
+}
