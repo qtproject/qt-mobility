@@ -43,7 +43,7 @@
 #include "qversitorganizerexporter_p.h"
 #include "qtorganizer.h"
 #include "versitutils_p.h"
-#include "qversitdefs_p.h"
+#include "qversitorganizerdefs_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 

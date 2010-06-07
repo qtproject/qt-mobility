@@ -49,6 +49,7 @@ PRIVATE_HEADERS += \
     qversitorganizerexporter_p.h \
     qversitorganizerimporter_p.h \
     qversitdefs_p.h \
+    qversitorganizerdefs_p.h \
     versitutils_p.h
 
 # Implementation

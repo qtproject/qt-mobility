@@ -56,7 +56,6 @@
 
 #include "qmobilityglobal.h"
 #include "qtcontacts.h"
-#include "qtorganizer.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -134,15 +133,6 @@ const VersitDetailMapping versitContactDetailMappings[] = {
                       QContactFamily::FieldSpouse.latin1()}
 };
 //! [Property name mappings]
-
-// Only put simple mappings in this table; ie. where a Versit property maps to a specific detail's
-// specific field (and that detail has no other fields of interest)
-const VersitDetailMapping versitOrganizerDetailMappings[] = {
-    {"SUMMARY",       QOrganizerItemDisplayLabel::DefinitionName.latin1(),
-                      QOrganizerItemDisplayLabel::FieldLabel.latin1()},
-    {"DESCRIPTION",   QOrganizerItemDescription::DefinitionName.latin1(),
-                      QOrganizerItemDescription::FieldDescription.latin1()}
-};
 
 // Mapping between a string in versit specifications and Qt contacts
 struct VersitMapping {

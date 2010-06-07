@@ -41,7 +41,7 @@
 
 #include "qversitcontactexporter.h"
 #include "qversitcontactexporter_p.h"
-#include "qversitdefs_p.h"
+#include "qversitorganizerdefs_p.h"
 #include "versitutils_p.h"
 #include "qmobilityglobal.h"
 

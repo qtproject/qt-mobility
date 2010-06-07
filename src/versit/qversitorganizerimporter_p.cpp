@@ -44,7 +44,7 @@
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
 #include "qtorganizer.h"
-#include "qversitdefs_p.h"
+#include "qversitorganizerdefs_p.h"
 
 
 QTM_USE_NAMESPACE
