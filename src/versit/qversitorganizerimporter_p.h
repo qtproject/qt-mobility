@@ -132,6 +132,10 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
+    bool createPriority(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
     bool createStartDateTime(
             const QVersitProperty& property,
             QOrganizerItem* item,

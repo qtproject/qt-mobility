@@ -489,6 +489,72 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
             << (QList<QVersitProperty>() << dtstart << dtend << rdate)
             << (QList<QOrganizerItemDetail>() << etr << recurrence);
     }
+
+    {
+        QVersitProperty property;
+        property.setName(QLatin1String("PRIORITY"));
+        property.setValue(QLatin1String("0"));
+
+        QOrganizerItemPriority detail;
+        detail.setPriority(QOrganizerItemPriority::UnknownPriority);
+        QTest::newRow("priority 0")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("1"));
+        detail.setPriority(QOrganizerItemPriority::HighestPriority);
+        QTest::newRow("priority 1")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("2"));
+        detail.setPriority(QOrganizerItemPriority::ExtremelyHighPriority);
+        QTest::newRow("priority 2")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("3"));
+        detail.setPriority(QOrganizerItemPriority::VeryHighPriority);
+        QTest::newRow("priority 3")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("4"));
+        detail.setPriority(QOrganizerItemPriority::HighPriority);
+        QTest::newRow("priority 4")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("5"));
+        detail.setPriority(QOrganizerItemPriority::MediumPriority);
+        QTest::newRow("priority 5")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("6"));
+        detail.setPriority(QOrganizerItemPriority::LowPriority);
+        QTest::newRow("priority 6")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("7"));
+        detail.setPriority(QOrganizerItemPriority::VeryLowPriority);
+        QTest::newRow("priority 7")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("8"));
+        detail.setPriority(QOrganizerItemPriority::ExtremelyLowPriority);
+        QTest::newRow("priority 8")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+
+        property.setValue(QLatin1String("9"));
+        detail.setPriority(QOrganizerItemPriority::LowestPriority);
+        QTest::newRow("priority 9")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << detail);
+    }
 }
 
 QTEST_MAIN(tst_QVersitOrganizerImporter)

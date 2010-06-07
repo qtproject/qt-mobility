@@ -107,6 +107,8 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeTimestamp(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemRecurrence::DefinitionName) {
         encodeRecurrence(item, detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    } else if (detail.definitionName() == QOrganizerItemPriority::DefinitionName) {
+        encodePriority(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (mPropertyMappings.contains(detail.definitionName())) {
         encodeSimpleProperty(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     }
@@ -341,6 +343,22 @@ void QVersitOrganizerExporterPrivate::encodeRecurDates(
     }
     property.setValue(value);
     *generatedProperties << property;
+}
+
+void QVersitOrganizerExporterPrivate::encodePriority(
+        const QOrganizerItemDetail& detail,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* removedProperties,
+        QList<QVersitProperty>* generatedProperties,
+        QSet<QString>* processedFields)
+{
+    QOrganizerItemPriority priority = static_cast<QOrganizerItemPriority>(detail);
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("PRIORITY"), removedProperties);
+    property.setName(QLatin1String("PRIORITY"));
+    property.setValue(QString::number(priority.priority()));
+    *generatedProperties << property;
+    *processedFields << QOrganizerItemPriority::FieldPriority;
 }
 
 void QVersitOrganizerExporterPrivate::encodeSimpleProperty(

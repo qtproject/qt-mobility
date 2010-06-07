@@ -106,6 +106,8 @@ void QVersitOrganizerImporterPrivate::importProperty(
         success = createTimestampCreated(property, item, &updatedDetails);
     } else if (property.name() == QLatin1String("LAST-MODIFIED")) {
         success = createTimestampModified(property, item, &updatedDetails);
+    } else if (property.name() == QLatin1String("PRIORITY")) {
+        success = createPriority(property, item, &updatedDetails);
     } else if (mPropertyMappings.contains(property.name())) {
         success = createSimpleDetail(property, item, &updatedDetails);
     } else if (document.componentType() == QLatin1String("VEVENT")) {
@@ -174,6 +176,23 @@ bool QVersitOrganizerImporterPrivate::createTimestampModified(
     QOrganizerItemTimestamp timestamp(item->detail<QOrganizerItemTimestamp>());
     timestamp.setLastModified(datetime);
     updatedDetails->append(timestamp);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createPriority(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().length() != 1)
+        return false;
+
+    bool ok;
+    int p = property.value().toInt(&ok);
+    if (!ok)
+        return false;
+    QOrganizerItemPriority priority(item->detail<QOrganizerItemPriority>());
+    priority.setPriority(QOrganizerItemPriority::Priority(p));
+    updatedDetails->append(priority);
     return true;
 }
 
