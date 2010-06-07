@@ -300,38 +300,40 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackE
     }
 }
 
-bool QFeedbackImmersion::setLoaded(const QFileFeedbackEffect *effect, bool load)
+void QFeedbackImmersion::setLoaded(QFileFeedbackEffect *effect, bool load)
 {
     const QString fileName = effect->fileName();
-    Q_ASSERT(load || fileData.contains(fileName));
+    if (!load && !fileData.contains(fileName))
+        return;
 
     FileContent &fc = fileData[fileName];
     if (load) {
-        if (fc.refCount == 0) {
+        bool success = true;
+        fc.refCount++;
+        if (fc.refCount == 1) {
             //we need to load the file
             QFile file(fileName);
-            if (file.size() > MAX_FILE_SIZE)
-                return false;
-            if (!file.open(QIODevice::ReadOnly))
-                return false;
-            fc.ba = file.readAll();
-            //now let's try to check the file content with immersion
-            if (VIBE_FAILED(ImmVibeGetIVTEffectCount(fc.constData()))) {
-                fileData.remove(fileName); 
-                return false;
+            success = false;
+            if (file.size() < MAX_FILE_SIZE && file.open(QIODevice::ReadOnly)) {
+                fc.ba = file.readAll();
+                //now let's try to check the file content with immersion
+                if (VIBE_FAILED(ImmVibeGetIVTEffectCount(fc.constData()))) {
+                    fileData.remove(fileName); 
+                } else {
+                    success = true;
+                }
             }
         }
-        fc.refCount++;
+        asyncLoadFinished(effect, success);
     } else {
         //unload
         fc.refCount--;
         if (fc.refCount == 0)
             fileData.remove(fileName);
     }
-    return true;
 }
 
-QFileFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFileFeedbackEffect *effect)
+QFileFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(QFileFeedbackEffect *effect)
 {
     VibeStatus status = VIBE_S_SUCCESS;
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);

@@ -80,6 +80,7 @@ private Q_SLOTS:
     void browseClicked();
     void filePlayPauseClicked();
     void fileEffectStateChanged(QAbstractAnimation::State newState);
+    void fileLoadingFinished();
 
 private:
     QFeedbackDevice currentDevice() const;

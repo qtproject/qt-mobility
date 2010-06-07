@@ -82,8 +82,8 @@ public:
     virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
 
     //for loading files
-    virtual bool setLoaded(const QFileFeedbackEffect*, bool);
-    virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *);
+    virtual void setLoaded(QFileFeedbackEffect*, bool);
+    virtual QFileFeedbackEffect::ErrorType updateEffectState(QFileFeedbackEffect *);
     virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *);
     virtual int effectDuration(const QFileFeedbackEffect *);
     virtual QStringList mimeTypes();

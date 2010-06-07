@@ -167,8 +167,9 @@ public:
 
     int duration() const;
 
+    bool isLoading() const;
     bool isLoaded() const;
-    bool setLoaded(bool);
+    void setLoaded(bool);
 
     QString fileName() const;
     void setFileName(const QString &);
@@ -177,6 +178,7 @@ public:
 
 signals:
     void error(ErrorType); //the feedback could not be played
+    void loadingFinished(bool);
 
 protected:
     //virtual methods from QAbstractAnimation

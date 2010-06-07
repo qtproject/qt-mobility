@@ -78,6 +78,7 @@ Dialog::Dialog()
     connect(ui.filePlayPause, SIGNAL(clicked()), SLOT(filePlayPauseClicked()));
     connect(ui.fileStop, SIGNAL(clicked()), &fileEffect, SLOT(stop()));
     connect(&fileEffect, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), SLOT(fileEffectStateChanged(QAbstractAnimation::State)));
+    connect(&fileEffect, SIGNAL(loadingFinished(bool)), SLOT(fileLoadingFinished()));
 
     foreach(const QFeedbackDevice &dev, QFeedbackDevice::devices()) {
         ui.devices->addItem(dev.name());
@@ -210,15 +211,24 @@ void Dialog::browseClicked()
 {
     fileEffect.stop();
     QString filename = QFileDialog::getOpenFileName(this, tr("feedback file"));
-    bool ok = !filename.isEmpty();
-    if (ok) {
-        ui.filename->setText(QDir::toNativeSeparators(filename));
-        fileEffect.setFileName(filename);
+    ui.fileStop->setEnabled(false);
+    ui.filePlayPause->setEnabled(fileEffect.isLoaded());
+    ui.filename->setText(QDir::toNativeSeparators(filename));
+    ui.fileStatus->setText( tr("Loading") );
+    fileEffect.setFileName(filename);
+}
+
+void Dialog::fileLoadingFinished()
+{
+    if (fileEffect.isLoaded()) {
         ui.fileStatus->setText( fileEffect.isLoaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );
         ui.filePlayPause->setEnabled(fileEffect.isLoaded());
         ui.fileStop->setEnabled(false);
+    } else {
+        ui.fileStatus->setText( tr("Impossible to load") );
     }
 }
+
 
 void Dialog::filePlayPauseClicked()
 {

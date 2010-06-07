@@ -285,6 +285,17 @@ bool QFeedbackEffect::supportsThemeEffect()
 }
 
 
+
+void QFileFeedbackEffectPrivate::finishedLoading(bool success)
+{
+    isLoading = false;
+    loaded = success;
+    if( !success)
+        backendUsed = -1;
+    emit q_func()->loadingFinished(success);
+}
+
+
 QFileFeedbackEffect::QFileFeedbackEffect(QObject *parent) : QAbstractAnimation(*new QFileFeedbackEffectPrivate, parent)
 {
 }
@@ -314,29 +325,26 @@ void QFileFeedbackEffect::setFileName(const QString &fileName)
     setLoaded(true);
 }
 
+bool QFileFeedbackEffect::isLoading() const
+{
+    return d_func()->isLoading;
+}
 bool QFileFeedbackEffect::isLoaded() const
 {
     return d_func()->loaded;
 }
-
-bool QFileFeedbackEffect::setLoaded(bool load)
+void QFileFeedbackEffect::setLoaded(bool load)
 {
     Q_D(QFileFeedbackEffect);
-    bool ret = false;
-    if (d->loaded == load)
-        return ret;
+    if (d->loaded == load && !(isLoading() && !load) )
+        return;
 
     if (state() != QAbstractAnimation::Stopped) {
-        qWarning() << "QFileFeedbackEffect::setLoaded: can't load /unload a file while the effect is not stopped";
-        return ret;
+        qWarning() << "QFileFeedbackEffect::setLoaded: can't load/unload a file while the effect is not stopped";
+        return;
     }
 
-
-    ret = QFileFeedbackInterface::instance()->setLoaded(this, load);
-    if (ret)
-        d->loaded = load;
-
-    return ret;
+    QFileFeedbackInterface::instance()->setLoaded(this, load);
 }
 
 QStringList QFileFeedbackEffect::mimeTypes()

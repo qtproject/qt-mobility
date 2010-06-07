@@ -46,7 +46,6 @@
 
 Q_EXPORT_PLUGIN2(feedback_phonon, QFeedbackPhonon)
 
-
 QFeedbackPhonon::QFeedbackPhonon()
 {
 }
@@ -55,23 +54,50 @@ QFeedbackPhonon::~QFeedbackPhonon()
 {
 }
 
-bool QFeedbackPhonon::setLoaded(const QFileFeedbackEffect *effect, bool load)
+void QFeedbackPhonon::mediaObjectStateChanged()
+{
+    QFeedbackMediaObject *mediaObject = qobject_cast<QFeedbackMediaObject*>(sender());
+    Q_ASSERT(mediaObject);
+    mediaObject->overrideState = false;
+    QFileFeedbackEffect *effect = mediaObject->effect;
+    if (!effect->isLoading())
+        return;
+    switch(mediaObject->state())
+    {
+    case Phonon::LoadingState:
+        //nothing to do, wait for the next state change
+        break;
+    case Phonon::StoppedState:
+    case Phonon::PausedState:
+    case Phonon::PlayingState:
+        asyncLoadFinished(effect, true);
+        break;
+    case Phonon::ErrorState:
+    default:
+        //we need to delete the mediaobject
+        mediaObject->deleteLater();
+        audioPlayers.remove(effect);
+        asyncLoadFinished(effect, false);
+        break;
+    }
+}
+
+void QFeedbackPhonon::setLoaded(QFileFeedbackEffect *effect, bool load)
 {
     Q_ASSERT(audioPlayers.contains(effect) != load);
 
     if (load) {
         //let's create the possibility to laod a file
-        Phonon::MediaObject *mediaObject = new Phonon::MediaObject;
+        QFeedbackMediaObject *mediaObject = new QFeedbackMediaObject(this, effect);
         Phonon::AudioOutput *audio = new Phonon::AudioOutput(mediaObject);
         if (!Phonon::createPath(mediaObject, audio).isValid()) {
-            delete mediaObject;
-            return false;
+            mediaObject->deleteLater();
+            asyncLoadFinished(effect, false); //an error occurred
         }
 
-        //TODO: loading a file is asynchronous, so error reporting can't happen immediately
+        audioPlayers[effect] = mediaObject;
         mediaObject->setCurrentSource(Phonon::MediaSource(effect->fileName()));
 
-        audioPlayers[effect] = mediaObject;
 
     } else {
         //unload
@@ -79,16 +105,14 @@ bool QFeedbackPhonon::setLoaded(const QFileFeedbackEffect *effect, bool load)
         audioPlayers.remove(effect);
     }
 
-    //no problem so far
-    return true;
 }
 
-QFileFeedbackEffect::ErrorType QFeedbackPhonon::updateEffectState(const QFileFeedbackEffect *effect)
+QFileFeedbackEffect::ErrorType QFeedbackPhonon::updateEffectState(QFileFeedbackEffect *effect)
 {
     //the file should be loaded
     Q_ASSERT(audioPlayers.contains(effect));
 
-    Phonon::MediaObject *mediaObject = audioPlayers[effect];
+    QFeedbackMediaObject *mediaObject = audioPlayers[effect];
     switch(effect->state()) 
     {
     case QAbstractAnimation::Stopped:
@@ -102,14 +126,22 @@ QFileFeedbackEffect::ErrorType QFeedbackPhonon::updateEffectState(const QFileFee
         break;
     }
 
+    //from now on until the state changed we need to override the state of the effect because
+    //the change is not immediate
+    mediaObject->overrideState = true;
+
     return QFileFeedbackEffect::NoError;
 }
 
 QAbstractAnimation::State QFeedbackPhonon::actualEffectState(const QFileFeedbackEffect *effect)
 {
-    Phonon::MediaObject *mediaObject = audioPlayers.value(effect, 0);
+    QFeedbackMediaObject *mediaObject = audioPlayers.value(effect, 0);
     if (!mediaObject)
         return QAbstractAnimation::Stopped;
+
+    if (mediaObject->overrideState)
+        return effect->state();
+
 
     switch (mediaObject->state())
     {

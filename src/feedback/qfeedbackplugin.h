@@ -64,7 +64,6 @@ public:
         Period,
         Device
     };
-    virtual ~QFeedbackInterface() { }
 
     //static members for devices management
     virtual QFeedbackDevice defaultDevice(QFeedbackDevice::Type) = 0;
@@ -97,14 +96,17 @@ public:
     static QThemeFeedbackInterface *instance();
 };
 
-class QFileFeedbackInterface
+class Q_FEEDBACK_EXPORT QFileFeedbackInterface
 {
 public:
-    virtual bool setLoaded(const QFileFeedbackEffect*, bool) = 0;
-    virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *) = 0;
+    virtual void setLoaded(QFileFeedbackEffect*, bool) = 0;
+    virtual QFileFeedbackEffect::ErrorType updateEffectState(QFileFeedbackEffect *) = 0;
     virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *) = 0;
     virtual int effectDuration(const QFileFeedbackEffect*) = 0;
     virtual QStringList mimeTypes() = 0;
+
+    //functions to call that allows for async loading
+    void asyncLoadFinished(QFileFeedbackEffect*, bool success);
 
     static QFileFeedbackInterface *instance();
 };

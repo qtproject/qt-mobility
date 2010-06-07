@@ -41,6 +41,7 @@
 
 #include "qfeedbackplugin.h"
 #include "qfeedbackplugin_p.h"
+#include "qfeedbackeffect_p.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QStringList>
@@ -53,32 +54,26 @@ QTM_BEGIN_NAMESPACE
 class FileBackend : public QFileFeedbackInterface
 {
 public:
-    //this class is used to redirect the calls to all the file backends available
-
-    virtual bool setLoaded(const QFileFeedbackEffect *effect, bool load)
+    FileBackend()
     {
-        if (load) {
-            //let's try to find the right backend to load
-            for (int i = 0; i < subBackends.count(); ++i) {
-                if (subBackends.at(i)->setLoaded(effect, load)) {
-                    backendUsed[effect] = subBackends.at(i);
-                    return true;
-                }
-            }
-        } else {
-            //unload
-            if (QFileFeedbackInterface *subBackend = getBackend(effect)) {
-                backendUsed.remove(effect);
-                return subBackend->setLoaded(effect, load);
-            }
-
-        }
-
-        //if we get here, the file was not (un)loaded
-        return false;
     }
 
-    virtual QFileFeedbackEffect::ErrorType updateEffectState(const QFileFeedbackEffect *effect)
+    //this class is used to redirect the calls to all the file backends available
+    virtual void setLoaded(QFileFeedbackEffect *effect, bool load)
+    {
+        if (load) {
+            //start loading
+            QFileFeedbackEffectPrivate *priv = QFileFeedbackEffectPrivate::get(effect);
+            priv->isLoading = true;
+            tryBackendLoad(effect);
+        } else {
+            //unload        
+            if (QFileFeedbackInterface *subBackend = getBackend(effect))
+                return subBackend->setLoaded(effect, load);
+        }
+    }
+
+    virtual QFileFeedbackEffect::ErrorType updateEffectState(QFileFeedbackEffect *effect)
     {
         if (QFileFeedbackInterface *subBackend = getBackend(effect))
             return subBackend->updateEffectState(effect);
@@ -115,14 +110,46 @@ public:
         subBackends.append(backend);
     }
 
-    QHash<const QFileFeedbackEffect*, QFileFeedbackInterface*> backendUsed;
-    QList<QFileFeedbackInterface*> subBackends; 
+    void asyncLoadFinished(QFileFeedbackEffect *effect, bool success)
+    {
+        if (success) {
+            //the file was loaded by the current backend
+            QFileFeedbackEffectPrivate *p = QFileFeedbackEffectPrivate::get(effect);
+            p->finishedLoading(true);
+            return;
+        }
+
+        //let's try the next backend
+        tryBackendLoad(effect);
+    }
 
 private:
+    QList<QFileFeedbackInterface*> subBackends; 
+
     QFileFeedbackInterface *getBackend(const QFileFeedbackEffect *effect)
     {
-        return backendUsed.value(effect, 0);
+        const QFileFeedbackEffectPrivate *priv = QFileFeedbackEffectPrivate::get(effect);
+        if (priv->backendUsed >= 0 && priv->backendUsed < subBackends.count())
+                return subBackends.at(priv->backendUsed);
+        return 0;
     }
+
+    void tryBackendLoad(QFileFeedbackEffect *effect)
+    {
+        QFileFeedbackEffectPrivate *p = QFileFeedbackEffectPrivate::get(effect);
+        p->backendUsed++;
+
+        //let's try to load the file
+        if (p->backendUsed >= subBackends.count()) {
+            //the file couldn't be loaded
+            p->finishedLoading(false);
+            return;
+        }
+
+        subBackends.at(p->backendUsed)->setLoaded(effect, true);
+        //now we're waiting for the reply (call to asyncLoadFinished)
+    }
+
 };
 
 
@@ -194,6 +221,11 @@ QThemeFeedbackInterface *QThemeFeedbackInterface::instance()
 QFileFeedbackInterface *QFileFeedbackInterface::instance()
 {
     return &backendManager()->fileBackend;
+}
+
+void QFileFeedbackInterface::asyncLoadFinished(QFileFeedbackEffect *effect, bool success)
+{
+    backendManager()->fileBackend.asyncLoadFinished(effect, success);
 }
 
 

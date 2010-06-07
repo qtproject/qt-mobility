@@ -85,12 +85,24 @@ public:
 class QFileFeedbackEffectPrivate : public QAbstractAnimationPrivate
 {
 public:
-    QFileFeedbackEffectPrivate() : loaded(false)
+    QFileFeedbackEffectPrivate() : loaded(false), isLoading(false), backendUsed(-1)
     {
     }
 
+    static QFileFeedbackEffectPrivate *get(QFileFeedbackEffect *e) { return e->d_func(); }
+    static const QFileFeedbackEffectPrivate *get(const QFileFeedbackEffect *e) { return e->d_func(); }
+
+    void finishedLoading(bool success);
+
     QString fileName;
     bool loaded;
+
+    //used for loading the file
+    bool isLoading;
+    int backendUsed;
+
+private:
+    Q_DECLARE_PUBLIC(QFileFeedbackEffect);
 };
 
 QTM_END_NAMESPACE
