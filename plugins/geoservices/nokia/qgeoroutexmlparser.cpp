@@ -321,8 +321,9 @@ bool QGeoRouteXmlParser::parseMode(QGeoRoute *route)
                     route->setOptimization(QGeoRouteRequest::MostEconomicRoute);
                 else if (value == "scenic")
                     route->setOptimization(QGeoRouteRequest::MostScenicRoute);
-                else if (value == "directDrive")
-                    route->setOptimization(QGeoRouteRequest::DirectRoute);
+                // See comments in qgeorouterequest.h
+                //else if (value == "directDrive")
+                //    route->setOptimization(QGeoRouteRequest::DirectRoute);
             }
             else if (m_reader->name() == "TransportModes") {
                 QString value = m_reader->readElementText();

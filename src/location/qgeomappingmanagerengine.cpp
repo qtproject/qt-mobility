@@ -67,19 +67,6 @@ QTM_BEGIN_NAMESPACE
     to delete the QGeoMapReply object at an appropriate time. Do not
     directly delete it inside the slot connected to replyFinished() or
     replyError() - the deleteLater() function should be used instead.
-
-    \sa QGeoMapReply
-*/
-
-
-/*!
-    \enum QGeoMappingManagerEngine::ErrorCode
-
-    Describes the type of error which occurred when a QGeoMappingManagerEngine instance
-    attempted to process a request.
-
-    \value NoError
-        No error occurred.
 */
 
 /*!
@@ -103,6 +90,11 @@ QGeoMappingManagerEngine::~QGeoMappingManagerEngine()
 }
 
 /*!
+    Sets the name which this engine implementation uses to distinguish itself
+    from the implementations provided by other plugins to \a managerName.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 void QGeoMappingManagerEngine::setManagerName(const QString &managerName)
 {
@@ -110,6 +102,11 @@ void QGeoMappingManagerEngine::setManagerName(const QString &managerName)
 }
 
 /*!
+    Returns the name which this engine implementation uses to distinguish
+    itself from the implementations provided by other plugins.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 QString QGeoMappingManagerEngine::managerName() const
 {
@@ -117,6 +114,7 @@ QString QGeoMappingManagerEngine::managerName() const
 }
 
 /*!
+    Returns the parameters used in the creation of this engine object.
 */
 QMap<QString, QString> QGeoMappingManagerEngine::managerParameters() const
 {
@@ -124,6 +122,10 @@ QMap<QString, QString> QGeoMappingManagerEngine::managerParameters() const
 }
 
 /*!
+    Sets the version of this engine implementation to \a managerVersion.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 void QGeoMappingManagerEngine::setManagerVersion(int managerVersion)
 {
@@ -131,6 +133,10 @@ void QGeoMappingManagerEngine::setManagerVersion(int managerVersion)
 }
 
 /*!
+    Returns the version of this engine implementation.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 int QGeoMappingManagerEngine::managerVersion() const
 {

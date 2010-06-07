@@ -88,7 +88,13 @@ QGeoPlacesManagerEngine::~QGeoPlacesManagerEngine()
     delete d_ptr;
 }
 
+
 /*!
+    Sets the name which this engine implementation uses to distinguish itself
+    from the implementations provided by other plugins to \a managerName.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 void QGeoPlacesManagerEngine::setManagerName(const QString &managerName)
 {
@@ -96,6 +102,11 @@ void QGeoPlacesManagerEngine::setManagerName(const QString &managerName)
 }
 
 /*!
+    Returns the name which this engine implementation uses to distinguish
+    itself from the implementations provided by other plugins.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 QString QGeoPlacesManagerEngine::managerName() const
 {
@@ -103,6 +114,7 @@ QString QGeoPlacesManagerEngine::managerName() const
 }
 
 /*!
+    Returns the parameters used in the creation of this engine object.
 */
 QMap<QString, QString> QGeoPlacesManagerEngine::managerParameters() const
 {
@@ -110,6 +122,10 @@ QMap<QString, QString> QGeoPlacesManagerEngine::managerParameters() const
 }
 
 /*!
+    Sets the version of this engine implementation to \a managerVersion.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 void QGeoPlacesManagerEngine::setManagerVersion(int managerVersion)
 {
@@ -117,6 +133,10 @@ void QGeoPlacesManagerEngine::setManagerVersion(int managerVersion)
 }
 
 /*!
+    Returns the version of this engine implementation.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 int QGeoPlacesManagerEngine::managerVersion() const
 {
@@ -199,7 +219,7 @@ int QGeoPlacesManagerEngine::managerVersion() const
 */
 
 /*!
-\fn QGeoPlacesReply* QGeoPlacesManagerEngine::placesSearch(const QString &searchString, QGeoPlacesManagerEngine::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+\fn QGeoPlacesReply* QGeoPlacesManagerEngine::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 
     Begins searching for a place matching \a searchString.  The value of
     \a searchTypes will determine whether the search is for addresses only,
@@ -357,7 +377,7 @@ void QGeoPlacesManagerEngine::addAdditionalLandmarkManager(QLandmarkManager *lan
     This signal is emitted when an error has been detected in the processing of
     \a reply. The QGeoPlacesManagerEngine::finished() signal will probably follow.
 
-    The error will be described by the error code \error. If \a errorString is
+    The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
     This signal and QGeoPlacesReply::error() will be emitted at the same time.

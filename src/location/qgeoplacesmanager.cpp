@@ -123,11 +123,11 @@ QGeoPlacesManager::~QGeoPlacesManager()
 }
 
 /*!
-    Returns the name of the plugin implementation which provides the
-    functionality for this places manager.
+    Returns the name of the engine which implements the behaviour of this
+    places manager.
 
-    The combination of managerName() and managerVersion() shoudl be unique
-    amongst plugin implementations.
+    The combination of managerName() and managerVersion() should be unique
+    amongst the plugin implementations.
 */
 QString QGeoPlacesManager::managerName() const
 {
@@ -149,10 +149,11 @@ QMap<QString, QString> QGeoPlacesManager::managerParameters() const
 }
 
 /*!
-    Returns the version of this places manager.
+    Returns the version of the engine which implements the behaviour of this
+    places manager.
 
     The combination of managerName() and managerVersion() should be unique
-    amongst plugin implementations.
+    amongst the plugin implementations.
 */
 int QGeoPlacesManager::managerVersion() const
 {
@@ -389,7 +390,7 @@ void QGeoPlacesManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkM
     This signal is emitted when an error has been detected in the processing of
     \a reply. The QGeoPlacesManager::finished() signal will probably follow.
 
-    The error will be described by the error code \error. If \a errorString is
+    The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
     This signal and QGeoPlacesReply::error() will be emitted at the same time.

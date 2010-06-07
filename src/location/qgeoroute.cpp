@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
     An instance QGeoRoutingService of will normally be responsible for the
     creation and setup of QGeoRoute objects.
 
-    \sa QGeoRoutingService
+    \sa QGeoRoutingManager
 */
 
 /*!

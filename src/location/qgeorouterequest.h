@@ -85,8 +85,10 @@ public:
         ShortestRoute = 0x0001,
         FastestRoute = 0x0002,
         MostEconomicRoute = 0x0004,
-        MostScenicRoute = 0x0008,
-        DirectRoute = 0x0010
+        MostScenicRoute = 0x0008
+        //MostScenicRoute = 0x0008,
+        // TODO - what is this and how is it different from shortest route?
+        //DirectRoute = 0x0010
     };
     Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
 
@@ -140,11 +142,15 @@ public:
     void setInstructionDetail(InstructionDetail instructionDetail);
     InstructionDetail instructionDetail() const;
 
-    void setDepartureTime(const QDateTime& departureTime);
-    QDateTime departureTime() const;
+//  TODO - determine if this is useful information for non-Navteq services
+//       - was previously removed with the plan to move the functionality 
+//         into a traffic-aware transit options subclass
+//    void setDepartureTime(const QDateTime& departureTime);
+//    QDateTime departureTime() const;
+//
+//    void setArrivalTime(const QDateTime& arrivalTime);
+//    QDateTime arrivalTime() const;
 
-    void setArrivalTime(const QDateTime& arrivalTime);
-    QDateTime arrivalTime() const;
 
     // defaults to empty - no subclass required yet
     // this is how we handle private / public / truck attributes

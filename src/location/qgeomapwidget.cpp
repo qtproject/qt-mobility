@@ -56,6 +56,19 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+\enum QGeoMapWidget::MapType
+
+\value StreetMap
+
+\value SatelliteMapDay
+
+\value SatelliteMapNight
+
+\value TerrainMap
+
+*/
+
+/*!
 */
 QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager)
         : d_ptr(new QGeoMapWidgetPrivate(manager))

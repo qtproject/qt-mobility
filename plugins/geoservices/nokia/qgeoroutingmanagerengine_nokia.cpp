@@ -263,8 +263,9 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
         types.append("economic");
     if ((optimization & QGeoRouteRequest::MostScenicRoute) != 0)
         types.append("scenic");
-    if ((optimization & QGeoRouteRequest::DirectRoute) != 0)
-        types.append("directDrive");
+    // See comments in qgeorouterequest.h
+    //if ((optimization & QGeoRouteRequest::DirectRoute) != 0)
+    //    types.append("directDrive");
 
     QStringList tModes;
     if ((travelModes & QGeoRouteRequest::CarTravel) != 0)
@@ -318,14 +319,17 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 {
     QString requestString;
 
-    if (request.departureTime().isValid()) {
-        requestString += "&departure=";
-        requestString += request.departureTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
-    }
-    if (request.arrivalTime().isValid()) {
-        requestString += "&arrival=";
-        requestString += request.arrivalTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
-    }
+// See comments in qgeoroutereqeust.h - if this is need to get a response
+// perhaps a departure time of now is good enough for the time being
+
+//    if (request.departureTime().isValid()) {
+//        requestString += "&departure=";
+//        requestString += request.departureTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
+//    }
+//    if (request.arrivalTime().isValid()) {
+//        requestString += "&arrival=";
+//        requestString += request.arrivalTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
+//    }
 
     // TODO: PublicTransportProfile
     // TODO: TruckProfile

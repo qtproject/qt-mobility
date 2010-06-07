@@ -68,19 +68,6 @@ QTM_BEGIN_NAMESPACE
     to delete the QGeoMapReply object at an appropriate time. Do not
     directly delete it inside the slot connected to replyFinished() or
     replyError() - the deleteLater() function should be used instead.
-
-    \sa QGeoMapReply
-*/
-
-
-/*!
-    \enum QGeoMappingManager::ErrorCode
-
-    Describes the type of error which occurred when a QGeoMappingManager instance
-    attempted to process a request.
-
-    \value NoError
-        No error occurred.
 */
 
 /*!
@@ -117,6 +104,11 @@ QGeoMappingManager::~QGeoMappingManager()
 }
 
 /*!
+    Returns the name of the engine which implements the behaviour of this
+    mapping manager.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst the plugin implementations.
 */
 QString QGeoMappingManager::managerName() const
 {
@@ -127,6 +119,7 @@ QString QGeoMappingManager::managerName() const
 }
 
 /*!
+    Returns the parameters used in the creation of this mapping manager.
 */
 QMap<QString, QString> QGeoMappingManager::managerParameters() const
 {
@@ -137,6 +130,11 @@ QMap<QString, QString> QGeoMappingManager::managerParameters() const
 }
 
 /*!
+    Returns the version of the engine which implements the behaviour of this
+    mapping manager.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst the plugin implementations.
 */
 int QGeoMappingManager::managerVersion() const
 {

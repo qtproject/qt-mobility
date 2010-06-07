@@ -246,7 +246,7 @@ void QGeoPlacesReply::abort()
     This signal is emitted when an error has been detected in the processing of
     this reply. The finished() signal will probably follow.
 
-    The error will be described by the error code \error. If \a errorString is
+    The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
     This signal and QGeoPlacesManager::error() will be emitted at the same time.

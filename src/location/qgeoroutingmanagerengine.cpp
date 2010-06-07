@@ -84,6 +84,11 @@ QGeoRoutingManagerEngine::~QGeoRoutingManagerEngine()
 }
 
 /*!
+    Sets the name which this engine implementation uses to distinguish itself
+    from the implementations provided by other plugins to \a managerName.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 void QGeoRoutingManagerEngine::setManagerName(const QString &managerName)
 {
@@ -91,6 +96,11 @@ void QGeoRoutingManagerEngine::setManagerName(const QString &managerName)
 }
 
 /*!
+    Returns the name which this engine implementation uses to distinguish
+    itself from the implementations provided by other plugins.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 QString QGeoRoutingManagerEngine::managerName() const
 {
@@ -98,6 +108,7 @@ QString QGeoRoutingManagerEngine::managerName() const
 }
 
 /*!
+    Returns the parameters used in the creation of this engine object.
 */
 QMap<QString, QString> QGeoRoutingManagerEngine::managerParameters() const
 {
@@ -105,6 +116,10 @@ QMap<QString, QString> QGeoRoutingManagerEngine::managerParameters() const
 }
 
 /*!
+    Sets the version of this engine implementation to \a managerVersion.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 void QGeoRoutingManagerEngine::setManagerVersion(int managerVersion)
 {
@@ -112,6 +127,10 @@ void QGeoRoutingManagerEngine::setManagerVersion(int managerVersion)
 }
 
 /*!
+    Returns the version of this engine implementation.
+
+    The combination of managerName() and managerVersion() should be unique
+    amongst plugin implementations.
 */
 int QGeoRoutingManagerEngine::managerVersion() const
 {
@@ -273,19 +292,30 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManagerEngine::supportedRouteOpt
 }
 
 /*!
+    Sets the levels of detail for routing segments which can be
+    requested by this manager to \a segmentDetails.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it supports no segment detail at all.
 */
 void QGeoRoutingManagerEngine::setSupportedSegmentDetails(QGeoRouteRequest::SegmentDetails segmentDetails)
 {
     d_ptr->supportedSegmentDetails = supportedSegmentDetails();
 }
 
+/*!
+    Returns the levels of detail for routing segments which can be
+    requested by this manager.
+*/
 QGeoRouteRequest::SegmentDetails QGeoRoutingManagerEngine::supportedSegmentDetails() const
 {
     return d_ptr->supportedSegmentDetails;
 }
 
 /*!
-    Sets the levels of instruction details supported by this manager to \a intructionDetails.
+    Sets the levels of detail for navigation instructions which can be
+    requested by this manager to \a instructionDetails.
 
     It is important that subclasses use this method to ensure that the manager
     reports its capabilities correctly.  If this function is not used the
@@ -297,7 +327,8 @@ void QGeoRoutingManagerEngine::setSupportedInstructionDetails(QGeoRouteRequest::
 }
 
 /*!
-    Returns the levels of instruction details supported by this manager.
+    Returns the levels of detail for navigation instructions which can be
+    requested by this manager.
 */
 QGeoRouteRequest::InstructionDetails QGeoRoutingManagerEngine::supportedInstructionDetails() const
 {
@@ -319,12 +350,12 @@ Use deleteLater() instead.
 */
 
 /*!
-\fn void QGeoRoutingManagerEngine::error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString
+\fn void QGeoRoutingManagerEngine::error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString)
 
 This signal is emitted when an error has been detected in the processing of
 \a reply.  The QGeoRoutingManagerEngine::finished() signal will probably follow.
 
-The error will be described by the error code \error.  If \a errorString is
+The error will be described by the error code \a error.  If \a errorString is
 not empty it will contain a textual description of the error.
 
 This signal and QGeoRouteReply::error() will be emitted at the same time.

@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoServiceProvider
-    \brief The QGeoServiceProvider aggregates access to services which provide
+    \brief The QGeoServiceProvider class aggregates access to services which provide
     geographical information.
     \ingroup maps
 
@@ -87,6 +87,19 @@ QTM_BEGIN_NAMESPACE
 
     At this point only the Nokia Servics plugin is pacakged with Qt Mobility,
     which is accessible using the provider name "nokia".
+*/
+
+/*!
+\enum QGeoServiceProvider::Error 
+
+\value NoError
+
+\value NotSupportedError
+
+\value UnknownParameterError
+
+\value MissingRequiredParameterError
+
 */
 
 /*!

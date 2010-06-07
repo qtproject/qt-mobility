@@ -77,8 +77,9 @@ public:
     QGeoRouteRequest::RouteOptimizations routeOptimization;
     QGeoRouteRequest::SegmentDetail segmentDetail;
     QGeoRouteRequest::InstructionDetail instructionDetail;
-    QDateTime departureTime;
-    QDateTime arrivalTime;
+//  TODO - see comments in qgeorouterequest.h    
+//    QDateTime departureTime;
+//    QDateTime arrivalTime;
 
     // defaults to empty - no subclass required yet
     // this is how we handle private / public / truck attributes

@@ -133,22 +133,53 @@ QTM_BEGIN_NAMESPACE
         Maximize the scenic potential of the journey.
 */
 
+        enum SegmentDetail {
+            NoSegmentData = 0x0000,
+            BasicSegmentData = 0x0001,
+            DetailedSegmentData = 0x0002
+        };
+
+/*!
+    \enum QGeoRouteRequest::SegmentDetail
+
+    Defines the amount of route segment information that shoudl be included
+    with the route.
+
+    \value NoSegmentData
+        No segment data should be included with the route.  A route requested
+        with this level of segment detail will initialise
+        QGeoRouteSegment::path() as a straight line between the positions of
+        the previous and next QGeoNavigationInstructions.
+
+    \value BasicSegmentData
+        Basic segment data will be included with the route.  This will include
+        QGeoRouteSegment::path().
+
+    \value DetailedSegmentData
+        Detailed segment data will be included with the route.  This will
+        typcially meant that subclasses of QGeoRouteSegment are used to provide
+        data structures describing the segment.  See QGeoRouteSegment and its
+        subclasses for more details.
+*/
+
 /*!
     \enum QGeoRouteRequest::InstructionDetail
 
-    Defines the amount of instruction information that should be included with the
-    route.
+    Defines the amount of instruction information that should be included with
+    the route.
 
     \value NoInstructions
         No instructions should be included with the route.
+
     \value BasicInstructions
-        Basic instructions will be included with the route.  This will typically
+        Basic instructions will be included with the route. This will
         include QGeoNavigationInstruction::instructionText().
+
     \value DetailedInstructions
-        Detailed instructions will be included with the route.  This will typically
-        mean that subclasses of QNavigationInstruction are used to provide
-        data structures describing the instructions.  See QGeoNavigationInstruction
-        and its subclasses for more details.
+        Detailed instructions will be included with the route. This will
+        typically mean that subclasses of QNavigationInstruction are used to
+        provide data structures describing the instructions. See
+        QGeoNavigationInstruction and its subclasses for more details.
 
     \sa QGeoNavigationInstruction
 */
@@ -298,6 +329,8 @@ QGeoRouteRequest::RouteOptimizations QGeoRouteRequest::routeOptimization() const
 }
 
 /*!
+    Sets the level of detail to use when representing routing segments to
+    \a segmentDetail.
 */
 void QGeoRouteRequest::setSegmentDetail(QGeoRouteRequest::SegmentDetail segmentDetail)
 {
@@ -305,6 +338,8 @@ void QGeoRouteRequest::setSegmentDetail(QGeoRouteRequest::SegmentDetail segmentD
 }
 
 /*!
+    Returns the level of detail which will be used in the representation of
+    routing segments.
 */
 QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
 {
@@ -312,8 +347,8 @@ QGeoRouteRequest::SegmentDetail QGeoRouteRequest::segmentDetail() const
 }
 
 /*!
-    Sets the level of the detail to use when representing routing instructions
-    to \a instructionsDetail.
+    Sets the level of detail to use when representing routing instructions to
+    \a instructionDetail.
 
     The default value is QGeoRouteRequest::BasicInstructions.
 */
@@ -324,44 +359,46 @@ void QGeoRouteRequest::setInstructionDetail(QGeoRouteRequest::InstructionDetail 
 }
 
 /*!
-    Returns the level of detail which is used in the representation of routing
-    instructions.
+    Returns the level of detail which will be used in the representation of
+    routing instructions.
 */
 QGeoRouteRequest::InstructionDetail QGeoRouteRequest::instructionDetail() const
 {
     return d_ptr->instructionDetail;
 }
-/*!
-    Sets the planned time of departure to \a tod.
-*/
 
-void QGeoRouteRequest::setDepartureTime(const QDateTime& departureTime)
-{
-    d_ptr->departureTime = departureTime;
-}
-
-/*!
-    Returns the planned time of departure.
-*/
-QDateTime QGeoRouteRequest::departureTime() const
-{
-    return d_ptr->departureTime;
-}
-/*!
-    Sets the planned time of arrival to \a toa.
-*/
-void QGeoRouteRequest::setArrivalTime(const QDateTime& arrivalTime)
-{
-    d_ptr->arrivalTime = arrivalTime;
-}
-
-/*!
-    Returns the planned time of departure.
-*/
-QDateTime QGeoRouteRequest::arrivalTime() const
-{
-    return d_ptr->arrivalTime;
-}
+// See comments in qgeorouterequest.h
+///*!
+//    Sets the planned time of departure to \a tod.
+//*/
+//
+//void QGeoRouteRequest::setDepartureTime(const QDateTime& departureTime)
+//{
+//    d_ptr->departureTime = departureTime;
+//}
+//
+///*!
+//    Returns the planned time of departure.
+//*/
+//QDateTime QGeoRouteRequest::departureTime() const
+//{
+//    return d_ptr->departureTime;
+//}
+///*!
+//    Sets the planned time of arrival to \a toa.
+//*/
+//void QGeoRouteRequest::setArrivalTime(const QDateTime& arrivalTime)
+//{
+//    d_ptr->arrivalTime = arrivalTime;
+//}
+//
+///*!
+//    Returns the planned time of departure.
+//*/
+//QDateTime QGeoRouteRequest::arrivalTime() const
+//{
+//    return d_ptr->arrivalTime;
+//}
 
 /*******************************************************************************
 *******************************************************************************/
