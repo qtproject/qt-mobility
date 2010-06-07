@@ -11,4 +11,4 @@ DEPENDPATH +=
 INCLUDEPATH += .
 
 SOURCES += main.cpp
-LIBS += -lImmVibe
+LIBS += -limmvibe

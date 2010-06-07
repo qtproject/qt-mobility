@@ -41,7 +41,8 @@
 
 #include <ImmVibe.h>
 
-int main(int argc, char** argv)
+int main(int, char**)
 {
-	return ImmVibeInitialize(VIBE_CURRENT_VERSION_NUMBER);
+	ImmVibeInitialize(VIBE_CURRENT_VERSION_NUMBER);
+	return 0;
 }
