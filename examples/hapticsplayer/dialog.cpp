@@ -116,8 +116,6 @@ QFeedbackDevice Dialog::currentDevice() const
 void Dialog::deviceChanged()
 {
     QFeedbackDevice dev = currentDevice();
-    const QMetaObject &mo = QFeedbackDevice::staticMetaObject;
-    ui.deviceType->setText(mo.enumerator(mo.indexOfEnumerator(ENUM_DEVICE_TYPE)).key(dev.type()));
     enabledChanged(dev.isEnabled());
     effect.setDevice(dev);
 }

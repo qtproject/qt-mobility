@@ -44,14 +44,13 @@
 
 #include "qfeedbackeffect.h"
 #include "qfeedbackdevice.h"
-#include <private/qabstractanimation_p.h>
 
 //
 //  W A R N I N G
 //  -------------
 //
 // This file is not part of the Qt API.  It exists for the convenience
-// of QAbstractItemModel*.  This header file may change from version
+// of Qt Feedback framework.  This header file may change from version
 // to version without notice, or even be removed.
 //
 // We mean it.
@@ -61,7 +60,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QFeedbackEffectPrivate : public QAbstractAnimationPrivate
+class QFeedbackEffectPrivate
 {
 public:
     QFeedbackEffectPrivate() : duration(250),
@@ -82,17 +81,19 @@ public:
     QFeedbackDevice device;
 };
 
-class QFileFeedbackEffectPrivate : public QAbstractAnimationPrivate
+class QFileFeedbackEffectPrivate
 {
 public:
-    QFileFeedbackEffectPrivate() : loaded(false), isLoading(false), backendUsed(-1)
+    QFileFeedbackEffectPrivate(QFileFeedbackEffect *effect) : effect(effect), loaded(false), isLoading(false), backendUsed(-1)
     {
     }
 
-    static QFileFeedbackEffectPrivate *get(QFileFeedbackEffect *e) { return e->d_func(); }
-    static const QFileFeedbackEffectPrivate *get(const QFileFeedbackEffect *e) { return e->d_func(); }
+    static QFileFeedbackEffectPrivate *get(QFileFeedbackEffect *e) { return e->priv.data(); }
+    static const QFileFeedbackEffectPrivate *get(const QFileFeedbackEffect *e) { return e->priv.data(); }
 
     void finishedLoading(bool success);
+
+    QFileFeedbackEffect *effect;
 
     QString fileName;
     bool loaded;
@@ -100,9 +101,6 @@ public:
     //used for loading the file
     bool isLoading;
     int backendUsed;
-
-private:
-    Q_DECLARE_PUBLIC(QFileFeedbackEffect);
 };
 
 QTM_END_NAMESPACE

@@ -58,20 +58,6 @@ QTM_BEGIN_NAMESPACE
         */
 
         /*!
-            \enum QFeedbackDevice::Type
-
-            \value Vibra The device represents a Vibra motor on your system.
-            \value Touch The device represents touch feedback (piezzo...).
-        */
-
-        /*!
-            \enum QFeedbackDevice::Type
-
-            \value Vibra The device represents a Vibra motor on your system.
-            \value Touch The device represents touch feedback (piezzo...).
-        */
-
-        /*!
             \enum QFeedbackDevice::Capability
 
             \value Envelope Capacity defining the wave type with attack/fade times and levels.
@@ -114,12 +100,6 @@ QTM_BEGIN_NAMESPACE
             \fn QFeedbackDevice QFeedbackDevice::defaultDevice()
 
             returns the default device.
-        */
-
-        /*!
-            \fn QFeedbackDevice QFeedbackDevice::defaultDevice(Type t)
-
-            returns the default device of the specified type.
         */
 
         /*!

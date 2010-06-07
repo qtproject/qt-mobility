@@ -49,6 +49,19 @@
 
 #include <QtCore/QCoreApplication>
 
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists for the convenience
+// of Qt Feedback framework.  This header file may change from version
+// to version without notice, or even be removed.
+//
+// We mean it.
+//
+//
+
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE

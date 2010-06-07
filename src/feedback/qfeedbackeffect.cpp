@@ -43,8 +43,7 @@
 #include "qfeedbackeffect_p.h"
 #include "qfeedbackplugin.h"
 
-#include <QtCore/QCoreApplication>
-#include <QtCore/QDebug>
+#include <QtCore>
 
 
 QTM_BEGIN_NAMESPACE
@@ -68,7 +67,7 @@ QTM_BEGIN_NAMESPACE
     \sa QAbstractAnimation, QFeedbackDevice
 */
 
-QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(*new QFeedbackEffectPrivate, parent)
+QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(parent), priv(new QFeedbackEffectPrivate)
 {
 }
 
@@ -85,14 +84,13 @@ QFeedbackEffect::~QFeedbackEffect()
 */
 int QFeedbackEffect::duration() const
 {
-    return d_func()->duration;
+    return priv->duration;
 }
 void QFeedbackEffect::setDuration(int msecs)
 {
-    Q_D(QFeedbackEffect);
-    if (d->duration == msecs)
+    if (priv->duration == msecs)
         return;
-    d->duration = msecs;
+    priv->duration = msecs;
     QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::Duration);
 }
 
@@ -105,14 +103,13 @@ void QFeedbackEffect::setDuration(int msecs)
 */
 qreal QFeedbackEffect::intensity() const
 {
-    return d_func()->intensity;
+    return priv->intensity;
 }
 void QFeedbackEffect::setIntensity(qreal intensity)
 {
-    Q_D(QFeedbackEffect);
-    if (d->intensity == intensity)
+    if (priv->intensity == intensity)
         return;
-    d->intensity = intensity;
+    priv->intensity = intensity;
     QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::Intensity);
 }
 
@@ -124,14 +121,13 @@ void QFeedbackEffect::setIntensity(qreal intensity)
 */
 int QFeedbackEffect::attackTime() const
 {
-    return d_func()->attackTime;
+    return priv->attackTime;
 }
 void QFeedbackEffect::setAttackTime(int msecs)
 {
-    Q_D(QFeedbackEffect);
-    if (d->attackTime == msecs)
+    if (priv->attackTime == msecs)
         return;
-    d->attackTime = msecs;
+    priv->attackTime = msecs;
     QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::AttackTime);
 }
 
@@ -144,14 +140,13 @@ void QFeedbackEffect::setAttackTime(int msecs)
 */
 qreal QFeedbackEffect::attackIntensity() const
 {
-    return d_func()->attackIntensity;
+    return priv->attackIntensity;
 }
 void QFeedbackEffect::setAttackIntensity(qreal intensity)
 {
-    Q_D(QFeedbackEffect);
-    if (d->attackIntensity == intensity)
+    if (priv->attackIntensity == intensity)
         return;
-    d->attackIntensity = intensity;
+    priv->attackIntensity = intensity;
     QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::AttackIntensity);
 }
 
@@ -163,14 +158,13 @@ void QFeedbackEffect::setAttackIntensity(qreal intensity)
 */
 int QFeedbackEffect::fadeTime() const
 {
-    return d_func()->fadeTime;
+    return priv->fadeTime;
 }
 void QFeedbackEffect::setFadeTime(int msecs)
 {
-    Q_D(QFeedbackEffect);
-    if (d->fadeTime == msecs)
+    if (priv->fadeTime == msecs)
         return;
-    d->fadeTime = msecs;
+    priv->fadeTime = msecs;
     QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::FadeTime);
 }
 
@@ -183,14 +177,13 @@ void QFeedbackEffect::setFadeTime(int msecs)
 */
 qreal QFeedbackEffect::fadeIntensity() const
 {
-    return d_func()->fadeIntensity;
+    return priv->fadeIntensity;
 }
 void QFeedbackEffect::setFadeIntensity(qreal intensity)
 {
-    Q_D(QFeedbackEffect);
-    if (d->fadeIntensity == intensity)
+    if (priv->fadeIntensity == intensity)
         return;
-    d->fadeIntensity = intensity;
+    priv->fadeIntensity = intensity;
     QFeedbackInterface::instance()->updateEffectProperty(this, QFeedbackInterface::FadeIntensity);
 }
 
@@ -202,7 +195,7 @@ void QFeedbackEffect::setFadeIntensity(qreal intensity)
 */
 QFeedbackDevice QFeedbackEffect::device() const
 {
-    return d_func()->device;
+    return priv->device;
 }
 void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
 {
@@ -211,7 +204,7 @@ void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
         return;
     }
 
-    d_func()->device = device;
+    priv->device = device;
 }
 
 /*!
@@ -223,7 +216,7 @@ void QFeedbackEffect::setDevice(const QFeedbackDevice &device)
 */
 int QFeedbackEffect::period() const
 {
-    return d_func()->period;
+    return priv->period;
 }
 void QFeedbackEffect::setPeriod(int msecs)
 {
@@ -231,7 +224,7 @@ void QFeedbackEffect::setPeriod(int msecs)
         qWarning("QFeedbackEffect::setPeriod: the period can only  be changed if the effect is stopped");
         return;
     }
-    d_func()->period = msecs;
+    priv->period = msecs;
 }
 
 /*
@@ -292,11 +285,11 @@ void QFileFeedbackEffectPrivate::finishedLoading(bool success)
     loaded = success;
     if( !success)
         backendUsed = -1;
-    emit q_func()->loadingFinished(success);
+    emit effect->loadingFinished(success);
 }
 
 
-QFileFeedbackEffect::QFileFeedbackEffect(QObject *parent) : QAbstractAnimation(*new QFileFeedbackEffectPrivate, parent)
+QFileFeedbackEffect::QFileFeedbackEffect(QObject *parent) : QAbstractAnimation(parent), priv(new QFileFeedbackEffectPrivate(this))
 {
 }
 
@@ -312,7 +305,7 @@ int QFileFeedbackEffect::duration() const
 
 QString QFileFeedbackEffect::fileName() const
 {
-    return d_func()->fileName;
+    return priv->fileName;
 }
 void QFileFeedbackEffect::setFileName(const QString &fileName)
 {
@@ -321,28 +314,27 @@ void QFileFeedbackEffect::setFileName(const QString &fileName)
         return;
     }
     setLoaded(false);
-    d_func()->fileName = fileName;
+    priv->fileName = fileName;
     setLoaded(true);
 }
 
 bool QFileFeedbackEffect::isLoading() const
 {
-    return d_func()->isLoading;
+    return priv->isLoading;
 }
 bool QFileFeedbackEffect::isLoaded() const
 {
-    return d_func()->loaded;
+    return priv->loaded;
 }
 void QFileFeedbackEffect::setLoaded(bool load)
 {
-    Q_D(QFileFeedbackEffect);
-    if (d->loaded == load && !(isLoading() && !load) )
-        return;
-
     if (state() != QAbstractAnimation::Stopped) {
         qWarning() << "QFileFeedbackEffect::setLoaded: can't load/unload a file while the effect is not stopped";
         return;
     }
+
+    if (priv->loaded == load && !(isLoading() && !load) )
+        return;
 
     QFileFeedbackInterface::instance()->setLoaded(this, load);
 }

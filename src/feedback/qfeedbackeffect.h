@@ -145,7 +145,8 @@ protected:
     void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
 
 private:
-    Q_DECLARE_PRIVATE(QFeedbackEffect)
+    friend class QFeedbackEffectPrivate;
+    QScopedPointer<QFeedbackEffectPrivate> priv;
 };
 
 class Q_FEEDBACK_EXPORT QFileFeedbackEffect : public QAbstractAnimation
@@ -187,7 +188,8 @@ protected:
 
 
 private:
-    Q_DECLARE_PRIVATE(QFileFeedbackEffect)
+    friend class QFileFeedbackEffectPrivate;
+    QScopedPointer<QFileFeedbackEffectPrivate> priv;
 };
 
 QTM_END_NAMESPACE
