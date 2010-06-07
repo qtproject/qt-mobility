@@ -160,7 +160,7 @@ void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef changedKeys, 
 }
 
 QScanThread::QScanThread(QObject *parent)
-    :QThread(parent), interfaceName(nil)
+    :QThread(parent)
 {
 }
 
