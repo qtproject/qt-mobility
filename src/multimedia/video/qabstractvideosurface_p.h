@@ -61,9 +61,203 @@
 
 #include <qabstractvideosurface.h>
 #include <qvideosurfaceformat.h>
-#include <QtCore/private/qobject_p.h>
+
+#include <QtCore/qobject.h>
+#include <QtCore/qpointer.h>
+#include <QtCore/qcoreevent.h>
+#include <QtCore/qlist.h>
+#include <QtCore/qvector.h>
+#include <QtCore/qreadwritelock.h>
+#include <QtCore/qvariant.h>
 
 QT_BEGIN_NAMESPACE
+
+#ifndef QOBJECT_P_H
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 7, 0))
+
+class QVariant;
+class QThreadData;
+class QObjectConnectionListVector;
+namespace QtSharedPointer { struct ExternalRefCountData; }
+
+enum { QObjectPrivateVersion = QT_VERSION };
+
+class QAbstractDeclarativeData;
+
+class Q_CORE_EXPORT QObjectPrivate : public QObjectData
+{
+    Q_DECLARE_PUBLIC(QObject)
+
+public:
+    struct ExtraData;
+    struct Connection;
+    // ConnectionList is a singly-linked list
+    struct ConnectionList;
+    struct Sender;
+
+    QObjectPrivate(int version = QObjectPrivateVersion);
+    virtual ~QObjectPrivate();
+    void deleteChildren();
+
+    void setParent_helper(QObject *);
+    void moveToThread_helper();
+    void setThreadData_helper(QThreadData *currentData, QThreadData *targetData);
+    void _q_reregisterTimers(void *pointer);
+
+    bool isSender(const QObject *receiver, const char *signal) const;
+    QObjectList receiverList(const char *signal) const;
+    QObjectList senderList() const;
+
+    void addConnection(int signal, Connection *c);
+    void cleanConnectionLists();
+
+#ifdef QT3_SUPPORT
+    void sendPendingChildInsertedEvents();
+    void removePendingChildInsertedEvents(QObject *child);
+#endif
+
+    static inline Sender *setCurrentSender(QObject *receiver,
+                                    Sender *sender);
+    static inline void resetCurrentSender(QObject *receiver,
+                                   Sender *currentSender,
+                                   Sender *previousSender);
+    static int *setDeleteWatch(QObjectPrivate *d, int *newWatch);
+    static void resetDeleteWatch(QObjectPrivate *d, int *oldWatch, int deleteWatch);
+    static void clearGuards(QObject *);
+
+    static QObjectPrivate *get(QObject *o) {
+        return o->d_func();
+    }
+
+    int signalIndex(const char *signalName) const;
+    inline bool isSignalConnected(uint signalIdx) const;
+
+public:
+    QString objectName;
+    ExtraData *extraData;    // extra data set by the user
+    QThreadData *threadData; // id of the thread that owns the object
+
+    QObjectConnectionListVector *connectionLists;
+
+    Connection *senders;     // linked list of connections connected to this object
+    Sender *currentSender;   // object currently activating the object
+    mutable quint32 connectedSignals[2];
+
+#ifdef QT3_SUPPORT
+    QList<QObject *> pendingChildInsertedEvents;
+#else
+    // preserve binary compatibility with code compiled without Qt 3 support
+    // keeping the binary layout stable helps the Qt Creator debugger
+    void *unused;
+#endif
+
+    QList<QPointer<QObject> > eventFilters;
+    union {
+        QObject *currentChildBeingDeleted;
+        QAbstractDeclarativeData *declarativeData; //extra data used by the declarative module
+    };
+
+    // these objects are all used to indicate that a QObject was deleted
+    // plus QPointer, which keeps a separate list
+    QAtomicPointer<QtSharedPointer::ExternalRefCountData> sharedRefcount;
+    int *deleteWatch;
+};
+
+#elif (QT_VERSION >= QT_VERSION_CHECK(4, 6, 0))
+
+class QVariant;
+class QThreadData;
+class QObjectConnectionListVector;
+namespace QtSharedPointer { struct ExternalRefCountData; }
+
+enum { QObjectPrivateVersion = QT_VERSION };
+
+class QDeclarativeData;
+
+class Q_CORE_EXPORT QObjectPrivate : public QObjectData
+{
+    Q_DECLARE_PUBLIC(QObject)
+
+public:
+    struct ExtraData;
+
+    struct Connection;
+    // ConnectionList is a singly-linked list
+    struct ConnectionList;
+    struct Sender;
+
+
+    QObjectPrivate(int version = QObjectPrivateVersion);
+    virtual ~QObjectPrivate();
+    void deleteChildren();
+
+    void setParent_helper(QObject *);
+    void moveToThread_helper();
+    void setThreadData_helper(QThreadData *currentData, QThreadData *targetData);
+    void _q_reregisterTimers(void *pointer);
+
+    bool isSender(const QObject *receiver, const char *signal) const;
+    QObjectList receiverList(const char *signal) const;
+    QObjectList senderList() const;
+
+    void addConnection(int signal, Connection *c);
+    void cleanConnectionLists();
+
+#ifdef QT3_SUPPORT
+    void sendPendingChildInsertedEvents();
+    void removePendingChildInsertedEvents(QObject *child);
+#endif
+
+    static Sender *setCurrentSender(QObject *receiver,
+                                    Sender *sender);
+    static void resetCurrentSender(QObject *receiver,
+                                   Sender *currentSender,
+                                   Sender *previousSender);
+    static int *setDeleteWatch(QObjectPrivate *d, int *newWatch);
+    static void resetDeleteWatch(QObjectPrivate *d, int *oldWatch, int deleteWatch);
+    static void clearGuards(QObject *);
+
+    static QObjectPrivate *get(QObject *o) {
+        return o->d_func();
+    }
+
+    int signalIndex(const char *signalName) const;
+    inline bool isSignalConnected(uint signalIdx) const;
+
+public:
+    QString objectName;
+    ExtraData *extraData;    // extra data set by the user
+    QThreadData *threadData; // id of the thread that owns the object
+
+    QObjectConnectionListVector *connectionLists;
+
+    Connection *senders;     // linked list of connections connected to this object
+    Sender *currentSender;   // object currently activating the object
+    mutable quint32 connectedSignals[2];
+
+#ifdef QT3_SUPPORT
+    QList<QObject *> pendingChildInsertedEvents;
+#else
+    // preserve binary compatibility with code compiled without Qt 3 support
+    // ### why?
+    QList<QObject *> unused;
+#endif
+
+    QList<QPointer<QObject> > eventFilters;
+    union {
+        QObject *currentChildBeingDeleted;
+        QDeclarativeData *declarativeData; //extra data used by the DeclarativeUI project.
+    };
+
+    // these objects are all used to indicate that a QObject was deleted
+    // plus QPointer, which keeps a separate list
+    QAtomicPointer<QtSharedPointer::ExternalRefCountData> sharedRefcount;
+    int *deleteWatch;
+};
+
+#endif
+
+#endif
 
 class QAbstractVideoSurfacePrivate : public QObjectPrivate
 {
