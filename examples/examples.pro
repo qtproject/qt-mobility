@@ -97,8 +97,11 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
-# Organizer
-contains(QT_CONFIG, declarative) {
-    SUBDIRS += timescape
+# Organizer API examples
+contains(mobility_modules, organizer) {
+    SUBDIRS += calendardemo
+    
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += timescape
+    }    
 }
-
