@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,42 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CLIENTSERVERCOMMON_H_
-#define CLIENTSERVERCOMMON_H_
+#include <mmailboxcontentobserver.h>
 
-#include <e32base.h>
-
-_LIT(KDatabaseManagerServerName, "!qsfwdatabasemanagerserver");
-_LIT(KDatabaseManagerServerProcess, "qsfwdatabasemanagerserver");
-
-const TUint KServerMajorVersionNumber = 0;
-const TUint KServerMinorVersionNumber = 1;
-const TUint KServerBuildVersionNumber = 1;
-
-IMPORT_C TInt StartThread(RThread& aServerThread);
-
-enum TDBServerRqst
+int main(int, char**)
 {
-    ERegisterServiceRequest,
-    EUnregisterServiceRequest,
-    EGetInterfacesRequest,
-    EGetServiceNamesRequest,
-    EGetServiceNamesSizeRequest,
-    EGetInterfacesSizeRequest,
-    EInterfaceDefaultRequest,
-    EInterfaceDefaultSizeRequest,
-    ESetInterfaceDefault,
-    ESetInterfaceDefault2,
-    ESetChangeNotificationsEnabledRequest,
-    ENotifyServiceSignalRequest,
-    ECancelNotifyServiceSignalRequest
-};
-
-enum TDBServerRqstComplete
-{
-    ENotifySignalComplete = 1
-};
-
-#endif // CLIENTSERVERCOMMON_H_
-
-// End of file
+    return 0;
+}

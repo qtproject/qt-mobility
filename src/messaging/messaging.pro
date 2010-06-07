@@ -138,11 +138,9 @@ SOURCES += qmessageid.cpp \
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-	exists($${EPOCROOT}epoc32\include\platform\app\emailinterfacefactory.h) {
+	contains(messaging_freestyle_enabled, yes) {
    	CONFIG += FREESTYLEMAIL
 	DEFINES += FREESTYLEMAILUSED
-	}
-	exists($${EPOCROOT}epoc32\include\platform\app\mmailboxcontentobserver.h) {
 	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
 	}
         HEADERS -= qmessagestore_p.h \

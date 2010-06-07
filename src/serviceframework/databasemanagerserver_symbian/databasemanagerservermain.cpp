@@ -39,32 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTCONTROL_H
-#define S60VIDEOOUTPUTCONTROL_H
+#include <qmobilityglobal.h>
+#include <QCoreApplication>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
+#include "databasemanagerserver.h"
+#include "clientservercommon.h"
 
-#include <QObject>
-#include <qvideooutputcontrol.h>
+QTM_USE_NAMESPACE
 
-QT_USE_NAMESPACE
-
-class S60VideoOutputControl : public QVideoOutputControl
+int main(int argc, char **argv)
 {
-    Q_OBJECT
-public:
-    S60VideoOutputControl(QObject *parent = 0);
+    QCoreApplication app(argc, argv);
+    
+    CDatabaseManagerServer* server = new CDatabaseManagerServer;
+    TInt err = server->Start(KDatabaseManagerServerName);
+    if (err != KErrAlreadyExists)
+    {
+        if (err != KErrNone)
+        {
+            CDatabaseManagerServer::PanicServer(ESvrStartServer);
+        }
+        RProcess::Rendezvous(err);
 
-    QList<Output> availableOutputs() const;
-    void setAvailableOutputs(const QList<Output> &outputs);
+        return app.exec();
+    }
+    return 0;
+}
 
-    Output output() const;
-    void setOutput(Output output);
-
-Q_SIGNALS:
-    void outputChanged(QVideoOutputControl::Output output);
-
-private:
-    QList<Output> m_outputs;
-    Output m_output;
-};
-
-#endif

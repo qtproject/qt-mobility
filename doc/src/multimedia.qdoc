@@ -58,7 +58,7 @@ collection of media content.
 
 Multimedia provides a set of APIs that allow the developer to play, record
 and manage a collection of media content. It is dependent on the
-QtMultimedia API. This API is planned to replace Phonon at a later stage.
+QtMultimediaKit module. This API is planned to replace Phonon at a later stage.
 
 \tableofcontents
 
@@ -210,7 +210,7 @@ implemented the developer will be able to quickly produce an application
 that supports the typical uses of an FM radio including tuning, volume,
 start, stop and various other controls.
 
-\section1 Extending for Symbian and Maemo
+\section1 Extending the API for Symbian and Maemo
 
 \section2 Adding a Media Service Provider
 
@@ -220,7 +220,7 @@ The base class for creating new service providers is \l{QMediaServiceProvider}. 
     QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint);
 \endcode
 
-The details of implementation will depend on the provider. Looking at the class \l QMediaServiceProviderPlugin for the default implementation. Notice that \l {QMediaServiceProviderPlugin::requestService()}{requestService()} uses the \l QMediaServiceProviderHint to look for the appropriate plugin and then to insert it into the plugin map. However, for a specific service provider there is probably no need for this approach, it will simply depend on what the developer wants to implement.
+The details of implementation will depend on the provider. Looking at the class \l QMediaServiceProvider for the default implementation. Notice that \l {QMediaServiceProvider::requestService()}{requestService()} uses the \l QMediaServiceProviderHint to look for the appropriate plugin and then to insert it into the plugin map. However, for a specific service provider there is probably no need for this approach, it will simply depend on what the developer wants to implement.
 
 Other methods that may be overloaded
 \code
@@ -274,7 +274,6 @@ QVideoWidget classes.
 \annotatedlist multimedia-serv
 
 \section2 QML multimedia elements
-\o
 \list
 \o \l {SoundEffect}{SoundEffect: Low Latency Sound Effects}
 \o \l {Audio}{Audio: Music playback}

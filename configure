@@ -470,33 +470,6 @@ else
     echo "sensord_enabled = no" >> "$CONFIG_IN"
 fi
 
-# Now module selection
-# using 'expr match ....' should help a bit
-#if [ -n "$MOBILITY_MODULES_UNPARSED" ]; then
-    # In theory we should do some sanity checking here.
-#    MOBILITY_MODULES="$MOBILITY_MODULES_UNPARSED"
-#fi
-
-# Test if able to build multimedia
-for module in $MOBILITY_MODULES; do
-    case "$module" in
-        multimedia)
-            echo "contains(QT_CONFIG,multimedia):message(1)" > 1.pro
-            SOMETHING=`qmake 1.pro 2>&1`
-            if [ "$SOMETHING" == "Project MESSAGE: 1" ]; then
-                MOBILITY_MODULES="$(echo $MOBILITY_MODULES | sed 's:multimedia::g')"
-                echo "Only one multimedia module allowed, please rebuild Qt with -no-multimedia"
-            fi
-            rm 1.pro
-            ;;
-    esac
-done
-
-if [ -z "$MOBILITY_MODULES" ]; then
-    echo "No module available to build."
-    exit 1
-fi
-
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
@@ -514,44 +487,44 @@ mkdir $shadowpath/include
 for module in $MOBILITY_MODULES; do
     case "$module" in 
         bearer)
-            $relpath/bin/syncheaders $shadowpath/include/QtmBearer $relpath/src/bearer
+            $relpath/bin/syncheaders $shadowpath/include/QtBearer $relpath/src/bearer
             ;;
         publishsubscribe)
-            $relpath/bin/syncheaders $shadowpath/include/QtmPubSub $relpath/src/publishsubscribe
+            $relpath/bin/syncheaders $shadowpath/include/QtPublishSubscribe $relpath/src/publishsubscribe
             ;;
         location)
-            $relpath/bin/syncheaders $shadowpath/include/QtmLocation $relpath/src/location
+            $relpath/bin/syncheaders $shadowpath/include/QtLocation $relpath/src/location
             ;;
         serviceframework)
-            $relpath/bin/syncheaders $shadowpath/include/QtmServiceFramework $relpath/src/serviceframework
+            $relpath/bin/syncheaders $shadowpath/include/QtServiceFramework $relpath/src/serviceframework
             ;;
         systeminfo)
-            $relpath/bin/syncheaders $shadowpath/include/QtmSystemInfo $relpath/src/systeminfo
+            $relpath/bin/syncheaders $shadowpath/include/QtSystemInfo $relpath/src/systeminfo
             ;;
         contacts)
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
             ;;
         multimedia)
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/audio
-            $relpath/bin/syncheaders $shadowpath/include $relpath/src/multimedia/video
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia/audio
+            $relpath/bin/syncheaders $shadowpath/include/QtMultimediaKit $relpath/src/multimedia/video
             ;;
         messaging)
-            $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
+            $relpath/bin/syncheaders $shadowpath/include/QtMessaging $relpath/src/messaging
             ;;
         versit)
             #versit implies contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
-            $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/filters
+            $relpath/bin/syncheaders $shadowpath/include/QtVersit $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/details
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/requests
+            $relpath/bin/syncheaders $shadowpath/include/QtContacts $relpath/src/contacts/filters
             ;;
         sensors)
-            $relpath/bin/syncheaders $shadowpath/include/QtmSensors $relpath/src/sensors
+            $relpath/bin/syncheaders $shadowpath/include/QtSensors $relpath/src/sensors
             ;;
         *)
             echo "Cannot generate headers for $module"

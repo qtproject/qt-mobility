@@ -42,12 +42,12 @@
 #include "s60audioencodercontrol.h"
 #include "s60audiocapturesession.h"
 
-#include <QAudioFormat>
+#include "qaudioformat.h"
 
 #include <QtCore/qdebug.h>
 
 S60AudioEncoderControl::S60AudioEncoderControl(QObject *session, QObject *parent)
-    :QAudioEncoderControl(parent), m_quality(QtMultimedia::NormalQuality)
+    :QAudioEncoderControl(parent), m_quality(QtMultimediaKit::NormalQuality)
 {   
     m_session = qobject_cast<S60AudioCaptureSession*>(session);
     QAudioFormat fmt = m_session->format();
@@ -73,31 +73,31 @@ QString S60AudioEncoderControl::codecDescription(const QString &codecName) const
 	return m_session->codecDescription(codecName);    
 }
 
-QtMultimedia::EncodingQuality S60AudioEncoderControl::quality() const
+QtMultimediaKit::EncodingQuality S60AudioEncoderControl::quality() const
 {
     return m_quality;
 }
 
-void S60AudioEncoderControl::setQuality(QtMultimedia::EncodingQuality value, QAudioFormat &fmt)
+void S60AudioEncoderControl::setQuality(QtMultimediaKit::EncodingQuality value, QAudioFormat &fmt)
 {
     switch (value) {
-    case QtMultimedia::VeryLowQuality:
-    case QtMultimedia::LowQuality:
+    case QtMultimediaKit::VeryLowQuality:
+    case QtMultimediaKit::LowQuality:
         // low, 8000Hz mono U8
         fmt.setSampleType(QAudioFormat::UnSignedInt);
         fmt.setSampleSize(8);
         fmt.setFrequency(8000);
         fmt.setChannels(1);
         break;
-    case QtMultimedia::NormalQuality:
+    case QtMultimediaKit::NormalQuality:
         // medium, 22050Hz mono S16
         fmt.setSampleType(QAudioFormat::SignedInt);
         fmt.setSampleSize(16);
         fmt.setFrequency(22050);
         fmt.setChannels(1);
         break;
-    case QtMultimedia::HighQuality:
-    case QtMultimedia::VeryHighQuality:    
+    case QtMultimediaKit::HighQuality:
+    case QtMultimediaKit::VeryHighQuality:
         // high, 44100Hz mono S16
         fmt.setSampleType(QAudioFormat::SignedInt);
         fmt.setSampleSize(16);
@@ -143,7 +143,7 @@ void S60AudioEncoderControl::setEncodingOption(
         QAudioFormat fmt = m_session->format();
 
         if(qstrcmp(name.toLocal8Bit().constData(), "quality") == 0) {
-            setQuality((QtMultimedia::EncodingQuality)value.toInt(), fmt);
+            setQuality((QtMultimediaKit::EncodingQuality)value.toInt(), fmt);
         } else if(qstrcmp(name.toLocal8Bit().constData(), "channels") == 0) {
             fmt.setChannels(value.toInt());
         } else if(qstrcmp(name.toLocal8Bit().constData(), "samplerate") == 0) {
@@ -169,7 +169,7 @@ QAudioEncoderSettings S60AudioEncoderControl::audioSettings() const
 void S60AudioEncoderControl::setAudioSettings(const QAudioEncoderSettings &settings)
 {
     QAudioFormat fmt = m_session->format();
-    if (settings.encodingMode() == QtMultimedia::ConstantQualityEncoding) {
+    if (settings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
         fmt.setCodec(settings.codec());
         setQuality(settings.quality(), fmt);
         if (settings.sampleRate() > 0) {

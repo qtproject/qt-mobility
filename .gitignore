@@ -23,6 +23,7 @@ config.pri
 config.in
 config.log
 mobility.prf
+mobilityconfig.prf
 bin/servicexmlgen*
 bin/servicefw*
 bin/vsexplorer*
@@ -30,9 +31,13 @@ bin/examples/*
 bin/sysinfo*
 bin/qcrmlgen*
 bin/icheck*
+bin/servicedbgen*
 install/*
 lib/*
 doc/src/snippets/sensors/sensors
+examples/audiodevices/audiodevices
+examples/audioinput/audioinput
+examples/audiooutput/audiooutput
 examples/audiorecorder/audiorecorder
 examples/bearercloud/bearercloud
 examples/bearermonitor/bearermonitor
@@ -64,6 +69,8 @@ examples/servicebrowser/servicebrowser
 examples/sfw-notes/sfw-notes
 examples/slideshow/slideshow
 examples/sysinfo/sysinfo
+examples/videographicsitem/videographicsitem
+examples/videowidget/videowidget
 examples/weatherinfo/weatherinfo_with_location
 examples/qmlcontacts/qmlcontacts
 *.app

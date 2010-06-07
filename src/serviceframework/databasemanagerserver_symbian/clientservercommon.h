@@ -38,39 +38,43 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef CLIENTSERVERCOMMON_H_
+#define CLIENTSERVERCOMMON_H_
 
-#include "s60videooutputcontrol.h"
+#include <e32base.h>
 
-S60VideoOutputControl::S60VideoOutputControl(QObject *parent)
-    : QVideoOutputControl(parent)
-    , m_output(NoOutput)
+_LIT(KDatabaseManagerServerName, "!qsfwdatabasemanagerserver");
+_LIT(KDatabaseManagerServerProcess, "qsfwdatabasemanagerserver");
+
+const TUint KServerMajorVersionNumber = 0;
+const TUint KServerMinorVersionNumber = 1;
+const TUint KServerBuildVersionNumber = 1;
+
+IMPORT_C TInt StartThread(RThread& aServerThread);
+
+enum TDBServerRqst
 {
-    setAvailableOutputs(QList<QVideoOutputControl::Output>()
-//                        << QVideoOutputControl::RendererOutput
-//                        << QVideoOutputControl::WindowOutput
-                        << QVideoOutputControl::WidgetOutput);
-}
+    ERegisterServiceRequest,
+    EUnregisterServiceRequest,
+    EServiceInitializedRequest,
+    EGetInterfacesRequest,
+    EGetServiceNamesRequest,
+    EGetServiceNamesSizeRequest,
+    EGetInterfacesSizeRequest,
+    EInterfaceDefaultRequest,
+    EInterfaceDefaultSizeRequest,
+    ESetInterfaceDefault,
+    ESetInterfaceDefault2,
+    ESetChangeNotificationsEnabledRequest,
+    ENotifyServiceSignalRequest,
+    ECancelNotifyServiceSignalRequest
+};
 
-QList<QVideoOutputControl::Output> S60VideoOutputControl::availableOutputs() const
+enum TDBServerRqstComplete
 {
-    return m_outputs;
-}
+    ENotifySignalComplete = 1
+};
 
-void S60VideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
-{
-    emit availableOutputsChanged(m_outputs = outputs);
-}
+#endif // CLIENTSERVERCOMMON_H_
 
-QVideoOutputControl::Output S60VideoOutputControl::output() const
-{
-    return m_output;
-}
-
-void S60VideoOutputControl::setOutput(Output output)
-{
-    if (!m_outputs.contains(output))
-        output = NoOutput;
-
-    if (m_output != output)
-        emit outputChanged(m_output = output);
-}
+// End of file

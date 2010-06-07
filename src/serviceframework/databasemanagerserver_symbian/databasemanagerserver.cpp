@@ -38,39 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CDATABASEMANAGERSERVER_H_
-#define CDATABASEMANAGERSERVER_H_
+#include "databasemanagerserver.h"
+#include "clientservercommon.h"
+#include "databasemanagersession.h"
+//#include <QThread>
 
-#include <qmobilityglobal.h>
-#include <e32base.h>
-#include "databasemanagerserver.pan"
-#include "databasemanagerserver_global.h"
+QTM_BEGIN_NAMESPACE
 
-//QTM_BEGIN_NAMESPACE
-namespace QtMobility {
-
-// needed for creating server thread.
-const TUint KDefaultHeapSize = 0x10000;
-
-class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServer : public CServer2
+CDatabaseManagerServer::CDatabaseManagerServer()
+    : CServer2(EPriorityNormal, ESharableSessions)
+    , iSessionCount(0)
     {
-    public:
-        CDatabaseManagerServer();
-        CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
+    }
 
-    public:
-        static void PanicServer(TDatabaseManagerSerververPanic aPanic);
+CSession2* CDatabaseManagerServer::NewSessionL(const TVersion& aVersion, const RMessage2& /*aMessage*/) const
+    {
+        if (!User::QueryVersionSupported(TVersion(KServerMajorVersionNumber, 
+                KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion))
+            {
+            User::Leave(KErrNotSupported);
+            }
         
-        void IncreaseSessions();
-        void DecreaseSessions();
-        
-    private:
-        int iSessionCount;
-    };
+        return CDatabaseManagerServerSession::NewL(*const_cast<CDatabaseManagerServer*>(this));
+    }
 
-//QTM_END_NAMESPACE
-}
+void CDatabaseManagerServer::PanicServer(TDatabaseManagerSerververPanic aPanic)
+    {
+    _LIT(KTxtServerPanic,"Database manager server panic");
+    User::Panic(KTxtServerPanic, aPanic);
+    }
 
-#endif
+void CDatabaseManagerServer::IncreaseSessions()
+    {
+    iSessionCount++;
+    }
 
+void CDatabaseManagerServer::DecreaseSessions()
+    {
+    iSessionCount--;
+    if (iSessionCount <= 0)
+        {
+        //QThread::currentThread()->quit();
+        }
+    }
+
+QTM_END_NAMESPACE
 // End of File

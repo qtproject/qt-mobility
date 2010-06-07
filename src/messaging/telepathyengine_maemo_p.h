@@ -81,6 +81,7 @@ private: //Data
     mutable QMessageAccountId defaultSmsAccountId;
     mutable QHash<QString, QMessageAccount> iAccounts;
     QEventLoop loop; // For making send message synchronous
+    bool opBusy;
 };
 
 QTM_END_NAMESPACE

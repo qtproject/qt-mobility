@@ -44,7 +44,7 @@
 
 #include <qaudioencodercontrol.h>
 #include <QtCore/qstringlist.h>
-#include <QAudioFormat>
+#include "qaudioformat.h"
 
 QT_USE_NAMESPACE
 
@@ -70,13 +70,13 @@ public:
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);    
     
 private:
-    QtMultimedia::EncodingQuality quality() const;
-    void setQuality(QtMultimedia::EncodingQuality, QAudioFormat &format);
+    QtMultimediaKit::EncodingQuality quality() const;
+    void setQuality(QtMultimediaKit::EncodingQuality, QAudioFormat &format);
 
 private:
     S60AudioCaptureSession* m_session;
     QAudioEncoderSettings m_settings;
-    QtMultimedia::EncodingQuality m_quality;
+    QtMultimediaKit::EncodingQuality m_quality;
 };
 
 #endif

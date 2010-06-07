@@ -48,7 +48,7 @@
 #include <QUrl>
 #include <QList>
 #include <QHash>
-#include <QAudioFormat>
+#include "qaudioformat.h"
 #include <qmediarecorder.h>
 
 #include <Mda\Common\Audio.h>
@@ -80,8 +80,8 @@ class S60AudioCaptureSession : public QObject, public MMdaObjectStateChangeObser
     Q_OBJECT
     Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_ENUMS(TAudioCaptureState)
-public:    
-    
+public:
+
     enum TAudioCaptureState
     {
         ENotInitialized = 0,
@@ -92,11 +92,11 @@ public:
         EPaused,
         ERecordComplete
     };
-    
+
     S60AudioCaptureSession(QObject *parent = 0);
     ~S60AudioCaptureSession();
 
-    QAudioFormat format() const;    
+    QAudioFormat format() const;
     bool setFormat(const QAudioFormat &format);
     QStringList supportedAudioCodecs() const;
     QString codecDescription(const QString &codecName);
@@ -104,22 +104,24 @@ public:
     QString audioCodec() const;
     QString audioContainer() const;
     QStringList supportedAudioContainers() const;
-    bool setAudioContainer(const QString &containerMimeType); 
+    bool setAudioContainer(const QString &containerMimeType);
     QString audioContainerDescription(const QString &containerName);
     QList<int> supportedAudioSampleRates(const QAudioEncoderSettings &settings) const;
     QUrl outputLocation() const;
     bool setOutputLocation(const QUrl& sink);
-    qint64 position() const;    
+    qint64 position() const;
     void record();
     void pause();
     void stop();
-    
-private:    
+    void mute(bool muted);
+    bool muted();
+
+private:
     void initializeSessionL();
     void setError(TInt aError);
-    QMediaRecorder::Error fromSymbianErrorToMultimediaError(int error);    
+    QMediaRecorder::Error fromSymbianErrorToMultimediaError(int error);
     QString initializeSinkL();
-    void updateAudioContainersL();    
+    void updateAudioContainersL();
     void populateAudioCodecsDataL();
     void retrieveSupportedAudioSampleRatesL();
     void applyAudioSettingsL();
@@ -130,7 +132,7 @@ private:
     void MoscoStateChangeEvent(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
-            TInt aCurrentState, TInt aErrorCode);    
+            TInt aCurrentState, TInt aErrorCode);
 
 public slots:
     void setCaptureDevice(const QString &deviceName);
@@ -141,17 +143,18 @@ Q_SIGNALS:
     void error(int error, const QString &errorString);
 
 private:
-    QString m_container;    
+    QString m_container;
     QString m_captureDevice;
     QUrl m_sink;
     TTimeIntervalMicroSeconds m_pausedPosition;
     CMdaAudioRecorderUtility *m_recorderUtility;
     TAudioCaptureState m_captureState;
-    QAudioFormat m_format;    
+    QAudioFormat m_format;
     QHash<QString, ControllerData> m_controllerIdMap;
     QHash<QString, CodecData>  m_audioCodeclist;
-    QList<int> m_supportedSampleRates;    
-    int m_error; 
+    QList<int> m_supportedSampleRates;
+    int m_error;
+    bool isMuted;
 };
 
 #endif // S60AUDIOCAPTURESESSION_H

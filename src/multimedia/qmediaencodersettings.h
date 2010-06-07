@@ -66,8 +66,8 @@ public:
 
     bool isNull() const;
 
-    QtMultimedia::EncodingMode encodingMode() const;
-    void setEncodingMode(QtMultimedia::EncodingMode);
+    QtMultimediaKit::EncodingMode encodingMode() const;
+    void setEncodingMode(QtMultimediaKit::EncodingMode);
 
     QString codec() const;
     void setCodec(const QString& codec);
@@ -81,8 +81,8 @@ public:
     int sampleRate() const;
     void setSampleRate(int rate);
 
-    QtMultimedia::EncodingQuality quality() const;
-    void setQuality(QtMultimedia::EncodingQuality quality);
+    QtMultimediaKit::EncodingQuality quality() const;
+    void setQuality(QtMultimediaKit::EncodingQuality quality);
 
 private:
     QSharedDataPointer<QAudioEncoderSettingsPrivate> d;
@@ -103,8 +103,8 @@ public:
 
     bool isNull() const;
 
-    QtMultimedia::EncodingMode encodingMode() const;
-    void setEncodingMode(QtMultimedia::EncodingMode);
+    QtMultimediaKit::EncodingMode encodingMode() const;
+    void setEncodingMode(QtMultimediaKit::EncodingMode);
 
     QString codec() const;
     void setCodec(const QString &);
@@ -119,8 +119,8 @@ public:
     int bitRate() const;
     void setBitRate(int bitrate);
 
-    QtMultimedia::EncodingQuality quality() const;
-    void setQuality(QtMultimedia::EncodingQuality quality);
+    QtMultimediaKit::EncodingQuality quality() const;
+    void setQuality(QtMultimediaKit::EncodingQuality quality);
 
 private:
     QSharedDataPointer<QVideoEncoderSettingsPrivate> d;
@@ -148,8 +148,8 @@ public:
     void setResolution(const QSize &);
     void setResolution(int width, int height);
 
-    QtMultimedia::EncodingQuality quality() const;
-    void setQuality(QtMultimedia::EncodingQuality quality);
+    QtMultimediaKit::EncodingQuality quality() const;
+    void setQuality(QtMultimediaKit::EncodingQuality quality);
 
 private:
     QSharedDataPointer<QImageEncoderSettingsPrivate> d;

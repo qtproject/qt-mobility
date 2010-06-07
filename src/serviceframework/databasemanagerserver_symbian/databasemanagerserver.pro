@@ -1,21 +1,19 @@
-TEMPLATE = lib
+TEMPLATE = app
 TARGET = qsfwdatabasemanagerserver
 QT = core sql
+TARGET.UID3 = 0x2002AC7F
 
-TARGET.UID3 = 0x2002BFBE
+CONFIG += no_icon
 
-DEFINES += QT_BUILD_SFW_LIB QT_MAKEDLL
-DEFINES += DATABASEMANAGERSERVER_LIBRARY
+DEFINES += QTM_SERVICEFW_SYMBIAN_DATABASEMANAGER_SERVER
 DEFINES += QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 
-DEPENDPATH += ../..
+SOURCES += databasemanagerservermain.cpp
 
-include(../../../../common.pri)
-# override the defFilePath set by common.pri
-defFilePath=../../../s60installs
+include(../../../common.pri)
 
 
-DEPENDPATH += ..
+DEPENDPATH += ../
 
 HEADERS +=  servicemetadata_p.h \
             servicedatabase_p.h \
@@ -40,6 +38,5 @@ SOURCES +=  servicemetadata.cpp \
             databasemanagersession.cpp \
             databasemanagersignalhandler.cpp
 
-# These capabilities cannot be reduced as long as QtServiceFramework.dll links against
-# this .dll
-TARGET.CAPABILITY = ALL -TCB
+#ProtServ is needed so that the server can be in protected namespace (start with '!' -mark).
+TARGET.CAPABILITY = ProtServ
