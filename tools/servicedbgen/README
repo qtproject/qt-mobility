@@ -1,45 +1,53 @@
 *) Intended readers:
-The servicedbgen tool is mainly intended to be used as a Symbian product creation time tool for prepopulating 
-Qt Serviceframework databases. It is not a tool for normal runtime / application usage.  However, it may
-be useful also for development-phase and testing purposes.
+
+The servicedbgen tool is intended to be used during Symbian rom
+creation for prepopulating  Qt Serviceframework databases. It is not a
+tool for normal runtime or application usage,  although it may be
+useful also for development or testing purposes.
 
 *) Overview:
-The servicedbgen tool is a command line application to populate Qt Serviceframework databases. 
-In principle, the tool takes XML files describing the service as input, and produces SQLite databases as output.
-Services can be both added and removed.
 
-The tool is intended to run on the cross-compiling machine (i.e. Windows or Linux) and is therefore delivered as a prebuilt 
-application along with the SDK (servicedbgen.exe). The tool can be invoked in two different ways. The first one is the conventional invokation 
-from the command line  with necessary parameters. The second one is to type directives into your project's .pro-file and let qmake + make
-take care of automagically running the tool. The latter approach is also the one used in product creation time.
+The servicedbgen tool is a command line application to populate Qt
+Serviceframework databases.  The tool takes XML files describing the
+service, and produces SQLite databases.  Services can  be added and
+removed.
+
+Servicedbgen runs on the cross-compiling machine (i.e. Windows or
+Linux) and is delivered as a prebuilt  application along with the SDK,
+or must compiled with host tools. It can be invoked  from the command
+line or by directives in your project's .pro-file. Qmake and make can
+then run the tool automatically. The latter approach is used at Symbian
+rom creation time.
 
 *) Design:
-The design of the servicedbgen tool itself is straightforward. It takes in commandline parameters, parses and 
-executes them. For the database population the tool uses the same servicedatabase creation components as the Qt 
-Serviceframework itself. Therefore whenever the tool is rebuilt, it reflects the latest changes
-in database components too.
 
-There are two main ways to run the tool: individual mode and batch mode. In individual mode, the tool is given
-individual XML files as input. In batch mode, the tool reads XML files from given the directory, or from default
-directory if none given. It is worthwhile to note that the tool uses Nokia Vendor ID as the security token when adding
-the services. Therefore if an application needs to tweak the preinstalled services during runtime, it needs to be 
-equipped with Nokia Vendor ID.
+The tool uses the same servicedatabase creation components as the Qt 
+Serviceframework. Therefore whenever the tool is rebuilt, it reflects
+the latest changes in database components.
 
-Some services may require initialization prior to their first usage (e.g. to initialize databases etc.). 
-This can be indicated by giving an option for the tool to indicate that initialization is needed for the given service(s).  
-As a result, the QServiceManager will later call QServicePluginInterface::installService() for those services when the service is
-loaded first time i.e. QServiceManager::loadInterface() is called.
+There are two operating modes, individual and batch mode. In individual
+mode, the tool is given individual XML files as input. In batch mode,
+the tool reads XML files from a given directory, or from a default
+directory if none given. The tool uses Nokia Vendor ID as the security
+token when adding the services. If an application needs to change the
+preinstalled services during runtime, it needs to be  equipped with
+Nokia Vendor ID.
 
-The tool supports both WINSCW emulator as well as hardware targets. The resulting databases are identical, but
-the locations differ (see Appendix). 
+Services that require initialization prior to their first usage (e.g.
+to initialize databases etc.)  can set a parameter.  QServiceManager
+will call QServicePluginInterface::installService() when the service is
+loaded first time when QServiceManager::loadInterface() is called.
 
-*)Usage from command line
+The tool supports WINSCW emulator and hardware targets. The resulting
+databases are identical, but the locations differ (see Appendix). 
+
+*) Command line use
 
 The usage of the tool is as follows:
+
 servicedbgen [options] <command> [command parameters]
 
-To see the list of all available options, 
-type 'servicedbgen --help'.
+To see the list of all available options,  type 'servicedbgen --help'.
 
 Basic usage examples:
  - registering service1 and service2 for winscw target:
@@ -57,29 +65,31 @@ Basic usage examples:
 
 The default target, if unspecified, is '-tall'.
 
-*) Usage from .pro-file
+*) Project file use
 
-Add following lines to your project's .pro-file (inside a symbian-block):
+Add following lines to your project's .pro file (inside a
+symbian-block):
 
-CONFIG += QTSERVICE                  // qmake magic, causes processing of qtservice.prf
-QTSERVICE.DESCRIPTOR = <XML files>   // the list of service descriptor XML files
-QTSERVICE.INITIALIZE = yes           // add  this if given descriptors need initialization
+CONFIG += qtservice                  # qmake magic, causes processing of qtservice.prf
+QTSERVICE.DESCRIPTOR = <XML files>   # the list of service descriptor XML files
+QTSERVICE.INITIALIZE = yes           # add  this if given descriptors need initialization
 
 ----------- Appendix
 
-Note: data in the appendix is subject to changes over tame, and merely to demonstrate the 
-principles. If up-to-date information is needed, please refer to the implementation.
-
 *) Database locations
-These are the paths where the tool stores the resulting db. The tool does not provide
-choice to alternate these destinations, because the Qt Serviceframework looks up from
-these databases.
-"/epoc32/winscw/c/data/temp/QtServiceFW" // Emulator 
+
+Paths to the db. They can not be changed since Qt Serviceframework is
+hardcoded to these paths.
+
+"/epoc32/winscw/c/data/temp/QtServiceFW" // Emulator without WDS
+"/epoc32/winscw/c/private/2002AC7F/Nokia" // Emulator with WDS
 "/epoc32/data/c/private/2002AC7F/Nokia"  // HW
 
 *) Default XML lookup paths
-These are the paths where the tool looks for XML files (.xml) if 
-batch option was given and no path was specified.
+
+These are the paths where the tool looks for XML files (.xml) if  batch
+option was given and no path was specified.
+
 "/epoc32/winscw/c/private/2002AC7F/Nokia/des" // Emulator
 "/epoc32/data/z/private/2002AC7F/Nokia/des"   // HW
 
