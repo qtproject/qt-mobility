@@ -54,15 +54,23 @@ SimulatorMagnetometer::SimulatorMagnetometer(QSensor *sensor)
 void SimulatorMagnetometer::poll()
 {
     QtMobility::QMagnetometerReadingData data = get_qtMagnetometerData();
+    qtimestamp newTimestamp;
     if (!data.timestamp.isValid())
-        m_reading.setTimestamp(QDateTime::currentDateTime().toTime_t());
+        newTimestamp = QDateTime::currentDateTime().toTime_t();
     else
-        m_reading.setTimestamp(data.timestamp.toTime_t());
-    m_reading.setX(data.x);
-    m_reading.setY(data.y);
-    m_reading.setZ(data.z);
-    m_reading.setCalibrationLevel(data.calibrationLevel);
+        newTimestamp = data.timestamp.toTime_t();
+    if (m_reading.timestamp() != newTimestamp
+        || m_reading.x() != data.x
+        || m_reading.y() != data.y
+        || m_reading.z() != data.z
+        || m_reading.calibrationLevel() != data.calibrationLevel) {
+            m_reading.setTimestamp(newTimestamp);
+            m_reading.setX(data.x);
+            m_reading.setY(data.y);
+            m_reading.setZ(data.z);
+            m_reading.setCalibrationLevel(data.calibrationLevel);
 
-    newReadingAvailable();
+            newReadingAvailable();
+    }
 }
 
