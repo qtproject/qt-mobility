@@ -1989,7 +1989,7 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
   if (paramValues.isEmpty())
     paramValues << "VOICE";
   
-  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, false, detail.detailUri().toInt());
+  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
 }
 
 void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const
