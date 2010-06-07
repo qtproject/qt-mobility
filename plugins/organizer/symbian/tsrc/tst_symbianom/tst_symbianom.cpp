@@ -216,7 +216,7 @@ void tst_SymbianOm::addItem_data()
 void tst_SymbianOm::addItem()
 {
     QFETCH(QStringList, detailsString);
-    QList<QOrganizerItemDetail> details(QList<QOrganizerItemDetail>());
+    QList<QOrganizerItemDetail> details;
     QVERIFY(parseDetails(detailsString, details));
 
     // Create item and set it's details
