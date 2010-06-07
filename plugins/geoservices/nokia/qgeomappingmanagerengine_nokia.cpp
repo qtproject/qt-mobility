@@ -116,6 +116,7 @@ QGeoTiledMapReply* QGeoMappingManagerThreadNokia::getTileImage(const QGeoTiledMa
 
     QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
 
+    qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
     return mapReply;
 }
 

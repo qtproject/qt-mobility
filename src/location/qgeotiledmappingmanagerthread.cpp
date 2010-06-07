@@ -173,7 +173,8 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
 
             for (int i = 0; i < replyList.size(); ++i) {
                 replyList.at(i)->abort();
-                replyList.at(i)->deleteLater();
+                //TODO: make sure that abort will always cause an error on the reply
+                //replyList.at(i)->deleteLater();
             }
             replies.clear();
 
@@ -195,7 +196,8 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
             for (int i = 0; i < replyList.size(); ++i) {
                 if (screenRect.intersected(replyList.at(i)->request().tileRect()).isEmpty()) {
                     replyList.at(i)->abort();
-                    replyList.at(i)->deleteLater();
+                    //TODO: make sure that abort will always cause an error on the reply
+                    //replyList.at(i)->deleteLater();
                     replies.remove(replyList.at(i));
                 } else {
                     if (replyList.at(i)->error() == QGeoTiledMapReply::NoError)

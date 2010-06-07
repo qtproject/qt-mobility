@@ -44,6 +44,8 @@
 
 #include "qgeotiledmaprequest.h"
 
+#include <qdebug.h>
+
 QTM_BEGIN_NAMESPACE
 /*!
     \class QGeoTiledMapReply
