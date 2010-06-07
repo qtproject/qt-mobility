@@ -39,18 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
+#ifndef QORGANIZERITEMDATETIMEPERIODFILTER_H
+#define QORGANIZERITEMDATETIMEPERIODFILTER_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Organizer API.
+#include <QDateTime>
+#include "qorganizeritemfilter.h"
 
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
-#include "qorganizeritemdatetimeperiodfilter.h"
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemDateTimePeriodFilterPrivate;
+class Q_ORGANIZER_EXPORT QOrganizerItemDateTimePeriodFilter : public QOrganizerItemFilter
+{
+public:
+    QOrganizerItemDateTimePeriodFilter();
+    QOrganizerItemDateTimePeriodFilter(const QOrganizerItemFilter& other);
+
+    void setStartPeriod(const QDateTime& start);
+    void setEndPeriod(const QDateTime& end) ;
+
+    /* Accessors */
+    QDateTime startPeriod() const;
+    QDateTime endPeriod() const;
+
+private:
+    Q_DECLARE_ORGANIZERITEMFILTER_PRIVATE(QOrganizerItemDateTimePeriodFilter)
+};
+
+QTM_END_NAMESPACE
+
 #endif

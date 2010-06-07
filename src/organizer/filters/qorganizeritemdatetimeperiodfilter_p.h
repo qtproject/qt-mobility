@@ -39,18 +39,61 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMFILTERS_H
-#define QORGANIZERITEMFILTERS_H
+#ifndef QORGANIZERITEMDATETIMEPERIODFILTER_P_H
+#define QORGANIZERITEMDATETIMEPERIODFILTER_P_H
 
-// this file includes all of the leaf filter classes
-// provided by the Qt Organizer API.
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include "qorganizeritemunionfilter.h"
-#include "qorganizeritemchangelogfilter.h"
-#include "qorganizeritemdetailfilter.h"
-#include "qorganizeritemdetailrangefilter.h"
-#include "qorganizeritemintersectionfilter.h"
-#include "qorganizeriteminvalidfilter.h"
-#include "qorganizeritemlocalidfilter.h"
+#include "qorganizeritemfilter_p.h"
+#include "qorganizeritemfilter.h"
+
 #include "qorganizeritemdatetimeperiodfilter.h"
+
+#include <QDateTime>
+
+
+QTM_BEGIN_NAMESPACE
+
+class QOrganizerItemDateTimePeriodFilterPrivate : public QOrganizerItemFilterPrivate
+{
+public:
+    QOrganizerItemDateTimePeriodFilterPrivate()
+        : QOrganizerItemFilterPrivate()
+    {
+    }
+
+    QOrganizerItemDateTimePeriodFilterPrivate(const QOrganizerItemDateTimePeriodFilterPrivate& other)
+        : QOrganizerItemFilterPrivate(other),
+        m_start(other.m_start),
+        m_end(other.m_end)
+    {
+    }
+
+    virtual bool compare(const QOrganizerItemFilterPrivate* other) const
+    {
+        const QOrganizerItemDateTimePeriodFilterPrivate *od = static_cast<const QOrganizerItemDateTimePeriodFilterPrivate*>(other);
+        if (m_start != od->m_start)
+            return false;
+        if (m_end != od->m_end)
+            return false;
+        return true;
+    }
+
+    Q_IMPLEMENT_ORGANIZERITEMFILTER_VIRTUALCTORS(QOrganizerItemDateTimePeriodFilter, QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter)
+
+    QDateTime  m_start;
+    QDateTime  m_end;
+};
+
+QTM_END_NAMESPACE
+
 #endif

@@ -71,6 +71,7 @@ public:
         InvalidFilter,
         OrganizerItemDetailFilter,
         OrganizerItemDetailRangeFilter,
+        OrganizerItemDateTimePeriodFilter,
         ChangeLogFilter,
         ActionFilter,
         IntersectionFilter,
