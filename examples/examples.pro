@@ -64,10 +64,8 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 
 #Multimedia
 contains(mobility_modules,multimedia) {
-    #disabled on Symbian due to missing backend
     SUBDIRS += \
         radio \
-        player \
         slideshow \
         audiorecorder \
         audiodevices \

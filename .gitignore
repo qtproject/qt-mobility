@@ -35,6 +35,7 @@ bin/servicedbgen*
 install/*
 lib/*
 doc/src/snippets/sensors/sensors
+demos/player/player
 examples/audiodevices/audiodevices
 examples/audioinput/audioinput
 examples/audiooutput/audiooutput
@@ -44,7 +45,6 @@ examples/bearermonitor/bearermonitor
 examples/flickrdemo/flickrdemo
 examples/lightmaps/lightmaps_with_location
 examples/logfilepositionsource/logfilepositionsource
-examples/player/player
 examples/publish-subscribe/publish-subscribe
 examples/radio/radio
 examples/samplephonebook/samplephonebook
