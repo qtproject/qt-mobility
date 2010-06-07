@@ -63,7 +63,7 @@ examples/sensors/small_screen_sensors/SmallSensors
 examples/servicebrowser/servicebrowser
 examples/sfw-notes/sfw-notes
 examples/slideshow/slideshow
-examples/sysinfo/sysinfo
+examples/sysinfo/qsysinfo
 examples/weatherinfo/weatherinfo_with_location
 examples/qmlcontacts/qmlcontacts
 *.app
