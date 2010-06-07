@@ -53,6 +53,9 @@ QTM_USE_NAMESPACE
 // Some big enough value for nested versit documents to prevent infinite recursion
 #define MAX_VERSIT_DOCUMENT_NESTING_DEPTH 20
 
+QHash<QPair<QVersitDocument::VersitType,QString>, QVersitProperty::ValueType>*
+    QVersitReaderPrivate::mValueTypeMap = 0;
+
 /*!
   \class LineReader
   \brief The LineReader class is a wrapper around a QIODevice that allows line-by-line reading.
