@@ -3,7 +3,7 @@ TARGET = serviceactions
 
 QT += gui
 
-include(../examples.pri)
+include(../../examples/examples.pri)
 
 CONFIG += mobility
 MOBILITY = messaging
@@ -11,8 +11,8 @@ INCLUDEPATH += ../../src/messaging
 
 symbian|win32|wince*|maemo5|mac {
 } else {
-# Temporarily link against local qtopiamail lib (should be part of the platform)
-LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
+    # Temporarily link against local qtopiamail lib (should be part of the platform)
+    LIBS += -L $$(QMF_LIBDIR) -lqtopiamail
 }
 
 HEADERS += \

@@ -55,6 +55,7 @@ set WIN32_RELEASEMODE=debug_and_release build_all
 set QT_MOBILITY_LIB=
 set BUILD_UNITTESTS=no
 set BUILD_EXAMPLES=no
+set BUILD_DEMOS=no
 set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
 set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
@@ -83,6 +84,7 @@ if "%1" == "-headerdir"         goto headerTag
 if "%1" == "-plugindir"         goto pluginTag
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
+if "%1" == "-demos"             goto demosTag
 if "%1" == "-qt"                goto qtTag
 if "%1" == "-vc"                goto vcTag
 if "%1" == "-no-docs"           goto nodocsTag
@@ -122,6 +124,7 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     Note, this adds test symbols to all libraries
     echo                     and should not be used for release builds.
     echo -examples ......... Build example applications
+    echo -demos ............ Build demo applications
     echo -no-docs .......... Do not build documentation (build by default)
     echo -modules ^<list^> ... Build only the specified modules (default all)
     echo                     Choose from: bearer contacts location publishsubscribe
@@ -210,6 +213,11 @@ goto cmdline_parsing
 
 :exampleTag
 set BUILD_EXAMPLES=yes
+shift
+goto cmdline_parsing
+
+:demosTag
+set BUILD_DEMOS=yes
 shift
 goto cmdline_parsing
 
@@ -330,6 +338,9 @@ set BUILD_UNITTESTS=
 
 echo build_examples = %BUILD_EXAMPLES% >> %PROJECT_CONFIG%
 set BUILD_EXAMPLES=
+
+echo build_demos = %BUILD_DEMOS% >> %PROJECT_CONFIG%
+set BUILD_DEMOS=
 
 echo build_docs = %BUILD_DOCS% >> %PROJECT_CONFIG%
 set BUILD_DOCS=

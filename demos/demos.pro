@@ -1,0 +1,21 @@
+include(../staticconfig.pri)
+
+TEMPLATE = subdirs
+
+#Multimedia demos
+contains(mobility_modules,multimedia) {
+    SUBDIRS += \
+        player
+}
+
+#Messaging demos
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+    contains(mobility_modules,messaging) {
+        !win32-g++ {
+	    SUBDIRS += \
+                serviceactions
+         }
+    }
+}
+
+
