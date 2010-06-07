@@ -205,6 +205,10 @@ QLandmarkManager *QLandmarkAbstractRequest::manager() const
 
 /*!
     Sets the \a manager which this request operates on.
+
+    Note that if a NULL manager is set, the functions
+    start(), cancel() and waitForFinished() will return false and
+    error will be set to QLandmarkManager::InvalidManagerError.
 */
 void QLandmarkAbstractRequest::setManager(QLandmarkManager *manager)
 {
