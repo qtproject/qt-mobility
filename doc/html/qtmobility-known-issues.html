@@ -15,7 +15,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Release Notes of the QtMobility Project<br /><span class="subtitle"></span>
 </h1>
 <p>An up-to-date list of known issues with the release can be found via the <a href="http://bugreports.qt.nokia.com">QtMobility Project Bug Tracker</a> on the Qt website which provides additional information about known issues and tasks related to Qt and the QtMobility Project.</p>
-<p>The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see <a href="index.html#platform-compatability">Platform Compatability</a>.</p>
+<p>The new Qt APIs are typically supported by backends for each platform. For overall summary of the completeness/compatibility of support for a given API see <a href="index.html#platform-compatibility">Platform Compatibility</a>.</p>
 <ul><li><a href="#new-features">New Features</a></li>
 <ul><li><a href="#detailed-feature-support-symbian-s60">Detailed Feature support - Symbian/S60</a></li>
 <ul><li><a href="#bearer-management-api">Bearer Management API</a></li>
@@ -117,6 +117,11 @@
 <ul>
 <li>Qt Mobility does not compile if Qt using a namespace.</li>
 <li>Not all example applications will display(fit) well on small screens.</li>
+<li>Prefixed paths in includes such as<pre>    #include &lt;QtLibrary/MyClass&gt;</pre>
+<p>or</p>
+<pre>    #include &lt;QtLibrary/myclass.h&gt;</pre>
+<p>do not currently work on Symbian.</p>
+</li>
 </ul>
 <a name="contacts-api"></a>
 <h3>Contacts API</h3>
@@ -130,10 +135,12 @@
 <ul>
 <li>Messaging filtering and sorting functions are not fully optimized.</li>
 <li>Fremantle: <tt>modest</tt> process must be restarted before Fremantle backend is fully operational. This can be achieved by restarting the device.</li>
+<li>Fremantle: <tt>SMS</tt> sending is failing when using MessagingEx example. Regression wrt 1.0&#x2e;0 release. serviceactions and writemessage work OK.</li>
 <li>Fremantle: <tt>QMessageService::show</tt> not supported for SMS type messages.</li>
 <li>Fremantle: <tt>QMessageManager::updateMessage</tt> is not supported.</li>
 <li>Fremantle: <tt>QMessageManager::addMessage</tt> is not supported for SMS type messages.</li>
-<li>Fremantle and Windows: <tt>QMessageServiceAction::send</tt>: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's disgression.</li>
+<li>Fremantle: <tt>QMessageManager::addMessage</tt> can not be used to set priority and status of email messages.</li>
+<li>Fremantle and Windows: <tt>QMessageServiceAction::send</tt>: Only queues a message for sending, message may or may not be sent depending on connection status and is at the platform's discretion.</li>
 <li>Fremantle, S60 and Windows: <tt>QMessageManager::addMessage</tt> can not be used to set size of messages.</li>
 <li>Fremantle and Windows: <tt>QMessageManager::addMessage</tt> can not be used to set the date of messages.</li>
 <li>S60: Only one level of folders is supported &lt;=&gt; Symbian/S60 applications do not use nested folders</li>

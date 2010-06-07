@@ -3575,105 +3575,105 @@
             <keyword name="Qt Mobility Project APIs Overview" id="Qt Mobility Project APIs Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
             <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
-            <keyword name="QtMultimedia" id="QtMultimedia" ref="qtmultimedia.html"/>
-            <keyword name="QtMultimedia::AvailabilityError" id="QtMultimedia::AvailabilityError" ref="qtmultimedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMultimedia::NoError" id="QtMultimedia::NoError" ref="qtmultimedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMultimedia::ServiceMissingError" id="QtMultimedia::ServiceMissingError" ref="qtmultimedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMultimedia::BusyError" id="QtMultimedia::BusyError" ref="qtmultimedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMultimedia::ResourceError" id="QtMultimedia::ResourceError" ref="qtmultimedia.html#AvailabilityError-enum"/>
-            <keyword name="QtMultimedia::EncodingMode" id="QtMultimedia::EncodingMode" ref="qtmultimedia.html#EncodingMode-enum"/>
-            <keyword name="QtMultimedia::ConstantQualityEncoding" id="QtMultimedia::ConstantQualityEncoding" ref="qtmultimedia.html#EncodingMode-enum"/>
-            <keyword name="QtMultimedia::ConstantBitRateEncoding" id="QtMultimedia::ConstantBitRateEncoding" ref="qtmultimedia.html#EncodingMode-enum"/>
-            <keyword name="QtMultimedia::AverageBitRateEncoding" id="QtMultimedia::AverageBitRateEncoding" ref="qtmultimedia.html#EncodingMode-enum"/>
-            <keyword name="QtMultimedia::TwoPassEncoding" id="QtMultimedia::TwoPassEncoding" ref="qtmultimedia.html#EncodingMode-enum"/>
-            <keyword name="QtMultimedia::EncodingQuality" id="QtMultimedia::EncodingQuality" ref="qtmultimedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMultimedia::VeryLowQuality" id="QtMultimedia::VeryLowQuality" ref="qtmultimedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMultimedia::LowQuality" id="QtMultimedia::LowQuality" ref="qtmultimedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMultimedia::NormalQuality" id="QtMultimedia::NormalQuality" ref="qtmultimedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMultimedia::HighQuality" id="QtMultimedia::HighQuality" ref="qtmultimedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMultimedia::VeryHighQuality" id="QtMultimedia::VeryHighQuality" ref="qtmultimedia.html#EncodingQuality-enum"/>
-            <keyword name="QtMultimedia::MetaData" id="QtMultimedia::MetaData" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Title" id="QtMultimedia::Title" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::SubTitle" id="QtMultimedia::SubTitle" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Author" id="QtMultimedia::Author" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Comment" id="QtMultimedia::Comment" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Description" id="QtMultimedia::Description" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Category" id="QtMultimedia::Category" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Genre" id="QtMultimedia::Genre" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Year" id="QtMultimedia::Year" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Date" id="QtMultimedia::Date" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::UserRating" id="QtMultimedia::UserRating" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Keywords" id="QtMultimedia::Keywords" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Language" id="QtMultimedia::Language" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Publisher" id="QtMultimedia::Publisher" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Copyright" id="QtMultimedia::Copyright" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ParentalRating" id="QtMultimedia::ParentalRating" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::RatingOrganisation" id="QtMultimedia::RatingOrganisation" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Size" id="QtMultimedia::Size" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::MediaType" id="QtMultimedia::MediaType" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Duration" id="QtMultimedia::Duration" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::AudioBitRate" id="QtMultimedia::AudioBitRate" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::AudioCodec" id="QtMultimedia::AudioCodec" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::AverageLevel" id="QtMultimedia::AverageLevel" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ChannelCount" id="QtMultimedia::ChannelCount" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::PeakValue" id="QtMultimedia::PeakValue" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::SampleRate" id="QtMultimedia::SampleRate" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::AlbumTitle" id="QtMultimedia::AlbumTitle" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::AlbumArtist" id="QtMultimedia::AlbumArtist" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ContributingArtist" id="QtMultimedia::ContributingArtist" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Composer" id="QtMultimedia::Composer" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Conductor" id="QtMultimedia::Conductor" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Lyrics" id="QtMultimedia::Lyrics" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Mood" id="QtMultimedia::Mood" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::TrackNumber" id="QtMultimedia::TrackNumber" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::TrackCount" id="QtMultimedia::TrackCount" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::CoverArtUrlSmall" id="QtMultimedia::CoverArtUrlSmall" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::CoverArtUrlLarge" id="QtMultimedia::CoverArtUrlLarge" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Resolution" id="QtMultimedia::Resolution" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::PixelAspectRatio" id="QtMultimedia::PixelAspectRatio" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::VideoFrameRate" id="QtMultimedia::VideoFrameRate" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::VideoBitRate" id="QtMultimedia::VideoBitRate" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::VideoCodec" id="QtMultimedia::VideoCodec" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::PosterUrl" id="QtMultimedia::PosterUrl" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ChapterNumber" id="QtMultimedia::ChapterNumber" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Director" id="QtMultimedia::Director" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::LeadPerformer" id="QtMultimedia::LeadPerformer" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Writer" id="QtMultimedia::Writer" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::CameraManufacturer" id="QtMultimedia::CameraManufacturer" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::CameraModel" id="QtMultimedia::CameraModel" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Event" id="QtMultimedia::Event" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Subject" id="QtMultimedia::Subject" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Orientation" id="QtMultimedia::Orientation" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ExposureTime" id="QtMultimedia::ExposureTime" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::FNumber" id="QtMultimedia::FNumber" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ExposureProgram" id="QtMultimedia::ExposureProgram" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ISOSpeedRatings" id="QtMultimedia::ISOSpeedRatings" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ExposureBiasValue" id="QtMultimedia::ExposureBiasValue" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::DateTimeOriginal" id="QtMultimedia::DateTimeOriginal" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::DateTimeDigitized" id="QtMultimedia::DateTimeDigitized" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::SubjectDistance" id="QtMultimedia::SubjectDistance" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::MeteringMode" id="QtMultimedia::MeteringMode" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::LightSource" id="QtMultimedia::LightSource" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Flash" id="QtMultimedia::Flash" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::FocalLength" id="QtMultimedia::FocalLength" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ExposureMode" id="QtMultimedia::ExposureMode" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::WhiteBalance" id="QtMultimedia::WhiteBalance" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::DigitalZoomRatio" id="QtMultimedia::DigitalZoomRatio" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::FocalLengthIn35mmFilm" id="QtMultimedia::FocalLengthIn35mmFilm" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::SceneCaptureType" id="QtMultimedia::SceneCaptureType" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::GainControl" id="QtMultimedia::GainControl" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Contrast" id="QtMultimedia::Contrast" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Saturation" id="QtMultimedia::Saturation" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::Sharpness" id="QtMultimedia::Sharpness" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::DeviceSettingDescription" id="QtMultimedia::DeviceSettingDescription" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::PosterImage" id="QtMultimedia::PosterImage" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::CoverArtImage" id="QtMultimedia::CoverArtImage" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::ThumbnailImage" id="QtMultimedia::ThumbnailImage" ref="qtmultimedia.html#MetaData-enum"/>
-            <keyword name="QtMultimedia::SupportEstimate" id="QtMultimedia::SupportEstimate" ref="qtmultimedia.html#SupportEstimate-enum"/>
-            <keyword name="QtMultimedia::NotSupported" id="QtMultimedia::NotSupported" ref="qtmultimedia.html#SupportEstimate-enum"/>
-            <keyword name="QtMultimedia::MaybeSupported" id="QtMultimedia::MaybeSupported" ref="qtmultimedia.html#SupportEstimate-enum"/>
-            <keyword name="QtMultimedia::ProbablySupported" id="QtMultimedia::ProbablySupported" ref="qtmultimedia.html#SupportEstimate-enum"/>
-            <keyword name="QtMultimedia::PreferredService" id="QtMultimedia::PreferredService" ref="qtmultimedia.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit" id="QtMultimediaKit" ref="qtmultimediakit.html"/>
+            <keyword name="QtMultimediaKit::AvailabilityError" id="QtMultimediaKit::AvailabilityError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::NoError" id="QtMultimediaKit::NoError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::ServiceMissingError" id="QtMultimediaKit::ServiceMissingError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::BusyError" id="QtMultimediaKit::BusyError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::ResourceError" id="QtMultimediaKit::ResourceError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::EncodingMode" id="QtMultimediaKit::EncodingMode" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::ConstantQualityEncoding" id="QtMultimediaKit::ConstantQualityEncoding" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::ConstantBitRateEncoding" id="QtMultimediaKit::ConstantBitRateEncoding" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::AverageBitRateEncoding" id="QtMultimediaKit::AverageBitRateEncoding" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::TwoPassEncoding" id="QtMultimediaKit::TwoPassEncoding" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::EncodingQuality" id="QtMultimediaKit::EncodingQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::VeryLowQuality" id="QtMultimediaKit::VeryLowQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::LowQuality" id="QtMultimediaKit::LowQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::NormalQuality" id="QtMultimediaKit::NormalQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::HighQuality" id="QtMultimediaKit::HighQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::VeryHighQuality" id="QtMultimediaKit::VeryHighQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::MetaData" id="QtMultimediaKit::MetaData" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Title" id="QtMultimediaKit::Title" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SubTitle" id="QtMultimediaKit::SubTitle" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Author" id="QtMultimediaKit::Author" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Comment" id="QtMultimediaKit::Comment" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Description" id="QtMultimediaKit::Description" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Category" id="QtMultimediaKit::Category" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Genre" id="QtMultimediaKit::Genre" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Year" id="QtMultimediaKit::Year" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Date" id="QtMultimediaKit::Date" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::UserRating" id="QtMultimediaKit::UserRating" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Keywords" id="QtMultimediaKit::Keywords" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Language" id="QtMultimediaKit::Language" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Publisher" id="QtMultimediaKit::Publisher" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Copyright" id="QtMultimediaKit::Copyright" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ParentalRating" id="QtMultimediaKit::ParentalRating" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::RatingOrganisation" id="QtMultimediaKit::RatingOrganisation" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Size" id="QtMultimediaKit::Size" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::MediaType" id="QtMultimediaKit::MediaType" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Duration" id="QtMultimediaKit::Duration" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AudioBitRate" id="QtMultimediaKit::AudioBitRate" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AudioCodec" id="QtMultimediaKit::AudioCodec" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AverageLevel" id="QtMultimediaKit::AverageLevel" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ChannelCount" id="QtMultimediaKit::ChannelCount" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::PeakValue" id="QtMultimediaKit::PeakValue" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SampleRate" id="QtMultimediaKit::SampleRate" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AlbumTitle" id="QtMultimediaKit::AlbumTitle" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AlbumArtist" id="QtMultimediaKit::AlbumArtist" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ContributingArtist" id="QtMultimediaKit::ContributingArtist" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Composer" id="QtMultimediaKit::Composer" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Conductor" id="QtMultimediaKit::Conductor" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Lyrics" id="QtMultimediaKit::Lyrics" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Mood" id="QtMultimediaKit::Mood" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::TrackNumber" id="QtMultimediaKit::TrackNumber" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::TrackCount" id="QtMultimediaKit::TrackCount" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CoverArtUrlSmall" id="QtMultimediaKit::CoverArtUrlSmall" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CoverArtUrlLarge" id="QtMultimediaKit::CoverArtUrlLarge" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Resolution" id="QtMultimediaKit::Resolution" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::PixelAspectRatio" id="QtMultimediaKit::PixelAspectRatio" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::VideoFrameRate" id="QtMultimediaKit::VideoFrameRate" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::VideoBitRate" id="QtMultimediaKit::VideoBitRate" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::VideoCodec" id="QtMultimediaKit::VideoCodec" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::PosterUrl" id="QtMultimediaKit::PosterUrl" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ChapterNumber" id="QtMultimediaKit::ChapterNumber" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Director" id="QtMultimediaKit::Director" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::LeadPerformer" id="QtMultimediaKit::LeadPerformer" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Writer" id="QtMultimediaKit::Writer" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CameraManufacturer" id="QtMultimediaKit::CameraManufacturer" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CameraModel" id="QtMultimediaKit::CameraModel" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Event" id="QtMultimediaKit::Event" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Subject" id="QtMultimediaKit::Subject" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Orientation" id="QtMultimediaKit::Orientation" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ExposureTime" id="QtMultimediaKit::ExposureTime" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::FNumber" id="QtMultimediaKit::FNumber" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ExposureProgram" id="QtMultimediaKit::ExposureProgram" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ISOSpeedRatings" id="QtMultimediaKit::ISOSpeedRatings" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ExposureBiasValue" id="QtMultimediaKit::ExposureBiasValue" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::DateTimeOriginal" id="QtMultimediaKit::DateTimeOriginal" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::DateTimeDigitized" id="QtMultimediaKit::DateTimeDigitized" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SubjectDistance" id="QtMultimediaKit::SubjectDistance" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::MeteringMode" id="QtMultimediaKit::MeteringMode" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::LightSource" id="QtMultimediaKit::LightSource" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Flash" id="QtMultimediaKit::Flash" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::FocalLength" id="QtMultimediaKit::FocalLength" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ExposureMode" id="QtMultimediaKit::ExposureMode" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::WhiteBalance" id="QtMultimediaKit::WhiteBalance" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::DigitalZoomRatio" id="QtMultimediaKit::DigitalZoomRatio" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::FocalLengthIn35mmFilm" id="QtMultimediaKit::FocalLengthIn35mmFilm" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SceneCaptureType" id="QtMultimediaKit::SceneCaptureType" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::GainControl" id="QtMultimediaKit::GainControl" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Contrast" id="QtMultimediaKit::Contrast" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Saturation" id="QtMultimediaKit::Saturation" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Sharpness" id="QtMultimediaKit::Sharpness" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::DeviceSettingDescription" id="QtMultimediaKit::DeviceSettingDescription" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::PosterImage" id="QtMultimediaKit::PosterImage" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CoverArtImage" id="QtMultimediaKit::CoverArtImage" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ThumbnailImage" id="QtMultimediaKit::ThumbnailImage" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SupportEstimate" id="QtMultimediaKit::SupportEstimate" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit::NotSupported" id="QtMultimediaKit::NotSupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit::MaybeSupported" id="QtMultimediaKit::MaybeSupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit::ProbablySupported" id="QtMultimediaKit::ProbablySupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit::PreferredService" id="QtMultimediaKit::PreferredService" ref="qtmultimediakit.html#SupportEstimate-enum"/>
             <keyword name="Query Messages Example" id="Query Messages Example" ref="querymessages.html"/>
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
@@ -4176,7 +4176,6 @@
             <file>qcontactinvalidengine.html</file>
             <file>qmediaplayer.html</file>
             <file>qambientlightfilter-members.html</file>
-            <file>qtmultimedia.html</file>
             <file>qgeoareamonitor.html</file>
             <file>qcontactphonenumber-members.html</file>
             <file>images/sample-phonebook-1.png</file>
@@ -4305,6 +4304,7 @@
             <file>multimedia.html</file>
             <file>qcontactinvalidfilter-members.html</file>
             <file>qmagnetometerfilter-members.html</file>
+            <file>qtmultimediakit.html</file>
             <file>player-mediakeysobserver-cpp.html</file>
             <file>qmlcontacts-main-cpp.html</file>
             <file>qmediaserviceprovider.html</file>

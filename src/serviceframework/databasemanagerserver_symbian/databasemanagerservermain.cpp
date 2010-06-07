@@ -38,53 +38,33 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#include <qmobilityglobal.h>
+#include <QCoreApplication>
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
 #include "databasemanagerserver.h"
 #include "clientservercommon.h"
-#include "databasemanagersession.h"
-#ifdef __WINS__
-#include <QThread>
-#endif
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-CDatabaseManagerServer::CDatabaseManagerServer()
-    : CServer2(EPriorityNormal)
-    , iSessionCount(0)
+int main(int argc, char **argv)
+{
+    QCoreApplication app(argc, argv);
+    
+    CDatabaseManagerServer* server = new CDatabaseManagerServer;
+    TInt err = server->Start(KDatabaseManagerServerName);
+    if (err != KErrAlreadyExists)
     {
-    }
-
-CSession2* CDatabaseManagerServer::NewSessionL(const TVersion& aVersion, const RMessage2& /*aMessage*/) const
-    {
-        if (!User::QueryVersionSupported(TVersion(KServerMajorVersionNumber, 
-                KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion))
-            {
-            User::Leave(KErrNotSupported);
-            }
-        
-        return CDatabaseManagerServerSession::NewL(*const_cast<CDatabaseManagerServer*>(this));
-    }
-
-void CDatabaseManagerServer::PanicServer(TDatabaseManagerSerververPanic aPanic)
-    {
-    _LIT(KTxtServerPanic,"Database manager server panic");
-    User::Panic(KTxtServerPanic, aPanic);
-    }
-
-void CDatabaseManagerServer::IncreaseSessions()
-    {
-    iSessionCount++;
-    }
-
-void CDatabaseManagerServer::DecreaseSessions()
-    {
-    iSessionCount--;
-    if (iSessionCount <= 0)
+        if (err != KErrNone)
         {
-#ifdef __WINS__        
-        QThread::currentThread()->quit();
-#endif
+            CDatabaseManagerServer::PanicServer(ESvrStartServer);
         }
-    }
+        RProcess::Rendezvous(err);
 
-QTM_END_NAMESPACE
-// End of File
+        return app.exec();
+    }
+    return 0;
+}
+

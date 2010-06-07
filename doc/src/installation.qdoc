@@ -46,7 +46,7 @@
 \tableofcontents
 
 \section1 Get the Qt Mobility API Package
-To begin, obtain the most recent distrubution package from 
+To begin, obtain the most recent distribution package from
 \l {http://get.qt.nokia.com}
 
 \section1 Pre-requisites & Dependencies
@@ -164,7 +164,7 @@ these domains have dependencies and these are outlined below:
        although System Information will compile without them, there will be reduced functionality. It also depends on QtGui.
        
        On Mac, it depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile
-       with older SDK's but there will be reduced functionality.
+       with older SSDKsbut there will be reduced functionality.
 
        On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
     \o N(Y)
