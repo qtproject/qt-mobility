@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,7 +53,7 @@ S60RadioTunerService::~S60RadioTunerService()
 	delete m_playerControl;
 }
 
-QMediaControl *S60RadioTunerService::control(const char* name) const
+QMediaControl *S60RadioTunerService::requestControl(const char* name)
 {
 	if (qstrcmp(name, QRadioTunerControl_iid) == 0)
 		return m_playerControl;
@@ -61,3 +61,7 @@ QMediaControl *S60RadioTunerService::control(const char* name) const
 	return 0;
 }
 
+void S60RadioTunerService::releaseControl(QMediaControl *control)
+{
+	Q_UNUSED(control);
+}

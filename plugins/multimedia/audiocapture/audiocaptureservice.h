@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,7 +61,8 @@ public:
     AudioCaptureService(QObject *parent = 0);
     ~AudioCaptureService();
 
-    QMediaControl *control(const char *name) const;
+    QMediaControl *requestControl(const char *interface);
+    void releaseControl(QMediaControl *control);
 private:
     AudioCaptureSession       *m_session;
     AudioEncoderControl       *m_encoderControl;

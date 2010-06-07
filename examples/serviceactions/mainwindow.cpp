@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -381,7 +381,6 @@ void RecentMessagesWidget::messagesFound(const QMessageIdList& ids)
 
 void RecentMessagesWidget::stateChanged(QMessageService::State newState)
 {
-    //  qDebug() << "stateChanged state=" << m_state << " newState=" << newState << "error=" << m_service->error();
     if (newState == QMessageService::FinishedState) {
         if ((m_state != LoadFailed) && (m_service->error() == QMessageManager::NoError)) {
             m_state = LoadFinished;
@@ -504,7 +503,6 @@ void RecentMessagesWidget::load()
     bool b;
 
     b=m_service->queryMessages(QMessageFilter(),QMessageSortOrder::byReceptionTimeStamp(Qt::DescendingOrder),m_maxRecent);
-    //    qDebug() << "RecentMessagesWidget::load" << b << m_state;
 //! [load-message]
 };
 
@@ -517,7 +515,7 @@ void RecentMessagesWidget::processResults()
         QMessage message(id);
 
         QListWidgetItem* newItem = new QListWidgetItem(message.from().addressee()+QString(":")+message.subject());
-		newItem->setData(MessageIdRole,id.toString());
+        newItem->setData(MessageIdRole,id.toString());
         QFont itemFont = newItem->font();
         bool isPartialMessage = !message.find(message.bodyId()).isContentAvailable();
         itemFont.setItalic(isPartialMessage);

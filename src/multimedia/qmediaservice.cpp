@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,7 +53,7 @@ QT_BEGIN_NAMESPACE
     \class QMediaService
     \brief The QMediaService class provides a common base class for media
     service implementations.
-    \ingroup multimedia-serv
+    \ingroup multimedia
     \preliminary
 
     Media services provide implementations of the functionality promised
@@ -66,12 +66,12 @@ QT_BEGIN_NAMESPACE
     the media object, or features of a secondary media object or peripheral
     object.
 
-    A pointer to media service's QMediaControl implementation can be
-    obtained by passing the control's interface name to the control() function.
+    A pointer to media service's QMediaControl implementation can be obtained
+    by passing the control's interface name to the requestControl() function.
 
     \code
     QMediaPlayerControl *control = qobject_cast<QMediaPlayerControl *>(
-            service->control("com.nokia.Qt.QMediaPlayerControl/1.0"));
+            service->requestControl("com.nokia.Qt.QMediaPlayerControl/1.0"));
     \endcode
 
     Media objects can use services loaded dynamically from plug-ins or
@@ -114,19 +114,33 @@ QMediaService::~QMediaService()
 }
 
 /*!
-    \fn QMediaService::control(const char *interface) const
+    \fn QMediaService::requestControl(const char *interface)
 
     Returns a pointer to the media control implementing \a interface.
 
-    If the service does not implement the control a null pointer is returned instead.
+    If the service does not implement the control, or if it is unavailable a
+    null pointer is returned instead.
+
+    Controls must be returned to the service when no longer needed using the
+    releaseControl() function.
 */
 
 /*!
-    \fn QMediaService::control() const
+    \fn QMediaService::requestControl() const
 
     Returns a pointer to the media control of type T implemented by a media service.
 
-    If the service does not implment the control a null pointer is returned instead.
+    If the service does not implement the control, or if it is unavailable a
+    null pointer is returned instead.
+
+    Controls must be returned to the service when no longer needed using the
+    releaseControl() function.
+*/
+
+/*!
+    \fn QMediaService::releaseControl(QMediaControl *control);
+
+    Releases a \a control back to the service.
 */
 
 #include "moc_qmediaservice.cpp"

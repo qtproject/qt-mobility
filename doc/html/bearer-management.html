@@ -15,9 +15,9 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Bearer Management<br /><span class="subtitle"></span>
 </h1>
 <p>Bearer Management controls the connectivity state of the system so that the user can start or stop interfaces or roam transparently between access points.</p>
-<ul><li><a href="#namespace">Namespace</a></li>
-<li><a href="#overview">Overview</a></li>
-<ul><li><a href="#the-api-in-detail">The API in Detail</a></li>
+<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#migration-to-qt-4-7-or-higher">Migration to Qt 4.7 or higher</a></li>
+<li><a href="#the-api-in-detail">The API in Detail</a></li>
 <ul><li><a href="#service-networks">Service networks</a></li>
 <li><a href="#managing-network-sessions">Managing network sessions</a></li>
 <li><a href="#roaming">Roaming</a></li>
@@ -33,14 +33,16 @@
 </ul>
 <li><a href="#classes">Classes</a></li>
 </ul>
-<a name="namespace"></a>
-<h3>Namespace</h3>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>The Bearer Management API controls the system's connectivity state. This incorporates simple information such as whether the device is online and how many interfaces there are as well as enables the application developer to start, stop network interfaces and influences other connection specific details. Depending on the platform's capabilities it may even provide session management so that a network interface remains up for as long as clients have a registered interest in them while at the same time optimizes the interface's uptime.</p>
-<p>This API is a key enabler for HTTP level roaming in <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a>.</p>
 <p>This API does not provide support for management of network configurations themselves. It is up to the platform to provide infrastructure which enables to user to create, edit or delete network configurations.</p>
+<a name="migration-to-qt-4-7-or-higher"></a>
+<h4>Migration to Qt 4.7 or higher</h4>
+<p>The Bearer API has been migrated to the Qt 4.7 <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a> library. This enables connection manager and roaming support for <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a>. Starting with Qt 4.7 the Mobility version has been deprecated in favor of Qt's Bearer API. Furthermore the roaming enabled <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a> cannot be used in connection with Mobility's Bearer API.</p>
+<p>The porting effort from Mobility Bearer to Qt Bearer is minimal as the relevant classes are source compatible. The only exception is the removal of the QtMobility namespace. Already deployed applications will continue to work but cannot make use of the new features in Qt 4.7 and <a href="http://qt.nokia.com/doc/4.6/qnetworkaccessmanager.html">QNetworkAccessManager</a>.</p>
+<p>An application can select the Bearer API to be used via its project file. As long as the MOBILITY variable contains the <tt>bearer</tt> string the project will link Mobility's bearer library (even if the project links against <a href="http://qt.nokia.com/doc/4.6/qtnetwork.html">QtNetwork</a> at the same time).</p>
+<pre>    MOBILITY+=bearer   #choose Mobility bearer</pre>
 <a name="the-api-in-detail"></a>
 <h4>The API in Detail</h4>
 <p>Computer systems manage their network interfaces via a set of configurations. Each configuration describes a set of parameters which instruct the system how a particular network interface is started. One of the most simplistic examples might be an Ethernet configuration that links a network card to a DHCP server. A more complex example might be a Wireless LAN configuration which may comprise of hardware details such as the WLAN card address, WLAN access point details (e.g ESSID, encryption details) and user specific information (for example username and password). Once the network interface was configured and started according to the configuration blue print, multiple applications are free to use this link layer connection/session for their own socket operations. Note that the <a href="qnetworkconfiguration.html">QNetworkConfiguration</a> object only provides limited information about the configuration details themselves. It's main purpose is to act as a configuration identifier through which link layer connections can be created, destroyed and monitored.</p>
@@ -85,7 +87,7 @@
 <h5>Managing network sessions</h5>
 <p>A <a href="qnetworksession.html">QNetworkSession</a> object separates a <a href="qnetworksession.html#state">state()</a> and an <a href="qnetworksession.html#isOpen">isOpen()</a> condition.</p>
 <p>The state() attribute enables developers to detect whether the system currently maintains a global network session for the given <a href="qnetworkconfiguration.html">QNetworkConfiguration</a>. If <a href="qnetworksession.html#isOpen">isOpen()</a> returns true the <a href="qnetworksession.html">QNetworkSession</a> instance at hand was at least one of the entities requesting the global network session. This distinction is required to support the notion of session registrations. For as long as there are one or more open <a href="qnetworksession.html">QNetworkSession</a> instances the underlying network interface is not shut down. Therefore the session <a href="qnetworksession.html#state">state()</a> can be used to monitor the state of network interfaces.</p>
-<p>An open session is created by calling <a href="qnetworksession.html#open">QNetworkSession::open</a>() and closed via <a href="qnetworksession.html#close">QNetworkSession::close</a>(), respectively. If the session is <a href="qnetworksession.html#State-enum">disconnected</a> at the time of the <a href="qnetworksession.html#open">open()</a> call the underlying interface is started; otherwise only the reference counter against the global session is incremeted. The opposite behavior can be observed when using <a href="qnetworksession.html#close">close()</a>.</p>
+<p>An open session is created by calling <a href="qnetworksession.html#open">QNetworkSession::open</a>() and closed via <a href="qnetworksession.html#close">QNetworkSession::close</a>(), respectively. If the session is <a href="qnetworksession.html#State-enum">disconnected</a> at the time of the <a href="qnetworksession.html#open">open()</a> call the underlying interface is started; otherwise only the reference counter against the global session is incremented. The opposite behavior can be observed when using <a href="qnetworksession.html#close">close()</a>.</p>
 <p>In some use cases it may be necessary to turn the interface off despite of open sessions. This can be achieved by calling <a href="qnetworksession.html#stop">stop()</a>. An example use case could be a network manager type of application allowing the user to control the overall state of the devices connectivity.</p>
 <p>Global (inter-process) session support is platform dependent and can be detected via <a href="qnetworkconfigurationmanager.html#Capability-enum">QNetworkConfigurationManager::SystemSessionSupport</a>. If the system does not support global session calling <a href="qnetworksession.html#close">close()</a> never stops the interface.</p>
 <a name="roaming"></a>
@@ -133,7 +135,7 @@
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

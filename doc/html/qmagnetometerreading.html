@@ -65,26 +65,10 @@
 <a name="qmagnetometerreading-units"></a>
 <h3>QMagnetometerReading Units</h3>
 <p>The magnetometer returns magnetic flux density values along 3 axes. The scale of the values is teslas. The axes are arranged as follows.</p>
-<pre>             +z
-              |
-              |      +y
-              |     /
-              |----/----
-             /| NOKIA  /|
-            <span class="comment">//|--/--- / |</span>
-           <span class="comment">// | /   //  /</span>
-          <span class="comment">//  |/   //  /</span>
-         <span class="comment">//   '--------------- +x</span>
-        <span class="comment">//       //  /</span>
-       <span class="comment">//       //  /</span>
-      /---------/  /
-     /    O    /  /
-    /         /  /
-    ----------  /
-    |_________!/</pre>
-<p>The magnetometer can report on either raw magnetic flux values or geomagnetic flux values. By default it returns raw magnetic flux values. The <a href="qmagnetometer.html#returnGeoValues-prop">QMagnetometer::returnGeoValues</a> property must be set to return geomagnetic flux values.</p>
+<p align="center"><img src="images/sensors-coordinates2.jpg" /></p><p>The magnetometer can report on either raw magnetic flux values or geomagnetic flux values. By default it returns raw magnetic flux values. The <a href="qmagnetometer.html#returnGeoValues-prop">QMagnetometer::returnGeoValues</a> property must be set to return geomagnetic flux values.</p>
 <p>The primary difference between raw and geomagnetic values is that extra processing is done to eliminate local magnetic interference from the geomagnetic values so they represent only the effect of the Earth's magnetic field. This process is not perfect and the accuracy of each reading may change.</p>
-<p>The accuracy of each reading is measured as a number from 0 to 1. A value of 1 is the highest level that the device can support and 0 is the worst.</p>
+<p>The image below shows the difference between geomagnetic (on the left) and raw (on the right) readings for a phone that is being subjected to magnetic interference.</p>
+<p align="center"><img src="images/sensors-geo-vs-raw-magnetism.jpg" /></p><p>The accuracy of each reading is measured as a number from 0 to 1. A value of 1 is the highest level that the device can support and 0 is the worst.</p>
 <hr />
 <h2>Property Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMagnetometerReading/calibrationLevel"></a>
@@ -144,7 +128,7 @@
 <p>See also <a href="qmagnetometerreading.html#z-prop">z</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

@@ -24,7 +24,7 @@
 <li><a href="publish-subscribe-publish-subscribe-pro.html">publish-subscribe/publish-subscribe.pro</a></li>
 </ul>
 <p>The Publish and Subscribe example shows how to use the Qt Publish and Subscribe API to publish and retrieve values from the platforms Publish and Subscribe system.</p>
-<p>This example program can act either a publisher of Value Space content, a subscriber of a Value Space content or both. It can also optionally act as the Value Space Manager. The behavior is selected by passing a combination of three optional command line parameters when starting the program. If no parameters are supplied the program defaults to acting as both a publisher and subscriber.</p>
+<p>This example program can act as either a publisher of Value Space content, a subscriber of Value Space content or both. It can also optionally act as the Value Space Manager. The behavior is selected by passing a combination of three optional command line parameters when starting the program. If no parameters are supplied the program defaults to acting as both a publisher and a subscriber.</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Parameter</th><th>Description</th></tr></thead>
 <tr valign="top" class="odd"><td>-server</td><td>Starts the Value Space Server. Only one instance should be started with the this parameter. This parameter is only needed if the Value Space will use a layer that has a client-server architecture and a server needs to be started.</td></tr>
@@ -33,8 +33,8 @@
 </table></p>
 <a name="publisher"></a>
 <h2>Publisher</h2>
-<p>When acting as a publisher of Value Space content the program creates a PublisherDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> and widgets for setting the value of the two fixed attributes 'intValue' and 'stringValue'.</p>
-<p align="center"><img src="images/publish-subscribe-publisher.png" /></p><p>We declare three slots which we will use to respond to user input in the dialog.</p>
+<p>When acting as a publisher of Value Space content the program creates a PublisherDialog. This dialog contains a widget for setting the base path of the <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> and widgets for setting the value of the three fixed attributes 'intValue', 'stringValue' and 'byteArrayValue'.</p>
+<p align="center"><img src="images/publish-subscribe-publisher.png" /></p><p>We declare the slots which we will use to respond to user input in the dialog.</p>
 <pre>    private slots:
         void createNewObject();
         void intValueChanged(int value);
@@ -47,16 +47,21 @@
         connect(ui-&gt;unsetIntButton, SIGNAL(clicked()), this, SLOT(unsetIntValue()));
         connect(ui-&gt;setStringButton, SIGNAL(clicked()), this, SLOT(setStringValue()));
         connect(ui-&gt;setByteArrayButton, SIGNAL(clicked()), this, SLOT(setByteArrayValue()));</pre>
-<p>To publish values in the Value Space we first need to create a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a>. We do this in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other two slots.</p>
+<p>To publish values in the Value Space we first need to create a <a href="qvaluespacepublisher.html">QValueSpacePublisher</a>. This is done in the <tt>createNewObject()</tt> slot, which is also used to handle changes in the base path. After the object is constructed we publish the initial values by explicitly calling the other slots.</p>
 <pre>    void PublisherDialog::createNewObject()
     {
         if (publisher)
             delete publisher;
 
-        publisher = new QValueSpacePublisher(ui-&gt;basePath-&gt;text());
-        intValueChanged(ui-&gt;intValue-&gt;value());
-        setStringValue();
-        setByteArrayValue();
+        publisher = new QValueSpacePublisher(QValueSpace::WritableLayer, ui-&gt;basePath-&gt;text());
+        if (publisher-&gt;isConnected()) {
+            ui-&gt;setters-&gt;setEnabled(true);
+            intValueChanged(ui-&gt;intValue-&gt;value());
+            setStringValue();
+            setByteArrayValue();
+        } else {
+            ui-&gt;setters-&gt;setEnabled(false);
+        }
     }</pre>
 <p>We use <a href="qvaluespacepublisher.html#setValue">QValueSpacePublisher::setValue</a>() to set the values in response to dialog input.</p>
 <pre>    void PublisherDialog::intValueChanged(int value)
@@ -88,7 +93,7 @@
         void changeSubscriberPath();
         void subscriberChanged();</pre>
 <p>To read values from the Value Space we first create a <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> and connect to the <tt>contentsChanged()</tt> signal.</p>
-<p>We explicitly call our <tt>itemChanged()</tt> slot to populate the table with the initial values.</p>
+<p>We explicitly call our <tt>subscriberChanged()</tt> slot to populate the table with the initial values.</p>
 <pre>    void SubscriberDialog::changeSubscriberPath()
     {
         if (listWidget)
@@ -143,7 +148,7 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

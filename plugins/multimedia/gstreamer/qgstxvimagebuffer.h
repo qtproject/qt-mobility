@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,11 +42,13 @@
 #ifndef QGSTXVIMAGEBUFFER_H
 #define QGSTXVIMAGEBUFFER_H
 
-#include <QtMultimedia/qabstractvideobuffer.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
+#include <qabstractvideobuffer.h>
+#include <qvideosurfaceformat.h>
 #include <QtCore/qmutex.h>
 #include <QtCore/qwaitcondition.h>
 #include <QtCore/qqueue.h>
+
+#ifndef QT_NO_XVIDEO
 
 #include <X11/Xlib.h>
 #include <sys/ipc.h>
@@ -116,5 +118,7 @@ private:
     QList<QGstXvImageBuffer*> m_allBuffers;
     QList<XvShmImage> m_imagesToDestroy;
 };
+
+#endif //QT_NO_XVIDEO
 
 #endif

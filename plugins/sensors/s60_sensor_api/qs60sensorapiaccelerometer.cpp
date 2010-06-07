@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
+#if !defined(HAS_NO_SENSOR_PROVISION)
 //Symbian
 #include <e32std.h>
 #include <rrsensorapi.h>
@@ -48,7 +50,7 @@
 // Constants
 const int KAccelerometerSensorUID = 0x10273024;
 
-const char *QS60SensorApiAccelerometer::id("s60sensorapi.accelerometer");
+char const * const QS60SensorApiAccelerometer::id("s60sensorapi.accelerometer");
 
 QS60SensorApiAccelerometer::QS60SensorApiAccelerometer(QSensor *sensor)
     : QSensorBackend(sensor)
@@ -70,7 +72,6 @@ QS60SensorApiAccelerometer::QS60SensorApiAccelerometer(QSensor *sensor)
     
     // 2G - mode
     addDataRate(100, 100);
-    sensor->setDataRate(100);
     addOutputRange(-22.418, 22.418, 0.17651);
     setDescription(QLatin1String("lis302dl"));
     
@@ -141,3 +142,4 @@ void QS60SensorApiAccelerometer::findAndCreateNativeSensorL()
     
     CleanupStack::PopAndDestroy(&sensorList);
 }
+#endif

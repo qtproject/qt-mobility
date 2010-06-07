@@ -59,13 +59,6 @@ access points.
 
 \tableofcontents
 
-\section1 Namespace
-
-The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility API's into Qt. See the
-\l {Quickstart Example}{Quickstart guide} for an example on how the
-namespace impacts on application development.
-
 \section1 Overview
 
 The Bearer Management API controls the system's connectivity state. This
@@ -77,12 +70,31 @@ session management so that a network interface remains up for as long as
 clients have a registered interest in them while at the same time
 optimizes the interface's uptime.
 
-This API is a key enabler for HTTP level roaming in
-\l {QNetworkAccessManager}{QNetworkAccessManager}.
-
 This API does not provide support for management of network configurations
 themselves. It is up to the platform to provide infrastructure which
 enables to user to create, edit or delete network configurations.
+
+\section2 Migration to Qt 4.7 or higher
+
+The Bearer API has been migrated to the Qt 4.7 QtNetwork library. This enables
+connection manager and roaming support for \l QNetworkAccessManager.
+Starting with Qt 4.7 the Mobility version has been deprecated in favor of
+Qt's Bearer API. Furthermore the roaming enabled QNetworkAccessManager cannot be used
+in connection with Mobility's Bearer API.
+
+The porting effort from Mobility Bearer to Qt Bearer is minimal as
+the relevant classes are source compatible. The only exception is the
+removal of the QtMobility namespace. Already deployed applications will continue
+to work but cannot make use of the new features in Qt 4.7 and QNetworkAccessManager.
+
+An application can select the Bearer API to be used via its project file.
+As long as the MOBILITY variable contains the \c bearer string the project
+will link Mobility's bearer library (even if the project links against QtNetwork at the same time).
+
+\code
+    MOBILITY+=bearer   #choose Mobility bearer
+\endcode
+
 
 \section2 The API in Detail
 
@@ -221,7 +233,7 @@ closed via \l{QNetworkSession::close()}, respectively. If the session
 is \l{QNetworkSession::Disconnected}{disconnected} at the time of the
 \l{QNetworkSession::open()}{open()} call the underlying interface is started;
 otherwise only the reference counter against the global session is
-incremeted. The opposite behavior can be observed when using
+incremented. The opposite behavior can be observed when using
 \l{QNetworkSession::close()}{close()}.
 
 In some use cases it may be necessary to turn the interface off despite of

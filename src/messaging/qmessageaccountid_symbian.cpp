@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -102,9 +102,11 @@ bool QMessageAccountId::operator<(const QMessageAccountId& other) const
     long right = 0;
     if (d_ptr) {
         left = SymbianHelpers::stripIdPrefix(d_ptr->_id).toLong();
+        //left = d_ptr->_id.toLong();
     }
     if (other.d_ptr) {
         right = SymbianHelpers::stripIdPrefix(other.d_ptr->_id).toLong();
+        //right = other.d_ptr->_id.toLong();
     }
 
     return (left < right);

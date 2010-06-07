@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -52,10 +52,11 @@ QT_BEGIN_NAMESPACE
     \brief The QVideoRendererControl class provides a control for rendering
     to a video surface.
 
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
-    Using the surface() property of QVideoRendererControl a QAbstractVideoSurface
-    may be set as the video render target of a QMediaService.
+    Using the surface() property of QVideoRendererControl a
+    QAbstractVideoSurface may be set as the video render target of a
+    QMediaService.
 
     \code
     QVideoRendererControl *rendererControl = mediaService->control<QVideoRendererControl *>();
@@ -63,9 +64,9 @@ QT_BEGIN_NAMESPACE
     \endcode
 
     QVideoRendererControl is one of number of possible video output controls,
-    in order to receive video it must be made the active video output
-    control by setting the output property of QVideoOutputControl to
-    \l {QVideoOutputControl::RendererOutput}{RendererOutput}. Consequently any
+    in order to receive video it must be made the active video output control
+    by setting the output property of QVideoOutputControl to \l
+    {QVideoOutputControl::RendererOutput}{RendererOutput}. Consequently any
     QMediaService that implements QVideoRendererControl must also implement
     QVideoOutputControl.
 
@@ -77,7 +78,7 @@ QT_BEGIN_NAMESPACE
     The interface name of QVideoRendererControl is \c com.nokia.Qt.QVideoRendererControl/1.0 as
     defined in QVideoRendererControl_iid.
 
-    \sa QMediaService::control(), QVideoOutputControl, QVideoWidget
+    \sa QMediaService::requestControl(), QVideoOutputControl, QVideoWidget
 */
 
 /*!

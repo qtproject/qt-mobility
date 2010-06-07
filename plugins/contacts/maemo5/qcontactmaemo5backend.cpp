@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -97,17 +97,38 @@ QString QContactMaemo5Engine::managerName() const
 /* Synthesise the display label of a contact */
 QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
-  Q_UNUSED(error)
-  QString label = QContactManagerEngine::synthesizedDisplayLabel(contact, error);
+  QString label;
   
-  if (label.isEmpty()) {
-    QContactNickname n = contact.detail(QContactNickname::DefinitionName);
-    label = n.nickname();
+  // Try to get the display name from the OSSO-ABook Contact
+  label = d->m_abook->getDisplayName(contact);
+  
+  // Synthesise the display label for not saved contacts
+  // A. FirstName + LastName
+  if (label.isEmpty()){
+    QContactName name = contact.detail(QContactName::DefinitionName);
+    QStringList nameList;
+    
+    nameList << name.firstName();
+    if (name.lastName().count()){
+      nameList << name.lastName();
+    }
+    
+    label = nameList.join(QString(' '));
   }
   
-  if (label.isEmpty())
-    label = "No name";
+  // B. Email
+  if (label.isEmpty()){
+    QContactEmailAddress email = contact.detail(QContactEmailAddress::DefinitionName);
+    label = email.emailAddress();
+  }
   
+  // 
+  if (label.isEmpty()){
+    *error = QContactManager::UnspecifiedError;
+    return QString("No name");
+  }
+  
+  *error = QContactManager::NoError;
   return label;
 }
 
@@ -144,8 +165,26 @@ QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& fi
 {
   Q_CHECK_PTR(d->m_abook);
   
-  //return QContactManagerEngine::contactIds(filter, sortOrders, error);
-  return d->m_abook->contactIds(filter, sortOrders, error);
+  QList<QContactLocalId> rtn;
+
+  // do this naively for now...
+  QContactManager::Error tempError = QContactManager::NoError;
+  QList<QContactLocalId> allIds = d->m_abook->contactIds(filter, sortOrders, error);
+  QList<QContact> sortedAndFiltered;
+  
+  foreach (const QContactLocalId& currId, allIds) {
+    QContact curr = contact(currId, QContactFetchHint(), &tempError);
+    if (tempError != QContactManager::NoError)
+      *error = tempError;
+    if (QContactManagerEngine::testFilter(filter, curr)) {
+      QContactManagerEngine::addSorted(&sortedAndFiltered, curr, sortOrders);
+    }
+  }
+
+  foreach (const QContact& contact, sortedAndFiltered) {
+    rtn.append(contact.localId());
+  }
+  return rtn;
 }
 
 QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, const QList<QContactSortOrder> & sortOrders, const QContactFetchHint & fetchHint,
@@ -166,6 +205,7 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   Q_UNUSED(fetchHint); //TODO
   Q_CHECK_PTR(d->m_abook);
   
+  //NOTE getQContact can't set the displayLabel
   QContact *contact = d->m_abook->getQContact(contactId, error);
   QContact rtn(*contact);
   delete contact;
@@ -338,7 +378,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactOrganization::FieldDepartment);
     fields.remove(QContactOrganization::FieldLocation);
     fields.remove(QContactOrganization::FieldLogoUrl);
-    fields.remove(QContactOrganization::FieldName);
+    fields.remove(QContactOrganization::FieldTitle);
     fields.remove(QContactOrganization::FieldRole);
     defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
     

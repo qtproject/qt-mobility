@@ -22,16 +22,20 @@ INCLUDEPATH += ../../src/global \
                 ../flickrdemo
 
 symbian {
-    TARGET.CAPABILITY = NetworkServices Location ReadUserData
-}
-
-symbian: {
-    addFiles.sources = nmealog.txt
-    DEPLOYMENT += addFiles
+    symbian {
+        addFiles.sources = nmealog.txt
+        DEPLOYMENT += addFiles
+        TARGET.CAPABILITY += Location \
+                NetworkServices \
+                ReadUserData
+    }
+    wince* {
+        addFiles.sources = ./nmealog.txt
+        addFiles.path = .
+        DEPLOYMENT += addFiles
+    }
 } else {
-    logfile.path = $$DESTDIR
+    logfile.path = $$QT_MOBILITY_PREFIX/bin
     logfile.files = nmealog.txt
-    logfile.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
     INSTALLS += logfile
-    build_pass:ALL_DEPS+=install_logfile
 }

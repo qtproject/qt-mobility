@@ -120,4 +120,6 @@ EXPORTS
 	_ZTVN10QtMobility18QSystemScreenSaverE @ 119 NONAME
 	_ZTVN10QtMobility18QSystemStorageInfoE @ 120 NONAME
 	_ZN10QtMobility18QSystemNetworkInfo11currentModeEv @ 121 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo13connectNotifyEPKc @ 122 NONAME
+	_ZN10QtMobility18QSystemNetworkInfo16disconnectNotifyEPKc @ 123 NONAME
 

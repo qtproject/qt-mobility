@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,9 +47,10 @@
 
 QT_BEGIN_NAMESPACE
 
+class QMediaPlaylist;
 
 class QMediaImageViewerPrivate;
-class Q_MEDIA_EXPORT QMediaImageViewer : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QMediaImageViewer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
@@ -82,15 +83,17 @@ public:
     MediaStatus mediaStatus() const;
 
     QMediaContent media() const;
+    QMediaPlaylist *playlist() const;
 
     int timeout() const;
     int elapsedTime() const;
 
-    void bind(QObject *);
+    bool bind(QObject *);
     void unbind(QObject *);
 
 public Q_SLOTS:
     void setMedia(const QMediaContent &media);
+    void setPlaylist(QMediaPlaylist *playlist);
 
     void play();
     void pause();

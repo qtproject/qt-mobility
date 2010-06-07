@@ -1,0 +1,398 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+
+\page contactsengines.html
+
+\title Qt Contacts Manager Engines
+
+\tableofcontents
+
+\section1 Introduction
+
+The QContactManager interface provided to clients to allow access to contact information depends
+on an implementation of QContactManagerEngine existing.  This engine provides the methods
+which are called by the manager.  An engine is identified by its URI, which is the name
+reported to clients through the QContactManager::managerUri() function.  The URI of a manager
+is built by combining its name, version and relevant construction parameters.
+
+\section1 Information For Clients
+
+While clients never interact directly with instances of QContactManagerEngine, they may need to
+be aware of limitations of individual engines, or differences between engines.  The API offered
+through QContactManager allows clients to retrieve this information for the engine which provides
+the functionality exposed through a particular QContactManager.
+
+\section2 Where Is The Data Stored?
+
+A QContactManagerEngine may provide an aggregated view of multiple physical datastores, zero or
+more of which may be remote datastores.  Clients of the API are aware only that the data is managed
+by a QContactManagerEngine with a particular URI.  It is possible that multiple different engines
+will have overlap in the datastores which they aggregate, and in that case the way in which those
+engines were implemented will determine whether operations are thread-safe or not.
+
+Since the data may physically be stored in a remote datastore, any operations may be dominated by
+the return-trip-time of communications with the remote datastore.  As such, it is recommended
+that clients use the asynchronous client API to access contact information from any QContactManager.
+
+\section2 Schema Differences
+
+Each engine may support a different schema.  All engines should attempt to support the default
+schema, described in the \l{Qt Contacts Schema}{default schema} documentation, however clients
+should never assume that any engine does support the default schema fully.
+
+Clients are able to retrieve the schema supported by a particular engine at run-time by calling
+QContactManager::detailDefinitions().  Some engines support different detail definitions (that is,
+a different schema) for different types of contacts.  Clients can retrieve the contact types
+supported by an engine by calling QContactManager::supportedContactTypes().
+
+\section2 Provided Engines
+
+The Contacts module of the Qt Mobility project includes several backends already, some of which
+are designed to interface with the default addressbook on their particular platform.
+
+\section3 In-Memory Example Engine
+
+The in-memory engine identifies itself as the "memory" engine.  It is available on all platforms
+which are supported by the Qt Mobility project.
+
+The in-memory engine supports the default schema, and provides all functionality available through
+the Qt Mobility Contacts API; however, all data is stored in-memory and is not persisted in any
+way.
+
+\section3 Symbian 3.1 Engine
+
+The Symbian 3.1 engine identifies itself as the "symbian" engine, but is only available on the
+Symbian 3.1 platform.
+
+The Symbian 3.1 engine supports a modified version of the default schema.
+\list
+ \o TODO: what is the schema supported by this engine.
+ \o TODO: what functionality is supported by this engine.
+ \o TODO: is there anything else that clients may need to know?
+\endlist
+
+\section3 Symbian 3.2 Engine
+
+The Symbian 3.2 engine identifies itself as the "symbian" engine, but is only available on the
+Symbian 3.2 platform.
+
+The Symbian 3.2 engine supports a modified version of the default schema.
+\list
+ \o TODO: what is the schema supported by this engine.
+ \o TODO: what functionality is supported by this engine.
+ \o TODO: is there anything else that clients may need to know?
+\endlist
+
+\section3 Symbian 5.0 Engine
+
+The Symbian 5.0 engine identifies itself as the "symbian" engine, but is only available on the
+Symbian 5.0 platform.
+
+The Symbian 5.0 engine supports a modified version of the default schema.
+\list
+ \o TODO: what is the schema supported by this engine.
+ \o TODO: what functionality is supported by this engine.
+ \o TODO: is there anything else that clients may need to know?
+\endlist
+
+\section3 Maemo 5 (Fremantle) Engine
+
+The Maemo 5 (Fremantle) engine identifies itself as the "maemo5" engine, but is only available
+on the Maemo 5 (Fremantle) platform which has the correct libraries installed (including
+lib-osso-abook).
+
+The Maemo 5 (Fremantle) engine supports a modified version of the default schema.
+In particular, it does not support the following details which are provided in the default schema:
+\list
+  \o QContactAnniversary
+  \o QContactAvatar (it does, however, support QContactThumbnail details)
+  \o QContactGeoLocation
+  \o QContactGlobalPresence
+  \o QContactPresence
+  \o QContactRingtone
+  \o QContactSyncTarget
+  \o QContactTag
+\endlist
+
+Furthermore, it supports only a subset of the fields and values supported by the default schema
+versions of various details.  The limitations are as follows:
+\list
+  \o It does not support the \c QContactDetail::Context field for any details other than QContactPhoneNumber, QContactEmailAddress and QContactAddress details, and only supports the contexts \c QContactDetail::ContextHome and \c QContactDetail::ContextWork
+  \o It does not support the \c QContactAddress::FieldSubTypes field of QContactAddress details
+  \o It does not support the \c QContactName::FieldCustomLabel, \c QContactName::FieldSuffix, \c QContactName::FieldPrefix or \c QContactName::FieldMiddleName fields of QContactName details
+  \o It does not support the \c QContactOnlineAccount::FieldSubTypes field of QContactOnlineAccount details
+  \o It does not support the \c QContactUrl::FieldSubTypes field of QContactUrl details
+  \o It supports only the \c QContactOrganization::DisplayLabel field of QContactOrganization details
+  \o It supports only the \c QContactPhoneNumber::SubTypeMobile and \c QContactPhoneNumber::SubTypeVoice values for the \c QContactPhoneNumber::FieldSubTypes field of QContactPhoneNumber details
+\endlist
+
+The Maemo 5 (Fremantle) engine supports asynchronous and synchronous requests, but does not support
+group contacts or relationships of any kind.  It does not allow clients to set a particular contact
+as the "self" contact.  It persists all data in the system addressbook.
+
+\section3 libQtTracker Engine
+
+The libQtTracker Engine identifies itself as "qtcontacts-tracker", and is available on any
+platform which supports the required libqttracker libraries of the correct version.
+
+The libQtTracker engine supports a modified version of the default schema.
+\list
+ \o TODO: what is the schema supported by this engine.
+ \o TODO: what functionality is supported by this engine.
+ \o TODO: is there anything else that clients may need to know?
+\endlist
+
+\section1 Information For Engine Implementors
+
+Some developers may wish to provide implementations of QContactManagerEngine for use by clients.
+The engine that they provide may aggregate multiple datastores, or access a remote datastore,
+or provide some other functionality to clients.  An engine is distributed as a Qt Plugin, and
+will be detected automatically by the plugin loading code in the QContactManager, so long as the
+plugin is located in the correct path ($QT_PLUGINS_DIR/contacts/).
+
+\section2 Which Functions Do I Need To Implement
+
+Different engines provide different functionality and support different features.  Depending on
+the feature set of the engine, it will need to implement a particular subset of the API.
+The default implementation for most functions will set the error to
+\c QContactManager::NotSupportedError and return the value which indicates that an error has
+occurred.
+
+\section3 Mandatory Functions
+
+All engines must implement the following functions:
+
+\list
+  \o QContactManagerEngine::managerName()
+  \o QContactManagerEngine::managerVersion()
+  \o QContactManagerEngine::supportedContactTypes()
+  \o QContactManagerEngine::supportedDataTypes()
+  \o QContactManagerEngine::hasFeature()
+  \o QContactManagerEngine::detailDefinitions()
+  \o QContactManagerEngine::contactIds()
+  \o QContactManagerEngine::contacts()
+\endlist
+
+Every engine implementation must also come with an implementation of QContactManagerEngineFactory
+for that engine.
+
+Note that you do not need to implement filtering and sorting natively in an engine; the default
+implementation offers the following static functions to perform filtering and sorting respectively,
+in memory:
+\list
+  \o QContactManagerEngine::testFilter()
+  \o QContactManagerEngine::sortContacts()
+\endlist
+
+However, engine implementors should be aware that the default implementation is naive and will
+have greatly reduced performance compared to a native implementation (e.g., SQL queries, if
+the contact data exposed by the engine implementation is stored in an SQL database).
+
+Similarly, any QContactFetchHint parameter may be ignored by an engine implementation, but if
+it does so it must return all information available for the contact.
+
+All engines must also implement the following functions to implement asynchronous requests:
+\list
+  \o QContactManagerEngine::requestDestroyed()
+  \o QContactManagerEngine::startRequest()
+  \o QContactManagerEngine::cancelRequest()
+  \o QContactManagerEngine::waitForRequestFinished()
+\endlist
+If the engine does not support asynchronous requests, it should always return false in the
+last three of those functions, and do nothing in the first.  If the engine does support
+asynchronous requests, it must ensure that all information required to perform the request
+is saved in the engine within QContactManagerEngine::startRequest(), as the client owns the
+request object and may delete it at any time.  In general, engine implementors should be aware
+of this ownership semantic, and never attempt an unsafe operation on a request pointer.
+
+It is recommended that all engine implementations support asynchronous requests, even if they
+use a "dummy" implementation which services the request synchronously during startRequest, and then
+emit the appropriate signals from the request via a zero-millisecond timeout timer.
+
+\section3 Optional Functionality
+
+The rest of the virtual functions are optional, and should be implemented only if the engine
+supports the operations.
+
+If the engine can be constructed with different parameters, which affects the operation of the
+engine (for example, a parameter might define which file to read contact information from, or
+it might be an access token to prove that the client has the access rights to read contact information
+from the engine, etc), it must report which parameters it was constructed with via the
+\list
+  \o QContactManagerEngine::managerParameters()
+\endlist
+function.
+
+If the engine supports native filtering of any kind, it must report to clients which filters
+are supported natively by implementing:
+\list
+  \o QContactManagerEngine::isFilterSupported()
+\endlist
+
+If the engine supports saving or removing contact information, as well as retrieval, it must
+implement:
+\list
+  \o QContactManagerEngine::saveContacts()
+  \o QContactManagerEngine::removeContacts()
+\endlist
+It may also choose to implement the "single contact" functions:
+\list
+  \o QContactManagerEngine::saveContact()
+  \o QContactManagerEngine::removeContact()
+\endlist
+If it does not, the default implementation of those functions will use the batch (plural) versions
+of those functions to implement the required behavior.
+
+If the engine supports modification of its schema (that is, extension of its definitions at
+run-time), it must report that it supports the \c QContactManager::MutableDefinitions feature
+via QContactManagerEngine::hasFeature(), and must also implement:
+\list
+  \o QContactManagerEngine::saveDetailDefinition()
+  \o QContactManagerEngine::removeDetailDefinition()
+\endlist
+
+If the engine supports any relationships, it must report that it supports the
+\c QContactManager::Relationships feature via QContactManagerEngine::hasFeature(), and must also
+implement:
+\list
+  \o QContactManagerEngine::isRelationshipTypeSupported()
+  \o QContactManagerEngine::relationships()
+  \o QContactManagerEngine::saveRelationships()
+  \o QContactManagerEngine::removeRelationships()
+\endlist
+
+Specifically, if the engine supports group contacts, it must support the
+\c QContactRelationship::HasMember relationship, and report this as a supported relationship type.
+It must then also report that it supports the \c QContactType::TypeGroup contact type as a
+supported contact type in QContactManagerEngine::supportedContactTypes().
+
+If the engine supports saving a "self" contact (that is, a contact which contains information
+about the owner of the device or online service account from which the engine provides contact
+information), it must report that it supports the \c QContactManager::SelfContact feature
+via QContactManagerEngine::hasFeature(), and must also implement:
+\list
+  \o QContactManagerEngine::setSelfContactId()
+  \o QContactManagerEngine::selfContactId()
+\endlist
+
+
+\section3 Optional Implementation
+
+Apart from areas of functionality which may be optionally implemented by the engine or not,
+the default implementation provides several functions which operate in a naive, in-memory
+manner.  An engine implementation can override this default implementation with its own,
+if it wishes, in order to obtain performance gains, or to more accurately implement the
+function.
+
+As previously mentioned it may implement its own sorting or filtering, in functions such as
+QContactManagerEngine::contacts().  An engine may also implement:
+\list
+  \o QContactManagerEngine::validateContact()
+  \o QContactManagerEngine::validateDefinition()
+  \o QContactManagerEngine::compatibleContact()
+  \o QContactManagerEngine::synthesizedDisplayLabel()
+\endlist
+
+
+\section2 Which Signals Do I Need To Emit
+
+An engine implementation must emit the appropriate signals for the subset of functionality
+that it supports.
+
+If the engine supports reading or saving contacts, it must emit the:
+\list
+  \o QContactManagerEngine::contactsAdded()
+  \o QContactManagerEngine::contactsChanged()
+  \o QContactManagerEngine::contactsRemoved()
+\endlist
+signals as appropriate.  Alternatively, it can emit the QContactManager::dataChanged()
+signal instead.
+
+If the engine supports reading or saving relationships, it must emit the:
+\list
+  \o QContactManagerEngine::relationshipsAdded()
+  \o QContactManagerEngine::relationshipsRemoved()
+\endlist
+ signals as appropriate.  Alternatively, it can emit the QContactManager::dataChanged()
+ signal instead.
+
+If the engine supports the \c QContactManager::SelfContact feature, it must emit the:
+\list
+  \o QContactManagerEngine::selfContactIdChanged()
+\endlist
+ signal as appropriate.  Alternatively, it can emit the QContactManager::dataChanged()
+ signal instead.
+
+
+\section2 Other Considerations
+
+There are several other considerations that engine writers must be aware of:
+\list
+  \o Most batch functions take an OPTIONAL error map as a parameter.  This parameter
+may be null, in which case the client is not interested in fine-grained error reporting.
+Engines must check the pointer before attempting to dereference it.
+  \o Every function takes a mandatory \c QContactManager::Error pointer argument.  This argument
+is NEVER null, since it exists in the private implementation of QContactManager.  Testing this
+argument for null is, therefore, superfluous.
+  \o The single-item functions for contact and relationship retrieval, removal and save
+already have a default implementation which merely wraps the batch retrieval, removal or save
+function appropriately.  This default implementation may not be as performant as a hand-rolled
+function.  Engine implementations MUST implement the batch functions for each area of
+functionality supported by the engine.
+  \o Most clients will prefer to use the asynchronous API to access contact information from the
+engine.  It is therefore suggested that asynchronous requests be serviced, even if it is
+implemented in a similar manner to the (provided) memory engine's naive implementation.
+\endlist
+
+\section2 Example Implementation
+
+There are several implementations of QContactManagerEngine available in the Qt Mobility
+source code repository.  In particular, the "memory" engine provides an implementation of
+an in-memory, anonymous datastore which supports every feature in the API, and therefore
+is useful for demonstration purposes.  Be aware, however, that the implementation of all
+functionality in the "memory" engine is naive and not performant, and should not be copied
+in any real engine implementation (e.g., to perform filtering, it reads all contacts from the
+(in-memory) database, and checks one by one for matches; a real engine, on the other hand,
+might perform a database query to return the results directly, rather than performing n-reads).
+
+*/

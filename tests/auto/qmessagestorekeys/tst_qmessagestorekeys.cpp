@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,7 +45,12 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
+#if (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
+# define TESTDATA_DIR "/var/tmp"
+#elif (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
 # if defined(TESTDATA_DIR)
 #  undef TESTDATA_DIR
 # endif
@@ -1463,7 +1468,6 @@ void tst_QMessageStoreKeys::testFolderOrdering()
     }
 }
 
-
 void tst_QMessageStoreKeys::testMessageFilter_data()
 {
     QTest::addColumn<QMessageFilter>("filter");
@@ -2188,7 +2192,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 #endif
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status equality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
@@ -2308,7 +2311,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << "";
-#endif
 
     QTest::newRow("size equality 1")
         << QMessageFilter::bySize(messageSizes[3], QMessageDataComparator::Equal) 
@@ -2888,6 +2890,7 @@ void tst_QMessageStoreKeys::testMessageFilter()
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
 }
+
 void tst_QMessageStoreKeys::testMessageOrdering_data()
 {
     QTest::addColumn<MessageSortList>("sorts");

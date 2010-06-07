@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,10 +44,10 @@
 
 #include <QtCore/qobject.h>
 
-#include <QMediaService>
-#include <QVideoOutputControl>
+#include <qmediaservice.h>
+//FIXME #include <qvideooutputcontrol.h>
 
-#include "s60videooutputcontrol.h"
+//FIXME #include "s60videooutputcontrol.h"
 #include "ms60mediaplayerresolver.h"
 
 #include "s60mediaplayeraudioendpointselector.h"
@@ -79,10 +79,11 @@ public:
     S60MediaPlayerService(QObject *parent = 0);
     ~S60MediaPlayerService();
 
-    QMediaControl *control(const char *name) const;
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
-private slots:
-    void videoOutputChanged(QVideoOutputControl::Output output);
+//FIXME  private slots:
+//    void videoOutputChanged(QVideoOutputControl::Output output);
 
 protected: // From MS60MediaPlayerResolver
     S60MediaPlayerSession* PlayerSession();
@@ -91,8 +92,7 @@ protected: // From MS60MediaPlayerResolver
     
 private:
     S60MediaPlayerControl *m_control;
-    S60MediaRecognizer *m_mediaRecognizer;
-    mutable S60VideoOutputControl *m_videoOutput;
+//FIXME    mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
     mutable S60MediaMetaDataProvider *m_metaData;
