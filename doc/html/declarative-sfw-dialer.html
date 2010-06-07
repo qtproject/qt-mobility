@@ -41,7 +41,7 @@
 <p>In this example we've implemented 2 services called Landdialer and Voipdialer. You can find the projects for those services in:</p>
 <p>declarative-sfw-dialer\landlinedialer and declarative-sfw-dialer\voipdialer. Those projects will create a shared library in each case.</p>
 <p>If the library needs to be available over the Service Framework, we need to register the library. In our example this will be done manually by using the servicefw tool. Refer to the project README for further details.</p>
-<p>As you can see we register the services using a xml file. This xml file basically contains all information to register the shared library in the Service Framework enviroment. For more information please read more about the Qt Service Framework <a href="service-frameworks.html#adding-and-removing-of-services">XML Format</a></p>
+<p>As you can see we register the services using a xml file. This xml file basically contains all information to register the shared library in the Service Framework environment. For more information please read more about the Qt Service Framework <a href="service-frameworks.html#adding-and-removing-of-services">XML Format</a></p>
 <p>The <a href="qservicemanager.html">QServiceManager</a> creates an instance of a services over a <a href="qserviceplugininterface.html">QServicePluginInterface</a>. For each services we provide a Plugin.</p>
 <pre>    class VoipDialerPlugin : public QObject,
                                     public QServicePluginInterface
@@ -59,7 +59,7 @@
     }
 
     Q_EXPORT_PLUGIN2(serviceframework_voipdialerservice, VoipDialerPlugin)</pre>
-<p>As you can see the createInstance function create the appropriate dialer object and returns it. The Q_EXPORT_PLUGIN2 macro provides the neccessary implementation for a plugin. See <a href="http://qt.nokia.com/doc/4.6/plugins-howto.html">How to Create Qt Plugins</a> for more details.</p>
+<p>As you can see the createInstance function create the appropriate dialer object and returns it. The Q_EXPORT_PLUGIN2 macro provides the necessary implementation for a plugin. See <a href="http://qt.nokia.com/doc/4.6/plugins-howto.html">How to Create Qt Plugins</a> for more details.</p>
 <p>The last thing we need to provide in our services are the states, properties, signals and slots that we want to access in out QML script later.</p>
 <a name="voipdialer-h-0"></a><pre>    public:
         enum ConnectionState {
@@ -102,7 +102,7 @@
 <p>To show the items of the model property we need to create a delegate component and assign it to the ListView Delegate property:</p>
 <pre>            Component {
                 id: delegate</pre>
-<p>In this component you can define how you want to draw one ListView item. You can acces insite of this component the current ListWiew item by using the variable modelData. In our example we are using two text lines. Furthermore we can define whats happening if we click on a ListView item by using the MouseRegion.</p>
+<p>In this component you can define how you want to draw one ListView item. You can access inside of this component the current ListWiew item by using the variable modelData. In our example we are using two text lines. Furthermore we can define whats happening if we click on a ListView item by using the MouseRegion.</p>
 <a name="dialerlist-qml-2"></a><pre>                    MouseArea {
                         id: listItemMouseRegion
                         anchors.fill: parent
@@ -181,7 +181,7 @@
                 }
             }
         }</pre>
-<p>In DialScreen.qml the dial and the hangup signals are defined. The hangup signal will be emited if the HangUpButton was clicked:</p>
+<p>In DialScreen.qml the dial and the hangup signals are defined. The hangup signal will be emitted if the HangUpButton was clicked:</p>
 <pre>        DialButton {
             id: hangUpButton
             height: { (numberPad.height / 2) - 2 }
@@ -195,7 +195,7 @@
                 dialString = &quot;&quot;
                 hangup()
             }</pre>
-<p>The dial signal will be emited if the CallButton was clicked:</p>
+<p>The dial signal will be emitted if the CallButton was clicked:</p>
 <pre>        DialButton {
             id: callButton
             width: 50

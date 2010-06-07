@@ -38,19 +38,49 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef DATABASEMANAGERSERVER_GLOBAL_H
-#define DATABASEMANAGERSERVER_GLOBAL_H
+#include "databasemanagerserver.h"
+#include "clientservercommon.h"
+#include "databasemanagersession.h"
+//#include <QThread>
 
-#include <QtCore/qglobal.h>
+QTM_BEGIN_NAMESPACE
 
-#if defined(DATABASEMANAGERSERVER_LIBRARY)
-#  define DATABASEMANAGERSERVER_EXPORT Q_DECL_EXPORT
-#else
-#  if defined(DATABASEMANAGERSERVER_NO_LIBRARY)
-#    define DATABASEMANAGERSERVER_EXPORT
-#  else
-#    define DATABASEMANAGERSERVER_EXPORT Q_DECL_IMPORT
-#  endif
-#endif
+CDatabaseManagerServer::CDatabaseManagerServer()
+    : CServer2(EPriorityNormal, ESharableSessions)
+    , iSessionCount(0)
+    {
+    }
 
-#endif // DATABASEMANAGERSERVER_GLOBAL_H
+CSession2* CDatabaseManagerServer::NewSessionL(const TVersion& aVersion, const RMessage2& /*aMessage*/) const
+    {
+        if (!User::QueryVersionSupported(TVersion(KServerMajorVersionNumber, 
+                KServerMinorVersionNumber, KServerBuildVersionNumber), aVersion))
+            {
+            User::Leave(KErrNotSupported);
+            }
+        
+        return CDatabaseManagerServerSession::NewL(*const_cast<CDatabaseManagerServer*>(this));
+    }
+
+void CDatabaseManagerServer::PanicServer(TDatabaseManagerSerververPanic aPanic)
+    {
+    _LIT(KTxtServerPanic,"Database manager server panic");
+    User::Panic(KTxtServerPanic, aPanic);
+    }
+
+void CDatabaseManagerServer::IncreaseSessions()
+    {
+    iSessionCount++;
+    }
+
+void CDatabaseManagerServer::DecreaseSessions()
+    {
+    iSessionCount--;
+    if (iSessionCount <= 0)
+        {
+        //QThread::currentThread()->quit();
+        }
+    }
+
+QTM_END_NAMESPACE
+// End of File

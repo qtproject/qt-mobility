@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,39 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef CDATABASEMANAGERSERVER_H_
-#define CDATABASEMANAGERSERVER_H_
+#include <mmailboxcontentobserver.h>
 
-#include <qmobilityglobal.h>
-#include <e32base.h>
-#include "databasemanagerserver.pan"
-#include "databasemanagerserver_global.h"
-
-//QTM_BEGIN_NAMESPACE
-namespace QtMobility {
-
-// needed for creating server thread.
-const TUint KDefaultHeapSize = 0x10000;
-
-class DATABASEMANAGERSERVER_EXPORT CDatabaseManagerServer : public CServer2
-    {
-    public:
-        CDatabaseManagerServer();
-        CSession2* NewSessionL(const TVersion& aVersion, const RMessage2& aMessage) const;
-
-    public:
-        static void PanicServer(TDatabaseManagerSerververPanic aPanic);
-        
-        void IncreaseSessions();
-        void DecreaseSessions();
-        
-    private:
-        int iSessionCount;
-    };
-
-//QTM_END_NAMESPACE
+int main(int, char**)
+{
+    return 0;
 }
-
-#endif
-
-// End of File

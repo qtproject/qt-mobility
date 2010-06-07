@@ -63,8 +63,8 @@ data using arbitrary data sources.
 
 \section1 Namespace
 
-The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility API's into Qt. See the
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -249,7 +249,7 @@ Here are the key methods in the class implementation:
 
 
 The example includes a \c ClientApplication class that requests updates
-from the \c LogFilePositionSource class. Run the exaple to see the data
+from the \c LogFilePositionSource class. Run the example to see the data
 that is received by \c ClientApplication.
 
 Before running the example, make sure you have done both \tt make
