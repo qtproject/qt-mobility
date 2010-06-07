@@ -89,20 +89,20 @@ public:
         return retn;
     }
 
-    void setRecurrenceDates(const QList<QDateTime>& rdates)
+    void setRecurrenceDates(const QList<QDate>& rdates)
     {
         QVariantList saveList;
-        foreach (const QDateTime& currDate, rdates) {
+        foreach (const QDate& currDate, rdates) {
             saveList << currDate;
         }
         setValue(FieldRecurrenceDates, saveList);
     }
-    QList<QDateTime> recurrenceDates() const
+    QList<QDate> recurrenceDates() const
     {
-        QList<QDateTime> retn;
+        QList<QDate> retn;
         QVariantList loadList = variantValue(FieldRecurrenceDates).toList();
         foreach (const QVariant& currDate, loadList) {
-            retn << currDate.toDateTime();
+            retn << currDate.toDate();
         }
         return retn;
     }
@@ -126,20 +126,20 @@ public:
         return retn;
     }
 
-    void setExceptionDates(const QList<QDateTime>& xdates)
+    void setExceptionDates(const QList<QDate>& xdates)
     {
         QVariantList saveList;
-        foreach (const QDateTime& currDate, xdates) {
+        foreach (const QDate& currDate, xdates) {
             saveList << currDate;
         }
         setValue(FieldExceptionDates, saveList);
     }
-    QList<QDateTime> exceptionDates() const
+    QList<QDate> exceptionDates() const
     {
-        QList<QDateTime> retn;
+        QList<QDate> retn;
         QVariantList loadList = variantValue(FieldExceptionDates).toList();
         foreach (const QVariant& currDate, loadList) {
-            retn << currDate.toDateTime();
+            retn << currDate.toDate();
         }
         return retn;
     }

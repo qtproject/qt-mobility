@@ -355,25 +355,13 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
         rdate.setName(QLatin1String("RDATE"));
         rdate.setValue(QLatin1String("19970304"));
         QOrganizerItemEventTimeRange etr;
-        etr.setStartDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
-        etr.setEndDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
+        etr.setStartDateTime(QDateTime(QDate(1997, 3, 4)));
+        etr.setEndDateTime(QDateTime(QDate(1997, 3, 4)));
         QOrganizerItemRecurrence recurrence;
-        QList<QDateTime> recurrenceDates;
-        recurrenceDates << QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)) ;
+        QList<QDate> recurrenceDates;
+        recurrenceDates << QDate(1997, 3, 4);
         recurrence.setRecurrenceDates(recurrenceDates);
         QTest::newRow("rdate")
-            << (QList<QOrganizerItemDetail>() << etr << recurrence)
-            << (QList<QVersitProperty>() << rdate);
-
-        // last one needs time specified because it differs from the start time
-        rdate.setValue(QLatin1String("19970304,19970504,19970704T120000"));
-        recurrenceDates.clear();
-        recurrenceDates
-            << QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0))
-            << QDateTime(QDate(1997, 5, 4), QTime(11, 0, 0))
-            << QDateTime(QDate(1997, 7, 4), QTime(12, 0, 0));
-        recurrence.setRecurrenceDates(recurrenceDates);
-        QTest::newRow("multiple rdates")
             << (QList<QOrganizerItemDetail>() << etr << recurrence)
             << (QList<QVersitProperty>() << rdate);
     }
@@ -386,8 +374,8 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
         etr.setStartDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
         etr.setEndDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
         QOrganizerItemRecurrence recurrence;
-        QList<QDateTime> exceptionDates;
-        exceptionDates << QDateTime(QDate(1997, 3, 4), QTime(0, 0, 0)); // time should be ignored
+        QList<QDate> exceptionDates;
+        exceptionDates << QDate(1997, 3, 4);
         recurrence.setExceptionDates(exceptionDates);
         QTest::newRow("exdate")
             << (QList<QOrganizerItemDetail>() << etr << recurrence)

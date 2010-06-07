@@ -204,7 +204,7 @@ private:
 
     static QOrganizerItem generateInstance(const QOrganizerItem& generator, const QDateTime& rdate);
 
-    QList<QDateTime> generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const;
+    QList<QDateTime> generateDateTimes(const QTime& startTime, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const;
     QDate nextMatchingDate(const QDate& currDate, const QDate& untilDate, const QOrganizerItemRecurrenceRule& rrule) const;
 
     QOrganizerItemMemoryEngineData* d;

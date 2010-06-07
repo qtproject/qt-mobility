@@ -71,11 +71,11 @@ void snippets()
 
     // XXX TODO: use rrule instead of rdates.
     QDateTime startDateTime = QDateTime::currentDateTime();
-    QDateTime firstOccDate = startDateTime.addDays(7);
-    QDateTime secondOccDate = startDateTime.addDays(14);
-    QDateTime thirdOccDate = startDateTime.addDays(21);
+    QDate firstOccDate = startDateTime.date().addDays(7);
+    QDate secondOccDate = startDateTime.date().addDays(14);
+    QDate thirdOccDate = startDateTime.date().addDays(21);
     QDateTime endDateTime = startDateTime.addDays(28);
-    QList<QDateTime> rDates;
+    QList<QDate> rDates;
     rDates << firstOccDate << secondOccDate << thirdOccDate;
 
     //! [Creating a recurrent event]

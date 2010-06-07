@@ -58,12 +58,12 @@ public:
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
-    void setRecurrenceDates(const QList<QDateTime>& rdates);
-    QList<QDateTime> recurrenceDates() const;
+    void setRecurrenceDates(const QList<QDate>& rdates);
+    QList<QDate> recurrenceDates() const;
     void setRecurrenceRules(const QList<QOrganizerItemRecurrenceRule>& rrules);
     QList<QOrganizerItemRecurrenceRule> recurrenceRules() const;
-    void setExceptionDates(const QList<QDateTime>& exdates);
-    QList<QDateTime> exceptionDates() const;
+    void setExceptionDates(const QList<QDate>& exdates);
+    QList<QDate> exceptionDates() const;
     void setExceptionRules(const QList<QOrganizerItemRecurrenceRule>& exrules);
     QList<QOrganizerItemRecurrenceRule> exceptionRules() const;
 

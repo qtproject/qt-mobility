@@ -176,8 +176,8 @@ void QVersitOrganizerExporterPrivate::encodeRecurrence(
     QOrganizerItemRecurrence recurrence = static_cast<QOrganizerItemRecurrence>(detail);
     QList<QOrganizerItemRecurrenceRule> rrules = recurrence.recurrenceRules();
     QList<QOrganizerItemRecurrenceRule> exrules = recurrence.exceptionRules();
-    QList<QDateTime> rdates = recurrence.recurrenceDates();
-    QList<QDateTime> exdates = recurrence.exceptionDates();
+    QList<QDate> rdates = recurrence.recurrenceDates();
+    QList<QDate> exdates = recurrence.exceptionDates();
     if (!rrules.isEmpty()) {
         foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
             encodeRecurRule(QLatin1String("RRULE"), rrule, generatedProperties);
@@ -316,7 +316,7 @@ QString QVersitOrganizerExporterPrivate::weekString(Qt::DayOfWeek day) {
 void QVersitOrganizerExporterPrivate::encodeRecurDates(
         const QString& propertyName,
         const QOrganizerItem& item,
-        const QList<QDateTime>& dates,
+        const QList<QDate>& dates,
         const QVersitDocument& document,
         QList<QVersitProperty>* removedProperties,
         QList<QVersitProperty>* generatedProperties)
@@ -327,15 +327,11 @@ void QVersitOrganizerExporterPrivate::encodeRecurDates(
     QString value = property.value();
     bool valueIsEmpty = value.isEmpty();
 
-    foreach (const QDateTime& dt, dates) {
+    foreach (const QDate& dt, dates) {
         QString str;
         QTime eventTime = static_cast<QOrganizerEvent>(item).startDateTime().time();
-        if (dt.date().isValid()) {
-            if (dt.time().isValid() && eventTime.isValid() && dt.time() != eventTime
-                    && propertyName != QLatin1String("EXDATE")) // exdate should never include time
-                str = encodeDateTime(dt);
-            else
-                str = dt.date().toString(QLatin1String("yyyyMMdd"));
+        if (dt.isValid()) {
+            str = dt.toString(QLatin1String("yyyyMMdd"));
             if (!valueIsEmpty)
                 value += QLatin1Char(',');
             value += str;

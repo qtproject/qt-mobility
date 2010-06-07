@@ -189,7 +189,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
     return QList<QOrganizerItem>();
 }
 
-QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerItem& recurringItem, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
+QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QTime& startTime, const QOrganizerItemRecurrenceRule& rrule, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount) const
 {
     // If no endDateTime is given, we'll only generate items that occur within the next 4 years of periodStart.
     QList<QDateTime> retn;
@@ -204,16 +204,7 @@ QList<QDateTime> QOrganizerItemMemoryEngine::generateDateTimes(const QOrganizerI
         if (!nextMatch.isNull()) {
             QDateTime nmdt;
             nmdt.setDate(nextMatch);
-            if (recurringItem.type() == QOrganizerItemType::TypeEvent) {
-                QOrganizerEvent evt = recurringItem;
-                nmdt.setTime(evt.startDateTime().time());
-            } else if (recurringItem.type() == QOrganizerItemType::TypeTodo) {
-                QOrganizerTodo todo = recurringItem;
-                nmdt.setTime(todo.notBeforeDateTime().time()); // XXX TODO: verify this is the right field to use..?
-            } else {
-                // erm... not a recurring item in our schema...
-                return QList<QDateTime>();
-            }
+            nmdt.setTime(startTime);
 
             // XXX TODO: check that nmdt is within the required start and end times / period,
             // because our instance date generation code merely checks dates, not datetimes.
@@ -433,28 +424,49 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
         }
     }
 
+    QTime startTime;
+    if (generator.type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent evt = generator;
+        startTime = evt.startDateTime().time();
+    } else if (generator.type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo todo = generator;
+        startTime = todo.notBeforeDateTime().time(); // XXX TODO: verify this is the right field to use..?
+    } else {
+        // erm... not a recurring item in our schema...
+        return QList<QOrganizerItem>() << generator;
+    }
+
     // then, generate the required (unchanged) instances from the generator.
     // before doing that, we have to find out all of the exception dates.
-    QList<QDateTime> xdates = recur.exceptionDates();
+    QList<QDate> xdates;
+    foreach (const QDate& xdate, recur.exceptionDates()) {
+        xdates += xdate;
+    }
     QList<QOrganizerItemRecurrenceRule> xrules = recur.exceptionRules();
     foreach (const QOrganizerItemRecurrenceRule& xrule, xrules) {
         bool xruleEndsBeforePeriodStarts = (!xrule.endDate().isNull()) && (xrule.endDate() < periodStart.date());
         bool xruleStartsAfterPeriodEnds = (!xrule.startDate().isNull()) && (xrule.startDate() > periodEnd.date());
         if (!xruleEndsBeforePeriodStarts && !xruleStartsAfterPeriodEnds) {
             // we cannot skip it, since it applies in the given time period.
-            xdates += generateDateTimes(generator, xrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
+            QList<QDateTime> xdatetimes = generateDateTimes(startTime, xrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
+            foreach (const QDateTime& xdatetime, xdatetimes) {
+                xdates += xdatetime.date();
+            }
         }
     }
 
     // now generate a list of rdates (from the recurrenceDates and recurrenceRules)
-    QList<QDateTime> rdates = recur.recurrenceDates();
+    QList<QDateTime> rdates;
+    foreach (const QDate& rdate, recur.recurrenceDates()) {
+        rdates += QDateTime(rdate, startTime);
+    }
     QList<QOrganizerItemRecurrenceRule> rrules = recur.recurrenceRules();
     foreach (const QOrganizerItemRecurrenceRule& rrule, rrules) {
         bool rruleEndsBeforePeriodStarts = (!rrule.endDate().isNull()) && (rrule.endDate() < periodStart.date());
         bool rruleStartsAfterPeriodEnds = (!rrule.startDate().isNull()) && (rrule.startDate() > periodEnd.date());
         if (!rruleEndsBeforePeriodStarts && !rruleStartsAfterPeriodEnds) {
             // we cannot skip it, since it applies in the given time period.
-            rdates += generateDateTimes(generator, rrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
+            rdates += generateDateTimes(startTime, rrule, periodStart, periodEnd, 50); // max count of 50 is arbitrary...
         }
     }
 
@@ -463,7 +475,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
 
     // now for each rdate which isn't also an xdate
     foreach (const QDateTime& rdate, rdates) {
-        if (!xdates.contains(rdate)) {
+        if (!xdates.contains(rdate.date())) {
             // generate the required instance and add it to the return list.
             retn.append(generateInstance(generator, rdate));
         }

@@ -70,14 +70,14 @@ QDateTime QOrganizerTodo::dueDateTime() const
     return ttr.dueDateTime();
 }
 
-void QOrganizerTodo::setRecurrenceDates(const QList<QDateTime>& rdates)
+void QOrganizerTodo::setRecurrenceDates(const QList<QDate>& rdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setRecurrenceDates(rdates);
     saveDetail(&rec);
 }
 
-QList<QDateTime> QOrganizerTodo::recurrenceDates() const
+QList<QDate> QOrganizerTodo::recurrenceDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.recurrenceDates();
@@ -96,14 +96,14 @@ QList<QOrganizerItemRecurrenceRule> QOrganizerTodo::recurrenceRules() const
     return rec.recurrenceRules();
 }
 
-void QOrganizerTodo::setExceptionDates(const QList<QDateTime>& exdates)
+void QOrganizerTodo::setExceptionDates(const QList<QDate>& exdates)
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     rec.setExceptionDates(exdates);
     saveDetail(&rec);
 }
 
-QList<QDateTime> QOrganizerTodo::exceptionDates() const
+QList<QDate> QOrganizerTodo::exceptionDates() const
 {
     QOrganizerItemRecurrence rec = detail<QOrganizerItemRecurrence>();
     return rec.exceptionDates();

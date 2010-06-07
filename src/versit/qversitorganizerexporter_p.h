@@ -96,7 +96,7 @@ private:
     void encodeRecurDates(
             const QString& propertyName,
             const QOrganizerItem& item,
-            const QList<QDateTime>& dates,
+            const QList<QDate>& dates,
             const QVersitDocument& document,
             QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties);
