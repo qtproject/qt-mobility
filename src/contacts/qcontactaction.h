@@ -64,27 +64,56 @@ public:
     QContactAction(QObject *parent = 0) : QObject(parent) {}
     virtual ~QContactAction() = 0;
 
+    enum Error {
+        NoError = 0,
+        InvalidTarget,
+        InvalidParameters,
+        UnspecifiedError
+    };
+
+    /* Error is merely whether invocation succeeded; it does not refer to the outcome of the invocation */
+    virtual Error error() const = 0; // do these need to be virtual at all?  could just assume that the impl. fills out the member variables correctly..?
+    virtual QMap<int, Error> errorMap() const = 0; // target index to error for that index.
+
     virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
 
     virtual QContactFilter contactFilter() const = 0; // use for matching
-    virtual bool isTargetSupported(const QContactActionTarget& target) const = 0;
+
+    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const = 0; // not sure about this function... what about actions which _require_ a certain combination of details to work?
+
+    virtual bool areTargetsSupported(const QList<QContactActionTarget>& targets) const = 0;
+    bool isTargetSupported(const QContactActionTarget& target) const
+    {
+        return areTargetsSupported(QList<QContactActionTarget>() << target);
+    }
+    bool isTargetSupported(const QContact& contact, const QContactDetail& detail) const
+    {
+        return areTargetsSupported(QList<QContactActionTarget>() << QContactActionTarget(contact, detail));
+    }
 
     // Need latin constants for keys.. {label, icon, vendor?, second label?}
 
-    virtual QVariant metaData(const QString& key, const QContactActionTarget& target) const = 0;
-    QVariant metaData(const QString& key, const QContact& target, const QContactDetail& detail) const
+    /* Retrieve meta data for a given "invoke" input.  Needs params since icon for (e.g.) send with image may be different to send text message. */
+    virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const = 0;
+    QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const
     {
-        return metaData(key, QContactActionTarget(contact, detail));
+        return metaData(key, QList<QContactActionTarget>() << target, parameters);
     }
-    // No metadata for list of targets?
-
-    virtual QList<QContactDetail> supportedDetails(const QContact& contact) const = 0;
-
-    /* Initiate the asynchronous action on the given contact (and optionally detail) with the given parameters */
-    virtual bool invokeAction(const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) = 0;
+    QVariant metaData(const QString& key, const QContact& target, const QContactDetail& detail, const QVariantMap& parameters = QVariantMap()) const
+    {
+        return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
+    }
 
     /* Initiate the asynchronous action on the given list of contacts (and optionally, per-contact-details) with the given parameters */
     virtual bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) = 0;
+    bool invokeAction(const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap())
+    {
+        return invokeAction(QList<QContactActionTarget>() << target, parameters);
+    }
+    bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDeatil(), const QVariantMap& parameters = QVariantMap())
+    {
+        return invokeAction(QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
+    }
 
     /* The possible states of an action */
     enum State {
