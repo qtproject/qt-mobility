@@ -80,9 +80,9 @@ public:
         Dropped = QTelephonyCallInfo::Dropped
     };
 
-    QTelephonyCallInfoProperty(QTelephonyCallInfo *parent = 0);
+    QTelephonyCallInfoProperty(const QTelephonyCallInfo& info);
 
-    virtual ~QTelephonyCallInfoProperty() {};
+    virtual ~QTelephonyCallInfoProperty();
 
     QString callIdentifier() const;
     QList<quint32> contacts() const;

@@ -38,8 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qtelephonycalllist.h"
 #include "qtelephonycalllist_win_p.h"
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,20 +55,22 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 }
 
 QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate()
+: refcount(1)
 {
+    qDebug() << "QTelephonyCallInfoPrivate()";
 }
 
 QTelephonyCallInfoPrivate::~QTelephonyCallInfoPrivate()
 {
-
+    qDebug() << "~QTelephonyCallInfoPrivate()";
 }
 
-QString QTelephonyCallInfoPrivate::callIdentifier()
+QString QTelephonyCallInfoPrivate::callIdentifier() const
 {
     return "not implemented!";
 }
 
-QList<quint32> QTelephonyCallInfoPrivate::contacts()
+QList<quint32> QTelephonyCallInfoPrivate::contacts() const
 {
     QList<quint32> ret;
     return ret;

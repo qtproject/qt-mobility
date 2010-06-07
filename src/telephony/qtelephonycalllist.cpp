@@ -76,7 +76,7 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup telephony
 
-    \brief The QTelephonyCallList class represents the call list container and the notifier about call changes.
+    \brief The QTelephonyCallList class contains a list of active calls. This object can notify other applications about call changes.
 
     QTelephonyCallList supports calls event notification for other application and an access of the list of the 
     existing calls.
@@ -87,10 +87,9 @@ Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonycalllistprivate)
 
 /*!
     \fn QTelephonyCallList::QTelephonyCallList(QObject *parent)
-
     \a parent The parent of this object. Default is 0.
 
-    Constructor for the Telephony Event object 
+    Constructor for the QTelephonyCallList object 
 */
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent), d(telephonycalllistprivate())
@@ -103,41 +102,59 @@ QTelephonyCallList::QTelephonyCallList(QObject *parent)
 
 /*!
     \fn QTelephonyCallList::~QTelephonyCallList()
-    
+
     Destructor of QTelephonyCallList.
 */
 QTelephonyCallList::~QTelephonyCallList()
 {
 }
 
-
 /*!
     \fn QList<QTelephonyCallInfo* > QTelephonyCallList::calls() const
-    
+
     Gives back a list of all active calls.
     Note that the caller retains ownership of the QTelephonyCallInfo pointers.
 */
 QList<QTelephonyCallInfo* > QTelephonyCallList::calls() const
 {
-    QList<QTelephonyCallInfo*> ret;
+    QList<QTelephonyCallInfo* > calllist;
+    QList<QTelephonyCallInfo* > ret;
     if(d)
-        ret = d->calls();
+        calllist = d->calls();
+
+    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
+    for( int i = 0; i < calllist.count(); i++){
+        ret.push_back(new QTelephonyCallInfo(*calllist.at(i)));
+    }
     return ret;
 }
 
-QList<QTelephonyCallInfoProperty*> QTelephonyCallList::callsProperty() const
+/*!
+    \fn  QList<QTelephonyCallInfoProperty* > QTelephonyCallList::callsProperty() const
+
+    Gives back a list of all active calls.
+    Note that the caller retains ownership of the QTelephonyCallInfoProperty pointers.
+*/
+/*!
+    \property QTelephonyCallList::calls
+
+    Gives back a list of all active calls.
+    Note that the caller retains ownership of the QTelephonyCallInfoProperty pointers.
+*/
+QList<QTelephonyCallInfoProperty* > QTelephonyCallList::callsProperty() const
 {
     QList<QTelephonyCallInfoProperty* > ret;
+
+    //with calls() we have already copy of QTelephonyCallInfo pointers.
     QList<QTelephonyCallInfo* > calllist = calls();
     for( int i = 0; i < calllist.count(); i++){
-        ret.push_back(new QTelephonyCallInfoProperty(calllist.at(i)));
+        ret.push_back(new QTelephonyCallInfoProperty(*calllist.at(i)));
     }
     return ret;
 }
 
 /*!
     \fn QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallType& calltype) const
-
     \a calltype All calls in the list have this type.
 
     Gives back a list of calls from type of calltype.
@@ -145,7 +162,7 @@ QList<QTelephonyCallInfoProperty*> QTelephonyCallList::callsProperty() const
 */
 QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallType& calltype) const
 {
-    QList<QTelephonyCallInfo*> ret;
+    QList<QTelephonyCallInfo* > ret;
     for( int i = 0; i < calls().count(); i++){
         if(calls().at(i)->type() == calltype)
             ret.push_back(calls().at(i));
@@ -155,7 +172,6 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 
 /*!
     \fn QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallStatus& callstatus) const
-
     \a callstatus All calls in the list have this status.
 
     Gives back a list of calls from status of callstatus.
@@ -163,7 +179,7 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 */
 QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallStatus& callstatus) const
 {
-    QList<QTelephonyCallInfo*> ret;
+    QList<QTelephonyCallInfo* > ret;
     for( int i = 0; i < calls().count(); i++){
         if(calls().at(i)->status() == callstatus)
             ret.push_back(calls().at(i));
@@ -173,7 +189,6 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 
 /*!
     \fn QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallType& calltype, const QTelephonyCallInfo::CallStatus& callstatus) const
-
     \a calltype All calls in the list have this type.
     \a callstatus All calls in the list have this status.
 
@@ -183,7 +198,7 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallType& calltype
                                             , const QTelephonyCallInfo::CallStatus& callstatus) const
 {
-    QList<QTelephonyCallInfo*> ret;
+    QList<QTelephonyCallInfo* > ret;
     for( int i = 0; i < calls().count(); i++){
         if(calls().at(i)->type() == calltype && calls().at(i)->status() == callstatus)
             ret.push_back(calls().at(i));
@@ -192,9 +207,9 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 }
 
 /*!
-    \property QTelephonyCallList::currentCall const
-    \brief the current call.
+    \fn QTelephonyCallInfo* QTelephonyCallList::currentCall() const
 
+    \brief Gves back the current call.
     Note that the caller retains ownership of the QTelephonyCallInfo pointer
 */
 QTelephonyCallInfo* QTelephonyCallList::currentCall() const
@@ -204,13 +219,25 @@ QTelephonyCallInfo* QTelephonyCallList::currentCall() const
     return 0; 
 }
 
+/*!
+    \fn  QTelephonyCallInfoProperty* QTelephonyCallList::currentCallProperty() const
+
+    Gives back the current call.
+    Note that the caller retains ownership of the QTelephonyCallInfoProperty pointer
+*/
+/*!
+    \property QTelephonyCallList::currentCall const
+
+    \brief Gives back the current call.
+    Note that the caller retains ownership of the QTelephonyCallInfoProperty pointer
+*/
 QTelephonyCallInfoProperty* QTelephonyCallList::currentCallProperty() const
 {
     QTelephonyCallInfo* pti = 0;
     if(d)
         pti = d->currentCall();
     if(pti)
-        return new QTelephonyCallInfoProperty(pti);
+        return new QTelephonyCallInfoProperty(*pti);
     return 0; 
 }
 

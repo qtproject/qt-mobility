@@ -61,7 +61,7 @@ class Q_TELEPHONY_EXPORT QTelephonyCallList : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QTelephonyCallInfoProperty* currentCall READ currentCallProperty)
-    Q_PROPERTY(QList<QTelephonyCallInfoProperty*> calls READ callsProperty)
+    Q_PROPERTY(QList<QTelephonyCallInfoProperty* > calls READ callsProperty)
 public:
     QTelephonyCallList(QObject *parent = 0);
     virtual ~QTelephonyCallList();
@@ -70,13 +70,13 @@ Q_SIGNALS:
     void callsChanged();
 public:
     QTelephonyCallInfo* currentCall() const;
-    QList<QTelephonyCallInfo*> calls() const;
-    QList<QTelephonyCallInfo*> calls(const QTelephonyCallInfo::CallType& calltype) const;
-    QList<QTelephonyCallInfo*> calls(const QTelephonyCallInfo::CallStatus& callstatus) const;
-    QList<QTelephonyCallInfo*> calls(const QTelephonyCallInfo::CallType& calltype, const QTelephonyCallInfo::CallStatus& callStatus) const;
+    QList<QTelephonyCallInfo* > calls() const;
+    QList<QTelephonyCallInfo* > calls(const QTelephonyCallInfo::CallType& calltype) const;
+    QList<QTelephonyCallInfo* > calls(const QTelephonyCallInfo::CallStatus& callstatus) const;
+    QList<QTelephonyCallInfo* > calls(const QTelephonyCallInfo::CallType& calltype, const QTelephonyCallInfo::CallStatus& callStatus) const;
 protected:
     QTelephonyCallInfoProperty* currentCallProperty() const;
-    QList<QTelephonyCallInfoProperty*> callsProperty() const;
+    QList<QTelephonyCallInfoProperty* > callsProperty() const;
 private:
     QTelephonyCallListPrivate *d;
 };
@@ -84,7 +84,7 @@ private:
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QTELEPHONY_H*/
+#endif /*QTELEPHONYCALLLIST_H*/
 
 // End of file
 

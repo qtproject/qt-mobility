@@ -97,11 +97,21 @@ QTM_BEGIN_NAMESPACE
 /*!
     \fn  QTelephonyCallInfo::QTelephonyCallInfo()
 
-    Constructor of a call info object.
+    Constructor of a QTelephonyCallInfo object.
 */
 QTelephonyCallInfo::QTelephonyCallInfo()
 {
     d = new QTelephonyCallInfoPrivate();
+}
+
+/*!
+    \fn  QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
+
+    Copy constructor of a QTelephonyCallInfo object.
+*/
+QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
+{
+    d = other.d->getref();
 }
 
 /*!
@@ -111,14 +121,15 @@ QTelephonyCallInfo::QTelephonyCallInfo()
 */
 QTelephonyCallInfo::~QTelephonyCallInfo()
 {
-    delete d;
+    d->release();
 }
 
 /*!
-    \property QTelephonyCallInfo::callIdentifier
-    \brief the id of a call.
+    \fn  QString QTelephonyCallInfo::callIdentifier() const
 
+    Gives back the id of a call.
     The callIdentifier contains the value dependend on the call CallType.
+    It can be the phone number, IP address or something else.
 */
 QString QTelephonyCallInfo::callIdentifier() const
 {
@@ -128,9 +139,9 @@ QString QTelephonyCallInfo::callIdentifier() const
 }
 
 /*!
-    \property QTelephonyCallInfo::contacts
-    \brief a list of the contacts ids (can be used in QContact).
+    \fn  QList<quint32> QTelephonyCallInfo::contacts() const
 
+    Gives back a list of contacts ids (can be used in QContact).
     A contact id represent an id to find the contact in the system.
     If you want to find the contact information for a QTelephonyCallInfo object then call this function.
 */
@@ -143,9 +154,9 @@ QList<quint32> QTelephonyCallInfo::contacts() const
 }
 
 /*!
-    \property QTelephonyCallInfo::type
-    \brief  the type of the call.
+    \fn  QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 
+    Gives back the type of the call.
     A call can be a VOIP, Video Voice and so on.
     You can use this property to get the type of the call.
 */
@@ -157,9 +168,9 @@ QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 }
 
 /*!
-    \property QTelephonyCallInfo::status
-    \brief the status of the call.
+    \fn  QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 
+    Gives back the status of the call.
     A call can be in different conditions like ringing, dropped and so on.
     You can use this property if you want to know about the current condition of the call.
 */

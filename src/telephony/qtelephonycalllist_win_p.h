@@ -63,7 +63,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallListPrivate : public QObject
+class Q_AUTOTEST_EXPORT QTelephonyCallListPrivate : public QObject
 {
     Q_OBJECT
 Q_SIGNALS:
@@ -72,26 +72,40 @@ Q_SIGNALS:
 public:
     QTelephonyCallListPrivate(QObject *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QTelephonyCallInfo* currentCall() { return 0; }
-    QTelephonyCallInfo::CallStatus currentCallStatus() { return QTelephonyCallInfo::UnknownStatus; }
-    QList<QTelephonyCallInfo*> calls() { return calllist; }
+    QTelephonyCallInfo* currentCall() const { return 0; }
+    QList<QTelephonyCallInfo* > calls() const { return calllist; }
 private:
-    QTelephonyCallInfo* createCallInfo();
-    QList<QTelephonyCallInfo*> calllist;
+    QList<QTelephonyCallInfo* > calllist;
 };
 
-class QTelephonyCallInfoPrivate
+class Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate
 {
+    friend class QTelephonyCallInfo;
 public:
     QTelephonyCallInfoPrivate();
-    virtual ~QTelephonyCallInfoPrivate();
-    QString callIdentifier();
-    QList<quint32> contacts();
+    ~QTelephonyCallInfoPrivate();
+    QString callIdentifier() const;
+    QList<quint32> contacts() const;
     QTelephonyCallInfo::CallType type() { return QTelephonyCallInfo::UnknownType; }
     QTelephonyCallInfo::CallStatus status() { return QTelephonyCallInfo::UnknownStatus; }
 
 public: //Declaration of properties (just an example)
     int contactBufferSize() const { return 124; };
+
+private:
+    int refcount; //reference counter
+    QTelephonyCallInfoPrivate* getref()
+     {
+        refcount++;
+        return this;
+     }
+
+     void release()
+     {
+         refcount--;
+         if(refcount <= 0)
+             delete this;
+     }
 };
 
 QTM_END_NAMESPACE

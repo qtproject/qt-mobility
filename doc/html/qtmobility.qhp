@@ -517,6 +517,9 @@
                     <section ref="qtelephonycallinfo.html" title="QTelephonyCallInfo Class Reference">
                         <section ref="qtelephonycallinfo-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qtelephonycallinfoproperty.html" title="QTelephonyCallInfoProperty Class Reference">
+                        <section ref="qtelephonycallinfoproperty-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qtelephonycalllist.html" title="QTelephonyCallList Class Reference">
                         <section ref="qtelephonycalllist-members.html" title="List of all members"/>
                     </section>
@@ -2984,16 +2987,36 @@
             <keyword name="QTelephonyCallInfo::VOIP" id="QTelephonyCallInfo::VOIP" ref="qtelephonycallinfo.html#CallType-enum"/>
             <keyword name="QTelephonyCallInfo::Voice" id="QTelephonyCallInfo::Voice" ref="qtelephonycallinfo.html#CallType-enum"/>
             <keyword name="QTelephonyCallInfo::Video" id="QTelephonyCallInfo::Video" ref="qtelephonycallinfo.html#CallType-enum"/>
-            <keyword name="callIdentifier" id="QTelephonyCallInfo::callIdentifier" ref="qtelephonycallinfo.html#callIdentifier-prop"/>
-            <keyword name="contacts" id="QTelephonyCallInfo::contacts" ref="qtelephonycallinfo.html#contacts-prop"/>
-            <keyword name="status" id="QTelephonyCallInfo::status" ref="qtelephonycallinfo.html#status-prop"/>
-            <keyword name="type" id="QTelephonyCallInfo::type" ref="qtelephonycallinfo.html#type-prop"/>
+            <keyword name="callIdentifier" id="QTelephonyCallInfo::callIdentifier" ref="qtelephonycallinfo.html#callIdentifier"/>
+            <keyword name="contacts" id="QTelephonyCallInfo::contacts" ref="qtelephonycallinfo.html#contacts"/>
+            <keyword name="status" id="QTelephonyCallInfo::status" ref="qtelephonycallinfo.html#status"/>
+            <keyword name="type" id="QTelephonyCallInfo::type" ref="qtelephonycallinfo.html#type"/>
             <keyword name="~QTelephonyCallInfo" id="QTelephonyCallInfo::~QTelephonyCallInfo" ref="qtelephonycallinfo.html#dtor.QTelephonyCallInfo"/>
+            <keyword name="QTelephonyCallInfoProperty" id="QTelephonyCallInfoProperty" ref="qtelephonycallinfoproperty.html"/>
+            <keyword name="QTelephonyCallInfoProperty::CallStatus" id="QTelephonyCallInfoProperty::CallStatus" ref="qtelephonycallinfoproperty.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::UnknownStatus" id="QTelephonyCallInfoProperty::UnknownStatus" ref="qtelephonycallinfoproperty.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::NoCall" id="QTelephonyCallInfoProperty::NoCall" ref="qtelephonycallinfoproperty.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::Ringing" id="QTelephonyCallInfoProperty::Ringing" ref="qtelephonycallinfoproperty.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::InProgress" id="QTelephonyCallInfoProperty::InProgress" ref="qtelephonycallinfoproperty.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::OnHold" id="QTelephonyCallInfoProperty::OnHold" ref="qtelephonycallinfoproperty.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::Dropped" id="QTelephonyCallInfoProperty::Dropped" ref="qtelephonycallinfoproperty.html#CallStatus-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::CallType" id="QTelephonyCallInfoProperty::CallType" ref="qtelephonycallinfoproperty.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::UnknownType" id="QTelephonyCallInfoProperty::UnknownType" ref="qtelephonycallinfoproperty.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::VOIP" id="QTelephonyCallInfoProperty::VOIP" ref="qtelephonycallinfoproperty.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::Voice" id="QTelephonyCallInfoProperty::Voice" ref="qtelephonycallinfoproperty.html#CallType-enum"/>
+            <keyword name="QTelephonyCallInfoProperty::Video" id="QTelephonyCallInfoProperty::Video" ref="qtelephonycallinfoproperty.html#CallType-enum"/>
+            <keyword name="callIdentifier" id="QTelephonyCallInfoProperty::callIdentifier" ref="qtelephonycallinfoproperty.html#callIdentifier-prop"/>
+            <keyword name="contacts" id="QTelephonyCallInfoProperty::contacts" ref="qtelephonycallinfoproperty.html#contacts-prop"/>
+            <keyword name="status" id="QTelephonyCallInfoProperty::status" ref="qtelephonycallinfoproperty.html#status-prop"/>
+            <keyword name="type" id="QTelephonyCallInfoProperty::type" ref="qtelephonycallinfoproperty.html#type-prop"/>
+            <keyword name="~QTelephonyCallInfoProperty" id="QTelephonyCallInfoProperty::~QTelephonyCallInfoProperty" ref="qtelephonycallinfoproperty.html#dtor.QTelephonyCallInfoProperty"/>
             <keyword name="QTelephonyCallList" id="QTelephonyCallList" ref="qtelephonycalllist.html"/>
             <keyword name="calls" id="QTelephonyCallList::calls" ref="qtelephonycalllist.html#calls"/>
             <keyword name="callsChanged" id="QTelephonyCallList::callsChanged" ref="qtelephonycalllist.html#callsChanged"/>
+            <keyword name="callsProperty" id="QTelephonyCallList::callsProperty" ref="qtelephonycalllist.html#callsProperty"/>
             <keyword name="callstatusChanged" id="QTelephonyCallList::callstatusChanged" ref="qtelephonycalllist.html#callstatusChanged"/>
-            <keyword name="currentCall" id="QTelephonyCallList::currentCall" ref="qtelephonycalllist.html#currentCall-prop"/>
+            <keyword name="currentCall" id="QTelephonyCallList::currentCall" ref="qtelephonycalllist.html#currentCall"/>
+            <keyword name="currentCallProperty" id="QTelephonyCallList::currentCallProperty" ref="qtelephonycalllist.html#currentCallProperty"/>
             <keyword name="~QTelephonyCallList" id="QTelephonyCallList::~QTelephonyCallList" ref="qtelephonycalllist.html#dtor.QTelephonyCallList"/>
             <keyword name="QVALUESPACE_AUTO_INSTALL_LAYER" id="QVALUESPACE_AUTO_INSTALL_LAYER" ref="qabstractvaluespacelayer.html#QVALUESPACE_AUTO_INSTALL_LAYER"/>
             <keyword name="QVALUESPACE_CONTEXTKIT_LAYER" id="QVALUESPACE_CONTEXTKIT_LAYER" ref="qvaluespace.html#QVALUESPACE_CONTEXTKIT_LAYER"/>
@@ -3918,6 +3941,7 @@
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>
+            <file>qtelephonycallinfoproperty-members.html</file>
             <file>qaccelerometerfilter-members.html</file>
             <file>slideshow-main-cpp.html</file>
             <file>qmediaplaylistprovider.html</file>
@@ -4032,6 +4056,7 @@
             <file>audiorecorder-audiorecorder-pro.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>qcontactfetchhint-members.html</file>
+            <file>qtelephonycallinfoproperty.html</file>
             <file>multimedia.html</file>
             <file>qcontactinvalidfilter-members.html</file>
             <file>qmagnetometerfilter-members.html</file>
