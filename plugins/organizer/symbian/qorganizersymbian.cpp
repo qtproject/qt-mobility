@@ -239,6 +239,9 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
 
 bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error* error)
 {
+    // TODO: the performance would be probably better, if we had a separate
+    // implementation for the case with a list of items that would save all
+    // the items
     for (int i(0); i < items->count(); i++) {
         QOrganizerItem item = items->at(i);
         saveItem(&item, error);
@@ -315,17 +318,40 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
 
 bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
+    // TODO: the performance would be probably better, if we had a separate
+    // implementation for the case with a list of item ids that would
+    // remove all the items
+    for (int i(0); i < itemIds.count(); i++) {
+        QOrganizerItemLocalId localId = itemIds.at(i);
+        removeItem(localId, error);
+        if (*error != QOrganizerItemManager::NoError) {
+            errorMap->insert(i, *error);
+        }
+    }
+    return *error == QOrganizerItemManager::NoError;
+}
 
-        Remove a list of items, given by their id.
+bool QOrganizerItemSymbianEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error)
+{
+    TRAPD(err, removeItemL(organizeritemId));
+    if (err != KErrNone) {
+        // TODO: convert symbian err into qt error
+        *error = QOrganizerItemManager::UnspecifiedError;
+    }
+    return err == QOrganizerItemManager::NoError;
+}
 
-        If you encounter an error, insert an error into the appropriate place in the error map,
-        and update the error variable as well.
+void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organizeritemId)
+{
+    // TODO: DoesNotExistError should be used if the id refers to a non existent item.
+    // TODO: How to remove item instances?
 
-        DoesNotExistError should be used if the id refers to a non existent item.
-    */
-    return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
+    RArray<TCalLocalUid> ids;
+    CleanupClosePushL(ids);
+    ids.AppendL(TCalLocalUid(organizeritemId));
+    TInt count(0);
+    m_entryView->DeleteL(ids, count);
+    CleanupStack::PopAndDestroy(&ids);
 }
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSymbianEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
@@ -511,7 +537,8 @@ void QOrganizerItemSymbianEngine::Progress(TInt /*aPercentageCompleted*/)
  */
 void QOrganizerItemSymbianEngine::Completed(TInt aError)
 {
-    // TODO: How to handle aError?
+    // TODO: How to handle aError? The client should be informed that the
+    // initialization failed
 
     // Let's continue the operation that started the calendar operation
     m_activeSchedulerWait->AsyncStop();

@@ -59,15 +59,25 @@ private slots:  // Init & cleanup
     void cleanupTestCase();
 
 private slots:  // Test cases
+
+    // Simple test cases without any data
     void addSimpleEvent();
     void fetchSimpleEvent();
+    void removeSimpleEvent();
+
+    // Tests with data
     void addItem_data();
     void addItem();
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
     // when the required functionality has been implemented in symbian backend
-    void addWithIllegalParameters();
+
+    // Negative test cases (testing for example with illegal parameters)
+    void addNegative();
+    void fetchNegative();
+    void removeNegative();
+
     void fetchItemIds();
 
 private:
@@ -145,7 +155,33 @@ void tst_SymbianOm::fetchSimpleEvent()
     QVERIFY(fetchedItem.type() == QOrganizerItemType::TypeEvent);
 }
 
-void tst_SymbianOm::addWithIllegalParameters()
+void tst_SymbianOm::removeSimpleEvent()
+{
+    // Create item
+    QOrganizerItem item;
+    item.setType(QOrganizerItemType::TypeEvent);
+
+    // Save
+    QVERIFY(m_om->saveItem(&item));
+    QVERIFY(item.id().localId() != 0);
+    QVERIFY(item.id().managerUri().contains(managerName));
+
+    // Remove
+    QVERIFY(m_om->removeItem(item.localId()));
+
+    // Remove list
+    QOrganizerItem item2;
+    item2.setType(QOrganizerItemType::TypeEvent);
+    QVERIFY(m_om->saveItem(&item2));
+    QVERIFY(m_om->saveItem(&item));
+    QList<QOrganizerItemLocalId> itemIds;
+    itemIds.append(item.localId());
+    itemIds.append(item2.localId());
+    QMap<int, QOrganizerItemManager::Error> errorMap;
+    QVERIFY(m_om->removeItems(itemIds, &errorMap));
+}
+
+void tst_SymbianOm::addNegative()
 {
     // Save with null pointer as item
     QVERIFY(!m_om->saveItem(0));
@@ -157,6 +193,16 @@ void tst_SymbianOm::addWithIllegalParameters()
     QList<QOrganizerItem> items;
     QVERIFY(!m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+}
+
+void tst_SymbianOm::fetchNegative()
+{
+    // TODO: negative cases: fetch with non-existing id, ...
+}
+
+void tst_SymbianOm::removeNegative()
+{
+    // TODO: negative cases: remove with empty list, non-existing item, multiple non-existing items...
 }
 
 void tst_SymbianOm::addItem_data()

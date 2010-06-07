@@ -129,8 +129,9 @@ public:
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
     bool saveItem(QOrganizerItem *item, QOrganizerItemManager::Error *error);
-
     bool saveItems(QList<QOrganizerItem> *items, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
+
+    bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error);
     bool removeItems(const QList<QOrganizerItemLocalId> &itemIds, QMap<int, QOrganizerItemManager::Error> *errorMap, QOrganizerItemManager::Error *error);
 
     /* Definitions - Accessors and Mutators */
@@ -159,6 +160,7 @@ public: // MCalProgressCallBack
 private:
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item);
+    void removeItemL(const QOrganizerItemLocalId& organizeritemId);
 
 private:
     QOrganizerItemSymbianEngineData *d;
