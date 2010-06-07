@@ -66,14 +66,12 @@ public:
     QFeedbackImmersion();
     virtual ~QFeedbackImmersion();
 
-    virtual QFeedbackDevice defaultDevice(QFeedbackDevice::Type);
     virtual QList<QFeedbackDevice> devices();
 
     //for device handling
     virtual QString deviceName(const QFeedbackDevice &);
     virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &);
     virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &);
-    virtual QFeedbackDevice::Type type(const QFeedbackDevice &);
     virtual bool isEnabled(const QFeedbackDevice &);
     virtual void setEnabled(const QFeedbackDevice &, bool);
 
@@ -91,11 +89,9 @@ public:
 private:
     VibeInt32 handleForDevice(const QFeedbackDevice &device);
     VibeInt32 handleForDevice(int devId);
-    static QFeedbackDevice::Type convert(VibeInt32 t);
     static VibeInt32 convertedDuration(int duration);
 
     QMutex mutex;
-    int defaultDevices[DEVICE_COUNT];
     QVector<VibeInt32> deviceHandles;
     QHash<const QAbstractAnimation*, VibeInt32> effectHandles;
 

@@ -53,23 +53,10 @@ Q_EXPORT_PLUGIN2(feedback_immersion, QFeedbackImmersion)
 
 QFeedbackImmersion::QFeedbackImmersion() : QObject(qApp)
 {
-    for (int i = 0; i < DEVICE_COUNT; ++i)
-        defaultDevices[i] = VIBE_INVALID_DEVICE_HANDLE_VALUE;
-
     if (VIBE_FAILED(ImmVibeInitialize(VIBE_CURRENT_VERSION_NUMBER))) {
         //that should be done once
         //error management
         qWarning() << "the Immersion library could not be initialized";
-    }
-
-    //looking for the default devices
-    const int nbDev = ImmVibeGetDeviceCount();
-    for (int i = 0; i < nbDev; ++i) {
-        VibeInt32 t = 0;
-        ImmVibeGetDeviceCapabilityInt32(i, VIBE_DEVCAPTYPE_ACTUATOR_TYPE, &t);
-        QFeedbackDevice::Type type = convert(t);
-        if (VIBE_IS_INVALID_DEVICE_HANDLE(defaultDevices[type]))
-            defaultDevices[type] = i;
     }
 }
 
@@ -80,11 +67,6 @@ QFeedbackImmersion::~QFeedbackImmersion()
         ImmVibeCloseDevice(deviceHandles.at(i));
 
     ImmVibeTerminate();
-}
-
-QFeedbackDevice QFeedbackImmersion::defaultDevice(QFeedbackDevice::Type t)
-{
-    return createFeedbackDevice(defaultDevices[t]);
 }
 
 QList<QFeedbackDevice> QFeedbackImmersion::devices()
@@ -128,15 +110,6 @@ QFeedbackDevice::Capabilities QFeedbackImmersion::supportedCapabilities(const QF
     return QFeedbackDevice::Envelope | QFeedbackDevice::Period;
 }
 
-QFeedbackDevice::Type QFeedbackImmersion::type(const QFeedbackDevice &dev)
-{
-    VibeInt32 t = 0;
-    if (!dev.isValid() || VIBE_FAILED(ImmVibeGetDeviceCapabilityInt32(dev.id(), VIBE_DEVCAPTYPE_ACTUATOR_TYPE, &t)))
-        return QFeedbackDevice::None;
-
-    return QFeedbackImmersion::convert(t);
-}
-
 bool QFeedbackImmersion::isEnabled(const QFeedbackDevice &dev)
 {
     VibeBool disabled = true;
@@ -150,19 +123,6 @@ void QFeedbackImmersion::setEnabled(const QFeedbackDevice &dev, bool enabled)
     ImmVibeSetDevicePropertyBool(handleForDevice(dev), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, !enabled);
 }
 
-
-QFeedbackDevice::Type QFeedbackImmersion::convert(VibeInt32 t)
-{
-    //TODO: check if that makes sense at all
-    switch (t) {
-    case VIBE_DEVACTUATORTYPE_PIEZO_WAVE:
-    case VIBE_DEVACTUATORTYPE_PIEZO:
-    case VIBE_DEVACTUATORTYPE_ERM:
-        return QFeedbackDevice::PrimaryDisplay;
-    default:
-        return QFeedbackDevice::Device;
-    }
-}
 
 VibeInt32 QFeedbackImmersion::convertedDuration(int duration)
 {

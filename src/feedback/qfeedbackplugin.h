@@ -66,14 +66,12 @@ public:
     };
 
     //static members for devices management
-    virtual QFeedbackDevice defaultDevice(QFeedbackDevice::Type) = 0;
     virtual QList<QFeedbackDevice> devices() = 0;
 
     //for device handling
     virtual QString deviceName(const QFeedbackDevice &) = 0;
     virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &) = 0;
     virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &) = 0;
-    virtual QFeedbackDevice::Type type(const QFeedbackDevice &) = 0;
     virtual bool isEnabled(const QFeedbackDevice &) = 0;
     virtual void setEnabled(const QFeedbackDevice &, bool) = 0;
 

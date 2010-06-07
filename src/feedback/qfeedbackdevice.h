@@ -58,13 +58,6 @@ class Q_FEEDBACK_EXPORT QFeedbackDevice
     Q_ENUMS(Capability)
     Q_ENUMS(State)
 public:
-    enum Type {
-        //should we have different type for actuators: vibra, motor...
-        None,
-        Device,
-        PrimaryDisplay
-    };
-
     enum Capability {
         //this might need to be extended
         Envelope = 1,
@@ -88,13 +81,11 @@ public:
     State state() const;
 
     Capabilities supportedCapabilities() const;
-    Type type() const;
 
     bool isEnabled() const;
     void setEnabled(bool);
 
     static QFeedbackDevice defaultDevice();
-    static QFeedbackDevice defaultDevice(Type t);
     static QList<QFeedbackDevice> devices();
 
 private:

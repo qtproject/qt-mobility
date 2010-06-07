@@ -58,13 +58,11 @@ class QDummyBackend : QObject, public QFeedbackInterface
 public:
     QDummyBackend() : QObject(qApp) { }
 
-    QFeedbackDevice defaultDevice(QFeedbackDevice::Type) { return QFeedbackDevice(); }
     QList<QFeedbackDevice> devices() { return QList<QFeedbackDevice>(); }
 
     QString deviceName(const QFeedbackDevice &) { return QString(); }
     QFeedbackDevice::State deviceState(const QFeedbackDevice &) { return QFeedbackDevice::Unknown; }
     QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &) { return 0; }
-    QFeedbackDevice::Type type(const QFeedbackDevice &) { return QFeedbackDevice::None; }
     bool isEnabled(const QFeedbackDevice &) { return false; }
     void setEnabled(const QFeedbackDevice &, bool) { }
 

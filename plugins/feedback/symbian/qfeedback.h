@@ -48,7 +48,6 @@
 #include <qfeedbackplugin.h>
 
 #include <hwrmvibra.h>
-#include <touchfeedback.h>
 
 
 QT_BEGIN_HEADER
@@ -56,23 +55,26 @@ QTM_USE_NAMESPACE
 
 class QTouchFeedback;
 
-class QFeedbackSymbian : public QObject, public QFeedbackInterface, public QThemeFeedbackInterface
+class QFeedbackSymbian : public QObject, public QFeedbackInterface
+#ifndef NO_TACTILE_FEEDBACK
+, public QThemeFeedbackInterface
+#endif //NO_TACTILE_FEEDBACK
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QFeedbackInterface)
+#ifndef NO_TACTILE_FEEDBACK
     Q_INTERFACES(QtMobility::QThemeFeedbackInterface)
+#endif //NO_TACTILE_FEEDBACK
 public:
     QFeedbackSymbian();
     virtual ~QFeedbackSymbian();
 
-    virtual QFeedbackDevice defaultDevice(QFeedbackDevice::Type);
     virtual QList<QFeedbackDevice> devices();
 
     //for device handling
     virtual QString deviceName(const QFeedbackDevice &);
     virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &);
     virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &);
-    virtual QFeedbackDevice::Type type(const QFeedbackDevice &);
     virtual bool isEnabled(const QFeedbackDevice &);
     virtual void setEnabled(const QFeedbackDevice &, bool);
 
@@ -80,14 +82,15 @@ public:
     virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *);
     virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
 
+#ifndef NO_TACTILE_FEEDBACK
     virtual void play(QFeedbackEffect::InstantEffect);
+#endif //NO_TACTILE_FEEDBACK
 
 private:
     CHWRMVibra *vibra();
 
 
     CCoeControl *defaultWidget();
-    TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::InstantEffect effect);
 
     CHWRMVibra *m_vibra;
     bool m_vibraActive;
