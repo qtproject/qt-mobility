@@ -43,11 +43,13 @@
 
 #include "galleryview.h"
 
-class GalleryModel;
-
 QT_BEGIN_NAMESPACE
 class QModelIndex;
 QT_END_NAMESPACE
+
+QTM_BEGIN_NAMESPACE
+class QGalleryItemListModel;
+QTM_END_NAMESPACE
 
 class SongView : public GalleryView
 {
@@ -63,7 +65,7 @@ private slots:
     void activated(const QModelIndex &index);
 
 private:
-    GalleryModel *model;
+    QGalleryItemListModel *model;
 };
 
 #endif

@@ -41,12 +41,11 @@
 #include "artistview.h"
 
 #include "artistdelegate.h"
-#include "gallerymodel.h"
-
 #include <QtGui>
 
 #include <qdocumentgallery.h>
 #include <qgalleryitemlist.h>
+#include <qgalleryitemlistmodel.h>
 
 ArtistView::ArtistView(const QString &type, QWidget *parent)
     : GalleryView(parent)
@@ -60,8 +59,8 @@ ArtistView::ArtistView(const QString &type, QWidget *parent)
     setSortFields(QStringList()
             << QDocumentGallery::title);
 
-    model = new GalleryModel;
-    model->setDisplayFieldForColumn(0, QDocumentGallery::title);
+    model = new QGalleryItemListModel;
+    model->addColumn(QDocumentGallery::title);
 
     QListView *view = new QListView;
     view->setIconSize(QSize(124, 124));
@@ -84,11 +83,12 @@ ArtistView::ArtistView(const QString &type, QWidget *parent)
 
 ArtistView::~ArtistView()
 {
+    delete model;
 }
 
 void ArtistView::mediaChanged(QGalleryItemList *media)
 {
-    model->setList(media);
+    model->setItemList(media);
 }
 
 void ArtistView::activated(const QModelIndex &index)

@@ -40,8 +40,6 @@
 
 #include "artistdelegate.h"
 
-#include "gallerymodel.h"
-
 #include <QtGui>
 
 ArtistDelegate::ArtistDelegate(QObject *parent)

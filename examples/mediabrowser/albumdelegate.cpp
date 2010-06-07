@@ -40,8 +40,6 @@
 
 #include "albumdelegate.h"
 
-#include "gallerymodel.h"
-
 #include <QtGui>
 
 AlbumDelegate::AlbumDelegate(QObject *parent)

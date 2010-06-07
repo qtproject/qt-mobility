@@ -41,12 +41,11 @@
 #include "photoview.h"
 
 #include "photodelegate.h"
-#include "gallerymodel.h"
 
 #include <QtGui>
 
 #include <qdocumentgallery.h>
-#include <qgalleryitemlist.h>
+#include <qgalleryitemlistmodel.h>
 
 PhotoView::PhotoView(QWidget *parent)
     : GalleryView(parent)
@@ -58,9 +57,13 @@ PhotoView::PhotoView(QWidget *parent)
     setSortFields(QStringList()
             << QDocumentGallery::title);
 
-    model = new GalleryModel;
-    model->setDisplayFieldForColumn(0, QDocumentGallery::fileName);
-    model->setDecorationFieldForColumn(0, QDocumentGallery::thumbnailImage);
+
+    QHash<int, QString> properties;
+    properties.insert(Qt::DisplayRole, QDocumentGallery::fileName);
+    properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailImage);
+
+    model = new QGalleryItemListModel;
+    model->addColumn(properties);
 
     QListView *view = new QListView;
     view->setIconSize(QSize(124, 124));
@@ -84,11 +87,12 @@ PhotoView::PhotoView(QWidget *parent)
 
 PhotoView::~PhotoView()
 {
+    delete model;
 }
 
 void PhotoView::mediaChanged(QGalleryItemList *media)
 {
-    model->setList(media);
+    model->setItemList(media);
 }
 
 void PhotoView::activated(const QModelIndex &)

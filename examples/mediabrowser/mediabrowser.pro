@@ -14,7 +14,6 @@ HEADERS = \
     artistdelegate.h \
     artistview.h \
     browser.h \
-    gallerymodel.h \
     galleryview.h \
     photodelegate.h \
     photoview.h \
@@ -26,7 +25,6 @@ SOURCES = \
     artistdelegate.cpp \
     artistview.cpp \
     browser.cpp \
-    gallerymodel.cpp \
     galleryview.cpp \
     main.cpp \
     photodelegate.cpp \

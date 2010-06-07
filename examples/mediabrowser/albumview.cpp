@@ -41,12 +41,12 @@
 #include "albumview.h"
 
 #include "albumdelegate.h"
-#include "gallerymodel.h"
 
 #include <QtGui>
 
 #include <qdocumentgallery.h>
 #include <qgalleryitemlist.h>
+#include <qgalleryitemlistmodel.h>
 
 AlbumView::AlbumView(QWidget *parent)
     : GalleryView(parent)
@@ -62,10 +62,14 @@ AlbumView::AlbumView(QWidget *parent)
     setSortFields(QStringList()
             << QDocumentGallery::title);
 
-    model = new GalleryModel;
-    model->setDisplayFieldForColumn(0, QDocumentGallery::title);
-    model->setDecorationFieldForColumn(0, QDocumentGallery::thumbnailImage);
-    model->setUserRoleFields(QVector<QString>() << QDocumentGallery::artist);
+
+    QHash<int, QString> properties;
+    properties.insert(Qt::DisplayRole, QDocumentGallery::title);
+    properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailImage);
+    properties.insert(AlbumDelegate::ArtistRole, QDocumentGallery::artist);
+
+    model = new QGalleryItemListModel;
+    model->addColumn(properties);
 
     QListView *view = new QListView;
     view->setIconSize(QSize(124, 124));
@@ -88,11 +92,12 @@ AlbumView::AlbumView(QWidget *parent)
 
 AlbumView::~AlbumView()
 {
+    delete model;
 }
 
 void AlbumView::mediaChanged(QGalleryItemList *media)
 {
-    model->setList(media);
+    model->setItemList(media);
 }
 
 void AlbumView::activated(const QModelIndex &index)

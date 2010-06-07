@@ -40,8 +40,6 @@
 
 #include "photodelegate.h"
 
-#include "gallerymodel.h"
-
 #include <QtGui>
 
 PhotoDelegate::PhotoDelegate(QObject *parent)
