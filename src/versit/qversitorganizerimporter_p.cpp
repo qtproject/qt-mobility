@@ -115,10 +115,12 @@ void QVersitOrganizerImporterPrivate::importProperty(
             success = createEndDateTime(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("DURATION")) {
             success = createDuration(property, item, &updatedDetails);
-        } else if (property.name() == QLatin1String("RRULE")) {
+        } else if (property.name() == QLatin1String("RRULE")
+               || (property.name() == QLatin1String("EXRULE"))) {
             success = createRecurrenceRule(property, item, &updatedDetails);
-        } else if (property.name() == QLatin1String("EXRULE")) {
-            success = createRecurrenceRule(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("RDATE")
+               || (property.name() == QLatin1String("EXDATE"))) {
+            success = createRecurrenceDates(property, item, &updatedDetails);
         }
     }
 
@@ -448,6 +450,53 @@ int QVersitOrganizerImporterPrivate::parseDayOfWeek(const QString& str)
     } else {
         return -1;
     }
+}
+
+/*!
+ * Parses an iCalendar RDATE or EXDATE property and updates the recurrenceDates or
+ * exceptionDates in the Recurrence detail.
+ */
+bool QVersitOrganizerImporterPrivate::createRecurrenceDates(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails)
+{
+    if (property.value().isEmpty())
+        return false;
+    QList<QDate> dates;
+    if (!parseDateList(property.value(), &dates))
+        return false;
+    QOrganizerItemRecurrence detail(item->detail<QOrganizerItemRecurrence>());
+    if (property.name() == QLatin1String("RDATE")) {
+        detail.setRecurrenceDates(detail.recurrenceDates() << dates);
+    } else if (property.name() == QLatin1String("EXDATE")) {
+        detail.setExceptionDates(detail.exceptionDates() << dates);
+    } 
+    updatedDetails->append(detail);
+    return true;
+}
+
+/*!
+ * Parses a string like "19970304,19970504,19970704" into a list of QDates
+ */
+bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QDate>* dates)
+{
+    QStringList parts = str.split(QLatin1Char(','));
+    if (parts.size() == 0)
+        return false;
+
+    foreach (QString part, parts) {
+        int tIndex = part.indexOf(QLatin1Char('T'));
+        if (tIndex >= 0) {
+            part = part.left(tIndex);
+        }
+        QDate date = QDate::fromString(part, QLatin1String("yyyyMMdd"));
+        if (date.isValid())
+            *dates << date;
+        else
+            return false;
+    }
+    return true;
 }
 
 /*! Parse the iCalendar duration string \a str in an RDP fashion with a two symbol lookahead, and

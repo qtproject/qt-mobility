@@ -156,6 +156,12 @@ private:
     QList<int> parseIntList(const QString& str, int min, int max);
     int parseDayOfWeek(const QString& str);
 
+    bool createRecurrenceDates(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool parseDateList(const QString& str, QList<QDate>* dates);
+
     // versit property name -> <definition name, field name>:
     QMap<QString, QPair<QString, QString> > mPropertyMappings;
 };

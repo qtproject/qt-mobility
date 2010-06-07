@@ -355,13 +355,23 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
         rdate.setName(QLatin1String("RDATE"));
         rdate.setValue(QLatin1String("19970304"));
         QOrganizerItemEventTimeRange etr;
-        etr.setStartDateTime(QDateTime(QDate(1997, 3, 4)));
-        etr.setEndDateTime(QDateTime(QDate(1997, 3, 4)));
+        etr.setStartDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
+        etr.setEndDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
         QOrganizerItemRecurrence recurrence;
         QList<QDate> recurrenceDates;
         recurrenceDates << QDate(1997, 3, 4);
         recurrence.setRecurrenceDates(recurrenceDates);
         QTest::newRow("rdate")
+            << (QList<QOrganizerItemDetail>() << etr << recurrence)
+            << (QList<QVersitProperty>() << rdate);
+
+        rdate.setValue(QLatin1String("19970304,19970504,19970704"));
+        recurrenceDates.clear();
+        recurrenceDates << QDate(1997, 3, 4)
+                        << QDate(1997, 5, 4)
+                        << QDate(1997, 7, 4);
+        recurrence.setRecurrenceDates(recurrenceDates);
+        QTest::newRow("multiple rdate")
             << (QList<QOrganizerItemDetail>() << etr << recurrence)
             << (QList<QVersitProperty>() << rdate);
     }
