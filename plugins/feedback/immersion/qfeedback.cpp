@@ -43,7 +43,7 @@
 #include "qfeedback.h"
 #include <QtCore/QtPlugin>
 #include <QtCore/QDebug>
-#include <QtCore/QStringlist>
+#include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 
@@ -107,7 +107,7 @@ QFeedbackDevice::State QFeedbackImmersion::deviceState(const QFeedbackDevice &de
 
 QFeedbackDevice::Capabilities QFeedbackImmersion::supportedCapabilities(const QFeedbackDevice &)
 {
-    return QFeedbackDevice::Envelope | QFeedbackDevice::Period;
+  return QFeedbackDevice::Capabilities(QFeedbackDevice::Envelope | QFeedbackDevice::Period);
 }
 
 bool QFeedbackImmersion::isEnabled(const QFeedbackDevice &dev)
