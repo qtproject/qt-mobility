@@ -324,6 +324,7 @@ void QVersitOrganizerExporterPrivate::encodeRecurDates(
     QVersitProperty property;
     property = VersitUtils::takeProperty(document, propertyName, removedProperties);
     property.setName(propertyName);
+    property.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
     QString value = property.value();
     bool valueIsEmpty = value.isEmpty();
 

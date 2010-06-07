@@ -352,6 +352,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rdate;
+        rdate.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
         rdate.setName(QLatin1String("RDATE"));
         rdate.setValue(QLatin1String("19970304"));
         QOrganizerItemEventTimeRange etr;
@@ -378,6 +379,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
 
     {
         QVersitProperty rdate;
+        rdate.insertParameter(QLatin1String("VALUE"), QLatin1String("DATE"));
         rdate.setName(QLatin1String("EXDATE"));
         rdate.setValue(QLatin1String("19970304"));
         QOrganizerItemEventTimeRange etr;
