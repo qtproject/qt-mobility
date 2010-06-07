@@ -144,7 +144,7 @@ protected:
 
     explicit QGalleryAbstractRequest(QGalleryAbstractRequestPrivate &dd, QObject *parent);
 
-    QGalleryAbstractRequestPrivate *d_ptr;
+    QScopedPointer<QGalleryAbstractRequestPrivate> d_ptr;
 
 private:
     Q_PRIVATE_SLOT(d_ptr, void _q_finished())

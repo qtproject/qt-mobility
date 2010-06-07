@@ -178,8 +178,8 @@ public:
         , aliasOffset(compositeOffset + arguments.compositeColumns.count())
         , imageOffset(aliasOffset + arguments.aliasColumns.count())
         , columnCount(imageOffset + arguments.imageColumns.count())
-        , rowCount(0)
         , queryLimit(qMax(256, (4 * minimumPagedItems + 63) & ~63))
+        , rowCount(0)
         , imageCacheIndex(0)
         , imageCacheCount(0)
         , queryInterface(arguments.queryInterface)
@@ -199,18 +199,15 @@ public:
 
     ~QGalleryTrackerItemListPrivate()
     {
-        delete idColumn;
-        delete urlColumn;
-        delete typeColumn;
         qDeleteAll(valueColumns);
         qDeleteAll(compositeColumns);
         qDeleteAll(imageColumns);
     }
 
     Flags flags;
-    QGalleryTrackerCompositeColumn *idColumn;
-    QGalleryTrackerCompositeColumn *urlColumn;
-    QGalleryTrackerCompositeColumn *typeColumn;
+    const QScopedPointer<QGalleryTrackerCompositeColumn> idColumn;
+    const QScopedPointer<QGalleryTrackerCompositeColumn> urlColumn;
+    const QScopedPointer<QGalleryTrackerCompositeColumn> typeColumn;
 
     const int updateMask;
     const int identityWidth;
@@ -223,11 +220,11 @@ public:
     const int aliasOffset;
     const int imageOffset;
     const int columnCount;
-    int rowCount;
     const int queryLimit;
+    int rowCount;
     int imageCacheIndex;
     int imageCacheCount;
-    QGalleryDBusInterfacePointer queryInterface;
+    const QGalleryDBusInterfacePointer queryInterface;
     const QString queryMethod;
     const QVariantList queryArguments;
     const QStringList propertyNames;

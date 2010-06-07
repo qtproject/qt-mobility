@@ -84,7 +84,6 @@ QAbstractGallery::QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent)
 
 QAbstractGallery::~QAbstractGallery()
 {
-    delete d_ptr;
 }
 
 /*!

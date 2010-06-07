@@ -214,7 +214,6 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(
 
 QGalleryAbstractRequest::~QGalleryAbstractRequest()
 {
-    delete d_ptr;
 }
 
 /*!

@@ -66,7 +66,7 @@ public:
     {
     }
 
-    QGalleryDBusInterfacePointer metaDataInterface;
+    const QGalleryDBusInterfacePointer metaDataInterface;
     const QStringList fieldNames;
 };
 

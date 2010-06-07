@@ -113,7 +113,7 @@ private:
     const QString m_normalDir;
 #endif
     const QString m_failDir;
-    QGalleryDBusInterfacePointer m_thumbnailInterface;
+    const QGalleryDBusInterfacePointer m_thumbnailInterface;
     QList<QGalleryTrackerThumbnailDBusWatcher *> m_dbusWatchers;
     QList<QGalleryTrackerThumbnailLoadWatcher *> m_loadWatchers;
     QList<int> m_keys;
