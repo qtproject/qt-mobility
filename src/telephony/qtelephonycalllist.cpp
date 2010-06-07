@@ -162,12 +162,17 @@ QList<QTelephonyCallInfoProperty* > QTelephonyCallList::callsProperty() const
 */
 QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallType& calltype) const
 {
+    QList<QTelephonyCallInfo* > calllist;
     QList<QTelephonyCallInfo* > ret;
-    for( int i = 0; i < calls().count(); i++){
-        if(calls().at(i)->type() == calltype)
-            ret.push_back(calls().at(i));
+    if(d)
+        calllist = d->calls();
+
+    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
+    for( int i = 0; i < calllist.count(); i++){
+        if(calllist.at(i)->type() == calltype)
+            ret.push_back(new QTelephonyCallInfo(*calllist.at(i)));
     }
-    return ret; 
+    return ret;
 }
 
 /*!
@@ -179,12 +184,17 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 */
 QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallStatus& callstatus) const
 {
+    QList<QTelephonyCallInfo* > calllist;
     QList<QTelephonyCallInfo* > ret;
-    for( int i = 0; i < calls().count(); i++){
-        if(calls().at(i)->status() == callstatus)
-            ret.push_back(calls().at(i));
+    if(d)
+        calllist = d->calls();
+
+    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
+    for( int i = 0; i < calllist.count(); i++){
+        if(calllist.at(i)->status() == callstatus)
+            ret.push_back(new QTelephonyCallInfo(*calllist.at(i)));
     }
-    return ret; 
+    return ret;
 }
 
 /*!
@@ -198,12 +208,17 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::CallType& calltype
                                             , const QTelephonyCallInfo::CallStatus& callstatus) const
 {
+    QList<QTelephonyCallInfo* > calllist;
     QList<QTelephonyCallInfo* > ret;
-    for( int i = 0; i < calls().count(); i++){
-        if(calls().at(i)->type() == calltype && calls().at(i)->status() == callstatus)
-            ret.push_back(calls().at(i));
+    if(d)
+        calllist = d->calls();
+
+    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
+    for( int i = 0; i < calllist.count(); i++){
+        if(calllist.at(i)->type() == calltype && calllist.at(i)->status() == callstatus)
+            ret.push_back(new QTelephonyCallInfo(*calllist.at(i)));
     }
-    return ret; 
+    return ret;
 }
 
 /*!
@@ -215,7 +230,7 @@ QList<QTelephonyCallInfo* > QTelephonyCallList::calls(const QTelephonyCallInfo::
 QTelephonyCallInfo* QTelephonyCallList::currentCall() const
 {
     if(d)
-        return d->currentCall();
+        return new QTelephonyCallInfo(*d->currentCall());
     return 0; 
 }
 
