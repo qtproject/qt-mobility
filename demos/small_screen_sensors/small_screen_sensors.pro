@@ -1,12 +1,12 @@
 TARGET = SmallSensors
 TEMPLATE = app
 
-include(../../examples.pri)
+include(../../examples/examples.pri)
 
 QT=core gui
 CONFIG+=mobility
 MOBILITY+=sensors
-INCLUDEPATH += ../../../src/sensors
+INCLUDEPATH += ../../src/sensors
 
 SOURCES += main.cpp \
     sensorswindow.cpp \

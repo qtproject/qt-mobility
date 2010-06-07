@@ -36,6 +36,7 @@ install/*
 lib/*
 doc/src/snippets/sensors/sensors
 demos/player/player
+demos/small_screen_sensors/SmallSensors
 examples/audiodevices/audiodevices
 examples/audioinput/audioinput
 examples/audiooutput/audiooutput
@@ -64,7 +65,6 @@ examples/sensors/show_orientation/show_orientation
 examples/sensors/show_proximity/show_proximity
 examples/sensors/show_rotation/show_rotation
 examples/sensors/show_tap/show_tap
-examples/sensors/small_screen_sensors/SmallSensors
 examples/servicebrowser/servicebrowser
 examples/sfw-notes/sfw-notes
 examples/slideshow/slideshow
