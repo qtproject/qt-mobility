@@ -61,24 +61,23 @@ class Q_CONTACTS_EXPORT QContactAction : public QObject
     Q_OBJECT
 
 public:
-    /* return a list of names of actions which are available */
-    static QStringList availableActions(const QString& serviceName = QString());
-
-    /* return a list of descriptors for action implementations matching the given criteria */
-    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
-
-    /* return a pointer to an implementation of the action identified by the given descriptor */
-    static QContactAction* action(const QContactActionDescriptor& descriptor);
-
-public:
     QContactAction(QObject *parent = 0) : QObject(parent) {}
     virtual ~QContactAction() = 0;
 
     virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
-    virtual QVariantMap metaData() const = 0;                               // label, icon etc - under discussion! - replaces the above
 
-    virtual QContactFilter contactFilter(const QVariant& value = QVariant()) const = 0; // use for matching
+    virtual QContactFilter contactFilter() const = 0; // use for matching
     virtual bool isTargetSupported(const QContactActionTarget& target) const = 0;
+
+    // Need latin constants for keys.. {label, icon, vendor?, second label?}
+
+    virtual QVariant metaData(const QString& key, const QContactActionTarget& target) const = 0;
+    QVariant metaData(const QString& key, const QContact& target, const QContactDetail& detail) const
+    {
+        return metaData(key, QContactActionTarget(contact, detail));
+    }
+    // No metadata for list of targets?
+
     virtual QList<QContactDetail> supportedDetails(const QContact& contact) const = 0;
 
     /* Initiate the asynchronous action on the given contact (and optionally detail) with the given parameters */
@@ -104,6 +103,16 @@ public:
 Q_SIGNALS:
     void stateChanged(QContactAction::State);
     void resultsAvailable();
+
+public:
+    /* return a list of names of actions which are available */
+    static QStringList availableActions(const QString& serviceName = QString());
+
+    /* return a list of descriptors for action implementations matching the given criteria */
+    static QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
+
+    /* return a pointer to an implementation of the action identified by the given descriptor */
+    static QContactAction* action(const QContactActionDescriptor& descriptor);
 };
 
 QTM_END_NAMESPACE
