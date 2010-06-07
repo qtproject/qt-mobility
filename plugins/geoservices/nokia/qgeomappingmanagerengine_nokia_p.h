@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_P_H
-#define QGEOMAPREPLY_P_H
+#ifndef QGEOMAPPINGMANAGERENGINE_NOKIA_P_H
+#define QGEOMAPPINGMANAGERENGINE_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -53,27 +53,60 @@
 // We mean it.
 //
 
-#include "qgeomapreply.h"
+#include <QGeoServiceProvider>
+#include <QGeoTiledMappingManagerEngine>
+#include <QGeoTiledMappingManagerThread>
 
-QTM_BEGIN_NAMESPACE
+class QNetworkAccessManager;
+class QNetworkDiskCache;
 
-class QGeoMapReplyPrivate
+QTM_USE_NAMESPACE
+
+class QGeoMappingManagerEngineNokia;
+
+class QGeoMappingManagerThreadNokia : public QGeoTiledMappingManagerThread
 {
+    Q_OBJECT
 public:
-    QGeoMapReplyPrivate();
-    QGeoMapReplyPrivate(QGeoMapReply::Error error, const QString& errorString);
-    QGeoMapReplyPrivate(const QGeoMapReplyPrivate &other);
-    ~QGeoMapReplyPrivate();
+    QGeoMappingManagerThreadNokia(QGeoMappingManagerEngineNokia* engine,
+                                  const QMap<QString, QString> &parameters);
+    ~QGeoMappingManagerThreadNokia();
 
-    QGeoMapReplyPrivate& operator= (const QGeoMapReplyPrivate &other);
+    void initialize();
+    QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
-    QGeoMapReply::Error error;
-    QString errorString;
-    bool isFinished;
+private:
+    Q_DISABLE_COPY(QGeoMappingManagerThreadNokia)
 
-    QPixmap mapImage;
+    QString getRequestString(const QGeoTiledMapRequest &request) const;
+
+    static QString sizeToStr(const QSize &size);
+    static QString mapTypeToStr(QGeoMapWidget::MapType type);
+
+    QGeoMappingManagerEngineNokia* m_engine;
+    QMap<QString, QString> m_parameters;
+    QNetworkAccessManager *m_nam;
+    QNetworkDiskCache *m_cache;
+    QString m_host;
+    QString m_token;
+    QString m_referrer;
 };
 
-QTM_END_NAMESPACE
+class QGeoMappingManagerEngineNokia : public QGeoTiledMappingManagerEngine
+{
+    Q_OBJECT
+public:
+    QGeoMappingManagerEngineNokia(const QMap<QString, QString> &parameters,
+                                  QGeoServiceProvider::Error *error,
+                                  QString *errorString);
+    virtual ~QGeoMappingManagerEngineNokia();
+
+protected:
+    QGeoTiledMappingManagerThread* createTileManagerThread();
+
+private:
+    QMap<QString, QString> parameters;
+    Q_DISABLE_COPY(QGeoMappingManagerEngineNokia)
+};
 
 #endif

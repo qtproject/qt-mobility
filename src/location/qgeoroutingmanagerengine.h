@@ -39,62 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESREPLY_H
-#define QGEOPLACESREPLY_H
+#ifndef QGEOROUTINGMANAGERENGINE_H
+#define QGEOROUTINGMANAGERENGINE_H
 
-#include "qgeoplace.h"
+#include "qgeorouterequest.h"
+#include "qgeoroutereply.h"
 
 #include <QObject>
-#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesReplyPrivate;
+class QGeoRoutingManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT QGeoPlacesReply : public QObject
+class Q_LOCATION_EXPORT QGeoRoutingManagerEngine : public QObject
 {
     Q_OBJECT
-
 public:
-    enum Error {
-        NoError,
-        EngineNotSetError,
-        CommunicationError,
-        ParseError,
-        UnsupportedOptionError,
-        UnknownError
-    };
+    QGeoRoutingManagerEngine(QObject *parent = 0);
+    virtual ~QGeoRoutingManagerEngine();
 
-    QGeoPlacesReply(Error error, const QString &errorString, QObject *parent = 0);
-    virtual ~QGeoPlacesReply();
+    virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) = 0;
+    virtual QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position) = 0;
 
-    bool isFinished() const;
-    Error error() const;
-    QString errorString() const;
-
-    QGeoBoundingBox bounds() const;
-    QList<QGeoPlace> places() const;
-
-public slots:
-    virtual void abort();
+    bool supportsRouteUpdates() const;
+    bool supportsAlternativeRoutes() const;
+    QGeoRouteRequest::TravelModes supportedTravelModes() const;
+    QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
+    QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
+    QGeoRouteRequest::InstructionDetails supportedInstructionDetails() const;
 
 signals:
-    void finished();
-    void error(QGeoPlacesReply::Error error, const QString &errorString = QString());
+    void finished(QGeoRouteReply* reply);
+    void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
 
 protected:
-    QGeoPlacesReply(QObject *parent = 0);
-
-    void setError(Error error, const QString &errorString);
-    void setFinished(bool finished);
-
-    void setBounds(const QGeoBoundingBox& bounds);
-    void addPlace(const QGeoPlace &place);
-    void setPlaces(const QList<QGeoPlace> &places);
+    void setSupportsRouteUpdates(bool supported);
+    void setSupportsAlternativeRoutes(bool supported);
+    void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);
+    void setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
+    void setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations);
+    void setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails);
 
 private:
-    QGeoPlacesReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoPlacesReply)
+    QGeoRoutingManagerEnginePrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoRoutingManagerEngine)
 };
 
 QTM_END_NAMESPACE

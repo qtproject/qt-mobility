@@ -39,39 +39,49 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREQUESTOPTIONS_H
-#define QGEOMAPREQUESTOPTIONS_H
+#ifndef QGEOTILEDMAPPINGMANAGERTHREAD_H
+#define QGEOTILEDMAPPINGMANAGERTHREAD_H
 
-#include "qgeomappingmanager.h"
+#include "qgeomapwidget.h"
+#include "qgeotiledmapreply.h"
 
-QT_BEGIN_HEADER
+#include <QThread>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapRequestOptionsPrivate;
+class QGeoTiledMapRequest;
+class QGeoTiledMapViewport;
+class QGeoTiledMappingManagerEngine;
 
-class Q_LOCATION_EXPORT QGeoMapRequestOptions
+class QGeoTiledMappingManagerThreadPrivate;
+
+class Q_LOCATION_EXPORT QGeoTiledMappingManagerThread : public QThread
 {
+    Q_OBJECT
 public:
-    QGeoMapRequestOptions();
-    QGeoMapRequestOptions(const QGeoMapRequestOptions &other);
-    ~QGeoMapRequestOptions();
+    QGeoTiledMappingManagerThread(QGeoTiledMappingManagerEngine* engine, QObject *parent = 0);
+    virtual ~QGeoTiledMappingManagerThread();
 
-    QGeoMapRequestOptions& operator= (const QGeoMapRequestOptions &other);
+    virtual void initialize();
 
-    void setMapType(QGeoMappingManager::MapType mapType);
-    QGeoMappingManager::MapType mapType() const;
+    virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
+    void removeViewport(QGeoTiledMapViewport* viewport);
 
-    void setImageFormat(const QString &imageFormat);
-    QString imageFormat() const;
+protected:
+    void run();
+
+public slots:
+    void setRequests(QGeoTiledMapViewport* viewport, const QList<QGeoTiledMapRequest> &requests);
+
+signals:
+    void tileFinished(QGeoTiledMapReply *reply);
+    void tileError(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
 
 private:
-    QGeoMapRequestOptionsPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QGeoMapRequestOptions)
+    QGeoTiledMappingManagerThreadPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoTiledMappingManagerThread)
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

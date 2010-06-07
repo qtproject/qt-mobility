@@ -63,11 +63,12 @@ public slots:
 
 private slots:
     void on_btnRequest_clicked();
-    void replyFinished(QGeoMapReply* reply);
-    void resultsError(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString);
+    //void replyFinished(QGeoTiledMapReply* reply);
+    //void resultsError(QGeoTiledMapReply* reply, QTiledGeoMapReply::Error error, QString errorString);
 
 private:
     QGeoMappingManager *m_mapManager;
+    QGeoMapViewport *m_viewport;
     QLineEdit *m_tileLong;
     QLineEdit *m_tileLat;
     QLineEdit *m_tileZoomLevel;

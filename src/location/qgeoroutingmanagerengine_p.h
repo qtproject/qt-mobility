@@ -39,54 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_H
-#define QGEOSERVICEPROVIDER_H
+#ifndef QGEOROUTINGMANAGERENGINE_P_H
+#define QGEOROUTINGMANAGERENGINE_P_H
 
-#include "qmobilityglobal.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QMap>
-
-class QString;
-class QStringList;
-
-QT_BEGIN_HEADER
+#include "qgeorouterequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManager;
-class QGeoMappingManager;
-class QGeoRoutingManager;
-class QGeoMapViewport;
-class QGeoServiceProviderPrivate;
-
-class Q_LOCATION_EXPORT QGeoServiceProvider
+class QGeoRoutingManagerEnginePrivate
 {
 public:
-    enum Error {
-        NoError,
-        NotSupportedError,
-        UnknownParameterError,
-        MissingRequiredParameterError
-    };
+    QGeoRoutingManagerEnginePrivate();
+    QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other);
+    ~QGeoRoutingManagerEnginePrivate();
 
-    static QStringList availableServiceProviders();
-    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
+    QGeoRoutingManagerEnginePrivate& operator= (const QGeoRoutingManagerEnginePrivate &other);
 
-    ~QGeoServiceProvider();
-
-    QGeoPlacesManager* placesManager() const;
-    QGeoMappingManager* mappingManager() const;
-    QGeoRoutingManager* routingManager() const;
-
-    Error error() const;
-    QString errorString() const;
-
-private:
-    QGeoServiceProviderPrivate* d_ptr;
+    bool supportsRouteUpdates;
+    bool supportsAlternativeRoutes;
+    QGeoRouteRequest::TravelModes supportedTravelModes;
+    QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes;
+    QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;
+    QGeoRouteRequest::InstructionDetails supportedInstructionDetails;
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

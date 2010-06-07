@@ -68,13 +68,16 @@ MainWindow::MainWindow(QWidget *parent) :
     qgv->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     qgv->setVisible(true);
     qgv->setGeometry(QRect(0, 0, width(), height()));
+    qgv->setInteractive(true);
 
     QGraphicsScene* scene = new QGraphicsScene(0, 0, width(), height());
     qgv->setScene(scene);
 
-    m_mapWidget = new QGeoMapWidget(m_mapViewport);
+    m_mapWidget = new QGeoMapWidget(m_mapManager);
     qgv->scene()->addItem(m_mapWidget);
     m_mapWidget->setGeometry(0, 0, width(), height());
+    m_mapWidget->setZoomLevel(8);
+    m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
 
     setWindowTitle(tr("Map Viewer Demo"));
 
@@ -110,7 +113,6 @@ void MainWindow::setProvider(QString providerId)
     }
 
     m_mapManager = m_serviceProvider->mappingManager();
-    m_mapViewport = m_serviceProvider->mapViewport();
 }
 
 void MainWindow::resizeEvent(QResizeEvent* event)

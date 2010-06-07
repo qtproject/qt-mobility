@@ -18,12 +18,12 @@ PUBLIC_HEADERS += \
                     qgeonavigationinstruction.h \
                     #qgeonavigator.h \
                     qgeomappingmanager.h \
-                    qgeomapreply.h \
-                    qgeomaprequestoptions.h \
+                    qgeomappingmanagerengine.h \
                     qgeomapviewport.h \
                     qgeomapwidget.h \
                     qgeoplace.h \
                     qgeoplacesmanager.h \
+                    qgeoplacesmanagerengine.h \
                     qgeoplacesreply.h \
                     qgeopositioninfo.h \
                     qgeopositioninfosource.h \
@@ -32,10 +32,16 @@ PUBLIC_HEADERS += \
                     qgeorouterequest.h \
                     qgeoroutesegment.h \
                     qgeoroutingmanager.h \
+                    qgeoroutingmanagerengine.h \
                     qgeosatelliteinfo.h \
                     qgeosatelliteinfosource.h \
                     qgeoserviceprovider.h \
                     qgeoserviceproviderplugin.h \
+                    qgeotiledmappingmanagerengine.h \
+                    qgeotiledmappingmanagerthread.h \
+                    qgeotiledmapreply.h \
+                    qgeotiledmaprequest.h \
+                    qgeotiledmapviewport.h \
                     qlandmark.h \
                     qlandmarkabstractrequest.h \
                     qlandmarkattributefilter.h \
@@ -74,21 +80,27 @@ PRIVATE_HEADERS += \
                     qgeoboundingbox_p.h \
                     qgeodistance_p.h \
                     qgeomappingmanager_p.h \
-                    qgeomapreply_p.h \
-                    qgeomaprequestoptions_p.h \
+                    qgeomappingmanagerengine_p.h \
                     qgeomapviewport_p.h \
                     qgeomapwidget_p.h \
                     qgeonavigationinstruction_p.h \
                     #qgeonavigator_p.h \
                     qgeoplace_p.h \
                     qgeoplacesmanager_p.h \
+                    qgeoplacesmanagerengine_p.h \
                     qgeoplacesreply_p.h \
                     qgeoroute_p.h \
                     qgeoroutereply_p.h \
                     qgeorouterequest_p.h \
                     qgeoroutesegment_p.h \
                     qgeoroutingmanager_p.h \
+                    qgeoroutingmanagerengine_p.h \
                     qgeoserviceprovider_p.h \
+                    qgeotiledmappingmanagerengine_p.h \
+                    qgeotiledmappingmanagerthread_p.h \
+                    qgeotiledmapreply_p.h \
+                    qgeotiledmaprequest_p.h \
+                    qgeotiledmapviewport_p.h \
                     qlandmark_p.h \
                     qlandmarkabstractrequest_p.h \
                     qlandmarkboxfilter_p.h \
@@ -196,12 +208,12 @@ SOURCES += \
             qgeonavigationinstruction.cpp \
             #qgeonavigator.cpp \
             qgeomappingmanager.cpp \
-            qgeomapreply.cpp \
-            qgeomaprequestoptions.cpp \
+            qgeomappingmanagerengine.cpp \
             qgeomapviewport.cpp \
             qgeomapwidget.cpp \
             qgeoplace.cpp \
             qgeoplacesmanager.cpp \
+            qgeoplacesmanagerengine.cpp \
             qgeoplacesreply.cpp \
             qgeopositioninfo.cpp \
             qgeopositioninfosource.cpp \
@@ -210,10 +222,16 @@ SOURCES += \
             qgeorouterequest.cpp \
             qgeoroutesegment.cpp \
             qgeoroutingmanager.cpp \
+            qgeoroutingmanagerengine.cpp \
             qgeosatelliteinfo.cpp \
             qgeosatelliteinfosource.cpp \
             qgeoserviceprovider.cpp \
             qgeoserviceproviderplugin.cpp \
+            qgeotiledmappingmanagerengine.cpp \
+            qgeotiledmappingmanagerthread.cpp \
+            qgeotiledmapreply.cpp \
+            qgeotiledmaprequest.cpp \
+            qgeotiledmapviewport.cpp \
             qlandmark.cpp \
             qlandmarkabstractrequest.cpp \
             qlandmarkattributefilter.cpp \

@@ -44,7 +44,6 @@
 
 #include <qgeomappingmanager.h>
 #include <qgeomapwidget.h>
-#include <qgeomapviewport.h>
 #include <qgeoserviceprovider.h>
 
 #include <QMainWindow>
@@ -84,7 +83,6 @@ private:
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
     QGeoMapWidget *m_mapWidget;
-    QGeoMapViewport *m_mapViewport;
 
     QGraphicsView* qgv;
 

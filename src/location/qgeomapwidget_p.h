@@ -53,17 +53,22 @@
 // We mean it.
 //
 
-#include "qgeomapwidget.h"
+#include "qgeomappingmanager.h"
+#include "qgeomapviewport.h"
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapWidgetPrivate
 {
 public:
-    QGeoMapWidgetPrivate(QGeoMapViewport *viewport);
+    QGeoMapWidgetPrivate(QGeoMappingManager *manager);
+    QGeoMapWidgetPrivate(const QGeoMapWidgetPrivate &other);
     ~QGeoMapWidgetPrivate();
+    QGeoMapWidgetPrivate& operator= (const QGeoMapWidgetPrivate &other);
 
+    QGeoMappingManager *manager;
     QGeoMapViewport *viewport;
+    bool panActive;
 };
 
 QTM_END_NAMESPACE

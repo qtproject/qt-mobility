@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGER_NOKIA_P_H
-#define QGEOMAPPINGMANAGER_NOKIA_P_H
+#ifndef QGEOROUTINGMANAGER_NOKIA_P_H
+#define QGEOROUTINGMANAGER_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -53,61 +53,39 @@
 // We mean it.
 //
 
-#include "qgeomapreply_nokia_p.h"
-
 #include <QGeoServiceProvider>
-#include <QGeoMappingManager>
-#include <QGeoMapRequestOptions>
+#include <QGeoRoutingManagerEngine>
 #include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
 
 QTM_USE_NAMESPACE
 
-class QGeoMappingManagerNokia : public QGeoMappingManager
+class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoMappingManagerNokia(const QMap<QString, QString> &parameters,
-                            QGeoServiceProvider::Error *error,
-                            QString *errorString);
-    virtual ~QGeoMappingManagerNokia();
+    QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters,
+                                  QGeoServiceProvider::Error *error,
+                                  QString *errorString);
+    ~QGeoRoutingManagerEngineNokia();
 
-    virtual QGeoMapReply* getMapImage(const QGeoCoordinate &center,
-                                      qreal zoomLevel,
-                                      const QSize &size,
-                                      const QGeoMapRequestOptions &requestOptions);
-
-    virtual QGeoMapReply* getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
-                                       const QSize &size,
-                                       const QGeoMapRequestOptions &requestOptions);
-
-    virtual void getTileQuadKey(const QGeoCoordinate& coordinate,
-                                qint32 zoomLevel,
-                                qint32* row, qint32* col);
-
-private:
-    Q_DISABLE_COPY(QGeoMappingManagerNokia)
-
-    QString getRequestString(qint32 row, qint32 col, qint32 zoomLevel,
-                             const QSize &size,
-                             const QGeoMapRequestOptions &options) const;
+    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
+    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
 private slots:
-    void mapFinished();
-    void mapError(QGeoMapReply::Error error, const QString &errorString);
+    void routeFinished();
+    void routeError(QGeoRouteReply::Error error, const QString &errorString);
 
 private:
-    static QString sizeToStr(const QSize &size);
-    static QString mapTypeToStr(MapType type);
-    static void getMercatorTileIndex(const QGeoCoordinate& coordinate, qint32 level, qint32* row, qint32* col);
-    static qint64 getTileIndex(qint32 row, qint32 col, qint32 zoomLevel);
+    QString calculateRouteRequestString(const QGeoRouteRequest &request);
+    QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
+    QString routeRequestString(const QGeoRouteRequest &request);
+    QString modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
+                               QGeoRouteRequest::TravelModes travelModes,
+                               QGeoRouteRequest::AvoidFeatureTypes avoid);
+    static QString trimDouble(qreal degree, int decimalDigits = 10);
 
-private:
-    QNetworkAccessManager *m_nam;
-    QNetworkDiskCache *m_cache;
+    QNetworkAccessManager *m_networkManager;
     QString m_host;
-    QString m_token;
-    QString m_referrer;
 };
 
 #endif

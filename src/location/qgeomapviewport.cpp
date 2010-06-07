@@ -41,137 +41,257 @@
 
 #include "qgeomapviewport.h"
 #include "qgeomapviewport_p.h"
-#include "qgeomappingmanager.h"
-
-#include <QNetworkProxy>
+#include "qgeomapwidget.h"
 
 QTM_BEGIN_NAMESPACE
 
-/*!
-    \class QGeoMapViewport
-    \brief The QGeoMapviewport class manages requests to and replies from
-    a geographical map image service.
-    \ingroup maps
+//!
+//    \class QGeoMapViewport
+//    \brief The QGeoMapviewport class manages requests to and replies from
+//    a geographical map image service.
+//    \ingroup maps
 
-    The request functions return a QGeoMapReply instance, which is responsible
-    for delivering the status and results of the request.
+//    The request functions return a QGeoMapReply instance, which is responsible
+//    for delivering the status and results of the request.
 
-    The rest of the class consists of functions providing metadata about the
-    service provider, primarily dealing with the capabilities of the service
-    and any limitations that may apply to the request inputs.
+//    The rest of the class consists of functions providing metadata about the
+//    service provider, primarily dealing with the capabilities of the service
+//    and any limitations that may apply to the request inputs.
 
-    The QGeoMapReply objects and the QGeoMappingManager instance will both
-    emit signals to indicate that a request has completed successfully or
-    has resulted in an error.
+//    The QGeoMapReply objects and the QGeoMappingManager instance will both
+//    emit signals to indicate that a request has completed successfully or
+//    has resulted in an error.
 
-    \note After the request has finished, it is the responsibility of the user
-    to delete the QGeoMapReply object at an appropriate time. Do not
-    directly delete it inside the slot connected to replyFinished() or
-    replyError() - the deleteLater() function should be used instead.
+//    \note After the request has finished, it is the responsibility of the user
+//    to delete the QGeoMapReply object at an appropriate time. Do not
+//    directly delete it inside the slot connected to replyFinished() or
+//    replyError() - the deleteLater() function should be used instead.
 
-    \sa QGeoMapReply
-*/
+//    \sa QGeoMapReply
+//*/
 
 
-/*!
-    Constructs a QGeoMapViewport object.
-*/
-QGeoMapViewport::QGeoMapViewport(QGeoMappingManager *manager)
-        : d_ptr(new QGeoMapViewportPrivate)
+///*!
+//    Constructs a QGeoMapViewport object.
+//*/
+//QGeoMapViewport::QGeoMapViewport(QGeoMappingManager *manager)
+//        : d_ptr(new QGeoMapViewportPrivate)
+//{
+//    d->engine = manager;
+//}
+
+///*!
+//    Destroys this QGeoMapViewport object.
+//*/
+//QGeoMapViewport::~QGeoMapViewport()
+//{
+//    Q_D(QGeoMapViewport);
+//    delete d;
+//}
+
+///*!
+//    Returns the current internal zoom level
+//*/
+//int QGeoMapViewport::zoomLevel() const
+//{
+//    Q_D(const QGeoMapViewport);
+//    return d->zoomLevel;
+//}
+
+///*!
+//    Sets the \a size of the internal view port. This will usually be
+//    set by the associated QGeoMapWidget to the size of its drawable
+//    rectangle.
+//*/
+//void QGeoMapViewport::setViewportSize(const QSize &size)
+//{
+//    Q_D(QGeoMapViewport);
+//    d->viewportSize = size;
+//}
+
+///*!
+//    Returns the size of the internal view port.
+//*/
+//QSize QGeoMapViewport::viewportSize() const
+//{
+//    Q_D(const QGeoMapViewport);
+//    return d->viewportSize;
+//}
+
+///*!
+//    Sets the map \a widget associated with this mapping service.
+//    Whenever the internal map representation changes,
+//    \a widget->update() will be called.
+//*/
+////void QGeoMapViewport::setMapWidget(QGeoMapWidget *widget)
+////{
+////    Q_D(QGeoMapViewport);
+////    d->mapWidget = widget;
+////}
+
+///*!
+//    \fn virtual void pan(int startX, int startY, int endX, int endY) = 0
+
+//    Pans the internal map representation by the pixel delta
+//    defined by \a start and \a end point.
+//*/
+
+///*!
+//    \fn virtual void paint(QPainter *painter) = 0
+
+//    Paints the internal map representation into the
+//    context of \a painter.
+//    The internal view port is aligned with the top-left
+//    corner of the \a painter.
+
+
+QGeoMapViewport::QGeoMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
+        : d_ptr(new QGeoMapViewportPrivate())
 {
-    d_ptr->manager = manager;
+    Q_D(QGeoMapViewport);
+    d->widget = widget;
+    d->engine = engine;
 }
 
-/*!
-    Destroys this QGeoMapViewport object.
-*/
+QGeoMapViewport::QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
+        : d_ptr(dd)
+{
+    Q_D(QGeoMapViewport);
+    d->widget = widget;
+    d->engine = engine;
+}
+
 QGeoMapViewport::~QGeoMapViewport()
 {
     Q_D(QGeoMapViewport);
+
+    if (d->engine)
+        d->engine->removeViewport(this);
+
     delete d;
 }
 
-/*!
-    Returns the current internal zoom level
-*/
-int QGeoMapViewport::zoomLevel() const
+QGeoMapWidget* QGeoMapViewport::widget() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->widget;
+}
+
+QGeoMappingManagerEngine* QGeoMapViewport::engine() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->engine;
+}
+
+void QGeoMapViewport::setZoomLevel(qreal zoomLevel)
+{
+    Q_D(QGeoMapViewport);
+    d->zoomLevel = zoomLevel;
+}
+
+qreal QGeoMapViewport::zoomLevel() const
 {
     Q_D(const QGeoMapViewport);
     return d->zoomLevel;
 }
 
-/*!
-    Sets the \a size of the internal view port. This will usually be
-    set by the associated QGeoMapWidget to the size of its drawable
-    rectangle.
-*/
-void QGeoMapViewport::setViewportSize(const QSize &size)
+void QGeoMapViewport::pan(int dx, int dy)
+{
+    QPointF pos = coordinateToScreenPosition(center());
+    setCenter(screenPositionToCoordinate(QPointF(pos.x() + dx, pos.y() + dy)));
+}
+
+void QGeoMapViewport::setCenter(const QGeoCoordinate &center)
+{
+    Q_D(QGeoMapViewport);
+    d->center = center;
+}
+
+QGeoCoordinate QGeoMapViewport::center() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->center;
+}
+
+void QGeoMapViewport::setViewportSize(const QSizeF &size)
 {
     Q_D(QGeoMapViewport);
     d->viewportSize = size;
 }
 
-/*!
-    Returns the size of the internal view port.
-*/
-QSize QGeoMapViewport::viewportSize() const
+QSizeF QGeoMapViewport::viewportSize() const
 {
     Q_D(const QGeoMapViewport);
     return d->viewportSize;
 }
 
-QGeoMappingManager* QGeoMapViewport::mappingManager() const
-{
-    Q_D(const QGeoMapViewport);
-    return d->manager;
-}
-
-void QGeoMapViewport::setMapWidget(QGeoMapWidget *widget)
+void QGeoMapViewport::setMapType(QGeoMapWidget::MapType mapType)
 {
     Q_D(QGeoMapViewport);
-    d->mapWidget = widget;
+    d->mapType = mapType;
 }
 
-QGeoMapWidget* QGeoMapViewport::mapWidget() const
+QGeoMapWidget::MapType QGeoMapViewport::mapType() const
 {
     Q_D(const QGeoMapViewport);
-    return d->mapWidget;
+    return d->mapType;
 }
 
-/*!
-    Sets the map \a widget associated with this mapping service.
-    Whenever the internal map representation changes,
-    \a widget->update() will be called.
-*/
-//void QGeoMapViewport::setMapWidget(QGeoMapWidget *widget)
-//{
-//    Q_D(QGeoMapViewport);
-//    d->mapWidget = widget;
-//}
+void QGeoMapViewport::setImageChangesTriggerUpdates(bool trigger)
+{
+    Q_D(QGeoMapViewport);
+    d->imageChangesTriggerUpdates = trigger;
+}
 
-/*!
-    \fn virtual void pan(int startX, int startY, int endX, int endY) = 0
+bool QGeoMapViewport::imageChangesTriggerUpdates() const
+{
+    Q_D(const QGeoMapViewport);
+    return d->imageChangesTriggerUpdates;
+}
 
-    Pans the internal map representation by the pixel delta
-    defined by \a start and \a end point.
-*/
+void QGeoMapViewport::setMapImage(const QPixmap &mapImage)
+{
+    Q_D(QGeoMapViewport);
+    d->mapImage = mapImage;
+    if (d->imageChangesTriggerUpdates)
+        d->widget->mapImageUpdated();
+}
 
-/*!
-    \fn virtual void paint(QPainter *painter) = 0
-
-    Paints the internal map representation into the
-    context of \a painter.
-    The internal view port is aligned with the top-left
-    corner of the \a painter.
-*/
+QPixmap QGeoMapViewport::mapImage()
+{
+    Q_D(QGeoMapViewport);
+    return d->mapImage;
+}
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapViewportPrivate::QGeoMapViewportPrivate()
-        : zoomLevel(0), manager(0), mapWidget(0)
-{}
+QGeoMapViewportPrivate::QGeoMapViewportPrivate() {}
 
-#include "moc_qgeomapviewport.cpp"
+QGeoMapViewportPrivate::QGeoMapViewportPrivate(const QGeoMapViewportPrivate &other)
+        : widget(other.widget),
+        engine(other.engine),
+        zoomLevel(other.zoomLevel),
+        center(other.center),
+        viewportSize(other.viewportSize),
+        mapType(other.mapType),
+        imageChangesTriggerUpdates(other.imageChangesTriggerUpdates),
+        mapImage(other.mapImage) {}
+
+QGeoMapViewportPrivate::~QGeoMapViewportPrivate() {}
+
+QGeoMapViewportPrivate& QGeoMapViewportPrivate::operator= (const QGeoMapViewportPrivate & other)
+{
+    widget = other.widget;
+    engine = other.engine;
+    zoomLevel = other.zoomLevel;
+    center = other.center;
+    viewportSize = other.viewportSize;
+    mapType = other.mapType;
+    imageChangesTriggerUpdates = other.imageChangesTriggerUpdates;
+    mapImage = other.mapImage;
+
+    return *this;
+}
 
 QTM_END_NAMESPACE

@@ -39,23 +39,22 @@
 **
 ****************************************************************************/
 
-#include "qgeoplacesmanager.h"
-#include "qgeoplacesmanager_p.h"
 #include "qgeoplacesmanagerengine.h"
+#include "qgeoplacesmanagerengine_p.h"
 
 #include "qlandmarkmanager.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \class QGeoPlacesManager
+    \class QGeoPlacesManagerEngine
 
-    \brief The QGeoPlacesManager class provides support for searching
+    \brief The QGeoPlacesManagerEngine class provides support for searching
     operations related to geographic information.
 
     \ingroup maps
 
-    Instances of QGeoPlacesManager primarily provide support for the
+    Instances of QGeoPlacesManagerEngine primarily provide support for the
     searching of geographical information, either through free text search or
     by geocoding (finding coordinates from addresses).
 
@@ -64,65 +63,34 @@ QTM_BEGIN_NAMESPACE
     report on the result of the operations and any errors which may have
     occurred.
 
-    The QGeoPlacesManager class also contains functions which provide
-    information on the capabilities and features supported by QGeoPlacesManager
-    instances. Those who write subclasses of QGeoPlacesManager should take care
+    The QGeoPlacesManagerEngine class also contains functions which provide
+    information on the capabilities and features supported by QGeoPlacesManagerEngine
+    instances. Those who write subclasses of QGeoPlacesManagerEngine should take care
     to make sure that this capability information is set up correctly,
     otherwise clients may be denied access to functionality they would
     otherwise expect.
 */
 
 /*!
-\enum QGeoPlacesManager::SearchType
-
-Describes the type of search that should be performed by placesSearch().
-
-\value SearchNone
-    Do not use the search string.
-\value SearchGeocode
-    Use the search string as a textual address in a geocoding operation.
-\value SearchLandmarks
-    Use the search string for free-text search against the available landmark
-    information sources.
-\value SearchAll
-    All available information sources should be used as part of the search.
-*/
-
-/*!
     Constructs a new manager with the specified \a parent.
 
-    This should only ever be called from subclasses of QGeoPlacesManager.
+    This should only ever be called from subclasses of QGeoPlacesManagerEngine.
 */
-QGeoPlacesManager::QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent)
+QGeoPlacesManagerEngine::QGeoPlacesManagerEngine(QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoPlacesManagerPrivate())
-{
-    d_ptr->engine = engine;
-    if (d_ptr->engine) {
-        d_ptr->engine->setParent(this);
-
-        connect(d_ptr->engine,
-                SIGNAL(finished(QGeoPlacesReply*)),
-                this,
-                SIGNAL(finished(QGeoPlacesReply*)));
-
-        connect(d_ptr->engine,
-                SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)),
-                this,
-                SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)));
-    }
-}
-
+        d_ptr(new QGeoPlacesManagerEnginePrivate()) {}
 
 /*!
     Destroys this manager.
 */
-QGeoPlacesManager::~QGeoPlacesManager()
+QGeoPlacesManagerEngine::~QGeoPlacesManagerEngine()
 {
     delete d_ptr;
 }
 
 /*!
+\fn QGeoPlacesReply* QGeoPlacesManagerEngine::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
+
     Begins the geocoding of \a address. Geocoding is the process of finding a
     coordinate that corresponds to a given address.
 
@@ -150,20 +118,14 @@ QGeoPlacesManager::~QGeoPlacesManager()
     that \a bounds will only be used if supportsViewportBiasing() returns true.
 
     The user is responsible for deleting the returned reply object, although
-    this can be done in the slot connected to QGeoPlacesManager::finished(),
-    QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
+    this can be done in the slot connected to QGeoPlacesManagerEngine::finished(),
+    QGeoPlacesManagerEngine::error(), QGeoPlacesReply::finished() or
     QGeoPlacesReply::error() with deleteLater().
 */
-QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
-{
-    if (!d_ptr->engine)
-        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
-
-    return d_ptr->engine->geocode(address, bounds);
-}
-
 
 /*!
+\fn QGeoPlacesReply* QGeoPlacesManagerEngine::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
+
     Begins the reverse geocoding of \a coordinate. Reverse geocoding is the
     process of finding an address that corresponds to a given coordinate.
 
@@ -196,19 +158,14 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoAddress &address, const QG
     bounds will only be used if supportsViewportBiasing() returns true.
 
     The user is responsible for deleting the returned reply object, although
-    this can be done in the slot connected to QGeoPlacesManager::finished(),
-    QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
+    this can be done in the slot connected to QGeoPlacesManagerEngine::finished(),
+    QGeoPlacesManagerEngine::error(), QGeoPlacesReply::finished() or
     QGeoPlacesReply::error() with deleteLater().
 */
-QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
-{
-    if (!d_ptr->engine)
-        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
-
-    return d_ptr->engine->geocode(coordinate, bounds);
-}
 
 /*!
+\fn QGeoPlacesReply* QGeoPlacesManagerEngine::placesSearch(const QString &searchString, QGeoPlacesManagerEngine::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+
     Begins searching for a place matching \a searchString.  The value of
     \a searchTypes will determine whether the search is for addresses only,
     for landmarks only or for both.
@@ -220,7 +177,7 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, co
     indicating if the operation completes or if errors occur.
 
     If supportsGeocoding() returns false and \a searchTypes is
-    QGeoPlacesManager::SearchGeocode an
+    QGeoPlacesManagerEngine::SearchGeocode an
     QGeoPlacesReply::UnsupportedOptionError will occur.
 
     Once the operation has completed, QGeoPlacesReply::places() can be used to
@@ -232,8 +189,8 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, co
     QLandmark::QLandmark(const QGeoPlace &place) can be used to convert the
     QGeoPlace instance into a QLandmark instance.
 
-    If \a searchTypes is QGeoPlacesManager::SearchLandmarks or
-    QGeoPlacesManager::SearchAll, a free text landmark search will be
+    If \a searchTypes is QGeoPlacesManagerEngine::SearchLandmarks or
+    QGeoPlacesManagerEngine::SearchAll, a free text landmark search will be
     performed. The results will be a combination of the backend specific
     landmark search and the same free text search applied to each of the
     QLandmarkManager instances in landmarkManagers().
@@ -244,82 +201,101 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, co
     supportsViewportBiasing() returns true.
 
     The user is responsible for deleting the returned reply object, although
-    this can be done in the slot connected to QGeoPlacesManager::finished(),
-    QGeoPlacesManager::error(), QGeoPlacesReply::finished() or
+    this can be done in the slot connected to QGeoPlacesManagerEngine::finished(),
+    QGeoPlacesManagerEngine::error(), QGeoPlacesReply::finished() or
     QGeoPlacesReply::error() with deleteLater().
 */
-QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
-{
-    if (!d_ptr->engine)
-        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
 
-    return d_ptr->engine->placesSearch(searchString, searchTypes, bounds);
+/*!
+    Sets whether this manager supports viewport biasing to \a supported.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it does not support viewport biasing.
+
+*/
+void QGeoPlacesManagerEngine::setSupportsViewportBiasing(bool supported)
+{
+    d_ptr->supportsViewportBiasing = supported;
 }
 
 /*!
     Returns whether this manager supports viewport biasing.
 */
-bool QGeoPlacesManager::supportsViewportBiasing() const
+bool QGeoPlacesManagerEngine::supportsViewportBiasing() const
 {
-    if (!d_ptr->engine)
-        return false;
+    return d_ptr->supportsViewportBiasing;
+}
 
-    return d_ptr->engine->supportsViewportBiasing();
+/*!
+    Sets whether this manager supports geocoding operations to \a supported.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it does not support geocoding operations.
+*/
+void QGeoPlacesManagerEngine::setSupportsGeocoding(bool supported)
+{
+    d_ptr->supportsGeocoding = supported;
 }
 
 /*!
     Returns whether this manager supports geocoding operations.
 */
-bool QGeoPlacesManager::supportsGeocoding() const
+bool QGeoPlacesManagerEngine::supportsGeocoding() const
 {
-    if (!d_ptr->engine)
-        return false;
+    return d_ptr->supportsGeocoding;
+}
 
-    return d_ptr->engine->supportsGeocoding();
+/*!
+    Sets the search types supported by the placesSearch() with this manager to \a searchTypes.
+
+    It is important that subclasses use this method to ensure that the manager
+    reports its capabilities correctly.  If this function is not used the
+    manager will report that it does not support any search types.
+*/
+void QGeoPlacesManagerEngine::setSupportedSearchTypes(QGeoPlacesManager::SearchTypes searchTypes)
+{
+    d_ptr->supportedSearchTypes = searchTypes;
 }
 
 /*!
     Returns the search types supported by the placesSearch() with this manager.
 */
-QGeoPlacesManager::SearchTypes QGeoPlacesManager::supportedSearchTypes() const
+QGeoPlacesManager::SearchTypes QGeoPlacesManagerEngine::supportedSearchTypes() const
 {
-    if (!d_ptr->engine)
-        return QGeoPlacesManager::SearchTypes();
-
-    return d_ptr->engine->supportedSearchTypes();
+    return d_ptr->supportedSearchTypes;
 }
 
 /*!
     Sets the landmark managers to be used with placesSearch() to \a landmarkManagers.
 */
-void QGeoPlacesManager::setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
+void QGeoPlacesManagerEngine::setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
 {
-    if (d_ptr->engine)
-        d_ptr->engine->setLandmarkManagers(landmarkManagers);
+    for (int i = 0; i < landmarkManagers.size(); ++i)
+        if (landmarkManagers.at(i))
+            d_ptr->landmarkManagers.append(landmarkManagers.at(i));
 }
 
 /*!
     Returns the landmark managers that will be used with placesSearch().
 */
-QList<QLandmarkManager *> QGeoPlacesManager::landmarkManagers() const
+QList<QLandmarkManager *> QGeoPlacesManagerEngine::landmarkManagers() const
 {
-    if (!d_ptr->engine)
-        return QList<QLandmarkManager *>();
-
-    return d_ptr->engine->landmarkManagers();
+    return d_ptr->landmarkManagers;
 }
 
 /*!
     Adds \a landmarkManager to the list of landmark managers that will be used with placesSearch().
 */
-void QGeoPlacesManager::addLandmarkManager(QLandmarkManager *landmarkManager)
+void QGeoPlacesManagerEngine::addLandmarkManager(QLandmarkManager *landmarkManager)
 {
-    if (d_ptr->engine && landmarkManager)
-        d_ptr->engine->addLandmarkManager(landmarkManager);
+    if (landmarkManager)
+        d_ptr->landmarkManagers.append(landmarkManager);
 }
 
 /*!
-\fn void QGeoPlacesManager::finished(QGeoPlacesReply* reply)
+\fn void QGeoPlacesManagerEngine::finished(QGeoPlacesReply* reply)
 
     This signal is emitted when \a reply has finished processing.
 
@@ -334,10 +310,10 @@ void QGeoPlacesManager::addLandmarkManager(QLandmarkManager *landmarkManager)
 */
 
 /*!
-\fn void QGeoPlacesManager::error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString)
+\fn void QGeoPlacesManagerEngine::error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString)
 
     This signal is emitted when an error has been detected in the processing of
-    \a reply. The QGeoPlacesManager::finished() signal will probably follow.
+    \a reply. The QGeoPlacesManagerEngine::finished() signal will probably follow.
 
     The error will be described by the error code \error. If \a errorString is
     not empty it will contain a textual description of the error.
@@ -351,24 +327,31 @@ void QGeoPlacesManager::addLandmarkManager(QLandmarkManager *landmarkManager)
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate()
-        : engine(0) {}
+QGeoPlacesManagerEnginePrivate::QGeoPlacesManagerEnginePrivate()
+        : supportsViewportBiasing(false),
+        supportsGeocoding(false) {}
 
-QGeoPlacesManagerPrivate::QGeoPlacesManagerPrivate(const QGeoPlacesManagerPrivate &other)
-        : engine(other.engine) {}
+QGeoPlacesManagerEnginePrivate::QGeoPlacesManagerEnginePrivate(const QGeoPlacesManagerEnginePrivate &other)
+        : landmarkManagers(other.landmarkManagers),
+        supportsViewportBiasing(other.supportsViewportBiasing),
+        supportsGeocoding(other.supportsGeocoding),
+        supportedSearchTypes(other.supportedSearchTypes) {}
 
-QGeoPlacesManagerPrivate::~QGeoPlacesManagerPrivate()
+QGeoPlacesManagerEnginePrivate::~QGeoPlacesManagerEnginePrivate()
 {
-    delete engine;
+    qDeleteAll(landmarkManagers);
 }
 
-QGeoPlacesManagerPrivate& QGeoPlacesManagerPrivate::operator= (const QGeoPlacesManagerPrivate & other)
+QGeoPlacesManagerEnginePrivate& QGeoPlacesManagerEnginePrivate::operator= (const QGeoPlacesManagerEnginePrivate & other)
 {
-    engine = other.engine;
+    landmarkManagers = other.landmarkManagers;
+    supportsViewportBiasing = other.supportsViewportBiasing;
+    supportsGeocoding = other.supportsGeocoding;
+    supportedSearchTypes = other.supportedSearchTypes;
 
     return *this;
 }
 
-#include "moc_qgeoplacesmanager.cpp"
+#include "moc_qgeoplacesmanagerengine.cpp"
 
 QTM_END_NAMESPACE

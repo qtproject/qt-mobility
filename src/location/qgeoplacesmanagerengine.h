@@ -39,9 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGER_H
-#define QGEOPLACESMANAGER_H
+#ifndef QGEOPLACESMANAGERENGINE_H
+#define QGEOPLACESMANAGERENGINE_H
 
+#include "qgeoplacesmanager.h"
 #include "qgeoplacesreply.h"
 #include "qgeoboundingbox.h"
 
@@ -52,36 +53,27 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
 
-class QGeoPlacesManagerEngine;
-class QGeoPlacesManagerPrivate;
+class QGeoPlacesManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT QGeoPlacesManager : public QObject
+class Q_LOCATION_EXPORT QGeoPlacesManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    enum SearchType {
-        SearchNone = 0x0000,
-        SearchGeocode = 0x0001,
-        SearchLandmarks = 0x0002,
-        SearchAll = 0xFFFF
-    };
-    Q_DECLARE_FLAGS(SearchTypes, SearchType)
+    QGeoPlacesManagerEngine(QObject *parent = 0);
+    virtual ~QGeoPlacesManagerEngine();
 
-    QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent = 0);
-    ~QGeoPlacesManager();
+    virtual QGeoPlacesReply* geocode(const QGeoAddress &address,
+                                     const QGeoBoundingBox &bounds) = 0;
+    virtual QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
+                                     const QGeoBoundingBox &bounds) = 0;
 
-    QGeoPlacesReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
-    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
-
-    QGeoPlacesReply* placesSearch(const QString &searchString,
-                                  SearchTypes searchTypes = SearchTypes(SearchAll),
-                                  const QGeoBoundingBox &bounds = QGeoBoundingBox());
+    virtual QGeoPlacesReply* placesSearch(const QString &searchString,
+                                          QGeoPlacesManager::SearchTypes searchTypes,
+                                          const QGeoBoundingBox &bounds) = 0;
 
     bool supportsViewportBiasing() const;
     bool supportsGeocoding() const;
-    SearchTypes supportedSearchTypes() const;
+    QGeoPlacesManager::SearchTypes supportedSearchTypes() const;
 
     void setLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers);
     QList<QLandmarkManager *> landmarkManagers() const;
@@ -91,12 +83,15 @@ signals:
     void finished(QGeoPlacesReply* reply);
     void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
 
-private:
-    QGeoPlacesManagerPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoPlacesManager)
-};
+protected:
+    void setSupportsViewportBiasing(bool supported);
+    void setSupportsGeocoding(bool supported);
+    void setSupportedSearchTypes(QGeoPlacesManager::SearchTypes searchTypes);
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoPlacesManager::SearchTypes)
+private:
+    QGeoPlacesManagerEnginePrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoPlacesManagerEngine)
+};
 
 QTM_END_NAMESPACE
 

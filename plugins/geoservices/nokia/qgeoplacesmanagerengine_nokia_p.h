@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTINGMANAGER_NOKIA_P_H
-#define QGEOROUTINGMANAGER_NOKIA_P_H
+#ifndef QGEOPLACESMANAGER_NOKIA_P_H
+#define QGEOPLACESMANAGER_NOKIA_P_H
 
 //
 //  W A R N I N G
@@ -53,36 +53,38 @@
 // We mean it.
 //
 
-#include <QGeoServiceProvider>
-#include <QGeoRoutingManager>
+#include <qgeoserviceprovider.h>
+#include <qgeoplacesmanagerengine.h>
+
 #include <QNetworkAccessManager>
 
 QTM_USE_NAMESPACE
 
-class QGeoRoutingManagerNokia : public QGeoRoutingManager
+class QGeoPlacesManagerEngineNokia : public QGeoPlacesManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoRoutingManagerNokia(const QMap<QString, QString> &parameters,
-                            QGeoServiceProvider::Error *error,
-                            QString *errorString);
-    ~QGeoRoutingManagerNokia();
+    QGeoPlacesManagerEngineNokia(const QMap<QString, QString> &parameters,
+                                 QGeoServiceProvider::Error *error,
+                                 QString *errorString);
+    ~QGeoPlacesManagerEngineNokia();
 
-    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
-    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
+    QGeoPlacesReply* geocode(const QGeoAddress &address,
+                             const QGeoBoundingBox &bounds);
+    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
+                             const QGeoBoundingBox &bounds);
+
+    QGeoPlacesReply* placesSearch(const QString &searchString,
+                                  QGeoPlacesManager::SearchTypes searchTypes,
+                                  const QGeoBoundingBox &bounds);
 
 private slots:
-    void routeFinished();
-    void routeError(QGeoRouteReply::Error error, const QString &errorString);
+    void placesFinished();
+    void placesError(QGeoPlacesReply::Error error, const QString &errorString);
 
 private:
-    QString calculateRouteRequestString(const QGeoRouteRequest &request);
-    QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
-    QString routeRequestString(const QGeoRouteRequest &request);
-    QString modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
-                               QGeoRouteRequest::TravelModes travelModes,
-                               QGeoRouteRequest::AvoidFeatureTypes avoid);
     static QString trimDouble(qreal degree, int decimalDigits = 10);
+    QGeoPlacesReply* search(QString requestString);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;

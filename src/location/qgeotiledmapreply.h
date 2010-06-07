@@ -39,24 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREQUESTOPTIONS_P_H
-#define QGEOMAPREQUESTOPTIONS_P_H
+#ifndef QGEOTILEDMAPREPLY_H
+#define QGEOTILEDMAPREPLY_H
 
-#include "qgeomappingmanager.h"
+#include "qmobilityglobal.h"
+
+#include <QObject>
+#include <QPixmap>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapRequestOptionsPrivate
+class QGeoTiledMapRequest;
+class QGeoTiledMapReplyPrivate;
+
+class Q_LOCATION_EXPORT QGeoTiledMapReply : public QObject
 {
+    Q_OBJECT
+
 public:
-    QGeoMapRequestOptionsPrivate();
-    QGeoMapRequestOptionsPrivate(const QGeoMapRequestOptionsPrivate &other);
-    ~QGeoMapRequestOptionsPrivate();
+    // TODO populate this some more...
+    enum Error {
+        NoError,
+        CommunicationError,
+        ParseError,
+        UnknownError
+    };
 
-    QGeoMapRequestOptionsPrivate& operator= (const QGeoMapRequestOptionsPrivate &other);
+    QGeoTiledMapReply(const QGeoTiledMapRequest &request, QObject *parent = 0);
+    QGeoTiledMapReply(Error error, const QString &errorString, QObject *parent = 0);
+    virtual ~QGeoTiledMapReply();
 
-    QGeoMappingManager::MapType mapType;
-    QString imageFormat;
+    bool isFinished() const;
+    Error error() const;
+    QString errorString() const;
+
+    QGeoTiledMapRequest request() const;
+    QPixmap mapImage() const;
+
+public slots:
+    virtual void abort();
+
+signals:
+    void finished();
+    void error(QGeoTiledMapReply::Error error, const QString &errorString = QString());
+
+protected:
+    void setError(Error error, const QString &errorString);
+    void setFinished(bool finished);
+
+    void setMapImage(const QPixmap &image);
+
+private:
+    QGeoTiledMapReplyPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoTiledMapReply)
 };
 
 QTM_END_NAMESPACE

@@ -39,54 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_H
-#define QGEOSERVICEPROVIDER_H
+#ifndef QGEOTILEDMAPREQUEST_P_H
+#define QGEOTILEDMAPREQUEST_P_H
 
-#include "qmobilityglobal.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QMap>
+#include "qgeomapwidget.h"
 
-class QString;
-class QStringList;
-
-QT_BEGIN_HEADER
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManager;
-class QGeoMappingManager;
-class QGeoRoutingManager;
-class QGeoMapViewport;
-class QGeoServiceProviderPrivate;
+class QGeoTiledMapViewport;
 
-class Q_LOCATION_EXPORT QGeoServiceProvider
+class QGeoTiledMapRequestPrivate : public QSharedData
 {
 public:
-    enum Error {
-        NoError,
-        NotSupportedError,
-        UnknownParameterError,
-        MissingRequiredParameterError
-    };
+    QGeoTiledMapRequestPrivate();
+    QGeoTiledMapRequestPrivate(const QGeoTiledMapRequestPrivate &other);
+    ~QGeoTiledMapRequestPrivate();
 
-    static QStringList availableServiceProviders();
-    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
+    QGeoTiledMapRequestPrivate& operator= (const QGeoTiledMapRequestPrivate &other);
 
-    ~QGeoServiceProvider();
-
-    QGeoPlacesManager* placesManager() const;
-    QGeoMappingManager* mappingManager() const;
-    QGeoRoutingManager* routingManager() const;
-
-    Error error() const;
-    QString errorString() const;
-
-private:
-    QGeoServiceProviderPrivate* d_ptr;
+    QGeoTiledMapViewport *viewport;
+    QGeoMapWidget::MapType mapType;
+    int zoomLevel;
+    int row;
+    int column;
+    QRectF tileRect;
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

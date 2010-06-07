@@ -53,27 +53,30 @@
 // We mean it.
 //
 
-#include <QGeoMapReply>
-#include <QGeoMapRequestOptions>
+#include <QGeoTiledMapReply>
+#include <QGeoMapWidget>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE
 
-class QGeoMapReplyNokia : public QGeoMapReply
+class QGeoMapReplyNokia : public QGeoTiledMapReply
 {
     Q_OBJECT
 
 public:
-    QGeoMapReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    QGeoMapReplyNokia(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
     ~QGeoMapReplyNokia();
 
     void abort();
+
+    QNetworkReply* networkReply() const;
 
 private slots:
     void networkFinished();
     void networkError(QNetworkReply::NetworkError error);
 
 private:
+    bool cleanedUp;
     QNetworkReply *m_reply;
 };
 

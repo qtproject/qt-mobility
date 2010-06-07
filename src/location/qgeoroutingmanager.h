@@ -49,16 +49,18 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoRoutingManagerEngine;
 class QGeoRoutingManagerPrivate;
 
 class Q_LOCATION_EXPORT QGeoRoutingManager : public QObject
 {
     Q_OBJECT
 public:
-    virtual ~QGeoRoutingManager();
+    QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent = 0);
+    ~QGeoRoutingManager();
 
-    virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) = 0;
-    virtual QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position) = 0;
+    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
+    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
     bool supportsRouteUpdates() const;
     bool supportsAlternativeRoutes() const;
@@ -70,15 +72,6 @@ public:
 signals:
     void finished(QGeoRouteReply* reply);
     void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
-
-protected:
-    QGeoRoutingManager(QObject *parent = 0);
-    void setSupportsRouteUpdates(bool supported);
-    void setSupportsAlternativeRoutes(bool supported);
-    void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);
-    void setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
-    void setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations);
-    void setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails);
 
 private:
     QGeoRoutingManagerPrivate *d_ptr;

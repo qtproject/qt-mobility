@@ -39,54 +39,47 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_H
-#define QGEOSERVICEPROVIDER_H
+#ifndef QGEOTILEDMAPVIEWPORT_H
+#define QGEOTILEDMAPVIEWPORT_H
 
-#include "qmobilityglobal.h"
-
-#include <QMap>
-
-class QString;
-class QStringList;
-
-QT_BEGIN_HEADER
+#include "qgeomapviewport.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManager;
-class QGeoMappingManager;
-class QGeoRoutingManager;
-class QGeoMapViewport;
-class QGeoServiceProviderPrivate;
+class QGeoTiledMapViewportPrivate;
 
-class Q_LOCATION_EXPORT QGeoServiceProvider
+class Q_LOCATION_EXPORT QGeoTiledMapViewport : public QGeoMapViewport
 {
 public:
-    enum Error {
-        NoError,
-        NotSupportedError,
-        UnknownParameterError,
-        MissingRequiredParameterError
-    };
+    QGeoTiledMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
+    virtual ~QGeoTiledMapViewport();
 
-    static QStringList availableServiceProviders();
-    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
+    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
-    ~QGeoServiceProvider();
+    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
 
-    QGeoPlacesManager* placesManager() const;
-    QGeoMappingManager* mappingManager() const;
-    QGeoRoutingManager* routingManager() const;
+    void setCenter(const QGeoCoordinate &center);
+    QGeoCoordinate center() const;
 
-    Error error() const;
-    QString errorString() const;
+    void setZoomLevel(qreal zoomLevel);
+    void setViewportSize(const QSizeF &size);
+    void pan(int dx, int dy);
+
+    QRectF screenRect() const;
+
+    QRectF protectedRegion() const;
+    void clearProtectedRegion();
+
+protected:
+    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
+    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
 
 private:
-    QGeoServiceProviderPrivate* d_ptr;
+    Q_DECLARE_PRIVATE(QGeoTiledMapViewport);
+    Q_DISABLE_COPY(QGeoTiledMapViewport)
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

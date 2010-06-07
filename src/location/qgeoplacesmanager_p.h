@@ -60,6 +60,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
+class QGeoPlacesManagerEngine;
 
 class QGeoPlacesManagerPrivate
 {
@@ -70,11 +71,7 @@ public:
 
     QGeoPlacesManagerPrivate& operator= (const QGeoPlacesManagerPrivate &other);
 
-    QList<QLandmarkManager*> landmarkManagers;
-
-    bool supportsViewportBiasing;
-    bool supportsGeocoding;
-    QGeoPlacesManager::SearchTypes supportedSearchTypes;
+    QGeoPlacesManagerEngine *engine;
 };
 
 QTM_END_NAMESPACE

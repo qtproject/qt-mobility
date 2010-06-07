@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include "qgeoroutingmanager_nokia_p.h"
+#include "qgeoroutingmanagerengine_nokia_p.h"
 #include "qgeoroutereply_nokia_p.h"
 
 #include <QStringList>
 #include <QNetworkProxy>
 
-QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : m_host("route.desktop.maps.svc.ovi.com")
 {
     m_networkManager = new QNetworkAccessManager(this);
@@ -97,9 +97,9 @@ QGeoRoutingManagerNokia::QGeoRoutingManagerNokia(const QMap<QString, QString> &p
         *errorString = "";
 }
 
-QGeoRoutingManagerNokia::~QGeoRoutingManagerNokia() {}
+QGeoRoutingManagerEngineNokia::~QGeoRoutingManagerEngineNokia() {}
 
-QGeoRouteReply* QGeoRoutingManagerNokia::calculateRoute(const QGeoRouteRequest& request)
+QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteRequest& request)
 {
     QString reqString = calculateRouteRequestString(request);
 
@@ -125,7 +125,7 @@ QGeoRouteReply* QGeoRoutingManagerNokia::calculateRoute(const QGeoRouteRequest& 
     return reply;
 }
 
-QGeoRouteReply* QGeoRoutingManagerNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
+QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
     QString reqString = updateRouteRequestString(route,position);
 
@@ -152,7 +152,7 @@ QGeoRouteReply* QGeoRoutingManagerNokia::updateRoute(const QGeoRoute &route, con
     return reply;
 }
 
-QString QGeoRoutingManagerNokia::calculateRouteRequestString(const QGeoRouteRequest &request)
+QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRouteRequest &request)
 {
     bool supported = true;
 
@@ -215,7 +215,7 @@ QString QGeoRoutingManagerNokia::calculateRouteRequestString(const QGeoRouteRequ
     return requestString;
 }
 
-QString QGeoRoutingManagerNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
+QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
 {
     QString requestString = "http://";
     requestString += m_host;
@@ -247,7 +247,7 @@ QString QGeoRoutingManagerNokia::updateRouteRequestString(const QGeoRoute &route
     return requestString;
 }
 
-QString QGeoRoutingManagerNokia::modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
+QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::RouteOptimizations optimization,
                                                     QGeoRouteRequest::TravelModes travelModes,
                                                     QGeoRouteRequest::AvoidFeatureTypes avoid)
 {
@@ -313,7 +313,7 @@ QString QGeoRoutingManagerNokia::modesRequestString(QGeoRouteRequest::RouteOptim
     return requestString;
 }
 
-QString QGeoRoutingManagerNokia::routeRequestString(const QGeoRouteRequest &request)
+QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest &request)
 {
     QString requestString;
 
@@ -351,7 +351,7 @@ QString QGeoRoutingManagerNokia::routeRequestString(const QGeoRouteRequest &requ
     return requestString;
 }
 
-QString QGeoRoutingManagerNokia::trimDouble(qreal degree, int decimalDigits)
+QString QGeoRoutingManagerEngineNokia::trimDouble(qreal degree, int decimalDigits)
 {
     QString sDegree = QString::number(degree, 'g', decimalDigits);
 
@@ -363,7 +363,7 @@ QString QGeoRoutingManagerNokia::trimDouble(qreal degree, int decimalDigits)
         return QString::number(degree, 'g', decimalDigits + index);
 }
 
-void QGeoRoutingManagerNokia::routeFinished()
+void QGeoRoutingManagerEngineNokia::routeFinished()
 {
     QGeoRouteReply *reply = qobject_cast<QGeoRouteReply*>(sender());
 
@@ -378,7 +378,7 @@ void QGeoRoutingManagerNokia::routeFinished()
     emit finished(reply);
 }
 
-void QGeoRoutingManagerNokia::routeError(QGeoRouteReply::Error error, const QString &errorString)
+void QGeoRoutingManagerEngineNokia::routeError(QGeoRouteReply::Error error, const QString &errorString)
 {
     QGeoRouteReply *reply = qobject_cast<QGeoRouteReply*>(sender());
 

@@ -39,57 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_H
-#define QGEOMAPREPLY_H
+#ifndef QGEOMAPPINGMANAGERENGINE_H
+#define QGEOMAPPINGMANAGERENGINE_H
 
-#include "qmobilityglobal.h"
+#include "qgeomapwidget.h"
 
 #include <QObject>
-#include <QPixmap>
+#include <QSize>
+#include <QPair>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapReplyPrivate;
+class QGeoBoundingBox;
+class QGeoCoordinate;
+class QGeoMapViewport;
+class QGeoMappingManagerPrivate;
+class QGeoMapRequestOptions;
 
-class Q_LOCATION_EXPORT QGeoMapReply : public QObject
+class QGeoMappingManagerEnginePrivate;
+
+class Q_LOCATION_EXPORT QGeoMappingManagerEngine : public QObject
 {
     Q_OBJECT
 
 public:
-    // TODO populate this some more...
-    enum Error {
-        NoError,
-        CommunicationError,
-        ParseError,
-        UnknownError
-    };
+    virtual ~QGeoMappingManagerEngine();
 
-    QGeoMapReply(QObject *parent = 0);
-    QGeoMapReply(Error error, const QString &errorString, QObject *parent = 0);
-    virtual ~QGeoMapReply();
+    virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget) = 0;
+    virtual void removeViewport(QGeoMapViewport *viewport);
 
-    bool isFinished() const;
-    Error error() const;
-    QString errorString() const;
+    virtual void updateMapImage(QGeoMapViewport *viewport) = 0;
 
-    QPixmap mapImage() const;
+    QList<QGeoMapWidget::MapType> supportedMapTypes() const;
 
-public slots:
-    virtual void abort();
+    QSize minimumImageSize() const;
+    QSize maximumImageSize() const;
 
-signals:
-    void finished();
-    void error(QGeoMapReply::Error error, const QString &errorString = QString());
+    qreal minimumZoomLevel() const;
+    qreal maximumZoomLevel() const;
 
 protected:
-    void setError(Error error, const QString &errorString);
-    void setFinished(bool finished);
+    QGeoMappingManagerEngine(QObject *parent = 0);
+    QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
-    void setMapImage(const QPixmap &image);
+    void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
+
+    void setMinimumZoomLevel(qreal minimumZoom);
+    void setMaximumZoomLevel(qreal maximumZoom);
+
+    void setMinimumImageSize(const QSize &minimumSize);
+    void setMaximumImageSize(const QSize &maximumSize);
+
+    QGeoMappingManagerEnginePrivate* d_ptr;
 
 private:
-    QGeoMapReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoMapReply)
+    Q_DECLARE_PRIVATE(QGeoMappingManagerEngine)
+    Q_DISABLE_COPY(QGeoMappingManagerEngine)
 };
 
 QTM_END_NAMESPACE

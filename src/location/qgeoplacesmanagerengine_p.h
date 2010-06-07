@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGER_NOKIA_P_H
-#define QGEOPLACESMANAGER_NOKIA_P_H
+#ifndef QGEOPLACESMANAGERENGINE_P_H
+#define QGEOPLACESMANAGERENGINE_P_H
 
 //
 //  W A R N I N G
@@ -53,43 +53,30 @@
 // We mean it.
 //
 
-#include <QGeoServiceProvider>
-#include <QGeoPlacesManager>
-#include <QNetworkAccessManager>
+#include "qgeoplacesmanagerengine.h"
 
-QTM_USE_NAMESPACE
+#include <QList>
 
-class QGeoPlacesManagerNokia : public QGeoPlacesManager
+QTM_BEGIN_NAMESPACE
+
+class QLandmarkManager;
+
+class QGeoPlacesManagerEnginePrivate
 {
-    Q_OBJECT
 public:
-    QGeoPlacesManagerNokia(const QMap<QString, QString> &parameters,
-                           QGeoServiceProvider::Error *error,
-                           QString *errorString);
-    ~QGeoPlacesManagerNokia();
+    QGeoPlacesManagerEnginePrivate();
+    QGeoPlacesManagerEnginePrivate(const QGeoPlacesManagerEnginePrivate &other);
+    ~QGeoPlacesManagerEnginePrivate();
 
-    QGeoPlacesReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
-    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
+    QGeoPlacesManagerEnginePrivate& operator= (const QGeoPlacesManagerEnginePrivate &other);
 
-    QGeoPlacesReply* placesSearch(const QString &searchString,
-                                  SearchTypes searchTypes = SearchTypes(SearchAll),
-                                  const QGeoBoundingBox &bounds = QGeoBoundingBox());
+    QList<QLandmarkManager*> landmarkManagers;
 
-    void setProxy(const QNetworkProxy &proxy);
-    void setHost(QString host);
-
-private slots:
-    void placesFinished();
-    void placesError(QGeoPlacesReply::Error error, const QString &errorString);
-
-private:
-    static QString trimDouble(qreal degree, int decimalDigits = 10);
-    QGeoPlacesReply* search(QString requestString);
-
-    QNetworkAccessManager *m_networkManager;
-    QString m_host;
+    bool supportsViewportBiasing;
+    bool supportsGeocoding;
+    QGeoPlacesManager::SearchTypes supportedSearchTypes;
 };
+
+QTM_END_NAMESPACE
 
 #endif

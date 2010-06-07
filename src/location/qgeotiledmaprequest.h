@@ -39,54 +39,46 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_H
-#define QGEOSERVICEPROVIDER_H
+#ifndef QGEOTILEDMAPREQUEST_H
+#define QGEOTILEDMAPREQUEST_H
 
-#include "qmobilityglobal.h"
+#include "qgeomapwidget.h"
 
-#include <QMap>
-
-class QString;
-class QStringList;
-
-QT_BEGIN_HEADER
+#include <QRectF>
+#include <QSharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManager;
-class QGeoMappingManager;
-class QGeoRoutingManager;
-class QGeoMapViewport;
-class QGeoServiceProviderPrivate;
+class QGeoTiledMapViewport;
+class QGeoTiledMapRequestPrivate;
 
-class Q_LOCATION_EXPORT QGeoServiceProvider
+class Q_LOCATION_EXPORT QGeoTiledMapRequest
 {
 public:
-    enum Error {
-        NoError,
-        NotSupportedError,
-        UnknownParameterError,
-        MissingRequiredParameterError
-    };
+    // TODO add isValid method, set to false for default constructor
+    QGeoTiledMapRequest();
+    QGeoTiledMapRequest(QGeoTiledMapViewport *viewport,
+                        int row,
+                        int column,
+                        const QRectF &tileRect);
+    QGeoTiledMapRequest(const QGeoTiledMapRequest &other);
+    ~QGeoTiledMapRequest();
 
-    static QStringList availableServiceProviders();
-    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
+    QGeoTiledMapRequest& operator= (const QGeoTiledMapRequest &other);
 
-    ~QGeoServiceProvider();
+    QGeoTiledMapViewport *viewport() const;
 
-    QGeoPlacesManager* placesManager() const;
-    QGeoMappingManager* mappingManager() const;
-    QGeoRoutingManager* routingManager() const;
+    QGeoMapWidget::MapType mapType() const;
+    int zoomLevel() const;
 
-    Error error() const;
-    QString errorString() const;
+    int row() const;
+    int column() const;
+    QRectF tileRect() const;
 
 private:
-    QGeoServiceProviderPrivate* d_ptr;
+    QSharedDataPointer<QGeoTiledMapRequestPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

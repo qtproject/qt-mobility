@@ -42,52 +42,36 @@
 #ifndef QGEOMAPPINGMANAGER_H
 #define QGEOMAPPINGMANAGER_H
 
-#include "qgeocoordinate.h"
-#include "qgeoboundingbox.h"
-#include "qgeomapreply.h"
+#include "qgeomapwidget.h"
 
 #include <QObject>
 #include <QSize>
+#include <QPair>
 
 QTM_BEGIN_NAMESPACE
 
-//class QGeoMapWidget;
+class QGeoBoundingBox;
+class QGeoCoordinate;
+class QGeoMapViewport;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
+
+class QGeoMappingManagerEngine;
 
 class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
 {
     Q_OBJECT
 
 public:
-    enum ErrorCode {
-        NoError
-    };
+    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
+    ~QGeoMappingManager();
 
-    enum MapType {
-        StreetMap,
-        SatelliteMapDay,
-        SatelliteMapNight,
-        TerrainMap
-    };
+    QGeoMapViewport* createViewport(QGeoMapWidget *widget);
+    void removeViewport(QGeoMapViewport *viewport);
 
-    virtual ~QGeoMappingManager();
+    void updateMapImage(QGeoMapViewport *viewport);
 
-    virtual QGeoMapReply* getMapImage(const QGeoCoordinate &center,
-                                      qreal zoomLevel,
-                                      const QSize &size,
-                                      const QGeoMapRequestOptions &requestOptions) = 0;
-
-    virtual QGeoMapReply* getTileImage(qint32 row, qint32 col, qint32 zoomLevel,
-                                       const QSize &size,
-                                       const QGeoMapRequestOptions &requestOptions) = 0;
-
-    virtual void getTileQuadKey(const QGeoCoordinate& coordinate,
-                                qint32 zoomLevel,
-                                qint32* row, qint32* col) = 0;
-
-    QList<MapType> supportedMapTypes() const;
-    QList<QString> supportedImageFormats() const;
+    QList<QGeoMapWidget::MapType> supportedMapTypes() const;
 
     QSize minimumImageSize() const;
     QSize maximumImageSize() const;
@@ -95,27 +79,9 @@ public:
     qreal minimumZoomLevel() const;
     qreal maximumZoomLevel() const;
 
-signals:
-    void finished(QGeoMapReply* reply);
-    void error(QGeoMapReply* reply, QGeoMapReply::Error error, QString errorString = QString());
-
-protected:
-    QGeoMappingManager();
-
-    void setSupportedMapTypes(const QList<MapType> &mapTypes);
-    void setSupportedImageFormats(const QList<QString> &imageFormats);
-
-    void setMinimumZoomLevel(qreal minimumZoom);
-    void setMaximumZoomLevel(qreal maximumZoom);
-
-    void setMinimumSize(const QSize &minimumSize);
-    void setMaximumSize(const QSize &maximumSize);
-
 private:
     QGeoMappingManagerPrivate* d_ptr;
-
     Q_DISABLE_COPY(QGeoMappingManager)
-    Q_DECLARE_PRIVATE(QGeoMappingManager)
 };
 
 QTM_END_NAMESPACE

@@ -60,6 +60,7 @@ class Q_LOCATION_EXPORT QGeoRouteReply : public QObject
 public:
     enum Error {
         NoError,
+        EngineNotSetError,
         CommunicationError,
         ParseError,
         UnsupportedOptionError,

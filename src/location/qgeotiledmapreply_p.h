@@ -39,54 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_H
-#define QGEOSERVICEPROVIDER_H
+#ifndef QGEOTILEDMAPREPLY_P_H
+#define QGEOTILEDMAPREPLY_P_H
 
-#include "qmobilityglobal.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QMap>
-
-class QString;
-class QStringList;
-
-QT_BEGIN_HEADER
+#include "qgeotiledmapreply.h"
+#include "qgeotiledmaprequest.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManager;
-class QGeoMappingManager;
-class QGeoRoutingManager;
-class QGeoMapViewport;
-class QGeoServiceProviderPrivate;
-
-class Q_LOCATION_EXPORT QGeoServiceProvider
+class QGeoTiledMapReplyPrivate
 {
 public:
-    enum Error {
-        NoError,
-        NotSupportedError,
-        UnknownParameterError,
-        MissingRequiredParameterError
-    };
+    QGeoTiledMapReplyPrivate(const QGeoTiledMapRequest &request);
+    QGeoTiledMapReplyPrivate(QGeoTiledMapReply::Error error, const QString& errorString);
+    QGeoTiledMapReplyPrivate(const QGeoTiledMapReplyPrivate &other);
+    ~QGeoTiledMapReplyPrivate();
 
-    static QStringList availableServiceProviders();
-    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
+    QGeoTiledMapReplyPrivate& operator= (const QGeoTiledMapReplyPrivate &other);
 
-    ~QGeoServiceProvider();
+    QGeoTiledMapReply::Error error;
+    QString errorString;
+    bool isFinished;
 
-    QGeoPlacesManager* placesManager() const;
-    QGeoMappingManager* mappingManager() const;
-    QGeoRoutingManager* routingManager() const;
-
-    Error error() const;
-    QString errorString() const;
-
-private:
-    QGeoServiceProviderPrivate* d_ptr;
+    QGeoTiledMapRequest request;
+    QPixmap mapImage;
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif

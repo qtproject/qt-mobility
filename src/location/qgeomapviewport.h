@@ -42,8 +42,7 @@
 #ifndef QGEOMAPVIEWPORT_H
 #define QGEOMAPVIEWPORT_H
 
-#include "qgeocoordinate.h"
-#include "qgeoboundingbox.h"
+#include "qgeomapwidget.h"
 
 #include <QObject>
 #include <QSize>
@@ -52,47 +51,51 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapWidget;
-class QGeoMappingManager;
+class QGeoCoordinate;
+class QGeoBoundingBox;
+class QGeoMappingManagerEngine;
 class QGeoMapViewportPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapViewport : public QObject
+class Q_LOCATION_EXPORT QGeoMapViewport
 {
-    Q_OBJECT
-
 public:
-    QGeoMapViewport(QGeoMappingManager *manager = 0);
+    QGeoMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoMapViewport();
 
-    void setMapWidget(QGeoMapWidget *widget);
-
-    int zoomLevel() const;
-    virtual void setZoomLevel(int zoomLevel) = 0;
-
-    virtual void setViewportSize(const QSize &size);
-    QSize viewportSize() const;
-
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option) = 0;
-
-    virtual void setCenter(const QGeoCoordinate &center) = 0;
-    virtual QGeoCoordinate center() const = 0;
-
-    virtual void pan(int startX, int startY, int endX, int endY) = 0;
-
-    virtual QGeoBoundingBox viewBounds() const = 0;
-
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const = 0;
+    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
+
+    virtual void setZoomLevel(qreal zoomLevel);
+    virtual qreal zoomLevel() const;
+
+    virtual void pan(int dx, int dy);
+
+    virtual void setCenter(const QGeoCoordinate &center);
+    virtual QGeoCoordinate center() const;
+
+    virtual void setViewportSize(const QSizeF &size);
+    virtual QSizeF viewportSize() const;
+
+    void setMapType(QGeoMapWidget::MapType mapType);
+    QGeoMapWidget::MapType mapType() const;
+
+    void setImageChangesTriggerUpdates(bool trigger);
+    bool imageChangesTriggerUpdates() const;
+
+    void setMapImage(const QPixmap &mapImage);
+    QPixmap mapImage();
 
 protected:
-    QGeoMappingManager* mappingManager() const;
-    QGeoMapWidget* mapWidget() const;
+    QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
 
-private:
+    QGeoMapWidget* widget() const;
+    QGeoMappingManagerEngine* engine() const;
+
     QGeoMapViewportPrivate* d_ptr;
 
-    Q_DISABLE_COPY(QGeoMapViewport)
+private:
     Q_DECLARE_PRIVATE(QGeoMapViewport)
+    Q_DISABLE_COPY(QGeoMapViewport)
 };
 
 QTM_END_NAMESPACE

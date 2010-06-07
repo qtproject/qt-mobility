@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPVIEWPORT_P_H
-#define QGEOMAPVIEWPORT_P_H
+#ifndef QGEOTILEDMAPPINGMANAGERTHREAD_P_H
+#define QGEOTILEDMAPPINGMANAGERTHREAD_P_H
 
 //
 //  W A R N I N G
@@ -53,29 +53,57 @@
 // We mean it.
 //
 
+#include "qgeotiledmapreply.h"
 #include "qgeomapwidget.h"
-#include "qgeomappingmanagerengine.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapViewportPrivate
+class QGeoTiledMapRequest;
+class QGeoTiledMapViewport;
+class QGeoTiledMappingManagerThread;
+class QGeoTiledMappingManagerEngine;
+
+class QGeoTiledMapRequestHandler : public QObject
 {
+    Q_OBJECT
 public:
-    QGeoMapViewportPrivate();
-    QGeoMapViewportPrivate(const QGeoMapViewportPrivate &other);
-    virtual ~QGeoMapViewportPrivate();
-    QGeoMapViewportPrivate& operator= (const QGeoMapViewportPrivate &other);
+    QGeoTiledMapRequestHandler(QGeoTiledMappingManagerThread *thread, QGeoTiledMapViewport *viewport);
+    ~QGeoTiledMapRequestHandler();
 
-    QGeoMapWidget *widget;
-    QGeoMappingManagerEngine *engine;
+public slots:
+    void setRequests(const QList<QGeoTiledMapRequest> &requests);
 
-    qreal zoomLevel;
-    QGeoCoordinate center;
-    QSizeF viewportSize;
-    QGeoMapWidget::MapType mapType;
+private slots:
+    void tileFinished();
+    void tileError(QGeoTiledMapReply::Error, const QString &errorString);
 
-    bool imageChangesTriggerUpdates;
-    QPixmap mapImage;
+signals:
+    void finished(QGeoTiledMapReply *reply);
+    void error(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
+
+private:
+    QGeoTiledMappingManagerThread *thread;
+    QGeoTiledMapViewport *viewport;
+
+    qreal lastZoomLevel;
+    QGeoMapWidget::MapType lastMapType;
+
+    QList<QGeoTiledMapRequest> queue;
+    QSet<QGeoTiledMapReply*> replies;
+};
+
+class QGeoTiledMappingManagerThreadPrivate
+{
+
+public:
+    QGeoTiledMappingManagerThreadPrivate();
+    QGeoTiledMappingManagerThreadPrivate(const QGeoTiledMappingManagerThreadPrivate &other);
+    ~QGeoTiledMappingManagerThreadPrivate();
+
+    QGeoTiledMappingManagerThreadPrivate& operator= (const QGeoTiledMappingManagerThreadPrivate &other);
+
+    QGeoTiledMappingManagerEngine *engine;
+    QHash<QGeoTiledMapViewport*, QGeoTiledMapRequestHandler*> handlers;
 };
 
 QTM_END_NAMESPACE

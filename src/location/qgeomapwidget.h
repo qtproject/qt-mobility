@@ -42,30 +42,65 @@
 #ifndef QGEOMAPWIDGET_H
 #define QGEOMAPWIDGET_H
 
-#include "qmobilityglobal.h"
+#include "qgeocoordinate.h"
 #include <QGraphicsWidget>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapViewport;
+class QGeoMappingManager;
+class QGeoBoundingBox;
+
 class QGeoMapWidgetPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
 {
     Q_OBJECT
-
 public:
-    QGeoMapWidget(QGeoMapViewport *viewport, QGraphicsItem *parent = 0);
-    virtual ~QGeoMapWidget();
+    enum MapType {
+        StreetMap,
+        SatelliteMapDay,
+        SatelliteMapNight,
+        TerrainMap
+    };
 
+    QGeoMapWidget(QGeoMappingManager *manager);
+    ~QGeoMapWidget();
 
-public: //overridden virtual methods
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    QPainterPath shape() const;
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
+
+    qreal minimumZoomLevel() const;
+    qreal maximumZoomLevel() const;
+
+    void setZoomLevel(qreal zoomLevel);
+    qreal zoomLevel() const;
+
+    void pan(int dx, int dy);
+
+    void setCenter(const QGeoCoordinate &center);
+    QGeoCoordinate center() const;
+
+    void setMapType(MapType mapType);
+    MapType mapType() const;
+
+    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
+
+protected:
+    void resizeEvent(QGraphicsSceneResizeEvent *event);
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    void wheelEvent(QGraphicsSceneWheelEvent* event);
 
 private:
+    void mapImageUpdated();
+
     QGeoMapWidgetPrivate *d_ptr;
 
-    Q_DISABLE_COPY(QGeoMapWidget)
+    friend class QGeoMapViewport;
 };
 
 QTM_END_NAMESPACE

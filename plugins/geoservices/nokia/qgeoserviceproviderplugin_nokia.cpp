@@ -41,10 +41,13 @@
 
 #include "qgeoserviceproviderplugin_nokia_p.h"
 
-#include "qgeoplacesmanager_nokia_p.h"
-#include "qgeoroutingmanager_nokia_p.h"
-#include "qgeomappingmanager_nokia_p.h"
-#include "qgeomapviewport_nokia_p.h"
+#include "qgeoplacesmanager.h"
+#include "qgeoroutingmanager.h"
+#include "qgeomappingmanager.h"
+
+#include "qgeoplacesmanagerengine_nokia_p.h"
+#include "qgeoroutingmanagerengine_nokia_p.h"
+#include "qgeomappingmanagerengine_nokia_p.h"
 
 #include <QtPlugin>
 #include <QNetworkProxy>
@@ -58,107 +61,28 @@ QString QGeoServiceProviderPluginNokia::providerName() const
     return "nokia";
 }
 
-/*
-bool QGeoServiceProviderPluginNokia::initialize(const QMap<QString, QString> &parameters,
-                                                QGeoServiceProvider::Error *error,
-                                                QString *errorString)
-{
-    QList<QString> keys = parameters.keys();
-
-    if (m_placesManager)
-        delete m_placesManager;
-
-    QGeoPlacesManagerNokia* placesManager = new QGeoPlacesManagerNokia();
-    if(keys.contains("places.proxy")) {
-        QString proxy = parameters.value("places.proxy");
-        if(proxy.isEmpty())
-            placesManager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-        else
-            placesManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
-    }
-    if(keys.contains("places.host")) {
-        QString host = parameters.value("places.host");
-        if(!host.isEmpty())
-            placesManager->setHost(host);
-    }
-    m_placesManager = placesManager;
-
-    if (m_routingManager)
-        delete m_routingManager;
-
-    QGeoRoutingManagerNokia* routingManager = new QGeoRoutingManagerNokia();
-    if(keys.contains("places.proxy")) {
-        QString proxy = parameters.value("routing.proxy");
-        if(proxy.isEmpty())
-            routingManager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-        else
-            routingManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
-    }
-    if(keys.contains("places.host")) {
-        QString host = parameters.value("routing.host");
-        if(!host.isEmpty())
-            routingManager->setHost(host);
-    }
-
-    m_routingManager = routingManager;
-
-    if (m_mappingManager)
-        delete m_mappingManager;
-
-    QGeoMappingManagerNokia* mappingManager = new QGeoMappingManagerNokia();
-    if(keys.contains("mapping.proxy")) {
-        QString proxy = parameters.value("mapping.proxy");
-        if(proxy.isEmpty())
-            mappingManager->setProxy(QNetworkProxy(QNetworkProxy::NoProxy));
-        else
-            mappingManager->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy,proxy,8080));
-    }
-    if(keys.contains("mapping.host")) {
-        QString host = parameters.value("mapping.host");
-        if(!host.isEmpty())
-            mappingManager->setHost(host);
-    }
-
-    m_mappingManager = mappingManager;
-
-    //TODO: don't get these two assignments
-    if (error)
-        *error = QGeoServiceProvider::NoError;
-
-    if (errorString)
-        *errorString = "";
-
-    return true;
-}
-*/
-
 QGeoPlacesManager* QGeoServiceProviderPluginNokia::createPlacesManager(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    return new QGeoPlacesManagerNokia(parameters, error, errorString);
+    QGeoPlacesManagerEngineNokia *engine = new QGeoPlacesManagerEngineNokia(parameters, error, errorString);
+    return new QGeoPlacesManager(engine);
 }
 
 QGeoMappingManager* QGeoServiceProviderPluginNokia::createMappingManager(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)const
 {
-    return new QGeoMappingManagerNokia(parameters, error, errorString);
+    QGeoMappingManagerEngineNokia *engine = new QGeoMappingManagerEngineNokia(parameters, error, errorString);
+    return new QGeoMappingManager(engine);
 }
 
 QGeoRoutingManager* QGeoServiceProviderPluginNokia::createRoutingManager(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    return new QGeoRoutingManagerNokia(parameters, error, errorString);
-}
-
-QGeoMapViewport* QGeoServiceProviderPluginNokia::createMapViewport(QGeoMappingManager *manager,
-        const QMap<QString, QString> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString) const
-{
-    return new QGeoMapViewportNokia(manager, parameters, error, errorString);
+    QGeoRoutingManagerEngineNokia *engine = new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
+    return new QGeoRoutingManager(engine);
 }
 
 Q_EXPORT_PLUGIN2(qtgeoservices_nokia, QGeoServiceProviderPluginNokia)

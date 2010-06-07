@@ -39,54 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_H
-#define QGEOSERVICEPROVIDER_H
+#ifndef QGEOTILEDMAPVIEWPORT_P_H
+#define QGEOTILEDMAPVIEWPORT_P_H
 
-#include "qmobilityglobal.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QMap>
+#include "qgeomapviewport_p.h"
 
-class QString;
-class QStringList;
-
-QT_BEGIN_HEADER
+#include <QRectF>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManager;
-class QGeoMappingManager;
-class QGeoRoutingManager;
-class QGeoMapViewport;
-class QGeoServiceProviderPrivate;
-
-class Q_LOCATION_EXPORT QGeoServiceProvider
+class QGeoTiledMapViewportPrivate : public QGeoMapViewportPrivate
 {
 public:
-    enum Error {
-        NoError,
-        NotSupportedError,
-        UnknownParameterError,
-        MissingRequiredParameterError
-    };
+    QGeoTiledMapViewportPrivate();
+    QGeoTiledMapViewportPrivate(const QGeoTiledMapViewportPrivate &other);
+    ~QGeoTiledMapViewportPrivate();
+    QGeoTiledMapViewportPrivate& operator= (const QGeoTiledMapViewportPrivate &other);
 
-    static QStringList availableServiceProviders();
-    QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
+    void updateScreenRect();
 
-    ~QGeoServiceProvider();
+    qint32 centerX;
+    qint32 centerY;
 
-    QGeoPlacesManager* placesManager() const;
-    QGeoMappingManager* mappingManager() const;
-    QGeoRoutingManager* routingManager() const;
+    qulonglong x;
+    qulonglong y;
+    qulonglong width;
+    qulonglong height;
+    qulonglong zoomFactor;
 
-    Error error() const;
-    QString errorString() const;
+    QRectF protectRegion;
 
-private:
-    QGeoServiceProviderPrivate* d_ptr;
+    QRectF screenRect;
 };
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
 
 #endif
