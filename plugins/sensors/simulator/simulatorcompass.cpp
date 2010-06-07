@@ -54,13 +54,19 @@ SimulatorCompass::SimulatorCompass(QSensor *sensor)
 void SimulatorCompass::poll()
 {
     QtMobility::QCompassReadingData data = get_qtCompassData();
+    qtimestamp newTimestamp;
     if (!data.timestamp.isValid())
-        m_reading.setTimestamp(QDateTime::currentDateTime().toTime_t());
+        newTimestamp = QDateTime::currentDateTime().toTime_t();
     else
-        m_reading.setTimestamp(data.timestamp.toTime_t());
-    m_reading.setAzimuth(data.azimuth);
-    m_reading.setCalibrationLevel(data.calibrationLevel);
+        newTimestamp = data.timestamp.toTime_t();
+    if (m_reading.timestamp() != newTimestamp
+        || m_reading.azimuth() != data.azimuth
+        || m_reading.calibrationLevel() != data.calibrationLevel) {
+            m_reading.setTimestamp(newTimestamp);
+            m_reading.setAzimuth(data.azimuth);
+            m_reading.setCalibrationLevel(data.calibrationLevel);
 
-    newReadingAvailable();
+            newReadingAvailable();
+    }
 }
 
