@@ -67,19 +67,10 @@ public:
     ~QGeoTiledMapViewportPrivate();
     QGeoTiledMapViewportPrivate& operator= (const QGeoTiledMapViewportPrivate &other);
 
-    void updateScreenRect();
-
-    qint32 centerX;
-    qint32 centerY;
-
-    qulonglong x;
-    qulonglong y;
     qulonglong width;
     qulonglong height;
-    qulonglong zoomFactor;
 
     QRectF protectRegion;
-
     QRectF screenRect;
 };
 
