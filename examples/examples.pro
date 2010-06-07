@@ -82,8 +82,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
         !win32-g++ {
 	    SUBDIRS += \
                 querymessages \
-                writemessage \
-                serviceactions
+                writemessage
 
             contains(mobility_modules,contacts) {
                 SUBDIRS += keepintouch
