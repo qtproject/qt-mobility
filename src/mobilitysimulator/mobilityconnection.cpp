@@ -42,6 +42,7 @@
 #include "mobilitysimulatorglobal.h"
 #include "mobilityconnection_p.h"
 #include "private/qsimulatordata_p.h"
+#include "private/qsimulatorconnection_p.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtNetwork/QLocalServer>
@@ -71,6 +72,10 @@ MobilityConnection *MobilityConnection::instance()
 {
     static MobilityConnection *gInstance = 0;
     if (!gInstance) {
+        // ensure the simulator is up and running before trying to
+        // connect to its mobility subserver
+        SimulatorConnection::instance();
+
         gInstance = new MobilityConnection();
         gInstance->connectToSimulator();
     }
