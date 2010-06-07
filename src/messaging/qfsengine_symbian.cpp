@@ -103,7 +103,9 @@ CFSEngine::~CFSEngine()
     }
     m_mailboxes.Reset();
     m_clientApi->Release();
+    CTrapCleanup* cleanup = CTrapCleanup::New();
     delete m_factory;
+    delete cleanup;
 }
 
 CFSEngine* CFSEngine::instance()
