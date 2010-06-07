@@ -56,7 +56,8 @@
 
 MapTileTab::MapTileTab(QWidget *parent)
         : QWidget(parent),
-        m_mapManager(NULL)
+        m_mapManager(NULL),
+        m_viewport(NULL)
 {
     QLabel *coordlbl = new QLabel(tr("Coordinates:"));
     m_tileLong = new QLineEdit("-74");

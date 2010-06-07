@@ -80,8 +80,10 @@ void QGeoTiledMappingManagerEngine::init()
 QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
 {
     Q_D(QGeoTiledMappingManagerEngine);
-    d->thread->quit();
-    d->thread->wait();
+    if(d->thread) {
+        d->thread->quit();
+        d->thread->wait();
+    }
 }
 
 QGeoMapViewport* QGeoTiledMappingManagerEngine::createViewport(QGeoMapWidget *widget)
@@ -309,7 +311,7 @@ void QGeoTiledMappingManagerEngine::setTileSize(const QSize &tileSize)
 *******************************************************************************/
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate(const QMap<QString, QString> &parameters)
-        : QGeoMappingManagerEnginePrivate(parameters) {}
+        : QGeoMappingManagerEnginePrivate(parameters), thread(NULL) {}
 
 QGeoTiledMappingManagerEnginePrivate::QGeoTiledMappingManagerEnginePrivate(const QGeoTiledMappingManagerEnginePrivate &other)
         : QGeoMappingManagerEnginePrivate(other),
