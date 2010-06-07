@@ -83,7 +83,7 @@ public:
 
     QVariant attribute(const QString &key, const QVariant &defaulValue = QVariant()) const;
     void setAttribute(const QString &key, const QVariant &value);
-    QStringList attributes() const;
+    QStringList attributeKeys() const;
 
 private:
     QSharedDataPointer<QLandmarkCategoryPrivate> d;

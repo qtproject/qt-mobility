@@ -274,7 +274,7 @@ void QLandmarkCategory::setAttribute(const QString &key, const QVariant &value)
 
     \sa attribute(), setAttribute()
 */
-QStringList QLandmarkCategory::attributes() const
+QStringList QLandmarkCategory::attributeKeys() const
 {
     return d->attributes.keys();
 }
