@@ -58,6 +58,7 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldParentLocalId;
+    const char* FieldParentGuid;
     const char* FieldOriginalTimestamp;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")

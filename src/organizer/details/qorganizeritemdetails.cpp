@@ -260,6 +260,16 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::DefinitionName, "Instance
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldParentLocalId, "ParentLocalId");
 
 /*!
+   \variable QOrganizerItemInstanceOrigin::FieldParentGuid
+
+   The constant key for the field in which the guid of the parent recurrent event
+   is stored in details of the QOrganizerItemInstanceOrigin type.  If the
+   ParentLocalId field is set to a nonzero value, then that should take
+   precedence over the ParentGuid field.
+ */
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldParentGuid, "ParentGuid");
+
+/*!
    \variable QOrganizerItemInstanceOrigin::FieldOriginalTimestamp
 
    The constant key for the field in which the original datetime of this instance

@@ -887,6 +887,8 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::Int);
     f.setAllowableValues(QVariantList());
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentLocalId, f);
+    f.setDataType(QVariant::String);
+    fields.insert(QOrganizerItemInstanceOrigin::FieldParentGuid, f);
     f.setDataType(QVariant::DateTime);
     fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, f);
     d.setFields(fields);
