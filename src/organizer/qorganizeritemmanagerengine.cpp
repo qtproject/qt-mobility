@@ -1684,6 +1684,49 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
             }
             break;
 
+        case QOrganizerItemFilter::OrganizerItemDateTimePeriodFilter:
+            {
+                const QOrganizerItemDateTimePeriodFilter dpf(filter);
+
+                if (organizeritem.type() == QOrganizerItemType::TypeEvent) {
+                    QOrganizerEvent event = organizeritem;
+                    return (dpf.startPeriod().isNull() || event.startDateTime() >= dpf.startPeriod())
+                            &&
+                           (dpf.endPeriod().isNull() || event.endDateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeEventOccurrence) {
+                   QOrganizerEventOccurrence eo = organizeritem;
+                   return (dpf.startPeriod().isNull() || eo.startDateTime() >= dpf.startPeriod())
+                           &&
+                          (dpf.endPeriod().isNull() || eo.endDateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeTodo) {
+                   QOrganizerTodo todo = organizeritem;
+                   return (dpf.startPeriod().isNull() || todo.notBeforeDateTime() >= dpf.startPeriod())
+                           &&
+                          (dpf.endPeriod().isNull() || todo.dueDateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeTodoOccurrence) {
+                    QOrganizerTodoOccurrence tdo = organizeritem;
+                    return (dpf.startPeriod().isNull() || tdo.notBeforeDateTime() >= dpf.startPeriod())
+                            &&
+                           (dpf.endPeriod().isNull() || tdo.dueDateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeJournal) {
+                    QOrganizerJournal journal = organizeritem;
+                    return (dpf.startPeriod().isNull() || journal.dateTime() >= dpf.startPeriod())
+                            &&
+                           (dpf.endPeriod().isNull() || journal.dateTime() <= dpf.endPeriod());
+                }
+                if (organizeritem.type() == QOrganizerItemType::TypeNote) {
+                    //for note, there is no such start/end datetime to be used, so we use the timestamp detail.
+                    QOrganizerItemTimestamp timestamp = organizeritem.detail<QOrganizerItemTimestamp>();
+                    return (dpf.startPeriod().isNull() || timestamp.lastModified() >= dpf.startPeriod())
+                            &&
+                           (dpf.endPeriod().isNull() || timestamp.lastModified() <= dpf.endPeriod());
+                }
+            }
+            break;
         case QOrganizerItemFilter::OrganizerItemDetailRangeFilter:
             {
                 const QOrganizerItemDetailRangeFilter cdf(filter);

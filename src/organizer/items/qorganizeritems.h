@@ -50,6 +50,7 @@
 #include "qorganizerjournal.h"
 #include "qorganizertodo.h"
 #include "qorganizertodooccurrence.h"
+#include "qorganizernote.h"
 
 #endif
 
