@@ -148,6 +148,16 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
     }
 
     {
+        QVersitProperty property;
+        property.setName(QLatin1String("UID"));
+        property.setValue(QLatin1String("1234567"));
+        QOrganizerItemGuid guid;
+        guid.setGuid(QLatin1String("1234567"));
+        QTest::newRow("guid") << (QList<QOrganizerItemDetail>() << guid)
+            << (QList<QVersitProperty>() << property);
+    }
+
+    {
         QList<QVersitProperty> properties;
         QVersitProperty dtstart;
         dtstart.setName(QLatin1String("DTSTART"));

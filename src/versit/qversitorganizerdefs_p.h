@@ -65,7 +65,9 @@ const VersitDetailMapping versitOrganizerDetailMappings[] = {
     {"SUMMARY",       QOrganizerItemDisplayLabel::DefinitionName.latin1(),
                       QOrganizerItemDisplayLabel::FieldLabel.latin1()},
     {"DESCRIPTION",   QOrganizerItemDescription::DefinitionName.latin1(),
-                      QOrganizerItemDescription::FieldDescription.latin1()}
+                      QOrganizerItemDescription::FieldDescription.latin1()},
+    {"UID",           QOrganizerItemGuid::DefinitionName.latin1(),
+                      QOrganizerItemGuid::FieldGuid.latin1()}
 };
 
 QTM_END_NAMESPACE
