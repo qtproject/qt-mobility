@@ -319,7 +319,7 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManagerEngine::supportedRouteOpt
 */
 void QGeoRoutingManagerEngine::setSupportedSegmentDetails(QGeoRouteRequest::SegmentDetails segmentDetails)
 {
-    d_ptr->supportedSegmentDetails = supportedSegmentDetails();
+    d_ptr->supportedSegmentDetails = segmentDetails;
 }
 
 /*!
