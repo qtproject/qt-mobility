@@ -22,7 +22,16 @@ HEADERS += src/calendardemo.h \
            src/monthpage.h \
            src/daypage.h \
            src/eventeditpage.h
-           
+
+INCLUDEPATH += . \
+    ../../include \
+    ../../src/organizer/ \
+    ../../src/organizer/items \
+    ../../src/organizer/details \
+    ../../src/organizer/filters \
+    ../../src/organizer/requests
+
+
 symbian: {
     TARGET.CAPABILITY = ReadUserData \
                         WriteUserData
