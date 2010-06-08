@@ -1690,13 +1690,21 @@ QVector<QGalleryTrackerImageColumn *> QGalleryTrackerSchema::createImageColumns(
     QVector<QGalleryTrackerImageColumn *> columns;
     columns.reserve(types.count());
 
+#ifdef Q_WS_MAEMO_5
+    const QString flavor = QLatin1String("cropped");
+#else
+    const QString flavor = QLatin1String("normal");
+#endif
+
     for (int i = 0, count = types.count(); i < count; ++i) {
         switch (types.at(i)) {
         case QVariant::Image:
-            columns.append(new QGalleryTrackerThumbnailImageColumn(dbus->thumbnailInterface(), i));
+            columns.append(new QGalleryTrackerThumbnailImageColumn(
+                    dbus->thumbnailInterface(), flavor, i));
             break;
         case QVariant::Pixmap:
-            columns.append(new QGalleryTrackerThumbnailPixmapColumn(dbus->thumbnailInterface(), i));
+            columns.append(new QGalleryTrackerThumbnailPixmapColumn(
+                    dbus->thumbnailInterface(), flavor, i));
             break;
         default:
             break;

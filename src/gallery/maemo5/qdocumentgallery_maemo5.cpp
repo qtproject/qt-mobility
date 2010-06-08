@@ -161,10 +161,17 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::thumbnailInterface()
 {
     if (!thumbnailService) {
+#ifdef Q_WS_MAEMO_5
         thumbnailService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.thumbnailer"),
                 QLatin1String("/org/freedesktop/thumbnailer/Generic"),
                 QLatin1String("org.freedesktop.thumbnailer.Generic"));
+#else
+        thumbnailService = new QGalleryDBusInterface(
+                QLatin1String("org.freedesktop.thumbnails.Thumbnailer1"),
+                QLatin1String("/org/freedesktop/thumbnails/Thumbnailer1"),
+                QLatin1String("org.freedesktop.thumbnails.Thumbnailer1"));
+#endif
     }
     return thumbnailService;
 }

@@ -58,19 +58,16 @@ class QGalleryTrackerThumbnailDBusWatcher : public QDBusPendingCallWatcher
 public:
     QGalleryTrackerThumbnailDBusWatcher(
             const QDBusPendingCall &call,
-            uint cancelId,
             const QVector<uint> &imageIds,
             const QStringList &filePaths)
         : QDBusPendingCallWatcher(call)
         , id(0)
-        , cancelId(cancelId)
         , imageIds(imageIds)
         , filePaths(filePaths)
     {
     }
 
     uint id;
-    uint cancelId;
     QVector<uint> imageIds;
     QStringList filePaths;
 };
@@ -78,32 +75,29 @@ public:
 class QGalleryTrackerThumbnailLoadWatcher : public QFutureWatcher<QVariant>
 {
 public:
-    QGalleryTrackerThumbnailLoadWatcher(
-            uint cancelId, const QVector<uint> imageIds, const QStringList &filePaths)
-        : cancelId(cancelId)
-        , imageIds(imageIds)
+    QGalleryTrackerThumbnailLoadWatcher(const QVector<uint> imageIds, const QStringList &filePaths)
+        : imageIds(imageIds)
         , filePaths(filePaths)
     {
     }
 
-    uint cancelId;
     QVector<uint> imageIds;
     QStringList filePaths;
 };
 
 
 QGalleryTrackerThumbnailColumn::QGalleryTrackerThumbnailColumn(
-        const QGalleryDBusInterfacePointer &thumbnailInterface, int key, QObject *parent)
+        const QGalleryDBusInterfacePointer &thumbnailInterface,
+        const QString &flavor,
+        int key,
+        QObject *parent)
     : QGalleryTrackerImageColumn(parent)
-#ifdef Q_WS_MAEMO_5
-    , m_croppedDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
-                 + QLatin1String("/.thumbnails/cropped/"))
-#else
-    , m_normalDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
-                + QLatin1String("/.thumbnails/normal/"))
-#endif
+    , m_flavor(flavor)
+    , m_thumbnailDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
+                 + QLatin1String("/.thumbnails/") + flavor + QLatin1Char('/'))
     , m_failDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
                 + QLatin1String("/.thumbnails/fail/"))
+    , m_localDir(QLatin1String(".thumblocal/") + flavor + QLatin1Char('/'))
     , m_thumbnailInterface(thumbnailInterface)
 {
     m_keys.append(key);
@@ -132,8 +126,6 @@ void QGalleryTrackerThumbnailColumn::insertImages(
     m_images.insert(index, count, QVariant());
     m_imageIds.insert(index, count, 0);
 
-    uint cancelId = 0;
-
     for (int i = index; i < count; ++i, row += tableWidth) {
         const QString filePath = row->toString();
 
@@ -141,13 +133,11 @@ void QGalleryTrackerThumbnailColumn::insertImages(
 
         m_imageIds.replace(i, imageId);
 
-        cancelId ^= imageId;
-
         filePaths.append(filePath);
     }
 
     QGalleryTrackerThumbnailLoadWatcher *watcher = new QGalleryTrackerThumbnailLoadWatcher(
-            cancelId, m_imageIds.mid(index, count), filePaths);
+            m_imageIds.mid(index, count), filePaths);
 
     m_loadWatchers.append(watcher);
 
@@ -190,12 +180,21 @@ void QGalleryTrackerThumbnailColumn::loadWatcherFinished()
         }
     }
 
+    const uint cancelId = 0;
+
     if (!imageIds.isEmpty()) {
         QDBusPendingCall call = m_thumbnailInterface->asyncCall(
-                QLatin1String("Queue"), urls, mimeTypes, loadWatcher->cancelId);
+                QLatin1String("Queue"),
+                urls,
+                mimeTypes,
+#ifndef Q_WS_MAEMO_5
+                m_flavor,
+                QLatin1String("default"),
+#endif
+                cancelId);
 
         QGalleryTrackerThumbnailDBusWatcher *dbusWatcher = new QGalleryTrackerThumbnailDBusWatcher(
-                call, loadWatcher->cancelId, imageIds, filePaths);
+                call, imageIds, filePaths);
 
         m_dbusWatchers.append(dbusWatcher);
 
@@ -294,7 +293,7 @@ void QGalleryTrackerThumbnailColumn::dbusFinished(uint id)
 
             QGalleryTrackerThumbnailLoadWatcher *loadWatcher
                     = new QGalleryTrackerThumbnailLoadWatcher(
-                            dbusWatcher->cancelId, dbusWatcher->imageIds, dbusWatcher->filePaths);
+                            dbusWatcher->imageIds, dbusWatcher->filePaths);
 
             m_loadWatchers.append(loadWatcher);
 
@@ -318,26 +317,19 @@ QVariant QGalleryTrackerThumbnailColumn::loadThumbnail(const QString &filePath)
             QUrl::fromLocalFile(filePath).toEncoded(), QCryptographicHash::Md5).toHex();
 
 #ifdef Q_WS_MAEMO_5
-    QString imagePath = m_croppedDir + hash + QLatin1String(".jpeg");
+    QString imagePath = m_thumbnailDir + hash + QLatin1String(".jpeg");
 #else
-    QString imagePath = m_normalDir + hash + QLatin1String(".png");
+    QString imagePath = m_thumbnailDir + hash + QLatin1String(".png");
 #endif
 
     if (!QFile::exists(imagePath)) {
         const int index = filePath.lastIndexOf(QLatin1Char('/'));
 
         if (index != -1 && index != filePath.count() - 1) {
-#ifdef Q_WS_MAEMO_5
             imagePath = filePath.mid(0, index + 1)
-                    + QLatin1String(".thumblocal/cropped/")
+                    + m_localDir
                     + QUrl::toPercentEncoding(filePath.mid(index + 1))
                     + QLatin1String(".jpeg");
-#else
-            imagePath = filePath.mid(0, index + 1)
-                    + QLatin1String(".thumblocal/normal/")
-                    + QUrl::toPercentEncoding(filePath.mid(index + 1))
-                    + QLatin1String(".png");
-#endif
 
             if (!QFile::exists(imagePath)) {
 #ifdef Q_WS_MAEMO_5

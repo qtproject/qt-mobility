@@ -70,7 +70,10 @@ class QGalleryTrackerThumbnailColumn : public QGalleryTrackerImageColumn
     Q_OBJECT
 public:
     QGalleryTrackerThumbnailColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, int key, QObject *parent = 0);
+            const QGalleryDBusInterfacePointer &thumbnailInterface,
+            const QString &flavor,
+            int key,
+            QObject *parent = 0);
     ~QGalleryTrackerThumbnailColumn();
 
     void insertImages(
@@ -107,12 +110,10 @@ private:
 
     QVariant loadThumbnail(const QString &filePath);
 
-#ifdef Q_WS_MAEMO_5
-    const QString m_croppedDir;
-#else
-    const QString m_normalDir;
-#endif
+    const QString m_flavor;
+    const QString m_thumbnailDir;
     const QString m_failDir;
+    const QString m_localDir;
     const QGalleryDBusInterfacePointer m_thumbnailInterface;
     QList<QGalleryTrackerThumbnailDBusWatcher *> m_dbusWatchers;
     QList<QGalleryTrackerThumbnailLoadWatcher *> m_loadWatchers;
@@ -125,8 +126,11 @@ class QGalleryTrackerThumbnailImageColumn : public QGalleryTrackerThumbnailColum
 {
 public:
     QGalleryTrackerThumbnailImageColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, int index, QObject *parent = 0)
-        : QGalleryTrackerThumbnailColumn(thumbnailInterface, index, parent) {}
+            const QGalleryDBusInterfacePointer &thumbnailInterface,
+            const QString &flavor,
+            int index,
+            QObject *parent = 0)
+        : QGalleryTrackerThumbnailColumn(thumbnailInterface, flavor, index, parent) {}
     ~QGalleryTrackerThumbnailImageColumn() {}
 
 protected:
@@ -137,8 +141,11 @@ class QGalleryTrackerThumbnailPixmapColumn : public QGalleryTrackerThumbnailColu
 {
 public:
     QGalleryTrackerThumbnailPixmapColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, int index, QObject *parent = 0)
-        : QGalleryTrackerThumbnailColumn(thumbnailInterface, index, parent) {}
+            const QGalleryDBusInterfacePointer &thumbnailInterface,
+            const QString &flavor,
+            int index,
+            QObject *parent = 0)
+        : QGalleryTrackerThumbnailColumn(thumbnailInterface, flavor, index, parent) {}
     ~QGalleryTrackerThumbnailPixmapColumn() {}
 
 protected:
