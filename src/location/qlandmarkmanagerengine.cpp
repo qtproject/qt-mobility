@@ -984,7 +984,7 @@ void QLandmarkManagerEngine::addSorted(QList<QLandmark>* sorted, const QLandmark
 {
     if (sortOrders.count() > 0) {
         for (int i = 0; i < sorted->size(); i++) {
-            // check to see if the new contact should be inserted here
+            // check to see if the new landmark should be inserted here
             int comparison = compareLandmark(sorted->at(i), landmark, sortOrders);
             if (comparison > 0) {
                 sorted->insert(i, landmark);

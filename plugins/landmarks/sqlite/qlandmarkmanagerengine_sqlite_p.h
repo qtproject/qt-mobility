@@ -151,43 +151,13 @@ public slots:
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state);
 
+public:
+    static QList<QLandmarkId> sortLandmarks(const QList<QLandmark>& landmarks, const QList<QLandmarkSortOrder> &sortOrders) {
+        return QLandmarkManagerEngine::sortLandmarks(landmarks,sortOrders);
+    }
+
+
 private:
-    QList<QLandmarkId> landmarkIdsDefault(const QLandmarkFilter &filter,
-                                          QLandmarkManager::Error *error,
-                                          QString *errorString) const;
-
-    QList<QLandmarkId> landmarkIdsName(const QLandmarkNameFilter &filter,
-                                       QLandmarkManager::Error *error,
-                                       QString *errorString) const;
-
-    QList<QLandmarkId> landmarkIdsProximity(const QLandmarkProximityFilter &filter,
-                                            QLandmarkManager::Error *error,
-                                            QString *errorString) const;
-
-    QList<QLandmarkId> landmarkIdsNearest(const QLandmarkNearestFilter &filter,
-                                          QLandmarkManager::Error *error,
-                                          QString *errorString) const;
-
-    QList<QLandmarkId> landmarkIdsCategory(const QLandmarkCategoryFilter &filter,
-                                           QLandmarkManager::Error *error,
-                                           QString *errorString) const;
-
-    QList<QLandmarkId> landmarkIdsBox(const QLandmarkBoxFilter &filter,
-                                      QLandmarkManager::Error *error,
-                                      QString *errorString) const;
-
-    QList<QLandmarkId> landmarkIdsIntersection(const QLandmarkIntersectionFilter &filter,
-            QLandmarkManager::Error *error,
-            QString *errorString) const;
-
-    QList<QLandmarkId> landmarkIdsUnion(const QLandmarkUnionFilter &filter,
-                                        QLandmarkManager::Error *error,
-                                        QString *errorString) const;
-
-    QList<QLandmarkId> landmarkIdsAttribute(const QLandmarkAttributeFilter &filter,
-                                         QLandmarkManager::Error *error,
-                                         QString *errorString) const;
-
     bool saveLandmarkInternal(QLandmark* landmark,
                               QLandmarkManager::Error *error,
                               QString *errorString,
