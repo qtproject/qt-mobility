@@ -202,6 +202,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += ",";
         requestString += trimDouble(request.waypoints().at(i).latitude());
     }
+
     //TODO: Avoid areas
     //requestString += "&avoidareas=";
 
@@ -209,6 +210,19 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
 
     requestString += "&alternatives=";
     requestString += QString::number(request.numberAlternativeRoutes());
+
+    requestString += "&representation=";
+     if( request.instructionDetail() & QGeoRouteRequest::BasicInstructions )
+         requestString += "display";
+     else if( request.instructionDetail() & QGeoRouteRequest::DetailedInstructions )
+         requestString += "navigation";
+     else
+         requestString += "overview";
+
+      if( request.instructionDetail() & QGeoRouteRequest::BasicSegmentData )
+          requestString += "&linkattributes=nextLink";
+      else if( request.instructionDetail() & QGeoRouteRequest::DetailedSegmentData )
+          requestString += "&linkattributes=shape,length,nextLink";
 
     requestString += routeRequestString(request);
 
@@ -218,16 +232,6 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
 QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
 {
     bool supported = true;
-
-    // TODO: Get original request info
-//    if ((request.avoidFeatureTypes() & supportedAvoidFeatureTypes()) != request.avoidFeatureTypes())
-//        supported = false;
-
-//    if ((request.instructionDetail() & supportedInstructionDetails()) != request.instructionDetail())
-//        supported = false;
-
-//    if ((request.segmentDetail() & supportedSegmentDetails()) != request.segmentDetail())
-//        supported = false;
 
     if ((route.optimization() & supportedRouteOptimizations()) != route.optimization())
         supported = false;
@@ -243,6 +247,8 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += m_host;
     requestString += "/getroute/6.1/routes.xml";
 
+    // TODO: Check that optimization, mode, avoidance etc keep the same as requested with
+    // calculate route once data is available
     requestString += "&routeid=";
     requestString += route.routeId();
 
@@ -251,13 +257,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += ",";
     requestString += QString::number(position.longitude());
 
-    //TODO: Avoid areas ?
-    //requestString += "&avoidareas=";
-
-    //TODO: Get original request info
-    QGeoRouteRequest request;
-    requestString += modesRequestString(route.optimization(),route.travelMode(),request.avoidFeatureTypes());
-    requestString += routeRequestString(request);
+    requestString += routeRequestString();
 
     return requestString;
 }
@@ -326,7 +326,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
     return requestString;
 }
 
-QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest &request)
+QString QGeoRoutingManagerEngineNokia::routeRequestString()
 {
     QString requestString;
 
@@ -334,19 +334,6 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     requestString += QDateTime::currentDateTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
 
     requestString += "&language=ENG";  // TODO locale / language handling
-
-   requestString += "&representation=";
-    if( request.instructionDetail() & QGeoRouteRequest::BasicInstructions )
-        requestString += "display";
-    else if( request.instructionDetail() & QGeoRouteRequest::DetailedInstructions )
-        requestString += "navigation";
-    else
-        requestString += "overview";
-
-     if( request.instructionDetail() & QGeoRouteRequest::BasicSegmentData )
-         requestString += "&linkattributes=nextLink";
-     else if( request.instructionDetail() & QGeoRouteRequest::DetailedSegmentData )
-         requestString += "&linkattributes=shape,length,nextLink";
 
     requestString += "&routeattributes=waypoints,summary,shape,maneuvers,links,boundingBox";
     requestString += "&maneuverattributes=position,link";
