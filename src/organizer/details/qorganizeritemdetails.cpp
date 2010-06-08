@@ -270,12 +270,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldParentLocalId, "Pare
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldParentGuid, "ParentGuid");
 
 /*!
-   \variable QOrganizerItemInstanceOrigin::FieldOriginalTimestamp
+   \variable QOrganizerItemInstanceOrigin::FieldOriginalDate
 
-   The constant key for the field in which the original datetime of this instance
+   The constant key for the field in which the original date of this instance
    or exception according to the recurrent series of the parent item is stored.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, "OriginalTimestamp");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemInstanceOrigin::FieldOriginalDate, "OriginalDate");
 
 
 

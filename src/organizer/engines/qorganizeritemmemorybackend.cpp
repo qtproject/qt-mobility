@@ -509,7 +509,7 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     // add the detail which identifies exactly which instance this item is.
     QOrganizerItemInstanceOrigin currOrigin;
     currOrigin.setParentLocalId(generator.localId());
-    currOrigin.setOriginalTimestamp(rdate);
+    currOrigin.setOriginalDate(rdate.date());
     occDets.append(currOrigin);
 
     // save those details in the instance.

@@ -693,7 +693,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentGuid, f);
     f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, f);
+    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -890,7 +890,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     f.setDataType(QVariant::String);
     fields.insert(QOrganizerItemInstanceOrigin::FieldParentGuid, f);
     f.setDataType(QVariant::DateTime);
-    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalTimestamp, f);
+    fields.insert(QOrganizerItemInstanceOrigin::FieldOriginalDate, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);

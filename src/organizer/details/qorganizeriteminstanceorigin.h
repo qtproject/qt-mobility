@@ -59,12 +59,12 @@ public:
     const char* DefinitionName;
     const char* FieldParentLocalId;
     const char* FieldParentGuid;
-    const char* FieldOriginalTimestamp;
+    const char* FieldOriginalDate;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")
     Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
     Q_DECLARE_LATIN1_CONSTANT(FieldParentGuid, "ParentGuid");
-    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalTimestamp, "OriginalTimestamp");
+    Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
 #endif
 
     void setParentLocalId(QOrganizerItemLocalId parentId) {setValue(FieldParentLocalId, static_cast<int>(parentId));}
@@ -73,8 +73,8 @@ public:
     void setParentGuid(const QString& guid) {setValue(FieldParentGuid, guid);}
     QString parentGuid() const {return value(FieldParentGuid);}
 
-    void setOriginalTimestamp(const QDateTime& timestamp) {setValue(FieldOriginalTimestamp, timestamp);}
-    QDateTime originalTimestamp() const {return variantValue(FieldOriginalTimestamp).toDateTime();}
+    void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
+    QDate originalDate() const {return variantValue(FieldOriginalDate).toDate();}
 };
 
 QTM_END_NAMESPACE
