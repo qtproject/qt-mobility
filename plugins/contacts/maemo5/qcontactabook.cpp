@@ -1116,16 +1116,20 @@ QContactNote* QContactABook::getNoteDetail(EContact *eContact) const
 }
 
 static const QStringList vcardsManagedByTelepathy(){
-  QStringList rtn;
-  OssoABookAccountManager* accountMgr = osso_abook_account_manager_get_default();
-  const GList *vcardFields = osso_abook_account_manager_get_primary_vcard_fields(accountMgr);
-  while (vcardFields){
-    QString field = (const char*)vcardFields->data;
-    if (!rtn.contains(field))
-      rtn << field;
-    vcardFields = vcardFields->next;
+  static QStringList rtn;
+  
+  if (rtn.isEmpty()){
+    OssoABookAccountManager* accountMgr = osso_abook_account_manager_get_default();
+    const GList *vcardFields = osso_abook_account_manager_get_primary_vcard_fields(accountMgr);
+    while (vcardFields){
+      QString field = (const char*)vcardFields->data;
+      if (!rtn.contains(field) && field != "TEL")
+        rtn << field;
+      vcardFields = vcardFields->next;
+    }
   }
   
+  QCM5_DEBUG << "VCards managed by Telepathy:" << rtn;
   return rtn;
 }
 
@@ -1133,6 +1137,65 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
 {
   QList<QContactOnlineAccount*> rtnList;
   
+  // Get VCards that store Online Account Details.
+  const QStringList telepathyVCards = vcardsManagedByTelepathy();
+  
+  // Parsing Attributes associated to the previous VCards
+  GList *attributeList = e_vcard_get_attributes((EVCard*)eContact);
+  GList *node;
+
+  if (!attributeList)
+    return rtnList;
+  
+  for (node = attributeList; node != NULL; node = g_list_next (node)) {
+    QContactOnlineAccount* rtn = new QContactOnlineAccount;
+    const char* accountUri;
+    const char* serviceProvider;
+    
+    EVCardAttribute* attr = (EVCardAttribute*)node->data;
+    if (!attr)
+      continue;
+    
+    // Continue if the attribute doesn't contain Online Account info
+    QString attributeName = e_vcard_attribute_get_name(attr);
+    if (!telepathyVCards.contains(attributeName))
+      continue;
+    
+    // Get the account URI
+    accountUri = e_vcard_attribute_get_value(attr);
+    
+    // Get the service provider
+    GList *params = e_vcard_attribute_get_params(attr);
+    GList *nodeP;
+    for (nodeP = params; nodeP != NULL; nodeP = g_list_next (nodeP)) {
+      EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
+      QString paramName = e_vcard_attribute_param_get_name(p);
+      if (paramName.contains("TYPE")){
+        // paramValues should not contains more than one value
+        GList *paramValues = e_vcard_attribute_param_get_values(p);
+        serviceProvider = CONST_CHAR(paramValues->data);
+      }
+    }
+
+#if 0    
+    // Get Capabilities
+    OssoABookCapsFlags caps;
+    caps = osso_abook_caps_from_account(McAccount *account);
+#endif
+
+    // Set details
+    QVariantMap map;
+    map[QContactOnlineAccount::FieldAccountUri] = accountUri;
+    //map[QContactOnlineAccount::FieldCapabilities] =; //### TODO
+    map[QContactOnlineAccount::FieldServiceProvider] = serviceProvider; // eg: facebook-chat,
+    setDetailValues(map, rtn);
+    
+    rtnList << rtn;
+  }
+  
+  return rtnList;
+  
+#if 0
   QStringList evcardToSkip = vcardsManagedByTelepathy();
   
   // Gets info of online accounts from roster contacts associated to the master one  
@@ -1181,9 +1244,11 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
     g_list_free (contacts);
   }
   
+  
   /* Users can add Online account details manually. Eg: IRC username.
    * evcardToSkip stringlist contains evCard attributes that have been already processed.
    */
+  
   GList *attributeList = e_vcard_get_attributes((EVCard*)eContact);
   GList *node;
 
@@ -1247,8 +1312,9 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       }
     }
   }
-
+  
   return rtnList;
+#endif
 }
 
 QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) const
