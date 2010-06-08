@@ -104,42 +104,16 @@ bool QGeoRouteXmlParser::parseRootElement()
         }
     }
 
-    if (m_reader->readNextStartElement()) {
-        if (m_reader->name() != "MetaInfo") {
-            m_reader->raiseError(QString(
-                "Expected a element named \"MetaInfo\" (element was named \"%1\").").arg(
-                m_reader->name().toString()));
-            return false;
-        }
-        else {
-            m_reader->readNext();
-            while (!(m_reader->tokenType() == QXmlStreamReader::EndElement
-                     && m_reader->name() == "MetaInfo")) {
-                if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
-                    if (m_reader->name() == "RequestId") {
-                        // TODO:  MetaInfo RequestId
-                        m_reader->skipCurrentElement();
-                    }
-                    else if (m_reader->name() == "Timestamp") {
-                        // TODO:  MetaInfo Timestamp
-                        m_reader->skipCurrentElement();
-                    }
-                    else {
-                        m_reader->skipCurrentElement();
-                    }
-                }
-                m_reader->readNext();
-            }
-        }
-    }
-
     while (m_reader->readNextStartElement()) {
-        if (m_reader->name() == "Route") {
+        if (m_reader->name() == "MetaInfo") {
+            m_reader->skipCurrentElement();
+        }
+        else if (m_reader->name() == "Route") {
             QGeoRoute route;
             route.setRequest(m_request);
 
             if (!parseRoute(&route))
-                return false;
+                continue; //route parsing failed move on to the next
 
             m_results.append(route);
         }
@@ -148,6 +122,7 @@ bool QGeoRouteXmlParser::parseRootElement()
             m_reader->skipCurrentElement();
         }
         else {
+            QString tmp = m_reader->name().toString();
             m_reader->raiseError(QString("Did not expect a child element named \"%1\".").arg(
                 m_reader->name().toString()));
             return false;
@@ -164,38 +139,33 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
     segments.clear();
 
     m_reader->readNext();
-
+    bool succeeded = true;
     while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "Route")) {
-        if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
+        if (m_reader->tokenType() == QXmlStreamReader::StartElement && succeeded) {
             if (m_reader->name() == "RouteId") {
                 route->setRouteId(m_reader->readElementText());
             }
             else if (m_reader->name() == "Waypoint") {
-                if(!parseWaypoint(route))
-                    return false;
+                succeeded = parseWaypoint(route);
             }
             else if (m_reader->name() == "Mode") {
-                if(!parseMode(route))
-                    return false;
+                succeeded = parseMode(route);
             }
             else if (m_reader->name() == "Shape") {
                 QString elementName = m_reader->name().toString();
                 QList<QGeoCoordinate> path;
-                if(!parseGeoPoints(m_reader->readElementText(), &path, elementName))
-                    return false;
-                route->setPath(path);
+                succeeded = parseGeoPoints(m_reader->readElementText(), &path, elementName);
+                if(succeeded)
+                    route->setPath(path);
             }
             else if (m_reader->name() == "Maneuver") {
-                if(!parseManeuver())
-                    return false;
+                succeeded = parseManeuver();
             }
             else if (m_reader->name() == "Link") {
-                if(!parseLink())
-                    return false;
+                succeeded = parseLink();
             }
             else if (m_reader->name() == "Summary") {
-                if(!parseSummary(route))
-                    return false;
+                succeeded = parseSummary(route);
             }
             else {
                 m_reader->skipCurrentElement();
@@ -203,8 +173,10 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
         }
         m_reader->readNext();
     }
-    postProcessRoute(route);
-    return true;
+    if(succeeded)
+        succeeded = postProcessRoute(route);
+
+    return succeeded;
 }
 
 bool QGeoRouteXmlParser::postProcessRoute(QGeoRoute *route)
@@ -290,10 +262,6 @@ bool QGeoRouteXmlParser::parseWaypoint(QGeoRoute *route)
                     return false;
                 path.append(coordinates);
             }
-            else if (m_reader->name() == "OriginalPosition") {
-                // TODO: Waypoint OriginalPosition
-                m_reader->skipCurrentElement();
-            }
             else {
                 m_reader->skipCurrentElement();
             }
@@ -321,6 +289,8 @@ bool QGeoRouteXmlParser::parseMode(QGeoRoute *route)
                     route->setOptimization(QGeoRouteRequest::MostEconomicRoute);
                 else if (value == "scenic")
                     route->setOptimization(QGeoRouteRequest::MostScenicRoute);
+                else // unsupported optimization
+                    return false;
                 // See comments in qgeorouterequest.h
                 //else if (value == "directDrive")
                 //    route->setOptimization(QGeoRouteRequest::DirectRoute);
@@ -337,6 +307,8 @@ bool QGeoRouteXmlParser::parseMode(QGeoRoute *route)
                     route->setTravelMode(QGeoRouteRequest::BicycleTravel);
                 else if (value == "truck")
                     route->setTravelMode(QGeoRouteRequest::TruckTravel);
+                else // unsupported optimization
+                    return false;
             }
             else {
                 m_reader->skipCurrentElement();
@@ -359,13 +331,9 @@ bool QGeoRouteXmlParser::parseSummary(QGeoRoute *route)
                 QString value = m_reader->readElementText();
                 route->setDistance(QGeoDistance(value.toDouble()));
             }
-            else if (m_reader->name() == "TrafficTime") {
+            else if (m_reader->name() == "BaseTime") {   // TODO: Check TrafficTime once data available
                 QString value = m_reader->readElementText();
                 route->setTravelTime(value.toDouble());
-            }
-            else if (m_reader->name() == "BaseTime") {
-                //TODO: Sumary base time
-                m_reader->skipCurrentElement();
             }
             else {
                 m_reader->skipCurrentElement();
@@ -461,10 +429,6 @@ bool QGeoRouteXmlParser::parseLink()
             else if (m_reader->name() == "Length") {
 
                 segmentContainer.segment->setDistance(QGeoDistance(m_reader->readElementText().toDouble()));
-            }
-            else if (m_reader->name() == "AdditionalData ") {
-                // TODO:  Link additional data
-                m_reader->skipCurrentElement();
             }
             else if (m_reader->name() == "NextLink") {
                 segmentContainer.nextId = m_reader->readElementText();

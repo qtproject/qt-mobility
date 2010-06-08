@@ -76,8 +76,10 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     avoidFeatures |= QGeoRouteRequest::AvoidDirtRoads;
     setSupportedAvoidFeatureTypes(avoidFeatures);
 
-    // TODO
-    //setSupportedDirectionsDetails();
+    QGeoRouteRequest::InstructionDetails instructionDetails;
+    instructionDetails |= QGeoRouteRequest::BasicInstructions;
+    instructionDetails |= QGeoRouteRequest::DetailedInstructions;
+    setSupportedInstructionDetails(instructionDetails);
 
     QGeoRouteRequest::RouteOptimizations optimizations;
     optimizations |= QGeoRouteRequest::ShortestRoute;
@@ -90,6 +92,11 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     travelModes |= QGeoRouteRequest::PedestrianTravel;
     travelModes |= QGeoRouteRequest::PublicTransitTravel;
     setSupportedTravelModes(travelModes);
+
+    QGeoRouteRequest::SegmentDetails segmentDetails;
+    segmentDetails |= QGeoRouteRequest::BasicSegmentData;
+    segmentDetails |= QGeoRouteRequest::DetailedSegmentData;
+    setSupportedSegmentDetails(segmentDetails);
 
     if (error)
         *error = QGeoServiceProvider::NoError;
@@ -160,8 +167,11 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     if ((request.avoidFeatureTypes() & supportedAvoidFeatureTypes()) != request.avoidFeatureTypes())
         supported = false;
 
-    // TODO
-    //setSupportedDirectionsDetails();
+    if ((request.instructionDetail() & supportedInstructionDetails()) != request.instructionDetail())
+        supported = false;
+
+    if ((request.segmentDetail() & supportedSegmentDetails()) != request.segmentDetail())
+        supported = false;
 
     if ((request.routeOptimization() & supportedRouteOptimizations()) != request.routeOptimization())
         supported = false;
@@ -179,8 +189,6 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     requestString += m_host;
     requestString += "/calculateroute/6.1/routes.xml";
 
-    // TODO: Request id
-    //requestString += "&requestid=";
     int numWaypoints = request.waypoints().size();
     if (numWaypoints < 2)
         return "";
@@ -193,18 +201,9 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += trimDouble(request.waypoints().at(i).longitude());
         requestString += ",";
         requestString += trimDouble(request.waypoints().at(i).latitude());
-/*
-        requestString += ";";
-        requestString += "";  // TODO: Heading?
-        requestString += ";";
-        requestString += ""; // TODO: TransitRadius?
-*/
     }
     //TODO: Avoid areas
     //requestString += "&avoidareas=";
-
-    //TODO: AvoidLinks
-    //requestString += "&avoidlinks=";
 
     requestString += modesRequestString(request.routeOptimization(),request.travelModes(),request.avoidFeatureTypes());
 
@@ -218,27 +217,42 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
 
 QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
 {
+    bool supported = true;
+
+    // TODO: Get original request info
+//    if ((request.avoidFeatureTypes() & supportedAvoidFeatureTypes()) != request.avoidFeatureTypes())
+//        supported = false;
+
+//    if ((request.instructionDetail() & supportedInstructionDetails()) != request.instructionDetail())
+//        supported = false;
+
+//    if ((request.segmentDetail() & supportedSegmentDetails()) != request.segmentDetail())
+//        supported = false;
+
+    if ((route.optimization() & supportedRouteOptimizations()) != route.optimization())
+        supported = false;
+
+    if ((route.travelMode() & supportedTravelModes()) != route.travelMode())
+        supported = false;
+
+    if (!supported)
+        return "";
+
+
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/getroute/6.1/routes.xml";
 
-    //TODO: RequestId
-    //requestString += "&requestid=";
-
     requestString += "&routeid=";
     requestString += route.routeId();
 
-    //TODO:  CurrentPosition <Point.Position> + “;” + <Point.Heading>? + “;” + <Point.TransitRadius>?
     requestString += "&pos=";
     requestString += QString::number(position.latitude());
     requestString += ",";
     requestString += QString::number(position.longitude());
 
-    //TODO: Avoid areas
+    //TODO: Avoid areas ?
     //requestString += "&avoidareas=";
-
-    //TODO: AvoidLinks
-    //requestString += "&avoidlinks=";
 
     //TODO: Get original request info
     QGeoRouteRequest request;
@@ -331,13 +345,9 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 //        requestString += request.arrivalTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
 //    }
 
-    // TODO: PublicTransportProfile
-    // TODO: TruckProfile
+    requestString += "&language=ENG";  // TODO locale / language handling
 
-    requestString += "&language=ENG";  // TODO: Settable language?
-
-    // TODO: representation: dragNDrop linkPaging
-    requestString += "&representation=";
+   requestString += "&representation=";
     if( request.instructionDetail() & QGeoRouteRequest::BasicInstructions )
         requestString += "display";
     else if( request.instructionDetail() & QGeoRouteRequest::DetailedInstructions )
@@ -345,13 +355,13 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
     else
         requestString += "overview";
 
-    // TODO: “&routeattributes=”  Allowed values: "waypoints", "summary", "summaryByCountry", "shape", "boundingBox", "maneuvers", "links"
+     if( request.instructionDetail() & QGeoRouteRequest::BasicSegmentData )
+         requestString += "&linkattributes=nextLink";
+     else if( request.instructionDetail() & QGeoRouteRequest::DetailedSegmentData )
+         requestString += "&linkattributes=shape,length,nextLink";
+
     requestString += "&routeattributes=waypoints,summary,shape,maneuvers,links,boundingBox";
-    // TODO: “&maneuverattributes=”  Allowed values: "position", "link", "publicTransportLine", "platform", "obstacles", "lane", "streetName", "nextStreetName", "routeName", "nextRouteName", "routeTemplate", "signPost"
-    requestString += "&maneuverattributes=position,link,routeName,nextRouteName";
-    // TODO: “&linkattributes=”  LinkAttributeType?? Allowed values: "shape", "length", "speedLimit", "dynamicSpeedInfo", "incidents", "truckRestrictions", "obstacles", "externalResources", "flags", "street", "freewayExit", "city", "corridorLevel", "nextLink", "stubs", "publicTransportLine", "TMCCodes", "jamFactor", "jamFactorTrend", "confidence"
-    requestString += "&linkattributes=shape,length,nextLink";
-    // TODO: “&corridordepth=” xs:int
+    requestString += "&maneuverattributes=position,link";
 
     return requestString;
 }
