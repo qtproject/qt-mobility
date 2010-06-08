@@ -39,32 +39,54 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTCONTROL_H
-#define S60VIDEOOUTPUTCONTROL_H
+#ifndef QAUDIOPLUGINLOADER_H
+#define QAUDIOPLUGINLOADER_H
 
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API. It exists purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include <qmobilityglobal.h>
 #include <QObject>
-#include <qvideooutputcontrol.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qmap.h>
+#include <QtCore/qmutex.h>
+#include <QtCore/qpluginloader.h>
 
-QT_USE_NAMESPACE
 
-class S60VideoOutputControl : public QVideoOutputControl
+QT_BEGIN_NAMESPACE
+
+class QAudioPluginLoader
 {
-    Q_OBJECT
 public:
-    S60VideoOutputControl(QObject *parent = 0);
+    QAudioPluginLoader(const char *iid,
+                   const QString &suffix = QString(),
+                   Qt::CaseSensitivity = Qt::CaseSensitive);
 
-    QList<Output> availableOutputs() const;
-    void setAvailableOutputs(const QList<Output> &outputs);
+    ~QAudioPluginLoader();
 
-    Output output() const;
-    void setOutput(Output output);
-
-Q_SIGNALS:
-    void outputChanged(QVideoOutputControl::Output output);
+    QStringList keys() const;
+    QObject* instance(QString const &key);
+    QList<QObject*> instances(QString const &key);
 
 private:
-    QList<Output> m_outputs;
-    Output m_output;
+    QStringList pluginList() const;
+    void load();
+
+    QMutex m_mutex;
+
+    QByteArray  m_iid;
+    QString     m_location;
+    QList<QPluginLoader*> m_plugins;
 };
 
-#endif
+QT_END_NAMESPACE
+
+#endif  // QAUDIOPLUGINLOADER_H
