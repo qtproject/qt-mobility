@@ -37,6 +37,14 @@
 <li><a href="#implementing-backends">Implementing backends</a></li>
 </ul>
 </ul>
+<li><a href="#maps-and-navigation">Maps and Navigation</a></li>
+<ul><li><a href="#common-classes">Common classes</a></li>
+<li><a href="#mapping">Mapping</a></li>
+<li><a href="#routing">Routing</a></li>
+<ul><li><a href="#places">Places</a></li>
+<li><a href="#implementing-backends">Implementing backends</a></li>
+</ul>
+</ul>
 </ul>
 <a name="namespace"></a>
 <h3>Namespace</h3>
@@ -278,6 +286,45 @@
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qlandmarkmanagerengine.html">QLandmarkManagerEngine</a></th><td>The interface for all implementations of the landmark manager backend functionality</td></tr>
 <tr valign="top" class="even"><th><a href="qlandmarkmanagerenginefactory.html">QLandmarkManagerEngineFactory</a></th><td>The interface for plugins that implement QLandmarkManagerEngine functionality</td></tr>
+</table></p>
+<a name="maps-and-navigation"></a>
+<h3>Maps and Navigation</h3>
+<a name="common-classes"></a>
+<h4>Common classes</h4>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeoboundingbox.html">QGeoBoundingBox</a></th><td>Defines a rectangular geographic area</td></tr>
+<tr valign="top" class="even"><th><a href="qgeodistance.html">QGeoDistance</a></th><td>Represents a geographical distance</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeoserviceprovider.html">QGeoServiceProvider</a></th><td>Aggregates access to services which provide geographical information</td></tr>
+</table></p>
+<a name="mapping"></a>
+<h4>Mapping</h4>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeomapdata.html">QGeoMapData</a></th><td>Is</td></tr>
+<tr valign="top" class="even"><th><a href="qgeomapwidget.html">QGeoMapWidget</a></th><td>Is</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeomappingmanager.html">QGeoMappingManager</a></th><td>Support for displaying and interacting with maps</td></tr>
+</table></p>
+<a name="routing"></a>
+<h4>Routing</h4>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a></th><td>Represnts a navigation instruction</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoroute.html">QGeoRoute</a></th><td>Represents a route between two points</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeoroutereply.html">QGeoRouteReply</a></th><td>Manages an operation started by an instance of QGeoRoutingManager</td></tr>
+<tr valign="top" class="even"><th><a href="qgeorouterequest.html">QGeoRouteRequest</a></th><td>Handles asynchronous requests for geographical routing information</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeoroutesegment.html">QGeoRouteSegment</a></th><td>Represents a segment of a route</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoroutingmanager.html">QGeoRoutingManager</a></th><td>Support for geographic routing operations</td></tr>
+</table></p>
+<a name="places"></a>
+<h5>Places</h5>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeoplacesmanager.html">QGeoPlacesManager</a></th><td>Support for searching operations related to geographic information</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoplacesreply.html">QGeoPlacesReply</a></th><td>Manages an operation started by an instance of QGeoPlacesManager</td></tr>
+</table></p>
+<a name="implementing-backends"></a>
+<h5>Implementing backends</h5>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a></th><td>Interface and convenience methods to implementors of QGeoServiceProvider plugins who want to provides support for displaying and interacting with maps</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoplacesmanagerengine.html">QGeoPlacesManagerEngine</a></th><td>Interface and convenience methods to implementers of QGeoServiceProvider plugins who want to provide support for searching operations related to geographic data</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeoroutingmanagerengine.html">QGeoRoutingManagerEngine</a></th><td>Interface and convenience methods to implementers of QGeoServiceProvider plugins who want to provide access to geographic routing information</td></tr>
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

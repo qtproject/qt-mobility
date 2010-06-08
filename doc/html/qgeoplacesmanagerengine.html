@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoPlacesManagerEngine Class Reference</h1>
-<p>The QGeoPlacesManagerEngine class provides support for searching operations related to geographic information. <a href="#details">More...</a></p>
+<p>The QGeoPlacesManagerEngine class provides an interface and convenience methods to implementers of <a href="qgeoserviceprovider.html">QGeoServiceProvider</a> plugins who want to provide support for searching operations related to geographic data. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGeoPlacesManagerEngine&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qgeoplacesmanagerengine-members.html">List of all members, including inherited members</a></li>
@@ -28,12 +28,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#addAdditionalLandmarkManager">addAdditionalLandmarkManager</a></b> ( QLandmarkManager * <i>landmarkManager</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QLandmarkManager *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#additionalLandmarkManagers">additionalLandmarkManagers</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QLandmarkManager * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPlacesReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#geocode">geocode</a></b> ( const QGeoAddress &amp; <i>address</i>, const QGeoBoundingBox &amp; <i>bounds</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPlacesReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#geocode-2">geocode</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i>, const QGeoBoundingBox &amp; <i>bounds</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPlacesReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#geocode">geocode</a></b> ( const QGeoAddress &amp; <i>address</i>, const QGeoBoundingBox &amp; <i>bounds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPlacesReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#geocode-2">geocode</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i>, const QGeoBoundingBox &amp; <i>bounds</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#managerName">managerName</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#managerParameters">managerParameters</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#managerVersion">managerVersion</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPlacesReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a></b> ( const QString &amp; <i>searchString</i>, QGeoPlacesManager::SearchTypes <i>searchTypes</i>, const QGeoBoundingBox &amp; <i>bounds</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPlacesReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a></b> ( const QString &amp; <i>searchString</i>, QGeoPlacesManager::SearchTypes <i>searchTypes</i>, const QGeoBoundingBox &amp; <i>bounds</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a></b> ( const QList&lt;QLandmarkManager *&gt; &amp; <i>landmarkManagers</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoPlacesManager::SearchTypes </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#supportedSearchTypes">supportedSearchTypes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</a></b> () const</td></tr>
@@ -56,8 +56,8 @@
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#setManagerName">setManagerName</a></b> ( const QString &amp; <i>managerName</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#setManagerVersion">setManagerVersion</a></b> ( int <i>managerVersion</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoPlacesReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#geocode-3">geocode</a></b> ( const QString &amp; <i>addressString</i>, const QGeoBoundingBox &amp; <i>bounds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#setDefaultLandmarkManager">setDefaultLandmarkManager</a></b> ( QLandmarkManager * <i>landmarkManager</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#setSupportedSearchTypes">setSupportedSearchTypes</a></b> ( QGeoPlacesManager::SearchTypes <i>searchTypes</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#setSupportsGeocoding">setSupportsGeocoding</a></b> ( bool <i>supported</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanagerengine.html#setSupportsViewportBiasing">setSupportsViewportBiasing</a></b> ( bool <i>supported</i> )</td></tr>
@@ -76,28 +76,40 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QGeoPlacesManagerEngine class provides support for searching operations related to geographic information.</p>
-<p>Instances of QGeoPlacesManagerEngine primarily provide support for the searching of geographical information, either through free text search or by geocoding (finding coordinates from addresses).</p>
-<p>The geocode(<a href="qgeoaddress.html">QGeoAddress</a>), geocode(<a href="qgeocoordinate.html">QGeoCoordinate</a>) and <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() methods return <a href="qgeoplacesreply.html">QGeoPlacesReply</a> objects, which manage these operations and report on the result of the operations and any errors which may have occurred.</p>
-<p>The QGeoPlacesManagerEngine class also contains functions which provide information on the capabilities and features supported by QGeoPlacesManagerEngine instances. Those who write subclasses of QGeoPlacesManagerEngine should take care to make sure that this capability information is set up correctly, otherwise clients may be denied access to functionality they would otherwise expect.</p>
+<p>The QGeoPlacesManagerEngine class provides an interface and convenience methods to implementers of <a href="qgeoserviceprovider.html">QGeoServiceProvider</a> plugins who want to provide support for searching operations related to geographic data.</p>
+<p>The QGeoPlacesManagerEngine class is used to define the service specific behaviour and metadata required by <a href="qgeoplacesmanager.html">QGeoPlacesManager</a>.</p>
+<p>Subclass of QGeoPlacesManagerEngine are able to provide support for geocoding operations and for a more general text based search which may include searching for landmarks as well as addresses.</p>
+<p>In the default implementation, <a href="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</a>() returns false while geocode(const <a href="qgeoaddress.html">QGeoAddress</a> &amp;address,const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp;bounds) and geocode(const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp;coordinate,const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp;bounds) cause <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> to occur.</p>
+<p>If the service provider supports geocoding the subclass should provide implementations of geocode(const <a href="qgeoaddress.html">QGeoAddress</a> &amp;address, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp;bounds) and geocode(const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp;coordinate, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp;bounds) and and call setSupportsGeocoding(true) at some point in time before either of the geoocode() methods are called.</p>
+<p>The <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() function is implemented in terms of geocode(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp;addressString, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp;bounds) and <a href="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a>(). If the service supports free text geocoding the subclass should provide an implementation of geocode(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp;addressString, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp;bounds), and if the service supports landmark searches, a <a href="qlandmarkmanagerenginefactory.html">QLandmarkManagerEngineFactory</a> subclass should be created and an appropriate <a href="qlandmarkmanager.html">QLandmarkManager</a> instance should be set with setDefaultLandmarkManager(0.</p>
+<p>The subclass should call <a href="qgeoplacesmanagerengine.html#setSupportedSearchTypes">setSupportedSearchTypes</a>() at some point in time before <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() is called.</p>
+<p>If the service supports searching for places the subclass should provide an implementetation of palcesSsearch and call setSupportedSearchTypes at some point in time before <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() is called.</p>
+<p>Additionally, <a href="qgeoplacesmanagerengine.html#setDefaultLandmarkManager">setDefaultLandmarkManager</a>() should be used to set the <a href="qlandmarkmanager.html">QLandmarkManager</a> used by <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() and <a href="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
+<p>The functions <a href="qgeoplacesmanagerengine.html#setSupportsGeocoding">setSupportsGeocoding</a>(), <a href="qgeoplacesmanagerengine.html#setSupportedSearchTypes">setSupportedSearchTypes</a>() and <a href="qgeoplacesmanagerengine.html#setSupportsViewportBiasing">setSupportsViewportBiasing</a>() are used to configure the reported capabilities of the engine. If the capabilities of an engine differ from the default values these functions should be used so that the reported capabilies are accurate.</p>
+<p>It is important that this is done before geocode(const <a href="qgeoaddress.html">QGeoAddress</a> &amp;address,const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp;bounds), geocode(const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp;coordinate,const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp;bounds), placesSearch(const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp;searchString, <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchTypes</a> searchTypes, constQGeoBoundingBox &amp;bounds or any of the capability reporting functions are used to prevent incorrect or inconsistent behaviour.</p>
+<p>See also <a href="qgeoplacesmanager.html">QGeoPlacesManager</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/QGeoPlacesManagerEngine"></a>
 <h3 class="fn"><a name="QGeoPlacesManagerEngine"></a>QGeoPlacesManagerEngine::QGeoPlacesManagerEngine ( const <a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; &amp; <i>parameters</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Constructs a new manager with the specified <i>parent</i>.</p>
-<p>This should only ever be called from subclasses of <a href="qgeoplacesmanagerengine.html">QGeoPlacesManagerEngine</a>.</p>
+<p>Constructs a new engine with the specified <i>parent</i>, using <i>parameters</i> to pass any implementation specific data to the engine.</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/~QGeoPlacesManagerEngine"></a>
 <h3 class="fn"><a name="dtor.QGeoPlacesManagerEngine"></a>QGeoPlacesManagerEngine::~QGeoPlacesManagerEngine ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Destroys this manager.</p>
+<p>Destroys this engine.</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/addAdditionalLandmarkManager"></a>
 <h3 class="fn"><a name="addAdditionalLandmarkManager"></a>void QGeoPlacesManagerEngine::addAdditionalLandmarkManager ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>landmarkManager</i> )</h3>
 <p>Adds <i>landmarkManager</i> to the list of landmark managers that will be used with <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>().</p>
+<p>These landmark managers will be used along with the landmark manager returned by <a href="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/additionalLandmarkManagers"></a>
 <h3 class="fn"><a name="additionalLandmarkManagers"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkmanager.html">QLandmarkManager</a> *&gt; QGeoPlacesManagerEngine::additionalLandmarkManagers () const</h3>
 <p>Returns the landmark managers that will be used with <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>().</p>
+<p>These landmark managers will be used along with the landmark manager returned by <a href="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
 <p>See also <a href="qgeoplacesmanagerengine.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/defaultLandmarkManager"></a>
 <h3 class="fn"><a name="defaultLandmarkManager"></a><a href="qlandmarkmanager.html">QLandmarkManager</a> * QGeoPlacesManagerEngine::defaultLandmarkManager () const</h3>
+<p>Returns the landmark manager provided by the service provider for use with <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>().</p>
+<p>Will return 0 if the no landmark manager is associated with the service provider.</p>
+<p>See also <a href="qgeoplacesmanagerengine.html#setDefaultLandmarkManager">setDefaultLandmarkManager</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/error"></a>
 <h3 class="fn"><a name="error"></a>void QGeoPlacesManagerEngine::error ( <a href="qgeoplacesreply.html">QGeoPlacesReply</a> * <i>reply</i>, <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::Error</a> <i>error</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>errorString</i> = QString() )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when an error has been detected in the processing of <i>reply</i>. The <a href="qgeoplacesmanagerengine.html#finished">QGeoPlacesManagerEngine::finished</a>() signal will probably follow.</p>
@@ -111,30 +123,39 @@
 <p>This signal and <a href="qgeoplacesreply.html#finished">QGeoPlacesReply::finished</a>() will be emitted at the same time.</p>
 <p><b>Note:</b> Do no delete the <i>reply</i> object in the slot connected to this signal. Use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() instead.</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/geocode"></a>
-<h3 class="fn"><a name="geocode"></a><a href="qgeoplacesreply.html">QGeoPlacesReply</a> * QGeoPlacesManagerEngine::geocode ( const <a href="qgeoaddress.html">QGeoAddress</a> &amp; <i>address</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="geocode"></a><a href="qgeoplacesreply.html">QGeoPlacesReply</a> * QGeoPlacesManagerEngine::geocode ( const <a href="qgeoaddress.html">QGeoAddress</a> &amp; <i>address</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Begins the geocoding of <i>address</i>. Geocoding is the process of finding a coordinate that corresponds to a given address.</p>
 <p>A <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will be returned, which can be used to manage the geocoding operation and to return the results of the operation.</p>
-<p>This manager and the returned <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
+<p>This engine and the returned <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
 <p>If <a href="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</a>() returns false an <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> will occur.</p>
 <p>Once the operation has completed, <a href="qgeoplacesreply.html#places">QGeoPlacesReply::places</a>() can be used to retrieve the results, which will consist of a list of <a href="qgeoplace.html">QGeoPlace</a> objects. These object represent a combination of coordinate and address data.</p>
 <p>The address data returned in the results may be different from <i>address</i>. This will usually occur if the geocoding service backend uses a different canonical form of addresses or if <i>address</i> was only partially filled out.</p>
 <p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the geocoding results to those that are contained by <i>bounds</i>. This is particularly useful if <i>address</i> is only partially filled out, as the service will attempt to geocode all matches for the specified data. Note that <i>bounds</i> will only be used if <a href="qgeoplacesmanagerengine.html#supportsViewportBiasing">supportsViewportBiasing</a>() returns true.</p>
 <p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeoplacesmanagerengine.html#finished">QGeoPlacesManagerEngine::finished</a>(), <a href="qgeoplacesmanagerengine.html#error">QGeoPlacesManagerEngine::error</a>(), <a href="qgeoplacesreply.html#finished">QGeoPlacesReply::finished</a>() or <a href="qgeoplacesreply.html#error">QGeoPlacesReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
-<h3 class="fn"><a name="geocode-2"></a><a href="qgeoplacesreply.html">QGeoPlacesReply</a> * QGeoPlacesManagerEngine::geocode ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="geocode-2"></a><a href="qgeoplacesreply.html">QGeoPlacesReply</a> * QGeoPlacesManagerEngine::geocode ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Begins the reverse geocoding of <i>coordinate</i>. Reverse geocoding is the process of finding an address that corresponds to a given coordinate.</p>
 <p>A <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will be returned, which can be used to manage the reverse geocoding operation and to return the results of the operation.</p>
-<p>This manager and the returned <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
+<p>This engine and the returned <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
 <p>If <a href="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</a>() returns false an <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> will occur.</p>
 <p>At that point <a href="qgeoplacesreply.html#places">QGeoPlacesReply::places</a>() can be used to retrieve the results, which will consist of a list of <a href="qgeoplace.html">QGeoPlace</a> objects. These object represent a combination of coordinate and address data.</p>
 <p>The coordinate data returned in the results may be different from <i>coordinate</i>. This will usually occur if the reverse geocoding service backend shifts the coordinates to be closer to the matching addresses, or if the backend returns results at multiple levels of detail.</p>
 <p>If multiple results are returned by the reverse geocoding service backend they will be provided in order of specificity. This normally occurs if the backend is configured to reverse geocode across multiple levels of detail. As an example, some services will return address and coordinate pairs for the street address, the city, the state and the country.</p>
 <p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the geocoding results to those that are contained by <i>bounds</i>. Note that <i>bounds</i> will only be used if <a href="qgeoplacesmanagerengine.html#supportsViewportBiasing">supportsViewportBiasing</a>() returns true.</p>
 <p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeoplacesmanagerengine.html#finished">QGeoPlacesManagerEngine::finished</a>(), <a href="qgeoplacesmanagerengine.html#error">QGeoPlacesManagerEngine::error</a>(), <a href="qgeoplacesreply.html#finished">QGeoPlacesReply::finished</a>() or <a href="qgeoplacesreply.html#error">QGeoPlacesReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
+<h3 class="fn"><a name="geocode-3"></a><a href="qgeoplacesreply.html">QGeoPlacesReply</a> * QGeoPlacesManagerEngine::geocode ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>addressString</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Begins the geocoding of <i>addressString</i>. Geocoding is the process of finding a coordinate that corresponds to a given address.</p>
+<p>The <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() function is implemented in terms of this function and, if the default landmark manager has been set, the <a href="qlandmarkmanager.html">QLandmarkManager</a> text search functionality.</p>
+<p>A <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will be returned, which can be used to manage the geocoding operation and to return the results of the operation.</p>
+<p>This engine and the returned <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
+<p>If <a href="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</a>() returns false an <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> will occur.</p>
+<p>Once the operation has completed, <a href="qgeoplacesreply.html#places">QGeoPlacesReply::places</a>() can be used to retrieve the results, which will consist of a list of <a href="qgeoplace.html">QGeoPlace</a> objects. These object represent a combination of coordinate and address data.</p>
+<p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the geocoding results to those that are contained by <i>bounds</i>.</p>
+<p>Note that <i>bounds</i> will only be used if <a href="qgeoplacesmanagerengine.html#supportsViewportBiasing">supportsViewportBiasing</a>() returns true.</p>
+<p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeoplacesmanagerengine.html#finished">QGeoPlacesManagerEngine::finished</a>(), <a href="qgeoplacesmanagerengine.html#error">QGeoPlacesManagerEngine::error</a>(), <a href="qgeoplacesreply.html#finished">QGeoPlacesReply::finished</a>() or <a href="qgeoplacesreply.html#error">QGeoPlacesReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/managerName"></a>
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoPlacesManagerEngine::managerName () const</h3>
 <p>Returns the name which this engine implementation uses to distinguish itself from the implementations provided by other plugins.</p>
 <p>The combination of managerName() and <a href="qgeoplacesmanagerengine.html#managerVersion">managerVersion</a>() should be unique amongst plugin implementations.</p>
-<p>See also <a href="qgeoplacesmanagerengine.html#setManagerName">setManagerName</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/managerParameters"></a>
 <h3 class="fn"><a name="managerParameters"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; QGeoPlacesManagerEngine::managerParameters () const</h3>
 <p>Returns the parameters used in the creation of this engine object.</p>
@@ -142,13 +163,13 @@
 <h3 class="fn"><a name="managerVersion"></a>int QGeoPlacesManagerEngine::managerVersion () const</h3>
 <p>Returns the version of this engine implementation.</p>
 <p>The combination of <a href="qgeoplacesmanagerengine.html#managerName">managerName</a>() and managerVersion() should be unique amongst plugin implementations.</p>
-<p>See also <a href="qgeoplacesmanagerengine.html#setManagerVersion">setManagerVersion</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/placesSearch"></a>
-<h3 class="fn"><a name="placesSearch"></a><a href="qgeoplacesreply.html">QGeoPlacesReply</a> * QGeoPlacesManagerEngine::placesSearch ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>searchString</i>, <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchTypes</a> <i>searchTypes</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="placesSearch"></a><a href="qgeoplacesreply.html">QGeoPlacesReply</a> * QGeoPlacesManagerEngine::placesSearch ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>searchString</i>, <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchTypes</a> <i>searchTypes</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Begins searching for a place matching <i>searchString</i>. The value of <i>searchTypes</i> will determine whether the search is for addresses only, for landmarks only or for both.</p>
 <p>A <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will be returned, which can be used to manage the geocoding operation and to return the results of the operation.</p>
-<p>This manager and the returned <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
+<p>This engine and the returned <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
 <p>If <a href="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</a>() returns false and <i>searchTypes</i> is QGeoPlacesManagerEngine::SearchGeocode an <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> will occur.</p>
+<p>Likewise, if <a href="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a>() returns 0 and <i>searchTypes</i> is <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchLandmarks</a> an <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> will occur.</p>
 <p>Once the operation has completed, <a href="qgeoplacesreply.html#places">QGeoPlacesReply::places</a>() can be used to retrieve the results, which will consist of a list of <a href="qgeoplace.html">QGeoPlace</a> objects. These object represent a combination of coordinate and address data.</p>
 <p>If any of the <a href="qgeoplace.html">QGeoPlace</a> instances in the results have landmark associated data, <a href="qgeoplace.html#type">QGeoPlace::type</a>() will return <a href="qgeoplace.html#PlaceType-enum">QGeoPlace::LandmarkType</a> and QLandmark::QLandmark(const <a href="qgeoplace.html">QGeoPlace</a> &amp;place) can be used to convert the <a href="qgeoplace.html">QGeoPlace</a> instance into a <a href="qlandmark.html">QLandmark</a> instance.</p>
 <p>If <i>searchTypes</i> is QGeoPlacesManagerEngine::SearchLandmarks or QGeoPlacesManagerEngine::SearchAll, a free text landmark search will be performed. The results will be a combination of the backend specific landmark search and the same free text search applied to each of the <a href="qlandmarkmanager.html">QLandmarkManager</a> instances in landmarkManagers().</p>
@@ -157,43 +178,39 @@
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/setAdditionalLandmarkManagers"></a>
 <h3 class="fn"><a name="setAdditionalLandmarkManagers"></a>void QGeoPlacesManagerEngine::setAdditionalLandmarkManagers ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkmanager.html">QLandmarkManager</a> *&gt; &amp; <i>landmarkManagers</i> )</h3>
 <p>Sets the landmark managers to be used with <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() to <i>landmarkManagers</i>.</p>
+<p>These landmark managers will be used along with the landmark manager returned by <a href="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
 <p>See also <a href="qgeoplacesmanagerengine.html#additionalLandmarkManagers">additionalLandmarkManagers</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/setManagerName"></a>
-<h3 class="fn"><a name="setManagerName"></a>void QGeoPlacesManagerEngine::setManagerName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>managerName</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets the name which this engine implementation uses to distinguish itself from the implementations provided by other plugins to <i>managerName</i>.</p>
-<p>The combination of <a href="qgeoplacesmanagerengine.html#managerName">managerName</a>() and <a href="qgeoplacesmanagerengine.html#managerVersion">managerVersion</a>() should be unique amongst plugin implementations.</p>
-<p>See also <a href="qgeoplacesmanagerengine.html#managerName">managerName</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/setManagerVersion"></a>
-<h3 class="fn"><a name="setManagerVersion"></a>void QGeoPlacesManagerEngine::setManagerVersion ( int <i>managerVersion</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets the version of this engine implementation to <i>managerVersion</i>.</p>
-<p>The combination of <a href="qgeoplacesmanagerengine.html#managerName">managerName</a>() and <a href="qgeoplacesmanagerengine.html#managerVersion">managerVersion</a>() should be unique amongst plugin implementations.</p>
-<p>See also <a href="qgeoplacesmanagerengine.html#managerVersion">managerVersion</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/setDefaultLandmarkManager"></a>
+<h3 class="fn"><a name="setDefaultLandmarkManager"></a>void QGeoPlacesManagerEngine::setDefaultLandmarkManager ( <a href="qlandmarkmanager.html">QLandmarkManager</a> * <i>landmarkManager</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Sets the landmark manager provided by the service provider for use with <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() to <i>landmarkManager</i>.</p>
+<p>It is important that subclasses use this method to ensure that the engine is able to carry out landmark searches. If this function is not used the engine will not be able to use or return the default landmark manager.</p>
+<p>See also <a href="qgeoplacesmanagerengine.html#defaultLandmarkManager">defaultLandmarkManager</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/setSupportedSearchTypes"></a>
 <h3 class="fn"><a name="setSupportedSearchTypes"></a>void QGeoPlacesManagerEngine::setSupportedSearchTypes ( <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchTypes</a> <i>searchTypes</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets the search types supported by the <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() with this manager to <i>searchTypes</i>.</p>
-<p>It is important that subclasses use this method to ensure that the manager reports its capabilities correctly. If this function is not used the manager will report that it does not support any search types.</p>
+<p>Sets the search types supported by the <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() with this engine to <i>searchTypes</i>.</p>
+<p>It is important that subclasses use this method to ensure that the engine reports its capabilities correctly. If this function is not used the engine will report that it does not support any search types.</p>
 <p>See also <a href="qgeoplacesmanagerengine.html#supportedSearchTypes">supportedSearchTypes</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/setSupportsGeocoding"></a>
 <h3 class="fn"><a name="setSupportsGeocoding"></a>void QGeoPlacesManagerEngine::setSupportsGeocoding ( bool <i>supported</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets whether this manager supports geocoding operations to <i>supported</i>.</p>
-<p>It is important that subclasses use this method to ensure that the manager reports its capabilities correctly. If this function is not used the manager will report that it does not support geocoding operations.</p>
+<p>Sets whether this engine supports geocoding operations to <i>supported</i>.</p>
+<p>It is important that subclasses use this method to ensure that the engine reports its capabilities correctly. If this function is not used the engine will report that it does not support geocoding operations.</p>
 <p>See also <a href="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/setSupportsViewportBiasing"></a>
 <h3 class="fn"><a name="setSupportsViewportBiasing"></a>void QGeoPlacesManagerEngine::setSupportsViewportBiasing ( bool <i>supported</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets whether this manager supports viewport biasing to <i>supported</i>.</p>
-<p>It is important that subclasses use this method to ensure that the manager reports its capabilities correctly. If this function is not used the manager will report that it does not support viewport biasing.</p>
+<p>Sets whether this engine supports viewport biasing to <i>supported</i>.</p>
+<p>It is important that subclasses use this method to ensure that the engine reports its capabilities correctly. If this function is not used the engine will report that it does not support viewport biasing.</p>
 <p>See also <a href="qgeoplacesmanagerengine.html#supportsViewportBiasing">supportsViewportBiasing</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/supportedSearchTypes"></a>
 <h3 class="fn"><a name="supportedSearchTypes"></a><a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchTypes</a> QGeoPlacesManagerEngine::supportedSearchTypes () const</h3>
-<p>Returns the search types supported by the <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() with this manager.</p>
+<p>Returns the search types supported by the <a href="qgeoplacesmanagerengine.html#placesSearch">placesSearch</a>() with this engine.</p>
 <p>See also <a href="qgeoplacesmanagerengine.html#setSupportedSearchTypes">setSupportedSearchTypes</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/supportsGeocoding"></a>
 <h3 class="fn"><a name="supportsGeocoding"></a>bool QGeoPlacesManagerEngine::supportsGeocoding () const</h3>
-<p>Returns whether this manager supports geocoding operations.</p>
+<p>Returns whether this engine supports geocoding operations.</p>
 <p>See also <a href="qgeoplacesmanagerengine.html#setSupportsGeocoding">setSupportsGeocoding</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManagerEngine/supportsViewportBiasing"></a>
 <h3 class="fn"><a name="supportsViewportBiasing"></a>bool QGeoPlacesManagerEngine::supportsViewportBiasing () const</h3>
-<p>Returns whether this manager supports viewport biasing.</p>
+<p>Returns whether this engine supports viewport biasing.</p>
 <p>See also <a href="qgeoplacesmanagerengine.html#setSupportsViewportBiasing">setSupportsViewportBiasing</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

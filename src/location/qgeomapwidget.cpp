@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QGeoMapWidget
   \brief The QGeoMapWidget class is.
-  \group maps-mapping
+  \ingroup maps-mapping
 */
 
 /*!
