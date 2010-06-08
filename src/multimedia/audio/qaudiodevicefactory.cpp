@@ -44,7 +44,7 @@
 #include "qaudiosystem.h"
 #include "qaudiosystemplugin.h"
 
-#include "qmediapluginloader_p.h"
+#include "qaudiopluginloader_p.h"
 #include "qaudiodevicefactory_p.h"
 
 #ifndef QT_NO_AUDIO_BACKEND
@@ -70,7 +70,7 @@
 QT_BEGIN_NAMESPACE
 
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
-Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, loader,
+Q_GLOBAL_STATIC_WITH_ARGS(QAudioPluginLoader, audioLoader,
         (QAudioSystemFactoryInterface_iid, QLatin1String("/audio"), Qt::CaseInsensitive))
 #endif
 
@@ -146,9 +146,8 @@ QList<QAudioDeviceInfo> QAudioDeviceFactory::availableDevices(QAudio::Mode mode)
 #endif
 
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
-    QMediaPluginLoader* l = loader();
-
-    foreach (QString const& key, l->keys()) {
+    QAudioPluginLoader* l = audioLoader();
+    foreach (const QString& key, l->keys()) {
         QAudioSystemFactoryInterface* plugin = qobject_cast<QAudioSystemFactoryInterface*>(l->instance(key));
         if (plugin) {
             foreach (QByteArray const& handle, plugin->availableDevices(mode))
@@ -165,7 +164,7 @@ QList<QAudioDeviceInfo> QAudioDeviceFactory::availableDevices(QAudio::Mode mode)
 QAudioDeviceInfo QAudioDeviceFactory::defaultInputDevice()
 {
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
-    QAudioSystemFactoryInterface* plugin = qobject_cast<QAudioSystemFactoryInterface*>(loader()->instance(QLatin1String("default")));
+    QAudioSystemFactoryInterface* plugin = qobject_cast<QAudioSystemFactoryInterface*>(audioLoader()->instance(QLatin1String("default")));
 
     if (plugin) {
         QList<QByteArray> list = plugin->availableDevices(QAudio::AudioInput);
@@ -185,7 +184,7 @@ QAudioDeviceInfo QAudioDeviceFactory::defaultInputDevice()
 QAudioDeviceInfo QAudioDeviceFactory::defaultOutputDevice()
 {
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
-    QAudioSystemFactoryInterface* plugin = qobject_cast<QAudioSystemFactoryInterface*>(loader()->instance(QLatin1String("default")));
+    QAudioSystemFactoryInterface* plugin = qobject_cast<QAudioSystemFactoryInterface*>(audioLoader()->instance(QLatin1String("default")));
 
     if (plugin) {
         QList<QByteArray> list = plugin->availableDevices(QAudio::AudioOutput);
@@ -215,7 +214,7 @@ QAbstractAudioDeviceInfo* QAudioDeviceFactory::audioDeviceInfo(const QString &re
 
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
     QAudioSystemFactoryInterface* plugin =
-        qobject_cast<QAudioSystemFactoryInterface*>(loader()->instance(realm));
+        qobject_cast<QAudioSystemFactoryInterface*>(audioLoader()->instance(realm));
 
     if (plugin)
         rc = plugin->createDeviceInfo(handle, mode);
@@ -249,7 +248,7 @@ QAbstractAudioInput* QAudioDeviceFactory::createInputDevice(QAudioDeviceInfo con
 #endif
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
     QAudioSystemFactoryInterface* plugin =
-        qobject_cast<QAudioSystemFactoryInterface*>(loader()->instance(deviceInfo.realm()));
+        qobject_cast<QAudioSystemFactoryInterface*>(audioLoader()->instance(deviceInfo.realm()));
 
     if (plugin) {
         QAbstractAudioInput* p = plugin->createInput(deviceInfo.handle());
@@ -277,7 +276,7 @@ QAbstractAudioOutput* QAudioDeviceFactory::createOutputDevice(QAudioDeviceInfo c
 
 #if !defined (QT_NO_LIBRARY) && !defined(QT_NO_SETTINGS)
     QAudioSystemFactoryInterface* plugin =
-        qobject_cast<QAudioSystemFactoryInterface*>(loader()->instance(deviceInfo.realm()));
+        qobject_cast<QAudioSystemFactoryInterface*>(audioLoader()->instance(deviceInfo.realm()));
 
     if (plugin) {
         QAbstractAudioOutput* p = plugin->createOutput(deviceInfo.handle());
