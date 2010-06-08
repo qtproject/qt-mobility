@@ -48,6 +48,7 @@
 #include <QUrl>
 #include <QList>
 #include <QHash>
+#include <QTimer>
 #include "qaudioformat.h"
 #include <qmediarecorder.h>
 
@@ -78,7 +79,6 @@ QT_USE_NAMESPACE
 class S60AudioCaptureSession : public QObject, public MMdaObjectStateChangeObserver
 {
     Q_OBJECT
-    Q_PROPERTY(qint64 position READ position NOTIFY positionChanged)
     Q_ENUMS(TAudioCaptureState)
 public:
 
@@ -120,19 +120,23 @@ private:
     void initializeSessionL();
     void setError(TInt aError);
     QMediaRecorder::Error fromSymbianErrorToMultimediaError(int error);
-    QString initializeSinkL();
+    QString initializeSinkL() const;
     void updateAudioContainersL();
     void populateAudioCodecsDataL();
     void retrieveSupportedAudioSampleRatesL();
     void applyAudioSettingsL();
     TFourCC determinePCMFormat();
     void setDefaultSettings();
-    void createFileWithHeader(const TPtrC &path);
-    // MMdaObjectStateChangeObserver
+    void initDurationNotifier();
+    void notify(bool notify) const;
+    // from MMdaObjectStateChangeObserver
     void MoscoStateChangeEvent(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
     void MoscoStateChangeEventL(CBase* aObject, TInt aPreviousState,
             TInt aCurrentState, TInt aErrorCode);
+
+private slots:
+    void updatePosition();
 
 public slots:
     void setCaptureDevice(const QString &deviceName);
@@ -154,7 +158,8 @@ private:
     QHash<QString, CodecData>  m_audioCodeclist;
     QList<int> m_supportedSampleRates;
     int m_error;
-    bool isMuted;
+    bool m_isMuted;
+    QTimer *m_notifyTimer;
 };
 
 #endif // S60AUDIOCAPTURESESSION_H
