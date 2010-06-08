@@ -2,7 +2,7 @@ TEMPLATE = lib
 CONFIG += plugin mobility
 TARGET = $$qtLibraryTarget(qtmultimediakit_xarecordservice)
 
-PLUGIN_SUBDIR = mediaservice
+PLUGIN_TYPE = mediaservice
 MOBILITY = multimedia
 
 include (../../../../../common.pri)
