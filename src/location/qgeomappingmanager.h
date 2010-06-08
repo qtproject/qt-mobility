@@ -63,7 +63,6 @@ class Q_LOCATION_EXPORT QGeoMappingManager : public QObject
     Q_OBJECT
 
 public:
-    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
     ~QGeoMappingManager();
 
     QString managerName() const;
@@ -83,8 +82,12 @@ public:
     qreal maximumZoomLevel() const;
 
 private:
+    QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent = 0);
+
     QGeoMappingManagerPrivate* d_ptr;
     Q_DISABLE_COPY(QGeoMappingManager)
+
+    friend class QGeoServiceProvider;
 };
 
 QTM_END_NAMESPACE

@@ -87,9 +87,6 @@ protected:
     // TODO remove this - going to move the tiling manager to the plugin in the short term
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
-    void setManagerName(const QString &managerName);
-    void setManagerVersion(int managerVersion);
-
     void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);
 
     void setMinimumZoomLevel(qreal minimumZoom);
@@ -101,8 +98,13 @@ protected:
     QGeoMappingManagerEnginePrivate* d_ptr;
 
 private:
+    void setManagerName(const QString &managerName);
+    void setManagerVersion(int managerVersion);
+
     Q_DECLARE_PRIVATE(QGeoMappingManagerEngine)
     Q_DISABLE_COPY(QGeoMappingManagerEngine)
+
+    friend class QGeoServiceProvider;
 };
 
 QTM_END_NAMESPACE

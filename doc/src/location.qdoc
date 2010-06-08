@@ -316,5 +316,27 @@ a QLandmarkManagerEngineFactory which can instantiate it when required.
 
 \annotatedlist landmarks-backend
 
+\section1 Maps and Navigation
+
+\section2 Common classes
+
+\annotatedlist maps
+
+\section2 Mapping
+
+\annotatedlist maps-mapping
+
+\section2 Routing
+
+\annotatedlist maps-routing
+
+\section3 Places
+
+\annotatedlist maps-places
+
+\section3 Implementing backends
+
+\annotatedlist maps-impl
+
 */
 

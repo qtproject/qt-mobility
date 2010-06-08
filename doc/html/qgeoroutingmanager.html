@@ -23,7 +23,6 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#QGeoRoutingManager">QGeoRoutingManager</a></b> ( QGeoRoutingManagerEngine * <i>engine</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#dtor.QGeoRoutingManager">~QGeoRoutingManager</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoRouteReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#calculateRoute">calculateRoute</a></b> ( const QGeoRouteRequest &amp; <i>request</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#managerName">managerName</a></b> () const</td></tr>
@@ -64,14 +63,10 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGeoRoutingManager class provides support for geographic routing operations.</p>
-<p>Instances of QGeoRoutingManager primarily provide support for the calculation and updating of routes. The <a href="qgeoroutingmanager.html#calculateRoute">calculateRoute</a>() and <a href="qgeoroutingmanager.html#updateRoute">updateRoute</a>() methods return <a href="qgeoroutereply.html">QGeoRouteReply</a> objects, which manage these operations and report on the result of the operations and any errors which may have occurred.</p>
+<p>Instances of QGeoRoutingManager can be accessed with <a href="qgeoserviceprovider.html#routingManager">QGeoServiceProvider::routingManager</a>() and primarily provide support for the calculation and updating of routes. The <a href="qgeoroutingmanager.html#calculateRoute">calculateRoute</a>() and <a href="qgeoroutingmanager.html#updateRoute">updateRoute</a>() methods return <a href="qgeoroutereply.html">QGeoRouteReply</a> objects, which manage these operations and report on the result of the operations and any errors which may have occurred.</p>
 <p>The QGeoRoutingManager class also contains functions which provide information on the capabilities and features supported by QGeoRoutingManager instances. Those who write subclasses of QGeoRoutingManager should take care to make sure that this capability information is set up correctly, otherwise clients may be denied access to functionality they would otherwise expect.</p>
 <hr />
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QGeoRoutingManager/QGeoRoutingManager"></a>
-<h3 class="fn"><a name="QGeoRoutingManager"></a>QGeoRoutingManager::QGeoRoutingManager ( <a href="qgeoroutingmanagerengine.html">QGeoRoutingManagerEngine</a> * <i>engine</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Constructs a new manager with the specified <i>parent</i>.</p>
-<p>This should only ever be called from subclasses of <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
 <a name="//apple_ref/cpp/instm/QGeoRoutingManager/~QGeoRoutingManager"></a>
 <h3 class="fn"><a name="dtor.QGeoRoutingManager"></a>QGeoRoutingManager::~QGeoRoutingManager ()</h3>
 <p>Destroys this manager.</p>

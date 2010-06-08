@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
 /*!
   \class QGeoMapData
   \brief The QGeoMapData class is.
-  \group maps-mapping
+  \ingroup maps-mapping
  */
 
 //!

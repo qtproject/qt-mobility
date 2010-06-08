@@ -76,9 +76,9 @@ QTM_BEGIN_NAMESPACE
     Constructs a new manager with the specified \a parent and with the
     implementation provided by \a engine.
 
-    This constructor is intended for use by implementers of
-    QGeoServiceProviderPlugin. Regular users should aquire instance of
-    QGeoMappingManager with QGeoServiceProvider::mappingManager();
+    This constructor is used internally by QGeoServiceProviderFactory. Regular
+    users should aquire instance of QGeoMappingManager with
+    QGeoServiceProvider::mappingManager();
 */
 QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent)
         : QObject(parent),

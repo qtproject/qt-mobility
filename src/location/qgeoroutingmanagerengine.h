@@ -79,9 +79,6 @@ signals:
     void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
 
 protected:
-    void setManagerName(const QString &managerName);
-    void setManagerVersion(int managerVersion);
-
     void setSupportsRouteUpdates(bool supported);
     void setSupportsAlternativeRoutes(bool supported);
     void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);
@@ -91,8 +88,13 @@ protected:
     void setSupportedInstructionDetails(QGeoRouteRequest::InstructionDetails instructionDetails);
 
 private:
+    void setManagerName(const QString &managerName);
+    void setManagerVersion(int managerVersion);
+
     QGeoRoutingManagerEnginePrivate *d_ptr;
     Q_DISABLE_COPY(QGeoRoutingManagerEngine)
+
+    friend class QGeoServiceProvider;
 };
 
 QTM_END_NAMESPACE

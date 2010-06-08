@@ -52,37 +52,39 @@
 #include <QtPlugin>
 #include <QNetworkProxy>
 
-QGeoServiceProviderPluginNokia::QGeoServiceProviderPluginNokia() {}
+QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia() {}
 
-QGeoServiceProviderPluginNokia::~QGeoServiceProviderPluginNokia() {}
+QGeoServiceProviderFactoryNokia::~QGeoServiceProviderFactoryNokia() {}
 
-QString QGeoServiceProviderPluginNokia::providerName() const
+QString QGeoServiceProviderFactoryNokia::providerName() const
 {
     return "nokia";
 }
 
-QGeoPlacesManager* QGeoServiceProviderPluginNokia::createPlacesManager(const QMap<QString, QString> &parameters,
+int QGeoServiceProviderFactoryNokia::providerVersion() const
+{
+    return 1;
+}
+
+QGeoPlacesManagerEngine* QGeoServiceProviderFactoryNokia::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    QGeoPlacesManagerEngineNokia *engine = new QGeoPlacesManagerEngineNokia(parameters, error, errorString);
-    return new QGeoPlacesManager(engine);
+    return new QGeoPlacesManagerEngineNokia(parameters, error, errorString);
 }
 
-QGeoMappingManager* QGeoServiceProviderPluginNokia::createMappingManager(const QMap<QString, QString> &parameters,
+QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)const
 {
-    QGeoMappingManagerEngineNokia *engine = new QGeoMappingManagerEngineNokia(parameters, error, errorString);
-    return new QGeoMappingManager(engine);
+    return new QGeoMappingManagerEngineNokia(parameters, error, errorString);
 }
 
-QGeoRoutingManager* QGeoServiceProviderPluginNokia::createRoutingManager(const QMap<QString, QString> &parameters,
+QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    QGeoRoutingManagerEngineNokia *engine = new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
-    return new QGeoRoutingManager(engine);
+    return new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
 }
 
-Q_EXPORT_PLUGIN2(qtgeoservices_nokia, QGeoServiceProviderPluginNokia)
+Q_EXPORT_PLUGIN2(qtgeoservices_nokia, QGeoServiceProviderFactoryNokia)

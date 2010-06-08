@@ -53,30 +53,31 @@
 // We mean it.
 //
 
-#include <QGeoServiceProviderPlugin>
+#include <QGeoServiceProviderFactory>
 #include <QObject>
 
 QTM_USE_NAMESPACE
 
-class QGeoServiceProviderPluginNokia : public QObject, public QGeoServiceProviderPlugin
+class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QGeoServiceProviderPlugin)
+    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoServiceProviderPluginNokia();
-    ~QGeoServiceProviderPluginNokia();
+    QGeoServiceProviderFactoryNokia();
+    ~QGeoServiceProviderFactoryNokia();
 
     QString providerName() const;
+    int providerVersion() const;
 
-    QGeoPlacesManager* createPlacesManager(const QMap<QString, QString> &parameters,
-                                           QGeoServiceProvider::Error *error,
-                                           QString *errorString) const;
-    QGeoMappingManager* createMappingManager(const QMap<QString, QString> &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
-    QGeoRoutingManager* createRoutingManager(const QMap<QString, QString> &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
+    QGeoPlacesManagerEngine* createPlacesManagerEngine(const QMap<QString, QString> &parameters,
+                                                       QGeoServiceProvider::Error *error,
+                                                       QString *errorString) const;
+    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const;
+    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
+                                                         QGeoServiceProvider::Error *error,
+                                                         QString *errorString) const;
 };
 
 #endif

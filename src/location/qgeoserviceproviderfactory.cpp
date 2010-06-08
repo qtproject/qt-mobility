@@ -39,39 +39,43 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin.h"
+#include "qgeoserviceproviderfactory.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoServiceProviderPlugin
-  \brief The QGeoServiceProviderPlugin class is.
+  \class QGeoServiceProviderFactory
+  \brief The QGeoServiceProviderFactory class is.
   \group maps-impl
 */
 
 /*!
-\fn QGeoServiceProviderPlugin::~QGeoServiceProviderPlugin()
+\fn QGeoServiceProviderFactory::~QGeoServiceProviderFactory()
 */
 
 
 /*!
-\fn QString QGeoServiceProviderPlugin::providerName() const
+\fn QString QGeoServiceProviderFactory::providerName() const
 */
 
 /*!
-\fn QGeoPlacesManager* QGeoServiceProviderPlugin::createPlacesManager(const QMap<QString, QString> &parameters,
+\fn int QGeoServiceProviderFactory::providerVersion() const
+*/
+
+/*!
+\fn QGeoPlacesManagerEngine* QGeoServiceProviderFactory::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
 */
 
 /*!
-\fn QGeoMappingManager* QGeoServiceProviderPlugin::createMappingManager(const QMap<QString, QString> &parameters,
+\fn QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
 */
 
 /*!
-\fn QGeoRoutingManager* QGeoServiceProviderPlugin::createRoutingManager(const QMap<QString, QString> &parameters,
+\fn QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
 */

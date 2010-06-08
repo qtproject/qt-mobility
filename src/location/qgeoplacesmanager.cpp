@@ -93,9 +93,9 @@ Describes the type of search that should be performed by placesSearch().
     Constructs a new manager with the specified \a parent and with the
     implementation provided by \a engine.
 
-    This constructor is intended for use by implementers of
-    QGeoServiceProviderPlugin. Regular users should aquire instance of
-    QGeoPlacesManager with QGeoServiceProvider::placesManager();
+    This constructor is used interally by QGeoServiceProviderFactory. Regular
+    users should aquire instance of QGeoPlacesManager with
+    QGeoServiceProvider::placesManager();
 */
 QGeoPlacesManager::QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent)
         : QObject(parent),

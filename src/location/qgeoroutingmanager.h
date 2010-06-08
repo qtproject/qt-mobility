@@ -57,7 +57,6 @@ class Q_LOCATION_EXPORT QGeoRoutingManager : public QObject
 {
     Q_OBJECT
 public:
-    QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent = 0);
     ~QGeoRoutingManager();
 
     QString managerName() const;
@@ -80,8 +79,12 @@ signals:
     void error(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString = QString());
 
 private:
+    QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent = 0);
+
     QGeoRoutingManagerPrivate *d_ptr;
     Q_DISABLE_COPY(QGeoRoutingManager)
+
+    friend class QGeoServiceProvider;
 };
 
 QTM_END_NAMESPACE

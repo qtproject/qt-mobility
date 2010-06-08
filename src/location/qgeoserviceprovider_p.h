@@ -63,7 +63,7 @@ class QGeoPlacesManager;
 class QGeoRoutingManager;
 class QGeoMappingManager;
 
-class QGeoServiceProviderPlugin;
+class QGeoServiceProviderFactory;
 
 class QGeoServiceProviderPrivate
 {
@@ -73,7 +73,7 @@ public:
 
     void loadPlugin(const QString &providerName, const QMap<QString, QString> &parameters);
 
-    QGeoServiceProviderPlugin *plugin;
+    QGeoServiceProviderFactory *factory;
 
     QMap<QString, QString> parameterMap;
 
@@ -92,9 +92,9 @@ public:
     QGeoServiceProvider::Error error;
     QString errorString;
 
-    static QHash<QString, QGeoServiceProviderPlugin*> plugins(bool reload = false);
-    static void loadDynamicPlugins(QHash<QString, QGeoServiceProviderPlugin*> *plugins);
-    static void loadStaticPlugins(QHash<QString, QGeoServiceProviderPlugin*> *plugins);
+    static QHash<QString, QGeoServiceProviderFactory*> plugins(bool reload = false);
+    static void loadDynamicPlugins(QHash<QString, QGeoServiceProviderFactory*> *plugins);
+    static void loadStaticPlugins(QHash<QString, QGeoServiceProviderFactory*> *plugins);
 };
 
 QTM_END_NAMESPACE

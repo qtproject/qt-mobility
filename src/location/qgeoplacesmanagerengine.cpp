@@ -291,10 +291,10 @@ QGeoPlacesReply* QGeoPlacesManagerEngine::geocode(const QGeoCoordinate &coordina
     These object represent a combination of coordinate and address data.
 
     If \a bounds is a valid QGeoBoundingBox it will be used to limit the
-    geocoding results to those that are contained by \a bounds. This is
-    particularly useful if \a address is only partially filled out, as the
-    service will attempt to geocode all matches for the specified data. Note
-    that \a bounds will only be used if supportsViewportBiasing() returns true.
+    geocoding results to those that are contained by \a bounds. 
+    
+    Note that \a bounds will only be used if supportsViewportBiasing()
+    returns true.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoPlacesManagerEngine::finished(),
@@ -324,7 +324,7 @@ QGeoPlacesReply* QGeoPlacesManagerEngine::geocode(const QString &addressString, 
     QGeoPlacesManagerEngine::SearchGeocode an
     QGeoPlacesReply::UnsupportedOptionError will occur.
 
-    Likewise, if defaultLandmarkManager() returns 0 and \a searchType is
+    Likewise, if defaultLandmarkManager() returns 0 and \a searchTypes is
     QGeoPlacesManager::SearchLandmarks an
     QGeoPlacesReply::UnsupportedOptionError will occur.
 

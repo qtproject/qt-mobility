@@ -36,7 +36,7 @@ PUBLIC_HEADERS += \
                     qgeosatelliteinfo.h \
                     qgeosatelliteinfosource.h \
                     qgeoserviceprovider.h \
-                    qgeoserviceproviderplugin.h \
+                    qgeoserviceproviderfactory.h \
                     qgeotiledmapdata.h \
                     qgeotiledmappingmanagerengine.h \
                     qgeotiledmappingmanagerthread.h \
@@ -226,7 +226,7 @@ SOURCES += \
             qgeosatelliteinfo.cpp \
             qgeosatelliteinfosource.cpp \
             qgeoserviceprovider.cpp \
-            qgeoserviceproviderplugin.cpp \
+            qgeoserviceproviderfactory.cpp \
             qgeotiledmapdata.cpp \
             qgeotiledmappingmanagerengine.cpp \
             qgeotiledmappingmanagerthread.cpp \
