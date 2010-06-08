@@ -87,10 +87,13 @@ QTM_BEGIN_NAMESPACE
 
     This enum describes the most of the local Bluetooth device.
 
-    \value HostConnectable  Remote Bluetooth devices can connect to the local Bluetooth device if
-                            they have previously been paired with it or otherwise know its address.
-    \value HostDiscoverable Remote Bluetooth devices can discover the presense of the local
-                            Bluetooth device.
+    \value HostUnconnectable    Remove Bluetooth devices cannot connect to the local Bluetooth
+                                device.
+    \value HostConnectable      Remote Bluetooth devices can connect to the local Bluetooth device
+                                if they have previously been paired with it or otherwise know its
+                                address.
+    \value HostDiscoverable     Remote Bluetooth devices can discover the presense of the local
+                                Bluetooth device.
 */
 
 /*!
@@ -113,7 +116,8 @@ QBluetoothLocalDevice::~QBluetoothLocalDevice()
 */
 bool QBluetoothLocalDevice::isValid() const
 {
-    return false;
+    Q_D(const QBluetoothLocalDevice);
+    return d;
 }
 
 /*!
@@ -134,66 +138,52 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairing(const QBluetoothAd
 }
 
 /*!
+    \fn void QBluetoothLocalDevice::setPowerState(PowerState powerState)
+
     Sets the power state of this local Bluetooth device to \a powerState.
 */
-void QBluetoothLocalDevice::setPowerState(PowerState powerState)
-{
-}
 
 /*!
+    \fn QBluetoothLocalDevice::PowerState QBluetoothLocalDevice::powerState() const
+
     Returns the current power state of this local Bluetooth device.
 */
-QBluetoothLocalDevice::PowerState QBluetoothLocalDevice::powerState() const
-{
-    return PowerOn;
-}
 
 /*!
+    \fn void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
+
     Sets the host mode the this local Bluetooth device to \a mode.
 */
-void QBluetoothLocalDevice::setHostMode(QBluetoothLocalDevice::HostMode mode)
-{
-}
 
 /*!
+    \fn QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
+
     Returns the current host mode of this local Bluetooth device.
 */
-QBluetoothLocalDevice::HostMode QBluetoothLocalDevice::hostMode() const
-{
-    return HostConnectable;
-}
 
 /*!
+    \fn QBluetoothLocalDevice::name() const
+
     Returns the name of this local Bluetooth device.
 */
-QString QBluetoothLocalDevice::name() const
-{
-    return QString();
-}
 
 /*!
+    \fn QBluetoothLocalDevice::address() const
+
     Returns the address of this local Bluetooth device.
 */
-QBluetoothAddress QBluetoothLocalDevice::address() const
-{
-    return QBluetoothAddress();
-}
 
 /*!
+    \fn QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice()
+
     Returns the default local Bluetooth device.
 */
-QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice()
-{
-    return QBluetoothLocalDevice();
-}
 
 /*!
+    \fn QList<QBluetoothLocalDevice> QBluetoothLocalDevice::allDevices()
+
     Returns a list of all available local Bluetooth devices.
 */
-QList<QBluetoothLocalDevice> QBluetoothLocalDevice::allDevices()
-{
-    return QList<QBluetoothLocalDevice>();
-}
 
 QTM_END_NAMESPACE
 

@@ -103,6 +103,7 @@ QTM_BEGIN_NAMESPACE
 
     Bluetooth service attributes.
 
+    \value ServiceClassIds          UUIDs of service classes that the service conforms to.
     \value ServiceId                UUID that uniquely identifies the service.
     \value ProtocolDescriptorList   List of protocols used by the service.
     \value BrowseGroupList          List of browse groups the service is in.
@@ -272,6 +273,18 @@ QTM_BEGIN_NAMESPACE
 
     \sa setServiceUuid(), attribute()
 */
+
+/*!
+    \fn QList<QBluetoothUuid> QBluetoothServiceInfo::serviceClassUuids() const
+
+    This is a convenience function. It is equivalent to calling
+    attribute(QBluetoothServiceInfo::ServiceClassIds).value<QList<QBluetoothUuid> >().
+
+    Returns a list of UUIDs describing the service classes that this service conforms to.
+
+    \sa attribute()
+*/
+
 
 /*!
     Construct a new invalid QBluetoothServiceInfo;

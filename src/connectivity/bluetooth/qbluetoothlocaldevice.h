@@ -52,9 +52,12 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QBluetoothAddress;
+class QBluetoothLocalDevicePrivate;
 
 class Q_CONNECTIVITY_EXPORT QBluetoothLocalDevice
 {
+    Q_DECLARE_PRIVATE(QBluetoothLocalDevice)
+
 public:
     enum Pairing {
         Unpaired,
@@ -68,6 +71,7 @@ public:
     };
 
     enum HostMode {
+        HostUnconnectable,
         HostConnectable,
         HostDiscoverable
     };
@@ -92,6 +96,9 @@ public:
 
     static QBluetoothLocalDevice defaultDevice();
     static QList<QBluetoothLocalDevice> allDevices();
+
+private:
+    QBluetoothLocalDevicePrivate *d_ptr;
 };
 
 QTM_END_NAMESPACE
