@@ -27,4 +27,4 @@ OTHER_FILES += example.qml \
     ScrollBar.qml
 symbian::TARGET.CAPABILITY = ReadUserData \
     WriteUserData
-include(../examples.pri)
+include(../../examples/examples.pri)
