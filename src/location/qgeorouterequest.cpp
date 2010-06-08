@@ -367,39 +367,6 @@ QGeoRouteRequest::InstructionDetail QGeoRouteRequest::instructionDetail() const
     return d_ptr->instructionDetail;
 }
 
-// See comments in qgeorouterequest.h
-///*!
-//    Sets the planned time of departure to \a tod.
-//*/
-//
-//void QGeoRouteRequest::setDepartureTime(const QDateTime& departureTime)
-//{
-//    d_ptr->departureTime = departureTime;
-//}
-//
-///*!
-//    Returns the planned time of departure.
-//*/
-//QDateTime QGeoRouteRequest::departureTime() const
-//{
-//    return d_ptr->departureTime;
-//}
-///*!
-//    Sets the planned time of arrival to \a toa.
-//*/
-//void QGeoRouteRequest::setArrivalTime(const QDateTime& arrivalTime)
-//{
-//    d_ptr->arrivalTime = arrivalTime;
-//}
-//
-///*!
-//    Returns the planned time of departure.
-//*/
-//QDateTime QGeoRouteRequest::arrivalTime() const
-//{
-//    return d_ptr->arrivalTime;
-//}
-
 /*******************************************************************************
 *******************************************************************************/
 

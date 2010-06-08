@@ -202,6 +202,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += ",";
         requestString += trimDouble(request.waypoints().at(i).latitude());
     }
+
     //TODO: Avoid areas
     //requestString += "&avoidareas=";
 
@@ -210,7 +211,20 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     requestString += "&alternatives=";
     requestString += QString::number(request.numberAlternativeRoutes());
 
-    requestString += routeRequestString(request);
+    requestString += "&representation=";
+     if( request.instructionDetail() & QGeoRouteRequest::BasicInstructions )
+         requestString += "display";
+     else if( request.instructionDetail() & QGeoRouteRequest::DetailedInstructions )
+         requestString += "navigation";
+     else
+         requestString += "overview";
+
+      if( request.instructionDetail() & QGeoRouteRequest::BasicSegmentData )
+          requestString += "&linkattributes=nextLink";
+      else if( request.instructionDetail() & QGeoRouteRequest::DetailedSegmentData )
+          requestString += "&linkattributes=shape,length,nextLink";
+
+    requestString += routeRequestString();
 
     return requestString;
 }
@@ -218,16 +232,6 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
 QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
 {
     bool supported = true;
-
-    // TODO: Get original request info
-//    if ((request.avoidFeatureTypes() & supportedAvoidFeatureTypes()) != request.avoidFeatureTypes())
-//        supported = false;
-
-//    if ((request.instructionDetail() & supportedInstructionDetails()) != request.instructionDetail())
-//        supported = false;
-
-//    if ((request.segmentDetail() & supportedSegmentDetails()) != request.segmentDetail())
-//        supported = false;
 
     if ((route.optimization() & supportedRouteOptimizations()) != route.optimization())
         supported = false;
@@ -243,6 +247,8 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += m_host;
     requestString += "/getroute/6.1/routes.xml";
 
+    // TODO: Check that optimization, mode, avoidance etc keep the same as requested with
+    // calculate route once data is available
     requestString += "&routeid=";
     requestString += route.routeId();
 
@@ -251,13 +257,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += ",";
     requestString += QString::number(position.longitude());
 
-    //TODO: Avoid areas ?
-    //requestString += "&avoidareas=";
-
-    //TODO: Get original request info
-    QGeoRouteRequest request;
-    requestString += modesRequestString(route.optimization(),route.travelMode(),request.avoidFeatureTypes());
-    requestString += routeRequestString(request);
+    requestString += routeRequestString();
 
     return requestString;
 }
@@ -270,16 +270,13 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
 
     QStringList types;
     if ((optimization & QGeoRouteRequest::ShortestRoute) != 0)
-        types.append("shortest");
+        types.append("directDrive");  // TODO: check difference to "shortest" once data available
     if ((optimization & QGeoRouteRequest::FastestRoute) != 0)
         types.append("fastestNow");
     if ((optimization & QGeoRouteRequest::MostEconomicRoute) != 0)
         types.append("economic");
     if ((optimization & QGeoRouteRequest::MostScenicRoute) != 0)
         types.append("scenic");
-    // See comments in qgeorouterequest.h
-    //if ((optimization & QGeoRouteRequest::DirectRoute) != 0)
-    //    types.append("directDrive");
 
     QStringList tModes;
     if ((travelModes & QGeoRouteRequest::CarTravel) != 0)
@@ -329,36 +326,14 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
     return requestString;
 }
 
-QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest &request)
+QString QGeoRoutingManagerEngineNokia::routeRequestString()
 {
     QString requestString;
 
-// See comments in qgeoroutereqeust.h - if this is need to get a response
-// perhaps a departure time of now is good enough for the time being
-
-//    if (request.departureTime().isValid()) {
-//        requestString += "&departure=";
-//        requestString += request.departureTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
-//    }
-//    if (request.arrivalTime().isValid()) {
-//        requestString += "&arrival=";
-//        requestString += request.arrivalTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
-//    }
+    requestString += "&departure=";
+    requestString += QDateTime::currentDateTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
 
     requestString += "&language=ENG";  // TODO locale / language handling
-
-   requestString += "&representation=";
-    if( request.instructionDetail() & QGeoRouteRequest::BasicInstructions )
-        requestString += "display";
-    else if( request.instructionDetail() & QGeoRouteRequest::DetailedInstructions )
-        requestString += "navigation";
-    else
-        requestString += "overview";
-
-     if( request.instructionDetail() & QGeoRouteRequest::BasicSegmentData )
-         requestString += "&linkattributes=nextLink";
-     else if( request.instructionDetail() & QGeoRouteRequest::DetailedSegmentData )
-         requestString += "&linkattributes=shape,length,nextLink";
 
     requestString += "&routeattributes=waypoints,summary,shape,maneuvers,links,boundingBox";
     requestString += "&maneuverattributes=position,link";
