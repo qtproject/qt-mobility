@@ -1646,6 +1646,57 @@ OssoABookContact* QContactABook::convert(const QContact *contact, QContactManage
 {
   Q_CHECK_PTR(contact);
 
+  // first, check for uniqueness constraints.
+  // currently, it is only phone numbers and online accounts
+  // which are NOT unique.
+  // XXX TODO: if/when we modify the logic to make other details
+  // non-unique (eg, QContactEmailAddress), we'll need to remove
+  // them from this check.
+  if (contact->details<QContactAddress>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactAvatar>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactBirthday>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactEmailAddress>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactGender>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactName>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactNickname>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactNote>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactOrganization>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactThumbnail>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactUrl>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+
   OssoABookContact* rtn;
   
   // Get aContact if it exists or create a new one if it doesn't
@@ -1658,6 +1709,7 @@ OssoABookContact* QContactABook::convert(const QContact *contact, QContactManage
   }
   
   QList<QContactDetail> allDetails = contact->details();
+
   foreach(const QContactDetail &detail, allDetails){
     QString definitionName = detail.definitionName();
     
@@ -1989,7 +2041,13 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
   if (paramValues.isEmpty())
     paramValues << "VOICE";
   
-  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
+  if (detail.detailUri().isEmpty()) {
+    // new phone number detail.
+    addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, false, detail.detailUri().toInt());
+  } else {
+    // overwrite old phone number detail.
+    addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
+  }
 }
 
 void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const

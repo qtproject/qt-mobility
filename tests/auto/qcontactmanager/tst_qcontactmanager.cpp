@@ -955,6 +955,24 @@ void tst_QContactManager::update()
         mt = cm->contact(mt.localId()); // force reload of (persisted) contact
         QCOMPARE(mt.details<QContactPhoneNumber>().count(), 2);
 
+        // here we do something tricky: we save one of the previously saved phone numbers
+        // in a _different_ contact, and see if that causes problems with the overwrite vs new detail code.
+        QContactPhoneNumber pn2Copy = pn2;
+        QContact mt2;
+        QContactName mt2n;
+        mt2n.setFirstName("test2");
+        mt2.saveDetail(&mt2n);
+        QContactPhoneNumber shouldBeNew = pn;
+        mt2.saveDetail(&shouldBeNew);
+        QVERIFY(cm->saveContact(&mt2));
+        mt2 = cm->contact(mt2.localId());
+        QCOMPARE(mt2.details<QContactPhoneNumber>().count(), 1);
+        mt2.saveDetail(&pn2);
+        QVERIFY(cm->saveContact(&mt2));
+        mt2 = cm->contact(mt2.localId());
+        QCOMPARE(mt2.details<QContactPhoneNumber>().count(), 2);
+        pn2 = pn2Copy; // reset just in case backend added some fields.
+
         // remove the other phone number detail, shouldn't cause side effects to the first...
         mt.removeDetail(&pn2);
         cm->saveContact(&mt);
@@ -968,6 +986,18 @@ void tst_QContactManager::update()
         mt = cm->contact(mt.localId());
         QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
         QVERIFY(mt.detail<QContactPhoneNumber>() == pn);
+
+        // we also should do the same test for other details (for example, email address).
+        // if the backend cannot save multiple copies of a detail (eg, email address always overwrites)
+        // it should FAIL the save operation if the contact has multiple of that detail type,
+        // and set error to QContactManager::LimitReachedError.
+        QContactEmailAddress mte2;
+        mte2.setEmailAddress("test2@test2.com");
+        mt.saveDetail(&mte2);
+        QVERIFY(!cm->saveContact(&mt));
+        QCOMPARE(cm->error(), QContactManager::LimitReachedError); // should be LimitReachedError.
+        mt = cm->contact(mt.localId());
+        QVERIFY(mt.details<QContactEmailAddress>().count() == 1);
     }
 
     /* Save a new contact first */
