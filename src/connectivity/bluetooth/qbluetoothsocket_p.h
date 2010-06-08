@@ -108,6 +108,8 @@ public:
 #elif !defined(QT_NO_DBUS)
     int socket;
     QSocketNotifier *readNotifier;
+
+    mutable QString peerName;
 #endif
 };
 

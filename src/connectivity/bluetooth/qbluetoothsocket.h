@@ -99,7 +99,7 @@ public:
     virtual qint64 bytesAvailable() const;
     virtual qint64 bytesToWrite() const;
 
-    virtual bool canReadLine() const;
+    //virtual bool canReadLine() const;
 
     void connectToService(const QBluetoothServiceInfo &service, OpenMode openMode = ReadWrite);
     void connectToService(const QBluetoothAddress &address, const QBluetoothUuid &uuid, OpenMode openMode = ReadWrite);

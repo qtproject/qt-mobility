@@ -278,12 +278,12 @@ qint64 QBluetoothSocket::bytesToWrite() const
 
     \sa readLine()
 */
-bool QBluetoothSocket::canReadLine() const
-{
-    Q_D(const QBluetoothSocket);
-
-    return (d->rxBuffer.indexOf('\n', d->rxOffset) != -1) || QIODevice::canReadLine();
-}
+//bool QBluetoothSocket::canReadLine() const
+//{
+//    Q_D(const QBluetoothSocket);
+//
+//    return (d->rxBuffer.indexOf('\n', d->rxOffset) != -1) || QIODevice::canReadLine();
+//}
 
 /*!
     Attempts to connect to the service described by \a service.
