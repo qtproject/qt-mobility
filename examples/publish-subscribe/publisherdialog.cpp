@@ -115,7 +115,6 @@ void PublisherDialog::setByteArrayValue()
 {
     publisher->setValue("byteArrayValue", ui->byteArrayValue->text().toAscii());
 }
-
 //! [0]
 
 //! [2]
@@ -124,9 +123,14 @@ void PublisherDialog::createNewObject()
     if (publisher)
         delete publisher;
 
-    publisher = new QValueSpacePublisher(ui->basePath->text());
-    intValueChanged(ui->intValue->value());
-    setStringValue();
-    setByteArrayValue();
+    publisher = new QValueSpacePublisher(QValueSpace::WritableLayer, ui->basePath->text());
+    if (publisher->isConnected()) {
+        ui->setters->setEnabled(true);
+        intValueChanged(ui->intValue->value());
+        setStringValue();
+        setByteArrayValue();
+    } else {
+        ui->setters->setEnabled(false);
+    }
 }
 //! [2]

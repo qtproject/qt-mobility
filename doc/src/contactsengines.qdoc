@@ -260,7 +260,7 @@ It may also choose to implement the "single contact" functions:
   \o QContactManagerEngine::removeContact()
 \endlist
 If it does not, the default implementation of those functions will use the batch (plural) versions
-of those functions to implement the required behaviour.
+of those functions to implement the required behavior.
 
 If the engine supports modification of its schema (that is, extension of its definitions at
 run-time), it must report that it supports the \c QContactManager::MutableDefinitions feature

@@ -27,21 +27,6 @@ CONFIG += mobility
 MOBILITY = serviceframework
 
 symbian {
-    INCLUDEPATH += ../../../src/serviceframework/symbian
-    DEPENDPATH += ../../../src/serviceframework \
-                  ../../../src/serviceframework/symbian
-    libBlock = \
-        "$${LITERAL_HASH}ifdef WINSCW" \
-        "LIBRARY qsfwdatabasemanagerserver.lib" \
-        "$${LITERAL_HASH}endif"
-
-    # DEFINES+= QT_NODLL
-    DEFINES+= QT_MAKEDLL
-    DEFINES += QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
-
-    MMP_RULES += libBlock
-    SOURCES += servicedatabase.cpp
-    HEADERS += servicedatabase_p.h
     TARGET.CAPABILITY = ALL -TCB
 }
 

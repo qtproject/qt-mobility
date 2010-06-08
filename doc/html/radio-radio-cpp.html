@@ -86,13 +86,15 @@
         else
             signal-&gt;setText(tr(&quot;No radio found&quot;));
         topBar-&gt;addWidget(signal);
-
+    #if defined Q_WS_MAEMO_5
+        QSpacerItem *spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        topBar-&gt;addItem(spacer);
+        volumeSlider = new QSlider(Qt::Horizontal,this);
+    #else
         volumeSlider = new QSlider(Qt::Vertical,this);
-        volumeSlider-&gt;setRange(0,100);
-    #if defined Q_OS_SYMBIAN
-        volumeSlider-&gt;setRange(0,10);
     #endif
-        volumeSlider-&gt;setValue(radio-&gt;volume());
+        volumeSlider-&gt;setRange(0,100);
+        volumeSlider-&gt;setValue(50);
         connect(volumeSlider,SIGNAL(valueChanged(int)),this,SLOT(updateVolume(int)));
         topBar-&gt;addWidget(volumeSlider);
 

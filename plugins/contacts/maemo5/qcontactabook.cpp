@@ -1737,6 +1737,18 @@ OssoABookContact* QContactABook::convert(const QContact *contact, QContactManage
   QCM5_DEBUG << "Converting QContact id:" << id << " to aContact";
   if (id) {
     rtn = getAContact(id, error);
+
+    // special case code to fix removal of phone numbers.
+    // XXX TODO: if we make other detail types non-unique, will need to add them here.
+    QString attrName = QString(QLatin1String(EVC_TEL));
+    EVCard *vcard = E_VCARD (rtn);
+    GList *attributeList = osso_abook_contact_get_attributes(E_CONTACT(rtn), qPrintable(attrName));
+    for (GList *node = g_list_last(attributeList); node != NULL; node = g_list_previous(node)) {
+      EVCardAttribute* eAttr = (EVCardAttribute*)node->data;
+      e_vcard_remove_attribute(vcard, eAttr);
+    }
+    g_list_free(attributeList);
+
   } else {
     rtn = osso_abook_contact_new();
   }

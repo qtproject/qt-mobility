@@ -47,15 +47,16 @@ QT_BEGIN_NAMESPACE
     \class QAudioEndpointSelector
     \preliminary
     \brief The QAudioEndpointSelector class provides an audio endpoint selector media control.
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
-    The QAudioEndpointSelector class provides descriptions of the audio endpoints available on a system
-    and allows one to be selected as the audio of a media service.
+    The QAudioEndpointSelector class provides descriptions of the audio
+    endpoints available on a system and allows one to be selected as the audio
+    of a media service.
 
     The interface name of QAudioEndpointSelector is \c com.nokia.Qt.QAudioEndpointSelector/1.0 as
     defined in QAudioEndpointSelector_iid.
 
-    \sa QMediaService::control()
+    \sa QMediaService::requestControl()
 */
 
 /*!

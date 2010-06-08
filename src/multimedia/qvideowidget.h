@@ -45,15 +45,17 @@
 #include <QtGui/qwidget.h>
 
 #include <qmobilityglobal.h>
+#include <qmediabindableinterface.h>
 
 QT_BEGIN_NAMESPACE
 
 class QMediaObject;
 
 class QVideoWidgetPrivate;
-class Q_MEDIA_EXPORT QVideoWidget : public QWidget
+class Q_MULTIMEDIA_EXPORT QVideoWidget : public QWidget, public QMediaBindableInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaBindableInterface)
     Q_PROPERTY(QMediaObject* mediaObject READ mediaObject WRITE setMediaObject)
     Q_PROPERTY(bool fullScreen READ isFullScreen WRITE setFullScreen NOTIFY fullScreenChanged)
     Q_PROPERTY(Qt::AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode NOTIFY aspectRatioModeChanged)
@@ -66,8 +68,7 @@ public:
     QVideoWidget(QWidget *parent = 0);
     ~QVideoWidget();   
 
-    QMediaObject *mediaObject() const;
-    void setMediaObject(QMediaObject *object);
+    QMediaObject *mediaObject() const;    
 
 #ifdef Q_QDOC
     bool isFullScreen() const;
@@ -105,19 +106,20 @@ protected:
     void moveEvent(QMoveEvent *event);
     void paintEvent(QPaintEvent *event);
 
+    bool setMediaObject(QMediaObject *object);
+
 protected:
     QVideoWidgetPrivate *d_ptr;
 
 private:
     Q_DECLARE_PRIVATE(QVideoWidget)
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
-    Q_PRIVATE_SLOT(d_func(), void _q_mediaObjectDestroyed())
     Q_PRIVATE_SLOT(d_func(), void _q_brightnessChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_contrastChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_hueChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_saturationChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_fullScreenChanged(bool))
-    Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
+    Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged())
 };
 
 QT_END_NAMESPACE

@@ -89,11 +89,9 @@ if (! -e $pheader) {
 // We mean it.
 //
 
-#include "qsensor_p.h"
-
 QTM_BEGIN_NAMESPACE
 
-class '.$reading_private.' : public QSensorReadingPrivate
+class '.$reading_private.'
 {
 public:
     '.$reading_private.'()
@@ -156,7 +154,7 @@ public:
     { setType('.$sensor.'::type); }
     virtual ~'.$sensor.'() {}
     '.$reading.' *reading() const { return static_cast<'.$reading.'*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 
 QTM_END_NAMESPACE
@@ -231,7 +229,7 @@ void '.$reading.'::setMyprop(qreal myprop)
     \sa QSensorFilter::filter()
 */
 
-const char *'.$sensor.'::type("'.$sensor.'");
+char const * const '.$sensor.'::type("'.$sensor.'");
 
 /*!
     \class '.$sensor.'
