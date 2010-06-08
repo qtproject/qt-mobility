@@ -224,7 +224,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
       else if( request.instructionDetail() & QGeoRouteRequest::DetailedSegmentData )
           requestString += "&linkattributes=shape,length,nextLink";
 
-    requestString += routeRequestString(request);
+    requestString += routeRequestString();
 
     return requestString;
 }
