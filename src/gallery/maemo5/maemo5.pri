@@ -19,6 +19,7 @@ HEADERS += \
         $$PWD/qgallerytrackerurlresponse_p.h
 
 SOURCES += \
+        $$PWD/qgallerydbusinterface.cpp \
         $$PWD/qdocumentgallery_maemo5.cpp \
         $$PWD/qgallerytrackercountresponse.cpp \
         $$PWD/qgallerytrackeritemlist.cpp \

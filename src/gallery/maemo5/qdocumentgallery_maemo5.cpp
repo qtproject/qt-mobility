@@ -117,10 +117,10 @@ private:
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::daemonInterface()
 {
     if (!daemonService) {
-        daemonService = new QGalleryDBusInterface(
+        daemonService = new QGalleryTrackerDaemonDBusInterface(
                 QLatin1String("org.freedesktop.Tracker"),
                 QLatin1String("/org/freedesktop/Tracker"),
-                QLatin1String("org.freedesktop.Tracker"));
+                "org.freedesktop.Tracker");
     }
     return daemonService;
 }
@@ -131,7 +131,7 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::metaDataInterface()
         metaDataService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.Tracker"),
                 QLatin1String("/org/freedesktop/Tracker/Metadata"),
-                QLatin1String("org.freedesktop.Tracker.Metadata"));
+                "org.freedesktop.Tracker.Metadata");
     }
     return metaDataService;
 }
@@ -142,7 +142,7 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::searchInterface()
         searchService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.Tracker"),
                 QLatin1String("/org/freedesktop/Tracker/Search"),
-                QLatin1String("org.freedesktop.Tracker.Search"));
+                "org.freedesktop.Tracker.Search");
     }
     return searchService;
 }
@@ -153,7 +153,7 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
         fileService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.Tracker"),
                 QLatin1String("/org/freedesktop/Tracker/Files"),
-                QLatin1String("org.freedesktop.Tracker.Files"));
+                "org.freedesktop.Tracker.Files");
     }
     return fileService;
 }
@@ -161,16 +161,16 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::thumbnailInterface()
 {
     if (!thumbnailService) {
+
+        thumbnailService = new QGalleryThumbnailerDBusInterface(
 #ifdef Q_WS_MAEMO_5
-        thumbnailService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.thumbnailer"),
                 QLatin1String("/org/freedesktop/thumbnailer/Generic"),
-                QLatin1String("org.freedesktop.thumbnailer.Generic"));
+                "org.freedesktop.thumbnailer.Generic");
 #else
-        thumbnailService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.thumbnails.Thumbnailer1"),
                 QLatin1String("/org/freedesktop/thumbnails/Thumbnailer1"),
-                QLatin1String("org.freedesktop.thumbnails.Thumbnailer1"));
+                "org.freedesktop.thumbnails.Thumbnailer1");
 #endif
     }
     return thumbnailService;

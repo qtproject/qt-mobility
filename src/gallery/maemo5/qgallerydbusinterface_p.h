@@ -56,24 +56,58 @@
 #include <qmobilityglobal.h>
 
 #include <QtCore/qshareddata.h>
-#include <QtDBus/qdbusinterface.h>
+#include <QtDBus/qdbusabstractinterface.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryDBusInterface : public QDBusInterface, public QSharedData
+class QGalleryDBusInterface : public QDBusAbstractInterface, public QSharedData
 {
+    Q_OBJECT
 public:
     QGalleryDBusInterface(
             const QString &service,
             const QString &path,
-            const QString &interface,
+            const char *interface,
             const QDBusConnection &connection = QDBusConnection::sessionBus(),
             QObject *parent = 0)
-        : QDBusInterface(service, path, interface, connection, parent) {}
-    ~QGalleryDBusInterface() {}
+        : QDBusAbstractInterface(service, path, interface, connection, parent) {}
 };
 
 typedef QExplicitlySharedDataPointer<QGalleryDBusInterface> QGalleryDBusInterfacePointer;
+
+class QGalleryTrackerDaemonDBusInterface : public QGalleryDBusInterface
+{
+    Q_OBJECT
+public:
+    QGalleryTrackerDaemonDBusInterface(
+            const QString &service,
+            const QString &path,
+            const char *interface,
+            const QDBusConnection &connection = QDBusConnection::sessionBus(),
+            QObject *parent = 0)
+        : QGalleryDBusInterface(service, path, interface, connection, parent) {}
+
+Q_SIGNALS:
+    void IndexFinished(double elapsed);
+    void ServiceStatisticsUpdated(const QVector<QStringList> &statistics);
+};
+
+class QGalleryThumbnailerDBusInterface : public QGalleryDBusInterface
+{
+    Q_OBJECT
+public:
+    QGalleryThumbnailerDBusInterface(
+            const QString &service,
+            const QString &path,
+            const char *interface,
+            const QDBusConnection &connection = QDBusConnection::sessionBus(),
+            QObject *parent = 0)
+        : QGalleryDBusInterface(service, path, interface, connection, parent) {}
+
+Q_SIGNALS:
+    void Ready(uint handle, const QStringList &filePaths);
+    void Finished(uint handle);
+};
 
 class QGalleryDBusInterfaceFactory
 {
