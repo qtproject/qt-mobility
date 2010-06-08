@@ -75,7 +75,8 @@ bool QVersitOrganizerExporterPrivate::exportItem(
     QVersitDocument* document,
     QVersitOrganizerExporter::Error* error)
 {
-    if (item.type() == QOrganizerItemType::TypeEvent) {
+    if (item.type() == QOrganizerItemType::TypeEvent
+        || item.type() == QOrganizerItemType::TypeEventOccurrence) {
         document->setComponentType(QLatin1String("VEVENT"));
     } else {
         *error = QVersitOrganizerExporter::UnknownComponentTypeError;
@@ -109,6 +110,8 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeRecurrence(item, detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemPriority::DefinitionName) {
         encodePriority(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    } else if (detail.definitionName() == QOrganizerItemInstanceOrigin::DefinitionName) {
+        encodeInstanceOrigin(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (mPropertyMappings.contains(detail.definitionName())) {
         encodeSimpleProperty(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     }
@@ -359,6 +362,22 @@ void QVersitOrganizerExporterPrivate::encodePriority(
     property.setValue(QString::number(priority.priority()));
     *generatedProperties << property;
     *processedFields << QOrganizerItemPriority::FieldPriority;
+}
+
+void QVersitOrganizerExporterPrivate::encodeInstanceOrigin(
+        const QOrganizerItemDetail& detail,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* removedProperties,
+        QList<QVersitProperty>* generatedProperties,
+        QSet<QString>* processedFields)
+{
+    QOrganizerItemInstanceOrigin instanceOrigin = static_cast<QOrganizerItemInstanceOrigin>(detail);
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("RECURRENCE-ID"), removedProperties);
+    property.setName(QLatin1String("RECURRENCE-ID"));
+    property.setValue(instanceOrigin.originalDate().toString(QLatin1String("yyyyMMdd")));
+    *generatedProperties << property;
+    *processedFields << QOrganizerItemInstanceOrigin::FieldOriginalDate;
 }
 
 void QVersitOrganizerExporterPrivate::encodeSimpleProperty(

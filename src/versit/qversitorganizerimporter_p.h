@@ -136,6 +136,10 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
+    bool createRecurrenceId(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
     bool createStartDateTime(
             const QVersitProperty& property,
             QOrganizerItem* item,
@@ -165,6 +169,7 @@ private:
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
     bool parseDateList(const QString& str, QList<QDate>* dates);
+    QDate parseDate(QString str);
 
     // versit property name -> <definition name, field name>:
     QMap<QString, QPair<QString, QString> > mPropertyMappings;

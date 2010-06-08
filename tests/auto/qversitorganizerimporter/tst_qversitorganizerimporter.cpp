@@ -165,6 +165,17 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
     }
 
     {
+        QVersitProperty property;
+        property.setName(QLatin1String("RECURRENCE-ID"));
+        property.setValue(QLatin1String("20100608"));
+        QOrganizerItemInstanceOrigin origin;
+        origin.setOriginalDate(QDate(2010, 6, 8));
+        QTest::newRow("recurrence-id")
+            << (QList<QVersitProperty>() << property)
+            << (QList<QOrganizerItemDetail>() << origin);
+    }
+
+    {
         QList<QVersitProperty> properties;
         QVersitProperty dtstart;
         dtstart.setName(QLatin1String("DTSTART"));

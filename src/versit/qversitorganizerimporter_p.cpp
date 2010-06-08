@@ -108,6 +108,8 @@ void QVersitOrganizerImporterPrivate::importProperty(
         success = createTimestampModified(property, item, &updatedDetails);
     } else if (property.name() == QLatin1String("PRIORITY")) {
         success = createPriority(property, item, &updatedDetails);
+    } else if (property.name() == QLatin1String("RECURRENCE-ID")) {
+        success = createRecurrenceId(property, item, &updatedDetails);
     } else if (mPropertyMappings.contains(property.name())) {
         success = createSimpleDetail(property, item, &updatedDetails);
     } else if (document.componentType() == QLatin1String("VEVENT")) {
@@ -193,6 +195,19 @@ bool QVersitOrganizerImporterPrivate::createPriority(
     QOrganizerItemPriority priority(item->detail<QOrganizerItemPriority>());
     priority.setPriority(QOrganizerItemPriority::Priority(p));
     updatedDetails->append(priority);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createRecurrenceId(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    QDate date = parseDate(property.value());
+    if (!date.isValid())
+        return false;
+    QOrganizerItemInstanceOrigin origin(item->detail<QOrganizerItemInstanceOrigin>());
+    origin.setOriginalDate(date);
+    updatedDetails->append(origin);
     return true;
 }
 
@@ -505,17 +520,26 @@ bool QVersitOrganizerImporterPrivate::parseDateList(const QString& str, QList<QD
         return false;
 
     foreach (QString part, parts) {
-        int tIndex = part.indexOf(QLatin1Char('T'));
-        if (tIndex >= 0) {
-            part = part.left(tIndex);
-        }
-        QDate date = QDate::fromString(part, QLatin1String("yyyyMMdd"));
+        QDate date = parseDate(part);
         if (date.isValid())
             *dates << date;
         else
             return false;
     }
     return true;
+}
+
+/*!
+ * Parses a date in either yyyyMMdd or yyyyMMddTHHmmss format (in the latter case, ignoring the
+ * time)
+ */
+QDate QVersitOrganizerImporterPrivate::parseDate(QString str)
+{
+    int tIndex = str.indexOf(QLatin1Char('T'));
+    if (tIndex >= 0) {
+        str = str.left(tIndex);
+    }
+    return QDate::fromString(str, QLatin1String("yyyyMMdd"));
 }
 
 /*! Parse the iCalendar duration string \a str in an RDP fashion with a two symbol lookahead, and

@@ -106,6 +106,12 @@ private:
             QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
+    void encodeInstanceOrigin(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
     void encodeSimpleProperty(
             const QOrganizerItemDetail& detail,
             const QVersitDocument& document,
