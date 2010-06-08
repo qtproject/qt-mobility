@@ -280,7 +280,7 @@ bool QGeoRouteXmlParser::parseMode(QGeoRoute *route)
         if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
             if (m_reader->name() == "Type") {
                 QString value = m_reader->readElementText();
-                if (value == "shortest")
+                if (value == "directDrive") // TODO: check difference to "shortest" once data available
                     route->setOptimization(QGeoRouteRequest::ShortestRoute);
                 else if (value == "fastestNow")
                     route->setOptimization(QGeoRouteRequest::FastestRoute);
@@ -290,9 +290,6 @@ bool QGeoRouteXmlParser::parseMode(QGeoRoute *route)
                     route->setOptimization(QGeoRouteRequest::MostScenicRoute);
                 else // unsupported optimization
                     return false;
-                // See comments in qgeorouterequest.h
-                //else if (value == "directDrive")
-                //    route->setOptimization(QGeoRouteRequest::DirectRoute);
             }
             else if (m_reader->name() == "TransportModes") {
                 QString value = m_reader->readElementText();

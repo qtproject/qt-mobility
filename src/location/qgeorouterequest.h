@@ -86,9 +86,6 @@ public:
         FastestRoute = 0x0002,
         MostEconomicRoute = 0x0004,
         MostScenicRoute = 0x0008
-        //MostScenicRoute = 0x0008,
-        // TODO - what is this and how is it different from shortest route?
-        //DirectRoute = 0x0010
     };
     Q_DECLARE_FLAGS(RouteOptimizations, RouteOptimization)
 

@@ -270,16 +270,13 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
 
     QStringList types;
     if ((optimization & QGeoRouteRequest::ShortestRoute) != 0)
-        types.append("shortest");
+        types.append("directDrive");  // TODO: check difference to "shortest" once data available
     if ((optimization & QGeoRouteRequest::FastestRoute) != 0)
         types.append("fastestNow");
     if ((optimization & QGeoRouteRequest::MostEconomicRoute) != 0)
         types.append("economic");
     if ((optimization & QGeoRouteRequest::MostScenicRoute) != 0)
         types.append("scenic");
-    // See comments in qgeorouterequest.h
-    //if ((optimization & QGeoRouteRequest::DirectRoute) != 0)
-    //    types.append("directDrive");
 
     QStringList tModes;
     if ((travelModes & QGeoRouteRequest::CarTravel) != 0)
