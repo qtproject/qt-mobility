@@ -333,17 +333,8 @@ QString QGeoRoutingManagerEngineNokia::routeRequestString(const QGeoRouteRequest
 {
     QString requestString;
 
-// See comments in qgeoroutereqeust.h - if this is need to get a response
-// perhaps a departure time of now is good enough for the time being
-
-//    if (request.departureTime().isValid()) {
-//        requestString += "&departure=";
-//        requestString += request.departureTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
-//    }
-//    if (request.arrivalTime().isValid()) {
-//        requestString += "&arrival=";
-//        requestString += request.arrivalTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
-//    }
+    requestString += "&departure=";
+    requestString += QDateTime::currentDateTime().toUTC().toString("yyyy-MM-ddThh:mm:ssZ");
 
     requestString += "&language=ENG";  // TODO locale / language handling
 

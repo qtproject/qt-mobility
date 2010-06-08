@@ -122,7 +122,6 @@ bool QGeoRouteXmlParser::parseRootElement()
             m_reader->skipCurrentElement();
         }
         else {
-            QString tmp = m_reader->name().toString();
             m_reader->raiseError(QString("Did not expect a child element named \"%1\".").arg(
                 m_reader->name().toString()));
             return false;
