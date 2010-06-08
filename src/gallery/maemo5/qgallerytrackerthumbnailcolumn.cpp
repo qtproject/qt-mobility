@@ -111,6 +111,7 @@ QGalleryTrackerThumbnailColumn::QGalleryTrackerThumbnailColumn(
     , m_thumbnailInterface(thumbnailInterface)
     , m_keys(QList<int>() << key)
 {
+    connect(m_thumbnailInterface.data(), SIGNAL(Finished(uint)), this, SLOT(dbusFinished(uint)));
 }
 
 QGalleryTrackerThumbnailColumn::~QGalleryTrackerThumbnailColumn()
