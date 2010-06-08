@@ -274,18 +274,6 @@ qint64 QBluetoothSocket::bytesToWrite() const
 }
 
 /*!
-    Returns true if a line of data can be read from the socket; otherwise returns false.
-
-    \sa readLine()
-*/
-//bool QBluetoothSocket::canReadLine() const
-//{
-//    Q_D(const QBluetoothSocket);
-//
-//    return (d->rxBuffer.indexOf('\n', d->rxOffset) != -1) || QIODevice::canReadLine();
-//}
-
-/*!
     Attempts to connect to the service described by \a service.
 
     The socket is opened in the given \a openMode.
