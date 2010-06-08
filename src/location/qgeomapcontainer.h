@@ -39,60 +39,32 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_H
-#define QGEOMAPDATA_H
+#ifndef QGEOMAPCONTAINER_H
+#define QGEOMAPCONTAINER_H
 
-#include "qgeomapwidget.h"
-#include "qgeomapcontainer.h"
+#include "qgeomapobject.h"
 
-#include <QObject>
-#include <QSize>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoBoundingBox;
-class QGeoMappingManagerEngine;
-class QGeoMapDataPrivate;
+class QGeoMapContainerPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapData : public QGeoMapContainer
+class Q_LOCATION_EXPORT QGeoMapContainer : public QGeoMapObject
 {
 public:
-    QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoMapData();
+    QGeoMapContainer(const QGeoMapContainer* parent = 0);
+    virtual ~QGeoMapContainer();
 
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
+    virtual void setVisibility(bool visibility);
 
-    virtual void setZoomLevel(qreal zoomLevel);
-    virtual qreal zoomLevel() const;
-
-    virtual void pan(int dx, int dy);
-
-    virtual void setCenter(const QGeoCoordinate &center);
-    virtual QGeoCoordinate center() const;
-
-    virtual void setViewportSize(const QSizeF &size);
-    virtual QSizeF viewportSize() const;
-
-    void setMapType(QGeoMapWidget::MapType mapType);
-    QGeoMapWidget::MapType mapType() const;
-
-    void setImageChangesTriggerUpdates(bool trigger);
-    bool imageChangesTriggerUpdates() const;
-
-    void setMapImage(const QPixmap &mapImage);
-    QPixmap mapImage();
-
-protected:
-    QGeoMapWidget* widget() const;
-    QGeoMappingManagerEngine* engine() const;
+    void addMapObject(QGeoMapObject *mapObject);
+    void removeMapObject(QGeoMapObject *mapObject);
+    QList<QGeoMapObject*> getAllMapObjects() const;
 
 private:
-    QGeoMapDataPrivate* d_ptr;
-    Q_DISABLE_COPY(QGeoMapData)
+    QGeoMapContainerPrivate* d_ptr;
+    Q_DISABLE_COPY(QGeoMapContainer)
 };
 
 QTM_END_NAMESPACE

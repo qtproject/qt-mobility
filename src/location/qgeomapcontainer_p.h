@@ -39,60 +39,25 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_H
-#define QGEOMAPDATA_H
+#ifndef QGEOMAPCONTAINER_P_H
+#define QGEOMAPCONTAINER_P_H
 
-#include "qgeomapwidget.h"
 #include "qgeomapcontainer.h"
 
-#include <QObject>
-#include <QSize>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include <QMultiMap>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoBoundingBox;
-class QGeoMappingManagerEngine;
-class QGeoMapDataPrivate;
-
-class Q_LOCATION_EXPORT QGeoMapData : public QGeoMapContainer
+class QGeoMapContainerPrivate
 {
 public:
-    QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoMapData();
-
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
-
-    virtual void setZoomLevel(qreal zoomLevel);
-    virtual qreal zoomLevel() const;
-
-    virtual void pan(int dx, int dy);
-
-    virtual void setCenter(const QGeoCoordinate &center);
-    virtual QGeoCoordinate center() const;
-
-    virtual void setViewportSize(const QSizeF &size);
-    virtual QSizeF viewportSize() const;
-
-    void setMapType(QGeoMapWidget::MapType mapType);
-    QGeoMapWidget::MapType mapType() const;
-
-    void setImageChangesTriggerUpdates(bool trigger);
-    bool imageChangesTriggerUpdates() const;
-
-    void setMapImage(const QPixmap &mapImage);
-    QPixmap mapImage();
-
-protected:
-    QGeoMapWidget* widget() const;
-    QGeoMappingManagerEngine* engine() const;
-
-private:
-    QGeoMapDataPrivate* d_ptr;
-    Q_DISABLE_COPY(QGeoMapData)
+    bool visibility;
+    bool isVisible;
+    QList<QGeoMapObject*> children;
+    //This is a convenience map so that we don't have to sort 
+    //all objects on their z-indices everytime we paint. The performance
+    //gains should more than justify the extra memory footprint.
+    QMultiMap<int, QGeoMapObject*> zChildren; 
 };
 
 QTM_END_NAMESPACE
