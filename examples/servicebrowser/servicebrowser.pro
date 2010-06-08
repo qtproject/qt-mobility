@@ -14,6 +14,8 @@ SOURCES += servicebrowser.cpp \
 CONFIG += mobility
 MOBILITY = serviceframework
 
+mac:CONFIG -= app_bundle
+
 symbian {
     addFiles.sources = ../filemanagerplugin/filemanagerservice.xml
     addFiles.sources += ../bluetoothtransferplugin/bluetoothtransferservice.xml
@@ -21,11 +23,4 @@ symbian {
     DEPLOYMENT += addFiles
 
     TARGET.CAPABILITY = ReadUserData WriteUserData
-}
-
-mac {
-    addFiles.sources = ../filemanagerplugin/filemanagerservice.xml
-    addFiles.sources += ../bluetoothtransferplugin/bluetoothtransferservice.xml
-    addFiles.path = servicebrowser.app/Contents/MacOS/xmldata
-    DEPLOYMENT += addFiles
 }

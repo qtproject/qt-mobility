@@ -26,11 +26,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-mac {
-    xml.path = $$DESTDIR/sfw-notes.app/Contents/MacOS/xmldata
-    DESTDIR = $$DESTDIR/sfw-notes.app/Contents/PlugIns
-} else {
-    xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
-}
+xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
 xml.files = notesmanagerservice.xml
 INSTALLS += xml

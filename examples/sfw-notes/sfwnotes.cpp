@@ -49,12 +49,6 @@ ToDoTool::ToDoTool(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
     setupUi(this);
-    #if defined(Q_OS_MAC)
-        QDir dir(QCoreApplication::applicationDirPath());
-        dir.cdUp();
-        dir.cd("PlugIns");
-        QCoreApplication::addLibraryPath(dir.absolutePath());
-    #endif
 
     serviceManager = new QServiceManager(this);
 
@@ -122,7 +116,7 @@ void ToDoTool::registerExampleServices()
     QStringList exampleXmlFiles;
     exampleXmlFiles << "notesmanagerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         serviceManager->addService(path);
     }
 }

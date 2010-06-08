@@ -24,11 +24,6 @@ symbian {
     TARGET.CAPABILITY = LocalServices Location NetworkServices ReadUserData WriteUserData UserEnvironment
 }
 
-mac {
-    xml.path = $$DESTDIR/servicebrowser.app/Contents/MacOS/xmldata
-    DESTDIR = $$DESTDIR/servicebrowser.app/Contents/PlugIns
-} else {
-    xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
-}
+xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
 xml.files = bluetoothtransferservice.xml
 INSTALLS += xml
