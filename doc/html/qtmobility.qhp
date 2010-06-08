@@ -1274,7 +1274,6 @@
             <keyword name="abort" id="QBluetoothSocket::abort" ref="qbluetoothsocket.html#abort"/>
             <keyword name="bytesAvailable" id="QBluetoothSocket::bytesAvailable" ref="qbluetoothsocket.html#bytesAvailable"/>
             <keyword name="bytesToWrite" id="QBluetoothSocket::bytesToWrite" ref="qbluetoothsocket.html#bytesToWrite"/>
-            <keyword name="canReadLine" id="QBluetoothSocket::canReadLine" ref="qbluetoothsocket.html#canReadLine"/>
             <keyword name="close" id="QBluetoothSocket::close" ref="qbluetoothsocket.html#close"/>
             <keyword name="connectToService" id="QBluetoothSocket::connectToService" ref="qbluetoothsocket.html#connectToService"/>
             <keyword name="connected" id="QBluetoothSocket::connected" ref="qbluetoothsocket.html#connected"/>

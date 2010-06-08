@@ -564,7 +564,6 @@
         <keyword ref="qbluetoothsocket.html#abort">abort</keyword>
         <keyword ref="qbluetoothsocket.html#bytesAvailable">bytesAvailable</keyword>
         <keyword ref="qbluetoothsocket.html#bytesToWrite">bytesToWrite</keyword>
-        <keyword ref="qbluetoothsocket.html#canReadLine">canReadLine</keyword>
         <keyword ref="qbluetoothsocket.html#close">close</keyword>
         <keyword ref="qbluetoothsocket.html#connectToService">connectToService</keyword>
         <keyword ref="qbluetoothsocket.html#connected">connected</keyword>
