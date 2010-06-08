@@ -52,11 +52,6 @@
                             g_error_free(x); \
                             qFatal(qPrintable(message)); \
                           }
-#define WARNING_IF_ERROR(x) if(x) { \
-                            QString message(x->message); \
-                            g_error_free(x); \
-                            qWarning(qPrintable(message)); \
-                          }
 
 /* Casting Macros */
 #define A_CONTACT(x) reinterpret_cast<OssoABookContact*>(x)
@@ -110,7 +105,6 @@ static void contactsAddedCB(OssoABookRoster *roster, OssoABookContact **contacts
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
   if (!d){
-    //qWarning() << "d has been deleted";
     return;
   }
   
@@ -140,7 +134,6 @@ static void contactsChangedCB(OssoABookRoster *roster, OssoABookContact **contac
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
   if (!d){
-    //qWarning() << "d has been deleted";
     return;
   }
   
@@ -169,7 +162,6 @@ static void contactsRemovedCB(OssoABookRoster *roster, const char **ids, gpointe
   
   cbSharedData* d = static_cast<cbSharedData*>(data);
   if (!d){
-    //qWarning() << "d has been deleted";
     return;
   }
   
@@ -220,18 +212,18 @@ void QContactABook::initAddressBook(){
   m_contactRemovedHandlerId = g_signal_connect(roster, "contacts-removed",
                    G_CALLBACK (contactsRemovedCB), m_cbSD);
   
-#if 0
-  //TEST List supported fields
-  EBook *book = NULL;
-  GList *l;
-  book = osso_abook_roster_get_book(roster);
-  e_book_get_supported_fields (book, &l, NULL);
-  while (l) {
-    qDebug() << "SUPPORTED FIELD" << (const char*)l->data;
-    l = l->next;  
+  //TEST Lists supported fields
+  if (QCM5_DEBUG_ENABLED){
+    EBook *book = NULL;
+    GList *l;
+    book = osso_abook_roster_get_book(roster);
+    e_book_get_supported_fields (book, &l, NULL);
+    while (l) {
+      qDebug() << "SUPPORTED FIELD" << (const char*)l->data;
+      l = l->next;  
+    }
+    g_list_free(l);
   }
-  g_list_free(l);
-#endif
 }
 
 /*! Fill LocalId Hash associating an internal QContactLocalId to any
@@ -246,7 +238,7 @@ void QContactABook::initLocalIdHash()
    contactList = osso_abook_aggregator_list_master_contacts(m_abookAgregator);
 
    if (!contactList) {
-     //qWarning() << "There are no Master contacts. LocalId hash is empty.";
+     QCM5_DEBUG << "There are no Master contacts. LocalId hash is empty.";
      return;
    }
    
@@ -259,7 +251,8 @@ void QContactABook::initLocalIdHash()
      QCM5_DEBUG << "eContactID " << eContactUID << "has been stored in m_localIDs with key" << m_localIds[eContactUID];
      
      // Useful for debugging.
-     if (QCM5_DEBUG_ENABLED) e_vcard_dump_structure((EVCard*)contact);
+     if (QCM5_DEBUG_ENABLED)
+       e_vcard_dump_structure((EVCard*)contact);
    }
    
    g_list_free(contactList);
@@ -340,7 +333,6 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   QContact *rtn;
   OssoABookContact* aContact = getAContact(contactId, error);
   if (!aContact) {
-    //qWarning() << "Unable to get a valid AContact";
     return new QContact;
   }
   
@@ -351,15 +343,6 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   cId.setLocalId(contactId);
   rtn->setId(cId);
   
-  //TEST BEGIN
-  
-/*
-  QContactDisplayLabel dl;
-  dl.setValue(QContactDisplayLabel::FieldLabel, "LABEL");
-  QContactDetailPrivate::setAccessConstraints(&dl, QContactDetail::Irremovable | QContactDetail::ReadOnly);
-  rtn->d->m_details.replace(0, dl);
-*/
-  //TEST END
   return rtn;
 }
 
@@ -374,7 +357,6 @@ static QContactManager::Error getErrorFromStatus(const EBookStatus status){
     case E_BOOK_ERROR_PERMISSION_DENIED:
     case E_BOOK_ERROR_AUTHENTICATION_FAILED:
     case E_BOOK_ERROR_AUTHENTICATION_REQUIRED:
-    //case E_BOOK_ERROR_UNSUPPORTED_AUTHENTICATION_METHOD: //Missing in current Maemo5 Ebook lib version
       return QContactManager::PermissionsError;
     case E_BOOK_ERROR_CONTACT_NOT_FOUND:
       return QContactManager::DoesNotExistError;
@@ -430,7 +412,7 @@ bool QContactABook::removeContact(const QContactLocalId& contactId, QContactMana
   EBook *book = osso_abook_roster_get_book(roster);
   OssoABookContact *aContact = getAContact(contactId, error);
   if (!OSSO_ABOOK_IS_CONTACT(aContact)){
-    //qWarning() << "Specified contact is not a valid ABook contact";
+    QCM5_DEBUG << "Specified contact is not a valid ABook contact";
     return false;
   }
   
@@ -633,7 +615,7 @@ QContactLocalId QContactABook::selfContactId(QContactManager::Error* errors) con
       QCM5_DEBUG << "eContactID " << eContactUID << "has been stored in m_localIDs with key" << id;
     }
   } else {
-    //qWarning() << "Cannot find self contact";
+    QCM5_DEBUG << "Cannot find the self contact";
     *errors = QContactManager::DoesNotExistError;
     id = 0;
   }
@@ -693,7 +675,6 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
         case QContactFilter::MatchEndsWith: queryStr = "endswith"; break;
         default:
           queryStr = "contains";
-          //qWarning() << "Match flag not supported";
       }
       static QHash<QString,QString> hash;
       if (hash.isEmpty()){
@@ -711,7 +692,6 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
   
       QString eDetail = hash[f.detailDefinitionName()];
       if (eDetail.isEmpty()){
-        //qWarning() << "Unable to found an ebook detail for " << f.detailDefinitionName();
         return NULL;
       }
       queryStr = queryStr + " \"" + eDetail + "\" \"" + f.value().toString() + "\"";
@@ -727,10 +707,8 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
       QContactFilter i;
       foreach(i, fs){
         EBookQuery* q = convert(i);
-        if (!q){
-          //qWarning() << "Query is null";
+        if (!q)
           continue;
-        }
         if (query)
           query = e_book_query_andv(query, q, NULL);
         else
@@ -746,7 +724,6 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
       foreach(i, fs){
         EBookQuery* q = convert(i);
         if (!q){
-          //qWarning() << "Query is null";
           continue;
         }
         if (query)
@@ -846,7 +823,6 @@ QContact* QContactABook::convert(EContact *eContact) const
 
     ok = contact->saveDetail(detail);
     if (!ok){
-      //qWarning() << "Detail can't be saved to QContact";
       delete detail;
       continue;
     }
@@ -904,7 +880,7 @@ OssoABookContact* QContactABook::getAContact(const QContactLocalId& contactId, Q
     } else if (g_list_length(contacts) == 0) {
       *error = QContactManager::DoesNotExistError;
     } else {
-      //qWarning("Several contacts have the same UID or contactId belongs to a roster contact.");
+      // Several contacts have the same UID or the contactId belongs to a roster contact.
       *error = QContactManager::UnspecifiedError;
     }
     if (contacts)
@@ -922,9 +898,9 @@ QContactId QContactABook::getContactId(EContact *eContact) const
     const char* data = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_UID));
     const QByteArray eContactUID(data);
     QContactLocalId localId = m_localIds[eContactUID];
+    
     if (!localId)
-      //qWarning("Unable to get valid localId for the specified eContaact UID");
-    rtn.setLocalId(localId);
+      rtn.setLocalId(localId);
   }
   return rtn;
 }
@@ -950,7 +926,6 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
     QVariantMap map;
  
     EVCardAttribute *attr = static_cast<EVCardAttribute*>(node->data);
-    
     
     // Set Address Context using attribute parameter value
     EVCardAttributeParam *param = NULL;
@@ -1077,31 +1052,8 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
 QContactAvatar* QContactABook::getAvatarDetail(EContact *eContact) const
 {
     Q_UNUSED(eContact);
-// XXX TODO: FIXME
-//  QContactAvatar* rtn = new QContactAvatar;
-//  QVariantMap map;
-//
-//  OssoABookContact *aContact = A_CONTACT(eContact);
-//  if (!aContact)
-//    return rtn;
-//
-//  //GdkPixbuf* pixbuf = osso_abook_contact_get_avatar_pixbuf(aContact, NULL, NULL);
-//  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), 64, 64, true, 4, NULL);
-//  if (!GDK_IS_PIXBUF(pixbuf)){
-//    FREE(pixbuf);
-//    return rtn;
-//  }
-//
-//  const uchar* bdata = (const uchar*)gdk_pixbuf_get_pixels(pixbuf);
-//  QSize bsize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
-//
-//  //Convert GdkPixbuf to QPixmap
-//  QImage converted(bdata, bsize.width(), bsize.height(), QImage::Format_ARGB32_Premultiplied);
-//  map[QContactAvatar::FieldPixmap] = QPixmap::fromImage(converted);
-//  g_object_unref(pixbuf);
-//  setDetailValues(map, rtn);
-//
-//  return rtn;
+    // XXX TODO
+    // Should be retrieved from EVC_PHOTO
 
     QContactAvatar* empty = new QContactAvatar;
     return empty;
@@ -1266,7 +1218,6 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
           attrIsOssoValid = paramName.contains("X-OSSO-VALID");
         
         if (!attrIsType && !attrIsOssoValid) {
-          //qWarning () << "Skipping attribute parameter checking for" << paramName;
           continue;
         }
         
@@ -1277,7 +1228,6 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
           if (attrIsOssoValid) {
             ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
             if (!ossoValidIsOk) {
-              //qWarning() << "X-OSSO-VALID is false.";
               break;
             }
           } else if (type.isEmpty()) {
@@ -1885,24 +1835,8 @@ void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QCon
 {
   Q_UNUSED(aContact)
   Q_UNUSED(detail);
-// XXX TODO: FIXME
-//  if (!aContact) return;
-//
-//  EBook *book;
-//  {
-//    OssoABookRoster* roster = A_ROSTER(m_abookAgregator);
-//    book = osso_abook_roster_get_book(roster);
-//  }
-//
-//  QImage image = detail.pixmap().toImage();
-//  if (image.format() != QImage::Format_ARGB32_Premultiplied)
-//      image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
-//  GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
-//                                               image.hasAlphaChannel(), 8,
-//                                               image.width(), image.height(),
-//                                               image.bytesPerLine(), 0, 0);
-//  osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, 0, 0);
-//  g_object_unref(pixbuf);
+  // XXX TODO: FIXME
+  // We should set the path of the avatar in EVC_PHOTO
 }
 
 void QContactABook::setBirthdayDetail(const OssoABookContact* aContact, const QContactBirthday& detail) const
