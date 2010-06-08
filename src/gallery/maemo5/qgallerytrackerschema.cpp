@@ -56,25 +56,6 @@ QTM_BEGIN_NAMESPACE
 
 namespace
 {
-    struct QGalleryItemProperty
-    {
-        QLatin1String name;
-        QLatin1String field;
-        QGalleryProperty::Attributes attributes;
-    };
-
-    struct QGalleryAggregateProperty
-    {
-        QLatin1String name;
-        QLatin1String field;
-        QLatin1String aggregate;
-    };
-
-    struct QGalleryThumbnailProperty
-    {
-        QLatin1String name;
-        QVariant::Type type;
-    };
 
     template <typename T>
     struct QGalleryPropertyList
@@ -90,8 +71,37 @@ namespace
         const T &operator [](int index) const { return items[index]; }
     };
 
+
+    struct QGalleryItemProperty
+    {
+        QLatin1String name;
+        QLatin1String field;
+        QGalleryProperty::Attributes attributes;
+    };
+
     typedef QGalleryPropertyList<QGalleryItemProperty> QGalleryItemPropertyList;
+
+    struct QGalleryAggregateProperty
+    {
+        QLatin1String name;
+        QLatin1String field;
+        QLatin1String aggregate;
+    };
+
     typedef QGalleryPropertyList<QGalleryAggregateProperty> QGalleryAggregatePropertyList;
+
+    struct QGalleryThumbnailProperty
+    {
+        QLatin1String name;
+        QLatin1String profile;
+        QGalleryItemPropertyList dependencies;
+        QGalleryTrackerImageColumn *(*createColumn)(
+                QGalleryDBusInterfaceFactory *dbus,
+                int key,
+                const QString &profile,
+                const QVector<int> &columns);
+    };
+
     typedef QGalleryPropertyList<QGalleryThumbnailProperty> QGalleryThumbnailPropertyList;
 
     enum UpdateId
@@ -256,8 +266,13 @@ namespace
 #define QT_GALLERY_AGGREGATE_PROPERTY(PropertyName, Field, Aggregate) \
 { QLatin1String(PropertyName), QLatin1String(Field), QLatin1String(Aggregate) }
 
-#define QT_GALLERY_THUMBNAIL_PROPERTY(PropertyName, Type) \
-{ QLatin1String(PropertyName), QVariant::Type }
+#define QT_GALLERY_THUMBNAIL_PROPERTY(PropertyName, Profile, Dependencies, Factory) \
+{ \
+    QLatin1String(PropertyName), \
+    QLatin1String(Profile), \
+    QGalleryItemPropertyList(Dependencies), \
+    Factory \
+}
 
 #define QT_GALLERY_ITEM_TYPE(Type, Service, Prefix, ItemProperties) \
 { \
@@ -584,12 +599,15 @@ static bool qt_writeCondition(
 // File
 ///////
 
+#define QT_GALLERY_FILE_MIMETYPE_PROPERTY \
+    QT_GALLERY_ITEM_PROPERTY("mimeType"    , "File:Mime"     , CanRead | CanSort | CanFilter)
+
 // These are repeated in a few lists.
 #define QT_GALLERY_FILE_PROPERTYS \
+    QT_GALLERY_FILE_MIMETYPE_PROPERTY, \
     QT_GALLERY_ITEM_PROPERTY("fileName"    , "File:Name"     , CanRead | CanSort | CanFilter), \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Contents" , QGalleryProperty::Attributes()),*/ \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Link"     , QGalleryProperty::Attributes()),*/ \
-    QT_GALLERY_ITEM_PROPERTY("mimeType"    , "File:Mime"     , CanRead | CanSort | CanFilter), \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:Size"     , QGalleryProperty::Attributes()),*/ \
   /*QT_GALLERY_ITEM_PROPERTY(""            , "File:License"  , QGalleryProperty::Attributes()),*/ \
     QT_GALLERY_ITEM_PROPERTY("copyright"   , "File:Copyright", CanRead | CanWrite | CanSort | CanFilter), \
@@ -622,10 +640,29 @@ static const QGalleryItemProperty qt_galleryFilePropertyList[] =
     QT_GALLERY_ITEM_PROPERTY("keywords"   , "User:Keywords" , CanRead | CanSort | CanFilter)
 };
 
+static const QGalleryItemProperty qt_galleryFileThumbnailDependencyList[] =
+{
+    QT_GALLERY_FILE_MIMETYPE_PROPERTY
+};
+
+#ifdef Q_WS_MAEMO_5
+#define QT_GALLERY_THUMBNAIL_NORMAL_PROFILE "cropped"
+#else
+#define QT_GALLERY_THUMBNAIL_NORMAL_PROFILE "normal"
+#endif
+
 static const QGalleryThumbnailProperty qt_galleryFileThumbnailPropertyList[] =
 {
-    QT_GALLERY_THUMBNAIL_PROPERTY("thumbnailImage", Image),
-    QT_GALLERY_THUMBNAIL_PROPERTY("thumbnailPixmap", Pixmap)
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "thumbnailImage",
+            QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
+            qt_galleryFileThumbnailDependencyList,
+            QGalleryTrackerThumbnailColumn::createImageColumn),
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "thumbnailPixmap",
+            QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
+            qt_galleryFileThumbnailDependencyList,
+            QGalleryTrackerThumbnailColumn::createPixmapColumn)
 };
 
 static void qt_writeFileIdCondition(int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
@@ -675,16 +712,23 @@ static void qt_writeFileScopeCondition(int *, QXmlStreamWriter *xml, const QStri
 // Audio
 ////////
 
+#define QT_GALLERY_AUDIO_ARTIST_PROPERTY \
+    QT_GALLERY_ITEM_PROPERTY("artist"      , "Audio:Artist"     , CanRead | CanWrite | CanSort | CanFilter)
+#define QT_GALLERY_AUDIO_ALBUMTITLE_PROPERTY \
+    QT_GALLERY_ITEM_PROPERTY("albumTitle"  , "Audio:Album"      , CanRead | CanWrite | CanSort | CanFilter)
+#define QT_GALLERY_AUDIO_ALBUMARTIST_PROPERTY \
+    QT_GALLERY_ITEM_PROPERTY("albumArtist" , "Audio:AlbumArtist", CanRead | CanWrite | CanSort | CanFilter)
+
 static const QGalleryItemProperty qt_galleryAudioPropertyList[] =
 {
     QT_GALLERY_FILE_PROPERTYS,
+    QT_GALLERY_AUDIO_ARTIST_PROPERTY,
+    QT_GALLERY_AUDIO_ALBUMTITLE_PROPERTY,
+    QT_GALLERY_AUDIO_ALBUMARTIST_PROPERTY,
     QT_GALLERY_ITEM_PROPERTY("title"       , "Audio:Title"        , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("artist"      , "Audio:Artist"       , CanRead | CanWrite | CanSort | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("albumTitle"  , "Audio:Album"        , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("genre"       , "Audio:Genre"        , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("duration"    , "Audio:Duration"     , CanRead | CanSort | CanFilter),
 //    QT_GALLERY_ITEM_PROPERTY(""          , "Audio:ReleaseDate"  , QGalleryProperty::Attributes()),
-    QT_GALLERY_ITEM_PROPERTY("albumArtist" , "Audio:AlbumArtist"  , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("trackNumber" , "Audio:TrackNo"      , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("discNumber"  , "Audio:DiscNo"       , CanRead | CanWrite | CanSort | CanFilter),
     QT_GALLERY_ITEM_PROPERTY("performer"   , "Audio:Performer"    , CanRead | CanWrite | CanSort | CanFilter),
@@ -842,13 +886,13 @@ static void qt_writeArtistIdCondition(int *, QXmlStreamWriter *xml, const QStrin
 
 static const QGalleryItemProperty qt_galleryAlbumArtistIdentity[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("title", "Audio:AlbumArtist", CanRead | CanFilter)
+    QT_GALLERY_ITEM_PROPERTY("title", "Audio:AlbumArtist", CanRead | CanFilter | CanSort)
 };
 
 static const QGalleryItemProperty qt_galleryAlbumArtistPropertyList[] =
 {
-    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", CanRead | CanFilter),
-    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:AlbumArtist", CanRead | CanFilter),
+    QT_GALLERY_ITEM_PROPERTY("artist", "Audio:AlbumArtist", CanRead | CanFilter | CanSort),
+    QT_GALLERY_ITEM_PROPERTY("title" , "Audio:AlbumArtist", CanRead | CanFilter | CanSort),
 };
 
 static const QGalleryAggregateProperty qt_galleryAlbumArtistAggregateList[] =
@@ -973,7 +1017,6 @@ static const QGalleryAggregateType qt_galleryAggregateTypeList[] =
     QT_GALLERY_AGGREGATE_TYPE(PhotoAlbum , Images, photoAlbum , ImageMask)
 
 };
-
 
 class QGalleryTrackerServicePrefixColumn : public QGalleryTrackerCompositeColumn
 {
@@ -1394,6 +1437,53 @@ int QGalleryTrackerSchema::buildFilterQuery(
     return result;
 }
 
+static QVector<QGalleryTrackerValueColumn *> qt_createValueColumns(
+        const QVector<QVariant::Type> &types)
+{
+    QVector<QGalleryTrackerValueColumn *> columns;
+
+    columns.reserve(types.count());
+
+    for (int i = 0, count = types.count(); i < count; ++i) {
+        switch (types.at(i)) {
+        case QVariant::String:
+            columns.append(new QGalleryTrackerStringColumn);
+            break;
+        case QVariant::Int:
+            columns.append(new QGalleryTrackerStringColumn);
+            break;
+        case QVariant::Double:
+            columns.append(new QGalleryTrackerStringColumn);
+            break;
+        case QVariant::DateTime:
+            columns.append(new QGalleryTrackerStringColumn);
+            break;
+        default:
+            Q_ASSERT(false);
+            break;
+        }
+    }
+
+    return columns;
+}
+
+static QVector<QGalleryTrackerImageColumn *> qt_createImageColumns(
+        QGalleryDBusInterfaceFactory *dbus,
+        const QVector<const QGalleryThumbnailProperty *> &properties,
+        const QVector<QVector<int> > &columns,
+        int keyOffset)
+{
+    QVector<QGalleryTrackerImageColumn *> imageColumns;
+    imageColumns.reserve(properties.count());
+
+    for (int i = 0; i < properties.count(); ++i) {
+        imageColumns.append(properties.at(i)->createColumn(
+                dbus, keyOffset + i, properties.at(i)->profile, columns.at(i)));
+    }
+
+    return imageColumns;
+}
+
 void QGalleryTrackerSchema::populateItemArguments(
         QGalleryTrackerItemListArguments *arguments,
         QGalleryDBusInterfaceFactory *dbus,
@@ -1415,7 +1505,8 @@ void QGalleryTrackerSchema::populateItemArguments(
     QVector<QGalleryProperty::Attributes> aliasAttributes;
     QVector<QGalleryProperty::Attributes> thumbnailAttributes;
     QVector<QVariant::Type> valueTypes;
-    QVector<QVariant::Type> thumbnailTypes;
+    QVector<const QGalleryThumbnailProperty *> imageProperties;
+    QVector<QVector<int> > imageColumns;
 
     const QGalleryItemPropertyList &itemProperties
             = qt_galleryItemTypeList[m_itemIndex].itemProperties;
@@ -1423,7 +1514,7 @@ void QGalleryTrackerSchema::populateItemArguments(
             = qt_galleryItemTypeList[m_itemIndex].thumbnailProperties;
 
     for (QStringList::const_iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
-        if (qFind(propertyNames.begin(), it, *it) != it)    // Skip duplicates.
+        if (valueNames.contains(*it) || aliasNames.contains(*it) || thumbnailNames.contains(*it))
             continue;
 
         int propertyIndex = itemProperties.indexOfProperty(*it);
@@ -1444,9 +1535,31 @@ void QGalleryTrackerSchema::populateItemArguments(
                 valueTypes.append(QVariant::String);
             }
         } else if ((propertyIndex = thumbnailProperties.indexOfProperty(*it)) >= 0) {
-            thumbnailTypes.append(thumbnailProperties[propertyIndex].type);
+            const QGalleryItemPropertyList &dependencies
+                    = thumbnailProperties[propertyIndex].dependencies;
+
+            QVector<int> columns;
+            for (int i = 0; i < dependencies.count; ++i) {
+                const QString field = dependencies[i].field;
+
+                int fieldIndex = arguments->fieldNames.indexOf(field);
+
+                if (fieldIndex >= 0) {
+                    columns.append(fieldIndex + 2);
+                } else {
+                    columns.append(arguments->fieldNames.count() + 2);
+
+                    arguments->fieldNames.append(field);
+                    valueNames.append(dependencies[i].name);
+                    valueAttributes.append(itemProperties[i].attributes);
+                    valueTypes.append(QVariant::String);
+                }
+            }
+
             thumbnailNames.append(*it);
             thumbnailAttributes.append(QGalleryProperty::CanRead);
+            imageProperties.append(&thumbnailProperties[propertyIndex]);
+            imageColumns.append(columns);
         } else if (*it == QLatin1String("filePath")) {
             arguments->aliasColumns.append(0);
             aliasNames.append(*it);
@@ -1521,8 +1634,9 @@ void QGalleryTrackerSchema::populateItemArguments(
     arguments->idColumn = new QGalleryTrackerServicePrefixColumn;
     arguments->urlColumn = new QGalleryTrackerFileUrlColumn(0);
     arguments->typeColumn = new QGalleryTrackerServiceTypeColumn;
-    arguments->valueColumns = createValueColumns(valueTypes);
-    arguments->imageColumns = createImageColumns(dbus, thumbnailTypes);
+    arguments->valueColumns = qt_createValueColumns(valueTypes);
+    arguments->imageColumns = qt_createImageColumns(
+            dbus, imageProperties, imageColumns, valueNames.count() + aliasNames.count());
     arguments->propertyNames = valueNames + aliasNames + thumbnailNames;
     arguments->propertyAttributes = valueAttributes + aliasAttributes + thumbnailAttributes;
 }
@@ -1649,69 +1763,9 @@ void QGalleryTrackerSchema::populateAggregateArguments(
         arguments->idColumn = new QGalleryTrackerCompositeIdColumn(identityColumns, type.prefix);
     arguments->urlColumn = new QGalleryTrackerStaticColumn(QVariant());
     arguments->typeColumn = new QGalleryTrackerStaticColumn(type.itemType);
-    arguments->valueColumns = createValueColumns(identityTypes + aggregateTypes);
+    arguments->valueColumns = qt_createValueColumns(identityTypes + aggregateTypes);
     arguments->propertyNames = identityNames + aggregateNames + aliasNames;
     arguments->propertyAttributes = identityAttributes + aggregateAttributes + aliasAttributes;
-}
-
-QVector<QGalleryTrackerValueColumn *> QGalleryTrackerSchema::createValueColumns(
-        const QVector<QVariant::Type> &types) const
-{
-    QVector<QGalleryTrackerValueColumn *> columns;
-
-    columns.reserve(types.count());
-
-    for (int i = 0, count = types.count(); i < count; ++i) {
-        switch (types.at(i)) {
-        case QVariant::String:
-            columns.append(new QGalleryTrackerStringColumn);
-            break;
-        case QVariant::Int:
-            columns.append(new QGalleryTrackerStringColumn);
-            break;
-        case QVariant::Double:
-            columns.append(new QGalleryTrackerStringColumn);
-            break;
-        case QVariant::DateTime:
-            columns.append(new QGalleryTrackerStringColumn);
-            break;
-        default:
-            Q_ASSERT(false);
-            break;
-        }
-    }
-
-    return columns;
-}
-
-QVector<QGalleryTrackerImageColumn *> QGalleryTrackerSchema::createImageColumns(
-        QGalleryDBusInterfaceFactory *dbus, const QVector<QVariant::Type> &types) const
-{
-    QVector<QGalleryTrackerImageColumn *> columns;
-    columns.reserve(types.count());
-
-#ifdef Q_WS_MAEMO_5
-    const QString flavor = QLatin1String("cropped");
-#else
-    const QString flavor = QLatin1String("normal");
-#endif
-
-    for (int i = 0, count = types.count(); i < count; ++i) {
-        switch (types.at(i)) {
-        case QVariant::Image:
-            columns.append(new QGalleryTrackerThumbnailImageColumn(
-                    dbus->thumbnailInterface(), flavor, i));
-            break;
-        case QVariant::Pixmap:
-            columns.append(new QGalleryTrackerThumbnailPixmapColumn(
-                    dbus->thumbnailInterface(), flavor, i));
-            break;
-        default:
-            break;
-        }
-    }
-
-    return columns;
 }
 
 QTM_END_NAMESPACE

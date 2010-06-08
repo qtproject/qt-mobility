@@ -139,13 +139,8 @@ private:
             const QStringList &propertyNames,
             const QStringList &sortPropertyNames) const;
 
-    QVector<QGalleryTrackerValueColumn *> createValueColumns(
-            const QVector<QVariant::Type> &types) const;
-    QVector<QGalleryTrackerImageColumn *> createImageColumns(
-            QGalleryDBusInterfaceFactory *dbus, const QVector<QVariant::Type> &types) const;
-
-    int m_itemIndex;
-    int m_aggregateIndex;
+    const int m_itemIndex;
+    const int m_aggregateIndex;
 };
 
 QTM_END_NAMESPACE

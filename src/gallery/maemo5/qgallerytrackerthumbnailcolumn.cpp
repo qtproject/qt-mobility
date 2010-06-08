@@ -59,39 +59,49 @@ public:
     QGalleryTrackerThumbnailDBusWatcher(
             const QDBusPendingCall &call,
             const QVector<uint> &imageIds,
-            const QStringList &filePaths)
+            const QStringList &filePaths,
+            const QStringList &mimeTypes)
         : QDBusPendingCallWatcher(call)
         , id(0)
         , imageIds(imageIds)
         , filePaths(filePaths)
+        , mimeTypes(mimeTypes)
     {
     }
 
     uint id;
     QVector<uint> imageIds;
     QStringList filePaths;
+    QStringList mimeTypes;
 };
 
 class QGalleryTrackerThumbnailLoadWatcher : public QFutureWatcher<QVariant>
 {
 public:
-    QGalleryTrackerThumbnailLoadWatcher(const QVector<uint> imageIds, const QStringList &filePaths)
+    QGalleryTrackerThumbnailLoadWatcher(
+            const QVector<uint> imageIds, const QStringList &filePaths, const QStringList &mimeTypes)
         : imageIds(imageIds)
         , filePaths(filePaths)
+        , mimeTypes(mimeTypes)
     {
     }
 
     QVector<uint> imageIds;
     QStringList filePaths;
+    QStringList mimeTypes;
 };
 
 
 QGalleryTrackerThumbnailColumn::QGalleryTrackerThumbnailColumn(
         const QGalleryDBusInterfacePointer &thumbnailInterface,
-        const QString &flavor,
         int key,
+        int mimeTypeColumn,
+        QVariant::Type type,
+        const QString &flavor,
         QObject *parent)
     : QGalleryTrackerImageColumn(parent)
+    , m_mimeTypeColumn(mimeTypeColumn)
+    , m_type(type)
     , m_flavor(flavor)
     , m_thumbnailDir(QDesktopServices::storageLocation(QDesktopServices::HomeLocation)
                  + QLatin1String("/.thumbnails/") + flavor + QLatin1Char('/'))
@@ -99,8 +109,8 @@ QGalleryTrackerThumbnailColumn::QGalleryTrackerThumbnailColumn(
                 + QLatin1String("/.thumbnails/fail/"))
     , m_localDir(QLatin1String(".thumblocal/") + flavor + QLatin1Char('/'))
     , m_thumbnailInterface(thumbnailInterface)
+    , m_keys(QList<int>() << key)
 {
-    m_keys.append(key);
 }
 
 QGalleryTrackerThumbnailColumn::~QGalleryTrackerThumbnailColumn()
@@ -118,26 +128,49 @@ QGalleryTrackerThumbnailColumn::~QGalleryTrackerThumbnailColumn()
     qDeleteAll(m_loadWatchers);
 }
 
+QGalleryTrackerImageColumn *QGalleryTrackerThumbnailColumn::createImageColumn(
+        QGalleryDBusInterfaceFactory *dbus,
+        int key,
+        const QString &profile,
+        const QVector<int> &columns)
+{
+    return new QGalleryTrackerThumbnailColumn(
+            dbus->thumbnailInterface(), key, columns.first(), QVariant::Image, profile);
+}
+
+QGalleryTrackerImageColumn *QGalleryTrackerThumbnailColumn::createPixmapColumn(
+        QGalleryDBusInterfaceFactory *dbus,
+        int key,
+        const QString &profile,
+        const QVector<int> &columns)
+{
+    return new QGalleryTrackerThumbnailColumn(
+            dbus->thumbnailInterface(), key, columns.first(), QVariant::Pixmap, profile);
+}
+
 void QGalleryTrackerThumbnailColumn::insertImages(
         int index, int count, QVector<QVariant>::const_iterator row, int tableWidth)
 {
     QStringList filePaths;
+    QStringList mimeTypes;
 
     m_images.insert(index, count, QVariant());
     m_imageIds.insert(index, count, 0);
 
     for (int i = index; i < count; ++i, row += tableWidth) {
         const QString filePath = row->toString();
+        const QString mimeType = (row + m_mimeTypeColumn)->toString();
 
         const uint imageId = qHash(filePath);
 
         m_imageIds.replace(i, imageId);
 
         filePaths.append(filePath);
+        mimeTypes.append(mimeType);
     }
 
     QGalleryTrackerThumbnailLoadWatcher *watcher = new QGalleryTrackerThumbnailLoadWatcher(
-            m_imageIds.mid(index, count), filePaths);
+            m_imageIds.mid(index, count), filePaths, mimeTypes);
 
     m_loadWatchers.append(watcher);
 
@@ -168,14 +201,10 @@ void QGalleryTrackerThumbnailColumn::loadWatcherFinished()
     QVector<uint> imageIds;
 
     for (int i = 0, count = loadWatcher->future().resultCount(); i < count; ++i) {
-        QVariant result = loadWatcher->resultAt(i);
-
-        if (result.type() == QVariant::String) {
-            QString filePath = result.toString();
-
-            urls.append(QLatin1String("file://") + filePath);
-            mimeTypes.append(QString());
-            filePaths.append(filePath);
+        if (loadWatcher->resultAt(i).isNull()) {
+            urls.append(QLatin1String("file://") + loadWatcher->filePaths.at(i));
+            mimeTypes.append(loadWatcher->mimeTypes.at(i));
+            filePaths.append(loadWatcher->filePaths.at(i));
             imageIds.append(loadWatcher->imageIds.at(i));
         }
     }
@@ -194,7 +223,7 @@ void QGalleryTrackerThumbnailColumn::loadWatcherFinished()
                 cancelId);
 
         QGalleryTrackerThumbnailDBusWatcher *dbusWatcher = new QGalleryTrackerThumbnailDBusWatcher(
-                call, imageIds, filePaths);
+                call, imageIds, filePaths, mimeTypes);
 
         m_dbusWatchers.append(dbusWatcher);
 
@@ -233,9 +262,11 @@ void QGalleryTrackerThumbnailColumn::imagesReady(int begin, int end)
         while (i < end
                && index + count < m_imageIds.count()
                && m_imageIds.at(index + count) == watcher->imageIds.at(i)) {
-            const QVariant image = watcher->resultAt(i);
+            QVariant image = watcher->resultAt(i);
 
-            if (!image.isNull() && image.type() != QVariant::String) {
+            if (!image.isNull()) {
+                image.convert(m_type);
+
                 m_images.replace(index + count, image);
 
                 ++i;
@@ -293,7 +324,7 @@ void QGalleryTrackerThumbnailColumn::dbusFinished(uint id)
 
             QGalleryTrackerThumbnailLoadWatcher *loadWatcher
                     = new QGalleryTrackerThumbnailLoadWatcher(
-                            dbusWatcher->imageIds, dbusWatcher->filePaths);
+                            dbusWatcher->imageIds, dbusWatcher->filePaths, dbusWatcher->mimeTypes);
 
             m_loadWatchers.append(loadWatcher);
 
@@ -337,28 +368,14 @@ QVariant QGalleryTrackerThumbnailColumn::loadThumbnail(const QString &filePath)
 #else
                 imagePath = m_failDir + hash + QLatin1String(".png");
 #endif
-                return !QFile::exists(imagePath)
-                        ? filePath
+                return QFile::exists(imagePath)
+                        ? QImage()
                         : QVariant();
             }
         }
     }
-    
-    return loadImage(imagePath);
-}
 
-QVariant QGalleryTrackerThumbnailImageColumn::loadImage(const QString &imagePath) const
-{
-    QImage image(imagePath);
-
-    return !image.isNull() ? QVariant(image) : QVariant();
-}
-
-QVariant QGalleryTrackerThumbnailPixmapColumn::loadImage(const QString &imagePath) const
-{
-    QPixmap pixmap(imagePath);
-
-    return !pixmap.isNull() ? QVariant(pixmap) : QVariant();
+    return QImage(imagePath);
 }
 
 #include "moc_qgallerytrackerthumbnailcolumn_p.cpp"
