@@ -97,7 +97,7 @@ public:
         BasicSegmentData = 0x0001,
         DetailedSegmentData = 0x0002
     };
-    Q_DECLARE_FLAGS(SegmentDetails, SegmentDetail);
+    Q_DECLARE_FLAGS(SegmentDetails, SegmentDetail)
 
     enum InstructionDetail {
         NoInstructions = 0x0000,
@@ -143,7 +143,7 @@ public:
     InstructionDetail instructionDetail() const;
 
 //  TODO - determine if this is useful information for non-Navteq services
-//       - was previously removed with the plan to move the functionality 
+//       - was previously removed with the plan to move the functionality
 //         into a traffic-aware transit options subclass
 //    void setDepartureTime(const QDateTime& departureTime);
 //    QDateTime departureTime() const;
