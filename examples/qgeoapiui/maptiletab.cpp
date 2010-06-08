@@ -50,9 +50,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 
-#include <qgeomappingmanager.h>
-#include <qgeomapviewport.h>
-//#include <qgeotiledmappingmanager.h>
+#include <QGeoMapData>
 
 MapTileTab::MapTileTab(QWidget *parent)
         : QWidget(parent),
