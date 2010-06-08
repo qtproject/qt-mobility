@@ -142,16 +142,6 @@ public:
     void setInstructionDetail(InstructionDetail instructionDetail);
     InstructionDetail instructionDetail() const;
 
-//  TODO - determine if this is useful information for non-Navteq services
-//       - was previously removed with the plan to move the functionality
-//         into a traffic-aware transit options subclass
-//    void setDepartureTime(const QDateTime& departureTime);
-//    QDateTime departureTime() const;
-//
-//    void setArrivalTime(const QDateTime& arrivalTime);
-//    QDateTime arrivalTime() const;
-
-
     // defaults to empty - no subclass required yet
     // this is how we handle private / public / truck attributes
     //void setTransitOptions(const QList<const QGeoRouteTransitOptions *> &transitOptions);
