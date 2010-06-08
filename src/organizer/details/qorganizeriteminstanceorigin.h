@@ -62,11 +62,15 @@ public:
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")
     Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
+    Q_DECLARE_LATIN1_CONSTANT(FieldParentGuid, "ParentGuid");
     Q_DECLARE_LATIN1_CONSTANT(FieldOriginalTimestamp, "OriginalTimestamp");
 #endif
 
     void setParentLocalId(QOrganizerItemLocalId parentId) {setValue(FieldParentLocalId, static_cast<int>(parentId));}
     QOrganizerItemLocalId parentLocalId() const {return static_cast<QOrganizerItemLocalId>(variantValue(FieldParentLocalId).toInt());}
+
+    void setParentGuid(const QString& guid) {setValue(FieldParentGuid, guid);}
+    QString parentGuid() const {return value(FieldParentGuid);}
 
     void setOriginalTimestamp(const QDateTime& timestamp) {setValue(FieldOriginalTimestamp, timestamp);}
     QDateTime originalTimestamp() const {return variantValue(FieldOriginalTimestamp).toDateTime();}
