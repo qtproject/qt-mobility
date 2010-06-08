@@ -202,10 +202,7 @@ QOrganizerItem QOrganizerItemSymbianEngine::item(const QOrganizerItemLocalId& it
 {
     QOrganizerItem item;
     TRAPD(err, itemL(itemId, &item, fetchHint));
-    if (err != KErrNone) {
-        // TODO: convert symbian err into qt error
-        *error = QOrganizerItemManager::UnspecifiedError;
-    }
+    transformError(err, error);
     return item;
 }
 
@@ -261,12 +258,7 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemM
     // TODO: Validate item according to the schema
 
     TRAPD(err, saveItemL(item));
-    if (err != KErrNone) {
-        // TODO: convert symbian err into qt error
-        *error = QOrganizerItemManager::UnspecifiedError;
-    }
-
-    return *error == QOrganizerItemManager::NoError;
+    return transformError(err, error);
 }
 
 void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
@@ -334,11 +326,7 @@ bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>
 bool QOrganizerItemSymbianEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error)
 {
     TRAPD(err, removeItemL(organizeritemId));
-    if (err != KErrNone) {
-        // TODO: convert symbian err into qt error
-        *error = QOrganizerItemManager::UnspecifiedError;
-    }
-    return err == QOrganizerItemManager::NoError;
+    return transformError(err, error);
 }
 
 void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organizeritemId)
@@ -551,4 +539,65 @@ TBool QOrganizerItemSymbianEngine::NotifyProgress()
 {
     // No 
     return EFalse;
+}
+
+/*! Transform a Symbian error id to QOrganizerItemManager::Error.
+ *
+ * \param symbianError Symbian error.
+ * \param QtError Qt error.
+ * \return true if there was no error
+ *         false if there was an error
+*/
+bool QOrganizerItemSymbianEngine::transformError(TInt symbianError, QOrganizerItemManager::Error* qtError)
+{
+    switch(symbianError)
+    {
+        case KErrNone:
+        {
+            *qtError = QOrganizerItemManager::NoError;
+            break;
+        }
+        case KErrNotFound:
+        {
+            *qtError = QOrganizerItemManager::DoesNotExistError;
+            break;
+        }
+        case KErrAlreadyExists:
+        {
+            *qtError = QOrganizerItemManager::AlreadyExistsError;
+            break;
+        }
+        case KErrLocked:
+        {
+            *qtError = QOrganizerItemManager::LockedError;
+            break;
+        }
+        case KErrAccessDenied:
+        case KErrPermissionDenied:
+        {
+            *qtError = QOrganizerItemManager::PermissionsError;
+            break;
+        }
+        case KErrNoMemory:
+        {
+            *qtError = QOrganizerItemManager::OutOfMemoryError;
+            break;
+        }
+        case KErrNotSupported:
+        {
+            *qtError = QOrganizerItemManager::NotSupportedError;
+            break;
+        }
+        case KErrArgument:
+        {
+            *qtError = QOrganizerItemManager::BadArgumentError;
+            break;
+        }
+        default:
+        {
+            *qtError = QOrganizerItemManager::UnspecifiedError;
+            break;
+        }
+    }
+    return *qtError == QOrganizerItemManager::NoError;
 }
