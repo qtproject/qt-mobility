@@ -6,10 +6,7 @@ SUBDIRS += global
 contains(mobility_modules,serviceframework) {
     SUBDIRS += serviceframework
     symbian {
-        SUBDIRS = serviceframework/symbian/dll/databasemanagerserver_dll.pro \
-                  serviceframework/symbian/exe/databasemanagerserver_exe.pro \
-                  $$SUBDIRS
-        CONFIG += ordered
+        SUBDIRS += serviceframework/databasemanagerserver_symbian/databasemanagerserver.pro
     }
 }
 
@@ -41,6 +38,6 @@ contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
 }
 
 symbian {
-    SUBDIRS += s60installs/s60installs.pro
+    SUBDIRS += s60installs
 }
 

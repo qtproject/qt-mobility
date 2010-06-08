@@ -21,21 +21,20 @@
 <li><a href="battery-charge-battery-publisher-main-cpp.html">battery-charge/battery-publisher/main.cpp</a></li>
 <li><a href="battery-charge-battery-charge-pro.html">battery-charge/battery-charge.pro</a></li>
 <li><a href="battery-charge-battery-publisher-battery-publisher-pro.html">battery-charge/battery-publisher/battery-publisher.pro</a></li>
-<li><a href="battery-charge-battery-subscriber-battery-subscriber-pro.html">battery-charge/battery-subscriber/battery-subscriber.pro</a></li>
-<li><a href="battery-charge-battery-subscriber-battery-subscriber-qrc.html">battery-charge/battery-subscriber/battery-subscriber.qrc</a></li>
 </ul>
 <p>This examples shows how to access published context values from within QML. The example consists of two programs. The first, battery-publisher, is a standard Qt GUI application that is used to emulate a battery for the sole purpose of demonstrating the second program. It publishes the keys</p>
 <pre>    /power/battery/charge
     /power/battery/charging</pre>
 <p>and provides controls for modifying their values.</p>
-<p align="center"><img src="images/battery-publisher.png" /></p><p>The second program, battery-subscriber, is implemented in QML with some C++ code to display the QML and make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML.</p>
+<p align="center"><img src="images/battery-publisher.png" /></p><p>The second program, battery-subscriber, is implemented in QML with some C++ code to display the QML and makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML.</p>
 <p>The user interface of the battery subscriber program is described in QML. It has the following features: A rectangular area representing the percent charge of the battery. It indicates a low battery state by changing the color to red, it is green otherwise. An animation is shown to indicate that the battery is being recharged.</p>
 <p align="center"><img src="images/battery-subscriber.png" /></p><a name="battery-subscriber"></a>
 <h2>Battery Subscriber</h2>
-<p>The first step is to make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML so that our QML code can access the keys published by the battery-publisher. This is achieved by using the QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros. The following code makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML as ValueSpaceSubscriber.</p>
-<pre>    QML_DECLARE_TYPE(QValueSpaceSubscriber);</pre>
+<p>The <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class is available from within QML through the use of a plugin which is parsed by the QML engine. This means that simply using the QML element 'ValueSpaceSubscriber' allows access to the valuespace, which is demonstrated below.</p>
 <a name="qml"></a>
 <h3>QML</h3>
+<p>Firstly, import the plugin library that provides the ValueSpaceSubscriber QML element.</p>
+<pre>    import QtMobility.publishsubscribe 1.0</pre>
 <p>Two ValueSpaceSubscriber instances are created, one for each of the battery values. We give each object a unique id so that we can reference it from elsewhere in the QML. We set the <i>path</i> properties to the Value Space path of the keys. Finally we set the <i>notify</i> properties to true to enable the emission of change notification signals.</p>
 <pre>        ValueSpaceSubscriber {
             id: batteryCharge

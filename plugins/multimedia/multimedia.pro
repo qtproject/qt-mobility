@@ -9,7 +9,7 @@ TEMPLATE = subdirs
 SUBDIRS += m3u
 
 win32 {
-    contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
+    SUBDIRS += audiocapture
 }
 
 win32:!wince* {
@@ -27,15 +27,13 @@ unix:!mac:!symbian {
     system(pkg-config --exists \'$${TMP_GST_LIBS}\' --print-errors): {
         SUBDIRS += gstreamer
     } else {
-        contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
+        SUBDIRS += audiocapture
     }
-   
     SUBDIRS += v4l
 }
 
 mac {
-    contains(QT_CONFIG, multimedia): SUBDIRS += audiocapture
-    SUBDIRS += qt7
+    SUBDIRS += audiocapture qt7
 }
 
 symbian:SUBDIRS += symbian

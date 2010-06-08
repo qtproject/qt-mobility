@@ -53,9 +53,9 @@ public:
     virtual void registerTypes(const char *uri)
     {
         Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.serviceframework"));
-
-        qmlRegisterType<QServiceWrapper>(uri, 1, 0, "Service");
-        qmlRegisterType<QServiceListWrapper>(uri, 1, 0, "ServiceList");
+        
+        qmlRegisterType<QDeclarativeService>(uri, 1, 0, "Service");
+        qmlRegisterType<QDeclarativeServiceList>(uri, 1, 0, "ServiceList");
     }
 };
 

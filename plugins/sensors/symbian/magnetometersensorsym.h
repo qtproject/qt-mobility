@@ -111,13 +111,14 @@ public:
     /**
      * Holds the id of the magnetometer
      */
-    static const char *id;
+    static char const * const id;
     
 private:     
     QMagnetometerReading iReading;
     TSensrvMagnetometerAxisData iData;
     qreal iCalibrationLevel;
     bool iReturnGeoValues;
+    TInt iScaleRange;
     };
 
 #endif //MAGNETOMETERSENSORSYM_H

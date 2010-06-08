@@ -84,7 +84,7 @@ public:
     explicit QOrientationSensor(QObject *parent = 0) : QSensor(QOrientationSensor::type, parent) {}
     virtual ~QOrientationSensor() {}
     QOrientationReading *reading() const { return static_cast<QOrientationReading*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 
 QTM_END_NAMESPACE

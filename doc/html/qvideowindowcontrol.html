@@ -89,15 +89,15 @@
 <h2>Detailed Description</h2>
 <p>The QVideoWindowControl class provides a media control for rendering video to a window.</p>
 <p>The <a href="qvideowindowcontrol.html#winId">winId</a>() property QVideoWindowControl allows a platform specific window ID to be set as the video render target of a <a href="qmediaservice.html">QMediaService</a>. The <a href="qvideowindowcontrol.html#displayRect">displayRect</a>() property is used to set the region of the window the video should be rendered to, and the <a href="qvideowindowcontrol.html#aspectRatioMode">aspectRatioMode</a>() property indicates how the video should be scaled to fit the <a href="qvideowindowcontrol.html#displayRect">displayRect</a>().</p>
-<pre>    QVideoWindowControl *windowControl = mediaService-&gt;control&lt;QVideoWindowControl *&gt;();
+<pre>    QVideoWindowControl *windowControl = mediaService-&gt;requestControl&lt;QVideoWindowControl *&gt;();
     windowControl-&gt;setWinId(widget-&gt;winId());
     windowControl-&gt;setDisplayRect(widget-&gt;rect());
     windowControl-&gt;setAspectRatioMode(Qt::KeepAspectRatio);</pre>
-<p>QVideoWindowControl is one of number of possible video output controls, in order to receive video it must be made the active video output control by setting the output property of <a href="qvideooutputcontrol.html">QVideoOutputControl</a> to <a href="qvideooutputcontrol.html#Output-enum">WindowOutput</a>. Consequently any <a href="qmediaservice.html">QMediaService</a> that implements QVideoWindowControl must also implement <a href="qvideooutputcontrol.html">QVideoOutputControl</a>.</p>
+<p>QVideoWindowControl is one of number of possible video output controls, in order to receive video it must be made the active video output control by setting the output property of QVideoOutputControl to WindowOutput. Consequently any <a href="qmediaservice.html">QMediaService</a> that implements QVideoWindowControl must also implement QVideoOutputControl.</p>
 <pre>    QVideoOutputControl *outputControl = mediaService-&gt;control&lt;QVideoOutputControl *&gt;();
     outputControl-&gt;setOutput(QVideoOutputControl::WindowOutput);</pre>
 <p>The interface name of QVideoWindowControl is <tt>com.nokia.Qt.QVideoWindowControl/1.0</tt> as defined in <a href="qvideowindowcontrol.html#QVideoWindowControl_iid">QVideoWindowControl_iid</a>.</p>
-<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>(), <a href="qvideooutputcontrol.html">QVideoOutputControl</a>, and <a href="qvideowidget.html">QVideoWidget</a>.</p>
+<p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>(), QVideoOutputControl, and <a href="qvideowidget.html">QVideoWidget</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QVideoWindowControl/QVideoWindowControl"></a>

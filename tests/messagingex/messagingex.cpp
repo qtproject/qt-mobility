@@ -54,7 +54,7 @@ MessagingEx::MessagingEx(QWidget* parent)
     connect(&m_service, SIGNAL(messagesFound(const QMessageIdList&)), this, SLOT(messagesFound(const QMessageIdList&)));
     m_accountList = m_manager.queryAccounts(QMessageAccountFilter(), QMessageAccountSortOrder(), 10 , 0);
     for(int i = 0; i < m_accountList.count(); ++i){
-        QMessageAccount account = QMessageAccount(m_accountList[i]);
+        QMessageAccount account = m_accountList[i];
         accountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
         accountComboBox_2->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
         folderAccountComboBox->addItem(QString("%1 - %2").arg(i+1).arg(account.name()),account.id().toString());
@@ -236,6 +236,19 @@ void MessagingEx::composeEmail()
 {
     QMessage message;
     message.setType(QMessage::Email);
+    int index = accountComboBox->currentIndex();
+    m_account = QMessageAccount(m_accountList[index]).id();
+    QMessage::TypeFlags types = m_account.messageTypes();
+    
+    if (!emailAddressEdit->text().isEmpty()){
+        message.setTo(QMessageAddress(QMessageAddress::Email, emailAddressEdit->text()));
+    }
+    
+    message.setParentAccountId(m_account.id());
+    message.setSubject(subjectEdit->text());
+   
+    message.setBody(QString(emailMessageEdit->toPlainText()));
+    message.appendAttachments(m_attachments);
     m_service.compose(message);
 }
 
@@ -348,34 +361,7 @@ void MessagingEx::on_sendMmsButton_clicked()
 
 void MessagingEx::messageReceived(const QMessageId& aId)
 {
-    bool canShow = true;
-    if (m_manager.message(aId).type() == QMessage::NoType) {
-        // Message can not be read/shown
-        // Wait message availability for 5 seconds at maximum
-        canShow = false;
-        int tries = 0;
-        QEventLoop* loop = new QEventLoop(this);
-        while (tries < 50) {
-            // => Wait for 0.1 seconds and try to read message again
-            QTimer::singleShot(100, loop, SLOT(quit()));
-            loop->exec();
-            if (m_manager.message(aId).type() != QMessage::NoType) {
-                // Message can be read/shown
-                canShow = true;
-                break;
-            } else {
-                // Message can not be read/shown
-                // => Continue waiting
-                tries++;
-            }
-        }
-        loop->disconnect();
-        loop->deleteLater();
-    }
-
-    if (canShow) {
-        m_service.show(aId);
-    }
+    m_service.show(aId);
 }
 
 void MessagingEx::messageRemoved(const QMessageId& aId)
