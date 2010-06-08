@@ -1540,8 +1540,7 @@ QContactThumbnail* QContactABook::getThumbnailDetail(EContact *eContact) const
   if (!aContact)
     return rtn;
 
-  //GdkPixbuf* pixbuf = osso_abook_contact_get_avatar_pixbuf(aContact, NULL, NULL);
-  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), 64, 64, true, 4, NULL);
+  GdkPixbuf* pixbuf = osso_abook_avatar_get_image_rounded(OSSO_ABOOK_AVATAR(aContact), -1, -1, false, 0, NULL);
   if (!GDK_IS_PIXBUF(pixbuf)){
     FREE(pixbuf);
     return rtn;
@@ -1551,7 +1550,10 @@ QContactThumbnail* QContactABook::getThumbnailDetail(EContact *eContact) const
   QSize bsize(gdk_pixbuf_get_width(pixbuf), gdk_pixbuf_get_height(pixbuf));
 
   //Convert GdkPixbuf to QPixmap
-  QImage converted(bdata, bsize.width(), bsize.height(), QImage::Format_ARGB32_Premultiplied);
+  QImage::Format format = gdk_pixbuf_get_has_alpha(pixbuf) ? QImage::Format_ARGB32 : QImage::Format_RGB32;
+  int stride = gdk_pixbuf_get_rowstride(pixbuf);
+  QImage converted(bdata, bsize.width(), bsize.height(), stride, format);
+  converted = converted.rgbSwapped();
   map[QContactThumbnail::FieldThumbnail] = converted;
   g_object_unref(pixbuf);
   setDetailValues(map, rtn);
@@ -1677,6 +1679,57 @@ OssoABookContact* QContactABook::convert(const QContact *contact, QContactManage
 {
   Q_CHECK_PTR(contact);
 
+  // first, check for uniqueness constraints.
+  // currently, it is only phone numbers and online accounts
+  // which are NOT unique.
+  // XXX TODO: if/when we modify the logic to make other details
+  // non-unique (eg, QContactEmailAddress), we'll need to remove
+  // them from this check.
+  if (contact->details<QContactAddress>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactAvatar>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactBirthday>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactEmailAddress>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactGender>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactName>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactNickname>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactNote>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactOrganization>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactThumbnail>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+  if (contact->details<QContactUrl>().count() > 1) {
+      *error = QContactManager::LimitReachedError;
+      return 0;
+  }
+
   OssoABookContact* rtn;
   
   // Get aContact if it exists or create a new one if it doesn't
@@ -1689,6 +1742,7 @@ OssoABookContact* QContactABook::convert(const QContact *contact, QContactManage
   }
   
   QList<QContactDetail> allDetails = contact->details();
+
   foreach(const QContactDetail &detail, allDetails){
     QString definitionName = detail.definitionName();
     
@@ -1831,13 +1885,19 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
     
     if (image.isNull())
       return;
-    
-    if (image.format() != QImage::Format_ARGB32_Premultiplied)
-        image = image.convertToFormat(QImage::Format_ARGB32_Premultiplied);
+
+    if (image.hasAlphaChannel()) {
+        image = image.convertToFormat(QImage::Format_ARGB32);
+        image = image.rgbSwapped();
+    } else {
+        image = image.convertToFormat(QImage::Format_RGB888);
+    }
+
     GdkPixbuf *pixbuf = gdk_pixbuf_new_from_data(image.bits(), GDK_COLORSPACE_RGB,
                                                  image.hasAlphaChannel(), 8,
                                                  image.width(), image.height(),
                                                  image.bytesPerLine(), 0, 0);
+
     osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, 0, 0);
     g_object_unref(pixbuf);
 }
@@ -2014,7 +2074,13 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
   if (paramValues.isEmpty())
     paramValues << "VOICE";
   
-  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, false, detail.detailUri().toInt());
+  if (detail.detailUri().isEmpty()) {
+    // new phone number detail.
+    addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, false, detail.detailUri().toInt());
+  } else {
+    // overwrite old phone number detail.
+    addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
+  }
 }
 
 void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const
