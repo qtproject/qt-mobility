@@ -130,10 +130,27 @@ void QLandmarkIdFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 }
 
 /*!
+    Returns the request's fetch hint.
+*/
+QLandmarkFetchHint QLandmarkIdFetchRequest::fetchHint() const
+{
+    Q_D(const QLandmarkIdFetchRequest);
+    return d->fetchHint;
+}
+
+/*!
+    Sets the request's \a fetchHint.
+*/
+void QLandmarkIdFetchRequest::setFetchHint(const QLandmarkFetchHint &fetchHint)
+{
+    Q_D(QLandmarkIdFetchRequest);
+    d->fetchHint = fetchHint;
+}
+
+/*!
     Returns the list of identifiers of landmarks which matched the
     filter.
 */
-
 QList<QLandmarkId> QLandmarkIdFetchRequest::landmarkIds() const
 {
     Q_D(const QLandmarkIdFetchRequest);

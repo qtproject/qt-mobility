@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,40 +39,41 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFETCHREQUEST_H
-#define QLANDMARKFETCHREQUEST_H
+#ifndef QLANDMARKFETCHHINT_P_H
+#define QLANDMARKFETCHHINT_P_H
 
-#include "qlandmarkabstractrequest.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qlandmarkfetchhint.h"
+#include <QSharedData>
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkFetchRequestPrivate;
-class Q_LOCATION_EXPORT QLandmarkFetchRequest : public QLandmarkAbstractRequest
+class QLandmarkFetchHintPrivate : public QSharedData
 {
-    Q_OBJECT
 public:
-    QLandmarkFetchRequest(QLandmarkManager *manager, QObject *parent = 0);
-    ~QLandmarkFetchRequest();
+    QLandmarkFetchHintPrivate(): QSharedData() {}
 
-    QLandmarkFilter filter() const;
-    void setFilter(const QLandmarkFilter &filter);
+    QLandmarkFetchHintPrivate(const QLandmarkFetchHintPrivate &other)
+        : QSharedData(other),
+          offset(other.offset),
+          maxItems(other.maxItems) {}
 
-    void setLandmarkIds(const QList<QLandmarkId> &ids);
+    ~QLandmarkFetchHintPrivate() {}
 
-    QList<QLandmarkSortOrder> sorting() const;
-    void setSorting(const QList<QLandmarkSortOrder> &sorting);
-    void setSorting(const QLandmarkSortOrder &sorting);
-
-    QLandmarkFetchHint fetchHint() const;
-    void setFetchHint(const QLandmarkFetchHint &fetchHint);
-
-    QList<QLandmark> landmarks() const;
-private:
-    Q_DISABLE_COPY(QLandmarkFetchRequest)
-    Q_DECLARE_PRIVATE(QLandmarkFetchRequest)
-    friend class QLandmarkManagerEngine;
+    int offset;
+    int maxItems;
 };
+
 
 QTM_END_NAMESPACE
 

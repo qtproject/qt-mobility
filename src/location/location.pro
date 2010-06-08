@@ -56,6 +56,7 @@ PUBLIC_HEADERS += \
                     qlandmarksaverequest.h \
                     qlandmarksortorder.h \
                     qlandmarkunionfilter.h \
+                    qlandmarkfetchhint.h \
                     qmaneuver.h \
                     qmapellipse.h \
                     qmapline.h \
@@ -112,6 +113,7 @@ PRIVATE_HEADERS += \
                     qlandmarkdistancesort_p.h \
                     qlandmarkrequests_p.h \
                     qlocationutils_p.h \
+                    qlandmarkfetchhint_p.h \
                     qmaneuver_p.h \
                     qmapellipse_p.h \
                     qmapline_p.h \
@@ -260,6 +262,7 @@ SOURCES += \
             qlandmarksortorder.cpp \
             qlandmarkunionfilter.cpp \
             qlocationutils.cpp \
+            qlandmarkfetchhint.cpp \
             qmaneuver.cpp \
             qmapellipse.cpp \
             qmapline.cpp \

@@ -47,6 +47,7 @@
 #include "qlandmarkfilter.h"
 #include "qlandmarksortorder.h"
 #include "qlandmarkcategoryid.h"
+#include "qlandmarkfetchhint.h"
 
 #include <QObject>
 #include <QMap>
@@ -103,13 +104,18 @@ public:
     QList<QLandmarkCategoryId> categoryIds() const;
 
     QLandmark landmark(const QLandmarkId &landmarkId) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders) const;
-    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,
+                                const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
+    QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
+                            const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
 
     QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds) const;
     QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
-                                   const QList<QLandmarkSortOrder> &sortOrders) const;
-    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder()) const;
+                                   const QList<QLandmarkSortOrder> &sortOrders,
+                                   const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
+    QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter,
+                                   const QLandmarkSortOrder &sortOrder = QLandmarkSortOrder(),
+                                   const QLandmarkFetchHint &fetchHint = QLandmarkFetchHint()) const;
 
     bool importLandmarks(QIODevice *device, const QByteArray &format= QByteArray());
     bool importLandmarks(const QString &fileName, const QByteArray &format = QByteArray());
@@ -136,7 +142,6 @@ public:
     static bool parseUri(const QString& uri, QString* managerName, QMap<QString, QString>* params);
 
 Q_SIGNALS:
-    void dataChanged();
     void landmarksAdded(const QList<QLandmarkId> &landmarkIds);
     void landmarksChanged(const QList<QLandmarkId> &landmarkIds);
     void landmarksRemoved(const QList<QLandmarkId> &landmarkIds);

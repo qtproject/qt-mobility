@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,39 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QLANDMARKFETCHREQUEST_H
-#define QLANDMARKFETCHREQUEST_H
+#ifndef QLANDMARKFETCHHINT_H
+#define QLANDMARKFETCHHINT_H
 
-#include "qlandmarkabstractrequest.h"
-#include "qlandmarkfetchhint.h"
+#include "qmobilityglobal.h"
+#include <QSharedDataPointer>
+
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkFetchRequestPrivate;
-class Q_LOCATION_EXPORT QLandmarkFetchRequest : public QLandmarkAbstractRequest
-{
-    Q_OBJECT
+class QLandmarkFetchHintPrivate;
+class Q_LOCATION_EXPORT QLandmarkFetchHint {
 public:
-    QLandmarkFetchRequest(QLandmarkManager *manager, QObject *parent = 0);
-    ~QLandmarkFetchRequest();
+    QLandmarkFetchHint();
+    QLandmarkFetchHint(const QLandmarkFetchHint &other);
+    ~QLandmarkFetchHint();
+    QLandmarkFetchHint &operator=(const QLandmarkFetchHint &other);
 
-    QLandmarkFilter filter() const;
-    void setFilter(const QLandmarkFilter &filter);
+    void setMaxItems(int max);
+    int maxItems();
 
-    void setLandmarkIds(const QList<QLandmarkId> &ids);
-
-    QList<QLandmarkSortOrder> sorting() const;
-    void setSorting(const QList<QLandmarkSortOrder> &sorting);
-    void setSorting(const QLandmarkSortOrder &sorting);
-
-    QLandmarkFetchHint fetchHint() const;
-    void setFetchHint(const QLandmarkFetchHint &fetchHint);
-
-    QList<QLandmark> landmarks() const;
+    void setOffset(int offset);
+    int offset();
 private:
-    Q_DISABLE_COPY(QLandmarkFetchRequest)
-    Q_DECLARE_PRIVATE(QLandmarkFetchRequest)
-    friend class QLandmarkManagerEngine;
+    QSharedDataPointer<QLandmarkFetchHintPrivate> d;
 };
 
 QTM_END_NAMESPACE

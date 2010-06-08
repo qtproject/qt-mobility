@@ -135,11 +135,12 @@ int QLandmarkManagerEngine::managerVersion() const
 /*!
     Returns a list of landmark ids of landmarks that match the given \a filter, sorted
     according to the given \a sortOrders.  Depending on the backend, this filtering operation
-    may involve retrieving all the landmarks.  Any error which occurs will be saved in \a error
-    and \a errorString.
+    may involve retrieving all the landmarks.  Various fetch operation parameters may be specified by \a fetchHint.
+
+    Any error which occurs will be saved in \a error and \a errorString.
  */
 QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& filter,
-        const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error,
+        const QList<QLandmarkSortOrder>& sortOrders, const QLandmarkFetchHint& fetchHint, QLandmarkManager::Error* error,
         QString *errorString) const
 {
     return QList<QLandmarkId>();
@@ -184,11 +185,12 @@ QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &lan
 
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
+    Various fetch operation parameters are specified by \a fetchHint.
 
     Overall operation errors are stored in \a error and \a errorString.
 */
 QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
-        QLandmarkManager::Error *error, QString *errorString) const
+                                                   const QLandmarkFetchHint &fetchHint, QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmark>();
 }
@@ -500,98 +502,74 @@ bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* re
 }
 
 /*!
-  \fn QLandmarkManagerEngine::dataChanged()
-
-  This signal is emitted some time after changes occur to the data managed by this
-  engine, and the engine is unable to precisely determine which changes occurred, or if the
-  engine considers the changes to be radical enough to require clients to reload all data.
-
-  If this signal is emitted, no other signals may be emitted for the associated changes.
-
-  As it is possible that other processes (or other devices) may have caused the
-  changes, the timing can not be determined.
-
-  \sa landmarksAdded(), landmarksChanged(), landmarksRemoved(), categoriesAdded(),
-  categoriesChanged(), categoriesRemoved()
- */
-
-/*!
    \fn QLandmarkManagerEngine::landmarksAdded(const QList<QLandmarkId> &landmarkIds)
 
-   This signal is emitted some time after a set of landmarks has been added
-   (and where the \l dataChanged() signal was not emitted for those
-   changes).  As it is possible that other processes(or other devices) may
+   This signal is emitted some time after a set of landmarks has been added.
+   As it is possible that other processes(or other devices) may
    have added the landmarks, the exact timing cannot be determined.
 
    There may be one or more landmark identifiers in the \a landmarkIds list.
 
-   \sa dataChanged()
+   \sa landmarksChanged(), landmarksRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::landmarksChanged(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted some time after a set of landmarks have been modified
-    (and where the \l dataChanged() signal was not emitted for those changes).  As it is
-    possible that other processes(or other devices) may have modified the landmarks,
+    This signal is emitted some time after a set of landmarks have been modified.
+    As it is possible that other processes(or other devices) may have modified the landmarks,
     the timing cannot be determined.
 
     There may be one ore more landmark identifiers in the \a landmarkIds list.
-
-    \sa dataChanged()
+    \sa landmarksAdded(), landmarksRemoved()
 */
 
 
 /*!
     \fn QLandmarkManagerEngine::landmarksRemoved(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted some time after a set of landmarks have been removed
-    (and where the \l dataChanged() signal was not emitted for those changes).  As it is
+    This signal is emitted some time after a set of landmarks have been removed.  As it is
     possible that other processes(or other devices) may have removed the landmarks,
     the timing cannot be determined.
 
     There may be one ore more landmark identifiers in the \a landmarkIds list.
-
-    \sa dataChanged()
+    \sa landmarksAdded(), landmarksChanged()
 */
 
 /*!
    \fn QLandmarkManagerEngine::categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds)
 
    This signal is emitted some time after a set of categories has been added
-   (and where the \l dataChanged() signal was not emitted for those
-   changes).  As it is possible that other processes(or other devices) may
+   As it is possible that other processes(or other devices) may
    have added the landmarks, the exact timing cannot be determined.
 
    There may be one or more category identifiers in the \a categoryIds list.
 
-   \sa dataChanged()
+   \sa categoriesChanged(), categoriesRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted some time after a set of categories have been modified
-    (and where the \l dataChanged() signal was not emitted for those changes).  As it is
-    possible that other processes(or other devices) may have modified the categories,
+    As it is possible that other processes(or other devices) may have modified the categories,
     the timing cannot be determined.
 
     There may be one ore more category identifiers in the \a categoryIds list.
 
-    \sa dataChanged()
+    \sa categoriesAdded(), categoriesRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted some time after a set of categories have been removed
-    (and where the \l dataChanged() signal was not emitted for those changes).  As it is
-    possible that other processes(or other devices) may have removed the categories,
+    As it is possible that other processes(or other devices) may have removed the categories,
     the timing cannot be determined.
 
     There may be one ore more category identifiers in the \a categoryIds list.
 
-    \sa dataChanged()
+    \sa categoriesAdded(), categoriesChanged()
 */
 
 /*!

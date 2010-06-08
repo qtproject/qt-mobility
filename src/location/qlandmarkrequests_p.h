@@ -70,6 +70,7 @@ public:
 
     QLandmarkFilter filter;
     QList<QLandmarkSortOrder>sorting;
+    QLandmarkFetchHint fetchHint;
     QList<QLandmarkId> landmarkIds;
 };
 
@@ -83,6 +84,7 @@ public:
     }
     QLandmarkFilter filter;
     QList<QLandmarkSortOrder> sorting;
+    QLandmarkFetchHint fetchHint;
     QList<QLandmark> landmarks;
 };
 

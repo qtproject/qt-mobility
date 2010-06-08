@@ -143,6 +143,24 @@ void QLandmarkFetchRequest::setSorting(const QLandmarkSortOrder &sorting)
 }
 
 /*!
+    Returns the request's fetch hint.
+*/
+QLandmarkFetchHint QLandmarkFetchRequest::fetchHint() const
+{
+    Q_D(const QLandmarkFetchRequest);
+    return d->fetchHint;
+}
+
+/*!
+    Sets the request's \a fetchHint
+*/
+void QLandmarkFetchRequest::setFetchHint(const QLandmarkFetchHint &fetchHint)
+{
+    Q_D(QLandmarkFetchRequest);
+    d->fetchHint = fetchHint;
+}
+
+/*!
     Returns the list of landmarks which matched the
     filter.
 */

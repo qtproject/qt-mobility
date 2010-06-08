@@ -552,6 +552,7 @@ QString landmarkIdsNearestQueryString(const QLandmarkNearestFilter &filter)
 
 QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFilter& filter,
         const QList<QLandmarkSortOrder>& sortOrders,
+        const QLandmarkFetchHint &fetchHint,
         QLandmarkManager::Error *error,
         QString *errorString, const QString &managerUri, QueryRun * queryRun =0)
 {
@@ -686,7 +687,7 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                 //do nothing
             } else if (filters.size() == 1) {
                 result = ::landmarkIds( connectionName, filters.at(0),
-                                QList<QLandmarkSortOrder>(), error, errorString, managerUri,queryRun);
+                                QList<QLandmarkSortOrder>(), fetchHint, error, errorString, managerUri,queryRun);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
                     return result;
@@ -694,7 +695,7 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             } else  {
                 QSet<QString> ids;
                 QList<QLandmarkId> firstResult = landmarkIds(connectionName,filters.at(0),
-                                                QList<QLandmarkSortOrder>(), error, errorString,
+                                                QList<QLandmarkSortOrder>(), fetchHint, error, errorString,
                                                 managerUri, queryRun);
                 for (int j = 0; j < firstResult.size(); ++j) {
                     if (firstResult.at(j).isValid())
@@ -703,7 +704,7 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
 
                 for (int i = 1; i < filters.size(); ++i) {
                     QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
-                                                QList<QLandmarkSortOrder>(), error, errorString,
+                                                QList<QLandmarkSortOrder>(), fetchHint, error, errorString,
                                                 managerUri, queryRun);
 
                     if (*error != QLandmarkManager::NoError) {
@@ -738,7 +739,7 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                 //do nothing
             } else if (filters.size() == 1) {
                 result =  ::landmarkIds(connectionName, filters.at(0),
-                                        QList<QLandmarkSortOrder>(), error, errorString,
+                                        QList<QLandmarkSortOrder>(), fetchHint, error, errorString,
                                         managerUri, queryRun);
                 if (*error != QLandmarkManager::NoError) {
                     result.clear();
@@ -747,7 +748,9 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             } else {
                 for (int i = 0; i < filters.size(); ++i) {
                     QList<QLandmarkId> subResult = landmarkIds(connectionName, filters.at(i),
-                                                               QList<QLandmarkSortOrder>(), error, errorString,
+                                                               QList<QLandmarkSortOrder>(),
+                                                               fetchHint,
+                                                               error, errorString,
                                                                managerUri, queryRun);
 
                     if (*error != QLandmarkManager::NoError) {
@@ -912,7 +915,7 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         }
     }
 
-    if (!alreadySorted) {
+    if (!alreadySorted && sortOrders.count() > 0 ) {
         //TODO: optimize this
         QList<QLandmark> landmarks;
         QLandmark landmark;
@@ -924,7 +927,6 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             }
             landmarks.append(landmark);
         }
-
         result = QLandmarkManagerEngineSqlite::sortLandmarks(landmarks, sortOrders);
     }
     return result;
@@ -932,6 +934,7 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
 
 QList<QLandmark> landmarks(const QString &connectionName, const QLandmarkFilter& filter,
         const QList<QLandmarkSortOrder>& sortOrders,
+        const QLandmarkFetchHint &fetchHint,
         QLandmarkManager::Error *error,
         QString *errorString, const QString &managerUri, QueryRun *queryRun =0)
 {
@@ -947,7 +950,7 @@ QList<QLandmark> landmarks(const QString &connectionName, const QLandmarkFilter&
         return result;
     }
 
-    QList<QLandmarkId> ids = ::landmarkIds(connectionName, filter, sortOrders, error, errorString, managerUri);
+    QList<QLandmarkId> ids = ::landmarkIds(connectionName, filter, sortOrders, fetchHint, error, errorString, managerUri);
     if (error && *error != QLandmarkManager::NoError) {
         return result;
     }
@@ -1008,7 +1011,8 @@ void QueryRun::run()
         switch(request->type()){
         case QLandmarkAbstractRequest::LandmarkFetchRequest: {
                 QLandmarkFetchRequest *fetchRequest = static_cast<QLandmarkFetchRequest *>(request);
-                QList<QLandmark> lms = ::landmarks(connectionName, fetchRequest->filter(), fetchRequest->sorting(), &error, &errorString, managerUri);
+                QList<QLandmark> lms = ::landmarks(connectionName, fetchRequest->filter(), fetchRequest->sorting(), fetchRequest->fetchHint(),
+                                                &error, &errorString, managerUri);
 
                 if (this->isCanceled) {
                     lms.clear();
@@ -1374,10 +1378,11 @@ int SortFunctor::compareDistance(const QLandmarkDistanceSort &sort, const QLandm
 
 QList<QLandmarkId> QLandmarkManagerEngineSqlite::landmarkIds(const QLandmarkFilter& filter,
         const QList<QLandmarkSortOrder>& sortOrders,
+        const QLandmarkFetchHint &fetchHint,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
-    return ::landmarkIds(m_dbConnectionName,filter,sortOrders,error,errorString, managerUri() );
+    return ::landmarkIds(m_dbConnectionName,filter,sortOrders,fetchHint, error,errorString, managerUri() );
 }
 
 QList<QLandmarkCategoryId> QLandmarkManagerEngineSqlite::categoryIds(QLandmarkManager::Error *error,
@@ -1414,12 +1419,13 @@ QLandmark QLandmarkManagerEngineSqlite::landmark(const QLandmarkId &landmarkId,
 
 QList<QLandmark> QLandmarkManagerEngineSqlite::landmarks(const QLandmarkFilter &filter,
         const QList<QLandmarkSortOrder>& sortOrders,
+        const QLandmarkFetchHint &fetchHint,
         QLandmarkManager::Error *error,
         QString *errorString) const
 {
     QList<QLandmark> result;
 
-    QList<QLandmarkId> ids = landmarkIds(filter, sortOrders, error, errorString);
+    QList<QLandmarkId> ids = landmarkIds(filter, sortOrders, fetchHint, error, errorString);
     if (error && *error != QLandmarkManager::NoError) {
         return result;
     }
