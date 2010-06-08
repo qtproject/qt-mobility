@@ -57,10 +57,10 @@ public:
     void setEndDateTime(const QDateTime& endDateTime);
     QDateTime endDateTime() const;
 
-    void setParentItemId(const QOrganizerItemId& parentId) const;
-    QOrganizerItemId parentItemId() const;
-    void setOriginalDateTime(const QDateTime& dateTime);
-    QDateTime originalDateTime() const;
+    void setParentItemLocalId(const QOrganizerItemLocalId& parentId);
+    QOrganizerItemLocalId parentItemLocalId() const;
+    void setOriginalDate(const QDate& date);
+    QDate originalDate() const;
 
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;

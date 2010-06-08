@@ -63,24 +63,30 @@ QDateTime QOrganizerTodoOccurrence::dueDateTime() const
     return QDateTime();
 }
 
-void QOrganizerTodoOccurrence::setParentItemId(const QOrganizerItemId& parentId) const
+void QOrganizerTodoOccurrence::setParentItemLocalId(const QOrganizerItemLocalId& parentLocalId)
 {
-    Q_UNUSED(parentId);
+    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    origin.setParentLocalId(parentLocalId);
+    saveDetail(&origin);
 }
 
-QOrganizerItemId QOrganizerTodoOccurrence::parentItemId() const
+QOrganizerItemLocalId QOrganizerTodoOccurrence::parentItemLocalId() const
 {
-    return QOrganizerItemId();
+    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    return origin.parentLocalId();
 }
 
-void QOrganizerTodoOccurrence::setOriginalDateTime(const QDateTime& dateTime)
+void QOrganizerTodoOccurrence::setOriginalDate(const QDate& date)
 {
-    Q_UNUSED(dateTime);
+    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    origin.setOriginalDate(date);
+    saveDetail(&origin);
 }
 
-QDateTime QOrganizerTodoOccurrence::originalDateTime() const
+QDate QOrganizerTodoOccurrence::originalDate() const
 {
-    return QDateTime();
+    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    return origin.originalDate();
 }
 
 void QOrganizerTodoOccurrence::setPriority(QOrganizerItemPriority::Priority priority)

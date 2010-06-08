@@ -69,26 +69,30 @@ QDateTime QOrganizerEventOccurrence::endDateTime() const
     return etr.endDateTime();
 }
 
-void QOrganizerEventOccurrence::setParentItemId(const QOrganizerItemId& parentId) const
+void QOrganizerEventOccurrence::setParentItemLocalId(const QOrganizerItemLocalId& parentLocalId)
 {
-    Q_UNUSED(parentId);
+    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    origin.setParentLocalId(parentLocalId);
+    saveDetail(&origin);
 }
 
-QOrganizerItemId QOrganizerEventOccurrence::parentItemId() const
+QOrganizerItemLocalId QOrganizerEventOccurrence::parentItemLocalId() const
 {
-    return QOrganizerItemId();
+    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    return origin.parentLocalId();
 }
 
-void QOrganizerEventOccurrence::setOriginalDateTime(const QDateTime& dateTime)
+void QOrganizerEventOccurrence::setOriginalDate(const QDate& date)
 {
-    // XXX TODO: is this operation allowed?  require backends to fail?
-    // ie, read only detail.
-    Q_UNUSED(dateTime);
+    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    origin.setOriginalDate(date);
+    saveDetail(&origin);
 }
 
-QDateTime QOrganizerEventOccurrence::originalDateTime() const
+QDate QOrganizerEventOccurrence::originalDate() const
 {
-    return QDateTime();
+    QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
+    return origin.originalDate();
 }
 
 void QOrganizerEventOccurrence::setPriority(QOrganizerItemPriority::Priority priority)
