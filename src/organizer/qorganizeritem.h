@@ -80,21 +80,6 @@ public:
     void setId(const QOrganizerItemId& id);
     QOrganizerItemLocalId localId() const;
 
-    /* Type - event, todo, journal, note... */
-    QString type() const;
-    void setType(const QString& type);
-    void setType(const QOrganizerItemType& type);
-
-    /* The display label of the organizeritem */
-    QString displayLabel() const;
-    void setDisplayLabel(const QString& label);
-    void setDisplayLabel(const QOrganizerItemDisplayLabel& label);
-
-    /* The description of the organizeritem */
-    QString description() const;
-    void setDescription(const QString& description);
-    void setDescription(const QOrganizerItemDescription& description);
-
     /* Is this an empty organizeritem? */
     bool isEmpty() const;
     void clearDetails();
@@ -168,8 +153,27 @@ public:
 
     // Some common convenience detail accessors
     // has to be things that all subclasses (including Occurrences) have.
-    void setNote(QString note);  // ??
-    QString note() const;        // ??
+
+    /* Type - event, todo, journal, note... */
+    QString type() const;
+    void setType(const QString& type);
+    void setType(const QOrganizerItemType& type);
+
+    /* The display label of the organizeritem */
+    QString displayLabel() const;
+    void setDisplayLabel(const QString& label);
+    void setDisplayLabel(const QOrganizerItemDisplayLabel& label);
+
+    /* The description of the organizeritem */
+    QString description() const;
+    void setDescription(const QString& description);
+    void setDescription(const QOrganizerItemDescription& description);
+
+    QString note() const;               // ??
+    void setNote(const QString& note);  // ??
+
+    QString guid() const;
+    void setGuid(const QString& guid);
 
 protected:
     explicit QOrganizerItem(const char* type);

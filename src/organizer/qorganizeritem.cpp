@@ -50,7 +50,7 @@
 #include "qorganizeritemdetail_p.h"
 #include "qorganizeritemmanager_p.h"
 
-#include "qorganizeritemdisplaylabel.h"
+#include "qorganizeritemdetails.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -264,78 +264,6 @@ QOrganizerItemId QOrganizerItem::id() const
 QOrganizerItemLocalId QOrganizerItem::localId() const
 {
     return d->m_id.localId();
-}
-
-/*!
- * Returns the type of the organizeritem.  Every organizeritem has exactly one type which
- * is either set manually (by saving a modified copy of the QOrganizerItemType
- * in the organizeritem, or by calling \l setType()) or synthesized automatically.
- *
- * \sa setType()
- */
-QString QOrganizerItem::type() const
-{
-    QOrganizerItemType newType = detail<QOrganizerItemType>();
-    return newType.type();
-}
-
-/*!
- * Sets the type of the organizeritem to the given \a type.
- */
-void QOrganizerItem::setType(const QString& type)
-{
-    QOrganizerItemType newType = detail<QOrganizerItemType>();
-    newType.setType(type);
-    newType.d->m_access = QOrganizerItemDetail::Irremovable;
-    saveDetail(&newType);
-}
-
-/*!
- * Sets the type of the organizeritem to the given \a type detail.
- */
-void QOrganizerItem::setType(const QOrganizerItemType& type)
-{
-    // XXX TODO: may need to copy in _all_ fields, not just the type field?
-    QOrganizerItemType newType = detail<QOrganizerItemType>();
-    newType.setType(type.type());
-    newType.d->m_access = QOrganizerItemDetail::Irremovable;
-    saveDetail(&newType);
-}
-
-QString QOrganizerItem::displayLabel() const
-{
-    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
-    return dl.label();
-}
-void QOrganizerItem::setDisplayLabel(const QString& label)
-{
-    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
-    dl.setLabel(label);
-    saveDetail(&dl);
-}
-void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
-{
-    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
-    dl.setLabel(label.label());
-    saveDetail(&dl);
-}
-
-QString QOrganizerItem::description() const
-{
-    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
-    return descr.description();
-}
-void QOrganizerItem::setDescription(const QString& description)
-{
-    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
-    descr.setDescription(description);
-    saveDetail(&descr);
-}
-void QOrganizerItem::setDescription(const QOrganizerItemDescription& description)
-{
-    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
-    descr.setDescription(description.description());
-    saveDetail(&descr);
 }
 
 
@@ -712,6 +640,93 @@ QDebug operator<<(QDebug dbg, const QOrganizerItem& organizeritem)
         dbg.space() << '\n' << detail;
     }
     return dbg.maybeSpace();
+}
+
+/*!
+ * Returns the type of the organizeritem.  Every organizeritem has exactly one type which
+ * is either set manually (by saving a modified copy of the QOrganizerItemType
+ * in the organizeritem, or by calling \l setType()) or synthesized automatically.
+ *
+ * \sa setType()
+ */
+QString QOrganizerItem::type() const
+{
+    QOrganizerItemType newType = detail<QOrganizerItemType>();
+    return newType.type();
+}
+
+/*!
+ * Sets the type of the organizeritem to the given \a type.
+ */
+void QOrganizerItem::setType(const QString& type)
+{
+    QOrganizerItemType newType = detail<QOrganizerItemType>();
+    newType.setType(type);
+    newType.d->m_access = QOrganizerItemDetail::Irremovable;
+    saveDetail(&newType);
+}
+
+/*!
+ * Sets the type of the organizeritem to the given \a type detail.
+ */
+void QOrganizerItem::setType(const QOrganizerItemType& type)
+{
+    // XXX TODO: may need to copy in _all_ fields, not just the type field?
+    QOrganizerItemType newType = detail<QOrganizerItemType>();
+    newType.setType(type.type());
+    newType.d->m_access = QOrganizerItemDetail::Irremovable;
+    saveDetail(&newType);
+}
+
+QString QOrganizerItem::displayLabel() const
+{
+    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
+    return dl.label();
+}
+void QOrganizerItem::setDisplayLabel(const QString& label)
+{
+    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
+    dl.setLabel(label);
+    saveDetail(&dl);
+}
+void QOrganizerItem::setDisplayLabel(const QOrganizerItemDisplayLabel& label)
+{
+    QOrganizerItemDisplayLabel dl = detail<QOrganizerItemDisplayLabel>();
+    dl.setLabel(label.label());
+    saveDetail(&dl);
+}
+
+QString QOrganizerItem::description() const
+{
+    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
+    return descr.description();
+}
+
+void QOrganizerItem::setDescription(const QString& description)
+{
+    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
+    descr.setDescription(description);
+    saveDetail(&descr);
+}
+
+void QOrganizerItem::setDescription(const QOrganizerItemDescription& description)
+{
+    QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
+    descr.setDescription(description.description());
+    saveDetail(&descr);
+}
+
+QString QOrganizerItem::guid() const
+{
+    QOrganizerItemGuid guid = detail<QOrganizerItemGuid>();
+    return guid.guid();
+}
+
+void QOrganizerItem::setGuid(const QString& guid)
+{
+    QOrganizerItemGuid guidDetail = detail<QOrganizerItemGuid>();
+    guidDetail.setGuid(guid);
+    saveDetail(&guidDetail);
 }
 
 QTM_END_NAMESPACE
