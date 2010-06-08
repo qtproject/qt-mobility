@@ -911,9 +911,67 @@ void tst_QContactManager::update()
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
-    int contactCount = cm->contacts().size();
+    if (cm->managerName() == QString(QLatin1String("maemo5"))) {
+        // we specifically want to test the update semantics of the maemo5 backend
+        // since there are various complexities relating to roster contacts.
+        QContact mt;
+        QContactName mtn;
+        mtn.setFirstName("test");
+        mtn.setLastName("maemo");
+        QContactPhoneNumber pn;
+        pn.setNumber("12345");
+
+        mt.saveDetail(&mtn);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QVERIFY(mt.details<QContactPhoneNumber>().count() == 0);
+
+        // now save a single phonenumber
+        mt.saveDetail(&pn);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QVERIFY(mt.details<QContactPhoneNumber>().count() == 1);
+
+        // edit some other existing detail and save (shouldn't duplicate the phone number)
+        mtn.setMiddleName("middle");
+        mt.saveDetail(&mtn);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
+
+        // add some other detail and save (shouldn't duplicate the phone number)
+        QContactEmailAddress mte;
+        mte.setEmailAddress("test@test.com");
+        mt.saveDetail(&mte);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
+
+        // add another phone number detail and save (should create a single other phone number)
+        QContactPhoneNumber pn2;
+        pn2.setNumber("98765");
+        mt.saveDetail(&pn2);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 2);
+
+        // remove the other phone number detail, shouldn't cause side effects to the first...
+        mt.removeDetail(&pn2);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
+
+        // edit the original phone number detail, shouldn't duplicate the phone number
+        pn.setNumber("54321");
+        mt.saveDetail(&pn);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId());
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
+        QVERIFY(mt.detail<QContactPhoneNumber>() == pn);
+    }
 
     /* Save a new contact first */
+    int contactCount = cm->contacts().size();
     QContactDetailDefinition nameDef = cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
     QContact alice = createContact(nameDef, "Alice", "inWonderland", "1234567");
     QVERIFY(cm->saveContact(&alice));
