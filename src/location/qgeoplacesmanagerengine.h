@@ -90,9 +90,6 @@ signals:
     void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
 
 protected:
-    void setManagerName(const QString &managerName);
-    void setManagerVersion(int managerVersion);
-
     virtual QGeoPlacesReply* geocode(const QString &addressString,
                                      const QGeoBoundingBox &bounds);
 
@@ -102,8 +99,13 @@ protected:
     void setSupportedSearchTypes(QGeoPlacesManager::SearchTypes searchTypes);
 
 private:
+    void setManagerName(const QString &managerName);
+    void setManagerVersion(int managerVersion);
+
     QGeoPlacesManagerEnginePrivate *d_ptr;
     Q_DISABLE_COPY(QGeoPlacesManagerEngine)
+
+    friend class QGeoServiceProvider;
 };
 
 QTM_END_NAMESPACE

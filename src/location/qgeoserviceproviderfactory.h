@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDERPLUGIN_H
-#define QGEOSERVICEPROVIDERPLUGIN_H
+#ifndef QGEOSERVICEPROVIDERFACTORY_H
+#define QGEOSERVICEPROVIDERFACTORY_H
 
 #include "qmobilityglobal.h"
 #include "qgeoserviceprovider.h"
@@ -51,20 +51,21 @@
 
 QTM_BEGIN_NAMESPACE
 
-class Q_LOCATION_EXPORT QGeoServiceProviderPlugin
+class Q_LOCATION_EXPORT QGeoServiceProviderFactory
 {
 public:
-    virtual ~QGeoServiceProviderPlugin() {}
+    virtual ~QGeoServiceProviderFactory() {}
 
     virtual QString providerName() const = 0;
+    virtual int providerVersion() const = 0;
 
-    virtual QGeoPlacesManager* createPlacesManager(const QMap<QString, QString> &parameters,
+    virtual QGeoPlacesManagerEngine* createPlacesManagerEngine(const QMap<QString, QString> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const = 0;
-    virtual QGeoMappingManager* createMappingManager(const QMap<QString, QString> &parameters,
+    virtual QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const = 0;
-    virtual QGeoRoutingManager* createRoutingManager(const QMap<QString, QString> &parameters,
+    virtual QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
             QGeoServiceProvider::Error *error,
             QString *errorString) const = 0;
 };
@@ -72,8 +73,8 @@ public:
 QTM_END_NAMESPACE
 
 QT_BEGIN_NAMESPACE
-#define QT_GEOSERVICE_BACKEND_INTERFACE "com.nokia.qt.mobility.geoservice.serviceproviderplugin/1.0"
-Q_DECLARE_INTERFACE(QtMobility::QGeoServiceProviderPlugin, QT_GEOSERVICE_BACKEND_INTERFACE);
+#define QT_GEOSERVICE_BACKEND_INTERFACE "com.nokia.qt.mobility.geoservice.serviceproviderfactory/1.0"
+Q_DECLARE_INTERFACE(QtMobility::QGeoServiceProviderFactory, QT_GEOSERVICE_BACKEND_INTERFACE);
 QT_END_NAMESPACE
 
 #endif

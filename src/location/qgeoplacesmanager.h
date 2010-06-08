@@ -68,7 +68,6 @@ public:
     };
     Q_DECLARE_FLAGS(SearchTypes, SearchType)
 
-    QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent = 0);
     ~QGeoPlacesManager();
 
     QString managerName() const;
@@ -99,8 +98,12 @@ signals:
     void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
 
 private:
+    QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent = 0);
+
     QGeoPlacesManagerPrivate *d_ptr;
     Q_DISABLE_COPY(QGeoPlacesManager)
+
+    friend class QGeoServiceProvider;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoPlacesManager::SearchTypes)

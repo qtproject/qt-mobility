@@ -41,11 +41,14 @@
 
 #include "qgeoserviceprovider.h"
 #include "qgeoserviceprovider_p.h"
-#include "qgeoserviceproviderplugin.h"
+#include "qgeoserviceproviderfactory.h"
 
 #include "qgeoplacesmanager.h"
 #include "qgeomappingmanager.h"
 #include "qgeoroutingmanager.h"
+#include "qgeoplacesmanagerengine.h"
+#include "qgeomappingmanagerengine.h"
+#include "qgeoroutingmanagerengine.h"
 
 #include <QList>
 #include <QString>
@@ -117,6 +120,8 @@ QStringList QGeoServiceProvider::availableServiceProviders()
 
     TODO if the name is bad use the platform default?
 
+    Will find the highest version plugin available with the given name.
+
     If no plugin was able to be loaded then error() and errorString() will
     provide details about why this is the case.
 */
@@ -125,6 +130,18 @@ QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap
 {
     d_ptr->loadPlugin(providerName, parameters);
     d_ptr->parameterMap = parameters;
+}
+
+/*!
+    Will try to match the given version number
+*/
+QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, int providerVersion, const QMap<QString, QString> &parameters)
+        : d_ptr(new QGeoServiceProviderPrivate())
+{
+
+    d_ptr->parameterMap = parameters;
+    d_ptr->parameterMap["version"] = QString::number(providerVersion);
+    d_ptr->loadPlugin(providerName, d_ptr->parameterMap);
 }
 
 /*!
@@ -147,13 +164,17 @@ QGeoServiceProvider::~QGeoServiceProvider()
 */
 QGeoPlacesManager* QGeoServiceProvider::placesManager() const
 {
-    if (!d_ptr->plugin || (d_ptr->placesError != QGeoServiceProvider::NoError))
+    if (!d_ptr->factory || (d_ptr->placesError != QGeoServiceProvider::NoError))
         return 0;
 
     if (!d_ptr->placesManager) {
-        d_ptr->placesManager = d_ptr->plugin->createPlacesManager(d_ptr->parameterMap,
-                               &(d_ptr->placesError),
-                               &(d_ptr->placesErrorString));
+        QGeoPlacesManagerEngine *engine = d_ptr->factory->createPlacesManagerEngine(d_ptr->parameterMap,
+                                                                                    &(d_ptr->placesError),
+                                                                                    &(d_ptr->placesErrorString));
+
+        engine->setManagerName(d_ptr->factory->providerName());
+        engine->setManagerVersion(d_ptr->factory->providerVersion());
+        d_ptr->placesManager = new QGeoPlacesManager(engine);
 
         if (d_ptr->placesError != QGeoServiceProvider::NoError) {
             delete d_ptr->placesManager;
@@ -177,13 +198,17 @@ QGeoPlacesManager* QGeoServiceProvider::placesManager() const
 */
 QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 {
-    if (!d_ptr->plugin || (d_ptr->mappingError != QGeoServiceProvider::NoError))
+    if (!d_ptr->factory || (d_ptr->mappingError != QGeoServiceProvider::NoError))
         return 0;
 
     if (!d_ptr->mappingManager) {
-        d_ptr->mappingManager = d_ptr->plugin->createMappingManager(d_ptr->parameterMap,
-                                &(d_ptr->mappingError),
-                                &(d_ptr->mappingErrorString));
+        QGeoMappingManagerEngine *engine = d_ptr->factory->createMappingManagerEngine(d_ptr->parameterMap,
+                                                                                      &(d_ptr->mappingError),
+                                                                                      &(d_ptr->mappingErrorString));
+
+        engine->setManagerName(d_ptr->factory->providerName());
+        engine->setManagerVersion(d_ptr->factory->providerVersion());
+        d_ptr->mappingManager = new QGeoMappingManager(engine);
 
         if (d_ptr->mappingError != QGeoServiceProvider::NoError) {
             delete d_ptr->mappingManager;
@@ -207,13 +232,17 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 */
 QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 {
-    if (!d_ptr->plugin || (d_ptr->routingError != QGeoServiceProvider::NoError))
+    if (!d_ptr->factory || (d_ptr->routingError != QGeoServiceProvider::NoError))
         return 0;
 
     if (!d_ptr->routingManager) {
-        d_ptr->routingManager = d_ptr->plugin->createRoutingManager(d_ptr->parameterMap,
-                                &(d_ptr->routingError),
-                                &(d_ptr->routingErrorString));
+        QGeoRoutingManagerEngine *engine = d_ptr->factory->createRoutingManagerEngine(d_ptr->parameterMap,
+                                                                                      &(d_ptr->routingError),
+                                                                                      &(d_ptr->routingErrorString));
+
+        engine->setManagerName(d_ptr->factory->providerName());
+        engine->setManagerVersion(d_ptr->factory->providerVersion());
+        d_ptr->routingManager = new QGeoRoutingManager(engine);
 
         if (d_ptr->routingError != QGeoServiceProvider::NoError) {
             delete d_ptr->routingManager;
@@ -244,7 +273,7 @@ QString QGeoServiceProvider::errorString() const
 *******************************************************************************/
 
 QGeoServiceProviderPrivate::QGeoServiceProviderPrivate()
-        : plugin(0),
+        : factory(0),
         placesManager(0),
         routingManager(0),
         mappingManager(0),
@@ -270,31 +299,44 @@ void QGeoServiceProviderPrivate::loadPlugin(const QString &providerName, const Q
     if (!QGeoServiceProviderPrivate::plugins().keys().contains(providerName)) {
         error = QGeoServiceProvider::NotSupportedError;
         errorString = QString("The geoservices provider %1 is not supported.").arg(providerName);
-        plugin = 0;
+        factory = 0;
         return;
     }
+
+    factory = 0;
 
     error = QGeoServiceProvider::NoError;
     errorString = "";
 
-    QList<QGeoServiceProviderPlugin*> candidates = QGeoServiceProviderPrivate::plugins().values(providerName);
+    QList<QGeoServiceProviderFactory*> candidates = QGeoServiceProviderPrivate::plugins().values(providerName);
+
+    bool ok = false;
+    int versionTarget  = parameters.value("version", "-1").toInt(&ok);
+    if (!ok)
+        versionTarget = -1;
+    int versionFound = -1;
 
     for (int i = 0; i < candidates.size(); ++i) {
-        QGeoServiceProviderPlugin* p = candidates[i];
-        if (p) {
-            //if (p->initialize(parameters, &error, &errorString)) {
-            //    error = QGeoServiceProvider::NoError;
-            //    errorString = "";
-            plugin = p;
-            break;
-            //}
+        QGeoServiceProviderFactory* f = candidates[i];
+        if (f) {
+            if (versionTarget == -1) {
+                if (f->providerVersion() > versionFound) {
+                    versionFound = f->providerVersion();
+                    factory = f;
+                }
+            } else {
+                if (f->providerVersion() == versionTarget) {
+                    factory = f;
+                    break;
+                }
+            }
         }
     }
 }
 
-QHash<QString, QGeoServiceProviderPlugin*> QGeoServiceProviderPrivate::plugins(bool reload)
+QHash<QString, QGeoServiceProviderFactory*> QGeoServiceProviderPrivate::plugins(bool reload)
 {
-    static QHash<QString, QGeoServiceProviderPlugin*> plugins;
+    static QHash<QString, QGeoServiceProviderFactory*> plugins;
     static bool alreadyDiscovered = false;
 
     if (reload  == true)
@@ -308,7 +350,7 @@ QHash<QString, QGeoServiceProviderPlugin*> QGeoServiceProviderPrivate::plugins(b
     return plugins;
 }
 
-void QGeoServiceProviderPrivate::loadDynamicPlugins(QHash<QString, QGeoServiceProviderPlugin*> *plugins)
+void QGeoServiceProviderPrivate::loadDynamicPlugins(QHash<QString, QGeoServiceProviderFactory*> *plugins)
 {
     QStringList paths;
     paths << mobilityPlugins(QLatin1String("geoservices"));
@@ -317,21 +359,21 @@ void QGeoServiceProviderPrivate::loadDynamicPlugins(QHash<QString, QGeoServicePr
     for (int i = 0;i < paths.count(); ++i) {
         qpl.setFileName(paths.at(i));
 
-        QGeoServiceProviderPlugin *p = qobject_cast<QGeoServiceProviderPlugin*>(qpl.instance());
-        if (p) {
-            QString name = p->providerName();
+        QGeoServiceProviderFactory *f = qobject_cast<QGeoServiceProviderFactory*>(qpl.instance());
+        if (f) {
+            QString name = f->providerName();
 
 #if !defined QT_NO_DEBUG
             const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
             if (showDebug)
                 qDebug() << "Dynamic: found a service provider plugin with name" << name;
 #endif
-            plugins->insertMulti(name, p);
+            plugins->insertMulti(name, f);
         }
     }
 }
 
-void QGeoServiceProviderPrivate::loadStaticPlugins(QHash<QString, QGeoServiceProviderPlugin*> *plugins)
+void QGeoServiceProviderPrivate::loadStaticPlugins(QHash<QString, QGeoServiceProviderFactory*> *plugins)
 {
 #if !defined QT_NO_DEBUG
     const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
@@ -339,9 +381,9 @@ void QGeoServiceProviderPrivate::loadStaticPlugins(QHash<QString, QGeoServicePro
 
     QObjectList staticPlugins = QPluginLoader::staticInstances();
     for (int i = 0; i < staticPlugins.count(); ++i) {
-        QGeoServiceProviderPlugin *p = qobject_cast<QGeoServiceProviderPlugin*>(staticPlugins.at(i));
-        if (p) {
-            QString name = p->providerName();
+        QGeoServiceProviderFactory *f = qobject_cast<QGeoServiceProviderFactory*>(staticPlugins.at(i));
+        if (f) {
+            QString name = f->providerName();
 
 #if !defined QT_NO_DEBUG
             const bool showDebug = qgetenv("QT_DEBUG_PLUGINS").toInt() > 0;
@@ -349,7 +391,7 @@ void QGeoServiceProviderPrivate::loadStaticPlugins(QHash<QString, QGeoServicePro
                 qDebug() << "Static: found a service provider plugin with name" << name;
 #endif
             if (!name.isEmpty()) {
-                plugins->insertMulti(name, p);
+                plugins->insertMulti(name, f);
             }
         }
 

@@ -56,6 +56,9 @@ QTM_BEGIN_NAMESPACE
 class QGeoPlacesManager;
 class QGeoMappingManager;
 class QGeoRoutingManager;
+class QGeoPlacesManagerEngine;
+class QGeoMappingManagerEngine;
+class QGeoRoutingManagerEngine;
 class QGeoServiceProviderPrivate;
 
 class Q_LOCATION_EXPORT QGeoServiceProvider
@@ -70,6 +73,7 @@ public:
 
     static QStringList availableServiceProviders();
     QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
+    QGeoServiceProvider(const QString &providerName, int providerVersion, const QMap<QString, QString> &parameters = (QMap<QString, QString>()));
 
     ~QGeoServiceProvider();
 
