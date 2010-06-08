@@ -59,7 +59,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QGeoTiledMapRequest;
-class QGeoTiledMapViewport;
+class QGeoTiledMapData;
 class QGeoTiledMappingManagerThread;
 class QGeoTiledMappingManagerEngine;
 
@@ -67,7 +67,7 @@ class QGeoTiledMapRequestHandler : public QObject
 {
     Q_OBJECT
 public:
-    QGeoTiledMapRequestHandler(QGeoTiledMappingManagerThread *thread, QGeoTiledMapViewport *viewport);
+    QGeoTiledMapRequestHandler(QGeoTiledMappingManagerThread *thread, QGeoTiledMapData *mapData);
     ~QGeoTiledMapRequestHandler();
 
 public slots:
@@ -83,7 +83,7 @@ signals:
 
 private:
     QGeoTiledMappingManagerThread *thread;
-    QGeoTiledMapViewport *viewport;
+    QGeoTiledMapData *mapData;
 
     qreal lastZoomLevel;
     QGeoMapWidget::MapType lastMapType;
@@ -103,7 +103,7 @@ public:
     QGeoTiledMappingManagerThreadPrivate& operator= (const QGeoTiledMappingManagerThreadPrivate &other);
 
     QGeoTiledMappingManagerEngine *engine;
-    QHash<QGeoTiledMapViewport*, QGeoTiledMapRequestHandler*> handlers;
+    QHash<QGeoTiledMapData*, QGeoTiledMapRequestHandler*> handlers;
 };
 
 QTM_END_NAMESPACE

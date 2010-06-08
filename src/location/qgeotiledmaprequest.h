@@ -49,7 +49,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapViewport;
+class QGeoTiledMapData;
 class QGeoTiledMapRequestPrivate;
 
 class Q_LOCATION_EXPORT QGeoTiledMapRequest
@@ -57,7 +57,7 @@ class Q_LOCATION_EXPORT QGeoTiledMapRequest
 public:
     // TODO add isValid method, set to false for default constructor
     QGeoTiledMapRequest();
-    QGeoTiledMapRequest(QGeoTiledMapViewport *viewport,
+    QGeoTiledMapRequest(QGeoTiledMapData *mapData,
                         int row,
                         int column,
                         const QRectF &tileRect);
@@ -66,7 +66,7 @@ public:
 
     QGeoTiledMapRequest& operator= (const QGeoTiledMapRequest &other);
 
-    QGeoTiledMapViewport *viewport() const;
+    QGeoTiledMapData *mapData() const;
 
     QGeoMapWidget::MapType mapType() const;
     int zoomLevel() const;

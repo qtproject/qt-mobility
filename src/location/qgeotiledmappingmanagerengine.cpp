@@ -42,7 +42,7 @@
 #include "qgeotiledmappingmanagerengine.h"
 #include "qgeotiledmappingmanagerengine_p.h"
 
-#include "qgeotiledmapviewport.h"
+#include "qgeotiledmapdata.h"
 #include "qgeotiledmaprequest.h"
 
 #include "qgeotiledmappingmanagerthread.h"
@@ -86,30 +86,35 @@ QGeoTiledMappingManagerEngine::~QGeoTiledMappingManagerEngine()
     }
 }
 
-QGeoMapViewport* QGeoTiledMappingManagerEngine::createViewport(QGeoMapWidget *widget)
+QGeoMapData* QGeoTiledMappingManagerEngine::createMapData(QGeoMapWidget *widget)
 {
-    return new QGeoTiledMapViewport(this, widget);
+    return new QGeoTiledMapData(this, widget);
 }
 
-void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
+void QGeoTiledMappingManagerEngine::removeMapData(QGeoMapData* mapData)
+{
+    // TODO remove in thread
+}
+
+void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
 {
     Q_D(QGeoTiledMappingManagerEngine);
 
-    if (!viewport)
+    if (!mapData)
         return;
 
     // deal with pole viewing later (needs more than two coords)
     // determine tile indices to fetch
 
-    QPoint tileIndicesTopLeft = screenPositionToTilePosition(viewport, QPointF(0.0, 0.0));
-    QPoint tileIndicesBottomRight = screenPositionToTilePosition(viewport, QPointF(viewport->viewportSize().width(), viewport->viewportSize().height()));
+    QPoint tileIndicesTopLeft = screenPositionToTilePosition(mapData, QPointF(0.0, 0.0));
+    QPoint tileIndicesBottomRight = screenPositionToTilePosition(mapData, QPointF(mapData->viewportSize().width(), mapData->viewportSize().height()));
 
     int tileMinX = tileIndicesTopLeft.x();
     int tileMaxX = tileIndicesBottomRight.x();
     int tileMinY = tileIndicesTopLeft.y();
     int tileMaxY = tileIndicesBottomRight.y();
 
-    int numTiles = 1 << qRound(viewport->zoomLevel());
+    int numTiles = 1 << qRound(mapData->zoomLevel());
 
     //TODO: replace this QList-based implementation with a more mem-lightweight solution like a la TileIterator
     QList<int> cols;
@@ -140,13 +145,13 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
     int tileWidth = tileSize().width();
 
     //TODO: need to have some form of type checking in here
-    QGeoTiledMapViewport *tiledViewport = static_cast<QGeoTiledMapViewport*>(viewport);
+    QGeoTiledMapData *tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
 
     QList<QGeoTiledMapRequest> requests;
 
     QList<QPair<int, int> > tiles;
 
-    QRectF protectedRegion = tiledViewport->protectedRegion();
+    QRectF protectedRegion = tiledMapData->protectedRegion();
 
     // TODO order in direction of travel if panning
     // TODO request excess tiles around border
@@ -171,12 +176,12 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapViewport *viewport)
         // We shouldn't request tiles that are entirely contained in this
         // region.
         //if (protectedRegion.isNull() || !protectedRegion.contains(tileRect))
-            requests.append(QGeoTiledMapRequest(tiledViewport, row, col, tileRect));
+            requests.append(QGeoTiledMapRequest(tiledMapData, row, col, tileRect));
     }
 
-    emit tileRequestsPrepared(tiledViewport, requests);
+    emit tileRequestsPrepared(tiledMapData, requests);
 
-    tiledViewport->clearProtectedRegion();
+    tiledMapData->clearProtectedRegion();
 }
 
 void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
@@ -189,15 +194,15 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
         return;
     }
 
-    QGeoTiledMapViewport *viewport = reply->request().viewport();
+    QGeoTiledMapData *mapData = reply->request().mapData();
 
-    if ((viewport->zoomLevel() != reply->request().zoomLevel())
-            || (viewport->mapType() != reply->request().mapType())) {
+    if ((mapData->zoomLevel() != reply->request().zoomLevel())
+            || (mapData->mapType() != reply->request().mapType())) {
         QTimer::singleShot(0, reply, SLOT(deleteLater()));
         return;
     }
 
-    QRectF screenRect = viewport->screenRect();
+    QRectF screenRect = mapData->screenRect();
     QRectF tileRect = reply->request().tileRect();
     QRectF overlap = tileRect.intersected(screenRect);
 
@@ -209,10 +214,10 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
     QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
     QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 * screenRect.y());
 
-    QPixmap pm = viewport->mapImage();
+    QPixmap pm = mapData->mapImage();
     QPainter *painter = new QPainter(&pm);
     painter->drawPixmap(dest, reply->mapImage(), source);
-    viewport->setMapImage(pm);
+    mapData->setMapImage(pm);
     delete painter;
 
     QTimer::singleShot(0, reply, SLOT(deleteLater()));
@@ -223,11 +228,11 @@ void QGeoTiledMappingManagerEngine::tileError(QGeoTiledMapReply *reply, QGeoTile
     qWarning() << errorString;
 }
 
-QPoint QGeoTiledMappingManagerEngine::screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const
+QPoint QGeoTiledMappingManagerEngine::screenPositionToTilePosition(const QGeoMapData *mapData, const QPointF &screenPosition) const
 {
     // TODO checking mechanism for viewport type?
-    const QGeoTiledMapViewport *tiledViewport = static_cast<const QGeoTiledMapViewport*>(viewport);
-    return tiledViewport->screenPositionToTileIndices(screenPosition);
+    const QGeoTiledMapData *tiledMapData = static_cast<const QGeoTiledMapData*>(mapData);
+    return tiledMapData->screenPositionToTileIndices(screenPosition);
 }
 
 /*!

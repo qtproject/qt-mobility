@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 
 class QGeoBoundingBox;
 class QGeoCoordinate;
-class QGeoMapViewport;
+class QGeoMapData;
 class QGeoMappingManagerPrivate;
 class QGeoMapRequestOptions;
 
@@ -70,10 +70,10 @@ public:
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget) = 0;
-    virtual void removeViewport(QGeoMapViewport *viewport);
+    virtual QGeoMapData* createMapData(QGeoMapWidget *widget) = 0;
+    virtual void removeMapData(QGeoMapData *mapData);
 
-    virtual void updateMapImage(QGeoMapViewport *viewport) = 0;
+    virtual void updateMapImage(QGeoMapData *mapData) = 0;
 
     QList<QGeoMapWidget::MapType> supportedMapTypes() const;
 

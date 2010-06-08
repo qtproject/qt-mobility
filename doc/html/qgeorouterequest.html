@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRouteRequest Class Reference</h1>
-<p>The QGeoRouteRequest class represents a request for a route between two points. <a href="#details">More...</a></p>
+<p>The QGeoRouteRequest class handles asynchronous requests for geographical routing information. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGeoRouteRequest&gt;</pre><ul>
 <li><a href="qgeorouterequest-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -22,199 +22,221 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#RouteAvoid-enum">RouteAvoid</a></b> { Highways, Tollroads, Ferries, Tunnels, Dirtroads, RailFerries }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#RouteMode-enum">RouteMode</a></b> { Car, Pedestrian, PublicTransport }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#RouteType-enum">RouteType</a></b> { Fastest, Shortest, Economic }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureType</a></b> { AvoidNothing, AvoidTolls, AvoidHighways, AvoidPublicTransit, ..., AvoidMotorPoolLanes }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a></b> { NoInstructions, BasicInstructions, DetailedInstructions }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetails</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimization</a></b> { ShortestRoute, FastestRoute, MostEconomicRoute, MostScenicRoute }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a></b> { NoSegmentData, BasicSegmentData, DetailedSegmentData }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetails</a></b></td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#TravelMode-enum">TravelMode</a></b> { CarTravel, PedestrianTravel, BicycleTravel, PublicTransitTravel, TruckTravel }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">flags </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a></b></td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#QGeoRouteRequest">QGeoRouteRequest</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#QGeoRouteRequest">QGeoRouteRequest</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; <i>waypoints</i> = QList&lt;QGeoCoordinate&gt; () )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#QGeoRouteRequest-2">QGeoRouteRequest</a></b> ( const QGeoCoordinate &amp; <i>origin</i>, const QGeoCoordinate &amp; <i>destination</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#QGeoRouteRequest-3">QGeoRouteRequest</a></b> ( const QGeoRouteRequest &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#dtor.QGeoRouteRequest">~QGeoRouteRequest</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#addStopOver">addStopOver</a></b> ( const QGeoCoordinate &amp; <i>stopOver</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">quint16 </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#alternatives">alternatives</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#arrivalTime">arrivalTime</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;RouteAvoid&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#avoid">avoid</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#departureTime">departureTime</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#destination">destination</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#language">language</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">RouteMode </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#mode">mode</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#removeStopOver">removeStopOver</a></b> ( const QGeoCoordinate &amp; <i>stopOver</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#requestString">requestString</a></b> ( const QString &amp; <i>host</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setAlternatives">setAlternatives</a></b> ( quint16 <i>nAlternatives</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setArrivalTime">setArrivalTime</a></b> ( const QDateTime &amp; <i>arrivalTime</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setAvoid">setAvoid</a></b> ( QList&lt;RouteAvoid&gt; <i>avoid</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setDepartureTime">setDepartureTime</a></b> ( const QDateTime &amp; <i>departureTime</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setDestination">setDestination</a></b> ( const QGeoCoordinate &amp; <i>destination</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setLanguage">setLanguage</a></b> ( const QString &amp; <i>code</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setMode">setMode</a></b> ( RouteMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setSource">setSource</a></b> ( const QGeoCoordinate &amp; <i>source</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setTotalResults">setTotalResults</a></b> ( quint32 <i>totalResults</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setType">setType</a></b> ( RouteType <i>type</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#source">source</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QList&lt;QGeoCoordinate&gt; &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#stopOvers">stopOvers</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#totalResults">totalResults</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">RouteType </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#type">type</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#version">version</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">AvoidFeatureTypes </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#avoidFeatureTypes">avoidFeatureTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">InstructionDetail </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#instructionDetail">instructionDetail</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#numberAlternativeRoutes">numberAlternativeRoutes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">RouteOptimizations </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#routeOptimization">routeOptimization</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">SegmentDetail </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#segmentDetail">segmentDetail</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setAvoidFeatureTypes">setAvoidFeatureTypes</a></b> ( AvoidFeatureTypes <i>avoidFeatureTypes</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setInstructionDetail">setInstructionDetail</a></b> ( InstructionDetail <i>instructionDetail</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setNumberAlternativeRoutes">setNumberAlternativeRoutes</a></b> ( int <i>alternatives</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setRouteOptimization">setRouteOptimization</a></b> ( RouteOptimizations <i>optimization</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setSegmentDetail">setSegmentDetail</a></b> ( SegmentDetail <i>segmentDetail</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setTravelModes">setTravelModes</a></b> ( TravelModes <i>travelModes</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#setWaypoints">setWaypoints</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; <i>waypoints</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">TravelModes </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#travelModes">travelModes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoCoordinate&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#waypoints">waypoints</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeorouterequest.html#operator-eq">operator=</a></b> ( const QGeoRouteRequest &amp; <i>other</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QGeoRouteRequest class represents a request for a route between two points.</p>
-<p>This is the base class representing a route request from a given source to a given destination.</p>
+<p>The QGeoRouteRequest class handles asynchronous requests for geographical routing information.</p>
+<p>Describes a route travelling along <a href="qgeorouterequest.html#waypoints">waypoints</a>().</p>
+<p>The route will traverse the elements of <a href="qgeorouterequest.html#waypoints">waypoints</a>() in order.</p>
+<p>If the routing calculation is successful results() will return a list of <a href="qgeoroute.html">QGeoRoute</a> objects containing information about the route, including alternative routes if they were requested. Otherwise results() will return an empty list.</p>
+<p>Regardless of the success of the operation, the results of error() and errorString() will be updated.</p>
+<p>If nothing went wrong, error() will return QGeoCodingManager::NoError and errorString() will return an empty <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, otherwise error() and errorString() will provide details of the error.</p>
+<p>The equivalent synchronous method is QGeoRoutingManager::calculateRoute(const <a href="qgeocoordinate.html">QGeoCoordinate</a>&amp;, const <a href="qgeocoordinate.html">QGeoCoordinate</a>&amp;) and QGeoRoutingManager::calculateRoute(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt;&amp;), which are simpler to use but offers less fine-grained control.</p>
 <hr />
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QGeoRouteRequest/RouteAvoid"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Highways"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Tollroads"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Ferries"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Tunnels"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Dirtroads"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/RailFerries"></a>
-<h3 class="fn"><a name="RouteAvoid-enum"></a>enum QGeoRouteRequest::RouteAvoid</h3>
-<p>Values that specify which components the route will not contain.</p>
+<a name="//apple_ref/cpp/tag/QGeoRouteRequest/AvoidFeatureType"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidNothing"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidTolls"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidHighways"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidPublicTransit"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidFerries"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidTunnels"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidDirtRoads"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidPark"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/AvoidMotorPoolLanes"></a>
+<a name="//apple_ref/cpp/tdef/QGeoRouteRequest/AvoidFeatureTypes"></a>
+<h3 class="flags"><a name="AvoidFeatureType-enum"></a>enum QGeoRouteRequest::AvoidFeatureType<br />flags QGeoRouteRequest::AvoidFeatureTypes</h3>
+<p>Defines features to be avoided while planning a route.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Highways</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">avoid highways</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Tollroads</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">avoid tollroads</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Ferries</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">avoid ferries</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Tunnels</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">avoid tunnels</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Dirtroads</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">avoid dirt roads</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::RailFerries</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">avoid rail ferries</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidNothing</tt></td><td align="center" valign="top"><tt>0x00000000</tt></td><td valign="top">The route can be planned without considering features to be avoided.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidTolls</tt></td><td align="center" valign="top"><tt>0x00000001</tt></td><td valign="top">Avoid routes that require the use of tollways.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidHighways</tt></td><td align="center" valign="top"><tt>0x00000002</tt></td><td valign="top">Avoid routes that require the use of highways.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidPublicTransit</tt></td><td align="center" valign="top"><tt>0x00000004</tt></td><td valign="top">Avoid routes that require the use of public transit.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidFerries</tt></td><td align="center" valign="top"><tt>0x00000008</tt></td><td valign="top">Avoid routes that require the use of ferries.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidTunnels</tt></td><td align="center" valign="top"><tt>0x00000010</tt></td><td valign="top">Avoid routes that require the use of tunnels.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidDirtRoads</tt></td><td align="center" valign="top"><tt>0x00000020</tt></td><td valign="top">Avoid routes that require the use of dirt roads.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidPark</tt></td><td align="center" valign="top"><tt>0x00000040</tt></td><td valign="top">Avoid routes that require the travel through parks.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::AvoidMotorPoolLanes</tt></td><td align="center" valign="top"><tt>0x00000080</tt></td><td valign="top">Avoid routes that require the use of motor pool lanes.</td></tr>
 </table></p>
-<a name="//apple_ref/cpp/tag/QGeoRouteRequest/RouteMode"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Car"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Pedestrian"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/PublicTransport"></a>
-<h3 class="fn"><a name="RouteMode-enum"></a>enum QGeoRouteRequest::RouteMode</h3>
+<p>The AvoidFeatureTypes type is a typedef for <a href="qflags.html">QFlags</a>&lt;AvoidFeatureType&gt;. It stores an OR combination of AvoidFeatureType values.</p>
+<a name="//apple_ref/cpp/tag/QGeoRouteRequest/InstructionDetail"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/NoInstructions"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/BasicInstructions"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/DetailedInstructions"></a>
+<a name="//apple_ref/cpp/tdef/QGeoRouteRequest/InstructionDetails"></a>
+<h3 class="flags"><a name="InstructionDetail-enum"></a>enum QGeoRouteRequest::InstructionDetail<br />flags QGeoRouteRequest::InstructionDetails</h3>
+<p>Defines the amount of instruction information that should be included with the route.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Car</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">car route (default)</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Pedestrian</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">pedestrian route</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::PublicTransport</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">public transport route</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::NoInstructions</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">No instructions should be included with the route.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::BasicInstructions</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Basic instructions will be included with the route. This will include <a href="qgeonavigationinstruction.html#instructionText">QGeoNavigationInstruction::instructionText</a>().</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::DetailedInstructions</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Detailed instructions will be included with the route. This will typically mean that subclasses of QNavigationInstruction are used to provide data structures describing the instructions. See <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> and its subclasses for more details.</td></tr>
 </table></p>
-<a name="//apple_ref/cpp/tag/QGeoRouteRequest/RouteType"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Fastest"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Shortest"></a>
-<a name="//apple_ref/cpp/econst/QGeoRouteRequest/Economic"></a>
-<h3 class="fn"><a name="RouteType-enum"></a>enum QGeoRouteRequest::RouteType</h3>
+<p>The InstructionDetails type is a typedef for <a href="qflags.html">QFlags</a>&lt;InstructionDetail&gt;. It stores an OR combination of InstructionDetail values.</p>
+<p>See also <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a>.</p>
+<a name="//apple_ref/cpp/tag/QGeoRouteRequest/RouteOptimization"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/ShortestRoute"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/FastestRoute"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/MostEconomicRoute"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/MostScenicRoute"></a>
+<a name="//apple_ref/cpp/tdef/QGeoRouteRequest/RouteOptimizations"></a>
+<h3 class="flags"><a name="RouteOptimization-enum"></a>enum QGeoRouteRequest::RouteOptimization<br />flags QGeoRouteRequest::RouteOptimizations</h3>
+<p>Defines the type of optimization which is applied to the planning of the route.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Fastest</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">fastest route (default)</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Shortest</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">shortest route</td></tr>
-<tr><td valign="top"><tt>QGeoRouteRequest::Economic</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">economic route</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::ShortestRoute</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Minimize the length of the journey.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::FastestRoute</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Minimize the travelling time for the journey.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::MostEconomicRoute</tt></td><td align="center" valign="top"><tt>0x0004</tt></td><td valign="top">Minimize the cost of the journey.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::MostScenicRoute</tt></td><td align="center" valign="top"><tt>0x0008</tt></td><td valign="top">Maximize the scenic potential of the journey.</td></tr>
 </table></p>
+<p>The RouteOptimizations type is a typedef for <a href="qflags.html">QFlags</a>&lt;RouteOptimization&gt;. It stores an OR combination of RouteOptimization values.</p>
+<a name="//apple_ref/cpp/tag/QGeoRouteRequest/SegmentDetail"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/NoSegmentData"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/BasicSegmentData"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/DetailedSegmentData"></a>
+<a name="//apple_ref/cpp/tdef/QGeoRouteRequest/SegmentDetails"></a>
+<h3 class="flags"><a name="SegmentDetail-enum"></a>enum QGeoRouteRequest::SegmentDetail<br />flags QGeoRouteRequest::SegmentDetails</h3>
+<p>Defines the amount of route segment information that shoudl be included with the route.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::NoSegmentData</tt></td><td align="center" valign="top"><tt>0x0000</tt></td><td valign="top">No segment data should be included with the route. A route requested with this level of segment detail will initialise <a href="qgeoroutesegment.html#path">QGeoRouteSegment::path</a>() as a straight line between the positions of the previous and next QGeoNavigationInstructions.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::BasicSegmentData</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">Basic segment data will be included with the route. This will include <a href="qgeoroutesegment.html#path">QGeoRouteSegment::path</a>().</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::DetailedSegmentData</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">Detailed segment data will be included with the route. This will typcially meant that subclasses of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> are used to provide data structures describing the segment. See <a href="qgeoroutesegment.html">QGeoRouteSegment</a> and its subclasses for more details.</td></tr>
+</table></p>
+<p>The SegmentDetails type is a typedef for <a href="qflags.html">QFlags</a>&lt;SegmentDetail&gt;. It stores an OR combination of SegmentDetail values.</p>
+<a name="//apple_ref/cpp/tag/QGeoRouteRequest/TravelMode"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/CarTravel"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/PedestrianTravel"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/BicycleTravel"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/PublicTransitTravel"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteRequest/TruckTravel"></a>
+<a name="//apple_ref/cpp/tdef/QGeoRouteRequest/TravelModes"></a>
+<h3 class="flags"><a name="TravelMode-enum"></a>enum QGeoRouteRequest::TravelMode<br />flags QGeoRouteRequest::TravelModes</h3>
+<p>Defines modes of travel to be used for a route.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::CarTravel</tt></td><td align="center" valign="top"><tt>0x0001</tt></td><td valign="top">The route will be optimized for someone who is driving a car.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::PedestrianTravel</tt></td><td align="center" valign="top"><tt>0x0002</tt></td><td valign="top">The route will be optimized for someone who is walking.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::BicycleTravel</tt></td><td align="center" valign="top"><tt>0x0004</tt></td><td valign="top">The route will be optimized for someone who is riding a bicycle.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::PublicTransitTravel</tt></td><td align="center" valign="top"><tt>0x0008</tt></td><td valign="top">The route will be optimized for someone who is making use of public transit.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteRequest::TruckTravel</tt></td><td align="center" valign="top"><tt>0x0010</tt></td><td valign="top">The route will be optimized for someone who is driving a truck.</td></tr>
+</table></p>
+<p>The TravelModes type is a typedef for <a href="qflags.html">QFlags</a>&lt;TravelMode&gt;. It stores an OR combination of TravelMode values.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoRouteRequest/QGeoRouteRequest"></a>
-<h3 class="fn"><a name="QGeoRouteRequest"></a>QGeoRouteRequest::QGeoRouteRequest ()</h3>
-<p>The default constructor.</p>
+<h3 class="fn"><a name="QGeoRouteRequest"></a>QGeoRouteRequest::QGeoRouteRequest ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>waypoints</i> = QList&lt;QGeoCoordinate&gt; () )</h3>
+<p>Constructs a request to calculate a route through the coordinates <i>waypoints</i>.</p>
+<p>The route will traverse the elements of <i>waypoints</i> in order.</p>
+<h3 class="fn"><a name="QGeoRouteRequest-2"></a>QGeoRouteRequest::QGeoRouteRequest ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>origin</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>destination</i> )</h3>
+<p>Constructs a request to calculate a route between <i>origin</i> and <i>destination</i>.</p>
+<h3 class="fn"><a name="QGeoRouteRequest-3"></a>QGeoRouteRequest::QGeoRouteRequest ( const QGeoRouteRequest &amp; <i>other</i> )</h3>
+<p>Constructs a route request object from the contents of <i>other</i>.</p>
 <a name="//apple_ref/cpp/instm/QGeoRouteRequest/~QGeoRouteRequest"></a>
 <h3 class="fn"><a name="dtor.QGeoRouteRequest"></a>QGeoRouteRequest::~QGeoRouteRequest ()</h3>
-<p>Destroys the route request.</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/addStopOver"></a>
-<h3 class="fn"><a name="addStopOver"></a>void QGeoRouteRequest::addStopOver ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>stopOver</i> )</h3>
-<p>Adds the stop over <i>stopOver</i> to the requested route.</p>
-<p>The server calculates a route that contains these waypoints (in the given order) as part of the route. These waypoints must be between the destination and the source.</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/alternatives"></a>
-<h3 class="fn"><a name="alternatives"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> QGeoRouteRequest::alternatives () const</h3>
-<p>Returns the maximum number of alternatives to be returned.</p>
-<p>See also <a href="qgeorouterequest.html#setAlternatives">setAlternatives</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/arrivalTime"></a>
-<h3 class="fn"><a name="arrivalTime"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QGeoRouteRequest::arrivalTime () const</h3>
-<p>Returns the planned time of departure.</p>
-<p>See also <a href="qgeorouterequest.html#setArrivalTime">setArrivalTime</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/avoid"></a>
-<h3 class="fn"><a name="avoid"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeorouterequest.html#RouteAvoid-enum">RouteAvoid</a>&gt; QGeoRouteRequest::avoid () const</h3>
-<p>Returns a list containing all routes components to be avoided.</p>
-<p>See also <a href="qgeorouterequest.html#setAvoid">setAvoid</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/departureTime"></a>
-<h3 class="fn"><a name="departureTime"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QGeoRouteRequest::departureTime () const</h3>
-<p>Returns the planned time of departure.</p>
-<p>See also <a href="qgeorouterequest.html#setDepartureTime">setDepartureTime</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/destination"></a>
-<h3 class="fn"><a name="destination"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoRouteRequest::destination () const</h3>
-<p>Returns the destination geo coordinate for this request.</p>
-<p>See also <a href="qgeorouterequest.html#setDestination">setDestination</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/language"></a>
-<h3 class="fn"><a name="language"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoRouteRequest::language () const</h3>
-<p>Returns the RFC 3066 language code of the response.</p>
-<p>See also <a href="qgeorouterequest.html#setLanguage">setLanguage</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/mode"></a>
-<h3 class="fn"><a name="mode"></a><a href="qgeorouterequest.html#RouteMode-enum">RouteMode</a> QGeoRouteRequest::mode () const</h3>
-<p>Returns the route mode.</p>
-<p>See also <a href="qgeorouterequest.html#setMode">setMode</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/removeStopOver"></a>
-<h3 class="fn"><a name="removeStopOver"></a>void QGeoRouteRequest::removeStopOver ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>stopOver</i> )</h3>
-<p>Removes the stop over <i>stopOver</i> from the requested route.</p>
-<p>See also <a href="qgeorouterequest.html#addStopOver">addStopOver</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/requestString"></a>
-<h3 class="fn"><a name="requestString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoRouteRequest::requestString ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>host</i> ) const</h3>
-<p>Returns the request string for this request and a given <i>host</i>.</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setAlternatives"></a>
-<h3 class="fn"><a name="setAlternatives"></a>void QGeoRouteRequest::setAlternatives ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint16-typedef">quint16</a> <i>nAlternatives</i> )</h3>
-<p>Sets the maximum number of alternative routes the server will try to generate.</p>
-<p>If set to 0 the result will contain no alternative routes (only one result is returned if any).</p>
-<p>See also <a href="qgeorouterequest.html#alternatives">alternatives</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setArrivalTime"></a>
-<h3 class="fn"><a name="setArrivalTime"></a>void QGeoRouteRequest::setArrivalTime ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>arrivalTime</i> )</h3>
-<p>Sets the planned time of arrival to <i>toa</i>.</p>
-<p>See also <a href="qgeorouterequest.html#arrivalTime">arrivalTime</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setAvoid"></a>
-<h3 class="fn"><a name="setAvoid"></a>void QGeoRouteRequest::setAvoid ( <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeorouterequest.html#RouteAvoid-enum">RouteAvoid</a>&gt; <i>avoid</i> )</h3>
-<p>Specifies which route components should not be part of the calculated route to <i>avoid</i>.</p>
-<p>The components are avoided on a best effort basis.</p>
-<p>See also <a href="qgeorouterequest.html#avoid">avoid</a>() and <a href="qgeorouterequest.html#RouteAvoid-enum">RouteAvoid</a>.</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setDepartureTime"></a>
-<h3 class="fn"><a name="setDepartureTime"></a>void QGeoRouteRequest::setDepartureTime ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>departureTime</i> )</h3>
-<p>Sets the planned time of departure to <i>tod</i>.</p>
-<p>See also <a href="qgeorouterequest.html#departureTime">departureTime</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setDestination"></a>
-<h3 class="fn"><a name="setDestination"></a>void QGeoRouteRequest::setDestination ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>destination</i> )</h3>
-<p>Sets the destination geo coordinate for this request to <i>destination</i>.</p>
-<p>See also <a href="qgeorouterequest.html#destination">destination</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setLanguage"></a>
-<h3 class="fn"><a name="setLanguage"></a>void QGeoRouteRequest::setLanguage ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>code</i> )</h3>
-<p>Sets he RFC 3066 language code of the response to <i>code</i>.</p>
-<p>The language code should look like en-US or de-DE.</p>
-<p>See also <a href="qgeorouterequest.html#language">language</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setMode"></a>
-<h3 class="fn"><a name="setMode"></a>void QGeoRouteRequest::setMode ( <a href="qgeorouterequest.html#RouteMode-enum">RouteMode</a> <i>mode</i> )</h3>
-<p>Sets the movement mode of the route to <i>mode</i>.</p>
-<p>See also <a href="qgeorouterequest.html#mode">mode</a>() and <a href="qgeorouterequest.html#RouteMode-enum">RouteMode</a>.</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setSource"></a>
-<h3 class="fn"><a name="setSource"></a>void QGeoRouteRequest::setSource ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>source</i> )</h3>
-<p>Sets the source geo coordinate for this request to <i>source</i>.</p>
-<p>See also <a href="qgeorouterequest.html#source">source</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setTotalResults"></a>
-<h3 class="fn"><a name="setTotalResults"></a>void QGeoRouteRequest::setTotalResults ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>totalResults</i> )</h3>
-<p>Sets the maximum number of response results.</p>
-<p>If set to 0 all possible results will be returned.</p>
-<p>See also <a href="qgeorouterequest.html#totalResults">totalResults</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setType"></a>
-<h3 class="fn"><a name="setType"></a>void QGeoRouteRequest::setType ( <a href="qgeorouterequest.html#RouteType-enum">RouteType</a> <i>type</i> )</h3>
-<p>Sets the type of the route the server will calculate to <i>type</i>.</p>
-<p>See also <a href="qgeorouterequest.html#type">type</a>() and <a href="qgeorouterequest.html#RouteType-enum">RouteType</a>.</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/source"></a>
-<h3 class="fn"><a name="source"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoRouteRequest::source () const</h3>
-<p>Returns the source geo coordinate for this request.</p>
-<p>See also <a href="qgeorouterequest.html#setSource">setSource</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/stopOvers"></a>
-<h3 class="fn"><a name="stopOvers"></a>const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; QGeoRouteRequest::stopOvers () const</h3>
-<p>Returns all added stop overs.</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/totalResults"></a>
-<h3 class="fn"><a name="totalResults"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QGeoRouteRequest::totalResults () const</h3>
-<p>Returns the maximum number of response results.</p>
-<p>See also <a href="qgeorouterequest.html#setTotalResults">setTotalResults</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/type"></a>
-<h3 class="fn"><a name="type"></a><a href="qgeorouterequest.html#RouteType-enum">RouteType</a> QGeoRouteRequest::type () const</h3>
-<p>Returns the route type.</p>
-<p>See also <a href="qgeorouterequest.html#setType">setType</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteRequest/version"></a>
-<h3 class="fn"><a name="version"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoRouteRequest::version () const</h3>
-<p>Returns the service version.</p>
-<p>Currently the only supported version is 1.0&#x2e;</p>
+<p>Destroys the request.</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/avoidFeatureTypes"></a>
+<h3 class="fn"><a name="avoidFeatureTypes"></a><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a> QGeoRouteRequest::avoidFeatureTypes () const</h3>
+<p>Returns the features which this request specifies should be avoided during the planning of the route.</p>
+<p>See also <a href="qgeorouterequest.html#setAvoidFeatureTypes">setAvoidFeatureTypes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/instructionDetail"></a>
+<h3 class="fn"><a name="instructionDetail"></a><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a> QGeoRouteRequest::instructionDetail () const</h3>
+<p>Returns the level of detail which will be used in the representation of routing instructions.</p>
+<p>See also <a href="qgeorouterequest.html#setInstructionDetail">setInstructionDetail</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/numberAlternativeRoutes"></a>
+<h3 class="fn"><a name="numberAlternativeRoutes"></a>int QGeoRouteRequest::numberAlternativeRoutes () const</h3>
+<p>Returns the number of alternative routes which will be requested.</p>
+<p>See also <a href="qgeorouterequest.html#setNumberAlternativeRoutes">setNumberAlternativeRoutes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/routeOptimization"></a>
+<h3 class="fn"><a name="routeOptimization"></a><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a> QGeoRouteRequest::routeOptimization () const</h3>
+<p>Returns the optimization criteria which this request specifies should be used while planning the route.</p>
+<p>See also <a href="qgeorouterequest.html#setRouteOptimization">setRouteOptimization</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/segmentDetail"></a>
+<h3 class="fn"><a name="segmentDetail"></a><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a> QGeoRouteRequest::segmentDetail () const</h3>
+<p>Returns the level of detail which will be used in the representation of routing segments.</p>
+<p>See also <a href="qgeorouterequest.html#setSegmentDetail">setSegmentDetail</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setAvoidFeatureTypes"></a>
+<h3 class="fn"><a name="setAvoidFeatureTypes"></a>void QGeoRouteRequest::setAvoidFeatureTypes ( <a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a> <i>avoidFeatureTypes</i> )</h3>
+<p>Sets the features to be avoided during the planning of the route to <i>avoidFeatureTypes</i>.</p>
+<p>The default value is <a href="qgeorouterequest.html#AvoidFeatureType-enum">QGeoRouteRequest::AvoidNothing</a>.</p>
+<p>See also <a href="qgeorouterequest.html#avoidFeatureTypes">avoidFeatureTypes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setInstructionDetail"></a>
+<h3 class="fn"><a name="setInstructionDetail"></a>void QGeoRouteRequest::setInstructionDetail ( <a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a> <i>instructionDetail</i> )</h3>
+<p>Sets the level of detail to use when representing routing instructions to <i>instructionDetail</i>.</p>
+<p>The default value is <a href="qgeorouterequest.html#InstructionDetail-enum">QGeoRouteRequest::BasicInstructions</a>.</p>
+<p>See also <a href="qgeorouterequest.html#instructionDetail">instructionDetail</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setNumberAlternativeRoutes"></a>
+<h3 class="fn"><a name="setNumberAlternativeRoutes"></a>void QGeoRouteRequest::setNumberAlternativeRoutes ( int <i>alternatives</i> )</h3>
+<p>Sets the number of alternative routes to request to <i>alternatives</i>.</p>
+<p>The default value is 0.</p>
+<p>See also <a href="qgeorouterequest.html#numberAlternativeRoutes">numberAlternativeRoutes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setRouteOptimization"></a>
+<h3 class="fn"><a name="setRouteOptimization"></a>void QGeoRouteRequest::setRouteOptimization ( <a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a> <i>optimization</i> )</h3>
+<p>Sets the optimization criteria to use while planning the route to <i>optimization</i>.</p>
+<p>The default value is <a href="qgeorouterequest.html#RouteOptimization-enum">QGeoRouteRequest::FastestRoute</a>.</p>
+<p>See also <a href="qgeorouterequest.html#routeOptimization">routeOptimization</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setSegmentDetail"></a>
+<h3 class="fn"><a name="setSegmentDetail"></a>void QGeoRouteRequest::setSegmentDetail ( <a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a> <i>segmentDetail</i> )</h3>
+<p>Sets the level of detail to use when representing routing segments to <i>segmentDetail</i>.</p>
+<p>See also <a href="qgeorouterequest.html#segmentDetail">segmentDetail</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setTravelModes"></a>
+<h3 class="fn"><a name="setTravelModes"></a>void QGeoRouteRequest::setTravelModes ( <a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a> <i>travelModes</i> )</h3>
+<p>Sets the travel modes which should be considered during the planning of the route to <i>travelModes</i>.</p>
+<p>The default value is <a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::CarTravel</a>.</p>
+<p>See also <a href="qgeorouterequest.html#travelModes">travelModes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/setWaypoints"></a>
+<h3 class="fn"><a name="setWaypoints"></a>void QGeoRouteRequest::setWaypoints ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>waypoints</i> )</h3>
+<p>Sets <i>waypoints</i> as the waypoints that the route should pass through.</p>
+<p>The waypoints should be given in order from origin to destination.</p>
+<p>This request will be invalid until the waypoints have been set to a list containing two or more coordinates.</p>
+<p>See also <a href="qgeorouterequest.html#waypoints">waypoints</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/travelModes"></a>
+<h3 class="fn"><a name="travelModes"></a><a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a> QGeoRouteRequest::travelModes () const</h3>
+<p>Returns the travel modes which this request specifies should be considered during the planning of the route.</p>
+<p>See also <a href="qgeorouterequest.html#setTravelModes">setTravelModes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/waypoints"></a>
+<h3 class="fn"><a name="waypoints"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRouteRequest::waypoints () const</h3>
+<p>Returns the waypoints that the route will pass through.</p>
+<p>See also <a href="qgeorouterequest.html#setWaypoints">setWaypoints</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteRequest/operator="></a>
+<h3 class="fn"><a name="operator-eq"></a>QGeoRouteRequest &amp; QGeoRouteRequest::operator= ( const QGeoRouteRequest &amp; <i>other</i> )</h3>
+<p>Assigns <i>other</i> to this route request object and then returns a reference to this route request object.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

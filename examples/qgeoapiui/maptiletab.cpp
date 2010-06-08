@@ -57,7 +57,7 @@
 MapTileTab::MapTileTab(QWidget *parent)
         : QWidget(parent),
         m_mapManager(NULL),
-        m_viewport(NULL)
+        m_mapData(NULL)
 {
     QLabel *coordlbl = new QLabel(tr("Coordinates:"));
     m_tileLong = new QLineEdit("-74");
@@ -104,7 +104,7 @@ MapTileTab::MapTileTab(QWidget *parent)
 
 MapTileTab::~MapTileTab()
 {
-    delete m_viewport;
+    delete m_mapData;
 }
 
 void MapTileTab::initialize(QGeoMappingManager *mapManager)
@@ -132,9 +132,9 @@ void MapTileTab::on_btnRequest_clicked()
         qint32 row;
         qint32 col;
 
-        m_viewport->setViewportSize(QSizeF(300, 300));
-        m_viewport->setZoomLevel(zoomLevel);
-        m_viewport->setCenter(coord);
+        m_mapData->setViewportSize(QSizeF(300, 300));
+        m_mapData->setZoomLevel(zoomLevel);
+        m_mapData->setCenter(coord);
 
         //QGeoTiledMappingManager *tiledManager = static_cast<QGeoTiledMappingManager *>(m_mapManager);
         //QPoint tile = tiledManager->screenPositionToTilePosition(m_viewport, QPointF(m_viewport->viewportSize().width() / 2.0, m_viewport->viewportSize().height() / 2.0));

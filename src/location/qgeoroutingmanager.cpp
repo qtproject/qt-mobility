@@ -53,7 +53,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-routing
 
-    Instances of QGeoRoutingManager primarily provide support for the
+    Instances of QGeoRoutingManager can be accessed with
+    QGeoServiceProvider::routingManager() and primarily provide support for the
     calculation and updating of routes. The calculateRoute() and updateRoute()
     methods return QGeoRouteReply objects, which manage these operations and
     report on the result of the operations and any errors which may have
@@ -68,9 +69,12 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a new manager with the specified \a parent.
+    Constructs a new manager with the specified \a parent and with the
+    implementation provided by \a engine.
 
-    This should only ever be called from subclasses of QGeoRoutingManager.
+    This constructor is intended for use by implementers of
+    QGeoServiceProviderPlugin. Regular users should aquire instance of
+    QGeoRoutingManager with QGeoServiceProvider::routingManager();
 */
 QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject *parent)
         : QObject(parent),
@@ -89,6 +93,8 @@ QGeoRoutingManager::QGeoRoutingManager(QGeoRoutingManagerEngine *engine, QObject
                 SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)),
                 this,
                 SIGNAL(error(QGeoRouteReply*, QGeoRouteReply::Error, QString)));
+    } else {
+        qFatal("The routing manager engine that was set for this routing manager was NULL.");
     }
 }
 
@@ -109,8 +115,8 @@ QGeoRoutingManager::~QGeoRoutingManager()
 */
 QString QGeoRoutingManager::managerName() const
 {
-    if (!d_ptr->engine)
-        return QString();
+//    if (!d_ptr->engine)
+//        return QString();
 
     return d_ptr->engine->managerName();
 }
@@ -120,8 +126,8 @@ QString QGeoRoutingManager::managerName() const
 */
 QMap<QString, QString> QGeoRoutingManager::managerParameters() const
 {
-    if (!d_ptr->engine)
-        return QMap<QString, QString>();
+//    if (!d_ptr->engine)
+//        return QMap<QString, QString>();
 
     return d_ptr->engine->managerParameters();
 }
@@ -135,8 +141,8 @@ QMap<QString, QString> QGeoRoutingManager::managerParameters() const
 */
 int QGeoRoutingManager::managerVersion() const
 {
-    if (!d_ptr->engine)
-        return -1;
+//    if (!d_ptr->engine)
+//        return -1;
 
     return d_ptr->engine->managerVersion();
 }
@@ -164,8 +170,8 @@ int QGeoRoutingManager::managerVersion() const
 */
 QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& request)
 {
-    if (!d_ptr->engine)
-        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
+//    if (!d_ptr->engine)
+//        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
 
     return d_ptr->engine->calculateRoute(request);
 }
@@ -199,8 +205,8 @@ QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& reque
 */
 QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
-    if (!d_ptr->engine)
-        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
+//    if (!d_ptr->engine)
+//        return new QGeoRouteReply(QGeoRouteReply::EngineNotSetError, "The routing manager was not created with a valid engine.", this);
 
     return d_ptr->engine->updateRoute(route, position);
 }
@@ -210,8 +216,8 @@ QGeoRouteReply* QGeoRoutingManager::updateRoute(const QGeoRoute &route, const QG
 */
 bool QGeoRoutingManager::supportsRouteUpdates() const
 {
-    if (!d_ptr->engine)
-        return false;
+//    if (!d_ptr->engine)
+//        return false;
 
     return d_ptr->engine->supportsRouteUpdates();
 }
@@ -221,8 +227,8 @@ bool QGeoRoutingManager::supportsRouteUpdates() const
 */
 bool QGeoRoutingManager::supportsAlternativeRoutes() const
 {
-    if (!d_ptr->engine)
-        return false;
+//    if (!d_ptr->engine)
+//        return false;
 
     return d_ptr->engine->supportsAlternativeRoutes();
 }
@@ -232,8 +238,8 @@ bool QGeoRoutingManager::supportsAlternativeRoutes() const
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 {
-    if (!d_ptr->engine)
-        return QGeoRouteRequest::TravelModes();
+//    if (!d_ptr->engine)
+//        return QGeoRouteRequest::TravelModes();
 
     return d_ptr->engine->supportedTravelModes();
 }
@@ -243,8 +249,8 @@ QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
 */
 QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTypes() const
 {
-    if (!d_ptr->engine)
-        return QGeoRouteRequest::AvoidFeatureTypes();
+//    if (!d_ptr->engine)
+//        return QGeoRouteRequest::AvoidFeatureTypes();
 
     return d_ptr->engine->supportedAvoidFeatureTypes();
 }
@@ -254,8 +260,8 @@ QGeoRouteRequest::AvoidFeatureTypes QGeoRoutingManager::supportedAvoidFeatureTyp
 */
 QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizations() const
 {
-    if (!d_ptr->engine)
-        return QGeoRouteRequest::RouteOptimizations();
+//    if (!d_ptr->engine)
+//        return QGeoRouteRequest::RouteOptimizations();
 
     return d_ptr->engine->supportedRouteOptimizations();
 }
@@ -266,8 +272,8 @@ QGeoRouteRequest::RouteOptimizations QGeoRoutingManager::supportedRouteOptimizat
 */
 QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() const
 {
-    if (!d_ptr->engine)
-        return QGeoRouteRequest::SegmentDetails();
+//    if (!d_ptr->engine)
+//        return QGeoRouteRequest::SegmentDetails();
 
     return d_ptr->engine->supportedSegmentDetails();
 }
@@ -278,8 +284,8 @@ QGeoRouteRequest::SegmentDetails QGeoRoutingManager::supportedSegmentDetails() c
 */
 QGeoRouteRequest::InstructionDetails QGeoRoutingManager::supportedInstructionDetails() const
 {
-    if (!d_ptr->engine)
-        return QGeoRouteRequest::InstructionDetails();
+//    if (!d_ptr->engine)
+//        return QGeoRouteRequest::InstructionDetails();
 
     return d_ptr->engine->supportedInstructionDetails();
 }

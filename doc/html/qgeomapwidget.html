@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeomapwidget.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QGeoMapWidget Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoMapWidget"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapWidget Class Reference</h1>
+<p>The QGeoMapWidget class is. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoMapWidget&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
+<ul>
+<li><a href="qgeomapwidget-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#MapType-enum">MapType</a></b> { StreetMap, SatelliteMapDay, SatelliteMapNight, TerrainMap }</td></tr>
+</table>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#QGeoMapWidget">QGeoMapWidget</a></b> ( QGeoMappingManager * <i>manager</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#dtor.QGeoMapWidget">~QGeoMapWidget</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#center">center</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#coordinateToScreenPosition">coordinateToScreenPosition</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">MapType </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mapType">mapType</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#pan">pan</a></b> ( int <i>dx</i>, int <i>dy</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#screenPositionToCoordinate">screenPositionToCoordinate</a></b> ( QPointF <i>screenPosition</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setMapType">setMapType</a></b> ( MapType <i>mapType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setZoomLevel">setZoomLevel</a></b> ( qreal <i>zoomLevel</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#zoomLevel">zoomLevel</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#paint">paint</a></b> ( QPainter * <i>painter</i>, const QStyleOptionGraphicsItem * <i>option</i>, QWidget * <i>parent</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPainterPath </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#shape">shape</a></b> () const</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>51 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-functions">QGraphicsWidget</a></li>
+<li><div bar="2" class="fn"></div>35 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#public-functions">QGraphicsLayoutItem</a></li>
+<li><div bar="2" class="fn"></div>167 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#public-functions">QGraphicsItem</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="reimplemented-protected-functions"></a>
+<h2>Reimplemented Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#keyPressEvent">keyPressEvent</a></b> ( QKeyEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mouseDoubleClickEvent">mouseDoubleClickEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mouseMoveEvent">mouseMoveEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mousePressEvent">mousePressEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mouseReleaseEvent">mouseReleaseEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#resizeEvent">resizeEvent</a></b> ( QGraphicsSceneResizeEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#wheelEvent">wheelEvent</a></b> ( QGraphicsSceneWheelEvent * <i>event</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>24 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#protected-functions">QGraphicsWidget</a></li>
+<li><div bar="2" class="fn"></div>3 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#protected-functions">QGraphicsLayoutItem</a></li>
+<li><div bar="2" class="fn"></div>23 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#protected-functions">QGraphicsItem</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>8 properties inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#properties">QGraphicsWidget</a></li>
+<li><div class="fn"></div>12 properties inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#properties">QGraphicsObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-slots">QGraphicsWidget</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>9 signals inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#signals">QGraphicsObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-variables">QGraphicsWidget</a></li>
+<li><div class="fn"></div>2 public variables inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#public-variables">QGraphicsItem</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>1 static public member inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#static-public-members">QGraphicsWidget</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>24 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#protected-functions">QGraphicsWidget</a></li>
+<li><div class="fn"></div>3 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#protected-functions">QGraphicsLayoutItem</a></li>
+<li><div class="fn"></div>23 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#protected-functions">QGraphicsItem</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>1 protected type inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#protected-variables">QGraphicsLayoutItem</a></li>
+<li><div class="fn"></div>1 protected type inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#protected-variables">QGraphicsItem</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoMapWidget class is.</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QGeoMapWidget/MapType"></a>
+<a name="//apple_ref/cpp/econst/QGeoMapWidget/StreetMap"></a>
+<a name="//apple_ref/cpp/econst/QGeoMapWidget/SatelliteMapDay"></a>
+<a name="//apple_ref/cpp/econst/QGeoMapWidget/SatelliteMapNight"></a>
+<a name="//apple_ref/cpp/econst/QGeoMapWidget/TerrainMap"></a>
+<h3 class="fn"><a name="MapType-enum"></a>enum QGeoMapWidget::MapType</h3>
+<p><table  class="valuelist" border="1" cellpadding="2" cellspacing="1" width="40%">
+<tr><th width="60%">Constant</th><th width="40%">Value</th></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::StreetMap</tt></td><td align="center" valign="top"><tt>0</tt></td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapDay</tt></td><td align="center" valign="top"><tt>1</tt></td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapNight</tt></td><td align="center" valign="top"><tt>2</tt></td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::TerrainMap</tt></td><td align="center" valign="top"><tt>3</tt></td></tr>
+</table></p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/QGeoMapWidget"></a>
+<h3 class="fn"><a name="QGeoMapWidget"></a>QGeoMapWidget::QGeoMapWidget ( <a href="qgeomappingmanager.html">QGeoMappingManager</a> * <i>manager</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/~QGeoMapWidget"></a>
+<h3 class="fn"><a name="dtor.QGeoMapWidget"></a>QGeoMapWidget::~QGeoMapWidget ()</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/center"></a>
+<h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::center () const</h3>
+<p>See also <a href="qgeomapwidget.html#setCenter">setCenter</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/coordinateToScreenPosition"></a>
+<h3 class="fn"><a name="coordinateToScreenPosition"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QGeoMapWidget::coordinateToScreenPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/keyPressEvent"></a>
+<h3 class="fn"><a name="keyPressEvent"></a>void QGeoMapWidget::keyPressEvent ( <a href="http://qt.nokia.com/doc/4.6/qkeyevent.html">QKeyEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#keyPressEvent">QGraphicsItem::keyPressEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mapType"></a>
+<h3 class="fn"><a name="mapType"></a><a href="qgeomapwidget.html#MapType-enum">MapType</a> QGeoMapWidget::mapType () const</h3>
+<p>See also <a href="qgeomapwidget.html#setMapType">setMapType</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/maximumZoomLevel"></a>
+<h3 class="fn"><a name="maximumZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::maximumZoomLevel () const</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/minimumZoomLevel"></a>
+<h3 class="fn"><a name="minimumZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::minimumZoomLevel () const</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mouseDoubleClickEvent"></a>
+<h3 class="fn"><a name="mouseDoubleClickEvent"></a>void QGeoMapWidget::mouseDoubleClickEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseDoubleClickEvent">QGraphicsItem::mouseDoubleClickEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mouseMoveEvent"></a>
+<h3 class="fn"><a name="mouseMoveEvent"></a>void QGeoMapWidget::mouseMoveEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseMoveEvent">QGraphicsItem::mouseMoveEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mousePressEvent"></a>
+<h3 class="fn"><a name="mousePressEvent"></a>void QGeoMapWidget::mousePressEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mousePressEvent">QGraphicsItem::mousePressEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mouseReleaseEvent"></a>
+<h3 class="fn"><a name="mouseReleaseEvent"></a>void QGeoMapWidget::mouseReleaseEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseReleaseEvent">QGraphicsItem::mouseReleaseEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/paint"></a>
+<h3 class="fn"><a name="paint"></a>void QGeoMapWidget::paint ( <a href="http://qt.nokia.com/doc/4.6/qpainter.html">QPainter</a> * <i>painter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstyleoptiongraphicsitem.html">QStyleOptionGraphicsItem</a> * <i>option</i>, <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#paint">QGraphicsItem::paint</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/pan"></a>
+<h3 class="fn"><a name="pan"></a>void QGeoMapWidget::pan ( int <i>dx</i>, int <i>dy</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/resizeEvent"></a>
+<h3 class="fn"><a name="resizeEvent"></a>void QGeoMapWidget::resizeEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicssceneresizeevent.html">QGraphicsSceneResizeEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#resizeEvent">QGraphicsWidget::resizeEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/screenPositionToCoordinate"></a>
+<h3 class="fn"><a name="screenPositionToCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::screenPositionToCoordinate ( <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> <i>screenPosition</i> ) const</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/setCenter"></a>
+<h3 class="fn"><a name="setCenter"></a>void QGeoMapWidget::setCenter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> )</h3>
+<p>See also <a href="qgeomapwidget.html#center">center</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/setMapType"></a>
+<h3 class="fn"><a name="setMapType"></a>void QGeoMapWidget::setMapType ( <a href="qgeomapwidget.html#MapType-enum">MapType</a> <i>mapType</i> )</h3>
+<p>See also <a href="qgeomapwidget.html#mapType">mapType</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/setZoomLevel"></a>
+<h3 class="fn"><a name="setZoomLevel"></a>void QGeoMapWidget::setZoomLevel ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>zoomLevel</i> )</h3>
+<p>See also <a href="qgeomapwidget.html#zoomLevel">zoomLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/shape"></a>
+<h3 class="fn"><a name="shape"></a><a href="http://qt.nokia.com/doc/4.6/qpainterpath.html">QPainterPath</a> QGeoMapWidget::shape () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#shape">QGraphicsItem::shape</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/wheelEvent"></a>
+<h3 class="fn"><a name="wheelEvent"></a>void QGeoMapWidget::wheelEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenewheelevent.html">QGraphicsSceneWheelEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#wheelEvent">QGraphicsItem::wheelEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/zoomLevel"></a>
+<h3 class="fn"><a name="zoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::zoomLevel () const</h3>
+<p>See also <a href="qgeomapwidget.html#setZoomLevel">setZoomLevel</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

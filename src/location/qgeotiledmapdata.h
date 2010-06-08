@@ -39,63 +39,45 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPVIEWPORT_H
-#define QGEOMAPVIEWPORT_H
+#ifndef QGEOTILEDMAPDATA_H
+#define QGEOTILEDMAPDATA_H
 
-#include "qgeomapwidget.h"
-
-#include <QObject>
-#include <QSize>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include "qgeomapdata.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoBoundingBox;
-class QGeoMappingManagerEngine;
-class QGeoMapViewportPrivate;
+class QGeoTiledMapDataPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapViewport
+class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
 {
 public:
-    QGeoMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoMapViewport();
+    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
+    virtual ~QGeoTiledMapData();
 
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
+    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
 
-    virtual void setZoomLevel(qreal zoomLevel);
-    virtual qreal zoomLevel() const;
+    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
 
-    virtual void pan(int dx, int dy);
+    void setCenter(const QGeoCoordinate &center);
+    QGeoCoordinate center() const;
 
-    virtual void setCenter(const QGeoCoordinate &center);
-    virtual QGeoCoordinate center() const;
+    void setZoomLevel(qreal zoomLevel);
+    void setViewportSize(const QSizeF &size);
+    void pan(int dx, int dy);
 
-    virtual void setViewportSize(const QSizeF &size);
-    virtual QSizeF viewportSize() const;
+    QRectF screenRect() const;
 
-    void setMapType(QGeoMapWidget::MapType mapType);
-    QGeoMapWidget::MapType mapType() const;
-
-    void setImageChangesTriggerUpdates(bool trigger);
-    bool imageChangesTriggerUpdates() const;
-
-    void setMapImage(const QPixmap &mapImage);
-    QPixmap mapImage();
+    QRectF protectedRegion() const;
+    void clearProtectedRegion();
 
 protected:
-    QGeoMapViewport(QGeoMapViewportPrivate *dd, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-
-    QGeoMapWidget* widget() const;
-    QGeoMappingManagerEngine* engine() const;
-
-    QGeoMapViewportPrivate* d_ptr;
+    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
+    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
 
 private:
-    Q_DECLARE_PRIVATE(QGeoMapViewport)
-    Q_DISABLE_COPY(QGeoMapViewport)
+    QGeoTiledMapDataPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoTiledMapData)
 };
 
 QTM_END_NAMESPACE

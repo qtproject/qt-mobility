@@ -39,45 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPVIEWPORT_H
-#define QGEOTILEDMAPVIEWPORT_H
+#ifndef QGEOMAPDATA_P_H
+#define QGEOMAPDATA_P_H
 
-#include "qgeomapviewport.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
+#include "qgeomapwidget.h"
+#include "qgeomappingmanagerengine.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapViewportPrivate;
-
-class Q_LOCATION_EXPORT QGeoTiledMapViewport : public QGeoMapViewport
+class QGeoMapDataPrivate
 {
 public:
-    QGeoTiledMapViewport(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoTiledMapViewport();
+    QGeoMapDataPrivate();
+    QGeoMapDataPrivate(const QGeoMapDataPrivate &other);
+    virtual ~QGeoMapDataPrivate();
+    QGeoMapDataPrivate& operator= (const QGeoMapDataPrivate &other);
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
+    QGeoMapWidget *widget;
+    QGeoMappingManagerEngine *engine;
 
-    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
+    qreal zoomLevel;
+    QGeoCoordinate center;
+    QSizeF viewportSize;
+    QGeoMapWidget::MapType mapType;
 
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
-
-    void setZoomLevel(qreal zoomLevel);
-    void setViewportSize(const QSizeF &size);
-    void pan(int dx, int dy);
-
-    QRectF screenRect() const;
-
-    QRectF protectedRegion() const;
-    void clearProtectedRegion();
-
-protected:
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
-
-private:
-    Q_DECLARE_PRIVATE(QGeoTiledMapViewport);
-    Q_DISABLE_COPY(QGeoTiledMapViewport)
+    bool imageChangesTriggerUpdates;
+    QPixmap mapImage;
 };
 
 QTM_END_NAMESPACE

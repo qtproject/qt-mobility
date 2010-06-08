@@ -147,17 +147,8 @@ QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QGeoCoordinate &coo
     return search(requestString);
 }
 
-QGeoPlacesReply* QGeoPlacesManagerEngineNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QString &addressString, const QGeoBoundingBox &bounds)
 {
-
-    if ((searchTypes != QGeoPlacesManager::SearchTypes(QGeoPlacesManager::SearchAll))
-            && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
-
-        QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "The selected search type is not supported by this service provider.", this);
-        emit error(reply, reply->error(), reply->errorString());
-        return reply;
-    }
-
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/gc/1.0?referer=localhost";
@@ -167,9 +158,24 @@ QGeoPlacesReply* QGeoPlacesManagerEngineNokia::placesSearch(const QString &searc
     //requestString += request->locale().language();
 
     requestString += "&obloc=";
-    requestString += searchString;
+    requestString += addressString;
 
     return search(requestString);
+}
+
+QGeoPlacesReply* QGeoPlacesManagerEngineNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
+{
+    // NOTE this will eventually replaced by a default implementation
+    //      written in terms of geocode(QString) and defaultLandmarkManager()
+    if ((searchTypes != QGeoPlacesManager::SearchTypes(QGeoPlacesManager::SearchAll))
+            && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
+
+        QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "The selected search type is not supported by this service provider.", this);
+        emit error(reply, reply->error(), reply->errorString());
+        return reply;
+    }
+
+    return geocode(searchString, bounds);
 }
 
 QGeoPlacesReply* QGeoPlacesManagerEngineNokia::search(QString requestString)

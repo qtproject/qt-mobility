@@ -45,7 +45,7 @@
 #include "qgeotiledmaprequest.h"
 #include "qgeotiledmappingmanagerengine.h"
 
-#include "qgeotiledmapviewport.h"
+#include "qgeotiledmapdata.h"
 
 #include <QTimer>
 
@@ -75,11 +75,11 @@ QGeoTiledMappingManagerThread::~QGeoTiledMappingManagerThread()
 \fn QGeoTiledMapReply* QGeoTiledMappingManagerThread::getTileImage(const QGeoTiledMapRequest &request) const
 */
 
-void QGeoTiledMappingManagerThread::removeViewport(QGeoTiledMapViewport* viewport)
+void QGeoTiledMappingManagerThread::removeMapData(QGeoTiledMapData* mapData)
 {
-    QGeoTiledMapRequestHandler *handler = d_ptr->handlers.value(viewport, 0);
+    QGeoTiledMapRequestHandler *handler = d_ptr->handlers.value(mapData, 0);
     if (handler) {
-        d_ptr->handlers.remove(viewport);
+        d_ptr->handlers.remove(mapData);
         delete handler;
     }
 }
@@ -94,9 +94,9 @@ void QGeoTiledMappingManagerThread::run()
     qRegisterMetaType<QList<QGeoTiledMapRequest> >();
     qRegisterMetaType<QGeoTiledMapReply::Error>();
     connect(d_ptr->engine,
-            SIGNAL(tileRequestsPrepared(QGeoTiledMapViewport*, QList<QGeoTiledMapRequest>)),
+            SIGNAL(tileRequestsPrepared(QGeoTiledMapData*, QList<QGeoTiledMapRequest>)),
             this,
-            SLOT(setRequests(QGeoTiledMapViewport*, QList<QGeoTiledMapRequest>)),
+            SLOT(setRequests(QGeoTiledMapData*, QList<QGeoTiledMapRequest>)),
             Qt::QueuedConnection);
 
     connect(this,
@@ -112,12 +112,12 @@ void QGeoTiledMappingManagerThread::run()
     exec();
 }
 
-void QGeoTiledMappingManagerThread::setRequests(QGeoTiledMapViewport* viewport, const QList<QGeoTiledMapRequest> &requests)
+void QGeoTiledMappingManagerThread::setRequests(QGeoTiledMapData* mapData, const QList<QGeoTiledMapRequest> &requests)
 {
-    QGeoTiledMapRequestHandler *handler = d_ptr->handlers.value(viewport, 0);
+    QGeoTiledMapRequestHandler *handler = d_ptr->handlers.value(mapData, 0);
 
     if (!handler) {
-        handler = new QGeoTiledMapRequestHandler(this, viewport);
+        handler = new QGeoTiledMapRequestHandler(this, mapData);
 
         // TODO remove replies from cache on error?
         // Would need to do this in handler
@@ -132,7 +132,7 @@ void QGeoTiledMappingManagerThread::setRequests(QGeoTiledMapViewport* viewport, 
                 this,
                 SIGNAL(tileError(QGeoTiledMapReply*, QGeoTiledMapReply::Error, QString)));
 
-        d_ptr->handlers.insert(viewport, handler);
+        d_ptr->handlers.insert(mapData, handler);
     }
 
     handler->setRequests(requests);
@@ -142,10 +142,10 @@ void QGeoTiledMappingManagerThread::setRequests(QGeoTiledMapViewport* viewport, 
 *******************************************************************************/
 
 
-QGeoTiledMapRequestHandler::QGeoTiledMapRequestHandler(QGeoTiledMappingManagerThread *thread, QGeoTiledMapViewport *viewport)
+QGeoTiledMapRequestHandler::QGeoTiledMapRequestHandler(QGeoTiledMappingManagerThread *thread, QGeoTiledMapData *mapData)
         : QObject(thread),
         thread(thread),
-        viewport(viewport),
+        mapData(mapData),
         lastZoomLevel(-1.0) {}
 
 QGeoTiledMapRequestHandler::~QGeoTiledMapRequestHandler()
@@ -165,7 +165,7 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
 
     if (lastZoomLevel != -1.0) {
         // TODO make the viewport access thread-safe
-        if ((lastZoomLevel != viewport->zoomLevel()) || (lastMapType != viewport->mapType())) {
+        if ((lastZoomLevel != mapData->zoomLevel()) || (lastMapType != mapData->mapType())) {
 
             // clear all replies
 
@@ -184,7 +184,7 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
 
         } else {
 
-            QRectF screenRect = viewport->screenRect();
+            QRectF screenRect = mapData->screenRect();
 
             // abort all replies that are off screen
 
@@ -213,8 +213,8 @@ void QGeoTiledMapRequestHandler::setRequests(const QList<QGeoTiledMapRequest> &r
         }
     }
 
-    lastZoomLevel = viewport->zoomLevel();
-    lastMapType = viewport->mapType();
+    lastZoomLevel = mapData->zoomLevel();
+    lastMapType = mapData->mapType();
 
     for (int i = 0; i < queue.size(); ++i) {
         QGeoTiledMapReply *reply = thread->getTileImage(queue.at(i));

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeomappingmanager.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QGeoMappingManager Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoMappingManager"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMappingManager Class Reference</h1>
+<p>The QGeoMappingManager class manages requests to and replies from a geographical map image service. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoMappingManager&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<ul>
+<li><a href="qgeomappingmanager-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#QGeoMappingManager">QGeoMappingManager</a></b> ( QGeoMappingManagerEngine * <i>engine</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#dtor.QGeoMappingManager">~QGeoMappingManager</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoMapViewport * </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#createViewport">createViewport</a></b> ( QGeoMapWidget * <i>widget</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#managerName">managerName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMap&lt;QString, QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#managerParameters">managerParameters</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#managerVersion">managerVersion</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#maximumImageSize">maximumImageSize</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#maximumZoomLevel">maximumZoomLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#minimumImageSize">minimumImageSize</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#minimumZoomLevel">minimumZoomLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#removeViewport">removeViewport</a></b> ( QGeoMapViewport * <i>viewport</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoMapWidget::MapType&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#supportedMapTypes">supportedMapTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomappingmanager.html#updateMapImage">updateMapImage</a></b> ( QGeoMapViewport * <i>viewport</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<h3>Additional Inherited Members</h3>
+<ul>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+</ul>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoMappingManager class manages requests to and replies from a geographical map image service.</p>
+<p>The request functions return a QGeoMapReply instance, which is responsible for delivering the status and results of the request.</p>
+<p>The rest of the class consists of functions providing metadata about the service provider, primarily dealing with the capabilities of the service and any limitations that may apply to the request inputs.</p>
+<p>The QGeoMapReply objects and the QGeoMappingManager instance will both emit signals to indicate that a request has completed successfully or has resulted in an error.</p>
+<p><b>Note:</b> After the request has finished, it is the responsibility of the user to delete the QGeoMapReply object at an appropriate time. Do not directly delete it inside the slot connected to replyFinished() or replyError() - the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() function should be used instead.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/QGeoMappingManager"></a>
+<h3 class="fn"><a name="QGeoMappingManager"></a>QGeoMappingManager::QGeoMappingManager ( <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> * <i>engine</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a <a href="qgeomappingmanager.html">QGeoMappingManager</a> object.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/~QGeoMappingManager"></a>
+<h3 class="fn"><a name="dtor.QGeoMappingManager"></a>QGeoMappingManager::~QGeoMappingManager ()</h3>
+<p>Destroys this <a href="qgeomappingmanager.html">QGeoMappingManager</a> object.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/createViewport"></a>
+<h3 class="fn"><a name="createViewport"></a><a href="qgeomapviewport.html">QGeoMapViewport</a> * QGeoMappingManager::createViewport ( <a href="qgeomapwidget.html">QGeoMapWidget</a> * <i>widget</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/managerName"></a>
+<h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoMappingManager::managerName () const</h3>
+<p>Returns the name of the engine which implements the behaviour of this mapping manager.</p>
+<p>The combination of managerName() and <a href="qgeomappingmanager.html#managerVersion">managerVersion</a>() should be unique amongst the plugin implementations.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/managerParameters"></a>
+<h3 class="fn"><a name="managerParameters"></a><a href="http://qt.nokia.com/doc/4.6/qmap.html">QMap</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; QGeoMappingManager::managerParameters () const</h3>
+<p>Returns the parameters used in the creation of this mapping manager.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/managerVersion"></a>
+<h3 class="fn"><a name="managerVersion"></a>int QGeoMappingManager::managerVersion () const</h3>
+<p>Returns the version of the engine which implements the behaviour of this mapping manager.</p>
+<p>The combination of <a href="qgeomappingmanager.html#managerName">managerName</a>() and managerVersion() should be unique amongst the plugin implementations.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/maximumImageSize"></a>
+<h3 class="fn"><a name="maximumImageSize"></a><a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a> QGeoMappingManager::maximumImageSize () const</h3>
+<p>Returns the size of the largest map image which is supported by this <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance.</p>
+<p>An invalid size indicates that this <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance places no restrictions on the maximum size of the map image.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/maximumZoomLevel"></a>
+<h3 class="fn"><a name="maximumZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMappingManager::maximumZoomLevel () const</h3>
+<p>Returns the maximum zoom level supported by this <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance.</p>
+<p>Larger values of the zoom level correspond to more detailed views of the map.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/minimumImageSize"></a>
+<h3 class="fn"><a name="minimumImageSize"></a><a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a> QGeoMappingManager::minimumImageSize () const</h3>
+<p>Returns the size of the smallest map image which is supported by this <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance.</p>
+<p>An invalid size indicates that this <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance places no restrictions on the minimum size of the map image.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/minimumZoomLevel"></a>
+<h3 class="fn"><a name="minimumZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMappingManager::minimumZoomLevel () const</h3>
+<p>Returns the minimum zoom level supported by this <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance.</p>
+<p>Larger values of the zoom level correspond to more detailed views of the map.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/removeViewport"></a>
+<h3 class="fn"><a name="removeViewport"></a>void QGeoMappingManager::removeViewport ( <a href="qgeomapviewport.html">QGeoMapViewport</a> * <i>viewport</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/supportedMapTypes"></a>
+<h3 class="fn"><a name="supportedMapTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; QGeoMappingManager::supportedMapTypes () const</h3>
+<p>Returns a list of the map types supported by this <a href="qgeomappingmanager.html">QGeoMappingManager</a> instance.</p>
+<a name="//apple_ref/cpp/instm/QGeoMappingManager/updateMapImage"></a>
+<h3 class="fn"><a name="updateMapImage"></a>void QGeoMappingManager::updateMapImage ( <a href="qgeomapviewport.html">QGeoMapViewport</a> * <i>viewport</i> )</h3>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

@@ -50,7 +50,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapViewport;
+class QGeoTiledMapData;
 class QGeoTiledMappingManagerEngine;
 
 class QGeoTiledMappingManagerThreadPrivate;
@@ -65,13 +65,13 @@ public:
     virtual void initialize();
 
     virtual QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request) = 0;
-    void removeViewport(QGeoTiledMapViewport* viewport);
+    void removeMapData(QGeoTiledMapData* mapData);
 
 protected:
     void run();
 
 public slots:
-    void setRequests(QGeoTiledMapViewport* viewport, const QList<QGeoTiledMapRequest> &requests);
+    void setRequests(QGeoTiledMapData* mapData, const QList<QGeoTiledMapRequest> &requests);
 
 signals:
     void tileFinished(QGeoTiledMapReply *reply);

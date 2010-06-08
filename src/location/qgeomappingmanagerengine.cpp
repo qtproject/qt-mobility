@@ -48,29 +48,21 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMappingManagerEngine
-    \brief The QGeoMappingManagerEngine class manages requests to and replies from
-    a geographical map image service.
+    \brief The QGeoMappingManagerEngine class provides an interface and convenience methods
+    to implementors of QGeoServiceProvider plugins who want to provides support for displaying
+    and interacting with maps.
     \ingroup maps-impl
 
-    The request functions return a QGeoMapReply instance, which is responsible
-    for delivering the status and results of the request.
+    The QGeoMappingManagerEngine class is used to define the service specific
+    behaviour and metadata required by QGeoMappingManager.
 
-    The rest of the class consists of functions providing metadata about the
-    service provider, primarily dealing with the capabilities of the service
-    and any limitations that may apply to the request inputs.
-
-    The QGeoMapReply objects and the QGeoMappingManagerEngine instance will both
-    emit signals to indicate that a request has completed successfully or
-    has resulted in an error.
-
-    \note After the request has finished, it is the responsibility of the user
-    to delete the QGeoMapReply object at an appropriate time. Do not
-    directly delete it inside the slot connected to replyFinished() or
-    replyError() - the deleteLater() function should be used instead.
+    Subclasses of QGeoMappingManagerEngine need to provide an implementations
+    of createMapData() and updateMapImage().
 */
 
 /*!
-    Constructs a QGeoMappingManagerEngine object.
+    Constructs a new engine with the specified \a parent, using \a parameters
+    to pass any implementation specific data to the engine.
 */
 QGeoMappingManagerEngine::QGeoMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent)
         : QObject(parent),
@@ -81,7 +73,7 @@ QGeoMappingManagerEngine::QGeoMappingManagerEngine(QGeoMappingManagerEnginePriva
         d_ptr(dd) {}
 
 /*!
-    Destroys this QGeoMappingManagerEngine object.
+    Destroys this engine.
 */
 QGeoMappingManagerEngine::~QGeoMappingManagerEngine()
 {
@@ -143,14 +135,47 @@ int QGeoMappingManagerEngine::managerVersion() const
     return d_ptr->managerVersion;
 }
 
-void QGeoMappingManagerEngine::removeViewport(QGeoMapViewport *viewport)
+/*!
+\fn QGeoMapData* QGeoMappingManagerEngine::createMapData(QGeoMapWidget *widget)
+
+    Returns a new QGeoMapData instance for \a widget which will be managed by 
+    this manager.
+
+    A QGeoMapData instance contains and manages the information about
+    what a map widget is looking at.  A  single manager can be used by several
+    widgets since each widget has an associated QGeoMapData instance.
+
+    The QGeoMapData instance can be treated as a kind of session object, or 
+    as a model in a model-view-controller architecture, with QGeoMapWidget 
+    as the view and QGeoMappingManagerEngine as the controller.
+
+    Subclasses of QGeoMappingManagerEngine are free to create subclasses of
+    QGeoMapData in order to associate implementation specific data
+    with the created instance..
+*/
+
+/*!
+  Stops this manager from managing \a mapData.
+*/
+void QGeoMappingManagerEngine::removeMapData(QGeoMapData *mapData)
 {
-    Q_UNUSED(viewport)
+    Q_UNUSED(mapData)
 }
 
 /*!
-    Returns a list of the map types supported by this QGeoMappingManagerEngine
-    instance.
+\fn void QGeoMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
+
+    Updates the map image stored in \a mapData based on the viewport 
+    data contained within \a mapData.
+
+    The image may be updated incrementally, as will happen with
+    tile based mapping managers.
+
+    Subclasses can use QGeoMapData::setMapImage() to update the map image.
+*/
+
+/*!
+    Returns a list of the map types supported by this engine.
 */
 QList<QGeoMapWidget::MapType> QGeoMappingManagerEngine::supportedMapTypes() const
 {
@@ -159,8 +184,7 @@ QList<QGeoMapWidget::MapType> QGeoMappingManagerEngine::supportedMapTypes() cons
 }
 
 /*!
-    Returns the minimum zoom level supported by this QGeoMappingManagerEngine
-    instance.
+    Returns the minimum zoom level supported by this engine.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -172,8 +196,7 @@ qreal QGeoMappingManagerEngine::minimumZoomLevel() const
 }
 
 /*!
-    Returns the maximum zoom level supported by this QGeoMappingManagerEngine
-    instance.
+    Returns the maximum zoom level supported by this engine.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -186,8 +209,7 @@ qreal QGeoMappingManagerEngine::maximumZoomLevel() const
 }
 
 /*!
-    Returns the size of the smallest map image which is supported by this
-    QGeoMappingManagerEngine instance.
+    Returns the size of the smallest map image which is supported by this engine.
 
     An invalid size indicates that this QGeoMappingManagerEngine instance places
     no restrictions on the minimum size of the map image.
@@ -199,8 +221,7 @@ QSize QGeoMappingManagerEngine::minimumImageSize() const
 }
 
 /*!
-    Returns the size of the largest map image which is supported by this
-    QGeoMappingManagerEngine instance.
+    Returns the size of the largest map image which is supported by this engine.
 
     An invalid size indicates that this QGeoMappingManagerEngine instance places
     no restrictions on the maximum size of the map image.
@@ -212,11 +233,10 @@ QSize QGeoMappingManagerEngine::maximumImageSize() const
 }
 
 /*!
-    Sets the list of map types supported by this QGeoMappingManagerEngine instance to
-    \a mapTypes.
+    Sets the list of map types supported by this engine to \a mapTypes.
 
-    Subclasses of QGeoCodingService should use this function to ensure that
-    supportedMapTypes() provides accurate information.
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
+    that supportedMapTypes() provides accurate information.
 
     \sa QGeoMapWidget::MapType
     \sa QGeoMappingManagerEngine::supportedMapTypes()
@@ -228,13 +248,12 @@ void QGeoMappingManagerEngine::setSupportedMapTypes(const QList<QGeoMapWidget::M
 }
 
 /*!
-    Sets the minimum zoom level supported by this QGeoMappingManagerEngine
-    instance.
+    Sets the minimum zoom level supported by this engine.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
 
-    Subclasses of QGeoCodingService should use this function to ensure that
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
     minimumZoomLevel() provides accurate information.
 */
 void QGeoMappingManagerEngine::setMinimumZoomLevel(qreal minimumZoom)
@@ -244,13 +263,12 @@ void QGeoMappingManagerEngine::setMinimumZoomLevel(qreal minimumZoom)
 }
 
 /*!
-    Sets the maximum zoom level supported by this QGeoMappingManagerEngine
-    instance.
+    Sets the maximum zoom level supported by this engine.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
 
-    Subclasses of QGeoCodingService should use this function to ensure that
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
     maximumZoomLevel() provides accurate information.
 */
 void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
@@ -261,12 +279,12 @@ void QGeoMappingManagerEngine::setMaximumZoomLevel(qreal maximumZoom)
 
 /*!
     Sets the size of the smallest map image which is supported by this
-    QGeoMappingManagerEngine instance.
+    engine.
 
-    An invalid size indicates that this QGeoMappingManagerEngine instance places
+    An invalid size indicates that this engine places
     no restrictions on the minimum size of the map image.
 
-    Subclasses of QGeoCodingService should use this function to ensure that
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
     minimumImageSize() provides accurate information.
 */
 void QGeoMappingManagerEngine::setMinimumImageSize(const QSize &minimumImageSize)
@@ -277,12 +295,12 @@ void QGeoMappingManagerEngine::setMinimumImageSize(const QSize &minimumImageSize
 
 /*!
     Sets the size of the largest map image which is supported by this
-    QGeoMappingManagerEngine instance.
+    engine.
 
-    An invalid size indicates that this QGeoMappingManagerEngine instance places
+    An invalid size indicates that this engine places
     no restrictions on the maximum size of the map image.
 
-    Subclasses of QGeoCodingService should use this function to ensure that
+    Subclasses of QGeoMappingManagerEngine should use this function to ensure
     maximumImageSize() provides accurate information.
 */
 void QGeoMappingManagerEngine::setMaximumImageSize(const QSize &maximumImageSize)

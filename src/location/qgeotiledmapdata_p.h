@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPVIEWPORT_P_H
-#define QGEOTILEDMAPVIEWPORT_P_H
+#ifndef QGEOTILEDMAPDATA_P_H
+#define QGEOTILEDMAPDATA_P_H
 
 //
 //  W A R N I N G
@@ -53,19 +53,19 @@
 // We mean it.
 //
 
-#include "qgeomapviewport_p.h"
+#include "qmobilityglobal.h"
 
 #include <QRectF>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapViewportPrivate : public QGeoMapViewportPrivate
+class QGeoTiledMapDataPrivate
 {
 public:
-    QGeoTiledMapViewportPrivate();
-    QGeoTiledMapViewportPrivate(const QGeoTiledMapViewportPrivate &other);
-    ~QGeoTiledMapViewportPrivate();
-    QGeoTiledMapViewportPrivate& operator= (const QGeoTiledMapViewportPrivate &other);
+    QGeoTiledMapDataPrivate();
+    QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &other);
+    ~QGeoTiledMapDataPrivate();
+    QGeoTiledMapDataPrivate& operator= (const QGeoTiledMapDataPrivate &other);
 
     qulonglong width;
     qulonglong height;

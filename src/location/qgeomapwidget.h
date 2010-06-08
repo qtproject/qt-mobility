@@ -100,7 +100,7 @@ private:
 
     QGeoMapWidgetPrivate *d_ptr;
 
-    friend class QGeoMapViewport;
+    friend class QGeoMapData;
 };
 
 QTM_END_NAMESPACE

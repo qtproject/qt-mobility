@@ -55,7 +55,8 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-places
 
-    Instances of QGeoPlacesManager primarily provide support for the
+    Instances of QGeoPlacesManager can be accessed with
+    QGeoServiceProvider::placesManager() primarily provide support for the
     searching of geographical information, either through free text search or
     by geocoding (finding coordinates from addresses).
 
@@ -89,9 +90,12 @@ Describes the type of search that should be performed by placesSearch().
 */
 
 /*!
-    Constructs a new manager with the specified \a parent.
+    Constructs a new manager with the specified \a parent and with the
+    implementation provided by \a engine.
 
-    This should only ever be called from subclasses of QGeoPlacesManager.
+    This constructor is intended for use by implementers of
+    QGeoServiceProviderPlugin. Regular users should aquire instance of
+    QGeoPlacesManager with QGeoServiceProvider::placesManager();
 */
 QGeoPlacesManager::QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent)
         : QObject(parent),
@@ -110,9 +114,10 @@ QGeoPlacesManager::QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *p
                 SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)),
                 this,
                 SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)));
+    } else {
+        qFatal("The places manager engine that was set for this places manager was NULL.");
     }
 }
-
 
 /*!
     Destroys this manager.
@@ -131,8 +136,8 @@ QGeoPlacesManager::~QGeoPlacesManager()
 */
 QString QGeoPlacesManager::managerName() const
 {
-    if (!d_ptr->engine)
-        return QString();
+//    if (!d_ptr->engine)
+//        return QString();
 
     return d_ptr->engine->managerName();
 }
@@ -142,8 +147,8 @@ QString QGeoPlacesManager::managerName() const
 */
 QMap<QString, QString> QGeoPlacesManager::managerParameters() const
 {
-    if (!d_ptr->engine)
-        return QMap<QString, QString>();
+//    if (!d_ptr->engine)
+//        return QMap<QString, QString>();
 
     return d_ptr->engine->managerParameters();
 }
@@ -157,8 +162,8 @@ QMap<QString, QString> QGeoPlacesManager::managerParameters() const
 */
 int QGeoPlacesManager::managerVersion() const
 {
-    if (!d_ptr->engine)
-        return -1;
+//    if (!d_ptr->engine)
+//        return -1;
 
     return d_ptr->engine->managerVersion();
 }
@@ -197,8 +202,8 @@ int QGeoPlacesManager::managerVersion() const
 */
 QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
 {
-    if (!d_ptr->engine)
-        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
+//    if (!d_ptr->engine)
+//        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
 
     return d_ptr->engine->geocode(address, bounds);
 }
@@ -243,8 +248,8 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoAddress &address, const QG
 */
 QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
 {
-    if (!d_ptr->engine)
-        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
+//    if (!d_ptr->engine)
+//        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
 
     return d_ptr->engine->geocode(coordinate, bounds);
 }
@@ -262,6 +267,10 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, co
 
     If supportsGeocoding() returns false and \a searchTypes is
     QGeoPlacesManager::SearchGeocode an
+    QGeoPlacesReply::UnsupportedOptionError will occur.
+
+    Likewise, if defaultLandmarkManager() returns 0 and \a searchType is
+    QGeoPlacesManager::SearchLandmarks an
     QGeoPlacesReply::UnsupportedOptionError will occur.
 
     Once the operation has completed, QGeoPlacesReply::places() can be used to
@@ -291,8 +300,8 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, co
 */
 QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
-    if (!d_ptr->engine)
-        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
+//    if (!d_ptr->engine)
+//        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
 
     return d_ptr->engine->placesSearch(searchString, searchTypes, bounds);
 }
@@ -302,8 +311,8 @@ QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QG
 */
 bool QGeoPlacesManager::supportsViewportBiasing() const
 {
-    if (!d_ptr->engine)
-        return false;
+//    if (!d_ptr->engine)
+//        return false;
 
     return d_ptr->engine->supportsViewportBiasing();
 }
@@ -313,8 +322,8 @@ bool QGeoPlacesManager::supportsViewportBiasing() const
 */
 bool QGeoPlacesManager::supportsGeocoding() const
 {
-    if (!d_ptr->engine)
-        return false;
+//    if (!d_ptr->engine)
+//        return false;
 
     return d_ptr->engine->supportsGeocoding();
 }
@@ -324,48 +333,63 @@ bool QGeoPlacesManager::supportsGeocoding() const
 */
 QGeoPlacesManager::SearchTypes QGeoPlacesManager::supportedSearchTypes() const
 {
-    if (!d_ptr->engine)
-        return QGeoPlacesManager::SearchTypes();
+//    if (!d_ptr->engine)
+//        return QGeoPlacesManager::SearchTypes();
 
     return d_ptr->engine->supportedSearchTypes();
 }
 
 /*!
+    Returns the landmark manager provided by the service provider for
+    use with placesSearch().
+
+    Will return 0 if the no landmark manager is associated with
+    the service provider.
 */
 QLandmarkManager* QGeoPlacesManager::defaultLandmarkManager() const
 {
-    if (!d_ptr->engine)
-        return 0;
+//    if (!d_ptr->engine)
+//        return 0;
 
     return d_ptr->engine->defaultLandmarkManager();
 }
 
 /*!
     Sets the landmark managers to be used with placesSearch() to \a landmarkManagers.
+
+    These landmark managers will be used along with the landmark manager returned
+    by defaultLandmarkManager().
 */
 void QGeoPlacesManager::setAdditionalLandmarkManagers(const QList<QLandmarkManager *> &landmarkManagers)
 {
-    if (d_ptr->engine)
+//    if (d_ptr->engine)
         d_ptr->engine->setAdditionalLandmarkManagers(landmarkManagers);
 }
 
 /*!
     Returns the landmark managers that will be used with placesSearch().
+
+    These landmark managers will be used along with the landmark manager returned
+    by defaultLandmarkManager().
 */
 QList<QLandmarkManager *> QGeoPlacesManager::additionalLandmarkManagers() const
 {
-    if (!d_ptr->engine)
-        return QList<QLandmarkManager *>();
+//    if (!d_ptr->engine)
+//        return QList<QLandmarkManager *>();
 
     return d_ptr->engine->additionalLandmarkManagers();
 }
 
 /*!
     Adds \a landmarkManager to the list of landmark managers that will be used with placesSearch().
+
+    These landmark managers will be used along with the landmark manager returned
+    by defaultLandmarkManager().
 */
 void QGeoPlacesManager::addAdditionalLandmarkManager(QLandmarkManager *landmarkManager)
 {
-    if (d_ptr->engine && landmarkManager)
+//    if (d_ptr->engine && landmarkManager)
+    if(landmarkManager)
         d_ptr->engine->addAdditionalLandmarkManager(landmarkManager);
 }
 

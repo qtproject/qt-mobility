@@ -67,13 +67,13 @@ public:
     int managerVersion() const;
 
     virtual QGeoPlacesReply* geocode(const QGeoAddress &address,
-                                     const QGeoBoundingBox &bounds) = 0;
+                                     const QGeoBoundingBox &bounds);
     virtual QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
-                                     const QGeoBoundingBox &bounds) = 0;
+                                     const QGeoBoundingBox &bounds);
 
     virtual QGeoPlacesReply* placesSearch(const QString &searchString,
                                           QGeoPlacesManager::SearchTypes searchTypes,
-                                          const QGeoBoundingBox &bounds) = 0;
+                                          const QGeoBoundingBox &bounds);
 
     bool supportsViewportBiasing() const;
     bool supportsGeocoding() const;
@@ -93,6 +93,10 @@ protected:
     void setManagerName(const QString &managerName);
     void setManagerVersion(int managerVersion);
 
+    virtual QGeoPlacesReply* geocode(const QString &addressString,
+                                     const QGeoBoundingBox &bounds);
+
+    void setDefaultLandmarkManager(QLandmarkManager *landmarkManager);
     void setSupportsViewportBiasing(bool supported);
     void setSupportsGeocoding(bool supported);
     void setSupportedSearchTypes(QGeoPlacesManager::SearchTypes searchTypes);

@@ -14,19 +14,28 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoRouteReply Class Reference</h1>
-<p>The QGeoRouteReply class represents the result of a request for routing information. <a href="#details">More...</a></p>
+<p>The QGeoRouteReply class manages an operation started by an instance of <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGeoRouteReply&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <ul>
 <li><a href="qgeoroutereply-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
+<a name="public-types"></a>
+<h2>Public Types</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#Error-enum">Error</a></b> { NoError, EngineNotSetError, CommunicationError, ParseError, UnsupportedOptionError, UnknownError }</td></tr>
+</table>
+<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#QGeoRouteReply">QGeoRouteReply</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#QGeoRouteReply">QGeoRouteReply</a></b> ( Error <i>error</i>, const QString &amp; <i>errorString</i>, QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#dtor.QGeoRouteReply">~QGeoRouteReply</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#errorString">errorString</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#isFinished">isFinished</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#request">request</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoRoute&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#routes">routes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#setRoutes">setRoutes</a></b> ( const QList&lt;QGeoRoute&gt; &amp; <i>routes</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -35,7 +44,7 @@
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#cancel">cancel</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#abort">abort</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
@@ -44,64 +53,119 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#error">error</a></b> ( QGeoRoutingService::ErrorCode <i>errorCode</i>, QString <i>errorString</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#error-2">error</a></b> ( QGeoRouteReply::Error <i>error</i>, const QString &amp; <i>errorString</i> = QString() )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#finished">finished</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+</ul>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#QGeoRouteReply-2">QGeoRouteReply</a></b> ( const QGeoRouteRequest &amp; <i>request</i>, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#setError">setError</a></b> ( Error <i>error</i>, const QString &amp; <i>errorString</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#setFinished">setFinished</a></b> ( bool <i>finished</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutereply.html#setRoutes">setRoutes</a></b> ( const QList&lt;QGeoRoute&gt; &amp; <i>routes</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QGeoRouteReply class represents the result of a request for routing information.</p>
-<p>The QGeoRouteReply class is responsible for signalling whether a routing request completed, whether the request was completed successfully, and for delivering the result of the request.</p>
-<p>Unless the <a href="qgeoroutereply.html#cancel">cancel</a>() method is used, a QGeoRouteReply object will emit the <a href="qgeoroutereply.html#finished">finished</a>() or <a href="qgeoroutereply.html#error">error</a>() signals to indicate that the request has completed.</p>
-<p>After the <a href="qgeoroutereply.html#finished">finished</a>() signal has been emitted the results can be retrieved with <a href="qgeoroutereply.html#routes">routes</a>().</p>
-<p><b>Note:</b> After the request has finished, it is the responsibility of the user to delete the QGeoRouteReply object at an appropriate time. Do not directly delete it inside the slot connected to <a href="qgeoroutereply.html#finished">finished</a>() or <a href="qgeoroutereply.html#error">error</a>() - the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() function should be used instead.</p>
-<p>See also <a href="qgeoroutingservice.html">QGeoRoutingService</a>.</p>
+<p>The QGeoRouteReply class manages an operation started by an instance of <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
+<p>Instances of QGeoRouteReply manage the state and results of these operations.</p>
+<p>The <a href="qgeoroutereply.html#isFinished">isFinished</a>(), <a href="qgeoroutereply.html#error">error</a>() and <a href="qgeoroutereply.html#errorString">errorString</a>() methods provide information on whether the operation has completed and if it completed succesfully.</p>
+<p>If the operation completes successfully the results will be able to be accessed with <a href="qgeoroutereply.html#routes">routes</a>().</p>
+<hr />
+<h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QGeoRouteReply/Error"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteReply/NoError"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteReply/EngineNotSetError"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteReply/CommunicationError"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteReply/ParseError"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteReply/UnsupportedOptionError"></a>
+<a name="//apple_ref/cpp/econst/QGeoRouteReply/UnknownError"></a>
+<h3 class="fn"><a name="Error-enum"></a>enum QGeoRouteReply::Error</h3>
+<p>Describes an error which prevented the completion of the operation.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QGeoRouteReply::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No error has occurred.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteReply::EngineNotSetError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The routing manager that was used did not have a <a href="qgeoroutingmanagerengine.html">QGeoRoutingManagerEngine</a> instance associated with it.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteReply::CommunicationError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">An error occurred while communicating with the service provider.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteReply::ParseError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The response from the service provider was in an unrecognizable format.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteReply::UnsupportedOptionError</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The requested operation or one of the options for the operation are not supported by the service provider.</td></tr>
+<tr><td valign="top"><tt>QGeoRouteReply::UnknownError</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">An error occurred which does not fit into any of the other categories.</td></tr>
+</table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoRouteReply/QGeoRouteReply"></a>
-<h3 class="fn"><a name="QGeoRouteReply"></a>QGeoRouteReply::QGeoRouteReply ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Constructs a <a href="qgeoroutereply.html">QGeoRouteReply</a> object with parent <i>parent</i>.</p>
+<h3 class="fn"><a name="QGeoRouteReply"></a>QGeoRouteReply::QGeoRouteReply ( <a href="qgeoroutereply.html#Error-enum">Error</a> <i>error</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>errorString</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Constructs a route reply with a given <i>error</i> and <i>errorString</i> and the specified <i>parent</i>.</p>
+<h3 class="fn"><a name="QGeoRouteReply-2"></a>QGeoRouteReply::QGeoRouteReply ( const <a href="qgeorouterequest.html">QGeoRouteRequest</a> &amp; <i>request</i>, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Constructs a route reply object based on <i>request</i>, with the specified <i>parent</i>.</p>
 <a name="//apple_ref/cpp/instm/QGeoRouteReply/~QGeoRouteReply"></a>
 <h3 class="fn"><a name="dtor.QGeoRouteReply"></a>QGeoRouteReply::~QGeoRouteReply ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
-<p>Destroys this <a href="qgeoroutereply.html">QGeoRouteReply</a> object.</p>
-<a name="//apple_ref/cpp/instm/QGeoRouteReply/cancel"></a>
-<h3 class="fn"><a name="cancel"></a>void QGeoRouteReply::cancel ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
-<p>Cancels this <a href="qgeoroutereply.html">QGeoRouteReply</a> if it has not yet completed.</p>
-<p>The <a href="qgeoroutereply.html#finished">finished</a>() signal will not be emitted.</p>
-<p>This function has no effect if the routing request has completed and this <a href="qgeoroutereply.html">QGeoRouteReply</a> object has emitted the <a href="qgeoroutereply.html#finished">finished</a>() or <a href="qgeoroutereply.html#error">error</a>() signals.</p>
-<p>The user is still responsible for deleting this <a href="qgeoroutereply.html">QGeoRouteReply</a> object.</p>
+<p>Destroys this route reply object.</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteReply/abort"></a>
+<h3 class="fn"><a name="abort"></a>void QGeoRouteReply::abort ()&nbsp;&nbsp;<tt> [virtual slot]</tt></h3>
+<p>Cancels the operation.</p>
+<p>This will do nothing if the reply is finished.</p>
 <a name="//apple_ref/cpp/instm/QGeoRouteReply/error"></a>
-<h3 class="fn"><a name="error"></a>void QGeoRouteReply::error ( <a href="qgeoroutingservice.html#ErrorCode-enum">QGeoRoutingService::ErrorCode</a> <i>errorCode</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>errorString</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>A <a href="qgeoroutereply.html">QGeoRouteReply</a> object represents the outcome of a request against a <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance. If this signal is emitted it indicates that the requested service did not finish successfully. The error that prevented the fulfullment of the request is described by <i>errorCode</i> and <i>errorString</i>.</p>
-<p>Note that the <a href="qgeoroutingservice.html#replyError">QGeoRoutingService::replyError</a>() signal can be used instead of this signal if it is more convinient to do so.</p>
-<p>Do not delete this <a href="qgeoroutereply.html">QGeoRouteReply</a> object in a slot connected to this signal - use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() if it is necessary to do so.</p>
-<p>See also <a href="qgeoroutingservice.html#replyError">QGeoRoutingService::replyError</a>().</p>
+<h3 class="fn"><a name="error"></a><a href="qgeoroutereply.html#Error-enum">Error</a> QGeoRouteReply::error () const</h3>
+<p>Returns the error state of this reply.</p>
+<p>If the result is <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::NoError</a> then no error has occurred.</p>
+<p>See also <a href="qgeoroutereply.html#setError">setError</a>().</p>
+<h3 class="fn"><a name="error-2"></a>void QGeoRouteReply::error ( <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::Error</a> <i>error</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>errorString</i> = QString() )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when an error has been detected in the processing of this reply. The <a href="qgeoroutereply.html#finished">finished</a>() signal will probably follow.</p>
+<p>The error will be described by the error code <i>error</i>. If <i>errorString</i> is not empty it will contain a textual description of the error.</p>
+<p>This signal and <a href="qgeoroutingmanager.html#error">QGeoRoutingManager::error</a>() will be emitted at the same time.</p>
+<p><b>Note:</b> Do no delete this reply object in the slot connected to this signal. Use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() instead.</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteReply/errorString"></a>
+<h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoRouteReply::errorString () const</h3>
+<p>Returns the textual representation of the error state of this reply.</p>
+<p>If no error has occurred this will return an empty string. It is possible that an error occurred which has no associated textual representation, in which case this will also return an empty string.</p>
+<p>To determine whether an error has occurred, check to see if <a href="qgeoroutereply.html#error">QGeoRouteReply::error</a>() is equal to <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::NoError</a>.</p>
 <a name="//apple_ref/cpp/instm/QGeoRouteReply/finished"></a>
 <h3 class="fn"><a name="finished"></a>void QGeoRouteReply::finished ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>A <a href="qgeoroutereply.html">QGeoRouteReply</a> object represents the outcome of a request against a <a href="qgeomappingservice.html">QGeoMappingService</a> instance. If this signal is emitted it indicates that the requested service was completed successfully.</p>
-<p>Note that the <a href="qgeoroutingservice.html#replyFinished">QGeoRoutingService::replyFinished</a>() signal can be used instead of this signal if it is more convinient to do so.</p>
-<p>Do not delete this <a href="qgeoroutereply.html">QGeoRouteReply</a> object in a slot connected to this signal - use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() if it is necessary to do so.</p>
-<p>See also <a href="qgeoroutingservice.html#replyFinished">QGeoRoutingService::replyFinished</a>().</p>
+<p>This signal is emitted when this reply has finished processing.</p>
+<p>If <a href="qgeoroutereply.html#error">error</a>() equals <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::NoError</a> then the processing finished successfully.</p>
+<p>This signal and <a href="qgeoroutingmanager.html#finished">QGeoRoutingManager::finished</a>() will be emitted at the same time.</p>
+<p><b>Note:</b> Do no delete this reply object in the slot connected to this signal. Use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() instead.</p>
+<p>See also <a href="qgeoroutereply.html#setFinished">setFinished</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteReply/isFinished"></a>
+<h3 class="fn"><a name="isFinished"></a>bool QGeoRouteReply::isFinished () const</h3>
+<p>Return true if the operation completed successfully or encountered an error which cause the operation to come to a halt.</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteReply/request"></a>
+<h3 class="fn"><a name="request"></a><a href="qgeorouterequest.html">QGeoRouteRequest</a> QGeoRouteReply::request () const</h3>
+<p>Returns the route request which specified the route.</p>
 <a name="//apple_ref/cpp/instm/QGeoRouteReply/routes"></a>
 <h3 class="fn"><a name="routes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeoroute.html">QGeoRoute</a>&gt; QGeoRouteReply::routes () const</h3>
-<p>Returns the requested routes.</p>
-<p>The result of calling this function prior to receiving the <a href="qgeoroutereply.html#finished">finished</a>() signal is undefined.</p>
-<p>See also <a href="qgeoroutereply.html#setRoutes">QGeoRouteReply::setRoutes</a>().</p>
+<p>Returns the list of routes which were requested.</p>
+<p>See also <a href="qgeoroutereply.html#setRoutes">setRoutes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteReply/setError"></a>
+<h3 class="fn"><a name="setError"></a>void QGeoRouteReply::setError ( <a href="qgeoroutereply.html#Error-enum">Error</a> <i>error</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>errorString</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Sets the error state of this reply to <i>error</i> and the textual representation of the error to <i>errorString</i>.</p>
+<p>This wil also cause <a href="qgeoroutereply.html#error">error</a>() and <a href="qgeoroutereply.html#finished">finished</a>() signals to be emitted, in that order.</p>
+<p>See also <a href="qgeoroutereply.html#error">error</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRouteReply/setFinished"></a>
+<h3 class="fn"><a name="setFinished"></a>void QGeoRouteReply::setFinished ( bool <i>finished</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Sets whether or not this reply has finished to <i>finished</i>.</p>
+<p>If <i>finished</i> is true, this will cause the <a href="qgeoroutereply.html#finished">finished</a>() signal to be emitted.</p>
+<p>If the operation completed successfully, <a href="qgeoroutereply.html#setRoutes">QGeoRouteReply::setRoutes</a>() should be called before this function. If an error occured, <a href="qgeoroutereply.html#setError">QGeoRouteReply::setError</a>() should be used instead.</p>
+<p>See also <a href="qgeoroutereply.html#finished">finished</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoRouteReply/setRoutes"></a>
-<h3 class="fn"><a name="setRoutes"></a>void QGeoRouteReply::setRoutes ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeoroute.html">QGeoRoute</a>&gt; &amp; <i>routes</i> )</h3>
-<p>Sets the routes in the reply to <i>routes</i>.</p>
-<p>See also <a href="qgeoroutereply.html#routes">QGeoRouteReply::routes</a>().</p>
+<h3 class="fn"><a name="setRoutes"></a>void QGeoRouteReply::setRoutes ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeoroute.html">QGeoRoute</a>&gt; &amp; <i>routes</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Sets the list of routes in the reply to <i>routes</i>.</p>
+<p>See also <a href="qgeoroutereply.html#routes">routes</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

@@ -54,7 +54,7 @@
 //
 
 #include "qgeomappingmanager.h"
-#include "qgeomapviewport.h"
+#include "qgeomapdata.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -67,7 +67,7 @@ public:
     QGeoMapWidgetPrivate& operator= (const QGeoMapWidgetPrivate &other);
 
     QGeoMappingManager *manager;
-    QGeoMapViewport *viewport;
+    QGeoMapData *mapData;
     bool panActive;
 };
 

@@ -64,7 +64,7 @@ public:
     int managerVersion() const;
 
     virtual QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request) = 0;
-    virtual QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position) = 0;
+    virtual QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
     bool supportsRouteUpdates() const;
     bool supportsAlternativeRoutes() const;

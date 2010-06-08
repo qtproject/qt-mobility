@@ -42,7 +42,7 @@
 #include "qgeotiledmaprequest.h"
 #include "qgeotiledmaprequest_p.h"
 
-#include "qgeotiledmapviewport.h"
+#include "qgeotiledmapdata.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,16 +51,16 @@ QGeoTiledMapRequest::QGeoTiledMapRequest()
 
 /*!
 */
-QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapViewport *viewport, int row, int column, const QRectF &tileRect)
+QGeoTiledMapRequest::QGeoTiledMapRequest(QGeoTiledMapData *mapData, int row, int column, const QRectF &tileRect)
         : d_ptr(new QGeoTiledMapRequestPrivate())
 {
-    d_ptr->viewport = viewport;
+    d_ptr->mapData = mapData;
     d_ptr->row = row;
     d_ptr->column = column;
     d_ptr->tileRect = tileRect;
 
-    d_ptr->zoomLevel = viewport->zoomLevel();
-    d_ptr->mapType = viewport->mapType();
+    d_ptr->zoomLevel = mapData->zoomLevel();
+    d_ptr->mapType = mapData->mapType();
     //d_ptr->imageFormat = viewport->imageFormat();
 }
 
@@ -84,9 +84,9 @@ QGeoTiledMapRequest& QGeoTiledMapRequest::operator= (const QGeoTiledMapRequest &
 
 /*!
 */
-QGeoTiledMapViewport* QGeoTiledMapRequest::viewport() const
+QGeoTiledMapData* QGeoTiledMapRequest::mapData() const
 {
-    return d_ptr->viewport;
+    return d_ptr->mapData;
 }
 
 /*!
@@ -129,11 +129,11 @@ QRectF QGeoTiledMapRequest::tileRect() const
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate()
         : QSharedData(),
-        viewport(0) {}
+        mapData(0) {}
 
 QGeoTiledMapRequestPrivate::QGeoTiledMapRequestPrivate(const QGeoTiledMapRequestPrivate &other)
         : QSharedData(other),
-        viewport(other.viewport),
+        mapData(other.mapData),
         mapType(other.mapType),
         zoomLevel(other.zoomLevel),
         row(other.row),
@@ -144,7 +144,7 @@ QGeoTiledMapRequestPrivate::~QGeoTiledMapRequestPrivate() {}
 
 QGeoTiledMapRequestPrivate& QGeoTiledMapRequestPrivate::operator= (const QGeoTiledMapRequestPrivate & other)
 {
-    viewport = other.viewport;
+    mapData = other.mapData;
     mapType = other.mapType;
     zoomLevel = other.zoomLevel;
     row = other.row;

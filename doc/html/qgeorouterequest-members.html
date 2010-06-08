@@ -16,37 +16,36 @@
 <p>This is the complete list of members for <a href="qgeorouterequest.html">QGeoRouteRequest</a>, including inherited members.</p>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn">enum <b><a href="qgeorouterequest.html#RouteAvoid-enum">RouteAvoid</a></b></div></li>
-<li><div class="fn">enum <b><a href="qgeorouterequest.html#RouteMode-enum">RouteMode</a></b></div></li>
-<li><div class="fn">enum <b><a href="qgeorouterequest.html#RouteType-enum">RouteType</a></b></div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#QGeoRouteRequest">QGeoRouteRequest</a></b> ()</div></li>
+<li><div class="fn">enum <b><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureType</a></b></div></li>
+<li><div class="fn">flags <b><a href="qgeorouterequest.html#AvoidFeatureType-enum">AvoidFeatureTypes</a></b></div></li>
+<li><div class="fn">enum <b><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetail</a></b></div></li>
+<li><div class="fn">flags <b><a href="qgeorouterequest.html#InstructionDetail-enum">InstructionDetails</a></b></div></li>
+<li><div class="fn">enum <b><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimization</a></b></div></li>
+<li><div class="fn">flags <b><a href="qgeorouterequest.html#RouteOptimization-enum">RouteOptimizations</a></b></div></li>
+<li><div class="fn">enum <b><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetail</a></b></div></li>
+<li><div class="fn">flags <b><a href="qgeorouterequest.html#SegmentDetail-enum">SegmentDetails</a></b></div></li>
+<li><div class="fn">enum <b><a href="qgeorouterequest.html#TravelMode-enum">TravelMode</a></b></div></li>
+<li><div class="fn">flags <b><a href="qgeorouterequest.html#TravelMode-enum">TravelModes</a></b></div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#QGeoRouteRequest">QGeoRouteRequest</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#QGeoRouteRequest-2">QGeoRouteRequest</a></b> ( const QGeoCoordinate &amp;, const QGeoCoordinate &amp; )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#QGeoRouteRequest-3">QGeoRouteRequest</a></b> ( const QGeoRouteRequest &amp; )</div></li>
 <li><div class="fn"><b><a href="qgeorouterequest.html#dtor.QGeoRouteRequest">~QGeoRouteRequest</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#addStopOver">addStopOver</a></b> ( const QGeoCoordinate &amp; )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#alternatives">alternatives</a></b> () const : quint16</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#arrivalTime">arrivalTime</a></b> () const : QDateTime</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#avoid">avoid</a></b> () const : QList&lt;RouteAvoid&gt;</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#departureTime">departureTime</a></b> () const : QDateTime</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#destination">destination</a></b> () const : QGeoCoordinate</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#language">language</a></b> () const : QString</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#mode">mode</a></b> () const : RouteMode</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#removeStopOver">removeStopOver</a></b> ( const QGeoCoordinate &amp; )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#requestString">requestString</a></b> ( const QString &amp; ) const : QString</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#avoidFeatureTypes">avoidFeatureTypes</a></b> () const : AvoidFeatureTypes</div></li>
 </ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setAlternatives">setAlternatives</a></b> ( quint16 )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setArrivalTime">setArrivalTime</a></b> ( const QDateTime &amp; )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setAvoid">setAvoid</a></b> ( QList&lt;RouteAvoid&gt; )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setDepartureTime">setDepartureTime</a></b> ( const QDateTime &amp; )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setDestination">setDestination</a></b> ( const QGeoCoordinate &amp; )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setLanguage">setLanguage</a></b> ( const QString &amp; )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setMode">setMode</a></b> ( RouteMode )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setSource">setSource</a></b> ( const QGeoCoordinate &amp; )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setTotalResults">setTotalResults</a></b> ( quint32 )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#setType">setType</a></b> ( RouteType )</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#source">source</a></b> () const : QGeoCoordinate</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#stopOvers">stopOvers</a></b> () const : const QList&lt;QGeoCoordinate&gt; &amp;</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#totalResults">totalResults</a></b> () const : quint32</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#type">type</a></b> () const : RouteType</div></li>
-<li><div class="fn"><b><a href="qgeorouterequest.html#version">version</a></b> () const : QString</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#instructionDetail">instructionDetail</a></b> () const : InstructionDetail</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#numberAlternativeRoutes">numberAlternativeRoutes</a></b> () const : int</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#routeOptimization">routeOptimization</a></b> () const : RouteOptimizations</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#segmentDetail">segmentDetail</a></b> () const : SegmentDetail</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#setAvoidFeatureTypes">setAvoidFeatureTypes</a></b> ( AvoidFeatureTypes )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#setInstructionDetail">setInstructionDetail</a></b> ( InstructionDetail )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#setNumberAlternativeRoutes">setNumberAlternativeRoutes</a></b> ( int )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#setRouteOptimization">setRouteOptimization</a></b> ( RouteOptimizations )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#setSegmentDetail">setSegmentDetail</a></b> ( SegmentDetail )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#setTravelModes">setTravelModes</a></b> ( TravelModes )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#setWaypoints">setWaypoints</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; )</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#travelModes">travelModes</a></b> () const : TravelModes</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#waypoints">waypoints</a></b> () const : QList&lt;QGeoCoordinate&gt;</div></li>
+<li><div class="fn"><b><a href="qgeorouterequest.html#operator-eq">operator=</a></b> ( const QGeoRouteRequest &amp; ) : QGeoRouteRequest &amp;</div></li>
 </ul>
 </td></tr>
 </table></p>

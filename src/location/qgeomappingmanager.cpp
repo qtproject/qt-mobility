@@ -49,29 +49,36 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMappingManager
-    \brief The QGeoMappingManager class manages requests to and replies from
-    a geographical map image service.
+    \brief The QGeoMappingManager class provides support for displaying
+    and interacting with maps.
     \ingroup maps-mapping
 
-    The request functions return a QGeoMapReply instance, which is responsible
-    for delivering the status and results of the request.
+    Instances of QGeoMappingManager can be accessed with
+    QGeoServiceProvider::mappingManager() and primarily provide support for
+    displaying and interacting with maps.
 
-    The rest of the class consists of functions providing metadata about the
-    service provider, primarily dealing with the capabilities of the service
-    and any limitations that may apply to the request inputs.
+    A QGeoMappingManager instance can create QGeoMapData instances
+    with createMapData, which are used to contain and manage information
+    concerning what a particular QGeoMapWidget is viewing.
 
-    The QGeoMapReply objects and the QGeoMappingManager instance will both
-    emit signals to indicate that a request has completed successfully or
-    has resulted in an error.
-
-    \note After the request has finished, it is the responsibility of the user
-    to delete the QGeoMapReply object at an appropriate time. Do not
-    directly delete it inside the slot connected to replyFinished() or
-    replyError() - the deleteLater() function should be used instead.
+    The functions in this class will typically not be used by clients of this
+    API, as the most common uses will only need to obtain a QGeoMappingManager
+    instance and associate it with a QGeoMapWidget instance:
+    \code
+        QGeoServiceProvider serviceProvider("nokia");
+        QGeoMapWidget *widget = new QGeoMapWidget();
+        QGeoMappingManager *manager = serviceProvider.mappingManager();
+        widget->setMappingManager(manager);
+    \endcode
 */
 
 /*!
-    Constructs a QGeoMappingManager object.
+    Constructs a new manager with the specified \a parent and with the
+    implementation provided by \a engine.
+
+    This constructor is intended for use by implementers of
+    QGeoServiceProviderPlugin. Regular users should aquire instance of
+    QGeoMappingManager with QGeoServiceProvider::mappingManager();
 */
 QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject *parent)
         : QObject(parent),
@@ -80,18 +87,8 @@ QGeoMappingManager::QGeoMappingManager(QGeoMappingManagerEngine *engine, QObject
     d_ptr->engine = engine;
     if (d_ptr->engine) {
         d_ptr->engine->setParent(this);
-
-        /*
-        connect(d_ptr->engine,
-                SIGNAL(finished(QGeoMapReply*)),
-                this,
-                SIGNAL(finished(QGeoMapReply*)));
-
-        connect(d_ptr->engine,
-                SIGNAL(error(QGeoMapReply*,QGeoMapReply::Error,QString)),
-                this,
-                SIGNAL(error(QGeoMapReply*,QGeoMapReply::Error,QString)));
-        */
+    } else {
+        qFatal("The mapping manager engine that was set for this mapping manager was NULL.");
     }
 }
 
@@ -112,8 +109,8 @@ QGeoMappingManager::~QGeoMappingManager()
 */
 QString QGeoMappingManager::managerName() const
 {
-    if (!d_ptr->engine)
-        return QString();
+//    if (!d_ptr->engine)
+//        return QString();
 
     return d_ptr->engine->managerName();
 }
@@ -123,8 +120,8 @@ QString QGeoMappingManager::managerName() const
 */
 QMap<QString, QString> QGeoMappingManager::managerParameters() const
 {
-    if (!d_ptr->engine)
-        return QMap<QString, QString>();
+//    if (!d_ptr->engine)
+//        return QMap<QString, QString>();
 
     return d_ptr->engine->managerParameters();
 }
@@ -138,109 +135,112 @@ QMap<QString, QString> QGeoMappingManager::managerParameters() const
 */
 int QGeoMappingManager::managerVersion() const
 {
-    if (!d_ptr->engine)
-        return -1;
+//    if (!d_ptr->engine)
+//        return -1;
 
     return d_ptr->engine->managerVersion();
 }
 
 /*!
+    Returns a new QGeoMapData instance for \a widget which will be managed by this manager.
 */
-QGeoMapViewport* QGeoMappingManager::createViewport(QGeoMapWidget *widget)
+QGeoMapData* QGeoMappingManager::createMapData(QGeoMapWidget *widget)
 {
-    if (!d_ptr->engine)
-        return 0;
+//    if (!d_ptr->engine)
+//        return 0;
 
-    return d_ptr->engine->createViewport(widget);
+    return d_ptr->engine->createMapData(widget);
 }
 
 /*!
+    Stops this manager from managing \a mapData.
 */
-void QGeoMappingManager::removeViewport(QGeoMapViewport *viewport)
+void QGeoMappingManager::removeMapData(QGeoMapData *mapData)
 {
-    if (d_ptr->engine)
-        d_ptr->engine->removeViewport(viewport);
+//    if (d_ptr->engine)
+        d_ptr->engine->removeMapData(mapData);
 }
 
 /*!
+    Updates the map image stored in \a mapData based on the viewport 
+    data contained within \a mapData.
+
+    The image may be updated incrementally, as will happen with
+    tile based mapping managers.
 */
-void QGeoMappingManager::updateMapImage(QGeoMapViewport *viewport)
+void QGeoMappingManager::updateMapImage(QGeoMapData *mapData)
 {
-    if (d_ptr->engine)
-        d_ptr->engine->updateMapImage(viewport);
+//    if (d_ptr->engine)
+        d_ptr->engine->updateMapImage(mapData);
 }
 
 /*!
-    Returns a list of the map types supported by this QGeoMappingManager
-    instance.
+    Returns a list of the map types supported by this manager.
 */
 QList<QGeoMapWidget::MapType> QGeoMappingManager::supportedMapTypes() const
 {
-    if (!d_ptr->engine)
-        return QList<QGeoMapWidget::MapType>();
+//    if (!d_ptr->engine)
+//        return QList<QGeoMapWidget::MapType>();
 
     return d_ptr->engine->supportedMapTypes();
 }
 
 /*!
-    Returns the minimum zoom level supported by this QGeoMappingManager
-    instance.
+    Returns the minimum zoom level supported by this manager.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
 */
 qreal QGeoMappingManager::minimumZoomLevel() const
 {
-    // TODO document this behaviour
-    if (!d_ptr->engine)
-        return -1.0;
+//    // TODO document this behaviour
+//    if (!d_ptr->engine)
+//        return -1.0;
 
     return d_ptr->engine->minimumZoomLevel();
 }
 
 /*!
-    Returns the maximum zoom level supported by this QGeoMappingManager
-    instance.
+    Returns the maximum zoom level supported by this manager.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
 */
 qreal QGeoMappingManager::maximumZoomLevel() const
-
 {
-    // TODO document this behaviour
-    if (!d_ptr->engine)
-        return -1.0;
+//    // TODO document this behaviour
+//    if (!d_ptr->engine)
+//        return -1.0;
 
     return d_ptr->engine->maximumZoomLevel();
 }
 
 /*!
     Returns the size of the smallest map image which is supported by this
-    QGeoMappingManager instance.
+    manager.
 
-    An invalid size indicates that this QGeoMappingManager instance places
+    An invalid size indicates that this manager places
     no restrictions on the minimum size of the map image.
 */
 QSize QGeoMappingManager::minimumImageSize() const
 {
-    if (!d_ptr->engine)
-        return QSize();
+//    if (!d_ptr->engine)
+//        return QSize();
 
     return d_ptr->engine->minimumImageSize();
 }
 
 /*!
     Returns the size of the largest map image which is supported by this
-    QGeoMappingManager instance.
+    manager.
 
-    An invalid size indicates that this QGeoMappingManager instance places
+    An invalid size indicates that this manager places
     no restrictions on the maximum size of the map image.
 */
 QSize QGeoMappingManager::maximumImageSize() const
 {
-    if (!d_ptr->engine)
-        return QSize();
+//    if (!d_ptr->engine)
+//        return QSize();
 
     return d_ptr->engine->maximumImageSize();
 }

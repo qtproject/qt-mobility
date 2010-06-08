@@ -59,7 +59,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapViewport;
+class QGeoTiledMapData;
 
 class QGeoTiledMapRequestPrivate : public QSharedData
 {
@@ -70,7 +70,7 @@ public:
 
     QGeoTiledMapRequestPrivate& operator= (const QGeoTiledMapRequestPrivate &other);
 
-    QGeoTiledMapViewport *viewport;
+    QGeoTiledMapData *mapData;
     QGeoMapWidget::MapType mapType;
     int zoomLevel;
     int row;

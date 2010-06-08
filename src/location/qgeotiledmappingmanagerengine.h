@@ -53,7 +53,7 @@ class QNetworkProxy;
 QTM_BEGIN_NAMESPACE
 
 class QGeoTiledMapRequest;
-class QGeoTiledMapViewport;
+class QGeoTiledMapData;
 
 class QGeoTiledMappingManagerThread;
 class QGeoTiledMappingManagerEnginePrivate;
@@ -64,11 +64,12 @@ class Q_LOCATION_EXPORT QGeoTiledMappingManagerEngine : public QGeoMappingManage
 public:
     virtual ~QGeoTiledMappingManagerEngine();
 
-    virtual QGeoMapViewport* createViewport(QGeoMapWidget *widget);
+    virtual QGeoMapData* createMapData(QGeoMapWidget *widget);
+    virtual void removeMapData(QGeoMapData* mapData);
 
-    virtual void updateMapImage(QGeoMapViewport *viewport);
+    virtual void updateMapImage(QGeoMapData *mapData);
 
-    virtual QPoint screenPositionToTilePosition(const QGeoMapViewport *viewport, const QPointF &screenPosition) const;
+    virtual QPoint screenPositionToTilePosition(const QGeoMapData *mapData, const QPointF &screenPosition) const;
 
     QList<QString> supportedImageFormats() const;
     QSize tileSize() const;
@@ -79,7 +80,7 @@ private slots:
     void tileError(QGeoTiledMapReply *reply, QGeoTiledMapReply::Error error, QString errorString);
 
 signals:
-    void tileRequestsPrepared(QGeoTiledMapViewport* viewport, const QList<QGeoTiledMapRequest> &requests);
+    void tileRequestsPrepared(QGeoTiledMapData* mapData, const QList<QGeoTiledMapRequest> &requests);
 
 protected:
     QGeoTiledMappingManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
