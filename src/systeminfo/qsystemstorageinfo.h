@@ -53,7 +53,7 @@ class QSystemStorageInfoPrivate;
 class  Q_SYSINFO_EXPORT QSystemStorageInfo : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList logicalDrives READ logicalDrives)
+    Q_PROPERTY(QStringList logicalDrives READ logicalDrives CONSTANT)
     Q_ENUMS(DriveType)
 
 public:

@@ -185,6 +185,7 @@ protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
     bool hasWifi;
+    bool networkThreadOk;
 
 };
 

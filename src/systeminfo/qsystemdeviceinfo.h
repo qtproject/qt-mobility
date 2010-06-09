@@ -144,11 +144,11 @@ public:
     bool currentBluetoothPowerState();
 
 Q_SIGNALS:
-    void batteryLevelChanged(int);
-    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );
-    void powerStateChanged(QSystemDeviceInfo::PowerState);
-    void currentProfileChanged(QSystemDeviceInfo::Profile);
-    void bluetoothStateChanged(bool);
+    void batteryLevelChanged(int level);
+    void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus status);
+    void powerStateChanged(QSystemDeviceInfo::PowerState state);
+    void currentProfileChanged(QSystemDeviceInfo::Profile profile);
+    void bluetoothStateChanged(bool on);
 
 private:
     QSystemDeviceInfoPrivate *d;

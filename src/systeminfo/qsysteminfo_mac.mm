@@ -908,7 +908,7 @@ void QBluetoothListenerThread::emitBtPower(bool b)
 }
 
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
-        : QObject(parent), signalStrengthCache(0)
+        : QObject(parent), signalStrengthCache(0),networkThreadOk(0)
 {
      defaultInterface = "";
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
@@ -931,7 +931,7 @@ if([[CWInterface supportedInterfaces] count] > 0 ) {
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-    if(hasWifi && runloopThread->isRunning()) {
+    if(hasWifi &&  networkThreadOk && runloopThread->isRunning()) {
         runloopThread->quit();
         runloopThread->wait();
         [delegate release];
@@ -956,6 +956,7 @@ void QSystemNetworkInfoPrivate::connectNotify(const char *signal)
         if(hasWifi) {
             runloopThread = new QRunLoopThread(this);
             runloopThread->start();
+            networkThreadOk = true;
         }
 #endif
     }
@@ -1335,11 +1336,14 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
+    qWarning() << __FUNCTION__  <<"Mode:"<< mode;
     return interfaceForMode(mode).hardwareAddress();
 }
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
+    qWarning () << __FUNCTION__ << mode;
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
     QNetworkInterface netInterface;
     CFArrayRef interfaceArray = SCNetworkInterfaceCopyAll(); //10.4
     CFStringRef iName;
@@ -1370,12 +1374,14 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                 netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
                 break;
             } else if (CFEqual(type, kSCNetworkInterfaceTypeIEEE80211) && mode == QSystemNetworkInfo::WlanMode) {
+                qWarning() << stringFromCFString(iName);
                 netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
                 break;
             }
         }
     }
     CFRelease(interfaceArray);
+    [autoreleasepool release];
     return netInterface;
 }
 
@@ -1794,7 +1800,7 @@ void powerInfoChanged(void* context)
 }
 
 QSystemDeviceInfoPrivate::QSystemDeviceInfoPrivate(QObject *parent)
-        : QObject(parent),btThread(0), btThreadOk(0)
+        : QObject(parent), btThreadOk(0) ,btThread(0)
 {
     batteryLevelCache = 0;
     currentPowerStateCache = QSystemDeviceInfo::UnknownPower;
@@ -1870,6 +1876,7 @@ QSystemDeviceInfo::InputMethodFlags QSystemDeviceInfoPrivate::inputMethodType()
 
 QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
 {
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
     QSystemDeviceInfo::PowerState state = QSystemDeviceInfo::UnknownPower;
 
     CFDictionaryRef powerSourceDict = NULL;
@@ -1909,6 +1916,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoPrivate::currentPowerState()
         currentPowerStateCache = state;
         Q_EMIT powerStateChanged(state);
     }
+    [autoreleasepool release];
     return state;
 }
 

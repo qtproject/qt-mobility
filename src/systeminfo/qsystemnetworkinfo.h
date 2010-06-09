@@ -63,7 +63,7 @@ class  Q_SYSINFO_EXPORT QSystemNetworkInfo : public QObject
     Q_PROPERTY(QString currentMobileNetworkCode READ currentMobileNetworkCode NOTIFY currentMobileNetworkCodeChanged)
     Q_PROPERTY(QString homeMobileCountryCode READ homeMobileCountryCode CONSTANT)
     Q_PROPERTY(QString homeMobileNetworkCode READ homeMobileNetworkCode CONSTANT)
-    Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode)
+    Q_PROPERTY(QSystemNetworkInfo::NetworkMode currentMode READ currentMode CONSTANT)
 
 
 public:
@@ -93,12 +93,11 @@ public:
         BluetoothMode,
         WimaxMode
     };
-    Q_DECLARE_FLAGS(NetworkModes, NetworkMode)
 
     Q_INVOKABLE QSystemNetworkInfo::NetworkStatus networkStatus(QSystemNetworkInfo::NetworkMode mode);
-    Q_INVOKABLE static int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
-    QString macAddress(QSystemNetworkInfo::NetworkMode mode);
-    QSystemNetworkInfo::NetworkMode currentMode();
+    Q_INVOKABLE int networkSignalStrength(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE QString macAddress(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE QSystemNetworkInfo::NetworkMode currentMode();
 
     int cellId();
     int locationAreaCode();
@@ -107,7 +106,7 @@ public:
     QString currentMobileNetworkCode();
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
-    Q_INVOKABLE static QString networkName(QSystemNetworkInfo::NetworkMode mode);
+    Q_INVOKABLE QString networkName(QSystemNetworkInfo::NetworkMode mode);
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
 
 
