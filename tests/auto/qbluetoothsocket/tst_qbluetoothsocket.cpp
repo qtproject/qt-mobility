@@ -113,7 +113,7 @@ void tst_QBluetoothSocket::tst_construction_data()
 
     QTest::newRow("unknown socket") << QBluetoothSocket::UnknownSocketType;
     QTest::newRow("rfcomm socket") << QBluetoothSocket::RfcommSocket;
-    QTest::newRow("l2cap socket") << QBluetoothSocket::L2CapSocket;
+    QTest::newRow("l2cap socket") << QBluetoothSocket::L2capSocket;
 }
 
 void tst_QBluetoothSocket::tst_construction()

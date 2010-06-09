@@ -68,7 +68,7 @@ class Q_CONNECTIVITY_EXPORT QBluetoothSocket : public QIODevice
 public:
     enum SocketType {
         UnknownSocketType = -1,
-        L2CapSocket,
+        L2capSocket,
         RfcommSocket,
     };
 

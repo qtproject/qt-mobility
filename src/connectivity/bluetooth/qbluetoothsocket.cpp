@@ -56,10 +56,10 @@ QTM_BEGIN_NAMESPACE
     \ingroup connectivity-bluetooth
     \inmodule QtConnectivity
 
-    QBluetoothSocket supports two socket types, \l {QBluetoothSocket::L2CapSocket}{L2CAP} and
+    QBluetoothSocket supports two socket types, \l {QBluetoothSocket::L2capSocket}{L2CAP} and
     \l {QBluetoothSocket::RfcommSocket}{RFCOMM}.
 
-    \l {QBluetoothSocket::L2CapSocket}{L2CAP} is a low level datagram-oriented Bluetooth socket.
+    \l {QBluetoothSocket::L2capSocket}{L2CAP} is a low level datagram-oriented Bluetooth socket.
 
     \l {QBluetoothSocket::RfcommSocket}{RFCOMM} is a reliable, stream-oriented socket.  RFCOMM
     sockets emulate an RS-232 serial port.
@@ -77,7 +77,7 @@ QTM_BEGIN_NAMESPACE
     This enum describes the Bluetooth socket type.
 
     \value UnknownSocketType    Unknown socket type.
-    \value L2CapSocket          L2CAP socket.
+    \value L2capSocket          L2CAP socket.
     \value RfcommSocket         RFCOMM socket.
 */
 
@@ -305,7 +305,7 @@ void QBluetoothSocket::connectToService(const QBluetoothServiceInfo &service, Op
     setOpenMode(openMode);
 
     if (service.protocolServiceMultiplexer() > 0) {
-        if (!d->ensureNativeSocket(L2CapSocket)) {
+        if (!d->ensureNativeSocket(L2capSocket)) {
             emit error(UnknownSocketError);
             return;
         }

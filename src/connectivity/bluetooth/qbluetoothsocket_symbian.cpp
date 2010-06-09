@@ -124,7 +124,7 @@ bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType ty
     socketType = type;
 
     switch (type) {
-    case QBluetoothSocket::L2CapSocket:
+    case QBluetoothSocket::L2capSocket:
         socket = CBluetoothSocket::NewL(*this, getSocketServer()->socketServer, _L("L2CAP"));
         break;
     case QBluetoothSocket::RfcommSocket:
