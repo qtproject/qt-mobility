@@ -1557,9 +1557,7 @@ QContactUrl* QContactABook::getUrlDetail(EContact *eContact) const
 
 static void addAttributeToAContact(const OssoABookContact* contact,
                                    const QString& attrName, const QStringList& attrValues,
-                                   const QString& paramName = QString(), const QStringList& paramValues = QStringList(),
-                                   bool overwrite = true,
-                                   const int index = 0)
+                                   const QString& paramName = QString(), const QStringList& paramValues = QStringList())
 {
   if (!contact)
     return;
@@ -1569,47 +1567,7 @@ static void addAttributeToAContact(const OssoABookContact* contact,
   EVCardAttributeParam* param = NULL;
   
   QCM5_DEBUG << "Adding attribute" << attrName << "AttrValues:" << attrValues
-             << "ParamName:" << paramName << "ParamValues:" << paramValues
-             << "overwrite" << overwrite << "Index" << index;
-  
-  if (overwrite)
-  {
-    GList *attributeList = osso_abook_contact_get_attributes(E_CONTACT(contact), qPrintable(attrName));
-    
-    for (GList *node = g_list_last(attributeList); node != NULL; node = g_list_previous(node)) {
-      EVCardAttribute* eAttr = (EVCardAttribute*)node->data;
-      int pos =  g_list_position(attributeList, node);
-      
-      if (index > pos){
-        //qWarning() << "Attribute doesn't found at position" << index;
-        return;
-      }
-      
-      if (index != pos)
-        continue;
-      
-      // Select the current EVCard Attribute if it contains the same parameters of
-      // attribute we want to modify/add
-      int matchedParams = 0;
-      GList* p = NULL;
-      p = e_vcard_attribute_get_param(eAttr, qPrintable(paramName));
-
-      while (p){
-          foreach(QString paramV, paramValues){
-          QString value = CONST_CHAR(p->data);
-          if (paramV == value)
-            ++matchedParams;
-        }
-        p = p->next;
-      }
-      g_list_free(p);
-
-      if (matchedParams == paramValues.count()) {
-        attr = eAttr;
-        break;
-      }    
-    }
-  }
+             << "ParamName:" << paramName << "ParamValues:" << paramValues;
   
   // Check if attrValues contains something
   bool noValues = true;
@@ -1663,24 +1621,13 @@ OssoABookContact* QContactABook::convert(const QContact *contact, QContactManage
   Q_CHECK_PTR(contact);
 
   // first, check for uniqueness constraints.
-  // currently, it is only phone numbers and online accounts
-  // which are NOT unique.
-  // XXX TODO: if/when we modify the logic to make other details
-  // non-unique (eg, QContactEmailAddress), we'll need to remove
-  // them from this check.
-  if (contact->details<QContactAddress>().count() > 1) {
-      *error = QContactManager::LimitReachedError;
-      return 0;
-  }
+  // currently, it is only addresses, email addresses, phone numbers
+  // and online accounts which are NOT unique.
   if (contact->details<QContactAvatar>().count() > 1) {
       *error = QContactManager::LimitReachedError;
       return 0;
   }
   if (contact->details<QContactBirthday>().count() > 1) {
-      *error = QContactManager::LimitReachedError;
-      return 0;
-  }
-  if (contact->details<QContactEmailAddress>().count() > 1) {
       *error = QContactManager::LimitReachedError;
       return 0;
   }
@@ -1720,18 +1667,21 @@ OssoABookContact* QContactABook::convert(const QContact *contact, QContactManage
   QCM5_DEBUG << "Converting QContact id:" << id << " to aContact";
   if (id) {
     rtn = getAContact(id, error);
+    EVCardAttribute *uidAttr = e_vcard_get_attribute(E_VCARD(rtn), e_contact_vcard_attribute(E_CONTACT_UID));
 
-    // special case code to fix removal of phone numbers.
-    // XXX TODO: if we make other detail types non-unique, will need to add them here.
-    QString attrName = QString(QLatin1String(EVC_TEL));
-    EVCard *vcard = E_VCARD (rtn);
-    GList *attributeList = osso_abook_contact_get_attributes(E_CONTACT(rtn), qPrintable(attrName));
-    for (GList *node = g_list_last(attributeList); node != NULL; node = g_list_previous(node)) {
-      EVCardAttribute* eAttr = (EVCardAttribute*)node->data;
-      e_vcard_remove_attribute(vcard, eAttr);
+    // remove all current attributes, since we rewrite them all.
+    EVCardAttribute *attr;
+    GList *attr_list = e_vcard_get_attributes (E_VCARD (rtn));
+    while (attr_list) {
+        attr = static_cast<EVCardAttribute*>(attr_list->data);
+        attr_list = attr_list->next;
+        if (!osso_abook_contact_attribute_is_readonly (attr)) {
+            if (attr != uidAttr) {
+                // we don't remove the uid, since we are updating the contact.
+                e_vcard_remove_attribute (E_VCARD (rtn), attr);
+            }
+        }
     }
-    g_list_free(attributeList);
-
   } else {
     rtn = osso_abook_contact_new();
   }
@@ -1856,14 +1806,14 @@ void QContactABook::setAddressDetail(const OssoABookContact* aContact, const QCo
     return;
   
   // Saving LABEL and ADR attributes into the VCard
-  addAttributeToAContact(aContact, EVC_ADR, adrAttrValues, EVC_TYPE, paramValues, true, detailUri);
+  addAttributeToAContact(aContact, EVC_ADR, adrAttrValues, EVC_TYPE, paramValues);
   
   //BUG Label attribute contains a bug
   //It contains TYPE(TYPE) if ADDRESS doesn't contain any parameter value.
   if (paramValues.isEmpty())
     paramValues << EVC_TYPE;
   
-  addAttributeToAContact(aContact, EVC_LABEL, lblAttrValues, EVC_TYPE, paramValues, true, detailUri);
+  addAttributeToAContact(aContact, EVC_LABEL, lblAttrValues, EVC_TYPE, paramValues);
 }
 
 void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const QContactThumbnail& detail) const
@@ -1937,7 +1887,7 @@ void QContactABook::setEmailDetail(const OssoABookContact* aContact, const QCont
       attrValues << i.value().toString();
   }
   
-  addAttributeToAContact(aContact, EVC_EMAIL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
+  addAttributeToAContact(aContact, EVC_EMAIL, attrValues, EVC_TYPE, paramValues);
 }
 
 void QContactABook::setGenderDetail(const OssoABookContact* aContact, const QContactGender& detail) const
@@ -2052,14 +2002,9 @@ void QContactABook::setPhoneDetail(const OssoABookContact* aContact, const QCont
   // Avoid unsupported type
   if (paramValues.isEmpty())
     paramValues << "VOICE";
-  
-  if (detail.detailUri().isEmpty()) {
-    // new phone number detail.
-    addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, false, detail.detailUri().toInt());
-  } else {
-    // overwrite old phone number detail.
-    addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues, true, detail.detailUri().toInt());
-  }
+
+  // new phone number detail.
+  addAttributeToAContact(aContact, EVC_TEL, attrValues, EVC_TYPE, paramValues);
 }
 
 void QContactABook::setUrlDetail(const OssoABookContact* aContact, const QContactUrl& detail) const

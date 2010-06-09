@@ -1005,17 +1005,20 @@ void tst_QContactManager::update()
         QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
         QVERIFY(mt.detail<QContactPhoneNumber>() == pn);
 
-        // we also should do the same test for other details (for example, email address).
-        // if the backend cannot save multiple copies of a detail (eg, email address always overwrites)
+        // we also should do the same test for other details (for example, gender).
+        // if the backend cannot save multiple copies of a detail (eg, gender always overwrites)
         // it should FAIL the save operation if the contact has multiple of that detail type,
         // and set error to QContactManager::LimitReachedError.
-        QContactEmailAddress mte2;
-        mte2.setEmailAddress("test2@test2.com");
-        mt.saveDetail(&mte2);
-        QVERIFY(!cm->saveContact(&mt));
+        QContactGender mtg, mtg2;
+        mtg.setGender(QContactGender::GenderFemale);
+        mtg2.setGender(QContactGender::GenderMale);
+        mt.saveDetail(&mtg);
+        QVERIFY(cm->saveContact(&mt)); // one gender is fine
+        mt.saveDetail(&mtg2);
+        QVERIFY(!cm->saveContact(&mt)); // two is not
         //QCOMPARE(cm->error(), QContactManager::LimitReachedError); // should be LimitReachedError.
         mt = cm->contact(mt.localId());
-        QVERIFY(mt.details<QContactEmailAddress>().count() == 1);
+        QVERIFY(mt.details<QContactGender>().count() == 1);
     }
 
     /* Save a new contact first */
