@@ -16,3 +16,6 @@ SOURCES = \
     main.cpp \
     radio.cpp
 
+symbian: {
+    TARGET.CAPABILITY = UserEnvironment WriteDeviceData ReadDeviceData SwEvent
+}

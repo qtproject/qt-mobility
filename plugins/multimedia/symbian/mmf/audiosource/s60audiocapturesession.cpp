@@ -136,8 +136,8 @@ bool S60AudioCaptureSession::setFormat(const QAudioFormat &format)
 }
 
 QStringList S60AudioCaptureSession::supportedAudioCodecs() const
-{   
-    return m_audioCodeclist.keys();    
+{
+    return m_audioCodeclist.keys();
 }
 
 QStringList S60AudioCaptureSession::supportedAudioContainers() const
@@ -306,7 +306,7 @@ void S60AudioCaptureSession::setCaptureDevice(const QString &deviceName)
 
 void S60AudioCaptureSession::MoscoStateChangeEvent(CBase* aObject,
         TInt aPreviousState, TInt aCurrentState, TInt aErrorCode)
-{ 	    
+{
     if (aErrorCode==KErrNone) {
 	    TRAPD(err, MoscoStateChangeEventL(aObject, aPreviousState, aCurrentState, NULL));
 	    setError(err);
@@ -480,12 +480,14 @@ void S60AudioCaptureSession::populateAudioCodecsDataL()
 
 void S60AudioCaptureSession::applyAudioSettingsL()
 {      
-    if (!m_recorderUtility)
-        return;
+    if (!m_recorderUtility || m_format.codec() == "AMR")
+        return;   
     
     TFourCC fourCC = m_audioCodeclist.value(m_format.codec()).fourCC;    
     
-    //set destination datatype
+    if (m_format.codec() == "PCM")         
+        fourCC = determinePCMFormat();    
+    
     RArray<TFourCC> supportedDataTypes;
     CleanupClosePushL(supportedDataTypes);
     m_recorderUtility->GetSupportedDestinationDataTypesL(supportedDataTypes);    
@@ -514,7 +516,7 @@ void S60AudioCaptureSession::applyAudioSettingsL()
     CleanupClosePushL(supportedChannels);
     m_recorderUtility->GetSupportedNumberOfChannelsL(supportedChannels);    
     for (TInt l = 0; l < supportedChannels.Count(); l++ ) {        
-        if (supportedChannels[l] == m_format.channels()) {
+        if (supportedChannels[l] == m_format.channels()) {            
             m_recorderUtility->SetDestinationNumberOfChannelsL(m_format.channels());
             break;
         }

@@ -128,7 +128,7 @@
 <a name="messaging-api"></a>
 <h3>Messaging API</h3>
 <ul>
-<li>Messaging filtering and Sorting functions are not fully optimized.</li>
+<li>Messaging filtering and sorting functions are not fully optimized.</li>
 <li>Fremantle: <tt>QMessageService::compose</tt> not supported for SMS type messages.</li>
 <li>Fremantle: queryMessages service action is synchronous for SMS type messages.</li>
 <li>Fremantle: <tt>QMessageService::show</tt> not supported for SMS type messages.</li>
@@ -146,13 +146,12 @@
 <li>Windows: <tt>QMessageServiceAction::queryMessages</tt> does not incrementally emit matching message identifiers or progress information.</li>
 <li>Windows: <tt>QMessageServiceAction::exportUpdates</tt>: Performs no operation as changes are automatically synchronized with external servers when a connection is available. control of update progress.</li>
 <li>Windows desktop: <tt>QMessageStore::instance</tt> shows a blocking modal dialog if MAPI is not installed.</li>
-<li>Windows mobile: <tt>QMessageSerivceAction::retrieve</tt>: Only retrieves content for messages bodies at present. Attachment retrieval overridden by mapi/mail client settings.</li>
+<li>Windows mobile: <tt>QMessageServiceAction::retrieve</tt>: Only retrieves content for messages bodies at present. Attachment retrieval overridden by mapi/mail client settings.</li>
 <li>Windows mobile: <tt>QMessageServiceAction::cancelOperation</tt>: Async nature of native calls used to implement service actions means that cancelOperation will only operate on the ::retrieveBody service action.</li>
 </ul>
 <a name="multimedia-api"></a>
 <h3>Multimedia API</h3>
 <ul>
-<li><b>Multimedia API is in beta state.</b></li>
 <li>S60: Audio capture does not support currently any special features like format, encoding etc.</li>
 <li>S60: seeking is not working properly</li>
 <li>S60: video size does not remain constant in repeated plays</li>

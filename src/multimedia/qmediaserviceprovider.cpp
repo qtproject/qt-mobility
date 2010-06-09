@@ -83,8 +83,8 @@ public:
     \class QMediaServiceProviderHint
     \preliminary
     \brief The QMediaServiceProviderHint class describes what is required of a QMediaService.
-    
-    \ingroup multimedia-serv
+
+    \ingroup multimedia
 
     The QMediaServiceProvider class uses hints to select an appropriate media service.
 */
@@ -336,9 +336,9 @@ public:
                 }
                 break;
             case QMediaServiceProviderHint::ContentType: {
-                    QtMediaServices::SupportEstimate estimate = QtMediaServices::NotSupported;
+                    QtMultimedia::SupportEstimate estimate = QtMultimedia::NotSupported;
                     foreach (QMediaServiceProviderPlugin *currentPlugin, plugins) {
-                        QtMediaServices::SupportEstimate currentEstimate = QtMediaServices::MaybeSupported;
+                        QtMultimedia::SupportEstimate currentEstimate = QtMultimedia::MaybeSupported;
                         QMediaServiceSupportedFormatsInterface *iface =
                                 qobject_cast<QMediaServiceSupportedFormatsInterface*>(currentPlugin);
 
@@ -349,7 +349,7 @@ public:
                             estimate = currentEstimate;
                             plugin = currentPlugin;
 
-                            if (currentEstimate == QtMediaServices::PreferredService)
+                            if (currentEstimate == QtMultimedia::PreferredService)
                                 break;
                         }
                     }
@@ -380,7 +380,7 @@ public:
         }
     }
 
-    QtMediaServices::SupportEstimate hasSupport(const QByteArray &serviceType,
+    QtMultimedia::SupportEstimate hasSupport(const QByteArray &serviceType,
                                      const QString &mimeType,
                                      const QStringList& codecs,
                                      int flags) const
@@ -388,10 +388,10 @@ public:
         QList<QObject*> instances = loader()->instances(serviceType);
 
         if (instances.isEmpty())
-            return QtMediaServices::NotSupported;
+            return QtMultimedia::NotSupported;
 
         bool allServicesProvideInterface = true;
-        QtMediaServices::SupportEstimate supportEstimate = QtMediaServices::NotSupported;
+        QtMultimedia::SupportEstimate supportEstimate = QtMultimedia::NotSupported;
 
         foreach(QObject *obj, instances) {
             QMediaServiceSupportedFormatsInterface *iface =
@@ -425,12 +425,12 @@ public:
         }
 
         //don't return PreferredService
-        supportEstimate = qMin(supportEstimate, QtMediaServices::ProbablySupported);
+        supportEstimate = qMin(supportEstimate, QtMultimedia::ProbablySupported);
 
         //Return NotSupported only if no services are available of serviceType
         //or all the services returned NotSupported, otherwise return at least MaybeSupported
         if (!allServicesProvideInterface)
-            supportEstimate = qMax(QtMediaServices::MaybeSupported, supportEstimate);
+            supportEstimate = qMax(QtMultimedia::MaybeSupported, supportEstimate);
 
         return supportEstimate;
     }
@@ -520,11 +520,14 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 /*!
     \fn QMediaServiceProvider::requestService(const QByteArray &type, const QMediaServiceProviderHint &hint)
 
-    Requests an instance of a \a type service which best matches the given \a hint.
+    Requests an instance of a \a type service which best matches the given \a
+    hint.
 
-    Returns a pointer to the requested service, or a null pointer if there is no suitable service.
+    Returns a pointer to the requested service, or a null pointer if there is
+    no suitable service.
 
-    The returned service must be released with releaseService when it is finished with.
+    The returned service must be released with releaseService when it is
+    finished with.
 */
 
 /*!
@@ -534,13 +537,14 @@ Q_GLOBAL_STATIC(QPluginServiceProvider, pluginProvider);
 */
 
 /*!
-    \fn QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
+    \fn QtMultimedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType, const QString &mimeType, const QStringList& codecs, int flags) const
 
-    Returns how confident a media service provider is that is can provide a \a serviceType
-    service that is able to play media of a specific \a mimeType that is encoded using the listed
-    \a codecs while adhearing to constraints identified in \a flags.
+    Returns how confident a media service provider is that is can provide a \a
+    serviceType service that is able to play media of a specific \a mimeType
+    that is encoded using the listed \a codecs while adhering to constraints
+    identified in \a flags.
 */
-QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
+QtMultimedia::SupportEstimate QMediaServiceProvider::hasSupport(const QByteArray &serviceType,
                                                         const QString &mimeType,
                                                         const QStringList& codecs,
                                                         int flags) const
@@ -550,15 +554,17 @@ QtMediaServices::SupportEstimate QMediaServiceProvider::hasSupport(const QByteAr
     Q_UNUSED(codecs);
     Q_UNUSED(flags);
 
-    return QtMediaServices::MaybeSupported;
+    return QtMultimedia::MaybeSupported;
 }
 
 /*!
     \fn QStringList QMediaServiceProvider::supportedMimeTypes(const QByteArray &serviceType, int flags) const
 
-    Returns a list of MIME types supported by the service provider for the specified \a serviceType.
+    Returns a list of MIME types supported by the service provider for the
+    specified \a serviceType.
 
-    The resultant list is restricted to MIME types which can be supported given the constraints in \a flags.
+    The resultant list is restricted to MIME types which can be supported given
+    the constraints in \a flags.
 */
 QStringList QMediaServiceProvider::supportedMimeTypes(const QByteArray &serviceType, int flags) const
 {
@@ -578,8 +584,8 @@ QList<QByteArray> QMediaServiceProvider::devices(const QByteArray &service) cons
 }
 
 /*!
-    Returns the description of \a device related to \a serviceType,
-    suitable to be displayed to user.
+    Returns the description of \a device related to \a serviceType, suitable for use by
+    an application for display.
 */
 QString QMediaServiceProvider::deviceDescription(const QByteArray &serviceType, const QByteArray &device)
 {
@@ -626,8 +632,9 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
     plug-ins.
 
     A media service provider plug-in may implement one or more of
-    QMediaServiceSupportedFormatsInterface, QMediaServiceSupportedDevicesInterface,
-    and QMediaServiceFeaturesInterface to identify the features it supports.
+    QMediaServiceSupportedFormatsInterface,
+    QMediaServiceSupportedDevicesInterface, and QMediaServiceFeaturesInterface
+    to identify the features it supports.
 */
 
 /*!
@@ -668,7 +675,8 @@ QMediaServiceProvider *QMediaServiceProvider::defaultServiceProvider()
 /*!
     \fn QMediaServiceSupportedFormatsInterface::hasSupport(const QString &mimeType, const QStringList& codecs) const
 
-    Returns the level of support a media service plug-in has for a \a mimeType and set of \a codecs.
+    Returns the level of support a media service plug-in has for a \a mimeType
+    and set of \a codecs.
 */
 
 /*!

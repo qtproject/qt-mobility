@@ -3,7 +3,7 @@ headers.path = $$QT_MOBILITY_INCLUDE
 
 contains(TEMPLATE,.*lib) {
     target.path=$$QT_MOBILITY_LIB
-    TARGET = $$qtLibraryTarget($${TARGET})
+    TARGET = $$qtLibraryTarget($${TARGET}$${QT_LIBINFIX})
  
     symbian {
         middleware {  path=$$MW_LAYER_PUBLIC_EXPORT_PATH("") }

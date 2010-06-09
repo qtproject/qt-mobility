@@ -293,10 +293,6 @@ bool QContactMemoryEngine::saveContact(QContact* theContact, QContactChangeSet& 
 /*! \reimp */
 bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error)
 {
-    if(errorMap) {
-        errorMap->clear();
-    }
-
     if (!contacts) {
         *error = QContactManager::BadArgumentError;
         return false;
@@ -309,7 +305,8 @@ bool QContactMemoryEngine::saveContacts(QList<QContact>* contacts, QMap<int, QCo
         current = contacts->at(i);
         if (!saveContact(&current, changeSet, error)) {
             operationError = *error;
-            errorMap->insert(i, operationError);
+            if (errorMap)
+                errorMap->insert(i, operationError);
         } else {
             (*contacts)[i] = current;
         }
@@ -376,7 +373,8 @@ bool QContactMemoryEngine::removeContacts(const QList<QContactLocalId>& contactI
         current = contactIds.at(i);
         if (!removeContact(current, changeSet, error)) {
             operationError = *error;
-            errorMap->insert(i, operationError);
+            if (errorMap)
+                errorMap->insert(i, operationError);
         }
     }
 
@@ -690,7 +688,7 @@ void QContactMemoryEngine::performAsynchronousOperation(QContactAbstractRequest 
             QList<QContactSortOrder> sorting = r->sorting();
             QContactFetchHint fetchHint = r->fetchHint();
 
-            QContactManager::Error operationError;
+            QContactManager::Error operationError = QContactManager::NoError;
             QList<QContact> requestedContacts = contacts(filter, sorting, fetchHint, &operationError);
 
             // update the request with the results.

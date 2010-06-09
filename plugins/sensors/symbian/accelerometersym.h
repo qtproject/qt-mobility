@@ -95,7 +95,7 @@ public:
     /**
      * Holds the id of the accelerometer
      */
-    static const char *id;
+    static char const * const id;
     
 private:
     QAccelerometerReading iReading;

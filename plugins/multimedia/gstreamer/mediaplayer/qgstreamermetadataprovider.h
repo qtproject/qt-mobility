@@ -42,13 +42,13 @@
 #ifndef QGSTREAMERMETADATAPROVIDER_H
 #define QGSTREAMERMETADATAPROVIDER_H
 
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 
 QT_USE_NAMESPACE
 
 class QGstreamerPlayerSession;
 
-class QGstreamerMetaDataProvider : public QMetaDataControl
+class QGstreamerMetaDataProvider : public QMetaDataReaderControl
 {
     Q_OBJECT
 public:
@@ -58,12 +58,10 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMediaServices::MetaData key) const;
-    void setMetaData(QtMediaServices::MetaData key, const QVariant &value);
-    QList<QtMediaServices::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimedia::MetaData key) const;
+    QList<QtMultimedia::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
 
 private slots:

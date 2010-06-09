@@ -70,9 +70,9 @@ public:
     {
         return true;
     }
-    QtMediaServices::AvailabilityError availabilityError() const
+    QtMultimedia::AvailabilityError availabilityError() const
     {
-        return QtMediaServices::NoError;
+        return QtMultimedia::NoError;
     }
 
     QRadioTuner::Band band() const
@@ -231,10 +231,12 @@ public:
         QMediaService(parent),
         mockControl(control) {}
 
-    QMediaControl* control(const char *) const
+    QMediaControl* requestControl(const char *)
     {
         return mockControl;
     }
+
+    void releaseControl(QMediaControl*) {}
 
     QMediaControl   *mockControl;
 };

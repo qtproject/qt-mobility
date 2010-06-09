@@ -1,25 +1,21 @@
 TEMPLATE = lib
-QT += multimedia
+
 CONFIG += plugin
-TARGET = qtmedia_mmfengine
-PLUGIN_TYPE = mediaservice
+TARGET = $$qtLibraryTarget(qtmultimedia_mmfengine)
+PLUGIN_SUBDIR = mediaservice
 include (../../../../common.pri)
-qtAddLibrary(QtMedia)
+qtAddLibrary(QtMultimedia)
 
 #includes here so that all defines are added here also
-include (../common/symbiancommon.pri)
+#FIXME include (../common/symbiancommon.pri)
 include(mediaplayer/mediaplayer_s60.pri)
 include(radio/radio.pri)
 
-# check if we are going to build openmax backend, if yes then disable mmf backend for audiorecording
-exists($${EPOCROOT}epoc32/include/platform/mw/khronos/OpenMAXAL.h) {
-    message("Not enabling mmf mediarecording backend")
-} else {
+# we include mmf audiorecording only if we are not building openmaxal based backend
+contains(openmaxal_symbian_enabled, no) {
     message("Enabling mmf mediarecording backend")
     include(audiosource/audiosource_s60.pri)
 }
-
-
 
 DEPENDPATH += .
 INCLUDEPATH += . \
@@ -49,7 +45,7 @@ pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
 DEPLOYMENT += pluginDep      
 
 #Media API spesific deployment
-QtMediaDeployment.sources = QtMedia.dll
+QtMediaDeployment.sources = QtMultimedia.dll
 QtMediaDeployment.path = /sys/bin
 
 DEPLOYMENT += QtMediaDeployment

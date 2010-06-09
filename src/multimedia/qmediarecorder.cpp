@@ -41,20 +41,21 @@
 
 #include "qmediarecorder.h"
 
-#include "qmediarecordercontrol.h"
-#include "qmediaobject_p.h"
-#include "qmediaservice.h"
-#include "qmediaserviceprovider.h"
-#include "qaudioencodercontrol.h"
-#include "qvideoencodercontrol.h"
-#include "qmediacontainercontrol.h"
+#include <qmediarecordercontrol.h>
+#include <qmediaobject_p.h>
+#include <qmediaservice.h>
+#include <qmediaserviceprovider.h>
+#include <qmetadatawritercontrol.h>
+#include <qaudioencodercontrol.h>
+#include <qvideoencodercontrol.h>
+#include <qmediacontainercontrol.h>
 
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qstringlist.h>
 #include <QtCore/qmetaobject.h>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -65,13 +66,9 @@ QT_BEGIN_NAMESPACE
     \preliminary
     \brief The QMediaRecorder class is used for the recording of media content.
 
-    The QMediaRecorder class is a high level media recording class.
-    It's not intended to be used alone but for accessing the media
-    recording functions of other media objects, like QRadioTuner,
-    or QAudioCaptureSource.
-
-    If the radio is used as a source, recording
-    is only possible when the source is in appropriate state
+    The QMediaRecorder class is a high level media recording class.  It's not
+    intended to be used alone but for accessing the media recording functions
+    of other media objects, like QRadioTuner, or QAudioCaptureSource.
 
     \code
     // Audio only recording
@@ -80,7 +77,7 @@ QT_BEGIN_NAMESPACE
 
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("audio/vorbis");
-    audioSettings.setQuality(QtMediaServices::HighQuality);
+    audioSettings.setQuality(QtMultimedia::HighQuality);
 
     recorder->setEncodingSettings(audioSettings);
 
@@ -106,18 +103,20 @@ public:
 }
 
 
-class QMediaRecorderPrivate : public QMediaObjectPrivate
+class QMediaRecorderPrivate
 {
     Q_DECLARE_NON_CONST_PUBLIC(QMediaRecorder)
 
 public:
     QMediaRecorderPrivate();
-    void initControls();
+
+    QMediaObject *mediaObject;
 
     QMediaRecorderControl *control;
     QMediaContainerControl *formatControl;
     QAudioEncoderControl *audioControl;
     QVideoEncoderControl *videoControl;
+    QMetaDataWriterControl *metaDataControl;
 
     QMediaRecorder::State state;
     QMediaRecorder::Error error;
@@ -125,50 +124,35 @@ public:
 
     void _q_stateChanged(QMediaRecorder::State state);
     void _q_error(int error, const QString &errorString);
+    void _q_serviceDestroyed();
+
+    QMediaRecorder *q_ptr;
 };
 
 QMediaRecorderPrivate::QMediaRecorderPrivate():
+     mediaObject(0),
      control(0),
      formatControl(0),
      audioControl(0),
      videoControl(0),
+     metaDataControl(0),
      state(QMediaRecorder::StoppedState),
      error(QMediaRecorder::NoError)
 {
 }
 
-void QMediaRecorderPrivate::initControls()
-{
-    Q_Q(QMediaRecorder);
-
-    if (!service)
-        return;
-
-    control = qobject_cast<QMediaRecorderControl*>(service->control(QMediaRecorderControl_iid));
-    formatControl = qobject_cast<QMediaContainerControl *>(service->control(QMediaContainerControl_iid));
-    audioControl = qobject_cast<QAudioEncoderControl *>(service->control(QAudioEncoderControl_iid));
-    videoControl = qobject_cast<QVideoEncoderControl *>(service->control(QVideoEncoderControl_iid));
-
-    if (control) {
-        q->connect(control, SIGNAL(stateChanged(QMediaRecorder::State)),
-                q, SLOT(_q_stateChanged(QMediaRecorder::State)));
-
-        q->connect(control, SIGNAL(error(int,QString)),
-                q, SLOT(_q_error(int,QString)));
-    }
-}
-
 #define ENUM_NAME(c,e,v) (c::staticMetaObject.enumerator(c::staticMetaObject.indexOfEnumerator(e)).valueToKey((v)))
-
 
 void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
 {
     Q_Q(QMediaRecorder);
 
+    /*
     if (ps == QMediaRecorder::RecordingState)
         q->addPropertyWatch("duration");
     else
         q->removePropertyWatch("duration");
+    */
 
 //    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
     if (state != ps) {
@@ -189,6 +173,11 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
     emit q->error(this->error);
 }
 
+void QMediaRecorderPrivate::_q_serviceDestroyed()
+{
+    q_func()->setMediaObject(0);
+}
+
 
 /*!
     Constructs a media recorder which records the media produced by \a mediaObject.
@@ -197,11 +186,12 @@ void QMediaRecorderPrivate::_q_error(int error, const QString &errorString)
 */
 
 QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
-    QMediaObject(*new QMediaRecorderPrivate, parent, mediaObject->service())
+    QObject(parent),
+    d_ptr(new QMediaRecorderPrivate)
 {
     Q_D(QMediaRecorder);
-
-    d->initControls();
+    d->q_ptr = this;
+    setMediaObject(mediaObject);
 }
 
 /*!
@@ -212,13 +202,130 @@ QMediaRecorder::~QMediaRecorder()
 {
 }
 
+QMediaObject *QMediaRecorder::mediaObject() const
+{
+    return d_func()->mediaObject;
+}
+
+bool QMediaRecorder::setMediaObject(QMediaObject *object)
+{
+    Q_D(QMediaRecorder);
+
+    if (object == d->mediaObject)
+        return true;
+
+    if (d->mediaObject) {
+        if (d->control) {
+            disconnect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)),
+                       this, SLOT(_q_stateChanged(QMediaRecorder::State)));
+
+            disconnect(d->control, SIGNAL(mutedChanged(bool)),
+                       this, SIGNAL(mutedChanged(bool)));
+
+            disconnect(d->control, SIGNAL(durationChanged(qint64)),
+                       this, SIGNAL(durationChanged(qint64)));
+
+            disconnect(d->control, SIGNAL(error(int,QString)),
+                       this, SLOT(_q_error(int,QString)));
+        }
+
+        QMediaService *service = d->mediaObject->service();
+
+        if (service) {
+            disconnect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+
+            if (d->control)
+                service->releaseControl(d->control);
+            if (d->formatControl)
+                service->releaseControl(d->formatControl);
+            if (d->audioControl)
+                service->releaseControl(d->audioControl);
+            if (d->videoControl)
+                service->releaseControl(d->videoControl);
+            if (d->metaDataControl) {
+                disconnect(d->metaDataControl, SIGNAL(metaDataChanged()),
+                        this, SIGNAL(metaDataChanged()));
+                disconnect(d->metaDataControl, SIGNAL(metaDataAvailableChanged(bool)),
+                        this, SIGNAL(metaDataAvailableChanged(bool)));
+                disconnect(d->metaDataControl, SIGNAL(writableChanged(bool)),
+                        this, SIGNAL(metaDataWritableChanged(bool)));
+
+                service->releaseControl(d->metaDataControl);
+            }
+        }
+    }
+
+    d->control = 0;
+    d->formatControl = 0;
+    d->audioControl = 0;
+    d->videoControl = 0;
+    d->metaDataControl = 0;
+
+    d->mediaObject = object;
+
+    if (d->mediaObject) {
+        QMediaService *service = d->mediaObject->service();
+
+        if (service) {
+            d->control = qobject_cast<QMediaRecorderControl*>(service->requestControl(QMediaRecorderControl_iid));
+
+            if (d->control) {
+                d->formatControl = qobject_cast<QMediaContainerControl *>(service->requestControl(QMediaContainerControl_iid));
+                d->audioControl = qobject_cast<QAudioEncoderControl *>(service->requestControl(QAudioEncoderControl_iid));
+                d->videoControl = qobject_cast<QVideoEncoderControl *>(service->requestControl(QVideoEncoderControl_iid));
+
+                QMediaControl *control = service->requestControl(QMetaDataWriterControl_iid);
+                if (control) {
+                    d->metaDataControl = qobject_cast<QMetaDataWriterControl *>(control);
+                    if (!d->metaDataControl) {
+                        service->releaseControl(control);
+                    } else {
+                        connect(d->metaDataControl,
+                                SIGNAL(metaDataChanged()),
+                                SIGNAL(metaDataChanged()));
+                        connect(d->metaDataControl,
+                                SIGNAL(metaDataAvailableChanged(bool)),
+                                SIGNAL(metaDataAvailableChanged(bool)));
+                        connect(d->metaDataControl,
+                                SIGNAL(writableChanged(bool)),
+                                SIGNAL(metaDataWritableChanged(bool)));
+                    }
+                }
+
+                connect(d->control, SIGNAL(stateChanged(QMediaRecorder::State)),
+                        this, SLOT(_q_stateChanged(QMediaRecorder::State)));
+
+                connect(d->control, SIGNAL(mutedChanged(bool)),
+                        this, SIGNAL(mutedChanged(bool)));
+
+                connect(d->control, SIGNAL(durationChanged(qint64)),
+                        this, SIGNAL(durationChanged(qint64)));
+
+                connect(d->control, SIGNAL(error(int,QString)),
+                        this, SLOT(_q_error(int,QString)));
+
+                connect(service, SIGNAL(destroyed()), this, SLOT(_q_serviceDestroyed()));
+
+                
+                return true;
+            }
+        }
+
+        d->mediaObject = 0;
+        return false;
+    }
+
+    return true;
+}
+
 /*!
     \property QMediaRecorder::outputLocation
     \brief the destination location of media content.
 
-    Setting the location can fail for example when the service supports
-    only local file system locations while the network url was passed,
-    or the service doesn't support media recording.
+    Setting the location can fail, for example when the service supports only
+    local file system locations but a network URL was passed. If the service
+    does not support media recording this setting the output location will
+    always fail.
 */
 
 /*!
@@ -235,12 +342,12 @@ bool QMediaRecorder::isAvailable() const
 /*!
     Returns the availability error code.
 */
-QtMediaServices::AvailabilityError QMediaRecorder::availabilityError() const
+QtMultimedia::AvailabilityError QMediaRecorder::availabilityError() const
 {
     if (d_func()->control != NULL)
-        return QtMediaServices::NoError;
+        return QtMultimedia::NoError;
     else
-        return QtMediaServices::ServiceMissingError;
+        return QtMultimedia::ServiceMissingError;
 }
 
 QUrl QMediaRecorder::outputLocation() const
@@ -298,6 +405,24 @@ qint64 QMediaRecorder::duration() const
     return d_func()->control ? d_func()->control->duration() : 0;
 }
 
+/*!
+    \property QMediaRecorder::muted
+
+    \brief whether a recording audio stream is muted.
+*/
+
+bool QMediaRecorder::isMuted() const
+{
+    return d_func()->control ? d_func()->control->isMuted() : 0;
+}
+
+void QMediaRecorder::setMuted(bool muted)
+{
+    Q_D(QMediaRecorder);
+
+    if (d->control)
+        d->control->setMuted(muted);
+}
 
 /*!
     Returns a list of MIME types of supported container formats.
@@ -348,13 +473,15 @@ QString QMediaRecorder::audioCodecDescription(const QString &codec) const
 /*!
     Returns a list of supported audio sample rates.
 
-    If non null audio \a settings parameter is passed,
-    the returned list is reduced to sample rates supported with partial settings applied.
+    If non null audio \a settings parameter is passed, the returned list is
+    reduced to sample rates supported with partial settings applied.
 
-    It can be used for example to query the list of sample rates, supported by specific audio codec.
+    This can be used to query the list of sample rates, supported by specific
+    audio codec.
 
-    If the encoder supports arbitrary sample rates within the supported rates range,
-    *\a continuous is set to true, otherwise *\a continuous is set to false.
+    If the encoder supports arbitrary sample rates within the supported rates
+    range, *\a continuous is set to true, otherwise *\a continuous is set to
+    false.
 */
 
 QList<int> QMediaRecorder::supportedAudioSampleRates(const QAudioEncoderSettings &settings, bool *continuous) const
@@ -369,8 +496,9 @@ QList<int> QMediaRecorder::supportedAudioSampleRates(const QAudioEncoderSettings
 /*!
     Returns a list of resolutions video can be encoded at.
 
-    If non null video \a settings parameter is passed,
-    the returned list is reduced to resolution supported with partial settings like video codec or framerate applied.
+    If non null video \a settings parameter is passed, the returned list is
+    reduced to resolution supported with partial settings like video codec or
+    framerate applied.
 
     If the encoder supports arbitrary resolutions within the supported range,
     *\a continuous is set to true, otherwise *\a continuous is set to false.
@@ -389,8 +517,9 @@ QList<QSize> QMediaRecorder::supportedResolutions(const QVideoEncoderSettings &s
 /*!
     Returns a list of frame rates video can be encoded at.
 
-    If non null video \a settings parameter is passed,
-    the returned list is reduced to frame rates supported with partial settings like video codec or resolution applied.
+    If non null video \a settings parameter is passed, the returned list is
+    reduced to frame rates supported with partial settings like video codec or
+    resolution applied.
 
     If the encoder supports arbitrary frame rates within the supported range,
     *\a continuous is set to true, otherwise *\a continuous is set to false.
@@ -453,14 +582,14 @@ QVideoEncoderSettings QMediaRecorder::videoSettings() const
 /*!
     Sets the \a audio and \a video encoder settings and \a container format MIME type.
 
-    It's only possible to change setttings when the encoder
-    is in the QMediaEncoder::StoppedState state.
-
-    If some parameters are not specified, or null settings are passed,
-    the encoder choose the default encoding parameters, depending on
-    media source properties.
-    But while setEncodingSettings is optional, the backend can preload
+    If some parameters are not specified, or null settings are passed, the
+    encoder will choose default encoding parameters, depending on media
+    source properties.
+    While setEncodingSettings is optional, the backend can preload
     encoding pipeline to improve recording startup time.
+
+    It's only possible to change settings when the encoder is in the
+    QMediaEncoder::StoppedState state.
 
     \sa audioSettings(), videoSettings(), containerMimeType()
 */
@@ -489,8 +618,8 @@ void QMediaRecorder::setEncodingSettings(const QAudioEncoderSettings &audio,
     Start recording.
 
     This is an asynchronous call, with signal
-    stateCahnged(QMediaRecorder::RecordingState) being emited
-    when recording started, otherwise error() signal is emited.
+    stateCahnged(QMediaRecorder::RecordingState) being emitted when recording
+    started, otherwise the error() signal is emitted.
 */
 
 void QMediaRecorder::record()
@@ -561,6 +690,132 @@ void QMediaRecorder::stop()
     Signals that an \a error has occurred.
 */
 
+
+/*!
+    \property QMediaRecorder::metaDataAvailable
+    \brief whether access to a media object's meta-data is available.
+
+    If this is true there is meta-data available, otherwise there is no meta-data available.
+*/
+
+bool QMediaRecorder::isMetaDataAvailable() const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->isMetaDataAvailable()
+            : false;
+}
+
+/*!
+    \fn QMediaRecorder::metaDataAvailableChanged(bool available)
+
+    Signals that the \a available state of a media object's meta-data has changed.
+*/
+
+/*!
+    \property QMediaRecorder::metaDataWritable
+    \brief whether a media object's meta-data is writable.
+
+    If this is true the meta-data is writable, otherwise the meta-data is read-only.
+*/
+
+bool QMediaRecorder::isMetaDataWritable() const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->isWritable()
+            : false;
+}
+
+/*!
+    \fn QMediaRecorder::metaDataWritableChanged(bool writable)
+
+    Signals that the \a writable state of a media object's meta-data has changed.
+*/
+
+/*!
+    Returns the value associated with a meta-data \a key.
+*/
+QVariant QMediaRecorder::metaData(QtMultimedia::MetaData key) const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->metaData(key)
+            : QVariant();
+}
+
+/*!
+    Sets a \a value for a meta-data \a key.
+*/
+void QMediaRecorder::setMetaData(QtMultimedia::MetaData key, const QVariant &value)
+{
+    Q_D(QMediaRecorder);
+
+    if (d->metaDataControl)
+        d->metaDataControl->setMetaData(key, value);
+}
+
+/*!
+    Returns a list of keys there is meta-data available for.
+*/
+QList<QtMultimedia::MetaData> QMediaRecorder::availableMetaData() const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->availableMetaData()
+            : QList<QtMultimedia::MetaData>();
+}
+
+/*!
+    \fn QMediaRecorder::metaDataChanged()
+
+    Signals that a media object's meta-data has changed.
+*/
+
+/*!
+    Returns the value associated with a meta-data \a key.
+
+    The naming and type of extended meta-data is not standardized, so the values and meaning
+    of keys may vary between backends.
+*/
+QVariant QMediaRecorder::extendedMetaData(const QString &key) const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->extendedMetaData(key)
+            : QVariant();
+}
+
+/*!
+    Sets a \a value for a meta-data \a key.
+
+    The naming and type of extended meta-data is not standardized, so the values and meaning
+    of keys may vary between backends.
+*/
+void QMediaRecorder::setExtendedMetaData(const QString &key, const QVariant &value)
+{
+    Q_D(QMediaRecorder);
+
+    if (d->metaDataControl)
+        d->metaDataControl->setExtendedMetaData(key, value);
+}
+
+/*!
+    Returns a list of keys there is extended meta-data available for.
+*/
+QStringList QMediaRecorder::availableExtendedMetaData() const
+{
+    Q_D(const QMediaRecorder);
+
+    return d->metaDataControl
+            ? d->metaDataControl->availableExtendedMetaData()
+            : QStringList();
+}
 
 #include "moc_qmediarecorder.cpp"
 QT_END_NAMESPACE

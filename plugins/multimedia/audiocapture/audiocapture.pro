@@ -3,10 +3,8 @@ CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtmedia_audioengine)
 PLUGIN_TYPE=mediaservice
 
-QT += multimedia
-
 include (../../../common.pri)
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/audio
 
 CONFIG += mobility
 MOBILITY = multimedia

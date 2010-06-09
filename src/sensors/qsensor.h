@@ -189,30 +189,11 @@ public:
 
 protected:
     explicit QSensorReading(QObject *parent, QSensorReadingPrivate *d);
-    QScopedPointer<QSensorReadingPrivate> *d_ptr() { return &d; }
-    virtual void copyValuesFrom(QSensorReading *other) = 0;
+    virtual void copyValuesFrom(QSensorReading *other);
 
 private:
     QScopedPointer<QSensorReadingPrivate> d;
     Q_DISABLE_COPY(QSensorReading)
-};
-
-template <typename T>
-class qTypedWrapper
-{
-public:
-    qTypedWrapper(QScopedPointer<QSensorReadingPrivate> *_ptr)
-        : ptr(_ptr)
-    {
-    }
-
-    T *operator->() const
-    {
-        return static_cast<T*>(ptr->data());
-    }
-
-private:
-    QScopedPointer<QSensorReadingPrivate> *ptr;
 };
 
 #define DECLARE_READING(classname)\
@@ -224,25 +205,27 @@ private:
         virtual ~classname();\
         void copyValuesFrom(QSensorReading *other);\
     private:\
-        qTypedWrapper<pclassname> d;
+        QScopedPointer<pclassname> d;
 
 #define IMPLEMENT_READING(classname)\
         IMPLEMENT_READING_D(classname, classname ## Private)
 
 #define IMPLEMENT_READING_D(classname, pclassname)\
     classname::classname(QObject *parent)\
-        : QSensorReading(parent, new pclassname)\
-        , d(d_ptr())\
+        : QSensorReading(parent, 0)\
+        , d(new pclassname)\
         {}\
     classname::~classname() {}\
     void classname::copyValuesFrom(QSensorReading *_other)\
     {\
         /* No need to verify types, only called by QSensorBackend */\
         classname *other = static_cast<classname *>(_other);\
-        pclassname *my_ptr = static_cast<pclassname*>(d_ptr()->data());\
-        pclassname *other_ptr = static_cast<pclassname*>(other->d_ptr()->data());\
+        pclassname *my_ptr = d.data();\
+        pclassname *other_ptr = other->d.data();\
         /* Do a direct copy of the private class */\
         *(my_ptr) = *(other_ptr);\
+        /* We need to copy the parent too */\
+        QSensorReading::copyValuesFrom(_other);\
     }
 
 QTM_END_NAMESPACE

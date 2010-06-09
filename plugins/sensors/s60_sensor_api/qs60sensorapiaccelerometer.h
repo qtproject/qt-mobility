@@ -46,6 +46,8 @@
 #include <qsensorbackend.h>
 #include <qaccelerometer.h>
 
+#if !defined(HAS_NO_SENSOR_PROVISION)
+
 // symbian
 #include <rrsensorapi.h>
 
@@ -54,7 +56,7 @@ QTM_USE_NAMESPACE
 class QS60SensorApiAccelerometer : public QSensorBackend,  public MRRSensorDataListener
 {
 public:
-    static const char *id;
+    static char const * const id;
     
     QS60SensorApiAccelerometer(QSensor *sensor);
     virtual ~QS60SensorApiAccelerometer();
@@ -75,5 +77,7 @@ private:
     QAccelerometerReading m_reading;
     qreal m_sampleFactor;
 };
+
+#endif // !HAS_NO_SENSOR_PROVISION
 
 #endif // QS60SENSORAPIACCELEROMETER_H

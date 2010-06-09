@@ -265,30 +265,13 @@ void QContactABook::initLocalIdHash()
    g_list_free(contactList);
 }
 
+//TODO Use native filters
 QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const
 {
-  QList<QContactLocalId> rtn;
-
-  // do this naively for now...
+  Q_UNUSED(sortOrders)
+  Q_UNUSED(filter);
   *error = QContactManager::NoError;
-  QContactManager::Error tempError = QContactManager::NoError;
-  QList<QContactLocalId> allIds = m_localIds.keys();
-  QList<QContact> sortedAndFiltered;
-  QContact *curr = 0;
-  foreach (const QContactLocalId& currId, allIds) {
-    curr = getQContact(currId, &tempError);
-    if (tempError != QContactManager::NoError)
-      *error = tempError;
-    if (QContactManagerEngine::testFilter(filter, *curr)) {
-      QContactManagerEngine::addSorted(&sortedAndFiltered, *curr, sortOrders);
-    }
-    delete curr;
-  }
-
-  foreach (const QContact& contact, sortedAndFiltered) {
-    rtn.append(contact.localId());
-  }
-  return rtn;
+  return m_localIds.keys();
 
   /*
   // Sorting
@@ -325,26 +308,32 @@ QList<QContactLocalId> QContactABook::contactIds(const QContactFilter& filter, c
     return QContactManagerEngine::sortContacts(contacts, sortOrders);
   }
   
-  EBookQuery* query = convert(filter);
-  
-  GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
-  if (query)
-      e_book_query_unref(query);
-  
-  while (l){
-    EContact *contact = E_CONTACT(l->data);
-    const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
-    QByteArray localId(data);
-    m_localIds << localId;
-    rtn.append(m_localIds[localId]);
-    QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
-    l = g_list_delete_link(l, l);
+  switch(filter.type()){
+    case QContactFilter::DefaultFilter: {
+      rtn = m_localIds.keys();
+    } break;
+    default: { 
+      EBookQuery* query = convert(filter);
+      GList* l = osso_abook_aggregator_find_contacts(m_abookAgregator, query);
+      if (query)
+        e_book_query_unref(query);
+      
+      while (l){
+        EContact *contact = E_CONTACT(l->data);
+        const char* data = CONST_CHAR(e_contact_get_const(contact, E_CONTACT_UID));
+        QByteArray localId(data);
+        m_localIds << localId;
+        rtn.append(m_localIds[localId]);
+        QCM5_DEBUG << "eContactID " << localId << "has been stored in m_localIDs with key" << m_localIds[localId];
+        l = g_list_delete_link(l, l);
+      }
+    }
   }
-  
   *error = QContactManager::NoError;
   return rtn;
   */
 }
+#include "qcontactdetail_p.h"
 
 QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactManager::Error* error) const
 {
@@ -357,9 +346,20 @@ QContact* QContactABook::getQContact(const QContactLocalId& contactId, QContactM
   
   //Convert aContact => qContact
   rtn = convert(E_CONTACT(aContact));
+  
   QContactId cId;
   cId.setLocalId(contactId);
   rtn->setId(cId);
+  
+  //TEST BEGIN
+  
+/*
+  QContactDisplayLabel dl;
+  dl.setValue(QContactDisplayLabel::FieldLabel, "LABEL");
+  QContactDetailPrivate::setAccessConstraints(&dl, QContactDetail::Irremovable | QContactDetail::ReadOnly);
+  rtn->d->m_details.replace(0, dl);
+*/
+  //TEST END
   return rtn;
 }
 
@@ -580,6 +580,42 @@ bool QContactABook::saveContact(QContact* contact, QContactManager::Error* error
   return ok;
 }
 
+const QString QContactABook::getDisplayName(const QContact& contact) const{
+  //Get Osso ABook ID for the contact (stored as GUID detail)
+  const char* acontactID = NULL;
+  {
+    QContactGuid g = contact.detail(QContactGuid::DefinitionName);
+    acontactID = qPrintable(g.guid());
+  }
+  
+  if (!acontactID){
+    QCM5_DEBUG << "The contact has not been saved yet and it doesn't have any GUID";
+    return QString();
+  }
+    
+  //Get OssoABookContact
+  OssoABookContact *acontact= NULL;
+  {
+    GList* l= NULL;
+    l = osso_abook_aggregator_lookup(m_abookAgregator, acontactID);
+    
+    if (g_list_length(l) == 1) {
+      acontact = A_CONTACT(l->data);
+    }
+    g_list_free(l);
+    
+  }
+  
+  if (!acontact){
+    QCM5_DEBUG << "AContact with ID:" << acontactID << "is null";
+    return QString();
+  }
+  //Get Display name;
+  const char* displayName = osso_abook_contact_get_display_name(acontact);  
+
+  return QString::fromUtf8(displayName);
+}
+
 QContactLocalId QContactABook::selfContactId(QContactManager::Error* errors) const
 {
   QContactLocalId id;
@@ -668,7 +704,7 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
         hash[QContactName::DefinitionName] = "full-name";
         hash[QContactNickname::DefinitionName] = "nickname";
         hash[QContactNote::DefinitionName] = "note";
-        hash[QContactOrganization::DefinitionName] = "title";
+        hash[QContactOrganization::DefinitionName] = "org";
         hash[QContactPhoneNumber::DefinitionName] = "phone";
         hash[QContactUrl::DefinitionName] = "homepage-url";
       }
@@ -730,10 +766,11 @@ EBookQuery* QContactABook::convert(const QContactFilter& filter) const
   }
  
   //Debugging
-  const char *queryString = e_book_query_to_string(query);
-  QCM5_DEBUG << "QUERY" << queryString;
-  FREE(queryString);
-  
+  if (QCM5_DEBUG_ENABLED){
+    const char *queryString = e_book_query_to_string(query);
+    QCM5_DEBUG << "QUERY" << queryString;
+    FREE(queryString);
+  }
   return query;
 } 
 
@@ -942,7 +979,7 @@ QList<QContactAddress*> QContactABook::getAddressDetail(EContact *eContact) cons
     }
     int i = 0;
     while (v){
-      map[addressFields[i]] = QString::fromLatin1(CONST_CHAR(v->data));
+      map[addressFields[i]] = QString::fromUtf8(CONST_CHAR(v->data));
       i++;
       v = v->next;
     }
@@ -974,8 +1011,8 @@ QContactName* QContactABook::getNameDetail(EContact *eContact) const
     e_contact_name_free (eContactName);
   } else {
     //Looks that Maemo use just these two fields
-    map[QContactName::FieldFirstName] = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_GIVEN_NAME));
-    map[QContactName::FieldLastName] = CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_FAMILY_NAME));
+    map[QContactName::FieldFirstName] = QString::fromUtf8(CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_GIVEN_NAME)));
+    map[QContactName::FieldLastName] = QString::fromUtf8(CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_FAMILY_NAME)));
   }
   setDetailValues(map, rtn);
   return rtn;
@@ -985,7 +1022,7 @@ QContactNickname* QContactABook::getNicknameDetail(EContact *eContact) const
 {
   QContactNickname* rtn = new QContactNickname;
   QVariantMap map;
-  map[QContactNickname::FieldNickname] = CONST_CHAR (e_contact_get_const(eContact, E_CONTACT_NICKNAME));
+  map[QContactNickname::FieldNickname] = QString::fromUtf8(CONST_CHAR(e_contact_get_const(eContact, E_CONTACT_NICKNAME)));
   setDetailValues(map, rtn);
   return rtn;
 }
@@ -1022,7 +1059,7 @@ QList<QContactEmailAddress*> QContactABook::getEmailDetail(EContact *eContact) c
     GList *v = e_vcard_attribute_get_values(attr);
     int i = 0;
     while (v){
-      map[QContactEmailAddress::FieldEmailAddress] = QString::fromLatin1(CONST_CHAR(v->data));
+      map[QContactEmailAddress::FieldEmailAddress] = QString::fromUtf8(CONST_CHAR(v->data));
       i++;
       v = v->next;
     }
@@ -1089,7 +1126,7 @@ QContactGender* QContactABook::getGenderDetail(EContact *eContact) const
   QContactGender* rtn = new QContactGender;
   QVariantMap map;
   const char* g = CONST_CHAR(osso_abook_contact_get_value(eContact, "X-GENDER"));
-  QString gender = QString::fromLatin1(g);
+  QString gender = g;
   if (gender == "male")
     gender = "Male";
   else if (gender == "female")
@@ -1120,7 +1157,7 @@ QContactNote* QContactABook::getNoteDetail(EContact *eContact) const
   QContactNote* rtn = new QContactNote;
   QVariantMap map;
   const char* note = CONST_CHAR(e_contact_get(eContact, E_CONTACT_NOTE));
-  map[QContactNote::FieldNote] = QString::fromLatin1(note);
+  map[QContactNote::FieldNote] = QString::fromUtf8(note);
   FREE(note);
   setDetailValues(map, rtn);
   return rtn;
@@ -1159,7 +1196,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       McAccount* account = osso_abook_contact_get_account(rosterContact);
       
       // Avoid to look for Roster contacts into the VCard
-      QString accountVCard = QString::fromLatin1(mc_profile_get_vcard_field(id));
+      QString accountVCard = mc_profile_get_vcard_field(id);
       evcardToSkip.removeOne(accountVCard);
       
       // Presence
@@ -1203,7 +1240,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       EVCardAttribute* attr = (EVCardAttribute*)node->data;
       if (!attr)
         continue;
-      QString attributeName = QString::fromLatin1(e_vcard_attribute_get_name(attr));
+      QString attributeName = e_vcard_attribute_get_name(attr);
       
       // Skip attributes processed scanning roster contacts.
       if (!evcardToSkip.contains(attributeName))
@@ -1217,7 +1254,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
 
       for (nodeP = params; nodeP != NULL; nodeP = g_list_next (nodeP)) {
         EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
-        QString paramName = QString::fromLatin1(e_vcard_attribute_param_get_name(p));
+        QString paramName = e_vcard_attribute_param_get_name(p);
         bool attrIsType = false;
         bool attrIsOssoValid = false;
         
@@ -1236,7 +1273,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
         GList *values = e_vcard_attribute_param_get_values(p);
         GList *node;
         for (node = values; node != NULL; node = g_list_next (node)) {
-          QString attributeParameterValue = QString::fromLatin1(CONST_CHAR(node->data));
+          QString attributeParameterValue = CONST_CHAR(node->data);
           if (attrIsOssoValid) {
             ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
             if (!ossoValidIsOk) {
@@ -1268,9 +1305,9 @@ QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) c
 {
   QContactOrganization* rtn = new QContactOrganization;
   QVariantMap map;
-  const char* title = CONST_CHAR(e_contact_get(eContact, E_CONTACT_ORG));
-  map[QContactOrganization::FieldTitle] = title;
-  FREE(title);
+  const char* org = CONST_CHAR(e_contact_get(eContact, E_CONTACT_ORG));
+  map[QContactOrganization::FieldName] = QString::fromUtf8(org);
+  FREE(org);
   setDetailValues(map, rtn);
   return rtn;
 }
@@ -1290,7 +1327,7 @@ QList<QContactPhoneNumber*> QContactABook::getPhoneDetail(EContact *eContact) co
     
     //Set Contexts and SubTypes
     while (p) {
-      QString value = QString::fromLatin1(CONST_CHAR(p->data));
+      QString value = CONST_CHAR(p->data);
       
       if (value == "HOME")
         phoneNumber->setContexts(QContactDetail::ContextHome);
@@ -1342,7 +1379,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
       McAccount* account = osso_abook_contact_get_account(rosterContact);
 
       // Avoid to look for Roster contacts into the VCard
-      QString accountVCard = QString::fromLatin1(mc_profile_get_vcard_field(id));
+      QString accountVCard = mc_profile_get_vcard_field(id);
       evcardToSkip.removeOne(accountVCard);
 
       // Presence
@@ -1367,7 +1404,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
       QVariantMap map; // XXX FIXME
       map[QContactPresence::FieldNickname] = osso_abook_contact_get_display_name(rosterContact);
       map[QContactPresence::FieldPresenceState] = presenceTypeEnum;
-      map[QContactPresence::FieldPresenceStateText] = QString::fromLatin1(osso_abook_presence_get_presence_status_message(presence));
+      map[QContactPresence::FieldPresenceStateText] = QString::fromUtf8(osso_abook_presence_get_presence_status_message(presence));
       map[QContactPresence::FieldLinkedDetailUris] = mc_profile_get_unique_name(id); //use the unique name as a detail uri of the online account.
       map["AccountPath"] = account->name; //MCAccount name: variable part of the D-Bus object path.
 
@@ -1388,7 +1425,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
       EVCardAttribute* attr = (EVCardAttribute*)node->data;
       if (!attr)
         continue;
-      QString attributeName = QString::fromLatin1(e_vcard_attribute_get_name(attr));
+      QString attributeName = e_vcard_attribute_get_name(attr);
 
       // Skip attributes processed scanning roster contacts.
       if (!evcardToSkip.contains(attributeName))
@@ -1402,7 +1439,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
 
       for (nodeP = params; nodeP != NULL; nodeP = g_list_next (nodeP)) {
         EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
-        QString paramName = QString::fromLatin1(e_vcard_attribute_param_get_name(p));
+        QString paramName = e_vcard_attribute_param_get_name(p);
         bool attrIsType = false;
         bool attrIsOssoValid = false;
 
@@ -1421,7 +1458,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
         GList *values = e_vcard_attribute_param_get_values(p);
         GList *node;
         for (node = values; node != NULL; node = g_list_next (node)) {
-          QString attributeParameterValue = QString::fromLatin1(CONST_CHAR(node->data));
+          QString attributeParameterValue = CONST_CHAR(node->data);
           if (attrIsOssoValid) {
             ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
             if (!ossoValidIsOk) {
@@ -1438,7 +1475,7 @@ QList<QContactPresence*> QContactABook::getPresenceDetail(EContact *eContact) co
         if (ossoValidIsOk && !type.isEmpty()) {
           QContactPresence* rtn = new QContactPresence;
           QVariantMap map;
-          map[QContactPresence::FieldNickname] = QString::fromLatin1(e_vcard_attribute_get_value(attr));
+          map[QContactPresence::FieldNickname] = QString::fromUtf8(e_vcard_attribute_get_value(attr));
           map[QContactPresence::FieldLinkedDetailUris] = type; // XXX FIXME
           setDetailValues(map, rtn);
           rtnList << rtn;
@@ -1768,7 +1805,7 @@ void QContactABook::setThumbnailDetail(const OssoABookContact* aContact, const Q
                                                  image.hasAlphaChannel(), 8,
                                                  image.width(), image.height(),
                                                  image.bytesPerLine(), 0, 0);
-    osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, book, 0);
+    osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, 0, 0);
     g_object_unref(pixbuf);
 }
 
@@ -1792,7 +1829,7 @@ void QContactABook::setAvatarDetail(const OssoABookContact* aContact, const QCon
 //                                               image.hasAlphaChannel(), 8,
 //                                               image.width(), image.height(),
 //                                               image.bytesPerLine(), 0, 0);
-//  osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, book, 0);
+//  osso_abook_contact_set_pixbuf((OssoABookContact*)aContact, pixbuf, 0, 0);
 //  g_object_unref(pixbuf);
 }
 
@@ -1907,7 +1944,7 @@ void QContactABook::setOrganizationDetail(const OssoABookContact* aContact, cons
   if (!aContact) return;
   
   QStringList attrValues;
-  attrValues << detail.value(QContactOrganization::FieldTitle);
+  attrValues << detail.value(QContactOrganization::FieldName);
   
   addAttributeToAContact(aContact, EVC_ORG, attrValues);
 }

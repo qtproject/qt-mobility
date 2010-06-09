@@ -49,7 +49,7 @@
 #include <qaudioendpointselector.h>
 #include <qaudioencodercontrol.h>
 #include <qmediacontainercontrol.h>
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 #include <qaudiocapturesource.h>
 
 #define QTRY_COMPARE(a,e)                       \
@@ -204,8 +204,8 @@ void tst_QMediaRecorder::testAudioEncoderControl()
     QCOMPARE(audiocapture->supportedAudioSampleRates().count(), 12);
     audioEncoder->setEncodingOption("PCM", "channels", QVariant(2));
     QCOMPARE(audioEncoder->encodingOption("PCM","channels").toInt(), 2);
-    audioEncoder->setEncodingOption("PCM", "quality", QVariant(int(QtMediaServices::NormalQuality)));
-    QCOMPARE(audioEncoder->encodingOption("PCM","quality").toInt(), int(QtMediaServices::NormalQuality));    
+    audioEncoder->setEncodingOption("PCM", "quality", QVariant(int(QtMultimedia::NormalQuality)));
+    QCOMPARE(audioEncoder->encodingOption("PCM","quality").toInt(), int(QtMultimedia::NormalQuality));    
     audioEncoder->setEncodingOption("PCM", "samplerate", QVariant(44100));
     QCOMPARE(audioEncoder->encodingOption("PCM","samplerate").toInt(), 44100);    
 }

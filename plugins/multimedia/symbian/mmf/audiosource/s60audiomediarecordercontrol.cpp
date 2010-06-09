@@ -120,3 +120,12 @@ void S60AudioMediaRecorderControl::stop()
 {
     m_session->stop();
 }
+
+bool S60AudioMediaRecorderControl::isMuted() const
+{
+    return false;
+}
+
+void S60AudioMediaRecorderControl::setMuted(bool)
+{
+}

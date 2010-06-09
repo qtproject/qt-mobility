@@ -43,8 +43,8 @@
 #define S60RADIOTUNERCONTROL_H
 
 #include <QtCore/qobject.h>
-#include <QRadioTunerControl>
-#include <QRadioTuner>
+#include <qradiotunercontrol.h>
+#include <qradiotuner.h>
 #include <tuner.h>
 
 class S60RadioTunerService;
@@ -95,7 +95,7 @@ public:
     bool isValid() const;
 
     bool isAvailable() const;
-    QtMediaServices::AvailabilityError availabilityError() const;
+    QtMultimedia::AvailabilityError availabilityError() const;
     
     void start();
     void stop();

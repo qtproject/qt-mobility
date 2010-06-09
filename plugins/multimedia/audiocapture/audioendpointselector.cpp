@@ -42,7 +42,7 @@
 #include "audiocapturesession.h"
 #include "audioendpointselector.h"
 
-#include <QtMultimedia/qaudiodeviceinfo.h>
+#include <qaudiodeviceinfo.h>
 
 
 AudioEndpointSelector::AudioEndpointSelector(QObject *parent)
