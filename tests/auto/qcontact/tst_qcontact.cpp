@@ -399,9 +399,6 @@ void tst_QContact::actions()
     // first, the empty contact
     QList<QContactActionDescriptor> availableActions = c.availableActions(QString());
     QVERIFY(availableActions.isEmpty());
-    QList<QContactDetail> dets = c.detailsWithAction(0);
-    QVERIFY(dets.isEmpty());
-    QVERIFY(c.detailWithAction(0).isEmpty());
     // then, the email contact
     availableActions = c2.availableActions(QString());
     QEXPECT_FAIL("", "Plugins are only loaded once", Continue);

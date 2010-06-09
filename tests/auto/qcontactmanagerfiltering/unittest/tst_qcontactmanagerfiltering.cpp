@@ -2376,12 +2376,7 @@ void tst_QContactManagerFiltering::actionFiltering_data()
 {
     QTest::addColumn<QContactManager *>("cm");
     QTest::addColumn<QString>("actionName");
-    QTest::addColumn<QVariant>("value");
     QTest::addColumn<QString>("expected");
-
-    QString es;
-    QVariant ev;
-
 
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
@@ -2389,7 +2384,7 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> dateDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Date");
 
-        newMRow("bad actionname", manager) << manager << "No such action" << ev << es;
+        newMRow("bad actionname", manager) << manager << "No such action"  << "";
 
         QString expected;
         if ( (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty())
@@ -2403,36 +2398,36 @@ void tst_QContactManagerFiltering::actionFiltering_data()
             expected = "ab";
         }
 
-        QTest::newRow("empty (any action matches)") << manager << es << ev << expected;
+        QTest::newRow("empty (any action matches)") << manager << es << expected;
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            newMRow("Number", manager) << manager << "Number" << ev << "abcd";
-            QTest::newRow("Number (NumberCo)") << manager << "Number" << ev << "abcd";
+            newMRow("Number", manager) << manager << "Number" << "abcd";
+            QTest::newRow("Number (NumberCo)") << manager << "Number" << "abcd";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
             /* Boolean testing */
-            newMRow("Boolean action", manager) << manager << "Boolean" << ev << "a";
-            newMRow("BooleanCo", manager) << manager << es << ev << "a";
+            newMRow("Boolean action", manager) << manager << "Boolean" << "a";
+            newMRow("BooleanCo", manager) << manager << es << "a";
         }
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
             /* Value filtering */
-            QTest::newRow("Any action matching 20") << manager << es << QVariant(20) << "b";
-            QTest::newRow("Any action matching 4.0") << manager << es << QVariant(4.0) << "bc";
+            QTest::newRow("Any action matching 20") << manager << es << "b";
+            QTest::newRow("Any action matching 4.0") << manager << es << "bc";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
-            newMRow("Boolean action matching true", manager) << manager << es << QVariant(true) << "a";
-            newMRow("Boolean action matching false", manager) << manager << es << QVariant(false) << es;
+            newMRow("Boolean action matching true", manager) << manager << es << "a";
+            newMRow("Boolean action matching false", manager) << manager << es << es;
         }
 
         /* Recursive filtering */
-        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << QVariant(false) << es;
-        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << QVariant(false) << es;
-        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << QVariant(false) << es;
-        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << QVariant(false) << es;
-        QTest::newRow("Recursive action 5") << manager << "Recursive" << QVariant(false) << es;
+        QTest::newRow("Recursive action 1") << manager << "IntersectionRecursive" << es;
+        QTest::newRow("Recursive action 2") << manager << "UnionRecursive" << es;
+        QTest::newRow("Recursive action 3") << manager << "PairRecursive" << es;
+        QTest::newRow("Recursive action 4") << manager << "AnotherPairRecursive" << es;
+        QTest::newRow("Recursive action 5") << manager << "Recursive" << es;
     }
 }
 
@@ -2440,7 +2435,6 @@ void tst_QContactManagerFiltering::actionFiltering()
 {
     QFETCH(QContactManager*, cm);
     QFETCH(QString, actionName);
-    QFETCH(QVariant, value);
     QFETCH(QString, expected);
 
     /* Load the definition and field names for the various variant types for the current manager */
@@ -2448,7 +2442,6 @@ void tst_QContactManagerFiltering::actionFiltering()
     if (!defAndFieldNamesForTypeForActions.isEmpty()) {
         QContactActionFilter af;
         af.setActionName(actionName);
-        af.setValue(value);
 
         QList<QContactLocalId> ids = cm->contactIds(af);
         QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
