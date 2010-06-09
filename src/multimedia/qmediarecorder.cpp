@@ -118,6 +118,8 @@ public:
     QVideoEncoderControl *videoControl;
     QMetaDataWriterControl *metaDataControl;
 
+    QTimer* notifyTimer;
+
     QMediaRecorder::State state;
     QMediaRecorder::Error error;
     QString errorString;
@@ -125,6 +127,8 @@ public:
     void _q_stateChanged(QMediaRecorder::State state);
     void _q_error(int error, const QString &errorString);
     void _q_serviceDestroyed();
+    void _q_notify();
+    void _q_updateNotifyInterval(int ms);
 
     QMediaRecorder *q_ptr;
 };
@@ -136,6 +140,7 @@ QMediaRecorderPrivate::QMediaRecorderPrivate():
      audioControl(0),
      videoControl(0),
      metaDataControl(0),
+     notifyTimer(0),
      state(QMediaRecorder::StoppedState),
      error(QMediaRecorder::NoError)
 {
@@ -147,12 +152,10 @@ void QMediaRecorderPrivate::_q_stateChanged(QMediaRecorder::State ps)
 {
     Q_Q(QMediaRecorder);
 
-    /*
     if (ps == QMediaRecorder::RecordingState)
-        q->addPropertyWatch("duration");
+        notifyTimer->start();
     else
-        q->removePropertyWatch("duration");
-    */
+        notifyTimer->stop();
 
 //    qDebug() << "Recorder state changed:" << ENUM_NAME(QMediaRecorder,"State",ps);
     if (state != ps) {
@@ -178,6 +181,16 @@ void QMediaRecorderPrivate::_q_serviceDestroyed()
     q_func()->setMediaObject(0);
 }
 
+void QMediaRecorderPrivate::_q_notify()
+{
+    emit q_func()->durationChanged(q_func()->duration());
+}
+
+void QMediaRecorderPrivate::_q_updateNotifyInterval(int ms)
+{
+    notifyTimer->setInterval(ms);
+}
+
 
 /*!
     Constructs a media recorder which records the media produced by \a mediaObject.
@@ -192,6 +205,11 @@ QMediaRecorder::QMediaRecorder(QMediaObject *mediaObject, QObject *parent):
     Q_D(QMediaRecorder);
     d->q_ptr = this;
     setMediaObject(mediaObject);
+
+    d->notifyTimer = new QTimer(this);
+    d->notifyTimer->setInterval(mediaObject->notifyInterval());
+    connect(d->notifyTimer, SIGNAL(timeout()), SLOT(_q_notify()));
+    connect(mediaObject, SIGNAL(notifyIntervalChanged(int)), SLOT(_q_updateNotifyInterval(int)));
 }
 
 /*!
