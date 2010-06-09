@@ -17,9 +17,7 @@ PUBLIC_HEADERS += \
                     qgeodistance.h \
                     qgeonavigationinstruction.h \
                     #qgeonavigator.h \
-                    qgeomapcontainer.h \
                     qgeomapdata.h \
-                    qgeomapobject.h \
                     qgeomappingmanager.h \
                     qgeomappingmanagerengine.h \
                     qgeomapwidget.h \
@@ -81,9 +79,7 @@ PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
                     qgeodistance_p.h \
-                    qgeomapcontainer_p.h \
                     qgeomapdata_p.h \
-                    qgeomapobject_p.h \
                     qgeomappingmanager_p.h \
                     qgeomappingmanagerengine_p.h \
                     qgeomapwidget_p.h \
@@ -211,9 +207,7 @@ SOURCES += \
             qgeodistance.cpp \
             qgeonavigationinstruction.cpp \
             #qgeonavigator.cpp \
-            qgeomapcontainer.cpp \
             qgeomapdata.cpp \
-            qgeomapobject.cpp \
             qgeomappingmanager.cpp \
             qgeomappingmanagerengine.cpp \
             qgeomapwidget.cpp \

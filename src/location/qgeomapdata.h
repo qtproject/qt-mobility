@@ -43,7 +43,6 @@
 #define QGEOMAPDATA_H
 
 #include "qgeomapwidget.h"
-#include "qgeomapcontainer.h"
 
 #include <QObject>
 #include <QSize>
@@ -57,7 +56,7 @@ class QGeoBoundingBox;
 class QGeoMappingManagerEngine;
 class QGeoMapDataPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapData : public QGeoMapContainer
+class Q_LOCATION_EXPORT QGeoMapData
 {
 public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
