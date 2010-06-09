@@ -1,0 +1,14 @@
+%RED% Instructions for Windows CE Platform %ENDCOLOR%
+
+---++++ Enumeration of connections
+
+   1. On a desktop device, use the following method to list visible networks:
+      1. Click StartMenu
+      1. Click "All Settings" button at bottom of screen
+      1. Click "Connections" tab
+      1. Select "Connections" icon
+      1. Select "Wi-fi"
+      1. Click "Wireless Networks"
+   1. Run the bearermonitor example application
+   1. Press 'Scan'
+   1. Verify all previously listed networks are shown in the application view

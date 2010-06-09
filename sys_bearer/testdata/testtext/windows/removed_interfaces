@@ -1,0 +1,13 @@
+%RED% Instructions for Windows Platform %ENDCOLOR%
+
+---++++ Removed network interfaces
+
+   1. Pre: Added network interfaces has been executed successfully
+   1. Run the bearercloud application
+   1. Verify the a WIFI network is displayed in one of the circles in bearercloud
+   1. Open Start Menu -> Settings -> Network Connections
+      * Select the *Wireless Network Connection* from the list
+      * Right mouse click, select *Properties* , select *Wireless Network* tab
+      * For any configured WIFI network select and click *Remove* button       
+   1. Disable the WIFI access point ( eg remove USB WIFI adapter)
+   1. Verify the WIFI network is not displayed in any circle in bearercloud

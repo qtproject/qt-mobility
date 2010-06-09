@@ -1,0 +1,34 @@
+%RED% Instructions for Windows Platform %ENDCOLOR%
+
+---++++ Changing the status of a network
+
+   1. Pre: no network access points are connected to; a WLAN is available eg:
+      * Start Menu -> Settings -> Network Connections
+      * Select the *Wireless Network Connection* from the list
+      * Right mouse click, select *Properties* , select *Wireless Network* tab
+      * For any configured WIFI network select and click *Remove* button       
+   1. Pre: no LAN is connected to (unplug LAN cable) 
+   1. Run the bearercloud application
+   1. Verify the cloud space is clear of WIFI networks
+   1. Verify the LAN network is displayed in the second from inner/*Discovered* circle in bearercloud
+   1. Enable a new Wireless Access Point via one of the following:
+      * turn on wireless access point
+      * insert  Wireless Lan USB adaptor
+      * use function key on Laptop to enable Wireless hardware
+   1. Open Start Menu -> Settings -> Network Connections
+   1. Select the *Wireless Network Connection* from the list
+   1. Right click and *View available Wireless Networks*
+   1. using the *Wireless Network Connection* control panel mentioned in earlier step
+      * select an WIFI interface
+      * configure it with the correct details
+   1. Verify the new WIFI network is displayed in the innermost/*Active* circle in bearercloud
+   1. Connect the LAN cable
+   1. Verify the LAN network is displayed in the innermost/*Active* circle in bearercloud
+   1. using the *Wireless Network Connection* control panel mentioned in earlier step
+      * select an WIFI interface
+      * click *Disconnect*
+   1. Verify the new WIFI network is now displayed in the second from inner/*Discovered* circle in bearercloud
+   1. Disable the network device (eg. unplug the access point)
+   1. Verify that bearercloud shows the network moves to outermost/*Undefined*  circle in bearercloud
+   1. Disconect the LAN cable
+   1. Verify the LAN network is now displayed in the second from inner/*Discovered* circle in bearercloud

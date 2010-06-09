@@ -1,0 +1,22 @@
+%RED% Instructions for Windows Platform %ENDCOLOR%
+
+---++++ Added network interfaces
+
+   1. Pre: no network access points are connected to; a WLAN is available eg:
+      * Start Menu -> Settings -> Network Connections
+      * Select the *Wireless Network Connection* from the list
+      * Right mouse click, select *Properties* , select *Wireless Network* tab
+      * For any configured WIFI network select and click *Remove* button       
+   1. Run the bearercloud application
+   1. Verify the cloud space is clear of WIFI networks
+   1. Enable a new Wireless Access Point via one of the following:
+      * turn on wireless access point
+      * insert  Wireless Lan USB adaptor
+      * use function key on Laptop to enable Wireless hardware
+   1. Open Start Menu -> Settings -> Network Connections
+   1. Select the *Wireless Network Connection* from the list
+   1. Right click and *View available Wireless Networks*
+   1. using the *Wireless Network Connection* control panel mentioned in earlier step
+      * select an WIFI interface
+      * configure it with default details
+   1. Verify the new WIFI network is displayed in one of the circles in bearercloud

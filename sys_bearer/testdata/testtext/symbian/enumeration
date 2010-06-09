@@ -1,0 +1,8 @@
+%RED% Instructions for Symbian Platform %ENDCOLOR%
+
+---++++ Enumeration of connections
+
+   1. On an S60 device, use Menu->Settings->Connectivity settings application to list visible networks
+   1. Run the bearermonitor example application
+   1. Press 'Scan'
+   1. Verify all previously listed networks are shown in the application view

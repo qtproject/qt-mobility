@@ -1,0 +1,23 @@
+%RED% Instructions for Linux and Mac Platforms %ENDCOLOR%
+
+---++++ Changing the status of a network
+
+   1. Pre: no network access points are defined on the device; a WLAN is available
+   1. Run the bearercloud application
+   1. Verify the cloud space is clear of networks
+   1. Press the Menu key to background the application
+   1. Open Settings -> Connectivity -> Wireless networks
+   1. Select the WLAN from the list
+   1. Press Connect
+   1. Press the Menu key
+   1. Select the bearercloud application to foreground it
+   1. Verify the new network is displayed in the green circle (connected)
+   1. Press the Menu key to background the application
+   1. Open Settings -> Connectivity -> Connection Mgr
+   1. Select the WLAN from the list
+   1. Press Options -> Disconnect
+   1. Press the Menu key
+   1. Select the bearercloud application to foreground it
+   1. Verify the new network is now displayed in the blue circle (disconnected)
+   1. Disable the network device (eg. unplug the access point)
+   1. Verify that bearercloud shows the network moves to the grey circle (unavailable)
