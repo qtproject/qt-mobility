@@ -237,13 +237,15 @@ public:
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
-    QFutureWatcher<int> queryWatcher;
+    QScopedPointer<QDBusPendingCallWatcher> queryWatcher;
+    QFutureWatcher<void> parseWatcher;
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
 
     void update(int index);
 
-    int queryRows(int offset);
+    void queryFinished(const QDBusPendingCall &call);
+    void parseRows(const QDBusPendingCall &call);
     void correctRows(
             row_iterator begin,
             row_iterator end,
@@ -258,7 +260,8 @@ public:
             const row_iterator &aEnd,
             const row_iterator &rEnd);
 
-    void _q_queryFinished();
+    void _q_queryFinished(QDBusPendingCallWatcher *watcher);
+    void _q_parseFinished();
     void _q_imagesLoaded(int index, const QList<uint> &ids);
     void _q_editFinished(QGalleryTrackerMetaDataEdit *edit);
 };
