@@ -66,42 +66,12 @@ public:
 
     virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
     virtual QContactFilter contactFilter() const = 0; // use for matching
-    virtual QList<QContactActionTarget> supportedTargets(const QContact& contact) const = 0;
-
-    // ### plural nouns don't get are, apparently
-    virtual bool targetsSupported(const QList<QContactActionTarget>& targets) const = 0;
-    bool isTargetSupported(const QContactActionTarget& target) const
-    {
-        return areTargetsSupported(QList<QContactActionTarget>() << target);
-    }
-    bool isTargetSupported(const QContact& contact, const QContactDetail& detail) const
-    {
-        return areTargetsSupported(QList<QContactActionTarget>() << QContactActionTarget(contact, detail));
-    }
-
-    // Need latin constants for keys.. {label, icon, vendor?, second label?}
+    virtual QSet<QContactActionTarget> supportedTargets(const QContact& contact) const = 0;
 
     /* Retrieve meta data for a given "invoke" input.  Needs params since icon for (e.g.) send with image may be different to send text message. */
     virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const = 0;
-    QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const
-    {
-        return metaData(key, QList<QContactActionTarget>() << target, parameters);
-    }
-    QVariant metaData(const QString& key, const QContact& target, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const
-    {
-        return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
-    }
-
     /* Initiate the asynchronous action on the given list of contacts (and optionally, per-contact-details) with the given parameters */
     virtual bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) = 0;
-    bool invokeAction(const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap())
-    {
-        return invokeAction(QList<QContactActionTarget>() << target, parameters);
-    }
-    bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap())
-    {
-        return invokeAction(QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
-    }
 
     /* The possible states of an action */
     enum State {
@@ -116,6 +86,35 @@ public:
 
     /* Returns the most recently received result, or an empty QVariantMap if no results received */
     virtual QVariantMap results() const = 0;
+
+    /* Convenience functions */
+    bool invokeAction(const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap())
+    {
+        return invokeAction(QList<QContactActionTarget>() << target, parameters);
+    }
+    bool invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap())
+    {
+        return invokeAction(QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
+    }
+    QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const
+    {
+        return metaData(key, QList<QContactActionTarget>() << target, parameters);
+    }
+    QVariant metaData(const QString& key, const QContact& target, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const
+    {
+        return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
+    }
+
+    // Need latin constants for keys.. {label, icon, vendor?, second label?}
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataIcon, "Icon");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataSecondLabel, "SecondLabel");
+
+    // and common actions
+    Q_DECLARE_LATIN1_CONSTANT(ActionCall, "call");
+    Q_DECLARE_LATIN1_CONSTANT(ActionEmail, "email");
+    Q_DECLARE_LATIN1_CONSTANT(ActionMessage, "message"); // XXX text message? IM message? either, depending on detail?
+    Q_DECLARE_LATIN1_CONSTANT(ActionVideoCall, "videocall");
 
 Q_SIGNALS:
     void stateChanged(QContactAction::State);

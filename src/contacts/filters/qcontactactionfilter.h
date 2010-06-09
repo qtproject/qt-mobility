@@ -54,11 +54,9 @@ public:
     QContactActionFilter(const QContactFilter& other);
 
     void setActionName(const QString& action);
-    void setValue(const QVariant& value);
 
     /* Accessors */
     QString actionName() const;
-    QVariant value() const;
 
 private:
     Q_DECLARE_CONTACTFILTER_PRIVATE(QContactActionFilter)

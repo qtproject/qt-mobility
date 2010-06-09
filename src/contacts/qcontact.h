@@ -96,15 +96,9 @@ public:
     bool isEmpty() const;
     void clearDetails();
 
-    /* deprecated */
-    QContactDetail Q_DECL_DEPRECATED detailWithAction(const QString& actionName) const;
-    QList<QContactDetail> Q_DECL_DEPRECATED detailsWithAction(const QString& actionName) const;
-
-    /* Access details of particular type or which support a particular action */
+    /* Access details of particular type */
     QContactDetail detail(const QString& definitionId) const;
     QList<QContactDetail> details(const QString& definitionId = QString()) const;
-    QContactDetail detailWithAction(QContactAction* action) const;
-    QList<QContactDetail> detailsWithAction(QContactAction* action) const;
 
     QList<QContactDetail> details(const QString& definitionName, const QString& fieldName, const QString& value) const;
 

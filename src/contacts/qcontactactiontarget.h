@@ -65,7 +65,6 @@ public:
     bool isValid() const;
     bool operator==(const QContactActionTarget& other) const;
     bool operator!=(const QContactActionTarget& other) const;
-    bool operator<(const QContactActionTarget& other) const;
 
     void setContact(const QContact& contact);
     void setDetails(const QList<QContactDetail>& details);
