@@ -415,10 +415,15 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QByteArray
 }
 
 /*!
-    \fn bool QLandmarkManagerEngine::isFilterSupported(QLandmarkFilter::FilterType filterType) const
+    \fn QLandmarkManager::FilterSupportLevel QLandmarkManagerEngine::filterSupportLevel(const QLandmarkFilter &filter) const
 
-    Returns a whether the supplied \a filterType can be implemented
-    natively by this engine. If not, the functionality will be emulated.
+    Returns the support level the manager engine provides for the given \a filter.
+*/
+
+/*!
+    \fn bool QLandmarkManagerEngine::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+
+    Returns true if the manager engine supports the given \a feature, otherwise returns false;
 */
 
 /*!

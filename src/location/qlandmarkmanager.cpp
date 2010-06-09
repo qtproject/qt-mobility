@@ -83,6 +83,21 @@ QTM_USE_NAMESPACE
 */
 
 /*!
+    \enum QLandmarkManager::LandmarkFeature
+    Defines the possible features the landmark manager can support.
+    \value GenericAttributes The manager supports landmarks and categories which have generic attributes
+*/
+
+/*!
+    \enum QLandmarkManager::FilterSupportLevel
+    Defines the possible support levels the manager can provide for a given filter.
+    \value Native The manager natively supports the filter.
+    \value Emulated The manager emulates the behaviour of the filter.  An emulated filter will inherently be slower than a natively supported filter.
+    \value None The manager does not support the filter at all.
+*/
+
+
+/*!
     Constructs a QLandmarkManager. The default implementation for the platform will be used.
 
     The \a parent QObject will be used as the parent of this QLandmarkManager.
@@ -701,23 +716,35 @@ QString QLandmarkManager::errorString() const
 }
 
 /*!
-    Returns true if the given \a filterType is supported
-    natively by the manager, else false if the filter behaviour would be emulated.
-
-    Note: In some cases, the behaviour of an unsupprted filter cannot be emulated.
-    In these cases the filter will fail.
+    Returns whether the manager supports the given \a feature.
 */
-bool QLandmarkManager::isFilterSupported(QLandmarkFilter::FilterType filterType) const
+bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+        return false;
+    }
+
+    return d->engine->isFeatureSupported(feature);
+}
+
+/*!
+    Returns the support level the manager provides for the given \a filter.
+*/
+QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const QLandmarkFilter &filter) const
 {
     Q_D(const QLandmarkManager);
 
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return false;
+        return QLandmarkManager::None;
     }
 
-    return d->engine->isFilterSupported(filterType);
+    return d->engine->filterSupportLevel(filter);
 }
 
 /*!

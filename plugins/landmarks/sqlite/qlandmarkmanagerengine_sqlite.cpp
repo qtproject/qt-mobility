@@ -2335,28 +2335,20 @@ bool QLandmarkManagerEngineSqlite::exportLandmarksGpx(QIODevice *device,
     return result;
 }
 
-bool QLandmarkManagerEngineSqlite::isFilterSupported(QLandmarkFilter::FilterType filterType) const
+QLandmarkManager::FilterSupportLevel QLandmarkManagerEngineSqlite::filterSupportLevel(const QLandmarkFilter &filter) const
 {
-    switch (filterType) {
-            // fall through for supported filters
-        case QLandmarkFilter::DefaultFilter:
-        case QLandmarkFilter::NameFilter:
-        case QLandmarkFilter::ProximityFilter:
-        case QLandmarkFilter::NearestFilter:
-        case QLandmarkFilter::CategoryFilter:
-        case QLandmarkFilter::BoxFilter:
-        case QLandmarkFilter::IntersectionFilter:
-        case QLandmarkFilter::UnionFilter:
-        case QLandmarkFilter::AttributeFilter:
-            return true;
+    return QLandmarkManager::Native;
+}
 
-            // fall through for unsupported filters
-        case QLandmarkFilter::InvalidFilter:
+bool QLandmarkManagerEngineSqlite::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+{
+    switch(feature) {
+        case (QLandmarkManager::GenericAttributes):
+            return false;
+            break;
         default:
             return false;
     }
-
-    return false;
 }
 
 bool QLandmarkManagerEngineSqlite::isReadOnly() const
