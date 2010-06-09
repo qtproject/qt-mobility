@@ -53,7 +53,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QGeoCoordinate;
-
+class QGeoBoundingBox;
 class QGeoRouteRequestPrivate;
 
 class Q_LOCATION_EXPORT QGeoRouteRequest
@@ -114,6 +114,9 @@ public:
 
     void setWaypoints(const QList<QGeoCoordinate> &waypoints);
     QList<QGeoCoordinate> waypoints() const;
+
+    void setExcludeAreas(const QList<QGeoBoundingBox> &areas);
+    QList<QGeoBoundingBox> excludeAreas() const;
 
     // default to 0
     void setNumberAlternativeRoutes(int alternatives);

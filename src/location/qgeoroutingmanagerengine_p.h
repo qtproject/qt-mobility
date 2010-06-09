@@ -72,6 +72,7 @@ public:
 
     bool supportsRouteUpdates;
     bool supportsAlternativeRoutes;
+    bool supportsExcludeAreas;
     QGeoRouteRequest::TravelModes supportedTravelModes;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations;

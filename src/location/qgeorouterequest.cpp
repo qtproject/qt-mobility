@@ -43,6 +43,7 @@
 #include "qgeorouterequest_p.h"
 
 #include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -248,6 +249,22 @@ void QGeoRouteRequest::setWaypoints(const QList<QGeoCoordinate> &waypoints)
 QList<QGeoCoordinate> QGeoRouteRequest::waypoints() const
 {
     return d_ptr->waypoints;
+}
+
+/*!
+    Sets \a areas as excluded areas that the route must not cross.
+*/
+void QGeoRouteRequest::setExcludeAreas(const QList<QGeoBoundingBox> &areas)
+{
+    d_ptr->excludeAreas = areas;
+}
+
+/*!
+    Returns areas the route must not cross.
+*/
+QList<QGeoBoundingBox> QGeoRouteRequest::excludeAreas() const
+{
+    return d_ptr->excludeAreas;
 }
 
 /*!

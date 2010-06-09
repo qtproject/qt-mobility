@@ -234,6 +234,17 @@ bool QGeoRoutingManager::supportsAlternativeRoutes() const
 }
 
 /*!
+    Returns whether this engine supports request for excluding areas from routes.
+*/
+bool QGeoRoutingManager::supportsExcludeAreas() const
+{
+//    if (!d_ptr->engine)
+//        return false;
+
+    return d_ptr->engine->supportsExcludeAreas();
+}
+
+/*!
     Returns the travel modes supported by this manager.
 */
 QGeoRouteRequest::TravelModes QGeoRoutingManager::supportedTravelModes() const
