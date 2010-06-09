@@ -934,7 +934,7 @@ QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
     if(hasWifi &&  networkThreadOk && runloopThread->isRunning()) {
         runloopThread->quit();
         runloopThread->wait();
-        [delegate release];
+      //  [delegate release];
     }
 #endif
 }
