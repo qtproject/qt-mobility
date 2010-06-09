@@ -39,60 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPDATA_H
-#define QGEOMAPDATA_H
+#ifndef QGEOMAPOBJECT_H
+#define QGEOMAPOBJECT_H
 
-#include "qgeomapwidget.h"
-#include "qgeomapcontainer.h"
-
-#include <QObject>
-#include <QSize>
-#include <QPainter>
-#include <QStyleOptionGraphicsItem>
+#include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoCoordinate;
-class QGeoBoundingBox;
-class QGeoMappingManagerEngine;
-class QGeoMapDataPrivate;
+class QGeoMapObjectPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapData : public QGeoMapContainer
+class Q_LOCATION_EXPORT QGeoMapObject
 {
+    friend class QGeoMapContainer;
+
 public:
-    QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoMapData();
+    QGeoMapObject(const QGeoMapContainer *parent = 0);
+    virtual ~QGeoMapObject();
 
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
+    QGeoBoundingBox boundingBox() const;
+    int zIndex() const;
+    bool visibility() const;
+    bool isVisible() const;
+    const QGeoMapContainer *parent() const;
 
-    virtual void setZoomLevel(qreal zoomLevel);
-    virtual qreal zoomLevel() const;
-
-    virtual void pan(int dx, int dy);
-
-    virtual void setCenter(const QGeoCoordinate &center);
-    virtual QGeoCoordinate center() const;
-
-    virtual void setViewportSize(const QSizeF &size);
-    virtual QSizeF viewportSize() const;
-
-    void setMapType(QGeoMapWidget::MapType mapType);
-    QGeoMapWidget::MapType mapType() const;
-
-    void setImageChangesTriggerUpdates(bool trigger);
-    bool imageChangesTriggerUpdates() const;
-
-    void setMapImage(const QPixmap &mapImage);
-    QPixmap mapImage();
+    void setZIndex(int z);
+    virtual void setVisibility(bool visibility);
 
 protected:
-    QGeoMapWidget* widget() const;
-    QGeoMappingManagerEngine* engine() const;
+    virtual void setVisible(bool visible);
 
 private:
-    QGeoMapDataPrivate* d_ptr;
-    Q_DISABLE_COPY(QGeoMapData)
+    QGeoMapObjectPrivate* d_ptr;
+    Q_DISABLE_COPY(QGeoMapObject)
 };
 
 QTM_END_NAMESPACE
