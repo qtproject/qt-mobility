@@ -66,6 +66,12 @@ QContactLocalIdFetchRequest::QContactLocalIdFetchRequest(QObject* parent)
 {
 }
 
+/*! Frees any memory used by this request */
+QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the filter which will be used to select the contacts whose ids will be returned to \a filter */
 void QContactLocalIdFetchRequest::setFilter(const QContactFilter& filter)
 {

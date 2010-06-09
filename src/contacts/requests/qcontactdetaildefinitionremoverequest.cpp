@@ -66,6 +66,12 @@ QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest(QOb
 {
 }
 
+/*! Frees any memory used by this request */
+QContactDetailDefinitionRemoveRequest::~QContactDetailDefinitionRemoveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   \deprecated
 */

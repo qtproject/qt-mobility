@@ -69,6 +69,12 @@ QContactRelationshipFetchRequest::QContactRelationshipFetchRequest(QObject* pare
 {
 }
 
+/*! Frees any memory used by this request */
+QContactRelationshipFetchRequest::~QContactRelationshipFetchRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*! Sets the source contact criterion of the fetch request to \a firstId.
     If \a firstId is the default-constructed id, or the first contact id is not set,
     the request will fetch relationships involving any first contact.

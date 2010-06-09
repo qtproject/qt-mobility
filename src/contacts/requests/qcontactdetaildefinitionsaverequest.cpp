@@ -67,6 +67,12 @@ QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest(QObject
 {
 }
 
+/*! Frees any memory used by this request */
+QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the definition to save to be the given \a definition.
   Equivalent to calling:

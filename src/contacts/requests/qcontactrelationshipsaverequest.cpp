@@ -66,6 +66,12 @@ QContactRelationshipSaveRequest::QContactRelationshipSaveRequest(QObject* parent
 {
 }
 
+/*! Frees any memory used by this request */
+QContactRelationshipSaveRequest::~QContactRelationshipSaveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the relationship to save to be \a contactRelationship.
   Equivalent to calling:

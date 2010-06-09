@@ -65,6 +65,12 @@ QContactRemoveRequest::QContactRemoveRequest(QObject* parent)
 {
 }
 
+/*! Frees any memory used by this request */
+QContactRemoveRequest::~QContactRemoveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   \deprecated
   Sets the filter which will be used to select the contacts to remove to \a filter.

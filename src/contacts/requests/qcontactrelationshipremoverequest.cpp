@@ -67,6 +67,13 @@ QContactRelationshipRemoveRequest::QContactRelationshipRemoveRequest(QObject* pa
 {
 }
 
+
+/*! Frees any memory used by this request */
+QContactRelationshipRemoveRequest::~QContactRelationshipRemoveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   \deprecated
    Sets the first contact criterion of the remove request to \a firstId.

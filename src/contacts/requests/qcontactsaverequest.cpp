@@ -66,6 +66,12 @@ QContactSaveRequest::QContactSaveRequest(QObject* parent)
 {
 }
 
+/*! Frees any memory used by this request */
+QContactSaveRequest::~QContactSaveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
+}
+
 /*!
   Sets the contact to be saved to \a contact.
   Equivalent to calling:
