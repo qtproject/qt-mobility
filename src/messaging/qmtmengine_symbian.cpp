@@ -104,6 +104,8 @@ Q_GLOBAL_STATIC(CMTMEngine,mtmEngine);
 CMTMEngine::CMTMEngine()
  : CActive(EPriorityStandard)
 {
+    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanupMTMBackend()));
+    
     iFsSession.Connect();
     CActiveScheduler::Add(this);
     iTimer.CreateLocal();
@@ -161,6 +163,11 @@ CMTMEngine::CMTMEngine()
 
 CMTMEngine::~CMTMEngine()
 {
+
+}
+
+void CMTMEngine::cleanupMTMBackend()
+{
     iCmsvEntryPoolFree.ResetAndDestroy();
     iCmsvEntryPoolInUse.ResetAndDestroy();
 
@@ -172,7 +179,7 @@ CMTMEngine::~CMTMEngine()
 
     delete ipClientMtmReg;
     delete ipMsvSession;
-    
+
     TRAPD(error,
         TBuf<KMaxPath> privatePath;
         FsSession().CreatePrivatePath(EDriveC);
@@ -191,6 +198,7 @@ CMTMEngine::~CMTMEngine()
     Cancel();
     iTimer.Close();
     iFsSession.Close();
+
 }
 
 CMTMEngine* CMTMEngine::instance()
@@ -5727,5 +5735,7 @@ void CAsynchronousMTMOperation::DoCancel()
 {
     ipMsvOperation->Cancel();
 }
+
+#include "..\..\build\Release\QtMessaging\moc\moc_qmtmengine_symbian_p.cpp";
 
 QTM_END_NAMESPACE
