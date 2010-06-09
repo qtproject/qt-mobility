@@ -327,7 +327,7 @@ public:
     QRunLoopThread(QObject *parent = 0);
     ~QRunLoopThread();
     bool keepRunning;
-    void quit();
+    void stop();
 
 protected:
     void run();
@@ -367,7 +367,7 @@ public:
     QDASessionThread(QObject *parent = 0);
     ~QDASessionThread();
     bool keepRunning;
-    void quit();
+    void stop();
     DASessionRef session;
 Q_SIGNALS:
     void storageAdded();
@@ -394,7 +394,6 @@ public:
 public Q_SLOTS:
     void emitBtPower(bool);
     void stop();
-    void quit();
 
 Q_SIGNALS:
     void bluetoothPower(bool);

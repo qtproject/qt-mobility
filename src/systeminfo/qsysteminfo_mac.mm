@@ -248,7 +248,7 @@ bool hasIOServiceMatching(const QString &classstr)
 
 -(void)dealloc
 {
-    [center release];
+//    [center release];
     [super dealloc];
 }
 
@@ -298,10 +298,10 @@ bool hasIOServiceMatching(const QString &classstr)
     Q_UNUSED(device);
 
     if ((error != kIOReturnSuccess) || (info == NULL)) {
-        qWarning() << "ERROR: readRSSIForDeviceComplete return error";
+        qDebug() << "ERROR: readRSSIForDeviceComplete return error";
 
     } else if (info->handle == kBluetoothConnectionHandleNone) {
-        qWarning() << "ERROR: readRSSIForDeviceComplete no connection";
+        qDebug() << "ERROR: readRSSIForDeviceComplete no connection";
     } else {
         NSLog(@"Rssi value: %@", info->RSSIValue);
     }
@@ -545,10 +545,7 @@ QLangLoopThread::~QLangLoopThread()
 
 void QLangLoopThread::stop()
 {
-    QMutexLocker locker(&mutex);
-    locker.unlock();
     keepRunning = false;
-    locker.relock();
 #ifdef MAC_SDK_10_6
     [langListener release];
 #endif
@@ -573,7 +570,7 @@ void QLangLoopThread::run()
     langListener = [[QtMLangListener alloc] init];
     SInt32 result;
     while (keepRunning &&
-           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,5, YES))) {
+           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,2, YES))) {
     }
     CFRunLoopStop(CFRunLoopGetCurrent());
     [pool release];
@@ -593,10 +590,11 @@ QRunLoopThread::~QRunLoopThread()
 {
 }
 
-void QRunLoopThread::quit()
+void QRunLoopThread::stop()
 {
     QMutexLocker locker(&mutex);
     locker.unlock();
+
     keepRunning = false;
     locker.relock();
 #ifdef MAC_SDK_10_6
@@ -630,7 +628,7 @@ void QRunLoopThread::run()
 
     SInt32 result;
     while (keepRunning &&
-           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,5, YES))) {
+           (result = CFRunLoopRunInMode(kCFRunLoopDefaultMode ,1, YES))) {
     }
     CFRunLoopStop(CFRunLoopGetCurrent());
     [pool release];
@@ -647,7 +645,7 @@ void QRunLoopThread::startNetworkChangeLoop()
                                  networkChangeCallback,
                                  &dynStoreContext);
     if (!storeSession ) {
-        qWarning() << "could not open dynamic store: error:" << SCErrorString(SCError());
+        qDebug()<< "could not open dynamic store: error:" << SCErrorString(SCError());
         return;
     }
 
@@ -698,7 +696,7 @@ void QRunLoopThread::startNetworkChangeLoop()
     CFRelease(storeKey);
 
     if (!SCDynamicStoreSetNotificationKeys(storeSession , notificationKeys, patternsArray)) {
-        qWarning() << "register notification error:"<< SCErrorString(SCError());
+        qDebug()<< "register notification error:"<< SCErrorString(SCError());
         CFRelease(storeSession );
         CFRelease(notificationKeys);
         CFRelease(patternsArray);
@@ -709,7 +707,7 @@ void QRunLoopThread::startNetworkChangeLoop()
 
     runloopSource = SCDynamicStoreCreateRunLoopSource(NULL, storeSession , 0);
     if (!runloopSource) {
-        qWarning() << "runloop source error:"<< SCErrorString(SCError());
+        qDebug()<< "runloop source error:"<< SCErrorString(SCError());
         CFRelease(storeSession);
         return;
     }
@@ -732,11 +730,17 @@ QDASessionThread::~QDASessionThread()
 {
 }
 
-void QDASessionThread::quit()
+void QDASessionThread::stop()
 {
     mutex.lock();
     keepRunning = false;
     mutex.unlock();
+    if(currentThread() != this) {
+        QMetaObject::invokeMethod(this, "quit",
+                                  Qt::QueuedConnection);
+    } else {
+        quit();
+    }
     wait();
 }
 
@@ -799,14 +803,6 @@ QBluetoothListenerThread::QBluetoothListenerThread(QObject *parent)
 
 QBluetoothListenerThread::~QBluetoothListenerThread()
 {
-    if(isRunning()) {
-        terminate();
-        wait();
-    }
-}
-
-void QBluetoothListenerThread::quit()
-{
 }
 
 void QBluetoothListenerThread::stop()
@@ -814,13 +810,6 @@ void QBluetoothListenerThread::stop()
     mutex.lock();
     keepRunning = false;
     mutex.unlock();
-
-    if(CFRunLoopContainsSource(rl,rls,kCFRunLoopDefaultMode)) {
-        CFRunLoopRemoveSource(rl,
-                              rls,
-                              kCFRunLoopDefaultMode);
-        CFRunLoopStop(rl);
-    }
     if(currentThread() != this) {
         QMetaObject::invokeMethod(this, "quit",
                                   Qt::QueuedConnection);
@@ -830,6 +819,7 @@ void QBluetoothListenerThread::stop()
     mutex.lock();
     IONotificationPortDestroy(port);
     mutex.unlock();
+    wait();
 }
 
 void QBluetoothListenerThread::run()
@@ -910,7 +900,7 @@ void QBluetoothListenerThread::emitBtPower(bool b)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
         : QObject(parent), signalStrengthCache(0),networkThreadOk(0)
 {
-     defaultInterface = "";
+    defaultInterface = "";
     qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 
@@ -931,11 +921,9 @@ if([[CWInterface supportedInterfaces] count] > 0 ) {
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
 {
 #ifdef MAC_SDK_10_6
-    if(hasWifi &&  networkThreadOk && runloopThread->isRunning()) {
-        runloopThread->quit();
-        runloopThread->wait();
-      //  [delegate release];
-    }
+    if(hasWifi && /* networkThreadOk &&*/ runloopThread->isRunning()) {
+        runloopThread->stop();
+   }
 #endif
 }
 
@@ -972,7 +960,7 @@ void QSystemNetworkInfoPrivate::disconnectNotify(const char *signal)
         || QLatin1String(signal) == SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus))) {
 #ifdef MAC_SDK_10_6
         if(hasWifi && runloopThread->isRunning()) {
-            runloopThread->quit();
+            runloopThread->stop();
             runloopThread->wait();
             [delegate release];
         }
@@ -1218,13 +1206,13 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
                 NSArray *devices = [IOBluetoothDevice recentDevices:0];
                 for ( IOBluetoothDevice *btDevice in devices ) {
                     if([btDevice isConnected]) {
-                        qWarning() <<"IOBluetoothDevice connected"<< nsstringToQString([btDevice getName]);
+                        qDebug()<<"IOBluetoothDevice connected"<< nsstringToQString([btDevice getName]);
 //                        delegate = [[RemoteDeviceRSSIHostControllerDelegate alloc] init];
                         [delegate retain];
                         [controller setDelegate:delegate];
                         IOReturn rc = [controller readRSSIForDevice:btDevice];
                         if (rc != noErr) {
-                            qWarning() << "ERROR: call readRSSIForDevice failed";
+                            qDebug()<< "ERROR: call readRSSIForDevice failed";
                         }
 //[delegate release];
                     }
@@ -1336,7 +1324,6 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
 
 QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
-    qWarning() << __FUNCTION__  <<"Mode:"<< mode;
     return interfaceForMode(mode).hardwareAddress();
 }
 
@@ -1374,7 +1361,6 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
                 netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
                 break;
             } else if (CFEqual(type, kSCNetworkInterfaceTypeIEEE80211) && mode == QSystemNetworkInfo::WlanMode) {
-                qWarning() << stringFromCFString(iName);
                 netInterface = QNetworkInterface::interfaceFromName(stringFromCFString(iName));
                 break;
             }
@@ -1605,7 +1591,7 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 {
     if(daSessionThread) {
         if(daSessionThread->isRunning()) {
-            daSessionThread->quit();
+            daSessionThread->stop();
             daSessionThread->wait();
         }
     }
@@ -1842,7 +1828,7 @@ void QSystemDeviceInfoPrivate::disconnectNotify(const char *signal)
 {
     if (QLatin1String(signal) == SIGNAL(bluetoothStateChanged(bool))) {
         if(btThread->isRunning()) {
-            btThread->quit();
+            btThread->stop();
         }
     }
 }
