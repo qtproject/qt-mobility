@@ -355,8 +355,12 @@ int main(int argc, char** argv)
     
     qRegisterMetaType<QServiceFilter>();
     qRegisterMetaTypeStreamOperators<QServiceFilter>("QServiceFilter");
-    qRegisterMetaType<QVariant>();
+    // QVariant is built in with 4.7
+    // QTBUG-11316 causes a crash so this is a work around
+#if (QT_VERSION < QT_VERSION_CHECK(4, 7, 0))
+    qRegisterMetaType<QVariant>();    
     qRegisterMetaTypeStreamOperators<QVariant>("QVariant");
+#endif
 
     registerExampleService();
 
