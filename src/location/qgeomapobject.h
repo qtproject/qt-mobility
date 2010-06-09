@@ -47,6 +47,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapObjectPrivate;
+class QGeoMapContainer;
 
 class Q_LOCATION_EXPORT QGeoMapObject
 {
