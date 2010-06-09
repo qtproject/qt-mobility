@@ -94,7 +94,7 @@ void tst_QRfcommServer::tst_construction()
         QCOMPARE(server.maxPendingConnections(), 1);
         QVERIFY(!server.hasPendingConnections());
         QVERIFY(server.nextPendingConnection() == 0);
-        QVERIFY(!server.serverAddress().isValid());
+        QVERIFY(server.serverAddress().isNull());
         QCOMPARE(server.serverPort(), quint16(0));
     }
 }
@@ -123,10 +123,10 @@ void tst_QRfcommServer::tst_listen()
         QVERIFY(result);
         QVERIFY(server.isListening());
 
-        if (address.isValid())
+        if (!address.isNull())
             QCOMPARE(server.serverAddress(), address);
         else
-            QVERIFY(server.serverAddress().isValid());
+            QVERIFY(!server.serverAddress().isNull());
 
         if (port != 0)
             QCOMPARE(server.serverPort(), port);
@@ -142,7 +142,7 @@ void tst_QRfcommServer::tst_listen()
 
         QVERIFY(!server.isListening());
 
-        QVERIFY(!server.serverAddress().isValid());
+        QVERIFY(server.serverAddress().isNull());
         QVERIFY(server.serverPort() == 0);
 
         QVERIFY(!server.hasPendingConnections());

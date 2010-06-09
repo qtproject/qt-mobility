@@ -85,7 +85,6 @@ void tst_QBluetoothAddress::tst_construction_data()
     QTest::addColumn<QString>("addressS12");
     QTest::addColumn<QString>("addressS17");
 
-    QTest::newRow("00:00:00:00:00:00") << Q_UINT64_C(0x000000000000) << QString("000000000000") << QString("00:00:00:00:00:00");
     QTest::newRow("11:22:33:44:55:66") << Q_UINT64_C(0x112233445566) << QString("112233445566") << QString("11:22:33:44:55:66");
     QTest::newRow("AA:BB:CC:DD:EE:FF") << Q_UINT64_C(0xAABBCCDDEEFF) << QString("AABBCCDDEEFF") << QString("AA:BB:CC:DD:EE:FF");
     QTest::newRow("aa:bb:cc:dd:ee:ff") << Q_UINT64_C(0xAABBCCDDEEFF) << QString("aabbccddeeff") << QString("AA:BB:CC:DD:EE:FF");
@@ -101,14 +100,14 @@ void tst_QBluetoothAddress::tst_construction()
     {
         QBluetoothAddress address;
 
-        QVERIFY(!address.isValid());
+        QVERIFY(address.isNull());
     }
 
     {
         /* construct from quint64 */
         QBluetoothAddress address(addressUInt);
 
-        QVERIFY(address.isValid());
+        QVERIFY(!address.isNull());
 
         QVERIFY(address.toUInt64() == addressUInt);
 
@@ -119,7 +118,7 @@ void tst_QBluetoothAddress::tst_construction()
         /* construct from string without colons */
         QBluetoothAddress address(addressS12);
 
-        QVERIFY(address.isValid());
+        QVERIFY(!address.isNull());
 
         QVERIFY(address.toUInt64() == addressUInt);
 
@@ -130,7 +129,7 @@ void tst_QBluetoothAddress::tst_construction()
         /* construct from string with colons */
         QBluetoothAddress address(addressS17);
 
-        QVERIFY(address.isValid());
+        QVERIFY(!address.isNull());
 
         QVERIFY(address.toUInt64() == addressUInt);
 
@@ -141,7 +140,7 @@ void tst_QBluetoothAddress::tst_construction()
         QString empty;
         QBluetoothAddress address(empty);
 
-        QVERIFY(!address.isValid());
+        QVERIFY(address.isNull());
     }
 
     {
@@ -167,13 +166,13 @@ void tst_QBluetoothAddress::tst_assignment()
         QBluetoothAddress copy1;
         QBluetoothAddress copy2;
 
-        QVERIFY(!copy1.isValid());
-        QVERIFY(!copy2.isValid());
+        QVERIFY(copy1.isNull());
+        QVERIFY(copy2.isNull());
 
         copy1 = copy2 = address;
 
-        QVERIFY(copy1.isValid());
-        QVERIFY(copy2.isValid());
+        QVERIFY(!copy1.isNull());
+        QVERIFY(!copy2.isNull());
 
         QVERIFY(address.toUInt64() == copy1.toUInt64());
         QVERIFY(address.toUInt64() == copy2.toUInt64());

@@ -187,11 +187,11 @@ void QBluetoothServiceDiscoveryAgent::start(DiscoveryMode mode)
     Q_D(QBluetoothServiceDiscoveryAgent);
 
     if (d->discoveryState() == QBluetoothServiceDiscoveryAgentPrivate::Inactive) {
-        if (d->deviceAddress.isValid()) {
+        if (d->deviceAddress.isNull()) {
+            d->startDeviceDiscovery();
+        } else {
             d->discoveredDevices << QBluetoothDeviceInfo(d->deviceAddress, QString(), 0);
             d->startServiceDiscovery();
-        } else {
-            d->startDeviceDiscovery();
         }
     }
 }

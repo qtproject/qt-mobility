@@ -62,10 +62,10 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs an invalid Bluetooth address.
+    Constructs an null Bluetooth address.
 */
 QBluetoothAddress::QBluetoothAddress()
-: m_valid(false), m_address(0)
+:   m_address(0)
 {
 }
 
@@ -73,7 +73,7 @@ QBluetoothAddress::QBluetoothAddress()
     Constructs a new Bluetooth address and assigns \a address to it.
 */
 QBluetoothAddress::QBluetoothAddress(quint64 address)
-: m_valid(true), m_address(address)
+:   m_address(address)
 {
 }
 
@@ -88,12 +88,14 @@ QBluetoothAddress::QBluetoothAddress(const QString &address)
     QString a = address;
 
     if (a.length() == 17)
-        a.replace(':', QByteArray());
+        a.remove(QLatin1Char(':'));
 
     if (a.length() == 12) {
-        m_address = a.toULongLong(&m_valid, 16);
+        bool ok;
+        m_address = a.toULongLong(&ok, 16);
+        if (!ok)
+            clear();
     } else {
-        m_valid = false;
         m_address = 0;
     }
 }
@@ -103,7 +105,6 @@ QBluetoothAddress::QBluetoothAddress(const QString &address)
 */
 QBluetoothAddress::QBluetoothAddress(const QBluetoothAddress &other)
 {
-    m_valid = other.m_valid;
     m_address = other.m_address;
 }
 
@@ -112,37 +113,33 @@ QBluetoothAddress::QBluetoothAddress(const QBluetoothAddress &other)
 */
 QBluetoothAddress &QBluetoothAddress::operator=(const QBluetoothAddress &other)
 {
-    m_valid = other.m_valid;
     m_address = other.m_address;
 
     return *this;
 }
 
 /*!
+    Sets the Bluetooth address to 00:00:00:00:00:00.
+*/
+void QBluetoothAddress::clear()
+{
+    m_address = 0;
+}
+
+/*!
     Returns true if the Bluetooth address is valid, otherwise returns false.
 */
-bool QBluetoothAddress::isValid() const
+bool QBluetoothAddress::isNull() const
 {
-    return m_valid;
+    return m_address == 0;
 }
 
 /*!
     Returns true if the Bluetooth address is less than \a other; otherwise
     returns false.
-
-    Invalid Bluetooth addresses are always less than valid addresses.
 */
 bool QBluetoothAddress::operator<(const QBluetoothAddress &other) const
 {
-    if (!m_valid && !other.m_valid)
-        return false;
-
-    if (m_valid && !other.m_valid)
-        return false;
-
-    if (!m_valid && other.m_valid)
-        return true;
-
     return m_address < other.m_address;
 }
 
@@ -153,12 +150,6 @@ bool QBluetoothAddress::operator<(const QBluetoothAddress &other) const
 */
 bool QBluetoothAddress::operator==(const QBluetoothAddress &other) const
 {
-    if (!m_valid && !other.m_valid)
-        return true;
-
-    if (m_valid != other.m_valid)
-        return false;
-
     return m_address == other.m_address;
 }
 
@@ -167,9 +158,6 @@ bool QBluetoothAddress::operator==(const QBluetoothAddress &other) const
 */
 quint64 QBluetoothAddress::toUInt64() const
 {
-    if (!m_valid)
-        return 0;
-
     return m_address;
 }
 
@@ -178,9 +166,6 @@ quint64 QBluetoothAddress::toUInt64() const
 */
 QString QBluetoothAddress::toString() const
 {
-    if (!m_valid)
-        return QString();
-
     QString s("%1:%2:%3:%4:%5:%6");
 
     for (int i = 5; i >= 0; --i) {

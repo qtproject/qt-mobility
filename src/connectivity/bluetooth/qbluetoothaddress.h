@@ -61,7 +61,9 @@ public:
 
     QBluetoothAddress &operator=(const QBluetoothAddress &other);
 
-    bool isValid() const;
+    bool isNull() const;
+
+    void clear();
 
     bool operator<(const QBluetoothAddress &other) const;
     bool operator==(const QBluetoothAddress &other) const;
@@ -71,7 +73,6 @@ public:
     QString toString() const;
 
 private:
-    bool m_valid;
     quint64 m_address;
 };
 
