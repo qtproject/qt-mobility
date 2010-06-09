@@ -1,2 +1,2 @@
 TEMPLATE=subdirs
-SUBDIRS+=sys_bearer sys_calendar sys_contacts sys_messaging sys_multimedia sys_sensors 
+SUBDIRS+=sys_bearer sys_calendar sys_contacts_automatic sys_contacts_manual sys_messaging sys_multimedia sys_sensors 
