@@ -44,6 +44,7 @@
 
 #include <QStringList>
 #include <QNetworkProxy>
+#include <QGeoBoundingBox>
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),
@@ -67,6 +68,7 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
 
     setSupportsRouteUpdates(true);
     setSupportsAlternativeRoutes(true);
+    setSupportsExcludeAreas(true);
 
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatures;
     avoidFeatures |= QGeoRouteRequest::AvoidTolls;
@@ -203,8 +205,22 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += trimDouble(request.waypoints().at(i).latitude());
     }
 
-    //TODO: Avoid areas
-    //requestString += "&avoidareas=";
+    int numAreas = request.excludeAreas().count();
+    if (numAreas > 0) {
+        requestString += "&avoidareas";
+        for(int i=0;i<numAreas;++i) {
+            requestString += i==0?"=":";";
+            QGeoBoundingBox box = request.excludeAreas().at(i);
+            requestString += trimDouble(box.topLeft().latitude());
+            requestString += ",";
+            requestString += trimDouble(box.topLeft().longitude());
+            requestString += ",";
+            requestString += trimDouble(box.bottomRight().latitude());
+            requestString += ",";
+            requestString += trimDouble(box.bottomRight().longitude());
+        }
+    }
+
 
     requestString += modesRequestString(request.routeOptimization(),request.travelModes(),request.avoidFeatureTypes());
 
