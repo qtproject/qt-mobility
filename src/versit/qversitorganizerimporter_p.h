@@ -179,6 +179,19 @@ private:
     bool parseDateList(const QString& str, QList<QDate>* dates);
     QDate parseDate(QString str);
 
+    bool createStatus(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createPercentageComplete(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+    bool createFinishedDateTime(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
+
     // versit property name -> <definition name, field name>:
     QMap<QString, QPair<QString, QString> > mPropertyMappings;
 };

@@ -61,6 +61,9 @@ private slots:
 
     void testImportEventProperties();
     void testImportEventProperties_data();
+
+    void testImportTodoProperties();
+    void testImportTodoProperties_data();
 };
 
 #endif

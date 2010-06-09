@@ -122,6 +122,8 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodePriority(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemInstanceOrigin::DefinitionName) {
         encodeInstanceOrigin(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    } else if (detail.definitionName() == QOrganizerItemTodoProgress::DefinitionName) {
+        encodeTodoProgress(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (mPropertyMappings.contains(detail.definitionName())) {
         encodeSimpleProperty(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     }
@@ -411,6 +413,55 @@ void QVersitOrganizerExporterPrivate::encodeInstanceOrigin(
     property.setValue(instanceOrigin.originalDate().toString(QLatin1String("yyyyMMdd")));
     *generatedProperties << property;
     *processedFields << QOrganizerItemInstanceOrigin::FieldOriginalDate;
+}
+
+void QVersitOrganizerExporterPrivate::encodeTodoProgress(
+        const QOrganizerItemDetail& detail,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* removedProperties,
+        QList<QVersitProperty>* generatedProperties,
+        QSet<QString>* processedFields)
+{
+    QOrganizerItemTodoProgress todoProgress = static_cast<QOrganizerItemTodoProgress>(detail);
+
+    if (todoProgress.finishedDateTime().isValid()) {
+        QVersitProperty property =
+            VersitUtils::takeProperty(document, QLatin1String("COMPLETED"), removedProperties);
+        property.setName(QLatin1String("COMPLETED"));
+        property.setValue(todoProgress.finishedDateTime().toString(QLatin1String("yyyyMMddTHHmmss")));
+        *generatedProperties << property;
+        *processedFields << QOrganizerItemTodoProgress::FieldFinishedDateTime;
+    }
+
+    if (todoProgress.hasValue(QOrganizerItemTodoProgress::FieldPercentageComplete)) {
+        QVersitProperty property =
+            VersitUtils::takeProperty(document, QLatin1String("PERCENT-COMPLETE"), removedProperties);
+        property.setName(QLatin1String("PERCENT-COMPLETE"));
+        property.setValue(QString::number(todoProgress.percentageComplete()));
+        *generatedProperties << property;
+        *processedFields << QOrganizerItemTodoProgress::FieldPercentageComplete;
+    }
+
+    if (todoProgress.hasValue(QOrganizerItemTodoProgress::FieldStatus)) {
+        QVersitProperty property =
+            VersitUtils::takeProperty(document, QLatin1String("STATUS"), removedProperties);
+        property.setName(QLatin1String("STATUS"));
+        switch (todoProgress.status()) {
+            case QOrganizerItemTodoProgress::StatusNotStarted:
+                property.setValue(QLatin1String("NEEDS-ACTION"));
+                break;
+            case QOrganizerItemTodoProgress::StatusInProgress:
+                property.setValue(QLatin1String("IN-PROCESS"));
+                break;
+            case QOrganizerItemTodoProgress::StatusComplete:
+                property.setValue(QLatin1String("COMPLETED"));
+                break;
+            default:
+                return;
+        }
+        *generatedProperties << property;
+        *processedFields << QOrganizerItemTodoProgress::FieldStatus;
+    }
 }
 
 void QVersitOrganizerExporterPrivate::encodeSimpleProperty(

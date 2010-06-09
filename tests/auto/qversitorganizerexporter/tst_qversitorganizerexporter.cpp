@@ -557,6 +557,84 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
     }
 }
 
+void tst_QVersitOrganizerExporter::testExportTodoDetails()
+{
+    QFETCH(QList<QOrganizerItemDetail>, details);
+    QFETCH(QList<QVersitProperty>, expectedProperties);
+
+    QVersitOrganizerExporter exporter;
+    QOrganizerTodo item;
+    foreach (QOrganizerItemDetail detail, details) {
+        item.saveDetail(&detail);
+    }
+    QVERIFY(exporter.exportItems(QList<QOrganizerItem>() << item, QVersitDocument::ICalendar20Type));
+    QVERIFY(exporter.errors().isEmpty());
+    QVersitDocument document = exporter.document();
+    QList<QVersitDocument> subDocuments = document.subDocuments();
+    QCOMPARE(subDocuments.size(), 1);
+
+    foreach(const QVersitProperty& expectedProperty, expectedProperties) {
+        QVersitProperty actualProperty = findPropertyByName(subDocuments.first(), expectedProperty.name());
+        if (actualProperty != expectedProperty) {
+            qDebug() << "Actual:" << actualProperty;
+            qDebug() << "Expected:" << expectedProperty;
+            QCOMPARE(actualProperty, expectedProperty);
+        }
+    }
+}
+
+void tst_QVersitOrganizerExporter::testExportTodoDetails_data()
+{
+    QTest::addColumn<QList<QOrganizerItemDetail> >("details");
+    QTest::addColumn<QList<QVersitProperty> >("expectedProperties");
+
+    {
+        QVersitProperty property;
+        property.setName(QLatin1String("STATUS"));
+        property.setValue(QLatin1String("COMPLETED"));
+        QOrganizerItemTodoProgress progress;
+        progress.setStatus(QOrganizerItemTodoProgress::StatusComplete);
+        QTest::newRow("status completed")
+            << (QList<QOrganizerItemDetail>() << progress)
+            << (QList<QVersitProperty>() << property);
+
+        property.setValue(QLatin1String("NEEDS-ACTION"));
+        progress.setStatus(QOrganizerItemTodoProgress::StatusNotStarted);
+        QTest::newRow("status needs-action")
+            << (QList<QOrganizerItemDetail>() << progress)
+            << (QList<QVersitProperty>() << property);
+
+        property.setValue(QLatin1String("IN-PROCESS"));
+        progress.setStatus(QOrganizerItemTodoProgress::StatusInProgress);
+        QTest::newRow("status in-process")
+            << (QList<QOrganizerItemDetail>() << progress)
+            << (QList<QVersitProperty>() << property);
+    }
+
+    {
+        QVersitProperty property;
+        property.setName(QLatin1String("PERCENT-COMPLETE"));
+        property.setValue(QLatin1String("42"));
+        QOrganizerItemTodoProgress progress;
+        progress.setPercentageComplete(42);
+        QTest::newRow("percent-complete")
+            << (QList<QOrganizerItemDetail>() << progress)
+            << (QList<QVersitProperty>() << property);
+    }
+
+    {
+        QVersitProperty property;
+        property.setName(QLatin1String("COMPLETED"));
+        property.setValue(QLatin1String("20100609T161500"));
+        QOrganizerItemTodoProgress progress;
+        progress.setFinishedDateTime(QDateTime(QDate(2010, 6, 9), QTime(16, 15, 0)));
+        QTest::newRow("completed")
+            << (QList<QOrganizerItemDetail>() << progress)
+            << (QList<QVersitProperty>() << property);
+    }
+}
+
+
 QVersitProperty tst_QVersitOrganizerExporter::findPropertyByName(
         const QVersitDocument &document, const QString &propertyName)
 {

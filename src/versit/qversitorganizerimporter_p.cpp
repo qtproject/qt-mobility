@@ -139,6 +139,12 @@ void QVersitOrganizerImporterPrivate::importProperty(
         } else if (property.name() == QLatin1String("RDATE")
                || (property.name() == QLatin1String("EXDATE"))) {
             success = createRecurrenceDates(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("STATUS")) {
+            success = createStatus(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("PERCENT-COMPLETE")) {
+            success = createPercentageComplete(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("COMPLETED")) {
+            success = createFinishedDateTime(property, item, &updatedDetails);
         }
     }
 
@@ -590,6 +596,56 @@ QDate QVersitOrganizerImporterPrivate::parseDate(QString str)
         str = str.left(tIndex);
     }
     return QDate::fromString(str, QLatin1String("yyyyMMdd"));
+}
+
+bool QVersitOrganizerImporterPrivate::createStatus(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    QOrganizerItemTodoProgress::Status status;
+    if (property.value() == QLatin1String("COMPLETED"))
+        status = QOrganizerItemTodoProgress::StatusComplete;
+    else if (property.value() == QLatin1String("NEEDS-ACTION"))
+        status = QOrganizerItemTodoProgress::StatusNotStarted;
+    else if (property.value() == QLatin1String("IN-PROCESS"))
+        status = QOrganizerItemTodoProgress::StatusInProgress;
+    else
+        return false;
+
+    QOrganizerItemTodoProgress progress(item->detail<QOrganizerItemTodoProgress>());
+    progress.setStatus(status);
+    updatedDetails->append(progress);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createPercentageComplete(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    bool ok = false;
+    int percent = property.value().toInt(&ok);
+    if (!ok)
+        return false;
+
+    QOrganizerItemTodoProgress progress(item->detail<QOrganizerItemTodoProgress>());
+    progress.setPercentageComplete(percent);
+    updatedDetails->append(progress);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createFinishedDateTime(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QDateTime datetime = parseDateTime(property.value());
+    if (!datetime.isValid())
+        return false;
+    QOrganizerItemTodoProgress progress(item->detail<QOrganizerItemTodoProgress>());
+    progress.setFinishedDateTime(datetime);
+    updatedDetails->append(progress);
+    return true;
 }
 
 /*! Parse the iCalendar duration string \a str in an RDP fashion with a two symbol lookahead, and
