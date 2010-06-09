@@ -1,5 +1,5 @@
 import Qt 4.7
-//import com.nokia.mobility 1.0
+import com.nokia.mobility 1.0
 import "contents" as TimeScape
 
 Rectangle {
@@ -14,9 +14,9 @@ Rectangle {
 
     SystemPalette { id: activePalette }
 
-//    Organizer {
-//       id : organizer
-//    }
+    QmlOrganizer {
+       id : organizer
+    }
 
     // Quick hack top menu bar to change views
     states: [
