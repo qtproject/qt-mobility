@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qdeclarativeaudio.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QML Audio Element Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QML Audio Element Reference<br /><span class="subtitle"></span>
+</h1>
+<p>The Audio element allows you to add audio playback to a scene. <a href="#details">More...</a></p>
+<a name="Propertiesx"></a>
+<h2>Properties</h2>
+<p><table width="100%" border="0" cellpadding="0" cellspacing="0">
+<tr><td width="45%" valign="top"><ul>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#autoLoad-prop">autoLoad</a></b></b> : url</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#bufferProgress-prop">bufferProgress</a></b></b> : real</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#duration-prop">duration</a></b></b> : int</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#error-prop">error</a></b></b> : enumeration</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#errorString-prop">errorString</a></b></b> : string</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#muted-prop">muted</a></b></b> : bool</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#paused-prop">paused</a></b></b> : bool</li>
+</ul></td><td valign="top"><ul>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#playbackRate-prop">playbackRate</a></b></b> : real</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#playing-prop">playing</a></b></b> : bool</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#position-prop">position</a></b></b> : int</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#seekable-prop">seekable</a></b></b> : bool</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#source-prop">source</a></b></b> : url</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#status-prop">status</a></b></b> : enumeration</li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#volume-prop">volume</a></b></b> : real</li>
+</ul>
+</td></tr>
+</table></p>
+<a name="Signalsx"></a>
+<h2>Signals</h2>
+<ul>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onBuffered-signal">onBuffered</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onBuffering-signal">onBuffering</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onEndOfMedia-signal">onEndOfMedia</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onError-signal">onError</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onLoaded-signal">onLoaded</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onPaused-signal">onPaused</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onResumed-signal">onResumed</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onStalled-signal">onStalled</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onStarted-signal">onStarted</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#onStopped-signal">onStopped</a></b></b></li>
+</ul>
+<a name="Methods"></a>
+<h2>Methods</h2>
+<ul>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#pause-method">pause</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#play-method">play</a></b></b></li>
+<li><div class="fn"></div><b><b><a href="qml-audio.html#stop-method">stop</a></b></b></li>
+</ul>
+<a name="details"></a>
+<h2>Detailed Description</h2>
+<p>This element is part of the <b>Qt.multimedia 1.0</b> module.</p>
+<pre>    import Qt 4.7
+    import Qt.multimedia 1.0
+
+    Text {
+        text: &quot;Click Me!&quot;;
+        font.pointSize: 24;
+        width: 150; height: 50;
+
+        Audio {
+            id: playMusic
+            source: &quot;music.wav&quot;
+        }
+        MouseArea {
+            id: playArea
+            anchors.fill: parent
+            onPressed:  { playMusic.play() }
+        }
+    }</pre>
+<p>See also <a href="qml-video.html">Video</a>.</p>
+<hr />
+<h2>Property Documentation</h2>
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="autoLoad-prop"></a>autoLoad : url</td></tr></table></div><div class="qmldoc"><p>This property indicates if loading of media should begin immediately.</p>
+<p>Defaults to true, if false media will not be loaded until playback is started.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="bufferProgress-prop"></a>bufferProgress : real</td></tr></table></div><div class="qmldoc"><p>This property holds how much of the data buffer is currently filled, from 0.0 (empty) to 1.0 (full).</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="duration-prop"></a><span class="qmlreadonly">read-only</span>duration : int</td></tr></table></div><div class="qmldoc"><p>This property holds the duration of the media in milliseconds.</p>
+<p>If the media doesn't have a fixed duration (a live stream for example) this will be 0.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="error-prop"></a><span class="qmlreadonly">read-only</span>error : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the error state of the audio. It can be one of:</p>
+<ul>
+<li>NoError - there is no current error.</li>
+<li>ResourceError - the audio cannot be played due to a problem allocating resources.</li>
+<li>FormatError - the audio format is not supported.</li>
+<li>NetworkError - the audio cannot be played due to network issues.</li>
+<li>AccessDenied - the audio cannot be played due to insufficient permissions.</li>
+<li>ServiceMissing - the audio cannot be played because the media service could not be instantiated.</li>
+</ul>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="errorString-prop"></a><span class="qmlreadonly">read-only</span>errorString : string</td></tr></table></div><div class="qmldoc"><p>This property holds a string describing the current error condition in more detail.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="muted-prop"></a>muted : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the audio output is muted.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="paused-prop"></a>paused : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the media is paused.</p>
+<p>Defaults to false, and can be set to true to pause playback.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="playbackRate-prop"></a>playbackRate : real</td></tr></table></div><div class="qmldoc"><p>This property holds the rate at which audio is played at as a multiple of the normal rate.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="playing-prop"></a>playing : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether the media is playing.</p>
+<p>Defaults to false, and can be set to true to start playback.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="position-prop"></a>position : int</td></tr></table></div><div class="qmldoc"><p>This property holds the current playback position in milliseconds.</p>
+<p>If the <a href="qml-audio.html#seekable-prop">seekable</a> property is true, this property can be set to seek to a new position.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="seekable-prop"></a><span class="qmlreadonly">read-only</span>seekable : bool</td></tr></table></div><div class="qmldoc"><p>This property holds whether position of the audio can be changed.</p>
+<p>If true; setting a <a href="qml-audio.html#position-prop">position</a> value will cause playback to seek to the new position.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="source-prop"></a>source : url</td></tr></table></div><div class="qmldoc"><p>This property holds the source URL of the media.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="status-prop"></a><span class="qmlreadonly">read-only</span>status : enumeration</td></tr></table></div><div class="qmldoc"><p>This property holds the status of media loading. It can be one of:</p>
+<ul>
+<li>NoMedia - no media has been set.</li>
+<li>Loading - the media is currently being loaded.</li>
+<li>Loaded - the media has been loaded.</li>
+<li>Buffering - the media is buffering data.</li>
+<li>Stalled - playback has been interrupted while the media is buffering data.</li>
+<li>Buffered - the media has buffered data.</li>
+<li>EndOfMedia - the media has played to the end.</li>
+<li>InvalidMedia - the media cannot be played.</li>
+<li>UnknownStatus - the status of the media is unknown.</li>
+</ul>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table width="100%" class="qmlname"><tr><td><a name="volume-prop"></a>volume : real</td></tr></table></div><div class="qmldoc"><p>This property holds the volume of the audio output, from 0.0 (silent) to 1.0 (maximum volume).</p>
+</div></div><br />
+<h2>Signal Documentation</h2>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onBuffered-signal"></a>Audio::onBuffered ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when the media has finished buffering.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onBuffering-signal"></a>Audio::onBuffering ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when the media starts buffering.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onEndOfMedia-signal"></a>Audio::onEndOfMedia ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when playback stops because end of the media has been reached.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onError-signal"></a>Audio::onError ( <a href="qml-audio.html#error-prop">error</a>, <a href="qml-audio.html#errorString-prop">errorString</a> )</td></tr></table></div><div class="qmldoc"><p>This handler is called when an <a href="qmediaplayer.html#Error-enum">error</a> has occurred. The <a href="qml-audio.html#errorString-prop">errorString</a> parameter may contain more detailed information about the error.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onLoaded-signal"></a>Audio::onLoaded ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when the media source has been loaded.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onPaused-signal"></a>Audio::onPaused ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when playback is paused.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onResumed-signal"></a>Audio::onResumed ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when playback is resumed from the paused state.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onStalled-signal"></a>Audio::onStalled ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when playback has stalled while the media buffers.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onStarted-signal"></a>Audio::onStarted ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when playback is started.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="onStopped-signal"></a>Audio::onStopped ()</td></tr></table></div><div class="qmldoc"><p>This handler is called when playback is stopped.</p>
+</div></div><br />
+<h2>Method Documentation</h2>
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="pause-method"></a>Audio::pause ()</td></tr></table></div><div class="qmldoc"><p>Pauses playback of the media.</p>
+<p>Sets the <a href="qml-audio.html#playing-prop">playing</a> and <a href="qml-audio.html#paused-prop">paused</a> properties to true.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="play-method"></a>Audio::play ()</td></tr></table></div><div class="qmldoc"><p>Starts playback of the media.</p>
+<p>Sets the <a href="qml-audio.html#playing-prop">playing</a> property to true, and the <a href="qml-audio.html#paused-prop">paused</a> property to false.</p>
+</div></div><br />
+<div class="qmlitem"><div class="qmlproto"><table class="qmlname"><tr><td><a name="stop-method"></a>Audio::stop ()</td></tr></table></div><div class="qmldoc"><p>Stops playback of the media.</p>
+<p>Sets the <a href="qml-audio.html#playing-prop">playing</a> and <a href="qml-audio.html#paused-prop">paused</a> properties to false.</p>
+</div></div><br />
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

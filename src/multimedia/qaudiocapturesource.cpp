@@ -96,14 +96,14 @@ public:
                        SIGNAL(availableAudioInputsChanged()));
             q->connect(audioEndpointSelector, SIGNAL(availableEndpointsChanged()),
                        SLOT(statusChanged()));
-            errorState = QtMultimedia::NoError;
+            errorState = QtMultimediaKit::NoError;
         }
     }
 
-    QAudioCaptureSourcePrivate():provider(0), audioEndpointSelector(0), errorState(QtMultimedia::ServiceMissingError) {}
+    QAudioCaptureSourcePrivate():provider(0), audioEndpointSelector(0), errorState(QtMultimediaKit::ServiceMissingError) {}
     QMediaServiceProvider *provider;
     QAudioEndpointSelector   *audioEndpointSelector;
-    QtMultimedia::AvailabilityError errorState;
+    QtMultimediaKit::AvailabilityError errorState;
 };
 
 /*!
@@ -138,7 +138,7 @@ QAudioCaptureSource::~QAudioCaptureSource()
     Returns the error state of the audio capture service.
 */
 
-QtMultimedia::AvailabilityError QAudioCaptureSource::availabilityError() const
+QtMultimediaKit::AvailabilityError QAudioCaptureSource::availabilityError() const
 {
     Q_D(const QAudioCaptureSource);
 
@@ -250,14 +250,14 @@ void QAudioCaptureSource::statusChanged()
 
     if (d->audioEndpointSelector) {
         if (d->audioEndpointSelector->availableEndpoints().size() > 0) {
-            d->errorState = QtMultimedia::NoError;
+            d->errorState = QtMultimediaKit::NoError;
             emit availabilityChanged(true);
         } else {
-            d->errorState = QtMultimedia::BusyError;
+            d->errorState = QtMultimediaKit::BusyError;
             emit availabilityChanged(false);
         }
     } else {
-        d->errorState = QtMultimedia::ServiceMissingError;
+        d->errorState = QtMultimediaKit::ServiceMissingError;
         emit availabilityChanged(false);
     }
 }

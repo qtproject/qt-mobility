@@ -81,48 +81,37 @@ QtLocation
 QtMessaging
 ------
 
- - API changes
-    * None.
- - Symbian^3 backend implemented
+ - Maemo 5 (Fremantle) backend implemented
     * SMS and Email message types supported.
+    * modest process must be restarted before Fremantle backend is fully
+      operational. This can be achieved by restarting the device.
+ - API changes
+    * QMessageAddress::recipient()/setRecipient renamed to 
+      QMessageAddress::addressee()/setAddressee respectively.
+    * QMessage::XMPP renamed to QMessage::InstantMessage.
  - Symbian specific fixes
-    * Fix for SMS message sending failed in some cases.
-    * Fix for simultaneous calls to QMessageService::send(...) causing crash.
-    * messagesAdded signal is now emitted only when message is ready to be 
-      read.
-    * retrieve* and exportUpdates functions are now asynchronous (MTM).
-      Before this fix these functions always hanged for the whole operation 
-      time.
- - Maemo 5 (Fremantle) specific fixes
-    Latest version of libtpsession and qtm-modest-plugin is required for 
-      these fixes.
-    * Fix for SMS sending not working with defaultAccount.
-    * Fix for multiple recipients not supported for SMS messages.
-    * Fix for sending successive SMS did not send later queued ones.
-    * Fix for queryMessages service action is synchronous for SMS messages.
-    * Fix for messageAdded signal is not emitted for email messages in inbox 
-      when inbox is open in modest.
-    * QMessageManager::updateMessage implemented for email messages,
-      only status and priority fields may be updated.
-    * Status & priority handling has been fixed for addMessage, getMessage & 
-      queryMessages functionality.
-    * Multipart message handling has been improved.
-    * Content CharacterSet reporting has been fixed to return correct MIME
-      header value.
-    * Body handling has been improved, text/html body is returned if text/html 
-      body can be found.
-    * Unicode character support (for example scandinavian
-      characters work correctly now in both HTML & plain text body).
-    * Attachment & body download (retrieve functions) fixes.
-      Modest automatically retrieves small messages and attachments,
-      now retrieveBody() & retrieve() can correctly be used to retrieve 
-      large messages from the server.
-    * Folder name localization support.
- - Windows specific fixes
-    * None
+    * Notifications which are related to internal folders (0x100001
+      and 0x100002) are ignored.
+    * Notifications about messages which are "created and then
+      immediately removed" (before message can be read to QMessage) are
+      removed from notifications queue and are not ever tried to
+      deliver.
+    * Improved message filtering functionality in case when whole
+      message should be used for filtering but whole message can not
+      be read yet from message store.
+    * Notifications which can be delivered immediately will be
+      delivered without putting notifications into queue.
+    * The following filter now works:
+      registerNotificationFilter(
+          QMessageFilter::byStandardFolder(QMessage::InboxFolder) &
+          QMessageFilter::byType(QMessage::Mms))
+ - Regression in keepintouch example fixed, incorrect results were returned 
+   when 'but not last' checkbox was unchecked.
+ - Format of identifiers changed
+   * For forwards compatibility.
 
 
-QtMultimedia
+QtMultimediaKit
 ------
  - Symbian backend improvements
     * AudioCapture

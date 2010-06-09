@@ -103,7 +103,7 @@ QRadioTunerControl::~QRadioTunerControl()
 */
 
 /*!
-    \fn QtMultimedia::AvailabilityError QRadioTunerControl::availabilityError() const
+    \fn QtMultimediaKit::AvailabilityError QRadioTunerControl::availabilityError() const
 
     Returns the error state of the radio service.
 */
