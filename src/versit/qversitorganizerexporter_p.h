@@ -68,7 +68,13 @@ private:
             const QOrganizerItem& item,
             const QOrganizerItemDetail& detail,
             QVersitDocument* document);
-    void encodeTimeRange(
+    void encodeEventTimeRange(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
+    void encodeTodoTimeRange(
             const QOrganizerItemDetail& detail,
             const QVersitDocument& document,
             QList<QVersitProperty>* removedProperties,

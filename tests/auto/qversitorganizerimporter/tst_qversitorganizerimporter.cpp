@@ -68,34 +68,82 @@ void tst_QVersitOrganizerImporter::testImport_data()
     QTest::addColumn<QVersitDocument>("document");
     QTest::addColumn<QList<QOrganizerItem> >("expectedItems");
 
-    QVersitDocument document(QVersitDocument::ICalendar20Type);
-    document.setComponentType(QLatin1String("VCALENDAR"));
-    QVersitProperty property;
-    property.setName(QLatin1String("PRODID"));
-    property.setValue(QLatin1String("-//hacksw/handcal//NONSGML v1.0//EN"));
-    document.addProperty(property);
-    QVersitDocument nested(QVersitDocument::ICalendar20Type);
-    nested.setComponentType(QLatin1String("VEVENT"));
-    property.setName(QLatin1String("SUMMARY"));
-    property.setValue(QLatin1String("Bastille Day Party"));
-    nested.addProperty(property);
-    property.setName(QLatin1String("DTSTART"));
-    property.setValue(QLatin1String("19970714T170000Z"));
-    nested.addProperty(property);
-    property.setName(QLatin1String("DTEND"));
-    property.setValue(QLatin1String("19970715T035959Z"));
-    nested.addProperty(property);
-    document.addSubDocument(nested);
+    {
+        QVersitDocument document(QVersitDocument::ICalendar20Type);
+        document.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitProperty property;
+        property.setName(QLatin1String("PRODID"));
+        property.setValue(QLatin1String("-//hacksw/handcal//NONSGML v1.0//EN"));
+        document.addProperty(property);
+        QVersitDocument nested(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VEVENT"));
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("Bastille Day Party"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("19970714T170000Z"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DTEND"));
+        property.setValue(QLatin1String("19970715T035959Z"));
+        nested.addProperty(property);
+        document.addSubDocument(nested);
 
-    QOrganizerEvent event;
-    event.setDisplayLabel(QLatin1String("Bastille Day Party"));
-    event.setStartDateTime(QDateTime(QDate(1997, 7, 14), QTime(17, 0, 0), Qt::UTC));
-    event.setEndDateTime(QDateTime(QDate(1997, 7, 15), QTime(3, 59, 59), Qt::UTC));
+        nested.clear();
+        nested.setType(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VTODO"));
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("Take out the garbage"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("20100609T080000"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DUE"));
+        property.setValue(QLatin1String("20100610T080000"));
+        nested.addProperty(property);
+        document.addSubDocument(nested);
 
-    QList<QOrganizerItem> items;
-    items << static_cast<QOrganizerItem>(event);
+        QOrganizerEvent event;
+        event.setDisplayLabel(QLatin1String("Bastille Day Party"));
+        event.setStartDateTime(QDateTime(QDate(1997, 7, 14), QTime(17, 0, 0), Qt::UTC));
+        event.setEndDateTime(QDateTime(QDate(1997, 7, 15), QTime(3, 59, 59), Qt::UTC));
 
-    QTest::newRow("sample event") << document << items;
+        QOrganizerTodo todo;
+        todo.setDisplayLabel(QLatin1String("Take out the garbage"));
+        todo.setNotBeforeDateTime(QDateTime(QDate(2010, 6, 9), QTime(8, 0, 0)));
+        todo.setDueDateTime(QDateTime(QDate(2010, 6, 10), QTime(8, 0, 0)));
+
+
+        QList<QOrganizerItem> items;
+        items << static_cast<QOrganizerItem>(event);
+        items << static_cast<QOrganizerItem>(todo);
+
+        QTest::newRow("sample event and todo") << document << items;
+    }
+
+    {
+        QVersitDocument document(QVersitDocument::ICalendar20Type);
+        document.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitDocument nested(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VEVENT"));
+        QVersitProperty property;
+        property.setName(QLatin1String("UID"));
+        property.setValue(QLatin1String("1234"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("RECURRENCE-ID"));
+        property.setValue(QLatin1String("20100608"));
+        nested.addProperty(property);
+        document.addSubDocument(nested);
+
+        // An event occurrence with OriginalDate and Guid set
+        QOrganizerEventOccurrence event;
+        event.setGuid(QLatin1String("1234"));
+        event.setOriginalDate(QDate(2010, 6, 8));
+
+        QList<QOrganizerItem> items;
+        items << static_cast<QOrganizerItem>(event);
+
+        QTest::newRow("event occurrence exception") << document << items;
+    }
 }
 
 void tst_QVersitOrganizerImporter::testImportEventProperties()
@@ -162,17 +210,6 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         QTest::newRow("guid")
             << (QList<QVersitProperty>() << property)
             << (QList<QOrganizerItemDetail>() << guid);
-    }
-
-    {
-        QVersitProperty property;
-        property.setName(QLatin1String("RECURRENCE-ID"));
-        property.setValue(QLatin1String("20100608"));
-        QOrganizerItemInstanceOrigin origin;
-        origin.setOriginalDate(QDate(2010, 6, 8));
-        QTest::newRow("recurrence-id")
-            << (QList<QVersitProperty>() << property)
-            << (QList<QOrganizerItemDetail>() << origin);
     }
 
     {

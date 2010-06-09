@@ -78,6 +78,9 @@ bool QVersitOrganizerExporterPrivate::exportItem(
     if (item.type() == QOrganizerItemType::TypeEvent
         || item.type() == QOrganizerItemType::TypeEventOccurrence) {
         document->setComponentType(QLatin1String("VEVENT"));
+    } else if (item.type() == QOrganizerItemType::TypeTodo
+        || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+        document->setComponentType(QLatin1String("VTODO"));
     } else {
         *error = QVersitOrganizerExporter::UnknownComponentTypeError;
         return false;
@@ -108,7 +111,9 @@ void QVersitOrganizerExporterPrivate::exportDetail(
     QSet<QString> processedFields;
 
     if (detail.definitionName() == QOrganizerItemEventTimeRange::DefinitionName) {
-        encodeTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+        encodeEventTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    } else if (detail.definitionName() == QOrganizerItemTodoTimeRange::DefinitionName) {
+        encodeTodoTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName) {
         encodeTimestamp(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemRecurrence::DefinitionName) {
@@ -129,7 +134,7 @@ void QVersitOrganizerExporterPrivate::exportDetail(
     }
 }
 
-void QVersitOrganizerExporterPrivate::encodeTimeRange(
+void QVersitOrganizerExporterPrivate::encodeEventTimeRange(
         const QOrganizerItemDetail& detail,
         const QVersitDocument& document,
         QList<QVersitProperty>* removedProperties,
@@ -150,6 +155,29 @@ void QVersitOrganizerExporterPrivate::encodeTimeRange(
     *generatedProperties << property;
     *processedFields << QOrganizerItemEventTimeRange::FieldStartDateTime
                      << QOrganizerItemEventTimeRange::FieldEndDateTime;
+}
+
+void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
+        const QOrganizerItemDetail& detail,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* removedProperties,
+        QList<QVersitProperty>* generatedProperties,
+        QSet<QString>* processedFields)
+{
+    QOrganizerItemTodoTimeRange ttr = static_cast<QOrganizerItemTodoTimeRange>(detail);
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("DTSTART"), removedProperties);
+    property.setName(QLatin1String("DTSTART"));
+    property.setValue(encodeDateTime(ttr.notBeforeDateTime()));
+    *generatedProperties << property;
+
+    property =
+        VersitUtils::takeProperty(document, QLatin1String("DUE"), removedProperties);
+    property.setName(QLatin1String("DUE"));
+    property.setValue(encodeDateTime(ttr.dueDateTime()));
+    *generatedProperties << property;
+    *processedFields << QOrganizerItemTodoTimeRange::FieldNotBeforeDateTime
+                     << QOrganizerItemTodoTimeRange::FieldDueDateTime;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTimestamp(

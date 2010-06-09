@@ -86,15 +86,35 @@ void tst_QVersitOrganizerExporter::testExport_data()
         nested.addProperty(property);
         document.addSubDocument(nested);
 
+        nested.clear();
+        nested.setType(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VTODO"));
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("Take out the garbage"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("20100609T080000"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DUE"));
+        property.setValue(QLatin1String("20100610T080000"));
+        nested.addProperty(property);
+        document.addSubDocument(nested);
+
         QOrganizerEvent event;
         event.setDisplayLabel(QLatin1String("Bastille Day Party"));
         event.setStartDateTime(QDateTime(QDate(1997, 7, 14), QTime(17, 0, 0), Qt::UTC));
         event.setEndDateTime(QDateTime(QDate(1997, 7, 15), QTime(3, 59, 59), Qt::UTC));
 
+        QOrganizerTodo todo;
+        todo.setDisplayLabel(QLatin1String("Take out the garbage"));
+        todo.setNotBeforeDateTime(QDateTime(QDate(2010, 6, 9), QTime(8, 0, 0)));
+        todo.setDueDateTime(QDateTime(QDate(2010, 6, 10), QTime(8, 0, 0)));
+
         QList<QOrganizerItem> items;
         items << static_cast<QOrganizerItem>(event);
+        items << static_cast<QOrganizerItem>(todo);
 
-        QTest::newRow("sample event") << items << document;
+        QTest::newRow("sample event and todo") << items << document;
     }
 
     {

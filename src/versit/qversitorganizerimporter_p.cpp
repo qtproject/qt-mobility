@@ -78,6 +78,8 @@ bool QVersitOrganizerImporterPrivate::importDocument(
 {
     if (document.componentType() == QLatin1String("VEVENT")) {
         item->setType(QOrganizerItemType::TypeEvent);
+    } else if (document.componentType() == QLatin1String("VTODO")) {
+        item->setType(QOrganizerItemType::TypeTodo);
     } else {
         *error = QVersitOrganizerImporter::InvalidDocumentError;
         return false;
@@ -125,6 +127,12 @@ void QVersitOrganizerImporterPrivate::importProperty(
         } else if (property.name() == QLatin1String("RDATE")
                || (property.name() == QLatin1String("EXDATE"))) {
             success = createRecurrenceDates(property, item, &updatedDetails);
+        }
+    } else if (document.componentType() == QLatin1String("VTODO")) {
+        if (property.name() == QLatin1String("DTSTART")) {
+            success = createNotBeforeDateTime(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("DUE")) {
+            success = createDueDateTime(property, item, &updatedDetails);
         }
     }
 
@@ -208,6 +216,7 @@ bool QVersitOrganizerImporterPrivate::createRecurrenceId(
     QOrganizerItemInstanceOrigin origin(item->detail<QOrganizerItemInstanceOrigin>());
     origin.setOriginalDate(date);
     updatedDetails->append(origin);
+    item->setType(QOrganizerItemType::TypeEventOccurrence);
     return true;
 }
 
@@ -285,6 +294,41 @@ bool QVersitOrganizerImporterPrivate::createDuration(
                      .addSecs(3600*duration.hours() + 60*duration.minutes() + duration.seconds()));
     updatedDetails->append(etr);
     mDurationSpecified = true;
+    return true;
+}
+
+/*! Set the NotBeforeDateTime field of the TodoTimeRange detail.
+ */
+bool QVersitOrganizerImporterPrivate::createNotBeforeDateTime(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QDateTime newStart = parseDateTime(property.value());
+    if (!newStart.isValid())
+        return false;
+    QOrganizerItemTodoTimeRange ttr(item->detail<QOrganizerItemTodoTimeRange>());
+    ttr.setNotBeforeDateTime(newStart);
+    updatedDetails->append(ttr);
+    return true;
+}
+
+/*! Set the DueDateTime field of the TodoTimeRange detail.
+ */
+bool QVersitOrganizerImporterPrivate::createDueDateTime(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QDateTime newEnd = parseDateTime(property.value());
+    if (!newEnd.isValid())
+        return false;
+    QOrganizerItemTodoTimeRange ttr(item->detail<QOrganizerItemTodoTimeRange>());
+    ttr.setDueDateTime(newEnd);
+    updatedDetails->append(ttr);
+    mDurationSpecified = false;
     return true;
 }
 
