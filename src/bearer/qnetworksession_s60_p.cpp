@@ -55,8 +55,8 @@ QNetworkSessionPrivate::QNetworkSessionPrivate()
     : CActive(CActive::EPriorityUserInput), state(QNetworkSession::Invalid),
       isOpen(false), iDynamicUnSetdefaultif(0), ipConnectionNotifier(0),
       iHandleStateNotificationsFromManager(false), iFirstSync(true), iStoppedByUser(false),
-      iClosedByUser(false), iDeprecatedConnectionId(0), iError(QNetworkSession::UnknownSessionError),
-      iALREnabled(0), iConnectInBackground(false)
+      iClosedByUser(false), iError(QNetworkSession::UnknownSessionError), iALREnabled(0),
+      iConnectInBackground(false)
 {
     CActiveScheduler::Add(this);
 
@@ -72,9 +72,9 @@ QNetworkSessionPrivate::QNetworkSessionPrivate()
 #ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
     qDebug() << "QNS this : " << QString::number((uint)this) << " - ";
     if (iDynamicUnSetdefaultif)
-        qDebug() << "dynamic setdefaultif() resolution succeeded. ";
+        qDebug() << "dynamic unsetdefaultif() is present in PIPS library. ";
     else
-        qDebug() << "dynamic setdefaultif() resolution failed. ";
+        qDebug() << "dynamic unsetdefaultif() not present in PIPS library. ";
 #endif
 
     TRAP_IGNORE(iConnectionMonitor.ConnectL());
@@ -107,6 +107,9 @@ QNetworkSessionPrivate::~QNetworkSessionPrivate()
     
     iConnectionMonitor.Close();
     iOpenCLibrary.Close();
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - destroyed (and setdefaultif(0))";
+#endif
 }
 
 void QNetworkSessionPrivate::configurationStateChanged(TUint32 accessPointId, TUint32 connMonId, QNetworkSession::State newState)
@@ -114,18 +117,12 @@ void QNetworkSessionPrivate::configurationStateChanged(TUint32 accessPointId, TU
     if (iHandleStateNotificationsFromManager) {
 #ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
         qDebug() << "QNS this : " << QString::number((uint)this) << " - "
-                << "configurationStateChanged from manager for IAP : " << QString::number(accessPointId)
-                << "configurationStateChanged connMon ID : " << QString::number(connMonId)
-                << " : to a state: " << newState
-                << " whereas my current state is: " << state;
+                 << "configurationStateChanged from manager for IAP : " << QString::number(accessPointId)
+                 << "connMon ID : " << QString::number(connMonId) << " : to a state: " << newState
+                 << "whereas my current state is: " << state;
+#else
+      Q_UNUSED(connMonId);
 #endif
-        if (connMonId == iDeprecatedConnectionId) {
-#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
-            qDebug() << "QNS this : " << QString::number((uint)this) << " - "
-                    << "however status update from manager ignored because it related to already closed connection.";
-#endif
-            return;
-        }
         this->newState(newState, accessPointId);
     }
 }
@@ -245,6 +242,14 @@ QNetworkInterface QNetworkSessionPrivate::interface(TUint iapId) const
 
 QNetworkInterface QNetworkSessionPrivate::currentInterface() const
 {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+             << "currentInterface() requested, state: " << state
+             << "publicConfig validity: " << publicConfig.isValid();
+    if (activeInterface.isValid())
+        qDebug() << "interface is: " << activeInterface.humanReadableName();
+#endif
+
     if (!publicConfig.isValid() || state != QNetworkSession::Connected) {
         return QNetworkInterface();
     }
@@ -333,7 +338,6 @@ void QNetworkSessionPrivate::open()
     // Clear possible previous states
     iStoppedByUser = false;
     iClosedByUser = false;
-    iDeprecatedConnectionId = 0;
 
     TInt error = iSocketServ.Connect();
     if (error != KErrNone) {
@@ -385,7 +389,11 @@ void QNetworkSessionPrivate::open()
             if (!IsActive()) {
                 SetActive();
             }
-            newState(QNetworkSession::Connecting);
+            // Avoid flip flop of states if the configuration is already
+            // active. IsOpen/opened() will indicate when ready.
+            if (state != QNetworkSession::Connected) {
+                newState(QNetworkSession::Connecting);
+            }
     } else if (publicConfig.type() == QNetworkConfiguration::ServiceNetwork) {
 #ifdef OCC_FUNCTIONALITY_AVAILABLE
         // On Symbian^3 if service network is not reachable, it triggers a UI (aka EasyWLAN) where
@@ -406,7 +414,11 @@ void QNetworkSessionPrivate::open()
         if (!IsActive()) {
             SetActive();
         }
-        newState(QNetworkSession::Connecting);
+        // Avoid flip flop of states if the configuration is already
+        // active. IsOpen/opened() will indicate when ready.
+        if (state != QNetworkSession::Connected) {
+            newState(QNetworkSession::Connecting);
+        }
     } else if (publicConfig.type() == QNetworkConfiguration::UserChoice) {
         iKnownConfigsBeforeConnectionStart = ((QNetworkConfigurationManagerPrivate*)publicConfig.d.data()->manager)->accessPointConfigurations.keys();
         iConnection.Start(iStatus);
@@ -471,11 +483,6 @@ void QNetworkSessionPrivate::close(bool allowSignals)
     iClosedByUser = true;
     isOpen = false;
 
-#ifndef OCC_FUNCTIONALITY_AVAILABLE
-    // On Symbian^3 we need to keep track of active configuration longer
-    // in case of empty-SNAP-triggered EasyWLAN.
-    activeConfig = QNetworkConfiguration();
-#endif
     serviceConfig = QNetworkConfiguration();
     
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE
@@ -512,15 +519,9 @@ void QNetworkSessionPrivate::close(bool allowSignals)
     // to go down.
     if (publicConfig.type() == QNetworkConfiguration::UserChoice || state == QNetworkSession::Connecting) {
 #ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
-    qDebug() << "QNS this : " << QString::number((uint)this) << " - "
-            << "going Disconnected right away. Deprecating connection monitor ID: " << publicConfig.d.data()->connectionId;
+        qDebug() << "QNS this : " << QString::number((uint)this) << " - "
+                 << "going disconnected right away, since either UserChoice or Connecting";
 #endif
-
-        // The connection has gone down, and processing of status updates must be
-        // stopped. Depending on platform, there may come 'connecting/connected' states
-        // considerably later (almost a second). Connection id is an increasing
-        // number, so this does not affect next _real_ 'conneting/connected' states.
-        iDeprecatedConnectionId = publicConfig.d.data()->connectionId;
         newState(QNetworkSession::Closing);
         newState(QNetworkSession::Disconnected);
     }
@@ -1127,6 +1128,12 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
         return false;
     }
 
+    // Make sure that some lagging 'connecting' state-changes do not overwrite
+    // if we are already connected (may righfully still happen with roaming though).
+    if (state == QNetworkSession::Connected && newState == QNetworkSession::Connecting) {
+        return false;
+    }
+
     bool emitSessionClosed = false;
 
     // If we abruptly go down and user hasn't closed the session, we've been aborted.
@@ -1233,20 +1240,12 @@ bool QNetworkSessionPrivate::newState(QNetworkSession::State newState, TUint acc
 #endif
         }
     }
-    
     if (emitSessionClosed) {
         emit q->closed();
     }
     if (state == QNetworkSession::Disconnected) {
-        // The connection has gone down, and processing of status updates must be
-        // stopped. Depending on platform, there may come 'connecting/connected' states
-        // considerably later (almost a second). Connection id is an increasing
-        // number, so this does not affect next _real_ 'conneting/connected' states.
-        iDeprecatedConnectionId = publicConfig.d.data()->connectionId;
-#ifdef OCC_FUNCTIONALITY_AVAILABLE
         // Just in case clear activeConfiguration.
         activeConfig = QNetworkConfiguration();
-#endif
     }
     return retVal;
 }

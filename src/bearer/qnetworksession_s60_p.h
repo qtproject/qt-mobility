@@ -175,7 +175,6 @@ private: // data
     bool iFirstSync;
     bool iStoppedByUser;
     bool iClosedByUser;
-    TUint32 iDeprecatedConnectionId;
     
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
     CActiveCommsMobilityApiExt* iMobility;
