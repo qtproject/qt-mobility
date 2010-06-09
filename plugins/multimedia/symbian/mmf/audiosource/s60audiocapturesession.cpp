@@ -43,7 +43,6 @@
 #include <QtCore/qdebug.h>
 #include <QtCore/qurl.h>
 #include <QDir>
-#include <QTimer>
 
 #include <Mda\Common\Audio.h>
 #include <Mda\Common\Resource.h>
@@ -64,8 +63,7 @@ S60AudioCaptureSession::S60AudioCaptureSession(QObject *parent):
     , m_controllerIdMap(QHash<QString, ControllerData>())
     , m_audioCodeclist(QHash<QString, CodecData>())
     , m_error(QMediaRecorder::NoError)
-    , m_isMuted(false)
-    , m_notifyTimer(NULL)
+    , isMuted(false)
 {
     TRAPD(err, initializeSessionL());
     setError(err);
@@ -77,7 +75,6 @@ void S60AudioCaptureSession::initializeSessionL()
     updateAudioContainersL();
     populateAudioCodecsDataL();
     setDefaultSettings();
-    initDurationNotifier();
 }
 
 void S60AudioCaptureSession::setError(TInt aError)
@@ -215,13 +212,6 @@ bool S60AudioCaptureSession::setOutputLocation(const QUrl& sink)
     }
 }
 
-void S60AudioCaptureSession::initDurationNotifier()
-{
-    m_notifyTimer = new QTimer(this);
-    m_notifyTimer->setInterval(1000);
-    connect(m_notifyTimer, SIGNAL(timeout()),this, SLOT(updatePosition()));
-}
-
 qint64 S60AudioCaptureSession::position() const
 {
     if ((m_captureState != ERecording) || !m_recorderUtility)
@@ -230,23 +220,7 @@ qint64 S60AudioCaptureSession::position() const
     return m_recorderUtility->Duration().Int64() / 1000;
 }
 
-void S60AudioCaptureSession::notify(bool notify) const
-{
-    if (notify) {
-        if (!m_notifyTimer->isActive())
-            m_notifyTimer->start();
-    }else
-        m_notifyTimer->stop();
-}
-
-void S60AudioCaptureSession::updatePosition()
-{
-    qint64 pos = 0;
-    pos = position();
-    emit positionChanged(pos);
-}
-
-QString S60AudioCaptureSession::initializeSinkL() const
+QString S60AudioCaptureSession::initializeSinkL()
 {
     QString sink = QDir::toNativeSeparators(m_sink.toString());
     int index = sink.lastIndexOf('.');
@@ -277,7 +251,6 @@ void S60AudioCaptureSession::record()
     }else if (m_captureState == EPaused) {
         m_recorderUtility->SetPosition(m_pausedPosition);
         TRAPD(error, m_recorderUtility->RecordL());
-        notify(true);
         setError(error);
         m_captureState = ERecording;
         emit stateChanged(m_captureState);
@@ -294,12 +267,12 @@ void S60AudioCaptureSession::mute(bool muted)
     else
         m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
 
-    m_isMuted = muted;
+    isMuted = muted;
 }
 
 bool S60AudioCaptureSession::muted()
 {
-    return m_isMuted;
+    return isMuted;
 }
 
 void S60AudioCaptureSession::setDefaultSettings()
@@ -330,7 +303,6 @@ void S60AudioCaptureSession::pause()
 
     m_pausedPosition = m_recorderUtility->Position();
     m_recorderUtility->Stop();
-    notify(false);
     m_captureState = EPaused;
     emit stateChanged(m_captureState);
 }
@@ -342,7 +314,6 @@ void S60AudioCaptureSession::stop()
 
     m_recorderUtility->Stop();
     m_recorderUtility->Close();
-    notify(false);
     m_captureState = ERecordComplete;
     emit stateChanged(m_captureState);
 }
@@ -380,7 +351,6 @@ void S60AudioCaptureSession::MoscoStateChangeEventL(CBase* aObject,
                     applyAudioSettingsL();
                     m_recorderUtility->SetGain(m_recorderUtility->MaxGain());
                     m_recorderUtility->RecordL();
-                    notify(true);
                     m_captureState = EOpenCompelete;
                     emit stateChanged(m_captureState);
                     }
