@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -117,8 +117,8 @@ private:
     QString langCached;
     QLangLoopThread * langloopThread;
     static QSystemInfoPrivate *self;
+    bool langThreadOk;
 
-private Q_SLOTS:
 protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
@@ -271,6 +271,7 @@ public:
     static QSystemDeviceInfoPrivate *instance();
 
     bool currentBluetoothPowerState();
+    bool btThreadOk;
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -347,7 +348,7 @@ public:
     QLangLoopThread(QObject *parent = 0);
     ~QLangLoopThread();
     bool keepRunning;
-    void quit();
+    void stop();
 
 protected:
     void run();

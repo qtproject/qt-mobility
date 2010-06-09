@@ -101,7 +101,7 @@ LIBS+=-lX11 -lXrandr
         LIBS += -framework SystemConfiguration -framework CoreFoundation \
          -framework IOKit -framework ApplicationServices -framework Foundation \
          -framework CoreServices -framework ScreenSaver -framework QTKit \
-         -framework DiskArbitration
+         -framework DiskArbitration -framework IOBluetooth
 
             contains(corewlan_enabled, yes) {
                      isEmpty(QMAKE_MAC_SDK) {
@@ -113,13 +113,13 @@ LIBS+=-lX11 -lXrandr
                  }
             
                 !isEmpty(SDK6) {
-                        LIBS += -framework CoreWLAN  -framework IOBluetooth -framework CoreLocation
+                        LIBS += -framework CoreWLAN  -framework CoreLocation
                         DEFINES += MAC_SDK_10_6
                 }
            } else {
                CONFIG += no_keywords
            }
-    
+
     TEMPLATE = lib
     }
 

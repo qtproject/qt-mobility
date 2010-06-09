@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,7 +65,7 @@ class XQPublishAndSubscribeSecurityPolicy;
 class XQSETTINGSMANAGER_EXPORT XQPublishAndSubscribeUtils : public QObject
 {
 public:
-    XQPublishAndSubscribeUtils(XQSettingsManager& settingsManager, QObject* parent = 0);
+    explicit XQPublishAndSubscribeUtils(XQSettingsManager& settingsManager, QObject* parent = 0);
     ~XQPublishAndSubscribeUtils();
     bool defineProperty(const XQPublishAndSubscribeSettingsKey& key, XQSettingsManager::Type type);
     bool defineProperty(const XQPublishAndSubscribeSettingsKey& key, XQSettingsManager::Type type,
