@@ -303,6 +303,8 @@ void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
         disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                    this, SLOT(_q_playlistMediaChanged(QMediaContent)));
         disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+        QMediaObject::unbind(playlist);
     }
 
     d->playlist = playlist;
@@ -311,6 +313,8 @@ void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
         connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
                 this, SLOT(_q_playlistMediaChanged(QMediaContent)));
         connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+        QMediaObject::bind(d->playlist);
 
         setMedia(d->playlist->currentMedia());
     } else {
@@ -385,7 +389,13 @@ int QMediaImageViewer::elapsedTime() const
 */
 bool QMediaImageViewer::bind(QObject *object)
 {
-    return QMediaObject::bind(object);
+    if (QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist *>(object)) {
+        setPlaylist(playlist);
+
+        return true;
+    } else {
+        return QMediaObject::bind(object);
+    }
 }
 
 /*!
@@ -393,7 +403,10 @@ bool QMediaImageViewer::bind(QObject *object)
  */
 void QMediaImageViewer::unbind(QObject *object)
 {
-    QMediaObject::unbind(object);
+    if (object == d_func()->playlist)
+        setPlaylist(0);
+    else
+        QMediaObject::unbind(object);
 }
 
 /*!
