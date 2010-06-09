@@ -46,7 +46,7 @@
 
 #include <QList>
 #include <QString>
-#include <QSharedPointer>
+#include <QVariant>
 
 QT_BEGIN_HEADER
 
@@ -80,6 +80,7 @@ public:
     QList<quint32> contacts() const;
     CallType type() const;
     CallStatus status() const;
+    QVariant value(const QVariant& param) const;
 
 private:
     QTelephonyCallInfoPrivate* d;

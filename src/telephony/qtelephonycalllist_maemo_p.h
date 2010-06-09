@@ -75,7 +75,7 @@ public:
     QTelephonyCallInfo* currentCall() const { return 0; }
     QList<QTelephonyCallInfo* > calls() const { return calllist; }
 private:
-    QList<QTelephonyCallInfo*> calllist;
+    QList<QTelephonyCallInfo* > calllist;
 };
 
 class Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate
@@ -88,6 +88,7 @@ public:
     QList<quint32> contacts() const;
     QTelephonyCallInfo::CallType type() { return QTelephonyCallInfo::UnknownType; }
     QTelephonyCallInfo::CallStatus status() { return QTelephonyCallInfo::UnknownStatus; }
+    QVariant value(const QVariant& param) const { return QVariant(); }
 
 public: //Declaration of properties (just an example)
     int contactBufferSize() const { return 124; };

@@ -2991,6 +2991,7 @@
             <keyword name="contacts" id="QTelephonyCallInfo::contacts" ref="qtelephonycallinfo.html#contacts"/>
             <keyword name="status" id="QTelephonyCallInfo::status" ref="qtelephonycallinfo.html#status"/>
             <keyword name="type" id="QTelephonyCallInfo::type" ref="qtelephonycallinfo.html#type"/>
+            <keyword name="value" id="QTelephonyCallInfo::value" ref="qtelephonycallinfo.html#value"/>
             <keyword name="~QTelephonyCallInfo" id="QTelephonyCallInfo::~QTelephonyCallInfo" ref="qtelephonycallinfo.html#dtor.QTelephonyCallInfo"/>
             <keyword name="QTelephonyCallInfoProperty" id="QTelephonyCallInfoProperty" ref="qtelephonycallinfoproperty.html"/>
             <keyword name="QTelephonyCallInfoProperty::CallStatus" id="QTelephonyCallInfoProperty::CallStatus" ref="qtelephonycallinfoproperty.html#CallStatus-enum"/>

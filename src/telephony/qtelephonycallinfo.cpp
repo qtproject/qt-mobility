@@ -106,6 +106,7 @@ QTelephonyCallInfo::QTelephonyCallInfo()
 
 /*!
     \fn  QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
+    \a other Object which needs to be copied from.
 
     Copy constructor of a QTelephonyCallInfo object.
 */
@@ -180,5 +181,20 @@ QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
         return d->status();
     return UnknownStatus;
 }
+
+/*!
+    \fn  QVariant QTelephonyCallInfo::value(const QVariant& param) const
+    \a param Parameter for reading additional values.
+
+    Gives back a variant value.
+    This function is for reading special values dependce on the param parameter.
+*/
+QVariant QTelephonyCallInfo::value(const QVariant& param) const
+{
+    if(d)
+        return d->value(param);
+    return QVariant();
+}
+
 
 QTM_END_NAMESPACE

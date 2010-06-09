@@ -36,6 +36,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;quint32&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#contacts">contacts</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">CallStatus </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#status">status</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">CallType </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#type">type</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#value">value</a></b> ( const QVariant &amp; <i>param</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -81,6 +82,7 @@
 <h3 class="fn"><a name="QTelephonyCallInfo"></a>QTelephonyCallInfo::QTelephonyCallInfo ()</h3>
 <p>Constructor of a <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object.</p>
 <h3 class="fn"><a name="QTelephonyCallInfo-2"></a>QTelephonyCallInfo::QTelephonyCallInfo ( const QTelephonyCallInfo &amp; <i>other</i> )</h3>
+<p><i>other</i> Object which needs to be copied from.</p>
 <p>Copy constructor of a <a href="qtelephonycallinfo.html">QTelephonyCallInfo</a> object.</p>
 <a name="//apple_ref/cpp/instm/QTelephonyCallInfo/~QTelephonyCallInfo"></a>
 <h3 class="fn"><a name="dtor.QTelephonyCallInfo"></a>QTelephonyCallInfo::~QTelephonyCallInfo ()</h3>
@@ -97,6 +99,10 @@
 <a name="//apple_ref/cpp/instm/QTelephonyCallInfo/type"></a>
 <h3 class="fn"><a name="type"></a><a href="qtelephonycallinfo.html#CallType-enum">CallType</a> QTelephonyCallInfo::type () const</h3>
 <p>Gives back the type of the call. A call can be a VOIP, Video Voice and so on. You can use this property to get the type of the call.</p>
+<a name="//apple_ref/cpp/instm/QTelephonyCallInfo/value"></a>
+<h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QTelephonyCallInfo::value ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>param</i> ) const</h3>
+<p><i>param</i> Parameter for reading additional values.</p>
+<p>Gives back a variant value. This function is for reading special values dependce on the param parameter.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

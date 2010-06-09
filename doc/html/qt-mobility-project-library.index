@@ -550,6 +550,9 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="contacts" fullname="QTelephonyCallInfo::contacts" href="qtelephonycallinfo.html#contacts" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;quint32&gt;" signature="contacts() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QTelephonyCallInfo::type" href="qtelephonycallinfo.html#type" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="CallType" signature="type() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="status" fullname="QTelephonyCallInfo::status" href="qtelephonycallinfo.html#status" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="CallStatus" signature="status() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QTelephonyCallInfo::value" href="qtelephonycallinfo.html#value" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value(const QVariant &amp; param) const">
+                <parameter left="const QVariant &amp;" right="" name="param" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactThumbnail" href="qcontactthumbnail.html" location="qcontactthumbnail.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactThumbnail::DefinitionName" href="qcontactthumbnail.html#DefinitionName-var" location="qcontactthumbnail.h" type="const QLatin1Constant" static="true"/>

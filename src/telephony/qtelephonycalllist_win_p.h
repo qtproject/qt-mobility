@@ -88,6 +88,7 @@ public:
     QList<quint32> contacts() const;
     QTelephonyCallInfo::CallType type() { return QTelephonyCallInfo::UnknownType; }
     QTelephonyCallInfo::CallStatus status() { return QTelephonyCallInfo::UnknownStatus; }
+    QVariant value(const QVariant& param) const { return QVariant(); }
 
 public: //Declaration of properties (just an example)
     int contactBufferSize() const { return 124; };
