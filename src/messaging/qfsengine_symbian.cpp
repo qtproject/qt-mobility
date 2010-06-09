@@ -78,6 +78,8 @@ Q_GLOBAL_STATIC(CFSEngine,fsEngine);
 
 CFSEngine::CFSEngine()
 {
+    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanupFSBackend()));
+
     TRAPD(err, {
         m_factory = CEmailInterfaceFactory::NewL(); 
         m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
@@ -93,6 +95,11 @@ CFSEngine::CFSEngine()
 
 CFSEngine::~CFSEngine()
 {
+
+}
+
+void CFSEngine::cleanupFSBackend()
+{
     m_mtmAccountList.clear();
     for (TInt i = 0; i < m_attachments.Count(); i++){
         m_attachments[i]->Release();
@@ -103,9 +110,7 @@ CFSEngine::~CFSEngine()
     }
     m_mailboxes.Reset();
     m_clientApi->Release();
-    CTrapCleanup* cleanup = CTrapCleanup::New();
     delete m_factory;
-    delete cleanup;
 }
 
 CFSEngine* CFSEngine::instance()
