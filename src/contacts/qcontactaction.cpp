@@ -125,25 +125,6 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::supportedDetails(const QContact& contact) const
-  Returns a list of the details saved in the given \a contact which contain the fields required
-  for this action to be performed on them.
-
-  The default implementation of this function simply tests all the details in the contact
-  using \l isDetailSupported()
- */
-QList<QContactDetail> QContactAction::supportedDetails(const QContact& contact) const
-{
-    QList<QContactDetail> ret;
-    QList<QContactDetail> details = contact.details();
-    for (int j=0; j < details.count(); j++) {
-        if (isTargetSupported(QContactActionTarget(contact, details.at(j))))
-            ret.append(details.at(j));
-    }
-    return ret;
-}
-
-/*!
   \fn QContactAction::invokeAction(const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap())
   Initiates the implemented action on the specified \a detail of the given \a contact, or on the first
   eligible detail saved in the contact if the given \a detail is empty, with the given \a parameters specified.

@@ -84,16 +84,6 @@ void QContactActionFilter::setActionName(const QString& action)
 }
 
 /*!
- * Sets the value criterion of the detail for which the action must be available to \a value
- * \sa value()
- */
-void QContactActionFilter::setValue(const QVariant& value)
-{
-    Q_D(QContactActionFilter);
-    d->m_value = value;
-}
-
-/*!
  * Returns the action name criterion of the filter
  * \sa setActionName()
  */
@@ -101,16 +91,6 @@ QString QContactActionFilter::actionName() const
 {
     Q_D(const QContactActionFilter);
     return d->m_action;
-}
-
-/*!
- * Returns the value criterion of the filter
- * \sa setValue()
- */
-QVariant QContactActionFilter::value() const
-{
-    Q_D(const QContactActionFilter);
-    return d->m_value;
 }
 
 QTM_END_NAMESPACE

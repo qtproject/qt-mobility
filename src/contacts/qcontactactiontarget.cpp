@@ -148,20 +148,6 @@ bool QContactActionTarget::operator!=(const QContactActionTarget& other) const
     return !(*this == other);
 }
 
-/*!
- * Returns true if the action target is less than the \a other action target.  The
- * comparison is performed first on the local id of the contact, then on the size of the list of details
- * specified as part of the target.
- */
-bool QContactActionTarget::operator<(const QContactActionTarget& other) const
-{
-    if (d->m_contact.localId() < other.d->m_contact.localId())
-        return true;
-    if (d->m_contact.localId() == other.d->m_contact.localId())
-        return d->m_details.size() < other.d->m_details.size();
-    return false;
-}
-
 /*! Returns the hash value for \a key. */
 uint qHash(const QContactActionTarget& key)
 {

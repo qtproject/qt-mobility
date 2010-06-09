@@ -100,7 +100,7 @@ public:
     {
         return metaData(key, QList<QContactActionTarget>() << target, parameters);
     }
-    QVariant metaData(const QString& key, const QContact& target, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const
+    QVariant metaData(const QString& key, const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const
     {
         return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
     }
