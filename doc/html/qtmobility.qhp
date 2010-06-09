@@ -649,7 +649,7 @@
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
-                    <section ref="contactsusagehtml.html" title="Contacts API Usage"/>
+                    <section ref="contactsusage.html" title="Contacts API Usage"/>
                     <section ref="contactsasync.html" title="Contacts Asynchronous API"/>
                     <section ref="contactssync.html" title="Contacts Synchronous API"/>
                     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin"/>
@@ -700,7 +700,7 @@
             <keyword name="Bluetooth Transfer Plugin Example" id="Bluetooth Transfer Plugin Example" ref="bluetoothtransferplugin.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
-            <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusagehtml.html"/>
+            <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusage.html"/>
             <keyword name="Contacts Asynchronous API" id="Contacts Asynchronous API" ref="contactsasync.html"/>
             <keyword name="Contacts Synchronous API" id="Contacts Synchronous API" ref="contactssync.html"/>
             <keyword name="Creating a sensor plugin" id="Creating a sensor plugin" ref="creating-a-sensor-plugin.html"/>
@@ -1796,9 +1796,119 @@
             <keyword name="latin1" id="QLatin1Constant::latin1" ref="qlatin1constant.html#latin1"/>
             <keyword name="operator!=" id="QLatin1Constant::operator!=" ref="qlatin1constant.html#operator-not-eq"/>
             <keyword name="operator==" id="QLatin1Constant::operator==" ref="qlatin1constant.html#operator-eq-eq"/>
-            <keyword name="QML Audio Element Reference" id="QML.Audio" ref="qml-audio.html"/>
-            <keyword name="QML SoundEffect Element Reference" id="QML.SoundEffect" ref="qml-soundeffect.html"/>
-            <keyword name="QML Video Element Reference" id="QML.Video" ref="qml-video.html"/>
+            <keyword name="QML Audio Element" id="QML.Audio" ref="qml-audio.html"/>
+            <keyword name="autoLoad" id="Audio::autoLoad" ref="qml-audio.html#autoLoad-prop"/>
+            <keyword name="bufferProgress" id="Audio::bufferProgress" ref="qml-audio.html#bufferProgress-prop"/>
+            <keyword name="duration" id="Audio::duration" ref="qml-audio.html#duration-prop"/>
+            <keyword name="error" id="Audio::error" ref="qml-audio.html#error-prop"/>
+            <keyword name="errorString" id="Audio::errorString" ref="qml-audio.html#errorString-prop"/>
+            <keyword name="muted" id="Audio::muted" ref="qml-audio.html#muted-prop"/>
+            <keyword name="onBuffered" id="Audio::onBuffered" ref="qml-audio.html#onBuffered-signal"/>
+            <keyword name="onBuffering" id="Audio::onBuffering" ref="qml-audio.html#onBuffering-signal"/>
+            <keyword name="onEndOfMedia" id="Audio::onEndOfMedia" ref="qml-audio.html#onEndOfMedia-signal"/>
+            <keyword name="onError" id="Audio::onError" ref="qml-audio.html#onError-signal"/>
+            <keyword name="onLoaded" id="Audio::onLoaded" ref="qml-audio.html#onLoaded-signal"/>
+            <keyword name="onPaused" id="Audio::onPaused" ref="qml-audio.html#onPaused-signal"/>
+            <keyword name="onResumed" id="Audio::onResumed" ref="qml-audio.html#onResumed-signal"/>
+            <keyword name="onStalled" id="Audio::onStalled" ref="qml-audio.html#onStalled-signal"/>
+            <keyword name="onStarted" id="Audio::onStarted" ref="qml-audio.html#onStarted-signal"/>
+            <keyword name="onStopped" id="Audio::onStopped" ref="qml-audio.html#onStopped-signal"/>
+            <keyword name="pause" id="Audio::pause" ref="qml-audio.html#pause-method"/>
+            <keyword name="paused" id="Audio::paused" ref="qml-audio.html#paused-prop"/>
+            <keyword name="play" id="Audio::play" ref="qml-audio.html#play-method"/>
+            <keyword name="playbackRate" id="Audio::playbackRate" ref="qml-audio.html#playbackRate-prop"/>
+            <keyword name="playing" id="Audio::playing" ref="qml-audio.html#playing-prop"/>
+            <keyword name="position" id="Audio::position" ref="qml-audio.html#position-prop"/>
+            <keyword name="seekable" id="Audio::seekable" ref="qml-audio.html#seekable-prop"/>
+            <keyword name="source" id="Audio::source" ref="qml-audio.html#source-prop"/>
+            <keyword name="status" id="Audio::status" ref="qml-audio.html#status-prop"/>
+            <keyword name="stop" id="Audio::stop" ref="qml-audio.html#stop-method"/>
+            <keyword name="volume" id="Audio::volume" ref="qml-audio.html#volume-prop"/>
+            <keyword name="QML SoundEffect Element" id="QML.SoundEffect" ref="qml-soundeffect.html"/>
+            <keyword name="loops" id="SoundEffect::loops" ref="qml-soundeffect.html#loops-prop"/>
+            <keyword name="loopsChanged" id="SoundEffect::loopsChanged" ref="qml-soundeffect.html#loopsChanged-signal"/>
+            <keyword name="muted" id="SoundEffect::muted" ref="qml-soundeffect.html#muted-prop"/>
+            <keyword name="mutedChanged" id="SoundEffect::mutedChanged" ref="qml-soundeffect.html#mutedChanged-signal"/>
+            <keyword name="source" id="SoundEffect::source" ref="qml-soundeffect.html#source-prop"/>
+            <keyword name="sourceChanged" id="SoundEffect::sourceChanged" ref="qml-soundeffect.html#sourceChanged-signal"/>
+            <keyword name="volume" id="SoundEffect::volume" ref="qml-soundeffect.html#volume-prop"/>
+            <keyword name="volumeChanged" id="SoundEffect::volumeChanged" ref="qml-soundeffect.html#volumeChanged-signal"/>
+            <keyword name="QML Video Element" id="QML.Video" ref="qml-video.html"/>
+            <keyword name="albumArtist" id="Video::albumArtist" ref="qml-video.html#albumArtist-prop"/>
+            <keyword name="albumTitle" id="Video::albumTitle" ref="qml-video.html#albumTitle-prop"/>
+            <keyword name="audioBitRate" id="Video::audioBitRate" ref="qml-video.html#audioBitRate-prop"/>
+            <keyword name="audioCodec" id="Video::audioCodec" ref="qml-video.html#audioCodec-prop"/>
+            <keyword name="author" id="Video::author" ref="qml-video.html#author-prop"/>
+            <keyword name="autoLoad" id="Video::autoLoad" ref="qml-video.html#autoLoad-prop"/>
+            <keyword name="averageLevel" id="Video::averageLevel" ref="qml-video.html#averageLevel-prop"/>
+            <keyword name="bufferProgress" id="Video::bufferProgress" ref="qml-video.html#bufferProgress-prop"/>
+            <keyword name="category" id="Video::category" ref="qml-video.html#category-prop"/>
+            <keyword name="channelCount" id="Video::channelCount" ref="qml-video.html#channelCount-prop"/>
+            <keyword name="chapterNumber" id="Video::chapterNumber" ref="qml-video.html#chapterNumber-prop"/>
+            <keyword name="comment" id="Video::comment" ref="qml-video.html#comment-prop"/>
+            <keyword name="composer" id="Video::composer" ref="qml-video.html#composer-prop"/>
+            <keyword name="conductor" id="Video::conductor" ref="qml-video.html#conductor-prop"/>
+            <keyword name="contributingArtist" id="Video::contributingArtist" ref="qml-video.html#contributingArtist-prop"/>
+            <keyword name="copyright" id="Video::copyright" ref="qml-video.html#copyright-prop"/>
+            <keyword name="coverArtUrlLarge" id="Video::coverArtUrlLarge" ref="qml-video.html#coverArtUrlLarge-prop"/>
+            <keyword name="coverArtUrlSmall" id="Video::coverArtUrlSmall" ref="qml-video.html#coverArtUrlSmall-prop"/>
+            <keyword name="date" id="Video::date" ref="qml-video.html#date-prop"/>
+            <keyword name="description" id="Video::description" ref="qml-video.html#description-prop"/>
+            <keyword name="director" id="Video::director" ref="qml-video.html#director-prop"/>
+            <keyword name="duration" id="Video::duration" ref="qml-video.html#duration-prop"/>
+            <keyword name="error" id="Video::error" ref="qml-video.html#error-prop"/>
+            <keyword name="errorString" id="Video::errorString" ref="qml-video.html#errorString-prop"/>
+            <keyword name="fillMode" id="Video::fillMode" ref="qml-video.html#fillMode-prop"/>
+            <keyword name="genre" id="Video::genre" ref="qml-video.html#genre-prop"/>
+            <keyword name="hasAudio" id="Video::hasAudio" ref="qml-video.html#hasAudio-prop"/>
+            <keyword name="hasVideo" id="Video::hasVideo" ref="qml-video.html#hasVideo-prop"/>
+            <keyword name="keywords" id="Video::keywords" ref="qml-video.html#keywords-prop"/>
+            <keyword name="language" id="Video::language" ref="qml-video.html#language-prop"/>
+            <keyword name="leadPerformer" id="Video::leadPerformer" ref="qml-video.html#leadPerformer-prop"/>
+            <keyword name="lyrics" id="Video::lyrics" ref="qml-video.html#lyrics-prop"/>
+            <keyword name="mediaType" id="Video::mediaType" ref="qml-video.html#mediaType-prop"/>
+            <keyword name="mood" id="Video::mood" ref="qml-video.html#mood-prop"/>
+            <keyword name="muted" id="Video::muted" ref="qml-video.html#muted-prop"/>
+            <keyword name="onBuffered" id="Video::onBuffered" ref="qml-video.html#onBuffered-signal"/>
+            <keyword name="onBuffering" id="Video::onBuffering" ref="qml-video.html#onBuffering-signal"/>
+            <keyword name="onEndOfMedia" id="Video::onEndOfMedia" ref="qml-video.html#onEndOfMedia-signal"/>
+            <keyword name="onError" id="Video::onError" ref="qml-video.html#onError-signal"/>
+            <keyword name="onLoaded" id="Video::onLoaded" ref="qml-video.html#onLoaded-signal"/>
+            <keyword name="onPaused" id="Video::onPaused" ref="qml-video.html#onPaused-signal"/>
+            <keyword name="onResumed" id="Video::onResumed" ref="qml-video.html#onResumed-signal"/>
+            <keyword name="onStalled" id="Video::onStalled" ref="qml-video.html#onStalled-signal"/>
+            <keyword name="onStarted" id="Video::onStarted" ref="qml-video.html#onStarted-signal"/>
+            <keyword name="onStopped" id="Video::onStopped" ref="qml-video.html#onStopped-signal"/>
+            <keyword name="parentalRating" id="Video::parentalRating" ref="qml-video.html#parentalRating-prop"/>
+            <keyword name="pause" id="Video::pause" ref="qml-video.html#pause-method"/>
+            <keyword name="paused" id="Video::paused" ref="qml-video.html#paused-prop"/>
+            <keyword name="peakValue" id="Video::peakValue" ref="qml-video.html#peakValue-prop"/>
+            <keyword name="pixelAspectRatio" id="Video::pixelAspectRatio" ref="qml-video.html#pixelAspectRatio-prop"/>
+            <keyword name="play" id="Video::play" ref="qml-video.html#play-method"/>
+            <keyword name="playbackRate" id="Video::playbackRate" ref="qml-video.html#playbackRate-prop"/>
+            <keyword name="playing" id="Video::playing" ref="qml-video.html#playing-prop"/>
+            <keyword name="position" id="Video::position" ref="qml-video.html#position-prop"/>
+            <keyword name="posterUrl" id="Video::posterUrl" ref="qml-video.html#posterUrl-prop"/>
+            <keyword name="publisher" id="Video::publisher" ref="qml-video.html#publisher-prop"/>
+            <keyword name="ratingOrganisation" id="Video::ratingOrganisation" ref="qml-video.html#ratingOrganisation-prop"/>
+            <keyword name="resolution" id="Video::resolution" ref="qml-video.html#resolution-prop"/>
+            <keyword name="sampleRate" id="Video::sampleRate" ref="qml-video.html#sampleRate-prop"/>
+            <keyword name="seekable" id="Video::seekable" ref="qml-video.html#seekable-prop"/>
+            <keyword name="size" id="Video::size" ref="qml-video.html#size-prop"/>
+            <keyword name="source" id="Video::source" ref="qml-video.html#source-prop"/>
+            <keyword name="status" id="Video::status" ref="qml-video.html#status-prop"/>
+            <keyword name="stop" id="Video::stop" ref="qml-video.html#stop-method"/>
+            <keyword name="subTitle" id="Video::subTitle" ref="qml-video.html#subTitle-prop"/>
+            <keyword name="title" id="Video::title" ref="qml-video.html#title-prop"/>
+            <keyword name="trackCount" id="Video::trackCount" ref="qml-video.html#trackCount-prop"/>
+            <keyword name="trackNumber" id="Video::trackNumber" ref="qml-video.html#trackNumber-prop"/>
+            <keyword name="userRating" id="Video::userRating" ref="qml-video.html#userRating-prop"/>
+            <keyword name="videoBitRate" id="Video::videoBitRate" ref="qml-video.html#videoBitRate-prop"/>
+            <keyword name="videoCodec" id="Video::videoCodec" ref="qml-video.html#videoCodec-prop"/>
+            <keyword name="videoFrameRate" id="Video::videoFrameRate" ref="qml-video.html#videoFrameRate-prop"/>
+            <keyword name="volume" id="Video::volume" ref="qml-video.html#volume-prop"/>
+            <keyword name="writer" id="Video::writer" ref="qml-video.html#writer-prop"/>
+            <keyword name="year" id="Video::year" ref="qml-video.html#year-prop"/>
             <keyword name="QMagnetometer" id="QMagnetometer" ref="qmagnetometer.html"/>
             <keyword name="reading" id="QMagnetometer::reading" ref="qmagnetometer.html#reading"/>
             <keyword name="returnGeoValues" id="QMagnetometer::returnGeoValues" ref="qmagnetometer.html#returnGeoValues-prop"/>
@@ -4007,6 +4117,7 @@
             <file>qmlcontacts.html</file>
             <file>qcontactbirthday.html</file>
             <file>qmessageaccountsortorder.html</file>
+            <file>declarative-sfw-dialer-declarative-sfw-dialer-content-qmldir.html</file>
             <file>qcontactdetailfielddefinition.html</file>
             <file>qgeosatelliteinfo-members.html</file>
             <file>qcontactrelationshipfetchrequest-members.html</file>
@@ -4082,6 +4193,7 @@
             <file>qvideoframe-members.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
+            <file>contactsusage.html</file>
             <file>qcontactmanager.html</file>
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
@@ -4354,7 +4466,6 @@
             <file>qcompassfilter.html</file>
             <file>notesmanagerplugin-note-h.html</file>
             <file>qvaluespacepublisher.html</file>
-            <file>contactsusagehtml.html</file>
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
