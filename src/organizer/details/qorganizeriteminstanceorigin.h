@@ -58,20 +58,16 @@ public:
 #ifdef Q_QDOC
     const char* DefinitionName;
     const char* FieldParentLocalId;
-    const char* FieldParentGuid;
     const char* FieldOriginalDate;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemInstanceOrigin, "InstanceOrigin")
     Q_DECLARE_LATIN1_CONSTANT(FieldParentLocalId, "ParentLocalId");
-    Q_DECLARE_LATIN1_CONSTANT(FieldParentGuid, "ParentGuid");
     Q_DECLARE_LATIN1_CONSTANT(FieldOriginalDate, "OriginalDate");
 #endif
 
     void setParentLocalId(QOrganizerItemLocalId parentId) {setValue(FieldParentLocalId, static_cast<int>(parentId));}
     QOrganizerItemLocalId parentLocalId() const {return static_cast<QOrganizerItemLocalId>(variantValue(FieldParentLocalId).toInt());}
 
-    void setParentGuid(const QString& guid) {setValue(FieldParentGuid, guid);}
-    QString parentGuid() const {return value(FieldParentGuid);}
 
     void setOriginalDate(const QDate& date) {setValue(FieldOriginalDate, date);}
     QDate originalDate() const {return variantValue(FieldOriginalDate).toDate();}
