@@ -74,7 +74,8 @@ public:
     enum Error {
         NoError = 0,
         EmptyOrganizerError,
-        UnknownComponentTypeError
+        UnknownComponentTypeError,
+        UnderspecifiedOccurrenceError
     };
 
     QVersitOrganizerExporter();

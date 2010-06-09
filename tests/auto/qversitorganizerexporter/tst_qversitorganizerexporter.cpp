@@ -111,7 +111,7 @@ void tst_QVersitOrganizerExporter::testExport_data()
         nested.addProperty(property);
         document.addSubDocument(nested);
 
-        // An event with OriginalDate set but now ParentLocalId
+        // An event occurrence with OriginalDate and Guid set
         QOrganizerEventOccurrence event;
         event.setGuid(QLatin1String("1234"));
         event.setOriginalDate(QDate(2010, 6, 8));
@@ -121,6 +121,45 @@ void tst_QVersitOrganizerExporter::testExport_data()
 
         QTest::newRow("event occurrence exception") << items << document;
     }
+}
+
+/*! Test that bad input causes the exporter to fail with the correct error */
+void tst_QVersitOrganizerExporter::testExportError()
+{
+    QFETCH(QList<QOrganizerItem>, items);
+    QFETCH(QVersitDocument, expectedDocument);
+    QFETCH(int, expectedError);
+
+    QVersitOrganizerExporter exporter;
+    QVERIFY(!exporter.exportItems(items, QVersitDocument::ICalendar20Type));
+    QVERIFY(!exporter.errors().isEmpty());
+    QVERIFY(exporter.errors()[0] == expectedError);
+    QVersitDocument document = exporter.document();
+    if (document != expectedDocument) {
+        qDebug() << "Actual:" << document;
+        qDebug() << "Expected:" << expectedDocument;
+        QCOMPARE(document, expectedDocument);
+    }
+}
+
+void tst_QVersitOrganizerExporter::testExportError_data()
+{
+    QTest::addColumn<QList<QOrganizerItem> >("items");
+    QTest::addColumn<QVersitDocument>("expectedDocument");
+    QTest::addColumn<int>("expectedError");
+
+    QVersitDocument document(QVersitDocument::ICalendar20Type);
+    document.setComponentType(QLatin1String("VCALENDAR"));
+
+    // An event occurrence with OriginalDate set but no Guid
+    QOrganizerEventOccurrence event;
+    event.setOriginalDate(QDate(2010, 6, 8));
+
+    QList<QOrganizerItem> items;
+    items << static_cast<QOrganizerItem>(event);
+
+    QTest::newRow("event occurrence exception with no guid") << items << document
+        << (int)QVersitOrganizerExporter::UnderspecifiedOccurrenceError;
 }
 
 void tst_QVersitOrganizerExporter::testExportEventDetails()

@@ -61,6 +61,9 @@ private slots:
     void testExport();
     void testExport_data();
 
+    void testExportError();
+    void testExportError_data();
+
     void testExportEventDetails();
     void testExportEventDetails_data();
 

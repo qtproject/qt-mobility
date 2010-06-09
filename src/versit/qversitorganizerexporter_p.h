@@ -120,6 +120,8 @@ private:
             QSet<QString>* processedFields);
     QString encodeDateTime(const QDateTime& dateTime);
 
+    bool documentContainsUidAndRecurrenceId(const QVersitDocument& document);
+
     // definition name -> <field name, versit property name>:
     QMap<QString, QPair<QString, QString> > mPropertyMappings;
 };

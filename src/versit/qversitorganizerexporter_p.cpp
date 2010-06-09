@@ -90,6 +90,11 @@ bool QVersitOrganizerExporterPrivate::exportItem(
     foreach (const QOrganizerItemDetail& detail, allDetails) {
         exportDetail(item, detail, document);
     }
+    if (item.type() == QOrganizerItemType::TypeEventOccurrence
+            && !documentContainsUidAndRecurrenceId(*document)) {
+        *error = QVersitOrganizerExporter::UnderspecifiedOccurrenceError;
+        return false;
+    }
     return true;
 }
 
@@ -405,4 +410,26 @@ QString QVersitOrganizerExporterPrivate::encodeDateTime(const QDateTime& dateTim
         return dateTime.toString(QLatin1String("yyyyMMddTHHmmssZ"));
     else
         return dateTime.toString(QLatin1String("yyyyMMddTHHmmss"));
+}
+
+/*!
+ * Returns true if and only if \a document has both the UID and the RECURRENCE-ID properties
+ */
+bool QVersitOrganizerExporterPrivate::documentContainsUidAndRecurrenceId(const QVersitDocument &document)
+{
+    bool hasUid = false;
+    bool hasRecurId = false;
+    foreach (const QVersitProperty& property, document.properties()) {
+        const QString& name = property.name();
+        if (name == QLatin1String("UID")) {
+            if (hasRecurId)
+                return true;
+            hasUid = true;
+        } else if (name == QLatin1String("RECURRENCE-ID")) {
+            if (hasUid)
+                return true;
+            hasRecurId = true;
+        }
+    }
+    return false;
 }
