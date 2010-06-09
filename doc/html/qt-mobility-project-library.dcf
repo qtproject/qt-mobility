@@ -1661,7 +1661,7 @@
     <section ref="qlandmarkcategory.html" title="QLandmarkCategory Class Reference">
         <keyword ref="qlandmarkcategory.html">QLandmarkCategory</keyword>
         <keyword ref="qlandmarkcategory.html#attribute">attribute</keyword>
-        <keyword ref="qlandmarkcategory.html#attributes">attributes</keyword>
+        <keyword ref="qlandmarkcategory.html#attributeKeys">attributeKeys</keyword>
         <keyword ref="qlandmarkcategory.html#categoryId">categoryId</keyword>
         <keyword ref="qlandmarkcategory.html#description">description</keyword>
         <keyword ref="qlandmarkcategory.html#iconUrl">iconUrl</keyword>
@@ -1740,10 +1740,21 @@
         <keyword ref="qlandmarkexportrequest.html#setLandmarkIds">setLandmarkIds</keyword>
         <section ref="qlandmarkexportrequest-members.html" title="List of all members"/>
     </section>
+    <section ref="qlandmarkfetchhint.html" title="QLandmarkFetchHint Class Reference">
+        <keyword ref="qlandmarkfetchhint.html">QLandmarkFetchHint</keyword>
+        <keyword ref="qlandmarkfetchhint.html#maxItems">maxItems</keyword>
+        <keyword ref="qlandmarkfetchhint.html#offset">offset</keyword>
+        <keyword ref="qlandmarkfetchhint.html#setMaxItems">setMaxItems</keyword>
+        <keyword ref="qlandmarkfetchhint.html#setOffset">setOffset</keyword>
+        <keyword ref="qlandmarkfetchhint.html#operator-eq">operator=</keyword>
+        <section ref="qlandmarkfetchhint-members.html" title="List of all members"/>
+    </section>
     <section ref="qlandmarkfetchrequest.html" title="QLandmarkFetchRequest Class Reference">
         <keyword ref="qlandmarkfetchrequest.html">QLandmarkFetchRequest</keyword>
+        <keyword ref="qlandmarkfetchrequest.html#fetchHint">fetchHint</keyword>
         <keyword ref="qlandmarkfetchrequest.html#filter">filter</keyword>
         <keyword ref="qlandmarkfetchrequest.html#landmarks">landmarks</keyword>
+        <keyword ref="qlandmarkfetchrequest.html#setFetchHint">setFetchHint</keyword>
         <keyword ref="qlandmarkfetchrequest.html#setFilter">setFilter</keyword>
         <keyword ref="qlandmarkfetchrequest.html#setLandmarkIds">setLandmarkIds</keyword>
         <keyword ref="qlandmarkfetchrequest.html#setSorting">setSorting</keyword>
@@ -1786,8 +1797,10 @@
     </section>
     <section ref="qlandmarkidfetchrequest.html" title="QLandmarkIdFetchRequest Class Reference">
         <keyword ref="qlandmarkidfetchrequest.html">QLandmarkIdFetchRequest</keyword>
+        <keyword ref="qlandmarkidfetchrequest.html#fetchHint">fetchHint</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#filter">filter</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkidfetchrequest.html#setFetchHint">setFetchHint</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#setFilter">setFilter</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#setSorting">setSorting</keyword>
         <keyword ref="qlandmarkidfetchrequest.html#sorting">sorting</keyword>
@@ -1798,7 +1811,6 @@
         <keyword ref="qlandmarkidfilter.html#append">append</keyword>
         <keyword ref="qlandmarkidfilter.html#clear">clear</keyword>
         <keyword ref="qlandmarkidfilter.html#landmarkIds">landmarkIds</keyword>
-        <keyword ref="qlandmarkidfilter.html#prepend">prepend</keyword>
         <keyword ref="qlandmarkidfilter.html#remove">remove</keyword>
         <keyword ref="qlandmarkidfilter.html#setLandmarkIds">setLandmarkIds</keyword>
         <keyword ref="qlandmarkidfilter.html#operator-lt-lt">operator&lt;&lt;</keyword>
@@ -1840,6 +1852,12 @@
         <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::LockedError</keyword>
         <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::InvalidManagerError</keyword>
         <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::NotSupportedError</keyword>
+        <keyword ref="qlandmarkmanager.html#FilterSupportLevel-enum">FilterSupportLevel</keyword>
+        <keyword ref="qlandmarkmanager.html#FilterSupportLevel-enum">QLandmarkManager::Emulated</keyword>
+        <keyword ref="qlandmarkmanager.html#FilterSupportLevel-enum">QLandmarkManager::None</keyword>
+        <keyword ref="qlandmarkmanager.html#FilterSupportLevel-enum">QLandmarkManager::Native</keyword>
+        <keyword ref="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</keyword>
+        <keyword ref="qlandmarkmanager.html#LandmarkFeature-enum">QLandmarkManager::GenericAttributes</keyword>
         <keyword ref="qlandmarkmanager.html#availableManagers">availableManagers</keyword>
         <keyword ref="qlandmarkmanager.html#buildUri">buildUri</keyword>
         <keyword ref="qlandmarkmanager.html#categories">categories</keyword>
@@ -1848,13 +1866,13 @@
         <keyword ref="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</keyword>
         <keyword ref="qlandmarkmanager.html#category">category</keyword>
         <keyword ref="qlandmarkmanager.html#categoryIds">categoryIds</keyword>
-        <keyword ref="qlandmarkmanager.html#dataChanged">dataChanged</keyword>
         <keyword ref="qlandmarkmanager.html#error">error</keyword>
         <keyword ref="qlandmarkmanager.html#errorString">errorString</keyword>
         <keyword ref="qlandmarkmanager.html#exportLandmarks">exportLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#filterSupportLevel">filterSupportLevel</keyword>
         <keyword ref="qlandmarkmanager.html#fromUri">fromUri</keyword>
         <keyword ref="qlandmarkmanager.html#importLandmarks">importLandmarks</keyword>
-        <keyword ref="qlandmarkmanager.html#isFilterSupported">isFilterSupported</keyword>
+        <keyword ref="qlandmarkmanager.html#isFeatureSupported">isFeatureSupported</keyword>
         <keyword ref="qlandmarkmanager.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qlandmarkmanager.html#landmark">landmark</keyword>
         <keyword ref="qlandmarkmanager.html#landmarkIds">landmarkIds</keyword>
@@ -1888,10 +1906,10 @@
         <keyword ref="qlandmarkmanagerengine.html#compareDistance">compareDistance</keyword>
         <keyword ref="qlandmarkmanagerengine.html#compareLandmark">compareLandmark</keyword>
         <keyword ref="qlandmarkmanagerengine.html#compareName">compareName</keyword>
-        <keyword ref="qlandmarkmanagerengine.html#dataChanged">dataChanged</keyword>
         <keyword ref="qlandmarkmanagerengine.html#exportLandmarks">exportLandmarks</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#filterSupportLevel">filterSupportLevel</keyword>
         <keyword ref="qlandmarkmanagerengine.html#importLandmarks">importLandmarks</keyword>
-        <keyword ref="qlandmarkmanagerengine.html#isFilterSupported">isFilterSupported</keyword>
+        <keyword ref="qlandmarkmanagerengine.html#isFeatureSupported">isFeatureSupported</keyword>
         <keyword ref="qlandmarkmanagerengine.html#isReadOnly">isReadOnly</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmark">landmark</keyword>
         <keyword ref="qlandmarkmanagerengine.html#landmarkIds">landmarkIds</keyword>
