@@ -57,9 +57,8 @@
 <p>A QGeoMappingManager instance can create <a href="qgeomapdata.html">QGeoMapData</a> instances with createMapData, which are used to contain and manage information concerning what a particular <a href="qgeomapwidget.html">QGeoMapWidget</a> is viewing.</p>
 <p>The functions in this class will typically not be used by clients of this API, as the most common uses will only need to obtain a QGeoMappingManager instance and associate it with a <a href="qgeomapwidget.html">QGeoMapWidget</a> instance:</p>
 <pre>    QGeoServiceProvider serviceProvider(&quot;nokia&quot;);
-    QGeoMapWidget *widget = new QGeoMapWidget();
     QGeoMappingManager *manager = serviceProvider.mappingManager();
-    widget-&gt;setMappingManager(manager);</pre>
+    QGeoMapWidget *widget = new QGeoMapWidget(manager);</pre>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoMappingManager/~QGeoMappingManager"></a>

@@ -30,17 +30,23 @@
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#QGeoMapWidget">QGeoMapWidget</a></b> ( QGeoMappingManager * <i>manager</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#dtor.QGeoMapWidget">~QGeoMapWidget</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#dtor.QGeoMapWidget">~QGeoMapWidget</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#addMapObject">addMapObject</a></b> ( QGeoMapObject * <i>mapObject</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#center">center</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#coordinateToScreenPosition">coordinateToScreenPosition</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mapObjects">mapObjects</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</a></b> ( const QPointF &amp; <i>screenPosition</i>, int <i>radius</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mapObjectsInScreenRect">mapObjectsInScreenRect</a></b> ( const QRectF &amp; <i>screenRect</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">MapType </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mapType">mapType</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#pan">pan</a></b> ( int <i>dx</i>, int <i>dy</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#removeMapObject">removeMapObject</a></b> ( QGeoMapObject * <i>mapObject</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#screenPositionToCoordinate">screenPositionToCoordinate</a></b> ( QPointF <i>screenPosition</i> ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setMapType">setMapType</a></b> ( MapType <i>mapType</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setZoomLevel">setZoomLevel</a></b> ( qreal <i>zoomLevel</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#visibleMapObjects">visibleMapObjects</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#zoomLevel">zoomLevel</a></b> () const</td></tr>
 </table>
 <hr />
@@ -60,13 +66,7 @@
 <a name="reimplemented-protected-functions"></a>
 <h2>Reimplemented Protected Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#keyPressEvent">keyPressEvent</a></b> ( QKeyEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mouseDoubleClickEvent">mouseDoubleClickEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mouseMoveEvent">mouseMoveEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mousePressEvent">mousePressEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mouseReleaseEvent">mouseReleaseEvent</a></b> ( QGraphicsSceneMouseEvent * <i>event</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#resizeEvent">resizeEvent</a></b> ( QGraphicsSceneResizeEvent * <i>event</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#wheelEvent">wheelEvent</a></b> ( QGraphicsSceneWheelEvent * <i>event</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>24 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#protected-functions">QGraphicsWidget</a></li>
@@ -108,51 +108,55 @@
 <a name="//apple_ref/cpp/econst/QGeoMapWidget/SatelliteMapNight"></a>
 <a name="//apple_ref/cpp/econst/QGeoMapWidget/TerrainMap"></a>
 <h3 class="fn"><a name="MapType-enum"></a>enum QGeoMapWidget::MapType</h3>
-<p><table  class="valuelist" border="1" cellpadding="2" cellspacing="1" width="40%">
-<tr><th width="60%">Constant</th><th width="40%">Value</th></tr>
-<tr><td valign="top"><tt>QGeoMapWidget::StreetMap</tt></td><td align="center" valign="top"><tt>0</tt></td></tr>
-<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapDay</tt></td><td align="center" valign="top"><tt>1</tt></td></tr>
-<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapNight</tt></td><td align="center" valign="top"><tt>2</tt></td></tr>
-<tr><td valign="top"><tt>QGeoMapWidget::TerrainMap</tt></td><td align="center" valign="top"><tt>3</tt></td></tr>
+<p>Describes a type of map data.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::StreetMap</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The map data is a graphical representation of streets and building boundaries.</td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapDay</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The map data is composed of images collected by satellites during the daytime.</td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapNight</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The map data is composed of images collected by satellites during the nighttime.</td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::TerrainMap</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The map data is a graphical representation of terrain features. This may also include some of the information provided by QGeoMapWidget::StreetMap.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/QGeoMapWidget"></a>
 <h3 class="fn"><a name="QGeoMapWidget"></a>QGeoMapWidget::QGeoMapWidget ( <a href="qgeomappingmanager.html">QGeoMappingManager</a> * <i>manager</i> )</h3>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/~QGeoMapWidget"></a>
-<h3 class="fn"><a name="dtor.QGeoMapWidget"></a>QGeoMapWidget::~QGeoMapWidget ()</h3>
+<h3 class="fn"><a name="dtor.QGeoMapWidget"></a>QGeoMapWidget::~QGeoMapWidget ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/addMapObject"></a>
+<h3 class="fn"><a name="addMapObject"></a>void QGeoMapWidget::addMapObject ( QGeoMapObject * <i>mapObject</i> )</h3>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/center"></a>
 <h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::center () const</h3>
+<p>Returns the coordinate of the point in the center of the map viewport.</p>
 <p>See also <a href="qgeomapwidget.html#setCenter">setCenter</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/coordinateToScreenPosition"></a>
 <h3 class="fn"><a name="coordinateToScreenPosition"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QGeoMapWidget::coordinateToScreenPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const</h3>
-<a name="//apple_ref/cpp/instm/QGeoMapWidget/keyPressEvent"></a>
-<h3 class="fn"><a name="keyPressEvent"></a>void QGeoMapWidget::keyPressEvent ( <a href="http://qt.nokia.com/doc/4.6/qkeyevent.html">QKeyEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#keyPressEvent">QGraphicsItem::keyPressEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mapObjects"></a>
+<h3 class="fn"><a name="mapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::mapObjects ()</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mapObjectsAtScreenPosition"></a>
+<h3 class="fn"><a name="mapObjectsAtScreenPosition"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::mapObjectsAtScreenPosition ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>screenPosition</i>, int <i>radius</i> = 0 )</h3>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mapObjectsInScreenRect"></a>
+<h3 class="fn"><a name="mapObjectsInScreenRect"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::mapObjectsInScreenRect ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>screenRect</i> )</h3>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/mapType"></a>
 <h3 class="fn"><a name="mapType"></a><a href="qgeomapwidget.html#MapType-enum">MapType</a> QGeoMapWidget::mapType () const</h3>
+<p>Returns the type of map data which is being displayed.</p>
 <p>See also <a href="qgeomapwidget.html#setMapType">setMapType</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/maximumZoomLevel"></a>
 <h3 class="fn"><a name="maximumZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::maximumZoomLevel () const</h3>
+<p>Returns the maximum zoom level supported by this manager.</p>
+<p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/minimumZoomLevel"></a>
 <h3 class="fn"><a name="minimumZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::minimumZoomLevel () const</h3>
-<a name="//apple_ref/cpp/instm/QGeoMapWidget/mouseDoubleClickEvent"></a>
-<h3 class="fn"><a name="mouseDoubleClickEvent"></a>void QGeoMapWidget::mouseDoubleClickEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseDoubleClickEvent">QGraphicsItem::mouseDoubleClickEvent</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoMapWidget/mouseMoveEvent"></a>
-<h3 class="fn"><a name="mouseMoveEvent"></a>void QGeoMapWidget::mouseMoveEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseMoveEvent">QGraphicsItem::mouseMoveEvent</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoMapWidget/mousePressEvent"></a>
-<h3 class="fn"><a name="mousePressEvent"></a>void QGeoMapWidget::mousePressEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mousePressEvent">QGraphicsItem::mousePressEvent</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoMapWidget/mouseReleaseEvent"></a>
-<h3 class="fn"><a name="mouseReleaseEvent"></a>void QGeoMapWidget::mouseReleaseEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenemouseevent.html">QGraphicsSceneMouseEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseReleaseEvent">QGraphicsItem::mouseReleaseEvent</a>().</p>
+<p>Returns the minimum zoom level supported by this manager.</p>
+<p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/paint"></a>
 <h3 class="fn"><a name="paint"></a>void QGeoMapWidget::paint ( <a href="http://qt.nokia.com/doc/4.6/qpainter.html">QPainter</a> * <i>painter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstyleoptiongraphicsitem.html">QStyleOptionGraphicsItem</a> * <i>option</i>, <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#paint">QGraphicsItem::paint</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/pan"></a>
 <h3 class="fn"><a name="pan"></a>void QGeoMapWidget::pan ( int <i>dx</i>, int <i>dy</i> )</h3>
+<p>Pans the map view <i>dx</i> pixels in the x direction and <i>dy</i> pixels in they y direction.</p>
+<p>The x and y axes are specified in Graphics View Framework coordinates. By default this will mean that positive values of <i>dx</i> move the viewed area to the right and that positive values of <i>dy</i> move the viewed area down.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/removeMapObject"></a>
+<h3 class="fn"><a name="removeMapObject"></a>void QGeoMapWidget::removeMapObject ( QGeoMapObject * <i>mapObject</i> )</h3>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/resizeEvent"></a>
 <h3 class="fn"><a name="resizeEvent"></a>void QGeoMapWidget::resizeEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicssceneresizeevent.html">QGraphicsSceneResizeEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#resizeEvent">QGraphicsWidget::resizeEvent</a>().</p>
@@ -160,21 +164,27 @@
 <h3 class="fn"><a name="screenPositionToCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::screenPositionToCoordinate ( <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> <i>screenPosition</i> ) const</h3>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/setCenter"></a>
 <h3 class="fn"><a name="setCenter"></a>void QGeoMapWidget::setCenter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> )</h3>
+<p>Centers the map viewport on the coordinate <i>center</i>.</p>
 <p>See also <a href="qgeomapwidget.html#center">center</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/setMapType"></a>
 <h3 class="fn"><a name="setMapType"></a>void QGeoMapWidget::setMapType ( <a href="qgeomapwidget.html#MapType-enum">MapType</a> <i>mapType</i> )</h3>
+<p>Changes the type of map data to display to <i>mapType</i>.</p>
 <p>See also <a href="qgeomapwidget.html#mapType">mapType</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/setZoomLevel"></a>
 <h3 class="fn"><a name="setZoomLevel"></a>void QGeoMapWidget::setZoomLevel ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>zoomLevel</i> )</h3>
+<p>Sets the zoom level of the map to <i>zoomLevel</i>.</p>
+<p>Larger values of the zoom level correspond to more detailed views of the map.</p>
+<p>If <i>zoomLevel</i> is less than <a href="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</a>() then <a href="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</a>() will be used, and if <i>zoomLevel</i> is larger than <a href="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</a>() then <a href="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</a>() will be used.</p>
 <p>See also <a href="qgeomapwidget.html#zoomLevel">zoomLevel</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/shape"></a>
 <h3 class="fn"><a name="shape"></a><a href="http://qt.nokia.com/doc/4.6/qpainterpath.html">QPainterPath</a> QGeoMapWidget::shape () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#shape">QGraphicsItem::shape</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoMapWidget/wheelEvent"></a>
-<h3 class="fn"><a name="wheelEvent"></a>void QGeoMapWidget::wheelEvent ( <a href="http://qt.nokia.com/doc/4.6/qgraphicsscenewheelevent.html">QGraphicsSceneWheelEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
-<p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#wheelEvent">QGraphicsItem::wheelEvent</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/visibleMapObjects"></a>
+<h3 class="fn"><a name="visibleMapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::visibleMapObjects ()</h3>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/zoomLevel"></a>
 <h3 class="fn"><a name="zoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::zoomLevel () const</h3>
+<p>Returns the zoom level of the map.</p>
+<p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <p>See also <a href="qgeomapwidget.html#setZoomLevel">setZoomLevel</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

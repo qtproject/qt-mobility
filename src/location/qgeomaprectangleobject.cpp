@@ -39,51 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPDATA_H
-#define QGEOTILEDMAPDATA_H
-
-#include "qgeomapdata.h"
+#include "qgeomaprectangleobject.h"
+#include "qgeomaprectangleobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapDataPrivate;
+QGeoMapRectangleObject::QGeoMapRectangleObject()
+    : QGeoMapObject(new QGeoMapRectangleObjectPrivate) {}
 
-class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
+QGeoMapRectangleObject::~QGeoMapRectangleObject()
 {
-public:
-    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoTiledMapData();
+}
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
+/*******************************************************************************
+*******************************************************************************/
 
-    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
+QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate()
+{
+    type = QGeoMapObject::RectangleType;
+}
 
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
+QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(const QGeoMapRectangleObjectPrivate &other)
+    : QGeoMapObjectPrivate(other) {}
 
-    void setZoomLevel(qreal zoomLevel);
-    void setViewportSize(const QSizeF &size);
-    void pan(int dx, int dy);
+QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
 
-    QRectF screenRect() const;
+QGeoMapRectangleObjectPrivate& QGeoMapRectangleObjectPrivate::operator= (const QGeoMapRectangleObjectPrivate &other)
+{
+    QGeoMapObjectPrivate::operator=(other);
 
-    virtual QList<QGeoMapObject*> visibleMapObjects();
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
-
-    QRectF protectedRegion() const;
-    void clearProtectedRegion();
-
-protected:
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
-
-private:
-    QGeoTiledMapDataPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoTiledMapData)
-};
+    return *this;
+}
 
 QTM_END_NAMESPACE
 
-#endif

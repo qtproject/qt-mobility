@@ -39,51 +39,78 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPDATA_H
-#define QGEOTILEDMAPDATA_H
-
-#include "qgeomapdata.h"
+#include "qgeomapcircleobject.h"
+#include "qgeomapcircleobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapDataPrivate;
+/*!
+*/
+QGeoMapCircleObject::QGeoMapCircleObject()
+    : QGeoMapObject(new QGeoMapCircleObjectPrivate) {}
 
-class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
+/*!
+*/
+QGeoMapCircleObject::~QGeoMapCircleObject()
 {
-public:
-    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoTiledMapData();
+}
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
+/*!
+*/
+void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
+{
+    Q_D(QGeoMapCircleObject);
+    d->center = center;
+}
 
-    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
+/*!
+*/
+QGeoCoordinate QGeoMapCircleObject::center() const
+{
+    Q_D(const QGeoMapCircleObject);
+    return d->center;
+}
 
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
+/*!
+*/
+void QGeoMapCircleObject::setRadius(const QGeoDistance &radius)
+{
+    Q_D(QGeoMapCircleObject);
+    d->radius = radius;
+}
 
-    void setZoomLevel(qreal zoomLevel);
-    void setViewportSize(const QSizeF &size);
-    void pan(int dx, int dy);
+/*!
+*/
+QGeoDistance QGeoMapCircleObject::radius() const
+{
+    Q_D(const QGeoMapCircleObject);
+    return d->radius;
+}
 
-    QRectF screenRect() const;
+/*******************************************************************************
+*******************************************************************************/
 
-    virtual QList<QGeoMapObject*> visibleMapObjects();
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate()
+{
+    type = QGeoMapObject::CircleType;
+}
 
-    QRectF protectedRegion() const;
-    void clearProtectedRegion();
+QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(const QGeoMapCircleObjectPrivate &other)
+    : QGeoMapObjectPrivate(other),
+    center(other.center),
+    radius(other.radius) {}
 
-protected:
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
+QGeoMapCircleObjectPrivate::~QGeoMapCircleObjectPrivate() {}
 
-private:
-    QGeoTiledMapDataPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoTiledMapData)
-};
+QGeoMapCircleObjectPrivate& QGeoMapCircleObjectPrivate::operator= (const QGeoMapCircleObjectPrivate &other)
+{
+    QGeoMapObjectPrivate::operator=(other);
+
+    center = other.center;
+    radius = other.radius;
+
+    return *this;
+}
 
 QTM_END_NAMESPACE
 
-#endif

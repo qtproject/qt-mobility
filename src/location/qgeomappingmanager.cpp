@@ -66,9 +66,8 @@ QTM_BEGIN_NAMESPACE
     instance and associate it with a QGeoMapWidget instance:
     \code
         QGeoServiceProvider serviceProvider("nokia");
-        QGeoMapWidget *widget = new QGeoMapWidget();
         QGeoMappingManager *manager = serviceProvider.mappingManager();
-        widget->setMappingManager(manager);
+        QGeoMapWidget *widget = new QGeoMapWidget(manager);
     \endcode
 */
 

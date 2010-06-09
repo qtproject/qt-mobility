@@ -43,6 +43,7 @@
 #include "qgeotiledmapdata_p.h"
 
 #include "qgeotiledmappingmanagerengine.h"
+#include "qgeocoordinate.h"
 
 #include <QDebug>
 
@@ -171,12 +172,18 @@ QGeoCoordinate QGeoTiledMapData::center() const
 
 void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 {
-    int zoomDiff = qRound(zoomLevel - QGeoMapData::zoomLevel());
+    qreal oldZoomLevel = QGeoMapData::zoomLevel();
+
+    QGeoMapData::setZoomLevel(zoomLevel);
+
+    // QGeoMapData::setZoomLevel clips the zoom level to be
+    // in between the minimum and maximum zoom levels
+    zoomLevel = QGeoMapData::zoomLevel();
+
+    int zoomDiff = qRound(zoomLevel - oldZoomLevel);
 
     if (zoomDiff == 0)
         return;
-
-    QGeoMapData::setZoomLevel(zoomLevel);
 
     d_ptr->protectRegion = QRectF();
 
@@ -288,6 +295,21 @@ QRectF QGeoTiledMapData::protectedRegion() const
 void QGeoTiledMapData::clearProtectedRegion()
 {
     d_ptr->protectRegion = QRectF();
+}
+
+QList<QGeoMapObject*> QGeoTiledMapData::visibleMapObjects()
+{
+    return QList<QGeoMapObject*>();
+}
+
+QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius)
+{
+    return QList<QGeoMapObject*>();
+}
+
+QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &screenRect)
+{
+    return QList<QGeoMapObject*>();
 }
 
 /*******************************************************************************

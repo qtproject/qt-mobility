@@ -84,7 +84,6 @@ public:
     qreal maximumZoomLevel() const;
 
 protected:
-    // TODO remove this - going to move the tiling manager to the plugin in the short term
     QGeoMappingManagerEngine(QGeoMappingManagerEnginePrivate *dd, QObject *parent = 0);
 
     void setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes);

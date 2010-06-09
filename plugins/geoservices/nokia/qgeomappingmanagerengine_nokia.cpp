@@ -116,7 +116,8 @@ QGeoTiledMapReply* QGeoMappingManagerThreadNokia::getTileImage(const QGeoTiledMa
 
     QGeoTiledMapReply* mapReply = new QGeoMapReplyNokia(netReply, request, this);
 
-    qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
+        // TODO goes badly on linux
+    //qDebug() << "request: " << QString::number(reinterpret_cast<int>(mapReply), 16) << " " << request.row() << "," << request.column();
     return mapReply;
 }
 
@@ -179,6 +180,8 @@ QGeoMappingManagerEngineNokia::QGeoMappingManagerEngineNokia(const QMap<QString,
         : QGeoTiledMappingManagerEngine(parameters),
         parameters(parameters)
 {
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
     setTileSize(QSize(128, 128));
     setMinimumZoomLevel(0.0);
     setMaximumZoomLevel(18.0);

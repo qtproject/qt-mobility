@@ -39,49 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPDATA_H
-#define QGEOTILEDMAPDATA_H
+#ifndef QGEOMAPPOLYLINEOBJECT_P_H
+#define QGEOMAPPOLYLINEOBJECT_P_H
 
-#include "qgeomapdata.h"
+#include "qgeomapobject_p.h"
+
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapDataPrivate;
+class QGeoCoordinate;
 
-class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
+class QGeoMapPolylineObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoTiledMapData();
+    QGeoMapPolylineObjectPrivate();
+    QGeoMapPolylineObjectPrivate(const QGeoMapPolylineObjectPrivate &other);
+    ~QGeoMapPolylineObjectPrivate();
+    QGeoMapPolylineObjectPrivate& operator= (const QGeoMapPolylineObjectPrivate &other);
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
-
-    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
-
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
-
-    void setZoomLevel(qreal zoomLevel);
-    void setViewportSize(const QSizeF &size);
-    void pan(int dx, int dy);
-
-    QRectF screenRect() const;
-
-    virtual QList<QGeoMapObject*> visibleMapObjects();
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
-
-    QRectF protectedRegion() const;
-    void clearProtectedRegion();
-
-protected:
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
-
-private:
-    QGeoTiledMapDataPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoTiledMapData)
+    QList<QGeoCoordinate> points;
 };
 
 QTM_END_NAMESPACE

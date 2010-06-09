@@ -32,6 +32,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#actions">actions</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#addAction">addAction</a></b> ( QAction * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#addActions">addActions</a></b> ( QList&lt;QAction *&gt; )</div></li>
+<li><div class="fn"><b><a href="qgeomapwidget.html#addMapObject">addMapObject</a></b> ( QGeoMapObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#adjustSize">adjustSize</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#advance">advance</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
@@ -142,7 +143,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#isWindow">isWindow</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#itemChange">itemChange</a></b> ( GraphicsItemChange, const QVariant &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#itemTransform">itemTransform</a></b> ( const QGraphicsItem *, bool * ) const</div></li>
-<li><div class="fn"><b><a href="qgeomapwidget.html#keyPressEvent">keyPressEvent</a></b> ( QKeyEvent * )</div></li>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#keyPressEvent">keyPressEvent</a></b> ( QKeyEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#keyReleaseEvent">keyReleaseEvent</a></b> ( QKeyEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#layout">layout</a></b> () const</div></li>
@@ -165,6 +166,9 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mapFromScene-4">mapFromScene</a></b> ( const QPainterPath &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mapFromScene-6">mapFromScene</a></b> ( qreal, qreal ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mapFromScene-5">mapFromScene</a></b> ( qreal, qreal, qreal, qreal ) const</div></li>
+<li><div class="fn"><b><a href="qgeomapwidget.html#mapObjects">mapObjects</a></b> () : QList&lt;QGeoMapObject *&gt;</div></li>
+<li><div class="fn"><b><a href="qgeomapwidget.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</a></b> ( const QPointF &amp;, int ) : QList&lt;QGeoMapObject *&gt;</div></li>
+<li><div class="fn"><b><a href="qgeomapwidget.html#mapObjectsInScreenRect">mapObjectsInScreenRect</a></b> ( const QRectF &amp; ) : QList&lt;QGeoMapObject *&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mapRectFromItem">mapRectFromItem</a></b> ( const QGraphicsItem *, const QRectF &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mapRectFromItem-2">mapRectFromItem</a></b> ( const QGraphicsItem *, qreal, qreal, qreal, qreal ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mapRectFromParent">mapRectFromParent</a></b> ( const QRectF &amp; ) const</div></li>
@@ -197,8 +201,8 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mapToScene-5">mapToScene</a></b> ( qreal, qreal, qreal, qreal ) const</div></li>
 <li><div class="fn"><b><a href="qgeomapwidget.html#mapType">mapType</a></b> () const : MapType</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#maximumHeight">maximumHeight</a></b> () const</div></li>
-<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#maximumSize">maximumSize</a></b> () const</div></li>
 </ul></td><td valign="top"><ul>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#maximumSize">maximumSize</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#maximumWidth">maximumWidth</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</a></b> () const : qreal</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#metaObject">metaObject</a></b> () const</div></li>
@@ -206,10 +210,10 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#minimumSize">minimumSize</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#minimumWidth">minimumWidth</a></b> () const</div></li>
 <li><div class="fn"><b><a href="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</a></b> () const : qreal</div></li>
-<li><div class="fn"><b><a href="qgeomapwidget.html#mouseDoubleClickEvent">mouseDoubleClickEvent</a></b> ( QGraphicsSceneMouseEvent * )</div></li>
-<li><div class="fn"><b><a href="qgeomapwidget.html#mouseMoveEvent">mouseMoveEvent</a></b> ( QGraphicsSceneMouseEvent * )</div></li>
-<li><div class="fn"><b><a href="qgeomapwidget.html#mousePressEvent">mousePressEvent</a></b> ( QGraphicsSceneMouseEvent * )</div></li>
-<li><div class="fn"><b><a href="qgeomapwidget.html#mouseReleaseEvent">mouseReleaseEvent</a></b> ( QGraphicsSceneMouseEvent * )</div></li>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseDoubleClickEvent">mouseDoubleClickEvent</a></b> ( QGraphicsSceneMouseEvent * )</div></li>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseMoveEvent">mouseMoveEvent</a></b> ( QGraphicsSceneMouseEvent * )</div></li>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mousePressEvent">mousePressEvent</a></b> ( QGraphicsSceneMouseEvent * )</div></li>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#mouseReleaseEvent">mouseReleaseEvent</a></b> ( QGraphicsSceneMouseEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#moveBy">moveBy</a></b> ( qreal, qreal )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#moveEvent">moveEvent</a></b> ( QGraphicsSceneMoveEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#moveToThread">moveToThread</a></b> ( QThread * )</div></li>
@@ -240,6 +244,7 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#releaseShortcut">releaseShortcut</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#removeAction">removeAction</a></b> ( QAction * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
+<li><div class="fn"><b><a href="qgeomapwidget.html#removeMapObject">removeMapObject</a></b> ( QGeoMapObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#removeSceneEventFilter">removeSceneEventFilter</a></b> ( QGraphicsItem * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#resetTransform">resetTransform</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#size-prop">resize</a></b> ( const QSizeF &amp; )</div></li>
@@ -365,7 +370,8 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#update-2">update</a></b> ( qreal, qreal, qreal, qreal )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#updateGeometry">updateGeometry</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#visibleChanged">visibleChanged</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qgeomapwidget.html#wheelEvent">wheelEvent</a></b> ( QGraphicsSceneWheelEvent * )</div></li>
+<li><div class="fn"><b><a href="qgeomapwidget.html#visibleMapObjects">visibleMapObjects</a></b> () : QList&lt;QGeoMapObject *&gt;</div></li>
+<li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#wheelEvent">wheelEvent</a></b> ( QGraphicsSceneWheelEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#window">window</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#windowFlags-prop">windowFlags</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#windowFrameEvent">windowFrameEvent</a></b> ( QEvent * )</div></li>

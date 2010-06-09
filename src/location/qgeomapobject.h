@@ -39,49 +39,53 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPDATA_H
-#define QGEOTILEDMAPDATA_H
+#ifndef QGEOMAPOBJECT_H
+#define QGEOMAPOBJECT_H
 
-#include "qgeomapdata.h"
+#include "qmobilityglobal.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapDataPrivate;
+class QGeoBoundingBox;
+class QGeoMapObjectPrivate;
 
-class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
+class Q_LOCATION_EXPORT QGeoMapObject
 {
 public:
-    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoTiledMapData();
+    enum Type {
+        RectangleType,
+        CircleType,
+        PolylineType,
+        PolygonType,
+        MarkerType,
+    };
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
+    QGeoMapObject();
+    virtual ~QGeoMapObject();
 
-    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
+    Type type() const;
 
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
+    void setZIndex(int zIndex);
+    int zIndex() const;
 
-    void setZoomLevel(qreal zoomLevel);
-    void setViewportSize(const QSizeF &size);
-    void pan(int dx, int dy);
+    void setVisible(bool visible);
+    bool isVisible() const;
 
-    QRectF screenRect() const;
+    QGeoBoundingBox boundingBox() const;
 
-    virtual QList<QGeoMapObject*> visibleMapObjects();
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
-
-    QRectF protectedRegion() const;
-    void clearProtectedRegion();
+    // either expose bounding box for hit testing
+    // or have contains(QGeoCoordinate) and containedBy(QGeoBoundingBox)
 
 protected:
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
+    QGeoMapObject(QGeoMapObjectPrivate *dd);
+
+    void setBoundingBox(const QGeoBoundingBox& boundingBox);
+
+    QGeoMapObjectPrivate *d_ptr;
 
 private:
-    QGeoTiledMapDataPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoTiledMapData)
+    Q_DECLARE_PRIVATE(QGeoMapObject)
+    Q_DISABLE_COPY(QGeoMapObject)
 };
 
 QTM_END_NAMESPACE

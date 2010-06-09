@@ -314,8 +314,8 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         routeSegments(other.routeSegments),
         travelTime(other.travelTime),
         distance(other.distance),
-        optimization(other.optimization),
-        travelMode(other.travelMode){}
+        travelMode(other.travelMode),
+        optimization(other.optimization) {}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 

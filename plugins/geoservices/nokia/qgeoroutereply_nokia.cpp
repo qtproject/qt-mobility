@@ -92,6 +92,7 @@ void QGeoRouteReplyNokia::networkFinished()
 
 void QGeoRouteReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
+    Q_UNUSED(error)
     setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
 }

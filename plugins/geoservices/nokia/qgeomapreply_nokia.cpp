@@ -105,7 +105,7 @@ void QGeoMapReplyNokia::networkFinished()
 
 void QGeoMapReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    if (m_reply->error() != QNetworkReply::OperationCanceledError)
+    if (error != QNetworkReply::OperationCanceledError)
         setError(QGeoTiledMapReply::CommunicationError, m_reply->errorString());
     m_reply->deleteLater();
     cleanedUp = true;

@@ -1250,13 +1250,18 @@
     </section>
     <section ref="qgeomapdata.html" title="QGeoMapData Class Reference">
         <keyword ref="qgeomapdata.html">QGeoMapData</keyword>
+        <keyword ref="qgeomapdata.html#addMapObject">addMapObject</keyword>
         <keyword ref="qgeomapdata.html#center">center</keyword>
         <keyword ref="qgeomapdata.html#coordinateToScreenPosition">coordinateToScreenPosition</keyword>
         <keyword ref="qgeomapdata.html#engine">engine</keyword>
         <keyword ref="qgeomapdata.html#imageChangesTriggerUpdates">imageChangesTriggerUpdates</keyword>
         <keyword ref="qgeomapdata.html#mapImage">mapImage</keyword>
+        <keyword ref="qgeomapdata.html#mapObjects">mapObjects</keyword>
+        <keyword ref="qgeomapdata.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</keyword>
+        <keyword ref="qgeomapdata.html#mapObjectsInScreenRect">mapObjectsInScreenRect</keyword>
         <keyword ref="qgeomapdata.html#mapType">mapType</keyword>
         <keyword ref="qgeomapdata.html#pan">pan</keyword>
+        <keyword ref="qgeomapdata.html#removeMapObject">removeMapObject</keyword>
         <keyword ref="qgeomapdata.html#screenPositionToCoordinate">screenPositionToCoordinate</keyword>
         <keyword ref="qgeomapdata.html#setCenter">setCenter</keyword>
         <keyword ref="qgeomapdata.html#setImageChangesTriggerUpdates">setImageChangesTriggerUpdates</keyword>
@@ -1265,6 +1270,7 @@
         <keyword ref="qgeomapdata.html#setViewportSize">setViewportSize</keyword>
         <keyword ref="qgeomapdata.html#setZoomLevel">setZoomLevel</keyword>
         <keyword ref="qgeomapdata.html#viewportSize">viewportSize</keyword>
+        <keyword ref="qgeomapdata.html#visibleMapObjects">visibleMapObjects</keyword>
         <keyword ref="qgeomapdata.html#widget">widget</keyword>
         <keyword ref="qgeomapdata.html#zoomLevel">zoomLevel</keyword>
         <section ref="qgeomapdata-members.html" title="List of all members"/>
@@ -1311,25 +1317,25 @@
         <keyword ref="qgeomapwidget.html#MapType-enum">QGeoMapWidget::TerrainMap</keyword>
         <keyword ref="qgeomapwidget.html#MapType-enum">QGeoMapWidget::SatelliteMapDay</keyword>
         <keyword ref="qgeomapwidget.html#MapType-enum">QGeoMapWidget::StreetMap</keyword>
+        <keyword ref="qgeomapwidget.html#addMapObject">addMapObject</keyword>
         <keyword ref="qgeomapwidget.html#center">center</keyword>
         <keyword ref="qgeomapwidget.html#coordinateToScreenPosition">coordinateToScreenPosition</keyword>
-        <keyword ref="qgeomapwidget.html#keyPressEvent">keyPressEvent</keyword>
+        <keyword ref="qgeomapwidget.html#mapObjects">mapObjects</keyword>
+        <keyword ref="qgeomapwidget.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</keyword>
+        <keyword ref="qgeomapwidget.html#mapObjectsInScreenRect">mapObjectsInScreenRect</keyword>
         <keyword ref="qgeomapwidget.html#mapType">mapType</keyword>
         <keyword ref="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</keyword>
         <keyword ref="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</keyword>
-        <keyword ref="qgeomapwidget.html#mouseDoubleClickEvent">mouseDoubleClickEvent</keyword>
-        <keyword ref="qgeomapwidget.html#mouseMoveEvent">mouseMoveEvent</keyword>
-        <keyword ref="qgeomapwidget.html#mousePressEvent">mousePressEvent</keyword>
-        <keyword ref="qgeomapwidget.html#mouseReleaseEvent">mouseReleaseEvent</keyword>
         <keyword ref="qgeomapwidget.html#paint">paint</keyword>
         <keyword ref="qgeomapwidget.html#pan">pan</keyword>
+        <keyword ref="qgeomapwidget.html#removeMapObject">removeMapObject</keyword>
         <keyword ref="qgeomapwidget.html#resizeEvent">resizeEvent</keyword>
         <keyword ref="qgeomapwidget.html#screenPositionToCoordinate">screenPositionToCoordinate</keyword>
         <keyword ref="qgeomapwidget.html#setCenter">setCenter</keyword>
         <keyword ref="qgeomapwidget.html#setMapType">setMapType</keyword>
         <keyword ref="qgeomapwidget.html#setZoomLevel">setZoomLevel</keyword>
         <keyword ref="qgeomapwidget.html#shape">shape</keyword>
-        <keyword ref="qgeomapwidget.html#wheelEvent">wheelEvent</keyword>
+        <keyword ref="qgeomapwidget.html#visibleMapObjects">visibleMapObjects</keyword>
         <keyword ref="qgeomapwidget.html#zoomLevel">zoomLevel</keyword>
         <section ref="qgeomapwidget-members.html" title="List of all members"/>
     </section>

@@ -39,51 +39,62 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOTILEDMAPDATA_H
-#define QGEOTILEDMAPDATA_H
+#include "qgeomappolylineobject.h"
+#include "qgeomappolylineobject_p.h"
 
-#include "qgeomapdata.h"
+#include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoTiledMapDataPrivate;
+/*!
+*/
+QGeoMapPolylineObject::QGeoMapPolylineObject()
+    : QGeoMapObject(new QGeoMapPolylineObjectPrivate) {}
 
-class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
+/*!
+*/
+QGeoMapPolylineObject::~QGeoMapPolylineObject()
 {
-public:
-    QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
-    virtual ~QGeoTiledMapData();
+}
 
-    QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
-    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const;
+/*!
+*/
+void QGeoMapPolylineObject::setPoints(const QList<QGeoCoordinate> &points)
+{
+    Q_D(QGeoMapPolylineObject);
+    d->points = points;
+}
 
-    virtual QPoint screenPositionToTileIndices(const QPointF &screenPosition) const;
+/*!
+*/
+QList<QGeoCoordinate> QGeoMapPolylineObject::points() const
+{
+    Q_D(const QGeoMapPolylineObject);
+    return d->points;
+}
 
-    void setCenter(const QGeoCoordinate &center);
-    QGeoCoordinate center() const;
+/*******************************************************************************
+*******************************************************************************/
 
-    void setZoomLevel(qreal zoomLevel);
-    void setViewportSize(const QSizeF &size);
-    void pan(int dx, int dy);
+QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate()
+{
+    type = QGeoMapObject::PolylineType;
+}
 
-    QRectF screenRect() const;
+QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(const QGeoMapPolylineObjectPrivate &other)
+    : QGeoMapObjectPrivate(other),
+    points(other.points) {}
 
-    virtual QList<QGeoMapObject*> visibleMapObjects();
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+QGeoMapPolylineObjectPrivate::~QGeoMapPolylineObjectPrivate() {}
 
-    QRectF protectedRegion() const;
-    void clearProtectedRegion();
+QGeoMapPolylineObjectPrivate& QGeoMapPolylineObjectPrivate::operator= (const QGeoMapPolylineObjectPrivate &other)
+{
+    QGeoMapObjectPrivate::operator=(other);
 
-protected:
-    virtual void coordinateToWorldPixel(const QGeoCoordinate &coordinate, qulonglong *x, qulonglong *y) const;
-    virtual QGeoCoordinate worldPixelToCoordinate(qulonglong x, qulonglong y) const;
+    points = other.points;
 
-private:
-    QGeoTiledMapDataPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoTiledMapData)
-};
+    return *this;
+}
 
 QTM_END_NAMESPACE
 
-#endif

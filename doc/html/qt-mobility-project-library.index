@@ -1229,7 +1229,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="QGeoMapWidget" fullname="QGeoMapWidget::QGeoMapWidget" href="qgeomapwidget.html#QGeoMapWidget" location="qgeomapwidget.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoMapWidget(QGeoMappingManager * manager)">
                 <parameter left="QGeoMappingManager *" right="" name="manager" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoMapWidget" fullname="QGeoMapWidget::~QGeoMapWidget" href="qgeomapwidget.html#dtor.QGeoMapWidget" location="qgeomapwidget.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoMapWidget()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoMapWidget" fullname="QGeoMapWidget::~QGeoMapWidget" href="qgeomapwidget.html#dtor.QGeoMapWidget" location="qgeomapwidget.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoMapWidget()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="shape" fullname="QGeoMapWidget::shape" href="qgeomapwidget.html#shape" location="qgeomapwidget.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QPainterPath" signature="shape() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="paint" fullname="QGeoMapWidget::paint" href="qgeomapwidget.html#paint" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * parent)">
                 <parameter left="QPainter *" right="" name="painter" default=""/>
@@ -1254,6 +1254,21 @@
                 <parameter left="MapType" right="" name="mapType" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="mapType" fullname="QGeoMapWidget::mapType" href="qgeomapwidget.html#mapType" location="qgeomapwidget.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="MapType" signature="mapType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addMapObject" fullname="QGeoMapWidget::addMapObject" href="qgeomapwidget.html#addMapObject" location="qgeomapwidget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="addMapObject(QGeoMapObject * mapObject)">
+                <parameter left="QGeoMapObject *" right="" name="mapObject" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeMapObject" fullname="QGeoMapWidget::removeMapObject" href="qgeomapwidget.html#removeMapObject" location="qgeomapwidget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="removeMapObject(QGeoMapObject * mapObject)">
+                <parameter left="QGeoMapObject *" right="" name="mapObject" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapObjects" fullname="QGeoMapWidget::mapObjects" href="qgeomapwidget.html#mapObjects" location="qgeomapwidget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="mapObjects()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="visibleMapObjects" fullname="QGeoMapWidget::visibleMapObjects" href="qgeomapwidget.html#visibleMapObjects" location="qgeomapwidget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="visibleMapObjects()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapObjectsAtScreenPosition" fullname="QGeoMapWidget::mapObjectsAtScreenPosition" href="qgeomapwidget.html#mapObjectsAtScreenPosition" location="qgeomapwidget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="mapObjectsAtScreenPosition(const QPointF &amp; screenPosition, int radius)">
+                <parameter left="const QPointF &amp;" right="" name="screenPosition" default=""/>
+                <parameter left="int" right="" name="radius" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapObjectsInScreenRect" fullname="QGeoMapWidget::mapObjectsInScreenRect" href="qgeomapwidget.html#mapObjectsInScreenRect" location="qgeomapwidget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="mapObjectsInScreenRect(const QRectF &amp; screenRect)">
+                <parameter left="const QRectF &amp;" right="" name="screenRect" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="coordinateToScreenPosition" fullname="QGeoMapWidget::coordinateToScreenPosition" href="qgeomapwidget.html#coordinateToScreenPosition" location="qgeomapwidget.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="coordinateToScreenPosition(const QGeoCoordinate &amp; coordinate) const">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
             </function>
@@ -1262,24 +1277,6 @@
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="resizeEvent" fullname="QGeoMapWidget::resizeEvent" href="qgeomapwidget.html#resizeEvent" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="resizeEvent(QGraphicsSceneResizeEvent * event)">
                 <parameter left="QGraphicsSceneResizeEvent *" right="" name="event" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="mousePressEvent" fullname="QGeoMapWidget::mousePressEvent" href="qgeomapwidget.html#mousePressEvent" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="mousePressEvent(QGraphicsSceneMouseEvent * event)">
-                <parameter left="QGraphicsSceneMouseEvent *" right="" name="event" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="mouseReleaseEvent" fullname="QGeoMapWidget::mouseReleaseEvent" href="qgeomapwidget.html#mouseReleaseEvent" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="mouseReleaseEvent(QGraphicsSceneMouseEvent * event)">
-                <parameter left="QGraphicsSceneMouseEvent *" right="" name="event" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="mouseMoveEvent" fullname="QGeoMapWidget::mouseMoveEvent" href="qgeomapwidget.html#mouseMoveEvent" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="mouseMoveEvent(QGraphicsSceneMouseEvent * event)">
-                <parameter left="QGraphicsSceneMouseEvent *" right="" name="event" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="mouseDoubleClickEvent" fullname="QGeoMapWidget::mouseDoubleClickEvent" href="qgeomapwidget.html#mouseDoubleClickEvent" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="mouseDoubleClickEvent(QGraphicsSceneMouseEvent * event)">
-                <parameter left="QGraphicsSceneMouseEvent *" right="" name="event" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="keyPressEvent" fullname="QGeoMapWidget::keyPressEvent" href="qgeomapwidget.html#keyPressEvent" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="keyPressEvent(QKeyEvent * event)">
-                <parameter left="QKeyEvent *" right="" name="event" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="wheelEvent" fullname="QGeoMapWidget::wheelEvent" href="qgeomapwidget.html#wheelEvent" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="wheelEvent(QGraphicsSceneWheelEvent * event)">
-                <parameter left="QGraphicsSceneWheelEvent *" right="" name="event" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkProximityFilter" href="qlandmarkproximityfilter.html" location="qlandmarkproximityfilter.h" bases="QLandmarkFilter" module="">
@@ -1999,47 +1996,62 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoMapData" href="qgeomapdata.html" location="qgeomapdata.h" bases="" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoMapData" fullname="QGeoMapData::QGeoMapData" href="qgeomapdata.html#QGeoMapData" location="qgeomapdata.cpp" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoMapData(QGeoMappingManagerEngine * engine, QGeoMapWidget * widget)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGeoMapData" fullname="QGeoMapData::QGeoMapData" href="qgeomapdata.html#QGeoMapData" location="qgeomapdata.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoMapData(QGeoMappingManagerEngine * engine, QGeoMapWidget * widget)">
                 <parameter left="QGeoMappingManagerEngine *" right="" name="engine" default=""/>
                 <parameter left="QGeoMapWidget *" right="" name="widget" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoMapData" fullname="QGeoMapData::~QGeoMapData" href="qgeomapdata.html#dtor.QGeoMapData" location="qgeomapdata.cpp" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoMapData()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGeoMapData" fullname="QGeoMapData::~QGeoMapData" href="qgeomapdata.html#dtor.QGeoMapData" location="qgeomapdata.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGeoMapData()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setViewportSize" fullname="QGeoMapData::setViewportSize" href="qgeomapdata.html#setViewportSize" location="qgeomapdata.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setViewportSize(const QSizeF &amp; size)">
+                <parameter left="const QSizeF &amp;" right="" name="size" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="viewportSize" fullname="QGeoMapData::viewportSize" href="qgeomapdata.html#viewportSize" location="qgeomapdata.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QSizeF" signature="viewportSize() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setZoomLevel" fullname="QGeoMapData::setZoomLevel" href="qgeomapdata.html#setZoomLevel" location="qgeomapdata.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setZoomLevel(qreal zoomLevel)">
+                <parameter left="qreal" right="" name="zoomLevel" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="zoomLevel" fullname="QGeoMapData::zoomLevel" href="qgeomapdata.html#zoomLevel" location="qgeomapdata.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="zoomLevel() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="pan" fullname="QGeoMapData::pan" href="qgeomapdata.html#pan" location="qgeomapdata.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="pan(int dx, int dy)">
+                <parameter left="int" right="" name="dx" default=""/>
+                <parameter left="int" right="" name="dy" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QGeoMapData::setCenter" href="qgeomapdata.html#setCenter" location="qgeomapdata.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCenter(const QGeoCoordinate &amp; center)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="center" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoMapData::center" href="qgeomapdata.html#center" location="qgeomapdata.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="center() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMapType" fullname="QGeoMapData::setMapType" href="qgeomapdata.html#setMapType" location="qgeomapdata.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMapType(QGeoMapWidget::MapType mapType)">
+                <parameter left="QGeoMapWidget::MapType" right="" name="mapType" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapType" fullname="QGeoMapData::mapType" href="qgeomapdata.html#mapType" location="qgeomapdata.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoMapWidget::MapType" signature="mapType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="addMapObject" fullname="QGeoMapData::addMapObject" href="qgeomapdata.html#addMapObject" location="qgeomapdata.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="addMapObject(QGeoMapObject * mapObject)">
+                <parameter left="QGeoMapObject *" right="" name="mapObject" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="removeMapObject" fullname="QGeoMapData::removeMapObject" href="qgeomapdata.html#removeMapObject" location="qgeomapdata.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="removeMapObject(QGeoMapObject * mapObject)">
+                <parameter left="QGeoMapObject *" right="" name="mapObject" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapObjects" fullname="QGeoMapData::mapObjects" href="qgeomapdata.html#mapObjects" location="qgeomapdata.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="mapObjects()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="visibleMapObjects" fullname="QGeoMapData::visibleMapObjects" href="qgeomapdata.html#visibleMapObjects" location="qgeomapdata.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="visibleMapObjects()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapObjectsAtScreenPosition" fullname="QGeoMapData::mapObjectsAtScreenPosition" href="qgeomapdata.html#mapObjectsAtScreenPosition" location="qgeomapdata.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="mapObjectsAtScreenPosition(const QPointF &amp; screenPosition, int radius)">
+                <parameter left="const QPointF &amp;" right="" name="screenPosition" default=""/>
+                <parameter left="int" right="" name="radius" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapObjectsInScreenRect" fullname="QGeoMapData::mapObjectsInScreenRect" href="qgeomapdata.html#mapObjectsInScreenRect" location="qgeomapdata.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="QList&lt;QGeoMapObject *&gt;" signature="mapObjectsInScreenRect(const QRectF &amp; screenRect)">
+                <parameter left="const QRectF &amp;" right="" name="screenRect" default=""/>
+            </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="coordinateToScreenPosition" fullname="QGeoMapData::coordinateToScreenPosition" href="qgeomapdata.html#coordinateToScreenPosition" location="qgeomapdata.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QPointF" signature="coordinateToScreenPosition(const QGeoCoordinate &amp; coordinate) const">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="screenPositionToCoordinate" fullname="QGeoMapData::screenPositionToCoordinate" href="qgeomapdata.html#screenPositionToCoordinate" location="qgeomapdata.h" virtual="pure" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="screenPositionToCoordinate(const QPointF &amp; screenPosition) const">
                 <parameter left="const QPointF &amp;" right="" name="screenPosition" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setZoomLevel" fullname="QGeoMapData::setZoomLevel" href="qgeomapdata.html#setZoomLevel" location="qgeomapdata.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setZoomLevel(qreal zoomLevel)">
-                <parameter left="qreal" right="" name="zoomLevel" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="zoomLevel" fullname="QGeoMapData::zoomLevel" href="qgeomapdata.html#zoomLevel" location="qgeomapdata.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="qreal" signature="zoomLevel() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="pan" fullname="QGeoMapData::pan" href="qgeomapdata.html#pan" location="qgeomapdata.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="pan(int dx, int dy)">
-                <parameter left="int" right="" name="dx" default=""/>
-                <parameter left="int" right="" name="dy" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCenter" fullname="QGeoMapData::setCenter" href="qgeomapdata.html#setCenter" location="qgeomapdata.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setCenter(const QGeoCoordinate &amp; center)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="center" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoMapData::center" href="qgeomapdata.html#center" location="qgeomapdata.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="center() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setViewportSize" fullname="QGeoMapData::setViewportSize" href="qgeomapdata.html#setViewportSize" location="qgeomapdata.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setViewportSize(const QSizeF &amp; size)">
-                <parameter left="const QSizeF &amp;" right="" name="size" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="viewportSize" fullname="QGeoMapData::viewportSize" href="qgeomapdata.html#viewportSize" location="qgeomapdata.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QSizeF" signature="viewportSize() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMapType" fullname="QGeoMapData::setMapType" href="qgeomapdata.html#setMapType" location="qgeomapdata.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMapType(QGeoMapWidget::MapType mapType)">
-                <parameter left="QGeoMapWidget::MapType" right="" name="mapType" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mapType" fullname="QGeoMapData::mapType" href="qgeomapdata.html#mapType" location="qgeomapdata.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoMapWidget::MapType" signature="mapType() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setImageChangesTriggerUpdates" fullname="QGeoMapData::setImageChangesTriggerUpdates" href="qgeomapdata.html#setImageChangesTriggerUpdates" location="qgeomapdata.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setImageChangesTriggerUpdates(bool trigger)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setImageChangesTriggerUpdates" fullname="QGeoMapData::setImageChangesTriggerUpdates" href="qgeomapdata.html#setImageChangesTriggerUpdates" location="qgeomapdata.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setImageChangesTriggerUpdates(bool trigger)">
                 <parameter left="bool" right="" name="trigger" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="imageChangesTriggerUpdates" fullname="QGeoMapData::imageChangesTriggerUpdates" href="qgeomapdata.html#imageChangesTriggerUpdates" location="qgeomapdata.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="imageChangesTriggerUpdates() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMapImage" fullname="QGeoMapData::setMapImage" href="qgeomapdata.html#setMapImage" location="qgeomapdata.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMapImage(const QPixmap &amp; mapImage)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="imageChangesTriggerUpdates" fullname="QGeoMapData::imageChangesTriggerUpdates" href="qgeomapdata.html#imageChangesTriggerUpdates" location="qgeomapdata.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="imageChangesTriggerUpdates() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMapImage" fullname="QGeoMapData::setMapImage" href="qgeomapdata.html#setMapImage" location="qgeomapdata.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMapImage(const QPixmap &amp; mapImage)">
                 <parameter left="const QPixmap &amp;" right="" name="mapImage" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mapImage" fullname="QGeoMapData::mapImage" href="qgeomapdata.html#mapImage" location="qgeomapdata.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="QPixmap" signature="mapImage()"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="widget" fullname="QGeoMapData::widget" href="qgeomapdata.html#widget" location="qgeomapdata.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoMapWidget *" signature="widget() const"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="engine" fullname="QGeoMapData::engine" href="qgeomapdata.html#engine" location="qgeomapdata.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoMappingManagerEngine *" signature="engine() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapImage" fullname="QGeoMapData::mapImage" href="qgeomapdata.html#mapImage" location="qgeomapdata.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QPixmap" signature="mapImage()"/>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="widget" fullname="QGeoMapData::widget" href="qgeomapdata.html#widget" location="qgeomapdata.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoMapWidget *" signature="widget() const"/>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="engine" fullname="QGeoMapData::engine" href="qgeomapdata.html#engine" location="qgeomapdata.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoMappingManagerEngine *" signature="engine() const"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactNote" href="qcontactnote.html" location="qcontactnote.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactNote::DefinitionName" href="qcontactnote.html#DefinitionName-var" location="qcontactnote.h" type="const QLatin1Constant" static="true"/>
@@ -7383,9 +7395,6 @@
                 <parameter left="const QGeoNavigationInstruction *" right="" name="instruction" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="instruction" fullname="QGeoRouteSegment::instruction" href="qgeoroutesegment.html#instruction" location="qgeoroutesegment.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="const QGeoNavigationInstruction *" signature="instruction() const"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="QGeoRouteSegment" fullname="QGeoRouteSegment::QGeoRouteSegment" href="qgeoroutesegment.html#QGeoRouteSegment-2" location="qgeoroutesegment.cpp" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGeoRouteSegment(QGeoRouteSegmentPrivate * d_ptr)">
-                <parameter left="QGeoRouteSegmentPrivate *" right="" name="d_ptr" default=""/>
-            </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QGeoRouteSegment::d_ptr" href="qgeoroutesegment.html#d_ptr-var" location="qgeoroutesegment.h" type="QGeoRouteSegmentPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="preliminary" name="QVideoWidgetControl" href="qvideowidgetcontrol.html" location="qvideowidgetcontrol.h" bases="QMediaControl" module="">

@@ -85,6 +85,8 @@ QGeoPlacesManagerEngineNokia::~QGeoPlacesManagerEngineNokia() {}
 
 QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QGeoAddress &address, const QGeoBoundingBox &bounds)
 {
+    Q_UNUSED(bounds)
+
     if (!supportsGeocoding()) {
         QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "Geocoding is not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
@@ -132,6 +134,8 @@ QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QGeoAddress &addres
 
 QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QGeoCoordinate &coordinate, const QGeoBoundingBox &bounds)
 {
+    Q_UNUSED(bounds)
+
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/rgc/1.0?referer=localhost";
@@ -149,6 +153,8 @@ QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QGeoCoordinate &coo
 
 QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QString &addressString, const QGeoBoundingBox &bounds)
 {
+    Q_UNUSED(bounds)
+
     QString requestString = "http://";
     requestString += m_host;
     requestString += "/geocoder/gc/1.0?referer=localhost";

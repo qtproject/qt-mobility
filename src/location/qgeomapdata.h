@@ -54,6 +54,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMappingManagerEngine;
+class QGeoMapObject;
 class QGeoMapDataPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapData
@@ -62,8 +63,8 @@ public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoMapData();
 
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
+    virtual void setViewportSize(const QSizeF &size);
+    virtual QSizeF viewportSize() const;
 
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
@@ -73,11 +74,18 @@ public:
     virtual void setCenter(const QGeoCoordinate &center);
     virtual QGeoCoordinate center() const;
 
-    virtual void setViewportSize(const QSizeF &size);
-    virtual QSizeF viewportSize() const;
-
     void setMapType(QGeoMapWidget::MapType mapType);
     QGeoMapWidget::MapType mapType() const;
+
+    virtual void addMapObject(QGeoMapObject *mapObject);
+    virtual void removeMapObject(QGeoMapObject *mapObject);
+    virtual QList<QGeoMapObject*> mapObjects();
+    virtual QList<QGeoMapObject*> visibleMapObjects() = 0;
+    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0) = 0;
+    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) = 0;
+
+    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
 
     void setImageChangesTriggerUpdates(bool trigger);
     bool imageChangesTriggerUpdates() const;

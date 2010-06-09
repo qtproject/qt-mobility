@@ -1757,13 +1757,18 @@
             <keyword name="units" id="QGeoDistance::units" ref="qgeodistance.html#units"/>
             <keyword name="~QGeoDistance" id="QGeoDistance::~QGeoDistance" ref="qgeodistance.html#dtor.QGeoDistance"/>
             <keyword name="QGeoMapData" id="QGeoMapData" ref="qgeomapdata.html"/>
+            <keyword name="addMapObject" id="QGeoMapData::addMapObject" ref="qgeomapdata.html#addMapObject"/>
             <keyword name="center" id="QGeoMapData::center" ref="qgeomapdata.html#center"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapData::coordinateToScreenPosition" ref="qgeomapdata.html#coordinateToScreenPosition"/>
             <keyword name="engine" id="QGeoMapData::engine" ref="qgeomapdata.html#engine"/>
             <keyword name="imageChangesTriggerUpdates" id="QGeoMapData::imageChangesTriggerUpdates" ref="qgeomapdata.html#imageChangesTriggerUpdates"/>
             <keyword name="mapImage" id="QGeoMapData::mapImage" ref="qgeomapdata.html#mapImage"/>
+            <keyword name="mapObjects" id="QGeoMapData::mapObjects" ref="qgeomapdata.html#mapObjects"/>
+            <keyword name="mapObjectsAtScreenPosition" id="QGeoMapData::mapObjectsAtScreenPosition" ref="qgeomapdata.html#mapObjectsAtScreenPosition"/>
+            <keyword name="mapObjectsInScreenRect" id="QGeoMapData::mapObjectsInScreenRect" ref="qgeomapdata.html#mapObjectsInScreenRect"/>
             <keyword name="mapType" id="QGeoMapData::mapType" ref="qgeomapdata.html#mapType"/>
             <keyword name="pan" id="QGeoMapData::pan" ref="qgeomapdata.html#pan"/>
+            <keyword name="removeMapObject" id="QGeoMapData::removeMapObject" ref="qgeomapdata.html#removeMapObject"/>
             <keyword name="screenPositionToCoordinate" id="QGeoMapData::screenPositionToCoordinate" ref="qgeomapdata.html#screenPositionToCoordinate"/>
             <keyword name="setCenter" id="QGeoMapData::setCenter" ref="qgeomapdata.html#setCenter"/>
             <keyword name="setImageChangesTriggerUpdates" id="QGeoMapData::setImageChangesTriggerUpdates" ref="qgeomapdata.html#setImageChangesTriggerUpdates"/>
@@ -1772,6 +1777,7 @@
             <keyword name="setViewportSize" id="QGeoMapData::setViewportSize" ref="qgeomapdata.html#setViewportSize"/>
             <keyword name="setZoomLevel" id="QGeoMapData::setZoomLevel" ref="qgeomapdata.html#setZoomLevel"/>
             <keyword name="viewportSize" id="QGeoMapData::viewportSize" ref="qgeomapdata.html#viewportSize"/>
+            <keyword name="visibleMapObjects" id="QGeoMapData::visibleMapObjects" ref="qgeomapdata.html#visibleMapObjects"/>
             <keyword name="widget" id="QGeoMapData::widget" ref="qgeomapdata.html#widget"/>
             <keyword name="zoomLevel" id="QGeoMapData::zoomLevel" ref="qgeomapdata.html#zoomLevel"/>
             <keyword name="~QGeoMapData" id="QGeoMapData::~QGeoMapData" ref="qgeomapdata.html#dtor.QGeoMapData"/>
@@ -1781,25 +1787,25 @@
             <keyword name="QGeoMapWidget::SatelliteMapDay" id="QGeoMapWidget::SatelliteMapDay" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::SatelliteMapNight" id="QGeoMapWidget::SatelliteMapNight" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::TerrainMap" id="QGeoMapWidget::TerrainMap" ref="qgeomapwidget.html#MapType-enum"/>
+            <keyword name="addMapObject" id="QGeoMapWidget::addMapObject" ref="qgeomapwidget.html#addMapObject"/>
             <keyword name="center" id="QGeoMapWidget::center" ref="qgeomapwidget.html#center"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapWidget::coordinateToScreenPosition" ref="qgeomapwidget.html#coordinateToScreenPosition"/>
-            <keyword name="keyPressEvent" id="QGeoMapWidget::keyPressEvent" ref="qgeomapwidget.html#keyPressEvent"/>
+            <keyword name="mapObjects" id="QGeoMapWidget::mapObjects" ref="qgeomapwidget.html#mapObjects"/>
+            <keyword name="mapObjectsAtScreenPosition" id="QGeoMapWidget::mapObjectsAtScreenPosition" ref="qgeomapwidget.html#mapObjectsAtScreenPosition"/>
+            <keyword name="mapObjectsInScreenRect" id="QGeoMapWidget::mapObjectsInScreenRect" ref="qgeomapwidget.html#mapObjectsInScreenRect"/>
             <keyword name="mapType" id="QGeoMapWidget::mapType" ref="qgeomapwidget.html#mapType"/>
             <keyword name="maximumZoomLevel" id="QGeoMapWidget::maximumZoomLevel" ref="qgeomapwidget.html#maximumZoomLevel"/>
             <keyword name="minimumZoomLevel" id="QGeoMapWidget::minimumZoomLevel" ref="qgeomapwidget.html#minimumZoomLevel"/>
-            <keyword name="mouseDoubleClickEvent" id="QGeoMapWidget::mouseDoubleClickEvent" ref="qgeomapwidget.html#mouseDoubleClickEvent"/>
-            <keyword name="mouseMoveEvent" id="QGeoMapWidget::mouseMoveEvent" ref="qgeomapwidget.html#mouseMoveEvent"/>
-            <keyword name="mousePressEvent" id="QGeoMapWidget::mousePressEvent" ref="qgeomapwidget.html#mousePressEvent"/>
-            <keyword name="mouseReleaseEvent" id="QGeoMapWidget::mouseReleaseEvent" ref="qgeomapwidget.html#mouseReleaseEvent"/>
             <keyword name="paint" id="QGeoMapWidget::paint" ref="qgeomapwidget.html#paint"/>
             <keyword name="pan" id="QGeoMapWidget::pan" ref="qgeomapwidget.html#pan"/>
+            <keyword name="removeMapObject" id="QGeoMapWidget::removeMapObject" ref="qgeomapwidget.html#removeMapObject"/>
             <keyword name="resizeEvent" id="QGeoMapWidget::resizeEvent" ref="qgeomapwidget.html#resizeEvent"/>
             <keyword name="screenPositionToCoordinate" id="QGeoMapWidget::screenPositionToCoordinate" ref="qgeomapwidget.html#screenPositionToCoordinate"/>
             <keyword name="setCenter" id="QGeoMapWidget::setCenter" ref="qgeomapwidget.html#setCenter"/>
             <keyword name="setMapType" id="QGeoMapWidget::setMapType" ref="qgeomapwidget.html#setMapType"/>
             <keyword name="setZoomLevel" id="QGeoMapWidget::setZoomLevel" ref="qgeomapwidget.html#setZoomLevel"/>
             <keyword name="shape" id="QGeoMapWidget::shape" ref="qgeomapwidget.html#shape"/>
-            <keyword name="wheelEvent" id="QGeoMapWidget::wheelEvent" ref="qgeomapwidget.html#wheelEvent"/>
+            <keyword name="visibleMapObjects" id="QGeoMapWidget::visibleMapObjects" ref="qgeomapwidget.html#visibleMapObjects"/>
             <keyword name="zoomLevel" id="QGeoMapWidget::zoomLevel" ref="qgeomapwidget.html#zoomLevel"/>
             <keyword name="~QGeoMapWidget" id="QGeoMapWidget::~QGeoMapWidget" ref="qgeomapwidget.html#dtor.QGeoMapWidget"/>
             <keyword name="QGeoMappingManager" id="QGeoMappingManager" ref="qgeomappingmanager.html"/>
