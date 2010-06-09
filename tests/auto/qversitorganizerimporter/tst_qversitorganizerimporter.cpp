@@ -144,6 +144,28 @@ void tst_QVersitOrganizerImporter::testImport_data()
 
         QTest::newRow("event occurrence exception") << document << items;
     }
+
+    {
+        QVersitDocument document(QVersitDocument::ICalendar20Type);
+        document.setComponentType(QLatin1String("VCALENDAR"));
+        QVersitDocument nested(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VTODO"));
+        QVersitProperty property;
+        property.setName(QLatin1String("RRULE"));
+        property.setValue(QLatin1String("FREQ=WEEKLY"));
+        nested.addProperty(property);
+        document.addSubDocument(nested);
+
+        QOrganizerTodo todo;
+        QOrganizerItemRecurrenceRule rrule;
+        rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+        todo.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << rrule);
+
+        QList<QOrganizerItem> items;
+        items << static_cast<QOrganizerItem>(todo);
+
+        QTest::newRow("todo recurrence rule") << document << items;
+    }
 }
 
 void tst_QVersitOrganizerImporter::testImportEventProperties()

@@ -133,6 +133,12 @@ void QVersitOrganizerImporterPrivate::importProperty(
             success = createNotBeforeDateTime(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("DUE")) {
             success = createDueDateTime(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("RRULE")
+               || (property.name() == QLatin1String("EXRULE"))) {
+            success = createRecurrenceRule(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("RDATE")
+               || (property.name() == QLatin1String("EXDATE"))) {
+            success = createRecurrenceDates(property, item, &updatedDetails);
         }
     }
 
