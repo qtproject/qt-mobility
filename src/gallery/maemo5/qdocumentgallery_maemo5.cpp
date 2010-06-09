@@ -51,6 +51,7 @@
 #include "qgalleryurlrequest.h"
 
 #include "qgallerybaseresponse_p.h"
+#include "qgallerytrackerchangenotifier_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerremoveresponse_p.h"
@@ -63,21 +64,6 @@
 Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
-
-class QDocumentGalleryRefreshManager : public QObject
-{
-    Q_OBJECT
-Q_SIGNALS:
-    void refresh(int updateId);
-
-public Q_SLOTS:
-    void itemEdited(const QString &service);
-};
-
-void QDocumentGalleryRefreshManager::itemEdited(const QString &service)
-{
-    emit refresh(QGalleryTrackerSchema::serviceUpdateId(service));
-}
 
 class QDocumentGalleryPrivate : public QAbstractGalleryPrivate, public QGalleryDBusInterfaceFactory
 {
@@ -95,6 +81,7 @@ private:
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
     QGalleryDBusInterfacePointer thumbnailInterface();
+    QGalleryTrackerChangeNotifier *changeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
             const QGalleryTrackerItemListArguments &arguments,
@@ -103,15 +90,12 @@ private:
             bool isItemType,
             bool isLive);
 
-    void _q_statisticsReady(const QVector<QStringList> &statistics);
-    void _q_statisticsChanged(const QVector<QStringList> &statistics);
-
     QGalleryDBusInterfacePointer daemonService;
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
     QGalleryDBusInterfacePointer fileService;
     QGalleryDBusInterfacePointer thumbnailService;
-    QDocumentGalleryRefreshManager refreshManager;
+    QScopedPointer<QGalleryTrackerChangeNotifier> notifier;
 };
 
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::daemonInterface()
@@ -176,6 +160,15 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::thumbnailInterface()
     return thumbnailService;
 }
 
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::changeNotifier()
+{
+    if (!notifier)
+        notifier.reset(new QGalleryTrackerChangeNotifier(daemonInterface()));
+
+    return notifier.data();
+}
+
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
         const QGalleryTrackerItemListArguments &arguments,
         int cursorPosition,
@@ -194,14 +187,10 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
 
     if (isLive) {
         QObject::connect(
-                daemonInterface().data(), SIGNAL(IndexFinished(double)),
-                response, SLOT(refresh()));
-        QObject::connect(
-                &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
-        QObject::connect(
-                response, SIGNAL(itemEdited(QString)),
-                &refreshManager, SLOT(itemEdited(QString)));
+                changeNotifier(), SIGNAL(itemsChanged(int)), response, SLOT(refresh(int)));
     }
+    QObject::connect(
+            response, SIGNAL(itemEdited(QString)), changeNotifier(), SLOT(itemsEdited(QString)));
 
     return response;
 }
@@ -229,8 +218,7 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
             fileInterface(), request->itemUrl(), request->create());
 
     QObject::connect(
-            daemonInterface().data(), SIGNAL(IndexFinished(double)),
-            response, SLOT(indexingFinished()));
+            changeNotifier(), SIGNAL(itemsChanged(int)), response, SLOT(indexingFinished()));
 
     return response;
 }
@@ -381,7 +369,6 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
 }
 
 #include "moc_qdocumentgallery.cpp"
-#include "qdocumentgallery_maemo5.moc"
 
 QTM_END_NAMESPACE
 
