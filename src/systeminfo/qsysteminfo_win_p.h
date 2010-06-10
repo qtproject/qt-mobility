@@ -255,6 +255,8 @@ public:
     void setConnection();
     static QSystemDeviceInfoPrivate *instance() {return self;}
 
+    bool currentBluetoothPowerState();
+
 Q_SIGNALS:
     void batteryLevelChanged(int);
     void batteryStatusChanged(QSystemDeviceInfo::BatteryStatus );

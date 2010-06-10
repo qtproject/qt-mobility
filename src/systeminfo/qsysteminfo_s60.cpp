@@ -1019,6 +1019,11 @@ void QSystemDeviceInfoPrivate::chargingStatusChanged()
     emit powerStateChanged(currentPowerState());
 }
 
+bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
+{
+    return false;
+}
+
 DeviceInfo *DeviceInfo::m_instance = NULL;
 
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
