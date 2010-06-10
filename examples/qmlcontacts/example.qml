@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-import QmlContactModel 1.0
-import Qt 4.6
+import Qt 4.7
+import com.nokia.mobility 1.0
 import "contents"
 
 Rectangle {
