@@ -12,7 +12,7 @@ win32 {
     SUBDIRS += audiocapture
 }
 
-win32:!wince* {
+win32:!wince*:!simulator {
     win32-msvc2005|win32-msvc2008: SUBDIRS *= directshow wmp
 }
 
