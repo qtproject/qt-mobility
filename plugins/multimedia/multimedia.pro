@@ -24,7 +24,7 @@ unix:!mac:!symbian {
         gstreamer-audio-0.10 >= 0.10.19 \
         gstreamer-video-0.10 >= 0.10.19
 
-    system(pkg-config --exists \'$${TMP_GST_LIBS}\' --print-errors): {
+    !simulator:system(pkg-config --exists \'$${TMP_GST_LIBS}\' --print-errors): {
         SUBDIRS += gstreamer
     } else {
         SUBDIRS += audiocapture
