@@ -41,6 +41,7 @@
 
 #include "qsystemdeviceinfo.h"
 #include "qsysteminfocommon.h"
+#include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
@@ -54,6 +55,12 @@ QTM_BEGIN_NAMESPACE
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
+    qRegisterMetaType<QSystemDeviceInfo::BatteryStatus>("QSystemDeviceInfo::BatteryStatus");
+    qRegisterMetaType<QSystemDeviceInfo::PowerState>("QSystemDeviceInfo::PowerState");
+    qRegisterMetaType<QSystemDeviceInfo::SimStatus>("QSystemDeviceInfo::SimStatus");
+    qRegisterMetaType<QSystemDeviceInfo::Profile>("QSystemDeviceInfo::Profile");
+    qRegisterMetaType<QSystemDeviceInfo::InputMethodFlags>("QSystemDeviceInfo::InputMethodFlags");
+
     connect(d,SIGNAL(batteryLevelChanged(int)),
             this,SIGNAL(batteryLevelChanged(int)));
 

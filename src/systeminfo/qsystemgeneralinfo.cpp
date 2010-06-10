@@ -53,6 +53,7 @@
 #include <QDesktopWidget>
 #include <QDebug>
 #include <QFileSystemWatcher>
+#include <QMetaType>
 
 #include <locale.h>
 
@@ -379,6 +380,9 @@ Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent), d(sysinfoPrivate())
 {
+    qRegisterMetaType<QSystemInfo::Version>("QSystemInfo::Version");
+    qRegisterMetaType<QSystemInfo::Feature>("QSystemInfo::Feature");
+
     connect(d,SIGNAL(currentLanguageChanged(QString)),
             this,SIGNAL(currentLanguageChanged(QString)));
 }

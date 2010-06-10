@@ -41,6 +41,7 @@
 
 #include "qsystemnetworkinfo.h"
 #include "qsysteminfocommon.h"
+#include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
         Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
@@ -53,6 +54,9 @@ QTM_BEGIN_NAMESPACE
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    : QObject(parent), d(netInfoPrivate())
 {
+    qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
+    qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
+
    connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
            this,SIGNAL(currentMobileCountryCodeChanged(QString)));
 

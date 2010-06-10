@@ -41,6 +41,7 @@
 
 #include "qsystemstorageinfo.h"
 #include "qsysteminfocommon.h"
+#include <QMetaType>
 
 QTM_BEGIN_NAMESPACE
 
@@ -54,7 +55,9 @@ QTM_BEGIN_NAMESPACE
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    : QObject(parent), d(storageInfoPrivate())
 {
-   connect(d,SIGNAL(storageAdded()),
+    qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
+
+connect(d,SIGNAL(storageAdded()),
            this,SIGNAL(storageAdded()));
    connect(d,SIGNAL(storageRemoved()),
            this,SIGNAL(storageRemoved()));
