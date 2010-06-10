@@ -283,6 +283,7 @@ if %FIRST% == bearer (
 )
 
 set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+
 if "%REMAINING%" == "" (
     shift
 ) else (
@@ -489,8 +490,9 @@ call :compileTest Symbian_Sensor_Framework sensors_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
-call :compileTest OpenMaxAl_support openmaxal_symbian
+REM call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
+call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 
 :noTests
 
@@ -516,53 +518,35 @@ for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
 )
 
 if %FIRST% == bearer (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmBearer %SOURCE_PATH%\src\bearer
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtBearer %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == location (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmLocation %SOURCE_PATH%\src\location
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location
 ) else if %FIRST% == messaging (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmMessaging %SOURCE_PATH%\src\messaging
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMessaging %SOURCE_PATH%\src\messaging
 ) else if %FIRST% == multimedia (
-    set CURRENT_PWD=%CD%
-    if %BUILD_PATH% == %SOURCE_PATH% (
-        cd %SOURCE_PATH%\config.tests\qtmultimedia
-        if exist make del qtmultimedia
-    ) else (
-        rmdir /S /Q config.tests\qtmultimedia
-        mkdir config.tests\qtmultimedia
-        cd config.tests\qtmultimedia
-    )
-    for /f "tokens=3" %%i in ('call %QT_PATH%qmake %SOURCE_PATH%\config.tests\qtmultimedia\qtmultimedia.pro 2^>^&1 1^>NUL') do set QTMULTIMEDIA=%%i 
-    if NOT "%QTMULTIMEDIA%" == "multimedia" (
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\audio
-        perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\multimedia\video
-    ) else (
-        echo "Only one multimedia module allowed, cannot continue."
-        echo "option 1: configure without multimedia module"
-        echo "option 2: compile Qt with -no-multimedia"
-        exit /b 1
-    )
-    cd /D %CURRENTDIR%
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\audio
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\video
 ) else if %FIRST% == publishsubscribe (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmPubSub %SOURCE_PATH%\src\publishsubscribe
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtPublishSubscribe %SOURCE_PATH%\src\publishsubscribe
 ) else if %FIRST% == systeminfo (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmSystemInfo %SOURCE_PATH%\src\systeminfo
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSystemInfo %SOURCE_PATH%\src\systeminfo
 ) else if %FIRST% == serviceframework (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == versit (
     REM versit implies contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmVersit %SOURCE_PATH%\src\versit
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == sensors (
-    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmSensors %SOURCE_PATH%\src\sensors
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
 )
 
 if "%REMAINING%" == "" (

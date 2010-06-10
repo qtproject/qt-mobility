@@ -1,5 +1,5 @@
 headers.files = $$PUBLIC_HEADERS
-headers.path = $$QT_MOBILITY_INCLUDE
+headers.path = $$QT_MOBILITY_INCLUDE/$$TARGET
 
 contains(TEMPLATE,.*lib) {
     target.path=$$QT_MOBILITY_LIB
@@ -36,3 +36,5 @@ mac:contains(QT_CONFIG,qt_framework) {
     FRAMEWORK_HEADERS.path = Headers
     QMAKE_BUNDLE_DATA += FRAMEWORK_HEADERS
 }
+
+CONFIG+= create_prl

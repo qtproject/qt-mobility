@@ -65,13 +65,13 @@ Player::Player(QWidget *parent)
     , videoWidget(0)
     , coverLabel(0)
     , slider(0)
+    , audioEndpointSelector(0)
 #ifdef Q_OS_SYMBIAN
     , mediaKeysObserver(0)
     , playlistDialog(0)
     , toggleAspectRatio(0)
     , showYoutubeDialog(0)
     , youtubeDialog(0)
-    , audioEndpointSelector(0)
 #else
     , colorDialog(0)
 #endif
@@ -112,10 +112,18 @@ Player::Player(QWidget *parent)
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
     
     QMediaService *service = player->service();
-    if (service)
-        audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->requestControl(QAudioEndpointSelector_iid));
-    if (audioEndpointSelector)
-        connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
+    if (service) {
+        QMediaControl *control = service->requestControl(QAudioEndpointSelector_iid);
+        if (control) {
+            audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(control);
+            if (audioEndpointSelector) {
+                connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)),
+                        this, SLOT(handleAudioOutputChangedSignal(const QString&)));
+            } else {
+                service->releaseControl(control);
+            }
+        }
+    }
 
 #ifndef Q_OS_SYMBIAN
     QPushButton *openButton = new QPushButton(tr("Open"), this);
@@ -282,15 +290,15 @@ void Player::metaDataChanged()
         setTrackInfo(QString("(%1/%2) %3 - %4")
                 .arg(playlist->currentIndex()+1)
                 .arg(playlist->mediaCount())
-                .arg(player->metaData(QtMultimedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMultimedia::Title).toString()));
+                .arg(player->metaData(QtMultimediaKit::AlbumArtist).toString())
+                .arg(player->metaData(QtMultimediaKit::Title).toString()));
 
         if (!player->isVideoAvailable()) {
-            QUrl uri = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
+            QUrl uri = player->metaData(QtMultimediaKit::CoverArtUrlLarge).value<QUrl>();
             QPixmap pixmap = NULL;
 
             if (uri.isEmpty()) {                
-                QVariant picture = player->metaData(QtMultimedia::CoverArtImage);
+                QVariant picture = player->metaData(QtMultimediaKit::CoverArtImage);
                 // Load picture from metadata
                 if (!picture.isNull() && picture.canConvert<QByteArray>())
                     pixmap.loadFromData(picture.value<QByteArray>());
@@ -324,14 +332,14 @@ void Player::metaDataChanged()
     hideOrShowCoverArt();
     }
 #else
-    //qDebug() << "update metadata" << player->metaData(QtMultimedia::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QtMultimediaKit::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(player->metaData(QtMultimedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMultimedia::Title).toString()));
+                .arg(player->metaData(QtMultimediaKit::AlbumArtist).toString())
+                .arg(player->metaData(QtMultimediaKit::Title).toString()));
 
         if (coverLabel) {
-            QUrl url = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
+            QUrl url = player->metaData(QtMultimediaKit::CoverArtUrlLarge).value<QUrl>();
 
             coverLabel->setPixmap(!url.isEmpty()
                     ? QPixmap(url.toString())
@@ -607,8 +615,9 @@ void Player::hideOrShowCoverArt()
         videoWidget->show();
         videoWidget->repaint();
     } else {
-        coverLabel->show();
         videoWidget->hide();
+        QApplication::setActiveWindow(this);
+        coverLabel->show();
     }
 }
 

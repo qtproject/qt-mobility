@@ -107,9 +107,9 @@
     
     \section1 Namespace
 
-    The QtMobility API's are placed into the \i{QtMobility} namespace, with
+    The QtMobility APIs are placed into the \i{QtMobility} namespace, with
     the important exception of Multimedia. This is done to facilitate the
-    future migration of Mobility API's into Qt.
+    future migration of Mobility APIs into Qt.
     
     See the \l {Quickstart Example}{Quickstart guide} for an example on how
     the  namespace impacts on application development.
@@ -130,7 +130,7 @@
     For a list of known issues and an additional details on feature supported see 
     \l {Release Notes of the QtMobility Project}.
 
-    For a overview of Platform Compatability see \l {Platform Compatability}.
+    For a overview of Platform Compatibility see \l {Platform Compatibility}.
     
     \section1 The New Qt APIs
     \section2 Bearer Management
@@ -221,9 +221,6 @@
     and managing of an FM radio. This includes the typical functionality you
     would find on a music and video player, combined with an FM radio.
 
-    \note The Multimedia API, together with QtMultimedia, is intended to
-    eventually replace the Phonon API.
-
     For more details see the \l {Multimedia} {Multimedia API overview}.
     
     \section2 Sensors
@@ -268,12 +265,13 @@
     
     \section1 The QtMobility Namespace 
 
-    The QtMobility API's are placed into the QtMobility namespace. This is done to facilitate
-    the future migration of Mobility API's into Qt. See the \l {Quickstart Example}{Quickstart guide} for an example on how
+    The QtMobility APIs are placed into the QtMobility namespace. This is
+    done to facilitate the future migration of Mobility APIs into Qt. See
+    the \l {Quickstart Example}{Quickstart guide} for an example on how
     the namespace impacts on application development.
 
 
-    \section1 Platform Compatability
+    \section1 Platform Compatibility
 
 
     \raw HTML
@@ -356,7 +354,7 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
-    <td bgcolor="yellow">Backend available in w21</td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -392,10 +390,10 @@
     <td bgcolor="green"></td>
     </tr>
     <tr>
-    <td>Contacts*</td>
+    <td>Contacts</td>
 
     <td>FINAL</td>
-    <td bgcolor="yellow"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
@@ -425,8 +423,8 @@
     <td bgcolor="green"></td>
     <td bgcolor="green"></td>
 
-    <td bgcolor="yellow">Player crashes</td>
-    <td bgcolor="yellow">Player crashes</td>
+    <td bgcolor="green"></td>
+    <td bgcolor="green"></td>
     <td bgcolor="green"></td>
     <td bgcolor="gray"></td>
     <td bgcolor="green"></td>
@@ -483,11 +481,6 @@
 
     \endraw
 
-    [*] \i {These APIs are considered FINAL however there are some known issues with Symbian backends. These backend issues will be resolved in a future release.}
-    
-    \note The FINAL Multimedia API does not have binary compatibility with
-    the Beta version of the Qt Multimedia library.
-    
     \raw HTML
     <p>
     \endraw

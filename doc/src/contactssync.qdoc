@@ -52,7 +52,7 @@
 
 The Contacts Synchronous API enables a client to synchronously fetch, update, or remove
 contact data from a contact manager.  A synchronous API is of most use to clients who wish
-to perform simple requests where performance or UI responsiveness is not critical.
+to perform simple requests where performance or user interface responsiveness is not critical.
 Synchronous calls to a contact manager will block until they are completed, and therefore
 should not be performed in the GUI thread if the manager is a frontend to an online service
 or long-latency datastore.  The main advantage of the synchronous API is its simplicity and
@@ -101,7 +101,7 @@ A contact is identified by its QContactId.  This id consists of two parts: a URI
 which stores the contact, and the local id of the contact in that manager.  Some operations which take a pointer
 to a contact as an argument may modify the contact during the operation; updating the contact id is a common example.
 
-The QContactManager class provides API for accessing the ids of contacts which are stored in the manager:
+The QContactManager class provides API for accessing the IDs of contacts which are stored in the manager:
 \list
   \o contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
   \o contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
@@ -234,10 +234,10 @@ datastores.
 The client creates a new contact, adds a name and a phone number, and
 saves it to the default store of the default manager.
 
-We assume the existence of a specialised leaf-class that allows simple
+We assume the existence of a specialized leaf-class that allows simple
 access to details of the definition identified by the "PhoneNumber"
 identifier, and another that allows simple access to details of the
-definition identified by the "Name" identifier.  These specialised leaf
+definition identified by the "Name" identifier.  These specialized leaf
 classes may be written by anyone, and simply wrap the functionality
 provided by QContactDetail in order to allow simpler access to fields
 supported by a particular definition.
@@ -246,7 +246,7 @@ supported by a particular definition.
 
 \section2 Filtering by detail definition and value
 
-The client utilises a default manager and asks for any contacts with a
+The client utilizes a default manager and asks for any contacts with a
 particular phone number.  The example assumes that the default manager
 supports the provided QContactPhoneNumber detail leaf class (which
 implements the default definition for phone number details).

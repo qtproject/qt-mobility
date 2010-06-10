@@ -7,8 +7,9 @@ PUBLIC_HEADERS += audio/qaudio.h \
            audio/qaudiooutput.h \
            audio/qaudiodeviceinfo.h \
            audio/qaudiosystemplugin.h \
-           audio/qaudiosystem.h \
-           audio/qaudiodevicefactory_p.h
+           audio/qaudiosystem.h 
+
+PRIVATE_HEADERS += audio/qaudiodevicefactory_p.h audio/qaudiopluginloader_p.h
 
 
 SOURCES += audio/qaudio.cpp \
@@ -18,12 +19,13 @@ SOURCES += audio/qaudio.cpp \
            audio/qaudioinput.cpp \
            audio/qaudiosystemplugin.cpp \
            audio/qaudiosystem.cpp \
-           audio/qaudiodevicefactory.cpp
+           audio/qaudiodevicefactory.cpp \
+           audio/qaudiopluginloader.cpp
 
 #contains(QT_CONFIG, audio-backend) {
 
 mac {
-    HEADERS +=  audio/qaudioinput_mac_p.h \
+    PRIVATE_HEADERS +=  audio/qaudioinput_mac_p.h \
                 audio/qaudiooutput_mac_p.h \
                 audio/qaudiodeviceinfo_mac_p.h \
                 audio/qaudio_mac_p.h
@@ -37,7 +39,7 @@ mac {
 
 } else:win32 {
 
-    HEADERS += audio/qaudioinput_win32_p.h audio/qaudiooutput_win32_p.h audio/qaudiodeviceinfo_win32_p.h
+    PRIVATE_HEADERS += audio/qaudioinput_win32_p.h audio/qaudiooutput_win32_p.h audio/qaudiodeviceinfo_win32_p.h
     SOURCES += audio/qaudiodeviceinfo_win32_p.cpp \
                audio/qaudiooutput_win32_p.cpp \
                audio/qaudioinput_win32_p.cpp
@@ -48,7 +50,7 @@ mac {
     INCLUDEPATH += /epoc32/include/mmf/common
     INCLUDEPATH += /epoc32/include/mmf/server
 
-    HEADERS += audio/qaudio_symbian_p.h \
+    PRIVATE_HEADERS += audio/qaudio_symbian_p.h \
                audio/qaudiodeviceinfo_symbian_p.h \
                audio/qaudioinput_symbian_p.h \
                audio/qaudiooutput_symbian_p.h
@@ -63,7 +65,7 @@ mac {
     unix:contains(QT_CONFIG, alsa) {
         linux-*|freebsd-*|openbsd-*:{
             DEFINES += HAS_ALSA
-            HEADERS += audio/qaudiooutput_alsa_p.h audio/qaudioinput_alsa_p.h audio/qaudiodeviceinfo_alsa_p.h
+            PRIVATE_HEADERS += audio/qaudiooutput_alsa_p.h audio/qaudioinput_alsa_p.h audio/qaudiodeviceinfo_alsa_p.h
             SOURCES += audio/qaudiodeviceinfo_alsa_p.cpp \
                    audio/qaudiooutput_alsa_p.cpp \
                    audio/qaudioinput_alsa_p.cpp
