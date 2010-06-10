@@ -107,6 +107,7 @@ public:
 class CCalSession;
 class CCalEntryView;
 class CActiveSchedulerWait;
+class TCalTime;
 
 class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, public MCalProgressCallBack
 {
@@ -165,6 +166,10 @@ private:
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item);
     void removeItemL(const QOrganizerItemLocalId& organizeritemId);
+
+    // Conversion functionality to be refactored into a separate class
+    TCalTime qdatetimeToTCalTimeL(QDateTime dateTime) const;
+    QDateTime calTimeToQDateTimeL(TCalTime calTime) const;
 
 private:
     QOrganizerItemSymbianEngineData *d;

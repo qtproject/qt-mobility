@@ -6,7 +6,6 @@ CONFIG += qtestlib
 symbian:
 {
     INCLUDEPATH += .\inc
-    INCLUDEPATH += $$SYMBIAN_PATHS
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
 
     SOURCES += tst_symbianom.cpp

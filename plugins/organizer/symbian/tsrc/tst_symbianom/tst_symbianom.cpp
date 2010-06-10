@@ -50,6 +50,22 @@ QTM_USE_NAMESPACE
 const QString managerName("symbian");
 //const QString managerName("memory");
 
+class QTstDetail
+{
+public:
+    QTstDetail(QString definitionName, QString fieldName, QVariant value)
+    {
+        m_definitionName = definitionName;
+        m_fieldName = fieldName;
+        m_value = value;
+    }
+    QString m_definitionName;
+    QString m_fieldName;
+    QVariant m_value;
+};
+typedef QList<QTstDetail> QTstDetailList;
+Q_DECLARE_METATYPE(QTstDetailList);
+
 class tst_SymbianOm : public QObject
 {
     Q_OBJECT
@@ -81,8 +97,7 @@ private:
     void fetchItemIds();
 
 private:
-    QString detailToQString(QString definitionName, QString field, QString value);
-    bool parseDetails(QStringList detailsString, QList<QOrganizerItemDetail> &details);
+    bool parseDetails(QTstDetailList detailsString, QList<QOrganizerItemDetail> &details);
     bool verifyDetails(QList<QOrganizerItemDetail> actual, QList<QOrganizerItemDetail> expected);
     QOrganizerItemManager *m_om;
 };
@@ -207,46 +222,58 @@ void tst_SymbianOm::removeNegative()
 
 void tst_SymbianOm::addItem_data()
 {
-    QTest::addColumn<QStringList>("detailsString");
+    
+    QTest::addColumn<QTstDetailList>("detailsList");
 
     // Item types
     QTest::newRow("Item type Event")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent));
 /* TODO: enable and implement these details
     QTest::newRow("Item type EventOccurrence")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEventOccurrence));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEventOccurrence));
     QTest::newRow("Item type Journal")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeJournal));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeJournal));
 */
     QTest::newRow("Item type Todo")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo));
 /* TODO: enable and implement these details
     QTest::newRow("Item type TodoOccurrence")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodoOccurrence));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodoOccurrence));
     QTest::newRow("Item type Note")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote));
+*/
 
     // Other details
+    QTest::newRow("Item type Event; details: start time")
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerItemEventTimeRange::DefinitionName, QOrganizerItemEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+    QTest::newRow("Item type Event; details: start time, end time")
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerItemEventTimeRange::DefinitionName, QOrganizerItemEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetail(QOrganizerItemEventTimeRange::DefinitionName, QOrganizerItemEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
+/*
     QTest::newRow("Item type Event; details: description")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
-            << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president")));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president")));
     QTest::newRow("Item type Event; details: description, note")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
-            << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
-            << detailToQString(QOrganizerItemNote::DefinitionName, QOrganizerItemNote::FieldNote, QString("Remember to wear blue jeans")));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
+            << QTstDetail(QOrganizerItemNote::DefinitionName, QOrganizerItemNote::FieldNote, QString("Remember to wear blue jeans")));
     QTest::newRow("Item type Note; details: description, note")
-        << (QStringList()
-            << detailToQString(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote)
-            << detailToQString(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
-            << detailToQString(QOrganizerItemNote::DefinitionName, QOrganizerItemNote::FieldNote, QString("Remember to wear blue jeans")));
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote)
+            << QTstDetail(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
+            << QTstDetail(QOrganizerItemNote::DefinitionName, QOrganizerItemNote::FieldNote, QString("Remember to wear blue jeans")));
 */
 
     // TODO: recurrence and exceptions
@@ -261,9 +288,9 @@ void tst_SymbianOm::addItem_data()
 
 void tst_SymbianOm::addItem()
 {
-    QFETCH(QStringList, detailsString);
+    QFETCH(QTstDetailList, detailsList);
     QList<QOrganizerItemDetail> details;
-    QVERIFY(parseDetails(detailsString, details));
+    QVERIFY(parseDetails(detailsList, details));
 
     // Create item and set it's details
     QOrganizerItem item;
@@ -303,27 +330,34 @@ void tst_SymbianOm::fetchItemIds()
 }
 
 /*!
- * Helper function for presenting detail field values as QStrings
+ * Helper function for parsing QTstDetails into organizer item details
  */
-QString tst_SymbianOm::detailToQString(QString definitionName, QString field, QString value)
+bool tst_SymbianOm::parseDetails(QTstDetailList detailsList, QList<QOrganizerItemDetail> &details)
 {
-    return definitionName + QString(":") + field + QString(":") + value;
-}
+    foreach (QTstDetail tstdetail, detailsList) {
+        QOrganizerItemDetail detail(tstdetail.m_definitionName);
+        int existingIndex(-1);
+        foreach (QOrganizerItemDetail existingDetail, details) {
+            if (existingDetail.definitionName() == detail.definitionName()) {
+                // Replace the existing detail in the list so that the new
+                // field is added to the existing detail
+                // TODO: check that the field does not exist already
+                existingIndex = details.indexOf(existingDetail);
+                detail = existingDetail;
+            }
+        }
 
-/*!
- * Helper function for parsing QStrings into organizer item details
- */
-bool tst_SymbianOm::parseDetails(QStringList detailsString, QList<QOrganizerItemDetail> &details)
-{
-    foreach (QString detailString, detailsString) {
-        QStringList detailParts = detailString.split(QChar(':'));
-        if (detailParts.count() != 3) {
-            qDebug() << QString("Failed to parse details");
+        if (detail.setValue(tstdetail.m_fieldName, tstdetail.m_value)) {
+            // If a detail with same name exists, replace
+            if (existingIndex != -1) {
+                details.replace(existingIndex, detail);
+            } else {
+                details.append(detail);
+            }
+        } else {
+            qDebug() << QString("Failed to set field value!");
             return false;
         }
-        QOrganizerItemDetail detail(detailParts[0]);
-        detail.setValue(detailParts[1], detailParts[2]);
-        details.append(detail);
     }
     return true;
 }
@@ -338,9 +372,9 @@ bool tst_SymbianOm::verifyDetails(QList<QOrganizerItemDetail> actual, QList<QOrg
         foreach (QOrganizerItemDetail actualDetail, actual) {
             if (actualDetail.definitionName() == expectedDetail.definitionName()) {
                 if (actualDetail.variantValues() != expectedDetail.variantValues()) {
-                    qDebug()
-                        << "Detail value mismatch. Actual: " << actualDetail.variantValues()
-                        << "Expected:" << expectedDetail.variantValues();
+                    qDebug() << "Detail value mismatch.";
+                    qDebug() << "Actual  :" << actualDetail.variantValues();
+                    qDebug() << "Expected:" << expectedDetail.variantValues();
                     return false;
                 } else {
                     // A valid detail with the same field values found

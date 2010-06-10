@@ -220,7 +220,9 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
     id.setLocalId(itemId);
     id.setManagerUri(managerUri());
     item->setId(id);
+
     // TODO: other types
+    // TODO: refactor type conversion into a dedicated class
     switch (calEntry->EntryTypeL()) {
     case CCalEntry::EEvent:
         item->setType(QOrganizerItemType::TypeEvent);
@@ -231,6 +233,16 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
     default:
         User::Leave(KErrGeneral);
     }
+
+    // TODO: refactor time range conversion into a dedicated class
+    QOrganizerItemEventTimeRange timeRange;
+    if (calEntry->StartTimeL().TimeUtcL() != Time::NullTTime()) {
+        timeRange.setStartDateTime(calTimeToQDateTimeL(calEntry->StartTimeL()));
+    }
+    if (calEntry->EndTimeL().TimeUtcL() != Time::NullTTime()) {
+        timeRange.setEndDateTime(calTimeToQDateTimeL(calEntry->EndTimeL()));
+    }
+    item->saveDetail(&timeRange);
     CleanupStack::PopAndDestroy(calEntry);
 }
 
@@ -267,7 +279,8 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
     m_entrycount++;
     uid->Des().Num(m_entrycount);
 
-    // TODO: conversions of the details, here is a draft version of converting type
+    // TODO: other types?
+    // TODO: refactor type conversion into a dedicated class
     CCalEntry::TType type(CCalEntry::ETodo);
     if (item->type() == QOrganizerItemType::TypeEvent) {
         type = CCalEntry::EEvent;
@@ -283,15 +296,29 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
     // TODO: sequence number?
     // TODO: recurrence id?
     // TODO: recurrence range?
-        
+
+    // TODO: refactor time range conversion into a dedicated class
+    QOrganizerItemEventTimeRange eventTimeRange = item->detail(QOrganizerItemEventTimeRange::DefinitionName);
+    if (!eventTimeRange.isEmpty()) {
+        if (eventTimeRange.startDateTime().isValid()) {
+            TCalTime startCalTime = qdatetimeToTCalTimeL(eventTimeRange.startDateTime());
+            TCalTime endCalTime;
+            endCalTime.SetTimeLocalL(Time::NullTTime());
+            if (eventTimeRange.endDateTime().isValid()) {
+                endCalTime = qdatetimeToTCalTimeL(eventTimeRange.endDateTime());
+            }
+            entry->SetStartAndEndTimeL(startCalTime, endCalTime);
+        }
+    }
+
     RPointerArray<CCalEntry> entries;
     CleanupClosePushL(entries);
     entries.AppendL(entry);
-    TInt numSuccessfulEntry(0);
-    m_entryView->StoreL(entries, numSuccessfulEntry);
+    TInt count(0);
+    m_entryView->StoreL(entries, count);
     const TInt expectedCount(1);
-    if (numSuccessfulEntry != expectedCount) {
-        // The documentation states about numSuccessfulEntry "On return, this
+    if (count != expectedCount) {
+        // The documentation states about count "On return, this
         // contains the number of entries which were successfully stored".
         // So it is not clear which error caused storing the entry to fail
         // -> let's use the "one-error-fits-all" error code KErrGeneral.
@@ -306,6 +333,35 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
     itemId.setLocalId(localUid);
     itemId.setManagerUri(managerUri());
     item->setId(itemId);
+}
+
+TCalTime QOrganizerItemSymbianEngine::qdatetimeToTCalTimeL(QDateTime dateTime) const
+{
+    uint secondsFrom1970 = dateTime.toTime_t();
+    quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
+    TTime time1970(_L("19700000:000000.000000"));
+    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
+    quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
+
+    TTime time(useconds);
+    TCalTime calTime;
+    calTime.SetTimeUtcL(time);
+
+    return calTime;
+}
+
+QDateTime QOrganizerItemSymbianEngine::calTimeToQDateTimeL(TCalTime calTime) const
+{
+    const TTime time1970(_L("19700000:000000.000000"));
+    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
+    quint64 useconds = calTime.TimeUtcL().Int64() - usecondsBCto1970;
+    quint64 seconds = useconds / (quint64)1000000;
+    quint64 msecondscomponent = (useconds - seconds * (quint64)1000000) / (quint64)1000;
+    QDateTime dateTime;
+    dateTime.setTime_t(seconds);
+    dateTime.setTime(dateTime.time().addMSecs(msecondscomponent));
+
+    return dateTime;
 }
 
 bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
