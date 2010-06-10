@@ -1127,11 +1127,79 @@ static const QStringList vcardsManagedByTelepathy(){
         rtn << field;
       vcardFields = vcardFields->next;
     }
+    FREE(vcardFields);
   }
   
   QCM5_DEBUG << "VCards managed by Telepathy:" << rtn;
   return rtn;
 }
+
+static void populateProfilesCapabilitiesMap(QMap<QString, QStringList>* map){
+  GList* l =  mc_profiles_list(); //Don't free this!!
+  GList* node;
+  
+  map->clear();
+
+  for (node = l; node != NULL; node = g_list_next(node)) {
+    McProfile* p = (McProfile*) node->data; //Don't free this!!
+    
+    //Get serviceProvider name from the profile
+    QString serviceProvider = mc_profile_get_unique_name(p);
+    if (serviceProvider.isEmpty())
+      continue;
+    
+    // Get capabilities
+    McProfileCapabilityFlags caps = mc_profile_get_capabilities(p);
+    QStringList capList;
+    
+    // MC_PROFILE_CAPABILITY_NONE skipped
+    if (caps & MC_PROFILE_CAPABILITY_CHAT_P2P)
+      capList << "CHAT_P2P";
+    if (caps & MC_PROFILE_CAPABILITY_CHAT_ROOM)
+      capList << "CHAT_ROOM";
+    if (caps & MC_PROFILE_CAPABILITY_CHAT_ROOM_LIST)
+      capList << "CHAT_ROOM_LIST";
+    if (caps & MC_PROFILE_CAPABILITY_VOICE_P2P)
+      capList << "VOICE_P2P";
+    if (caps & MC_PROFILE_CAPABILITY_CONTACT_SEARCH)
+      capList << "CONTACT_SEARCH";
+    if (caps & MC_PROFILE_CAPABILITY_SPLIT_ACCOUNT)
+      capList << "SPLIT_ACCOUNT";
+    if (caps & MC_PROFILE_CAPABILITY_REGISTRATION_UI)
+      capList << "REGISTRATION_UI";
+    if (caps & MC_PROFILE_CAPABILITY_SUPPORTS_AVATARS)
+      capList << "SUPPORTS_AVATARS";
+    if (caps & MC_PROFILE_CAPABILITY_SUPPORTS_ALIAS)
+      capList << "SUPPORTS_ALIAS";
+    if (caps & MC_PROFILE_CAPABILITY_SUPPORTS_ROSTER)
+      capList << "SUPPORTS_ROSTER";
+    if (caps & MC_PROFILE_CAPABILITY_VIDEO_P2P)
+      capList << "VIDEO_P2P";
+    if (caps & MC_PROFILE_CAPABILITY_CHAT_UPGRADE)
+      capList << "CHAT_UPGRADE";
+    
+    // Store into the map
+    map->insert(serviceProvider, capList); 
+  }  
+  
+}
+
+static const QStringList mcProfileCapabilities(const QString& serviceProvider){
+  static QMap<QString, QStringList> map;
+  
+  if (map.isEmpty())
+    populateProfilesCapabilitiesMap(&map);
+  
+  if (serviceProvider.isEmpty())
+    return QStringList();
+  
+  QStringList rtn = map.value(serviceProvider);
+  if (!rtn.isEmpty())
+    return rtn;
+  else
+    return QStringList();
+}
+
 
 QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eContact) const
 {
@@ -1151,7 +1219,7 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
     QContactOnlineAccount* rtn = new QContactOnlineAccount;
     const char* accountUri;
     const char* serviceProvider;
-    
+    QStringList caps;
     EVCardAttribute* attr = (EVCardAttribute*)node->data;
     if (!attr)
       continue;
@@ -1177,16 +1245,10 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
       }
     }
 
-#if 0    
-    // Get Capabilities
-    OssoABookCapsFlags caps;
-    caps = osso_abook_caps_from_account(McAccount *account);
-#endif
-
     // Set details
     QVariantMap map;
     map[QContactOnlineAccount::FieldAccountUri] = accountUri;
-    //map[QContactOnlineAccount::FieldCapabilities] =; //### TODO
+    map[QContactOnlineAccount::FieldCapabilities] = mcProfileCapabilities(serviceProvider);
     map[QContactOnlineAccount::FieldServiceProvider] = serviceProvider; // eg: facebook-chat,
     setDetailValues(map, rtn);
     
