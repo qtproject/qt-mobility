@@ -1816,11 +1816,14 @@ void QSystemDeviceInfoPrivate::connectNotify(const char *signal)
     }
 
     if (QLatin1String(signal) == SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState))) {
+        NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+
         CFRunLoopSourceRef runLoopSource = (CFRunLoopSourceRef)IOPSNotificationCreateRunLoopSource(powerInfoChanged, this);
         if (runLoopSource) {
             CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
             CFRelease(runLoopSource);
         }
+        [autoreleasepool release];
     }
 }
 
@@ -1934,12 +1937,17 @@ QString QSystemDeviceInfoPrivate::model()
 
 QString QSystemDeviceInfoPrivate::productName()
 {
-    return nsstringToQString([[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductName"]);
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+    QString name = nsstringToQString([[[NSDictionary dictionaryWithContentsOfFile:@"/System/Library/CoreServices/SystemVersion.plist"] objectForKey:@"ProductName"]autorelease]);
+    [autoreleasepool release];
+    return name ;
 }
 
 int QSystemDeviceInfoPrivate::batteryLevel()
 {
     float level = 0;
+    NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
+
     CFDictionaryRef powerSourceDict = NULL;
     CFTypeRef powerSourcesInfoBlob = IOPSCopyPowerSourcesInfo();
     CFArrayRef powerSourcesList = IOPSCopyPowerSourcesList(powerSourcesInfoBlob);
@@ -1984,6 +1992,7 @@ int QSystemDeviceInfoPrivate::batteryLevel()
         Q_EMIT batteryStatusChanged(batteryStatusCache);
     }
 
+    [autoreleasepool release];
     return (int)level;
 }
 
