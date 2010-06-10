@@ -68,12 +68,17 @@ QTM_BEGIN_NAMESPACE
     QGraphicsWidget.
 
     TODO link to example
+
+    DESIGN TODO do we need a signal for when the user pans the map?
 */
 
 /*!
 \enum QGeoMapWidget::MapType
 
 Describes a type of map data.
+
+\value NoMap
+Indicates a lack of map valid data.
 
 \value StreetMap
 The map data is a graphical representation of streets and building boundaries.
@@ -157,7 +162,8 @@ void QGeoMapWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 }
 
 /*!
-    Returns the minimum zoom level supported by this manager.
+    Returns the minimum zoom level supported by the QGeoMappingManager
+    associated with this widget.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -171,7 +177,8 @@ qreal QGeoMapWidget::minimumZoomLevel() const
 }
 
 /*!
-    Returns the maximum zoom level supported by this manager.
+    Returns the maximum zoom level supported by the QGeoMappingManager
+    associated with this widget.
 
     Larger values of the zoom level correspond to more detailed views of the
     map.
@@ -256,11 +263,28 @@ QGeoCoordinate QGeoMapWidget::center() const
 }
 
 /*!
+    Returns the map types supported by the QGeoMappingManager associated with
+    this widget.
+*/
+QList<QGeoMapWidget::MapType> QGeoMapWidget::supportedMapTypes() const
+{
+    if (d_ptr->manager)
+        return d_ptr->manager->supportedMapTypes();
+
+    return QList<QGeoMapWidget::MapType>();
+}
+
+/*!
     Changes the type of map data to display to \a mapType.
+
+    This will do nothing if \a mapType is not present in supportedMapTypes().
 */
 void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
 {
     if (d_ptr->mapData && d_ptr->manager) {
+        if (!d_ptr->manager->supportedMapTypes().contains(mapType))
+            return;
+
         d_ptr->mapData->setMapType(mapType);
         d_ptr->manager->updateMapImage(d_ptr->mapData);
     }
@@ -271,8 +295,10 @@ void QGeoMapWidget::setMapType(QGeoMapWidget::MapType mapType)
 */
 QGeoMapWidget::MapType QGeoMapWidget::mapType() const
 {
-    // TODO null check
-    return d_ptr->mapData->mapType();
+    if (d_ptr->mapData)
+        return d_ptr->mapData->mapType();
+
+    return QGeoMapWidget::NoMap;
 }
 
 /*!
@@ -379,6 +405,26 @@ QGeoCoordinate QGeoMapWidget::screenPositionToCoordinate(QPointF screenPosition)
 
     return QGeoCoordinate();
 }
+
+/*!
+\fn void QGeoMapWidget::zoomLevelChanged(qreal zoomLevel)
+
+Indicates that the zoom level has changed to \a zoomLevel.
+*/
+
+/*!
+\fn void QGeoMapWidget::centered(const QGeoCoordinate &coordinate)
+
+Indicates that the map has been centered on \a coordinate.
+
+This signal will not be emitted when the user pans the map.
+*/
+
+/*!
+\fn void QGeoMapWidget::mapTypeChanged(MapType mapType)
+
+Indicates that the type of the map has been changed.
+*/
 
 /*******************************************************************************
 *******************************************************************************/

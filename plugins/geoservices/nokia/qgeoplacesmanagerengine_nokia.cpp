@@ -174,7 +174,7 @@ QGeoPlacesReply* QGeoPlacesManagerEngineNokia::placesSearch(const QString &searc
     //requestString += request->locale().language();
 
     requestString += "&obloc=";
-    requestString += addressString;
+    requestString += searchString;
 
     return search(requestString);
 }

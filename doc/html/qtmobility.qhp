@@ -1784,17 +1784,20 @@
             <keyword name="~QGeoMapData" id="QGeoMapData::~QGeoMapData" ref="qgeomapdata.html#dtor.QGeoMapData"/>
             <keyword name="QGeoMapWidget" id="QGeoMapWidget" ref="qgeomapwidget.html"/>
             <keyword name="QGeoMapWidget::MapType" id="QGeoMapWidget::MapType" ref="qgeomapwidget.html#MapType-enum"/>
+            <keyword name="QGeoMapWidget::NoMap" id="QGeoMapWidget::NoMap" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::StreetMap" id="QGeoMapWidget::StreetMap" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::SatelliteMapDay" id="QGeoMapWidget::SatelliteMapDay" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::SatelliteMapNight" id="QGeoMapWidget::SatelliteMapNight" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::TerrainMap" id="QGeoMapWidget::TerrainMap" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="addMapObject" id="QGeoMapWidget::addMapObject" ref="qgeomapwidget.html#addMapObject"/>
             <keyword name="center" id="QGeoMapWidget::center" ref="qgeomapwidget.html#center"/>
+            <keyword name="centered" id="QGeoMapWidget::centered" ref="qgeomapwidget.html#centered"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapWidget::coordinateToScreenPosition" ref="qgeomapwidget.html#coordinateToScreenPosition"/>
             <keyword name="mapObjects" id="QGeoMapWidget::mapObjects" ref="qgeomapwidget.html#mapObjects"/>
             <keyword name="mapObjectsAtScreenPosition" id="QGeoMapWidget::mapObjectsAtScreenPosition" ref="qgeomapwidget.html#mapObjectsAtScreenPosition"/>
             <keyword name="mapObjectsInScreenRect" id="QGeoMapWidget::mapObjectsInScreenRect" ref="qgeomapwidget.html#mapObjectsInScreenRect"/>
             <keyword name="mapType" id="QGeoMapWidget::mapType" ref="qgeomapwidget.html#mapType"/>
+            <keyword name="mapTypeChanged" id="QGeoMapWidget::mapTypeChanged" ref="qgeomapwidget.html#mapTypeChanged"/>
             <keyword name="maximumZoomLevel" id="QGeoMapWidget::maximumZoomLevel" ref="qgeomapwidget.html#maximumZoomLevel"/>
             <keyword name="minimumZoomLevel" id="QGeoMapWidget::minimumZoomLevel" ref="qgeomapwidget.html#minimumZoomLevel"/>
             <keyword name="paint" id="QGeoMapWidget::paint" ref="qgeomapwidget.html#paint"/>
@@ -1806,8 +1809,10 @@
             <keyword name="setMapType" id="QGeoMapWidget::setMapType" ref="qgeomapwidget.html#setMapType"/>
             <keyword name="setZoomLevel" id="QGeoMapWidget::setZoomLevel" ref="qgeomapwidget.html#setZoomLevel"/>
             <keyword name="shape" id="QGeoMapWidget::shape" ref="qgeomapwidget.html#shape"/>
+            <keyword name="supportedMapTypes" id="QGeoMapWidget::supportedMapTypes" ref="qgeomapwidget.html#supportedMapTypes"/>
             <keyword name="visibleMapObjects" id="QGeoMapWidget::visibleMapObjects" ref="qgeomapwidget.html#visibleMapObjects"/>
             <keyword name="zoomLevel" id="QGeoMapWidget::zoomLevel" ref="qgeomapwidget.html#zoomLevel"/>
+            <keyword name="zoomLevelChanged" id="QGeoMapWidget::zoomLevelChanged" ref="qgeomapwidget.html#zoomLevelChanged"/>
             <keyword name="~QGeoMapWidget" id="QGeoMapWidget::~QGeoMapWidget" ref="qgeomapwidget.html#dtor.QGeoMapWidget"/>
             <keyword name="QGeoMappingManager" id="QGeoMappingManager" ref="qgeomappingmanager.html"/>
             <keyword name="createMapData" id="QGeoMappingManager::createMapData" ref="qgeomappingmanager.html#createMapData"/>

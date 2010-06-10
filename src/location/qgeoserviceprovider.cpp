@@ -95,14 +95,19 @@ QTM_BEGIN_NAMESPACE
 /*!
 \enum QGeoServiceProvider::Error 
 
+Describes an error related to the construction and setup of providers of
+geographic information.
+
 \value NoError
+No error has occurred.
 
 \value NotSupportedError
+The
 
 \value UnknownParameterError
 
 \value MissingRequiredParameterError
-
+The service provider
 */
 
 /*!
@@ -115,12 +120,11 @@ QStringList QGeoServiceProvider::availableServiceProviders()
 }
 
 /*!
-    Constract a QGeoServiceProvider whose backend has the name \a providerName
-    and is constructed with the provided \a parameters.
+    Constructs a QGeoServiceProvider whose backend has the name \a
+    providerName, using the provided \a parameters.
 
-    TODO if the name is bad use the platform default?
-
-    Will find the highest version plugin available with the given name.
+    If multiple plugins have the same \a providerName, the plugin with the highest
+    reported providerVersion() will be used.
 
     If no plugin was able to be loaded then error() and errorString() will
     provide details about why this is the case.
@@ -133,7 +137,14 @@ QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap
 }
 
 /*!
-    Will try to match the given version number
+    Constructs a QGeoServiceProvider whose backend has the name \a providerName
+    and version \a providerVersion, using the provided \a parameters.
+
+    If multiple plugins have the same \a providerName, the plugin with the highest
+    reported providerVersion() will be used.
+
+    If no plugin was able to be loaded then error() and errorString() will
+    provide details about why this is the case.
 */
 QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, int providerVersion, const QMap<QString, QString> &parameters)
         : d_ptr(new QGeoServiceProviderPrivate())
@@ -160,7 +171,15 @@ QGeoServiceProvider::~QGeoServiceProvider()
     This function will return 0 if the service provider does not provide
     any geocoding services.
 
-    TODO doc lazy loading, setting of error
+    This function will attempt to construct a QGeoPlacesManager instance
+    when it is called for the first time.  If the attempt is succesful the
+    QGeoPlacesManager will be cached, otherwise each call of this function
+    will attempt to construct a QGeoPlacesManager instance until the
+    construction is successful.
+
+    After this function has been called, error() and errorString() will
+    report any errors which occurred during the construction of the
+    QGeoPlacesManager.
 */
 QGeoPlacesManager* QGeoServiceProvider::placesManager() const
 {
@@ -171,13 +190,18 @@ QGeoPlacesManager* QGeoServiceProvider::placesManager() const
         QGeoPlacesManagerEngine *engine = d_ptr->factory->createPlacesManagerEngine(d_ptr->parameterMap,
                                                                                     &(d_ptr->placesError),
                                                                                     &(d_ptr->placesErrorString));
-
-        engine->setManagerName(d_ptr->factory->providerName());
-        engine->setManagerVersion(d_ptr->factory->providerVersion());
-        d_ptr->placesManager = new QGeoPlacesManager(engine);
+        if (engine) {
+            engine->setManagerName(d_ptr->factory->providerName());
+            engine->setManagerVersion(d_ptr->factory->providerVersion());
+            d_ptr->placesManager = new QGeoPlacesManager(engine);
+        } else {
+            d_ptr->placesError = QGeoServiceProvider::NotSupportedError;
+            d_ptr->placesErrorString = "The service provider does not support placesManager().";
+        }
 
         if (d_ptr->placesError != QGeoServiceProvider::NoError) {
-            delete d_ptr->placesManager;
+            if (d_ptr->placesManager)
+                delete d_ptr->placesManager;
             d_ptr->placesManager = 0;
             d_ptr->error = d_ptr->placesError;
             d_ptr->errorString = d_ptr->placesErrorString;
@@ -194,7 +218,15 @@ QGeoPlacesManager* QGeoServiceProvider::placesManager() const
     This function will return 0 if the service provider does not provide
     any mapping services.
 
-    TODO doc lazy loading, setting of error
+    This function will attempt to construct a QGeoMappingManager instance
+    when it is called for the first time.  If the attempt is succesful the
+    QGeoMappingManager will be cached, otherwise each call of this function
+    will attempt to construct a QGeoMappingManager instance until the
+    construction is successful.
+
+    After this function has been called, error() and errorString() will
+    report any errors which occurred during the construction of the
+    QGeoMappingManager.
 */
 QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 {
@@ -206,12 +238,18 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
                                                                                       &(d_ptr->mappingError),
                                                                                       &(d_ptr->mappingErrorString));
 
-        engine->setManagerName(d_ptr->factory->providerName());
-        engine->setManagerVersion(d_ptr->factory->providerVersion());
-        d_ptr->mappingManager = new QGeoMappingManager(engine);
+        if (engine) {
+            engine->setManagerName(d_ptr->factory->providerName());
+            engine->setManagerVersion(d_ptr->factory->providerVersion());
+            d_ptr->mappingManager = new QGeoMappingManager(engine);
+        } else {
+            d_ptr->mappingError = QGeoServiceProvider::NotSupportedError;
+            d_ptr->mappingErrorString = "The service provider does not support mappingManager().";
+        }
 
         if (d_ptr->mappingError != QGeoServiceProvider::NoError) {
-            delete d_ptr->mappingManager;
+            if (d_ptr->mappingManager)
+                delete d_ptr->mappingManager;
             d_ptr->mappingManager = 0;
             d_ptr->error = d_ptr->mappingError;
             d_ptr->errorString = d_ptr->mappingErrorString;
@@ -228,7 +266,15 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
     This function will return 0 if the service provider does not provide
     any geographic routing services.
 
-    TODO doc lazy loading, setting of error
+    This function will attempt to construct a QGeoRoutingManager instance
+    when it is called for the first time.  If the attempt is succesful the
+    QGeoRoutingManager will be cached, otherwise each call of this function
+    will attempt to construct a QGeoRoutingManager instance until the
+    construction is successful.
+
+    After this function has been called, error() and errorString() will
+    report any errors which occurred during the construction of the
+    QGeoRoutingManager.
 */
 QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 {
@@ -240,12 +286,18 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
                                                                                       &(d_ptr->routingError),
                                                                                       &(d_ptr->routingErrorString));
 
-        engine->setManagerName(d_ptr->factory->providerName());
-        engine->setManagerVersion(d_ptr->factory->providerVersion());
-        d_ptr->routingManager = new QGeoRoutingManager(engine);
+        if (engine) {
+            engine->setManagerName(d_ptr->factory->providerName());
+            engine->setManagerVersion(d_ptr->factory->providerVersion());
+            d_ptr->routingManager = new QGeoRoutingManager(engine);
+        } else {
+            d_ptr->routingError = QGeoServiceProvider::NotSupportedError;
+            d_ptr->routingErrorString = "The service provider does not support routingManager().";
+        }
 
         if (d_ptr->routingError != QGeoServiceProvider::NoError) {
-            delete d_ptr->routingManager;
+            if (d_ptr->routingManager)
+                delete d_ptr->routingManager;
             d_ptr->routingManager = 0;
             d_ptr->error = d_ptr->routingError;
             d_ptr->errorString = d_ptr->routingErrorString;
@@ -256,6 +308,8 @@ QGeoRoutingManager* QGeoServiceProvider::routingManager() const
 }
 
 /*!
+    Returns an error code describing the error which occurred during the
+    last operation that was performed by this class.
 */
 QGeoServiceProvider::Error QGeoServiceProvider::error() const
 {
@@ -263,6 +317,8 @@ QGeoServiceProvider::Error QGeoServiceProvider::error() const
 }
 
 /*!
+    Returns a string describing the error which occurred during the
+    last operation that was performed by this class.
 */
 QString QGeoServiceProvider::errorString() const
 {

@@ -1317,14 +1317,17 @@
         <keyword ref="qgeomapwidget.html#MapType-enum">QGeoMapWidget::SatelliteMapNight</keyword>
         <keyword ref="qgeomapwidget.html#MapType-enum">QGeoMapWidget::TerrainMap</keyword>
         <keyword ref="qgeomapwidget.html#MapType-enum">QGeoMapWidget::SatelliteMapDay</keyword>
+        <keyword ref="qgeomapwidget.html#MapType-enum">QGeoMapWidget::NoMap</keyword>
         <keyword ref="qgeomapwidget.html#MapType-enum">QGeoMapWidget::StreetMap</keyword>
         <keyword ref="qgeomapwidget.html#addMapObject">addMapObject</keyword>
         <keyword ref="qgeomapwidget.html#center">center</keyword>
+        <keyword ref="qgeomapwidget.html#centered">centered</keyword>
         <keyword ref="qgeomapwidget.html#coordinateToScreenPosition">coordinateToScreenPosition</keyword>
         <keyword ref="qgeomapwidget.html#mapObjects">mapObjects</keyword>
         <keyword ref="qgeomapwidget.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</keyword>
         <keyword ref="qgeomapwidget.html#mapObjectsInScreenRect">mapObjectsInScreenRect</keyword>
         <keyword ref="qgeomapwidget.html#mapType">mapType</keyword>
+        <keyword ref="qgeomapwidget.html#mapTypeChanged">mapTypeChanged</keyword>
         <keyword ref="qgeomapwidget.html#maximumZoomLevel">maximumZoomLevel</keyword>
         <keyword ref="qgeomapwidget.html#minimumZoomLevel">minimumZoomLevel</keyword>
         <keyword ref="qgeomapwidget.html#paint">paint</keyword>
@@ -1336,8 +1339,10 @@
         <keyword ref="qgeomapwidget.html#setMapType">setMapType</keyword>
         <keyword ref="qgeomapwidget.html#setZoomLevel">setZoomLevel</keyword>
         <keyword ref="qgeomapwidget.html#shape">shape</keyword>
+        <keyword ref="qgeomapwidget.html#supportedMapTypes">supportedMapTypes</keyword>
         <keyword ref="qgeomapwidget.html#visibleMapObjects">visibleMapObjects</keyword>
         <keyword ref="qgeomapwidget.html#zoomLevel">zoomLevel</keyword>
+        <keyword ref="qgeomapwidget.html#zoomLevelChanged">zoomLevelChanged</keyword>
         <section ref="qgeomapwidget-members.html" title="List of all members"/>
     </section>
     <section ref="qgeonavigationinstruction.html" title="QGeoNavigationInstruction Class Reference">

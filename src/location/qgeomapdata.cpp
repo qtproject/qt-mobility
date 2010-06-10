@@ -292,7 +292,7 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 
     QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
     for (int i = 0; i < objects.size(); ++i)
-        if (bounds.intersects(objects.at(i)->bounds()))
+        if (bounds.intersects(objects.at(i)->boundingBox()))
             results.append(objects.at(i));
 
     return results;
@@ -357,7 +357,8 @@ QPixmap QGeoMapData::mapImage() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapDataPrivate::QGeoMapDataPrivate() {}
+QGeoMapDataPrivate::QGeoMapDataPrivate()
+    : containerObject(new QGeoMapObject()) {}
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
         : widget(other.widget),
@@ -366,13 +367,13 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
         center(other.center),
         viewportSize(other.viewportSize),
         mapType(other.mapType),
-        mapObjects(other.mapObjects),
+        containerObject(other.containerObject),
         imageChangesTriggerUpdates(other.imageChangesTriggerUpdates),
         mapImage(other.mapImage) {}
 
 QGeoMapDataPrivate::~QGeoMapDataPrivate()
 {
-    qDeleteAll(mapObjects);
+    delete containerObject;
 }
 
 QGeoMapDataPrivate& QGeoMapDataPrivate::operator= (const QGeoMapDataPrivate & other)
@@ -383,7 +384,7 @@ QGeoMapDataPrivate& QGeoMapDataPrivate::operator= (const QGeoMapDataPrivate & ot
     center = other.center;
     viewportSize = other.viewportSize;
     mapType = other.mapType;
-    mapObjects = other.mapObjects;
+    containerObject = other.containerObject;
     imageChangesTriggerUpdates = other.imageChangesTriggerUpdates;
     mapImage = other.mapImage;
 

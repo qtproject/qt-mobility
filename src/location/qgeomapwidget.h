@@ -58,6 +58,7 @@ class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
     Q_OBJECT
 public:
     enum MapType {
+        NoMap,
         StreetMap,
         SatelliteMapDay,
         SatelliteMapNight,
@@ -81,6 +82,7 @@ public:
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
+    QList<MapType> supportedMapTypes() const;
     void setMapType(MapType mapType);
     MapType mapType() const;
 
@@ -95,10 +97,13 @@ public:
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
-//TODO need signals for center changed, zoom changed etc...
-
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
+
+signals:
+    void zoomLevelChanged(qreal zoomLevel);
+    void centered(const QGeoCoordinate &coordinate);
+    void mapTypeChanged(MapType mapType);
 
 private:
     QGeoMapWidgetPrivate *d_ptr;

@@ -140,7 +140,7 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
         return false;
 
     for (int i = 0; i < d->children.size(); ++i)
-        if (d->children.at(i)->contains(coordiante))
+        if (d->children.at(i)->contains(coordinate))
             return true;
 
     return false;

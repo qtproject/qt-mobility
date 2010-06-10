@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapWidget Class Reference</h1>
-<p>The QGeoMapWidget class is. <a href="#details">More...</a></p>
+<p>The QGeoMapWidget class is used to display a map and manager the interactions between the user and the map. <a href="#details">More...</a></p>
 <pre>    #include &lt;QGeoMapWidget&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
 <ul>
 <li><a href="qgeomapwidget-members.html">List of all members, including inherited members</a></li>
@@ -23,7 +23,7 @@
 <a name="public-types"></a>
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#MapType-enum">MapType</a></b> { StreetMap, SatelliteMapDay, SatelliteMapNight, TerrainMap }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#MapType-enum">MapType</a></b> { NoMap, StreetMap, SatelliteMapDay, SatelliteMapNight, TerrainMap }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
@@ -46,6 +46,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setMapType">setMapType</a></b> ( MapType <i>mapType</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#setZoomLevel">setZoomLevel</a></b> ( qreal <i>zoomLevel</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;MapType&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#supportedMapTypes">supportedMapTypes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#visibleMapObjects">visibleMapObjects</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#zoomLevel">zoomLevel</a></b> () const</td></tr>
 </table>
@@ -61,6 +62,18 @@
 <li><div bar="2" class="fn"></div>35 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicslayoutitem.html#public-functions">QGraphicsLayoutItem</a></li>
 <li><div bar="2" class="fn"></div>167 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#public-functions">QGraphicsItem</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+</ul>
+<hr />
+<a name="signals"></a>
+<h2>Signals</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#centered">centered</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#mapTypeChanged">mapTypeChanged</a></b> ( MapType <i>mapType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapwidget.html#zoomLevelChanged">zoomLevelChanged</a></b> ( qreal <i>zoomLevel</i> )</td></tr>
+</table>
+<ul>
+<li><div bar="2" class="fn"></div>9 signals inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#signals">QGraphicsObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="reimplemented-protected-functions"></a>
@@ -81,8 +94,6 @@
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-slots">QGraphicsWidget</a></li>
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>9 signals inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsobject.html#signals">QGraphicsObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html#public-variables">QGraphicsWidget</a></li>
 <li><div class="fn"></div>2 public variables inherited from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#public-variables">QGraphicsItem</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
@@ -99,10 +110,16 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QGeoMapWidget class is.</p>
+<p>The QGeoMapWidget class is used to display a map and manager the interactions between the user and the map.</p>
+<p>Most of the functionality is provided by <a href="qgeomappingmanager.html">QGeoMappingManager</a>, which handles most aspects of the display.</p>
+<p>TODO describe link to map objects</p>
+<p>Mouse and keyboard events should be handled by subclassing QGeoMapWidget and providing implementations of the event handling functions present in <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
+<p>TODO link to example</p>
+<p>DESIGN TODO do we need a signal for when the user pans the map?</p>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoMapWidget/MapType"></a>
+<a name="//apple_ref/cpp/econst/QGeoMapWidget/NoMap"></a>
 <a name="//apple_ref/cpp/econst/QGeoMapWidget/StreetMap"></a>
 <a name="//apple_ref/cpp/econst/QGeoMapWidget/SatelliteMapDay"></a>
 <a name="//apple_ref/cpp/econst/QGeoMapWidget/SatelliteMapNight"></a>
@@ -111,10 +128,11 @@
 <p>Describes a type of map data.</p>
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGeoMapWidget::StreetMap</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The map data is a graphical representation of streets and building boundaries.</td></tr>
-<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapDay</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The map data is composed of images collected by satellites during the daytime.</td></tr>
-<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapNight</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The map data is composed of images collected by satellites during the nighttime.</td></tr>
-<tr><td valign="top"><tt>QGeoMapWidget::TerrainMap</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The map data is a graphical representation of terrain features. This may also include some of the information provided by QGeoMapWidget::StreetMap.</td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::NoMap</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Indicates a lack of map valid data.</td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::StreetMap</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The map data is a graphical representation of streets and building boundaries.</td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapDay</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The map data is composed of images collected by satellites during the daytime.</td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::SatelliteMapNight</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The map data is composed of images collected by satellites during the nighttime.</td></tr>
+<tr><td valign="top"><tt>QGeoMapWidget::TerrainMap</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">The map data is a graphical representation of terrain features. This may also include some of the information provided by QGeoMapWidget::StreetMap.</td></tr>
 </table></p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -136,6 +154,10 @@
 <h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapWidget::center () const</h3>
 <p>Returns the coordinate of the point in the center of the map viewport.</p>
 <p>See also <a href="qgeomapwidget.html#setCenter">setCenter</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/centered"></a>
+<h3 class="fn"><a name="centered"></a>void QGeoMapWidget::centered ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Indicates that the map has been centered on <i>coordinate</i>.</p>
+<p>This signal will not be emitted when the user pans the map.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/coordinateToScreenPosition"></a>
 <h3 class="fn"><a name="coordinateToScreenPosition"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QGeoMapWidget::coordinateToScreenPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const</h3>
 <p>Returns the position on the screen at which <i>coordinate</i> is displayed.</p>
@@ -153,13 +175,16 @@
 <h3 class="fn"><a name="mapType"></a><a href="qgeomapwidget.html#MapType-enum">MapType</a> QGeoMapWidget::mapType () const</h3>
 <p>Returns the type of map data which is being displayed.</p>
 <p>See also <a href="qgeomapwidget.html#setMapType">setMapType</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/mapTypeChanged"></a>
+<h3 class="fn"><a name="mapTypeChanged"></a>void QGeoMapWidget::mapTypeChanged ( <a href="qgeomapwidget.html#MapType-enum">MapType</a> <i>mapType</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Indicates that the type of the map has been changed.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/maximumZoomLevel"></a>
 <h3 class="fn"><a name="maximumZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::maximumZoomLevel () const</h3>
-<p>Returns the maximum zoom level supported by this manager.</p>
+<p>Returns the maximum zoom level supported by the <a href="qgeomappingmanager.html">QGeoMappingManager</a> associated with this widget.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/minimumZoomLevel"></a>
 <h3 class="fn"><a name="minimumZoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::minimumZoomLevel () const</h3>
-<p>Returns the minimum zoom level supported by this manager.</p>
+<p>Returns the minimum zoom level supported by the <a href="qgeomappingmanager.html">QGeoMappingManager</a> associated with this widget.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/paint"></a>
 <h3 class="fn"><a name="paint"></a>void QGeoMapWidget::paint ( <a href="http://qt.nokia.com/doc/4.6/qpainter.html">QPainter</a> * <i>painter</i>, const <a href="http://qt.nokia.com/doc/4.6/qstyleoptiongraphicsitem.html">QStyleOptionGraphicsItem</a> * <i>option</i>, <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> * <i>parent</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
@@ -186,6 +211,7 @@
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/setMapType"></a>
 <h3 class="fn"><a name="setMapType"></a>void QGeoMapWidget::setMapType ( <a href="qgeomapwidget.html#MapType-enum">MapType</a> <i>mapType</i> )</h3>
 <p>Changes the type of map data to display to <i>mapType</i>.</p>
+<p>This will do nothing if <i>mapType</i> is not present in <a href="qgeomapwidget.html#supportedMapTypes">supportedMapTypes</a>().</p>
 <p>See also <a href="qgeomapwidget.html#mapType">mapType</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/setZoomLevel"></a>
 <h3 class="fn"><a name="setZoomLevel"></a>void QGeoMapWidget::setZoomLevel ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>zoomLevel</i> )</h3>
@@ -196,6 +222,9 @@
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/shape"></a>
 <h3 class="fn"><a name="shape"></a><a href="http://qt.nokia.com/doc/4.6/qpainterpath.html">QPainterPath</a> QGeoMapWidget::shape () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qgraphicsitem.html#shape">QGraphicsItem::shape</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/supportedMapTypes"></a>
+<h3 class="fn"><a name="supportedMapTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapwidget.html#MapType-enum">MapType</a>&gt; QGeoMapWidget::supportedMapTypes () const</h3>
+<p>Returns the map types supported by the <a href="qgeomappingmanager.html">QGeoMappingManager</a> associated with this widget.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/visibleMapObjects"></a>
 <h3 class="fn"><a name="visibleMapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::visibleMapObjects ()</h3>
 <p>Returns the list of map objects managed by this widget which are currently visible and at least partially within the viewport of the map.</p>
@@ -204,6 +233,9 @@
 <p>Returns the zoom level of the map.</p>
 <p>Larger values of the zoom level correspond to more detailed views of the map.</p>
 <p>See also <a href="qgeomapwidget.html#setZoomLevel">setZoomLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapWidget/zoomLevelChanged"></a>
+<h3 class="fn"><a name="zoomLevelChanged"></a>void QGeoMapWidget::zoomLevelChanged ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>zoomLevel</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Indicates that the zoom level has changed to <i>zoomLevel</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

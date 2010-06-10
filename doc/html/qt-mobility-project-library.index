@@ -1225,10 +1225,11 @@
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGeoMapWidget" href="qgeomapwidget.html" location="qgeomapwidget.h" bases="QGraphicsWidget" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="MapType" fullname="QGeoMapWidget::MapType" href="qgeomapwidget.html#MapType-enum" location="qgeomapwidget.h">
-                <value name="StreetMap" value="0"/>
-                <value name="SatelliteMapDay" value="1"/>
-                <value name="SatelliteMapNight" value="2"/>
-                <value name="TerrainMap" value="3"/>
+                <value name="NoMap" value="0"/>
+                <value name="StreetMap" value="1"/>
+                <value name="SatelliteMapDay" value="2"/>
+                <value name="SatelliteMapNight" value="3"/>
+                <value name="TerrainMap" value="4"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QGeoMapWidget" fullname="QGeoMapWidget::QGeoMapWidget" href="qgeomapwidget.html#QGeoMapWidget" location="qgeomapwidget.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGeoMapWidget(QGeoMappingManager * manager, QGraphicsItem * parent)">
                 <parameter left="QGeoMappingManager *" right="" name="manager" default=""/>
@@ -1255,6 +1256,7 @@
                 <parameter left="const QGeoCoordinate &amp;" right="" name="center" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="center" fullname="QGeoMapWidget::center" href="qgeomapwidget.html#center" location="qgeomapwidget.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="center() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="supportedMapTypes" fullname="QGeoMapWidget::supportedMapTypes" href="qgeomapwidget.html#supportedMapTypes" location="qgeomapwidget.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;MapType&gt;" signature="supportedMapTypes() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setMapType" fullname="QGeoMapWidget::setMapType" href="qgeomapwidget.html#setMapType" location="qgeomapwidget.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setMapType(MapType mapType)">
                 <parameter left="MapType" right="" name="mapType" default=""/>
             </function>
@@ -1281,6 +1283,15 @@
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="resizeEvent" fullname="QGeoMapWidget::resizeEvent" href="qgeomapwidget.html#resizeEvent" location="qgeomapwidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="resizeEvent(QGraphicsSceneResizeEvent * event)">
                 <parameter left="QGraphicsSceneResizeEvent *" right="" name="event" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="zoomLevelChanged" fullname="QGeoMapWidget::zoomLevelChanged" href="qgeomapwidget.html#zoomLevelChanged" location="qgeomapwidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="zoomLevelChanged(qreal zoomLevel)">
+                <parameter left="qreal" right="" name="zoomLevel" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="centered" fullname="QGeoMapWidget::centered" href="qgeomapwidget.html#centered" location="qgeomapwidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="centered(const QGeoCoordinate &amp; coordinate)">
+                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mapTypeChanged" fullname="QGeoMapWidget::mapTypeChanged" href="qgeomapwidget.html#mapTypeChanged" location="qgeomapwidget.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="mapTypeChanged(MapType mapType)">
+                <parameter left="MapType" right="" name="mapType" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkProximityFilter" href="qlandmarkproximityfilter.html" location="qlandmarkproximityfilter.h" bases="QLandmarkFilter" module="">
