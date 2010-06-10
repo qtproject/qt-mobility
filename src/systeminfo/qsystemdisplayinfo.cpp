@@ -87,32 +87,60 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
     return displayInfoPrivate()->colorDepth(screenNumber);
 }
 
+/*!
+    Returns the orientation of the \a screen.
+
+    \sa QDesktopWidget::screenCount()
+*/
 QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfo::getOrientation(int screen)
 {
     return displayInfoPrivate()->getOrientation(screen);
 }
 
 
+/*!
+    Returns the current contrast of the screen \a screen.
+
+    \sa QDesktopWidget::screenCount()
+*/
 float QSystemDisplayInfo::contrast(int screen)
 {
         return displayInfoPrivate()->contrast(screen);
 }
 
+/*!
+    Returns the current dots per inch (DPI) for the width of \a screen.
+
+    \sa QDesktopWidget::screenCount()
+*/
 int QSystemDisplayInfo::getDPIWidth(int screen)
 {
         return displayInfoPrivate()->getDPIWidth(screen);
 }
 
+/*!
+    Returns the dpi (Dot Per Inch) of the height os \a screen.
+
+    \sa QDesktopWidget::screenCount()
+*/
 int QSystemDisplayInfo::getDPIHeight(int screen)
 {
         return displayInfoPrivate()->getDPIHeight(screen);
 }
 
+/*!
+    Returns the physical height of the \a screen in millimeters.
+    \sa QDesktopWidget::screenCount()
+*/
 int QSystemDisplayInfo::physicalHeight(int screen)
 {
         return displayInfoPrivate()->physicalHeight(screen);
 }
 
+/*!
+    Returns the physical width of \a screen in millimeters.
+    \sa QDesktopWidget::screenCount()
+*/
 int QSystemDisplayInfo::physicalWidth(int screen)
 {
         return displayInfoPrivate()->physicalWidth(screen);

@@ -185,15 +185,18 @@ QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 
 /*!
  Returns the first found QNetworkInterface for type \a mode.
+
  */
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
    return netInfoPrivate()->interfaceForMode(mode);
 }
+
 /*!
- Returns the current active mode. If more than one mode is active, returns the
- default or preferred mode. If no modes are active, returns UnknownMode.
- */
+    Returns the current active mode. If more than one mode is active, returns the
+     default or preferred mode. If no modes are active, returns UnknownMode.
+
+*/
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
 {
    return netInfoPrivate()->currentMode();

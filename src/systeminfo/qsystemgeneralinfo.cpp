@@ -186,8 +186,18 @@ is a reliable way to gather such information.
     \value CdromDrive            Is a cd rom drive.
 */
 
-
 /*!
+   \enum QSystemDisplayInfo::DisplayOrientation
+  This enum describes the current orientation of the display.
+
+     \value Unknown              Orientation could not be determined.
+     \value Landscape            Orientation is in landscape.
+     \value Portrait             Orientation is in portrait.
+     \value InvertedLandscape    Orientation is landscape inverted.
+     \value InvertedPortrait     Orientation is portrait inverted.
+*/
+
+        /*!
     \class QSystemDeviceInfo
 
     \ingroup systeminfo
@@ -339,6 +349,24 @@ information from the system.
   \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
 
   This signal is emitted whenever bluetooth state changes, specified by \a on.
+*/
+
+/*!
+  \fn void QSystemDeviceInfo::bluetoothStateChanged(bool on)
+
+  This signal is emitted whenever bluetooth state changes, specified by \a on.
+*/
+
+/*!
+   \fn void QSystemStorageInfo::storageAdded()
+
+   This signal gets emitted when new storage has been added to the system.
+*/
+
+/*!
+   \fn void QSystemStorageInfo::storageRemoved()
+
+   This signal gets emitted when new storage has been removed from the system.
 */
 
 Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)

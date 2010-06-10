@@ -221,7 +221,7 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
     return deviceInfoPrivate()->currentPowerState();
 }
 
-/*
+/*!
  \property QSystemDeviceInfo::currentBluetoothPowerState
  \brief bluetooth power state.
 
