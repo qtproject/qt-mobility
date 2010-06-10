@@ -51,12 +51,29 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoMapData
-  \brief The QGeoMapData class is.
-  \ingroup maps-mapping
+    \class QGeoMapData
+
+    \brief The QGeoMapData class are used as a bridge between QGeoMapWidget and
+    QGeoMappingManager.
+
+    \ingroup maps-impl
+
+    Instances of QGeoMapData are created with
+    QGeoMappingManager::createMapData(), and are used internally by
+    QGeoMappingWidget to manage the state of the map and the associated
+    QGeoMapObject instances.
+
+    Plugin implementers will need to provide implementations of
+    coordinateToScreenPosition(const QGeoCoordinate &coordinate) and
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition).
+
+    There are a number of other virtual methods which can be overridden in
+    order to improve the performance of common mapping operations.
  */
 
 /*!
+    Constructs a new map data object, which stores the map data required by
+    \a widget and makes use of the functionality provided by \a engine.
 */
 QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
         : d_ptr(new QGeoMapDataPrivate())
@@ -66,6 +83,7 @@ QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget
 }
 
 /*!
+    Destroys this map data object.
 */
 QGeoMapData::~QGeoMapData()
 {
@@ -76,6 +94,7 @@ QGeoMapData::~QGeoMapData()
 }
 
 /*!
+    Returns the widget that this map data object is associated with.
 */
 QGeoMapWidget* QGeoMapData::widget() const
 {
@@ -83,6 +102,7 @@ QGeoMapWidget* QGeoMapData::widget() const
 }
 
 /*!
+    Returns the mapping engine that this map data object is associated with.
 */
 QGeoMappingManagerEngine* QGeoMapData::engine() const
 {
@@ -90,6 +110,8 @@ QGeoMappingManagerEngine* QGeoMapData::engine() const
 }
 
 /*!
+    Returns the QGeoMapObject which acts as the parent to all QGeoMapObject
+    instances which are added to the map by the user.
 */
 QGeoMapObject* QGeoMapData::containerObject()
 {
@@ -192,6 +214,7 @@ QGeoMapWidget::MapType QGeoMapData::mapType() const
 }
 
 /*!
+    Adds \a mapObject to the list of map objects managed by this map.
 */
 void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 {
@@ -199,6 +222,7 @@ void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
 }
 
 /*!
+    Removes \a mapObject from the list of map objects managed by this map.
 */
 void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 {
@@ -206,6 +230,7 @@ void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
 }
 
 /*!
+    Returns the list of map objects managed by this map.
 */
 QList<QGeoMapObject*> QGeoMapData::mapObjects()
 {
@@ -213,7 +238,9 @@ QList<QGeoMapObject*> QGeoMapData::mapObjects()
 }
 
 /*!
-  */
+    Returns the list of map objects managed by this map which are currently
+    visible and at least partially within the viewport of the map.
+*/
 QList<QGeoMapObject*> QGeoMapData::visibleMapObjects()
 {
     QList<QGeoMapObject*> objectsOnScreen
@@ -232,8 +259,10 @@ QList<QGeoMapObject*> QGeoMapData::visibleMapObjects()
 }
 
 /*!
-  */
-QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius)
+    Returns the list of map objects managed by this map which are visible and
+    contain the point \a screenPosition within their boundaries.
+*/
+QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition)
 {
     QList<QGeoMapObject*> results;
 
@@ -247,7 +276,10 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &scr
 }
 
 /*!
-  */
+    Returns the list of map objects managed by this map which are visible and
+    which are displayed at least partially within the on screen rectangle
+    \a screenRect.
+*/
 QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect)
 {
     QList<QGeoMapObject*> results;
@@ -268,14 +300,27 @@ QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRe
 
 /*!
 \fn QPointF QGeoMapData::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+
+    Returns the position on the screen at which \a coordinate is displayed.
+
+    An invalid QPointF will be returned if \a coordinate is invalid or is not
+    within the current viewport.
 */
 
 /*!
 \fn QGeoCoordinate QGeoMapData::screenPositionToCoordinate(const QPointF &screenPosition) const
+
+    Returns the coordinate corresponding to the point in the viewport at \a
+    screenPosition.
+
+    An invalid QGeoCoordinate will be returned if \a screenPosition is invalid
+    or is not within the current viewport.
 */
 
 
 /*!
+    Sets whether changes to the map image will cause widget() to update to \a
+    trigger.
 */
 void QGeoMapData::setImageChangesTriggerUpdates(bool trigger)
 {
@@ -283,6 +328,7 @@ void QGeoMapData::setImageChangesTriggerUpdates(bool trigger)
 }
 
 /*!
+    Returns whether changes to the map image will case widget() to update.
 */
 bool QGeoMapData::imageChangesTriggerUpdates() const
 {
@@ -290,6 +336,8 @@ bool QGeoMapData::imageChangesTriggerUpdates() const
 }
 
 /*!
+    Sets the image that will be displayed in the viewport of widget() to \a
+    mapImage.
 */
 void QGeoMapData::setMapImage(const QPixmap &mapImage)
 {
@@ -299,8 +347,9 @@ void QGeoMapData::setMapImage(const QPixmap &mapImage)
 }
 
 /*!
+    Returns the image that will be displayed in the viewport of widget().
 */
-QPixmap QGeoMapData::mapImage()
+QPixmap QGeoMapData::mapImage() const
 {
     return d_ptr->mapImage;
 }

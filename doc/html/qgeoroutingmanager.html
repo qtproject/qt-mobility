@@ -34,6 +34,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest::SegmentDetails </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#supportedSegmentDetails">supportedSegmentDetails</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest::TravelModes </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#supportedTravelModes">supportedTravelModes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#supportsAlternativeRoutes">supportsAlternativeRoutes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#supportsExcludeAreas">supportsExcludeAreas</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#supportsRouteUpdates">supportsRouteUpdates</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoRouteReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanager.html#updateRoute">updateRoute</a></b> ( const QGeoRoute &amp; <i>route</i>, const QGeoCoordinate &amp; <i>position</i> )</td></tr>
 </table>
@@ -63,8 +64,9 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGeoRoutingManager class provides support for geographic routing operations.</p>
-<p>Instances of QGeoRoutingManager can be accessed with <a href="qgeoserviceprovider.html#routingManager">QGeoServiceProvider::routingManager</a>() and primarily provide support for the calculation and updating of routes. The <a href="qgeoroutingmanager.html#calculateRoute">calculateRoute</a>() and <a href="qgeoroutingmanager.html#updateRoute">updateRoute</a>() methods return <a href="qgeoroutereply.html">QGeoRouteReply</a> objects, which manage these operations and report on the result of the operations and any errors which may have occurred.</p>
+<p>The <a href="qgeoroutingmanager.html#calculateRoute">calculateRoute</a>() and <a href="qgeoroutingmanager.html#updateRoute">updateRoute</a>() methods return <a href="qgeoroutereply.html">QGeoRouteReply</a> objects, which manage these operations and report on the result of the operations and any errors which may have occurred.</p>
 <p>The QGeoRoutingManager class also contains functions which provide information on the capabilities and features supported by QGeoRoutingManager instances. Those who write subclasses of QGeoRoutingManager should take care to make sure that this capability information is set up correctly, otherwise clients may be denied access to functionality they would otherwise expect.</p>
+<p>Instances of QGeoRoutingManager can be accessed with <a href="qgeoserviceprovider.html#routingManager">QGeoServiceProvider::routingManager</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoRoutingManager/~QGeoRoutingManager"></a>
@@ -119,6 +121,9 @@
 <a name="//apple_ref/cpp/instm/QGeoRoutingManager/supportsAlternativeRoutes"></a>
 <h3 class="fn"><a name="supportsAlternativeRoutes"></a>bool QGeoRoutingManager::supportsAlternativeRoutes () const</h3>
 <p>Returns whether this manager supports request for alternative routes.</p>
+<a name="//apple_ref/cpp/instm/QGeoRoutingManager/supportsExcludeAreas"></a>
+<h3 class="fn"><a name="supportsExcludeAreas"></a>bool QGeoRoutingManager::supportsExcludeAreas () const</h3>
+<p>Returns whether this engine supports the exclusion of areas from routes.</p>
 <a name="//apple_ref/cpp/instm/QGeoRoutingManager/supportsRouteUpdates"></a>
 <h3 class="fn"><a name="supportsRouteUpdates"></a>bool QGeoRoutingManager::supportsRouteUpdates () const</h3>
 <p>Returns whether this manager supports updating routes.</p>

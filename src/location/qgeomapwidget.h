@@ -64,7 +64,7 @@ public:
         TerrainMap
     };
 
-    QGeoMapWidget(QGeoMappingManager *manager);
+    QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
     virtual ~QGeoMapWidget();
 
     QPainterPath shape() const;
@@ -87,8 +87,9 @@ public:
     void addMapObject(QGeoMapObject *mapObject);
     void removeMapObject(QGeoMapObject *mapObject);
     QList<QGeoMapObject*> mapObjects();
+
     QList<QGeoMapObject*> visibleMapObjects();
-    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
+    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;

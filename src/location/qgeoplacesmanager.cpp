@@ -55,11 +55,6 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-places
 
-    Instances of QGeoPlacesManager can be accessed with
-    QGeoServiceProvider::placesManager() primarily provide support for the
-    searching of geographical information, either through free text search or
-    by geocoding (finding coordinates from addresses).
-
     The geocode(QGeoAddress), geocode(QGeoCoordinate) and placesSearch()
     methods return QGeoPlacesReply objects, which manage these operations and
     report on the result of the operations and any errors which may have
@@ -71,6 +66,9 @@ QTM_BEGIN_NAMESPACE
     to make sure that this capability information is set up correctly,
     otherwise clients may be denied access to functionality they would
     otherwise expect.
+
+    Instances of QGeoPlacesManager can be accessed with
+    QGeoServiceProvider::placesManager().
 */
 
 /*!
@@ -269,10 +267,6 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, co
     QGeoPlacesManager::SearchGeocode an
     QGeoPlacesReply::UnsupportedOptionError will occur.
 
-    Likewise, if defaultLandmarkManager() returns 0 and \a searchType is
-    QGeoPlacesManager::SearchLandmarks an
-    QGeoPlacesReply::UnsupportedOptionError will occur.
-
     Once the operation has completed, QGeoPlacesReply::places() can be used to
     retrieve the results, which will consist of a list of QGeoPlace objects.
     These object represent a combination of coordinate and address data.
@@ -343,8 +337,10 @@ QGeoPlacesManager::SearchTypes QGeoPlacesManager::supportedSearchTypes() const
     Returns the landmark manager provided by the service provider for
     use with placesSearch().
 
-    Will return 0 if the no landmark manager is associated with
-    the service provider.
+    Will return 0 if the no landmark manager is associated with the service
+    provider. This does not indicate that placesSearch() does not support
+    landmark searching, only that any landmark searching which occurs within in
+    placesSearch() is done without the use of a QLandmarkManager.
 */
 QLandmarkManager* QGeoPlacesManager::defaultLandmarkManager() const
 {

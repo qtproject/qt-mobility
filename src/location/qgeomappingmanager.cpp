@@ -53,13 +53,9 @@ QTM_BEGIN_NAMESPACE
     and interacting with maps.
     \ingroup maps-mapping
 
-    Instances of QGeoMappingManager can be accessed with
-    QGeoServiceProvider::mappingManager() and primarily provide support for
-    displaying and interacting with maps.
-
-    A QGeoMappingManager instance can create QGeoMapData instances
-    with createMapData, which are used to contain and manage information
-    concerning what a particular QGeoMapWidget is viewing.
+    A QGeoMappingManager instance can create QGeoMapData instances with
+    createMapData(). These instances can be used to contain and manage
+    information concerning what a particular QGeoMapWidget is viewing.
 
     The functions in this class will typically not be used by clients of this
     API, as the most common uses will only need to obtain a QGeoMappingManager

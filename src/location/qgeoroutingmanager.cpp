@@ -53,12 +53,9 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-routing
 
-    Instances of QGeoRoutingManager can be accessed with
-    QGeoServiceProvider::routingManager() and primarily provide support for the
-    calculation and updating of routes. The calculateRoute() and updateRoute()
-    methods return QGeoRouteReply objects, which manage these operations and
-    report on the result of the operations and any errors which may have
-    occurred.
+    The calculateRoute() and updateRoute() methods return QGeoRouteReply
+    objects, which manage these operations and report on the result of the
+    operations and any errors which may have occurred.
 
     The QGeoRoutingManager class also contains functions which provide
     information on the capabilities and features supported by
@@ -66,6 +63,9 @@ QTM_BEGIN_NAMESPACE
     QGeoRoutingManager should take care to make sure that this capability
     information is set up correctly, otherwise clients may be denied access to
     functionality they would otherwise expect.
+
+    Instances of QGeoRoutingManager can be accessed with
+    QGeoServiceProvider::routingManager().
 */
 
 /*!
@@ -234,7 +234,7 @@ bool QGeoRoutingManager::supportsAlternativeRoutes() const
 }
 
 /*!
-    Returns whether this engine supports request for excluding areas from routes.
+    Returns whether this engine supports the exclusion of areas from routes.
 */
 bool QGeoRoutingManager::supportsExcludeAreas() const
 {

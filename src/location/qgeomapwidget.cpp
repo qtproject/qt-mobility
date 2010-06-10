@@ -53,9 +53,21 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoMapWidget
-  \brief The QGeoMapWidget class is.
-  \ingroup maps-mapping
+    \class QGeoMapWidget
+    \brief The QGeoMapWidget class is used to display and manager a user's
+    \interactions with a map.
+    \ingroup maps-mapping
+
+    Most of the functionality is provided by QGeoMappingManager, which
+    handles most aspects of the display.
+
+    TODO describe link to map objects
+
+    Mouse and keyboard events should be handled by subclassing QGeoMapWidget
+    and providing implementations of the event handling functions present in
+    QGraphicsWidget.
+
+    TODO link to example
 */
 
 /*!
@@ -78,9 +90,20 @@ include some of the information provided by QGeoMapWidget::StreetMap.
 */
 
 /*!
+    Creates a new mapping widget, with the mapping operations managed by
+    \a manager, and the specified \a parent.
+
+    Note that the \a manager will typically be accessed from an instance of
+    QGeoServiceProvider:
+    \code
+        QGeoServiceProvider serviceProvider("nokia");
+        QGeoMappingManager *manager = serviceProvider.mappingManager();
+        QGeoMapWidget *widget = new QGeoMapWidget(manager);
+    \endcode
 */
-QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager)
-        : d_ptr(new QGeoMapWidgetPrivate(manager))
+QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent)
+        : QGraphicsWidget(parent),
+        d_ptr(new QGeoMapWidgetPrivate(manager))
 {
     d_ptr->mapData = d_ptr->manager->createMapData(this);
 
@@ -93,6 +116,7 @@ QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager)
 }
 
 /*!
+    Destroys this map widget.
 */
 QGeoMapWidget::~QGeoMapWidget()
 {
@@ -252,54 +276,86 @@ QGeoMapWidget::MapType QGeoMapWidget::mapType() const
 }
 
 /*!
+    Adds \a mapObject to the list of map objects managed by this widget.
+
+    If \a mapObject is within the viewport of the map and
+    QGeoMapObject::isVisible() returns true then the map will display the map
+    object immediately.
 */
 void QGeoMapWidget::addMapObject(QGeoMapObject *mapObject)
 {
-    // TODO null check
-    d_ptr->mapData->addMapObject(mapObject);
+    if (d_ptr->mapData)
+        d_ptr->mapData->addMapObject(mapObject);
+    // TODO update display if visible?
 }
 
 /*!
+    Removes \a mapObject from the list of map objects managed by this widget.
+
+    If \a mapObject is within the viewport of the map and
+    QGeoMapObject::isVisible() returns true then the map will stop displaying
+    the map object immediately.
 */
 void QGeoMapWidget::removeMapObject(QGeoMapObject *mapObject)
 {
-    // TODO null check
-    d_ptr->mapData->removeMapObject(mapObject);
+    // TODO update display if visible?
+    if (d_ptr->mapData)
+        d_ptr->mapData->removeMapObject(mapObject);
 }
 
 /*!
+    Returns the list of map objects managed by this widget.
 */
 QList<QGeoMapObject*> QGeoMapWidget::mapObjects()
 {
-    // TODO null check
-    return d_ptr->mapData->mapObjects();
+    if (d_ptr->mapData)
+        return d_ptr->mapData->mapObjects();
+
+    return QList<QGeoMapObject*>();
 }
 
 /*!
+    Returns the list of map objects managed by this widget which are currently
+    visible and at least partially within the viewport of the map.
 */
 QList<QGeoMapObject*> QGeoMapWidget::visibleMapObjects()
 {
-    // TODO null check
-    return d_ptr->mapData->visibleMapObjects();
+    if (d_ptr->mapData)
+        return d_ptr->mapData->visibleMapObjects();
+
+    return QList<QGeoMapObject*>();
 }
 
 /*!
+    Returns the list of map objects managed by this widget which are visible
+    and contain the point \a screenPosition within their boundaries.
 */
-QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius)
+QList<QGeoMapObject*> QGeoMapWidget::mapObjectsAtScreenPosition(const QPointF &screenPosition)
 {
-    // TODO null check
-    return d_ptr->mapData->mapObjectsAtScreenPosition(screenPosition, radius);
+    if (d_ptr->mapData)
+        return d_ptr->mapData->mapObjectsAtScreenPosition(screenPosition);
+
+    return QList<QGeoMapObject*>();
 }
 
 /*!
+    Returns the list of map objects managed by this widget which are visible
+    and which are displayed at least partially within the on screen rectangle
+    \a screenRect.
 */
 QList<QGeoMapObject*> QGeoMapWidget::mapObjectsInScreenRect(const QRectF &screenRect)
 {
-    // TODO null check
-    return d_ptr->mapData->mapObjectsInScreenRect(screenRect);
+    if (d_ptr->mapData)
+        return d_ptr->mapData->mapObjectsInScreenRect(screenRect);
+
+    return QList<QGeoMapObject*>();
 }
 
 /*!
+    Returns the position on the screen at which \a coordinate is displayed.
+
+    An invalid QPointF will be returned if \a coordinate is invalid or is not
+    within the current viewport.
 */
 QPointF QGeoMapWidget::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
 {
@@ -310,6 +366,11 @@ QPointF QGeoMapWidget::coordinateToScreenPosition(const QGeoCoordinate &coordina
 }
 
 /*!
+    Returns the coordinate corresponding to the point in the viewport at \a
+    screenPosition.
+
+    An invalid QGeoCoordinate will be returned if \a screenPosition is invalid
+    or is not within the current viewport.
 */
 QGeoCoordinate QGeoMapWidget::screenPositionToCoordinate(QPointF screenPosition) const
 {

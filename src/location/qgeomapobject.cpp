@@ -45,12 +45,21 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+        enum Type {
+            ContainerType,
+            RectangleType,
+            CircleType,
+            PolylineType,
+            PolygonType,
+            MarkerType,
+        };
+*/
+
+/*!
 */
 QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
     : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
 
-/*!
-*/
 QGeoMapObject::QGeoMapObject(QGeoMapObjectPrivate *dd)
     : d_ptr(dd) {}
 

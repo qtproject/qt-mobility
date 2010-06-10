@@ -151,8 +151,18 @@ QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QGeoCoordinate &coo
     return search(requestString);
 }
 
-QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QString &addressString, const QGeoBoundingBox &bounds)
+QGeoPlacesReply* QGeoPlacesManagerEngineNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
 {
+    // NOTE this will eventually replaced by a much improved implementation
+    // which will make use of the additionLandmarkManagers()
+    if ((searchTypes != QGeoPlacesManager::SearchTypes(QGeoPlacesManager::SearchAll))
+            && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
+
+        QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "The selected search type is not supported by this service provider.", this);
+        emit error(reply, reply->error(), reply->errorString());
+        return reply;
+    }
+
     Q_UNUSED(bounds)
 
     QString requestString = "http://";
@@ -167,21 +177,6 @@ QGeoPlacesReply* QGeoPlacesManagerEngineNokia::geocode(const QString &addressStr
     requestString += addressString;
 
     return search(requestString);
-}
-
-QGeoPlacesReply* QGeoPlacesManagerEngineNokia::placesSearch(const QString &searchString, QGeoPlacesManager::SearchTypes searchTypes, const QGeoBoundingBox &bounds)
-{
-    // NOTE this will eventually replaced by a default implementation
-    //      written in terms of geocode(QString) and defaultLandmarkManager()
-    if ((searchTypes != QGeoPlacesManager::SearchTypes(QGeoPlacesManager::SearchAll))
-            && ((searchTypes & supportedSearchTypes()) != searchTypes)) {
-
-        QGeoPlacesReply *reply = new QGeoPlacesReply(QGeoPlacesReply::UnsupportedOptionError, "The selected search type is not supported by this service provider.", this);
-        emit error(reply, reply->error(), reply->errorString());
-        return reply;
-    }
-
-    return geocode(searchString, bounds);
 }
 
 QGeoPlacesReply* QGeoPlacesManagerEngineNokia::search(QString requestString)

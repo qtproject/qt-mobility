@@ -1759,6 +1759,7 @@
             <keyword name="QGeoMapData" id="QGeoMapData" ref="qgeomapdata.html"/>
             <keyword name="addMapObject" id="QGeoMapData::addMapObject" ref="qgeomapdata.html#addMapObject"/>
             <keyword name="center" id="QGeoMapData::center" ref="qgeomapdata.html#center"/>
+            <keyword name="containerObject" id="QGeoMapData::containerObject" ref="qgeomapdata.html#containerObject"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapData::coordinateToScreenPosition" ref="qgeomapdata.html#coordinateToScreenPosition"/>
             <keyword name="engine" id="QGeoMapData::engine" ref="qgeomapdata.html#engine"/>
             <keyword name="imageChangesTriggerUpdates" id="QGeoMapData::imageChangesTriggerUpdates" ref="qgeomapdata.html#imageChangesTriggerUpdates"/>
@@ -2053,12 +2054,14 @@
             <keyword name="QGeoRouteRequest::TruckTravel" id="QGeoRouteRequest::TruckTravel" ref="qgeorouterequest.html#TravelMode-enum"/>
             <keyword name="QGeoRouteRequest::TravelModes" id="QGeoRouteRequest::TravelModes" ref="qgeorouterequest.html#TravelMode-enum"/>
             <keyword name="avoidFeatureTypes" id="QGeoRouteRequest::avoidFeatureTypes" ref="qgeorouterequest.html#avoidFeatureTypes"/>
+            <keyword name="excludeAreas" id="QGeoRouteRequest::excludeAreas" ref="qgeorouterequest.html#excludeAreas"/>
             <keyword name="instructionDetail" id="QGeoRouteRequest::instructionDetail" ref="qgeorouterequest.html#instructionDetail"/>
             <keyword name="numberAlternativeRoutes" id="QGeoRouteRequest::numberAlternativeRoutes" ref="qgeorouterequest.html#numberAlternativeRoutes"/>
             <keyword name="operator=" id="QGeoRouteRequest::operator=" ref="qgeorouterequest.html#operator-eq"/>
             <keyword name="routeOptimization" id="QGeoRouteRequest::routeOptimization" ref="qgeorouterequest.html#routeOptimization"/>
             <keyword name="segmentDetail" id="QGeoRouteRequest::segmentDetail" ref="qgeorouterequest.html#segmentDetail"/>
             <keyword name="setAvoidFeatureTypes" id="QGeoRouteRequest::setAvoidFeatureTypes" ref="qgeorouterequest.html#setAvoidFeatureTypes"/>
+            <keyword name="setExcludeAreas" id="QGeoRouteRequest::setExcludeAreas" ref="qgeorouterequest.html#setExcludeAreas"/>
             <keyword name="setInstructionDetail" id="QGeoRouteRequest::setInstructionDetail" ref="qgeorouterequest.html#setInstructionDetail"/>
             <keyword name="setNumberAlternativeRoutes" id="QGeoRouteRequest::setNumberAlternativeRoutes" ref="qgeorouterequest.html#setNumberAlternativeRoutes"/>
             <keyword name="setRouteOptimization" id="QGeoRouteRequest::setRouteOptimization" ref="qgeorouterequest.html#setRouteOptimization"/>
@@ -2097,6 +2100,7 @@
             <keyword name="supportedSegmentDetails" id="QGeoRoutingManager::supportedSegmentDetails" ref="qgeoroutingmanager.html#supportedSegmentDetails"/>
             <keyword name="supportedTravelModes" id="QGeoRoutingManager::supportedTravelModes" ref="qgeoroutingmanager.html#supportedTravelModes"/>
             <keyword name="supportsAlternativeRoutes" id="QGeoRoutingManager::supportsAlternativeRoutes" ref="qgeoroutingmanager.html#supportsAlternativeRoutes"/>
+            <keyword name="supportsExcludeAreas" id="QGeoRoutingManager::supportsExcludeAreas" ref="qgeoroutingmanager.html#supportsExcludeAreas"/>
             <keyword name="supportsRouteUpdates" id="QGeoRoutingManager::supportsRouteUpdates" ref="qgeoroutingmanager.html#supportsRouteUpdates"/>
             <keyword name="updateRoute" id="QGeoRoutingManager::updateRoute" ref="qgeoroutingmanager.html#updateRoute"/>
             <keyword name="~QGeoRoutingManager" id="QGeoRoutingManager::~QGeoRoutingManager" ref="qgeoroutingmanager.html#dtor.QGeoRoutingManager"/>
@@ -2113,6 +2117,7 @@
             <keyword name="setSupportedSegmentDetails" id="QGeoRoutingManagerEngine::setSupportedSegmentDetails" ref="qgeoroutingmanagerengine.html#setSupportedSegmentDetails"/>
             <keyword name="setSupportedTravelModes" id="QGeoRoutingManagerEngine::setSupportedTravelModes" ref="qgeoroutingmanagerengine.html#setSupportedTravelModes"/>
             <keyword name="setSupportsAlternativeRoutes" id="QGeoRoutingManagerEngine::setSupportsAlternativeRoutes" ref="qgeoroutingmanagerengine.html#setSupportsAlternativeRoutes"/>
+            <keyword name="setSupportsExcludeAreas" id="QGeoRoutingManagerEngine::setSupportsExcludeAreas" ref="qgeoroutingmanagerengine.html#setSupportsExcludeAreas"/>
             <keyword name="setSupportsRouteUpdates" id="QGeoRoutingManagerEngine::setSupportsRouteUpdates" ref="qgeoroutingmanagerengine.html#setSupportsRouteUpdates"/>
             <keyword name="supportedAvoidFeatureTypes" id="QGeoRoutingManagerEngine::supportedAvoidFeatureTypes" ref="qgeoroutingmanagerengine.html#supportedAvoidFeatureTypes"/>
             <keyword name="supportedInstructionDetails" id="QGeoRoutingManagerEngine::supportedInstructionDetails" ref="qgeoroutingmanagerengine.html#supportedInstructionDetails"/>
@@ -2120,6 +2125,7 @@
             <keyword name="supportedSegmentDetails" id="QGeoRoutingManagerEngine::supportedSegmentDetails" ref="qgeoroutingmanagerengine.html#supportedSegmentDetails"/>
             <keyword name="supportedTravelModes" id="QGeoRoutingManagerEngine::supportedTravelModes" ref="qgeoroutingmanagerengine.html#supportedTravelModes"/>
             <keyword name="supportsAlternativeRoutes" id="QGeoRoutingManagerEngine::supportsAlternativeRoutes" ref="qgeoroutingmanagerengine.html#supportsAlternativeRoutes"/>
+            <keyword name="supportsExcludeAreas" id="QGeoRoutingManagerEngine::supportsExcludeAreas" ref="qgeoroutingmanagerengine.html#supportsExcludeAreas"/>
             <keyword name="supportsRouteUpdates" id="QGeoRoutingManagerEngine::supportsRouteUpdates" ref="qgeoroutingmanagerengine.html#supportsRouteUpdates"/>
             <keyword name="updateRoute" id="QGeoRoutingManagerEngine::updateRoute" ref="qgeoroutingmanagerengine.html#updateRoute"/>
             <keyword name="~QGeoRoutingManagerEngine" id="QGeoRoutingManagerEngine::~QGeoRoutingManagerEngine" ref="qgeoroutingmanagerengine.html#dtor.QGeoRoutingManagerEngine"/>

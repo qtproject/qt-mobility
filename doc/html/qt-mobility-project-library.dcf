@@ -1252,6 +1252,7 @@
         <keyword ref="qgeomapdata.html">QGeoMapData</keyword>
         <keyword ref="qgeomapdata.html#addMapObject">addMapObject</keyword>
         <keyword ref="qgeomapdata.html#center">center</keyword>
+        <keyword ref="qgeomapdata.html#containerObject">containerObject</keyword>
         <keyword ref="qgeomapdata.html#coordinateToScreenPosition">coordinateToScreenPosition</keyword>
         <keyword ref="qgeomapdata.html#engine">engine</keyword>
         <keyword ref="qgeomapdata.html#imageChangesTriggerUpdates">imageChangesTriggerUpdates</keyword>
@@ -1572,11 +1573,13 @@
         <keyword ref="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::PublicTransitTravel</keyword>
         <keyword ref="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TruckTravel</keyword>
         <keyword ref="qgeorouterequest.html#avoidFeatureTypes">avoidFeatureTypes</keyword>
+        <keyword ref="qgeorouterequest.html#excludeAreas">excludeAreas</keyword>
         <keyword ref="qgeorouterequest.html#instructionDetail">instructionDetail</keyword>
         <keyword ref="qgeorouterequest.html#numberAlternativeRoutes">numberAlternativeRoutes</keyword>
         <keyword ref="qgeorouterequest.html#routeOptimization">routeOptimization</keyword>
         <keyword ref="qgeorouterequest.html#segmentDetail">segmentDetail</keyword>
         <keyword ref="qgeorouterequest.html#setAvoidFeatureTypes">setAvoidFeatureTypes</keyword>
+        <keyword ref="qgeorouterequest.html#setExcludeAreas">setExcludeAreas</keyword>
         <keyword ref="qgeorouterequest.html#setInstructionDetail">setInstructionDetail</keyword>
         <keyword ref="qgeorouterequest.html#setNumberAlternativeRoutes">setNumberAlternativeRoutes</keyword>
         <keyword ref="qgeorouterequest.html#setRouteOptimization">setRouteOptimization</keyword>
@@ -1620,6 +1623,7 @@
         <keyword ref="qgeoroutingmanager.html#supportedSegmentDetails">supportedSegmentDetails</keyword>
         <keyword ref="qgeoroutingmanager.html#supportedTravelModes">supportedTravelModes</keyword>
         <keyword ref="qgeoroutingmanager.html#supportsAlternativeRoutes">supportsAlternativeRoutes</keyword>
+        <keyword ref="qgeoroutingmanager.html#supportsExcludeAreas">supportsExcludeAreas</keyword>
         <keyword ref="qgeoroutingmanager.html#supportsRouteUpdates">supportsRouteUpdates</keyword>
         <keyword ref="qgeoroutingmanager.html#updateRoute">updateRoute</keyword>
         <section ref="qgeoroutingmanager-members.html" title="List of all members"/>
@@ -1638,6 +1642,7 @@
         <keyword ref="qgeoroutingmanagerengine.html#setSupportedSegmentDetails">setSupportedSegmentDetails</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#setSupportedTravelModes">setSupportedTravelModes</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#setSupportsAlternativeRoutes">setSupportsAlternativeRoutes</keyword>
+        <keyword ref="qgeoroutingmanagerengine.html#setSupportsExcludeAreas">setSupportsExcludeAreas</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#setSupportsRouteUpdates">setSupportsRouteUpdates</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#supportedAvoidFeatureTypes">supportedAvoidFeatureTypes</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#supportedInstructionDetails">supportedInstructionDetails</keyword>
@@ -1645,6 +1650,7 @@
         <keyword ref="qgeoroutingmanagerengine.html#supportedSegmentDetails">supportedSegmentDetails</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#supportedTravelModes">supportedTravelModes</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#supportsAlternativeRoutes">supportsAlternativeRoutes</keyword>
+        <keyword ref="qgeoroutingmanagerengine.html#supportsExcludeAreas">supportsExcludeAreas</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#supportsRouteUpdates">supportsRouteUpdates</keyword>
         <keyword ref="qgeoroutingmanagerengine.html#updateRoute">updateRoute</keyword>
         <section ref="qgeoroutingmanagerengine-members.html" title="List of all members"/>

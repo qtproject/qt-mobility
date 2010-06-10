@@ -54,7 +54,7 @@
 <p>The QGeoRoute class represents a route between two points.</p>
 <p>A QGeoRoute object contains high level information about a route, such as the length the route, the estimated travel time for the route, and enough information to render a basic image of the route on a map.</p>
 <p>The QGeoRoute object also contains a list of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> objecs, or objects derived from <a href="qgeoroutesegment.html">QGeoRouteSegment</a>, which describe subsections of the route in greater detail. The subclasses of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> are used to provide specific information for the subsection of the route for particular cases, as may be needed when the segment is to be traversed via public transport or in a truck.</p>
-<p>An instance QGeoRoutingService of will normally be responsible for the creation and setup of QGeoRoute objects.</p>
+<p>Routing information is normally requested using <a href="qgeoroutingmanager.html#calculateRoute">QGeoRoutingManager::calculateRoute</a>(), which returns a <a href="qgeoroutereply.html">QGeoRouteReply</a> instance. If the operation is completed successfully the routing information can be accessed with <a href="qgeoroutereply.html#routes">QGeoRouteReply::routes</a>()</p>
 <p>See also <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>

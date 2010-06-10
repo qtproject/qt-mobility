@@ -53,9 +53,6 @@ QTM_BEGIN_NAMESPACE
     and interacting with maps.
     \ingroup maps-impl
 
-    The QGeoMappingManagerEngine class is used to define the service specific
-    behaviour and metadata required by QGeoMappingManager.
-
     Subclasses of QGeoMappingManagerEngine need to provide an implementations
     of createMapData() and updateMapImage().
 */

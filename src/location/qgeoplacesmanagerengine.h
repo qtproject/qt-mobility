@@ -90,9 +90,6 @@ signals:
     void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
 
 protected:
-    virtual QGeoPlacesReply* geocode(const QString &addressString,
-                                     const QGeoBoundingBox &bounds);
-
     void setDefaultLandmarkManager(QLandmarkManager *landmarkManager);
     void setSupportsViewportBiasing(bool supported);
     void setSupportsGeocoding(bool supported);

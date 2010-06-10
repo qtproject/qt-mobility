@@ -53,9 +53,6 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl
 
-    The QGeoRoutingManagerEngine class is used to define the service specific
-    behaviour and metadata required by QGeoRoutingManager.
-
     Subclasses of QGeoRoutingManagerEngine need to provide an implementation of
     calculateRoute().
 
@@ -262,7 +259,7 @@ void QGeoRoutingManagerEngine::setSupportsExcludeAreas(bool supported)
 }
 
 /*!
-    Returns whether this engine supports request for excluding areas from routes.
+    Returns whether this engine supports the exclusion of areas from routes.
 */
 bool QGeoRoutingManagerEngine::supportsExcludeAreas() const
 {

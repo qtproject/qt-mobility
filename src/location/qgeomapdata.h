@@ -81,7 +81,7 @@ public:
     virtual void removeMapObject(QGeoMapObject *mapObject);
     virtual QList<QGeoMapObject*> mapObjects();
     virtual QList<QGeoMapObject*> visibleMapObjects();
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
+    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
@@ -91,7 +91,7 @@ public:
     bool imageChangesTriggerUpdates() const;
 
     void setMapImage(const QPixmap &mapImage);
-    QPixmap mapImage();
+    QPixmap mapImage() const;
 
 protected:
     QGeoMapWidget* widget() const;

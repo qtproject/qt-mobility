@@ -66,8 +66,10 @@ QTM_BEGIN_NAMESPACE
     cases, as may be needed when the segment is to be traversed via public
     transport or in a truck.
 
-    An instance QGeoRoutingService of will normally be responsible for the
-    creation and setup of QGeoRoute objects.
+    Routing information is normally requested using
+    QGeoRoutingManager::calculateRoute(), which returns a QGeoRouteReply
+    instance. If the operation is completed successfully the routing
+    information can be accessed with QGeoRouteReply::routes()
 
     \sa QGeoRoutingManager
 */
