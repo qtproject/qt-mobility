@@ -71,6 +71,7 @@ public:
     QGeoRouteRequestPrivate& operator= (const QGeoRouteRequestPrivate &other);
 
     QList<QGeoCoordinate> waypoints;
+    QList<QGeoBoundingBox> excludeAreas;
     int numberAlternativeRoutes;
     QGeoRouteRequest::TravelModes travelModes;
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;

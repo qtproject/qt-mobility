@@ -250,6 +250,26 @@ bool QGeoRoutingManagerEngine::supportsAlternativeRoutes() const
 }
 
 /*!
+    Sets whether this engine supports request for excluding areas from routes to \a supported.
+
+    It is important that subclasses use this method to ensure that the engine
+    reports its capabilities correctly.  If this function is not used the
+    engine will report that it does not support excluding areas.
+*/
+void QGeoRoutingManagerEngine::setSupportsExcludeAreas(bool supported)
+{
+    d_ptr->supportsExcludeAreas = supported;
+}
+
+/*!
+    Returns whether this engine supports request for excluding areas from routes.
+*/
+bool QGeoRoutingManagerEngine::supportsExcludeAreas() const
+{
+    return d_ptr->supportsExcludeAreas;
+}
+
+/*!
     Sets the travel modes supported by this engine to \a travelModes.
 
     It is important that subclasses use this method to ensure that the engine
@@ -389,7 +409,8 @@ QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QMap<QStr
         : managerParameters(parameters),
         managerVersion(-1),
         supportsRouteUpdates(false),
-        supportsAlternativeRoutes(false) {}
+        supportsAlternativeRoutes(false),
+        supportsExcludeAreas(false) {}
 
 QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QGeoRoutingManagerEnginePrivate &other)
         : managerName(other.managerName),
@@ -397,6 +418,7 @@ QGeoRoutingManagerEnginePrivate::QGeoRoutingManagerEnginePrivate(const QGeoRouti
         managerVersion(other.managerVersion),
         supportsRouteUpdates(other.supportsRouteUpdates),
         supportsAlternativeRoutes(other.supportsAlternativeRoutes),
+        supportsExcludeAreas(other.supportsExcludeAreas),
         supportedTravelModes(other.supportedTravelModes),
         supportedAvoidFeatureTypes(other.supportedAvoidFeatureTypes),
         supportedRouteOptimizations(other.supportedRouteOptimizations),
@@ -412,6 +434,7 @@ QGeoRoutingManagerEnginePrivate& QGeoRoutingManagerEnginePrivate::operator= (con
     managerVersion = other.managerVersion;
     supportsRouteUpdates = other.supportsRouteUpdates;
     supportsAlternativeRoutes = other.supportsAlternativeRoutes;
+    supportsExcludeAreas = other.supportsExcludeAreas;
     supportedTravelModes = other.supportedTravelModes;
     supportedAvoidFeatureTypes = other.supportedAvoidFeatureTypes;
     supportedRouteOptimizations = other.supportedRouteOptimizations;

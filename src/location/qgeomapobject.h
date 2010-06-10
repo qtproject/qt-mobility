@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
+class QGeoMapContainer;
 
 class Q_LOCATION_EXPORT QGeoMapObject
 {

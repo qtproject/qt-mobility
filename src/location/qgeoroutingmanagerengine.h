@@ -68,6 +68,7 @@ public:
 
     bool supportsRouteUpdates() const;
     bool supportsAlternativeRoutes() const;
+    bool supportsExcludeAreas() const;
     QGeoRouteRequest::TravelModes supportedTravelModes() const;
     QGeoRouteRequest::AvoidFeatureTypes supportedAvoidFeatureTypes() const;
     QGeoRouteRequest::RouteOptimizations supportedRouteOptimizations() const;
@@ -81,6 +82,7 @@ signals:
 protected:
     void setSupportsRouteUpdates(bool supported);
     void setSupportsAlternativeRoutes(bool supported);
+    void setSupportsExcludeAreas(bool supported);
     void setSupportedTravelModes(QGeoRouteRequest::TravelModes travelModes);
     void setSupportedAvoidFeatureTypes(QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
     void setSupportedRouteOptimizations(QGeoRouteRequest::RouteOptimizations optimizations);
