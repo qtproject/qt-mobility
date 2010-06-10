@@ -73,6 +73,8 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
+#include "organizeritemtransform.h"
+
 #include <calprogresscallback.h> // MCalProgressCallBack
 
 QTM_USE_NAMESPACE
@@ -167,10 +169,6 @@ private:
     void saveItemL(QOrganizerItem *item);
     void removeItemL(const QOrganizerItemLocalId& organizeritemId);
 
-    // Conversion functionality to be refactored into a separate class
-    TCalTime qdatetimeToTCalTimeL(QDateTime dateTime) const;
-    QDateTime calTimeToQDateTimeL(TCalTime calTime) const;
-
 private:
     QOrganizerItemSymbianEngineData *d;
     CCalSession *m_calSession;
@@ -178,6 +176,7 @@ private:
     CActiveSchedulerWait *m_activeSchedulerWait;
     // TODO: replace this with an algorithm that generates the calendar entry UID
     int m_entrycount;
+    OrganizerItemTransform m_itemTransform;
 
     friend class QOrganizerItemSymbianFactory;
 };

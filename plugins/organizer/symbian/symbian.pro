@@ -25,9 +25,11 @@ symbian: {
     INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 
     HEADERS += \
-        qorganizersymbian_p.h
+        qorganizersymbian_p.h \
+        organizeritemtransform.h
     SOURCES += \
-        qorganizersymbian.cpp
+        qorganizersymbian.cpp \
+        organizeritemtransform.cpp
     LIBS += -lcalinterimapi
 
     target.path = /sys/bin

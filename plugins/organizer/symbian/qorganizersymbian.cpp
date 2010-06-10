@@ -213,36 +213,20 @@ void QOrganizerItemSymbianEngine::itemL(const QOrganizerItemLocalId& itemId, QOr
         You can ignore the fetch hint and fetch everything (but you must
         fetch at least what is mentioned in the fetch hint). */
 
+    // Fetch item
     TCalLocalUid uid(itemId);
     CCalEntry *calEntry = m_entryView->FetchL(uid);
     CleanupStack::PushL(calEntry);
+    
+    // Transform CCalEntry -> QOrganizerItem
+    m_itemTransform.toItemL(*calEntry, item);
+    
+    // Set item id
     QOrganizerItemId id;
     id.setLocalId(itemId);
     id.setManagerUri(managerUri());
     item->setId(id);
 
-    // TODO: other types
-    // TODO: refactor type conversion into a dedicated class
-    switch (calEntry->EntryTypeL()) {
-    case CCalEntry::EEvent:
-        item->setType(QOrganizerItemType::TypeEvent);
-        break;
-    case CCalEntry::ETodo:
-        item->setType(QOrganizerItemType::TypeTodo);
-        break;
-    default:
-        User::Leave(KErrGeneral);
-    }
-
-    // TODO: refactor time range conversion into a dedicated class
-    QOrganizerItemEventTimeRange timeRange;
-    if (calEntry->StartTimeL().TimeUtcL() != Time::NullTTime()) {
-        timeRange.setStartDateTime(calTimeToQDateTimeL(calEntry->StartTimeL()));
-    }
-    if (calEntry->EndTimeL().TimeUtcL() != Time::NullTTime()) {
-        timeRange.setEndDateTime(calTimeToQDateTimeL(calEntry->EndTimeL()));
-    }
-    item->saveDetail(&timeRange);
     CleanupStack::PopAndDestroy(calEntry);
 }
 
@@ -275,42 +259,14 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemM
 
 void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
 {
-    HBufC8 *uid = HBufC8::NewLC(30);
-    m_entrycount++;
-    uid->Des().Num(m_entrycount);
+    // Transform QOrganizerItem -> CCalEntry
+    CCalEntry *entry = m_itemTransform.toEntryLC(*item);
+    
+    // update last modified date
+    entry->SetLastModifiedDateL();
+    // TODO: update timestamp
 
-    // TODO: other types?
-    // TODO: refactor type conversion into a dedicated class
-    CCalEntry::TType type(CCalEntry::ETodo);
-    if (item->type() == QOrganizerItemType::TypeEvent) {
-        type = CCalEntry::EEvent;
-    } else if (item->type() == QOrganizerItemType::TypeTodo) {
-        type = CCalEntry::ETodo;
-    } else {
-        User::Leave(KErrGeneral);
-    }
-    CleanupStack::Pop(uid); // TODO: what if the following leaves, is uid deleted?
-    CCalEntry *entry = CCalEntry::NewL(type, uid, CCalEntry::EMethodAdd, 0);
-    CleanupStack::PushL(entry);
-
-    // TODO: sequence number?
-    // TODO: recurrence id?
-    // TODO: recurrence range?
-
-    // TODO: refactor time range conversion into a dedicated class
-    QOrganizerItemEventTimeRange eventTimeRange = item->detail(QOrganizerItemEventTimeRange::DefinitionName);
-    if (!eventTimeRange.isEmpty()) {
-        if (eventTimeRange.startDateTime().isValid()) {
-            TCalTime startCalTime = qdatetimeToTCalTimeL(eventTimeRange.startDateTime());
-            TCalTime endCalTime;
-            endCalTime.SetTimeLocalL(Time::NullTTime());
-            if (eventTimeRange.endDateTime().isValid()) {
-                endCalTime = qdatetimeToTCalTimeL(eventTimeRange.endDateTime());
-            }
-            entry->SetStartAndEndTimeL(startCalTime, endCalTime);
-        }
-    }
-
+    // Save entry
     RPointerArray<CCalEntry> entries;
     CleanupClosePushL(entries);
     entries.AppendL(entry);
@@ -324,44 +280,17 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
         // -> let's use the "one-error-fits-all" error code KErrGeneral.
         User::Leave(KErrGeneral);
     }
-    TCalLocalUid localUid = entry->LocalUidL();
-    CleanupStack::PopAndDestroy(&entries);
-    CleanupStack::PopAndDestroy(entry);
-
+    
     // Update the id of the organizer item
     QOrganizerItemId itemId;
+    TCalLocalUid localUid = entry->LocalUidL();
     itemId.setLocalId(localUid);
     itemId.setManagerUri(managerUri());
     item->setId(itemId);
-}
 
-TCalTime QOrganizerItemSymbianEngine::qdatetimeToTCalTimeL(QDateTime dateTime) const
-{
-    uint secondsFrom1970 = dateTime.toTime_t();
-    quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
-    TTime time1970(_L("19700000:000000.000000"));
-    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-    quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
-
-    TTime time(useconds);
-    TCalTime calTime;
-    calTime.SetTimeUtcL(time);
-
-    return calTime;
-}
-
-QDateTime QOrganizerItemSymbianEngine::calTimeToQDateTimeL(TCalTime calTime) const
-{
-    const TTime time1970(_L("19700000:000000.000000"));
-    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-    quint64 useconds = calTime.TimeUtcL().Int64() - usecondsBCto1970;
-    quint64 seconds = useconds / (quint64)1000000;
-    quint64 msecondscomponent = (useconds - seconds * (quint64)1000000) / (quint64)1000;
-    QDateTime dateTime;
-    dateTime.setTime_t(seconds);
-    dateTime.setTime(dateTime.time().addMSecs(msecondscomponent));
-
-    return dateTime;
+    // Cleanup
+    CleanupStack::PopAndDestroy(&entries);
+    CleanupStack::PopAndDestroy(entry);
 }
 
 bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
