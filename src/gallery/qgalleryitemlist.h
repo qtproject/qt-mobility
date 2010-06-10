@@ -132,7 +132,7 @@ Q_SIGNALS:
 protected:
     QGalleryItemList(QGalleryItemListPrivate &dd, QObject *parent);
 
-    QGalleryItemListPrivate *d_ptr;
+    QScopedPointer<QGalleryItemListPrivate> d_ptr;
 };
 
 QTM_END_NAMESPACE

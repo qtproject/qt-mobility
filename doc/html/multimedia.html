@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- multimedia.qdoc -->
   <title>Qt Mobility Project 1.1: Multimedia</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
   <script src="scripts/jquery.js" type="text/javascript"></script>
   <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
@@ -36,16 +36,16 @@
 <div class="descr"/>
 <p>Multimedia provides a set of APIs that allow the developer to play, record and manage a collection of media content. It is dependent on the <a href="http://qt.nokia.com/doc/4.6/qtmultimedia.html">QtMultimedia</a> API. This API is planned to replace Phonon at a later stage.</p>
 <a name="namespace"></a>
-<h3>Namespace</h3>
+<h2>Namespace</h2>
 <p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
-<h3>Overview</h3>
+<h2>Overview</h2>
 <p>This library will require Qt 4.6&#x2e;</p>
 <p>This API delivers an easy to use interface to multimedia functions whether the developer wants to show an image, a video, record sound or play a multimedia stream.</p>
 <p>There are several benefits from that this API brings to Qt. Firstly, the developer can now implement fundamental multimedia functions with minimal code, mostly because they are already implemented. Also there is a great deal of flexibility with the source or generated multimedia. The source file does not need to be local to the device, it could be streamed from a remote location and identified by a URL. Many different codecs are supported 'out of the box'.</p>
 <p>The supplied examples give a good idea at the ease of use of the API. When the supporting user interface code is ignored we can see that functionality is immediately available with minimal code.</p>
 <a name="audio"></a>
-<h4>Audio</h4>
+<h3>Audio</h3>
 <p>Looking at the Audio Recorder example we see that by creating a <a href="qmediarecorder.html">QMediaRecorder</a> object that is initialized with a newly created <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object we can now perform all the core actions necessary to record a sound source.</p>
 <p>To initialize the objects we create a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> object. This will have a list of available devices to choose from so that we can identify the origin of the audio data. We then use the capture source object to initialize a <a href="qmediarecorder.html">QMediaRecorder</a> object</p>
 <pre class="highlightedCode">        audiosource = new QAudioCaptureSource;
@@ -53,29 +53,29 @@
 <p>The API now allows us to discover available devices and codecs as shown in the example. To actually do the recording we merely have to call the <a href="qmediarecorder.html#record">record()</a> function, and to stop call the <a href="qmediarecorder.html#stop">stop()</a> function. Saving to a file is done simply by calling <a href="qmediarecorder.html#outputLocation-prop">QMediaRecorder::setOutputLocation</a>() before starting to record.</p>
 <p>With a handful of functions and two classes we can implement a sound recording application, excluding the supporting user interface code.</p>
 <a name="video"></a>
-<h4>Video</h4>
+<h3>Video</h3>
 <p>For playing and manipulating video sources the API enables us to easily implement a player application. If we examine the <a href="player.html">Player</a> example we see that the implementation of a simple media player requires a <a href="qmediaplayer.html">QMediaPlayer</a> object, which is used to initialize a <a href="qmediaplaylist.html">QMediaPlaylist</a> object.</p>
 <pre class="highlightedCode">        player = new QMediaPlayer;
         playlist = new QMediaPlaylist(player);</pre>
 <p>To display the playing video file we need a <a href="qvideowidget.html">QVideoWidget</a> object. However, instead of using a <a href="qvideowidget.html">QVideoWidget</a> object directly the Player example has a VideoWidget class that inherits from <a href="qvideowidget.html">QVideoWidget</a> so that functions can be added to go to full screen display, either on a double click or on a particular keypress.</p>
 <a name="radio"></a>
-<h4>Radio</h4>
+<h3>Radio</h3>
 <p><a href="qradiotunercontrol.html">QRadioTunerControl</a> is a pure virtual base class that will be the basis for any platform specific radio device control. When the functions are implemented the developer will be able to quickly produce an application that supports the typical uses of an FM radio including tuning, volume, start, stop and various other controls.</p>
 <a name="examples"></a>
-<h3>Examples</h3>
+<h2>Examples</h2>
 <a name="record-a-sound-source"></a>
-<h4>Record a Sound Source</h4>
+<h3>Record a Sound Source</h3>
 <p><a href="audiorecorder.html">AudioRecorder</a> is a demonstration of the discovery of the supported devices and codecs and the use of recording functions in the <a href="qmediarecorder.html">QMediaRecorder</a> class.</p>
 <a name="play-a-media-file"></a>
-<h4>Play a Media File</h4>
+<h3>Play a Media File</h3>
 <p>The <a href="player.html">Player</a> example is a simple multimedia player. Select a video file to play, stop, pause, show in fullscreen or manipulate various image attributes using the Color Options button.</p>
 <a name="slide-show"></a>
-<h4>Slide Show</h4>
+<h3>Slide Show</h3>
 <p>The <a href="slideshow.html">Slide Show</a> shows the use of the <a href="qmediaimageviewer.html">QMediaImageViewer</a> and <a href="qvideowidget.html">QVideoWidget</a> classes.</p>
 <a name="reference-documentation"></a>
-<h3>Reference documentation</h3>
+<h2>Reference documentation</h2>
 <a name="main-classes"></a>
-<h4>Main classes</h4>
+<h3>Main classes</h3>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qaudiocapturesource.html">QAudioCaptureSource</a></p></td><td><p>Interface to query and select an audio input endpoint</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qaudioencodersettings.html">QAudioEncoderSettings</a></p></td><td><p>Set of audio encoder settings</p></td></tr>
@@ -95,7 +95,7 @@
 <tr class="even topAlign"><td><p><a href="qtmediaservices.html">QtMediaServices</a></p></td><td><p>Contains miscellaneous identifiers used throughout the Qt Media services library</p></td></tr>
 </table>
 <a name="classes-for-service-implementers"></a>
-<h4>Classes for service implementers.</h4>
+<h3>Classes for service implementers.</h3>
 <table class="annotated">
 <tr class="odd topAlign"><td><p><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></p></td><td><p>Access to the settings of a media service that performs audio encoding</p></td></tr>
 <tr class="even topAlign"><td><p><a href="qaudioendpointselector.html">QAudioEndpointSelector</a></p></td><td><p>Audio endpoint selector media control</p></td></tr>

@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qgalleryproperty.cpp -->
   <title>Qt Mobility Project 1.1: QGalleryProperty Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
   <script src="scripts/jquery.js" type="text/javascript"></script>
   <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
@@ -43,7 +43,7 @@
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#ascending">ascending</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#descending">descending</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataRangeFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#isInRange">isInRange</a></b> ( const QVariant &amp; <i>minimum</i>, const QVariant &amp; <i>maximum</i> ) const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#matches">matches</a></b> ( const QVariant &amp; <i>value</i>, Qt::MatchFlags <i>flags</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#matches">matches</a></b> ( const QVariant &amp; <i>value</i>, Qt::MatchFlags <i>flags</i> = 0 ) const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#name">name</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-QString">operator QString</a></b> () const</td></tr>
 <tr><td class="memItemLeft rightAlign topAlign"> QGalleryMetaDataRangeFilter </td><td class="memItemRight bottomAlign"><b><a href="qgalleryproperty.html#operator-lt">operator&lt;</a></b> ( const QVariant &amp; <i>value</i> ) const</td></tr>
@@ -82,7 +82,7 @@
 <p>Returns a sort key which indicating items should be sorted a property in descending order.</p>
 <h3 class="fn"><a name="isInRange"></a><a href="qgallerymetadatarangefilter.html">QGalleryMetaDataRangeFilter</a> QGalleryProperty::isInRange ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>minimum</i>, const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>maximum</i> ) const</h3>
 <p>Returns a gallery filter which tests if a property is in a range between a <i>minimum</i> and <i>maximum</i> value.</p>
-<h3 class="fn"><a name="matches"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::matches ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i>, <a href="http://qt.nokia.com/doc/4.6/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> <i>flags</i> = 0 )</h3>
+<h3 class="fn"><a name="matches"></a><a href="qgallerymetadatafilter.html">QGalleryMetaDataFilter</a> QGalleryProperty::matches ( const <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> &amp; <i>value</i>, <a href="http://qt.nokia.com/doc/4.6/qt.html#MatchFlags-typedef">Qt::MatchFlags</a> <i>flags</i> = 0 ) const</h3>
 <p>Returns a gallery filter which tests if a property matches a <i>value</i>. The match <i>flags</i> identify the criteria for a match.</p>
 <h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGalleryProperty::name () const</h3>
 <p>Returns the name of a property.</p>

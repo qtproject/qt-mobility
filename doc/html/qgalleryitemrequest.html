@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qgalleryitemrequest.cpp -->
   <title>Qt Mobility Project 1.1: QGalleryItemRequest Class Reference</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
   <script src="scripts/jquery.js" type="text/javascript"></script>
   <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
@@ -67,7 +67,7 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#itemChanged">itemChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#itemChanged">itemChanged</a></b> ( QGalleryItemList * <i>item</i> )</td></tr>
 </table>
 <ul>
 <li class="fn">8 signals inherited from <a href="qgalleryabstractrequest.html#signals">QGalleryAbstractRequest</a></li>
@@ -110,7 +110,7 @@
 </table>
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary">
-<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#itemChanged">itemChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgalleryitemrequest.html#itemChanged">itemChanged</a></b> ( QGalleryItemList * <i>item</i> )</td></tr>
 </table>
 <h3 class="fn"><a name="itemId-prop"></a>itemId : <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a></h3>
 <p>This property holds the ID of a item a item request should return.</p>
@@ -146,8 +146,8 @@
 <p>The <i>parent</i> is passed to <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <h3 class="fn"><a name="dtor.QGalleryItemRequest"></a>QGalleryItemRequest::~QGalleryItemRequest ()</h3>
 <p>Destroys a gallery item request.</p>
-<h3 class="fn"><a name="itemChanged"></a>void QGalleryItemRequest::itemChanged ()<tt> [signal]</tt></h3>
-<p>Signals that the <a href="qgalleryitemrequest.html#item-prop">item</a> property has changed.</p>
+<h3 class="fn"><a name="itemChanged"></a>void QGalleryItemRequest::itemChanged ( <a href="qgalleryitemlist.html">QGalleryItemList</a> * <i>item</i> )<tt> [signal]</tt></h3>
+<p>Signals that the <i>item</i> list returned by a request has changed.</p>
 <h3 class="fn"><a name="setResponse"></a>void QGalleryItemRequest::setResponse ( <a href="qgalleryabstractresponse.html">QGalleryAbstractResponse</a> * <i>response</i> )<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="qgalleryabstractrequest.html#setResponse">QGalleryAbstractRequest::setResponse</a>().</p>
 </div>

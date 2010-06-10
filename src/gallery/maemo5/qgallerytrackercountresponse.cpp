@@ -83,7 +83,7 @@ public:
     int workingCount;
     int currentOffset;
     QDBusPendingCallWatcher *queryWatcher;
-    QGalleryDBusInterfacePointer queryInterface;
+    const QGalleryDBusInterfacePointer queryInterface;
     const QString queryMethod;
     const QVariantList queryArguments;
 };

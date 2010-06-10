@@ -178,8 +178,8 @@ public:
         , aliasOffset(compositeOffset + arguments.compositeColumns.count())
         , imageOffset(aliasOffset + arguments.aliasColumns.count())
         , columnCount(imageOffset + arguments.imageColumns.count())
-        , rowCount(0)
         , queryLimit(qMax(256, (4 * minimumPagedItems + 63) & ~63))
+        , rowCount(0)
         , imageCacheIndex(0)
         , imageCacheCount(0)
         , queryInterface(arguments.queryInterface)
@@ -199,18 +199,15 @@ public:
 
     ~QGalleryTrackerItemListPrivate()
     {
-        delete idColumn;
-        delete urlColumn;
-        delete typeColumn;
         qDeleteAll(valueColumns);
         qDeleteAll(compositeColumns);
         qDeleteAll(imageColumns);
     }
 
     Flags flags;
-    QGalleryTrackerCompositeColumn *idColumn;
-    QGalleryTrackerCompositeColumn *urlColumn;
-    QGalleryTrackerCompositeColumn *typeColumn;
+    const QScopedPointer<QGalleryTrackerCompositeColumn> idColumn;
+    const QScopedPointer<QGalleryTrackerCompositeColumn> urlColumn;
+    const QScopedPointer<QGalleryTrackerCompositeColumn> typeColumn;
 
     const int updateMask;
     const int identityWidth;
@@ -223,11 +220,11 @@ public:
     const int aliasOffset;
     const int imageOffset;
     const int columnCount;
-    int rowCount;
     const int queryLimit;
+    int rowCount;
     int imageCacheIndex;
     int imageCacheCount;
-    QGalleryDBusInterfacePointer queryInterface;
+    const QGalleryDBusInterfacePointer queryInterface;
     const QString queryMethod;
     const QVariantList queryArguments;
     const QStringList propertyNames;
@@ -240,13 +237,15 @@ public:
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
-    QFutureWatcher<int> queryWatcher;
+    QScopedPointer<QDBusPendingCallWatcher> queryWatcher;
+    QFutureWatcher<void> parseWatcher;
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
 
     void update(int index);
 
-    int queryRows(int offset);
+    void queryFinished(const QDBusPendingCall &call);
+    void parseRows(const QDBusPendingCall &call);
     void correctRows(
             row_iterator begin,
             row_iterator end,
@@ -261,7 +260,8 @@ public:
             const row_iterator &aEnd,
             const row_iterator &rEnd);
 
-    void _q_queryFinished();
+    void _q_queryFinished(QDBusPendingCallWatcher *watcher);
+    void _q_parseFinished();
     void _q_imagesLoaded(int index, const QList<uint> &ids);
     void _q_editFinished(QGalleryTrackerMetaDataEdit *edit);
 };

@@ -163,8 +163,7 @@ void QGalleryAbstractRequestPrivate::_q_progressChanged(int current, int maximum
 
     \value Item The request is a QGalleryItemRequest.
     \value Url The request is a QGalleryUrlRequest.
-    \value Container The request is a QGalleryContainerRequest.
-    \value Filter The request is a QGalleryFilterRequest.
+    \value Query The request is a QGalleryQueryRequest.
     \value Count The request is a QGalleryCountRequest.
     \value Remove The request is a QGalleryRemoveRequest.
 */
@@ -214,7 +213,6 @@ QGalleryAbstractRequest::QGalleryAbstractRequest(
 
 QGalleryAbstractRequest::~QGalleryAbstractRequest()
 {
-    delete d_ptr;
 }
 
 /*!

@@ -207,7 +207,6 @@ QGalleryItemList::QGalleryItemList(QGalleryItemListPrivate &dd, QObject *parent)
 
 QGalleryItemList::~QGalleryItemList()
 {
-    delete d_ptr;
 }
 
 /*!

@@ -62,7 +62,7 @@ protected:
 
     QAbstractGallery(QAbstractGalleryPrivate &dd, QObject *parent);
 
-    QAbstractGalleryPrivate *d_ptr;
+    QScopedPointer<QAbstractGalleryPrivate> d_ptr;
 
     friend class QGalleryAbstractRequest;
 };
