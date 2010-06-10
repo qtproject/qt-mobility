@@ -1,4 +1,4 @@
-TARGET = SmallSensors
+TARGET = smallsensors
 TEMPLATE = app
 
 include(../../examples/examples.pri)

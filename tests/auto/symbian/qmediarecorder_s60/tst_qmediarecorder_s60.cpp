@@ -205,7 +205,7 @@ void tst_QMediaRecorder::testAudioEncoderControl()
     audioEncoder->setEncodingOption("PCM", "channels", QVariant(2));
     QCOMPARE(audioEncoder->encodingOption("PCM","channels").toInt(), 2);
     audioEncoder->setEncodingOption("PCM", "quality", QVariant(int(QtMultimediaKit::NormalQuality)));
-    QCOMPARE(audioEncoder->encodingOption("PCM","quality").toInt(), int(QtMultimediaKit::NormalQuality));    
+    QCOMPARE(audioEncoder->encodingOption("PCM","quality").toInt(), int(QtMultimediaKit::NormalQuality));
     audioEncoder->setEncodingOption("PCM", "samplerate", QVariant(44100));
     QCOMPARE(audioEncoder->encodingOption("PCM","samplerate").toInt(), 44100);    
 }
