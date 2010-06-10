@@ -10,11 +10,15 @@ Rectangle{
     height: 300;
     color: "#343434"
 
+    property int speed: 1000;
+
     SystemDeviceInfo {
         id: deviceinfo;
-        property int batlevel :  deviceinfo.batteryLevel;
 
-        function doPowerStateChange() {
+//        property int batlevel :  deviceinfo.batteryLevel;
+
+        function doPowerStateChange(state) {
+            console.log("power state changed: "+ state)
             if(deviceinfo.currentPowerState == 1) {
                 img.state = 'Battery';
             }
@@ -27,8 +31,8 @@ Rectangle{
             }
         }
 
-        function doBatteryStatusChange() {
-
+        function doBatteryStatusChange(status) {
+console.log("battery status changed: "+status)
             if(status == 4) {
                 img.state = 'Charging';
             }
@@ -39,19 +43,66 @@ Rectangle{
                 img.state = 'Battery';
             }
         }
-        onBatteryStatusChanged : doBatteryStatusChange();
-        onPowerStateChanged : doPowerStateChange();
+
+        function doBatteryLevelChange(level) {
+            if(level > 90) {
+                speed = 1000;
+            } else if(level > 70) {
+                speed = 1500;
+            } else if(level > 40) {
+                speed = 2000;
+            }
+            else if(level > 10) {
+                speed = 2500;
+            } else if(level < 11) {
+                speed = 3000;
+            } else {
+                speed = 4000;
+            }
+             floorParticles.burst(level);
+        }
+
+        onBatteryStatusChanged : doBatteryStatusChange(status);
+        onPowerStateChanged : doPowerStateChange(state);
+        onBatteryLevelChanged: doBatteryLevelChange(level)
     }
 
+    function getPowerState(x) {
+        state = deviceinfo.currentPowerState;
+        if ( state == 1) {
+            return "On Battery : " + deviceinfo.batteryLevel +"%"
+        }
+        if ( state == 2 ) {
+            return "Wall Power : " + deviceinfo.batteryLevel +"%"
+        }
+        if ( state == 3) {
+            return "Charging : " + deviceinfo.batteryLevel +"%"
+        }
+        return ""
+    }
+
+    Text {
+        id: manu
+        y: 3
+        text: deviceinfo.manufacturer + " "+ deviceinfo.model+ " "+ deviceinfo.productName
+        color: "white";
+    }
+    Text {
+        id: power
+        text: getPowerState();
+        anchors.top: manu.bottom
+        color: "white";
+    }
 
     Particles {
+        id: floorParticles
         anchors { horizontalCenter: parent.horizontalCenter; }
              y: screen.height
              width: 1
              height: 1
              source: "images/blueStar.png"
              lifeSpan: 50000
-             count: deviceinfo.batlevel
+             count: deviceinfo.batteryLevel
              angle: 270
              angleDeviation: 45
              velocity: 50
@@ -62,6 +113,12 @@ Rectangle{
                  acceleration: 5
              }
          }
+
+    function particleState() {
+        if(img.state == "Battery") {
+            particles.burst(50,200);
+        }
+    }
 
     Image {
         id: img;
@@ -80,46 +137,28 @@ Rectangle{
             source:"images/blueStar.png";
         }
 
-        function runParticleBurst() {
-            particles.burst(50);
-        }
-
         states: [
         State {
             name: "WallPower"
             //  when: mousearea.pressed == false
+            StateChangeScript { script: particles.burst(50); }
             PropertyChanges { target: img; opacity: 1; source : "images/blueStone.png";}
         },
         State {
             name: "Charging"
             //  when: mousearea.pressed == false
+            StateChangeScript { script: particles.burst(50); }
             PropertyChanges { target: img; opacity: 1; source : "images/yellowStone.png";}
         },
 
         State {
+
             name: "Battery"
             //    when: mousearea.pressed == true
             StateChangeScript { script: particles.burst(50); }
             PropertyChanges { target: img; source : "images/redStone.png"; /*opacity: 0; */}
         }
         ]
-
-
-        transitions: [
-        Transition {
-            from: "*"
-            to: "WallPower"
-//   NumberAnimation{target: glob;  from: minvalue ; to: maxvalue; easing.type:Easing.OutBounce;}
-        },
-        Transition {
-            from: "*"
-            to: "Battery"
-        }
-        ]
-
-        Behavior on opacity {
-            NumberAnimation { properties:"opacity";duration: 500 }
-        }
 
         SequentialAnimation on y {
             loops: Animation.Infinite
@@ -128,9 +167,10 @@ Rectangle{
 
             NumberAnimation {
                 from: img.y; to: screen.height - (screen.height * (deviceinfo.batteryLevel / 100 ))-img.height
-                easing.type: Easing.InOutQuart; duration: Math.round(Math.abs(Math.cos(deviceinfo.batlevel))* 5000 );
+                easing.type: Easing.InOutQuart; duration: speed/* Math.round(Math.abs(Math.cos(deviceinfo.batteryLevel))* 5000 )*/;
             }
 
+            ScriptAction { script: particleState() }
             PauseAnimation { duration: 750 }
         }
     }
