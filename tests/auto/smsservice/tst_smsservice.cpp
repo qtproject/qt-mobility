@@ -176,8 +176,14 @@ private slots:
 
     void testShow();
 
+    void testSearch();
+    void testSearch_data();
+    
+    void testError();
+
 private:
     void testQueryCountData();
+    QMessage newSmsMessage(const QString &to, const QString &text);
 
 private:
     QMessageService* testService;
@@ -253,8 +259,8 @@ void tst_SMSService::initTestCase()
     QList<Support::Parameters> messageParams;
     messageParams << Params()
         ("type", "sms")
-        ("to", "SuperMegaLightningBabe")
-        ("from", "Frozone")
+        ("to", "+358443144813")
+        ("from", "+358409144835")
         ("subject", "Ice to meet you")
         ("text", "Shall I compare thee to a summers day")
         ("date", "2000-01-01T12:00:00Z")
@@ -264,8 +270,8 @@ void tst_SMSService::initTestCase()
         ("custom-flagged", "true")
     << Params()
         ("type", "sms")
-        ("to", "ImportantPerson.example")
-        ("from", "EsteemedColleague")
+        ("to", "+358409644123") 
+        ("from", "+49405644999")
         ("subject", "Meeting agenda")
         ("text", "Some text")
         ("date", "2000-01-01T12:00:00Z")
@@ -274,8 +280,8 @@ void tst_SMSService::initTestCase()
         ("custom-flagged", "true")
     << Params()
         ("type", "sms")
-        ("to", "ImportantPerson.example,Minion.example")
-        ("from", "BigBoss")
+        ("to", "+358409644123,+358401234666") 
+        ("from", "+4940333666")
         ("subject", "Motivational message")
         ("text", "School's out for summer")
         ("date", "2000-01-01T13:00:00Z")
@@ -283,8 +289,8 @@ void tst_SMSService::initTestCase()
         ("priority", "High")
     << Params()
         ("type", "sms")
-        ("to", "announce.example,maintenance-log.example")
-        ("from", "sysadmin")
+        ("to", "+35840312366,+3584123288")
+        ("from", "+4940632789")
         ("subject", "Scheduled maintenance")
         ("text", "Even more text")
         ("date", "2000-01-01T13:00:00Z")
@@ -293,8 +299,8 @@ void tst_SMSService::initTestCase()
         ("status-read", "true")
     << Params()
         ("type", "sms")
-        ("to", "announce.example")
-        ("from", "BigBoss")
+        ("to", "+35840312366")
+        ("from", "+4940333666")
         ("subject", "Free beer")
         ("text", "More and more text")
         ("date", "1999-04-01T10:30:00Z")
@@ -372,6 +378,7 @@ void tst_SMSService::cleanupTestCase()
 
 void tst_SMSService::testQueryMessages()
 {
+    
     QFETCH(QMessageFilter, filter);
     QFETCH(QMessageIdList, ids);
     QFETCH(QMessageIdList, negatedIds);
@@ -438,6 +445,7 @@ void tst_SMSService::testQueryMessages()
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
+    
 }
 
 void tst_SMSService::testQueryCountData()
@@ -648,15 +656,15 @@ void tst_SMSService::testQueryCountData()
         << QMessageIdList()
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_5)
     QTest::newRow("sender equality 1")
-        << QMessageFilter::bySender("EsteemedColleague", QMessageDataComparator::Equal) 
+        << QMessageFilter::bySender("+49405644999", QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] )
         << ( QMessageIdList() << messageIds[0] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 
     QTest::newRow("sender equality 2")
-        << QMessageFilter::bySender("sysadmin", QMessageDataComparator::Equal) 
+        << QMessageFilter::bySender("+4940632789", QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
         << "";
@@ -680,15 +688,15 @@ void tst_SMSService::testQueryCountData()
         << messageIds
         << "";
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
+#if !defined(Q_WS_MAEMO_5)
     QTest::newRow("sender inequality 1")
-        << QMessageFilter::bySender("EsteemedColleague", QMessageDataComparator::NotEqual) 
+        << QMessageFilter::bySender("+49405644999", QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[1] )
         << "";
 
     QTest::newRow("sender inequality 2")
-        << QMessageFilter::bySender("sysadmin", QMessageDataComparator::NotEqual) 
+        << QMessageFilter::bySender("+4940632789", QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[3] )
         << "";
@@ -712,13 +720,13 @@ void tst_SMSService::testQueryCountData()
         << "";
 
     QTest::newRow("sender inclusion 1")
-        << QMessageFilter::bySender("example", QMessageDataComparator::Includes) 
+        << QMessageFilter::bySender("940", QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
         << "";
 
     QTest::newRow("sender inclusion 2")
-        << QMessageFilter::bySender("ozone", QMessageDataComparator::Includes) 
+        << QMessageFilter::bySender("584", QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
@@ -742,13 +750,13 @@ void tst_SMSService::testQueryCountData()
         << "";
 
     QTest::newRow("sender exclusion 1")
-        << QMessageFilter::bySender("example", QMessageDataComparator::Excludes) 
+        << QMessageFilter::bySender("940", QMessageDataComparator::Excludes) 
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 
     QTest::newRow("sender exclusion 2")
-        << QMessageFilter::bySender("ozone", QMessageDataComparator::Excludes) 
+        << QMessageFilter::bySender("0914", QMessageDataComparator::Excludes) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
         << "";
@@ -773,13 +781,13 @@ void tst_SMSService::testQueryCountData()
 #endif
 
     QTest::newRow("recipients inclusion 1")
-        << QMessageFilter::byRecipients("example", QMessageDataComparator::Includes) 
+        << QMessageFilter::byRecipients("123", QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
         << "";
 
     QTest::newRow("recipients inclusion 2")
-        << QMessageFilter::byRecipients("Mega", QMessageDataComparator::Includes) 
+        << QMessageFilter::byRecipients("813", QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
@@ -803,13 +811,13 @@ void tst_SMSService::testQueryCountData()
         << "";
 
     QTest::newRow("recipients exclusion 1")
-        << QMessageFilter::byRecipients("example", QMessageDataComparator::Excludes) 
+        << QMessageFilter::byRecipients("123", QMessageDataComparator::Excludes) 
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 
     QTest::newRow("recipients exclusion 2")
-        << QMessageFilter::byRecipients("Mega", QMessageDataComparator::Excludes) 
+        << QMessageFilter::byRecipients("813", QMessageDataComparator::Excludes) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
         << "";
@@ -1391,7 +1399,7 @@ void tst_SMSService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
 #endif
-
+    /*
     QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
     caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
     QTest::newRow("options:caseSensitive 1")
@@ -1407,6 +1415,7 @@ void tst_SMSService::testQueryCountData()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
+    */
 }
 
 void tst_SMSService::testQueryMessages_data()
@@ -1416,6 +1425,7 @@ void tst_SMSService::testQueryMessages_data()
 
 void tst_SMSService::testCountMessages()
 {
+    
     QFETCH(QMessageFilter, filter);
     QFETCH(QMessageIdList, ids);
     QFETCH(QMessageIdList, negatedIds);
@@ -1456,6 +1466,7 @@ void tst_SMSService::testCountMessages()
     } else {
         QSKIP("Unsupported for this configuration", SkipSingle);
     }
+    
 }
 
 void tst_SMSService::testCountMessages_data()
@@ -1463,12 +1474,62 @@ void tst_SMSService::testCountMessages_data()
     testQueryCountData();
 }
 
+QMessage tst_SMSService::newSmsMessage(const QString &to, const QString &text)
+{
+    QMessage msg;
+    
+    msg.setParentAccountId(smsAccountId);
+    msg.setType(QMessage::Sms);
+
+    QList<QMessageAddress> toList;
+    foreach (const QString &addr, to.split(",", QString::SkipEmptyParts)) {
+	toList.append(QMessageAddress(QMessageAddress::Phone, addr.trimmed()));
+    }
+
+    msg.setTo(toList);
+    //msg.setFrom(QMessageAddress(QMessageAddress::Phone, from));
+    msg.setDate(QDateTime::currentDateTime());
+    msg.setBody(text);
+
+    return msg;
+}
+
 void tst_SMSService::testSend()
 {
-    QMessage testMessage;
-    testMessage.setType(QMessage::Sms);
-    bool result = testService->send(testMessage);
-    QVERIFY(result == true || result == false);
+    QString to("+358XXXXXXX");
+    QString to2("+358XXXXXXX,+358_INVALID");
+
+    SignalCatcher sc(this);
+    connect(testService, SIGNAL(stateChanged(QMessageService::State)), &sc, SLOT(stateChanged(QMessageService::State)));
+
+    QMessage m1 = newSmsMessage(to, "1st message");
+    QMessage m2 = newSmsMessage(to, "2nd message");
+
+    QVERIFY(testService->send(m1) == true);
+    QCOMPARE(testService->send(m2), false);
+
+    QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+    
+    QCOMPARE(testService->error(), QMessageManager::NoError);
+
+    QMessageService otherService(this);
+    SignalCatcher sc2(this);
+    connect(&otherService, SIGNAL(stateChanged(QMessageService::State)), &sc2, SLOT(stateChanged(QMessageService::State)));
+
+    QMessage m3 = newSmsMessage(to, "3rd message");
+    QMessage m4 = newSmsMessage(to2, "4th message");
+
+    QVERIFY(testService->send(m3) == true);
+    QVERIFY(otherService.send(m4) == true);
+
+    QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+    QTRY_VERIFY(sc2.state == QMessageService::FinishedState);
+
+    QCOMPARE(testService->error(), QMessageManager::NoError);
+    QCOMPARE(otherService.error() != QMessageManager::NoError, true);
+
+    QMessageIdList ids = QMessageManager().queryMessages(QMessageFilter::byType(QMessage::Sms), m1.textContent());
+    QCOMPARE(ids.count() > 0, true);
 }
 
 void tst_SMSService::testCompose()
@@ -1484,4 +1545,92 @@ void tst_SMSService::testShow()
     QMessageId testId;
     bool result = testService->show(testId);
     QCOMPARE(result,false);
+}
+
+void tst_SMSService::testSearch()
+{
+    QFETCH(QMessageFilter, filter);
+    QFETCH(QMessageIdList, ids);
+    QFETCH(QMessageIdList, negatedIds);
+    QFETCH(QString, body);
+    
+    if (filter.isSupported()) {
+        QVERIFY(filter == filter);
+        QCOMPARE(filter != QMessageFilter(), !filter.isEmpty());
+
+        SignalCatcher sc(this);
+        connect(testService,SIGNAL(messagesFound(const QMessageIdList&)),&sc,SLOT(messagesFound(const QMessageIdList&)));
+        connect(testService,SIGNAL(stateChanged(QMessageService::State)),&sc,SLOT(stateChanged(QMessageService::State)));
+	sc.reset();
+
+	QCOMPARE(testService->queryMessages(filter,body),true);
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+	QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+#else            
+	while(testService->state() == QMessageService::ActiveState)
+	    qApp->processEvents();
+#endif            
+	QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
+
+	sc.reset();
+
+	QCOMPARE(testService->queryMessages(~filter,body),true);
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+	QTRY_VERIFY(sc.state == QMessageService::FinishedState);
+#else            
+	while(testService->state() == QMessageService::ActiveState)
+	    qApp->processEvents();
+#endif            
+	QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
+        
+    } else {
+        QSKIP("Unsupported for this configuration", SkipSingle);
+    }
+
+    QCOMPARE(QMessageManager().queryMessages(filter, body).toSet().subtract(existingMessageIds), ids.toSet());
+    QCOMPARE(QMessageManager().queryMessages(~filter, body).toSet().subtract(existingMessageIds), negatedIds.toSet());
+
+}
+
+void tst_SMSService::testSearch_data()
+{
+    QTest::addColumn<QMessageFilter>("filter");
+    QTest::addColumn<QMessageIdList>("ids");
+    QTest::addColumn<QMessageIdList>("negatedIds");
+    QTest::addColumn<QString>("body");
+
+    QTest::newRow("body")
+        << QMessageFilter()
+        << ( QMessageIdList() << messageIds[0] << messageIds[2] )
+        << QMessageIdList() // contains body but does not match filter
+        << "summer";
+
+    QTest::newRow("body and subject")
+        << QMessageFilter::bySender("+4940333666", QMessageDataComparator::Equal)
+        << ( QMessageIdList() << messageIds[2] )
+        << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
+        << "summer";
+}
+
+void tst_SMSService::testError()
+{
+    QMessageId invalidId;
+    
+    QVERIFY(invalidId.isValid() == false);
+
+    QCOMPARE(testService->retrieve(invalidId, QMessageContentContainerId()), false);
+    QCOMPARE(testService->error(), QMessageManager::InvalidId);
+
+    QCOMPARE(testService->retrieveHeader(invalidId), false);
+    QCOMPARE(testService->error(), QMessageManager::InvalidId);
+    
+    QCOMPARE(testService->retrieveBody(invalidId), false);
+    QCOMPARE(testService->error(), QMessageManager::InvalidId);
+
+    QCOMPARE(testService->exportUpdates(QMessageAccountId()), false);
+    QCOMPARE(testService->error(), QMessageManager::InvalidId);
+
+    QCOMPARE(testService->show(invalidId), false);
+    QCOMPARE(testService->error(), QMessageManager::InvalidId);
+
 }
