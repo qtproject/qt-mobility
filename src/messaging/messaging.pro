@@ -138,11 +138,15 @@ symbian|win32|maemo6|maemo5|mac {
     }
     symbian { 
         INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
-	contains(messaging_freestyle_enabled, yes) {
-   	CONFIG += FREESTYLEMAIL
-	DEFINES += FREESTYLEMAILUSED
-	DEFINES += FREESTYLEMAILBOXOBSERVERUSED
-	}
+		contains(messaging_freestyle_enabled, yes) {
+	   		CONFIG += FREESTYLEMAIL
+			DEFINES += FREESTYLEMAILUSED
+			DEFINES += FREESTYLEMAILBOXOBSERVERUSED
+		}
+		contains(messaging_freestylenm_enabled, yes) {
+            CONFIG += FREESTYLENMAIL
+            DEFINES += FREESTYLENMAILUSED
+        }
         HEADERS -= qmessagestore_p.h \
             qmessagecontentcontainer_p.h \
             qmessage_p.h
@@ -152,11 +156,8 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagecontentcontainer_symbian_p.h \
             qmessage_symbian_p.h \
             maemohelpers_p.h
-
-        contains(CONFIG, FREESTYLEMAIL) {
-	    HEADERS += qfsengine_symbian_p.h
-	}
-
+        contains(CONFIG, FREESTYLEMAIL):HEADERS += qfsengine_symbian_p.h
+		contains(CONFIG, FREESTYLENMAIL):HEADERS += qfsnmengine_symbian_p.h
     SOURCES += qmtmengine_symbian.cpp \
             qmessageid_symbian.cpp \
             qmessagecontentcontainerid_symbian.cpp \
@@ -175,10 +176,9 @@ symbian|win32|maemo6|maemo5|mac {
             qmessagestore_symbian.cpp \
             qmessageservice_symbian.cpp \
             maemohelpers.cpp
-
-        contains(CONFIG, FREESTYLEMAIL) {
-	    SOURCES += qfsengine_symbian.cpp
-	}
+        contains(CONFIG, FREESTYLEMAIL):SOURCES += qfsengine_symbian.cpp
+        contains(CONFIG, FREESTYLENMAIL):SOURCES += qfsnmengine_symbian.cpp
+        contains(CONFIG, FREESTYLENMAIL):LIBS += -lnmailclientapi \	
     LIBS += -lsendas2 \
             -lmsgs \
             -letext \

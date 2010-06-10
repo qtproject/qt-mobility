@@ -49,7 +49,7 @@
 QTM_BEGIN_NAMESPACE
 
 class CMTMEngine;
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
 class CFSEngine;
 #endif
 
@@ -103,7 +103,7 @@ private:
     QMessageStore* q_ptr;
 
     CMTMEngine* _mtmEngine;
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
     CFSEngine* _fsEngine;
 #endif
 

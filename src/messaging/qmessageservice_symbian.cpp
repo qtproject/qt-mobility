@@ -55,6 +55,9 @@
 #ifdef FREESTYLEMAILUSED
 #include "qfsengine_symbian_p.h"
 #endif
+#ifdef FREESTYLENMAILUSED
+#include "qfsnmengine_symbian_p.h"
+#endif
 
 QTM_BEGIN_NAMESPACE
 
@@ -86,7 +89,7 @@ bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
     switch (idType(message.parentAccountId())) {
         case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
             return CFSEngine::instance()->sendEmail(message);
 #else
             return false;
@@ -103,7 +106,7 @@ bool QMessageServicePrivate::show(const QMessageId& id)
 {
     switch (idType(id)) {
         case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
             return CFSEngine::instance()->showMessage(id);
 #else
             return false;
@@ -120,7 +123,7 @@ bool QMessageServicePrivate::compose(const QMessage &message)
 {
     switch (idType(message.parentAccountId())) {
         case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
             return CFSEngine::instance()->composeMessage(message);
 #else
             return false;
@@ -150,7 +153,7 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _pendingRequestCount++;
     CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, 0, 0);
 
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
     _pendingRequestCount++;
     CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, 0, 0);
 #endif
@@ -175,7 +178,7 @@ bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const Q
     _pendingRequestCount++;
     CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, 0, 0);
 
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
     _pendingRequestCount++;
     CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, 0, 0);
 #endif
@@ -195,7 +198,7 @@ bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
     _pendingRequestCount++;
     CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
 
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
     _pendingRequestCount++;
     CFSEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
 #endif
@@ -206,7 +209,7 @@ bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessag
 {
     switch (idType(messageId)) {
         case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
             return CFSEngine::instance()->retrieve(*this, messageId, id);
 #else
             return false;
@@ -223,7 +226,7 @@ bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 {
     switch (idType(id)) {
         case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
             return CFSEngine::instance()->retrieveBody(*this, id);
 #else
             return false;
@@ -240,7 +243,7 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
     switch (idType(id)) {
         case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
             return CFSEngine::instance()->retrieveHeader(*this, id);
 #else
             return false;
@@ -310,7 +313,7 @@ bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
     switch (idType(id)) {
             case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
+#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
                 return CFSEngine::instance()->exportUpdates(id);
 #else
                 return false;

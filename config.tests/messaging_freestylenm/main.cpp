@@ -38,45 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QMESSAGEACCOUNT_H
-#define QMESSAGEACCOUNT_H
-#include <QString>
-#include <QList>
-#include <qmessageglobal.h>
-#include <qmessage.h>
 
-QTM_BEGIN_NAMESPACE
-
-class QMessageAccountPrivate;
-
-class Q_MESSAGING_EXPORT QMessageAccount
+int main(int, char**)
 {
-    friend class QMessageAccountPrivate;
-
-public:
-    QMessageAccount();
-    QMessageAccount(const QMessageAccountId &id);
-    QMessageAccount(const QMessageAccount &other);
-    virtual ~QMessageAccount();
-
-    QMessageAccount& operator=(const QMessageAccount &other);
-
-    QMessageAccountId id() const;
-    QString name() const;
-    QMessage::TypeFlags messageTypes() const;
-
-    static QMessageAccountId defaultAccount(QMessage::Type type);
-
-private:
-    QMessageAccountPrivate *d_ptr;
-#ifdef Q_OS_SYMBIAN
-    friend class CMTMEngine;
-#ifdef FREESTYLEMAILUSED || FREESTYLENMAILUSED
-    friend class CFSEngine;
-#endif
-    friend class CMessagesFindOperation;
-#endif
-};
-
-QTM_END_NAMESPACE
-#endif
+    return 0;
+}
