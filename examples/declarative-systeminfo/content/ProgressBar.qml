@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,72 +38,48 @@
 **
 ****************************************************************************/
 
-#ifndef DIALOG_H
-#define DIALOG_H
+import Qt 4.7
 
-#include <QWidget>
-#include <qsysteminfo.h>
+Item {
+    id: progressbar
 
-#ifdef QTM_EXAMPLES_PREFER_LANDSCAPE
-#include "ui_dialog_landscape.h"
-#else //QTM_EXAMPLES_PREFER_LANDSCAPE
-#ifdef Q_OS_SYMBIAN
-#include "ui_dialog_s60.h"
-#else //Q_OS_SYMBIAN
-#include "ui_dialog.h"
-#endif //Q_OS_SYMBIAN
-#endif //QTM_EXAMPLES_PREFER_LANDSCAPE
-QTM_USE_NAMESPACE
+    property int minimum: 0
+    property int maximum: 100
+    property int value: 0
+    property int maxval: 0
+    property alias color: gradient1.color
+    property alias secondColor: gradient2.color
 
-class Dialog : public QWidget, public Ui_Dialog
-{
-    Q_OBJECT
-public:
-    Dialog();
-    ~Dialog();
+    width: 30; height: 250
+    clip: true
 
-protected:
-    void changeEvent(QEvent *e);
+    BorderImage {
+        source: "background.png"
+        width: parent.width; height: parent.height
+        border { left: 4; top: 4; right: 4; bottom: 4 }
+    }
 
-private:
-    void setupGeneral();
-    void setupDevice();
-    void setupDisplay();
-    void setupStorage();
-    void setupNetwork();
-    void setupSaver();
+    Rectangle {
+        id: highlight
 
-    QSystemScreenSaver *saver;
-    QSystemInfo *systemInfo;
-    QSystemDeviceInfo *di;
-    QSystemNetworkInfo *ni;
-    QSystemStorageInfo *sti;
-    void updateStorage();
-    
-private slots:
-    void tabChanged(int index);
-    void getVersion(int index);
-    void getFeature(int index);
-    void setSaverEnabled(bool b);
-    void updateDeviceLockedState();
+        property int widthDest: ((progressbar.height * (value - minimum)) / (maximum - minimum) )
 
-    void netStatusComboActivated(int);
-    void updateBatteryStatus(int);
-    void updatePowerState(QSystemDeviceInfo::PowerState);
-    void displayBatteryStatus(QSystemDeviceInfo::BatteryStatus);
-    void updateProfile(QSystemDeviceInfo::Profile profile);
-    void updateSimStatus();
-    void updateProfile();
+        height: highlight.widthDest
+        Behavior on height { SmoothedAnimation { velocity: 1200 } }
 
-     void displayNetworkStatus(QSystemNetworkInfo::NetworkStatus);
-     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
-     void networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int);
-     void networkNameChanged(QSystemNetworkInfo::NetworkMode,const QString &);
-     void networkModeChanged(QSystemNetworkInfo::NetworkMode);
+        anchors { left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: 2; rightMargin: 2; bottomMargin: 2 }
+//        anchors { left: parent.left; top: parent.top; bottom: parent.bottom; leftMargin: 3; topMargin: 3; bottomMargin: 3 }
+        radius: 1
+        gradient: Gradient {
+            GradientStop { id: gradient1; position: 0.0 }
+            GradientStop { id: gradient2; position: 1.0 }
+        }
 
-    void storageChanged();
-    void bluetoothChanged(bool);
-
-};
-
-#endif // DIALOG_H
+    }
+    Text {
+        anchors { /*right: highlight.right; rightMargin: 6; */horizontalCenter: parent.horizontalCenter }
+        color: "black"
+        font.bold: true
+        text: maxval + '%'//Math.floor((value - minimum) / (maximum - minimum) * 100) + '%'
+    }
+}

@@ -57,18 +57,26 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
+#include "qsysteminfocommon.h"
+
+//#include "qmobilityglobal.h"
 
 #include "qsysteminfo.h"
-#include <qmobilityglobal.h>
+
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
 
 #include <QTimer>
 #include <QtCore/qthread.h>
 #include <QtCore/qmutex.h>
-#include <QEventLoop>
-#include <IOKit/IOKitLib.h>
+ #include <QEventLoop>
 
 #include <SystemConfiguration/SystemConfiguration.h>
 //#include <CoreFoundation/CoreFoundation.h>
+#include <DiskArbitration/DiskArbitration.h>
 
 QT_BEGIN_HEADER
 
@@ -177,6 +185,7 @@ protected:
     void connectNotify(const char *signal);
     void disconnectNotify(const char *signal);
     bool hasWifi;
+    bool networkThreadOk;
 
 };
 
@@ -191,8 +200,16 @@ public:
 
     int displayBrightness(int screen);
     int colorDepth(int screen);
+
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 };
 
+class QDASessionThread;
 class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -207,11 +224,23 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
+public slots:
+    void storageChanged( bool added);
+Q_SIGNALS:
+    void storageAdded();
+    void storageRemoved();
+
 private:
     QHash<QString, QString> mountEntriesHash;
     bool updateVolumesMap();
     void mountEntries();
+    bool sessionThread();
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+    QDASessionThread *daSessionThread;
 };
 
 class QBluetoothListenerThread;
@@ -327,6 +356,29 @@ protected:
 
 private:
     QMutex mutex;
+private Q_SLOTS:
+};
+
+class QDASessionThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QDASessionThread(QObject *parent = 0);
+    ~QDASessionThread();
+    bool keepRunning;
+    void stop();
+    DASessionRef session;
+Q_SIGNALS:
+    void storageAdded();
+    void storageRemoved();
+
+protected:
+    void run();
+
+private:
+    QMutex mutex;
+
 private Q_SLOTS:
 };
 

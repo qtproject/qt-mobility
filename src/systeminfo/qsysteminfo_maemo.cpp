@@ -38,9 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfo.h"
-#include "qsysteminfo_maemo_p.h"
-
+#include "qsysteminfocommon.h"
+#include <qsysteminfo_maemo_p.h>
 #include <QStringList>
 #include <QSize>
 #include <QFile>
@@ -169,6 +168,18 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
                 featureSupported = true;
             }
 #endif /* Maemo 5 */
+        }
+        break;
+    case QSystemInfo::VideoOutFeature :
+        {
+            const QString sysPath = "/sys/class/video4linux/";
+            const QDir sysDir(sysPath);
+            QStringList filters;
+            filters << "*";
+            const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
+            if(sysList.contains("video0")) {
+                featureSupported = true;
+            }
         }
         break;
     case QSystemInfo::HapticsFeature:
@@ -1209,7 +1220,6 @@ void QSystemDeviceInfoPrivate::deviceModeChanged(QString newMode)
 void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString profile, QList<ProfileDataValue> values)
 {
     if (active) {
-        const QSystemDeviceInfo::Profile previousProfile = currentProfile();
         profileName = profile;
         foreach (const ProfileDataValue value, values) {
             if (value.key == "ringing.alert.type")
@@ -1219,9 +1229,8 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
             else if (value.key == "ringing.alert.volume")
                 ringingAlertVolume = value.val.toInt();
         }
-        QSystemDeviceInfo::Profile newProfile = currentProfile();
-        if (previousProfile != newProfile)
-           emit currentProfileChanged(newProfile);
+        if (changed)
+            emit currentProfileChanged(currentProfile());
     }
 }
 
