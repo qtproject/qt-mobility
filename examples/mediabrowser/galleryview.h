@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 class QAbstractGallery;
 class QGalleryCountRequest;
 class QGalleryItemList;
-class QGalleryFilterRequest;
+class QGalleryQueryRequest;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -86,7 +86,7 @@ private slots:
     void requestCountChanged();
 
 private:
-    QGalleryFilterRequest *request;
+    QGalleryQueryRequest *request;
     QGalleryCountRequest *countRequest;
 };
 

@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- versit.qdoc -->
   <title>Qt Mobility Project 1.1: Versit API</title>
-  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
   <script src="scripts/jquery.js" type="text/javascript"></script>
   <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
@@ -27,15 +27,15 @@
 <span class="subtitle"></span>
 <div class="descr"/>
 <a name="namespace"></a>
-<h3>Namespace</h3>
+<h2>Namespace</h2>
 <p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
-<h3>Overview</h3>
+<h2>Overview</h2>
 <p>Versit API provides a set of methods to parse/read (<a href="qversitreader.html">QVersitReader</a>) and encode/write (<a href="qversitwriter.html">QVersitWriter</a>) Versit <sup>&reg;</sup> documents such as vCards (<a href="http://www.imc.org/pdi/">http://www.imc.org/pdi/</a>). Currently <a href="qversitreader.html">QVersitReader</a> and <a href="qversitwriter.html">QVersitWriter</a> support reading and writing vCard 2.1 and 3.0 formats.</p>
 <p>Versit API also provides utilities to import (<a href="qversitcontactimporter.html">QVersitContactImporter</a>) QContacts from Versit documents and export (<a href="qversitcontactexporter.html">QVersitContactExporter</a>) QContacts to Versit documents.</p>
 <p>Versit <sup>&reg;</sup> is a trademark of the Internet Mail Consortium.</p>
 <a name="usage"></a>
-<h3>Usage</h3>
+<h2>Usage</h2>
 <pre class="highlightedCode">        <span class="comment">// Create the input vCard</span>
         QBuffer input;
         input.open(QBuffer::ReadWrite);
@@ -79,7 +79,7 @@
         output.seek(0);
         QByteArray outputVCard(output.readAll());</pre>
 <a name="main-classes"></a>
-<h3>Main Classes</h3>
+<h2>Main Classes</h2>
 <ul>
 <li><a href="qversitproperty.html">QVersitProperty</a></li>
 <li><a href="qversitdocument.html">QVersitDocument</a></li>

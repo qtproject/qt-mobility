@@ -70,16 +70,30 @@ class QGalleryTrackerThumbnailColumn : public QGalleryTrackerImageColumn
     Q_OBJECT
 public:
     QGalleryTrackerThumbnailColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, int key, QObject *parent = 0);
+            const QGalleryDBusInterfacePointer &thumbnailInterface,
+            int key,
+            int mimeTypeColumn,
+            QVariant::Type type,
+            const QString &flavor,
+            QObject *parent = 0);
     ~QGalleryTrackerThumbnailColumn();
+
+    static QGalleryTrackerImageColumn *createImageColumn(
+            QGalleryDBusInterfaceFactory *dbus,
+            int key,
+            const QString &profile,
+            const QVector<int> &columns);
+
+    static QGalleryTrackerImageColumn *createPixmapColumn(
+            QGalleryDBusInterfaceFactory *dbus,
+            int key,
+            const QString &profile,
+            const QVector<int> &columns);
 
     void insertImages(
             int index, int count, QVector<QVariant>::const_iterator begin, int tableWidth);
 
     void removeImages(int index, int count);
-
-protected:
-    virtual QVariant loadImage(const QString &imagePath) const = 0;
 
 private Q_SLOTS:
     void loadWatcherFinished();
@@ -107,43 +121,20 @@ private:
 
     QVariant loadThumbnail(const QString &filePath);
 
-#ifdef Q_WS_MAEMO_5
-    const QString m_croppedDir;
-#else
-    const QString m_normalDir;
-#endif
+    const int m_mimeTypeColumn;
+    const QVariant::Type m_type;
+    const QString m_flavor;
+    const QString m_thumbnailDir;
     const QString m_failDir;
-    QGalleryDBusInterfacePointer m_thumbnailInterface;
+    const QString m_localDir;
+    const QGalleryDBusInterfacePointer m_thumbnailInterface;
     QList<QGalleryTrackerThumbnailDBusWatcher *> m_dbusWatchers;
     QList<QGalleryTrackerThumbnailLoadWatcher *> m_loadWatchers;
-    QList<int> m_keys;
+    const QList<int> m_keys;
     QVector<uint> m_imageIds;
 
 };
 
-class QGalleryTrackerThumbnailImageColumn : public QGalleryTrackerThumbnailColumn
-{
-public:
-    QGalleryTrackerThumbnailImageColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, int index, QObject *parent = 0)
-        : QGalleryTrackerThumbnailColumn(thumbnailInterface, index, parent) {}
-    ~QGalleryTrackerThumbnailImageColumn() {}
-
-protected:
-    QVariant loadImage(const QString &imagePath) const;
-};
-
-class QGalleryTrackerThumbnailPixmapColumn : public QGalleryTrackerThumbnailColumn
-{
-public:
-    QGalleryTrackerThumbnailPixmapColumn(
-            const QGalleryDBusInterfacePointer &thumbnailInterface, int index, QObject *parent = 0)
-        : QGalleryTrackerThumbnailColumn(thumbnailInterface, index, parent) {}
-    ~QGalleryTrackerThumbnailPixmapColumn() {}
-
-protected:
-    QVariant loadImage(const QString &imagePath) const;
-};
 
 QTM_END_NAMESPACE
 

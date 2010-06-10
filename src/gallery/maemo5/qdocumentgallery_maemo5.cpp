@@ -43,14 +43,14 @@
 
 #include "qabstractgallery_p.h"
 
-#include "qgallerycontainerrequest.h"
 #include "qgallerycountrequest.h"
-#include "qgalleryfilterrequest.h"
 #include "qgalleryitemrequest.h"
+#include "qgalleryqueryrequest.h"
 #include "qgalleryremoverequest.h"
 #include "qgalleryurlrequest.h"
 
 #include "qgallerybaseresponse_p.h"
+#include "qgallerytrackerchangenotifier_p.h"
 #include "qgallerytrackercountresponse_p.h"
 #include "qgallerytrackeritemresponse_p.h"
 #include "qgallerytrackerremoveresponse_p.h"
@@ -64,28 +64,12 @@ Q_DECLARE_METATYPE(QVector<QStringList>)
 
 QTM_BEGIN_NAMESPACE
 
-class QDocumentGalleryRefreshManager : public QObject
-{
-    Q_OBJECT
-Q_SIGNALS:
-    void refresh(int updateId);
-
-public Q_SLOTS:
-    void itemEdited(const QString &service);
-};
-
-void QDocumentGalleryRefreshManager::itemEdited(const QString &service)
-{
-    emit refresh(QGalleryTrackerSchema::serviceUpdateId(service));
-}
-
 class QDocumentGalleryPrivate : public QAbstractGalleryPrivate, public QGalleryDBusInterfaceFactory
 {
 public:
     QGalleryAbstractResponse *createItemResponse(QGalleryItemRequest *request);
     QGalleryAbstractResponse *createUrlResponse(QGalleryUrlRequest *request);
-    QGalleryAbstractResponse *createContainerResponse(QGalleryContainerRequest *request);
-    QGalleryAbstractResponse *createFilterResponse(QGalleryFilterRequest *request);
+    QGalleryAbstractResponse *createFilterResponse(QGalleryQueryRequest *request);
     QGalleryAbstractResponse *createCountResponse(QGalleryCountRequest *request);
     QGalleryAbstractResponse *createRemoveResponse(QGalleryRemoveRequest *request);
 
@@ -95,6 +79,7 @@ private:
     QGalleryDBusInterfacePointer searchInterface();
     QGalleryDBusInterfacePointer fileInterface();
     QGalleryDBusInterfacePointer thumbnailInterface();
+    QGalleryTrackerChangeNotifier *changeNotifier();
 
     QGalleryAbstractResponse *createItemListResponse(
             const QGalleryTrackerItemListArguments &arguments,
@@ -103,24 +88,21 @@ private:
             bool isItemType,
             bool isLive);
 
-    void _q_statisticsReady(const QVector<QStringList> &statistics);
-    void _q_statisticsChanged(const QVector<QStringList> &statistics);
-
     QGalleryDBusInterfacePointer daemonService;
     QGalleryDBusInterfacePointer metaDataService;
     QGalleryDBusInterfacePointer searchService;
     QGalleryDBusInterfacePointer fileService;
     QGalleryDBusInterfacePointer thumbnailService;
-    QDocumentGalleryRefreshManager refreshManager;
+    QScopedPointer<QGalleryTrackerChangeNotifier> notifier;
 };
 
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::daemonInterface()
 {
     if (!daemonService) {
-        daemonService = new QGalleryDBusInterface(
+        daemonService = new QGalleryTrackerDaemonDBusInterface(
                 QLatin1String("org.freedesktop.Tracker"),
                 QLatin1String("/org/freedesktop/Tracker"),
-                QLatin1String("org.freedesktop.Tracker"));
+                "org.freedesktop.Tracker");
     }
     return daemonService;
 }
@@ -131,7 +113,7 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::metaDataInterface()
         metaDataService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.Tracker"),
                 QLatin1String("/org/freedesktop/Tracker/Metadata"),
-                QLatin1String("org.freedesktop.Tracker.Metadata"));
+                "org.freedesktop.Tracker.Metadata");
     }
     return metaDataService;
 }
@@ -142,7 +124,7 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::searchInterface()
         searchService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.Tracker"),
                 QLatin1String("/org/freedesktop/Tracker/Search"),
-                QLatin1String("org.freedesktop.Tracker.Search"));
+                "org.freedesktop.Tracker.Search");
     }
     return searchService;
 }
@@ -153,7 +135,7 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
         fileService = new QGalleryDBusInterface(
                 QLatin1String("org.freedesktop.Tracker"),
                 QLatin1String("/org/freedesktop/Tracker/Files"),
-                QLatin1String("org.freedesktop.Tracker.Files"));
+                "org.freedesktop.Tracker.Files");
     }
     return fileService;
 }
@@ -161,12 +143,28 @@ QGalleryDBusInterfacePointer QDocumentGalleryPrivate::fileInterface()
 QGalleryDBusInterfacePointer QDocumentGalleryPrivate::thumbnailInterface()
 {
     if (!thumbnailService) {
-        thumbnailService = new QGalleryDBusInterface(
+
+        thumbnailService = new QGalleryThumbnailerDBusInterface(
+#ifdef Q_WS_MAEMO_5
                 QLatin1String("org.freedesktop.thumbnailer"),
                 QLatin1String("/org/freedesktop/thumbnailer/Generic"),
-                QLatin1String("org.freedesktop.thumbnailer.Generic"));
+                "org.freedesktop.thumbnailer.Generic");
+#else
+                QLatin1String("org.freedesktop.thumbnails.Thumbnailer1"),
+                QLatin1String("/org/freedesktop/thumbnails/Thumbnailer1"),
+                "org.freedesktop.thumbnails.Thumbnailer1");
+#endif
     }
     return thumbnailService;
+}
+
+
+QGalleryTrackerChangeNotifier *QDocumentGalleryPrivate::changeNotifier()
+{
+    if (!notifier)
+        notifier.reset(new QGalleryTrackerChangeNotifier(daemonInterface()));
+
+    return notifier.data();
 }
 
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
@@ -187,14 +185,10 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
 
     if (isLive) {
         QObject::connect(
-                daemonInterface().data(), SIGNAL(IndexFinished(double)),
-                response, SLOT(refresh()));
-        QObject::connect(
-                &refreshManager, SIGNAL(refresh(int)), response, SLOT(refresh(int)));
-        QObject::connect(
-                response, SIGNAL(itemEdited(QString)),
-                &refreshManager, SLOT(itemEdited(QString)));
+                changeNotifier(), SIGNAL(itemsChanged(int)), response, SLOT(refresh(int)));
     }
+    QObject::connect(
+            response, SIGNAL(itemEdited(QString)), changeNotifier(), SLOT(itemsEdited(QString)));
 
     return response;
 }
@@ -222,40 +216,13 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createUrlResponse(
             fileInterface(), request->itemUrl(), request->create());
 
     QObject::connect(
-            daemonInterface().data(), SIGNAL(IndexFinished(double)),
-            response, SLOT(indexingFinished()));
+            changeNotifier(), SIGNAL(itemsChanged(int)), response, SLOT(indexingFinished()));
 
     return response;
 }
 
-QGalleryAbstractResponse *QDocumentGalleryPrivate::createContainerResponse(
-        QGalleryContainerRequest *request)
-{
-    QGalleryTrackerSchema schema(request->itemType());
-
-    QGalleryTrackerItemListArguments arguments;
-
-    int result = schema.prepareContainerResponse(
-            &arguments,
-            this,
-            request->containerId().toString(),
-            request->propertyNames(),
-            request->sortPropertyNames());
-
-    if (result != QGalleryAbstractRequest::Succeeded) {
-        return new QGalleryBaseResponse(result);
-    } else {
-        return createItemListResponse(
-                arguments,
-                request->initialCursorPosition(),
-                request->minimumPagedItems(),
-                schema.isItemType(),
-                request->isLive());
-    }
-}
-
 QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
-        QGalleryFilterRequest *request)
+        QGalleryQueryRequest *request)
 {
     QGalleryTrackerSchema schema(request->itemType());
 
@@ -264,7 +231,8 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createFilterResponse(
     int result = schema.prepareFilterResponse(
             &arguments,
             this,
-            request->containerId().toString(),
+            request->scope(),
+            request->scopeItemId().toString(),
             request->filter(),
             request->propertyNames(),
             request->sortPropertyNames());
@@ -289,7 +257,11 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
     QGalleryTrackerCountResponseArguments arguments;
 
     int result = schema.prepareCountResponse(
-            &arguments, this, request->containerId().toString(), request->filter());
+            &arguments,
+            this,
+            request->scope(),
+            request->scopeItemId().toString(),
+            request->filter());
 
     if (result != QGalleryAbstractRequest::Succeeded) {
         return new QGalleryBaseResponse(result);
@@ -330,8 +302,7 @@ bool QDocumentGallery::isRequestSupported(QGalleryAbstractRequest::Type type) co
     switch (type) {
     case QGalleryAbstractRequest::Item:
     case QGalleryAbstractRequest::Url:
-    case QGalleryAbstractRequest::Container:
-    case QGalleryAbstractRequest::Filter:
+    case QGalleryAbstractRequest::Query:
     case QGalleryAbstractRequest::Count:
     case QGalleryAbstractRequest::Remove:
         return true;
@@ -360,10 +331,8 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
         return d->createItemResponse(static_cast<QGalleryItemRequest *>(request));
     case QGalleryAbstractRequest::Url:
         return d->createUrlResponse(static_cast<QGalleryUrlRequest *>(request));
-    case QGalleryAbstractRequest::Container:
-        return d->createContainerResponse(static_cast<QGalleryContainerRequest *>(request));
-    case QGalleryAbstractRequest::Filter:
-        return d->createFilterResponse(static_cast<QGalleryFilterRequest *>(request));
+    case QGalleryAbstractRequest::Query:
+        return d->createFilterResponse(static_cast<QGalleryQueryRequest *>(request));
     case QGalleryAbstractRequest::Count:
         return d->createCountResponse(static_cast<QGalleryCountRequest *>(request));
     case QGalleryAbstractRequest::Remove:
@@ -374,7 +343,6 @@ QGalleryAbstractResponse *QDocumentGallery::createResponse(QGalleryAbstractReque
 }
 
 #include "moc_qdocumentgallery.cpp"
-#include "qdocumentgallery_maemo5.moc"
 
 QTM_END_NAMESPACE
 

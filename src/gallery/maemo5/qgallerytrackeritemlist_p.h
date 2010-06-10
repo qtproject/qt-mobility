@@ -57,8 +57,11 @@
 
 #include "qgallerydbusinterface_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
+class QDBusPendingCallWatcher;
+QT_END_NAMESPACE
 
+QTM_BEGIN_NAMESPACE
 
 class QGalleryDBusInterfaceFactory;
 class QGalleryTrackerCompositeColumn;
@@ -160,7 +163,8 @@ protected:
 
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemList)
-    Q_PRIVATE_SLOT(d_func(), void _q_queryFinished())
+    Q_PRIVATE_SLOT(d_func(), void _q_queryFinished(QDBusPendingCallWatcher *))
+    Q_PRIVATE_SLOT(d_func(), void _q_parseFinished())
 };
 
 

@@ -244,17 +244,11 @@
                     <section ref="qgalleryabstractresponse.html" title="QGalleryAbstractResponse Class Reference">
                         <section ref="qgalleryabstractresponse-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qgallerycontainerrequest.html" title="QGalleryContainerRequest Class Reference">
-                        <section ref="qgallerycontainerrequest-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qgallerycountrequest.html" title="QGalleryCountRequest Class Reference">
                         <section ref="qgallerycountrequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgalleryfilter.html" title="QGalleryFilter Class Reference">
                         <section ref="qgalleryfilter-members.html" title="List of all members"/>
-                    </section>
-                    <section ref="qgalleryfilterrequest.html" title="QGalleryFilterRequest Class Reference">
-                        <section ref="qgalleryfilterrequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgalleryintersectionfilter.html" title="QGalleryIntersectionFilter Class Reference">
                         <section ref="qgalleryintersectionfilter-members.html" title="List of all members"/>
@@ -273,6 +267,9 @@
                     </section>
                     <section ref="qgalleryproperty.html" title="QGalleryProperty Class Reference">
                         <section ref="qgalleryproperty-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qgalleryqueryrequest.html" title="QGalleryQueryRequest Class Reference">
+                        <section ref="qgalleryqueryrequest-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgalleryremoverequest.html" title="QGalleryRemoveRequest Class Reference">
                         <section ref="qgalleryremoverequest-members.html" title="List of all members"/>
@@ -1598,6 +1595,9 @@
             <keyword name="QGalleryAbstractRequest::InvalidDestinationError" id="QGalleryAbstractRequest::InvalidDestinationError" ref="qgalleryabstractrequest.html#Result-enum"/>
             <keyword name="QGalleryAbstractRequest::InvalidUrlError" id="QGalleryAbstractRequest::InvalidUrlError" ref="qgalleryabstractrequest.html#Result-enum"/>
             <keyword name="QGalleryAbstractRequest::RequestError" id="QGalleryAbstractRequest::RequestError" ref="qgalleryabstractrequest.html#Result-enum"/>
+            <keyword name="QGalleryAbstractRequest::Scope" id="QGalleryAbstractRequest::Scope" ref="qgalleryabstractrequest.html#Scope-enum"/>
+            <keyword name="QGalleryAbstractRequest::AllDescendants" id="QGalleryAbstractRequest::AllDescendants" ref="qgalleryabstractrequest.html#Scope-enum"/>
+            <keyword name="QGalleryAbstractRequest::DirectDescendants" id="QGalleryAbstractRequest::DirectDescendants" ref="qgalleryabstractrequest.html#Scope-enum"/>
             <keyword name="QGalleryAbstractRequest::State" id="QGalleryAbstractRequest::State" ref="qgalleryabstractrequest.html#State-enum"/>
             <keyword name="QGalleryAbstractRequest::Inactive" id="QGalleryAbstractRequest::Inactive" ref="qgalleryabstractrequest.html#State-enum"/>
             <keyword name="QGalleryAbstractRequest::Active" id="QGalleryAbstractRequest::Active" ref="qgalleryabstractrequest.html#State-enum"/>
@@ -1606,7 +1606,6 @@
             <keyword name="QGalleryAbstractRequest::Type" id="QGalleryAbstractRequest::Type" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Item" id="QGalleryAbstractRequest::Item" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Url" id="QGalleryAbstractRequest::Url" ref="qgalleryabstractrequest.html#Type-enum"/>
-            <keyword name="QGalleryAbstractRequest::Container" id="QGalleryAbstractRequest::Container" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Filter" id="QGalleryAbstractRequest::Filter" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Count" id="QGalleryAbstractRequest::Count" ref="qgalleryabstractrequest.html#Type-enum"/>
             <keyword name="QGalleryAbstractRequest::Remove" id="QGalleryAbstractRequest::Remove" ref="qgalleryabstractrequest.html#Type-enum"/>
@@ -1642,39 +1641,21 @@
             <keyword name="result" id="QGalleryAbstractResponse::result" ref="qgalleryabstractresponse.html#result"/>
             <keyword name="waitForFinished" id="QGalleryAbstractResponse::waitForFinished" ref="qgalleryabstractresponse.html#waitForFinished"/>
             <keyword name="~QGalleryAbstractResponse" id="QGalleryAbstractResponse::~QGalleryAbstractResponse" ref="qgalleryabstractresponse.html#dtor.QGalleryAbstractResponse"/>
-            <keyword name="QGalleryContainerRequest" id="QGalleryContainerRequest" ref="qgallerycontainerrequest.html"/>
-            <keyword name="containerId" id="QGalleryContainerRequest::containerId" ref="qgallerycontainerrequest.html#containerId-prop"/>
-            <keyword name="initialCursorPosition" id="QGalleryContainerRequest::initialCursorPosition" ref="qgallerycontainerrequest.html#initialCursorPosition-prop"/>
-            <keyword name="isLive" id="QGalleryContainerRequest::isLive" ref="qgallerycontainerrequest.html#live-prop"/>
-            <keyword name="itemType" id="QGalleryContainerRequest::itemType" ref="qgallerycontainerrequest.html#itemType-prop"/>
-            <keyword name="items" id="QGalleryContainerRequest::items" ref="qgallerycontainerrequest.html#items-prop"/>
-            <keyword name="itemsChanged" id="QGalleryContainerRequest::itemsChanged" ref="qgallerycontainerrequest.html#itemsChanged"/>
-            <keyword name="live" id="QGalleryContainerRequest::live" ref="qgallerycontainerrequest.html#live-prop"/>
-            <keyword name="minimumPagedItems" id="QGalleryContainerRequest::minimumPagedItems" ref="qgallerycontainerrequest.html#minimumPagedItems-prop"/>
-            <keyword name="propertyNames" id="QGalleryContainerRequest::propertyNames" ref="qgallerycontainerrequest.html#propertyNames-prop"/>
-            <keyword name="setContainerId" id="QGalleryContainerRequest::setContainerId" ref="qgallerycontainerrequest.html#containerId-prop"/>
-            <keyword name="setInitialCursorPosition" id="QGalleryContainerRequest::setInitialCursorPosition" ref="qgallerycontainerrequest.html#initialCursorPosition-prop"/>
-            <keyword name="setItemType" id="QGalleryContainerRequest::setItemType" ref="qgallerycontainerrequest.html#itemType-prop"/>
-            <keyword name="setLive" id="QGalleryContainerRequest::setLive" ref="qgallerycontainerrequest.html#live-prop"/>
-            <keyword name="setMinimumPagedItems" id="QGalleryContainerRequest::setMinimumPagedItems" ref="qgallerycontainerrequest.html#minimumPagedItems-prop"/>
-            <keyword name="setPropertyNames" id="QGalleryContainerRequest::setPropertyNames" ref="qgallerycontainerrequest.html#propertyNames-prop"/>
-            <keyword name="setResponse" id="QGalleryContainerRequest::setResponse" ref="qgallerycontainerrequest.html#setResponse"/>
-            <keyword name="setSortPropertyNames" id="QGalleryContainerRequest::setSortPropertyNames" ref="qgallerycontainerrequest.html#sortPropertyNames-prop"/>
-            <keyword name="sortPropertyNames" id="QGalleryContainerRequest::sortPropertyNames" ref="qgallerycontainerrequest.html#sortPropertyNames-prop"/>
-            <keyword name="~QGalleryContainerRequest" id="QGalleryContainerRequest::~QGalleryContainerRequest" ref="qgallerycontainerrequest.html#dtor.QGalleryContainerRequest"/>
             <keyword name="QGalleryCountRequest" id="QGalleryCountRequest" ref="qgallerycountrequest.html"/>
-            <keyword name="containerId" id="QGalleryCountRequest::containerId" ref="qgallerycountrequest.html#containerId-prop"/>
             <keyword name="count" id="QGalleryCountRequest::count" ref="qgallerycountrequest.html#count-prop"/>
             <keyword name="countChanged" id="QGalleryCountRequest::countChanged" ref="qgallerycountrequest.html#countChanged"/>
             <keyword name="filter" id="QGalleryCountRequest::filter" ref="qgallerycountrequest.html#filter-prop"/>
             <keyword name="isLive" id="QGalleryCountRequest::isLive" ref="qgallerycountrequest.html#live-prop"/>
             <keyword name="itemType" id="QGalleryCountRequest::itemType" ref="qgallerycountrequest.html#itemType-prop"/>
             <keyword name="live" id="QGalleryCountRequest::live" ref="qgallerycountrequest.html#live-prop"/>
-            <keyword name="setContainerId" id="QGalleryCountRequest::setContainerId" ref="qgallerycountrequest.html#containerId-prop"/>
+            <keyword name="scope" id="QGalleryCountRequest::scope" ref="qgallerycountrequest.html#scope-prop"/>
+            <keyword name="scopeItemId" id="QGalleryCountRequest::scopeItemId" ref="qgallerycountrequest.html#scopeItemId-prop"/>
             <keyword name="setFilter" id="QGalleryCountRequest::setFilter" ref="qgallerycountrequest.html#filter-prop"/>
             <keyword name="setItemType" id="QGalleryCountRequest::setItemType" ref="qgallerycountrequest.html#itemType-prop"/>
             <keyword name="setLive" id="QGalleryCountRequest::setLive" ref="qgallerycountrequest.html#live-prop"/>
             <keyword name="setResponse" id="QGalleryCountRequest::setResponse" ref="qgallerycountrequest.html#setResponse"/>
+            <keyword name="setScope" id="QGalleryCountRequest::setScope" ref="qgallerycountrequest.html#scope-prop"/>
+            <keyword name="setScopeItemId" id="QGalleryCountRequest::setScopeItemId" ref="qgallerycountrequest.html#scopeItemId-prop"/>
             <keyword name="~QGalleryCountRequest" id="QGalleryCountRequest::~QGalleryCountRequest" ref="qgallerycountrequest.html#dtor.QGalleryCountRequest"/>
             <keyword name="QGalleryFilter" id="QGalleryFilter" ref="qgalleryfilter.html"/>
             <keyword name="QGalleryFilter::RangeFlag" id="QGalleryFilter::RangeFlag" ref="qgalleryfilter.html#RangeFlag-enum"/>
@@ -1701,28 +1682,6 @@
             <keyword name="toUnionFilter" id="QGalleryFilter::toUnionFilter" ref="qgalleryfilter.html#toUnionFilter"/>
             <keyword name="type" id="QGalleryFilter::type" ref="qgalleryfilter.html#type"/>
             <keyword name="~QGalleryFilter" id="QGalleryFilter::~QGalleryFilter" ref="qgalleryfilter.html#dtor.QGalleryFilter"/>
-            <keyword name="QGalleryFilterRequest" id="QGalleryFilterRequest" ref="qgalleryfilterrequest.html"/>
-            <keyword name="containerId" id="QGalleryFilterRequest::containerId" ref="qgalleryfilterrequest.html#containerId-prop"/>
-            <keyword name="filter" id="QGalleryFilterRequest::filter" ref="qgalleryfilterrequest.html#filter-prop"/>
-            <keyword name="initialCursorPosition" id="QGalleryFilterRequest::initialCursorPosition" ref="qgalleryfilterrequest.html#initialCursorPosition-prop"/>
-            <keyword name="isLive" id="QGalleryFilterRequest::isLive" ref="qgalleryfilterrequest.html#live-prop"/>
-            <keyword name="itemType" id="QGalleryFilterRequest::itemType" ref="qgalleryfilterrequest.html#itemType-prop"/>
-            <keyword name="items" id="QGalleryFilterRequest::items" ref="qgalleryfilterrequest.html#items-prop"/>
-            <keyword name="itemsChanged" id="QGalleryFilterRequest::itemsChanged" ref="qgalleryfilterrequest.html#itemsChanged"/>
-            <keyword name="live" id="QGalleryFilterRequest::live" ref="qgalleryfilterrequest.html#live-prop"/>
-            <keyword name="minimumPagedItems" id="QGalleryFilterRequest::minimumPagedItems" ref="qgalleryfilterrequest.html#minimumPagedItems-prop"/>
-            <keyword name="propertyNames" id="QGalleryFilterRequest::propertyNames" ref="qgalleryfilterrequest.html#propertyNames-prop"/>
-            <keyword name="setContainerId" id="QGalleryFilterRequest::setContainerId" ref="qgalleryfilterrequest.html#containerId-prop"/>
-            <keyword name="setFilter" id="QGalleryFilterRequest::setFilter" ref="qgalleryfilterrequest.html#filter-prop"/>
-            <keyword name="setInitialCursorPosition" id="QGalleryFilterRequest::setInitialCursorPosition" ref="qgalleryfilterrequest.html#initialCursorPosition-prop"/>
-            <keyword name="setItemType" id="QGalleryFilterRequest::setItemType" ref="qgalleryfilterrequest.html#itemType-prop"/>
-            <keyword name="setLive" id="QGalleryFilterRequest::setLive" ref="qgalleryfilterrequest.html#live-prop"/>
-            <keyword name="setMinimumPagedItems" id="QGalleryFilterRequest::setMinimumPagedItems" ref="qgalleryfilterrequest.html#minimumPagedItems-prop"/>
-            <keyword name="setPropertyNames" id="QGalleryFilterRequest::setPropertyNames" ref="qgalleryfilterrequest.html#propertyNames-prop"/>
-            <keyword name="setResponse" id="QGalleryFilterRequest::setResponse" ref="qgalleryfilterrequest.html#setResponse"/>
-            <keyword name="setSortPropertyNames" id="QGalleryFilterRequest::setSortPropertyNames" ref="qgalleryfilterrequest.html#sortPropertyNames-prop"/>
-            <keyword name="sortPropertyNames" id="QGalleryFilterRequest::sortPropertyNames" ref="qgalleryfilterrequest.html#sortPropertyNames-prop"/>
-            <keyword name="~QGalleryFilterRequest" id="QGalleryFilterRequest::~QGalleryFilterRequest" ref="qgalleryfilterrequest.html#dtor.QGalleryFilterRequest"/>
             <keyword name="QGalleryIntersectionFilter" id="QGalleryIntersectionFilter" ref="qgalleryintersectionfilter.html"/>
             <keyword name="append" id="QGalleryIntersectionFilter::append" ref="qgalleryintersectionfilter.html#append"/>
             <keyword name="clear" id="QGalleryIntersectionFilter::clear" ref="qgalleryintersectionfilter.html#clear"/>
@@ -1815,6 +1774,30 @@
             <keyword name="operator==" id="QGalleryProperty::operator==" ref="qgalleryproperty.html#operator-eq-eq"/>
             <keyword name="operator&gt;" id="QGalleryProperty::operator&gt;" ref="qgalleryproperty.html#operator-gt"/>
             <keyword name="operator&gt;=" id="QGalleryProperty::operator&gt;=" ref="qgalleryproperty.html#operator-gt-eq"/>
+            <keyword name="QGalleryQueryRequest" id="QGalleryQueryRequest" ref="qgalleryqueryrequest.html"/>
+            <keyword name="filter" id="QGalleryQueryRequest::filter" ref="qgalleryqueryrequest.html#filter-prop"/>
+            <keyword name="initialCursorPosition" id="QGalleryQueryRequest::initialCursorPosition" ref="qgalleryqueryrequest.html#initialCursorPosition-prop"/>
+            <keyword name="isLive" id="QGalleryQueryRequest::isLive" ref="qgalleryqueryrequest.html#live-prop"/>
+            <keyword name="itemType" id="QGalleryQueryRequest::itemType" ref="qgalleryqueryrequest.html#itemType-prop"/>
+            <keyword name="items" id="QGalleryQueryRequest::items" ref="qgalleryqueryrequest.html#items-prop"/>
+            <keyword name="itemsChanged" id="QGalleryQueryRequest::itemsChanged" ref="qgalleryqueryrequest.html#itemsChanged"/>
+            <keyword name="live" id="QGalleryQueryRequest::live" ref="qgalleryqueryrequest.html#live-prop"/>
+            <keyword name="minimumPagedItems" id="QGalleryQueryRequest::minimumPagedItems" ref="qgalleryqueryrequest.html#minimumPagedItems-prop"/>
+            <keyword name="propertyNames" id="QGalleryQueryRequest::propertyNames" ref="qgalleryqueryrequest.html#propertyNames-prop"/>
+            <keyword name="scope" id="QGalleryQueryRequest::scope" ref="qgalleryqueryrequest.html#scope-prop"/>
+            <keyword name="scopeItemId" id="QGalleryQueryRequest::scopeItemId" ref="qgalleryqueryrequest.html#scopeItemId-prop"/>
+            <keyword name="setFilter" id="QGalleryQueryRequest::setFilter" ref="qgalleryqueryrequest.html#filter-prop"/>
+            <keyword name="setInitialCursorPosition" id="QGalleryQueryRequest::setInitialCursorPosition" ref="qgalleryqueryrequest.html#initialCursorPosition-prop"/>
+            <keyword name="setItemType" id="QGalleryQueryRequest::setItemType" ref="qgalleryqueryrequest.html#itemType-prop"/>
+            <keyword name="setLive" id="QGalleryQueryRequest::setLive" ref="qgalleryqueryrequest.html#live-prop"/>
+            <keyword name="setMinimumPagedItems" id="QGalleryQueryRequest::setMinimumPagedItems" ref="qgalleryqueryrequest.html#minimumPagedItems-prop"/>
+            <keyword name="setPropertyNames" id="QGalleryQueryRequest::setPropertyNames" ref="qgalleryqueryrequest.html#propertyNames-prop"/>
+            <keyword name="setResponse" id="QGalleryQueryRequest::setResponse" ref="qgalleryqueryrequest.html#setResponse"/>
+            <keyword name="setScope" id="QGalleryQueryRequest::setScope" ref="qgalleryqueryrequest.html#scope-prop"/>
+            <keyword name="setScopeItemId" id="QGalleryQueryRequest::setScopeItemId" ref="qgalleryqueryrequest.html#scopeItemId-prop"/>
+            <keyword name="setSortPropertyNames" id="QGalleryQueryRequest::setSortPropertyNames" ref="qgalleryqueryrequest.html#sortPropertyNames-prop"/>
+            <keyword name="sortPropertyNames" id="QGalleryQueryRequest::sortPropertyNames" ref="qgalleryqueryrequest.html#sortPropertyNames-prop"/>
+            <keyword name="~QGalleryQueryRequest" id="QGalleryQueryRequest::~QGalleryQueryRequest" ref="qgalleryqueryrequest.html#dtor.QGalleryQueryRequest"/>
             <keyword name="QGalleryRemoveRequest" id="QGalleryRemoveRequest" ref="qgalleryremoverequest.html"/>
             <keyword name="itemId" id="QGalleryRemoveRequest::itemId" ref="qgalleryremoverequest.html#itemId-prop"/>
             <keyword name="setItemId" id="QGalleryRemoveRequest::setItemId" ref="qgalleryremoverequest.html#itemId-prop"/>
@@ -3785,7 +3768,6 @@
             <file>qmessagefolder-members.html</file>
             <file>qmessageaccountfilter-members.html</file>
             <file>contactsschema.html</file>
-            <file>qgallerycontainerrequest.html</file>
             <file>qgeocoordinate-members.html</file>
             <file>qsensorplugininterface.html</file>
             <file>qvideodevicecontrol.html</file>
@@ -3927,7 +3909,6 @@
             <file>qorientationreading.html</file>
             <file>qmessage-members.html</file>
             <file>mediabrowser-photodelegate-h.html</file>
-            <file>qgalleryfilterrequest.html</file>
             <file>qcontactemailaddress-members.html</file>
             <file>weatherinfo-icons-weather-showers-svg.html</file>
             <file>qmediarecordercontrol-members.html</file>
@@ -4231,7 +4212,6 @@
             <file>mediabrowser.html</file>
             <file>qcontactdetaildefinitionremoverequest.html</file>
             <file>qmediarecorder.html</file>
-            <file>qgalleryfilterrequest-members.html</file>
             <file>bearercloud-bearercloud-cpp.html</file>
             <file>sysinfo-dialog-cpp.html</file>
             <file>qcontactunionfilter.html</file>
@@ -4355,6 +4335,7 @@
             <file>recorder.html</file>
             <file>qmetadatacontrol-members.html</file>
             <file>qabstractgallery-members.html</file>
+            <file>qgalleryqueryrequest.html</file>
             <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-pro.html</file>
@@ -4460,8 +4441,8 @@
             <file>qcontactfetchrequest-members.html</file>
             <file>mediabrowser-albumview-h.html</file>
             <file>qnmeapositioninfosource-members.html</file>
+            <file>qgalleryqueryrequest-members.html</file>
             <file>qcontactglobalpresence.html</file>
-            <file>qgallerycontainerrequest-members.html</file>
             <file>qmediaimageviewer.html</file>
             <file>qrotationreading-members.html</file>
             <file>qaudiocapturesource-members.html</file>

@@ -588,88 +588,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QContactType::type" href="qcontacttype.html#type" location="qcontacttype.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="type() const"/>
         </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGalleryFilterRequest" href="qgalleryfilterrequest.html" location="qgalleryfilterrequest.h" bases="QGalleryAbstractRequest" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="propertyNames" fullname="QGalleryFilterRequest::propertyNames" href="qgalleryfilterrequest.html#propertyNames-prop" location="qgalleryfilterrequest.h" type="QStringList">
-                <getter name="propertyNames"/>
-                <setter name="setPropertyNames"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="sortPropertyNames" fullname="QGalleryFilterRequest::sortPropertyNames" href="qgalleryfilterrequest.html#sortPropertyNames-prop" location="qgalleryfilterrequest.h" type="QStringList">
-                <getter name="sortPropertyNames"/>
-                <setter name="setSortPropertyNames"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="live" fullname="QGalleryFilterRequest::live" href="qgalleryfilterrequest.html#live-prop" location="qgalleryfilterrequest.h" type="bool">
-                <getter name="isLive"/>
-                <setter name="setLive"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="initialCursorPosition" fullname="QGalleryFilterRequest::initialCursorPosition" href="qgalleryfilterrequest.html#initialCursorPosition-prop" location="qgalleryfilterrequest.h" type="int">
-                <getter name="initialCursorPosition"/>
-                <setter name="setInitialCursorPosition"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="minimumPagedItems" fullname="QGalleryFilterRequest::minimumPagedItems" href="qgalleryfilterrequest.html#minimumPagedItems-prop" location="qgalleryfilterrequest.h" type="int">
-                <getter name="minimumPagedItems"/>
-                <setter name="setMinimumPagedItems"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="itemType" fullname="QGalleryFilterRequest::itemType" href="qgalleryfilterrequest.html#itemType-prop" location="qgalleryfilterrequest.h" type="QString">
-                <getter name="itemType"/>
-                <setter name="setItemType"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QGalleryFilterRequest::filter" href="qgalleryfilterrequest.html#filter-prop" location="qgalleryfilterrequest.h" type="QGalleryFilter">
-                <getter name="filter"/>
-                <setter name="setFilter"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="containerId" fullname="QGalleryFilterRequest::containerId" href="qgalleryfilterrequest.html#containerId-prop" location="qgalleryfilterrequest.h" type="QVariant">
-                <getter name="containerId"/>
-                <setter name="setContainerId"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="items" fullname="QGalleryFilterRequest::items" href="qgalleryfilterrequest.html#items-prop" location="qgalleryfilterrequest.h" type="QGalleryItemList *">
-                <getter name="items"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGalleryFilterRequest" fullname="QGalleryFilterRequest::QGalleryFilterRequest" href="qgalleryfilterrequest.html#QGalleryFilterRequest" location="qgalleryfilterrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGalleryFilterRequest(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGalleryFilterRequest" fullname="QGalleryFilterRequest::QGalleryFilterRequest" href="qgalleryfilterrequest.html#QGalleryFilterRequest-2" location="qgalleryfilterrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGalleryFilterRequest(QAbstractGallery * gallery, QObject * parent)">
-                <parameter left="QAbstractGallery *" right="" name="gallery" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGalleryFilterRequest" fullname="QGalleryFilterRequest::~QGalleryFilterRequest" href="qgalleryfilterrequest.html#dtor.QGalleryFilterRequest" location="qgalleryfilterrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGalleryFilterRequest()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="propertyNames" fullname="QGalleryFilterRequest::propertyNames" href="qgalleryfilterrequest.html#propertyNames-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="propertyNames" type="QStringList" signature="propertyNames() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setPropertyNames" fullname="QGalleryFilterRequest::setPropertyNames" href="qgalleryfilterrequest.html#propertyNames-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="propertyNames" type="void" signature="setPropertyNames(const QStringList &amp; names)">
-                <parameter left="const QStringList &amp;" right="" name="names" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sortPropertyNames" fullname="QGalleryFilterRequest::sortPropertyNames" href="qgalleryfilterrequest.html#sortPropertyNames-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="sortPropertyNames" type="QStringList" signature="sortPropertyNames() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSortPropertyNames" fullname="QGalleryFilterRequest::setSortPropertyNames" href="qgalleryfilterrequest.html#sortPropertyNames-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="sortPropertyNames" type="void" signature="setSortPropertyNames(const QStringList &amp; names)">
-                <parameter left="const QStringList &amp;" right="" name="names" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isLive" fullname="QGalleryFilterRequest::isLive" href="qgalleryfilterrequest.html#live-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="live" type="bool" signature="isLive() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setLive" fullname="QGalleryFilterRequest::setLive" href="qgalleryfilterrequest.html#live-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="live" type="void" signature="setLive(bool live)">
-                <parameter left="bool" right="" name="live" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="initialCursorPosition" fullname="QGalleryFilterRequest::initialCursorPosition" href="qgalleryfilterrequest.html#initialCursorPosition-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="initialCursorPosition" type="int" signature="initialCursorPosition() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setInitialCursorPosition" fullname="QGalleryFilterRequest::setInitialCursorPosition" href="qgalleryfilterrequest.html#initialCursorPosition-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="initialCursorPosition" type="void" signature="setInitialCursorPosition(int index)">
-                <parameter left="int" right="" name="index" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="minimumPagedItems" fullname="QGalleryFilterRequest::minimumPagedItems" href="qgalleryfilterrequest.html#minimumPagedItems-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="minimumPagedItems" type="int" signature="minimumPagedItems() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMinimumPagedItems" fullname="QGalleryFilterRequest::setMinimumPagedItems" href="qgalleryfilterrequest.html#minimumPagedItems-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="minimumPagedItems" type="void" signature="setMinimumPagedItems(int size)">
-                <parameter left="int" right="" name="size" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="itemType" fullname="QGalleryFilterRequest::itemType" href="qgalleryfilterrequest.html#itemType-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="itemType" type="QString" signature="itemType() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setItemType" fullname="QGalleryFilterRequest::setItemType" href="qgalleryfilterrequest.html#itemType-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="itemType" type="void" signature="setItemType(const QString &amp; type)">
-                <parameter left="const QString &amp;" right="" name="type" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="containerId" fullname="QGalleryFilterRequest::containerId" href="qgalleryfilterrequest.html#containerId-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="containerId" type="QVariant" signature="containerId() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setContainerId" fullname="QGalleryFilterRequest::setContainerId" href="qgalleryfilterrequest.html#containerId-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="containerId" type="void" signature="setContainerId(const QVariant &amp; id)">
-                <parameter left="const QVariant &amp;" right="" name="id" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QGalleryFilterRequest::filter" href="qgalleryfilterrequest.html#filter-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="filter" type="QGalleryFilter" signature="filter() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setFilter" fullname="QGalleryFilterRequest::setFilter" href="qgalleryfilterrequest.html#filter-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="filter" type="void" signature="setFilter(const QGalleryFilter &amp; filter)">
-                <parameter left="const QGalleryFilter &amp;" right="" name="filter" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="items" fullname="QGalleryFilterRequest::items" href="qgalleryfilterrequest.html#items-prop" location="qgalleryfilterrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="items" type="QGalleryItemList *" signature="items() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="itemsChanged" fullname="QGalleryFilterRequest::itemsChanged" href="qgalleryfilterrequest.html#itemsChanged" location="qgalleryfilterrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="itemsChanged()"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setResponse" fullname="QGalleryFilterRequest::setResponse" href="qgalleryfilterrequest.html#setResponse" location="qgalleryfilterrequest.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setResponse(QGalleryAbstractResponse * response)">
-                <parameter left="QGalleryAbstractResponse *" right="" name="response" default=""/>
-            </function>
-        </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QGalleryAbstractRequest" href="qgalleryabstractrequest.html" location="qgalleryabstractrequest.h" bases="QObject" module="">
             <property access="public" threadsafety="unspecified" status="commendable" name="gallery" fullname="QGalleryAbstractRequest::gallery" href="qgalleryabstractrequest.html#gallery-prop" location="qgalleryabstractrequest.h" type="QAbstractGallery *">
                 <getter name="gallery"/>
@@ -717,10 +635,13 @@
             <enum access="public" threadsafety="unspecified" status="commendable" name="Type" fullname="QGalleryAbstractRequest::Type" href="qgalleryabstractrequest.html#Type-enum" location="qgalleryabstractrequest.h">
                 <value name="Item" value="0"/>
                 <value name="Url" value="1"/>
-                <value name="Container" value="2"/>
-                <value name="Filter" value="3"/>
-                <value name="Count" value="4"/>
-                <value name="Remove" value="5"/>
+                <value name="Filter" value="2"/>
+                <value name="Count" value="3"/>
+                <value name="Remove" value="4"/>
+            </enum>
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Scope" fullname="QGalleryAbstractRequest::Scope" href="qgalleryabstractrequest.html#Scope-enum" location="qgalleryabstractrequest.h">
+                <value name="AllDescendants" value="0"/>
+                <value name="DirectDescendants" value="1"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QGalleryAbstractRequest" fullname="QGalleryAbstractRequest::QGalleryAbstractRequest" href="qgalleryabstractrequest.html#QGalleryAbstractRequest" location="qgalleryabstractrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGalleryAbstractRequest(Type type, QObject * parent)">
                 <parameter left="Type" right="" name="type" default=""/>
@@ -955,80 +876,6 @@
                 <parameter left="const QList&lt;QContactLocalId&gt; &amp;" right="" name="ids" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="ids" fullname="QContactLocalIdFilter::ids" href="qcontactlocalidfilter.html#ids" location="qcontactlocalidfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QContactLocalId&gt;" signature="ids() const"/>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QGalleryContainerRequest" href="qgallerycontainerrequest.html" location="qgallerycontainerrequest.h" bases="QGalleryAbstractRequest" module="">
-            <property access="public" threadsafety="unspecified" status="commendable" name="propertyNames" fullname="QGalleryContainerRequest::propertyNames" href="qgallerycontainerrequest.html#propertyNames-prop" location="qgallerycontainerrequest.h" type="QStringList">
-                <getter name="propertyNames"/>
-                <setter name="setPropertyNames"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="sortPropertyNames" fullname="QGalleryContainerRequest::sortPropertyNames" href="qgallerycontainerrequest.html#sortPropertyNames-prop" location="qgallerycontainerrequest.h" type="QStringList">
-                <getter name="sortPropertyNames"/>
-                <setter name="setSortPropertyNames"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="live" fullname="QGalleryContainerRequest::live" href="qgallerycontainerrequest.html#live-prop" location="qgallerycontainerrequest.h" type="bool">
-                <getter name="isLive"/>
-                <setter name="setLive"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="initialCursorPosition" fullname="QGalleryContainerRequest::initialCursorPosition" href="qgallerycontainerrequest.html#initialCursorPosition-prop" location="qgallerycontainerrequest.h" type="int">
-                <getter name="initialCursorPosition"/>
-                <setter name="setInitialCursorPosition"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="minimumPagedItems" fullname="QGalleryContainerRequest::minimumPagedItems" href="qgallerycontainerrequest.html#minimumPagedItems-prop" location="qgallerycontainerrequest.h" type="int">
-                <getter name="minimumPagedItems"/>
-                <setter name="setMinimumPagedItems"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="itemType" fullname="QGalleryContainerRequest::itemType" href="qgallerycontainerrequest.html#itemType-prop" location="qgallerycontainerrequest.h" type="QString">
-                <getter name="itemType"/>
-                <setter name="setItemType"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="containerId" fullname="QGalleryContainerRequest::containerId" href="qgallerycontainerrequest.html#containerId-prop" location="qgallerycontainerrequest.h" type="QVariant">
-                <getter name="containerId"/>
-                <setter name="setContainerId"/>
-            </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="items" fullname="QGalleryContainerRequest::items" href="qgallerycontainerrequest.html#items-prop" location="qgallerycontainerrequest.h" type="QGalleryItemList *">
-                <getter name="items"/>
-            </property>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGalleryContainerRequest" fullname="QGalleryContainerRequest::QGalleryContainerRequest" href="qgallerycontainerrequest.html#QGalleryContainerRequest" location="qgallerycontainerrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGalleryContainerRequest(QObject * parent)">
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QGalleryContainerRequest" fullname="QGalleryContainerRequest::QGalleryContainerRequest" href="qgallerycontainerrequest.html#QGalleryContainerRequest-2" location="qgallerycontainerrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGalleryContainerRequest(QAbstractGallery * gallery, QObject * parent)">
-                <parameter left="QAbstractGallery *" right="" name="gallery" default=""/>
-                <parameter left="QObject *" right="" name="parent" default="0"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QGalleryContainerRequest" fullname="QGalleryContainerRequest::~QGalleryContainerRequest" href="qgallerycontainerrequest.html#dtor.QGalleryContainerRequest" location="qgallerycontainerrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGalleryContainerRequest()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="propertyNames" fullname="QGalleryContainerRequest::propertyNames" href="qgallerycontainerrequest.html#propertyNames-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="propertyNames" type="QStringList" signature="propertyNames() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setPropertyNames" fullname="QGalleryContainerRequest::setPropertyNames" href="qgallerycontainerrequest.html#propertyNames-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="propertyNames" type="void" signature="setPropertyNames(const QStringList &amp; names)">
-                <parameter left="const QStringList &amp;" right="" name="names" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="sortPropertyNames" fullname="QGalleryContainerRequest::sortPropertyNames" href="qgallerycontainerrequest.html#sortPropertyNames-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="sortPropertyNames" type="QStringList" signature="sortPropertyNames() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setSortPropertyNames" fullname="QGalleryContainerRequest::setSortPropertyNames" href="qgallerycontainerrequest.html#sortPropertyNames-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="sortPropertyNames" type="void" signature="setSortPropertyNames(const QStringList &amp; names)">
-                <parameter left="const QStringList &amp;" right="" name="names" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isLive" fullname="QGalleryContainerRequest::isLive" href="qgallerycontainerrequest.html#live-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="live" type="bool" signature="isLive() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setLive" fullname="QGalleryContainerRequest::setLive" href="qgallerycontainerrequest.html#live-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="live" type="void" signature="setLive(bool live)">
-                <parameter left="bool" right="" name="live" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="initialCursorPosition" fullname="QGalleryContainerRequest::initialCursorPosition" href="qgallerycontainerrequest.html#initialCursorPosition-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="initialCursorPosition" type="int" signature="initialCursorPosition() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setInitialCursorPosition" fullname="QGalleryContainerRequest::setInitialCursorPosition" href="qgallerycontainerrequest.html#initialCursorPosition-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="initialCursorPosition" type="void" signature="setInitialCursorPosition(int index)">
-                <parameter left="int" right="" name="index" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="minimumPagedItems" fullname="QGalleryContainerRequest::minimumPagedItems" href="qgallerycontainerrequest.html#minimumPagedItems-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="minimumPagedItems" type="int" signature="minimumPagedItems() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setMinimumPagedItems" fullname="QGalleryContainerRequest::setMinimumPagedItems" href="qgallerycontainerrequest.html#minimumPagedItems-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="minimumPagedItems" type="void" signature="setMinimumPagedItems(int size)">
-                <parameter left="int" right="" name="size" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="itemType" fullname="QGalleryContainerRequest::itemType" href="qgallerycontainerrequest.html#itemType-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="itemType" type="QString" signature="itemType() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setItemType" fullname="QGalleryContainerRequest::setItemType" href="qgallerycontainerrequest.html#itemType-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="itemType" type="void" signature="setItemType(const QString &amp; type)">
-                <parameter left="const QString &amp;" right="" name="type" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="containerId" fullname="QGalleryContainerRequest::containerId" href="qgallerycontainerrequest.html#containerId-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="containerId" type="QVariant" signature="containerId() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setContainerId" fullname="QGalleryContainerRequest::setContainerId" href="qgallerycontainerrequest.html#containerId-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="containerId" type="void" signature="setContainerId(const QVariant &amp; id)">
-                <parameter left="const QVariant &amp;" right="" name="id" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="items" fullname="QGalleryContainerRequest::items" href="qgallerycontainerrequest.html#items-prop" location="qgallerycontainerrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="items" type="QGalleryItemList *" signature="items() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="itemsChanged" fullname="QGalleryContainerRequest::itemsChanged" href="qgallerycontainerrequest.html#itemsChanged" location="qgallerycontainerrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="itemsChanged()"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setResponse" fullname="QGalleryContainerRequest::setResponse" href="qgallerycontainerrequest.html#setResponse" location="qgallerycontainerrequest.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setResponse(QGalleryAbstractResponse * response)">
-                <parameter left="QGalleryAbstractResponse *" right="" name="response" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactThumbnail" href="qcontactthumbnail.html" location="qcontactthumbnail.h" bases="QContactDetail" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="DefinitionName" fullname="QContactThumbnail::DefinitionName" href="qcontactthumbnail.html#DefinitionName-var" location="qcontactthumbnail.h" type="const QLatin1Constant" static="true"/>
@@ -2093,7 +1940,7 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="name" fullname="QGalleryProperty::name" href="qgalleryproperty.html#name" location="qgalleryproperty.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="name() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="operator QString" fullname="QGalleryProperty::operator QString" href="qgalleryproperty.html#operator QString" location="qgalleryproperty.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="" signature="operator QString() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="matches" fullname="QGalleryProperty::matches" href="qgalleryproperty.html#matches" location="qgalleryproperty.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="QGalleryMetaDataFilter" signature="matches(const QVariant &amp; value, Qt::MatchFlags flags)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="matches" fullname="QGalleryProperty::matches" href="qgalleryproperty.html#matches" location="qgalleryproperty.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGalleryMetaDataFilter" signature="matches(const QVariant &amp; value, Qt::MatchFlags flags) const">
                 <parameter left="const QVariant &amp;" right="" name="value" default=""/>
                 <parameter left="Qt::MatchFlags" right="" name="flags" default="0"/>
             </function>
@@ -2520,7 +2367,9 @@
                 <parameter left="const QVariant &amp;" right="" name="id" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="item" fullname="QGalleryItemRequest::item" href="qgalleryitemrequest.html#item-prop" location="qgalleryitemrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="item" type="QGalleryItemList *" signature="item() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="itemChanged" fullname="QGalleryItemRequest::itemChanged" href="qgalleryitemrequest.html#itemChanged" location="qgalleryitemrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="itemChanged()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="itemChanged" fullname="QGalleryItemRequest::itemChanged" href="qgalleryitemrequest.html#itemChanged" location="qgalleryitemrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="itemChanged(QGalleryItemList * item)">
+                <parameter left="QGalleryItemList *" right="" name="item" default=""/>
+            </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="setResponse" fullname="QGalleryItemRequest::setResponse" href="qgalleryitemrequest.html#setResponse" location="qgalleryitemrequest.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setResponse(QGalleryAbstractResponse * response)">
                 <parameter left="QGalleryAbstractResponse *" right="" name="response" default=""/>
             </function>
@@ -4605,9 +4454,13 @@
                 <getter name="filter"/>
                 <setter name="setFilter"/>
             </property>
-            <property access="public" threadsafety="unspecified" status="commendable" name="containerId" fullname="QGalleryCountRequest::containerId" href="qgallerycountrequest.html#containerId-prop" location="qgallerycountrequest.h" type="QVariant">
-                <getter name="containerId"/>
-                <setter name="setContainerId"/>
+            <property access="public" threadsafety="unspecified" status="commendable" name="scope" fullname="QGalleryCountRequest::scope" href="qgallerycountrequest.html#scope-prop" location="qgallerycountrequest.h" type="QGalleryAbstractRequest::Scope">
+                <getter name="scope"/>
+                <setter name="setScope"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="scopeItemId" fullname="QGalleryCountRequest::scopeItemId" href="qgallerycountrequest.html#scopeItemId-prop" location="qgallerycountrequest.h" type="QVariant">
+                <getter name="scopeItemId"/>
+                <setter name="setScopeItemId"/>
             </property>
             <property access="public" threadsafety="unspecified" status="commendable" name="count" fullname="QGalleryCountRequest::count" href="qgallerycountrequest.html#count-prop" location="qgallerycountrequest.h" type="int">
                 <getter name="count"/>
@@ -4632,8 +4485,12 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setFilter" fullname="QGalleryCountRequest::setFilter" href="qgallerycountrequest.html#filter-prop" location="qgallerycountrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="filter" type="void" signature="setFilter(const QGalleryFilter &amp; filter)">
                 <parameter left="const QGalleryFilter &amp;" right="" name="filter" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="containerId" fullname="QGalleryCountRequest::containerId" href="qgallerycountrequest.html#containerId-prop" location="qgallerycountrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="containerId" type="QVariant" signature="containerId() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setContainerId" fullname="QGalleryCountRequest::setContainerId" href="qgallerycountrequest.html#containerId-prop" location="qgallerycountrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="containerId" type="void" signature="setContainerId(const QVariant &amp; id)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="scope" fullname="QGalleryCountRequest::scope" href="qgallerycountrequest.html#scope-prop" location="qgallerycountrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="scope" type="QGalleryAbstractRequest::Scope" signature="scope() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setScope" fullname="QGalleryCountRequest::setScope" href="qgallerycountrequest.html#scope-prop" location="qgallerycountrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="scope" type="void" signature="setScope(QGalleryAbstractRequest::Scope scope)">
+                <parameter left="QGalleryAbstractRequest::Scope" right="" name="scope" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="scopeItemId" fullname="QGalleryCountRequest::scopeItemId" href="qgallerycountrequest.html#scopeItemId-prop" location="qgallerycountrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="scopeItemId" type="QVariant" signature="scopeItemId() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setScopeItemId" fullname="QGalleryCountRequest::setScopeItemId" href="qgallerycountrequest.html#scopeItemId-prop" location="qgallerycountrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="scopeItemId" type="void" signature="setScopeItemId(const QVariant &amp; id)">
                 <parameter left="const QVariant &amp;" right="" name="id" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="count" fullname="QGalleryCountRequest::count" href="qgallerycountrequest.html#count-prop" location="qgallerycountrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="count" type="int" signature="count() const"/>
@@ -5619,6 +5476,98 @@
                 <parameter left="const QString &amp;" right="" name="subType" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactAddress::subTypes" href="qcontactaddress.html#subTypes" location="qcontactaddress.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
+        </class>
+        <class access="public" threadsafety="unspecified" status="commendable" name="QGalleryQueryRequest" href="qgalleryqueryrequest.html" location="qgalleryqueryrequest.h" bases="QGalleryAbstractRequest" module="">
+            <property access="public" threadsafety="unspecified" status="commendable" name="propertyNames" fullname="QGalleryQueryRequest::propertyNames" href="qgalleryqueryrequest.html#propertyNames-prop" location="qgalleryqueryrequest.h" type="QStringList">
+                <getter name="propertyNames"/>
+                <setter name="setPropertyNames"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="sortPropertyNames" fullname="QGalleryQueryRequest::sortPropertyNames" href="qgalleryqueryrequest.html#sortPropertyNames-prop" location="qgalleryqueryrequest.h" type="QStringList">
+                <getter name="sortPropertyNames"/>
+                <setter name="setSortPropertyNames"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="live" fullname="QGalleryQueryRequest::live" href="qgalleryqueryrequest.html#live-prop" location="qgalleryqueryrequest.h" type="bool">
+                <getter name="isLive"/>
+                <setter name="setLive"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="initialCursorPosition" fullname="QGalleryQueryRequest::initialCursorPosition" href="qgalleryqueryrequest.html#initialCursorPosition-prop" location="qgalleryqueryrequest.h" type="int">
+                <getter name="initialCursorPosition"/>
+                <setter name="setInitialCursorPosition"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="minimumPagedItems" fullname="QGalleryQueryRequest::minimumPagedItems" href="qgalleryqueryrequest.html#minimumPagedItems-prop" location="qgalleryqueryrequest.h" type="int">
+                <getter name="minimumPagedItems"/>
+                <setter name="setMinimumPagedItems"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="itemType" fullname="QGalleryQueryRequest::itemType" href="qgalleryqueryrequest.html#itemType-prop" location="qgalleryqueryrequest.h" type="QString">
+                <getter name="itemType"/>
+                <setter name="setItemType"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QGalleryQueryRequest::filter" href="qgalleryqueryrequest.html#filter-prop" location="qgalleryqueryrequest.h" type="QGalleryFilter">
+                <getter name="filter"/>
+                <setter name="setFilter"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="scope" fullname="QGalleryQueryRequest::scope" href="qgalleryqueryrequest.html#scope-prop" location="qgalleryqueryrequest.h" type="QGalleryAbstractRequest::Scope">
+                <getter name="scope"/>
+                <setter name="setScope"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="scopeItemId" fullname="QGalleryQueryRequest::scopeItemId" href="qgalleryqueryrequest.html#scopeItemId-prop" location="qgalleryqueryrequest.h" type="QVariant">
+                <getter name="scopeItemId"/>
+                <setter name="setScopeItemId"/>
+            </property>
+            <property access="public" threadsafety="unspecified" status="commendable" name="items" fullname="QGalleryQueryRequest::items" href="qgalleryqueryrequest.html#items-prop" location="qgalleryqueryrequest.h" type="QGalleryItemList *">
+                <getter name="items"/>
+            </property>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGalleryQueryRequest" fullname="QGalleryQueryRequest::QGalleryQueryRequest" href="qgalleryqueryrequest.html#QGalleryQueryRequest" location="qgalleryqueryrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QGalleryQueryRequest(QObject * parent)">
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="QGalleryQueryRequest" fullname="QGalleryQueryRequest::QGalleryQueryRequest" href="qgalleryqueryrequest.html#QGalleryQueryRequest-2" location="qgalleryqueryrequest.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QGalleryQueryRequest(QAbstractGallery * gallery, QObject * parent)">
+                <parameter left="QAbstractGallery *" right="" name="gallery" default=""/>
+                <parameter left="QObject *" right="" name="parent" default="0"/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="~QGalleryQueryRequest" fullname="QGalleryQueryRequest::~QGalleryQueryRequest" href="qgalleryqueryrequest.html#dtor.QGalleryQueryRequest" location="qgalleryqueryrequest.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QGalleryQueryRequest()"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="propertyNames" fullname="QGalleryQueryRequest::propertyNames" href="qgalleryqueryrequest.html#propertyNames-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="propertyNames" type="QStringList" signature="propertyNames() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPropertyNames" fullname="QGalleryQueryRequest::setPropertyNames" href="qgalleryqueryrequest.html#propertyNames-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="propertyNames" type="void" signature="setPropertyNames(const QStringList &amp; names)">
+                <parameter left="const QStringList &amp;" right="" name="names" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="sortPropertyNames" fullname="QGalleryQueryRequest::sortPropertyNames" href="qgalleryqueryrequest.html#sortPropertyNames-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="sortPropertyNames" type="QStringList" signature="sortPropertyNames() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSortPropertyNames" fullname="QGalleryQueryRequest::setSortPropertyNames" href="qgalleryqueryrequest.html#sortPropertyNames-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="sortPropertyNames" type="void" signature="setSortPropertyNames(const QStringList &amp; names)">
+                <parameter left="const QStringList &amp;" right="" name="names" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isLive" fullname="QGalleryQueryRequest::isLive" href="qgalleryqueryrequest.html#live-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="live" type="bool" signature="isLive() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setLive" fullname="QGalleryQueryRequest::setLive" href="qgalleryqueryrequest.html#live-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="live" type="void" signature="setLive(bool live)">
+                <parameter left="bool" right="" name="live" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="initialCursorPosition" fullname="QGalleryQueryRequest::initialCursorPosition" href="qgalleryqueryrequest.html#initialCursorPosition-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="initialCursorPosition" type="int" signature="initialCursorPosition() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setInitialCursorPosition" fullname="QGalleryQueryRequest::setInitialCursorPosition" href="qgalleryqueryrequest.html#initialCursorPosition-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="initialCursorPosition" type="void" signature="setInitialCursorPosition(int index)">
+                <parameter left="int" right="" name="index" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="minimumPagedItems" fullname="QGalleryQueryRequest::minimumPagedItems" href="qgalleryqueryrequest.html#minimumPagedItems-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="minimumPagedItems" type="int" signature="minimumPagedItems() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setMinimumPagedItems" fullname="QGalleryQueryRequest::setMinimumPagedItems" href="qgalleryqueryrequest.html#minimumPagedItems-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="minimumPagedItems" type="void" signature="setMinimumPagedItems(int size)">
+                <parameter left="int" right="" name="size" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="itemType" fullname="QGalleryQueryRequest::itemType" href="qgalleryqueryrequest.html#itemType-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="itemType" type="QString" signature="itemType() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setItemType" fullname="QGalleryQueryRequest::setItemType" href="qgalleryqueryrequest.html#itemType-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="itemType" type="void" signature="setItemType(const QString &amp; type)">
+                <parameter left="const QString &amp;" right="" name="type" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="scope" fullname="QGalleryQueryRequest::scope" href="qgalleryqueryrequest.html#scope-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="scope" type="QGalleryAbstractRequest::Scope" signature="scope() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setScope" fullname="QGalleryQueryRequest::setScope" href="qgalleryqueryrequest.html#scope-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="scope" type="void" signature="setScope(QGalleryAbstractRequest::Scope scope)">
+                <parameter left="QGalleryAbstractRequest::Scope" right="" name="scope" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="scopeItemId" fullname="QGalleryQueryRequest::scopeItemId" href="qgalleryqueryrequest.html#scopeItemId-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="scopeItemId" type="QVariant" signature="scopeItemId() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setScopeItemId" fullname="QGalleryQueryRequest::setScopeItemId" href="qgalleryqueryrequest.html#scopeItemId-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="scopeItemId" type="void" signature="setScopeItemId(const QVariant &amp; id)">
+                <parameter left="const QVariant &amp;" right="" name="id" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="filter" fullname="QGalleryQueryRequest::filter" href="qgalleryqueryrequest.html#filter-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="filter" type="QGalleryFilter" signature="filter() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setFilter" fullname="QGalleryQueryRequest::setFilter" href="qgalleryqueryrequest.html#filter-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="filter" type="void" signature="setFilter(const QGalleryFilter &amp; filter)">
+                <parameter left="const QGalleryFilter &amp;" right="" name="filter" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="items" fullname="QGalleryQueryRequest::items" href="qgalleryqueryrequest.html#items-prop" location="qgalleryqueryrequest.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="items" type="QGalleryItemList *" signature="items() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="itemsChanged" fullname="QGalleryQueryRequest::itemsChanged" href="qgalleryqueryrequest.html#itemsChanged" location="qgalleryqueryrequest.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="itemsChanged(QGalleryItemList * items)">
+                <parameter left="QGalleryItemList *" right="" name="items" default=""/>
+            </function>
+            <function access="protected" threadsafety="unspecified" status="commendable" name="setResponse" fullname="QGalleryQueryRequest::setResponse" href="qgalleryqueryrequest.html#setResponse" location="qgalleryqueryrequest.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="setResponse(QGalleryAbstractResponse * response)">
+                <parameter left="QGalleryAbstractResponse *" right="" name="response" default=""/>
+            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QCompassReading" href="qcompassreading.html" location="qcompass.h" bases="QSensorReading" module="">
             <contents name="qcompassreading-units" title="QCompassReading Units" level="2"/>

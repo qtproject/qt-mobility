@@ -53,14 +53,13 @@ PhotoView::PhotoView(QWidget *parent)
     setType(QDocumentGallery::Image);
     setFields(QStringList()
             << QDocumentGallery::fileName
-            << QDocumentGallery::thumbnailImage);
+            << QDocumentGallery::thumbnailPixmap);
     setSortFields(QStringList()
             << QDocumentGallery::title);
 
-
     QHash<int, QString> properties;
     properties.insert(Qt::DisplayRole, QDocumentGallery::fileName);
-    properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailImage);
+    properties.insert(Qt::DecorationRole, QDocumentGallery::thumbnailPixmap);
 
     model = new QGalleryItemListModel;
     model->addColumn(properties);

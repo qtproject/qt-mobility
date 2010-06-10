@@ -88,7 +88,7 @@ public:
     int timeout;
     QDBusPendingCallWatcher *getServiceTypeWatcher;
     QDBusPendingCallWatcher *existWatcher;
-    QGalleryDBusInterfacePointer fileInterface;
+    const QGalleryDBusInterfacePointer fileInterface;
     QBasicTimer createTimer;
     QTime createTime;
     const QUrl itemUrl;
