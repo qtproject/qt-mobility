@@ -295,10 +295,8 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     QContactDetailFieldDefinition gsfd; //Generic string field definition
     gsfd.setDataType(QVariant::String);
 
-    // XXX NOTE: for every detail where setXxxDetail() function used overwrite = true
-    // I've set that detail definition to be unique.
-    // XXX TODO: add logic like in setPhoneDetail() to test for existence and change
-    // invocation of addAttributeToAContact to use overwrite = false in "new detail" case.
+    // XXX NOTE: only QContactPhoneNumber, QContactOnlineAccount,
+    // QContactEmailAddress and QContactAddress are currently non-unique.
     
     // QContactAddress
     fields = defns[contactType][QContactAddress::DefinitionName].fields();
@@ -306,7 +304,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.insert(AddressFieldExtension, gsfd);
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactAddress::DefinitionName].setFields(fields);
-    defns[contactType][QContactAddress::DefinitionName].setUnique(true);
+    defns[contactType][QContactAddress::DefinitionName].setUnique(false);
     
     // No QContactAnniversary
     defns[contactType].remove(QContactAnniversary::DefinitionName);
@@ -329,7 +327,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields = defns[contactType][QContactEmailAddress::DefinitionName].fields();
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactEmailAddress::DefinitionName].setFields(fields);
-    defns[contactType][QContactEmailAddress::DefinitionName].setUnique(true);
+    defns[contactType][QContactEmailAddress::DefinitionName].setUnique(false);
     
     // QContactFamily
     fields = defns[contactType][QContactFamily::DefinitionName].fields();
