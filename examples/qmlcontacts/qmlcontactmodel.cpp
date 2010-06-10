@@ -105,7 +105,7 @@ QString QMLContactModel::manager()
 void QMLContactModel::fillContactsIntoMemoryEngine(QContactManager* manager)
 {
     QVersitReader reader;
-    QFile file(":/contents/example.vcf");
+    QFile file("contents/example.vcf");
     bool ok = file.open(QIODevice::ReadOnly);
     if (ok) {
        reader.setDevice(&file);
@@ -200,7 +200,7 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
                 if (!a.imageUrl().isEmpty())
                     return a.imageUrl();
                 else
-                    return QString("qrc:/default.svg");
+                    return QString("contents/default.svg");
             } else {
                 // We have a thumbnail, so return empty
                 return QString("");
