@@ -38,38 +38,27 @@
 **
 ****************************************************************************/
 
+
 #include <QApplication>
-#include <QtGui>
-#include <QDeclarativeEngine>
-#include <QDeclarativeComponent>
+#include <QtDeclarative>
+#include <QDeclarativeExtensionPlugin>
 #include <QDebug>
-#include <QDeclarativeView>
-#include <qcontactmanager.h>
 #include "qmlcontactmodel.h"
 
 QT_USE_NAMESPACE
-QTM_USE_NAMESPACE
 
-int main(int argc, char ** argv)
+
+class QContactQmlPlugin : public QDeclarativeExtensionPlugin
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
+public:
+    void registerTypes(const char *uri)
+    {
+        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
+        qmlRegisterType<QMLContactModel>("QmlContactModel", 1, 0, "QmlContactModel");
+    }
+};
 
+#include "plugin.moc"
 
-    QDeclarativeEngine engine;
-
-    qmlRegisterType<QMLContactModel>("QmlContactModel", 1, 0, "QmlContactModel");
-
-    QWidget *b = new QWidget();
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setMargin(0);
-
-    QDeclarativeView *view = new QDeclarativeView(b);
-    view->setFocusPolicy(Qt::StrongFocus);
-    view->setResizeMode(QDeclarativeView::SizeViewToRootObject);
-    view->setSource(QUrl("qrc:/example.qml"));
-    vbox->addWidget(view);
-    b->setLayout(vbox);
-    b->show();    
-
-    return app.exec();
-}
+Q_EXPORT_PLUGIN2(qcontactqmlplugin, QContactQmlPlugin);
