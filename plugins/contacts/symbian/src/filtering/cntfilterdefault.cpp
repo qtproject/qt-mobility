@@ -75,11 +75,12 @@ QList<QContactLocalId> CntFilterDefault::contacts(
     //Create the query
     QString sqlQuery;
     createSelectQuery( filter,sqlQuery,error);
+    QString sortQuery = m_dbInfo.getSortQuery(sortOrders, sqlQuery, error);
     
     //fetch the contacts
     if(*error == QContactManager::NoError)
     {
-        idList =  m_srvConnection.searchContacts(sqlQuery, error);
+        idList =  m_srvConnection.searchContacts(sortQuery, error);
     }
     
     return idList;

@@ -27,7 +27,8 @@ symbian:
                ut_cntsymbiandatabase.h \
                #mock_cntdb.h \
                ut_transformcontactdata.h \
-               ut_cntsqlsearch.h
+               ut_cntsqlsearch.h \
+               mt_cntsqlsort.h
     
     SOURCES += $$SYMBIAN_SOURCES \
     		   testrunner.cpp \
@@ -39,7 +40,8 @@ symbian:
                ut_cntsymbiandatabase.cpp \
                #mock_cntdb.cpp \
                ut_transformcontactdata.cpp \
-               ut_cntsqlsearch.cpp
+               ut_cntsqlsearch.cpp \
+               mt_cntsqlsort.cpp
 
     CONFIG += mobility
     MOBILITY = contacts

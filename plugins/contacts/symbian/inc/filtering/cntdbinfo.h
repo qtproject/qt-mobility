@@ -79,6 +79,8 @@ public:
                          const QString& selectQuery,
                          QContactManager::Error* error);
     QContactManagerEngine* engine();
+    bool isStringFieldType(const QString definitionName);
+    void setDirAndCaseSensitivity(QContactSortOrder s, QString& str);
 
 private:
     QHash<QString,QString> contactsTableIdColumNameMapping;

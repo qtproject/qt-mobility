@@ -41,7 +41,7 @@
 #include <cntdef.h>
 #include "cntdbinfo.h"
 #include "cntfilterdetail.h"
-
+#include <QStringList>
 
 CntDbInfo::CntDbInfo(QContactManagerEngine* engine):
     m_engine(engine)
@@ -127,10 +127,13 @@ QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
     QString sortQuery =  selectQuery;
     
     if(*error == QContactManager::NoError)
-        {
-        QList<QString> list;
-        foreach(const QContactSortOrder& s, sortOrders )
-            {
+    {
+        QStringList list;
+        QString tempColumn;
+        QString concatString;
+        bool blanksLast = true;
+        QContactSortOrder tempOrder;
+        foreach(const QContactSortOrder& s, sortOrders ) {
             QString tableName;
             QString columnName;
             bool isSubType;
@@ -141,44 +144,100 @@ QString CntDbInfo::getSortQuery( const QList<QContactSortOrder> &sortOrders,
             if (tableName.compare("contact") != 0 || columnName.isEmpty()) {
                 // Skip invalid sort clause
                 continue;
-            }
-            else {
-                if (s.direction() == Qt::DescendingOrder) {
-                    QString col;
-                    if (s.caseSensitivity() == Qt::CaseInsensitive)
-                        col = ' ' + columnName + ' ' + "COLLATE NOCASE DESC";
-                    else
-                        col = ' ' + columnName + ' ' + "DESC";
-                    list.append(col);
+            } else {
+                //
+                // ORDER BY str_column_1 || str_column_2 || str_column_N COLLATE (comparison function);
+                //
+                // The || operator concatenates the strings to avoid wrong orders in cases where 
+                // one of the rows in the colums has a NULL value
+                //
+                if (isStringFieldType(s.detailDefinitionName())) {
+                    if ( tempColumn.isEmpty() ) {
+                        // This is the first string. Store sortOrder and 
+                        // columnName in temp variable to be used later
+                        tempColumn = columnName;
+                        tempOrder = s;
+                        continue;
+                    } else {
+                        // Check if the previous sort order has the same direction and
+                        // case sensitivity as the current one. If true store the temp
+                        // variables to be used later
+                        if (s.direction() == tempOrder.direction() && 
+                                s.caseSensitivity() == tempOrder.caseSensitivity() 
+                                && s.blankPolicy() == tempOrder.blankPolicy()) {
+                            tempColumn += " || " + columnName;
+                            tempOrder = s;
+                            continue;
+                        } else {
+                            // Its time to break the loop and use the tempColumn string
+                            concatString = tempColumn;
+                            setDirAndCaseSensitivity(tempOrder, tempColumn);
+                            list.append(tempColumn);
+                            tempColumn.clear();
+                        }
+                    }                   
                 }
-                else {
-                    // Default sort order
-                    QString col;
-                    if(s.caseSensitivity() == Qt::CaseInsensitive)
-                        col= ' ' + columnName + ' ' + "COLLATE CompareC3";
-                    else
-                        col= ' ' + columnName + ' ' + "ASC";
-                    list.append(col);
-                }
+                QString col = ' ' + columnName + ' ';
+                setDirAndCaseSensitivity(s, col);
+                list.append(col);
             }
         }
+        
+        if (!tempColumn.isEmpty()) {
+            concatString = tempColumn;
+            setDirAndCaseSensitivity(tempOrder, tempColumn);
+            list.append(tempColumn);
+            tempColumn.clear();
+        }
+        
+        if (tempOrder.isValid() && tempOrder.blankPolicy() == QContactSortOrder::BlanksFirst)
+            blanksLast = false;
         
         if (list.count() > 0) {
             // Recreate query
             // SELECT DISTINCT contact_id FROM contact WHERE contact_id in (
             //      SELECT ..
-            // )  ORDER BY  <field> <order>
-            sortQuery = " SELECT DISTINCT contact_id FROM contact WHERE contact_id in (";
-            QString clause = " ORDER BY " + list.at(0);
-            for (int i = 1; i < list.size(); ++i) {
-                clause += " ," + list.at(i);
+            // )  
+            sortQuery = "SELECT DISTINCT contact_id FROM contact WHERE contact_id in (";
+            sortQuery += selectQuery;
+			sortQuery += ')';
+			
+            QString clause = list.join(" ,");
+            
+            // ORDER BY CASE <concatenated string fields> WHEN "" THEN 1 ELSE 0 END, <concatenated string fields & other fields> <order>
+            if (blanksLast) {
+                // If concatString is blank, do not evaluate ORDER BY. All unevaluated rows are pushed to the end
+                sortQuery += " ORDER BY CASE " + concatString + " WHEN \"\" THEN 1 ELSE 0 END, " + clause;
+            } else {
+                sortQuery += " ORDER BY CASE " + concatString + " WHEN \"\" THEN 0 ELSE 1 END, " + clause;
             }
-            sortQuery += selectQuery + ')';
-            sortQuery += clause;
         }
     }
     
     return sortQuery;
 }
 
+bool CntDbInfo::isStringFieldType( const QString definitionName )
+{
+    if ( definitionName == QContactOrganization::DefinitionName
+        || definitionName == QContactName::DefinitionName )
+        return true;
+    else
+        return false;
+}
 
+void CntDbInfo::setDirAndCaseSensitivity(QContactSortOrder s, QString& query)
+{
+    if (s.direction() == Qt::DescendingOrder) {
+        if (s.caseSensitivity() == Qt::CaseInsensitive)
+            query += " COLLATE NOCASE DESC";
+        else
+            query += " DESC";
+    } else {
+        // Default sort order
+        if(s.caseSensitivity() == Qt::CaseInsensitive)
+            query += " COLLATE CompareC3";
+        else
+            query += " ASC";
+    }
+}

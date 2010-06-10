@@ -105,6 +105,9 @@ CntSymbianEngine::CntSymbianEngine(const QMap<QString, QString>& parameters, QCo
 #endif
         m_relationship     = new CntRelationship(m_dataBase->contactDatabase(), m_managerUri);
         m_displayLabel     = new CntDisplayLabel();
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
+        connect(m_displayLabel, SIGNAL(displayLabelChanged()), this, SIGNAL(dataChanged()));
+#endif
     }
 }
 
@@ -246,7 +249,7 @@ QContact CntSymbianEngine::contact(const QContactLocalId& contactId, const QCont
 bool CntSymbianEngine::saveContact(QContact* contact, QContactManager::Error* error)
 {
     QContactChangeSet changeSet;
-    TBool ret = doSaveContact(contact, changeSet, error);
+    bool ret = doSaveContact(contact, changeSet, error);
     changeSet.emitSignals(this);
     return ret;
 }
