@@ -55,7 +55,7 @@ public:
     void registerTypes(const char *uri)
     {
         Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLContactModel>("QmlContactModel", 1, 0, "QmlContactModel");
+        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
     }
 };
 
