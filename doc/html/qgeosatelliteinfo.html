@@ -1,124 +1,125 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qgeosatelliteinfo.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qgeosatelliteinfo.cpp -->
   <title>Qt Mobility Project 1.0: QGeoSatelliteInfo Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
-<a name="//apple_ref/cpp/cl//QGeoSatelliteInfo"></a>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoSatelliteInfo Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qgeosatelliteinfo.html">QGeoSatelliteInfo</a></li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#related-non-members">Related Non-Members</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QGeoSatelliteInfo Class Reference</h1>
 <p>The QGeoSatelliteInfo class contains basic information about a satellite. <a href="#details">More...</a></p>
-<pre>    #include &lt;QGeoSatelliteInfo&gt;</pre><ul>
+<pre class="highlightedCode">    #include &lt;QGeoSatelliteInfo&gt;</pre><ul>
 <li><a href="qgeosatelliteinfo-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#Attribute-enum">Attribute</a></b> { Elevation, Azimuth }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#Attribute-enum">Attribute</a></b> { Elevation, Azimuth }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#QGeoSatelliteInfo">QGeoSatelliteInfo</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#QGeoSatelliteInfo-2">QGeoSatelliteInfo</a></b> ( const QGeoSatelliteInfo &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#dtor.QGeoSatelliteInfo">~QGeoSatelliteInfo</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#attribute">attribute</a></b> ( Attribute <i>attribute</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#hasAttribute">hasAttribute</a></b> ( Attribute <i>attribute</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#prnNumber">prnNumber</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#removeAttribute">removeAttribute</a></b> ( Attribute <i>attribute</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#setAttribute">setAttribute</a></b> ( Attribute <i>attribute</i>, qreal <i>value</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#setPrnNumber">setPrnNumber</a></b> ( int <i>prn</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#setSignalStrength">setSignalStrength</a></b> ( int <i>signalStrength</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#signalStrength">signalStrength</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#operator-not-eq">operator!=</a></b> ( const QGeoSatelliteInfo &amp; <i>other</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoSatelliteInfo &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#operator-eq">operator=</a></b> ( const QGeoSatelliteInfo &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#operator-eq-eq">operator==</a></b> ( const QGeoSatelliteInfo &amp; <i>other</i> ) const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#QGeoSatelliteInfo">QGeoSatelliteInfo</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#QGeoSatelliteInfo-2">QGeoSatelliteInfo</a></b> ( const QGeoSatelliteInfo &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#dtor.QGeoSatelliteInfo">~QGeoSatelliteInfo</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> qreal </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#attribute">attribute</a></b> ( Attribute <i>attribute</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#hasAttribute">hasAttribute</a></b> ( Attribute <i>attribute</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#prnNumber">prnNumber</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#removeAttribute">removeAttribute</a></b> ( Attribute <i>attribute</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#setAttribute">setAttribute</a></b> ( Attribute <i>attribute</i>, qreal <i>value</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#setPrnNumber">setPrnNumber</a></b> ( int <i>prn</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#setSignalStrength">setSignalStrength</a></b> ( int <i>signalStrength</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#signalStrength">signalStrength</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#operator-not-eq">operator!=</a></b> ( const QGeoSatelliteInfo &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QGeoSatelliteInfo &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#operator-eq">operator=</a></b> ( const QGeoSatelliteInfo &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#operator-eq-eq">operator==</a></b> ( const QGeoSatelliteInfo &amp; <i>other</i> ) const</td></tr>
 </table>
 <hr />
 <a name="related-non-members"></a>
 <h2>Related Non-Members</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#operator-lt-lt-81">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>stream</i>, const QGeoSatelliteInfo &amp; <i>info</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDataStream &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeosatelliteinfo.html#operator-gt-gt-74">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>stream</i>, QGeoSatelliteInfo &amp; <i>info</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> QDataStream &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#operator-lt-lt-81">operator&lt;&lt;</a></b> ( QDataStream &amp; <i>stream</i>, const QGeoSatelliteInfo &amp; <i>info</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QDataStream &amp; </td><td class="memItemRight bottomAlign"><b><a href="qgeosatelliteinfo.html#operator-gt-gt-74">operator&gt;&gt;</a></b> ( QDataStream &amp; <i>stream</i>, QGeoSatelliteInfo &amp; <i>info</i> )</td></tr>
 </table>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QGeoSatelliteInfo class contains basic information about a satellite.</p>
+</div>
 <p>See also <a href="qgeosatelliteinfosource.html">QGeoSatelliteInfoSource</a>.</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QGeoSatelliteInfo/Attribute"></a>
-<a name="//apple_ref/cpp/econst/QGeoSatelliteInfo/Elevation"></a>
-<a name="//apple_ref/cpp/econst/QGeoSatelliteInfo/Azimuth"></a>
 <h3 class="fn"><a name="Attribute-enum"></a>enum QGeoSatelliteInfo::Attribute</h3>
 <p>Defines the attributes for the satellite information.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGeoSatelliteInfo::Elevation</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The elevation of the satellite, in degrees.</td></tr>
-<tr><td valign="top"><tt>QGeoSatelliteInfo::Azimuth</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The azimuth to true north, in degrees.</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QGeoSatelliteInfo::Elevation</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The elevation of the satellite, in degrees.</td></tr>
+<tr><td  class="topAlign"><tt>QGeoSatelliteInfo::Azimuth</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The azimuth to true north, in degrees.</td></tr>
+</table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/QGeoSatelliteInfo"></a>
 <h3 class="fn"><a name="QGeoSatelliteInfo"></a>QGeoSatelliteInfo::QGeoSatelliteInfo ()</h3>
 <p>Creates a satellite information object.</p>
 <h3 class="fn"><a name="QGeoSatelliteInfo-2"></a>QGeoSatelliteInfo::QGeoSatelliteInfo ( const QGeoSatelliteInfo &amp; <i>other</i> )</h3>
 <p>Creates a satellite information object with the values of <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/~QGeoSatelliteInfo"></a>
 <h3 class="fn"><a name="dtor.QGeoSatelliteInfo"></a>QGeoSatelliteInfo::~QGeoSatelliteInfo ()</h3>
 <p>Destroys a satellite information object.</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/attribute"></a>
 <h3 class="fn"><a name="attribute"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoSatelliteInfo::attribute ( <a href="qgeosatelliteinfo.html#Attribute-enum">Attribute</a> <i>attribute</i> ) const</h3>
 <p>Returns the value of the specified <i>attribute</i> as a qreal value.</p>
 <p>Returns -1 if the value has not been set.</p>
 <p>See also <a href="qgeosatelliteinfo.html#hasAttribute">hasAttribute</a>() and <a href="qgeosatelliteinfo.html#setAttribute">setAttribute</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/hasAttribute"></a>
 <h3 class="fn"><a name="hasAttribute"></a>bool QGeoSatelliteInfo::hasAttribute ( <a href="qgeosatelliteinfo.html#Attribute-enum">Attribute</a> <i>attribute</i> ) const</h3>
 <p>Returns true if the specified <i>attribute</i> is present in this update.</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/prnNumber"></a>
 <h3 class="fn"><a name="prnNumber"></a>int QGeoSatelliteInfo::prnNumber () const</h3>
 <p>Returns the PRN (Pseudo-random noise) number, or -1 if the value has not been set.</p>
 <p>See also <a href="qgeosatelliteinfo.html#setPrnNumber">setPrnNumber</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/removeAttribute"></a>
 <h3 class="fn"><a name="removeAttribute"></a>void QGeoSatelliteInfo::removeAttribute ( <a href="qgeosatelliteinfo.html#Attribute-enum">Attribute</a> <i>attribute</i> )</h3>
 <p>Removes the specified <i>attribute</i> and its value.</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/setAttribute"></a>
 <h3 class="fn"><a name="setAttribute"></a>void QGeoSatelliteInfo::setAttribute ( <a href="qgeosatelliteinfo.html#Attribute-enum">Attribute</a> <i>attribute</i>, <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>value</i> )</h3>
 <p>Sets the value for <i>attribute</i> to <i>value</i>.</p>
 <p>See also <a href="qgeosatelliteinfo.html#attribute">attribute</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/setPrnNumber"></a>
 <h3 class="fn"><a name="setPrnNumber"></a>void QGeoSatelliteInfo::setPrnNumber ( int <i>prn</i> )</h3>
 <p>Sets the PRN (Pseudo-random noise) number to <i>prn</i>.</p>
 <p>The PRN number can be used to identify a satellite.</p>
 <p>See also <a href="qgeosatelliteinfo.html#prnNumber">prnNumber</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/setSignalStrength"></a>
 <h3 class="fn"><a name="setSignalStrength"></a>void QGeoSatelliteInfo::setSignalStrength ( int <i>signalStrength</i> )</h3>
 <p>Sets the signal strength to <i>signalStrength</i>, in decibels.</p>
 <p>See also <a href="qgeosatelliteinfo.html#signalStrength">signalStrength</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/signalStrength"></a>
 <h3 class="fn"><a name="signalStrength"></a>int QGeoSatelliteInfo::signalStrength () const</h3>
 <p>Returns the signal strength, or -1 if the value has not been set.</p>
 <p>See also <a href="qgeosatelliteinfo.html#setSignalStrength">setSignalStrength</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QGeoSatelliteInfo::operator!= ( const QGeoSatelliteInfo &amp; <i>other</i> ) const</h3>
 <p>Returns true if any of the information for this satellite are not the same as those of <i>other</i>.</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QGeoSatelliteInfo &amp; QGeoSatelliteInfo::operator= ( const QGeoSatelliteInfo &amp; <i>other</i> )</h3>
 <p>Assigns the values from <i>other</i> to this object.</p>
-<a name="//apple_ref/cpp/instm/QGeoSatelliteInfo/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QGeoSatelliteInfo::operator== ( const QGeoSatelliteInfo &amp; <i>other</i> ) const</h3>
 <p>Returns true if all the information for this satellite are the same as those of <i>other</i>.</p>
+</div>
 <hr />
+<div class="relnonmem"/>
 <h2>Related Non-Members</h2>
 <h3 class="fn"><a name="operator-lt-lt-81"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&lt;&lt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, const QGeoSatelliteInfo &amp; <i>info</i> )</h3>
 <p>Writes the given <i>info</i> to the specified <i>stream</i>.</p>
@@ -126,10 +127,12 @@
 <h3 class="fn"><a name="operator-gt-gt-74"></a><a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; operator&gt;&gt; ( <a href="http://qt.nokia.com/doc/4.6/qdatastream.html">QDataStream</a> &amp; <i>stream</i>, QGeoSatelliteInfo &amp; <i>info</i> )</h3>
 <p>Reads satellite information from the specified <i>stream</i> into the given <i>info</i>.</p>
 <p>See also <a href="http://qt.nokia.com/doc/4.6/datastreamformat.html">Format of the QDataStream Operators</a>.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

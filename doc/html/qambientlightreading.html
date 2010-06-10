@@ -1,108 +1,119 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qambientlightsensor.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qambientlightsensor.cpp -->
   <title>Qt Mobility Project 1.0: QAmbientLightReading Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
-<a name="//apple_ref/cpp/cl//QAmbientLightReading"></a>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAmbientLightReading Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qambientlightreading.html">QAmbientLightReading</a></li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+<li class="level2"><a href="#qambientlightreading-units">QAmbientLightReading Units</a></li>
+</ul>
+</div>
+<h1 class="title">QAmbientLightReading Class Reference</h1>
 <p>The QAmbientLightReading class represents one reading from the ambient light sensor. <a href="#details">More...</a></p>
-<pre>    #include &lt;QAmbientLightReading&gt;</pre><p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
+<pre class="highlightedCode">    #include &lt;QAmbientLightReading&gt;</pre><p>Inherits <a href="qsensorreading.html">QSensorReading</a>.</p>
 <ul>
 <li><a href="qambientlightreading-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qambientlightreading.html#LightLevel-enum">LightLevel</a></b> { Undefined, Dark, Twilight, Light, Bright, Sunny }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qambientlightreading.html#LightLevel-enum">LightLevel</a></b> { Undefined, Dark, Twilight, Light, Bright, Sunny }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
-<li><div class="fn"><b><a href="qambientlightreading.html#lightLevel-prop">lightLevel</a></b> : const LightLevel</div></li>
+<li class="fn"><b><a href="qambientlightreading.html#lightLevel-prop">lightLevel</a></b> : const LightLevel</li>
 </ul>
 <ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">1 property inherited from <a href="qsensorreading.html#properties">QSensorReading</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">LightLevel </td><td class="memItemRight" valign="bottom"><b><a href="qambientlightreading.html#lightLevel-prop">lightLevel</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qambientlightreading.html#setLightLevel">setLightLevel</a></b> ( LightLevel <i>lightLevel</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> LightLevel </td><td class="memItemRight bottomAlign"><b><a href="qambientlightreading.html#lightLevel-prop">lightLevel</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qambientlightreading.html#setLightLevel">setLightLevel</a></b> ( LightLevel <i>lightLevel</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">4 public functions inherited from <a href="qsensorreading.html#public-functions">QSensorReading</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QAmbientLightReading class represents one reading from the ambient light sensor.</p>
 <a name="qambientlightreading-units"></a>
 <h3>QAmbientLightReading Units</h3>
 <p>The ambient light sensor returns the intensity of the ambient light using the pre-defined values found in the <a href="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::LightLevel</a> enum.</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QAmbientLightReading/LightLevel"></a>
-<a name="//apple_ref/cpp/econst/QAmbientLightReading/Undefined"></a>
-<a name="//apple_ref/cpp/econst/QAmbientLightReading/Dark"></a>
-<a name="//apple_ref/cpp/econst/QAmbientLightReading/Twilight"></a>
-<a name="//apple_ref/cpp/econst/QAmbientLightReading/Light"></a>
-<a name="//apple_ref/cpp/econst/QAmbientLightReading/Bright"></a>
-<a name="//apple_ref/cpp/econst/QAmbientLightReading/Sunny"></a>
 <h3 class="fn"><a name="LightLevel-enum"></a>enum QAmbientLightReading::LightLevel</h3>
 <p>This enum represents the ambient light level.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QAmbientLightReading::Undefined</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The light level is unknown.</td></tr>
-<tr><td valign="top"><tt>QAmbientLightReading::Dark</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">It is dark.</td></tr>
-<tr><td valign="top"><tt>QAmbientLightReading::Twilight</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">It is moderately dark.</td></tr>
-<tr><td valign="top"><tt>QAmbientLightReading::Light</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">It is light (eg. internal lights).</td></tr>
-<tr><td valign="top"><tt>QAmbientLightReading::Bright</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">It is bright (eg. shade).</td></tr>
-<tr><td valign="top"><tt>QAmbientLightReading::Sunny</tt></td><td align="center" valign="top"><tt>5</tt></td><td valign="top">It is very bright (eg. direct sunlight).</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QAmbientLightReading::Undefined</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The light level is unknown.</td></tr>
+<tr><td  class="topAlign"><tt>QAmbientLightReading::Dark</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">It is dark.</td></tr>
+<tr><td  class="topAlign"><tt>QAmbientLightReading::Twilight</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">It is moderately dark.</td></tr>
+<tr><td  class="topAlign"><tt>QAmbientLightReading::Light</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">It is light (eg. internal lights).</td></tr>
+<tr><td  class="topAlign"><tt>QAmbientLightReading::Bright</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">It is bright (eg. shade).</td></tr>
+<tr><td  class="topAlign"><tt>QAmbientLightReading::Sunny</tt></td><td class=" topAlign"><tt>5</tt></td><td  class="topAlign">It is very bright (eg. direct sunlight).</td></tr>
+</table>
+</div>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QAmbientLightReading/lightLevel"></a>
 <h3 class="fn"><a name="lightLevel-prop"></a>lightLevel : const <a href="qambientlightreading.html#LightLevel-enum">LightLevel</a></h3>
 <p>This property holds the ambient light level.</p>
 <p>The value represents the ambient light and comes from <a href="qambientlightreading.html#LightLevel-enum">QAmbientLightReading::LightLevel</a>.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">LightLevel </td><td class="memItemRight" valign="bottom"><b>lightLevel</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> LightLevel </td><td class="memItemRight bottomAlign"><b>lightLevel</b> () const</td></tr>
 </table>
 <p>See also <a href="qambientlightreading.html#qambientlightreading-units">QAmbientLightReading Units</a>.</p>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QAmbientLightReading/setLightLevel"></a>
 <h3 class="fn"><a name="setLightLevel"></a>void QAmbientLightReading::setLightLevel ( <a href="qambientlightreading.html#LightLevel-enum">LightLevel</a> <i>lightLevel</i> )</h3>
 <p>Sets the ambient light level to <i>lightLevel</i>.</p>
 <p>See also <a href="qambientlightreading.html#lightLevel-prop">lightLevel</a>().</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>
