@@ -1,137 +1,151 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qradiotuner.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qradiotuner.cpp -->
   <title>Qt Mobility Project 1.0: QRadioTuner Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
+  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
+  <script src="scripts/jquery.js" type="text/javascript"></script>
+  <script src="scripts/functions.js" type="text/javascript"></script>
 </head>
-<body>
-<a name="//apple_ref/cpp/cl//QRadioTuner"></a>
+<body class="offline"  onload="CheckEmptyAndLoadList();">
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QRadioTuner Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qradiotuner.html">QRadioTuner</a></li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QRadioTuner Class Reference</h1>
 <p>The QRadioTuner class provides an interface to the systems analog radio device. <a href="#details">More...</a></p>
-<pre>    #include &lt;QRadioTuner&gt;</pre><p>Inherits <a href="qmediaobject.html">QMediaObject</a>.</p>
+<pre class="highlightedCode">    #include &lt;QRadioTuner&gt;</pre><p>Inherits <a href="qmediaobject.html">QMediaObject</a>.</p>
 <ul>
 <li><a href="qradiotuner-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#Band-enum">Band</a></b> { AM, FM, SW, LW, FM2 }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#Error-enum">Error</a></b> { NoError, ResourceError, OpenError, OutOfRangeError }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#State-enum">State</a></b> { ActiveState, StoppedState }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#StereoMode-enum">StereoMode</a></b> { Auto, ForceStereo, ForceMono }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#Band-enum">Band</a></b> { AM, FM, SW, LW, FM2 }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#Error-enum">Error</a></b> { NoError, ResourceError, OpenError, OutOfRangeError }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#State-enum">State</a></b> { ActiveState, StoppedState }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#StereoMode-enum">StereoMode</a></b> { Auto, ForceStereo, ForceMono }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
-<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td width="45%" valign="top"><ul>
-<li><div class="fn"><b><a href="qradiotuner.html#band-prop">band</a></b> : Band</div></li>
-<li><div class="fn"><b><a href="qradiotuner.html#frequency-prop">frequency</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qradiotuner.html#muted-prop">muted</a></b> : bool</div></li>
-<li><div class="fn"><b><a href="qradiotuner.html#searching-prop">searching</a></b> : const bool</div></li>
-<li><div class="fn"><b><a href="qradiotuner.html#signalStrength-prop">signalStrength</a></b> : const int</div></li>
-</ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qradiotuner.html#state-prop">state</a></b> : const State</div></li>
-<li><div class="fn"><b><a href="qradiotuner.html#stereo-prop">stereo</a></b> : const bool</div></li>
-<li><div class="fn"><b><a href="qradiotuner.html#stereoMode-prop">stereoMode</a></b> : StereoMode</div></li>
-<li><div class="fn"><b><a href="qradiotuner.html#volume-prop">volume</a></b> : int</div></li>
+<table class="propsummary">
+<tr><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qradiotuner.html#band-prop">band</a></b> : Band</li>
+<li class="fn"><b><a href="qradiotuner.html#frequency-prop">frequency</a></b> : int</li>
+<li class="fn"><b><a href="qradiotuner.html#muted-prop">muted</a></b> : bool</li>
+<li class="fn"><b><a href="qradiotuner.html#searching-prop">searching</a></b> : const bool</li>
+<li class="fn"><b><a href="qradiotuner.html#signalStrength-prop">signalStrength</a></b> : const int</li>
+</ul></td><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qradiotuner.html#state-prop">state</a></b> : const State</li>
+<li class="fn"><b><a href="qradiotuner.html#stereo-prop">stereo</a></b> : const bool</li>
+<li class="fn"><b><a href="qradiotuner.html#stereoMode-prop">stereoMode</a></b> : StereoMode</li>
+<li class="fn"><b><a href="qradiotuner.html#volume-prop">volume</a></b> : int</li>
 </ul>
 </td></tr>
-</table></p>
+</table>
 <ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#QRadioTuner">QRadioTuner</a></b> ( QObject * <i>parent</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#dtor.QRadioTuner">~QRadioTuner</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Band </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#band-prop">band</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#error">error</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#errorString">errorString</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#frequency-prop">frequency</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QPair&lt;int, int&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#frequencyRange">frequencyRange</a></b> ( Band <i>band</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#frequencyStep">frequencyStep</a></b> ( Band <i>band</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#isBandSupported">isBandSupported</a></b> ( Band <i>band</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#muted-prop">isMuted</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#searching-prop">isSearching</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#stereo-prop">isStereo</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#stereoMode-prop">setStereoMode</a></b> ( QRadioTuner::StereoMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#signalStrength-prop">signalStrength</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#state-prop">state</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">StereoMode </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#stereoMode-prop">stereoMode</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#volume-prop">volume</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#QRadioTuner">QRadioTuner</a></b> ( QObject * <i>parent</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#dtor.QRadioTuner">~QRadioTuner</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Band </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#band-prop">band</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> Error </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#error">error</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#errorString">errorString</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#frequency-prop">frequency</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QPair&lt;int, int&gt; </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#frequencyRange">frequencyRange</a></b> ( Band <i>band</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#frequencyStep">frequencyStep</a></b> ( Band <i>band</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#isBandSupported">isBandSupported</a></b> ( Band <i>band</i> ) const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#muted-prop">isMuted</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#searching-prop">isSearching</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#stereo-prop">isStereo</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#stereoMode-prop">setStereoMode</a></b> ( QRadioTuner::StereoMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#signalStrength-prop">signalStrength</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#state-prop">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> StereoMode </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#stereoMode-prop">stereoMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#volume-prop">volume</a></b> () const</td></tr>
 </table>
 <hr />
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual QtMultimediaKit::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#availabilityError">availabilityError</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#isAvailable">isAvailable</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QtMultimediaKit::AvailabilityError </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#availabilityError">availabilityError</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#isAvailable">isAvailable</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>12 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">12 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#cancelSearch">cancelSearch</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#searchBackward">searchBackward</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#searchForward">searchForward</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#band-prop">setBand</a></b> ( Band <i>band</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#frequency-prop">setFrequency</a></b> ( int <i>frequency</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#muted-prop">setMuted</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#start">start</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#stop">stop</a></b> ()</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#cancelSearch">cancelSearch</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#searchBackward">searchBackward</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#searchForward">searchForward</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#band-prop">setBand</a></b> ( Band <i>band</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#frequency-prop">setFrequency</a></b> ( int <i>frequency</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#muted-prop">setMuted</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#volume-prop">setVolume</a></b> ( int <i>volume</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#start">start</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#stop">stop</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#bandChanged">bandChanged</a></b> ( QRadioTuner::Band <i>band</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#error-2">error</a></b> ( Error <i>error</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#searchingChanged">searchingChanged</a></b> ( bool <i>searching</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#stateChanged">stateChanged</a></b> ( QRadioTuner::State <i>state</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#bandChanged">bandChanged</a></b> ( QRadioTuner::Band <i>band</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#error-2">error</a></b> ( Error <i>error</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#searchingChanged">searchingChanged</a></b> ( bool <i>searching</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#stateChanged">stateChanged</a></b> ( QRadioTuner::State <i>state</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QRadioTuner class provides an interface to the systems analog radio device.</p>
 <p>You can control the systems analog radio device using this interface, for example:</p>
-<pre>    radio = new QRadioTuner;
+<pre class="highlightedCode">    radio = new QRadioTuner;
     connect(radio,SIGNAL(frequencyChanged(int)),this,SLOT(freqChanged(int)));
     if (radio-&gt;isBandSupported(QRadioTuner::FM)) {
         radio-&gt;setBand(QRadioTuner::FM);
@@ -141,261 +155,203 @@
     }</pre>
 <p>The radio object will emit signals for any changes in state such as: <a href="qradiotuner.html#bandChanged">bandChanged</a>(), <a href="qradiotuner.html#frequencyChanged">frequencyChanged</a>(), <a href="qradiotuner.html#stereoStatusChanged">stereoStatusChanged</a>(), <a href="qradiotuner.html#searchingChanged">searchingChanged</a>(), <a href="qradiotuner.html#signalStrengthChanged">signalStrengthChanged</a>(), <a href="qradiotuner.html#volumeChanged">volumeChanged</a>(), <a href="qradiotuner.html#mutedChanged">mutedChanged</a>().</p>
 <p>You can change between the frequency bands using <a href="qradiotuner.html#band-prop">setBand</a>() however it is recommended that you check to make sure the band is available first using <a href="qradiotuner.html#isBandSupported">isBandSupported</a>().</p>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QRadioTuner/Band"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/AM"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/FM"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/SW"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/LW"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/FM2"></a>
 <h3 class="fn"><a name="Band-enum"></a>enum QRadioTuner::Band</h3>
 <p>Enumerates radio frequency bands.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QRadioTuner::AM</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::FM</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">87.5 to 108.0 MHz, except Japan 76-90 MHz</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::SW</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::LW</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::FM2</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">range not defined, used when area supports more than one FM range.</td></tr>
-</table></p>
-<a name="//apple_ref/cpp/tag/QRadioTuner/Error"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/NoError"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/ResourceError"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/OpenError"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/OutOfRangeError"></a>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::AM</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">520 to 1610 kHz, 9 or 10kHz channel spacing, extended 1610 to 1710 kHz</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::FM</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">87.5 to 108.0 MHz, except Japan 76-90 MHz</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::SW</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">1.711 to 30.0 MHz, divided into 15 bands. 5kHz channel spacing</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::LW</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">148.5 to 283.5 kHz, 9kHz channel spacing (Europe, Africa, Asia)</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::FM2</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">range not defined, used when area supports more than one FM range.</td></tr>
+</table>
 <h3 class="fn"><a name="Error-enum"></a>enum QRadioTuner::Error</h3>
 <p>Enumerates radio tuner error conditions.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QRadioTuner::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No errors have occurred.</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::ResourceError</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">There is no radio service available.</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::OpenError</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Unable to open radio device.</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::OutOfRangeError</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">An attempt to set a frequency or band that is not supported by radio device.</td></tr>
-</table></p>
-<a name="//apple_ref/cpp/tag/QRadioTuner/State"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/ActiveState"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/StoppedState"></a>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::NoError</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">No errors have occurred.</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::ResourceError</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">There is no radio service available.</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::OpenError</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Unable to open radio device.</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::OutOfRangeError</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">An attempt to set a frequency or band that is not supported by radio device.</td></tr>
+</table>
 <h3 class="fn"><a name="State-enum"></a>enum QRadioTuner::State</h3>
 <p>Enumerates radio tuner states.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QRadioTuner::ActiveState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The tuner is started and active.</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::StoppedState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The tuner device is stopped.</td></tr>
-</table></p>
-<a name="//apple_ref/cpp/tag/QRadioTuner/StereoMode"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/Auto"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/ForceStereo"></a>
-<a name="//apple_ref/cpp/econst/QRadioTuner/ForceMono"></a>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::ActiveState</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The tuner is started and active.</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::StoppedState</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The tuner device is stopped.</td></tr>
+</table>
 <h3 class="fn"><a name="StereoMode-enum"></a>enum QRadioTuner::StereoMode</h3>
 <p>Enumerates radio tuner policy for receiving stereo signals.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QRadioTuner::Auto</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Uses the stereo mode matching the station.</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::ForceStereo</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Provide stereo mode, converting if required.</td></tr>
-<tr><td valign="top"><tt>QRadioTuner::ForceMono</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Provide mono mode, converting if required.</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::Auto</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Uses the stereo mode matching the station.</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::ForceStereo</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Provide stereo mode, converting if required.</td></tr>
+<tr><td  class="topAlign"><tt>QRadioTuner::ForceMono</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Provide mono mode, converting if required.</td></tr>
+</table>
+</div>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QRadioTuner/band"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/setBand"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/bandChanged"></a>
 <h3 class="fn"><a name="band-prop"></a>band : <a href="qradiotuner.html#Band-enum">Band</a></h3>
 <p>This property holds the frequency band a radio tuner is tuned to.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">Band </td><td class="memItemRight" valign="bottom"><b>band</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setBand</b> ( Band <i>band</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> Band </td><td class="memItemRight bottomAlign"><b>band</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setBand</b> ( Band <i>band</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#bandChanged">bandChanged</a></b> ( QRadioTuner::Band <i>band</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#bandChanged">bandChanged</a></b> ( QRadioTuner::Band <i>band</i> )</td></tr>
 </table>
 <p>See also <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a>.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/frequency"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/setFrequency"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/frequencyChanged"></a>
 <h3 class="fn"><a name="frequency-prop"></a>frequency : int</h3>
 <p>This property holds the frequency in Hertz a radio tuner is tuned to.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>frequency</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setFrequency</b> ( int <i>frequency</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>frequency</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setFrequency</b> ( int <i>frequency</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#frequencyChanged">frequencyChanged</a></b> ( int <i>frequency</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QRadioTuner/isMuted"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/setMuted"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/mutedChanged"></a>
 <h3 class="fn"><a name="muted-prop"></a>muted : bool</h3>
 <p>This property holds whether a radio tuner's audio output is muted.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isMuted</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMuted</b> ( bool <i>muted</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isMuted</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setMuted</b> ( bool <i>muted</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#mutedChanged">mutedChanged</a></b> ( bool <i>muted</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QRadioTuner/isSearching"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/searchingChanged"></a>
 <h3 class="fn"><a name="searching-prop"></a>searching : const bool</h3>
 <p>This property holds whether a radio tuner is currently scanning for a signal.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isSearching</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isSearching</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#searchingChanged">searchingChanged</a></b> ( bool <i>searching</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#searchingChanged">searchingChanged</a></b> ( bool <i>searching</i> )</td></tr>
 </table>
 <p>See also <a href="qradiotuner.html#searchForward">searchForward</a>(), <a href="qradiotuner.html#searchBackward">searchBackward</a>(), and <a href="qradiotuner.html#cancelSearch">cancelSearch</a>().</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/signalStrength"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/signalStrengthChanged"></a>
 <h3 class="fn"><a name="signalStrength-prop"></a>signalStrength : const int</h3>
 <p>This property holds the strength of the current radio signal as a percentage.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>signalStrength</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>signalStrength</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#signalStrengthChanged">signalStrengthChanged</a></b> ( int <i>strength</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QRadioTuner/state"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/stateChanged"></a>
 <h3 class="fn"><a name="state-prop"></a>state : const <a href="qradiotuner.html#State-enum">State</a></h3>
 <p>Return the current radio tuner state.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b>state</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> State </td><td class="memItemRight bottomAlign"><b>state</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#stateChanged">stateChanged</a></b> ( QRadioTuner::State <i>state</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#stateChanged">stateChanged</a></b> ( QRadioTuner::State <i>state</i> )</td></tr>
 </table>
 <p>See also <a href="qradiotuner.html#State-enum">QRadioTuner::State</a>.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/isStereo"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/stereoStatusChanged"></a>
 <h3 class="fn"><a name="stereo-prop"></a>stereo : const bool</h3>
 <p>This property holds whether a radio tuner is receiving a stereo signal.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b>isStereo</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> bool </td><td class="memItemRight bottomAlign"><b>isStereo</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#stereoStatusChanged">stereoStatusChanged</a></b> ( bool <i>stereo</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QRadioTuner/stereoMode"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/setStereoMode"></a>
 <h3 class="fn"><a name="stereoMode-prop"></a>stereoMode : <a href="qradiotuner.html#StereoMode-enum">StereoMode</a></h3>
 <p>This property holds the stereo mode of a radio tuner.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">StereoMode </td><td class="memItemRight" valign="bottom"><b>stereoMode</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setStereoMode</b> ( QRadioTuner::StereoMode <i>mode</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> StereoMode </td><td class="memItemRight bottomAlign"><b>stereoMode</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setStereoMode</b> ( QRadioTuner::StereoMode <i>mode</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QRadioTuner/volume"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/setVolume"></a>
-<a name="//apple_ref/cpp/instm/QRadioTuner/volumeChanged"></a>
 <h3 class="fn"><a name="volume-prop"></a>volume : int</h3>
 <p>This property holds the volume of a radio tuner's audio output as a percentage.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>volume</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setVolume</b> ( int <i>volume</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>volume</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setVolume</b> ( int <i>volume</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qradiotuner.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qradiotuner.html#volumeChanged">volumeChanged</a></b> ( int <i>volume</i> )</td></tr>
 </table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QRadioTuner/QRadioTuner"></a>
 <h3 class="fn"><a name="QRadioTuner"></a>QRadioTuner::QRadioTuner ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0, <a href="qmediaserviceprovider.html">QMediaServiceProvider</a> * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</h3>
 <p>Constructs a radio tuner based on a media service allocated by a media service <i>provider</i>.</p>
 <p>The <i>parent</i> is passed to <a href="qmediaobject.html">QMediaObject</a>.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/~QRadioTuner"></a>
 <h3 class="fn"><a name="dtor.QRadioTuner"></a>QRadioTuner::~QRadioTuner ()</h3>
 <p>Destroys a radio tuner.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/availabilityError"></a>
-<h3 class="fn"><a name="availabilityError"></a><a href="qtmultimediakit.html#AvailabilityError-enum">QtMultimediaKit::AvailabilityError</a> QRadioTuner::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmultimediakit.html#AvailabilityError-enum">QtMultimediaKit::AvailabilityError</a> QRadioTuner::availabilityError () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
 <p>Returns the availability error state.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/bandChanged"></a>
-<h3 class="fn"><a name="bandChanged"></a>void QRadioTuner::bandChanged ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="bandChanged"></a>void QRadioTuner::bandChanged ( <a href="qradiotuner.html#Band-enum">QRadioTuner::Band</a> <i>band</i> )<tt> [signal]</tt></h3>
 <p>Signals a radio tuner's <i>band</i> has changed.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/cancelSearch"></a>
-<h3 class="fn"><a name="cancelSearch"></a>void QRadioTuner::cancelSearch ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="cancelSearch"></a>void QRadioTuner::cancelSearch ()<tt> [slot]</tt></h3>
 <p>Stops scanning for a signal.</p>
 <p>See also <a href="qradiotuner.html#searchForward">searchForward</a>(), <a href="qradiotuner.html#searchBackward">searchBackward</a>(), and <a href="qradiotuner.html#searching-prop">searching</a>.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/error"></a>
 <h3 class="fn"><a name="error"></a><a href="qradiotuner.html#Error-enum">Error</a> QRadioTuner::error () const</h3>
 <p>Returns the error state of a radio tuner.</p>
 <p>See also <a href="qradiotuner.html#errorString">errorString</a>().</p>
-<h3 class="fn"><a name="error-2"></a>void QRadioTuner::error ( <a href="qradiotuner.html#Error-enum">Error</a> <i>error</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="error-2"></a>void QRadioTuner::error ( <a href="qradiotuner.html#Error-enum">Error</a> <i>error</i> )<tt> [signal]</tt></h3>
 <p>Signals that an <i>error</i> occurred.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/errorString"></a>
 <h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QRadioTuner::errorString () const</h3>
 <p>Returns a description of a radio tuner's error state.</p>
 <p>See also <a href="qradiotuner.html#error">error</a>().</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/frequencyChanged"></a>
-<h3 class="fn"><a name="frequencyChanged"></a>void QRadioTuner::frequencyChanged ( int <i>frequency</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="frequencyChanged"></a>void QRadioTuner::frequencyChanged ( int <i>frequency</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>frequency</i> a radio tuner is tuned to has changed.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/frequencyRange"></a>
 <h3 class="fn"><a name="frequencyRange"></a><a href="http://qt.nokia.com/doc/4.6/qpair.html">QPair</a>&lt;int, int&gt; QRadioTuner::frequencyRange ( <a href="qradiotuner.html#Band-enum">Band</a> <i>band</i> ) const</h3>
 <p>Returns a frequency <i>band</i>'s minimum and maximum frequency.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/frequencyStep"></a>
 <h3 class="fn"><a name="frequencyStep"></a>int QRadioTuner::frequencyStep ( <a href="qradiotuner.html#Band-enum">Band</a> <i>band</i> ) const</h3>
 <p>Returns the number of Hertz to increment the frequency by when stepping through frequencies within a given <i>band</i>.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/isAvailable"></a>
-<h3 class="fn"><a name="isAvailable"></a>bool QRadioTuner::isAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="isAvailable"></a>bool QRadioTuner::isAvailable () const<tt> [virtual]</tt></h3>
 <p>Reimplemented from <a href="qmediaobject.html#isAvailable">QMediaObject::isAvailable</a>().</p>
 <p>Returns true if the radio tuner service is ready to use.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/isBandSupported"></a>
 <h3 class="fn"><a name="isBandSupported"></a>bool QRadioTuner::isBandSupported ( <a href="qradiotuner.html#Band-enum">Band</a> <i>band</i> ) const</h3>
 <p>Identifies if a frequency <i>band</i> is supported by a radio tuner.</p>
 <p>Returns true if the band is supported, and false if it is not.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/mutedChanged"></a>
-<h3 class="fn"><a name="mutedChanged"></a>void QRadioTuner::mutedChanged ( bool <i>muted</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="mutedChanged"></a>void QRadioTuner::mutedChanged ( bool <i>muted</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>muted</i> state of a radio tuner's audio output has changed.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/searchBackward"></a>
-<h3 class="fn"><a name="searchBackward"></a>void QRadioTuner::searchBackward ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="searchBackward"></a>void QRadioTuner::searchBackward ()<tt> [slot]</tt></h3>
 <p>Starts a backwards scan for a signal, starting from the current <a href="qradiotuner.html#frequency-prop">frequency</a>.</p>
 <p>See also <a href="qradiotuner.html#searchForward">searchForward</a>(), <a href="qradiotuner.html#cancelSearch">cancelSearch</a>(), and <a href="qradiotuner.html#searching-prop">searching</a>.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/searchForward"></a>
-<h3 class="fn"><a name="searchForward"></a>void QRadioTuner::searchForward ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="searchForward"></a>void QRadioTuner::searchForward ()<tt> [slot]</tt></h3>
 <p>Starts a forward scan for a signal, starting from the current <a href="qradiotuner.html#frequency-prop">frequency</a>.</p>
 <p>See also <a href="qradiotuner.html#searchBackward">searchBackward</a>(), <a href="qradiotuner.html#cancelSearch">cancelSearch</a>(), and <a href="qradiotuner.html#searching-prop">searching</a>.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/searchingChanged"></a>
-<h3 class="fn"><a name="searchingChanged"></a>void QRadioTuner::searchingChanged ( bool <i>searching</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="searchingChanged"></a>void QRadioTuner::searchingChanged ( bool <i>searching</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>searching</i> state of a radio tuner has changed.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/signalStrengthChanged"></a>
-<h3 class="fn"><a name="signalStrengthChanged"></a>void QRadioTuner::signalStrengthChanged ( int <i>strength</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="signalStrengthChanged"></a>void QRadioTuner::signalStrengthChanged ( int <i>strength</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>strength</i> of the signal received by a radio tuner has changed.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/start"></a>
-<h3 class="fn"><a name="start"></a>void QRadioTuner::start ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="start"></a>void QRadioTuner::start ()<tt> [slot]</tt></h3>
 <p>Activate the radio device.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/stateChanged"></a>
-<h3 class="fn"><a name="stateChanged"></a>void QRadioTuner::stateChanged ( <a href="qradiotuner.html#State-enum">QRadioTuner::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="stateChanged"></a>void QRadioTuner::stateChanged ( <a href="qradiotuner.html#State-enum">QRadioTuner::State</a> <i>state</i> )<tt> [signal]</tt></h3>
 <p>This signal is emitted when the state changes to <i>state</i>.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/stereoStatusChanged"></a>
-<h3 class="fn"><a name="stereoStatusChanged"></a>void QRadioTuner::stereoStatusChanged ( bool <i>stereo</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="stereoStatusChanged"></a>void QRadioTuner::stereoStatusChanged ( bool <i>stereo</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>stereo</i> state of a radio tuner has changed.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/stop"></a>
-<h3 class="fn"><a name="stop"></a>void QRadioTuner::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="stop"></a>void QRadioTuner::stop ()<tt> [slot]</tt></h3>
 <p>Deactivate the radio device.</p>
-<a name="//apple_ref/cpp/instm/QRadioTuner/volumeChanged"></a>
-<h3 class="fn"><a name="volumeChanged"></a>void QRadioTuner::volumeChanged ( int <i>volume</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="volumeChanged"></a>void QRadioTuner::volumeChanged ( int <i>volume</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>volume</i> of a radio tuner's audio output has changed.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
-</tr></table></div></address></body>
+</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
+</body>
 </html>

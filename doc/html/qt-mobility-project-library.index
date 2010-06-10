@@ -7166,11 +7166,15 @@
                 <parameter left="Qt::SortOrder" right="" name="order" default="Qt::AscendingOrder"/>
             </function>
         </class>
-        <page access="public" status="commendable" name="SoundEffect" href="qml-soundeffect.html" title="QML SoundEffect Element Reference" fulltitle="QML SoundEffect Element Reference" subtitle="" location="qsoundeffect.cpp">
-            <page access="public" status="commendable" name="source" href="source.html" title="" fulltitle="" subtitle="" location="qsoundeffect.cpp"/>
-            <page access="public" status="commendable" name="loops" href="loops.html" title="" fulltitle="" subtitle="" location="qsoundeffect.cpp"/>
-            <page access="public" status="commendable" name="volume" href="volume.html" title="" fulltitle="" subtitle="" location="qsoundeffect.cpp"/>
-            <page access="public" status="commendable" name="muted" href="muted.html" title="" fulltitle="" subtitle="" location="qsoundeffect.cpp"/>
+        <page access="public" status="commendable" name="SoundEffect" href="qml-soundeffect.html" subtype="qmlclass" title="QML SoundEffect Element" fulltitle="QML SoundEffect Element" subtitle="" location="qsoundeffect.cpp">
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="source" fullname="SoundEffect#source" href="qml-soundeffect.html#source-prop" type="url"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="loops" fullname="SoundEffect#loops" href="qml-soundeffect.html#loops-prop" type="int"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="volume" fullname="SoundEffect#volume" href="qml-soundeffect.html#volume-prop" type="int"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="muted" fullname="SoundEffect#muted" href="qml-soundeffect.html#muted-prop" type="bool"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="sourceChanged" fullname="SoundEffect#sourceChanged" href="qml-soundeffect.html#sourceChanged-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="loopsChanged" fullname="SoundEffect#loopsChanged" href="qml-soundeffect.html#loopsChanged-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="volumeChanged" fullname="SoundEffect#volumeChanged" href="qml-soundeffect.html#volumeChanged-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="mutedChanged" fullname="SoundEffect#mutedChanged" href="qml-soundeffect.html#mutedChanged-signal"/>
         </page>
         <page access="public" status="commendable" name="audiorecorder" href="audiorecorder.html" subtype="example" title="Audio Recorder Example" fulltitle="Audio Recorder Example" subtitle="" location="undocumented.qdoc">
             <page access="public" status="commendable" name="audiorecorder/audiorecorder.cpp" href="audiorecorder-audiorecorder-cpp.html" subtype="file" title="" fulltitle="audiorecorder.cpp Example File" subtitle="audiorecorder/audiorecorder.cpp" location=""/>
@@ -7188,6 +7192,7 @@
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp" href="declarative-sfw-dialer-voipdialer-voipdialerplugin-cpp.html" subtype="file" title="" fulltitle="voipdialerplugin.cpp Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialerplugin.h" href="declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html" subtype="file" title="" fulltitle="voipdialerplugin.h Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialerplugin.h" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/declarative-sfw-dialer.pro" href="declarative-sfw-dialer-declarative-sfw-dialer-pro.html" subtype="file" title="" fulltitle="declarative-sfw-dialer.pro Example File" subtitle="declarative-sfw-dialer/declarative-sfw-dialer.pro" location=""/>
+            <page access="public" status="commendable" name="declarative-sfw-dialer/declarative-sfw-dialer/content/qmldir" href="declarative-sfw-dialer-declarative-sfw-dialer-content-qmldir.html" subtype="file" title="" fulltitle="qmldir Example File" subtitle="declarative-sfw-dialer/declarative-sfw-dialer/content/qmldir" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialer.pro" href="declarative-sfw-dialer-landlinedialer-landlinedialer-pro.html" subtype="file" title="" fulltitle="landlinedialer.pro Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialer.pro" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialer.pro" href="declarative-sfw-dialer-voipdialer-voipdialer-pro.html" subtype="file" title="" fulltitle="voipdialer.pro Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialer.pro" location=""/>
         </page>
@@ -7293,21 +7298,34 @@
             <contents name="wintab-api" title="Wintab API ()" level="1"/>
             <contents name="data-compression-library-version-1-2-3" title="Data Compression Library () version 1.2.3" level="1"/>
         </page>
-        <page access="public" status="commendable" name="Audio" href="qml-audio.html" title="QML Audio Element Reference" fulltitle="QML Audio Element Reference" subtitle="" location="qdeclarativeaudio.cpp">
-            <page access="public" status="commendable" name="source" href="source.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="autoLoad" href="autoload.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="playing" href="playing.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="paused" href="paused.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="status" href="status.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="duration" href="duration.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="position" href="position.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="volume" href="volume.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="muted" href="muted.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="bufferProgress" href="bufferprogress.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="seekable" href="seekable.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="playbackRate" href="playbackrate.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="error" href="error.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
-            <page access="public" status="commendable" name="errorString" href="errorstring.html" title="" fulltitle="" subtitle="" location="qdeclarativeaudio.cpp"/>
+        <page access="public" status="commendable" name="Audio" href="qml-audio.html" subtype="qmlclass" title="QML Audio Element" fulltitle="QML Audio Element" subtitle="" location="qdeclarativeaudio.cpp">
+            <qmlmethod access="public" threadsafety="unspecified" status="commendable" name="play" fullname="Audio#play" href="qml-audio.html#play-method"/>
+            <qmlmethod access="public" threadsafety="unspecified" status="commendable" name="pause" fullname="Audio#pause" href="qml-audio.html#pause-method"/>
+            <qmlmethod access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="Audio#stop" href="qml-audio.html#stop-method"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="source" fullname="Audio#source" href="qml-audio.html#source-prop" type="url"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="autoLoad" fullname="Audio#autoLoad" href="qml-audio.html#autoLoad-prop" type="url"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="playing" fullname="Audio#playing" href="qml-audio.html#playing-prop" type="bool"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="paused" fullname="Audio#paused" href="qml-audio.html#paused-prop" type="bool"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onStarted" fullname="Audio#onStarted" href="qml-audio.html#onStarted-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onResumed" fullname="Audio#onResumed" href="qml-audio.html#onResumed-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onPaused" fullname="Audio#onPaused" href="qml-audio.html#onPaused-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onStopped" fullname="Audio#onStopped" href="qml-audio.html#onStopped-signal"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="status" fullname="Audio#status" href="qml-audio.html#status-prop" type="enumeration"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onLoaded" fullname="Audio#onLoaded" href="qml-audio.html#onLoaded-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onBuffering" fullname="Audio#onBuffering" href="qml-audio.html#onBuffering-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onStalled" fullname="Audio#onStalled" href="qml-audio.html#onStalled-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onBuffered" fullname="Audio#onBuffered" href="qml-audio.html#onBuffered-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onEndOfMedia" fullname="Audio#onEndOfMedia" href="qml-audio.html#onEndOfMedia-signal"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="duration" fullname="Audio#duration" href="qml-audio.html#duration-prop" type="int"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="position" fullname="Audio#position" href="qml-audio.html#position-prop" type="int"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="volume" fullname="Audio#volume" href="qml-audio.html#volume-prop" type="real"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="muted" fullname="Audio#muted" href="qml-audio.html#muted-prop" type="bool"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="bufferProgress" fullname="Audio#bufferProgress" href="qml-audio.html#bufferProgress-prop" type="real"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="seekable" fullname="Audio#seekable" href="qml-audio.html#seekable-prop" type="bool"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="playbackRate" fullname="Audio#playbackRate" href="qml-audio.html#playbackRate-prop" type="real"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="error" fullname="Audio#error" href="qml-audio.html#error-prop" type="enumeration"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="Audio#errorString" href="qml-audio.html#errorString-prop" type="string"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onError" fullname="Audio#onError" href="qml-audio.html#onError-signal"/>
         </page>
         <page access="public" status="commendable" name="slideshow" href="slideshow.html" subtype="example" title="SlideShow Example" fulltitle="SlideShow Example" subtitle="" location="slideshow.qdoc">
             <page access="public" status="commendable" name="slideshow/slideshow.cpp" href="slideshow-slideshow-cpp.html" subtype="file" title="" fulltitle="slideshow.cpp Example File" subtitle="slideshow/slideshow.cpp" location=""/>
@@ -7462,69 +7480,82 @@
             <page access="public" status="commendable" name="bearermonitor/main.cpp" href="bearermonitor-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="bearermonitor/main.cpp" location=""/>
             <page access="public" status="commendable" name="bearermonitor/bearermonitor.pro" href="bearermonitor-bearermonitor-pro.html" subtype="file" title="" fulltitle="bearermonitor.pro Example File" subtitle="bearermonitor/bearermonitor.pro" location=""/>
         </page>
-        <page access="public" status="commendable" name="Video" href="qml-video.html" title="QML Video Element Reference" fulltitle="QML Video Element Reference" subtitle="" location="qdeclarativevideo.cpp">
-            <page access="public" status="commendable" name="source" href="source.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="autoLoad" href="autoload.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="playing" href="playing.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="paused" href="paused.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="status" href="status.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="duration" href="duration.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="position" href="position.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="volume" href="volume.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="muted" href="muted.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="hasAudio" href="hasaudio.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="hasVideo" href="hasvideo.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="bufferProgress" href="bufferprogress.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="seekable" href="seekable.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="playbackRate" href="playbackrate.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="error" href="error.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="errorString" href="errorstring.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="fillMode" href="fillmode.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="title" href="title.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="subTitle" href="subtitle.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="author" href="author.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="comment" href="comment.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="description" href="description.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="category" href="category.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="genre" href="genre.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="year" href="year.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="date" href="date.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="userRating" href="userrating.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="keywords" href="keywords.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="language" href="language.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="publisher" href="publisher.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="copyright" href="copyright.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="parentalRating" href="parentalrating.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="ratingOrganisation" href="ratingorganisation.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="size" href="size.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="mediaType" href="mediatype.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="audioBitRate" href="audiobitrate.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="audioCodec" href="audiocodec.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="averageLevel" href="averagelevel.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="channelCount" href="channelcount.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="peakValue" href="peakvalue.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="sampleRate" href="samplerate.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="albumTitle" href="albumtitle.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="albumArtist" href="albumartist.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="contributingArtist" href="contributingartist.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="composer" href="composer.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="conductor" href="conductor.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="lyrics" href="lyrics.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="mood" href="mood.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="trackNumber" href="tracknumber.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="trackCount" href="trackcount.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="coverArtUrlSmall" href="coverarturlsmall.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="coverArtUrlLarge" href="coverarturllarge.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="resolution" href="resolution.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="pixelAspectRatio" href="pixelaspectratio.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="videoFrameRate" href="videoframerate.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="videoBitRate" href="videobitrate.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="videoCodec" href="videocodec.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="posterUrl" href="posterurl.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="chapterNumber" href="chapternumber.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="director" href="director.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="leadPerformer" href="leadperformer.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
-            <page access="public" status="commendable" name="writer" href="writer.html" title="" fulltitle="" subtitle="" location="qdeclarativevideo.cpp"/>
+        <page access="public" status="commendable" name="Video" href="qml-video.html" subtype="qmlclass" title="QML Video Element" fulltitle="QML Video Element" subtitle="" location="qdeclarativevideo.cpp">
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="source" fullname="Video#source" href="qml-video.html#source-prop" type="url"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="autoLoad" fullname="Video#autoLoad" href="qml-video.html#autoLoad-prop" type="url"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="playing" fullname="Video#playing" href="qml-video.html#playing-prop" type="bool"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="paused" fullname="Video#paused" href="qml-video.html#paused-prop" type="bool"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onStarted" fullname="Video#onStarted" href="qml-video.html#onStarted-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onResumed" fullname="Video#onResumed" href="qml-video.html#onResumed-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onPaused" fullname="Video#onPaused" href="qml-video.html#onPaused-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onStopped" fullname="Video#onStopped" href="qml-video.html#onStopped-signal"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="status" fullname="Video#status" href="qml-video.html#status-prop" type="enumeration"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onLoaded" fullname="Video#onLoaded" href="qml-video.html#onLoaded-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onBuffering" fullname="Video#onBuffering" href="qml-video.html#onBuffering-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onStalled" fullname="Video#onStalled" href="qml-video.html#onStalled-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onBuffered" fullname="Video#onBuffered" href="qml-video.html#onBuffered-signal"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onEndOfMedia" fullname="Video#onEndOfMedia" href="qml-video.html#onEndOfMedia-signal"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="duration" fullname="Video#duration" href="qml-video.html#duration-prop" type="int"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="position" fullname="Video#position" href="qml-video.html#position-prop" type="int"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="volume" fullname="Video#volume" href="qml-video.html#volume-prop" type="real"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="muted" fullname="Video#muted" href="qml-video.html#muted-prop" type="bool"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="hasAudio" fullname="Video#hasAudio" href="qml-video.html#hasAudio-prop" type="bool"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="hasVideo" fullname="Video#hasVideo" href="qml-video.html#hasVideo-prop" type="bool"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="bufferProgress" fullname="Video#bufferProgress" href="qml-video.html#bufferProgress-prop" type="real"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="seekable" fullname="Video#seekable" href="qml-video.html#seekable-prop" type="bool"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="playbackRate" fullname="Video#playbackRate" href="qml-video.html#playbackRate-prop" type="real"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="error" fullname="Video#error" href="qml-video.html#error-prop" type="enumeration"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="errorString" fullname="Video#errorString" href="qml-video.html#errorString-prop" type="string"/>
+            <qmlsignal access="public" threadsafety="unspecified" status="commendable" name="onError" fullname="Video#onError" href="qml-video.html#onError-signal"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="fillMode" fullname="Video#fillMode" href="qml-video.html#fillMode-prop" type="enumeration"/>
+            <qmlmethod access="public" threadsafety="unspecified" status="commendable" name="play" fullname="Video#play" href="qml-video.html#play-method"/>
+            <qmlmethod access="public" threadsafety="unspecified" status="commendable" name="pause" fullname="Video#pause" href="qml-video.html#pause-method"/>
+            <qmlmethod access="public" threadsafety="unspecified" status="commendable" name="stop" fullname="Video#stop" href="qml-video.html#stop-method"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="title" fullname="Video#title" href="qml-video.html#title-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="subTitle" fullname="Video#subTitle" href="qml-video.html#subTitle-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="author" fullname="Video#author" href="qml-video.html#author-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="comment" fullname="Video#comment" href="qml-video.html#comment-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="description" fullname="Video#description" href="qml-video.html#description-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="category" fullname="Video#category" href="qml-video.html#category-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="genre" fullname="Video#genre" href="qml-video.html#genre-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="year" fullname="Video#year" href="qml-video.html#year-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="date" fullname="Video#date" href="qml-video.html#date-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="userRating" fullname="Video#userRating" href="qml-video.html#userRating-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="keywords" fullname="Video#keywords" href="qml-video.html#keywords-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="language" fullname="Video#language" href="qml-video.html#language-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="publisher" fullname="Video#publisher" href="qml-video.html#publisher-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="copyright" fullname="Video#copyright" href="qml-video.html#copyright-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="parentalRating" fullname="Video#parentalRating" href="qml-video.html#parentalRating-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="ratingOrganisation" fullname="Video#ratingOrganisation" href="qml-video.html#ratingOrganisation-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="size" fullname="Video#size" href="qml-video.html#size-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="mediaType" fullname="Video#mediaType" href="qml-video.html#mediaType-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="audioBitRate" fullname="Video#audioBitRate" href="qml-video.html#audioBitRate-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="audioCodec" fullname="Video#audioCodec" href="qml-video.html#audioCodec-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="averageLevel" fullname="Video#averageLevel" href="qml-video.html#averageLevel-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="channelCount" fullname="Video#channelCount" href="qml-video.html#channelCount-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="peakValue" fullname="Video#peakValue" href="qml-video.html#peakValue-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="sampleRate" fullname="Video#sampleRate" href="qml-video.html#sampleRate-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="albumTitle" fullname="Video#albumTitle" href="qml-video.html#albumTitle-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="albumArtist" fullname="Video#albumArtist" href="qml-video.html#albumArtist-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="contributingArtist" fullname="Video#contributingArtist" href="qml-video.html#contributingArtist-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="composer" fullname="Video#composer" href="qml-video.html#composer-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="conductor" fullname="Video#conductor" href="qml-video.html#conductor-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="lyrics" fullname="Video#lyrics" href="qml-video.html#lyrics-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="mood" fullname="Video#mood" href="qml-video.html#mood-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="trackNumber" fullname="Video#trackNumber" href="qml-video.html#trackNumber-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="trackCount" fullname="Video#trackCount" href="qml-video.html#trackCount-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="coverArtUrlSmall" fullname="Video#coverArtUrlSmall" href="qml-video.html#coverArtUrlSmall-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="coverArtUrlLarge" fullname="Video#coverArtUrlLarge" href="qml-video.html#coverArtUrlLarge-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="resolution" fullname="Video#resolution" href="qml-video.html#resolution-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="pixelAspectRatio" fullname="Video#pixelAspectRatio" href="qml-video.html#pixelAspectRatio-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="videoFrameRate" fullname="Video#videoFrameRate" href="qml-video.html#videoFrameRate-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="videoBitRate" fullname="Video#videoBitRate" href="qml-video.html#videoBitRate-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="videoCodec" fullname="Video#videoCodec" href="qml-video.html#videoCodec-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="posterUrl" fullname="Video#posterUrl" href="qml-video.html#posterUrl-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="chapterNumber" fullname="Video#chapterNumber" href="qml-video.html#chapterNumber-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="director" fullname="Video#director" href="qml-video.html#director-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="leadPerformer" fullname="Video#leadPerformer" href="qml-video.html#leadPerformer-prop" type="variant"/>
+            <qmlproperty access="public" threadsafety="unspecified" status="commendable" name="writer" fullname="Video#writer" href="qml-video.html#writer-prop" type="variant"/>
         </page>
         <page access="public" status="commendable" name="bearer" href="bearer.html" subtype="group" title="Qt Bearer Management API" fulltitle="Qt Bearer Management API" subtitle="" location="bearermanagement.qdoc"/>
         <page access="public" status="commendable" name="bearer-management.html" href="bearer-management.html" subtype="page" title="Bearer Management" fulltitle="Bearer Management" subtitle="" location="bearermanagement.qdoc">
@@ -7592,6 +7623,7 @@
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp" href="declarative-sfw-dialer-voipdialer-voipdialerplugin-cpp.html" subtype="file" title="" fulltitle="voipdialerplugin.cpp Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialerplugin.cpp" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialerplugin.h" href="declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html" subtype="file" title="" fulltitle="voipdialerplugin.h Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialerplugin.h" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/declarative-sfw-dialer.pro" href="declarative-sfw-dialer-declarative-sfw-dialer-pro.html" subtype="file" title="" fulltitle="declarative-sfw-dialer.pro Example File" subtitle="declarative-sfw-dialer/declarative-sfw-dialer.pro" location=""/>
+            <page access="public" status="commendable" name="declarative-sfw-dialer/declarative-sfw-dialer/content/qmldir" href="declarative-sfw-dialer-declarative-sfw-dialer-content-qmldir.html" subtype="file" title="" fulltitle="qmldir Example File" subtitle="declarative-sfw-dialer/declarative-sfw-dialer/content/qmldir" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/landlinedialer/landlinedialer.pro" href="declarative-sfw-dialer-landlinedialer-landlinedialer-pro.html" subtype="file" title="" fulltitle="landlinedialer.pro Example File" subtitle="declarative-sfw-dialer/landlinedialer/landlinedialer.pro" location=""/>
             <page access="public" status="commendable" name="declarative-sfw-dialer/voipdialer/voipdialer.pro" href="declarative-sfw-dialer-voipdialer-voipdialer-pro.html" subtype="file" title="" fulltitle="voipdialer.pro Example File" subtitle="declarative-sfw-dialer/voipdialer/voipdialer.pro" location=""/>
         </page>
@@ -7844,7 +7876,7 @@
             <page access="public" status="commendable" name="writemessage/writemessage.pro" href="writemessage-writemessage-pro.html" subtype="file" title="" fulltitle="writemessage.pro Example File" subtitle="writemessage/writemessage.pro" location=""/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMetaDataWriterControl_iid" href="qmetadatawritercontrol.html#QMetaDataWriterControl_iid" location="qmetadatawritercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMetaDataWriterControl" type="" signature="QMetaDataWriterControl_iid()"/>
-        <page access="public" status="commendable" name="contactsusagehtml" href="contactsusagehtml.html" subtype="page" title="Contacts API Usage" fulltitle="Contacts API Usage" subtitle="" location="contactsusage.qdoc">
+        <page access="public" status="commendable" name="contactsusage.html" href="contactsusage.html" subtype="page" title="Contacts API Usage" fulltitle="Contacts API Usage" subtitle="" location="contactsusage.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="manager-settings-and-configuration" title="Manager Settings And Configuration" level="1"/>
             <contents name="loading-the-default-manager-for-the-platform" title="Loading the default manager for the platform" level="2"/>
@@ -7958,11 +7990,10 @@
             <contents name="schema-differences" title="Schema Differences" level="2"/>
             <contents name="provided-engines" title="Provided Engines" level="2"/>
             <contents name="in-memory-example-engine" title="In-Memory Example Engine" level="3"/>
-            <contents name="symbian-3-1-engine" title="Symbian 3.1 Engine" level="3"/>
-            <contents name="symbian-3-2-engine" title="Symbian 3.2 Engine" level="3"/>
-            <contents name="symbian-5-0-engine" title="Symbian 5.0 Engine" level="3"/>
+            <contents name="symbian-engine" title="Symbian Engine" level="3"/>
+            <contents name="symbian-sim-engine" title="Symbian Sim Engine" level="3"/>
             <contents name="maemo-5-fremantle-engine" title="Maemo 5 (Fremantle) Engine" level="3"/>
-            <contents name="libqttracker-engine" title="libQtTracker Engine" level="3"/>
+            <contents name="windows-ce-engine" title="Windows CE Engine" level="3"/>
             <contents name="information-for-engine-implementors" title="Information For Engine Implementors" level="1"/>
             <contents name="which-functions-do-i-need-to-implement" title="Which Functions Do I Need To Implement" level="2"/>
             <contents name="mandatory-functions" title="Mandatory Functions" level="3"/>
