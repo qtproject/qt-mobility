@@ -248,6 +248,7 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
+    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

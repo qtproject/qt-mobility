@@ -1758,6 +1758,11 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfoLinuxCommonPrivate::currentPowerS
   }
  #endif
 
+ bool QSystemDeviceInfoLinuxCommonPrivate::currentBluetoothPowerState()
+ {
+     return false;
+ }
+
 QSystemScreenSaverLinuxCommonPrivate::QSystemScreenSaverLinuxCommonPrivate(QObject *parent) : QObject(parent)
 {
 }

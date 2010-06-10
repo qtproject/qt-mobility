@@ -1942,6 +1942,11 @@ QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
     return QSystemDeviceInfo::SimNotAvailable;
 }
 
+bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
+{
+    return false;
+}
+
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
 {
     qWarning()<< __FUNCTION__;
