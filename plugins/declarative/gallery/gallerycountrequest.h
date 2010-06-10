@@ -57,6 +57,7 @@ class GalleryCountRequest : public QObject, public QDeclarativeParserStatus
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(State)
     Q_ENUMS(Result)
+    Q_ENUMS(Scope)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
@@ -64,8 +65,9 @@ class GalleryCountRequest : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
+    Q_PROPERTY(Scope scope READ scope WRITE setScope)
+    Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
     Q_PROPERTY(GalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QVariant containerId READ containerId WRITE setContainerId)
     Q_PROPERTY(int count READ count NOTIFY countChanged)
 public:
     enum State
@@ -95,6 +97,12 @@ public:
         InvalidUrlError                 = QGalleryAbstractRequest::NoResult,
     };
 
+    enum Scope
+    {
+        AllDescendants,
+        DirectDescendants
+    };
+
     GalleryCountRequest(QObject *parent = 0);
 
     QAbstractGallery *gallery() const { return m_request.gallery(); }
@@ -112,8 +120,11 @@ public:
     QString itemType() const { return m_request.itemType(); }
     void setItemType(const QString &itemType) { m_request.setItemType(itemType); }
 
-    QVariant containerId() const { return m_request.containerId(); }
-    void setContainerId(const QVariant &containerId) { m_request.setContainerId(containerId); }
+    Scope scope() const { return Scope(m_request.scope()); }
+    void setScope(Scope scope) { m_request.setScope(QGalleryAbstractRequest::Scope(scope)); }
+
+    QVariant scopeItemId() const { return m_request.scopeItemId(); }
+    void setScopeItemId(const QVariant &itemId) { m_request.setScopeItemId(itemId); }
 
     GalleryFilterBase *filter() const { return m_filter; }
     void setFilter(GalleryFilterBase *filter) { m_filter = filter; }

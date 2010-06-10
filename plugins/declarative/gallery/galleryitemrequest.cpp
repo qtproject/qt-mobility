@@ -44,8 +44,8 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryItemRequest GalleryItemRequest
-    \brief The GalleryItemRequest element allows you to request a single item
+    \qmlclass GalleryItem GalleryItemRequest
+    \brief The GalleryItem element allows you to request a single item
     from a gallery
 
     This is element is part of the \bold {QtMobility.gallery 1.0} module.
@@ -78,98 +78,98 @@ GalleryItemRequest::~GalleryItemRequest()
 }
 
 /*!
-    \qmlproperty gallery GalleryItemRequest::gallery
+    \qmlproperty gallery GalleryItem::gallery
 
     This property holds the gallery a request should return results from.
 */
 
 /*!
-    \qmlproperty enum GalleryItemRequest::state
+    \qmlproperty enum GalleryItem::state
 
     This property holds the state of a request.
 */
 
 /*!
-    \qmlproperty enum GalleryItemRequest::result
+    \qmlproperty enum GalleryItem::result
 
     The property holds the result of a request.
 */
 
 /*!
-    \qmlproperty int GalleryItemRequest::currentProgress
+    \qmlproperty int GalleryItem::currentProgress
 
     This property holds the current progress value.
 */
 
 /*!
-    \qmlproperty int GalleryItemRequest::maximumProgress
+    \qmlproperty int GalleryItem::maximumProgress
 
     This property holds the maximum progress value.
 */
 
 /*!
-    \qmlproperty stringlist GalleryItemRequest::properties
+    \qmlproperty stringlist GalleryItem::properties
 
     This property holds the item properties a request should return values for.
 */
 
 /*!
-    \qmlproperty bool GalleryItemRequest::live
+    \qmlproperty bool GalleryItem::live
 
     This property holds whether a request should refresh its results
     automatically.
 */
 
 /*!
-    \qmlpropery galleryId GalleryItemRequest::itemId
+    \qmlpropery galleryId GalleryItem::itemId
 
     This property holds the id of the item to return information about.
 */
 
 /*!
-    \qmlproperty model GalleryItemRequest::model
+    \qmlproperty model GalleryItem::model
 
     This property holds a model containing the results of a request.
 */
 
 /*!
-    \qmlmethod GalleryItemRequest::reload()
+    \qmlmethod GalleryItem::reload()
 
     Re-queries the gallery.
 */
 
 /*!
-    \qmlmethod GalleryItemRequest::cancel()
+    \qmlmethod GalleryItem::cancel()
 
     Cancels an executing request.
 */
 
 /*!
-    \qmlmethod GalleryItemRequest::clear()
+    \qmlmethod GalleryItem::clear()
 
     Clears the results of a request.
 */
 
 /*!
-    \qmlsignal GalleryItemRequest::onSucceeded()
+    \qmlsignal GalleryItem::onSucceeded()
 
     Signals that a request has finished successfully.
 */
 
 /*!
-    \qmlsignal GalleryItemRequest::onCancelled()
+    \qmlsignal GalleryItem::onCancelled()
 
     Signals that a request was cancelled.
 */
 
 /*!
-    \qmlsignal GalleryItemRequest::onFailed(error)
+    \qmlsignal GalleryItem::onFailed(error)
 
     Signals that a request failed with the given \a error.
 */
 
 /*!
-    \qmlsignal GalleryItemRequest::onFinished(result)
+    \qmlsignal GalleryItem::onFinished(result)
 
     Signals that a request finished with the given \a result.
 */

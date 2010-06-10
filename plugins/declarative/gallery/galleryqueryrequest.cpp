@@ -39,15 +39,15 @@
 **
 ****************************************************************************/
 
-#include "galleryfilterrequest.h"
+#include "galleryqueryrequest.h"
 
 #include "galleryfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryFilterRequest GalleryFilterRequest
-    \brief The GalleryFilterRequest element allows you to query a list of items
+    \qmlclass GalleryQuery GalleryQueryRequest
+    \brief The GalleryQueryRequest element allows you to query a list of items
     from a gallery.
 
     This is element is part of the \bold {QtMobility.gallery 1.0} module.
@@ -60,7 +60,7 @@ QTM_BEGIN_NAMESPACE
         width: 1024
         height: 768
 
-        GalleryFilterRequest {
+        GalleryQuery {
             id: request;
             gallery: DocumentGallery {}
 
@@ -87,10 +87,10 @@ QTM_BEGIN_NAMESPACE
     }
     \endqml
 
-    \sa GalleryItemRequest
+    \sa GalleryItem
 */
 
-GalleryFilterRequest::GalleryFilterRequest(QObject *parent)
+GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
     : QObject(parent)
     , m_items(0)
     , m_model(0)
@@ -109,151 +109,158 @@ GalleryFilterRequest::GalleryFilterRequest(QObject *parent)
             this, SLOT(_q_itemsChanged(QGalleryItemList*)));
 }
 
-GalleryFilterRequest::~GalleryFilterRequest()
+GalleryQueryRequest::~GalleryQueryRequest()
 {
     delete m_model;
 }
 
-void GalleryFilterRequest::classBegin()
+void GalleryQueryRequest::classBegin()
 {
 }
 
-void GalleryFilterRequest::componentComplete()
+void GalleryQueryRequest::componentComplete()
 {
     reload();
 }
 
 /*!
-    \qmlproperty gallery GalleryFilterRequest::gallery
+    \qmlproperty gallery GalleryQuery::gallery
 
     This property holds the gallery a query should return results from.
 */
 
 /*!
-    \qmlproperty enum GalleryFilterRequest::state
+    \qmlproperty enum GalleryQuery::state
 
     This property holds the state of a query.
 */
 
 /*!
-    \qmlproperty enum GalleryFilterRequest::result
+    \qmlproperty enum GalleryQuery::result
 
     The property holds the result of a query.
 */
 
 /*!
-    \qmlproperty int GalleryFilterRequest::currentProgress
+    \qmlproperty int GalleryQuery::currentProgress
 
     This property holds the current progress value.
 */
 
 /*!
-    \qmlproperty int GalleryFilterRequest::maximumProgress
+    \qmlproperty int GalleryQuery::maximumProgress
 
     This property holds the maximum progress value.
 */
 
 /*!
-    \qmlproperty stringlist GalleryFilterRequest::properties
+    \qmlproperty stringlist GalleryQuery::properties
 
     This property holds the item properties a query should return values for.
 */
 
 /*!
-    \qmlproperty stringlist GalleryFilterRequest::sortProperties
+    \qmlproperty stringlist GalleryQuery::sortProperties
 
     This property holds the properties the results of a query should be sorted
     on.
 */
 
 /*!
-    \qmlproperty bool GalleryFilterRequest::live
+    \qmlproperty bool GalleryQuery::live
 
     This property holds whether a query should refresh its results
     automatically.
 */
 
 /*!
-    \qmlproperty int GalleryFilterRequest::cursorPosition
+    \qmlproperty int GalleryQuery::cursorPosition
 
     This property holds the offset of a query's internal cache.
 */
 
 /*!
-    \qmlproperty int GalleryFilterRequest::minimumPagedItems
+    \qmlproperty int GalleryQuery::minimumPagedItems
 
     This property contains the minimum number of consectutive items a query
     should retain in it's internal cache.
 */
 
 /*!
-    \qmlproperty string GalleryFilterRequest::itemType
+    \qmlproperty string GalleryQuery::itemType
 
     This property contains the type of item a query should return.
 */
 
 /*!
-    \qmlproperty filter GalleryFilterRequest::filter
+    \qmlproperty filter GalleryQuery::filter
 
     This property contains criteria to used to filter the results of a query.
 */
 
 /*!
-    \qmlproperty galleryId GalleryFilterRequest::containerId
+    \qmlproperty galleryId GalleryQuery::scopeItemId
 
-    This property contains the id of a container item that a query should
-    return the contents of.
+    This property contains the id of an item that a query should return a
+    count of the descendants of.
 */
 
 /*!
-    \qmlproperty model GalleryFilterRequest::model
+    \qmlproperty enum GalleryQuery::scope
+
+    The property contains whether a query should count the direct descendants
+    of the \l scopeItemId or all descendants.
+*/
+
+/*!
+    \qmlproperty model GalleryQuery::model
 
     This property holds a model containing the results of a query.
 */
 
 /*!
-    \qmlmethod GalleryFilterRequest::reload()
+    \qmlmethod GalleryQuery::reload()
 
     Re-queries the gallery.
 */
 
 /*!
-    \qmlmethod GalleryFilterRequest::cancel()
+    \qmlmethod GalleryQuery::cancel()
 
     Cancels an executing query.
 */
 
 /*!
-    \qmlmethod GalleryFilterRequest::clear()
+    \qmlmethod GalleryQuery::clear()
 
     Clears the results of a query.
 */
 
 /*!
-    \qmlsignal GalleryFilterRequest::onSucceeded()
+    \qmlsignal GalleryQuery::onSucceeded()
 
     Signals that a query has finished successfully.
 */
 
 /*!
-    \qmlsignal GalleryFilterRequest::onCancelled()
+    \qmlsignal GalleryQuery::onCancelled()
 
     Signals that a query was cancelled.
 */
 
 /*!
-    \qmlsignal GalleryFilterRequest::onFailed(error)
+    \qmlsignal GalleryQuery::onFailed(error)
 
     Signals that a query failed with the given \a error.
 */
 
 /*!
-    \qmlsignal GalleryFilterRequest::onFinished(result)
+    \qmlsignal GalleryQuery::onFinished(result)
 
     Signals that a query finished with the given \a result.
 */
 
-void GalleryFilterRequest::reload()
+void GalleryQueryRequest::reload()
 {
     m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
     if (m_items)
@@ -261,7 +268,7 @@ void GalleryFilterRequest::reload()
     m_request.execute();
 }
 
-void GalleryFilterRequest::_q_itemsChanged(QGalleryItemList *items)
+void GalleryQueryRequest::_q_itemsChanged(QGalleryItemList *items)
 {
     GalleryItemListModel *model = 0;
 
@@ -276,6 +283,6 @@ void GalleryFilterRequest::_q_itemsChanged(QGalleryItemList *items)
     delete model;
 }
 
-#include "moc_galleryfilterrequest.cpp"
+#include "moc_galleryqueryrequest.cpp"
 
 QTM_END_NAMESPACE

@@ -46,8 +46,8 @@
 
 #include "gallerycountrequest.h"
 #include "galleryfilter.h"
-#include "galleryfilterrequest.h"
 #include "galleryitemrequest.h"
+#include "galleryqueryrequest.h"
 #include "galleryremoverequest.h"
 #include "galleryurlrequest.h"
 
@@ -76,9 +76,9 @@ public:
         qmlRegisterType<GalleryFilterInclusiveRange>(uri, 1, 0, "GalleryInclusivePropertyRange");
         qmlRegisterType<GalleryFilterUnion>(uri, 1, 0, "GalleryFilterUnion");
         qmlRegisterType<GalleryFilterIntersection>(uri, 1, 0, "GalleryFilterIntersection");
-        qmlRegisterType<GalleryCountRequest>(uri, 1, 0, "GalleryCountRequest");
-        qmlRegisterType<GalleryFilterRequest>(uri, 1, 0, "GalleryFilterRequest");
-        qmlRegisterType<GalleryItemRequest>(uri, 1, 0, "GalleryItemRequest");
+        qmlRegisterType<GalleryCountRequest>(uri, 1, 0, "GalleryCountQuery");
+        qmlRegisterType<GalleryItemRequest>(uri, 1, 0, "GalleryItem");
+        qmlRegisterType<GalleryQueryRequest>(uri, 1, 0, "GalleryQuery");
         qmlRegisterType<GalleryRemoveRequest>(uri, 1, 0, "GalleryRemoveRequest");
         qmlRegisterType<GalleryUrlRequest>(uri, 1, 0, "GalleryUrlRequest");
         qmlRegisterType<QAbstractGallery>();

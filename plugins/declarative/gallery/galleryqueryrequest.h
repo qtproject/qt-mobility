@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef GALLERYFILTERREQUEST_H
-#define GALLERYFILTERREQUEST_H
+#ifndef GALLERYQUERYREQUEST_H
+#define GALLERYQUERYREQUEST_H
 
 #include <qgalleryitemlist.h>
-#include <qgalleryfilterrequest.h>
+#include <qgalleryqueryrequest.h>
 
 #include <QtCore/qpointer.h>
 #include <QtDeclarative/qdeclarative.h>
@@ -58,12 +58,13 @@ QTM_BEGIN_NAMESPACE
 
 class GalleryFilterBase;
 
-class GalleryFilterRequest : public QObject, public QDeclarativeParserStatus
+class GalleryQueryRequest : public QObject, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
     Q_ENUMS(State)
     Q_ENUMS(Result)
+    Q_ENUMS(Scope)
     Q_PROPERTY(QAbstractGallery* gallery READ gallery WRITE setGallery)
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
     Q_PROPERTY(Result result READ result NOTIFY resultChanged)
@@ -75,8 +76,9 @@ class GalleryFilterRequest : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition NOTIFY cursorPositionChanged)
     Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
+    Q_PROPERTY(Scope scope READ scope WRITE setScope)
+    Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
     Q_PROPERTY(GalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QVariant containerId READ containerId WRITE setContainerId)
     Q_PROPERTY(QObject *model READ model NOTIFY modelChanged)
 public:
     enum State
@@ -106,8 +108,14 @@ public:
         InvalidUrlError                 = QGalleryAbstractRequest::NoResult,
     };
 
-    GalleryFilterRequest(QObject *parent = 0);
-    ~GalleryFilterRequest();
+    enum Scope
+    {
+        AllDescendants,
+        DirectDescendants
+    };
+
+    GalleryQueryRequest(QObject *parent = 0);
+    ~GalleryQueryRequest();
 
     QAbstractGallery *gallery() const { return m_request.gallery(); }
     void setGallery(QAbstractGallery *gallery) { m_request.setGallery(gallery); }
@@ -144,8 +152,11 @@ public:
     QString itemType() const { return m_request.itemType(); }
     void setItemType(const QString &itemType) { m_request.setItemType(itemType); }
 
-    QVariant containerId() const { return m_request.containerId(); }
-    void setContainerId(const QVariant &containerId) { m_request.setContainerId(containerId); }
+    Scope scope() const { return Scope(m_request.scope()); }
+    void setScope(Scope scope) { m_request.setScope(QGalleryAbstractRequest::Scope(scope)); }
+
+    QVariant scopeItemId() const { return m_request.scopeItemId(); }
+    void setScopeItemId(const QVariant &itemId) { m_request.setScopeItemId(itemId); }
 
     GalleryFilterBase *filter() const { return m_filter; }
     void setFilter(GalleryFilterBase *filter) { m_filter = filter; }
@@ -175,7 +186,7 @@ private Q_SLOTS:
     void _q_itemsChanged(QGalleryItemList *items);
 
 private:
-    QGalleryFilterRequest m_request;
+    QGalleryQueryRequest m_request;
     QPointer<GalleryFilterBase> m_filter;
     QGalleryItemList *m_items;
     GalleryItemListModel *m_model;
@@ -183,7 +194,7 @@ private:
 
 QTM_END_NAMESPACE
 
-QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryFilterRequest))
+QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(GalleryQueryRequest))
 
 #endif
 
