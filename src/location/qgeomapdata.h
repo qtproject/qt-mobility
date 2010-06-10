@@ -80,9 +80,9 @@ public:
     virtual void addMapObject(QGeoMapObject *mapObject);
     virtual void removeMapObject(QGeoMapObject *mapObject);
     virtual QList<QGeoMapObject*> mapObjects();
-    virtual QList<QGeoMapObject*> visibleMapObjects() = 0;
-    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0) = 0;
-    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect) = 0;
+    virtual QList<QGeoMapObject*> visibleMapObjects();
+    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
+    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
     virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
     virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
@@ -96,6 +96,8 @@ public:
 protected:
     QGeoMapWidget* widget() const;
     QGeoMappingManagerEngine* engine() const;
+
+    QGeoMapObject* containerObject();
 
 private:
     QGeoMapDataPrivate* d_ptr;

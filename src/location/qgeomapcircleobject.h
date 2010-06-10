@@ -53,7 +53,7 @@ class QGeoMapCircleObjectPrivate;
 class Q_LOCATION_EXPORT QGeoMapCircleObject : public QGeoMapObject
 {
 public:
-    QGeoMapCircleObject();
+    QGeoMapCircleObject(QGeoMapObject *parent = 0);
     ~QGeoMapCircleObject();
 
     void setCenter(const QGeoCoordinate &center);

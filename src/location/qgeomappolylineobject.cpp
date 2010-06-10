@@ -48,8 +48,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
 */
-QGeoMapPolylineObject::QGeoMapPolylineObject()
-    : QGeoMapObject(new QGeoMapPolylineObjectPrivate) {}
+QGeoMapPolylineObject::QGeoMapPolylineObject(QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapPolylineObjectPrivate(this, parent)) {}
 
 /*!
 */
@@ -76,7 +76,8 @@ QList<QGeoCoordinate> QGeoMapPolylineObject::points() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate()
+QGeoMapPolylineObjectPrivate::QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+    : QGeoMapObjectPrivate(impl, parent)
 {
     type = QGeoMapObject::PolylineType;
 }

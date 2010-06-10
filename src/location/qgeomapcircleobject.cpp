@@ -46,8 +46,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
 */
-QGeoMapCircleObject::QGeoMapCircleObject()
-    : QGeoMapObject(new QGeoMapCircleObjectPrivate) {}
+QGeoMapCircleObject::QGeoMapCircleObject(QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
 
 /*!
 */
@@ -90,7 +90,8 @@ QGeoDistance QGeoMapCircleObject::radius() const
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate()
+QGeoMapCircleObjectPrivate::QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+    : QGeoMapObjectPrivate(impl, parent)
 {
     type = QGeoMapObject::CircleType;
 }

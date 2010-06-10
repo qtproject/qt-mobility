@@ -55,7 +55,7 @@ class QGeoMapPolylineObjectPrivate;
 class Q_LOCATION_EXPORT QGeoMapPolylineObject : public QGeoMapObject
 {
 public:
-    QGeoMapPolylineObject();
+    QGeoMapPolylineObject(QGeoMapObject *parent = 0);
     ~QGeoMapPolylineObject();
 
     void setPoints(const QList<QGeoCoordinate> &points);

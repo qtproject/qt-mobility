@@ -44,22 +44,31 @@
 
 #include "qgeomapobject.h"
 
+#include <QList>
 #include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoMapObject;
+
 class QGeoMapObjectPrivate
 {
 public:
-    QGeoMapObjectPrivate();
+    QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
     ~QGeoMapObjectPrivate();
     QGeoMapObjectPrivate& operator= (const QGeoMapObjectPrivate &other);
 
     QGeoMapObject::Type type;
-    int zIndex;
+    QGeoMapObject *parent;
+    QList<QGeoMapObject *> children;
+    int zValue;
     bool isVisible;
     QGeoBoundingBox boundingBox;
+
+private:
+    QGeoMapObject *q_ptr;
+    Q_DECLARE_PUBLIC(QGeoMapObject)
 };
 
 QTM_END_NAMESPACE

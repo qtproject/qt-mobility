@@ -44,8 +44,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapMarkerObject::QGeoMapMarkerObject()
-    : QGeoMapObject(new QGeoMapMarkerObjectPrivate) {}
+QGeoMapMarkerObject::QGeoMapMarkerObject(QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapMarkerObjectPrivate(this, parent)) {}
 
 QGeoMapMarkerObject::~QGeoMapMarkerObject()
 {
@@ -54,7 +54,8 @@ QGeoMapMarkerObject::~QGeoMapMarkerObject()
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate()
+QGeoMapMarkerObjectPrivate::QGeoMapMarkerObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+    : QGeoMapObjectPrivate(impl, parent)
 {
     type = QGeoMapObject::MarkerType;
 }

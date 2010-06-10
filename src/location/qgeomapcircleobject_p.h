@@ -52,7 +52,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoMapCircleObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QGeoMapCircleObjectPrivate();
+    QGeoMapCircleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     QGeoMapCircleObjectPrivate(const QGeoMapCircleObjectPrivate &other);
     ~QGeoMapCircleObjectPrivate();
     QGeoMapCircleObjectPrivate& operator= (const QGeoMapCircleObjectPrivate &other);

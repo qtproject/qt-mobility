@@ -44,8 +44,8 @@
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapRectangleObject::QGeoMapRectangleObject()
-    : QGeoMapObject(new QGeoMapRectangleObjectPrivate) {}
+QGeoMapRectangleObject::QGeoMapRectangleObject(QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent)) {}
 
 QGeoMapRectangleObject::~QGeoMapRectangleObject()
 {
@@ -54,7 +54,8 @@ QGeoMapRectangleObject::~QGeoMapRectangleObject()
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate()
+QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+    : QGeoMapObjectPrivate(impl, parent)
 {
     type = QGeoMapObject::RectangleType;
 }

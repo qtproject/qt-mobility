@@ -51,7 +51,7 @@ class QGeoMapRectangleObjectPrivate;
 class Q_LOCATION_EXPORT QGeoMapRectangleObject : public QGeoMapObject
 {
 public:
-    QGeoMapRectangleObject();
+    QGeoMapRectangleObject(QGeoMapObject *parent = 0);
     ~QGeoMapRectangleObject();
 
 private:

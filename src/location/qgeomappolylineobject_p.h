@@ -53,7 +53,7 @@ class QGeoCoordinate;
 class QGeoMapPolylineObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QGeoMapPolylineObjectPrivate();
+    QGeoMapPolylineObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     QGeoMapPolylineObjectPrivate(const QGeoMapPolylineObjectPrivate &other);
     ~QGeoMapPolylineObjectPrivate();
     QGeoMapPolylineObjectPrivate& operator= (const QGeoMapPolylineObjectPrivate &other);

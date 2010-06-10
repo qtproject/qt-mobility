@@ -78,7 +78,7 @@ public:
     QSizeF viewportSize;
     QGeoMapWidget::MapType mapType;
 
-    QList<QGeoMapObject*> mapObjects;
+    QGeoMapObject* containerObject;
 
     bool imageChangesTriggerUpdates;
     QPixmap mapImage;

@@ -46,8 +46,8 @@ QTM_BEGIN_NAMESPACE
 
 /*!
 */
-QGeoMapObject::QGeoMapObject()
-    : d_ptr(new QGeoMapObjectPrivate()) {}
+QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
+    : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
 
 /*!
 */
@@ -72,18 +72,18 @@ QGeoMapObject::Type QGeoMapObject::type() const
 
 /*!
 */
-void QGeoMapObject::setZIndex(int zIndex)
+void QGeoMapObject::setZValue(int zValue)
 {
     Q_D(QGeoMapObject);
-    d->zIndex = zIndex;
+    d->zValue = zValue;
 }
 
 /*!
 */
-int QGeoMapObject::zIndex() const
+int QGeoMapObject::zValue() const
 {
     Q_D(const QGeoMapObject);
-    return d->zIndex;
+    return d->zValue;
 }
 
 /*!
@@ -104,39 +104,116 @@ bool QGeoMapObject::isVisible() const
 
 /*!
 */
-void QGeoMapObject::setBoundingBox(const QGeoBoundingBox& boundingBox)
+QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
-    Q_D(QGeoMapObject);
-    d->boundingBox = boundingBox;
+    Q_D(const QGeoMapObject);
+
+    QGeoBoundingBox bounds;
+
+    if (d->children.size() == 0)
+        return bounds;
+
+    bounds = d->children.at(0)->boundingBox();
+
+    for (int i = 1; i < d->children.size(); ++i)
+        bounds = bounds.united(d->children.at(i)->boundingBox());
+
+    return bounds;
 }
 
 /*!
 */
-QGeoBoundingBox QGeoMapObject::boundingBox() const
+bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
     Q_D(const QGeoMapObject);
-    return d->boundingBox;
+
+    if (d->children.size() == 0)
+        return false;
+
+    for (int i = 0; i < d->children.size(); ++i)
+        if (d->children.at(i)->contains(coordiante))
+            return true;
+
+    return false;
+}
+
+/*!
+*/
+QGeoMapObject* QGeoMapObject::parentObject() const
+{
+    Q_D(const QGeoMapObject);
+    return d->parent;
+}
+
+/*!
+*/
+void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
+{
+    Q_D(QGeoMapObject);
+
+    // TODO check if already added?
+
+    if (childObject)
+        d->children.append(childObject);
+}
+
+/*!
+*/
+void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
+{
+    Q_D(QGeoMapObject);
+    if (childObject)
+        d->children.removeAll(childObject);
+}
+
+/*!
+*/
+QList<QGeoMapObject*> QGeoMapObject::childObjects() const
+{
+    Q_D(const QGeoMapObject);
+    return d->children;
 }
 
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapObjectPrivate::QGeoMapObjectPrivate() {}
+QGeoMapObjectPrivate::QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+    : type(QGeoMapObject::ContainerType),
+    parent(parent),
+    q_ptr(impl) {}
 
 QGeoMapObjectPrivate::QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other)
     : type(other.type),
-    zIndex(other.zIndex),
+    parent(other.parent),
+    children(other.children),
+    zValue(other.zValue),
     isVisible(other.isVisible),
-    boundingBox(other.boundingBox) {}
+    boundingBox(other.boundingBox),
+    q_ptr(other.q_ptr) {}
 
-QGeoMapObjectPrivate::~QGeoMapObjectPrivate() {}
+QGeoMapObjectPrivate::~QGeoMapObjectPrivate() {
+    if (parent) {
+        Q_Q(QGeoMapObject);
+        parent->removeChildObject(q);
+    }
+
+    for (int i = 0; i < children.size(); ++i) {
+        children.at(i)->d_ptr->parent = 0;
+        delete children.at(i);
+    }
+
+    children.clear();
+}
 
 QGeoMapObjectPrivate& QGeoMapObjectPrivate::operator= (const QGeoMapObjectPrivate &other)
 {
     type = other.type;
-    zIndex = other.zIndex;
+    parent = other.parent;
+    children = other.children;
+    zValue = other.zValue;
     isVisible = other.isVisible;
     boundingBox = other.boundingBox;
+    q_ptr = other.q_ptr;
 
     return *this;
 }

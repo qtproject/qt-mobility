@@ -51,7 +51,7 @@ class QGeoMapMarkerObjectPrivate;
 class Q_LOCATION_EXPORT QGeoMapMarkerObject : public QGeoMapObject
 {
 public:
-    QGeoMapMarkerObject();
+    QGeoMapMarkerObject(QGeoMapObject *parent = 0);
     ~QGeoMapMarkerObject();
 
 private:

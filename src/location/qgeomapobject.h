@@ -44,8 +44,11 @@
 
 #include "qmobilityglobal.h"
 
+#include <QList>
+
 QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 
@@ -53,6 +56,7 @@ class Q_LOCATION_EXPORT QGeoMapObject
 {
 public:
     enum Type {
+        ContainerType,
         RectangleType,
         CircleType,
         PolylineType,
@@ -60,30 +64,35 @@ public:
         MarkerType,
     };
 
-    QGeoMapObject();
+    QGeoMapObject(QGeoMapObject *parent = 0);
     virtual ~QGeoMapObject();
 
     Type type() const;
 
-    void setZIndex(int zIndex);
-    int zIndex() const;
+    void setZValue(int zValue);
+    int zValue() const;
 
     void setVisible(bool visible);
     bool isVisible() const;
 
-    QGeoBoundingBox boundingBox() const;
+    // TODO selection and selectability?
 
-    // either expose bounding box for hit testing
-    // or have contains(QGeoCoordinate) and containedBy(QGeoBoundingBox)
+    virtual QGeoBoundingBox boundingBox() const;
+    virtual bool contains(const QGeoCoordinate &coordinate) const;
+
+    QGeoMapObject* parentObject() const;
+    void addChildObject(QGeoMapObject *childObject);
+    void removeChildObject(QGeoMapObject *childObject);
+    QList<QGeoMapObject*> childObjects() const;
 
 protected:
     QGeoMapObject(QGeoMapObjectPrivate *dd);
 
-    void setBoundingBox(const QGeoBoundingBox& boundingBox);
-
     QGeoMapObjectPrivate *d_ptr;
 
 private:
+
+
     Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)
 };

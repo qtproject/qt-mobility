@@ -49,7 +49,7 @@ QTM_BEGIN_NAMESPACE
 class QGeoMapRectangleObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QGeoMapRectangleObjectPrivate();
+    QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     QGeoMapRectangleObjectPrivate(const QGeoMapRectangleObjectPrivate &other);
     ~QGeoMapRectangleObjectPrivate();
     QGeoMapRectangleObjectPrivate& operator= (const QGeoMapRectangleObjectPrivate &other);
