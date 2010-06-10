@@ -169,8 +169,9 @@ public:
     void setDescription(const QString& description);
     void setDescription(const QOrganizerItemDescription& description);
 
-    QString note() const;               // ??
-    void setNote(const QString& note);  // ??
+    QStringList comments() const;
+    void clearComments();
+    void addComment(const QString& comment);
 
     QString guid() const;
     void setGuid(const QString& guid);

@@ -55,16 +55,3 @@ QDateTime QOrganizerJournal::dateTime() const
     QOrganizerItemJournalTimeRange jtr = detail<QOrganizerItemJournalTimeRange>();
     return jtr.entryDateTime();
 }
-
-void QOrganizerJournal::setNote(const QString& note)
-{
-    QOrganizerItemNote nd = detail<QOrganizerItemNote>();
-    nd.setNote(note);
-    saveDetail(&nd);
-}
-
-QString QOrganizerJournal::note() const
-{
-    QOrganizerItemNote nd = detail<QOrganizerItemNote>();
-    return nd.note();
-}

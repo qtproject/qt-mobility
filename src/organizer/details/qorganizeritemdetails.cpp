@@ -102,7 +102,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemAttendee::FieldAttendeeParticipationStatu
 
 /*!
    \variable QOrganizerItemDescription::DefinitionName
-   The constant string which identifies the definition of details which are notes.
+   The constant string which identifies the definition of details which are long descriptions.
  */
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::DefinitionName, "Description");
 
@@ -116,7 +116,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemDescription::FieldDescription, "Descripti
 
 /*!
    \fn QOrganizerItemDescription::setDescription(const QString& description)
-   Sets a note associated with an organizer item to \a description.
+   Sets a description associated with an organizer item to \a description.
  */
 
 /*!
@@ -344,34 +344,34 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemLocation::FieldLocationName, "LocationNam
 
 
 
-/* ==================== QOrganizerItemNote ======================= */
+/* ==================== QOrganizerItemComment ======================= */
 /*!
-   \class QOrganizerItemNote
-   \brief The QOrganizerItemNote class contains some arbitrary information which is relevant to the organizer item.
+   \class QOrganizerItemComment
+   \brief The QOrganizerItemComment class contains some arbitrary information which is relevant to the organizer item.
  */
 
 /*!
-   \variable QOrganizerItemNote::DefinitionName
-   The constant string which identifies the definition of details which are notes.
+   \variable QOrganizerItemComment::DefinitionName
+   The constant string which identifies the definition of details which are comments.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::DefinitionName, "Note");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::DefinitionName, "Comment");
 
 /*!
-   \variable QOrganizerItemNote::FieldNote
+   \variable QOrganizerItemComment::FieldComment
 
-   The constant key for which the note value is stored in details of
-   the QOrganizerItemNote type.
+   The constant key for which the comment value is stored in details of
+   the QOrganizerItemComment type.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemNote::FieldNote, "Note");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemComment::FieldComment, "Comment");
 
 /*!
-   \fn QOrganizerItemNote::setNote(const QString& note)
-   Sets a note associated with an organizer item to \a note.
+   \fn QOrganizerItemComment::setComment(const QString& comment)
+   Sets a comment associated with an organizer item to \a comment.
  */
 
 /*!
-   \fn QOrganizerItemNote::note() const
-   Returns a string for a note associated with an organizer item.
+   \fn QOrganizerItemComment::comment() const
+   Returns a string for a comment associated with an organizer item.
  */
 
 

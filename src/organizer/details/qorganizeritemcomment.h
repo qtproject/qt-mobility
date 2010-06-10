@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMNOTE_H
-#define QORGANIZERITEMNOTE_H
+#ifndef QORGANIZERITEMCOMMENT_H
+#define QORGANIZERITEMCOMMENT_H
 
 #include <QString>
 
@@ -51,19 +51,19 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemNote : public QOrganizerItemDetail
+class Q_ORGANIZER_EXPORT QOrganizerItemComment : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldNote;
+    const char* FieldComment;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemNote, "Note")
-    Q_DECLARE_LATIN1_CONSTANT(FieldNote, "Note");
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemComment, "Comment")
+    Q_DECLARE_LATIN1_CONSTANT(FieldComment, "Comment");
 #endif
 
-    void setNote(const QString& note) {setValue(FieldNote, note);}
-    QString note() const {return value(FieldNote);}
+    void setComment(const QString& comment) {setValue(FieldComment, comment);}
+    QString comment() const {return value(FieldComment);}
 };
 
 QTM_END_NAMESPACE

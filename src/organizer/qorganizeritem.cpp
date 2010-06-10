@@ -206,7 +206,7 @@ bool QOrganizerItem::isEmpty() const
  * Removes all details of the organizeritem.
  * This function does not modify the id or type of the organizeritem.
  * Calling isEmpty() after calling this function will return true.
- * The empty item becomes a \l QOrganizerItemNote.
+ * The empty item becomes a \l QOrganizerNote.
  */
 void QOrganizerItem::clearDetails()
 {
@@ -714,6 +714,31 @@ void QOrganizerItem::setDescription(const QOrganizerItemDescription& description
     QOrganizerItemDescription descr = detail<QOrganizerItemDescription>();
     descr.setDescription(description.description());
     saveDetail(&descr);
+}
+
+QStringList QOrganizerItem::comments() const
+{
+    QList<QOrganizerItemComment> comments = details<QOrganizerItemComment>();
+    QStringList list;
+    foreach (const QOrganizerItemComment& comment, comments) {
+        list += comment.comment();
+    }
+    return list;
+}
+
+void QOrganizerItem::clearComments()
+{
+    QList<QOrganizerItemComment> comments = details<QOrganizerItemComment>();
+    foreach (QOrganizerItemComment comment, comments) {
+        removeDetail(&comment);
+    }
+}
+
+void QOrganizerItem::addComment(const QString& comment)
+{
+    QOrganizerItemComment detail;
+    detail.setComment(comment);
+    saveDetail(&detail);
 }
 
 QString QOrganizerItem::guid() const

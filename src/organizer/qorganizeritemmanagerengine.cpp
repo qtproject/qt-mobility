@@ -504,14 +504,14 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
-    // note
-    d.setName(QOrganizerItemNote::DefinitionName);
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemNote::FieldNote, f);
+    fields.insert(QOrganizerItemComment::FieldComment, f);
     d.setFields(fields);
-    d.setUnique(true);        // note consists of a single note?  XXX TODO verify this...
+    d.setUnique(false);
     retn.insert(d.name(), d);
 
     retnSchema.insert(QOrganizerItemType::TypeNote, retn);
@@ -622,12 +622,12 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
-    // note - XXX TODO: verify that events can have notes?
-    d.setName(QOrganizerItemNote::DefinitionName);
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemNote::FieldNote, f);
+    fields.insert(QOrganizerItemComment::FieldComment, f);
     d.setFields(fields);
     d.setUnique(false);
     retn.insert(d.name(), d);
@@ -994,14 +994,14 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
-    // note
-    d.setName(QOrganizerItemNote::DefinitionName);
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::String);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerItemNote::FieldNote, f);
+    fields.insert(QOrganizerItemComment::FieldComment, f);
     d.setFields(fields);
-    d.setUnique(false);       // XXX TODO: verify that journals can have multiple notes saved...?
+    d.setUnique(false);
     retn.insert(d.name(), d);
 
     retnSchema.insert(QOrganizerItemType::TypeJournal, retn);

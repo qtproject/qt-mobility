@@ -54,9 +54,6 @@ public:
     // XXX TODO: research whether journal is a single point in time, or can cover a period of time...
     void setDateTime(const QDateTime& dateTime);
     QDateTime dateTime() const;
-
-    void setNote(const QString& note);
-    QString note() const;
 };
 
 QTM_END_NAMESPACE

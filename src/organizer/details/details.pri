@@ -3,6 +3,7 @@ INCLUDEPATH += details \
 
 PUBLIC_HEADERS += \
     details/qorganizeritemattendee.h \
+    details/qorganizeritemcomment.h \
     details/qorganizeritemdescription.h \
     details/qorganizeritemdisplaylabel.h \
     details/qorganizeritemeventtimerange.h \
@@ -10,7 +11,6 @@ PUBLIC_HEADERS += \
     details/qorganizeriteminstanceorigin.h \
     details/qorganizeritemjournaltimerange.h \
     details/qorganizeritemlocation.h \
-    details/qorganizeritemnote.h \
     details/qorganizeritemparticipation.h \
     details/qorganizeritempriority.h \
     details/qorganizeritemprovenance.h \
