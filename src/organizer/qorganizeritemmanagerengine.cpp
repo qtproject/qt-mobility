@@ -473,6 +473,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     // timestamp
     d.setName(QOrganizerItemTimestamp::DefinitionName);
     fields.clear();
@@ -531,6 +541,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -653,6 +673,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     // timestamp
     d.setName(QOrganizerItemTimestamp::DefinitionName);
     fields.clear();
@@ -735,6 +765,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemComment::FieldComment, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeEventOccurrence, retn);
 
     // and then again for TODOs =============================
@@ -752,6 +792,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -827,6 +877,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemComment::FieldComment, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeTodo, retn);
 
     // and then again for TODOOCCURRENCEs =============================
@@ -844,6 +904,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
@@ -932,6 +1002,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // comment
+    d.setName(QOrganizerItemComment::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemComment::FieldComment, f);
+    d.setFields(fields);
+    d.setUnique(false);
+    retn.insert(d.name(), d);
+
     retnSchema.insert(QOrganizerItemType::TypeTodoOccurrence, retn);
 
     // and then again for JOURNALs =============================
@@ -949,6 +1029,16 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
                          << QString(QLatin1String(QOrganizerItemType::TypeTodo))
                          << QString(QLatin1String(QOrganizerItemType::TypeTodoOccurrence)));
     fields.insert(QOrganizerItemType::FieldType, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
+    // guid
+    d.setName(QOrganizerItemGuid::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::String);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerItemGuid::FieldGuid, f);
     d.setFields(fields);
     d.setUnique(true);
     retn.insert(d.name(), d);
