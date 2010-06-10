@@ -189,11 +189,11 @@ void tst_QVersitOrganizerImporter::testImportEventProperties()
     QCOMPARE(items.size(), 1);
 
     foreach (const QOrganizerItemDetail& expectedDetail, expectedDetails) {
-        QOrganizerItemDetail actualDetail = items.first().detail(expectedDetail.definitionName());
-        if (actualDetail != expectedDetail) {
-            qDebug() << "Actual:" << actualDetail;
-            qDebug() << "Expected:" << expectedDetail;
-            QCOMPARE(actualDetail, expectedDetail);
+        QList<QOrganizerItemDetail> actualDetails = items.first().details(expectedDetail.definitionName());
+        if (!actualDetails.contains(expectedDetail)) {
+            qDebug() << "Actual:" << actualDetails;
+            qDebug() << "Expected to find:" << expectedDetail;
+            QVERIFY(false);
         }
     } 
 }
@@ -221,6 +221,22 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         description.setDescription(QLatin1String("Twinkle, twinkle, little bat! How I wonder what you're at."));
         QTest::newRow("one description") << (QList<QVersitProperty>() << property)
             << (QList<QOrganizerItemDetail>() << description);
+    }
+
+    {
+        QVersitProperty property1;
+        property1.setName(QLatin1String("COMMENT"));
+        property1.setValue(QLatin1String("Comment 1"));
+        QVersitProperty property2;
+        property2.setName(QLatin1String("COMMENT"));
+        property2.setValue(QLatin1String("Comment 2"));
+        QOrganizerItemComment comment1;
+        comment1.setComment(QLatin1String("Comment 1"));
+        QOrganizerItemComment comment2;
+        comment2.setComment(QLatin1String("Comment 2"));
+        QTest::newRow("two comments")
+            << (QList<QVersitProperty>() << property1 << property2)
+            << (QList<QOrganizerItemDetail>() << comment1 << comment2);
     }
 
     {

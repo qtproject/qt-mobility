@@ -136,6 +136,9 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
+    bool createComment(
+            const QVersitProperty& property,
+            QList<QOrganizerItemDetail>* updatedDetails);
     bool createRecurrenceId(
             const QVersitProperty& property,
             QOrganizerItem* item,

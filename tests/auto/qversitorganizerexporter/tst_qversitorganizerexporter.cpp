@@ -199,11 +199,12 @@ void tst_QVersitOrganizerExporter::testExportEventDetails()
     QCOMPARE(subDocuments.size(), 1);
 
     foreach(const QVersitProperty& expectedProperty, expectedProperties) {
-        QVersitProperty actualProperty = findPropertyByName(subDocuments.first(), expectedProperty.name());
-        if (actualProperty != expectedProperty) {
-            qDebug() << "Actual:" << actualProperty;
-            qDebug() << "Expected:" << expectedProperty;
-            QCOMPARE(actualProperty, expectedProperty);
+        QList<QVersitProperty> actualProperties =
+            findPropertiesByName(subDocuments.first(), expectedProperty.name());
+        if (!actualProperties.contains(expectedProperty)) {
+            qDebug() << "Actual:" << actualProperties;
+            qDebug() << "Expected to find:" << expectedProperty;
+            QVERIFY(false);
         }
     }
 }
@@ -231,6 +232,22 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
         description.setDescription(QLatin1String("Twinkle, twinkle, little bat! How I wonder what you're at."));
         QTest::newRow("one description") << (QList<QOrganizerItemDetail>() << description)
             << (QList<QVersitProperty>() << property);
+    }
+
+    {
+        QVersitProperty property1;
+        property1.setName(QLatin1String("COMMENT"));
+        property1.setValue(QLatin1String("Comment 1"));
+        QVersitProperty property2;
+        property2.setName(QLatin1String("COMMENT"));
+        property2.setValue(QLatin1String("Comment 2"));
+        QOrganizerItemComment comment1;
+        comment1.setComment(QLatin1String("Comment 1"));
+        QOrganizerItemComment comment2;
+        comment2.setComment(QLatin1String("Comment 2"));
+        QTest::newRow("two comments")
+            << (QList<QOrganizerItemDetail>() << comment1 << comment2)
+            << (QList<QVersitProperty>() << property1 << property2);
     }
 
     {
@@ -574,11 +591,12 @@ void tst_QVersitOrganizerExporter::testExportTodoDetails()
     QCOMPARE(subDocuments.size(), 1);
 
     foreach(const QVersitProperty& expectedProperty, expectedProperties) {
-        QVersitProperty actualProperty = findPropertyByName(subDocuments.first(), expectedProperty.name());
-        if (actualProperty != expectedProperty) {
-            qDebug() << "Actual:" << actualProperty;
-            qDebug() << "Expected:" << expectedProperty;
-            QCOMPARE(actualProperty, expectedProperty);
+        QList<QVersitProperty> actualProperties =
+            findPropertiesByName(subDocuments.first(), expectedProperty.name());
+        if (!actualProperties.contains(expectedProperty)) {
+            qDebug() << "Actual:" << actualProperties;
+            qDebug() << "Expected to find:" << expectedProperty;
+            QVERIFY(false);
         }
     }
 }
@@ -635,14 +653,15 @@ void tst_QVersitOrganizerExporter::testExportTodoDetails_data()
 }
 
 
-QVersitProperty tst_QVersitOrganizerExporter::findPropertyByName(
+QList<QVersitProperty> tst_QVersitOrganizerExporter::findPropertiesByName(
         const QVersitDocument &document, const QString &propertyName)
 {
+    QList<QVersitProperty> retval;
     foreach (const QVersitProperty& property, document.properties()) {
         if (property.name() == propertyName)
-            return property;
+            retval << property;
     }
-    return QVersitProperty();
+    return retval;
 }
 
 QTEST_MAIN(tst_QVersitOrganizerExporter)

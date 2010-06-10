@@ -110,8 +110,8 @@ void QVersitOrganizerImporterPrivate::importProperty(
         success = createTimestampModified(property, item, &updatedDetails);
     } else if (property.name() == QLatin1String("PRIORITY")) {
         success = createPriority(property, item, &updatedDetails);
-    } else if (property.name() == QLatin1String("RECURRENCE-ID")) {
-        success = createRecurrenceId(property, item, &updatedDetails);
+    } else if (property.name() == QLatin1String("COMMENT")) {
+        success = createComment(property, &updatedDetails);
     } else if (mPropertyMappings.contains(property.name())) {
         success = createSimpleDetail(property, item, &updatedDetails);
     } else if (document.componentType() == QLatin1String("VEVENT")) {
@@ -127,6 +127,8 @@ void QVersitOrganizerImporterPrivate::importProperty(
         } else if (property.name() == QLatin1String("RDATE")
                || (property.name() == QLatin1String("EXDATE"))) {
             success = createRecurrenceDates(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("RECURRENCE-ID")) {
+            success = createRecurrenceId(property, item, &updatedDetails);
         }
     } else if (document.componentType() == QLatin1String("VTODO")) {
         if (property.name() == QLatin1String("DTSTART")) {
@@ -145,6 +147,8 @@ void QVersitOrganizerImporterPrivate::importProperty(
             success = createPercentageComplete(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("COMPLETED")) {
             success = createFinishedDateTime(property, item, &updatedDetails);
+        } else if (property.name() == QLatin1String("RECURRENCE-ID")) {
+            success = createRecurrenceId(property, item, &updatedDetails);
         }
     }
 
@@ -215,6 +219,17 @@ bool QVersitOrganizerImporterPrivate::createPriority(
     QOrganizerItemPriority priority(item->detail<QOrganizerItemPriority>());
     priority.setPriority(QOrganizerItemPriority::Priority(p));
     updatedDetails->append(priority);
+    return true;
+}
+
+bool QVersitOrganizerImporterPrivate::createComment(
+        const QVersitProperty& property,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QOrganizerItemComment comment;
+    comment.setComment(property.value());
+    updatedDetails->append(comment);
     return true;
 }
 

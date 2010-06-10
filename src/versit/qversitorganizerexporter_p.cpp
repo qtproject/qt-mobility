@@ -124,6 +124,8 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeInstanceOrigin(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemTodoProgress::DefinitionName) {
         encodeTodoProgress(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    } else if (detail.definitionName() == QOrganizerItemComment::DefinitionName) {
+        encodeComment(detail, &generatedProperties, &processedFields);
     } else if (mPropertyMappings.contains(detail.definitionName())) {
         encodeSimpleProperty(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     }
@@ -462,6 +464,19 @@ void QVersitOrganizerExporterPrivate::encodeTodoProgress(
         *generatedProperties << property;
         *processedFields << QOrganizerItemTodoProgress::FieldStatus;
     }
+}
+
+void QVersitOrganizerExporterPrivate::encodeComment(
+        const QOrganizerItemDetail& detail,
+        QList<QVersitProperty>* generatedProperties,
+        QSet<QString>* processedFields)
+{
+    QOrganizerItemComment comment = static_cast<QOrganizerItemComment>(detail);
+    QVersitProperty property;
+    property.setName("COMMENT");
+    property.setValue(comment.comment());
+    *generatedProperties << property;
+    *processedFields << QOrganizerItemComment::FieldComment;
 }
 
 void QVersitOrganizerExporterPrivate::encodeSimpleProperty(

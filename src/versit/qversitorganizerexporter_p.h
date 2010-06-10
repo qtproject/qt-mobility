@@ -124,6 +124,10 @@ private:
             QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
+    void encodeComment(
+            const QOrganizerItemDetail& detail,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
     void encodeSimpleProperty(
             const QOrganizerItemDetail& detail,
             const QVersitDocument& document,
