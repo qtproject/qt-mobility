@@ -1224,14 +1224,14 @@ void tst_QOrganizerItemManager::compatibleItem_data()
 
     {
         QOrganizerItem item(baseNote);
-        QOrganizerItemNote note1;
-        note1.setNote("This is the first note");
-        item.saveDetail(&note1);
-        QOrganizerItemNote note2;
-        note2.setNote("This is the second note");
-        item.saveDetail(&note2);
+        QOrganizerItemDescription description1;
+        description1.setDescription("This is the first description");
+        item.saveDetail(&description1);
+        QOrganizerItemDescription description2;
+        description2.setDescription("This is the second description");
+        item.saveDetail(&description2);
         QOrganizerItem expected(baseNote);
-        expected.saveDetail(&note1); // can't have two notes, only the first will be kept XXX TODO: surely it's backend specific which gets kept?
+        expected.saveDetail(&description1); // can't have two descriptions, only the first will be kept XXX TODO: surely it's backend specific which gets kept?
         QTest::newRow("duplicate unique field") << item << expected << QOrganizerItemManager::NoError;
     }
 
@@ -1866,34 +1866,34 @@ void tst_QOrganizerItemManager::detailOrders()
 
     QOrganizerEvent a;
 
-    // notes
-    QOrganizerItemNote note1, note2, note3;
+    // comments
+    QOrganizerItemComment comment1, comment2, comment3;
     
-    note1.setNote("11111111");
-    note2.setNote("22222222");
-    note3.setNote("33333333");
+    comment1.setComment("11111111");
+    comment2.setComment("22222222");
+    comment3.setComment("33333333");
 
-    a.saveDetail(&note1);
-    a.saveDetail(&note2);
-    a.saveDetail(&note3);
+    a.saveDetail(&comment1);
+    a.saveDetail(&comment2);
+    a.saveDetail(&comment3);
 
     QVERIFY(cm->saveItem(&a));
     a = cm->item(a.id().localId());
     
-    QList<QOrganizerItemDetail> details = a.details(QOrganizerItemNote::DefinitionName);
+    QList<QOrganizerItemDetail> details = a.details(QOrganizerItemComment::DefinitionName);
     QVERIFY(details.count() == 3);
     
-    QVERIFY(a.removeDetail(&note2));
+    QVERIFY(a.removeDetail(&comment2));
     QVERIFY(cm->saveItem(&a));
     a = cm->item(a.id().localId());
-    details = a.details(QOrganizerItemNote::DefinitionName);
+    details = a.details(QOrganizerItemComment::DefinitionName);
     QVERIFY(details.count() == 2);
 
-    a.saveDetail(&note2);
+    a.saveDetail(&comment2);
     QVERIFY(cm->saveItem(&a));
     a = cm->item(a.id().localId());
     
-    details = a.details(QOrganizerItemNote::DefinitionName);
+    details = a.details(QOrganizerItemComment::DefinitionName);
     QVERIFY(details.count() == 3);
 
     //addresses

@@ -112,7 +112,7 @@ foreach(const QOrganizerItem& currInst, instances)
     //! [Creating a non-recurrent entry]
     // a default constructed journal will have it's date/time set to the current date/time.
     QOrganizerJournal journal;
-    journal.setNote("The conference went well.  We all agree that marshmallows are awesome, "\
+    journal.setDescription("The conference went well.  We all agree that marshmallows are awesome, "\
                     "but we were unable to reach any agreement as to how we could possibly "\
                     "increase our intake of marshmallows.  Several action points were assigned "\
                     "to various members of the group; I have been tasked with finding a good "\
@@ -121,9 +121,7 @@ foreach(const QOrganizerItem& currInst, instances)
     //! [Creating a non-recurrent entry]
 
     //! [Editing a non-recurrent entry]
-    QOrganizerItemNote recipe;
-    recipe.setNote("Serves: 8.  Ingredients: 500g Milk Chocolate, 500g Marshmallows.  Step 1: Put the marshmallows into 8 separate bowls.  Step 2: Melt the chocolate.  Step 3: Pour the chocolate over the marshmallows in the bowls.  Step 4: Put the bowls into the refrigerator for 20 minutes; serve chilled.");
-    journal.saveDetail(&recipe);
+    journal.addComment("Serves: 8.  Ingredients: 500g Milk Chocolate, 500g Marshmallows.  Step 1: Put the marshmallows into 8 separate bowls.  Step 2: Melt the chocolate.  Step 3: Pour the chocolate over the marshmallows in the bowls.  Step 4: Put the bowls into the refrigerator for 20 minutes; serve chilled.");
     if (!defaultManager.saveItem(&journal)) qDebug() << "Unable to save updated journal!  Error:" << defaultManager.error();
     //! [Editing a non-recurrent entry]
 
@@ -137,19 +135,14 @@ foreach(const QOrganizerItem& currInst, instances)
     //! [Retrieving any entry (not occurrence) which matches a search criteria]
 
     //! [Creating an exception to a particular recurrent event]
-    QOrganizerItemEventTimeRange newTime;
-    newTime.setStartDateTime(QDateTime::fromString("13.05.2010 18:00:00", "dd.MM.yy hh:mm:ss"));
-    newTime.setEndDateTime(QDateTime::fromString("13.05.2010 20:00:00", "dd.MM.yy hh:mm:ss"));
-    QOrganizerItemNote newNote;
-    newNote.setNote("The next meeting will go for an hour longer (starting one "\
-                    "hour earlier than usual), since we have scheduled one hour"\
-                    "to taste the results of the recipe that I will be presenting "\
-                    "at the meeting.");
-
     // the following line should be made simpler via QOIM::itemInstances(item, startDateTime, endDateTime, count)...
     QOrganizerEventOccurrence nextMarshmallowMeeting = QOrganizerEventOccurrence(defaultManager.itemInstances().value(0)); // should use dfil.
-    nextMarshmallowMeeting.saveDetail(&newTime);
-    nextMarshmallowMeeting.saveDetail(&newNote);
+    nextMarshmallowMeeting.setStartDateTime(QDateTime::fromString("13.05.2010 18:00:00", "dd.MM.yy hh:mm:ss"));
+    nextMarshmallowMeeting.setEndDateTime(QDateTime::fromString("13.05.2010 20:00:00", "dd.MM.yy hh:mm:ss"));
+    nextMarshmallowMeeting.addComment("The next meeting will go for an hour longer (starting one "\
+                                      "hour earlier than usual), since we have scheduled one hour"\
+                                      "to taste the results of the recipe that I will be presenting "\
+                                      "at the meeting.");
     defaultManager.saveItem(&nextMarshmallowMeeting);
     //! [Creating an exception to a particular recurrent event]
 
