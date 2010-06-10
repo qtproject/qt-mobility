@@ -187,11 +187,13 @@ void tst_SymbianOm::removeSimpleEvent()
     // Remove list
     QOrganizerItem item2;
     item2.setType(QOrganizerItemType::TypeEvent);
+    QOrganizerItem item3;
+    item3.setType(QOrganizerItemType::TypeEvent);
     QVERIFY(m_om->saveItem(&item2));
-    QVERIFY(m_om->saveItem(&item));
+    QVERIFY(m_om->saveItem(&item3));
     QList<QOrganizerItemLocalId> itemIds;
-    itemIds.append(item.localId());
     itemIds.append(item2.localId());
+    itemIds.append(item3.localId());
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QVERIFY(m_om->removeItems(itemIds, &errorMap));
 }
@@ -208,6 +210,8 @@ void tst_SymbianOm::addNegative()
     QList<QOrganizerItem> items;
     QVERIFY(!m_om->saveItems(&items, 0));
     QCOMPARE(m_om->error(), QOrganizerItemManager::BadArgumentError);
+
+    // TODO: try to save an event with non-existing (non-zero) id and check that it fails
 }
 
 void tst_SymbianOm::fetchNegative()
