@@ -281,6 +281,16 @@ QGeoRouteRequest::RouteOptimization QGeoRoute::optimization() const
     return d_ptr->optimization;
 }
 
+void QGeoRoute::setAvoidFeatureTypes(const QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
+{
+    d_ptr->avoidFeatureTypes = avoidFeatureTypes;
+}
+    
+QGeoRouteRequest::AvoidFeatureTypes QGeoRoute::avoidFeatureTypes() const
+{
+    return d_ptr->avoidFeatureTypes;
+}
+
 /*!
     Sets the geometric shape of the route to \a path.
 

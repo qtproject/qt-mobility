@@ -95,9 +95,11 @@ public:
 
     void setTravelMode(const QGeoRouteRequest::TravelMode mode);
     void setOptimization(const QGeoRouteRequest::RouteOptimization optimization);
-
+    void setAvoidFeatureTypes(const QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes);
+    
     QGeoRouteRequest::TravelMode travelMode() const;
     QGeoRouteRequest::RouteOptimization optimization() const;
+    QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes() const;
 
     void setPath(const QList<QGeoCoordinate> &path);
     QList<QGeoCoordinate> path() const;
