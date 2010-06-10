@@ -39,18 +39,22 @@
 **
 ****************************************************************************/
 
-#include <QtMultimedia/QAbstractVideoSurface>
-#include <QtMultimedia/QVideoFrame>
+#include <qabstractvideosurface.h>
+#include <qvideoframe.h>
 #include <QDebug>
 #include <QMap>
 #include <QDebug>
 #include <QThread>
+
+#include "qgstvideobuffer.h"
+
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
 #include <QtGui/qx11info_x11.h>
+#include "qgstxvimagebuffer.h"
+#endif
 
 #include "qvideosurfacegstsink.h"
 
-#include "qgstvideobuffer.h"
-#include "qgstxvimagebuffer.h"
 
 
 Q_DECLARE_METATYPE(QVideoSurfaceFormat)
@@ -60,16 +64,17 @@ QVideoSurfaceGstDelegate::QVideoSurfaceGstDelegate(QAbstractVideoSurface *surfac
     , m_renderReturn(GST_FLOW_ERROR)
     , m_bytesPerLine(0)
 {
-    m_supportedPixelFormats = m_surface->supportedPixelFormats();
-
-    connect(m_surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
+    if (m_surface) {
+        m_supportedPixelFormats = m_surface->supportedPixelFormats();
+        connect(m_surface, SIGNAL(supportedFormatsChanged()), this, SLOT(supportedFormatsChanged()));
+    }
 }
 
 QList<QVideoFrame::PixelFormat> QVideoSurfaceGstDelegate::supportedPixelFormats(QAbstractVideoBuffer::HandleType handleType) const
 {
     QMutexLocker locker(const_cast<QMutex *>(&m_mutex));
 
-    if (handleType == QAbstractVideoBuffer::NoHandle)
+    if (handleType == QAbstractVideoBuffer::NoHandle || !m_surface)
         return m_supportedPixelFormats;
     else
         return m_surface->supportedPixelFormats(handleType);
@@ -83,6 +88,9 @@ QVideoSurfaceFormat QVideoSurfaceGstDelegate::surfaceFormat() const
 
 bool QVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int bytesPerLine)
 {
+    if (!m_surface)
+        return false;
+
     QMutexLocker locker(&m_mutex);
 
     m_format = format;
@@ -103,6 +111,9 @@ bool QVideoSurfaceGstDelegate::start(const QVideoSurfaceFormat &format, int byte
 
 void QVideoSurfaceGstDelegate::stop()
 {
+    if (!m_surface)
+        return;
+
     QMutexLocker locker(&m_mutex);
 
     if (QThread::currentThread() == thread()) {
@@ -125,15 +136,20 @@ bool QVideoSurfaceGstDelegate::isActive()
 
 GstFlowReturn QVideoSurfaceGstDelegate::render(GstBuffer *buffer)
 {
+    if (!m_surface)
+        return GST_FLOW_NOT_NEGOTIATED;
+
     QMutexLocker locker(&m_mutex);
 
     QGstVideoBuffer *videoBuffer = 0;
 
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     if (G_TYPE_CHECK_INSTANCE_TYPE(buffer, QGstXvImageBuffer::get_type())) {
         QGstXvImageBuffer *xvBuffer = reinterpret_cast<QGstXvImageBuffer *>(buffer);
         QVariant handle = QVariant::fromValue(xvBuffer->xvImage);
         videoBuffer = new QGstVideoBuffer(buffer, m_bytesPerLine, XvHandleType, handle);
     } else
+#endif
         videoBuffer = new QGstVideoBuffer(buffer, m_bytesPerLine);
 
     m_frame = QVideoFrame(
@@ -210,7 +226,9 @@ void QVideoSurfaceGstDelegate::supportedFormatsChanged()
 {
     QMutexLocker locker(&m_mutex);
 
-    m_supportedPixelFormats = m_surface->supportedPixelFormats();
+    m_supportedPixelFormats.clear();
+    if (m_surface)
+        m_supportedPixelFormats = m_surface->supportedPixelFormats();
 }
 
 struct YuvFormat
@@ -385,7 +403,9 @@ void QVideoSurfaceGstSink::instance_init(GTypeInstance *instance, gpointer g_cla
     Q_UNUSED(g_class);
 
     sink->delegate = 0;
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     sink->pool = new QGstXvImageBufferPool();
+#endif
     sink->lastRequestedCaps = 0;
     sink->lastBufferCaps = 0;
     sink->lastSurfaceFormat = new QVideoSurfaceFormat;
@@ -394,8 +414,11 @@ void QVideoSurfaceGstSink::instance_init(GTypeInstance *instance, gpointer g_cla
 void QVideoSurfaceGstSink::finalize(GObject *object)
 {
     VO_SINK(object);
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
     delete sink->pool;
     sink->pool = 0;
+#endif
+
     delete sink->lastSurfaceFormat;
     sink->lastSurfaceFormat = 0;
 
@@ -586,6 +609,8 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
 
     *buffer = 0;
 
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+
     if (sink->lastRequestedCaps && gst_caps_is_equal(sink->lastRequestedCaps, caps)) {
         //qDebug() << "reusing last caps";
         *buffer = GST_BUFFER(sink->pool->takeBuffer(*sink->lastSurfaceFormat, sink->lastBufferCaps));
@@ -647,6 +672,7 @@ GstFlowReturn QVideoSurfaceGstSink::buffer_alloc(
 
     *buffer =  GST_BUFFER(sink->pool->takeBuffer(surfaceFormat, intersection));
 
+#endif
     return GST_FLOW_OK;
 }
 

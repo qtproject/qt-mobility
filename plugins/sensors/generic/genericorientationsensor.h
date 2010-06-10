@@ -51,7 +51,7 @@ QTM_USE_NAMESPACE
 class genericorientationsensor : public QSensorBackend, public QAccelerometerFilter
 {
 public:
-    static const char *id;
+    static char const * const id;
 
     genericorientationsensor(QSensor *sensor);
 

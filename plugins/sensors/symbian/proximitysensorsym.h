@@ -93,7 +93,7 @@ public:
     /**
      * Holds the id of the proximity sensor
      */
-    static const char *id;
+    static char const * const id;
     
 private:     
     QProximityReading iReading;

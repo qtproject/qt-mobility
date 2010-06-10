@@ -72,7 +72,11 @@ QContactDetailFilter::QContactDetailFilter()
 
 /*!
  * Sets the name of the detail definition of which details will be matched to \a definitionName, and the name of the field in
- * details of that definition which will contain the value criterion to \a fieldName
+ * details of that definition which will contain the value criterion to \a fieldName.
+ * If \a definitionName is empty, the detail filter will match no contacts.  If \a fieldName
+ * is empty, the detail filter acts like a "detail exists" filter; if any detail of the specified definition
+ * is present in a contact, that contact will match the filter, regardless of what values might be
+ * stored in that detail.
  * \sa detailDefinitionName()
  */
 void QContactDetailFilter::setDetailDefinitionName(const QString& definitionName, const QString& fieldName)
@@ -83,8 +87,10 @@ void QContactDetailFilter::setDetailDefinitionName(const QString& definitionName
 }
 
 /*!
- * Sets the value criterion of the filter to \a value
- * \sa value()
+ * Sets the value criterion of the filter to \a value.
+ * Note that if the field name criterion (set via setDetailDefinitionName())
+ * of the filter is an empty string, this value will be ignored.
+ * \sa value(), setDetailDefinitionName()
  */
 void QContactDetailFilter::setValue(const QVariant& value)
 {

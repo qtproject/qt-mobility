@@ -53,6 +53,9 @@ QTM_BEGIN_NAMESPACE
   For a QContactDetailDefinitionRemoveRequest, the resultsUpdated() signal will be emitted when
   the individual item errors (which may be retrieved by calling errorMap()) are updated, or if the overall
   operation error (which may be retrieved by calling error()) is updated.
+
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
   
   \ingroup contacts-requests
  */

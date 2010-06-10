@@ -48,7 +48,7 @@
 /**
  * set the id of the accelerometer sensor
  */
-const char *CAccelerometerSensorSym::id("sym.accelerometer");
+char const * const CAccelerometerSensorSym::id("sym.accelerometer");
 
 /**
  * Factory function, this is used to create the accelerometer object
