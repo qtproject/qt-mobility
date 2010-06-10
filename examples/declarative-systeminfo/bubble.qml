@@ -49,15 +49,19 @@ console.log("battery status changed: "+status)
                 speed = 1000;
             } else if(level > 70) {
                 speed = 1500;
-            } else if(level > 40) {
+            } else if(level > 60) {
                 speed = 2000;
+            } else if(level > 50) {
+                speed = 2500;
+            } else if(level > 40) {
+                speed = 3000;
             }
             else if(level > 10) {
-                speed = 2500;
+                speed = 3500;
             } else if(level < 11) {
-                speed = 3000;
-            } else {
                 speed = 4000;
+            } else {
+                speed = 4500;
             }
              floorParticles.burst(level);
         }
@@ -101,7 +105,7 @@ console.log("battery status changed: "+status)
              width: 1
              height: 1
              source: "images/blueStar.png"
-             lifeSpan: 50000
+             lifeSpan: 1000
              count: deviceinfo.batteryLevel
              angle: 270
              angleDeviation: 45
@@ -143,12 +147,14 @@ console.log("battery status changed: "+status)
             //  when: mousearea.pressed == false
             StateChangeScript { script: particles.burst(50); }
             PropertyChanges { target: img; opacity: 1; source : "images/blueStone.png";}
+            PropertyChanges { target: floorParticles; count:0 }
         },
         State {
             name: "Charging"
             //  when: mousearea.pressed == false
             StateChangeScript { script: particles.burst(50); }
             PropertyChanges { target: img; opacity: 1; source : "images/yellowStone.png";}
+            PropertyChanges { target: floorParticles; count:0 }
         },
 
         State {
@@ -157,6 +163,7 @@ console.log("battery status changed: "+status)
             //    when: mousearea.pressed == true
             StateChangeScript { script: particles.burst(50); }
             PropertyChanges { target: img; source : "images/redStone.png"; /*opacity: 0; */}
+            PropertyChanges { target: floorParticles; count:deviceinfo.batteryLevel }
         }
         ]
 
