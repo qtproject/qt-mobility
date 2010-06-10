@@ -98,6 +98,18 @@ Qt::ItemFlags GalleryModel::flags(const QModelIndex &index) const
 
         if (key >= 0 && mediaList->propertyAttributes(key) & QGalleryProperty::CanWrite)
             flags |= Qt::ItemIsEditable;
+
+        const int row = index.row();
+        // Ideally we'd use the scroll position of the view to set the cursor position
+        if (row < mediaList->count() - 1) {
+            const int position = mediaList->cursorPosition();
+            const int pageSize = mediaList->minimumPagedItems();
+
+            if (row - 32 < position && position > 0)
+                mediaList->setCursorPosition(qMax(0, row - 32));
+            else if (row + 32 > position + pageSize)
+                mediaList->setCursorPosition(qMax(0, row + 32 - pageSize));
+        }
     }
 
     return flags;
@@ -108,17 +120,6 @@ QModelIndex GalleryModel::index(int row, int column, const QModelIndex &parent) 
     if (!parent.isValid() && mediaList
             && row >= 0 && row < mediaList->count()
             && column >= 0 && column < displayFields.count()) {
-
-        // Ideally we'd use the scroll position of the view to set the cursor position
-        if (row < mediaList->count() - 1) {
-            const int position = mediaList->cursorPosition();
-            const int pageSize = mediaList->minimumPagedItems();
-
-            if (row - 16 < position && position > 0)
-                mediaList->setCursorPosition(qMax(0, row - 16));
-            else if (row + 16 > position + pageSize)
-                mediaList->setCursorPosition(qMax(0, row + 16 - pageSize));
-        }
 
         return createIndex(row, column);
     }
