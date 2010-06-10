@@ -134,8 +134,13 @@ private slots:
     void testAccount_data();
     void testAccount();
 
+    void testFolder_data();
+    void testFolder();
+
     void testMessage_data();
     void testMessage();
+
+    void testError();
 
 private:
     QMessageManager *manager;
@@ -143,6 +148,7 @@ private:
 
 QTEST_MAIN(tst_QMessageStore)
 Q_DECLARE_METATYPE(QMessageAccountId);
+Q_DECLARE_METATYPE(QMessageFolderFilter);
 
 #include "tst_smsstore.moc"
 
@@ -191,14 +197,19 @@ void tst_QMessageStore::testAccount()
     QFETCH(QString, name);
     QFETCH(QMessageAccountId, accountId);
 
-    QMessageAccountIdList ids = manager->queryAccounts(QMessageAccountFilter::byName(name));
+    QMessageAccountFilter filter1 = QMessageAccountFilter::byName(name);
+    
+    QMessageAccountIdList ids = manager->queryAccounts(filter1);
     
     QVERIFY(ids.count() == 1);
     QCOMPARE(ids.first(), accountId);
+    QCOMPARE(1, manager->countAccounts(filter1));
     
-    ids = manager->queryAccounts(QMessageAccountFilter::byId(accountId));
+    QMessageAccountFilter filter2 = QMessageAccountFilter::byId(accountId);
+    ids = manager->queryAccounts(filter2);
 
     QVERIFY(ids.count() == 1);
+    QCOMPARE(1, manager->countAccounts(filter2));
 
     QMessageAccount account(ids.first());
 
@@ -207,6 +218,55 @@ void tst_QMessageStore::testAccount()
 
     QVERIFY(QMessageAccount::defaultAccount(QMessage::Sms).isValid());
 }
+
+void tst_QMessageStore::testFolder_data()
+{
+    QMessageAccountId accountId = QMessageAccount::defaultAccount(QMessage::Sms);
+
+    QTest::addColumn<QMessageFolderFilter>("filter");
+    QTest::addColumn<QStringList>("nameResults");
+
+    QTest::newRow("Folder filter empty")
+	<< (QMessageFolderFilter() & QMessageFolderFilter::byParentAccountId(accountId))
+	<< (QStringList() << "InboxFolder" << "OutboxFolder" << "DraftsFolder" << "SentFolder" << "TrashFolder");
+
+    QTest::newRow("Folder non-matching filter")
+	<< (~QMessageFolderFilter() & QMessageFolderFilter::byParentAccountId(accountId))
+	<< QStringList();
+
+    QTest::newRow("Folder name equality")
+	<< (QMessageFolderFilter::byName("SentFolder", QMessageDataComparator::Equal) & QMessageFolderFilter::byParentAccountId(accountId))
+	<< (QStringList() << "SentFolder");
+
+    QTest::newRow("Folder name inclusion")
+	<< (QMessageFolderFilter::byName("box", QMessageDataComparator::Includes) & QMessageFolderFilter::byParentAccountId(accountId))
+	<< (QStringList() << "InboxFolder" << "OutboxFolder");
+
+    QTest::newRow("Folder name exclusion")
+	<< (QMessageFolderFilter::byName("box", QMessageDataComparator::Excludes) & QMessageFolderFilter::byParentAccountId(accountId))
+	<< (QStringList() << "DraftsFolder" << "SentFolder" << "TrashFolder");
+
+    QTest::newRow("Folder id equality")
+	<< (QMessageFolderFilter::byId(QMessageFolderId("SMS_DraftsFolder"), QMessageDataComparator::Equal) & QMessageFolderFilter::byParentAccountId(accountId))
+	<< (QStringList() << "DraftsFolder");
+
+}
+
+void tst_QMessageStore::testFolder()
+{
+    QFETCH(QMessageFolderFilter, filter);
+    QFETCH(QStringList, nameResults);
+    
+    QCOMPARE(nameResults.count(), manager->countFolders(filter));
+    
+    QStringList names;
+    foreach (const QMessageFolderId &id, manager->queryFolders(filter)) {
+	names << manager->folder(id).name();
+    }
+    
+    QCOMPARE(nameResults.toSet(), names.toSet());
+}
+
 
 void tst_QMessageStore::testMessage_data()
 {
@@ -219,16 +279,16 @@ void tst_QMessageStore::testMessage_data()
 
     
     QTest::newRow("1") 
-	<< "123456789"
-	<< "987654321"
+	<< "+358123456789"
+	<< "+358987654321"
 	<< "1999-12-31T23:59:59Z"
 	<< 28
 	<< "This is a test SMS message 1"
 	<< "byId";
 
     QTest::newRow("2") 
-	<< "123"
-	<< "666"
+	<< "+35844333666"
+	<< "+35844312123"
         << "1999-11-21T23:59:59Z"
 	<< 28
 	<< "This is a test SMS message 2"
@@ -406,7 +466,7 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(QMessage(message).id(), message.id());
     QVERIFY(!(message.id() < message.id()));
     QVERIFY((QMessageId() < message.id()) || (message.id() < QMessageId()));
-    QCOMPARE(updated.date(), dt);
+    //    QCOMPARE(updated.date(), dt);
 
     bodyId = updated.bodyId();
     QCOMPARE(bodyId.isValid(), true);
@@ -442,11 +502,11 @@ void tst_QMessageStore::testMessage()
 
     while (QCoreApplication::hasPendingEvents())
         QCoreApplication::processEvents();
-    /*
+
 #if !defined(Q_OS_SYMBIAN)
     QCOMPARE(removeCatcher.removed.count(), 1);
     QCOMPARE(removeCatcher.removed.first().first, messageId);
-#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#if defined(Q_WS_MAEMO_5)
     QCOMPARE(removeCatcher.removed.first().second.count(), 2);
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter2->id << filter3->id);
 #else
@@ -454,8 +514,52 @@ void tst_QMessageStore::testMessage()
     QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter3->id);
 #endif
 #endif
-    */
-    QCOMPARE(removeCatcher.removed.first().second.count(), 1);
-    QCOMPARE(removeCatcher.removed.first().second, QSet<QMessageManager::NotificationFilterId>() << filter3->id);
 
 }
+
+void tst_QMessageStore::testError()
+{
+
+    QMessageFilter filter;
+    QMessageAccountFilter filter2;
+    QMessageFolderFilter filter3;
+	
+    (void)manager->queryMessages(filter);
+    QVERIFY(manager->error() == QMessageManager::NoError);
+    QMessageAccount account = manager->account(QMessageAccountId());
+    QCOMPARE(account.id().isValid(), false);
+    QCOMPARE(QMessageManager::InvalidId, manager->error());
+    
+    (void)manager->queryMessages(filter, "NotFound");
+    QVERIFY(manager->error() == QMessageManager::NoError);
+    QMessageFolder folder = manager->folder(QMessageFolderId());
+    QCOMPARE(folder.id().isValid(), false);
+    QCOMPARE(QMessageManager::InvalidId, manager->error());
+
+    (void)manager->countMessages(filter);
+    QVERIFY(manager->error() == QMessageManager::NoError);
+    QMessage message = manager->message(QMessageId());
+    QCOMPARE(message.id().isValid(), false);
+    QCOMPARE(QMessageManager::InvalidId, manager->error());
+
+    (void)manager->countAccounts(filter2);
+    QVERIFY(manager->error() == QMessageManager::NoError);    
+    QCOMPARE(manager->removeMessage(QMessageId()), false);
+    QCOMPARE(QMessageManager::InvalidId, manager->error());
+
+    (void)manager->queryAccounts(filter2);
+    QVERIFY(manager->error() == QMessageManager::NoError);    
+    QMessage msg;
+    QCOMPARE(manager->addMessage(&msg), false);
+    QCOMPARE(manager->error() != QMessageManager::NoError, true);    
+
+    (void)manager->countFolders(filter3);
+    QVERIFY(manager->error() == QMessageManager::NoError);    
+    QMessage msg2;
+    QCOMPARE(manager->updateMessage(&msg2), false);
+    QCOMPARE(manager->error() != QMessageManager::NoError, true);    
+    
+    (void)manager->queryFolders(filter3);
+    QVERIFY(manager->error() == QMessageManager::NoError);    
+}
+
