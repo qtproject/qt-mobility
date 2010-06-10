@@ -52,9 +52,6 @@ char const * const CRotationSensorSym::id("sym.rotation");
 const TInt KMinimumRange = -180;
 const TInt KMaximumRange = 180;
 
-const TInt KMinimumRange = -180;
-const TInt KMaximumRange = 180;
-
 /**
  * Factory function, this is used to create the rotation sensor object
  * @return CRotationSensorSym if successful, leaves on failure

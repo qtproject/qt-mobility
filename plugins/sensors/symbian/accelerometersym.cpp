@@ -94,15 +94,38 @@ void CAccelerometerSensorSym::start()
     TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdChannelDataFormat, ESensrvSingleProperty, dataFormatProperty));
     if(err == KErrNone)
         {
-        TInt dataFormat;
-        dataFormatProperty.GetValue(dataFormat);
-        if(dataFormat == ESensrvChannelDataFormatScaled)
+        TSensrvProperty scaleRangeProperty;
+        TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty)); 
+        if(err == KErrNone)
             {
-            TSensrvProperty scaleRangeProperty;
-            TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, scaleRangeProperty)); 
-            if(err == KErrNone)
+            if(scaleRangeProperty.GetArrayIndex() == ESensrvSingleProperty)
                 {
-                if(scaleRangeProperty.GetArrayIndex() == ESensrvSingleProperty)
+                if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                    {
+                    scaleRangeProperty.GetMaxValue(iScaleRange);
+                    }
+                else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                    {
+                    TReal realScale;
+                    scaleRangeProperty.GetMaxValue(realScale);
+                    iScaleRange = realScale;
+                    }
+                }
+            else if(scaleRangeProperty.GetArrayIndex() == ESensrvArrayPropertyInfo)
+                {
+                TInt index;
+                if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
+                    {               
+                    scaleRangeProperty.GetValue(index);
+                    }
+                else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
+                    {
+                    TReal realIndex;           
+                    scaleRangeProperty.GetValue(realIndex);
+                    index = realIndex;
+                    }
+                TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, index, scaleRangeProperty));
+                if(err == KErrNone)
                     {
                     if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
                         {
@@ -110,37 +133,9 @@ void CAccelerometerSensorSym::start()
                         }
                     else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
                         {
-                        TReal realScale;
-                        scaleRangeProperty.GetMaxValue(realScale);
-                        iScaleRange = realScale;
-                        }
-                    }
-                else if(scaleRangeProperty.GetArrayIndex() == ESensrvArrayPropertyInfo)
-                    {
-                    TInt index;
-                    if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
-                        {               
-                        scaleRangeProperty.GetValue(index);
-                        }
-                    else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
-                        {
-                        TReal realIndex;           
-                        scaleRangeProperty.GetValue(realIndex);
-                        index = realIndex;
-                        }
-                    TRAP(err, iBackendData.iSensorChannel->GetPropertyL(KSensrvPropIdScaledRange, KSensrvItemIndexNone, index, scaleRangeProperty));
-                    if(err == KErrNone)
-                        {
-                        if(scaleRangeProperty.PropertyType() == ESensrvIntProperty)
-                            {
-                            scaleRangeProperty.GetMaxValue(iScaleRange);
-                            }
-                        else if(scaleRangeProperty.PropertyType() == ESensrvRealProperty)
-                            {
-                            TReal realScaleRange;
-                            scaleRangeProperty.GetMaxValue(realScaleRange);
-                            iScaleRange = realScaleRange;
-                            }
+                        TReal realScaleRange;
+                        scaleRangeProperty.GetMaxValue(realScaleRange);
+                        iScaleRange = realScaleRange;
                         }
                     }
                 }
