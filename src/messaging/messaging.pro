@@ -113,7 +113,7 @@ symbian|win32|maemo6|maemo5|mac {
         documentation.files = doc/html
         PKGCONFIG += glib-2.0 \
             dbus-glib-1 \
-            gconf-2.0 \
+            gconf-2.0 \const
             libosso \
             libmodest-dbus-client-1.0 \
             TpSession \
@@ -220,8 +220,9 @@ symbian|win32|maemo6|maemo5|mac {
             -lgobject-2.0 \
             -lglib-2.0 \
             -lcommhistory \
-            -ltelepathy-qt4
-        
+            -ltelepathy-qt4 \
+            -lmessagingif0
+
         # QMF headers must be located at $QMF_INCLUDEDIR
         INCLUDEPATH += $$(QMF_INCLUDEDIR) \
             $$(QMF_INCLUDEDIR)/support
@@ -234,6 +235,9 @@ symbian|win32|maemo6|maemo5|mac {
 
         # libcommhistory support
         INCLUDEPATH += "/usr/include/commhistory"
+        # libmessagingif-dev support
+        INCLUDEPATH += "/usr/include/messaging-service"
+        INCLUDEPATH += "/usr/include/meegotouch"
     }
     maemo6:LIBS += -lgconf-2 \
         -losso \

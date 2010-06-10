@@ -60,13 +60,15 @@
 
 #include "tpsessionchannel_p.h"
 
+class SendRequest;
+
 class TpSessionAccount: public QObject
 {
     Q_OBJECT
 
 public:
     TpSessionAccount(Tp::AccountManagerPtr amv, const QString &objectPath);
-    bool sendMessageToAddress(const QString &address, const QString &message);
+    bool sendMessage(SendRequest *sendRequest);
 
 signals:
     void accountReady(TpSessionAccount *);
@@ -89,21 +91,20 @@ public:
 
 private:
     
-    struct Request
+    struct SendJob
     {
-	Request(const QString &addr, const QString &msg)
+	SendJob(const QString &addr, SendRequest *sendReq)
 	    : address(addr)
-	    , message(msg)
+	    , sendRequest(sendReq)
 	    , contactReady(false)
 	{}
 
 	QString address;
-	QString message;
-
+	SendRequest *sendRequest;
 	bool contactReady;
     };
 
-    typedef QList<Request> RequestList;
+    typedef QList<SendJob> SendJobList;
 
     void makeContactFromAddress(const QString &address);
     Tp::ContactPtr getContactFromAddress(const QString &address) const;
@@ -116,7 +117,7 @@ private:
     Tp::ConnectionPtr contactsConn;
     QSet<Tp::ContactPtr> myContacts;
     QSet<TpSessionChannel *> myChannels;
-    RequestList requests;
+    SendJobList jobs;
 };
 
 #endif // TPSESSIONACCOUNT_H

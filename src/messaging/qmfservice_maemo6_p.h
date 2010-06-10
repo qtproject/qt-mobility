@@ -41,11 +41,14 @@
 #ifndef QMFSERVICE_MAEMO6_H
 #define QMFSERVICE_MAEMO6_H
 #include <QObject>
+#include <QProcess>
 #include <qmessageglobal.h>
 #include <qmessagemanager.h>
 #include <qmessageservice.h>
 #include <qmessage.h>
 #include <qmailserviceaction.h>
+
+class QTimer;
 
 QTM_BEGIN_NAMESPACE
 
@@ -89,6 +92,7 @@ protected slots:
 
 private:
 
+    QTimer *timer();
     QMessageManager::Error error() const;
     void setError(QMessageManager::Error error) const;
     void stateChanged(QMessageService::State state) const;
@@ -98,6 +102,7 @@ private:
     bool isBusy() const;
 
     QMessageService *m_service;
+    QTimer *m_timer;
     QMailTransmitAction m_transmit;
     QMailRetrievalAction m_retrieval;
     QMailServiceAction *m_active;

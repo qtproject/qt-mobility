@@ -45,6 +45,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageFolderSortOrder
 
+    \preliminary
     \brief The QMessageFolderSortOrder class defines the parameters used for sorting a subset of 
     queried folders from the messaging store.
     \ingroup messaging

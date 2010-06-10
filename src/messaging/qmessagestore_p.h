@@ -75,7 +75,7 @@ public:
                              const QMessageManager::NotificationFilterIdSet &matchingFilters);
 #endif
 #ifdef Q_WS_MAEMO_6
-    QMessageManager::Error error;
+    mutable QMessageManager::Error error;
 #endif
 #ifdef Q_OS_WIN
     static QMutex* mutex(QMessageStore*);

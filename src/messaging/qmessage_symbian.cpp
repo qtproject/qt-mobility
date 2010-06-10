@@ -43,16 +43,17 @@
 #include "qmessagecontentcontainer_symbian_p.h"
 #include "qmessagemanager.h"
 
+
 QTM_BEGIN_NAMESPACE
 
-QMessagePrivate::QMessagePrivate(QMessage *message)
- : q_ptr(message),
-   _type(QMessage::NoType),
-   _size(0),
-   _standardFolder(QMessage::DraftsFolder),
-   _status(0),
-   _priority(QMessage::NormalPriority),
-   _modified(false)
+        QMessagePrivate::QMessagePrivate(QMessage *message)
+            : q_ptr(message),
+            _type(QMessage::NoType),
+            _size(0),
+            _standardFolder(QMessage::DraftsFolder),
+            _status(0),
+            _priority(QMessage::NormalPriority),
+            _modified(false)
 {
 }
 
@@ -93,29 +94,29 @@ QMessageContentContainerPrivate* QMessagePrivate::containerImplementation(const 
 }
 
 QMessage::QMessage()
- : d_ptr(new QMessagePrivate(this))
+    : d_ptr(new QMessagePrivate(this))
 {
-	setDerivedMessage(this);
-	d_ptr->_size = 0;
-	d_ptr->_modified = false;
+    setDerivedMessage(this);
+    d_ptr->_size = 0;
+    d_ptr->_modified = false;
 }
 
 QMessage::QMessage(const QMessageId& id)
- : d_ptr(new QMessagePrivate(this))
+    : d_ptr(new QMessagePrivate(this))
 {
-	*this = QMessageManager().message(id);
-	setDerivedMessage(this);	
+    *this = QMessageManager().message(id);
+    setDerivedMessage(this);
 }
 
 QMessage::QMessage(const QMessage &other)
- :QMessageContentContainer(other),
+    :QMessageContentContainer(other),
     d_ptr(new QMessagePrivate(this))
 {
-	this->operator=(other);
+    this->operator=(other);
 }
 
 QMessage& QMessage::operator=(const QMessage& other)
-{
+                             {
     if (&other != this) {
         QMessageContentContainer::operator=(other);
         *d_ptr = *other.d_ptr;
@@ -127,23 +128,23 @@ QMessage& QMessage::operator=(const QMessage& other)
 
 QMessage::~QMessage()
 {
-	delete d_ptr;	
+    delete d_ptr;
 }
 
 QMessageId QMessage::id() const
 {
-	return d_ptr->_id;
+    return d_ptr->_id;
 }
 
 QMessage::Type QMessage::type() const
 {
-	return d_ptr->_type;
+    return d_ptr->_type;
 }
 
 void QMessage::setType(Type t)
 {
-	d_ptr->_type = t;
-	d_ptr->_modified = true;
+    d_ptr->_type = t;
+    d_ptr->_modified = true;
 }
 
 QMessageAccountId QMessage::parentAccountId() const
@@ -169,13 +170,13 @@ QMessage::StandardFolder QMessage::standardFolder() const
 
 QMessageAddress QMessage::from() const
 {
-	return d_ptr->_from;
+    return d_ptr->_from;
 }
 
 void QMessage::setFrom(const QMessageAddress &address)
 {
-	d_ptr->_modified = true;
-	d_ptr->_from = address;
+    d_ptr->_modified = true;
+    d_ptr->_from = address;
     d_ptr->_modified = true;
 }
 
@@ -186,8 +187,8 @@ QString QMessage::subject() const
 
 void QMessage::setSubject(const QString &s)
 {
-	d_ptr->_modified = true;   
-	d_ptr->_subject = s;
+    d_ptr->_modified = true;
+    d_ptr->_subject = s;
     d_ptr->_modified = true;
 }
 
@@ -198,8 +199,8 @@ QDateTime QMessage::date() const
 
 void QMessage::setDate(const QDateTime &d)
 {
-	d_ptr->_modified = true;
-	d_ptr->_date = d;
+    d_ptr->_modified = true;
+    d_ptr->_date = d;
     d_ptr->_modified = true;
 }
 
@@ -210,7 +211,7 @@ QDateTime QMessage::receivedDate() const
 
 void QMessage::setReceivedDate(const QDateTime &d)
 {
-	d_ptr->_modified = true;
+    d_ptr->_modified = true;
     d_ptr->_receivedDate = d;
     d_ptr->_modified = true;
 }
@@ -222,27 +223,27 @@ QMessageAddressList QMessage::to() const
 
 void QMessage::setTo(const QMessageAddressList& toList)
 {
-	d_ptr->_modified = true;
+    d_ptr->_modified = true;
     d_ptr->_toList = toList;
     d_ptr->_modified = true;
 }
 
 void QMessage::setTo(const QMessageAddress& address)
 {
-	d_ptr->_modified = true;
+    d_ptr->_modified = true;
     d_ptr->_toList << address;
     d_ptr->_modified = true;
 }
 
 QMessageAddressList QMessage::cc() const
 {
-	return d_ptr->_ccList;
+    return d_ptr->_ccList;
 }
 
 void QMessage::setCc(const QMessageAddressList& ccList)
 {
-	d_ptr->_modified = true;
-	d_ptr->_ccList = ccList;
+    d_ptr->_modified = true;
+    d_ptr->_ccList = ccList;
     d_ptr->_modified = true;
 }
 
@@ -253,8 +254,8 @@ QMessageAddressList QMessage::bcc() const
 
 void QMessage::setBcc(const QMessageAddressList& bccList)
 {
-	d_ptr->_modified = true;
-	d_ptr->_bccList = bccList;
+    d_ptr->_modified = true;
+    d_ptr->_bccList = bccList;
     d_ptr->_modified = true;
 }
 
@@ -265,19 +266,19 @@ QMessage::StatusFlags QMessage::status() const
 
 void QMessage::setStatus(QMessage::StatusFlags newStatus)
 {
-	d_ptr->_modified = true;
+    d_ptr->_modified = true;
     d_ptr->_status = newStatus;
     d_ptr->_modified = true;
 }
 
 void QMessage::setStatus(QMessage::Status flag, bool set)
 {
-	d_ptr->_modified = true;
-	if (set) {
-		d_ptr->_status |= flag;
-	} else {
-		d_ptr->_status &= ~flag;
-	}
+    d_ptr->_modified = true;
+    if (set) {
+        d_ptr->_status |= flag;
+    } else {
+        d_ptr->_status &= ~flag;
+    }
     d_ptr->_modified = true;
 }
 
@@ -288,7 +289,7 @@ QMessage::Priority QMessage::priority() const
 
 void QMessage::setPriority(Priority newPriority)
 {
-	d_ptr->_modified = true;
+    d_ptr->_modified = true;
     d_ptr->_priority = newPriority;
     d_ptr->_modified = true;
 }
@@ -327,30 +328,30 @@ void QMessage::setBody(const QString &body, const QByteArray &mimeType)
     
     QString mime = QString(mimeType);
 
-	int index = mimeType.indexOf("/");
-	if (index != -1) {
-		mainType = mimeType.left(index).trimmed();
+    int index = mimeType.indexOf("/");
+    if (index != -1) {
+        mainType = mimeType.left(index).trimmed();
 
-		subType = mimeType.mid(index + 1).trimmed();
-		index = subType.indexOf(";");
-		if (index != -1) {
-			 QString remainder = subType.mid(index + 1);
-			subType = subType.left(index).trimmed();
+        subType = mimeType.mid(index + 1).trimmed();
+        index = subType.indexOf(";");
+        if (index != -1) {
+            QString remainder = subType.mid(index + 1);
+            subType = subType.left(index).trimmed();
 
-			QRegExp charsetPattern("charset=(\\S+)");
-			index = charsetPattern.indexIn(remainder);
-			if (index != -1) {
-				charset = charsetPattern.cap(1).toLatin1();
-			}
-	   }
-	}
+            QRegExp charsetPattern("charset=(\\S+)");
+            index = charsetPattern.indexIn(remainder);
+            if (index != -1) {
+                charset = charsetPattern.cap(1).toLatin1();
+            }
+        }
+    }
 
-	if (charset.isEmpty()) {
-		charset = QMessage::preferredCharsetFor(body);
-	    if (charset.isEmpty()) {
+    if (charset.isEmpty()) {
+        charset = QMessage::preferredCharsetFor(body);
+        if (charset.isEmpty()) {
 	    charset = "UTF-8";
-	    }
-	}
+        }
+    }
     
     QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
 
@@ -388,21 +389,21 @@ void QMessage::setBody(QTextStream &in, const QByteArray &mimeType)
 
 QMessageContentContainerIdList QMessage::attachmentIds() const
 {
-	QMessageContentContainerIdList ids;
+    QMessageContentContainerIdList ids;
 
-	QMessageContentContainerId msgBodyId(bodyId());
+    QMessageContentContainerId msgBodyId(bodyId());
     foreach (const QMessageContentContainerId &contentId, contentIds()) {
         if (contentId != msgBodyId) {
             ids.append(contentId);
         }
     }
-	    
-	return ids;
+
+    return ids;
 }
 
 void QMessage::appendAttachments(const QStringList &fileNames)
 {
-	if (!fileNames.isEmpty()) {
+    if (!fileNames.isEmpty()) {
         d_ptr->_modified = true;
 
         QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
@@ -439,94 +440,94 @@ void QMessage::appendAttachments(const QStringList &fileNames)
 
 void QMessage::clearAttachments()
 {
-	d_ptr->_modified = true;
-	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
-	container->_attachments.clear();
+    d_ptr->_modified = true;
+    QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+    container->_attachments.clear();
 }
 
 bool QMessage::isModified() const
 {
-	return d_ptr->_modified;
+    return d_ptr->_modified;
 }
 
 QMessage QMessage::createResponseMessage(ResponseType type) const
 {
-	QMessage message;
-	message.setType(d_ptr->_type);
-	message.setParentAccountId(d_ptr->_parentAccountId);
-	message.setDate(QDateTime::currentDateTime());
-	
-	QString body;
-	QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
-	QMessageContentContainerId existingBodyId(bodyId());
-	if (existingBodyId.isValid()) {
-		if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
-			// The body content is in the message itself
-			body = textContent();
-			message.setBody(body);
-		} else {
-			// The body content is in the first attachment
-			QMessageContentContainerPrivate *attachmentContainer(container->attachment(existingBodyId)->d_ptr);
-			body = attachmentContainer->_textContent;
-			message.setBody(body);
-		}
-	}
-	
-	if (type == ReplyToSender) {
-		message.setTo(d_ptr->_from);
-		
-		QString subj = subject();
-		if (!subj.isEmpty()) {
-			subj.insert(0, "Re:");
-			message.setSubject(subj);
-		}
-		
-	} else if (type == ReplyToAll) {
-		QList<QMessageAddress> addressList;
-		addressList.append(d_ptr->_from);
-		message.setTo(addressList);
-		
-		QList<QMessageAddress> ccAddressList;
-		QMessageAddressList toList = to();
-		foreach(QMessageAddress address, toList) {
-			ccAddressList.append(address);
-		}	
-		QMessageAddressList ccList = cc();
-		foreach(QMessageAddress ccAddress, ccList) {
-			ccAddressList.append(ccAddress);
-		}
-		message.setCc(ccAddressList);
-		
-		QList<QMessageAddress> bccAddressList;
-		QMessageAddressList bccList = bcc();
-		foreach(QMessageAddress bccAddress, bccList) {
-			bccAddressList.append(bccAddress);
-		}
-		message.setBcc(bccAddressList);
-		
-		QString subj = subject();
-		if (!subj.isEmpty()) {
-			subj.insert(0, "Re:");
-			message.setSubject(subj);
-		}
+    QMessage message;
+    message.setType(d_ptr->_type);
+    message.setParentAccountId(d_ptr->_parentAccountId);
+    message.setDate(QDateTime::currentDateTime());
 
-	} else if (type == Forward) {
-		QString subj = subject();
-		if (!subj.isEmpty()) {
-			subj.insert(0, "Fwd:");
-			message.setSubject(subj);
-		}
+    QString body;
+    QMessageContentContainerPrivate *container(((QMessageContentContainer *)(this))->d_ptr);
+    QMessageContentContainerId existingBodyId(bodyId());
+    if (existingBodyId.isValid()) {
+        if (existingBodyId == QMessageContentContainerPrivate::bodyContentId()) {
+            // The body content is in the message itself
+            body = textContent();
+            message.setBody(body);
+        } else {
+            // The body content is in the first attachment
+            QMessageContentContainerPrivate *attachmentContainer(container->attachment(existingBodyId)->d_ptr);
+            body = attachmentContainer->_textContent;
+            message.setBody(body);
+        }
+    }
 
-		QMessageContentContainerIdList ids = attachmentIds();
-		QStringList containerList;
-		foreach (QMessageContentContainerId id, ids){
-			QMessageContentContainer container = find(id);
-			QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);			
-			containerList.append(QString(filePath));
-		}
-		message.appendAttachments(containerList);
-		
-	}	
+    if (type == ReplyToSender) {
+        message.setTo(d_ptr->_from);
+
+        QString subj = subject();
+        if (!subj.isEmpty()) {
+            subj.insert(0, "Re:");
+            message.setSubject(subj);
+        }
+
+    } else if (type == ReplyToAll) {
+        QList<QMessageAddress> addressList;
+        addressList.append(d_ptr->_from);
+        message.setTo(addressList);
+
+        QList<QMessageAddress> ccAddressList;
+        QMessageAddressList toList = to();
+        foreach(QMessageAddress address, toList) {
+            ccAddressList.append(address);
+        }
+        QMessageAddressList ccList = cc();
+        foreach(QMessageAddress ccAddress, ccList) {
+            ccAddressList.append(ccAddress);
+        }
+        message.setCc(ccAddressList);
+
+        QList<QMessageAddress> bccAddressList;
+        QMessageAddressList bccList = bcc();
+        foreach(QMessageAddress bccAddress, bccList) {
+            bccAddressList.append(bccAddress);
+        }
+        message.setBcc(bccAddressList);
+
+        QString subj = subject();
+        if (!subj.isEmpty()) {
+            subj.insert(0, "Re:");
+            message.setSubject(subj);
+        }
+
+    } else if (type == Forward) {
+        QString subj = subject();
+        if (!subj.isEmpty()) {
+            subj.insert(0, "Fwd:");
+            message.setSubject(subj);
+        }
+
+        QMessageContentContainerIdList ids = attachmentIds();
+        QStringList containerList;
+        foreach (QMessageContentContainerId id, ids){
+            QMessageContentContainer container = find(id);
+            QByteArray filePath = QMessageContentContainerPrivate::attachmentFilename(container);
+            containerList.append(QString(filePath));
+        }
+        message.appendAttachments(containerList);
+
+    }
     return message;
 }
 

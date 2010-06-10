@@ -60,7 +60,7 @@ class TpSessionChannel : public QObject
 public:
     TpSessionChannel(Tp::TextChannelPtr);
     TpSessionChannel(Tp::ConnectionPtr conn, const Tp::ContactPtr &contact);
-    bool sendMessage(const QString &message);
+    Tp::PendingSendMessage *sendMessage(const QString &message);
     QString peerId() const;
 signals:
     void channelReady(TpSessionChannel *);

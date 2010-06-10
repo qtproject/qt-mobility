@@ -43,13 +43,13 @@
 
 QTM_BEGIN_NAMESPACE
 
-QMessageAccountSortOrderPrivate::QMessageAccountSortOrderPrivate(QMessageAccountSortOrder *sortOrder)
- : q_ptr(sortOrder)
+        QMessageAccountSortOrderPrivate::QMessageAccountSortOrderPrivate(QMessageAccountSortOrder *sortOrder)
+            : q_ptr(sortOrder)
 {
 }
 
 bool QMessageAccountSortOrderPrivate::lessThan(const QMessageAccountSortOrder &sortOrder,
-                                              const QMessageAccount &account1, const QMessageAccount &account2)
+                                               const QMessageAccount &account1, const QMessageAccount &account2)
 {
     QMessageAccountSortOrderPrivate *d(sortOrder.d_ptr);
     if (d->_order == Qt::AscendingOrder) {
@@ -59,25 +59,25 @@ bool QMessageAccountSortOrderPrivate::lessThan(const QMessageAccountSortOrder &s
 }
 
 QMessageAccountSortOrder::QMessageAccountSortOrder()
- : d_ptr(0)
+    : d_ptr(0)
 {
 }
 
 QMessageAccountSortOrder::QMessageAccountSortOrder(const QMessageAccountSortOrder &other)
- : d_ptr(new QMessageAccountSortOrderPrivate(this))
+    : d_ptr(new QMessageAccountSortOrderPrivate(this))
 {
-	this->operator=(other);
+    this->operator=(other);
 }
 
 QMessageAccountSortOrder::~QMessageAccountSortOrder()
 {
-	delete d_ptr;
-	d_ptr = 0;
+    delete d_ptr;
+    d_ptr = 0;
 }
 
 bool QMessageAccountSortOrder::isEmpty() const
 {
-	return (d_ptr == 0);
+    return (d_ptr == 0);
 }
 
 bool QMessageAccountSortOrder::isSupported() const
@@ -94,27 +94,27 @@ bool QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other)
         return false;
     }
     
-	return (d_ptr->_order == other.d_ptr->_order);
+    return (d_ptr->_order == other.d_ptr->_order);
 }
 
 QMessageAccountSortOrder& QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
-{
-	if (&other != this) {
-	    if (!d_ptr) {
-			d_ptr = new QMessageAccountSortOrderPrivate(this);	    
-	    }
-		d_ptr->_order = other.d_ptr->_order;
-	}
-	
-	return *this;
+                                                             {
+    if (&other != this) {
+        if (!d_ptr) {
+            d_ptr = new QMessageAccountSortOrderPrivate(this);
+        }
+        d_ptr->_order = other.d_ptr->_order;
+    }
+
+    return *this;
 }
 
 QMessageAccountSortOrder QMessageAccountSortOrder::byName(Qt::SortOrder order)
 {
-	QMessageAccountSortOrder sortOrder;
-	sortOrder.d_ptr = new QMessageAccountSortOrderPrivate(&sortOrder);
-	sortOrder.d_ptr->_order = order;
-	return sortOrder;
+    QMessageAccountSortOrder sortOrder;
+    sortOrder.d_ptr = new QMessageAccountSortOrderPrivate(&sortOrder);
+    sortOrder.d_ptr->_order = order;
+    return sortOrder;
 }
 
 QTM_END_NAMESPACE

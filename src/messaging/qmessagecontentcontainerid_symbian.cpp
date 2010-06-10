@@ -39,15 +39,20 @@
 **
 ****************************************************************************/
 #include "qmessagecontentcontainerid.h"
-#include <messagingutil_p.h>
-
 
 QTM_BEGIN_NAMESPACE
 
 class QMessageContentContainerIdPrivate
 {
 public:
-    QString _id;
+    enum {
+		Invalid = -1, 
+		Body = 0 
+	};
+
+    int _number;
+
+    QMessageContentContainerIdPrivate() : _number(Invalid) {}
 };
 
 QMessageContentContainerId::QMessageContentContainerId()
@@ -64,8 +69,9 @@ QMessageContentContainerId::QMessageContentContainerId(const QMessageContentCont
 QMessageContentContainerId::QMessageContentContainerId(const QString& id)
 : d_ptr(new QMessageContentContainerIdPrivate)
 {
-    if(!SymbianHelpers::stripIdPrefix(id).isEmpty())
-        d_ptr->_id = id;
+	if (!id.isEmpty()) {
+		d_ptr->_number = id.toUInt();
+	}
 }
 
 QMessageContentContainerId::~QMessageContentContainerId()
@@ -75,29 +81,26 @@ QMessageContentContainerId::~QMessageContentContainerId()
 
 bool QMessageContentContainerId::operator==(const QMessageContentContainerId& other) const
 {
-	return (d_ptr->_id == other.d_ptr->_id);
+	return (d_ptr->_number == other.d_ptr->_number);
 }
 
 QMessageContentContainerId& QMessageContentContainerId::operator=(const QMessageContentContainerId& other)
 {
 	if (&other != this) {
-		d_ptr->_id = other.d_ptr->_id;
+		d_ptr->_number = other.d_ptr->_number;
 	}
-
-    return *this;
+	
+	return *this;
 }
 
 QString QMessageContentContainerId::toString() const
 {
-    if(!isValid())
-        return QString();
-
-	return d_ptr->_id;
+	return QString::number(d_ptr->_number);
 }
 
 bool QMessageContentContainerId::isValid() const
 {
-	return !d_ptr->_id.isEmpty();
+	return (d_ptr->_number != QMessageContentContainerIdPrivate::Invalid);
 }
 
 QTM_END_NAMESPACE

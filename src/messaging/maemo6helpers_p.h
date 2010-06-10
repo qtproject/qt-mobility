@@ -85,6 +85,8 @@ public:
     static QString addressListToString(const QMessageAddressList &alist);
     static QMessageAddressList stringToAddressList(const QString &astring);
 
+    static QStringList stringListFromAddressList(const QMessageAddressList &alist);
+
 private:
    static bool accountLessThan(const QMessageAccountId accountId1, const QMessageAccountId accountId2);
    static bool folderLessThan(const QMessageFolderId folderId1, const QMessageFolderId folderId2);

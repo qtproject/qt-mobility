@@ -73,12 +73,14 @@ public:
 
 
     QMessageAccountIdList queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder,
-                                        uint limit, uint offset, bool &isFiltered, bool &isSorted) const;
-    int countAccounts(const QMessageAccountFilter &filter) const;
-    QMessageAccount account(const QMessageAccountId &id) const;
-    QMessageAccountId defaultAccount(QMessage::Type type) const;
+                                        uint limit, uint offset, bool &isFiltered, bool &isSorted);
+    int countAccounts(const QMessageAccountFilter &filter);
+    QMessageAccount account(const QMessageAccountId &id);
+    QMessageAccountId defaultAccount(QMessage::Type type);
 
-    bool sendMessage(QMessage &message);
+    bool sendMessage(QMessage &message, QMessageService *service);
+    QMessageManager::Error error();
+    static QMessageManager::Error convertError(const Tp::PendingOperation *op);
 
 signals:
     //void amReady(TpSession *);
@@ -97,8 +99,7 @@ private:
     //static TelepathyEngine *m_inst;
 
     void _updateImAccounts() const;
-    bool _sendMessageToAddress(QString connectionMgr, QString address, QString message);
-    TpSessionAccount* _getTpSessionAccount(const  QString cm, const QString protocol = QString());
+    TpSessionAccount *getTpSessionAccount(const QString &cm, const QString &protocol = QString());
 
     mutable QMessageAccountId m_defaultSmsAccountId;
     mutable QHash<QString, QMessageAccount> m_iAccounts;
@@ -110,7 +111,33 @@ private:
     QString m_reqMsg;
     QString m_reqAddress;
     bool m_sync;  // Synchronous initialization
+    QMessageManager::Error m_error;
 };
 
+class SendRequest : public QObject
+{
+    Q_OBJECT
+public:
+    SendRequest(const QMessage &message, QMessageService *parent);
+    ~SendRequest();
+
+    QStringList to() const;
+    QString text() const;	  
+
+    void setFinished(const QString &address, bool success);
+
+public slots:
+    void finished(Tp::PendingOperation *operation, bool processLater = false);
+
+private slots:
+    friend class QTimer;
+    void down();
+
+private:
+    QMessage _message;
+    int _pendingRequestCount;
+    int _failCount;
+
+};
 
 #endif // TELEPATHYENGINE_MAEMO_P_H

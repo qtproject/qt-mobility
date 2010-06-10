@@ -46,6 +46,7 @@ QTM_BEGIN_NAMESPACE
     \class QMessageAccountId
     \ingroup messaging
 
+    \preliminary
     \brief The QMessageAccountId class provides a unique identifier for a QMessageAccount 
     messaging account, within the scope of the messaging store.
 

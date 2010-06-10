@@ -42,8 +42,7 @@
 #include <QStringList>
 #include <QTextCodec>
 #include "qmessagecontentcontainer_symbian_p.h"
-#include <qmtmengine_symbian_p.h>
-#include <messagingutil_p.h>
+#include "qmtmengine_symbian_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -235,7 +234,7 @@ bool QMessageContentContainerPrivate::createAttachment(const QString& attachment
 
 QMessageContentContainerId QMessageContentContainerPrivate::appendContent(QMessageContentContainer& container)
 {
-    container.d_ptr->_id = QMessageContentContainerId(SymbianHelpers::addIdPrefix(QString::number(_attachments.count()+1),SymbianHelpers::EngineTypeMTM));
+    container.d_ptr->_id = QMessageContentContainerId(QString::number(_attachments.count()+1));
     _attachments.append(container);
     return container.d_ptr->_id;
 }
@@ -244,7 +243,7 @@ QMessageContentContainerId QMessageContentContainerPrivate::prependContent(QMess
 {
     _attachments.prepend(container);
     for (int i = 0; i < _attachments.count(); ++i) {
-        _attachments[i].d_ptr->_id = QMessageContentContainerId(SymbianHelpers::addIdPrefix(QString::number(i+1),SymbianHelpers::EngineTypeMTM));
+        _attachments[i].d_ptr->_id = QMessageContentContainerId(QString::number(i+1));
     }
     return _attachments[0].d_ptr->_id;
 }
@@ -253,7 +252,7 @@ QMessageContentContainerId QMessageContentContainerPrivate::prependContent(QMess
 
 QMessageContentContainerId QMessageContentContainerPrivate::bodyContentId()
 {
-    return QMessageContentContainerId(SymbianHelpers::addIdPrefix(QString::number(0),SymbianHelpers::EngineTypeMTM));
+    return QMessageContentContainerId(QString::number(0));
 }
 
 QByteArray QMessageContentContainerPrivate::attachmentFilename(const QMessageContentContainer& container)

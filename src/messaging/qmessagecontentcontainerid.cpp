@@ -46,6 +46,7 @@ QTM_BEGIN_NAMESPACE
     \class QMessageContentContainerId
     \ingroup messaging
 
+    \preliminary
     \brief The QMessageContentContainerId class provides a unique identifier for 
     QMessageContentContainer internet media (MIME) type entities, within the scope of the
     containing message.

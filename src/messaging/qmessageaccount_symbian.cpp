@@ -106,7 +106,6 @@ QMessage::TypeFlags QMessageAccount::messageTypes() const
 QMessageAccountId QMessageAccount::defaultAccount(QMessage::Type type)
 {
 	return CMTMEngine::instance()->defaultAccount(type);
-	// or return CFSEngine::instance()->defaultAccount(type);
 }
 
 QTM_END_NAMESPACE

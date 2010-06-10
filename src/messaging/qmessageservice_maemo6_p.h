@@ -41,7 +41,6 @@
 
 #include "qmessageservice.h"
 #include "qmfservice_maemo6_p.h"
-#include "storageengine_maemo6_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -77,10 +76,14 @@ public:
     void messagesCounted(int count);
     void progressChanged(uint value, uint total);
 
+    bool compose(const QMessage &message);
+    bool show(const QMessageId &id);
+
+    void cancel();
+
 public:
     QMessageService *q_ptr;
     QMFService *_qmfService;
-    StorageEngine *_smsService;
     QMessageService::State _state;
     QMessageManager::Error _error;
     bool _active;

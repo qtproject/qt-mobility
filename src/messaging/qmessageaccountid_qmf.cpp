@@ -65,7 +65,7 @@ QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 QMessageAccountId::QMessageAccountId(const QString& id)
     : d_ptr(0)
 {
-    QMailAccountId aid(QmfHelpers::stripIdentifierPrefix(id).toULongLong());
+    QMailAccountId aid(id.toULongLong());
     if (aid.isValid()) {
         d_ptr = new QMessageAccountIdPrivate;
         d_ptr->_id = aid;
@@ -117,8 +117,7 @@ bool QMessageAccountId::operator<(const QMessageAccountId& other) const
 
 QString QMessageAccountId::toString() const
 {
-    QString result = (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());
-    return QmfHelpers::prefixIdentifier(result);
+    return (isValid() ? QString::number(d_ptr->_id.toULongLong()) : QString());
 }
 
 bool QMessageAccountId::isValid() const

@@ -57,6 +57,8 @@
 #include "qmessageservice.h"
 
 
+
+
 class CRichText;
 class CCharFormatLayer;
 class CParaFormatLayer;
@@ -71,7 +73,6 @@ class CMsvFindOperation;
 
 
 QTM_BEGIN_NAMESPACE
-
 class CMessagesFindOperation;
 class QMessageId;
 class QMessageAccount;
@@ -162,7 +163,6 @@ public:
                                      bool resultSetOrdered);
 
     inline RFs& FsSession() const { return((RFs&)iFsSession); }
-
 private:
     void updateEmailAccountsL() const;
     bool switchToMTMRootEntry(MTMType aMTMType);
@@ -226,7 +226,6 @@ private:
     void storeEmailL(QMessage &message);
     void sendEmailL(QMessage &message);
     void storeSMSL(QMessage &message);
-    bool validateSMS();
     void sendSMSL(QMessage &message);
     void retrieveL(const QMessageId &messageId, const QMessageContentContainerId& id);
     void retrieveBodyL(const QMessageId& id) const;
@@ -346,21 +345,6 @@ private: // Data
     mutable RTimer iTimer;
 };
 
-class QMTMWait : public CActive
-{
-public:
-    QMTMWait(TInt aPriority = EPriorityStandard);
-    ~QMTMWait();
-
-    void start();
-
-protected: // From CActive
-    void RunL();
-    void DoCancel();
-    
-private: // Data
-    QEventLoop m_eventLoop;
-};
 
 QTM_END_NAMESPACE
 #endif // QMTMENGINE_SYMBIAN_H

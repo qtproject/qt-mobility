@@ -43,6 +43,7 @@
 /*!
     \class QMessageFolder
 
+    \preliminary
     \brief The QMessageFolder class provides an interface for folders containing messages in the 
     messaging store.
     

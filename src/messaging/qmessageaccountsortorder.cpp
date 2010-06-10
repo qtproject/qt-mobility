@@ -45,6 +45,7 @@ QTM_BEGIN_NAMESPACE
 /*!
     \class QMessageAccountSortOrder
 
+    \preliminary
     \brief The QMessageAccountSortOrder class defines the parameters used for sorting a subset of 
     queried accounts from the messaging store.
     \ingroup messaging

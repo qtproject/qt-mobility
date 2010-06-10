@@ -192,12 +192,12 @@ void TpSessionChannel::onChannelReady(Tp::PendingOperation *op)
  * \param message   message to send
  */
 
-bool TpSessionChannel::sendMessage(const QString &message)
+Tp::PendingSendMessage *TpSessionChannel::sendMessage(const QString &message)
 {
     QDEBUG_FUNCTION_BEGIN
-    bool retVal = !channel->send(message)->isError();
+    Tp::PendingSendMessage *ret = channel->send(message);
     QDEBUG_FUNCTION_END
-    return retVal;	
+    return ret;	
 }
 
 void TpSessionChannel::onMessageReceived(const Tp::ReceivedMessage &msg)

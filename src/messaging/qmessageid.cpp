@@ -47,6 +47,7 @@ QTM_BEGIN_NAMESPACE
     \class QMessageId
     \ingroup messaging
 
+    \preliminary
     \brief The QMessageId class provides a unique identifier for a QMessage message within the 
     scope of the messaging store.
 

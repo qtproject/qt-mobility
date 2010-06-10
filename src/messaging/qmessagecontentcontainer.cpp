@@ -42,7 +42,7 @@
 #ifdef Q_OS_SYMBIAN
 #include "qmessagecontentcontainer_symbian_p.h"
 #elif defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
-#include "qmessagecontentcontainer_maemo_p.h"
+#include "qmessagecontentcontainer_maemo6_p.h"
 #else
 #include "qmessagecontentcontainer_p.h"
 #endif
@@ -51,6 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QMessageContentContainer
+    \preliminary
 
     \brief The QMessageContentContainer class provides an interface for internet media (MIME) 
     and Transport Neutral Encapsulation Format (TNEF) content that is possibly only 

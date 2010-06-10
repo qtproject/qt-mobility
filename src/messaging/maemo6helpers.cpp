@@ -51,7 +51,7 @@ QTM_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC(MessagingHelper, messagingHelper);
 
-#define DELIMETER   "===="
+#define DELIMETER_EMAIL   "; "
 
 MessagingHelper* MessagingHelper::instance()
 {
@@ -506,14 +506,13 @@ void MessagingHelper::handleNestedFiltersFromMessageFilter(QMessageFilter &filte
     }
 }
 
-
 QString MessagingHelper::addressListToString(const QMessageAddressList &alist)
 {
     QString ret;
 
     for (int i = 0; i < alist.size(); i++) {
         if (i != 0)
-            ret += DELIMETER;
+            ret += DELIMETER_EMAIL;
 
             ret += alist.at(i).addressee();
         }
@@ -527,13 +526,25 @@ QMessageAddressList MessagingHelper::stringToAddressList(const QString &astring)
     int i = 0;
 
     while(1) {
-        QString str = astring.section(DELIMETER, i, i);
+        QString str = astring.section(DELIMETER_EMAIL, i, i);
         i++;
         if (str.length()) {
             QMessageAddress address(QMessageAddress::Phone, str);
             ret.append(address);
         } else
             break;
+    }
+
+    return ret;
+}
+
+QStringList MessagingHelper::stringListFromAddressList(const QMessageAddressList &alist)
+{
+    QStringList ret;
+
+    foreach(QMessageAddress address, alist)
+    {
+        ret.append(address.addressee());
     }
 
     return ret;

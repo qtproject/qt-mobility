@@ -41,9 +41,19 @@
 #include "qmfservice_maemo6_p.h"
 #include "qmfhelpers_maemo6_p.h"
 #include "qmessageservice_maemo6_p.h"
+#include "maemo6helpers_p.h"
 
 #include <QTimer>
 #include <qmessage_p.h>
+
+#define XDG_PROG    "/usr/bin/xdg-email"
+
+#define SINGLESHOT(slot) \
+    do {\
+	QTimer *__t = timer();\
+        connect(__t, SIGNAL(timeout()), this, SLOT(slot));\
+	__t->start(0);\
+    } while (0)
 
 
 QTM_BEGIN_NAMESPACE
@@ -79,7 +89,8 @@ using namespace QmfHelpers;
 
 QMFService::QMFService(QMessageService *service, QObject *parent)
     : QObject(parent),
-      m_service(service),
+      m_service(service),      
+      m_timer(0),
       m_active(0),
       m_activeStoreAction(false),
       m_limit(0),
@@ -98,6 +109,7 @@ QMFService::QMFService(QMessageService *service, QObject *parent)
 
 QMFService::~QMFService()
 {
+
 }
 
 bool QMFService::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
@@ -123,8 +135,8 @@ bool QMFService::queryMessages(const QMessageFilter &filter, const QMessageSortO
         m_limit = static_cast<int>(limit);
         m_offset = 0;
         m_matchingIds.clear();
-        QTimer::singleShot(0, this, SLOT(reportMatchingIds()));
-        return true;
+	SINGLESHOT(reportMatchingIds());
+	return true;
     }
 
     return false;
@@ -149,7 +161,7 @@ bool QMFService::queryMessages(const QMessageFilter &filter, const QString &body
         // This is a continuation of the last search
         m_limit = static_cast<int>(limit);
         m_offset = static_cast<int>(offset);
-        QTimer::singleShot(0, this, SLOT(findMatchingIds()));
+	SINGLESHOT(findMatchingIds());
         return true;
     }
 
@@ -167,7 +179,7 @@ bool QMFService::queryMessages(const QMessageFilter &filter, const QString &body
         m_offset = static_cast<int>(offset);
 	m_matchFlags = matchFlags;
         m_matchingIds.clear();
-        QTimer::singleShot(0, this, SLOT(findMatchingIds()));
+        SINGLESHOT(findMatchingIds());
         return true;
     }
 
@@ -194,7 +206,7 @@ bool QMFService::countMessages(const QMessageFilter &filter)
         m_limit = 0;
         m_offset = 0;
         m_matchingIds.clear();
-        QTimer::singleShot(0, this, SLOT(reportMatchingCount()));
+        SINGLESHOT(reportMatchingCount());
         return true;
     }
 
@@ -274,13 +286,32 @@ bool QMFService::compose(const QMessage &message)
         return false;
     }
     m_active = 0;
-    
-    // TODO: To be implemented by integrator
-    setError(QMessageManager::NotYetImplemented);
-    qWarning() << "QMFService::compose not yet implemented";
-    return false;
+    setError(QMessageManager::NoError);
 
-    Q_UNUSED(message)
+    QStringList arguments;
+    arguments  << "--subject" << message.subject()
+            << "--body" << message.textContent();
+
+    if (message.cc().size())
+        arguments << "--cc" << MessagingHelper::addressListToString(message.cc());
+
+    if (message.bcc().size())
+        arguments << "--bcc" << MessagingHelper::addressListToString(message.bcc());
+
+    if (message.to().size())
+        arguments <<  MessagingHelper::addressListToString(message.to());
+
+    //qDebug() << __PRETTY_FUNCTION__ << " starting:" << XDG_PROG << arguments;
+
+    if (QProcess::execute(XDG_PROG, arguments) != 0) {
+        qWarning() << __PRETTY_FUNCTION__ << "Cannot start email composer: " << XDG_PROG << arguments;
+        setError(QMessageManager::FrameworkFault);
+        return false;
+    }
+
+    //qDebug() << __PRETTY_FUNCTION__ << "execution completed";
+
+    return true;
 }
 
 bool QMFService::retrieveHeader(const QMessageId& id)
@@ -300,7 +331,7 @@ bool QMFService::retrieveHeader(const QMessageId& id)
     // Operation is not relevant to QMF - meta data retrieval always includes header information
     setError(QMessageManager::NoError);
     m_active = 0;
-    QTimer::singleShot(0, this, SLOT(completed()));
+    SINGLESHOT(completed());
     return true;
 }
 
@@ -353,12 +384,15 @@ bool QMFService::show(const QMessageId& id)
         return false;
     }
     m_active = 0;
-    // TODO: To be implemented by integrator
-    setError(QMessageManager::NotYetImplemented);
-    qWarning() << "QMFService::show not yet implemented";
-    return false;
+    setError(QMessageManager::NoError);
 
-    Q_UNUSED(id)
+    if (!(id.toString().startsWith("QMF_") && id.isValid())) {
+        setError(QMessageManager::InvalidId);
+        return false;
+    }
+
+    //QMessage m(id);
+    return compose(QMessage(id));
 }
 
 bool QMFService::exportUpdates(const QMessageAccountId &id)
@@ -393,6 +427,7 @@ QMessageService::State QMFService::state() const
 
 void QMFService::cancel()
 {
+    delete m_timer; m_timer = 0;
     if (m_active) {
         m_active->cancelOperation();
     } else if (m_activeStoreAction) {
@@ -409,6 +444,21 @@ bool QMFService::isBusy() const
     }
     return false;
 }
+
+QTimer *QMFService::timer()
+{
+    if (!m_timer) {
+	m_timer = new QTimer(this);
+	m_timer->setSingleShot(true);
+    } else {
+	if (m_timer->isActive()) {
+	    m_timer->stop();
+	}
+	m_timer->disconnect();
+    }
+
+    return m_timer;
+}    
 
 void QMFService::transmitActivityChanged(QMailServiceAction::Activity a)
 {
@@ -531,7 +581,7 @@ void QMFService::findMatchingIds()
     }
 
     if ((required > 0 || m_limit == 0) && !m_candidateIds.isEmpty()) {
-        QTimer::singleShot(0, this, SLOT(testNextMessage()));
+        SINGLESHOT(testNextMessage());
     } else {
 	matchQueryCompleted();
     }
@@ -553,7 +603,7 @@ void QMFService::testNextMessage()
         }
 
         if ((required > 0 || m_limit == 0) && !m_candidateIds.isEmpty()) {
-            QTimer::singleShot(0, this, SLOT(testNextMessage()));
+            SINGLESHOT(testNextMessage());
             return;
         }
     }
@@ -577,7 +627,6 @@ void QMFService::stateChanged(QMessageService::State state) const
     // QMessageServicePrivate emits QMessageService::stateChanged() signal 
     p->stateChanged(state);
 }
-
 
 #include "moc_qmfservice_maemo6_p.cpp"
 

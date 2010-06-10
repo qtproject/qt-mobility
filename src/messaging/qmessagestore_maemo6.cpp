@@ -76,8 +76,8 @@ void QMessageStorePrivate::initialize(QMessageStore *store)
     q_ptr = store;
     p_ptr = new QMessageStorePrivatePlatform(this, store);
 
-    StorageEngine::instance()->initialize(true);
-    (void)QMFStore::instance();
+    StorageEngine::instance();//->initialize(true);
+    QMFStore::instance();
 }
 
 void QMessageStorePrivate::messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
@@ -143,8 +143,9 @@ QMessageManager::Error QMessageStore::error() const
 {
     if (d_ptr->error != QMessageManager::NoError) {
 	return d_ptr->error;
+    } else if (StorageEngine::instance()->error() != QMessageManager::NoError) {
+	return StorageEngine::instance()->error();
     }
-
     return QMFStore::instance()->error();
 }
 
@@ -156,9 +157,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     QMessageFilter handledFilter = filter;
     MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
 
-
     // returns the filtered but not ordered list
-    messageIds = StorageEngine::instance()->queryMessagesSync(handledFilter);    
+    messageIds = StorageEngine::instance()->queryMessagesSync(handledFilter, sortOrder, limit, offset);    
 
     // QMFStore does not need to use helpers, but messages from StorageEngine needs to be sorted
     if (messageIds.count() > 0)
@@ -173,6 +173,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 	MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);    
     }
 
+    d_ptr->error = QMessageManager::NoError;
+
     return messageIds;
 }
 
@@ -185,7 +187,7 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
     MessagingHelper::handleNestedFiltersFromMessageFilter(handledFilter);
 
     // returns the filtered but not ordered list
-    messageIds = StorageEngine::instance()->queryMessagesSync(handledFilter, body, matchFlags);
+    messageIds = StorageEngine::instance()->queryMessagesSync(handledFilter, body, matchFlags, sortOrder, limit, offset);
 
     // QMFStore does not need to use helpers, but messages from StorageEngine needs to be sorted
     if (messageIds.count() > 0)
@@ -199,6 +201,8 @@ QMessageIdList QMessageStore::queryMessages(const QMessageFilter &filter, const 
 	MessagingHelper::orderMessages(messageIds, sortOrder);
 	MessagingHelper::applyOffsetAndLimitToMessageIdList(messageIds, limit, offset);
     }
+
+    d_ptr->error = QMessageManager::NoError;
 
     return messageIds;
 }
@@ -218,6 +222,8 @@ QMessageFolderIdList QMessageStore::queryFolders(const QMessageFolderFilter &fil
     MessagingHelper::orderFolders(folderIds, sortOrder);
 
     MessagingHelper::applyOffsetAndLimitToFolderIdList(folderIds, limit, offset);
+    
+    d_ptr->error = QMessageManager::NoError;
 
     return folderIds;
 }
@@ -246,12 +252,16 @@ QMessageAccountIdList QMessageStore::queryAccounts(const QMessageAccountFilter &
 
     MessagingHelper::applyOffsetAndLimitToAccountIdList(accountIds, limit, offset);
 
+    d_ptr->error = QMessageManager::NoError;
+
     return accountIds;
 }
 
 int QMessageStore::countMessages(const QMessageFilter& filter) const
 {
     int count = 0;
+
+    d_ptr->error = QMessageManager::NoError;
 
     count += QMFStore::instance()->countMessages(filter, d_ptr->error);
     count += StorageEngine::instance()->countMessagesSync(filter);
@@ -263,6 +273,8 @@ int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 {
     int count = 0;
 
+    d_ptr->error = QMessageManager::NoError;
+
     count += QMFStore::instance()->countFolders(filter, d_ptr->error);
     count += StorageEngine::instance()->countFolders(filter);
 
@@ -272,6 +284,8 @@ int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
 int QMessageStore::countAccounts(const QMessageAccountFilter& filter) const
 {
     int count = 0;
+
+    d_ptr->error = QMessageManager::NoError;
 
     count += QMFStore::instance()->countAccounts(filter, d_ptr->error);
     count += TelepathyEngine::instance()->countAccounts(filter);
@@ -283,12 +297,17 @@ bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::Removal
 {
     bool ret = false;
 
-    if (id.isValid()) {
-	if (id.toString().startsWith("QMF_")) {
-	    ret = QMFStore::instance()->removeMessage(id, option, d_ptr->error);
-	} else {
-	    ret = StorageEngine::instance()->removeMessage(id);
-	}
+    if (!id.isValid()) {
+	d_ptr->error = QMessageManager::InvalidId;
+	return false;
+    }
+
+    d_ptr->error = QMessageManager::NoError;
+
+    if (id.toString().startsWith("QMF_")) {
+	ret = QMFStore::instance()->removeMessage(id, option, d_ptr->error);
+    } else {
+	ret = StorageEngine::instance()->removeMessage(id);
     }
 
     return ret;
@@ -297,6 +316,8 @@ bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::Removal
 bool QMessageStore::removeMessages(const QMessageFilter& filter, QMessageManager::RemovalOption option)
 {
     bool noErrors;
+
+    d_ptr->error = QMessageManager::NoError;
 
     noErrors = QMFStore::instance()->removeMessages(filter, option, d_ptr->error);
 
@@ -335,6 +356,7 @@ bool QMessageStore::addMessage(QMessage *m)
         }
         if (msgType == QMessage::NoType) {
             retVal = false;
+	    d_ptr->error = QMessageManager::ConstraintFailure;
         }
     }
 
@@ -343,6 +365,7 @@ bool QMessageStore::addMessage(QMessage *m)
         if (!accountId.isValid()) {
             accountId = QMessageAccount::defaultAccount(m->type());
             if (!accountId.isValid()) {
+		d_ptr->error = QMessageManager::ConstraintFailure;
                 retVal = false;
             }
         }
@@ -353,6 +376,7 @@ bool QMessageStore::addMessage(QMessage *m)
         // Check account/message type compatibility
         if (!(account.messageTypes() & m->type()) && (msgType == QMessage::NoType)) {
             retVal = false;
+	    d_ptr->error = QMessageManager::ConstraintFailure;
         }
     }
 
@@ -365,9 +389,11 @@ bool QMessageStore::addMessage(QMessage *m)
 	    retVal = StorageEngine::instance()->addMessage(*m);
         } else if (account.messageTypes() & QMessage::InstantMessage) {
             retVal = false; //TODO:
+	    d_ptr->error = QMessageManager::NotYetImplemented;
             qWarning() << "QMessageManager::add not yet implemented for Instant Message";
         } else if (account.messageTypes() & QMessage::Mms) {
             retVal = false; //TODO:
+	    d_ptr->error = QMessageManager::NotYetImplemented;
             qWarning() << "QMessageManager::add not yet implemented for MMS";
         } else if (account.messageTypes() & QMessage::Email) {
             retVal = QMFStore::instance()->addMessage(*m, d_ptr->error);
@@ -381,16 +407,24 @@ bool QMessageStore::updateMessage(QMessage *m)
 {
     bool retVal = false;
 
+    d_ptr->error = QMessageManager::NoError;
+
     if (m->type() == QMessage::Sms) {
+        //retVal = false; //TODO:
+        //qWarning() << "QMessageManager::update not yet implemented for SMS";
         retVal = StorageEngine::instance()->updateMessage(*m);
     } else if (m->type() == QMessage::InstantMessage) {
-        retVal = false; //TODO:
+	d_ptr->error = QMessageManager::NotYetImplemented;
+	retVal = false; //TODO:
         qWarning() << "QMessageManager::update not yet implemented for Instant Message";
     } else if (m->type() == QMessage::Mms) {
+	d_ptr->error = QMessageManager::NotYetImplemented;
         retVal = false; //TODO:
         qWarning() << "QMessageManager::update not yet implemented for Instant MMS";
     } else if (m->type() == QMessage::Email) {
         retVal = QMFStore::instance()->updateMessage(*m, d_ptr->error);
+    } else {
+	d_ptr->error = QMessageManager::ConstraintFailure;
     }
 
     return retVal;
@@ -398,6 +432,13 @@ bool QMessageStore::updateMessage(QMessage *m)
 
 QMessage QMessageStore::message(const QMessageId& id) const
 {
+    if (!id.isValid()) {
+	d_ptr->error = QMessageManager::InvalidId;
+	return QMessage();
+    }
+
+    d_ptr->error = QMessageManager::NoError;
+
     if (id.toString().startsWith("QMF_")) {
 	return QMFStore::instance()->message(id, d_ptr->error); 
     } else {
@@ -407,20 +448,35 @@ QMessage QMessageStore::message(const QMessageId& id) const
 
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
 {
+    if (!id.isValid()) {
+	d_ptr->error = QMessageManager::InvalidId;
+	return QMessageFolder();
+    }
+
+    d_ptr->error = QMessageManager::NoError;
+
     if (id.toString().startsWith("QMF_")) {
 	return QMFStore::instance()->folder(id, d_ptr->error);     
-    } else  if (id.toString().startsWith(FOLDER_PREFIX_SMS))
+    } else if (id.toString().startsWith(FOLDER_PREFIX_SMS)) {
         return StorageEngine::instance()->folder(id);
+    }
 
     return QMessageFolder();
 }
 
 QMessageAccount QMessageStore::account(const QMessageAccountId& id) const
 {
+    if (!id.isValid()) {
+	d_ptr->error = QMessageManager::InvalidId;
+	return QMessageAccount();
+    }
+
+    d_ptr->error = QMessageManager::NoError;
+
     if (id.toString().startsWith("QMF_")) {
 	return QMFStore::instance()->account(id, d_ptr->error);
     } else {
-        return  TelepathyEngine::instance()->account(id);
+        return TelepathyEngine::instance()->account(id);
     }
 
     return QMessageAccount();
@@ -441,6 +497,5 @@ void QMessageStore::unregisterNotificationFilter(QMessageManager::NotificationFi
     QMFStore::instance()->unregisterNotificationFilter(notificationFilterId);
     StorageEngine::instance()->unregisterNotificationFilter(notificationFilterId);
 }
-
 
 QTM_END_NAMESPACE

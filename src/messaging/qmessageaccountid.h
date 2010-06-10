@@ -55,7 +55,7 @@ class Q_MESSAGING_EXPORT QMessageAccountId
 public:
     QMessageAccountId();
     QMessageAccountId(const QMessageAccountId &other);
-    QMessageAccountId(const QString& id);
+    QMessageAccountId(const QString &id);
     ~QMessageAccountId();
     
     QMessageAccountId& operator=(const QMessageAccountId &other);

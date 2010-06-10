@@ -44,6 +44,7 @@
 #include "qmessageservice_maemo6_p.h"
 
 #include "maemo6helpers_p.h"
+#include "storageengine_maemo6_p.h"
 #include "telepathyengine_maemo6_p.h"
 
 QTM_BEGIN_NAMESPACE
@@ -51,21 +52,17 @@ QTM_BEGIN_NAMESPACE
 QMessageServicePrivate::QMessageServicePrivate(QMessageService *parent)
     : q_ptr(parent),
    _qmfService(new QMFService(parent)),
-   //_smsService(new StorageEngine(parent)),
-   _smsService(StorageEngine::instance()),
    _state(QMessageService::InactiveState),
    _error(QMessageManager::NoError),
    _active(false), _actionId(-1),
    _pendingRequestCount(0)
 {
-    if (_smsService)
-        _smsService->setService(parent);
+
 }
 
 QMessageServicePrivate::~QMessageServicePrivate()
 {
     delete _qmfService;
-    //delete _smsService;
 }
 
 QMessageServicePrivate* QMessageServicePrivate::implementation(const QMessageService &service)
@@ -79,8 +76,6 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
                                            uint limit, uint offset,
                                            EnginesToCall enginesToCall)
 {
-    Q_UNUSED(messageService);
-
     if (_active) {
         return false;
     }
@@ -102,10 +97,10 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         }
     }
 
-    if ((enginesToCall & EnginesToCallTelepathy) && _smsService) {
-        if (_smsService->queryMessages(_filter, sortOrder, limit, offset)) {
+    if (enginesToCall & EnginesToCallTelepathy) {
+        if (StorageEngine::instance()->queryMessages(&messageService, _filter, sortOrder, limit, offset)) {
             _pendingRequestCount++;
-        }
+	}
     }
 
     if (_pendingRequestCount > 0) {
@@ -130,8 +125,6 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
                                            uint limit, uint offset,
                                            EnginesToCall enginesToCall)
 {
-    Q_UNUSED(messageService);
-
     if (_active) {
         return false;
     }
@@ -154,11 +147,12 @@ bool QMessageServicePrivate::queryMessages(QMessageService &messageService,
         } 
     }
 
-    if ((enginesToCall & EnginesToCallTelepathy) && _smsService) {
-        if (_smsService->queryMessages(_filter, body, matchFlags,
+    if (enginesToCall & EnginesToCallTelepathy) {
+
+        if (StorageEngine::instance()->queryMessages(&messageService, _filter, body, matchFlags,
                                        sortOrder, limit, offset)) {
             _pendingRequestCount++;
-        }
+	}
     }
 
     if (_pendingRequestCount > 0) {
@@ -179,8 +173,6 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
                                            const QMessageFilter &filter,
                                            EnginesToCall enginesToCall)
 {
-    Q_UNUSED(messageService);
-
     if (_active) {
         return false;
     }
@@ -200,11 +192,10 @@ bool QMessageServicePrivate::countMessages(QMessageService &messageService,
         }
     }
 
-    //TODO: SMS count support
-    if ((enginesToCall & EnginesToCallTelepathy) && _smsService) {
-        if (_smsService->countMessages(handledFilter)) {
+    if (enginesToCall & EnginesToCallTelepathy) {
+        if (StorageEngine::instance()->countMessages(&messageService, handledFilter)) {
                 _pendingRequestCount++;
-            }
+	}
     }
 
     if (_pendingRequestCount > 0) {
@@ -241,8 +232,33 @@ void QMessageServicePrivate::stateChanged(QMessageService::State state)
     emit q_ptr->stateChanged(state);
 }
 
+void QMessageServicePrivate::cancel()
+{
+    if (!_active) 
+	return;
+    
+    _active = false;
+    _error = QMessageManager::NoError;
+    _pendingRequestCount = 0;
+
+    QObjectList deleteList;
+    foreach (QObject *child, q_ptr->children()) {
+	if (qobject_cast<ServiceQuery *>(child) || qobject_cast<SendRequest *>(child)) {
+	    deleteList << child;
+	}
+    }
+    qDeleteAll(deleteList);
+    
+    _qmfService->cancel();
+
+    stateChanged(QMessageService::CanceledState);
+}
+
 void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
 {
+    if (!_active)
+	return;
+
     _pendingRequestCount--;
 
     if (!isFiltered) {
@@ -281,15 +297,77 @@ void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFil
 
 void QMessageServicePrivate::messagesCounted(int count)
 {
+    if (!_active)
+	return;
+
     _pendingRequestCount--;
     _count += count;
     if (_pendingRequestCount == 0) {
         emit q_ptr->messagesCounted(_count);
-
         setFinished(true);
-
         _count = 0;
     }
+}
+
+bool QMessageServicePrivate::compose(const QMessage &message)
+{
+    if (_active) {
+        return false;
+    }
+
+    _active = true;
+    _error = QMessageManager::NoError;
+
+    bool retVal = true;
+    _state = QMessageService::ActiveState;
+    emit stateChanged(_state);
+
+    if (message.type() == QMessage::Sms) {
+        retVal = StorageEngine::instance()->compose(message);
+    } else if (message.type() == QMessage::Mms) {
+        _error = QMessageManager::NotYetImplemented; //TODO:
+        qWarning() << "QMessageService::compose not yet implemented for MMS";
+        retVal = false;
+    } else if (message.type() == QMessage::Email) {
+        retVal = _qmfService->compose(message);
+    }
+
+    setFinished(retVal);
+    return retVal;
+}
+
+bool QMessageServicePrivate::show(const QMessageId &id)
+{
+    if (_active) {
+        return false;
+    }
+
+    if (!id.isValid()) {
+        _error = QMessageManager::InvalidId;
+        return false;
+    }
+
+    _active = true;
+    _error = QMessageManager::NoError;
+
+    bool retVal = true;
+    _state = QMessageService::ActiveState;
+    emit stateChanged(_state);
+
+    if (id.toString().startsWith("QMF_")) {
+        retVal = _qmfService->show(id);
+    } else
+        // TODO: fix problems with prefix: "SMS_"
+        // if(id.toString().startsWith("SMS_"))
+        {
+        retVal = StorageEngine::instance()->show(id);
+    } /*
+    else {
+        retVal = false;
+    } */
+
+    setFinished(retVal);
+    return retVal;
 }
 
 void QMessageServicePrivate::progressChanged(uint value, uint total)
@@ -406,50 +484,27 @@ bool QMessageService::send(QMessage &message)
         }
 
         if (account.messageTypes() & QMessage::Sms) {
-	    retVal = TelepathyEngine::instance()->sendMessage(message);
+	    retVal = TelepathyEngine::instance()->sendMessage(message, this);
         } else if (account.messageTypes() & QMessage::InstantMessage) {
-            retVal = TelepathyEngine::instance()->sendMessage(message);
+            retVal = TelepathyEngine::instance()->sendMessage(message, this);
         } else if (account.messageTypes() & QMessage::Mms) {
             d_ptr->_error = QMessageManager::NotYetImplemented;
             qWarning() << "QMessageService::send not yet implemented for MMS";
             retVal = false;
         } else if (account.messageTypes() & QMessage::Email) {
             retVal = d_ptr->_qmfService->send(message);
-	    if (retVal) return retVal;
 	}
     }
 
-    d_ptr->setFinished(retVal);
+    if (!retVal)
+	d_ptr->setFinished(retVal);
+
     return retVal;
 }
 
 bool QMessageService::compose(const QMessage &message)
 {
-    if (d_ptr->_active) {
-        return false;
-    }
-
-    d_ptr->_active = true;
-    d_ptr->_error = QMessageManager::NoError;
-
-    bool retVal = true;
-    d_ptr->_state = QMessageService::ActiveState;
-    emit stateChanged(d_ptr->_state);
-
-    if (message.type() == QMessage::Sms) {
-        d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
-        qWarning() << "QMessageService::compose not yet implemented for SMS";
-        retVal = false;
-    } else if (message.type() == QMessage::Mms) {
-        d_ptr->_error = QMessageManager::NotYetImplemented; //TODO:
-        qWarning() << "QMessageService::compose not yet implemented for MMS";
-        retVal = false;
-    } else if (message.type() == QMessage::Email) {
-        retVal = d_ptr->_qmfService->compose(message);
-    }
-
-    d_ptr->setFinished(retVal);
-    return retVal;
+    return d_ptr->compose(message);
 }
 
 
@@ -457,6 +512,11 @@ bool QMessageService::retrieveHeader(const QMessageId& id)
 {
     if (d_ptr->_active) {
         return false;
+    }
+
+    if (!id.isValid()) {
+	d_ptr->_error = QMessageManager::InvalidId;
+	return false;
     }
 
     // QMFService might emit signals so this value must be true
@@ -480,6 +540,11 @@ bool QMessageService::retrieveBody(const QMessageId& id)
         return false;
     }
 
+    if (!id.isValid()) {
+	d_ptr->_error = QMessageManager::InvalidId;
+	return false;
+    }
+
     // QMFService might emit signals so this value must be true
     d_ptr->_active = true;
 
@@ -501,6 +566,11 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
         return false;
     }
 
+    if (!messageId.isValid() || !id.isValid()) {
+	d_ptr->_error = QMessageManager::InvalidId;
+	return false;
+    }
+
     // QMFService might emit signals so this value must be true
     d_ptr->_active = true;
 
@@ -518,36 +588,18 @@ bool QMessageService::retrieve(const QMessageId &messageId, const QMessageConten
 
 bool QMessageService::show(const QMessageId& id)
 {
-    if (d_ptr->_active) {
-        return false;
-    }
-
-    if (!id.isValid()) {
-        d_ptr->_error = QMessageManager::InvalidId;
-        return false;
-    }
-
-    d_ptr->_active = true;
-    d_ptr->_error = QMessageManager::NoError;
-
-    bool retVal = true;
-    d_ptr->_state = QMessageService::ActiveState;
-    emit stateChanged(d_ptr->_state);
-
-    if (id.toString().startsWith("QMF_")) {
-        retVal = d_ptr->_qmfService->show(id);
-    } else {
-        retVal = false;
-    }
-
-    d_ptr->setFinished(retVal);
-    return retVal;
+    return d_ptr->show(id);
 }
 
 bool QMessageService::exportUpdates(const QMessageAccountId &id)
 {
     if (d_ptr->_active) {
         return false;
+    }
+
+    if (!id.isValid()) {
+	d_ptr->_error = QMessageManager::InvalidId;
+	return false;
     }
 
     // QMFService might emit signals so this value must be true
@@ -572,8 +624,7 @@ QMessageService::State QMessageService::state() const
 
 void QMessageService::cancel()
 {
-    //TODO add cancelation of SMS sybsystems
-    d_ptr->_qmfService->cancel();
+    d_ptr->cancel();
 }
 
 QMessageManager::Error QMessageService::error() const

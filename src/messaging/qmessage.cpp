@@ -59,6 +59,7 @@ QList<QByteArray> charsets;
 /*!
     \class QMessage
 
+    \preliminary
     \brief The QMessage class provides a convenient interface for working with messages.
     
     \ingroup messaging

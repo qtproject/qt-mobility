@@ -42,7 +42,6 @@
 #include <QByteArray>
 #include <QDataStream>
 #include <MAPIUtil.h>
-#include <messagingutil_p.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -91,7 +90,7 @@ QMessageAccountId::QMessageAccountId(const QMessageAccountId& other)
 QMessageAccountId::QMessageAccountId(const QString& id)
     : d_ptr(new QMessageAccountIdPrivate(this))
 {
-    QDataStream idStream(QByteArray::fromBase64(MessagingUtil::stripIdPrefix(id).toLatin1()));
+    QDataStream idStream(QByteArray::fromBase64(id.toLatin1()));
     idStream >> d_ptr->_storeRecordKey;
 }
 
@@ -129,13 +128,13 @@ bool QMessageAccountId::operator<(const QMessageAccountId& other) const
 QString QMessageAccountId::toString() const
 {
     if (!isValid())
-        return MessagingUtil::addIdPrefix(QString());
+        return QString();
 
     QByteArray encodedId;
     QDataStream encodedIdStream(&encodedId, QIODevice::WriteOnly);
     encodedIdStream << d_ptr->_storeRecordKey;
 
-    return MessagingUtil::addIdPrefix(encodedId.toBase64());
+    return encodedId.toBase64();
 }
 
 bool QMessageAccountId::isValid() const

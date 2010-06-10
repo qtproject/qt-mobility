@@ -41,10 +41,108 @@
 
 #include "storageengine_maemo6_p.h"
 #include "telepathyhelpers_maemo6_p.h"
+#include "maemo6helpers_p.h"
+
 #include "qmessageservice_maemo6_p.h"
 #include "qmessagefolder_p.h"
 #include "qmessagefolderid_p.h"
+#include "qmessagefilter_p.h"
+#include "qmessage_p.h"
 
+#include <QTimer>
+
+namespace 
+{
+
+struct MessageCounter
+{
+    MessageCounter(const QMessageFilter &filter)
+	: _filter(filter)
+	, _count(0)
+     {
+	 _privateFilter = QMessageFilterPrivate::implementation(_filter); 
+     }
+
+    void operator()(const Event &event)
+    {
+	if (_filter.isEmpty()) {
+	    _count++;
+	} else {
+	    const QMessage message = StorageEngine::messageFromEvent(event);
+	    if (_privateFilter->filter(message)) {
+		_count++;
+	    }
+	}
+    }
+
+    QMessageFilter _filter;
+    const QMessageFilterPrivate *_privateFilter;
+    int _count;
+};
+
+struct MessageFilter
+{
+    MessageFilter(const QMessageFilter &filter)
+	: _filter(filter)
+     {
+	 _privateFilter = QMessageFilterPrivate::implementation(_filter); 
+     }
+
+    void operator()(const Event &event)
+    {
+	if (_filter.isEmpty()) {
+	    _ids << QMessageId(QString::number(event.id()));
+	} else {
+	    const QMessage message = StorageEngine::messageFromEvent(event);
+	    if (_privateFilter->filter(message)) {
+		_ids << message.id();
+	    }
+	}
+    }
+
+    QMessageFilter _filter;
+    const QMessageFilterPrivate *_privateFilter;
+    QMessageIdList _ids;
+};
+
+struct MessageFilterAndBodySearcher
+{
+    MessageFilterAndBodySearcher(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchflags) 
+	: _filter(filter)
+	, _body(body)
+	, _matchFlags(matchflags)
+     {
+	 _privateFilter = QMessageFilterPrivate::implementation(_filter); 
+     }
+
+    void operator()(const Event &event)
+    {
+	const QMessage message = StorageEngine::messageFromEvent(event);
+        if (_privateFilter->filter(message)) {
+            const QString text = message.textContent();
+
+            if (text.length() >= _body.length()) {
+                bool found = false;
+
+                if (_matchFlags & QMessageDataComparator::MatchCaseSensitive)
+                    found = text.contains(_body, Qt::CaseSensitive);
+                else
+                    found = text.contains(_body, Qt::CaseInsensitive);
+
+                if (found)
+                    _ids << message.id();
+            }
+        }
+    }
+
+    QMessageFilter _filter;
+    QString _body;
+    QMessageDataComparator::MatchFlags _matchFlags;
+    const QMessageFilterPrivate *_privateFilter;
+    QMessageIdList _ids;
+};
+
+}
 
 Q_GLOBAL_STATIC(StorageEngine, storageEngine);
 
@@ -53,13 +151,15 @@ StorageEngine* StorageEngine::instance()
     return storageEngine();
 }
 
-StorageEngine::StorageEngine(QMessageService *service, QObject *parent) :
-        QObject(parent), m_service(service), m_sync(false),
-        m_ready(false), m_state(QMessageService::InactiveState)
+StorageEngine::StorageEngine(QObject *parent) 
+	: QObject(parent)
+        , m_pMessagingIf(new MessagingIf())
+	, m_sync(true)
+        , m_ready(false)
+	, m_error(QMessageManager::NoError)
 {
     QDEBUG_FUNCTION_BEGIN
-    m_messagesMap.clear();
-    // set the model mode
+
     m_SMSModel.setQueryMode(CommHistoryModel::AsyncQuery);
     connect(&m_SMSModel, SIGNAL(modelReady()), SLOT(onModelReady()));
 
@@ -68,48 +168,10 @@ StorageEngine::StorageEngine(QMessageService *service, QObject *parent) :
     connect(&m_SMSModel, SIGNAL(eventsUpdated(const QList<CommHistory::Event> &)),
 	    this, SLOT(eventsUpdated(const QList<CommHistory::Event> &)));
     connect(&m_SMSModel, SIGNAL(eventDeleted(int)), this, SLOT(eventDeleted(int)));
-
-    QDEBUG_FUNCTION_END
-}
-
-bool StorageEngine::initialize(bool sync)
-{
-   qDebug() << __PRETTY_FUNCTION__ ;
-
-   // read events from tracker database
-   return  updateSMSModel(sync);
-}
-
-QMessageService::State StorageEngine::state()
-{    
-    return m_state;
-}
-
-void StorageEngine::setService(QMessageService *service)
-{
-    // onModelReady() uses m_service to access QMessageServicePrivate
-    m_service = service;
-}
-
-void StorageEngine::debugMessage(QMessage &message)
-{
-    // just prints content of main message`s fields
-    QDEBUG_FUNCTION_BEGIN
-    qDebug() << "id:" << message.id().toString() << "type:" << message.type() << "size:" << message.size() << "status:" << message.status() << "priority:" << message.priority();
-    qDebug() << "AccountId:" << message.parentAccountId().toString() << "StantardFolder" << message.standardFolder() << "parenFolderId:" << message.parentFolderId().toString();
-    qDebug() << "Date:" << message.date() << "receivedDate:" << message.receivedDate() << "Subject:" << message.subject();
-    qDebug() << "From:" << message.from().addressee();
-    qDebug() << "To:" << (message.to().isEmpty() ? "**none**" : message.to().first().addressee());
-    qDebug() << "Body:" << message.textContent();
-    QDEBUG_FUNCTION_END
-}
-
-void StorageEngine::debugEvent(Event &event)
-{
-    QDEBUG_FUNCTION_BEGIN
-    // just prints content of main event`s fields
-    // TODO: add more fields
-    qDebug() << "id: " << event.id() << "contactId" << event.contactId() << "contactName: " << event.contactName();    
+    
+    if (m_SMSModel.getEvents() && m_sync)
+	m_loop.exec();
+    
     QDEBUG_FUNCTION_END
 }
 
@@ -118,7 +180,7 @@ void StorageEngine::debugEvent(Event &event)
  * Converts message to event.
  *
  */
-Event StorageEngine::eventFromMessage(const QMessage &message) const
+Event StorageEngine::eventFromMessage(const QMessage &message)
 {
    QDEBUG_FUNCTION_BEGIN
    Event event;
@@ -178,6 +240,8 @@ Event StorageEngine::eventFromMessage(const QMessage &message) const
    event.setStartTime(message.date());
    event.setEndTime(message.receivedDate());
    */
+   event.setIsRead(message.status() & QMessage::Read);
+
    bool ok = false;
    int eId = message.id().toString().toInt(&ok);
 
@@ -195,7 +259,7 @@ Event StorageEngine::eventFromMessage(const QMessage &message) const
  * Converts event to message.
  *
  */
-QMessage StorageEngine::messageFromEvent(const Event &ev) const
+QMessage StorageEngine::messageFromEvent(const Event &ev)
 {
     QDEBUG_FUNCTION_BEGIN
     QMessage message;
@@ -218,10 +282,15 @@ QMessage StorageEngine::messageFromEvent(const Event &ev) const
 
     message.setParentAccountId(QMessageAccount::defaultAccount(QMessage::Sms));
 
+    QMessage::StatusFlags status(0);
     if (ev.isRead()) {
-        message.setStatus(QMessage::Read);
-    };
-
+	status |= QMessage::Read;
+    }
+    if (ev.isDeleted()) {
+	status |= QMessage::Removed;
+    }
+    
+    message.setStatus(status);
     message.setPriority(QMessage::NormalPriority);
 
     message.setDate(ev.startTime());
@@ -257,7 +326,6 @@ QMessage StorageEngine::messageFromEvent(const Event &ev) const
         message.setFrom(QMessageAddress(QMessageAddress::Phone, ev.localUid()));
         message.setTo(MessagingHelper::stringToAddressList(ev.remoteUid()));
     }
-
     message.setBody(QString(ev.freeText()));
 
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
@@ -268,393 +336,157 @@ QMessage StorageEngine::messageFromEvent(const Event &ev) const
     return message;
 }
 
-/**
- *
- * Updates model in synchronous mode if requested by flag updateModel and returns the result of applied filtering.
- *
- */
-int StorageEngine::countMessagesSync(const QMessageFilter & filter, bool updateModel)
+QMessageManager::Error StorageEngine::error() const
 {
-    QDEBUG_FUNCTION_BEGIN
-    int count = 0;
-
-    if (updateModel) {
-        updateSMSModel(true);
-    }
-
-    if (filter.isEmpty())
-        count =  m_messagesMap.size();
-    else {
-        QMessageIdList idList = filterInternalList(filter);
-        count = idList.size();
-    }
-
-    QDEBUG_FUNCTION_END
-    return count;
+    return m_error;
 }
 
-/**
- *
- * Async call to count messages from event`s database. Slot onModelReady() is called when model is updated.
- * Filtering is applied in the slot after model update.
- *
- * \param  filter
- */
-bool StorageEngine::countMessages(const QMessageFilter &filter)
+int StorageEngine::countMessagesSync(const QMessageFilter &filter)
 {
     QDEBUG_FUNCTION_BEGIN
-    bool ret = updateSMSModel();
+	
+    m_error = QMessageManager::NoError;
 
-    if (ret) {
-        m_queryType = QueryCount;
-        m_filter = filter;
+    QMessageFilterPrivate *pf = QMessageFilterPrivate::implementation(filter);
+    if (pf->_field == QMessageFilterPrivate::None && 
+	pf->_filterList.count() == 0 &&
+	pf->_notFilter) {
+	return 0;
     }
-    else
-        m_queryType = NoQuery;
+
+    MessageCounter counter(filter);
+    foreachEvent<MessageCounter>(counter);
 
     QDEBUG_FUNCTION_END
-    return ret;
+    return counter._count;
 }
 
-/**
- *
- * Updates model in synchronous mode if requested by flag updateModel and returns the result of applied filtering and searching.
- *
- */
 QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, const QString &body,
-                                  QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
-                                  uint limit, uint offset, bool updateModel)
+						QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
+						uint limit, uint offset)
 {
     QDEBUG_FUNCTION_BEGIN;
     Q_UNUSED(sortOrder);
     Q_UNUSED(limit);
     Q_UNUSED(offset);
 
-    if (updateModel)
-        updateSMSModel(true);
+    m_error = QMessageManager::NoError;
 
-    if ((m_ready == true) && (m_state == QMessageService::FinishedState))
-    {
-        QMessageIdList ids = filterAndSearchInternalList(filter, body, matchFlags);
-        // sorting will be applied in void QMessageServicePrivate::messagesFound()
-        // limit and offset will be applied in void QMessageServicePrivate::messagesFound()
-
-        QDEBUG_FUNCTION_END
-        return ids;
-    } else {
-        QDEBUG_FUNCTION_END
-        return QMessageIdList();
+    QMessageFilterPrivate *pf = QMessageFilterPrivate::implementation(filter);
+    if (pf->_field == QMessageFilterPrivate::None && 
+	pf->_filterList.count() == 0 &&
+	pf->_notFilter) {
+	return QMessageIdList();
     }
-}
 
-/**
- *
- * Updates SMS model and m_messagesMap in async or sync mode depending on flag sync.
- * Does not emit stateChanged() in sync mode.
- *
- */
-bool StorageEngine::updateSMSModel(bool sync)
-{
-    bool ret = false;
-
-    if ((m_state == QMessageService::ActiveState))
-        return false;
-
-    ret = m_SMSModel.getEvents();
-    if (ret)
-        m_state = QMessageService::ActiveState;
-    else
-        m_state = QMessageService::CanceledState;
-
-
-    if (ret && sync) {
-        m_sync = true;
-        m_queryType = NoQuery;
-        m_loop.exec();
-    }
-    else
-        emit stateChanged(m_state);
-
-    return ret;
-}
-
-/**
- *
- * Async call to query messages from event`s database. Slot onModelReady() is called when model is updated.
- * Filtering and searching are applied in the slot after the whole model update.
- *
- *
- */
-bool StorageEngine::queryMessages(const QMessageFilter &filter, const QString &body,
-                                  QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
-                                  uint limit, uint offset)
-{
-    QDEBUG_FUNCTION_BEGIN            
-    bool ret = updateSMSModel();
-
-    if (ret) {
-        m_queryType = QueryAndSearch;
-
-        m_filter = filter;
-        m_body = body;
-        m_matchFlags = matchFlags;
-        m_sortOrder = sortOrder;
-        m_limit = limit;
-        m_offset = offset;
-    }
-    else
-        m_queryType = NoQuery;
+    MessageFilterAndBodySearcher searcher(filter, body, matchFlags);
+    foreachEvent<MessageFilterAndBodySearcher>(searcher);
 
     QDEBUG_FUNCTION_END
-    return ret;
+
+    return searcher._ids;
 }
 
-/**
- *
- * Updates model in synchronous mode if requested by flag updateModel and returns the result of applied filtering.
- *
- */
-QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter & filter, const QMessageSortOrder &sortOrder, uint limit, uint offset, bool updateModel)
+QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
-    QDEBUG_FUNCTION_BEGIN;
+    QDEBUG_FUNCTION_BEGIN
     Q_UNUSED(sortOrder);
     Q_UNUSED(limit);
     Q_UNUSED(offset);
 
-    if (updateModel)
-        updateSMSModel(true);
+    m_error = QMessageManager::NoError;
 
-    if ((m_ready == true) && (m_state != QMessageService::ActiveState))
-    {
-        QMessageIdList ids = filterInternalList(filter);
-        // sorting will be applied in void QMessageServicePrivate::messagesFound()
-        // limit and offset will be applied in void QMessageServicePrivate::messagesFound()
-
-        QDEBUG_FUNCTION_END
-        return ids;
-    } else {
-        QDEBUG_FUNCTION_END
-        return QMessageIdList();
+    QMessageFilterPrivate *pf = QMessageFilterPrivate::implementation(filter);
+    if (pf->_field == QMessageFilterPrivate::None && 
+	pf->_filterList.count() == 0 &&
+	pf->_notFilter) {
+	return QMessageIdList();
     }
+    
+    MessageFilter searcher(filter);
+    foreachEvent<MessageFilter>(searcher);
+    
+    QDEBUG_FUNCTION_END
+
+    return searcher._ids;
 }
 
-/**
- *
- * Async call to query messages from event`s database. Slot onModelReady() is called when model is updated.
- * Filtering is applied in the slot after the whole model update.
- *
- *
- */
-bool StorageEngine::queryMessages(const QMessageFilter & filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+bool StorageEngine::countMessages(QMessageService *service, const QMessageFilter &filter)
 {
     QDEBUG_FUNCTION_BEGIN
-    bool ret = updateSMSModel();
 
-    if (ret) {
-        m_queryType = QueryAndFilter;
+    m_error = QMessageManager::NoError;    
 
-        m_filter = filter;
-        m_sortOrder = sortOrder;
-        m_limit = limit;
-        m_offset = offset;
-    }
-    else
-        m_queryType = NoQuery;
+    ServiceQuery *query = new ServiceQuery(service, filter);
+    QTimer::singleShot(0, query, SLOT(doQuery()));
 
     QDEBUG_FUNCTION_END
-    return ret;
+    return true;
 }
 
-/**
- *
- * Filter and search m_messagesMap. Do not update it. Sync call.
- *
- *
- */
-QMessageIdList StorageEngine::filterAndSearchInternalList(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags)
+bool StorageEngine::queryMessages(QMessageService *service, const QMessageFilter &filter, const QString &body,
+				  QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
+				  uint limit, uint offset)
+{
+    QDEBUG_FUNCTION_BEGIN;
+
+    m_error = QMessageManager::NoError;
+
+    ServiceQuery *query = new ServiceQuery(service, filter, body, matchFlags, 
+					   sortOrder, limit, offset);
+    QTimer::singleShot(0, query, SLOT(doQuery()));
+
+    QDEBUG_FUNCTION_END
+    return true;
+}
+
+bool StorageEngine::queryMessages(QMessageService *service, const QMessageFilter &filter, 
+				  const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     QDEBUG_FUNCTION_BEGIN
-    QMessageIdList idList;
-    QList<QMessage> messageList = m_messagesMap.values();
-    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filter);
 
-    for (int i = 0; i < messageList.size(); ++i) {
-        QMessage message = messageList.at(i);
-
-        if (pf->filter(message)) {
-            QString text = message.subject();
-
-            if (text.length() >= body.length()) {
-                bool found = false;
-
-                if (matchFlags & QMessageDataComparator::MatchCaseSensitive)
-                    found = text.contains(body, Qt::CaseSensitive);
-                else
-                    found = text.contains(body, Qt::CaseInsensitive);
-
-                if (found)
-                    idList.append(message.id());
-            }
-        }
-    }
+    m_error = QMessageManager::NoError;
+	
+    ServiceQuery *query = new ServiceQuery(service, filter, sortOrder, limit, offset);
+    QTimer::singleShot(0, query, SLOT(doQuery()));
 
     QDEBUG_FUNCTION_END
-    return idList;
+    return true;
 }
 
 /**
- *
- * Filter m_messagesMap. Do not update it. Sync call.
- *
- *
- */
-QMessageIdList StorageEngine::filterInternalList(const QMessageFilter &filter)
-{
-    QDEBUG_FUNCTION_BEGIN
-    QMessageIdList idList;
-    QList<QMessage> messageList = m_messagesMap.values();
-    QMessageFilterPrivate* pf = QMessageFilterPrivate::implementation(filter);
-
-    for (int i = 0; i < messageList.size(); ++i) {
-        QMessage message = messageList.at(i);
-
-        if (pf->filter(message)) {            
-          idList.append(message.id());
-        };
-    }
-
-    QDEBUG_FUNCTION_END
-    return idList;
-}
-
-/**
- *
- * Slot that is called when m_SMSModel is updated. Updates m_messagesMap.
- * If model update was caused by async query (queryMessages(), countMessages()), apply filtering and search and pass processing to QMessageServicePrivate.
- * In case of sync queries (queryMessagesSync(), countMessagesSync()) just quits loop m_loop.
- *
+ * Slot that is called when m_SMSModel is ready.
  */
 void StorageEngine::onModelReady()
 {
     QDEBUG_FUNCTION_BEGIN;
 
-    if (m_queryType == AddQuery || m_queryType == RemoveQuery)
-    {
-        qDebug() << __PRETTY_FUNCTION__ << "m_queryType == AddQuery || m_queryType == RemoveQuery";
-        qDebug() << __PRETTY_FUNCTION__ << "m_sync: " << m_sync;
-        if (m_sync)
-        {
-            m_sync = false;
-            m_loop.quit();
-        }
-        return;
-    }
-
-    if ( !updateMessagesMap() )
-                qWarning() << __PRETTY_FUNCTION__ << "Error in messages map update";
-
     m_ready = true;
-    m_state = QMessageService::FinishedState;
-
-    if (m_queryType != NoQuery)
-    {        
-        QMessageServicePrivate *p = QMessageServicePrivate::implementation(*m_service);        
-
-        if (!p) {
-            qWarning() <<  __PRETTY_FUNCTION__ << "Cannot get QMessageServicePrivate";
-            return;
-        }
-
-        switch (m_queryType)
-        {
-        case QueryAndFilter: {
-                QMessageIdList ids = queryMessagesSync(m_filter, m_sortOrder, m_limit, m_offset, false);
-                p->messagesFound(ids, true, false);
-                break;
-            }
-        case QueryAndSearch: {
-                QMessageIdList ids = queryMessagesSync(m_filter, m_body, m_matchFlags, m_sortOrder, m_limit, m_offset, false);
-                p->messagesFound(ids, true, false);
-                break;
-            }
-        case QueryCount: {
-                int counter = countMessagesSync(m_filter, false);
-                p->messagesCounted(counter);
-                break;
-            }
-        case NoQuery:
-            break;
-        default:
-            emit stateChanged(m_state);
-        }
-    }
-
-    qDebug() << __PRETTY_FUNCTION__ << "m_sync: " << m_sync;
-    if (m_sync)
-    {
+    if (m_sync) {
         m_sync = false;
         m_loop.quit();
     }    
+
     QDEBUG_FUNCTION_END
 }
 
 /**
  *
- * Updates m_messagesMap using just updated m_SMSModel.  Sync call.
+ * Returns message from m_SMSModel by id. Sync call.
  *
  */
-bool StorageEngine::updateMessagesMap()
-{
-    QDEBUG_FUNCTION_BEGIN
-    bool ret = false;
-
-    int rowsCount = m_SMSModel.rowCount();
-    int rowIndex = 0;
-
-    qDebug() << __PRETTY_FUNCTION__ << "rowsCount: " << rowsCount;
-
-    for (rowIndex = 0; rowIndex < rowsCount; rowIndex++)
-    {
-        QModelIndex modelIndex = m_SMSModel.index(rowIndex, 0);
-
-        if (!modelIndex.isValid())
-        {
-            qWarning() << __PRETTY_FUNCTION__ << "Invalid index";
-            return false;
-        }
-        else
-        {
-            Event event = m_SMSModel.event(modelIndex);
-
-            if (!event.isValid())
-            {
-                qWarning() << __PRETTY_FUNCTION__ << "Invalid event ";
-                return false;
-            }
-            else if (!event.isDeleted()) {
-                QMessage message = messageFromEvent(event);
-
-                m_messagesMap.insert(message.id(), message);
-                debugMessage(message);
-                ret = true;
-            }
-        }
-    }
-
-    QDEBUG_FUNCTION_END
-    return ret;
-}
-
-/**
- *
- * Returns message from m_messagesMap by id. Sync call.
- *
- */
-QMessage StorageEngine::message(const QMessageId& id)
+QMessage StorageEngine::message(const QMessageId &id) const
 {
     if (id.isValid()) {
-
-        return m_messagesMap.value(id, QMessage());
+	m_error = QMessageManager::NoError;
+	int eventId = id.toString().toInt();
+	QModelIndex index = m_SMSModel.findEvent(eventId);
+	if (index.isValid()) {
+	    const Event event = m_SMSModel.event(index);
+	    return messageFromEvent(event);
+	}
+    } else {
+	m_error = QMessageManager::InvalidId;
     }
 
     return QMessage();
@@ -662,24 +494,30 @@ QMessage StorageEngine::message(const QMessageId& id)
 
 /**
  *
- * Removes message m_messagesMap, m_SMSModel and events database by id.  Sync call.
+ * Removes message m_SMSModel and events database by id. Sync call.
  *
  */
-bool StorageEngine::removeMessage(const QMessageId& id)
+bool StorageEngine::removeMessage(const QMessageId &id)
 {
     bool ret = false;
 
-    if (id.isValid())
-    {
+    if (id.isValid()) {
         bool isConverted = false;
         int iId = id.toString().toInt(&isConverted);
-        if (isConverted && (iId > 0 )) {
-            ret = m_SMSModel.deleteEvent(iId) && m_messagesMap.remove(id);
-            if (!ret)
-                qWarning() << __PRETTY_FUNCTION__ << "Cannot removeMessage";
-            else
-                qDebug() << __PRETTY_FUNCTION__ << "Removed successfully";
-        }
+        if (isConverted && iId > 0) {
+            ret = m_SMSModel.deleteEvent(iId);
+            if (ret) {
+		m_error = QMessageManager::NoError;
+		qDebug() << __PRETTY_FUNCTION__ << "Removed successfully";
+            } else {
+		m_error = QMessageManager::FrameworkFault;
+                qWarning() << __PRETTY_FUNCTION__ << "Cannot removeMessage";             
+	    }
+        } else {
+	    m_error = QMessageManager::InvalidId;
+	}
+    } else {	
+	m_error = QMessageManager::InvalidId;
     }
 
    return ret;
@@ -687,7 +525,7 @@ bool StorageEngine::removeMessage(const QMessageId& id)
 
 /**
  *
- * Adds message to  m_messagesMap, m_SMSModel and events database.  Sync call.
+ * Adds message to m_SMSModel and events database.  Sync call.
  *
  */
 bool StorageEngine::addMessage(QMessage &message)
@@ -695,24 +533,23 @@ bool StorageEngine::addMessage(QMessage &message)
     bool ret = false;
     Event event = eventFromMessage(message);
 
-    if (m_SMSModel.addEvent(event , false, true)) {
-            QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-            privateMessage->_id = QMessageId(QString::number(event.id()));
-            privateMessage->_modified = false;
-
-            m_messagesMap.insert(message.id(), message);
-            qDebug() << __PRETTY_FUNCTION__ << "Message added to store. new id = " << message.id().toString();
-            ret = true;
-    }
-    else
+    if (m_SMSModel.addEvent(event)) {
+	QMessagePrivate *privateMessage = QMessagePrivate::implementation(message);
+	privateMessage->_id = QMessageId(QString::number(event.id()));
+	privateMessage->_modified = false;
+	qDebug() << __PRETTY_FUNCTION__ << "Message added to store. new id = " << message.id().toString();
+	m_error = QMessageManager::NoError;
+	ret = true;
+    }  else {
         qWarning() << __PRETTY_FUNCTION__ << "Cannot add message";
-
+	m_error = QMessageManager::FrameworkFault;
+    }
     return ret;
 }
 
 /**
  *
- * Updates existing message data in m_messagesMap, m_SMSModel and tracker database.
+ * Updates existing message data in m_SMSModel and tracker database.
  *
  */
 bool StorageEngine::updateMessage(QMessage &message)
@@ -721,15 +558,12 @@ bool StorageEngine::updateMessage(QMessage &message)
     bool ret = false;
     QMessageId id(message.id());
 
-    if (id.isValid() && m_messagesMap.contains(id)) {
+    if (id.isValid()) {
 	Event event = eventFromMessage(message);
 	ret = m_SMSModel.modifyEvent(event);
-	if (ret) {
-	    QMessage &mapMessage = m_messagesMap[id];
-	    mapMessage = message;
-	    QMessagePrivate *p = QMessagePrivate::implementation(mapMessage);
-	    p->_modified = false;
-	}
+	m_error = ret ? QMessageManager::NoError : QMessageManager::FrameworkFault;
+    } else {
+	m_error = QMessageManager::InvalidId;
     }
 
     QDEBUG_FUNCTION_END
@@ -745,9 +579,14 @@ QMessageFolder StorageEngine::folder(const QMessageFolderId& id)
 {
     QMessageFolder folder;
     QString name = id.toString();
+    
+    if (!id.isValid()) {
+	m_error = QMessageManager::InvalidId;
+	return folder;
+    }
 
-    if (name.startsWith(FOLDER_PREFIX_SMS))
-    {
+    m_error = QMessageManager::NoError;
+    if (name.startsWith(FOLDER_PREFIX_SMS)) {
        name.remove(0, 4);
        folder = QMessageFolderPrivate::from(id, QMessageAccount::defaultAccount(QMessage::Sms), QMessageFolderId(), name,  QString());
     }
@@ -763,6 +602,8 @@ QMessageFolder StorageEngine::folder(const QMessageFolderId& id)
 int StorageEngine::countFolders(const QMessageFolderFilter& filter)
 {
     QMessageFolderIdList result;
+
+    m_error = QMessageManager::NoError;
 
     result << QMessageFolderId(FOLDER_ID_INBOX)
            << QMessageFolderId(FOLDER_ID_OUTBOX)
@@ -785,7 +626,10 @@ QMessageFolderIdList StorageEngine::queryFolders(const QMessageFolderFilter &fil
     Q_UNUSED(sortOrder);
     Q_UNUSED(limit);
     Q_UNUSED(offset);
+
     QMessageFolderIdList result;
+
+    m_error = QMessageManager::NoError;
 
     result << QMessageFolderId(FOLDER_ID_INBOX)
            << QMessageFolderId(FOLDER_ID_OUTBOX)
@@ -801,11 +645,13 @@ QMessageFolderIdList StorageEngine::queryFolders(const QMessageFolderFilter &fil
 
 void StorageEngine::eventsAdded(const QList<CommHistory::Event> &events)
 {
+    qDebug() << "StorageEngine::eventsAdded";
     processFilters(events, &StorageEngine::messageAdded);
 }
 
 void StorageEngine::eventsUpdated(const QList<CommHistory::Event> &events)
 {
+    qDebug() << "StorageEngine::eventsUpdated";
     processFilters(events, &StorageEngine::messageUpdated);
 }
 
@@ -842,6 +688,7 @@ void StorageEngine::processFilters(const QList<CommHistory::Event> &events, void
     QList<QMessage> messages;
     foreach (const Event &event, events) {
 	messages << messageFromEvent(event);
+	qDebug() << "StorageEngine::processFilters:" << "added/updated" << event.id();
     }
 
     NotificationFilterMap::const_iterator it = m_filters.begin(), end = m_filters.end();
@@ -865,3 +712,157 @@ void StorageEngine::processFilters(const QList<CommHistory::Event> &events, void
     }
 }
 
+bool StorageEngine::compose(const QMessage &message)
+{
+    QDEBUG_FUNCTION_BEGIN
+    bool ret = false;
+    m_error = QMessageManager::NoError;
+
+    if (m_pMessagingIf) {
+        QStringList contacts = MessagingHelper::stringListFromAddressList(message.to());
+
+        qDebug() << __PRETTY_FUNCTION__ << contacts << message.textContent();
+
+        m_pMessagingIf->showSmsEditor(contacts, message.textContent(), QString());
+        ret = true;
+    }
+    else {
+        m_error = QMessageManager::FrameworkFault;
+        qWarning() << __PRETTY_FUNCTION__ << "Cannot start SMS composer";
+    }
+
+    QDEBUG_FUNCTION_END
+    return ret;
+}
+
+bool StorageEngine::show(const QMessageId &id)
+{
+    QDEBUG_FUNCTION_BEGIN
+    bool ret = false;
+    m_error = QMessageManager::NoError;
+
+    if (id.isValid()) {
+        QMessage message(id);
+        qDebug() << "after message";
+        ret = compose(message);
+    }
+    else {
+        qWarning() << __PRETTY_FUNCTION__ << "ERROR: InvalidId";
+        m_error = QMessageManager::InvalidId;
+    }
+
+    QDEBUG_FUNCTION_END
+    return ret;
+}
+
+ServiceQuery::ServiceQuery(QMessageService *service, const QMessageFilter &filter)
+    : QObject(service)
+    , _type(CountQuery)
+    , _service(service)
+    , _filter(filter)
+    , _count(0)
+{
+
+}
+	
+ServiceQuery::ServiceQuery(QMessageService *service, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
+    : QObject(service)
+    , _type(MessageQuery)
+    , _service(service)
+    , _filter(filter)
+    , _sortOrder(sortOrder)
+    , _limit(limit)
+    , _offset(offset)
+    , _count(0)
+    
+{
+
+}
+
+ServiceQuery::ServiceQuery(QMessageService *service, const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, 
+			   const QMessageSortOrder &sortOrder, uint limit, uint offset)
+    : QObject(service)
+    , _type(MessageAndBodySearchQuery)
+    , _service(service)
+    , _filter(filter)
+    , _body(body)
+    , _matchFlags(matchFlags)
+    , _sortOrder(sortOrder)
+    , _limit(limit)
+    , _offset(offset)
+    , _count(0)
+{
+
+}
+
+ServiceQuery::~ServiceQuery()
+{
+    qDebug() << "ServiceQuery::~ServiceQuery()";
+}
+
+void ServiceQuery::doQuery()
+{
+    if (_type == CountQuery) {
+	_count = StorageEngine::instance()->countMessagesSync(_filter);
+	QTimer::singleShot(0, this, SLOT(completed()));
+    } else {
+	_ids = StorageEngine::instance()->queryMessagesSync(_filter);
+	if (_ids.count()) {
+	    if (_type == MessageQuery || _body.isEmpty()) {
+		QTimer::singleShot(0, this, SLOT(sortMessages()));
+	    } else {
+		QTimer::singleShot(0, this, SLOT(searchBody()));
+	    }
+	} else {
+	    QTimer::singleShot(0, this, SLOT(completed()));
+	}
+    }
+}
+
+void ServiceQuery::sortMessages()
+{
+    MessagingHelper::orderMessages(_ids, _sortOrder);
+    MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, _limit, _offset);
+    QTimer::singleShot(0, this, SLOT(completed()));
+}
+
+void ServiceQuery::searchBody()
+{
+    QMessageIdList ids(_ids);
+    
+    _ids.clear();
+    
+    foreach (const QMessageId &id, ids) {
+	const QMessage message(id);
+	const QString text = message.textContent();
+	if (text.length() >= _body.length()) {
+	    bool found = false;
+
+	    if (_matchFlags & QMessageDataComparator::MatchCaseSensitive)
+		found = text.contains(_body, Qt::CaseSensitive);
+	    else
+		found = text.contains(_body, Qt::CaseInsensitive);
+	    
+	    if (found)
+		_ids << message.id();
+	}
+    }
+
+    if (_ids.count()) {
+	QTimer::singleShot(0, this, SLOT(sortMessages()));
+    } else {
+	QTimer::singleShot(0, this, SLOT(completed()));
+    }
+}
+
+void ServiceQuery::completed()
+{
+    QMessageServicePrivate *p = QMessageServicePrivate::implementation(*_service);
+    if (_type == CountQuery)
+	p->messagesCounted(_count);
+    else
+	p->messagesFound(_ids, true, true);
+    deleteLater();
+}
+
+#include "moc_storageengine_maemo6_p.cpp"

@@ -49,9 +49,6 @@
 QTM_BEGIN_NAMESPACE
 
 class CMTMEngine;
-#ifdef FREESTYLEMAILUSED
-class CFSEngine;
-#endif
 
 class QMessageStorePrivate : public QObject
 {
@@ -103,10 +100,6 @@ private:
     QMessageStore* q_ptr;
 
     CMTMEngine* _mtmEngine;
-#ifdef FREESTYLEMAILUSED
-    CFSEngine* _fsEngine;
-#endif
-
     QMessageManager::Error _error;
     
     NotificationType _notificationType;

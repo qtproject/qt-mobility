@@ -50,7 +50,8 @@
 #include "qmessageaccountfilter.h"
 #include "qmessageaccountfilter_p.h"
 #include "qmessageservice.h"
-#include "qmessage.h"
+#include "qmessageservice_maemo6_p.h"
+#include "qmessage_p.h"
 #include "telepathyengine_maemo6_p.h"
 #include "maemo6helpers_p.h"
 #include "telepathyhelpers_maemo6_p.h"
@@ -58,7 +59,7 @@
 Q_GLOBAL_STATIC(TelepathyEngine, telepathyEngine);
 
 TelepathyEngine::TelepathyEngine():
-        m_sync(true)
+        m_sync(true), m_error(QMessageManager::NoError)
 {
     QDEBUG_FUNCTION_BEGIN
     Tp::registerTypes();
@@ -120,6 +121,8 @@ void TelepathyEngine::onAMReady(Tp::PendingOperation *op)
 {
     QDEBUG_FUNCTION_BEGIN
 
+    m_error = convertError(op);
+
     if (op && op->isError()) {
         qWarning() << "Account manager cannot become ready:" << op->errorName() << "-" << op->errorMessage();
         return;
@@ -172,8 +175,8 @@ void TelepathyEngine::onAccountReady(TpSessionAccount *tpacc)
 
         emit accountReady(tpacc);
 
-        if (!m_reqMsg.isEmpty())
-            tpacc->sendMessageToAddress(m_reqAddress, m_reqMsg);
+        //if (!m_reqMsg.isEmpty())
+	// tpacc->sendMessageToAddress(m_reqAddress, m_reqMsg);
 
     }
     QDEBUG_FUNCTION_END
@@ -181,9 +184,10 @@ void TelepathyEngine::onAccountReady(TpSessionAccount *tpacc)
 
 /******************************************************************/
 
-void TelepathyEngine::onReady(Tp::PendingOperation *)
+void TelepathyEngine::onReady(Tp::PendingOperation *op)
 {
     QDEBUG_FUNCTION_BEGIN
+    m_error = convertError(op);
     QDEBUG_FUNCTION_END
 };
 
@@ -198,34 +202,13 @@ void TelepathyEngine::onMessageReceived(const Tp::ReceivedMessage &msg, TpSessio
     QDEBUG_FUNCTION_END
 }
 
-/******************************************************************/
-
-/**
- * Send message using specified connection manager to address
- *
- * \param connectionMgr  Name of the connection manager
- * \param address Valid address for this connection manager type. Asexample telephone number to Ring, GoogleTalk address for Gabble
- * \param message Message body
- */
-bool TelepathyEngine::_sendMessageToAddress(QString connectionMgr, QString address, QString message)
-{
-    QDEBUG_FUNCTION_BEGIN
-
-    TpSessionAccount *tpsa = _getTpSessionAccount(connectionMgr);
-
-    if (tpsa)
-        return tpsa->sendMessageToAddress(address, message);
-    QDEBUG_FUNCTION_END
-    return false;	
-}
-
 /**
  * Returns pointer to TpSessionAccout object with specified connection manager or protocol, returns NULL if no match found
  *
  * \param cm  Name of the connection manager, if left empty matches every entry
  * \param protocol Name of the protocol manager, if left empty matches every entry
  */
-TpSessionAccount* TelepathyEngine::_getTpSessionAccount(const  QString cm, QString protocol)
+TpSessionAccount *TelepathyEngine::getTpSessionAccount(const QString &cm, const QString &protocol)
 {
     QDEBUG_FUNCTION_BEGIN
     qWarning() << "TelepathyEngine::getAccount" << cm << " " << protocol;
@@ -240,30 +223,31 @@ TpSessionAccount* TelepathyEngine::_getTpSessionAccount(const  QString cm, QStri
     QDEBUG_FUNCTION_END return NULL;
 }
 
-bool TelepathyEngine::sendMessage(QMessage &message)
+bool TelepathyEngine::sendMessage(QMessage &message, QMessageService *service)
 {
     QDEBUG_FUNCTION_BEGIN
 
     bool retVal(false);	
     QMessage::Type type = message.type();
     QString cm = (type == QMessage::Sms) ? "ring" : (type == QMessage::InstantMessage) ? "gabble" : "";
-    QMessageAddressList toList = message.to();
+
     QMessageAccountId accountId = message.parentAccountId();
 
-    qDebug() << __FUNCTION__ << "accountId: " << accountId.toString() ;
+    qDebug() << __FUNCTION__ << "accountId: " << accountId.toString();
 
     if (!cm.isEmpty()) {
-        foreach (const QMessageAddress &to, toList) {
-            qDebug() << __FUNCTION__ << " cm: " << cm << " to: " << to.addressee() << " text: " << message.textContent();
-            if (!_sendMessageToAddress(cm, to.addressee(), message.textContent()))
-		return false;
-        }
-	retVal = true;
-    } else
-        qWarning() << "TelepathyEngine::sendMessage unsupported message type" << type;
+	if (TpSessionAccount *sessionAccount = getTpSessionAccount(cm)) {
+	    SendRequest *request = new SendRequest(message, service);
+	    retVal = sessionAccount->sendMessage(request);
+	    if (!retVal) delete request;
+	}
+    } else {
+        qWarning() << "TelepathyEngine::sendMessage : unsupported message type :" << type;
+    }
+
     QDEBUG_FUNCTION_END
-	
-   return retVal;	
+    
+    return retVal;	
 }
 
 void TelepathyEngine::_updateImAccounts() const
@@ -310,7 +294,7 @@ void TelepathyEngine::_updateImAccounts() const
 }
 
 QMessageAccountIdList TelepathyEngine::queryAccounts(const QMessageAccountFilter &filter, const QMessageAccountSortOrder &sortOrder,
-        uint limit, uint offset, bool &isFiltered, bool &isSorted) const
+        uint limit, uint offset, bool &isFiltered, bool &isSorted)
 {
     QDEBUG_FUNCTION_BEGIN
     Q_UNUSED(sortOrder);
@@ -318,6 +302,7 @@ QMessageAccountIdList TelepathyEngine::queryAccounts(const QMessageAccountFilter
     Q_UNUSED(offset);
 
     QMessageAccountIdList accountIds;
+    m_error = QMessageManager::NoError;
 
     _updateImAccounts();
     foreach(QMessageAccount value, m_iAccounts) {
@@ -332,27 +317,127 @@ QMessageAccountIdList TelepathyEngine::queryAccounts(const QMessageAccountFilter
     QDEBUG_FUNCTION_END return accountIds;
 }
 
-int TelepathyEngine::countAccounts(const QMessageAccountFilter &filter) const
+int TelepathyEngine::countAccounts(const QMessageAccountFilter &filter)
 {
     QDEBUG_FUNCTION_BEGIN
     bool isFiltered, isSorted;
+    m_error = QMessageManager::NoError;
     QDEBUG_FUNCTION_END return queryAccounts(filter, QMessageAccountSortOrder(), 0, 0, isFiltered, isSorted).count();
 }
 
-QMessageAccount TelepathyEngine::account(const QMessageAccountId &id) const
+QMessageAccount TelepathyEngine::account(const QMessageAccountId &id)
 {
     QDEBUG_FUNCTION_BEGIN
+    m_error = QMessageManager::NoError;
     _updateImAccounts();
     QDEBUG_FUNCTION_END return m_iAccounts[id.toString()];
 }
 
-QMessageAccountId TelepathyEngine ::defaultAccount(QMessage::Type type) const
+QMessageAccountId TelepathyEngine ::defaultAccount(QMessage::Type type)
 {
     QDEBUG_FUNCTION_BEGIN
     Q_UNUSED(type);
 
+    m_error = QMessageManager::NoError;
     _updateImAccounts();
     return m_defaultSmsAccountId;
     QDEBUG_FUNCTION_END
+}
+
+QMessageManager::Error TelepathyEngine::convertError(const Tp::PendingOperation *op)
+{
+    if (op->isError())
+        return QMessageManager::FrameworkFault ;
+
+    if (!op->isValid())
+        return QMessageManager::RequestIncomplete;
+
+    return QMessageManager::NoError;
+}
+
+QMessageManager::Error TelepathyEngine ::error()
+{
+    return m_error;
+}
+
+#define TELEPATHY_ENGINE_STORE_MESSAGE
+
+SendRequest::SendRequest(const QMessage &message, QMessageService *parent)
+    : QObject(parent)
+    , _message(message)
+    , _pendingRequestCount(message.to().count())
+    , _failCount(0)
+{
+#ifdef TELEPATHY_ENGINE_STORE_MESSAGE
+    QMessagePrivate::setStandardFolder(_message, QMessage::DraftsFolder);
+    if (!QMessageManager().addMessage(&_message)) {
+	qWarning() << "SendRequest::SendRequest() : cannot add message";
+    }
+#endif
+}
+
+SendRequest::~SendRequest()
+{
+    qDebug() << "SendRequest::~SendRequest()";
+}
+
+QStringList SendRequest::to() const
+{
+    QStringList result;
+    
+    foreach (const QMessageAddress &address, _message.to()) {
+	result << address.addressee();
+    }
+    
+    return result;
+}
+
+QString SendRequest::text() const
+{
+    return _message.textContent();
+}
+
+void SendRequest::setFinished(const QString &address, bool success)
+{
+    if (!success) {
+	_failCount++;
+	qWarning() << "SendRequest::setFinished() : sending message to" << address << "failed";
+    }
+    down();
+}
+
+void SendRequest::finished(Tp::PendingOperation *operation, bool processLater)
+{
+    if (operation->isError()) {
+	_failCount++;
+	qWarning() << "SendRequest::finished() : " << operation->errorName() << ":" << operation->errorMessage(); 
+    }
+
+    if (processLater) {
+	QTimer::singleShot(0, this, SLOT(down()));
+    } else {
+	down();
+    }
+}
+
+void SendRequest::down()
+{
+    if (--_pendingRequestCount == 0) {
+	QMessageService *service = qobject_cast<QMessageService *>(parent());
+	if (service) {
+	    QMessageServicePrivate *privateService = QMessageServicePrivate::implementation(*service);
+	    bool success = (_failCount == 0);
+#ifdef TELEPATHY_ENGINE_STORE_MESSAGE
+	    if (success) {
+		QMessagePrivate::setStandardFolder(_message, QMessage::SentFolder);
+		if (!_message.id().isValid() || !QMessageManager().updateMessage(&_message)) {
+		    qWarning() << "SendRequest::down() : cannot update message";
+		}
+	    }
+#endif
+	    privateService->setFinished(success);
+	}
+	deleteLater();
+    }
 }
 

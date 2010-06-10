@@ -50,21 +50,14 @@
 #include "qmessageservice_symbian_p.h"
 #include "qmtmengine_symbian_p.h"
 #include "qmessage_symbian_p.h"
-#include "messagingutil_p.h"
-#include "maemohelpers_p.h" // contains non-meamo specific helpers for messaging
-#ifdef FREESTYLEMAILUSED
-#include "qfsengine_symbian_p.h"
-#endif
+
 
 QTM_BEGIN_NAMESPACE
-
-using namespace SymbianHelpers;
 
 QMessageServicePrivate::QMessageServicePrivate(QMessageService* parent)
  : q_ptr(parent),
    _state(QMessageService::InactiveState),
-   _active(false),
-   _pendingRequestCount(0)
+   _active(false)
 {
 }
       
@@ -84,234 +77,52 @@ bool QMessageServicePrivate::sendMMS(QMessage &message)
 
 bool QMessageServicePrivate::sendEmail(QMessage &message)
 {
-    switch (idType(message.parentAccountId())) {
-        case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->sendEmail(message);
-#else
-            return false;
-#endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->sendEmail(message);
-            break;
-    }
+    return CMTMEngine::instance()->sendEmail(message);
 }
 
 bool QMessageServicePrivate::show(const QMessageId& id)
 {
-    switch (idType(id)) {
-        case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->showMessage(id);
-#else
-            return false;
-#endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->showMessage(id);
-            break;
-    }
+	return CMTMEngine::instance()->showMessage(id);
 }
 
 bool QMessageServicePrivate::compose(const QMessage &message)
 {
-    switch (idType(message.parentAccountId())) {
-        case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->composeMessage(message);
-#else
-            return false;
-#endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->composeMessage(message);
-            break;
-    }
+	return CMTMEngine::instance()->composeMessage(message);
 }
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    if (_pendingRequestCount > 0) {
-        return false;
-    }
-    _pendingRequestCount = 0;
-    _active = true;
-    _filter = filter;
-    _sortOrder = sortOrder;
-    _limit = limit;
-    _offset = offset;
-    _filtered = true;
-    _sorted = true;
-
-    _pendingRequestCount++;
-    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, 0, 0);
-
-#ifdef FREESTYLEMAILUSED
-    _pendingRequestCount++;
-    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, 0, 0);
-#endif
-
-    return _active;
+    return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, sortOrder, limit, offset);
 }
 
 bool QMessageServicePrivate::queryMessages(const QMessageFilter &filter, const QString &body, QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder, uint limit, uint offset) const
 {
-    if (_pendingRequestCount > 0) {
-        return false;
-    }
-    _pendingRequestCount = 0;
-    _active = true;
-    _filter = filter;
-    _sortOrder = sortOrder;
-    _limit = limit;
-    _offset = offset;
-    _filtered = true;
-    _sorted = true;
-    
-    _pendingRequestCount++;
-    CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, 0, 0);
-
-#ifdef FREESTYLEMAILUSED
-    _pendingRequestCount++;
-    CFSEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, 0, 0);
-#endif
-
-    return _active;
+    return CMTMEngine::instance()->queryMessages((QMessageServicePrivate&)*this, filter, body, matchFlags, sortOrder, limit, offset);
 }
 
 bool QMessageServicePrivate::countMessages(const QMessageFilter &filter)
 {
-    if (_pendingRequestCount > 0) {
-        return false;
-    }
-    _pendingRequestCount = 0;
-    _active = true;
-    _count = 0;
-
-    _pendingRequestCount++;
-    CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
-
-#ifdef FREESTYLEMAILUSED
-    _pendingRequestCount++;
-    CFSEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
-#endif
-    return _active;
+    return CMTMEngine::instance()->countMessages((QMessageServicePrivate&)*this, filter);
 }
 
 bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessageContentContainerId &id)
 {
-    switch (idType(messageId)) {
-        case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieve(messageId, id);
-#else
-            return false;
-#endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieve(messageId, id);
-            break;
-    }
+	return CMTMEngine::instance()->retrieve(messageId, id);
 }
 
 bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
 {
-    switch (idType(id)) {
-        case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveBody(id);
-#else
-            return false;
-#endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieveBody(id);
-            break;
-    }
+	return CMTMEngine::instance()->retrieveBody(id);
 }
 
 bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
 {
-    switch (idType(id)) {
-        case EngineTypeFreestyle:
-#ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveHeader(id);
-#else
-            return false;
-#endif
-            break;
-        case EngineTypeMTM:
-        default:
-            return CMTMEngine::instance()->retrieveHeader(id);
-            break;
-    }
-}
-
-void QMessageServicePrivate::messagesFound(const QMessageIdList &ids, bool isFiltered, bool isSorted)
-{
-    _pendingRequestCount--;
-
-    if (!isFiltered) {
-        _filtered = false;
-    }
-
-    if (!isSorted) {
-        _sorted = false;
-    } else {
-        if ((ids.count() > 0) && (_ids.count() > 0)) {
-            _sorted = false;
-        }
-    }
-
-    _ids.append(ids);
-
-    if (_pendingRequestCount == 0) {
-        if (!_filtered) {
-            MessagingHelper::filterMessages(_ids, _filter);
-        }
-        if (!_sorted) {
-            MessagingHelper::orderMessages(_ids, _sortOrder);
-        }
-        MessagingHelper::applyOffsetAndLimitToMessageIdList(_ids, _limit, _offset);
-
-        emit q_ptr->messagesFound(_ids);
-
-        setFinished(true);
-
-        _ids.clear();
-        _filter = QMessageFilter();
-        _sortOrder = QMessageSortOrder();
-    }
-}
-
-void QMessageServicePrivate::messagesCounted(int count)
-{
-    _pendingRequestCount--;
-
-    _count += count;
-
-    if (_pendingRequestCount == 0) {
-
-        emit q_ptr->messagesCounted(_count);
-
-        setFinished(true);
-
-        _count = 0;
-    }
+	return CMTMEngine::instance()->retrieveHeader(id);
 }
 
 bool QMessageServicePrivate::exportUpdates(const QMessageAccountId &id)
 {
-  //  if (SymbianHelpers::isFreestyleMessage(id))
-  //      return CFSEngine::instance()->exportUpdates(id);
-  //  else
-        return CMTMEngine::instance()->exportUpdates(id);
+    return CMTMEngine::instance()->exportUpdates(id);
 }
 
 void QMessageServicePrivate::setFinished(bool successful)
@@ -332,7 +143,7 @@ QMessageService::QMessageService(QObject *parent)
 {
 	connect(d_ptr, SIGNAL(stateChanged(QMessageService::State)), this, SIGNAL(stateChanged(QMessageService::State)));
 	connect(d_ptr, SIGNAL(messagesFound(const QMessageIdList&)), this, SIGNAL(messagesFound(const QMessageIdList&)));
-    //connect(d_ptr, SIGNAL(messagesCounted(int)), this, SIGNAL(messagesCounted(int)));
+    connect(d_ptr, SIGNAL(messagesCounted(int)), this, SIGNAL(messagesCounted(int)));
 	connect(d_ptr, SIGNAL(progressChanged(uint, uint)), this, SIGNAL(progressChanged(uint, uint)));
 }
 

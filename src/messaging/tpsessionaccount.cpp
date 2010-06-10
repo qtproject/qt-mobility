@@ -41,8 +41,9 @@
 
 #include "tpsessionaccount_p.h"
 #include "telepathyhelpers_maemo6_p.h"
-#include <TelepathyQt4/Message>
+#include "telepathyengine_maemo6_p.h"
 
+#include <TelepathyQt4/Message>
 /**
  * \class TpSessionAccount
  * \headerfile <tpsessionaccount.h>
@@ -150,13 +151,13 @@ void TpSessionAccount::onContactsConnectionReady(Tp::PendingOperation *op)
     //    RosterItem *item;
 
     myContacts = contactsConn->contactManager()->allKnownContacts();
-    foreach(const Tp::ContactPtr &contact, myContacts) {
+    foreach (const Tp::ContactPtr &contact, myContacts) {
         qDebug() << "id=" << contact->id() << " alias=" << contact->alias() << " presence=" << contact->presenceStatus();
 
 	const QString id(contact->id());
 	bool isChannelAdded(false);
 
-	RequestList::Iterator it = requests.begin(), end = requests.end();
+	SendJobList::Iterator it = jobs.begin(), end = jobs.end();
 	for (; it != end; ++it) {
 	    if (id == (*it).address) {
 		(*it).contactReady = true;
@@ -169,10 +170,10 @@ void TpSessionAccount::onContactsConnectionReady(Tp::PendingOperation *op)
     }
 
     QSet<QString> addresses;
-    foreach (const Request &request, requests) {
-	if (!request.contactReady && !addresses.contains(request.address)) {
-	    addresses.insert(request.address);
-	    makeContactFromAddress(request.address);
+    foreach (const SendJob &job, jobs) {
+	if (!job.contactReady && !addresses.contains(job.address)) {
+	    addresses.insert(job.address);
+	    makeContactFromAddress(job.address);
 	}
     }
 
@@ -250,29 +251,39 @@ void TpSessionAccount::onNewContactRetrieved(Tp::PendingOperation *op)
     QDEBUG_FUNCTION_BEGIN
 
     Tp::PendingContacts *pcontacts = qobject_cast<Tp::PendingContacts *>(op);
-    QList<Tp::ContactPtr> contacts = pcontacts->contacts();
-    QString username = pcontacts->identifiers().first();
 
-    if (contacts.size() != 1 || !contacts.first()) {
-        qDebug() << "Unable to add contact ";
-        QDEBUG_FUNCTION_END
-        return;
-    }
-    Tp::ContactPtr contact = contacts.first();
-    qDebug() << "TpSessionAccount::onContactRetrieved" << contact->id();
-    
-    const QString id(contact->id()); 
-    bool found(false);
+    if (!pcontacts)
+	return;
 
-    RequestList::Iterator it = requests.begin(), end = requests.end();
-    for (; it != end; ++it) {
-	if (id == (*it).address) {
-	    (*it).contactReady = true;
-	    found = true;
+    QHash<QString, QPair<QString, QString> > invalidIds = pcontacts->invalidIdentifiers();
+    {
+	QHash<QString, QPair<QString, QString> >::ConstIterator it = invalidIds.begin(), end = invalidIds.end();
+	for (; it != end; ++it) {
+	    qWarning() << "Unable to add contact " << it.key() << ":" << it.value().first << ":" << it.value().second;
+	    QString id(it.key());
+	    for (int i = jobs.count() - 1; i >= 0; --i) {
+		if (id == jobs[i].address) {
+		    jobs[i].sendRequest->setFinished(id, false);
+		    jobs.removeAt(i);
+		}
+	    }
 	}
     }
-    if (found)
-	addOutgoingChannel(contact);
+
+    foreach (Tp::ContactPtr contact, pcontacts->contacts()) {
+	const QString id(contact->id()); 
+	bool found(false);
+
+	SendJobList::Iterator it = jobs.begin(), end = jobs.end();
+	for (; it != end; ++it) {
+	    if (id == (*it).address) {
+		(*it).contactReady = true;
+		found = true;
+	    }
+	}
+	if (found)
+	    addOutgoingChannel(contact);
+    }
 
     QDEBUG_FUNCTION_END
 }
@@ -284,33 +295,38 @@ void TpSessionAccount::onNewContactRetrieved(Tp::PendingOperation *op)
  * proceeds to channel creation.
  *
  * MessageSent() signal is emitted when completed
- *
- * \param address           Contact address/id, as example email address, telephone number etc.
- * \param message           Message string
  */
 
-bool TpSessionAccount::sendMessageToAddress(const QString &address, const QString &message)
+bool TpSessionAccount::sendMessage(SendRequest *sendRequest)
 {
-    QDEBUG_FUNCTION_BEGIN
-    Tp::ContactPtr p;
-    TpSessionChannel *channel = getChannelFromPeerAddress(address);
+    int jobCount(0);
 
-    if (channel) {
-        return channel->sendMessage(message); // We have already channel
-    } else {
-	Request request(address, message);
-        p = getContactFromAddress(address); // Do we have contact ready ?
-        if (p.isNull()) { // If not, create it
-            makeContactFromAddress(address); // Create and after created, send
-        } else {
-            addOutgoingChannel(p); // Create channel and when ready, send
-	    request.contactReady = true;
+    foreach (const QString &address, sendRequest->to()) {
+	if (TpSessionChannel *channel = getChannelFromPeerAddress(address)) {
+	    Tp::PendingSendMessage *pendingMessage = channel->sendMessage(sendRequest->text()); // We have already channel
+	    if (pendingMessage->isFinished()) {
+		sendRequest->finished(pendingMessage, true);
+		if (!pendingMessage->isError())
+		    jobCount++;
+	    } else {
+		connect(pendingMessage, SIGNAL(finished(Tp::PendingOperation *)),
+			sendRequest, SLOT(finished(Tp::PendingOperation *)));
+		jobCount++;
+	    }
+	} else {
+	    SendJob job(address, sendRequest);
+	    Tp::ContactPtr p = getContactFromAddress(address); // Do we have contact ready ?
+	    if (p.isNull()) { // If not, create it
+		makeContactFromAddress(address); // Create and after created, send
+	    } else {
+		addOutgoingChannel(p); // Create channel and when ready, send
+		job.contactReady = true;
+	    }
+	    jobs << job;
+	    jobCount++;
 	}
-	requests << request;
     }
-
-    QDEBUG_FUNCTION_END
-    return true;	
+    return jobCount > 0;
 }
 
 void TpSessionAccount::addOutgoingChannel(const Tp::ContactPtr &contact)
@@ -333,20 +349,27 @@ void TpSessionAccount::onOutgoingChannelReady(TpSessionChannel *ch)
 {
     QDEBUG_FUNCTION_BEGIN
 
-    qDebug() << "TpSessionAccoiunt::onOutgoingChannelReady";
+    qDebug() << "TpSessionAccoiunt::onOutgoingChannelReady" << ch->peerId();
 
     emit channelReady(this);
 
-    QStringList messages;
-    for (int i = requests.count() - 1; i >= 0; --i) {
-	if (ch->peerId() == requests[i].address) {
-	    messages.prepend(requests[i].message);
-	    requests.removeAt(i);
+    SendJobList readyList;
+    for (int i = jobs.count() - 1; i >= 0; --i) {
+	if (ch->peerId() == jobs[i].address) {
+	    readyList.prepend(jobs[i]);
+	    jobs.removeAt(i);
 	}
     }
 
-    foreach (const QString &message, messages) {
-	ch->sendMessage(message);
+    foreach (const SendJob &job, readyList) {
+	SendRequest *sendRequest = job.sendRequest;
+	Tp::PendingSendMessage *pendingMessage = ch->sendMessage(sendRequest->text());
+	if (pendingMessage->isFinished()) {
+	    sendRequest->finished(pendingMessage);
+	} else {
+	    connect(pendingMessage, SIGNAL(finished(Tp::PendingOperation *)),
+		    sendRequest, SLOT(finished(Tp::PendingOperation *)));
+	}
     }
 
     QDEBUG_FUNCTION_END
