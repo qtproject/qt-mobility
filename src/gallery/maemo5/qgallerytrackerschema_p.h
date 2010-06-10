@@ -53,6 +53,7 @@
 // We mean it.
 //
 
+#include "qgalleryabstractrequest.h"
 #include "qgalleryfilter.h"
 #include "qgalleryproperty.h"
 
@@ -96,17 +97,11 @@ public:
             const QString &itemId,
             const QStringList &propertyNames) const;
 
-    int prepareContainerResponse(
-            QGalleryTrackerItemListArguments *arguments,
-            QGalleryDBusInterfaceFactory *dbus,
-            const QString &containerId,
-            const QStringList &propertyNames,
-            const QStringList &sortPropertyNames) const;
-
     int prepareFilterResponse(
             QGalleryTrackerItemListArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
-            const QString &containerId,
+            QGalleryAbstractRequest::Scope scope,
+            const QString &scopeItemId,
             const QGalleryFilter &filter,
             const QStringList &propertyNames,
             const QStringList &sortPropertyNames) const;
@@ -114,7 +109,8 @@ public:
     int prepareCountResponse(
             QGalleryTrackerCountResponseArguments *arguments,
             QGalleryDBusInterfaceFactory *dbus,
-            const QString &containerId,
+            QGalleryAbstractRequest::Scope scope,
+            const QString &scopeItemId,
             const QGalleryFilter &filter) const;
 
 private:
@@ -123,7 +119,8 @@ private:
 
     int buildFilterQuery(
             QString *query,
-            const QString &containerId,
+            QGalleryAbstractRequest::Scope scope,
+            const QString &scopeItemId,
             const QGalleryFilter &filter) const;
 
     void populateItemArguments(
