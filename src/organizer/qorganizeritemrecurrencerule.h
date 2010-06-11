@@ -80,7 +80,7 @@ QTM_BEGIN_NAMESPACE
  * [frequency = Monthly, dayOfWeek = Monday,Tuesday]
  * [frequency = Yearly, dayOfWeek = Monday,Tuesday]
  * However, the frequency field may start affecting the result differently when other fields are
- * added like interval and position.
+ * added like interval and positions.
  *
  * For the purpose of calculating occurrence dates, information not contained in the rule is in some
  * cases derived from the startDateTime field of the event that the detail is associated with.
@@ -110,7 +110,7 @@ public:
     const char* FieldDaysOfYear;
     const char* FieldMonths;
     const char* FieldWeeksOfYear;
-    const char* FieldPosition;
+    const char* FieldPositions;
     const char* FieldWeekStart;
 #else
     Q_DECLARE_LATIN1_CONSTANT(FieldFrequency, "Frequency");
@@ -123,7 +123,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfYear, "DaysOfYear");
     Q_DECLARE_LATIN1_CONSTANT(FieldMonths, "Months");
     Q_DECLARE_LATIN1_CONSTANT(FieldWeeksOfYear, "WeeksOfYear");
-    Q_DECLARE_LATIN1_CONSTANT(FieldPosition, "Position");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPositions, "Positions");
     Q_DECLARE_LATIN1_CONSTANT(FieldWeekStart, "WeekStart");
 #endif
 
@@ -159,8 +159,7 @@ public:
     void setFrequency(Frequency freq);
     Frequency frequency() const;
 
-    /* end critierion: neither, either or both of count/endDate could be set.  If both is set, the
-     * recurrence ends on whichever occurs first.  */
+    /* end critieria: count and endDate are mutually exclusive.  Setting one unsets the other.  */
     // eg: 10 means ten times, 0 means not set.
     // Default: 0
     void setCount(int count);

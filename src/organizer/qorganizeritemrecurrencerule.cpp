@@ -59,7 +59,7 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDaysOfMonth, "DaysOf
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldDaysOfYear, "DaysOfYear");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldMonths, "Months");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeeksOfYear, "WeeksOfYear");
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldPosition, "Position");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldPositions, "Positions");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerItemRecurrenceRule::FieldWeekStart, "WeekStart");
 
 QOrganizerItemRecurrenceRule::QOrganizerItemRecurrenceRule()
@@ -93,27 +93,39 @@ QOrganizerItemRecurrenceRule::Frequency QOrganizerItemRecurrenceRule::frequency(
     return static_cast<Frequency>(d->m_variantValues.value(FieldFrequency).toInt());
 }
 
-/* end critierion: neither, either or both of count/endDate could be set.  If both is set, the
- * recurrence ends on whichever occurs first.  */
-// eg: 10 means ten times, 0 means not set.
-// Default: 0
+/*! Sets the "count" condition of the recurrence rule.  If an end-date was previously set,
+ * it is removed as count and endDate are mutually exclusive.
+ *
+ * The "count" condition is the maximum number of times the item should recur.  Setting this
+ * to 0 removes the count condition.
+ */
 void QOrganizerItemRecurrenceRule::setCount(int count)
 {
+    d->m_variantValues.remove(FieldEndDate);
     d->m_variantValues.insert(FieldCount, count);
 }
 
+/*! Returns the "count" condition specified by the recurrence rule.
+ */
 int QOrganizerItemRecurrenceRule::count() const
 {
     return d->m_variantValues.value(FieldCount).toInt();
 }
 
-// invalid means not set.
-// Default: null
+/*! Sets the end-date condition of the recurrence rule.  If a "count" condition was previously
+ * set, it is removed as count and endDate are mutually exclusive.
+ *
+ * The end-date condition is the date after which the item should not recur.  Setting this to
+ * the null date removes the end-date condition.
+ */
 void QOrganizerItemRecurrenceRule::setEndDate(const QDate& endDate)
 {
+    d->m_variantValues.remove(FieldCount);
     d->m_variantValues.insert(FieldEndDate, endDate);
 }
 
+/*! Returns the end-date condition specified by the recurrence rule.
+ */
 QDate QOrganizerItemRecurrenceRule::endDate() const
 {
     return d->m_variantValues.value(FieldEndDate).toDate();
@@ -243,13 +255,13 @@ void QOrganizerItemRecurrenceRule::setPositions(const QList<int>& pos)
     for (int i = 0; i < pos.size(); ++i) {
         saveList << pos.at(i);
     }
-    d->m_variantValues.insert(FieldPosition, saveList);
+    d->m_variantValues.insert(FieldPositions, saveList);
 }
 
 QList<int> QOrganizerItemRecurrenceRule::positions() const
 {
     QList<int> retn;
-    QVariantList loadList = d->m_variantValues.value(FieldPosition).toList();
+    QVariantList loadList = d->m_variantValues.value(FieldPositions).toList();
     for (int i = 0; i < loadList.size(); ++i) {
         retn << loadList.at(i).toInt();
     }
