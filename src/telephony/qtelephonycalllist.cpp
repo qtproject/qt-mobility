@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 
+
 #include "qtelephonycalllist.h"
 #include "qtelephonycallinfo.h"
 
@@ -54,7 +55,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-/*! 
+/*!
     \fn void QTelephonyCallList::activeCallStatusChanged(const QTelephonyCallInfo& call);
     \a call The QTelephonyCallInfo object that changed its status.
 
@@ -62,14 +63,14 @@ QTM_BEGIN_NAMESPACE
     The new status of the current call is specified by \a status.
 */
 
-/*! 
+/*!
     \fn void QTelephonyCallList::activeCallRemoved(const QTelephonyCallInfo& call);
     \a call The QTelephonyCallInfo object that was removed from the active call list.
 
     This signal is emitted whenever a call was removed from the active call list.
 */
 
-/*! 
+/*!
     \fn void QTelephonyCallList::activeCallAdded(const QTelephonyCallInfo& call);
     \a call The QTelephonyCallInfo object that was added to the active call list.
 
@@ -83,7 +84,7 @@ QTM_BEGIN_NAMESPACE
 
     \brief The QTelephonyCallList class contains a list of active calls. This object can notify other applications about call changes.
 
-    QTelephonyCallList supports calls event notification for other application and an access of the list of the 
+    QTelephonyCallList supports calls event notification for other application and an access of the list of the
     existing calls.
 */
 
@@ -94,7 +95,7 @@ Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonycalllistprivate)
     \fn QTelephonyCallList::QTelephonyCallList(QObject *parent)
     \a parent The parent of this object. Default is 0.
 
-    Constructor for the QTelephonyCallList object 
+    Constructor for the QTelephonyCallList object
 */
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent), d(telephonycalllistprivate())
@@ -131,7 +132,7 @@ QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyCallIn
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
     for( int i = 0; i < calllist.count(); i++){
-        if(calllist.at(i).type() == QTelephonyCallInfo::All 
+        if(calllist.at(i).type() == QTelephonyCallInfo::All
             || calllist.at(i).type() == calltype)
             ret.push_back(QTelephonyCallInfo(calllist.at(i)));
     }

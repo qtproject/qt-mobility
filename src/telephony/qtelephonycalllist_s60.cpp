@@ -38,8 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-
-#include "qtelephonycalllist_win_p.h"
+#include "qtelephonycalllist_s60_p.h"
 
 QTM_BEGIN_NAMESPACE
 

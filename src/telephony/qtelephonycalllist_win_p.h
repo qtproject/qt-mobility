@@ -54,11 +54,8 @@
 // We mean it.
 //
 
-#include <QObject>
-#include <QtCore/qshareddata.h>
-#include "qtelephonycalllist.h"
-#include "qtelephonycallinfo.h"
 
+#include "qtelephonycalllist.h"
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
