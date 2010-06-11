@@ -43,7 +43,7 @@
 #include <QDBusInterface>
 #include <QDBusConnection>
 #include <QDBusReply>
-#include <QtSystemInfo/QSystemNetworkInfo>
+#include <QSystemInfo/QSystemNetworkInfo>
 
 QTM_USE_NAMESPACE
 
