@@ -82,17 +82,6 @@ QOrganizerItemRecurrenceRule& QOrganizerItemRecurrenceRule::operator=(const QOrg
     return *this;
 }
 
-// Compulsory for a valid rule
-void QOrganizerItemRecurrenceRule::setStartDate(const QDate& startDate)
-{
-    d->m_variantValues.insert(FieldStartDate, startDate);
-}
-
-QDate QOrganizerItemRecurrenceRule::startDate() const
-{
-    return d->m_variantValues.value(FieldStartDate).toDate();
-}
-
 // Default: Weekly
 void QOrganizerItemRecurrenceRule::setFrequency(Frequency freq)
 {
@@ -305,7 +294,6 @@ QOrganizerItemRecurrenceRule QOrganizerItemRecurrenceRule::fromVariantValues(con
     ret.setInterval(converter.interval());
     ret.setMonths(converter.months());
     ret.setPositions(converter.positions());
-    ret.setStartDate(converter.startDate());
     ret.setWeeksOfYear(converter.weeksOfYear());
     ret.setWeekStart(converter.weekStart());
 
