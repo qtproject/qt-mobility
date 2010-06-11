@@ -80,6 +80,8 @@ private slots:  // Test cases
     void addSimpleItem();
     void fetchSimpleItem();
     void removeSimpleItem();
+    void fetchItems();
+    void fetchItemIds();
 
     // Tests with data
     void addItem_data();
@@ -93,8 +95,6 @@ private:
     void addNegative();
     void fetchNegative();
     void removeNegative();
-
-    void fetchItemIds();
 
 private:
     bool parseDetails(QTstDetailList detailsString, QList<QOrganizerItemDetail> &details);
@@ -199,6 +199,60 @@ void tst_SymbianOm::removeSimpleItem()
     itemIds.append(item3.localId());
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QVERIFY(m_om->removeItems(itemIds, &errorMap));
+}
+
+void tst_SymbianOm::fetchItems()
+{
+    // Remove all first
+    QList<QOrganizerItemLocalId> ids = m_om->itemIds();
+    m_om->removeItems(ids, 0);
+    
+    // Add some items
+    QList<QOrganizerItem> expectedItems;
+    for (int i=0; i<10; i++) {
+        QOrganizerItem item;
+        item.setType(QOrganizerItemType::TypeTodo);
+        QVERIFY(m_om->saveItem(&item));
+        expectedItems << item;
+    }
+
+    // Fetch ids
+    QList<QOrganizerItem> actualItems = m_om->items();
+    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    
+    // Verify
+    QVERIFY(actualItems.count() == expectedItems.count());
+    foreach (const QOrganizerItem &item, actualItems) {
+        QVERIFY(item.localId() != QOrganizerItemLocalId());
+        QVERIFY(expectedItems.contains(item));
+    }
+}
+
+void tst_SymbianOm::fetchItemIds()
+{
+    // Remove all first
+    QList<QOrganizerItemLocalId> ids = m_om->itemIds();
+    m_om->removeItems(ids, 0);
+    
+    // Add some items
+    QList<QOrganizerItemLocalId> expectedIds;
+    for (int i=0; i<10; i++) {
+        QOrganizerItem item;
+        item.setType(QOrganizerItemType::TypeTodo);
+        QVERIFY(m_om->saveItem(&item));
+        expectedIds << item.localId();
+    }
+
+    // Fetch ids
+    QList<QOrganizerItemLocalId> actualIds = m_om->itemIds();
+    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    
+    // Verify
+    QVERIFY(actualIds.count() == expectedIds.count());
+    foreach (QOrganizerItemLocalId id, actualIds) {
+        QVERIFY(id != QOrganizerItemLocalId());
+        QVERIFY(expectedIds.contains(id));
+    }
 }
 
 void tst_SymbianOm::addNegative()
@@ -326,18 +380,6 @@ void tst_SymbianOm::addItem()
     QOrganizerItem savedItem = m_om->item(item.localId());
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(verifyDetails(savedItem.details(), details));
-}
-
-void tst_SymbianOm::fetchItemIds()
-{
-    // TODO: initialize calendar with test data and
-    // set the expected item count according to the test data!
-
-    QList<QOrganizerItemLocalId> ids = m_om->itemIds();
-    QVERIFY(ids.count() > 0);
-    foreach (QOrganizerItemLocalId id, ids) {
-        QVERIFY(id != QOrganizerItemLocalId());
-    }
 }
 
 /*!
