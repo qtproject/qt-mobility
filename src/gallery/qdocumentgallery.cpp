@@ -234,6 +234,28 @@ const QGalleryProperty QDocumentGallery::keywords("keywords");
 const QGalleryProperty QDocumentGallery::language("language");
 
 /*!
+    \variable QDocumentGallery::iconImage
+
+    This property contains a QImage icon representation of an item in the
+    document gallery.
+
+    \sa iconPixmap, thumbnailImage, previewImage
+*/
+
+const QGalleryProperty QDocumentGallery::iconImage("iconImage");
+
+/*!
+    \variable QDocumentGallery::iconPixmap
+
+    This property contains a QPixmap icon representation of an item in the
+    document gallery.
+
+    \sa iconImage, thumbnailPixmap, previewPixmap
+*/
+
+const QGalleryProperty QDocumentGallery::iconPixmap("iconPixmap");
+
+/*!
     \variable QDocumentGallery::thumbnailImage
 
     This property contains a QImage thumbnail representation of an item in the
@@ -250,6 +272,24 @@ const QGalleryProperty QDocumentGallery::thumbnailImage("thumbnailImage");
 */
 
 const QGalleryProperty QDocumentGallery::thumbnailPixmap("thumbnailPixmap");
+
+/*!
+    \variable QDocumentGallery::previewImage
+
+    This property contains a QImage preview representation of an item in the
+    document gallery.
+*/
+
+const QGalleryProperty QDocumentGallery::previewImage("previewImage");
+
+/*!
+    \variable QDocumentGallery::previewPixmap
+
+    This property contains a QPixmap preview representation of an item in the
+    document gallery.
+*/
+
+const QGalleryProperty QDocumentGallery::previewPixmap("previewPixmap");
 
 // File
 

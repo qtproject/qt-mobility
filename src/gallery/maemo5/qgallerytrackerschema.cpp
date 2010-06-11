@@ -666,7 +666,19 @@ static const QGalleryThumbnailProperty qt_galleryFileThumbnailPropertyList[] =
             "thumbnailPixmap",
             QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
             qt_galleryFileThumbnailDependencyList,
+            QGalleryTrackerThumbnailColumn::createPixmapColumn),
+#ifndef Q_WS_MAEMO_5
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "previewImage",
+            "large",
+            qt_galleryFileThumbnailDependencyList,
+            QGalleryTrackerThumbnailColumn::createImageColumn),
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "previewPixmap",
+            "large",
+            qt_galleryFileThumbnailDependencyList,
             QGalleryTrackerThumbnailColumn::createPixmapColumn)
+#endif
 };
 
 static void qt_writeFileIdCondition(int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
