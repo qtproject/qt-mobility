@@ -201,6 +201,10 @@ private:
     QHash<QString, QString> mountEntriesHash;
     void mountEntries();
 
+Q_SIGNALS:
+    void storageAdded(/*const QString &driveVolume*/);
+    void storageRemoved(/*const QString &driveVolume*/);
+
 };
 
 #if defined(Q_OS_WINCE)

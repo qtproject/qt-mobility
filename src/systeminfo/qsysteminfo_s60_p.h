@@ -176,6 +176,12 @@ public:
 
 private:
     RFs iFs;
+
+
+Q_SIGNALS:
+    void storageAdded(/*const QString &driveVolume*/);
+    void storageRemoved(/*const QString &driveVolume*/);
+
 };
 
 //////// QSystemDeviceInfo
