@@ -324,7 +324,7 @@ bool QSensor::start()
     d->busy = false;
     // Backend will update the flags appropriately
     d->backend->start();
-    emit activeChanged();
+    Q_EMIT activeChanged();
     return d->active;
 }
 
@@ -341,7 +341,7 @@ void QSensor::stop()
         return;
     d->active = false;
     d->backend->stop();
-    emit activeChanged();
+    Q_EMIT activeChanged();
 }
 
 /*!
