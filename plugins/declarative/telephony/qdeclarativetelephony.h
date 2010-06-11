@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -37,27 +37,21 @@
 **
 ** $QT_END_LICENSE$
 **
-****************************************************************************/
+***************************************************************************/
 
-#ifndef QTELEPHONYCALLINFOPROPERTY_H
-#define QTELEPHONYCALLINFOPROPERTY_H
+#ifndef QDECLARATIVETELEPHONY_H
+#define QDECLARATIVETELEPHONY_H
 
-#include "qmobilityglobal.h"
-#include "qtelephonycallinfo.h"
+#include <QtCore>
+#include <qdeclarative.h>
+#include <qdeclarativelist.h>
+#include <qtelephonycalllist.h>
 
-#include <QList>
-#include <QString>
-#include <QObject>
+QTM_USE_NAMESPACE
 
-QT_BEGIN_HEADER
-
-QTM_BEGIN_NAMESPACE
-
-//class QTelephonyCallInfo;
-class Q_TELEPHONY_EXPORT QTelephonyCallInfoProperty : public QObject
-{
+class QTelephonyCallInfoWrapper : public QObject {
     Q_OBJECT
-    Q_ENUMS(QTelephonyCallInfo::CallType QTelephonyCallInfo::CallStatus)
+    Q_ENUMS(CallType CallStatus)
     Q_PROPERTY(QString callIdentifier READ callIdentifier)
     Q_PROPERTY(QList<quint32> contacts READ contacts)
     Q_PROPERTY(CallType type READ type)
@@ -80,21 +74,46 @@ public:
         Dropped = QTelephonyCallInfo::Dropped
     };
 
-    QTelephonyCallInfoProperty(const QTelephonyCallInfo& info);
+    QTelephonyCallInfoWrapper();
+    QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other);
+    QTelephonyCallInfoWrapper(const QTelephonyCallInfoWrapper& other);
+    virtual ~QTelephonyCallInfoWrapper();
 
-    virtual ~QTelephonyCallInfoProperty();
-
+protected:
     QString callIdentifier() const;
     QList<quint32> contacts() const;
 
-    QTelephonyCallInfoProperty::CallType type() const;
-    QTelephonyCallInfoProperty::CallStatus status() const;
+    CallType type() const;
+    CallStatus status() const;
+private:
+    QTelephonyCallInfo* d;
+};
+QML_DECLARE_TYPE(QTelephonyCallInfoWrapper)
+
+class QTelephonyCallListWrapper : public QObject {
+    Q_OBJECT
+
+public:
+    QTelephonyCallListWrapper();
+    virtual~QTelephonyCallListWrapper();
+
+Q_SIGNALS:
+    void activeCallStatusChanged(const QTelephonyCallInfoWrapper& call);
+    void activeCallRemoved(const QTelephonyCallInfoWrapper& call);
+    void activeCallAdded(const QTelephonyCallInfoWrapper& call);
+public:
+    QList<QTelephonyCallInfoWrapper> activeCalls(const QTelephonyCallInfoWrapper::CallType& calltype) const;
+
+private slots:
+    void activeCallStatusChanged(const QTelephonyCallInfo& call);
+    void activeCallRemoved(const QTelephonyCallInfo& call);
+    void activeCallAdded(const QTelephonyCallInfo& call);
 
 private:
-    QTelephonyCallInfo* pqtelephonyCallInfo;
+    QTelephonyCallList* d;
 };
 
-QTM_END_NAMESPACE
-QT_END_HEADER
+QML_DECLARE_TYPE(QTelephonyCallListWrapper)
 
-#endif /*QTELEPHONYCALLINFOPROPERTY_H*/
+#endif //QDECLARATIVETELEPHONY_H
+

@@ -42,7 +42,6 @@
 #ifndef QTELEPHONYCALLLIST_H
 #define QTELEPHONYCALLLIST_H
 
-#include "qmobilityglobal.h"
 #include "qtelephonycallinfo.h"
 
 #include <QObject>
@@ -60,23 +59,15 @@ class QTelephonyCallInfoProperty;
 class Q_TELEPHONY_EXPORT QTelephonyCallList : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QTelephonyCallInfoProperty* currentCall READ currentCallProperty)
-    Q_PROPERTY(QList<QTelephonyCallInfoProperty* > calls READ callsProperty)
 public:
     QTelephonyCallList(QObject *parent = 0);
     virtual ~QTelephonyCallList();
 Q_SIGNALS:
-    void callstatusChanged(const QTelephonyCallInfo::CallStatus& status);
-    void callsChanged();
+    void activeCallStatusChanged(const QTelephonyCallInfo& call);
+    void activeCallRemoved(const QTelephonyCallInfo& call);
+    void activeCallAdded(const QTelephonyCallInfo& call);
 public:
-    QTelephonyCallInfo* currentCall() const;
-    QList<QTelephonyCallInfo* > calls() const;
-    QList<QTelephonyCallInfo* > calls(const QTelephonyCallInfo::CallType& calltype) const;
-    QList<QTelephonyCallInfo* > calls(const QTelephonyCallInfo::CallStatus& callstatus) const;
-    QList<QTelephonyCallInfo* > calls(const QTelephonyCallInfo::CallType& calltype, const QTelephonyCallInfo::CallStatus& callStatus) const;
-protected:
-    QTelephonyCallInfoProperty* currentCallProperty() const;
-    QList<QTelephonyCallInfoProperty* > callsProperty() const;
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
 private:
     QTelephonyCallListPrivate *d;
 };

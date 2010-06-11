@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the plugins of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,39 +39,39 @@
 **
 ****************************************************************************/
 
-#include "qtelephonycalllist_win_p.h"
+#include <QtDeclarative/qdeclarativeextensionplugin.h>
+#include <QtDeclarative/qdeclarative.h>
 
-QTM_BEGIN_NAMESPACE
+#include "qdeclarativetelephony.h"
 
-////////
-QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
- : QObject(parent)
+QT_BEGIN_NAMESPACE
+
+/*!
+    \class QTelephonyDeclarativeModule
+    \ingroup telephony
+    \brief The QTelephonyDeclarativeModule class contains one function to register the telephony QML objects.
+*/
+class QTelephonyDeclarativeModule : public QDeclarativeExtensionPlugin
 {
-}
+    Q_OBJECT
+public:
+    /*!
+    \fn  virtual void registerTypes(const char *uri)
 
-QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
-{
-}
+    Function that register the telephony objects for QML usage.
+    */
+    virtual void registerTypes(const char *uri)
+    {
+        Q_ASSERT(QLatin1String(uri) == QLatin1String("QtMobility.telephony"));
 
-QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate()
-{
-}
+        qmlRegisterType<QTelephonyCallInfoWrapper>(uri, 1, 0, "TelephonyCallInfo");
+        qmlRegisterType<QTelephonyCallListWrapper>(uri, 1, 0, "TelephonyCallList");
+    }
+};
 
-QTelephonyCallInfoPrivate::~QTelephonyCallInfoPrivate()
-{
-}
+QT_END_NAMESPACE
 
-QString QTelephonyCallInfoPrivate::callIdentifier() const
-{
-    return QString();
-}
+#include "telephony.moc"
 
-QList<quint32> QTelephonyCallInfoPrivate::contacts() const
-{
-    QList<quint32> ret;
-    return ret;
-}
+Q_EXPORT_PLUGIN2(qtelephonydeclarativemodule, QT_PREPEND_NAMESPACE(QTelephonyDeclarativeModule));
 
-#include "moc_qtelephonycalllist_win_p.cpp"
-
-QTM_END_NAMESPACE

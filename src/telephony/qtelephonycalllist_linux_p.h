@@ -54,11 +54,11 @@
 // We mean it.
 //
 
-
 #include <QObject>
+#include <QtCore/qshareddata.h>
 #include "qtelephonycalllist.h"
 #include "qtelephonycallinfo.h"
-#include "qmobilityglobal.h"
+
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
@@ -67,46 +67,38 @@ class Q_AUTOTEST_EXPORT QTelephonyCallListPrivate : public QObject
 {
     Q_OBJECT
 Q_SIGNALS:
-    void callstatusChanged(const QTelephonyCallInfo::CallStatus);
-    void callsChanged();
+    void activeCallStatusChanged(const QTelephonyCallInfo& call);
+    void activeCallRemoved(const QTelephonyCallInfo& call);
+    void activeCallAdded(const QTelephonyCallInfo& call);
 public:
     QTelephonyCallListPrivate(QObject *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QTelephonyCallInfo* currentCall() const { return 0; }
-    QList<QTelephonyCallInfo* > calls() const { return calllist; }
+    QList<QTelephonyCallInfo> activeCalls() const { return calllist; }
 private:
-    QList<QTelephonyCallInfo* > calllist;
+    QList<QTelephonyCallInfo> calllist;
 };
 
-class Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate
+class QTelephonyCallInfoPrivate : public QSharedData
 {
-    friend class QTelephonyCallInfo;
 public:
     QTelephonyCallInfoPrivate();
     ~QTelephonyCallInfoPrivate();
     QString callIdentifier() const;
     QList<quint32> contacts() const;
-    QTelephonyCallInfo::CallType type() { return QTelephonyCallInfo::UnknownType; }
-    QTelephonyCallInfo::CallStatus status() { return QTelephonyCallInfo::UnknownStatus; }
-    QVariant value(const QVariant& param) const { return QVariant(); }
+    QTelephonyCallInfo::CallType type() const { return QTelephonyCallInfo::UnknownType; }
+    QTelephonyCallInfo::CallStatus status() const { return QTelephonyCallInfo::UnknownStatus; }
+    QVariant value(const QString& param) const { return QVariant(); }
 
-public: //Declaration of properties (just an example)
-    int contactBufferSize() const { return 124; };
-
-private:
-    int refcount; //reference counter
-    QTelephonyCallInfoPrivate* getref()
-     {
-        refcount++;
-        return this;
-     }
-
-     void release()
-     {
-         refcount--;
-         if(refcount <= 0)
-             delete this;
-     }
+public:
+    // disallow detaching
+    QTelephonyCallInfoPrivate &operator=(const QTelephonyCallInfoPrivate &other)
+    {
+        return *this;
+    }
+    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
+        : QSharedData(other)
+    {
+    }
 };
 
 QTM_END_NAMESPACE

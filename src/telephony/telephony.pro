@@ -3,21 +3,19 @@
 # #####################################################################
 
 TEMPLATE = lib
-
-# Target gets fixed up in common.pri
 TARGET = QtTelephony
-DEFINES += QT_BUILD_TELEPHONY_LIB QT_MAKEDLL
 
 include(../../common.pri)
 
+# Target gets fixed up in common.pri
+DEFINES += QT_BUILD_TELEPHONY_LIB QT_MAKEDLL
+
 # Input
 PUBLIC_HEADERS += qtelephonycalllist.h \
-                  qtelephonycallinfoproperty.h \
-                  qtelephonycallinfo.h
+                  qtelephonycallinfo.h 
 				  
 SOURCES +=        qtelephonycalllist.cpp \
-                  qtelephonycallinfoproperty.cpp \
-                  qtelephonycallinfo.cpp
+                  qtelephonycallinfo.cpp 
 
 # Private Headers and sources
 win32: {

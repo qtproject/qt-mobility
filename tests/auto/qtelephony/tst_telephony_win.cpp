@@ -79,6 +79,12 @@ void tst_Telephony::initTestCase()
 //Test cases
 void tst_Telephony::myFirstTest()
 {
+    QTelephonyCallInfo ci;
+    qDebug() << &ci;
+    QTelephonyCallInfo cii(ci);
+    qDebug() << &cii;
+
+    //QTelephonyCallInfo ci1(ci);
     QCOMPARE(1, 1); // make sure the signal was emitted exactly one time
 }
 
