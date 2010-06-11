@@ -257,12 +257,12 @@ void tst_SymbianOm::addItem_data()
     QTest::newRow("Item type Event; details: start time")
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
-            << QTstDetail(QOrganizerItemEventTimeRange::DefinitionName, QOrganizerItemEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
     QTest::newRow("Item type Event; details: start time, end time")
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
-            << QTstDetail(QOrganizerItemEventTimeRange::DefinitionName, QOrganizerItemEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
-            << QTstDetail(QOrganizerItemEventTimeRange::DefinitionName, QOrganizerItemEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
 /*
     QTest::newRow("Item type Event; details: description")
         << (QTstDetailList()

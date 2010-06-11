@@ -854,7 +854,7 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
         ret.setStartedDateTime(tempdt);
     
     // status is always available..
-    ret.setStatus(static_cast<QOrganizerItemTodoProgress::Status>(ctodo->getStatus()));
+    ret.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
     
     QOrganizerItemId rId;
     rId.setManagerUri(managerUri());

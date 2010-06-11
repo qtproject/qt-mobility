@@ -144,24 +144,24 @@ CCalEntry *OrganizerItemTransform::toEntryLC(const QOrganizerItem &item)
     // *** Date and Time ***
     if (item.type() == QOrganizerItemType::TypeEvent)
     {
-        QOrganizerItemEventTimeRange range = item.detail<QOrganizerItemEventTimeRange>();
+        QOrganizerEventTimeRange range = item.detail<QOrganizerEventTimeRange>();
         if (!range.isEmpty())
             entry->SetStartAndEndTimeL(toTCalTime(range.startDateTime()), toTCalTime(range.endDateTime()));
     }
     else if(item.type() == QOrganizerItemType::TypeJournal)
     {
-        QOrganizerItemJournalTimeRange range = item.detail<QOrganizerItemJournalTimeRange>();
+        QOrganizerJournalTimeRange range = item.detail<QOrganizerJournalTimeRange>();
         if (!range.isEmpty())
             entry->SetDTStampL(toTCalTime(range.entryDateTime()));
     }
     else if(item.type() == QOrganizerItemType::TypeTodo)
     {
-        QOrganizerItemTodoTimeRange range = item.detail<QOrganizerItemTodoTimeRange>();
+        QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
         if (!range.isEmpty())
             entry->SetStartAndEndTimeL(toTCalTime(range.notBeforeDateTime()), toTCalTime(range.dueDateTime()));
 
-        QOrganizerItemTodoProgress progress = item.detail<QOrganizerItemTodoProgress>();
-        if (!progress.isEmpty() && progress.status() == QOrganizerItemTodoProgress::StatusComplete)
+        QOrganizerTodoProgress progress = item.detail<QOrganizerTodoProgress>();
+        if (!progress.isEmpty() && progress.status() == QOrganizerTodoProgress::StatusComplete)
             entry->SetCompletedL(true, toTCalTime(progress.finishedDateTime()));
     }
 
@@ -252,7 +252,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
 
     if (item->type() == QOrganizerItemType::TypeEvent)
     {
-        QOrganizerItemEventTimeRange range;
+        QOrganizerEventTimeRange range;
         if (startTime.TimeUtcL() != Time::NullTTime())
             range.setStartDateTime(toQDateTime(startTime));
         if (endTime.TimeUtcL() != Time::NullTTime())
@@ -262,31 +262,31 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
     else if(item->type() == QOrganizerItemType::TypeJournal)
     {
         if (dtstamp.TimeUtcL() != Time::NullTTime()) {
-            QOrganizerItemJournalTimeRange range;
+            QOrganizerJournalTimeRange range;
             range.setEntryDateTime(toQDateTime(entry.DTStampL()));
             item->saveDetail(&range);
         }
     }
     else if(item->type() == QOrganizerItemType::TypeTodo)
     {
-        QOrganizerItemTodoTimeRange range;
+        QOrganizerTodoTimeRange range;
         if (startTime.TimeUtcL() != Time::NullTTime())
             range.setNotBeforeDateTime(toQDateTime(startTime));
         if (endTime.TimeUtcL() != Time::NullTTime())
             range.setDueDateTime(toQDateTime(endTime));
         item->saveDetail(&range);
 
-        QOrganizerItemTodoProgress progress;
+        QOrganizerTodoProgress progress;
 
         CCalEntry::TStatus entryStatus = entry.StatusL();
         if (entryStatus == CCalEntry::ETodoNeedsAction)
-            progress.setStatus(QOrganizerItemTodoProgress::StatusNotStarted);
+            progress.setStatus(QOrganizerTodoProgress::StatusNotStarted);
         if (entryStatus == CCalEntry::ETodoInProcess)
-            progress.setStatus(QOrganizerItemTodoProgress::StatusInProgress);
+            progress.setStatus(QOrganizerTodoProgress::StatusInProgress);
         if (entryStatus == CCalEntry::ETodoCompleted)
-            progress.setStatus(QOrganizerItemTodoProgress::StatusComplete);
+            progress.setStatus(QOrganizerTodoProgress::StatusComplete);
 
-        if (progress.status() == QOrganizerItemTodoProgress::StatusComplete)
+        if (progress.status() == QOrganizerTodoProgress::StatusComplete)
             progress.setFinishedDateTime(toQDateTime(entry.CompletedTimeL()));
 
         item->saveDetail(&progress);
