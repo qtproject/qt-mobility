@@ -44,6 +44,7 @@
 #include <QDeclarativeExtensionPlugin>
 #include <QDebug>
 #include "qmlcontactmodel.h"
+#include "imageprovider.h"
 
 QT_USE_NAMESPACE
 
@@ -57,8 +58,14 @@ public:
         Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
         qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
     }
+
+    void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
+        Q_UNUSED(uri);
+        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
+    }
 };
 
 #include "plugin.moc"
 
 Q_EXPORT_PLUGIN2(qcontactqmlplugin, QContactQmlPlugin);
+

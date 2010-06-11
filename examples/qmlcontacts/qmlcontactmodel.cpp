@@ -97,7 +97,7 @@ QStringList QMLContactModel::availableManagers() const
     return QContactManager::availableManagers();
 }
 
-QString QMLContactModel::manager()
+QString QMLContactModel::manager() const
 {
     return m_manager->managerName();
 }
@@ -195,16 +195,8 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
         case InterestRole:
             return interestingDetail(c).second;
         case AvatarRole:
-            if (c.detail<QContactThumbnail>().isEmpty()) {
-                QContactAvatar a = c.detail<QContactAvatar>();
-                if (!a.imageUrl().isEmpty())
-                    return a.imageUrl();
-                else
-                    return QString("contents/default.svg");
-            } else {
-                // We have a thumbnail, so return empty
-                return QString("");
-            }
+            //Just let the imager provider deal with it
+            return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());
         case Qt::DecorationRole:
             {
                 QContactThumbnail t = c.detail<QContactThumbnail>();

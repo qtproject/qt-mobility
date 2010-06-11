@@ -67,7 +67,7 @@ public:
 
     QStringList availableManagers() const;
 
-    QString manager();
+    QString manager() const;
     void setManager(const QString& manager);
 
     int rowCount(const QModelIndex &parent) const;

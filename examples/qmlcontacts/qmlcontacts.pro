@@ -22,10 +22,12 @@ INCLUDEPATH += . \
     ../../src/versit
 
 # Input
-HEADERS += qmlcontactmodel.h
+HEADERS += qmlcontactmodel.h \
+           imageprovider.h
 
 SOURCES += plugin.cpp \
-    qmlcontactmodel.cpp
+    qmlcontactmodel.cpp \
+    imageprovider.cpp
 
 OTHER_FILES += example.qml \
     contents/example.vcf \
