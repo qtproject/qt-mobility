@@ -1,32 +1,21 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qsensor.cpp -->
-  <title>Qt Mobility Project 1.0: QSensorReading Class Reference</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+<head>
+  <title>Qt Mobility Project 1.1: QSensorReading Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+<body>
+<a name="//apple_ref/cpp/cl//QSensorReading"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qsensorreading.html">QSensorReading</a></li>
-<div class="toc">
-<h3>Contents</h3>
-<ul>
-<li class="level1"><a href="#properties">Properties</a></li>
-<li class="level1"><a href="#public-functions">Public Functions</a></li>
-<li class="level1"><a href="#macros">Macros</a></li>
-<li class="level1"><a href="#details">Detailed Description</a></li>
-</ul>
-</div>
-<h1 class="title">QSensorReading Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QSensorReading Class Reference</h1>
 <p>The QSensorReading class holds the readings from the sensor. <a href="#details">More...</a></p>
-<pre class="highlightedCode">    #include &lt;QSensorReading&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<pre>    #include &lt;QSensorReading&gt;</pre><p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
 <p>Inherited by <a href="qaccelerometerreading.html">QAccelerometerReading</a>, <a href="qambientlightreading.html">QAmbientLightReading</a>, <a href="qcompassreading.html">QCompassReading</a>, <a href="qmagnetometerreading.html">QMagnetometerReading</a>, <a href="qorientationreading.html">QOrientationReading</a>, <a href="qproximityreading.html">QProximityReading</a>, <a href="qrotationreading.html">QRotationReading</a>, and <a href="qtapreading.html">QTapReading</a>.</p>
 <ul>
 <li><a href="qsensorreading-members.html">List of all members, including inherited members</a></li>
@@ -35,88 +24,86 @@
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
-<li class="fn"><b><a href="qsensorreading.html#timestamp-prop">timestamp</a></b> : const QtMobility::qtimestamp</li>
+<li><div class="fn"><b><a href="qsensorreading.html#timestamp-prop">timestamp</a></b> : const QtMobility::qtimestamp</div></li>
 </ul>
 <ul>
-<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#setTimestamp">setTimestamp</a></b> ( qtimestamp <i>timestamp</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> qtimestamp </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#timestamp-prop">timestamp</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QVariant </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#value">value</a></b> ( int <i>index</i> ) const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#valueCount">valueCount</a></b> () const</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#setTimestamp">setTimestamp</a></b> ( qtimestamp <i>timestamp</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">qtimestamp </td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#timestamp-prop">timestamp</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#value">value</a></b> ( int <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#valueCount">valueCount</a></b> () const</td></tr>
 </table>
 <ul>
-<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="macros"></a>
 <h2>Macros</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#DECLARE_READING">DECLARE_READING</a></b> (  <i>classname</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</a></b> (  <i>classname</i> )</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#DECLARE_READING">DECLARE_READING</a></b> (  <i>classname</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</a></b> (  <i>classname</i> )</td></tr>
 </table>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QSensorReading class holds the readings from the sensor.</p>
 <p>Note that QSensorReading is not particularly useful by itself. The interesting data for each sensor is defined in a sub-class of QSensorReading.</p>
-</div>
 <hr />
-<div class="prop"/>
 <h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QSensorReading/timestamp"></a>
 <h3 class="fn"><a name="timestamp-prop"></a>timestamp : const QtMobility::qtimestamp</h3>
 <p>This property holds the timestamp of the reading.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary">
-<tr><td class="memItemLeft topAlign rightAlign"> qtimestamp </td><td class="memItemRight bottomAlign"><b>timestamp</b> () const</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">qtimestamp </td><td class="memItemRight" valign="bottom"><b>timestamp</b> () const</td></tr>
 </table>
 <p>See also <a href="qsensor.html#qtimestamp-typedef">qtimestamp</a>.</p>
-</div>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QSensorReading/setTimestamp"></a>
 <h3 class="fn"><a name="setTimestamp"></a>void QSensorReading::setTimestamp ( <a href="qsensor.html#qtimestamp-typedef">qtimestamp</a> <i>timestamp</i> )</h3>
 <p>Sets the <i>timestamp</i> of the reading.</p>
 <p>See also <a href="qsensorreading.html#timestamp-prop">timestamp</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorReading/value"></a>
 <h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QSensorReading::value ( int <i>index</i> ) const</h3>
 <p>Returns the value of the property at <i>index</i>.</p>
 <p>Note that this function is slower than calling the data function directly.</p>
 <p>Here is an example of getting a property via the different mechanisms available.</p>
 <p>Accessing directly provides the best performance but requires compile-time knowledge of the data you are accessing.</p>
-<pre class="highlightedCode">    QAccelerometerReading *reading = ...;
+<pre>    QAccelerometerReading *reading = ...;
     qreal x = reading-&gt;x();</pre>
 <p>You can also access a property by name. To do this you must call <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>().</p>
-<pre class="highlightedCode">    qreal x = reading-&gt;property(&quot;x&quot;).value&lt;qreal&gt;();</pre>
+<pre>    qreal x = reading-&gt;property(&quot;x&quot;).value&lt;qreal&gt;();</pre>
 <p>Finally, you can access values via numeric index.</p>
-<pre class="highlightedCode">    qreal x = reading-&gt;value(0).value&lt;qreal&gt;();</pre>
+<pre>    qreal x = reading-&gt;value(0).value&lt;qreal&gt;();</pre>
 <p>Note that value() can only access properties declared with <a href="http://qt.nokia.com/doc/4.6/qobject.html#Q_PROPERTY">Q_PROPERTY</a>() in sub-classes of <a href="qsensorreading.html">QSensorReading</a>.</p>
 <p>See also <a href="qsensorreading.html#valueCount">valueCount</a>() and <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>().</p>
+<a name="//apple_ref/cpp/instm/QSensorReading/valueCount"></a>
 <h3 class="fn"><a name="valueCount"></a>int QSensorReading::valueCount () const</h3>
 <p>Returns the number of extra properties that the reading has.</p>
 <p>Note that this does not count properties declared in <a href="qsensorreading.html">QSensorReading</a>.</p>
 <p>As an example, this returns 3 for <a href="qaccelerometerreading.html">QAccelerometerReading</a> because there are 3 properties defined in that class.</p>
-</div>
 <hr />
-<div class="macros"/>
 <h2>Macro Documentation</h2>
+<a name="//apple_ref/cpp/macro//DECLARE_READING"></a>
 <h3 class="fn"><a name="DECLARE_READING"></a>DECLARE_READING (  <i>classname</i> )</h3>
 <p>The DECLARE_READING macro adds some required methods to a reading class.</p>
 <p>This macro should be used for all reading classes. Pass the <i>classname</i> of your reading class.</p>
-<pre class="highlightedCode">    class MyReading : public QSensorReading
+<pre>    class MyReading : public QSensorReading
     {
         Q_OBJECT
         Q_PROPERTY(qreal myprop READ myprop)
@@ -126,17 +113,16 @@
         vod setMyprop(qreal myprop);
     };</pre>
 <p>See also <a href="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</a>().</p>
+<a name="//apple_ref/cpp/macro//IMPLEMENT_READING"></a>
 <h3 class="fn"><a name="IMPLEMENT_READING"></a>IMPLEMENT_READING (  <i>classname</i> )</h3>
 <p>The IMPLEMENT_READING macro implements the required methods for a reading class.</p>
 <p>This macro should be used for all reading classes. It should be placed into a single compilation unit (source file), not into a header file. Pass the <i>classname</i> of your reading class.</p>
-<pre class="highlightedCode">    IMPLEMENT_READING(MyReading)</pre>
+<pre>    IMPLEMENT_READING(MyReading)</pre>
 <p>See also <a href="qsensorreading.html#DECLARE_READING">DECLARE_READING</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
 </html>

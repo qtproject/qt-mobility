@@ -5,7 +5,7 @@ QT += network \
 
 INCLUDEPATH += ../../src/multimedia ../../src/multimedia/audio
 
-include(../examples.pri)
+include(../../examples/examples.pri)
 CONFIG += mobility
 MOBILITY = multimedia
 

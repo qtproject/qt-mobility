@@ -1,22 +1,19 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- declarative-sfw-notes.qdoc -->
-  <title>Qt Mobility Project 1.0: Declarative Service Framework Notes Manager</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+<head>
+  <title>Qt Mobility Project 1.1: Declarative Service Framework Notes Manager</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+<body>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="all-examples.html">Examples</a></li>              <li><a href="examples-declarative-sfw-notes.html"></a></li>              <li><a href="declarative-sfw-notes-declarative-sfw-notes.html">Declarative Service Framework Notes Manager</a></li><h1 class="title">Declarative Service Framework Notes Manager</h1>
-<span class="subtitle"></span>
-<div class="descr"/>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Declarative Service Framework Notes Manager<br /><span class="subtitle"></span>
+</h1>
 <p>This example demonstrates how to use the <a href="notesmanagerplugin.html">Notes Manager service plugin</a> to implement a notes managing application with QML as the declarative user-interface. There is also a non-QML counterpart which demonstrates an identical application using standard Qt user-interface tools. See <a href="sfw-notes.html">Service Framework Notes Manager</a> for more details.</p>
 <p><b>Explanation</b></p>
 <p>The <a href="qservicemanager.html">QServiceManager</a> and <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> API are provided to QML through the use of a plugin-based system. The resulting class is referred to as QDeclarativeService, which provides users with the ability of accessing services by loading the interfaces specified using the QML element 'Service'.</p>
@@ -25,24 +22,24 @@
 <p>The section below explains how QML can be used to emulate to exact functionality of the alternate Qt/C++ example.</p>
 <p><b>QML File</b></p>
 <p>The very first step is to import our registered types with the following:</p>
-<pre class="highlightedCode">    import QtMobility.serviceframework 1.0</pre>
+<pre>    import QtMobility.serviceframework 1.0</pre>
 <p>Now to obtain the default service with a specific interface name from within QML we can use the Service wrapper item as follows:</p>
-<pre class="highlightedCode">        Service {
+<pre>        Service {
             id: notesService
             interfaceName: &quot;com.nokia.qt.examples.NotesManager&quot;
         }</pre>
 <p>In most cases we will need the service to be available to all parts of the QML file, meaning the actual <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> returned from the service wrapper needs to be a global property.</p>
-<pre class="highlightedCode">        property variant notesManager: notesService.serviceObject</pre>
+<pre>        property variant notesManager: notesService.serviceObject</pre>
 <p>The interfaceName property of the Service item has READ and WRITE methods which can be used to obtain a new service instance and check if there was a valid default service.</p>
-<pre class="highlightedCode">                notesService.interfaceName = input;
+<pre>                notesService.interfaceName = input;
 
                 if (notesService.valid) {
                     notesManager = notesService.serviceObject;</pre>
 <p>With a valid reference which points to the service plugin class we can now invoke methods directly from the Notes Manager plugin. The example below shows how to obtain a list of notes and delete one from the notes manager database through QML.</p>
-<pre class="highlightedCode">                var list = notesManager.noteSet;
+<pre>                var list = notesManager.noteSet;
                 notesManager.removeNote(list[curr-1].index);</pre>
 <p>The Notes Manager plugin also provides readable functions which return the values of a single note and can be utilized to display on the UI as follows:</p>
-<pre class="highlightedCode">            notesManager.setSearch(searchText);
+<pre>            notesManager.setSearch(searchText);
             var list = notesManager.noteSet;
             size = list.length;
 
@@ -50,12 +47,10 @@
                 noteLabel.text = list[curr-1].message;
                 datetimeLabel.text = formatDateTime(list[curr-1].alarm);
             }</pre>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
 </html>
