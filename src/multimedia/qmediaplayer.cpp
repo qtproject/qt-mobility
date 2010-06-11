@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -656,7 +656,7 @@ void QMediaPlayer::unbind(QObject *obj)
     The \a flags argument allows additional requirements such as performance indicators to be
     specified.
 */
-QtMultimedia::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
+QtMultimediaKit::SupportEstimate QMediaPlayer::hasSupport(const QString &mimeType,
                                                const QStringList& codecs,
                                                Flags flags)
 {
@@ -679,12 +679,12 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
 }
 
 /*!
+    \fn void QMediaPlayer::setVideoOutput(QVideoWidget* output)
+
     Attach a QVideoWidget video \a output to the media player.
 
     If the media player has already video output attached,
     it will be replaced with a new one.
-
-    \sa setVideoOutput(QGraphicsVideoItem*)
 */
 void QMediaPlayer::setVideoOutput(QVideoWidget *output)
 {
@@ -700,12 +700,12 @@ void QMediaPlayer::setVideoOutput(QVideoWidget *output)
 }
 
 /*!
+    \fn void QMediaPlayer::setVideoOutput(QGraphicsVideoItem* output)
+
     Attach a QGraphicsVideoItem video \a output to the media player.
 
     If the media player has already video output attached,
     it will be replaced with a new one.
-
-    \sa setVideoOutput(QVideoWidget*)
 */
 void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
 {

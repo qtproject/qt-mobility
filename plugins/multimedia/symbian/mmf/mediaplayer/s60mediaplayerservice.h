@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,13 +43,9 @@
 #define S60VIDEOPLAYERSERVICE_H
 
 #include <QtCore/qobject.h>
-
 #include <qmediaservice.h>
-//FIXME #include <qvideooutputcontrol.h>
 
-//FIXME #include "s60videooutputcontrol.h"
 #include "ms60mediaplayerresolver.h"
-
 #include "s60mediaplayeraudioendpointselector.h"
 
 QT_BEGIN_NAMESPACE
@@ -68,38 +64,35 @@ class S60VideoWidgetControl;
 class S60MediaRecognizer;
 class S60VideoRenderer;
 class S60VideoOverlay;
-
 class QMediaPlaylistNavigator;
 
 class S60MediaPlayerService : public QMediaService, public MS60MediaPlayerResolver
 {
     Q_OBJECT
-    
-public:   
+
+public:
+
     S60MediaPlayerService(QObject *parent = 0);
     ~S60MediaPlayerService();
 
     QMediaControl *requestControl(const char *name);
     void releaseControl(QMediaControl *control);
 
-//FIXME  private slots:
-//    void videoOutputChanged(QVideoOutputControl::Output output);
-
 protected: // From MS60MediaPlayerResolver
     S60MediaPlayerSession* PlayerSession();
     S60MediaPlayerSession* VideoPlayerSession();
     S60MediaPlayerSession* AudioPlayerSession();
-    
+
 private:
     S60MediaPlayerControl *m_control;
-//FIXME    mutable S60VideoOutputControl *m_videoOutput;
     S60VideoPlayerSession *m_videoPlayerSession;
     S60AudioPlayerSession *m_audioPlayerSession;
-    mutable S60MediaMetaDataProvider *m_metaData;
-    mutable S60VideoWidgetControl *m_videoWidget;
-    mutable S60VideoOverlay *m_videoWindow;
-    mutable S60VideoRenderer *m_videoRenderer;
+    S60MediaMetaDataProvider *m_metaData;
     S60MediaPlayerAudioEndpointSelector *m_audioEndpointSelector;
+    QMediaControl *m_videoWidget;
+    QMediaControl *m_videoWindow;
+    QMediaControl *m_videoRenderer;
+    QMediaControl *m_videoOutput;
 };
 
 #endif

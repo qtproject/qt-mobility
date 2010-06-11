@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -166,8 +166,5 @@ QTM_END_NAMESPACE
 
 // Not needed since this is a typedef, and qglobal already does this for the base type
 // Q_DECLARE_TYPEINFO(QTM_PREPEND_NAMESPACE(QContactLocalId), Q_PRIMITIVE_TYPE);
-
-// Workaround for unannounced SC break
-#include "qcontactid.h"
 
 #endif

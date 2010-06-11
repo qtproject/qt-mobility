@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,7 +57,7 @@ QT_BEGIN_NAMESPACE
     current media it will implement QMetaDataWriterControl.  This control
     provides functions for both retrieving and setting meta-data values.
     Meta-data may be addressed by the well defined keys in the
-    QtMultimedia::MetaData enumeration using the metaData() functions, or
+    QtMultimediaKit::MetaData enumeration using the metaData() functions, or
     by string keys using the extendedMetaData() functions.
 
     The functionality provided by this control is exposed to application code
@@ -116,13 +116,13 @@ QMetaDataWriterControl::~QMetaDataWriterControl()
 */
 
 /*!
-    \fn QVariant QMetaDataWriterControl::metaData(QtMultimedia::MetaData key) const
+    \fn QVariant QMetaDataWriterControl::metaData(QtMultimediaKit::MetaData key) const
 
     Returns the meta-data for the given \a key.
 */
 
 /*!
-    \fn void QMetaDataWriterControl::setMetaData(QtMultimedia::MetaData key, const QVariant &value)
+    \fn void QMetaDataWriterControl::setMetaData(QtMultimediaKit::MetaData key, const QVariant &value)
 
     Sets the \a value of the meta-data element with the given \a key.
 */

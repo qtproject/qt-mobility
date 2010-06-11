@@ -76,7 +76,7 @@ class QTimer;
 class QIODevice;
 class QAbstractAudioDeviceInfo;
 
-namespace QtMultimediaInternal
+namespace QtMultimediaKitInternal
 {
 class QAudioInputBuffer;
 }
@@ -98,7 +98,7 @@ public:
     UInt64          startTime;
     QAudio::Error   errorCode;
     QAudio::State   stateCode;
-    QtMultimediaInternal::QAudioInputBuffer*   audioBuffer;
+    QtMultimediaKitInternal::QAudioInputBuffer*   audioBuffer;
     QMutex          mutex;
     QWaitCondition  threadFinished;
     QAtomicInt      audioThreadState;

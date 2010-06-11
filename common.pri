@@ -13,10 +13,6 @@ CONFIG(debug, debug|release) {
 
 include(staticconfig.pri)
 
-# use only $$QT_MOBILITY_BUILD_TREE. If you add an subfolder it will create a relative path!!!
-# $$QT_MOBILITY_BUILD_TREE/src/global will become ../global
-INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE
-
 symbian:contains(symbian_symbols_unfrozen,1) {
     #see configure.bat for details
     MMP_RULES+="EXPORTUNFROZEN"
@@ -92,12 +88,19 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
+            VERSION = 1.0.1
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }
     } else {
-        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
-        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
+        testplugin {
+            DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
+        } else {
+            #check that plugin_type is set or warn otherwise
+            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
+            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+            INSTALLS += target
+        }
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -159,6 +162,9 @@ wince* {
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
+    
+    #This is supposed to be defined in symbian_os.hrh
+    #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
 }
 
 # Add the output dirs to the link path too
@@ -173,3 +179,4 @@ LIBS += -L$$OUTPUT_DIR/lib
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
+!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PLUGINS, \\\\, /)\\\"

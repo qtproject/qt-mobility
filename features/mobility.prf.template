@@ -13,51 +13,64 @@
 }
 mac: LIBS += -F$${MOBILITY_LIB}
 LIBS+= -L$${MOBILITY_LIB}
+QMAKE_RPATHDIR+=$${MOBILITY_LIB}
 
 contains(MOBILITY, bearer) {
     DEFINES += QT_MOBILITY_BEARER
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtBearer
     qtAddLibrary(QtBearer)
+    !equals(QT_MAJOR_VERSION,4)|!equals(QT_MINOR_VERSION, 6) {
+        message(Qt Mobility Bearer API is deprecated when using Qt 4.7 or higher.)
+        message(Please use source compatible replacement Bearer API in QtNetwork.)
+    }
 }
 
 contains(MOBILITY, publishsubscribe) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtPublishSubscribe
     qtAddLibrary(QtPublishSubscribe)
 }
 
 contains(MOBILITY, location) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtLocation
     qtAddLibrary(QtLocation)
 }
 
 contains(MOBILITY, serviceframework) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtServiceFramework
     qtAddLibrary(QtServiceFramework)
 }
 
 contains(MOBILITY, systeminfo) {
     #QSystemInfo header requires QNetworkInterface
     QT += network
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtSystemInfo
     qtAddLibrary(QtSystemInfo)
 }
 
 contains(MOBILITY, multimedia) {
     QT += network
     contains(QT_CONFIG, opengl): QT += opengl
-    mac:LIBS += -framework QtMultimedia
-    else:win32:contains(QT_CONFIG, debug):LIBS += -lQtMultimediad
-    else:LIBS += -lQtMultimedia
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtMultimediaKit
+    qtAddLibrary(QtMultimediaKit)
 }
 
 contains(MOBILITY, contacts) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtContacts
     qtAddLibrary(QtContacts)
 }
 
 contains(MOBILITY, messaging) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtMessaging
     qtAddLibrary(QtMessaging)
 }
 
 contains(MOBILITY, versit) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtVersit
     qtAddLibrary(QtVersit)
 }
 
 contains(MOBILITY, sensors) {
+    INCLUDEPATH += $${MOBILITY_INCLUDE}/QtSensors
     qtAddLibrary(QtSensors)
 }
 
@@ -67,7 +80,7 @@ contains(MOBILITY, sensors) {
 symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
     mobility_default_deployment.pkg_prerules += \
         "; Default dependency to QtMobility libraries" \
-        "(0x2002AC89), 1, 0, 0, {\"QtMobility\"}"
+        "(0x2002AC89), 1, 0, 1, {\"QtMobility\"}"
     DEPLOYMENT += mobility_default_deployment
 }
 

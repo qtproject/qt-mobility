@@ -136,6 +136,7 @@ private:
 #endif // MMF_VIDEO_SURFACES_SUPPORTED
     TRect m_rect;
     //QVideoOutputControl::Output m_output;
+    QObject *m_videoOutput;
     WId m_windowId;
     bool m_dsaActive;
     bool m_dsaStopped;

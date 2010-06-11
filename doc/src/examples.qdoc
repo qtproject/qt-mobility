@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -78,12 +78,9 @@
 
     \list
     \o \l{audiorecorder}{Audio Recorder}
-    \o \l{cameracapture}{Camera Capture}
     \o \l{player}{Player}
     \o \l{radio}{Radio}
-    \o \l{recorder}{Recorder}
     \o \l{slideshow}{Slideshow}
-    \o \l{streamplayer}{Stream Player}
     \endlist
 
     \section2 Publish and Subscribe

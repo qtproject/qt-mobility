@@ -15,7 +15,9 @@ PUBLIC_HEADERS += \
             qserviceinterfacedescriptor.h \
             qservicefilter.h
 
-PRIVATE_HEADERS += servicemetadata_p.h \
+PRIVATE_HEADERS += servicedatabase_p.h \
+            databasemanager_p.h \
+            servicemetadata_p.h \
             qserviceinterfacedescriptor_p.h \
             dberror_p.h
 
@@ -29,32 +31,21 @@ SOURCES +=  servicemetadata.cpp \
             dberror.cpp
 
 symbian {
-    INCLUDEPATH +=  ./symbian
+    INCLUDEPATH +=  ./databasemanagerserver_symbian
     
-    PRIVATE_HEADERS +=  databasemanager_s60_p.h
+    PRIVATE_HEADERS +=  databasemanager_symbian_p.h
 
-    SOURCES +=  databasemanager_s60.cpp
+    SOURCES +=  databasemanager_symbian.cpp
 
     TARGET.CAPABILITY = ALL -TCB
     TARGET.UID3 = 0x2002AC84
-    
-    libBlock = \
-        "$${LITERAL_HASH}ifdef WINSCW" \
-        "LIBRARY SFWDatabaseManagerServer.lib" \
-        "$${LITERAL_HASH}endif"
 
-    MMP_RULES += libBlock
-
-    QtServiceFrameworkDeployment.sources = QtServiceFramework.dll SFWDatabaseManagerServer.exe
+    QtServiceFrameworkDeployment.sources = QtServiceFramework.dll qsfwdatabasemanagerserver.exe
     QtServiceFrameworkDeployment.path = /sys/bin
 
     DEPLOYMENT += QtServiceFrameworkDeployment
-    DEFINES += QT_SFW_SERVICEDATABASE_USE_SECURITY_TOKEN
 
 } else {
-    PRIVATE_HEADERS +=  servicedatabase_p.h \
-                databasemanager_p.h
-
     SOURCES +=  servicedatabase.cpp \
                 databasemanager.cpp
 }

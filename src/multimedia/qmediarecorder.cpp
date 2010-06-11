@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -77,7 +77,7 @@ QT_BEGIN_NAMESPACE
 
     QAudioEncoderSettings audioSettings;
     audioSettings.setCodec("audio/vorbis");
-    audioSettings.setQuality(QtMultimedia::HighQuality);
+    audioSettings.setQuality(QtMultimediaKit::HighQuality);
 
     recorder->setEncodingSettings(audioSettings);
 
@@ -220,11 +220,18 @@ QMediaRecorder::~QMediaRecorder()
 {
 }
 
+/*!
+    Returns the QMediaObject instance that this QMediaRecorder is bound too,
+    or 0 otherwise.
+*/
 QMediaObject *QMediaRecorder::mediaObject() const
 {
     return d_func()->mediaObject;
 }
 
+/*!
+    \internal
+*/
 bool QMediaRecorder::setMediaObject(QMediaObject *object)
 {
     Q_D(QMediaRecorder);
@@ -360,12 +367,12 @@ bool QMediaRecorder::isAvailable() const
 /*!
     Returns the availability error code.
 */
-QtMultimedia::AvailabilityError QMediaRecorder::availabilityError() const
+QtMultimediaKit::AvailabilityError QMediaRecorder::availabilityError() const
 {
     if (d_func()->control != NULL)
-        return QtMultimedia::NoError;
+        return QtMultimediaKit::NoError;
     else
-        return QtMultimedia::ServiceMissingError;
+        return QtMultimediaKit::ServiceMissingError;
 }
 
 QUrl QMediaRecorder::outputLocation() const
@@ -708,6 +715,11 @@ void QMediaRecorder::stop()
     Signals that an \a error has occurred.
 */
 
+/*!
+    \fn QMediaRecorder::mutedChanged(bool muted)
+
+    Signals that the \a muted state has changed. If true the recording is being muted.
+*/
 
 /*!
     \property QMediaRecorder::metaDataAvailable
@@ -756,7 +768,7 @@ bool QMediaRecorder::isMetaDataWritable() const
 /*!
     Returns the value associated with a meta-data \a key.
 */
-QVariant QMediaRecorder::metaData(QtMultimedia::MetaData key) const
+QVariant QMediaRecorder::metaData(QtMultimediaKit::MetaData key) const
 {
     Q_D(const QMediaRecorder);
 
@@ -768,7 +780,7 @@ QVariant QMediaRecorder::metaData(QtMultimedia::MetaData key) const
 /*!
     Sets a \a value for a meta-data \a key.
 */
-void QMediaRecorder::setMetaData(QtMultimedia::MetaData key, const QVariant &value)
+void QMediaRecorder::setMetaData(QtMultimediaKit::MetaData key, const QVariant &value)
 {
     Q_D(QMediaRecorder);
 
@@ -779,13 +791,13 @@ void QMediaRecorder::setMetaData(QtMultimedia::MetaData key, const QVariant &val
 /*!
     Returns a list of keys there is meta-data available for.
 */
-QList<QtMultimedia::MetaData> QMediaRecorder::availableMetaData() const
+QList<QtMultimediaKit::MetaData> QMediaRecorder::availableMetaData() const
 {
     Q_D(const QMediaRecorder);
 
     return d->metaDataControl
             ? d->metaDataControl->availableMetaData()
-            : QList<QtMultimedia::MetaData>();
+            : QList<QtMultimediaKit::MetaData>();
 }
 
 /*!

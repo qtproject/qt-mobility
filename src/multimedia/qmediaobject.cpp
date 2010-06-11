@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -97,9 +97,9 @@ QMediaObject::~QMediaObject()
     Returns the service availability error state.
 */
 
-QtMultimedia::AvailabilityError QMediaObject::availabilityError() const
+QtMultimediaKit::AvailabilityError QMediaObject::availabilityError() const
 {
-    return QtMultimedia::ServiceMissingError;
+    return QtMultimediaKit::ServiceMissingError;
 }
 
 /*!
@@ -137,6 +137,15 @@ void QMediaObject::setNotifyInterval(int milliSeconds)
 }
 
 /*!
+    Bind \a object to the QMediaObject instance.
+
+    This method establishes a relationship between the media object and a
+    helper object. The nature of the relationship depends on both parties. This
+    methods returns true if the helper was succesfully bound, false otherwise.
+
+    The object passed must implement the QMediaBindableInterface interface.
+
+    \sa QMediaBindableInterface
 */
 bool QMediaObject::bind(QObject *object)
 {
@@ -156,6 +165,11 @@ bool QMediaObject::bind(QObject *object)
 }
 
 /*!
+    Detach \a object from the QMediaObject instance.
+
+    Disconnect the help object from the media object.
+
+    \sa QMediaBindableInterface
 */
 void QMediaObject::unbind(QObject *object)
 {
@@ -278,10 +292,7 @@ void QMediaObject::removePropertyWatch(QByteArray const &name)
 */
 
 /*!
-    \property QMediaObject::metaDataAvailable
-    \brief whether access to a media object's meta-data is available.
-
-    If this is true there is meta-data available, otherwise there is no meta-data available.
+    Returns true if there is meta-data associated with this media object, else false.
 */
 
 bool QMediaObject::isMetaDataAvailable() const
@@ -302,7 +313,7 @@ bool QMediaObject::isMetaDataAvailable() const
 /*!
     Returns the value associated with a meta-data \a key.
 */
-QVariant QMediaObject::metaData(QtMultimedia::MetaData key) const
+QVariant QMediaObject::metaData(QtMultimediaKit::MetaData key) const
 {
     Q_D(const QMediaObject);
 
@@ -314,13 +325,13 @@ QVariant QMediaObject::metaData(QtMultimedia::MetaData key) const
 /*!
     Returns a list of keys there is meta-data available for.
 */
-QList<QtMultimedia::MetaData> QMediaObject::availableMetaData() const
+QList<QtMultimediaKit::MetaData> QMediaObject::availableMetaData() const
 {
     Q_D(const QMediaObject);
 
     return d->metaDataControl
             ? d->metaDataControl->availableMetaData()
-            : QList<QtMultimedia::MetaData>();
+            : QList<QtMultimediaKit::MetaData>();
 }
 
 /*!

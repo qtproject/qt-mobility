@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -67,8 +67,8 @@ arbitrary services.
 
 \section1 Namespace
 
-The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility API's into Qt. See the
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -150,21 +150,23 @@ The client code has precise knowledge of the service and its interfaces.
 
 It is assumed that the client has knowledge of the interface but does not really care
 about the specific type or version of the service implementing the interface. In such cases the default
-service lookup can be utilized to create a service object instance. If the
-same service provides multiple versions of the same interface the latest
-version is returned. Therefore subsequent versions of the same interface
-must always be binary compatible to previous versions.
+service lookup can be utilized to create a service object instance.
 
 \code
     QServiceManager manager;
     manager.setInterfaceDefault("FileStorageService", "com.nokia.qt.examples.FileStorage");
 \endcode
 
-The above call to \l QServiceManager::setInterfaceDefault() registers the \i FileStorageService as default implementation. Whenever a client asks
-for an implementation of \i com.nokia.qt.examples.FileStorage the \i FileStorageService service will be loaded. The current scope of the service manager object
-determines whether the default assignment is valid for all users or whether it is valid for the current user only. The system default is used if the user
-scope has not been defined. This enables users to customize their personal preferences. By default the first service installing a so far unknown interface
-becomes the system wide default selection.
+The above call to \l QServiceManager::setInterfaceDefault() registers the \i FileStorageService as default implementation.
+Whenever a client asks for an implementation of \i com.nokia.qt.examples.FileStorage the \i FileStorageService
+service will be loaded. If (at the time of this call) the \i FileStorageService provides multiple registered implementations/versions for the
+same interface the latest version becomes the default. Therefore subsequent versions of the same interface
+must always be binary compatible to previous versions.
+
+The current scope of the service manager object determines whether the default assignment is valid for all users
+or whether it is valid for the current user only. The system default is used if the user
+scope has not been defined. This enables users to customize their personal preferences.
+By default the first service installing a so far unknown interface becomes the system wide default selection.
 
 \section3 QObject based services
 
@@ -183,11 +185,11 @@ does not have to link against a service specific library.
 \section3 Typed services
 
 So far all lookup mechanism returned a QObject pointer. This pointer can be
-utilised by introspecting the object, using Qt's meta object system.
+utilized by introspecting the object, using Qt's meta object system.
 However in some use cases it may be more convenient to
 directly interact with the service object by including the service header
 and/or linking against the service provider. The main advantage is compile time checking.
-Its disdvantage is that client and service must share the implementation of the service object via a library
+Its disadvantage is that client and service must share the implementation of the service object via a library
 they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework
 principle of separating clients from service as changes of the service type may require changes to both, services and clients.
 

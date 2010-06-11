@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -176,10 +176,9 @@ public: // New functions
         const QVersitProperty& property) const;
 
     bool unencode(
-        QVariant& value,
+        QByteArray& value,
         VersitCursor& cursor,
         QVersitProperty& property,
-        QTextCodec* codec,
         LineReader& lineReader) const;
 
     QString decodeCharset(
@@ -188,7 +187,7 @@ public: // New functions
         QTextCodec* defaultCodec,
         QTextCodec** codec) const;
 
-    void decodeQuotedPrintable(QString& text) const;
+    void decodeQuotedPrintable(QByteArray& text) const;
 
 
     /* These functions operate on a cursor describing a single line */
@@ -208,8 +207,7 @@ public: // New functions
     QString paramName(const QByteArray& parameter, QTextCodec* codec) const;
     QString paramValue(const QByteArray& parameter, QTextCodec* codec) const;
     static bool containsAt(const QByteArray& text, const QByteArray& ba, int index);
-    bool splitStructuredValue(QVersitDocument::VersitType type,
-                              QVersitProperty& property,
+    bool splitStructuredValue(QVersitProperty& property,
                               bool hasEscapedBackslashes) const;
     static QStringList splitValue(const QString& string,
                                   const QChar& sep,

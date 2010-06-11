@@ -1,7 +1,7 @@
 TEMPLATE = lib
 
 # distinct from QtMultimedia
-TARGET = QtMultimedia
+TARGET = QtMultimediaKit
 
 include (../../common.pri)
 INCLUDEPATH+= .
@@ -12,7 +12,6 @@ contains(QT_CONFIG, opengl): QT += opengl
 
 !static:DEFINES += QT_MAKEDLL
 DEFINES += QT_BUILD_MULTIMEDIA_LIB
-!symbian:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PREFIX, \\\\, /)/plugins\\\"
 
 PRIVATE_HEADERS += \
     qmediacontrol_p.h \
@@ -133,11 +132,12 @@ HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
     load(data_caging_paths)
-    QtMediaDeployment.sources = QtMultimedia.dll
+    QtMediaDeployment.sources = QtMultimediaKit.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2001E627
     TARGET.CAPABILITY = ALL -TCB
+    LIBS += -lefsrv
 }
 
 CONFIG += middleware

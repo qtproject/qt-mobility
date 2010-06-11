@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -719,7 +719,10 @@ void XARecordSessionImpl::setOptimalSampleRate() {
     TRACE_FUNCTION_ENTRY;
     m_SampleRate = 0;
 
-    if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
+    if (m_AudioEncoderId == XA_AUDIOCODEC_AAC) {
+            m_SampleRate = 32000 * KMilliToHz;
+    }
+    else if (m_AudioEncoderId == XA_AUDIOCODEC_AMR) {
         m_SampleRate = 8000 * KMilliToHz;
     } else {
         RArray<TInt32> sampleRates;

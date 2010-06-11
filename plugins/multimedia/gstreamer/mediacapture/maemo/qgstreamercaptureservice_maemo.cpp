@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -169,6 +169,7 @@ QGstreamerCaptureService::QGstreamerCaptureService(const QString &service, QObje
 
         m_videoWidgetControl = new QGstreamerVideoWidgetControl(this);
         m_videoWidgetFactory = new QGstreamerVideoRendererWrapper(m_videoWidgetControl);
+
     }
     
     if (!m_captureSession) {
@@ -243,4 +244,5 @@ void QGstreamerCaptureService::releaseControl(QMediaControl *control)
         m_captureSession->setVideoPreview(0);
     }
 }
+
 

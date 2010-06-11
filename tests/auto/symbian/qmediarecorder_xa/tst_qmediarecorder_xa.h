@@ -52,7 +52,7 @@
 #include <qaudioendpointselector.h>
 #include <qaudioencodercontrol.h>
 #include <qmediacontainercontrol.h>
-#include <QtMultimedia/qaudioformat.h>
+#include <QtMultimediaKit/qaudioformat.h>
 #include <qaudiocapturesource.h>
 
 QT_USE_NAMESPACE

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -911,11 +911,124 @@ void tst_QContactManager::update()
     QFETCH(QString, uri);
     QScopedPointer<QContactManager> cm(QContactManager::fromUri(uri));
 
+    if (cm->managerName() == QString(QLatin1String("maemo5"))) {
+        // we specifically want to test the update semantics of the maemo5 backend
+        // since there are various complexities relating to roster contacts.
+        QContact mt;
+        QContactName mtn;
+        mtn.setFirstName("test");
+        mtn.setLastName("maemo");
+        QContactPhoneNumber pn;
+        pn.setNumber("12345");
+
+        mt.saveDetail(&mtn);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QVERIFY(mt.details<QContactPhoneNumber>().count() == 0);
+
+        // now save a single phonenumber
+        mt.saveDetail(&pn);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QVERIFY(mt.details<QContactPhoneNumber>().count() == 1);
+
+        // edit some other existing detail and save (shouldn't duplicate the phone number)
+        mtn.setMiddleName("middle");
+        mt.saveDetail(&mtn);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
+
+        // add some other detail and save (shouldn't duplicate the phone number)
+        QContactEmailAddress mte;
+        mte.setEmailAddress("test@test.com");
+        mt.saveDetail(&mte);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
+
+        // add another phone number detail and save (should create a single other phone number)
+        QContactPhoneNumber pn2;
+        pn2.setNumber("98765");
+        mt.saveDetail(&pn2);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 2);
+
+        // here we do something tricky: we save one of the previously saved phone numbers
+        // in a _different_ contact, and see if that causes problems with the overwrite vs new detail code.
+        QContactPhoneNumber pn2Copy = pn2;
+        QContact mt2;
+        QContactName mt2n;
+        mt2n.setFirstName("test2");
+        mt2.saveDetail(&mt2n);
+        QContactPhoneNumber shouldBeNew = pn;
+        mt2.saveDetail(&shouldBeNew);
+        QVERIFY(cm->saveContact(&mt2));
+        mt2 = cm->contact(mt2.localId());
+        QCOMPARE(mt2.details<QContactPhoneNumber>().count(), 1);
+        mt2.saveDetail(&pn2);
+        QVERIFY(cm->saveContact(&mt2));
+        mt2 = cm->contact(mt2.localId());
+        QCOMPARE(mt2.details<QContactPhoneNumber>().count(), 2);
+        pn2 = pn2Copy; // reset just in case backend added some fields.
+
+        // remove the other phone number detail, shouldn't cause side effects to the first...
+        // NOTE: we need to reload the details before attempting to remove/edit them
+        // because the backend can change the ids.
+        QList<QContactPhoneNumber> pnums = mt.details<QContactPhoneNumber>();
+        foreach (const QContactPhoneNumber& pd, pnums) {
+            if (pd.number() == pn2.number())
+                pn2 = pd;
+            else if (pd.number() == pn.number())
+                pn = pd;
+        }
+        mt.removeDetail(&pn2);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId()); // force reload of (persisted) contact
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
+
+        // edit the original phone number detail, shouldn't duplicate the phone number
+        // NOTE: we need to reload the details before attempting to remove/edit them
+        // because the backend can change the ids.
+        pnums = mt.details<QContactPhoneNumber>();
+        foreach (const QContactPhoneNumber& pd, pnums) {
+            if (pd.number() == pn2.number())
+                pn2 = pd;
+            else if (pd.number() == pn.number())
+                pn = pd;
+        }
+        pn.setNumber("54321");
+        mt.saveDetail(&pn);
+        cm->saveContact(&mt);
+        mt = cm->contact(mt.localId());
+        QCOMPARE(mt.details<QContactPhoneNumber>().count(), 1);
+        QVERIFY(mt.detail<QContactPhoneNumber>() == pn);
+
+        // we also should do the same test for other details (for example, gender).
+        // if the backend cannot save multiple copies of a detail (eg, gender always overwrites)
+        // it should FAIL the save operation if the contact has multiple of that detail type,
+        // and set error to QContactManager::LimitReachedError.
+        QContactGender mtg, mtg2;
+        mtg.setGender(QContactGender::GenderFemale);
+        mtg2.setGender(QContactGender::GenderMale);
+        mt.saveDetail(&mtg);
+        QVERIFY(cm->saveContact(&mt)); // one gender is fine
+        mt.saveDetail(&mtg2);
+        QVERIFY(!cm->saveContact(&mt)); // two is not
+        //QCOMPARE(cm->error(), QContactManager::LimitReachedError); // should be LimitReachedError.
+        mt = cm->contact(mt.localId());
+        QVERIFY(mt.details<QContactGender>().count() == 1);
+    }
+
     /* Save a new contact first */
+    int contactCount = cm->contacts().size();
     QContactDetailDefinition nameDef = cm->detailDefinition(QContactName::DefinitionName, QContactType::TypeContact);
     QContact alice = createContact(nameDef, "Alice", "inWonderland", "1234567");
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
+    contactCount += 1; // added a new contact.
+    QCOMPARE(cm->contacts().size(), contactCount);
 
     /* Update name */
     QContactName name = alice.detail(QContactName::DefinitionName);
@@ -925,9 +1038,54 @@ void tst_QContactManager::update()
     saveContactName(&alice, nameDef, &name, "updated2");
     QVERIFY(cm->saveContact(&alice));
     QVERIFY(cm->error() == QContactManager::NoError);
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
     QContact updated = cm->contact(alice.localId());
     QContactName updatedName = updated.detail(QContactName::DefinitionName);
     QCOMPARE(updatedName, name);
+    QCOMPARE(cm->contacts().size(), contactCount); // contact count should be the same, no new contacts
+
+    /* Test that adding a new detail doesn't cause unwanted side effects */
+    int detailCount = alice.details().size();
+    QContactEmailAddress email;
+    email.setEmailAddress("test@example.com");
+    alice.saveDetail(&email);
+    QVERIFY(cm->saveContact(&alice));
+    QCOMPARE(cm->contacts().size(), contactCount); // contact count shoudl be the same, no new contacts
+
+    // This test is dangerous, since backends can add timestamps etc...
+    detailCount += 1;
+    QCOMPARE(detailCount, alice.details().size()); // adding a detail should cause the detail count to increase by one.
+
+    /* Test that removal of fields in a detail works */
+    QContactPhoneNumber phn = alice.detail<QContactPhoneNumber>();
+    phn.setNumber("1234567");
+    phn.setContexts(QContactDetail::ContextHome);
+    alice.saveDetail(&phn);
+    QVERIFY(cm->saveContact(&alice));
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
+    QVERIFY(alice.detail<QContactPhoneNumber>().contexts().contains(QContactDetail::ContextHome)); // check context saved.
+    phn = alice.detail<QContactPhoneNumber>(); // reload the detail, since it's key could have changed
+    phn.setContexts(QStringList()); // remove context field.
+    alice.saveDetail(&phn);
+    QVERIFY(cm->saveContact(&alice));
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
+    QVERIFY(alice.detail<QContactPhoneNumber>().contexts().isEmpty()); // check context removed.
+    QCOMPARE(cm->contacts().size(), contactCount); // removal of a field of a detail shouldn't affect the contact count
+
+    // This test is dangerous, since backends can add timestamps etc...
+    QCOMPARE(detailCount, alice.details().size()); // removing a field from a detail should affect the detail count
+
+    /* Test that removal of details works */
+    phn = alice.detail<QContactPhoneNumber>(); // reload the detail, since it's key could have changed
+    alice.removeDetail(&phn);
+    QVERIFY(cm->saveContact(&alice));
+    alice = cm->contact(alice.localId()); // force reload of (persisted) alice
+    QVERIFY(alice.details<QContactPhoneNumber>().isEmpty()); // no such detail.
+    QCOMPARE(cm->contacts().size(), contactCount); // removal of a detail shouldn't affect the contact count
+
+    // This test is dangerous, since backends can add timestamps etc...
+    //detailCount -= 1;
+    //QCOMPARE(detailCount, alice.details().size()); // removing a detail should cause the detail count to decrease by one.
 
     if (cm->hasFeature(QContactManager::Groups)) {
         // Try changing types - not allowed
@@ -1034,6 +1192,10 @@ void tst_QContactManager::batch()
     QVERIFY(contacts.at(1).detail(QContactName::DefinitionName) == nb);
     QVERIFY(contacts.at(2).detail(QContactName::DefinitionName) == nc);
 
+    /* Save again, with a null error map */
+    QVERIFY(cm->saveContacts(&contacts, NULL));
+    QVERIFY(cm->error() == QContactManager::NoError);
+
     /* Now make an update to them all */
     QContactPhoneNumber number;
     number.setNumber("1234567");
@@ -1091,6 +1253,10 @@ void tst_QContactManager::batch()
     QVERIFY(errorMap.values().at(0) == QContactManager::DoesNotExistError);
     QVERIFY(errorMap.values().at(1) == QContactManager::DoesNotExistError);
     QVERIFY(errorMap.values().at(2) == QContactManager::DoesNotExistError);
+
+    /* And again with a null error map */
+    QVERIFY(!cm->removeContacts(ids, NULL));
+    QVERIFY(cm->error() == QContactManager::DoesNotExistError);
 
     /* Try adding some new ones again, this time one with an error */
     contacts.clear();
@@ -1988,11 +2154,11 @@ void tst_QContactManager::signalEmission()
 
     /* Batch modifies */
     QContactName modifiedName = c.detail(QContactName::DefinitionName);
-    saveContactName(&c, nameDef, &modifiedName, "This is modified number 1");
+    saveContactName(&c, nameDef, &modifiedName, "Modified number 1");
     modifiedName = c2.detail(QContactName::DefinitionName);
-    saveContactName(&c2, nameDef, &modifiedName, "This is modified number 2");
+    saveContactName(&c2, nameDef, &modifiedName, "Modified number 2");
     modifiedName = c3.detail(QContactName::DefinitionName);
-    saveContactName(&c3, nameDef, &modifiedName, "This is modified number 3");
+    saveContactName(&c3, nameDef, &modifiedName, "Modified number 3");
 
     batchAdd.clear();
     batchAdd << c << c2 << c3;
@@ -2012,6 +2178,20 @@ void tst_QContactManager::signalEmission()
     QTRY_COMPARE(spyCM.count(), 0);
 
     QScopedPointer<QContactManager> m2(QContactManager::fromUri(uri));
+    
+    // During construction SIM backend (m2) will try writing contacts with 
+    // nickname, email and additional number to find out if the SIM card
+    // will support these fields. The other backend (m1) will then receive
+    // signals about that. These need to be caught so they don't interfere
+    // with the tests. (This trial and error method is used because existing
+    // API for checking the availability of these fields is not public.)
+	// NOTE: This applies only to pre 10.1 platforms (S60 3.1, 3.2, ect.)
+    if (uri.contains("symbiansim")) {
+        QTest::qWait(0);
+        spyCA.clear();
+        spyCM.clear();
+        spyCR.clear();
+    }
 
     QVERIFY(m1->hasFeature(QContactManager::Anonymous) ==
         m2->hasFeature(QContactManager::Anonymous));
@@ -2946,8 +3126,13 @@ void tst_QContactManager::relationships()
     }
     
     // Cleanup a bit
-    QVERIFY(cm->removeRelationship(customRelationshipOne));
-    QVERIFY(cm->removeRelationship(customRelationshipTwo));
+    QMap<int, QContactManager::Error> errorMap;
+    QList<QContactRelationship> moreRels;
+
+    moreRels << customRelationshipOne << customRelationshipTwo;
+    errorMap.insert(5, QContactManager::BadArgumentError);
+    QVERIFY(cm->removeRelationships(moreRels, &errorMap));
+    QVERIFY(errorMap.count() == 0);
 
     // test batch API and ordering in contacts
     QList<QContactRelationship> currentRelationships = cm->relationships(source.id(), QContactRelationship::First);
@@ -3057,7 +3242,14 @@ void tst_QContactManager::relationships()
     customRelationshipOne.setFirst(source.id());
     customRelationshipOne.setSecond(dest2.id());
     customRelationshipOne.setRelationshipType(availableRelationshipTypes.at(0));
-    QVERIFY(cm->saveRelationship(&customRelationshipOne));
+
+    // Test batch save with an error map
+    moreRels.clear();
+    moreRels << customRelationshipOne;
+    errorMap.insert(0, QContactManager::BadArgumentError);
+    QVERIFY(cm->saveRelationships(&moreRels, &errorMap));
+    QVERIFY(cm->error() == QContactManager::NoError);
+    QVERIFY(errorMap.count() == 0); // should be reset
     source = cm->contact(source.localId());
     dest2 = cm->contact(dest2.localId());
     QVERIFY(cm->removeContact(dest2.localId())); // remove dest2, the relationship should be removed

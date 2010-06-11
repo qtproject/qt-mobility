@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,7 +59,7 @@
 QT_BEGIN_NAMESPACE
 
 Q_GLOBAL_STATIC_WITH_ARGS(QMediaPluginLoader, playlistIOLoader,
-        (QMediaPlaylistIOInterface_iid, QLatin1String("/playlistformats"), Qt::CaseInsensitive))
+        (QMediaPlaylistIOInterface_iid, QLatin1String("playlistformats"), Qt::CaseInsensitive))
 
 
 /*!
@@ -146,12 +146,17 @@ QMediaPlaylist::~QMediaPlaylist()
     delete d_ptr;
 }
 
+/*!
+  Returns the QMediaObject instance that this QMediaPlaylist is bound too,
+  or 0 otherwise.
+*/
 QMediaObject *QMediaPlaylist::mediaObject() const
 {
     return d_func()->mediaObject;
 }
 
 /*!
+  \internal
   If \a mediaObject is null or doesn't have an intrinsic playlist,
   internal local memory playlist source will be created.
 */

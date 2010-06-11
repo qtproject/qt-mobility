@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,13 +60,13 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMultimedia::MetaData key) const;
-    QList<QtMultimedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
     QVariant extendedMetaData(const QString &key) const ;
     QStringList availableExtendedMetaData() const;
 
 private:
-    QString metaDataKeyAsString(QtMultimedia::MetaData key) const;
+    QString metaDataKeyAsString(QtMultimediaKit::MetaData key) const;
 
 private:
     MS60MediaPlayerResolver& m_mediaPlayerResolver;

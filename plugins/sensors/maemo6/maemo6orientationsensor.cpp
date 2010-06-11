@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -41,36 +41,37 @@
 
 #include "maemo6orientationsensor.h"
 
-#include "sensord/filters/posedata.h"
+#include <posedata.h>
 
-const char *maemo6orientationsensor::id("maemo6.orientationsensor");
+char const * const maemo6orientationsensor::id("maemo6.orientationsensor");
 bool maemo6orientationsensor::m_initDone = false;
 
 maemo6orientationsensor::maemo6orientationsensor(QSensor *sensor)
     : maemo6sensorbase(sensor)
 {
-    setReading<QOrientationReading>(&m_reading);
+    const QString sensorName = "orientationsensor";
+    initSensor<OrientationSensorChannelInterface>(sensorName, m_initDone);
 
-    if (!m_initDone) {
-        initSensor<OrientationSensorChannelInterface>("orientationsensor");
-
-        if (m_sensorInterface)
-            QObject::connect(static_cast<OrientationSensorChannelInterface*>(m_sensorInterface), SIGNAL(orientationChanged(const int&)), this, SLOT(slotOrientationChanged(const int&)));
-        else
-            qWarning() << "Unable to initialize orientation sensor.";
-
-        // metadata
-        addOutputRange(0, 6, 1);
-        setDescription(QLatin1String("Orientation of the device screen"));
-
-        m_initDone = true;
+    if (m_sensorInterface){
+        if (!(QObject::connect(m_sensorInterface, SIGNAL(orientationChanged(const Unsigned&)),
+                               this, SLOT(slotDataAvailable(const Unsigned&)))))
+            qWarning() << "Unable to connect "<< sensorName;
     }
+    else
+        qWarning() << "Unable to initialize "<<sensorName;
+
+    setReading<QOrientationReading>(&m_reading);
+    // metadata
+    addDataRate(130, 130);
+    addDataRate(1, 130); // TODO: this is for testing only
+    addOutputRange(0, 6, 1);
+    setDescription(QLatin1String("Measures orientation of the device screen as 6 pre-defined positions"));
 }
 
-void maemo6orientationsensor::slotOrientationChanged(const int& data)
+void maemo6orientationsensor::slotDataAvailable(const Unsigned& data)
 {
     QOrientationReading::Orientation o;
-    switch (data) {
+    switch (data.x()) {
         case PoseData::BottomDown: o = QOrientationReading::TopUp;     break;
         case PoseData::BottomUp:   o = QOrientationReading::TopDown;   break;
         case PoseData::LeftUp:     o = QOrientationReading::LeftUp;    break;
@@ -80,7 +81,6 @@ void maemo6orientationsensor::slotOrientationChanged(const int& data)
         default:                   o = QOrientationReading::Undefined;
     }
     m_reading.setOrientation(o);
-    //m_reading.setTimestamp(data.timestamp());
-    m_reading.setTimestamp(createTimestamp()); //TODO: use correct timestamp
+    m_reading.setTimestamp(data.UnsignedData().timestamp_);
     newReadingAvailable();
 }

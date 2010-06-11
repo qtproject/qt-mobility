@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -204,8 +204,8 @@ void tst_QMediaRecorder::testAudioEncoderControl()
     QCOMPARE(audiocapture->supportedAudioSampleRates().count(), 12);
     audioEncoder->setEncodingOption("PCM", "channels", QVariant(2));
     QCOMPARE(audioEncoder->encodingOption("PCM","channels").toInt(), 2);
-    audioEncoder->setEncodingOption("PCM", "quality", QVariant(int(QtMultimedia::NormalQuality)));
-    QCOMPARE(audioEncoder->encodingOption("PCM","quality").toInt(), int(QtMultimedia::NormalQuality));    
+    audioEncoder->setEncodingOption("PCM", "quality", QVariant(int(QtMultimediaKit::NormalQuality)));
+    QCOMPARE(audioEncoder->encodingOption("PCM","quality").toInt(), int(QtMultimediaKit::NormalQuality));
     audioEncoder->setEncodingOption("PCM", "samplerate", QVariant(44100));
     QCOMPARE(audioEncoder->encodingOption("PCM","samplerate").toInt(), 44100);    
 }

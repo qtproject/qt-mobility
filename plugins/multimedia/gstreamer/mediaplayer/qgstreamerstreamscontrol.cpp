@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,7 +62,7 @@ QMediaStreamsControl::StreamType QGstreamerStreamsControl::streamType(int stream
     return m_session->streamType(streamNumber);
 }
 
-QVariant QGstreamerStreamsControl::metaData(int streamNumber, QtMultimedia::MetaData key)
+QVariant QGstreamerStreamsControl::metaData(int streamNumber, QtMultimediaKit::MetaData key)
 {
     return m_session->streamProperties(streamNumber).value(key);
 }

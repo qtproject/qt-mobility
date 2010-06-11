@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,7 +45,12 @@
 #include "qtmessaging.h"
 #include "../support/support.h"
 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
+#if (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+# if defined(TESTDATA_DIR)
+#  undef TESTDATA_DIR
+# endif
+# define TESTDATA_DIR "/var/tmp"
+#elif (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) && defined(_WIN32_WCE))
 # if defined(TESTDATA_DIR)
 #  undef TESTDATA_DIR
 # endif
@@ -1487,7 +1492,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] )
         << ( QMessageIdList() << messageIds[0] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
-
     QTest::newRow("id equality invalid")
         << QMessageFilter::byId(QMessageId(), QMessageDataComparator::Equal) 
         << QMessageIdList()
@@ -1578,7 +1582,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
-
     QTest::newRow("type equality 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Equal) 
 #if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
@@ -2189,7 +2192,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << "";
 #endif
 
-#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status equality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
@@ -2309,7 +2311,6 @@ void tst_QMessageStoreKeys::testMessageFilter_data()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << "";
-#endif
 
     QTest::newRow("size equality 1")
         << QMessageFilter::bySize(messageSizes[3], QMessageDataComparator::Equal) 
@@ -2876,7 +2877,7 @@ void tst_QMessageStoreKeys::testMessageFilter()
     if (filter.isSupported()) {
         QVERIFY(filter == filter);
         QCOMPARE(filter != QMessageFilter(), !filter.isEmpty());
-        
+
         // Order is irrelevant for filtering
         if (body.isEmpty()) {
             QCOMPARE(manager->queryMessages(filter&~existingAccountsFilter).toSet().subtract(existingMessageIds), ids.toSet());

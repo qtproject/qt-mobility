@@ -59,7 +59,3 @@ OBJECTIVE_SOURCES += \
     qt7ciimagevideobuffer.mm \
     qt7playerservice.mm \
     qcvdisplaylink.mm
-
-
-target.path=$$QT_MOBILITY_PREFIX/plugins/mediaservice
-INSTALLS+=target

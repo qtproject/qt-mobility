@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -198,7 +198,12 @@ bool QContactManager::parseUri(const QString& uri, QString* pManagerId, QMap<QSt
     return true;
 }
 
-/*! Returns a URI that completely describes a manager implementation, datastore, and the parameters with which to instantiate the manager, from the given \a managerName, \a params and an optional \a implementationVersion */
+/*!
+   Returns a URI that completely describes a manager implementation, datastore, and the parameters
+   with which to instantiate the manager, from the given \a managerName, \a params and an optional
+   \a implementationVersion.  This function is generally useful only if you intend to construct a
+   manager with the \l fromUri() function, or wish to set the manager URI field in a QContactId
+   manually (for synchronization or other purposes).  Most clients will not need to use this function. */
 QString QContactManager::buildUri(const QString& managerName, const QMap<QString, QString>& params, int implementationVersion) 
 {
     QString ret(QLatin1String("qtcontacts:%1:%2"));
@@ -227,17 +232,17 @@ QString QContactManager::buildUri(const QString& managerName, const QMap<QString
 }
 
 /*!
-  Constructs a QContactManager whose implementation, store and parameters are specified in the given \a storeUri,
-  and whose parent object is \a parent.
+  Constructs a QContactManager whose implementation version, manager name and specific parameters
+  are specified in the given \a managerUri, and whose parent object is \a parent.
  */
-QContactManager* QContactManager::fromUri(const QString& storeUri, QObject* parent)
+QContactManager* QContactManager::fromUri(const QString& managerUri, QObject* parent)
 {
-    if (storeUri.isEmpty()) {
+    if (managerUri.isEmpty()) {
         return new QContactManager(QString(), QMap<QString, QString>(), parent);
     } else {
         QString id;
         QMap<QString, QString> parameters;
-        if (parseUri(storeUri, &id, &parameters)) {
+        if (parseUri(managerUri, &id, &parameters)) {
             return new QContactManager(id, parameters, parent);
         } else {
             // invalid
@@ -541,13 +546,10 @@ bool QContactManager::removeContacts(const QList<QContactLocalId>& contactIds, Q
 }
 
 /*!
-  \preliminary
   Returns a pruned or modified version of the \a original contact which is valid and can be saved in the manager.
   The returned contact might have entire details removed or arbitrarily changed.  The cache of relationships
   in the contact are ignored entirely when considering compatibility with the backend, as they are
   saved and validated separately.
-
-  This function is preliminary and the behaviour is subject to change!
  */
 QContact QContactManager::compatibleContact(const QContact& original)
 {

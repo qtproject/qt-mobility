@@ -49,7 +49,6 @@ QTM_USE_NAMESPACE
 
 /*!
   \class QVersitResourceHandler
-  \preliminary
   \brief The QVersitResourceHandler class is an interface for clients wishing to implement custom
   behaviour for loading and saving files to disk when exporting and importing.
   \ingroup versit
@@ -132,7 +131,8 @@ bool QVersitDefaultResourceHandler::loadResource(const QString& location,
     if (location.isEmpty())
         return false;
     QFile file(location);
-    file.open(QIODevice::ReadOnly);
+    if (!file.open(QIODevice::ReadOnly))
+        return false;
     if (!file.isReadable())
         return false;
     *contents = file.readAll();

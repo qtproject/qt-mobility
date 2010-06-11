@@ -1,6 +1,10 @@
 :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 ::
+<<<<<<< HEAD:configure.bat
 :: Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+=======
+:: Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 :: All rights reserved.
 :: Contact: Nokia Corporation (qt-info@nokia.com)
 ::
@@ -59,7 +63,10 @@ set BUILD_DOCS=yes
 set BUILD_TOOLS=yes
 set MOBILITY_MODULES=bearer location contacts multimedia publishsubscribe versit messaging systeminfo serviceframework sensors
 set MOBILITY_MODULES_UNPARSED=
+<<<<<<< HEAD:configure.bat
 set MOBILITY_MULTIMEDIA=yes
+=======
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 set VC_TEMPLATE_OPTION=
 set QT_PATH=
 set QMAKE_CACHE=%BUILD_PATH%\.qmake.cache
@@ -72,6 +79,7 @@ echo QT_MOBILITY_SOURCE_TREE = %SOURCE_PATH% > %QMAKE_CACHE%
 echo QT_MOBILITY_BUILD_TREE = %BUILD_PATH% >> %QMAKE_CACHE%
 set QMAKE_CACHE=
 
+<<<<<<< HEAD:configure.bat
 if %BUILD_PATH% == %SOURCE_PATH% (
     cd %SOURCE_PATH%\config.tests\qtmultimedia
     if exist make del qtmultimedia
@@ -88,6 +96,8 @@ if %QTMULTIMEDIA% == no-multimedia (
 )
 cd /D %BUILD_PATH%
 
+=======
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 :cmdline_parsing
 if "%1" == ""                   goto startProcessing
 if "%1" == "-debug"             goto debugTag
@@ -97,6 +107,10 @@ if "%1" == "-prefix"            goto prefixTag
 if "%1" == "-libdir"            goto libTag
 if "%1" == "-bindir"            goto binTag
 if "%1" == "-headerdir"         goto headerTag
+<<<<<<< HEAD:configure.bat
+=======
+if "%1" == "-plugindir"         goto pluginTag
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 if "%1" == "-tests"             goto testTag
 if "%1" == "-examples"          goto exampleTag
 if "%1" == "-qt"                goto qtTag
@@ -129,6 +143,11 @@ echo Usage: configure.bat [-prefix (dir)] [headerdir (dir)] [libdir (dir)]
     echo                     (default PREFIX/lib)
     echo -bindir (dir) ..... Executables will be installed to dir
     echo                     (default PREFIX/bin)
+<<<<<<< HEAD:configure.bat
+=======
+    echo -plugindir (dir) .. Plug-ins will be installed to dir
+    echo                     (default PREFIX/plugins)
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
     echo -debug ............ Build with debugging symbols
     echo -release .......... Build without debugging symbols
     echo -silent ........... Reduces build output
@@ -198,6 +217,16 @@ echo QT_MOBILITY_INCLUDE = %1 >> %PROJECT_CONFIG%
 shift
 goto cmdline_parsing
 
+<<<<<<< HEAD:configure.bat
+=======
+:pluginTag
+shift
+echo QT_MOBILITY_PLUGINS = %1 >> %PROJECT_CONFIG%
+shift
+echo
+goto cmdline_parsing
+
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 :unfrozenTag
 REM Should never be used in release builds
 REM Some SDK's seem to exclude Q_AUTOTEST_EXPORT symbols if the
@@ -253,7 +282,10 @@ set MOBILITY_MODULES_UNPARSED=%MOBILITY_MODULES_UNPARSED:xxx=%
 
 REM reset default modules as we expect a modules list
 set MOBILITY_MODULES=
+<<<<<<< HEAD:configure.bat
 set /a MODULE_COUNT=0
+=======
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 
 echo Checking selected modules:
 :modulesTag2
@@ -290,6 +322,7 @@ if %FIRST% == bearer (
     goto errorTag
 )
 
+<<<<<<< HEAD:configure.bat
 if %FIRST% == multimedia (
     if %MOBILITY_MULTIMEDIA% == yes (
         set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
@@ -307,6 +340,11 @@ if "%REMAINING%" == "" (
         echo "No modules to build, exiting..."
         exit /b 1
     )
+=======
+set MOBILITY_MODULES=%MOBILITY_MODULES% %FIRST%
+
+if "%REMAINING%" == "" (
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
     shift
 ) else (
     set MOBILITY_MODULES_UNPARSED=%REMAINING%
@@ -317,6 +355,7 @@ SET REMAINING=
 SET FIRST=
 goto cmdline_parsing
 
+<<<<<<< HEAD:configure.bat
 :removeMultimedia
 set MOBILITY_MODULES_TEMP=%MOBILITY_MODULES%
 set MOBILITY_MODULES=
@@ -352,6 +391,10 @@ for %%a in (%MOBILITY_MODULES%) do (
 
 :startProcessing2
 
+=======
+:startProcessing
+
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 echo CONFIG += %RELEASEMODE% >> %PROJECT_CONFIG%
 echo CONFIG_WIN32 += %WIN32_RELEASEMODE% %RELEASEMODE% >> %PROJECT_CONFIG%
 set RELEASEMODE=
@@ -394,9 +437,16 @@ set BUILD_TOOLS=
 
 echo qmf_enabled = no >> %PROJECT_CONFIG%
 
+<<<<<<< HEAD:configure.bat
 echo isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
 echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+=======
+echo !symbian:isEmpty($$QT_MOBILITY_INCLUDE):QT_MOBILITY_INCLUDE=$$QT_MOBILITY_PREFIX/include >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_LIB):QT_MOBILITY_LIB=$$QT_MOBILITY_PREFIX/lib >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_BIN):QT_MOBILITY_BIN=$$QT_MOBILITY_PREFIX/bin >> %PROJECT_CONFIG%
+echo isEmpty($$QT_MOBILITY_PLUGINS):QT_MOBILITY_PLUGINS=$$QT_MOBILITY_PREFIX/plugins >> %PROJECT_CONFIG%
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 
 echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 REM no Sysinfo support on Maemo yet
@@ -482,6 +532,10 @@ goto errorTag
 
 :compileTest
 setlocal
+<<<<<<< HEAD:configure.bat
+=======
+    @echo off
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
     echo Checking %1
     set CURRENT_PWD=%CD%
 
@@ -543,8 +597,14 @@ call :compileTest Symbian_Sensor_Framework sensors_symbian
 call :compileTest Audiorouting_s60 audiorouting_s60
 call :compileTest Tunerlibrary_for_3.1 tunerlib_s60
 call :compileTest RadioUtility_for_post_3.1 radioutility_s60
+<<<<<<< HEAD:configure.bat
 call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
+=======
+REM call :compileTest OpenMaxAl_support openmaxal_symbian
+call :compileTest Surfaces_s60 surfaces_s60
+call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 
 :noTests
 
@@ -570,6 +630,7 @@ for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
 )
 
 if %FIRST% == bearer (
+<<<<<<< HEAD:configure.bat
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts
@@ -601,6 +662,37 @@ if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\contacts\details
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include %SOURCE_PATH%\src\sensors
+=======
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtBearer %SOURCE_PATH%\src\bearer
+) else if %FIRST% == contacts (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
+) else if %FIRST% == location (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtLocation %SOURCE_PATH%\src\location
+) else if %FIRST% == messaging (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMessaging %SOURCE_PATH%\src\messaging
+) else if %FIRST% == multimedia (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\audio
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtMultimediaKit %SOURCE_PATH%\src\multimedia\video
+) else if %FIRST% == publishsubscribe (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtPublishSubscribe %SOURCE_PATH%\src\publishsubscribe
+) else if %FIRST% == systeminfo (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSystemInfo %SOURCE_PATH%\src\systeminfo
+) else if %FIRST% == serviceframework (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtServiceFramework %SOURCE_PATH%\src\serviceframework
+) else if %FIRST% == versit (
+    REM versit implies contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtVersit %SOURCE_PATH%\src\versit
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\requests
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\filters
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtContacts %SOURCE_PATH%\src\contacts\details
+) else if %FIRST% == sensors (
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtSensors %SOURCE_PATH%\src\sensors
+>>>>>>> 9edc34e159ad66883ae25fd29945f2d5e483d638:configure.bat
 )
 
 if "%REMAINING%" == "" (

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -88,12 +88,12 @@ bool V4LRadioControl::isAvailable() const
     return available;
 }
 
-QtMultimedia::AvailabilityError V4LRadioControl::availabilityError() const
+QtMultimediaKit::AvailabilityError V4LRadioControl::availabilityError() const
 {
     if (fd > 0)
-        return QtMultimedia::NoError;
+        return QtMultimediaKit::NoError;
     else
-        return QtMultimedia::ResourceError;
+        return QtMultimediaKit::ResourceError;
 }
 
 QRadioTuner::State V4LRadioControl::state() const

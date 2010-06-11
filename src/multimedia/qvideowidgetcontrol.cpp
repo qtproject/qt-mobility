@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,21 +59,15 @@ QT_BEGIN_NAMESPACE
 
     \code
     QVideoWidgetControl *widgetControl = mediaService->requestControl<QVideoWidgetControl *>();
-
     layout->addWidget(widgetControl->widget());
     \endcode
 
-    QVideoWidgetControl is one of number of possible video output controls, in
-    order to receive video it must be made the active video output control by
-    setting the output property of QVideoOutputControl to \l
-    {QVideoOutputControl::WidgetOutput}{WidgetOutput}. Consequently any
-    QMediaService that implements QVideoWidgetControl must also implement
-    QVideoOutputControl.
+    QVideoWidgetControl is one of number of possible video output controls.
 
     The interface name of QVideoWidgetControl is \c com.nokia.Qt.QVideoWidgetControl/1.0 as
     defined in QVideoWidgetControl_iid.
 
-    \sa QMediaService::requestControl(), QVideoOutputControl, QVideoWidget
+    \sa QMediaService::requestControl(), QVideoWidget
 */
 
 /*!

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -76,10 +76,12 @@ Player::Player(QWidget *parent)
     , colorDialog(0)
 #endif
 {
+//! [create-objs]
     player = new QMediaPlayer(this);
     // owned by PlaylistModel
     playlist = new QMediaPlaylist();
     player->setPlaylist(playlist);
+//! [create-objs]
 
     connect(player, SIGNAL(durationChanged(qint64)), SLOT(durationChanged(qint64)));
     connect(player, SIGNAL(positionChanged(qint64)), SLOT(positionChanged(qint64)));
@@ -90,11 +92,13 @@ Player::Player(QWidget *parent)
     connect(player, SIGNAL(bufferStatusChanged(int)), this, SLOT(bufferingProgress(int)));
     connect(player, SIGNAL(error(QMediaPlayer::Error)), this, SLOT(displayErrorMessage()));
 
+//! [2]
     videoWidget = new VideoWidget(this);
     player->setVideoOutput(videoWidget);
 
     playlistModel = new PlaylistModel(this);
     playlistModel->setPlaylist(playlist);
+//! [2]
 
     playlistView = new QListView(this);
     playlistView->setModel(playlistModel);
@@ -108,10 +112,18 @@ Player::Player(QWidget *parent)
     connect(slider, SIGNAL(sliderMoved(int)), this, SLOT(seek(int)));
     
     QMediaService *service = player->service();
-    if (service)
-        audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(service->requestControl(QAudioEndpointSelector_iid));
-    if (audioEndpointSelector)
-        connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)), this, SLOT(handleAudioOutputChangedSignal(const QString&)));
+    if (service) {
+        QMediaControl *control = service->requestControl(QAudioEndpointSelector_iid);
+        if (control) {
+            audioEndpointSelector = qobject_cast<QAudioEndpointSelector*>(control);
+            if (audioEndpointSelector) {
+                connect(audioEndpointSelector, SIGNAL(activeEndpointChanged(const QString&)),
+                        this, SLOT(handleAudioOutputChangedSignal(const QString&)));
+            } else {
+                service->releaseControl(control);
+            }
+        }
+    }
 
 #ifndef Q_OS_SYMBIAN
     QPushButton *openButton = new QPushButton(tr("Open"), this);
@@ -278,15 +290,15 @@ void Player::metaDataChanged()
         setTrackInfo(QString("(%1/%2) %3 - %4")
                 .arg(playlist->currentIndex()+1)
                 .arg(playlist->mediaCount())
-                .arg(player->metaData(QtMultimedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMultimedia::Title).toString()));
+                .arg(player->metaData(QtMultimediaKit::AlbumArtist).toString())
+                .arg(player->metaData(QtMultimediaKit::Title).toString()));
 
         if (!player->isVideoAvailable()) {
-            QUrl uri = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
+            QUrl uri = player->metaData(QtMultimediaKit::CoverArtUrlLarge).value<QUrl>();
             QPixmap pixmap = NULL;
 
             if (uri.isEmpty()) {                
-                QVariant picture = player->metaData(QtMultimedia::CoverArtImage);
+                QVariant picture = player->metaData(QtMultimediaKit::CoverArtImage);
                 // Load picture from metadata
                 if (!picture.isNull() && picture.canConvert<QByteArray>())
                     pixmap.loadFromData(picture.value<QByteArray>());
@@ -320,14 +332,14 @@ void Player::metaDataChanged()
     hideOrShowCoverArt();
     }
 #else
-    //qDebug() << "update metadata" << player->metaData(QtMultimedia::Title).toString();
+    //qDebug() << "update metadata" << player->metaData(QtMultimediaKit::Title).toString();
     if (player->isMetaDataAvailable()) {
         setTrackInfo(QString("%1 - %2")
-                .arg(player->metaData(QtMultimedia::AlbumArtist).toString())
-                .arg(player->metaData(QtMultimedia::Title).toString()));
+                .arg(player->metaData(QtMultimediaKit::AlbumArtist).toString())
+                .arg(player->metaData(QtMultimediaKit::Title).toString()));
 
         if (coverLabel) {
-            QUrl url = player->metaData(QtMultimedia::CoverArtUrlLarge).value<QUrl>();
+            QUrl url = player->metaData(QtMultimediaKit::CoverArtUrlLarge).value<QUrl>();
 
             coverLabel->setPixmap(!url.isEmpty()
                     ? QPixmap(url.toString())
