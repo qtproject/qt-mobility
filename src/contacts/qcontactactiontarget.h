@@ -62,6 +62,14 @@ public:
     QContactActionTarget& operator=(const QContactActionTarget& other);
     ~QContactActionTarget();
 
+    enum Type {
+        Invalid, // no contact
+        WholeContact, // no details
+        SingleDetail, // a single detail
+        MultipleDetails,
+    };
+
+    Type type() const; // No setter
     bool isValid() const;
     bool operator==(const QContactActionTarget& other) const;
     bool operator!=(const QContactActionTarget& other) const;

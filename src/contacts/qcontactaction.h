@@ -115,6 +115,8 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(ActionEmail, "email");
     Q_DECLARE_LATIN1_CONSTANT(ActionMessage, "message"); // XXX text message? IM message? either, depending on detail?
     Q_DECLARE_LATIN1_CONSTANT(ActionVideoCall, "videocall");
+    Q_DECLARE_LATIN1_CONSTANT(ActionOpenInEditor, "editor"); // Open in the native addressbook editor
+    Q_DECLARE_LATIN1_CONSTANT(ActionOpenInViewer, "view"); // Open in the native addressbook viewer
 
 Q_SIGNALS:
     void stateChanged(QContactAction::State);
