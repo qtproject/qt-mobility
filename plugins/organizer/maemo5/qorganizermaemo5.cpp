@@ -396,6 +396,8 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
+    // TODO: Make this use the fetch hint??
+
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     std::string nativeId = QString::number(itemId).toStdString();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
@@ -426,6 +428,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     }
 
     // In an error situation return invalid item
+    *error = QOrganizerItemManager::DoesNotExistError;
     return QOrganizerItem();
 }
 
@@ -443,7 +446,6 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
         items->replace(i, curr );
 
         if ( calError != CALENDAR_OPERATION_SUCCESSFUL || *error != QOrganizerItemManager::NoError ) {
-            //qDebug() << "ERROR!";
             success = false;
             if ( errorMap ) {
                 if ( *error != QOrganizerItemManager::NoError )
@@ -460,86 +462,42 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
-
-        Remove a list of items, given by their id.
-
-        If you encounter an error, insert an error into the appropriate place in the error map,
-        and update the error variable as well.
-
-        DoesNotExistError should be used if the id refers to a non existent item.
-    */
-    return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
-
-
-    // TODO: The commented out code below is from the Proof of Concept
-    // TODO: Remove the Proof of Concept codes at some point
-
-    /*
-    // this is much simpler, since the maemo5 calendar-backend API
-    // supports removal by component id.  Note that while the API
-    // supports batch remove (and rolls back if fails),
-    // we want to provide fine-grained error reporting, so we do
-    // the operation one at a time...
-    // XXX TODO: check performance, change to batch if too slow.
+    // TODO: Add changeset manipulation and signal emissions
+    // TODO: Check all the dependencies of the removed item
 
     *error = QOrganizerItemManager::NoError;
-    int calError = 1; // no error.
-    QOrganizerItemChangeSet cs;
-   
-    for (int i = 0; i < itemIds.size(); ++i) {
-        QOrganizerItemLocalId currId = itemIds.at(i);
-        QString entireId = d->m_cIdToQId.key(currId);
-        if (entireId.isEmpty()) {
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-            *error = QOrganizerItemManager::DoesNotExistError;
-            if (errorMap) {
-                errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
-            }
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    bool success = true;
 
-            // user has specified a nonexistent id to remove.
-            continue;
-        }
-        QString calendarName = d->m_cIdToCName.value(entireId);
-        QString cId = entireId.mid((calendarName.size() + 1), -1); // entireId = calendarName:cId
-        CCalendar* calendar = d->m_mcInstance->getCalendarByName(calendarName.toStdString(), calError);
-        if (calendar) {
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-            std::vector<std::string> removeItemIds;
-            removeItemIds.push_back(cId.toStdString());
-            d->m_mcInstance->deleteComponents(removeItemIds, calendar->getCalendarId(), calError);
-	    
-            if (calError != CALENDAR_OPERATION_SUCCESSFUL) {
-                calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-                *error = QOrganizerItemManager::DoesNotExistError;
-                if (errorMap) {
-                    errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
-                }
-            } else {
-                // remove the item from our maps.
-                d->m_cIdToQId.remove(entireId);
-                d->m_cIdToCName.remove(entireId);
-                cs.insertRemovedItem(currId);
+    for( int i = 0; i < itemIds.size(); ++i ) {
+        QOrganizerItemLocalId currId = itemIds.at(i);
+
+        QOrganizerItemFetchHint::OptimizationHints optimizationHints( QOrganizerItemFetchHint::NoBinaryBlobs );
+        optimizationHints |= QOrganizerItemFetchHint::NoActionPreferences;
+        QOrganizerItemFetchHint fetchHints;
+        fetchHints.setOptimizationHints( optimizationHints );
+        QOrganizerItem currItem = item( currId, fetchHints, error );
+        if ( *error == QOrganizerItemManager::NoError ) {
+            // Item exists
+            QString itemId = QString::number( currItem.localId() );
+            int calError = CALENDAR_OPERATION_SUCCESSFUL;
+            cal->deleteComponent( itemId.toStdString(), calError );
+            *error = calErrorToManagerError( calError );
+
+            if ( calError != CALENDAR_OPERATION_SUCCESSFUL )
+            {
+                success = false;
+                if ( errorMap )
+                    errorMap->insert(i, *error);
             }
         } else {
-            // XXX TODO: make a "InvalidCalendar" error
-            calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-            *error = QOrganizerItemManager::DoesNotExistError;
-            if (errorMap) {
-                errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
-            }
+            success = false;
+            if ( errorMap )
+                errorMap->insert(i, *error);
         }
-	delete calendar;
     }
 
-    // ensure that the changes are committed to the dbase.
-    d->m_mcInstance->commitAllChanges();
-
-    // emit signals
-    cs.emitSignals(this);
-    return (*error == QOrganizerItemManager::NoError);
-    */
+    return success;
 }
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)
