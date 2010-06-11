@@ -500,8 +500,8 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
     QList<QOrganizerItemDetail> occDets;
     foreach (const QOrganizerItemDetail& det, allDets) {
         if (det.definitionName() != QOrganizerItemRecurrence::DefinitionName
-                && det.definitionName() != QOrganizerItemEventTimeRange::DefinitionName
-                && det.definitionName() != QOrganizerItemTodoTimeRange::DefinitionName) {
+                && det.definitionName() != QOrganizerEventTimeRange::DefinitionName
+                && det.definitionName() != QOrganizerTodoTimeRange::DefinitionName) {
             occDets.append(det);
         }
     }
@@ -520,7 +520,7 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
 
     // and update the time range in the instance based on the current instance date
     if (generator.type() == QOrganizerItemType::TypeEvent) {
-        QOrganizerItemEventTimeRange etr = generator.detail<QOrganizerItemEventTimeRange>();
+        QOrganizerEventTimeRange etr = generator.detail<QOrganizerEventTimeRange>();
         QDateTime temp = etr.startDateTime();
         temp.setDate(rdate.date());
         etr.setStartDateTime(temp);
@@ -532,7 +532,7 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
 
     // for todo's?
     if (generator.type() == QOrganizerItemType::TypeTodo) {
-        QOrganizerItemTodoTimeRange ttr = generator.detail<QOrganizerItemTodoTimeRange>();
+        QOrganizerTodoTimeRange ttr = generator.detail<QOrganizerTodoTimeRange>();
         QDateTime temp = ttr.dueDateTime();
         temp.setDate(rdate.date());
         ttr.setDueDateTime(temp);

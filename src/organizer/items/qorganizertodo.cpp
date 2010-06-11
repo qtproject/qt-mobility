@@ -46,27 +46,27 @@ QTM_USE_NAMESPACE
 
 void QOrganizerTodo::setNotBeforeDateTime(const QDateTime& notBeforeDateTime)
 {
-    QOrganizerItemTodoTimeRange ttr = detail<QOrganizerItemTodoTimeRange>();
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
     ttr.setNotBeforeDateTime(notBeforeDateTime);
     saveDetail(&ttr);
 }
 
 QDateTime QOrganizerTodo::notBeforeDateTime() const
 {
-    QOrganizerItemTodoTimeRange ttr = detail<QOrganizerItemTodoTimeRange>();
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
     return ttr.notBeforeDateTime();
 }
 
 void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
 {
-    QOrganizerItemTodoTimeRange ttr = detail<QOrganizerItemTodoTimeRange>();
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
     ttr.setDueDateTime(dueDateTime);
     saveDetail(&ttr);
 }
 
 QDateTime QOrganizerTodo::dueDateTime() const
 {
-    QOrganizerItemTodoTimeRange ttr = detail<QOrganizerItemTodoTimeRange>();
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
     return ttr.dueDateTime();
 }
 

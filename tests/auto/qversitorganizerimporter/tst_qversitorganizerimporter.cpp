@@ -260,7 +260,7 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         dtend.setName(QLatin1String("DTEND"));
         dtend.setValue(QLatin1String("20100102T030406"));
         properties << dtend;
-        QOrganizerItemEventTimeRange etr;
+        QOrganizerEventTimeRange etr;
         etr.setStartDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 5)));
         etr.setEndDateTime(QDateTime(QDate(2010, 1, 2), QTime(3, 4, 6)));
         QTest::newRow("dtstart and dtend") << properties
@@ -280,7 +280,7 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         QVersitProperty duration;
         duration.setName(QLatin1String("DURATION"));
         duration.setValue(QLatin1String("P15DT5H7M20S"));
-        QOrganizerItemEventTimeRange etr;
+        QOrganizerEventTimeRange etr;
         etr.setStartDateTime(QDateTime(QDate(2009, 12, 31), QTime(0, 0, 0)));
         etr.setEndDateTime(QDateTime(QDate(2010, 1, 15), QTime(5, 7, 20)));
         QTest::newRow("dtstart and duration: days hours minutes seconds")
@@ -534,7 +534,7 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         QVersitProperty rdate;
         rdate.setName(QLatin1String("RDATE"));
         rdate.setValue(QLatin1String("19970304"));
-        QOrganizerItemEventTimeRange etr;
+        QOrganizerEventTimeRange etr;
         etr.setStartDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
         etr.setEndDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
         QOrganizerItemRecurrence recurrence;
@@ -575,7 +575,7 @@ void tst_QVersitOrganizerImporter::testImportEventProperties_data()
         QVersitProperty rdate;
         rdate.setName(QLatin1String("EXDATE"));
         rdate.setValue(QLatin1String("19970304"));
-        QOrganizerItemEventTimeRange etr;
+        QOrganizerEventTimeRange etr;
         etr.setStartDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
         etr.setEndDateTime(QDateTime(QDate(1997, 3, 4), QTime(11, 0, 0)));
         QOrganizerItemRecurrence recurrence;
@@ -693,20 +693,20 @@ void tst_QVersitOrganizerImporter::testImportTodoProperties_data()
         QVersitProperty property;
         property.setName(QLatin1String("STATUS"));
         property.setValue(QLatin1String("COMPLETED"));
-        QOrganizerItemTodoProgress progress;
-        progress.setStatus(QOrganizerItemTodoProgress::StatusComplete);
+        QOrganizerTodoProgress progress;
+        progress.setStatus(QOrganizerTodoProgress::StatusComplete);
         QTest::newRow("status completed")
             << (QList<QVersitProperty>() << property)
             << (QList<QOrganizerItemDetail>() << progress);
 
         property.setValue(QLatin1String("NEEDS-ACTION"));
-        progress.setStatus(QOrganizerItemTodoProgress::StatusNotStarted);
+        progress.setStatus(QOrganizerTodoProgress::StatusNotStarted);
         QTest::newRow("status needs-action")
             << (QList<QVersitProperty>() << property)
             << (QList<QOrganizerItemDetail>() << progress);
 
         property.setValue(QLatin1String("IN-PROCESS"));
-        progress.setStatus(QOrganizerItemTodoProgress::StatusInProgress);
+        progress.setStatus(QOrganizerTodoProgress::StatusInProgress);
         QTest::newRow("status in-process")
             << (QList<QVersitProperty>() << property)
             << (QList<QOrganizerItemDetail>() << progress);
@@ -716,7 +716,7 @@ void tst_QVersitOrganizerImporter::testImportTodoProperties_data()
         QVersitProperty property;
         property.setName(QLatin1String("PERCENT-COMPLETE"));
         property.setValue(QLatin1String("42"));
-        QOrganizerItemTodoProgress progress;
+        QOrganizerTodoProgress progress;
         progress.setPercentageComplete(42);
         QTest::newRow("percent-complete")
             << (QList<QVersitProperty>() << property)
@@ -727,7 +727,7 @@ void tst_QVersitOrganizerImporter::testImportTodoProperties_data()
         QVersitProperty property;
         property.setName(QLatin1String("COMPLETED"));
         property.setValue(QLatin1String("20100609T161500"));
-        QOrganizerItemTodoProgress progress;
+        QOrganizerTodoProgress progress;
         progress.setFinishedDateTime(QDateTime(QDate(2010, 6, 9), QTime(16, 15, 0)));
         QTest::newRow("completed")
             << (QList<QVersitProperty>() << property)

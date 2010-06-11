@@ -104,53 +104,53 @@ QOrganizerItemPriority::Priority QOrganizerTodoOccurrence::priority() const
 
 void QOrganizerTodoOccurrence::setProgressPercentage(int percentage)
 {
-    // XXX TODO: make the API more consistent with that in QOrganizerItemTodoProgress.
-    QOrganizerItemTodoProgress tp = detail<QOrganizerItemTodoProgress>();
+    // XXX TODO: make the API more consistent with that in QOrganizerTodoProgress.
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     tp.setPercentageComplete(percentage);
     saveDetail(&tp);
 }
 
 int QOrganizerTodoOccurrence::progressPercentage() const
 {
-    QOrganizerItemTodoProgress tp = detail<QOrganizerItemTodoProgress>();
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     return tp.percentageComplete();
 }
 
-void QOrganizerTodoOccurrence::setStatus(QOrganizerItemTodoProgress::Status status)
+void QOrganizerTodoOccurrence::setStatus(QOrganizerTodoProgress::Status status)
 {
-    QOrganizerItemTodoProgress tp = detail<QOrganizerItemTodoProgress>();
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     tp.setStatus(status);
     saveDetail(&tp);
 }
 
-QOrganizerItemTodoProgress::Status QOrganizerTodoOccurrence::status() const
+QOrganizerTodoProgress::Status QOrganizerTodoOccurrence::status() const
 {
-    QOrganizerItemTodoProgress tp = detail<QOrganizerItemTodoProgress>();
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     return tp.status();
 }
 
 void QOrganizerTodoOccurrence::setStartedDateTime(const QDateTime& startedDateTime)
 {
-    QOrganizerItemTodoProgress tp = detail<QOrganizerItemTodoProgress>();
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     tp.setStartedDateTime(startedDateTime);
     saveDetail(&tp);
 }
 
 QDateTime QOrganizerTodoOccurrence::startedDateTime() const
 {
-    QOrganizerItemTodoProgress tp = detail<QOrganizerItemTodoProgress>();
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     return tp.startedDateTime();
 }
 
 void QOrganizerTodoOccurrence::setFinishedDateTime(const QDateTime& finishedDateTime)
 {
-    QOrganizerItemTodoProgress tp = detail<QOrganizerItemTodoProgress>();
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     tp.setFinishedDateTime(finishedDateTime);
     saveDetail(&tp);
 }
 
 QDateTime QOrganizerTodoOccurrence::finishedDateTime() const
 {
-    QOrganizerItemTodoProgress tp = detail<QOrganizerItemTodoProgress>();
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     return tp.finishedDateTime();
 }

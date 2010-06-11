@@ -45,13 +45,13 @@ QTM_USE_NAMESPACE
 
 void QOrganizerJournal::setDateTime(const QDateTime& dateTime)
 {
-    QOrganizerItemJournalTimeRange jtr = detail<QOrganizerItemJournalTimeRange>();
+    QOrganizerJournalTimeRange jtr = detail<QOrganizerJournalTimeRange>();
     jtr.setEntryDateTime(dateTime);
     saveDetail(&jtr);
 }
 
 QDateTime QOrganizerJournal::dateTime() const
 {
-    QOrganizerItemJournalTimeRange jtr = detail<QOrganizerItemJournalTimeRange>();
+    QOrganizerJournalTimeRange jtr = detail<QOrganizerJournalTimeRange>();
     return jtr.entryDateTime();
 }

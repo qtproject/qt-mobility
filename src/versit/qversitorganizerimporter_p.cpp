@@ -259,7 +259,7 @@ bool QVersitOrganizerImporterPrivate::createStartDateTime(
     QDateTime newStart = parseDateTime(property.value());
     if (!newStart.isValid())
         return false;
-    QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
+    QOrganizerEventTimeRange etr(item->detail<QOrganizerEventTimeRange>());
     if (mDurationSpecified) {
         // Need to fix up the end date to match the duration of the event
         QDateTime start = etr.startDateTime();
@@ -291,7 +291,7 @@ bool QVersitOrganizerImporterPrivate::createEndDateTime(
     QDateTime newEnd = parseDateTime(property.value());
     if (!newEnd.isValid())
         return false;
-    QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
+    QOrganizerEventTimeRange etr(item->detail<QOrganizerEventTimeRange>());
     etr.setEndDateTime(newEnd);
     updatedDetails->append(etr);
     mDurationSpecified = false;
@@ -310,7 +310,7 @@ bool QVersitOrganizerImporterPrivate::createDuration(
     Duration duration = Duration::parseDuration(property.value());
     if (!duration.isValid())
         return false;
-    QOrganizerItemEventTimeRange etr(item->detail<QOrganizerItemEventTimeRange>());
+    QOrganizerEventTimeRange etr(item->detail<QOrganizerEventTimeRange>());
     QDateTime startTime = etr.startDateTime();
     if (!startTime.isValid()) {
         // not having a start date set is treated as a start date of epoch
@@ -335,7 +335,7 @@ bool QVersitOrganizerImporterPrivate::createNotBeforeDateTime(
     QDateTime newStart = parseDateTime(property.value());
     if (!newStart.isValid())
         return false;
-    QOrganizerItemTodoTimeRange ttr(item->detail<QOrganizerItemTodoTimeRange>());
+    QOrganizerTodoTimeRange ttr(item->detail<QOrganizerTodoTimeRange>());
     ttr.setNotBeforeDateTime(newStart);
     updatedDetails->append(ttr);
     return true;
@@ -352,7 +352,7 @@ bool QVersitOrganizerImporterPrivate::createDueDateTime(
     QDateTime newEnd = parseDateTime(property.value());
     if (!newEnd.isValid())
         return false;
-    QOrganizerItemTodoTimeRange ttr(item->detail<QOrganizerItemTodoTimeRange>());
+    QOrganizerTodoTimeRange ttr(item->detail<QOrganizerTodoTimeRange>());
     ttr.setDueDateTime(newEnd);
     updatedDetails->append(ttr);
     mDurationSpecified = false;
@@ -617,17 +617,17 @@ bool QVersitOrganizerImporterPrivate::createStatus(
         const QVersitProperty& property,
         QOrganizerItem* item,
         QList<QOrganizerItemDetail>* updatedDetails) {
-    QOrganizerItemTodoProgress::Status status;
+    QOrganizerTodoProgress::Status status;
     if (property.value() == QLatin1String("COMPLETED"))
-        status = QOrganizerItemTodoProgress::StatusComplete;
+        status = QOrganizerTodoProgress::StatusComplete;
     else if (property.value() == QLatin1String("NEEDS-ACTION"))
-        status = QOrganizerItemTodoProgress::StatusNotStarted;
+        status = QOrganizerTodoProgress::StatusNotStarted;
     else if (property.value() == QLatin1String("IN-PROCESS"))
-        status = QOrganizerItemTodoProgress::StatusInProgress;
+        status = QOrganizerTodoProgress::StatusInProgress;
     else
         return false;
 
-    QOrganizerItemTodoProgress progress(item->detail<QOrganizerItemTodoProgress>());
+    QOrganizerTodoProgress progress(item->detail<QOrganizerTodoProgress>());
     progress.setStatus(status);
     updatedDetails->append(progress);
     return true;
@@ -642,7 +642,7 @@ bool QVersitOrganizerImporterPrivate::createPercentageComplete(
     if (!ok)
         return false;
 
-    QOrganizerItemTodoProgress progress(item->detail<QOrganizerItemTodoProgress>());
+    QOrganizerTodoProgress progress(item->detail<QOrganizerTodoProgress>());
     progress.setPercentageComplete(percent);
     updatedDetails->append(progress);
     return true;
@@ -657,7 +657,7 @@ bool QVersitOrganizerImporterPrivate::createFinishedDateTime(
     QDateTime datetime = parseDateTime(property.value());
     if (!datetime.isValid())
         return false;
-    QOrganizerItemTodoProgress progress(item->detail<QOrganizerItemTodoProgress>());
+    QOrganizerTodoProgress progress(item->detail<QOrganizerTodoProgress>());
     progress.setFinishedDateTime(datetime);
     updatedDetails->append(progress);
     return true;

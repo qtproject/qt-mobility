@@ -110,9 +110,9 @@ void QVersitOrganizerExporterPrivate::exportDetail(
     QList<QVersitProperty> generatedProperties;
     QSet<QString> processedFields;
 
-    if (detail.definitionName() == QOrganizerItemEventTimeRange::DefinitionName) {
+    if (detail.definitionName() == QOrganizerEventTimeRange::DefinitionName) {
         encodeEventTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
-    } else if (detail.definitionName() == QOrganizerItemTodoTimeRange::DefinitionName) {
+    } else if (detail.definitionName() == QOrganizerTodoTimeRange::DefinitionName) {
         encodeTodoTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName) {
         encodeTimestamp(detail, *document, &removedProperties, &generatedProperties, &processedFields);
@@ -122,7 +122,7 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodePriority(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemInstanceOrigin::DefinitionName) {
         encodeInstanceOrigin(detail, *document, &removedProperties, &generatedProperties, &processedFields);
-    } else if (detail.definitionName() == QOrganizerItemTodoProgress::DefinitionName) {
+    } else if (detail.definitionName() == QOrganizerTodoProgress::DefinitionName) {
         encodeTodoProgress(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemComment::DefinitionName) {
         encodeComment(detail, &generatedProperties, &processedFields);
@@ -145,7 +145,7 @@ void QVersitOrganizerExporterPrivate::encodeEventTimeRange(
         QList<QVersitProperty>* generatedProperties,
         QSet<QString>* processedFields)
 {
-    QOrganizerItemEventTimeRange etr = static_cast<QOrganizerItemEventTimeRange>(detail);
+    QOrganizerEventTimeRange etr = static_cast<QOrganizerEventTimeRange>(detail);
     QVersitProperty property =
         VersitUtils::takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
@@ -157,8 +157,8 @@ void QVersitOrganizerExporterPrivate::encodeEventTimeRange(
     property.setName(QLatin1String("DTEND"));
     property.setValue(encodeDateTime(etr.endDateTime()));
     *generatedProperties << property;
-    *processedFields << QOrganizerItemEventTimeRange::FieldStartDateTime
-                     << QOrganizerItemEventTimeRange::FieldEndDateTime;
+    *processedFields << QOrganizerEventTimeRange::FieldStartDateTime
+                     << QOrganizerEventTimeRange::FieldEndDateTime;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
@@ -168,7 +168,7 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
         QList<QVersitProperty>* generatedProperties,
         QSet<QString>* processedFields)
 {
-    QOrganizerItemTodoTimeRange ttr = static_cast<QOrganizerItemTodoTimeRange>(detail);
+    QOrganizerTodoTimeRange ttr = static_cast<QOrganizerTodoTimeRange>(detail);
     QVersitProperty property =
         VersitUtils::takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
@@ -180,8 +180,8 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
     property.setName(QLatin1String("DUE"));
     property.setValue(encodeDateTime(ttr.dueDateTime()));
     *generatedProperties << property;
-    *processedFields << QOrganizerItemTodoTimeRange::FieldNotBeforeDateTime
-                     << QOrganizerItemTodoTimeRange::FieldDueDateTime;
+    *processedFields << QOrganizerTodoTimeRange::FieldNotBeforeDateTime
+                     << QOrganizerTodoTimeRange::FieldDueDateTime;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTimestamp(
@@ -424,7 +424,7 @@ void QVersitOrganizerExporterPrivate::encodeTodoProgress(
         QList<QVersitProperty>* generatedProperties,
         QSet<QString>* processedFields)
 {
-    QOrganizerItemTodoProgress todoProgress = static_cast<QOrganizerItemTodoProgress>(detail);
+    QOrganizerTodoProgress todoProgress = static_cast<QOrganizerTodoProgress>(detail);
 
     if (todoProgress.finishedDateTime().isValid()) {
         QVersitProperty property =
@@ -432,37 +432,37 @@ void QVersitOrganizerExporterPrivate::encodeTodoProgress(
         property.setName(QLatin1String("COMPLETED"));
         property.setValue(todoProgress.finishedDateTime().toString(QLatin1String("yyyyMMddTHHmmss")));
         *generatedProperties << property;
-        *processedFields << QOrganizerItemTodoProgress::FieldFinishedDateTime;
+        *processedFields << QOrganizerTodoProgress::FieldFinishedDateTime;
     }
 
-    if (todoProgress.hasValue(QOrganizerItemTodoProgress::FieldPercentageComplete)) {
+    if (todoProgress.hasValue(QOrganizerTodoProgress::FieldPercentageComplete)) {
         QVersitProperty property =
             VersitUtils::takeProperty(document, QLatin1String("PERCENT-COMPLETE"), removedProperties);
         property.setName(QLatin1String("PERCENT-COMPLETE"));
         property.setValue(QString::number(todoProgress.percentageComplete()));
         *generatedProperties << property;
-        *processedFields << QOrganizerItemTodoProgress::FieldPercentageComplete;
+        *processedFields << QOrganizerTodoProgress::FieldPercentageComplete;
     }
 
-    if (todoProgress.hasValue(QOrganizerItemTodoProgress::FieldStatus)) {
+    if (todoProgress.hasValue(QOrganizerTodoProgress::FieldStatus)) {
         QVersitProperty property =
             VersitUtils::takeProperty(document, QLatin1String("STATUS"), removedProperties);
         property.setName(QLatin1String("STATUS"));
         switch (todoProgress.status()) {
-            case QOrganizerItemTodoProgress::StatusNotStarted:
+            case QOrganizerTodoProgress::StatusNotStarted:
                 property.setValue(QLatin1String("NEEDS-ACTION"));
                 break;
-            case QOrganizerItemTodoProgress::StatusInProgress:
+            case QOrganizerTodoProgress::StatusInProgress:
                 property.setValue(QLatin1String("IN-PROCESS"));
                 break;
-            case QOrganizerItemTodoProgress::StatusComplete:
+            case QOrganizerTodoProgress::StatusComplete:
                 property.setValue(QLatin1String("COMPLETED"));
                 break;
             default:
                 return;
         }
         *generatedProperties << property;
-        *processedFields << QOrganizerItemTodoProgress::FieldStatus;
+        *processedFields << QOrganizerTodoProgress::FieldStatus;
     }
 }
 

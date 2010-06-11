@@ -2,14 +2,13 @@ INCLUDEPATH += details \
     ./
 
 PUBLIC_HEADERS += \
+    details/qorganizereventtimerange.h \
     details/qorganizeritemattendee.h \
     details/qorganizeritemcomment.h \
     details/qorganizeritemdescription.h \
     details/qorganizeritemdisplaylabel.h \
-    details/qorganizeritemeventtimerange.h \
     details/qorganizeritemguid.h \
     details/qorganizeriteminstanceorigin.h \
-    details/qorganizeritemjournaltimerange.h \
     details/qorganizeritemlocation.h \
     details/qorganizeritemparticipation.h \
     details/qorganizeritempriority.h \
@@ -17,9 +16,10 @@ PUBLIC_HEADERS += \
     details/qorganizeritemrecurrence.h \
     details/qorganizeritemrsvpinfo.h \
     details/qorganizeritemtimestamp.h \
-    details/qorganizeritemtodoprogress.h \
-    details/qorganizeritemtodotimerange.h \
     details/qorganizeritemtype.h \
-    details/qorganizeritemdetails.h
+    details/qorganizeritemdetails.h \
+    details/qorganizerjournaltimerange.h \
+    details/qorganizertodoprogress.h \
+    details/qorganizertodotimerange.h
 
 SOURCES += details/qorganizeritemdetails.cpp

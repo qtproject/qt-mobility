@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMTODOTIMERANGE_H
-#define QORGANIZERITEMTODOTIMERANGE_H
+#ifndef QORGANIZERJOURNALTIMERANGE_H
+#define QORGANIZERJOURNALTIMERANGE_H
 
 #include <QString>
 
@@ -51,23 +51,19 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemTodoTimeRange : public QOrganizerItemDetail
+class Q_ORGANIZER_EXPORT QOrganizerJournalTimeRange : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldDueDateTime;
-    const char* FieldNotBeforeDateTime;
+    const char* FieldEntryDateTime;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemTodoTimeRange, "TodoTimeRange")
-    Q_DECLARE_LATIN1_CONSTANT(FieldDueDateTime, "DueDateTime");
-    Q_DECLARE_LATIN1_CONSTANT(FieldNotBeforeDateTime, "NotBeforeDateTime");
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerJournalTimeRange, "JournalTimeRange")
+    Q_DECLARE_LATIN1_CONSTANT(FieldEntryDateTime, "EntryDateTime");
 #endif
 
-    void setDueDateTime(const QDateTime& dueDateTime) {setValue(FieldDueDateTime, dueDateTime);}
-    QDateTime dueDateTime() const {return value<QDateTime>(FieldDueDateTime);}
-    void setNotBeforeDateTime(const QDateTime& notBeforeDateTime) {setValue(FieldNotBeforeDateTime, notBeforeDateTime);}
-    QDateTime notBeforeDateTime() const {return value<QDateTime>(FieldNotBeforeDateTime);}
+    void setEntryDateTime(const QDateTime& entryDateTime) {setValue(FieldEntryDateTime, entryDateTime);}
+    QDateTime entryDateTime() const {return value<QDateTime>(FieldEntryDateTime);}
 };
 
 QTM_END_NAMESPACE

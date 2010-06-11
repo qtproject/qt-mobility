@@ -164,7 +164,7 @@ void MonthPage::refresh()
     QList<QDate> dates;
     foreach (const QOrganizerItem &item, items)
     {
-        QOrganizerItemEventTimeRange timeRange = item.detail<QOrganizerItemEventTimeRange>();
+        QOrganizerEventTimeRange timeRange = item.detail<QOrganizerEventTimeRange>();
         if (!timeRange.isEmpty()) {
             dates << (timeRange.startDateTime().date());
             dates << (timeRange.endDateTime().date());
@@ -196,7 +196,7 @@ void MonthPage::refreshDayItems()
     QList<QOrganizerItem> items = m_manager->items();
     foreach (const QOrganizerItem &item, items)
     {
-        QOrganizerItemEventTimeRange timeRange = item.detail<QOrganizerItemEventTimeRange>();
+        QOrganizerEventTimeRange timeRange = item.detail<QOrganizerEventTimeRange>();
         if (!timeRange.isEmpty()) {
             if (timeRange.startDateTime().date() == selectedDate) {
                 QString time = timeRange.startDateTime().time().toString("hh:mm");

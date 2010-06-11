@@ -45,27 +45,27 @@ QTM_USE_NAMESPACE
 
 void QOrganizerEventOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
-    QOrganizerItemEventTimeRange etr = detail<QOrganizerItemEventTimeRange>();
+    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
     etr.setStartDateTime(startDateTime);
     saveDetail(&etr);
 }
 
 QDateTime QOrganizerEventOccurrence::startDateTime() const
 {
-    QOrganizerItemEventTimeRange etr = detail<QOrganizerItemEventTimeRange>();
+    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
     return etr.startDateTime();
 }
 
 void QOrganizerEventOccurrence::setEndDateTime(const QDateTime& endDateTime)
 {
-    QOrganizerItemEventTimeRange etr = detail<QOrganizerItemEventTimeRange>();
+    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
     etr.setEndDateTime(endDateTime);
     saveDetail(&etr);
 }
 
 QDateTime QOrganizerEventOccurrence::endDateTime() const
 {
-    QOrganizerItemEventTimeRange etr = detail<QOrganizerItemEventTimeRange>();
+    QOrganizerEventTimeRange etr = detail<QOrganizerEventTimeRange>();
     return etr.endDateTime();
 }
 

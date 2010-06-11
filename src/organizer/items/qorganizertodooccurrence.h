@@ -43,7 +43,7 @@
 #define QORGANIZERTODOOCCURRENCE_H
 
 #include "qtorganizer.h"
-#include "qorganizeritemtodoprogress.h"
+#include "qorganizertodoprogress.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -68,8 +68,8 @@ public:
 
     void setProgressPercentage(int percentage);
     int progressPercentage() const;
-    void setStatus(QOrganizerItemTodoProgress::Status status);
-    QOrganizerItemTodoProgress::Status status() const;
+    void setStatus(QOrganizerTodoProgress::Status status);
+    QOrganizerTodoProgress::Status status() const;
     void setStartedDateTime(const QDateTime& startedDateTime);
     QDateTime startedDateTime() const;
     void setFinishedDateTime(const QDateTime& finishedDateTime);

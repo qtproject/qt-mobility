@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QORGANIZERITEMTODOPROGRESS_H
-#define QORGANIZERITEMTODOPROGRESS_H
+#ifndef QORGANIZEREVENTTIMERANGE_H
+#define QORGANIZEREVENTTIMERANGE_H
 
 #include <QString>
 
@@ -51,45 +51,23 @@
 QTM_BEGIN_NAMESPACE
 
 /* Leaf class */
-class Q_ORGANIZER_EXPORT QOrganizerItemTodoProgress : public QOrganizerItemDetail
+class Q_ORGANIZER_EXPORT QOrganizerEventTimeRange : public QOrganizerItemDetail
 {
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldStartedDateTime;
-    const char* FieldFinishedDateTime;
-    const char* FieldPercentageComplete;
-    const char* FieldStatus;
+    const char* FieldStartDateTime;
+    const char* FieldEndDateTime;
 #else
-    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerItemTodoProgress, "TodoProgress")
-    Q_DECLARE_LATIN1_CONSTANT(FieldStartedDateTime, "StartedDateTime");
-    Q_DECLARE_LATIN1_CONSTANT(FieldFinishedDateTime, "FinishedDateTime");
-    Q_DECLARE_LATIN1_CONSTANT(FieldPercentageComplete, "PercentageComplete");
-    Q_DECLARE_LATIN1_CONSTANT(FieldStatus, "Status");
+    Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerEventTimeRange, "EventTimeRange")
+    Q_DECLARE_LATIN1_CONSTANT(FieldStartDateTime, "StartDateTime");
+    Q_DECLARE_LATIN1_CONSTANT(FieldEndDateTime, "EndDateTime");
 #endif
 
-    void setStartedDateTime(const QDateTime& startedDateTime) {setValue(FieldStartedDateTime, startedDateTime);}
-    QDateTime startedDateTime() const {return value<QDateTime>(FieldStartedDateTime);}
-
-    void setFinishedDateTime(const QDateTime& finishedDateTime) {setValue(FieldFinishedDateTime, finishedDateTime);}
-    QDateTime finishedDateTime() const {return value<QDateTime>(FieldFinishedDateTime);}
-
-    void setPercentageComplete(int percentage)
-    {
-        if (percentage >=0 && percentage <= 100)
-            setValue(FieldPercentageComplete, percentage);
-    }
-    int percentageComplete() const {return value<int>(FieldPercentageComplete);}
-
-    enum Status {
-        // what about: waited/blocked, and deferred?
-        StatusNotStarted,
-        StatusInProgress,
-        StatusComplete,
-    };
-
-    void setStatus(Status status) {setValue(FieldStatus, (int) status);}
-    Status status() const {return (Status) value<int>(FieldStatus);}
+    void setStartDateTime(const QDateTime& startDateTime) {setValue(FieldStartDateTime, startDateTime);}
+    QDateTime startDateTime() const {return value<QDateTime>(FieldStartDateTime);}
+    void setEndDateTime(const QDateTime& endDateTime) {setValue(FieldEndDateTime, endDateTime);}
+    QDateTime endDateTime() const {return value<QDateTime>(FieldEndDateTime);}
 };
 
 QTM_END_NAMESPACE
