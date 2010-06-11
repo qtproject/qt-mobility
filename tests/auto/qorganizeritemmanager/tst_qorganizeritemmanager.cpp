@@ -1314,7 +1314,7 @@ void tst_QOrganizerItemManager::compatibleItem_data()
         description2.setDescription("This is the second description");
         item.saveDetail(&description2);
         QOrganizerItem expected(baseNote);
-        expected.saveDetail(&description1); // can't have two descriptions, only the first will be kept XXX TODO: surely it's backend specific which gets kept?
+        expected.saveDetail(&description2); // can't have two descriptions, only the second will be kept XXX TODO: surely it's backend specific which gets kept?
         QTest::newRow("duplicate unique field") << item << expected << QOrganizerItemManager::NoError;
     }
 
