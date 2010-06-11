@@ -23,10 +23,14 @@ INCLUDEPATH += . \
 
 # Input
 HEADERS += qmlcontactmodel.h \
+           qmlcontact.h \
+           qmlcontactdetail.h \
            imageprovider.h
 
 SOURCES += plugin.cpp \
     qmlcontactmodel.cpp \
+    qmlcontact.cpp \
+    qmlcontactdetail.cpp \
     imageprovider.cpp
 
 OTHER_FILES += example.qml \

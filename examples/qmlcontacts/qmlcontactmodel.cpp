@@ -60,6 +60,7 @@ QMLContactModel::QMLContactModel(QObject *parent) :
     roleNames = QAbstractItemModel::roleNames();
     roleNames.insert(InterestLabelRole, "interestLabel");
     roleNames.insert(InterestRole, "interest");
+    roleNames.insert(ContactRole, "contact");
     roleNames.insert(AvatarRole, "avatar");
     roleNames.insert(PresenceAvailableRole, "presenceSupported");
     roleNames.insert(PresenceTextRole, "presenceText");
@@ -194,6 +195,8 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
             return interestingDetail(c).first;
         case InterestRole:
             return interestingDetail(c).second;
+        case ContactRole:
+            //return
         case AvatarRole:
             //Just let the imager provider deal with it
             return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,38 +38,44 @@
 **
 ****************************************************************************/
 
-
-#include <QApplication>
-#include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlcontactmodel.h"
+#include <qcontactdetails.h>
 #include "qmlcontact.h"
 #include "qmlcontactdetail.h"
-#include "imageprovider.h"
-
-QT_USE_NAMESPACE
 
 
-class QContactQmlPlugin : public QDeclarativeExtensionPlugin
+
+static QString normalizePropertyName(const QString& name)
 {
-    Q_OBJECT
-public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
-        qmlRegisterType<QMLContact>(uri, 1, 0, "QmlContact");
-        qmlRegisterType<QMLContactDetail>(uri, 1, 0, "QmlContactDetail");
+   if (!name.isEmpty())
+     return name.mid(1).prepend(name[0].toLower());
+   return QString();
+}
+
+
+QMLContact::QMLContact(QObject *parent)
+    :QObject(parent)
+{
+}
+
+void QMLContact::setContact(const QContact& c)
+{
+    QList<QContactDetail> details = c.details();
+
+    m_details.clear();
+    foreach (const QContactDetail& detail, details) {
+      QMLContactDetail* qmldetail = new QMLContactDetail(detail, this);
+      setProperty(normalizePropertyName(detail.definitionName()).toLatin1().data(), qVariantFromValue(qmldetail));
+      m_details.append(qmldetail);
     }
+}
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
-        Q_UNUSED(uri);
-        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
-    }
-};
 
-#include "plugin.moc"
+QVariant QMLContact::details() const
+{
+    return QVariant::fromValue(m_details);
+}
 
-Q_EXPORT_PLUGIN2(qcontactqmlplugin, QContactQmlPlugin);
-
+ bool QMLContact::isEmpty() const
+ {
+    return m_details.isEmpty();
+ }

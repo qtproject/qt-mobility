@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,38 +38,33 @@
 **
 ****************************************************************************/
 
+#ifndef QMLCONTACTDETAIL_H
+#define QMLCONTACTDETAIL_H
 
-#include <QApplication>
 #include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlcontactmodel.h"
-#include "qmlcontact.h"
-#include "qmlcontactdetail.h"
-#include "imageprovider.h"
+#include <QDeclarativePropertyMap>
+#include <QVariant>
+#include "qcontactdetail.h"
 
-QT_USE_NAMESPACE
+QTM_USE_NAMESPACE;
 
-
-class QContactQmlPlugin : public QDeclarativeExtensionPlugin
+class QMLContactDetail : public QObject
 {
-    Q_OBJECT
-public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
-        qmlRegisterType<QMLContact>(uri, 1, 0, "QmlContact");
-        qmlRegisterType<QMLContactDetail>(uri, 1, 0, "QmlContactDetail");
-    }
+Q_OBJECT
+Q_PROPERTY(QVariant defaultProperty READ defaultProperty WRITE setDefaultProperty)
+Q_CLASSINFO("DefaultProperty", "defaultProperty")
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
-        Q_UNUSED(uri);
-        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
-    }
+public:
+    explicit QMLContactDetail(QObject *parent = 0);
+    explicit QMLContactDetail(const QContactDetail& detail, QObject *parent = 0);
+    void setContactDetail(const QContactDetail& detail);
+    QVariant defaultProperty() const;
+    void setDefaultProperty(const QVariant& value);
+
+    QDeclarativePropertyMap m_Properties;
+    QString m_defaultPropertyName;
 };
 
-#include "plugin.moc"
+QML_DECLARE_TYPE(QMLContactDetail)
 
-Q_EXPORT_PLUGIN2(qcontactqmlplugin, QContactQmlPlugin);
-
+#endif // QMLCONTACTDETAIL_H

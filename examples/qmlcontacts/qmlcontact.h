@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,38 +38,33 @@
 **
 ****************************************************************************/
 
+#ifndef QMLCONTACT_H
+#define QMLCONTACT_H
 
-#include <QApplication>
+#include <QList>
 #include <QtDeclarative>
-#include <QDeclarativeExtensionPlugin>
-#include <QDebug>
-#include "qmlcontactmodel.h"
-#include "qmlcontact.h"
-#include "qmlcontactdetail.h"
-#include "imageprovider.h"
 
-QT_USE_NAMESPACE
+#include "qcontact.h"
+#include "qcontactmanager.h"
 
+QTM_USE_NAMESPACE;
 
-class QContactQmlPlugin : public QDeclarativeExtensionPlugin
+class QMLContactDetail;
+class QMLContact : public QObject
 {
-    Q_OBJECT
-public:
-    void registerTypes(const char *uri)
-    {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
-        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
-        qmlRegisterType<QMLContact>(uri, 1, 0, "QmlContact");
-        qmlRegisterType<QMLContactDetail>(uri, 1, 0, "QmlContactDetail");
-    }
+Q_OBJECT
+Q_CLASSINFO("DefaultProperty", "displayLabel")
 
-    void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
-        Q_UNUSED(uri);
-        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
-    }
+public:
+    explicit QMLContact(QObject *parent = 0);
+    void setContact(const QContact& item);
+    bool isEmpty() const;
+    //Acts as details model
+    Q_INVOKABLE QVariant details() const;
+private:
+    QList<QObject*> m_details;
 };
 
-#include "plugin.moc"
+ QML_DECLARE_TYPE(QMLContact)
 
-Q_EXPORT_PLUGIN2(qcontactqmlplugin, QContactQmlPlugin);
-
+#endif // QMLCONTACT_H

@@ -58,6 +58,7 @@ public:
     enum {
         InterestRole = Qt::UserRole + 500,
         InterestLabelRole,
+        ContactRole,
         AvatarRole,
         PresenceAvailableRole,
         PresenceTextRole,
