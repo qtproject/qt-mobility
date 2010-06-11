@@ -70,10 +70,12 @@ QOrganizerItemMaemo5Engine::QOrganizerItemMaemo5Engine()
 {
     // XXX TODO: on construction, we need to enumerate all items in
     // the database and fill out our maps of ids and calendar names.
+    qDebug() << "*************************Construction";
 }
 
 QOrganizerItemMaemo5Engine::~QOrganizerItemMaemo5Engine()
 {
+    qDebug() << "*************************Destruction";
 }
 
 QString QOrganizerItemMaemo5Engine::managerName() const
@@ -93,6 +95,31 @@ int QOrganizerItemMaemo5Engine::managerVersion() const
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
+    /*
+        TODO
+
+        This function should create a list of instances that occur in the time period from the supplied item.
+        The periodStart should always be valid, and either the periodEnd or the maxCount will be valid (if periodEnd is
+        valid, use that.  Otherwise use the count).  It's permissible to limit the number of items returned...
+
+        Basically, if the generator item is an Event, a list of EventOccurrences should be returned.  Similarly for
+        Todo/TodoOccurrence.
+
+        If there are no instances, return an empty list.
+
+        The returned items should have a QOrganizerItemInstanceOrigin detail that points to the generator and the
+        original instance that the event would have occurred on (e.g. with an exception).
+
+        They should not have recurrence information details in them.
+
+        We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
+    */
+    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
+
+
+
+
+    /*
     *error = QOrganizerItemManager::NoError;
     int calError;
     QList<QOrganizerItem> retn;
@@ -171,6 +198,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
     }
 
     return retn;
+    */
 }
 
 /*!
@@ -178,6 +206,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
   */
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::enumerateAllItems(QOrganizerItemChangeSet *cs, QOrganizerItemManager::Error* error) const
 {
+    /*
     *error = QOrganizerItemManager::NoError;
     int calError = CALENDAR_OPERATION_SUCCESSFUL; // default is no error
 
@@ -262,10 +291,38 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::enumerateAllItems(QOrganizerIt
 
     // caller should emit signals from cs if they want to.
     return allItems;
+    */
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
+    /*
+        TODO
+
+        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return their ids.
+
+        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
+        functions to filter and sort it for you.
+
+        If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
+    */
+
+    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+
+    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
+    QList<QOrganizerItem> ret;
+
+    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
+        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
+            ret.append(item);
+        }
+    }
+
+    return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
+
+
+
+    /*
     // build the list of items which we'll return
     QOrganizerItemChangeSet cs;
     QList<QOrganizerItem> allItems = enumerateAllItems(&cs, error);
@@ -279,10 +336,49 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
     //cs.emitSignals(this); // XXX TODO: does this break synchronous behaviour?
 
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
+    */
 }
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
+    /*
+        TODO
+
+        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return them.
+
+        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
+        functions to filter and sort it for you.
+
+        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
+        fetch at least what is mentioned in the fetch hint).
+    */
+
+    Q_UNUSED(fetchHint);
+    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+
+    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
+    QList<QOrganizerItem> ret;
+
+    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
+        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
+            QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
+        }
+    }
+
+    /* An alternative formulation, depending on how your engine is implemented is just:
+
+        foreach(const QOrganizerItemLocalId& id, itemIds(filter, sortOrders, error)) {
+            ret.append(item(id, fetchHint, error);
+        }
+     */
+
+    return ret;
+
+
+
+
+
+    /*
     Q_UNUSED(fetchHint);
 
     QOrganizerItemChangeSet cs;
@@ -297,10 +393,53 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
     //cs.emitSignals(this); // XXX TODO: does this break synchronous behaviour?
 
     return ret;
+    */
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
+    /*
+        TODO
+
+        Fetch a single item by id.
+
+        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
+        fetch at least what is mentioned in the fetch hint).
+
+    */
+
+    qDebug() << "*************************Item";
+
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    QString calName = QString::fromStdString( cal->getCalendarName() );
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    CEvent* event = cal->getEvent( QString::number(itemId).toStdString(), calError );
+    if ( event ) {
+        QOrganizerEvent retn = convertCEventToQEvent( event, calName );
+        delete event;
+        qDebug() << "******************Event get";
+        return retn;
+    }
+    CTodo* todo = cal->getTodo( QString::number(itemId).toStdString(), calError );
+    if ( todo ) {
+        QOrganizerTodo retn = convertCTodoToQTodo( todo, calName );
+        delete todo;
+        qDebug() << "******************Todo get";
+        return retn;
+    }
+    CJournal* journal = cal->getJournal( QString::number(itemId).toStdString(), calError );
+    if ( journal ) {
+        QOrganizerJournal retn = convertCJournalToQJournal( journal, calName );
+        delete journal;
+        qDebug() << "******************Journal get";
+        return retn;
+    }
+
+    return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
+
+
+
+    /*
     Q_UNUSED(fetchHint);
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     *error = QOrganizerItemManager::NoError;
@@ -347,10 +486,116 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     // none of the above exist in the specified calendar, so return error.
     *error = QOrganizerItemManager::DoesNotExistError;
     return QOrganizerItem();
+    */
+}
+
+bool QOrganizerItemMaemo5Engine::saveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error)
+{
+    qDebug() << "*************************SaveItem";
+
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    *error = QOrganizerItemManager::NoError;
+
+    bool ok = false; // TODO: This might be temporary...
+
+    if (item->type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent* event = static_cast<QOrganizerEvent*>( item );
+        CEvent* cevent = convertQEventToCEvent(*event);
+        CCalendar* currCal = d->m_mcInstance->getDefaultCalendar();
+        int calendarId = currCal->getCalendarId();
+        //QString calName = QString::fromStdString(currCal->getCalendarName());
+        if (!QString::fromStdString(cevent->getId()).isEmpty()) {
+            d->m_mcInstance->modifyEvent(cevent, calendarId, calError);
+            if (calError != CALENDAR_OPERATION_SUCCESSFUL)
+                *error = QOrganizerItemManager::UnspecifiedError;
+            else
+                ok = true;
+        } else {
+            // this is a new (or previously deleted) event.  save it new.
+            d->m_mcInstance->addEvent(cevent, calendarId, calError);
+            if (calError != CALENDAR_OPERATION_SUCCESSFUL)
+                *error = QOrganizerItemManager::UnspecifiedError;
+            else
+                ok = true;
+        }
+        delete cevent;
+        delete currCal;
+        if ( ok ) qDebug() << "Event saved****************************************";
+    }
+    else if (item->type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo* todo = static_cast<QOrganizerTodo*>( item );
+        CTodo* ctodo = convertQTodoToCTodo(*todo);
+        CCalendar* currCal = d->m_mcInstance->getDefaultCalendar();
+        int calendarId = currCal->getCalendarId();
+        //QString calName = QString::fromStdString(currCal->getCalendarName());
+        if (!QString::fromStdString(ctodo->getId()).isEmpty()) {
+            d->m_mcInstance->modifyTodo(ctodo, calendarId, calError);
+            if (calError != CALENDAR_OPERATION_SUCCESSFUL)
+                *error = QOrganizerItemManager::UnspecifiedError;
+            else
+                ok = true;
+        } else {
+            // this is a new (or previously deleted) todo.  save it new.
+            d->m_mcInstance->addTodo(ctodo, calendarId, calError);
+            if (calError != CALENDAR_OPERATION_SUCCESSFUL)
+                *error = QOrganizerItemManager::UnspecifiedError;
+            else
+                ok = true;
+        }
+        delete ctodo;
+        delete currCal;
+        if ( ok ) qDebug() << "Todo saved****************************************";
+    }
+    else if (item->type() == QOrganizerItemType::TypeJournal) {
+        QOrganizerJournal* journal = static_cast<QOrganizerJournal*>( item );
+        CJournal* cjournal = convertQJournalToCJournal(*journal);
+        CCalendar* currCal = d->m_mcInstance->getDefaultCalendar();
+        int calendarId = currCal->getCalendarId();
+        //QString calName = QString::fromStdString(currCal->getCalendarName());
+        if (!QString::fromStdString(cjournal->getId()).isEmpty()) {
+            d->m_mcInstance->modifyJournal(cjournal, calendarId, calError);
+            if (calError != CALENDAR_OPERATION_SUCCESSFUL)
+                *error = QOrganizerItemManager::UnspecifiedError;
+            else
+                ok = true;
+        } else {
+            // this is a new (or previously deleted) journal.  save it new.
+            d->m_mcInstance->addJournal(cjournal, calendarId, calError);
+            if (calError != CALENDAR_OPERATION_SUCCESSFUL)
+                *error = QOrganizerItemManager::UnspecifiedError;
+            else
+                ok = true;
+        }
+        delete cjournal;
+        delete currCal;
+        if ( ok ) qDebug() << "Journal saved****************************************";
+    }
+    return QOrganizerItemManagerEngine::saveItem(item, error);
 }
 
 bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
+    /*
+        TODO
+
+        Save a list of items.
+
+        For each item, convert it to your local type, assign an item id, and update the
+        QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
+
+        If you encounter an error (e.g. converting to local type, or saving), insert an entry into
+        the map above at the corresponding index (e.g. errorMap->insert(idx, QOIM::InvalidDetailError).
+        You should set the "error" variable as well (first, last, most serious error etc).
+
+        The item passed in should be validated according to the schema.
+    */
+    return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
+
+
+
+
+
+    /*
     *error = QOrganizerItemManager::NoError;
     QOrganizerItemChangeSet cs;
 
@@ -509,10 +754,29 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
     cs.emitSignals(this);
     
     return (*error == QOrganizerItemManager::NoError);
+    */
 }
 
 bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
+    /*
+        TODO
+
+        Remove a list of items, given by their id.
+
+        If you encounter an error, insert an error into the appropriate place in the error map,
+        and update the error variable as well.
+
+        DoesNotExistError should be used if the id refers to a non existent item.
+    */
+    return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
+
+
+
+
+
+
+    /*
     // this is much simpler, since the maemo5 calendar-backend API
     // supports removal by component id.  Note that while the API
     // supports batch remove (and rolls back if fails),
@@ -575,6 +839,7 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
     // emit signals
     cs.emitSignals(this);
     return (*error == QOrganizerItemManager::NoError);
+    */
 }
 
 bool QOrganizerItemMaemo5Engine::startRequest(QOrganizerItemAbstractRequest* req)
