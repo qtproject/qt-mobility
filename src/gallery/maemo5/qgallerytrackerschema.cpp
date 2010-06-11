@@ -657,16 +657,6 @@ static const QGalleryItemProperty qt_galleryFileThumbnailDependencyList[] =
 
 static const QGalleryThumbnailProperty qt_galleryFileThumbnailPropertyList[] =
 {
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "thumbnailImage",
-            QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
-            qt_galleryFileThumbnailDependencyList,
-            QGalleryTrackerThumbnailColumn::createImageColumn),
-    QT_GALLERY_THUMBNAIL_PROPERTY(
-            "thumbnailPixmap",
-            QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
-            qt_galleryFileThumbnailDependencyList,
-            QGalleryTrackerThumbnailColumn::createPixmapColumn),
 #ifndef Q_WS_MAEMO_5
     QT_GALLERY_THUMBNAIL_PROPERTY(
             "previewImage",
@@ -677,8 +667,19 @@ static const QGalleryThumbnailProperty qt_galleryFileThumbnailPropertyList[] =
             "previewPixmap",
             "large",
             qt_galleryFileThumbnailDependencyList,
-            QGalleryTrackerThumbnailColumn::createPixmapColumn)
+            QGalleryTrackerThumbnailColumn::createPixmapColumn),
 #endif
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "thumbnailImage",
+            QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
+            qt_galleryFileThumbnailDependencyList,
+            QGalleryTrackerThumbnailColumn::createImageColumn),
+    QT_GALLERY_THUMBNAIL_PROPERTY(
+            "thumbnailPixmap",
+            QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
+            qt_galleryFileThumbnailDependencyList,
+            QGalleryTrackerThumbnailColumn::createPixmapColumn)
+
 };
 
 static void qt_writeFileIdCondition(int *error, QXmlStreamWriter *xml, const QStringRef &itemId)
@@ -1533,8 +1534,8 @@ void QGalleryTrackerSchema::populateItemArguments(
 
                     arguments->fieldNames.append(field);
                     valueNames.append(dependencies[i].name);
-                    valueAttributes.append(itemProperties[i].attributes);
-                    valueTypes.append(itemProperties[propertyIndex].type);
+                    valueAttributes.append(dependencies[i].attributes);
+                    valueTypes.append(dependencies[i].type);
                 }
             }
 
