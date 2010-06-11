@@ -60,7 +60,7 @@ void QGalleryTrackerItemListPrivate::update(int index)
     aCache.offset = rCache.index;
 
     rCache.index = index;
-    rCache.count = 0;
+    rCache.count = index + queryLimit;
     rCache.cutoff = 0;
 
     qSwap(aCache.values, rCache.values);
@@ -99,6 +99,8 @@ void QGalleryTrackerItemListPrivate::queryFinished(const QDBusPendingCall &call)
 
         q_func()->finish(QGalleryAbstractRequest::ConnectionError);
     } else if (flags & Cancelled) {
+        rCache.count = 0;
+
         q_func()->QGalleryAbstractResponse::cancel();
     } else {
         parseWatcher.setFuture(QtConcurrent::run(
@@ -662,9 +664,24 @@ QList<QGalleryResource> QGalleryTrackerItemList::resources(int index) const
 
 QGalleryItemList::ItemStatus QGalleryTrackerItemList::status(int index) const
 {
-    Q_UNUSED(index);
+    Q_D(const QGalleryTrackerItemList);
 
-    return QGalleryItemList::ItemStatus();
+    ItemStatus status;
+
+    if (index < d->rCache.cutoff) {
+        if (index >= d->rCache.index)
+            return status;
+    } else {
+        if (index >= d->rCache.index && index < d->rCache.count)
+            status |= Reading;
+
+        if (index < d->aCache.count && index >= d->aCache.offset)
+            return status;
+    }
+
+    status |= OutOfRange;
+
+    return status;
 }
 
 QVariant QGalleryTrackerItemList::metaData(int index, int key) const
