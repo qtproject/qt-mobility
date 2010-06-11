@@ -224,7 +224,7 @@ public:
     QStringList logicalDrives();
     QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
 
-public slots:
+public Q_SLOTS:
     void storageChanged( bool added);
 Q_SIGNALS:
     void storageAdded();
