@@ -593,6 +593,10 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         QOrganizerItemManagerEngine::setDetailAccessConstraints(&ts, QOrganizerItemDetail::ReadOnly | QOrganizerItemDetail::Irremovable);
         theOrganizerItem->saveDetail(&ts);
 
+        if (!fixOccurrenceReferences(theOrganizerItem, error)) {
+            return false;
+        }
+
         // Looks ok, so continue
         d->m_organizeritems.replace(index, *theOrganizerItem);
         changeSet.insertChangedItem(theOrganizerItem->localId());
@@ -617,6 +621,10 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
         newId.setLocalId(++d->m_nextOrganizerItemId);
         theOrganizerItem->setId(newId);
 
+        if (!fixOccurrenceReferences(theOrganizerItem, error)) {
+            return false;
+        }
+
         // finally, add the organizeritem to our internal lists and return
         d->m_organizeritems.append(*theOrganizerItem);                   // add organizeritem to list
         d->m_organizeritemIds.append(theOrganizerItem->localId());  // track the organizeritem id.
@@ -633,6 +641,83 @@ bool QOrganizerItemMemoryEngine::saveItem(QOrganizerItem* theOrganizerItem, QOrg
 
     *error = QOrganizerItemManager::NoError;     // successful.
     return true;
+}
+
+/*!
+ * For Occurrence type items, ensure the ParentLocalId and the Guid are set consistently.  Returns
+ * false and sets \a error on error, returns true otherwise.
+ */
+bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem, QOrganizerItemManager::Error* error)
+{
+    if (theItem->type() == QOrganizerItemType::TypeEventOccurrence
+            || theItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
+        QString guid = theItem->guid();
+        QOrganizerItemLocalId parentId = theItem->detail<QOrganizerItemInstanceOrigin>().parentLocalId();
+        if (!guid.isEmpty()) {
+            if (parentId != 0) {
+                QOrganizerItemManager::Error tempError;
+                QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
+                if (guid != parentItem.guid()
+                        || !typesAreRelated(theItem->type(), parentItem.type())) {
+                    // parentId and guid are both set and inconsistent, or the parent is the wrong
+                    // type
+                    *error = QOrganizerItemManager::InvalidOccurrenceError;
+                    return false;
+                }
+            } else {
+                // guid set but not parentId
+                // find an item with the given guid
+                foreach (const QOrganizerItem& item, d->m_organizeritems) {
+                    if (item.guid() == guid) {
+                        parentId = item.localId();
+                        break;
+                    }
+                }
+                if (parentId == 0) {
+                    // couldn't find an item with the given guid
+                    *error = QOrganizerItemManager::InvalidOccurrenceError;
+                    return false;
+                }
+                QOrganizerItemManager::Error tempError;
+                QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
+                if (!typesAreRelated(theItem->type(), parentItem.type())) {
+                    // the parent is the wrong type
+                    *error = QOrganizerItemManager::InvalidOccurrenceError;
+                    return false;
+                }
+                // found a matching item - set the parentId of the occurrence
+                QOrganizerItemInstanceOrigin origin = theItem->detail<QOrganizerItemInstanceOrigin>();
+                origin.setParentLocalId(parentId);
+                theItem->saveDetail(&origin);
+            }
+        } else if (parentId != 0) {
+            QOrganizerItemManager::Error tempError;
+            QOrganizerItem parentItem = item(parentId, QOrganizerItemFetchHint(), &tempError);
+            if (parentItem.guid().isEmpty()
+                    || !typesAreRelated(theItem->type(), parentItem.type())) {
+                // found the matching item but it has no guid, or it isn't the right type
+                *error = QOrganizerItemManager::InvalidOccurrenceError;
+                return false;
+            }
+            theItem->setGuid(parentItem.guid());
+        } else {
+            // neither parentId or guid is supplied
+            *error = QOrganizerItemManager::InvalidOccurrenceError;
+            return false;
+        }
+    }
+    return true;
+}
+
+/*!
+ * Returns true iff \a occurrenceType is the "Occurrence" version of \a parentType.
+ */
+bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, const QString& parentType)
+{
+    return ((parentType == QOrganizerItemType::TypeEvent
+                && occurrenceType == QOrganizerItemType::TypeEventOccurrence)
+            || (parentType == QOrganizerItemType::TypeTodo
+                && occurrenceType == QOrganizerItemType::TypeTodoOccurrence));
 }
 
 /*! \reimp */

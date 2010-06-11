@@ -196,6 +196,8 @@ protected:
 private:
     /* Implement "signal coalescing" for batch functions via change set */
     bool saveItem(QOrganizerItem* theOrganizerItem, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
+    bool fixOccurrenceReferences(QOrganizerItem* item, QOrganizerItemManager::Error* error);
+    bool typesAreRelated(const QString& occurrenceType, const QString& parentType);
     bool removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
     bool saveDetailDefinition(const QOrganizerItemDetailDefinition& def, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);
     bool removeDetailDefinition(const QString& definitionId, const QString& organizeritemType, QOrganizerItemChangeSet& changeSet, QOrganizerItemManager::Error* error);

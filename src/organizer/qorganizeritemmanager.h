@@ -103,7 +103,8 @@ public:
         UnspecifiedError,
         VersionMismatchError,
         LimitReachedError,
-        InvalidItemTypeError
+        InvalidItemTypeError,
+        InvalidOccurrenceError
     };
 
     /* Error reporting */

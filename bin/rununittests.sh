@@ -150,5 +150,8 @@ a
 ./tst_qmessagestore
 ./tst_qmessagestorekeys
 
+#QOrganizer
+./tst_qorganizeritemmanager
+
 cd $SAVED_PWD
 
