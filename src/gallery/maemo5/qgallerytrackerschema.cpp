@@ -1287,6 +1287,7 @@ int QGalleryTrackerSchema::prepareCountResponse(
         return result;
     } else if (m_itemIndex >= 0) {
         arguments->accumulative = false;
+        arguments->updateMask = qt_galleryItemTypeList[m_itemIndex].updateMask;
         arguments->queryInterface = dbus->metaDataInterface();
         arguments->queryMethod = QLatin1String("GetCount");
         arguments->queryArguments = QVariantList()
@@ -1316,6 +1317,7 @@ int QGalleryTrackerSchema::prepareCountResponse(
             const bool descending = false;
 
             arguments->accumulative = true;
+            arguments->updateMask = type.updateMask;
             arguments->queryInterface = dbus->metaDataInterface();
             arguments->queryMethod = QLatin1String("GetUniqueValuesWithCount");
             arguments->queryArguments = QVariantList()

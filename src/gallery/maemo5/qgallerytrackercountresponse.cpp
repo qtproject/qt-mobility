@@ -58,6 +58,9 @@ class QGalleryTrackerCountResponsePrivate : public QGalleryAbstractResponsePriva
 public:
     QGalleryTrackerCountResponsePrivate(const QGalleryTrackerCountResponseArguments &arguments)
         : accumulative(arguments.accumulative)
+        , cancelled(false)
+        , refresh(false)
+        , updateMask(arguments.updateMask)
         , count(0)
         , workingCount(0)
         , currentOffset(0)
@@ -79,6 +82,9 @@ public:
     };
 
     const bool accumulative;
+    bool cancelled;
+    bool refresh;
+    const int updateMask;
     int count;
     int workingCount;
     int currentOffset;
@@ -112,6 +118,13 @@ void QGalleryTrackerCountResponsePrivate::queryFinished(const QDBusPendingCall &
         QDBusPendingReply<int> reply(call);
 
         count = reply.value();
+
+        if (refresh) {
+            refresh = false;
+
+            queryCount();
+        }
+
     } else {
         QDBusPendingReply<QVector<QStringList> > reply(call);
 
@@ -121,15 +134,27 @@ void QGalleryTrackerCountResponsePrivate::queryFinished(const QDBusPendingCall &
         for (iterator it = counts.begin(), end = counts.end(); it != end; ++it)
             workingCount += it->value(1).toInt();
 
-        currentOffset += counts.count();
+        if (refresh) {
+            refresh = false;
 
-        if (counts.count() == MaximumFetchSize) {
-            if (count > workingCount)
-                count = workingCount;
+            currentOffset = 0;
+            workingCount = 0;
 
             queryCount();
         } else {
-            count = workingCount;
+            currentOffset += counts.count();
+
+            if (counts.count() == MaximumFetchSize) {
+                if (count > workingCount)
+                    count = workingCount;
+
+                if (cancelled)
+                    q_func()->QGalleryAbstractResponse::cancel();
+                else
+                    queryCount();
+            } else {
+                count = workingCount;
+            }
         }
     }
 
@@ -183,7 +208,11 @@ int QGalleryTrackerCountResponse::count() const
 
 void QGalleryTrackerCountResponse::cancel()
 {
+    d_func()->cancelled = true;
+    d_func()->refresh = false;
 
+    if (!d_func()->queryWatcher)
+        QGalleryAbstractResponse::cancel();
 }
 
 bool QGalleryTrackerCountResponse::waitForFinished(int msecs)
@@ -210,6 +239,19 @@ bool QGalleryTrackerCountResponse::waitForFinished(int msecs)
     } while ((msecs -= timer.restart()) > 0);
 
     return false;
+}
+
+void QGalleryTrackerCountResponse::refresh(int serviceId)
+{
+    Q_D(QGalleryTrackerCountResponse);
+
+    if (!d->cancelled && (d->updateMask & serviceId)) {
+        d->refresh = true;
+
+        if (!d->queryWatcher)
+            d->queryCount();
+
+    }
 }
 
 #include "moc_qgallerytrackercountresponse_p.cpp"
