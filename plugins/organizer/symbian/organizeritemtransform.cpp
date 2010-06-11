@@ -95,14 +95,14 @@ CCalEntry::TType OrganizerItemTransform::entryTypeL(const QOrganizerItem &item) 
     QString itemType = item.type();
     CCalEntry::TType entryType;
 
-    if (itemType == QOrganizerItemType::TypeTodo )
+    if (itemType == QOrganizerItemType::TypeTodo)
         entryType = CCalEntry::ETodo;
-    else if (itemType == QOrganizerItemType::TypeEvent )
-        entryType = CCalEntry::EEvent;
+    else if (itemType == QOrganizerItemType::TypeEvent)
+        entryType = CCalEntry::EAppt;
     else
         User::Leave(KErrUnknown); // unknown type
 
-    // TODO: CCalEntry::EAppt
+    // TODO: CCalEntry::EEvent???
     // TODO: CCalEntry::EReminder
     // TODO: CCalEntry::EAnniv
 
@@ -117,6 +117,8 @@ QString OrganizerItemTransform::itemTypeL(const CCalEntry &entry) const
     if (entryType == CCalEntry::ETodo)
         itemType = QLatin1String(QOrganizerItemType::TypeTodo);
     else if (entryType == CCalEntry::EEvent)
+        itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    else if (entryType == CCalEntry::EAppt)
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
     else
         User::Leave(KErrUnknown); // unknown type
@@ -255,8 +257,15 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
         QOrganizerEventTimeRange range;
         if (startTime.TimeUtcL() != Time::NullTTime())
             range.setStartDateTime(toQDateTime(startTime));
-        if (endTime.TimeUtcL() != Time::NullTTime())
+
+        // Check if the end time is defined and if the end time is different to
+        // start time. Effectively this means that if a QtMobility Organizer API
+        // client defines an end time that is exactly the same as start time, the
+        // end time is lost.
+        if (endTime.TimeUtcL() != Time::NullTTime()
+            && endTime.TimeUtcL() != startTime.TimeUtcL())
             range.setEndDateTime(toQDateTime(endTime));
+
         item->saveDetail(&range);
     }
     else if(item->type() == QOrganizerItemType::TypeJournal)
@@ -359,15 +368,19 @@ TPtrC16 OrganizerItemTransform::toPtrC16(const QString &string) const
 
 TCalTime OrganizerItemTransform::toTCalTime(QDateTime dateTime) const
 {
-    uint secondsFrom1970 = dateTime.toTime_t();
-    quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
-    TTime time1970(_L("19700000:000000.000000"));
-    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-    quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
-
-    TTime time(useconds);
     TCalTime calTime;
-    calTime.SetTimeUtcL(time);
+    calTime.SetTimeUtcL(Time::NullTTime());
+
+    if (dateTime.isValid()) {
+        uint secondsFrom1970 = dateTime.toTime_t();
+        quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
+        TTime time1970(_L("19700000:000000.000000"));
+        quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
+        quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
+
+        TTime time(useconds);
+        calTime.SetTimeUtcL(time);
+    }
 
     return calTime;
 }
