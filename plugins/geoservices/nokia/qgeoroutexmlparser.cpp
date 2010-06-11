@@ -157,6 +157,12 @@ bool QGeoRouteXmlParser::parseRoute(QGeoRoute *route)
                 if(succeeded)
                     route->setPath(path);
             }
+            else if (m_reader->name() == "BoundingBox") {
+                QGeoBoundingBox bounds;
+                succeeded = parseBoundingBox(bounds);
+                if(succeeded)
+                    route->setBounds(bounds);
+            }
             else if (m_reader->name() == "Maneuver") {
                 succeeded = parseManeuver();
             }
@@ -327,7 +333,7 @@ bool QGeoRouteXmlParser::parseSummary(QGeoRoute *route)
                 QString value = m_reader->readElementText();
                 route->setDistance(QGeoDistance(value.toDouble()));
             }
-            else if (m_reader->name() == "BaseTime") {   // TODO: Check TrafficTime once data available
+            else if (m_reader->name() == "TrafficTime") {
                 QString value = m_reader->readElementText();
                 route->setTravelTime(value.toDouble());
             }
@@ -478,46 +484,37 @@ bool QGeoRouteXmlParser::parseGeoPoints(const QString& strPoints, QList<QGeoCoor
     return true;
 }
 
-bool QGeoRouteXmlParser::parseBoundingBox(QGeoBoundingBox *bounds)
+bool QGeoRouteXmlParser::parseBoundingBox(QGeoBoundingBox &bounds)
 {
-    Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "boundingBox");
-/*
-    if (!m_reader->readNextStartElement()) {
-        m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (0 found)");
-        return false;
+    Q_ASSERT(m_reader->isStartElement() && m_reader->name() == "BoundingBox");
+
+    QGeoCoordinate tl;
+    QGeoCoordinate br;
+
+    m_reader->readNext();
+    while (!(m_reader->tokenType() == QXmlStreamReader::EndElement && m_reader->name() == "BoundingBox")) {
+        if (m_reader->tokenType() == QXmlStreamReader::StartElement) {
+            if (m_reader->name() == "TopLeft") {
+                QGeoCoordinate coordinates;
+                if(parseCoordinates(coordinates))
+                    tl = coordinates;
+            }
+            else if (m_reader->name() == "BottomRight") {
+                QGeoCoordinate coordinates;
+                if(parseCoordinates(coordinates))
+                    br = coordinates;
+            }
+            else {
+                m_reader->skipCurrentElement();
+            }
+        }
+        m_reader->readNext();
     }
 
-    QGeoCoordinate nw;
-
-    if (m_reader->name() == "northWest") {
-        if (!parseCoordinate(&nw, "northWest"))
-            return false;
-    } else {
-        m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"northWest\" (found an element named \"%1\")").arg(m_reader->name().toString()));
-        return false;
+    if(tl.isValid() && br.isValid()) {
+        bounds = QGeoBoundingBox(tl, br);
+        return true;
     }
 
-    if (!m_reader->readNextStartElement()) {
-        m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (1 found)");
-        return false;
-    }
-
-    QGeoCoordinate se;
-
-    if (m_reader->name() == "southEast") {
-        if (!parseCoordinate(&se, "southEast"))
-            return false;
-    } else {
-        m_reader->raiseError(QString("The element \"boundingBox\" expected this child element to be named \"southEast\" (found an element named \"%1\")").arg(m_reader->name().toString()));
-        return false;
-    }
-
-    if (m_reader->readNextStartElement()) {
-        m_reader->raiseError("The element \"boundingBox\" was expected to have 2 child elements (more than 2 found)");
-        return false;
-    }
-
-    *bounds = QGeoBoundingBox(nw, se);
-*/
-    return true;
+    return false;
 }
