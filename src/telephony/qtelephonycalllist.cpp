@@ -41,16 +41,18 @@
 
 
 #include "qtelephonycalllist.h"
-#include "qtelephonycallinfo.h"
 
 #ifdef Q_OS_LINUX
 # include "qtelephonycalllist_linux_p.h"
+# include "qtelephonycallinfo_linux_p.h"
 #endif
 #ifdef Q_OS_WIN
 # include "qtelephonycalllist_win_p.h"
+# include "qtelephonycallinfo_win_p.h"
 #endif
 #ifdef Q_OS_SYMBIAN
 # include "qtelephonycalllist_s60_p.h"
+# include "qtelephonycallinfo_s60_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -89,7 +91,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 
-Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonycalllistprivate)
+Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonyCallListPrivate)
 
 /*!
     \fn QTelephonyCallList::QTelephonyCallList(QObject *parent)
@@ -98,14 +100,14 @@ Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonycalllistprivate)
     Constructor for the QTelephonyCallList object
 */
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
-    : QObject(parent), d(telephonycalllistprivate())
+    : QObject(parent), d(telephonyCallListPrivate())
 {
-    connect(d, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo))
-        , this, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo)));
-    connect(d, SIGNAL(activeCallRemoved(const QTelephonyCallInfo))
-        , this, SIGNAL(activeCallRemoved(const QTelephonyCallInfo)));
-    connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfo))
-        , this, SIGNAL(activeCallAdded(const QTelephonyCallInfo)));
+    connect(d, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfoPrivate))
+        , this, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfoPrivate)));
+    connect(d, SIGNAL(activeCallRemoved(const QTelephonyCallInfoPrivate))
+        , this, SIGNAL(activeCallRemoved(const QTelephonyCallInfoPrivate)));
+    connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfoPrivate))
+        , this, SIGNAL(activeCallAdded(const QTelephonyCallInfoPrivate)));
 }
 
 /*!
@@ -125,18 +127,50 @@ QTelephonyCallList::~QTelephonyCallList()
 */
 QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
 {
-    QList<QTelephonyCallInfo> calllist;
     QList<QTelephonyCallInfo> ret;
-    if(d)
-        calllist = d->activeCalls();
 
     //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
-    for( int i = 0; i < calllist.count(); i++){
-        if(calllist.at(i).type() == QTelephonyCallInfo::All
-            || calllist.at(i).type() == calltype)
-            ret.push_back(QTelephonyCallInfo(calllist.at(i)));
+    for( int i = 0; i < callInfoList.count(); i++){
+        if(callInfoList.at(i).data()->type() == QTelephonyCallInfo::Any
+            || callInfoList.at(i).data()->type() == calltype)
+        {
+            ret.push_back(QTelephonyCallInfo(callInfoList.at(i)));
+        }
     }
     return ret;
+}
+
+/*!
+    \fn QTelephonyCallList::activeCallStatusChanged(QTelephonyCallInfoPrivate& call)
+    \a call Slot for routing the call object as a QTelephonyCallInfo to the user.
+
+    Gives back a list of calls from type of calltype.
+*/
+void QTelephonyCallList::activeCallStatusChanged(QTelephonyCallInfoPrivate& call)
+{
+    emit activeCallStatusChanged(QTelephonyCallInfo(QSharedDataPointer<QTelephonyCallInfoPrivate>(&call)));
+}
+
+/*!
+    \fn QTelephonyCallList::activeCallRemoved(QTelephonyCallInfoPrivate& call)
+    \a call Slot for routing the call object as a QTelephonyCallInfo to the user.
+
+    Gives back a list of calls from type of calltype.
+*/
+void QTelephonyCallList::activeCallRemoved(QTelephonyCallInfoPrivate& call)
+{
+    emit activeCallRemoved(QTelephonyCallInfo(QSharedDataPointer<QTelephonyCallInfoPrivate>(&call)));
+}
+
+/*!
+    \fn QTelephonyCallList::activeCallAdded(QTelephonyCallInfoPrivate& call)
+    \a call Slot for routing the call object as a QTelephonyCallInfo to the user.
+
+    Gives back a list of calls from type of calltype.
+*/
+void QTelephonyCallList::activeCallAdded(QTelephonyCallInfoPrivate& call)
+{
+    emit activeCallAdded(QTelephonyCallInfo(QSharedDataPointer<QTelephonyCallInfoPrivate>(&call)));
 }
 
 #include "moc_qtelephonycalllist.cpp"

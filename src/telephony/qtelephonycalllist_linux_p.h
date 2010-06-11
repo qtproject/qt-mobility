@@ -54,48 +54,25 @@
 // We mean it.
 //
 
-
-#include "qtelephonycalllist.h"
+#include "qmobilityglobal.h"
+#include <QObject>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
+class QTelephonyCallInfoPrivate;
 class Q_AUTOTEST_EXPORT QTelephonyCallListPrivate : public QObject
 {
     Q_OBJECT
+        
 Q_SIGNALS:
-    void activeCallStatusChanged(const QTelephonyCallInfo& call);
-    void activeCallRemoved(const QTelephonyCallInfo& call);
-    void activeCallAdded(const QTelephonyCallInfo& call);
+    void activeCallStatusChanged(const QTelephonyCallInfoPrivate& call);
+    void activeCallRemoved(const QTelephonyCallInfoPrivate& call);
+    void activeCallAdded(const QTelephonyCallInfoPrivate& call);
+
 public:
     QTelephonyCallListPrivate(QObject *parent = 0);
     virtual ~QTelephonyCallListPrivate();
-    QList<QTelephonyCallInfo> activeCalls() const { return calllist; }
-private:
-    QList<QTelephonyCallInfo> calllist;
-};
-
-class QTelephonyCallInfoPrivate : public QSharedData
-{
-public:
-    QTelephonyCallInfoPrivate();
-    ~QTelephonyCallInfoPrivate();
-    QString callIdentifier() const;
-    QList<quint32> contacts() const;
-    QTelephonyCallInfo::CallType type() const { return QTelephonyCallInfo::UnknownType; }
-    QTelephonyCallInfo::CallStatus status() const { return QTelephonyCallInfo::UnknownStatus; }
-    QVariant value(const QString& param) const { return QVariant(); }
-
-public:
-    // disallow detaching
-    QTelephonyCallInfoPrivate &operator=(const QTelephonyCallInfoPrivate &other)
-    {
-        return *this;
-    }
-    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
-        : QSharedData(other)
-    {
-    }
 };
 
 QTM_END_NAMESPACE

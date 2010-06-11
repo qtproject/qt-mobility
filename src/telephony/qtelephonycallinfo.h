@@ -54,6 +54,9 @@ QTM_BEGIN_NAMESPACE
 class QTelephonyCallInfoPrivate;
 class Q_TELEPHONY_EXPORT QTelephonyCallInfo
 {
+    friend class QTelephonyCallList;
+private:
+    QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other);
 public:
     QTelephonyCallInfo();
     QTelephonyCallInfo(const QTelephonyCallInfo& other);
@@ -65,15 +68,15 @@ public:
     { return !operator==(cp); }
 
     enum CallType {
-        UnknownType = 0,
-        All,
-        VOIP,
+        Unknown = 0,
+        Any,
+        Voip,
         Voice,
         Video
     };
 
     enum CallStatus {
-        UnknownStatus = 0,
+        Undefined = 0,
         NoCall,
         Ringing,
         InProgress,

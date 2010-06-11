@@ -39,51 +39,59 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLIST_H
-#define QTELEPHONYCALLLIST_H
+#ifndef QTELEPHONYCALLLISTPRIVATE_LINUX_H
+#define QTELEPHONYCALLLISTPRIVATE_LINUX_H
 
-#include "qmobilityglobal.h"
-#include <QtCore/qshareddata.h>
+
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
+
 #include "qtelephonycallinfo.h"
+#include <QtCore/qshareddata.h>
 #include <QList>
-#include <QString>
-#include <QVariant>
 
 QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallListPrivate;
-class QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallList : QObject
+class QTelephonyCallInfoPrivate : public QSharedData
 {
-    Q_OBJECT
     friend class QTelephonyCallListPrivate;
-public:
-    QTelephonyCallList(QObject *parent = 0);
-    ~QTelephonyCallList();
-
-Q_SIGNALS:
-    void activeCallStatusChanged(const QTelephonyCallInfo& call);
-    void activeCallRemoved(const QTelephonyCallInfo& call);
-    void activeCallAdded(const QTelephonyCallInfo& call);
-
-private slots:
-    void activeCallStatusChanged(QTelephonyCallInfoPrivate& call);
-    void activeCallRemoved(QTelephonyCallInfoPrivate& call);
-    void activeCallAdded(QTelephonyCallInfoPrivate& call);
-
-public:
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype = QTelephonyCallInfo::Any) const;
 private:
-    QTelephonyCallListPrivate *d;
-    QList<QSharedDataPointer<QTelephonyCallInfoPrivate>> callInfoList;
+    QTelephonyCallInfoPrivate();
+public:
+    ~QTelephonyCallInfoPrivate();
+
+    QString callIdentifier() const;
+    QList<quint32> contacts() const;
+    QTelephonyCallInfo::CallType type() const { return QTelephonyCallInfo::Unknown; }
+    QTelephonyCallInfo::CallStatus status() const { return QTelephonyCallInfo::Undefined; }
+    QVariant value(const QString& param) const { return QVariant(); }
+
+public:
+    // disallow detaching
+    QTelephonyCallInfoPrivate &operator=(const QTelephonyCallInfoPrivate &other)
+    {
+        return *this;
+    }
+    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
+        : QSharedData(other)
+    {
+    }
 };
 
 QTM_END_NAMESPACE
+
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLLIST_H*/
+#endif //QTELEPHONYCALLLISTPRIVATE_LINUX_H
 
 // End of file
 

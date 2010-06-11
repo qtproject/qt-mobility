@@ -41,15 +41,16 @@
 
 
 #include "qtelephonycallinfo.h"
+#include <QList>
 
 #ifdef Q_OS_LINUX
-# include "qtelephonycalllist_linux_p.h"
+# include "qtelephonycallinfo_linux_p.h"
 #endif
 #ifdef Q_OS_WIN
-# include "qtelephonycalllist_win_p.h"
+# include "qtelephonycallinfo_win_p.h"
 #endif
 #ifdef Q_OS_SYMBIAN
-# include "qtelephonycalllist_s60_p.h"
+# include "qtelephonycallinfo_s60_p.h"
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -99,8 +100,8 @@ QTM_BEGIN_NAMESPACE
     Constructor of a QTelephonyCallInfo object.
 */
 QTelephonyCallInfo::QTelephonyCallInfo()
+: d(0)
 {
-    d = new QTelephonyCallInfoPrivate;
 }
 
 /*!
@@ -110,8 +111,19 @@ QTelephonyCallInfo::QTelephonyCallInfo()
     Copy constructor of a QTelephonyCallInfo object.
 */
 QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
-    : d(other.d)
 {
+    d = other.d;
+}
+
+/*!
+    \fn  QTelephonyCallInfo::QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other)
+    \a other Object which needs to be copied from.
+
+    Constructor of a QTelephonyCallInfo object using a const QSharedDataPointer<QTelephonyCallInfoPrivate>.
+*/
+QTelephonyCallInfo::QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other)
+{
+    d = other;
 }
 
 /*!
@@ -188,7 +200,7 @@ QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 {
     if(d)
         return d->type();
-    return UnknownType;
+    return Unknown;
 }
 
 /*!
@@ -202,7 +214,7 @@ QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 {
     if(d)
         return d->status();
-    return UnknownStatus;
+    return Undefined;
 }
 
 /*!

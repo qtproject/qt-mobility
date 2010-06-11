@@ -76,13 +76,6 @@ The Application can query call information using this API. e.g. call type, phone
 
 The library provides a number of classes and signals and properties to assist with the access of the calls in a mobile system.
 
-\image telephonycd.png
-
 Another application can use this library to get informed about incomming calls, accessing calls information and more of the current system.
-The following image demonstrate the responsibility of the telephony API.
 Basically the library provides an easy access of call information of different OS system (here it is Linux and the DBus system).
-
-\image telephonyapp.png
-
-*/
 
