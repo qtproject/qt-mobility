@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,54 +39,24 @@
 **
 ****************************************************************************/
 
-#ifndef SFWNOTES_H
-#define SFWNOTES_H
+#ifndef FILEMANAGERPLUGIN_H
+#define FILEMANAGERPLUGIN_H
 
-#include <QWidget>
 #include <QObject>
-#include <QDateTime>
-#include <qmobilityglobal.h>
 
-#include "ui_sfwnotes.h"
-
-QTM_BEGIN_NAMESPACE
-class QServiceManager;
-QTM_END_NAMESPACE
+#include <qserviceplugininterface.h>
 
 QTM_USE_NAMESPACE
 
-class ToDoTool : public QWidget, public Ui_ToDoTool
+class FileManagerPlugin : public QObject,
+                          public QServicePluginInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QtMobility::QServicePluginInterface)
 public:
-    ToDoTool(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~ToDoTool();
-
-private slots:
-    void on_nextButton_clicked();
-    void on_prevButton_clicked();
-    void on_addButton_clicked();
-    void on_deleteButton_clicked();
-    void on_searchButton_clicked();
-    void soundAlarm(const QDateTime &alarm);
-
-private:
-    void init();
-    void refreshList();
-    void refreshNotes();
-    void registerExampleServices();
-    void unregisterExampleServices();
-
-    QServiceManager *serviceManager;
-    QObject *notesManager;
-
-    QList<QObject*> ret;
-
-    QString searchWord;
-    int currentNote;
-    int totalNotes;
-
+    QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
+                            QServiceContext* context,
+                            QAbstractSecuritySession* session);
 };
 
 #endif
-

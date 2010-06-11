@@ -88,6 +88,7 @@ QT_MOBILITY_BIN=
 QT_MOBILITY_PLUGINS=
 BUILD_UNITTESTS=
 BUILD_EXAMPLES=
+BUILD_DEMOS=
 BUILD_DOCS=yes
 BUILD_TOOLS=yes
 RELEASEMODE=
@@ -129,6 +130,7 @@ usage()
     echo "                    Note, this adds test symbols to all libraries"
     echo "                    and should not be used for release builds."
     echo "-examples ......... Build example applications"
+    echo "-demos ............ Build demo applications"
     echo "-no-docs .......... Do not build documentation (build by default)"
     echo "-no-tools ......... Do not build tools (build by default)"
     echo "-modules <list> ... Restrict list of modules to build (default all supported)"
@@ -180,6 +182,9 @@ while [ "$#" -gt 0 ]; do
             ;;
         -tests)
             BUILD_UNITTESTS="yes"
+            ;;
+        -demos)
+            BUILD_DEMOS="yes"
             ;;
         -examples)
             BUILD_EXAMPLES="yes"
@@ -381,6 +386,12 @@ if [ -z "$BUILD_EXAMPLES" ]; then
     echo "build_examples = no" >> "$CONFIG_IN"
 else
     echo "build_examples = yes" >> "$CONFIG_IN"
+fi
+
+if [ -z "$BUILD_DEMOS" ]; then
+    echo "build_demos = no" >> "$CONFIG_IN"
+else
+    echo "build_demos = yes" >> "$CONFIG_IN"
 fi
 
 if [ -z "$BUILD_DOCS" ]; then

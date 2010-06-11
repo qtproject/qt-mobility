@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,54 +39,28 @@
 **
 ****************************************************************************/
 
-#ifndef SFWNOTES_H
-#define SFWNOTES_H
+#include <QtCore>
 
-#include <QWidget>
-#include <QObject>
-#include <QDateTime>
-#include <qmobilityglobal.h>
+#include "filemanagerstorage.h"
 
-#include "ui_sfwnotes.h"
-
-QTM_BEGIN_NAMESPACE
-class QServiceManager;
-QTM_END_NAMESPACE
-
-QTM_USE_NAMESPACE
-
-class ToDoTool : public QWidget, public Ui_ToDoTool
+FileManagerStorage::FileManagerStorage(QObject *parent)
+    : QObject(parent)
 {
-    Q_OBJECT
-public:
-    ToDoTool(QWidget *parent = 0, Qt::WindowFlags flags = 0);
-    ~ToDoTool();
+    directory = QCoreApplication::applicationDirPath();
+}
 
-private slots:
-    void on_nextButton_clicked();
-    void on_prevButton_clicked();
-    void on_addButton_clicked();
-    void on_deleteButton_clicked();
-    void on_searchButton_clicked();
-    void soundAlarm(const QDateTime &alarm);
+void FileManagerStorage::setWorkingDirectory(const QString &path)
+{
+    directory = path;
+    emit workingDirectoryChanged(path);
+}
 
-private:
-    void init();
-    void refreshList();
-    void refreshNotes();
-    void registerExampleServices();
-    void unregisterExampleServices();
+QString FileManagerStorage::workingDirectory() const
+{
+    return directory;
+}
 
-    QServiceManager *serviceManager;
-    QObject *notesManager;
-
-    QList<QObject*> ret;
-
-    QString searchWord;
-    int currentNote;
-    int totalNotes;
-
-};
-
-#endif
-
+void FileManagerStorage::copyFile(const QString &currentPath, const QString &newPath)
+{
+    qDebug() << "FileManagerStorage::copyFile() from" << currentPath << "to" << newPath;
+}
