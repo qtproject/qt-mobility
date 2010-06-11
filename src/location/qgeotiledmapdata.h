@@ -68,6 +68,10 @@ public:
 
     QRectF screenRect() const;
 
+    virtual QList<QGeoMapObject*> visibleMapObjects();
+    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
+    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+
     QRectF protectedRegion() const;
     void clearProtectedRegion();
 

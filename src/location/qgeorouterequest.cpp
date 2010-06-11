@@ -49,31 +49,44 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoRouteRequest
-    \brief The QGeoRouteRequest class handles asynchronous requests
-    for geographical routing information.
+    \brief The QGeoRouteRequest class represents the parameters and restrictions
+    which define a request for routing information.
     \ingroup maps-routing
 
-    Describes a route travelling along waypoints().
+    The default state of a QGeoRouteRequest instance will result in a request
+    for basic route segment and navigation instructions describing the fastest
+    route by car which covers the given waypoints.
 
-    The route will traverse the elements of waypoints() in order.
+    There may be signifcant variation in the features supported by different
+    providers of routing information, or even in the features supported by
+    the same provider if different levels of authorization are used.
 
-    If the routing calculation is successful results() will return a list of
-    QGeoRoute objects containing information about the route, including
-    alternative routes if they were requested.  Otherwise results() will
-    return an empty list.
+    There are several functions in QGeoRoutingManager which can be used to
+    check which features are supported with the current provider and
+    authorization level.
 
-    Regardless of the success of the operation, the results of error() and
-    errorString() will be updated.
+    DESIGN NOTE FOR API REVIEW:
 
-    If nothing went wrong, error() will return QGeoCodingManager::NoError and
-    errorString() will return an empty QString, otherwise error() and
-    errorString() will provide details of the error.
+    There are plans to make this extensible by allowing the user to set a
+    list of QGeoTransportOptions (or QGeoTransitOptions).  We don't have any
+    subclasses for that just yet, otherwise they'd be present.
 
-    The equivalent synchronous method is
-    QGeoRoutingManager::calculateRoute(const QGeoCoordinate&, const QGeoCoordinate&)
-    and
-    QGeoRoutingManager::calculateRoute(const QList<QGeoCoordinate>&),
-    which are simpler to use but offers less fine-grained control.
+    A QGeoPublicTransportOption subclass would allow users to specify things
+    like cost limits, the maximum number of changes of vehicle, the maximum
+    walking time / distance between changes of vehicle.
+
+    There's Nokia / Navteq support for specifying things like Truck attributes
+    so you can route around various road restrictions and conditions which
+    effect trucks.
+
+    A QGeoTrafficAwareTransportOption is probably also a good place to put the
+    inputs for the various traffic / time aware bits of information. A
+    departure / arrrival time could be set, and the presence of this transport
+    options subclass (and the fact that user auth said that the user had
+    support) would mean we could provide better values for the estimated
+    travel times etc...
+
+    \sa QGeoRoutingManager
 */
 
 /*!
@@ -399,6 +412,7 @@ QGeoRouteRequestPrivate::QGeoRouteRequestPrivate()
 QGeoRouteRequestPrivate::QGeoRouteRequestPrivate(const QGeoRouteRequestPrivate &other)
         : QSharedData(other),
         waypoints(other.waypoints),
+        excludeAreas(other.excludeAreas),
         numberAlternativeRoutes(other.numberAlternativeRoutes),
         travelModes(other.travelModes),
         avoidFeatureTypes(other.avoidFeatureTypes),
@@ -413,6 +427,7 @@ QGeoRouteRequestPrivate::~QGeoRouteRequestPrivate() {}
 QGeoRouteRequestPrivate& QGeoRouteRequestPrivate::operator= (const QGeoRouteRequestPrivate & other)
 {
     waypoints = other.waypoints;
+    excludeAreas = other.excludeAreas;
     numberAlternativeRoutes = other.numberAlternativeRoutes;
     travelModes = other.travelModes;
     avoidFeatureTypes = other.avoidFeatureTypes;

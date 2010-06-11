@@ -42,35 +42,59 @@
 #ifndef QGEOMAPOBJECT_H
 #define QGEOMAPOBJECT_H
 
-#include "qgeoboundingbox.h"
+#include "qmobilityglobal.h"
+
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
+class QGeoBoundingBox;
 class QGeoMapObjectPrivate;
 class QGeoMapContainer;
 
 class Q_LOCATION_EXPORT QGeoMapObject
 {
-    friend class QGeoMapContainer;
-
 public:
-    QGeoMapObject(const QGeoMapContainer *parent = 0);
+    enum Type {
+        ContainerType,
+        RectangleType,
+        CircleType,
+        PolylineType,
+        PolygonType,
+        MarkerType,
+    };
+
+    QGeoMapObject(QGeoMapObject *parent = 0);
     virtual ~QGeoMapObject();
 
-    QGeoBoundingBox boundingBox() const;
-    int zIndex() const;
-    bool visibility() const;
-    bool isVisible() const;
-    const QGeoMapContainer *parent() const;
+    Type type() const;
 
-    void setZIndex(int z);
-    virtual void setVisibility(bool visibility);
+    void setZValue(int zValue);
+    int zValue() const;
+
+    void setVisible(bool visible);
+    bool isVisible() const;
+
+    // TODO selection and selectability?
+
+    virtual QGeoBoundingBox boundingBox() const;
+    virtual bool contains(const QGeoCoordinate &coordinate) const;
+
+    QGeoMapObject* parentObject() const;
+    void addChildObject(QGeoMapObject *childObject);
+    void removeChildObject(QGeoMapObject *childObject);
+    QList<QGeoMapObject*> childObjects() const;
 
 protected:
-    virtual void setVisible(bool visible);
+    QGeoMapObject(QGeoMapObjectPrivate *dd);
+
+    QGeoMapObjectPrivate *d_ptr;
 
 private:
-    QGeoMapObjectPrivate* d_ptr;
+
+
+    Q_DECLARE_PRIVATE(QGeoMapObject)
     Q_DISABLE_COPY(QGeoMapObject)
 };
 

@@ -59,6 +59,12 @@ QTM_BEGIN_NAMESPACE
     possible to convert instance of QGeoPlace subclasses to and from QGeoPlace
     instances.
 
+    DESIGN NOTE
+
+    The type() method and PlaceType enum could be made protected, and a public
+    bool isLandmark() method could be provided in their place, in order to
+    simplify the conversion from QGeoPlace to QLandmark for the user.
+
     \sa type()
 */
 

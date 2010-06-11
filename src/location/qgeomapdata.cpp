@@ -41,116 +41,41 @@
 
 #include "qgeomapdata.h"
 #include "qgeomapdata_p.h"
+
+#include "qgeoboundingbox.h"
+#include "qgeocoordinate.h"
 #include "qgeomapwidget.h"
+#include "qgeomapobject.h"
+#include "qgeomappingmanagerengine.h"
 
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoMapData
-  \brief The QGeoMapData class is.
-  \ingroup maps-mapping
+    \class QGeoMapData
+
+    \brief The QGeoMapData class are used as a bridge between QGeoMapWidget and
+    QGeoMappingManager.
+
+    \ingroup maps-impl
+
+    Instances of QGeoMapData are created with
+    QGeoMappingManager::createMapData(), and are used internally by
+    QGeoMappingWidget to manage the state of the map and the associated
+    QGeoMapObject instances.
+
+    Plugin implementers will need to provide implementations of
+    coordinateToScreenPosition(const QGeoCoordinate &coordinate) and
+    QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition).
+
+     The other virtual functions can be overriden.  If the screen position to
+     coordinate tranformations are expensive then overriding these functions
+     may allow optimizations based on caching parts of the geometry information.
  */
 
-//!
-//    \class QGeoMapData
-//    \brief The QGeoMapData class manages requests to and replies from
-//    a geographical map image service.
-//    \ingroup maps
-
-//    The request functions return a QGeoMapReply instance, which is responsible
-//    for delivering the status and results of the request.
-
-//    The rest of the class consists of functions providing metadata about the
-//    service provider, primarily dealing with the capabilities of the service
-//    and any limitations that may apply to the request inputs.
-
-//    The QGeoMapReply objects and the QGeoMappingManager instance will both
-//    emit signals to indicate that a request has completed successfully or
-//    has resulted in an error.
-
-//    \note After the request has finished, it is the responsibility of the user
-//    to delete the QGeoMapReply object at an appropriate time. Do not
-//    directly delete it inside the slot connected to replyFinished() or
-//    replyError() - the deleteLater() function should be used instead.
-
-//    \sa QGeoMapReply
-//*/
-
-
-///*!
-//    Constructs a QGeoMapData object.
-//*/
-//QGeoMapData::QGeoMapData(QGeoMappingManager *manager)
-//        : d_ptr(new QGeoMapDataPrivate)
-//{
-//    d_ptr->engine = manager;
-//}
-
-///*!
-//    Destroys this QGeoMapData object.
-//*/
-//QGeoMapData::~QGeoMapData()
-//{
-//    Q_D(QGeoMapData);
-//    delete d;
-//}
-
-///*!
-//    Returns the current internal zoom level
-//*/
-//int QGeoMapData::zoomLevel() const
-//{
-//    Q_D(const QGeoMapData);
-//    return d_ptr->zoomLevel;
-//}
-
-///*!
-//    Sets the \a size of the internal view port. This will usually be
-//    set by the associated QGeoMapWidget to the size of its drawable
-//    rectangle.
-//*/
-//void QGeoMapData::setViewportSize(const QSize &size)
-//{
-//    Q_D(QGeoMapData);
-//    d_ptr->viewportSize = size;
-//}
-
-///*!
-//    Returns the size of the internal view port.
-//*/
-//QSize QGeoMapData::viewportSize() const
-//{
-//    Q_D(const QGeoMapData);
-//    return d_ptr->viewportSize;
-//}
-
-///*!
-//    Sets the map \a widget associated with this mapping service.
-//    Whenever the internal map representation changes,
-//    \a widget->update() will be called.
-//*/
-////void QGeoMapData::setMapWidget(QGeoMapWidget *widget)
-////{
-////    Q_D(QGeoMapData);
-////    d_ptr->mapWidget = widget;
-////}
-
-///*!
-//    \fn virtual void pan(int startX, int startY, int endX, int endY) = 0
-
-//    Pans the internal map representation by the pixel delta
-//    defined by \a start and \a end point.
-//*/
-
-///*!
-//    \fn virtual void paint(QPainter *painter) = 0
-
-//    Paints the internal map representation into the
-//    context of \a painter.
-//    The internal view port is aligned with the top-left
-//    corner of the \a painter.
-
-
+/*!
+    Constructs a new map data object, which stores the map data required by
+    \a widget and makes use of the functionality provided by \a engine.
+*/
 QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
         : d_ptr(new QGeoMapDataPrivate())
 {
@@ -158,13 +83,9 @@ QGeoMapData::QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget
     d_ptr->engine = engine;
 }
 
-//QGeoMapData::QGeoMapData(QGeoMapDataPrivate *dd, QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
-//        : d_ptr(dd)
-//{
-//    d_ptr->widget = widget;
-//    d_ptr->engine = engine;
-//}
-
+/*!
+    Destroys this map data object.
+*/
 QGeoMapData::~QGeoMapData()
 {
     if (d_ptr->engine)
@@ -173,80 +94,263 @@ QGeoMapData::~QGeoMapData()
     delete d_ptr;
 }
 
+/*!
+    Returns the widget that this map data object is associated with.
+*/
 QGeoMapWidget* QGeoMapData::widget() const
 {
     return d_ptr->widget;
 }
 
+/*!
+    Returns the mapping engine that this map data object is associated with.
+*/
 QGeoMappingManagerEngine* QGeoMapData::engine() const
 {
     return d_ptr->engine;
 }
 
+/*!
+    Returns the QGeoMapObject which acts as the parent to all QGeoMapObject
+    instances which are added to the map by the user.
+*/
+QGeoMapObject* QGeoMapData::containerObject()
+{
+    return d_ptr->containerObject;
+}
+
+/*!
+    Sets the size of the map viewport to \a size.
+
+    The size will be adjusted by the associated QGeoMapWidget as it resizes.
+*/
+void QGeoMapData::setViewportSize(const QSizeF &size)
+{
+    d_ptr->viewportSize = size;
+}
+
+/*!
+    Returns the size of the map viewport.
+
+    The size will be adjusted by the associated QGeoMapWidget as it resizes.
+*/
+QSizeF QGeoMapData::viewportSize() const
+{
+    return d_ptr->viewportSize;
+}
+
+/*!
+    Sets the zoom level of the map to \a zoomLevel.
+
+    Larger values of the zoom level correspond to more detailed views of the
+    map.
+
+    If \a zoomLevel is less than minimumZoomLevel() then minimumZoomLevel()
+    will be used, and if \a zoomLevel is  larger than
+    maximumZoomLevel() then maximumZoomLevel() will be used.
+*/
 void QGeoMapData::setZoomLevel(qreal zoomLevel)
 {
+    zoomLevel = qMin(zoomLevel, d_ptr->engine->maximumZoomLevel());
+    zoomLevel = qMax(zoomLevel, d_ptr->engine->minimumZoomLevel());
     d_ptr->zoomLevel = zoomLevel;
 }
 
+/*!
+    Returns the zoom level of the map.
+
+    Larger values of the zoom level correspond to more detailed views of the
+    map.
+*/
 qreal QGeoMapData::zoomLevel() const
 {
     return d_ptr->zoomLevel;
 }
 
+/*!
+    Pans the map view \a dx pixels in the x direction and \a dy pixels
+    in they y direction.
+
+    The x and y axes are specified in Graphics View Framework coordinates.
+    By default this will mean that positive values of \a dx move the
+    viewed area to the right and that positive values of \a dy move the
+    viewed area down.
+*/
 void QGeoMapData::pan(int dx, int dy)
 {
     QPointF pos = coordinateToScreenPosition(center());
     setCenter(screenPositionToCoordinate(QPointF(pos.x() + dx, pos.y() + dy)));
 }
 
+/*!
+    Centers the map viewport on the coordinate \a center.
+*/
 void QGeoMapData::setCenter(const QGeoCoordinate &center)
 {
     d_ptr->center = center;
 }
 
+/*!
+    Returns the coordinate of the point in the center of the map viewport.
+*/
 QGeoCoordinate QGeoMapData::center() const
 {
     return d_ptr->center;
 }
 
-void QGeoMapData::setViewportSize(const QSizeF &size)
-{
-    d_ptr->viewportSize = size;
-}
-
-QSizeF QGeoMapData::viewportSize() const
-{
-    return d_ptr->viewportSize;
-}
-
+/*!
+    Changes the type of map data to display to \a mapType.
+*/
 void QGeoMapData::setMapType(QGeoMapWidget::MapType mapType)
 {
     d_ptr->mapType = mapType;
 }
 
+/*!
+    Returns the type of map data which is being displayed.
+*/
 QGeoMapWidget::MapType QGeoMapData::mapType() const
 {
     return d_ptr->mapType;
 }
 
+/*!
+    Adds \a mapObject to the list of map objects managed by this map.
+*/
+void QGeoMapData::addMapObject(QGeoMapObject *mapObject)
+{
+    d_ptr->containerObject->addChildObject(mapObject);
+}
+
+/*!
+    Removes \a mapObject from the list of map objects managed by this map.
+*/
+void QGeoMapData::removeMapObject(QGeoMapObject *mapObject)
+{
+    d_ptr->containerObject->removeChildObject(mapObject);
+}
+
+/*!
+    Returns the list of map objects managed by this map.
+*/
+QList<QGeoMapObject*> QGeoMapData::mapObjects()
+{
+    return d_ptr->containerObject->childObjects();
+}
+
+/*!
+    Returns the list of map objects managed by this map which are currently
+    visible and at least partially within the viewport of the map.
+*/
+QList<QGeoMapObject*> QGeoMapData::visibleMapObjects()
+{
+    QList<QGeoMapObject*> objectsOnScreen
+            = mapObjectsInScreenRect(QRectF(0.0,
+                                            0.0,
+                                            d_ptr->viewportSize.width(),
+                                            d_ptr->viewportSize.height()));
+
+    QList<QGeoMapObject*> visibleObjects;
+
+    for (int i = 0; i < objectsOnScreen.size(); ++i)
+        if (objectsOnScreen.at(i)->isVisible())
+            visibleObjects.append(objectsOnScreen.at(i));
+
+    return visibleObjects;
+}
+
+/*!
+    Returns the list of map objects managed by this map which are visible and
+    contain the point \a screenPosition within their boundaries.
+*/
+QList<QGeoMapObject*> QGeoMapData::mapObjectsAtScreenPosition(const QPointF &screenPosition)
+{
+    QList<QGeoMapObject*> results;
+
+    QGeoCoordinate coord = screenPositionToCoordinate(screenPosition);
+    QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
+    for (int i = 0; i < objects.size(); ++i)
+        if (objects.at(i)->contains(coord))
+            results.append(objects.at(i));
+
+    return results;
+}
+
+/*!
+    Returns the list of map objects managed by this map which are visible and
+    which are displayed at least partially within the on screen rectangle
+    \a screenRect.
+*/
+QList<QGeoMapObject*> QGeoMapData::mapObjectsInScreenRect(const QRectF &screenRect)
+{
+    QList<QGeoMapObject*> results;
+
+    // TODO - find a way to disambiguate rectangles at poles
+    QGeoCoordinate topLeft = screenPositionToCoordinate(screenRect.topLeft());
+    QGeoCoordinate bottomRight = screenPositionToCoordinate(screenRect.bottomRight());
+
+    QGeoBoundingBox bounds(topLeft, bottomRight);
+
+    QList<QGeoMapObject*> objects = d_ptr->containerObject->childObjects();
+    for (int i = 0; i < objects.size(); ++i)
+        if (bounds.intersects(objects.at(i)->boundingBox()))
+            results.append(objects.at(i));
+
+    return results;
+}
+
+/*!
+\fn QPointF QGeoMapData::coordinateToScreenPosition(const QGeoCoordinate &coordinate) const
+
+    Returns the position on the screen at which \a coordinate is displayed.
+
+    An invalid QPointF will be returned if \a coordinate is invalid or is not
+    within the current viewport.
+*/
+
+/*!
+\fn QGeoCoordinate QGeoMapData::screenPositionToCoordinate(const QPointF &screenPosition) const
+
+    Returns the coordinate corresponding to the point in the viewport at \a
+    screenPosition.
+
+    An invalid QGeoCoordinate will be returned if \a screenPosition is invalid
+    or is not within the current viewport.
+*/
+
+
+/*!
+    Sets whether changes to the map image will cause widget() to update to \a
+    trigger.
+*/
 void QGeoMapData::setImageChangesTriggerUpdates(bool trigger)
 {
     d_ptr->imageChangesTriggerUpdates = trigger;
 }
 
+/*!
+    Returns whether changes to the map image will case widget() to update.
+*/
 bool QGeoMapData::imageChangesTriggerUpdates() const
 {
     return d_ptr->imageChangesTriggerUpdates;
 }
 
+/*!
+    Sets the image that will be displayed in the viewport of widget() to \a
+    mapImage.
+*/
 void QGeoMapData::setMapImage(const QPixmap &mapImage)
 {
     d_ptr->mapImage = mapImage;
     if (d_ptr->imageChangesTriggerUpdates)
-        d_ptr->widget->mapImageUpdated();
+        d_ptr->widget->update();
 }
 
-QPixmap QGeoMapData::mapImage()
+/*!
+    Returns the image that will be displayed in the viewport of widget().
+*/
+QPixmap QGeoMapData::mapImage() const
 {
     return d_ptr->mapImage;
 }
@@ -254,7 +358,8 @@ QPixmap QGeoMapData::mapImage()
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoMapDataPrivate::QGeoMapDataPrivate() {}
+QGeoMapDataPrivate::QGeoMapDataPrivate()
+    : containerObject(new QGeoMapObject()) {}
 
 QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
         : widget(other.widget),
@@ -263,10 +368,14 @@ QGeoMapDataPrivate::QGeoMapDataPrivate(const QGeoMapDataPrivate &other)
         center(other.center),
         viewportSize(other.viewportSize),
         mapType(other.mapType),
+        containerObject(other.containerObject),
         imageChangesTriggerUpdates(other.imageChangesTriggerUpdates),
         mapImage(other.mapImage) {}
 
-QGeoMapDataPrivate::~QGeoMapDataPrivate() {}
+QGeoMapDataPrivate::~QGeoMapDataPrivate()
+{
+    delete containerObject;
+}
 
 QGeoMapDataPrivate& QGeoMapDataPrivate::operator= (const QGeoMapDataPrivate & other)
 {
@@ -276,6 +385,7 @@ QGeoMapDataPrivate& QGeoMapDataPrivate::operator= (const QGeoMapDataPrivate & ot
     center = other.center;
     viewportSize = other.viewportSize;
     mapType = other.mapType;
+    containerObject = other.containerObject;
     imageChangesTriggerUpdates = other.imageChangesTriggerUpdates;
     mapImage = other.mapImage;
 

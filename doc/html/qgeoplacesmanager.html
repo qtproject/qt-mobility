@@ -43,7 +43,6 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a></b> ( const QList&lt;QLandmarkManager *&gt; &amp; <i>landmarkManagers</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">SearchTypes </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanager.html#supportedSearchTypes">supportedSearchTypes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanager.html#supportsGeocoding">supportsGeocoding</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoplacesmanager.html#supportsViewportBiasing">supportsViewportBiasing</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -71,9 +70,57 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGeoPlacesManager class provides support for searching operations related to geographic information.</p>
-<p>Instances of QGeoPlacesManager can be accessed with <a href="qgeoserviceprovider.html#placesManager">QGeoServiceProvider::placesManager</a>() primarily provide support for the searching of geographical information, either through free text search or by geocoding (finding coordinates from addresses).</p>
-<p>The geocode(<a href="qgeoaddress.html">QGeoAddress</a>), geocode(<a href="qgeocoordinate.html">QGeoCoordinate</a>) and <a href="qgeoplacesmanager.html#placesSearch">placesSearch</a>() methods return <a href="qgeoplacesreply.html">QGeoPlacesReply</a> objects, which manage these operations and report on the result of the operations and any errors which may have occurred.</p>
-<p>The QGeoPlacesManager class also contains functions which provide information on the capabilities and features supported by QGeoPlacesManager instances. Those who write subclasses of QGeoPlacesManager should take care to make sure that this capability information is set up correctly, otherwise clients may be denied access to functionality they would otherwise expect.</p>
+<p>The geocode(<a href="qgeoaddress.html">QGeoAddress</a>), geocode(<a href="qgeocoordinate.html">QGeoCoordinate</a>) and <a href="qgeoplacesmanager.html#placesSearch">placesSearch</a>() functions return <a href="qgeoplacesreply.html">QGeoPlacesReply</a> objects, which manage these operations and report on the result of the operations and any errors which may have occurred.</p>
+<p>The geocode(<a href="qgeoaddress.html">QGeoAddress</a>) and geocode(<a href="qgeocoordinate.html">QGeoCoordinate</a>) functions can be used to convert <a href="qgeoaddress.html">QGeoAddress</a> instances to <a href="qgeocoordinate.html">QGeoCoordinate</a> instances and vice-versa.</p>
+<p>The <a href="qgeoplacesmanager.html#placesSearch">placesSearch</a>() function allows a user to perform a free text search for place information. If the string provided can be interpreted as an address it can be geocoded to coordinate information, and the string can also be used to search a landmarks database, depending on the level of support supplied by the service provider.</p>
+<p>The <a href="qgeoplacesmanager.html#defaultLandmarkManager">defaultLandmarkManager</a>() function will return a <a href="qlandmarkmanager.html">QLandmarkManager</a> instance if access to the service providers landmark database is available outside of the <a href="qgeoplacesmanager.html#placesSearch">placesSearch</a>() method.</p>
+<p>A user can supply other <a href="qlandmarkmanager.html">QLandmarkManager</a> instances to be searched during the execution of <a href="qgeoplacesmanager.html#placesSearch">placesSearch</a>() with <a href="qgeoplacesmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</a>(). This means that a personal database store can be combined with a public source of database information with very little effort.</p>
+<p>Instances of QGeoPlacesManager can be accessed with <a href="qgeoserviceprovider.html#placesManager">QGeoServiceProvider::placesManager</a>().</p>
+<p>A small example of the usage of QGeoPlacesManager and the handling of <a href="qlandmark.html">QLandmark</a> results follows:</p>
+<pre>    class MyPlaceHandler : public QObject
+    {
+        Q_OBJECT
+    public:
+        MyPlaceHandler(QGeoPlacesManager *placesManager, QString searchString)
+        {
+            QGeoPlacesReply *reply = placesManager-&gt;placesSearch(searchString);
+
+            connect(placesManager,
+                    SIGNAL(finished(QGeoPlacesReply*)),
+                    this,
+                    SLOT(placesResults(QGeoPlacesReply*)));
+
+            connect(placesManager,
+                    SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)),
+                    this
+                    SLOT(placesError(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)));
+        }
+
+    private slots:
+        void placesResults(QGeoPlacesReply *reply)
+        {
+            <span class="comment">// We now have the results as QGeoPlace objects</span>
+            QList&lt;QGeoPlace&gt; places = reply-&gt;places();
+
+            <span class="comment">// The QLandmark results can be created from the simpler</span>
+            <span class="comment">// QGeoPlace results if that is required.</span>
+            QList&lt;QLandmark&gt; landmarks;
+            for (int i = 0; i &lt; places().size(); ++i) {
+                QGeoPlace place = places.at(i);
+                if (place.type() == QGeoPlace::LandmarkType) {
+                    landmarks.append(QLandmark(place));
+                }
+            }
+
+            <span class="comment">// ... now we have to make use of the places and landmarks ...</span>
+            reply-&gt;deleteLater();
+        }
+
+        void placesError(QGeoPlacesReply *reply, QGeoPlacesReply::Error error, const QString &amp;errorString)
+        {
+            <span class="comment">// ... inform the user that an error has occurred ...</span>
+        }
+    };</pre>
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QGeoPlacesManager/SearchType"></a>
@@ -109,7 +156,7 @@
 <a name="//apple_ref/cpp/instm/QGeoPlacesManager/defaultLandmarkManager"></a>
 <h3 class="fn"><a name="defaultLandmarkManager"></a><a href="qlandmarkmanager.html">QLandmarkManager</a> * QGeoPlacesManager::defaultLandmarkManager () const</h3>
 <p>Returns the landmark manager provided by the service provider for use with <a href="qgeoplacesmanager.html#placesSearch">placesSearch</a>().</p>
-<p>Will return 0 if the no landmark manager is associated with the service provider.</p>
+<p>Will return 0 if the no landmark manager is associated with the service provider. This does not indicate that <a href="qgeoplacesmanager.html#placesSearch">placesSearch</a>() does not support landmark searching, only that any landmark searching which occurs within in <a href="qgeoplacesmanager.html#placesSearch">placesSearch</a>() is done without the use of a <a href="qlandmarkmanager.html">QLandmarkManager</a>.</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManager/error"></a>
 <h3 class="fn"><a name="error"></a>void QGeoPlacesManager::error ( <a href="qgeoplacesreply.html">QGeoPlacesReply</a> * <i>reply</i>, <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::Error</a> <i>error</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>errorString</i> = QString() )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>This signal is emitted when an error has been detected in the processing of <i>reply</i>. The <a href="qgeoplacesmanager.html#finished">QGeoPlacesManager::finished</a>() signal will probably follow.</p>
@@ -130,7 +177,7 @@
 <p>If <a href="qgeoplacesmanager.html#supportsGeocoding">supportsGeocoding</a>() returns false an <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> will occur.</p>
 <p>Once the operation has completed, <a href="qgeoplacesreply.html#places">QGeoPlacesReply::places</a>() can be used to retrieve the results, which will consist of a list of <a href="qgeoplace.html">QGeoPlace</a> objects. These object represent a combination of coordinate and address data.</p>
 <p>The address data returned in the results may be different from <i>address</i>. This will usually occur if the geocoding service backend uses a different canonical form of addresses or if <i>address</i> was only partially filled out.</p>
-<p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the geocoding results to those that are contained by <i>bounds</i>. This is particularly useful if <i>address</i> is only partially filled out, as the service will attempt to geocode all matches for the specified data. Note that <i>bounds</i> will only be used if <a href="qgeoplacesmanager.html#supportsViewportBiasing">supportsViewportBiasing</a>() returns true.</p>
+<p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the results to thos that are contained within <i>bounds</i>. This is particularly useful if <i>address</i> is only partially filled out, as the service will attempt to geocode all matches for the specified data.</p>
 <p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeoplacesmanager.html#finished">QGeoPlacesManager::finished</a>(), <a href="qgeoplacesmanager.html#error">QGeoPlacesManager::error</a>(), <a href="qgeoplacesreply.html#finished">QGeoPlacesReply::finished</a>() or <a href="qgeoplacesreply.html#error">QGeoPlacesReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
 <h3 class="fn"><a name="geocode-2"></a><a href="qgeoplacesreply.html">QGeoPlacesReply</a> * QGeoPlacesManager::geocode ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i>, const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> = QGeoBoundingBox() )</h3>
 <p>Begins the reverse geocoding of <i>coordinate</i>. Reverse geocoding is the process of finding an address that corresponds to a given coordinate.</p>
@@ -140,7 +187,7 @@
 <p>At that point <a href="qgeoplacesreply.html#places">QGeoPlacesReply::places</a>() can be used to retrieve the results, which will consist of a list of <a href="qgeoplace.html">QGeoPlace</a> objects. These object represent a combination of coordinate and address data.</p>
 <p>The coordinate data returned in the results may be different from <i>coordinate</i>. This will usually occur if the reverse geocoding service backend shifts the coordinates to be closer to the matching addresses, or if the backend returns results at multiple levels of detail.</p>
 <p>If multiple results are returned by the reverse geocoding service backend they will be provided in order of specificity. This normally occurs if the backend is configured to reverse geocode across multiple levels of detail. As an example, some services will return address and coordinate pairs for the street address, the city, the state and the country.</p>
-<p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the geocoding results to those that are contained by <i>bounds</i>. Note that <i>bounds</i> will only be used if <a href="qgeoplacesmanager.html#supportsViewportBiasing">supportsViewportBiasing</a>() returns true.</p>
+<p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the results to thos that are contained within <i>bounds</i>.</p>
 <p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeoplacesmanager.html#finished">QGeoPlacesManager::finished</a>(), <a href="qgeoplacesmanager.html#error">QGeoPlacesManager::error</a>(), <a href="qgeoplacesreply.html#finished">QGeoPlacesReply::finished</a>() or <a href="qgeoplacesreply.html#error">QGeoPlacesReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManager/managerName"></a>
 <h3 class="fn"><a name="managerName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoPlacesManager::managerName () const</h3>
@@ -159,11 +206,10 @@
 <p>A <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will be returned, which can be used to manage the geocoding operation and to return the results of the operation.</p>
 <p>This manager and the returned <a href="qgeoplacesreply.html">QGeoPlacesReply</a> object will emit signals indicating if the operation completes or if errors occur.</p>
 <p>If <a href="qgeoplacesmanager.html#supportsGeocoding">supportsGeocoding</a>() returns false and <i>searchTypes</i> is <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchGeocode</a> an <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> will occur.</p>
-<p>Likewise, if <a href="qgeoplacesmanager.html#defaultLandmarkManager">defaultLandmarkManager</a>() returns 0 and <i>searchType</i> is <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchLandmarks</a> an <a href="qgeoplacesreply.html#Error-enum">QGeoPlacesReply::UnsupportedOptionError</a> will occur.</p>
 <p>Once the operation has completed, <a href="qgeoplacesreply.html#places">QGeoPlacesReply::places</a>() can be used to retrieve the results, which will consist of a list of <a href="qgeoplace.html">QGeoPlace</a> objects. These object represent a combination of coordinate and address data.</p>
 <p>If any of the <a href="qgeoplace.html">QGeoPlace</a> instances in the results have landmark associated data, <a href="qgeoplace.html#type">QGeoPlace::type</a>() will return <a href="qgeoplace.html#PlaceType-enum">QGeoPlace::LandmarkType</a> and QLandmark::QLandmark(const <a href="qgeoplace.html">QGeoPlace</a> &amp;place) can be used to convert the <a href="qgeoplace.html">QGeoPlace</a> instance into a <a href="qlandmark.html">QLandmark</a> instance.</p>
-<p>If <i>searchTypes</i> is <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchLandmarks</a> or <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchAll</a>, a free text landmark search will be performed. The results will be a combination of the backend specific landmark search and the same free text search applied to each of the <a href="qlandmarkmanager.html">QLandmarkManager</a> instances in landmarkManagers().</p>
-<p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the geocoding results to those that are contained by <i>bounds</i>. Note that <i>bounds</i> will only be used for the geocoding part of the search if <a href="qgeoplacesmanager.html#supportsViewportBiasing">supportsViewportBiasing</a>() returns true.</p>
+<p>If <i>searchTypes</i> is <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchLandmarks</a> or <a href="qgeoplacesmanager.html#SearchType-enum">QGeoPlacesManager::SearchAll</a>, a free text landmark search will be performed. The results will be a combination of the backend specific landmark search and the same free text search applied to each of the <a href="qlandmarkmanager.html">QLandmarkManager</a> instances in <a href="qgeoplacesmanager.html#additionalLandmarkManagers">additionalLandmarkManagers</a>().</p>
+<p>If <i>bounds</i> is a valid <a href="qgeoboundingbox.html">QGeoBoundingBox</a> it will be used to limit the results to thos that are contained within <i>bounds</i>.</p>
 <p>The user is responsible for deleting the returned reply object, although this can be done in the slot connected to <a href="qgeoplacesmanager.html#finished">QGeoPlacesManager::finished</a>(), <a href="qgeoplacesmanager.html#error">QGeoPlacesManager::error</a>(), <a href="qgeoplacesreply.html#finished">QGeoPlacesReply::finished</a>() or <a href="qgeoplacesreply.html#error">QGeoPlacesReply::error</a>() with <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPlacesManager/setAdditionalLandmarkManagers"></a>
 <h3 class="fn"><a name="setAdditionalLandmarkManagers"></a>void QGeoPlacesManager::setAdditionalLandmarkManagers ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkmanager.html">QLandmarkManager</a> *&gt; &amp; <i>landmarkManagers</i> )</h3>
@@ -176,9 +222,6 @@
 <a name="//apple_ref/cpp/instm/QGeoPlacesManager/supportsGeocoding"></a>
 <h3 class="fn"><a name="supportsGeocoding"></a>bool QGeoPlacesManager::supportsGeocoding () const</h3>
 <p>Returns whether this manager supports geocoding operations.</p>
-<a name="//apple_ref/cpp/instm/QGeoPlacesManager/supportsViewportBiasing"></a>
-<h3 class="fn"><a name="supportsViewportBiasing"></a>bool QGeoPlacesManager::supportsViewportBiasing () const</h3>
-<p>Returns whether this manager supports viewport biasing.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

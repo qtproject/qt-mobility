@@ -84,6 +84,8 @@ public:
 
     QGeoRouteRequest::TravelMode travelMode;
     QGeoRouteRequest::RouteOptimization optimization;
+    QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes;
+
     QList<QGeoCoordinate> path;
 };
 

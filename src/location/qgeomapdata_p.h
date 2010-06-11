@@ -54,9 +54,13 @@
 //
 
 #include "qgeomapwidget.h"
-#include "qgeomappingmanagerengine.h"
+
+#include "qgeocoordinate.h"
+#include <QList>
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoMappingManagerEngine;
 
 class QGeoMapDataPrivate
 {
@@ -73,6 +77,8 @@ public:
     QGeoCoordinate center;
     QSizeF viewportSize;
     QGeoMapWidget::MapType mapType;
+
+    QGeoMapObject* containerObject;
 
     bool imageChangesTriggerUpdates;
     QPixmap mapImage;

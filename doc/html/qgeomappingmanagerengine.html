@@ -67,8 +67,12 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGeoMappingManagerEngine class provides an interface and convenience methods to implementors of <a href="qgeoserviceprovider.html">QGeoServiceProvider</a> plugins who want to provides support for displaying and interacting with maps.</p>
-<p>The QGeoMappingManagerEngine class is used to define the service specific behaviour and metadata required by <a href="qgeomappingmanager.html">QGeoMappingManager</a>.</p>
 <p>Subclasses of QGeoMappingManagerEngine need to provide an implementations of <a href="qgeomappingmanagerengine.html#createMapData">createMapData</a>() and <a href="qgeomappingmanagerengine.html#updateMapImage">updateMapImage</a>().</p>
+<p>The functions setSupportedMapTypes(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a>&gt; &amp;mapTypes), setMinimumZoomLevel(qreal minimumZoom), setMaximumZoomLevel(qreal maximumZoom), setMinimumImageSize(const <a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a> &amp;minimumSize) and setMaximumImageSize(const <a href="http://qt.nokia.com/doc/4.6/qsize.html">QSize</a> &amp;maximumSize) should be used to configure the reported capabilities of the engine.</p>
+<p>It is important that this is done before <a href="qgeomappingmanagerengine.html#createMapData">createMapData</a>(), <a href="qgeomappingmanagerengine.html#updateMapImage">updateMapImage</a>() or any of the capability reporting functions are used to prevent incorrect or inconsistent behaviour.</p>
+<p>DESIGN NOTES</p>
+<p>There are convinience classes for working with tile based mapping services on the way. They won't be ready for review until they stabilize.</p>
+<p>A vector based mappin service exists. Once we get a hold of it, the mapping engine and widget will probably get methods related to tilt and heading, as well as the associated supportsXYZ methods.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoMappingManagerEngine/QGeoMappingManagerEngine"></a>

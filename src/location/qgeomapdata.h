@@ -43,7 +43,6 @@
 #define QGEOMAPDATA_H
 
 #include "qgeomapwidget.h"
-#include "qgeomapcontainer.h"
 
 #include <QObject>
 #include <QSize>
@@ -55,16 +54,17 @@ QTM_BEGIN_NAMESPACE
 class QGeoCoordinate;
 class QGeoBoundingBox;
 class QGeoMappingManagerEngine;
+class QGeoMapObject;
 class QGeoMapDataPrivate;
 
-class Q_LOCATION_EXPORT QGeoMapData : public QGeoMapContainer
+class Q_LOCATION_EXPORT QGeoMapData
 {
 public:
     QGeoMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoMapData();
 
-    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
-    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
+    virtual void setViewportSize(const QSizeF &size);
+    virtual QSizeF viewportSize() const;
 
     virtual void setZoomLevel(qreal zoomLevel);
     virtual qreal zoomLevel() const;
@@ -74,21 +74,30 @@ public:
     virtual void setCenter(const QGeoCoordinate &center);
     virtual QGeoCoordinate center() const;
 
-    virtual void setViewportSize(const QSizeF &size);
-    virtual QSizeF viewportSize() const;
-
     void setMapType(QGeoMapWidget::MapType mapType);
     QGeoMapWidget::MapType mapType() const;
+
+    virtual void addMapObject(QGeoMapObject *mapObject);
+    virtual void removeMapObject(QGeoMapObject *mapObject);
+    virtual QList<QGeoMapObject*> mapObjects();
+    virtual QList<QGeoMapObject*> visibleMapObjects();
+    virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
+    virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+
+    virtual QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const = 0;
+    virtual QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition) const = 0;
 
     void setImageChangesTriggerUpdates(bool trigger);
     bool imageChangesTriggerUpdates() const;
 
     void setMapImage(const QPixmap &mapImage);
-    QPixmap mapImage();
+    QPixmap mapImage() const;
 
 protected:
     QGeoMapWidget* widget() const;
     QGeoMappingManagerEngine* engine() const;
+
+    QGeoMapObject* containerObject();
 
 private:
     QGeoMapDataPrivate* d_ptr;

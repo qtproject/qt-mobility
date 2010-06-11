@@ -55,22 +55,82 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-places
 
-    Instances of QGeoPlacesManager can be accessed with
-    QGeoServiceProvider::placesManager() primarily provide support for the
-    searching of geographical information, either through free text search or
-    by geocoding (finding coordinates from addresses).
-
     The geocode(QGeoAddress), geocode(QGeoCoordinate) and placesSearch()
-    methods return QGeoPlacesReply objects, which manage these operations and
+    functions return QGeoPlacesReply objects, which manage these operations and
     report on the result of the operations and any errors which may have
     occurred.
 
-    The QGeoPlacesManager class also contains functions which provide
-    information on the capabilities and features supported by QGeoPlacesManager
-    instances. Those who write subclasses of QGeoPlacesManager should take care
-    to make sure that this capability information is set up correctly,
-    otherwise clients may be denied access to functionality they would
-    otherwise expect.
+    The geocode(QGeoAddress) and geocode(QGeoCoordinate) functions can be used
+    to convert QGeoAddress instances to QGeoCoordinate instances and
+    vice-versa.
+
+    The placesSearch() function allows a user to perform a free text search
+    for place information.  If the string provided can be interpreted as
+    an address it can be geocoded to coordinate information, and the string
+    can also be used to search a landmarks database, depending on the level
+    of support supplied by the service provider.
+
+    The defaultLandmarkManager() function will return a QLandmarkManager
+    instance if access to the service providers landmark database is
+    available outside of the placesSearch() method.
+
+    A user can supply other QLandmarkManager instances to be searched during
+    the execution of placesSearch() with setAdditionalLandmarkManagers(). This
+    means that a personal database store can be combined with a public source
+    of database information with very little effort.
+
+    Instances of QGeoPlacesManager can be accessed with
+    QGeoServiceProvider::placesManager().
+
+    A small example of the usage of QGeoPlacesManager and the handling of
+    QLandmark results follows:
+
+    \code
+class MyPlaceHandler : public QObject
+{
+    Q_OBJECT
+public:
+    MyPlaceHandler(QGeoPlacesManager *placesManager, QString searchString)
+    {
+        QGeoPlacesReply *reply = placesManager->placesSearch(searchString);
+
+        connect(placesManager,
+                SIGNAL(finished(QGeoPlacesReply*)),
+                this,
+                SLOT(placesResults(QGeoPlacesReply*)));
+
+        connect(placesManager,
+                SIGNAL(error(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)),
+                this
+                SLOT(placesError(QGeoPlacesReply*,QGeoPlacesReply::Error,QString)));
+    }
+
+private slots:
+    void placesResults(QGeoPlacesReply *reply)
+    {
+        // We now have the results as QGeoPlace objects
+        QList<QGeoPlace> places = reply->places();
+
+        // The QLandmark results can be created from the simpler
+        // QGeoPlace results if that is required.
+        QList<QLandmark> landmarks;
+        for (int i = 0; i < places().size(); ++i) {
+            QGeoPlace place = places.at(i);
+            if (place.type() == QGeoPlace::LandmarkType) {
+                landmarks.append(QLandmark(place));
+            }
+        }
+
+        // ... now we have to make use of the places and landmarks ...
+        reply->deleteLater();
+    }
+
+    void placesError(QGeoPlacesReply *reply, QGeoPlacesReply::Error error, const QString &errorString)
+    {
+        // ... inform the user that an error has occurred ...
+    }
+};
+    \endcode
 */
 
 /*!
@@ -190,10 +250,9 @@ int QGeoPlacesManager::managerVersion() const
     canonical form of addresses or if \a address was only partially filled out.
 
     If \a bounds is a valid QGeoBoundingBox it will be used to limit the
-    geocoding results to those that are contained by \a bounds. This is
-    particularly useful if \a address is only partially filled out, as the
-    service will attempt to geocode all matches for the specified data. Note
-    that \a bounds will only be used if supportsViewportBiasing() returns true.
+    results to thos that are contained within \a bounds. This is particularly
+    useful if \a address is only partially filled out, as the service will
+    attempt to geocode all matches for the specified data.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoPlacesManager::finished(),
@@ -238,8 +297,7 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoAddress &address, const QG
     the street address, the city, the state and the country.
 
     If \a bounds is a valid QGeoBoundingBox it will be used to limit the
-    geocoding results to those that are contained by \a bounds. Note that \a
-    bounds will only be used if supportsViewportBiasing() returns true.
+    results to thos that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoPlacesManager::finished(),
@@ -269,10 +327,6 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, co
     QGeoPlacesManager::SearchGeocode an
     QGeoPlacesReply::UnsupportedOptionError will occur.
 
-    Likewise, if defaultLandmarkManager() returns 0 and \a searchType is
-    QGeoPlacesManager::SearchLandmarks an
-    QGeoPlacesReply::UnsupportedOptionError will occur.
-
     Once the operation has completed, QGeoPlacesReply::places() can be used to
     retrieve the results, which will consist of a list of QGeoPlace objects.
     These object represent a combination of coordinate and address data.
@@ -286,12 +340,10 @@ QGeoPlacesReply* QGeoPlacesManager::geocode(const QGeoCoordinate &coordinate, co
     QGeoPlacesManager::SearchAll, a free text landmark search will be
     performed. The results will be a combination of the backend specific
     landmark search and the same free text search applied to each of the
-    QLandmarkManager instances in landmarkManagers().
+    QLandmarkManager instances in additionalLandmarkManagers().
 
     If \a bounds is a valid QGeoBoundingBox it will be used to limit the
-    geocoding results to those that are contained by \a bounds. Note that \a
-    bounds will only be used for the geocoding part of the search if
-    supportsViewportBiasing() returns true.
+    results to thos that are contained within \a bounds.
 
     The user is responsible for deleting the returned reply object, although
     this can be done in the slot connected to QGeoPlacesManager::finished(),
@@ -304,17 +356,6 @@ QGeoPlacesReply* QGeoPlacesManager::placesSearch(const QString &searchString, QG
 //        return new QGeoPlacesReply(QGeoPlacesReply::EngineNotSetError, "The places manager was not created with a valid engine.", this);
 
     return d_ptr->engine->placesSearch(searchString, searchTypes, bounds);
-}
-
-/*!
-    Returns whether this manager supports viewport biasing.
-*/
-bool QGeoPlacesManager::supportsViewportBiasing() const
-{
-//    if (!d_ptr->engine)
-//        return false;
-
-    return d_ptr->engine->supportsViewportBiasing();
 }
 
 /*!
@@ -343,8 +384,10 @@ QGeoPlacesManager::SearchTypes QGeoPlacesManager::supportedSearchTypes() const
     Returns the landmark manager provided by the service provider for
     use with placesSearch().
 
-    Will return 0 if the no landmark manager is associated with
-    the service provider.
+    Will return 0 if the no landmark manager is associated with the service
+    provider. This does not indicate that placesSearch() does not support
+    landmark searching, only that any landmark searching which occurs within in
+    placesSearch() is done without the use of a QLandmarkManager.
 */
 QLandmarkManager* QGeoPlacesManager::defaultLandmarkManager() const
 {

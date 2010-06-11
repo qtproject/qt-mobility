@@ -66,8 +66,10 @@ QTM_BEGIN_NAMESPACE
     cases, as may be needed when the segment is to be traversed via public
     transport or in a truck.
 
-    An instance QGeoRoutingService of will normally be responsible for the
-    creation and setup of QGeoRoute objects.
+    Routing information is normally requested using
+    QGeoRoutingManager::calculateRoute(), which returns a QGeoRouteReply
+    instance. If the operation is completed successfully the routing
+    information can be accessed with QGeoRouteReply::routes()
 
     \sa QGeoRoutingManager
 */
@@ -148,10 +150,10 @@ QGeoRouteRequest QGeoRoute::request() const
     Sets the list of coordinates suitable for providing a graphical
     overview of the route to \a pathSummary.
 
-    Acutal routing information may describe the geographic path of the route
+    Actual routing information may describe the geographic path of the route
     in much higher detail than is necessary to draw the route at most scales,
 
-    \sa QGeoRoute::pathSummary()
+    The detailed routing information can be set with QGeoRouteSegment::setPath().
 */
 void QGeoRoute::setPathSummary(const QList<QGeoCoordinate> &pathSummary)
 {
@@ -162,7 +164,7 @@ void QGeoRoute::setPathSummary(const QList<QGeoCoordinate> &pathSummary)
     Returns a list of coordinates suitable for providing a graphical
     overview of the route.
 
-    \sa QGeoRoute::setPathSummary()
+    The detailed routing information is present in QGeoRouteSegment::path().
 */
 QList<QGeoCoordinate> QGeoRoute::pathSummary() const
 {
@@ -259,45 +261,118 @@ QGeoDistance QGeoRoute::distance() const
 {
     return d_ptr->distance;
 }
+
+/*!
+    API REVIEW NOTE
+
+    This might be moved into QGeoRouteSegment to support mult-mode routes.
+*/
 void QGeoRoute::setTravelMode(const QGeoRouteRequest::TravelMode mode)
 {
     d_ptr->travelMode = mode;
 }
 
+/*!
+    API REVIEW NOTE
+
+    This might be moved into QGeoRouteSegment to support mult-mode routes.
+*/
 QGeoRouteRequest::TravelMode QGeoRoute::travelMode() const
 {
     return d_ptr->travelMode;
 }
 
+/*!
+    API REVIEW NOTE
+
+    This may not be in the API, since it's present in request() and hence
+    redundant.  This is being discussed with the people who added it.
+*/
 void QGeoRoute::setOptimization(const QGeoRouteRequest::RouteOptimization optimization)
 {
     d_ptr->optimization = optimization;
 }
 
+/*!
+    API REVIEW NOTE
+
+    This may not be in the API, since it's present in request() and hence
+    redundant.  This is being discussed with the people who added it.
+*/
 QGeoRouteRequest::RouteOptimization QGeoRoute::optimization() const
 {
     return d_ptr->optimization;
 }
 
 /*!
-    Sets the geometric shape of the route to \a path.
+    API REVIEW NOTE
 
-    The coordinates in \a path should be listed in the order in which they
-    would be traversed by someone travelling along this segment of the route.
+    This may not be in the API, since it's present in request() and hence
+    redundant.  This is being discussed with the people who added it.
 */
-void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
+void QGeoRoute::setAvoidFeatureTypes(const QGeoRouteRequest::AvoidFeatureTypes avoidFeatureTypes)
 {
-    d_ptr->path = path;
+    // TODO not handled in private impl copy constructor / assignment operator
+    d_ptr->avoidFeatureTypes = avoidFeatureTypes;
 }
 
 /*!
-    Returns the geometric shape of the route.
+    API REVIEW NOTE
 
-    The coordinates should be listed in the order in which they
-    would be traversed by someone travelling along this segment of the route.
+    This may not be in the API, since it's present in request() and hence
+    redundant.  This is being discussed with the people who added it.
+*/
+QGeoRouteRequest::AvoidFeatureTypes QGeoRoute::avoidFeatureTypes() const
+{
+    // TODO not handled in private impl copy constructor / assignment operator
+    return d_ptr->avoidFeatureTypes;
+}
+
+//!
+//    Sets the geometric shape of the route to \a path.
+
+//    The coordinates in \a path should be listed in the order in which they
+//    would be traversed by someone travelling along this segment of the route.
+
+/*!
+    API REVIEW NOTE
+
+    This may not be in the API, or it may replace setPathSummary().
+
+    It's possible that both will be removed, provided that its acceptable to
+    only expose the detailed route geometry via QGeoRouteSegment, since the
+    "summary" path should probably be recomputed based on how the route is
+    being viewed (mostly based on the zoom level).
+
+    This is being discussed with the people who added it.
+*/
+void QGeoRoute::setPath(const QList<QGeoCoordinate> &path)
+{
+    // TODO not handled in private impl copy constructor / assignment operator
+    d_ptr->path = path;
+}
+
+//!
+//    Returns the geometric shape of the route.
+
+//    The coordinates should be listed in the order in which they
+//    would be traversed by someone travelling along this segment of the route.
+
+/*!
+    API REVIEW NOTE
+
+    This may not be in the API, or it may replace pathSummary().
+
+    It's possible that both will be removed, provided that its acceptable to
+    only expose the detailed route geometry via QGeoRouteSegment, since the
+    "summary" path should probably be recomputed based on how the route is
+    being viewed (mostly based on the zoom level).
+
+    This is being discussed with the people who added it.
 */
 QList<QGeoCoordinate> QGeoRoute::path() const
 {
+    // TODO not handled in private impl copy constructor / assignment operator
     return d_ptr->path;
 }
 
@@ -314,8 +389,8 @@ QGeoRoutePrivate::QGeoRoutePrivate(const QGeoRoutePrivate &other)
         routeSegments(other.routeSegments),
         travelTime(other.travelTime),
         distance(other.distance),
-        optimization(other.optimization),
-        travelMode(other.travelMode){}
+        travelMode(other.travelMode),
+        optimization(other.optimization) {}
 
 QGeoRoutePrivate::~QGeoRoutePrivate() {}
 

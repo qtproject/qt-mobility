@@ -44,40 +44,116 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-  \class QGeoServiceProviderFactory
-  \brief The QGeoServiceProviderFactory class is.
-  \group maps-impl
+    \class QGeoServiceProviderFactory
+
+    \brief The QGeoServiceProviderFactory class is a factory class used as the
+    plugin interface for services related to geographical information.
+
+    \ingroup maps-impl
+
+    Implementers must provide a unique combination of providerName() and
+    providerVersion() per plugin.
+
+    The other functions should be overriden if the plugin supports the
+    associated set of functionality.
 */
 
 /*!
 \fn QGeoServiceProviderFactory::~QGeoServiceProviderFactory()
+
+Destroys this QGeoServiceProviderFactory instance.
 */
 
 
 /*!
 \fn QString QGeoServiceProviderFactory::providerName() const
+
+Returns the string used to identify the service provider behind this implementation.
+
+The combination of providerName() and providerVersion() should be unique
+amongst the plugins.
 */
 
 /*!
 \fn int QGeoServiceProviderFactory::providerVersion() const
+
+Returns the version of the plugin.
+
+The combination of providerName() and providerVersion() should be unique
+amongst the plugins.
 */
 
 /*!
-\fn QGeoPlacesManagerEngine* QGeoServiceProviderFactory::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
+    Returns a QGeoPlacesManagerEngine instance which implements as much of the
+    places searching functionality as the service provider supports.
+
+    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
+    success or an appropriate QGeoServiceProvider::Error on failure.
+
+    If \a errorString is not 0 it should be set to a string describing any
+    error which occurred.
+
+    The default implementation returns 0, which causes a
+    QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
+*/
+QGeoPlacesManagerEngine* QGeoServiceProviderFactory::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
-*/
+{
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
+    return 0;
+}
 
 /*!
-\fn QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QString> &parameters,
+    Returns a QGeoMappingManagerEngine instance which implements as much of the
+    places searching functionality as the service provider supports.
+
+    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
+    success or an appropriate QGeoServiceProvider::Error on failure.
+
+    If \a errorString is not 0 it should be set to a string describing any
+    error which occurred.
+
+    The default implementation returns 0, which causes a
+    QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
+*/
+QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
-*/
+{
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
+    return 0;
+}
 
 /*!
-\fn QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
+    Returns a QGeoRoutingManagerEngine instance which implements as much of the
+    places searching functionality as the service provider supports.
+
+    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
+    success or an appropriate QGeoServiceProvider::Error on failure.
+
+    If \a errorString is not 0 it should be set to a string describing any
+    error which occurred.
+
+    The default implementation returns 0, which causes a
+    QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
+*/
+QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
-*/
+
+{
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
+    return 0;
+}
 
 QTM_END_NAMESPACE

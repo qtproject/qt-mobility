@@ -247,8 +247,14 @@
                     <section ref="qgeodistance.html" title="QGeoDistance Class Reference">
                         <section ref="qgeodistance-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qgeomapcircleobject.html" title="QGeoMapCircleObject Class Reference">
+                        <section ref="qgeomapcircleobject-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qgeomapdata.html" title="QGeoMapData Class Reference">
                         <section ref="qgeomapdata-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qgeomapobject.html" title="QGeoMapObject Class Reference">
+                        <section ref="qgeomapobject-members.html" title="List of all members"/>
                     </section>
                     <section ref="qgeomapwidget.html" title="QGeoMapWidget Class Reference">
                         <section ref="qgeomapwidget-members.html" title="List of all members"/>
@@ -1756,14 +1762,26 @@
             <keyword name="setUnits" id="QGeoDistance::setUnits" ref="qgeodistance.html#setUnits"/>
             <keyword name="units" id="QGeoDistance::units" ref="qgeodistance.html#units"/>
             <keyword name="~QGeoDistance" id="QGeoDistance::~QGeoDistance" ref="qgeodistance.html#dtor.QGeoDistance"/>
+            <keyword name="QGeoMapCircleObject" id="QGeoMapCircleObject" ref="qgeomapcircleobject.html"/>
+            <keyword name="center" id="QGeoMapCircleObject::center" ref="qgeomapcircleobject.html#center"/>
+            <keyword name="radius" id="QGeoMapCircleObject::radius" ref="qgeomapcircleobject.html#radius"/>
+            <keyword name="setCenter" id="QGeoMapCircleObject::setCenter" ref="qgeomapcircleobject.html#setCenter"/>
+            <keyword name="setRadius" id="QGeoMapCircleObject::setRadius" ref="qgeomapcircleobject.html#setRadius"/>
+            <keyword name="~QGeoMapCircleObject" id="QGeoMapCircleObject::~QGeoMapCircleObject" ref="qgeomapcircleobject.html#dtor.QGeoMapCircleObject"/>
             <keyword name="QGeoMapData" id="QGeoMapData" ref="qgeomapdata.html"/>
+            <keyword name="addMapObject" id="QGeoMapData::addMapObject" ref="qgeomapdata.html#addMapObject"/>
             <keyword name="center" id="QGeoMapData::center" ref="qgeomapdata.html#center"/>
+            <keyword name="containerObject" id="QGeoMapData::containerObject" ref="qgeomapdata.html#containerObject"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapData::coordinateToScreenPosition" ref="qgeomapdata.html#coordinateToScreenPosition"/>
             <keyword name="engine" id="QGeoMapData::engine" ref="qgeomapdata.html#engine"/>
             <keyword name="imageChangesTriggerUpdates" id="QGeoMapData::imageChangesTriggerUpdates" ref="qgeomapdata.html#imageChangesTriggerUpdates"/>
             <keyword name="mapImage" id="QGeoMapData::mapImage" ref="qgeomapdata.html#mapImage"/>
+            <keyword name="mapObjects" id="QGeoMapData::mapObjects" ref="qgeomapdata.html#mapObjects"/>
+            <keyword name="mapObjectsAtScreenPosition" id="QGeoMapData::mapObjectsAtScreenPosition" ref="qgeomapdata.html#mapObjectsAtScreenPosition"/>
+            <keyword name="mapObjectsInScreenRect" id="QGeoMapData::mapObjectsInScreenRect" ref="qgeomapdata.html#mapObjectsInScreenRect"/>
             <keyword name="mapType" id="QGeoMapData::mapType" ref="qgeomapdata.html#mapType"/>
             <keyword name="pan" id="QGeoMapData::pan" ref="qgeomapdata.html#pan"/>
+            <keyword name="removeMapObject" id="QGeoMapData::removeMapObject" ref="qgeomapdata.html#removeMapObject"/>
             <keyword name="screenPositionToCoordinate" id="QGeoMapData::screenPositionToCoordinate" ref="qgeomapdata.html#screenPositionToCoordinate"/>
             <keyword name="setCenter" id="QGeoMapData::setCenter" ref="qgeomapdata.html#setCenter"/>
             <keyword name="setImageChangesTriggerUpdates" id="QGeoMapData::setImageChangesTriggerUpdates" ref="qgeomapdata.html#setImageChangesTriggerUpdates"/>
@@ -1772,35 +1790,61 @@
             <keyword name="setViewportSize" id="QGeoMapData::setViewportSize" ref="qgeomapdata.html#setViewportSize"/>
             <keyword name="setZoomLevel" id="QGeoMapData::setZoomLevel" ref="qgeomapdata.html#setZoomLevel"/>
             <keyword name="viewportSize" id="QGeoMapData::viewportSize" ref="qgeomapdata.html#viewportSize"/>
+            <keyword name="visibleMapObjects" id="QGeoMapData::visibleMapObjects" ref="qgeomapdata.html#visibleMapObjects"/>
             <keyword name="widget" id="QGeoMapData::widget" ref="qgeomapdata.html#widget"/>
             <keyword name="zoomLevel" id="QGeoMapData::zoomLevel" ref="qgeomapdata.html#zoomLevel"/>
             <keyword name="~QGeoMapData" id="QGeoMapData::~QGeoMapData" ref="qgeomapdata.html#dtor.QGeoMapData"/>
+            <keyword name="QGeoMapObject" id="QGeoMapObject" ref="qgeomapobject.html"/>
+            <keyword name="QGeoMapObject::Type" id="QGeoMapObject::Type" ref="qgeomapobject.html#Type-enum"/>
+            <keyword name="QGeoMapObject::ContainerType" id="QGeoMapObject::ContainerType" ref="qgeomapobject.html#Type-enum"/>
+            <keyword name="QGeoMapObject::RectangleType" id="QGeoMapObject::RectangleType" ref="qgeomapobject.html#Type-enum"/>
+            <keyword name="QGeoMapObject::CircleType" id="QGeoMapObject::CircleType" ref="qgeomapobject.html#Type-enum"/>
+            <keyword name="QGeoMapObject::PolylineType" id="QGeoMapObject::PolylineType" ref="qgeomapobject.html#Type-enum"/>
+            <keyword name="QGeoMapObject::PolygonType" id="QGeoMapObject::PolygonType" ref="qgeomapobject.html#Type-enum"/>
+            <keyword name="QGeoMapObject::MarkerType" id="QGeoMapObject::MarkerType" ref="qgeomapobject.html#Type-enum"/>
+            <keyword name="addChildObject" id="QGeoMapObject::addChildObject" ref="qgeomapobject.html#addChildObject"/>
+            <keyword name="boundingBox" id="QGeoMapObject::boundingBox" ref="qgeomapobject.html#boundingBox"/>
+            <keyword name="childObjects" id="QGeoMapObject::childObjects" ref="qgeomapobject.html#childObjects"/>
+            <keyword name="contains" id="QGeoMapObject::contains" ref="qgeomapobject.html#contains"/>
+            <keyword name="isVisible" id="QGeoMapObject::isVisible" ref="qgeomapobject.html#isVisible"/>
+            <keyword name="parentObject" id="QGeoMapObject::parentObject" ref="qgeomapobject.html#parentObject"/>
+            <keyword name="removeChildObject" id="QGeoMapObject::removeChildObject" ref="qgeomapobject.html#removeChildObject"/>
+            <keyword name="setVisible" id="QGeoMapObject::setVisible" ref="qgeomapobject.html#setVisible"/>
+            <keyword name="setZValue" id="QGeoMapObject::setZValue" ref="qgeomapobject.html#setZValue"/>
+            <keyword name="type" id="QGeoMapObject::type" ref="qgeomapobject.html#type"/>
+            <keyword name="zValue" id="QGeoMapObject::zValue" ref="qgeomapobject.html#zValue"/>
+            <keyword name="~QGeoMapObject" id="QGeoMapObject::~QGeoMapObject" ref="qgeomapobject.html#dtor.QGeoMapObject"/>
             <keyword name="QGeoMapWidget" id="QGeoMapWidget" ref="qgeomapwidget.html"/>
             <keyword name="QGeoMapWidget::MapType" id="QGeoMapWidget::MapType" ref="qgeomapwidget.html#MapType-enum"/>
+            <keyword name="QGeoMapWidget::NoMap" id="QGeoMapWidget::NoMap" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::StreetMap" id="QGeoMapWidget::StreetMap" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::SatelliteMapDay" id="QGeoMapWidget::SatelliteMapDay" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::SatelliteMapNight" id="QGeoMapWidget::SatelliteMapNight" ref="qgeomapwidget.html#MapType-enum"/>
             <keyword name="QGeoMapWidget::TerrainMap" id="QGeoMapWidget::TerrainMap" ref="qgeomapwidget.html#MapType-enum"/>
+            <keyword name="addMapObject" id="QGeoMapWidget::addMapObject" ref="qgeomapwidget.html#addMapObject"/>
             <keyword name="center" id="QGeoMapWidget::center" ref="qgeomapwidget.html#center"/>
+            <keyword name="centered" id="QGeoMapWidget::centered" ref="qgeomapwidget.html#centered"/>
             <keyword name="coordinateToScreenPosition" id="QGeoMapWidget::coordinateToScreenPosition" ref="qgeomapwidget.html#coordinateToScreenPosition"/>
-            <keyword name="keyPressEvent" id="QGeoMapWidget::keyPressEvent" ref="qgeomapwidget.html#keyPressEvent"/>
+            <keyword name="mapObjects" id="QGeoMapWidget::mapObjects" ref="qgeomapwidget.html#mapObjects"/>
+            <keyword name="mapObjectsAtScreenPosition" id="QGeoMapWidget::mapObjectsAtScreenPosition" ref="qgeomapwidget.html#mapObjectsAtScreenPosition"/>
+            <keyword name="mapObjectsInScreenRect" id="QGeoMapWidget::mapObjectsInScreenRect" ref="qgeomapwidget.html#mapObjectsInScreenRect"/>
             <keyword name="mapType" id="QGeoMapWidget::mapType" ref="qgeomapwidget.html#mapType"/>
+            <keyword name="mapTypeChanged" id="QGeoMapWidget::mapTypeChanged" ref="qgeomapwidget.html#mapTypeChanged"/>
             <keyword name="maximumZoomLevel" id="QGeoMapWidget::maximumZoomLevel" ref="qgeomapwidget.html#maximumZoomLevel"/>
             <keyword name="minimumZoomLevel" id="QGeoMapWidget::minimumZoomLevel" ref="qgeomapwidget.html#minimumZoomLevel"/>
-            <keyword name="mouseDoubleClickEvent" id="QGeoMapWidget::mouseDoubleClickEvent" ref="qgeomapwidget.html#mouseDoubleClickEvent"/>
-            <keyword name="mouseMoveEvent" id="QGeoMapWidget::mouseMoveEvent" ref="qgeomapwidget.html#mouseMoveEvent"/>
-            <keyword name="mousePressEvent" id="QGeoMapWidget::mousePressEvent" ref="qgeomapwidget.html#mousePressEvent"/>
-            <keyword name="mouseReleaseEvent" id="QGeoMapWidget::mouseReleaseEvent" ref="qgeomapwidget.html#mouseReleaseEvent"/>
             <keyword name="paint" id="QGeoMapWidget::paint" ref="qgeomapwidget.html#paint"/>
             <keyword name="pan" id="QGeoMapWidget::pan" ref="qgeomapwidget.html#pan"/>
+            <keyword name="removeMapObject" id="QGeoMapWidget::removeMapObject" ref="qgeomapwidget.html#removeMapObject"/>
             <keyword name="resizeEvent" id="QGeoMapWidget::resizeEvent" ref="qgeomapwidget.html#resizeEvent"/>
             <keyword name="screenPositionToCoordinate" id="QGeoMapWidget::screenPositionToCoordinate" ref="qgeomapwidget.html#screenPositionToCoordinate"/>
             <keyword name="setCenter" id="QGeoMapWidget::setCenter" ref="qgeomapwidget.html#setCenter"/>
             <keyword name="setMapType" id="QGeoMapWidget::setMapType" ref="qgeomapwidget.html#setMapType"/>
             <keyword name="setZoomLevel" id="QGeoMapWidget::setZoomLevel" ref="qgeomapwidget.html#setZoomLevel"/>
             <keyword name="shape" id="QGeoMapWidget::shape" ref="qgeomapwidget.html#shape"/>
-            <keyword name="wheelEvent" id="QGeoMapWidget::wheelEvent" ref="qgeomapwidget.html#wheelEvent"/>
+            <keyword name="supportedMapTypes" id="QGeoMapWidget::supportedMapTypes" ref="qgeomapwidget.html#supportedMapTypes"/>
+            <keyword name="visibleMapObjects" id="QGeoMapWidget::visibleMapObjects" ref="qgeomapwidget.html#visibleMapObjects"/>
             <keyword name="zoomLevel" id="QGeoMapWidget::zoomLevel" ref="qgeomapwidget.html#zoomLevel"/>
+            <keyword name="zoomLevelChanged" id="QGeoMapWidget::zoomLevelChanged" ref="qgeomapwidget.html#zoomLevelChanged"/>
             <keyword name="~QGeoMapWidget" id="QGeoMapWidget::~QGeoMapWidget" ref="qgeomapwidget.html#dtor.QGeoMapWidget"/>
             <keyword name="QGeoMappingManager" id="QGeoMappingManager" ref="qgeomappingmanager.html"/>
             <keyword name="createMapData" id="QGeoMappingManager::createMapData" ref="qgeomappingmanager.html#createMapData"/>
@@ -1884,7 +1928,6 @@
             <keyword name="setAdditionalLandmarkManagers" id="QGeoPlacesManager::setAdditionalLandmarkManagers" ref="qgeoplacesmanager.html#setAdditionalLandmarkManagers"/>
             <keyword name="supportedSearchTypes" id="QGeoPlacesManager::supportedSearchTypes" ref="qgeoplacesmanager.html#supportedSearchTypes"/>
             <keyword name="supportsGeocoding" id="QGeoPlacesManager::supportsGeocoding" ref="qgeoplacesmanager.html#supportsGeocoding"/>
-            <keyword name="supportsViewportBiasing" id="QGeoPlacesManager::supportsViewportBiasing" ref="qgeoplacesmanager.html#supportsViewportBiasing"/>
             <keyword name="~QGeoPlacesManager" id="QGeoPlacesManager::~QGeoPlacesManager" ref="qgeoplacesmanager.html#dtor.QGeoPlacesManager"/>
             <keyword name="QGeoPlacesManagerEngine" id="QGeoPlacesManagerEngine" ref="qgeoplacesmanagerengine.html"/>
             <keyword name="addAdditionalLandmarkManager" id="QGeoPlacesManagerEngine::addAdditionalLandmarkManager" ref="qgeoplacesmanagerengine.html#addAdditionalLandmarkManager"/>
@@ -1901,10 +1944,8 @@
             <keyword name="setDefaultLandmarkManager" id="QGeoPlacesManagerEngine::setDefaultLandmarkManager" ref="qgeoplacesmanagerengine.html#setDefaultLandmarkManager"/>
             <keyword name="setSupportedSearchTypes" id="QGeoPlacesManagerEngine::setSupportedSearchTypes" ref="qgeoplacesmanagerengine.html#setSupportedSearchTypes"/>
             <keyword name="setSupportsGeocoding" id="QGeoPlacesManagerEngine::setSupportsGeocoding" ref="qgeoplacesmanagerengine.html#setSupportsGeocoding"/>
-            <keyword name="setSupportsViewportBiasing" id="QGeoPlacesManagerEngine::setSupportsViewportBiasing" ref="qgeoplacesmanagerengine.html#setSupportsViewportBiasing"/>
             <keyword name="supportedSearchTypes" id="QGeoPlacesManagerEngine::supportedSearchTypes" ref="qgeoplacesmanagerengine.html#supportedSearchTypes"/>
             <keyword name="supportsGeocoding" id="QGeoPlacesManagerEngine::supportsGeocoding" ref="qgeoplacesmanagerengine.html#supportsGeocoding"/>
-            <keyword name="supportsViewportBiasing" id="QGeoPlacesManagerEngine::supportsViewportBiasing" ref="qgeoplacesmanagerengine.html#supportsViewportBiasing"/>
             <keyword name="~QGeoPlacesManagerEngine" id="QGeoPlacesManagerEngine::~QGeoPlacesManagerEngine" ref="qgeoplacesmanagerengine.html#dtor.QGeoPlacesManagerEngine"/>
             <keyword name="QGeoPlacesReply" id="QGeoPlacesReply" ref="qgeoplacesreply.html"/>
             <keyword name="QGeoPlacesReply::Error" id="QGeoPlacesReply::Error" ref="qgeoplacesreply.html#Error-enum"/>
@@ -1970,6 +2011,7 @@
             <keyword name="~QGeoPositionInfoSource" id="QGeoPositionInfoSource::~QGeoPositionInfoSource" ref="qgeopositioninfosource.html#dtor.QGeoPositionInfoSource"/>
             <keyword name="QGeoRoute" id="QGeoRoute" ref="qgeoroute.html"/>
             <keyword name="appendRouteSegment" id="QGeoRoute::appendRouteSegment" ref="qgeoroute.html#appendRouteSegment"/>
+            <keyword name="avoidFeatureTypes" id="QGeoRoute::avoidFeatureTypes" ref="qgeoroute.html#avoidFeatureTypes"/>
             <keyword name="bounds" id="QGeoRoute::bounds" ref="qgeoroute.html#bounds"/>
             <keyword name="distance" id="QGeoRoute::distance" ref="qgeoroute.html#distance"/>
             <keyword name="operator=" id="QGeoRoute::operator=" ref="qgeoroute.html#operator-eq"/>
@@ -1979,6 +2021,7 @@
             <keyword name="request" id="QGeoRoute::request" ref="qgeoroute.html#request"/>
             <keyword name="routeId" id="QGeoRoute::routeId" ref="qgeoroute.html#routeId"/>
             <keyword name="routeSegments" id="QGeoRoute::routeSegments" ref="qgeoroute.html#routeSegments"/>
+            <keyword name="setAvoidFeatureTypes" id="QGeoRoute::setAvoidFeatureTypes" ref="qgeoroute.html#setAvoidFeatureTypes"/>
             <keyword name="setBounds" id="QGeoRoute::setBounds" ref="qgeoroute.html#setBounds"/>
             <keyword name="setDistance" id="QGeoRoute::setDistance" ref="qgeoroute.html#setDistance"/>
             <keyword name="setOptimization" id="QGeoRoute::setOptimization" ref="qgeoroute.html#setOptimization"/>
@@ -2047,12 +2090,14 @@
             <keyword name="QGeoRouteRequest::TruckTravel" id="QGeoRouteRequest::TruckTravel" ref="qgeorouterequest.html#TravelMode-enum"/>
             <keyword name="QGeoRouteRequest::TravelModes" id="QGeoRouteRequest::TravelModes" ref="qgeorouterequest.html#TravelMode-enum"/>
             <keyword name="avoidFeatureTypes" id="QGeoRouteRequest::avoidFeatureTypes" ref="qgeorouterequest.html#avoidFeatureTypes"/>
+            <keyword name="excludeAreas" id="QGeoRouteRequest::excludeAreas" ref="qgeorouterequest.html#excludeAreas"/>
             <keyword name="instructionDetail" id="QGeoRouteRequest::instructionDetail" ref="qgeorouterequest.html#instructionDetail"/>
             <keyword name="numberAlternativeRoutes" id="QGeoRouteRequest::numberAlternativeRoutes" ref="qgeorouterequest.html#numberAlternativeRoutes"/>
             <keyword name="operator=" id="QGeoRouteRequest::operator=" ref="qgeorouterequest.html#operator-eq"/>
             <keyword name="routeOptimization" id="QGeoRouteRequest::routeOptimization" ref="qgeorouterequest.html#routeOptimization"/>
             <keyword name="segmentDetail" id="QGeoRouteRequest::segmentDetail" ref="qgeorouterequest.html#segmentDetail"/>
             <keyword name="setAvoidFeatureTypes" id="QGeoRouteRequest::setAvoidFeatureTypes" ref="qgeorouterequest.html#setAvoidFeatureTypes"/>
+            <keyword name="setExcludeAreas" id="QGeoRouteRequest::setExcludeAreas" ref="qgeorouterequest.html#setExcludeAreas"/>
             <keyword name="setInstructionDetail" id="QGeoRouteRequest::setInstructionDetail" ref="qgeorouterequest.html#setInstructionDetail"/>
             <keyword name="setNumberAlternativeRoutes" id="QGeoRouteRequest::setNumberAlternativeRoutes" ref="qgeorouterequest.html#setNumberAlternativeRoutes"/>
             <keyword name="setRouteOptimization" id="QGeoRouteRequest::setRouteOptimization" ref="qgeorouterequest.html#setRouteOptimization"/>
@@ -2091,6 +2136,7 @@
             <keyword name="supportedSegmentDetails" id="QGeoRoutingManager::supportedSegmentDetails" ref="qgeoroutingmanager.html#supportedSegmentDetails"/>
             <keyword name="supportedTravelModes" id="QGeoRoutingManager::supportedTravelModes" ref="qgeoroutingmanager.html#supportedTravelModes"/>
             <keyword name="supportsAlternativeRoutes" id="QGeoRoutingManager::supportsAlternativeRoutes" ref="qgeoroutingmanager.html#supportsAlternativeRoutes"/>
+            <keyword name="supportsExcludeAreas" id="QGeoRoutingManager::supportsExcludeAreas" ref="qgeoroutingmanager.html#supportsExcludeAreas"/>
             <keyword name="supportsRouteUpdates" id="QGeoRoutingManager::supportsRouteUpdates" ref="qgeoroutingmanager.html#supportsRouteUpdates"/>
             <keyword name="updateRoute" id="QGeoRoutingManager::updateRoute" ref="qgeoroutingmanager.html#updateRoute"/>
             <keyword name="~QGeoRoutingManager" id="QGeoRoutingManager::~QGeoRoutingManager" ref="qgeoroutingmanager.html#dtor.QGeoRoutingManager"/>
@@ -2107,6 +2153,7 @@
             <keyword name="setSupportedSegmentDetails" id="QGeoRoutingManagerEngine::setSupportedSegmentDetails" ref="qgeoroutingmanagerengine.html#setSupportedSegmentDetails"/>
             <keyword name="setSupportedTravelModes" id="QGeoRoutingManagerEngine::setSupportedTravelModes" ref="qgeoroutingmanagerengine.html#setSupportedTravelModes"/>
             <keyword name="setSupportsAlternativeRoutes" id="QGeoRoutingManagerEngine::setSupportsAlternativeRoutes" ref="qgeoroutingmanagerengine.html#setSupportsAlternativeRoutes"/>
+            <keyword name="setSupportsExcludeAreas" id="QGeoRoutingManagerEngine::setSupportsExcludeAreas" ref="qgeoroutingmanagerengine.html#setSupportsExcludeAreas"/>
             <keyword name="setSupportsRouteUpdates" id="QGeoRoutingManagerEngine::setSupportsRouteUpdates" ref="qgeoroutingmanagerengine.html#setSupportsRouteUpdates"/>
             <keyword name="supportedAvoidFeatureTypes" id="QGeoRoutingManagerEngine::supportedAvoidFeatureTypes" ref="qgeoroutingmanagerengine.html#supportedAvoidFeatureTypes"/>
             <keyword name="supportedInstructionDetails" id="QGeoRoutingManagerEngine::supportedInstructionDetails" ref="qgeoroutingmanagerengine.html#supportedInstructionDetails"/>
@@ -2114,6 +2161,7 @@
             <keyword name="supportedSegmentDetails" id="QGeoRoutingManagerEngine::supportedSegmentDetails" ref="qgeoroutingmanagerengine.html#supportedSegmentDetails"/>
             <keyword name="supportedTravelModes" id="QGeoRoutingManagerEngine::supportedTravelModes" ref="qgeoroutingmanagerengine.html#supportedTravelModes"/>
             <keyword name="supportsAlternativeRoutes" id="QGeoRoutingManagerEngine::supportsAlternativeRoutes" ref="qgeoroutingmanagerengine.html#supportsAlternativeRoutes"/>
+            <keyword name="supportsExcludeAreas" id="QGeoRoutingManagerEngine::supportsExcludeAreas" ref="qgeoroutingmanagerengine.html#supportsExcludeAreas"/>
             <keyword name="supportsRouteUpdates" id="QGeoRoutingManagerEngine::supportsRouteUpdates" ref="qgeoroutingmanagerengine.html#supportsRouteUpdates"/>
             <keyword name="updateRoute" id="QGeoRoutingManagerEngine::updateRoute" ref="qgeoroutingmanagerengine.html#updateRoute"/>
             <keyword name="~QGeoRoutingManagerEngine" id="QGeoRoutingManagerEngine::~QGeoRoutingManagerEngine" ref="qgeoroutingmanagerengine.html#dtor.QGeoRoutingManagerEngine"/>
@@ -4454,6 +4502,7 @@
             <file>qtapsensor.html</file>
             <file>qservicemanager.html</file>
             <file>qgeoroute-members.html</file>
+            <file>qgeomapobject-members.html</file>
             <file>qcontacttimestamp.html</file>
             <file>images/servicebrowser-attributes.png</file>
             <file>writemessage-main-cpp.html</file>
@@ -4562,6 +4611,7 @@
             <file>declarative-sfw-dialer-landlinedialer-landlinedialer-h.html</file>
             <file>qgeoplacesreply-members.html</file>
             <file>qgeoroutingmanagerengine-members.html</file>
+            <file>qgeomapcircleobject.html</file>
             <file>images/publish-subscribe-publisher.png</file>
             <file>filemanagerplugin-filemanagertransfer-h.html</file>
             <file>images/slideshow-img1.png</file>
@@ -4718,6 +4768,7 @@
             <file>declarative-sfw-notes.html</file>
             <file>weatherinfo-weatherinfo-cpp.html</file>
             <file>audiorecorder.html</file>
+            <file>qgeomapobject.html</file>
             <file>qcontactrelationshipfilter.html</file>
             <file>qlandmarkid-members.html</file>
             <file>bearercloud-icons-qrc.html</file>
@@ -4903,6 +4954,7 @@
             <file>qcontactphonenumber-members.html</file>
             <file>images/sample-phonebook-1.png</file>
             <file>qmediatimeinterval.html</file>
+            <file>qgeomapcircleobject-members.html</file>
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
             <file>qvideooutputcontrol.html</file>

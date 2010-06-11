@@ -39,27 +39,38 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPCONTAINER_P_H
-#define QGEOMAPCONTAINER_P_H
-
-#include "qgeomapcontainer.h"
-
-#include <QMultiMap>
+#include "qgeomaprectangleobject.h"
+#include "qgeomaprectangleobject_p.h"
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapContainerPrivate
+QGeoMapRectangleObject::QGeoMapRectangleObject(QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent)) {}
+
+QGeoMapRectangleObject::~QGeoMapRectangleObject()
 {
-public:
-    bool visibility;
-    bool isVisible;
-    QList<QGeoMapObject*> children;
-    //This is a convenience map so that we don't have to sort 
-    //all objects on their z-indices everytime we paint. The performance
-    //gains should more than justify the extra memory footprint.
-    QMultiMap<int, QGeoMapObject*> zChildren; 
-};
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent)
+    : QGeoMapObjectPrivate(impl, parent)
+{
+    type = QGeoMapObject::RectangleType;
+}
+
+QGeoMapRectangleObjectPrivate::QGeoMapRectangleObjectPrivate(const QGeoMapRectangleObjectPrivate &other)
+    : QGeoMapObjectPrivate(other) {}
+
+QGeoMapRectangleObjectPrivate::~QGeoMapRectangleObjectPrivate() {}
+
+QGeoMapRectangleObjectPrivate& QGeoMapRectangleObjectPrivate::operator= (const QGeoMapRectangleObjectPrivate &other)
+{
+    QGeoMapObjectPrivate::operator=(other);
+
+    return *this;
+}
 
 QTM_END_NAMESPACE
 
-#endif

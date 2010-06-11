@@ -47,6 +47,8 @@
 #include <QMessageBox>
 #include <QTimer>
 
+#include <QGeoCoordinate>
+
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>
 #include <qnetworksession.h>
@@ -54,6 +56,80 @@
 #endif
 
 QTM_USE_NAMESPACE
+
+MapWidget::MapWidget(QGeoMappingManager *manager)
+    : QGeoMapWidget(manager),
+    panActive(false) {}
+
+MapWidget::~MapWidget() {}
+
+void MapWidget::mousePressEvent(QGraphicsSceneMouseEvent* event)
+{
+    setFocus();
+    if (event->button() == Qt::LeftButton)
+        panActive = true;
+
+    event->accept();
+}
+
+void MapWidget::mouseReleaseEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (event->button() == Qt::LeftButton)
+        panActive = false;
+
+    event->accept();
+}
+
+void MapWidget::mouseMoveEvent(QGraphicsSceneMouseEvent* event)
+{
+    if (panActive) {
+        int deltaLeft = event->lastPos().x() - event->pos().x();
+        int deltaTop  = event->lastPos().y() - event->pos().y();
+        pan(deltaLeft, deltaTop);
+    }
+
+    event->accept();
+}
+
+void MapWidget::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    setFocus();
+
+    pan(event->lastPos().x() -  size().width() / 2.0, event->lastPos().y() - size().height() / 2.0);
+    if (zoomLevel() < maximumZoomLevel())
+        setZoomLevel(zoomLevel() + 1);
+
+    event->accept();
+}
+
+void MapWidget::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Minus) {
+        if (zoomLevel() > minimumZoomLevel()) {
+            setZoomLevel(zoomLevel() - 1);
+        }
+    } else if (event->key() == Qt::Key_Plus) {
+        if (zoomLevel() < maximumZoomLevel()) {
+            setZoomLevel(zoomLevel() + 1);
+        }
+    }
+
+    event->accept();
+}
+
+void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
+{
+    if (event->delta() > 0) { //zoom in
+        if (zoomLevel() > minimumZoomLevel()) {
+            setZoomLevel(zoomLevel() + 1);
+        }
+    } else { //zoom out
+        if (zoomLevel() < maximumZoomLevel()) {
+            setZoomLevel(zoomLevel() - 1);
+        }
+    }
+    event->accept();
+}
 
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
@@ -73,7 +149,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QGraphicsScene* scene = new QGraphicsScene(0, 0, width(), height());
     qgv->setScene(scene);
 
-    m_mapWidget = new QGeoMapWidget(m_mapManager);
+    m_mapWidget = new MapWidget(m_mapManager);
     qgv->scene()->addItem(m_mapWidget);
     m_mapWidget->setGeometry(0, 0, width(), height());
     //m_mapWidget->setZoomLevel(8);

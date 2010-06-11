@@ -61,13 +61,13 @@ public:
 
     virtual QGeoPlacesManagerEngine* createPlacesManagerEngine(const QMap<QString, QString> &parameters,
             QGeoServiceProvider::Error *error,
-            QString *errorString) const = 0;
+            QString *errorString) const;
     virtual QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
             QGeoServiceProvider::Error *error,
-            QString *errorString) const = 0;
+            QString *errorString) const;
     virtual QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
             QGeoServiceProvider::Error *error,
-            QString *errorString) const = 0;
+            QString *errorString) const;
 };
 
 QTM_END_NAMESPACE

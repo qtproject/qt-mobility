@@ -42,14 +42,15 @@
 #ifndef QGEOMAPWIDGET_H
 #define QGEOMAPWIDGET_H
 
-#include "qgeocoordinate.h"
+#include "qmobilityglobal.h"
 #include <QGraphicsWidget>
 
 QTM_BEGIN_NAMESPACE
 
+class QGeoCoordinate;
 class QGeoMappingManager;
 class QGeoBoundingBox;
-
+class QGeoMapObject;
 class QGeoMapWidgetPrivate;
 
 class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
@@ -57,14 +58,15 @@ class Q_LOCATION_EXPORT QGeoMapWidget : public QGraphicsWidget
     Q_OBJECT
 public:
     enum MapType {
+        NoMap,
         StreetMap,
         SatelliteMapDay,
         SatelliteMapNight,
         TerrainMap
     };
 
-    QGeoMapWidget(QGeoMappingManager *manager);
-    ~QGeoMapWidget();
+    QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
+    virtual ~QGeoMapWidget();
 
     QPainterPath shape() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *parent);
@@ -80,27 +82,31 @@ public:
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
+    QList<MapType> supportedMapTypes() const;
     void setMapType(MapType mapType);
     MapType mapType() const;
+
+    void addMapObject(QGeoMapObject *mapObject);
+    void removeMapObject(QGeoMapObject *mapObject);
+    QList<QGeoMapObject*> mapObjects();
+
+    QList<QGeoMapObject*> visibleMapObjects();
+    QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition);
+    QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
 
     QPointF coordinateToScreenPosition(const QGeoCoordinate &coordinate) const;
     QGeoCoordinate screenPositionToCoordinate(QPointF screenPosition) const;
 
 protected:
     void resizeEvent(QGraphicsSceneResizeEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent* event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event);
-    void wheelEvent(QGraphicsSceneWheelEvent* event);
+
+signals:
+    void zoomLevelChanged(qreal zoomLevel);
+    void centered(const QGeoCoordinate &coordinate);
+    void mapTypeChanged(MapType mapType);
 
 private:
-    void mapImageUpdated();
-
     QGeoMapWidgetPrivate *d_ptr;
-
-    friend class QGeoMapData;
 };
 
 QTM_END_NAMESPACE

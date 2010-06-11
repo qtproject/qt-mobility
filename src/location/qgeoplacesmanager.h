@@ -83,7 +83,6 @@ public:
                                   SearchTypes searchTypes = SearchTypes(SearchAll),
                                   const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
-    bool supportsViewportBiasing() const;
     bool supportsGeocoding() const;
     SearchTypes supportedSearchTypes() const;
 

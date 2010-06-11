@@ -63,6 +63,25 @@ QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
 
+class MapWidget : public QGeoMapWidget
+{
+    Q_OBJECT
+public:
+    MapWidget(QGeoMappingManager *manager);
+    ~MapWidget();
+
+protected:
+    void mousePressEvent(QGraphicsSceneMouseEvent* event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent* event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent* event);
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void keyPressEvent(QKeyEvent *event);
+    void wheelEvent(QGraphicsSceneWheelEvent* event);
+
+private:
+    bool panActive;
+};
+
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -82,7 +101,7 @@ private:
 private:
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
-    QGeoMapWidget *m_mapWidget;
+    MapWidget *m_mapWidget;
 
     QGraphicsView* qgv;
 

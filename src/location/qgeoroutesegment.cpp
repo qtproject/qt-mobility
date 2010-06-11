@@ -87,7 +87,8 @@ QTM_BEGIN_NAMESPACE
 QGeoRouteSegment::QGeoRouteSegment()
         : d_ptr(new QGeoRouteSegmentPrivate()) {}
 
-/*
+/*!
+        \internal
     Internal use
 */
 QGeoRouteSegment::QGeoRouteSegment(QGeoRouteSegmentPrivate *d_ptr)
@@ -201,7 +202,8 @@ const QGeoNavigationInstruction* QGeoRouteSegment::instruction() const
 *******************************************************************************/
 
 QGeoRouteSegmentPrivate::QGeoRouteSegmentPrivate()
-    : instruction(NULL),travelTime(0)
+    : travelTime(0),
+    instruction(0)
 {
     type = QGeoRouteSegment::NormalSegment;
 }

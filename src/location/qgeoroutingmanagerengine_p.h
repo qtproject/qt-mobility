@@ -55,6 +55,8 @@
 
 #include "qgeorouterequest.h"
 
+#include <QMap>
+
 QTM_BEGIN_NAMESPACE
 
 class QGeoRoutingManagerEnginePrivate

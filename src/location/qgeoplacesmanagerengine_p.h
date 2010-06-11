@@ -77,7 +77,6 @@ public:
     QLandmarkManager *defaultLandmarkManager;
     QList<QLandmarkManager*> additionalLandmarkManagers;
 
-    bool supportsViewportBiasing;
     bool supportsGeocoding;
     QGeoPlacesManager::SearchTypes supportedSearchTypes;
 };

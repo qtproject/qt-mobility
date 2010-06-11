@@ -35,6 +35,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest::SegmentDetails </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#supportedSegmentDetails">supportedSegmentDetails</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest::TravelModes </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#supportedTravelModes">supportedTravelModes</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#supportsAlternativeRoutes">supportsAlternativeRoutes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#supportsExcludeAreas">supportsExcludeAreas</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#supportsRouteUpdates">supportsRouteUpdates</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QGeoRouteReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#updateRoute">updateRoute</a></b> ( const QGeoRoute &amp; <i>route</i>, const QGeoCoordinate &amp; <i>position</i> )</td></tr>
 </table>
@@ -61,6 +62,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#setSupportedSegmentDetails">setSupportedSegmentDetails</a></b> ( QGeoRouteRequest::SegmentDetails <i>segmentDetails</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#setSupportedTravelModes">setSupportedTravelModes</a></b> ( QGeoRouteRequest::TravelModes <i>travelModes</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#setSupportsAlternativeRoutes">setSupportsAlternativeRoutes</a></b> ( bool <i>supported</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#setSupportsExcludeAreas">setSupportsExcludeAreas</a></b> ( bool <i>supported</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingmanagerengine.html#setSupportsRouteUpdates">setSupportsRouteUpdates</a></b> ( bool <i>supported</i> )</td></tr>
 </table>
 <ul>
@@ -78,11 +80,10 @@
 <hr />
 <h2>Detailed Description</h2>
 <p>The QGeoRoutingManagerEngine class provides an interface and convenience methods to implementers of <a href="qgeoserviceprovider.html">QGeoServiceProvider</a> plugins who want to provide access to geographic routing information.</p>
-<p>The QGeoRoutingManagerEngine class is used to define the service specific behaviour and metadata required by <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
 <p>Subclasses of QGeoRoutingManagerEngine need to provide an implementation of <a href="qgeoroutingmanagerengine.html#calculateRoute">calculateRoute</a>().</p>
 <p>In the default implementation, <a href="qgeoroutingmanagerengine.html#supportsRouteUpdates">supportsRouteUpdates</a>() returns false and <a href="qgeoroutingmanagerengine.html#updateRoute">updateRoute</a>() returns a <a href="qgeoroutereply.html">QGeoRouteReply</a> object containing a <a href="qgeoroutereply.html#Error-enum">QGeoRouteReply::UnsupportedOptionError</a>.</p>
 <p>If the routing service supports updating routes as they are being travelled, the subclass should provide an implementation of <a href="qgeoroutingmanagerengine.html#updateRoute">updateRoute</a>() and call setSupportsRouteUpdates(true) at some point in time before <a href="qgeoroutingmanagerengine.html#updateRoute">updateRoute</a>() is called.</p>
-<p>The function setSeupportsRouteUpdates() is one of several functions which configure the reported capabilities of the engine. If the capabilities of an engine differ from the default values these functions should be used so that the reported capabilies are accurate.</p>
+<p>The function <a href="qgeoroutingmanagerengine.html#setSupportsRouteUpdates">setSupportsRouteUpdates</a>() is one of several functions which configure the reported capabilities of the engine. If the capabilities of an engine differ from the default values these functions should be used so that the reported capabilies are accurate.</p>
 <p>It is important that this is done before <a href="qgeoroutingmanagerengine.html#calculateRoute">calculateRoute</a>(), <a href="qgeoroutingmanagerengine.html#updateRoute">updateRoute</a>() or any of the capability reporting functions are used to prevent incorrect or inconsistent behaviour.</p>
 <p>See also <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
 <hr />
@@ -154,6 +155,11 @@
 <p>Sets whether this engine supports request for alternative routes to <i>supported</i>.</p>
 <p>It is important that subclasses use this method to ensure that the engine reports its capabilities correctly. If this function is not used the engine will report that it does not support alternative routes.</p>
 <p>See also <a href="qgeoroutingmanagerengine.html#supportsAlternativeRoutes">supportsAlternativeRoutes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoutingManagerEngine/setSupportsExcludeAreas"></a>
+<h3 class="fn"><a name="setSupportsExcludeAreas"></a>void QGeoRoutingManagerEngine::setSupportsExcludeAreas ( bool <i>supported</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Sets whether this engine supports request for excluding areas from routes to <i>supported</i>.</p>
+<p>It is important that subclasses use this method to ensure that the engine reports its capabilities correctly. If this function is not used the engine will report that it does not support excluding areas.</p>
+<p>See also <a href="qgeoroutingmanagerengine.html#supportsExcludeAreas">supportsExcludeAreas</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoRoutingManagerEngine/setSupportsRouteUpdates"></a>
 <h3 class="fn"><a name="setSupportsRouteUpdates"></a>void QGeoRoutingManagerEngine::setSupportsRouteUpdates ( bool <i>supported</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Sets whether this engine supports updating routes to <i>supported</i>.</p>
@@ -183,6 +189,10 @@
 <h3 class="fn"><a name="supportsAlternativeRoutes"></a>bool QGeoRoutingManagerEngine::supportsAlternativeRoutes () const</h3>
 <p>Returns whether this engine supports request for alternative routes.</p>
 <p>See also <a href="qgeoroutingmanagerengine.html#setSupportsAlternativeRoutes">setSupportsAlternativeRoutes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoutingManagerEngine/supportsExcludeAreas"></a>
+<h3 class="fn"><a name="supportsExcludeAreas"></a>bool QGeoRoutingManagerEngine::supportsExcludeAreas () const</h3>
+<p>Returns whether this engine supports the exclusion of areas from routes.</p>
+<p>See also <a href="qgeoroutingmanagerengine.html#setSupportsExcludeAreas">setSupportsExcludeAreas</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoRoutingManagerEngine/supportsRouteUpdates"></a>
 <h3 class="fn"><a name="supportsRouteUpdates"></a>bool QGeoRoutingManagerEngine::supportsRouteUpdates () const</h3>
 <p>Returns whether this engine supports updating routes.</p>

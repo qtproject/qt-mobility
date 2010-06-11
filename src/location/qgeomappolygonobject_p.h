@@ -39,32 +39,26 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPCONTAINER_H
-#define QGEOMAPCONTAINER_H
+#ifndef QGEOMAPPOLYGONOBJECT_P_H
+#define QGEOMAPPOLYGONOBJECT_P_H
 
-#include "qgeomapobject.h"
+#include "qgeomapobject_p.h"
 
 #include <QList>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoMapContainerPrivate;
+class QGeoCoordinate;
 
-class Q_LOCATION_EXPORT QGeoMapContainer : public QGeoMapObject
+class QGeoMapPolygonObjectPrivate : public QGeoMapObjectPrivate
 {
 public:
-    QGeoMapContainer(const QGeoMapContainer* parent = 0);
-    virtual ~QGeoMapContainer();
+    QGeoMapPolygonObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
+    QGeoMapPolygonObjectPrivate(const QGeoMapPolygonObjectPrivate &other);
+    ~QGeoMapPolygonObjectPrivate();
+    QGeoMapPolygonObjectPrivate& operator= (const QGeoMapPolygonObjectPrivate &other);
 
-    virtual void setVisibility(bool visibility);
-
-    void addMapObject(QGeoMapObject *mapObject);
-    void removeMapObject(QGeoMapObject *mapObject);
-    QList<QGeoMapObject*> getAllMapObjects() const;
-
-private:
-    QGeoMapContainerPrivate* d_ptr;
-    Q_DISABLE_COPY(QGeoMapContainer)
+    QList<QGeoCoordinate> points;
 };
 
 QTM_END_NAMESPACE

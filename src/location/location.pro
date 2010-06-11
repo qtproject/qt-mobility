@@ -17,11 +17,15 @@ PUBLIC_HEADERS += \
                     qgeodistance.h \
                     qgeonavigationinstruction.h \
                     #qgeonavigator.h \
-                    qgeomapcontainer.h \
+					qgeomapcircleobject.h \
                     qgeomapdata.h \
-                    qgeomapobject.h \
+					qgeomapmarkerobject.h \
+					qgeomapobject.h \
                     qgeomappingmanager.h \
                     qgeomappingmanagerengine.h \
+					qgeomappolygonobject.h \
+					qgeomappolylineobject.h \
+					qgeomaprectangleobject.h \
                     qgeomapwidget.h \
                     qgeoplace.h \
                     qgeoplacesmanager.h \
@@ -81,11 +85,15 @@ PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
                     qgeodistance_p.h \
-                    qgeomapcontainer_p.h \
+					qgeomapcircleobject_p.h \
                     qgeomapdata_p.h \
-                    qgeomapobject_p.h \
+					qgeomapmarkerobject_p.h \
+					qgeomapobject_p.h \
                     qgeomappingmanager_p.h \
                     qgeomappingmanagerengine_p.h \
+					qgeomappolygonobject_p.h \
+					qgeomappolylineobject_p.h \
+					qgeomaprectangleobject_p.h \
                     qgeomapwidget_p.h \
                     qgeonavigationinstruction_p.h \
                     #qgeonavigator_p.h \
@@ -211,11 +219,15 @@ SOURCES += \
             qgeodistance.cpp \
             qgeonavigationinstruction.cpp \
             #qgeonavigator.cpp \
-            qgeomapcontainer.cpp \
-            qgeomapdata.cpp \
-            qgeomapobject.cpp \
+			qgeomapcircleobject.cpp \
+	        qgeomapdata.cpp \
+			qgeomapmarkerobject.cpp \
+			qgeomapobject.cpp \
             qgeomappingmanager.cpp \
             qgeomappingmanagerengine.cpp \
+			qgeomappolygonobject.cpp \
+			qgeomappolylineobject.cpp \
+			qgeomaprectangleobject.cpp \
             qgeomapwidget.cpp \
             qgeoplace.cpp \
             qgeoplacesmanager.cpp \

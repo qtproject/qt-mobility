@@ -79,6 +79,7 @@ void QGeoPlacesReplyNokia::networkFinished()
     QGeoCodeXmlParser parser;
 
     if (parser.parse(m_reply)) {
+        // TODO trim results based on bounds
         setPlaces(parser.results());
         setFinished(true);
     } else {
