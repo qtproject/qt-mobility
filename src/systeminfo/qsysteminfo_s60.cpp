@@ -574,7 +574,7 @@ void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
     if (status)
         emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Connected);
     else
-        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::UndefinedStatus);
+        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
 }
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
