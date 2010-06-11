@@ -76,6 +76,7 @@
 #include <ScreenSaver/ScreenSaverDefaults.h>
 #include <DiskArbitration/DiskArbitration.h>
 #include <ApplicationServices/ApplicationServices.h>
+#include <DiskArbitration/DASession.h>
 
 #include <dns_sd.h>
 
@@ -1766,13 +1767,21 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
 
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
+#ifdef MAC_SDK_10_6
         DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
+#else
+        DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)mountCallback,NULL);
+#endif
         disconnect(daSessionThread,SIGNAL(storageAdded()),this,SIGNAL(storageAdded()));
     }
 
     if (QLatin1String(signal) ==
         QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
+#ifdef MAC_SDK_10_6
         DAUnregisterApprovalCallback(daSessionThread->session,(void*)unmountCallback,NULL);
+#else
+        DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
+#endif
         disconnect(daSessionThread,SIGNAL(storageRemoved()),this,SIGNAL(storageRemoved()));
     }
 }
