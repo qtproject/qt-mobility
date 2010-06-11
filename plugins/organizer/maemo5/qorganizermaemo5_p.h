@@ -161,6 +161,9 @@ public:
     bool waitForRequestFinished(QOrganizerItemAbstractRequest* req, int msecs);
 
 private:
+    // single item saving implementation
+    int doSaveItem(CCalendar* cal, QOrganizerItem* item, QOrganizerItemManager::Error* error, bool emitSignals);
+
     // conversion functions
     QOrganizerEvent convertCEventToQEvent(CEvent* cevent) const;
     QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const;
