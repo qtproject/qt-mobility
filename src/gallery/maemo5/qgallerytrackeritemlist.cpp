@@ -637,9 +637,27 @@ QString QGalleryTrackerItemList::type(int index) const
 
 QList<QGalleryResource> QGalleryTrackerItemList::resources(int index) const
 {
-    Q_UNUSED(index);
+    Q_D(const QGalleryTrackerItemList);
 
-    return QList<QGalleryResource>();
+    QList<QGalleryResource> resources;
+
+    QUrl url = QGalleryTrackerItemList::url(index);
+
+    if (!url.isEmpty()) {
+        QMap<int, QVariant> attributes;
+
+        typedef QVector<int>::const_iterator iterator;
+        for (iterator it = d->resourceKeys.begin(), end = d->resourceKeys.end(); it != end; ++it) {
+            QVariant value = metaData(index, *it);
+
+            if (!value.isNull())
+                attributes.insert(*it, value);
+        }
+
+        resources.append(QGalleryResource(url, attributes));
+    }
+
+    return resources;
 }
 
 QGalleryItemList::ItemStatus QGalleryTrackerItemList::status(int index) const

@@ -116,6 +116,7 @@ struct QGalleryTrackerItemListArguments
     QVector<int> aliasColumns;
     QVector<QGalleryTrackerImageColumn *> imageColumns;
     QVector<QGalleryTrackerSortCriteria> sortCriteria;
+    QVector<int> resourceKeys;
 };
 
 class QGalleryTrackerItemList : public QGalleryAbstractResponse

@@ -195,6 +195,7 @@ public:
         , aliasColumns(arguments.aliasColumns)
         , imageColumns(arguments.imageColumns)
         , sortCriteria(arguments.sortCriteria)
+        , resourceKeys(arguments.resourceKeys)
     {
         if (live)
             flags |= Live;
@@ -240,6 +241,7 @@ public:
     const QVector<int> aliasColumns;
     const QVector<QGalleryTrackerImageColumn *> imageColumns;
     const QVector<QGalleryTrackerSortCriteria> sortCriteria;
+    const QVector<int> resourceKeys;
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
