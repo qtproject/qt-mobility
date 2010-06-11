@@ -323,6 +323,14 @@ void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
 }
 
 /*!
+  Returns the current playlist, or 0 if none.
+*/
+QMediaPlaylist *QMediaImageViewer::playlist() const
+{
+    return d_func()->playlist;
+}
+
+/*!
     \fn QMediaImageViewer::mediaChanged(const QMediaContent &media)
 
     Signals that the \a media an image viewer is presenting has changed.
