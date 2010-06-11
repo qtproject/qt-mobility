@@ -45,6 +45,7 @@
 #include <QEventLoop>
 #include <libebook/e-book-util.h>
 
+#include <libmcclient/mc-account-manager.h>
 
 /* Error handling Macros */
 #define FATAL_IF_ERROR(x) if(x) { \
@@ -1184,7 +1185,7 @@ static void populateProfilesCapabilitiesMap(QMap<QString, QStringList>* map){
   
 }
 
-static const QStringList mcProfileCapabilities(const QString& serviceProvider){
+static const QStringList serviceProviderCapabilities(const QString& serviceProvider){
   static QMap<QString, QStringList> map;
   
   if (map.isEmpty())
@@ -1199,7 +1200,6 @@ static const QStringList mcProfileCapabilities(const QString& serviceProvider){
   else
     return QStringList();
 }
-
 
 QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eContact) const
 {
@@ -1217,8 +1217,10 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
   
   for (node = attributeList; node != NULL; node = g_list_next (node)) {
     QContactOnlineAccount* rtn = new QContactOnlineAccount;
-    const char* accountUri;
-    const char* serviceProvider;
+    const char* accountUri = NULL;
+    const char* serviceProvider = NULL;
+    const char* accountPath = NULL; // Outgoing account path eg: SERVICE_NAME/PROTOCOL_NAME/USER_NAME
+    
     QStringList caps;
     EVCardAttribute* attr = (EVCardAttribute*)node->data;
     if (!attr)
@@ -1231,152 +1233,34 @@ QList<QContactOnlineAccount*> QContactABook::getOnlineAccountDetail(EContact *eC
     
     // Get the account URI
     accountUri = e_vcard_attribute_get_value(attr);
-    
-    // Get the service provider
-    GList *params = e_vcard_attribute_get_params(attr);
-    GList *nodeP;
-    for (nodeP = params; nodeP != NULL; nodeP = g_list_next (nodeP)) {
-      EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
-      QString paramName = e_vcard_attribute_param_get_name(p);
-      if (paramName.contains("TYPE")){
-        // paramValues should not contains more than one value
-        GList *paramValues = e_vcard_attribute_param_get_values(p);
-        serviceProvider = CONST_CHAR(paramValues->data);
+
+    // Get AccountPath and service provider for the roster contact associated to the attribute
+    GList* rContacts = osso_abook_contact_find_roster_contacts_for_attribute(A_CONTACT(eContact), attr);
+    for (GList * node = rContacts; node != NULL; node = g_list_next(node)){
+      OssoABookContact* c = NULL;
+      McAccount* a = NULL;
+      c = A_CONTACT(node->data);
+      if (c) {
+       a = osso_abook_contact_get_account(c);
+       if (a){
+         accountPath = a->name;
+         serviceProvider = mc_account_compat_get_profile(a);
+       }
       }
     }
-
+    
     // Set details
     QVariantMap map;
     map[QContactOnlineAccount::FieldAccountUri] = accountUri;
-    map[QContactOnlineAccount::FieldCapabilities] = mcProfileCapabilities(serviceProvider);
+    map[QContactOnlineAccount::FieldCapabilities] = serviceProviderCapabilities(serviceProvider);
     map[QContactOnlineAccount::FieldServiceProvider] = serviceProvider; // eg: facebook-chat,
+    map["AccountPath"] = accountPath;
     setDetailValues(map, rtn);
     
     rtnList << rtn;
   }
   
   return rtnList;
-  
-#if 0
-  QStringList evcardToSkip = vcardsManagedByTelepathy();
-  
-  // Gets info of online accounts from roster contacts associated to the master one  
-  if (!osso_abook_contact_is_roster_contact (A_CONTACT(eContact))) {
-    QContactOnlineAccount* rtn = new QContactOnlineAccount;
-    
-    GList *contacts = osso_abook_contact_get_roster_contacts(A_CONTACT(eContact));
-    GList *node;
-    for (node = contacts; node != NULL; node = g_list_next(node)){
-      OssoABookContact *rosterContact = A_CONTACT(node->data);
-     
-      McProfile* id = osso_abook_contact_get_profile(rosterContact);
-      McAccount* account = osso_abook_contact_get_account(rosterContact);
-      
-      // Avoid to look for Roster contacts into the VCard
-      QString accountVCard = mc_profile_get_vcard_field(id);
-      evcardToSkip.removeOne(accountVCard);
-      
-      // Presence
-      OssoABookPresence *presence = OSSO_ABOOK_PRESENCE (rosterContact);
-      TpConnectionPresenceType presenceType = osso_abook_presence_get_presence_type (presence);
-      QString presenceTypeString;
-      QContactPresence::PresenceState presenceTypeEnum;
-      switch (presenceType) {
-        case TP_CONNECTION_PRESENCE_TYPE_UNSET: presenceTypeString = "Unset"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
-        case TP_CONNECTION_PRESENCE_TYPE_OFFLINE: presenceTypeString = "Offline"; presenceTypeEnum = QContactPresence::PresenceOffline; break;
-        case TP_CONNECTION_PRESENCE_TYPE_AVAILABLE: presenceTypeString = "Available"; presenceTypeEnum = QContactPresence::PresenceAvailable; break;
-        case TP_CONNECTION_PRESENCE_TYPE_AWAY: presenceTypeString = "Away"; presenceTypeEnum = QContactPresence::PresenceAway; break;
-        case TP_CONNECTION_PRESENCE_TYPE_EXTENDED_AWAY: presenceTypeString = "Extended Away"; presenceTypeEnum = QContactPresence::PresenceExtendedAway; break;
-        case TP_CONNECTION_PRESENCE_TYPE_HIDDEN: presenceTypeString = "Hidden"; presenceTypeEnum = QContactPresence::PresenceHidden; break;
-        case TP_CONNECTION_PRESENCE_TYPE_BUSY: presenceTypeString = "Busy"; presenceTypeEnum = QContactPresence::PresenceBusy; break;
-        case TP_CONNECTION_PRESENCE_TYPE_UNKNOWN: presenceTypeString = "Unknown"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
-        case TP_CONNECTION_PRESENCE_TYPE_ERROR: presenceTypeString = "Error"; presenceTypeEnum = QContactPresence::PresenceUnknown; break;
-        default:
-          qCritical() << "Presence type is not vaild" << presenceType;
-      }
-      
-      QVariantMap map;
-      map[QContactOnlineAccount::FieldServiceProvider] = mc_profile_get_unique_name(id);
-      map[QContactOnlineAccount::FieldDetailUri] = mc_profile_get_unique_name(id); // use this as detail URI so we can link to presence.
-      map["AccountPath"] = account->name; //MCAccount name: variable part of the D-Bus object path.
-      
-      setDetailValues(map, rtn);
-    }
-    rtnList << rtn;
-    g_list_free (contacts);
-  }
-  
-  
-  /* Users can add Online account details manually. Eg: IRC username.
-   * evcardToSkip stringlist contains evCard attributes that have been already processed.
-   */
-  
-  GList *attributeList = e_vcard_get_attributes((EVCard*)eContact);
-  GList *node;
-
-  if (attributeList) {
-    for (node = attributeList; node != NULL; node = g_list_next (node)) {
-      EVCardAttribute* attr = (EVCardAttribute*)node->data;
-      if (!attr)
-        continue;
-      QString attributeName = e_vcard_attribute_get_name(attr);
-      
-      // Skip attributes processed scanning roster contacts.
-      if (!evcardToSkip.contains(attributeName))
-        continue;
-      
-      GList *params = e_vcard_attribute_get_params(attr);
-      GList *nodeP;
-      QString type;
-      // If the parameter list lenght is 1, X-OSSO-VALID is not specified
-      bool ossoValidIsOk = (g_list_length(params) == 1) ? true : false;
-
-      for (nodeP = params; nodeP != NULL; nodeP = g_list_next (nodeP)) {
-        EVCardAttributeParam* p = (EVCardAttributeParam*) nodeP->data;
-        QString paramName = e_vcard_attribute_param_get_name(p);
-        bool attrIsType = false;
-        bool attrIsOssoValid = false;
-        
-        //If type is empty check if the attribute is "TYPE"
-        if (type.isEmpty())
-          attrIsType = paramName.contains(EVC_TYPE);
-        
-        if(!ossoValidIsOk)
-          attrIsOssoValid = paramName.contains("X-OSSO-VALID");
-        
-        if (!attrIsType && !attrIsOssoValid) {
-          continue;
-        }
-        
-        GList *values = e_vcard_attribute_param_get_values(p);
-        GList *node;
-        for (node = values; node != NULL; node = g_list_next (node)) {
-          QString attributeParameterValue = CONST_CHAR(node->data);
-          if (attrIsOssoValid) {
-            ossoValidIsOk = (attributeParameterValue == "yes")? true : false;
-            if (!ossoValidIsOk) {
-              break;
-            }
-          } else if (type.isEmpty()) {
-            type = attributeParameterValue;
-            if (type.isEmpty())
-              qCritical() << "TYPE is empty"; 
-          }
-        }
-        
-        if (ossoValidIsOk && !type.isEmpty()) {
-          QContactOnlineAccount* rtn = new QContactOnlineAccount;
-          QVariantMap map;
-          map[QContactOnlineAccount::FieldServiceProvider] = type;
-          setDetailValues(map, rtn);
-          rtnList << rtn;
-        }
-      }
-    }
-  }
-  
-  return rtnList;
-#endif
 }
 
 QContactOrganization* QContactABook::getOrganizationDetail(EContact *eContact) const
