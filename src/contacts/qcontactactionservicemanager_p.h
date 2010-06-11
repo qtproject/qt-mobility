@@ -75,6 +75,7 @@ public:
     QContactActionServiceManager();
     ~QContactActionServiceManager();
 
+    QList<QContactActionDescriptor> availableActions(const QContact& contact);
     QList<QContactActionDescriptor> actionDescriptors(const QString& actionName = QString());
     QContactAction* action(const QContactActionDescriptor& descriptor);
 
@@ -89,7 +90,7 @@ private:
     QMutex m_instanceMutex;
     QServiceManager m_serviceManager;
 
-    QHash<QContactActionDescriptor, QContactAction*> m_actionHash;   // descriptor to action ptr
+    QHash<QContactActionDescriptor, QContactActionFactory*> m_actionFactoryHash; // descriptor to action factory ptr.
     QMultiHash<QString, QContactActionDescriptor> m_descriptorHash;  // action name to descriptor
 };
 

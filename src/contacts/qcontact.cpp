@@ -822,20 +822,15 @@ QList<QContactRelationship> QContact::relationshipOrder() const
  */
 QList<QContactActionDescriptor> QContact::availableActions(const QString& serviceName) const
 {
-    // check every action implementation to see if it supports me.
-    QSet<QContactActionDescriptor> retn;
-    QList<QContactActionDescriptor> descriptors = QContactActionServiceManager::instance()->actionDescriptors();
-    for (int i = 0; i < descriptors.size(); i++) {
-        QContactActionDescriptor currDescriptor = descriptors.at(i);
-        if ((serviceName.isEmpty() || currDescriptor.serviceName() == serviceName)) {
-            QContactAction* currImpl = QContactActionServiceManager::instance()->action(currDescriptor);
-            if (QContactManagerEngine::testFilter(currImpl->contactFilter(), *this)) {
-                retn.insert(currDescriptor);
-            }
+    QList<QContactActionDescriptor> ret;
+    QList<QContactActionDescriptor> allds = QContactActionServiceManager::instance()->availableActions(*this);
+    foreach (const QContactActionDescriptor& d, allds) {
+        if (d.serviceName() == serviceName) {
+            ret.append(d);
         }
     }
 
-    return retn.toList();
+    return ret;
 }
 
 /*!

@@ -44,6 +44,7 @@
 
 #include "qcontactaction.h"
 #include "qcontactactiondescriptor.h"
+#include "qcontactactionfactory.h"
 
 #include "qservicemanager.h"
 
@@ -72,7 +73,7 @@ QContactActionServiceManager::QContactActionServiceManager()
 
 QContactActionServiceManager::~QContactActionServiceManager()
 {
-    qDeleteAll(m_actionHash);
+    qDeleteAll(m_actionFactoryHash);
 }
 
 void QContactActionServiceManager::init()
@@ -84,10 +85,10 @@ void QContactActionServiceManager::init()
         QList<QServiceInterfaceDescriptor> sids = m_serviceManager.findInterfaces(); // all services, all interfaces.
         foreach (const QServiceInterfaceDescriptor& sid, sids) {
             if (sid.interfaceName().startsWith(QString(QLatin1String("com.nokia.qt.mobility.contacts")))) {
-                QContactAction* action = qobject_cast<QContactAction*>(m_serviceManager.loadInterface(sid));
-                QContactActionDescriptor ad = action->actionDescriptor();
-                m_descriptorHash.insert(ad.actionName(), ad);
-                m_actionHash.insert(ad, action); // multimap insert.
+                QContactActionFactory* actionFactory = qobject_cast<QContactActionFactory*>(m_serviceManager.loadInterface(sid));
+                QContactActionDescriptor ad = actionFactory->actionDescriptor();
+                m_descriptorHash.insert(ad.actionName(), ad); // multihash insert.
+                m_actionFactoryHash.insert(ad, actionFactory);
             }
         }
 
@@ -95,6 +96,22 @@ void QContactActionServiceManager::init()
         connect(&m_serviceManager, SIGNAL(serviceAdded(QString, QService::Scope)), this, SLOT(serviceAdded(QString)));
         connect(&m_serviceManager, SIGNAL(serviceRemoved(QString, QService::Scope)), this, SLOT(serviceRemoved(QString)));
     }
+}
+
+QList<QContactActionDescriptor> QContactActionServiceManager::availableActions(const QContact &contact)
+{
+    QMutexLocker locker(&m_instanceMutex);
+    init();
+    QList<QContactActionDescriptor> ret;
+    QList<QContactActionFactory*> factories = m_actionFactoryHash.values();
+    for (int i = 0; i < factories.size(); ++i) {
+        QContactActionFactory* curr = factories.at(i);
+        if (curr->supportsContact(contact)) {
+            ret.append(curr->actionDescriptor());
+        }
+    }
+
+    return ret;
 }
 
 QList<QContactActionDescriptor> QContactActionServiceManager::actionDescriptors(const QString& actionName)
@@ -106,12 +123,12 @@ QList<QContactActionDescriptor> QContactActionServiceManager::actionDescriptors(
     return m_descriptorHash.values(actionName);
 }
 
-/*! The QContactActionServiceManager retains ownership of the returned action pointer.  Do not delete it, or undefined behaviour will occur. */
+/*! The caller takes ownership of the returned action pointer, and must delete it to avoid leaking memory. */
 QContactAction* QContactActionServiceManager::action(const QContactActionDescriptor& descriptor)
 {
     QMutexLocker locker(&m_instanceMutex);
     init();
-    return m_actionHash.value(descriptor);
+    return m_actionFactoryHash.value(descriptor)->instance();
 }
 
 void QContactActionServiceManager::serviceAdded(const QString& serviceName)
@@ -120,10 +137,10 @@ void QContactActionServiceManager::serviceAdded(const QString& serviceName)
     QList<QServiceInterfaceDescriptor> sids = m_serviceManager.findInterfaces(serviceName);
     foreach (const QServiceInterfaceDescriptor& sid, sids) {
         if (sid.interfaceName().startsWith(QString(QLatin1String("com.nokia.qt.mobility.contacts")))) {
-            QContactAction* action = qobject_cast<QContactAction*>(m_serviceManager.loadInterface(sid));
-            QContactActionDescriptor ad = action->actionDescriptor();
-            m_descriptorHash.insert(ad.actionName(), ad);
-            m_actionHash.insert(ad, action); // multimap insert.
+            QContactActionFactory* actionFactory = qobject_cast<QContactActionFactory*>(m_serviceManager.loadInterface(sid));
+            QContactActionDescriptor ad = actionFactory->actionDescriptor();
+            m_descriptorHash.insert(ad.actionName(), ad); // multimap insert.
+            m_actionFactoryHash.insert(ad, actionFactory);
         }
     }
 }
@@ -134,12 +151,12 @@ void QContactActionServiceManager::serviceRemoved(const QString& serviceName)
     QList<QServiceInterfaceDescriptor> sids = m_serviceManager.findInterfaces(serviceName);
     foreach (const QServiceInterfaceDescriptor& sid, sids) {
         if (sid.interfaceName().startsWith(QString(QLatin1String("com.nokia.qt.mobility.contacts")))) {
-            QList<QContactActionDescriptor> cads = m_actionHash.keys();
+            QList<QContactActionDescriptor> cads = m_actionFactoryHash.keys();
             foreach (const QContactActionDescriptor& cad, cads) {
                 if (cad.serviceName() != serviceName)
                     continue;
-                delete m_actionHash.value(cad);
-                m_actionHash.remove(cad);
+                delete m_actionFactoryHash.value(cad);
+                m_actionFactoryHash.remove(cad);
                 m_descriptorHash.remove(cad.actionName(), cad);
             }
         }
