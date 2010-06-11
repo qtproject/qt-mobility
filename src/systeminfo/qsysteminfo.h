@@ -40,10 +40,10 @@
 
 #ifndef QSYSTEMINFO_H
 #define QSYSTEMINFO_H
-#include <qsystemgeneralinfo.h>
-#include <qsystemdeviceinfo.h>
-#include <qsystemdisplayinfo.h>
-#include <qsystemnetworkinfo.h>
-#include <qsystemscreensaver.h>
-#include <qsystemstorageinfo.h>
+#include "qsystemgeneralinfo.h"
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
 #endif
