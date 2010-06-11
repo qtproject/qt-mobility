@@ -165,6 +165,9 @@ these domains have dependencies and these are outlined below:
        with older SDK's but there will be reduced functionality.
 
        On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
+       
+       On Symbian, it depends on WLANManagementAPI. WLANManagementAPI plugin is available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a WLANManagementAPI.zip is provided.
     \o N(Y)
     \o N
 \row

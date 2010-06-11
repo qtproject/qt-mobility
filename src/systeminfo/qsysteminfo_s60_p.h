@@ -63,6 +63,7 @@
 #include <f32file.h>
 #include "telephonyinfo_s60.h"
 #include "chargingstatus_s60.h"
+#include "wlaninfo_s60.h"
 
 QT_BEGIN_HEADER
 
@@ -138,6 +139,11 @@ protected:  //from MTelephonyInfoObserver
 
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
+
+public slots:
+    void wlanNetworkNameChanged();
+    void wlanNetworkSignalStrengthChanged();
+    void wlanNetworkStatusChanged();
 };
 
 //////// QSystemDisplayInfo
@@ -279,7 +285,6 @@ private:    //data
 //////// DeviceInfo (singleton)
 class DeviceInfo
 {
-
 public:
     static DeviceInfo *instance()
     {
@@ -346,10 +351,18 @@ public:
         return m_cellSignalStrengthInfo;
     }
 
+    CWlanInfo *wlanInfo()
+    {
+        if (!m_wlanInfo) {
+            m_wlanInfo = new CWlanInfo;
+        }
+        return m_wlanInfo;
+    }
+
 private:
     DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
         m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL)
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL)
     {
         m_telephony = CTelephony::NewL();
     };
@@ -364,6 +377,7 @@ private:
         delete m_subscriberInfo;
         delete m_phoneInfo;
         delete m_telephony;
+        delete m_wlanInfo;
     }
 
     static DeviceInfo *m_instance;
@@ -376,6 +390,7 @@ private:
     CCellNetworkInfo *m_cellNetworkInfo;
     CCellNetworkRegistrationInfo *m_cellNetworkRegistrationInfo;
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
+    CWlanInfo* m_wlanInfo;
 };
 
 QTM_END_NAMESPACE
