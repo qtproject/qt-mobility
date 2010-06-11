@@ -60,8 +60,8 @@ static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDet
     if (detail.definitionName() == QOrganizerItemDisplayLabel::DefinitionName)
         return QOrganizerItemDisplayLabel::FieldLabel;
 
-    if (detail.definitionName() == QOrganizerItemEventTimeRange::DefinitionName)
-        return QOrganizerItemEventTimeRange::FieldStartDateTime;
+    if (detail.definitionName() == QOrganizerEventTimeRange::DefinitionName)
+        return QOrganizerEventTimeRange::FieldStartDateTime;
 
     if (detail.definitionName() == QOrganizerItemGuid::DefinitionName)
         return QOrganizerItemGuid::FieldGuid;
@@ -69,8 +69,8 @@ static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDet
     if (detail.definitionName() == QOrganizerItemInstanceOrigin::DefinitionName)
         return QOrganizerItemInstanceOrigin::FieldParentLocalId;
 
-    if (detail.definitionName() == QOrganizerItemJournalTimeRange::DefinitionName)
-        return QOrganizerItemJournalTimeRange::FieldEntryDateTime;
+    if (detail.definitionName() == QOrganizerJournalTimeRange::DefinitionName)
+        return QOrganizerJournalTimeRange::FieldEntryDateTime;
 
     if (detail.definitionName() == QOrganizerItemLocation::DefinitionName)
         return QOrganizerItemLocation::FieldLocationName;
@@ -96,11 +96,11 @@ static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDet
     if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName)
         return QOrganizerItemTimestamp::FieldModificationTimestamp;
 
-    if (detail.definitionName() == QOrganizerItemTodoProgress::DefinitionName)
-        return QOrganizerItemTodoProgress::FieldStatus;
+    if (detail.definitionName() == QOrganizerTodoProgress::DefinitionName)
+        return QOrganizerTodoProgress::FieldStatus;
 
-    if (detail.definitionName() == QOrganizerItemTodoTimeRange::DefinitionName)
-        return QOrganizerItemTodoTimeRange::FieldDueDateTime;
+    if (detail.definitionName() == QOrganizerTodoTimeRange::DefinitionName)
+        return QOrganizerTimeRange::FieldDueDateTime;
 
     if (detail.definitionName() == QOrganizerItemType::DefinitionName)
         return QOrganizerItemType::FieldType;

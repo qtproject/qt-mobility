@@ -80,19 +80,19 @@ QTM_BEGIN_NAMESPACE
  * [frequency = Monthly, dayOfWeek = Monday,Tuesday]
  * [frequency = Yearly, dayOfWeek = Monday,Tuesday]
  * However, the frequency field may start affecting the result differently when other fields are
- * added like interval and position.
+ * added like interval and positions.
  *
- * Information not contained in the rule is in some cases derived from the startDate field for the
- * purpose of calculating occurrence dates.  There are three cases where such derivation is
- * necessary.
+ * For the purpose of calculating occurrence dates, information not contained in the rule is in some
+ * cases derived from the startDateTime field of the event that the detail is associated with.
+ * There are three cases where such derivation is necessary.
  * Case 1: frequency == Weekly.  If dayOfWeek is not specified, derive it from the week day that
- * startDate occurs on.
+ * the startDateTime occurs on.
  * Case 2: frequency == Monthly.  If neither dayOfWeek or dayOfMonth is specified, dayOfMonth should
- * be derived from the startDate
+ * be derived from the startDateTime
  * Case 3: frequency == Yearly.  If none of month, weekOfYear, dayOfYear, dayOfMonth or dayOfWeek
  * are specified, derive month and dayOfMonth.  If month is specified but not weekOfYear, dayOfYear,
  * dayOfMonth or dayOfWeek, then derive dayOfMonth.  If weekOfYear is specified but not dayOfYear,
- * dayOfWeek or dayOfMonth, derive dayOfWeek from the startDate.
+ * dayOfWeek or dayOfMonth, derive dayOfWeek from the startDateTime.
  * For any cases not covered here, do not derive any of the fields.
  */
 
@@ -110,7 +110,7 @@ public:
     const char* FieldDaysOfYear;
     const char* FieldMonths;
     const char* FieldWeeksOfYear;
-    const char* FieldPosition;
+    const char* FieldPositions;
     const char* FieldWeekStart;
 #else
     Q_DECLARE_LATIN1_CONSTANT(FieldFrequency, "Frequency");
@@ -123,7 +123,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(FieldDaysOfYear, "DaysOfYear");
     Q_DECLARE_LATIN1_CONSTANT(FieldMonths, "Months");
     Q_DECLARE_LATIN1_CONSTANT(FieldWeeksOfYear, "WeeksOfYear");
-    Q_DECLARE_LATIN1_CONSTANT(FieldPosition, "Position");
+    Q_DECLARE_LATIN1_CONSTANT(FieldPositions, "Positions");
     Q_DECLARE_LATIN1_CONSTANT(FieldWeekStart, "WeekStart");
 #endif
 
@@ -155,16 +155,11 @@ public:
         December
     };
 
-    // Compulsory for a valid rule
-    void setStartDate(const QDate& startDate);
-    QDate startDate() const;
-
     // Default: Weekly
     void setFrequency(Frequency freq);
     Frequency frequency() const;
 
-    /* end critierion: neither, either or both of count/endDate could be set.  If both is set, the
-     * recurrence ends on whichever occurs first.  */
+    /* end critieria: count and endDate are mutually exclusive.  Setting one unsets the other.  */
     // eg: 10 means ten times, 0 means not set.
     // Default: 0
     void setCount(int count);
