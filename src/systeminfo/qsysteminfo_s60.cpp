@@ -65,7 +65,6 @@
 #include <etel3rdparty.h>
 #include <aknkeylock.h>
 #include <startupdomainpskeys.h>
-#include <simutils.h>
 
 QTM_BEGIN_NAMESPACE
 
