@@ -178,9 +178,9 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
 
     if (isItemType) {
         response = new QGalleryTrackerItemResponse(
-                arguments, metaDataInterface(), cursorPosition, minimumPagedItems);
+                arguments, metaDataInterface(), isLive, cursorPosition, minimumPagedItems);
     } else {
-        response = new QGalleryTrackerItemList(arguments, cursorPosition, minimumPagedItems);
+        response = new QGalleryTrackerItemList(arguments, isLive, cursorPosition, minimumPagedItems);
     }
 
     if (isLive) {

@@ -76,6 +76,8 @@ void QGalleryTrackerItemListPrivate::update(int index)
         QObject::connect(
                 queryWatcher.data(), SIGNAL(finished(QDBusPendingCallWatcher*)),
                 q_func(), SLOT(_q_queryFinished(QDBusPendingCallWatcher*)));
+
+        emit q_func()->progressChanged(0, 2);
     }
 }
 
@@ -91,12 +93,18 @@ void QGalleryTrackerItemListPrivate::_q_queryFinished(QDBusPendingCallWatcher *w
 void QGalleryTrackerItemListPrivate::queryFinished(const QDBusPendingCall &call)
 {
     if (call.isError()) {
+        emit q_func()->progressChanged(2, 2);
+
         qWarning("DBUS error %s", qPrintable(call.error().message()));
 
         q_func()->finish(QGalleryAbstractRequest::ConnectionError);
+    } else if (flags & Cancelled) {
+        q_func()->QGalleryAbstractResponse::cancel();
     } else {
         parseWatcher.setFuture(QtConcurrent::run(
                 this, &QGalleryTrackerItemListPrivate::parseRows, call));
+
+        emit q_func()->progressChanged(1, 2);
     }
 }
 
@@ -414,6 +422,10 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
 
     if (flags & Refresh)
         update(rCache.index);
+    else
+        emit q_func()->progressChanged(2, 2);
+
+    q_func()->finish(QGalleryAbstractRequest::Succeeded, flags & Live);
 }
 
 void QGalleryTrackerItemListPrivate::_q_editFinished(QGalleryTrackerMetaDataEdit *edit)
@@ -425,11 +437,12 @@ void QGalleryTrackerItemListPrivate::_q_editFinished(QGalleryTrackerMetaDataEdit
 
 QGalleryTrackerItemList::QGalleryTrackerItemList(
         const QGalleryTrackerItemListArguments &arguments,
+        bool live,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
     : QGalleryAbstractResponse(
-            *new QGalleryTrackerItemListPrivate(arguments, cursorPosition, minimumPagedItems),
+            *new QGalleryTrackerItemListPrivate(arguments, live, cursorPosition, minimumPagedItems),
             parent)
 {
     Q_D(QGalleryTrackerItemList);
@@ -504,7 +517,9 @@ void QGalleryTrackerItemList::setCursorPosition(int position)
 
     d->cursorPosition = position;
 
-    if (!d->queryWatcher && d->parseWatcher.isFinished()) {
+    if (!d->queryWatcher
+            && d->parseWatcher.isFinished()
+            && !(d->flags & QGalleryTrackerItemListPrivate::Cancelled)) {
         if (position > d->rCache.index + d->queryLimit - d->minimumPagedItems) {
             d->update(qMax(0, position - d->minimumPagedItems) & ~63);
         } else if (position < d->rCache.index) {
@@ -684,7 +699,11 @@ void QGalleryTrackerItemList::setMetaData(int, int, const QVariant &)
 
 void QGalleryTrackerItemList::cancel()
 {
+    d_func()->flags |= QGalleryTrackerItemListPrivate::Cancelled;
+    d_func()->flags &= ~QGalleryTrackerItemListPrivate::Live;
 
+    if (!d_func()->queryWatcher && d_func()->parseWatcher.isFinished())
+        QGalleryAbstractResponse::cancel();
 }
 
 bool QGalleryTrackerItemList::waitForFinished(int)
@@ -785,7 +804,9 @@ void QGalleryTrackerItemList::refresh(int updateId)
 {
     Q_D(QGalleryTrackerItemList);
 
-    if ((d->updateMask & updateId) && !d->updateTimer.isActive()) {
+    if ((d->updateMask & updateId)
+            && !d->updateTimer.isActive()
+            && (d->flags & QGalleryTrackerItemListPrivate::Live)) {
         d->flags |= QGalleryTrackerItemListPrivate::Refresh;
 
         if (!d->queryWatcher && d->parseWatcher.isFinished())

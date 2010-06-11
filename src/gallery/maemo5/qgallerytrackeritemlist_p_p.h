@@ -159,13 +159,16 @@ public:
 
     enum Flag
     {
-        Refresh = 0x01
+        Refresh     = 0x01,
+        Cancelled   = 0x02,
+        Live        = 0x04
     };
 
     Q_DECLARE_FLAGS(Flags, Flag)
 
     QGalleryTrackerItemListPrivate(
             const QGalleryTrackerItemListArguments &arguments,
+            bool live,
             int cursorPosition,
             int minimumPagedItems)
         : idColumn(arguments.idColumn)
@@ -193,6 +196,9 @@ public:
         , imageColumns(arguments.imageColumns)
         , sortCriteria(arguments.sortCriteria)
     {
+        if (live)
+            flags |= Live;
+
         QGalleryItemListPrivate::cursorPosition = cursorPosition;
         QGalleryItemListPrivate::minimumPagedItems = (minimumPagedItems + 15) & ~15;
     }

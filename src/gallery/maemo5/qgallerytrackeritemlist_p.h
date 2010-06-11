@@ -124,6 +124,7 @@ class QGalleryTrackerItemList : public QGalleryAbstractResponse
 public:
     QGalleryTrackerItemList(
             const QGalleryTrackerItemListArguments &arguments,
+            bool live,
             int cursorPosition,
             int minimumPagedItems,
             QObject *parent = 0);

@@ -58,9 +58,10 @@ public:
     QGalleryTrackerItemResponsePrivate(
             const QGalleryTrackerItemListArguments &arguments,
             const QGalleryDBusInterfacePointer &metaDataInterface,
+            bool live,
             int cursorPosition,
             int minimumPagedItems)
-        : QGalleryTrackerItemListPrivate(arguments, cursorPosition, minimumPagedItems)
+        : QGalleryTrackerItemListPrivate(arguments, live, cursorPosition, minimumPagedItems)
         , metaDataInterface(metaDataInterface)
         , fieldNames(arguments.fieldNames)
     {
@@ -73,12 +74,13 @@ public:
 QGalleryTrackerItemResponse::QGalleryTrackerItemResponse(
         const QGalleryTrackerItemListArguments &arguments,
         const QGalleryDBusInterfacePointer &metaDataInterface,
+        bool live,
         int cursorPosition,
         int minimumPagedItems,
         QObject *parent)
     : QGalleryTrackerItemList(
             *new QGalleryTrackerItemResponsePrivate(
-                    arguments, metaDataInterface, cursorPosition, minimumPagedItems),
+                    arguments, metaDataInterface, live, cursorPosition, minimumPagedItems),
             parent)
 {
 }
