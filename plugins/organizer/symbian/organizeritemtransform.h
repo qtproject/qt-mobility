@@ -86,6 +86,7 @@ public:
     QList<QOrganizerItemRecurrenceRule> toItemRecurrenceRules(TCalRRule calRule) const;
 
 private:
+    void debugEntry(const CCalEntry &entry) const;
 };
 
 #endif /* ORGANIZERITEMTRANSFORM_H_ */

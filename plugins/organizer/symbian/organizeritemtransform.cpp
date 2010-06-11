@@ -244,6 +244,8 @@ CCalEntry *OrganizerItemTransform::toEntryLC(const QOrganizerItem &item)
 
 void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *item) const
 {
+    debugEntry(entry);
+        
     item->setType(itemTypeL(entry));
     item->setGuid(toQString(entry.UidL()));
 
@@ -288,15 +290,15 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
         QOrganizerTodoProgress progress;
 
         CCalEntry::TStatus entryStatus = entry.StatusL();
-        if (entryStatus == CCalEntry::ETodoNeedsAction)
-            progress.setStatus(QOrganizerTodoProgress::StatusNotStarted);
+           
         if (entryStatus == CCalEntry::ETodoInProcess)
             progress.setStatus(QOrganizerTodoProgress::StatusInProgress);
-        if (entryStatus == CCalEntry::ETodoCompleted)
+        else if (entryStatus == CCalEntry::ETodoCompleted) {
             progress.setStatus(QOrganizerTodoProgress::StatusComplete);
-
-        if (progress.status() == QOrganizerTodoProgress::StatusComplete)
             progress.setFinishedDateTime(toQDateTime(entry.CompletedTimeL()));
+        }
+        else
+            progress.setStatus(QOrganizerTodoProgress::StatusNotStarted);
 
         item->saveDetail(&progress);
     }
@@ -420,4 +422,14 @@ QList<QOrganizerItemRecurrenceRule> OrganizerItemTransform::toItemRecurrenceRule
 {
     // TODO: conversion
     return QList<QOrganizerItemRecurrenceRule>();
+}
+
+void OrganizerItemTransform::debugEntry(const CCalEntry &entry) const
+{
+    qDebug() << "CCalEntry";
+    qDebug() << "LocalUid    :" << entry.LocalUidL();
+    qDebug() << "Uid         :" << toQString(entry.UidL());
+    qDebug() << "Type        :" << entry.EntryTypeL();
+    qDebug() << "Summary     :" << toQString(entry.SummaryL());
+    qDebug() << "Desription  :" << toQString(entry.DescriptionL());
 }

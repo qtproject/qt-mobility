@@ -168,6 +168,7 @@ private:
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const;
     void saveItemL(QOrganizerItem *item);
     void removeItemL(const QOrganizerItemLocalId& organizeritemId);
+    QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const;
 
 private:
     QOrganizerItemSymbianEngineData *d;
