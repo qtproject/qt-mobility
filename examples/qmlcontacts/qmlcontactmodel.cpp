@@ -45,12 +45,18 @@
 #include "qcontactdetailfilter.h"
 #include "qversitreader.h"
 #include "qversitcontactimporter.h"
-
 #include <QColor>
 #include <QHash>
 #include <QDebug>
 #include <QPixmap>
 #include <QFile>
+
+static QString normalizePropertyName(const QString& name)
+{
+   if (!name.isEmpty())
+     return name.mid(1).prepend(name[0].toLower());
+   return QString();
+}
 
 QMLContactModel::QMLContactModel(QObject *parent) :
     QAbstractListModel(parent),
@@ -103,6 +109,26 @@ QString QMLContactModel::manager() const
     return m_manager->managerName();
 }
 
+void QMLContactModel::exposeContactsToQML()
+{
+    foreach (const QContact& c, m_contacts) {
+        if (!m_contactMaps.contains(c.localId())) {
+            QDeclarativePropertyMap* cm = new QDeclarativePropertyMap(this);
+            QList<QContactDetail> details = c.details();
+            foreach (const QContactDetail& detail, details) {
+              QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(cm);
+
+              QVariantMap values = detail.variantValues();
+              foreach (const QString& key, values.keys()) {
+                  dm->insert(normalizePropertyName(key), values.value(key));
+              }
+              cm->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
+            }
+            m_contactMaps.insert(c.localId(), cm);
+        }
+    }
+}
+
 void QMLContactModel::fillContactsIntoMemoryEngine(QContactManager* manager)
 {
     QVersitReader reader;
@@ -127,7 +153,14 @@ int QMLContactModel::rowCount(const QModelIndex &parent) const
 
 void QMLContactModel::setManager(const QString& managerName)
 {
-    delete m_manager;
+    if (m_manager)
+        delete m_manager;
+
+    foreach (const QContactLocalId& id, m_contactMaps.keys()) {
+        delete m_contactMaps.value(id);
+    }
+    m_contactMaps.clear();
+
     m_manager = new QContactManager(managerName);
 
     if (managerName == "memory" && m_manager->contactIds().isEmpty()) {
@@ -143,6 +176,7 @@ void QMLContactModel::setManager(const QString& managerName)
 void QMLContactModel::resultsReceived()
 {
     int oldCount = m_contacts.count();
+
     int newCount = m_contactsRequest.contacts().count();
     if (newCount > oldCount) {
         // Assuming the order is the same
@@ -156,6 +190,8 @@ void QMLContactModel::resultsReceived()
         m_contacts =  m_contactsRequest.contacts();
         endInsertRows();
     }
+
+    exposeContactsToQML();
 }
 
 void QMLContactModel::fetchAgain()
@@ -185,6 +221,8 @@ QPair<QString, QString> QMLContactModel::interestingDetail(const QContact&c) con
     return qMakePair(QString(), QString());
 }
 
+
+
 QVariant QMLContactModel::data(const QModelIndex &index, int role) const
 {
     QContact c = m_contacts.value(index.row());
@@ -196,7 +234,9 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
         case InterestRole:
             return interestingDetail(c).second;
         case ContactRole:
-            //return
+            if (m_contactMaps.contains(c.localId())) {
+               return QVariant::fromValue(static_cast<QObject*>(m_contactMaps.value(c.localId())));
+           }
         case AvatarRole:
             //Just let the imager provider deal with it
             return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());

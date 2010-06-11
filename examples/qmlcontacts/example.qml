@@ -136,6 +136,11 @@ Rectangle {
                                 text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
                                 color: details.textColor;
                             }
+                            Text {
+                                //use contact.detailDefinationName.fieldName ..
+                                text: "Name: " + contact.displayLabel.label
+                                color: details.textColor;
+                            }
                         }
                     }
                 }

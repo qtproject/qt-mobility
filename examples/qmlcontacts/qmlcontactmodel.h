@@ -42,6 +42,7 @@
 #define QMLCONTACTMODEL_H
 
 #include <QAbstractListModel>
+#include <QDeclarativePropertyMap>
 #include "qcontact.h"
 #include "qcontactmanager.h"
 #include "qcontactfetchrequest.h"
@@ -83,9 +84,11 @@ private slots:
 
 private:
     QPair<QString, QString> interestingDetail(const QContact&c) const;
-
+    void exposeContactsToQML();
     void fillContactsIntoMemoryEngine(QContactManager* manager);
 
+
+    QMap<QContactLocalId, QDeclarativePropertyMap*> m_contactMaps;
     QList<QContact> m_contacts;
     QContactManager* m_manager;
     QContactFetchHint m_fetchHint;
