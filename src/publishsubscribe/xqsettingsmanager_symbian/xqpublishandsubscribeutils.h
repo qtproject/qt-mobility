@@ -65,7 +65,7 @@ class XQPublishAndSubscribeSecurityPolicy;
 class XQSETTINGSMANAGER_EXPORT XQPublishAndSubscribeUtils : public QObject
 {
 public:
-    XQPublishAndSubscribeUtils(XQSettingsManager& settingsManager, QObject* parent = 0);
+    explicit XQPublishAndSubscribeUtils(XQSettingsManager& settingsManager, QObject* parent = 0);
     ~XQPublishAndSubscribeUtils();
     bool defineProperty(const XQPublishAndSubscribeSettingsKey& key, XQSettingsManager::Type type);
     bool defineProperty(const XQPublishAndSubscribeSettingsKey& key, XQSettingsManager::Type type,

@@ -57,7 +57,8 @@ symbian: {
 
     LIBS += -lcntmodel \
             -lflogger \
-            -lefsrv
+            -lefsrv \
+            -lcentralrepository
 
     target.path = /sys/bin
     INSTALLS += target

@@ -34,3 +34,4 @@ SOURCES += \
     dummyaccelerometer.cpp\
     dummycommon.cpp
 
+symbian:TARGET.CAPABILITY = ALL -TCB

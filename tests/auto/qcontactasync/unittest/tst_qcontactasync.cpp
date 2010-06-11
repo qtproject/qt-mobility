@@ -73,6 +73,7 @@ class QThreadSignalSpy: public QObject
 public:
     QThreadSignalSpy(QObject *obj, const char *aSignal)
     {
+        QMutexLocker m(&lock);
 #ifdef Q_CC_BOR
         const int memberOffset = QObject::staticMetaObject.methodCount();
 #else
@@ -136,7 +137,6 @@ public:
 private:
     void initArgs(const QMetaMethod &member)
     {
-        QMutexLocker m(&lock);
         QList<QByteArray> params = member.parameterTypes();
         for (int i = 0; i < params.count(); ++i) {
             int tp = QMetaType::type(params.at(i).constData());
@@ -181,11 +181,11 @@ public slots:
     void cleanupTestCase();
 
 private:
-    void addManagers(); // add standard managers to the data
+    void addManagers(QStringList includes = QStringList()); // add standard managers to the data
 
 private slots:
     void testDestructor();
-    void testDestructor_data() { addManagers(); }
+    void testDestructor_data() { addManagers(QStringList(QString("maliciousplugin"))); }
 
     void contactFetch();
     void contactFetch_data() { addManagers(); }
@@ -213,12 +213,13 @@ private slots:
     void maliciousManager(); // uses it's own custom data (manager)
 
     void testQuickDestruction();
-    void testQuickDestruction_data() { addManagers(); }
+    void testQuickDestruction_data() { addManagers(QStringList(QString("maliciousplugin"))); }
 
     void threadDelivery();
-    void threadDelivery_data() { addManagers(); }
+    void threadDelivery_data() { addManagers(QStringList(QString("maliciousplugin"))); }
 protected slots:
     void resultsAvailableReceived();
+    void deleteRequest();
 
 private:
     bool compareContactLists(QList<QContact> lista, QList<QContact> listb);
@@ -373,6 +374,12 @@ void tst_QContactAsync::testDestructor()
     // second, delete request then manager
     delete req2;
     delete cm2;
+}
+
+void tst_QContactAsync::deleteRequest()
+{
+    // Delete the sender (request) - check that it doesn't crash in this common coding error
+    delete sender();
 }
 
 void tst_QContactAsync::contactFetch()
@@ -601,6 +608,19 @@ void tst_QContactAsync::contactFetch()
         break;
     }
 
+    // Now test deletion in the first slot called
+    QContactFetchRequest *cfr2 = new QContactFetchRequest();
+    QPointer<QObject> obj(cfr2);
+    cfr2->setManager(cm.data());
+    connect(cfr2, SIGNAL(resultsAvailable()), this, SLOT(deleteRequest()));
+    QVERIFY(cfr2->start());
+    int i = 100;
+    // at this point we can't even call wait for finished..
+    while(obj && i > 0) {
+        QTest::qWait(50); // force it to process events at least once.
+        i--;
+    }
+    QVERIFY(obj == NULL);
 }
 
 void tst_QContactAsync::contactIdFetch()
@@ -2084,7 +2104,7 @@ void tst_QContactAsync::maliciousManager()
     delete destroyedRequest;
 
     // now use a malicious manager that deliberately calls
-    // incorrect "updateRequest" functions in base class:
+    // things in a different thread
     QContactManager mcm("maliciousplugin");
     QCOMPARE(mcm.managerName(), QString("maliciousplugin"));
     QList<QContact> emptyCList;
@@ -2095,71 +2115,44 @@ void tst_QContactAsync::maliciousManager()
     cfr.setFilter(fil);
     cfr.setManager(&mcm);
     QVERIFY(cfr.start());
-    QVERIFY(cfr.cancel());
-    QVERIFY(cfr.waitForFinished(100));
-    QVERIFY(cfr.start());
-    QVERIFY(!cfr.waitForFinished(100));
-    QVERIFY(cfr.cancel());
 
     QContactLocalIdFetchRequest cifr;
     cifr.setFilter(fil);
     cifr.setManager(&mcm);
     QVERIFY(cifr.start());
-    QVERIFY(cifr.cancel());
-    QVERIFY(cifr.waitForFinished(100));
-    QVERIFY(cifr.start());
-    QVERIFY(!cifr.waitForFinished(100));
-    QVERIFY(cifr.cancel());
 
     QContactRemoveRequest crr;
     crr.setContactIds(mcm.contactIds(fil));
     crr.setManager(&mcm);
     QVERIFY(crr.start());
-    QVERIFY(crr.cancel());
-    QVERIFY(crr.waitForFinished(100));
-    QVERIFY(crr.start());
-    QVERIFY(!crr.waitForFinished(100));
-    QVERIFY(crr.cancel());
 
     QContactSaveRequest csr;
     csr.setContacts(emptyCList);
     csr.setManager(&mcm);
     QVERIFY(csr.start());
-    QVERIFY(csr.cancel());
-    QVERIFY(csr.waitForFinished(100));
-    QVERIFY(csr.start());
-    QVERIFY(!csr.waitForFinished(100));
-    QVERIFY(csr.cancel());
 
+    {
     QContactDetailDefinitionFetchRequest dfr;
     dfr.setDefinitionNames(emptyDNList);
     dfr.setManager(&mcm);
     QVERIFY(dfr.start());
-    QVERIFY(dfr.cancel());
-    QVERIFY(dfr.waitForFinished(100));
-    QVERIFY(dfr.start());
-    QVERIFY(!dfr.waitForFinished(100));
-    QVERIFY(dfr.cancel());
+    }
+
+    {
+    QContactDetailDefinitionFetchRequest dfr;
+    dfr.setDefinitionNames(emptyDNList);
+    dfr.setManager(&mcm);
+    }
 
     QContactDetailDefinitionSaveRequest dsr;
     dsr.setDefinitions(emptyDList);
     dsr.setManager(&mcm);
     QVERIFY(dsr.start());
-    QVERIFY(dsr.cancel());
-    QVERIFY(dsr.waitForFinished(100));
-    QVERIFY(dsr.start());
-    QVERIFY(!dsr.waitForFinished(100));
-    QVERIFY(dsr.cancel());
 
     QContactDetailDefinitionRemoveRequest drr;
     drr.setDefinitionNames(emptyDNList);
     drr.setManager(&mcm);
     QVERIFY(drr.start());
-    QVERIFY(drr.cancel());
-    QVERIFY(drr.waitForFinished(100));
-    QVERIFY(drr.start());
-    QVERIFY(!drr.waitForFinished(100));
-    QVERIFY(drr.cancel());
 }
 
 void tst_QContactAsync::testQuickDestruction()
@@ -2247,10 +2240,10 @@ void tst_QContactAsync::resultsAvailableReceived()
     if (req)
         m_resultsAvailableSlotThreadId = req->thread()->currentThreadId();
     else
-        qDebug() << "resultsAvailableReceived() : request deleted; unable to set thread id!";
+        qWarning() << "resultsAvailableReceived() : request deleted; unable to set thread id!";
 }
 
-void tst_QContactAsync::addManagers()
+void tst_QContactAsync::addManagers(QStringList stringlist)
 {
     QTest::addColumn<QString>("uri");
 
@@ -2258,10 +2251,14 @@ void tst_QContactAsync::addManagers()
     QStringList managers = QContactManager::availableManagers();
 
     // remove ones that we know will not pass
-    managers.removeAll("invalid");
-    managers.removeAll("maliciousplugin");
-    managers.removeAll("testdummy");
-    managers.removeAll("symbiansim"); // SIM backend does not support all the required details for tests to pass.
+    if (!stringlist.contains("invalid"))
+        managers.removeAll("invalid");
+    if (!stringlist.contains("maliciousplugin"))
+        managers.removeAll("maliciousplugin");
+    if (!stringlist.contains("testdummy"))
+        managers.removeAll("testdummy");
+    if (!stringlist.contains("symbiansim"))
+        managers.removeAll("symbiansim"); // SIM backend does not support all the required details for tests to pass.
 
     foreach(QString mgr, managers) {
         QMap<QString, QString> params;

@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QVideoWidget Class Reference</h1>
 <p>The QVideoWidget class provides a widget which presents video produced by a media object. <a href="#details">More...</a></p>
 <pre>    #include &lt;QVideoWidget&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a>.</p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qwidget.html">QWidget</a> and <a href="qmediabindableinterface.html">QMediaBindableInterface</a>.</p>
 <ul>
 <li><a href="qvideowidget-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -31,7 +31,7 @@
 <li><div class="fn"><b><a href="qvideowidget.html#fullScreen-prop">fullScreen</a></b> : bool</div></li>
 </ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="qvideowidget.html#hue-prop">hue</a></b> : int</div></li>
-<li><div class="fn"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> : QMediaObject *</div></li>
+<li><div class="fn"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> : QMediaObject * const</div></li>
 <li><div class="fn"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> : int</div></li>
 </ul>
 </td></tr>
@@ -51,18 +51,18 @@
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#contrast-prop">contrast</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hue-prop">hue</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#fullScreen-prop">isFullScreen</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaObject * </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#saturation-prop">saturation</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#mediaObject-prop">setMediaObject</a></b> ( QMediaObject * <i>object</i> )</td></tr>
 </table>
 <hr />
 <a name="reimplemented-public-functions"></a>
 <h2>Reimplemented Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaObject * </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#mediaObject-prop">mediaObject</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual QSize </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#sizeHint">sizeHint</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>208 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#public-functions">QWidget</a></li>
+<li><div bar="2" class="fn"></div>1 public function inherited from <a href="qmediabindableinterface.html#public-functions">QMediaBindableInterface</a></li>
 <li><div bar="2" class="fn"></div>12 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#public-functions">QPaintDevice</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
@@ -103,10 +103,12 @@
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#moveEvent">moveEvent</a></b> ( QMoveEvent * <i>event</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#paintEvent">paintEvent</a></b> ( QPaintEvent * <i>event</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#resizeEvent">resizeEvent</a></b> ( QResizeEvent * <i>event</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#setMediaObject">setMediaObject</a></b> ( QMediaObject * <i>object</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#showEvent">showEvent</a></b> ( QShowEvent * <i>event</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>37 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-functions">QWidget</a></li>
+<li><div bar="2" class="fn"></div>1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
 <li><div bar="2" class="fn"></div>1 protected function inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#protected-functions">QPaintDevice</a></li>
 <li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
@@ -116,6 +118,7 @@
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#static-public-members">QWidget</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>37 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-functions">QWidget</a></li>
+<li><div class="fn"></div>1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
 <li><div class="fn"></div>1 protected function inherited from <a href="http://qt.nokia.com/doc/4.6/qpaintdevice.html#protected-functions">QPaintDevice</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>1 protected slot inherited from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#protected-slots">QWidget</a></li>
@@ -129,9 +132,10 @@
 <p>Attaching a QVideoWidget to a <a href="qmediaobject.html">QMediaObject</a> allows it to display the video or image output of that media object. A QVideoWidget is attached to media object by passing a pointer to the <a href="qmediaobject.html">QMediaObject</a> in its constructor, and detached by destroying the QVideoWidget.</p>
 <pre>    player = new QMediaPlayer;
 
-    widget = new QVideoWidget(player);
+    widget = new QVideoWidget;
     widget-&gt;show();
 
+    player-&gt;setVideoOutput(widget);
     player-&gt;setMedia(QUrl(&quot;http:<span class="comment">//example.com/movie.mp4&quot;));</span>
     player-&gt;play();</pre>
 <p><b>Note</b>: Only a single display output can be attached to a media object at one time.</p>
@@ -207,13 +211,11 @@
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qvideowidget.html#hueChanged">hueChanged</a></b> ( int <i>hue</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QVideoWidget/mediaObject"></a>
-<a name="//apple_ref/cpp/instm/QVideoWidget/setMediaObject"></a>
-<h3 class="fn"><a name="mediaObject-prop"></a>mediaObject : <a href="qmediaobject.html">QMediaObject</a> *</h3>
+<h3 class="fn"><a name="mediaObject-prop"></a>mediaObject : <a href="qmediaobject.html">QMediaObject</a> * const</h3>
 <p>This property holds the media object which provides the video displayed by a widget.</p>
 <p><b>Access functions:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMediaObject * </td><td class="memItemRight" valign="bottom"><b>mediaObject</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMediaObject</b> ( QMediaObject * <i>object</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaObject * </td><td class="memItemRight" valign="bottom"><b>mediaObject</b> () const</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QVideoWidget/saturation"></a>
 <a name="//apple_ref/cpp/instm/QVideoWidget/setSaturation"></a>
@@ -275,6 +277,9 @@
 <h3 class="fn"><a name="saturationChanged"></a>void QVideoWidget::saturationChanged ( int <i>saturation</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signals that a video widgets's <i>saturation</i> has changed.</p>
 <p>See also <a href="qvideowidget.html#saturation-prop">saturation</a>.</p>
+<a name="//apple_ref/cpp/instm/QVideoWidget/setMediaObject"></a>
+<h3 class="fn"><a name="setMediaObject"></a>bool QVideoWidget::setMediaObject ( <a href="qmediaobject.html">QMediaObject</a> * <i>object</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
+<p>See also <a href="qvideowidget.html#mediaObject-prop">mediaObject</a>().</p>
 <a name="//apple_ref/cpp/instm/QVideoWidget/showEvent"></a>
 <h3 class="fn"><a name="showEvent"></a>void QVideoWidget::showEvent ( <a href="http://qt.nokia.com/doc/4.6/qshowevent.html">QShowEvent</a> * <i>event</i> )&nbsp;&nbsp;<tt> [virtual protected]</tt></h3>
 <p>Reimplemented from <a href="http://qt.nokia.com/doc/4.6/qwidget.html#showEvent">QWidget::showEvent</a>().</p>

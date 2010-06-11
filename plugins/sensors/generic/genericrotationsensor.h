@@ -52,7 +52,7 @@ QTM_USE_NAMESPACE
 class genericrotationsensor : public QSensorBackend, public QSensorFilter
 {
 public:
-    static const char *id;
+    static char const * const id;
 
     genericrotationsensor(QSensor *sensor);
 
