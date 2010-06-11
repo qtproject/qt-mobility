@@ -83,11 +83,6 @@
   \value MatchEndsWith The search term matches the end of the item
   \value MatchFixedString Performs string-based matching. String-based comparisons are case-insensitive unless the \c MatchCaseSensitive flag is also specified
   \value MatchCaseSensitive The search is case sensitive
-  \value MatchPhoneNumber The search term is considered to be in the form of a phone number, and special processing (removing dialing prefixes, non significant
-         characters like '-'. ')' etc). may be performed when matching the item.
-  \value MatchKeypadCollation The search term is in the form of text entered by a numeric phone keypad (such as ITU-T E.161 compliant keypads).  Each digit in the
-         search term can represent a number of alphanumeric symbols.  For example, the search string "43556" would match items "HELLO", "GEKKO", "HELL6" and "43556" among others.
-         Accented characters and other punctuation characters may additionally be matched by the QOrganizerItemManager in a way consistent with the platform.
  */
 
 /*!

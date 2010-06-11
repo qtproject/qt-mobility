@@ -89,9 +89,7 @@ public:
         MatchStartsWith = Qt::MatchStartsWith,  // 2
         MatchEndsWith = Qt::MatchEndsWith, // 3
         MatchFixedString = Qt::MatchFixedString, // 8
-        MatchCaseSensitive = Qt::MatchCaseSensitive, // 16
-        MatchPhoneNumber = 1024,
-        MatchKeypadCollation = 2048
+        MatchCaseSensitive = Qt::MatchCaseSensitive // 16
     };
     Q_DECLARE_FLAGS(MatchFlags, MatchFlag)
 
