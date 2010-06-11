@@ -64,6 +64,7 @@
 #include <bttypes.h>
 #include <etel3rdparty.h>
 #include <aknkeylock.h>
+#define RD_STARTUP_CHANGE
 #include <startupdomainpskeys.h>
 
 QTM_BEGIN_NAMESPACE
