@@ -429,14 +429,6 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     return QOrganizerItem();
 }
 
-bool QOrganizerItemMaemo5Engine::saveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error)
-{
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
-    int calError =  doSaveItem( cal, item, error, true );
-    cleanupCal( cal );
-    return ( calError == CALENDAR_OPERATION_SUCCESSFUL && *error == QOrganizerItemManager::NoError );
-}
-
 bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     // TODO: Add changeset manipulation and signal emissions
@@ -447,9 +439,11 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
 
     for( int i = 0; i < items->size(); ++i) {
         QOrganizerItem curr = items->at(i);
-        int calError = doSaveItem( cal, &curr, error, false );
+        int calError = doSaveItem( cal, &curr, error );
+        items->replace(i, curr );
 
         if ( calError != CALENDAR_OPERATION_SUCCESSFUL || *error != QOrganizerItemManager::NoError ) {
+            //qDebug() << "ERROR!";
             success = false;
             if ( errorMap ) {
                 if ( *error != QOrganizerItemManager::NoError )
@@ -695,9 +689,10 @@ QStringList QOrganizerItemMaemo5Engine::supportedItemTypes() const
     return ret;
 }
 
-int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item, QOrganizerItemManager::Error* error, bool emitSignals)
+int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item, QOrganizerItemManager::Error* error)
 {
     // TODO: Add signal emissions
+    // TODO: Or might be better not to implement emissions here?
 
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     *error = QOrganizerItemManager::InvalidItemTypeError;
