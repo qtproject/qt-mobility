@@ -93,7 +93,7 @@ class Q_SENSORS_EXPORT QSensor : public QObject
     Q_PROPERTY(int dataRate READ dataRate WRITE setDataRate)
     Q_PROPERTY(QSensorReading* reading READ reading NOTIFY readingChanged)
     Q_PROPERTY(bool busy READ isBusy)
-    Q_PROPERTY(bool active READ isActive WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(bool active READ isActive)
     Q_PROPERTY(QtMobility::qoutputrangelist outputRanges READ outputRanges)
     Q_PROPERTY(int outputRange READ outputRange WRITE setOutputRange)
     Q_PROPERTY(QString description READ description)
@@ -111,8 +111,6 @@ public:
     bool isConnectedToBackend() const;
 
     bool isBusy() const;
-
-    void setActive(bool active);
     bool isActive() const;
 
     qrangelist availableDataRates() const;
@@ -148,7 +146,6 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void busyChanged();
-    void activeChanged();
     void readingChanged();
     void sensorError(int error);
 
