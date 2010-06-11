@@ -93,6 +93,10 @@ public:
 Q_SIGNALS:
     void finished(QGalleryTrackerMetaDataEdit *edit);
 
+public Q_SLOTS:
+    void itemsInserted(int index, int count);
+    void itemsRemoved(int index, int count);
+
 private Q_SLOTS:
     void watcherFinished(QDBusPendingCallWatcher *watcher);
 

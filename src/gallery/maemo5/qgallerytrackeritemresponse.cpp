@@ -136,6 +136,9 @@ void QGalleryTrackerItemResponse::setMetaData(int index, int key, const QVariant
         connect(edit, SIGNAL(finished(QGalleryTrackerMetaDataEdit*)),
                 this, SLOT(_q_editFinished(QGalleryTrackerMetaDataEdit*)));
 
+        connect(this, SIGNAL(inserted(int,int)), edit, SLOT(itemsInserted(int,int)));
+        connect(this, SIGNAL(removed(int,int)), edit, SLOT(itemsRemoved(int,int)));
+
         if (d->edits.isEmpty())
             QCoreApplication::postEvent(this, new QEvent(QEvent::UpdateRequest));
 

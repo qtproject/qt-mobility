@@ -668,6 +668,14 @@ QGalleryItemList::ItemStatus QGalleryTrackerItemList::status(int index) const
 
     ItemStatus status;
 
+    typedef QList<QGalleryTrackerMetaDataEdit *>::const_iterator iterator;
+    for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it) {
+        if ((*it)->index() == index) {
+            status |= Writing;
+            break;
+        }
+    }
+
     if (index < d->rCache.cutoff) {
         if (index >= d->rCache.index)
             return status;
@@ -749,7 +757,11 @@ bool QGalleryTrackerItemList::waitForFinished(int)
         watcher->waitForFinished();
 
         if (watcher->isError()) {
-            // finish
+            progressChanged(2, 2);
+
+            qWarning("DBUS error %s", qPrintable(watcher->error().message()));
+
+            finish(QGalleryAbstractRequest::ConnectionError);
 
             return true;
         } else {
