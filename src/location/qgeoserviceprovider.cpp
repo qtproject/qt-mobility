@@ -95,24 +95,25 @@ QTM_BEGIN_NAMESPACE
 /*!
 \enum QGeoServiceProvider::Error 
 
-Describes an error related to the construction and setup of providers of
-geographic information.
+Describes an error related to the loading and setup of a service provider
+plugin.
 
 \value NoError
 No error has occurred.
 
 \value NotSupportedError
-The
+The plugin does not support this functionality.
 
 \value UnknownParameterError
+The plugin did not recognise one of the parameters it was given.
 
 \value MissingRequiredParameterError
-The service provider
+The plugin did not find one of the parameters it was expecting.
 */
 
 /*!
     Returns a list of names of the available service providers, for use with
-    QGeoServiceProvider::createServiceProvider().
+    the QGeoServiceProvider constructors.
 */
 QStringList QGeoServiceProvider::availableServiceProviders()
 {
@@ -126,8 +127,8 @@ QStringList QGeoServiceProvider::availableServiceProviders()
     If multiple plugins have the same \a providerName, the plugin with the highest
     reported providerVersion() will be used.
 
-    If no plugin was able to be loaded then error() and errorString() will
-    provide details about why this is the case.
+    If no plugin matching \a providerName was able to be loaded then error()
+    and errorString() will provide details about why this is the case.
 */
 QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap<QString, QString> &parameters)
         : d_ptr(new QGeoServiceProviderPrivate())
@@ -140,11 +141,9 @@ QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, const QMap
     Constructs a QGeoServiceProvider whose backend has the name \a providerName
     and version \a providerVersion, using the provided \a parameters.
 
-    If multiple plugins have the same \a providerName, the plugin with the highest
-    reported providerVersion() will be used.
-
-    If no plugin was able to be loaded then error() and errorString() will
-    provide details about why this is the case.
+    If no plugin matching \a providerName and \a providerVersion was able to be
+    loaded then error() and errorString() will provide details about why this
+    is the case.
 */
 QGeoServiceProvider::QGeoServiceProvider(const QString &providerName, int providerVersion, const QMap<QString, QString> &parameters)
         : d_ptr(new QGeoServiceProviderPrivate())
@@ -164,8 +163,7 @@ QGeoServiceProvider::~QGeoServiceProvider()
 }
 
 /*!
-    Returns the QGeoPlacesManager that is responsible for geocoding and
-    string based landmark search operations made available by the service
+    Returns the QGeoPlacesManager made available by the service
     provider.
 
     This function will return 0 if the service provider does not provide
@@ -212,8 +210,7 @@ QGeoPlacesManager* QGeoServiceProvider::placesManager() const
 }
 
 /*!
-    Returns the QGeoMappingManager that is responsible for the mapping
-    operations made available by the service provider.
+    Returns the QGeoMappingManager made available by the service provider.
 
     This function will return 0 if the service provider does not provide
     any mapping services.
@@ -260,8 +257,7 @@ QGeoMappingManager* QGeoServiceProvider::mappingManager() const
 }
 
 /*!
-    Returns the QGeoRoutingManager that is responsible for the geographic
-    routing operations made available by the service provider.
+    Returns the QGeoRoutingManager made available by the service provider.
 
     This function will return 0 if the service provider does not provide
     any geographic routing services.

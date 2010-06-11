@@ -54,20 +54,27 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoMapWidget
-    \brief The QGeoMapWidget class is used to display and manager a user's
-    \interactions with a map.
+    \brief The QGeoMapWidget class is used to display a map and manager the
+    interactions between the user and the map.
     \ingroup maps-mapping
 
     Most of the functionality is provided by QGeoMappingManager, which
     handles most aspects of the display.
 
-    TODO describe link to map objects
+    The map viewport can be panned, the zoom level can be changed and the
+    center coordinate of the viewport can be set explicitly.
+
+    The screenPositionToCoordinate() and coordinateToScreenPoisition()
+    functions can be used to convert between positions on the screen and
+    global coordinates.
+
+    TODO describe map objects
 
     Mouse and keyboard events should be handled by subclassing QGeoMapWidget
     and providing implementations of the event handling functions present in
     QGraphicsWidget.
 
-    TODO link to example
+    TODO example code
 
     DESIGN TODO do we need a signal for when the user pans the map?
 */

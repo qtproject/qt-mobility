@@ -51,7 +51,11 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-impl
 
-    TODO guidance for implementers
+    Implementers must provide a unique combination of providerName() and
+    providerVersion() per plugin.
+
+    The other functions should be overriden if the plugin supports the
+    associated set of functionality.
 */
 
 /*!
@@ -80,60 +84,76 @@ amongst the plugins.
 */
 
 /*!
-\fn QGeoPlacesManagerEngine* QGeoServiceProviderFactory::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
-                                               QGeoServiceProvider::Error *error,
-                                               QString *errorString) const
-
     Returns a QGeoPlacesManagerEngine instance which implements as much of the
     places searching functionality as the service provider supports.
 
-    If \a error is not NULL it should be set to QGeoServiceProvider::NoError on
+    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
 
-    If \a errorString is not NULL it should be set to a string describing any
+    If \a errorString is not 0 it should be set to a string describing any
     error which occurred.
 
-    Returns 0 if QGeoPlacesManager functionality is not supported by this
-    service provider. It is not necessary to set \a error or \a errorString in
-    this case.
+    The default implementation returns 0, which causes a
+    QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-
-/*!
-\fn QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QString> &parameters,
+QGeoPlacesManagerEngine* QGeoServiceProviderFactory::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
+{
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
 
+    return 0;
+}
+
+/*!
     Returns a QGeoMappingManagerEngine instance which implements as much of the
     places searching functionality as the service provider supports.
 
-    If \a error is not NULL it should be set to QGeoServiceProvider::NoError on
+    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
 
-    If \a errorString is not NULL it should be set to a string describing any
+    If \a errorString is not 0 it should be set to a string describing any
     error which occurred.
 
-    Returns 0 if QGeoMappingManager functionality is not supported by this
-    service provider. It is not necessary to set \a error or \a errorString in
-    this case.
+    The default implementation returns 0, which causes a
+    QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
-
-/*!
-\fn QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
+QGeoMappingManagerEngine* QGeoServiceProviderFactory::createMappingManagerEngine(const QMap<QString, QString> &parameters,
                                                QGeoServiceProvider::Error *error,
                                                QString *errorString) const
+{
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
 
+    return 0;
+}
+
+/*!
     Returns a QGeoRoutingManagerEngine instance which implements as much of the
     places searching functionality as the service provider supports.
 
-    If \a error is not NULL it should be set to QGeoServiceProvider::NoError on
+    If \a error is not 0 it should be set to QGeoServiceProvider::NoError on
     success or an appropriate QGeoServiceProvider::Error on failure.
 
-    If \a errorString is not NULL it should be set to a string describing any
+    If \a errorString is not 0 it should be set to a string describing any
     error which occurred.
 
-    Returns 0 if QGeoRoutingManager functionality is not supported by this
-    service provider. It is not necessary to set \a error or \a errorString in
-    this case.
+    The default implementation returns 0, which causes a
+    QGeoServiceProvider::NotSupportedError in QGeoServiceProvider.
 */
+QGeoRoutingManagerEngine* QGeoServiceProviderFactory::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
+                                               QGeoServiceProvider::Error *error,
+                                               QString *errorString) const
+
+{
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
+    return 0;
+}
 
 QTM_END_NAMESPACE

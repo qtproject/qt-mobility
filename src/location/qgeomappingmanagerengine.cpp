@@ -55,6 +55,27 @@ QTM_BEGIN_NAMESPACE
 
     Subclasses of QGeoMappingManagerEngine need to provide an implementations
     of createMapData() and updateMapImage().
+
+    The functions
+    setSupportedMapTypes(const QList<QGeoMapWidget::MapType> &mapTypes),
+    setMinimumZoomLevel(qreal minimumZoom),
+    setMaximumZoomLevel(qreal maximumZoom),
+    setMinimumImageSize(const QSize &minimumSize) and
+    setMaximumImageSize(const QSize &maximumSize) should be used to
+    configure the reported capabilities of the engine.
+
+    It is important that this is done before createMapData(),
+    updateMapImage() or any of the capability reporting functions are used to
+    prevent incorrect or inconsistent behaviour.
+
+    DESIGN NOTES
+
+    There are convinience classes for working with tile based mapping services
+    on the way.  They won't be ready for review until they stabilize.
+
+    A vector based mappin service exists.  Once we get a hold of it, the
+    mapping engine and widget will probably get methods related to tilt and
+    heading, as well as the associated supportsXYZ methods.
 */
 
 /*!

@@ -45,17 +45,29 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
+    \class QGeoMapCircleObject
+    \brief The QGeoMapCircleObject class is a QGeoMapObject used to draw the region
+    within a certain distance of a coordinate.
+    \ingroup maps-mapping-objects
+
+    TODO add pen and brush attributes as per alignment doc
+*/
+
+/*!
+    Constructs a new circle object with the specified \a parent.
 */
 QGeoMapCircleObject::QGeoMapCircleObject(QGeoMapObject *parent)
     : QGeoMapObject(new QGeoMapCircleObjectPrivate(this, parent)) {}
 
 /*!
+    Destroys this circle object.
 */
 QGeoMapCircleObject::~QGeoMapCircleObject()
 {
 }
 
 /*!
+    Sets the center of the circle object to \a center.
 */
 void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 {
@@ -64,6 +76,7 @@ void QGeoMapCircleObject::setCenter(const QGeoCoordinate &center)
 }
 
 /*!
+    Returns the center of the circle object.
 */
 QGeoCoordinate QGeoMapCircleObject::center() const
 {
@@ -72,6 +85,7 @@ QGeoCoordinate QGeoMapCircleObject::center() const
 }
 
 /*!
+    Sets the radius of the circle object to \a radius.
 */
 void QGeoMapCircleObject::setRadius(const QGeoDistance &radius)
 {
@@ -80,6 +94,7 @@ void QGeoMapCircleObject::setRadius(const QGeoDistance &radius)
 }
 
 /*!
+    Returns the radius of the circle object.
 */
 QGeoDistance QGeoMapCircleObject::radius() const
 {

@@ -67,8 +67,9 @@ QTM_BEGIN_NAMESPACE
     coordinateToScreenPosition(const QGeoCoordinate &coordinate) and
     QGeoCoordinate screenPositionToCoordinate(const QPointF &screenPosition).
 
-    There are a number of other virtual methods which can be overridden in
-    order to improve the performance of common mapping operations.
+     The other virtual functions can be overriden.  If the screen position to
+     coordinate tranformations are expensive then overriding these functions
+     may allow optimizations based on caching parts of the geometry information.
  */
 
 /*!

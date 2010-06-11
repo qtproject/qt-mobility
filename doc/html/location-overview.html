@@ -40,10 +40,11 @@
 <li><a href="#maps-and-navigation">Maps and Navigation</a></li>
 <ul><li><a href="#common-classes">Common classes</a></li>
 <li><a href="#mapping">Mapping</a></li>
-<li><a href="#routing">Routing</a></li>
-<ul><li><a href="#places">Places</a></li>
-<li><a href="#implementing-backends">Implementing backends</a></li>
+<ul><li><a href="#map-objects">Map objects</a></li>
 </ul>
+<li><a href="#routing">Routing</a></li>
+<li><a href="#places">Places</a></li>
+<li><a href="#implementing-backends">Implementing backends</a></li>
 </ul>
 </ul>
 <a name="namespace"></a>
@@ -289,6 +290,20 @@
 </table></p>
 <a name="maps-and-navigation"></a>
 <h3>Maps and Navigation</h3>
+<p>The Maps and Navigation API is based on plugins.</p>
+<p>Since most providers of mapping, geocoding and routing information offer no guarantees that their data is interoperable with the data provided by other services, the plugins are used to group the functionality per service provider.</p>
+<p>The plugins are accessed via <a href="qgeoserviceprovider.html">QGeoServiceProvider</a>, and a Nokia based plugin is part of Qt Mobility.</p>
+<pre>        QGeoMappingManager *mappingManager = 0;
+        QGeoRoutingManager *routingManager = 0;
+        QGeoPlacesManager *placesManager = 0;
+
+        QGeoServiceProvider serviceProvider(&quot;nokia&quot;);
+
+        if (serviceProvider.error() == QGeoServiceProvider::NoError) {
+            mappingManager = serviceProvider.mappingManager();
+            routingManager = serviceProvider.routingManager();
+            placesManager = serviceProvider.placesManager();
+        }</pre>
 <a name="common-classes"></a>
 <h4>Common classes</h4>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
@@ -298,14 +313,30 @@
 </table></p>
 <a name="mapping"></a>
 <h4>Mapping</h4>
+<p>The <a href="qgeomapwidget.html">QGeoMapWidget</a> class is the main class used for displaying and interacting with maps. It is designed for use within the Graphics View Framework, and is a subclass of <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
+<p>The <a href="qgeomappingmanager.html">QGeoMappingManager</a> provides most of the functionality required by <a href="qgeomapwidget.html">QGeoMapWidget</a>. The details of <a href="qgeomappingmanager.html">QGeoMappingManager</a> are mostly only important to plugin implementers, as regular users should not need to make use of <a href="qgeomappingmanager.html">QGeoMappingManager</a> outside of the <a href="qgeomapwidget.html">QGeoMapWidget</a> constructor:</p>
+<pre>        QGeoMapWidget *widget = new QGeoMapWidget(mappingManager);</pre>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qgeomapwidget.html">QGeoMapWidget</a></th><td>Used to display a map and manager the interactions between the user and the map</td></tr>
 <tr valign="top" class="even"><th><a href="qgeomappingmanager.html">QGeoMappingManager</a></th><td>Support for displaying and interacting with maps</td></tr>
 </table></p>
+<a name="map-objects"></a>
+<h5>Map objects</h5>
+<p><a href="qgeomapobject.html">QGeoMapObject</a> and its subclasses provide the ability to add graphics to the map specified in terms of coordinates and distances. <a href="qgeomapobject.html">QGeoMapObject</a> instances can also be grouped into heirarchies in order to simplify the process of creating compound objects and managing groups of objects.</p>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+<tr valign="top" class="odd"><th><a href="qgeomapcircleobject.html">QGeoMapCircleObject</a></th><td>QGeoMapObject used to draw the region within a certain distance of a coordinate</td></tr>
+<tr valign="top" class="even"><th><a href="qgeomapobject.html">QGeoMapObject</a></th><td>Graphical item for display in QGeoMapWidget instancse, that is specified in terms of coordinates and distances</td></tr>
+</table></p>
 <a name="routing"></a>
 <h4>Routing</h4>
+<p><a href="qgeoroutingmanager.html">QGeoRoutingManager</a> handles requests for routing information.</p>
+<p>The requests are created as <a href="qgeorouterequest.html">QGeoRouteRequest</a> instances, which are passed to <a href="qgeoroutingmanager.html#calculateRoute">QGeoRoutingManager::calculateRoute</a>(). The returned <a href="qgeoroutereply.html">QGeoRouteReply</a> instance will contain the result of the request when it is completed.</p>
+<p>The <a href="qgeoroute.html">QGeoRoute</a> class describes the resulting route. Each route is broken up into a number of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> instances, with the division usually occurring at either user specified waypoints or at changes in the mode of transport, like when changing from a train to a bus.</p>
+<p>Each <a href="qgeoroutesegment.html">QGeoRouteSegment</a> has a <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> instance which describes the instructions that would be issued to a user attempting to follow a route. These instructions a location, which is typically somewhere near the end of the associated <a href="qgeoroutesegment.html">QGeoRouteSegment</a>, and instruction text describing how the next <a href="qgeoroutesegment.html">QGeoRouteSegment</a> should be reached.</p>
+<p>Several <a href="qgeoroutesegment.html">QGeoRouteSegment</a> subclasses exist and can be used to provide additional data about the segment, like the route number of a bus or the speed limit of a road.</p>
+<p>Similarly, subclasses of <a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a> can be used to access data structures describing the intruction in more detail than the usual instruction text and location.</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
-<tr valign="top" class="odd"><th><a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a></th><td>Represnets a navigation instruction</td></tr>
+<tr valign="top" class="odd"><th><a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a></th><td>Represents a navigation instruction</td></tr>
 <tr valign="top" class="even"><th><a href="qgeoroute.html">QGeoRoute</a></th><td>Represents a route between two points</td></tr>
 <tr valign="top" class="odd"><th><a href="qgeoroutereply.html">QGeoRouteReply</a></th><td>Manages an operation started by an instance of QGeoRoutingManager</td></tr>
 <tr valign="top" class="even"><th><a href="qgeorouterequest.html">QGeoRouteRequest</a></th><td>Represents the parameters and restrictions which define a request for routing information</td></tr>
@@ -313,13 +344,17 @@
 <tr valign="top" class="even"><th><a href="qgeoroutingmanager.html">QGeoRoutingManager</a></th><td>Support for geographic routing operations</td></tr>
 </table></p>
 <a name="places"></a>
-<h5>Places</h5>
+<h4>Places</h4>
+<p><a href="qgeoplacesmanager.html">QGeoPlacesManager</a> handles geocoding, reverse geocoding and free-text search for places.</p>
+<p>The free-text search will attempt to geocode text that looks like an address while simultaneously searching any landmark databases that the service pro. It is even possibly to add additional <a href="qlandmarkmanager.html">QLandmarkManager</a> instances to the soures of data, so that users can search online databases alongside their personal offline landmarks store.</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qgeoplacesmanager.html">QGeoPlacesManager</a></th><td>Support for searching operations related to geographic information</td></tr>
 <tr valign="top" class="even"><th><a href="qgeoplacesreply.html">QGeoPlacesReply</a></th><td>Manages an operation started by an instance of QGeoPlacesManager</td></tr>
 </table></p>
 <a name="implementing-backends"></a>
-<h5>Implementing backends</h5>
+<h4>Implementing backends</h4>
+<p>A plugin implementer needs to subclass <a href="qgeoserviceproviderfactory.html">QGeoServiceProviderFactory</a> and as many of the ManagerEngine classes as they want to provide implementations for.</p>
+<p>Subclassing <a href="qgeoserviceproviderfactory.html">QGeoServiceProviderFactory</a> will only involve exposing a name and a version by overriding <a href="qgeoserviceproviderfactory.html#providerName">QGeoServiceProviderFactory::providerName</a>() and <a href="qgeoserviceproviderfactory.html#providerVersion">QGeoServiceProviderFactory::providerVersion</a>(), and overriding <a href="qgeoserviceproviderfactory.html#createPlacesManagerEngine">QGeoServiceProviderFactory::createPlacesManagerEngine</a>(), <a href="qgeoserviceproviderfactory.html#createMappingManagerEngine">QGeoServiceProviderFactory::createMappingManagerEngine</a>() and <a href="qgeoserviceproviderfactory.html#createRoutingManagerEngine">QGeoServiceProviderFactory::createRoutingManagerEngine</a>() as appropriate.</p>
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qgeomapdata.html">QGeoMapData</a></th><td>Are used as a bridge between QGeoMapWidget and QGeoMappingManager</td></tr>
 <tr valign="top" class="even"><th><a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a></th><td>Interface and convenience methods to implementors of QGeoServiceProvider plugins who want to provides support for displaying and interacting with maps</td></tr>

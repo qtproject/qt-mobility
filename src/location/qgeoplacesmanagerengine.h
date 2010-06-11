@@ -75,7 +75,6 @@ public:
                                           QGeoPlacesManager::SearchTypes searchTypes,
                                           const QGeoBoundingBox &bounds);
 
-    bool supportsViewportBiasing() const;
     bool supportsGeocoding() const;
     QGeoPlacesManager::SearchTypes supportedSearchTypes() const;
 
@@ -91,7 +90,6 @@ signals:
 
 protected:
     void setDefaultLandmarkManager(QLandmarkManager *landmarkManager);
-    void setSupportsViewportBiasing(bool supported);
     void setSupportsGeocoding(bool supported);
     void setSupportedSearchTypes(QGeoPlacesManager::SearchTypes searchTypes);
 

@@ -112,9 +112,11 @@
 <h2>Detailed Description</h2>
 <p>The QGeoMapWidget class is used to display a map and manager the interactions between the user and the map.</p>
 <p>Most of the functionality is provided by <a href="qgeomappingmanager.html">QGeoMappingManager</a>, which handles most aspects of the display.</p>
-<p>TODO describe link to map objects</p>
+<p>The map viewport can be panned, the zoom level can be changed and the center coordinate of the viewport can be set explicitly.</p>
+<p>The <a href="qgeomapwidget.html#screenPositionToCoordinate">screenPositionToCoordinate</a>() and coordinateToScreenPoisition() functions can be used to convert between positions on the screen and global coordinates.</p>
+<p>TODO describe map objects</p>
 <p>Mouse and keyboard events should be handled by subclassing QGeoMapWidget and providing implementations of the event handling functions present in <a href="http://qt.nokia.com/doc/4.6/qgraphicswidget.html">QGraphicsWidget</a>.</p>
-<p>TODO link to example</p>
+<p>TODO example code</p>
 <p>DESIGN TODO do we need a signal for when the user pans the map?</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -147,7 +149,7 @@
 <h3 class="fn"><a name="dtor.QGeoMapWidget"></a>QGeoMapWidget::~QGeoMapWidget ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys this map widget.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/addMapObject"></a>
-<h3 class="fn"><a name="addMapObject"></a>void QGeoMapWidget::addMapObject ( QGeoMapObject * <i>mapObject</i> )</h3>
+<h3 class="fn"><a name="addMapObject"></a>void QGeoMapWidget::addMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3>
 <p>Adds <i>mapObject</i> to the list of map objects managed by this widget.</p>
 <p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#isVisible">QGeoMapObject::isVisible</a>() returns true then the map will display the map object immediately.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/center"></a>
@@ -163,13 +165,13 @@
 <p>Returns the position on the screen at which <i>coordinate</i> is displayed.</p>
 <p>An invalid <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> will be returned if <i>coordinate</i> is invalid or is not within the current viewport.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/mapObjects"></a>
-<h3 class="fn"><a name="mapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::mapObjects ()</h3>
+<h3 class="fn"><a name="mapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjects ()</h3>
 <p>Returns the list of map objects managed by this widget.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/mapObjectsAtScreenPosition"></a>
-<h3 class="fn"><a name="mapObjectsAtScreenPosition"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::mapObjectsAtScreenPosition ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>screenPosition</i> )</h3>
+<h3 class="fn"><a name="mapObjectsAtScreenPosition"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjectsAtScreenPosition ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>screenPosition</i> )</h3>
 <p>Returns the list of map objects managed by this widget which are visible and contain the point <i>screenPosition</i> within their boundaries.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/mapObjectsInScreenRect"></a>
-<h3 class="fn"><a name="mapObjectsInScreenRect"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::mapObjectsInScreenRect ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>screenRect</i> )</h3>
+<h3 class="fn"><a name="mapObjectsInScreenRect"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::mapObjectsInScreenRect ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>screenRect</i> )</h3>
 <p>Returns the list of map objects managed by this widget which are visible and which are displayed at least partially within the on screen rectangle <i>screenRect</i>.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/mapType"></a>
 <h3 class="fn"><a name="mapType"></a><a href="qgeomapwidget.html#MapType-enum">MapType</a> QGeoMapWidget::mapType () const</h3>
@@ -194,7 +196,7 @@
 <p>Pans the map view <i>dx</i> pixels in the x direction and <i>dy</i> pixels in they y direction.</p>
 <p>The x and y axes are specified in Graphics View Framework coordinates. By default this will mean that positive values of <i>dx</i> move the viewed area to the right and that positive values of <i>dy</i> move the viewed area down.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/removeMapObject"></a>
-<h3 class="fn"><a name="removeMapObject"></a>void QGeoMapWidget::removeMapObject ( QGeoMapObject * <i>mapObject</i> )</h3>
+<h3 class="fn"><a name="removeMapObject"></a>void QGeoMapWidget::removeMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )</h3>
 <p>Removes <i>mapObject</i> from the list of map objects managed by this widget.</p>
 <p>If <i>mapObject</i> is within the viewport of the map and <a href="qgeomapobject.html#isVisible">QGeoMapObject::isVisible</a>() returns true then the map will stop displaying the map object immediately.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/resizeEvent"></a>
@@ -226,7 +228,7 @@
 <h3 class="fn"><a name="supportedMapTypes"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapwidget.html#MapType-enum">MapType</a>&gt; QGeoMapWidget::supportedMapTypes () const</h3>
 <p>Returns the map types supported by the <a href="qgeomappingmanager.html">QGeoMappingManager</a> associated with this widget.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/visibleMapObjects"></a>
-<h3 class="fn"><a name="visibleMapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;QGeoMapObject *&gt; QGeoMapWidget::visibleMapObjects ()</h3>
+<h3 class="fn"><a name="visibleMapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapWidget::visibleMapObjects ()</h3>
 <p>Returns the list of map objects managed by this widget which are currently visible and at least partially within the viewport of the map.</p>
 <a name="//apple_ref/cpp/instm/QGeoMapWidget/zoomLevel"></a>
 <h3 class="fn"><a name="zoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapWidget::zoomLevel () const</h3>

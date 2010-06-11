@@ -45,17 +45,38 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-        enum Type {
-            ContainerType,
-            RectangleType,
-            CircleType,
-            PolylineType,
-            PolygonType,
-            MarkerType,
-        };
+    \class QGeoMapObject
+    \brief The QGeoMapObject class is graphical item for display in
+    QGeoMapWidget instancse, that is specified in terms of coordinates and
+    distances.
+    \ingroup maps-mapping-objects
+
+    QGeoMapObject instances can also be grouped into heirarchies in order to
+    simplify the process of creating compound objects and managing groups of
+    objects.
 */
 
 /*!
+    \enum QGeoMapObject::Type
+
+    Describes the type of a map object.
+
+    \value ContainerType
+        A basic QGeoMapObject.
+    \value RectangleType
+        A QGeoMapObject used to display a rectangular region.
+    \value CircleType
+        A QGeoMapObject used to display a circular region.
+    \value PolylineType
+        A QGeoMapObject used to display a multi-segment line.
+    \value PolygonType
+        A QGeoMapObject used to display a polygonal region.
+    \value MarkerType
+        A QGeoMapObject used to display a map marker.
+*/
+
+/*!
+    Constructs a new map object with the specified \a parent.
 */
 QGeoMapObject::QGeoMapObject(QGeoMapObject *parent)
     : d_ptr(new QGeoMapObjectPrivate(this, parent)) {}
@@ -64,6 +85,7 @@ QGeoMapObject::QGeoMapObject(QGeoMapObjectPrivate *dd)
     : d_ptr(dd) {}
 
 /*!
+    Destroys this map object.
 */
 QGeoMapObject::~QGeoMapObject()
 {
@@ -72,6 +94,7 @@ QGeoMapObject::~QGeoMapObject()
 }
 
 /*!
+    Returns the type of this map object.
 */
 QGeoMapObject::Type QGeoMapObject::type() const
 {
@@ -80,6 +103,9 @@ QGeoMapObject::Type QGeoMapObject::type() const
 }
 
 /*!
+    Sets the z-value of this map object to \a zValue.
+
+    TODO describe the z-value semantics - see QGraphicsItem in the meantime
 */
 void QGeoMapObject::setZValue(int zValue)
 {
@@ -88,6 +114,9 @@ void QGeoMapObject::setZValue(int zValue)
 }
 
 /*!
+    Returns the z-value of this map object.
+
+    TODO describe the z-value semantics - see QGraphicsItem in the meantime
 */
 int QGeoMapObject::zValue() const
 {
@@ -96,6 +125,10 @@ int QGeoMapObject::zValue() const
 }
 
 /*!
+    Sets whether this map object is \a visible.
+
+    If this map object is not visible then none of the childObjects() will
+    be displayed either.
 */
 void QGeoMapObject::setVisible(bool visible)
 {
@@ -104,6 +137,10 @@ void QGeoMapObject::setVisible(bool visible)
 }
 
 /*!
+    Returns whether this map object is visible.
+
+    If this map object is not visible then none of the childObjects() will
+    be displayed either.
 */
 bool QGeoMapObject::isVisible() const
 {
@@ -112,6 +149,10 @@ bool QGeoMapObject::isVisible() const
 }
 
 /*!
+    Returns a bounding box which contains this map object.
+
+    If this map object has children, the bounding box will be large
+    enough to contain both this map object and all of its children.
 */
 QGeoBoundingBox QGeoMapObject::boundingBox() const
 {
@@ -131,6 +172,12 @@ QGeoBoundingBox QGeoMapObject::boundingBox() const
 }
 
 /*!
+    Returns whether \a coordinate is contained with the boundary of this
+    map object.
+
+    If this map object has children, this function will return whether
+    \a coordinate is contained within the boundary of this map object or
+    within the boundary of any of its children.
 */
 bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 {
@@ -147,6 +194,9 @@ bool QGeoMapObject::contains(const QGeoCoordinate &coordinate) const
 }
 
 /*!
+    Returns the parent of this map object.
+
+    Returns 0 if this map object has no parent.
 */
 QGeoMapObject* QGeoMapObject::parentObject() const
 {
@@ -155,6 +205,9 @@ QGeoMapObject* QGeoMapObject::parentObject() const
 }
 
 /*!
+    Adds \a childObject to the list of children of this map object.
+
+    If \a childObject is 0 it will not be added.
 */
 void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 {
@@ -167,6 +220,10 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 }
 
 /*!
+    Removes \a childObject from the list of children of this map object.
+
+    This method does nothing if \a childObject is not contained in this
+    map objects list of children.
 */
 void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
 {
@@ -176,6 +233,7 @@ void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
 }
 
 /*!
+    Returns the children of this map object.
 */
 QList<QGeoMapObject*> QGeoMapObject::childObjects() const
 {

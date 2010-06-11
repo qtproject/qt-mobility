@@ -53,19 +53,90 @@ QTM_BEGIN_NAMESPACE
 
     \ingroup maps-routing
 
-    The calculateRoute() and updateRoute() methods return QGeoRouteReply
+    The calculateRoute() and updateRoute() methods function QGeoRouteReply
     objects, which manage these operations and report on the result of the
     operations and any errors which may have occurred.
 
-    The QGeoRoutingManager class also contains functions which provide
-    information on the capabilities and features supported by
-    QGeoRoutingManager instances. Those who write subclasses of
-    QGeoRoutingManager should take care to make sure that this capability
-    information is set up correctly, otherwise clients may be denied access to
-    functionality they would otherwise expect.
+    The calculateRoute() function is used to find a route (or routes) that
+    follows a set of waypoints and matches various other criteria.  The
+    QGeoRouteRequest class is used to specify this information.
+
+    If supportsRouteUpdates() returns true then the QGeoRoutingManager
+    supports updating route information based on position updates.  This
+    will cause the travel time and distance estimates to be updated, and
+    any QGeoRouteSegments already traversed to be removed from the route.
+
+    The updates can be triggered with the updateRoute() function, which makes
+    use of the QGeoPositionInfo instances emitted as position updates by
+    QGeoPositionInfoSource.
 
     Instances of QGeoRoutingManager can be accessed with
     QGeoServiceProvider::routingManager().
+
+    A small example of the usage of QGeoRoutingManager and QGeoRouteRequests
+    follows:
+
+    \code
+class MyRouteHandler : public QObject
+{
+    Q_OBJECT
+public:
+    MyRouteHandler(QGeoRoutingManager *routingManager,
+                   const QGeoCoordinate &origin,
+                   const QGeoCoordinate &destination) {
+
+        QGeoRouteRequest request(origin, destination);
+
+        // The request defaults to the fastest route by car, which is
+        // equivalent to:
+        // request.setTravelMode(QGeoRouteRequest::CarTravel);
+        // request.setRouteOptimization(QGeoRouteRequest::FastestRoute);
+
+        request.setAvoidFeatureTypes(QGeoRouteRequest::AvoidTolls);
+        request.setAvoidFeatureTypes(QGeoRouteRequest::AvoidMotorPoolLanes);
+
+        QGeoRouteRequest::AvoidFeaturesTypes avoidableFeatures = routingManager->supportedAvoidFeatureTypes();
+
+        if (!(avoidableFeatures & request.avoidFeatureTypes())) {
+            // ... inform the user that the routing manager does not
+            // provide support for avoiding tolls and/or motor pool lanes ...
+            return;
+        }
+
+        QGeoRouteReply *reply = routingManager->calculateRoute(request);
+
+        connect(routingManager,
+                SIGNAL(finished(QGeoRouteReply*)),
+                this,
+                SLOT(routeCalculated(QGeoRouteReply*)));
+
+        connect(routingManager,
+                SIGNAL(error(QGeoRouteReply*,QGeoRouteReply::Error,QString)),
+                this,
+                SLOT(routeError(QGeoRouteReply*,QGeoRouteReply::Error,QString)));
+    }
+
+private slots:
+    void routeCalculated(QGeoRouteReply *reply)
+    {
+        // A route request can ask for several alternative routes ...
+        if (reply->routes().size() != 0) {
+
+            // ... but by default it will only get a single route
+            QGeoRoute route = reply->routes().at(0);
+
+            //... now we have to make use of the route ...
+        }
+
+        reply->deleteLater();
+    }
+
+    void routeError(QGeoRouteReply *reply, QGeoRouteReply:Error error, const QString &errorString)
+    {
+        // ... inform the user that an error has occurred ...
+    }
+};
+    \endcode
 */
 
 /*!
@@ -193,7 +264,7 @@ QGeoRouteReply* QGeoRoutingManager::calculateRoute(const QGeoRouteRequest& reque
     retrieve the updated route.
 
     The returned route could be entirely different to the original route,
-    especially if \a position is far enough away from the initial route.
+    especially if \a position is far away from the initial route.
     Otherwise the route will be similar, although the remaining time and
     distance will be updated and any segments of the original route which
     have been traversed will be removed.

@@ -48,7 +48,7 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QGeoNavigationInstruction
-    \brief The QGeoNavigationInstruction class represnets a navigation instruction.
+    \brief The QGeoNavigationInstruction class represents a navigation instruction.
     \ingroup maps-routing
 
     A QGeoNavigationInstruction instance has a position at which the

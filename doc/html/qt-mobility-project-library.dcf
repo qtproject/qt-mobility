@@ -1248,6 +1248,14 @@
         <keyword ref="qgeodistance.html#operator-eq">operator=</keyword>
         <section ref="qgeodistance-members.html" title="List of all members"/>
     </section>
+    <section ref="qgeomapcircleobject.html" title="QGeoMapCircleObject Class Reference">
+        <keyword ref="qgeomapcircleobject.html">QGeoMapCircleObject</keyword>
+        <keyword ref="qgeomapcircleobject.html#center">center</keyword>
+        <keyword ref="qgeomapcircleobject.html#radius">radius</keyword>
+        <keyword ref="qgeomapcircleobject.html#setCenter">setCenter</keyword>
+        <keyword ref="qgeomapcircleobject.html#setRadius">setRadius</keyword>
+        <section ref="qgeomapcircleobject-members.html" title="List of all members"/>
+    </section>
     <section ref="qgeomapdata.html" title="QGeoMapData Class Reference">
         <keyword ref="qgeomapdata.html">QGeoMapData</keyword>
         <keyword ref="qgeomapdata.html#addMapObject">addMapObject</keyword>
@@ -1275,6 +1283,28 @@
         <keyword ref="qgeomapdata.html#widget">widget</keyword>
         <keyword ref="qgeomapdata.html#zoomLevel">zoomLevel</keyword>
         <section ref="qgeomapdata-members.html" title="List of all members"/>
+    </section>
+    <section ref="qgeomapobject.html" title="QGeoMapObject Class Reference">
+        <keyword ref="qgeomapobject.html">QGeoMapObject</keyword>
+        <keyword ref="qgeomapobject.html#Type-enum">Type</keyword>
+        <keyword ref="qgeomapobject.html#Type-enum">QGeoMapObject::PolylineType</keyword>
+        <keyword ref="qgeomapobject.html#Type-enum">QGeoMapObject::RectangleType</keyword>
+        <keyword ref="qgeomapobject.html#Type-enum">QGeoMapObject::MarkerType</keyword>
+        <keyword ref="qgeomapobject.html#Type-enum">QGeoMapObject::PolygonType</keyword>
+        <keyword ref="qgeomapobject.html#Type-enum">QGeoMapObject::ContainerType</keyword>
+        <keyword ref="qgeomapobject.html#Type-enum">QGeoMapObject::CircleType</keyword>
+        <keyword ref="qgeomapobject.html#addChildObject">addChildObject</keyword>
+        <keyword ref="qgeomapobject.html#boundingBox">boundingBox</keyword>
+        <keyword ref="qgeomapobject.html#childObjects">childObjects</keyword>
+        <keyword ref="qgeomapobject.html#contains">contains</keyword>
+        <keyword ref="qgeomapobject.html#isVisible">isVisible</keyword>
+        <keyword ref="qgeomapobject.html#parentObject">parentObject</keyword>
+        <keyword ref="qgeomapobject.html#removeChildObject">removeChildObject</keyword>
+        <keyword ref="qgeomapobject.html#setVisible">setVisible</keyword>
+        <keyword ref="qgeomapobject.html#setZValue">setZValue</keyword>
+        <keyword ref="qgeomapobject.html#type">type</keyword>
+        <keyword ref="qgeomapobject.html#zValue">zValue</keyword>
+        <section ref="qgeomapobject-members.html" title="List of all members"/>
     </section>
     <section ref="qgeomappingmanager.html" title="QGeoMappingManager Class Reference">
         <keyword ref="qgeomappingmanager.html">QGeoMappingManager</keyword>
@@ -1401,7 +1431,6 @@
         <keyword ref="qgeoplacesmanager.html#setAdditionalLandmarkManagers">setAdditionalLandmarkManagers</keyword>
         <keyword ref="qgeoplacesmanager.html#supportedSearchTypes">supportedSearchTypes</keyword>
         <keyword ref="qgeoplacesmanager.html#supportsGeocoding">supportsGeocoding</keyword>
-        <keyword ref="qgeoplacesmanager.html#supportsViewportBiasing">supportsViewportBiasing</keyword>
         <section ref="qgeoplacesmanager-members.html" title="List of all members"/>
     </section>
     <section ref="qgeoplacesmanagerengine.html" title="QGeoPlacesManagerEngine Class Reference">
@@ -1420,10 +1449,8 @@
         <keyword ref="qgeoplacesmanagerengine.html#setDefaultLandmarkManager">setDefaultLandmarkManager</keyword>
         <keyword ref="qgeoplacesmanagerengine.html#setSupportedSearchTypes">setSupportedSearchTypes</keyword>
         <keyword ref="qgeoplacesmanagerengine.html#setSupportsGeocoding">setSupportsGeocoding</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#setSupportsViewportBiasing">setSupportsViewportBiasing</keyword>
         <keyword ref="qgeoplacesmanagerengine.html#supportedSearchTypes">supportedSearchTypes</keyword>
         <keyword ref="qgeoplacesmanagerengine.html#supportsGeocoding">supportsGeocoding</keyword>
-        <keyword ref="qgeoplacesmanagerengine.html#supportsViewportBiasing">supportsViewportBiasing</keyword>
         <section ref="qgeoplacesmanagerengine-members.html" title="List of all members"/>
     </section>
     <section ref="qgeoplacesreply.html" title="QGeoPlacesReply Class Reference">
@@ -1497,6 +1524,7 @@
     <section ref="qgeoroute.html" title="QGeoRoute Class Reference">
         <keyword ref="qgeoroute.html">QGeoRoute</keyword>
         <keyword ref="qgeoroute.html#appendRouteSegment">appendRouteSegment</keyword>
+        <keyword ref="qgeoroute.html#avoidFeatureTypes">avoidFeatureTypes</keyword>
         <keyword ref="qgeoroute.html#bounds">bounds</keyword>
         <keyword ref="qgeoroute.html#distance">distance</keyword>
         <keyword ref="qgeoroute.html#optimization">optimization</keyword>
@@ -1505,6 +1533,7 @@
         <keyword ref="qgeoroute.html#request">request</keyword>
         <keyword ref="qgeoroute.html#routeId">routeId</keyword>
         <keyword ref="qgeoroute.html#routeSegments">routeSegments</keyword>
+        <keyword ref="qgeoroute.html#setAvoidFeatureTypes">setAvoidFeatureTypes</keyword>
         <keyword ref="qgeoroute.html#setBounds">setBounds</keyword>
         <keyword ref="qgeoroute.html#setDistance">setDistance</keyword>
         <keyword ref="qgeoroute.html#setOptimization">setOptimization</keyword>

@@ -68,7 +68,6 @@ QGeoPlacesManagerEngineNokia::QGeoPlacesManagerEngineNokia(const QMap<QString, Q
     }
 
     setSupportsGeocoding(true);
-    setSupportsViewportBiasing(false);
 
     QGeoPlacesManager::SearchTypes supportedSearchTypes;
     supportedSearchTypes |= QGeoPlacesManager::SearchGeocode;

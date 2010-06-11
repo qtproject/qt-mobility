@@ -55,6 +55,8 @@
 <p>The QGeoPlace class represents basic information about a place.</p>
 <p>A QGeoPlace contains a coordinate and the corresponding address, along with an optional bounding box describing the minimum viewport necessary to display the entirety of the place.</p>
 <p>The subclasses of QGeoPlace can provide further place information. It is possible to convert instance of QGeoPlace subclasses to and from QGeoPlace instances.</p>
+<p>DESIGN NOTE</p>
+<p>The <a href="qgeoplace.html#type">type</a>() method and <a href="qgeoplace.html#PlaceType-enum">PlaceType</a> enum could be made protected, and a public bool isLandmark() method could be provided in their place, in order to simplify the conversion from QGeoPlace to <a href="qlandmark.html">QLandmark</a> for the user.</p>
 <p>See also <a href="qgeoplace.html#type">type</a>().</p>
 <hr />
 <h2>Member Type Documentation</h2>
