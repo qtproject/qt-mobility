@@ -162,15 +162,21 @@ public:
 
 private:
     // conversion functions
-    QOrganizerEvent convertCEventToQEvent(CEvent* cevent, const QString& calendarName) const;
+    QOrganizerEvent convertCEventToQEvent(CEvent* cevent) const;
     QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const;
-    QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo, const QString& calendarName) const;
+    QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo) const;
     QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
-    QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal, const QString& calendarName) const;
+    QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal ) const;
 
     CEvent* convertQEventToCEvent(const QOrganizerEvent& event) const;
     CTodo* convertQTodoToCTodo(const QOrganizerTodo& todo) const;
     CJournal* convertQJournalToCJournal(const QOrganizerJournal& journal) const;
+
+    // error code conversion
+    QOrganizerItemManager::Error calErrorToManagerError( int calError ) const;
+
+    // calendar instance deletion helper
+    void cleanupCal( CCalendar* cal ) const;
 
     // ctor
     QOrganizerItemMaemo5Engine();
