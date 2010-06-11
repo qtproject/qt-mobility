@@ -504,7 +504,7 @@ void QVersitOrganizerImporterPrivate::parseRecurFragment(const QString& key, con
     } else if (key == QLatin1String("BYSETPOS")) {
         QList<int> poss = parseIntList(value, -366, 366);
         if (!poss.isEmpty()) {
-            rule->setPosition(poss);
+            rule->setPositions(poss);
         }
     } else if (key == QLatin1String("WKST")) {
         int day = parseDayOfWeek(value);

@@ -424,7 +424,7 @@ void tst_QVersitOrganizerExporter::testExportEventDetails_data()
         recurrenceRule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
         recurrenceRule.setDaysOfWeek(QList<Qt::DayOfWeek>()
                 << Qt::Monday << Qt::Tuesday << Qt::Wednesday << Qt::Thursday << Qt::Friday);
-        recurrenceRule.setPosition(QList<int>() << -1);
+        recurrenceRule.setPositions(QList<int>() << -1);
         recurrence.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
         QTest::newRow("rrule bysetpos")
             << (QList<QOrganizerItemDetail>() << recurrence)

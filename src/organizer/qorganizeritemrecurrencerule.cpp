@@ -248,7 +248,7 @@ QList<int> QOrganizerItemRecurrenceRule::weeksOfYear() const
 // of every month.
 // All other criteria are applied first, then for each time period as specified by frequency,
 // dates are selected via the 1-based indices specified by position.
-void QOrganizerItemRecurrenceRule::setPosition(const QList<int>& pos)
+void QOrganizerItemRecurrenceRule::setPositions(const QList<int>& pos)
 {
     QVariantList saveList;
     for (int i = 0; i < pos.size(); ++i) {
@@ -257,7 +257,7 @@ void QOrganizerItemRecurrenceRule::setPosition(const QList<int>& pos)
     d->m_variantValues.insert(FieldPosition, saveList);
 }
 
-QList<int> QOrganizerItemRecurrenceRule::position() const
+QList<int> QOrganizerItemRecurrenceRule::positions() const
 {
     QList<int> retn;
     QVariantList loadList = d->m_variantValues.value(FieldPosition).toList();
@@ -304,7 +304,7 @@ QOrganizerItemRecurrenceRule QOrganizerItemRecurrenceRule::fromVariantValues(con
     ret.setFrequency(converter.frequency());
     ret.setInterval(converter.interval());
     ret.setMonths(converter.months());
-    ret.setPosition(converter.position());
+    ret.setPositions(converter.positions());
     ret.setStartDate(converter.startDate());
     ret.setWeeksOfYear(converter.weeksOfYear());
     ret.setWeekStart(converter.weekStart());

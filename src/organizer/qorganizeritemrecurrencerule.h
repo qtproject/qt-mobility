@@ -200,8 +200,8 @@ public:
     // of every month.
     // All other criteria are applied first, then for each time period as specified by frequency,
     // dates are selected via the 1-based indices specified by position.
-    void setPosition(const QList<int>& pos);
-    QList<int> position() const;
+    void setPositions(const QList<int>& pos);
+    QList<int> positions() const;
 
     // Default: Monday
     // sets the day that the week starts on (significant for Weekly with interval > 1, and for weekOfYear)

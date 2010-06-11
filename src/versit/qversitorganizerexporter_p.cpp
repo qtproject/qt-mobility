@@ -309,9 +309,9 @@ void QVersitOrganizerExporterPrivate::encodeRecurRule(
             value.append(QString::number(month));
         }
     }
-    if (!rule.position().isEmpty()) {
+    if (!rule.positions().isEmpty()) {
         value.append(QLatin1String(";BYSETPOS="));
-        appendIntList(&value, rule.position());
+        appendIntList(&value, rule.positions());
     }
     if (rule.weekStart() != Qt::Monday && rule.weekStart() > 0) {
         value.append(QLatin1String(";WKST="));
