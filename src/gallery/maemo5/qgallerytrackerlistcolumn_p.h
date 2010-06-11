@@ -102,9 +102,20 @@ protected:
 class QGalleryTrackerStringColumn : public QGalleryTrackerValueColumn
 {
 public:
-    virtual ~QGalleryTrackerStringColumn() {}
-
     QVariant toVariant(const QString &string) const;
+};
+
+class QGalleryTrackerStringListColumn : public QGalleryTrackerValueColumn
+{
+public:
+    QGalleryTrackerStringListColumn()
+        : m_separatorChar(QLatin1Char('|')), m_separatorString(QLatin1String("|")) {}
+    QVariant toVariant(const QString &string) const;
+    QString toString(const QVariant &variant) const;
+
+private:
+    const QChar m_separatorChar;
+    const QString m_separatorString;
 };
 
 class QGalleryTrackerIntegerColumn : public QGalleryTrackerValueColumn
