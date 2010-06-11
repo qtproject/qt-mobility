@@ -109,7 +109,7 @@ private:
     bool parseLink();
     bool postProcessRoute(QGeoRoute *route);
 
-    bool parseBoundingBox(QGeoBoundingBox *bounds);
+    bool parseBoundingBox(QGeoBoundingBox &bounds);
 
     QGeoRouteRequest m_request;
     QXmlStreamReader *m_reader;
