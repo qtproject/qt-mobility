@@ -65,7 +65,7 @@ public:
         TerrainMap
     };
 
-    QGeoMapWidget::QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
+    QGeoMapWidget(QGeoMappingManager *manager, QGraphicsItem *parent = 0);
     virtual ~QGeoMapWidget();
 
     QPainterPath shape() const;
