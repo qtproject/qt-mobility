@@ -220,11 +220,18 @@ QMediaRecorder::~QMediaRecorder()
 {
 }
 
+/*!
+    Returns the QMediaObject instance that this QMediaRecorder is bound too,
+    or 0 otherwise.
+*/
 QMediaObject *QMediaRecorder::mediaObject() const
 {
     return d_func()->mediaObject;
 }
 
+/*!
+    \internal
+*/
 bool QMediaRecorder::setMediaObject(QMediaObject *object)
 {
     Q_D(QMediaRecorder);
@@ -708,6 +715,11 @@ void QMediaRecorder::stop()
     Signals that an \a error has occurred.
 */
 
+/*!
+    \fn QMediaRecorder::mutedChanged(bool muted)
+
+    Signals that the \a muted state has changed. If true the recording is being muted.
+*/
 
 /*!
     \property QMediaRecorder::metaDataAvailable

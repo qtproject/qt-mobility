@@ -679,12 +679,12 @@ QStringList QMediaPlayer::supportedMimeTypes(Flags flags)
 }
 
 /*!
+    \fn void QMediaPlayer::setVideoOutput(QVideoWidget* output)
+
     Attach a QVideoWidget video \a output to the media player.
 
     If the media player has already video output attached,
     it will be replaced with a new one.
-
-    \sa setVideoOutput(QGraphicsVideoItem*)
 */
 void QMediaPlayer::setVideoOutput(QVideoWidget *output)
 {
@@ -700,12 +700,12 @@ void QMediaPlayer::setVideoOutput(QVideoWidget *output)
 }
 
 /*!
+    \fn void QMediaPlayer::setVideoOutput(QGraphicsVideoItem* output)
+
     Attach a QGraphicsVideoItem video \a output to the media player.
 
     If the media player has already video output attached,
     it will be replaced with a new one.
-
-    \sa setVideoOutput(QVideoWidget*)
 */
 void QMediaPlayer::setVideoOutput(QGraphicsVideoItem *output)
 {

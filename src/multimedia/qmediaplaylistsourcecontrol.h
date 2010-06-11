@@ -60,7 +60,7 @@ public:
     virtual void setPlaylist(QMediaPlaylist *) = 0;
 
 Q_SIGNALS:
-    void playlistChanged(QMediaPlaylist*);
+    void playlistChanged(QMediaPlaylist* playlist);
 
 protected:
     QMediaPlaylistSourceControl(QObject* parent = 0);

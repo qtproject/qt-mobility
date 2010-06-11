@@ -295,6 +295,9 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
     emit mediaChanged(d->media);
 }
 
+/*!
+  Use \a playlist as the source of images to be displayed in the viewer.
+*/
 void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
 {
     Q_D(QMediaImageViewer);
