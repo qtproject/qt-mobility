@@ -69,14 +69,14 @@ QDateTime QOrganizerEventOccurrence::endDateTime() const
     return etr.endDateTime();
 }
 
-void QOrganizerEventOccurrence::setParentItemLocalId(const QOrganizerItemLocalId& parentLocalId)
+void QOrganizerEventOccurrence::setParentLocalId(const QOrganizerItemLocalId& parentLocalId)
 {
     QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
     origin.setParentLocalId(parentLocalId);
     saveDetail(&origin);
 }
 
-QOrganizerItemLocalId QOrganizerEventOccurrence::parentItemLocalId() const
+QOrganizerItemLocalId QOrganizerEventOccurrence::parentLocalId() const
 {
     QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
     return origin.parentLocalId();

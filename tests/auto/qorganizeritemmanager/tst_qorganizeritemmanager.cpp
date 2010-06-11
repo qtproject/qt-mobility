@@ -829,34 +829,34 @@ void tst_QOrganizerItemManager::addOccurrences()
     exception.setGuid(QLatin1String("christmas"));
     QVERIFY(cm->saveItem(&exception));
     QOrganizerEventOccurrence savedException = cm->item(exception.localId());
-    QCOMPARE(savedException.parentItemLocalId(), christmas.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId());
 
     // with the guid and the parentId both set and consistent, it should work
     exception = savedException;
     QVERIFY(cm->saveItem(&exception));
     savedException = cm->item(exception.localId());
-    QCOMPARE(savedException.parentItemLocalId(), christmas.localId());
+    QCOMPARE(savedException.parentLocalId(), christmas.localId());
 
     // with the guid inconsistent with the parentId, it should fail
-    exception.setParentItemLocalId(newYearsDay.localId());
+    exception.setParentLocalId(newYearsDay.localId());
     QVERIFY(!cm->saveItem(&exception));
 
     // with just the parentId set, it should work
     exception.setGuid(QLatin1String(""));
     QVERIFY(cm->saveItem(&exception));
     savedException = cm->item(exception.localId());
-    QCOMPARE(savedException.parentItemLocalId(), newYearsDay.localId());
+    QCOMPARE(savedException.parentLocalId(), newYearsDay.localId());
     QCOMPARE(savedException.guid(), QLatin1String("newyear"));
 
     // can't set parentId to a non-event
     exception.setGuid(QLatin1String(""));
-    exception.setParentItemLocalId(report.localId());
+    exception.setParentLocalId(report.localId());
     QVERIFY(!cm->saveItem(&exception));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
 
     // can't set guid to a non-event
     exception.setGuid(QLatin1String("report"));
-    exception.setParentItemLocalId(0);
+    exception.setParentLocalId(0);
     QVERIFY(!cm->saveItem(&exception));
     QCOMPARE(cm->error(), QOrganizerItemManager::InvalidOccurrenceError);
 }
