@@ -651,7 +651,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
 {
     if (theItem->type() == QOrganizerItemType::TypeEventOccurrence
             || theItem->type() == QOrganizerItemType::TypeTodoOccurrence) {
-        QString guid = theItem->guid();
+        const QString guid = theItem->guid();
         QOrganizerItemLocalId parentId = theItem->detail<QOrganizerItemInstanceOrigin>().parentLocalId();
         if (!guid.isEmpty()) {
             if (parentId != 0) {
@@ -710,7 +710,7 @@ bool QOrganizerItemMemoryEngine::fixOccurrenceReferences(QOrganizerItem* theItem
 }
 
 /*!
- * Returns true iff \a occurrenceType is the "Occurrence" version of \a parentType.
+ * Returns true if and only if \a occurrenceType is the "Occurrence" version of \a parentType.
  */
 bool QOrganizerItemMemoryEngine::typesAreRelated(const QString& occurrenceType, const QString& parentType)
 {
