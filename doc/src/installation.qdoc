@@ -165,6 +165,9 @@ these domains have dependencies and these are outlined below:
        with older SDK's but there will be reduced functionality.
 
        On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
+
+       On Symbian, it depends on SIM Utils API SDK plugin available from Forum Nokia \l http://wiki.forum.nokia.com/index.php/File:SIMUtilsAPI_3x_50.zip
+
     \o N(Y)
     \o N
 \row
