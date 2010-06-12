@@ -859,11 +859,13 @@ bool CntSymbianEngine::setSelfContactId(const QContactLocalId& contactId, QConta
         return false;
     }
 
+#ifdef SYMBIAN_BACKEND_SIGNAL_EMISSION_TWEAK
     QContactManager::Error e;
     QContactLocalId selfCntId = selfContactId( &e ); // err ignored
    
     QContactChangeSet changeSet;
     QOwnCardPair ownCard(selfCntId, contactId);
+#endif
     
     TContactItemId id(contactId);
     CContactItem* symContact = 0;
@@ -872,7 +874,8 @@ bool CntSymbianEngine::setSelfContactId(const QContactLocalId& contactId, QConta
         m_dataBase->contactDatabase()->SetOwnCardL(*symContact);
         );
     delete symContact;
-    
+
+#ifdef SYMBIAN_BACKEND_SIGNAL_EMISSION_TWEAK    
     if(err == KErrNone)
        {
        m_dataBase->appendContactEmitted(id);
@@ -880,6 +883,7 @@ bool CntSymbianEngine::setSelfContactId(const QContactLocalId& contactId, QConta
        changeSet.setOldAndNewSelfContactId(ownCard);
        changeSet.emitSignals( this );
        }
+#endif
     
     CntSymbianTransformError::transformError(err, error);
     return (err==KErrNone);
