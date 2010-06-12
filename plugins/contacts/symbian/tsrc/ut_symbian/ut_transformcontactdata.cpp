@@ -1173,6 +1173,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapVOIP);
+    newField->SetLabelL(_L("0"));
     QContact contact;
     QContactDetail* contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
@@ -1187,6 +1188,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapSWIS);
+    newField->SetLabelL(_L("0"));
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
     const QContactOnlineAccount* onlineAccountDetail2(static_cast<const QContactOnlineAccount*>(contactDetail));
@@ -1200,6 +1202,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldSIPID);
     newField->TextStorage()->SetTextL(sipField);
     newField->AddFieldTypeL(KUidContactFieldVCardMapSIPID);
+    newField->SetLabelL(_L("0"));
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
     const QContactOnlineAccount* onlineAccountDetail3(static_cast<const QContactOnlineAccount*>(contactDetail));
@@ -1212,6 +1215,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
 
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldIMPP);
     newField->TextStorage()->SetTextL(sipField);
+    newField->SetLabelL(_L("0"));
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
     const QContactOnlineAccount* onlineAccountDetail4(static_cast<const QContactOnlineAccount*>(contactDetail));
@@ -1224,6 +1228,7 @@ void TestCntTransformContactData::validateCntTransformOnlineAccountL(
 
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldServiceProvider);
     newField->TextStorage()->SetTextL(providerField);
+    newField->SetLabelL(_L("0"));
     contactDetail = transformOnlineAccount->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
     const QContactOnlineAccount* onlineAccountDetail5(static_cast<const QContactOnlineAccount*>(contactDetail));
@@ -1280,6 +1285,7 @@ void TestCntTransformContactData::validateCntTransformPresenceL(TPtrC16 presence
      
     CContactItemField* newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldPresence);
     newField->TextStorage()->SetTextL(presenceStateField);
+    newField->SetLabelL(_L("0"));
     QContact contact;
     QContactDetail* contactDetail = transformPresence->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
@@ -1293,6 +1299,7 @@ void TestCntTransformContactData::validateCntTransformPresenceL(TPtrC16 presence
      
     newField = CContactItemField::NewL(KStorageTypeText, KUidContactFieldStatusMsg);
     newField->TextStorage()->SetTextL(presenceStatusMsgField);
+    newField->SetLabelL(_L("0"));
     contactDetail = transformPresence->transformItemField(*newField, contact);
     QVERIFY(contactDetail != NULL);
     const QContactPresence* presenceDetail2(static_cast<const QContactPresence*>(contactDetail));

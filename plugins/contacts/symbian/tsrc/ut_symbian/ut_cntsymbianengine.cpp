@@ -1013,7 +1013,7 @@ void TestSymbianEngine::synthesizeDisplaylable()
     QContact empty;
     QString label = m_engine->synthesizedDisplayLabel(empty, &err);
     QVERIFY(err == QContactManager::NoError);
-    QVERIFY(label == QString(""));
+    QVERIFY(label.isEmpty());
 
     QContact first;
     QContactName fn;

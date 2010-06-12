@@ -45,12 +45,8 @@
 #include <QList>
 #include <QObject>
 #include <e32std.h>
-#ifdef CNTSYMBIANDATABASE_UNIT_TEST
-#include "mock_cntdb.h"
-#else
 #include <cntdb.h>
 #include <cntdbobs.h>
-#endif
 
 // User includes
 #include "qcontactmanager.h"

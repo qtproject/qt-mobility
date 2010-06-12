@@ -25,7 +25,6 @@ symbian:
                ut_matchphonenumber.h \
                ut_cntrelationship.h \
                ut_cntsymbiandatabase.h \
-               #mock_cntdb.h \
                ut_transformcontactdata.h \
                ut_cntsqlsearch.h \
                mt_cntsqlsort.h
@@ -38,7 +37,6 @@ symbian:
                ut_matchphonenumber.cpp \
                ut_cntrelationship.cpp \
                ut_cntsymbiandatabase.cpp \
-               #mock_cntdb.cpp \
                ut_transformcontactdata.cpp \
                ut_cntsqlsearch.cpp \
                mt_cntsqlsort.cpp

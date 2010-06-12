@@ -44,7 +44,7 @@
 #include "ut_cntfiltering.h"
 #include "ut_matchphonenumber.h"
 #include "ut_cntrelationship.h"
-//#include "ut_cntsymbiandatabase.h"
+#include "ut_cntsymbiandatabase.h"
 #include "ut_transformcontactdata.h"
 #include "ut_cntsqlsearch.h"
 #include "mt_cntsqlsort.h"
@@ -76,9 +76,8 @@ int main(int argc, char *argv[])
     TestCntRelationship ut_relationship;
     testRunner.runTests(ut_relationship);
     
-    //TODO: fix
-    //TestCntSymbianDatabase ut_symbianDatabase;
-    //testRunner.runTests(ut_symbianDatabase);
+    TestCntSymbianDatabase ut_symbianDatabase;
+    testRunner.runTests(ut_symbianDatabase);
     
     TestCntTransformContactData ut_transformContactData;
     testRunner.runTests(ut_transformContactData);

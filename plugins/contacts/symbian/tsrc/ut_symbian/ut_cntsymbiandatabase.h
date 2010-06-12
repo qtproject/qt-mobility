@@ -38,27 +38,74 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef TESTRELATIONSHIP_H
-#define TESTRELATIONSHIP_H
-
 #ifndef CNTSYMBIANDATABASE_UNIT_TEST
 #define CNTSYMBIANDATABASE_UNIT_TEST
-#endif
 
 #include <QObject>
+#include <qcontactid.h>
+class CntSymbianEngine;
+class CntSymbianDatabase;
+
+QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
+QTM_END_NAMESPACE
 
 class TestCntSymbianDatabase : public QObject
 {
     Q_OBJECT
 
 private slots:
-    void initTestCase();
+    void initTestCase();    
     void cleanupTestCase();
+    
+    void init();
+    void cleanup();
         
-    void ctor();
     void contactDatabase();
-    void appendFunctions();
-    void databaseEvents();
+    void createChangeRemoveContactEvents();
+    void ownCardEvents();
+    void relationshipEvents();
+
+private slots:
+    void handleAddedOrig(const QList<QContactLocalId>& contactIds);
+    void handleChangedOrig(const QList<QContactLocalId>& contactIds);
+    void handleRemovedOrig(const QList<QContactLocalId>& contactIds);
+    void handleMyCardChangedOrig(const QContactLocalId& oldId, const QContactLocalId& newId);
+    void handleRelationshipsAddedOrig(QList<QContactLocalId> contactIds);
+    void handleRelationshipsRemovedOrig(QList<QContactLocalId> contactIds);
+    
+    void handleAdded(const QList<QContactLocalId>& contactIds);
+    void handleChanged(const QList<QContactLocalId>& contactIds);
+    void handleRemoved(const QList<QContactLocalId>& contactIds);
+    void handleMyCardChanged(const QContactLocalId& oldId, const QContactLocalId& newId);
+    void handleRelationshipsAdded(QList<QContactLocalId> contactIds);
+    void handleRelationshipsRemoved(QList<QContactLocalId> contactIds);
+
+private:
+    void removeAllContacts();
+    
+private:
+    CntSymbianEngine *m_engine;
+    CntSymbianDatabase *m_db;
+    
+    QContactLocalId addedContactId;
+    QContactLocalId addedOrigContactId;
+    QContactLocalId changedContactId;
+    QContactLocalId changedOrigContactId;
+    QContactLocalId removedContactId;
+    QContactLocalId removedOrigContactId;
+    QContactLocalId ownCardId;
+    QContactLocalId ownCardOrigId;
+    QContactLocalId addedRelId1;
+    QContactLocalId addedRelId2;
+    QContactLocalId addedRelOrigId1;
+    QContactLocalId addedRelOrigId2;
+    QContactLocalId removedRelId1;
+    QContactLocalId removedRelId2;
+    QContactLocalId removedRelOrigId1;
+    QContactLocalId removedRelOrigId2;
+    
 };
+
 
 #endif
