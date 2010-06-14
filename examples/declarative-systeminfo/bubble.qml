@@ -2,8 +2,6 @@ import Qt 4.7
 import QtMobility.systeminfo 1.0
 import Qt.labs.particles 1.0
 
-
-
 Rectangle{
     id: screen
     width: 500;
@@ -14,83 +12,85 @@ Rectangle{
 
     SystemDeviceInfo {
         id: deviceinfo;
-
-//        property int batlevel :  deviceinfo.batteryLevel;
-
-        function doPowerStateChange(state) {
-            console.log("power state changed: "+ state)
-            if(deviceinfo.currentPowerState == 1) {
-                img.state = 'Battery';
-            }
-            if(deviceinfo.currentPowerState == 2) {
-
-                img.state = 'WallPower';
-            }
-            if(deviceinfo.currentPowerState == 3) {
-                img.state = 'Charging'
-            }
-        }
-
-        function doBatteryStatusChange(status) {
-console.log("battery status changed: "+status)
-            if(status == 4) {
-                img.state = 'Charging';
-            }
-            if(status == 3) {
-                img.state = 'Charging';
-            }
-            if(status == 2) {
-                img.state = 'Battery';
-            }
-        }
-
-        function doBatteryLevelChange(level) {
-            if(level > 90) {
-                speed = 1000;
-            } else if(level > 70) {
-                speed = 1500;
-            } else if(level > 60) {
-                speed = 2000;
-            } else if(level > 50) {
-                speed = 2500;
-            } else if(level > 40) {
-                speed = 3000;
-            }
-            else if(level > 10) {
-                speed = 3500;
-            } else if(level < 11) {
-                speed = 4000;
-            } else {
-                speed = 4500;
-            }
-             floorParticles.burst(level);
-        }
-
-        onBatteryStatusChanged : doBatteryStatusChange(status);
-        onPowerStateChanged : doPowerStateChange(state);
+        //        onBatteryStatusChanged : doBatteryStatusChange(status);
+        onPowerStateChanged : getPowerState(powerState);
         onBatteryLevelChanged: doBatteryLevelChange(level)
+        property int battlevel: batteryLevel;
+
     }
 
-    function getPowerState(x) {
-        state = deviceinfo.currentPowerState;
-        if ( state == 1) {
-            return "On Battery : " + deviceinfo.batteryLevel +"%"
+    property alias batlevel: deviceinfo.battlevel;
+    property alias curPowerState: deviceinfo.currentPowerState;
+
+    property string oldstate;
+
+    function doBatteryLevelChange(level) {
+        //  console.log("doBatteryLevel: "+level + " " + deviceinfo.batlevel)
+        if(level > 90) {
+            speed = 1000;
+        } else if(level > 70) {
+            speed = 1500;
+        } else if(level > 60) {
+            speed = 2000;
+        } else if(level > 50) {
+            speed = 2500;
+        } else if(level > 40) {
+            speed = 3000;
+        } else if(level > 10) {
+            speed = 3500;
+        } else if(level < 11) {
+            speed = 4000;
         }
-        if ( state == 2 ) {
-            return "Wall Power : " + deviceinfo.batteryLevel +"%"
+        floorParticles.burst(level);
+        batlevel = level;
+        oldstate = img.state;
+        img.state = "levelchange"
+        img.state = oldstate;
+    }
+
+    function getPowerState(powerState) {
+        console.log("get power state: "+powerState)
+
+        if(powerState == SystemDeviceInfo.UnknownPower) {
+            console.log("get power state: "+powerState)
         }
-        if ( state == 3) {
-            return "Charging : " + deviceinfo.batteryLevel +"%"
+
+        if(powerState == SystemDeviceInfo.BatteryPower) {
+            console.log("battery power state: "+powerState)
+        }
+
+        if(powerState == SystemDeviceInfo.WallPower) {
+            console.log("wall state: "+powerState)
+        }
+
+        if(powerState == SystemDeviceInfo.WallPowerChargingBattery) {
+            console.log("charging power state: "+powerState)
+        }
+
+        // state = curPowerState;
+        if ( curPowerState == 1) {
+            return "On Battery : " + batlevel +"%"
+        }
+        if ( curPowerState == 2 ) {
+            return "Wall Power : " + batlevel +"%"
+        }
+        if ( curPowerState == 3) {
+            return "Charging : " + batlevel +"%"
         }
         return ""
     }
 
+    property alias manufacturer: deviceinfo.manufacturer
+    property alias model: deviceinfo.model
+    property alias product: deviceinfo.productName
+
     Text {
         id: manu
         y: 3
-        text: deviceinfo.manufacturer + " "+ deviceinfo.model+ " "+ deviceinfo.productName
+        text: manufacturer + " "+ model+ " "+ product
         color: "white";
     }
+
     Text {
         id: power
         text: getPowerState();
@@ -100,23 +100,23 @@ console.log("battery status changed: "+status)
 
     Particles {
         id: floorParticles
-        anchors { horizontalCenter: parent.horizontalCenter; }
-             y: screen.height
-             width: 1
-             height: 1
-             source: "images/blueStar.png"
-             lifeSpan: 1000
-             count: deviceinfo.batteryLevel
-             angle: 270
-             angleDeviation: 45
-             velocity: 50
-             velocityDeviation: 60
-             ParticleMotionGravity {
-                 yattractor: 1000
-                 xattractor: 0
-                 acceleration: 5
-             }
-         }
+        anchors { horizontalCenter: screen.horizontalCenter; }
+        y: screen.height
+        width: 1
+        height: 1
+        source: "images/blueStar.png"
+        lifeSpan: 1000
+        count: batlevel
+        angle: 270
+        angleDeviation: 45
+        velocity: 50
+        velocityDeviation: 60
+        ParticleMotionGravity {
+            yattractor: 1000
+            xattractor: 0
+            acceleration: 5
+        }
+    }
 
     function particleState() {
         if(img.state == "Battery") {
@@ -127,9 +127,10 @@ console.log("battery status changed: "+status)
     Image {
         id: img;
         source: "images/blueStone.png"
-        anchors { horizontalCenter: parent.horizontalCenter; }
-        y: screen.height;
-       // MouseArea { id: mousearea; anchors.fill: parent; onClicked: test()/*img.state = 'Battery'*/ }
+        anchors {
+            horizontalCenter: screen.horizontalCenter;
+        }
+        y: screen.height - img.height;
 
         Particles {
             id: particles
@@ -144,41 +145,95 @@ console.log("battery status changed: "+status)
         states: [
         State {
             name: "WallPower"
-            //  when: mousearea.pressed == false
+            when: deviceinfo.currentPowerState == 2
             StateChangeScript { script: particles.burst(50); }
-            PropertyChanges { target: img; opacity: 1; source : "images/blueStone.png";}
+            PropertyChanges {
+                target: img; opacity: 1; source : "images/blueStone.png";
+                anchors.horizontalCenter: undefined
+                y: 0;  x: (screen.width / 2) - (img.width / 2)
+            }
             PropertyChanges { target: floorParticles; count:0 }
+
         },
         State {
             name: "Charging"
-            //  when: mousearea.pressed == false
+            when: deviceinfo.currentPowerState == 3
             StateChangeScript { script: particles.burst(50); }
-            PropertyChanges { target: img; opacity: 1; source : "images/yellowStone.png";}
+            PropertyChanges { target: img; y:screen.height
+            }
+            PropertyChanges {
+                target: img; opacity: 1; source : "images/yellowStone.png";
+                anchors.horizontalCenter: parent.horizontalCenter;
+            }
             PropertyChanges { target: floorParticles; count:0 }
         },
 
         State {
-
             name: "Battery"
-            //    when: mousearea.pressed == true
+            when: deviceinfo.currentPowerState == 1
             StateChangeScript { script: particles.burst(50); }
-            PropertyChanges { target: img; source : "images/redStone.png"; /*opacity: 0; */}
-            PropertyChanges { target: floorParticles; count:deviceinfo.batteryLevel }
+            PropertyChanges {
+                target: img; source : "images/redStone.png";
+                anchors.horizontalCenter: parent.horizontalCenter;
+            }
+            PropertyChanges { target: floorParticles; count: batlevel }
+        },
+        State {
+            name: "levelchange"
+            PropertyChanges {
+                target: yAnim
+                running: false;
+            }
+
+            PropertyChanges {
+                target: bubblebounceanim
+                from: screen.height
+                to: screen.height - (screen.height * (batlevel / 100 ))
+            }
+            PropertyChanges {
+                target: yAnim
+                running: true;
+            }
+        }
+        ]
+
+
+        transitions: [
+        Transition {
+            from: "*"
+            to: "WallPower"
+            NumberAnimation{ property: "y"; to: 0; duration: 750; easing.type: Easing.InOutQuad; }
+        },
+        Transition {
+            from: "WallPower"
+            to: "*"
+            NumberAnimation{ property: "y"; to: screen.height; duration: 2000; easing.type: Easing.InOutQuad; }
+            //            NumberAnimation{ property: "x"; to: screen.width / 2 - img.width / 2; duration: 750; easing.type: Easing.InOutQuad; }
+            //            PropertyAction{ target: bubblebounceanim; properties: "to"; value: screen.height - (screen.height * (batlevel / 100 )); }
         }
         ]
 
         SequentialAnimation on y {
+            id: yAnim
             loops: Animation.Infinite
-
- //            PropertyAction { target: img; property: "opacity"; value: 1 }
-
+            running: img.state != "WallPower"
             NumberAnimation {
-                from: img.y; to: screen.height - (screen.height * (deviceinfo.batteryLevel / 100 ))-img.height
-                easing.type: Easing.InOutQuart; duration: speed/* Math.round(Math.abs(Math.cos(deviceinfo.batteryLevel))* 5000 )*/;
+                id: bubblebounceanim;
+                from: screen.height; to: screen.height - (screen.height * (batlevel / 100 ))
+                easing.type: Easing.OutBounce; duration: speed
             }
-
             ScriptAction { script: particleState() }
             PauseAnimation { duration: 750 }
+        }
+
+        SequentialAnimation on x {
+            running: img.state == "WallPower"
+            loops: Animation.Infinite
+            id: xanim
+            NumberAnimation { target: img; property: "x"; to: screen.width - img.width; duration: 1500;
+                easing.type: Easing.InOutQuad;  }
+            NumberAnimation { target: img; property: "x"; to: 0; duration: 1500;
+                easing.type: Easing.InOutQuad;}
         }
     }
 }
