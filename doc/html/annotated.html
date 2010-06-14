@@ -111,7 +111,7 @@
 <tr valign="top" class="odd"><th><a href="qgeonavigationinstruction.html">QGeoNavigationInstruction</a></th><td>Represnts a navigation instruction</td></tr>
 <tr valign="top" class="even"><th><a href="qgeopositioninfo.html">QGeoPositionInfo</a></th><td>Contains information gathered on a global position, direction and velocity at a particular point in time</td></tr>
 <tr valign="top" class="odd"><th><a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a></th><td>Abstract base class for the distribution of positional updates</td></tr>
-<tr valign="top" class="even"><th><a href="qgeoroute.html">QGeoRoute</a></th><td>Representation of a route</td></tr>
+<tr valign="top" class="even"><th><a href="qgeoroute.html">QGeoRoute</a></th><td>Represents a route between two points</td></tr>
 <tr valign="top" class="odd"><th><a href="qgeoroutereply.html">QGeoRouteReply</a></th><td>Represents the result of a request for routing information</td></tr>
 <tr valign="top" class="even"><th><a href="qgeorouterequest.html">QGeoRouteRequest</a></th><td>Represents a request for a route between two points</td></tr>
 <tr valign="top" class="odd"><th><a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a></th><td>Represents various options which may be specified when requesting geographical routes</td></tr>
@@ -159,6 +159,18 @@
 <tr valign="top" class="odd"><th><a href="qmagnetometer.html">QMagnetometer</a></th><td>Convenience wrapper around QSensor</td></tr>
 <tr valign="top" class="even"><th><a href="qmagnetometerfilter.html">QMagnetometerFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
 <tr valign="top" class="odd"><th><a href="qmagnetometerreading.html">QMagnetometerReading</a></th><td>Represents one reading from the magnetometer</td></tr>
+<tr valign="top" class="even"><th><a href="qmaneuver.html">QManeuver</a></th><td>Represents the maneuver component of a QGeoRouteReply</td></tr>
+<tr valign="top" class="odd"><th><a href="qmapellipse.html">QMapEllipse</a></th><td>Represents an ellipse that has been added to the map. *</td></tr>
+<tr valign="top" class="even"><th><a href="qmapline.html">QMapLine</a></th><td>Represents a line on a map</td></tr>
+<tr valign="top" class="odd"><th><a href="qmapmarker.html">QMapMarker</a></th><td>Internal representation of a map marker</td></tr>
+<tr valign="top" class="even"><th><a href="qmapobject.html">QMapObject</a></th><td>The base of all map objects</td></tr>
+<tr valign="top" class="odd"><th><a href="qmappixmap.html">QMapPixmap</a></th><td>Represents a pixmap on a map</td></tr>
+<tr valign="top" class="even"><th><a href="qmappolygon.html">QMapPolygon</a></th><td>Represents a polygon that has been added to the map. *</td></tr>
+<tr valign="top" class="odd"><th><a href="qmaprect.html">QMapRect</a></th><td>Represents a rectangle that has been added to a map</td></tr>
+<tr valign="top" class="even"><th><a href="qmaproute.html">QMapRoute</a></th></tr>
+<tr valign="top" class="odd"><th><a href="qmaptilereply.html">QMapTileReply</a></th><td>Represents the response from a mapping service</td></tr>
+<tr valign="top" class="even"><th><a href="qmaptileservice.html">QMapTileService</a></th><td>Handles all communication to and from a geographic map service</td></tr>
+<tr valign="top" class="odd"><th><a href="qmapview.html">QMapView</a></th><td>Displays a map. It supports panning, zooming, different map formats, and the adding of map objects (overlays)</td></tr>
 <tr valign="top" class="even"><th><a href="qmediabindableinterface.html">QMediaBindableInterface</a></th><td>The base class for objects extending media objects functionality</td></tr>
 <tr valign="top" class="odd"><th><a href="qmediacontainercontrol.html">QMediaContainerControl</a></th><td>Access to the output container format of a QMediaService</td></tr>
 <tr valign="top" class="even"><th><a href="qmediacontent.html">QMediaContent</a></th><td>Access to the resources relating to a media content</td></tr>
@@ -222,48 +234,49 @@
 <tr valign="top" class="even"><th><a href="qrotationfilter.html">QRotationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
 <tr valign="top" class="odd"><th><a href="qrotationreading.html">QRotationReading</a></th><td>Represents one reading from the rotation sensor</td></tr>
 <tr valign="top" class="even"><th><a href="qrotationsensor.html">QRotationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qsensor.html">QSensor</a></th><td>Represents a single hardware sensor</td></tr>
-<tr valign="top" class="even"><th><a href="qsensorbackend.html">QSensorBackend</a></th><td>Sensor implementation</td></tr>
-<tr valign="top" class="odd"><th><a href="qsensorbackendfactory.html">QSensorBackendFactory</a></th><td>Instantiates instances of QSensorBackend</td></tr>
-<tr valign="top" class="even"><th><a href="qsensorfilter.html">QSensorFilter</a></th><td>Efficient callback facility for asynchronous notifications of sensor changes</td></tr>
-<tr valign="top" class="odd"><th><a href="qsensormanager.html">QSensorManager</a></th><td>Handles registration and creation of sensor backends</td></tr>
-<tr valign="top" class="even"><th><a href="qsensorplugininterface.html">QSensorPluginInterface</a></th><td>The pure virtual interface to sensor plugins</td></tr>
-<tr valign="top" class="odd"><th><a href="qsensorreading.html">QSensorReading</a></th><td>Holds the readings from the sensor</td></tr>
-<tr valign="top" class="even"><th><a href="qservicecontext.html">QServiceContext</a></th><td>Context information to services</td></tr>
-<tr valign="top" class="odd"><th><a href="qservicefilter.html">QServiceFilter</a></th><td>Defines criteria for defining a sub-set of all available services</td></tr>
-<tr valign="top" class="even"><th><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a></th><td>Identifies a service implementation</td></tr>
-<tr valign="top" class="odd"><th><a href="qservicemanager.html">QServiceManager</a></th><td>Enables the loading of service plugins and the (de)registration of services</td></tr>
-<tr valign="top" class="even"><th><a href="qserviceplugininterface.html">QServicePluginInterface</a></th><td>Defines the interface that every plug-in based service must implement</td></tr>
-<tr valign="top" class="odd"><th><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></th><td>Access to device information from the system</td></tr>
-<tr valign="top" class="even"><th><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></th><td>Access to display information from the system</td></tr>
-<tr valign="top" class="odd"><th><a href="qsysteminfo.html">QSystemInfo</a></th><td>Access to various general information from the system</td></tr>
-<tr valign="top" class="even"><th><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></th><td>Access to network information from the system</td></tr>
-<tr valign="top" class="odd"><th><a href="qsystemscreensaver.html">QSystemScreenSaver</a></th><td>Access to screen saver and blanking</td></tr>
-<tr valign="top" class="even"><th><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></th><td>Access to memory and disk information from the system</td></tr>
-<tr valign="top" class="odd"><th><a href="qtapfilter.html">QTapFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qtapreading.html">QTapReading</a></th><td>Represents one reading from the tap sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qtapsensor.html">QTapSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qvaluespacepublisher.html">QValueSpacePublisher</a></th><td>Allows applications to publish values in the Value Space</td></tr>
-<tr valign="top" class="odd"><th><a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a></th><td>Allows applications to read and subscribe to Value Space paths</td></tr>
-<tr valign="top" class="even"><th><a href="qversitcontactexporter.html">QVersitContactExporter</a></th><td>Converts QContacts into QVersitDocuments</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a></th><td>Interface for clients wishing to implement custom export behaviour for certain contact details</td></tr>
-<tr valign="top" class="even"><th><a href="qversitcontactimporter.html">QVersitContactImporter</a></th><td>Creates QContacts from QVersitDocuments</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a></th><td>Interface for clients wishing to implement custom import behaviour for versit properties</td></tr>
-<tr valign="top" class="even"><th><a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a></th><td>Default implementation of a Versit resource handler</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitdocument.html">QVersitDocument</a></th><td>Container for a list of versit properties</td></tr>
-<tr valign="top" class="even"><th><a href="qversitproperty.html">QVersitProperty</a></th><td>Stores the name, value, groups and parameters of a Versit property</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitreader.html">QVersitReader</a></th><td>Reads Versit documents such as vCards from a device</td></tr>
-<tr valign="top" class="even"><th><a href="qversitresourcehandler.html">QVersitResourceHandler</a></th><td>Interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitwriter.html">QVersitWriter</a></th><td>Writes Versit documents such as vCards to a device</td></tr>
-<tr valign="top" class="even"><th><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></th><td>Video device selector media control</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></th><td>Access to the settings of a media service that performs video encoding</td></tr>
-<tr valign="top" class="even"><th><a href="qvideoencodersettings.html">QVideoEncoderSettings</a></th><td>Set of video encoder settings</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideoframe.html">QVideoFrame</a></th><td>Representation of a frame of video data</td></tr>
-<tr valign="top" class="even"><th><a href="qvideorenderercontrol.html">QVideoRendererControl</a></th><td>Control for rendering to a video surface</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideosurfaceformat.html">QVideoSurfaceFormat</a></th><td>Specifies the stream format of a video presentation surface</td></tr>
-<tr valign="top" class="even"><th><a href="qvideowidget.html">QVideoWidget</a></th><td>Widget which presents video produced by a media object</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideowidgetcontrol.html">QVideoWidgetControl</a></th><td>Media control which implements a video widget</td></tr>
-<tr valign="top" class="even"><th><a href="qvideowindowcontrol.html">QVideoWindowControl</a></th><td>Media control for rendering video to a window</td></tr>
+<tr valign="top" class="odd"><th><a href="qsearchresponse.html">QSearchResponse</a></th><td>Represents the response from a geocoding service</td></tr>
+<tr valign="top" class="even"><th><a href="qsensor.html">QSensor</a></th><td>Represents a single hardware sensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qsensorbackend.html">QSensorBackend</a></th><td>Sensor implementation</td></tr>
+<tr valign="top" class="even"><th><a href="qsensorbackendfactory.html">QSensorBackendFactory</a></th><td>Instantiates instances of QSensorBackend</td></tr>
+<tr valign="top" class="odd"><th><a href="qsensorfilter.html">QSensorFilter</a></th><td>Efficient callback facility for asynchronous notifications of sensor changes</td></tr>
+<tr valign="top" class="even"><th><a href="qsensormanager.html">QSensorManager</a></th><td>Handles registration and creation of sensor backends</td></tr>
+<tr valign="top" class="odd"><th><a href="qsensorplugininterface.html">QSensorPluginInterface</a></th><td>The pure virtual interface to sensor plugins</td></tr>
+<tr valign="top" class="even"><th><a href="qsensorreading.html">QSensorReading</a></th><td>Holds the readings from the sensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qservicecontext.html">QServiceContext</a></th><td>Context information to services</td></tr>
+<tr valign="top" class="even"><th><a href="qservicefilter.html">QServiceFilter</a></th><td>Defines criteria for defining a sub-set of all available services</td></tr>
+<tr valign="top" class="odd"><th><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a></th><td>Identifies a service implementation</td></tr>
+<tr valign="top" class="even"><th><a href="qservicemanager.html">QServiceManager</a></th><td>Enables the loading of service plugins and the (de)registration of services</td></tr>
+<tr valign="top" class="odd"><th><a href="qserviceplugininterface.html">QServicePluginInterface</a></th><td>Defines the interface that every plug-in based service must implement</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></th><td>Access to device information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></th><td>Access to display information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsysteminfo.html">QSystemInfo</a></th><td>Access to various general information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></th><td>Access to network information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemscreensaver.html">QSystemScreenSaver</a></th><td>Access to screen saver and blanking</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></th><td>Access to memory and disk information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qtapfilter.html">QTapFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="odd"><th><a href="qtapreading.html">QTapReading</a></th><td>Represents one reading from the tap sensor</td></tr>
+<tr valign="top" class="even"><th><a href="qtapsensor.html">QTapSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qvaluespacepublisher.html">QValueSpacePublisher</a></th><td>Allows applications to publish values in the Value Space</td></tr>
+<tr valign="top" class="even"><th><a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a></th><td>Allows applications to read and subscribe to Value Space paths</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitcontactexporter.html">QVersitContactExporter</a></th><td>Converts QContacts into QVersitDocuments</td></tr>
+<tr valign="top" class="even"><th><a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a></th><td>Interface for clients wishing to implement custom export behaviour for certain contact details</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitcontactimporter.html">QVersitContactImporter</a></th><td>Creates QContacts from QVersitDocuments</td></tr>
+<tr valign="top" class="even"><th><a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a></th><td>Interface for clients wishing to implement custom import behaviour for versit properties</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a></th><td>Default implementation of a Versit resource handler</td></tr>
+<tr valign="top" class="even"><th><a href="qversitdocument.html">QVersitDocument</a></th><td>Container for a list of versit properties</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitproperty.html">QVersitProperty</a></th><td>Stores the name, value, groups and parameters of a Versit property</td></tr>
+<tr valign="top" class="even"><th><a href="qversitreader.html">QVersitReader</a></th><td>Reads Versit documents such as vCards from a device</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitresourcehandler.html">QVersitResourceHandler</a></th><td>Interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing</td></tr>
+<tr valign="top" class="even"><th><a href="qversitwriter.html">QVersitWriter</a></th><td>Writes Versit documents such as vCards to a device</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></th><td>Video device selector media control</td></tr>
+<tr valign="top" class="even"><th><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></th><td>Access to the settings of a media service that performs video encoding</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideoencodersettings.html">QVideoEncoderSettings</a></th><td>Set of video encoder settings</td></tr>
+<tr valign="top" class="even"><th><a href="qvideoframe.html">QVideoFrame</a></th><td>Representation of a frame of video data</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideorenderercontrol.html">QVideoRendererControl</a></th><td>Control for rendering to a video surface</td></tr>
+<tr valign="top" class="even"><th><a href="qvideosurfaceformat.html">QVideoSurfaceFormat</a></th><td>Specifies the stream format of a video presentation surface</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideowidget.html">QVideoWidget</a></th><td>Widget which presents video produced by a media object</td></tr>
+<tr valign="top" class="even"><th><a href="qvideowidgetcontrol.html">QVideoWidgetControl</a></th><td>Media control which implements a video widget</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideowindowcontrol.html">QVideoWindowControl</a></th><td>Media control for rendering video to a window</td></tr>
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">

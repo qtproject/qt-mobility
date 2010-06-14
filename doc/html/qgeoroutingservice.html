@@ -20,24 +20,12 @@
 <li><a href="qgeoroutingservice-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
-<a name="public-types"></a>
-<h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#ErrorCode-enum">ErrorCode</a></b> { NoError }</td></tr>
-</table>
-<hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#QGeoRoutingService">QGeoRoutingService</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#dtor.QGeoRoutingService">~QGeoRoutingService</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoRouteReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#requestRoute">requestRoute</a></b> ( const QGeoCoordinate &amp; <i>origin</i>, const QGeoCoordinate &amp; <i>destination</i>, QGeoRoute::DirectionsDetail <i>detail</i> = QGeoRoute::NoDirections, const QGeoRouteRequestOptions &amp; <i>requestOptions</i> = QGeoRouteRequestOptions() ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoRouteReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#requestRoute-2">requestRoute</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; <i>waypoints</i>, QGeoRoute::DirectionsDetail <i>detail</i> = QGeoRoute::NoDirections, const QGeoRouteRequestOptions &amp; <i>requestOptions</i> = QGeoRouteRequestOptions() ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoRoute::AvoidFeatureTypes </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#supportedAvoidFeatureTypes">supportedAvoidFeatureTypes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoRoute::DirectionsDetails </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#supportedDirectionDetails">supportedDirectionDetails</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoRoute::RouteOptimizations </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#supportedRouteOptimizations">supportedRouteOptimizations</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QGeoRoute::TravelModes </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#supportedTravelModes">supportedTravelModes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#supportsUpdatingRoutes">supportsUpdatingRoutes</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoRouteReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#updateRoute">updateRoute</a></b> ( const QGeoRoute &amp; <i>route</i>, const QGeoCoordinate &amp; <i>currentPosition</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoRouteReply * </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#getRoute">getRoute</a></b> ( const QGeoRouteRequest &amp; <i>request</i> ) = 0</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
@@ -46,25 +34,11 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#replyError">replyError</a></b> ( QGeoRouteReply * <i>reply</i>, QGeoRoutingService::ErrorCode <i>errorCode</i>, QString <i>errorString</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#replyFinished">replyFinished</a></b> ( QGeoRouteReply * <i>reply</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#error">error</a></b> ( QGeoRouteReply * <i>reply</i>, QGeoRouteReply::ErrorCode <i>errorCode</i>, QString <i>errorString</i> = QString() )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#finished">finished</a></b> ( QGeoRouteReply * <i>reply</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
-</ul>
-<hr />
-<a name="protected-functions"></a>
-<h2>Protected Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#QGeoRoutingService">QGeoRoutingService</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#setSupportedAvoidFeatureTypes">setSupportedAvoidFeatureTypes</a></b> ( QGeoRoute::AvoidFeatureTypes <i>avoidFeatureTypes</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#setSupportedDirectionDetails">setSupportedDirectionDetails</a></b> ( QGeoRoute::DirectionsDetails <i>directionsDetails</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#setSupportedRouteOptimizations">setSupportedRouteOptimizations</a></b> ( QGeoRoute::RouteOptimizations <i>routeOptimizations</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#setSupportedTravelModes">setSupportedTravelModes</a></b> ( QGeoRoute::TravelModes <i>travelModes</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroutingservice.html#setSupportsUpdatingRoutes">setSupportsUpdatingRoutes</a></b> ( bool <i>updatingRoutes</i> )</td></tr>
-</table>
-<ul>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
@@ -72,6 +46,7 @@
 <li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
@@ -81,108 +56,25 @@
 <p>The request functions return a <a href="qgeoroutereply.html">QGeoRouteReply</a> instance, which is responsible for delivering the status and results of the request.</p>
 <p>The rest of the class consists of functions providing metadata about the service provider, primarily dealing with the capabilities of the service and any limitations that may apply to the request inputs.</p>
 <p>The <a href="qgeoroutereply.html">QGeoRouteReply</a> objects and the QGeoRoutingService instance will both emit signals to indicate that a request has completed successfully or has resulted in an error.</p>
-<p><b>Note:</b> After the request has finished, it is the responsibility of the user to delete the <a href="qgeoroutereply.html">QGeoRouteReply</a> object at an appropriate time. Do not directly delete it inside the slot connected to <a href="qgeoroutingservice.html#replyFinished">replyFinished</a>() or <a href="qgeoroutingservice.html#replyError">replyError</a>() - the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() function should be used instead.</p>
+<p><b>Note:</b> After the request has finished, it is the responsibility of the user to delete the <a href="qgeoroutereply.html">QGeoRouteReply</a> object at an appropriate time. Do not directly delete it inside the slot connected to replyFinished() or replyError() - the <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() function should be used instead.</p>
 <p>See also <a href="qgeoroutereply.html">QGeoRouteReply</a>.</p>
-<hr />
-<h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QGeoRoutingService/ErrorCode"></a>
-<a name="//apple_ref/cpp/econst/QGeoRoutingService/NoError"></a>
-<h3 class="fn"><a name="ErrorCode-enum"></a>enum QGeoRoutingService::ErrorCode</h3>
-<p>Describes the type of error which occurred when a <a href="qgeomappingservice.html">QGeoMappingService</a> instance attempted to process a request.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QGeoRoutingService::NoError</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">No error occurred.</td></tr>
-</table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoRoutingService/QGeoRoutingService"></a>
-<h3 class="fn"><a name="QGeoRoutingService"></a>QGeoRoutingService::QGeoRoutingService ()&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="QGeoRoutingService"></a>QGeoRoutingService::QGeoRoutingService ()</h3>
 <p>Constructs a <a href="qgeoroutingservice.html">QGeoRoutingService</a> object.</p>
 <a name="//apple_ref/cpp/instm/QGeoRoutingService/~QGeoRoutingService"></a>
 <h3 class="fn"><a name="dtor.QGeoRoutingService"></a>QGeoRoutingService::~QGeoRoutingService ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys this <a href="qgeoroutingservice.html">QGeoRoutingService</a> object.</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/replyError"></a>
-<h3 class="fn"><a name="replyError"></a>void QGeoRoutingService::replyError ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i>, <a href="qgeoroutingservice.html#ErrorCode-enum">QGeoRoutingService::ErrorCode</a> <i>errorCode</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>errorString</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Indicates that a request handled by this QGeoeRoutingService object has failed. The error is described by <i>errorCode</i> and <i>errorString</i>, and <i>reply</i> is the <a href="qgeoroutereply.html">QGeoRouteReply</a> object which was managing the result of the corresponding service request.</p>
-<p>Note that <i>reply</i> will be the same object returned by this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance when the request was issued, and that the <a href="qgeoroutereply.html#error">QGeoRouteReply::error</a>() signal can be used instead of this signal if it is more convinient to do so.</p>
-<p>Do not delete the <a href="qgeoroutereply.html">QGeoRouteReply</a> object in a slot connected to this signal - use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() if it is necessary to do so.</p>
-<p>See also <a href="qgeoroutereply.html#error">QGeoRouteReply::error</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/replyFinished"></a>
-<h3 class="fn"><a name="replyFinished"></a>void QGeoRoutingService::replyFinished ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Indicates that a request handled by this <a href="qgeoroutingservice.html">QGeoRoutingService</a> object has finished successfully. The result of the request will be in <i>reply</i>.</p>
-<p>Note that <i>reply</i> will be the same object returned by this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance when the request was issued, and that the <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>() signal can be used instead of this signal if it is more convinient to do so.</p>
-<p>Do not delete the <a href="qgeoroutereply.html">QGeoRouteReply</a> object in a slot connected to this signal - use <a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a>() if it is necessary to do so.</p>
-<p>See also <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/requestRoute"></a>
-<h3 class="fn"><a name="requestRoute"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingService::requestRoute ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>origin</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>destination</i>, QGeoRoute::DirectionsDetail <i>detail</i> = QGeoRoute::NoDirections, const <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a> &amp; <i>requestOptions</i> = QGeoRouteRequestOptions() )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Requests the calculation of a route from <i>origin</i> to <i>destination</i>, with directions having a level of detail as specified by <i>detail</i>.</p>
-<p>The return value is a <a href="qgeoroutereply.html">QGeoRouteReply</a> object, which manages the result of the request. If the request completes successfully then the <a href="qgeoroutereply.html">QGeoRouteReply</a> object will emit the <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>() signal and this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance will emit the QGeoRoutingService::finished() signal.</p>
-<p>The resulting route (or routes) can then be retreived with QGeoRoutReply::routes().</p>
-<p>If an error occurs then the <a href="qgeoroutereply.html">QGeoRouteReply</a> object will emit <a href="qgeoroutereply.html#error">QGeoRouteReply::error</a>() and this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance will emit QGeoRoutingService::error().</p>
-<p>Additional options can also be set with <i>requestOptions</i>. A <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance can may not support these options, or may only support a subset of the values for each option, however there are functions which can be used to determine the level of support provided by the service.</p>
-<p>The use of unsupported options will cause on error() signal to be emitted.</p>
-<p>See also QGeoRoute::DirectionsDetail and <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a>.</p>
-<h3 class="fn"><a name="requestRoute-2"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingService::requestRoute ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>waypoints</i>, QGeoRoute::DirectionsDetail <i>detail</i> = QGeoRoute::NoDirections, const <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a> &amp; <i>requestOptions</i> = QGeoRouteRequestOptions() )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Requests the calculation of a route passing through each of the coordinates in <i>waypoints</i> in order, with directions having a level of detail as specified by <i>detail</i>.</p>
-<p>The return value is a <a href="qgeoroutereply.html">QGeoRouteReply</a> object, which manages the result of the request. If the request completes successfully then the <a href="qgeoroutereply.html">QGeoRouteReply</a> object will emit the <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>() signal and this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance will emit the QGeoRoutingService::finished() signal.</p>
-<p>The resulting route (or routes) can then be retreived with QGeoRoutReply::routes().</p>
-<p>If an error occurs then the <a href="qgeoroutereply.html">QGeoRouteReply</a> object will emit <a href="qgeoroutereply.html#error">QGeoRouteReply::error</a>() and this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance will emit QGeoRoutingService::error().</p>
-<p>Additional options can also be set with <i>requestOptions</i>. A <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance can may not support these options, or may only support a subset of the values for each option, however there are functions which can be used to determine the level of support provided by the service.</p>
-<p>The use of unsupported options will cause on error() signal to be emitted.</p>
-<p>See also QGeoRoute::DirectionsDetail and <a href="qgeorouterequestoptions.html">QGeoRouteRequestOptions</a>.</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/setSupportedAvoidFeatureTypes"></a>
-<h3 class="fn"><a name="setSupportedAvoidFeatureTypes"></a>void QGeoRoutingService::setSupportedAvoidFeatureTypes ( QGeoRoute::AvoidFeatureTypes <i>avoidFeatureTypes</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets the features that this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance is able to avoid to <i>avoidFeatureTypes</i>.</p>
-<p>Subclasses of <a href="qgeoroutingservice.html">QGeoRoutingService</a> should use this function to ensure that <a href="qgeoroutingservice.html#supportedAvoidFeatureTypes">supportedAvoidFeatureTypes</a>() provides accurate information.</p>
-<p>See also QGeoRoute::AvoidFeatureTypes and <a href="qgeoroutingservice.html#supportedAvoidFeatureTypes">QGeoRoutingService::supportedAvoidFeatureTypes</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/setSupportedDirectionDetails"></a>
-<h3 class="fn"><a name="setSupportedDirectionDetails"></a>void QGeoRoutingService::setSupportedDirectionDetails ( QGeoRoute::DirectionsDetails <i>directionsDetails</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets the levels of details for directions that this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance supports to <i>directionsDetails</i>.</p>
-<p>Subclasses of <a href="qgeoroutingservice.html">QGeoRoutingService</a> should use this function to ensure that <a href="qgeoroutingservice.html#supportedDirectionDetails">supportedDirectionDetails</a>() provides accurate information.</p>
-<p>See also QGeoRoute::DirectionsDetails and <a href="qgeoroutingservice.html#supportedDirectionDetails">QGeoRoutingService::supportedDirectionDetails</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/setSupportedRouteOptimizations"></a>
-<h3 class="fn"><a name="setSupportedRouteOptimizations"></a>void QGeoRoutingService::setSupportedRouteOptimizations ( QGeoRoute::RouteOptimizations <i>routeOptimizations</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets the route optimzations that this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance supports to <i>routeOptimizations</i>.</p>
-<p>Subclasses of <a href="qgeoroutingservice.html">QGeoRoutingService</a> should use this function to ensure that <a href="qgeoroutingservice.html#supportedRouteOptimizations">supportedRouteOptimizations</a>() provides accurate information.</p>
-<p>See also QGeoRoute::RouteOptimizations and <a href="qgeoroutingservice.html#supportedRouteOptimizations">QGeoRoutingService::supportedRouteOptimizations</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/setSupportedTravelModes"></a>
-<h3 class="fn"><a name="setSupportedTravelModes"></a>void QGeoRoutingService::setSupportedTravelModes ( QGeoRoute::TravelModes <i>travelModes</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets the travel modes supported by this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance to <i>travelModes</i>.</p>
-<p>Subclasses of <a href="qgeoroutingservice.html">QGeoRoutingService</a> should use this function to ensure that <a href="qgeoroutingservice.html#supportedTravelModes">supportedTravelModes</a>() provides accurate information.</p>
-<p>See also QGeoRoute::TravelModes and <a href="qgeoroutingservice.html#supportedTravelModes">QGeoRoutingService::supportedTravelModes</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/setSupportsUpdatingRoutes"></a>
-<h3 class="fn"><a name="setSupportsUpdatingRoutes"></a>void QGeoRoutingService::setSupportsUpdatingRoutes ( bool <i>updatingRoutes</i> )&nbsp;&nbsp;<tt> [protected]</tt></h3>
-<p>Sets whether or not this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance supports updating of previously calculated routes, according to the value of <i>updatingRoutes</i>.</p>
-<p>Subclasses of <a href="qgeoroutingservice.html">QGeoRoutingService</a> should use this function to ensure that <a href="qgeoroutingservice.html#supportsUpdatingRoutes">supportsUpdatingRoutes</a>() provides accurate information.</p>
-<p>See also <a href="qgeoroutingservice.html#supportsUpdatingRoutes">QGeoRoutingService::supportsUpdatingRoutes</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/supportedAvoidFeatureTypes"></a>
-<h3 class="fn"><a name="supportedAvoidFeatureTypes"></a>QGeoRoute::AvoidFeatureTypes QGeoRoutingService::supportedAvoidFeatureTypes () const</h3>
-<p>Returns which features this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance is able to plan to avoid when creating routes.</p>
-<p>See also QGeoRoute::AvoidFeatureTypes and <a href="qgeoroutingservice.html#setSupportedAvoidFeatureTypes">QGeoRoutingService::setSupportedAvoidFeatureTypes</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/supportedDirectionDetails"></a>
-<h3 class="fn"><a name="supportedDirectionDetails"></a>QGeoRoute::DirectionsDetails QGeoRoutingService::supportedDirectionDetails () const</h3>
-<p>Returns the level of details for directions which this <a href="qgeoroutingservice.html">QGeoRoutingService</a> supports.</p>
-<p>See also QGeoRoute::DirectionsDetails and <a href="qgeoroutingservice.html#setSupportedDirectionDetails">QGeoRoutingService::setSupportedDirectionDetails</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/supportedRouteOptimizations"></a>
-<h3 class="fn"><a name="supportedRouteOptimizations"></a>QGeoRoute::RouteOptimizations QGeoRoutingService::supportedRouteOptimizations () const</h3>
-<p>Returns which route optimizations are supported by this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance.</p>
-<p>See also QGeoRoute::RouteOptimizations and <a href="qgeoroutingservice.html#setSupportedRouteOptimizations">QGeoRoutingService::setSupportedRouteOptimizations</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/supportedTravelModes"></a>
-<h3 class="fn"><a name="supportedTravelModes"></a>QGeoRoute::TravelModes QGeoRoutingService::supportedTravelModes () const</h3>
-<p>Returns the travel modes supported by this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance.</p>
-<p>See also QGeoRoute::TravelModes and <a href="qgeoroutingservice.html#setSupportedTravelModes">QGeoRoutingService::setSupportedTravelModes</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/supportsUpdatingRoutes"></a>
-<h3 class="fn"><a name="supportsUpdatingRoutes"></a>bool QGeoRoutingService::supportsUpdatingRoutes () const</h3>
-<p>Returns whether this <a href="qgeoroutingservice.html">QGeoRoutingService</a> supports updating a previously calculated route by specifying a new position.</p>
-<p>This is typically supported so that routes can be replanned based on the position of a user after they have left</p>
-<p>See also <a href="qgeoroutingservice.html#setSupportsUpdatingRoutes">QGeoRoutingService::setSupportsUpdatingRoutes</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoutingService/updateRoute"></a>
-<h3 class="fn"><a name="updateRoute"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingService::updateRoute ( const <a href="qgeoroute.html">QGeoRoute</a> &amp; <i>route</i>, const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>currentPosition</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Requests that a new route be calculated based on the previously calculated route <i>route</i> and a current position <i>currentPosition</i>, which will become the starting point of the new route.</p>
-<p>TODO bool <a href="qgeoroutingservice.html#supportsUpdatingRoutes">supportsUpdatingRoutes</a>() const;</p>
-<p>The return value is a <a href="qgeoroutereply.html">QGeoRouteReply</a> object, which manages the result of the request. If the request completes successfully then the <a href="qgeoroutereply.html">QGeoRouteReply</a> object will emit the <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>() signal and this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance will emit the QGeoRoutingService::finished() signal.</p>
-<p>The resulting route (or routes) can then be retreived with QGeoRoutReply::routes().</p>
-<p>If an error occurs then the <a href="qgeoroutereply.html">QGeoRouteReply</a> object will emit <a href="qgeoroutereply.html#error">QGeoRouteReply::error</a>() and this <a href="qgeoroutingservice.html">QGeoRoutingService</a> instance will emit QGeoRoutingService::error().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoutingService/error"></a>
+<h3 class="fn"><a name="error"></a>void QGeoRoutingService::error ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i>, <a href="qgeoroutereply.html#ErrorCode-enum">QGeoRouteReply::ErrorCode</a> <i>errorCode</i>, <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> <i>errorString</i> = QString() )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QGeoRoutingService/finished"></a>
+<h3 class="fn"><a name="finished"></a>void QGeoRoutingService::finished ( <a href="qgeoroutereply.html">QGeoRouteReply</a> * <i>reply</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted when a <a href="qgeoroutereply.html">QGeoRouteReply</a> is available in response to a previously submitted <a href="qgeorouterequest.html">QGeoRouteRequest</a>.</p>
+<a name="//apple_ref/cpp/instm/QGeoRoutingService/getRoute"></a>
+<h3 class="fn"><a name="getRoute"></a><a href="qgeoroutereply.html">QGeoRouteReply</a> * QGeoRoutingService::getRoute ( const <a href="qgeorouterequest.html">QGeoRouteRequest</a> &amp; <i>request</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Submits the route request <i>request</i> and returns the corresponding <a href="qgeoroutereply.html">QGeoRouteReply</a>.</p>
+<p><b>Note:</b> Due to the asynchronous nature of requests, you should wait for the QGeoRoutingService::finished(<a href="qgeoroutereply.html">QGeoRouteReply</a>*) signal from this object or the <a href="qgeoroutereply.html#finished">QGeoRouteReply::finished</a>() signal from the returned <a href="qgeoroutereply.html">QGeoRouteReply</a> object before working with the reply.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

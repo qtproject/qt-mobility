@@ -396,9 +396,7 @@
                     <section ref="qlandmarkintersectionfilter.html" title="QLandmarkIntersectionFilter Class Reference">
                         <section ref="qlandmarkintersectionfilter-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qlandmarkmanager.html" title="QLandmarkManager Class Reference">
-                        <section ref="qlandmarkmanager-members.html" title="List of all members"/>
-                    </section>
+                    <section ref="qlandmarkmanager.html" title="QLandmarkManager Class Reference"/>
                     <section ref="qlandmarkmanagerengine.html" title="QLandmarkManagerEngine Class Reference">
                         <section ref="qlandmarkmanagerengine-members.html" title="List of all members"/>
                     </section>
@@ -441,7 +439,6 @@
                     <section ref="qmagnetometerreading.html" title="QMagnetometerReading Class Reference">
                         <section ref="qmagnetometerreading-members.html" title="List of all members"/>
                     </section>
-<<<<<<< HEAD
                     <section ref="qmaneuver.html" title="QManeuver Class Reference">
                         <section ref="qmaneuver-members.html" title="List of all members"/>
                     </section>
@@ -480,10 +477,9 @@
                     </section>
                     <section ref="qmapview-tileiterator.html" title="QMapView::TileIterator Class Reference">
                         <section ref="qmapview-tileiterator-members.html" title="List of all members"/>
-=======
+                    </section>
                     <section ref="qmediabindableinterface.html" title="QMediaBindableInterface Class Reference">
                         <section ref="qmediabindableinterface-members.html" title="List of all members"/>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
                     </section>
                     <section ref="qmediacontainercontrol.html" title="QMediaContainerControl Class Reference">
                         <section ref="qmediacontainercontrol-members.html" title="List of all members"/>
@@ -2075,10 +2071,18 @@
             <keyword name="timeOfDeparture" id="QGeoRoute::timeOfDeparture" ref="qgeoroute.html#timeOfDeparture"/>
             <keyword name="~QGeoRoute" id="QGeoRoute::~QGeoRoute" ref="qgeoroute.html#dtor.QGeoRoute"/>
             <keyword name="QGeoRouteReply" id="QGeoRouteReply" ref="qgeoroutereply.html"/>
+            <keyword name="QGeoRouteReply::ErrorCode" id="QGeoRouteReply::ErrorCode" ref="qgeoroutereply.html#ErrorCode-enum"/>
+            <keyword name="QGeoRouteReply::NoError" id="QGeoRouteReply::NoError" ref="qgeoroutereply.html#ErrorCode-enum"/>
+            <keyword name="QGeoRouteReply::NetworkError" id="QGeoRouteReply::NetworkError" ref="qgeoroutereply.html#ErrorCode-enum"/>
+            <keyword name="QGeoRouteReply::NoContentError" id="QGeoRouteReply::NoContentError" ref="qgeoroutereply.html#ErrorCode-enum"/>
+            <keyword name="QGeoRouteReply::ParsingError" id="QGeoRouteReply::ParsingError" ref="qgeoroutereply.html#ErrorCode-enum"/>
+            <keyword name="QGeoRouteReply::UnknownError" id="QGeoRouteReply::UnknownError" ref="qgeoroutereply.html#ErrorCode-enum"/>
             <keyword name="cancel" id="QGeoRouteReply::cancel" ref="qgeoroutereply.html#cancel"/>
+            <keyword name="description" id="QGeoRouteReply::description" ref="qgeoroutereply.html#description"/>
             <keyword name="error" id="QGeoRouteReply::error" ref="qgeoroutereply.html#error"/>
             <keyword name="finished" id="QGeoRouteReply::finished" ref="qgeoroutereply.html#finished"/>
             <keyword name="routes" id="QGeoRouteReply::routes" ref="qgeoroutereply.html#routes"/>
+            <keyword name="setDescription" id="QGeoRouteReply::setDescription" ref="qgeoroutereply.html#setDescription"/>
             <keyword name="setRoutes" id="QGeoRouteReply::setRoutes" ref="qgeoroutereply.html#setRoutes"/>
             <keyword name="~QGeoRouteReply" id="QGeoRouteReply::~QGeoRouteReply" ref="qgeoroutereply.html#dtor.QGeoRouteReply"/>
             <keyword name="QGeoRouteRequest" id="QGeoRouteRequest" ref="qgeorouterequest.html"/>
@@ -2151,22 +2155,9 @@
             <keyword name="type" id="QGeoRouteSegment::type" ref="qgeoroutesegment.html#type"/>
             <keyword name="~QGeoRouteSegment" id="QGeoRouteSegment::~QGeoRouteSegment" ref="qgeoroutesegment.html#dtor.QGeoRouteSegment"/>
             <keyword name="QGeoRoutingService" id="QGeoRoutingService" ref="qgeoroutingservice.html"/>
-            <keyword name="QGeoRoutingService::ErrorCode" id="QGeoRoutingService::ErrorCode" ref="qgeoroutingservice.html#ErrorCode-enum"/>
-            <keyword name="QGeoRoutingService::NoError" id="QGeoRoutingService::NoError" ref="qgeoroutingservice.html#ErrorCode-enum"/>
-            <keyword name="replyError" id="QGeoRoutingService::replyError" ref="qgeoroutingservice.html#replyError"/>
-            <keyword name="replyFinished" id="QGeoRoutingService::replyFinished" ref="qgeoroutingservice.html#replyFinished"/>
-            <keyword name="requestRoute" id="QGeoRoutingService::requestRoute" ref="qgeoroutingservice.html#requestRoute"/>
-            <keyword name="setSupportedAvoidFeatureTypes" id="QGeoRoutingService::setSupportedAvoidFeatureTypes" ref="qgeoroutingservice.html#setSupportedAvoidFeatureTypes"/>
-            <keyword name="setSupportedDirectionDetails" id="QGeoRoutingService::setSupportedDirectionDetails" ref="qgeoroutingservice.html#setSupportedDirectionDetails"/>
-            <keyword name="setSupportedRouteOptimizations" id="QGeoRoutingService::setSupportedRouteOptimizations" ref="qgeoroutingservice.html#setSupportedRouteOptimizations"/>
-            <keyword name="setSupportedTravelModes" id="QGeoRoutingService::setSupportedTravelModes" ref="qgeoroutingservice.html#setSupportedTravelModes"/>
-            <keyword name="setSupportsUpdatingRoutes" id="QGeoRoutingService::setSupportsUpdatingRoutes" ref="qgeoroutingservice.html#setSupportsUpdatingRoutes"/>
-            <keyword name="supportedAvoidFeatureTypes" id="QGeoRoutingService::supportedAvoidFeatureTypes" ref="qgeoroutingservice.html#supportedAvoidFeatureTypes"/>
-            <keyword name="supportedDirectionDetails" id="QGeoRoutingService::supportedDirectionDetails" ref="qgeoroutingservice.html#supportedDirectionDetails"/>
-            <keyword name="supportedRouteOptimizations" id="QGeoRoutingService::supportedRouteOptimizations" ref="qgeoroutingservice.html#supportedRouteOptimizations"/>
-            <keyword name="supportedTravelModes" id="QGeoRoutingService::supportedTravelModes" ref="qgeoroutingservice.html#supportedTravelModes"/>
-            <keyword name="supportsUpdatingRoutes" id="QGeoRoutingService::supportsUpdatingRoutes" ref="qgeoroutingservice.html#supportsUpdatingRoutes"/>
-            <keyword name="updateRoute" id="QGeoRoutingService::updateRoute" ref="qgeoroutingservice.html#updateRoute"/>
+            <keyword name="error" id="QGeoRoutingService::error" ref="qgeoroutingservice.html#error"/>
+            <keyword name="finished" id="QGeoRoutingService::finished" ref="qgeoroutingservice.html#finished"/>
+            <keyword name="getRoute" id="QGeoRoutingService::getRoute" ref="qgeoroutingservice.html#getRoute"/>
             <keyword name="~QGeoRoutingService" id="QGeoRoutingService::~QGeoRoutingService" ref="qgeoroutingservice.html#dtor.QGeoRoutingService"/>
             <keyword name="QGeoSatelliteInfo" id="QGeoSatelliteInfo" ref="qgeosatelliteinfo.html"/>
             <keyword name="QGeoSatelliteInfo::Attribute" id="QGeoSatelliteInfo::Attribute" ref="qgeosatelliteinfo.html#Attribute-enum"/>
@@ -2431,12 +2422,17 @@
             <keyword name="sorting" id="QLandmarkIdFetchRequest::sorting" ref="qlandmarkidfetchrequest.html#sorting"/>
             <keyword name="~QLandmarkIdFetchRequest" id="QLandmarkIdFetchRequest::~QLandmarkIdFetchRequest" ref="qlandmarkidfetchrequest.html#dtor.QLandmarkIdFetchRequest"/>
             <keyword name="QLandmarkIdFilter" id="QLandmarkIdFilter" ref="qlandmarkidfilter.html"/>
+            <keyword name="QLandmarkIdFilter::MatchingScheme" id="QLandmarkIdFilter::MatchingScheme" ref="qlandmarkidfilter.html#MatchingScheme-enum"/>
+            <keyword name="QLandmarkIdFilter::MatchAll" id="QLandmarkIdFilter::MatchAll" ref="qlandmarkidfilter.html#MatchingScheme-enum"/>
+            <keyword name="QLandmarkIdFilter::MatchSubset" id="QLandmarkIdFilter::MatchSubset" ref="qlandmarkidfilter.html#MatchingScheme-enum"/>
             <keyword name="append" id="QLandmarkIdFilter::append" ref="qlandmarkidfilter.html#append"/>
             <keyword name="clear" id="QLandmarkIdFilter::clear" ref="qlandmarkidfilter.html#clear"/>
             <keyword name="landmarkIds" id="QLandmarkIdFilter::landmarkIds" ref="qlandmarkidfilter.html#landmarkIds"/>
+            <keyword name="matchingScheme" id="QLandmarkIdFilter::matchingScheme" ref="qlandmarkidfilter.html#matchingScheme"/>
             <keyword name="operator&lt;&lt;" id="QLandmarkIdFilter::operator&lt;&lt;" ref="qlandmarkidfilter.html#operator-lt-lt"/>
             <keyword name="remove" id="QLandmarkIdFilter::remove" ref="qlandmarkidfilter.html#remove"/>
             <keyword name="setLandmarkIds" id="QLandmarkIdFilter::setLandmarkIds" ref="qlandmarkidfilter.html#setLandmarkIds"/>
+            <keyword name="setMatchingScheme" id="QLandmarkIdFilter::setMatchingScheme" ref="qlandmarkidfilter.html#setMatchingScheme"/>
             <keyword name="~QLandmarkIdFilter" id="QLandmarkIdFilter::~QLandmarkIdFilter" ref="qlandmarkidfilter.html#dtor.QLandmarkIdFilter"/>
             <keyword name="QLandmarkImportRequest" id="QLandmarkImportRequest" ref="qlandmarkimportrequest.html"/>
             <keyword name="device" id="QLandmarkImportRequest::device" ref="qlandmarkimportrequest.html#device"/>
@@ -2457,58 +2453,6 @@
             <keyword name="setFilters" id="QLandmarkIntersectionFilter::setFilters" ref="qlandmarkintersectionfilter.html#setFilters"/>
             <keyword name="~QLandmarkIntersectionFilter" id="QLandmarkIntersectionFilter::~QLandmarkIntersectionFilter" ref="qlandmarkintersectionfilter.html#dtor.QLandmarkIntersectionFilter"/>
             <keyword name="QLandmarkManager" id="QLandmarkManager" ref="qlandmarkmanager.html"/>
-            <keyword name="QLandmarkManager::Error" id="QLandmarkManager::Error" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::NoError" id="QLandmarkManager::NoError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::DoesNotExistError" id="QLandmarkManager::DoesNotExistError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::AlreadyExistsError" id="QLandmarkManager::AlreadyExistsError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::LockedError" id="QLandmarkManager::LockedError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::PermissionsError" id="QLandmarkManager::PermissionsError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::OutOfMemoryError" id="QLandmarkManager::OutOfMemoryError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::VersionMismatchError" id="QLandmarkManager::VersionMismatchError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::NotSupportedError" id="QLandmarkManager::NotSupportedError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::BadArgumentError" id="QLandmarkManager::BadArgumentError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::InvalidManagerError" id="QLandmarkManager::InvalidManagerError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::UnknownError" id="QLandmarkManager::UnknownError" ref="qlandmarkmanager.html#Error-enum"/>
-            <keyword name="QLandmarkManager::FilterSupportLevel" id="QLandmarkManager::FilterSupportLevel" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
-            <keyword name="QLandmarkManager::Native" id="QLandmarkManager::Native" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
-            <keyword name="QLandmarkManager::Emulated" id="QLandmarkManager::Emulated" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
-            <keyword name="QLandmarkManager::None" id="QLandmarkManager::None" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
-            <keyword name="QLandmarkManager::LandmarkFeature" id="QLandmarkManager::LandmarkFeature" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
-            <keyword name="QLandmarkManager::GenericAttributes" id="QLandmarkManager::GenericAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
-            <keyword name="availableManagers" id="QLandmarkManager::availableManagers" ref="qlandmarkmanager.html#availableManagers"/>
-            <keyword name="buildUri" id="QLandmarkManager::buildUri" ref="qlandmarkmanager.html#buildUri"/>
-            <keyword name="categories" id="QLandmarkManager::categories" ref="qlandmarkmanager.html#categories"/>
-            <keyword name="categoriesAdded" id="QLandmarkManager::categoriesAdded" ref="qlandmarkmanager.html#categoriesAdded"/>
-            <keyword name="categoriesChanged" id="QLandmarkManager::categoriesChanged" ref="qlandmarkmanager.html#categoriesChanged"/>
-            <keyword name="categoriesRemoved" id="QLandmarkManager::categoriesRemoved" ref="qlandmarkmanager.html#categoriesRemoved"/>
-            <keyword name="category" id="QLandmarkManager::category" ref="qlandmarkmanager.html#category"/>
-            <keyword name="categoryIds" id="QLandmarkManager::categoryIds" ref="qlandmarkmanager.html#categoryIds"/>
-            <keyword name="error" id="QLandmarkManager::error" ref="qlandmarkmanager.html#error"/>
-            <keyword name="errorString" id="QLandmarkManager::errorString" ref="qlandmarkmanager.html#errorString"/>
-            <keyword name="exportLandmarks" id="QLandmarkManager::exportLandmarks" ref="qlandmarkmanager.html#exportLandmarks"/>
-            <keyword name="filterSupportLevel" id="QLandmarkManager::filterSupportLevel" ref="qlandmarkmanager.html#filterSupportLevel"/>
-            <keyword name="fromUri" id="QLandmarkManager::fromUri" ref="qlandmarkmanager.html#fromUri"/>
-            <keyword name="importLandmarks" id="QLandmarkManager::importLandmarks" ref="qlandmarkmanager.html#importLandmarks"/>
-            <keyword name="isFeatureSupported" id="QLandmarkManager::isFeatureSupported" ref="qlandmarkmanager.html#isFeatureSupported"/>
-            <keyword name="isReadOnly" id="QLandmarkManager::isReadOnly" ref="qlandmarkmanager.html#isReadOnly"/>
-            <keyword name="landmark" id="QLandmarkManager::landmark" ref="qlandmarkmanager.html#landmark"/>
-            <keyword name="landmarkIds" id="QLandmarkManager::landmarkIds" ref="qlandmarkmanager.html#landmarkIds"/>
-            <keyword name="landmarks" id="QLandmarkManager::landmarks" ref="qlandmarkmanager.html#landmarks"/>
-            <keyword name="landmarksAdded" id="QLandmarkManager::landmarksAdded" ref="qlandmarkmanager.html#landmarksAdded"/>
-            <keyword name="landmarksChanged" id="QLandmarkManager::landmarksChanged" ref="qlandmarkmanager.html#landmarksChanged"/>
-            <keyword name="landmarksRemoved" id="QLandmarkManager::landmarksRemoved" ref="qlandmarkmanager.html#landmarksRemoved"/>
-            <keyword name="managerName" id="QLandmarkManager::managerName" ref="qlandmarkmanager.html#managerName"/>
-            <keyword name="managerParameters" id="QLandmarkManager::managerParameters" ref="qlandmarkmanager.html#managerParameters"/>
-            <keyword name="managerUri" id="QLandmarkManager::managerUri" ref="qlandmarkmanager.html#managerUri"/>
-            <keyword name="managerVersion" id="QLandmarkManager::managerVersion" ref="qlandmarkmanager.html#managerVersion"/>
-            <keyword name="parseUri" id="QLandmarkManager::parseUri" ref="qlandmarkmanager.html#parseUri"/>
-            <keyword name="removeCategory" id="QLandmarkManager::removeCategory" ref="qlandmarkmanager.html#removeCategory"/>
-            <keyword name="removeLandmark" id="QLandmarkManager::removeLandmark" ref="qlandmarkmanager.html#removeLandmark"/>
-            <keyword name="removeLandmarks" id="QLandmarkManager::removeLandmarks" ref="qlandmarkmanager.html#removeLandmarks"/>
-            <keyword name="saveCategory" id="QLandmarkManager::saveCategory" ref="qlandmarkmanager.html#saveCategory"/>
-            <keyword name="saveLandmark" id="QLandmarkManager::saveLandmark" ref="qlandmarkmanager.html#saveLandmark"/>
-            <keyword name="saveLandmarks" id="QLandmarkManager::saveLandmarks" ref="qlandmarkmanager.html#saveLandmarks"/>
-            <keyword name="~QLandmarkManager" id="QLandmarkManager::~QLandmarkManager" ref="qlandmarkmanager.html#dtor.QLandmarkManager"/>
             <keyword name="QLandmarkManagerEngine" id="QLandmarkManagerEngine" ref="qlandmarkmanagerengine.html"/>
             <keyword name="addSorted" id="QLandmarkManagerEngine::addSorted" ref="qlandmarkmanagerengine.html#addSorted"/>
             <keyword name="cancelRequest" id="QLandmarkManagerEngine::cancelRequest" ref="qlandmarkmanagerengine.html#cancelRequest"/>
@@ -2641,7 +2585,6 @@
             <keyword name="x" id="QMagnetometerReading::x" ref="qmagnetometerreading.html#x-prop"/>
             <keyword name="y" id="QMagnetometerReading::y" ref="qmagnetometerreading.html#y-prop"/>
             <keyword name="z" id="QMagnetometerReading::z" ref="qmagnetometerreading.html#z-prop"/>
-<<<<<<< HEAD
             <keyword name="QManeuver" id="QManeuver" ref="qmaneuver.html"/>
             <keyword name="action" id="QManeuver::action" ref="qmaneuver.html#action"/>
             <keyword name="description" id="QManeuver::description" ref="qmaneuver.html#description"/>
@@ -2818,12 +2761,10 @@
             <keyword name="wheelEvent" id="QMapView::wheelEvent" ref="qmapview.html#wheelEvent"/>
             <keyword name="zoomLevelChanged" id="QMapView::zoomLevelChanged" ref="qmapview.html#zoomLevelChanged"/>
             <keyword name="~QMapView" id="QMapView::~QMapView" ref="qmapview.html#dtor.QMapView"/>
-=======
             <keyword name="QMediaBindableInterface" id="QMediaBindableInterface" ref="qmediabindableinterface.html"/>
             <keyword name="mediaObject" id="QMediaBindableInterface::mediaObject" ref="qmediabindableinterface.html#mediaObject"/>
             <keyword name="setMediaObject" id="QMediaBindableInterface::setMediaObject" ref="qmediabindableinterface.html#setMediaObject"/>
             <keyword name="~QMediaBindableInterface" id="QMediaBindableInterface::~QMediaBindableInterface" ref="qmediabindableinterface.html#dtor.QMediaBindableInterface"/>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <keyword name="QMediaContainerControl" id="QMediaContainerControl" ref="qmediacontainercontrol.html"/>
             <keyword name="containerDescription" id="QMediaContainerControl::containerDescription" ref="qmediacontainercontrol.html#containerDescription"/>
             <keyword name="containerMimeType" id="QMediaContainerControl::containerMimeType" ref="qmediacontainercontrol.html#containerMimeType"/>
@@ -4739,11 +4680,8 @@
             <file>qmessageaccountfilter-members.html</file>
             <file>contactsschema.html</file>
             <file>qgeocoordinate-members.html</file>
-<<<<<<< HEAD
-            <file>qlandmarkexportrequest.html</file>
-=======
             <file>qvideosurfaceformat-members.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
+            <file>qlandmarkexportrequest.html</file>
             <file>qsensorplugininterface.html</file>
             <file>qvideodevicecontrol.html</file>
             <file>qnmeapositioninfosource.html</file>
@@ -4775,11 +4713,8 @@
             <file>qsystemdisplayinfo.html</file>
             <file>keepintouch-main-cpp.html</file>
             <file>qcontactsaverequest.html</file>
-<<<<<<< HEAD
-            <file>qlandmarknearestfilter-members.html</file>
-=======
             <file>qabstractvideosurface-members.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
+            <file>qlandmarknearestfilter-members.html</file>
             <file>qcontactdisplaylabel-members.html</file>
             <file>qmaptileservice-members.html</file>
             <file>qcontactdetailfilter.html</file>
@@ -4834,12 +4769,9 @@
             <file>qcontactringtone-members.html</file>
             <file>qtapsensor.html</file>
             <file>qservicemanager.html</file>
-<<<<<<< HEAD
             <file>qmaptileservice.html</file>
             <file>qgeoroute-members.html</file>
-=======
             <file>qvideosurfaceformat.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <file>qcontacttimestamp.html</file>
             <file>images/servicebrowser-attributes.png</file>
             <file>writemessage-main-cpp.html</file>
@@ -4866,7 +4798,6 @@
             <file>qversitcontactimporter.html</file>
             <file>qgeoroutingservice-members.html</file>
             <file>bearercloud-cloud-h.html</file>
-            <file>qlandmarkmanager-members.html</file>
             <file>qlandmarksortorder-members.html</file>
             <file>player-videowidget-cpp.html</file>
             <file>images/servicebrowser.png</file>
@@ -4877,11 +4808,8 @@
             <file>sfw-notes-sfwnotes-h.html</file>
             <file>qmapobject-members.html</file>
             <file>images/sensors-coordinates3.jpg</file>
-<<<<<<< HEAD
             <file>qlandmarkfilter-members.html</file>
-=======
             <file>qaudiooutput.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <file>qmediaplaylistprovider-members.html</file>
             <file>notesmanagerplugin-notesmanagerplugin-pro.html</file>
             <file>qgeorouterequest.html</file>
@@ -4984,8 +4912,8 @@
             <file>qlandmarkcategory-members.html</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
             <file>qcontactgeolocation.html</file>
-            <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>annotated.html</file>
+            <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>qcontactmanagerenginefactory-members.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
@@ -5007,8 +4935,8 @@
             <file>qlandmarkcategoryidfetchrequest.html</file>
             <file>qlandmarkimportrequest-members.html</file>
             <file>bearercloud-unknown-svg.html</file>
-            <file>weatherinfo-icons-weather-icy-svg.html</file>
             <file>qsystemstorageinfo.html</file>
+            <file>weatherinfo-icons-weather-icy-svg.html</file>
             <file>weatherinfo-icons-weather-thundershower-svg.html</file>
             <file>flickrdemo-flickrdemo-h.html</file>
             <file>qvideorenderercontrol-members.html</file>
@@ -5016,12 +4944,9 @@
             <file>qgeolocation.html</file>
             <file>preview.html</file>
             <file>samplephonebook-contactlistpage-cpp.html</file>
-<<<<<<< HEAD
-            <file>qmaproute.html</file>
-=======
             <file>qmlcontacts-qmlcontactmodel-cpp.html</file>
             <file>qmetadatareadercontrol-members.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
+            <file>qmaproute.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qgeoroutingservice.html</file>
             <file>qcontactpresence.html</file>
@@ -5040,13 +4965,10 @@
             <file>qserviceplugininterface-members.html</file>
             <file>opensourceedition.html</file>
             <file>fetchgooglemaps.html</file>
-<<<<<<< HEAD
             <file>qmappixmap.html</file>
             <file>qlandmarkcategoryid.html</file>
             <file>qmapmarker-members.html</file>
-=======
             <file>qmediaplaylistsourcecontrol-members.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <file>qgeosatelliteinfosource-members.html</file>
             <file>qcontactnickname-members.html</file>
             <file>qabstractsecuritysession.html</file>
@@ -5163,12 +5085,9 @@
             <file>qmappixmap-members.html</file>
             <file>qambientlightfilter.html</file>
             <file>flickrdemo-xqlistwidget-h.html</file>
-<<<<<<< HEAD
             <file>qgeoaddress-members.html</file>
-            <file>qlandmarknearestfilter.html</file>
-=======
             <file>qabstractvideobuffer.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
+            <file>qlandmarknearestfilter.html</file>
             <file>notesmanagerplugin-notesmanager-cpp.html</file>
             <file>qgeocodereply.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
@@ -5186,13 +5105,10 @@
             <file>qlandmarkintersectionfilter-members.html</file>
             <file>qcontactdisplaylabel.html</file>
             <file>qsensorfilter-members.html</file>
-<<<<<<< HEAD
+            <file>qaudioformat-obsolete.html</file>
             <file>qlandmarknamesort.html</file>
             <file>qgeocodingservice.html</file>
             <file>qgeomapreply-members.html</file>
-=======
-            <file>qaudioformat-obsolete.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <file>images/DialerServiceGUI.png</file>
             <file>qgeodistance.html</file>
             <file>qcontactdetailfielddefinition-members.html</file>
@@ -5204,23 +5120,15 @@
             <file>qgeopositioninfo.html</file>
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
-<<<<<<< HEAD
             <file>qgeocoderequestoptions-members.html</file>
-            <file>battery-charge-battery-subscriber-battery-subscriber-pro.html</file>
             <file>images/sensors-rotation2.jpg</file>
-            <file>qmlcontacts-qmlcontact-h.html</file>
+            <file>qvideoframe-members.html</file>
             <file>qgeomappingservice.html</file>
             <file>qgeoboundingbox-members.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
             <file>qlandmarkcategoryid-members.html</file>
-=======
-            <file>images/sensors-rotation2.jpg</file>
-            <file>qvideoframe-members.html</file>
-            <file>qmediaplaylistreader.html</file>
-            <file>classes.html</file>
             <file>contactsusage.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <file>qcontactmanager.html</file>
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
@@ -5312,11 +5220,8 @@
             <file>notesmanagerplugin-notesmanager-h.html</file>
             <file>qmediaplaylistnavigator.html</file>
             <file>qmediaresource-members.html</file>
-<<<<<<< HEAD
-            <file>qlandmarkcategory.html</file>
-=======
             <file>qabstractvideobuffer-members.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
+            <file>qlandmarkcategory.html</file>
             <file>sfw-notes-main-cpp.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
             <file>qmaptilereply-members.html</file>
@@ -5338,11 +5243,7 @@
             <file>qmediatimeinterval.html</file>
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
-<<<<<<< HEAD
-            <file>qvideooutputcontrol.html</file>
             <file>qlandmarkidfilter.html</file>
-=======
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <file>qaccelerometerfilter-members.html</file>
             <file>qgeomappingservice-members.html</file>
             <file>slideshow-main-cpp.html</file>
@@ -5357,11 +5258,8 @@
             <file>qaudiodeviceinfo-obsolete.html</file>
             <file>player.html</file>
             <file>qversitproperty.html</file>
-<<<<<<< HEAD
             <file>qsearchresponse-members.html</file>
-=======
             <file>qml-video.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <file>sfw-notes-sfw-notes-pro.html</file>
             <file>qtapfilter.html</file>
             <file>qcontactmemoryengine.html</file>
@@ -5397,12 +5295,9 @@
             <file>qmaprect.html</file>
             <file>qlandmarkcategorysaverequest-members.html</file>
             <file>qimageencodercontrol.html</file>
-<<<<<<< HEAD
+            <file>qaudioformat.html</file>
             <file>qlandmarkcategoryfilter-members.html</file>
             <file>qlandmarkidfetchrequest.html</file>
-=======
-            <file>qaudioformat.html</file>
->>>>>>> b1e64744dcae67e79e59807d18963080315577eb
             <file>images/sensors-sides.jpg</file>
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
@@ -5508,8 +5403,8 @@
             <file>slideshow-slideshow-h.html</file>
             <file>sysinfo-sysinfo-pro.html</file>
             <file>qcontacttype-members.html</file>
-            <file>qaudioformat-members.html</file>
             <file>qabstractvideosurface.html</file>
+            <file>qaudioformat-members.html</file>
             <file>notesmanagerplugin.html</file>
             <file>qmediacontainercontrol-members.html</file>
             <file>qorientationfilter-members.html</file>
@@ -5550,9 +5445,9 @@
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
-            <file>weatherinfo-icons-weather-haze-svg.html</file>
             <file>qmlcontacts-qmlcontacts-qrc.html</file>
             <file>writemessage-writemessage-pro.html</file>
+            <file>weatherinfo-icons-weather-haze-svg.html</file>
             <file>flickrdemo-main-cpp.html</file>
             <file>sensors-api.html</file>
             <file>qmessagefolderid-members.html</file>
