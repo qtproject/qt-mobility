@@ -169,9 +169,16 @@ private:
     QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
     QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal ) const;
 
+    // conversions between CComponent and QOrganizerItem
+    void fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component ) const;
+    CComponent* createCComponent( CCalendar* cal, const QOrganizerItem& item ) const;
+
+
+    /*
     CEvent* convertQEventToCEvent(const QOrganizerEvent& event) const;
     CTodo* convertQTodoToCTodo(const QOrganizerTodo& todo) const;
     CJournal* convertQJournalToCJournal(const QOrganizerJournal& journal) const;
+    */
 
     // error code conversion
     QOrganizerItemManager::Error calErrorToManagerError( int calError ) const;

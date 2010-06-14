@@ -178,7 +178,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
     Q_UNUSED(fetchHint);
-    // TODO: Make this use the fetch hint??
+    // TODO: Make this method to use the fetch hint
 
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     std::string nativeId = QString::number(itemId).toStdString();
@@ -188,6 +188,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     *error = calErrorToManagerError( calError );
     if ( event ) {
         QOrganizerEvent retn = convertCEventToQEvent( event );
+        fillInCommonCComponentDetails( &retn, event );
         delete event;
         cleanupCal( cal );
         return retn;
@@ -196,6 +197,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     *error = calErrorToManagerError( calError );
     if ( todo ) {
         QOrganizerTodo retn = convertCTodoToQTodo( todo );
+        fillInCommonCComponentDetails( &retn, todo );
         delete todo;
         cleanupCal( cal );
         return retn;
@@ -203,13 +205,14 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     CJournal* journal = cal->getJournal( nativeId, calError );
     *error = calErrorToManagerError( calError );
     if ( journal ) {
-        QOrganizerJournal retn = convertCJournalToQJournal( journal );
+        QOrganizerJournal retn = convertCJournalToQJournal( journal ); // TODO: Probably this call is not needed
+        fillInCommonCComponentDetails( &retn, journal );
         delete journal;
         cleanupCal( cal );
         return retn;
     }
 
-    // In an error situation return invalid item
+    // In an error situation return an invalid item
     *error = QOrganizerItemManager::DoesNotExistError;
     return QOrganizerItem();
 }
@@ -437,22 +440,16 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
-    // TODO: This is for debug purposes, remove it!
-    /*
-    std::vector<CEvent*> events = cal->getEvents( calError );
-    qDebug() << "Events count 1: " << events.size();
-    for( int i = 0; i < events.size(); ++i )
-    {
-        CEvent* e = events[i];
-        qDebug() << "-- Event id: " << QString::fromStdString(e->getId());
-    }
-    */
+    CComponent* component = createCComponent( cal, *item );
+    if( !component )
+        return calError;
+
+    // TODO: The custom detail fields should be iterated and the corresponding
+    // fields should be set to CComponent for saving.
 
     if (item->type() == QOrganizerItemType::TypeEvent) {
-        QOrganizerEvent* event = static_cast<QOrganizerEvent*>( item );
-        CEvent* cevent = convertQEventToCEvent(*event);
+        CEvent* cevent = static_cast<CEvent*>( component );
         QString ceventId = QString::fromStdString( cevent->getId() );
-
         if ( !ceventId.isEmpty() ) {
             // CEvent ID is not empty, the event already exists in calendar
             cal->modifyEvent(cevent, calError);
@@ -485,10 +482,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeTodo) {
-        QOrganizerTodo* todo = static_cast<QOrganizerTodo*>( item );
-        CTodo* ctodo = convertQTodoToCTodo(*todo);
+        CTodo* ctodo = static_cast<CTodo*>( component );
         QString ctodoId = QString::fromStdString( ctodo->getId() );
-
         if ( !ctodoId.isEmpty() ) {
             // CTodo ID is not empty, the todo already exists in calendar
             cal->modifyTodo(ctodo, calError);
@@ -521,10 +516,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
         return calError;
     }
     else if (item->type() == QOrganizerItemType::TypeJournal) {
-        QOrganizerEvent* journal = static_cast<QOrganizerEvent*>( item );
-        CJournal* cjournal = convertQJournalToCJournal(*journal);
+        CJournal* cjournal = static_cast<CJournal*>( component );
         QString cjournalId = QString::fromStdString( cjournal->getId() );
-
         if ( !cjournalId.isEmpty() ) {
             // CJournal ID is not empty, the journal already exists in calendar
             cal->modifyJournal(cjournal, calError);
@@ -563,21 +556,9 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
 QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent) const
 {
     QOrganizerEvent ret;
-    QString tempstr = QString::fromStdString(cevent->getGeo());
-    if (!tempstr.isEmpty())
-        ret.setLocationGeoCoordinates(tempstr);
     int tempint = cevent->getPriority();
     if (tempint != -1)
         ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
-    tempstr = QString::fromStdString(cevent->getSummary());
-    if (!tempstr.isEmpty())
-        ret.setDisplayLabel(tempstr);
-    tempstr = QString::fromStdString(cevent->getDescription());
-    if (!tempstr.isEmpty())
-        ret.setDescription(tempstr);
-    tempstr = QString::fromStdString(cevent->getLocation());
-    if (!tempstr.isEmpty())
-        ret.setLocationName(tempstr);
     QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
     if (!tempdt.isNull())
         ret.setStartDateTime(tempdt);
@@ -585,14 +566,7 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent
     if (!tempdt.isNull())
         ret.setEndDateTime(tempdt);
 
-    QString idString = QString::fromStdString( cevent->getId() );
-    QOrganizerItemLocalId localId = idString.toUInt();
-    QOrganizerItemId id;
-    id.setLocalId( localId );
-    id.setManagerUri(managerUri());
-    ret.setId( id );
-
-    // TODO: the recurrence information
+    // TODO: the recurrence information?
 
     return ret;
 }
@@ -653,19 +627,9 @@ QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo ) co
     QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
         ret.setNotBeforeDateTime(tempdt);
-    QString tempstr = QString::fromStdString(ctodo->getSummary());
-    if (!tempstr.isEmpty())
-        ret.setDisplayLabel(tempstr);
     tempdt = QDateTime::fromTime_t(ctodo->getDue());
     if (!tempdt.isNull())
         ret.setDueDateTime(tempdt);
-
-    QString idString = QString::fromStdString( ctodo->getId() );
-    QOrganizerItemLocalId localId = idString.toUInt();
-    QOrganizerItemId id;
-    id.setLocalId( localId );
-    id.setManagerUri(managerUri());
-    ret.setId( id );
 
     return ret;
 }
@@ -719,6 +683,8 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
 
 QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal* cjournal) const
 {
+    // TODO: Probably this method is not needed at all. Check if this can be removed.
+
     QOrganizerJournal ret;
     QString tempstr = QString::fromStdString(cjournal->getDescription());
     if (!tempstr.isEmpty())
@@ -727,129 +693,160 @@ QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal
     if (!tempstr.isEmpty())
         ret.setDisplayLabel(tempstr);
 
+    /*
     QString idString = QString::fromStdString( cjournal->getId() );
     QOrganizerItemLocalId localId = idString.toUInt();
     QOrganizerItemId id;
     id.setLocalId( localId );
     id.setManagerUri(managerUri());
     ret.setId( id );
+    */
 
     return ret;
 }
 
-CEvent* QOrganizerItemMaemo5Engine::convertQEventToCEvent(const QOrganizerEvent& event) const
+void QOrganizerItemMaemo5Engine::fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component ) const
 {
-    QOrganizerItemLocalId eventId = event.localId();
-    QString eventIdStr = QString::number( eventId );
+    // TODO: Possible fields to add (defined in the CComponent superclass):
+    // TODO: flags, status, (datestart), (dateend), lastmodified, (comments)
+    // TODO: recurrence, until, rtype, alarm, allday, tzoffset... still others??
 
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
-    int calId = cal->getCalendarId();
+    // TODO: What to do with attendee, instanceorigin, participation, priority, provenance
+    // TODO: rsvpinfo, timestamp... others??
 
-    int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-    CEvent* ret = cal->getEvent( eventIdStr.toStdString(), calError );
-    if ( !ret ) {
-        // Event did not existed in calendar, create a new CEvent with an empty ID
-        ret = new CEvent();
+    if( item ) {
+        QString tempstr = QString::fromStdString(component->getSummary());
+        if (!tempstr.isEmpty())
+            item->setDisplayLabel(tempstr);
+        tempstr = QString::fromStdString(component->getDescription());
+        if (!tempstr.isEmpty())
+            item->setDescription(tempstr);
+
+        tempstr = QString::fromStdString(component->getLocation());
+        if(!tempstr.isEmpty()) {
+            QOrganizerItemLocation il = item->detail<QOrganizerItemLocation>();
+            il.setGeoLocation( tempstr );
+            item->saveDetail(&il);
+        }
+        tempstr = QString::fromStdString(component->getGUid());
+        if(!tempstr.isEmpty()) {
+            QOrganizerItemGuid ig = item->detail<QOrganizerItemGuid>();
+            ig.setGuid( tempstr );
+            item->saveDetail(&ig);
+        }
+
+        // Component ID
+        QString idString = QString::fromStdString( component->getId() );
+        QOrganizerItemLocalId localId = idString.toUInt();
+        QOrganizerItemId id;
+        id.setLocalId(localId);
+        id.setManagerUri(managerUri());
+        item->setId( id );
     }
-    else {
-        // Event existed in calendar, use the existing event's ID
-        ret->setId( eventIdStr.toStdString() );
-    }
-
-    ret->setCalendarId( calId );
-
-    if (!event.locationGeoCoordinates().isEmpty())
-        ret->setGeo(event.locationGeoCoordinates().toStdString());
-    if (!event.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
-        ret->setPriority(static_cast<int>(event.priority()));
-    if (!event.displayLabel().isEmpty())
-        ret->setSummary(event.displayLabel().toStdString());
-    if (!event.description().isEmpty())
-        ret->setDescription(event.description().toStdString());
-    if (!event.startDateTime().isNull())
-        ret->setDateStart(event.startDateTime().toTime_t());
-    if (!event.endDateTime().isNull())
-        ret->setDateEnd(event.endDateTime().toTime_t());
-
-    cleanupCal( cal );
-
-    return ret;
 }
 
-
-CTodo* QOrganizerItemMaemo5Engine::convertQTodoToCTodo(const QOrganizerTodo& todo) const
+CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const QOrganizerItem& item ) const
 {
-    QOrganizerItemLocalId todoId = todo.localId();
-    QString todoIdStr = QString::number( todoId );
-
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    QOrganizerItemLocalId itemId = item.localId();
+    QString itemIdStr = QString::number( itemId );
     int calId = cal->getCalendarId();
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    CComponent* retn = 0;
 
-    int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-    CTodo* ret = cal->getTodo( todoIdStr.toStdString(), calError );
-    if ( !ret ) {
-        // Event did not existed in calendar, create a new CEvent with an empty ID
-        ret = new CTodo();
+    if (item.type() == QOrganizerItemType::TypeEvent) {
+        CEvent* cevent = cal->getEvent( itemIdStr.toStdString(), calError );
+        if ( !cevent ) {
+            // Event did not existed in calendar, create a new CEvent with an empty ID
+            cevent = new CEvent();
+        }
+        else {
+            // Event existed in calendar, use the existing event's ID
+            cevent->setId( itemIdStr.toStdString() );
+        }
+        cevent->setCalendarId( calId );
+
+        // Set the event specific details
+        const QOrganizerEvent& event = static_cast<const QOrganizerEvent&>( item );
+        if (!event.locationGeoCoordinates().isEmpty())
+            cevent->setGeo(event.locationGeoCoordinates().toStdString());
+        if (!event.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
+            cevent->setPriority(static_cast<int>(event.priority()));
+
+        // TODO: Maybe the following should be removed and should be set on the upper level?
+        if (!event.startDateTime().isNull())
+            cevent->setDateStart(event.startDateTime().toTime_t());
+        if (!event.endDateTime().isNull())
+            cevent->setDateEnd(event.endDateTime().toTime_t());
+
+        retn = cevent;
     }
-    else {
-        // Todo existed in calendar, use the existing todo's ID
-        ret->setId( todoIdStr.toStdString() );
+    else if (item.type() == QOrganizerItemType::TypeTodo) {
+        CTodo* ctodo = cal->getTodo( itemIdStr.toStdString(), calError );
+        if ( !ctodo ) {
+            // Event did not existed in calendar, create a new CEvent with an empty ID
+            ctodo = new CTodo();
+        }
+        else {
+            // Event existed in calendar, use the existing event's ID
+            ctodo->setId( itemIdStr.toStdString() );
+        }
+        ctodo->setCalendarId( calId );
+
+        // Set the todo specific details
+        const QOrganizerTodo& todo = static_cast<const QOrganizerTodo&>( item );
+        if (!todo.detail("QOrganizerItemLocation::DefinitionName").isEmpty())
+            ctodo->setGeo(todo.detail<QOrganizerItemLocation>().geoLocation().toStdString());
+        if (!todo.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
+            ctodo->setPriority(static_cast<int>(todo.priority()));
+        if (!todo.dueDateTime().isNull())
+            ctodo->setDue(todo.dueDateTime().toTime_t());
+        // TODO: CTodo::setCompleted, CTodo::setPercentComplete ??
+
+        // TODO: Maybe the following should be removed and should be set on the upper level?
+        if (!todo.notBeforeDateTime().isNull())
+            ctodo->setDateStart(todo.notBeforeDateTime().toTime_t());
+
+        retn = ctodo;
+    }
+    else if (item.type() == QOrganizerItemType::TypeJournal) {
+        CJournal* cjournal = cal->getJournal( itemIdStr.toStdString(), calError );
+        if ( !cjournal ) {
+            // Event did not existed in calendar, create a new CEvent with an empty ID
+            cjournal = new CJournal();
+        }
+        else {
+            // Event existed in calendar, use the existing event's ID
+            cjournal->setId( itemIdStr.toStdString() );
+        }
+        cjournal->setCalendarId( calId );
+
+        // Set journal specific details
+        // TODO: There's no journal specific details in Maemo.
+        // TODO: Maybe should be removed and should be set on the upper level?
+        const QOrganizerJournal& journal = static_cast<const QOrganizerJournal&>( item );
+        if (!journal.dateTime().isNull())
+            cjournal->setDateStart(journal.dateTime().toTime_t());
+
+        retn = cjournal;
     }
 
-    ret->setCalendarId( calId );
+    if( retn ) {
+        // Set the common details for all CComponents:
+        if (!item.displayLabel().isEmpty())
+            retn->setSummary(item.displayLabel().toStdString());
+        if (!item.description().isEmpty())
+            retn->setDescription(item.description().toStdString());
+        if (!item.guid().isEmpty())
+            retn->setGUid(item.guid().toStdString());
 
-    if (!todo.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
-        ret->setPriority(static_cast<int>(todo.priority()));
-    if (!todo.displayLabel().isEmpty())
-        ret->setSummary(todo.displayLabel().toStdString());
-    if (!todo.description().isEmpty())
-        ret->setDescription(todo.description().toStdString());
-    if (!todo.notBeforeDateTime().isNull())
-        ret->setDateStart(todo.notBeforeDateTime().toTime_t());
-    if (!todo.dueDateTime().isNull())
-        ret->setDue(todo.dueDateTime().toTime_t());
-
-    // XXX TODO: generate or load the occurrence, and fill out required fields.
-
-    cleanupCal( cal );
-
-    return ret;
-}
-
-
-CJournal* QOrganizerItemMaemo5Engine::convertQJournalToCJournal(const QOrganizerJournal& journal) const
-{
-    QOrganizerItemLocalId journalId = journal.localId();
-    QString journalIdStr = QString::number( journalId );
-
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
-    int calId = cal->getCalendarId();
-
-    int calError = CALENDAR_OPERATION_SUCCESSFUL; // reset error variable
-    CJournal* ret = cal->getJournal( journalIdStr.toStdString(), calError );
-    if ( !ret ) {
-        // Event did not existed in calendar, create a new CEvent with an empty ID
-        ret = new CJournal();
-    }
-    else {
-        // Event existed in calendar, use the existing event's ID
-        ret->setId( journalIdStr.toStdString() );
+        QStringList comments = item.comments();
+        if ( !comments.isEmpty() ) {
+            // TODO: Maemo5 has only a single string for comments,
+            // map the comment list to a string somehow.
+        }
     }
 
-    ret->setCalendarId( calId );
-
-    if (!journal.displayLabel().isEmpty())
-        ret->setSummary(journal.displayLabel().toStdString());
-    if (!journal.description().isEmpty())
-        ret->setDescription(journal.description().toStdString());
-    if (!journal.dateTime().isNull())
-        ret->setDateStart(journal.dateTime().toTime_t());
-
-    // XXX TODO: other fields?  notes etc?
-
-    cleanupCal( cal );
-
-    return ret;
+    return retn;
 }
 
 QOrganizerItemManager::Error QOrganizerItemMaemo5Engine::calErrorToManagerError( int calError ) const
