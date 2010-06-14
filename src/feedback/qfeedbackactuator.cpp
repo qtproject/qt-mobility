@@ -158,7 +158,7 @@ QFeedbackActuator::State QFeedbackActuator::state() const
 
 QFeedbackActuator::Capabilities QFeedbackActuator::supportedCapabilities() const
 {
-    return QHapticsFeedbackInterface::instance()->actuatorProperty(*this, QHapticsFeedbackInterface::SupportedCapabilities).toInt();
+  return  QFeedbackActuator::Capabilities(QHapticsFeedbackInterface::instance()->actuatorProperty(*this, QHapticsFeedbackInterface::SupportedCapabilities).toInt());
 }
 
 bool QFeedbackActuator::isEnabled() const

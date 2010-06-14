@@ -52,7 +52,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QFeedbackActuator;
-class QFeedbackEffectPrivate;
+class QHapticsFeedbackEffectPrivate;
 class QFileFeedbackEffectPrivate;
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
