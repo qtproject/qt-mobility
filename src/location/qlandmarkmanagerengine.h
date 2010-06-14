@@ -106,8 +106,6 @@ public:
                                QString *errorString) const =0;
     virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders, const QLandmarkFetchHint &fetchHint,
                                        QLandmarkManager::Error *error, QString *errorString) const = 0;
-    virtual QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
-                                       QString *errorString) const = 0;
     virtual QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId, QLandmarkManager::Error *error,
                                        QString *errorString) const = 0;
     virtual QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds, QLandmarkManager::Error *error,

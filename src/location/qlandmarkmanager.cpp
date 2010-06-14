@@ -475,7 +475,9 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
     }
 
     QList<QLandmarkSortOrder> sortOrders;
-    sortOrders.append(sortOrder);
+    if (sortOrder.type() != QLandmarkSortOrder::DefaultSort)
+        sortOrders.append(sortOrder);
+
     QList<QLandmark> lms = d->engine->landmarks(filter,
                            sortOrders,
                            fetchHint,
@@ -503,6 +505,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
     }
 
     QLandmarkIdFilter idFilter(landmarkIds);
+    idFilter.setMatchingScheme(QLandmarkIdFilter::MatchAll);
     QList<QLandmarkSortOrder> sortOrders;
 
     // use the error map to add to the error string?
@@ -717,6 +720,8 @@ bool QLandmarkManager::isFilterSupported(QLandmarkFilter::FilterType filterType)
         return false;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->isFilterSupported(filterType);
 }
 
@@ -733,6 +738,8 @@ bool QLandmarkManager::isReadOnly() const
         return true;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->isReadOnly();
 }
 
@@ -787,6 +794,8 @@ QString QLandmarkManager::managerName() const
         return QString();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->managerName();
 }
 
@@ -803,6 +812,8 @@ QMap<QString, QString> QLandmarkManager::managerParameters() const
         return QMap<QString, QString>();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->managerParameters();
 }
 
@@ -819,6 +830,8 @@ QString QLandmarkManager::managerUri() const
         return QString();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->managerUri();
 }
 
@@ -835,6 +848,8 @@ int QLandmarkManager::managerVersion() const
         return 0;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->managerVersion();
 }
 

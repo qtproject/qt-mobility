@@ -56,8 +56,8 @@ Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkIdFilter)
 /*!
     Creates a filter that selects landmarks by a list of landmark \a ids.
 */
-QLandmarkIdFilter::QLandmarkIdFilter(const QList<QLandmarkId> &ids)
-        : QLandmarkFilter(new QLandmarkIdFilterPrivate(ids)) {}
+QLandmarkIdFilter::QLandmarkIdFilter(const QList<QLandmarkId> &ids, MatchingScheme matchingScheme)
+        : QLandmarkFilter(new QLandmarkIdFilterPrivate(ids, matchingScheme)) {}
 
 /*!
     \fn QLandmarkIdFilter::QLandmarkIdFilter(const QLandmarkFilter &other)
@@ -128,18 +128,40 @@ QLandmarkIdFilter &QLandmarkIdFilter::operator<<(const QLandmarkId &id)
     return *this;
 }
 
+/*!
+    Returns the matching scheme of the filter.
+
+    The matching scheme specifies whether the filter needs to match all
+    landmark ids or only a subset.
+*/
+QLandmarkIdFilter::MatchingScheme QLandmarkIdFilter::matchingScheme() const
+{
+    Q_D(const QLandmarkIdFilter);
+    return d->matchingScheme;
+}
+
+/*!
+    Sets the \a matchingScheme of the filter.
+*/
+void QLandmarkIdFilter::setMatchingScheme(QLandmarkIdFilter::MatchingScheme matchingScheme)
+{
+    Q_D(QLandmarkIdFilter);
+    d->matchingScheme = matchingScheme;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids)
-        : landmarkIds(ids)
+QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids, QLandmarkIdFilter::MatchingScheme scheme)
+        : landmarkIds(ids), matchingScheme(scheme)
 {
     type = QLandmarkFilter::LandmarkIdFilter;
 }
 
 QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QLandmarkIdFilterPrivate &other)
         : QLandmarkFilterPrivate(other),
-        landmarkIds(other.landmarkIds)
+        landmarkIds(other.landmarkIds),
+        matchingScheme(other.matchingScheme)
 {
 }
 

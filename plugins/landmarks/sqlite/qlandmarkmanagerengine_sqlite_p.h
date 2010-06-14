@@ -59,6 +59,7 @@
 #include <QHash>
 
 QTM_USE_NAMESPACE
+typedef QMap<int, QLandmarkManager::Error>  ERROR_MAP;
 
 class QueryRun;
 
@@ -90,10 +91,6 @@ public:
     QList<QLandmark> landmarks(const QLandmarkFilter& filter,
                                const QList<QLandmarkSortOrder>& sortOrders,
                                const QLandmarkFetchHint &fetchHint,
-                               QLandmarkManager::Error *error,
-                               QString *errorString) const;
-    QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds,
-                               QMap<int, QLandmarkManager::Error> *errorMap,
                                QLandmarkManager::Error *error,
                                QString *errorString) const;
     QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId,
@@ -151,6 +148,8 @@ public:
 public slots:
     void updateLandmarkFetchRequest(QLandmarkFetchRequest* req, const QList<QLandmark>& result,
             QLandmarkManager::Error error, const QString &errorString, QLandmarkAbstractRequest::State newState);
+    void updateLandmarkSaveRequest(QLandmarkSaveRequest* req, const QList<QLandmark>& result,
+                                    QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState);
     void updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state);
 
 public:

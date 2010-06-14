@@ -168,22 +168,6 @@ QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &landmarkId, QLandm
 }
 
 /*!
-    Returns a list of landmarks which match the given \a landmarkIds.
-
-    The engine will populate \a errorMap (the map of indices of the
-    \a landmarkIds list to the error which occurred when retrieving the landmark
-    at that index) for every index for which the landmark could not be
-    retrieved.
-
-    Overall operation errors are stored in \a error and \a errorString.
-*/
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
-        QString *errorString) const
-{
-    return QList<QLandmark>();
-}
-
-/*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
     Various fetch operation parameters are specified by \a fetchHint.
 
