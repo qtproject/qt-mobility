@@ -71,8 +71,8 @@ public:
     CCalEntry::TType entryTypeL(const QOrganizerItem &item) const;
     QString itemTypeL(const CCalEntry &entry) const;
 
-    QString toQString(const TDesC8 &des) const;
-    QString toQString(const TDesC16 &des) const;
+    static QString toQString(const TDesC8 &des);
+    static QString toQString(const TDesC16 &des);
     TPtrC8 toPtrC8(const QString &string) const;
     TPtrC16 toPtrC16(const QString &string) const;
 

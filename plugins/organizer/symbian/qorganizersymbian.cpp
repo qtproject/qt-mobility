@@ -301,7 +301,10 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
         User::Leave(KErrGeneral);
     }
     
-    // Update the id of the organizer item
+    // Update guid
+    item->setGuid(OrganizerItemTransform::toQString(entry->UidL()));
+    
+    // Update local id
     QOrganizerItemId itemId;
     TCalLocalUid localUid = entry->LocalUidL();
     itemId.setLocalId(localUid);

@@ -55,7 +55,11 @@ QTM_USE_NAMESPACE
 
 OrganizerItemTransform::OrganizerItemTransform()
 {
-
+    // Set seed for qrand()
+    TTime homeTime;
+    homeTime.HomeTime();
+    uint seed = (uint) homeTime.Int64();
+    qsrand(seed);
 }
 
 OrganizerItemTransform::~OrganizerItemTransform()
@@ -72,21 +76,15 @@ HBufC8 *OrganizerItemTransform::guidLC(const QOrganizerItem &item)
     HBufC8* globalUidBuf = HBufC8::NewLC(KGuidLength);
     TPtr8 ptr = globalUidBuf->Des();
 
-    if (item.guid().isEmpty())
-    {
-        // Create a new guid
-        TTime homeTime;
-        homeTime.HomeTime();
-        TInt64 seed = homeTime.Int64();
-        TInt randumNumber = Math::Rand(seed);
-        ptr.Num(randumNumber);
-    }
-    else
-    {
+    if (item.guid().isEmpty()) {
+        // Generate a new quid
+        // TODO: is this long enough for us? We could add imei or second random number to it...
+        ptr.Num(qrand());
+    } else {
         // Use the old guid
         ptr = toPtrC8(globalUidString);
     }
-
+    
     return globalUidBuf; // ownership passed
 }
 
@@ -348,12 +346,12 @@ void OrganizerItemTransform::toItemL(const CCalInstance &instance, QOrganizerIte
     // TODO: transform  CCalInstance::EndTimeL()
 }
 
-QString OrganizerItemTransform::toQString(const TDesC8 &des) const
+QString OrganizerItemTransform::toQString(const TDesC8 &des)
 {
     return QString::fromUtf8((const char *)des.Ptr(), des.Length());
 }
 
-QString OrganizerItemTransform::toQString(const TDesC16 &des) const
+QString OrganizerItemTransform::toQString(const TDesC16 &des)
 {
     return QString::fromUtf16(des.Ptr(), des.Length());
 }
