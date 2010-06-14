@@ -38,11 +38,10 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QFEEDBACKDEVICE_H
-#define QFEEDBACKDEVICE_H
+#ifndef QFEEDBACKACTUATOR_H
+#define QFEEDBACKACTUATOR_H
 
 #include <qmobilityglobal.h>
-#include <QtCore/QList>
 #include <QtCore/QObject>
 
 QT_BEGIN_HEADER
@@ -51,7 +50,7 @@ QTM_BEGIN_NAMESPACE
 
 class QFeedbackEffect;
 
-class Q_FEEDBACK_EXPORT QFeedbackDevice
+class Q_FEEDBACK_EXPORT QFeedbackActuator
 {
     Q_GADGET
     Q_ENUMS(Type)
@@ -72,7 +71,7 @@ public:
         Unknown
     };
 
-    QFeedbackDevice();
+    QFeedbackActuator();
 
     int id() const;
     bool isValid() const;
@@ -85,11 +84,11 @@ public:
     bool isEnabled() const;
     void setEnabled(bool);
 
-    static QFeedbackDevice defaultDevice();
-    static QList<QFeedbackDevice> devices();
+    static QFeedbackActuator defaultActuator();
+    static QList<QFeedbackActuator> actuators();
 
 private:
-    friend class QFeedbackInterface;
+    friend class QHapticsFeedbackInterface;
     int m_id;
 };
 

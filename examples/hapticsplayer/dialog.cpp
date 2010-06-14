@@ -46,14 +46,13 @@
 #include <QtGui/QFileDialog>
 
 static const char ENUM_INSTANT_EFFECT[] = "InstantEffect";
-static const char ENUM_DEVICE_TYPE[] = "Type";
 static const char ENUM_ANIMATION_STATE[] = "State";
 
 Dialog::Dialog()
 {
     ui.setupUi(this);
 
-    connect(ui.devices, SIGNAL(currentIndexChanged(int)), SLOT(deviceChanged()));
+    connect(ui.actuators, SIGNAL(currentIndexChanged(int)), SLOT(actuatorChanged()));
     connect(ui.enabled, SIGNAL(toggled(bool)), SLOT(enabledChanged(bool)));
     connect(ui.playPause, SIGNAL(clicked()), SLOT(playPauseClicked()));
     connect(ui.stop, SIGNAL(clicked()), &effect, SLOT(stop()));
@@ -78,12 +77,12 @@ Dialog::Dialog()
     connect(ui.filePlayPause, SIGNAL(clicked()), SLOT(filePlayPauseClicked()));
     connect(ui.fileStop, SIGNAL(clicked()), &fileEffect, SLOT(stop()));
     connect(&fileEffect, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), SLOT(fileEffectStateChanged(QAbstractAnimation::State)));
-    connect(&fileEffect, SIGNAL(loadingFinished(bool)), SLOT(fileLoadingFinished()));
+    connect(&fileEffect, SIGNAL(loadFinished(bool)), SLOT(fileLoadFinished()));
 
-    foreach(const QFeedbackDevice &dev, QFeedbackDevice::devices()) {
-        ui.devices->addItem(dev.name());
+    foreach(const QFeedbackActuator &dev, QFeedbackActuator::actuators()) {
+        ui.actuators->addItem(dev.name());
     }
-    ui.devices->addItem("test device");
+    ui.actuators->addItem("test actuator");
 
     //adding the instant effects
     const QMetaObject &mo = QFeedbackEffect::staticMetaObject;
@@ -106,29 +105,29 @@ Dialog::Dialog()
     ui.tabWidget->setTabEnabled(2, !QFileFeedbackEffect::mimeTypes().isEmpty());
 }
 
-QFeedbackDevice Dialog::currentDevice() const
+QFeedbackActuator Dialog::currentActuator() const
 {
-    QList<QFeedbackDevice> devs = QFeedbackDevice::devices();
-    int index = ui.devices->currentIndex();
-    return index < devs.count() ? devs.at(index) : QFeedbackDevice();
+    QList<QFeedbackActuator> devs = QFeedbackActuator::actuators();
+    int index = ui.actuators->currentIndex();
+    return index < devs.count() ? devs.at(index) : QFeedbackActuator();
 }
 
-void Dialog::deviceChanged()
+void Dialog::actuatorChanged()
 {
-    QFeedbackDevice dev = currentDevice();
+    QFeedbackActuator dev = currentActuator();
     enabledChanged(dev.isEnabled());
-    effect.setDevice(dev);
+    effect.setActuator(dev);
 }
 
 void Dialog::enabledChanged(bool on)
 {
     if (!on)
         effect.stop();
-    QFeedbackDevice dev = currentDevice();
+    QFeedbackActuator dev = currentActuator();
     dev.setEnabled(on);
     ui.enabled->setChecked(dev.isEnabled());
-    ui.envelope->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackDevice::Envelope));
-    ui.grpPeriod->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackDevice::Period));
+    ui.envelope->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackActuator::Envelope));
+    ui.grpPeriod->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackActuator::Period));
 }
 
 void Dialog::playPauseClicked()
@@ -216,7 +215,7 @@ void Dialog::browseClicked()
     fileEffect.setFileName(filename);
 }
 
-void Dialog::fileLoadingFinished()
+void Dialog::fileLoadFinished()
 {
     if (fileEffect.isLoaded()) {
         ui.fileStatus->setText( fileEffect.isLoaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );

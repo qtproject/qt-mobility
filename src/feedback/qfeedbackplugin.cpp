@@ -115,7 +115,7 @@ public:
         if (success) {
             //the file was loaded by the current backend
             QFileFeedbackEffectPrivate *p = QFileFeedbackEffectPrivate::get(effect);
-            p->finishedLoading(true);
+            p->loadFinished(true);
             return;
         }
 
@@ -142,7 +142,7 @@ private:
         //let's try to load the file
         if (p->backendUsed >= subBackends.count()) {
             //the file couldn't be loaded
-            p->finishedLoading(false);
+            p->loadFinished(false);
             return;
         }
 
@@ -170,7 +170,7 @@ struct BackendManager
                 bool usedPlugin = false;
 
                 if (!backend) {
-                    backend = qobject_cast<QFeedbackInterface*>(loader.instance());
+                    backend = qobject_cast<QHapticsFeedbackInterface*>(loader.instance());
                     usedPlugin = backend != 0;
                 }
 
@@ -194,21 +194,21 @@ struct BackendManager
             backend = new QDummyBackend;
     }
 
-    QFeedbackInterface *backend;
+    QHapticsFeedbackInterface *backend;
     QThemeFeedbackInterface *themeBackend;
     FileBackend fileBackend;
 };
 
 Q_GLOBAL_STATIC(BackendManager, backendManager);
 
-QFeedbackDevice QFeedbackInterface::createFeedbackDevice(int id)
+QFeedbackActuator QHapticsFeedbackInterface::createFeedbackActuator(int id)
 {
-    QFeedbackDevice dev;
+    QFeedbackActuator dev;
     dev.m_id = id;
     return dev;
 }
 
-QFeedbackInterface *QFeedbackInterface::instance()
+QHapticsFeedbackInterface *QHapticsFeedbackInterface::instance()
 {
     return backendManager()->backend;
 }

@@ -57,27 +57,24 @@
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QFeedbackImmersion : public QObject, public QFeedbackInterface, public QFileFeedbackInterface
+class QFeedbackImmersion : public QObject, public QHapticsFeedbackInterface, public QFileFeedbackInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QFeedbackInterface)
+    Q_INTERFACES(QtMobility::QHapticsFeedbackInterface)
     Q_INTERFACES(QtMobility::QFileFeedbackInterface)
 public:
     QFeedbackImmersion();
     virtual ~QFeedbackImmersion();
 
-    virtual QList<QFeedbackDevice> devices();
+    virtual QList<QFeedbackActuator> actuators();
 
-    //for device handling
-    virtual QString deviceName(const QFeedbackDevice &);
-    virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &);
-    virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &);
-    virtual bool isEnabled(const QFeedbackDevice &);
-    virtual void setEnabled(const QFeedbackDevice &, bool);
+    //for actuator handling
+    virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
+    virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty);
 
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty);
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
+    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QHapticsFeedbackEffect *, EffectProperty);
+    virtual QFeedbackEffect::ErrorType updateEffectState(const QHapticsFeedbackEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QHapticsFeedbackEffect *);
 
     //for loading files
     virtual void setLoaded(QFileFeedbackEffect*, bool);
@@ -87,13 +84,13 @@ public:
     virtual QStringList mimeTypes();
 
 private:
-    VibeInt32 handleForDevice(const QFeedbackDevice &device);
-    VibeInt32 handleForDevice(int devId);
+    VibeInt32 handleForActuator(const QFeedbackActuator &actuator);
+    VibeInt32 handleForActuator(int actId);
     static VibeInt32 convertedDuration(int duration);
 
     QMutex mutex;
-    QVector<VibeInt32> deviceHandles;
-    QHash<const QAbstractAnimation*, VibeInt32> effectHandles;
+    QVector<VibeInt32> actuatorHandles;
+    QHash<const QFeedbackEffect*, VibeInt32> effectHandles;
 
     struct FileContent {
         FileContent() : refCount(0) { }

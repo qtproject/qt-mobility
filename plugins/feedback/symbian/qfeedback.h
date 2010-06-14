@@ -55,13 +55,13 @@ QTM_USE_NAMESPACE
 
 class QTouchFeedback;
 
-class QFeedbackSymbian : public QObject, public QFeedbackInterface
+class QFeedbackSymbian : public QObject, public QHapticsFeedbackInterface
 #ifndef NO_TACTILE_FEEDBACK
 , public QThemeFeedbackInterface
 #endif //NO_TACTILE_FEEDBACK
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QFeedbackInterface)
+    Q_INTERFACES(QtMobility::QHapticsFeedbackInterface)
 #ifndef NO_TACTILE_FEEDBACK
     Q_INTERFACES(QtMobility::QThemeFeedbackInterface)
 #endif //NO_TACTILE_FEEDBACK
@@ -69,18 +69,15 @@ public:
     QFeedbackSymbian();
     virtual ~QFeedbackSymbian();
 
-    virtual QList<QFeedbackDevice> devices();
+    virtual QList<QFeedbackActuator> actuators();
 
     //for device handling
-    virtual QString deviceName(const QFeedbackDevice &);
-    virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &);
-    virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &);
-    virtual bool isEnabled(const QFeedbackDevice &);
-    virtual void setEnabled(const QFeedbackDevice &, bool);
+    virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
+    virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty);
 
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty);
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *);
+    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QHapticsFeedbackEffect *, EffectProperty);
+    virtual QFeedbackEffect::ErrorType updateEffectState(const QHapticsFeedbackEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QHapticsFeedbackEffect *);
 
 #ifndef NO_TACTILE_FEEDBACK
     virtual void play(QFeedbackEffect::InstantEffect);

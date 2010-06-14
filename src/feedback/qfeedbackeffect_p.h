@@ -43,7 +43,7 @@
 #define QFEEDBACKEFFECT_P_H
 
 #include "qfeedbackeffect.h"
-#include "qfeedbackdevice.h"
+#include "qfeedbackactuator.h"
 
 //
 //  W A R N I N G
@@ -60,12 +60,12 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QFeedbackEffectPrivate
+class QHapticsFeedbackEffectPrivate
 {
 public:
-    QFeedbackEffectPrivate() : duration(250),
+    QHapticsFeedbackEffectPrivate() : duration(250),
                     intensity(1), attackTime(0), attackIntensity(0), fadeTime(0),
-                    period(-1), device(QFeedbackDevice::defaultDevice())
+                    period(-1), actuator(QFeedbackActuator::defaultActuator())
     {
 
     }
@@ -78,7 +78,7 @@ public:
     int fadeTime;
     qreal fadeIntensity;
     int period;
-    QFeedbackDevice device;
+    QFeedbackActuator actuator;
 };
 
 class QFileFeedbackEffectPrivate
@@ -91,7 +91,7 @@ public:
     static QFileFeedbackEffectPrivate *get(QFileFeedbackEffect *e) { return e->priv.data(); }
     static const QFileFeedbackEffectPrivate *get(const QFileFeedbackEffect *e) { return e->priv.data(); }
 
-    void finishedLoading(bool success);
+    void loadFinished(bool success);
 
     QFileFeedbackEffect *effect;
 

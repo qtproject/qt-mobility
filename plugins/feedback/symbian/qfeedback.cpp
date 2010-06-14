@@ -39,8 +39,9 @@
 **
 ****************************************************************************/
 
-#include <qfeedbackdevice.h>
+#include <qfeedbackactuator.h>
 #include "qfeedback.h"
+#include <QtCore/QVariant>
 #include <QtCore/QtPlugin>
 #include <QtGui/QApplication>
 
@@ -228,97 +229,97 @@ CHWRMVibra *QFeedbackSymbian::vibra()
     return m_vibra;
 }
 
-QList<QFeedbackDevice> QFeedbackSymbian::devices()
+QList<QFeedbackActuator> QFeedbackSymbian::actuators()
 {
-    QList<QFeedbackDevice> ret;
+    QList<QFeedbackActuator> ret;
 #ifndef NO_TACTILE_FEEDBACK
     if (QTouchFeedback::Instance()->TouchFeedbackSupported()) {
-        ret << createFeedbackDevice(TOUCH_DEVICE);
+        ret << createFeedbackActuator(TOUCH_DEVICE);
     }
 #endif //NO_TACTILE_FEEDBACK
-    ret << createFeedbackDevice(VIBRA_DEVICE);
+    ret << createFeedbackActuator(VIBRA_DEVICE);
     return ret;
 }
 
-QString QFeedbackSymbian::deviceName(const QFeedbackDevice &dev)
+void QFeedbackSymbian::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)
 {
-    switch(dev.id())
+    switch(prop)
     {
-    case VIBRA_DEVICE:
-        return QLatin1String("Vibra");
-    case TOUCH_DEVICE:
-        return QLatin1String("Touch");
-    default:
-        break;
-    }
-    return QString();
-}
-
-QFeedbackDevice::State QFeedbackSymbian::deviceState(const QFeedbackDevice &dev)
-{
-    QFeedbackDevice::State ret = QFeedbackDevice::Unknown;
-    switch(dev.id())
-    {
-    case VIBRA_DEVICE:
-        switch (vibra()->VibraStatus())
+    case Enabled:
+        switch(actuator.id())
         {
-        case CHWRMVibra::EVibraStatusStopped:
-            ret = QFeedbackDevice::Ready;
+        case VIBRA_DEVICE:
+            m_vibraActive = value.toBool();
             break;
-        case CHWRMVibra::EVibraStatusOn:
-            ret = QFeedbackDevice::Busy;
+    #ifndef NO_TACTILE_FEEDBACK
+        case TOUCH_DEVICE:
+            QTouchFeedback::Instance()->SetFeedbackEnabledForThisApp(value.toBool());
             break;
+    #endif //NO_TACTILE_FEEDBACK
         default:
             break;
         }
-        break;
-    case TOUCH_DEVICE:
-        //there is no way of getting the state of the device!
-        break;
-    default:
-        break;
     }
-    return ret;
 }
 
-QFeedbackDevice::Capabilities QFeedbackSymbian::supportedCapabilities(const QFeedbackDevice &)
+QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop)
 {
-    return 0;
-}
-
-bool QFeedbackSymbian::isEnabled(const QFeedbackDevice &dev)
-{
-    switch(dev.id())
+    switch(prop)
     {
-    case VIBRA_DEVICE:
-        return m_vibraActive;
-#ifndef NO_TACTILE_FEEDBACK
-    case TOUCH_DEVICE:
-        return QTouchFeedback::Instance()->FeedbackEnabledForThisApp();
-#endif //NO_TACTILE_FEEDBACK
+    case Name:
+        switch(actuator.id())
+        {
+        case VIBRA_DEVICE:
+            return QLatin1String("Vibra");
+        case TOUCH_DEVICE:
+            return QLatin1String("Touch");
+        default:
+            return QString();
+        }
+    case State:
+        {
+            QFeedbackActuator::State ret = QFeedbackActuator::Unknown;
+            switch(actuator.id())
+            {
+            case VIBRA_DEVICE:
+                switch (vibra()->VibraStatus())
+                {
+                case CHWRMVibra::EVibraStatusStopped:
+                    return QFeedbackActuator::Ready;
+                case CHWRMVibra::EVibraStatusOn:
+                    return QFeedbackActuator::Busy;
+                default:
+                    return QFeedbackActuator::Unknown;
+                }
+            case TOUCH_DEVICE:
+                //there is no way of getting the state of the device!
+            default:
+                return QFeedbackActuator::Unknown;
+            }
+            return ret;
+        }
+    case SupportedCapabilities:
+        return 0;
+
+    case Enabled:
+        switch(actuator.id())
+        {
+        case VIBRA_DEVICE:
+            return m_vibraActive;
+    #ifndef NO_TACTILE_FEEDBACK
+        case TOUCH_DEVICE:
+            return QTouchFeedback::Instance()->FeedbackEnabledForThisApp();
+    #endif //NO_TACTILE_FEEDBACK
+        default:
+            return false;
+        }
     default:
-        return false;
+        return QVariant();
     }
+
 }
 
-void QFeedbackSymbian::setEnabled(const QFeedbackDevice &dev, bool enabled)
-{
-    switch(dev.id())
-    {
-    case VIBRA_DEVICE:
-        m_vibraActive = enabled;
-        break;
-#ifndef NO_TACTILE_FEEDBACK
-    case TOUCH_DEVICE:
-        QTouchFeedback::Instance()->SetFeedbackEnabledForThisApp(enabled);
-        break;
-#endif //NO_TACTILE_FEEDBACK
-    default:
-        break;
-    }
-}
-
-QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QFeedbackEffect *effect, EffectProperty prop)
+QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QHapticsFeedbackEffect *effect, EffectProperty prop)
 {
 
     switch(prop)
@@ -327,7 +328,7 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QFeedbac
         if (effect->state() != QAbstractAnimation::Running)
             break;
 
-        switch(effect->device().id())
+        switch(effect->actuator().id())
         {
         case VIBRA_DEVICE:
             vibra()->StartVibraL(effect->duration() - effect->currentTime(), qRound(100 * effect->intensity()));
@@ -348,9 +349,9 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QFeedbac
 
 }
 
-QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QFeedbackEffect *effect)
+QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QHapticsFeedbackEffect *effect)
 {
-    switch(effect->device().id())
+    switch(effect->actuator().id())
     {
     case VIBRA_DEVICE:
         switch(effect->state())
@@ -386,7 +387,7 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QFeedbackEf
     return QFeedbackEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackSymbian::actualEffectState(const QFeedbackEffect *effect)
+QAbstractAnimation::State QFeedbackSymbian::actualEffectState(const QHapticsFeedbackEffect *effect)
 {
     return effect->state();
 }

@@ -43,7 +43,7 @@
 
 #include "ui_dialog.h"
 
-#include <qfeedbackdevice.h>
+#include <qfeedbackactuator.h>
 #include <qfeedbackeffect.h>
 QTM_USE_NAMESPACE
 
@@ -58,7 +58,7 @@ public:
     Dialog();
 
 private Q_SLOTS:
-    void deviceChanged();
+    void actuatorChanged();
     void enabledChanged(bool);
     void playPauseClicked();
     void durationChanged(int);
@@ -80,12 +80,12 @@ private Q_SLOTS:
     void browseClicked();
     void filePlayPauseClicked();
     void fileEffectStateChanged(QAbstractAnimation::State newState);
-    void fileLoadingFinished();
+    void fileLoadFinished();
 
 private:
-    QFeedbackDevice currentDevice() const;
+    QFeedbackActuator currentActuator() const;
     Ui_Dialog ui;
-    QFeedbackEffect effect;
+    QHapticsFeedbackEffect effect;
     QFileFeedbackEffect fileEffect;
 };
 

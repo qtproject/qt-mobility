@@ -39,13 +39,14 @@
 **
 ****************************************************************************/
 
-#include <qfeedbackdevice.h>
+#include <qfeedbackactuator.h>
 #include "qfeedback.h"
 #include <QtCore/QtPlugin>
 #include <QtCore/QDebug>
 #include <QtCore/QStringList>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
+#include <QtCore/QVariant>
 
 #define MAX_FILE_SIZE (1 << 14) //16KB
 
@@ -63,66 +64,75 @@ QFeedbackImmersion::QFeedbackImmersion() : QObject(qApp)
 QFeedbackImmersion::~QFeedbackImmersion()
 {
     //cleanup the devices when terminating
-    for (int i = 0 ; i < deviceHandles.size(); ++i)
-        ImmVibeCloseDevice(deviceHandles.at(i));
+    for (int i = 0 ; i < actuatorHandles.size(); ++i)
+        ImmVibeCloseDevice(actuatorHandles.at(i));
 
     ImmVibeTerminate();
 }
 
-QList<QFeedbackDevice> QFeedbackImmersion::devices()
+QList<QFeedbackActuator> QFeedbackImmersion::actuators()
 {
-    QList<QFeedbackDevice> ret;
+    QList<QFeedbackActuator> ret;
     const int nbDev = ImmVibeGetDeviceCount();
     for (int i = 0; i < nbDev; ++i) {
-        ret << createFeedbackDevice(i);
+        ret << createFeedbackActuator(i);
     }
 
     return ret;
 }
 
-QString QFeedbackImmersion::deviceName(const QFeedbackDevice &dev)
+void QFeedbackImmersion::setActuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop, const QVariant &value)
 {
-    char szDeviceName[VIBE_MAX_DEVICE_NAME_LENGTH] = { 0 };
-    if (VIBE_FAILED(ImmVibeGetDeviceCapabilityString(dev.id(),VIBE_DEVCAPTYPE_DEVICE_NAME,
-                        VIBE_MAX_CAPABILITY_STRING_LENGTH, szDeviceName)))
-        return QString();
-
-    return QString::fromLocal8Bit(szDeviceName);
-}
-
-QFeedbackDevice::State QFeedbackImmersion::deviceState(const QFeedbackDevice &dev)
-{
-    QFeedbackDevice::State ret = QFeedbackDevice::Unknown;
-    VibeInt32 s = 0;
-    if (dev.isValid() && VIBE_SUCCEEDED(ImmVibeGetDeviceState(dev.id(), &s))) {
-        if (s == VIBE_DEVICESTATE_ATTACHED)
-            ret = QFeedbackDevice::Ready;
-        else if (s == VIBE_DEVICESTATE_BUSY)
-            ret = QFeedbackDevice:: Busy;
+    switch (prop)
+    {
+    case Enabled:
+        ImmVibeSetDevicePropertyBool(handleForActuator(actuator), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, !value.toBool());
+        break;
+    default:
+        break;
     }
-
-    return ret;
-
 }
 
-QFeedbackDevice::Capabilities QFeedbackImmersion::supportedCapabilities(const QFeedbackDevice &)
+QVariant QFeedbackImmersion::actuatorProperty(const QFeedbackActuator &actuator, ActuatorProperty prop)
 {
-  return QFeedbackDevice::Capabilities(QFeedbackDevice::Envelope | QFeedbackDevice::Period);
-}
+    switch (prop)
+    {
+    case Name:
+        {
+            char szDeviceName[VIBE_MAX_DEVICE_NAME_LENGTH] = { 0 };
+            if (VIBE_FAILED(ImmVibeGetDeviceCapabilityString(actuator.id(),VIBE_DEVCAPTYPE_DEVICE_NAME,
+                VIBE_MAX_CAPABILITY_STRING_LENGTH, szDeviceName)))
+                return QString();
 
-bool QFeedbackImmersion::isEnabled(const QFeedbackDevice &dev)
-{
-    VibeBool disabled = true;
-   if (VIBE_FAILED(ImmVibeGetDevicePropertyBool(handleForDevice(dev), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, &disabled)))
-        return false;
-    return !disabled;
-}
+            return QString::fromLocal8Bit(szDeviceName);
+        }
 
-void QFeedbackImmersion::setEnabled(const QFeedbackDevice &dev, bool enabled)
-{
-    ImmVibeSetDevicePropertyBool(handleForDevice(dev), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, !enabled);
-}
+    case State:
+        {
+            QFeedbackActuator::State ret = QFeedbackActuator::Unknown;
+            VibeInt32 s = 0;
+            if (actuator.isValid() && VIBE_SUCCEEDED(ImmVibeGetDeviceState(actuator.id(), &s))) {
+                if (s == VIBE_DEVICESTATE_ATTACHED)
+                    ret = QFeedbackActuator::Ready;
+                else if (s == VIBE_DEVICESTATE_BUSY)
+                    ret = QFeedbackActuator:: Busy;
+            }
 
+            return ret;
+        }
+    case SupportedCapabilities:
+        return qVariantFromValue<int>(QFeedbackActuator::Envelope | QFeedbackActuator::Period);
+    case Enabled:
+        {
+            VibeBool disabled = true;
+            if (VIBE_FAILED(ImmVibeGetDevicePropertyBool(handleForActuator(actuator), VIBE_DEVPROPTYPE_DISABLE_EFFECTS, &disabled)))
+                return false;
+            return !disabled;
+        }
+    default:
+        return QVariant();
+    }
+}
 
 VibeInt32 QFeedbackImmersion::convertedDuration(int duration)
 {
@@ -133,36 +143,36 @@ VibeInt32 QFeedbackImmersion::convertedDuration(int duration)
 }
 
 
-VibeInt32 QFeedbackImmersion::handleForDevice(const QFeedbackDevice &device)
+VibeInt32 QFeedbackImmersion::handleForActuator(const QFeedbackActuator &actuator)
 {
-    return handleForDevice(device.id());
+    return handleForActuator(actuator.id());
 }
 
-VibeInt32 QFeedbackImmersion::handleForDevice(int devId)
+VibeInt32 QFeedbackImmersion::handleForActuator(int actId)
 {
-    if (devId < 0)
+    if (actId < 0)
         return VIBE_INVALID_DEVICE_HANDLE_VALUE;
 
     //we avoid locking too much (it will only lock if the device is not yet open
-    if (deviceHandles.size() <= devId) {
+    if (actuatorHandles.size() <= actId) {
         QMutexLocker locker(&mutex);
-        while (deviceHandles.size() <= devId)
-            deviceHandles.append(VIBE_INVALID_DEVICE_HANDLE_VALUE);
+        while (actuatorHandles.size() <= actId)
+            actuatorHandles.append(VIBE_INVALID_DEVICE_HANDLE_VALUE);
     }
 
-    if (VIBE_IS_INVALID_DEVICE_HANDLE(deviceHandles.at(devId))) {
+    if (VIBE_IS_INVALID_DEVICE_HANDLE(actuatorHandles.at(actId))) {
         QMutexLocker locker(&mutex);
-        if (VIBE_IS_INVALID_DEVICE_HANDLE(deviceHandles.at(devId))) {
-            ImmVibeOpenDevice(devId, &deviceHandles[devId] );
+        if (VIBE_IS_INVALID_DEVICE_HANDLE(actuatorHandles.at(actId))) {
+            ImmVibeOpenDevice(actId, &actuatorHandles[actId] );
 
             //temporary solution: provide a proto dev licence key
-            ImmVibeSetDevicePropertyString(deviceHandles.at(devId), VIBE_DEVPROPTYPE_LICENSE_KEY, "IMWPROTOSJZF4EH6KWVUK8HAP5WACT6Q");
+            ImmVibeSetDevicePropertyString(actuatorHandles.at(actId), VIBE_DEVPROPTYPE_LICENSE_KEY, "IMWPROTOSJZF4EH6KWVUK8HAP5WACT6Q");
         }
     }
-    return deviceHandles.at(devId);
+    return actuatorHandles.at(actId);
 }
 
-QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QFeedbackEffect *effect, EffectProperty)
+QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QHapticsFeedbackEffect *effect, EffectProperty)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
     if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
@@ -170,14 +180,14 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QFeedb
 
     VibeStatus status = VIBE_S_SUCCESS;
     if (effect->period() > 0) {
-        status = ImmVibeModifyPlayingPeriodicEffect(handleForDevice(effect->device()), effectHandle,
+        status = ImmVibeModifyPlayingPeriodicEffect(handleForActuator(effect->actuator()), effectHandle,
                                            convertedDuration(effect->duration()),
                                            effect->intensity() / qreal(VIBE_MAX_MAGNITUDE), effect->period(),
                                            VIBE_DEFAULT_STYLE,
                                            effect->attackTime(), effect->attackIntensity(),
                                            effect->fadeTime(), effect->fadeIntensity());
     } else {
-        status = ImmVibeModifyPlayingMagSweepEffect(handleForDevice(effect->device()), effectHandle,
+        status = ImmVibeModifyPlayingMagSweepEffect(handleForActuator(effect->actuator()), effectHandle,
                                            convertedDuration(effect->duration()),
                                            effect->intensity() / qreal(VIBE_MAX_MAGNITUDE),
                                            VIBE_DEFAULT_STYLE,
@@ -191,7 +201,7 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QFeedb
     return QFeedbackEffect::NoError;
 }
 
-QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFeedbackEffect *effect)
+QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QHapticsFeedbackEffect *effect)
 {
     VibeStatus status = VIBE_S_SUCCESS;
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
@@ -200,28 +210,28 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFeedback
     {
     case QAbstractAnimation::Stopped:
         if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
-            status = ImmVibeStopPlayingEffect(handleForDevice(effect->device()), effectHandle);
+            status = ImmVibeStopPlayingEffect(handleForActuator(effect->actuator()), effectHandle);
             effectHandles.remove(effect);
         }
         break;
     case QAbstractAnimation::Paused:
         Q_ASSERT(VIBE_IS_VALID_EFFECT_HANDLE(effectHandle));
-        status = ImmVibePausePlayingEffect(handleForDevice(effect->device()), effectHandle);
+        status = ImmVibePausePlayingEffect(handleForActuator(effect->actuator()), effectHandle);
         break;
     case QAbstractAnimation::Running:
         //if the effect handle exists, the feedback must be paused 
         if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
-            status = ImmVibeResumePausedEffect(handleForDevice(effect->device()), effectHandle);
+            status = ImmVibeResumePausedEffect(handleForActuator(effect->actuator()), effectHandle);
         } else {
             //we need to start the effect and create the handle
             VibeInt32 effectHandle = VIBE_INVALID_EFFECT_HANDLE_VALUE;
             if (effect->period() > 0) {
-                status = ImmVibePlayPeriodicEffect(handleForDevice(effect->device()), convertedDuration(effect->duration()),
+                status = ImmVibePlayPeriodicEffect(handleForActuator(effect->actuator()), convertedDuration(effect->duration()),
                     effect->intensity() / qreal(VIBE_MAX_MAGNITUDE), effect->period(),
                     VIBE_DEFAULT_STYLE, effect->attackTime(), effect->attackIntensity(),
                     effect->fadeTime(), effect->fadeIntensity(), &effectHandle);
             } else {
-                status = ImmVibePlayMagSweepEffect(handleForDevice(effect->device()), convertedDuration(effect->duration()),
+                status = ImmVibePlayMagSweepEffect(handleForActuator(effect->actuator()), convertedDuration(effect->duration()),
                     effect->intensity() / qreal(VIBE_MAX_MAGNITUDE),
                     VIBE_DEFAULT_STYLE, effect->attackTime(), effect->attackIntensity(),
                     effect->fadeTime(), effect->fadeIntensity(), &effectHandle);
@@ -238,14 +248,14 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFeedback
     return QFeedbackEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackEffect *effect)
+QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QHapticsFeedbackEffect *effect)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
     if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
         return QAbstractAnimation::Stopped; // the effect is simply not running
 
     VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
-    ImmVibeGetEffectState(handleForDevice(effect->device()), effectHandle, &effectState);
+    ImmVibeGetEffectState(handleForActuator(effect->actuator()), effectHandle, &effectState);
 
     //here we detect changes in the state of the effect
     switch(effectState)
@@ -298,7 +308,7 @@ QFileFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(QFileFeedba
     VibeStatus status = VIBE_S_SUCCESS;
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
 
-    VibeInt32 dev = handleForDevice(0); //we always use the default (first) device
+    VibeInt32 dev = handleForActuator(0); //we always use the default (first) device
 
     switch (effect->state())
     {
@@ -339,7 +349,7 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFileFeedb
         return QAbstractAnimation::Stopped; // the effect is simply not running
 
     VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
-    ImmVibeGetEffectState(handleForDevice(0), effectHandle, &effectState);
+    ImmVibeGetEffectState(handleForActuator(0), effectHandle, &effectState);
 
     //here we detect changes in the state of the effect
     switch(effectState)

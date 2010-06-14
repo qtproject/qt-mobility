@@ -25,7 +25,7 @@
       </attribute>
       <layout class="QGridLayout" name="gridLayout">
        <item row="0" column="0">
-        <widget class="QComboBox" name="devices"/>
+        <widget class="QComboBox" name="actuators"/>
        </item>
        <item row="2" column="0">
         <widget class="QGroupBox" name="enabled">
@@ -366,7 +366,7 @@
         <string/>
        </property>
       </widget>
-      <widget class="QWidget" name="layoutWidget">
+      <widget class="QWidget" name="layoutWidget_2">
        <property name="geometry">
         <rect>
          <x>60</x>

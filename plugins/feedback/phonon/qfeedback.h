@@ -84,9 +84,8 @@ public:
 
     QFileFeedbackEffect *effect;
     bool overrideState; //decides if the state should be picked from the effect (that's useful during a transition)
-
-
 };
+
 QT_END_HEADER
 
 #endif

@@ -51,32 +51,16 @@ QT_BEGIN_HEADER
     
 QTM_BEGIN_NAMESPACE
 
-class QFeedbackDevice;
+class QFeedbackActuator;
 class QFeedbackEffectPrivate;
 class QFileFeedbackEffectPrivate;
-
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
     Q_OBJECT
     Q_ENUMS(InstantEffect)
-    Q_ENUMS(EffectStyle)
     Q_ENUMS(ErrorType)
-
 public:
-    Q_PROPERTY(int duration READ duration WRITE setDuration)
-    Q_PROPERTY(qreal intensity READ intensity WRITE setIntensity)
-    Q_PROPERTY(int attackTime READ attackTime WRITE setAttackTime)
-    Q_PROPERTY(qreal attackIntensity READ attackIntensity WRITE setAttackIntensity)
-    Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime)
-    Q_PROPERTY(int fadeIntensity READ fadeIntensity WRITE setFadeIntensity)
-    Q_PROPERTY(int period READ period WRITE setPeriod)
-    Q_PROPERTY(QFeedbackDevice device READ device WRITE setDevice)
-
-    enum Duration {
-        INFINITE = -1
-    };
-
     enum InstantEffect {
         InstantNone, InstantBasic, InstantSensitive, InstantBasicButton, InstantSensitiveButton,
         InstantBasicKeypad, InstantSensitiveKeypad, InstantBasicSlider, InstantSensitiveSlider,
@@ -90,14 +74,6 @@ public:
         InstantUser = 65535
     };
 
-    //what TODO with the effect style (Immersion and s60 are ay different)
-    /*enum EffectStyle {
-        StyleNone, ContinuousSmooth, ContinuousSlider, ContinuousPopup,
-        ContinuousInput, ContinuousPinch, NumberOfContinuousFeedbacks, NoContinuousOverride,
-        ContinuousUser = 1000, ContinuousMaxUser = 65535
-    };*/
-
-
     enum ErrorType {
         //to be completed
         NoError,
@@ -106,10 +82,34 @@ public:
     };
 
     QFeedbackEffect(QObject *parent = 0);
-    ~QFeedbackEffect();
 
     static bool supportsThemeEffect();
     static void playThemeEffect(InstantEffect effect);
+
+Q_SIGNALS:
+    void error(ErrorType); //the feedback could not be played
+
+};
+
+class Q_FEEDBACK_EXPORT QHapticsFeedbackEffect : public QFeedbackEffect
+{
+    Q_OBJECT
+public:
+    Q_PROPERTY(int duration READ duration WRITE setDuration)
+    Q_PROPERTY(qreal intensity READ intensity WRITE setIntensity)
+    Q_PROPERTY(int attackTime READ attackTime WRITE setAttackTime)
+    Q_PROPERTY(qreal attackIntensity READ attackIntensity WRITE setAttackIntensity)
+    Q_PROPERTY(int fadeTime READ fadeTime WRITE setFadeTime)
+    Q_PROPERTY(int fadeIntensity READ fadeIntensity WRITE setFadeIntensity)
+    Q_PROPERTY(int period READ period WRITE setPeriod)
+    Q_PROPERTY(QFeedbackActuator actuator READ actuator WRITE setActuator)
+
+    enum Duration {
+        INFINITE = -1
+    };
+
+    QHapticsFeedbackEffect(QObject *parent = 0);
+    ~QHapticsFeedbackEffect();
 
     void setDuration(int msecs);
     int duration() const;
@@ -133,11 +133,8 @@ public:
     void setPeriod(int msecs);
     int period() const;
 
-    void setDevice(const QFeedbackDevice &device);
-    QFeedbackDevice device() const;
-
-signals:
-    void error(ErrorType); //the feedback could not be played
+    void setActuator(const QFeedbackActuator &actuator);
+    QFeedbackActuator actuator() const;
 
 protected:
     //virtual methods from QAbstractAnimation
@@ -145,24 +142,17 @@ protected:
     void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
 
 private:
-    friend class QFeedbackEffectPrivate;
-    QScopedPointer<QFeedbackEffectPrivate> priv;
+    friend class QHapticsFeedbackEffectPrivate;
+    QScopedPointer<QHapticsFeedbackEffectPrivate> priv;
 };
 
-class Q_FEEDBACK_EXPORT QFileFeedbackEffect : public QAbstractAnimation
+class Q_FEEDBACK_EXPORT QFileFeedbackEffect : public QFeedbackEffect
 {
     Q_OBJECT
     Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded)
     Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
 
 public:
-    enum ErrorType {
-        //to be completed
-        NoError,
-        UnknownError,
-        DeviceBusy
-    };
-
     QFileFeedbackEffect(QObject *parent = 0);
     ~QFileFeedbackEffect();
 
@@ -178,8 +168,7 @@ public:
     static QStringList mimeTypes();
 
 signals:
-    void error(ErrorType); //the feedback could not be played
-    void loadingFinished(bool);
+    void loadFinished(bool);
 
 protected:
     //virtual methods from QAbstractAnimation

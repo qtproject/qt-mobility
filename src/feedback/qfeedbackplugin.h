@@ -43,16 +43,17 @@
 #define QFEEDBACKPLUGIN_H
 
 #include <qmobilityglobal.h>
-#include "qfeedbackdevice.h"
+#include "qfeedbackactuator.h"
 #include "qfeedbackeffect.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class Q_FEEDBACK_EXPORT QFeedbackInterface
+class Q_FEEDBACK_EXPORT QHapticsFeedbackInterface
 {
 public:
+    //going with enums allow more flexibility without breaking BC
     enum EffectProperty
     {
         Duration,
@@ -65,26 +66,31 @@ public:
         Device
     };
 
-    //static members for devices management
-    virtual QList<QFeedbackDevice> devices() = 0;
+    enum ActuatorProperty
+    {
+        Name,
+        State,
+        SupportedCapabilities,
+        Enabled
+    };
 
-    //for device handling
-    virtual QString deviceName(const QFeedbackDevice &) = 0;
-    virtual QFeedbackDevice::State deviceState(const QFeedbackDevice &) = 0;
-    virtual QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &) = 0;
-    virtual bool isEnabled(const QFeedbackDevice &) = 0;
-    virtual void setEnabled(const QFeedbackDevice &, bool) = 0;
+    //static members for actuators management
+    virtual QList<QFeedbackActuator> actuators() = 0;
+
+    //for actuator handling
+    virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) = 0;
+    virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) = 0;
 
     //effects
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty) = 0;
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *) = 0;
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackEffect *) = 0;
+    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QHapticsFeedbackEffect *, EffectProperty) = 0;
+    virtual QFeedbackEffect::ErrorType updateEffectState(const QHapticsFeedbackEffect *) = 0;
+    virtual QAbstractAnimation::State actualEffectState(const QHapticsFeedbackEffect *) = 0;
 
-    static QFeedbackInterface *instance();
+    static QHapticsFeedbackInterface *instance();
 
 protected:
     //utility function for the backends
-    QFeedbackDevice createFeedbackDevice(int id);
+    QFeedbackActuator createFeedbackActuator(int id);
 };
 
 class QThemeFeedbackInterface
@@ -98,7 +104,7 @@ class Q_FEEDBACK_EXPORT QFileFeedbackInterface
 {
 public:
     virtual void setLoaded(QFileFeedbackEffect*, bool) = 0;
-    virtual QFileFeedbackEffect::ErrorType updateEffectState(QFileFeedbackEffect *) = 0;
+    virtual QFeedbackEffect::ErrorType updateEffectState(QFileFeedbackEffect *) = 0;
     virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *) = 0;
     virtual int effectDuration(const QFileFeedbackEffect*) = 0;
     virtual QStringList mimeTypes() = 0;
@@ -112,7 +118,7 @@ public:
 
 QTM_END_NAMESPACE
 
-Q_DECLARE_INTERFACE(QtMobility::QFeedbackInterface, "com.nokia.qt.QFeedbackInterface")
+Q_DECLARE_INTERFACE(QtMobility::QHapticsFeedbackInterface, "com.nokia.qt.QHapticsFeedbackInterface")
 Q_DECLARE_INTERFACE(QtMobility::QThemeFeedbackInterface, "com.nokia.qt.QThemeFeedbackInterface")
 Q_DECLARE_INTERFACE(QtMobility::QFileFeedbackInterface, "com.nokia.qt.QFileFeedbackInterface")
 

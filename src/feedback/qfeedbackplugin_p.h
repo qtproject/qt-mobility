@@ -43,11 +43,12 @@
 #define QFEEDBACKPLUGIN_P_H
 
 #include <qmobilityglobal.h>
-#include "qfeedbackdevice.h"
+#include "qfeedbackactuator.h"
 #include "qfeedbackeffect.h"
 #include "qfeedbackplugin.h"
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QVariant>
 
 
 //
@@ -66,22 +67,19 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QDummyBackend : QObject, public QFeedbackInterface
+class QDummyBackend : QObject, public QHapticsFeedbackInterface
 {
 public:
     QDummyBackend() : QObject(qApp) { }
 
-    QList<QFeedbackDevice> devices() { return QList<QFeedbackDevice>(); }
+    QList<QFeedbackActuator> actuators() { return QList<QFeedbackActuator>(); }
 
-    QString deviceName(const QFeedbackDevice &) { return QString(); }
-    QFeedbackDevice::State deviceState(const QFeedbackDevice &) { return QFeedbackDevice::Unknown; }
-    QFeedbackDevice::Capabilities supportedCapabilities(const QFeedbackDevice &) { return 0; }
-    bool isEnabled(const QFeedbackDevice &) { return false; }
-    void setEnabled(const QFeedbackDevice &, bool) { }
+    void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) { }
+    QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) { return QVariant(); }
 
-    QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackEffect *, EffectProperty) { return QFeedbackEffect::UnknownError; }
-    QFeedbackEffect::ErrorType updateEffectState(const QFeedbackEffect *) { return QFeedbackEffect::UnknownError; }
-    QAbstractAnimation::State actualEffectState(const QFeedbackEffect *) { return QAbstractAnimation::Stopped; }
+    QFeedbackEffect::ErrorType updateEffectProperty(const QHapticsFeedbackEffect *, EffectProperty) { return QFeedbackEffect::UnknownError; }
+    QFeedbackEffect::ErrorType updateEffectState(const QHapticsFeedbackEffect *) { return QFeedbackEffect::UnknownError; }
+    QAbstractAnimation::State actualEffectState(const QHapticsFeedbackEffect *) { return QAbstractAnimation::Stopped; }
 
     virtual void play(QFeedbackEffect::InstantEffect effect) { Q_UNUSED(effect); }
 
