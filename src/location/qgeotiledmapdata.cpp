@@ -189,15 +189,13 @@ void QGeoTiledMapData::setZoomLevel(qreal zoomLevel)
 
     d_ptr->protectRegion = QRectF();
 
-    //compute new screenRect
-    qreal ratioX = d_ptr->screenRect.center().x() / d_ptr->width;
-    qreal ratioY = d_ptr->screenRect.center().y() / d_ptr->height;
+    QGeoCoordinate currCenter = center();
     //TODO: add some type checking
     QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
     d_ptr->width = (1 << static_cast<int>(zoomLevel)) * tileEngine->tileSize().width();
     d_ptr->height = (1 << static_cast<int>(zoomLevel)) * tileEngine->tileSize().height();
-    QPointF newCenter(qRound(ratioX * d_ptr->width), qRound(ratioY * d_ptr->height));
-    d_ptr->screenRect.moveCenter(newCenter);
+
+    setCenter(currCenter);
 
     //scale old image
     QRectF target = QGeoMapData::mapImage().rect();
