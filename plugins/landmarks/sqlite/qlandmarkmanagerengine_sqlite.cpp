@@ -1354,9 +1354,10 @@ bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
         bool changed = false;
 
         bool result = saveLandmark(connectionName, &(landmark->operator [](i)), &loopError, &loopErrorString, &added, &changed, managerUri);
-        errorMap->insert(i, loopError);
+        if (errorMap)
+            errorMap->insert(i, loopError);
 
-        if (!result && errorMap) {
+        if (!result) {
             noErrors = false;
             lastError = loopError;
             lastErrorString = loopErrorString;
@@ -2236,75 +2237,18 @@ bool QLandmarkManagerEngineSqlite::saveLandmark(QLandmark* landmark,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    bool added = false;
-    bool changed = false;
-    bool result = saveLandmarkInternal(landmark, error, errorString, &added, &changed);
 
-    if (added) {
-        QList<QLandmarkId> ids;
-        ids << landmark->landmarkId();
-        emit landmarksAdded(ids);
-    }
+    return ::saveLandmark(m_dbConnectionName, landmark, error, errorString, managerUri());
 
-    if (changed) {
-        QList<QLandmarkId> ids;
-        ids << landmark->landmarkId();
-        emit landmarksChanged(ids);
-    }
-
-    if (result) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-    }
-
-    return result;
 }
 
-bool QLandmarkManagerEngineSqlite::saveLandmarks(QList<QLandmark> * landmark,
+bool QLandmarkManagerEngineSqlite::saveLandmarks(QList<QLandmark> * landmarks,
         QMap<int, QLandmarkManager::Error> *errorMap,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    QList<QLandmarkId> addedIds;
-    QList<QLandmarkId> changedIds;
+    return ::saveLandmarks(m_dbConnectionName, landmarks, errorMap, error, errorString, managerUri());
 
-    bool noErrors = true;
-    for (int i = 0; i < landmark->size(); ++i) {
-        QLandmarkManager::Error loopError;
-        bool added = false;
-        bool changed = false;
-        bool result = saveLandmarkInternal(&(landmark->operator [](i)), &loopError, 0, &added, &changed);
-        if (!result && errorMap) {
-            noErrors = false;
-            errorMap->insert(i, loopError);
-        }
-        if (added)
-            addedIds << landmark->at(i).landmarkId();
-        if (changed)
-            changedIds << landmark->at(i).landmarkId();
-    }
-
-    if (noErrors) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-    } else {
-        if (error)
-            *error = QLandmarkManager::UnknownError;
-        if (errorString)
-            *errorString = "Errors occured while saving landmarks.";
-    }
-
-    if (addedIds.size() != 0)
-        emit landmarksAdded(addedIds);
-
-    if (changedIds.size() != 0)
-        emit landmarksChanged(changedIds);
-
-    return noErrors;
 }
 
 bool QLandmarkManagerEngineSqlite::removeLandmarkInternal(const QLandmarkId &landmarkId,
