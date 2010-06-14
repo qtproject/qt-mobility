@@ -685,7 +685,8 @@ bool QLandmarkManager::exportLandmarks(const QString &fileName, const QByteArray
 }
 
 /*!
-    Returns the error code of the most recent operation
+    Returns the error code of the most recent operation.  All functions will modify the error based on whether the
+    operation successfully or not.
 */
 QLandmarkManager::Error QLandmarkManager::error() const
 {
