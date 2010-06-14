@@ -307,6 +307,12 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
+    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
+        this, SLOT(wlanNetworkNameChanged()));
+    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
+        this, SLOT(wlanNetworkSignalStrengthChanged()));
+    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
+        this, SLOT(wlanNetworkStatusChanged()));
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -351,6 +357,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             };
         }
         case QSystemNetworkInfo::WlanMode:
+        {
+            if (DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus())
+                return QSystemNetworkInfo::Connected;
+            else
+                return QSystemNetworkInfo::NoNetworkAvailable;
+        }
         case QSystemNetworkInfo::EthernetMode:
         case QSystemNetworkInfo::BluetoothMode:
         case QSystemNetworkInfo::WimaxMode:
@@ -382,6 +394,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         }
 
         case QSystemNetworkInfo::WlanMode:
+            return DeviceInfo::instance()->wlanInfo()->wlanNetworkSignalStrength();
         case QSystemNetworkInfo::EthernetMode:
         case QSystemNetworkInfo::BluetoothMode:
         case QSystemNetworkInfo::WimaxMode:
@@ -452,6 +465,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
             return DeviceInfo::instance()->cellNetworkInfo()->networkName();
         }
         case QSystemNetworkInfo::WlanMode:
+            return DeviceInfo::instance()->wlanInfo()->wlanNetworkName();
         case QSystemNetworkInfo::EthernetMode:
         case QSystemNetworkInfo::BluetoothMode:
         case QSystemNetworkInfo::WimaxMode:
@@ -538,6 +552,28 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
 {
     QSystemNetworkInfo::NetworkMode mode = currentMode();
     emit networkStatusChanged(mode, networkStatus(mode));
+}
+
+void QSystemNetworkInfoPrivate::wlanNetworkNameChanged()
+{
+    emit networkNameChanged(QSystemNetworkInfo::WlanMode,
+        DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+}
+
+void QSystemNetworkInfoPrivate::wlanNetworkSignalStrengthChanged()
+{
+    emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode,
+        DeviceInfo::instance()->wlanInfo()->wlanNetworkSignalStrength());
+}
+
+//TODO: There are no WLAN specific modes (Not connected, Infrastructure, Adhoc, Secure Infrastructure and Searching)
+void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
+{
+    bool status = DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus();
+    if (status)
+        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Connected);
+    else
+        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::UndefinedStatus);
 }
 
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
