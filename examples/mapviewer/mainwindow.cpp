@@ -120,11 +120,11 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
 void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
 {
     if (event->delta() > 0) { //zoom in
-        if (zoomLevel() > minimumZoomLevel()) {
+        if (zoomLevel() < maximumZoomLevel()) {
             setZoomLevel(zoomLevel() + 1);
         }
     } else { //zoom out
-        if (zoomLevel() < maximumZoomLevel()) {
+        if (zoomLevel() > minimumZoomLevel()) {
             setZoomLevel(zoomLevel() - 1);
         }
     }
