@@ -906,11 +906,13 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 
 #ifdef MAC_SDK_10_6
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 if([[CWInterface supportedInterfaces] count] > 0 ) {
         hasWifi = true;
     } else {
         hasWifi = false;
     }
+ [pool release];
 #endif
     rssiTimer = new QTimer(this);
 
@@ -1001,6 +1003,7 @@ QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::modeForInterface(QStr
 
 QString QSystemNetworkInfoPrivate::getDefaultInterface()
 {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     SCDynamicStoreRef storeSession2;
     CFStringRef key;
     CFDictionaryRef	globalDict;
@@ -1008,8 +1011,8 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
     QString interfaceName;
 
     storeSession2 = SCDynamicStoreCreate(NULL, CFSTR("getPrimary"), NULL, NULL);
-    if (!storeSession2) {
-    }
+//    if (!storeSession2) {
+//    }
     key = SCDynamicStoreKeyCreateNetworkGlobalEntity(NULL, kSCDynamicStoreDomainState,kSCEntNetIPv4);
     globalDict = (const __CFDictionary*)SCDynamicStoreCopyValue(storeSession2, key);
     CFRelease(key);
@@ -1031,7 +1034,7 @@ QString QSystemNetworkInfoPrivate::getDefaultInterface()
              defaultInterface = interfaceName;
         }
     }
-
+    [pool release];
     return interfaceName;
 }
 
@@ -1286,10 +1289,13 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
     case QSystemNetworkInfo::WlanMode:
         {
             QString name = interfaceForMode(mode).name();
+            NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 #ifdef MAC_SDK_10_6
             if(hasWifi) {
                 CWInterface *wifiInterface = [CWInterface interfaceWithName:qstringToNSString(name)];
-                return nsstringToQString([wifiInterface ssid]);
+                QString netname = nsstringToQString([wifiInterface ssid]);
+                [pool release];
+                return netname;
             }
 #else
             SCDynamicStoreRef theDynamicStore;
@@ -1301,8 +1307,9 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
             CFDictionaryRef airportPlist = (const __CFDictionary*)SCDynamicStoreCopyValue(theDynamicStore, (CFStringRef)airportPath);
 
             CFRelease(theDynamicStore);
-
-            return nsstringToQString([(NSDictionary *)airportPlist valueForKey:@"SSID_STR"]);
+            QString netname = nsstringToQString([(NSDictionary *)airportPlist valueForKey:@"SSID_STR"]);
+            [pool release];
+            return netname;
 #endif
         }
         break;
@@ -1330,7 +1337,6 @@ QString QSystemNetworkInfoPrivate::macAddress(QSystemNetworkInfo::NetworkMode mo
 
 QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
-    qWarning () << __FUNCTION__ << mode;
     NSAutoreleasePool *autoreleasepool = [[NSAutoreleasePool alloc] init];
     QNetworkInterface netInterface;
     CFArrayRef interfaceArray = SCNetworkInterfaceCopyAll(); //10.4
