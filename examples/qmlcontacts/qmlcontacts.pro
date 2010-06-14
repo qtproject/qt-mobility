@@ -4,9 +4,6 @@ TARGET = qcontactqmlplugin
 
 CONFIG += qt plugin mobility
 QT += declarative
-QT += script
-
-VERSION = 1.0.0
 
 MOBILITY = contacts \
     versit
