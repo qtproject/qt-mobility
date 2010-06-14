@@ -205,6 +205,7 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
         requestString += trimDouble(request.waypoints().at(i).latitude());
     }
 
+    requestString += "&modes=";
     requestString += modesRequestString(request.routeOptimization(), request.travelModes(),
         request.avoidFeatureTypes());
 
@@ -241,9 +242,9 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "/routing-route-service/6.2/routes.xml";
+    requestString += "/routing-route-service/6.2/getroute.xml";
 
-    requestString += "&routeid=";
+    requestString += "?routeid=";
     requestString += route.routeId();
 
     requestString += "&pos=";
@@ -251,6 +252,7 @@ QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute 
     requestString += ",";
     requestString += QString::number(position.longitude());
 
+    requestString += "&mode=";
     requestString += modesRequestString(route.optimization(), route.travelMode(),
         route.request().avoidFeatureTypes());
 
@@ -264,7 +266,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
                                                     QGeoRouteRequest::TravelModes travelModes,
                                                     QGeoRouteRequest::AvoidFeatureTypes avoid)
 {
-    QString requestString = "&modes=";
+    QString requestString;
 
     QStringList types;
     if ((optimization & QGeoRouteRequest::ShortestRoute) != 0)
@@ -304,7 +306,7 @@ QString QGeoRoutingManagerEngineNokia::modesRequestString(QGeoRouteRequest::Rout
             avoidTypes.append("disallowPublicTransport");
         if ((avoid & QGeoRouteRequest::AvoidPark) != 0)
             avoidTypes.append("disallowPark");
-        if ((avoid & QGeoRouteRequest::AvoidMotorPoolLanes) == 0)
+        if ((avoid & QGeoRouteRequest::AvoidMotorPoolLanes) != 0)
             avoidTypes.append("allowHOVLanes");
     }
     QString avoidStr = avoidTypes.join(",");
