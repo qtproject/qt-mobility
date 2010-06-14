@@ -162,6 +162,8 @@ void QGeoTiledMapData::setCenter(const QGeoCoordinate &center)
     qulonglong y;
     coordinateToWorldPixel(center, &x, &y);
     d_ptr->screenRect.moveCenter(QPointF(x, y));
+    d_ptr->screenRect.moveLeft(qRound64(d_ptr->screenRect.left()));
+    d_ptr->screenRect.moveTop(qRound64(d_ptr->screenRect.top()));
 }
 
 QGeoCoordinate QGeoTiledMapData::center() const
