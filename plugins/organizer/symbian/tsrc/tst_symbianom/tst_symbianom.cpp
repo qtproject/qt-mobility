@@ -83,6 +83,7 @@ private slots:  // Test cases
     void fetchItems();
     void fetchItemIds();
     void uniqueIds();
+    void timeStamp();
 
     // Tests with data
     void addItem_data();
@@ -278,6 +279,41 @@ void tst_SymbianOm::uniqueIds()
         QVERIFY(!guids.contains(item.guid()));
         guids << item.guid();
     }
+}
+
+void tst_SymbianOm::timeStamp()
+{
+    // TODO: support for created time? is it possible with symbian?
+    // TODO: check detail definitions
+    
+    // Save item
+    QOrganizerTodo item1;
+    item1.setDisplayLabel("do stuff");
+    QVERIFY(m_om->saveItem(&item1));
+    
+    // Verify timestamp
+    QOrganizerItemTimestamp timeStamp1 = item1.detail<QOrganizerItemTimestamp>();
+    QVERIFY(!timeStamp1.isEmpty());
+    QVERIFY(timeStamp1.lastModified().isValid());
+    
+    // Wait a while
+    QTest::qSleep(1000);
+
+    // Save again
+    item1.setDisplayLabel("do more stuff");
+    QVERIFY(m_om->saveItem(&item1));
+    
+    // Verify timestamp
+    QOrganizerItemTimestamp timeStamp2 = item1.detail<QOrganizerItemTimestamp>();
+    QVERIFY(!timeStamp2.isEmpty());
+    QVERIFY(timeStamp2.lastModified().isValid());
+    QVERIFY(timeStamp2.lastModified() > timeStamp1.lastModified()); 
+    
+    // Load the same item again
+    QOrganizerTodo item2 = m_om->item(item1.localId());
+    QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+    QOrganizerItemTimestamp timeStamp3 = item2.detail<QOrganizerItemTimestamp>();
+    QVERIFY(timeStamp3.lastModified() == timeStamp2.lastModified());
 }
 
 void tst_SymbianOm::addNegative()

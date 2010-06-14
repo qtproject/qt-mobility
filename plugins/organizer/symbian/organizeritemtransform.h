@@ -76,17 +76,17 @@ public:
     TPtrC8 toPtrC8(const QString &string) const;
     TPtrC16 toPtrC16(const QString &string) const;
 
-    TCalTime toTCalTime(QDateTime dateTime) const;
-    QDateTime toQDateTime(TCalTime calTime) const;
+    static TCalTime toTCalTimeL(QDateTime dateTime);
+    static QDateTime toQDateTimeL(TCalTime calTime);
 
-    void toTCalTimes(const QList<QDate> &dateTimes, RArray<TCalTime> &calDates) const;
-    QList<QDate> toQDates(const RArray<TCalTime> &calDates) const;
+    void toTCalTimesL(const QList<QDate> &dateTimes, RArray<TCalTime> &calDates) const;
+    QList<QDate> toQDatesL(const RArray<TCalTime> &calDates) const;
 
     TCalRRule toCalRRule(QList<QOrganizerItemRecurrenceRule> rules) const;
     QList<QOrganizerItemRecurrenceRule> toItemRecurrenceRules(TCalRRule calRule) const;
 
 private:
-    void debugEntry(const CCalEntry &entry) const;
+    void debugEntryL(const CCalEntry &entry) const;
 };
 
 #endif /* ORGANIZERITEMTRANSFORM_H_ */

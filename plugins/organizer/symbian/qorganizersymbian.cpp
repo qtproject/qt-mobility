@@ -282,9 +282,8 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
     // Transform QOrganizerItem -> CCalEntry
     CCalEntry *entry = m_itemTransform.toEntryLC(*item);
     
-    // update last modified date
+    // Update last modified date to entry
     entry->SetLastModifiedDateL();
-    // TODO: update timestamp
 
     // Save entry
     RPointerArray<CCalEntry> entries;
@@ -300,6 +299,12 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
         // -> let's use the "one-error-fits-all" error code KErrGeneral.
         User::Leave(KErrGeneral);
     }
+	
+    // Update timestamp to item
+    QOrganizerItemTimestamp timeStamp = item->detail<QOrganizerItemTimestamp>();
+    timeStamp.setLastModified(OrganizerItemTransform::toQDateTimeL(entry->LastModifiedDateL()));
+    // TODO: where do we get the created timestamp? native api does not seem to support it
+    item->saveDetail(&timeStamp);
     
     // Update guid
     item->setGuid(OrganizerItemTransform::toQString(entry->UidL()));

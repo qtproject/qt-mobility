@@ -146,23 +146,23 @@ CCalEntry *OrganizerItemTransform::toEntryLC(const QOrganizerItem &item)
     {
         QOrganizerEventTimeRange range = item.detail<QOrganizerEventTimeRange>();
         if (!range.isEmpty())
-            entry->SetStartAndEndTimeL(toTCalTime(range.startDateTime()), toTCalTime(range.endDateTime()));
+            entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.endDateTime()));
     }
     else if(item.type() == QOrganizerItemType::TypeJournal)
     {
         QOrganizerJournalTimeRange range = item.detail<QOrganizerJournalTimeRange>();
         if (!range.isEmpty())
-            entry->SetDTStampL(toTCalTime(range.entryDateTime()));
+            entry->SetDTStampL(toTCalTimeL(range.entryDateTime()));
     }
     else if(item.type() == QOrganizerItemType::TypeTodo)
     {
         QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
         if (!range.isEmpty())
-            entry->SetStartAndEndTimeL(toTCalTime(range.notBeforeDateTime()), toTCalTime(range.dueDateTime()));
+            entry->SetStartAndEndTimeL(toTCalTimeL(range.notBeforeDateTime()), toTCalTimeL(range.dueDateTime()));
 
         QOrganizerTodoProgress progress = item.detail<QOrganizerTodoProgress>();
         if (!progress.isEmpty() && progress.status() == QOrganizerTodoProgress::StatusComplete)
-            entry->SetCompletedL(true, toTCalTime(progress.finishedDateTime()));
+            entry->SetCompletedL(true, toTCalTimeL(progress.finishedDateTime()));
     }
 
     // *** Repeat rules / RDate / ExDate Methods ***
@@ -176,13 +176,13 @@ CCalEntry *OrganizerItemTransform::toEntryLC(const QOrganizerItem &item)
 
         if (recurrence.recurrenceDates().count()) {
             RArray<TCalTime> calRDates;
-            toTCalTimes(recurrence.recurrenceDates(), calRDates);
+            toTCalTimesL(recurrence.recurrenceDates(), calRDates);
             entry->SetRDatesL(calRDates);
         }
 
         if (recurrence.exceptionDates().count()) {
             RArray<TCalTime> calExDates;
-            toTCalTimes(recurrence.exceptionDates(), calExDates);
+            toTCalTimesL(recurrence.exceptionDates(), calExDates);
             entry->SetRDatesL(calExDates);
         }
 
@@ -242,7 +242,7 @@ CCalEntry *OrganizerItemTransform::toEntryLC(const QOrganizerItem &item)
 
 void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *item) const
 {
-    debugEntry(entry);
+    //debugEntryL(entry);
         
     item->setType(itemTypeL(entry));
     item->setGuid(toQString(entry.UidL()));
@@ -256,7 +256,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
     {
         QOrganizerEventTimeRange range;
         if (startTime.TimeUtcL() != Time::NullTTime())
-            range.setStartDateTime(toQDateTime(startTime));
+            range.setStartDateTime(toQDateTimeL(startTime));
 
         // Check if the end time is defined and if the end time is different to
         // start time. Effectively this means that if a QtMobility Organizer API
@@ -264,7 +264,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
         // end time is lost.
         if (endTime.TimeUtcL() != Time::NullTTime()
             && endTime.TimeUtcL() != startTime.TimeUtcL())
-            range.setEndDateTime(toQDateTime(endTime));
+            range.setEndDateTime(toQDateTimeL(endTime));
 
         item->saveDetail(&range);
     }
@@ -272,7 +272,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
     {
         if (dtstamp.TimeUtcL() != Time::NullTTime()) {
             QOrganizerJournalTimeRange range;
-            range.setEntryDateTime(toQDateTime(entry.DTStampL()));
+            range.setEntryDateTime(toQDateTimeL(entry.DTStampL()));
             item->saveDetail(&range);
         }
     }
@@ -280,9 +280,9 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
     {
         QOrganizerTodoTimeRange range;
         if (startTime.TimeUtcL() != Time::NullTTime())
-            range.setNotBeforeDateTime(toQDateTime(startTime));
+            range.setNotBeforeDateTime(toQDateTimeL(startTime));
         if (endTime.TimeUtcL() != Time::NullTTime())
-            range.setDueDateTime(toQDateTime(endTime));
+            range.setDueDateTime(toQDateTimeL(endTime));
         item->saveDetail(&range);
 
         QOrganizerTodoProgress progress;
@@ -293,13 +293,17 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
             progress.setStatus(QOrganizerTodoProgress::StatusInProgress);
         else if (entryStatus == CCalEntry::ETodoCompleted) {
             progress.setStatus(QOrganizerTodoProgress::StatusComplete);
-            progress.setFinishedDateTime(toQDateTime(entry.CompletedTimeL()));
+            progress.setFinishedDateTime(toQDateTimeL(entry.CompletedTimeL()));
         }
         else
             progress.setStatus(QOrganizerTodoProgress::StatusNotStarted);
 
         item->saveDetail(&progress);
     }
+    
+    QOrganizerItemTimestamp timeStamp;
+    timeStamp.setLastModified(toQDateTimeL(entry.LastModifiedDateL()));
+    item->saveDetail(&timeStamp);
 
     // *** Repeat rules / RDate / ExDate Methods ***
     QOrganizerItemRecurrence recurrence;
@@ -310,11 +314,11 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
 
     RArray<TCalTime> calRDateList;
     entry.GetRDatesL(calRDateList);
-    recurrence.setRecurrenceDates(toQDates(calRDateList));
+    recurrence.setRecurrenceDates(toQDatesL(calRDateList));
 
     RArray<TCalTime> calExDateList;
     entry.GetExceptionDatesL(calExDateList);
-    recurrence.setExceptionDates(toQDates(calExDateList));
+    recurrence.setExceptionDates(toQDatesL(calExDateList));
 
     // TODO: exceptionRules
     // There is no native support for this.
@@ -366,7 +370,7 @@ TPtrC16 OrganizerItemTransform::toPtrC16(const QString &string) const
     return TPtrC16(reinterpret_cast<const TUint16*>(string.utf16()));
 }
 
-TCalTime OrganizerItemTransform::toTCalTime(QDateTime dateTime) const
+TCalTime OrganizerItemTransform::toTCalTimeL(QDateTime dateTime)
 {
     TCalTime calTime;
     calTime.SetTimeUtcL(Time::NullTTime());
@@ -385,7 +389,7 @@ TCalTime OrganizerItemTransform::toTCalTime(QDateTime dateTime) const
     return calTime;
 }
 
-QDateTime OrganizerItemTransform::toQDateTime(TCalTime calTime) const
+QDateTime OrganizerItemTransform::toQDateTimeL(TCalTime calTime)
 {
     const TTime time1970(_L("19700000:000000.000000"));
     quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
@@ -398,15 +402,24 @@ QDateTime OrganizerItemTransform::toQDateTime(TCalTime calTime) const
     return dateTime;
 }
 
-void OrganizerItemTransform::toTCalTimes(const QList<QDate> &dates, RArray<TCalTime> &calDates) const
+void OrganizerItemTransform::toTCalTimesL(const QList<QDate> &dates, RArray<TCalTime> &calDates) const
 {
-    // TODO: conversion
+    foreach (QDate date, dates) {
+        QDateTime dateTime(date);
+        TCalTime calTime = toTCalTimeL(dateTime);
+        calDates.Append(calTime);
+    }
 }
 
-QList<QDate> OrganizerItemTransform::toQDates(const RArray<TCalTime> &calDates) const
+QList<QDate> OrganizerItemTransform::toQDatesL(const RArray<TCalTime> &calDates) const
 {
-    // TODO: conversion
-    return QList<QDate>();
+    QList<QDate> dates;
+    int count = calDates.Count();
+    for (int i=0; i<count; i++) {
+        QDateTime dateTime = toQDateTimeL(calDates[i]);
+        dates << dateTime.date();
+    }    
+    return dates;
 }
 
 TCalRRule OrganizerItemTransform::toCalRRule(QList<QOrganizerItemRecurrenceRule> rules) const
@@ -422,7 +435,7 @@ QList<QOrganizerItemRecurrenceRule> OrganizerItemTransform::toItemRecurrenceRule
     return QList<QOrganizerItemRecurrenceRule>();
 }
 
-void OrganizerItemTransform::debugEntry(const CCalEntry &entry) const
+void OrganizerItemTransform::debugEntryL(const CCalEntry &entry) const
 {
     qDebug() << "CCalEntry";
     qDebug() << "LocalUid    :" << entry.LocalUidL();
