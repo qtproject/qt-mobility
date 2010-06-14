@@ -63,11 +63,9 @@ testsensorimpl::testsensorimpl(QSensor *sensor)
         setDataRates(acc);
         if (!sensor->availableDataRates().count()) {
             addDataRate(100, 100);
-            sensor->setDataRate(100);
         }
     } else {
         addDataRate(100, 100);
-        sensor->setDataRate(100);
     }
     reading();
 }

@@ -127,7 +127,8 @@ public:
     virtual bool exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds,
                                  QLandmarkManager::Error *error, QString *errorString) const;
 
-    virtual bool isFilterSupported(QLandmarkFilter::FilterType filterType) const = 0;
+    virtual QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const = 0;
+    virtual bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const = 0;
 
     virtual bool isReadOnly() const = 0;
     virtual bool isReadOnly(const QLandmarkId &landmarkId) const = 0;

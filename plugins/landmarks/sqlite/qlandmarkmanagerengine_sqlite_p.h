@@ -133,7 +133,8 @@ public:
                          QLandmarkManager::Error *error,
                          QString *errorString);
 
-    bool isFilterSupported(QLandmarkFilter::FilterType filterType) const;
+    QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const;
 
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &landmarkId) const;

@@ -126,6 +126,8 @@ QString CntDisplayLabel::synthesizedDisplayLabel(const QContact& contact, QConta
  */
 QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QList<QList<QPair<QLatin1String, QLatin1String> > > detailList) const
 {
+    // Default to empty display label. It is up to the client to create a
+    // localised presentation of a contact without a name.
     QString displayLabel("");
     
     //loop through the details and create display label
@@ -153,13 +155,6 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
         }
     }
 
-    //no display label, set default value
-    if(displayLabel.isEmpty())
-    {
-        //should the unnamned be read from somewhere?
-        displayLabel = unNamned();
-    }
-    
     return displayLabel;
 }
 
@@ -171,14 +166,6 @@ QString CntDisplayLabel::delimiter() const
 {
     //this will be variated in the future.
     return " ";
-}
-
-/*!
- * return the name used for unknown contacts
- */
-QString CntDisplayLabel::unNamned() const
-{
-    return "Unnamed";
 }
 
 /*!

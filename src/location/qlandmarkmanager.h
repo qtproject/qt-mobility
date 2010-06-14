@@ -80,6 +80,16 @@ public:
         UnknownError,
     };
 
+    enum FilterSupportLevel {
+        Native,
+        Emulated,
+        None
+    };
+
+    enum LandmarkFeature {
+        GenericAttributes
+    };
+
 #ifdef Q_QDOC
     QLandmarkManager(QObject *parent = 0);
     QLandmarkManager(const QString &managerName, const QMap<QString, QString> &parameters = 0, QObject *parent = 0);
@@ -125,7 +135,8 @@ public:
     Error error() const;
     QString errorString() const;
 
-    bool isFilterSupported(QLandmarkFilter::FilterType filterType) const;
+    FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const;
+    bool isFeatureSupported(LandmarkFeature feature) const;
 
     bool isReadOnly() const;
     bool isReadOnly(const QLandmarkId &id) const;

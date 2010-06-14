@@ -31,7 +31,7 @@
 </ul>
 <a name="introduction"></a>
 <h2>Introduction</h2>
-<p>The Contacts Synchronous API enables a client to synchronously fetch, update, or remove contact data from a contact manager. A synchronous API is of most use to clients who wish to perform simple requests where performance or UI responsiveness is not critical. Synchronous calls to a contact manager will block until they are completed, and therefore should not be performed in the GUI thread if the manager is a frontend to an online service or long-latency datastore. The main advantage of the synchronous API is its simplicity and convenience.</p>
+<p>The Contacts Synchronous API enables a client to synchronously fetch, update, or remove contact data from a contact manager. A synchronous API is of most use to clients who wish to perform simple requests where performance or user interface responsiveness is not critical. Synchronous calls to a contact manager will block until they are completed, and therefore should not be performed in the GUI thread if the manager is a frontend to an online service or long-latency datastore. The main advantage of the synchronous API is its simplicity and convenience.</p>
 <p>Most operations which may be performed using the synchronous API may also be performed using the asynchronous API. It is recommended for most applications that the asynchronous API be used where possible.</p>
 <a name="using-the-api"></a>
 <h2>Using The API</h2>
@@ -51,7 +51,7 @@
 <h3>Contact Manipulation</h3>
 <p>The most common type of operation that clients will perform involves retrieval or modification of contacts. The <a href="qcontactmanager.html">QContactManager</a> class offers synchronous API to retrieve, create, update and delete contacts. The create and update operations are provided through the same interface. Both singular and batch operations are offered by the API.</p>
 <p>A contact is identified by its <a href="qcontactid.html">QContactId</a>. This id consists of two parts: a URI which identifies the contact manager which stores the contact, and the local id of the contact in that manager. Some operations which take a pointer to a contact as an argument may modify the contact during the operation; updating the contact id is a common example.</p>
-<p>The <a href="qcontactmanager.html">QContactManager</a> class provides API for accessing the ids of contacts which are stored in the manager:</p>
+<p>The <a href="qcontactmanager.html">QContactManager</a> class provides API for accessing the IDs of contacts which are stored in the manager:</p>
 <ul>
 <li>contactIds(const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; <a href="location-overview.html#sortorders">sortOrders</a> = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
 <li>contactIds(const <a href="qcontactfilter.html">QContactFilter</a>&amp; filter, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;&amp; <a href="location-overview.html#sortorders">sortOrders</a> = <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactsortorder.html">QContactSortOrder</a>&gt;()) const</li>
@@ -116,7 +116,7 @@
 <a name="saving-a-new-contact-to-the-default-manager"></a>
 <h3>Saving a new contact to the default manager</h3>
 <p>The client creates a new contact, adds a name and a phone number, and saves it to the default store of the default manager.</p>
-<p>We assume the existence of a specialised leaf-class that allows simple access to details of the definition identified by the &quot;PhoneNumber&quot; identifier, and another that allows simple access to details of the definition identified by the &quot;Name&quot; identifier. These specialised leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qcontactdetail.html">QContactDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
+<p>We assume the existence of a specialized leaf-class that allows simple access to details of the definition identified by the &quot;PhoneNumber&quot; identifier, and another that allows simple access to details of the definition identified by the &quot;Name&quot; identifier. These specialized leaf classes may be written by anyone, and simply wrap the functionality provided by <a href="qcontactdetail.html">QContactDetail</a> in order to allow simpler access to fields supported by a particular definition.</p>
 <pre>    void addContact(QContactManager* cm)
     {
         QContact alice;
@@ -149,7 +149,7 @@
     }</pre>
 <a name="filtering-by-detail-definition-and-value"></a>
 <h3>Filtering by detail definition and value</h3>
-<p>The client utilises a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
+<p>The client utilizes a default manager and asks for any contacts with a particular phone number. The example assumes that the default manager supports the provided <a href="qcontactphonenumber.html">QContactPhoneNumber</a> detail leaf class (which implements the default definition for phone number details).</p>
 <pre>    void matchCall(QContactManager* cm, const QString&amp; incomingCallNbr)
     {
         QContactDetailFilter phoneFilter;

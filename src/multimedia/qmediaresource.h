@@ -50,7 +50,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QMediaResource
+class Q_MULTIMEDIA_EXPORT QMediaResource
 {
 public:
     QMediaResource();

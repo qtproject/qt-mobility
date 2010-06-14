@@ -1328,6 +1328,17 @@ Q_DEFINE_LATIN1_CONSTANT(QContactNote::FieldNote, "Note");
    \brief The QContactTag class contains a tag associated with a
    contact.
    \ingroup contacts-details
+
+   Typically the tags associated with a contact will be distinct,
+   although this is usually only enforced when the contact is saved
+   in the manager.
+
+   Here is an example of retrieving all the tags for a contact:
+   \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Getting all tags
+
+   Here is an example of checking for a specific tag value:
+   \snippet doc/src/snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Checking for a specific tag
+
  */
 
 /*!
