@@ -218,7 +218,7 @@ public:
     QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     bool isDeviceLocked();
-    QSystemDeviceInfo::SimStatus simStatus();
+    static QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
@@ -244,7 +244,7 @@ private:
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged();
-    
+
     void countryCodeChanged(){};
     void networkCodeChanged(){};
     void networkNameChanged(){};
@@ -255,7 +255,7 @@ protected:  //from MTelephonyInfoObserver
 
 protected:  //from MChargingStatusObserver
     void chargingStatusChanged();
-    
+
 private:    //data
     MProEngEngine *m_profileEngine;
     MProEngNotifyHandler* m_proEngNotifyHandler;
@@ -326,7 +326,7 @@ public:
         }
         return m_batteryInfo;
     }
-    
+
     CCellNetworkInfo *cellNetworkInfo()
     {
         if (!m_cellNetworkInfo) {
@@ -334,7 +334,7 @@ public:
         }
         return m_cellNetworkInfo;
     }
-    
+
     CCellNetworkRegistrationInfo *cellNetworkRegistrationInfo()
     {
         if (!m_cellNetworkRegistrationInfo) {
@@ -342,7 +342,7 @@ public:
         }
         return m_cellNetworkRegistrationInfo;
     }
-    
+
     CCellSignalStrengthInfo *cellSignalStrenghtInfo()
     {
         if (!m_cellSignalStrengthInfo) {

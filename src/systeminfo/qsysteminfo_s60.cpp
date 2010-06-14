@@ -901,7 +901,10 @@ QString QSystemDeviceInfoPrivate::imei()
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-    return DeviceInfo::instance()->subscriberInfo()->imsi();
+    if (simStatus() == QSystemDeviceInfo::SimNotAvailable)
+        return QString();
+    else
+        return DeviceInfo::instance()->subscriberInfo()->imsi();
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
