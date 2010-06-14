@@ -182,9 +182,6 @@ private:
     // ctor
     QOrganizerItemMaemo5Engine();
 
-    // enumerate all items
-    QList<QOrganizerItem> enumerateAllItems(QOrganizerItemChangeSet *cs, QOrganizerItemManager::Error* error) const;
-
 private:
     QOrganizerItemMaemo5EngineData* d;
 
