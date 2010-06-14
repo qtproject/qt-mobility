@@ -452,7 +452,7 @@ bool QGeoRouteXmlParser::parseGeoPoints(const QString& strPoints, QList<QGeoCoor
 {
     QStringList rawPoints = strPoints.split(' ');
 
-    for (int i = 0; i < rawPoints.length(); i++) {
+    for (int i = 0; i < rawPoints.length(); ++i) {
         QStringList coords = rawPoints[i].split(',');
 
         if (coords.length() != 2) {
