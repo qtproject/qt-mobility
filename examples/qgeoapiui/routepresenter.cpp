@@ -54,10 +54,34 @@ RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* ro
 void RoutePresenter::show()
 {
     treeWidget->clear();
+
+    QTreeWidgetItem* requestTop = new QTreeWidgetItem(treeWidget);
+    requestTop->setText(0, "request");
+
+    QTreeWidgetItem* prop = new QTreeWidgetItem(requestTop);
+    prop->setText(0, "modes");
+    showModes(prop,routeReply->request().routeOptimization(),routeReply->request().travelModes(),routeReply->request().avoidFeatureTypes());
+
+    prop = new QTreeWidgetItem(requestTop);
+    prop->setText(0, "waypoints");
+    prop->setText(1, QString().setNum(routeReply->request().waypoints().length()));
+    showPoints(prop, routeReply->request().waypoints());
+
+    prop = new QTreeWidgetItem(requestTop);
+    prop->setText(0, "exclude areas");
+    prop->setText(1, QString().setNum(routeReply->request().excludeAreas().length()));
+    for (int i = 0; i < routeReply->request().excludeAreas().length(); ++i)
+        showBoundingBox(prop, routeReply->request().excludeAreas().at(i));
+
+    prop = new QTreeWidgetItem(requestTop);
+    prop->setText(0, "alternatives");
+    prop->setText(1, QString().setNum(routeReply->request().numberAlternativeRoutes()));
+
+
     QTreeWidgetItem* top = showRoutes();
     const QList<QGeoRoute> routes = routeReply->routes();
 
-    for (int i = 0; i < routes.length(); i++) {
+    for (int i = 0; i < routes.length(); ++i) {
         showRoute(top, routes[i]);
     }
 }
@@ -66,24 +90,6 @@ QTreeWidgetItem* RoutePresenter::showRoutes()
 {
     QTreeWidgetItem* top = new QTreeWidgetItem(treeWidget);
     top->setText(0, "routes");
-
-    /*
-    QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-    prop->setText(0, "result");
-    prop->setText(1, QString().setNum((quint16) routeReply->resultCode()));
-
-    QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-    prop->setText(0, "description");
-    prop->setText(1, routeReply->description());
-
-    QString lang = routeReply->language();
-
-    if (!lang.isEmpty()) {
-        prop = new QTreeWidgetItem(top);
-        prop->setText(0, "language");
-        prop->setText(1, lang);
-    }
-    */
 
     QTreeWidgetItem* prop = new QTreeWidgetItem(top);
     prop->setText(0, "count");
@@ -102,12 +108,8 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     prop->setText(1, route.routeId());
 
     prop = new QTreeWidgetItem(routeItem);
-    prop->setText(0, "optimization");
-    prop->setText(1, QString().setNum(route.optimization()));
-
-    prop = new QTreeWidgetItem(routeItem);
-    prop->setText(0, "travel mode");
-    prop->setText(1, QString().setNum(route.travelMode()));
+    prop->setText(0, "mode");
+    showModes(prop,route.optimization(),route.travelMode(),route.request().avoidFeatureTypes());
 
     prop = new QTreeWidgetItem(routeItem);
     prop->setText(0, "distance");
@@ -120,10 +122,10 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     showPoints(wayPointsItem, route.pathSummary());
 
     QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
-    segmentsItem->setText(0, "Segments");
+    segmentsItem->setText(0, "segments");
 
     const QList<const QGeoRouteSegment*> segments = route.routeSegments();
-    for (int i = 0; i < segments.length(); i++) {
+    for (int i = 0; i < segments.length(); ++i) {
         showRouteSegment(segmentsItem, segments[i]);
     }
 }
@@ -208,7 +210,7 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRout
 
 void RoutePresenter::showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points)
 {
-    for (int i = 0; i < points.length(); i++) {
+    for (int i = 0; i < points.length(); ++i) {
         QTreeWidgetItem* point = new QTreeWidgetItem(pointsItem);
         point->setText(0, QString().setNum(i + 1));
         point->setText(1, formatGeoCoordinate(points[i]));
@@ -235,6 +237,95 @@ QString GeoPresenter::formatGeoCoordinate(const QGeoCoordinate& coord)
     return QString().setNum(coord.longitude()) %
            ", " %
            QString().setNum(coord.latitude());
+}
+
+void RoutePresenter::showModes(QTreeWidgetItem* top, QGeoRouteRequest::RouteOptimizations optimization,
+                                    QGeoRouteRequest::TravelModes travelModes,
+                                    QGeoRouteRequest::AvoidFeatureTypes avoid )
+{
+    QTreeWidgetItem* item = new QTreeWidgetItem(top);
+    item->setText(0, "optimization");
+
+    if ((optimization & QGeoRouteRequest::ShortestRoute) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "ShortestRoute");
+    }
+    if ((optimization & QGeoRouteRequest::FastestRoute) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "FastestRoute");
+    }
+    if ((optimization & QGeoRouteRequest::MostEconomicRoute) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "MostEconomicRoute");
+    }
+    if ((optimization & QGeoRouteRequest::MostScenicRoute) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "MostScenicRoute");
+    }
+
+    item = new QTreeWidgetItem(top);
+    item->setText(0, "travel mode");
+
+    if ((travelModes & QGeoRouteRequest::CarTravel) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "CarTravel");
+    }
+    if ((travelModes & QGeoRouteRequest::PedestrianTravel) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "PedestrianTravel");
+    }
+    if ((travelModes & QGeoRouteRequest::PublicTransitTravel) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "PublicTransitTravel");
+    }
+    if ((travelModes & QGeoRouteRequest::BicycleTravel) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "BicycleTravel");
+    }
+    if ((travelModes & QGeoRouteRequest::TruckTravel) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "TruckTravel");
+    }
+
+    item = new QTreeWidgetItem(top);
+    item->setText(0, "avoid");
+
+    if (avoid == QGeoRouteRequest::AvoidNothing) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidNothing");
+    }
+    if ((avoid & QGeoRouteRequest::AvoidTolls) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidTolls");
+    }
+    if ((avoid & QGeoRouteRequest::AvoidHighways) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidHighways");
+    }
+    if ((avoid & QGeoRouteRequest::AvoidFerries) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidFerries");
+    }
+    if ((avoid & QGeoRouteRequest::AvoidTunnels) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidTunnels");
+    }
+    if ((avoid & QGeoRouteRequest::AvoidDirtRoads) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidDirtRoads");
+    }
+    if ((avoid & QGeoRouteRequest::AvoidPublicTransit) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidPublicTransit");
+    }
+    if ((avoid & QGeoRouteRequest::AvoidPark) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidPark");
+    }
+    if ((avoid & QGeoRouteRequest::AvoidMotorPoolLanes) != 0) {
+        QTreeWidgetItem* prop = new QTreeWidgetItem(item);
+        prop->setText(1, "AvoidMotorPoolLanes");
+    }
 }
 
 

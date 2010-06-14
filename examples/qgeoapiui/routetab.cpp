@@ -153,10 +153,12 @@ void RouteTab::on_btnUpdate_clicked()
 
 void RouteTab::replyFinished(QGeoRouteReply* reply)
 {
-    routes = reply->routes();
-    RoutePresenter presenter(m_resultTree, reply);
-    presenter.show();
-    reply->deleteLater();
+    if(reply->error() == QGeoRouteReply::NoError) {
+        routes = reply->routes();
+        RoutePresenter presenter(m_resultTree, reply);
+        presenter.show();
+        reply->deleteLater();
+        }
 }
 
 void RouteTab::resultsError(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString)

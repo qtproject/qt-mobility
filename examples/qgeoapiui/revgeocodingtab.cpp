@@ -119,7 +119,7 @@ void ReverseGeocodingTab::on_btnRequest_clicked()
 
 void ReverseGeocodingTab::replyFinished(QGeoPlacesReply* reply)
 {
-    if (!isHidden()) {
+    if (!isHidden() && reply->error() == QGeoPlacesReply::NoError) {
         PlacePresenter presenter(m_resultTree, reply);
         presenter.show();
         reply->deleteLater();
