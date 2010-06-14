@@ -97,9 +97,13 @@ private:
     void fetchNegative();
     void removeNegative();
 
-private:
+private: // util functions
     bool parseDetails(QTstDetailList detailsString, QList<QOrganizerItemDetail> &details);
     bool verifyDetails(QList<QOrganizerItemDetail> actual, QList<QOrganizerItemDetail> expected);
+    bool compareItemLists(QList<QOrganizerItem> actual, QList<QOrganizerItem> expected, QStringList ignoredDetails = QStringList());
+    bool compareItems(QOrganizerItem itemA, QOrganizerItem itemB, QStringList ignoredDetails = QStringList());    
+
+private:
     QOrganizerItemManager *m_om;
 };
 
@@ -222,11 +226,15 @@ void tst_SymbianOm::fetchItems()
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     
     // Verify
-    QVERIFY(actualItems.count() == expectedItems.count());
-    foreach (const QOrganizerItem &item, actualItems) {
-        QVERIFY(item.localId() != QOrganizerItemLocalId());
-        QVERIFY(expectedItems.contains(item));
-    }
+    QStringList ignoredDetails;
+    // TODO: remove these when backend supports them properly
+    ignoredDetails << QOrganizerItemDisplayLabel::DefinitionName;
+    ignoredDetails << QOrganizerItemRecurrence::DefinitionName;
+    ignoredDetails << QOrganizerTodoTimeRange::DefinitionName;
+    ignoredDetails << QOrganizerTodoProgress::DefinitionName;
+    ignoredDetails << QOrganizerItemDescription::DefinitionName;
+    ignoredDetails << QOrganizerItemPriority::DefinitionName;
+    QVERIFY(compareItemLists(actualItems, expectedItems, ignoredDetails));
 }
 
 void tst_SymbianOm::fetchItemIds()
@@ -459,6 +467,75 @@ bool tst_SymbianOm::verifyDetails(QList<QOrganizerItemDetail> actual, QList<QOrg
         }
     }
     return true;
+}
+
+bool tst_SymbianOm::compareItemLists(QList<QOrganizerItem> actual, QList<QOrganizerItem> expected, QStringList ingoredDetails)
+{
+    // Remove matching contacts
+    foreach (QOrganizerItem a, actual) {
+        foreach (QOrganizerItem b, expected) {
+            if (compareItems(a, b, ingoredDetails)) {
+                actual.removeOne(a);
+                expected.removeOne(b);
+                break;
+            }
+        }
+    }
+    
+    if (actual.count()) {
+        qDebug() << "Extra items:";
+        qDebug() << actual;
+    }
+    
+    if (expected.count()) {
+        qDebug() << "Missing items:";
+        qDebug() << expected;
+    }    
+    
+    if (actual.count() == 0 && expected.count() == 0)
+        return true;
+    
+    return false;
+}
+
+bool tst_SymbianOm::compareItems(QOrganizerItem itemA, QOrganizerItem itemB, QStringList ignoredDetails)
+{
+    if (itemA.localId() != itemB.localId())
+        return false;
+    
+    QList<QOrganizerItemDetail> aDetails = itemA.details();
+    QList<QOrganizerItemDetail> bDetails = itemB.details();
+    
+    // Remove ignored details
+    foreach (QString ignored, ignoredDetails) { 
+        foreach (QOrganizerItemDetail d, aDetails) {
+            if (d.definitionName() == ignored)
+                itemA.removeDetail(&d);
+        }
+    }
+    
+    foreach (QString ignored, ignoredDetails) { 
+        foreach (QOrganizerItemDetail d, bDetails) {
+            if (d.definitionName() == ignored)
+                itemB.removeDetail(&d);
+        }
+    }
+    
+    // They can be in any order, so loop
+    foreach (QOrganizerItemDetail d, aDetails) {
+        foreach (QOrganizerItemDetail d2, bDetails) {
+            if (d == d2) {
+                itemA.removeDetail(&d);
+                itemB.removeDetail(&d2);
+                break;
+            }
+        }
+    }
+    
+    if (itemA == itemB)
+        return true;
+    
+    return false;
 }
 
 QTEST_MAIN(tst_SymbianOm);
