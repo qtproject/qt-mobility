@@ -82,6 +82,7 @@ private slots:  // Test cases
     void removeSimpleItem();
     void fetchItems();
     void fetchItemIds();
+    void uniqueIds();
 
     // Tests with data
     void addItem_data();
@@ -252,6 +253,22 @@ void tst_SymbianOm::fetchItemIds()
     foreach (QOrganizerItemLocalId id, actualIds) {
         QVERIFY(id != QOrganizerItemLocalId());
         QVERIFY(expectedIds.contains(id));
+    }
+}
+
+void tst_SymbianOm::uniqueIds()
+{
+    // Test that new items have unique ids
+    QList<QOrganizerItemLocalId> lids;
+    QList<QString> guids;
+    for (int i=0; i<10; i++) {
+        QOrganizerItem item;
+        item.setType(QOrganizerItemType::TypeTodo);
+        QVERIFY(m_om->saveItem(&item));
+        QVERIFY(!lids.contains(item.localId()));
+        lids << item.localId();
+        QVERIFY(!guids.contains(item.guid()));
+        guids << item.guid();
     }
 }
 
