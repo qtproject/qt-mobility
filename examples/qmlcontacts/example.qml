@@ -52,7 +52,7 @@ Rectangle {
     color: "#080808";
 
     QmlContactModel {
-        id: "myModel"
+        id: myModel
         manager: "memory"
     }
 
@@ -145,9 +145,36 @@ Rectangle {
 
                                 model:model.details(model.id)
                                 delegate: Component {
-                                    //TODO
-                                }
-                            }
+                                    Item {
+                                        Column {
+                                            Text {
+                                                text: model.modelData.name
+                                                color:details.textColor;
+                                            }
+                                            ListView {
+                                                model:model.modelData.fields();
+                                                delegate: Component {
+                                                    Item {
+                                                        Row {
+                                                          Text {
+                                                             text:model.modelData.key;
+                                                             color:details.textColor;
+                                                          }
+                                                          TextInput {
+                                                              text:model.modelData.value;
+                                                              color:details.textColor;
+                                                          }
+                                                        }
+                                                    }
+                                                }//delegate
+
+                                            }//detail fields view
+
+                                        }
+                                    }
+
+                                }//delegate
+                            }//detail list view
                         }
                     }
                 }
