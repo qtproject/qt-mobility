@@ -71,7 +71,7 @@ public:
     virtual QContactFilter contactFilter() const = 0;
     virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const = 0;
 
-    bool supportsContact(const QContact& contact) const {return !supportedTargets(contact).isEmpty();}
+    virtual bool supportsContact(const QContact& contact) const; // virtual but not pure virtual; default impl. calls supportedTargets.isEmpty().
     QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const
     {
         return metaData(key, QList<QContactActionTarget>() << target, parameters);

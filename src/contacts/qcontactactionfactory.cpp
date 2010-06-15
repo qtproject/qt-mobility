@@ -90,6 +90,13 @@ QContactActionFactory::~QContactActionFactory()
   The meta-data may vary depending on the \a targets of the action and any \a parameters to invocation which the client may specify.
  */
 
+
+bool QContactActionFactory::supportsContact(const QContact& contact) const
+{
+    // default implementation is naive.
+    return !supportedTargets(contact).isEmpty();
+}
+
 #include "moc_qcontactactionfactory.cpp"
 
 QTM_END_NAMESPACE

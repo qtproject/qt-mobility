@@ -83,7 +83,7 @@ public:
     QContactFilter contactFilter() const;
     QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
 
-    bool supportsContact(const QContact& contact) const {return !supportedTargets(contact).isEmpty();}
+    bool supportsContact(const QContact& contact) const;
     QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const
     {
         return metaData(key, QList<QContactActionTarget>() << target, parameters);

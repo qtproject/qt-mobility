@@ -161,6 +161,14 @@ QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QCon
 
     return QVariant();
 }
+bool QContactActionDescriptor::supportsContact(const QContact& contact) const
+{
+    if (d->m_factory) {
+        return d->m_factory->supportsContact(contact);
+    }
+
+    return false;
+}
 
 /*!
  * Returns true if either the name, service and version of the descriptor are missing from the descriptor.
