@@ -1969,6 +1969,58 @@
     </section>
     <section ref="qlandmarkmanager.html" title="QLandmarkManager Class Reference">
         <keyword ref="qlandmarkmanager.html">QLandmarkManager</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">Error</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::AlreadyExistsError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::NoError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::UnknownError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::DoesNotExistError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::OutOfMemoryError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::BadArgumentError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::PermissionsError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::VersionMismatchError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::LockedError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::InvalidManagerError</keyword>
+        <keyword ref="qlandmarkmanager.html#Error-enum">QLandmarkManager::NotSupportedError</keyword>
+        <keyword ref="qlandmarkmanager.html#FilterSupportLevel-enum">FilterSupportLevel</keyword>
+        <keyword ref="qlandmarkmanager.html#FilterSupportLevel-enum">QLandmarkManager::Emulated</keyword>
+        <keyword ref="qlandmarkmanager.html#FilterSupportLevel-enum">QLandmarkManager::None</keyword>
+        <keyword ref="qlandmarkmanager.html#FilterSupportLevel-enum">QLandmarkManager::Native</keyword>
+        <keyword ref="qlandmarkmanager.html#LandmarkFeature-enum">LandmarkFeature</keyword>
+        <keyword ref="qlandmarkmanager.html#LandmarkFeature-enum">QLandmarkManager::GenericAttributes</keyword>
+        <keyword ref="qlandmarkmanager.html#availableManagers">availableManagers</keyword>
+        <keyword ref="qlandmarkmanager.html#buildUri">buildUri</keyword>
+        <keyword ref="qlandmarkmanager.html#categories">categories</keyword>
+        <keyword ref="qlandmarkmanager.html#categoriesAdded">categoriesAdded</keyword>
+        <keyword ref="qlandmarkmanager.html#categoriesChanged">categoriesChanged</keyword>
+        <keyword ref="qlandmarkmanager.html#categoriesRemoved">categoriesRemoved</keyword>
+        <keyword ref="qlandmarkmanager.html#category">category</keyword>
+        <keyword ref="qlandmarkmanager.html#categoryIds">categoryIds</keyword>
+        <keyword ref="qlandmarkmanager.html#error">error</keyword>
+        <keyword ref="qlandmarkmanager.html#errorString">errorString</keyword>
+        <keyword ref="qlandmarkmanager.html#exportLandmarks">exportLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#filterSupportLevel">filterSupportLevel</keyword>
+        <keyword ref="qlandmarkmanager.html#fromUri">fromUri</keyword>
+        <keyword ref="qlandmarkmanager.html#importLandmarks">importLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#isFeatureSupported">isFeatureSupported</keyword>
+        <keyword ref="qlandmarkmanager.html#isReadOnly">isReadOnly</keyword>
+        <keyword ref="qlandmarkmanager.html#landmark">landmark</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarkIds">landmarkIds</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarks">landmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarksAdded">landmarksAdded</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarksChanged">landmarksChanged</keyword>
+        <keyword ref="qlandmarkmanager.html#landmarksRemoved">landmarksRemoved</keyword>
+        <keyword ref="qlandmarkmanager.html#managerName">managerName</keyword>
+        <keyword ref="qlandmarkmanager.html#managerParameters">managerParameters</keyword>
+        <keyword ref="qlandmarkmanager.html#managerUri">managerUri</keyword>
+        <keyword ref="qlandmarkmanager.html#managerVersion">managerVersion</keyword>
+        <keyword ref="qlandmarkmanager.html#parseUri">parseUri</keyword>
+        <keyword ref="qlandmarkmanager.html#removeCategory">removeCategory</keyword>
+        <keyword ref="qlandmarkmanager.html#removeLandmark">removeLandmark</keyword>
+        <keyword ref="qlandmarkmanager.html#removeLandmarks">removeLandmarks</keyword>
+        <keyword ref="qlandmarkmanager.html#saveCategory">saveCategory</keyword>
+        <keyword ref="qlandmarkmanager.html#saveLandmark">saveLandmark</keyword>
+        <keyword ref="qlandmarkmanager.html#saveLandmarks">saveLandmarks</keyword>
+        <section ref="qlandmarkmanager-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkmanagerengine.html" title="QLandmarkManagerEngine Class Reference">
         <keyword ref="qlandmarkmanagerengine.html">QLandmarkManagerEngine</keyword>

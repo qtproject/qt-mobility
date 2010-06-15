@@ -396,7 +396,9 @@
                     <section ref="qlandmarkintersectionfilter.html" title="QLandmarkIntersectionFilter Class Reference">
                         <section ref="qlandmarkintersectionfilter-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qlandmarkmanager.html" title="QLandmarkManager Class Reference"/>
+                    <section ref="qlandmarkmanager.html" title="QLandmarkManager Class Reference">
+                        <section ref="qlandmarkmanager-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qlandmarkmanagerengine.html" title="QLandmarkManagerEngine Class Reference">
                         <section ref="qlandmarkmanagerengine-members.html" title="List of all members"/>
                     </section>
@@ -2453,6 +2455,58 @@
             <keyword name="setFilters" id="QLandmarkIntersectionFilter::setFilters" ref="qlandmarkintersectionfilter.html#setFilters"/>
             <keyword name="~QLandmarkIntersectionFilter" id="QLandmarkIntersectionFilter::~QLandmarkIntersectionFilter" ref="qlandmarkintersectionfilter.html#dtor.QLandmarkIntersectionFilter"/>
             <keyword name="QLandmarkManager" id="QLandmarkManager" ref="qlandmarkmanager.html"/>
+            <keyword name="QLandmarkManager::Error" id="QLandmarkManager::Error" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::NoError" id="QLandmarkManager::NoError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::DoesNotExistError" id="QLandmarkManager::DoesNotExistError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::AlreadyExistsError" id="QLandmarkManager::AlreadyExistsError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::LockedError" id="QLandmarkManager::LockedError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::PermissionsError" id="QLandmarkManager::PermissionsError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::OutOfMemoryError" id="QLandmarkManager::OutOfMemoryError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::VersionMismatchError" id="QLandmarkManager::VersionMismatchError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::NotSupportedError" id="QLandmarkManager::NotSupportedError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::BadArgumentError" id="QLandmarkManager::BadArgumentError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::InvalidManagerError" id="QLandmarkManager::InvalidManagerError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::UnknownError" id="QLandmarkManager::UnknownError" ref="qlandmarkmanager.html#Error-enum"/>
+            <keyword name="QLandmarkManager::FilterSupportLevel" id="QLandmarkManager::FilterSupportLevel" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
+            <keyword name="QLandmarkManager::Native" id="QLandmarkManager::Native" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
+            <keyword name="QLandmarkManager::Emulated" id="QLandmarkManager::Emulated" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
+            <keyword name="QLandmarkManager::None" id="QLandmarkManager::None" ref="qlandmarkmanager.html#FilterSupportLevel-enum"/>
+            <keyword name="QLandmarkManager::LandmarkFeature" id="QLandmarkManager::LandmarkFeature" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
+            <keyword name="QLandmarkManager::GenericAttributes" id="QLandmarkManager::GenericAttributes" ref="qlandmarkmanager.html#LandmarkFeature-enum"/>
+            <keyword name="availableManagers" id="QLandmarkManager::availableManagers" ref="qlandmarkmanager.html#availableManagers"/>
+            <keyword name="buildUri" id="QLandmarkManager::buildUri" ref="qlandmarkmanager.html#buildUri"/>
+            <keyword name="categories" id="QLandmarkManager::categories" ref="qlandmarkmanager.html#categories"/>
+            <keyword name="categoriesAdded" id="QLandmarkManager::categoriesAdded" ref="qlandmarkmanager.html#categoriesAdded"/>
+            <keyword name="categoriesChanged" id="QLandmarkManager::categoriesChanged" ref="qlandmarkmanager.html#categoriesChanged"/>
+            <keyword name="categoriesRemoved" id="QLandmarkManager::categoriesRemoved" ref="qlandmarkmanager.html#categoriesRemoved"/>
+            <keyword name="category" id="QLandmarkManager::category" ref="qlandmarkmanager.html#category"/>
+            <keyword name="categoryIds" id="QLandmarkManager::categoryIds" ref="qlandmarkmanager.html#categoryIds"/>
+            <keyword name="error" id="QLandmarkManager::error" ref="qlandmarkmanager.html#error"/>
+            <keyword name="errorString" id="QLandmarkManager::errorString" ref="qlandmarkmanager.html#errorString"/>
+            <keyword name="exportLandmarks" id="QLandmarkManager::exportLandmarks" ref="qlandmarkmanager.html#exportLandmarks"/>
+            <keyword name="filterSupportLevel" id="QLandmarkManager::filterSupportLevel" ref="qlandmarkmanager.html#filterSupportLevel"/>
+            <keyword name="fromUri" id="QLandmarkManager::fromUri" ref="qlandmarkmanager.html#fromUri"/>
+            <keyword name="importLandmarks" id="QLandmarkManager::importLandmarks" ref="qlandmarkmanager.html#importLandmarks"/>
+            <keyword name="isFeatureSupported" id="QLandmarkManager::isFeatureSupported" ref="qlandmarkmanager.html#isFeatureSupported"/>
+            <keyword name="isReadOnly" id="QLandmarkManager::isReadOnly" ref="qlandmarkmanager.html#isReadOnly"/>
+            <keyword name="landmark" id="QLandmarkManager::landmark" ref="qlandmarkmanager.html#landmark"/>
+            <keyword name="landmarkIds" id="QLandmarkManager::landmarkIds" ref="qlandmarkmanager.html#landmarkIds"/>
+            <keyword name="landmarks" id="QLandmarkManager::landmarks" ref="qlandmarkmanager.html#landmarks"/>
+            <keyword name="landmarksAdded" id="QLandmarkManager::landmarksAdded" ref="qlandmarkmanager.html#landmarksAdded"/>
+            <keyword name="landmarksChanged" id="QLandmarkManager::landmarksChanged" ref="qlandmarkmanager.html#landmarksChanged"/>
+            <keyword name="landmarksRemoved" id="QLandmarkManager::landmarksRemoved" ref="qlandmarkmanager.html#landmarksRemoved"/>
+            <keyword name="managerName" id="QLandmarkManager::managerName" ref="qlandmarkmanager.html#managerName"/>
+            <keyword name="managerParameters" id="QLandmarkManager::managerParameters" ref="qlandmarkmanager.html#managerParameters"/>
+            <keyword name="managerUri" id="QLandmarkManager::managerUri" ref="qlandmarkmanager.html#managerUri"/>
+            <keyword name="managerVersion" id="QLandmarkManager::managerVersion" ref="qlandmarkmanager.html#managerVersion"/>
+            <keyword name="parseUri" id="QLandmarkManager::parseUri" ref="qlandmarkmanager.html#parseUri"/>
+            <keyword name="removeCategory" id="QLandmarkManager::removeCategory" ref="qlandmarkmanager.html#removeCategory"/>
+            <keyword name="removeLandmark" id="QLandmarkManager::removeLandmark" ref="qlandmarkmanager.html#removeLandmark"/>
+            <keyword name="removeLandmarks" id="QLandmarkManager::removeLandmarks" ref="qlandmarkmanager.html#removeLandmarks"/>
+            <keyword name="saveCategory" id="QLandmarkManager::saveCategory" ref="qlandmarkmanager.html#saveCategory"/>
+            <keyword name="saveLandmark" id="QLandmarkManager::saveLandmark" ref="qlandmarkmanager.html#saveLandmark"/>
+            <keyword name="saveLandmarks" id="QLandmarkManager::saveLandmarks" ref="qlandmarkmanager.html#saveLandmarks"/>
+            <keyword name="~QLandmarkManager" id="QLandmarkManager::~QLandmarkManager" ref="qlandmarkmanager.html#dtor.QLandmarkManager"/>
             <keyword name="QLandmarkManagerEngine" id="QLandmarkManagerEngine" ref="qlandmarkmanagerengine.html"/>
             <keyword name="addSorted" id="QLandmarkManagerEngine::addSorted" ref="qlandmarkmanagerengine.html#addSorted"/>
             <keyword name="cancelRequest" id="QLandmarkManagerEngine::cancelRequest" ref="qlandmarkmanagerengine.html#cancelRequest"/>
@@ -4798,6 +4852,7 @@
             <file>qversitcontactimporter.html</file>
             <file>qgeoroutingservice-members.html</file>
             <file>bearercloud-cloud-h.html</file>
+            <file>qlandmarkmanager-members.html</file>
             <file>qlandmarksortorder-members.html</file>
             <file>player-videowidget-cpp.html</file>
             <file>images/servicebrowser.png</file>
