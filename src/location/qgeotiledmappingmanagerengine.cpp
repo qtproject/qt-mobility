@@ -106,70 +106,17 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
     // deal with pole viewing later (needs more than two coords)
     // determine tile indices to fetch
 
-    QPoint tileIndicesTopLeft = screenPositionToTilePosition(mapData, QPointF(0.0, 0.0));
-    QPoint tileIndicesBottomRight = screenPositionToTilePosition(mapData, QPointF(mapData->viewportSize().width(), mapData->viewportSize().height()));
-
-    int tileMinX = tileIndicesTopLeft.x();
-    int tileMaxX = tileIndicesBottomRight.x();
-    int tileMinY = tileIndicesTopLeft.y();
-    int tileMaxY = tileIndicesBottomRight.y();
-
-    int numTiles = 1 << qRound(mapData->zoomLevel());
-
-    //TODO: replace this QList-based implementation with a more mem-lightweight solution like a la TileIterator
-    QList<int> cols;
-
-    if (tileMinX <= tileMaxX) {
-        for (int i = tileMinX; i <= tileMaxX; ++i)
-            cols << i;
-    } else {
-        for (int i = tileMinX; i < numTiles; ++i)
-            cols << i;
-        for (int i = 0; i <= tileMaxX; ++i)
-            cols << i;
-    }
-
-    QList<int> rows;
-
-    if (tileMinY <= tileMaxY) {
-        for (int i = tileMinY; i <= tileMaxY; ++i)
-            rows << i;
-    } else {
-        for (int i = tileMinY; i < numTiles; ++i)
-            rows << i;
-        for (int i = 0; i <= tileMaxY; ++i)
-            rows << i;
-    }
-
-    int tileHeight = tileSize().height();
-    int tileWidth = tileSize().width();
-
     //TODO: need to have some form of type checking in here
     QGeoTiledMapData *tiledMapData = static_cast<QGeoTiledMapData*>(mapData);
-
+    QGeoTileIterator it(tiledMapData->screenRect(), tileSize(), qRound(mapData->zoomLevel()));
     QList<QGeoTiledMapRequest> requests;
-
-    QList<QPair<int, int> > tiles;
 
     QRectF protectedRegion = tiledMapData->protectedRegion();
 
-    // TODO order in direction of travel if panning
-    // TODO request excess tiles around border
-    for (int x = 0; x < cols.size(); ++x) {
-        for (int y = 0; y < rows.size(); ++y) {
-            tiles.append(qMakePair(cols.at(x), rows.at(y)));
-        }
-    }
-
-    for (int i = 0; i < tiles.size(); ++i) {
-        int col = tiles.at(i).first;
-        int row = tiles.at(i).second;
-
-        int colOffset = 0;
-        if ((tileMinX > tileMaxX) && col <= tileMaxX)
-            colOffset = numTiles;
-
-        QRectF tileRect = QRectF((col + colOffset) * tileWidth, row * tileHeight, tileWidth, tileHeight);
+    while (it.hasNext()) {
+        int col = it.col();
+        int row = it.row();
+        QRectF tileRect = it.tileRect();
 
         // Protected region is the area that was on the screen before the
         // start of a resize or pan.
@@ -177,6 +124,8 @@ void QGeoTiledMappingManagerEngine::updateMapImage(QGeoMapData *mapData)
         // region.
         //if (protectedRegion.isNull() || !protectedRegion.contains(tileRect))
             requests.append(QGeoTiledMapRequest(tiledMapData, row, col, tileRect));
+
+        it.next();
     }
 
     emit tileRequestsPrepared(tiledMapData, requests);
@@ -345,6 +294,59 @@ QGeoTiledMappingManagerEnginePrivate& QGeoTiledMappingManagerEnginePrivate::oper
     thread = other.thread;
 
     return *this;
+}
+
+///*******************************************************************************
+//*******************************************************************************/
+
+QGeoTileIterator::QGeoTileIterator(const QRectF &screenRect, const QSize &tileSize, int zoomLevel)
+    : aHasNext(true), aRow(-1), aCol(-1), aScreenRect(screenRect),
+    aTileSize(tileSize), aZoomLevel(zoomLevel), aTileRect(QPointF(0,0), tileSize)
+{
+    qulonglong x = static_cast<qulonglong>(screenRect.topLeft().x() / tileSize.width());
+    qulonglong y = static_cast<qulonglong>(screenRect.topLeft().y() / tileSize.height());
+
+    currTopLeft.setX(x * tileSize.width());
+    currTopLeft.setY(y * tileSize.height());
+}
+
+bool QGeoTileIterator::hasNext()
+{
+    return aHasNext;
+}
+
+QRectF QGeoTileIterator::tileRect() const
+{
+    return aTileRect;
+}
+
+void QGeoTileIterator::next()
+{
+    int numCols = 1 << aZoomLevel;
+    aCol = static_cast<int>(currTopLeft.x() / aTileSize.width()) % numCols;
+    aRow = static_cast<int>(currTopLeft.y() / aTileSize.height()) % numCols;
+    aTileRect.moveTopLeft(currTopLeft);
+
+    currTopLeft.rx() += aTileSize.width();
+
+    if (currTopLeft.x() > aScreenRect.right()) { //next row
+        qulonglong x = static_cast<qulonglong>(aScreenRect.topLeft().x() / aTileSize.width());
+        currTopLeft.setX(x * aTileSize.width());
+        currTopLeft.ry() += aTileSize.height();
+    }
+
+    if (currTopLeft.y() > aScreenRect.bottom()) //done
+        aHasNext = false;
+}
+
+int QGeoTileIterator::row() const
+{
+    return aRow;
+}
+
+int QGeoTileIterator::col() const
+{
+    return aCol;
 }
 
 ///*******************************************************************************

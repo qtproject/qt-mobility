@@ -75,6 +75,28 @@ public:
     QGeoTiledMappingManagerThread *thread;
 };
 
+class QGeoTileIterator
+{
+public:
+    QGeoTileIterator(const QRectF &screenRect, const QSize &tileSize, int zoomLevel);
+    
+    bool hasNext();
+    void next();
+    int row() const;
+    int col() const;
+    QRectF tileRect() const;
+
+private:
+    bool aHasNext;
+    int aRow;
+    int aCol;
+    QRectF aScreenRect;
+    QSize aTileSize;
+    int aZoomLevel;
+    QPointF currTopLeft;
+    QRectF aTileRect;
+};
+
 /*
 
 class QGeoTiledMapRequestHandler : public QObject
