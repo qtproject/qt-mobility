@@ -1239,60 +1239,64 @@ void QSystemDeviceInfoPrivate::profileChanged(bool changed, bool active, QString
 //////////////
 ///////
 QSystemScreenSaverPrivate::QSystemScreenSaverPrivate(QObject *parent)
-        : QSystemScreenSaverLinuxCommonPrivate(parent), m_screenSaverInhibited(false)
-
+        : QSystemScreenSaverLinuxCommonPrivate(parent)
 {
     ssTimer = new QTimer(this);
+#if !defined(QT_NO_DBUS)
+    mceConnectionInterface = new QDBusInterface("com.nokia.mce",
+                                                "/com/nokia/mce/request",
+                                                "com.nokia.mce.request",
+                                                QDBusConnection::systemBus());
+#endif
 }
 
 QSystemScreenSaverPrivate::~QSystemScreenSaverPrivate()
 {
-     if(ssTimer->isActive())
-         ssTimer->stop();
-
-     m_screenSaverInhibited = false;
-}
-
-bool QSystemScreenSaverPrivate::screenSaverInhibited()
-{
-    return m_screenSaverInhibited;
+    if (ssTimer->isActive()) {
+        ssTimer->stop();
+    }
+#if !defined(QT_NO_DBUS)
+    delete mceConnectionInterface, mceConnectionInterface = 0;
+#endif
 }
 
 bool QSystemScreenSaverPrivate::setScreenSaverInhibit()
 {
-    if (m_screenSaverInhibited)
-        return true;
-
-     m_screenSaverInhibited = true;
-     display_blanking_pause();
-     connect(ssTimer, SIGNAL(timeout()), this, SLOT(display_blanking_pause()));
-     ssTimer->start(3000); //3 seconds interval
-     return true;
+    wakeUpDisplay();
+    if (!ssTimer->isActive()) {
+        connect(ssTimer, SIGNAL(timeout()), this, SLOT(wakeUpDisplay()));
+        // Set a wake up interval of 30 seconds.
+        // The reason for this is to avoid the situation where
+        // a crashed/hung application keeps the display on.
+        ssTimer->start(30000);
+     }
+     return screenSaverInhibited();
 }
 
-void QSystemScreenSaverPrivate::display_blanking_pause()
+void QSystemScreenSaverPrivate::wakeUpDisplay()
 {
 #if !defined(QT_NO_DBUS)
-    QDBusInterface connectionInterface("com.nokia.mce",
-                                       "/com/nokia/mce/request",
-                                       "com.nokia.mce.request",
-                                       QDBusConnection::systemBus());
-    if (!connectionInterface.isValid()) {
-        qWarning() << "interface not valid";
-        return;
+    if (mceConnectionInterface->isValid()) {
+        mceConnectionInterface->call("req_tklock_mode_change", "unlocked");
+        mceConnectionInterface->call("req_display_blanking_pause");
     }
-    connectionInterface.call("req_display_blanking_pause");
 #endif
 }
 
-bool QSystemScreenSaverPrivate::isScreenLockEnabled()
+bool QSystemScreenSaverPrivate::screenSaverInhibited()
 {
-   return false;
-}
-
-bool QSystemScreenSaverPrivate::isScreenSaverActive()
-{
-    return false;
+    bool displayOn = false;
+#if !defined(QT_NO_DBUS)
+    if (mceConnectionInterface->isValid()) {
+        // The most educated guess for the screen saver being inhibited is to determine
+        // whether the display is on. That is because the QSystemScreenSaver cannot
+        // prevent other processes from blanking the screen (like, if
+        // MCE decides to blank the screen for some reason).
+        QDBusReply<QString> reply = mceConnectionInterface->call("get_display_status");
+        displayOn = ("on" == reply.value());
+    }
+#endif
+    return displayOn;
 }
 
 #include "moc_qsysteminfo_maemo_p.cpp"
