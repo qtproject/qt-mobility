@@ -64,7 +64,6 @@ class Q_CONTACTS_EXPORT QContactActionFactory : public QObject
 
 public:
     virtual ~QContactActionFactory() = 0;
-    virtual QContactActionDescriptor actionDescriptor() const = 0; // each action factory can create only a single action..
     virtual QContactAction* instance() const = 0;
 
     virtual QSet<QContactActionTarget> supportedTargets(const QContact& contact) const = 0;
@@ -72,14 +71,6 @@ public:
     virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const = 0;
 
     virtual bool supportsContact(const QContact& contact) const; // virtual but not pure virtual; default impl. calls supportedTargets.isEmpty().
-    QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const
-    {
-        return metaData(key, QList<QContactActionTarget>() << target, parameters);
-    }
-    QVariant metaData(const QString& key, const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const
-    {
-        return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
-    }
 };
 
 QTM_END_NAMESPACE

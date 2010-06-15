@@ -86,7 +86,7 @@ void QContactActionServiceManager::init()
         foreach (const QServiceInterfaceDescriptor& sid, sids) {
             if (sid.interfaceName().startsWith(QString(QLatin1String("com.nokia.qt.mobility.contacts")))) {
                 QContactActionFactory* actionFactory = qobject_cast<QContactActionFactory*>(m_serviceManager.loadInterface(sid));
-                QContactActionDescriptor ad = actionFactory->actionDescriptor();
+                QContactActionDescriptor ad(sid.customAttribute(QString(QLatin1String("ActionName"))), sid.serviceName(), sid.minorVersion(), actionFactory);
                 m_descriptorHash.insert(ad.actionName(), ad); // multihash insert.
                 m_actionFactoryHash.insert(ad, actionFactory);
             }
@@ -103,11 +103,12 @@ QList<QContactActionDescriptor> QContactActionServiceManager::availableActions(c
     QMutexLocker locker(&m_instanceMutex);
     init();
     QList<QContactActionDescriptor> ret;
-    QList<QContactActionFactory*> factories = m_actionFactoryHash.values();
-    for (int i = 0; i < factories.size(); ++i) {
-        QContactActionFactory* curr = factories.at(i);
+    QList<QContactActionDescriptor> keys = m_actionFactoryHash.keys();
+    for (int i = 0; i < keys.size(); ++i) {
+        QContactActionDescriptor currKey = keys.at(i);
+        QContactActionFactory* curr = m_actionFactoryHash.value(currKey);
         if (curr->supportsContact(contact)) {
-            ret.append(curr->actionDescriptor());
+            ret.append(currKey);
         }
     }
 
@@ -138,7 +139,7 @@ void QContactActionServiceManager::serviceAdded(const QString& serviceName)
     foreach (const QServiceInterfaceDescriptor& sid, sids) {
         if (sid.interfaceName().startsWith(QString(QLatin1String("com.nokia.qt.mobility.contacts")))) {
             QContactActionFactory* actionFactory = qobject_cast<QContactActionFactory*>(m_serviceManager.loadInterface(sid));
-            QContactActionDescriptor ad = actionFactory->actionDescriptor();
+            QContactActionDescriptor ad(sid.customAttribute(QString(QLatin1String("ActionName"))), sid.serviceName(), sid.minorVersion(), actionFactory);
             m_descriptorHash.insert(ad.actionName(), ad); // multimap insert.
             m_actionFactoryHash.insert(ad, actionFactory);
         }

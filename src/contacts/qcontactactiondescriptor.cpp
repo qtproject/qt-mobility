@@ -90,30 +90,6 @@ QContactActionDescriptor::~QContactActionDescriptor()
 }
 
 /*!
- * Sets the name of the action identified by this action descriptor to \a actionName
- */
-void QContactActionDescriptor::setActionName(const QString& actionName)
-{
-    d->m_actionName = actionName;
-}
-
-/*!
- * Sets the name of the service of the action implementation identified by this action descriptor to \a serviceName
- */
-void QContactActionDescriptor::setServiceName(const QString& serviceName)
-{
-    d->m_serviceName = serviceName;
-}
-
-/*!
- * Sets the service-specified implementation version of the action implementation identified by this action descriptor to \a implementationVersion
- */
-void QContactActionDescriptor::setImplementationVersion(int implementationVersion)
-{
-    d->m_implementationVersion = implementationVersion;
-}
-
-/*!
  * Returns the name of the action which is identified by the action descriptor
  */
 QString QContactActionDescriptor::actionName() const
@@ -171,18 +147,21 @@ bool QContactActionDescriptor::supportsContact(const QContact& contact) const
 }
 
 /*!
- * Returns true if either the name, service and version of the descriptor are missing from the descriptor.
+ * Returns false if either the name, service and version of the descriptor are missing from the descriptor,
+ * or if the descriptor is not associated with a valid action factory which can create instances of an action.
  * An empty descriptor cannot uniquely identify an action.
  */
-bool QContactActionDescriptor::isEmpty() const
+bool QContactActionDescriptor::isValid() const
 {
     if (d->m_actionName.isEmpty())
-        return true;
+        return false;
     if (d->m_serviceName.isEmpty())
-        return true;
+        return false;
     if (d->m_implementationVersion <= 0)
-        return true;
-    return false;
+        return false;
+    if (d->m_factory == 0)
+        return false;
+    return true;
 }
 
 /*!

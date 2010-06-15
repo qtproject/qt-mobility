@@ -60,11 +60,6 @@ QContactActionFactory::~QContactActionFactory()
  */
 
 /*!
-  \fn QContactActionFactory::actionDescriptor() const
-  Returns the descriptor of the action which may be instantiated by this factory.
- */
-
-/*!
   \fn QContactActionFactory::instance() const
   Returns a pointer to an instance of the implementation of the action.
   The caller takes ownership of the action instance returned from this function, and must delete it when

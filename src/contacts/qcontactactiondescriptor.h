@@ -60,19 +60,14 @@ class QContactActionDescriptorPrivate;
 class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
 public:
-    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& serviceName = QString(), int vendorVersion = -1, QContactActionFactory* factory = 0);
     QContactActionDescriptor(const QContactActionDescriptor& other);
     QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
     ~QContactActionDescriptor();
 
-    bool isEmpty() const;
+    bool isValid() const;
     bool operator==(const QContactActionDescriptor& other) const;
     bool operator!=(const QContactActionDescriptor& other) const;
     bool operator<(const QContactActionDescriptor& other) const;
-
-    void setActionName(const QString& actionName);
-    void setServiceName(const QString& serviceName);
-    void setImplementationVersion(int implementationVersion);
 
     QString actionName() const;
     QString serviceName() const;
@@ -98,8 +93,13 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(MetaDataLabel, "Label");
     Q_DECLARE_LATIN1_CONSTANT(MetaDataSecondLabel, "SecondLabel");
 
+protected:
+    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& serviceName = QString(), int vendorVersion = -1, QContactActionFactory* factory = 0);
+
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;
+    friend class QContactActionFactory;
+    friend class QContactActionServiceManager;
 };
 
 Q_CONTACTS_EXPORT uint qHash(const QContactActionDescriptor& key);
