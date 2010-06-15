@@ -1,16 +1,16 @@
 TEMPLATE = app
 TARGET = weatherinfo_with_location
 
-HEADERS = ../satellitedialog/satellitedialog.h \
-            ../flickrdemo/connectivityhelper.h
+HEADERS = ../../examples/satellitedialog/satellitedialog.h \
+            ../../examples/flickrdemo/connectivityhelper.h
 SOURCES = weatherinfo.cpp \
-            ../satellitedialog/satellitedialog.cpp \
-            ../flickrdemo/connectivityhelper.cpp
+            ../../examples/satellitedialog/satellitedialog.cpp \
+            ../../examples/flickrdemo/connectivityhelper.cpp
 
 RESOURCES = weatherinfo.qrc
 QT += network svg
 
-include(../examples.pri)
+include(../../examples/examples.pri)
 
 CONFIG += mobility
 MOBILITY = location bearer
@@ -18,8 +18,8 @@ MOBILITY = location bearer
 INCLUDEPATH += ../../src/global \
                 ../../src/bearer \
                 ../../src/location \
-                ../satellitedialog \
-                ../flickrdemo
+                ../../examples/satellitedialog \
+                ../../examples/flickrdemo
 
 symbian {
     symbian {

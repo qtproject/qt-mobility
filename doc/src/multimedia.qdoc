@@ -199,7 +199,7 @@ hue, saturation and full screen mode.
 
 The \l {player}{Player} example does things a bit differently to our sample code. instead of using a QVideoWidget object directly, the Player example has a \i {VideoWidget} class that inherits from QVideoWidget. This means that functions can be added to provide functions such as full screen display, either on a double click or on a particular keypress.
 
-\snippet ../../examples/player/player.cpp  2
+\snippet ../../demos/player/player.cpp  2
 
 
 \section2 Radio

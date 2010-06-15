@@ -3562,8 +3562,8 @@
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
     </section>
-    <section ref="contactsusagehtml.html" title="Contacts API Usage">
-        <keyword ref="contactsusagehtml.html">Contacts API Usage</keyword>
+    <section ref="contactsusage.html" title="Contacts API Usage">
+        <keyword ref="contactsusage.html">Contacts API Usage</keyword>
     </section>
     <section ref="contactsasync.html" title="Contacts Asynchronous API">
         <keyword ref="contactsasync.html">Contacts Asynchronous API</keyword>
