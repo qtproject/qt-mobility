@@ -2160,7 +2160,7 @@
         <keyword ref="qmessagecontentcontainerid.html#toString">toString</keyword>
         <section ref="qmessagecontentcontainerid-members.html" title="List of all members"/>
     </section>
-    <section ref="qmessagedatacomparator.html" title="QMessageDataComparator Namespace">
+    <section ref="qmessagedatacomparator.html" title="QMessageDataComparator Namespace Reference">
         <keyword ref="qmessagedatacomparator.html">QMessageDataComparator</keyword>
         <keyword ref="qmessagedatacomparator.html#EqualityComparator-enum">EqualityComparator</keyword>
         <keyword ref="qmessagedatacomparator.html#EqualityComparator-enum">QMessageDataComparator::NotEqual</keyword>
@@ -2724,7 +2724,7 @@
         <keyword ref="qsensorreading.html#IMPLEMENT_READING">IMPLEMENT_READING</keyword>
         <section ref="qsensorreading-members.html" title="List of all members"/>
     </section>
-    <section ref="qservice.html" title="QService Namespace">
+    <section ref="qservice.html" title="QService Namespace Reference">
         <keyword ref="qservice.html">QService</keyword>
         <keyword ref="qservice.html#Scope-enum">Scope</keyword>
         <keyword ref="qservice.html#Scope-enum">QService::UserScope</keyword>
@@ -3005,7 +3005,7 @@
         <keyword ref="qtapsensor.html#reading">reading</keyword>
         <section ref="qtapsensor-members.html" title="List of all members"/>
     </section>
-    <section ref="qtmultimediakit.html" title="QtMultimediaKit Namespace">
+    <section ref="qtmultimediakit.html" title="QtMultimediaKit Namespace Reference">
         <keyword ref="qtmultimediakit.html">QtMultimediaKit</keyword>
         <keyword ref="qtmultimediakit.html#AvailabilityError-enum">AvailabilityError</keyword>
         <keyword ref="qtmultimediakit.html#AvailabilityError-enum">QtMultimediaKit::NoError</keyword>
@@ -3106,7 +3106,7 @@
         <keyword ref="qtmultimediakit.html#SupportEstimate-enum">QtMultimediaKit::MaybeSupported</keyword>
         <keyword ref="qtmultimediakit.html#SupportEstimate-enum">QtMultimediaKit::ProbablySupported</keyword>
     </section>
-    <section ref="qvaluespace.html" title="QValueSpace Namespace">
+    <section ref="qvaluespace.html" title="QValueSpace Namespace Reference">
         <keyword ref="qvaluespace.html">QValueSpace</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">LayerOption</keyword>
         <keyword ref="qvaluespace.html#LayerOption-enum">LayerOptions</keyword>
