@@ -143,7 +143,7 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
-    viewer->addVideoOutput(display);
+    viewer->setVideoOutput(display);
     display->show();
     \endcode
 
