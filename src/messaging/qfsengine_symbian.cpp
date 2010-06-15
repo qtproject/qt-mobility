@@ -78,6 +78,8 @@ Q_GLOBAL_STATIC(CFSEngine,fsEngine);
 
 CFSEngine::CFSEngine()
 {
+    connect(QCoreApplication::instance(), SIGNAL(aboutToQuit()), this, SLOT(cleanupFSBackend()));
+
     TRAPD(err, {
         m_factory = CEmailInterfaceFactory::NewL(); 
         m_ifPtr = m_factory->InterfaceL(KEmailClientApiInterface);
@@ -92,6 +94,11 @@ CFSEngine::CFSEngine()
 }
 
 CFSEngine::~CFSEngine()
+{
+
+}
+
+void CFSEngine::cleanupFSBackend()
 {
     m_mtmAccountList.clear();
     for (TInt i = 0; i < m_attachments.Count(); i++){
@@ -801,9 +808,10 @@ bool CFSEngine::composeMessage(const QMessage &message)
     return retVal;
 }
 
-bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentContainerId& id)
+bool CFSEngine::retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id)
 {
     Q_UNUSED(id);
+    m_privateService = &privateService;
     bool retVal = false;
     foreach (QMessageAccount account, m_accounts) {
         MEmailMessage* message = NULL;
@@ -835,9 +843,10 @@ bool CFSEngine::retrieve(const QMessageId &messageId, const QMessageContentConta
     return retVal;
 }
 
-bool CFSEngine::retrieveBody(const QMessageId& id)
+bool CFSEngine::retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id)
 {
     bool retVal = false;
+    m_privateService = &privateService;
     foreach (QMessageAccount account, m_accounts) {
         MEmailMessage* message = NULL;
         TMailboxId mailboxId(stripIdPrefix(account.id().toString()).toInt());
@@ -917,15 +926,19 @@ void CFSEngine::retrieveAttachmentsL(MEmailMessage* aMessage)
     }
 }
 
-bool CFSEngine::retrieveHeader(const QMessageId& id)
+bool CFSEngine::retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id)
 {
     Q_UNUSED(id);
+    Q_UNUSED(privateService);
     return false;
 }
 
 void CFSEngine::DataFetchedL(const TInt aResult)
 {
-    Q_UNUSED(aResult);       
+    if (aResult == KErrNone)
+        m_privateService->setFinished(true);
+    else
+        m_privateService->setFinished(false);      
 }
 
 bool CFSEngine::exportUpdates(const QMessageAccountId &id)

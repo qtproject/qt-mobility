@@ -65,13 +65,24 @@ SlideShow::SlideShow(QWidget *parent)
     connect(imageViewer, SIGNAL(elapsedTimeChanged(int)), this, SLOT(elapsedTimeChanged(int)));
 
     playlist = new QMediaPlaylist;
-    playlist->setMediaObject(imageViewer);
+    imageViewer->bind(playlist);
+
+    connect(playlist, SIGNAL(loaded()), this, SLOT(playlistLoaded()));
+    connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
 
     connect(playlist, SIGNAL(loaded()), this, SLOT(playlistLoaded()));
     connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
 
     QVideoWidget *videoWidget = new QVideoWidget;
-    videoWidget->setMediaObject(imageViewer);
+    imageViewer->bind(videoWidget);
+
+    statusLabel = new QLabel(tr("%1 Images").arg(0));
+    statusLabel->setAlignment(Qt::AlignCenter);
+
+    viewerLayout = new QStackedLayout;
+    viewerLayout->setStackingMode(QStackedLayout::StackAll);
+    viewerLayout->addWidget(videoWidget);
+    viewerLayout->addWidget(statusLabel);
 
     statusLabel = new QLabel(tr("%1 Images").arg(0));
     statusLabel->setAlignment(Qt::AlignCenter);

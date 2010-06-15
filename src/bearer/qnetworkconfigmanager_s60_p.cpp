@@ -69,13 +69,10 @@
 
 QTM_BEGIN_NAMESPACE
 
-#ifdef SNAP_FUNCTIONALITY_AVAILABLE
-    static const int KValueThatWillBeAddedToSNAPId = 1000;
-#endif
 static const int KUserChoiceIAPId = 0;
 
 QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
-    : QObject(0), CActive(CActive::EPriorityIdle), capFlags(0),
+    : QObject(0), CActive(CActive::EPriorityHigh), capFlags(0),
     iFirstUpdate(true), iInitOk(true), iUpdatePending(false),
     iTimeToWait(0)
 {
@@ -92,6 +89,9 @@ QNetworkConfigurationManagerPrivate::QNetworkConfigurationManagerPrivate()
     }
 
     TRAP_IGNORE(iConnectionMonitor.ConnectL());
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE    
+    TRAP_IGNORE(iConnectionMonitor.SetUintAttribute(EBearerIdAll, 0, KBearerGroupThreshold, 1));
+#endif    
     TRAP_IGNORE(iConnectionMonitor.NotifyEventL(*this));
 
 #ifdef SNAP_FUNCTIONALITY_AVAILABLE    
@@ -215,7 +215,6 @@ void QNetworkConfigurationManagerPrivate::updateConfigurations()
     if (!iInitOk) {
         return;
     }
-
     TRAP_IGNORE(updateConfigurationsL());
 }
 
@@ -236,7 +235,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
         RCmConnectionMethod connectionMethod = iCmManager.ConnectionMethodL(connectionMethods[i]);
         CleanupClosePushL(connectionMethod);
         TUint32 iapId = connectionMethod.GetIntAttributeL(CMManager::ECmIapId);
-        QString ident = QString::number(qHash(iapId));
+        QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(iapId));
         if (accessPointConfigurations.contains(ident)) {
             knownConfigs.removeOne(ident);
         } else {
@@ -268,7 +267,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
         RCmDestination destination;
         destination = iCmManager.DestinationL(destinations[i]);
         CleanupClosePushL(destination);
-        QString ident = QString::number(qHash(destination.Id()+KValueThatWillBeAddedToSNAPId)); //TODO: Check if it's ok to add 1000 SNAP Id to prevent SNAP ids overlapping IAP ids
+        QString ident = QT_BEARERMGMT_CONFIGURATION_SNAP_PREFIX+QString::number(qHash(destination.Id()));
         if (snapConfigurations.contains(ident)) {
             knownSnapConfigs.removeOne(ident);
         } else {
@@ -304,7 +303,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
             CleanupClosePushL(connectionMethod);
             
             TUint32 iapId = connectionMethod.GetIntAttributeL(CMManager::ECmIapId);
-            QString iface = QString::number(qHash(iapId));
+            QString iface = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(iapId));
             // Check that IAP can be found from accessPointConfigurations list
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
             if (priv.data() == 0) {
@@ -358,7 +357,7 @@ void QNetworkConfigurationManagerPrivate::updateConfigurationsL()
     TInt retVal = pDbTView->GotoFirstRecord();
     while (retVal == KErrNone) {
         pDbTView->ReadUintL(TPtrC(COMMDB_ID), apId);
-        QString ident = QString::number(qHash(apId));
+        QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
         if (accessPointConfigurations.contains(ident)) {
             knownConfigs.removeOne(ident);
         } else {
@@ -420,7 +419,7 @@ QNetworkConfigurationPrivate* QNetworkConfigurationManagerPrivate::configFromCon
 {
     QNetworkConfigurationPrivate* cpPriv = new QNetworkConfigurationPrivate();
     TUint32 iapId = connectionMethod.GetIntAttributeL(CMManager::ECmIapId);
-    QString ident = QString::number(qHash(iapId));
+    QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(iapId));
     
     HBufC *pName = connectionMethod.GetStringAttributeL(CMManager::ECmName);
     CleanupStack::PushL(pName);
@@ -521,7 +520,7 @@ void QNetworkConfigurationManagerPrivate::readNetworkConfigurationValuesFromComm
         User::Leave(KErrNotFound);
     }
     
-    QString ident = QString::number(qHash(aApId));
+    QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(aApId));
     
     QT_TRYCATCH_LEAVING(apNetworkConfiguration->name = QString::fromUtf16(name.Ptr(),name.Length()));
     apNetworkConfiguration->isValid = true;
@@ -588,13 +587,13 @@ QNetworkConfiguration QNetworkConfigurationManagerPrivate::defaultConfigurationL
     TCmDefConnValue defaultConnectionValue;
     iCmManager.ReadDefConnL(defaultConnectionValue);
     if (defaultConnectionValue.iType == ECmDefConnDestination) {
-        QString iface = QString::number(qHash(defaultConnectionValue.iId+KValueThatWillBeAddedToSNAPId));
+        QString iface = QT_BEARERMGMT_CONFIGURATION_SNAP_PREFIX+QString::number(qHash(defaultConnectionValue.iId));
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = snapConfigurations.value(iface);
         if (priv.data() != 0) {
             item.d = priv;
         }
     } else if (defaultConnectionValue.iType == ECmDefConnConnectionMethod) {
-        QString iface = QString::number(qHash(defaultConnectionValue.iId));
+        QString iface = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(defaultConnectionValue.iId));
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(iface);
         if (priv.data() != 0) {
             item.d = priv;
@@ -636,8 +635,14 @@ void QNetworkConfigurationManagerPrivate::updateActiveAccessPoints()
             iConnectionMonitor.GetConnectionInfo(i, connectionId, subConnectionCount);
             iConnectionMonitor.GetUintAttribute(connectionId, subConnectionCount, KIAPId, apId, status);
             User::WaitForRequest(status);
-            QString ident = QString::number(qHash(apId));
+            QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+            if (!priv.data()) {
+                // If IAP was not found, check if the update was about EasyWLAN
+                priv = configurationFromEasyWlan(apId, connectionId);
+            }
+#endif
             if (priv.data()) {
                 iConnectionMonitor.GetIntAttribute(connectionId, subConnectionCount, KConnectionStatus, connectionStatus, status);
                 User::WaitForRequest(status);          
@@ -663,7 +668,7 @@ void QNetworkConfigurationManagerPrivate::updateActiveAccessPoints()
 
     if (iOnline != online) {
         iOnline = online;
-        emit this->onlineStateChanged(iOnline);
+        emit this->onlineStateChanged(online);
     }
 }
 
@@ -687,7 +692,7 @@ void QNetworkConfigurationManagerPrivate::accessPointScanningReady(TBool scanSuc
         // Set state of returned IAPs to Discovered
         // if state is not already Active
         for(TUint i=0; i<iapInfo.iCount; i++) {
-            QString ident = QString::number(qHash(iapInfo.iIap[i].iIapId));
+            QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(iapInfo.iIap[i].iIapId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
             if (priv.data()) {
                 unavailableConfigs.removeOne(ident);
@@ -746,6 +751,31 @@ void QNetworkConfigurationManagerPrivate::updateStatesToSnaps()
         }
     }    
 }
+
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE
+void QNetworkConfigurationManagerPrivate::updateMobileBearerToConfigs(TConnMonBearerInfo bearerInfo)
+{
+    foreach (const QString &ii, accessPointConfigurations.keys()) {
+        QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> p = 
+            accessPointConfigurations.value(ii);
+        if (p->bearer >= QNetworkConfigurationPrivate::Bearer2G &&
+            p->bearer <= QNetworkConfigurationPrivate::BearerHSPA) {
+            switch (bearerInfo) {
+            case EBearerInfoCSD:      p->bearer = QNetworkConfigurationPrivate::Bearer2G; break;  
+            case EBearerInfoWCDMA:    p->bearer = QNetworkConfigurationPrivate::BearerWCDMA; break;
+            case EBearerInfoCDMA2000: p->bearer = QNetworkConfigurationPrivate::BearerCDMA2000; break;
+            case EBearerInfoGPRS:     p->bearer = QNetworkConfigurationPrivate::Bearer2G; break;
+            case EBearerInfoHSCSD:    p->bearer = QNetworkConfigurationPrivate::Bearer2G; break;
+            case EBearerInfoEdgeGPRS: p->bearer = QNetworkConfigurationPrivate::Bearer2G; break;
+            case EBearerInfoWcdmaCSD: p->bearer = QNetworkConfigurationPrivate::BearerWCDMA; break;
+            case EBearerInfoHSDPA:    p->bearer = QNetworkConfigurationPrivate::BearerHSPA; break;
+            case EBearerInfoHSUPA:    p->bearer = QNetworkConfigurationPrivate::BearerHSPA; break;
+            case EBearerInfoHSxPA:    p->bearer = QNetworkConfigurationPrivate::BearerHSPA; break;
+            }
+        }
+    }
+}
+#endif
 
 bool QNetworkConfigurationManagerPrivate::changeConfigurationStateTo(QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>& sharedData,
                                                                      QNetworkConfiguration::StateFlags newState)
@@ -832,15 +862,15 @@ void QNetworkConfigurationManagerPrivate::stopCommsDatabaseNotifications()
 void QNetworkConfigurationManagerPrivate::RunL()
 {
     if (iStatus != KErrCancel) {
-#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
-        qDebug("QNCM CommsDB event (of type RDbNotifier::TEvent) received: %d", iStatus.Int());
-#endif
         // By default, start relistening notifications. Stop only if interesting event occured.
         iWaitingCommsDatabaseNotifications = true;
         RDbNotifier::TEvent event = STATIC_CAST(RDbNotifier::TEvent, iStatus.Int());
         switch (event) {
         case RDbNotifier::ECommit:   /** A transaction has been committed.  */ 
         case RDbNotifier::ERecover:  /** The database has been recovered    */
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+            qDebug("QNCM CommsDB event (of type RDbNotifier::TEvent) received: %d", iStatus.Int());
+#endif
             // Mark that there is update pending. No need to ask more events,
             // as we know we will be updating anyway when the timer expires.
             if (!iUpdatePending) {
@@ -873,6 +903,20 @@ void QNetworkConfigurationManagerPrivate::DoCancel()
 void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent)
 {
     switch (aEvent.EventType()) {
+#ifdef SNAP_FUNCTIONALITY_AVAILABLE     
+    case EConnMonBearerInfoChange:
+        {
+        CConnMonBearerInfoChange* realEvent;
+        realEvent = (CConnMonBearerInfoChange*) &aEvent;
+        TUint connectionId = realEvent->ConnectionId();
+        if (connectionId == EBearerIdAll) {
+            //Network level event
+            TConnMonBearerInfo bearerInfo = (TConnMonBearerInfo)realEvent->BearerInfo();
+            updateMobileBearerToConfigs(bearerInfo);
+        }
+        break;
+        }
+#endif        
     case EConnMonConnectionStatusChange:
         {
         CConnMonConnectionStatusChange* realEvent;
@@ -888,10 +932,17 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             TRequestStatus status;
             iConnectionMonitor.GetUintAttribute(connectionId, subConnectionCount, KIAPId, apId, status);
             User::WaitForRequest(status);
-            QString ident = QString::number(qHash(apId));
+
+            QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+            if (!priv.data()) {
+                // Check if status was regarding EasyWLAN
+                priv = configurationFromEasyWlan(apId, connectionId);
+            }
+#endif
             if (priv.data()) {
-                priv.data()->connectionId = connectionId;
+                priv.data()->connectionId = connectionId;                
                 QT_TRYCATCH_LEAVING(emit this->configurationStateChanged(priv.data()->numericId, connectionId, QNetworkSession::Connecting));
             }
         } else if (connectionStatus == KLinkLayerOpen) {
@@ -902,8 +953,14 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
             TRequestStatus status;
             iConnectionMonitor.GetUintAttribute(connectionId, subConnectionCount, KIAPId, apId, status);
             User::WaitForRequest(status);
-            QString ident = QString::number(qHash(apId));
+            QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+            if (!priv.data()) {
+                // Check for EasyWLAN
+                priv = configurationFromEasyWlan(apId, connectionId);
+            }
+#endif
             if (priv.data()) {
                 priv.data()->connectionId = connectionId;
                 // Configuration is Active
@@ -963,7 +1020,7 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
         TConnMonIapInfo iaps = realEvent->IapAvailability();
         QList<QString> unDiscoveredConfigs = accessPointConfigurations.keys();
         for ( TUint i = 0; i < iaps.Count(); i++ ) {
-            QString ident = QString::number(qHash(iaps.iIap[i].iIapId));
+            QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(iaps.iIap[i].iIapId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
             if (priv.data()) {
                 // Configuration is either Discovered or Active 
@@ -992,8 +1049,14 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
         TRequestStatus status;
         iConnectionMonitor.GetUintAttribute(connectionId, subConnectionCount, KIAPId, apId, status);
         User::WaitForRequest(status);
-        QString ident = QString::number(qHash(apId));
+        QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(apId));
         QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+        if (!priv.data()) {
+            // If IAP was not found, check if the update was about EasyWLAN
+            priv = configurationFromEasyWlan(apId, connectionId);
+        }
+#endif
         if (priv.data()) {
 #ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
             qDebug() << "QNCM updating connection monitor ID : from, to, whose: " << priv.data()->connectionId << connectionId << priv->name;
@@ -1007,6 +1070,41 @@ void QNetworkConfigurationManagerPrivate::EventL(const CConnMonEventBase& aEvent
         break;
     }
 }
+
+#ifdef OCC_FUNCTIONALITY_AVAILABLE
+// Tries to derive configuration from EasyWLAN.
+// First checks if the interface brought up was EasyWLAN, then derives the real SSID,
+// and looks up configuration based on that one.
+QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> QNetworkConfigurationManagerPrivate::configurationFromEasyWlan(TUint32 apId, TUint connectionId)
+{
+    if (apId == iCmManager.EasyWlanIdL()) {
+        TRequestStatus status;
+        TBuf<50> easyWlanNetworkName;
+        iConnectionMonitor.GetStringAttribute( connectionId, 0, KNetworkName,
+                                               easyWlanNetworkName, status );
+        User::WaitForRequest(status);
+        if (status.Int() == KErrNone) {
+            QString realSSID = QString::fromUtf16(easyWlanNetworkName.Ptr(), easyWlanNetworkName.Length());
+
+            // Browser through all items and check their name for match
+            QNetworkConfiguration item;
+            QHash<QString, QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> >::const_iterator i =
+                    accessPointConfigurations.constBegin();
+            while (i != accessPointConfigurations.constEnd()) {
+                QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = i.value();
+                if (priv.data()->name == realSSID) {
+#ifdef QT_BEARERMGMT_SYMBIAN_DEBUG
+                    qDebug() << "QNCM EasyWlan uses real SSID: " << realSSID;
+#endif
+                    return priv;
+                }
+                ++i;
+            }
+        }
+    }
+    return QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>();
+}
+#endif
 
 // Sessions may use this function to report configuration state changes,
 // because on some Symbian platforms (especially Symbian^3) all state changes are not
@@ -1023,7 +1121,7 @@ void QNetworkConfigurationManagerPrivate::configurationStateChangeReport(TUint32
     switch (newState) {
     case QNetworkSession::Disconnected:
         {
-            QString ident = QString::number(qHash(accessPointId));
+            QString ident = QT_BEARERMGMT_CONFIGURATION_IAP_PREFIX+QString::number(qHash(accessPointId));
             QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> priv = accessPointConfigurations.value(ident);
             if (priv.data()) {
                 // Configuration is either Defined or Discovered
@@ -1065,7 +1163,6 @@ QExplicitlySharedDataPointer<QNetworkConfigurationPrivate> QNetworkConfiguration
         }
         ++i;
     }
-
     return QExplicitlySharedDataPointer<QNetworkConfigurationPrivate>();
 }
 

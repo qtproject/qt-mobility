@@ -207,7 +207,7 @@ bool QMessageServicePrivate::retrieve(const QMessageId &messageId, const QMessag
     switch (idType(messageId)) {
         case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieve(messageId, id);
+            return CFSEngine::instance()->retrieve(*this, messageId, id);
 #else
             return false;
 #endif
@@ -224,7 +224,7 @@ bool QMessageServicePrivate::retrieveBody(const QMessageId& id)
     switch (idType(id)) {
         case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveBody(id);
+            return CFSEngine::instance()->retrieveBody(*this, id);
 #else
             return false;
 #endif
@@ -241,7 +241,7 @@ bool QMessageServicePrivate::retrieveHeader(const QMessageId& id)
     switch (idType(id)) {
         case EngineTypeFreestyle:
 #ifdef FREESTYLEMAILUSED
-            return CFSEngine::instance()->retrieveHeader(id);
+            return CFSEngine::instance()->retrieveHeader(*this, id);
 #else
             return false;
 #endif

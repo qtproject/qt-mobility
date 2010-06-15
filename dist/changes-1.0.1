@@ -20,21 +20,29 @@ Merge Request:  http://qt.gitorious.org
 New features
 ------
 
- - SomeClass, SomeOtherClass
-    * New classes for foo, bar and baz
+ - MOBILITY-991: Translation file support added
 
-Optimizations
+Other changes/optimizations
 ------
 
- - Optimized foo in QSomeClass
-    * See list of Important Behavior Changes below
-
+ - QTMOBILITY-50, QTMOBILITY-264, MOBILITY-971 fixed: various configure -prefix bugs fixed
+ - configure tests on Symbian are based on arm builds (rather than winscw)
+ - MOBILITY-908 fixed: -plugindir parameter added to configure.[sh|bat]
+ - plugin project files simplified
+ - MOBILITY-717 fixed: plug-in loading across all API's using plug-ins unified
+   and fixed. This includes addition of PREFIX/plugins to standard plugin
+   path lookup.
+ - QTMOBILITY-129 fixed: namespace related documentation improved
+ - MOBILITY-625 fixed: RPATH support for examples and third party code
 
 ****************************************************************************
 *                   Important Behavior Changes                             *
 ****************************************************************************
 
- -
+ - building of Mobility requires "make install" step as binaries
+   such as plug-ins and examples are not automatically deployed to BUILDDIR/plugins,
+   BUILDDIR/bin or BUILDDIR/bin/examples anymore. Rpath values have been
+   adjusted accordingly.
 
 
 ****************************************************************************
@@ -44,32 +52,121 @@ Optimizations
 QtBearer
 ------
 
- - foo
-    * bar
+ - tests/networkmanager test application has been removed
+ - MOBILITY-810 fixed: crash in bearermonitor example fixed
 
 QtContacts
 ------
+ - Documentation clarifications
+ - Several bugs on several platforms fixed
+    * Symbian: Several memory leak fixes
+    * Symbian: SIM backend did not recover from errors when listening for store events
+    * Symbian: Fix for determing additional detail support on SIM backend
+    * Symbian: Phone number match filtering gave contacts that had been deleted
+    * Symbian: SIM backend phonenumber matching
+    * Symbian: Last modified timestamp is now updated during contact update
+    * Symbian: Fixed a bug that caused SIM contact display label to be empty
+    * Symbian: Several signal emission related issues
+    * Handling of phone numbers
+    * Handling of organization fields on Maemo 5
+    * Deleting a request in a resultsAvailable() slot should not crash any more
+ - Performance improvements when fallback sorting code is used
+ - Symbian: Performance improvements in contact fetches and contact id fetches
+ - Symbian: Timestamps are now given in current time-zone time
+ - Symbian: Removed unnecessary capabilities from test modules and examples
+ - Symbian: Display label is now empty for contacts with no names instead of non-localized "Unnamed"
+ - Symbian: Removed timeout from sychronous methods to make batch APIs more reliable with hundreds of SIM contacts. (Asynchronous API provides timeouts if needed.)
+ - Performance improvements with Maemo 5 engine when fetching ids
+ - Fix compilation errors on Maemo 5 when required libraries are not installed
+ - Better thread support for the request class (for multi threaded engines)
+ - Use locale aware string comparisons when fallback filtering or sortind code is used
+ - Missing QFlag operators for two flags added
 
- - foo
-    * bar
+QtVersit
+------
+ - Properties with both ENCODING and CHARSET are properly handled now
+ - Better round tripping of property names
+ - Removed empty contact fields generated during import.
 
 QtLocation
 ------
 
- - foo
-    * bar
+ - Several bugs on the Symbian platform have been fixed.
+    * Using INT_MAX for the update interval no longer causes crashes.
+    * The default preferred positioning methods for a new position source 
+      are now reported accurately.
+    * The last known position now respects the 
+      fromSatellitePositioningMethodsOnly parameter correctly across 
+      changes to the preferred position method.
+ - MOBILITY-858 fixed: Crash in lightmaps example fixed
 
 QtMessaging
 ------
 
- - foo
-    * bar
+ - API changes
+    * None.
+ - Symbian^3 backend implemented
+    * SMS and Email message types supported.
+ - Symbian specific fixes
+    * Fix for SMS message sending failed in some cases.
+    * Fix for simultaneous calls to QMessageService::send(...) causing crash.
+    * messagesAdded signal is now emitted only when message is ready to be 
+      read.
+    * retrieve* and exportUpdates functions are now asynchronous (MTM).
+      Before this fix these functions always hanged for the whole operation 
+      time.
+    * UI fix for keepintouch example for N95.
+    * String form of identifiers (QMessage*Id) are prefixed with platform tag.
+ - Maemo 5 (Fremantle) specific fixes
+    Latest version of libtpsession and qtm-modest-plugin is required for 
+      these fixes.
+    * Fix for SMS sending not working with defaultAccount.
+    * Fix for multiple recipients not supported for SMS messages.
+    * Fix for sending successive SMS did not send later queued ones.
+    * Fix for queryMessages service action is synchronous for SMS messages.
+    * Fix for messageAdded signal is not emitted for email messages in inbox 
+      when inbox is open in modest.
+    * QMessageManager::updateMessage implemented for email messages,
+      only status and priority fields may be updated.
+    * Status & priority handling has been fixed for addMessage, getMessage & 
+      queryMessages functionality.
+    * Multipart message handling has been improved.
+    * Content CharacterSet reporting has been fixed to return correct MIME
+      header value.
+    * Body handling has been improved, text/html body is returned if text/html 
+      body can be found.
+    * Unicode character support (for example scandinavian
+      characters work correctly now in both HTML & plain text body).
+    * Attachment & body download (retrieve functions) fixes.
+      Modest automatically retrieves small messages and attachments,
+      now retrieveBody() & retrieve() can correctly be used to retrieve 
+      large messages from the server.
+    * Folder name localization support.
+    * UI fix for keepintouch example for N900.
+    * String form of identifiers (QMessage*Id) are prefixed with platform tag.
+ - Windows specific fixes
+    * Windows Mobile: Fix QMessageService::retrieve for attachments larger 
+      than 4KB on Windows.
 
-QtMedia
+QtMedia/QtMultimediaKit
 ------
 
- - foo
-    * bar
+ - The QtMedia library has been merged with the QtMultimediaKit library from Qt.
+   The new QtMultimediaKit library in QtMobility replaces both the QtMedia libary
+   from QtMobility and the QtMultimedia library from Qt.
+
+ - Meta-data related API changes
+     * Meta-data on QMediaObject is now read-only.  The isWritable(), 
+       setMetaData() and setExtendedMetaData() function have been removed.
+     * The meta-data editing functions removed from QMediaObject have been
+       added to QMediaRecorder. 
+     * QMetaDataControl has been split into two controls, the read-only
+       QMetaDataReaderControl and the writable QMetaDataWriterControl.
+ - Media Service API changes.
+     * The API for requesting a control from a QMediaService has been split
+       into request and release steps, allowing services to allocate and
+       release resources on demand.  This removes the QMediaService
+       control() function and adds requestControl(), and releaseControl().
 
 QtPublishSubscribe
 ------
@@ -77,11 +174,35 @@ QtPublishSubscribe
  - foo
     * bar
 
+QtSensors
+------
+ - Bug fixes
+    * correct cubehouse example to avoid extreem camera angle being used.
+ - Added support for Symbian 3.2 and newer devices using the Symbian Sensor
+   Framework.
+ - Fixed rotation definition to be -90 < X < 90 so that the complete range of
+   motion can be represented.
+ - Corrected the rotation definition for the Z axis (it starts from the Y axis,
+   not the X axis).
+ - Clarify that the tap sensor cannot report on single and double tap events at
+   the same time.
+ - Remove the need for new sensor types to include qsensor_p.h. Note that this
+   breaks forwards binary compatibility (a sensor type built against 1.0.1 will
+   cause a crash when run against 1.0.0).
+ - Backends should no longer set a data rate and should treat the default (0)
+   as "app does not care".
+ - Backends should no longer set an output range and should treat the default
+   (-1) as "app does not care".
+ - Binary compatibility broke on Symbian emulator (WINSCW) and most likely on
+   Windows too (but not on Linux). This was due to the addition of extra const
+   modifiers to the ::type members on QSensor sub-classes. This change was made
+   to address a crash on Symbian caused by applications getting uninitialized
+   pointers.
+
 QtServiceFramework
 ------
 
- - foo
-    * bar
+ - MOBILITY-873 fixed: default interface documentation improved
 
 QtSystemInfo
 ------
@@ -126,12 +247,16 @@ Qt Mobility for Mac OS X
  -
 
 
-
 Qt Mobility for Windows CE
 ------
 
  -
 
+Qt Mobility for Symbian
+------
+
+ - Symbian capability documentation improved
+ - QTMOBILITY-30 fixed: convenience headers supported on Symbian
 
 ****************************************************************************
 *                          Tools                                           *

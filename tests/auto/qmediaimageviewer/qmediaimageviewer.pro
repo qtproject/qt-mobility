@@ -1,12 +1,12 @@
 TARGET = tst_qmediaimageviewer
 CONFIG += testcase
-INCLUDEPATH += ../../../src/multimedia
+INCLUDEPATH += ../../../src/multimedia ../../../src/multimedia/video
 
 include (../../../common.pri)
 
 SOURCES += tst_qmediaimageviewer.cpp
 
-QT += network multimedia
+QT += network
 CONFIG += mobility
 MOBILITY = multimedia
 

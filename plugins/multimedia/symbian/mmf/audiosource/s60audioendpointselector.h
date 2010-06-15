@@ -44,7 +44,7 @@
 
 #include <QStringList>
 
-#include <QAudioEndpointSelector>
+#include <qaudioendpointselector.h>
 
 QT_USE_NAMESPACE
 
