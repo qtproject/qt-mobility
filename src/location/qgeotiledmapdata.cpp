@@ -96,8 +96,9 @@ QPoint QGeoTiledMapData::screenPositionToTileIndices(const QPointF &screenPositi
     QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
     QPointF pos = d_ptr->screenRect.topLeft() + screenPosition;
 
-    int tileX = pos.x() / tileEngine->tileSize().width();
-    int tileY = pos.y() / tileEngine->tileSize().height();
+    int numCols = 1 << static_cast<int>(zoomLevel());
+    int tileX = static_cast<int>(pos.x() / tileEngine->tileSize().width()) % numCols;
+    int tileY = static_cast<int>(pos.y() / tileEngine->tileSize().height()) % numCols;
 
     return QPoint(tileX, tileY);
 }

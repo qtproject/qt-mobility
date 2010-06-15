@@ -202,21 +202,31 @@ void QGeoTiledMappingManagerEngine::tileFinished(QGeoTiledMapReply *reply)
         return;
     }
 
+    int tileHeight = tileSize().height();
+    int tileWidth = tileSize().width();
+    int numCols = 1 << static_cast<int>(mapData->zoomLevel());
+    qreal totalPixelWidth = static_cast<qreal>(numCols) * tileWidth;
     QRectF screenRect = mapData->screenRect();
-    QRectF tileRect = reply->request().tileRect();
-    QRectF overlap = tileRect.intersected(screenRect);
-
-    if (overlap.isEmpty()) {
-        QTimer::singleShot(0, reply, SLOT(deleteLater()));
-        return;
-    }
-
-    QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
-    QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 * screenRect.y());
-
+    QRectF tileRect(tileWidth * reply->request().column(),
+                    tileHeight * reply->request().row(),
+                    tileWidth, tileHeight);
     QPixmap pm = mapData->mapImage();
     QPainter *painter = new QPainter(&pm);
-    painter->drawPixmap(dest, reply->mapImage(), source);
+
+    while (tileRect.left() <= screenRect.right())
+    {
+        QRectF overlap = tileRect.intersected(screenRect);
+
+        if (!overlap.isEmpty())
+        {
+            QRectF source = overlap.translated(-1.0 * tileRect.x(), -1.0 * tileRect.y());
+            QRectF dest = overlap.translated(-1.0 * screenRect.x(), -1.0 * screenRect.y());
+            painter->drawPixmap(dest, reply->mapImage(), source);
+        }
+
+        tileRect.translate(totalPixelWidth, 0);
+    }
+
     mapData->setMapImage(pm);
     delete painter;
 
