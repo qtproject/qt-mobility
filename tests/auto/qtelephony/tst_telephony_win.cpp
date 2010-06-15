@@ -70,34 +70,23 @@ private:
 
 void tst_Telephony::initTestCase()
 {
-    qRegisterMetaType<QTelephonyCallInfo::CallStatus>("QTelephonyCallInfo::CallStatus");
-    qRegisterMetaType<QTelephonyCallInfo::CallType>("QTelephonyCallInfo::CallType");
-    pTelephonyCallList = new QTelephonyCallList();
     qDebug("called before everything else");
 }
 
 //Test cases
 void tst_Telephony::myFirstTest()
 {
-    QTelephonyCallInfo ci;
-    qDebug() << &ci;
-    QTelephonyCallInfo cii(ci);
-    qDebug() << &cii;
-
-    //QTelephonyCallInfo ci1(ci);
-    QCOMPARE(1, 1); // make sure the signal was emitted exactly one time
+    QVERIFY(1 == 1);
 }
 
 void tst_Telephony::mySecondTest()
 {
-    QCOMPARE(1, 1); // make sure the signal was emitted exactly one time
+    QVERIFY(1 == 1);
 }
 
 void tst_Telephony::cleanupTestCase()
 {
-    if(pTelephonyCallList)
-        delete pTelephonyCallList;
-    pTelephonyCallList = 0;
+    qDebug("called after myFirstTest and mySecondTest");
 }
 
 QTEST_MAIN(tst_Telephony)

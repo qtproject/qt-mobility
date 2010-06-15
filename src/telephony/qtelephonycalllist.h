@@ -54,7 +54,7 @@ QTM_BEGIN_NAMESPACE
 class QTelephonyCallListPrivate;
 class QTelephonyCallInfoPrivate;
 
-class QTelephonyCallList : QObject
+class Q_TELEPHONY_EXPORT QTelephonyCallList : QObject
 {
     Q_OBJECT
 public:
