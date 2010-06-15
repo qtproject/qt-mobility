@@ -94,8 +94,10 @@ struct FSSearchOperation
 };
 
 
-class CFSEngine
+class CFSEngine: public QObject
 {
+    Q_OBJECT;
+    
 public: 
     
     static CFSEngine* instance();
@@ -149,11 +151,10 @@ private:
     void updateMessageL(QMessage* message);
     NmApiMessageEnvelope* createFSMessageL(const QMessage &message/*, const NmApiMailbox* mailbox*/);
     QMessageFolderIdList folderIdsByAccountId(const QMessageAccountId& accountId) const;
-    QMessageFolderIdList folderIdsByAccountIdL(const QMessageAccountId& accountId) const;
     QMessageFolderIdList filterMessageFoldersL(const QMessageFolderFilter& filter, bool& filterHandled) const;
     QMessageFolderIdList allFolders() const;
-    QMessageFolder folderL(const QMessageFolderId &id) const;
     bool fsFolderL(const QMessageFolderId& id, NmApiMailbox* mailbox, NmApiFolder* folder) const;
+    QList<NmApiFolder> getFolderListByAccountId(const quint64 mailboxId) const;
     //TFolderType standardFolderId(QMessage::StandardFolder standardFolder);
     
     QMessageFolderIdList filterMessageFolders(const QMessageFolderFilter& filter, bool& filterHandled) const;
@@ -186,8 +187,6 @@ private:
     
 private:
 
-    EmailClientApi::NmApiMailboxListing* m_nmApiMailboxListing;
-    
     mutable QHash<QString, QMessageAccount> m_accounts;
     mutable int m_operationIds;
     mutable QList<FSMessageQueryInfo> m_messageQueries;
