@@ -319,8 +319,9 @@ void callContact(QContactManager* cm)
 
     //! [Details with action]
     // Get the first "Call" action
-    QContactAction* action = QContactAction::action(QContactAction::actionDescriptors("Call").value(0));
-    QSet<QContactActionTarget> targets = action->supportedTargets(contact);
+    QContactActionDescriptor callDescriptor = QContactAction::actionDescriptors("Call").value(0);
+    QContactAction* action = QContactAction::action(callDescriptor);
+    QSet<QContactActionTarget> targets = callDescriptor.supportedTargets(contact);
 
     if (targets.count() == 0) {
         // Can't call this contact

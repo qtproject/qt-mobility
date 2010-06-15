@@ -102,11 +102,6 @@ QContactAction::~QContactAction()
  */
 
 /*!
-  \fn QContactAction::metaData() const
-  Returns the meta-data associated with this action, such as icons, labels or sound cues
- */
-
-/*!
   \fn QContactAction::contactFilter(const QVariant& value) const
   Returns a filter which may be used to filter contacts by the availability of this action implementation for them.
   If \a value is valid, only contacts which have a detail with the given value and for which the action is available are returned

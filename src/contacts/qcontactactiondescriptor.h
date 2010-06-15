@@ -44,16 +44,23 @@
 #define QCONTACTACTIONDESCRIPTOR_H
 
 #include "qtcontactsglobal.h"
+#include "qcontactactiontarget.h"
+
+#include <QSet>
+#include <QVariant>
+#include <QMap>
 #include <QString>
 #include <QSharedDataPointer>
 
 QTM_BEGIN_NAMESPACE
 
+class QContact;
+class QContactActionFactory;
 class QContactActionDescriptorPrivate;
 class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
 public:
-    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& serviceName = QString(), int vendorVersion = -1);
+    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& serviceName = QString(), int vendorVersion = -1, QContactActionFactory* factory = 0);
     QContactActionDescriptor(const QContactActionDescriptor& other);
     QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
     ~QContactActionDescriptor();
@@ -70,6 +77,26 @@ public:
     QString actionName() const;
     QString serviceName() const;
     int implementationVersion() const;
+
+    /* The descriptor provides the client with all information required in UI. */
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
+    QContactFilter contactFilter() const;
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
+
+    bool supportsContact(const QContact& contact) const {return !supportedTargets(contact).isEmpty();}
+    QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const
+    {
+        return metaData(key, QList<QContactActionTarget>() << target, parameters);
+    }
+    QVariant metaData(const QString& key, const QContact& contact, const QContactDetail& detail = QContactDetail(), const QVariantMap& parameters = QVariantMap()) const
+    {
+        return metaData(key, QList<QContactActionTarget>() << QContactActionTarget(contact, detail), parameters);
+    }
+
+    // Need latin constants for keys.. {label, icon, vendor?, second label?}
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataIcon, "Icon");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataLabel, "Label");
+    Q_DECLARE_LATIN1_CONSTANT(MetaDataSecondLabel, "SecondLabel");
 
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;

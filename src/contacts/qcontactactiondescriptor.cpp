@@ -41,6 +41,10 @@
 
 #include "qcontactactiondescriptor.h"
 #include "qcontactactiondescriptor_p.h"
+#include "qcontactactionfactory.h"
+#include "qcontact.h"
+#include "qcontactinvalidfilter.h"
+
 #include <QHash>
 
 QTM_BEGIN_NAMESPACE
@@ -56,8 +60,8 @@ QTM_BEGIN_NAMESPACE
  * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
  * of the given implementation \a implementationVersion, as implemented by the service identified by the given \a serviceName
  */
-QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion)
-        : d(new QContactActionDescriptorPrivate(actionName, serviceName, implementationVersion))
+QContactActionDescriptor::QContactActionDescriptor(const QString& actionName, const QString& serviceName, int implementationVersion, QContactActionFactory* factory)
+        : d(new QContactActionDescriptorPrivate(actionName, serviceName, implementationVersion, factory))
 {
 }
 
@@ -131,6 +135,31 @@ QString QContactActionDescriptor::serviceName() const
 int QContactActionDescriptor::implementationVersion() const
 {
     return d->m_implementationVersion;
+}
+
+QSet<QContactActionTarget> QContactActionDescriptor::supportedTargets(const QContact& contact) const
+{
+    if (d->m_factory) {
+        return d->m_factory->supportedTargets(contact);
+    }
+
+    return QSet<QContactActionTarget>();
+}
+QContactFilter QContactActionDescriptor::contactFilter() const
+{
+    if (d->m_factory) {
+        return d->m_factory->contactFilter();
+    }
+
+    return QContactInvalidFilter();
+}
+QVariant QContactActionDescriptor::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters) const
+{
+    if (d->m_factory) {
+        return d->m_factory->metaData(key, targets, parameters);
+    }
+
+    return QVariant();
 }
 
 /*!

@@ -58,14 +58,25 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QContactActionFactory;
 class QContactActionDescriptorPrivate : public QSharedData
 {
 public:
-    QContactActionDescriptorPrivate(const QString& action, const QString& service, int version)
+    QContactActionDescriptorPrivate(const QString& action, const QString& service, int version, QContactActionFactory* factory)
             : QSharedData(),
             m_actionName(action),
             m_serviceName(service),
-            m_implementationVersion(version)
+            m_implementationVersion(version),
+            m_factory(factory)
+    {
+    }
+
+    QContactActionDescriptorPrivate(const QContactActionDescriptorPrivate& other)
+            : QSharedData(),
+            m_actionName(other.m_actionName),
+            m_serviceName(other.m_serviceName),
+            m_implementationVersion(other.m_implementationVersion),
+            m_factory(other.m_factory)
     {
     }
 
@@ -95,6 +106,7 @@ public:
     QString m_actionName;
     QString m_serviceName;
     int m_implementationVersion;
+    QContactActionFactory* m_factory;
 };
 
 QTM_END_NAMESPACE

@@ -84,6 +84,12 @@ QContactActionFactory::~QContactActionFactory()
   Returns true if the list of supported targets for the given \a contact is not empty.
  */
 
+/*!
+  \fn QContactActionFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
+  Returns the meta-data associated with the action which this factory generates, for the given \a key (such as icon, label or sound cues).
+  The meta-data may vary depending on the \a targets of the action and any \a parameters to invocation which the client may specify.
+ */
+
 #include "moc_qcontactactionfactory.cpp"
 
 QTM_END_NAMESPACE

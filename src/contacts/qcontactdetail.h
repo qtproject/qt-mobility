@@ -44,7 +44,6 @@
 #define QCONTACTDETAIL_H
 
 #include "qtcontactsglobal.h"
-#include "qcontactactiondescriptor.h"
 
 #include <QSharedDataPointer>
 #include <QStringList>
@@ -52,6 +51,7 @@
 
 QTM_BEGIN_NAMESPACE
 
+class QContactActionDescriptor;
 class QContactDetailPrivate;
 class Q_CONTACTS_EXPORT QContactDetail
 {

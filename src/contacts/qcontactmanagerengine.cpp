@@ -558,7 +558,7 @@ QContactFilter QContactManagerEngine::canonicalizedFilter(const QContactFilter &
 
                 // Action filters are not allowed to return action filters, at all
                 // it's too annoying to check for recursion
-                QContactFilter d = action->contactFilter();
+                QContactFilter d = descriptors.at(j).contactFilter();
                 delete action; // clean up.
                 if (!validateActionFilter(d))
                     continue;
@@ -2049,11 +2049,9 @@ bool QContactManagerEngine::testFilter(const QContactFilter &filter, const QCont
                 // we have to adjust any contained QContactDetailFilters to have that value
                 // or test if a QContactDetailRangeFilter contains this value already
                 for (int j = 0; j < descriptors.count(); j++) {
-                    QContactAction* action = QContactAction::action(descriptors.at(j));
-
                     // Action filters are not allowed to return action filters, at all
                     // it's too annoying to check for recursion
-                    QContactFilter d = action->contactFilter();
+                    QContactFilter d = descriptors.at(j).contactFilter();
                     if (!validateActionFilter(d))
                         return false;
 
