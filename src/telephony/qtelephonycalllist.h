@@ -58,7 +58,7 @@ class QTelephonyCallList : QObject
 {
     Q_OBJECT
 public:
-    QTelephonyCallList(QObject *parent = 0);
+    explicit QTelephonyCallList(QObject *parent = 0);
     virtual ~QTelephonyCallList();
 
 Q_SIGNALS:
