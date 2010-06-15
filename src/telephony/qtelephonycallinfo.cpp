@@ -69,7 +69,7 @@ QTM_BEGIN_NAMESPACE
     This enum type is used to describe the status of a call.
     A QTelephonyCallInfo object can have a status of:
 
-    \value UnknownStatus The call status is not defined.
+    \value Undefined     The call status is not defined.
     \value NoCall        The status of the call is not active.
     \value Ringing       The status of the call is ringing.
     \value InProgress    The status of the call is in progress.
@@ -83,8 +83,9 @@ QTM_BEGIN_NAMESPACE
     This enum decribes the type of the call.
     A QTelephonyCallInfo object can be a type of:
 
-    \value UnknownType The call type is not defined.
-    \value VOIP        The call is a VOIP call.
+    \value Unknown     The call type is not defined.
+    \value Any         The call type can be any type.
+    \value Voip        The call is a Voip call.
     \value Voice       The call is a Voice call.
     \value Video       The call is a Video call.
 */
@@ -185,7 +186,7 @@ QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 }
 
 /*!
-    \fn  QVariant QTelephonyCallInfo::value(const QVariant& param) const
+    \fn  QVariant QTelephonyCallInfo::value(const QString& param) const
     \a param Parameter for reading additional values.
 
     Gives back a variant value.

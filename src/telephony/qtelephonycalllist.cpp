@@ -67,7 +67,6 @@ QTM_BEGIN_NAMESPACE
     \a call The QTelephonyCallInfo object that changed its status.
 
     This signal is emitted whenever the status of a active call was changed.
-    The new status of the current call is specified by \a status.
 */
 
 /*!

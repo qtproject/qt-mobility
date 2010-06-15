@@ -18,21 +18,16 @@
 <tr><td width="45%" valign="top"><ul>
 <li><div class="fn"><b><a href="qtelephonycalllist.html#QTelephonyCallList">QTelephonyCallList</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="qtelephonycalllist.html#dtor.QTelephonyCallList">~QTelephonyCallList</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qtelephonycalllist.html#activeCallAdded">activeCallAdded</a></b> ( const QTelephonyCallInfo &amp; )</div></li>
+<li><div class="fn"><b><a href="qtelephonycalllist.html#activeCallRemoved">activeCallRemoved</a></b> ( const QTelephonyCallInfo &amp; )</div></li>
+<li><div class="fn"><b><a href="qtelephonycalllist.html#activeCallStatusChanged">activeCallStatusChanged</a></b> ( const QTelephonyCallInfo &amp; )</div></li>
+<li><div class="fn"><b><a href="qtelephonycalllist.html#activeCalls">activeCalls</a></b> ( const QTelephonyCallInfo::CallType &amp; ) const : QList&lt;QTelephonyCallInfo&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#calls">calls</a></b> () const : QList&lt;QTelephonyCallInfo *&gt;</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#calls-2">calls</a></b> ( const QTelephonyCallInfo::CallType &amp; ) const : QList&lt;QTelephonyCallInfo *&gt;</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#calls-3">calls</a></b> ( const QTelephonyCallInfo::CallStatus &amp; ) const : QList&lt;QTelephonyCallInfo *&gt;</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#calls-4">calls</a></b> ( const QTelephonyCallInfo::CallType &amp;, const QTelephonyCallInfo::CallStatus &amp; ) const : QList&lt;QTelephonyCallInfo *&gt;</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#callsChanged">callsChanged</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#callsProperty">callsProperty</a></b> () const : QList&lt;QTelephonyCallInfoProperty *&gt;</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#callstatusChanged">callstatusChanged</a></b> ( const QTelephonyCallInfo::CallStatus &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#children">children</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connect-2">connect</a></b> ( const QObject *, const char *, const char *, Qt::ConnectionType ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connectNotify">connectNotify</a></b> ( const char * )</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#currentCall">currentCall</a></b> () const : QTelephonyCallInfo *</div></li>
-<li><div class="fn"><b><a href="qtelephonycalllist.html#currentCallProperty">currentCallProperty</a></b> () const : QTelephonyCallInfoProperty *</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
@@ -44,10 +39,10 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dumpObjectInfo">dumpObjectInfo</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dumpObjectTree">dumpObjectTree</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dynamicPropertyNames">dynamicPropertyNames</a></b> () const</div></li>
-</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
+</ul></td><td valign="top"><ul>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren">findChildren</a></b> ( const QString &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChildren-2">findChildren</a></b> ( const QRegExp &amp; ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
