@@ -116,6 +116,8 @@ void QMLContactModel::exposeContactsToQML()
             QMLContact* qc = new QMLContact(this);
             qc->setContact(c);
             m_contactMap.insert(c.localId(), qc);
+        } else {
+            m_contactMap.value(c.localId())->setContact(c);
         }
     }
 }

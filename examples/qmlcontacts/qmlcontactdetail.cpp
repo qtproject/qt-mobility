@@ -38,36 +38,38 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACT_H
-#define QMLCONTACT_H
+#include "qmlcontactdetail.h"
+#include "qmlcontactdetailfield.h"
+#include <QDebug>
 
-#include <QDeclarativePropertyMap>
-#include "qcontact.h"
-
-QTM_USE_NAMESPACE;
-
-class QMLContact : public QObject
+QMLContactDetail::QMLContactDetail(QObject* parent)
+    :QObject(parent)
 {
-    Q_OBJECT
-public:
-    explicit QMLContact(QObject *parent = 0);
-    void setContact(const QContact& c);
-    const QContact& contact() const;
-    Q_INVOKABLE bool isContactChanged() const;
-    QVariant contactMap() const;
-    Q_INVOKABLE QList<QObject*> details() const;
-signals:
 
-private slots:
-    void contactChanged(const QString &key, const QVariant &value);
-    void detailChanged(const QString &key, const QVariant &value);
-private:
+}
 
-    QContact m_contact;
-    bool m_contactChanged;
-    QDeclarativePropertyMap* m_contactMap;
-    QList<QDeclarativePropertyMap*> m_detailMaps;
-    QList<QObject*> m_details;
-};
+void QMLContactDetail::setDetailPropertyMap(QDeclarativePropertyMap* map)
+{
+    m_map = map;
+    foreach (const QString& key, m_map->keys()) {
+        QMLContactDetailField* field = new QMLContactDetailField(this);
+        field->setDetailPropertyMap(m_map);
+        field->setKey(key);
+        m_fields.append(field);
+    }
+}
 
-#endif // QMLCONTACT_H
+QList<QObject*> QMLContactDetail::fields() const
+{
+    return m_fields;
+}
+
+QString QMLContactDetail::name() const
+{
+    return m_detailName;
+}
+
+void QMLContactDetail::setName(const QString& name)
+{
+    m_detailName = name;
+}

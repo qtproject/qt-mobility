@@ -38,36 +38,42 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACT_H
-#define QMLCONTACT_H
 
-#include <QDeclarativePropertyMap>
-#include "qcontact.h"
+#include "qmlcontactdetailfield.h"
+#include <QDebug>
 
-QTM_USE_NAMESPACE;
-
-class QMLContact : public QObject
+QMLContactDetailField::QMLContactDetailField(QObject* parent)
+    :QObject(parent),
+    m_map(0)
 {
-    Q_OBJECT
-public:
-    explicit QMLContact(QObject *parent = 0);
-    void setContact(const QContact& c);
-    const QContact& contact() const;
-    Q_INVOKABLE bool isContactChanged() const;
-    QVariant contactMap() const;
-    Q_INVOKABLE QList<QObject*> details() const;
-signals:
 
-private slots:
-    void contactChanged(const QString &key, const QVariant &value);
-    void detailChanged(const QString &key, const QVariant &value);
-private:
+}
 
-    QContact m_contact;
-    bool m_contactChanged;
-    QDeclarativePropertyMap* m_contactMap;
-    QList<QDeclarativePropertyMap*> m_detailMaps;
-    QList<QObject*> m_details;
-};
+void QMLContactDetailField::setDetailPropertyMap(QDeclarativePropertyMap* map)
+{
+    m_map = map;
+}
 
-#endif // QMLCONTACT_H
+void QMLContactDetailField::setKey(const QString& key)
+{
+    m_key = key;
+}
+
+QString QMLContactDetailField::key() const
+{
+    return m_key;
+}
+
+QVariant QMLContactDetailField::value() const
+{
+    if (m_map)
+        return m_map->value(m_key);
+    return QVariant();
+}
+
+void QMLContactDetailField::setValue(const QVariant& value)
+{
+    if (m_map && m_map->contains(m_key)) {
+        (*m_map)[m_key] = value;
+    }
+}

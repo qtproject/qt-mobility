@@ -38,36 +38,33 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACT_H
-#define QMLCONTACT_H
+#ifndef QMLCONTACTDETAILFIELD_H
+#define QMLCONTACTDETAILFIELD_H
 
 #include <QDeclarativePropertyMap>
-#include "qcontact.h"
 
-QTM_USE_NAMESPACE;
 
-class QMLContact : public QObject
+
+class QMLContactDetailField : public QObject
 {
     Q_OBJECT
 public:
-    explicit QMLContact(QObject *parent = 0);
-    void setContact(const QContact& c);
-    const QContact& contact() const;
-    Q_INVOKABLE bool isContactChanged() const;
-    QVariant contactMap() const;
-    Q_INVOKABLE QList<QObject*> details() const;
-signals:
+    Q_PROPERTY(QString key READ key)
+    Q_PROPERTY(QVariant value READ value WRITE setValue)
+    QMLContactDetailField(QObject* parent = 0);
 
-private slots:
-    void contactChanged(const QString &key, const QVariant &value);
-    void detailChanged(const QString &key, const QVariant &value);
+    void setDetailPropertyMap(QDeclarativePropertyMap* map);
+
+    void setKey(const QString& key);
+    QString key() const;
+
+    QVariant value() const;
+    void setValue(const QVariant& value);
+
 private:
-
-    QContact m_contact;
-    bool m_contactChanged;
-    QDeclarativePropertyMap* m_contactMap;
-    QList<QDeclarativePropertyMap*> m_detailMaps;
-    QList<QObject*> m_details;
+    QDeclarativePropertyMap* m_map;
+    QString m_key;
 };
 
-#endif // QMLCONTACT_H
+
+#endif // QMLCONTACTDETAILFIELD_H

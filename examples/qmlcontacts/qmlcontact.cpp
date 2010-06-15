@@ -40,6 +40,7 @@
 
 #include <qcontactdetails.h>
 #include "qmlcontact.h"
+#include "qmlcontactdetail.h"
 #include <QDebug>
 
 static QString normalizePropertyName(const QString& name)
@@ -67,6 +68,11 @@ void QMLContact::setContact(const QContact& c)
         m_detailMaps.clear();
     }
 
+    foreach (QObject* detail, m_details) {
+        delete detail;
+    }
+    m_details.clear();
+
     m_contactMap = new QDeclarativePropertyMap(this);
     connect(m_contactMap, SIGNAL(valueChanged(QString,QVariant)), this, SLOT(contactChanged(QString,QVariant)));
 
@@ -74,7 +80,11 @@ void QMLContact::setContact(const QContact& c)
 
     QList<QContactDetail> details = m_contact.details();
     foreach (const QContactDetail& detail, details) {
+      QMLContactDetail* qd = new QMLContactDetail(this);
+
       QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(m_contactMap);
+      qd->setDetailPropertyMap(dm);
+      m_details.append(qd);
 
       connect(dm, SIGNAL(valueChanged(QString,QVariant)), SLOT(detailChanged(QString,QVariant)));
 
@@ -93,6 +103,11 @@ void QMLContact::setContact(const QContact& c)
 const QContact& QMLContact::contact() const
 {
     return m_contact;
+}
+
+QList<QObject*> QMLContact::details() const
+{
+    return m_details;
 }
 
 QVariant QMLContact::contactMap() const
