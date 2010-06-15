@@ -119,7 +119,7 @@ struct QGalleryTrackerItemListArguments
     QVector<int> resourceKeys;
 };
 
-class QGalleryTrackerItemList : public QGalleryAbstractResponse
+class Q_AUTOTEST_EXPORT QGalleryTrackerItemList : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:

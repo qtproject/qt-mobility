@@ -59,7 +59,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QGalleryTrackerValueColumn
+class Q_AUTOTEST_EXPORT QGalleryTrackerValueColumn
 {
 public:
     virtual ~QGalleryTrackerValueColumn() {}
@@ -68,7 +68,7 @@ public:
     virtual QString toString(const QVariant &variant) const { return variant.toString(); }
 };
 
-class QGalleryTrackerCompositeColumn
+class Q_AUTOTEST_EXPORT QGalleryTrackerCompositeColumn
 {
 public:
     virtual ~QGalleryTrackerCompositeColumn() {}
@@ -76,7 +76,7 @@ public:
     virtual QVariant value(QVector<QVariant>::const_iterator row) const = 0;
 };
 
-class QGalleryTrackerImageColumn : public QObject
+class Q_AUTOTEST_EXPORT QGalleryTrackerImageColumn : public QObject
 {
     Q_OBJECT
 public:

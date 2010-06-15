@@ -157,5 +157,10 @@ contains(mobility_modules,gallery) {
         qgalleryremoverequest \
         qgalleryresource \
         qgalleryurlrequest
+
+    unix: contains(QT_CONFIG, dbus) {
+        SUBDIRS += \
+                qgallerytrackeritemlist_maemo5
+    }
 }
 

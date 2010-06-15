@@ -581,7 +581,7 @@ void QGalleryTrackerItemList::setCursorPosition(int position)
                         + ((absoluteIndex - d->rCache.index) * d->tableWidth);
 
                 for (iterator it = d->imageColumns.begin(); it != d->imageColumns.end(); ++it) {
-                    (*it)->removeImages(0, maximumCount);
+                    (*it)->removeImages(0, d->imageCacheCount);
                     (*it)->insertImages(0, maximumCount, begin, d->tableWidth);
                     (*it)->moveOffset(absoluteIndex);
                 }
