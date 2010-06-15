@@ -51,12 +51,6 @@
 #include <QPixmap>
 #include <QFile>
 
-static QString normalizePropertyName(const QString& name)
-{
-   if (!name.isEmpty())
-     return name.mid(1).prepend(name[0].toLower());
-   return QString();
-}
 
 QMLContactModel::QMLContactModel(QObject *parent) :
     QAbstractListModel(parent),
