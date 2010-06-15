@@ -81,6 +81,8 @@ bool QVersitOrganizerExporterPrivate::exportItem(
     } else if (item.type() == QOrganizerItemType::TypeTodo
         || item.type() == QOrganizerItemType::TypeTodoOccurrence) {
         document->setComponentType(QLatin1String("VTODO"));
+    } else if (item.type() == QOrganizerItemType::TypeJournal) {
+        document->setComponentType(QLatin1String("VJOURNAL"));
     } else {
         *error = QVersitOrganizerExporter::UnknownComponentTypeError;
         return false;
@@ -114,6 +116,8 @@ void QVersitOrganizerExporterPrivate::exportDetail(
         encodeEventTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerTodoTimeRange::DefinitionName) {
         encodeTodoTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
+    } else if (detail.definitionName() == QOrganizerJournalTimeRange::DefinitionName) {
+        encodeJournalTimeRange(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemTimestamp::DefinitionName) {
         encodeTimestamp(detail, *document, &removedProperties, &generatedProperties, &processedFields);
     } else if (detail.definitionName() == QOrganizerItemRecurrence::DefinitionName) {
@@ -182,6 +186,22 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
     *generatedProperties << property;
     *processedFields << QOrganizerTodoTimeRange::FieldNotBeforeDateTime
                      << QOrganizerTodoTimeRange::FieldDueDateTime;
+}
+
+void QVersitOrganizerExporterPrivate::encodeJournalTimeRange(
+        const QOrganizerItemDetail& detail,
+        const QVersitDocument& document,
+        QList<QVersitProperty>* removedProperties,
+        QList<QVersitProperty>* generatedProperties,
+        QSet<QString>* processedFields)
+{
+    QOrganizerJournalTimeRange jtr = static_cast<QOrganizerJournalTimeRange>(detail);
+    QVersitProperty property =
+        VersitUtils::takeProperty(document, QLatin1String("DTSTART"), removedProperties);
+    property.setName(QLatin1String("DTSTART"));
+    property.setValue(encodeDateTime(jtr.entryDateTime()));
+    *generatedProperties << property;
+    *processedFields << QOrganizerJournalTimeRange::FieldEntryDateTime;
 }
 
 void QVersitOrganizerExporterPrivate::encodeTimestamp(
@@ -473,7 +493,7 @@ void QVersitOrganizerExporterPrivate::encodeComment(
 {
     QOrganizerItemComment comment = static_cast<QOrganizerItemComment>(detail);
     QVersitProperty property;
-    property.setName("COMMENT");
+    property.setName(QLatin1String("COMMENT"));
     property.setValue(comment.comment());
     *generatedProperties << property;
     *processedFields << QOrganizerItemComment::FieldComment;

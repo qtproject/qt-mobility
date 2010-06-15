@@ -80,6 +80,8 @@ bool QVersitOrganizerImporterPrivate::importDocument(
         item->setType(QOrganizerItemType::TypeEvent);
     } else if (document.componentType() == QLatin1String("VTODO")) {
         item->setType(QOrganizerItemType::TypeTodo);
+    } else if (document.componentType() == QLatin1String("VJOURNAL")) {
+        item->setType(QOrganizerItemType::TypeJournal);
     } else {
         *error = QVersitOrganizerImporter::InvalidDocumentError;
         return false;
@@ -149,6 +151,10 @@ void QVersitOrganizerImporterPrivate::importProperty(
             success = createFinishedDateTime(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("RECURRENCE-ID")) {
             success = createRecurrenceId(property, item, &updatedDetails);
+        }
+    } else if (document.componentType() == QLatin1String("VJOURNAL")) {
+        if (property.name() == QLatin1String("DTSTART")) {
+            success = createJournalEntryDateTime(property, item, &updatedDetails);
         }
     }
 
@@ -356,6 +362,23 @@ bool QVersitOrganizerImporterPrivate::createDueDateTime(
     ttr.setDueDateTime(newEnd);
     updatedDetails->append(ttr);
     mDurationSpecified = false;
+    return true;
+}
+
+/*! Set the EntryDateTime field of the JournalTimeRange detail.
+ */
+bool QVersitOrganizerImporterPrivate::createJournalEntryDateTime(
+        const QVersitProperty& property,
+        QOrganizerItem* item,
+        QList<QOrganizerItemDetail>* updatedDetails) {
+    if (property.value().isEmpty())
+        return false;
+    QDateTime dateTime = parseDateTime(property.value());
+    if (!dateTime.isValid())
+        return false;
+    QOrganizerJournalTimeRange jtr(item->detail<QOrganizerJournalTimeRange>());
+    jtr.setEntryDateTime(dateTime);
+    updatedDetails->append(jtr);
     return true;
 }
 

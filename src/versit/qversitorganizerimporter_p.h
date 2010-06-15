@@ -163,6 +163,10 @@ private:
             const QVersitProperty& property,
             QOrganizerItem* item,
             QList<QOrganizerItemDetail>* updatedDetails);
+    bool createJournalEntryDateTime(
+            const QVersitProperty& property,
+            QOrganizerItem* item,
+            QList<QOrganizerItemDetail>* updatedDetails);
     QDateTime parseDateTime(QString str);
 
     bool createRecurrenceRule(

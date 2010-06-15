@@ -100,6 +100,17 @@ void tst_QVersitOrganizerExporter::testExport_data()
         nested.addProperty(property);
         document.addSubDocument(nested);
 
+        nested.clear();
+        nested.setType(QVersitDocument::ICalendar20Type);
+        nested.setComponentType(QLatin1String("VJOURNAL"));
+        property.setName(QLatin1String("SUMMARY"));
+        property.setValue(QLatin1String("Trip to Thailand"));
+        nested.addProperty(property);
+        property.setName(QLatin1String("DTSTART"));
+        property.setValue(QLatin1String("20100615T112300"));
+        nested.addProperty(property);
+        document.addSubDocument(nested);
+
         QOrganizerEvent event;
         event.setDisplayLabel(QLatin1String("Bastille Day Party"));
         event.setStartDateTime(QDateTime(QDate(1997, 7, 14), QTime(17, 0, 0), Qt::UTC));
@@ -110,11 +121,16 @@ void tst_QVersitOrganizerExporter::testExport_data()
         todo.setNotBeforeDateTime(QDateTime(QDate(2010, 6, 9), QTime(8, 0, 0)));
         todo.setDueDateTime(QDateTime(QDate(2010, 6, 10), QTime(8, 0, 0)));
 
+        QOrganizerJournal journal;
+        journal.setDisplayLabel(QLatin1String("Trip to Thailand"));
+        journal.setDateTime(QDateTime(QDate(2010, 6, 15), QTime(11, 23, 0)));
+
         QList<QOrganizerItem> items;
         items << static_cast<QOrganizerItem>(event);
         items << static_cast<QOrganizerItem>(todo);
+        items << static_cast<QOrganizerItem>(journal);
 
-        QTest::newRow("sample event and todo") << items << document;
+        QTest::newRow("sample event, todo and journal") << items << document;
     }
 
     {
