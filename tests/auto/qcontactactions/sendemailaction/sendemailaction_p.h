@@ -84,6 +84,7 @@ class QContactSendEmailActionFactory : public QContactActionFactory
     Q_OBJECT
 
 public:
+    QContactSendEmailActionFactory();
     ~QContactSendEmailActionFactory();
     QContactAction* create() const;
 

@@ -65,14 +65,39 @@ QObject* QContactSendEmailActionPlugin::createInstance(const QServiceInterfaceDe
     Q_UNUSED(session);
 
     if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.sendemail")
-        return new QContactSendEmailAction(this);
+        return new QContactSendEmailActionFactory();
     else
         return 0;
 }
 
 Q_EXPORT_PLUGIN2(contacts_sendemailaction, QContactSendEmailActionPlugin);
 
+QContactSendEmailActionFactory::QContactSendEmailActionFactory() : QContactActionFactory()
+{
+}
 
+QContactSendEmailActionFactory::~QContactSendEmailActionFactory()
+{
+}
+
+QContactAction* QContactSendEmailActionFactory::create() const
+{
+    return new QContactSendEmailAction;
+}
+
+QSet<QContactActionTarget> QContactSendEmailActionFactory::supportedTargets(const QContact& contact) const
+{
+    QSet<QContactActionTarget> retn;
+    QList<QContactEmailAddress> emdets = contact.details<QContactEmailAddress>();
+    for (int i = 0; i < emdets.size(); ++i) {
+        QContactActionTarget curr;
+        curr.setContact(contact);
+        curr.setDetails(QList<QContactDetail>() << emdets.at(i));
+        retn << curr;
+    }
+
+    return retn;
+}
 
 QContactFilter QContactSendEmailActionFactory::contactFilter() const
 {
@@ -88,6 +113,14 @@ QVariant QContactSendEmailActionFactory::metaData(const QString& key, const QLis
     Q_UNUSED(parameters);
     return QVariant();
 }
+
+bool QContactSendEmailActionFactory::supportsContact(const QContact& contact) const
+{
+    return !contact.details<QContactEmailAddress>().isEmpty();
+}
+
+
+
 
 QContactSendEmailAction::QContactSendEmailAction(QObject* parent) : QContactAction(parent)
 {
