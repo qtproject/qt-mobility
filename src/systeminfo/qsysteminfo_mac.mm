@@ -1433,35 +1433,22 @@ bool QSystemStorageInfoPrivate::updateVolumesMap()
 
 qint64 QSystemStorageInfoPrivate::availableDiskSpace(const QString &driveVolume)
 {
-    struct statfs64 *buf = NULL;
-    unsigned i, count = 0;
     qint64 totalFreeBytes=0;
-
-    count = getmntinfo64(&buf, 0);
-    for (i=0; i<count; i++) {
-        char *volName = buf[i].f_mntonname;
-        if(driveVolume == QString(volName)) {
-            totalFreeBytes = (buf[i].f_bavail * (buf[i].f_bsize/512));
-        }
-    }
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:qstringToNSString(driveVolume) error:nil];
+    totalFreeBytes = [[attr objectForKey:NSFileSystemFreeSize] doubleValue];
+    [pool release];
 
     return  totalFreeBytes;
 }
 
 qint64 QSystemStorageInfoPrivate::totalDiskSpace(const QString &driveVolume)
 {
-    struct statfs64 *buf = NULL;
-    unsigned i, count = 0;
     qint64 totalBytes=0;
-
-    count = getmntinfo64(&buf, 0);
-    for (i=0; i<count; i++) {
-        char *volName = buf[i].f_mntonname;
-        if(driveVolume == QString(volName)) {
-            totalBytes = (buf[i].f_blocks * (buf[i].f_bsize/512));
-            return totalBytes;
-        }
-    }
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSDictionary *attr = [ [NSFileManager defaultManager] attributesOfFileSystemForPath:qstringToNSString(driveVolume) error:nil];
+    totalBytes = [[attr objectForKey:NSFileSystemSize] doubleValue];
+    [pool release];
 
     return totalBytes;
 }
