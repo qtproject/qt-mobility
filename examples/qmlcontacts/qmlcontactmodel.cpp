@@ -112,19 +112,10 @@ QString QMLContactModel::manager() const
 void QMLContactModel::exposeContactsToQML()
 {
     foreach (const QContact& c, m_contacts) {
-        if (!m_contactMaps.contains(c.localId())) {
-            QDeclarativePropertyMap* cm = new QDeclarativePropertyMap(this);
-            QList<QContactDetail> details = c.details();
-            foreach (const QContactDetail& detail, details) {
-              QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(cm);
-
-              QVariantMap values = detail.variantValues();
-              foreach (const QString& key, values.keys()) {
-                  dm->insert(normalizePropertyName(key), values.value(key));
-              }
-              cm->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
-            }
-            m_contactMaps.insert(c.localId(), cm);
+        if (!m_contactMap.contains(c.localId())) {
+            QMLContact* qc = new QMLContact(this);
+            qc->setContact(c);
+            m_contactMap.insert(c.localId(), qc);
         }
     }
 }
@@ -156,10 +147,10 @@ void QMLContactModel::setManager(const QString& managerName)
     if (m_manager)
         delete m_manager;
 
-    foreach (const QContactLocalId& id, m_contactMaps.keys()) {
-        delete m_contactMaps.value(id);
+    foreach (const QContactLocalId& id, m_contactMap.keys()) {
+        delete m_contactMap.value(id);
     }
-    m_contactMaps.clear();
+    m_contactMap.clear();
 
     m_manager = new QContactManager(managerName);
 
@@ -234,8 +225,8 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
         case InterestRole:
             return interestingDetail(c).second;
         case ContactRole:
-            if (m_contactMaps.contains(c.localId())) {
-               return QVariant::fromValue(static_cast<QObject*>(m_contactMaps.value(c.localId())));
+            if (m_contactMap.contains(c.localId())) {
+               return m_contactMap.value(c.localId())->contactMap();
            }
         case AvatarRole:
             //Just let the imager provider deal with it

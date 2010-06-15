@@ -38,63 +38,84 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACTMODEL_H
-#define QMLCONTACTMODEL_H
-
-#include <QAbstractListModel>
-#include <QDeclarativePropertyMap>
-#include "qcontact.h"
-#include "qcontactmanager.h"
-#include "qcontactfetchrequest.h"
+#include <qcontactdetails.h>
 #include "qmlcontact.h"
+#include <QDebug>
 
-QTM_USE_NAMESPACE;
-class QMLContactModel : public QAbstractListModel
+static QString normalizePropertyName(const QString& name)
 {
-Q_OBJECT
-Q_PROPERTY(QStringList availableManagers READ availableManagers)
-Q_PROPERTY(QString manager READ manager WRITE setManager)
-public:
-    explicit QMLContactModel(QObject *parent = 0);
-
-    enum {
-        InterestRole = Qt::UserRole + 500,
-        InterestLabelRole,
-        ContactRole,
-        AvatarRole,
-        PresenceAvailableRole,
-        PresenceTextRole,
-        PresenceStateRole,
-        PresenceMessageRole
-    };
-
-    QStringList availableManagers() const;
-
-    QString manager() const;
-    void setManager(const QString& manager);
-
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
-signals:
-
-public slots:
-
-private slots:
-    void resultsReceived();
-    void fetchAgain();
-
-private:
-    QPair<QString, QString> interestingDetail(const QContact&c) const;
-    void exposeContactsToQML();
-    void fillContactsIntoMemoryEngine(QContactManager* manager);
+   if (!name.isEmpty())
+     return name.mid(1).prepend(name[0].toLower());
+   return QString();
+}
 
 
-    QMap<QContactLocalId, QMLContact*> m_contactMap;
-    QList<QContact> m_contacts;
-    QContactManager* m_manager;
-    QContactFetchHint m_fetchHint;
-    QContactSortOrder m_sortOrder;
-    QContactFetchRequest m_contactsRequest;
-};
+QMLContact::QMLContact(QObject *parent)
+    :QObject(parent),
+    m_contactChanged(false),
+    m_contactMap(0)
+{
 
-#endif // QMLCONTACTMODEL_H
+}
+
+void QMLContact::setContact(const QContact& c)
+{
+    m_contact = c;
+
+    if (m_contactMap) {
+        delete m_contactMap;
+        m_detailMaps.clear();
+    }
+
+    m_contactMap = new QDeclarativePropertyMap(this);
+    connect(m_contactMap, SIGNAL(valueChanged(QString,QVariant)), this, SLOT(contactChanged(QString,QVariant)));
+
+
+
+    QList<QContactDetail> details = m_contact.details();
+    foreach (const QContactDetail& detail, details) {
+      QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(m_contactMap);
+
+      connect(dm, SIGNAL(valueChanged(QString,QVariant)), SLOT(detailChanged(QString,QVariant)));
+
+      m_detailMaps.append(dm);;
+
+      QVariantMap values = detail.variantValues();
+      foreach (const QString& key, values.keys()) {
+          dm->insert(normalizePropertyName(key), values.value(key));
+      }
+      m_contactMap->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
+    }
+
+    m_contactChanged = false;
+}
+
+const QContact& QMLContact::contact() const
+{
+    return m_contact;
+}
+
+QVariant QMLContact::contactMap() const
+{
+    if (m_contactMap)
+        return QVariant::fromValue(static_cast<QObject*>(m_contactMap));
+    return QVariant();
+}
+
+bool QMLContact::isContactChanged() const
+{
+    return m_contactChanged;
+}
+
+void QMLContact::contactChanged(const QString &key, const QVariant &value)
+{
+    qWarning() << "contactChanged field:"  << key << " value:" << value;
+    m_contactChanged = true;
+}
+
+
+void QMLContact::detailChanged(const QString &key, const QVariant &value)
+{
+    qWarning() << "detailChanged field:"  << key << " value:" << value;
+    m_contactChanged = true;
+}

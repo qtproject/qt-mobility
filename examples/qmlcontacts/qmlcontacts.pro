@@ -20,11 +20,13 @@ INCLUDEPATH += . \
 
 # Input
 HEADERS += qmlcontactmodel.h \
-           imageprovider.h
+           imageprovider.h \
+           qmlcontact.h
 
 SOURCES += plugin.cpp \
     qmlcontactmodel.cpp \
-    imageprovider.cpp
+    imageprovider.cpp \
+    qmlcontact.cpp
 
 OTHER_FILES += example.qml \
     contents/example.vcf \

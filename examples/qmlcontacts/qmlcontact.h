@@ -38,63 +38,33 @@
 **
 ****************************************************************************/
 
-#ifndef QMLCONTACTMODEL_H
-#define QMLCONTACTMODEL_H
+#ifndef QMLCONTACT_H
+#define QMLCONTACT_H
 
-#include <QAbstractListModel>
 #include <QDeclarativePropertyMap>
 #include "qcontact.h"
-#include "qcontactmanager.h"
-#include "qcontactfetchrequest.h"
-#include "qmlcontact.h"
 
 QTM_USE_NAMESPACE;
-class QMLContactModel : public QAbstractListModel
+class QMLContact : public QObject
 {
 Q_OBJECT
-Q_PROPERTY(QStringList availableManagers READ availableManagers)
-Q_PROPERTY(QString manager READ manager WRITE setManager)
 public:
-    explicit QMLContactModel(QObject *parent = 0);
-
-    enum {
-        InterestRole = Qt::UserRole + 500,
-        InterestLabelRole,
-        ContactRole,
-        AvatarRole,
-        PresenceAvailableRole,
-        PresenceTextRole,
-        PresenceStateRole,
-        PresenceMessageRole
-    };
-
-    QStringList availableManagers() const;
-
-    QString manager() const;
-    void setManager(const QString& manager);
-
-    int rowCount(const QModelIndex &parent) const;
-    QVariant data(const QModelIndex &index, int role) const;
+    explicit QMLContact(QObject *parent = 0);
+    void setContact(const QContact& c);
+    const QContact& contact() const;
+    bool isContactChanged() const;
+    QVariant contactMap() const;
 signals:
 
-public slots:
-
 private slots:
-    void resultsReceived();
-    void fetchAgain();
-
+    void contactChanged(const QString &key, const QVariant &value);
+    void detailChanged(const QString &key, const QVariant &value);
 private:
-    QPair<QString, QString> interestingDetail(const QContact&c) const;
-    void exposeContactsToQML();
-    void fillContactsIntoMemoryEngine(QContactManager* manager);
 
-
-    QMap<QContactLocalId, QMLContact*> m_contactMap;
-    QList<QContact> m_contacts;
-    QContactManager* m_manager;
-    QContactFetchHint m_fetchHint;
-    QContactSortOrder m_sortOrder;
-    QContactFetchRequest m_contactsRequest;
+    QContact m_contact;
+    bool m_contactChanged;
+    QDeclarativePropertyMap* m_contactMap;
+    QList<QDeclarativePropertyMap*> m_detailMaps;
 };
 
-#endif // QMLCONTACTMODEL_H
+#endif // QMLCONTACT_H
