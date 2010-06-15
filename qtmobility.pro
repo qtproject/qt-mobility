@@ -85,6 +85,7 @@ contains(build_docs, yes) {
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
+contains(build_docs, yes):SUBDIRS+=demos
 
 #updating and deployment of translations requires Qt 4.6.3/qtPrepareTool
 !symbian:defined(qtPrepareTool):SUBDIRS += translations
