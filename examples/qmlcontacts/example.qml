@@ -136,17 +136,24 @@ Rectangle {
                                 text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
                                 color: details.textColor;
                             }
-                            Text {
-                                //use contact.detailDefinationName.fieldName ..
-                                text: "Name: " + contact.displayLabel.label
-                                color: details.textColor;
+                            ListView {
+                                //width: parent.width; height: parent.height
+                                highlightFollowsCurrentItem: false
+                                focus: true
+                                //anchors.fill: parent
+                                keyNavigationWraps: true
+
+                                model:model.details(model.id)
+                                delegate: Component {
+                                    //TODO
+                                }
                             }
                         }
                     }
                 }
 
                 Item {
-                    id: "buttonBox"
+                    id: buttonBox
                     x: wrapper.width - 6 - childrenRect.width;
                     y: 4;
                     height:childrenRect.height

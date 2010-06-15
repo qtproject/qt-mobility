@@ -61,6 +61,7 @@ public:
         InterestRole = Qt::UserRole + 500,
         InterestLabelRole,
         ContactRole,
+        DetailsRole,
         AvatarRole,
         PresenceAvailableRole,
         PresenceTextRole,
@@ -75,6 +76,8 @@ public:
 
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
+
+    Q_INVOKABLE QList<QObject*> details(int id) const;
 signals:
 
 public slots:

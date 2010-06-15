@@ -53,18 +53,12 @@ public:
     explicit QMLContact(QObject *parent = 0);
     void setContact(const QContact& c);
     const QContact& contact() const;
-    Q_INVOKABLE bool isContactChanged() const;
     QVariant contactMap() const;
     Q_INVOKABLE QList<QObject*> details() const;
-signals:
 
-private slots:
-    void contactChanged(const QString &key, const QVariant &value);
-    void detailChanged(const QString &key, const QVariant &value);
 private:
 
     QContact m_contact;
-    bool m_contactChanged;
     QDeclarativePropertyMap* m_contactMap;
     QList<QDeclarativePropertyMap*> m_detailMaps;
     QList<QObject*> m_details;

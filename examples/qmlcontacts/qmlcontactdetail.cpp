@@ -42,12 +42,26 @@
 #include "qmlcontactdetailfield.h"
 #include <QDebug>
 
+
+static QString ToContactDetailName(const QString& name)
+{
+   if (!name.isEmpty())
+     return name.mid(1).prepend(name[0].toUpper());
+   return QString();
+}
+
+
 QMLContactDetail::QMLContactDetail(QObject* parent)
-    :QObject(parent)
+    :QObject(parent),
+    m_contactChanged(false)
 {
 
 }
 
+QDeclarativePropertyMap* QMLContactDetail::propertyMap() const
+{
+    return m_map;
+}
 void QMLContactDetail::setDetailPropertyMap(QDeclarativePropertyMap* map)
 {
     m_map = map;
@@ -72,4 +86,24 @@ QString QMLContactDetail::name() const
 void QMLContactDetail::setName(const QString& name)
 {
     m_detailName = name;
+}
+
+bool QMLContactDetail::isDetailChanged() const
+{
+    return m_contactChanged;
+}
+
+QContactDetail QMLContactDetail::detail() const
+{
+    QContactDetail d(ToContactDetailName(name()));
+    foreach (const QString& key, m_map->keys()) {
+        d.setValue(ToContactDetailName(key), m_map->value(key));
+    }
+    return d;
+}
+
+void QMLContactDetail::detailChanged(const QString &key, const QVariant &value)
+{
+    qWarning() << "detailChanged field:"  << key << " value:" << value;
+    m_contactChanged = true;
 }

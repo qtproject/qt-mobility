@@ -43,6 +43,7 @@
 
 #include <QDeclarativePropertyMap>
 #include "qcontact.h"
+#include "qcontactdetail.h"
 
 QTM_USE_NAMESPACE;
 
@@ -54,12 +55,17 @@ public:
 
     explicit QMLContactDetail(QObject* parent = 0);
     void setDetailPropertyMap(QDeclarativePropertyMap* map);
+    QDeclarativePropertyMap* propertyMap() const;
     Q_INVOKABLE QList<QObject*> fields() const;
-
+    Q_INVOKABLE bool isDetailChanged() const;
+    QContactDetail detail() const;
     QString name() const;
     void setName(const QString& name);
+private slots:
+    void detailChanged(const QString &key, const QVariant &value);
 
 private:
+    bool m_contactChanged;
     QDeclarativePropertyMap* m_map;
     QString m_detailName;
     QList<QObject*> m_fields;

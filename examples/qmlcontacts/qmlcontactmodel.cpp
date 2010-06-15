@@ -102,7 +102,12 @@ QString QMLContactModel::manager() const
 {
     return m_manager->managerName();
 }
-
+QList<QObject*> QMLContactModel::details(int id) const
+{
+    if (m_contactMap.contains(id))
+        return m_contactMap.value(id)->details();
+    return QList<QObject*>();
+}
 void QMLContactModel::exposeContactsToQML()
 {
     foreach (const QContact& c, m_contacts) {

@@ -53,7 +53,6 @@ static QString normalizePropertyName(const QString& name)
 
 QMLContact::QMLContact(QObject *parent)
     :QObject(parent),
-    m_contactChanged(false),
     m_contactMap(0)
 {
 
@@ -96,12 +95,17 @@ void QMLContact::setContact(const QContact& c)
       }
       m_contactMap->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
     }
-
-    m_contactChanged = false;
 }
 
 const QContact& QMLContact::contact() const
 {
+    foreach (QObject* o, m_details) {
+        QMLContactDetail* d = qobject_cast(o);
+        if (d && d->isDetailChanged()) {
+            m_contact.saveDetail(&d->detail());
+        }
+    }
+
     return m_contact;
 }
 
@@ -117,20 +121,3 @@ QVariant QMLContact::contactMap() const
     return QVariant();
 }
 
-bool QMLContact::isContactChanged() const
-{
-    return m_contactChanged;
-}
-
-void QMLContact::contactChanged(const QString &key, const QVariant &value)
-{
-    qWarning() << "contactChanged field:"  << key << " value:" << value;
-    m_contactChanged = true;
-}
-
-
-void QMLContact::detailChanged(const QString &key, const QVariant &value)
-{
-    qWarning() << "detailChanged field:"  << key << " value:" << value;
-    m_contactChanged = true;
-}
