@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += plugin
 INCLUDEPATH += ../../src/serviceframework
+PLUGIN_TYPE = serviceframework
 HEADERS += note.h \
            notesmanagerplugin.h \
            notesmanager.h
@@ -8,7 +9,6 @@ SOURCES += notesmanagerplugin.cpp \
            notesmanager.cpp
 QT += sql
 TARGET = serviceframework_notesmanagerplugin
-DESTDIR = .
 
 contains(QT_CONFIG, declarative):DEFINES += DECLARATIVE
 
@@ -26,13 +26,6 @@ symbian {
     TARGET.CAPABILITY = ALL -TCB
 }
 
-mac {
-xml.path = $$DESTDIR/sfw-notes.app/Contents/MacOS/xmldata
-DESTDIR = $$DESTDIR/sfw-notes.app/Contents/PlugIns
-} else {
-xml.path = $$DESTDIR/xmldata
-}
+xml.path = $$QT_MOBILITY_PREFIX/bin/xmldata
 xml.files = notesmanagerservice.xml
-xml.CONFIG = no_link no_dependencies explicit_dependencies no_build combine ignore_no_exist no_clean
 INSTALLS += xml
-build_pass:ALL_DEPS+=install_xml

@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -64,12 +64,6 @@
         : QWidget(parent, flags)
     {
         setupUi(this);
-        #if defined(Q_OS_MAC)
-            QDir dir(QCoreApplication::applicationDirPath());
-            dir.cdUp();
-            dir.cd(&quot;PlugIns&quot;);
-            QCoreApplication::addLibraryPath(dir.absolutePath());
-        #endif
 
         serviceManager = new QServiceManager(this);
 
@@ -137,7 +131,7 @@
         QStringList exampleXmlFiles;
         exampleXmlFiles &lt;&lt; &quot;notesmanagerservice.xml&quot;;
         foreach (const QString &amp;fileName, exampleXmlFiles) {
-            QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
+            const QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
             serviceManager-&gt;addService(path);
         }
     }
@@ -266,7 +260,7 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

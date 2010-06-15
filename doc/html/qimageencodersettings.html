@@ -28,10 +28,10 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#dtor.QImageEncoderSettings">~QImageEncoderSettings</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#codec">codec</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#isNull">isNull</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QtMediaServices::EncodingQuality </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#quality">quality</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QtMultimediaKit::EncodingQuality </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#quality">quality</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QSize </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#resolution">resolution</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#setCodec">setCodec</a></b> ( const QString &amp; <i>codec</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#setQuality">setQuality</a></b> ( QtMediaServices::EncodingQuality <i>quality</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#setQuality">setQuality</a></b> ( QtMultimediaKit::EncodingQuality <i>quality</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#setResolution">setResolution</a></b> ( const QSize &amp; <i>resolution</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#setResolution-2">setResolution</a></b> ( int <i>width</i>, int <i>height</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qimageencodersettings.html#operator-not-eq">operator!=</a></b> ( const QImageEncoderSettings &amp; <i>other</i> ) const</td></tr>
@@ -68,7 +68,7 @@
 <p>Identifies if a image encoder settings object is uninitalized.</p>
 <p>Returns true if the settings are null, and false if they are not.</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/quality"></a>
-<h3 class="fn"><a name="quality"></a><a href="qtmediaservices.html#EncodingQuality-enum">QtMediaServices::EncodingQuality</a> QImageEncoderSettings::quality () const</h3>
+<h3 class="fn"><a name="quality"></a><a href="qtmultimediakit.html#EncodingQuality-enum">QtMultimediaKit::EncodingQuality</a> QImageEncoderSettings::quality () const</h3>
 <p>Returns the image encoding quality.</p>
 <p>See also <a href="qimageencodersettings.html#setQuality">setQuality</a>().</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/resolution"></a>
@@ -80,7 +80,7 @@
 <p>Sets the image <i>codec</i>.</p>
 <p>See also <a href="qimageencodersettings.html#codec">codec</a>().</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/setQuality"></a>
-<h3 class="fn"><a name="setQuality"></a>void QImageEncoderSettings::setQuality ( <a href="qtmediaservices.html#EncodingQuality-enum">QtMediaServices::EncodingQuality</a> <i>quality</i> )</h3>
+<h3 class="fn"><a name="setQuality"></a>void QImageEncoderSettings::setQuality ( <a href="qtmultimediakit.html#EncodingQuality-enum">QtMultimediaKit::EncodingQuality</a> <i>quality</i> )</h3>
 <p>Sets the image encoding <i>quality</i>.</p>
 <p>See also <a href="qimageencodersettings.html#quality">quality</a>().</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/setResolution"></a>
@@ -94,17 +94,17 @@
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QImageEncoderSettings::operator!= ( const QImageEncoderSettings &amp; <i>other</i> ) const</h3>
 <p>Determines if <i>other</i> is of equal value to a image encoder settings object.</p>
-<p>Returns true if the settings objects are not of equal value, and true if they are of equal value.</p>
+<p>Returns true if the settings objects are not of equal value, and false if they are of equal value.</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QImageEncoderSettings &amp; QImageEncoderSettings::operator= ( const QImageEncoderSettings &amp; <i>other</i> )</h3>
 <p>Assigns the value of <i>other</i> to a image encoder settings object.</p>
 <a name="//apple_ref/cpp/instm/QImageEncoderSettings/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QImageEncoderSettings::operator== ( const QImageEncoderSettings &amp; <i>other</i> ) const</h3>
 <p>Determines if <i>other</i> is of equal value to a image encoder settings object.</p>
-<p>Returns true if the settings objects are of equal value, and true if they are not of equal value.</p>
+<p>Returns true if the settings objects are of equal value, and false if they are not of equal value.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

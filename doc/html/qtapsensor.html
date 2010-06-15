@@ -65,7 +65,8 @@
 <h2>Property Documentation</h2>
 <h3 class="fn"><a name="returnDoubleTapEvents-prop"></a>returnDoubleTapEvents : const bool</h3>
 <p>This property holds a value indicating if double tap events should be reported.</p>
-<p>Set to true (the default) to have the sensor report on double tap events. Set to false to have the sensor report on individual tap events.</p>
+<p>Set to true (the default) to have the sensor report only on double tap events. Set to false to have the sensor report only on individual tap events.</p>
+<p>It is not possible to have the sensor report both single and double tap events. If both are needed the app should create 2 sensor objects.</p>
 <p>Note that you must access this property via <a href="http://qt.nokia.com/doc/4.6/qobject.html#property">QObject::property</a>() and <a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">QObject::setProperty</a>(). The property must be set before calling <a href="qsensor.html#start">start</a>().</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -81,7 +82,7 @@
 <p>See also <a href="qsensor.html#reading-prop">QSensor::reading</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

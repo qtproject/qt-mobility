@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -56,15 +56,16 @@ class tst_QVCard21Writer : public QObject
      Q_OBJECT
 
 private slots: // Tests
-
+#ifdef QT_BUILD_INTERNAL
     void init();
     void cleanup();
-
     void testEncodeVersitProperty();
     void testEncodeVersitProperty_data();
     void testEncodeParameters();
     void testEncodeGroupsAndName();
     void testQuotedPrintableEncode();
+#endif
+
 private: // Data
     QVCard21Writer* mWriter;
 };

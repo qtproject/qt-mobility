@@ -174,6 +174,7 @@
 <h3 class="fn"><a name="removeDetail"></a>bool QContact::removeDetail ( <a href="qcontactdetail.html">QContactDetail</a> * <i>detail</i> )</h3>
 <p>Removes the <i>detail</i> from the contact.</p>
 <p>The detail in the contact which has the same key as that of the given <i>detail</i> will be removed if it exists. Only the key is used for comparison - that is, the information in the detail may be different.</p>
+<p>Be aware that if a contact is retrieved (or reloaded) from the backend, the keys of any details it contains may have been changed by the backend, or other threads may have modified the contact details in the backend. Therefore, clients should reload the detail that they wish to remove from a contact after retrieving the contact, in order to ensure that the remove operation is successful.</p>
 <p>If the detail's access constraint includes <tt>QContactDetail::Irremovable</tt>, this function will return false.</p>
 <p>Returns true if the detail was removed successfully, false if an error occurred.</p>
 <p>Note that the caller retains ownership of the detail.</p>
@@ -183,6 +184,7 @@
 <p>If the detail's access constraint includes <tt>QContactDetail::ReadOnly</tt>, this function will return true and save the detail in the contact, however attempting to save the contact in a manager may fail (if that manager decides that the read only detail should not be updated). Details with the <tt>QContactDetail::ReadOnly</tt> constraint set are typically provided in a contact by the manager, and are usually information that is either synthesized, or not intended to be changed by the user (e.g&#x2e; presence information for other contacts).</p>
 <p>If <i>detail</i> is a <a href="qcontacttype.html">QContactType</a>, the existing contact type will be overwritten with <i>detail</i>. There is never more than one contact type in a contact.</p>
 <p>If <i>detail</i> is a <a href="qcontactdisplaylabel.html">QContactDisplayLabel</a>, the contact will not be updated, and the function will return false. Since the display label formatting is specific to each manager, use the <a href="qcontactmanager.html#synthesizeContactDisplayLabel">QContactManager::synthesizeContactDisplayLabel</a>() function instead.</p>
+<p>Be aware that if a contact is retrieved (or reloaded) from the backend, the keys of any details it contains may have been changed by the backend, or other threads may have modified the contact details in the backend. Therefore, clients should reload the detail that they wish to save in a contact after retrieving the contact, in order to avoid creating unwanted duplicated details.</p>
 <p>Returns true if the detail was saved successfully, otherwise returns false.</p>
 <p>Note that the caller retains ownership of the detail.</p>
 <p>See also <a href="qcontactmanager.html#synthesizeContactDisplayLabel">QContactManager::synthesizeContactDisplayLabel</a>().</p>
@@ -213,7 +215,7 @@
 <p>Returns true if this contact is equal to the <i>other</i> contact, false if either the id or stored details are not the same</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

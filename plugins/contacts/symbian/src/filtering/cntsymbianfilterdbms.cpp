@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -148,6 +148,11 @@ QList<QContactLocalId> CntSymbianFilter::contacts(
         }
         // The resulting filter is handled with a recursive function call
         result = contacts(intersectionFilter, sortOrders, filterSupportedFlag, error);
+    } else if (filter == QContactFilter()) {
+        // Empty filter -> don't do any filtering and tell the caller to not
+        // to do any filtering either
+        filterSupportedFlag = true;
+        result = filterContacts(QContactInvalidFilter(), error);
     } else {
         FilterSupport filterSupport = filterSupportLevel(filter);
         if (filterSupport == Supported) {
@@ -283,7 +288,6 @@ CntAbstractContactFilter::FilterSupport CntSymbianFilter::filterSupportLevel(con
             }            
         // display label, this is a special case that contains several name
         // fields and company name
-        //TODO: "unnamed" display label is not supported currently
         } else if (defName == QContactDisplayLabel::DefinitionName) {
             
             if (matchFlags == QContactFilter::MatchStartsWith) {
@@ -327,7 +331,17 @@ QList<QContactLocalId> CntSymbianFilter::filterContacts(
             TRAP_IGNORE(getMatchLengthL(matchLength));
 
             TInt err = matchContacts(idArray, commPtr, matchLength);
-            if(err != KErrNone) {
+            if (err == KErrNone) {
+                // Phone number matching sometimes includes nonexisting contacts to
+                // the result for some reason. Remove them.
+                for (TInt i(0); i < idArray->Count(); ) {
+                    if(!contactExists((*idArray)[i])) {
+                        idArray->Remove(i);
+                    } else {
+                        i++;
+                    }
+                }
+            } else {
                 CntSymbianTransformError::transformError(err, error);
             }
         // Names, e-mail, display label (other flags)
@@ -411,6 +425,12 @@ bool CntSymbianFilter::isFalsePositive(const CContactItemFieldSet& fieldSet, con
             value = false;
     }
     return value;
+}
+
+bool CntSymbianFilter::contactExists(const TContactItemId &contactId)
+{
+    TRAPD(err, m_contactDatabase.ReadMinimalContactL(contactId));
+    return err == KErrNone;
 }
 
 /*!

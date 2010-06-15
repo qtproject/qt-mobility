@@ -11,7 +11,9 @@ symbian: {
     INCLUDEPATH += $$APP_LAYER_SYSTEMINCLUDE
     
     SOURCES  += tst_qcontactmanagersymbian.cpp
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = ReadUserData \
+                        WriteUserData
+
     LIBS += -lqtcontacts \
     		-lcntmodel
 

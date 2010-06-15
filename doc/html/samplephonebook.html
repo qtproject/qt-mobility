@@ -67,14 +67,14 @@
 <p>The example is not intended to be feature complete. Only a very limited subset of detail types are supported by the application. It exercises only a very small portion of the Qt Contacts API.</p>
 <p>In particular:</p>
 <ul>
-<li>The example only exercises the synchronous API of QtContacts. For most real applications, the asynchronous API is the preferred interface to use as it does not block the UI while a query is made to the contacts backend.</li>
+<li>The example only exercises the synchronous API of QtContacts. For most real applications, the asynchronous API is the preferred interface to use as it does not block the GUI while a query is made to the contacts backend.</li>
 <li>Detail subtypes and contexts are not supported by the interface.</li>
 <li>Duplicate contacts are not filtered out - importing the same contact twice results in two identical contacts appearing in the list. In a real application, more complex synchronization code may be required.</li>
 <li>Contact groups are not supported. The QtContacts API supports two methods of grouping contacts. One way is to use contacts of type <a href="qcontacttype.html#TypeGroup-var">TypeGroup</a>, along with the <a href="qcontactrelationship.html#HasMember-var">HasMember</a> <a href="qcontactrelationship.html">QContactRelationship</a>. The other way is to use the <a href="qcontacttag.html">QContactTag</a> detail by giving related contacts the same tag. A real application may support grouping via one or both of these methods.</li>
 </ul>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

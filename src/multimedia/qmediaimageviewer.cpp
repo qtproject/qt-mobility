@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,9 +44,10 @@
 #include "qmediaobject_p.h"
 #include "qmediaimageviewerservice_p.h"
 
-#include "qmediaplaylist.h"
-#include "qmediacontent.h"
-#include "qmediaresource.h"
+#include <qmediaplaylist.h>
+#include <qmediaplaylistsourcecontrol.h>
+#include <qmediacontent.h>
+#include <qmediaresource.h>
 
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qtextstream.h>
@@ -123,6 +124,8 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
 
     if (state != QMediaImageViewer::StoppedState)
         emit q_func()->stateChanged(state = QMediaImageViewer::StoppedState);
+
+    q_func()->setMedia(QMediaContent());
 }
 
 /*!
@@ -140,7 +143,7 @@ void QMediaImageViewerPrivate::_q_playlistDestroyed()
     viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
-    display->setMediaObject(viewer);
+    viewer->addVideoOutput(display);
     display->show();
     \endcode
 
@@ -203,7 +206,7 @@ QMediaImageViewer::QMediaImageViewer(QObject *parent)
     Q_D(QMediaImageViewer);
 
     d->viewerControl = qobject_cast<QMediaImageViewerControl*>(
-            d->service->control(QMediaImageViewerControl_iid));
+            d->service->requestControl(QMediaImageViewerControl_iid));
 
     connect(d->viewerControl, SIGNAL(mediaStatusChanged(QMediaImageViewer::MediaStatus)),
             this, SLOT(_q_mediaStatusChanged(QMediaImageViewer::MediaStatus)));
@@ -267,6 +270,14 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
 {
     Q_D(QMediaImageViewer);
 
+    if (d->playlist && d->playlist->currentMedia() != media) {
+        disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                   this, SLOT(_q_playlistMediaChanged(QMediaContent)));
+        disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+        d->playlist = 0;
+    }
+
     d->media = media;
 
     if (d->timer.isActive()) {
@@ -282,6 +293,29 @@ void QMediaImageViewer::setMedia(const QMediaContent &media)
     d->viewerControl->showMedia(d->media);
 
     emit mediaChanged(d->media);
+}
+
+void QMediaImageViewer::setPlaylist(QMediaPlaylist *playlist)
+{
+    Q_D(QMediaImageViewer);
+
+    if (d->playlist) {
+        disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                   this, SLOT(_q_playlistMediaChanged(QMediaContent)));
+        disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+    }
+
+    d->playlist = playlist;
+
+    if (d->playlist) {
+        connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
+                this, SLOT(_q_playlistMediaChanged(QMediaContent)));
+        connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
+
+        setMedia(d->playlist->currentMedia());
+    } else {
+        setMedia(QMediaContent());
+    }
 }
 
 /*!
@@ -349,21 +383,9 @@ int QMediaImageViewer::elapsedTime() const
 /*!
     \internal
 */
-void QMediaImageViewer::bind(QObject *object)
+bool QMediaImageViewer::bind(QObject *object)
 {
-    Q_D(QMediaImageViewer);
-
-    if (QMediaPlaylist *playlist = qobject_cast<QMediaPlaylist *>(object)) {
-        if (d->playlist) {
-            qWarning("QMediaImageViewer::bind(): already bound to a playlist, detaching the current one");
-            d->playlist->setMediaObject(0);
-        }
-        d->playlist = playlist;
-
-        connect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
-                this, SLOT(_q_playlistMediaChanged(QMediaContent)));
-        connect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
-    }
+    return QMediaObject::bind(object);
 }
 
 /*!
@@ -371,16 +393,7 @@ void QMediaImageViewer::bind(QObject *object)
  */
 void QMediaImageViewer::unbind(QObject *object)
 {
-    Q_D(QMediaImageViewer);
-
-    if (object == d->playlist) {
-        disconnect(d->playlist, SIGNAL(currentMediaChanged(QMediaContent)),
-                   this, SLOT(_q_playlistMediaChanged(QMediaContent)));
-        disconnect(d->playlist, SIGNAL(destroyed()), this, SLOT(_q_playlistDestroyed()));
-
-        d->playlist = 0;
-        setMedia(QMediaContent());
-    }
+    QMediaObject::unbind(object);
 }
 
 /*!

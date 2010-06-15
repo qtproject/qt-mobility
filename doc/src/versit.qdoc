@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,8 +50,8 @@
 
 \section1 Namespace
 
-The QtMobility API's are placed into the \i{QtMobility} namespace. This is done
-to facilitate the future migration of Mobility API's into Qt. See the
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
 \l {Quickstart Example}{Quickstart guide} for an example on how the
 namespace impacts on application development.
 
@@ -71,7 +71,7 @@ Versit \reg is a trademark of the Internet Mail Consortium.
 \section1 Usage
 \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Complete example
 
-\section1 Classes
+\section1 Main Classes
 \list
     \o \l{QVersitProperty}
     \o \l{QVersitDocument}    
@@ -80,12 +80,4 @@ Versit \reg is a trademark of the Internet Mail Consortium.
     \o \l{QVersitContactImporter}
     \o \l{QVersitContactExporter}
 \endlist
-
-\section1 Mapping the vCard constants
-
-vCard properties are mapped to QContactDetails as follows:
-\snippet ../../src/versit/qversitdefs_p.h Property name mappings
-
-vCard type parameters are mapped to subtypes in QContactDetails as follows:
-\snippet ../../src/versit/qversitdefs_p.h Property type parameter mappings
 */

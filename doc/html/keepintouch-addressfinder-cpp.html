@@ -15,7 +15,7 @@
 </h1>
 <pre><span class="comment">    /****************************************************************************
     **
-    ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
     ** All rights reserved.
     ** Contact: Nokia Corporation (qt-info@nokia.com)
     **
@@ -352,9 +352,21 @@
             tabChanged(1);
     #endif
 
-            if (contactList-&gt;currentItem()) {
+            if (
+    #ifdef USE_CONTACTS_COMBOBOX
+                    contactList-&gt;currentIndex() != -1
+    #else
+                    contactList-&gt;currentItem()
+    #endif
+                    ) {
                 <span class="comment">// Select the first address automatically</span>
-                addressSelected(contactList-&gt;currentItem()-&gt;text());
+                addressSelected(
+    #ifdef USE_CONTACTS_COMBOBOX
+                        contactList-&gt;currentText()
+    #else
+                        contactList-&gt;currentItem()-&gt;text()
+    #endif
+                        );
             }
         }
     }
@@ -404,16 +416,15 @@
         filterLayout-&gt;setContentsMargins(0, spacingHack, 0, 0);
     #endif
 
-        QLabel *includeLabel = new QLabel(tr(&quot;Contacted this&quot;));
+        QLabel *includeLabel = new QLabel(tr(&quot;Contacted in the last&quot;));
         filterLayout-&gt;addWidget(includeLabel, 0, 0);
         filterLayout-&gt;setAlignment(includeLabel, Qt::AlignRight);
 
-        excludeCheckBox = new QCheckBox(tr(&quot;But not last&quot;));
+        excludeCheckBox = new QCheckBox(tr(&quot;But not in the last&quot;));
     #ifdef Q_WS_MAEMO_5
         <span class="comment">// Maemo 5 style cuts off check box text.</span>
         excludeCheckBox-&gt;setText(excludeCheckBox-&gt;text() + &quot;  &quot;);
     #endif
-        excludeCheckBox-&gt;setCheckState(Qt::Checked);
         connect(excludeCheckBox, SIGNAL(stateChanged(int)), this, SLOT(excludePeriodEnabled(int)));
         filterLayout-&gt;addWidget(excludeCheckBox, 1, 0);
         filterLayout-&gt;setAlignment(excludeCheckBox, Qt::AlignRight);
@@ -432,6 +443,7 @@
         excludePeriod = new QComboBox;
         excludePeriod-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         filterLayout-&gt;addWidget(excludePeriod, 1, 1);
+        excludePeriod-&gt;setEnabled(false);
 
     #ifdef USE_SEARCH_BUTTON
         searchButton = new QPushButton(tr(&quot;Search&quot;));
@@ -440,8 +452,13 @@
         filterLayout-&gt;addWidget(searchButton, 2, 1);
     #endif
 
+    #ifdef USE_CONTACTS_COMBOBOX
+        contactList = new QComboBox(this);
+        connect(contactList, SIGNAL(currentIndexChanged(QString)), this, SLOT(addressSelected(QString)));
+    #else
         contactList = new QListWidget(this);
         connect(contactList, SIGNAL(currentTextChanged(QString)), this, SLOT(addressSelected(QString)));
+    #endif
 
     #ifndef USE_SEARCH_BUTTON
         QWidget* resultsWidget = new QWidget(this);
@@ -542,7 +559,13 @@
         int index = messageCombo-&gt;currentIndex();
         if (index != -1) {
             <span class="comment">// Find the address currently selected</span>
-            const QString &amp;selectedAddress(addressList[contactList-&gt;currentRow()]);
+            const QString &amp;selectedAddress(addressList[
+    #ifdef USE_CONTACTS_COMBOBOX
+                    contactList-&gt;currentIndex()
+    #else
+                    contactList-&gt;currentRow()
+    #endif
+                    ]);
 
             <span class="comment">// Show the message selected</span>
             QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);
@@ -555,7 +578,13 @@
         int index = messageCombo-&gt;currentIndex();
         if (index != -1) {
             <span class="comment">// Find the address currently selected</span>
-            const QString &amp;selectedAddress(addressList[contactList-&gt;currentRow()]);
+            const QString &amp;selectedAddress(addressList[
+    #ifdef USE_CONTACTS_COMBOBOX
+                    contactList-&gt;currentIndex()
+    #else
+                    contactList-&gt;currentRow()
+    #endif
+                    ]);
 
             <span class="comment">// Find the selected message</span>
             QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);
@@ -569,7 +598,7 @@
     }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,12 +50,6 @@ Q_DECLARE_METATYPE(QServiceInterfaceDescriptor)
 ServiceBrowser::ServiceBrowser(QWidget *parent, Qt::WindowFlags flags)
     : QWidget(parent, flags)
 {
-#if defined(Q_OS_MAC)
-    QDir dir(QCoreApplication::applicationDirPath());
-    dir.cdUp();
-    dir.cd("PlugIns");
-    QCoreApplication::addLibraryPath(dir.absolutePath());
-#endif
     serviceManager = new QServiceManager(this);
 
     registerExampleServices();
@@ -198,7 +192,7 @@ void ServiceBrowser::registerExampleServices()
     QStringList exampleXmlFiles;
     exampleXmlFiles << "filemanagerservice.xml" << "bluetoothtransferservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         serviceManager->addService(path);
     }
 }

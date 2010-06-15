@@ -14,22 +14,12 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Declarative Service Framework Notes Manager<br /><span class="subtitle"></span>
 </h1>
-<p>Files:</p>
-<ul>
-<li><a href="declarative-sfw-notes-qdeclarativeservice-cpp.html">declarative-sfw-notes/qdeclarativeservice.cpp</a></li>
-<li><a href="declarative-sfw-notes-qdeclarativeservice-h.html">declarative-sfw-notes/qdeclarativeservice.h</a></li>
-<li><a href="declarative-sfw-notes-sfwnotes-cpp.html">declarative-sfw-notes/sfwnotes.cpp</a></li>
-<li><a href="declarative-sfw-notes-sfwnotes-h.html">declarative-sfw-notes/sfwnotes.h</a></li>
-<li><a href="declarative-sfw-notes-main-cpp.html">declarative-sfw-notes/main.cpp</a></li>
-<li><a href="declarative-sfw-notes-declarative-sfw-notes-pro.html">declarative-sfw-notes/declarative-sfw-notes.pro</a></li>
-<li><a href="declarative-sfw-notes-sfwnotes-qrc.html">declarative-sfw-notes/sfwnotes.qrc</a></li>
-</ul>
-<p>This example demonstrates how to use the <a href="notesmanagerplugin.html">Notes Manager service plugin</a> to implement a notes managing application with QML as the declarative user-interface. There is also a non-QML counterpart which demonstrates an identical application using standard Qt user-interface tool. See <a href="sfw-notes.html">Service Framework Notes Manager</a> for more details.</p>
+<p>This example demonstrates how to use the <a href="notesmanagerplugin.html">Notes Manager service plugin</a> to implement a notes managing application with QML as the declarative user-interface. There is also a non-QML counterpart which demonstrates an identical application using standard Qt user-interface tools. See <a href="sfw-notes.html">Service Framework Notes Manager</a> for more details.</p>
 <p><b>Explanation</b></p>
-<p>In general, QML requires external types and registrations to be provided via a plugin-based system, which the service framework does not currently provide. Instead, we have a wrapper class which provides access to the <a href="qservicemanager.html">QServiceManager</a> and <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> API that needs to be included in the project and declared in the main funciton of the application. The wrapper is referred to as QDeclarativeService.</p>
-<p>This example demonstrates how QML can be used to completely control the logic of the application, using a combination of declarative elements and Javascript in the QML file. The main function is used to produce an application binary but once service framework supports a QML plugin, only the QML file will be needed. Also contained is a class that registers our Notes Manager service to supply the plugin library, which can also be done using the servicefw tool.</p>
-<p>There is another service framework example that demonstrates how to use the wrapper to browse a list of services to select for dialing usage. See <a href="declarative-sfw-dialer.html">Declarative Service Framework Dialer</a> for a detailed explanation.</p>
-<p>The secion belows explains how QML can be used to emulate to exact functionality of the alternate Qt/C++ example.</p>
+<p>The <a href="qservicemanager.html">QServiceManager</a> and <a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a> API are provided to QML through the use of a plugin-based system. The resulting class is referred to as QDeclarativeService, which provides users with the ability of accessing services by loading the interfaces specified using the QML element 'Service'.</p>
+<p>This example demonstrates how QML can be used to completely control the logic of the application, using a combination of declarative elements and Javascript in the QML file. To run the application refer to the README file supplied which includes instructions on how to setup and run the QML file demonstrating service framework capabilities.</p>
+<p>There is also another service framework example that demonstrates how to use the QML library plugin browse a list of services to select for dialing usage. See <a href="declarative-sfw-dialer.html">Declarative Service Framework Dialer</a> for a detailed explanation.</p>
+<p>The section below explains how QML can be used to emulate to exact functionality of the alternate Qt/C++ example.</p>
 <p><b>QML File</b></p>
 <p>The very first step is to import our registered types with the following:</p>
 <pre>    import QtMobility.serviceframework 1.0</pre>
@@ -38,8 +28,8 @@
             id: notesService
             interfaceName: &quot;com.nokia.qt.examples.NotesManager&quot;
         }</pre>
-<p>In most cases we will need the service to be avaiable to all parts of the QML file, meaning the actual <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> returned from the service wrapper needs to be a global property.</p>
-<pre>        property var notesManager: notesService.serviceObject</pre>
+<p>In most cases we will need the service to be available to all parts of the QML file, meaning the actual <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> returned from the service wrapper needs to be a global property.</p>
+<pre>        property variant notesManager: notesService.serviceObject</pre>
 <p>The interfaceName property of the Service item has READ and WRITE methods which can be used to obtain a new service instance and check if there was a valid default service.</p>
 <pre>                notesService.interfaceName = input;
 
@@ -59,7 +49,7 @@
             }</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>

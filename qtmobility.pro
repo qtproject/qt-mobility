@@ -1,17 +1,4 @@
-
-#This is a temporary workaround for internal Symbian builds
-#QT_MAJOR_VERSION et al are not set
-symbian {
-    isEmpty(QT_MAJOR_VERSION)  {
-         exists($${EPOCROOT}epoc32/data/z/system/install/Series60v5.2.sis) {
-           QT_MAJOR_VERSION=4;
-           QT_MINOR_VERSION=6;
-           QT_PATCH_VERSION=0;
-        }
-    }
-}
-
-# config.pri specifies the configure options
+# config.pri specifies the configure options and is pulled in via staticconfig.pri
 include(staticconfig.pri)
 !include($$QT_MOBILITY_BUILD_TREE/config.pri) {
     error("Please run configure script");
@@ -56,17 +43,25 @@ contains(QT_MAJOR_VERSION, 4):lessThan(QT_MINOR_VERSION, 6) {
     win32:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
     symbian:system(type $${QT_MOBILITY_SOURCE_TREE}\features\mobility.prf.template >> $$PRF_OUTPUT)
 
+    PRF_CONFIG=$${QT_MOBILITY_BUILD_TREE}/features/mobilityconfig.prf
+    system(echo MOBILITY_CONFIG=$${mobility_modules} > $$PRF_CONFIG)
+
     #symbian does not generate make install rule. we have to copy prf manually 
     symbian {
         FORMATDIR=$$[QT_INSTALL_DATA]\mkspecs\features
         FORMATDIR=$$replace(FORMATDIR,/,\\ )
         system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobility.prf $$FORMATDIR")
+        system(copy "$${QT_MOBILITY_BUILD_TREE}\features\mobilityconfig.prf $$FORMATDIR")
     }
+
+    # install config file
+    config.path = $$[QT_INSTALL_DATA]/mkspecs/features
+    config.files = $$QT_MOBILITY_BUILD_TREE/features/mobilityconfig.prf
 
     # install feature file
     feature.path = $$[QT_INSTALL_DATA]/mkspecs/features
     feature.files = $$QT_MOBILITY_BUILD_TREE/features/mobility.prf
-    INSTALLS += feature
+    INSTALLS += feature config
 }
 
 TEMPLATE = subdirs
@@ -90,45 +85,93 @@ contains(build_docs, yes) {
 
 contains(build_unit_tests, yes):SUBDIRS+=tests
 contains(build_examples, yes):SUBDIRS+=examples
+contains(build_docs, yes):SUBDIRS+=demos
+
+#updating and deployment of translations requires Qt 4.6.3/qtPrepareTool
+!symbian:defined(qtPrepareTool):SUBDIRS += translations
 
 # install Qt style headers
-qtmheaders.path = $${QT_MOBILITY_INCLUDE}
 
 !symbian {
-    qtmheaders.files = $${QT_MOBILITY_BUILD_TREE}/include/QtmBearer/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmContacts/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmLocation/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmMessaging/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmMedia/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmPubSub/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmServiceFramework/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmVersit/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmSystemInfo/* \
-                         $${QT_MOBILITY_BUILD_TREE}/include/QtmSensors/*
-    INSTALLS += qtmheaders
+    contains(mobility_modules,bearer) {
+        qtmheadersbearer.path = $${QT_MOBILITY_INCLUDE}/QtBearer
+        qtmheadersbearer.files = $${QT_MOBILITY_BUILD_TREE}/include/QtBearer/*
+        INSTALLS += qtmheadersbearer
+    }
+
+    contains(mobility_modules,contacts) {
+        qtmheaderscontacts.path = $${QT_MOBILITY_INCLUDE}/QtContacts
+        qtmheaderscontacts.files = $${QT_MOBILITY_BUILD_TREE}/include/QtContacts/*
+        INSTALLS += qtmheaderscontacts
+    }
+
+    contains(mobility_modules,location) {
+        qtmheaderslocation.path = $${QT_MOBILITY_INCLUDE}/QtLocation
+        qtmheaderslocation.files = $${QT_MOBILITY_BUILD_TREE}/include/QtLocation/*
+        INSTALLS += qtmheaderslocation
+    }
+
+    contains(mobility_modules,messaging) {
+        qtmheadersmessaging.path = $${QT_MOBILITY_INCLUDE}/QtMessaging
+        qtmheadersmessaging.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMessaging/*
+        INSTALLS += qtmheadersmessaging
+    }
+
+    contains(mobility_modules,multimedia) {
+        qtmheadersmultimedia.path = $${QT_MOBILITY_INCLUDE}/QtMultimediaKit
+        qtmheadersmultimedia.files = $${QT_MOBILITY_BUILD_TREE}/include/QtMultimediaKit/*
+        INSTALLS += qtmheadersmultimedia
+    }
+
+    contains(mobility_modules,publishsubscribe) {
+        qtmheaderspubsub.path = $${QT_MOBILITY_INCLUDE}/QtPublishSubscribe
+        qtmheaderspubsub.files = $${QT_MOBILITY_BUILD_TREE}/include/QtPublishSubscribe/*
+        INSTALLS += qtmheaderspubsub
+    }
+
+    contains(mobility_modules,serviceframework) {
+        qtmheaderssfw.path = $${QT_MOBILITY_INCLUDE}/QtServiceFramework
+        qtmheaderssfw.files = $${QT_MOBILITY_BUILD_TREE}/include/QtServiceFramework/*
+        INSTALLS += qtmheaderssfw
+    }
+
+    contains(mobility_modules,versit) {
+        qtmheadersversit.path = $${QT_MOBILITY_INCLUDE}/QtVersit
+        qtmheadersversit.files = $${QT_MOBILITY_BUILD_TREE}/include/QtVersit/*
+        INSTALLS += qtmheadersversit
+    }
+
+    contains(mobility_modules,systeminfo) {
+        qtmheaderssysteminfo.path = $${QT_MOBILITY_INCLUDE}/QtSystemInfo
+        qtmheaderssysteminfo.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSystemInfo/*
+        INSTALLS += qtmheaderssysteminfo
+    }
+
+    contains(mobility_modules,systeminfo) {
+        qtmheaderssysteminfo.path = $${QT_MOBILITY_INCLUDE}/QtSystemInfo
+        qtmheaderssysteminfo.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSystemInfo/*
+        INSTALLS += qtmheaderssysteminfo
+    }
+
+    contains(mobility_modules,sensors) {
+        qtmheaderssensors.path = $${QT_MOBILITY_INCLUDE}/QtSensors
+        qtmheaderssensors.files = $${QT_MOBILITY_BUILD_TREE}/include/QtSensors/*
+        INSTALLS += qtmheaderssensors
+    }
 } else {
+    #absolute path does not work and 
+    #include <QtMyLibrary/class.h> style does not work either
+    qtmAppHeaders = include/QtContacts/* \
+                          include/QtVersit/*
 
-#    Can we assume the path exists?
-#    paths = $$MW_LAYER_PUBLIC_EXPORT_PATH("") \
-#            $$APP_LAYER_PUBLIC_EXPORT_PATH("")
-#    for(i, paths) {
-#        exportPath=$$EPOCROOT"."$$dirname($$i)
-#        nativePath=$$replace(exportPath, /,\)
-#        !exists($$nativePath):system($$QMAKE_MKDIR $$nativePath)
-#    }
-
-    #absolute path does not work and so is shadow building for Symbian
-    qtmAppHeaders = include/QtmContacts/* \
-                          include/QtmVersit/*
-
-    qtmMwHeaders = include/QtmBearer/* \
-                       include/QtmLocation/* \
-                       include/QtmMessaging/* \
-                       include/QtmMedia/* \
-                       include/QtmPubSub/* \
-                       include/QtmServiceFramework/* \
-                       include/QtmSystemInfo/* \
-                       include/QtmSensors/*
+    qtmMwHeaders = include/QtBearer/* \
+                       include/QtLocation/* \
+                       include/QtMessaging/* \
+                       include/QtMultimediaKit/* \
+                       include/QtPublishSubscribe/* \
+                       include/QtServiceFramework/* \
+                       include/QtSystemInfo/* \
+                       include/QtSensors/*
 
     contains(mobility_modules,contacts|versit) {
         for(api, qtmAppHeaders) {

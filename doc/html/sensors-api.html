@@ -14,7 +14,6 @@
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Sensors API<br /><span class="subtitle"></span>
 </h1>
-<p><b>Warning:</b> This API should be considered in a beta state. It is under development and subject to change.</p>
 <p>The Sensors API provides access to sensors.</p>
 <p>This covers both high-level sensors such as screen orientation (portrait, landscape) and low-level, real-time sensors such as accelerometer data.</p>
 <ul><li><a href="#namespace">Namespace</a></li>
@@ -30,16 +29,18 @@
 </ul>
 <a name="namespace"></a>
 <h3>Namespace</h3>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="sensor-types"></a>
 <h3>Sensor Types</h3>
 <p>On a device there can be many types of sensors. Not all of the types that the Sensors API supports may be available. There may also be types available that are not defined in the Sensors API. You can find the sensor types available on a device using the <a href="qsensor.html#sensorTypes">QSensor::sensorTypes</a>() function.</p>
 <p>For a list of built-in sensor types, see the <a href="preview.html#sensor-classes">Sensor Classes</a> section below.</p>
 <a name="common-conventions"></a>
 <h3>Common Conventions</h3>
-<p>Unless otherwise specified, sensors shall use the <a href="http://en.wikipedia.org/wiki/Cartesian_coordinate_system">Right Hand Cartesian coordinate system</a>. An example of how the axes are arranged on a phone is included below.</p>
-<p align="center"><img src="images/axes.png" /></p><p>In general, sensor data is not reoriented to match the UI. Some specific sensors may reorient data to match the UI but most sensors will not do this.</p>
-<a name="using-a-sensor"></a>
+<p>Unless otherwise specified, sensors shall use the <a href="http://en.wikipedia.org/wiki/Cartesian_coordinate_system">Right Hand Cartesian coordinate system</a>.</p>
+<p align="center"><img src="images/sensors-coordinates.jpg" /></p><p>To allow for measurements in all 6 directions, negative values are used.</p>
+<p align="center"><img src="images/sensors-coordinates2.jpg" /></p><p>Where rotation around an axis is used, the rotation shall be expressed as a Right Hand rotation.</p>
+<p align="center"><img src="images/sensors-coordinates3.jpg" /></p><p>In general, sensor data is oriented to the top of the device. If values are to be displayed on the screen the values may need to be transformed so that they match the user interface orientation. A sensor may define its data as being oriented to the UI. This will be noted in the documentation for the sensor.</p>
+<p align="center"><img src="images/sensors-sides2.jpg" /></p><a name="using-a-sensor"></a>
 <h3>Using a Sensor</h3>
 <p>The life cycle of a sensor is typically:</p>
 <ul>
@@ -128,7 +129,7 @@
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
 <td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
