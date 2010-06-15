@@ -13,7 +13,7 @@ INCLUDEPATH += $$SOURCE_DIR/src/feedback
 
 target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
 INSTALLS+=target
-LIBS += -lImmVibe -lQtFeedback
+LIBS += -limmvibe -lQtFeedback
 CONFIG += mobility
 MOBILITY = feedback
 
