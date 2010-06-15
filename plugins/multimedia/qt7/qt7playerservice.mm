@@ -84,6 +84,7 @@ QMediaControl *QT7PlayerService::requestControl(const char *name)
     if (qstrcmp(name, QMetaDataReaderControl_iid) == 0)
         return m_playerMetaDataControl;
 
+#ifndef QT_NO_OPENGL
     if (!m_videoOutput) {
         if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
 #if defined(QT_MAC_USE_COCOA)
@@ -111,6 +112,7 @@ QMediaControl *QT7PlayerService::requestControl(const char *name)
             return m_videoOutput;
         }
     }
+#endif // !defined(QT_NO_OPENGL)
 
     return 0;
 }

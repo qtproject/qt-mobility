@@ -46,9 +46,11 @@
 
 #include <QtCore/QString>
 
+#ifndef Q_WS_SIMULATOR
 #ifndef Q_WS_MAC64
 #define QUICKTIME_C_API_AVAILABLE
 #endif
+#endif // !defined(Q_WS_SIMULATOR)
 
 QT_BEGIN_NAMESPACE
 
