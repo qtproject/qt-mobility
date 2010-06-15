@@ -610,7 +610,7 @@ void TestFiltering::testContactDetailFilter_2()
     sortOrder.append(sortOrderLastName);
     
     QContactDetailFilter cdf1;
-    cdf1.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::SubTypeSip);
+    cdf1.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldAccountUri);
     cdf1.setValue("sip");
     cdf1.setMatchFlags(QContactFilter::MatchStartsWith);
     cnt_ids = m_engine->contactIds(cdf1, sortOrder, &error);
@@ -620,7 +620,7 @@ void TestFiltering::testContactDetailFilter_2()
     QVERIFY(expectedCount == seachedcontactcount);
     
     QContactDetailFilter cdf2;
-    cdf2.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::SubTypeSipVoip);
+    cdf2.setDetailDefinitionName(QContactOnlineAccount::DefinitionName, QContactOnlineAccount::FieldAccountUri);
     cdf2.setValue("voip");
     cdf2.setMatchFlags(QContactFilter::MatchStartsWith);
     cnt_ids = m_engine->contactIds(cdf2, sortOrder, &error);
