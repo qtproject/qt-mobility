@@ -59,14 +59,15 @@ class QTelephonyCallInfoWrapper : public QObject {
 
 public:
     enum CallType {
-        UnknownType = QTelephonyCallInfo::UnknownType,
-        VOIP = QTelephonyCallInfo::VOIP,
+        Unknown = QTelephonyCallInfo::Unknown,
+        Any = QTelephonyCallInfo::Any,
+        Voip = QTelephonyCallInfo::Voip,
         Voice = QTelephonyCallInfo::Voice,
         Video = QTelephonyCallInfo::Video
     };
 
     enum CallStatus {
-        UnknownStatus = QTelephonyCallInfo::UnknownStatus,
+        Undefined = QTelephonyCallInfo::Undefined,
         NoCall = QTelephonyCallInfo::NoCall,
         Ringing = QTelephonyCallInfo::Ringing,
         InProgress = QTelephonyCallInfo::InProgress,

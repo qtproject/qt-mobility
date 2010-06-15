@@ -53,7 +53,7 @@
     This enum type is used to describe the status of a call.
     A QTelephonyCallInfoWrapper object can have a status of:
 
-    \value UnknownStatus The call status is not defined.
+    \value Undefined     The call status is not defined.
     \value NoCall        The status of the call is not active.
     \value Ringing       The status of the call is ringing.
     \value InProgress    The status of the call is in progress.
@@ -67,8 +67,9 @@
     This enum decribes the type of the call.
     A QTelephonyCallInfoWrapper object can be a type of:
 
-    \value UnknownType The call type is not defined.
-    \value VOIP        The call is a VOIP call.
+    \value Unknown     The call type is not defined.
+    \value Any         The call type can be any type.
+    \value Voip        The call is a Voip call.
     \value Voice       The call is a Voice call.
     \value Video       The call is a Video call.
 */
