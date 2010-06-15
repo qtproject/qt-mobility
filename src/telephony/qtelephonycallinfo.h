@@ -79,6 +79,7 @@ public:
     QString callIdentifier() const;
     QList< quint32 > contacts() const;
     CallType type() const;
+    QString subTyp() const;
     CallStatus status() const;
     QVariant value(const QString& param) const;
 

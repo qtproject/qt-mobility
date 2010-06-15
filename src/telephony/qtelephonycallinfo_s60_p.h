@@ -73,6 +73,7 @@ public:
     QString callIdentifier() const;
     QList<quint32> contacts() const;
     QTelephonyCallInfo::CallType type() const;
+    QString subTyp() const;
     QTelephonyCallInfo::CallStatus status() const;
     QVariant value(const QString& param) const;
 };

@@ -73,6 +73,11 @@ QTelephonyCallInfo::CallType QTelephonyCallInfoPrivate::type() const
     return QTelephonyCallInfo::Unknown;
 }
 
+QString QTelephonyCallInfoPrivate::subTyp() const
+{
+    return QString();
+}
+
 QTelephonyCallInfo::CallStatus QTelephonyCallInfoPrivate::status() const
 {
     return QTelephonyCallInfo::Undefined;

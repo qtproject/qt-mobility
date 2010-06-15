@@ -2988,6 +2988,7 @@
             <keyword name="callIdentifier" id="QTelephonyCallInfo::callIdentifier" ref="qtelephonycallinfo.html#callIdentifier"/>
             <keyword name="contacts" id="QTelephonyCallInfo::contacts" ref="qtelephonycallinfo.html#contacts"/>
             <keyword name="status" id="QTelephonyCallInfo::status" ref="qtelephonycallinfo.html#status"/>
+            <keyword name="subTyp" id="QTelephonyCallInfo::subTyp" ref="qtelephonycallinfo.html#subTyp"/>
             <keyword name="type" id="QTelephonyCallInfo::type" ref="qtelephonycallinfo.html#type"/>
             <keyword name="value" id="QTelephonyCallInfo::value" ref="qtelephonycallinfo.html#value"/>
             <keyword name="~QTelephonyCallInfo" id="QTelephonyCallInfo::~QTelephonyCallInfo" ref="qtelephonycallinfo.html#dtor.QTelephonyCallInfo"/>
