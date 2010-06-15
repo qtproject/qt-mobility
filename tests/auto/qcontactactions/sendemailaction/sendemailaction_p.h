@@ -54,6 +54,7 @@
 //
 
 #include "qcontactaction.h"
+#include "qcontactactionfactory.h"
 
 #include "qserviceinterfacedescriptor.h"
 #include "qserviceplugininterface.h"
@@ -78,6 +79,21 @@ public:
                             QAbstractSecuritySession* session);
 };
 
+class QContactSendEmailActionFactory : public QContactActionFactory
+{
+    Q_OBJECT
+
+public:
+    ~QContactSendEmailActionFactory();
+    QContactAction* create() const;
+
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
+    QContactFilter contactFilter() const;
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
+
+    bool supportsContact(const QContact& contact) const;
+};
+
 class QContactSendEmailAction : public QContactAction
 {
     Q_OBJECT
@@ -86,12 +102,6 @@ public:
     QContactSendEmailAction(QObject* parent = 0);
     ~QContactSendEmailAction();
 
-    QContactActionDescriptor actionDescriptor() const;
-    QVariantMap metaData() const;
-
-    QContactFilter contactFilter(const QVariant& value) const;
-    bool isTargetSupported(const QContactActionTarget& target) const;
-    QList<QContactDetail> supportedDetails(const QContact& contact) const;
     bool invokeAction(const QContactActionTarget& target, const QVariantMap& params = QVariantMap());
     bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& params = QVariantMap());
     QVariantMap results() const;
@@ -99,6 +109,9 @@ public:
 
 private slots:
     void performAction();
+
+private:
+    bool isTargetSupported(const QContactActionTarget &target) const;
 };
 
 #endif

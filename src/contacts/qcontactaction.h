@@ -64,8 +64,6 @@ public:
     QContactAction(QObject *parent = 0) : QObject(parent) {}
     virtual ~QContactAction() = 0;
 
-    virtual QContactActionDescriptor actionDescriptor() const = 0;          // the descriptor which uniquely identifies this action
-
     /* Initiate the asynchronous action on the given list of contacts (and optionally, per-contact-details) with the given parameters */
     virtual bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) = 0;
 

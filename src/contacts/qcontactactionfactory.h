@@ -63,8 +63,8 @@ class Q_CONTACTS_EXPORT QContactActionFactory : public QObject
     Q_OBJECT
 
 public:
-    virtual ~QContactActionFactory() = 0;
-    virtual QContactAction* instance() const = 0;
+    virtual ~QContactActionFactory();
+    virtual QContactAction* create() const = 0;
 
     virtual QSet<QContactActionTarget> supportedTargets(const QContact& contact) const = 0;
     virtual QContactFilter contactFilter() const = 0;

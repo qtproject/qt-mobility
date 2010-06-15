@@ -60,6 +60,7 @@ class QContactActionDescriptorPrivate;
 class Q_CONTACTS_EXPORT QContactActionDescriptor
 {
 public:
+    QContactActionDescriptor();
     QContactActionDescriptor(const QContactActionDescriptor& other);
     QContactActionDescriptor& operator=(const QContactActionDescriptor& other);
     ~QContactActionDescriptor();
@@ -94,7 +95,7 @@ public:
     Q_DECLARE_LATIN1_CONSTANT(MetaDataSecondLabel, "SecondLabel");
 
 protected:
-    explicit QContactActionDescriptor(const QString& actionName = QString(), const QString& serviceName = QString(), int vendorVersion = -1, QContactActionFactory* factory = 0);
+    QContactActionDescriptor(const QString& actionName, const QString& serviceName, int vendorVersion, QContactActionFactory* factory);
 
 private:
     QSharedDataPointer<QContactActionDescriptorPrivate> d;

@@ -57,6 +57,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+ * Constructs a new, invalid action descriptor
+ */
+QContactActionDescriptor::QContactActionDescriptor()
+        : d(new QContactActionDescriptorPrivate(QString(), QString(), -1, 0))
+{
+}
+
+/*!
  * Constructs a new action descriptor for the implementation of the action identified by the given \a actionName
  * of the given implementation \a implementationVersion, as implemented by the service identified by the given \a serviceName
  */

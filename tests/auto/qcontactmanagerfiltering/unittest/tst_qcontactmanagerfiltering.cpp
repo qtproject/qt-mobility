@@ -2378,6 +2378,8 @@ void tst_QContactManagerFiltering::actionFiltering_data()
     QTest::addColumn<QString>("actionName");
     QTest::addColumn<QString>("expected");
 
+    QString es;
+
     for (int i = 0; i < managers.size(); i++) {
         QContactManager *manager = managers.at(i);
         QPair<QString, QString> booleanDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Bool");

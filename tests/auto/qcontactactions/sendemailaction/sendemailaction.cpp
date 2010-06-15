@@ -72,6 +72,23 @@ QObject* QContactSendEmailActionPlugin::createInstance(const QServiceInterfaceDe
 
 Q_EXPORT_PLUGIN2(contacts_sendemailaction, QContactSendEmailActionPlugin);
 
+
+
+QContactFilter QContactSendEmailActionFactory::contactFilter() const
+{
+    QContactDetailFilter retn;
+    retn.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
+    return retn;
+}
+
+QVariant QContactSendEmailActionFactory::metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters) const
+{
+    Q_UNUSED(key);
+    Q_UNUSED(targets);
+    Q_UNUSED(parameters);
+    return QVariant();
+}
+
 QContactSendEmailAction::QContactSendEmailAction(QObject* parent) : QContactAction(parent)
 {
 }
@@ -80,39 +97,12 @@ QContactSendEmailAction::~QContactSendEmailAction()
 {
 }
 
-QContactActionDescriptor QContactSendEmailAction::actionDescriptor() const
-{
-    QContactActionDescriptor ret;
-    ret.setActionName("SendEmail");
-    ret.setServiceName("tst_qcontactactions:sendemailaction");
-    ret.setImplementationVersion(1);
-    return ret;
-}
-
-QVariantMap QContactSendEmailAction::metaData() const
-{
-    return QVariantMap();
-}
-
-QContactFilter QContactSendEmailAction::contactFilter(const QVariant& value) const
-{
-    QContactDetailFilter retn;
-    retn.setDetailDefinitionName(QContactEmailAddress::DefinitionName, QContactEmailAddress::FieldEmailAddress);
-    retn.setValue(value);
-    return retn;
-}
-
 bool QContactSendEmailAction::isTargetSupported(const QContactActionTarget &target) const
 {
     QList<QContactDetail> dets = target.details();
     if (dets.size() != 1 || !target.isValid())
         return false;
     return (dets.at(0).definitionName() == QContactEmailAddress::DefinitionName);
-}
-
-QList<QContactDetail> QContactSendEmailAction::supportedDetails(const QContact& contact) const
-{
-    return contact.details(QContactEmailAddress::DefinitionName);
 }
 
 bool QContactSendEmailAction::invokeAction(const QContactActionTarget& target, const QVariantMap& )
