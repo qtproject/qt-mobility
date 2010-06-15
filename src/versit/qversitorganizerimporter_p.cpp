@@ -134,7 +134,7 @@ void QVersitOrganizerImporterPrivate::importProperty(
         }
     } else if (document.componentType() == QLatin1String("VTODO")) {
         if (property.name() == QLatin1String("DTSTART")) {
-            success = createNotBeforeDateTime(property, item, &updatedDetails);
+            success = createTodoStartDateTime(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("DUE")) {
             success = createDueDateTime(property, item, &updatedDetails);
         } else if (property.name() == QLatin1String("RRULE")
@@ -330,9 +330,9 @@ bool QVersitOrganizerImporterPrivate::createDuration(
     return true;
 }
 
-/*! Set the NotBeforeDateTime field of the TodoTimeRange detail.
+/*! Set the StartDateTime field of the TodoTimeRange detail.
  */
-bool QVersitOrganizerImporterPrivate::createNotBeforeDateTime(
+bool QVersitOrganizerImporterPrivate::createTodoStartDateTime(
         const QVersitProperty& property,
         QOrganizerItem* item,
         QList<QOrganizerItemDetail>* updatedDetails) {
@@ -342,7 +342,7 @@ bool QVersitOrganizerImporterPrivate::createNotBeforeDateTime(
     if (!newStart.isValid())
         return false;
     QOrganizerTodoTimeRange ttr(item->detail<QOrganizerTodoTimeRange>());
-    ttr.setNotBeforeDateTime(newStart);
+    ttr.setStartDateTime(newStart);
     updatedDetails->append(ttr);
     return true;
 }

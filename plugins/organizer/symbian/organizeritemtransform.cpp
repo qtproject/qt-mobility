@@ -158,7 +158,7 @@ CCalEntry *OrganizerItemTransform::toEntryLC(const QOrganizerItem &item)
     {
         QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
         if (!range.isEmpty())
-            entry->SetStartAndEndTimeL(toTCalTimeL(range.notBeforeDateTime()), toTCalTimeL(range.dueDateTime()));
+            entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.dueDateTime()));
 
         QOrganizerTodoProgress progress = item.detail<QOrganizerTodoProgress>();
         if (!progress.isEmpty() && progress.status() == QOrganizerTodoProgress::StatusComplete)
@@ -280,7 +280,7 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
     {
         QOrganizerTodoTimeRange range;
         if (startTime.TimeUtcL() != Time::NullTTime())
-            range.setNotBeforeDateTime(toQDateTimeL(startTime));
+            range.setStartDateTime(toQDateTimeL(startTime));
         if (endTime.TimeUtcL() != Time::NullTTime())
             range.setDueDateTime(toQDateTimeL(endTime));
         item->saveDetail(&range);

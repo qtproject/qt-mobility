@@ -850,12 +850,25 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     d.setUnique(true);
     retn.insert(d.name(), d);
 
+    // todo progress
+    d.setName(QOrganizerTodoProgress::DefinitionName);
+    fields.clear();
+    f.setDataType(QVariant::DateTime);
+    f.setAllowableValues(QVariantList());
+    fields.insert(QOrganizerTodoProgress::FieldFinishedDateTime, f);
+    f.setDataType(QVariant::Int);
+    fields.insert(QOrganizerTodoProgress::FieldPercentageComplete, f);
+    fields.insert(QOrganizerTodoProgress::FieldStatus, f);
+    d.setFields(fields);
+    d.setUnique(true);
+    retn.insert(d.name(), d);
+
     // todo time range
     d.setName(QOrganizerTodoTimeRange::DefinitionName);
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerTodoTimeRange::FieldNotBeforeDateTime, f);
+    fields.insert(QOrganizerTodoTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerTodoTimeRange::FieldDueDateTime, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -966,7 +979,6 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerTodoProgress::FieldStartedDateTime, f);
     fields.insert(QOrganizerTodoProgress::FieldFinishedDateTime, f);
     f.setDataType(QVariant::Int);
     fields.insert(QOrganizerTodoProgress::FieldPercentageComplete, f);
@@ -980,7 +992,7 @@ QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMana
     fields.clear();
     f.setDataType(QVariant::DateTime);
     f.setAllowableValues(QVariantList());
-    fields.insert(QOrganizerTodoTimeRange::FieldNotBeforeDateTime, f);
+    fields.insert(QOrganizerTodoTimeRange::FieldStartDateTime, f);
     fields.insert(QOrganizerTodoTimeRange::FieldDueDateTime, f);
     d.setFields(fields);
     d.setUnique(true);
@@ -1703,13 +1715,13 @@ bool QOrganizerItemManagerEngine::testFilter(const QOrganizerItemFilter &filter,
                 }
                 if (organizeritem.type() == QOrganizerItemType::TypeTodo) {
                    QOrganizerTodo todo = organizeritem;
-                   return (dpf.startPeriod().isNull() || todo.notBeforeDateTime() >= dpf.startPeriod())
+                   return (dpf.startPeriod().isNull() || todo.startDateTime() >= dpf.startPeriod())
                            &&
                           (dpf.endPeriod().isNull() || todo.dueDateTime() <= dpf.endPeriod());
                 }
                 if (organizeritem.type() == QOrganizerItemType::TypeTodoOccurrence) {
                     QOrganizerTodoOccurrence tdo = organizeritem;
-                    return (dpf.startPeriod().isNull() || tdo.notBeforeDateTime() >= dpf.startPeriod())
+                    return (dpf.startPeriod().isNull() || tdo.startDateTime() >= dpf.startPeriod())
                             &&
                            (dpf.endPeriod().isNull() || tdo.dueDateTime() <= dpf.endPeriod());
                 }

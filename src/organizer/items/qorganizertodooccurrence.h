@@ -53,8 +53,8 @@ public:
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodoOccurrence, QOrganizerItemType::TypeTodoOccurrence)
 
     // XXX TODO: see discussion in qorganizertodo.h
-    void setNotBeforeDateTime(const QDateTime& noteBeforeDateTime);
-    QDateTime notBeforeDateTime() const;
+    void setStartDateTime(const QDateTime& startDateTime);
+    QDateTime startDateTime() const;
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
@@ -70,8 +70,6 @@ public:
     int progressPercentage() const;
     void setStatus(QOrganizerTodoProgress::Status status);
     QOrganizerTodoProgress::Status status() const;
-    void setStartedDateTime(const QDateTime& startedDateTime);
-    QDateTime startedDateTime() const;
     void setFinishedDateTime(const QDateTime& finishedDateTime);
     QDateTime finishedDateTime() const;
 };

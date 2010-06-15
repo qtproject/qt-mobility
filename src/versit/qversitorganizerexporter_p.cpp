@@ -176,7 +176,7 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
     QVersitProperty property =
         VersitUtils::takeProperty(document, QLatin1String("DTSTART"), removedProperties);
     property.setName(QLatin1String("DTSTART"));
-    property.setValue(encodeDateTime(ttr.notBeforeDateTime()));
+    property.setValue(encodeDateTime(ttr.startDateTime()));
     *generatedProperties << property;
 
     property =
@@ -184,7 +184,7 @@ void QVersitOrganizerExporterPrivate::encodeTodoTimeRange(
     property.setName(QLatin1String("DUE"));
     property.setValue(encodeDateTime(ttr.dueDateTime()));
     *generatedProperties << property;
-    *processedFields << QOrganizerTodoTimeRange::FieldNotBeforeDateTime
+    *processedFields << QOrganizerTodoTimeRange::FieldStartDateTime
                      << QOrganizerTodoTimeRange::FieldDueDateTime;
 }
 

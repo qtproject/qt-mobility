@@ -624,14 +624,6 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldStatus, "Status");
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldPercentageComplete, "PercentageComplete");
 
 /*!
-   \variable QOrganizerTodoProgress::FieldStartedDateTime
-
-   The constant key of the date time value which contains the date and time at which the
-   todo item was started.
- */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldStartedDateTime, "StartedDateTime");
-
-/*!
    \variable QOrganizerTodoProgress::FieldFinishedDateTime
 
    The constant key of the date time value which contains the date and time at which the
@@ -656,12 +648,12 @@ Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoProgress::FieldFinishedDateTime, "Finishe
 Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::DefinitionName, "TodoTimeRange");
 
 /*!
-   \variable QOrganizerTodoTimeRange::FieldNotBeforeDateTime
+   \variable QOrganizerTodoTimeRange::FieldStartDateTime
 
-   The constant key of the date time value which describes the earliest date at which
-   the todo should be completed.
+   The constant key of the date time value which describes the date at which
+   the todo should be started.
  */
-Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldNotBeforeDateTime, "NotBeforeDateTime");
+Q_DEFINE_LATIN1_CONSTANT(QOrganizerTodoTimeRange::FieldStartDateTime, "StartDateTime");
 
 /*!
    \variable QOrganizerTodoTimeRange::FieldDueDateTime

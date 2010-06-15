@@ -810,33 +810,7 @@ QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo, con
         ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint));
     QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
-        ret.setNotBeforeDateTime(tempdt);
-    QString tempstr = QString::fromStdString(ctodo->getSummary());
-    if (!tempstr.isEmpty())
-        ret.setDisplayLabel(tempstr);
-    tempdt = QDateTime::fromTime_t(ctodo->getDue());
-    if (!tempdt.isNull())
-        ret.setDueDateTime(tempdt);
-
-    QOrganizerItemId rId;
-    rId.setManagerUri(managerUri());
-    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
-    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setId(rId);
-    // and the recurrence information
-
-    return ret;
-}
-
-QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const
-{
-    QOrganizerTodoOccurrence ret;
-    int tempint = ctodo->getPriority();
-    if (tempint != -1)
-        ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint));
-    QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
-    if (!tempdt.isNull())
-        ret.setNotBeforeDateTime(tempdt);
+        ret.setStartDateTime(tempdt);
     QString tempstr = QString::fromStdString(ctodo->getSummary());
     if (!tempstr.isEmpty())
         ret.setDisplayLabel(tempstr);
@@ -851,7 +825,44 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
         ret.setFinishedDateTime(tempdt);
     tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
-        ret.setStartedDateTime(tempdt);
+        ret.setStartDateTime(tempdt);
+    
+    // status is always available..
+    ret.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
+
+    QOrganizerItemId rId;
+    rId.setManagerUri(managerUri());
+    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
+    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
+    ret.setId(rId);
+
+    return ret;
+}
+
+QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const
+{
+    QOrganizerTodoOccurrence ret;
+    int tempint = ctodo->getPriority();
+    if (tempint != -1)
+        ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint));
+    QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
+    if (!tempdt.isNull())
+        ret.setStartDateTime(tempdt);
+    QString tempstr = QString::fromStdString(ctodo->getSummary());
+    if (!tempstr.isEmpty())
+        ret.setDisplayLabel(tempstr);
+    tempdt = QDateTime::fromTime_t(ctodo->getDue());
+    if (!tempdt.isNull())
+        ret.setDueDateTime(tempdt);
+    tempint = ctodo->getPercentComplete();
+    if (tempint != -1)
+        ret.setProgressPercentage(tempint);
+    tempdt = QDateTime::fromTime_t(ctodo->getCompleted());
+    if (!tempdt.isNull())
+        ret.setFinishedDateTime(tempdt);
+    tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
+    if (!tempdt.isNull())
+        ret.setStartDateTime(tempdt);
     
     // status is always available..
     ret.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
@@ -864,7 +875,7 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
 
     // now, in maemo, the parent id is the same as this id (todo's only have one occurrence).
     ret.setParentItemId(rId);
-    ret.setOriginalDateTime(QDateTime::fromTime_t(ctodo->getDue())); // XXX TODO: verify this is the correct field to use as the instance date...
+    ret.setOriginalDateTime(QDateTime::fromTime_t(ctodo->getDateStart()));
 
     return ret;
 }
@@ -999,8 +1010,8 @@ CTodo* QOrganizerItemMaemo5Engine::convertQTodoToCTodo(const QOrganizerTodo& tod
         ret->setSummary(todo.displayLabel().toStdString());
     if (!todo.description().isEmpty())
         ret->setDescription(todo.description().toStdString());
-    if (!todo.notBeforeDateTime().isNull())
-        ret->setDateStart(todo.notBeforeDateTime().toTime_t());
+    if (!todo.startDateTime().isNull())
+        ret->setDateStart(todo.startDateTime().toTime_t());
     if (!todo.dueDateTime().isNull())
         ret->setDue(todo.dueDateTime().toTime_t());
 

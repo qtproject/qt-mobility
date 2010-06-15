@@ -120,7 +120,7 @@ void tst_QVersitOrganizerImporter::testImport_data()
 
         QOrganizerTodo todo;
         todo.setDisplayLabel(QLatin1String("Take out the garbage"));
-        todo.setNotBeforeDateTime(QDateTime(QDate(2010, 6, 9), QTime(8, 0, 0)));
+        todo.setStartDateTime(QDateTime(QDate(2010, 6, 9), QTime(8, 0, 0)));
         todo.setDueDateTime(QDateTime(QDate(2010, 6, 10), QTime(8, 0, 0)));
 
         QOrganizerJournal journal;

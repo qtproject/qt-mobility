@@ -43,24 +43,30 @@
 
 QTM_USE_NAMESPACE
 
-void QOrganizerTodoOccurrence::setNotBeforeDateTime(const QDateTime& notBeforeDateTime)
+void QOrganizerTodoOccurrence::setStartDateTime(const QDateTime& startDateTime)
 {
-    Q_UNUSED(notBeforeDateTime);
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    ttr.setStartDateTime(startDateTime);
+    saveDetail(&ttr);
 }
 
-QDateTime QOrganizerTodoOccurrence::notBeforeDateTime() const
+QDateTime QOrganizerTodoOccurrence::startDateTime() const
 {
-    return QDateTime();
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    return ttr.startDateTime();
 }
 
 void QOrganizerTodoOccurrence::setDueDateTime(const QDateTime& dueDateTime)
 {
-    Q_UNUSED(dueDateTime);
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    ttr.setDueDateTime(dueDateTime);
+    saveDetail(&ttr);
 }
 
 QDateTime QOrganizerTodoOccurrence::dueDateTime() const
 {
-    return QDateTime();
+    QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
+    return ttr.dueDateTime();
 }
 
 void QOrganizerTodoOccurrence::setParentItemLocalId(const QOrganizerItemLocalId& parentLocalId)
@@ -127,19 +133,6 @@ QOrganizerTodoProgress::Status QOrganizerTodoOccurrence::status() const
 {
     QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
     return tp.status();
-}
-
-void QOrganizerTodoOccurrence::setStartedDateTime(const QDateTime& startedDateTime)
-{
-    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
-    tp.setStartedDateTime(startedDateTime);
-    saveDetail(&tp);
-}
-
-QDateTime QOrganizerTodoOccurrence::startedDateTime() const
-{
-    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
-    return tp.startedDateTime();
 }
 
 void QOrganizerTodoOccurrence::setFinishedDateTime(const QDateTime& finishedDateTime)

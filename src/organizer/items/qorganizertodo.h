@@ -53,8 +53,8 @@ public:
     Q_DECLARE_CUSTOM_ORGANIZER_ITEM(QOrganizerTodo, QOrganizerItemType::TypeTodo)
 
     // XXX TODO: some questions about "recurring periods and doneness"...
-    void setNotBeforeDateTime(const QDateTime& notBeforeDateTime);
-    QDateTime notBeforeDateTime() const;
+    void setStartDateTime(const QDateTime& dueDateTime);
+    QDateTime startDateTime() const;
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
@@ -69,6 +69,13 @@ public:
 
     void setPriority(QOrganizerItemPriority::Priority);
     QOrganizerItemPriority::Priority priority() const;
+
+    void setProgressPercentage(int percentage);
+    int progressPercentage() const;
+    void setStatus(QOrganizerTodoProgress::Status status);
+    QOrganizerTodoProgress::Status status() const;
+    void setFinishedDateTime(const QDateTime& finishedDateTime);
+    QDateTime finishedDateTime() const;
 };
 
 QTM_END_NAMESPACE
