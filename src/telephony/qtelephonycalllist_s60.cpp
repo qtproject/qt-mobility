@@ -38,20 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #include "qtelephonycalllist_s60_p.h"
+#include "qtelephonycallinfo_s60_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 ////////
 QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
- : QObject(parent)
+: QObject(parent)
 {
 }
 
 QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 {
+    QTelephonyCallInfoPrivate ci;
+    emit activeCallStatusChanged(ci);
 }
 
-#include "moc_qtelephonycalllist_win_p.cpp"
+#include "moc_qtelephonycalllist_s60_p.cpp"
 
 QTM_END_NAMESPACE

@@ -54,18 +54,10 @@ QTM_BEGIN_NAMESPACE
 class QTelephonyCallInfoPrivate;
 class Q_TELEPHONY_EXPORT QTelephonyCallInfo
 {
-    friend class QTelephonyCallList;
-private:
-    QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other);
 public:
     QTelephonyCallInfo();
-    QTelephonyCallInfo(const QTelephonyCallInfo& other);
-    QTelephonyCallInfo &operator=(const QTelephonyCallInfo& other);
+    QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other);
     ~QTelephonyCallInfo();
-
-    bool operator ==(const  QTelephonyCallInfo& cp) const;
-    inline bool operator!=(const QTelephonyCallInfo& cp) const
-    { return !operator==(cp); }
 
     enum CallType {
         Unknown = 0,
@@ -85,12 +77,11 @@ public:
     };
 
     QString callIdentifier() const;
-    QList<quint32> contacts() const;
+    QList< quint32 > contacts() const;
     CallType type() const;
     CallStatus status() const;
     QVariant value(const QString& param) const;
 
-private:
     QSharedDataPointer<QTelephonyCallInfoPrivate> d;
 };
 

@@ -39,20 +39,25 @@
 **
 ****************************************************************************/
 
-
 #include "qtelephonycalllist.h"
 
-#ifdef Q_OS_LINUX
-# include "qtelephonycalllist_linux_p.h"
-# include "qtelephonycallinfo_linux_p.h"
-#endif
-#ifdef Q_OS_WIN
-# include "qtelephonycalllist_win_p.h"
-# include "qtelephonycallinfo_win_p.h"
-#endif
-#ifdef Q_OS_SYMBIAN
-# include "qtelephonycalllist_s60_p.h"
-# include "qtelephonycallinfo_s60_p.h"
+
+#if defined(Q_WS_MAEMO5)
+# include "qtelephonycalllist_maemo_p.h"
+# include "qtelephonycallinfo_maemo_p.h"
+#else
+# ifdef Q_OS_LINUX
+#  include "qtelephonycalllist_linux_p.h"
+#  include "qtelephonycallinfo_linux_p.h"
+# endif
+# ifdef Q_OS_WIN
+#  include "qtelephonycalllist_win_p.h"
+#  include "qtelephonycallinfo_win_p.h"
+# endif
+# ifdef Q_OS_SYMBIAN
+#  include "qtelephonycalllist_s60_p.h"
+#  include "qtelephonycallinfo_s60_p.h"
+# endif
 #endif
 
 QTM_BEGIN_NAMESPACE
@@ -102,12 +107,10 @@ Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonyCallListPrivate)
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent), d(telephonyCallListPrivate())
 {
-    connect(d, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfoPrivate))
-        , this, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfoPrivate)));
-    connect(d, SIGNAL(activeCallRemoved(const QTelephonyCallInfoPrivate))
-        , this, SIGNAL(activeCallRemoved(const QTelephonyCallInfoPrivate)));
-    connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfoPrivate))
-        , this, SIGNAL(activeCallAdded(const QTelephonyCallInfoPrivate)));
+    d = new QTelephonyCallListPrivate();
+    connect(d, SIGNAL(activeCallStatusChanged(QTelephonyCallInfoPrivate)), this, SLOT(activeCallStatusChanged(QTelephonyCallInfoPrivate&)));
+    connect(d, SIGNAL(activeCallRemoved(QTelephonyCallInfoPrivate)), this, SLOT(activeCallRemoved(QTelephonyCallInfoPrivate&)));
+    connect(d, SIGNAL(activeCallAdded(QTelephonyCallInfoPrivate)), this, SLOT(activeCallAdded(QTelephonyCallInfoPrivate&)));
 }
 
 /*!
@@ -117,6 +120,7 @@ QTelephonyCallList::QTelephonyCallList(QObject *parent)
 */
 QTelephonyCallList::~QTelephonyCallList()
 {
+
 }
 
 /*!
@@ -129,12 +133,14 @@ QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyCallIn
 {
     QList<QTelephonyCallInfo> ret;
 
-    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
-    for( int i = 0; i < callInfoList.count(); i++){
-        if(callInfoList.at(i).data()->type() == QTelephonyCallInfo::Any
-            || callInfoList.at(i).data()->type() == calltype)
-        {
-            ret.push_back(QTelephonyCallInfo(callInfoList.at(i)));
+    if(d){
+        //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
+        for( int i = 0; i < d->callInfoList.count(); i++){
+            if(d->callInfoList.at(i).data()->type() == QTelephonyCallInfo::Any
+                || d->callInfoList.at(i).data()->type() == calltype)
+            {
+                ret.push_back(QTelephonyCallInfo(d->callInfoList.at(i)));
+            }
         }
     }
     return ret;

@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLINFOPRIVATE_WIN_H
-#define QTELEPHONYCALLINFOPRIVATE_WIN_H
+#ifndef QTELEPHONYCALLLINFO_WIN_P_H
+#define QTELEPHONYCALLLINFO_WIN_P_H
 
 
 //
@@ -57,41 +57,31 @@
 #include "qtelephonycallinfo.h"
 #include <QtCore/qshareddata.h>
 #include <QList>
+#include <QString>
+#include <QVariant>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QTelephonyCallInfoPrivate : public QSharedData
 {
-    friend class QTelephonyCallListPrivate;
-private:
-    QTelephonyCallInfoPrivate();
 public:
+    QTelephonyCallInfoPrivate();
     ~QTelephonyCallInfoPrivate();
+    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other);
 
     QString callIdentifier() const;
     QList<quint32> contacts() const;
-    QTelephonyCallInfo::CallType type() const { return QTelephonyCallInfo::Unknown; }
-    QTelephonyCallInfo::CallStatus status() const { return QTelephonyCallInfo::Undefined; }
-    QVariant value(const QString& param) const { return QVariant(); }
-
-public:
-    // disallow detaching
-    QTelephonyCallInfoPrivate &operator=(const QTelephonyCallInfoPrivate &other)
-    {
-        return *this;
-    }
-    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
-        : QSharedData(other)
-    {
-    }
+    QTelephonyCallInfo::CallType type() const;
+    QTelephonyCallInfo::CallStatus status() const;
+    QVariant value(const QString& param) const;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif // QTELEPHONYCALLINFOPRIVATE_WIN_H
+#endif //QTELEPHONYCALLLINFO_WIN_P_H
 
 // End of file
 

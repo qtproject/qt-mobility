@@ -39,21 +39,24 @@
 **
 ****************************************************************************/
 
+#include "qmobilityglobal.h"
 
-#include "qtelephonycallinfo.h"
-#include <QList>
-
-#ifdef Q_OS_LINUX
-# include "qtelephonycallinfo_linux_p.h"
-#endif
-#ifdef Q_OS_WIN
-# include "qtelephonycallinfo_win_p.h"
-#endif
-#ifdef Q_OS_SYMBIAN
-# include "qtelephonycallinfo_s60_p.h"
+#if defined(Q_WS_MAEMO5)
+# include "qtelephonycallinfo_maemo_p.h"
+#else
+# ifdef Q_OS_LINUX
+#  include "qtelephonycallinfo_linux_p.h"
+# endif
+# ifdef Q_OS_WIN
+#  include "qtelephonycallinfo_win_p.h"
+# endif
+# ifdef Q_OS_SYMBIAN
+#  include "qtelephonycallinfo_s60_p.h"
+# endif
 #endif
 
 QTM_BEGIN_NAMESPACE
+
 /*!
     \class QTelephonyCallInfo
     \ingroup telephony
@@ -100,19 +103,8 @@ QTM_BEGIN_NAMESPACE
     Constructor of a QTelephonyCallInfo object.
 */
 QTelephonyCallInfo::QTelephonyCallInfo()
-: d(0)
+    : d(0)
 {
-}
-
-/*!
-    \fn  QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
-    \a other Object which needs to be copied from.
-
-    Copy constructor of a QTelephonyCallInfo object.
-*/
-QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
-{
-    d = other.d;
 }
 
 /*!
@@ -122,8 +114,8 @@ QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
     Constructor of a QTelephonyCallInfo object using a const QSharedDataPointer<QTelephonyCallInfoPrivate>.
 */
 QTelephonyCallInfo::QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other)
+    : d(other)
 {
-    d = other;
 }
 
 /*!
@@ -133,31 +125,6 @@ QTelephonyCallInfo::QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallIn
 */
 QTelephonyCallInfo::~QTelephonyCallInfo()
 {
-}
-
-/*!
-    Copies the content of the QTelephonyCallInfo object contained in
-    \a other into this one.
-*/
-QTelephonyCallInfo& QTelephonyCallInfo::operator=(const QTelephonyCallInfo& other)
-{
-    d = other.d;
-    return *this;
-}
-
-/*!
-    Returns true, if this QTelephonyCallInfo is the same as the
-    \a other QTelephonyCallInfo given; otherwise returns false.
-*/
-bool QTelephonyCallInfo::operator==(const QTelephonyCallInfo& other) const
-{
-    if (!d)
-        return !other.d;
-
-    if (!other.d)
-        return false;
-
-    return (d == other.d);
 }
 
 /*!

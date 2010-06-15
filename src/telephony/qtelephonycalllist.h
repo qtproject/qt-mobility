@@ -43,25 +43,23 @@
 #define QTELEPHONYCALLLIST_H
 
 #include "qmobilityglobal.h"
+#include <QObject>
 #include <QtCore/qshareddata.h>
-#include "qtelephonycallinfo.h"
 #include <QList>
-#include <QString>
-#include <QVariant>
+#include "qtelephonycallinfo.h"
 
 QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
 class QTelephonyCallListPrivate;
 class QTelephonyCallInfoPrivate;
-class Q_TELEPHONY_EXPORT QTelephonyCallList : QObject
+
+class QTelephonyCallList : QObject
 {
     Q_OBJECT
-    friend class QTelephonyCallListPrivate;
 public:
     QTelephonyCallList(QObject *parent = 0);
-    ~QTelephonyCallList();
+    virtual ~QTelephonyCallList();
 
 Q_SIGNALS:
     void activeCallStatusChanged(const QTelephonyCallInfo& call);
@@ -74,16 +72,13 @@ private slots:
     void activeCallAdded(QTelephonyCallInfoPrivate& call);
 
 public:
-    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype = QTelephonyCallInfo::Any) const;
+    QList<QTelephonyCallInfo > activeCalls(const QTelephonyCallInfo::CallType& calltype = QTelephonyCallInfo::Any) const;
+
 private:
-    QTelephonyCallListPrivate *d;
-    QList<QSharedDataPointer<QTelephonyCallInfoPrivate>> callInfoList;
+    QTelephonyCallListPrivate* d;
 };
 
 QTM_END_NAMESPACE
 QT_END_HEADER
 
-#endif /*QTELEPHONYCALLLIST_H*/
-
-// End of file
-
+#endif // QTELEPHONYCALLLIST_H

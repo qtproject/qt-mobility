@@ -38,7 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qtelephonycalllist_maemo_p.h"
+#include "qtelephonycallinfo_maemo_p.h"
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
@@ -51,6 +52,11 @@ QTelephonyCallInfoPrivate::~QTelephonyCallInfoPrivate()
 {
 }
 
+QTelephonyCallInfoPrivate::QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
+    : QSharedData(other)
+{
+}
+
 QString QTelephonyCallInfoPrivate::callIdentifier() const
 {
     return QString();
@@ -60,6 +66,25 @@ QList<quint32> QTelephonyCallInfoPrivate::contacts() const
 {
     QList<quint32> ret;
     return ret;
+}
+
+QTelephonyCallInfo::CallType QTelephonyCallInfoPrivate::type() const
+{
+    return QTelephonyCallInfo::Unknown;
+}
+
+QTelephonyCallInfo::CallStatus QTelephonyCallInfoPrivate::status() const
+{
+    return QTelephonyCallInfo::Undefined;
+}
+
+QVariant QTelephonyCallInfoPrivate::value(const QString& param) const
+{
+    if(param.length() > 0)
+    {
+    }
+
+    return QVariant();
 }
 
 QTM_END_NAMESPACE
