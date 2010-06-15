@@ -366,8 +366,8 @@ void MT_CntSqlSort::sortPriority()
 {
     // Symbol possiblities (!, ", # etc)
     QList<char> sl;
-    //sl << '"' << '#' << '¤' << '&' << '/' << '(' << ')' << '=' << '?'
-    //        << ' ' << '!' << '`' << '+' << 'µ';
+    /*sl << '"' << '#' << '¤' << '&' << '/' << '(' << ')' << '=' << '?'
+            << ' ' << '!' << '`' << '+' << 'µ';*/
     
     QList<QContactLocalId> sids;
     QContactManager cm("symbian");
@@ -426,10 +426,7 @@ void MT_CntSqlSort::sortPriority()
     sortOrders.append(order1);
     
     QList<QContactLocalId> ids = cm.contactIds(sortOrders);
-    for(int i=0; i<ids.count(); i++) {
-        QContactLocalId id = ids.at(i);
-        //qDebug() << "## [" << i <<"]" << cm.contact(id).detail<QContactName>().firstName();
-    }
+    
     QVERIFY(ids.count() == 6 + sids.count());
     QVERIFY(c6.localId() == ids.at(0));
     QVERIFY(c2.localId() == ids.at(1));
@@ -440,6 +437,6 @@ void MT_CntSqlSort::sortPriority()
         QContactLocalId id = ids.at(4 + i);
         QVERIFY(sids.contains(id));
     }
-    QVERIFY(c5.localId() == ids.at(5 + ids.count()));
-    QVERIFY(c4.localId() == ids.at(6 + ids.count()));
+    QVERIFY(c5.localId() == ids.at(4 + sids.count()));
+    QVERIFY(c4.localId() == ids.at(5 + sids.count()));
 }
