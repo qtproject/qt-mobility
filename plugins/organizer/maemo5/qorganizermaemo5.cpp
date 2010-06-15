@@ -213,6 +213,7 @@ QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& ite
     }
 
     // In an error situation return an invalid item
+    cleanupCal( cal );
     *error = QOrganizerItemManager::DoesNotExistError;
     return QOrganizerItem();
 }
@@ -221,6 +222,11 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
 {
     // TODO: Add changeset manipulation and signal emissions
 
+    if ( !items ) {
+        *error = QOrganizerItemManager::BadArgumentError;
+        return false;
+    }
+
     *error = QOrganizerItemManager::NoError;
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     bool success = true;
@@ -228,10 +234,10 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
     for( int i = 0; i < items->size(); ++i) {
         QOrganizerItem curr = items->at(i);
         int calError = doSaveItem( cal, &curr, error );
-        items->replace(i, curr );
 
         if ( calError != CALENDAR_OPERATION_SUCCESSFUL || *error != QOrganizerItemManager::NoError ) {
             success = false;
+            curr.setId(QOrganizerItemId()); // clear ID
             if ( errorMap ) {
                 if ( *error != QOrganizerItemManager::NoError )
                     errorMap->insert(i, *error );
@@ -239,6 +245,8 @@ bool QOrganizerItemMaemo5Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
                     errorMap->insert(i, QOrganizerItemManager::UnspecifiedError );
             }
         }
+
+        items->replace(i, curr);
     }
 
     cleanupCal( cal );
@@ -460,8 +468,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
             *error = calErrorToManagerError( calError );
             if( calError == CALENDAR_OPERATION_SUCCESSFUL ||
                 calError == CALENDAR_ENTRY_DUPLICATED )
-                // The Maemo5 calendar does not accept two items if all
-                // the details are equal. That's so even if the item IDs differ.
+                // The Maemo5 calendar does not accept two items if all the
+                // time details are equal. That's so even if the item IDs differ.
                 // If the "new" item is actually a duplicate, then let
                 // the calendar to modify the existing item.
                 // TODO: Is that what we want?
@@ -494,8 +502,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
             *error = calErrorToManagerError( calError );
             if( calError == CALENDAR_OPERATION_SUCCESSFUL ||
                 calError == CALENDAR_ENTRY_DUPLICATED )
-                // The Maemo5 calendar does not accept two items if all
-                // the details are equal. That's so even if the item IDs differ.
+                // The Maemo5 calendar does not accept two items if all the
+                // time details are equal. That's so even if the item IDs differ.
                 // If the "new" item is actually a duplicate, then let
                 // the calendar to modify the existing item.
                 // TODO: Is that what we want?
@@ -528,8 +536,8 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
             *error = calErrorToManagerError( calError );
             if( calError == CALENDAR_OPERATION_SUCCESSFUL ||
                 calError == CALENDAR_ENTRY_DUPLICATED )
-                // The Maemo5 calendar does not accept two items if all
-                // the details are equal. That's so even if the item IDs differ.
+                // The Maemo5 calendar does not accept two items if all the
+                // time details are equal. That's so even if the item IDs differ.
                 // If the "new" item is actually a duplicate, then let
                 // the calendar to modify the existing item.
                 // TODO: Is that what we want?
