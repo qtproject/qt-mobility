@@ -52,7 +52,7 @@ class QMLContact : public QObject
 public:
     explicit QMLContact(QObject *parent = 0);
     void setContact(const QContact& c);
-    const QContact& contact() const;
+    QContact contact() const;
     QVariant contactMap() const;
     Q_INVOKABLE QList<QObject*> details() const;
 

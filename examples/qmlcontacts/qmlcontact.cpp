@@ -97,16 +97,18 @@ void QMLContact::setContact(const QContact& c)
     }
 }
 
-const QContact& QMLContact::contact() const
+QContact QMLContact::contact() const
 {
+    QContact c(m_contact); 
     foreach (QObject* o, m_details) {
-        QMLContactDetail* d = qobject_cast(o);
+        QMLContactDetail* d = qobject_cast<QMLContactDetail*>(o);
         if (d && d->isDetailChanged()) {
-            m_contact.saveDetail(&d->detail());
+            QContactDetail detail = d->detail();
+            c.saveDetail(&detail);
         }
     }
 
-    return m_contact;
+    return c;
 }
 
 QList<QObject*> QMLContact::details() const
