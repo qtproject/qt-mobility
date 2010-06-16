@@ -42,9 +42,9 @@
 #ifndef AUDIOENCODERCONTROL_H
 #define AUDIOENCODERCONTROL_H
 
-#include <QAudioEncoderControl>
+#include <qaudioencodercontrol.h>
 #include <QtCore/qstringlist.h>
-#include <QAudioFormat>
+#include "qaudioformat.h"
 
 QT_USE_NAMESPACE
 
@@ -69,24 +69,14 @@ public:
     QVariant encodingOption(const QString &codec, const QString &name) const;
     void setEncodingOption(const QString &codec, const QString &name, const QVariant &value);    
     
-private:    
-    QString audioCodec() const;
-    bool setAudioCodec(const QString &codecName);
-    int bitRate() const;
-    void setBitRate(int);
+private:
+    QtMultimediaKit::EncodingQuality quality() const;
+    void setQuality(QtMultimediaKit::EncodingQuality, QAudioFormat &format);
 
-    QtMediaServices::EncodingQuality quality() const;
-    void setQuality(QtMediaServices::EncodingQuality);
-
-    int sampleRate() const;
-    void setSampleRate(int sampleRate);
-    int channelCount() const;
-    void setChannelCount(int channels);    
-    int sampleSize() const;
-    void setSampleSize(int sampleSize);    
 private:
     S60AudioCaptureSession* m_session;
-    QtMediaServices::EncodingQuality m_quality;
+    QAudioEncoderSettings m_settings;
+    QtMultimediaKit::EncodingQuality m_quality;
 };
 
 #endif

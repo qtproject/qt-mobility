@@ -16,6 +16,12 @@
                     <section ref="qabstractvaluespacelayer.html" title="QAbstractValueSpaceLayer Class Reference">
                         <section ref="qabstractvaluespacelayer-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qabstractvideobuffer.html" title="QAbstractVideoBuffer Class Reference">
+                        <section ref="qabstractvideobuffer-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qabstractvideosurface.html" title="QAbstractVideoSurface Class Reference">
+                        <section ref="qabstractvideosurface-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qaccelerometer.html" title="QAccelerometer Class Reference">
                         <section ref="qaccelerometer-members.html" title="List of all members"/>
                     </section>
@@ -37,6 +43,10 @@
                     <section ref="qaudiocapturesource.html" title="QAudioCaptureSource Class Reference">
                         <section ref="qaudiocapturesource-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qaudiodeviceinfo.html" title="QAudioDeviceInfo Class Reference">
+                        <section ref="qaudiodeviceinfo-members.html" title="List of all members"/>
+                        <section ref="qaudiodeviceinfo-obsolete.html" title="Obsolete members"/>
+                    </section>
                     <section ref="qaudioencodercontrol.html" title="QAudioEncoderControl Class Reference">
                         <section ref="qaudioencodercontrol-members.html" title="List of all members"/>
                     </section>
@@ -45,6 +55,16 @@
                     </section>
                     <section ref="qaudioendpointselector.html" title="QAudioEndpointSelector Class Reference">
                         <section ref="qaudioendpointselector-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qaudioformat.html" title="QAudioFormat Class Reference">
+                        <section ref="qaudioformat-members.html" title="List of all members"/>
+                        <section ref="qaudioformat-obsolete.html" title="Obsolete members"/>
+                    </section>
+                    <section ref="qaudioinput.html" title="QAudioInput Class Reference">
+                        <section ref="qaudioinput-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qaudiooutput.html" title="QAudioOutput Class Reference">
+                        <section ref="qaudiooutput-members.html" title="List of all members"/>
                     </section>
                     <section ref="qcompass.html" title="QCompass Class Reference">
                         <section ref="qcompass-members.html" title="List of all members"/>
@@ -271,6 +291,9 @@
                     <section ref="qmagnetometerreading.html" title="QMagnetometerReading Class Reference">
                         <section ref="qmagnetometerreading-members.html" title="List of all members"/>
                     </section>
+                    <section ref="qmediabindableinterface.html" title="QMediaBindableInterface Class Reference">
+                        <section ref="qmediabindableinterface-members.html" title="List of all members"/>
+                    </section>
                     <section ref="qmediacontainercontrol.html" title="QMediaContainerControl Class Reference">
                         <section ref="qmediacontainercontrol-members.html" title="List of all members"/>
                     </section>
@@ -309,6 +332,9 @@
                     </section>
                     <section ref="qmediaplaylistreader.html" title="QMediaPlaylistReader Class Reference">
                         <section ref="qmediaplaylistreader-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qmediaplaylistsourcecontrol.html" title="QMediaPlaylistSourceControl Class Reference">
+                        <section ref="qmediaplaylistsourcecontrol-members.html" title="List of all members"/>
                     </section>
                     <section ref="qmediaplaylistwriter.html" title="QMediaPlaylistWriter Class Reference">
                         <section ref="qmediaplaylistwriter-members.html" title="List of all members"/>
@@ -403,8 +429,11 @@
                     <section ref="qmessagesortorder.html" title="QMessageSortOrder Class Reference">
                         <section ref="qmessagesortorder-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qmetadatacontrol.html" title="QMetaDataControl Class Reference">
-                        <section ref="qmetadatacontrol-members.html" title="List of all members"/>
+                    <section ref="qmetadatareadercontrol.html" title="QMetaDataReaderControl Class Reference">
+                        <section ref="qmetadatareadercontrol-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qmetadatawritercontrol.html" title="QMetaDataWriterControl Class Reference">
+                        <section ref="qmetadatawritercontrol-members.html" title="List of all members"/>
                     </section>
                     <section ref="qnetworkconfiguration.html" title="QNetworkConfiguration Class Reference">
                         <section ref="qnetworkconfiguration-members.html" title="List of all members"/>
@@ -559,11 +588,14 @@
                     <section ref="qvideoencodersettings.html" title="QVideoEncoderSettings Class Reference">
                         <section ref="qvideoencodersettings-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qvideooutputcontrol.html" title="QVideoOutputControl Class Reference">
-                        <section ref="qvideooutputcontrol-members.html" title="List of all members"/>
+                    <section ref="qvideoframe.html" title="QVideoFrame Class Reference">
+                        <section ref="qvideoframe-members.html" title="List of all members"/>
                     </section>
                     <section ref="qvideorenderercontrol.html" title="QVideoRendererControl Class Reference">
                         <section ref="qvideorenderercontrol-members.html" title="List of all members"/>
+                    </section>
+                    <section ref="qvideosurfaceformat.html" title="QVideoSurfaceFormat Class Reference">
+                        <section ref="qvideosurfaceformat-members.html" title="List of all members"/>
                     </section>
                     <section ref="qvideowidget.html" title="QVideoWidget Class Reference">
                         <section ref="qvideowidget-members.html" title="List of all members"/>
@@ -598,7 +630,6 @@
                     <section ref="querymessages.html" title="Query Messages Example"/>
                     <section ref="quickstart.html" title="Quickstart Example"/>
                     <section ref="radio.html" title="Radio Example"/>
-                    <section ref="recorder.html" title="Recorder Example"/>
                     <section ref="samplephonebook.html" title="Sample Phonebook Example"/>
                     <section ref="qmlcontacts.html" title="Sample QML-based Phonebook Example"/>
                     <section ref="serviceactions.html" title="Service Actions Example"/>
@@ -618,7 +649,7 @@
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
-                    <section ref="contactsusagehtml.html" title="Contacts API Usage"/>
+                    <section ref="contactsusage.html" title="Contacts API Usage"/>
                     <section ref="contactsasync.html" title="Contacts Asynchronous API"/>
                     <section ref="contactssync.html" title="Contacts Synchronous API"/>
                     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin"/>
@@ -669,7 +700,7 @@
             <keyword name="Bluetooth Transfer Plugin Example" id="Bluetooth Transfer Plugin Example" ref="bluetoothtransferplugin.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
-            <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusagehtml.html"/>
+            <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusage.html"/>
             <keyword name="Contacts Asynchronous API" id="Contacts Asynchronous API" ref="contactsasync.html"/>
             <keyword name="Contacts Synchronous API" id="Contacts Synchronous API" ref="contactssync.html"/>
             <keyword name="Creating a sensor plugin" id="Creating a sensor plugin" ref="creating-a-sensor-plugin.html"/>
@@ -728,6 +759,45 @@
             <keyword name="supportsInterestNotification" id="QAbstractValueSpaceLayer::supportsInterestNotification" ref="qabstractvaluespacelayer.html#supportsInterestNotification"/>
             <keyword name="sync" id="QAbstractValueSpaceLayer::sync" ref="qabstractvaluespacelayer.html#sync"/>
             <keyword name="value" id="QAbstractValueSpaceLayer::value" ref="qabstractvaluespacelayer.html#value"/>
+            <keyword name="QAbstractVideoBuffer" id="QAbstractVideoBuffer" ref="qabstractvideobuffer.html"/>
+            <keyword name="QAbstractVideoBuffer::HandleType" id="QAbstractVideoBuffer::HandleType" ref="qabstractvideobuffer.html#HandleType-enum"/>
+            <keyword name="QAbstractVideoBuffer::NoHandle" id="QAbstractVideoBuffer::NoHandle" ref="qabstractvideobuffer.html#HandleType-enum"/>
+            <keyword name="QAbstractVideoBuffer::GLTextureHandle" id="QAbstractVideoBuffer::GLTextureHandle" ref="qabstractvideobuffer.html#HandleType-enum"/>
+            <keyword name="QAbstractVideoBuffer::XvShmImageHandle" id="QAbstractVideoBuffer::XvShmImageHandle" ref="qabstractvideobuffer.html#HandleType-enum"/>
+            <keyword name="QAbstractVideoBuffer::CoreImageHandle" id="QAbstractVideoBuffer::CoreImageHandle" ref="qabstractvideobuffer.html#HandleType-enum"/>
+            <keyword name="QAbstractVideoBuffer::UserHandle" id="QAbstractVideoBuffer::UserHandle" ref="qabstractvideobuffer.html#HandleType-enum"/>
+            <keyword name="QAbstractVideoBuffer::MapMode" id="QAbstractVideoBuffer::MapMode" ref="qabstractvideobuffer.html#MapMode-enum"/>
+            <keyword name="QAbstractVideoBuffer::NotMapped" id="QAbstractVideoBuffer::NotMapped" ref="qabstractvideobuffer.html#MapMode-enum"/>
+            <keyword name="QAbstractVideoBuffer::ReadOnly" id="QAbstractVideoBuffer::ReadOnly" ref="qabstractvideobuffer.html#MapMode-enum"/>
+            <keyword name="QAbstractVideoBuffer::WriteOnly" id="QAbstractVideoBuffer::WriteOnly" ref="qabstractvideobuffer.html#MapMode-enum"/>
+            <keyword name="QAbstractVideoBuffer::ReadWrite" id="QAbstractVideoBuffer::ReadWrite" ref="qabstractvideobuffer.html#MapMode-enum"/>
+            <keyword name="handle" id="QAbstractVideoBuffer::handle" ref="qabstractvideobuffer.html#handle"/>
+            <keyword name="handleType" id="QAbstractVideoBuffer::handleType" ref="qabstractvideobuffer.html#handleType"/>
+            <keyword name="map" id="QAbstractVideoBuffer::map" ref="qabstractvideobuffer.html#map"/>
+            <keyword name="mapMode" id="QAbstractVideoBuffer::mapMode" ref="qabstractvideobuffer.html#mapMode"/>
+            <keyword name="unmap" id="QAbstractVideoBuffer::unmap" ref="qabstractvideobuffer.html#unmap"/>
+            <keyword name="~QAbstractVideoBuffer" id="QAbstractVideoBuffer::~QAbstractVideoBuffer" ref="qabstractvideobuffer.html#dtor.QAbstractVideoBuffer"/>
+            <keyword name="QAbstractVideoSurface" id="QAbstractVideoSurface" ref="qabstractvideosurface.html"/>
+            <keyword name="QAbstractVideoSurface::Error" id="QAbstractVideoSurface::Error" ref="qabstractvideosurface.html#Error-enum"/>
+            <keyword name="QAbstractVideoSurface::NoError" id="QAbstractVideoSurface::NoError" ref="qabstractvideosurface.html#Error-enum"/>
+            <keyword name="QAbstractVideoSurface::UnsupportedFormatError" id="QAbstractVideoSurface::UnsupportedFormatError" ref="qabstractvideosurface.html#Error-enum"/>
+            <keyword name="QAbstractVideoSurface::IncorrectFormatError" id="QAbstractVideoSurface::IncorrectFormatError" ref="qabstractvideosurface.html#Error-enum"/>
+            <keyword name="QAbstractVideoSurface::StoppedError" id="QAbstractVideoSurface::StoppedError" ref="qabstractvideosurface.html#Error-enum"/>
+            <keyword name="QAbstractVideoSurface::ResourceError" id="QAbstractVideoSurface::ResourceError" ref="qabstractvideosurface.html#Error-enum"/>
+            <keyword name="activeChanged" id="QAbstractVideoSurface::activeChanged" ref="qabstractvideosurface.html#activeChanged"/>
+            <keyword name="error" id="QAbstractVideoSurface::error" ref="qabstractvideosurface.html#error"/>
+            <keyword name="isActive" id="QAbstractVideoSurface::isActive" ref="qabstractvideosurface.html#isActive"/>
+            <keyword name="isFormatSupported" id="QAbstractVideoSurface::isFormatSupported" ref="qabstractvideosurface.html#isFormatSupported"/>
+            <keyword name="nearestFormat" id="QAbstractVideoSurface::nearestFormat" ref="qabstractvideosurface.html#nearestFormat"/>
+            <keyword name="present" id="QAbstractVideoSurface::present" ref="qabstractvideosurface.html#present"/>
+            <keyword name="setError" id="QAbstractVideoSurface::setError" ref="qabstractvideosurface.html#setError"/>
+            <keyword name="start" id="QAbstractVideoSurface::start" ref="qabstractvideosurface.html#start"/>
+            <keyword name="stop" id="QAbstractVideoSurface::stop" ref="qabstractvideosurface.html#stop"/>
+            <keyword name="supportedFormatsChanged" id="QAbstractVideoSurface::supportedFormatsChanged" ref="qabstractvideosurface.html#supportedFormatsChanged"/>
+            <keyword name="supportedPixelFormats" id="QAbstractVideoSurface::supportedPixelFormats" ref="qabstractvideosurface.html#supportedPixelFormats"/>
+            <keyword name="surfaceFormat" id="QAbstractVideoSurface::surfaceFormat" ref="qabstractvideosurface.html#surfaceFormat"/>
+            <keyword name="surfaceFormatChanged" id="QAbstractVideoSurface::surfaceFormatChanged" ref="qabstractvideosurface.html#surfaceFormatChanged"/>
+            <keyword name="~QAbstractVideoSurface" id="QAbstractVideoSurface::~QAbstractVideoSurface" ref="qabstractvideosurface.html#dtor.QAbstractVideoSurface"/>
             <keyword name="QAccelerometer" id="QAccelerometer" ref="qaccelerometer.html"/>
             <keyword name="reading" id="QAccelerometer::reading" ref="qaccelerometer.html#reading"/>
             <keyword name="~QAccelerometer" id="QAccelerometer::~QAccelerometer" ref="qaccelerometer.html#dtor.QAccelerometer"/>
@@ -766,6 +836,25 @@
             <keyword name="isAvailable" id="QAudioCaptureSource::isAvailable" ref="qaudiocapturesource.html#isAvailable"/>
             <keyword name="setAudioInput" id="QAudioCaptureSource::setAudioInput" ref="qaudiocapturesource.html#setAudioInput"/>
             <keyword name="~QAudioCaptureSource" id="QAudioCaptureSource::~QAudioCaptureSource" ref="qaudiocapturesource.html#dtor.QAudioCaptureSource"/>
+            <keyword name="QAudioDeviceInfo" id="QAudioDeviceInfo" ref="qaudiodeviceinfo.html"/>
+            <keyword name="availableDevices" id="QAudioDeviceInfo::availableDevices" ref="qaudiodeviceinfo.html#availableDevices"/>
+            <keyword name="defaultInputDevice" id="QAudioDeviceInfo::defaultInputDevice" ref="qaudiodeviceinfo.html#defaultInputDevice"/>
+            <keyword name="defaultOutputDevice" id="QAudioDeviceInfo::defaultOutputDevice" ref="qaudiodeviceinfo.html#defaultOutputDevice"/>
+            <keyword name="deviceName" id="QAudioDeviceInfo::deviceName" ref="qaudiodeviceinfo.html#deviceName"/>
+            <keyword name="isFormatSupported" id="QAudioDeviceInfo::isFormatSupported" ref="qaudiodeviceinfo.html#isFormatSupported"/>
+            <keyword name="isNull" id="QAudioDeviceInfo::isNull" ref="qaudiodeviceinfo.html#isNull"/>
+            <keyword name="nearestFormat" id="QAudioDeviceInfo::nearestFormat" ref="qaudiodeviceinfo.html#nearestFormat"/>
+            <keyword name="operator=" id="QAudioDeviceInfo::operator=" ref="qaudiodeviceinfo.html#operator-eq"/>
+            <keyword name="preferredFormat" id="QAudioDeviceInfo::preferredFormat" ref="qaudiodeviceinfo.html#preferredFormat"/>
+            <keyword name="supportedByteOrders" id="QAudioDeviceInfo::supportedByteOrders" ref="qaudiodeviceinfo.html#supportedByteOrders"/>
+            <keyword name="supportedChannelCounts" id="QAudioDeviceInfo::supportedChannelCounts" ref="qaudiodeviceinfo.html#supportedChannelCounts"/>
+            <keyword name="supportedChannels" id="QAudioDeviceInfo::supportedChannels" ref="qaudiodeviceinfo-obsolete.html#supportedChannels"/>
+            <keyword name="supportedCodecs" id="QAudioDeviceInfo::supportedCodecs" ref="qaudiodeviceinfo.html#supportedCodecs"/>
+            <keyword name="supportedFrequencies" id="QAudioDeviceInfo::supportedFrequencies" ref="qaudiodeviceinfo-obsolete.html#supportedFrequencies"/>
+            <keyword name="supportedSampleRates" id="QAudioDeviceInfo::supportedSampleRates" ref="qaudiodeviceinfo.html#supportedSampleRates"/>
+            <keyword name="supportedSampleSizes" id="QAudioDeviceInfo::supportedSampleSizes" ref="qaudiodeviceinfo.html#supportedSampleSizes"/>
+            <keyword name="supportedSampleTypes" id="QAudioDeviceInfo::supportedSampleTypes" ref="qaudiodeviceinfo.html#supportedSampleTypes"/>
+            <keyword name="~QAudioDeviceInfo" id="QAudioDeviceInfo::~QAudioDeviceInfo" ref="qaudiodeviceinfo.html#dtor.QAudioDeviceInfo"/>
             <keyword name="QAudioEncoderControl" id="QAudioEncoderControl" ref="qaudioencodercontrol.html"/>
             <keyword name="audioSettings" id="QAudioEncoderControl::audioSettings" ref="qaudioencodercontrol.html#audioSettings"/>
             <keyword name="codecDescription" id="QAudioEncoderControl::codecDescription" ref="qaudioencodercontrol.html#codecDescription"/>
@@ -805,6 +894,76 @@
             <keyword name="setActiveEndpoint" id="QAudioEndpointSelector::setActiveEndpoint" ref="qaudioendpointselector.html#setActiveEndpoint"/>
             <keyword name="~QAudioEndpointSelector" id="QAudioEndpointSelector::~QAudioEndpointSelector" ref="qaudioendpointselector.html#dtor.QAudioEndpointSelector"/>
             <keyword name="QAudioEndpointSelector_iid" id="QAudioEndpointSelector_iid" ref="qaudioendpointselector.html#QAudioEndpointSelector_iid"/>
+            <keyword name="QAudioFormat" id="QAudioFormat" ref="qaudioformat.html"/>
+            <keyword name="QAudioFormat::Endian" id="QAudioFormat::Endian" ref="qaudioformat.html#Endian-enum"/>
+            <keyword name="QAudioFormat::BigEndian" id="QAudioFormat::BigEndian" ref="qaudioformat.html#Endian-enum"/>
+            <keyword name="QAudioFormat::LittleEndian" id="QAudioFormat::LittleEndian" ref="qaudioformat.html#Endian-enum"/>
+            <keyword name="QAudioFormat::SampleType" id="QAudioFormat::SampleType" ref="qaudioformat.html#SampleType-enum"/>
+            <keyword name="QAudioFormat::Unknown" id="QAudioFormat::Unknown" ref="qaudioformat.html#SampleType-enum"/>
+            <keyword name="QAudioFormat::SignedInt" id="QAudioFormat::SignedInt" ref="qaudioformat.html#SampleType-enum"/>
+            <keyword name="QAudioFormat::UnSignedInt" id="QAudioFormat::UnSignedInt" ref="qaudioformat.html#SampleType-enum"/>
+            <keyword name="QAudioFormat::Float" id="QAudioFormat::Float" ref="qaudioformat.html#SampleType-enum"/>
+            <keyword name="byteOrder" id="QAudioFormat::byteOrder" ref="qaudioformat.html#byteOrder"/>
+            <keyword name="channelCount" id="QAudioFormat::channelCount" ref="qaudioformat.html#channelCount"/>
+            <keyword name="channels" id="QAudioFormat::channels" ref="qaudioformat-obsolete.html#channels"/>
+            <keyword name="codec" id="QAudioFormat::codec" ref="qaudioformat.html#codec"/>
+            <keyword name="frequency" id="QAudioFormat::frequency" ref="qaudioformat-obsolete.html#frequency"/>
+            <keyword name="isValid" id="QAudioFormat::isValid" ref="qaudioformat.html#isValid"/>
+            <keyword name="operator!=" id="QAudioFormat::operator!=" ref="qaudioformat.html#operator-not-eq"/>
+            <keyword name="operator=" id="QAudioFormat::operator=" ref="qaudioformat.html#operator-eq"/>
+            <keyword name="operator==" id="QAudioFormat::operator==" ref="qaudioformat.html#operator-eq-eq"/>
+            <keyword name="sampleRate" id="QAudioFormat::sampleRate" ref="qaudioformat.html#sampleRate"/>
+            <keyword name="sampleSize" id="QAudioFormat::sampleSize" ref="qaudioformat.html#sampleSize"/>
+            <keyword name="sampleType" id="QAudioFormat::sampleType" ref="qaudioformat.html#sampleType"/>
+            <keyword name="setByteOrder" id="QAudioFormat::setByteOrder" ref="qaudioformat.html#setByteOrder"/>
+            <keyword name="setChannelCount" id="QAudioFormat::setChannelCount" ref="qaudioformat.html#setChannelCount"/>
+            <keyword name="setChannels" id="QAudioFormat::setChannels" ref="qaudioformat-obsolete.html#setChannels"/>
+            <keyword name="setCodec" id="QAudioFormat::setCodec" ref="qaudioformat.html#setCodec"/>
+            <keyword name="setFrequency" id="QAudioFormat::setFrequency" ref="qaudioformat-obsolete.html#setFrequency"/>
+            <keyword name="setSampleRate" id="QAudioFormat::setSampleRate" ref="qaudioformat.html#setSampleRate"/>
+            <keyword name="setSampleSize" id="QAudioFormat::setSampleSize" ref="qaudioformat.html#setSampleSize"/>
+            <keyword name="setSampleType" id="QAudioFormat::setSampleType" ref="qaudioformat.html#setSampleType"/>
+            <keyword name="~QAudioFormat" id="QAudioFormat::~QAudioFormat" ref="qaudioformat.html#dtor.QAudioFormat"/>
+            <keyword name="QAudioInput" id="QAudioInput" ref="qaudioinput.html"/>
+            <keyword name="bufferSize" id="QAudioInput::bufferSize" ref="qaudioinput.html#bufferSize"/>
+            <keyword name="bytesReady" id="QAudioInput::bytesReady" ref="qaudioinput.html#bytesReady"/>
+            <keyword name="elapsedUSecs" id="QAudioInput::elapsedUSecs" ref="qaudioinput.html#elapsedUSecs"/>
+            <keyword name="error" id="QAudioInput::error" ref="qaudioinput.html#error"/>
+            <keyword name="format" id="QAudioInput::format" ref="qaudioinput.html#format"/>
+            <keyword name="notify" id="QAudioInput::notify" ref="qaudioinput.html#notify"/>
+            <keyword name="notifyInterval" id="QAudioInput::notifyInterval" ref="qaudioinput.html#notifyInterval"/>
+            <keyword name="periodSize" id="QAudioInput::periodSize" ref="qaudioinput.html#periodSize"/>
+            <keyword name="processedUSecs" id="QAudioInput::processedUSecs" ref="qaudioinput.html#processedUSecs"/>
+            <keyword name="reset" id="QAudioInput::reset" ref="qaudioinput.html#reset"/>
+            <keyword name="resume" id="QAudioInput::resume" ref="qaudioinput.html#resume"/>
+            <keyword name="setBufferSize" id="QAudioInput::setBufferSize" ref="qaudioinput.html#setBufferSize"/>
+            <keyword name="setNotifyInterval" id="QAudioInput::setNotifyInterval" ref="qaudioinput.html#setNotifyInterval"/>
+            <keyword name="start" id="QAudioInput::start" ref="qaudioinput.html#start"/>
+            <keyword name="state" id="QAudioInput::state" ref="qaudioinput.html#state"/>
+            <keyword name="stateChanged" id="QAudioInput::stateChanged" ref="qaudioinput.html#stateChanged"/>
+            <keyword name="stop" id="QAudioInput::stop" ref="qaudioinput.html#stop"/>
+            <keyword name="suspend" id="QAudioInput::suspend" ref="qaudioinput.html#suspend"/>
+            <keyword name="~QAudioInput" id="QAudioInput::~QAudioInput" ref="qaudioinput.html#dtor.QAudioInput"/>
+            <keyword name="QAudioOutput" id="QAudioOutput" ref="qaudiooutput.html"/>
+            <keyword name="bufferSize" id="QAudioOutput::bufferSize" ref="qaudiooutput.html#bufferSize"/>
+            <keyword name="bytesFree" id="QAudioOutput::bytesFree" ref="qaudiooutput.html#bytesFree"/>
+            <keyword name="elapsedUSecs" id="QAudioOutput::elapsedUSecs" ref="qaudiooutput.html#elapsedUSecs"/>
+            <keyword name="error" id="QAudioOutput::error" ref="qaudiooutput.html#error"/>
+            <keyword name="format" id="QAudioOutput::format" ref="qaudiooutput.html#format"/>
+            <keyword name="notify" id="QAudioOutput::notify" ref="qaudiooutput.html#notify"/>
+            <keyword name="notifyInterval" id="QAudioOutput::notifyInterval" ref="qaudiooutput.html#notifyInterval"/>
+            <keyword name="periodSize" id="QAudioOutput::periodSize" ref="qaudiooutput.html#periodSize"/>
+            <keyword name="processedUSecs" id="QAudioOutput::processedUSecs" ref="qaudiooutput.html#processedUSecs"/>
+            <keyword name="reset" id="QAudioOutput::reset" ref="qaudiooutput.html#reset"/>
+            <keyword name="resume" id="QAudioOutput::resume" ref="qaudiooutput.html#resume"/>
+            <keyword name="setBufferSize" id="QAudioOutput::setBufferSize" ref="qaudiooutput.html#setBufferSize"/>
+            <keyword name="setNotifyInterval" id="QAudioOutput::setNotifyInterval" ref="qaudiooutput.html#setNotifyInterval"/>
+            <keyword name="start" id="QAudioOutput::start" ref="qaudiooutput.html#start"/>
+            <keyword name="state" id="QAudioOutput::state" ref="qaudiooutput.html#state"/>
+            <keyword name="stateChanged" id="QAudioOutput::stateChanged" ref="qaudiooutput.html#stateChanged"/>
+            <keyword name="stop" id="QAudioOutput::stop" ref="qaudiooutput.html#stop"/>
+            <keyword name="suspend" id="QAudioOutput::suspend" ref="qaudiooutput.html#suspend"/>
+            <keyword name="~QAudioOutput" id="QAudioOutput::~QAudioOutput" ref="qaudiooutput.html#dtor.QAudioOutput"/>
             <keyword name="QCompass" id="QCompass" ref="qcompass.html"/>
             <keyword name="reading" id="QCompass::reading" ref="qcompass.html#reading"/>
             <keyword name="~QCompass" id="QCompass::~QCompass" ref="qcompass.html#dtor.QCompass"/>
@@ -1607,7 +1766,7 @@
             <keyword name="offset" id="QGraphicsVideoItem::offset" ref="qgraphicsvideoitem.html#offset-prop"/>
             <keyword name="paint" id="QGraphicsVideoItem::paint" ref="qgraphicsvideoitem.html#paint"/>
             <keyword name="setAspectRatioMode" id="QGraphicsVideoItem::setAspectRatioMode" ref="qgraphicsvideoitem.html#aspectRatioMode-prop"/>
-            <keyword name="setMediaObject" id="QGraphicsVideoItem::setMediaObject" ref="qgraphicsvideoitem.html#mediaObject-prop"/>
+            <keyword name="setMediaObject" id="QGraphicsVideoItem::setMediaObject" ref="qgraphicsvideoitem.html#setMediaObject"/>
             <keyword name="setOffset" id="QGraphicsVideoItem::setOffset" ref="qgraphicsvideoitem.html#offset-prop"/>
             <keyword name="setSize" id="QGraphicsVideoItem::setSize" ref="qgraphicsvideoitem.html#size-prop"/>
             <keyword name="size" id="QGraphicsVideoItem::size" ref="qgraphicsvideoitem.html#size-prop"/>
@@ -1637,6 +1796,9 @@
             <keyword name="latin1" id="QLatin1Constant::latin1" ref="qlatin1constant.html#latin1"/>
             <keyword name="operator!=" id="QLatin1Constant::operator!=" ref="qlatin1constant.html#operator-not-eq"/>
             <keyword name="operator==" id="QLatin1Constant::operator==" ref="qlatin1constant.html#operator-eq-eq"/>
+            <keyword name="QML Audio Element Reference" id="QML.Audio" ref="qml-audio.html"/>
+            <keyword name="QML SoundEffect Element Reference" id="QML.SoundEffect" ref="qml-soundeffect.html"/>
+            <keyword name="QML Video Element Reference" id="QML.Video" ref="qml-video.html"/>
             <keyword name="QMagnetometer" id="QMagnetometer" ref="qmagnetometer.html"/>
             <keyword name="reading" id="QMagnetometer::reading" ref="qmagnetometer.html#reading"/>
             <keyword name="returnGeoValues" id="QMagnetometer::returnGeoValues" ref="qmagnetometer.html#returnGeoValues-prop"/>
@@ -1652,6 +1814,10 @@
             <keyword name="x" id="QMagnetometerReading::x" ref="qmagnetometerreading.html#x-prop"/>
             <keyword name="y" id="QMagnetometerReading::y" ref="qmagnetometerreading.html#y-prop"/>
             <keyword name="z" id="QMagnetometerReading::z" ref="qmagnetometerreading.html#z-prop"/>
+            <keyword name="QMediaBindableInterface" id="QMediaBindableInterface" ref="qmediabindableinterface.html"/>
+            <keyword name="mediaObject" id="QMediaBindableInterface::mediaObject" ref="qmediabindableinterface.html#mediaObject"/>
+            <keyword name="setMediaObject" id="QMediaBindableInterface::setMediaObject" ref="qmediabindableinterface.html#setMediaObject"/>
+            <keyword name="~QMediaBindableInterface" id="QMediaBindableInterface::~QMediaBindableInterface" ref="qmediabindableinterface.html#dtor.QMediaBindableInterface"/>
             <keyword name="QMediaContainerControl" id="QMediaContainerControl" ref="qmediacontainercontrol.html"/>
             <keyword name="containerDescription" id="QMediaContainerControl::containerDescription" ref="qmediacontainercontrol.html#containerDescription"/>
             <keyword name="containerMimeType" id="QMediaContainerControl::containerMimeType" ref="qmediacontainercontrol.html#containerMimeType"/>
@@ -1689,7 +1855,9 @@
             <keyword name="mediaStatusChanged" id="QMediaImageViewer::mediaStatusChanged" ref="qmediaimageviewer.html#mediaStatusChanged"/>
             <keyword name="pause" id="QMediaImageViewer::pause" ref="qmediaimageviewer.html#pause"/>
             <keyword name="play" id="QMediaImageViewer::play" ref="qmediaimageviewer.html#play"/>
+            <keyword name="playlist" id="QMediaImageViewer::playlist" ref="qmediaimageviewer.html#playlist"/>
             <keyword name="setMedia" id="QMediaImageViewer::setMedia" ref="qmediaimageviewer.html#media-prop"/>
+            <keyword name="setPlaylist" id="QMediaImageViewer::setPlaylist" ref="qmediaimageviewer.html#setPlaylist"/>
             <keyword name="setTimeout" id="QMediaImageViewer::setTimeout" ref="qmediaimageviewer.html#timeout-prop"/>
             <keyword name="state" id="QMediaImageViewer::state" ref="qmediaimageviewer.html#state-prop"/>
             <keyword name="stateChanged" id="QMediaImageViewer::stateChanged" ref="qmediaimageviewer.html#stateChanged"/>
@@ -1702,23 +1870,19 @@
             <keyword name="availabilityError" id="QMediaObject::availabilityError" ref="qmediaobject.html#availabilityError"/>
             <keyword name="availableExtendedMetaData" id="QMediaObject::availableExtendedMetaData" ref="qmediaobject.html#availableExtendedMetaData"/>
             <keyword name="availableMetaData" id="QMediaObject::availableMetaData" ref="qmediaobject.html#availableMetaData"/>
+            <keyword name="bind" id="QMediaObject::bind" ref="qmediaobject.html#bind"/>
             <keyword name="extendedMetaData" id="QMediaObject::extendedMetaData" ref="qmediaobject.html#extendedMetaData"/>
             <keyword name="isAvailable" id="QMediaObject::isAvailable" ref="qmediaobject.html#isAvailable"/>
-            <keyword name="isMetaDataAvailable" id="QMediaObject::isMetaDataAvailable" ref="qmediaobject.html#metaDataAvailable-prop"/>
-            <keyword name="isMetaDataWritable" id="QMediaObject::isMetaDataWritable" ref="qmediaobject.html#metaDataWritable-prop"/>
+            <keyword name="isMetaDataAvailable" id="QMediaObject::isMetaDataAvailable" ref="qmediaobject.html#isMetaDataAvailable"/>
             <keyword name="metaData" id="QMediaObject::metaData" ref="qmediaobject.html#metaData"/>
-            <keyword name="metaDataAvailable" id="QMediaObject::metaDataAvailable" ref="qmediaobject.html#metaDataAvailable-prop"/>
             <keyword name="metaDataAvailableChanged" id="QMediaObject::metaDataAvailableChanged" ref="qmediaobject.html#metaDataAvailableChanged"/>
             <keyword name="metaDataChanged" id="QMediaObject::metaDataChanged" ref="qmediaobject.html#metaDataChanged"/>
-            <keyword name="metaDataWritable" id="QMediaObject::metaDataWritable" ref="qmediaobject.html#metaDataWritable-prop"/>
-            <keyword name="metaDataWritableChanged" id="QMediaObject::metaDataWritableChanged" ref="qmediaobject.html#metaDataWritableChanged"/>
             <keyword name="notifyInterval" id="QMediaObject::notifyInterval" ref="qmediaobject.html#notifyInterval-prop"/>
             <keyword name="notifyIntervalChanged" id="QMediaObject::notifyIntervalChanged" ref="qmediaobject.html#notifyIntervalChanged"/>
             <keyword name="removePropertyWatch" id="QMediaObject::removePropertyWatch" ref="qmediaobject.html#removePropertyWatch"/>
             <keyword name="service" id="QMediaObject::service" ref="qmediaobject.html#service"/>
-            <keyword name="setExtendedMetaData" id="QMediaObject::setExtendedMetaData" ref="qmediaobject.html#setExtendedMetaData"/>
-            <keyword name="setMetaData" id="QMediaObject::setMetaData" ref="qmediaobject.html#setMetaData"/>
             <keyword name="setNotifyInterval" id="QMediaObject::setNotifyInterval" ref="qmediaobject.html#notifyInterval-prop"/>
+            <keyword name="unbind" id="QMediaObject::unbind" ref="qmediaobject.html#unbind"/>
             <keyword name="~QMediaObject" id="QMediaObject::~QMediaObject" ref="qmediaobject.html#dtor.QMediaObject"/>
             <keyword name="QMediaPlayer" id="QMediaPlayer" ref="qmediaplayer.html"/>
             <keyword name="QMediaPlayer::Error" id="QMediaPlayer::Error" ref="qmediaplayer.html#Error-enum"/>
@@ -1770,6 +1934,7 @@
             <keyword name="play" id="QMediaPlayer::play" ref="qmediaplayer.html#play"/>
             <keyword name="playbackRate" id="QMediaPlayer::playbackRate" ref="qmediaplayer.html#playbackRate-prop"/>
             <keyword name="playbackRateChanged" id="QMediaPlayer::playbackRateChanged" ref="qmediaplayer.html#playbackRateChanged"/>
+            <keyword name="playlist" id="QMediaPlayer::playlist" ref="qmediaplayer.html#playlist-prop"/>
             <keyword name="position" id="QMediaPlayer::position" ref="qmediaplayer.html#position-prop"/>
             <keyword name="positionChanged" id="QMediaPlayer::positionChanged" ref="qmediaplayer.html#positionChanged"/>
             <keyword name="seekable" id="QMediaPlayer::seekable" ref="qmediaplayer.html#seekable-prop"/>
@@ -1777,7 +1942,9 @@
             <keyword name="setMedia" id="QMediaPlayer::setMedia" ref="qmediaplayer.html#media-prop"/>
             <keyword name="setMuted" id="QMediaPlayer::setMuted" ref="qmediaplayer.html#muted-prop"/>
             <keyword name="setPlaybackRate" id="QMediaPlayer::setPlaybackRate" ref="qmediaplayer.html#playbackRate-prop"/>
+            <keyword name="setPlaylist" id="QMediaPlayer::setPlaylist" ref="qmediaplayer.html#playlist-prop"/>
             <keyword name="setPosition" id="QMediaPlayer::setPosition" ref="qmediaplayer.html#position-prop"/>
+            <keyword name="setVideoOutput" id="QMediaPlayer::setVideoOutput" ref="qmediaplayer.html#setVideoOutput"/>
             <keyword name="setVolume" id="QMediaPlayer::setVolume" ref="qmediaplayer.html#volume-prop"/>
             <keyword name="state" id="QMediaPlayer::state" ref="qmediaplayer.html#state-prop"/>
             <keyword name="stateChanged" id="QMediaPlayer::stateChanged" ref="qmediaplayer.html#stateChanged"/>
@@ -1837,7 +2004,7 @@
             <keyword name="QMediaPlaylist::PlaybackMode" id="QMediaPlaylist::PlaybackMode" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="QMediaPlaylist::CurrentItemOnce" id="QMediaPlaylist::CurrentItemOnce" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="QMediaPlaylist::CurrentItemInLoop" id="QMediaPlaylist::CurrentItemInLoop" ref="qmediaplaylist.html#PlaybackMode-enum"/>
-            <keyword name="QMediaPlaylist::Linear" id="QMediaPlaylist::Linear" ref="qmediaplaylist.html#PlaybackMode-enum"/>
+            <keyword name="QMediaPlaylist::Sequential" id="QMediaPlaylist::Sequential" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="QMediaPlaylist::Loop" id="QMediaPlaylist::Loop" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="QMediaPlaylist::Random" id="QMediaPlaylist::Random" ref="qmediaplaylist.html#PlaybackMode-enum"/>
             <keyword name="addMedia" id="QMediaPlaylist::addMedia" ref="qmediaplaylist.html#addMedia"/>
@@ -1943,6 +2110,12 @@
             <keyword name="close" id="QMediaPlaylistReader::close" ref="qmediaplaylistreader.html#close"/>
             <keyword name="readItem" id="QMediaPlaylistReader::readItem" ref="qmediaplaylistreader.html#readItem"/>
             <keyword name="~QMediaPlaylistReader" id="QMediaPlaylistReader::~QMediaPlaylistReader" ref="qmediaplaylistreader.html#dtor.QMediaPlaylistReader"/>
+            <keyword name="QMediaPlaylistSourceControl" id="QMediaPlaylistSourceControl" ref="qmediaplaylistsourcecontrol.html"/>
+            <keyword name="playlist" id="QMediaPlaylistSourceControl::playlist" ref="qmediaplaylistsourcecontrol.html#playlist"/>
+            <keyword name="playlistChanged" id="QMediaPlaylistSourceControl::playlistChanged" ref="qmediaplaylistsourcecontrol.html#playlistChanged"/>
+            <keyword name="setPlaylist" id="QMediaPlaylistSourceControl::setPlaylist" ref="qmediaplaylistsourcecontrol.html#setPlaylist"/>
+            <keyword name="~QMediaPlaylistSourceControl" id="QMediaPlaylistSourceControl::~QMediaPlaylistSourceControl" ref="qmediaplaylistsourcecontrol.html#dtor.QMediaPlaylistSourceControl"/>
+            <keyword name="QMediaPlaylistSourceControl_iid" id="QMediaPlaylistSourceControl_iid" ref="qmediaplaylistsourcecontrol.html#QMediaPlaylistSourceControl_iid"/>
             <keyword name="QMediaPlaylistWriter" id="QMediaPlaylistWriter" ref="qmediaplaylistwriter.html"/>
             <keyword name="close" id="QMediaPlaylistWriter::close" ref="qmediaplaylistwriter.html#close"/>
             <keyword name="writeItem" id="QMediaPlaylistWriter::writeItem" ref="qmediaplaylistwriter.html#writeItem"/>
@@ -1959,17 +2132,36 @@
             <keyword name="audioCodecDescription" id="QMediaRecorder::audioCodecDescription" ref="qmediarecorder.html#audioCodecDescription"/>
             <keyword name="audioSettings" id="QMediaRecorder::audioSettings" ref="qmediarecorder.html#audioSettings"/>
             <keyword name="availabilityError" id="QMediaRecorder::availabilityError" ref="qmediarecorder.html#availabilityError"/>
+            <keyword name="availableExtendedMetaData" id="QMediaRecorder::availableExtendedMetaData" ref="qmediarecorder.html#availableExtendedMetaData"/>
+            <keyword name="availableMetaData" id="QMediaRecorder::availableMetaData" ref="qmediarecorder.html#availableMetaData"/>
             <keyword name="containerDescription" id="QMediaRecorder::containerDescription" ref="qmediarecorder.html#containerDescription"/>
             <keyword name="containerMimeType" id="QMediaRecorder::containerMimeType" ref="qmediarecorder.html#containerMimeType"/>
             <keyword name="duration" id="QMediaRecorder::duration" ref="qmediarecorder.html#duration-prop"/>
             <keyword name="durationChanged" id="QMediaRecorder::durationChanged" ref="qmediarecorder.html#durationChanged"/>
             <keyword name="error" id="QMediaRecorder::error" ref="qmediarecorder.html#error"/>
             <keyword name="errorString" id="QMediaRecorder::errorString" ref="qmediarecorder.html#errorString"/>
+            <keyword name="extendedMetaData" id="QMediaRecorder::extendedMetaData" ref="qmediarecorder.html#extendedMetaData"/>
             <keyword name="isAvailable" id="QMediaRecorder::isAvailable" ref="qmediarecorder.html#isAvailable"/>
+            <keyword name="isMetaDataAvailable" id="QMediaRecorder::isMetaDataAvailable" ref="qmediarecorder.html#metaDataAvailable-prop"/>
+            <keyword name="isMetaDataWritable" id="QMediaRecorder::isMetaDataWritable" ref="qmediarecorder.html#metaDataWritable-prop"/>
+            <keyword name="isMuted" id="QMediaRecorder::isMuted" ref="qmediarecorder.html#muted-prop"/>
+            <keyword name="mediaObject" id="QMediaRecorder::mediaObject" ref="qmediarecorder.html#mediaObject"/>
+            <keyword name="metaData" id="QMediaRecorder::metaData" ref="qmediarecorder.html#metaData"/>
+            <keyword name="metaDataAvailable" id="QMediaRecorder::metaDataAvailable" ref="qmediarecorder.html#metaDataAvailable-prop"/>
+            <keyword name="metaDataAvailableChanged" id="QMediaRecorder::metaDataAvailableChanged" ref="qmediarecorder.html#metaDataAvailableChanged"/>
+            <keyword name="metaDataChanged" id="QMediaRecorder::metaDataChanged" ref="qmediarecorder.html#metaDataChanged"/>
+            <keyword name="metaDataWritable" id="QMediaRecorder::metaDataWritable" ref="qmediarecorder.html#metaDataWritable-prop"/>
+            <keyword name="metaDataWritableChanged" id="QMediaRecorder::metaDataWritableChanged" ref="qmediarecorder.html#metaDataWritableChanged"/>
+            <keyword name="muted" id="QMediaRecorder::muted" ref="qmediarecorder.html#muted-prop"/>
+            <keyword name="mutedChanged" id="QMediaRecorder::mutedChanged" ref="qmediarecorder.html#mutedChanged"/>
             <keyword name="outputLocation" id="QMediaRecorder::outputLocation" ref="qmediarecorder.html#outputLocation-prop"/>
             <keyword name="pause" id="QMediaRecorder::pause" ref="qmediarecorder.html#pause"/>
             <keyword name="record" id="QMediaRecorder::record" ref="qmediarecorder.html#record"/>
             <keyword name="setEncodingSettings" id="QMediaRecorder::setEncodingSettings" ref="qmediarecorder.html#setEncodingSettings"/>
+            <keyword name="setExtendedMetaData" id="QMediaRecorder::setExtendedMetaData" ref="qmediarecorder.html#setExtendedMetaData"/>
+            <keyword name="setMediaObject" id="QMediaRecorder::setMediaObject" ref="qmediarecorder.html#setMediaObject"/>
+            <keyword name="setMetaData" id="QMediaRecorder::setMetaData" ref="qmediarecorder.html#setMetaData"/>
+            <keyword name="setMuted" id="QMediaRecorder::setMuted" ref="qmediarecorder.html#muted-prop"/>
             <keyword name="setOutputLocation" id="QMediaRecorder::setOutputLocation" ref="qmediarecorder.html#outputLocation-prop"/>
             <keyword name="state" id="QMediaRecorder::state" ref="qmediarecorder.html#state"/>
             <keyword name="stateChanged" id="QMediaRecorder::stateChanged" ref="qmediarecorder.html#stateChanged"/>
@@ -1988,9 +2180,12 @@
             <keyword name="duration" id="QMediaRecorderControl::duration" ref="qmediarecordercontrol.html#duration"/>
             <keyword name="durationChanged" id="QMediaRecorderControl::durationChanged" ref="qmediarecordercontrol.html#durationChanged"/>
             <keyword name="error" id="QMediaRecorderControl::error" ref="qmediarecordercontrol.html#error"/>
+            <keyword name="isMuted" id="QMediaRecorderControl::isMuted" ref="qmediarecordercontrol.html#isMuted"/>
+            <keyword name="mutedChanged" id="QMediaRecorderControl::mutedChanged" ref="qmediarecordercontrol.html#mutedChanged"/>
             <keyword name="outputLocation" id="QMediaRecorderControl::outputLocation" ref="qmediarecordercontrol.html#outputLocation"/>
             <keyword name="pause" id="QMediaRecorderControl::pause" ref="qmediarecordercontrol.html#pause"/>
             <keyword name="record" id="QMediaRecorderControl::record" ref="qmediarecordercontrol.html#record"/>
+            <keyword name="setMuted" id="QMediaRecorderControl::setMuted" ref="qmediarecordercontrol.html#setMuted"/>
             <keyword name="setOutputLocation" id="QMediaRecorderControl::setOutputLocation" ref="qmediarecordercontrol.html#setOutputLocation"/>
             <keyword name="state" id="QMediaRecorderControl::state" ref="qmediarecordercontrol.html#state"/>
             <keyword name="stateChanged" id="QMediaRecorderControl::stateChanged" ref="qmediarecordercontrol.html#stateChanged"/>
@@ -2026,7 +2221,8 @@
             <keyword name="~QMediaResource" id="QMediaResource::~QMediaResource" ref="qmediaresource.html#dtor.QMediaResource"/>
             <keyword name="QMediaResourceList" id="QMediaResourceList" ref="AQMediaResourceList-typedef"/>
             <keyword name="QMediaService" id="QMediaService" ref="qmediaservice.html"/>
-            <keyword name="control" id="QMediaService::control" ref="qmediaservice.html#control"/>
+            <keyword name="releaseControl" id="QMediaService::releaseControl" ref="qmediaservice.html#releaseControl"/>
+            <keyword name="requestControl" id="QMediaService::requestControl" ref="qmediaservice.html#requestControl"/>
             <keyword name="~QMediaService" id="QMediaService::~QMediaService" ref="qmediaservice.html#dtor.QMediaService"/>
             <keyword name="QMediaServiceFeaturesInterface" id="QMediaServiceFeaturesInterface" ref="qmediaservicefeaturesinterface.html"/>
             <keyword name="supportedFeatures" id="QMediaServiceFeaturesInterface::supportedFeatures" ref="qmediaservicefeaturesinterface.html#supportedFeatures"/>
@@ -2402,20 +2598,30 @@
             <keyword name="operator+" id="QMessageSortOrder::operator+" ref="qmessagesortorder.html#operator-2b"/>
             <keyword name="operator+=" id="QMessageSortOrder::operator+=" ref="qmessagesortorder.html#operator-2b-eq"/>
             <keyword name="~QMessageSortOrder" id="QMessageSortOrder::~QMessageSortOrder" ref="qmessagesortorder.html#dtor.QMessageSortOrder"/>
-            <keyword name="QMetaDataControl" id="QMetaDataControl" ref="qmetadatacontrol.html"/>
-            <keyword name="availableExtendedMetaData" id="QMetaDataControl::availableExtendedMetaData" ref="qmetadatacontrol.html#availableExtendedMetaData"/>
-            <keyword name="availableMetaData" id="QMetaDataControl::availableMetaData" ref="qmetadatacontrol.html#availableMetaData"/>
-            <keyword name="extendedMetaData" id="QMetaDataControl::extendedMetaData" ref="qmetadatacontrol.html#extendedMetaData"/>
-            <keyword name="isMetaDataAvailable" id="QMetaDataControl::isMetaDataAvailable" ref="qmetadatacontrol.html#isMetaDataAvailable"/>
-            <keyword name="isWritable" id="QMetaDataControl::isWritable" ref="qmetadatacontrol.html#isWritable"/>
-            <keyword name="metaData" id="QMetaDataControl::metaData" ref="qmetadatacontrol.html#metaData"/>
-            <keyword name="metaDataAvailableChanged" id="QMetaDataControl::metaDataAvailableChanged" ref="qmetadatacontrol.html#metaDataAvailableChanged"/>
-            <keyword name="metaDataChanged" id="QMetaDataControl::metaDataChanged" ref="qmetadatacontrol.html#metaDataChanged"/>
-            <keyword name="setExtendedMetaData" id="QMetaDataControl::setExtendedMetaData" ref="qmetadatacontrol.html#setExtendedMetaData"/>
-            <keyword name="setMetaData" id="QMetaDataControl::setMetaData" ref="qmetadatacontrol.html#setMetaData"/>
-            <keyword name="writableChanged" id="QMetaDataControl::writableChanged" ref="qmetadatacontrol.html#writableChanged"/>
-            <keyword name="~QMetaDataControl" id="QMetaDataControl::~QMetaDataControl" ref="qmetadatacontrol.html#dtor.QMetaDataControl"/>
-            <keyword name="QMetaDataControl_iid" id="QMetaDataControl_iid" ref="qmetadatacontrol.html#QMetaDataControl_iid"/>
+            <keyword name="QMetaDataReaderControl" id="QMetaDataReaderControl" ref="qmetadatareadercontrol.html"/>
+            <keyword name="availableExtendedMetaData" id="QMetaDataReaderControl::availableExtendedMetaData" ref="qmetadatareadercontrol.html#availableExtendedMetaData"/>
+            <keyword name="availableMetaData" id="QMetaDataReaderControl::availableMetaData" ref="qmetadatareadercontrol.html#availableMetaData"/>
+            <keyword name="extendedMetaData" id="QMetaDataReaderControl::extendedMetaData" ref="qmetadatareadercontrol.html#extendedMetaData"/>
+            <keyword name="isMetaDataAvailable" id="QMetaDataReaderControl::isMetaDataAvailable" ref="qmetadatareadercontrol.html#isMetaDataAvailable"/>
+            <keyword name="metaData" id="QMetaDataReaderControl::metaData" ref="qmetadatareadercontrol.html#metaData"/>
+            <keyword name="metaDataAvailableChanged" id="QMetaDataReaderControl::metaDataAvailableChanged" ref="qmetadatareadercontrol.html#metaDataAvailableChanged"/>
+            <keyword name="metaDataChanged" id="QMetaDataReaderControl::metaDataChanged" ref="qmetadatareadercontrol.html#metaDataChanged"/>
+            <keyword name="~QMetaDataReaderControl" id="QMetaDataReaderControl::~QMetaDataReaderControl" ref="qmetadatareadercontrol.html#dtor.QMetaDataReaderControl"/>
+            <keyword name="QMetaDataReaderControl_iid" id="QMetaDataReaderControl_iid" ref="qmetadatareadercontrol.html#QMetaDataReaderControl_iid"/>
+            <keyword name="QMetaDataWriterControl" id="QMetaDataWriterControl" ref="qmetadatawritercontrol.html"/>
+            <keyword name="availableExtendedMetaData" id="QMetaDataWriterControl::availableExtendedMetaData" ref="qmetadatawritercontrol.html#availableExtendedMetaData"/>
+            <keyword name="availableMetaData" id="QMetaDataWriterControl::availableMetaData" ref="qmetadatawritercontrol.html#availableMetaData"/>
+            <keyword name="extendedMetaData" id="QMetaDataWriterControl::extendedMetaData" ref="qmetadatawritercontrol.html#extendedMetaData"/>
+            <keyword name="isMetaDataAvailable" id="QMetaDataWriterControl::isMetaDataAvailable" ref="qmetadatawritercontrol.html#isMetaDataAvailable"/>
+            <keyword name="isWritable" id="QMetaDataWriterControl::isWritable" ref="qmetadatawritercontrol.html#isWritable"/>
+            <keyword name="metaData" id="QMetaDataWriterControl::metaData" ref="qmetadatawritercontrol.html#metaData"/>
+            <keyword name="metaDataAvailableChanged" id="QMetaDataWriterControl::metaDataAvailableChanged" ref="qmetadatawritercontrol.html#metaDataAvailableChanged"/>
+            <keyword name="metaDataChanged" id="QMetaDataWriterControl::metaDataChanged" ref="qmetadatawritercontrol.html#metaDataChanged"/>
+            <keyword name="setExtendedMetaData" id="QMetaDataWriterControl::setExtendedMetaData" ref="qmetadatawritercontrol.html#setExtendedMetaData"/>
+            <keyword name="setMetaData" id="QMetaDataWriterControl::setMetaData" ref="qmetadatawritercontrol.html#setMetaData"/>
+            <keyword name="writableChanged" id="QMetaDataWriterControl::writableChanged" ref="qmetadatawritercontrol.html#writableChanged"/>
+            <keyword name="~QMetaDataWriterControl" id="QMetaDataWriterControl::~QMetaDataWriterControl" ref="qmetadatawritercontrol.html#dtor.QMetaDataWriterControl"/>
+            <keyword name="QMetaDataWriterControl_iid" id="QMetaDataWriterControl_iid" ref="qmetadatawritercontrol.html#QMetaDataWriterControl_iid"/>
             <keyword name="QNetworkConfiguration" id="QNetworkConfiguration" ref="qnetworkconfiguration.html"/>
             <keyword name="QNetworkConfiguration::Purpose" id="QNetworkConfiguration::Purpose" ref="qnetworkconfiguration.html#Purpose-enum"/>
             <keyword name="QNetworkConfiguration::UnknownPurpose" id="QNetworkConfiguration::UnknownPurpose" ref="qnetworkconfiguration.html#Purpose-enum"/>
@@ -3175,25 +3381,111 @@
             <keyword name="setQuality" id="QVideoEncoderSettings::setQuality" ref="qvideoencodersettings.html#setQuality"/>
             <keyword name="setResolution" id="QVideoEncoderSettings::setResolution" ref="qvideoencodersettings.html#setResolution"/>
             <keyword name="~QVideoEncoderSettings" id="QVideoEncoderSettings::~QVideoEncoderSettings" ref="qvideoencodersettings.html#dtor.QVideoEncoderSettings"/>
-            <keyword name="QVideoOutputControl" id="QVideoOutputControl" ref="qvideooutputcontrol.html"/>
-            <keyword name="QVideoOutputControl::Output" id="QVideoOutputControl::Output" ref="qvideooutputcontrol.html#Output-enum"/>
-            <keyword name="QVideoOutputControl::NoOutput" id="QVideoOutputControl::NoOutput" ref="qvideooutputcontrol.html#Output-enum"/>
-            <keyword name="QVideoOutputControl::WindowOutput" id="QVideoOutputControl::WindowOutput" ref="qvideooutputcontrol.html#Output-enum"/>
-            <keyword name="QVideoOutputControl::RendererOutput" id="QVideoOutputControl::RendererOutput" ref="qvideooutputcontrol.html#Output-enum"/>
-            <keyword name="QVideoOutputControl::WidgetOutput" id="QVideoOutputControl::WidgetOutput" ref="qvideooutputcontrol.html#Output-enum"/>
-            <keyword name="QVideoOutputControl::UserOutput" id="QVideoOutputControl::UserOutput" ref="qvideooutputcontrol.html#Output-enum"/>
-            <keyword name="QVideoOutputControl::MaxUserOutput" id="QVideoOutputControl::MaxUserOutput" ref="qvideooutputcontrol.html#Output-enum"/>
-            <keyword name="availableOutputs" id="QVideoOutputControl::availableOutputs" ref="qvideooutputcontrol.html#availableOutputs"/>
-            <keyword name="availableOutputsChanged" id="QVideoOutputControl::availableOutputsChanged" ref="qvideooutputcontrol.html#availableOutputsChanged"/>
-            <keyword name="output" id="QVideoOutputControl::output" ref="qvideooutputcontrol.html#output"/>
-            <keyword name="setOutput" id="QVideoOutputControl::setOutput" ref="qvideooutputcontrol.html#setOutput"/>
-            <keyword name="~QVideoOutputControl" id="QVideoOutputControl::~QVideoOutputControl" ref="qvideooutputcontrol.html#dtor.QVideoOutputControl"/>
-            <keyword name="QVideoOutputControl_iid" id="QVideoOutputControl_iid" ref="qvideooutputcontrol.html#QVideoOutputControl_iid"/>
+            <keyword name="QVideoFrame" id="QVideoFrame" ref="qvideoframe.html"/>
+            <keyword name="QVideoFrame::FieldType" id="QVideoFrame::FieldType" ref="qvideoframe.html#FieldType-enum"/>
+            <keyword name="QVideoFrame::ProgressiveFrame" id="QVideoFrame::ProgressiveFrame" ref="qvideoframe.html#FieldType-enum"/>
+            <keyword name="QVideoFrame::TopField" id="QVideoFrame::TopField" ref="qvideoframe.html#FieldType-enum"/>
+            <keyword name="QVideoFrame::BottomField" id="QVideoFrame::BottomField" ref="qvideoframe.html#FieldType-enum"/>
+            <keyword name="QVideoFrame::InterlacedFrame" id="QVideoFrame::InterlacedFrame" ref="qvideoframe.html#FieldType-enum"/>
+            <keyword name="QVideoFrame::PixelFormat" id="QVideoFrame::PixelFormat" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_Invalid" id="QVideoFrame::Format_Invalid" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_ARGB32" id="QVideoFrame::Format_ARGB32" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_ARGB32_Premultiplied" id="QVideoFrame::Format_ARGB32_Premultiplied" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_RGB32" id="QVideoFrame::Format_RGB32" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_RGB24" id="QVideoFrame::Format_RGB24" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_RGB565" id="QVideoFrame::Format_RGB565" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_RGB555" id="QVideoFrame::Format_RGB555" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_ARGB8565_Premultiplied" id="QVideoFrame::Format_ARGB8565_Premultiplied" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_BGRA32" id="QVideoFrame::Format_BGRA32" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_BGRA32_Premultiplied" id="QVideoFrame::Format_BGRA32_Premultiplied" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_BGR32" id="QVideoFrame::Format_BGR32" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_BGR24" id="QVideoFrame::Format_BGR24" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_BGR565" id="QVideoFrame::Format_BGR565" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_BGR555" id="QVideoFrame::Format_BGR555" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_BGRA5658_Premultiplied" id="QVideoFrame::Format_BGRA5658_Premultiplied" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_AYUV444" id="QVideoFrame::Format_AYUV444" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_AYUV444_Premultiplied" id="QVideoFrame::Format_AYUV444_Premultiplied" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_YUV444" id="QVideoFrame::Format_YUV444" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_YUV420P" id="QVideoFrame::Format_YUV420P" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_YV12" id="QVideoFrame::Format_YV12" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_UYVY" id="QVideoFrame::Format_UYVY" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_YUYV" id="QVideoFrame::Format_YUYV" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_NV12" id="QVideoFrame::Format_NV12" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_NV21" id="QVideoFrame::Format_NV21" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_IMC1" id="QVideoFrame::Format_IMC1" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_IMC2" id="QVideoFrame::Format_IMC2" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_IMC3" id="QVideoFrame::Format_IMC3" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_IMC4" id="QVideoFrame::Format_IMC4" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_Y8" id="QVideoFrame::Format_Y8" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_Y16" id="QVideoFrame::Format_Y16" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="QVideoFrame::Format_User" id="QVideoFrame::Format_User" ref="qvideoframe.html#PixelFormat-enum"/>
+            <keyword name="bits" id="QVideoFrame::bits" ref="qvideoframe.html#bits"/>
+            <keyword name="bytesPerLine" id="QVideoFrame::bytesPerLine" ref="qvideoframe.html#bytesPerLine"/>
+            <keyword name="endTime" id="QVideoFrame::endTime" ref="qvideoframe.html#endTime"/>
+            <keyword name="fieldType" id="QVideoFrame::fieldType" ref="qvideoframe.html#fieldType"/>
+            <keyword name="handle" id="QVideoFrame::handle" ref="qvideoframe.html#handle"/>
+            <keyword name="handleType" id="QVideoFrame::handleType" ref="qvideoframe.html#handleType"/>
+            <keyword name="height" id="QVideoFrame::height" ref="qvideoframe.html#height"/>
+            <keyword name="imageFormatFromPixelFormat" id="QVideoFrame::imageFormatFromPixelFormat" ref="qvideoframe.html#imageFormatFromPixelFormat"/>
+            <keyword name="isMapped" id="QVideoFrame::isMapped" ref="qvideoframe.html#isMapped"/>
+            <keyword name="isReadable" id="QVideoFrame::isReadable" ref="qvideoframe.html#isReadable"/>
+            <keyword name="isValid" id="QVideoFrame::isValid" ref="qvideoframe.html#isValid"/>
+            <keyword name="isWritable" id="QVideoFrame::isWritable" ref="qvideoframe.html#isWritable"/>
+            <keyword name="map" id="QVideoFrame::map" ref="qvideoframe.html#map"/>
+            <keyword name="mapMode" id="QVideoFrame::mapMode" ref="qvideoframe.html#mapMode"/>
+            <keyword name="mappedBytes" id="QVideoFrame::mappedBytes" ref="qvideoframe.html#mappedBytes"/>
+            <keyword name="operator=" id="QVideoFrame::operator=" ref="qvideoframe.html#operator-eq"/>
+            <keyword name="pixelFormat" id="QVideoFrame::pixelFormat" ref="qvideoframe.html#pixelFormat"/>
+            <keyword name="pixelFormatFromImageFormat" id="QVideoFrame::pixelFormatFromImageFormat" ref="qvideoframe.html#pixelFormatFromImageFormat"/>
+            <keyword name="setEndTime" id="QVideoFrame::setEndTime" ref="qvideoframe.html#setEndTime"/>
+            <keyword name="setFieldType" id="QVideoFrame::setFieldType" ref="qvideoframe.html#setFieldType"/>
+            <keyword name="setStartTime" id="QVideoFrame::setStartTime" ref="qvideoframe.html#setStartTime"/>
+            <keyword name="size" id="QVideoFrame::size" ref="qvideoframe.html#size"/>
+            <keyword name="startTime" id="QVideoFrame::startTime" ref="qvideoframe.html#startTime"/>
+            <keyword name="unmap" id="QVideoFrame::unmap" ref="qvideoframe.html#unmap"/>
+            <keyword name="width" id="QVideoFrame::width" ref="qvideoframe.html#width"/>
+            <keyword name="~QVideoFrame" id="QVideoFrame::~QVideoFrame" ref="qvideoframe.html#dtor.QVideoFrame"/>
             <keyword name="QVideoRendererControl" id="QVideoRendererControl" ref="qvideorenderercontrol.html"/>
             <keyword name="setSurface" id="QVideoRendererControl::setSurface" ref="qvideorenderercontrol.html#setSurface"/>
             <keyword name="surface" id="QVideoRendererControl::surface" ref="qvideorenderercontrol.html#surface"/>
             <keyword name="~QVideoRendererControl" id="QVideoRendererControl::~QVideoRendererControl" ref="qvideorenderercontrol.html#dtor.QVideoRendererControl"/>
             <keyword name="QVideoRendererControl_iid" id="QVideoRendererControl_iid" ref="qvideorenderercontrol.html#QVideoRendererControl_iid"/>
+            <keyword name="QVideoSurfaceFormat" id="QVideoSurfaceFormat" ref="qvideosurfaceformat.html"/>
+            <keyword name="QVideoSurfaceFormat::Direction" id="QVideoSurfaceFormat::Direction" ref="qvideosurfaceformat.html#Direction-enum"/>
+            <keyword name="QVideoSurfaceFormat::TopToBottom" id="QVideoSurfaceFormat::TopToBottom" ref="qvideosurfaceformat.html#Direction-enum"/>
+            <keyword name="QVideoSurfaceFormat::BottomToTop" id="QVideoSurfaceFormat::BottomToTop" ref="qvideosurfaceformat.html#Direction-enum"/>
+            <keyword name="QVideoSurfaceFormat::YCbCrColorSpace" id="QVideoSurfaceFormat::YCbCrColorSpace" ref="qvideosurfaceformat.html#YCbCrColorSpace-enum"/>
+            <keyword name="QVideoSurfaceFormat::YCbCr_Undefined" id="QVideoSurfaceFormat::YCbCr_Undefined" ref="qvideosurfaceformat.html#YCbCrColorSpace-enum"/>
+            <keyword name="QVideoSurfaceFormat::YCbCr_BT601" id="QVideoSurfaceFormat::YCbCr_BT601" ref="qvideosurfaceformat.html#YCbCrColorSpace-enum"/>
+            <keyword name="QVideoSurfaceFormat::YCbCr_BT709" id="QVideoSurfaceFormat::YCbCr_BT709" ref="qvideosurfaceformat.html#YCbCrColorSpace-enum"/>
+            <keyword name="QVideoSurfaceFormat::YCbCr_xvYCC601" id="QVideoSurfaceFormat::YCbCr_xvYCC601" ref="qvideosurfaceformat.html#YCbCrColorSpace-enum"/>
+            <keyword name="QVideoSurfaceFormat::YCbCr_xvYCC709" id="QVideoSurfaceFormat::YCbCr_xvYCC709" ref="qvideosurfaceformat.html#YCbCrColorSpace-enum"/>
+            <keyword name="QVideoSurfaceFormat::YCbCr_JPEG" id="QVideoSurfaceFormat::YCbCr_JPEG" ref="qvideosurfaceformat.html#YCbCrColorSpace-enum"/>
+            <keyword name="frameHeight" id="QVideoSurfaceFormat::frameHeight" ref="qvideosurfaceformat.html#frameHeight"/>
+            <keyword name="frameRate" id="QVideoSurfaceFormat::frameRate" ref="qvideosurfaceformat.html#frameRate"/>
+            <keyword name="frameSize" id="QVideoSurfaceFormat::frameSize" ref="qvideosurfaceformat.html#frameSize"/>
+            <keyword name="frameWidth" id="QVideoSurfaceFormat::frameWidth" ref="qvideosurfaceformat.html#frameWidth"/>
+            <keyword name="handleType" id="QVideoSurfaceFormat::handleType" ref="qvideosurfaceformat.html#handleType"/>
+            <keyword name="isValid" id="QVideoSurfaceFormat::isValid" ref="qvideosurfaceformat.html#isValid"/>
+            <keyword name="operator!=" id="QVideoSurfaceFormat::operator!=" ref="qvideosurfaceformat.html#operator-not-eq"/>
+            <keyword name="operator=" id="QVideoSurfaceFormat::operator=" ref="qvideosurfaceformat.html#operator-eq"/>
+            <keyword name="operator==" id="QVideoSurfaceFormat::operator==" ref="qvideosurfaceformat.html#operator-eq-eq"/>
+            <keyword name="pixelAspectRatio" id="QVideoSurfaceFormat::pixelAspectRatio" ref="qvideosurfaceformat.html#pixelAspectRatio"/>
+            <keyword name="pixelFormat" id="QVideoSurfaceFormat::pixelFormat" ref="qvideosurfaceformat.html#pixelFormat"/>
+            <keyword name="property" id="QVideoSurfaceFormat::property" ref="qvideosurfaceformat.html#property"/>
+            <keyword name="propertyNames" id="QVideoSurfaceFormat::propertyNames" ref="qvideosurfaceformat.html#propertyNames"/>
+            <keyword name="scanLineDirection" id="QVideoSurfaceFormat::scanLineDirection" ref="qvideosurfaceformat.html#scanLineDirection"/>
+            <keyword name="setFrameRate" id="QVideoSurfaceFormat::setFrameRate" ref="qvideosurfaceformat.html#setFrameRate"/>
+            <keyword name="setFrameSize" id="QVideoSurfaceFormat::setFrameSize" ref="qvideosurfaceformat.html#setFrameSize"/>
+            <keyword name="setPixelAspectRatio" id="QVideoSurfaceFormat::setPixelAspectRatio" ref="qvideosurfaceformat.html#setPixelAspectRatio"/>
+            <keyword name="setProperty" id="QVideoSurfaceFormat::setProperty" ref="qvideosurfaceformat.html#setProperty"/>
+            <keyword name="setScanLineDirection" id="QVideoSurfaceFormat::setScanLineDirection" ref="qvideosurfaceformat.html#setScanLineDirection"/>
+            <keyword name="setViewport" id="QVideoSurfaceFormat::setViewport" ref="qvideosurfaceformat.html#setViewport"/>
+            <keyword name="setYCbCrColorSpace" id="QVideoSurfaceFormat::setYCbCrColorSpace" ref="qvideosurfaceformat.html#setYCbCrColorSpace"/>
+            <keyword name="sizeHint" id="QVideoSurfaceFormat::sizeHint" ref="qvideosurfaceformat.html#sizeHint"/>
+            <keyword name="viewport" id="QVideoSurfaceFormat::viewport" ref="qvideosurfaceformat.html#viewport"/>
+            <keyword name="yCbCrColorSpace" id="QVideoSurfaceFormat::yCbCrColorSpace" ref="qvideosurfaceformat.html#yCbCrColorSpace"/>
+            <keyword name="~QVideoSurfaceFormat" id="QVideoSurfaceFormat::~QVideoSurfaceFormat" ref="qvideosurfaceformat.html#dtor.QVideoSurfaceFormat"/>
             <keyword name="QVideoWidget" id="QVideoWidget" ref="qvideowidget.html"/>
             <keyword name="aspectRatioMode" id="QVideoWidget::aspectRatioMode" ref="qvideowidget.html#aspectRatioMode-prop"/>
             <keyword name="brightness" id="QVideoWidget::brightness" ref="qvideowidget.html#brightness-prop"/>
@@ -3217,7 +3509,7 @@
             <keyword name="setContrast" id="QVideoWidget::setContrast" ref="qvideowidget.html#contrast-prop"/>
             <keyword name="setFullScreen" id="QVideoWidget::setFullScreen" ref="qvideowidget.html#fullScreen-prop"/>
             <keyword name="setHue" id="QVideoWidget::setHue" ref="qvideowidget.html#hue-prop"/>
-            <keyword name="setMediaObject" id="QVideoWidget::setMediaObject" ref="qvideowidget.html#mediaObject-prop"/>
+            <keyword name="setMediaObject" id="QVideoWidget::setMediaObject" ref="qvideowidget.html#setMediaObject"/>
             <keyword name="setSaturation" id="QVideoWidget::setSaturation" ref="qvideowidget.html#saturation-prop"/>
             <keyword name="showEvent" id="QVideoWidget::showEvent" ref="qvideowidget.html#showEvent"/>
             <keyword name="sizeHint" id="QVideoWidget::sizeHint" ref="qvideowidget.html#sizeHint"/>
@@ -3283,110 +3575,109 @@
             <keyword name="Qt Mobility Project APIs Overview" id="Qt Mobility Project APIs Overview" ref="index.html"/>
             <keyword name="Qt Service Framework" id="Qt Service Framework" ref="service-frameworks.html"/>
             <keyword name="Qt Service Framework on Symbian" id="Qt Service Framework on Symbian" ref="service-framework-on-symbian.html"/>
-            <keyword name="QtMediaServices" id="QtMediaServices" ref="qtmediaservices.html"/>
-            <keyword name="QtMediaServices::AvailabilityError" id="QtMediaServices::AvailabilityError" ref="qtmediaservices.html#AvailabilityError-enum"/>
-            <keyword name="QtMediaServices::NoError" id="QtMediaServices::NoError" ref="qtmediaservices.html#AvailabilityError-enum"/>
-            <keyword name="QtMediaServices::ServiceMissingError" id="QtMediaServices::ServiceMissingError" ref="qtmediaservices.html#AvailabilityError-enum"/>
-            <keyword name="QtMediaServices::BusyError" id="QtMediaServices::BusyError" ref="qtmediaservices.html#AvailabilityError-enum"/>
-            <keyword name="QtMediaServices::ResourceError" id="QtMediaServices::ResourceError" ref="qtmediaservices.html#AvailabilityError-enum"/>
-            <keyword name="QtMediaServices::EncodingMode" id="QtMediaServices::EncodingMode" ref="qtmediaservices.html#EncodingMode-enum"/>
-            <keyword name="QtMediaServices::ConstantQualityEncoding" id="QtMediaServices::ConstantQualityEncoding" ref="qtmediaservices.html#EncodingMode-enum"/>
-            <keyword name="QtMediaServices::ConstantBitRateEncoding" id="QtMediaServices::ConstantBitRateEncoding" ref="qtmediaservices.html#EncodingMode-enum"/>
-            <keyword name="QtMediaServices::AverageBitRateEncoding" id="QtMediaServices::AverageBitRateEncoding" ref="qtmediaservices.html#EncodingMode-enum"/>
-            <keyword name="QtMediaServices::TwoPassEncoding" id="QtMediaServices::TwoPassEncoding" ref="qtmediaservices.html#EncodingMode-enum"/>
-            <keyword name="QtMediaServices::EncodingQuality" id="QtMediaServices::EncodingQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
-            <keyword name="QtMediaServices::VeryLowQuality" id="QtMediaServices::VeryLowQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
-            <keyword name="QtMediaServices::LowQuality" id="QtMediaServices::LowQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
-            <keyword name="QtMediaServices::NormalQuality" id="QtMediaServices::NormalQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
-            <keyword name="QtMediaServices::HighQuality" id="QtMediaServices::HighQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
-            <keyword name="QtMediaServices::VeryHighQuality" id="QtMediaServices::VeryHighQuality" ref="qtmediaservices.html#EncodingQuality-enum"/>
-            <keyword name="QtMediaServices::MetaData" id="QtMediaServices::MetaData" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Title" id="QtMediaServices::Title" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::SubTitle" id="QtMediaServices::SubTitle" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Author" id="QtMediaServices::Author" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Comment" id="QtMediaServices::Comment" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Description" id="QtMediaServices::Description" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Category" id="QtMediaServices::Category" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Genre" id="QtMediaServices::Genre" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Year" id="QtMediaServices::Year" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Date" id="QtMediaServices::Date" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::UserRating" id="QtMediaServices::UserRating" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Keywords" id="QtMediaServices::Keywords" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Language" id="QtMediaServices::Language" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Publisher" id="QtMediaServices::Publisher" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Copyright" id="QtMediaServices::Copyright" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ParentalRating" id="QtMediaServices::ParentalRating" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::RatingOrganisation" id="QtMediaServices::RatingOrganisation" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Size" id="QtMediaServices::Size" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::MediaType" id="QtMediaServices::MediaType" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Duration" id="QtMediaServices::Duration" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::AudioBitRate" id="QtMediaServices::AudioBitRate" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::AudioCodec" id="QtMediaServices::AudioCodec" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::AverageLevel" id="QtMediaServices::AverageLevel" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ChannelCount" id="QtMediaServices::ChannelCount" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::PeakValue" id="QtMediaServices::PeakValue" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::SampleRate" id="QtMediaServices::SampleRate" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::AlbumTitle" id="QtMediaServices::AlbumTitle" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::AlbumArtist" id="QtMediaServices::AlbumArtist" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ContributingArtist" id="QtMediaServices::ContributingArtist" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Composer" id="QtMediaServices::Composer" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Conductor" id="QtMediaServices::Conductor" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Lyrics" id="QtMediaServices::Lyrics" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Mood" id="QtMediaServices::Mood" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::TrackNumber" id="QtMediaServices::TrackNumber" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::TrackCount" id="QtMediaServices::TrackCount" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::CoverArtUrlSmall" id="QtMediaServices::CoverArtUrlSmall" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::CoverArtUrlLarge" id="QtMediaServices::CoverArtUrlLarge" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Resolution" id="QtMediaServices::Resolution" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::PixelAspectRatio" id="QtMediaServices::PixelAspectRatio" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::VideoFrameRate" id="QtMediaServices::VideoFrameRate" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::VideoBitRate" id="QtMediaServices::VideoBitRate" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::VideoCodec" id="QtMediaServices::VideoCodec" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::PosterUrl" id="QtMediaServices::PosterUrl" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ChapterNumber" id="QtMediaServices::ChapterNumber" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Director" id="QtMediaServices::Director" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::LeadPerformer" id="QtMediaServices::LeadPerformer" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Writer" id="QtMediaServices::Writer" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::CameraManufacturer" id="QtMediaServices::CameraManufacturer" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::CameraModel" id="QtMediaServices::CameraModel" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Event" id="QtMediaServices::Event" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Subject" id="QtMediaServices::Subject" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Orientation" id="QtMediaServices::Orientation" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ExposureTime" id="QtMediaServices::ExposureTime" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::FNumber" id="QtMediaServices::FNumber" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ExposureProgram" id="QtMediaServices::ExposureProgram" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ISOSpeedRatings" id="QtMediaServices::ISOSpeedRatings" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ExposureBiasValue" id="QtMediaServices::ExposureBiasValue" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::DateTimeOriginal" id="QtMediaServices::DateTimeOriginal" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::DateTimeDigitized" id="QtMediaServices::DateTimeDigitized" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::SubjectDistance" id="QtMediaServices::SubjectDistance" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::MeteringMode" id="QtMediaServices::MeteringMode" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::LightSource" id="QtMediaServices::LightSource" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Flash" id="QtMediaServices::Flash" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::FocalLength" id="QtMediaServices::FocalLength" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ExposureMode" id="QtMediaServices::ExposureMode" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::WhiteBalance" id="QtMediaServices::WhiteBalance" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::DigitalZoomRatio" id="QtMediaServices::DigitalZoomRatio" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::FocalLengthIn35mmFilm" id="QtMediaServices::FocalLengthIn35mmFilm" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::SceneCaptureType" id="QtMediaServices::SceneCaptureType" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::GainControl" id="QtMediaServices::GainControl" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Contrast" id="QtMediaServices::Contrast" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Saturation" id="QtMediaServices::Saturation" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::Sharpness" id="QtMediaServices::Sharpness" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::DeviceSettingDescription" id="QtMediaServices::DeviceSettingDescription" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::PosterImage" id="QtMediaServices::PosterImage" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::CoverArtImage" id="QtMediaServices::CoverArtImage" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::ThumbnailImage" id="QtMediaServices::ThumbnailImage" ref="qtmediaservices.html#MetaData-enum"/>
-            <keyword name="QtMediaServices::SupportEstimate" id="QtMediaServices::SupportEstimate" ref="qtmediaservices.html#SupportEstimate-enum"/>
-            <keyword name="QtMediaServices::NotSupported" id="QtMediaServices::NotSupported" ref="qtmediaservices.html#SupportEstimate-enum"/>
-            <keyword name="QtMediaServices::MaybeSupported" id="QtMediaServices::MaybeSupported" ref="qtmediaservices.html#SupportEstimate-enum"/>
-            <keyword name="QtMediaServices::ProbablySupported" id="QtMediaServices::ProbablySupported" ref="qtmediaservices.html#SupportEstimate-enum"/>
-            <keyword name="QtMediaServices::PreferredService" id="QtMediaServices::PreferredService" ref="qtmediaservices.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit" id="QtMultimediaKit" ref="qtmultimediakit.html"/>
+            <keyword name="QtMultimediaKit::AvailabilityError" id="QtMultimediaKit::AvailabilityError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::NoError" id="QtMultimediaKit::NoError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::ServiceMissingError" id="QtMultimediaKit::ServiceMissingError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::BusyError" id="QtMultimediaKit::BusyError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::ResourceError" id="QtMultimediaKit::ResourceError" ref="qtmultimediakit.html#AvailabilityError-enum"/>
+            <keyword name="QtMultimediaKit::EncodingMode" id="QtMultimediaKit::EncodingMode" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::ConstantQualityEncoding" id="QtMultimediaKit::ConstantQualityEncoding" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::ConstantBitRateEncoding" id="QtMultimediaKit::ConstantBitRateEncoding" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::AverageBitRateEncoding" id="QtMultimediaKit::AverageBitRateEncoding" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::TwoPassEncoding" id="QtMultimediaKit::TwoPassEncoding" ref="qtmultimediakit.html#EncodingMode-enum"/>
+            <keyword name="QtMultimediaKit::EncodingQuality" id="QtMultimediaKit::EncodingQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::VeryLowQuality" id="QtMultimediaKit::VeryLowQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::LowQuality" id="QtMultimediaKit::LowQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::NormalQuality" id="QtMultimediaKit::NormalQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::HighQuality" id="QtMultimediaKit::HighQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::VeryHighQuality" id="QtMultimediaKit::VeryHighQuality" ref="qtmultimediakit.html#EncodingQuality-enum"/>
+            <keyword name="QtMultimediaKit::MetaData" id="QtMultimediaKit::MetaData" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Title" id="QtMultimediaKit::Title" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SubTitle" id="QtMultimediaKit::SubTitle" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Author" id="QtMultimediaKit::Author" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Comment" id="QtMultimediaKit::Comment" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Description" id="QtMultimediaKit::Description" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Category" id="QtMultimediaKit::Category" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Genre" id="QtMultimediaKit::Genre" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Year" id="QtMultimediaKit::Year" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Date" id="QtMultimediaKit::Date" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::UserRating" id="QtMultimediaKit::UserRating" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Keywords" id="QtMultimediaKit::Keywords" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Language" id="QtMultimediaKit::Language" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Publisher" id="QtMultimediaKit::Publisher" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Copyright" id="QtMultimediaKit::Copyright" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ParentalRating" id="QtMultimediaKit::ParentalRating" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::RatingOrganisation" id="QtMultimediaKit::RatingOrganisation" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Size" id="QtMultimediaKit::Size" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::MediaType" id="QtMultimediaKit::MediaType" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Duration" id="QtMultimediaKit::Duration" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AudioBitRate" id="QtMultimediaKit::AudioBitRate" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AudioCodec" id="QtMultimediaKit::AudioCodec" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AverageLevel" id="QtMultimediaKit::AverageLevel" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ChannelCount" id="QtMultimediaKit::ChannelCount" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::PeakValue" id="QtMultimediaKit::PeakValue" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SampleRate" id="QtMultimediaKit::SampleRate" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AlbumTitle" id="QtMultimediaKit::AlbumTitle" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::AlbumArtist" id="QtMultimediaKit::AlbumArtist" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ContributingArtist" id="QtMultimediaKit::ContributingArtist" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Composer" id="QtMultimediaKit::Composer" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Conductor" id="QtMultimediaKit::Conductor" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Lyrics" id="QtMultimediaKit::Lyrics" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Mood" id="QtMultimediaKit::Mood" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::TrackNumber" id="QtMultimediaKit::TrackNumber" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::TrackCount" id="QtMultimediaKit::TrackCount" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CoverArtUrlSmall" id="QtMultimediaKit::CoverArtUrlSmall" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CoverArtUrlLarge" id="QtMultimediaKit::CoverArtUrlLarge" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Resolution" id="QtMultimediaKit::Resolution" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::PixelAspectRatio" id="QtMultimediaKit::PixelAspectRatio" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::VideoFrameRate" id="QtMultimediaKit::VideoFrameRate" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::VideoBitRate" id="QtMultimediaKit::VideoBitRate" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::VideoCodec" id="QtMultimediaKit::VideoCodec" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::PosterUrl" id="QtMultimediaKit::PosterUrl" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ChapterNumber" id="QtMultimediaKit::ChapterNumber" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Director" id="QtMultimediaKit::Director" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::LeadPerformer" id="QtMultimediaKit::LeadPerformer" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Writer" id="QtMultimediaKit::Writer" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CameraManufacturer" id="QtMultimediaKit::CameraManufacturer" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CameraModel" id="QtMultimediaKit::CameraModel" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Event" id="QtMultimediaKit::Event" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Subject" id="QtMultimediaKit::Subject" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Orientation" id="QtMultimediaKit::Orientation" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ExposureTime" id="QtMultimediaKit::ExposureTime" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::FNumber" id="QtMultimediaKit::FNumber" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ExposureProgram" id="QtMultimediaKit::ExposureProgram" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ISOSpeedRatings" id="QtMultimediaKit::ISOSpeedRatings" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ExposureBiasValue" id="QtMultimediaKit::ExposureBiasValue" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::DateTimeOriginal" id="QtMultimediaKit::DateTimeOriginal" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::DateTimeDigitized" id="QtMultimediaKit::DateTimeDigitized" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SubjectDistance" id="QtMultimediaKit::SubjectDistance" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::MeteringMode" id="QtMultimediaKit::MeteringMode" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::LightSource" id="QtMultimediaKit::LightSource" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Flash" id="QtMultimediaKit::Flash" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::FocalLength" id="QtMultimediaKit::FocalLength" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ExposureMode" id="QtMultimediaKit::ExposureMode" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::WhiteBalance" id="QtMultimediaKit::WhiteBalance" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::DigitalZoomRatio" id="QtMultimediaKit::DigitalZoomRatio" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::FocalLengthIn35mmFilm" id="QtMultimediaKit::FocalLengthIn35mmFilm" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SceneCaptureType" id="QtMultimediaKit::SceneCaptureType" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::GainControl" id="QtMultimediaKit::GainControl" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Contrast" id="QtMultimediaKit::Contrast" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Saturation" id="QtMultimediaKit::Saturation" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::Sharpness" id="QtMultimediaKit::Sharpness" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::DeviceSettingDescription" id="QtMultimediaKit::DeviceSettingDescription" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::PosterImage" id="QtMultimediaKit::PosterImage" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::CoverArtImage" id="QtMultimediaKit::CoverArtImage" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::ThumbnailImage" id="QtMultimediaKit::ThumbnailImage" ref="qtmultimediakit.html#MetaData-enum"/>
+            <keyword name="QtMultimediaKit::SupportEstimate" id="QtMultimediaKit::SupportEstimate" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit::NotSupported" id="QtMultimediaKit::NotSupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit::MaybeSupported" id="QtMultimediaKit::MaybeSupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit::ProbablySupported" id="QtMultimediaKit::ProbablySupported" ref="qtmultimediakit.html#SupportEstimate-enum"/>
+            <keyword name="QtMultimediaKit::PreferredService" id="QtMultimediaKit::PreferredService" ref="qtmultimediakit.html#SupportEstimate-enum"/>
             <keyword name="Query Messages Example" id="Query Messages Example" ref="querymessages.html"/>
             <keyword name="Quickstart Example" id="Quickstart Example" ref="quickstart.html"/>
             <keyword name="REGISTER_STATIC_PLUGIN" id="REGISTER_STATIC_PLUGIN" ref="qsensormanager.html#REGISTER_STATIC_PLUGIN"/>
             <keyword name="Radio Example" id="Radio Example" ref="radio.html"/>
-            <keyword name="Recorder Example" id="Recorder Example" ref="recorder.html"/>
             <keyword name="Release Notes of the QtMobility Project" id="Release Notes of the QtMobility Project" ref="qtmobility-known-issues.html"/>
             <keyword name="Sample Phonebook Example" id="Sample Phonebook Example" ref="samplephonebook.html"/>
             <keyword name="Sample QML-based Phonebook Example" id="Sample QML-based Phonebook Example" ref="qmlcontacts.html"/>
@@ -3426,6 +3717,7 @@
             <file>qmessageaccountfilter-members.html</file>
             <file>contactsschema.html</file>
             <file>qgeocoordinate-members.html</file>
+            <file>qvideosurfaceformat-members.html</file>
             <file>qsensorplugininterface.html</file>
             <file>qvideodevicecontrol.html</file>
             <file>qnmeapositioninfosource.html</file>
@@ -3436,6 +3728,7 @@
             <file>flickrdemo-xqlistwidget-cpp.html</file>
             <file>qversitdefaultresourcehandler-members.html</file>
             <file>qaudioendpointselector.html</file>
+            <file>qml-audio.html</file>
             <file>filemanagerplugin-filemanagerplugin-h.html</file>
             <file>messaging.html</file>
             <file>qcontactringtone.html</file>
@@ -3451,6 +3744,7 @@
             <file>qsystemdisplayinfo.html</file>
             <file>keepintouch-main-cpp.html</file>
             <file>qcontactsaverequest.html</file>
+            <file>qabstractvideosurface-members.html</file>
             <file>qcontactdisplaylabel-members.html</file>
             <file>qcontactdetailfilter.html</file>
             <file>qmagnetometerfilter.html</file>
@@ -3470,6 +3764,7 @@
             <file>qmediaservicefeaturesinterface.html</file>
             <file>images/sensors-orientation.jpg</file>
             <file>qmediaserviceproviderhint-members.html</file>
+            <file>qmediabindableinterface-members.html</file>
             <file>slideshow-slideshow-cpp.html</file>
             <file>qversitdocument.html</file>
             <file>player-videowidget-h.html</file>
@@ -3500,6 +3795,7 @@
             <file>qcontactringtone-members.html</file>
             <file>qtapsensor.html</file>
             <file>qservicemanager.html</file>
+            <file>qvideosurfaceformat.html</file>
             <file>qcontacttimestamp.html</file>
             <file>images/servicebrowser-attributes.png</file>
             <file>writemessage-main-cpp.html</file>
@@ -3532,6 +3828,7 @@
             <file>qmediaplaylistreader-members.html</file>
             <file>sfw-notes-sfwnotes-h.html</file>
             <file>images/sensors-coordinates3.jpg</file>
+            <file>qaudiooutput.html</file>
             <file>qmediaplaylistprovider-members.html</file>
             <file>notesmanagerplugin-notesmanagerplugin-pro.html</file>
             <file>qcontactmemoryengine-members.html</file>
@@ -3579,6 +3876,7 @@
             <file>sensors-backend.html</file>
             <file>writemessage.html</file>
             <file>qcontactdetaildefinitionfetchrequest.html</file>
+            <file>qmetadatawritercontrol-members.html</file>
             <file>qmessageaccountsortorder-members.html</file>
             <file>logfilepositionsource-main-cpp.html</file>
             <file>trademarks.html</file>
@@ -3610,10 +3908,10 @@
             <file>qmediacontrol-members.html</file>
             <file>images/sensors-coordinates.jpg</file>
             <file>qmediaservicesupporteddevicesinterface.html</file>
-            <file>qcontactmanagerenginefactory-members.html</file>
             <file>qcontactgeolocation.html</file>
             <file>weatherinfo-icons-weather-overcast-svg.html</file>
             <file>annotated.html</file>
+            <file>qcontactmanagerenginefactory-members.html</file>
             <file>qnetworksession-members.html</file>
             <file>qtapsensor-members.html</file>
             <file>qcontactrelationshipsaverequest.html</file>
@@ -3633,11 +3931,11 @@
             <file>qsystemstorageinfo.html</file>
             <file>flickrdemo-flickrdemo-h.html</file>
             <file>qvideorenderercontrol-members.html</file>
-            <file>qmetadatacontrol.html</file>
             <file>qgraphicsvideoitem.html</file>
             <file>preview.html</file>
             <file>samplephonebook-contactlistpage-cpp.html</file>
             <file>qmlcontacts-qmlcontactmodel-cpp.html</file>
+            <file>qmetadatareadercontrol-members.html</file>
             <file>filemanagerplugin-filemanagerplugin-pro.html</file>
             <file>qcontactpresence.html</file>
             <file>qvideowidget-members.html</file>
@@ -3652,6 +3950,7 @@
             <file>qserviceplugininterface-members.html</file>
             <file>opensourceedition.html</file>
             <file>fetchgooglemaps.html</file>
+            <file>qmediaplaylistsourcecontrol-members.html</file>
             <file>qgeosatelliteinfosource-members.html</file>
             <file>qcontactnickname-members.html</file>
             <file>qabstractsecuritysession.html</file>
@@ -3690,6 +3989,7 @@
             <file>weatherinfo-icons-weather-fog-svg.html</file>
             <file>qversitresourcehandler.html</file>
             <file>qmediaplaylistioplugin-members.html</file>
+            <file>qml-soundeffect.html</file>
             <file>bearermonitor.html</file>
             <file>qcontact-members.html</file>
             <file>keepintouch.html</file>
@@ -3697,8 +3997,8 @@
             <file>qcontactnote-members.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-h.html</file>
             <file>qcontactdetaildefinition-members.html</file>
-            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qmessageid.html</file>
+            <file>qcontactlocalidfetchrequest-members.html</file>
             <file>qsensorreading-members.html</file>
             <file>samplephonebook-filterpage-h.html</file>
             <file>bearermonitor-bearermonitor-cpp.html</file>
@@ -3729,16 +4029,16 @@
             <file>qmessagemanager-members.html</file>
             <file>qservicecontext-members.html</file>
             <file>audiorecorder-main-cpp.html</file>
-            <file>qcontactrelationshipremoverequest-members.html</file>
             <file>images/sensors-coordinates2.jpg</file>
+            <file>qcontactrelationshipremoverequest-members.html</file>
             <file>images/sensors-rotation-anim.gif</file>
             <file>sfw-notes-sfwnotes-cpp.html</file>
             <file>weatherinfo-icons-weather-sunny-svg.html</file>
             <file>fetchgooglemaps-mapwindow-cpp.html</file>
             <file>qmessagefolderfilter.html</file>
             <file>images/bearercloud-example.png</file>
-            <file>qcontactname-members.html</file>
             <file>qaudioendpointselector-members.html</file>
+            <file>qcontactname-members.html</file>
             <file>weatherinfo-weatherinfo-pro.html</file>
             <file>systeminfo.html</file>
             <file>quickstart-main-cpp.html</file>
@@ -3753,6 +4053,7 @@
             <file>qmessagesortorder.html</file>
             <file>qambientlightfilter.html</file>
             <file>flickrdemo-xqlistwidget-h.html</file>
+            <file>qabstractvideobuffer.html</file>
             <file>notesmanagerplugin-notesmanager-cpp.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
             <file>qmessageid-members.html</file>
@@ -3767,6 +4068,7 @@
             <file>player-playlistmodel-h.html</file>
             <file>qcontactdisplaylabel.html</file>
             <file>qsensorfilter-members.html</file>
+            <file>qaudioformat-obsolete.html</file>
             <file>images/DialerServiceGUI.png</file>
             <file>qcontactdetailfielddefinition-members.html</file>
             <file>servicefw.html</file>
@@ -3777,8 +4079,10 @@
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>images/sensors-rotation2.jpg</file>
+            <file>qvideoframe-members.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
+            <file>contactsusage.html</file>
             <file>qcontactmanager.html</file>
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
@@ -3801,12 +4105,14 @@
             <file>qaudioencodercontrol.html</file>
             <file>qmessageaccountfilter.html</file>
             <file>qsysteminfo-members.html</file>
+            <file>qaudioinput.html</file>
             <file>qcontactdetaildefinitionsaverequest.html</file>
             <file>qcompassreading.html</file>
             <file>weatherinfo-icons-weather-snow-svg.html</file>
             <file>servicebrowser-main-cpp.html</file>
             <file>images/lightmaps-oslo.png</file>
             <file>images/weatherinfo-bris.png</file>
+            <file>qaudiooutput-members.html</file>
             <file>publish-subscribe-publish-subscribe-pro.html</file>
             <file>qmediaservice-members.html</file>
             <file>qlatin1constant-members.html</file>
@@ -3832,8 +4138,8 @@
             <file>images/publish-subscribe-subscriber.png</file>
             <file>qversitcontactimporterpropertyhandler-members.html</file>
             <file>qvideowidgetcontrol-members.html</file>
-            <file>qcontactmanagerengine-members.html</file>
             <file>bearermonitor-bearermonitor-pro.html</file>
+            <file>qcontactmanagerengine-members.html</file>
             <file>qvideorenderercontrol.html</file>
             <file>bearer.html</file>
             <file>qcontactonlineaccount.html</file>
@@ -3849,7 +4155,6 @@
             <file>publish-subscribe-subscriberdialog-h.html</file>
             <file>qcontactchangelogfilter.html</file>
             <file>bearermonitor-bearermonitor-h.html</file>
-            <file>qvideooutputcontrol-members.html</file>
             <file>qservicefilter.html</file>
             <file>versit.html</file>
             <file>qvaluespace.html</file>
@@ -3861,22 +4166,23 @@
             <file>notesmanagerplugin-notesmanager-h.html</file>
             <file>qmediaplaylistnavigator.html</file>
             <file>qmediaresource-members.html</file>
+            <file>qabstractvideobuffer-members.html</file>
             <file>sfw-notes-main-cpp.html</file>
             <file>qcontactdetailrangefilter-members.html</file>
             <file>qgeosatelliteinfosource.html</file>
             <file>qcontactanniversary-members.html</file>
             <file>qmediaserviceproviderplugin-members.html</file>
+            <file>qmetadatawritercontrol.html</file>
             <file>qmediaserviceproviderplugin.html</file>
             <file>qcontactinvalidengine.html</file>
             <file>qmediaplayer.html</file>
             <file>qambientlightfilter-members.html</file>
-            <file>qcontactphonenumber-members.html</file>
             <file>qgeoareamonitor.html</file>
+            <file>qcontactphonenumber-members.html</file>
             <file>images/sample-phonebook-1.png</file>
             <file>qmediatimeinterval.html</file>
             <file>qmessagefoldersortorder.html</file>
             <file>qmediaservicesupportedformatsinterface-members.html</file>
-            <file>qvideooutputcontrol.html</file>
             <file>qaccelerometerfilter-members.html</file>
             <file>slideshow-main-cpp.html</file>
             <file>qmediaplaylistprovider.html</file>
@@ -3885,12 +4191,15 @@
             <file>qmlcontacts-contents-default-svg.html</file>
             <file>qsensormanager-members.html</file>
             <file>qvaluespacesubscriber-members.html</file>
+            <file>qaudiodeviceinfo-obsolete.html</file>
             <file>player.html</file>
             <file>qversitproperty.html</file>
+            <file>qml-video.html</file>
             <file>sfw-notes-sfw-notes-pro.html</file>
             <file>qtapfilter.html</file>
             <file>qcontactmemoryengine.html</file>
             <file>images/roaming-states.png</file>
+            <file>qaudiodeviceinfo.html</file>
             <file>qcontactemailaddress.html</file>
             <file>declarative-sfw-dialer-landlinedialer-landlinedialerplugin-h.html</file>
             <file>qsystemdeviceinfo-members.html</file>
@@ -3919,6 +4228,7 @@
             <file>qcontacttag-members.html</file>
             <file>images/sysinfo.png</file>
             <file>qimageencodercontrol.html</file>
+            <file>qaudioformat.html</file>
             <file>images/sensors-sides.jpg</file>
             <file>qsystemscreensaver-members.html</file>
             <file>qcontactavatar-members.html</file>
@@ -3928,13 +4238,11 @@
             <file>player-player-h.html</file>
             <file>qmediaservice.html</file>
             <file>qcompassfilter-members.html</file>
-            <file>qcontactrelationship-members.html</file>
             <file>sfw-notes-sfwnotes-qrc.html</file>
+            <file>qcontactrelationship-members.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
-            <file>recorder.html</file>
-            <file>qmetadatacontrol-members.html</file>
             <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-pro.html</file>
@@ -3945,15 +4253,16 @@
             <file>qaccelerometer.html</file>
             <file>player-playlistmodel-cpp.html</file>
             <file>qsensor-members.html</file>
+            <file>qvideoframe.html</file>
             <file>qmediaservicesupporteddevicesinterface-members.html</file>
             <file>qlatin1constant.html</file>
+            <file>qmediaplaylistsourcecontrol.html</file>
             <file>qsystemscreensaver.html</file>
             <file>qcontactaddress-members.html</file>
             <file>player-playercontrols-cpp.html</file>
             <file>qambientlightreading-members.html</file>
             <file>qcontactid-members.html</file>
             <file>qvaluespacesubscriber.html</file>
-            <file>qtmediaservices.html</file>
             <file>images/sample-phonebook-3.png</file>
             <file>qcontactlocalidfetchrequest.html</file>
             <file>qrotationsensor.html</file>
@@ -3978,6 +4287,7 @@
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
+            <file>qaudioinput-members.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
             <file>images/flickr-demo.png</file>
@@ -3986,6 +4296,7 @@
             <file>qmediacontent-members.html</file>
             <file>qmediacontainercontrol.html</file>
             <file>flickrdemo-flickrdemo-pro.html</file>
+            <file>qmediabindableinterface.html</file>
             <file>qmlcontacts-qmlcontacts-pro.html</file>
             <file>qrotationsensor-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
@@ -3994,6 +4305,7 @@
             <file>multimedia.html</file>
             <file>qcontactinvalidfilter-members.html</file>
             <file>qmagnetometerfilter-members.html</file>
+            <file>qtmultimediakit.html</file>
             <file>player-mediakeysobserver-cpp.html</file>
             <file>qmlcontacts-main-cpp.html</file>
             <file>qmediaserviceprovider.html</file>
@@ -4008,10 +4320,13 @@
             <file>slideshow-slideshow-h.html</file>
             <file>sysinfo-sysinfo-pro.html</file>
             <file>qcontacttype-members.html</file>
+            <file>qaudioformat-members.html</file>
+            <file>qabstractvideosurface.html</file>
             <file>notesmanagerplugin.html</file>
             <file>qmediacontainercontrol-members.html</file>
             <file>qorientationfilter-members.html</file>
             <file>qorientationsensor-members.html</file>
+            <file>qmetadatareadercontrol.html</file>
             <file>qmediaservicesupportedformatsinterface.html</file>
             <file>qrotationfilter-members.html</file>
             <file>location.html</file>
@@ -4023,6 +4338,7 @@
             <file>qsystemstorageinfo-members.html</file>
             <file>qproximitysensor.html</file>
             <file>weatherinfo-icons-weather-sleet-svg.html</file>
+            <file>qaudiodeviceinfo-members.html</file>
             <file>qgeopositioninfo-members.html</file>
             <file>images/battery-subscriber.png</file>
             <file>qmessageservice.html</file>
@@ -4039,7 +4355,6 @@
             <file>qcompassfilter.html</file>
             <file>notesmanagerplugin-note-h.html</file>
             <file>qvaluespacepublisher.html</file>
-            <file>contactsusagehtml.html</file>
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>

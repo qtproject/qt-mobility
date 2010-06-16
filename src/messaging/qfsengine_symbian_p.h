@@ -102,11 +102,13 @@ struct FSSearchOperation
 };
 
 #ifdef FREESTYLEMAILBOXOBSERVERUSED
-class CFSEngine : public MMailboxContentObserver, public MMailboxSyncObserver, public MEmailFetchObserver
+class CFSEngine : public QObject, public MMailboxContentObserver, public MMailboxSyncObserver, public MEmailFetchObserver
 #else
-class CFSEngine : public MMailboxSyncObserver, public MEmailFetchObserver
+class CFSEngine : public QObject, public MMailboxSyncObserver, public MEmailFetchObserver
 #endif
 {
+    Q_OBJECT
+
 public: 
     
     static CFSEngine* instance();
@@ -135,9 +137,9 @@ public:
     QMessage message(const QMessageId& id) const;
     bool sendEmail(QMessage &message);
    
-    bool retrieve(const QMessageId &messageId, const QMessageContentContainerId& id);
-    bool retrieveBody(const QMessageId& id);
-    bool retrieveHeader(const QMessageId& id);
+    bool retrieve(QMessageServicePrivate& privateService, const QMessageId &messageId, const QMessageContentContainerId& id);
+    bool retrieveBody(QMessageServicePrivate& privateService, const QMessageId& id);
+    bool retrieveHeader(QMessageServicePrivate& privateService, const QMessageId& id);
     bool exportUpdates(const QMessageAccountId &id);
     
     QMessageManager::NotificationFilterId registerNotificationFilter(QMessageStorePrivate& aPrivateStore,
@@ -164,7 +166,10 @@ public:
     
 public: // From MEmailFetchObserver
     virtual void DataFetchedL(const TInt aResult);
-        
+
+public slots:
+    void cleanupFSBackend();
+
 private:
 
     void queryMessagesL(QMessageServicePrivate& privateService, const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset) const;
@@ -235,6 +240,7 @@ private:
     QMessageAccount m_account;
     RMailboxPtrArray m_mailboxes;
     REmailAttachmentArray m_attachments;
+    QMessageServicePrivate* m_privateService;
     friend class QMessageService;
     friend class CFSMessagesFindOperation;
     
