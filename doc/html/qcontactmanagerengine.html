@@ -326,6 +326,7 @@
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/setContactDisplayLabel"></a>
 <h3 class="fn"><a name="setContactDisplayLabel"></a>void QContactManagerEngine::setContactDisplayLabel ( <a href="qcontact.html">QContact</a> * <i>contact</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>displayLabel</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Sets the contact display label of <i>contact</i> to the supplied <i>displayLabel</i>.</p>
+<p>This function does not touch the database in any way, and is purely a convenience to allow engine implementations to set the display label.</p>
 <a name="//apple_ref/cpp/clm/QContactManagerEngine/setContactRelationships"></a>
 <h3 class="fn"><a name="setContactRelationships"></a>void QContactManagerEngine::setContactRelationships ( <a href="qcontact.html">QContact</a> * <i>contact</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qcontactrelationship.html">QContactRelationship</a>&gt; &amp; <i>relationships</i> )&nbsp;&nbsp;<tt> [static]</tt></h3>
 <p>Sets the cached relationships in the given <i>contact</i> to <i>relationships</i></p>

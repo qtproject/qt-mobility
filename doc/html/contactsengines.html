@@ -20,11 +20,10 @@
 <li><a href="#schema-differences">Schema Differences</a></li>
 <li><a href="#provided-engines">Provided Engines</a></li>
 <ul><li><a href="#in-memory-example-engine">In-Memory Example Engine</a></li>
-<li><a href="#symbian-3-1-engine">Symbian 3.1 Engine</a></li>
-<li><a href="#symbian-3-2-engine">Symbian 3.2 Engine</a></li>
-<li><a href="#symbian-5-0-engine">Symbian 5.0 Engine</a></li>
+<li><a href="#symbian-engine">Symbian Engine</a></li>
+<li><a href="#symbian-sim-engine">Symbian Sim Engine</a></li>
 <li><a href="#maemo-5-fremantle-engine">Maemo 5 (Fremantle) Engine</a></li>
-<li><a href="#libqttracker-engine">libQtTracker Engine</a></li>
+<li><a href="#windows-ce-engine">Windows CE Engine</a></li>
 </ul>
 </ul>
 <li><a href="#information-for-engine-implementors">Information For Engine Implementors</a></li>
@@ -59,33 +58,14 @@
 <h4>In-Memory Example Engine</h4>
 <p>The in-memory engine identifies itself as the &quot;memory&quot; engine. It is available on all platforms which are supported by the Qt Mobility project.</p>
 <p>The in-memory engine supports the default schema, and provides all functionality available through the Qt Mobility Contacts API; however, all data is stored in-memory and is not persisted in any way.</p>
-<a name="symbian-3-1-engine"></a>
-<h4>Symbian 3.1 Engine</h4>
-<p>The Symbian 3.1 engine identifies itself as the &quot;symbian&quot; engine, but is only available on the Symbian 3.1 platform.</p>
-<p>The Symbian 3.1 engine supports a modified version of the default schema.</p>
-<ul>
-<li>TODO: what is the schema supported by this engine.</li>
-<li>TODO: what functionality is supported by this engine.</li>
-<li>TODO: is there anything else that clients may need to know?</li>
-</ul>
-<a name="symbian-3-2-engine"></a>
-<h4>Symbian 3.2 Engine</h4>
-<p>The Symbian 3.2 engine identifies itself as the &quot;symbian&quot; engine, but is only available on the Symbian 3.2 platform.</p>
-<p>The Symbian 3.2 engine supports a modified version of the default schema.</p>
-<ul>
-<li>TODO: what is the schema supported by this engine.</li>
-<li>TODO: what functionality is supported by this engine.</li>
-<li>TODO: is there anything else that clients may need to know?</li>
-</ul>
-<a name="symbian-5-0-engine"></a>
-<h4>Symbian 5.0 Engine</h4>
-<p>The Symbian 5.0 engine identifies itself as the &quot;symbian&quot; engine, but is only available on the Symbian 5.0 platform.</p>
-<p>The Symbian 5.0 engine supports a modified version of the default schema.</p>
-<ul>
-<li>TODO: what is the schema supported by this engine.</li>
-<li>TODO: what functionality is supported by this engine.</li>
-<li>TODO: is there anything else that clients may need to know?</li>
-</ul>
+<a name="symbian-engine"></a>
+<h4>Symbian Engine</h4>
+<p>The Symbian engine identifies itself as the &quot;symbian&quot; engine, and is only available on the Symbian S60 3.1, S60 3.2, S60 5.0 and Symbian^3 platforms.</p>
+<p>The Symbian engine supports a modified version of the default schema. The schema supported by the Symbian engine depends on which version of the platform is being used.</p>
+<p>The symbian engine allows clients to use both the asynchronous and synchronous interfaces, and supports various different relationships, supports setting the self-contact, and persists all saved data to the system addressbook.</p>
+<a name="symbian-sim-engine"></a>
+<h4>Symbian Sim Engine</h4>
+<p>The Symbian Sim engine identifies itself as the &quot;symbiansim&quot; engine, and is only available on Symbian platforms. It is an extremely limited engine which supports a very small subset of the default schema, and can be constructed with a &quot;store&quot; parameter to set which contact store to interact with. The value of the &quot;store&quot; parameter may be either &quot;ADN&quot;, &quot;FDN&quot; or &quot;SDN&quot;.</p>
 <a name="maemo-5-fremantle-engine"></a>
 <h4>Maemo 5 (Fremantle) Engine</h4>
 <p>The Maemo 5 (Fremantle) engine identifies itself as the &quot;maemo5&quot; engine, but is only available on the Maemo 5 (Fremantle) platform which has the correct libraries installed (including lib-osso-abook).</p>
@@ -111,15 +91,10 @@
 <li>It supports only the <tt>QContactPhoneNumber::SubTypeMobile</tt> and <tt>QContactPhoneNumber::SubTypeVoice</tt> values for the <tt>QContactPhoneNumber::FieldSubTypes</tt> field of <a href="qcontactphonenumber.html">QContactPhoneNumber</a> details</li>
 </ul>
 <p>The Maemo 5 (Fremantle) engine supports asynchronous and synchronous requests, but does not support group contacts or relationships of any kind. It does not allow clients to set a particular contact as the &quot;self&quot; contact. It persists all data in the system addressbook.</p>
-<a name="libqttracker-engine"></a>
-<h4>libQtTracker Engine</h4>
-<p>The libQtTracker Engine identifies itself as &quot;qtcontacts-tracker&quot;, and is available on any platform which supports the required libqttracker libraries of the correct version.</p>
-<p>The libQtTracker engine supports a modified version of the default schema.</p>
-<ul>
-<li>TODO: what is the schema supported by this engine.</li>
-<li>TODO: what functionality is supported by this engine.</li>
-<li>TODO: is there anything else that clients may need to know?</li>
-</ul>
+<a name="windows-ce-engine"></a>
+<h4>Windows CE Engine</h4>
+<p>The Windows CE engine identifies itself as the &quot;wince&quot; engine, and is only available on the Windows Mobile 6.0 platform.</p>
+<p>It supports a subset of the default schema, and supports both the asynchronous and synchronous interfaces to the datastore. It persists saved data to the system addressbook.</p>
 <a name="information-for-engine-implementors"></a>
 <h2>Information For Engine Implementors</h2>
 <p>Some developers may wish to provide implementations of <a href="qcontactmanagerengine.html">QContactManagerEngine</a> for use by clients. The engine that they provide may aggregate multiple datastores, or access a remote datastore, or provide some other functionality to clients. An engine is distributed as a Qt Plugin, and will be detected automatically by the plugin loading code in the <a href="qcontactmanager.html">QContactManager</a>, so long as the plugin is located in the correct path ($QT_PLUGINS_DIR/contacts/).</p>

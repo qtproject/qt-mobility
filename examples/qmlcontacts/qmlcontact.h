@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,38 +38,30 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QtGui>
-#include <QDeclarativeEngine>
-#include <QDeclarativeComponent>
-#include <QDebug>
-#include <QDeclarativeView>
-#include <qcontactmanager.h>
-#include "qmlcontactmodel.h"
+#ifndef QMLCONTACT_H
+#define QMLCONTACT_H
 
-QT_USE_NAMESPACE
-QTM_USE_NAMESPACE
+#include <QDeclarativePropertyMap>
+#include "qcontact.h"
 
-int main(int argc, char ** argv)
+QTM_USE_NAMESPACE;
+
+class QMLContact : public QObject
 {
-    QApplication app(argc, argv);
+    Q_OBJECT
+public:
+    explicit QMLContact(QObject *parent = 0);
+    void setContact(const QContact& c);
+    QContact contact() const;
+    QVariant contactMap() const;
+    Q_INVOKABLE QList<QObject*> details() const;
 
+private:
 
-    QDeclarativeEngine engine;
+    QContact m_contact;
+    QDeclarativePropertyMap* m_contactMap;
+    QList<QDeclarativePropertyMap*> m_detailMaps;
+    QList<QObject*> m_details;
+};
 
-    qmlRegisterType<QMLContactModel>("QmlContactModel", 1, 0, "QmlContactModel");
-
-    QWidget *b = new QWidget();
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setMargin(0);
-
-    QDeclarativeView *view = new QDeclarativeView(b);
-    view->setFocusPolicy(Qt::StrongFocus);
-    view->setResizeMode(QDeclarativeView::SizeViewToRootObject);
-    view->setSource(QUrl("qrc:/example.qml"));
-    vbox->addWidget(view);
-    b->setLayout(vbox);
-    b->show();    
-
-    return app.exec();
-}
+#endif // QMLCONTACT_H
