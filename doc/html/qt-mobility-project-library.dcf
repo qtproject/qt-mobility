@@ -1895,7 +1895,6 @@
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::UnionFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::DefaultFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NameFilter</keyword>
-        <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::NearestFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::IntersectionFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::AttributeFilter</keyword>
         <keyword ref="qlandmarkfilter.html#FilterType-enum">QLandmarkFilter::LandmarkIdFilter</keyword>
@@ -1935,6 +1934,8 @@
     <section ref="qlandmarkidfilter.html" title="QLandmarkIdFilter Class Reference">
         <keyword ref="qlandmarkidfilter.html">QLandmarkIdFilter</keyword>
         <keyword ref="qlandmarkidfilter.html#MatchingScheme-enum">MatchingScheme</keyword>
+        <keyword ref="qlandmarkidfilter.html#MatchingScheme-enum">QLandmarkIdFilter::MatchAll</keyword>
+        <keyword ref="qlandmarkidfilter.html#MatchingScheme-enum">QLandmarkIdFilter::MatchSubset</keyword>
         <keyword ref="qlandmarkidfilter.html#append">append</keyword>
         <keyword ref="qlandmarkidfilter.html#clear">clear</keyword>
         <keyword ref="qlandmarkidfilter.html#landmarkIds">landmarkIds</keyword>
@@ -2095,20 +2096,17 @@
         <keyword ref="qlandmarknamesort.html#setCaseSensitivity">setCaseSensitivity</keyword>
         <section ref="qlandmarknamesort-members.html" title="List of all members"/>
     </section>
-    <section ref="qlandmarknearestfilter.html" title="QLandmarkNearestFilter Class Reference">
-        <keyword ref="qlandmarknearestfilter.html">QLandmarkNearestFilter</keyword>
-        <keyword ref="qlandmarknearestfilter.html#coordinate">coordinate</keyword>
-        <keyword ref="qlandmarknearestfilter.html#radius">radius</keyword>
-        <keyword ref="qlandmarknearestfilter.html#setCoordinate">setCoordinate</keyword>
-        <keyword ref="qlandmarknearestfilter.html#setRadius">setRadius</keyword>
-        <section ref="qlandmarknearestfilter-members.html" title="List of all members"/>
-    </section>
     <section ref="qlandmarkproximityfilter.html" title="QLandmarkProximityFilter Class Reference">
         <keyword ref="qlandmarkproximityfilter.html">QLandmarkProximityFilter</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#Selection-enum">Selection</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#Selection-enum">QLandmarkProximityFilter::SelectNearestOnly</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#Selection-enum">QLandmarkProximityFilter::SelectAll</keyword>
         <keyword ref="qlandmarkproximityfilter.html#coordinate">coordinate</keyword>
         <keyword ref="qlandmarkproximityfilter.html#radius">radius</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#selection">selection</keyword>
         <keyword ref="qlandmarkproximityfilter.html#setCoordinate">setCoordinate</keyword>
         <keyword ref="qlandmarkproximityfilter.html#setRadius">setRadius</keyword>
+        <keyword ref="qlandmarkproximityfilter.html#setSelection">setSelection</keyword>
         <section ref="qlandmarkproximityfilter-members.html" title="List of all members"/>
     </section>
     <section ref="qlandmarkremoverequest.html" title="QLandmarkRemoveRequest Class Reference">
