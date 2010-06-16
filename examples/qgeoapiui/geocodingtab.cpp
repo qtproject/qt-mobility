@@ -176,6 +176,8 @@ void GeocodingTab::replyFinished(QGeoPlacesReply* reply)
 
 void GeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString)
 {
+    Q_UNUSED(errorCode)
+
     QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
     top->setText(0, tr("Error"));
     top->setText(1, errorString);

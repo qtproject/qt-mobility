@@ -163,6 +163,8 @@ void RouteTab::replyFinished(QGeoRouteReply* reply)
 
 void RouteTab::resultsError(QGeoRouteReply* reply, QGeoRouteReply::Error error, QString errorString)
 {
+    Q_UNUSED(error)
+
     QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
     top->setText(0, tr("Error"));
     top->setText(1, errorString);

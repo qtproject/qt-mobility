@@ -128,6 +128,8 @@ void ReverseGeocodingTab::replyFinished(QGeoPlacesReply* reply)
 
 void ReverseGeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString)
 {
+    Q_UNUSED(errorCode)
+
     if (!isHidden()) {
         QTreeWidgetItem* top = new QTreeWidgetItem(m_resultTree);
         top->setText(0, tr("Error"));

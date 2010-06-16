@@ -128,8 +128,8 @@ void MapTileTab::on_btnRequest_clicked()
 
         QGeoCoordinate coord(m_tileLat->text().toDouble(), m_tileLong->text().toDouble());
         qint32 zoomLevel = m_tileZoomLevel->text().toInt();
-        qint32 row;
-        qint32 col;
+        //qint32 row;
+        //qint32 col;
 
         m_mapData->setViewportSize(QSizeF(300, 300));
         m_mapData->setZoomLevel(zoomLevel);
