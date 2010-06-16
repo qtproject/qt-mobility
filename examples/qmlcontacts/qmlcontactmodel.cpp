@@ -61,6 +61,7 @@ QMLContactModel::QMLContactModel(QObject *parent) :
     roleNames.insert(InterestLabelRole, "interestLabel");
     roleNames.insert(InterestRole, "interest");
     roleNames.insert(ContactRole, "contact");
+    roleNames.insert(ContactIdRole, "contactId");
     roleNames.insert(AvatarRole, "avatar");
     roleNames.insert(PresenceAvailableRole, "presenceSupported");
     roleNames.insert(PresenceTextRole, "presenceText");
@@ -229,6 +230,8 @@ QVariant QMLContactModel::data(const QModelIndex &index, int role) const
             if (m_contactMap.contains(c.localId())) {
                return m_contactMap.value(c.localId())->contactMap();
            }
+        case ContactIdRole:
+            return c.localId();
         case AvatarRole:
             //Just let the imager provider deal with it
             return QString("image://thumbnail/%1.%2").arg(manager()).arg(c.localId());

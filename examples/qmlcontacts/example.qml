@@ -52,7 +52,7 @@ Rectangle {
     color: "#080808";
 
     QmlContactModel {
-        id: myModel
+        id: contactModel 
         manager: "memory"
     }
 
@@ -127,6 +127,7 @@ Rectangle {
                         opacity: wrapper.detailsOpacity
                         height: childrenRect.height + 6;
                         width: childrenRect.width;
+                        
                         Column {
                             Text {
                                 text: model.interestLabel + ": " + model.interest
@@ -143,16 +144,17 @@ Rectangle {
                                 //anchors.fill: parent
                                 keyNavigationWraps: true
 
-                                model:model.details(model.id)
+                                model:contactModel.details(contactId)
                                 delegate: Component {
                                     Item {
+                                        property QtObject contactDetail : model.modelData;
                                         Column {
                                             Text {
-                                                text: model.modelData.name
+                                                text: contactDetail.name
                                                 color:details.textColor;
                                             }
                                             ListView {
-                                                model:model.modelData.fields();
+                                                model:contactDetail.fields();
                                                 delegate: Component {
                                                     Item {
                                                         Row {
@@ -306,7 +308,7 @@ Rectangle {
 
     ListView {
         id: mainList
-        model: myModel
+        model: contactModel
         width: parent.width; height: parent.height
         delegate: listdelegate
         highlightFollowsCurrentItem: false

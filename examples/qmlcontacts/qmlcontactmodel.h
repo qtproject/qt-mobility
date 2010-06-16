@@ -61,6 +61,7 @@ public:
         InterestRole = Qt::UserRole + 500,
         InterestLabelRole,
         ContactRole,
+        ContactIdRole,
         DetailsRole,
         AvatarRole,
         PresenceAvailableRole,
