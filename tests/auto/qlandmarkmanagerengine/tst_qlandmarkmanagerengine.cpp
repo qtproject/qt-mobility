@@ -58,7 +58,6 @@
 #include <qlandmarkintersectionfilter.h>
 #include <qlandmarkidfilter.h>
 #include <qlandmarknamefilter.h>
-#include <qlandmarknearestfilter.h>
 #include <qlandmarkproximityfilter.h>
 #include <qlandmarkunionfilter.h>
 
@@ -411,8 +410,9 @@ private slots:
 
     void testNearestFilter()
     {
-        QLandmarkNearestFilter nearestFilter;
+        QLandmarkProximityFilter nearestFilter;
         nearestFilter.setCoordinate(QGeoCoordinate(30,30));
+        nearestFilter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
         QLandmark lm;
         lm.setCoordinate(QGeoCoordinate(40,30));
         QVERIFY(MockEngine::testFilter(nearestFilter,lm));

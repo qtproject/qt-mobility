@@ -52,6 +52,13 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-filter
 */
 
+/*!
+    \enum QLandmarkProximityFilter::Selection
+    Defines the selection behavior of the proximity filter.
+    \value SelectAll Selects all landmarks in the given proximity
+    \value SelectNearestOnly Selects only the closest landmark
+*/
+
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkProximityFilter)
 
 /*!
@@ -112,6 +119,26 @@ void QLandmarkProximityFilter::setRadius(double radius)
     d->radius = radius;
 }
 
+/*!
+    Returns the selection type of the proximity filter.
+    By default the proximity filter will be \c SelectAll to select all landmarks
+    with a given proximity.
+*/
+QLandmarkProximityFilter::Selection QLandmarkProximityFilter::selection() const
+{
+    Q_D(const QLandmarkProximityFilter);
+    return d->selection;
+}
+
+/*!
+    Sets the \a selection type of the proximity filter.
+*/
+void QLandmarkProximityFilter::setSelection(QLandmarkProximityFilter::Selection selection)
+{
+    Q_D(QLandmarkProximityFilter);
+    d->selection = selection;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
@@ -121,12 +148,15 @@ QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QGeoCoord
         radius(radius)
 {
     type = QLandmarkFilter::ProximityFilter;
+    selection = QLandmarkProximityFilter::SelectAll;
 }
 
 QLandmarkProximityFilterPrivate::QLandmarkProximityFilterPrivate(const QLandmarkProximityFilterPrivate &other)
         : QLandmarkFilterPrivate(other),
         coordinate(other.coordinate),
-        radius(other.radius) {}
+        radius(other.radius),
+        selection(other.selection)
+        {}
 
 QLandmarkProximityFilterPrivate::~QLandmarkProximityFilterPrivate() {}
 

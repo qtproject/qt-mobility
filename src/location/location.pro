@@ -51,7 +51,6 @@ PUBLIC_HEADERS += \
                     qlandmarkmanagerengine.h \
                     qlandmarkmanagerenginefactory.h \
                     qlandmarknamefilter.h \
-                    qlandmarknearestfilter.h \
                     qlandmarkproximityfilter.h \
                     qlandmarkremoverequest.h \
                     qlandmarksaverequest.h \
@@ -106,7 +105,6 @@ PRIVATE_HEADERS += \
                     qlandmarkintersectionfilter_p.h \
                     qlandmarkmanager_p.h \
                     qlandmarknamefilter_p.h \
-                    qlandmarknearestfilter_p.h \
                     qlandmarkproximityfilter_p.h \
                     qlandmarkunionfilter_p.h \
                     qlandmarksortorder_p.h \
@@ -256,7 +254,6 @@ SOURCES += \
             qlandmarkmanagerengine.cpp \
             qlandmarkmanagerenginefactory.cpp \
             qlandmarknamefilter.cpp \
-            qlandmarknearestfilter.cpp \
             qlandmarkproximityfilter.cpp \
             qlandmarkremoverequest.cpp \
             qlandmarksaverequest.cpp \

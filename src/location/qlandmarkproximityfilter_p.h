@@ -54,6 +54,7 @@
 //
 
 #include "qlandmarkfilter_p.h"
+#include "qlandmarkproximityfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,13 +72,15 @@ public:
         //it is assumed that the types and superclass member variables already match
         const QLandmarkProximityFilterPrivate *od = static_cast<const QLandmarkProximityFilterPrivate*>(other);
             return (coordinate == od->coordinate)
-                    && (radius == od->radius);
+                    && (radius == od->radius)
+                    && (selection == od->selection);
     }
 
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkProximityFilter, QLandmarkFilter::ProximityFilter)
 
     QGeoCoordinate coordinate;
     double radius;
+    QLandmarkProximityFilter::Selection selection;
 };
 
 QTM_END_NAMESPACE

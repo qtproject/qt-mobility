@@ -50,7 +50,6 @@
 
 #include <qlandmarknamefilter.h>
 #include <qlandmarkproximityfilter.h>
-#include <qlandmarknearestfilter.h>
 #include <qlandmarkcategoryfilter.h>
 #include <qlandmarkboxfilter.h>
 #include <qlandmarkintersectionfilter.h>
@@ -561,7 +560,7 @@ QString landmarkIdsBoxQueryString(const QLandmarkBoxFilter &filter)
     return queryString;
 }
 
-QString landmarkIdsNearestQueryString(const QLandmarkNearestFilter &filter)
+QString landmarkIdsNearestQueryString(const QLandmarkProximityFilter &filter)
 {
    return QString("SELECT id, latitude, longitude FROM landmark ");
 }
@@ -625,15 +624,17 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
         queryString = landmarkIdsCategoryQueryString(categoryFilter);
         break;
         }
-    case QLandmarkFilter::NearestFilter: {
-        QLandmarkNearestFilter nearestFilter = filter;
-        if (nearestFilter.radius() < 0) {
-            queryString = ::landmarkIdsNearestQueryString(nearestFilter);
-            break;
-        }
-        //fall through if we have a radius
-        }
-    case QLandmarkFilter::ProximityFilter:
+    case QLandmarkFilter::ProximityFilter: {
+            QLandmarkProximityFilter proximityFilter = filter;
+            if (proximityFilter.radius() < 0) {
+                if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
+                    queryString = ::landmarkIdsNearestQueryString(proximityFilter);
+                } else {
+                    queryString =  ::landmarkIdsDefaultQueryString();
+                }
+                break;
+            }
+        }//fall through if we have a radius
     case QLandmarkFilter::BoxFilter: {
             QLandmarkBoxFilter boxFilter;
             if (filter.type() == QLandmarkFilter::BoxFilter) {
@@ -646,11 +647,6 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
                     proximityFilter = filter;
                     center = proximityFilter.coordinate();
                     radius = proximityFilter.radius();
-                } else if (filter.type() == QLandmarkFilter::NearestFilter) {
-                    QLandmarkNearestFilter nearestFilter;
-                    nearestFilter = filter;
-                    center = nearestFilter.coordinate();
-                    radius = nearestFilter.radius();
                 }
 
                 QGeoCoordinate topLeft = center;
@@ -874,59 +870,66 @@ QList<QLandmarkId> landmarkIds(const QString &connectionName, const QLandmarkFil
             } else if ( filter.type() == QLandmarkFilter::ProximityFilter) {
                 QLandmarkProximityFilter proximityFilter;
                 proximityFilter = filter;
-                qreal distance = proximityFilter.radius();
+
+
+                qreal radius = proximityFilter.radius();
                 QGeoCoordinate center = proximityFilter.coordinate();
-                QGeoCoordinate coordinate;
+                if (radius > -1) {
+                    QGeoCoordinate coordinate;
 
-                do {
-                    if (queryRun && queryRun->isCanceled) {
-                        return QList<QLandmarkId>();
-                    }
+                    do {
+                        if (queryRun && queryRun->isCanceled) {
+                            return QList<QLandmarkId>();
+                        }
 
-                    coordinate.setLatitude(query.value(1).toDouble());
-                    coordinate.setLongitude(query.value(2).toDouble());
+                        coordinate.setLatitude(query.value(1).toDouble());
+                        coordinate.setLongitude(query.value(2).toDouble());
 
-                    if (coordinate.distanceTo(center) < distance || qFuzzyCompare(coordinate.distanceTo(center),distance))
-                    {
+                        if (coordinate.distanceTo(center) < radius || qFuzzyCompare(coordinate.distanceTo(center), radius))
+                        {
+                            id.setManagerUri(managerUri);
+                            id.setLocalId(QString::number(query.value(0).toInt()));
+                            result << id;
+                        }
+                    } while (query.next());
+                } else { //no radius
+                    if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly) {
+                        bool ok = false;
+                        double lat;
+                        double lon;
+                        int minId = -1;
+                        double minDist = 0.0;
+                        double dist;
+
+                        do {
+                            if (queryRun && queryRun->isCanceled) {
+                                return QList<QLandmarkId>();
+                            }
+                            lat = query.value(1).toDouble(&ok);
+                            Q_ASSERT(ok);
+                            lon = query.value(2).toDouble(&ok);
+                            Q_ASSERT(ok);
+
+                            dist = QGeoCoordinate(lat, lon).distanceTo(proximityFilter.coordinate());
+                            if (radius == -1 || dist < radius) {
+                                if (minId == -1 || dist < minDist) {
+                                    minId = query.value(0).toInt();
+                                    minDist = dist;
+                                }
+                            }
+                        } while (query.next());
+
+                        if (minId != -1) {
+                            QLandmarkId id;
+                            id.setManagerUri(managerUri);
+                            id.setLocalId(QString::number(minId));
+                            result << id;
+                        }
+                    } else { //accept all results since we are proximity filter with no radius
                         id.setManagerUri(managerUri);
                         id.setLocalId(QString::number(query.value(0).toInt()));
                         result << id;
                     }
-                } while (query.next());
-
-            } else if (filter.type() == QLandmarkFilter::NearestFilter) {
-                QLandmarkNearestFilter nearestFilter = filter;
-                double radius = nearestFilter.radius();
-                bool ok = false;
-                double lat;
-                double lon;
-                int minId = -1;
-                double minDist = 0.0;
-                double dist;
-
-                do {
-                    if (queryRun && queryRun->isCanceled) {
-                        return QList<QLandmarkId>();
-                    }
-                    lat = query.value(1).toDouble(&ok);
-                    Q_ASSERT(ok);
-                    lon = query.value(2).toDouble(&ok);
-                    Q_ASSERT(ok);
-
-                    dist = QGeoCoordinate(lat, lon).distanceTo(nearestFilter.coordinate());
-                    if (radius == -1 || dist < radius) {
-                        if (minId == -1 || dist < minDist) {
-                            minId = query.value(0).toInt();
-                            minDist = dist;
-                        }
-                    }
-                } while (query.next());
-
-                if (minId != -1) {
-                    QLandmarkId id;
-                    id.setManagerUri(managerUri);
-                    id.setLocalId(QString::number(minId));
-                    result << id;
                 }
             } else {
                 id.setManagerUri(managerUri);

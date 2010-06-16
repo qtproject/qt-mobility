@@ -53,7 +53,6 @@
 #include <qlandmarkfilter.h>
 #include <qlandmarknamefilter.h>
 #include <qlandmarkproximityfilter.h>
-#include <qlandmarknearestfilter.h>
 #include <qlandmarkcategoryfilter.h>
 #include <qlandmarkboxfilter.h>
 #include <qlandmarkintersectionfilter.h>
@@ -1707,7 +1706,8 @@ private slots:
             QGeoCoordinate filterCoord = testSets.at(i).first;
             QGeoCoordinate lmCoord = testSets.at(i).second;
 
-            QLandmarkNearestFilter filter(filterCoord);
+            QLandmarkProximityFilter filter(filterCoord);
+            filter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
 
             QList<QLandmark> lms = m_manager->landmarks(filter);
 
@@ -1716,13 +1716,15 @@ private slots:
             QCOMPARE(lms.at(0).coordinate(), lmCoord);
         }
 
-        QLandmarkNearestFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
+        QLandmarkProximityFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
+        filter1.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
 
         QList<QLandmark> lms = m_manager->landmarks(filter1);
         QCOMPARE(lms.size(), 1);
         QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
 
-        QLandmarkNearestFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
+        QLandmarkProximityFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
+        filter2.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
 
         lms = m_manager->landmarks(filter2);
         QCOMPARE(lms.size(), 0);
@@ -1848,7 +1850,8 @@ private slots:
         for (int i = 0; i < testSets.size(); ++i) {
             QGeoCoordinate filterCoord = testSets.at(i).first;
             QGeoCoordinate lmCoord = testSets.at(i).second;
-            QLandmarkNearestFilter filter(filterCoord);
+            QLandmarkProximityFilter filter(filterCoord);
+            filter.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
             QLandmarkFetchRequest fetchRequest(m_manager);
             fetchRequest.setFilter(filter);
             QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
@@ -1861,7 +1864,8 @@ private slots:
             QCOMPARE(lms.at(0).coordinate(), lmCoord);
         }
 
-        QLandmarkNearestFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
+        QLandmarkProximityFilter filter1(QGeoCoordinate(-10.0, -10.0), -1.0);
+        filter1.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
 
         QLandmarkFetchRequest fetchRequest(m_manager);
         fetchRequest.setFilter(filter1);
@@ -1874,7 +1878,8 @@ private slots:
         QCOMPARE(lms.size(), 1);
         QCOMPARE(lms.at(0).coordinate(), QGeoCoordinate(-1.0, -1.0));
 
-        QLandmarkNearestFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
+        QLandmarkProximityFilter filter2(QGeoCoordinate(-10.0, -10.0), 100.0);
+        filter2.setSelection(QLandmarkProximityFilter::SelectNearestOnly);
         fetchRequest.setFilter(filter2);
         fetchRequest.start();
 

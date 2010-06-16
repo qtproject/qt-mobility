@@ -71,7 +71,6 @@ class QLandmarkExportRequest;
 class QLandmarkFilter;
 class QLandmarkNameFilter;
 class QLandmarkProximityFilter;
-class QLandmarkNearestFilter;
 class QLandmarkCategoryFilter;
 class QLandmarkBoxFilter;
 class QLandmarkUnionFilter;
