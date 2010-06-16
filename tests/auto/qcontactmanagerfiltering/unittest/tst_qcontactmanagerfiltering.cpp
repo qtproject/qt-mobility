@@ -2403,20 +2403,14 @@ void tst_QContactManagerFiltering::actionFiltering_data()
         QTest::newRow("empty (any action matches)") << manager << es << expected;
 
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            newMRow("Number", manager) << manager << "Number" << "abcd";
-            QTest::newRow("Number (NumberCo)") << manager << "Number" << "abcd";
+            newMRow("Number", manager) << manager << "NumberAction" << "abcd";
+            QTest::newRow("Number (NumberCo)") << manager << "NumberAction" << "abcd";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
             /* Boolean testing */
-            newMRow("Boolean action", manager) << manager << "Boolean" << "a";
+            newMRow("Boolean action", manager) << manager << "BooleanAction" << "a";
             newMRow("BooleanCo", manager) << manager << es << "a";
-        }
-
-        if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
-            /* Value filtering */
-            QTest::newRow("Any action matching 20") << manager << es << "b";
-            QTest::newRow("Any action matching 4.0") << manager << es << "bc";
         }
 
         if (!booleanDefAndFieldNames.first.isEmpty() && !booleanDefAndFieldNames.second.isEmpty()) {
@@ -2439,6 +2433,12 @@ void tst_QContactManagerFiltering::actionFiltering()
     QFETCH(QString, actionName);
     QFETCH(QString, expected);
 
+    // only test the memory engine - action filtering + service framework plugin loading
+    // codepaths are tested fully this way since the codepath for other engines is that of
+    // the memory engine, and only the memory engine has the required definitions and fields.
+    if (cm->managerName() != QString(QLatin1String("memory")))
+        return;
+
     /* Load the definition and field names for the various variant types for the current manager */
     defAndFieldNamesForTypeForActions = defAndFieldNamesForTypePerManager.value(cm);
     if (!defAndFieldNamesForTypeForActions.isEmpty()) {
@@ -2447,6 +2447,8 @@ void tst_QContactManagerFiltering::actionFiltering()
 
         QList<QContactLocalId> ids = cm->contactIds(af);
         QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
+
+qDebug() << "   actionName =" << actionName;
 
         QString output = convertIds(contacts, ids);
         QCOMPARE_UNSORTED(output, expected);
@@ -2777,6 +2779,62 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
     bool supportsChangelog = cm->hasFeature(QContactManager::ChangeLogs);
     int napTime = supportsChangelog ? 2000 : 1;
 
+
+    /* For our test actions: memory engine, add the "special" definitions. */
+    if (cm->managerName() == QString(QLatin1String("memory"))) {
+        QContactDetailDefinition def;
+        QContactDetailFieldDefinition field;
+        QMap<QString, QContactDetailFieldDefinition> fields;
+
+        // integer
+        def.setName("IntegerDefinition");
+        field.setDataType(QVariant::Int);
+        field.setAllowableValues(QVariantList());
+        fields.clear();
+        fields.insert("IntegerField", field);
+        def.setFields(fields);
+        defAndFieldNames = QPair<QString, QString>("IntegerDefinition", "IntegerField");
+        definitionDetails.insert("Integer", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+        cm->saveDetailDefinition(def, QContactType::TypeContact);
+
+        // double
+        def.setName("DoubleDefinition");
+        field.setDataType(QVariant::Double);
+        field.setAllowableValues(QVariantList());
+        fields.clear();
+        fields.insert("DoubleField", field);
+        def.setFields(fields);
+        defAndFieldNames = QPair<QString, QString>("DoubleDefinition", "DoubleField");
+        definitionDetails.insert("Double", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+        cm->saveDetailDefinition(def, QContactType::TypeContact);
+
+        // boolean
+        def.setName("BooleanDefinition");
+        field.setDataType(QVariant::Bool);
+        field.setAllowableValues(QVariantList());
+        fields.clear();
+        fields.insert("BooleanField", field);
+        def.setFields(fields);
+        defAndFieldNames = QPair<QString, QString>("BooleanDefinition", "BooleanField");
+        definitionDetails.insert("Boolean", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+        cm->saveDetailDefinition(def, QContactType::TypeContact);
+
+        // date
+        def.setName("DateDefinition");
+        field.setDataType(QVariant::Date);
+        field.setAllowableValues(QVariantList());
+        fields.clear();
+        fields.insert("DateField", field);
+        def.setFields(fields);
+        defAndFieldNames = QPair<QString, QString>("DateDefinition", "DateField");
+        definitionDetails.insert("Date", defAndFieldNames);
+        defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
+        cm->saveDetailDefinition(def, QContactType::TypeContact);
+    }
+
     /* String */
     defAndFieldNames = definitionAndField(cm, QVariant::String, &nativelyFilterable);
     if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
@@ -2788,7 +2846,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* Integer */
     defAndFieldNames = definitionAndField(cm, QVariant::Int, &nativelyFilterable);
-    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+    if (cm->managerName() != "memory" && !defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        // we don't insert for memory engine, as we already handled this above (for action filtering)
         definitionDetails.insert("Integer", defAndFieldNames);
         defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
     }
@@ -2806,7 +2865,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* double detail */
     defAndFieldNames = definitionAndField(cm, QVariant::Double, &nativelyFilterable);
-    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+    if (cm->managerName() != "memory" && !defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        // we don't insert for memory engine, as we already handled this above (for action filtering)
         definitionDetails.insert("Double", defAndFieldNames);
         defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
     }
@@ -2815,7 +2875,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* bool */
     defAndFieldNames = definitionAndField(cm, QVariant::Bool, &nativelyFilterable);
-    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+    if (cm->managerName() != "memory" && !defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        // we don't insert for memory engine, as we already handled this above (for action filtering)
         definitionDetails.insert("Bool", defAndFieldNames);
         defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
     }
@@ -2842,7 +2903,8 @@ QList<QContactLocalId> tst_QContactManagerFiltering::prepareModel(QContactManage
 
     /* date */
     defAndFieldNames = definitionAndField(cm, QVariant::Date, &nativelyFilterable);
-    if (!defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+    if (cm->managerName() != "memory" && !defAndFieldNames.first.isEmpty() && !defAndFieldNames.second.isEmpty()) {
+        // we don't insert for memory engine, as we already handled this above (for action filtering)
         definitionDetails.insert("Date", defAndFieldNames);
         defAndFieldNamesForTypePerManager.insert(cm, definitionDetails);
     }
