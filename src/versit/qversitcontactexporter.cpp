@@ -166,10 +166,12 @@ QTM_USE_NAMESPACE
 
   By associating a \l QVersitContactExporterDetailHandlerV2 with the exporter using
   setDetailHandler(), the client can pass in a handler to override the processing of details and/or
-  handle details that QVersitContactExporter doesn't support.
+  handle details that QVersitContactExporter doesn't support.  A "backup" handler is provided by
+  QVersitContactExporterDetailHandlerV2::createBackupHandler(), which serializes any details
+  that the standard QVersitContactExporter doesn't support to the vCard.
 
 
-  An example usage of QVersitContactExporter
+  An example usage of QVersitContactExporter:
   \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Export example
 
   \section1 Exporting group relationships
