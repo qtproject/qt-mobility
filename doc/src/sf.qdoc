@@ -413,7 +413,7 @@ all services that implement the interface \i com.nokia.qt.ILocation:
 \code
     QServiceManager mgr;
     QServiceFilter filter;
-    filter.setInterfaceName("com.nokia.qt.ILocation");
+    filter.setInterface("com.nokia.qt.ILocation");
     QList<QServiceInterfaceDescriptor> list = mgr.findInterfaces(filter);
     for(int i = 0; i < list.size(); i++) {
         QObject *serviceObject;
