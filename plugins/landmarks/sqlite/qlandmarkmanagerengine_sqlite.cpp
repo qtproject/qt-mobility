@@ -65,6 +65,7 @@
 #include <qlandmarkabstractrequest.h>
 #include <qlandmarkfetchrequest.h>
 #include <qlandmarksaverequest.h>
+#include <qlandmarkremoverequest.h>
 
 #include <qlandmarkfilehandler_gpx_p.h>
 #include <qlandmarkfilehandler_lmx_p.h>
@@ -1026,7 +1027,7 @@ QString quoteString(const QString &s)
 
 bool saveLandmark(const QString &connectionName, QLandmark *landmark,
                   QLandmarkManager::Error *error, QString *errorString,
-                  bool *added, bool *changed, QString managerUri)
+                  bool *added, bool *changed, const QString &managerUri)
 {
     if (!landmark->landmarkId().managerUri().isEmpty() && landmark->landmarkId().managerUri() != managerUri) {
         if (error)
@@ -1392,6 +1393,118 @@ bool saveLandmarks(const QString &connectionName, QList<QLandmark> * landmark,
     return noErrors;
 }
 
+bool removeLandmark(const QString &connectionName, const QLandmarkId &landmarkId,
+        QLandmarkManager::Error *error,
+        QString *errorString,
+        const QString &managerUri)
+{
+    if (landmarkId.managerUri() != managerUri) {
+        if (error)
+            *error = QLandmarkManager::BadArgumentError;
+        if (errorString)
+            *errorString = "Landmark id comes from different landmark manager.";
+        return false;
+    }
+
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+
+    bool transacting = db.transaction();
+
+    QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmarkId.localId());
+    QSqlQuery query0(q0, db);
+    // invalid id - not an error, but we need to detect this to avoid sending the signals
+    if (!query0.next()) {
+        if (transacting)
+            db.rollback();
+
+        if (error)
+            *error = QLandmarkManager::DoesNotExistError;
+         if (errorString)
+            *errorString = QString("Landmark with local id, %1, does with exist in database").arg(landmarkId.localId());
+        return false;
+    }
+
+    QString q1 = QString("DELETE FROM landmark WHERE id = %1;").arg(landmarkId.localId());
+    QSqlQuery query1(q1, db);
+    if (!query1.exec()) {
+        if (transacting)
+            db.rollback();
+        if (error)
+            *error = QLandmarkManager::UnknownError;
+        if (errorString)
+            *errorString = query1.lastError().text();
+        return false;
+    }
+
+    QString q2 = QString("DELETE FROM landmark_category WHERE landmark_id = %1;").arg(landmarkId.localId());
+    QSqlQuery query2(q2, db);
+    if (!query2.exec()) {
+        if (transacting)
+            db.rollback();
+
+        if (error)
+            *error = QLandmarkManager::UnknownError;
+        if (errorString)
+            *errorString = query1.lastError().text();
+        return false;
+    }
+
+    if (transacting)
+        db.commit();
+
+    return true;
+}
+
+bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &landmarkIds,
+                    QMap<int, QLandmarkManager::Error> *errorMap,
+                    QLandmarkManager::Error *error,
+                    QString *errorString, const QString &managerUri)
+{
+    QList<QLandmarkId> removedIds;
+
+    bool noErrors = true;
+    QLandmarkManager::Error lastError = QLandmarkManager::NoError;
+    QString lastErrorString;
+    QLandmarkManager::Error loopError;
+    QString loopErrorString;
+    for (int i = 0; i < landmarkIds.size(); ++i) {
+        loopError = QLandmarkManager::NoError;
+        loopErrorString.clear();
+
+        bool result = removeLandmark(connectionName, landmarkIds.at(i), &loopError, &loopErrorString, managerUri);
+
+        if (errorMap)
+            errorMap->insert(i, loopError);
+
+        if (!result) {
+            noErrors = false;
+            lastError = loopError;
+            lastErrorString = loopErrorString;
+        }
+
+        if (result)
+            removedIds << landmarkIds.at(i);
+    }
+
+    if (noErrors) {
+        if (error)
+            *error = QLandmarkManager::NoError;
+        if (errorString)
+            *errorString = "";
+    } else {
+        if (error)
+            *error = lastError;
+        if (errorString)
+            *errorString = lastErrorString;
+    }
+
+    //TODO: notifications
+    //if (removedIds.size() != 0)
+    //    emit landmarksRemoved(removedIds);
+
+    return noErrors;
+}
+
 QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng)
     : request(req),
       error(QLandmarkManager::NoError),
@@ -1478,6 +1591,28 @@ void QueryRun::run()
                 }
                 break;
         }
+        case QLandmarkAbstractRequest::LandmarkRemoveRequest :
+        {
+            QLandmarkRemoveRequest *removeRequest = static_cast<QLandmarkRemoveRequest *> (request);
+            QList<QLandmarkId> lmIds = removeRequest->landmarkIds();
+            ::removeLandmarks(connectionName, lmIds, &errorMap, &error, &errorString, managerUri);
+            if (this->isCanceled) {
+                    QMetaObject::invokeMethod(engine, "updateLandmarkRemoveRequest",
+                                              Q_ARG(QLandmarkRemoveRequest *,removeRequest),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(ERROR_MAP, errorMap),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
+                } else {
+                    QMetaObject::invokeMethod(engine, "updateLandmarkRemoveRequest",
+                                              Q_ARG(QLandmarkRemoveRequest *,removeRequest),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(ERROR_MAP, errorMap),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                }
+                break;
+        }
         default:
             break;
         }
@@ -1492,6 +1627,7 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
 
 {
     qRegisterMetaType<ERROR_MAP >();
+
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
     db.setDatabaseName(filename);
     if (!db.open()) {
@@ -2251,120 +2387,23 @@ bool QLandmarkManagerEngineSqlite::saveLandmarks(QList<QLandmark> * landmarks,
 
 }
 
-bool QLandmarkManagerEngineSqlite::removeLandmarkInternal(const QLandmarkId &landmarkId,
-        QLandmarkManager::Error *error,
-        QString *errorString,
-        bool *removed)
-{
-    if (removed)
-        *removed = false;
-
-    if (landmarkId.managerUri() != managerUri()) {
-        if (error)
-            *error = QLandmarkManager::BadArgumentError;
-        if (errorString)
-            *errorString = "Category id comes from different landmark manager.";
-        return false;
-    }
-
-    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
-
-    bool transacting = db.transaction();
-
-    QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmarkId.localId());
-    QSqlQuery query0(q0, db);
-    // invalid id - not an error, but we need to detect this to avoid sending the signals
-    if (!query0.next()) {
-        if (transacting)
-            db.commit();
-        return true;
-    }
-
-    QString q1 = QString("DELETE FROM landmark WHERE id = %1;").arg(landmarkId.localId());
-    QSqlQuery query1(q1, db);
-    if (!query1.exec()) {
-        if (transacting)
-            db.rollback();
-        return false;
-    }
-
-    QString q2 = QString("DELETE FROM landmark_category WHERE landmark_id = %1;").arg(landmarkId.localId());
-    QSqlQuery query2(q2, db);
-    if (!query2.exec()) {
-        if (transacting)
-            db.rollback();
-        return false;
-    }
-
-    if (transacting)
-        db.commit();
-
-    if (removed)
-        *removed = true;
-
-    return true;
-}
-
 bool QLandmarkManagerEngineSqlite::removeLandmark(const QLandmarkId &landmarkId,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    bool removed = false;
-    bool result = removeLandmarkInternal(landmarkId, error, errorString, &removed);
+    return  ::removeLandmark(m_dbConnectionName, landmarkId , error, errorString, managerUri());
 
-    if (removed) {
-        QList<QLandmarkId> ids;
-        ids << landmarkId;
-        emit landmarksRemoved(ids);
-    }
 
-    if (result) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-    }
-
-    return result;
+    //TODO: notifications
 }
 
-bool QLandmarkManagerEngineSqlite::removeLandmarks(const QList<QLandmarkId> &landmarkId,
+bool QLandmarkManagerEngineSqlite::removeLandmarks(const QList<QLandmarkId> &landmarkIds,
         QMap<int, QLandmarkManager::Error> *errorMap,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    QList<QLandmarkId> removedIds;
-
-    bool noErrors = true;
-    for (int i = 0; i < landmarkId.size(); ++i) {
-        QLandmarkManager::Error loopError;
-        bool removed = false;
-        bool result = removeLandmarkInternal(landmarkId.at(i), &loopError, 0, &removed);
-        if (!result && errorMap) {
-            noErrors = false;
-            errorMap->insert(i, loopError);
-        }
-
-        if (removed)
-            removedIds << landmarkId.at(i);
-    }
-
-    if (noErrors) {
-        if (error)
-            *error = QLandmarkManager::NoError;
-        if (errorString)
-            *errorString = "";
-    } else {
-        if (error)
-            *error = QLandmarkManager::UnknownError;
-        if (errorString)
-            *errorString = "Errors occured while removing landmarks.";
-    }
-
-    if (removedIds.size() != 0)
-        emit landmarksRemoved(removedIds);
-
-    return noErrors;
+    return  ::removeLandmarks(m_dbConnectionName, landmarkIds , errorMap, error, errorString, managerUri());
+    //TODO: notifications
 }
 
 bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
@@ -2761,6 +2800,12 @@ void QLandmarkManagerEngineSqlite::updateLandmarkSaveRequest(QLandmarkSaveReques
                             QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
 {
     QLandmarkManagerEngine::updateLandmarkSaveRequest(req, result, error, errorString, errorMap, newState);
+}
+
+void QLandmarkManagerEngineSqlite::updateLandmarkRemoveRequest(QLandmarkRemoveRequest* req, QLandmarkManager::Error error,
+                             const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkManagerEngine::updateLandmarkRemoveRequest(req, error, errorString, errorMap, newState);
 }
 
 void QLandmarkManagerEngineSqlite::updateRequestState(QLandmarkAbstractRequest *req, QLandmarkAbstractRequest::State state)
