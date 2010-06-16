@@ -39,69 +39,20 @@
 **
 ****************************************************************************/
 
-#include "qbluetoothsocket.h"
-#include "qbluetoothsocket_p.h"
+#include "qbluetoothlocaldevice.h"
+
+#include <QtCore/QString>
 
 QTM_BEGIN_NAMESPACE
 
-void QBluetoothSocket::abort()
+QBluetoothLocalDevice QBluetoothLocalDevice::defaultDevice()
 {
+    return QBluetoothLocalDevice();
 }
 
-void QBluetoothSocket::disconnectFromService()
+QString QBluetoothLocalDevice::name() const
 {
-}
-
-QString QBluetoothSocket::localName() const
-{
-}
-
-QBluetoothAddress QBluetoothSocket::localAddress() const
-{
-}
-
-quint16 QBluetoothSocket::localPort() const
-{
-}
-
-QString QBluetoothSocket::peerName() const
-{
-}
-
-QBluetoothAddress QBluetoothSocket::peerAddress() const
-{
-}
-
-quint16 QBluetoothSocket::peerPort() const
-{
-}
-
-qint64 QBluetoothSocket::writeData(const char *data, qint64 maxSize)
-{
-}
-
-qint64 QBluetoothSocket::readData(char *data, qint64 maxSize)
-{
-}
-
-void QBluetoothSocket::close()
-{
-}
-
-QBluetoothSocketPrivate::QBluetoothSocketPrivate()
-{
-}
-
-QBluetoothSocketPrivate::~QBluetoothSocketPrivate()
-{
-}
-
-bool QBluetoothSocketPrivate::ensureNativeSocket(QBluetoothSocket::SocketType type)
-{
-}
-
-void QBluetoothSocketPrivate::connectToService(const QBluetoothAddress &address, quint16 port, QIODevice::OpenMode openMode)
-{
+    return QString();
 }
 
 QTM_END_NAMESPACE

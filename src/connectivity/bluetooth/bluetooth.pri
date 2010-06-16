@@ -54,7 +54,8 @@ unix:!symbian {
         bluetooth/qbluetoothdevicediscoveryagent_bluez.cpp \
         bluetooth/qbluetoothservicediscoveryagent_bluez.cpp \
         bluetooth/qbluetoothsocket_bluez.cpp \
-        bluetooth/qrfcommserver_bluez.cpp
+        bluetooth/qrfcommserver_bluez.cpp \
+        bluetooth/qbluetoothlocaldevice_bluez.cpp
 }
 
 INCLUDEPATH += $$PWD

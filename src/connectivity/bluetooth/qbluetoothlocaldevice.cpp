@@ -44,8 +44,6 @@
 
 #include <QtCore/QString>
 
-QT_BEGIN_HEADER
-
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -186,5 +184,3 @@ QBluetoothLocalDevice::Pairing QBluetoothLocalDevice::pairing(const QBluetoothAd
 */
 
 QTM_END_NAMESPACE
-
-QT_END_HEADER
