@@ -81,6 +81,8 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     // Create entry view (creation is synchronized with CActiveSchedulerWait)
     m_entryView = CCalEntryView::NewL(*m_calSession, *this);
     m_activeSchedulerWait = new CActiveSchedulerWait();
+    // TODO: The calendar session may take some time to initialize which would
+    // make an UI app using symbian backend freeze. To be refactored.
     m_activeSchedulerWait->Start();
 }
 

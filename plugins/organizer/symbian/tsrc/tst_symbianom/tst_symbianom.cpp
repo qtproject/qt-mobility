@@ -47,9 +47,12 @@
 
 QTM_USE_NAMESPACE
 
-const QString managerName("symbian");
-//const QString managerName("memory");
+const QString m_managerName("symbian");
+//const QString m_managerName("memory");
 
+/*!
+ * A test helper class that acts as a placeholder for QOrganizerItemDetail data.
+ */
 class QTstDetail
 {
 public:
@@ -64,8 +67,14 @@ public:
     QVariant m_value;
 };
 typedef QList<QTstDetail> QTstDetailList;
-Q_DECLARE_METATYPE(QTstDetailList);
+Q_DECLARE_METATYPE(QTstDetailList)
 
+/*!
+ * For testing symbian backend via QOrganizerItemManager API. The target is
+ * to implement test cases in a platform independent manner so that this test
+ * module could be used also with other backends and potentially used as a
+ * QtMobility auto test with as little porting work as possible.
+ */
 class tst_SymbianOm : public QObject
 {
     Q_OBJECT
@@ -75,7 +84,6 @@ private slots:  // Init & cleanup
     void cleanupTestCase();
 
 private slots:  // Test cases
-
     // Simple test cases without any data
     void addSimpleItem();
     void fetchSimpleItem();
@@ -113,7 +121,7 @@ void tst_SymbianOm::initTestCase()
 {
     // You could also use the override without the manager name; that should
     // default to the platform specific default manager
-    m_om = new QOrganizerItemManager(managerName);
+    m_om = new QOrganizerItemManager(m_managerName);
 
     // Remove all organizer items first (Note: ignores possible errors)
     //m_om->removeItems(m_om->itemIds(), 0);
@@ -138,7 +146,7 @@ void tst_SymbianOm::addSimpleItem()
     QVERIFY(m_om->saveItem(&item));
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     QVERIFY(item.id().localId() != 0);
-    QVERIFY(item.id().managerUri().contains(managerName));
+    QVERIFY(item.id().managerUri().contains(m_managerName));
 
     // Save with list parameter
     QList<QOrganizerItem> items;
@@ -147,7 +155,7 @@ void tst_SymbianOm::addSimpleItem()
     QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
     foreach (QOrganizerItem listitem, items) {
         QVERIFY(listitem.id().localId() != 0);
-        QVERIFY(item.id().managerUri().contains(managerName));
+        QVERIFY(item.id().managerUri().contains(m_managerName));
     }
 
     // Save with list parameter and error map parameter
@@ -157,7 +165,7 @@ void tst_SymbianOm::addSimpleItem()
     QVERIFY(errorMap.count() == 0);
     foreach (QOrganizerItem listitem2, items) {
         QVERIFY(listitem2.id().localId() != 0);
-        QVERIFY(item.id().managerUri().contains(managerName));
+        QVERIFY(item.id().managerUri().contains(m_managerName));
     }
 }
 
@@ -170,7 +178,7 @@ void tst_SymbianOm::fetchSimpleItem()
     // Save
     QVERIFY(m_om->saveItem(&item));
     QVERIFY(item.id().localId() != 0);
-    QVERIFY(item.id().managerUri().contains(managerName));
+    QVERIFY(item.id().managerUri().contains(m_managerName));
 
     // Fetch
     QOrganizerItem fetchedItem = m_om->item(item.localId());
@@ -188,7 +196,7 @@ void tst_SymbianOm::removeSimpleItem()
     // Save
     QVERIFY(m_om->saveItem(&item));
     QVERIFY(item.id().localId() != 0);
-    QVERIFY(item.id().managerUri().contains(managerName));
+    QVERIFY(item.id().managerUri().contains(m_managerName));
 
     // Remove
     QVERIFY(m_om->removeItem(item.localId()));
@@ -344,47 +352,64 @@ void tst_SymbianOm::removeNegative()
 
 void tst_SymbianOm::addItem_data()
 {
+    QTest::addColumn<int>("expectedError");
     QTest::addColumn<QTstDetailList>("detailsList");
 
-    // Item types
-    // TODO: the following test case panics on symbian! Symbian backend to be fixed!
-    /*
+    /**** event items ****/
     QTest::newRow("Item type Event")
+        << (int) QOrganizerItemManager::BadArgumentError // Symbian calendar API does not allow creating an event without start time
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent));
-    */
-
-/* TODO: enable and implement these details
-    QTest::newRow("Item type EventOccurrence")
-        << (QTstDetailList()
-            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEventOccurrence));
-    QTest::newRow("Item type Journal")
-        << (QTstDetailList()
-            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeJournal));
-*/
-    QTest::newRow("Item type Todo")
-        << (QTstDetailList()
-            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo));
-/* TODO: enable and implement these details
-    QTest::newRow("Item type TodoOccurrence")
-        << (QTstDetailList()
-            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodoOccurrence));
-    QTest::newRow("Item type Note")
-        << (QTstDetailList()
-            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote));
-*/
-
-    // Other details
     QTest::newRow("Item type Event; details: start time")
+        << (int) QOrganizerItemManager::NoError
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
             << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
-    QTest::newRow("Item type Event; details: start time, end time")
+#ifndef Q_OS_SYMBIAN
+    // There is a bug in symbian calendar server: An end datetime that is
+    // exactly the same as the start datetime is ignored.
+    // TODO: File a bug report against symbian calendar server in 10.1
+    // platform. For older platforms this should be considered a known-issue
+    // and test case should be left disabled.
+    QTest::newRow("Item type Event; details: start time = end time")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime()));
+#endif
+    QTest::newRow("Item type Event; details: start time < end time")
+        << (int) QOrganizerItemManager::NoError
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
             << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
             << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
-/*
+    QTest::newRow("Item type Event; details: start time > end time")
+        << (int) QOrganizerItemManager::BadArgumentError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addSecs(3600))
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime()));
+#ifndef Q_OS_SYMBIAN
+    // Symbian calendar server makes the client process panic in case the start
+    // time of an event (calendar event of type EAppt) is left empty.
+    // TODO: File a bug report against symbian calendar server in 10.1
+    // platform. For older platforms this should be considered a known-issue
+    // and test case should be left disabled.
+    QTest::newRow("Item type Event; details: end time")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
+#else
+    QTest::newRow("Item type Event; details: end time")
+        << (int) QOrganizerItemManager::BadArgumentError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
+#endif
+
+    /* TODO: Enable and implement
     QTest::newRow("Item type Event; details: description")
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
@@ -394,6 +419,81 @@ void tst_SymbianOm::addItem_data()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
             << QTstDetail(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Memo for the meeting with Elbonian president"))
             << QTstDetail(QOrganizerItemNote::DefinitionName, QOrganizerItemNote::FieldNote, QString("Remember to wear blue jeans")));
+     */
+
+    /* TODO: enable and implement
+        QTest::newRow("Item type EventOccurrence")
+            << (int) QOrganizerItemManager::NoError
+            << (QTstDetailList()
+                << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEventOccurrence));
+                */
+
+    /* TODO: enable and implement
+        QTest::newRow("Item type Journal")
+            << (int) QOrganizerItemManager::NoError
+            << (QTstDetailList()
+                << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeJournal));
+    */
+
+    /**** todo items ****/
+    QTest::newRow("Item type Todo")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo));
+#ifndef Q_OS_SYMBIAN
+    // There is a bug in symbian calendar server that makes an empty
+    // "not-before" datetime to be replaced with the same value as "due"
+    // datetime if only "due" datetime was defined
+    // TODO: File a bug report against symbian calendar server in 10.1
+    // platform. For older platforms this should be considered a known-issue
+    // and test case should be left disabled.
+    QTest::newRow("Item type Todo; details: due time")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo)
+            << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime())); 
+#endif
+    QTest::newRow("Item type Todo; details: due time == not-before time")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo)
+            << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime())
+            << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+    QTest::newRow("Item type Todo; details: due time > not-before time")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo)
+            << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1))
+            << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime()));
+    QTest::newRow("Item type Todo; details: due time < not-before time")
+        << (int) QOrganizerItemManager::BadArgumentError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo)
+            << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime())
+            << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(1)));
+
+#ifndef Q_OS_SYMBIAN
+    // There is a bug in symbian calendar server which makes the "not-before"
+    // datetime to be ignored if no "due" datetime is defined
+    // TODO: File a bug report against symbian calendar server in 10.1
+    // platform. For older platforms this should be considered a known-issue
+    // and test case should be left disabled.
+    QTest::newRow("Item type Todo; details: not-before time")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo)
+            << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldNotBeforeDateTime, QDateTime::currentDateTime().addDays(1)));
+#endif
+
+/* TODO: Enable and implement
+    QTest::newRow("Item type TodoOccurrence")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodoOccurrence));
+    QTest::newRow("Item type Note")
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList()
+            << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote));
     QTest::newRow("Item type Note; details: description, note")
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeNote)
@@ -413,6 +513,8 @@ void tst_SymbianOm::addItem_data()
 
 void tst_SymbianOm::addItem()
 {
+    QFETCH(int, expectedError);
+    QOrganizerItemManager::Error expectedErrorCode = (QOrganizerItemManager::Error) expectedError; 
     QFETCH(QTstDetailList, detailsList);
     QList<QOrganizerItemDetail> details;
     QVERIFY(parseDetails(detailsList, details));
@@ -431,16 +533,22 @@ void tst_SymbianOm::addItem()
         */
     }
 
-    // Save
-    QVERIFY(m_om->saveItem(&item));
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(item.id().localId() != 0);
-    QVERIFY(item.id().managerUri().contains(managerName));
+    if (expectedErrorCode == QOrganizerItemManager::NoError) {
+        // Save
+        QVERIFY(m_om->saveItem(&item));
+        QCOMPARE(m_om->error(), expectedErrorCode);
+        QVERIFY(item.id().localId() != 0);
+        QVERIFY(item.id().managerUri().contains(m_managerName));
 
-    // Fetch item to verify everything was saved successfully
-    QOrganizerItem savedItem = m_om->item(item.localId());
-    QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
-    QVERIFY(verifyDetails(savedItem.details(), details));
+        // Fetch item to verify everything was saved successfully
+        QOrganizerItem savedItem = m_om->item(item.localId());
+        QCOMPARE(m_om->error(), QOrganizerItemManager::NoError);
+        QVERIFY(verifyDetails(savedItem.details(), details));
+    } else {
+        // Check that save fails
+        QVERIFY(!m_om->saveItem(&item));
+        QCOMPARE(m_om->error(), expectedErrorCode);
+    }
 }
 
 /*!

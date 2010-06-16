@@ -142,20 +142,23 @@ CCalEntry *OrganizerItemTransform::toEntryLC(const QOrganizerItem &item)
     CleanupStack::PushL(entry);
 
     // *** Date and Time ***
-    if (item.type() == QOrganizerItemType::TypeEvent)
-    {
+    if (item.type() == QOrganizerItemType::TypeEvent) {
         QOrganizerEventTimeRange range = item.detail<QOrganizerEventTimeRange>();
-        if (!range.isEmpty())
+        // Symbian calendar server makes the client process panic in case there
+        // is no start time for an event. As a work-around let's check the
+        // parameters and leave in that case.
+        // TODO: A VEVENT with empty start time is allowed by the iCalendar
+        // specification (RFC2445); file a bug report against symbian calendar
+        // server in 10.1 or later platforms.
+        if (!range.isEmpty() && range.startDateTime().isValid())
             entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.endDateTime()));
-    }
-    else if(item.type() == QOrganizerItemType::TypeJournal)
-    {
+        else
+            User::Leave(KErrArgument);
+    } else if(item.type() == QOrganizerItemType::TypeJournal) {
         QOrganizerJournalTimeRange range = item.detail<QOrganizerJournalTimeRange>();
         if (!range.isEmpty())
             entry->SetDTStampL(toTCalTimeL(range.entryDateTime()));
-    }
-    else if(item.type() == QOrganizerItemType::TypeTodo)
-    {
+    } else if(item.type() == QOrganizerItemType::TypeTodo) {
         QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
         if (!range.isEmpty())
             entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.dueDateTime()));
@@ -279,10 +282,13 @@ void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *ite
     else if(item->type() == QOrganizerItemType::TypeTodo)
     {
         QOrganizerTodoTimeRange range;
+
         if (startTime.TimeUtcL() != Time::NullTTime())
             range.setStartDateTime(toQDateTimeL(startTime));
+
         if (endTime.TimeUtcL() != Time::NullTTime())
             range.setDueDateTime(toQDateTimeL(endTime));
+
         item->saveDetail(&range);
 
         QOrganizerTodoProgress progress;
