@@ -260,7 +260,7 @@ for /f "tokens=1,*" %%a in ("%MOBILITY_MODULES_UNPARSED%") do (
 if %FIRST% == bearer (
     echo     Bearer Management selected
 ) else if %FIRST% == contacts (
-    echo     Contacts selected
+    echo     Contacts selected ^(implies ServiceFramework^)
 ) else if %FIRST% == location (
     echo     Location selected
 ) else if %FIRST% == messaging (
@@ -347,6 +347,7 @@ echo mobility_modules = %MOBILITY_MODULES%  >> %PROJECT_CONFIG%
 REM no Sysinfo support on Maemo yet
 echo maemo5^|maemo6:mobility_modules -= systeminfo >> %PROJECT_CONFIG%
 echo contains(mobility_modules,versit): mobility_modules *= contacts  >> %PROJECT_CONFIG%
+echo contains(mobility_modules,contacts): mobility_modules *= serviceframework  >> %PROJECT_CONFIG%
 
 echo Checking available Qt
 call %QT_PATH%qmake -v >> %PROJECT_LOG% 2>&1
@@ -498,10 +499,12 @@ for /f "tokens=1,*" %%a in ("%MODULES_TEMP%") do (
 if %FIRST% == bearer (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmBearer %SOURCE_PATH%\src\bearer
 ) else if %FIRST% == contacts (
+    REM contacts implies service framework
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == location (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmLocation %SOURCE_PATH%\src\location
 ) else if %FIRST% == messaging (
@@ -515,12 +518,13 @@ if %FIRST% == bearer (
 ) else if %FIRST% == serviceframework (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == versit (
-    REM versit implies contacts
+    REM versit implies contacts, which implies service framework
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmVersit %SOURCE_PATH%\src\versit
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\requests
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\filters
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmContacts %SOURCE_PATH%\src\contacts\details
+    perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmServiceFramework %SOURCE_PATH%\src\serviceframework
 ) else if %FIRST% == sensors (
     perl -S %SOURCE_PATH%\bin\syncheaders %BUILD_PATH%\include\QtmSensors %SOURCE_PATH%\src\sensors
 )

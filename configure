@@ -485,8 +485,8 @@ fi
 
 # It's a lot easier to make qmake do the dependency checking...
 echo "mobility_modules = $MOBILITY_MODULES" >> "$CONFIG_IN"
-echo "contains(mobility_modules,contacts): mobility_modules *= serviceframework" >> "$CONFIG_IN"
 echo "contains(mobility_modules,versit): mobility_modules *= contacts" >> "$CONFIG_IN"
+echo "contains(mobility_modules,contacts): mobility_modules *= serviceframework" >> "$CONFIG_IN"
 echo "maemo5|maemo6:contains(maemo-icd_enabled, no): mobility_modules -= bearer" >> "$CONFIG_IN"
 
 # If libicd-network-wlan-dev.h is not present, use own copy.
@@ -530,8 +530,9 @@ for module in $MOBILITY_MODULES; do
             $relpath/bin/syncheaders $shadowpath/include/QtmMessaging $relpath/src/messaging
             ;;
         versit)
-            #versit implies contacts
+            #versit implies contacts, which implies service framework
             $relpath/bin/syncheaders $shadowpath/include/QtmVersit $relpath/src/versit
+            $relpath/bin/syncheaders $shadowpath/include/QtmServiceFramework $relpath/src/serviceframework
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/details
             $relpath/bin/syncheaders $shadowpath/include/QtmContacts $relpath/src/contacts/requests
