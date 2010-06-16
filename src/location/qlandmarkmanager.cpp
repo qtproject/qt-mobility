@@ -810,7 +810,10 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 }
 
 /*!
-    Returns the manager name for this QLandmarkManager
+    Returns the manager name for this QLandmarkManager.
+
+    The manager name usually takes the format of a reverse domain string.  An example
+    of a manager name is \c com.nokia.qt.landmarks.engines.sqlite
 */
 QString QLandmarkManager::managerName() const
 {
@@ -828,7 +831,10 @@ QString QLandmarkManager::managerName() const
 }
 
 /*!
-    Return the parameters relevant to the creation of this QLandmarkManager
+    Return the parameters relevant to the creation of this QLandmarkManager.
+
+    The parameters may be viewed as a set of key-value pairs.  Each manager
+    may have a different set of parameters depending upon its backend implementation.
 */
 QMap<QString, QString> QLandmarkManager::managerParameters() const
 {
