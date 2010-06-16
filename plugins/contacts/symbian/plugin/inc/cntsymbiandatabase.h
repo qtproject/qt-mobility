@@ -62,6 +62,9 @@ QTM_USE_NAMESPACE
 // Constants
 
 class CntSymbianDatabase : public QObject, public MContactDbObserver
+#ifdef SYMBIAN_BACKEND_USE_SQLITE  
+, public MContactDbObserverV2
+#endif
 {
 Q_OBJECT
 
@@ -78,6 +81,11 @@ public:
     // From MContactDbObserver
     void HandleDatabaseEventL(TContactDbObserverEvent aEvent);
 
+#ifdef SYMBIAN_BACKEND_USE_SQLITE    
+    // From MContactDbObserverV2
+    void HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent);
+#endif    
+    
 private:
     void initializeL();
     void updateGroupMembershipsL();

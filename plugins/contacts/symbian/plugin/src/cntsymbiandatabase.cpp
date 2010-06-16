@@ -78,6 +78,7 @@ void CntSymbianDatabase::initializeL()
     TRAP(err, m_contactChangeNotifier = CContactChangeNotifier::NewL(*m_contactDatabase, this));
 #else
     TRAP(err, m_contactDatabase->AddObserverL(*this));
+    TRAP(err, m_contactDatabase->AddObserverV2L(*this));
 #endif
 
     // Read current own card id (self contact id)
@@ -107,6 +108,7 @@ CntSymbianDatabase::~CntSymbianDatabase()
 #else
     if (m_contactDatabase != 0) {
         m_contactDatabase->RemoveObserver(*this);
+        m_contactDatabase->RemoveObserverV2(*this);
     }
 #endif
     delete m_contactDatabase;
@@ -189,20 +191,7 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
             changeSet.insertRemovedContact(id);
         break;
     case EContactDbObserverEventGroupChanged:
-        if(m_contactsEmitted.contains(id))
-            m_contactsEmitted.removeOne(id);
-        else {
-            // Currently the group membership check is only used in pre-10.1
-            // platforms. In 10.1 we need to check the performance penalty
-            // caused in the instantiation of QContactManager. If the
-            // performance is too bad, then the MContactDbObserver API needs to
-            // be changed in 10.1 so that we don't need the group membership
-            // buffer in the engine level. In other words events like
-            // EContactDbObserverEventGroupMembersAdded and 
-            // EContactDbObserverEventGroupMembersRemoved need to be added to
-            // MContactDbObserver.
-            changeSet.insertChangedContact(id); //group is a contact
-        }
+				//handled in HandleDatabaseEventV2L
         break;
     case EContactDbObserverEventOwnCardChanged:
         if (m_contactsEmitted.contains(id)) {
@@ -324,6 +313,60 @@ void CntSymbianDatabase::HandleDatabaseEventL(TContactDbObserverEvent aEvent)
     
     changeSet.emitSignals(m_engine);
 }
+
+#ifdef SYMBIAN_BACKEND_USE_SQLITE  
+/*!
+ * Respond to a contacts database extended event, delegating this event to
+ * an appropriate signal as required.
+ *
+ * \param aEvent Contacts database extended event describing the change to the
+ *  database.
+ */
+void CntSymbianDatabase::HandleDatabaseEventV2L(TContactDbObserverEventV2 aEvent)
+{
+    QContactChangeSet changeSet;
+    switch (aEvent.iTypeV2)
+    {
+    case EContactDbObserverEventV2ContactAddedToGroup:
+        if (m_contactsEmitted.contains(aEvent.iContactId) && 
+            m_contactsEmitted.contains(aEvent.iAdditionalContactId)) {
+            m_contactsEmitted.removeOne(aEvent.iContactId);
+            m_contactsEmitted.removeOne(aEvent.iAdditionalContactId);
+            }
+        else {
+            QList<QContactLocalId> affectedContactIds;
+            affectedContactIds.append(aEvent.iContactId);
+            affectedContactIds.append(aEvent.iAdditionalContactId);
+            changeSet.insertAddedRelationshipsContacts(affectedContactIds);
+        }
+        break;
+    case EContactDbObserverEventV2ContactRemovedFromGroup:
+        if (m_contactsEmitted.contains(aEvent.iContactId) && 
+            m_contactsEmitted.contains(aEvent.iAdditionalContactId)) {
+            m_contactsEmitted.removeOne(aEvent.iContactId);
+            m_contactsEmitted.removeOne(aEvent.iAdditionalContactId);
+            }
+        else {
+            QList<QContactLocalId> affectedContactIds;
+            affectedContactIds.append(aEvent.iContactId);
+            affectedContactIds.append(aEvent.iAdditionalContactId);
+            changeSet.insertRemovedRelationshipsContacts(affectedContactIds);
+        }
+        break;
+    case EContactDbObserverEventV2GroupChanged:
+        if(m_contactsEmitted.contains(aEvent.iContactId)) {
+            m_contactsEmitted.removeOne(aEvent.iContactId);
+        }
+        else {
+            changeSet.insertChangedContact(aEvent.iContactId);
+        }
+        break;
+    default:
+        break; // ignore other events   
+    }
+    changeSet.emitSignals(m_engine);
+}
+#endif
 
 /*
  * Private implementation for updating the buffer containing the members of all
