@@ -395,9 +395,6 @@ bool QGeoRouteXmlParser::parseManeuver()
             else if (m_reader->name() == "ToLink") {
                 instructionContainer.toId = m_reader->readElementText();
             }
-            else if (m_reader->name() == "FromLink") {
-                instructionContainer.fromId = m_reader->readElementText();
-            }
             else {
                 m_reader->skipCurrentElement();
             }

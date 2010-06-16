@@ -53,8 +53,8 @@
 // We mean it.
 //
 
-#include <qgeoserviceprovider.h>
-#include <qgeoplacesmanagerengine.h>
+#include <QGeoServiceProvider>
+#include <QGeoPlacesManagerEngine>
 
 #include <QNetworkAccessManager>
 

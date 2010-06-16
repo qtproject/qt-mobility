@@ -75,7 +75,6 @@ public:
     QGeoNavigationInstruction* instruction;
     QString id;
     QString toId;
-    QString fromId;
 };
 
 class QGeoRouteSegmentContainer

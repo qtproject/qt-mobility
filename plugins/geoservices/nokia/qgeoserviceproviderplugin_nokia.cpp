@@ -41,10 +41,6 @@
 
 #include "qgeoserviceproviderplugin_nokia_p.h"
 
-#include "qgeoplacesmanager.h"
-#include "qgeoroutingmanager.h"
-#include "qgeomappingmanager.h"
-
 #include "qgeoplacesmanagerengine_nokia_p.h"
 #include "qgeoroutingmanagerengine_nokia_p.h"
 #include "qgeomappingmanagerengine_nokia_p.h"
