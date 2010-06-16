@@ -145,6 +145,12 @@ Support is present for the following System Info API classes
     \o Not all example applications will display(fit) well on small screens.
 \endlist
 
+\section2 Bearer Management API
+\list
+    \o All platforms: QNetworkConfigurationManager is not thread-safe; using it from other than main-thread off the application will not work properly.
+    Applies to QtMobility::QtBearer (1.0), QtBearer in Qt4.7 onwards is thread-safe.
+\endlist
+
 \section2 Contacts API
 \list
     \o S60: Async contact operations not supported

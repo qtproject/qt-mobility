@@ -28,6 +28,7 @@
 </ul>
 <li><a href="#known-issues">Known Issues</a></li>
 <ul><li><a href="#non-api-specific-issues">Non-API specific issues</a></li>
+<li><a href="#bearer-management-api">Bearer Management API</a></li>
 <li><a href="#contacts-api">Contacts API</a></li>
 <li><a href="#messaging-api">Messaging API</a></li>
 <li><a href="#multimedia-api">Multimedia API</a></li>
@@ -117,6 +118,11 @@
 <ul>
 <li>Qt Mobility does not compile if Qt using a namespace.</li>
 <li>Not all example applications will display(fit) well on small screens.</li>
+</ul>
+<a name="bearer-management-api"></a>
+<h3>Bearer Management API</h3>
+<ul>
+<li>All platforms: <a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a> is not thread-safe; using it from other than main-thread off the application will not work properly. Applies to QtMobility::QtBearer (1.0), QtBearer in Qt4.7 onwards is thread-safe.</li>
 </ul>
 <a name="contacts-api"></a>
 <h3>Contacts API</h3>
