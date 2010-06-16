@@ -80,7 +80,7 @@ contains(MOBILITY, sensors) {
 symbian:contains(CONFIG, mobility):!contains(TARGET.UID3, 0x2002AC89):!contains(TARGET.UID3, 0xE002AC89) {
     mobility_default_deployment.pkg_prerules += \
         "; Default dependency to QtMobility libraries" \
-        "(0x2002AC89), 1, 0, 1, {\"QtMobility\"}"
+        "(0x2002AC89), 1, 0, 2, {\"QtMobility\"}"
     DEPLOYMENT += mobility_default_deployment
 }
 
