@@ -1,0 +1,171 @@
+// Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description:
+//
+
+PRINT Run all TestImpExvCard Suite Tests
+
+//
+LOAD_SUITE TestImpExvCardSuite
+//
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0003
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0003
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Import VCard with REV property set to local
+//! @SYMTestActions A VCard with REV property in local time format and a TZ property present is imported to a Contact database using the CntModel converter
+//! @SYMTestExpectedResults The imported contact entry has LastModified() equal to the VCard's REV property after beign adjusted by the TZ property
+RUN_TEST_STEP 100 TestImpExvCardSuite TestImpRevLocalTZ c:\CITExImvCard\testdata\ImportREVLocalTZ\ExpectedUTC.ini
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0003
+
+
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0002
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0002
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Import VCard wtih REV property set to local, but no TZ property set
+//! @SYMTestActions A VCard with REV property in local time format is imported to a Contact database using the Cnt Model converter
+//! @SYMTestExpectedResults The imported contact entry has LastModified() equal to the VCard's REV property.  The Vcard's REV property is converted to UTC time with offset=0
+RUN_TEST_STEP 100 TestImpExvCardSuite TestImpRevLocal c:\CITExImvCard\testdata\ImportREVLocal\ExpectedUTC.ini
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0002
+
+
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0004
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0004
+//! @SYMTestType Component Test
+//! @SYMTestPriority med
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Import VCard with no REV property
+//! @SYMTestActions A VCard with no REV property is imported to a Contact database using the CntModel converter
+//! @SYMTestExpectedResults The imported contact entry has LastModified() equal to NULL
+RUN_TEST_STEP 100 TestImpExvCardSuite TestImpNoRev
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0004
+
+
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0001
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0001
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Import VCard with REV in UTC format
+//! @SYMTestActions A VCard with REV property in UTC format is imported to a Contact database using the Cnt Model converter
+//! @SYMTestExpectedResults The imported contact entry has LastModified() equal to the VCard's REV property
+RUN_TEST_STEP 100 TestImpExvCardSuite TestImpRevUTC c:\CITExImvCard\testdata\ImportRevUTC\ExpectedUTC.ini
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0002
+
+
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0005
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0005
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Import VCard with BDAY property in local date/time format
+//! @SYMTestActions A Vcard with BDAY property is imported to a Contact database using the Cnt Model converter.
+//! @SYMTestExpectedResults The imported contact entry has the birthday field equal to the VCards BDAY property.  No adjustement is made for UTC Offset.
+RUN_TEST_STEP 100 TestImpExvCardSuite TestImpBDay c:\CITExImvCard\testdata\ImportBDay\ExpectedBDAY.ini
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0005
+
+
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0006
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0006
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Import VCard with no BDAY property
+//! @SYMTestActions A Vcard with no BDAY property is imported to a Contact database using the Cnt Model converter.
+//! @SYMTestExpectedResults The imported contact entry has the birthday field equal to TDateTime::Null
+RUN_TEST_STEP 100 TestImpExvCardSuite TestImpNoBDay
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0006
+
+
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0007
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0007
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Export to VCard with REV in UTC format
+//! @SYMTestActions A Contact database is exported to VCards using the CntModel converter
+//! @SYMTestExpectedResults The exported VCard's REV property is set to UTC value, and is equal to the contact entry's LastModified() value.
+RUN_TEST_STEP 100 TestImpExvCardSuite TestExRevUTC
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0007
+
+
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0008
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0008
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Export to VCard with BDAY property in local date/time format
+//! @SYMTestActions A VCard with BDAY property is exported from a Contact database using the CntModel converter.
+//! @SYMTestExpectedResults The exported VCard's BDAY property is equal to the contact entry's birthday field, and is in Local Time format.
+RUN_TEST_STEP 100 TestImpExvCardSuite TestExBDayLocal c:\CITExImvCard\testdata\ExportBDayLocal\ExportBDayLocal.ini
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0008
+
+
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0009
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0009
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Export to VCard with no BDAY property 
+//! @SYMTestActions A VCard with no BDAY property is exported from a Contact database using the CntModel converter.
+//! @SYMTestExpectedResults The exported VCard's BDAY property is equal to TDateTime::Null
+RUN_TEST_STEP 100 TestImpExvCardSuite TestExNoBDay
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0009
+
+ 
+START_TESTCASE  PIM-CIT-Cntmodel-234AP-0010
+
+//! @SYMTestCaseID PIM-CIT-Cntmodel-234AP-0010
+//! @SYMTestType Component Test
+//! @SYMTestPriority low
+//! @SYMPREQ 234
+//! @SYMFssID <App-Engines>/<CntModel>/IE.3
+//! @SYMTestStatus Implemented
+//! @SYMTestCaseDesc Import VCard in OOM
+//! @SYMTestActions A Vcard is imported in an OOM loop.
+//! @SYMTestExpectedResults Contacts Import must be successful
+RUN_TEST_STEP 100 TestImpExvCardSuite TestImpOOM
+END_TESTCASE  PIM-CIT-Cntmodel-234AP-0010
+
+
+PRINT Complate_TestImpExvCard_Tests

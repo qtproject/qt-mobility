@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<relnotes name="Contacts Model">
+  <purpose>
+    Application model i.e. data store and supporting APIs for a Contacts (aka Address Book) application.
+  </purpose>
+
+  <defect number="PDEF112330" title="Pbk2: Names List is not updated correctly when marked phone contacts are deleted." revision="031"> 
+     EItemRemoved was not inserted in the right position in CViewSubSessionQueue::QueueEvent .
+  </defect> 
+
+  <defect number="PDEF112333" title="Function TInt CContactActiveCompress::StepsTogo() wrong works." revision="030"> 
+     We have to maintain BC with 9.2. When ContactDatabase::CreateCompressorLC is called iStep has to be set with number of steps to be performed.
+  </defect> 
+
+  <defect number="PDEF111890" title="Cntmodel: Wrong events and size in group view during synch." revision="029"> 
+     A new check is added in serversubsession when events are queued to check if remove/add sequence may come or not from a change event.
+  </defect> 
+
+  <defect number="PDEF111333" title="KERN-EXEC 3 after CContactDatabase::CreateContactGroup() had been called." revision="028"> 
+    Before inserting into iGroupIds a sanity check is made. This is because if database is opened async, iGroupIds can be null.
+  </defect> 
+
+  <defect number="PDEF111332" title="Contacts: Panics after start up" revision="027"> 
+    Before inserting into iCardTemplateIds a sanity check is made. This is because if database is opened async, iCardTemplateIds can be null.
+  </defect> 
+
+  <defect number="PDEF111334" title="Possible KERN-EXEC 3 in CContactDatabase::HandleDatabaseEventL for EContactDbObserverEventTemplateDeleted" revision="026"> 
+    A sanity check has to be made for iCardTemplateIds before trying to use it.
+  </defect> 
+
+  <defect number="PDEF110848" title="TRAP likely to cause panic in AppEngines " revision="025"> 
+    Functionality being trapped was moved inside a new leavable method
+  </defect> 
+
+  <defect number="PDEF110847" title="CContactActiveCompress::StepsTogo() return wrong value" revision="024"> 
+    iStep updated in CContactActiveBase::Step before calling MContactUiCompactObserver::Step 
+  </defect> 
+
+  <defect number="DEF110301" title="CntModel DebugLogIPC ifdefs do not agree with CCntIpcCodes" revision="023">
+    Update DebugIPC method to have same code as those defined in CCntIpcCodes
+  </defect>
+
+  <defect number="DEF108481" title="T_Lowdiskspace test failing on ONB" revision="022">
+    Before calling DatabaseTestL(), refill the disk if the size of the free space passes the threshold.
+  </defect>
+
+  <defect number="DEF108182" title="cntmodel.rh has no IM tagging" revision="021">
+    Updated cntmodel.rh according to the suggestion in TT.
+  </defect>
+
+  <defect number="PDEF107779" title="Cntmodel: Group view corrupt during contact deletion" revision="020">
+    Update mapping in CContactGroupView::NotifyRemovedMembersL(), also added a new test case t_GroupViewEvents.
+  </defect>
+
+  <defect number="PDEF105170" title="Panic is raised: DBMS-Table 4" revision="019">
+    Added a new test case asynaccess to test opening the database simultaneously.
+  </defect>
+
+  <defect number="PDEF103254" title="Contacts Backup does not complete" revision="018">
+    Now Versit splits large binary fields, encodes and then writes to stream. Also Code improved at Contacts server so that it wont run out of memory while trying to load such a contact.
+  </defect>
+
+  <defect number="DEF103602" title="Incorrect behaviour of the api CContactGroupView::NewL()" revision="017">
+    CContactGroupView::NewL() in source documentation clarified.
+  </defect>
+
+  <defect number="PDEF103847" title="Cntmodel: Wrong events from named remote view" revision="016">
+    Modified the conditions to insert an event to the event queue:
+    1. EItemAdded - 1.1 Find if an existing EItemAdded events iInt is greater or equal with incoming events iInt. if found,insert event before the found one and increment the iInt of the rest event by 1.
+    1.2 If no match is found with same iInt, modify its iInt value with incoming events iInt, then append to the event queue.
+  </defect>
+
+  <defect number="PDEF103847" title="Cntmodel: Wrong events from named remote view" revision="015">
+    Modified the conditions to insert an event to the event queue:
+    1. EItemAdded - 1.1 Find if an existing EItemAdded events iInt is greater or equal with incoming events iInt. if found,insert event before the found one and increment the iInt of the rest event by 1.
+    1.2 If no match is found with same iInt, modify its iInt value with incoming events iInt, then append to the event queue.
+  </defect>
+
+  <defect number="DEF102602" title="Support for Export of multiple agents in a contact is not present." revision="014">
+    Support for Export of multiple agents in a contact is not present.
+  </defect>
+
+  <defect number="DEF102255" title="Unexpected leave if Agent is deleted and Parent is exported." revision="013">
+    Call to read agent item is placed in TRAPD to ensure that CContactVCardConverter::ExportL doesnt leave incase the agent item is already been deleted and not found.
+  </defect>
+
+  <defect number="INC099524" title="MVPbkContactStoreObserver::HandleStoreEventL is not called when contacts to whic" revision="012">
+    CLplAnalyserProxy::CheckSpeedDialUpdatesL(aItem) of CLplAnalyserProxy::UpdateL was always returning True for any change in contacts with speed dail. Added an extra parameter for updateL, which will be used for notifying "contacts changed event". Adding an extra parameter will also propogate a change in MLplPersistenceBroker class.
+  </defect>
+
+  <defect number="PDEF103614" title="SDR 117890 Phone info lost when vCard sent from handheld" revision="011">
+    Added an Exported function to CParserProperty, which returns the parameter array for a property.
+    A method has been added to CVCardToContactsAppConverter which finds out if a specified parameter value is present or not.
+    
+  </defect>
+
+  <defect number="DEF103163" title="Implementation error in CPlCollection::UnfiledL()" revision="010">
+    Have added the missing code to Push the array before calling any leaving function and Pop it before returning.
+  </defect>
+
+  <defect number="DEF103167" title="Implementation error in CPlCollection::DeletedL()" revision="009">
+    Have added the missing code to Push the array before calling any leaving function and poped it beofre returning
+  </defect>
+
+  <defect number="DEF101944" title="Cnt Server panics when doing Agent import/export access count test" revision="008">
+    If the value of ContactAgent field is not exported/imported, it should be the intial value 0
+  </defect>
+
+  <defect number="PDEF102136" title="Entry still available in the view after EItemRemoved event from the view" revision="007">
+    contact id is removed from iGroupContacts before a ItemRemoved event is sent.
+  </defect>
+
+  <defect number="DEF099834" title="Deleting a ICC Contact causes PhBkSync's engine to hang." revision="006">
+    Database events for multiple delete of contacts fixed.
+  </defect>
+
+  <defect number="INC101293" title="Old School assign does not function correctly when assingin to multiple entries" revision="005">
+    In CTransactionLock::LockLX() locked ids are now appended to array using InsertInSignedKeyOrderL().
+  </defect>
+
+  <defect number="PDEF101554" title="Switch: Phonebook gets stuck when you first sync only contacts and then add some" revision="004">
+    If an attempt is made to commit the System template then we validate that the fields do not contain any data. If they do then the commit will leave with KErrNotSupported.
+  </defect>
+
+  <deliverystep number="521" name="Deliver the plug-in implementation to app-engines cntmodel" osproject="Oghma" revision="003">
+    <ec number="021" title="Break dependency of Log engine (Syslibs/Logeng) on Contacts model (App-engines/Cntmodel)">
+    Deliver the plug-in implementation to app-engines cntmodel
+  </ec>
+    <milestone project="GT0329" number="3.6"/>
+  </deliverystep>
+
+  <ec number="066" title="Refactor the contacts model servers session class to improve maintainability." revision="002">
+    Re-factor the contacts model server's session class to improve maintainability. The EC is necessary to increase the maintainability and modularity of the contacts model server. Currently, the contacts model server uses a huge session class. It is easy to make a clear distinction between the different requests to the server. However this has not been adequately done. All requests are bundled together with the session class. Requests should be refactored into several smaller RMessageHandler classes. A message handler should exist for each category of request.
+  </ec>
+
+  <defect number="INC097928" title="PBK2: Phonebook2 crashes when adding group with default name when group without" revision="001">
+    Events are need to insert in the queue using following two condition
+    1. EItemAdded - 1.1 Find if an existing EItemAdded events iInt matches with incoming events iInt. if found,insert event before the found one and increment the iInt of the rest event by 1
+    1.2 if no match is found with same iInt, modify its iInt value with last EItemAdded elements (iInt + 1) and append to the event queue.
+    1.3 If no EItemAdded events are in queue, append this one to Queue.
+    2. EItemRemoved - 2.1 Find if an existing EItemAdded events iInt matches with incoming EItemRemoved events iInt if found, then remove that EItemAdded event from the Queue and decrement rest of the events iInt by 1.
+    2.2 if no match is found with same iInt, then insert the event before next greater iInt event and then decerement the iInt value of rest of the event by 1.
+    2.3 if no events greater than this then append this one to Queue.
+  </defect>
+</relnotes>
