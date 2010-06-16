@@ -94,7 +94,7 @@ QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper()
 QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other)
     : QObject(0)
 {
-    d = new QTelephonyCallInfo(other);
+   // d = new QTelephonyCallInfo(other);
 }
 
 /*!
@@ -117,6 +117,17 @@ QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfoWra
 QTelephonyCallInfoWrapper::~QTelephonyCallInfoWrapper()
 {
     delete d;
+}
+
+/*!
+    \fn  QTelephonyCallInfoWrapper& QTelephonyCallInfoWrapper::operator=(const QTelephonyCallInfoWrapper& other)
+
+    Assigns this relationship to be equal to \a other.
+*/
+QTelephonyCallInfoWrapper& QTelephonyCallInfoWrapper::operator=(const QTelephonyCallInfoWrapper& other)
+{
+    d = other.d;
+    return *this;
 }
 
 /*!
@@ -167,6 +178,29 @@ QTelephonyCallInfoWrapper::CallStatus QTelephonyCallInfoWrapper::status() const
     return (QTelephonyCallInfoWrapper::CallStatus)d->status();
 }
 
+/*!
+    \fn  QString QTelephonyCallInfoWrapper::subTyp() const
+
+    Gives back the sub type of the call type.
+    A subtype of a Voip call can be Skype.
+    You can use this property to get the sub type of the call.
+*/
+QString QTelephonyCallInfoWrapper::subTyp() const
+{
+    return d->subTyp();
+}
+
+/*!
+    \fn  QVariant QTelephonyCallInfoWrapper::value(const QString& param) const
+    \a param Parameter for reading additional values.
+
+    Gives back a variant value.
+    This function is for reading special values dependce on the param parameter.
+*/
+QVariant QTelephonyCallInfoWrapper::value(const QString& param) const
+{
+    return d->value(param);
+}
 
 /*!
     \class QTelephonyCallListWrapper
@@ -184,11 +218,8 @@ QTelephonyCallListWrapper::QTelephonyCallListWrapper()
     : QObject(0)
 {
     d = new QTelephonyCallList(this);
-    QObject::connect(d
-        , SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo))
-        , this
-        , SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo)));
-
+    connect(d, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo))
+        , this , SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo)));
     connect(d, SIGNAL(activeCallRemoved(const QTelephonyCallInfo))
         , this, SIGNAL(activeCallRemoved(const QTelephonyCallInfo)));
     connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfo))

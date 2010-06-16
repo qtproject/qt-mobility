@@ -80,13 +80,16 @@ public:
     QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other);
     QTelephonyCallInfoWrapper(const QTelephonyCallInfoWrapper& other);
     virtual ~QTelephonyCallInfoWrapper();
+    QTelephonyCallInfoWrapper& operator=(const QTelephonyCallInfoWrapper& other);
 
-protected:
+
     QString callIdentifier() const;
     QList<quint32> contacts() const;
-
     CallType type() const;
     CallStatus status() const;
+    QString subTyp() const;
+    QVariant value(const QString& param) const;
+
 private:
     QTelephonyCallInfo* d;
 };
