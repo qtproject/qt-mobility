@@ -59,8 +59,6 @@ public:
     QWmpVideoOverlay(IWMPPlayer4 *player, IOleObject *object, QWmpPlayerService *service);
     ~QWmpVideoOverlay();
 
-    void setEnabled(bool enabled);
-
     WId winId() const;
     void setWinId(WId id);
 
@@ -141,7 +139,6 @@ private:
     QSize m_sizeHint;
     QRect m_displayRect;
     bool m_fullScreen;
-    bool m_enabled;
 };
 
 #endif

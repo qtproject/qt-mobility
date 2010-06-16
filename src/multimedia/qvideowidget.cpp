@@ -619,6 +619,9 @@ QMediaObject *QVideoWidget::mediaObject() const
     return d_func()->mediaObject;
 }
 
+/*!
+    \internal
+*/
 bool QVideoWidget::setMediaObject(QMediaObject *object)
 {
     Q_D(QVideoWidget);

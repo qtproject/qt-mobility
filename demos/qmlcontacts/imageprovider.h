@@ -1,10 +1,10 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,28 +39,27 @@
 **
 ****************************************************************************/
 
-#include <qserviceinterfacedescriptor.h>
-#include <qabstractsecuritysession.h>
-#include <qservicecontext.h>
 
-#include "filemanagerplugin.h"
-#include "filemanagerstorage.h"
-#include "filemanagertransfer.h"
+#include <qdeclarativeimageprovider.h>
+#include <QMap>
+#include "qcontactmanager.h"
 
-//! [createinstance-sig]
-QObject* FileManagerPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
-//! [createinstance-sig]
+
+
+
+QTM_USE_NAMESPACE;
+
+
+class ContactThumbnailImageProvider : public QDeclarativeImageProvider
 {
-    Q_UNUSED(context);
-    Q_UNUSED(session);
-//! [createinstance]
-    if (descriptor.interfaceName() == "com.nokia.qt.examples.FileStorage")
-        return new FileManagerStorage(this);
-    else if (descriptor.interfaceName() == "com.nokia.qt.examples.FileTransfer")
-        return new FileManagerTransfer(this);
-    else
-        return 0;
-//! [createinstance]
-}
+public:
+    // This is run in a low priority thread.
+    QImage request(const QString &id, QSize *size, const QSize &req_size);
 
-Q_EXPORT_PLUGIN2(serviceframework_filemanagerplugin, FileManagerPlugin)
+    ~ContactThumbnailImageProvider();
+
+private:
+    QMap<QString, QContactManager*> m_managers;
+    QMap<QString, QImage> m_thumbnails;
+};
+
