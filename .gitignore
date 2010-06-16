@@ -86,7 +86,6 @@ bld.inf*
 ABLD.BAT
 *.mk
 *.sis
-*.loc
 *.sisx
 .make.cache
 qmakepluginstubs
