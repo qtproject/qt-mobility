@@ -73,8 +73,6 @@ void QMLContact::setContact(const QContact& c)
     m_details.clear();
 
     m_contactMap = new QDeclarativePropertyMap(this);
-    //connect(m_contactMap, SIGNAL(valueChanged(QString,QVariant)), this, SLOT(contactChanged(QString,QVariant)));
-
 
 
     QList<QContactDetail> details = m_contact.details();
@@ -82,17 +80,18 @@ void QMLContact::setContact(const QContact& c)
       QMLContactDetail* qd = new QMLContactDetail(this);
 
       QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(m_contactMap);
-      qd->setDetailPropertyMap(dm);
-      m_details.append(qd);
 
       connect(dm, SIGNAL(valueChanged(QString,QVariant)), qd, SLOT(detailChanged(QString,QVariant)));
 
-      m_detailMaps.append(dm);;
 
       QVariantMap values = detail.variantValues();
       foreach (const QString& key, values.keys()) {
           dm->insert(normalizePropertyName(key), values.value(key));
       }
+      qd->setName(normalizePropertyName(detail.definitionName()));
+      m_details.append(qd);
+      qd->setDetailPropertyMap(dm);
+      m_detailMaps.append(dm);;
       m_contactMap->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
     }
 }

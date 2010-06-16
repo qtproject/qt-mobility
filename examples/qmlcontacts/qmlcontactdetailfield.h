@@ -49,8 +49,8 @@ class QMLContactDetailField : public QObject
 {
     Q_OBJECT
 public:
-    Q_PROPERTY(QString key READ key)
-    Q_PROPERTY(QVariant value READ value WRITE setValue)
+    Q_PROPERTY(QString key READ key NOTIFY keyChanged)
+    Q_PROPERTY(QVariant value READ value WRITE setValue NOTIFY valueChanged)
     QMLContactDetailField(QObject* parent = 0);
 
     void setDetailPropertyMap(QDeclarativePropertyMap* map);
@@ -60,7 +60,9 @@ public:
 
     QVariant value() const;
     void setValue(const QVariant& value);
-
+signals:
+    void keyChanged();
+    void valueChanged();
 private:
     QDeclarativePropertyMap* m_map;
     QString m_key;

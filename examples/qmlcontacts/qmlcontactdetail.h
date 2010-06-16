@@ -51,7 +51,7 @@ class QMLContactDetail : public QObject
 {
     Q_OBJECT
 public:
-    Q_PROPERTY(QString name READ name)
+    Q_PROPERTY(QString name READ name NOTIFY nameChanged)
 
     explicit QMLContactDetail(QObject* parent = 0);
     void setDetailPropertyMap(QDeclarativePropertyMap* map);
@@ -61,6 +61,9 @@ public:
     QContactDetail detail() const;
     QString name() const;
     void setName(const QString& name);
+
+signals:
+    void nameChanged();
 private slots:
     void detailChanged(const QString &key, const QVariant &value);
 

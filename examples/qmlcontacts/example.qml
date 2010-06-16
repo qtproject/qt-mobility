@@ -138,7 +138,7 @@ Rectangle {
                                 color: details.textColor;
                             }
                             ListView {
-                                //width: parent.width; height: parent.height
+                                width: details.width; 
                                 highlightFollowsCurrentItem: false
                                 focus: true
                                 //anchors.fill: parent
@@ -147,23 +147,32 @@ Rectangle {
                                 model:contactModel.details(contactId)
                                 delegate: Component {
                                     Item {
+                                        width: details.width;
                                         property QtObject contactDetail : model.modelData;
                                         Column {
                                             Text {
-                                                text: contactDetail.name
+                                                width:  details.width;
+                                                height: 20;
+                                                text: contactDetail.name;
                                                 color:details.textColor;
                                             }
                                             ListView {
+                                                width:  details.width;
                                                 model:contactDetail.fields();
                                                 delegate: Component {
                                                     Item {
+                                                        property QtObject field: model.modelData;
                                                         Row {
                                                           Text {
-                                                             text:model.modelData.key;
+                                                             text:field.key;
                                                              color:details.textColor;
+                                                             width: details.width;
+                                                             height: 20;
                                                           }
                                                           TextInput {
-                                                              text:model.modelData.value;
+                                                              width: details.width;
+                                                              height: 20;
+                                                              text:field.value;
                                                               color:details.textColor;
                                                           }
                                                         }
