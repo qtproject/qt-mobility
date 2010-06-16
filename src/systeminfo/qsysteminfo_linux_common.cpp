@@ -1123,7 +1123,6 @@ void QSystemStorageInfoLinuxCommonPrivate::deviceChanged(const QString &path)
         emit logicalDrivesChanged(true);
 
     } else if(mountEntriesMap.count() < mountEntriesMap2.count()) {
-        added = false;
         delete mtabWatcherB;
         mtabWatcherB = 0;
         mtabWatcherB = new QFileSystemWatcher(QStringList() << "/proc/mounts",this);
