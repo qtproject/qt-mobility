@@ -102,8 +102,10 @@ struct MessageQueryInfo
     int count;
 };
 
-class CMTMEngine : public CActive, public MMsvSessionObserver
+class CMTMEngine : public QObject, public CActive, public MMsvSessionObserver
 {
+    Q_OBJECT
+
 public:
     enum MTMType
     {
@@ -164,6 +166,9 @@ public:
 
     inline RFs& FsSession() const { return((RFs&)iFsSession); }
 
+public slots:
+    void cleanupMTMBackend();
+    
 private:
     void updateEmailAccountsL() const;
     bool switchToMTMRootEntry(MTMType aMTMType);

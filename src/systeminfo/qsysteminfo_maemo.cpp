@@ -154,11 +154,21 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
         break;
     case QSystemInfo::LocationFeature :
         {
+#if defined(Q_WS_MAEMO_6)
+            GConfItem satellitePositioning("/system/osso/location/settings/satellitePositioning");
+            GConfItem networkPositioning("/system/osso/location/settings/networkPositioning");
+
+            bool satellitePositioningAvailable = satellitePositioning.value(false).toBool();
+            bool networkPositioningAvailable   = networkPositioning.value(false).toBool();
+
+            featureSupported = (satellitePositioningAvailable || networkPositioningAvailable);
+#else /* Maemo 5 */
             GConfItem locationValues("/system/nokia/location");
             const QStringList locationKeys = locationValues.listEntries();
             if(locationKeys.count()) {
                 featureSupported = true;
             }
+#endif /* Maemo 5 */
         }
         break;
     case QSystemInfo::HapticsFeature:
@@ -185,6 +195,17 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QSystemNetworkInfoLinuxCommonPrivate *parent)
         : QSystemNetworkInfoLinuxCommonPrivate(parent)
 {
+    csStatusMaemo6["Unknown"]    = -1;  // Current registration status is unknown.
+    csStatusMaemo6["Home"]       = 0;   // Registered with the home network.
+    csStatusMaemo6["Roaming"]    = 1;   // Registered with a roaming network.
+    csStatusMaemo6["Offline"]    = 3;   // Not registered.
+    csStatusMaemo6["Searching"]  = 4;   // Offline, but currently searching for network.
+    csStatusMaemo6["NoSim"]      = 6;   // Offline because no SIM is present.
+    csStatusMaemo6["PowerOff"]   = 8;   // Offline because the CS is powered off.
+    csStatusMaemo6["PowerSave"]  = 9;   // Offline and in power save mode.
+    csStatusMaemo6["NoCoverage"] = 10;  // Offline and in power save mode because of poor coverage.
+    csStatusMaemo6["Rejected"]   = 11;  // Offline because SIM was rejected by the network.
+
     setupNetworkInfo();
 }
 
@@ -441,7 +462,7 @@ QNetworkInterface QSystemNetworkInfoPrivate::interfaceForMode(QSystemNetworkInfo
 
 void QSystemNetworkInfoPrivate::setupNetworkInfo()
 {
-    currentCellNetworkStatus = QSystemNetworkInfo::UndefinedStatus;
+    currentCellNetworkStatus = -1;
     currentBluetoothNetworkStatus = networkStatus(QSystemNetworkInfo::BluetoothMode);
     currentEthernetState = "down";
     currentEthernetSignalStrength = networkSignalStrength(QSystemNetworkInfo::EthernetMode);
@@ -516,19 +537,7 @@ void QSystemNetworkInfoPrivate::setupNetworkInfo()
         QVariant registrationStatus = ifc4.property("RegistrationStatus");
         QString status = registrationStatus.isValid() ? registrationStatus.value<QString>() : "";
 
-        if (status ==  "Home") {
-            currentCellNetworkStatus = QSystemNetworkInfo::HomeNetwork;
-        } else if (status == "Roaming") {
-            currentCellNetworkStatus = QSystemNetworkInfo::Roaming;
-        } else if (status == "Searching") {
-            currentCellNetworkStatus = QSystemNetworkInfo::Searching;
-        } else if (status == "Offline" || status == "NoSim" || status == "PowerOff" || status == "PowerSave" || status == "NoCoverage") {
-            currentCellNetworkStatus = QSystemNetworkInfo::NoNetworkAvailable;
-        } else if (status == "Rejected") {
-            currentCellNetworkStatus = QSystemNetworkInfo::Denied;
-        } else {
-            currentCellNetworkStatus = QSystemNetworkInfo::UndefinedStatus;
-        }
+        currentCellNetworkStatus = csStatusMaemo6.value(status, -1);
 
         /* Signal handlers */
         if (!systemDbusConnection.connect(service, servicePath, "com.nokia.csd.CSNet.SignalStrength", "SignalStrengthChanged",
@@ -706,21 +715,7 @@ void QSystemNetworkInfoPrivate::slotOperatorNameChanged(const QString &name)
 
 void QSystemNetworkInfoPrivate::slotRegistrationChanged(const QString &status)
 {
-    int newCellNetworkStatus = -1;
-
-    if (status ==  "Home") {
-        newCellNetworkStatus = QSystemNetworkInfo::HomeNetwork;
-    } else if (status == "Roaming") {
-        newCellNetworkStatus = QSystemNetworkInfo::Roaming;
-    } else if (status == "Searching") {
-        newCellNetworkStatus = QSystemNetworkInfo::Searching;
-    } else if (status == "Offline" || status == "NoSim" || status == "PowerOff" || status == "PowerSave" || status == "NoCoverage") {
-        newCellNetworkStatus = QSystemNetworkInfo::NoNetworkAvailable;
-    } else if (status == "Rejected") {
-        newCellNetworkStatus = QSystemNetworkInfo::Denied;
-    } else {
-        newCellNetworkStatus = QSystemNetworkInfo::UndefinedStatus;
-    }
+    int newCellNetworkStatus = csStatusMaemo6.value(status, -1);
 
     if (currentCellNetworkStatus != newCellNetworkStatus) {
         currentCellNetworkStatus = newCellNetworkStatus;
