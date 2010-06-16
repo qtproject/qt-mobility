@@ -46,11 +46,11 @@
 
 #include "qbluetoothuuid.h"
 
-#include <QMetaType>
-#include <QList>
-#include <QVariant>
+#include <QtCore/QMetaType>
+#include <QtCore/QList>
+#include <QtCore/QVariant>
 
-#include <QDebug>
+#include <QtCore/QDebug>
 
 QT_BEGIN_HEADER
 
@@ -72,6 +72,12 @@ public:
         ServiceName = PrimaryLanguageBase + 0x0000,
         ServiceDescription = PrimaryLanguageBase + 0x0001,
         ServiceProvider = PrimaryLanguageBase + 0x0002,
+    };
+
+    enum Protocol {
+        UnknownProtocol,
+        L2capProtocol,
+        RfcommProtocol
     };
 
     class Sequence : public QList<QVariant>
@@ -114,6 +120,7 @@ public:
     inline void setServiceProvider(const QString &provider);
     inline QString serviceProvider() const;
 
+    QBluetoothServiceInfo::Protocol socketProtocol() const;
     int protocolServiceMultiplexer() const;
     int serverChannel() const;
 

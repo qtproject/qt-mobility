@@ -421,6 +421,22 @@ void QBluetoothServiceInfo::removeAttribute(quint16 attributeId)
 }
 
 /*!
+    Returns the protocol that this service uses.
+*/
+QBluetoothServiceInfo::Protocol QBluetoothServiceInfo::socketProtocol() const
+{
+    QBluetoothServiceInfo::Sequence parameters = protocolDescriptor(QBluetoothUuid::Rfcomm);
+    if (!parameters.isEmpty())
+        return RfcommProtocol;
+
+    parameters = protocolDescriptor(QBluetoothUuid::L2cap);
+    if (!parameters.isEmpty())
+        return L2capProtocol;
+
+    return UnknownProtocol;
+}
+
+/*!
     This is a convenience function. Returns the protocol/service multiplexer for services which
     support the L2CAP protocol. Otherwise returns -1.
 

@@ -10,7 +10,9 @@ HEADERS += \
     bluetooth/qrfcommserver.h \
     bluetooth/ql2capserver.h \
     bluetooth/qbluetooth.h \
-    bluetooth/qbluetoothlocaldevice.h
+    bluetooth/qbluetoothlocaldevice.h \
+    bluetooth/ql2capsocket.h \
+    bluetooth/qrfcommsocket.h
 
 PRIVATE_HEADERS += \
     bluetooth/qbluetoothuuid_p.h\
@@ -32,7 +34,9 @@ SOURCES += \
     bluetooth/qrfcommserver.cpp \
     bluetooth/ql2capserver.cpp \
     bluetooth/qbluetoothlocaldevice.cpp \
-    bluetooth/qbluetooth.cpp
+    bluetooth/qbluetooth.cpp \
+    bluetooth/ql2capsocket.cpp \
+    bluetooth/qrfcommsocket.cpp
 
 symbian {
     PRIVATE_HEADERS += \
