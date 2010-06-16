@@ -44,6 +44,7 @@
 
 #include "qtorganizer.h"
 #include "qorganizeritemrecurrence.h"
+#include "qorganizertodoprogress.h"
 
 QTM_BEGIN_NAMESPACE
 
