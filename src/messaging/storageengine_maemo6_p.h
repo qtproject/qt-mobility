@@ -122,7 +122,6 @@ private:
     template <typename Func>
     void foreachEvent(Func &f) const;
 
-    MessagingIf  *m_pMessagingIf;
     bool m_sync;
     bool m_ready;
     

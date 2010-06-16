@@ -142,10 +142,13 @@ QMessageStore* QMessageStore::instance()
 QMessageManager::Error QMessageStore::error() const
 {
     if (d_ptr->error != QMessageManager::NoError) {
+        //qDebug() << __PRETTY_FUNCTION__ << "d_ptr->error = " << d_ptr->error;
 	return d_ptr->error;
     } else if (StorageEngine::instance()->error() != QMessageManager::NoError) {
+        //qDebug() << __PRETTY_FUNCTION__ << "StorageEngine::instance()->error() = " << StorageEngine::instance()->error();
 	return StorageEngine::instance()->error();
     }
+    //qDebug() << __PRETTY_FUNCTION__ << "QMFStore::instance()->error() = " << QMFStore::instance()->error();
     return QMFStore::instance()->error();
 }
 
@@ -276,8 +279,9 @@ int QMessageStore::countFolders(const QMessageFolderFilter& filter) const
     d_ptr->error = QMessageManager::NoError;
 
     count += QMFStore::instance()->countFolders(filter, d_ptr->error);
+    qDebug() << __PRETTY_FUNCTION__ << "QMF folders count  = " << count;
     count += StorageEngine::instance()->countFolders(filter);
-
+    qDebug() << __PRETTY_FUNCTION__ << "QMF  + SMS folders count  = " << count;
     return count;
 }
 
@@ -306,8 +310,10 @@ bool QMessageStore::removeMessage(const QMessageId& id, QMessageManager::Removal
 
     if (id.toString().startsWith("QMF_")) {
 	ret = QMFStore::instance()->removeMessage(id, option, d_ptr->error);
-    } else {
+    } else if (id.toString().startsWith("SMS_")) {
 	ret = StorageEngine::instance()->removeMessage(id);
+    } else {
+        d_ptr->error = QMessageManager::InvalidId;
     }
 
     return ret;
@@ -410,8 +416,6 @@ bool QMessageStore::updateMessage(QMessage *m)
     d_ptr->error = QMessageManager::NoError;
 
     if (m->type() == QMessage::Sms) {
-        //retVal = false; //TODO:
-        //qWarning() << "QMessageManager::update not yet implemented for SMS";
         retVal = StorageEngine::instance()->updateMessage(*m);
     } else if (m->type() == QMessage::InstantMessage) {
 	d_ptr->error = QMessageManager::NotYetImplemented;
@@ -441,9 +445,12 @@ QMessage QMessageStore::message(const QMessageId& id) const
 
     if (id.toString().startsWith("QMF_")) {
 	return QMFStore::instance()->message(id, d_ptr->error); 
-    } else {
+    } else if (id.toString().startsWith("SMS_")) {
 	return StorageEngine::instance()->message(id);
     }
+
+    d_ptr->error = QMessageManager::InvalidId;
+    return QMessage();
 }
 
 QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
@@ -461,6 +468,7 @@ QMessageFolder QMessageStore::folder(const QMessageFolderId& id) const
         return StorageEngine::instance()->folder(id);
     }
 
+    d_ptr->error = QMessageManager::InvalidId;
     return QMessageFolder();
 }
 

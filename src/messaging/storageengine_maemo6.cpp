@@ -54,6 +54,26 @@
 namespace 
 {
 
+QString prefixForEvent(const Event &event)
+{
+    QString prefix;
+
+    switch(event.type())
+    {
+    case Event::SMSEvent:
+             prefix = "SMS_";
+             break;
+    case Event::IMEvent:
+             prefix = "IMS_";
+             break;
+    default:
+            prefix = "";
+            qWarning() << __PRETTY_FUNCTION__ << "wrong type";
+    }
+
+    return prefix;
+}
+
 struct MessageCounter
 {
     MessageCounter(const QMessageFilter &filter)
@@ -91,7 +111,7 @@ struct MessageFilter
     void operator()(const Event &event)
     {
 	if (_filter.isEmpty()) {
-	    _ids << QMessageId(QString::number(event.id()));
+            _ids << QMessageId(prefixForEvent(event) + QString::number(event.id()));
 	} else {
 	    const QMessage message = StorageEngine::messageFromEvent(event);
 	    if (_privateFilter->filter(message)) {
@@ -153,7 +173,6 @@ StorageEngine* StorageEngine::instance()
 
 StorageEngine::StorageEngine(QObject *parent) 
 	: QObject(parent)
-        , m_pMessagingIf(new MessagingIf())
 	, m_sync(true)
         , m_ready(false)
 	, m_error(QMessageManager::NoError)
@@ -243,7 +262,10 @@ Event StorageEngine::eventFromMessage(const QMessage &message)
    event.setIsRead(message.status() & QMessage::Read);
 
    bool ok = false;
-   int eId = message.id().toString().toInt(&ok);
+   int eId = message.id().toString().mid(4).toInt(&ok);
+
+   if (!ok)
+       eId = message.id().toString().toInt(&ok);
 
    if (ok || (message.id().toString().length() == 0))
         event.setId(eId);
@@ -329,7 +351,8 @@ QMessage StorageEngine::messageFromEvent(const Event &ev)
     message.setBody(QString(ev.freeText()));
 
     QMessagePrivate* privateMessage = QMessagePrivate::implementation(message);
-    privateMessage->_id = QMessageId(QString::number(ev.id()));
+
+    privateMessage->_id = QMessageId(prefixForEvent(ev) + QString::number(ev.id()));
     privateMessage->_modified = false;   
 
     QDEBUG_FUNCTION_END
@@ -479,7 +502,7 @@ QMessage StorageEngine::message(const QMessageId &id) const
 {
     if (id.isValid()) {
 	m_error = QMessageManager::NoError;
-	int eventId = id.toString().toInt();
+        int eventId = id.toString().mid(4).toInt();
 	QModelIndex index = m_SMSModel.findEvent(eventId);
 	if (index.isValid()) {
 	    const Event event = m_SMSModel.event(index);
@@ -499,11 +522,12 @@ QMessage StorageEngine::message(const QMessageId &id) const
  */
 bool StorageEngine::removeMessage(const QMessageId &id)
 {
+    QDEBUG_FUNCTION_BEGIN
     bool ret = false;
 
     if (id.isValid()) {
         bool isConverted = false;
-        int iId = id.toString().toInt(&isConverted);
+        int iId = id.toString().mid(4).toInt(&isConverted);
         if (isConverted && iId > 0) {
             ret = m_SMSModel.deleteEvent(iId);
             if (ret) {
@@ -514,12 +538,15 @@ bool StorageEngine::removeMessage(const QMessageId &id)
                 qWarning() << __PRETTY_FUNCTION__ << "Cannot removeMessage";             
 	    }
         } else {
+            qWarning() << __PRETTY_FUNCTION__ << "Invalid ID";
 	    m_error = QMessageManager::InvalidId;
 	}
     } else {	
+        qWarning() << __PRETTY_FUNCTION__ << "Invalid ID";
 	m_error = QMessageManager::InvalidId;
     }
 
+   QDEBUG_FUNCTION_END
    return ret;
 }
 
@@ -535,7 +562,7 @@ bool StorageEngine::addMessage(QMessage &message)
 
     if (m_SMSModel.addEvent(event)) {
 	QMessagePrivate *privateMessage = QMessagePrivate::implementation(message);
-	privateMessage->_id = QMessageId(QString::number(event.id()));
+        privateMessage->_id = QMessageId(prefixForEvent(event) + QString::number(event.id()));
 	privateMessage->_modified = false;
 	qDebug() << __PRETTY_FUNCTION__ << "Message added to store. new id = " << message.id().toString();
 	m_error = QMessageManager::NoError;
@@ -657,7 +684,7 @@ void StorageEngine::eventsUpdated(const QList<CommHistory::Event> &events)
 
 void StorageEngine::eventDeleted(int id)
 {
-    QMessageId messageId(QString::number(id));
+    QMessageId messageId("SMS_" + QString::number(id));
     QMessageManager::NotificationFilterIdSet idSet;
 
     NotificationFilterMap::const_iterator it = m_filters.begin(), end = m_filters.end();
@@ -715,24 +742,16 @@ void StorageEngine::processFilters(const QList<CommHistory::Event> &events, void
 bool StorageEngine::compose(const QMessage &message)
 {
     QDEBUG_FUNCTION_BEGIN
-    bool ret = false;
-    m_error = QMessageManager::NoError;
+    m_error = QMessageManager::NoError;    
 
-    if (m_pMessagingIf) {
-        QStringList contacts = MessagingHelper::stringListFromAddressList(message.to());
+    QStringList contacts = MessagingHelper::stringListFromAddressList(message.to());
 
-        qDebug() << __PRETTY_FUNCTION__ << contacts << message.textContent();
-
-        m_pMessagingIf->showSmsEditor(contacts, message.textContent(), QString());
-        ret = true;
-    }
-    else {
-        m_error = QMessageManager::FrameworkFault;
-        qWarning() << __PRETTY_FUNCTION__ << "Cannot start SMS composer";
-    }
+    qDebug() << __PRETTY_FUNCTION__ << contacts << message.textContent();
+    MessagingIf l_pMessagingIf;
+    l_pMessagingIf.showSmsEditor(contacts, message.textContent(), QString());
 
     QDEBUG_FUNCTION_END
-    return ret;
+    return true;
 }
 
 bool StorageEngine::show(const QMessageId &id)

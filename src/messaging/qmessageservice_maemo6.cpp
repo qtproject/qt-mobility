@@ -356,15 +356,12 @@ bool QMessageServicePrivate::show(const QMessageId &id)
 
     if (id.toString().startsWith("QMF_")) {
         retVal = _qmfService->show(id);
-    } else
-        // TODO: fix problems with prefix: "SMS_"
-        // if(id.toString().startsWith("SMS_"))
-        {
+    } else if(id.toString().startsWith("SMS_")) {
         retVal = StorageEngine::instance()->show(id);
-    } /*
+    }
     else {
         retVal = false;
-    } */
+    }
 
     setFinished(retVal);
     return retVal;

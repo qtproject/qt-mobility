@@ -110,20 +110,28 @@ bool QMessageId::operator<(const QMessageId& other) const
     if (!other.d_ptr)
 	return true;
 
-    bool isPrefixed = d_ptr->_id.startsWith("QMF_");
-    bool isPrefixed2 = other.d_ptr->_id.startsWith("QMF_");
+    bool isPrefixedQMF = d_ptr->_id.startsWith("QMF_");
+    bool isPrefixedQMF2 = other.d_ptr->_id.startsWith("QMF_");
 
-    if (isPrefixed && isPrefixed2) {
+    bool isPrefixedSMS = d_ptr->_id.startsWith("SMS_");
+    bool isPrefixedSMS2 = other.d_ptr->_id.startsWith("SMS_");
+
+    // E-mail
+    if (isPrefixedQMF && isPrefixedQMF2)  { // E-mail
 	long left = d_ptr->_id.mid(4).toLong();
 	long right = other.d_ptr->_id.mid(4).toLong();
 	return left < right;
-    } else if (!isPrefixed && !isPrefixed2) {
+    } else if (isPrefixedSMS && isPrefixedSMS2)  { // SMS
+        long left = d_ptr->_id.mid(4).toLong();
+        long right = other.d_ptr->_id.mid(4).toLong();
+        return left < right;
+    } else if (!isPrefixedSMS && !isPrefixedSMS2 && !isPrefixedQMF && !isPrefixedQMF2) { // smth else
 	long left = d_ptr->_id.toLong();
 	long right = other.d_ptr->_id.toLong();
 	return left < right;
     }
 
-    return !isPrefixed;
+    return !isPrefixedQMF;
 }
 
 QString QMessageId::toString() const
