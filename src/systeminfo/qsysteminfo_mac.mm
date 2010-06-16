@@ -1144,6 +1144,7 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
 
 int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::NetworkMode mode)
 {
+    qWarning() << Q_FUNC_INFO << mode;
     switch(mode) {
         case QSystemNetworkInfo::GsmMode:
         break;
@@ -1606,11 +1607,7 @@ QSystemStorageInfoPrivate::~QSystemStorageInfoPrivate()
 
 void QSystemStorageInfoPrivate::storageChanged( bool added)
 {
-    if(added) {
-        Q_EMIT storageAdded();
-    } else {
-        Q_EMIT storageRemoved();
-    }
+    Q_EMIT logicalDrivesChanged(added);
 }
 
 bool QSystemStorageInfoPrivate::updateVolumesMap()
@@ -1740,18 +1737,13 @@ bool QSystemStorageInfoPrivate::sessionThread()
 void QSystemStorageInfoPrivate::connectNotify(const char *signal)
 {
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDrivesChanged(bool))))) {
         sessionThread();
         DARegisterDiskAppearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
-        connect(daSessionThread,SIGNAL(storageAdded()),this,SIGNAL(storageAdded()));
+        DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchVolumeMountable,mountCallback,this);
+        connect(daSessionThread,SIGNAL(logicalDrivesChanged(bool)),this,SIGNAL(logicalDrivesChanged(bool)));
     }
 
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
-        sessionThread();
-        DARegisterDiskDisappearedCallback(daSessionThread->session,kDADiskDescriptionMatchMediaWhole,unmountCallback,this);
-        connect(daSessionThread,SIGNAL(storageRemoved()),this,SIGNAL(storageRemoved()));
-    }
 }
 
 
@@ -1759,24 +1751,15 @@ void QSystemStorageInfoPrivate::disconnectNotify(const char *signal)
 {
 
     if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageAdded())))) {
+        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(logicalDrivesChanged(bool))))) {
 #ifdef MAC_SDK_10_6
         DAUnregisterApprovalCallback(daSessionThread->session,(void*)mountCallback,NULL);
 #else
         DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)mountCallback,NULL);
 #endif
-        disconnect(daSessionThread,SIGNAL(storageAdded()),this,SIGNAL(storageAdded()));
+        disconnect(daSessionThread,SIGNAL(logicalDrivesChanged(bool)),this,SIGNAL(logicalDrivesChanged(bool)));
     }
 
-    if (QLatin1String(signal) ==
-        QLatin1String(QMetaObject::normalizedSignature(SIGNAL(storageRemoved())))) {
-#ifdef MAC_SDK_10_6
-        DAUnregisterApprovalCallback(daSessionThread->session,(void*)unmountCallback,NULL);
-#else
-        DAUnregisterApprovalCallback((__DAApprovalSession *)daSessionThread->session,(void*)unmountCallback,NULL);
-#endif
-        disconnect(daSessionThread,SIGNAL(storageRemoved()),this,SIGNAL(storageRemoved()));
-    }
 }
 
 

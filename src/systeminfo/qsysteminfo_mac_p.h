@@ -227,8 +227,7 @@ public:
 public Q_SLOTS:
     void storageChanged( bool added);
 Q_SIGNALS:
-    void storageAdded();
-    void storageRemoved();
+    void logicalDrivesChanged(bool);
 
 private:
     QHash<QString, QString> mountEntriesHash;
@@ -370,8 +369,7 @@ public:
     void stop();
     DASessionRef session;
 Q_SIGNALS:
-    void storageAdded();
-    void storageRemoved();
+    void logicalDrivesChanged(bool);
 
 protected:
     void run();

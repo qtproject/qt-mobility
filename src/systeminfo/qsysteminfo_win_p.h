@@ -202,8 +202,7 @@ private:
     void mountEntries();
 
 Q_SIGNALS:
-    void storageAdded(/*const QString &driveVolume*/);
-    void storageRemoved(/*const QString &driveVolume*/);
+    void logicalDrivesChanged(bool);
 
 };
 
