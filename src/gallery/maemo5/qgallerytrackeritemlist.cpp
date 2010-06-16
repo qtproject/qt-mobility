@@ -259,8 +259,8 @@ void QGalleryTrackerItemListPrivate::synchronize()
     }
 
     if (equal) {
-        int aIndex = aIt - aBegin + aCache.index;
-        int rIndex = rIt - rBegin + rCache.index;
+        const int aIndex = aIt - aBegin + aCache.index;
+        const int rIndex = rIt - rBegin + rCache.index;
 
         if (aIndex < rIndex) {
             QCoreApplication::postEvent(
@@ -279,6 +279,19 @@ void QGalleryTrackerItemListPrivate::synchronize()
         }
 
         synchronizeRows(aIt, rIt, aEnd, rEnd);
+    } else {
+        const int aCount = aCache.count - aCache.index;
+        const int rCount = rCache.count - rCache.index;
+
+        if (aCount > 0) {
+            QCoreApplication::postEvent(q_func(), new RowEvent(
+                    RowsRemoved, aCache.index, rCache.index, aCount));
+        }
+
+        if (rCount > 0) {
+            QCoreApplication::postEvent(q_func(), new RowEvent(
+                    RowsInserted, aCache.count, rCache.index, rCount));
+        }
     }
 }
 
