@@ -312,7 +312,9 @@ The elements and attributes have the following meanings:
         \o "
         \o capabilities
         \o This property is a list of arbitrary strings which are
-           interpreted as permissions/capabilities. This list can be empty.
+           interpreted as permissions/capabilities. The list elements are
+           comma-separated and spaces after commas are not permitted.
+           This list can be empty.
     \row
         \o "
         \o name
