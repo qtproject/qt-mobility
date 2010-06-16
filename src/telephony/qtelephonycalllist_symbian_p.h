@@ -39,9 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLINFO_LINUX_P_H
-#define QTELEPHONYCALLLINFO_LINUX_P_H
-
+#ifndef QTELEPHONYCALLLIST_SYMBIAN_P_H
+#define QTELEPHONYCALLLIST_SYMBIAN_P_H
 
 //
 //  W A R N I N G
@@ -54,35 +53,36 @@
 // We mean it.
 //
 
-#include "qtelephonycallinfo.h"
-#include <QtCore/qshareddata.h>
+#include "qmobilityglobal.h"
+#include "qtelephonycalllist.h"
 #include <QList>
-#include <QString>
-#include <QVariant>
+#include <QtCore/qshareddata.h>
 
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate : public QSharedData
-{
-public:
-    QTelephonyCallInfoPrivate();
-    ~QTelephonyCallInfoPrivate();
-    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other);
+class QTelephonyCallInfoPrivate;
+class QTelephonyCallList;
 
-    QString callIdentifier() const;
-    QList<quint32> contacts() const;
-    QTelephonyCallInfo::CallType type() const;
-    QString subTyp() const;
-    QTelephonyCallInfo::CallStatus status() const;
-    QVariant value(const QString& param) const;
+class QTelephonyCallListPrivate
+{
+    friend class QTelephonyCallList;
+
+public:
+    QTelephonyCallListPrivate(QTelephonyCallList *parent = 0);
+    virtual ~QTelephonyCallListPrivate();
+    QList<QTelephonyCallInfo> activeCalls(const QTelephonyCallInfo::CallType& calltype) const;
+
+private:
+    void emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call);
+    void emitActiveCallRemoved(QTelephonyCallInfoPrivate& call);
+    void emitActiveCallAdded(QTelephonyCallInfoPrivate& call);
+
+    QList<QSharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
+    QTelephonyCallList* p;
 };
 
 QTM_END_NAMESPACE
-
 QT_END_HEADER
 
-#endif //QTELEPHONYCALLLINFO_LINUX_P_H
-
-// End of file
-
+#endif // QTELEPHONYCALLLIST_SYMBIAN_P_H

@@ -56,7 +56,7 @@ class Q_TELEPHONY_EXPORT QTelephonyCallInfo
 {
 public:
     QTelephonyCallInfo();
-    QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other);
+    QTelephonyCallInfo(const QTelephonyCallInfo& other);
     ~QTelephonyCallInfo();
 
     enum CallType {
@@ -82,8 +82,9 @@ public:
     QString subTyp() const;
     CallStatus status() const;
     QVariant value(const QString& param) const;
-
+private:
     QSharedDataPointer<QTelephonyCallInfoPrivate> d;
+    friend class QTelephonyCallListPrivate;
 };
 
 QTM_END_NAMESPACE

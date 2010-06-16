@@ -44,7 +44,6 @@
 
 #include "qmobilityglobal.h"
 #include <QObject>
-#include <QtCore/qshareddata.h>
 #include <QList>
 #include "qtelephonycallinfo.h"
 
@@ -54,7 +53,7 @@ QTM_BEGIN_NAMESPACE
 class QTelephonyCallListPrivate;
 class QTelephonyCallInfoPrivate;
 
-class Q_TELEPHONY_EXPORT QTelephonyCallList : QObject
+class Q_TELEPHONY_EXPORT QTelephonyCallList : public QObject
 {
     Q_OBJECT
 public:
@@ -66,16 +65,12 @@ Q_SIGNALS:
     void activeCallRemoved(const QTelephonyCallInfo& call);
     void activeCallAdded(const QTelephonyCallInfo& call);
 
-private slots:
-    void activeCallStatusChanged(QTelephonyCallInfoPrivate& call);
-    void activeCallRemoved(QTelephonyCallInfoPrivate& call);
-    void activeCallAdded(QTelephonyCallInfoPrivate& call);
-
 public:
     QList<QTelephonyCallInfo > activeCalls(const QTelephonyCallInfo::CallType& calltype = QTelephonyCallInfo::Any) const;
 
 private:
     QTelephonyCallListPrivate* d;
+    friend class QTelephonyCallListPrivate;
 };
 
 QTM_END_NAMESPACE

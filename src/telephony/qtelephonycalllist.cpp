@@ -40,23 +40,20 @@
 ****************************************************************************/
 
 #include "qtelephonycalllist.h"
+#include "qtelephonycallinfo_p.h"
 
 
 #if defined(Q_WS_MAEMO5)
 # include "qtelephonycalllist_maemo_p.h"
-# include "qtelephonycallinfo_maemo_p.h"
 #else
 # ifdef Q_OS_LINUX
 #  include "qtelephonycalllist_linux_p.h"
-#  include "qtelephonycallinfo_linux_p.h"
 # endif
 # ifdef Q_OS_WIN
 #  include "qtelephonycalllist_win_p.h"
-#  include "qtelephonycallinfo_win_p.h"
 # endif
 # ifdef Q_OS_SYMBIAN
-#  include "qtelephonycalllist_s60_p.h"
-#  include "qtelephonycallinfo_s60_p.h"
+#  include "qtelephonycalllist_symbian_p.h"
 # endif
 #endif
 
@@ -106,10 +103,6 @@ Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonyCallListPrivate)
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
     : QObject(parent), d(telephonyCallListPrivate())
 {
-    d = new QTelephonyCallListPrivate();
-    connect(d, SIGNAL(activeCallStatusChanged(QTelephonyCallInfoPrivate)), this, SLOT(activeCallStatusChanged(QTelephonyCallInfoPrivate&)));
-    connect(d, SIGNAL(activeCallRemoved(QTelephonyCallInfoPrivate)), this, SLOT(activeCallRemoved(QTelephonyCallInfoPrivate&)));
-    connect(d, SIGNAL(activeCallAdded(QTelephonyCallInfoPrivate)), this, SLOT(activeCallAdded(QTelephonyCallInfoPrivate&)));
 }
 
 /*!
@@ -130,52 +123,9 @@ QTelephonyCallList::~QTelephonyCallList()
 */
 QList<QTelephonyCallInfo> QTelephonyCallList::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
 {
-    QList<QTelephonyCallInfo> ret;
-
-    if(d){
-        //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
-        for( int i = 0; i < d->callInfoList.count(); i++){
-            if(d->callInfoList.at(i).data()->type() == QTelephonyCallInfo::Any
-                || d->callInfoList.at(i).data()->type() == calltype)
-            {
-                ret.push_back(QTelephonyCallInfo(d->callInfoList.at(i)));
-            }
-        }
-    }
-    return ret;
-}
-
-/*!
-    \fn QTelephonyCallList::activeCallStatusChanged(QTelephonyCallInfoPrivate& call)
-    \a call Slot for routing the call object as a QTelephonyCallInfo to the user.
-
-    Gives back a list of calls from type of calltype.
-*/
-void QTelephonyCallList::activeCallStatusChanged(QTelephonyCallInfoPrivate& call)
-{
-    emit activeCallStatusChanged(QTelephonyCallInfo(QSharedDataPointer<QTelephonyCallInfoPrivate>(&call)));
-}
-
-/*!
-    \fn QTelephonyCallList::activeCallRemoved(QTelephonyCallInfoPrivate& call)
-    \a call Slot for routing the call object as a QTelephonyCallInfo to the user.
-
-    Gives back a list of calls from type of calltype.
-*/
-void QTelephonyCallList::activeCallRemoved(QTelephonyCallInfoPrivate& call)
-{
-    emit activeCallRemoved(QTelephonyCallInfo(QSharedDataPointer<QTelephonyCallInfoPrivate>(&call)));
-}
-
-/*!
-    \fn QTelephonyCallList::activeCallAdded(QTelephonyCallInfoPrivate& call)
-    \a call Slot for routing the call object as a QTelephonyCallInfo to the user.
-
-    Gives back a list of calls from type of calltype.
-*/
-void QTelephonyCallList::activeCallAdded(QTelephonyCallInfoPrivate& call)
-{
-    emit activeCallAdded(QTelephonyCallInfo(QSharedDataPointer<QTelephonyCallInfoPrivate>(&call)));
+    if(d)
+        return d->activeCalls(calltype);
+    return QList<QTelephonyCallInfo>();
 }
 
 #include "moc_qtelephonycalllist.cpp"

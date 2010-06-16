@@ -80,6 +80,7 @@
     Constructor of a QTelephonyCallInfoWrapper object.
 */
 QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper()
+    : QObject(0)
 {
     d = new QTelephonyCallInfo();
 }
@@ -91,6 +92,7 @@ QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper()
     Constructor of a QTelephonyCallInfoWrapper object.
 */
 QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfo& other)
+    : QObject(0)
 {
     d = new QTelephonyCallInfo(other);
 }
@@ -102,6 +104,7 @@ QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfo& o
     Copy constructor of a QTelephonyCallInfoWrapper object.
 */
 QTelephonyCallInfoWrapper::QTelephonyCallInfoWrapper(const QTelephonyCallInfoWrapper& other)
+    : QObject(0)
 {
     d = new QTelephonyCallInfo(*other.d);
 }
@@ -178,10 +181,14 @@ QTelephonyCallInfoWrapper::CallStatus QTelephonyCallInfoWrapper::status() const
     Constructor for the QTelephonyCallListWrapper object 
 */
 QTelephonyCallListWrapper::QTelephonyCallListWrapper()
+    : QObject(0)
 {
     d = new QTelephonyCallList(this);
-    connect(d, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo))
-        , this, SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo)));
+    QObject::connect(d
+        , SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo))
+        , this
+        , SIGNAL(activeCallStatusChanged(const QTelephonyCallInfo)));
+
     connect(d, SIGNAL(activeCallRemoved(const QTelephonyCallInfo))
         , this, SIGNAL(activeCallRemoved(const QTelephonyCallInfo)));
     connect(d, SIGNAL(activeCallAdded(const QTelephonyCallInfo))

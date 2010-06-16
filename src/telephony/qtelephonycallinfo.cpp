@@ -40,20 +40,7 @@
 ****************************************************************************/
 
 #include "qmobilityglobal.h"
-
-#if defined(Q_WS_MAEMO5)
-# include "qtelephonycallinfo_maemo_p.h"
-#else
-# ifdef Q_OS_LINUX
-#  include "qtelephonycallinfo_linux_p.h"
-# endif
-# ifdef Q_OS_WIN
-#  include "qtelephonycallinfo_win_p.h"
-# endif
-# ifdef Q_OS_SYMBIAN
-#  include "qtelephonycallinfo_s60_p.h"
-# endif
-#endif
+#include "qtelephonycallinfo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -109,13 +96,13 @@ QTelephonyCallInfo::QTelephonyCallInfo()
 }
 
 /*!
-    \fn  QTelephonyCallInfo::QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other)
+    \fn  QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
     \a other Object which needs to be copied from.
 
-    Constructor of a QTelephonyCallInfo object using a const QSharedDataPointer<QTelephonyCallInfoPrivate>.
+    Constructor of a QTelephonyCallInfo object using a const QTelephonyCallInfo.
 */
-QTelephonyCallInfo::QTelephonyCallInfo(const QSharedDataPointer<QTelephonyCallInfoPrivate>& other)
-    : d(other)
+QTelephonyCallInfo::QTelephonyCallInfo(const QTelephonyCallInfo& other)
+    : d(other.d)
 {
 }
 
@@ -138,7 +125,7 @@ QTelephonyCallInfo::~QTelephonyCallInfo()
 QString QTelephonyCallInfo::callIdentifier() const
 {
     if(d)
-        return d->callIdentifier();
+        return d->callIdentifier;
     return QString();
 }
 
@@ -153,7 +140,7 @@ QList<quint32> QTelephonyCallInfo::contacts() const
 {
     QList<quint32> ret;
     if(d)
-        ret = d->contacts();
+        ret = d->contacts;
     return ret;
 }
 
@@ -167,7 +154,7 @@ QList<quint32> QTelephonyCallInfo::contacts() const
 QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 {
     if(d)
-        return d->type();
+        return d->type;
     return Unknown;
 }
 
@@ -181,7 +168,7 @@ QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 QString QTelephonyCallInfo::subTyp() const
 {
     if(d)
-        return d->subTyp();
+        return d->subTyp;
     return QString();
 }
 
@@ -195,7 +182,7 @@ QString QTelephonyCallInfo::subTyp() const
 QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 {
     if(d)
-        return d->status();
+        return d->status;
     return Undefined;
 }
 
@@ -208,8 +195,9 @@ QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 */
 QVariant QTelephonyCallInfo::value(const QString& param) const
 {
-    if(d)
-        return d->value(param);
+    if(d && d->values.contains(param)){
+        return d->values.value(param);
+    }
     return QVariant();
 }
 

@@ -47,6 +47,7 @@
 #include <qdeclarativelist.h>
 #include <qtelephonycalllist.h>
 
+QT_USE_NAMESPACE
 QTM_USE_NAMESPACE
 
 class QTelephonyCallInfoWrapper : public QObject {

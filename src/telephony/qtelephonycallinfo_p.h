@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QTELEPHONYCALLLINFO_S60_P_H
-#define QTELEPHONYCALLLINFO_S60_P_H
+#ifndef QTELEPHONYCALLLINFO_LINUX_P_H
+#define QTELEPHONYCALLLINFO_LINUX_P_H
 
 
 //
@@ -63,26 +63,29 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate : public QSharedData
+struct QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
-    QTelephonyCallInfoPrivate();
-    ~QTelephonyCallInfoPrivate();
-    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other);
+    QTelephonyCallInfoPrivate()
+        : type(QTelephonyCallInfo::Unknown)
+        , subTyp("")
+        , status(QTelephonyCallInfo::Undefined) { }
+    QTelephonyCallInfoPrivate(const QTelephonyCallInfoPrivate &other)
+        : QSharedData(other) { }
 
-    QString callIdentifier() const;
-    QList<quint32> contacts() const;
-    QTelephonyCallInfo::CallType type() const;
-    QString subTyp() const;
-    QTelephonyCallInfo::CallStatus status() const;
-    QVariant value(const QString& param) const;
+    QString callIdentifier;
+    QList<quint32> contacts;
+    QTelephonyCallInfo::CallType type;
+    QString subTyp;
+    QTelephonyCallInfo::CallStatus status;
+    QHash<QString, QVariant> values;
 };
 
 QTM_END_NAMESPACE
 
 QT_END_HEADER
 
-#endif //QTELEPHONYCALLLINFO_S60_P_H
+#endif //QTELEPHONYCALLLINFO_LINUX_P_H
 
 // End of file
 

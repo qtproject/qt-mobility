@@ -40,22 +40,56 @@
 ****************************************************************************/
 
 #include "qtelephonycalllist_linux_p.h"
-#include "qtelephonycallinfo_linux_p.h"
+#include "qtelephonycallinfo_p.h"
 
 QTM_BEGIN_NAMESPACE
 
 ////////
-QTelephonyCallListPrivate::QTelephonyCallListPrivate(QObject *parent)
-: QObject(parent)
+QTelephonyCallListPrivate::QTelephonyCallListPrivate(QTelephonyCallList *parent)
+    : p(parent)
 {
 }
 
 QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 {
-    QTelephonyCallInfoPrivate ci;
-    emit activeCallStatusChanged(ci);
 }
 
-#include "moc_qtelephonycalllist_linux_p.cpp"
+void QTelephonyCallListPrivate::emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call)
+{
+    QTelephonyCallInfo callinfo;
+    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    emit p->activeCallStatusChanged(callinfo);
+}
+
+void QTelephonyCallListPrivate::emitActiveCallRemoved(QTelephonyCallInfoPrivate& call)
+{
+    QTelephonyCallInfo callinfo;
+    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    emit p->activeCallRemoved(callinfo);
+}
+
+void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& call)
+{
+    QTelephonyCallInfo callinfo;
+    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
+    emit p->activeCallAdded(callinfo);
+}
+
+QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyCallInfo::CallType& calltype) const
+{
+    QList<QTelephonyCallInfo> ret;
+
+    //call copy constructor so the caller has to delete the QTelephonyCallInfo pointers
+    for( int i = 0; i < callInfoList.count(); i++){
+        if(callInfoList.at(i).data()->type == QTelephonyCallInfo::Any
+            || callInfoList.at(i).data()->type == calltype)
+        {
+            QTelephonyCallInfo callinfo;
+            callinfo.d = callInfoList.at(i);
+            ret.push_back(callinfo);
+        }
+    }
+    return ret;
+}
 
 QTM_END_NAMESPACE
