@@ -61,9 +61,12 @@
 #include "qgallerytrackermetadataedit_p.h"
 #include "qgallerytrackerschema_p.h"
 
+#include <QtCore/qcoreapplication.h>
 #include <QtCore/qbasictimer.h>
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qfuturewatcher.h>
+#include <QtCore/qqueue.h>
+#include <QtCore/qwaitcondition.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,6 +74,77 @@ class QGalleryTrackerItemListPrivate : public QGalleryAbstractResponsePrivate
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerItemList)
 public:
+    struct SyncEvent
+    {
+        enum Type
+        {
+            Start,
+            Update,
+            Replace,
+            Finish
+        };
+
+        const Type type;
+        const int aIndex;
+        const int aCount;
+        const int rIndex;
+        const int rCount;
+
+        static SyncEvent *startEvent(int count) { return new SyncEvent(Start, 0, 0, 0, count); }
+
+        static SyncEvent *updateEvent(int aIndex, int rIndex, int count) {
+            return new SyncEvent(Update, aIndex, count, rIndex, count); }
+
+        static SyncEvent *replaceEvent(int aIndex, int aCount, int rIndex, int rCount) {
+            return new SyncEvent(Replace, aIndex, aCount, rIndex, rCount); }
+
+        static SyncEvent *finishEvent() { return new SyncEvent(Finish, 0, 0, 0, 0); }
+
+    private:
+        SyncEvent(Type type, int aIndex, int aCount, int rIndex, int rCount)
+            : type(type), aIndex(aIndex), aCount(aCount), rIndex(rIndex), rCount(rCount) {}
+
+    };
+
+    class SyncEventQueue
+    {
+    public:
+        SyncEventQueue() {}
+        ~SyncEventQueue() { qDeleteAll(m_queue); }
+
+        bool enqueue(SyncEvent *event)
+        {
+            QMutexLocker locker(&m_mutex);
+
+            m_queue.enqueue(event);
+            m_wait.wakeOne();
+
+            return m_queue.count() == 1;
+        }
+
+        SyncEvent *dequeue()
+        {
+            QMutexLocker locker(&m_mutex);
+
+            return !m_queue.isEmpty() ? m_queue.dequeue() : 0;
+        }
+
+        bool waitForEvent(int msecs)
+        {
+            QMutexLocker locker(&m_mutex);
+
+            if (!m_queue.isEmpty())
+                return true;
+
+            return m_wait.wait(&m_mutex, msecs);
+        }
+
+    private:
+        QQueue<SyncEvent *> m_queue;
+        QMutex m_mutex;
+        QWaitCondition m_wait;
+    };
+
     struct Row
     {
         Row() {}
@@ -117,30 +191,6 @@ public:
         mutable Row row;
     };
 
-    enum RowEventType
-    {
-        RowsChanged = QEvent::User,
-        RowsInserted,
-        RowsRemoved,
-        SyncFinalized
-    };
-
-    class RowEvent : public QEvent
-    {
-    public:
-        RowEvent(RowEventType type, int aIndex, int rIndex, int count)
-            : QEvent(QEvent::Type(type))
-            , aIndex(aIndex)
-            , rIndex(rIndex)
-            , count(count)
-        {
-        }
-
-        const int aIndex;
-        const int rIndex;
-        const int count;
-    };
-
     struct Cache
     {
         Cache() : index(0), count(0), cutoff(0) {}
@@ -159,9 +209,11 @@ public:
 
     enum Flag
     {
-        Refresh     = 0x01,
-        Cancelled   = 0x02,
-        Live        = 0x04
+        Refresh         = 0x01,
+        Cancelled       = 0x02,
+        Live            = 0x04,
+        SyncFinished    = 0x08,
+        Active          = 0x10
     };
 
     Q_DECLARE_FLAGS(Flags, Flag)
@@ -249,6 +301,7 @@ public:
     QFutureWatcher<void> parseWatcher;
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
+    SyncEventQueue syncEvents;
 
     void update(int index);
 
@@ -267,6 +320,15 @@ public:
             row_iterator &rBegin,
             const row_iterator &aEnd,
             const row_iterator &rEnd);
+
+    void postSyncEvent(SyncEvent *event)
+    {
+        if (syncEvents.enqueue(event))
+            QCoreApplication::postEvent(q_func(), new QEvent(QEvent::UpdateRequest));
+    }
+
+    void processSyncEvents();
+    bool waitForSyncFinish(int msecs);
 
     void _q_queryFinished(QDBusPendingCallWatcher *watcher);
     void _q_parseFinished();

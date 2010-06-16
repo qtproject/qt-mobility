@@ -356,7 +356,7 @@ void tst_QGalleryTrackerItemList::query()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
 
-    QVERIFY(qt_waitForFinished(&list));
+    QVERIFY(list.waitForFinished(1000));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
@@ -407,7 +407,8 @@ void tst_QGalleryTrackerItemList::refresh()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
 
-    QVERIFY(qt_waitForFinished(&list));
+
+    QVERIFY(list.waitForFinished(1000));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
@@ -440,7 +441,7 @@ void tst_QGalleryTrackerItemList::refresh()
 //    QCOMPARE(list.metaData(15, 8), QVariant(QLatin1String("a-015")));
 
     list.refresh();
-    QVERIFY(qt_waitForProgress(&list));
+    QVERIFY(list.waitForFinished(1000));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
@@ -488,7 +489,7 @@ void tst_QGalleryTrackerItemList::reset()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
 
-    QVERIFY(qt_waitForFinished(&list));
+    QVERIFY(list.waitForFinished(1000));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
@@ -523,8 +524,12 @@ void tst_QGalleryTrackerItemList::reset()
     m_queryAdaptor->setCount('a', 0);
     m_queryAdaptor->setCount('b', 16);
 
+    qDebug("Refresh");
+
     list.refresh();
-    QVERIFY(qt_waitForProgress(&list));
+    QVERIFY(list.waitForFinished(1000));
+
+    qDebug("Refreshed");
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);

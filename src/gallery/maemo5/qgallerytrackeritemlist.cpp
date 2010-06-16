@@ -42,8 +42,8 @@
 #include "qgallerytrackeritemlist_p_p.h"
 
 #include "qgallerytrackermetadataedit_p.h"
-#include <QtCore/qcoreapplication.h>
 #include <QtCore/qtconcurrentrun.h>
+#include <QtCore/qdatetime.h>
 #include <QtDBus/qdbusreply.h>
 
 Q_DECLARE_METATYPE(QVector<QStringList>)
@@ -52,8 +52,11 @@ QTM_BEGIN_NAMESPACE
 
 void QGalleryTrackerItemListPrivate::update(int index)
 {
-    flags &= ~Refresh;
+    flags &= ~(Refresh | SyncFinished);
+    flags |= Active;
+
     updateTimer.stop();
+
 
     aCache.index = rCache.index;
     aCache.count = rCache.count;
@@ -97,9 +100,13 @@ void QGalleryTrackerItemListPrivate::queryFinished(const QDBusPendingCall &call)
 
         qWarning("DBUS error %s", qPrintable(call.error().message()));
 
+        flags &= ~Active;
+
         q_func()->finish(QGalleryAbstractRequest::ConnectionError);
     } else if (flags & Cancelled) {
         rCache.count = 0;
+
+        flags &= ~Active;
 
         q_func()->QGalleryAbstractResponse::cancel();
     } else {
@@ -118,7 +125,7 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
 
     const QVector<QStringList> resultSet = reply.value();
 
-    rCache.count = rCache.index + resultSet.count();
+    postSyncEvent(SyncEvent::startEvent(resultSet.count()));
 
     QVector<QVariant> &values = rCache.values;
     values.clear();
@@ -144,8 +151,11 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
                     sortCriteria.constBegin(),
                     sortCriteria.constEnd());
         }
-        synchronize();
     }
+
+    synchronize();
+
+    postSyncEvent(SyncEvent::finishEvent());
 }
 
 void QGalleryTrackerItemListPrivate::correctRows(
@@ -263,35 +273,22 @@ void QGalleryTrackerItemListPrivate::synchronize()
         const int rIndex = rIt - rBegin + rCache.index;
 
         if (aIndex < rIndex) {
-            QCoreApplication::postEvent(
-                    q_func(), new RowEvent(RowsRemoved, aIndex, rIndex, rIndex - aIndex));
-        } else if (rIndex > aIndex) {
-            QCoreApplication::postEvent(
-                    q_func(), new RowEvent(RowsInserted, aIndex, rIndex, aIndex - rIndex));
+            postSyncEvent(SyncEvent::replaceEvent(aIndex, rIndex - aIndex, rIndex, 0));
+        } else if (aIndex > rIndex) {
+            postSyncEvent(SyncEvent::replaceEvent(aIndex, 0, rIndex, rIndex - aIndex));
         }
 
         if (rIndex > rCache.index) {
-            QCoreApplication::postEvent(q_func(), new RowEvent(
-                    RowsChanged,
-                    aCache.index,
-                    rCache.index,
-                    rIndex - rCache.index));
+            postSyncEvent(SyncEvent::updateEvent(
+                    aCache.index, rCache.index, rIndex - rCache.index));
         }
 
         synchronizeRows(aIt, rIt, aEnd, rEnd);
     } else {
         const int aCount = aCache.count - aCache.index;
-        const int rCount = rCache.count - rCache.index;
+        const int rCount = rCache.values.count() / tableWidth;
 
-        if (aCount > 0) {
-            QCoreApplication::postEvent(q_func(), new RowEvent(
-                    RowsRemoved, aCache.index, rCache.index, aCount));
-        }
-
-        if (rCount > 0) {
-            QCoreApplication::postEvent(q_func(), new RowEvent(
-                    RowsInserted, aCache.count, rCache.index, rCount));
-        }
+        postSyncEvent(SyncEvent::replaceEvent(aCache.index, aCount, rCache.index, rCount));
     }
 }
 
@@ -301,8 +298,6 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
         const row_iterator &aEnd,
         const row_iterator &rEnd)
 {
-    Q_Q(QGalleryTrackerItemList);
-
     for (bool equal = true; equal && aBegin != aEnd && rBegin != rEnd; ) {
         bool changed = false;
 
@@ -333,11 +328,11 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
                 }
             } while (aIt != aEnd && rIt != rEnd);
 
-            QCoreApplication::postEvent(q, new RowEvent(
-                    RowsChanged,
-                    (aBegin.begin - aCache.values.begin()) / tableWidth,
-                    (rBegin.begin - rCache.values.begin()) / tableWidth,
-                    (rIt.begin - rBegin.begin) / tableWidth));
+            const int aIndex = (aBegin.begin - aCache.values.begin()) / tableWidth;
+            const int rIndex = (rBegin.begin - rCache.values.begin()) / tableWidth;
+            const int count = (rIt.begin - rBegin.begin) / tableWidth;
+
+            postSyncEvent(SyncEvent::updateEvent(aIndex, rIndex, count));
 
             aBegin = aIt;
             rBegin = rIt;
@@ -360,38 +355,24 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
                     aInner != aInnerEnd && rInner != rInnerEnd;
                     ++aInner, ++rInner) {
                 if ((equal = aInner.isEqual(rOuter, identityWidth))) {
-                    if (rOuter != rBegin) {
-                        QCoreApplication::postEvent(q, new RowEvent(
-                                RowsInserted,
-                                (aBegin.begin - aCache.values.begin()) / tableWidth + aCache.index,
-                                (rBegin.begin - rCache.values.begin()) / tableWidth + rCache.index,
-                                (rOuter.begin - rBegin.begin) / tableWidth));
-                    }
+                    const int aIndex = (aOuter.begin - aCache.values.begin()) / tableWidth;
+                    const int rIndex = (rOuter.begin - rCache.values.begin()) / tableWidth;
+                    const int aCount = (aInner.begin - aOuter.begin) / tableWidth;
+                    const int rCount = (rOuter.begin - rBegin.begin) / tableWidth;
 
-                    QCoreApplication::postEvent(q, new RowEvent(
-                            RowsRemoved,
-                            (aOuter.begin - aCache.values.begin()) / tableWidth + aCache.index,
-                            (aOuter.begin - rCache.values.begin()) / tableWidth + rCache.index,
-                            (aInner.begin - aOuter.begin) / tableWidth));
+                    postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
 
                     aBegin = aInner;
                     rBegin = rOuter;
 
                     break;
                 } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
-                    if (aOuter != aBegin) {
-                        QCoreApplication::postEvent(q, new RowEvent(
-                                RowsRemoved,
-                                (aBegin.begin - aCache.values.begin()) / tableWidth + aCache.index,
-                                (rBegin.begin - rCache.values.begin()) / tableWidth + rCache.index,
-                                (aOuter.begin - aBegin.begin) / tableWidth));
-                    }
+                    const int aIndex = (aOuter.begin - aCache.values.begin()) / tableWidth;
+                    const int rIndex = (rOuter.begin - rCache.values.begin()) / tableWidth;
+                    const int aCount = (aOuter.begin - aBegin.begin) / tableWidth;
+                    const int rCount = (rInner.begin - rOuter.begin) / tableWidth;
 
-                    QCoreApplication::postEvent(q, new RowEvent(
-                            RowsInserted,
-                            (aOuter.begin - aCache.values.begin()) / tableWidth + aCache.index,
-                            (rOuter.begin - rCache.values.begin()) / tableWidth + rCache.index,
-                            (rInner.begin - rOuter.begin) / tableWidth));
+                    postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
 
                     aBegin = aOuter;
                     rBegin = rInner;
@@ -403,10 +384,74 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
     }
 }
 
+void QGalleryTrackerItemListPrivate::processSyncEvents()
+{
+    while (SyncEvent *event = syncEvents.dequeue()) {
+        switch (event->type) {
+        case SyncEvent::Start:
+            rCache.count = rCache.index + event->rCount;
+            break;
+        case SyncEvent::Update:
+            aCache.offset = event->aIndex;
+            rCache.cutoff = event->rIndex + event->rCount;
 
+            emit q_func()->metaDataChanged(event->rIndex, event->rCount, QList<int>());
+
+            break;
+        case SyncEvent::Replace:
+            if (event->aCount > 0) {
+                aCache.offset = event->aIndex + event->aCount;
+                rCache.cutoff = event->rIndex;
+
+                rowCount -= event->aCount;
+
+                emit q_func()->removed(event->rIndex, event->aCount);
+            }
+            if (event->rCount > 0) {
+                aCache.offset = event->aIndex + event->aCount;
+                rCache.cutoff = event->rIndex + event->rCount;
+
+                rowCount += event->rCount;
+
+                q_func()->inserted(event->rIndex, event->rCount);
+
+                break;
+            }
+            break;
+        case SyncEvent::Finish:
+            flags |= SyncFinished;
+            break;
+        default:
+            break;
+        }
+
+        delete event;
+    }
+}
+
+bool QGalleryTrackerItemListPrivate::waitForSyncFinish(int msecs)
+{
+    QTime timer;
+    timer.start();
+
+    do {
+        processSyncEvents();
+
+        if (flags & SyncFinished) {
+            return true;
+        }
+
+        if (!syncEvents.waitForEvent(msecs))
+            return false;
+    } while ((msecs -= timer.restart()) > 0);
+
+    return false;
+}
 
 void QGalleryTrackerItemListPrivate::_q_parseFinished()
 {
+    processSyncEvents();
+
     aCache.values.clear();
     aCache.count = 0;
 
@@ -433,12 +478,16 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
             emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
     }
 
+    flags &= ~Active;
+
     q_func()->setCursorPosition(cursorPosition);
 
     if (flags & Refresh)
         update(rCache.index);
     else
         emit q_func()->progressChanged(2, 2);
+
+
 
     q_func()->finish(QGalleryAbstractRequest::Succeeded, flags & Live);
 }
@@ -532,9 +581,8 @@ void QGalleryTrackerItemList::setCursorPosition(int position)
 
     d->cursorPosition = position;
 
-    if (!d->queryWatcher
-            && d->parseWatcher.isFinished()
-            && !(d->flags & QGalleryTrackerItemListPrivate::Cancelled)) {
+    if (!(d->flags & (QGalleryTrackerItemListPrivate::Cancelled
+            | QGalleryTrackerItemListPrivate::Active))) {
         if (position > d->rCache.index + d->queryLimit - d->minimumPagedItems) {
             d->update(qMax(0, position - d->minimumPagedItems) & ~63);
         } else if (position < d->rCache.index) {
@@ -758,83 +806,57 @@ void QGalleryTrackerItemList::cancel()
     d_func()->flags |= QGalleryTrackerItemListPrivate::Cancelled;
     d_func()->flags &= ~QGalleryTrackerItemListPrivate::Live;
 
-    if (!d_func()->queryWatcher && d_func()->parseWatcher.isFinished())
+    if (!(d_func()->flags &QGalleryTrackerItemListPrivate::Active))
         QGalleryAbstractResponse::cancel();
 }
 
-bool QGalleryTrackerItemList::waitForFinished(int)
+bool QGalleryTrackerItemList::waitForFinished(int msecs)
 {
-    if (d_func()->queryWatcher) {
-        QScopedPointer<QDBusPendingCallWatcher> watcher(d_func()->queryWatcher.take());
+    Q_D(QGalleryTrackerItemList);
 
-        watcher->waitForFinished();
+    QTime timer;
+    timer.start();
 
-        if (watcher->isError()) {
-            progressChanged(2, 2);
+    do {
+        if (d->updateTimer.isActive()) {
+            d->updateTimer.stop();
 
-            qWarning("DBUS error %s", qPrintable(watcher->error().message()));
+            d->update(d->rCache.index);
+        } else if (d->queryWatcher) {
+            QScopedPointer<QDBusPendingCallWatcher> watcher(d_func()->queryWatcher.take());
 
-            finish(QGalleryAbstractRequest::ConnectionError);
+            watcher->waitForFinished();
 
-            return true;
-        } else {
-            d_func()->queryFinished(*watcher);
+            d->queryFinished(*watcher);
 
-            if (d_func()->result != QGalleryAbstractRequest::NoResult)
+            if (!(d->flags &QGalleryTrackerItemListPrivate::Active))
                 return true;
-        }
-    }
-    d_func()->parseWatcher.waitForFinished();
+        } else if (d->flags & QGalleryTrackerItemListPrivate::Active) {
+            if (d->waitForSyncFinish(msecs)) {
+                d->parseWatcher.waitForFinished();
 
-    return true;
+                d->_q_parseFinished();
+
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return true;
+        }
+    } while ((msecs -= timer.restart()) > 0);
+
+    return false;
 }
 
 bool QGalleryTrackerItemList::event(QEvent *event)
 {
     switch (event->type()) {
-    case QGalleryTrackerItemListPrivate::RowsChanged: {
-            Q_D(QGalleryTrackerItemList);
-            QGalleryTrackerItemListPrivate::RowEvent *rowEvent
-                    = static_cast<QGalleryTrackerItemListPrivate::RowEvent *>(event);
 
-            d->aCache.offset = rowEvent->aIndex + rowEvent->count;
-            d->rCache.cutoff = rowEvent->rIndex + rowEvent->count;
-
-            emit metaDataChanged(rowEvent->rIndex, rowEvent->count, QList<int>());
-
-            return true;
-        }
-    case QGalleryTrackerItemListPrivate::RowsInserted: {
-            Q_D(QGalleryTrackerItemList);
-            QGalleryTrackerItemListPrivate::RowEvent *rowEvent
-                    = static_cast<QGalleryTrackerItemListPrivate::RowEvent *>(event);
-
-            d->aCache.offset = rowEvent->aIndex;
-            d->rCache.cutoff = rowEvent->rIndex + rowEvent->count;
-
-            d->rowCount += rowEvent->count;
-
-            emit inserted(rowEvent->rIndex, rowEvent->count);
-
-            return true;
-        }
-    case QGalleryTrackerItemListPrivate::RowsRemoved: {
-            Q_D(QGalleryTrackerItemList);
-
-            QGalleryTrackerItemListPrivate::RowEvent *rowEvent
-                    = static_cast<QGalleryTrackerItemListPrivate::RowEvent *>(event);
-
-            d->aCache.offset = rowEvent->aIndex + rowEvent->count;
-            d->rCache.cutoff = rowEvent->rIndex;
-
-            d->rowCount -= rowEvent->count;
-
-            emit removed(rowEvent->rIndex, rowEvent->count);
-
-            return true;
-        }
     case QEvent::UpdateRequest: {
             Q_D(QGalleryTrackerItemList);
+
+            d->processSyncEvents();
 
             typedef QList<QGalleryTrackerMetaDataEdit *>::iterator iterator;
             for (iterator it = d->edits.begin(), end = d->edits.end(); it != end; ++it)
@@ -867,10 +889,13 @@ void QGalleryTrackerItemList::refresh(int updateId)
     if ((d->updateMask & updateId)
             && !d->updateTimer.isActive()
             && (d->flags & QGalleryTrackerItemListPrivate::Live)) {
+
+
         d->flags |= QGalleryTrackerItemListPrivate::Refresh;
 
-        if (!d->queryWatcher && d->parseWatcher.isFinished())
+        if (!(d->flags &QGalleryTrackerItemListPrivate::Active)) {
             d->updateTimer.start(100, this);
+        }
     }
 }
 
