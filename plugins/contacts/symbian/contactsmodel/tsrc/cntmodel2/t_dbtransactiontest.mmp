@@ -1,0 +1,40 @@
+/*
+* Copyright (c) 2005-2009 Nokia Corporation and/or its subsidiary(-ies).
+* All rights reserved.
+* This component and the accompanying materials are made available
+* under the terms of "Eclipse Public License v1.0"
+* which accompanies this distribution, and is available
+* at the URL "http://www.eclipse.org/legal/epl-v10.html".
+*
+* Initial Contributors:
+* Nokia Corporation - initial contribution.
+*
+* Contributors:
+*
+* Description: 
+* T_DBTransactionTest.exe
+*
+*/
+
+
+target          T_DBTransactionTest.exe
+targettype      EXE
+CAPABILITY	ReadUserData WriteUserData
+UID		0x102731D4
+VENDORID 	0x70000001
+
+systeminclude   /EPOC32/INCLUDE 
+systeminclude 	../NbCntTestLib
+
+userinclude 	.
+
+SOURCEPATH	.
+source          T_DBTransactionTest.cpp
+source		T_CAsyncTest.cpp
+
+
+//Parts of contacts model
+library         EUSER.LIB 
+library         efsrv.lib 
+library         NbCntTestLib.LIB 
+library         CntModel.lib
