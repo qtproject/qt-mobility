@@ -38,7 +38,7 @@
 **
 ****************************************************************************/
 
-import Qt 4.6
+import Qt 4.7
 
 Item {
     id: scrollBar
@@ -49,7 +49,7 @@ Item {
     // orientation can be either 'Vertical' or 'Horizontal'
     property real position
     property real pageSize
-    property var orientation : "Vertical"
+    property string orientation : "Vertical"
     property alias bgColor: background.color
     property alias fgColor: thumb.color
 

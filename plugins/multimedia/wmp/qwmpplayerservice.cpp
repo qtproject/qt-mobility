@@ -94,23 +94,9 @@ QWmpPlayerService::QWmpPlayerService(EmbedMode mode, QObject *parent)
             qWarning("Failed to set site, %x: %s", hr, qwmp_error_string(hr));
         }
 
-        if (m_embedMode == LocalEmbed) {
+        if (m_embedMode == LocalEmbed)
             m_oleVideoOverlay = new QWmpVideoOverlay(m_player, m_oleObject, this);
-#ifdef QWMP_EVR
-            IWMPVideoRenderConfig *config = 0;
-            if (m_player->QueryInterface(
-                    __uuidof(IWMPVideoRenderConfig), reinterpret_cast<void **>(&config)) == S_OK) {
-                if (HINSTANCE evrHwnd = LoadLibrary(L"evr")) {
-                    m_evrVideoOverlay = new QEvrVideoOverlay(evrHwnd);
 
-                    connect(m_events, SIGNAL(OpenStateChange(long)),
-                            m_evrVideoOverlay, SLOT(openStateChanged(long)));
-                }
-
-                config->Release();
-            }
-#endif
-        }
         m_metaData = new QWmpMetaData(m_player, m_events);
         m_playlist = new QWmpPlaylistControl(m_player, m_events);
         m_control = new QWmpPlayerControl(m_player, m_events);
@@ -180,8 +166,6 @@ QMediaControl *QWmpPlayerService::requestControl(const char *name)
         } else
 #endif
         if (SUCCEEDED(m_player->put_uiMode(QAutoBStr(L"none")))) {
-            m_oleVideoOverlay->setEnabled(true);
-
             m_activeVideoOverlay = m_oleVideoOverlay;
 
             return m_oleVideoOverlay;
@@ -212,6 +196,7 @@ void QWmpPlayerService::releaseControl(QMediaControl *control)
 #endif
     } else if (control == m_oleVideoOverlay) {
         m_player->put_uiMode(QAutoBStr(L"invisible"));
+        m_oleVideoOverlay->setWinId(0);
 
         m_activeVideoOverlay = 0;
     }
