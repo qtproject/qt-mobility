@@ -100,7 +100,6 @@ QLandmarkFilterPrivate::~QLandmarkFilterPrivate()
     \value NameFilter A filter which matches landmarks based on name
     \value ProximityFilter A filter which matches landmarks within a certain range of a given
            coordinate.
-    \value NearestFilter A filter which matches a landmark closest to a given coordinate.
     \value CategoryFilter A filter which matches landmarks that belong to a given category
     \value BoxFilter A filter which matches landmarks within a given bounding box.
     \value IntersectionFilter A filter which performs an AND operation with its

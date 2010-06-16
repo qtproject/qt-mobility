@@ -51,12 +51,20 @@
 <hr />
 <h2>Member Type Documentation</h2>
 <a name="//apple_ref/cpp/tag/QLandmarkIdFilter/MatchingScheme"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkIdFilter/MatchAll"></a>
+<a name="//apple_ref/cpp/econst/QLandmarkIdFilter/MatchSubset"></a>
 <h3 class="fn"><a name="MatchingScheme-enum"></a>enum QLandmarkIdFilter::MatchingScheme</h3>
+<p>Defines the matching behavior of the id filter.</p>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QLandmarkIdFilter::MatchAll</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">A landmark must be returned for every id assigned to the filter. Failure to match every id results in a <a href="qlandmarkmanager.html#Error-enum">QLandmarkManager::DoesNotExistError</a>.</td></tr>
+<tr><td valign="top"><tt>QLandmarkIdFilter::MatchSubset</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Every id does not have to be matched to a landmark. Matching only a subset of the assigned ids is acceptable.</td></tr>
+</table></p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFilter/QLandmarkIdFilter"></a>
 <h3 class="fn"><a name="QLandmarkIdFilter"></a>QLandmarkIdFilter::QLandmarkIdFilter ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qlandmarkid.html">QLandmarkId</a>&gt; &amp; <i>ids</i> = QList&lt;QLandmarkId&gt; (), <a href="qlandmarkidfilter.html#MatchingScheme-enum">MatchingScheme</a> <i>matchingScheme</i> = MatchSubset )</h3>
-<p>Creates a filter that selects landmarks by a list of landmark <i>ids</i>.</p>
+<p>Creates a filter that selects landmarks using a list of landmark <i>ids</i> and a <i>matchingScheme</i>.</p>
 <h3 class="fn"><a name="QLandmarkIdFilter-2"></a>QLandmarkIdFilter::QLandmarkIdFilter ( const <a href="qlandmarkfilter.html">QLandmarkFilter</a> &amp; <i>other</i> )</h3>
 <p>Constructs a copy of <i>other</i> if possible, otherwise constructs a new id filter.</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFilter/~QLandmarkIdFilter"></a>
@@ -75,7 +83,7 @@
 <a name="//apple_ref/cpp/instm/QLandmarkIdFilter/matchingScheme"></a>
 <h3 class="fn"><a name="matchingScheme"></a><a href="qlandmarkidfilter.html#MatchingScheme-enum">MatchingScheme</a> QLandmarkIdFilter::matchingScheme () const</h3>
 <p>Returns the matching scheme of the filter.</p>
-<p>The matching scheme specifies whether the filter needs to match all landmark ids or only a subset.</p>
+<p>The matching scheme specifies whether the filter needs to match all landmark ids or only a subset. The default scheme is <tt>MatchSubset</tt>.</p>
 <p>See also <a href="qlandmarkidfilter.html#setMatchingScheme">setMatchingScheme</a>().</p>
 <a name="//apple_ref/cpp/instm/QLandmarkIdFilter/remove"></a>
 <h3 class="fn"><a name="remove"></a>void QLandmarkIdFilter::remove ( const <a href="qlandmarkid.html">QLandmarkId</a> &amp; <i>id</i> )</h3>

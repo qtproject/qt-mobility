@@ -1075,12 +1075,13 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             QLandmarkNameFilter nameFilter(filter);
             return QString::compare(nameFilter.name(), landmark.name(), nameFilter.caseSensitivity()) == 0;
         }
-        case QLandmarkFilter::NearestFilter:
-            //Since we have only one landmark to use, is considered the nearest
-            return true;
         case QLandmarkFilter::ProximityFilter:
         {
             QLandmarkProximityFilter proximityFilter(filter);
+
+            if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly)
+                return true; // since we only have one landmark to use, is considered the nearest
+
             double distance = proximityFilter.coordinate().distanceTo(landmark.coordinate());
             if (distance < proximityFilter.radius() || qFuzzyCompare(distance, proximityFilter.radius()))
                 return true;

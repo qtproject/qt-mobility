@@ -51,10 +51,20 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-filter
 */
 
+/*!
+    \enum QLandmarkIdFilter::MatchingScheme
+    Defines the matching behavior of the id filter.
+    \value MatchAll A landmark must be returned for every id assigned to the filter.
+                    Failure to match every id results in a QLandmarkManager::DoesNotExistError.
+    \value MatchSubset Every id does not have to be matched to a landmark.  Matching
+                       only a subset of the assigned ids is acceptable.
+*/
+
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkIdFilter)
 
 /*!
-    Creates a filter that selects landmarks by a list of landmark \a ids.
+    Creates a filter that selects landmarks using a list of landmark \a ids and a
+    \a matchingScheme.
 */
 QLandmarkIdFilter::QLandmarkIdFilter(const QList<QLandmarkId> &ids, MatchingScheme matchingScheme)
         : QLandmarkFilter(new QLandmarkIdFilterPrivate(ids, matchingScheme)) {}
@@ -132,7 +142,7 @@ QLandmarkIdFilter &QLandmarkIdFilter::operator<<(const QLandmarkId &id)
     Returns the matching scheme of the filter.
 
     The matching scheme specifies whether the filter needs to match all
-    landmark ids or only a subset.
+    landmark ids or only a subset.  The default scheme is \c MatchSubset.
 */
 QLandmarkIdFilter::MatchingScheme QLandmarkIdFilter::matchingScheme() const
 {

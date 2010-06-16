@@ -61,8 +61,7 @@ friend class QLandmarkFilterPrivate;
 public:
     enum FilterType {InvalidFilter, DefaultFilter,
                      NameFilter, ProximityFilter,
-                     NearestFilter, CategoryFilter,
-                     BoxFilter, IntersectionFilter,
+                     CategoryFilter, BoxFilter, IntersectionFilter,
                      UnionFilter, AttributeFilter,
                      LandmarkIdFilter
                     };

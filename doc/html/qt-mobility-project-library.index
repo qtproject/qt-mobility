@@ -3671,13 +3671,12 @@
                 <value name="DefaultFilter" value="1"/>
                 <value name="NameFilter" value="2"/>
                 <value name="ProximityFilter" value="3"/>
-                <value name="NearestFilter" value="4"/>
-                <value name="CategoryFilter" value="5"/>
-                <value name="BoxFilter" value="6"/>
-                <value name="IntersectionFilter" value="7"/>
-                <value name="UnionFilter" value="8"/>
-                <value name="AttributeFilter" value="9"/>
-                <value name="LandmarkIdFilter" value="10"/>
+                <value name="CategoryFilter" value="4"/>
+                <value name="BoxFilter" value="5"/>
+                <value name="IntersectionFilter" value="6"/>
+                <value name="UnionFilter" value="7"/>
+                <value name="AttributeFilter" value="8"/>
+                <value name="LandmarkIdFilter" value="9"/>
             </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkFilter" fullname="QLandmarkFilter::QLandmarkFilter" href="qlandmarkfilter.html#QLandmarkFilter" location="qlandmarkfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkFilter()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkFilter" fullname="QLandmarkFilter::QLandmarkFilter" href="qlandmarkfilter.html#QLandmarkFilter-2" location="qlandmarkfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QLandmarkFilter(const QLandmarkFilter &amp; other)">
@@ -7668,6 +7667,10 @@
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkProximityFilter" href="qlandmarkproximityfilter.html" location="qlandmarkproximityfilter.h" bases="QLandmarkFilter" module="">
+            <enum access="public" threadsafety="unspecified" status="commendable" name="Selection" fullname="QLandmarkProximityFilter::Selection" href="qlandmarkproximityfilter.html#Selection-enum" location="qlandmarkproximityfilter.h">
+                <value name="SelectNearestOnly" value="0"/>
+                <value name="SelectAll" value="1"/>
+            </enum>
             <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkProximityFilter" fullname="QLandmarkProximityFilter::QLandmarkProximityFilter" href="qlandmarkproximityfilter.html#QLandmarkProximityFilter" location="qlandmarkproximityfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkProximityFilter(const QGeoCoordinate &amp; coordinate, double radius)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default="QGeoCoordinate()"/>
                 <parameter left="double" right="" name="radius" default="-1"/>
@@ -7680,6 +7683,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setCoordinate" fullname="QLandmarkProximityFilter::setCoordinate" href="qlandmarkproximityfilter.html#setCoordinate" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCoordinate(const QGeoCoordinate &amp; coordinate)">
                 <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
             </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="setSelection" fullname="QLandmarkProximityFilter::setSelection" href="qlandmarkproximityfilter.html#setSelection" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setSelection(Selection selection)">
+                <parameter left="Selection" right="" name="selection" default=""/>
+            </function>
+            <function access="public" threadsafety="unspecified" status="commendable" name="selection" fullname="QLandmarkProximityFilter::selection" href="qlandmarkproximityfilter.html#selection" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="Selection" signature="selection() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QLandmarkProximityFilter::radius" href="qlandmarkproximityfilter.html#radius" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="radius() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QLandmarkProximityFilter::setRadius" href="qlandmarkproximityfilter.html#setRadius" location="qlandmarkproximityfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRadius(double radius)">
                 <parameter left="double" right="" name="radius" default=""/>
@@ -7937,24 +7944,6 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="subTypes" fullname="QContactPhoneNumber::subTypes" href="qcontactphonenumber.html#subTypes" location="qcontactphonenumber.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QStringList" signature="subTypes() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="match" fullname="QContactPhoneNumber::match" href="qcontactphonenumber.html#match" location="qcontactphonenumber.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QContactFilter" signature="match(const QString &amp; number)">
                 <parameter left="const QString &amp;" right="" name="number" default=""/>
-            </function>
-        </class>
-        <class access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNearestFilter" href="qlandmarknearestfilter.html" location="qlandmarknearestfilter.h" bases="QLandmarkFilter" module="">
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNearestFilter" fullname="QLandmarkNearestFilter::QLandmarkNearestFilter" href="qlandmarknearestfilter.html#QLandmarkNearestFilter" location="qlandmarknearestfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QLandmarkNearestFilter(const QGeoCoordinate &amp; coordinate, double radius)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default="QGeoCoordinate()"/>
-                <parameter left="double" right="" name="radius" default="-1"/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="QLandmarkNearestFilter" fullname="QLandmarkNearestFilter::QLandmarkNearestFilter" href="qlandmarknearestfilter.html#QLandmarkNearestFilter-2" location="qlandmarknearestfilter.h" virtual="non" meta="constructor" const="false" static="false" overload="true" overload-number="2" type="" signature="QLandmarkNearestFilter(const QLandmarkFilter &amp; other)">
-                <parameter left="const QLandmarkFilter &amp;" right="" name="other" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="~QLandmarkNearestFilter" fullname="QLandmarkNearestFilter::~QLandmarkNearestFilter" href="qlandmarknearestfilter.html#dtor.QLandmarkNearestFilter" location="qlandmarknearestfilter.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QLandmarkNearestFilter()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="coordinate" fullname="QLandmarkNearestFilter::coordinate" href="qlandmarknearestfilter.html#coordinate" location="qlandmarknearestfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QGeoCoordinate" signature="coordinate() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setCoordinate" fullname="QLandmarkNearestFilter::setCoordinate" href="qlandmarknearestfilter.html#setCoordinate" location="qlandmarknearestfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setCoordinate(const QGeoCoordinate &amp; coordinate)">
-                <parameter left="const QGeoCoordinate &amp;" right="" name="coordinate" default=""/>
-            </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="radius" fullname="QLandmarkNearestFilter::radius" href="qlandmarknearestfilter.html#radius" location="qlandmarknearestfilter.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="double" signature="radius() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setRadius" fullname="QLandmarkNearestFilter::setRadius" href="qlandmarknearestfilter.html#setRadius" location="qlandmarknearestfilter.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setRadius(double radius)">
-                <parameter left="double" right="" name="radius" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailRangeFilter" href="qcontactdetailrangefilter.html" location="qcontactdetailrangefilter.h" bases="QContactFilter" module="">

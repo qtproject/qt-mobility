@@ -411,9 +411,6 @@
                     <section ref="qlandmarknamesort.html" title="QLandmarkNameSort Class Reference">
                         <section ref="qlandmarknamesort-members.html" title="List of all members"/>
                     </section>
-                    <section ref="qlandmarknearestfilter.html" title="QLandmarkNearestFilter Class Reference">
-                        <section ref="qlandmarknearestfilter-members.html" title="List of all members"/>
-                    </section>
                     <section ref="qlandmarkproximityfilter.html" title="QLandmarkProximityFilter Class Reference">
                         <section ref="qlandmarkproximityfilter-members.html" title="List of all members"/>
                     </section>
@@ -2390,7 +2387,6 @@
             <keyword name="QLandmarkFilter::DefaultFilter" id="QLandmarkFilter::DefaultFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::NameFilter" id="QLandmarkFilter::NameFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::ProximityFilter" id="QLandmarkFilter::ProximityFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
-            <keyword name="QLandmarkFilter::NearestFilter" id="QLandmarkFilter::NearestFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::CategoryFilter" id="QLandmarkFilter::CategoryFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::BoxFilter" id="QLandmarkFilter::BoxFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
             <keyword name="QLandmarkFilter::IntersectionFilter" id="QLandmarkFilter::IntersectionFilter" ref="qlandmarkfilter.html#FilterType-enum"/>
@@ -2572,17 +2568,16 @@
             <keyword name="caseSensitivity" id="QLandmarkNameSort::caseSensitivity" ref="qlandmarknamesort.html#caseSensitivity"/>
             <keyword name="setCaseSensitivity" id="QLandmarkNameSort::setCaseSensitivity" ref="qlandmarknamesort.html#setCaseSensitivity"/>
             <keyword name="~QLandmarkNameSort" id="QLandmarkNameSort::~QLandmarkNameSort" ref="qlandmarknamesort.html#dtor.QLandmarkNameSort"/>
-            <keyword name="QLandmarkNearestFilter" id="QLandmarkNearestFilter" ref="qlandmarknearestfilter.html"/>
-            <keyword name="coordinate" id="QLandmarkNearestFilter::coordinate" ref="qlandmarknearestfilter.html#coordinate"/>
-            <keyword name="radius" id="QLandmarkNearestFilter::radius" ref="qlandmarknearestfilter.html#radius"/>
-            <keyword name="setCoordinate" id="QLandmarkNearestFilter::setCoordinate" ref="qlandmarknearestfilter.html#setCoordinate"/>
-            <keyword name="setRadius" id="QLandmarkNearestFilter::setRadius" ref="qlandmarknearestfilter.html#setRadius"/>
-            <keyword name="~QLandmarkNearestFilter" id="QLandmarkNearestFilter::~QLandmarkNearestFilter" ref="qlandmarknearestfilter.html#dtor.QLandmarkNearestFilter"/>
             <keyword name="QLandmarkProximityFilter" id="QLandmarkProximityFilter" ref="qlandmarkproximityfilter.html"/>
+            <keyword name="QLandmarkProximityFilter::Selection" id="QLandmarkProximityFilter::Selection" ref="qlandmarkproximityfilter.html#Selection-enum"/>
+            <keyword name="QLandmarkProximityFilter::SelectNearestOnly" id="QLandmarkProximityFilter::SelectNearestOnly" ref="qlandmarkproximityfilter.html#Selection-enum"/>
+            <keyword name="QLandmarkProximityFilter::SelectAll" id="QLandmarkProximityFilter::SelectAll" ref="qlandmarkproximityfilter.html#Selection-enum"/>
             <keyword name="coordinate" id="QLandmarkProximityFilter::coordinate" ref="qlandmarkproximityfilter.html#coordinate"/>
             <keyword name="radius" id="QLandmarkProximityFilter::radius" ref="qlandmarkproximityfilter.html#radius"/>
+            <keyword name="selection" id="QLandmarkProximityFilter::selection" ref="qlandmarkproximityfilter.html#selection"/>
             <keyword name="setCoordinate" id="QLandmarkProximityFilter::setCoordinate" ref="qlandmarkproximityfilter.html#setCoordinate"/>
             <keyword name="setRadius" id="QLandmarkProximityFilter::setRadius" ref="qlandmarkproximityfilter.html#setRadius"/>
+            <keyword name="setSelection" id="QLandmarkProximityFilter::setSelection" ref="qlandmarkproximityfilter.html#setSelection"/>
             <keyword name="~QLandmarkProximityFilter" id="QLandmarkProximityFilter::~QLandmarkProximityFilter" ref="qlandmarkproximityfilter.html#dtor.QLandmarkProximityFilter"/>
             <keyword name="QLandmarkRemoveRequest" id="QLandmarkRemoveRequest" ref="qlandmarkremoverequest.html"/>
             <keyword name="errorMap" id="QLandmarkRemoveRequest::errorMap" ref="qlandmarkremoverequest.html#errorMap"/>
@@ -4768,7 +4763,6 @@
             <file>keepintouch-main-cpp.html</file>
             <file>qcontactsaverequest.html</file>
             <file>qabstractvideosurface-members.html</file>
-            <file>qlandmarknearestfilter-members.html</file>
             <file>qcontactdisplaylabel-members.html</file>
             <file>qmaptileservice-members.html</file>
             <file>qcontactdetailfilter.html</file>
@@ -5142,7 +5136,6 @@
             <file>flickrdemo-xqlistwidget-h.html</file>
             <file>qgeoaddress-members.html</file>
             <file>qabstractvideobuffer.html</file>
-            <file>qlandmarknearestfilter.html</file>
             <file>notesmanagerplugin-notesmanager-cpp.html</file>
             <file>qgeocodereply.html</file>
             <file>qmediaplaylistcontrol-members.html</file>
