@@ -53,7 +53,7 @@ QTM_BEGIN_NAMESPACE
     Conceptually it performs an OR operation and may thus be used
     to select landmarks which match any one of it's constituent filters.
 
-    Whether a uniion filter can be comprised of
+    Whether a union filter can be comprised of
     compound filters  (i.e. union or intersection filters) is backend specific.
     Even if this is supported the performance of such a filter is likely to be poor.
 */
