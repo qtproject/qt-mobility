@@ -85,7 +85,6 @@ translations/qtmobility_*.qm
 bld.inf*
 ABLD.BAT
 *.mk
-*.rss
 *.sis
 *.loc
 *.sisx
