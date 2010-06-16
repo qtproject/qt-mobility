@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,39 +38,9 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include <mmailboxcontentobserver.h>
 
-#include "s60videooutputcontrol.h"
-
-S60VideoOutputControl::S60VideoOutputControl(QObject *parent)
-    : QVideoOutputControl(parent)
-    , m_output(NoOutput)
+int main(int, char**)
 {
-    setAvailableOutputs(QList<QVideoOutputControl::Output>()
-//                        << QVideoOutputControl::RendererOutput
-//                        << QVideoOutputControl::WindowOutput
-                        << QVideoOutputControl::WidgetOutput);
-}
-
-QList<QVideoOutputControl::Output> S60VideoOutputControl::availableOutputs() const
-{
-    return m_outputs;
-}
-
-void S60VideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
-{
-    emit availableOutputsChanged(m_outputs = outputs);
-}
-
-QVideoOutputControl::Output S60VideoOutputControl::output() const
-{
-    return m_output;
-}
-
-void S60VideoOutputControl::setOutput(Output output)
-{
-    if (!m_outputs.contains(output))
-        output = NoOutput;
-
-    if (m_output != output)
-        emit outputChanged(m_output = output);
+    return 0;
 }

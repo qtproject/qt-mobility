@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the demonstration applications of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -39,32 +39,27 @@
 **
 ****************************************************************************/
 
-#ifndef S60VIDEOOUTPUTCONTROL_H
-#define S60VIDEOOUTPUTCONTROL_H
 
-#include <QObject>
-#include <qvideooutputcontrol.h>
+#include <qdeclarativeimageprovider.h>
+#include <QMap>
+#include "qcontactmanager.h"
 
-QT_USE_NAMESPACE
 
-class S60VideoOutputControl : public QVideoOutputControl
+
+
+QTM_USE_NAMESPACE;
+
+
+class ContactThumbnailImageProvider : public QDeclarativeImageProvider
 {
-    Q_OBJECT
 public:
-    S60VideoOutputControl(QObject *parent = 0);
+    // This is run in a low priority thread.
+    QImage request(const QString &id, QSize *size, const QSize &req_size);
 
-    QList<Output> availableOutputs() const;
-    void setAvailableOutputs(const QList<Output> &outputs);
-
-    Output output() const;
-    void setOutput(Output output);
-
-Q_SIGNALS:
-    void outputChanged(QVideoOutputControl::Output output);
+    ~ContactThumbnailImageProvider();
 
 private:
-    QList<Output> m_outputs;
-    Output m_output;
+    QMap<QString, QContactManager*> m_managers;
+    QMap<QString, QImage> m_thumbnails;
 };
 
-#endif

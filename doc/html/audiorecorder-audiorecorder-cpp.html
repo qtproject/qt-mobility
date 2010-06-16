@@ -69,15 +69,6 @@
         audiosource = new QAudioCaptureSource;
         capture = new QMediaRecorder(audiosource);
 
-        if (capture-&gt;supportedAudioCodecs().size() &gt; 0) {
-            QAudioEncoderSettings audioSettings;
-            audioSettings.setQuality(QtMultimediaKit::LowQuality);
-            audioSettings.setEncodingMode(QtMultimediaKit::ConstantQualityEncoding);
-            audioSettings.setCodec(capture-&gt;supportedAudioCodecs().first());
-            capture-&gt;setEncodingSettings(audioSettings,QVideoEncoderSettings(),
-                    capture-&gt;supportedContainers().first());
-        }
-
         <span class="comment">// set a default file</span>
     #ifdef Q_OS_SYMBIAN
         capture-&gt;setOutputLocation(recordPathAudio(QUrl()));

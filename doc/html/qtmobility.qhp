@@ -649,7 +649,7 @@
                     <section ref="bearer-management.html" title="Bearer Management"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
-                    <section ref="contactsusagehtml.html" title="Contacts API Usage"/>
+                    <section ref="contactsusage.html" title="Contacts API Usage"/>
                     <section ref="contactsasync.html" title="Contacts Asynchronous API"/>
                     <section ref="contactssync.html" title="Contacts Synchronous API"/>
                     <section ref="creating-a-sensor-plugin.html" title="Creating a sensor plugin"/>
@@ -700,7 +700,7 @@
             <keyword name="Bluetooth Transfer Plugin Example" id="Bluetooth Transfer Plugin Example" ref="bluetoothtransferplugin.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
-            <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusagehtml.html"/>
+            <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusage.html"/>
             <keyword name="Contacts Asynchronous API" id="Contacts Asynchronous API" ref="contactsasync.html"/>
             <keyword name="Contacts Synchronous API" id="Contacts Synchronous API" ref="contactssync.html"/>
             <keyword name="Creating a sensor plugin" id="Creating a sensor plugin" ref="creating-a-sensor-plugin.html"/>
@@ -4082,6 +4082,7 @@
             <file>qvideoframe-members.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
+            <file>contactsusage.html</file>
             <file>qcontactmanager.html</file>
             <file>querymessages-querymessages-pro.html</file>
             <file>qcontactavatar.html</file>
@@ -4354,7 +4355,6 @@
             <file>qcompassfilter.html</file>
             <file>notesmanagerplugin-note-h.html</file>
             <file>qvaluespacepublisher.html</file>
-            <file>contactsusagehtml.html</file>
             <file>images/battery-publisher.png</file>
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>

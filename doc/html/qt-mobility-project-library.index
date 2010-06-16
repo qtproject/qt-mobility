@@ -7844,7 +7844,7 @@
             <page access="public" status="commendable" name="writemessage/writemessage.pro" href="writemessage-writemessage-pro.html" subtype="file" title="" fulltitle="writemessage.pro Example File" subtitle="writemessage/writemessage.pro" location=""/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMetaDataWriterControl_iid" href="qmetadatawritercontrol.html#QMetaDataWriterControl_iid" location="qmetadatawritercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMetaDataWriterControl" type="" signature="QMetaDataWriterControl_iid()"/>
-        <page access="public" status="commendable" name="contactsusagehtml" href="contactsusagehtml.html" subtype="page" title="Contacts API Usage" fulltitle="Contacts API Usage" subtitle="" location="contactsusage.qdoc">
+        <page access="public" status="commendable" name="contactsusage.html" href="contactsusage.html" subtype="page" title="Contacts API Usage" fulltitle="Contacts API Usage" subtitle="" location="contactsusage.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="manager-settings-and-configuration" title="Manager Settings And Configuration" level="1"/>
             <contents name="loading-the-default-manager-for-the-platform" title="Loading the default manager for the platform" level="2"/>
@@ -7958,11 +7958,10 @@
             <contents name="schema-differences" title="Schema Differences" level="2"/>
             <contents name="provided-engines" title="Provided Engines" level="2"/>
             <contents name="in-memory-example-engine" title="In-Memory Example Engine" level="3"/>
-            <contents name="symbian-3-1-engine" title="Symbian 3.1 Engine" level="3"/>
-            <contents name="symbian-3-2-engine" title="Symbian 3.2 Engine" level="3"/>
-            <contents name="symbian-5-0-engine" title="Symbian 5.0 Engine" level="3"/>
+            <contents name="symbian-engine" title="Symbian Engine" level="3"/>
+            <contents name="symbian-sim-engine" title="Symbian Sim Engine" level="3"/>
             <contents name="maemo-5-fremantle-engine" title="Maemo 5 (Fremantle) Engine" level="3"/>
-            <contents name="libqttracker-engine" title="libQtTracker Engine" level="3"/>
+            <contents name="windows-ce-engine" title="Windows CE Engine" level="3"/>
             <contents name="information-for-engine-implementors" title="Information For Engine Implementors" level="1"/>
             <contents name="which-functions-do-i-need-to-implement" title="Which Functions Do I Need To Implement" level="2"/>
             <contents name="mandatory-functions" title="Mandatory Functions" level="3"/>
