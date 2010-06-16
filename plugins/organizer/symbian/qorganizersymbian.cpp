@@ -41,9 +41,11 @@
 
 #include "qorganizersymbian_p.h"
 #include "qtorganizer.h"
-
 #include <calsession.h>
 #include <calentryview.h>
+#include "organizeritemdetailtransform.h"
+#include "organizeritemtypetransform.h"
+#include "organizeritemguidtransform.h"
 
 //QTM_USE_NAMESPACE
 
@@ -281,12 +283,23 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemM
 
 void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
 {
-    // Transform QOrganizerItem -> CCalEntry
-    CCalEntry *entry = m_itemTransform.toEntryLC(*item);
-    
+    // Create entry
+    CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
+    HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+    CCalEntry::TMethod method = CCalEntry::EMethodAdd; // TODO
+    TInt seqNum = 0; // TODO
+    //TCalTime recurrenceId; // TODO
+    //CalCommon::TRecurrenceRange recurrenceRange; // TODO
+    CCalEntry *entry = CCalEntry::NewL(type, globalUid, method, seqNum);
+    CleanupStack::Pop(globalUid); // ownership passed?
+    CleanupStack::PushL(entry);
+        
     // Update last modified date to entry
     entry->SetLastModifiedDateL();
-
+    
+    // Transform QOrganizerItem -> CCalEntry    
+    m_itemTransform.toEntryL(*item, entry);
+    
     // Save entry
     RPointerArray<CCalEntry> entries;
     CleanupClosePushL(entries);
@@ -301,15 +314,15 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
         // -> let's use the "one-error-fits-all" error code KErrGeneral.
         User::Leave(KErrGeneral);
     }
-	
-    // Update timestamp to item
+
+    // Update timestamp
     QOrganizerItemTimestamp timeStamp = item->detail<QOrganizerItemTimestamp>();
-    timeStamp.setLastModified(OrganizerItemTransform::toQDateTimeL(entry->LastModifiedDateL()));
+    timeStamp.setLastModified(OrganizerItemDetailTransform::toQDateTimeL(entry->LastModifiedDateL()));
     // TODO: where do we get the created timestamp? native api does not seem to support it
     item->saveDetail(&timeStamp);
     
     // Update guid
-    item->setGuid(OrganizerItemTransform::toQString(entry->UidL()));
+    item->setGuid(OrganizerItemDetailTransform::toQString(entry->UidL()));
     
     // Update local id
     QOrganizerItemId itemId;

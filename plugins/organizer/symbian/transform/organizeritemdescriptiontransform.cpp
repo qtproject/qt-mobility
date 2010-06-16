@@ -38,37 +38,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "organizeritemdescriptiontransform.h"
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
-
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+void OrganizerItemDescriptionTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
+    QString description = toQString(entry.DescriptionL());
+    if (!description.isEmpty())
+        item->setDescription(description);
+}
 
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
-
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
-};
-
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+void OrganizerItemDescriptionTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+{
+    if (!item.description().isEmpty())
+        entry->SetDescriptionL(toPtrC16(item.description()));
+}

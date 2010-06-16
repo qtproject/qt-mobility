@@ -38,37 +38,30 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef ORGANIZERITEMDETAILTRANSFORM_H_
+#define ORGANIZERITEMDETAILTRANSFORM_H_
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
+#include <caltime.h>
+#include <calentry.h>
+#include "qorganizeritem.h"
 
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
 QTM_USE_NAMESPACE
 
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+class OrganizerItemDetailTransform
 {
 public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
+    OrganizerItemDetailTransform();
+    virtual ~OrganizerItemDetailTransform();
 
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
+    virtual void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item) = 0;
+    virtual void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry) = 0;
 
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
+    static QString toQString(const TDesC8 &des);
+    static QString toQString(const TDesC16 &des);
+    static TPtrC8 toPtrC8(const QString &string);
+    static TPtrC16 toPtrC16(const QString &string);
+    static TCalTime toTCalTimeL(QDateTime dateTime);
+    static QDateTime toQDateTimeL(TCalTime calTime);
 };
 
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+#endif /* ORGANIZERITEMDETAILTRANSFORM_H_ */

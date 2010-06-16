@@ -38,37 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "organizeritemlocationtransform.h"
+#include "qorganizeritemlocation.h"
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
-
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+void OrganizerItemLocationTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
+    QString locationName = toQString(entry.LocationL());
+    if (!locationName.isEmpty()) {
+        QOrganizerItemLocation location;
+        location.setLocationName(locationName);
+        item->saveDetail(&location);
+    }
+}
 
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
-
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
-};
-
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+void OrganizerItemLocationTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+{
+    QOrganizerItemLocation loc = item.detail<QOrganizerItemLocation>();
+    if (!loc.isEmpty()) {
+        // NOTE: what about geoLocation & address?
+        entry->SetLocationL(toPtrC16(loc.locationName()));
+    }
+}

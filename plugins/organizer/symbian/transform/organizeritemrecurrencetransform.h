@@ -38,37 +38,24 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef ORGANIZERITEMRECURRENCETRANSFORM_H_
+#define ORGANIZERITEMRECURRENCETRANSFORM_H_
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
+#include "organizeritemdetailtransform.h"
+#include "qorganizeritemrecurrencerule.h"
 
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+class OrganizerItemRecurrenceTransform : public OrganizerItemDetailTransform
 {
 public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
-
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
+    void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
+    void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
 
 private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
+    void toTCalTimesL(const QList<QDate> &dateTimes, RArray<TCalTime> &calDates) const;
+    QList<QDate> toQDatesL(const RArray<TCalTime> &calDates) const;
+    QList<QOrganizerItemRecurrenceRule> toItemRecurrenceRules(const TCalRRule &rrule) const;
+    TCalRRule toCalRRule(QList<QOrganizerItemRecurrenceRule> recrules) const;
 };
 
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+#endif // ORGANIZERITEMRECURRENCETRANSFORM_H_
+

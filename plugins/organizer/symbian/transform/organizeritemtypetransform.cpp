@@ -39,36 +39,51 @@
 **
 ****************************************************************************/
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
+#include "organizeritemtypetransform.h"
 
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
+    CCalEntry::TType entryType = entry.EntryTypeL();
+    QString itemType;
 
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
+    if (entryType == CCalEntry::ETodo)
+        itemType = QLatin1String(QOrganizerItemType::TypeTodo);
+    else if (entryType == CCalEntry::EEvent)
+        itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    else if (entryType == CCalEntry::EAppt)
+        itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    else
+        User::Leave(KErrUnknown); // unknown type
 
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
-};
+    // TODO: CCalEntry::EAppt
+    // TODO: CCalEntry::EReminder
+    // TODO: CCalEntry::EAnniv
 
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+    item->setType(itemType);
+}
+
+void OrganizerItemTypeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+{
+    Q_UNUSED(item);
+    Q_UNUSED(entry);
+    // Not used. Entry type is already set when CCalEntry was created.
+}
+
+CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &item)
+{
+    QString itemType = item.type();
+    CCalEntry::TType entryType;
+
+    if (itemType == QOrganizerItemType::TypeTodo)
+        entryType = CCalEntry::ETodo;
+    else if (itemType == QOrganizerItemType::TypeEvent)
+        entryType = CCalEntry::EAppt;
+    else
+        User::Leave(KErrUnknown); // unknown type
+
+    // TODO: CCalEntry::EEvent???
+    // TODO: CCalEntry::EReminder
+    // TODO: CCalEntry::EAnniv
+
+    return entryType;
+}

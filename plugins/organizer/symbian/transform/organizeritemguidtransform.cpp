@@ -38,37 +38,50 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "organizeritemguidtransform.h"
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
+const TInt KGuidLength = 30;
 
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+OrganizerItemGuidTransform::OrganizerItemGuidTransform()
 {
-public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
+    // Set seed for qrand()
+    TTime homeTime;
+    homeTime.HomeTime();
+    uint seed = (uint) homeTime.Int64();
+    qsrand(seed);
+}
 
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
+void OrganizerItemGuidTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
+{
+    QString guid = toQString(entry.UidL());
+    if (!guid.isEmpty())
+        item->setGuid(guid);
+}
 
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
-};
+void OrganizerItemGuidTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+{
+    Q_UNUSED(item);
+    Q_UNUSED(entry);
+    // Not used. Guid is already set when CCalEntry was created.
+}
 
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+HBufC8 *OrganizerItemGuidTransform::guidLC(const QOrganizerItem &item)
+{
+    // Read guid from organizer item
+    QString globalUidString = item.guid();
+
+    // Create a buffer for guid
+    HBufC8* globalUidBuf = HBufC8::NewLC(KGuidLength);
+    TPtr8 ptr = globalUidBuf->Des();
+
+    if (item.guid().isEmpty()) {
+        // Generate a new quid
+        // TODO: is this long enough for us? We could add imei or second random number to it...
+        ptr.Num(qrand());
+    } else {
+        // Use the old guid
+        ptr = toPtrC8(globalUidString);
+    }
+
+    return globalUidBuf; // ownership passed
+}

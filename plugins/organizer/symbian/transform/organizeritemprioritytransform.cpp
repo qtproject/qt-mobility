@@ -38,37 +38,21 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "organizeritemprioritytransform.h"
+#include "qorganizeritempriority.h"
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
-
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+void OrganizerItemPriorityTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
+    QOrganizerItemPriority priority;
+    // TODO: do we need some kind of conversion?
+    // Item has range from 0-9 and entry has range from 0 - 255.
+    priority.setPriority((QOrganizerItemPriority::Priority) entry.PriorityL());
+    item->saveDetail(&priority);
+}
 
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
-
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
-};
-
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+void OrganizerItemPriorityTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+{
+    QOrganizerItemPriority priority = item.detail<QOrganizerItemPriority>();
+    if (!priority.isEmpty())
+        entry->SetPriorityL(priority.priority()); // allowed values between 0 and 255.
+}

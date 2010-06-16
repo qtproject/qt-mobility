@@ -39,36 +39,16 @@
 **
 ****************************************************************************/
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
+#ifndef ORGANIZEREVENTTIMERANGETRANSFORM_H_
+#define ORGANIZEREVENTTIMERANGETRANSFORM_H_
 
-#include <QList>
-#include <qmobilityglobal.h>
+#include "organizeritemdetailtransform.h"
 
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+class OrganizerEventTimeRangeTransform : public OrganizerItemDetailTransform
 {
 public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
-
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
-
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
+    void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
+    void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
 };
 
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+#endif /* ORGANIZEREVENTTIMERANGETRANSFORM_H_ */

@@ -38,37 +38,28 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "organizerjournaltimerangetransform.h"
+#include "qorganizerjournaltimerange.h"
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
-
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+void OrganizerJournalTimeRangeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
+    if (item->type() == QOrganizerItemType::TypeJournal)
+    {
+        TCalTime dtstamp = entry.DTStampL(); // TODO: is DTStamp correct?
+        if (dtstamp.TimeUtcL() != Time::NullTTime()) {
+            QOrganizerJournalTimeRange range;
+            range.setEntryDateTime(toQDateTimeL(entry.DTStampL()));
+            item->saveDetail(&range);
+        }
+    }
+}
 
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
-
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
-};
-
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+void OrganizerJournalTimeRangeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+{
+    if (item.type() == QOrganizerItemType::TypeJournal)
+    {
+        QOrganizerJournalTimeRange range = item.detail<QOrganizerJournalTimeRange>();
+        if (!range.isEmpty())
+            entry->SetDTStampL(toTCalTimeL(range.entryDateTime())); // TODO: is DTStamp correct?
+    }
+}

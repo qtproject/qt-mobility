@@ -38,37 +38,32 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#include "organizertodotimerangetransform.h"
+#include "qorganizertodotimerange.h"
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
-
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+void OrganizerTodoTimeRangeTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
+    if(item->type() == QOrganizerItemType::TypeTodo)
+    {
+        TCalTime startTime = entry.StartTimeL();
+        TCalTime endTime = entry.EndTimeL();
 
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
+        QOrganizerTodoTimeRange range;
+        if (startTime.TimeUtcL() != Time::NullTTime())
+            range.setStartDateTime(toQDateTimeL(startTime));
+        if (endTime.TimeUtcL() != Time::NullTTime())
+            range.setDueDateTime(toQDateTimeL(endTime));
 
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
-};
+        item->saveDetail(&range);
+    }
+}
 
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+void OrganizerTodoTimeRangeTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
+{
+    if(item.type() == QOrganizerItemType::TypeTodo)
+    {
+        QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
+        if (!range.isEmpty())
+            entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.dueDateTime()));
+    }
+}

@@ -38,37 +38,17 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+#ifndef ORGANIZERITEMTYPETRANSFORM_H_
+#define ORGANIZERITEMTYPETRANSFORM_H_
 
-#ifndef ORGANIZERITEMTRANSFORM_H_
-#define ORGANIZERITEMTRANSFORM_H_
+#include "organizeritemdetailtransform.h"
 
-#include <QList>
-#include <qmobilityglobal.h>
-
-QTM_BEGIN_NAMESPACE
-class QOrganizerItem;
-QTM_END_NAMESPACE
-QTM_USE_NAMESPACE
-
-class CCalEntry;
-class CCalInstance;
-class OrganizerItemDetailTransform;
-
-class OrganizerItemTransform
+class OrganizerItemTypeTransform : public OrganizerItemDetailTransform
 {
 public:
-    OrganizerItemTransform();
-    ~OrganizerItemTransform();
-
-    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
-    void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
-    void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
-
-private:
-    void debugEntryL(const CCalEntry &entry) const;
-    
-private:
-    QList<OrganizerItemDetailTransform *> m_detailTransforms;
+    void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
+    void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
+    static CCalEntry::TType entryTypeL(const QOrganizerItem &item);
 };
 
-#endif /* ORGANIZERITEMTRANSFORM_H_ */
+#endif /* ORGANIZERITEMTYPETRANSFORM_H_ */
