@@ -129,19 +129,21 @@ void ContextKitHandle::insert (const QString &path, const QString &key)
 ContextKitHandle::ContextKitHandle (ContextKitHandle *parent, const QString &path)
 {
     QString key = path;
-    if (key.startsWith("/"))
+    if (key.startsWith(QLatin1Char('/')))
         key = key.mid(1);
-    key = key.replace('/', '.');
+    key = key.replace(QLatin1Char('/'), QLatin1Char('.'));
     if (parent)
         key = parent->prefix + key;
 
-    prefix = (key == "")? "" : key + ".";
+    if (!key.isEmpty())
+        prefix = key + QLatin1Char('.');
+
     foreach (const QString &k, ContextRegistryInfo::instance()->listKeys())
     {
         if (k == key)
-            insert ("", k);
-        else if (k.startsWith (prefix))
-            insert (k.mid(prefix.length()).replace ('.', '/'), k);
+            insert(QString(), k);
+        else if (k.startsWith(prefix))
+            insert(k.mid(prefix.length()).replace (QLatin1Char('.'), QLatin1Char('/')), k);
     }
 }
 

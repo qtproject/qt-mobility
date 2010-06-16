@@ -652,6 +652,11 @@ void tst_QContact::displayName()
     QVERIFY(!d.removeDetail(&old)); // should fail.
     QVERIFY(d.isEmpty() == false);
     QVERIFY(d.details().count() == 3); // it should not be removed!
+
+    /* Test self assign */
+    d.operator =(d);
+    QVERIFY(d.details().count() == 3);
+    QVERIFY(d.isEmpty() == false);
 }
 
 void tst_QContact::type()

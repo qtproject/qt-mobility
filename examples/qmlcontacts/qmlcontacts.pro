@@ -4,9 +4,6 @@ TARGET = qcontactqmlplugin
 
 CONFIG += qt plugin mobility
 QT += declarative
-QT += script
-
-VERSION = 1.0.0
 
 MOBILITY = contacts \
     versit
@@ -22,10 +19,18 @@ INCLUDEPATH += . \
     ../../src/versit
 
 # Input
-HEADERS += qmlcontactmodel.h
+HEADERS += qmlcontactmodel.h \
+           imageprovider.h \
+           qmlcontact.h \
+           qmlcontactdetail.h \
+           qmlcontactdetailfield.h
 
 SOURCES += plugin.cpp \
-    qmlcontactmodel.cpp
+    qmlcontactmodel.cpp \
+    imageprovider.cpp \
+    qmlcontact.cpp \
+    qmlcontactdetail.cpp \
+    qmlcontactdetailfield.cpp
 
 OTHER_FILES += example.qml \
     contents/example.vcf \

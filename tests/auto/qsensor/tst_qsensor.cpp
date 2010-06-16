@@ -261,14 +261,6 @@ private slots:
         sensor.availableDataRates();
     }
 
-    void testMetaData4()
-    {
-        TestSensor sensor;
-        sensor.setProperty("doThis", "rates(nodef)");
-        QTest::ignoreMessage(QtWarningMsg, "\"test sensor impl\" backend did not supply default data rate. ");
-        sensor.connectToBackend();
-    }
-
     void testFilter()
     {
         TestSensor sensor;

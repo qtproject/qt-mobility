@@ -54,6 +54,9 @@ QTM_BEGIN_NAMESPACE
   contacts (which may be retrieved by calling contacts()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
   \ingroup contacts-requests
  */
 
@@ -61,6 +64,12 @@ QTM_BEGIN_NAMESPACE
 QContactFetchRequest::QContactFetchRequest(QObject* parent)
     : QContactAbstractRequest(new QContactFetchRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactFetchRequest::~QContactFetchRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*! Sets the contact filter used to determine which contacts will be retrieved to \a filter */

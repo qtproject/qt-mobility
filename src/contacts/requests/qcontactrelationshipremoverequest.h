@@ -56,6 +56,7 @@ class Q_CONTACTS_EXPORT QContactRelationshipRemoveRequest : public QContactAbstr
 
 public:
     QContactRelationshipRemoveRequest(QObject* parent = 0);
+    ~QContactRelationshipRemoveRequest();
 
     /* Selection */
     void Q_DECL_DEPRECATED setFirst(const QContactId& firstId);                   // deprecated, replaced by explicitly defined relationship list

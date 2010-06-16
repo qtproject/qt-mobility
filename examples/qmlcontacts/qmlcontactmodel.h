@@ -42,9 +42,11 @@
 #define QMLCONTACTMODEL_H
 
 #include <QAbstractListModel>
+#include <QDeclarativePropertyMap>
 #include "qcontact.h"
 #include "qcontactmanager.h"
 #include "qcontactfetchrequest.h"
+#include "qmlcontact.h"
 
 QTM_USE_NAMESPACE;
 class QMLContactModel : public QAbstractListModel
@@ -58,6 +60,9 @@ public:
     enum {
         InterestRole = Qt::UserRole + 500,
         InterestLabelRole,
+        ContactRole,
+        ContactIdRole,
+        DetailsRole,
         AvatarRole,
         PresenceAvailableRole,
         PresenceTextRole,
@@ -67,11 +72,13 @@ public:
 
     QStringList availableManagers() const;
 
-    QString manager();
+    QString manager() const;
     void setManager(const QString& manager);
 
     int rowCount(const QModelIndex &parent) const;
     QVariant data(const QModelIndex &index, int role) const;
+
+    Q_INVOKABLE QList<QObject*> details(int id) const;
 signals:
 
 public slots:
@@ -82,9 +89,11 @@ private slots:
 
 private:
     QPair<QString, QString> interestingDetail(const QContact&c) const;
-
+    void exposeContactsToQML();
     void fillContactsIntoMemoryEngine(QContactManager* manager);
 
+
+    QMap<QContactLocalId, QMLContact*> m_contactMap;
     QList<QContact> m_contacts;
     QContactManager* m_manager;
     QContactFetchHint m_fetchHint;

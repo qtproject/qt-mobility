@@ -370,6 +370,11 @@ void tst_QContactManagerFiltering::detailStringFiltering_data()
             QTest::newRow("integer == 20, contains, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("20") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "bc";
             QTest::newRow("integer == 0, contains, string") << manager << defAndFieldNames.first << defAndFieldNames.second << QVariant("0") << (int)(Qt::MatchFixedString | Qt::MatchContains) << "abc";
         }
+
+        /* Detail filter semantics: empty definition or field */
+        newMRow("Empty Definition Name", manager) << manager << es << lastname << QVariant("A") << (int)(Qt::MatchStartsWith) << es; // empty definition name means filter matches nothing
+        newMRow("Empty Def And Field Name", manager) << manager << es << es << QVariant("A") << (int)(Qt::MatchStartsWith) << es; // as above
+        newMRow("Empty Field Name", manager) << manager << name << es << QVariant("A") << (int)(Qt::MatchStartsWith) << "abcdefghijk"; // empty field name matches any with a name detail
     }
 }
 
@@ -840,12 +845,16 @@ void tst_QContactManagerFiltering::rangeFiltering_data()
         newMRow("no min, cs, most results", manager) << manager << namedef << firstname << QVariant() << QVariant("Xambezi") << false << 0 << true << csflag << "abcdefg";
         newMRow("no min, cs, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("Bob") << false << 0 << true << csflag << "a";
         newMRow("no min, cs, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("Aardvark") << false << 0 << true << csflag << es;
-
-        /* due to ascii sorting, most lower case parameters give all results, which is boring */
         newMRow("no max, cs, badcase, all results", manager) << manager << namedef << firstname << QVariant("A") << QVariant() << false << 0 << true << csflag << "abcdefghijk";
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"no max, cs, badcase, some results\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("no max, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant("BOB") << QVariant() << false << 0 << true << csflag << "cdefghijk";
         newMRow("no max, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant("XAMBEZI") << QVariant() << false << 0 << true << csflag << "hijk";
         newMRow("no min, cs, badcase, all results", manager) << manager << namedef << firstname << QVariant() << QVariant("XAMBEZI") << false << 0 << true << csflag << "abcdefg";
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"no min, cs, badcase, some results\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("no min, cs, badcase, some results", manager) << manager << namedef << firstname << QVariant() << QVariant("BOB") << false << 0 << true << csflag << "ab";
         newMRow("no min, cs, badcase, no results", manager) << manager << namedef << firstname << QVariant() << QVariant("AARDVARK") << false << 0 << true << csflag << es;
 
@@ -2037,9 +2046,18 @@ void tst_QContactManagerFiltering::sorting_data()
         QPair<QString, QString> integerDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("Integer");
         QPair<QString, QString> stringDefAndFieldNames = defAndFieldNamesForTypePerManager.value(manager).value("String");
 
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"first ascending\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("first ascending", manager) << manager << namedef << firstname << asc << false << 0 << cs << "abcdefghjik" << "efg";  // efg have the same first name
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"first descending\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("first descending", manager) << manager << namedef << firstname << desc << false << 0 << cs << "kijhefgdcba" << "efg";// efg have the same first name
         newMRow("last ascending", manager) << manager << namedef << lastname << asc << false << 0 << cs << "bacdefghijk" << "hijk";       // all have a well defined, sortable last name except hijk
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"last descending\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
         newMRow("last descending", manager) << manager << namedef << lastname << desc << false << 0 << cs << "gfedcabhijk" << "hijk";     // all have a well defined, sortable last name except hijk
         if (!integerDefAndFieldNames.first.isEmpty() && !integerDefAndFieldNames.second.isEmpty()) {
             newMRow("integer ascending, blanks last", manager) << manager << integerDefAndFieldNames.first << integerDefAndFieldNames.second << asc << true << bll << cs << "cabgfedhijk" << "gfedhijk"; // gfedhijk have no integer
@@ -2052,8 +2070,11 @@ void tst_QContactManagerFiltering::sorting_data()
             QTest::newRow("string ascending (null value), blanks last") << manager << stringDefAndFieldNames.first << stringDefAndFieldNames.second << asc << true << bll << cs << "abcdgef" << "efhijk";   // f and e have blank string
         }
 
-        newMRow("display label insensitive", manager) << manager << dldef << dlfld << asc << false << 0 << cs << "abcdefghjik" << "efg";
-        newMRow("display label sensitive", manager) << manager << dldef << dlfld << asc << false << 0 << ci << "abcdefghjik" << "efg";
+        newMRow("display label insensitive", manager) << manager << dldef << dlfld << asc << false << 0 << ci << "abcdefghjik" << "efghji";
+#ifdef Q_OS_SYMBIAN
+        qWarning() << "Test case \"display label sensitive\" will fail on symbian platform because of QString::localeAwareCompare is not actually locale aware"; 
+#endif
+        newMRow("display label sensitive", manager) << manager << dldef << dlfld << asc << false << 0 << cs << "abcdefghjik" << "efg";
     }
 }
 
@@ -2065,12 +2086,14 @@ void tst_QContactManagerFiltering::sorting()
     QFETCH(int, directioni);
     QFETCH(bool, setbp);
     QFETCH(int, blankpolicyi);
+    QFETCH(int, casesensitivityi);    
     QFETCH(QString, expected);
     QFETCH(QString, unstable);
 
     Qt::SortOrder direction = (Qt::SortOrder)directioni;
-    QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy)blankpolicyi;
-
+    QContactSortOrder::BlankPolicy blankpolicy = (QContactSortOrder::BlankPolicy) blankpolicyi;
+    Qt::CaseSensitivity casesensitivity = (Qt::CaseSensitivity) casesensitivityi;
+    
     QList<QContactLocalId> contacts = contactsAddedToManagers.values(cm);
     QList<QContactLocalId> ids;
 
@@ -2080,6 +2103,7 @@ void tst_QContactManagerFiltering::sorting()
     s.setDirection(direction);
     if (setbp)
         s.setBlankPolicy(blankpolicy);
+    s.setCaseSensitivity(casesensitivity);
 
     ids = cm->contactIds(s);
     QString output = convertIds(contacts, ids);
@@ -2112,7 +2136,7 @@ void tst_QContactManagerFiltering::sorting()
         bool unstableElementsAreGrouped = ((lastIndex - firstIndex) == (unstable.length() - 1));
         QVERIFY(unstableElementsAreGrouped);
 
-        // now remove all unstable elements from the output except one.
+        // now remove all unstable elements from the output
         for (int i = 1; i < unstable.length(); i++) {
             output.remove(unstable.at(i));
             expected.remove(unstable.at(i));
@@ -2157,7 +2181,7 @@ void tst_QContactManagerFiltering::sorting()
         bool unstableElementsAreGrouped = ((lastIndex - firstIndex) == (unstable.length() - 1));
         QVERIFY(unstableElementsAreGrouped);
 
-        // now remove all unstable elements from the output except one.
+        // now remove all unstable elements from the output
         for (int i = 1; i < unstable.length(); i++) {
             output.remove(unstable.at(i));
             expected.remove(unstable.at(i));

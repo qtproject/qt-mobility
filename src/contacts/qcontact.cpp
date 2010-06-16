@@ -176,14 +176,12 @@ void QContact::clearDetails()
     // insert the contact's display label detail.
     QContactDisplayLabel contactLabel;
     contactLabel.setValue(QContactDisplayLabel::FieldLabel, QString());
-    contactLabel.d->m_id = 1;
     contactLabel.d->m_access = QContactDetail::Irremovable | QContactDetail::ReadOnly;
     d->m_details.insert(0, contactLabel);
 
     // and the contact type detail.
     QContactType contactType;
     contactType.setType(QContactType::TypeContact);
-    contactType.d->m_id = 2;
     contactType.d->m_access = QContactDetail::Irremovable;
     d->m_details.insert(1, contactType);
 }
@@ -522,6 +520,12 @@ QList<QContactDetail> QContact::details(const char* definitionName, const char* 
  * to each manager, use the QContactManager::synthesizeContactDisplayLabel() function
  * instead.
  *
+ * Be aware that if a contact is retrieved (or reloaded) from the backend, the
+ * keys of any details it contains may have been changed by the backend, or other
+ * threads may have modified the contact details in the backend.  Therefore,
+ * clients should reload the detail that they wish to save in a contact after retrieving
+ * the contact, in order to avoid creating unwanted duplicated details.
+ *
  * Returns true if the detail was saved successfully, otherwise returns false.
  *
  * Note that the caller retains ownership of the detail.
@@ -570,6 +574,12 @@ bool QContact::saveDetail(QContactDetail* detail)
  * information in the detail may be different.
  *
  * Any action preferences for the matching detail is also removed.
+ *
+ * Be aware that if a contact is retrieved (or reloaded) from the backend, the
+ * keys of any details it contains may have been changed by the backend, or other
+ * threads may have modified the contact details in the backend.  Therefore,
+ * clients should reload the detail that they wish to remove from a contact after retrieving
+ * the contact, in order to ensure that the remove operation is successful.
  *
  * If the detail's access constraint includes \c QContactDetail::Irremovable,
  * this function will return false.

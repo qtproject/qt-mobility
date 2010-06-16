@@ -49,8 +49,8 @@
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
-#include "qt7videooutputcontrol.h"
-#include <QtMultimedia/qvideoframe.h>
+#include "qt7videooutput.h"
+#include <qvideoframe.h>
 
 QT_BEGIN_NAMESPACE
 
@@ -65,8 +65,8 @@ public:
     QT7MovieViewRenderer(QObject *parent = 0);
     ~QT7MovieViewRenderer();
 
-    void setEnabled(bool);
     void setMovie(void *movie);
+    void updateNaturalSize(const QSize &newSize);
 
     QAbstractVideoSurface *surface() const;
     void setSurface(QAbstractVideoSurface *surface);
@@ -84,6 +84,7 @@ private:
     QSize m_nativeSize;
     QAbstractVideoSurface *m_surface;
     QVideoFrame m_currentFrame;
+    bool m_pendingRenderEvent;
     QMutex m_mutex;
 };
 

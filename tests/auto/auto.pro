@@ -63,6 +63,10 @@ contains(mobility_modules,systeminfo) {
           qsystemstorageinfo \
           qsystemnetworkinfo \
           qsystemscreensaver
+    maemo6: {
+          #maemo6 spesific autotests
+          SUBDIRS += maemo6
+    }
 }
 
 contains(mobility_modules,contacts) {
@@ -115,7 +119,13 @@ contains(mobility_modules,multimedia) {
         qradiotuner \
         qpaintervideosurface \
         qvideowidget \
-        qmediatimerange
+        qmediatimerange \
+        qaudiodeviceinfo \
+        qaudiooutput \
+        qaudioinput \
+        qaudioformat \
+        qvideoframe \
+        qvideosurfaceformat
 
     symbian: {
         #symbian spesific autotests

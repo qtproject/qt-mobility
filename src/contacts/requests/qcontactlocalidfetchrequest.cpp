@@ -54,6 +54,9 @@ QTM_BEGIN_NAMESPACE
   manager-local contact ids (which may be retrieved by calling ids()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
 
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
+
   \ingroup contacts-requests
  */
 
@@ -61,6 +64,12 @@ QTM_BEGIN_NAMESPACE
 QContactLocalIdFetchRequest::QContactLocalIdFetchRequest(QObject* parent)
     : QContactAbstractRequest(new QContactLocalIdFetchRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactLocalIdFetchRequest::~QContactLocalIdFetchRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*! Sets the filter which will be used to select the contacts whose ids will be returned to \a filter */
