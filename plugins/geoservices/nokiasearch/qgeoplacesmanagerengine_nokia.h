@@ -39,34 +39,43 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_NOKIA_H
-#define QGEOSERVICEPROVIDER_NOKIA_H
+#ifndef QGEOPLACESMANAGER_NOKIA_H
+#define QGEOPLACESMANAGER_NOKIA_H
 
-#include <QGeoServiceProviderFactory>
-#include <QObject>
+#include <QGeoServiceProvider>
+#include <QGeoPlacesManagerEngine>
+
+#include <QNetworkAccessManager>
 
 QTM_USE_NAMESPACE
 
-class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
+class QGeoPlacesManagerEngineNokia : public QGeoPlacesManagerEngine
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoServiceProviderFactoryNokia();
-    ~QGeoServiceProviderFactoryNokia();
+    QGeoPlacesManagerEngineNokia(const QMap<QString, QString> &parameters,
+                                 QGeoServiceProvider::Error *error,
+                                 QString *errorString);
+    ~QGeoPlacesManagerEngineNokia();
 
-    QString providerName() const;
-    int providerVersion() const;
+    QGeoPlacesReply* geocode(const QGeoAddress &address,
+                             const QGeoBoundingBox &bounds);
+    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
+                             const QGeoBoundingBox &bounds);
 
-    QGeoPlacesManagerEngine* createPlacesManagerEngine(const QMap<QString, QString> &parameters,
-                                                       QGeoServiceProvider::Error *error,
-                                                       QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
+    QGeoPlacesReply* placesSearch(const QString &searchString,
+                                  QGeoPlacesManager::SearchTypes searchTypes,
+                                  const QGeoBoundingBox &bounds);
+
+private slots:
+    void placesFinished();
+    void placesError(QGeoPlacesReply::Error error, const QString &errorString);
+
+private:
+    QGeoPlacesReply* search(QString requestString);
+
+    QNetworkAccessManager *m_networkManager;
+    QString m_host;
 };
 
 #endif

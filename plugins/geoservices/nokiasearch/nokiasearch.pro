@@ -11,9 +11,17 @@ CONFIG += mobility
 MOBILITY = location
 
 HEADERS += \
+            qgeoplacesreply_nokia.h \
+            qgeoplacesmanagerengine_nokia.h \
+            qgeoroutereply_nokia.h \
+            qgeoroutingmanagerengine_nokia.h \
             qgeoserviceproviderplugin_nokia.h
 
 SOURCES += \
+            qgeoplacesreply_nokia.cpp \
+            qgeoplacesmanagerengine_nokia.cpp \
+            qgeoroutereply_nokia.cpp \
+            qgeoroutingmanagerengine_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
 INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE/include/QtmLocation

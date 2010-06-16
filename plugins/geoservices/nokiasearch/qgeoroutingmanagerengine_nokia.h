@@ -39,34 +39,37 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_NOKIA_H
-#define QGEOSERVICEPROVIDER_NOKIA_H
+#ifndef QGEOROUTINGMANAGER_NOKIA_H
+#define QGEOROUTINGMANAGER_NOKIA_H
 
-#include <QGeoServiceProviderFactory>
-#include <QObject>
+#include <QGeoServiceProvider>
+#include <QGeoRoutingManagerEngine>
+#include <QNetworkAccessManager>
 
 QTM_USE_NAMESPACE
 
-class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
+class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoServiceProviderFactoryNokia();
-    ~QGeoServiceProviderFactoryNokia();
+    QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters,
+                                  QGeoServiceProvider::Error *error,
+                                  QString *errorString);
+    ~QGeoRoutingManagerEngineNokia();
 
-    QString providerName() const;
-    int providerVersion() const;
+    QGeoRouteReply* calculateRoute(const QGeoRouteRequest& request);
+    QGeoRouteReply* updateRoute(const QGeoRoute &route, const QGeoCoordinate &position);
 
-    QGeoPlacesManagerEngine* createPlacesManagerEngine(const QMap<QString, QString> &parameters,
-                                                       QGeoServiceProvider::Error *error,
-                                                       QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
+private slots:
+    void routeFinished();
+    void routeError(QGeoRouteReply::Error error, const QString &errorString);
+
+private:
+    QString calculateRouteRequestString(const QGeoRouteRequest &request);
+    QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
+
+    QNetworkAccessManager *m_networkManager;
+    QString m_host;
 };
 
 #endif

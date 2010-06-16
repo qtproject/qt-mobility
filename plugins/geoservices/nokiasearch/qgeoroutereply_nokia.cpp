@@ -39,48 +39,60 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin_nokia.h"
+#include "qgeoroutereply_nokia.h"
+//#include "qgeoroutexmlparser_p.h"
 
-#include <QGeoMappingManagerEngine>
-#include "qgeoplacesmanagerengine_nokia.h"
-#include "qgeoroutingmanagerengine_nokia.h"
+#include <QGeoRouteRequest>
 
-#include <QtPlugin>
-#include <QNetworkProxy>
-
-QGeoServiceProviderFactoryNokia::QGeoServiceProviderFactoryNokia() {}
-
-QGeoServiceProviderFactoryNokia::~QGeoServiceProviderFactoryNokia() {}
-
-QString QGeoServiceProviderFactoryNokia::providerName() const
+QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request, QNetworkReply *reply, QObject *parent)
+        : QGeoRouteReply(request, parent),
+        m_reply(reply)
 {
-    return "nokiasearch";
+    connect(m_reply,
+            SIGNAL(finished()),
+            this,
+            SLOT(networkFinished()));
+
+    connect(m_reply,
+            SIGNAL(error(QNetworkReply::NetworkError)),
+            this,
+            SLOT(networkError(QNetworkReply::NetworkError)));
 }
 
-int QGeoServiceProviderFactoryNokia::providerVersion() const
+QGeoRouteReplyNokia::~QGeoRouteReplyNokia()
 {
-    return 1;
 }
 
-QGeoPlacesManagerEngine* QGeoServiceProviderFactoryNokia::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString) const
+void QGeoRouteReplyNokia::abort()
 {
-    return NULL;
+    m_reply->abort();
+    m_reply->deleteLater();
 }
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QString> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString)const
+void QGeoRouteReplyNokia::networkFinished()
 {
-    return NULL;
+    if (m_reply->error() != QNetworkReply::NoError) {
+        setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
+        m_reply->deleteLater();
+        return;
+    }
+
+//    QGeoRouteXmlParser parser(request());
+
+//    if (parser.parse(m_reply)) {
+//        setRoutes(parser.results());
+//        setFinished(true);
+//    } else {
+        // add a qWarning with the actual parser.errorString()
+        setError(QGeoRouteReply::ParseError, "The response from the service was not in a recognisable format.");
+//    }
+
+    m_reply->deleteLater();
 }
 
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString) const
+void QGeoRouteReplyNokia::networkError(QNetworkReply::NetworkError error)
 {
-    return NULL;
+    Q_UNUSED(error)
+    setError(QGeoRouteReply::CommunicationError, m_reply->errorString());
+    m_reply->deleteLater();
 }
-
-Q_EXPORT_PLUGIN2(qtgeoservices_nokiasearch, QGeoServiceProviderFactoryNokia)
