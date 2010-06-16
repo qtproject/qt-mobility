@@ -129,7 +129,9 @@ QContactAction* QContactActionServiceManager::action(const QContactActionDescrip
 {
     QMutexLocker locker(&m_instanceMutex);
     init();
-    return m_actionFactoryHash.value(descriptor)->create();
+    if (m_actionFactoryHash.contains(descriptor))
+        return m_actionFactoryHash.value(descriptor)->create();
+    return 0;
 }
 
 void QContactActionServiceManager::serviceAdded(const QString& serviceName)

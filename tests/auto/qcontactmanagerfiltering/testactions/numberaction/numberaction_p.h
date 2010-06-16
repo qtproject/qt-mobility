@@ -67,7 +67,7 @@ QTM_USE_NAMESPACE
 class DummyAction : public QContactAction
 {
 public:
-    DummyAction(QObject* parent = 0) : QContactAction(parent) {}
+    DummyAction(QObject* parent = 0) { Q_UNUSED(parent) }
 
     QVariantMap metaData() const {return QVariantMap();}
 
@@ -102,50 +102,74 @@ class QNumberAction : public DummyAction
 public:
     QNumberAction(QObject *parent = 0) : DummyAction(parent) {}
     ~QNumberAction() {}
+};
 
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "NumberCo", 42); }
+class QNumberActionFactory : public QContactActionFactory
+{
+    Q_OBJECT
 
-    QContactFilter contactFilter(const QVariant& value) const
+public:
+    QNumberActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
+    {
+    }
+
+    ~QNumberActionFactory()
+    {
+
+    }
+
+    QContactAction* create() const
+    {
+        return new QNumberAction;
+    }
+
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const
+    {
+        QSet<QContactActionTarget> retn;
+        QList<QContactDetail> intDets = contact.details("IntegerDefinition");
+        foreach (const QContactDetail& det, intDets) {
+            if (det.variantValue("IntegerField").isValid()) {
+                QContactActionTarget curr(contact, det);
+                retn << curr;
+            }
+        }
+
+        QList<QContactDetail> doubleDets = contact.details("DoubleDefinition");
+        foreach (const QContactDetail& det, doubleDets) {
+            if (det.variantValue("DoubleField").isValid()) {
+                QContactActionTarget curr(contact, det);
+                retn << curr;
+            }
+        }
+
+        return retn;
+    }
+
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Double to this function...
         df.setDetailDefinitionName("DoubleDefinition", "DoubleField");
-        df.setValue(value);
 
         QContactDetailFilter df2;
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
         df2.setDetailDefinitionName("IntegerDefinition", "IntegerField");
-        df2.setValue(value);
 
         /* We like either doubles or integers */
         return df | df2;
     }
 
-    bool isTargetSupported(const QContactActionTarget &target) const
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
     {
-        if (target.details().size() != 1 || !target.isValid())
-            return false;
-
-        QContactDetail detail = target.details().at(0);
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Double to this function...
-        if (detail.definitionName() == QString(QLatin1String("DoubleDefinition")) && detail.hasValue("DoubleField")) {
-            return true;
-        }
-
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
-        if (detail.definitionName() == QString(QLatin1String("IntegerDefinition")) && detail.hasValue("IntegerField")) {
-            return true;
-        }
-
-        return false;
+        Q_UNUSED(key);
+        Q_UNUSED(targets);
+        Q_UNUSED(parameters);
+        return QVariant();
     }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
+
+    bool supportsContact(const QContact& contact) const
     {
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
-        QList<QContactDetail> retn = contact.details("IntegerDefinition");
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Double to this function...
-        retn.append(contact.details("DoubleDefinition"));
-        return retn;
+        return supportedTargets(contact).isEmpty();
     }
 };
 
@@ -163,7 +187,7 @@ public:
         Q_UNUSED(session);
 
         if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.number")
-            return new QNumberAction(this);
+            return new QNumberActionFactory(this);
         else
             return 0;
     }

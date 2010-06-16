@@ -5,8 +5,9 @@
     <description>This service provides the "send email" QContactAction for testing purposes</description>
     <interface>
         <name>com.nokia.qt.mobility.contacts.qcontactaction.sendemail</name>
-        <version>1.0</version>
+        <version>1.1</version>
         <capabilities></capabilities>
+        <customproperty key="ActionName">SendEmail</customproperty>
         <description>Interface which allows sending emails to a contact</description>
     </interface>
 </service>

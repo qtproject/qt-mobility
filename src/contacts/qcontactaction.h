@@ -61,7 +61,6 @@ class Q_CONTACTS_EXPORT QContactAction : public QObject
     Q_OBJECT
 
 public:
-    QContactAction(QObject *parent = 0) : QObject(parent) {}
     virtual ~QContactAction() = 0;
 
     /* Initiate the asynchronous action on the given list of contacts (and optionally, per-contact-details) with the given parameters */

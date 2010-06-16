@@ -67,9 +67,7 @@ QTM_USE_NAMESPACE
 class DummyAction : public QContactAction
 {
 public:
-    DummyAction(QObject* parent = 0) : QContactAction(parent) {}
-
-    QVariantMap metaData() const {return QVariantMap();}
+    DummyAction(QObject* parent = 0) { Q_UNUSED(parent) }
 
     bool invokeAction(const QContactActionTarget&, const QVariantMap&)
     {
@@ -102,35 +100,62 @@ class QBooleanAction : public DummyAction
 public:
     QBooleanAction(QObject *parent = 0) : DummyAction(parent) {}
     ~QBooleanAction() {}
+};
 
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Boolean", "BooleanCo", 3); }
+class QBooleanActionFactory : public QContactActionFactory
+{
+    Q_OBJECT
 
-    QContactFilter contactFilter(const QVariant& value) const
+public:
+    QBooleanActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
     {
-        if (value.isNull() || (value.type() == QVariant::Bool && value.toBool() == true)) {
+    }
 
-            /* This only likes bools that are true */
-            QContactDetailFilter df;
-            // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Bool to this function...
-            df.setDetailDefinitionName("BooleanDefinition", "BooleanField");
-            df.setValue(true);
-            return df;
-        } else {
-            return QContactInvalidFilter();
+    ~QBooleanActionFactory()
+    {
+
+    }
+
+    QContactAction* create() const
+    {
+        return new QBooleanAction;
+    }
+
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const
+    {
+        QSet<QContactActionTarget> retn;
+        QList<QContactDetail> boolDets = contact.details("BooleanDefinition");
+        foreach (const QContactDetail& det, boolDets) {
+            if (det.variantValue("BooleanField").toBool()) {
+                QContactActionTarget curr(contact, det);
+                retn << curr;
+            }
         }
+
+        return retn;
     }
-    bool isTargetSupported(const QContactActionTarget &target) const
+
+    QContactFilter contactFilter() const
     {
+        /* This only likes bools that are true */
+        QContactDetailFilter df;
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Bool to this function...
-        if (target.details().size() != 1 || !target.isValid())
-            return false;
-        return (target.details().at(0).definitionName() == QString(QLatin1String(("BooleanDefinition")))
-                && target.details().at(0).hasValue("BooleanField"));
+        df.setDetailDefinitionName("BooleanDefinition", "BooleanField");
+        df.setValue(true);
+        return df;
     }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
+
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
     {
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Bool to this function...
-        return contact.details("BooleanDefinition");
+        Q_UNUSED(key);
+        Q_UNUSED(targets);
+        Q_UNUSED(parameters);
+        return QVariant();
+    }
+
+    bool supportsContact(const QContact& contact) const
+    {
+        return supportedTargets(contact).isEmpty();
     }
 };
 
@@ -148,7 +173,7 @@ public:
         Q_UNUSED(session);
 
         if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.boolean")
-            return new QBooleanAction(this);
+            return new QBooleanActionFactory(this);
         else
             return 0;
     }

@@ -122,8 +122,9 @@ bool QContactSendEmailActionFactory::supportsContact(const QContact& contact) co
 
 
 
-QContactSendEmailAction::QContactSendEmailAction(QObject* parent) : QContactAction(parent)
+QContactSendEmailAction::QContactSendEmailAction(QObject* parent)
 {
+    Q_UNUSED(parent)
 }
 
 QContactSendEmailAction::~QContactSendEmailAction()

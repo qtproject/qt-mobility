@@ -67,7 +67,7 @@ QTM_USE_NAMESPACE
 class DummyAction : public QContactAction
 {
 public:
-    DummyAction(QObject* parent = 0) : QContactAction(parent) {}
+    DummyAction(QObject* parent = 0) { Q_UNUSED(parent) }
 
     QVariantMap metaData() const {return QVariantMap();}
 
@@ -103,31 +103,60 @@ class QDateAction : public DummyAction
 public:
     QDateAction(QObject *parent = 0) : DummyAction(parent) {}
     ~QDateAction() {}
+};
 
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Date", "DateCo", 9); }
+class QDateActionFactory : public QContactActionFactory
+{
+    Q_OBJECT
 
-    QContactFilter contactFilter(const QVariant& value) const
+public:
+    QDateActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
+    {
+    }
+
+    ~QDateActionFactory()
+    {
+
+    }
+
+    QContactAction* create() const
+    {
+        return new QDateAction;
+    }
+
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const
+    {
+        QSet<QContactActionTarget> retn;
+        QList<QContactDetail> dateDets = contact.details("DateDefinition");
+        foreach (const QContactDetail& det, dateDets) {
+            if (det.variantValue("DateField").isValid()) {
+                QContactActionTarget curr(contact, det);
+                retn << curr;
+            }
+        }
+
+        return retn;
+    }
+
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Date to this function...
         df.setDetailDefinitionName("DateDefinition", "DateField");
-        df.setValue(value);
         return df;
     }
 
-    bool isTargetSupported(const QContactActionTarget &target) const
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
     {
-        if (target.details().size() != 1 || !target.isValid())
-            return false;
-
-        QContactDetail detail = target.details().at(0);
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Date to this function...
-        return (detail.definitionName() == QString(QLatin1String("DateDefinition")) && detail.hasValue("DateField"));
+        Q_UNUSED(key);
+        Q_UNUSED(targets);
+        Q_UNUSED(parameters);
+        return QVariant();
     }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
+
+    bool supportsContact(const QContact& contact) const
     {
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Date to this function...
-        return contact.details("DateDefinition");
+        return supportedTargets(contact).isEmpty();
     }
 };
 
@@ -145,7 +174,7 @@ public:
         Q_UNUSED(session);
 
         if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.date")
-            return new QDateAction(this);
+            return new QDateActionFactory(this);
         else
             return 0;
     }

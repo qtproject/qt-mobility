@@ -63,6 +63,7 @@ class Q_CONTACTS_EXPORT QContactActionFactory : public QObject
     Q_OBJECT
 
 public:
+    QContactActionFactory(QObject *parent = 0) : QObject(parent) {}
     virtual ~QContactActionFactory();
     virtual QContactAction* create() const = 0;
 

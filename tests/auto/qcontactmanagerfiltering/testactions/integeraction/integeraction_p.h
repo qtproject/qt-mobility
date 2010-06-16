@@ -67,7 +67,7 @@ QTM_USE_NAMESPACE
 class DummyAction : public QContactAction
 {
 public:
-    DummyAction(QObject* parent = 0) : QContactAction(parent) {}
+    DummyAction(QObject* parent = 0) { Q_UNUSED(parent) }
 
     QVariantMap metaData() const {return QVariantMap();}
 
@@ -101,30 +101,60 @@ class QIntegerAction : public DummyAction
 public:
     QIntegerAction(QObject* parent = 0) : DummyAction(parent) {}
     ~QIntegerAction() {}
+};
 
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("Number", "IntegerCo", 5); }
+class QIntegerActionFactory : public QContactActionFactory
+{
+    Q_OBJECT
 
-    QContactFilter contactFilter(const QVariant& value) const
+public:
+    QIntegerActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
+    {
+    }
+
+    ~QIntegerActionFactory()
+    {
+
+    }
+
+    QContactAction* create() const
+    {
+        return new QIntegerAction;
+    }
+
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const
+    {
+        QSet<QContactActionTarget> retn;
+        QList<QContactDetail> intDets = contact.details("IntegerDefinition");
+        foreach (const QContactDetail& det, intDets) {
+            if (det.variantValue("IntegerField").isValid()) {
+                QContactActionTarget curr(contact, det);
+                retn << curr;
+            }
+        }
+
+        return retn;
+    }
+
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
         // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
         df.setDetailDefinitionName("IntegerDefinition", "IntegerField");
-        df.setValue(value);
         return df;
     }
-    bool isTargetSupported(const QContactActionTarget &target) const
-    {
-        if (target.details().size() != 1 || !target.isValid())
-            return false;
 
-        QContactDetail detail = target.details().at(0);
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
-        return (detail.definitionName() == QString(QLatin1String("IntegerDefinition")) && detail.hasValue("IntegerField"));
-    }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
     {
-        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
-        return contact.details("IntegerDefinition");
+        Q_UNUSED(key);
+        Q_UNUSED(targets);
+        Q_UNUSED(parameters);
+        return QVariant();
+    }
+
+    bool supportsContact(const QContact& contact) const
+    {
+        return supportedTargets(contact).isEmpty();
     }
 };
 
@@ -142,7 +172,7 @@ public:
         Q_UNUSED(session);
 
         if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.number")
-            return new QIntegerAction(this);
+            return new QIntegerActionFactory(this);
         else
             return 0;
     }

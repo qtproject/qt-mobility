@@ -192,37 +192,36 @@ void tst_QContactActions::testDescriptor()
     for (int i = 0; i < descrs.size(); i++) {
         if (descrs.at(i).actionName() == QString("SendEmail")) {
             sendEmailAction = QContactAction::action(descrs.at(i));
+            QVERIFY(c.availableActions().contains(descrs.at(i))); // has an email address, so should be available
+            QVERIFY(descrs.at(i).supportsContact(c));
             foundSendEmail = true;
             break;
         }
     }
     QVERIFY(foundSendEmail);
     QVERIFY(sendEmailAction != 0);
-
-    // XXX TODO: fixme this test.
+    delete sendEmailAction;
 }
 
 void tst_QContactActions::testDescriptorHash()
 {
-    QContactActionDescriptor qcad1;
-    //qcad1.setServiceName("a");
-    //qcad1.setActionName("a");
-    //qcad1.setImplementationVersion(1);
+    QContactActionDescriptor qcad1, qcad2, qcad3;
+    QList<QContactActionDescriptor> alldes = QContactAction::actionDescriptors();
 
-    QContactActionDescriptor qcad2;
-    //qcad2.setServiceName("a");
-    //qcad2.setActionName("a");
-    //qcad2.setImplementationVersion(1);
+    if (alldes.size() > 1) {
+        qcad1 = alldes.at(0);
+        qcad2 = alldes.at(1);
+        QVERIFY(qHash(qcad1) != qHash(qcad2));
+        qcad3 = alldes.at(0);
+        QVERIFY(qHash(qcad1) == qHash(qcad3));
+    }
 
-    QContactActionDescriptor qcad3;
-    //qcad3.setServiceName("a");
-    //qcad3.setActionName("a");
-    //qcad3.setImplementationVersion(2);
-
-    // XXX TODO: fixme.
-
-    QVERIFY(qHash(qcad1) == qHash(qcad2));
-    QVERIFY(qHash(qcad1) != qHash(qcad3));
+    if (alldes.size() > 2) {
+        qcad3 = alldes.at(2);
+        QVERIFY(qHash(qcad1) != qHash(qcad2));
+        QVERIFY(qHash(qcad2) != qHash(qcad3));
+        QVERIFY(qHash(qcad1) != qHash(qcad3));
+    }
 }
 
 void tst_QContactActions::traits()

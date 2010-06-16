@@ -7,6 +7,7 @@
         <name>com.nokia.qt.mobility.contacts.qcontactaction.boolean</name>
         <version>1.0</version>
         <capabilities></capabilities>
+        <customproperty key="ActionName">BooleanAction</customproperty>
         <description>Interface which returns a boolean</description>
     </interface>
 </service>

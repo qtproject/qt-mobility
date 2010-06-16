@@ -67,7 +67,7 @@ QTM_USE_NAMESPACE
 class DummyAction : public QContactAction
 {
 public:
-    DummyAction(QObject* parent = 0) : QContactAction(parent) {}
+    DummyAction(QObject* parent = 0) { Q_UNUSED(parent) }
 
     QVariantMap metaData() const {return QVariantMap();}
 
@@ -102,28 +102,60 @@ class QPhoneNumberAction : public DummyAction
 public:
     QPhoneNumberAction(QObject *parent = 0) : DummyAction(parent) {}
     ~QPhoneNumberAction() {}
+};
 
-    QContactActionDescriptor actionDescriptor() const { return QContactActionDescriptor("PhoneNumber", "PhoneNumberCo", 4); }
+class QPhoneNumberActionFactory : public QContactActionFactory
+{
+    Q_OBJECT
 
-    QContactFilter contactFilter(const QVariant& value) const
+public:
+    QPhoneNumberActionFactory(QObject* parent = 0) : QContactActionFactory(parent)
+    {
+    }
+
+    ~QPhoneNumberActionFactory()
+    {
+
+    }
+
+    QContactAction* create() const
+    {
+        return new QPhoneNumberAction;
+    }
+
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const
+    {
+        QSet<QContactActionTarget> retn;
+        QList<QContactDetail> pnDets = contact.details(QContactPhoneNumber::DefinitionName);
+        foreach (const QContactDetail& det, pnDets) {
+            if (!det.value(QContactPhoneNumber::FieldNumber).isEmpty()) {
+                QContactActionTarget curr(contact, det);
+                retn << curr;
+            }
+        }
+
+        return retn;
+    }
+
+    QContactFilter contactFilter() const
     {
         QContactDetailFilter df;
+        // XXX TODO: find some way to pass the defAndFieldNamesForTypeForActions value for Integer to this function...
         df.setDetailDefinitionName(QContactPhoneNumber::DefinitionName, QContactPhoneNumber::FieldNumber);
-        df.setValue(value);
         return df;
     }
-    bool isTargetSupported(const QContactActionTarget& target) const
-    {
-        if (target.details().size() != 1 || !target.isValid())
-            return false;
 
-        QContactDetail detail = target.details().at(0);
-        return detail.definitionName() == QContactPhoneNumber::DefinitionName
-                && !detail.variantValue(QContactPhoneNumber::FieldNumber).isNull();
-    }
-    QList<QContactDetail> supportedDetails(const QContact& contact) const
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const
     {
-        return contact.details(QContactPhoneNumber::DefinitionName);
+        Q_UNUSED(key);
+        Q_UNUSED(targets);
+        Q_UNUSED(parameters);
+        return QVariant();
+    }
+
+    bool supportsContact(const QContact& contact) const
+    {
+        return supportedTargets(contact).isEmpty();
     }
 };
 
@@ -141,7 +173,7 @@ public:
         Q_UNUSED(session);
 
         if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.phonenumber")
-            return new QPhoneNumberAction(this);
+            return new QPhoneNumberActionFactory(this);
         else
             return 0;
     }
