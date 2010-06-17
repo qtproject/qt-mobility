@@ -100,7 +100,7 @@ static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDet
         return QOrganizerTodoProgress::FieldStatus;
 
     if (detail.definitionName() == QOrganizerTodoTimeRange::DefinitionName)
-        return QOrganizerTimeRange::FieldDueDateTime;
+        return QOrganizerTodoTimeRange::FieldDueDateTime;
 
     if (detail.definitionName() == QOrganizerItemType::DefinitionName)
         return QOrganizerItemType::FieldType;
