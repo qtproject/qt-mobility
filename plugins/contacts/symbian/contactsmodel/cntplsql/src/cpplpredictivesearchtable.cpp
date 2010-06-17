@@ -20,6 +20,8 @@
 #include "cpcskeymap.h"
 #include "cntitem.h"
 #include <QStringList>
+// This macro suppresses log writes
+//#define NO_PRED_SEARCH_LOGS
 #include "predictivesearchlog.h"
 
 
@@ -101,6 +103,12 @@ QStringList CPplPredictiveSearchTableBase::GetTableSpecificFields(
 	aMandatoryFieldsPresent = ETrue;
 	QStringList emptyList;
 	return emptyList;
+	}
+
+
+const CPcsKeyMap* CPplPredictiveSearchTableBase::KeyMap() const
+	{
+	return iKeyMap;
 	}
 
 

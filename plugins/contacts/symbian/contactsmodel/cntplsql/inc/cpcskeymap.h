@@ -21,7 +21,6 @@
 
 
 // If this macro is defined, Orbit code is used to build the keymap.
-// But this might crash at startup for unknown reason.
 //
 // If macro is not defined, a hardcoded keymap is used. That code does not
 // crash, but it supports just a limited range of characters.

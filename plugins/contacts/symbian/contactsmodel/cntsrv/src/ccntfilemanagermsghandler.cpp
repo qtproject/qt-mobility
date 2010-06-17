@@ -37,7 +37,6 @@
 #include <cntviewstore.h>
 #include "cntviewprivate.h"
 #include "cviewsubsessions.h"
-#include "cntpredictivesearch.h"
 
 const TInt KCntFileManagerIpcCodes[] =
 	{
@@ -81,13 +80,11 @@ CCntFileManagerMsgHandler::CCntFileManagerMsgHandler(CCntSession& aSession)
 // ----------------------------------------------------------------------------
 void CCntFileManagerMsgHandler::ConstructL()
     {
-    predictiveSearch = CntPredictiveSearch::NewL();
     }
 
 CCntFileManagerMsgHandler::~CCntFileManagerMsgHandler()
-	{
-    delete predictiveSearch;
-	}
+    {
+    }
 
 /**
 Delegates the incoming op code to a message handling method.
@@ -402,14 +399,12 @@ void CCntFileManagerMsgHandler::FetchGroupIdListsL(const RMessage2& aMessage)
 void CCntFileManagerMsgHandler::FetchPredictiveSearchResultsL(const RMessage2& aMessage)
     {
     const TInt KSqlQueryMaxLen = aMessage.GetDesLengthL(1); 
-    HBufC* searchQuery = HBufC::NewLC(KSqlQueryMaxLen);
-    TPtr searchQueryPtr(searchQuery->Des());
-    aMessage.ReadL(1, searchQueryPtr);
+    HBufC* searchPattern = HBufC::NewLC(KSqlQueryMaxLen);
+    TPtr searchPatternPtr(searchPattern->Des());
+    aMessage.ReadL(1, searchPatternPtr);
     
     CheckForManagerL();
-    HBufC* newPredictiveQuery = predictiveSearch->CreateSQLQueryL(*searchQuery, 1 );
-    CleanupStack::PushL(newPredictiveQuery);
-    CBufSeg* buffer = iManager->GetPersistenceLayer().ContactProperties().DetailsListL(newPredictiveQuery->Des());
+    CBufSeg* buffer = iManager->GetPersistenceLayer().ContactProperties().DetailsListPredictiveL(searchPattern->Des());
     if (aMessage.GetDesMaxLength(0) >= buffer->Size())
         {
         TInt offset = 0;
@@ -427,9 +422,9 @@ void CCntFileManagerMsgHandler::FetchPredictiveSearchResultsL(const RMessage2& a
         }
 
     delete buffer;
-    CleanupStack::PopAndDestroy(); //searchQuery*/
-    CleanupStack::PopAndDestroy(); //newPredictiveQuery
+    CleanupStack::PopAndDestroy( searchPattern ); 
     }
+
 void CCntFileManagerMsgHandler::FetchSearchResultsL(const RMessage2& aMessage)
     {
     const TInt KSqlQueryMaxLen = aMessage.GetDesLengthL(1); 
