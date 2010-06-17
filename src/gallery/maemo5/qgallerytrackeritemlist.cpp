@@ -241,27 +241,34 @@ void QGalleryTrackerItemListPrivate::synchronize()
     }
 
     if (!equal) {
-        row_iterator aOuterEnd = aBegin + (((aEnd - aBegin) + 15) & ~15);
-        row_iterator rOuterEnd = rBegin + (((rEnd - rBegin) + 15) & ~15);
+        const int aStep = qMax(64, aEnd - aBegin) / 16;
+        const int rStep = qMax(64, rEnd - rBegin) / 16;
 
-        row_iterator aInnerEnd = qMin(aIt + 16, aEnd);
-        row_iterator rInnerEnd = qMin(rIt + 16, rEnd);
+        row_iterator aOuterEnd = aBegin + ((((aEnd - aBegin) + rStep - 1) / aStep) * aStep);
+        row_iterator rOuterEnd = rBegin + ((((rEnd - rBegin) + rStep - 1) / rStep) * rStep);
+
+        row_iterator aInnerEnd = qMin(aBegin + aStep, aEnd);
+        row_iterator rInnerEnd = qMin(rBegin + rStep, rEnd);
 
         for (row_iterator aOuter = aBegin, rOuter = rBegin;
                 !equal && aOuter != aOuterEnd && rOuter != rOuterEnd;
-                aOuter += 16, rOuter += 16) {
+                aOuter += aStep / 2, rOuter += rStep / 2) {
             for (row_iterator aInner = aIt, rInner = rIt;
                     aInner != aInnerEnd && rInner != rInnerEnd;
                     ++aInner, ++rInner) {
                 if ((equal = aInner.isEqual(rOuter, identityWidth))) {
-                    aIt = aInner;
-                    rIt = rOuter;
-
+                    do {
+                        aIt = aInner;
+                        rIt = rOuter;
+                    } while (aInner-- != aBegin && rOuter-- != rBegin
+                             && aInner.isEqual(rOuter, identityWidth));
                     break;
                 } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
-                    aIt = aOuter;
-                    rIt = rInner;
-
+                    do {
+                        aIt = aOuter;
+                        rIt = rInner;
+                    } while (rInner-- != rBegin && aOuter-- != aBegin
+                           && rInner.isEqual(aOuter, identityWidth));
                     break;
                 }
             }
@@ -272,16 +279,8 @@ void QGalleryTrackerItemListPrivate::synchronize()
         const int aIndex = aIt - aBegin + aCache.index;
         const int rIndex = rIt - rBegin + rCache.index;
 
-        if (aIndex < rIndex) {
-            postSyncEvent(SyncEvent::replaceEvent(aIndex, rIndex - aIndex, rIndex, 0));
-        } else if (aIndex > rIndex) {
-            postSyncEvent(SyncEvent::replaceEvent(aIndex, 0, rIndex, rIndex - aIndex));
-        }
-
-        if (rIndex > rCache.index) {
-            postSyncEvent(SyncEvent::updateEvent(
-                    aCache.index, rCache.index, rIndex - rCache.index));
-        }
+        postSyncEvent(SyncEvent::replaceEvent(
+                aCache.index, aIndex - aCache.index, rCache.index, rIndex - rCache.index));
 
         synchronizeRows(aIt, rIt, aEnd, rEnd);
     } else {
@@ -298,6 +297,9 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
         const row_iterator &aEnd,
         const row_iterator &rEnd)
 {
+    const int aStep = qMax(64, aEnd - aBegin) / 16;
+    const int rStep = qMax(64, rEnd - rBegin) / 16;
+
     for (bool equal = true; equal && aBegin != aEnd && rBegin != rEnd; ) {
         bool changed = false;
 
@@ -342,40 +344,58 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
             return;
         }
 
-        row_iterator aOuterEnd = aBegin + (((aEnd - aBegin) + 15) & ~15);
-        row_iterator rOuterEnd = rBegin + (((rEnd - rBegin) + 15) & ~15);
+        row_iterator aOuterEnd = aBegin + ((((aEnd - aBegin) + rStep - 1) / aStep) * aStep);
+        row_iterator rOuterEnd = rBegin + ((((rEnd - rBegin) + rStep - 1) / rStep) * rStep);
 
-        row_iterator aInnerEnd = qMin(aBegin + 16, aEnd);
-        row_iterator rInnerEnd = qMin(rBegin + 16, rEnd);
+        row_iterator aInnerEnd = qMin(aBegin + aStep, aEnd);
+        row_iterator rInnerEnd = qMin(rBegin + rStep, rEnd);
 
         for (row_iterator aOuter = aBegin, rOuter = rBegin;
                 !equal && aOuter != aOuterEnd && rOuter != rOuterEnd;
-                aOuter += 16, rOuter += 16) {
+                aOuter += aStep / 2, rOuter += rStep / 2) {
             for (row_iterator aInner = aBegin, rInner = rBegin;
                     aInner != aInnerEnd && rInner != rInnerEnd;
                     ++aInner, ++rInner) {
                 if ((equal = aInner.isEqual(rOuter, identityWidth))) {
+                    row_iterator aIt;
+                    row_iterator rIt;
+
+                    do {
+                        aIt = aInner;
+                        rIt = rOuter;
+                    } while (aInner-- != aBegin && rOuter-- != rBegin
+                             && aInner.isEqual(rOuter, identityWidth));
+
                     const int aIndex = (aOuter.begin - aCache.values.begin()) / tableWidth;
-                    const int rIndex = (rOuter.begin - rCache.values.begin()) / tableWidth;
-                    const int aCount = (aInner.begin - aOuter.begin) / tableWidth;
-                    const int rCount = (rOuter.begin - rBegin.begin) / tableWidth;
+                    const int rIndex = (rBegin.begin - rCache.values.begin()) / tableWidth;
+                    const int aCount = (aIt.begin - aOuter.begin) / tableWidth;
+                    const int rCount = (rIt.begin - rBegin.begin) / tableWidth;
 
                     postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
 
-                    aBegin = aInner;
-                    rBegin = rOuter;
+                    aBegin = aIt;
+                    rBegin = rIt;
 
                     break;
                 } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
-                    const int aIndex = (aOuter.begin - aCache.values.begin()) / tableWidth;
+                    row_iterator aIt;
+                    row_iterator rIt;
+
+                    do {
+                        aIt = aOuter;
+                        rIt = rInner;
+                    } while (rInner-- != rBegin && aOuter-- != aBegin
+                           && rInner.isEqual(aOuter, identityWidth));
+
+                    const int aIndex = (aBegin.begin - aCache.values.begin()) / tableWidth;
                     const int rIndex = (rOuter.begin - rCache.values.begin()) / tableWidth;
-                    const int aCount = (aOuter.begin - aBegin.begin) / tableWidth;
-                    const int rCount = (rInner.begin - rOuter.begin) / tableWidth;
+                    const int aCount = (aIt.begin - aBegin.begin) / tableWidth;
+                    const int rCount = (rIt.begin - rOuter.begin) / tableWidth;
 
                     postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
 
-                    aBegin = aOuter;
-                    rBegin = rInner;
+                    aBegin = aIt;
+                    rBegin = rIt;
 
                     break;
                 }

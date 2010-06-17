@@ -78,6 +78,7 @@ private Q_SLOTS:
     void reset();
     void removeItem();
     void insertItem();
+    void replaceItem();
 
 private:
     void populateArguments(
@@ -532,12 +533,8 @@ void tst_QGalleryTrackerItemList::reset()
     m_queryAdaptor->setCount('a', 0);
     m_queryAdaptor->setCount('b', 16);
 
-    qDebug("Refresh");
-
     list.refresh();
     QVERIFY(list.waitForFinished(1000));
-
-    qDebug("Refreshed");
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
@@ -766,9 +763,96 @@ void tst_QGalleryTrackerItemList::insertItem()
     QCOMPARE(list.metaData(10, 6), QVariant(QLatin1String("c|000")));
     QCOMPARE(list.metaData(10, 7), QVariant(QLatin1String("000")));
 //    QCOMPARE(list.metaData(10, 8), QVariant(QLatin1String("c-000")));
-
 }
 
+void tst_QGalleryTrackerItemList::replaceItem()
+{
+    QGalleryTrackerItemListArguments arguments;
+
+    populateArguments(&arguments, QLatin1String("query"));
+
+    m_queryAdaptor->setCount('a', 1);
+    m_queryAdaptor->setCount('c', 15);
+
+    QGalleryTrackerItemList list(arguments, true, 0, 32);
+
+    QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
+    QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
+    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(list.count(), 0);
+
+    QVERIFY(list.waitForFinished(1000));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 16);
+    QCOMPARE(insertSpy.count(), 1);
+    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
+    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
+    QCOMPARE(removeSpy.count(), 0);
+    QCOMPARE(changeSpy.count(), 0);
+
+    QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
+    QCOMPARE(list.url(0), QUrl(QLatin1String("file:///a/000")));
+    QCOMPARE(list.type(0), QLatin1String("typea"));
+    QCOMPARE(list.metaData(0, 2), QVariant(QLatin1String("typea")));
+    QCOMPARE(list.metaData(0, 3), QVariant(QLatin1String("a")));
+    QCOMPARE(list.metaData(0, 4), QVariant(QLatin1String("000")));
+    QCOMPARE(list.metaData(0, 5), QVariant(QLatin1String("query")));
+    QCOMPARE(list.metaData(0, 6), QVariant(QLatin1String("a|000")));
+    QCOMPARE(list.metaData(0, 7), QVariant(QLatin1String("000")));
+    //    QCOMPARE(list.metaData(0, 8), QVariant(QLatin1String("a-000")));
+
+    QCOMPARE(list.id(1), QVariant(QLatin1String("c-000")));
+    QCOMPARE(list.url(1), QUrl(QLatin1String("file:///c/000")));
+    QCOMPARE(list.type(1), QLatin1String("typec"));
+    QCOMPARE(list.metaData(1, 2), QVariant(QLatin1String("typec")));
+    QCOMPARE(list.metaData(1, 3), QVariant(QLatin1String("c")));
+    QCOMPARE(list.metaData(1, 4), QVariant(QLatin1String("000")));
+    QCOMPARE(list.metaData(1, 5), QVariant(QLatin1String("query")));
+    QCOMPARE(list.metaData(1, 6), QVariant(QLatin1String("c|000")));
+    QCOMPARE(list.metaData(1, 7), QVariant(QLatin1String("000")));
+    //    QCOMPARE(list.metaData(1, 8), QVariant(QLatin1String("c-000")));
+
+    m_queryAdaptor->setCount('a', 0);
+    m_queryAdaptor->setCount('b', 1);
+
+    list.refresh();
+    QVERIFY(list.waitForFinished(1000));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 16);
+    QCOMPARE(insertSpy.count(), 2);
+    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
+    QCOMPARE(insertSpy.last().value(1).toInt(), 1);
+    QCOMPARE(removeSpy.count(), 1);
+    QCOMPARE(removeSpy.last().value(0).toInt(), 0);
+    QCOMPARE(removeSpy.last().value(1).toInt(), 1);
+    QCOMPARE(changeSpy.count(), 0);
+
+    QCOMPARE(list.id(0), QVariant(QLatin1String("b-000")));
+    QCOMPARE(list.url(0), QUrl(QLatin1String("file:///b/000")));
+    QCOMPARE(list.type(0), QLatin1String("typeb"));
+    QCOMPARE(list.metaData(0, 2), QVariant(QLatin1String("typeb")));
+    QCOMPARE(list.metaData(0, 3), QVariant(QLatin1String("b")));
+    QCOMPARE(list.metaData(0, 4), QVariant(QLatin1String("000")));
+    QCOMPARE(list.metaData(0, 5), QVariant(QLatin1String("query")));
+    QCOMPARE(list.metaData(0, 6), QVariant(QLatin1String("b|000")));
+    QCOMPARE(list.metaData(0, 7), QVariant(QLatin1String("000")));
+    //    QCOMPARE(list.metaData(0, 8), QVariant(QLatin1String("b-000")));
+
+    QCOMPARE(list.id(1), QVariant(QLatin1String("c-000")));
+    QCOMPARE(list.url(1), QUrl(QLatin1String("file:///c/000")));
+    QCOMPARE(list.type(1), QLatin1String("typec"));
+    QCOMPARE(list.metaData(1, 2), QVariant(QLatin1String("typec")));
+    QCOMPARE(list.metaData(1, 3), QVariant(QLatin1String("c")));
+    QCOMPARE(list.metaData(1, 4), QVariant(QLatin1String("000")));
+    QCOMPARE(list.metaData(1, 5), QVariant(QLatin1String("query")));
+    QCOMPARE(list.metaData(1, 6), QVariant(QLatin1String("c|000")));
+    QCOMPARE(list.metaData(1, 7), QVariant(QLatin1String("000")));
+    //    QCOMPARE(list.metaData(1, 8), QVariant(QLatin1String("c-000")));
+}
 
 QTEST_MAIN(tst_QGalleryTrackerItemList)
 
