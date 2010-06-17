@@ -51,6 +51,7 @@
 #include "qcontactemailaddress.h"
 #include "qcontactfilters.h"
 
+#include <QDebug>
 #include <QMessageBox>
 #include <QTimer>
 
@@ -63,11 +64,15 @@ QObject* QContactSendEmailActionPlugin::createInstance(const QServiceInterfaceDe
 {
     Q_UNUSED(context);
     Q_UNUSED(session);
-
-    if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.sendemail")
+    if (descriptor.interfaceName() == QContactActionFactory::InterfaceName
+            && descriptor.serviceName() == QString(QLatin1String("tst_qcontactactions:sendemailaction"))
+            && descriptor.majorVersion() == 1
+            && descriptor.minorVersion() == 1
+            && descriptor.customAttribute("ActionName") == QString(QLatin1String("SendEmail"))) {
         return new QContactSendEmailActionFactory();
-    else
+    } else {
         return 0;
+    }
 }
 
 Q_EXPORT_PLUGIN2(contacts_sendemailaction, QContactSendEmailActionPlugin);
@@ -122,9 +127,8 @@ bool QContactSendEmailActionFactory::supportsContact(const QContact& contact) co
 
 
 
-QContactSendEmailAction::QContactSendEmailAction(QObject* parent)
+QContactSendEmailAction::QContactSendEmailAction()
 {
-    Q_UNUSED(parent)
 }
 
 QContactSendEmailAction::~QContactSendEmailAction()

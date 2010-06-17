@@ -4,8 +4,8 @@
     <filepath>plugins/contacts/libcontacts_dateaction</filepath>
     <description>This service provides a QContactAction plugin for testing purposes - date</description>
     <interface>
-        <name>com.nokia.qt.mobility.contacts.qcontactaction.date</name>
-        <version>1.0</version>
+        <name>com.nokia.qt.mobility.contacts.action</name>
+        <version>1.1</version>
         <capabilities></capabilities>
         <customproperty key="ActionName">DateAction</customproperty>
         <description>Interface which returns a date</description>

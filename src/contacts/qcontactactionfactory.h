@@ -72,6 +72,8 @@ public:
     virtual QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const = 0;
 
     virtual bool supportsContact(const QContact& contact) const; // virtual but not pure virtual; default impl. calls supportedTargets.isEmpty().
+
+    Q_DECLARE_LATIN1_CONSTANT(InterfaceName, "com.nokia.qt.mobility.contacts.action");
 };
 
 QTM_END_NAMESPACE

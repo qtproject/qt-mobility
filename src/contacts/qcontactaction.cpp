@@ -180,8 +180,9 @@ QStringList QContactAction::availableActions(const QString& serviceName)
     QList<QContactActionDescriptor> actionDescriptors = QContactActionServiceManager::instance()->actionDescriptors();
     for (int i = 0; i < actionDescriptors.size(); i++) {
         QContactActionDescriptor descriptor = actionDescriptors.at(i);
-        if (serviceName.isEmpty() || serviceName == descriptor.serviceName())
+        if (serviceName.isEmpty() || serviceName == descriptor.serviceName()) {
             ret.insert(descriptor.actionName());
+        }
     }
 
     return ret.toList();

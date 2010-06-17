@@ -4,7 +4,7 @@
     <filepath>plugins/contacts/libcontacts_numberaction</filepath>
     <description>This service provides a QContactAction plugin for testing purposes - number</description>
     <interface>
-        <name>com.nokia.qt.mobility.contacts.qcontactaction.number</name>
+        <name>com.nokia.qt.mobility.contacts.action</name>
         <version>1.1</version>
         <capabilities></capabilities>
         <customproperty key="ActionName">NumberAction</customproperty>

@@ -84,11 +84,14 @@ void QContactActionServiceManager::init()
         // fill up our hashes
         QList<QServiceInterfaceDescriptor> sids = m_serviceManager.findInterfaces(); // all services, all interfaces.
         foreach (const QServiceInterfaceDescriptor& sid, sids) {
-            if (sid.interfaceName().startsWith(QString(QLatin1String("com.nokia.qt.mobility.contacts")))) {
+            if (sid.interfaceName() == QContactActionFactory::InterfaceName) {
                 QContactActionFactory* actionFactory = qobject_cast<QContactActionFactory*>(m_serviceManager.loadInterface(sid));
-                QContactActionDescriptor ad(sid.customAttribute(QString(QLatin1String("ActionName"))), sid.serviceName(), sid.minorVersion(), actionFactory);
-                m_descriptorHash.insert(ad.actionName(), ad); // multihash insert.
-                m_actionFactoryHash.insert(ad, actionFactory);
+                if (actionFactory) {
+                    // if we cannot get the action factory from the service manager, then we don't add it to our hash.
+                    QContactActionDescriptor ad(sid.customAttribute(QString(QLatin1String("ActionName"))), sid.serviceName(), sid.minorVersion(), actionFactory);
+                    m_descriptorHash.insert(ad.actionName(), ad); // multihash insert.
+                    m_actionFactoryHash.insert(ad, actionFactory);
+                }
             }
         }
 

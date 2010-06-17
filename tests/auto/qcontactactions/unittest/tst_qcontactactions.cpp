@@ -76,11 +76,14 @@ tst_QContactActions::tst_QContactActions()
 
     // and add the sendemail action to the service framework
     QServiceManager sm;
-    qDebug() << sm.findServices();
     if (!sm.removeService("tst_qcontactactions:sendemailaction"))
-        qDebug() << " tst_qca: ctor: cleaning up test services failed:" << sm.error();
+        qDebug() << " tst_qca: ctor: cleaning up send email test service failed:" << sm.error();
+    if (!sm.removeService("tst_qcontactactions:multiaction"))
+        qDebug() << " tst_qca: ctor: cleaning up multi action test service failed:" << sm.error();
     if (!sm.addService(QCoreApplication::applicationDirPath() + "/plugins/contacts/xmldata/sendemailactionservice.xml"))
         qDebug() << " tst_qca: ctor: unable to add SendEmail service:" << sm.error();
+    if (!sm.addService(QCoreApplication::applicationDirPath() + "/plugins/contacts/xmldata/multiactionservice.xml"))
+        qDebug() << " tst_qca: ctor: unable to add MultiAction service:" << sm.error();
 }
 
 tst_QContactActions::~tst_QContactActions()
@@ -174,7 +177,9 @@ void tst_QContactActions::testSendEmail()
 
 void tst_QContactActions::testDescriptor()
 {
-    // first, test retrieving an action when no factories are loaded
+qDebug() << "\n\n\navailableactions:" << QContactAction::availableActions() << "\n\n\n\n";
+
+    // first, test retrieving an invalid action
     QContactAction* invalidAction = QContactAction::action(QContactActionDescriptor());
     QVERIFY(invalidAction == 0); // should be null.
 
@@ -182,25 +187,60 @@ void tst_QContactActions::testDescriptor()
     QContactEmailAddress e;
     e.setEmailAddress("test@nokia.com");
     c.saveDetail(&e);
+    QContactPhoneNumber p;
+    p.setNumber("12345");
+    c.saveDetail(&p);
 
     QVERIFY(QContactAction::availableActions().contains("SendEmail"));
     QVERIFY(QContactAction::availableActions("tst_qcontactactions:sendemailaction").contains("SendEmail"));
 
+    QContactActionDescriptor sendEmailDescriptor;
+    QContactActionDescriptor multiActionOneDescriptor;
+    QContactActionDescriptor multiActionTwoDescriptor;
+
     QList<QContactActionDescriptor> descrs = QContactAction::actionDescriptors();
     QContactAction* sendEmailAction = 0;
-    bool foundSendEmail = false;
     for (int i = 0; i < descrs.size(); i++) {
-        if (descrs.at(i).actionName() == QString("SendEmail")) {
-            sendEmailAction = QContactAction::action(descrs.at(i));
-            QVERIFY(c.availableActions().contains(descrs.at(i))); // has an email address, so should be available
-            QVERIFY(descrs.at(i).supportsContact(c));
-            foundSendEmail = true;
-            break;
+        QContactActionDescriptor temp = descrs.at(i);
+        if (temp.actionName() == QString("SendEmail")) {
+            sendEmailAction = QContactAction::action(temp);
+            QVERIFY(c.availableActions().contains(temp)); // has an email address, so should be available
+            QVERIFY(temp.supportsContact(c));
+            sendEmailDescriptor = temp;
+        } else if (temp.actionName() == QString("MultiAction")) {
+qDebug() << "\n\nfound a multiaction:" << temp.serviceName() << temp.actionName() << "\n";
+            if (temp.metaData(QString(QLatin1String("Provider"))) == QString(QLatin1String("sip"))) {
+                multiActionOneDescriptor = temp;
+            } else {
+                multiActionTwoDescriptor = temp;
+            }
         }
     }
-    QVERIFY(foundSendEmail);
+
+    QVERIFY(sendEmailDescriptor.isValid());
+    QVERIFY(multiActionOneDescriptor.isValid());
+    QVERIFY(multiActionTwoDescriptor.isValid());
+
     QVERIFY(sendEmailAction != 0);
     delete sendEmailAction;
+
+    // now test equivalence.  The send email action descriptor should
+    // have a different action name to both multi action one and two.
+    QVERIFY(sendEmailDescriptor.actionName() != multiActionOneDescriptor.actionName());
+    QVERIFY(sendEmailDescriptor.actionName() != multiActionTwoDescriptor.actionName());
+    QVERIFY(sendEmailDescriptor != multiActionOneDescriptor);
+    QVERIFY(sendEmailDescriptor != multiActionTwoDescriptor);
+
+    // multi action one and two should have the same action name, service
+    // name and implementation (minor) version.  BUT they have different
+    // implementations (Provider is different) so they should NOT be equal.
+    QVERIFY(multiActionOneDescriptor.actionName() == multiActionTwoDescriptor.actionName());
+    QVERIFY(multiActionOneDescriptor.serviceName() == multiActionTwoDescriptor.serviceName());
+    QVERIFY(multiActionOneDescriptor.implementationVersion() == multiActionTwoDescriptor.implementationVersion());
+    QVERIFY(multiActionOneDescriptor != multiActionTwoDescriptor);
+
+    // verify that the meta data is reported correctly
+    QVERIFY(multiActionOneDescriptor.metaData("Provider") != multiActionTwoDescriptor.metaData("Provider"));
 }
 
 void tst_QContactActions::testDescriptorHash()

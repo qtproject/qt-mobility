@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service>
+    <name>tst_qcontactactions:multiaction</name>
+    <filepath>plugins/contacts/libcontacts_multiaction</filepath>
+    <description>This service provides two test QContactAction implementations for testing purposes.  It is also an example of a single plugin providing multiple actions whose descriptors are identical except for their meta data.</description>
+    <interface>
+        <name>com.nokia.qt.mobility.contacts.action</name>
+        <version>1.1</version>
+        <capabilities></capabilities>
+        <customproperty key="ActionName">call</customproperty>
+        <customproperty key="Provider">sip</customproperty>
+        <description>This is action number one - it provides the "call" action via "sip" provider</description>
+    </interface>
+    <interface>
+        <name>com.nokia.qt.mobility.contacts.action</name>
+        <version>1.2</version>
+        <capabilities></capabilities>
+        <customproperty key="ActionName">call</customproperty>
+        <customproperty key="Provider">example proprietary protocol</customproperty>
+        <description>This is action number two - it provides the "call" action via "example proprietary protocol" provider</description>
+    </interface>
+</service>

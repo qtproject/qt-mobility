@@ -85,6 +85,7 @@ QContactActionFactory::~QContactActionFactory()
   The meta-data may vary depending on the \a targets of the action and any \a parameters to invocation which the client may specify.
  */
 
+Q_DEFINE_LATIN1_CONSTANT(QContactActionFactory::InterfaceName, "com.nokia.qt.mobility.contacts.action");
 
 bool QContactActionFactory::supportsContact(const QContact& contact) const
 {

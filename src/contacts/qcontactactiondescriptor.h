@@ -77,7 +77,7 @@ public:
     /* The descriptor provides the client with all information required in UI. */
     QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
     QContactFilter contactFilter() const;
-    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets = QList<QContactActionTarget>(), const QVariantMap& parameters = QVariantMap()) const;
 
     bool supportsContact(const QContact& contact) const;
     QVariant metaData(const QString& key, const QContactActionTarget& target, const QVariantMap& parameters = QVariantMap()) const

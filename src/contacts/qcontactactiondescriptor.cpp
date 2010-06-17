@@ -173,14 +173,15 @@ bool QContactActionDescriptor::isValid() const
 }
 
 /*!
- * Returns true if the action name, service name and service-specified implementation version
- * specified by this action descriptor are equal to those specified by \a other
+ * Returns true if the action identified by this descriptor is the same as the action
+ * identified by the \a other descriptor.  Note that two actions with the same
+ * action name, service name and implementation version may in fact be different (for example,
+ * they may have different metaData), so using this function is the only way for clients
+ * to tell whether or not the action descriptors identify different actions.
  */
 bool QContactActionDescriptor::operator==(const QContactActionDescriptor& other) const
 {
-    return d->m_actionName == other.d->m_actionName
-            && d->m_serviceName == other.d->m_serviceName
-            && d->m_implementationVersion == other.d->m_implementationVersion;
+    return d->m_factory == other.d->m_factory;
 }
 
 /*!

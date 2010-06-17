@@ -810,12 +810,9 @@ QList<QContactRelationship> QContact::relationshipOrder() const
  * Return a list of descriptors for the actions available to be performed on this contact.
  *
  * The actions considered can be restricted by the optional parameters
- * \list
- *  \o The actions can be restricted to those provided by a specific vendor with the \a vendorName parameter.
- * If \a vendorName is empty, actions from all vendors will be considered.
- *  \o A specific version of an action can also be requested with \a implementationVersion.  If \c -1 is
- * passed (the default), all versions will be considered.  This is usually useful in conjunction with a specific vendor.
- * \endlist
+ * The actions can be restricted to those provided by a specific service with the \a serviceName parameter.
+ * If \a serviceName is empty, actions provided by any service will be returned if the
+ * contact meets the required criteria (contains details of the correct type, etc).
  *
  * Each action that matches the above criteria will be tested to see if this contact is supported
  * by the action, and a list of the action descriptors that are supported will be returned.
@@ -825,7 +822,7 @@ QList<QContactActionDescriptor> QContact::availableActions(const QString& servic
     QList<QContactActionDescriptor> ret;
     QList<QContactActionDescriptor> allds = QContactActionServiceManager::instance()->availableActions(*this);
     foreach (const QContactActionDescriptor& d, allds) {
-        if (d.serviceName() == serviceName) {
+        if (serviceName.isEmpty() || d.serviceName() == serviceName) {
             ret.append(d);
         }
     }

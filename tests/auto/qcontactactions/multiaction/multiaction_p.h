@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QCONTACTSENDEMAILACTION_P_H
-#define QCONTACTSENDEMAILACTION_P_H
+#ifndef QCONTACTMULTIACTION_P_H
+#define QCONTACTMULTIACTION_P_H
 
 //
 //  W A R N I N G
@@ -67,25 +67,48 @@
 
 QTM_USE_NAMESPACE
 
+/*
+   This action plugin is capable of producing two actions which each have the
+   same action name, service name, interface name and implementation (minor) version,
+   but internally use a different implementation.  This difference is reported via the
+   meta data function of the factory (which is exposed to clients via the descriptor
+   which provides a "front end" to the factory).
 
-class QContactSendEmailActionPlugin : public QObject, public QServicePluginInterface
+   Example use case:
+   Company "Example VoIP Solutions" wants to provide a "Call" action with different implementations.
+       -> it provides a SINGLE plugin which provides two actions, both of which are:
+           - ServiceName = "Example VoIP Solution"
+           - InterfaceName = "com.nokia.qt.mobility.contact.action"
+           - Major Version = "1"
+           - Minor Version = "1"
+           - ActionName = "Call" (this is a custom property in the service interface xml)
+       -> BUT one of the actions has the custom property:
+           - Provider = "sip"
+       -> where the other action has the custom property:
+           - Provider = "example proprietary protocol"
+       -> the custom properties are available to clients via the QContactActionDescriptor::metaData()
+          function.
+ */
+
+class QContactMultiActionPlugin : public QObject, public QServicePluginInterface
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QServicePluginInterface)
 
 public:
+    // depending on the QSID's custom properties, will produce either an ActionOneFactory or ActionTwoFactory
     QObject* createInstance(const QServiceInterfaceDescriptor& descriptor,
                             QServiceContext* context,
                             QAbstractSecuritySession* session);
 };
 
-class QContactSendEmailActionFactory : public QContactActionFactory
+class QContactActionTwoFactory : public QContactActionFactory
 {
     Q_OBJECT
 
 public:
-    QContactSendEmailActionFactory();
-    ~QContactSendEmailActionFactory();
+    QContactActionTwoFactory();
+    ~QContactActionTwoFactory();
     QContactAction* create() const;
 
     QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
@@ -95,24 +118,54 @@ public:
     bool supportsContact(const QContact& contact) const;
 };
 
-class QContactSendEmailAction : public QContactAction
+class QContactActionOneFactory : public QContactActionFactory
 {
     Q_OBJECT
 
 public:
-    QContactSendEmailAction();
-    ~QContactSendEmailAction();
+    QContactActionOneFactory();
+    ~QContactActionOneFactory();
+    QContactAction* create() const;
+
+    QSet<QContactActionTarget> supportedTargets(const QContact& contact) const;
+    QContactFilter contactFilter() const;
+    QVariant metaData(const QString& key, const QList<QContactActionTarget>& targets, const QVariantMap& parameters = QVariantMap()) const;
+
+    bool supportsContact(const QContact& contact) const;
+};
+
+class QContactActionOne : public QContactAction
+{
+    Q_OBJECT
+
+public:
+    QContactActionOne();
+    ~QContactActionOne();
 
     bool invokeAction(const QContactActionTarget& target, const QVariantMap& params = QVariantMap());
     bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& params = QVariantMap());
     QVariantMap results() const;
-    State state() const {return QContactAction::FinishedState;}
+    State state() const;
 
 private slots:
     void performAction();
+};
 
-private:
-    bool isTargetSupported(const QContactActionTarget &target) const;
+class QContactActionTwo : public QContactAction
+{
+    Q_OBJECT
+
+public:
+    QContactActionTwo();
+    ~QContactActionTwo();
+
+    bool invokeAction(const QContactActionTarget& target, const QVariantMap& params = QVariantMap());
+    bool invokeAction(const QList<QContactActionTarget>& targets, const QVariantMap& params = QVariantMap());
+    QVariantMap results() const;
+    State state() const;
+
+private slots:
+    void performAction();
 };
 
 #endif
