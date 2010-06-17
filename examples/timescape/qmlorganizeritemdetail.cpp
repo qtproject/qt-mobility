@@ -75,8 +75,8 @@ static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDet
     if (detail.definitionName() == QOrganizerItemLocation::DefinitionName)
         return QOrganizerItemLocation::FieldLocationName;
 
-    if (detail.definitionName() == QOrganizerItemNote::DefinitionName)
-        return QOrganizerItemNote::FieldNote;
+    if (detail.definitionName() == QOrganizerItemComment::DefinitionName)
+        return QOrganizerItemComment::FieldComment;
 
     if (detail.definitionName() == QOrganizerItemParticipation::DefinitionName)
         return QOrganizerItemParticipation::FieldParticipationRole;
