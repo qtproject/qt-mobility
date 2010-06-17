@@ -56,23 +56,29 @@ QTelephonyCallListPrivate::~QTelephonyCallListPrivate()
 
 void QTelephonyCallListPrivate::emitActiveCallStatusChanged(QTelephonyCallInfoPrivate& call)
 {
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallStatusChanged(callinfo);
+    if(p){
+        QTelephonyCallInfo callinfo;
+        callinfo.d = &call;
+        emit p->activeCallStatusChanged(callinfo);
+    }
 }
 
 void QTelephonyCallListPrivate::emitActiveCallRemoved(QTelephonyCallInfoPrivate& call)
 {
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallRemoved(callinfo);
+    if(p){
+        QTelephonyCallInfo callinfo;
+        callinfo.d = &call;
+        emit p->activeCallRemoved(callinfo);
+    }
 }
 
 void QTelephonyCallListPrivate::emitActiveCallAdded(QTelephonyCallInfoPrivate& call)
 {
-    QTelephonyCallInfo callinfo;
-    callinfo.d = QSharedDataPointer<QTelephonyCallInfoPrivate>(&call);
-    emit p->activeCallAdded(callinfo);
+    if(p){
+        QTelephonyCallInfo callinfo;
+        callinfo.d = &call;
+        emit p->activeCallAdded(callinfo);
+    }
 }
 
 QList<QTelephonyCallInfo> QTelephonyCallListPrivate::activeCalls(const QTelephonyCallInfo::CallType& calltype) const

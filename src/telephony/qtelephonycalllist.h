@@ -51,7 +51,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QTelephonyCallListPrivate;
-class QTelephonyCallInfoPrivate;
+struct QTelephonyCallInfoPrivate;
 
 class Q_TELEPHONY_EXPORT QTelephonyCallList : public QObject
 {
@@ -68,7 +68,7 @@ Q_SIGNALS:
 public:
     QList<QTelephonyCallInfo > activeCalls(const QTelephonyCallInfo::CallType& calltype = QTelephonyCallInfo::Any) const;
 
-private:
+protected:
     QTelephonyCallListPrivate* d;
     friend class QTelephonyCallListPrivate;
 };

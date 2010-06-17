@@ -61,10 +61,10 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-class QTelephonyCallInfoPrivate;
+struct QTelephonyCallInfoPrivate;
 class QTelephonyCallList;
 
-class QTelephonyCallListPrivate
+class Q_AUTOTEST_EXPORT QTelephonyCallListPrivate
 {
     friend class QTelephonyCallList;
 
@@ -80,6 +80,8 @@ private:
 
     QList<QSharedDataPointer<QTelephonyCallInfoPrivate> > callInfoList;
     QTelephonyCallList* p;
+    friend class tst_Telephony;
+    friend class tst_TelefonyCallList;
 };
 
 QTM_END_NAMESPACE

@@ -63,7 +63,7 @@
 QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
-struct QTelephonyCallInfoPrivate : public QSharedData
+struct Q_AUTOTEST_EXPORT QTelephonyCallInfoPrivate : public QSharedData
 {
 public:
     QTelephonyCallInfoPrivate()

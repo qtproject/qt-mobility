@@ -91,9 +91,6 @@ QTM_BEGIN_NAMESPACE
     existing calls.
 */
 
-
-Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonyCallListPrivate)
-
 /*!
     \fn QTelephonyCallList::QTelephonyCallList(QObject *parent)
     \a parent The parent of this object. Default is 0.
@@ -101,8 +98,9 @@ Q_GLOBAL_STATIC(QTelephonyCallListPrivate, telephonyCallListPrivate)
     Constructor for the QTelephonyCallList object
 */
 QTelephonyCallList::QTelephonyCallList(QObject *parent)
-    : QObject(parent), d(telephonyCallListPrivate())
+    : QObject(parent)
 {
+    d = new QTelephonyCallListPrivate(this);
 }
 
 /*!
@@ -112,7 +110,8 @@ QTelephonyCallList::QTelephonyCallList(QObject *parent)
 */
 QTelephonyCallList::~QTelephonyCallList()
 {
-
+    if(d)
+        delete d;
 }
 
 /*!
