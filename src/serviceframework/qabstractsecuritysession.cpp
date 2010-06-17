@@ -78,7 +78,7 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constrcuts an abstract item model with the given \a parent.
+    Constructs an abstract security session with the given \a parent.
 */
 QAbstractSecuritySession::QAbstractSecuritySession(QObject* parent)
     : QObject(parent)

@@ -1766,11 +1766,9 @@
             <keyword name="offset" id="QGraphicsVideoItem::offset" ref="qgraphicsvideoitem.html#offset-prop"/>
             <keyword name="paint" id="QGraphicsVideoItem::paint" ref="qgraphicsvideoitem.html#paint"/>
             <keyword name="setAspectRatioMode" id="QGraphicsVideoItem::setAspectRatioMode" ref="qgraphicsvideoitem.html#aspectRatioMode-prop"/>
-            <keyword name="setMediaObject" id="QGraphicsVideoItem::setMediaObject" ref="qgraphicsvideoitem.html#setMediaObject"/>
             <keyword name="setOffset" id="QGraphicsVideoItem::setOffset" ref="qgraphicsvideoitem.html#offset-prop"/>
             <keyword name="setSize" id="QGraphicsVideoItem::setSize" ref="qgraphicsvideoitem.html#size-prop"/>
             <keyword name="size" id="QGraphicsVideoItem::size" ref="qgraphicsvideoitem.html#size-prop"/>
-            <keyword name="timerEvent" id="QGraphicsVideoItem::timerEvent" ref="qgraphicsvideoitem.html#timerEvent"/>
             <keyword name="~QGraphicsVideoItem" id="QGraphicsVideoItem::~QGraphicsVideoItem" ref="qgraphicsvideoitem.html#dtor.QGraphicsVideoItem"/>
             <keyword name="QImageEncoderControl" id="QImageEncoderControl" ref="qimageencodercontrol.html"/>
             <keyword name="imageCodecDescription" id="QImageEncoderControl::imageCodecDescription" ref="qimageencodercontrol.html#imageCodecDescription"/>
@@ -2038,7 +2036,6 @@
             <keyword name="removeMedia" id="QMediaPlaylist::removeMedia" ref="qmediaplaylist.html#removeMedia"/>
             <keyword name="save" id="QMediaPlaylist::save" ref="qmediaplaylist.html#save"/>
             <keyword name="setCurrentIndex" id="QMediaPlaylist::setCurrentIndex" ref="qmediaplaylist.html#currentIndex-prop"/>
-            <keyword name="setMediaObject" id="QMediaPlaylist::setMediaObject" ref="qmediaplaylist.html#setMediaObject"/>
             <keyword name="setPlaybackMode" id="QMediaPlaylist::setPlaybackMode" ref="qmediaplaylist.html#playbackMode-prop"/>
             <keyword name="shuffle" id="QMediaPlaylist::shuffle" ref="qmediaplaylist.html#shuffle"/>
             <keyword name="~QMediaPlaylist" id="QMediaPlaylist::~QMediaPlaylist" ref="qmediaplaylist.html#dtor.QMediaPlaylist"/>
@@ -2159,7 +2156,6 @@
             <keyword name="record" id="QMediaRecorder::record" ref="qmediarecorder.html#record"/>
             <keyword name="setEncodingSettings" id="QMediaRecorder::setEncodingSettings" ref="qmediarecorder.html#setEncodingSettings"/>
             <keyword name="setExtendedMetaData" id="QMediaRecorder::setExtendedMetaData" ref="qmediarecorder.html#setExtendedMetaData"/>
-            <keyword name="setMediaObject" id="QMediaRecorder::setMediaObject" ref="qmediarecorder.html#setMediaObject"/>
             <keyword name="setMetaData" id="QMediaRecorder::setMetaData" ref="qmediarecorder.html#setMetaData"/>
             <keyword name="setMuted" id="QMediaRecorder::setMuted" ref="qmediarecorder.html#muted-prop"/>
             <keyword name="setOutputLocation" id="QMediaRecorder::setOutputLocation" ref="qmediarecorder.html#outputLocation-prop"/>
@@ -3048,6 +3044,7 @@
             <keyword name="batteryStatus" id="QSystemDeviceInfo::batteryStatus" ref="qsystemdeviceinfo.html#batteryStatus-prop"/>
             <keyword name="batteryStatusChanged" id="QSystemDeviceInfo::batteryStatusChanged" ref="qsystemdeviceinfo.html#batteryStatusChanged"/>
             <keyword name="bluetoothStateChanged" id="QSystemDeviceInfo::bluetoothStateChanged" ref="qsystemdeviceinfo.html#bluetoothStateChanged"/>
+            <keyword name="currentBluetoothPowerState" id="QSystemDeviceInfo::currentBluetoothPowerState" ref="qsystemdeviceinfo.html#currentBluetoothPowerState-prop"/>
             <keyword name="currentPowerState" id="QSystemDeviceInfo::currentPowerState" ref="qsystemdeviceinfo.html#currentPowerState-prop"/>
             <keyword name="currentProfile" id="QSystemDeviceInfo::currentProfile" ref="qsystemdeviceinfo.html#currentProfile-prop"/>
             <keyword name="currentProfileChanged" id="QSystemDeviceInfo::currentProfileChanged" ref="qsystemdeviceinfo.html#currentProfileChanged"/>
@@ -3062,8 +3059,20 @@
             <keyword name="simStatus" id="QSystemDeviceInfo::simStatus" ref="qsystemdeviceinfo.html#simStatus-prop"/>
             <keyword name="~QSystemDeviceInfo" id="QSystemDeviceInfo::~QSystemDeviceInfo" ref="qsystemdeviceinfo.html#dtor.QSystemDeviceInfo"/>
             <keyword name="QSystemDisplayInfo" id="QSystemDisplayInfo" ref="qsystemdisplayinfo.html"/>
+            <keyword name="QSystemDisplayInfo::DisplayOrientation" id="QSystemDisplayInfo::DisplayOrientation" ref="qsystemdisplayinfo.html#DisplayOrientation-enum"/>
+            <keyword name="QSystemDisplayInfo::Unknown" id="QSystemDisplayInfo::Unknown" ref="qsystemdisplayinfo.html#DisplayOrientation-enum"/>
+            <keyword name="QSystemDisplayInfo::Landscape" id="QSystemDisplayInfo::Landscape" ref="qsystemdisplayinfo.html#DisplayOrientation-enum"/>
+            <keyword name="QSystemDisplayInfo::Portrait" id="QSystemDisplayInfo::Portrait" ref="qsystemdisplayinfo.html#DisplayOrientation-enum"/>
+            <keyword name="QSystemDisplayInfo::InvertedLandscape" id="QSystemDisplayInfo::InvertedLandscape" ref="qsystemdisplayinfo.html#DisplayOrientation-enum"/>
+            <keyword name="QSystemDisplayInfo::InvertedPortrait" id="QSystemDisplayInfo::InvertedPortrait" ref="qsystemdisplayinfo.html#DisplayOrientation-enum"/>
             <keyword name="colorDepth" id="QSystemDisplayInfo::colorDepth" ref="qsystemdisplayinfo.html#colorDepth"/>
+            <keyword name="contrast" id="QSystemDisplayInfo::contrast" ref="qsystemdisplayinfo.html#contrast"/>
             <keyword name="displayBrightness" id="QSystemDisplayInfo::displayBrightness" ref="qsystemdisplayinfo.html#displayBrightness"/>
+            <keyword name="getDPIHeight" id="QSystemDisplayInfo::getDPIHeight" ref="qsystemdisplayinfo.html#getDPIHeight"/>
+            <keyword name="getDPIWidth" id="QSystemDisplayInfo::getDPIWidth" ref="qsystemdisplayinfo.html#getDPIWidth"/>
+            <keyword name="getOrientation" id="QSystemDisplayInfo::getOrientation" ref="qsystemdisplayinfo.html#getOrientation"/>
+            <keyword name="physicalHeight" id="QSystemDisplayInfo::physicalHeight" ref="qsystemdisplayinfo.html#physicalHeight"/>
+            <keyword name="physicalWidth" id="QSystemDisplayInfo::physicalWidth" ref="qsystemdisplayinfo.html#physicalWidth"/>
             <keyword name="~QSystemDisplayInfo" id="QSystemDisplayInfo::~QSystemDisplayInfo" ref="qsystemdisplayinfo.html#dtor.QSystemDisplayInfo"/>
             <keyword name="QSystemInfo" id="QSystemInfo" ref="qsysteminfo.html"/>
             <keyword name="QSystemInfo::Feature" id="QSystemInfo::Feature" ref="qsysteminfo.html#Feature-enum"/>
@@ -3101,7 +3110,6 @@
             <keyword name="QSystemNetworkInfo::EthernetMode" id="QSystemNetworkInfo::EthernetMode" ref="qsystemnetworkinfo.html#NetworkMode-enum"/>
             <keyword name="QSystemNetworkInfo::BluetoothMode" id="QSystemNetworkInfo::BluetoothMode" ref="qsystemnetworkinfo.html#NetworkMode-enum"/>
             <keyword name="QSystemNetworkInfo::WimaxMode" id="QSystemNetworkInfo::WimaxMode" ref="qsystemnetworkinfo.html#NetworkMode-enum"/>
-            <keyword name="QSystemNetworkInfo::NetworkModes" id="QSystemNetworkInfo::NetworkModes" ref="qsystemnetworkinfo.html#NetworkMode-enum"/>
             <keyword name="QSystemNetworkInfo::NetworkStatus" id="QSystemNetworkInfo::NetworkStatus" ref="qsystemnetworkinfo.html#NetworkStatus-enum"/>
             <keyword name="QSystemNetworkInfo::UndefinedStatus" id="QSystemNetworkInfo::UndefinedStatus" ref="qsystemnetworkinfo.html#NetworkStatus-enum"/>
             <keyword name="QSystemNetworkInfo::NoNetworkAvailable" id="QSystemNetworkInfo::NoNetworkAvailable" ref="qsystemnetworkinfo.html#NetworkStatus-enum"/>
@@ -3144,6 +3152,8 @@
             <keyword name="QSystemStorageInfo::CdromDrive" id="QSystemStorageInfo::CdromDrive" ref="qsystemstorageinfo.html#DriveType-enum"/>
             <keyword name="availableDiskSpace" id="QSystemStorageInfo::availableDiskSpace" ref="qsystemstorageinfo.html#availableDiskSpace"/>
             <keyword name="logicalDrives" id="QSystemStorageInfo::logicalDrives" ref="qsystemstorageinfo.html#logicalDrives-prop"/>
+            <keyword name="storageAdded" id="QSystemStorageInfo::storageAdded" ref="qsystemstorageinfo.html#storageAdded"/>
+            <keyword name="storageRemoved" id="QSystemStorageInfo::storageRemoved" ref="qsystemstorageinfo.html#storageRemoved"/>
             <keyword name="totalDiskSpace" id="QSystemStorageInfo::totalDiskSpace" ref="qsystemstorageinfo.html#totalDiskSpace"/>
             <keyword name="typeForDrive" id="QSystemStorageInfo::typeForDrive" ref="qsystemstorageinfo.html#typeForDrive"/>
             <keyword name="~QSystemStorageInfo" id="QSystemStorageInfo::~QSystemStorageInfo" ref="qsystemstorageinfo.html#dtor.QSystemStorageInfo"/>
@@ -3509,7 +3519,6 @@
             <keyword name="setContrast" id="QVideoWidget::setContrast" ref="qvideowidget.html#contrast-prop"/>
             <keyword name="setFullScreen" id="QVideoWidget::setFullScreen" ref="qvideowidget.html#fullScreen-prop"/>
             <keyword name="setHue" id="QVideoWidget::setHue" ref="qvideowidget.html#hue-prop"/>
-            <keyword name="setMediaObject" id="QVideoWidget::setMediaObject" ref="qvideowidget.html#setMediaObject"/>
             <keyword name="setSaturation" id="QVideoWidget::setSaturation" ref="qvideowidget.html#saturation-prop"/>
             <keyword name="showEvent" id="QVideoWidget::showEvent" ref="qvideowidget.html#showEvent"/>
             <keyword name="sizeHint" id="QVideoWidget::sizeHint" ref="qvideowidget.html#sizeHint"/>
@@ -3772,6 +3781,7 @@
             <file>logfilepositionsource-logfilepositionsource-pro.html</file>
             <file>hierarchy.html</file>
             <file>sysinfo-examples-qrc.html</file>
+            <file>qmlcontacts-qmlcontactdetail-h.html</file>
             <file>qcontactpresence-members.html</file>
             <file>qproximityreading-members.html</file>
             <file>qmessageaddress.html</file>
@@ -3919,6 +3929,7 @@
             <file>qvideowindowcontrol.html</file>
             <file>images/sensors-overview.png</file>
             <file>qsensorreading.html</file>
+            <file>qmlcontacts-plugin-cpp.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-cpp.html</file>
             <file>qcontactid.html</file>
             <file>qmessagefilter-members.html</file>
@@ -3957,6 +3968,7 @@
             <file>qcontactaddress.html</file>
             <file>player-main-cpp.html</file>
             <file>qmediaplaylistioplugin.html</file>
+            <file>qmlcontacts-qmlcontactdetailfield-h.html</file>
             <file>radio-radio-pro.html</file>
             <file>writemessage-messagesender-cpp.html</file>
             <file>flickrdemo-connectivityhelper-cpp.html</file>
@@ -4060,6 +4072,7 @@
             <file>qserviceinterfacedescriptor.html</file>
             <file>index.html</file>
             <file>bearercloud.html</file>
+            <file>qmlcontacts-qmlcontactdetailfield-cpp.html</file>
             <file>publish-subscribe-main-cpp.html</file>
             <file>bearercloud-bearercloud-h.html</file>
             <file>qabstractsecuritysession-members.html</file>
@@ -4079,6 +4092,7 @@
             <file>qmediatimeinterval-members.html</file>
             <file>bluetoothtransferplugin-bluetoothtransferplugin-pro.html</file>
             <file>images/sensors-rotation2.jpg</file>
+            <file>qmlcontacts-qmlcontact-h.html</file>
             <file>qvideoframe-members.html</file>
             <file>qmediaplaylistreader.html</file>
             <file>classes.html</file>
@@ -4101,6 +4115,7 @@
             <file>bluetoothtransferplugin-bluetoothtransferplugin-cpp.html</file>
             <file>player-player-pro.html</file>
             <file>serviceactions-main-cpp.html</file>
+            <file>qmlcontacts-imageprovider-h.html</file>
             <file>qmessageaccountid.html</file>
             <file>qaudioencodercontrol.html</file>
             <file>qmessageaccountfilter.html</file>
@@ -4243,14 +4258,15 @@
             <file>declarative-sfw-dialer-voipdialer-voipdialerplugin-h.html</file>
             <file>sysinfo-dialog-h.html</file>
             <file>qcontacttimestamp-members.html</file>
+            <file>qmlcontacts-imageprovider-cpp.html</file>
             <file>qrotationfilter.html</file>
             <file>radio-radio-cpp.html</file>
             <file>declarative-sfw-dialer-voipdialer-voipdialer-pro.html</file>
             <file>qsensorbackendfactory.html</file>
             <file>qnetworkconfiguration-members.html</file>
-            <file>qcontactgender-members.html</file>
             <file>flickrdemo.html</file>
             <file>qaccelerometer.html</file>
+            <file>qcontactgender-members.html</file>
             <file>player-playlistmodel-cpp.html</file>
             <file>qsensor-members.html</file>
             <file>qvideoframe.html</file>
@@ -4287,6 +4303,7 @@
             <file>qmediaplaylistwriter.html</file>
             <file>qversitdocument-members.html</file>
             <file>qtmobility-known-issues.html</file>
+            <file>qmlcontacts-qmlcontact-cpp.html</file>
             <file>qaudioinput-members.html</file>
             <file>qmessagecontentcontainer.html</file>
             <file>qambientlightsensor.html</file>
@@ -4300,6 +4317,7 @@
             <file>qmlcontacts-qmlcontacts-pro.html</file>
             <file>qrotationsensor-members.html</file>
             <file>audiorecorder-audiorecorder-pro.html</file>
+            <file>qmlcontacts-qmlcontactdetail-cpp.html</file>
             <file>qmediaplaylist-members.html</file>
             <file>qcontactfetchhint-members.html</file>
             <file>multimedia.html</file>
@@ -4307,7 +4325,6 @@
             <file>qmagnetometerfilter-members.html</file>
             <file>qtmultimediakit.html</file>
             <file>player-mediakeysobserver-cpp.html</file>
-            <file>qmlcontacts-main-cpp.html</file>
             <file>qmediaserviceprovider.html</file>
             <file>qcontactabstractrequest.html</file>
             <file>qgeopositioninfosource.html</file>
@@ -4359,7 +4376,6 @@
             <file>qsensormanager.html</file>
             <file>serviceactions-attachmentlistwidget-cpp.html</file>
             <file>weatherinfo-icons-weather-haze-svg.html</file>
-            <file>qmlcontacts-qmlcontacts-qrc.html</file>
             <file>writemessage-writemessage-pro.html</file>
             <file>flickrdemo-main-cpp.html</file>
             <file>sensors-api.html</file>
