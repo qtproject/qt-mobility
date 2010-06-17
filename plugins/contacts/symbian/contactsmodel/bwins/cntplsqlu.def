@@ -11,7 +11,4 @@ EXPORTS
 	?RegisterDbObserver@CPersistenceLayer@@QAEXAAVMContactDbObserverV2@@@Z @ 10 NONAME ; void CPersistenceLayer::RegisterDbObserver(class MContactDbObserverV2 &)
 	?TransactionManager@CPersistenceLayer@@QAEAAVMLplTransactionManager@@XZ @ 11 NONAME ; class MLplTransactionManager & CPersistenceLayer::TransactionManager(void)
 	?KContactsModelSqliteDbCacheSize@@3HB @ 12 NONAME ; int const KContactsModelSqliteDbCacheSize
-	??1CntPredictiveSearch@@UAE@XZ @ 13 NONAME ; CntPredictiveSearch::~CntPredictiveSearch(void)
-	?NewL@CntPredictiveSearch@@SAPAV1@XZ @ 14 NONAME ; class CntPredictiveSearch * CntPredictiveSearch::NewL(void)
-	?CreateSQLQueryL@CntPredictiveSearch@@QAEPAVHBufC16@@AAV2@H@Z @ 15 NONAME ; class HBufC16 * CntPredictiveSearch::CreateSQLQueryL(class HBufC16 &, int)
-
+	

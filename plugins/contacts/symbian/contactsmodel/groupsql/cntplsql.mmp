@@ -94,7 +94,6 @@ source		c12keykeymap.cpp
 source		cqwertykeymap.cpp
 //source		cntmetadataoperation.cpp
 source		cpplpresencetable.cpp
-source    cntpredictivesearch.cpp
 source    cntsqlsearch.cpp
 
 LIBRARY         euser.lib 

@@ -338,6 +338,8 @@ private: // New virtual functions
 							   TBool& aMandatoryFieldsPresent) const;
 
 public:
+	const CPcsKeyMap* KeyMap() const;
+
 	// Return next table's name, ownership is transferred
 	HBufC* GetNextTableNameL(QList<QChar>& aTables) const;
 
