@@ -55,8 +55,8 @@ Dialog::Dialog()
 
     connect(ui.actuators, SIGNAL(currentIndexChanged(int)), SLOT(actuatorChanged()));
     connect(ui.enabled, SIGNAL(toggled(bool)), SLOT(enabledChanged(bool)));
-    connect(ui.playPause, SIGNAL(clicked()), SLOT(playPauseClicked()));
-    connect(ui.stop, SIGNAL(clicked()), &effect, SLOT(stop()));
+    connect(ui.playPause, SIGNAL(pressed()), SLOT(playPauseClicked()));
+    connect(ui.stop, SIGNAL(pressed()), &effect, SLOT(stop()));
     connect(ui.duration, SIGNAL(valueChanged(int)), SLOT(durationChanged(int)));
     connect(ui.intensity, SIGNAL(valueChanged(int)), SLOT(intensityChanged(int)));
     connect(&effect, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), SLOT(effectStateChanged(QAbstractAnimation::State)));
@@ -71,12 +71,12 @@ Dialog::Dialog()
     connect(ui.grpPeriod, SIGNAL(toggled(bool)), SLOT(periodToggled(bool)));
     connect(ui.period, SIGNAL(valueChanged(int)), SLOT(periodChanged(int)));
 
-    connect(ui.instantPlay, SIGNAL(clicked()), SLOT(instantPlayClicked()));
+    connect(ui.instantPlay, SIGNAL(pressed()), SLOT(instantPlayClicked()));
 
     //file API
-    connect(ui.browse, SIGNAL(clicked()), SLOT(browseClicked()));
-    connect(ui.filePlayPause, SIGNAL(clicked()), SLOT(filePlayPauseClicked()));
-    connect(ui.fileStop, SIGNAL(clicked()), &fileEffect, SLOT(stop()));
+    connect(ui.browse, SIGNAL(pressed()), SLOT(browseClicked()));
+    connect(ui.filePlayPause, SIGNAL(pressed()), SLOT(filePlayPauseClicked()));
+    connect(ui.fileStop, SIGNAL(pressed()), &fileEffect, SLOT(stop()));
     connect(&fileEffect, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), SLOT(fileEffectStateChanged(QAbstractAnimation::State)));
     connect(&fileEffect, SIGNAL(loadFinished(bool)), SLOT(fileLoadFinished()));
 
