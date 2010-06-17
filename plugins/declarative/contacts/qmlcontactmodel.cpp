@@ -94,6 +94,8 @@ QMLContactModel::QMLContactModel(QObject *parent) :
     m_contactsRequest.setFilter(d);
 
     setManager(QString());
+
+    connect(&m_reader, SIGNAL(resultsAvailable()), this, SLOT(startImport()));
 }
 
 QStringList QMLContactModel::availableManagers() const
@@ -133,37 +135,24 @@ void QMLContactModel::saveContact(int id)
 
 void QMLContactModel::importFromVcard(const QString& vcard)
 {
-    //TODO: need to be asynchronous here...
-    if (m_manager) {
-      QVersitReader reader;
-      QFile file(vcard);
-      bool ok = file.open(QIODevice::ReadOnly);
-      if (ok) {
-         reader.setDevice(&file);
-         if (reader.startReading() && reader.waitForFinished()) {
-             QVersitContactImporter importer;
-             importer.importDocuments(reader.results());
-             QList<QContact> contacts = importer.contacts();
-             m_manager->saveContacts(&contacts, 0);
-             fetchAgain();
-         }
-      }
+   QFile file(vcard);
+   bool ok = file.open(QIODevice::ReadOnly);
+   if (ok) {
+      m_reader.setDevice(&file);
+      m_reader.startReading();
    }
 }
 
 void QMLContactModel::exportToVcard(const QString& vcard)
 {
-   //TODO: need to be asynchronous here...
    QVersitContactExporter exporter;
    exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type);
    QList<QVersitDocument> documents = exporter.documents();
-   QVersitWriter  writer;
    QFile file(vcard);
    bool ok = file.open(QIODevice::ReadWrite);
    if (ok) {
-      writer.setDevice(&file);
-      if (writer.startWriting(documents))
-        writer.waitForFinished();
+      m_writer.setDevice(&file);
+      m_writer.startWriting(documents);
    }
 }
 
@@ -189,6 +178,15 @@ void QMLContactModel::setManager(const QString& managerName)
     m_contactsRequest.setManager(m_manager);
     connect(m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
     fetchAgain();
+}
+
+void QMLContactModel::startImport()
+{
+    QVersitContactImporter importer;
+    importer.importDocuments(m_reader.results());
+    QList<QContact> contacts = importer.contacts();
+    if (m_manager)
+      m_manager->saveContacts(&contacts, 0);
 }
 
 void QMLContactModel::resultsReceived()

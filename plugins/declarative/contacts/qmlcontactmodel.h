@@ -47,6 +47,8 @@
 #include "qcontactmanager.h"
 #include "qcontactfetchrequest.h"
 #include "qmlcontact.h"
+#include "qversitreader.h"
+#include "qversitwriter.h"
 
 QTM_USE_NAMESPACE;
 class QMLContactModel : public QAbstractListModel
@@ -89,7 +91,7 @@ public slots:
 private slots:
     void resultsReceived();
     void fetchAgain();
-
+    void startImport();
 private:
     QPair<QString, QString> interestingDetail(const QContact&c) const;
     void exposeContactsToQML();
@@ -101,6 +103,8 @@ private:
     QContactFetchHint m_fetchHint;
     QContactSortOrder m_sortOrder;
     QContactFetchRequest m_contactsRequest;
+    QVersitReader m_reader;
+    QVersitWriter m_writer;
 };
 
 #endif // QMLCONTACTMODEL_H
