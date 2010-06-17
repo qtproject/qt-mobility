@@ -47,6 +47,7 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 #include <QtCore/QVariant>
+#include <QDebug>
 
 #define MAX_FILE_SIZE (1 << 14) //16KB
 
@@ -227,12 +228,12 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QHapticsF
             VibeInt32 effectHandle = VIBE_INVALID_EFFECT_HANDLE_VALUE;
             if (effect->period() > 0) {
                 status = ImmVibePlayPeriodicEffect(handleForActuator(effect->actuator()), convertedDuration(effect->duration()),
-                    effect->intensity() / qreal(VIBE_MAX_MAGNITUDE), effect->period(),
+                    qRound(effect->intensity() * qreal(VIBE_MAX_MAGNITUDE)), effect->period(),
                     VIBE_DEFAULT_STYLE, effect->attackTime(), effect->attackIntensity(),
                     effect->fadeTime(), effect->fadeIntensity(), &effectHandle);
             } else {
                 status = ImmVibePlayMagSweepEffect(handleForActuator(effect->actuator()), convertedDuration(effect->duration()),
-                    effect->intensity() / qreal(VIBE_MAX_MAGNITUDE),
+                    qRound(effect->intensity() * qreal(VIBE_MAX_MAGNITUDE)),
                     VIBE_DEFAULT_STYLE, effect->attackTime(), effect->attackIntensity(),
                     effect->fadeTime(), effect->fadeIntensity(), &effectHandle);
             }
@@ -266,6 +267,7 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QHapticsFe
         return QAbstractAnimation::Running;
     case VIBE_EFFECT_STATE_NOT_PLAYING:
     default:
+        effectHandles.remove(effect);
         return QAbstractAnimation::Stopped;
     }
 }

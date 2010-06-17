@@ -44,6 +44,7 @@
 #include "qfeedbackplugin.h"
 
 #include <QtCore>
+#include <QDebug>
 
 
 QTM_BEGIN_NAMESPACE

@@ -44,6 +44,7 @@
 #include <QtCore/qmetaobject.h>
 
 #include <QtGui/QFileDialog>
+#include <QDebug>
 
 static const char ENUM_INSTANT_EFFECT[] = "InstantEffect";
 static const char ENUM_ANIMATION_STATE[] = "State";

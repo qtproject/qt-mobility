@@ -48,6 +48,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QPluginLoader>
 #include <QtCore/QHash>
+#include <QDebug>
 
 QTM_BEGIN_NAMESPACE
 
