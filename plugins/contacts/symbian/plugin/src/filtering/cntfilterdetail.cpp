@@ -44,7 +44,6 @@
 
 #include "cntfilterdetail.h"
 #include "cntfilterdetaildisplaylabel.h" //todo rename class to follow naming pattern CntFilterDetailDisplayLabel
-#include "cntsqlsearch.h"
 #include "cntsymbianengine.h"
 #include "cnttransformphonenumber.h"
 
@@ -255,25 +254,25 @@ void CntFilterDetail::getTableNameWhereClause(const QContactDetailFilter& detail
 QList<QContactLocalId>  CntFilterDetail::HandlePredictiveSearchFilter(const QContactFilter& filter,
                                                                       QContactManager::Error* error)
 {
-    QString sqlQuery;
-    
     if (filter.type() == QContactFilter::ContactDetailFilter) {
-       const QContactDetailFilter detailFilter(filter);
-       if (detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation) {
-           CntSqlSearch sqlSearch;
-           //convert string to numeric format
+        const QContactDetailFilter detailFilter(filter);
+        if (detailFilter.matchFlags() == QContactFilter::MatchKeypadCollation) {
             QString pattern = detailFilter.value().toString();
-            sqlQuery = sqlSearch.CreatePredictiveSearch(pattern);
-            return  m_srvConnection.searchContacts(sqlQuery, error);  
-       }
-       else {
-           return QList<QContactLocalId>();
-       }
+            //if ( detailFilter.detailFieldName() == QContactEmailAddress::FieldEmailAddress ) {
+                return  m_srvConnection.searchOnServer(
+                        pattern, CntSymbianSrvConnection::CntPredictiveSearchList, error);
+            /*} else {
+                QString sqlQuery;
+                CntSqlSearch sqlSearch;
+                //convert string to numeric format
+                sqlQuery = sqlSearch.CreatePredictiveSearch(pattern);
+                return  m_srvConnection.searchContacts(sqlQuery, error);
+            }*/
+        }
     }
-    else {
-        return QList<QContactLocalId>();
-    }
+    return QList<QContactLocalId>();
 }
+
 
 /*
  * Creates an sql query to fetch contact item IDs for all the contact items
