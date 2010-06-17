@@ -8,15 +8,19 @@ INCLUDEPATH += . \
                ../../../src/versit
 DEPENDPATH += ../../../src/contacts
 
-TARGET = declarative_contacts
+TARGET = $$qtLibraryTarget(declarative_contacts)
 TARGETPATH = QtMobility/contacts
 
-include(../../qimportbase.pri)
+TEMPLATE = lib
+CONFIG += plugin
+PLUGIN_TYPE = declarative
+
 include(../../../common.pri)
 
 QT += declarative
-CONFIG += mobility
 
+
+CONFIG += mobility
 MOBILITY = contacts versit
 
 DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
@@ -25,7 +29,6 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 qmldir.files += $$PWD/qmldir
 qmldir.path +=  $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
-INSTALLS += target qmldir
 
 # Input
 HEADERS += qmlcontactmodel.h \
@@ -43,3 +46,4 @@ SOURCES += plugin.cpp \
 
 OTHER_FILES += qmldir
     
+INSTALLS += target qmldir
