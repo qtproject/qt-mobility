@@ -173,7 +173,7 @@ public:
         Q_UNUSED(context);
         Q_UNUSED(session);
 
-        if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.date")
+        if (descriptor.interfaceName() == QContactActionFactory::InterfaceName)
             return new QDateActionFactory(this);
         else
             return 0;

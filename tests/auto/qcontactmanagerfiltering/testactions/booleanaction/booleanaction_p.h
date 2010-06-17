@@ -172,7 +172,7 @@ public:
         Q_UNUSED(context);
         Q_UNUSED(session);
 
-        if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.boolean")
+        if (descriptor.interfaceName() == QContactActionFactory::InterfaceName)
             return new QBooleanActionFactory(this);
         else
             return 0;

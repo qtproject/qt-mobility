@@ -171,7 +171,7 @@ public:
         Q_UNUSED(context);
         Q_UNUSED(session);
 
-        if (descriptor.interfaceName() == "com.nokia.qt.mobility.contacts.qcontactaction.number")
+        if (descriptor.interfaceName() == QContactActionFactory::InterfaceName)
             return new QIntegerActionFactory(this);
         else
             return 0;

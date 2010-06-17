@@ -74,12 +74,19 @@ tst_QContactActions::tst_QContactActions()
     QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::addLibraryPath(path);
 
-    // and add the sendemail action to the service framework
+    // and add the sendemail + call actions to the service framework
     QServiceManager sm;
-    if (!sm.removeService("tst_qcontactactions:sendemailaction"))
-        qDebug() << " tst_qca: ctor: cleaning up send email test service failed:" << sm.error();
-    if (!sm.removeService("tst_qcontactactions:multiaction"))
-        qDebug() << " tst_qca: ctor: cleaning up multi action test service failed:" << sm.error();
+
+    // clean up any actions/services.
+    QStringList allServices = sm.findServices();
+    foreach(const QString& serv, allServices) {
+        if (serv.startsWith("tst_qcontact")) {
+            if (!sm.removeService(serv)) {
+                qDebug() << " tst_qca: ctor: cleaning up test service" << serv << "failed:" << sm.error();
+            }
+        }
+    }
+
     if (!sm.addService(QCoreApplication::applicationDirPath() + "/plugins/contacts/xmldata/sendemailactionservice.xml"))
         qDebug() << " tst_qca: ctor: unable to add SendEmail service:" << sm.error();
     if (!sm.addService(QCoreApplication::applicationDirPath() + "/plugins/contacts/xmldata/multiactionservice.xml"))
@@ -91,9 +98,16 @@ tst_QContactActions::~tst_QContactActions()
     QString path = QApplication::applicationDirPath() + "/dummyplugin/plugins";
     QApplication::removeLibraryPath(path);
 
+    // clean up any actions/services.
     QServiceManager sm;
-    if (!sm.removeService("tst_qcontactactions:sendemailaction"))
-        qDebug() << " tst_qca: ctor: unable to remove service:" << sm.error();
+    QStringList allServices = sm.findServices();
+    foreach(const QString& serv, allServices) {
+        if (serv.startsWith("tst_qcontact")) {
+            if (!sm.removeService(serv)) {
+                qDebug() << " tst_qca: ctor: cleaning up test service" << serv << "failed:" << sm.error();
+            }
+        }
+    }
 }
 
 void tst_QContactActions::init()
