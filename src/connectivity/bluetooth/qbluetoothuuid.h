@@ -44,21 +44,20 @@
 
 #include "qmobilityglobal.h"
 
-#include <QtGlobal>
-#include <QMetaType>
+#include <QtCore/QtGlobal>
+#include <QtCore/QMetaType>
+#include <QtCore/QUuid>
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
-
-class QBluetoothUuidPrivate;
 
 struct quint128
 {
     quint8 data[16];
 };
 
-class Q_CONNECTIVITY_EXPORT QBluetoothUuid
+class Q_CONNECTIVITY_EXPORT QBluetoothUuid : public QUuid
 {
 public:
     enum ProtocolUuid {
@@ -101,11 +100,8 @@ public:
     explicit QBluetoothUuid(quint128 uuid);
     explicit QBluetoothUuid(const QString &uuid);
     QBluetoothUuid(const QBluetoothUuid &uuid);
+    QBluetoothUuid(const QUuid &uuid);
     ~QBluetoothUuid();
-
-    bool isNull() const;
-
-    QBluetoothUuid &operator=(const QBluetoothUuid &other);
 
     bool operator==(const QBluetoothUuid &other) const;
 
@@ -114,14 +110,6 @@ public:
     quint16 toUInt16(bool *ok = 0) const;
     quint32 toUInt32(bool *ok = 0) const;
     quint128 toUInt128() const;
-
-    QString toString() const;
-
-protected:
-    QBluetoothUuidPrivate *d_ptr;
-
-private:
-    Q_DECLARE_PRIVATE(QBluetoothUuid)
 };
 
 QTM_END_NAMESPACE

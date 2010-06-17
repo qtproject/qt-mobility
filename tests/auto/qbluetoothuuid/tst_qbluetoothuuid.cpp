@@ -162,7 +162,8 @@ do { \
     UUID128_16(uuid128, a, b); \
     quint32 uuid32 = a << 8 | b; \
     quint16 uuid16 = a << 8 | b; \
-    QTest::newRow(text) << true << uuid16 << true << uuid32 << true << uuid128 << QString(s); \
+    QTest::newRow(text) << true << uuid16 << true << uuid32 << true << uuid128 \
+                        << (QLatin1Char('{') + QLatin1String(s) + QLatin1Char('}')); \
 } while (0)
 
 #define NEWROW32(text, a, b, c, d, s) \
@@ -175,7 +176,8 @@ do { \
         uuid16 = c << 8 | d; \
     else \
         uuid16 = 0; \
-    QTest::newRow(text) << constructUuid16 << uuid16 << true << uuid32 << true << uuid128 << QString(s); \
+    QTest::newRow(text) << constructUuid16 << uuid16 << true << uuid32 << true << uuid128 \
+                        << (QLatin1Char('{') + QLatin1String(s) + QLatin1Char('}')); \
 } while (0)
 
 void tst_QBluetoothUuid::tst_conversion_data()
@@ -209,7 +211,7 @@ void tst_QBluetoothUuid::tst_conversion_data()
 
         QTest::newRow("00112233-4455-6677-8899-AABBCCDDEEFF")
             << false << quint16(0) << false << quint32(0) << true << uuid128
-            << QString("00112233-4455-6677-8899-AABBCCDDEEFF");
+            << QString(QLatin1String("{00112233-4455-6677-8899-AABBCCDDEEFF}"));
     }
 }
 
@@ -222,6 +224,12 @@ void tst_QBluetoothUuid::tst_conversion()
     QFETCH(bool, constructUuid128);
     QFETCH(quint128, uuid128);
     QFETCH(QString, uuidS);
+
+    int minimumSize = 16;
+    if (constructUuid16)
+        minimumSize = 2;
+    else if (constructUuid32)
+        minimumSize = 4;
 
     if (constructUuid16) {
         QBluetoothUuid uuid(uuid16);
@@ -237,6 +245,8 @@ void tst_QBluetoothUuid::tst_conversion()
         QVERIFY(memcmp(uuid.toUInt128().data, uuid128.data, 16) == 0);
 
         QCOMPARE(uuid.toString().toUpper(), uuidS.toUpper());
+
+        QCOMPARE(uuid.minimumSize(), minimumSize);
     }
 
     if (constructUuid32) {
@@ -256,6 +266,8 @@ void tst_QBluetoothUuid::tst_conversion()
         QVERIFY(memcmp(uuid.toUInt128().data, uuid128.data, 16) == 0);
 
         QCOMPARE(uuid.toString().toUpper(), uuidS.toUpper());
+
+        QCOMPARE(uuid.minimumSize(), minimumSize);
     }
 
     if (constructUuid128) {
@@ -276,6 +288,8 @@ void tst_QBluetoothUuid::tst_conversion()
         QVERIFY(memcmp(uuid.toUInt128().data, uuid128.data, 16) == 0);
 
         QCOMPARE(uuid.toString().toUpper(), uuidS.toUpper());
+
+        QCOMPARE(uuid.minimumSize(), minimumSize);
     }
 }
 
