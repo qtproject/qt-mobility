@@ -95,7 +95,7 @@ QMLContactModel::QMLContactModel(QObject *parent) :
 
     setManager(QString());
 
-    connect(&m_reader, SIGNAL(resultsAvailable()), this, SLOT(startImport()));
+    connect(&m_reader, SIGNAL(stateChanged(QVersitReader::State)), this, SLOT(startImport(QVersitReader::State)));
 }
 
 QStringList QMLContactModel::availableManagers() const
@@ -130,10 +130,10 @@ void QMLContactModel::exposeContactsToQML()
 void QMLContactModel::importContacts(const QString& vcard)
 {
    qWarning() << "importing contacts from:" << vcard;
-   QFile file(vcard);
-   bool ok = file.open(QIODevice::ReadOnly);
+   QFile*  file = new QFile(vcard);
+   bool ok = file->open(QIODevice::ReadOnly);
    if (ok) {
-      m_reader.setDevice(&file);
+      m_reader.setDevice(file);
       m_reader.startReading();
    }
 }
@@ -143,12 +143,20 @@ void QMLContactModel::exportContacts(const QString& vcard)
    QVersitContactExporter exporter;
    exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type);
    QList<QVersitDocument> documents = exporter.documents();
-   QFile file(vcard);
-   bool ok = file.open(QIODevice::ReadWrite);
+   QFile* file = new QFile(vcard);
+   bool ok = file->open(QIODevice::ReadWrite);
    if (ok) {
-      m_writer.setDevice(&file);
+      m_writer.setDevice(file);
       m_writer.startWriting(documents);
    }
+}
+
+void QMLContactModel::contactsExported(QVersitWriter::State state)
+{
+    if (state == QVersitWriter::FinishedState || state == QVersitWriter::CanceledState) {
+         delete m_writer.device();
+         m_writer.setDevice(0);
+    }
 }
 
 int QMLContactModel::rowCount(const QModelIndex &parent) const
@@ -176,14 +184,22 @@ void QMLContactModel::setManager(const QString& managerName)
     emit managerChanged();
 }
 
-void QMLContactModel::startImport()
+void QMLContactModel::startImport(QVersitReader::State state)
 {
-    QVersitContactImporter importer;
-    importer.importDocuments(m_reader.results());
-    QList<QContact> contacts = importer.contacts();
+    if (state == QVersitReader::FinishedState || state == QVersitReader::CanceledState) {
+        QVersitContactImporter importer;
+        importer.importDocuments(m_reader.results());
+        QList<QContact> contacts = importer.contacts();
 
-    if (m_manager)
-        m_manager->saveContacts(&contacts, 0);
+        delete m_reader.device();
+        m_reader.setDevice(0);
+
+        if (m_manager) {
+            if (m_manager->saveContacts(&contacts, 0))
+                qWarning() << "contacts imported.";
+                fetchAgain();
+        }
+    }
 }
 
 void QMLContactModel::resultsReceived()

@@ -90,7 +90,8 @@ public slots:
 private slots:
     void resultsReceived();
     void fetchAgain();
-    void startImport();
+    void startImport(QVersitReader::State state);
+    void contactsExported(QVersitWriter::State state);
 private:
     QPair<QString, QString> interestingDetail(const QContact&c) const;
     void exposeContactsToQML();
