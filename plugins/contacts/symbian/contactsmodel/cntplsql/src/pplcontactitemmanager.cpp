@@ -31,7 +31,10 @@
 #include "cpredictivesearchsettingstable.h"
 #include "cpredictivesearchsynchronizer.h"
 #include "predictivesearchlog.h"
+#include "cntsqlsearch.h"
+
 //#include "cntmetadataoperation.h"
+
 #include <cntdef.h>
 #include <sqldb.h>
 #include <cntdb.h>
@@ -827,6 +830,24 @@ CBufSeg* CPplContactItemManager::DetailsListL(const TDesC& aSearchQuery) const
     return array;
     }
 
+
+CBufSeg* CPplContactItemManager::DetailsListPredictiveL(const TDesC& aSearchPattern ) const
+    {
+    
+	
+    QString qString;
+    QString queryString;
+    CntSqlSearch sqlSearch( *iPredSearch12keyTable->KeyMap(), 
+	                        *iPredSearchQwertyTable->KeyMap() );
+
+    QT_TRYCATCH_LEAVING({
+        qString = QString((QChar*)aSearchPattern.Ptr(),aSearchPattern.Length());
+        queryString = sqlSearch.CreatePredictiveSearch( qString );
+        });
+    TPtrC query (reinterpret_cast<const TText*>(queryString.constData()),queryString.length());   
+    return DetailsListL( query );
+    }
+
 /**
 Utility method used to rthe prefered card template id
 */
@@ -857,3 +878,5 @@ void CPplContactItemManager::RecreatePredSearchTablesL()
 	iPredictiveSearchSynchronizer->CreatePredSearchTablesL();
 #endif
 	}
+
+

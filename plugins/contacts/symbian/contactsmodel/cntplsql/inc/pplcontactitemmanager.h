@@ -40,6 +40,7 @@ class C12keyPredictiveSearchTable;
 class CQwertyPredictiveSearchTable;
 class CPredictiveSearchSettingsTable;
 class CPredictiveSearchSynchronizer;
+class CPcsKeyMap;
 
 
 /**
@@ -75,6 +76,8 @@ public:
 	CPplPreferencesPersistor& PreferencesPersitor();
 	CContactIdArray* GroupIdListL();	
     CBufSeg* DetailsListL (const TDesC& aSearchQuery) const;
+    CBufSeg* DetailsListPredictiveL(const TDesC& aSearchPattern) const;
+    
     CContactIdArray& CardTemplateIdsL();
     TContactItemId OwnCardIdL();
     void SetOwnCardIdL(TContactItemId aId);

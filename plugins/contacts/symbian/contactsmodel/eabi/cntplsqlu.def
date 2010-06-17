@@ -18,9 +18,4 @@ EXPORTS
 	_ZTV20CContactSynchroniser @ 17 NONAME
 	_ZTV20MContactSynchroniser @ 18 NONAME
 	KContactsModelSqliteDbCacheSize @ 19 NONAME DATA 4
-	_ZN19CntPredictiveSearch15CreateSQLQueryLER7HBufC16i @ 20 NONAME
-	_ZN19CntPredictiveSearch4NewLEv @ 21 NONAME
-	_ZN19CntPredictiveSearchD0Ev @ 22 NONAME
-	_ZN19CntPredictiveSearchD1Ev @ 23 NONAME
-	_ZN19CntPredictiveSearchD2Ev @ 24 NONAME
-
+	

@@ -123,7 +123,9 @@ public:
 
 	CContactIdArray& CardTemplateIdsL();
 	CContactIdArray& GroupIdListL();
-    CBufSeg* DetailsListL(const TDesC& aSearchQuery) const;
+        CBufSeg* DetailsListL(const TDesC& aSearchQuery) const;
+        CBufSeg* DetailsListPredictiveL(const TDesC& aSearchPattern) const;
+
 	TInt64 MachineIdL() const;
 	void SetMachineIdL(TInt64 aMachineId);
 	TPtrC UniqueIdL(); 
