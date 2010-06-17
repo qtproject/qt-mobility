@@ -103,7 +103,8 @@ private:
 };
 
 #else
-class CntCenrep;
+// No problem on earlier platforms
+#include <cntuids.h>
 #endif
 
 class CntDisplayLabel : public QObject
@@ -134,7 +135,9 @@ private:
 private:
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_contactDisplayLabelDetails;
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_groupDisplayLabelDetails;
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
     CntCenrep* m_settings;
+#endif
     int m_nameOrder;
 };
 

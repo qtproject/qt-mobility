@@ -47,7 +47,6 @@
  */
 
 CntDisplayLabel::CntDisplayLabel() :
-m_settings(NULL),
 m_nameOrder(CntOrderFirstLast)
 {
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
@@ -62,7 +61,9 @@ m_nameOrder(CntOrderFirstLast)
  */
 CntDisplayLabel::~CntDisplayLabel()
 {
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
     delete m_settings;
+#endif
 }
 
 /*! 
