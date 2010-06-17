@@ -1574,6 +1574,7 @@ TAccept CStateWritable::AcceptRequestL(CReqSetOwnCard* aRequest)
 		iPersistenceLayer.PersistenceBroker().SetConnectionId(aRequest->SessionId());
 		//Now set the new own card
 		iPersistenceLayer.PersistenceBroker().ChangeTypeL(aRequest->Item().Id(), KUidContactOwnCard);
+		iPersistenceLayer.ContactProperties().SetOwnCardIdL(aRequest->Item().Id(), EFalse);
 		}
 	TransactionCommitLP();
 	aRequest->Complete();

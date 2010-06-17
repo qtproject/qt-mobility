@@ -185,7 +185,7 @@ public:
 	virtual void RecreateSystemTemplateL() = 0;
 
 	virtual TContactItemId OwnCardIdL() = 0;
-	virtual void SetOwnCardIdL(TContactItemId aId) = 0;
+	virtual void SetOwnCardIdL(TContactItemId aId, TBool aPersist = ETrue) = 0;
 
 	virtual const CArrayFix<CContactDatabase::TSortPref>& SortPrefsL() =0;
 	virtual void SetSortPrefsL(CArrayFix<CContactDatabase::TSortPref>* aPrefs) =0;

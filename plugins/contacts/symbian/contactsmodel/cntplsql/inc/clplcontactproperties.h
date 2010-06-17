@@ -123,8 +123,8 @@ public:
 
 	CContactIdArray& CardTemplateIdsL();
 	CContactIdArray& GroupIdListL();
-        CBufSeg* DetailsListL(const TDesC& aSearchQuery) const;
-        CBufSeg* DetailsListPredictiveL(const TDesC& aSearchPattern) const;
+    CBufSeg* DetailsListL(const TDesC& aSearchQuery) const;
+    CBufSeg* DetailsListPredictiveL(const TDesC& aSearchPattern) const;
 
 	TInt64 MachineIdL() const;
 	void SetMachineIdL(TInt64 aMachineId);
@@ -145,7 +145,7 @@ public:
 	const CContactTemplate& SystemTemplateL() const;
 	
 	TContactItemId OwnCardIdL();
-	void SetOwnCardIdL(TContactItemId aId);	
+	void SetOwnCardIdL(TContactItemId aId, TBool aPersist = ETrue);	
 
 	TContactItemId ICCTemplateIdL(TUid aPhonebookUid, TUint aSessionId);
 	TContactItemId PhonebookGroupIdL(TUint aSessionId);

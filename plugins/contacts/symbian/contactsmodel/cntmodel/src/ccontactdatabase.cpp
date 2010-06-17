@@ -308,6 +308,17 @@ EXPORT_C CContactDatabase* CContactDatabase::OpenL(TThreadAccess aAccess)
 	return db;
 	}
 
+EXPORT_C CContactDatabase* CContactDatabase::OpenV2L(TThreadAccess aAccess)
+	{
+    CContactDatabase* db = NewLC();
+	User::LeaveIfError(db->iCntSvr->OpenDatabase(KNullDesC));
+	if( aAccess == EMultiThread )
+		{
+		db->iCntSvr->ShareAuto();
+		} 
+	CleanupStack::Pop(db);
+	return db;
+	}
 
 /**
 Opens a named contact database.
@@ -450,6 +461,18 @@ EXPORT_C CContactDatabase* CContactDatabase::CreateL(TThreadAccess aAccess)
 		db->iCntSvr->ShareAuto();
 		} 
 	db->FetchGroupAndTemplateListsL();
+	CleanupStack::Pop  (db);
+	return db;	
+	}
+
+EXPORT_C CContactDatabase* CContactDatabase::CreateV2L(TThreadAccess aAccess)
+	{
+	CContactDatabase* db = NewLC();
+	User::LeaveIfError(db->iCntSvr->CreateDatabase(KNullDesC)); 
+	if( aAccess == EMultiThread )
+		{
+		db->iCntSvr->ShareAuto();
+		} 
 	CleanupStack::Pop  (db);
 	return db;	
 	}
