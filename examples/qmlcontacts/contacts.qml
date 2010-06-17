@@ -39,7 +39,7 @@
 ****************************************************************************/
 
 import Qt 4.7
-import com.nokia.mobility 1.0
+import QtMobility.contacts 1.0
 import "contents"
 
 Rectangle {
@@ -54,6 +54,9 @@ Rectangle {
     QmlContactModel {
         id: contactModel 
         manager: "memory"
+        onCompleted: {
+            contactModel.importContacts("contents/example.vcf");
+        }
     }
 
     Component {
