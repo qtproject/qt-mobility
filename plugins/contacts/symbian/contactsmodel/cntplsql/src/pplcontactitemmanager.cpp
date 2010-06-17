@@ -740,10 +740,10 @@ TContactItemId CPplContactItemManager::OwnCardIdL()
 /**
 Utility method used to set own card id
 */	
-void CPplContactItemManager::SetOwnCardIdL(TContactItemId aId)
+void CPplContactItemManager::SetOwnCardIdL(TContactItemId aId, TBool aPersist)
 	{	
 	// Call contact table
-	static_cast<CPplContactTable*>(iContactTable)->SetOwnCardIdL(aId);		
+	static_cast<CPplContactTable*>(iContactTable)->SetOwnCardIdL(aId, aPersist);		
 	}
 
 /**

@@ -77,7 +77,7 @@ public:
     CBufSeg* DetailsListL (const TDesC& aSearchQuery) const;
     CContactIdArray& CardTemplateIdsL();
     TContactItemId OwnCardIdL();
-    void SetOwnCardIdL(TContactItemId aId);
+    void SetOwnCardIdL(TContactItemId aId, TBool aPersist = ETrue);
     TInt CardTemplatePrefIdL() const;
     void SetCardTemplatePrefIdL(TInt aCardTemplatePrefId);
 	void SynchronizePredSearchTableL();

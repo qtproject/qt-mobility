@@ -132,7 +132,7 @@ public:
 	TBool IsTableEmptyL();
 	CContactIdArray& CardTemplateIdsL();
 	TContactItemId OwnCardIdL();
-    void SetOwnCardIdL(TContactItemId aId);	
+    void SetOwnCardIdL(TContactItemId aId, TBool aPersist = ETrue);	
     
 	~CPplContactTable();
 	
@@ -158,6 +158,7 @@ private:
 	RSqlDatabase&  iDatabase;
 	
 	CContactIdArray* iCardTemplateIds;
+	TContactItemId iOwnCardId;
 	};
 
 /**

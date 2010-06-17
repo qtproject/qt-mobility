@@ -216,9 +216,9 @@ TContactItemId CLplContactProperties::OwnCardIdL()
 	}
 
 
-void CLplContactProperties::SetOwnCardIdL(TContactItemId aId)
+void CLplContactProperties::SetOwnCardIdL(TContactItemId aId, TBool aPersist)
 	{
-	iContactItemManager->SetOwnCardIdL(aId);
+	iContactItemManager->SetOwnCardIdL(aId, aPersist);
 	}
 
 

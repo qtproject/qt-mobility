@@ -700,4 +700,6 @@ EXPORTS
 	_ZN16CContactDatabase14RemoveObserverERK18MContactDbObserver @ 699 NONAME
 	_ZN16CContactDatabase14AddObserverV2LER20MContactDbObserverV2 @ 700 NONAME
 	_ZN16CContactDatabase16RemoveObserverV2ERK20MContactDbObserverV2 @ 701 NONAME
+	_ZN16CContactDatabase7OpenV2LENS_13TThreadAccessE @ 702 NONAME
+	_ZN16CContactDatabase9CreateV2LENS_13TThreadAccessE @ 703 NONAME
 

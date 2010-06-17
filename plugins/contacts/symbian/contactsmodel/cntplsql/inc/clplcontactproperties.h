@@ -143,7 +143,7 @@ public:
 	const CContactTemplate& SystemTemplateL() const;
 	
 	TContactItemId OwnCardIdL();
-	void SetOwnCardIdL(TContactItemId aId);	
+	void SetOwnCardIdL(TContactItemId aId, TBool aPersist = ETrue);	
 
 	TContactItemId ICCTemplateIdL(TUid aPhonebookUid, TUint aSessionId);
 	TContactItemId PhonebookGroupIdL(TUint aSessionId);
