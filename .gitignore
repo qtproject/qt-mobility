@@ -81,11 +81,14 @@ config.tests/maemo5-contacts/maemo5-contacts
 translations/qtmobility_*.qm
 
 #Symbian specific
+*.mmp
 *.pkg
 bld.inf*
 ABLD.BAT
 *.mk
+*.rss
 *.sis
+*.loc
 *.sisx
 .make.cache
 qmakepluginstubs
