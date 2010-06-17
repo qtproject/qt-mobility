@@ -69,6 +69,7 @@ QTM_BEGIN_NAMESPACE
   a single VCALENDAR document can compose documents of type VEVENT, VTODO, etc.
 
   For example, for the following iCalendar:
+  \code
   BEGIN:VCALENDAR
   VERSION:2.0
   BEGIN:VEVENT
@@ -76,6 +77,7 @@ QTM_BEGIN_NAMESPACE
   DTSTART:20001225
   END:VEVENT
   END:VCALENDAR
+  \endcode
 
   This can be represented as a QVersitDocument of with componentType VCALENDAR and versitType
   ICalendar20Type.  It contains no properties (note: the VERSION property is not stored explicitly
