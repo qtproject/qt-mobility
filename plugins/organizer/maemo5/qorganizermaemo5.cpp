@@ -165,7 +165,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
                 break;
             }
         }
-        QDateTime instanceDate = QDateTime::fromTime_t(resultVec[i]);
+        QDate instanceDate = QDateTime::fromTime_t(resultVec[i]).date();
         QOrganizerEventOccurrence eventocc = convertCEventToQEventOccurrence(cevent, instanceDate, calName);
         retn.append(eventocc);
     }
@@ -760,7 +760,7 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent
     return ret;
 }
 
-QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const
+QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDate& instanceDate, const QString& calendarName) const
 {
     QOrganizerEventOccurrence ret;
     QString tempstr = QString::fromStdString(cevent->getGeo());
@@ -785,13 +785,10 @@ QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccur
     if (!tempdt.isNull())
         ret.setEndDateTime(tempdt);
 
-    // now set the parent information (parent id and original datetime)
-    QOrganizerItemId pId;
-    pId.setManagerUri(managerUri());
+    // now set the parent information (parent id and original date)
     QString hashKey = calendarName + ":" + QString::fromStdString(cevent->getId());
-    pId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setParentItemId(pId);
-    ret.setOriginalDateTime(instanceDate);
+    ret.setParentLocalId(QOrganizerItemLocalId(qHash(hashKey)));
+    ret.setOriginalDate(instanceDate);
     
     // generate a new (empty) id for the occurrence.
     QOrganizerItemId rId;
@@ -867,15 +864,10 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
     // status is always available..
     ret.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
     
-    QOrganizerItemId rId;
-    rId.setManagerUri(managerUri());
-    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
-    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setId(rId);
-
     // now, in maemo, the parent id is the same as this id (todo's only have one occurrence).
-    ret.setParentItemId(rId);
-    ret.setOriginalDateTime(QDateTime::fromTime_t(ctodo->getDateStart()));
+    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
+    ret.setParentLocalId(QOrganizerItemLocalId(qHash(hashKey)));
+    ret.setOriginalDate(QDateTime::fromTime_t(ctodo->getDateStart()).date());
 
     return ret;
 }
