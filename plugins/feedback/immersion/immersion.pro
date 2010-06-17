@@ -11,8 +11,6 @@ SOURCES += qfeedback.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/feedback
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
-INSTALLS+=target
 LIBS += -limmvibe -lQtFeedback
 CONFIG += mobility
 MOBILITY = feedback
@@ -22,4 +20,14 @@ symbian: {
     TARGET.CAPABILITY = All -Tcb
     TARGET = $${TARGET}$${QT_LIBINFIX}
     load(armcc_warnings)
+
+    target.path = /sys/bin
+    INSTALLS += target
+
+    symbianplugin.sources = $${TARGET}.dll
+    symbianplugin.path = /resource/qt/plugins/feedback
+    DEPLOYMENT += symbianplugin
 }
+
+target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
+INSTALLS+=target

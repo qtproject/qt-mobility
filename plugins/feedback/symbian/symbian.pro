@@ -10,8 +10,6 @@ SOURCES += qfeedback.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/feedback
 
-target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
-INSTALLS+=target
 LIBS += -lQtFeedback -lhwrmvibraclient
 CONFIG += mobility
 MOBILITY = feedback
@@ -24,8 +22,20 @@ symbian {
         LIBS += -ltouchfeedback
         contains(S60_VERSION, 5.2): DEFINES += ADVANCED_TACTILE_SUPPORT
     }
+
     TARGET.EPOCALLOWDLLDATA=1
     TARGET.CAPABILITY = All -Tcb
     TARGET = $${TARGET}$${QT_LIBINFIX}
     load(armcc_warnings)
+
+    target.path = /sys/bin
+    INSTALLS += target
+
+    symbianplugin.sources = $${TARGET}.dll
+    symbianplugin.path = /resource/qt/plugins/feedback
+    DEPLOYMENT += symbianplugin
+
 }
+
+target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
+INSTALLS+=target
