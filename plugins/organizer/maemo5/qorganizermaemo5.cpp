@@ -46,6 +46,7 @@
 #include <CEvent.h>
 #include <CJournal.h>
 #include <CTodo.h>
+#include <CRecurrence.h>
 
 QTM_USE_NAMESPACE
 
@@ -90,6 +91,26 @@ int QOrganizerItemMaemo5Engine::managerVersion() const
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
+
+    //TODO!
+
+    *error = QOrganizerItemManager::NoError;
+
+    //QOrganizerItem item = item( generator.localId(), , error );
+
+
+    //CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+
+    if( generator.type() == QOrganizerItemType::TypeTodo )
+    {
+        // Todo types do not have recurrent occurrences in Maemo5
+
+
+
+        //return;
+    }
+
+
     /*
         TODO
 
@@ -259,7 +280,7 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
     // TODO: Check all the dependencies of the removed item
 
     *error = QOrganizerItemManager::NoError;
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    //CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     bool success = true;
 
     for( int i = 0; i < itemIds.size(); ++i ) {
@@ -759,7 +780,7 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
     QString itemIdStr = QString::number( itemId );
     int calId = cal->getCalendarId();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
-    CComponent* retn = 0;
+    CComponent* retn = 0; // Return null on errors
 
     if (item.type() == QOrganizerItemType::TypeEvent) {
         CEvent* cevent = cal->getEvent( itemIdStr.toStdString(), calError );
@@ -779,6 +800,21 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
             cevent->setGeo(event.locationGeoCoordinates().toStdString());
         if (!event.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
             cevent->setPriority(static_cast<int>(event.priority()));
+
+        // Build and set the recurrence information of the event
+        CRecurrence* recurrence = createCRecurrence( item );
+
+        bool ok = cevent->setRecurrence( recurrence ); // setting makes a copy
+        qDebug() << "*** setRecurrence status: " << ok;
+        delete recurrence;
+        recurrence = 0;
+
+        recurrence = cevent->getRecurrence();
+        if ( recurrence )
+            qDebug() << "*** " << QString::fromStdString( recurrence->toString() );
+        else
+            qDebug() << "*** Recurrence is NULL";
+
 
         // TODO: Maybe the following should be removed and should be set on the upper level?
         if (!event.startDateTime().isNull())
@@ -855,6 +891,37 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
     }
 
     return retn;
+}
+
+CRecurrence* QOrganizerItemMaemo5Engine::createCRecurrence( const QOrganizerItem& item ) const
+{
+    // Only the event and todo types contain recurrence information
+    if (item.type() == QOrganizerItemType::TypeEvent) {
+        const QOrganizerEvent& event = static_cast<const QOrganizerEvent&>( item );
+
+        //QList<QDate> recurrenceDates = event.recurrenceDates();
+        //QList<QOrganizerItemRecurrenceRule> exceptionRules = event.exceptionRules();
+        //QList<QDate> exceptionDates = event.exceptionDates();
+
+        d->m_recTransformer.beginTransformToCrecurrence();
+
+        QList<QOrganizerItemRecurrenceRule> recurrenceRules = event.recurrenceRules();
+        foreach( QOrganizerItemRecurrenceRule rule, recurrenceRules )
+            d->m_recTransformer.addQOrganizerItemRecurrenceRule( rule );
+
+        // TODO: recurrenceDates, exceptionRules, exceptionDates
+
+        return d->m_recTransformer.crecurrence(); // TODO: This may need error handling?
+    }
+    else if (item.type() == QOrganizerItemType::TypeTodo) {
+        const QOrganizerTodo& todo = static_cast<const QOrganizerTodo&>( item );
+        QList<QDate> recurrenceDates = todo.recurrenceDates();
+        QList<QOrganizerItemRecurrenceRule> recurrenceRules = todo.recurrenceRules();
+
+        // TODO
+    }
+
+    return 0; // no recurrence information
 }
 
 QOrganizerItemManager::Error QOrganizerItemMaemo5Engine::calErrorToManagerError( int calError ) const

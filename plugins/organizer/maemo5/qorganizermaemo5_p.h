@@ -72,6 +72,8 @@
 #include "qorganizeritemabstractrequest.h"
 #include "qorganizeritemchangeset.h"
 
+#include "qorganizerrecurrencetransform.h"
+
 #include "qorganizerjournal.h"
 #include "qorganizertodo.h"
 #include "qorganizerevent.h"
@@ -80,6 +82,7 @@
 #include <CEvent.h>
 #include <CTodo.h>
 #include <CJournal.h>
+#include <CRecurrence.h>
 
 QTM_USE_NAMESPACE
 
@@ -115,14 +118,17 @@ public:
 
     // key = QString(QLatin1String(CEvent.id().data()));
     // value = QOrganizerItemLocalId(qHash(key));
-    QMap<QString, QOrganizerItemLocalId> m_cIdToQId;
+    QMap<QString, QOrganizerItemLocalId> m_cIdToQId; // TODO: This is not used anymore, remove
 
     // the cId consists of a calendar name and an item id
     // we need to be able to separate both of these parts.
-    QMap<QString, QString> m_cIdToCName;
+    QMap<QString, QString> m_cIdToCName; // TODO: This is not used anymore, remove
 
     // the multicalendar instance
     CMulticalendar *m_mcInstance;
+
+    // recurrence rule converter instance
+    OrganizerRecurrenceTransform m_recTransformer;
 };
 
 
@@ -172,6 +178,9 @@ private:
     // conversions between CComponent and QOrganizerItem
     void fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component ) const;
     CComponent* createCComponent( CCalendar* cal, const QOrganizerItem& item ) const;
+
+    // recurrence information conversions
+    CRecurrence* createCRecurrence( const QOrganizerItem& item ) const;
 
     // error code conversion
     QOrganizerItemManager::Error calErrorToManagerError( int calError ) const;
