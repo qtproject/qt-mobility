@@ -38,87 +38,55 @@
 **
 ****************************************************************************/
 
-#include <qcontactdetails.h>
-#include "qmlcontact.h"
-#include "qmlcontactdetail.h"
+
+#include "qmlcontactdetailfield.h"
 #include <QDebug>
 
-static QString normalizePropertyName(const QString& name)
-{
-   if (!name.isEmpty())
-     return name.mid(1).prepend(name[0].toLower());
-   return QString();
-}
-
-
-QMLContact::QMLContact(QObject *parent)
+QMLContactDetailField::QMLContactDetailField(QObject* parent)
     :QObject(parent),
-    m_contactMap(0)
+    m_map(0)
 {
 
 }
 
-void QMLContact::setContact(const QContact& c)
+void QMLContactDetailField::setDetailPropertyMap(QDeclarativePropertyMap* map)
 {
-    m_contact = c;
-
-    if (m_contactMap) {
-        delete m_contactMap;
-        m_detailMaps.clear();
-    }
-
-    foreach (QObject* detail, m_details) {
-        delete detail;
-    }
-    m_details.clear();
-
-    m_contactMap = new QDeclarativePropertyMap(this);
-
-
-    QList<QContactDetail> details = m_contact.details();
-    foreach (const QContactDetail& detail, details) {
-      QMLContactDetail* qd = new QMLContactDetail(this);
-
-      QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(m_contactMap);
-
-      connect(dm, SIGNAL(valueChanged(QString,QVariant)), qd, SLOT(detailChanged(QString,QVariant)));
-
-
-      QVariantMap values = detail.variantValues();
-      foreach (const QString& key, values.keys()) {
-          dm->insert(normalizePropertyName(key), values.value(key));
-      }
-      qd->setName(normalizePropertyName(detail.definitionName()));
-      m_details.append(qd);
-      qd->setDetailPropertyMap(dm);
-      m_detailMaps.append(dm);;
-      m_contactMap->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
-    }
+    m_map = map;
 }
 
-QContact QMLContact::contact() const
+void QMLContactDetailField::setKey(const QString& key)
 {
-    QContact c(m_contact); 
-    foreach (QObject* o, m_details) {
-        QMLContactDetail* d = qobject_cast<QMLContactDetail*>(o);
-        if (d && d->isDetailChanged()) {
-            QContactDetail detail = d->detail();
-            c.saveDetail(&detail);
-        }
+    m_key = key;
+}
+
+QString QMLContactDetailField::key() const
+{
+    return m_key;
+}
+
+QVariant QMLContactDetailField::value() const
+{
+    if (m_map) {
+        qWarning() <<  "key:" << m_key << "value:" << m_map->value(m_key);
+        return m_map->value(m_key);
     }
-
-    return c;
-}
-
-QList<QObject*> QMLContact::details() const
-{
-    return m_details;
-}
-
-QVariant QMLContact::contactMap() const
-{
-    if (m_contactMap)
-        return QVariant::fromValue(static_cast<QObject*>(m_contactMap));
     return QVariant();
 }
 
+void QMLContactDetailField::setValue(const QVariant& value)
+{
+    if (m_map && m_map->contains(m_key)) {
+        (*m_map)[m_key] = value;
+    }
+}
+
+
+QString QMLContactDetailField::detailName() const
+{
+    return m_detailName;
+}
+
+void QMLContactDetailField::setDetailName(const QString& name)
+{
+    m_detailName = name;
+}

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,43 +39,39 @@
 ****************************************************************************/
 
 
-#include "qmlcontactdetailfield.h"
+#include <QApplication>
+#include <QtDeclarative>
+#include <QDeclarativeExtensionPlugin>
 #include <QDebug>
+#include "qmlcontactmodel.h"
+#include "qmlcontact.h"
+#include "qmlcontactdetail.h"
+#include "qmlcontactdetailfield.h"
+#include "imageprovider.h"
 
-QMLContactDetailField::QMLContactDetailField(QObject* parent)
-    :QObject(parent),
-    m_map(0)
+QT_USE_NAMESPACE
+
+
+class QContactQmlPlugin : public QDeclarativeExtensionPlugin
 {
-
-}
-
-void QMLContactDetailField::setDetailPropertyMap(QDeclarativePropertyMap* map)
-{
-    m_map = map;
-}
-
-void QMLContactDetailField::setKey(const QString& key)
-{
-    m_key = key;
-}
-
-QString QMLContactDetailField::key() const
-{
-    return m_key;
-}
-
-QVariant QMLContactDetailField::value() const
-{
-    if (m_map) {
-        qWarning() <<  "key:" << m_key << "value:" << m_map->value(m_key);
-        return m_map->value(m_key);
+    Q_OBJECT
+public:
+    void registerTypes(const char *uri)
+    {
+        Q_ASSERT(uri == QLatin1String("QtMobility.contacts"));
+        qmlRegisterType<QMLContactModel>(uri, 1, 0, "QmlContactModel");
+        qmlRegisterType<QMLContact>(uri, 1, 0, "QmlContact");
+        qmlRegisterType<QMLContactDetail>(uri, 1, 0, "QmlContactDetail");
+        qmlRegisterType<QMLContactDetailField>(uri, 1, 0, "QmlContactDetailField");
     }
-    return QVariant();
-}
 
-void QMLContactDetailField::setValue(const QVariant& value)
-{
-    if (m_map && m_map->contains(m_key)) {
-        (*m_map)[m_key] = value;
+    void initializeEngine(QDeclarativeEngine *engine, const char *uri) {
+        Q_UNUSED(uri);
+        engine->addImageProvider("thumbnail", new ContactThumbnailImageProvider);
     }
-}
+};
+
+#include "plugin.moc"
+
+Q_EXPORT_PLUGIN2(qcontactqmlplugin, QContactQmlPlugin);
+
