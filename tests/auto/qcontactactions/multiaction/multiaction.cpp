@@ -68,14 +68,14 @@ QObject* QContactMultiActionPlugin::createInstance(const QServiceInterfaceDescri
             && descriptor.minorVersion() == 1
             && descriptor.customAttribute("ActionName") == QString(QLatin1String("call"))
             && descriptor.customAttribute("Provider") == QString(QLatin1String("sip"))) {
-        return new QContactActionOne;
+        return new QContactActionOneFactory;
     } else if (descriptor.interfaceName() == QContactActionFactory::InterfaceName
                && descriptor.serviceName() == QString(QLatin1String("tst_qcontactactions:multiaction"))
                && descriptor.majorVersion() == 1
                && descriptor.minorVersion() == 2
                && descriptor.customAttribute("ActionName") == QString(QLatin1String("call"))
                && descriptor.customAttribute("Provider") == QString(QLatin1String("example proprietary protocol"))) {
-        return new QContactActionTwo;
+        return new QContactActionTwoFactory;
     } else {
         return 0;
     }
