@@ -276,13 +276,24 @@ void QGalleryTrackerItemListPrivate::synchronize()
     }
 
     if (equal) {
-        const int aIndex = aIt - aBegin + aCache.index;
-        const int rIndex = rIt - rBegin + rCache.index;
+        {
+            const int aIndex = aCacheIndex(aIt);
+            const int rIndex = rCacheIndex(rIt);
 
-        postSyncEvent(SyncEvent::replaceEvent(
-                aCache.index, aIndex - aCache.index, rCache.index, rIndex - rCache.index));
+            postSyncEvent(SyncEvent::replaceEvent(
+                    aCache.index, aIndex - aCache.index, rCache.index, rIndex - rCache.index));
+        }
 
         synchronizeRows(aIt, rIt, aEnd, rEnd);
+
+        {
+            const int aIndex = aCacheIndex(aIt);
+            const int rIndex = rCacheIndex(rIt);
+            const int aCount = aEnd - aIt;
+            const int rCount = rEnd - rIt;
+
+            postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
+        }
     } else {
         const int aCount = aCache.count - aCache.index;
         const int rCount = rCache.values.count() / tableWidth;
@@ -330,9 +341,9 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
                 }
             } while (aIt != aEnd && rIt != rEnd);
 
-            const int aIndex = (aBegin.begin - aCache.values.begin()) / tableWidth;
-            const int rIndex = (rBegin.begin - rCache.values.begin()) / tableWidth;
-            const int count = (rIt.begin - rBegin.begin) / tableWidth;
+            const int aIndex = aCacheIndex(aBegin);
+            const int rIndex = rCacheIndex(rBegin);
+            const int count = rIt - rBegin;
 
             postSyncEvent(SyncEvent::updateEvent(aIndex, rIndex, count));
 
@@ -366,10 +377,10 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
                     } while (aInner-- != aBegin && rOuter-- != rBegin
                              && aInner.isEqual(rOuter, identityWidth));
 
-                    const int aIndex = (aOuter.begin - aCache.values.begin()) / tableWidth;
-                    const int rIndex = (rBegin.begin - rCache.values.begin()) / tableWidth;
-                    const int aCount = (aIt.begin - aOuter.begin) / tableWidth;
-                    const int rCount = (rIt.begin - rBegin.begin) / tableWidth;
+                    const int aIndex = aCacheIndex(aOuter);
+                    const int rIndex = rCacheIndex(rBegin);
+                    const int aCount = aIt - aBegin;
+                    const int rCount = rIt - rBegin;
 
                     postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
 
@@ -387,10 +398,10 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
                     } while (rInner-- != rBegin && aOuter-- != aBegin
                            && rInner.isEqual(aOuter, identityWidth));
 
-                    const int aIndex = (aBegin.begin - aCache.values.begin()) / tableWidth;
-                    const int rIndex = (rOuter.begin - rCache.values.begin()) / tableWidth;
-                    const int aCount = (aIt.begin - aBegin.begin) / tableWidth;
-                    const int rCount = (rIt.begin - rOuter.begin) / tableWidth;
+                    const int aIndex = aCacheIndex(aBegin);
+                    const int rIndex = rCacheIndex(rOuter);
+                    const int aCount = aIt - aBegin;
+                    const int rCount = rIt - rBegin;
 
                     postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
 
@@ -402,6 +413,8 @@ void QGalleryTrackerItemListPrivate::synchronizeRows(
             }
         }
     }
+
+
 }
 
 void QGalleryTrackerItemListPrivate::processSyncEvents()

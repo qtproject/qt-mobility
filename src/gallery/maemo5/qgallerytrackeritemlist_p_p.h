@@ -170,6 +170,8 @@ public:
         row_iterator operator --(int) { row_iterator n(*this); begin -= width; return n; }
 
         int operator -(const row_iterator &other) const { return (begin - other.begin) / width; }
+        int operator -(const QVector<QVariant>::const_iterator &iterator) const {
+            return (begin - iterator) / width; }
 
         row_iterator operator +(int span) const {
             return row_iterator(begin + (span * width), width); }
@@ -302,6 +304,11 @@ public:
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
     SyncEventQueue syncEvents;
+
+    inline int aCacheIndex(const row_iterator &iterator) const {
+        return iterator - aCache.values.begin() + aCache.index; }
+    inline int rCacheIndex(const row_iterator &iterator) const {
+        return iterator - rCache.values.begin() + rCache.index; }
 
     void update(int index);
 

@@ -78,7 +78,9 @@ private Q_SLOTS:
     void reset();
     void removeItem();
     void insertItem();
-    void replaceItem();
+    void replaceFirstItem();
+    void replaceLastItem();
+    void replaceMiddleItem();
 
 private:
     void populateArguments(
@@ -593,7 +595,7 @@ void tst_QGalleryTrackerItemList::insertItem()
     QCOMPARE(list.id(10), QVariant(QLatin1String("c-000")));
 }
 
-void tst_QGalleryTrackerItemList::replaceItem()
+void tst_QGalleryTrackerItemList::replaceFirstItem()
 {
     QGalleryTrackerItemListArguments arguments;
 
@@ -642,6 +644,114 @@ void tst_QGalleryTrackerItemList::replaceItem()
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("b-000")));
     QCOMPARE(list.id(1), QVariant(QLatin1String("c-000")));
+}
+
+
+void tst_QGalleryTrackerItemList::replaceLastItem()
+{
+    QGalleryTrackerItemListArguments arguments;
+
+    populateArguments(&arguments, QLatin1String("query"));
+
+    m_queryAdaptor->setCount('a', 15);
+    m_queryAdaptor->setCount('b', 1);
+
+    QGalleryTrackerItemList list(arguments, true, 0, 32);
+
+    QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
+    QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
+    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(list.count(), 0);
+
+    QVERIFY(list.waitForFinished(1000));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 16);
+    QCOMPARE(insertSpy.count(), 1);
+    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
+    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
+    QCOMPARE(removeSpy.count(), 0);
+    QCOMPARE(changeSpy.count(), 0);
+
+    QCOMPARE(list.id(14), QVariant(QLatin1String("a-014")));
+    QCOMPARE(list.id(15), QVariant(QLatin1String("b-000")));
+
+    m_queryAdaptor->setCount('b', 0);
+    m_queryAdaptor->setCount('c', 1);
+
+    list.refresh();
+    QVERIFY(list.waitForFinished(1000));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 16);
+    QCOMPARE(insertSpy.count(), 2);
+    QCOMPARE(insertSpy.last().value(0).toInt(), 15);
+    QCOMPARE(insertSpy.last().value(1).toInt(), 1);
+    QCOMPARE(removeSpy.count(), 1);
+    QCOMPARE(removeSpy.last().value(0).toInt(), 15);
+    QCOMPARE(removeSpy.last().value(1).toInt(), 1);
+    QCOMPARE(changeSpy.count(), 0);
+
+    QCOMPARE(list.id(14), QVariant(QLatin1String("a-014")));
+    QCOMPARE(list.id(15), QVariant(QLatin1String("c-000")));
+}
+
+void tst_QGalleryTrackerItemList::replaceMiddleItem()
+{
+    QGalleryTrackerItemListArguments arguments;
+
+    populateArguments(&arguments, QLatin1String("query"));
+
+    m_queryAdaptor->setCount('a', 8);
+    m_queryAdaptor->setCount('b', 2);
+    m_queryAdaptor->setCount('d', 6);
+
+    QGalleryTrackerItemList list(arguments, true, 0, 32);
+
+    QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
+    QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
+    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(list.count(), 0);
+
+    QVERIFY(list.waitForFinished(1000));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 16);
+    QCOMPARE(insertSpy.count(), 1);
+    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
+    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
+    QCOMPARE(removeSpy.count(), 0);
+    QCOMPARE(changeSpy.count(), 0);
+
+    QCOMPARE(list.id(7), QVariant(QLatin1String("a-007")));
+    QCOMPARE(list.id(8), QVariant(QLatin1String("b-000")));
+    QCOMPARE(list.id(9), QVariant(QLatin1String("b-001")));
+    QCOMPARE(list.id(10), QVariant(QLatin1String("d-000")));
+
+    m_queryAdaptor->setCount('b', 0);
+    m_queryAdaptor->setCount('c', 2);
+
+    list.refresh();
+    QVERIFY(list.waitForFinished(1000));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 16);
+    QCOMPARE(insertSpy.count(), 2);
+    QCOMPARE(insertSpy.last().value(0).toInt(), 8);
+    QCOMPARE(insertSpy.last().value(1).toInt(), 2);
+    QCOMPARE(removeSpy.count(), 1);
+    QCOMPARE(removeSpy.last().value(0).toInt(), 8);
+    QCOMPARE(removeSpy.last().value(1).toInt(), 2);
+    QCOMPARE(changeSpy.count(), 0);
+
+    QCOMPARE(list.id(7), QVariant(QLatin1String("a-007")));
+    QCOMPARE(list.id(8), QVariant(QLatin1String("c-000")));
+    QCOMPARE(list.id(9), QVariant(QLatin1String("c-001")));
+    QCOMPARE(list.id(10), QVariant(QLatin1String("d-000")));
 }
 
 QTEST_MAIN(tst_QGalleryTrackerItemList)
