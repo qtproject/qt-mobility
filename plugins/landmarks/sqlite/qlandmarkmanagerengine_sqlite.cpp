@@ -1415,7 +1415,6 @@ bool removeLandmark(const QString &connectionName, const QLandmarkId &landmarkId
 
     QString q0 = QString("SELECT 1 FROM landmark WHERE id = %1;").arg(landmarkId.localId());
     QSqlQuery query0(q0, db);
-    // invalid id - not an error, but we need to detect this to avoid sending the signals
     if (!query0.next()) {
         if (transacting)
             db.rollback();
@@ -1506,6 +1505,177 @@ bool removeLandmarks(const QString &connectionName, const QList<QLandmarkId> &la
     //    emit landmarksRemoved(removedIds);
 
     return noErrors;
+}
+
+bool saveCategory(const QString &connectionName, QLandmarkCategory *category,
+                QLandmarkManager::Error *error,
+                QString *errorString, const QString &managerUri)
+{
+
+    if (!category->categoryId().managerUri().isEmpty() && category->categoryId().managerUri() != managerUri) {
+        if (error)
+            *error = QLandmarkManager::DoesNotExistError;
+        if (errorString)
+            *errorString = "Category id comes from different landmark manager.";
+        return false;
+    }
+
+    bool update = category->categoryId().isValid();
+
+    QStringList columns;
+    QStringList values;
+
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+
+    bool transacting = db.transaction();
+
+    if (update) {
+        columns << "id";
+        values << category->categoryId().localId();
+
+        QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->categoryId().localId());
+        QSqlQuery query0(q0, db);
+        if (!query0.next()) {
+            if (transacting)
+                db.rollback();
+
+            if (error)
+                *error = QLandmarkManager::DoesNotExistError;
+            if (errorString)
+                *errorString = "Category id does not exist in this landmark manager.";
+
+            return false;
+        }
+    }
+
+    columns << "name";
+    if (!category->name().isEmpty())
+        values << quoteString(category->name());
+    else
+        values << "null";
+
+    columns << "description";
+    if (!category->description().isEmpty())
+        values << quoteString(category->description());
+    else
+        values << "null";
+
+    columns << "icon_url";
+    if (!category->iconUrl().isEmpty())
+        values << quoteString(category->iconUrl().toString());
+    else
+        values << "null";
+
+    QString q1 = QString("REPLACE INTO category (%1) VALUES (%2);").arg(columns.join(",")).arg(values.join(","));
+    QSqlQuery query1(db);
+    if (!query1.exec(q1)) {
+        if (error)
+            *error  = QLandmarkManager::UnknownError;
+        if (errorString)
+            *errorString = QString("Database Query failed, reaosn: %1").arg(query1.lastError().text());
+        //qWarning() << query1.lastError().databaseText();
+        if (transacting)
+            db.rollback();
+        return false;
+    }
+
+    if (!update) {
+        QLandmarkCategoryId id;
+        id.setManagerUri(managerUri);
+        id.setLocalId(query1.lastInsertId().toString());
+        category->setCategoryId(id);
+    }
+
+    if (transacting)
+        db.commit();
+
+    //TODO: notifications
+    /*if (!update) {
+        QList<QLandmarkCategoryId> ids;
+        ids << category->categoryId();
+        emit categoriesAdded(ids);
+    } else {
+        QList<QLandmarkCategoryId> ids;
+        ids << category->categoryId();
+        emit categoriesChanged(ids);
+    }*/
+
+    /*
+    // grab keys from attributes tables for current id
+    // delete those we no longer have
+    // use replace for the rest
+
+    // loop through attributes
+
+    */
+
+    if (error)
+        *error = QLandmarkManager::NoError;
+    if (errorString)
+        *errorString = "";
+
+    return true;
+}
+
+bool removeCategory(const QString &connectionName, const QLandmarkCategoryId &categoryId,
+                QLandmarkManager::Error *error,
+                QString *errorString, const QString &managerUri)
+{
+    if (categoryId.managerUri() != managerUri) {
+        if (error)
+            *error = QLandmarkManager::BadArgumentError;
+        if (errorString)
+            *errorString = "Category id comes from different landmark manager.";
+        return false;
+    }
+
+    QSqlDatabase db = QSqlDatabase::database(connectionName);
+
+    bool transacting = db.transaction();
+
+    QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(categoryId.localId());
+    QSqlQuery query0(q0, db);
+    if (!query0.next()) {
+        if (transacting)
+            db.commit();
+
+        if (error)
+            *error = QLandmarkManager::NoError;
+        if (errorString)
+            *errorString = "";
+        return true;
+    }
+
+    QString q1 = QString("DELETE FROM category WHERE id = %1;").arg(categoryId.localId());
+    QSqlQuery query1(q1, db);
+    if (!query1.exec()) {
+        if (transacting)
+            db.rollback();
+        return false;
+    }
+
+    QString q2 = QString("DELETE FROM landmark_category WHERE category_id = %1;").arg(categoryId.localId());
+    QSqlQuery query2(q2, db);
+    if (!query2.exec()) {
+        if (transacting)
+            db.rollback();
+        return false;
+    }
+
+    if (transacting)
+        db.commit();
+
+    //TODO: notifications
+    //QList<QLandmarkCategoryId> ids;
+    //ids << categoryId;
+    //emit categoriesRemoved(ids);
+
+    if (error)
+        *error = QLandmarkManager::NoError;
+    if (errorString)
+        *errorString = "";
+
+    return true;
 }
 
 QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng)
@@ -2413,163 +2583,14 @@ bool QLandmarkManagerEngineSqlite::saveCategory(QLandmarkCategory* category,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    QString uri = managerUri();
-
-    if (!category->categoryId().managerUri().isEmpty() && category->categoryId().managerUri() != uri) {
-        if (error)
-            *error = QLandmarkManager::DoesNotExistError;
-        if (errorString)
-            *errorString = "Category id comes from different landmark manager.";
-        return false;
-    }
-
-    bool update = category->categoryId().isValid();
-
-    QStringList columns;
-    QStringList values;
-
-    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
-
-    bool transacting = db.transaction();
-
-    if (update) {
-        columns << "id";
-        values << category->categoryId().localId();
-
-        QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(category->categoryId().localId());
-        QSqlQuery query0(q0, db);
-        if (!query0.next()) {
-            if (transacting)
-                db.rollback();
-
-            if (error)
-                *error = QLandmarkManager::DoesNotExistError;
-            if (errorString)
-                *errorString = "Category id does not exist in this landmark manager.";
-
-            return false;
-        }
-    }
-
-    columns << "name";
-    if (!category->name().isEmpty())
-        values << quoteString(category->name());
-    else
-        values << "null";
-
-    columns << "description";
-    if (!category->description().isEmpty())
-        values << quoteString(category->description());
-    else
-        values << "null";
-
-    columns << "icon_url";
-    if (!category->iconUrl().isEmpty())
-        values << quoteString(category->iconUrl().toString());
-    else
-        values << "null";
-
-    QString q1 = QString("REPLACE INTO category (%1) VALUES (%2);").arg(columns.join(",")).arg(values.join(","));
-    QSqlQuery query1(db);
-    if (!query1.exec(q1)) {
-        // TODO set error
-        //qWarning() << query1.lastError().databaseText();
-        if (transacting)
-            db.rollback();
-        return false;
-    }
-
-    if (!update) {
-        QLandmarkCategoryId id;
-        id.setManagerUri(uri);
-        id.setLocalId(query1.lastInsertId().toString());
-        category->setCategoryId(id);
-    }
-
-    if (transacting)
-        db.commit();
-
-    if (!update) {
-        QList<QLandmarkCategoryId> ids;
-        ids << category->categoryId();
-        emit categoriesAdded(ids);
-    } else {
-        QList<QLandmarkCategoryId> ids;
-        ids << category->categoryId();
-        emit categoriesChanged(ids);
-    }
-
-    /*
-    // grab keys from attributes tables for current id
-    // delete those we no longer have
-    // use replace for the rest
-
-    // loop through attributes
-
-    */
-
-    if (error)
-        *error = QLandmarkManager::NoError;
-    if (errorString)
-        *errorString = "";
-
-    return true;
+    return ::saveCategory(m_dbConnectionName, category, error, errorString, managerUri());
 }
 
 bool QLandmarkManagerEngineSqlite::removeCategory(const QLandmarkCategoryId &categoryId,
         QLandmarkManager::Error *error,
         QString *errorString)
 {
-    if (categoryId.managerUri() != managerUri()) {
-        if (error)
-            *error = QLandmarkManager::BadArgumentError;
-        if (errorString)
-            *errorString = "Category id comes from different landmark manager.";
-        return false;
-    }
-
-    QSqlDatabase db = QSqlDatabase::database(m_dbConnectionName);
-
-    bool transacting = db.transaction();
-
-    QString q0 = QString("SELECT 1 FROM category WHERE id = %1;").arg(categoryId.localId());
-    QSqlQuery query0(q0, db);
-    // invalid id - not an error, but we need to detect this to avoid sending the signals
-    if (!query0.next()) {
-        if (transacting)
-            db.commit();
-        return true;
-    }
-
-    QString q1 = QString("DELETE FROM category WHERE id = %1;").arg(categoryId.localId());
-    QSqlQuery query1(q1, db);
-    if (!query1.exec()) {
-        if (transacting)
-            db.rollback();
-        return false;
-    }
-
-    QString q2 = QString("DELETE FROM landmark_category WHERE category_id = %1;").arg(categoryId.localId());
-    QSqlQuery query2(q2, db);
-    if (!query2.exec()) {
-        if (transacting)
-            db.rollback();
-        return false;
-    }
-
-    if (transacting)
-        db.commit();
-
-    QList<QLandmarkCategoryId> ids;
-    ids << categoryId;
-    emit categoriesRemoved(ids);
-
-    if (error)
-        *error = QLandmarkManager::NoError;
-    if (errorString)
-        *errorString = "";
-
-    return true;
+    return ::removeCategory(m_dbConnectionName, categoryId, error, errorString, managerUri());
 }
 
 bool QLandmarkManagerEngineSqlite::importLandmarks(QIODevice *device,
