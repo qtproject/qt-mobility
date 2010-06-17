@@ -125,6 +125,7 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
 
     const QVector<QStringList> resultSet = reply.value();
 
+    rCache.count = rCache.index + resultSet.count();
     postSyncEvent(SyncEvent::startEvent(resultSet.count()));
 
     QVector<QVariant> &values = rCache.values;
@@ -235,6 +236,8 @@ void QGalleryTrackerItemListPrivate::synchronize()
 
         if ((equal = aBegin.isEqual(rBegin + offset, identityWidth))) {
             rIt = rBegin + offset;
+
+            postSyncEvent(SyncEvent::updateEvent(aCache.index, rCache.index, offset));
         } else {
             rIt = rBegin + qMax(0, offset - 8);
         }
@@ -296,7 +299,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
 
         const int aIndex = aCacheIndex(aIt);
         const int rIndex = rCacheIndex(rIt);
-        const int aCount = aEnd - aIt;
+        const int aCount = rCache.count - rCache.index < queryLimit ? aEnd - aIt : 0;
         const int rCount = rEnd - rIt;
 
         postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
@@ -450,10 +453,17 @@ void QGalleryTrackerItemListPrivate::processSyncEvents()
                 aCache.offset = event->aIndex + event->aCount;
                 rCache.cutoff = event->rIndex + event->rCount;
 
-                rowCount += event->rCount;
+                if (event->rIndex > rowCount) {
+                    const int index = rowCount;
 
-                q_func()->inserted(event->rIndex, event->rCount);
+                    rowCount = event->rIndex + event->rCount;
 
+                    q_func()->inserted(index, rowCount - index);
+                } else {
+                    rowCount += event->rCount;
+
+                    q_func()->inserted(event->rIndex, event->rCount);
+                }
                 break;
             }
             break;
