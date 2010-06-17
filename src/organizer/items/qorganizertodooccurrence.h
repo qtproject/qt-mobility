@@ -58,8 +58,8 @@ public:
     void setDueDateTime(const QDateTime& dueDateTime);
     QDateTime dueDateTime() const;
 
-    void setParentItemLocalId(const QOrganizerItemLocalId& parentId);
-    QOrganizerItemLocalId parentItemLocalId() const;
+    void setParentLocalId(const QOrganizerItemLocalId& parentId);
+    QOrganizerItemLocalId parentLocalId() const;
     void setOriginalDate(const QDate& date);
     QDate originalDate() const;
 

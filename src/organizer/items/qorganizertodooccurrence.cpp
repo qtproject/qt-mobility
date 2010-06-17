@@ -69,14 +69,14 @@ QDateTime QOrganizerTodoOccurrence::dueDateTime() const
     return ttr.dueDateTime();
 }
 
-void QOrganizerTodoOccurrence::setParentItemLocalId(const QOrganizerItemLocalId& parentLocalId)
+void QOrganizerTodoOccurrence::setParentLocalId(const QOrganizerItemLocalId& parentLocalId)
 {
     QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
     origin.setParentLocalId(parentLocalId);
     saveDetail(&origin);
 }
 
-QOrganizerItemLocalId QOrganizerTodoOccurrence::parentItemLocalId() const
+QOrganizerItemLocalId QOrganizerTodoOccurrence::parentLocalId() const
 {
     QOrganizerItemInstanceOrigin origin = detail<QOrganizerItemInstanceOrigin>();
     return origin.parentLocalId();
