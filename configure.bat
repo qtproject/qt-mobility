@@ -494,6 +494,9 @@ REM call :compileTest OpenMaxAl_support openmaxal_symbian
 call :compileTest Surfaces_s60 surfaces_s60
 call :compileTest Symbian_Messaging_Freestyle messaging_freestyle
 
+REM this isn't a test, since configure isn't called during MCL builds
+echo build_symbiancntmodel = no >> %PROJECT_CONFIG%
+
 :noTests
 
 echo End of compile tests
