@@ -226,6 +226,15 @@ void tst_SymbianOm::removeSimpleItem()
     itemIds.append(item3.localId());
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QVERIFY(m_om->removeItems(itemIds, &errorMap));
+
+    // Remove with itemIds
+    QOrganizerItem item4;
+    item4.setType(QOrganizerItemType::TypeTodo);
+    QOrganizerItem item5;
+    item5.setType(QOrganizerItemType::TypeTodo);
+    QVERIFY(m_om->saveItem(&item4));
+    QVERIFY(m_om->saveItem(&item5));
+    QVERIFY(m_om->removeItems(m_om->itemIds(), 0));
 }
 
 void tst_SymbianOm::fetchItems()
@@ -564,13 +573,14 @@ void tst_SymbianOm::addEvent_data(QString managerName)
                 << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
                 << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
     }
-
-    /* TODO: Enable and implement
     QTest::newRow(QString("[%1] Item type Event; details: description").arg(managerName).toLatin1().constData())
         << managerName
+        << (int) QOrganizerItemManager::NoError
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
             << QTstDetail(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president")));
+    /* TODO: Enable and implement
     QTest::newRow(QString("[%1] Item type Event; details: description, note").arg(managerName).toLatin1().constData())
         << managerName
         << (QTstDetailList()
