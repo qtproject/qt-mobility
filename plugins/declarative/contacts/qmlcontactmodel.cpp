@@ -129,6 +129,7 @@ void QMLContactModel::exposeContactsToQML()
 
 void QMLContactModel::importContacts(const QString& vcard)
 {
+   qWarning() << "importing contacts from:" << vcard;
    QFile file(vcard);
    bool ok = file.open(QIODevice::ReadOnly);
    if (ok) {
@@ -172,6 +173,7 @@ void QMLContactModel::setManager(const QString& managerName)
     m_contactsRequest.setManager(m_manager);
     connect(m_manager, SIGNAL(dataChanged()), this, SLOT(fetchAgain()));
     fetchAgain();
+    emit managerChanged();
 }
 
 void QMLContactModel::startImport()
@@ -179,8 +181,9 @@ void QMLContactModel::startImport()
     QVersitContactImporter importer;
     importer.importDocuments(m_reader.results());
     QList<QContact> contacts = importer.contacts();
+
     if (m_manager)
-      m_manager->saveContacts(&contacts, 0);
+        m_manager->saveContacts(&contacts, 0);
 }
 
 void QMLContactModel::resultsReceived()

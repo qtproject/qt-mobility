@@ -54,13 +54,14 @@ Rectangle {
     QmlContactModel {
         id: contactModel 
         manager: "memory"
-        onCompleted: {
+        Component.onCompleted : {
             contactModel.importContacts("contents/example.vcf");
         }
     }
 
     Component {
-        id: listdelegate        
+        id: listdelegate
+
         Rectangle {
             id: wrapper            
             border.width: 2

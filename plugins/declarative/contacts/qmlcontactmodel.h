@@ -55,7 +55,7 @@ class QMLContactModel : public QAbstractListModel
 {
 Q_OBJECT
 Q_PROPERTY(QStringList availableManagers READ availableManagers)
-Q_PROPERTY(QString manager READ manager WRITE setManager)
+Q_PROPERTY(QString manager READ manager WRITE setManager NOTIFY managerChanged)
 public:
     explicit QMLContactModel(QObject *parent = 0);
 
@@ -84,7 +84,7 @@ public:
     Q_INVOKABLE void importContacts(const QString& file);
     Q_INVOKABLE void exportContacts(const QString& file);
 signals:
-
+    void managerChanged();
 public slots:
 
 private slots:
