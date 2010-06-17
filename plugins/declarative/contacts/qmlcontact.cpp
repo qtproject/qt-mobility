@@ -56,9 +56,13 @@ QMLContact::QMLContact(QObject *parent)
     :QObject(parent),
     m_contactMap(0)
 {
-
+   connect(&m_saveRequest, SIGNAL(resultAvailable()), this, SLOT(onContactSaved()));
 }
 
+void QMLContact::setManager(QContactManager* manager)
+{
+   m_manager = manager;
+}
 void QMLContact::setContact(const QContact& c)
 {
     m_contact = c;
@@ -102,7 +106,7 @@ QContact QMLContact::contact() const
     QContact c(m_contact); 
     foreach (QObject* o, m_details) {
         QMLContactDetail* d = qobject_cast<QMLContactDetail*>(o);
-        if (d && d->isDetailChanged()) {
+        if (d && d->detailChanged()) {
             QContactDetail detail = d->detail();
             c.saveDetail(&detail);
         }
@@ -130,5 +134,36 @@ QVariant QMLContact::contactMap() const
     if (m_contactMap)
         return QVariant::fromValue(static_cast<QObject*>(m_contactMap));
     return QVariant();
+}
+
+
+void QMLContact::save()
+{
+   if (contactChanged()) {
+     m_saveRequest.setManager(m_manager);
+     m_saveRequest.setContact(contact());
+     m_saveRequest.start();
+   }
+}
+
+
+bool QMLContact::contactChanged() const
+{
+   foreach (QObject* o, m_details) {
+     QMLContactDetail* detail = qobject_cast<QMLContactDetail*>(o);
+     if (detail->detailChanged())
+       return true;
+   }
+   return false;
+}
+
+void QMLContact::onContactSaved()
+{
+   if (m_saveRequest.isFinished() && m_saveRequest.error() == QContactManager::NoError) {
+      foreach (QObject* o, m_details) {
+        QMLContactDetail* detail = qobject_cast<QMLContactDetail*>(o);
+        detail->setDetailChanged(false);
+      }
+   }
 }
 

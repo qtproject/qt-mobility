@@ -127,12 +127,6 @@ void QMLContactModel::exposeContactsToQML()
 }
 
 
-void QMLContactModel::saveContact(int id)
-{
-   //TODO: save this contact
-   Q_UNUSED(id);
-}
-
 void QMLContactModel::importFromVcard(const QString& vcard)
 {
    QFile file(vcard);

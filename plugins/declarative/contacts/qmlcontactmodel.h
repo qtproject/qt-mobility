@@ -81,7 +81,6 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     Q_INVOKABLE QList<QObject*> details(int id) const;
-    Q_INVOKABLE void saveContact(int id);
     Q_INVOKABLE void importFromVcard(const QString& vcard);
     Q_INVOKABLE void exportToVcard(const QString& vcard);
 signals:

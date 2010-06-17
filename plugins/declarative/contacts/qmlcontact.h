@@ -43,26 +43,37 @@
 
 #include <QDeclarativePropertyMap>
 #include "qcontact.h"
+#include "qcontactmanager.h"
+#include "qcontactsaverequest.h"
 
 QTM_USE_NAMESPACE;
 
 class QMLContact : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY (bool contactChanged READ contactChanged NOTIFY onContactChanged);
 public:
     explicit QMLContact(QObject *parent = 0);
     void setContact(const QContact& c);
+    void setManager(QContactManager* manager);
     QContact contact() const;
     QVariant contactMap() const;
     Q_INVOKABLE QList<QObject*> details() const;
     Q_INVOKABLE QList<QObject*> detailFields() const;
+    bool contactChanged() const; 
+    Q_INVOKABLE void save();
 
+signals:
+    void onContactChanged();
+private slots:
+    void onContactSaved();
 private:
-
     QContact m_contact;
     QDeclarativePropertyMap* m_contactMap;
     QList<QDeclarativePropertyMap*> m_detailMaps;
     QList<QObject*> m_details;
+    QContactManager* m_manager;
+    QContactSaveRequest m_saveRequest;
 };
 
 #endif // QMLCONTACT_H

@@ -52,23 +52,25 @@ class QMLContactDetail : public QObject
     Q_OBJECT
 public:
     Q_PROPERTY(QString name READ name NOTIFY nameChanged)
+    Q_PROPERTY(bool detailChanged READ detailChanged NOTIFY onDetailChanged)
 
     explicit QMLContactDetail(QObject* parent = 0);
     void setDetailPropertyMap(QDeclarativePropertyMap* map);
     QDeclarativePropertyMap* propertyMap() const;
     Q_INVOKABLE QList<QObject*> fields() const;
-    Q_INVOKABLE bool isDetailChanged() const;
+    bool detailChanged() const;
+    void setDetailChanged(bool changed);
     QContactDetail detail() const;
     QString name() const;
     void setName(const QString& name);
 
 signals:
     void nameChanged();
+    void onDetailChanged();
 private slots:
     void detailChanged(const QString &key, const QVariant &value);
-
 private:
-    bool m_contactChanged;
+    bool m_detailChanged;
     QDeclarativePropertyMap* m_map;
     QString m_detailName;
     QList<QObject*> m_fields;
