@@ -262,6 +262,14 @@ void QGalleryTrackerItemListPrivate::synchronize()
                         rIt = rOuter;
                     } while (aInner-- != aBegin && rOuter-- != rBegin
                              && aInner.isEqual(rOuter, identityWidth));
+
+                    const int aIndex = aCacheIndex(aOuter);
+                    const int rIndex = rCacheIndex(rBegin);
+                    const int aCount = aIt - aBegin;
+                    const int rCount = rIt - rBegin;
+
+                    postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
+
                     break;
                 } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
                     do {
@@ -269,6 +277,14 @@ void QGalleryTrackerItemListPrivate::synchronize()
                         rIt = rInner;
                     } while (rInner-- != rBegin && aOuter-- != aBegin
                            && rInner.isEqual(aOuter, identityWidth));
+
+                    const int aIndex = aCacheIndex(aBegin);
+                    const int rIndex = rCacheIndex(rOuter);
+                    const int aCount = aIt - aBegin;
+                    const int rCount = rIt - rBegin;
+
+                    postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
+
                     break;
                 }
             }
@@ -276,24 +292,14 @@ void QGalleryTrackerItemListPrivate::synchronize()
     }
 
     if (equal) {
-        {
-            const int aIndex = aCacheIndex(aIt);
-            const int rIndex = rCacheIndex(rIt);
-
-            postSyncEvent(SyncEvent::replaceEvent(
-                    aCache.index, aIndex - aCache.index, rCache.index, rIndex - rCache.index));
-        }
-
         synchronizeRows(aIt, rIt, aEnd, rEnd);
 
-        {
-            const int aIndex = aCacheIndex(aIt);
-            const int rIndex = rCacheIndex(rIt);
-            const int aCount = aEnd - aIt;
-            const int rCount = rEnd - rIt;
+        const int aIndex = aCacheIndex(aIt);
+        const int rIndex = rCacheIndex(rIt);
+        const int aCount = aEnd - aIt;
+        const int rCount = rEnd - rIt;
 
-            postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
-        }
+        postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
     } else {
         const int aCount = aCache.count - aCache.index;
         const int rCount = rCache.values.count() / tableWidth;
