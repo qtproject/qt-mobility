@@ -280,7 +280,7 @@ bool QOrganizerItemMaemo5Engine::removeItems(const QList<QOrganizerItemLocalId>&
     // TODO: Check all the dependencies of the removed item
 
     *error = QOrganizerItemManager::NoError;
-    //CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     bool success = true;
 
     for( int i = 0; i < itemIds.size(); ++i ) {
@@ -804,17 +804,9 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         // Build and set the recurrence information of the event
         CRecurrence* recurrence = createCRecurrence( item );
 
-        bool ok = cevent->setRecurrence( recurrence ); // setting makes a copy
-        qDebug() << "*** setRecurrence status: " << ok;
+        cevent->setRecurrence( recurrence ); // setting makes a copy
         delete recurrence;
         recurrence = 0;
-
-        recurrence = cevent->getRecurrence();
-        if ( recurrence )
-            qDebug() << "*** " << QString::fromStdString( recurrence->toString() );
-        else
-            qDebug() << "*** Recurrence is NULL";
-
 
         // TODO: Maybe the following should be removed and should be set on the upper level?
         if (!event.startDateTime().isNull())
