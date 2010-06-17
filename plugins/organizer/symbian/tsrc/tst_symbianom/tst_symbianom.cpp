@@ -288,17 +288,38 @@ void tst_SymbianOm::fetchItemIds()
 
 void tst_SymbianOm::uniqueIds()
 {
-    // Test that new items have unique ids
+    const int count = 10;
+    QList<QOrganizerItem> items;
     QList<QOrganizerItemLocalId> lids;
     QList<QString> guids;
-    for (int i=0; i<10; i++) {
+
+    // Test that new items have unique ids
+    for (int i=0; i<count; i++) {
         QOrganizerItem item;
         item.setType(QOrganizerItemType::TypeTodo);
         QVERIFY(m_om->saveItem(&item));
         QVERIFY(!lids.contains(item.localId()));
-        lids << item.localId();
         QVERIFY(!guids.contains(item.guid()));
+        lids << item.localId();
         guids << item.guid();
+        items << item;
+    }
+    
+    // Modify and check that local id and global uid persists
+    for (int i=0; i<count; i++) {
+        QOrganizerItem &item = items[i];
+        item.setDisplayLabel("foobar");
+        QVERIFY(m_om->saveItem(&item));
+        QVERIFY(lids[i] == item.localId());
+        QVERIFY(guids[i] == item.guid());
+    }
+    
+    // Load and check that ids are the still the same
+    for (int i=0; i<count; i++) {
+        QOrganizerItem item = m_om->item(lids[i]);
+        QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
+        QVERIFY(lids[i] == item.localId());
+        QVERIFY(guids[i] == item.guid());
     }
 }
 
