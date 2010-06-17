@@ -184,7 +184,7 @@ void QRotationReading::setZ(qreal z)
     \sa QSensorFilter::filter()
 */
 
-const char *QRotationSensor::type("QRotationSensor");
+char const * const QRotationSensor::type("QRotationSensor");
 
 /*!
     \class QRotationSensor

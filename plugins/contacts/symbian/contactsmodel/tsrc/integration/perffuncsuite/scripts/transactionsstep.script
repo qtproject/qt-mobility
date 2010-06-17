@@ -1,0 +1,98 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+
+LOAD_SUITE Te_PerformanceFunctionalitySuite
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81144
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81144
+//! @SYMTestType CIT
+//! @SYMTestPriority Low
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Nested transaction Test
+//! @SYMTestActions Start Transaction A
+//! Start Transaction B
+//! Update field X in contact A
+//! Commit transaction B
+//! Check value of contact A
+//! Update field Y in contact A
+//! Revert transaction A
+//! Check value of contact A
+//! @SYMTestExpectedResults Contact A should be unchanged
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini Nested
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81144
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81145
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81145
+//! @SYMTestType CIT
+//! @SYMTestPriority Low
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Commit/Revert Transaction Test
+//! @SYMTestActions Start Transaction A
+//! Perform set of operations X
+//! Commit Transaction
+//! Check value of all contacts within the database
+//! Repeat test where X equals, no operations, single update operation, single read operation, single delete,  single create or 1000 CUD operations
+//! Repeat test where all transactions are reverted
+//! @SYMTestExpectedResults The contacts should be modified as specified by X when transactions are committed
+//! The contacts should not be affected by X when transactions are reverted
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini EmptyCommit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini EmptyRevert
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini UpdateCommit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini UpdateRevert
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CreateCommit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CreatRevert
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini DeleteCommit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini DeleteRevert
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CudCommit
+RUN_TEST_STEP 500 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini CudRevert
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81145
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81146
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81146
+//! @SYMTestType CIT
+//! @SYMTestPriority Low
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Transaction Performance Test
+//! @SYMTestActions Export 1000 type X contacts
+//! Import contacts singly within a transaction, in groups of 50
+//! Measure length of time to complete importing of all contacts
+//! Store in Y
+//! Repeat test where X equals: empty contacts, partially filled contacts or heavily filled contacts
+//! Repeat test where all contacts are deleted after they are exported.
+//! @SYMTestExpectedResults Y should take less than 500 seconds
+RUN_TEST_STEP 1500 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini EmptyPerfomance
+RUN_TEST_STEP 1500 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini EmptyEmptyPerformance
+RUN_TEST_STEP 1500 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini MediumPerformance
+RUN_TEST_STEP 1500 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini MediumEmptyPerformance
+RUN_TEST_STEP 5000 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini FullPerformance
+RUN_TEST_STEP 5000 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini FullEmptyPerformance
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81146
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81147
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81147
+//! @SYMTestType CIT
+//! @SYMTestPriority Low
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc Multiple Commit Test
+//! @SYMTestActions Open 1000 contacts
+//! Set all fields to preset values
+//! Commit All contacts
+//! Check all field values
+//! Repeat test within a transaction
+//! @SYMTestExpectedResults All fields values should match the preset values
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini MultipleCommit
+RUN_TEST_STEP 100 Te_PerformanceFunctionalitySuite TransactionsStep c:\PerformanceFunc\configs\te_PerformanceFunctionalitySuite.ini TransactionMultiple
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81147

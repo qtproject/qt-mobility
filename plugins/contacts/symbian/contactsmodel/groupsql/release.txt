@@ -1,0 +1,4326 @@
+Perforce Release 
+================
+Made by Lucian Piros - 20 Feb 2009
+DEF135301: Improve performace by removing RSqlColumnReadStream
+
+Perforce Release 
+================
+Made by Lucian Piros - 19 Feb 2009
+DEF135260: CPlCollectionIterator: Improve performance
+
+Perforce Release 
+================
+Made by Lucian Piros - 16 Feb 2009
+DEF133933: WDP: T_SEC_CNTDBASE fails on WDP on configuration  
+
+Perforce Release 
+================
+Made by Xavier Leclercq - 13 Feb 2009
+DEF134223: Removal of obsolete CCntCompressionManager 
+
+Perforce Release 
+================
+Made by Xavier Leclercq - 13 Feb 2009
+DEF133357: cntmodel unbranching - step 3
+
+Perforce Release 
+================
+Made by Lucian Piros - 08 Jan 2009
+DEF131015: Problem in CCntNotifyMonitor observer notification algorithm 
+
+Perforce Release 
+================
+Made by Raveendra Mullaguri - 08 Jan 2009
+PDEF128963: Configurable heapsizes for agenda server, contacts model and contacts server 
+
+Perforce Release 
+================
+Made by Prabodh Depala - 05 Jan 2009
+DEF118115: PIM_FailingTestHarness_CntPerfTestHW.htm script failing on ONB 
+
+Perforce Release
+================
+Made by Prabodh Depala - 07 January 2009
+DEF132768: TE_Cntsrv_API_Policing.htm failing on armv5
+
+Perforce Release
+================
+Made by Xavier Leclercq - 07 January 2009
+DEF132674: cntmodel unbranching - step 2
+
+Perforce Release
+================
+Made by Prabodh Depala - 05 January 2009
+DEF130639: ONB long failing test: te_PerformanceFunctionalitySuite.script
+
+Perforce Release
+================
+Made by Xavier Leclercq - 31 December 2008
+DEF131406: Fxing a few remarks in PIM builds
+
+Perforce Release
+================
+Made by Xavier Leclercq - 17 December 2008
+DEF131213: Unbranching cntmodel - step 1
+
+Perforce Release
+================
+Made by Xavier Leclercq - 17 December 2008
+DEF129618: Added copyright notice to some test files.
+
+Perforce Release
+================
+Made by Raveendra Mullaguri - 17 December 2008
+DEF125760: T_ERROR failing: KErrAlreadyExists returned to client on 
+
+Perforce Release
+================
+Made by Prabodh Depala - 09 December 2008
+DEF131684: Modify vCard TEF tests to be run in ROM 
+
+Perforce Release
+================
+Made by James Clarke 27 Nov 2008
+DEF129775: SMP: Cntmodel - RTest "t_casesensitivedb" fails on H4 with crazy priorities
+
+Perforce Release
+================
+Made by JRaveendra Mullaguri  19 Nov 2008
+DEF130391:ONB long failing T_DBASE2 
+
+Perforce Release
+================
+Made by Raveendra Mullaguri - 17 November 2008
+DEF130392:ONB long failing T_SEC_CNTDBASE (UDEB) 
+
+Perforce Release
+================
+Made by James Aley 10 Nov 2008
+DEF124047 CreateContactCardTemplateLC leaves with code -311 (KSqlErrGeneral).
+
+Perforce Release
+================
+Made by Waiman Tang - 14 October 2008
+Issue ID: DEF128969
+Title: rom building warnings on ONB
+
+Perforce Release
+================
+Made by Prabodh Depala - 26 September 2008
+PDEF128301: Adding multiple favorites by using Add favorites item and then marking and  
+
+Perforce Release
+================
+Made by Raveendra Mullaguri - 17 Sep 2008
+Issue ID: DEF127185
+Title: [Coverity]-DEADCODE-calendar/server 
+
+Perforce Release
+================
+Made by Lucian Piros - 10 September 2008
+PDEF127574: CContactDatabase problem in 3rd FP2
+
+Perforce Release
+================
+Made by Raveendra Mullaguri - 09 September 2008
+DEF127383: A simple syntax error 
+
+Perforce Release
+================
+Made by Lucian Piros - 08 September 2008
+DEF127464: Friend class CContactDatabase declared twice
+
+Perforce Release
+================
+Made by James Aley - 03 September 2008
+DEF124047 : CreateContactCardTemplateLC leaves with code -311 (KSqlErrGeneral) 
+
+Perforce Release
+================
+Made by Prabodh Depala - 03 September 2008
+PDEF127161: CLI digits matching setting does not work 
+
+Perforce Release
+================
+Made by Waiman Tang - 19 August 2008
+PDEF126394 : bld.inf does not contain dbdumper.mmp/dbsqldumper.mmp
+
+Perforce Release
+================
+Made by James Clarke - 14 August 2008
+DEF126486: PIM_ONB: T_GROUPVIEWEVENTS long failing test
+
+Perforce Release
+================
+Made by Waiman Tang - 11 August 2008
+INC126294 : KSpeedDialPhoneLength has been renamed in v9.5
+
+Perforce Release
+================
+Made by Waiman Tang - 08 August 2008
+DEF126181 : Extra member qualifactions
+
+Perforce Release
+================
+Made by Waiman Tang - 08 August 2008
+DEF125913 : [coverity] - app-engines
+
+Perforce Release
+================
+Made by Andrew Smith - 4 August 2008
+DEF125903 bad conditional in CPBAPContactVCardConverter::PrepareFilterAndOption
+
+Perforce Release
+================
+Made by James Clarke - 29 July 2008
+DEF118117: PIM_FailingTestHarness_te_PerformanceFunctionalitySuite.htm script fails on ONB
+
+
+Perforce Release
+================
+Made by James Clarke - 24 July 2008
+DEF125393: PIM Sphinx QP: Improve test coverage of Cntmodel Subviews
+
+Perforce Release
+================
+Made by Waiman Tang - 22 July 2008
+DEF124288: R class incorrectly push on cleanup stack
+
+Perforce Release
+================
+Made by James Clarke - 14 July 2008
+PDEF124802: Crash is detected after removing and then inserting MMC quickly 
+
+Perforce Release
+================
+Made by Waiman Tang - 14 July 2008
+DEF124561: [coverity] - cntmodel/cntvcard - FORWARD_NULL
+
+Perforce Release
+================
+Made by James Clarke - 27 June 2008
+DEF123893: Incorect declaration/definition for CSpeedDial class
+
+Perforce Release
+================
+Made by Andrew Smith - 25 June 2008
+DEF123991: Incorrect use of CleanupStack::PushL for R classes 
+
+Perforce Release 
+================
+Made by Prabodh Depala - 23 June 2008
+DEF124004: CContactDatabase::ReplaceL API can leave with KErrNoMemory or KErrServerTerminat
+
+Perforce Release 
+================
+Made by Andrew Smith - 20th June 2008 
+DEF123986: Incorrect API classification for PIM cross-module dependencies
+ 
+Perforce Release
+================
+Made by Michael Coffey - 19 June 2008
+DEF123896: If not in destructor, set to NULL after delete
+
+Perforce Release
+================
+Made by James Clarke - 19 June 2008
+PDEF123935: Contacts backup&restore breaks if a custom contacts.cdb is used
+
+Perforce Release 
+================
+Made by Prabodh Depala - 19 June 2008
+DEF123983: CleanupStack::Pop(TAny*) is preferred instead CleanupStack::Pop()
+
+Perforce Release 
+================
+Made by Andrew Smith - 19 June 2008
+DEF123989: Avoid assignment in if statement
+
+Made by Andrew Smith - 18 June 2008
+DEF123894: Member variable incorrectly put on cleanup stack
+
+Perforce Release
+================
+Made by James Clarke - 18 May 2008
+DEF123895: Check if not NULL before delete
+
+Perforce Release
+================
+Made by Prabodh Depala - 13 May 2008
+PDEF122321: ContactDbObserverEvent.iConnectionId can not match with CCont...
+
+Perforce Release
+================
+Made by Prabodh Depala - 09 May 2008
+DEF121096: No PBAP owner card results in error when pulling pb
+
+Perforce Release 
+================
+Made by James Clarke - 08 May 2008
+PDEF121954: EUT crashes when trying to add a contact having 65 digits as Speed Contact
+
+Perforce Release
+================
+Made by Andy Smith - 23 April 2008
+DEF121567: Duplicate include in cplcollectioniterator.cpp
+
+Perforce Release
+================
+Made by Prabodh Depala - 17 April 2008
+PDEF121149: Stability: Panic during our stability tests: CNTSRV.EXE :: KERN-EXEC 44
+
+Perforce Release
+================
+Made by James Clarke - 20 March 2008
+PDEF119991: Break in CContactDatabase::SortL
+
+Perforce Release
+================
+Made be Andy Smith
+DEF120119: Hardcoded path to C drive in cntdbdumper 
+
+Perforce Release
+================
+Made by Kalyan Reddy - 22 February 2008
+PDEF118516: SBTM:Program Closed after tried to send a contact with Chinese name.
+
+Perforce Release
+================
+Made by Lucian Piros - 21 February 2008
+PDEF118288: PC Suite backup or restore fails.
+
+Perforce Release
+================
+Made by Kalyan Reddy - 30 January 2008
+PDEF117155: Panic in contact model when deleting contact templates
+
+Perforce Release
+================
+Made by Renzo Cherin - 27 December 2007
+PDEF115916: Phone becomes inactive when opening phone book with 1500 contacts.
+
+Perforce Release
+================
+Made by Xing Jin - 03 December 2007
+PDEF115100: CNTSRV crashes under IPC attack
+
+Perforce Release
+================
+Made by Xing Jin - 23 November 2007
+DEF114198: Nickname field accepts more than 300 Characters
+
+Perforce Release
+================
+Made by Xing Jin - 24 October 2007
+PDEF113124: Unable to access SIM Phonebook from Contacts app while using USIM 
+
+Perforce Release
+================
+Made by Lucian Piros - 23 October 2007
+DEF113167: Call to GetDesLength() is not checked for an error
+
+Perforce Release
+================
+Made by Lucian Piros - 23 October 2007
+DEF113166: Call to GetDesLength() is not checked for an error return 
+
+Perforce Release
+================
+Made by Beibei Wang - 17 October 2007
+PDEF112828: SyncML replace commands fail to correctly replace contacts on the device 
+
+Perforce Release
+================
+Made by Lucian Piros - 28 September 2007
+PDEF112330: Pbk2: Names List is not updated correctly when marked phone contacts are deleted.
+
+Perforce Release
+================
+Made by Lucian Piros - 28 September 2007
+PDEF112333: Function TInt CContactActiveCompress::StepsTogo() wrong works.
+
+Perforce Release
+================
+Made by Lucian Piros - 24 September 2007
+PDEF111890: Cntmodel: Wrong events and size in group view during synch.
+
+Perforce Release
+================
+Made by Tom Bassett - 18 September 2007
+PDEF111739: KER-EXEC 3 panic when deleting a contact item
+
+Perforce Release
+================
+Made by Tom Bassett 16 Sept 2007
+PDEF111738  Nested leaves in CContactDatabase transactions
+
+Perforce Release
+================
+Made by Lucian Piros 07 Sept 2007
+PDEF111333: KERN-EXEC 3 after CContactDatabase::CreateContactGroup() had been called. 
+
+Perforce Release
+================
+Made by Lucian Piros 06 Sept 2007
+PDEF111332: Contacts: Panics after start up
+
+Perforce Release
+================
+Made by Lucian Piros 06 Sept 2007
+PDEF111334: Possible KERN-EXEC 3 in CContactDatabase::HandleDatabaseEventL for EContactDbObserverEventTemplateDeleted 
+
+Perforce Release
+================
+Made by Tom Bassett 05 Sept 2007
+PDEF111140  Contact removal messes up filtered contact view 
+
+Perforce Release
+================
+Made by Crystal Wang 10 Aug 2007
+DEF109987: Usability improvements for Cntmodel logging
+
+Perforce Release
+================
+Made by Xing Jin 31 August 2007
+DEF111208: ADP0038: Change to use PREQ1187 behaviour for contact view.
+
+Perforce Release
+================
+Made by Lucian Piros 29 August 2007
+PDEF110848: TRAP likely to cause panic in AppEngines
+
+Perforce Release
+================
+Made by Lucian Piros 21 August 2007
+PDEF110847: CContactActiveCompress::StepsTogo() return wrong value
+
+Perforce Release
+================
+Made by Lucian Piros 08 August 2007
+DEF110301: CntModel DebugLogIPC ifdefs do not agree with CCntIpcCodes
+
+Perforce Release
+================
+Made by Crystal Wang 1 Aug 2007
+DEF109987: Usability improvements for Cntmodel logging
+
+Perforce Release
+================
+Made by Crystal Wang 27 July 2007
+DEF109827: GTC cntmodel.iby directly includes cntpldbms.dll
+
+Perforce Release
+================
+Made by Tom Bassett 11 June 2007
+DEF108041: PREQ1187: T_PlPerformance fails on ONB
+
+Perforce Release
+================
+Made by Jade Ho - 12 Jun 2007
+PDEF107938: Field ids read incorrectly
+
+Perforce Release
+================
+Made by Jade Ho - 29 May 2007
+DEF106281: CntModel - Mixed-up usage of TBool vs TInt in RCntModel implementation
+
+Perforce Release
+================
+Made by Tomas Sommergyll - 30 May 2007
+PDEF107246: SWSV_633_R26A01_BT-AUDMULINK-04 - The PBAP service can be made
+
+Perforce Release
+================
+Made by Zlatko Zimonjic - 30 May 2007
+PDEF104972: [v9.4,v9.5] {Fix Identified} Attempting to restore the contacts database using PC connect always fails 
+
+Perforce Release
+================
+Made by Kelly Hon - 8 May 2007
+PDEF102541: Cnt Server panics when doing concurrent recovery and compress test
+
+Perforce Release
+================
+Made by Tomas Sommergyll - 17 April 2007
+DEF103603: CContactDatabase::DeleteContactsL APi break: unknownchanges event not generated.
+
+Perforce Release
+================
+Made by James Doherty - 13 April 2007
+PDEF104729: CN_SWSV_Media_633_91_R27A01_SMS:The phone crashs after tap Task
+
+Perforce Release
+================
+Made by Saju Thomas - 01 March 2007
+DEF102602: Support for Export of multiple agents in a contact is not present. 
+
+Perforce Release
+================
+Made by Jonathan Richardson - 16 February 2007
+PDEF103303: interfaces_s60symbianui API defect (SE: Wrong Include Path name)
+
+Perforce Release
+================
+Made by Divakar E - 14 February 2007
+INC099524: MVPbkContactStoreObserver::HandleStoreEventL is not called when contacts to whic
+
+Perforce Release
+================
+Made by Ryan Gilmour - 12 February 2007
+DEF099834: Deleting a ICC Contact causes PhBkSync's engine to hang.
+
+Perforce Release
+================
+Made by Ryan Gilmour - 02 February 2007
+PDEF101554: Switch: Phonebook gets stuck when you first sync only contacts and then add some
+
+Perforce Release
+================
+Made by Amita Bhalerao - 23 Jan 2007
+INC097928: PBK2: Phonebook2 crashes when adding group with default name when group without 
+
+Perforce Release
+================ 
+Made by Ryan Gilmour - 17 January 2007
+PDEF100661: Contact card created by PCSuite has SIP address named as Internet telephone in p
+
+Perforce Release
+================ 
+Made by Saju Thomas - 16 Jan 2007
+INC099968: S60 3.2 wk44, Phonebook2: Sorting of reading field is not done accordingly   
+
+Perforce Release
+================ 
+Made by Janice Halligan - 10 Jan 2007
+DEF098775: Failing test steps in te_PerformanceFunctionalitySuite
+
+Perforce Release
+================
+Made by Kalyan Reddy - 13 Dec 2006
+DEF098709  Support for proper import (update/merge)of Agent cards missing in cntmodel.
+
+Perforce Release
+================ 
+Made by Rajender Pasricha - 08 December 2006
+PDEF099046: CContactStoreField: A failed allocation in SetThingL doesn't cause a leave.
+
+Perforce Release
+================
+Made by Tomas Sommergyll -  30 Nov 2006
+INC097895: Pbk2 AIW: Speed dial is removed from incorrect entry
+
+Perforce Release
+================
+Made by Luke Zhang - 30 Nov 2006
+DEF094105: [AQD] Duplicate uids corrupt the contact item
+
+Perforce Release
+================ 
+Made by Saju Thomas - 27 Nov 2006
+PDEF097999: Contacts in wrong alphabetical order when updated through ImportContactsL
+
+Perforce Release
+================
+Made by Amita Bhalerao - 27 Nov 2006
+INC096705: Company Name and Department cannot be removed by synchronisation
+
+Perforce Release
+================
+Made by Rajender Pasricha - 17 Nov 2006
+DEF097565  Incorrect encoding of binary property (KEY) value 
+
+Perforce Release
+================
+Made by Amita Bhalerao - 16 Nov 2006
+PDEF097460: Phonebook disappeared after syncing with MFE, having single open parenthesis '('
+
+Perforce Release
+================
+Made by Rajat Das - 07 Nov 2006
+DEF090972: [AQD] Contact model doesnt export Agent cards 
+
+Perforce Release
+================
+Made by Jonathan Richardson - 26 October 2006
+DEF090896: [AQD] Populating a local/remote view while in recovery state panics cntsrv
+
+Perforce Release
+================
+Made by Ryan Gilmour - 20 Oct 2006
+INC095011: Arriving call during creating backup.-> App closed: Main
+
+Perforce Release
+================
+Made by Prabodh Depala - 17 Oct 2006
+PDEF094773: Cntmodel: CContactGroupView problems
+
+Perforce Release
+================
+Made by Jonathan Richardson - 13 Oct 2006
+PDEF094774: Incorrect db connection state at the end of restore of Corrupt cdb file
+
+Perforce Release
+================
+Made by Rajat Das - 10 Oct 2006
+DEF094104: [AQD] local view panics when it handles EContactDbObserverEventCompress 
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 10 Oct 2006
+DEF091910: [AQD] Active recovery/compress state can be corrupted
+
+Perforce Release
+================
+Made by Carl Hamelberg - 03 Oct 2006
+DEF090896 	[AQD] Populating a local/remote view while in recovery state panics cntsrv
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 26 Sept 2006
+DEF094776: Type data lost during import and export of photo information in Vcards (Inactive)
+
+Perforce Release
+================
+Made by Saju A T - 01 Sept 2006
+DEF091913: [AQD] Contact server panic when setting contact with id 0 as speed dial 
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 14 August 2006
+DEF091390: Contacts import unsuccesful during OOM testing
+(submitted by Janice Halligan)
+
+Perforce Release
+================
+Made by Tejsweeta Singh - 9 Aug 2006
+DEF091908: [AQD] Active compress doesnt return an error
+
+Perforce Release
+================
+Made by Daniel Yuen - 04 August 2006
+DEF091912: [AQD] It shouldn't be possible to set non text fields as speed dials
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 03 August 2006
+DEF091825: Recovery fails if tables opened
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 01 August 2006
+DEF091905: Active recover doesnt return an error
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 31 July 2006
+DEF091826: Cancelling asynchronous open, panics cntsrv
+
+Perforce Release
+================
+Made by Janice Halligan - 30 July 2006
+MINOR: fix regression in T_CNT_BACKUP for 9.3 
+Vancouver maintenance builds
+
+Perforce Release
+================
+Made by Prashanth Grandhi - 28 July 2006
+DEF086861: [AQD] Local view is not created if in recovery/compression state
+
+Perforce Release
+================
+Made by Prabodh Depala - 28 July 2006
+PDEF085629: Backup/Restore failed to restore assigned Speed Dial numbers
+
+Perforce Release
+================
+Made by Jonathan Richardson - 19 July 2006
+DEF090995: [AQD] RCntModel::ContactCountL doesnt leave
+
+Perforce Release
+================
+Made by Janice Halligan
+DEF090943: reverted changes
+
+Perforce Release
+================
+Made by Jonathan Richardson - 14 July 2006
+DEF090952: [AQD] Its possible to set invalid contact item agent field values
+
+Perforce Release
+================
+Made by Ryan Gilmour - 13 July 2006
+PDEF090917: [BRAVO TEST IMPROVEMENT] Contacts model
+
+Perforce Release
+================
+Made by Janice Halligan - 11 July 2006
+Other: Regression in T_RemoteView addressed
+
+Perforce Release
+================
+Made by Lucian Piros - 11 July 2006
+INC088853: Members can not be fetched to groups in Phonebook.
+
+Perforce Release
+================
+Made by Janice Halligan - 10 July 2006
+DEF089548: PREQ811 review changes - Collection Iterator
+(revisit previous fix)
+
+Perforce Release
+================
+Made by Prabodh Depala - 10 July 2006
+PDEF090252: Some content on the phone could not be read in backup (contacts)
+
+Perforce Release
+================
+Made by Jonathan Richardson - 7 July 2006
+DEF090661: [AQD] PREQ811 Review Changes - Client API
+
+Perforce Release
+================
+Made by Lucian Piros - 05 July 2006
+DEF088096: [AQD] Local view Serverside OOM failiure.
+
+Perforce Release
+================
+Made by Lucian Piros - 03 July 2006
+PDEF090253 Phonebook2: voip field title is incorrect.
+
+Perforce Release
+================
+Made by Carl Hamelberg - 28 June 2006
+DEF087939 [AQD] RemoteView OOM failure
+
+Perforce Release
+================
+Made by Xing Jin - 27 June 2006
+PDEF088370  Cntmodel: No EItemRemoved reported from group view 
+
+Perforce Release
+================
+Made by Xing Jin - 27 June 2006
+DEF086713  [AQD] Local view leaks memory server side
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 23 June 2006
+DEF088971: PREQ811 review changes - Speed Dials and Ini File Mgr
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 22 June 2006
+DEF088936: PREQ811 review changes - Persistence Layer & ICC for contacts
+
+Perforce Release
+================
+Made by Tejsweeta Singh - 19 June 2006
+DEF086855: [AQD] Can't share a cntmodel session between multiple threads
+
+Perforce Release
+================
+Made by Francesco Lodolo - 07 June 2006
+DEF087622: TContactViewEvent broadcasted with delay.
+
+Perforce Release
+================
+Made by Francesco Lodolo - 07 June 2006
+DEF087625: HiQTC: Not possible to view attached vcf files.
+
+Perforce Release
+================
+Made by Prabodh Depala - 2 June 2006
+DEF075427: PHBKSync: PhBkSyncSvrExe.EXE blocks QMessaging & QContacts to be launched.
+
+Perforce Release
+================
+Made by Kalyan Reddy 26 May 2006
+DEF086613: Cntmodel: Wrong indexes for EItemAdded
+
+Perforce Release
+================
+Made by Chandra S Karri 25 May 2006
+DEF086395: CContactActiveRecover causes memory leak
+
+Perforce Release
+================
+Made by Prashanth Grandhi 24 May 2006
+INC082113: Phonebook, ReTe, S60 Rel3.1_2005_wk50: Speed Dial indicator is still displayed
+
+Perforce Release
+================
+Made by Prashanth Grandhi 24 May 2006
+DEF073914: CntModel no longer checks the length of fields being submitted...
+
+Perforce Release
+================
+Made by Chandra S Karri 15 May 2006
+DEF085783: SWSV_548_R2A01 Sync: Performance test of contact sync fails
+
+Perforce Release
+================
+Made by Rajat Das 14 may 2006
+DEF085699: Own card id set to incorrect value after modifying contacts 
+
+Perforce Release
+================
+Made by Ryan Gilmour - 11 May 2006
+DEF086084 : In-source doc for CContactDatabase::SetOperationTimeOutL 
+
+Perforce Release
+================
+Made by Rajat Das 5 may 2006
+DEF084877 : SWSV_604_R3A01_CONT Not possible to add Contacts without mobile number or ema... 
+
+Perforce Release
+================
+Made by Xing Jin - 2 May 2006
+DEF084708: TYPE parameter not supported in VCARD when using Remote sync
+
+Perforce Release
+================
+Made by Chandra Sekhar Karri - 02 May 2006
+DEF072122: T_ERROR test fails on 9.3 dev/defect ONBs
+
+Perforce Release
+================
+Made by Prabodh Depala - 20 April 2006
+DEF085092: Phonebook sync: Department field is not added to outlook
+
+Perforce Release
+================
+Made by Rajat Das 19 April 2006
+DEF076391: Create a Macro for Verbose debugging in the Contact Server.
+
+Perforce Release
+================
+Made by Kalyan Reddy 06 April 2006
+DEF081999: T_FILTERFINDCONTACTS fails for 9.3 ARMV5 ONB
+
+Perforce Release
+================
+Made by Oz Najafi - 23 March 2006
+DEF082003:  Some failures in PREQ811 Contacts tests for cnts V2 
+
+Perforce Release
+================
+Made by Xavier Leclercq - 21 March 2006
+DEF079543: Symbian Contacts model field type mathching needs urgent fix
+
+Perforce Release
+================
+Made by Jonathan Richardson - 20 March 2006
+DEF082928: OMA TF12: Contacts panic with an E32User-CBase:21
+
+Perforce Release
+================
+Made by Lucian Piros - 16 March 2006
+DEF082123: Notes in contact not synced consequently
+
+Perforce Release
+================
+Made by Oz Najafi - 16 March 2006
+DEF081712:  Contact properties on device not deleted during synchronisation  - Propogation from 9.1
+
+Perforce Release
+================
+Made by Ryan Gilmour - 14 March 2006
+DEF082153: Contacts - Selecting to place contacts into categories, then selecting a cont... 
+
+Perforce Release
+================
+Made by Ryan Gilmour - 14 March 2006
+DEF079015: App-engines.cntmodel test case T_GROUPVIEW_UNFILED_PROFILE freezes 
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 28 February 2006
+DEF081396: Cntmodel: Wrong indexes for EItemRemoved events
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 24 February 2006
+INC080701: Addressbook: ZEUS_RIM3.1_Wk52_001: Only first SIM Contact is copied to phonebook
+
+Perforce Release
+================
+Made by Mohammad Minhaz - 13 February 2006
+DEF079827: X-EPOCCNTMODELLABEL parameters exported in VCards when they shouldn't be
+
+Perforce Release
+================
+Made by Jarek Piotrowiak - 26 January 2006
+DEF077467: Landline fields with only two field type UIDs are not recognized as landline field
+
+Perforce Release 
+================
+Chris Jarvis - 25 January 2006
+DEF076677: CONTACTS MODEL: Kariba unbranching: Provide a proper fix for INC012582
+
+Perforce Release
+================
+Made by Rajat Kanti Das - 16 January 2006
+DEF073387: Missing in-source comments in CntModel MCL submission
+
+Perforce Release
+================
+Made by Daniel Yuen - 10 January 2006
+INC076789: When changing timezone to timezone that has "negative" hours To-Do note is not d
+
+Perforce Release
+================
+Made by Kalyan Reddy - 19 December 2005
+DEF076201: CContactGroupView: Problem updating a contact
+
+Perforce Release
+================
+Made by Shazia Murtaza - 14 December 2005
+DEF073630 - T_REMOTEVIEW fails on H2 
+
+Perforce Release
+================
+Made by Mohammad Minhaz - 12 December 2005
+DEF075531: After restart the application,  the speed dial just added disappears.
+
+Perforce Release
+================
+Made by Konstantin Zheludev - 07 December 2005
+DEF075372: Test introduced for DEF069418 on Contacts Model needs improvement.
+Test case t_DBFill was merged with t_ViewUpdate and t_ViewUpdate was deleted. In case
+the test will fail it will exit after 3 seconds timeout.
+
+Perforce Release
+================
+Made by Johan Nareskog - 7 December2005
+DEF073727: T_DBASE2
+
+Perforce Release
+================
+Made by Johan Nareskog - 7 December2005
+DEF075221: T_Packagertestharness fails on H2
+
+Perforce Release
+================
+Made by Johan Nareskog - 22 November 2005
+DEF073637: SAN: Connected tests fails with -2017 and Error -1
+
+Perforce Release
+================
+Made by Chris Cooper - 16 November 2005
+DEF072115: Symbian defect: Contacts Database Views are not updated when deleting a group.
+Also added two new test cases T_DBFill and T_ViewUpdate.
+
+Perforce Release
+================
+Made by Johan Nareskog - 16 November 2005
+DEF072024: Insufficient speed dial phone number length used in Contacts Model
+
+Perforce Release
+================
+Made by Johan Nareskog - 11 November 2005
+GT0257 MS3.11 PREQ1192 "System Characteristics - performance plus!"
+and Some improvements regarding the previous PREQ811 submission
+
+Perforce Release
+================
+Made by Mayank Vaducha - 10 November 2005
+DEF071107: Copying 1000 contacts from MMC to Telephone looses data
+Note: Propagated from 7.0s - INC066851: Copying 1000 contacts from MMC to Telephone looses data
+
+Perforce Release
+================
+Made by Michael Marchenko - 07 November 2005
+DEF072821: CntVcardConverter::ExportL can trash stack
+
+Perforce Release
+================
+Made by Nikolay Budantsev - 03 November 2005
+GT0257 MS3.15.1 PREQ811 "Reduce time to do an initial contact synchronisation"
+
+BR.1615 "PIM Application Services: Move contact database files to contact server private directory"
+
+Note: The dbDumper utility is not updated according to BR.1615.
+To be able to use the dbDumper utility do the following:
+1. Move the contacts file from \private\10003a73 to \private\100012a5 directory 
+2. Rename the file to DBS_100065FF_CONTACTS.CDB
+
+1 new exported API:  CContactDatabase::SetOperationTimeOutL()
+Sets the time out of operations on the database server.
+The default time out is one second.
+
+This submission contains major changes in the contacts model architecture:
+1. Introduction of persistence layer.
+2. Most of the business logic moved to the cntsrv component.
+3. Improved transaction support.
+
+Perforce Release
+================
+Made by Tony Naggs - 19 October 2005
+DEF071446: unapproved break in CContactDatabase
+
+Perforce Release
+================
+Made by John Moore - 12 October 2005
+DEF070471: T_CONNEC and T_DBASE2 have started failing
+
+Perforce Release
+================
+Made by Tony Naggs - 10 October 2005
+DEF070165: Contacts Model OpenContactLX issues
+
+Perforce Release
+================
+Made by Tony Naggs - 7 October 2005
+DEF070324: cntmodel disk space observation threshold is ridiculously large
+
+Perforce Release 
+================
+Made by Krishna Vasudevan - 05 October 2005
+
+Implement change request 
+CR CWAK-6DZL92 'Support for additional Contacts fields'
+
+This CR delivers support for seven new contact fields 
+-- Assistant, Assistant Telephone Number, Anniversary,Spouse, Children, Department, Class
+The new fields are also provided with necessary vCard support
+
+Perforce Release
+================
+Made by John Moore - 04th October 2005
+DEF070042: ContactsChangedSinceL incorrectly uses the TTime argument
+
+Perforce Release
+================
+Made by Shazia Murtaza - 21th September 2005
+DEF068371 - iLockServer member data of CLockSrvDatabase is declared but never used 
+
+Perforce Release
+================
+Made by Tony Naggs - 13th September 2005
+DEF068352: Contacts Views miss early Phonebook Sync notifications
+
+Perforce release
+================
+Made by Ravishankar Lakshminarayanan - 7th September 2005
+INC064456: CContactDatabase needs to provide construction overloads taking RFs parameter
+
+Perforce Release
+================
+Made by Shazia Murtaza - 6th September 2005
+DEF065476 - Techview contacts App. New group not displayed 
+
+Perforce Release
+================
+Made by John Moore - 31th August 2005
+INC066425 - CContactDatabase::SetViewDefinitionL incorrectly panics  
+
+Perforce release
+================
+Made by Tony Naggs - 23rd August 2005
+DEF067078: Contacts Backup registration file usage needs updating
+
+Perforce Release
+================
+Made by Tony Naggs - 23rd August 2005
+DEF067135: Contacts SpeedDial tables should be deleted when database is deleted
+
+Perforce Release
+================
+Made by Shazia Murtaza - 17th August 2005
+INC066193: Contact content missing from newly created sync profile 
+
+Perforce release
+================
+Made by Tony Naggs - 16th August 2005
+DEF058892: Synchronization of USIM phonebook not working
+
+Perforce Release
+================
+Made by Alex Samoutin - 16th August 2005
+DEF064916 - Contacts Server memory leak
+
+Perforce Release
+================
+Made by Alex Samoutin - 10th August 2005
+DEF064916 - Contacts Server memory leak
+
+Perforce Release
+================
+Made by John Moore - 9th August 2005
+DEF066050: T_PLATSEC test is logging platfrom security warnings.
+
+Perforce Release
+================
+Made by Andrew Smith - 8th August 2005
+INC065189: Cntmodel server global static data objects waste RAM.
+
+Perforce Release
+================
+Made by John Moore - 20th July 2005
+DEF065179 - bug in contact views AllFieldsLC()
+
+Perforce Release
+================
+Made by Ryan Gilmour - 19th July 2005
+INC063619 - Mars 3.0: Client does not send "Wv user id" to the server
+
+Perforce Release
+================
+Made by Shazia Murtaza - 11th July 2005
+DEF063528 - Degradation in Contacts Model App Start-Up Performance 
+
+Perforce Release
+================
+Made by Shazia Murtaza - 5th July 2005
+INC063497: App-engines.cntmodel test T_ERROR fails in winscw 
+
+Perforce Release
+================
+Made by Shazia Murtaza - 1st July 2005
+DEF063120: T_Cnt_ViewSortProfiling 
+
+Perforce Release
+================
+Made by Tony Naggs - 29th June 2005
+BR1551.1 Reclassification of MContactSynchroniser and CContactSynchroniser to internal
+
+Perforce Release
+================
+Made by Krishna Vasudevan - 23th June 2005
+DEF062472: Update T_viewsortprofiling test
+
+Perforce Release
+================
+Made by Ryan Gilmour - 17th June 2005
+DEF063384: Contacts Model T_BACKUPRESTORE test fails on ARVMV5 UREL
+
+Perforce Release
+================
+Made by Prabodh Depala - 3rd June 2005
+DEF061837: T_BackupRestore test issues
+
+Perforce Release
+================
+Made by Prabodh Depala - 31st May 2005
+INC060933: Contacts - Find in Notes
+
+Perforce Release
+================
+Made by Prabodh Depala - 31st May 2005
+DEF056398: CntLockServer panic when a SMS is received
+
+Perforce Release
+================
+Made by Tony Naggs - 31st May 2005
+DEF061645: panic in CViewContact::SetFieldsForEmptyContactL
+
+Perforce Release
+================
+Made by Tony Naggs - 30th May 2005
+BR1523  BC Proofing CntModel Class RContactViewSortOrder.
+
+Perforce release
+================
+Made by Veeranjaneyulu Toka - 16th may 2005
+DEF059599: T_ICCVIEW crashes on ARMV5 hardware
+
+Perforce Release
+================
+Made by Mohammed Zafrulla - 13th May 2005
+Issue ID: DEF059597
+Title: DEF059597: T_ICCENTRY fails on 9.1 ARMV5 hardware
+
+Perforce Release 
+================
+Made by Andrew Smith - 13th May 2005
+DEF060963: Inappropriate Debug Panics from Contact Views.
+
+Perforce Release
+================
+Made by Ryan Gilmour - 12th May 2005
+DEF060631: T_PLATSEC fails on H2 ARMV5 Defect Branch
+
+Perforce Release
+================
+Made by Tony Naggs - 9th May 2005
+DEF060631: Contact Model test robustness & quality
+
+Perforce Release
+================
+Made by Mohammed Zafrulla - 6th May 2005
+Issue ID: DEF058831
+Title: DEF058831: Lint warnings for cntmodel
+
+Perforce release
+================
+Made by Tony Naggs - 3rd May 2005
+DEF060565: Contacts Server panic on resource shortage, T_Error skips test that shows this
+
+Perforce Release
+================
+Made by Vaughan McPherson - 26th April 2005
+DEF059962  Interim GS PIM part 2 breaks over 200 Java PIM TCK Tests 
+
+Perforce Release
+================
+Made by John Moore - 26th April 2005
+Issue ID: DEF058920
+Title: DEF058920: [PSAudit] Contacts not usable if only ReadUserData held by client 
+
+Perforce Release
+================
+Made by Noel Raj - 21th April 2005
+Issue ID: DEF059573
+Title: DEF059573: T_CNTMATCH fails on 9.1 ARMV5 hardware
+
+Perforce Release
+================
+Made by Juan Matilla - 19th April 2005
+Issue ID: DEF059358  - Various issues with cntmodel doxygen commenting
+
+Perforce Release
+================
+Made by Juan Matilla - 14th April 2005
+Issue ID: INC057591 - Asynch CContactDatabase::Open fails to set TStatusRequest to pending
+
+Perforce Release
+================
+Made by Noel Raj - 12th April 2005
+Issue ID: DEF057610
+Title: DEF057610: T_CNTMATCH fails on ARMV5 9.1 H2
+
+Perforce Release
+================
+Made by Prabodh Depala - 8th April 2005
+Issue ID: DEF058553
+Title: DEF058553 - T_error fails on 9.1 WINSCW
+
+Perforce Release
+================
+Made by Ryan Gilmour - 6th April 2005
+Issue ID: DEF058077
+Title: DEF058077 - minor commenting problem in Submission 526455
+
+Perforce Release
+================
+Made by Krishna Vasudevan - 29th March 05
+Issue ID:  DEF056168
+Title: DEF056168  NTT Contact Model return wrong values to PIM API 
+
+Perforce Release
+================
+Made by Ryan Gilmour - 23rd March 2005
+Issue ID: INC056117
+Title: INC056117 - Lift restrictions on field sizes in contacts which cause synchronization to fail
+
+Perforce Release
+================
+Made by Johan Nareskog - 10th March 2005
+Issue ID: Submitted a break requests
+BR.1417.1 PIM Application Services: Reclassification of Cntmodel Published-All APIs to Published-Partner. (Chris Dudding, Johan Nareskog; Simon Kingsley) 
+
+Perforce Release
+================
+Made by Johan Nareskog - 9th March 2005
+Issue ID: Issued a number of break requests
+BR.1367.1 PIM Application Services: Removal of Cntmodel APIs deprecated in SymbianOS v7.0 or earlier releases. (Chris Dudding; Simon Kingsley) 
+BR.1368.1 PIM Application Services: Reclassification of Cntmodel prototype APIs. (Chris Dudding; Simon Kingsley) 
+BR.1370.1 PIM Application Services: Deprecation of Cntmodel legacy sorting functionality. (Chris Dudding; Simon Kingsley)  
+BR.1371.1 PIM Application Services: Deprecation of Cntmodel legacy functionality. (Chris Dudding; Simon Kingsley) 
+BR.1372.1 PIM Application Services: Reclassification of Cntmodel API from Published-All to Internal. (Chris Dudding; Simon Kingsley) 
+BR.1373 PIM Application Services: Removal of internal Cntmodel APIs. (Chris Dudding; Simon Kingsley) 
+BR.1101.2 Development Admin: Development Environments: Change of Class Exporting Rules of RVCT 2.1 build 416 that affects ARMv5 DEF files. (Lars Kurth) 
+
+Perforce Release
+================
+Made by Prabodh Depala - 7th March 2005
+Issue ID: DEF054825
+Title: DEF056284 - T_error fails on 9.1 WINSCW
+
+Perforce Release
+================
+Made by Krishna Vasudevan - 24th February 05
+Issue ID:  DEF055370
+Title: DEF055370 : Backup registration file is incorrect
+
+Perforce Release
+================
+Made by Shazia Murtaza - 22nd February 2005
+Issue ID: DEF054825
+Title: DEF054825 - T_VIEW2 fails on 8.1a wins UDEB
+
+Perforce Release
+================
+Made by Oz Najafi - 14th February 05
+Issue ID:  DEF049719
+Title: DEF049719 - Corrupt Contacts databases cannot be deleted
+
+Perforce release
+================
+Made by Martin Hansen 11 Feb 2005
+
+Fixed defect:
+DEF054389 - [Sierra IPR] Distribution.policy files not in compliance with 8.1 CKL
+
+Perforce Release
+================
+Made by Tony Naggs - 10th February 2005
+Issue ID: DEF049698
+Title: DEF049698 - Minor code review comments not applied to CntModel
+
+Perforce Release
+================
+Made by Loughlin Spollen - 3rd February 05
+Issue ID:  DEF049948
+Title: DEF049948 - Core Apps Test Server improvement
+
+Perforce Release
+================
+Made by Johan Nareskog - 3rd February 05
+Issue ID:  BR1105.1
+Title: For class CContactViewFindConfigInterface change publishedAll to publishedPartner
+
+Perforce Release
+================
+Made by Lucien Oh - 3rd February 05
+Issue ID:  DEF054556
+Title: DEF054556  CContactDatabase class documentation is incomplete.
+
+Perforce Release
+================
+Made by Oz Najafi - 3rd February 05
+Issue ID:  DEF054209
+Title: DEF054209 - CContactDatabase::CreateL can fail but leave a partial, unusable database
+
+Perforce Release
+================
+Made by Oz Najafi - 1st February 05
+Issue ID:  DEF054205
+Title: DEF054205 - T_Sec_CntDbase robustness and correctness issues.
+
+Perforce Release
+================
+Made by Martin Hansen - 1st Febuary 05
+Issue ID: INC052869 
+Title: INC052869 - NTT Cntmodel test T_ERROR fails
+
+Perforce Release
+================
+Made by Lucien Oh - 27th January 05
+Issue ID:  DEF054198 
+Title: DEF054198 - cntmodel\T_ViewDefaultPlugin test harness should be removed.
+
+Perforce Release
+================
+Made by Prabodh Depala - 26th January 05
+Issue ID:  DEF053314 
+Title: DEF053314 - T_BACKUPRESTORE fails on winscw 8.1a.
+
+Perforce Release
+================
+Made by Andrew N Smith - 17th January 05
+Issue ID:  DEF051767
+Title: DEF051767 - Kariba unbranching: Crash in CContactDatabase::ContactMatchesHintFieldL.
+
+Perforce Release
+================
+Made by Noel Raj - 20th December 04
+Issue ID: DEF052624
+Title: DEF052624 : CContactDatabase class description needs minor change
+
+Perforce Release
+================
+Made by Andrew N Smith - 16th December 04
+Issue ID: DEF051770
+Title: DEF051770 - Kariba unbranching: cntmodel cant recover after failed transaction when disk fulL.
+
+Perforce Release
+================
+Made by Michael Coffey - 6th December 04
+Issue ID: DEF052475
+Title: DEF052475 - T_FILTERVIEW fails on 8.1b winscw
+
+Perforce Release
+================
+Made by Michael Coffey - 1st December 04
+Issue ID: DEF052296
+Title: DEF052296 - Contact model performance tests do not work for EKA2
+
+Perforce Release
+================
+Made by Richard Jackson - 29th November 04
+Issue ID: INC049017
+Title: INC049017 - NTT FindAsyncL and FindLC problems with KUidContactFieldMatchAll
+
+Perforce Release
+================
+Made by Beibei Wang - 23th November 04
+Issue ID: DEF051959
+Title: DEF051959 - Error in contacts model data schema documentation
+
+Perforce Release
+================
+Made by Andrew N Smith - 18th November 04
+Issue ID: DEF051783 
+Title: DEF051783 - Fix test harness T_REMOTEVIEW.CPP
+
+Perforce Release
+================
+Made by Vaughan McPherson - 12th November 04
+Issue ID: DEF051446
+Title: DEF051446 SS Contacts model & long fields
+
+Perforce release
+================
+Made by Vaughan McPherson 11 Nov 2004
+Issue Id INC051286  
+INC051286 Cntmodel ECOM migration prevents plugins being instanciated outside of cntmodel  
+
+Perforce release
+================
+Made by Steve Childerley 11 Nov 2004
+Minor change
+T_Sec_Cntdbase - modified to handle different drives encountered in Lubbock & H2
+
+Perforce release
+================
+Made by Krishna Vasudevan 04 Nov 2004
+Issue Id DEF049953 
+DEF049953 - Opcodes in the CLockServer not correct
+
+Perforce release
+================
+Made by Vaughan McPherson 04 Nov 2004
+Issue Id DEF050542
+DEF050542 - Core Apps Tests fail on Hardware (Thumb) 
+
+Perforce release
+================
+Made by Vaughan McPherson 03 Nov 2004
+Issue Id DEF051137
+DEF051137 RU: PANIC: Contacts, E32USER-CBase, 21, CContactIdArray::MoveL(...) 
+
+Perforce release
+================
+Made by Ibrahim Rahman 03 Nov 2004
+Issue Id DEF051000
+DEF051000 - Contacts Backup&Restore deferred review comments
+
+Perforce release
+================
+Made by John Owen 29 Oct 2004
+Issue Id DEF051015
+DEF051015 - Contacts Performance test has not been updated to use secure data
+
+Perforce release
+================
+Made by John Owen 29 Oct 2004
+Issue Id DEF050635
+DEF050635 - T_BackupRestore test failing
+
+Perforce release
+================
+Made by Vaughan McPherson 29 Oct 2004
+Issue Id INC050631
+NTT - App-engines\cntmodel T_RECOVERVIEW panics
+
+Perforce release
+================
+Made by John Owen 29 Oct 2004
+Issue Id DEF050965
+DEF050965 - Contacts test T_database_killer fails on OS9.0
+
+Perforce release
+================
+Made by Michael Coffey 27 Oct 2004
+Issue Id DEF049032
+DEF049032 - Contacts test T_TEMPL fails on 8.1b armv5 HW
+
+Perforce Release 
+================
+Made by Chris Dudding - 27 October 2004
+
+Implement change request 
+APOS-65HDRN Contact Support for SIP UID
+
+This CR delivers support for a general SIP identity (SIP URI) field
+and vCard mappings for push over cellular, "see what i see" and 
+voice over IP applications. 
+
+Support for vCard import/export is provided using X-SIP extension.
+
+Perforce release
+================
+Made by John Owen 26 Oct 2004
+Issue Id DEF050828
+DEF050828 - Contacts tests missing heap marking
+
+Perforce release
+================
+Made by Ibrahim Rahman 25 Oct 2004
+GT0215 MS3.1.2  Backup & Restore
+1)Added app-Services component BackupRestoreNotification which 
+provides a notification mechanism for SECURE and UNSECURE builds.
+2)Modifed AlarmServer to use this component. Modified existing 
+text t_backupAlarms, adding SECURE_MODE tests.
+3)Contacts now uses BackupRestoreNotification.dll. 
+Added test t_backupRestore to test the B&R functionality.
+
+Perforce Release 
+================
+Made by Johan Nareskog - 24 October 2004
+Issue Id DEF050695
+DEF050695 - Performance Tests fail
+
+Perforce release
+================
+Made by Tony Naggs 21 Oct 2004
+Issue Id DEF050513
+DEF050513 - Unsecure CContactDatabase::DefaultContactDatabaseExistsL leaves with -12
+
+Perforce Release
+================
+Made by Steve Childerley 20 Oct 04
+Issue Id DEF050201
+DEF050201 - Leave Scan Error fixes in production code. (change list 439401)
+
+Perforce Release 
+================
+Made by Tony Naggs - 18 October 2004
+Issue Id DEF050303
+DEF050303 - Incorrect configuration macro used in some places
+
+Perforce Release
+================
+Made by Richard Jackson 13 Oct 04
+Issue Id INC048545
+INC048545 - NTT - cntmodel test T_VIEWSOOM udeb hangs on hardware
+
+Perforce Release
+================
+Made by Beibei Wang 11 Oct 04
+Issue Id DEF049869
+DEF049944 - CContactDatabase::ListDatabasesL and ListAgendaFilesL Issues on Lubbock
+
+Perforce Release
+================
+Made by Ibrahim Rahman - 08 October 2004
+GT0215   MS3.1.2  Backup & Restore
+Title: Added Backup&Restore functionality to Contacts.
+Now uses BackupRestoreNotification.dll which provides a
+notification mechanism for SECURE and UNSECURE builds.
+
+Perforce Release
+====================
+Made by Andy Smith - 7th Oct 04
+Issue Id DEF049869
+DEF049869 - Mistakes in api classification.
+
+Perforce Release
+================
+Made by Andy Smith - 4th Oct 04
+Issue Id DEF049195 
+DEF049195 - various problems with new doxygen comments in cntdb.cpp.
+
+Perforce Release
+================
+Made by Tom Bassett - 4th Oct 04
+Issue Id INC047728
+INC047728 - T_Connec Fails on UREL
+
+Perforce Release
+================
+Made by Tom Bassett - 4th Oct 04
+Issue Id DEF049023
+DEF049023 - T_Error fails on UREL and UDEB
+
+Perforce Release
+================
+Made by Johan Nareskog - 04 October 2004
+Issue Id: DEF049724 - Mistakes in API Classification
+Title: Mistakes in API Classification
+
+Perforce Release
+================
+Made by Nikolay Urievich Budantsev - 01 October 2004
+Issue Id: DEF049521
+Title: contacts test t_expdel fail on hw 
+
+Perforce Release
+================
+Made by Abdulaziz Faraj - 30th Sept 04
+Issue Id DEF047376
+INC047376 - NTT - STABILITY: CntModel has some functions that can leak memory (Remix)
+
+Perforce Release
+================
+Made by Franco Bellu - 29 September 2004
+Issue Id: DEF049504 
+Title: ExportSelectedContactsL has broken source compatibility
+
+Perforce Release
+================
+Made by Tony Naggs - 29 September 2004
+GT0215   MS3.1.2  PREQ277 PS6.3 & PS6.5 Remaining Data Caging work
+
+2 new exported APIs for asynchronous database open.
+For both the default database, (on the current default drive), and named databases:
+  CContactOpenOperation* CContactDatabase::Open(TRequestStatus& aClientStatus, TThreadAccess aAccess)
+  CContactOpenOperation* CContactDatabase::Open(const TDesC& aFileName, TRequestStatus& aClientStatus, 
+    TThreadAccess aAccess)
+When the client supplied TRequestStatus parameter is completed with KErrNone the 
+CContactOpenOperation::TakeDatabase method takes ownership of the new CContactDatabase object. 
+Deleting the CContactOpenOperation object cancels the asynchronous open.
+
+Perforce Release 
+================
+Made by Andy Smith - 27th September 04
+Issue Id: DEF049195
+Title: Various problems with new doxygen comments in cntdb.cpp
+
+Perforce Release 
+================
+Made by Tony Naggs - 21 September 2004
+Issue Id DEF049180
+Title: [System Build] Kits Warnings in build 03369
+
+Perforce Release
+================
+Made by Tony Naggs - 21 September 2004
+Issue Id DEF049242
+Title: Problem with 9.0 Secure operation of CContactDatabase::ListDatabasesL()
+
+Perforce Release 
+================
+Made by Daniel Clark - 20 September 2004
+Issue Id: DEF048463
+Title: cntdef.h lacks API classification tags 
+
+Perforce Release 
+================
+Made by Nikolay Budantsev - 18th September 04
+Title: 
+GT0215   MS3.1.1  PREQ277 PS6.4 Replacement APIs (Also PS8.1) (cntmodel only)
+GT0215   MS3.6    PREQ728 Base API Improvements (cntmodel only)
+
+PerforceRelease
+===============
+Made By Richard Jackson - 25th August 04
+Issue ID INC047630
+Title: NTT-Problems when fetching saved contact item with character combination '(+'
+
+Perforce Release
+================
+Made by Andy Smith - 23rd August 04
+Issue Id DEF047279 
+Title: KIntFieldFlagFilterable in CntModel.(included Strings removed from previous version).
+
+Perforce Release
+================
+Made by Andy Smith - 23rd August 04
+Issue Id DEF047279 
+Title: KIntFieldFlagFilterable in CntModel.
+
+Perforce Release
+================
+Made by Andy Smith - 12th August 04
+Issue Id DEF047279 
+Title: KIntFieldFlagFilterable in CntModel.
+
+Perforce Release
+================
+Made by Ravi  - 03 August 04
+Issue Id DEF046818 
+Title: Core-Apps Test T_CNTVCARD fails on 8.1b def
+
+Perforce Release
+================
+Made by Tom Bassett  - 2nd Aug 04
+Issue Id DEF47120
+Title: Reordering of Contacts Optimisation directory. Adding of performance directory and tests
+
+Perforce Release
+================
+Made by Pat Nicholls - 02nd August 04
+Issue ID: DEF046771
+Title: Test T_Vers fails on 8.0a defect build
+
+Perforce Release
+================
+Made by Tom Bassett  - 2nd Aug 04
+Issue Id DEF47120
+Title: Reordering of Contacts Optimisation directory. Adding of performance directory and tests
+
+Perforce Release
+================
+Made by Pat Nicholls - 02nd August 04
+Issue ID: DEF046771
+Title: Test T_Vers fails on 8.0a defect build
+
+Perforce Release
+================
+Made by Johan Nareskog- 30th July 04
+Issue Id DEF047179  
+Title: Unloading of ECOM plugins results in a memory leak after the SYS LIB changes 
+
+Perforce Release
+================
+Made by Tom Bassett  - 30th July 04
+Issue Id INC047110
+Title: Regression deleting phone numbers less than 7 digits
+
+Perforce Release
+================
+Made by Johan Nareskog- 30th July 04
+Issue Id DEF047179  
+Title: Unloading of ECOM plugins results in a memory leak after the SYS LIB changes 
+
+Perforce Release
+================
+Made by Tom Bassett  - 30th July 04
+Issue Id INC047110
+Title: Regression deleting phone numbers less than 7 digits
+
+Perforce Release
+================
+Made by Subani  - 26th July 04
+Issue Id DEF046852 
+Title: Almost all coreapps source files use wrong format of copyright information
+
+Perforce release
+================
+Made by Abdulaziz Faraj - 26 July 2004
+Issue ID: INC045285
+INC045285 - NTT - CContactDatabase::OpenL + deletion leaks memory
+
+Perforce Release
+================
+Made by Subani  - 26th July 04
+Issue Id DEF046852 
+Title: Almost all coreapps source files use wrong format of copyright information
+
+Perforce Release 
+================
+Made by Nikolay Budantsev 16/07/04
+Sierra, GT0197, MS3.3.2 PREQ539 Core Apps Security Documentation Migration
+
+Perforce Release 
+================
+Made by Jitender Kumar - 9th July 04
+Issue Id DEF046694
+Title: Production build failure for app-eng/cntmodel on 8.1b def for Armv5
+
+Perforce Release 
+================
+Made by Jitender Kumar - 2nd July 04
+Issue Id DEF046402
+Title: Test code leaks into release build of Contacts Model
+
+Perforce Release
+================
+Made by Pat Nicholls - 2nd July 04
+Issue Id DEF046108
+Title: Contacts Database uses wrong criteria to test CompressRequired
+
+Perforce Release 
+================
+Made by Nikolay Budantsev - 8th June 04
+Issue Id DEF045383 
+Title: CContactDatabase::FindLC uses folded comparision rather than collation
+
+Perforce Release 
+================
+Made by Bob Rosenberg - 8th June 04
+Issue Id DEF045836
+Title: Contacts sorting not working right
+Implements fixes for CR PHAR-5U6KGG
+
+Perforce Release 
+================
+Made by Waiman Tang - 20th May 04
+Issue Id DEF045296 
+Title: Aggregate mismatch in Erin headerfile /epoc32/include/cntitem.h
+
+Perforce Release 
+================
+Made by Pat Nicholls - 29 April 04
+Issue Id DEF 044203
+Title: Contacts View notifications can get lost and are mishandled
+
+Perforce Release 
+================
+Made by Tony Naggs - 23 April 2004
+CR Id: PHAR-5U6KP6
+Title: Support for customising sorting of contact views 
+
+Support for a Sort plug-in, based on the ECOM framework, for comparing Contacts view items
+when sorting a view.
+This release implements all calls to the Sort plug-in and new APIs.
+Test coverage includes example/test sort plug-in CntSimpleSortPlugin, new unit test T_ViewSortPlugin
+and test cases added to T_ViewSort, T_ViewEvents and T_ViewsOOM.
+Caveats are: interaction with PhoneBook Sync may is erroneous, and some minor performance issues,
+(sorting a very large view can block the contacts server from processing other things).
+
+Perforce Release 
+================
+Made by Bob Rosenberg - 23 April 2004
+CR Id: PHAR-5U6KGG
+Title: Add support for reading (pronunciation) fields in Contacts model (for e.g. Japanese)
+
+Contacts model is modified to support the new fields in the database tables
+CntVCard is modified to add the SOUND extensions into a contact
+T_ViewSortProfiling is added to test the performance of view sorting and finding for the 3 new fields
+T_CntVcard is modified to rest reading and writing vCards with the new SOUND support
+Various other tests are modified to suport the changes.
+This is the final of two releases.
+
+Perforce Release
+================
+Made by Patrik Nicholls - 22 April 2004
+Issue Id: DEF 044162
+Title: CContactDatabase::FindLC needs documentation to explain restrictions
+Issue Id: DEF 043904
+Title: T_VIEWSORTERROR2 failed under WINSCW UREL 8.0b
+
+Perforce Release 
+================
+Made by Tom Bassett - 30 March 2004
+Issue Id: DEF043947
+Title: Suggested optimisation for Contacts Deletion
+
+Perforce Release 
+================
+Made by Jitender Kumar - 25 March 2004
+Issue Id: DEF043601
+Title: Contact model db event not sent correctly when removing speed dial from another client.
+
+Perforce Release 
+================
+Made by Chris Dudding - 17 March 2004
+Issue Id: DEF043571
+Title: Suggested optimisation to CContactFilteredView 
+
+Perforce Release 
+================
+Made by Tony Naggs - 11 February 2004
+Issue Id: DEF041603
+Title: Contacts View incorrect for SIM card that becomes unlocked
+
+Perforce release
+================
+Made by Waiman Tang - 06 Feb 2004
+Issue Id: DEF042129 
+Title:	Contacts documentation is corrupted
+
+Perforce release
+================
+Made by Bob Rosenberg - 5 Feb 2004
+CR Id: PHAR-5U6KGG
+Title: Add support for reading (pronunciation) fields in Contacts model (for e.g. Japanese)
+
+This CR adds 3 new pronunciation UIDs for the given, family, and company names. 
+Simple tests to ensure the UIDs are usable are added to the T_Field test
+The spelling error in PerformReadIterationL() is fixed
+This is the first of two releases. This release adds the fields but does not address
+any performance issues. 
+
+Perforce release
+================
+Made by Waiman Tang - 03 Feb 2004
+Issue Id: INC039087
+Title:	CContactDatabase::GetFieldText has problems in Arabic&Hebrew mode
+
+Perforce release
+================
+Made by Waiman Tang - 29 Jan 2004
+Issue Id: DEF041898 
+Title:	Incorrectly named literal in T_FilteredViewUpdate
+
+Perforce release
+================
+Made by Waiman Tang - 28 Jan 2004
+Issue Id: INC039675 
+Title:	Contact view's sorting ignores special characters
+
+Perforce release
+================
+Made by Waiman Tang - 19 Jan 2004
+Issue Id: DEF041564 
+Title:	Mistakes in Doxygen tagging
+
+Perforce release
+================
+Made by Waiman Tang - 9 Jan 2004
+Issue Id: DEF041336
+Title:	FileServerIsHung Method should not be called in T_VIEWSORTERROR2.cpp
+
+Perforce release
+================
+Made by Bob Rosenberg - 5 Jan 2004
+Issue Id: DEF041266
+Title: T_RemoteView fails on wins sometimes
+
+Perforce release
+================
+Made by Bob Rosenberg - 29 Dec 2003
+Issue Id: DEF041250
+Title: T_Connec sometimes fails on Winscw Udeb
+
+Perforce release
+================
+Made by Andrew Newman - 19 Dec 2003
+Issue Id: INC041082
+Title: t_custfilter fails
+
+Perforce release
+================
+Made by Bob Rosenberg - 15 Dec 2003
+Issue Id: DEF040992
+Title: cntdb.h is not ISO C++ compliant
+
+Perforce release
+================
+Made by Andrew Newman - 15 Dec 2003
+Issue Id: INC039299
+Title: Problems searching contacts
+
+Perforce release
+================
+Made by Bob Rosenberg - 12 Dec 2003
+Issue Id: DEF040936
+Title: Bad IPC message in creating remote named view
+
+Perforce release
+================
+Made by Andrew Newman - 09 Dec 2003
+Issue Id: DEF040794
+Title: Remote view set plugin sends address where value was intended
+
+Perforce release
+================
+Made by Andrew Newman - 09 Dec 2003
+Issue Id: DEF040795
+Title: A test left out of t_error can now be restored, since the defect being avoided has been fixed.
+
+Perforce release
+================
+Made by Nichola Turner - 26 Nov 2003
+Issue Id: DEF040449
+Title: Missing copyright statements in files
+
+Perforce release
+================
+Made by Andy Blackburn - 25 Nov 2003
+IPC changes for cntmodel for EKA2.
+
+Perforce release
+================
+Made by Bob Rosenberg - 18 Nov 2003
+Issue Id: DEF040167
+Title: Contact Fields need more comments in code
+
+Perforce release
+================
+Made by Tom Bassett - 18 Nov 2003
+Issue Id: INC039403
+Title: Removed T_RenameEmptyField.
+
+Perforce release
+================
+Made by Dominic Pinkman - 17 Nov 2003
+Issue Id: DEF039933
+Title:  Mistakes in Doxygen tagging
+
+Perforce release
+ ================
+Made by Tom Bassett - 13 Nov 2003
+Issue Id: INC038547
+Title: Contacts - Export Birthday from Versit correctly. Also added T_VExportBirthday 
+
+Perforce release
+================
+Made by Andrew Newman - 13 Nov 2003
+Issue Id: INC039438
+Title:  Design error in CContactViewBase::NotifyObservers causes application panic
+
+Perforce release
+================
+Made by Tom Bassett - 11 Nov 2003
+Issue Id: INC039403
+Title: Contacts - Rename field - Change not saved (Rubik). Also added T_RenameEmptyField
+
+Perforce release
+================
+Made by Andrew Newman - 10 Nov 2003
+Issue Id: DEF039900
+Title:  TFORMEVA, TEVATIME & TMODEL fail.
+
+Perforce release
+================
+Made by Stéphane Lenclud - 08 Nov 2003
+Fixing defect:
+INC037791 - Contacts not data compatible with 7650? 
+One test case added: T_DATACOMPATIBILITY.
+To find out more about data schema evolution from version to version please read the "contacts model database schema" document.
+
+Perforce release 
+================
+Made by Andrew Newman 08 Nov 2003
+Issue Id:  DEF037234
+Title:  Replace lost change to bld.inf
+
+Perforce release
+================
+Made by Bob Rosenberg - 06 Nov 2003
+Issue Id: DEF039433
+Title:  T_datacompatibility fails on CEDAR WINSCW and CEDAR ARM4
+
+Perforce release
+================
+Made by Andrew Newman - 04 Nov 2003
+Issue Id: DEF039497
+Title:  Temporary File Cleanup
+
+Perforce release
+================
+Made by Andrew Newman - 31 Oct 2003
+Issue Id: DEF039642
+Title:  Added two files missing from earlier changelist.
+
+Perforce release
+================
+Made by Nichola Turner - 30 Oct 2003
+Issue Id: DEF039192
+Title:  cntmodel/t_owncard test crushes Lubbock on Cedar
+
+Perforce release
+================
+Made by Waiman Tang - 28 Oct 2003
+Issue Id: DEF039417 
+Title:  T_ERROR fails on WINCW UREL
+
+Perforce release
+================
+Made by Tom Bassett - 15 Oct 2003
+Issue Id: DEF039036
+Title:  Added OOM Test
+
+Perforce Release
+================
+Made by Bob Rosenberg - 14 Oct 2003
+Issue Id: INC038634 
+Title:  Contact View filtered view takes too long to open
+
+Perforce release
+================
+Made by Tom Bassett - 08 Oct 2003
+Issue Id: DEF038931
+Title:  Don't test for 0 thread contention for db on Lubbock  
+
+Perforce release
+================
+Made by Tom Bassett - 08 Oct 2003
+Issue Id: DEF037452
+Title:  Database dump tool should be added to Contacts model  
+
+Perforce release
+================
+Made by Tom Bassett - 07 Oct 2003
+Issue Id: INC038969 
+Title T_VIEWSORTERROR2.cpp Panics on Lubbock - Change Guards due to Compiler warning
+
+Perforce release 
+================
+Made by Dominic Pinkman 7 Oct 2003
+Issue Id:  INC038308  
+Title:  CContactsDatabase - SpeedDial methods use fieldId as field index  
+
+Perforce release 
+================
+Made by Andrew Newman 2 Oct 2003
+Issue Id:  DEF037234  
+Title:  Test code t_error fails in cntmodel  
+
+Perforce release 
+================
+Made by Bob Rosenberg 2 Oct 2003
+DEF038709 - T_HintExtension fails on WINS UREL & WINSCW UREL
+
+Perforce release Graeme Riddick 29/09/03
+===============================
+Issue Id:  DEF037964  
+Title:  ABLD ROMFILE ARM4 command fails for cedar  
+Generic add of ROMFILE to each project makefile
+
+Perforce release Stéphane Lenclud 22/09/03
+=================================
+INC037394 - Sync Contacts: Contact is deleted from phone if removing birthday detail from PIM
+
+Perforce release 
+================
+Made by Bob Rosenberg 16 Sep 2003
+INC037352 - CntModel: Contact view panics after using DeleteContactsL
+
+Perforce release
+================
+Made by Andrew Newman, 2nd September 2003
+Fix for INC037373 - INC037386 - Strange behaviour when CContactDatabase::RemoveSpeedDialFieldL fails.
+
+Perforce release
+================
+Made by Andrew Newman, 29th August 2003
+Fix for INC037373 - t_filterbroadcast fails
+
+Perforce release
+================
+Made by Bob Rosenberg, 28th August 2003
+Fix for DEF037633 - cntdb.cpp issues
+
+Perforce release
+================
+Made by Andrew Newman, 27th August 2003
+Fix for DEF037524 - vCard to only export N: fields if they contain data
+
+Perforce release 
+================
+Made by Graeme Riddick 26 Aug 2003
+PHAR-5LKRFC - Added support for X-EPOCSECONDNAME field in versit and contacts model
+
+Perforce release
+================
+Made by: Johan Nareskog, 26th August 2003
+Fix for DEF037563 - Build warnings in Core-Apps Defect branch
+
+Perforce release
+================
+Made by Andrew Newman, 26th August 2003
+Fix for INC037368 - buildfile had wrong path to connectivity.vcf
+
+Perforce release
+================
+Made by Franco Bellu, 19th August 2003
+Fix for DEF037216 - "T_DBase2 has a lot of test functions commented out "
+
+Perforce Release
+================
+Made by Tony Naggs 15 Aug 2003
+Fixed T_IccView and CntSyncChecker DLL to test defect fix integrated from 7.0
+  (DEF036366 - stray event when phbksync fails and sync is attempted again)
+
+Perforce release 
+================
+Made by Jonathan Gibson 13 Aug 2003
+Fixed the T_viewoom test harnesses so that it works on lubbock board (DEF37264)
+
+Perforce release 
+================
+Made by Jonathan Gibson 12 Aug 2003
+Fixed the T_View2 test harnesses so that it works on lubbock board (INC37112)
+
+Perforce release 
+================
+Integration from Hurricane code made by Graeme Riddick 18th September 2003 : 
+	Made by Tony Naggs 7 August 2003
+	DEF035882 - CContactLocalView doesn't handle locked SIM cards
+	T_IccView has a new test case to exercise this
+	DEF037063 - T_FilterBroadcast test often fails on WINS
+	Fixed test to assure DEF035882 fix did not introduce errors
+
+Perforce release
+================
+Made by Franco Bellu, 5th August 2003
+Fix for DEF037135 - "contact model should have a test harness for recovering after a roll back"
+
+Perforce release 
+================
+Made by Bob Rosenberg 1 Aug 2003
+DEF036199 - Deleting first or surname from a contact does not remove name from contacts list
+
+Perforce release
+================
+INtegrating defect fix from Bill Vance:
+Fixed DEF036083 "CContactDatabase::FindAsyncL() does not find contact in email field only search"
+t_dbase2 to veify fix
+
+Perforce release
+================
+Made by Daniel Fuchs, 31st July 2003
+Fix for DEF035765 - TimeIS export/import behaviour for addresses and names.
+
+Perforce release IbrahimR 28th July 2003
+================================
+DEF036802 - T_View2 test harness fails
+
+Perforce release NikolayB 24/07/03
+================================
+PHAR-5HJFQ8 "Contacts needs to support generic Location privacy setting"
+
+Perforce release
+================
+Made by Franco Bellu 24th July2003
+DEF036481 "app-engines/cntmodel/T_VIEWSOOM test fails on all platforms "
+
+Perforce Release
+================
+Made by Tony Naggs 21 July 2003
+DEF036366 - stray event when phbksync fails and sync is attempted again
+
+Perforce release
+================
+Made by Andy Blackburn, 18th July 2003
+
+Fix for DEF036524 - cntmodel phone matching doesn't work for less then 7 digits; this is actually just a change to the extractable documentation to clarify current behaviour.
+
+Perforce release
+================
+Made by Franco Bellu 18th July2003
+DEF036463 "RDebug::Print in CContactViewBase::GetViewFindConfigPlugin"
+
+Perforce Release
+================
+Made by Andy Blackburn
+Fix defect
+INC036716 - CContactViewBase::TVirtualFunction1Params::iIndexes has wrong type
+
+Perforce release BeibeiW 15/07/03
+================================
+Fix defect
+DEF035264 - Incorrect handling of vCalendar time properties in AgnVersit
+
+Perforce release 
+================
+Made by StephaneL 15th July 2003
+DEF036345  CCntFilter leaves for default CContactDataBase::FilterDatabaseL() 
+
+Perforce release 
+================
+
+Made by Andy Blackburn
+PHAR-5K2TAF "Improvements to contacts matching" CR
+
+Functionality: Previous versions of:
+
+CContactDatabase::MatchPhoneNumberL(const TDesc& aNumber, const TInt aMatchLengthFromRight)
+
+matches on a maximum of 7 phone digits, but the function has now been modifed to
+match on up to 15 digits. This has been done by adding an extra column to the
+Phone table to hold a phone digit hash for the additional digits.
+
+Impact of changes: Existing behaviour has been retained but KMaxPhoneMatchLength
+has been changed from 7 to 15. Any code or test code that uses this constant when
+calling MatchPhoneNumberL(...) will see a change in behaviour. When an existing
+database is opened it will be updated (if necessary) to the new schema during the
+opening process. It will not be possible to read and update databases with a version
+number earlier than 5.
+
+The changes are source and binary with existing code.
+
+Perforce release
+================
+Made by Franco Bellu 26 June 2003
+Fixed DEF029368 "Contacts: DBMS-crash when saving Ring tone contact after changing folder"
+
+Perforce release
+================
+Made by TonyN 12th June 2003
+INC029478 - Reduction in cntmodel performance introduced by defect fix
+
+Perforce release
+================
+Made by DanielF 11th June 2003
+DEF029366 - Contacts: Owerlfow/Not ready when adding new fields in a ring tone contact 
+
+Perforce release
+================
+Made by StephaneL 27th May 2003
+INC023805 - Fliter view does not broadcast event when resorting underlying view
+
+Perforce release
+================
+Made by StephaneL 23th May 2003
+DEF022367  (Propagated) CFilteredView's sort doesn't work correctly 
+
+Perforce release
+================
+Made by StephaneL 13th May 2003
+Integrating defect fix from Chris Woods:
+INC021333  Cancel() not called in CIdleContactSorter destructor leads to thread hanging
+
+Perforce release 
+================
+Made by ChrisD 23/06/2003
+
+Implement change request PHAR-5K2QZF "Export CViewContact::AddFieldL".
+
+A new export has been added to CViewContact
+- IMPORT_C void AddFieldL(const TDesC& aField);
+
+Perforce release 
+================
+Made by Graeme Riddick 13/06/2003
+Fix of defect DEF023159 - Contact Synchronisation behaviour
+
+Perforce release 
+================
+
+Made by Nikolay Budantsev
+PHAR-5K3KUJ "Filtered View Performance" CR
+
+Perforce release 
+================
+
+Made by Franco Bellu 12/06/2003
+patch: submitted new def files for cntmodel as a consequence of an api change ( se previous relese)
+
+Perforce release 
+================
+
+Made by Franco Bellu 10/06/2003
+
+fixed defect INC029455 "Cntmodel defines "TFuntion"
+
+Perforce release 
+================
+
+Made by Tony Naggs 06/06/2003
+
+Fixed defect DEF032289 - T_currentdb test harness does not end correctly, it timeouts
+Changed bld.inf to autorun t_currentdb.
+
+Perforce release 
+================
+
+Made by Andy Blackburn 29/05/2003
+
+Fixed defect INC029483 - Product code name in source code
+
+Perforce release 
+================
+Made by Bob Rosenberg 29/05/2003
+
+Fixed defect DEF 024068  Contacts model row update is unefficient
+
+Perforce release 
+(relese to gt149 branch)
+================
+Made by Franco Bellu 28/05/2003
+
+Fixed defect DEF 026823 "(Propagated) CContactLocalView does not recover from initialisation problems"
+Fixed defect DEF 022373 "T_ViewSortError is not guarranteed to be valid should the code tested change"
+
+
+Perforce release
+================
+Made by Andy Blackburn 23/05/2003
+
+Re-submitted deferred defects:
+DEF023874 - app-engines/cntmodel RDebug::Print being used instead of RTest class.
+DEF023877 - app-engines/cntmodel two testharnesses are not included in IBY file.
+
+Perforce release
+================
+Made by Bob Rosenebrg 21/05/2003
+
+Fixed defect: DEF025434 - cntmodel/TFilterview doesn't check leaving error in E32Main()
+iTest object moved to global test object
+added test files to .iby
+fixed copyright headers
+
+Perforce release
+================
+Made by Bob Rosenebrg 21/05/2003
+
+Fixed defect:
+DEF025436  cntmodel: 5 tests still use RDebug::Print(_L("RTEST: SUCCESS : ..."));
+t_apac, bld.inf: iTest object moved to global test object, data file moved to z drive to allow testing on device
+t_viewevents, t_groupview_unfiled_profile: iTest object moved to global test object
+t_owncard: RDebug line removed
+t_speeddialtest: removed RDebug and replaced with proper use of g_test
+cntmodeltest.iby: t_apac, t_speeddialtest, t_viewevents added to build
+
+============================================================================================================
+CNTMODEL Perforce release by Nikolay Budantsev 21/05/2003
+Fixed defects:
+DEF023745 - Cntmodel potential memory leak preventing OOM testing 
+MWAR-5LFHMY Change Request
+"Application Engines, GT0149 C&M (Typhoon), CntvCard reference plugin modernisation"
+
+Perforce release
+================
+Made by Andy Blackburn 20/05/2003
+
+Fixed defects:
+DEF023745 - Cntmodel potential memory leak preventing OOM testing
+DEF023874 - (propagated) app-engines/cntmodel RDebug::Print being used instead of RTest class
+DEF023877 - (propagated) app-engines/cntmodel two testharnesses are not included in IBY file.
+
+Perforce release
+================
+Made by Franco Bellu 08/05/2003
+
+Fixed defect DEF023565 - stubsis.mk does not respect EPOCROOT  
+
+Perforce release
+================
+Made by StephaneL 25th April 2003
+Test code update for defect:
+DEF022667  (Propagated) Contact model db event not sent when removing speed dial from an... 
+DEF022709  (Propagated) Contact DB Monitoring Error Messages 
+
+Perforce release
+================
+Made by AlexD 11th April 2003
+fix defect
+DEF022709 (Propagated) Contact DB Monitoring Error Messages
+DEF022634 - (Propagated) CFilteredView's sort doesn't work correctly 
+DEF022667 - (Propagated) Contact model db event not sent when removing speed dial from an...
+DEF022839  Contacts Model sorting uses many non-alphanum chars before number when sortin 
+DEF022303  Font naming should be independent of printer drivers 
+DEF022410  (Propagated) Contacts Model ignores spaces when sorting 
+DEF022782 t32wld.h is exported twice
+DEF022904 CntModel test code T_FiliteredViewSort builds with warnings for ARM4
+DEF022666 (Propagated) Wrong information carried in TContactViewEvent::EItemRemoved eve... 
+DEF022844 Misleading Commenting of RASCliSession::AlarmDataSize(..) API
+
+Perforce release
+================
+Made by StephaneL 9th April 2003
+DEF022282 - (Propagated) CContactDatabase::MatchPhoneNumberL(const TDesC&, const TInt) ig... 
+
+Perforce release
+================
+Made by NicholaT 7th April 2003
+
+Fix defect
+DEF017683 "(Propagated) contacts have all (empty) fields after sync"
+
+Perforce release
+================
+Made by NickB 02/04/2003
+t_groups fix, for wins urel build warning.
+
+Perforce release
+================
+Made by NickB 01/04/2003
+Fix t_owncard build warnings 7.0 cntmodel
+
+Perforce release
+================
+Made by NikolayB 26/03/2003
+VoiceDial & RingTone CR test code
+
+Perforce release
+================
+Made by BeibeiW 25th March 2003
+
+Fix defect
+DEF021829 "Unused method in CLockSrvClient"
+
+Perforce release
+================
+Made by MableT 21st March 2003
+
+Fix defect
+INC018272 "SetTemplateRefId() does not update database"
+
+Perforce release
+================
+Made by StephaneL 14/03/2003
+DEF021845 - Old file format files crash machine
+
+Perforce release
+================
+Made by MableT 12th March 2003
+
+Fix defect
+DEF002434  "Contact search by phone number (locked ICC) does not leave with KErrAccessDenied "
+
+Perforce release
+================
+Made by DougF 12/03/2003
+Fix bug with loading old format CntModel data files.
+
+Perforce release
+================
+Made by StephaneL 10/03/2003
+Fix CntModel ARM4 build warning.
+
+Perforce release
+================
+Made by StephaneL 07/03/2003
+Minor changes to fix problems with the build.
+
+Perforce release
+================
+Made by StephaneL 6th March 2003
+
+DEF017460 - Memoryleak when calling CContactDatabase->ExportSelectedContactsL during OOM
+
+Perforce release
+================
+Made by StephaneL 21th February 2003
+
+INC016848 - Creating group during phonebook sync results in locked error
+INC018191 - CContactDatabase::GetGroupIdListL() returns incomplete list of groups
+
+Perforce release
+================
+Made by MableT 18th February 2003
+
+INC015225 "T_ViewSortError contact view sort error reporting fails"
+
+Perforce release
+================
+Made by MableT 12th February 2003
+
+INC013101 "BC-proofing has been lost in CContactViewBase"
+
+Perforce release
+================
+Made by NicholaT 5th February 2003
+
+Additional fix for defect
+INC016098 "Change of owner card not reflected though CContactDatabase::OwnCardId()"
+to handle own card deletion
+
+Perforce release
+================
+Made by StephaneL 30th January 2003
+
+INC016520 "(Propagated) CContactFilteredView never sends EReady event after sort order chan"
+
+
+Perforce release
+================
+Made by StephaneL 22th January 2003
+
+Fix defect
+INC016415  "CContactDatabase::CreateL() leaving results in owncard id set to 0" 
+The constructor initialisation list of CContactDatabase as change.
+
+Perforce release
+================
+Made by NicholaT/ChrisW 20th January 2003
+
+Fix defect
+INC016098 "Change of owner card not reflected though CContactDatabase::OwnCardId()"
+
+Perforce release
+================
+Made by NicholaT/ChrisW 14th January 2003
+
+Fix defect
+INC012959 "Beamed/synced VCard contains localised field labels"
+
+Perforce release
+================
+Made by MableT 13th January 2003
+
+INC013100 "CNTModel has broken BC"
+
+Perforce release
+================
+Made by MableT 10th January 2003
+
+Fix defect
+DEF015946 "Database gets corrupted"
+DEF015945 "FFFB: PC Sync corrupts Contact View information"
+DEF015942 "Contacts synchronisation fix is not working with Chinese device (Calypso)"
+DEF015938 "CContactLocalView hangs when Contact DB is recovered"
+DEF015936 "Contact view sorting does not use default collation rules"
+DEF015932 "CContactDatabase::RecoverL() does not forward errors to caller"
+
+Perforce release
+================
+Made by ChrisD 22nd November 2002
+
+Fix defect
+LUD-5FTG6V "adding a new ICC contact to database does not add 
+entry to group in same transaction"
+
+
+Perforce release
+================
+Made by ChrisD/ChrisW 21st November 2002
+
+Fix defect
+TAA-5FTKBS "Edited coantact can not be re-added to speed dial 
+and gets locked permanently"
+
+Perforce release
+================
+MableT 19/11/02
+
+Fix defect DEF003535 :  cntviewfindconfig.h should be exported?   
+cntviewfindconfig.h
+-Renamed MContactViewFindConfig as CContactViewFindConfigInterface (derived from CBase)
+-Add a NewL method to return the class (public)
+static CContactViewFindConfigInterface * NewL(TUid aImplementationUid);
+-Added a virtual destructor (public).
+-Added the other virtual methods in MContactViewFindConfig (public)
+-Added the destructor key - TUid iDtor_ID_Key; (as private)
+-Created a new inline header with the same name cntviewfindconfig.inl
+-Added inline implementation for NewL and destructor
+-Other virtual methods are not implemented now.
+testplugin
+-Moved this directory to the cntmodel/tsrc directory
+-Only the resource file, mmp file and cpp file are necessary
+-Removed empty directories
+-Edit cntmodel/group/bld.inf to include the testplugin, t_apac + test export
+-Edit cntmtst.iby file to include all necessary files for loading the testplugin and test input files onto rom.
+-Changed name of testplugin to cntfindplugin
+
+Perforce release
+================
+Made by ChrisW/ChrisD 4th November 2002
+
+Fix defect
+DUG-5E5D8G "CNTMODEL unit tests fail on Lubbock"
+
+Perforce release
+================
+Made by ChrisW/ChrisD 31st October 2002
+
+Fix defect
+LUD-5FFJGZ "dbms panic when syncing contacts"
+
+Perforce release
+================
+Made by Katie Evans/ChrisD 29th October 2002
+
+Fix defect
+KRL-5EYFBU "CContactDatabase::CompressRequired() returns true when it should not"
+
+Perforce release
+================
+Made by Stéphane Lenclud 17th October 2002
+
+Fix for defect
+LUD-5ETG3K "VCard sent from P800 to T300 which includes an image does not save on T300"
+
+Perforce release 
+================
+MableT 17/10/02
+
+Implemented Change Request:JROE-5DNJ3K
+Application Engines, GT0149 C&M (Typhoon), Add APAC Find support to CNTMODEL
+ECOM Plugin framework has been used to design and implement an interface,that allows 
+users of contacts model to define the Find behaviour of their own.
+A Test Plugin has been written which implements a simple Find .
+Test code (t_apac.exe) has been written to test this test plugin.
+
+Perforce release 
+================
+SindhuM 12/10/02
+
+Implemented Change Request: PHAR-5CTQ52 Application Engines, GT0149 C&M (Typhoon), 
+BC/S60: Break direct VERSIT static dependency with the app engines
+The function CContactItemField::IsValidLabel() updated.
+
+Perforce release
+================
+Made by NicholaT 10th October 2002
+
+Fix for defect
+BRN-5EGH2G "Race condition in CPhoneBookSession::DoSynchronisationL"
+
+Perforce release
+================
+Made by ChrisD 2nd October 2002
+
+Fix defect
+LUD-5EBHZF "ICC contacts view broadcasts additem events after view is ready"
+BRN-5E9CQL "CntModel doesn't handle PhBkSync errors"
+
+Perforce release
+================
+Made by ChrisD 20th September 2002
+
+Fix defect
+EXT-5DXERR "SyncML VCARD: REV value in VCARD from the phone does hold
+time 1 hour offset"
+
+Perforce release
+================
+Made by ChrisD 17th September 2002
+
+Fix defect
+DUG-5DQHSQ "Complexity of handling ICC contact views should be reduced"
+
+Perforce release
+================
+Made by ChrisD 16th September 2002
+
+Fix defect
+MON-5CZJQ5 "Contacts database stores language dependent strings"
+
+Perforce release
+================
+Made by ChrisD 13th September 2002
+
+Fix defect
+SAS-5DWB9T "Contacts panic while sync with list view displayed"
+
+Perforce release
+================
+Made by ChrisD 12th September 2002
+
+Fix defects
+THY-5D9KH7 "contact sorting for uppercase/lowercase chars wrong"
+DUG-5DQHMS "New API required to return phonebook group ID"
+
+Perforce release
+================
+Made by Stephane Lenclud 12th September 2002
+
+Fix defect
+SAR-5CJEFW Phonematch will match 121 to 07777666121
+
+Perforce release
+================
+Made by ChrisD 11th September 2002
+
+Fix defect
+TAA-5CRJB3 "Can not get database view event (TContactViewEvent::EItemAdded) 
+when an ICC entry is added"
+
+Perforce release
+================
+Made by ChrisD 20th August 2002
+
+Fix defect
+LUD-5CYEQX "SyncML/Contacts - Department info in company name"
+
+Perforce release
+================
+Made by ChrisD 19th August 2002
+
+Fix defect
+BEN-5CMNFP "Device hangs when PC owerwrites Handheld and syncing deleted email"
+DUG-5D6DVM "(Propagated) FFFB: PC Sync corrupts Contact View information"
+
+Perforce release
+================
+Made by Stephane Lenclud 14th August 2002
+
+Fix defect
+MON-5CTEMV "Locale of cntmodel resource file is not checked before being loaded"
+
+Perforce release
+================
+Made by ChrisD 13th August 2002
+
+Fix defect
+DUG-5CXEQY "(Propagated) CNTMODEL ignores a DBMS error"
+
+Perforce release
+================
+Made by ChrisD 7th August 2002
+
+Fix defect
+BEN-5CEBZB "Contact not displayed when changed in new folder list view"
+
+Perforce release
+================
+Made by ChrisD 5th August 2002
+
+Fix defect
+LIG-5CCG3Y "Program closed when database is corrupt"
+DUG-5CQBYA "(Propagated) Searching works slowly with a CContactFilteredView"
+
+Perforce release
+================
+Made by ChrisD 2nd August 2002
+
+Fix defect
+TAA-5C4DMX "Using CContactDatabase::MatchPhoneNumberL(...) with a string that doesn't 
+represent a phone number returns every contact in the database"
+
+Perforce release
+================
+Made by ChrisD/ChrisW 1st August 2002
+
+Fix defect
+BEN-5B3KWK "SyncML: Crash when syncing contacts"
+
+Perforce release
+================
+Made by ChrisD/ChrisW 18th July 2002
+
+Fix defect
+OEL-5BQA4S "Performance issues with unfiled group in contacts"
+
+Perforce release
+================
+Made by Stephane Lenclud 9th July 2002
+
+Fix Defect 
+DUG-5BVFK4 "(Propagated) Sync PC to Phone match the wrong field"
+Two functions updated from contact model:
+-CContentType::IsEqualForSyncUpdate
+-CContactItemFieldSet::UpdateForSyncL
+Added tests: 
+T_WRONGFIELDMATCH : Tests the CContentType::IsEqualForSyncUpdate function
+T_UPDATEFORSYNC :   Does profiling and tests the CContactItemFieldSet::UpdateForSyncL function.
+
+
+Perforce release
+================
+Made by DougF 4th July 2002
+
+Fix defect
+FER-5BJJXY "If Contacts leaves in the wrong place then an object is not cleared up"
+
+Perforce release
+================
+Made by ChrisD/ChrisW 26th June 2002
+
+Fix defect
+TET-5ADK7Y "System locks due to CPrivateChangeEventNotifier"
+ 
+Perforce release
+================
+Made by ChrisD 25th June 2002
+
+Fix defect
+MAT-5B7JD4 "AddContactToGroupL()/RemoveContactFromGroupL() does not update
+object passed as argument"
+
+Perforce release
+================
+Made by ChrisD 21st June 2002
+
+Fix defect
+DUG-5ATJD7 "(Propagated) Contacts synchronisation fix is not working with
+Chinese device (Calypso)"
+
+Perforce release
+================
+Made by ChrisD 19th June 2002
+
+Fix defect
+DUG-5B9EJG "(Propagated) (Propagated) Database gets corrupted"
+
+Perforce release
+================
+Made by ChrisD/ChrisW 14th June 2002
+
+Fix defects
+MAT-59SHVW "Insufficient support for unfiled contacts"
+MAT-5A5D25 "CContactFindView is too slow"
+DUG-59HHTZ "Filtered View needs performance enhancement"
+
+This release changes the file format. Test databases should be regenerated.
+
+Perforce release
+================
+Made by ChrisD 23rd May 2002
+
+Fix defects
+EXT-599EF6 "Problems appear when contact's default number is deleted / edited
+in PIM - Lotus Organizer 6.0"
+EXT-59PB7J "CContactLocalView notifies only the first observer about initialisation problems"
+
+Perforce release
+================
+Made by NicholaT 22nd May 2002
+
+Fix defects
+TUR-5ADHGW "Contact view sorting does not use default collation rules"
+THY-59KK2U "Cntmodel View architecture does not sort contacts based on individual fields"
+test t_viewsort added
+
+Perforce release
+================
+Made by ChrisD 9th May 2002
+
+Fix defect
+DUG-59JEH3 "New API proposal for CContactViewBase"
+
+Perforce release
+================
+Made by NicholaT 9th May 2002
+
+Migrate 6.1 fix for 
+TUR-59YLCR "CContactDatabase::RecoverL() does not forward errors to caller"
+
+Perforce release
+================
+Made by NicholaT 9th May 2002
+
+Migrate 6.1 fix for 
+TUR-59YD47 "CContactLocalView hangs when Contact DB is recovered"
+
+Perforce release
+================
+Made by ChrisD 24th April 2002
+
+Migrate 6.1 fix for 
+EXT-57YGMQ "CContactViewBase::ContactsMatchingCriteriaL is too slow for interactive find"
+
+Perforce release
+================
+Made by Nichola Turner 22nd April 2002
+Fix defects
+TUR-59AHB6 "ICC entries not supported in contact model views"
+Added test t_iccview and changed cntsyncchecker to disable some of the user::infoprints by default
+
+ANN-58CD3U "JavaPhone javax\pim\addressbook\items.html fails on WINS"
+This was fixed by reverting the fix for
+JOE-4ZDDM5 "JavaPhone API cannot retrieve ContactTemplates via their ORG field"
+Contact templates now retain default data when a template is updated.
+
+Perforce release
+================
+Made by Beibei Wang 18th April 2002
+Fix defect
+BRN-595GB2 "Contacts panic when searching for contacts with alot of chinese characthers in the search-string"
+
+Perforce release
+================
+Made by Beibei Wang 14th April 2002
+Fix defect
+SIK-57KLBQ "Remaining disk space is not included in CompressRequired() calculation"
+
+Perforce release
+================
+Made by NicholaT 20th March 2002
+
+Fix defect
+TUR-58EDRQ "local view of contact model panic when deleted a group when i just added a member"
+
+Perforce release
+================
+Made by ChrisD 19th March 2002
+
+Fix defect
+DUG-58DGTD "Accessor method required to return Contact item GUID"
+
+Perforce release
+================
+Made by ChrisD 18th March 2002
+
+Fix defect
+DUG-587KUF "Speed dial should be removed from ini-file before doing it with contact"
+
+Perforce release
+================
+Made by NicholaT 13th March 2002
+
+fix for defect SEC-57QL65 "Find an ICC entry by number is successful even though ICC has become locked"
+
+Added test to t_iccentry.cpp to check fix
+
+Perforce release
+================
+Made by ChrisD 7th March 2002
+
+Fix for defects
+EXT-57PDX3 "CContactFilteredView sends an invalid event if its update fails"
+EXT-57PDPT "CContactFilteredView sends superfluous events"
+EXT-57YBRN "CViewContact ignores out of memory errors"
+EXT-57PG7Q "Cntmodels cntview CContactRemoteView::ContactAtL leaves with 
+KErrEof when there is a euro sign"
+
+Added new regression testcode, T_CONTACTAT & T_FILTEREDVIEWEVENTS.
+
+Perforce release
+================
+Made by NicholaT 7th March 2002
+
+Fix for defect
+JOE-4ZDDM5 "JavaPhone API cannot retrieve ContactTemplates via their ORG field"
+
+Added test code to T_templ to check fix.
+Fixed test failure in T_view2.
+
+Perforce release
+================
+Made by PaulC 4th March 2002
+
+Fix for 6.1 defect
+EXT-57KBZN "CntModel FindLC leaves with KErrArgument when find string contains a "'" character"
+
+Added test code to T_dbase2 to check fix.
+
+Perforce release
+================
+Made by ChrisD 15th February 2002
+
+Fix defects
+EXT-55HFMN "Cntmodel is not euro compatible"
+DUG-57CEV7 "Contacts model finds email addresses after the contact has been deleted"
+
+Perforce release
+================
+Made by ChrisD 5th February 2002
+
+Fix defect
+SEC-562N6B "Find an ICC entry is successful even though ICC has become locked"
+
+Perforce release
+================
+Made by ChrisD 30th January 2002
+
+Fix for defect TUR-53DBD3 "13 phone (w) fields in a contact"
+An extension makefile has been added to contacts model to generate the resource file header 
+(CNTMODEL.RSG) without creating the compiled resource file (CNTMODEL.RSC). 
+	
+CONTACUI and the contacts model testcode have been modified to create the template they 
+require as part of their build process.
+
+Perforce release
+================
+Made by ChrisD 25th January 2002
+
+Fix defect DUG-56GJT9 "Problem with TemplateRefId"
+
+Perforce release
+================
+Made by ChrisD 15th January 2002
+
+Revised fix for 
+EXT-54EKP9 "Phone number matching does not match Fax field" 
+DUG-542GK2 "FindInTextDef performance is degraded with new contacts model"
+This release fixes testcode regressions introduced by these submissions.
+
+Perforce release
+================
+Made by PaulC 9th January 2002
+
+Update for previous Fix for defect COY-567J99 "Phone number matching does not match Fax field"
+
+
+Perforce release
+================
+Made by PaulC 8th January 2002
+
+Fix for defect COY-567J99 "Phone number matching does not match Fax field" 
++ associated test code.
+
+
+Perforce release
+================
+Made by ChrisD 4rd January 2002
+
+Fixed the following defects
+DUG-542GK2 "FindInTextDef performance is degraded with new contacts model"
+ROE-55CET4 "Performance issue: Contacts deletion is very slow on Calypso hardware"
+MAT-555JQ2 "Missing ItemRemoved event when removing Own card"
+
+Revised API behaviour for CContactNamedRemoteView to allow clients to request a 
+shared view without knowing the sort order it is currently using. See in source docs
+for details.
+
+Perforce release
+================
+Made by PaulC 4th January 2002
+
+Fix for Defect COY-555GVG "CLockSrvClient::InitL() uses a bitwise comparison for 
+database file names" plus new test code to test for this.
+
+Perforce release
+================
+Made by ChrisD 18th December 2001
+
+Fixed defects
+DUG-54HJVV "MatchPhoneNumberL doesn't match phone numbers with leading spaces"
+DUG-53UEF5 "Contacts model has several non-leaving methods which leave"
+
+Perforce release
+================
+Made by ChrisD 5th December 2001
+
+First release of changes for GT 83 Hurricane Telephony project.
+This adds a framework to allow SIM card contact information to be accessed 
+via the standard Contacts model API. Please look at the project documentation 
+for further details.
+
+Perforce release
+================
+Made by ChrisD 26th November 2001
+
+Fix for WHE-52VECT "Panic in CContactDatabase::AddNewContactL"
+
+Perforce release
+================
+Made by ChrisD/PaulC 24th October 2001
+
+Revised fix for EXT-52YGDT "CContactLocalView works incorrectly with some preferences"
+since the previous fix introduced new warnings to the code. Fixed testcode bugs which 
+caused failure in release builds.
+	
+Fixed EXT-53RJ4S "A groups only local view crashes when contacts are deleted" caused
+by mismatched DBMS debug resource checking statements.
+
+Fixed EXT-53JGEN "CContactDatabase::GroupCount() crashes when called to a brand 
+new default database"
+
+Perforce release
+================
+Made by ChrisD 10th October 2001
+
+Fixed the following defect
+DUG-4ZLLGG "Lock server should use global message pool"
+
+Perforce release
+================
+Made by ChrisD 9th October 2001
+
+Fixed the following defects
+EXT-52WGT8 "CContactViewBase async events panic"
+EXT-52YGDT "CContactLocalView works incorrectly with some preferences" 
+
+Perforce release
+================
+Made by ChrisD 21st September 2001
+
+Fixed the following defects
+EXT-4ZZH86 "Non-leaving functions call leaving functions in RContactRemoteView class"
+EXT-52JGUG "RContactRemoteView::ContactsMatchingCriteriaL() is not OOM-safe"	
+
+Perforce release
+================
+Made by ChrisD 5th September 2001
+
+Fixed the following defects
+DUG-523ENR "Phone match table rows not deleted after synchronisation"
+DUG-4ZTGGU "Incorrect data retrieved after editing contact twice"
+DUG-4ZVN79 "EUnfiltered flag should return all contacts in filtered view"
+DUG-4ZVNBW "MatchPhoneNumberL doesn't match correctly without CNTPHONE.DLL"
+DUG-522DDH "FieldTextForContactAtRowL doesn't return the correct number of fields"
+DUG-522DHM "CContactViewRangeBase should only compare the first character"
+DUG-525BZ9 "CContactGroupView sends wrong event when the group contents change"
+DUG-525C4N "CContactLocalView::InsertL() ignores out of memory error"
+DUG-525C6R "Index Assertions in CContactRemoteViewBase should be ASSERT_ALWAYS"
+DUG-525CAX "CContactFindView::RefineFindViewL() crashes if called repeatedly"
+DUG-525CBQ "CContactLocalView::InsertL() leaks a CViewContact in certain cases"
+DUG-525NQ4 "Filtered View Optimisation"
+DUG-525C3R "CContactLocalView with EUnSortedAtEnd preferences panics when a 
+group is added to the Contact DB"
+
+Perforce release
+================
+Made by ChrisD 20th August 2001
+
+Integrate OOM testcode for Contact Views API and various views 
+OOM fixes from GrahamO. 
+
+Fixed defects 
+EDNCDUG-4ZEPY7 "Duplicate names shown after incremental find"
+WIR-4WLFW6 "CntModel test code failing on assabet"
+
+This release is not BC for contact view classes derived from 
+CContactViewBase since NotifyObserverAsync() now returns a TInt. 
+However, this only affects internal Contact model code and is restricted 
+to WINS.
+
+Perforce release
+================
+Made by ChrisD 8th August 2001
+
+Minor tidy-up release.  
+- Removed calls to RDebug::ProfileReset(), 
+- Removed unused TDatabaseState enum from CContactTables
+- Removed CContactTables cleanup item defined in cntdb.cpp already
+- Skipped T_ERROR tests which fail, so T_ERROR runs on WINS without failure
+- Renamed method parameters in CContactTables to conform with 
+coding standards
+
+
+Perforce release
+================
+Made by ChrisD/GrahamO/JoeB 3rd August 2001
+
+Not source or binary compatible with the previous release.
+
+API changes:
+CViewContact::Field() now returns a TPtrC rather than a const TDesC&
+Removed method CContactViewBase::NotifyObserversAsync()
+Removed method CContactDatabase::ContactsMatchingHintField()
+
+From ChrisD:
+Fixed regression in asynchronous sort caused by new table structure (can be 
+verified by t_profile).
+Used RPointerArray rather than CArrayPtrFlat for speeddial and current item classes.
+Added new filtered view options EHome and EWork for Quartz and minimal testcode.
+Removed all remaining code warrior warnings shown in Mainline 465.
+Removed unused enum TTextDefFindState from cntdb.h
+Fixed defect in T_BENCH so command line parameters can be used again
+Reorganised Contacts model vCard converter DLL code and added Javadoc comments.
+Changed DISTRIBUTION.POLICY files for Cntvcard and Documentation directories
+from category D to E (approved by IPR change requests CDUG-4YYKPM and SCHM-4YYHWU)
+Removed unnecessary CContactDatabase::ContactsMatchingHintFieldL() method.
+Removed unsupported ConvertV6ContactsDatabaseIfNeededL() method.
+
+From JoeB/GrahamO:
+Lots of views defect fixes! (details below)
+
+Changed the events sent by CContactLocal view after a re-sort, because it
+was causing certain views to re-construct themselves twice. The events sent
+on re-sort are now EUnavailable then ESortOrderChanged, rather than 
+EUnavailable, ESortOrderChanged then EReady. ESortOrderChanged implies
+that the view is ready and waiting.
+
+Fixed defect in CContactFilteredView::HandleRemoveEventL() so that it doesn't 
+access the underlying view with the deleted contact's index.
+
+Fixed defect when a CContactLocalView is created while the creating thread has
+outstanding EContactDbObserverEventContactAdded events. This could cause
+the local view to end up with duplicated contacts.
+
+Fixed defect in CContactDatabase::CreatePhoneMatchNumberL() which assumed 
+phone number was at least 256 characters, if the phone parser didn't exist.
+
+Fixed defect concerning update of the groups view, if the group itself changes.
+The original code only coped with contacts being changed and not groups.
+
+Fixed defect caused if CContactLocalView::SortL() is called twice. If it is called 
+before the sort has finished, it now cancels the active object then restarts it.
+
+A queue of outstanding notifications has been added to CContactViewBase 
+to allow multiple subviews to be created synchronously when they are based 
+on the same underlying view.
+
+A performance improvement has been made by modifying CViewContact from 
+holding an array of HBufC's to a single HBuf with an array of integers to index
+the fields. The single HBufC solution should make sorting and inserting contacts 
+into the views faster as we don't have to concatenate their fields to compare them.
+
+Joe investigated a potential problem concerning construction of child views. 
+These views rely on the underlying parent view staying consistent during their
+asynchronous construction. We initially thought this problem could be resolved
+by locking the parent view whilst the child was constructed. However, this 
+work was abandoned because the locking strategy chosen was fundamentally
+flawed. Joe summarised his findings as follows
+
+"It is not possible to know the state of the database underlying a view at the point
+the lock is requested, and so the lock is meaningless.
+
+Current thoughts on the subject are that any locking strategy is probably over the
+top for the requirements of the system - the only time when multiple clients will
+be editing the database concurrently is when a sync is happening, and we're probably
+going to disable all notifications then anyway. So, I think we're going to live
+with the fact that views may be out of sync with the underlying data, and be soft
+on (i.e. not panic) client that request data that is no longer present. This at least
+will result in a semi-meaningful error dialog. There may be cases where the user requests
+to edit an entry and is actually presented with a different entry. Shouldn't be
+very common, and so we can probably live with this.
+	
+Another stategy was considered (idea from Dave Amos). This involved views maintaining
+a "synchronisation level id" between parents and children. Then when a child makes a
+request on a parent, the child provides its id and the parent can use this to know
+if the child is in sync or not. The problem with this strategy is that there's nothing
+particularly sensible that the UI code can do beyond displaying a cryptic error
+message, so it doesn't appear to help very much."
+
+As a result of Joe's investigation, the debug assertions for invalid view indexes have 
+been changed to User::Leave(KErrNotFound). This prevents the situation where a 
+the lock server could be panic'd if a child view asks the remote view for a contact 
+that doesn't exist in the view. This could be caused because the child view didn't 
+recieve a notification in time for example. We thought it would be very rare for this
+to happen, and so we just leave rather than panic. 
+
+
+Perforce release
+================
+Made by ChrisD 9th July 2001
+
+Fixed the following defects
+RYT-4VQMBZ "ImportContactsL returns wrong LastModified date"
+BEN-4Y2KTC "Contacts engine negatively indexing into an array"
+BET-4YDGB3 "Contacts crashes when creating two entries"
+DUG-4W7EMX "CContactSrvSession leaves with KErrGeneral in OOM"
+DUG-4YDHV3 "CContactDatabase::OpenL can leave with KRequestPending!"
+
+Perforce release
+================
+Made by ChrisD 3rd July 2001
+
+Contact View API defect fixes from GrahamO. This release fixes problems 
+caused when a contact id is added and removed from the underlying view, 
+causing the mappings in the filtered and group views to be out of date. 
+Also, CContactLocalView::HandleDatabaseEventL no longer notifies events 
+with an ID of -1.
+
+Perforce release
+================
+Made by ChrisD 28th June 2001
+
+Added new phone number parsing library to contacts model. 
+This is required to avoid incorrect matches for phone number fields which 
+contain DTMF or supplementary service information. The library takes a 
+contacts phone number field and returns a descriptor with the raw phone 
+number (ie. without the DTMF and Supplementary service code parts of 
+the number). 
+
+This library is dynamically loaded the first time it is required and is kept 
+loaded until the CContactDatabase object is destroyed. 
+
+GT provides a reference implementation which conforms to the relevant
+ETSI specifications. However, licensees are free to implement their own 
+phone parser library which conforms to the interface defined. The second 
+UID of the DLL needs to be 0x101F3D58 (KUidContactsPhoneNumParserDll).
+
+If no library can be found, cntmodel reverts to the previous behaviour and 
+will use all digits in the phone number field to determine the match.
+
+Other changes in this release
+- Integrated fix for CContactViewBase::Close() suggested by Sami Rosendahl (Digita).
+- Encapsulated public member data in CViewContact and provided two new methods
+for view clients, Field() and Count(), 
+- Removed unused variable warnings in release builds
+- Added a new base class for contacts plug-ins which the vCard converter and phone 
+number parser use.
+- Deprecated old phone matching interfaces and removed the phone matching code
+from the lock server.
+- Minor ROM size reduction changes
+- Fixes for the following defects
+DUG-4VYPUP "Spelling mistake in CCntFilter API"
+DUG-4W6C2P "Calling CCntFilter::Reset() before calling FilterDatabaseL causes access violation"
+CHM-4XVEHB "Contacts server doesn't name its thread"
+
+Perforce release
+================
+Made by GrahamO/JoeB/ChrisD 22nd June 2001
+
+First integration of LPD contacts model optimisation work to the mainline.
+This introduces a new contact view library and API. See in-source docs
+for more details.
+
+All recent 6.0 & 6.1 fixes have been integrated into this code, including:
+EDNMBEN-4WCDPV "Phone match length specified incorrectly".
+EDNJKOO-4W4CWJ "Deleting CContactDatabase causes troubles" 
+DUG-4WBEQG "Contacts model base64 workaround needs to be removed"
+EDNJKAA-4WLDAY "Cannot synchronise Outlook contacts with German device"
+
+CContactDatabase::MatchPhoneNumberL() now uses the 7 rightmost digits of the 
+phone number when matching. The date separator set in the current locale is 
+checked to ensure that it won't cause TTime::Parse() to fail when the SQL is executed.
+
+
+Perforce release
+================
+Made by ChrisD 4th April 2001
+
+Fixed the following defects
+NIN-4T9KFR "Contacts takes too long time to start up at first time with 500 or 700 entries"
+DUG-4VGHGC "Regression in Current item support"
+EXT-4UTCCX "RemoveSpeedDialFieldL opens a already open contact item"
+Revised fix for CHM-4V3MHM "No notification sent if members of a group are changes"
+
+This release integrates the asynchronous sorting API from ER5u.
+void SortAsyncL(CArrayFix<TSortPref>* aSortOrder, TRequestStatus& aStatus);
+void SortAsyncL(CArrayFix<TSortPref>* aSortOrder, TRequestStatus& aStatus, MContactSortObserver& aObserver);
+void CancelAsyncSort();
+
+The API is not dissimilar to the synchronous version, taking a sort order array as
+the primary parameter, and, specific to the asynch version, a TRequestStatus that will
+be signalled upon completion of the sort. In addition, an optional observer may be
+specified, and will be used to report progress during the reading of the contacts
+from the database (the slowest aspect of the sorting process). 
+
+The observer mixin call-back allows the contacts database to report the number of contacts
+read so far, and the total number remaining. Clients may use this information to present
+graphical progress reporting on slow hardware.
+
+The asynchronous sort expects that you don't call other contacts model methods without 
+aborting the sort. If you start a sort and need to add a contact, you need to cancel the 
+sort and restart the sort.
+
+A new test code project, T_PROFILE has been added to illustrate the use of the new API
+and provide test cases for completed asynchronous sorting, and cancelled sorting.
+
+Perforce release
+================
+Made by AlexW 30th March 2001
+
+Fixed the following defects
+CHM-4V3MHM "No notification sent if members of a group are changes"
+EXT-4UTD9Y "SetFieldAsSpeedDialL doesnt send notifications"
+
+Perforce release
+================
+Made by AlexW/ChrisD 12th February 2001
+
+Fixed the following defects
+EDNMBEN-4Q6HCP "Removing contact with speed dial makes it impossible change related SD any more"
+EDNTVIA-4SEHCT "The size of contact database increases when opening and closing a contact card"
+EDNETJA-4PSATC "New contact group not visible in address book selection list"
+
+Fully source and binary compatible. The database format has changed so you need to delete 
+old databases and 'c:\system\data\cntmodel.ini' before running the emulator.
+
+Perforce release
+================
+Made by ChrisD 26th January 2001
+
+Fixed the following defects
+EDNJTON-4R4HRZ "HeapSize >> HeapUsed"
+EDNCDUG-4TAG8B "Linda optimisation work needs a way to set the sorted item list"
+
+Perforce release
+================
+Made by ChrisD 10th January 2001
+
+Fixed the following defect
+EDNAPIN-4RPGLG "CContactDatabase::ImportContactsL does not support  TYPE=FAX"
+
+Perforce release
+================
+Made by ChrisD 9th January 2001
+
+Fixed the following defect
+EDNAALR-4Q2L4D "CContactDatabase::MatchPhoneNumberL() returns wrong number of contacts"
+
+Updated T_NOMACH unit test code to provide test coverage for duplicate phone numbers.
+Fully source and binary compatible. The database format has changed so you need to delete 
+old databases before running the emulator.
+
+Perforce release
+================
+Made by ChrisD 18th December 2000
+
+Fixed the following defect
+EDNSKSA-4RHJQC "CContactDatabase::ImportContactsL doesn't set field type for job title"
+
+Perforce release
+================
+Made by ChrisD 6th November 2000
+
+Fixed the following defect
+EDNAPIN-4NYE97 "The search for several fields of same type is not supported"
+
+Perforce release
+================
+Made by ChrisD 23rd October 2000
+
+Fixed the following defect EDNMBEN-4Q6HCP "Removing contact with speed dial
+makes it impossible change related SD any more". 
+
+Modified private PersistSpeedDialsL() method to take a TContactItemId parameter, so 
+that other clients are notified when the speeddials are changed. Added new code
+in T_CURRENTDB unit test to verify this defect.
+
+Perforce release
+================
+Made by ChrisD 19th October 2000
+
+Fixed the following defect 
+EDNAPIN-4NYE3R "CntModel does not support opening of read-only databases". 
+
+The model has been changed so that it tries to open the contacts database 
+file read/write and if that fails, it tries to open the file read only. If it fails 
+to open it read only, the error is propagated to the client to handle. 
+
+Perforce release
+================
+Made by ChrisD 9th October 2000
+
+Fixed the following defect
+EDNKDIN-4PSHRB "RDebug::Print()'s in non-debug code"
+
+Perforce release
+================
+Made by ChrisD 2nd October 2000
+
+Fixed the following defects
+EDNMBEN-4PEAXM "Removing speed dial #9 causes panic"
+EDNCDUG-4PK9SA "GUID generation in vCards doesn't handle zero digits in a machine UID"
+
+Perforce release
+================
+Made by AlexW 25th September 2000
+
+Fix for defect "Problem importing a vCard into cntModel?" (EDNPDAS-4NPJJS). 
+This was a merge in of a defect fix from ER5U. Added additional test code from ChrisD
+
+Perforce release
+================
+Made by AlexW/ChrisD 5th September 2000
+
+Fixed the following defects
+EDNPPKN-4N7H5R "transactions and parameter aInTransaction"
+EDNPSTS-4NGL55 "Field has no content type info"
+
+Perforce release
+================
+Made by ChrisD 11th August 2000
+
+Fixed the following defects
+EDNPDAS-4N3EQU "Corrupt contact when adding a set of name fields and then restoring"
+EDNRTRN-4MUGZX "vCards with images generated by Contacts Engine won't get their 
+images internalized when importing"
+
+Perforce release
+================
+Made by ChrisD/AlexW 28th July 2000
+
+Fixes for the following defects
+EDNAPIN-4L4EN9 "Wildcards should be treated as normal characters in search"
+EDNCDUG-4JXF68 "Contact Uid generation relies on Hal::MachineUniqueId()"
+EDNCDUG-4M7BXN "Strange CNTMODEL mappings when using Quartz template file"
+EDNMMIR-4MBK9Z "Recurring DBMS panic EDbCannotSeek if contacts commits are forcibly interrupted"
+EDNSWAR-4M5NGD "Missing "Current database" support"
+
+Added 'Current Database' support as requested by Crystal. Added new test code project 
+'T_CURRENTDB' to test this new additional functionality which includes tests for multi client 
+access, and current database persistence to new 'CntModel.ini'
+
+Fully source and binary compatible. The database format has changed so you need to delete 
+old databases before running the emulator.
+
+
+Perforce release
+================
+Made by ChrisD 14th July 2000
+
+Fix for the following defects
+EDNCDUG-4LYJ8N "EStreamCannotSeek panic when adding long notes field"
+EDNPPKN-4L5F2K "transactions in cntmodel"
+
+This release adds new methods to enable clients to begin and commit a 
+transaction without placing a cleanup item to rollback the database onto the 
+cleanup stack. The database can be explicitly rolled back by calling a seperate
+method. 
+
+The methods are : 
+void CContactDatabase::DatabaseBeginL(TBool aIsInTransaction);
+void CContactDatabase::DatabaseCommitL(TBool aIsInTransaction);
+void CContactDatabase::DatabaseRollback();
+
+Added new test unit, T_SIZE, which generates worst-case deletions to monitor
+file growth.
+
+
+Perforce release
+================
+Made by ChrisD 23rd June 2000
+
+This release integrates Steve Townsend's speed improvements to group loading 
+and bug fixes for rollback in CNTMODEL.
+
+Added new base class, CContactItemPlusGroup, to remove the duplication of 
+group functionality. This is now the new base for CContactGroup, CContactCard 
+and CContactOwnCard. This is hidden from external clients - so no changes are 
+necessary for applications.
+
+To speed up loading of groups, a second group table has been added which stores 
+the groups as arrays containing the id's of all contacts in a group. This has a lower 
+overhead than a second group index.
+
+Corrected GroupsJoinedLC() methods so that they return an empty array rather than 
+NULL for an empty list to avoid catching out clients that forget to check for NULL before 
+trying to use the array. Removed use of temporary heap allocations for SQL statements 
+to reduce heap churning.
+
+Fixed the following defects
+EDNMKOS-4L4HPV "CContactDatabase::iCurrentItemId is not saved in database"
+EDNCDUG-4LHDR7 "Template fields aren't being restored for contacts imported via vCard"
+
+Fully source and binary compatible. The database format has changed so you need to delete 
+old databases before running the emulator.
+
+
+Perforce release
+================
+Made by ChrisD 8th June 2000
+
+Integrates source incompatible changes made by Steve Townsend. This release
+adds caching for multiple templates and a new database structure.
+
+An optimisation has been found by splitting the blob column into two. Search 
+speed is improved since the model doesn't need to read as much data in when 
+it searches through the contacts. This takes advantage of a DBMS optimisation 
+where columns under 255 bytes are read in a single pass.
+
+API changes as follows: 
+Added const parameter to function CContactItemField::IsTemplateLabelField()
+Changed signature of CContactItemFieldSet::RestoreL
+Changed signature of CContactItemFieldSet::StoreL
+
+Fixed the following defect
+EDNMBEN-4L3HXX "Setting speed dial #9 causes panic"
+
+
+Perforce release 
+================
+Made by ChrisD 1st June 2000
+
+Fixed the following defect
+EDNMPEN-4KPHXK "importing an already exported vcard file"
+
+Perforce release 
+================
+Made by ChrisD 22nd May 2000
+
+Fixed the following defects
+EDNCDUG-4K6LNZ "Lockserver doesn't handle OOM correctly"
+EDNCDUG-4JXE4L "CNTMODEL testcode T_ERROR fails"
+EDNCDUG-4KCDEK "CContactDatabase::doFindL is inefficient"
+EDNMBEN-4KGAMF "Method to remove Speed Dial is missing"
+Revised fix for 
+EDNASAE-4JHCE4 "Contacts will not sort correctly for different locales"
+
+All testcode runs on wins udeb successfully. 
+
+Perforce release 
+================
+Made by ChrisD 5 May 2000
+
+Minor changes to CNTVCARD to allow clients to import/export PHOTO and LOGO 
+properties via vCard. This uses the new functionality implemented in Versit.
+
+All testcode runs on wins udeb successfully (except t_error)
+
+Perforce release 
+================
+Made by ChrisD 2 May 2000
+
+Fixed the following defects
+EDNASAE-4JHCE4 "Contacts will not sort correctly for different locales"
+EDNRTRN-4J5C5E "Groups in Cntmodel cannot be renamed if ..."
+EDNCDUG-4JGJMQ "CContactStoreField stores binary data in HBufC rather than HBufC8"
+
+Added reserved functions to CContactFieldStorage derived classes for BC proofing. 
+Removed calls to depreciated User::Hal functions, cntmodel will use a Machine UID 
+of zero until a long-term solution for Contact UID generation is established. 
+
+This release does not import or export PHOTO or LOGO properties, since this requires
+new functionality to be implemented in Versit (the vCard parser).
+
+
+Perforce release 
+================
+Made by ChrisD 17 April 2000
+
+Fixed the following defects
+EDNMMIR-4JCCQD "CNTMODEL.IBY includes localisable items"
+EDNVPUA-4JBLYC "CntModel needs BC proofing"
+EDNCDUG-4J6MMC "Contacts model won't receive vCards it originally created but has since deleted"
+EDNBWHE-4HXCXM "group retains link to a nested group after it has been deleted"
+
+Removed build warnings in cntfilt.cpp, cntitem.cpp & cntsrv.cpp. All testcode runs on wins udeb
+with the exception of T_ERROR.
+
+
+Version 0.00.063
+================
+Made by StephanieR 5 May 1999
+
+This release is attended for ER5U.
+Merged in fix from licensee specific patch released in 047
+Uses versit 042
+
+Version 0.00.062
+================
+Made by StephanieR 17 March 1999
+
+This release is attended for ER5U.
+Works with full unicode characters in label text and field contents
+Now uses Versit 041 and Conarc 031
+
+Version 0.00.061
+================
+Made by StephanieR 4 March 1999
+
+This release is attended for ER5U.
+
+Added fix from release 045
+Fixed few problems highlighted in code review
+Changed find code to use views rather than tables
+Two version of find for multiple words have been tested for speed, one using SQL AND, 
+and one using a SQL search on first word only. The SQL AND version showed to be slightly faster.
+Now uses Versit 040 and Conarc 030
+
+
+
+Version 0.00.060
+================
+Made by StephanieR 25 Feb 1999
+
+Note for Rom building: cntvcard.dll must now be included in ROM.
+
+This release is attended for ER5U.
+
+1. the vcard import/export routines are now in a separate dll cntvcard.dll 
+which is loaded when necessary
+
+2. File format changes:
+	Removed DeleteFlag column
+	Added a text column, where the content of text fields is stored
+	Using TCardinality to store counts
+	Hint,Extra Fieldtypes and labels are now stored inline in the blob rootstream
+
+
+
+Version 0.00.044
+================
+Made by SteveT 15 Feb 1999
+
+1:"Personal pager" text changed to "Pager";
+
+2:New functions intend for debug use only, these are not approved for use in
+ROM apps.
+IMPORT_C TInt BlobSizeL(TContactItemId aContactId);
+IMPORT_C CContactIdArray* DeletedContactsLC();
+
+3:DeleteContactsL bug fixed where it wouldn't send a changed message if it hit
+an error after commiting some deletions.
+
+4:Index on UID's dropped, this has reduced the file size considerably at the
+expense of speed when importing contacts with non-native UID's
+
+The file version number has been upped as a result of this. Old files will have
+their uid index deleted. This appears to recover some of the space used for
+the index but not all. You are recomended to delete old contacts files and
+re-create them by synching.
+
+5:Handle changed events arriving when tables are closed. These used to cause
+a panic, the CContactDatabase::HandleDatabaseEventL() function now checks
+for tables being closed and marks the sort array as out of date if an event
+arrives when it's in this state.
+
+6:When sending events with no meaningful iConnectionId value, it is now set
+to zero instead of being left uninitialised.
+
+7:Fixed importing a NULL VCard to delete a contact problem where it used to
+ignore the decrement access count flag.
+
+8:CContactDatabase::CompressRequired() will not leave now. If it gets an error
+it will simply return EFalse.
+
+
+Version 0.00.043
+================
+Made by SteveT 9 Feb 1999
+
+VDBMS/056 VE32/161 VMEDIASVR/039 VF32/127 VSTORE/051 VE32TOOLS/095
+VE32TOOLP/099 VE32UTILS/026 VEIKTOOLS/128 VRCOMP/314 VETEXT/100
+VVERSIT/020 VBAFL/086 VCONVERT/025 VCHARCONV/003 VCONARC/010 VEMIME/003
+
+Changed algorithm in CContactItemField::TemplateContentType() so it gives the
+original content type for new contacts that have not yet been mapped onto a
+template.
+
+When launching the lock server under Marm the RProcess was not being closed,
+this meant the lock server process would hang around until the calling
+application exited.
+
+CloseContactL() is confirmed as being a non-leaving function, although the
+name can not be changed at this stage.
+
+Version 0.00.042
+================
+Made by SteveT 5 Feb 1999
+
+VDBMS/056 VE32/161 VMEDIASVR/039 VF32/127 VSTORE/051 VE32TOOLS/095
+VE32TOOLP/099 VE32UTILS/026 VEIKTOOLS/128 VRCOMP/314 VETEXT/100
+VVERSIT/020 VBAFL/086 VCONVERT/025 VCHARCONV/003 VCONARC/010 VEMIME/003
+
+Significant speed up in importing VCards.
+Not insignificant speed up in reading contacts
+
+Added home flag to home email & mobile fields in the template
+
+When importing entries preference is given to work rather than home when
+neither is specified
+
+Import/export now both support incrementing and decrementing of access
+counts.
+
+Version 0.00.041
+================
+Made by SteveT 2 Feb 1999
+
+Fixed bug that caused contacts items without firstname/lastname go to the top
+when first added.
+
+Added function TVersion CContactDatabase::Version() const that returns the
+current model version.
+
+CContactDatabase::DeleteContactsL() has changed so it compresses if required
+(as indicated by CompressRequired()), and also commits every 16 contacts
+deleted.
+
+The value reutrned by TPtrC CContactDatabase::FileUid() is now constant for
+a particular file. This release only will patch old files created with CntModels
+earlier than 040 to add this file UID.
+
+Fixed more problems with DBMS giving locked and not found errors. AddContactL()
+and DeleteContactL() now catch and retry when they receive these errors.
+
+Version 0.00.040
+================
+Made by SteveT 27 January 1999
+
+VDBMS/056 VE32/161 VMEDIASVR/039 VF32/127 VSTORE/051 VE32TOOLS/095
+VE32TOOLP/099 VE32UTILS/026 VEIKTOOLS/128 VRCOMP/314 VETEXT/100
+VVERSIT/018 VBAFL/086 VCONVERT/025 VCHARCONV/003 VCONARC/009 VEMIME/003
+
+New functions:
+
+TUint CContactDatabase::ConnectionId() const
+reutrns the current connection id, this can be compared the connection id
+of incoming messages that provide the id of the connection that generated
+them.
+
+CContactIdArray* CContactDatabase::ContactsChangedSinceL(const TTime& aTime)
+Returns an array of contacts ids for all contacts changed since the specified
+date.
+
+void CContactDatabase::DeleteContactsL(const CContactIdArray& aContactIds);
+
+Delete the specified array of contacts. One 'unspecified change' message
+is sent instead of multiple deleted messages.
+
+static void CContactDatabase::DeleteDefaultFileL();
+
+Delete the default contacts file.
+
+CContactIdArray* CContactDatabase::SortArrayL(const CContactIdArray* aIdArray, const CArrayFix<TSortPref>* aSortOrder);
+
+Returns a sorted array of contacts.
+
+const CContentType &CContactDatabase::TemplateContentType(const CContactItemField &aField) const
+
+Returns the content type of the template entry the specified field maps onto.
+
+const CContactTextDef* CContactDatabase::TextDefinition() const;
+
+Returns the current text def.
+
+CContactIdArray* CContactDatabase::FindInTextDefLC(const MDesCArray& aFindWords, const TCallBack &aWordParserCallback);
+CContactIdArray* CContactDatabase::FindInTextDefLC(const MDesCArray& aFindWords,CContactTextDef* aTextDef, const TCallBack &aWordParserCallback);
+CIdleFinder* CContactDatabase::FindInTextDefAsyncL(const MDesCArray& aFindWords, MIdleFindObserver *aObserver, const TCallBack &aWordParserCallback);
+CIdleFinder* CContactDatabase::FindInTextDefAsyncL(const MDesCArray& aFindWords,const CContactTextDef* aTextDef, MIdleFindObserver *aObserver, const TCallBack &aWordParserCallback);
+
+Four overloads for the 'Find in text def' function. A find must match all
+words in aFindWords. Functions without the CContactTextDef parameter use the
+current default text def.
+
+Once created the async versions work the same as the usual async find.
+
+TFieldType CContactTextDef::FallbackField() const;
+
+returns the type of the current fall back field.
+
+TBool CContactItemField::IsValidLabel(const TDesC& aLabel,TInt& aInvalidPos)
+
+Returns wether the label is valid or not, if not aInvalidPos is set as the
+index of the first invalid character.
+
+TPtrC CContactItem::UidStringL() const;
+
+Gives access to the contacts UidString.
+
+Version 0.00.039
+================
+Made by SteveT 19 January 1999
+
+DBMS/056 E32/159 MEDIASVR/039 F32/125 STORE/051 E32TOOLS/095 E32TOOLP/098
+E32UTILS/023 EIKTOOLS/128 RCOMP/314 ETEXT/099 VERSIT/017 BAFL/086 CONVERT/025
+CHARCONV/003 CONARC/008 EMIME/003
+
+Contains DBMS speed ups from Andrew Thoelke and Simon Chisholm
+Following fixes to sort VCard import export bugs:
+ A few field types got changes in the types between export and import
+ UpdateContact had bugged field type matching
+ Template matching didn't take into account extra unmatched fields in the template
+
+Version 0.00.038
+================
+Made by SteveT 19 January 1999
+
+DBMS/056 E32/159 MEDIASVR/039 F32/125 STORE/051 E32TOOLS/095 E32TOOLP/098
+E32UTILS/023 EIKTOOLS/128 RCOMP/314 ETEXT/099 VERSIT/??? BAFL/086 CONVERT/025
+CHARCONV/003 CONARC/008 EMIME/003
+
+Well source only release put here as a fallback.
+
+Version 0.00.037
+================
+Made by SteveT 15 January 1999
+
+DBMS/056 E32/159 MEDIASVR/039 F32/125 STORE/051 E32TOOLS/095 E32TOOLP/098
+E32UTILS/023 EIKTOOLS/128 RCOMP/314 ETEXT/099 VERSIT/015 BAFL/086 CONVERT/025
+CHARCONV/003 CONARC/008 EMIME/003
+
+Bug fixes as documented in Notes
+
+Version 0.00.036
+================
+Made by SimonC 12 January 1999
+
+DBMS/056 E32/159 MEDIASVR/039 F32/125 STORE/051 E32TOOLS/095 E32TOOLP/098
+E32UTILS/023 EIKTOOLS/128 RCOMP/314 ETEXT/099 VERSIT/015 BAFL/086 CONVERT/025
+CHARCONV/003 CONARC/008 EMIME/003
+
+Another resource change to work around Versit bug with field labels ending in '.'
+
+
+Version 0.00.035
+================
+Made by StephanieR 12 January 1999
+
+Same a s 034 but removed VOICE mappings from resource file (as in cntmodel 033)
+
+DBMS/056 E32/159 MEDIASVR/039 F32/125 STORE/051 E32TOOLS/095 E32TOOLP/098
+E32UTILS/023 EIKTOOLS/128 RCOMP/314 ETEXT/099 VERSIT/015 BAFL/086 CONVERT/025
+CHARCONV/003 CONARC/008 EMIME/003
+
+Version 0.00.034
+================
+Made by SteveT 11 January 1999
+
+Modified resource file from Terry
+Added CContactDatabase::ReplaceL() function
+Added CContactItemField::UpdateFieldSet()
+Added new variants of ReadContactTextDefL that work on a ready loaded
+contact rather than a contact Id.
+Added CContactItemField::FileSize() function
+Plus bug fixes as mentioned in the bugs database
+
+DBMS/056 E32/159 MEDIASVR/039 F32/125 STORE/051 E32TOOLS/095 E32TOOLP/098
+E32UTILS/023 EIKTOOLS/128 RCOMP/314 ETEXT/099 VERSIT/015 BAFL/086 CONVERT/025
+CHARCONV/003 CONARC/008 EMIME/003
+
+Version 0.00.033
+================
+Made by StephanieR 07 January 1999
+
+Added Option in ImportContacts to increase Access count (should speed up synchronisation)
+Fixed bug where vcard uid creation time is changed
+
+Version 0.00.032
+================
+Made by StephanieR 30 December 1998
+
+Now uses Conarc 008 
+Commented out Converter Kludge
+Fixed SetStandardTextArray, doesn't introduced Etext paragraph mark before conversion
+Fixed foreign uid matching
+Removed VOICE mapping in template ressource file
+
+Version 0.00.031
+================
+Made by StephanieR 22 December 1998
+
+Vcard uis are now truncated to 255 characters
+Fixed bug when importing empty vcard
+
+Version 0.00.030
+================
+Made by SteveT 21 December 1998
+
+Fixed import so labels from the template are used with imported contacts
+Fix from SimonCh to get cache converters, speeding import up by a huge amount.
+
+Version 0.00.029
+================
+Made by SteveT 16 December 1998
+
+Changed template matching rules
+Fixed problem with loading the template record while reading another record
+Sorted out some problems with recovering from DBMS errors
+
+Version 0.00.028
+================
+Made by StephanieR 15 December 1998
+
+Added option to import contacts one by one
+Fixed uid string problem (it wasn't decompressing)
+Added Text<>Etext conversion when doing vcard import and exports  (this requires convert 24 , whci isn't released yet, convert 23 doesn't work)
+
+
+Version 0.00.027
+================
+Made by SteveT 11 December 1998
+
+Changed file structure, all old files are now defunct.
+
+Added RemoveFieldType() function to CContentType & CContactItemField 
+
+SetThing(...) functions renamed to SetThingL(...)
+
+
+
+Version 0.00.026
+================
+(Made by SimonC 10 December 1998)
+
+Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/098 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/013 BAFL/086 CONVERT/023 CHARCONV/003 CONARC/005
+
+Fixed field restoration bug that was losing labels from non-empty fields
+
+
+
+Version 0.00.025
+================
+Made by SteveT 08 December 1998
+
+System template
+Added a system template to the database, all database are now created with a system template, the id of this template can be found by calling 
+
+	IMPORT_C TContactItemId TemplateId() const;
+
+This template can be read and modified like any other entry, but don't delete it, you can at the moment but I think it will be banned in future.
+
+Date format
+
+The format of the date used in text def's, for sorting and for finding can be set by calling 
+
+	IMPORT_C void SetDateFormatTextL(const TDesC &aFormat);
+
+The format string is as used by TTime to format dates & times.
+
+Phone match functions now declared as returning a TInt instead of a TBool.
+	IMPORT_C TInt InitLoadPhoneMatchesL();
+	IMPORT_C TInt LoadPhoneMatchesL();
+
+Changed message changes
+
+There's three new types of event
+	EContactDbObserverEventTemplateChanged,
+	EContactDbObserverEventTemplateDeleted,
+	EContactDbObserverEventTemplateAdded,
+All with the obvious meanings.
+The old out of date EContactDbObserverEventChanged has gone properly now.
+
+TStorageType
+This is now a global typedef instead of a enum within CContactItemField
+
+Version 0.00.024
+================
+(Made by SimonC 5 December 1998)
+
+Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/098 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/013 BAFL/086 CONVERT/023 CHARCONV/003 CONARC/005
+
+Released to allow further UI & Connectivity development.  Must be used with 
+ContacUi 013 or later
+
+Not binary, source or data compatible with 023 (see 3 and 8 below)
+
+From Steve
+1) Added methods to edit the template entry which is now stored in the database.  This
+is created along with the database.  To make this localisable, the template contents
+are stroed in a new resource file - CNTMODEL.RSS.
+
+2) The resource file itself is private and will not be kept BC but a new resource header -
+CNTTEM.RH is released in INCG.xxx
+
+From Steph
+3) Added support for altering the access count inside a vCard read/write.  This involed 
+changing the enum arg to the import and export methods to a flags int, hence the source
+incompatibility.
+
+4) Further vCard fixes.
+
+From Simon
+5) First cut of new data structure to reduce file size.  At present this is controlled
+by a set of #defines (largely to allow a file converter to be added soon).  Future
+releases should leave __CDB_COMPRESSED set until the old scheme is no longer supported.
+Don't set __CDB_COMRPESSING unless you want your file corrupted.
+
+6) Changed the signature of CContactFieldStorage::RestoreL - hence the break of BC.  This 
+shouldn't cause any problems as no-one could sensibly use this method outwith Cntmodel.
+
+7) All variants of ReadContact and OpenContact now automatically add in any template fields
+that aren't present in the stored contact.
+
+8) Field labels should only be stored when different to that in the template.  This isn't 
+yet working however.
+
+9) Most test code is currently broken as a result of the above changes.
+
+Version 0.00.023
+================
+Made by StephanieR 1st December 1998
+
+Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/012 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+fixed problems in 22 release files, which used cntlock instead of cntsrv
+
+Version 0.00.022
+================
+Made by StephanieR 1st December 1998
+
+Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/012 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+
+Same code than 021, but made BC with 020
+
+???Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/012 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+
+Version 0.00.021
+================
+Made by SteveT 30 November 1998
+
+Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/012 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+
+Version 0.00.020
+================
+Made by StephanieR 30 November 1998
+
+Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/012 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+* fixed problem with ADR and ORG exports
+* added option to exclude Uid from export
+* fixed Date storage (for BDAY)
+* boilerplated with symbian copyright
+
+Version 0.00.019
+================
+Made by StephanieR 24 November 1998
+
+Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/011 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+* vcard import and export now cascade the TOptions to relevant private functions
+* CContactItem IsDeletable() and SetDeleteFlag(TBool aValue) now private
+* ReadContact checks that viewDef is not empty before reading blob
+* ETTFormat import and export sup[pport for multiple fields
+* fixed bug in importing vcards with field labels
+* new test code for TT format vcards (multiple fields)
+
+Version 0.00.018
+================
+Made by StephanieR 17 November 1998
+
+Uses: DBMS/054 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/011 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+
+* release of include file: included cntlock.h in incc, removed incg as not generated   files are present
+* vcard uid now does not always give 0 (fix)
+* it is possible to delete a record by importing a vcard.
+* it is possible to synchronize a deleted record in the db (see new test code in   t_expdel)
+* vcard Name (N:...) only includes extension when required
+* cntdef split 
+* new DBMS sorce incompatible, Notify() replaced by NotifyUnlock()
+
+Version 0.00.017
+================
+Made by StephanieR 13 November 1998
+
+Uses: DBMS/053 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/009 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+
+* modified contacts uid format to have ascii characters only.
+* added support for the DOM versit parameter.
+* API changes:
+   removed CContactDatabase::TOptions:EincludeUid
+	ExportSelectedContactsL always exports a UID.
+	ImportContactsL looks in the stream for a uid value, if a value is 
+	found and already  exist, the matching record will be updated. Otherwise a
+	new record will be inserted.
+   added CContactDatabase::TOptions:ETTFormat
+	This will be used to indicate a special TT vcard format to the import/export 
+	functions, but is not implemented yet.
+
+Version 0.00.016
+================
+Made by StephanieR 11 November 1998
+
+Uses: DBMS/053 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/009 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+added stringuid column in database
+fixed updatevcard 
+
+Version 0.00.015
+================
+Made by SteveT 6 November 1998
+
+Uses: DBMS/053 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/009 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+
+
+Version 0.00.014
+================
+Made by MattM 5 November 1998
+
+Uses: DBMS/053 E32/156 E32TOOLS/095 E32TOOLP/096 E32UTILS/023 EIKTOOLS/128
+F32/122 STORE/050 VERSIT/008 BAFL/086 CONVERT/022 CHARCONV/003 CONARC/005
+
+Deb/rel unicode uid release
+
+Branched from 012 because 013 is "unlucky" (and doesn't work)
+
+Version 0.00.012
+================
+(Made by SteveT, 27 October 1998)
+
+Uses: DBMS/052 E32/144 E32TOOLS/095 E32TOOLP/093 E32UTILS/019 EIKTOOLS/125
+F32/115 STORE/049 VERSIT/007 BAFL/078 CONVERT/021 CHARCONV/002 CONARC/003
+
+New CContactTextDef class, plus related functions in CContactDatabase
+
+Moved compress code from the ContacUI into CNTMODEL
+Changed a number of *'s to &'s
+
+
+Version 0.00.011
+================
+(Made by StephanieR, 20 October 1998)
+
+New typing scheme  using Hint 
+Import/Export VCard API changes
+Support for hidden contacts
+Deleted flag column added in itemtable
+
+
+Version 0.00.010
+================
+(Made by SteveT, 12 October 1998)
+
+Bug fixes
+Record count was not initialised when a database was opened.
+An unbalanced call to __UHEAP_MARK was being made in 
+CContactDatabase::ReadBlobColL, this caused the alloc heaven check in cone to 
+never fail even when there were left over cells.
+
+New variant of CContactItemField::SetLabel
+The new variant of SetLabel sets the label by taking ownership of an exisiting HBufC.
+
+void CContactItemField::SetLabel(const HBufC* aLabel);
+
+
+Version 0.00.009
+================
+(Made by MattM, 7 October 1998)
+
+Uses:   DBMS/051 E32/126 E32TOOLS/091 E32TOOLS/091
+		E32UTILS/019 EIKTOOLS/125 F32/095 STORE/048 VERSIT/004
+
+Added INCG release which includes all group headers for clients
+which wish to make use of any internal headers.
+
+Version 0.00.008
+================
+(Made by SteveT, 5 October 1998)
+
+Uses:   DBMS/051 E32/126 E32TOOLS/091 E32TOOLS/091
+		E32UTILS/019 EIKTOOLS/125 F32/095 STORE/048 VERSIT/004
+
+No unicode released, since versit doesn't yet support unicode
+
+Not file, source or binary compatible with 007
+
+Added iterator class
+
+Added Asynchronus finding
+
+Changed the change notificiation mechanism
+
+New versions of CContactIdArray & CContactIdArray that construct the
+new class by copying an exising insistence.
+
+
+
+Version 0.00.007
+================
+(Made by StephanieR, 23 September 1998)
+
+Uses:   DBMS/051 E32/126 E32TOOLS/091 E32TOOLS/091
+		E32UTILS/019 EIKTOOLS/125 F32/095 STORE/048 VERSIT/004
+
+No unicode released, since versit doesn't yet support unicode
+
+Not file, source or binary compatible with 003
+
+Added new preference table
+Merged in Steve T's work (released in 006)
+Added VCard import and export
+
+
+Version 0.00.004
+================
+(Made by SimonC, 13 August 1998)
+
+Uses:   DBMS/050 E32/126 E32TOOLS/091 E32TOOLS/091
+		E32UTILS/019 EIKTOOLS/125 F32/095 STORE/048
+
+All variants tested and released
+
+Not file, source or binary compatible with 003
+
+Added view definition and sorting to CContactDatabase.  Only synchronous sort is
+currently supported.  See API.DOC or the test code for more information on how to 
+use these.
+
+Removed the special treatment given to names by CContactItem as it turned out to
+be unhelpful and impossible to justify in practice.  Names should be added just 
+like any other field now.
+
+Defined a number of extra uids for vCard mappings etc. - see CNTDEF.H for details.
+
+Replaced CContactIdArray and CContactFieldSet typedef'ed CArrays with wrapper classes 
+of the same names.  See the docs or test code for more info on their use.
+
+Fixed ROM building problems - all builds can be tested on p2 racks at least
+
+
+
+Version 0.00.003
+================
+(Made by SimonC, 8 June 1998)
+
+Uses:   DBMS/050 E32/126 E32TOOLS/091 E32TOOLS/091
+		E32UTILS/019 EIKTOOLS/125 F32/095 STORE/048
+
+Only WINS variants tested and released.
+
+Updated API.DOC to include changes since 001
+
+Fixed defects in CNTMODEL.OBY to allow test ROMs to be built.  All test code currently fails
+on MARM due to problems starting the DBMS server.
+
+
+
+Version 0.00.002
+================
+(Made by SimonC, 2 June 1998)
+
+Uses:   DBMS/050 E32/126 E32TOOLS/091 E32TOOLS/091
+		E32UTILS/019 EIKTOOLS/125 F32/095 STORE/048
+
+Not compatible with 001
+
+Only WINS variants tested
+
+Converted to DBMS 050 and changed to make use of multiple client support.  Current DBMS
+limitations mean its not possible to store anything else in the data file (e.g. UI 
+preference streams, printer setup)
+
+Added basic synchronous finding for any text column and support for row navigation - entry
+identifiers no longer need to be stored by clients and persisted separately.
+
+
+
+Version 0.00.001
+================
+(Made by SimonC, 12 May 1998)
+
+Uses:   DBMS/038 E32/121 E32TOOLS/086 E32UTILS/019
+		EIKTOOLS/125 F32/090 STORE/046
+
+First release
+
+Uses Platform 003 dependencies except for Eiktools which requires version 125 to
+fetch unicode variants of everything.  Clients can safely build with 123.
+
+All wins variants and marm rel released.  No other marm variants released as rom
+images can't yet be successfully built so only rel could be tested.
+
+Allows simple addition, editing and deletion of whole contacts.  These can contain 
+any number of text fields but don't yet support other field types.  See ..\DOCS\API.DOC
+for a description of the current API or the test code in ..\TSRC for example use.
+
+Row navigation is not yet supported so clients should store the identifier returned when
+adding an entry.
+
+Can be released and built using the standard MNT and EBLD commands.
+
+Note that nether binary nor file compatibility will be maintained in future releases.

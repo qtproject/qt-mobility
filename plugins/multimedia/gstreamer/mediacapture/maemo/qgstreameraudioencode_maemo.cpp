@@ -169,8 +169,8 @@ GstElement *QGstreamerAudioEncode::createEncoder()
     }
 
     if (encoderElement) {
-        if (m_audioSettings.encodingMode() == QtMediaServices::ConstantQualityEncoding) {
-            QtMediaServices::EncodingQuality qualityValue = m_audioSettings.quality();
+        if (m_audioSettings.encodingMode() == QtMultimediaKit::ConstantQualityEncoding) {
+            QtMultimediaKit::EncodingQuality qualityValue = m_audioSettings.quality();
 
             if (codec == QLatin1String("audio/mpeg")) {
                 g_object_set(G_OBJECT(encoderElement), "target", 0, NULL); //constant quality mode

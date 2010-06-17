@@ -1,0 +1,35 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+//
+PRINT Run all te_PerformanceFunctionality Suite Tests
+
+//
+LOAD_SUITE Te_PerformanceFunctionalitySuite
+//
+//Please add or make change of you test steps, here is sample only:
+RUN_SCRIPT c:\PerformanceFunc\scripts\RequestMixStep.script
+RUN_SCRIPT c:\PerformanceFunc\scripts\LowDiskSpaceStep.script
+RUN_SCRIPT c:\PerformanceFunc\scripts\CRUDOOMStep.script       
+RUN_SCRIPT c:\PerformanceFunc\scripts\TimeoutStep.script 
+RUN_SCRIPT c:\PerformanceFunc\scripts\RandomBlobStep.script
+RUN_SCRIPT c:\PerformanceFunc\scripts\NotificationStep.script
+RUN_SCRIPT c:\PerformanceFunc\scripts\te_PerformanceFunctionalityConcurrent.script
+RUN_SCRIPT c:\PerformanceFunc\scripts\te_PerformanceFunctionalityTimeoutConcurrent.script
+RUN_SCRIPT c:\PerformanceFunc\scripts\CompactAndRecoverStep.script
+RUN_SCRIPT c:\PerformanceFunc\scripts\StateMachineStep.script
+RUN_SCRIPT c:\PerformanceFunc\scripts\TransactionsStep.script
+
+PRINT Complete_te_PerformanceFunctionality_Tests

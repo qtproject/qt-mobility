@@ -54,6 +54,9 @@ QTM_BEGIN_NAMESPACE
   either the individual item errors (which may be retrieved by calling errorMap()), or the resultant
   detail definitions (which may be retrieved by calling definitions()), are updated, as well as if
   the overall operation error (which may be retrieved by calling error()) is updated.
+
+  Please see the class documentation of QContactAbstractRequest for more information about
+  the usage of request classes and ownership semantics.
   
   \ingroup contacts-requests
  */
@@ -62,6 +65,12 @@ QTM_BEGIN_NAMESPACE
 QContactDetailDefinitionSaveRequest::QContactDetailDefinitionSaveRequest(QObject* parent)
     : QContactAbstractRequest(new QContactDetailDefinitionSaveRequestPrivate, parent)
 {
+}
+
+/*! Frees any memory used by this request */
+QContactDetailDefinitionSaveRequest::~QContactDetailDefinitionSaveRequest()
+{
+    QContactAbstractRequestPrivate::notifyEngine(this);
 }
 
 /*!

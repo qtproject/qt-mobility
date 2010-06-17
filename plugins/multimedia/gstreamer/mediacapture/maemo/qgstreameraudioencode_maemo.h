@@ -51,7 +51,7 @@ class QGstreamerCaptureSession;
 
 #include <gst/gst.h>
 
-#include <QtMultimedia/qaudioformat.h>
+#include <qaudioformat.h>
 
 QT_USE_NAMESPACE
 

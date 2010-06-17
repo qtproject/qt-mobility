@@ -44,22 +44,53 @@
 <p>The QVersitContactExporter class converts <a href="qcontact.html">QContacts</a> into <a href="qversitdocument.html">QVersitDocuments</a>.</p>
 <p>A <a href="qversitresourcehandler.html">QVersitResourceHandler</a> is associated with the exporter to supply the behaviour for loading files from persistent storage. By default, this is set to a <a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a>, which supports basic resource loading from the file system. An alternative resource handler can be specified with <a href="qversitcontactexporter.html#setResourceHandler">setResourceHandler</a>().</p>
 <p>By associating a <a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a> with the exporter using <a href="qversitcontactexporter.html#setDetailHandler">setDetailHandler</a>(), the client can pass in a handler to override the processing of details and/or handle details that QVersitContactExporter doesn't support.</p>
-<p>An example detail handler that logs unknown properties:</p>
+<p>An example detail handler that encodes all unknown details as nonstandard vCard propreties:</p>
 <pre>    class MyDetailHandler : public QVersitContactExporterDetailHandler {
     public:
+        MyDetailHandler() : detailNumber(0) {}
         bool preProcessDetail(const QContact&amp; contact, const QContactDetail&amp; detail,
                               QVersitDocument* document) {
             Q_UNUSED(contact) Q_UNUSED(detail) Q_UNUSED(document)
             return false;
         }
+        <span class="comment">/* eg. a detail with definition name &quot;Detail1&quot; and fields &quot;Field1&quot;=&quot;Value1&quot; and
+         * &quot;Field2&quot;=&quot;Value2&quot; will be exported to the vCard properties:
+         * G0.DETAIL1-FIELD1:Value1
+         * G0.DETAIL1-FIELD2:Value2
+         * And the next detail (say, &quot;Detail2&quot; with a field &quot;Field3&quot;=&quot;Value3&quot; will generate:
+         * G1.DETAIL2-FIELD3:Value3
+         * ie. Different details will have different vCard groups.
+         */</span>
         bool postProcessDetail(const QContact&amp; contact, const QContactDetail&amp; detail,
                                bool alreadyProcessed, QVersitDocument* document) {
-            Q_UNUSED(contact) Q_UNUSED(document)
-            if (!alreadyProcessed)
-                mUnknownDetails.append(detail);
-            return false;
+            Q_UNUSED(contact)
+            <span class="comment">// beware: if the base implementation exports some but not all fields, alreadyProcessed</span>
+            <span class="comment">// will be true and the unprocessed fields won't be exported</span>
+            if (alreadyProcessed)
+                return false;
+            if (detail.definitionName() == QContactType::DefinitionName)
+                return false; <span class="comment">// special case of an unhandled detail that we don't export</span>
+            QVersitProperty property;
+            QVariantMap fields = detail.variantValues();
+            <span class="comment">// fields from the same detail have the same group so the importer can collate them</span>
+            QString detailGroup = QLatin1String(&quot;G&quot;) + QString::number(detailNumber++);
+            for (QVariantMap::const_iterator it = fields.constBegin();
+                 it != fields.constEnd();
+                 it++) {
+                property.setGroups(QStringList(detailGroup));
+                <span class="comment">// beware: detail.definitionName and the field name will be made uppercase on export</span>
+                property.setName(QLatin1String(&quot;X-QCONTACTDETAIL-&quot;)
+                                 + detail.definitionName()
+                                 + QLatin1String(&quot;-&quot;)
+                                 + it.key());
+                <span class="comment">// beware: this might not handle nonstring values properly:</span>
+                property.setValue(it.value());
+                document-&gt;addProperty(property);
+            }
+            return true;
         }
-        QList&lt;QContactDetail&gt; mUnknownDetails;
+    private:
+        int detailNumber;
     };</pre>
 <p>An example usage of QVersitContactExporter</p>
 <pre>        QVersitContactExporter contactExporter;

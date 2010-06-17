@@ -61,6 +61,7 @@ class Q_CONTACTS_EXPORT QContactFetchRequest : public QContactAbstractRequest
 
 public:
     QContactFetchRequest(QObject* parent = 0);
+    ~QContactFetchRequest();
 
     /* Selection, restriction and sorting */
     void setFilter(const QContactFilter& filter);

@@ -46,7 +46,7 @@
 \tableofcontents
 
 \section1 Get the Qt Mobility API Package
-To begin, obtain the most recent distrubution package from 
+To begin, obtain the most recent distribution package from
 \l {http://get.qt.nokia.com}
 
 \section1 Pre-requisites & Dependencies
@@ -110,7 +110,7 @@ these domains have dependencies and these are outlined below:
     \o Y
 \row
     \o Multimedia
-    \o On all platforms, QtMedia depends on QtMultimedia and QtNetwork.
+    \o On all platforms, QtMultimediaKit depends on QtGui and QtNetwork.
 
        On all platforms, QML elements for sound effects and music and video playing are exported if QtDeclarative (auto-detected) is available.
 
@@ -119,17 +119,19 @@ these domains have dependencies and these are outlined below:
     \o
 \row
     \o Multimedia mediaservice plugins
-    \o The audioengine plugin for Unix depends on QtMultimedia.
+    \o The audioengine plugin for Unix depends on QtMultimediaKit.
 
-       The dsengine plugin for desktop Windows depends on QtMultimedia.
+       The dsengine plugin for desktop Windows depends on QtMultimediaKit.
 
        The gstengine plugin for Linux and Maemo depends on gstreamer-0.10 (>= 0.10.19), gstreamer-audio-0.10 (>= 0.10.19), gstreamer-base-0.10 (>= 0.10.19), gstreamer-interfaces-0.10 (>= 0.10.19) and gstreamer-video-0.10 (>= 0.10.19).
        If asound (auto-detected) is available, ALSA device detection will be enabled.
 
-       The mmf plugin for Symbian depends on QtMultimedia. 
-       To enable all mediaservices on symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
-       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features: 
-       MediaPlayerEngine (MediaPlayerUtilityAPI for 3rd FP2), AudioRoutingAPI , Tuner Utility (only for 3rd FP1) Radio Utility API (for 3rd FP2 and 5th ed).
+       To enable all mediaservices on Symbian one must download sdk plugins. Sdk plugins are available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a zip is provided. You will need following plugins to compile all features:
+       AudioRoutingAPI, Tuner Utility (only for 3rd FP1), Radio Utility API (for 3rd FP2 and 5th ed).
+
+       Multimedia also includes audio and video (from 1.0.1 onwards) and in Symbian we need MMFDevSound API-SDK plugin to compile/link API. This is also available in Forum Nokia as a supplementary pack.
+
     \o Y
     \o N
 \row
@@ -162,9 +164,14 @@ these domains have dependencies and these are outlined below:
        although System Information will compile without them, there will be reduced functionality. It also depends on QtGui.
        
        On Mac, it depends on CoreWLAN (auto-detected) if the Mac OS X 10.6 SDK is available. It will compile
-       with older SDK's but there will be reduced functionality.
+       with older SSDKsbut there will be reduced functionality.
 
        On Maemo, it depends on QtDBus (auto-detected). QtDBus is used to communicate with HAL, and functionality will be reduced if either is unavailable.
+       
+       On Symbian, it depends on WLANManagementAPI. WLANManagementAPI plugin is available at \l http://wiki.forum.nokia.com/index.php/SDK_API_Plug-in
+       For 5th edition sdk plugins are installed with installer (all at once), but for FP1 and FP2 devices a WLANManagementAPI.zip is provided.
+
+       On Symbian, it depends on SIM Utils API SDK plugin available from Forum Nokia \l http://wiki.forum.nokia.com/index.php/File:SIMUtilsAPI_3x_50.zip
     \o N(Y)
     \o N
 \row
@@ -200,7 +207,7 @@ platform have been met before building.
 If Qt is installed for multiple platforms it is also important 
 to ensure that the correct version of \c{qmake} is being used.
 
-bold{Note:} Static builds of Qt are not supported by Qt Mobility.
+\bold{Note:} Static builds of Qt are not supported by Qt Mobility.
 
 \section2 Building On Unix
 
@@ -271,8 +278,8 @@ mobility libraries into $PWD/install.
 \section2 Building For Windows CE
 
     The process is much the same as for Windows, although it is 
-    important to run the \c{setcepaths} script from the \c{bin} 
-    directory of the Qt for Windows CE installation to ensure that 
+    important to run the \c{setcepaths} script from the \c{bin}
+    directory of the Qt for Windows CE installation to ensure that
     the correct headers and libraries are used.
 
 \section2 Building For Symbian On Windows

@@ -19,8 +19,6 @@ contains(mobility_modules,serviceframework) {
     }
 }
 
-sources.path = $$QT_MOBILITY_PREFIX/bin
-INSTALLS += sources
 
 #BearerManagement examples
 contains(mobility_modules,bearer) {
@@ -55,6 +53,8 @@ contains(mobility_modules,publishsubscribe) {
         SUBDIRS += publish-subscribe
         contains(QT_CONFIG, declarative) {
             SUBDIRS += battery-charge
+
+            sources.files += battery-charge/battery-subscriber
         }
     }
 }
@@ -69,7 +69,12 @@ contains(mobility_modules,multimedia) {
         radio \
         player \
         slideshow \
-        audiorecorder
+        audiorecorder \
+        audiodevices \
+        audioinput \
+        audiooutput \
+        videographicsitem \
+        videowidget
 }
 
 
@@ -105,3 +110,6 @@ contains(mobility_modules, organizer) {
         SUBDIRS += timescape
     }    
 }
+
+sources.path = $$QT_MOBILITY_PREFIX/bin
+INSTALLS += sources

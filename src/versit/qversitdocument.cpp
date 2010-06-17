@@ -52,9 +52,15 @@ QTM_BEGIN_NAMESPACE
   \brief The QVersitDocument class is a container for a list of versit properties.
   \ingroup versit
 
-  For example a vCard can be presented as a QVersitDocument that consists of a number of properties
-  such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
-  Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
+  A vCard is represented in abstract form as a QVersitDocument that consists of a number of
+  properties such as a name (N), a telephone number (TEL) and an email address (EMAIL), for
+  instance.  Each of these properties is stored as an instance of a QVersitProperty in a
+  QVersitDocument.
+
+  In addition to the list of properties, QVersitDocument also records the type of the Versit
+  document via the VersitType field.  This enum describes the format in which the document is to be
+  serialized by QVersitWriter (or the format from which it was read by QVersitReader), and should
+  not be used to infer any semantics about the document data.
 
   QVersitDocument supports implicit sharing.
 

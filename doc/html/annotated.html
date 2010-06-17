@@ -18,6 +18,8 @@
 <p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
 <tr valign="top" class="odd"><th><a href="qabstractsecuritysession.html">QAbstractSecuritySession</a></th><td>Generic mechanism to enable permission checks for services</td></tr>
 <tr valign="top" class="even"><th><a href="qabstractvaluespacelayer.html">QAbstractValueSpaceLayer</a></th><td>Support for adding new logical data layers to the Qt Value Space</td></tr>
+<tr valign="top" class="odd"><th><a href="qabstractvideobuffer.html">QAbstractVideoBuffer</a></th><td>Abstraction for video data</td></tr>
+<tr valign="top" class="even"><th><a href="qabstractvideosurface.html">QAbstractVideoSurface</a></th><td>Base class for video presentation surfaces</td></tr>
 <tr valign="top" class="odd"><th><a href="qaccelerometer.html">QAccelerometer</a></th><td>Convenience wrapper around QSensor</td></tr>
 <tr valign="top" class="even"><th><a href="qaccelerometerfilter.html">QAccelerometerFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
 <tr valign="top" class="odd"><th><a href="qaccelerometerreading.html">QAccelerometerReading</a></th><td>Reports on linear acceleration along the X, Y and Z axes</td></tr>
@@ -25,9 +27,13 @@
 <tr valign="top" class="odd"><th><a href="qambientlightreading.html">QAmbientLightReading</a></th><td>Represents one reading from the ambient light sensor</td></tr>
 <tr valign="top" class="even"><th><a href="qambientlightsensor.html">QAmbientLightSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
 <tr valign="top" class="odd"><th><a href="qaudiocapturesource.html">QAudioCaptureSource</a></th><td>Interface to query and select an audio input endpoint</td></tr>
-<tr valign="top" class="even"><th><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></th><td>Access to the settings of a media service that performs audio encoding</td></tr>
-<tr valign="top" class="odd"><th><a href="qaudioencodersettings.html">QAudioEncoderSettings</a></th><td>Set of audio encoder settings</td></tr>
-<tr valign="top" class="even"><th><a href="qaudioendpointselector.html">QAudioEndpointSelector</a></th><td>Audio endpoint selector media control</td></tr>
+<tr valign="top" class="even"><th><a href="qaudiodeviceinfo.html">QAudioDeviceInfo</a></th><td>Interface to query audio devices and their functionality</td></tr>
+<tr valign="top" class="odd"><th><a href="qaudioencodercontrol.html">QAudioEncoderControl</a></th><td>Access to the settings of a media service that performs audio encoding</td></tr>
+<tr valign="top" class="even"><th><a href="qaudioencodersettings.html">QAudioEncoderSettings</a></th><td>Set of audio encoder settings</td></tr>
+<tr valign="top" class="odd"><th><a href="qaudioendpointselector.html">QAudioEndpointSelector</a></th><td>Audio endpoint selector media control</td></tr>
+<tr valign="top" class="even"><th><a href="qaudioformat.html">QAudioFormat</a></th><td>Stores audio parameter information</td></tr>
+<tr valign="top" class="odd"><th><a href="qaudioinput.html">QAudioInput</a></th><td>Interface for receiving audio data from an audio input device</td></tr>
+<tr valign="top" class="even"><th><a href="qaudiooutput.html">QAudioOutput</a></th><td>Interface for sending audio data to an audio output device</td></tr>
 <tr valign="top" class="odd"><th><a href="qcompass.html">QCompass</a></th><td>Convenience wrapper around QSensor</td></tr>
 <tr valign="top" class="even"><th><a href="qcompassfilter.html">QCompassFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
 <tr valign="top" class="odd"><th><a href="qcompassreading.html">QCompassReading</a></th><td>Represents one reading from a compass</td></tr>
@@ -103,19 +109,21 @@
 <tr valign="top" class="odd"><th><a href="qmagnetometer.html">QMagnetometer</a></th><td>Convenience wrapper around QSensor</td></tr>
 <tr valign="top" class="even"><th><a href="qmagnetometerfilter.html">QMagnetometerFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
 <tr valign="top" class="odd"><th><a href="qmagnetometerreading.html">QMagnetometerReading</a></th><td>Represents one reading from the magnetometer</td></tr>
-<tr valign="top" class="even"><th><a href="qmediacontainercontrol.html">QMediaContainerControl</a></th><td>Access to the output container format of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediacontent.html">QMediaContent</a></th><td>Access to the resources relating to a media content</td></tr>
-<tr valign="top" class="even"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaimageviewer.html">QMediaImageViewer</a></th><td>Means of viewing image media</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaobject.html">QMediaObject</a></th><td>Common base for multimedia objects</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaplayer.html">QMediaPlayer</a></th><td>Allows the playing of a media source</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaplayercontrol.html">QMediaPlayerControl</a></th><td>Access to the media playing functionality of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaplaylist.html">QMediaPlaylist</a></th><td>List of media content to play</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a></th><td>Access to the playlist functionality of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaplaylistioplugin.html">QMediaPlaylistIOPlugin</a></th><td>Interface for media playlist I/O plug-ins</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaplaylistnavigator.html">QMediaPlaylistNavigator</a></th><td>Navigation for a media playlist</td></tr>
-<tr valign="top" class="odd"><th><a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a></th><td>Abstract list of media</td></tr>
-<tr valign="top" class="even"><th><a href="qmediaplaylistreader.html">QMediaPlaylistReader</a></th><td>Interface for reading a playlist file</td></tr>
+<tr valign="top" class="even"><th><a href="qmediabindableinterface.html">QMediaBindableInterface</a></th><td>The base class for objects extending media objects functionality</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediacontainercontrol.html">QMediaContainerControl</a></th><td>Access to the output container format of a QMediaService</td></tr>
+<tr valign="top" class="even"><th><a href="qmediacontent.html">QMediaContent</a></th><td>Access to the resources relating to a media content</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediacontrol.html">QMediaControl</a></th><td>Base interface for media service controls</td></tr>
+<tr valign="top" class="even"><th><a href="qmediaimageviewer.html">QMediaImageViewer</a></th><td>Means of viewing image media</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediaobject.html">QMediaObject</a></th><td>Common base for multimedia objects</td></tr>
+<tr valign="top" class="even"><th><a href="qmediaplayer.html">QMediaPlayer</a></th><td>Allows the playing of a media source</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediaplayercontrol.html">QMediaPlayerControl</a></th><td>Access to the media playing functionality of a QMediaService</td></tr>
+<tr valign="top" class="even"><th><a href="qmediaplaylist.html">QMediaPlaylist</a></th><td>List of media content to play</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a></th><td>Access to the playlist functionality of a QMediaService</td></tr>
+<tr valign="top" class="even"><th><a href="qmediaplaylistioplugin.html">QMediaPlaylistIOPlugin</a></th><td>Interface for media playlist I/O plug-ins</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediaplaylistnavigator.html">QMediaPlaylistNavigator</a></th><td>Navigation for a media playlist</td></tr>
+<tr valign="top" class="even"><th><a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a></th><td>Abstract list of media</td></tr>
+<tr valign="top" class="odd"><th><a href="qmediaplaylistreader.html">QMediaPlaylistReader</a></th><td>Interface for reading a playlist file</td></tr>
+<tr valign="top" class="even"><th><a href="qmediaplaylistsourcecontrol.html">QMediaPlaylistSourceControl</a></th><td>Access to the playlist playback functionality of a QMediaService</td></tr>
 <tr valign="top" class="odd"><th><a href="qmediaplaylistwriter.html">QMediaPlaylistWriter</a></th><td>Interface for writing a playlist file</td></tr>
 <tr valign="top" class="even"><th><a href="qmediarecorder.html">QMediaRecorder</a></th><td>Used for the recording of media content</td></tr>
 <tr valign="top" class="odd"><th><a href="qmediarecordercontrol.html">QMediaRecorderControl</a></th><td>Access to the recording functionality of a QMediaService</td></tr>
@@ -147,60 +155,62 @@
 <tr valign="top" class="odd"><th><a href="qmessagemanager.html">QMessageManager</a></th><td>Represents the main interface for storage and retrieval of messages, folders and accounts in the system message store</td></tr>
 <tr valign="top" class="even"><th><a href="qmessageservice.html">QMessageService</a></th><td>The interface for requesting messaging service operations</td></tr>
 <tr valign="top" class="odd"><th><a href="qmessagesortorder.html">QMessageSortOrder</a></th><td>Defines the parameters used for sorting a subset of queried messages from the messaging store</td></tr>
-<tr valign="top" class="even"><th><a href="qmetadatacontrol.html">QMetaDataControl</a></th><td>Access to the meta-data of a QMediaService's media</td></tr>
-<tr valign="top" class="odd"><th><a href="qnetworkconfiguration.html">QNetworkConfiguration</a></th><td>Abstraction of one or more access point configurations</td></tr>
-<tr valign="top" class="even"><th><a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a></th><td>Manages the network configurations provided by the system</td></tr>
-<tr valign="top" class="odd"><th><a href="qnetworksession.html">QNetworkSession</a></th><td>Control over the system's access points and enables session management for cases when multiple clients access the same access point</td></tr>
-<tr valign="top" class="even"><th><a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a></th><td>Positional information using a NMEA data source</td></tr>
-<tr valign="top" class="odd"><th><a href="qorientationfilter.html">QOrientationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qorientationreading.html">QOrientationReading</a></th><td>Represents one reading from the orientation sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qorientationsensor.html">QOrientationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qproximityfilter.html">QProximityFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="odd"><th><a href="qproximityreading.html">QProximityReading</a></th><td>Represents one reading from the proximity sensor</td></tr>
-<tr valign="top" class="even"><th><a href="qproximitysensor.html">QProximitySensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qradiotuner.html">QRadioTuner</a></th><td>Interface to the systems analog radio device</td></tr>
-<tr valign="top" class="even"><th><a href="qradiotunercontrol.html">QRadioTunerControl</a></th><td>Access to the radio tuning functionality of a QMediaService</td></tr>
-<tr valign="top" class="odd"><th><a href="qrotationfilter.html">QRotationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="even"><th><a href="qrotationreading.html">QRotationReading</a></th><td>Represents one reading from the rotation sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qrotationsensor.html">QRotationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="even"><th><a href="qsensor.html">QSensor</a></th><td>Represents a single hardware sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qsensorbackend.html">QSensorBackend</a></th><td>Sensor implementation</td></tr>
-<tr valign="top" class="even"><th><a href="qsensorbackendfactory.html">QSensorBackendFactory</a></th><td>Instantiates instances of QSensorBackend</td></tr>
-<tr valign="top" class="odd"><th><a href="qsensorfilter.html">QSensorFilter</a></th><td>Efficient callback facility for asynchronous notifications of sensor changes</td></tr>
-<tr valign="top" class="even"><th><a href="qsensormanager.html">QSensorManager</a></th><td>Handles registration and creation of sensor backends</td></tr>
-<tr valign="top" class="odd"><th><a href="qsensorplugininterface.html">QSensorPluginInterface</a></th><td>The pure virtual interface to sensor plugins</td></tr>
-<tr valign="top" class="even"><th><a href="qsensorreading.html">QSensorReading</a></th><td>Holds the readings from the sensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qservicecontext.html">QServiceContext</a></th><td>Context information to services</td></tr>
-<tr valign="top" class="even"><th><a href="qservicefilter.html">QServiceFilter</a></th><td>Defines criteria for defining a sub-set of all available services</td></tr>
-<tr valign="top" class="odd"><th><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a></th><td>Identifies a service implementation</td></tr>
-<tr valign="top" class="even"><th><a href="qservicemanager.html">QServiceManager</a></th><td>Enables the loading of service plugins and the (de)registration of services</td></tr>
-<tr valign="top" class="odd"><th><a href="qserviceplugininterface.html">QServicePluginInterface</a></th><td>Defines the interface that every plug-in based service must implement</td></tr>
-<tr valign="top" class="even"><th><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></th><td>Access to device information from the system</td></tr>
-<tr valign="top" class="odd"><th><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></th><td>Access to display information from the system</td></tr>
-<tr valign="top" class="even"><th><a href="qsysteminfo.html">QSystemInfo</a></th><td>Access to various general information from the system</td></tr>
-<tr valign="top" class="odd"><th><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></th><td>Access to network information from the system</td></tr>
-<tr valign="top" class="even"><th><a href="qsystemscreensaver.html">QSystemScreenSaver</a></th><td>Access to screen saver and blanking</td></tr>
-<tr valign="top" class="odd"><th><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></th><td>Access to memory and disk information from the system</td></tr>
-<tr valign="top" class="even"><th><a href="qtapfilter.html">QTapFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
-<tr valign="top" class="odd"><th><a href="qtapreading.html">QTapReading</a></th><td>Represents one reading from the tap sensor</td></tr>
-<tr valign="top" class="even"><th><a href="qtapsensor.html">QTapSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
-<tr valign="top" class="odd"><th><a href="qvaluespacepublisher.html">QValueSpacePublisher</a></th><td>Allows applications to publish values in the Value Space</td></tr>
-<tr valign="top" class="even"><th><a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a></th><td>Allows applications to read and subscribe to Value Space paths</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitcontactexporter.html">QVersitContactExporter</a></th><td>Converts QContacts into QVersitDocuments</td></tr>
-<tr valign="top" class="even"><th><a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a></th><td>Interface for clients wishing to implement custom export behaviour for certain contact details</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitcontactimporter.html">QVersitContactImporter</a></th><td>Creates QContacts from QVersitDocuments</td></tr>
-<tr valign="top" class="even"><th><a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a></th><td>Interface for clients wishing to implement custom import behaviour for versit properties</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a></th><td>Default implementation of a Versit resource handler</td></tr>
-<tr valign="top" class="even"><th><a href="qversitdocument.html">QVersitDocument</a></th><td>Container for a list of versit properties</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitproperty.html">QVersitProperty</a></th><td>Stores the name, value, groups and parameters of a Versit property</td></tr>
-<tr valign="top" class="even"><th><a href="qversitreader.html">QVersitReader</a></th><td>Reads Versit documents such as vCards from a device</td></tr>
-<tr valign="top" class="odd"><th><a href="qversitresourcehandler.html">QVersitResourceHandler</a></th><td>Interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing</td></tr>
-<tr valign="top" class="even"><th><a href="qversitwriter.html">QVersitWriter</a></th><td>Writes Versit documents such as vCards to a device</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></th><td>Video device selector media control</td></tr>
-<tr valign="top" class="even"><th><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></th><td>Access to the settings of a media service that performs video encoding</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideoencodersettings.html">QVideoEncoderSettings</a></th><td>Set of video encoder settings</td></tr>
-<tr valign="top" class="even"><th><a href="qvideooutputcontrol.html">QVideoOutputControl</a></th><td>Means of selecting the active video output control</td></tr>
-<tr valign="top" class="odd"><th><a href="qvideorenderercontrol.html">QVideoRendererControl</a></th><td>Control for rendering to a video surface</td></tr>
+<tr valign="top" class="even"><th><a href="qmetadatareadercontrol.html">QMetaDataReaderControl</a></th><td>Read access to the meta-data of a QMediaService's media</td></tr>
+<tr valign="top" class="odd"><th><a href="qmetadatawritercontrol.html">QMetaDataWriterControl</a></th><td>Write access to the meta-data of a QMediaService's media</td></tr>
+<tr valign="top" class="even"><th><a href="qnetworkconfiguration.html">QNetworkConfiguration</a></th><td>Abstraction of one or more access point configurations</td></tr>
+<tr valign="top" class="odd"><th><a href="qnetworkconfigurationmanager.html">QNetworkConfigurationManager</a></th><td>Manages the network configurations provided by the system</td></tr>
+<tr valign="top" class="even"><th><a href="qnetworksession.html">QNetworkSession</a></th><td>Control over the system's access points and enables session management for cases when multiple clients access the same access point</td></tr>
+<tr valign="top" class="odd"><th><a href="qnmeapositioninfosource.html">QNmeaPositionInfoSource</a></th><td>Positional information using a NMEA data source</td></tr>
+<tr valign="top" class="even"><th><a href="qorientationfilter.html">QOrientationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="odd"><th><a href="qorientationreading.html">QOrientationReading</a></th><td>Represents one reading from the orientation sensor</td></tr>
+<tr valign="top" class="even"><th><a href="qorientationsensor.html">QOrientationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qproximityfilter.html">QProximityFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="even"><th><a href="qproximityreading.html">QProximityReading</a></th><td>Represents one reading from the proximity sensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qproximitysensor.html">QProximitySensor</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="even"><th><a href="qradiotuner.html">QRadioTuner</a></th><td>Interface to the systems analog radio device</td></tr>
+<tr valign="top" class="odd"><th><a href="qradiotunercontrol.html">QRadioTunerControl</a></th><td>Access to the radio tuning functionality of a QMediaService</td></tr>
+<tr valign="top" class="even"><th><a href="qrotationfilter.html">QRotationFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="odd"><th><a href="qrotationreading.html">QRotationReading</a></th><td>Represents one reading from the rotation sensor</td></tr>
+<tr valign="top" class="even"><th><a href="qrotationsensor.html">QRotationSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qsensor.html">QSensor</a></th><td>Represents a single hardware sensor</td></tr>
+<tr valign="top" class="even"><th><a href="qsensorbackend.html">QSensorBackend</a></th><td>Sensor implementation</td></tr>
+<tr valign="top" class="odd"><th><a href="qsensorbackendfactory.html">QSensorBackendFactory</a></th><td>Instantiates instances of QSensorBackend</td></tr>
+<tr valign="top" class="even"><th><a href="qsensorfilter.html">QSensorFilter</a></th><td>Efficient callback facility for asynchronous notifications of sensor changes</td></tr>
+<tr valign="top" class="odd"><th><a href="qsensormanager.html">QSensorManager</a></th><td>Handles registration and creation of sensor backends</td></tr>
+<tr valign="top" class="even"><th><a href="qsensorplugininterface.html">QSensorPluginInterface</a></th><td>The pure virtual interface to sensor plugins</td></tr>
+<tr valign="top" class="odd"><th><a href="qsensorreading.html">QSensorReading</a></th><td>Holds the readings from the sensor</td></tr>
+<tr valign="top" class="even"><th><a href="qservicecontext.html">QServiceContext</a></th><td>Context information to services</td></tr>
+<tr valign="top" class="odd"><th><a href="qservicefilter.html">QServiceFilter</a></th><td>Defines criteria for defining a sub-set of all available services</td></tr>
+<tr valign="top" class="even"><th><a href="qserviceinterfacedescriptor.html">QServiceInterfaceDescriptor</a></th><td>Identifies a service implementation</td></tr>
+<tr valign="top" class="odd"><th><a href="qservicemanager.html">QServiceManager</a></th><td>Enables the loading of service plugins and the (de)registration of services</td></tr>
+<tr valign="top" class="even"><th><a href="qserviceplugininterface.html">QServicePluginInterface</a></th><td>Defines the interface that every plug-in based service must implement</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemdeviceinfo.html">QSystemDeviceInfo</a></th><td>Access to device information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemdisplayinfo.html">QSystemDisplayInfo</a></th><td>Access to display information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsysteminfo.html">QSystemInfo</a></th><td>Access to various general information from the system</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemnetworkinfo.html">QSystemNetworkInfo</a></th><td>Access to network information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qsystemscreensaver.html">QSystemScreenSaver</a></th><td>Access to screen saver and blanking</td></tr>
+<tr valign="top" class="even"><th><a href="qsystemstorageinfo.html">QSystemStorageInfo</a></th><td>Access to memory and disk information from the system</td></tr>
+<tr valign="top" class="odd"><th><a href="qtapfilter.html">QTapFilter</a></th><td>Convenience wrapper around QSensorFilter</td></tr>
+<tr valign="top" class="even"><th><a href="qtapreading.html">QTapReading</a></th><td>Represents one reading from the tap sensor</td></tr>
+<tr valign="top" class="odd"><th><a href="qtapsensor.html">QTapSensor</a></th><td>Convenience wrapper around QSensor</td></tr>
+<tr valign="top" class="even"><th><a href="qvaluespacepublisher.html">QValueSpacePublisher</a></th><td>Allows applications to publish values in the Value Space</td></tr>
+<tr valign="top" class="odd"><th><a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a></th><td>Allows applications to read and subscribe to Value Space paths</td></tr>
+<tr valign="top" class="even"><th><a href="qversitcontactexporter.html">QVersitContactExporter</a></th><td>Converts QContacts into QVersitDocuments</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitcontactexporterdetailhandler.html">QVersitContactExporterDetailHandler</a></th><td>Interface for clients wishing to implement custom export behaviour for certain contact details</td></tr>
+<tr valign="top" class="even"><th><a href="qversitcontactimporter.html">QVersitContactImporter</a></th><td>Creates QContacts from QVersitDocuments</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitcontactimporterpropertyhandler.html">QVersitContactImporterPropertyHandler</a></th><td>Interface for clients wishing to implement custom import behaviour for versit properties</td></tr>
+<tr valign="top" class="even"><th><a href="qversitdefaultresourcehandler.html">QVersitDefaultResourceHandler</a></th><td>Default implementation of a Versit resource handler</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitdocument.html">QVersitDocument</a></th><td>Container for a list of versit properties</td></tr>
+<tr valign="top" class="even"><th><a href="qversitproperty.html">QVersitProperty</a></th><td>Stores the name, value, groups and parameters of a Versit property</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitreader.html">QVersitReader</a></th><td>Reads Versit documents such as vCards from a device</td></tr>
+<tr valign="top" class="even"><th><a href="qversitresourcehandler.html">QVersitResourceHandler</a></th><td>Interface for clients wishing to implement custom behaviour for loading and saving files to disk when exporting and importing</td></tr>
+<tr valign="top" class="odd"><th><a href="qversitwriter.html">QVersitWriter</a></th><td>Writes Versit documents such as vCards to a device</td></tr>
+<tr valign="top" class="even"><th><a href="qvideodevicecontrol.html">QVideoDeviceControl</a></th><td>Video device selector media control</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideoencodercontrol.html">QVideoEncoderControl</a></th><td>Access to the settings of a media service that performs video encoding</td></tr>
+<tr valign="top" class="even"><th><a href="qvideoencodersettings.html">QVideoEncoderSettings</a></th><td>Set of video encoder settings</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideoframe.html">QVideoFrame</a></th><td>Representation of a frame of video data</td></tr>
+<tr valign="top" class="even"><th><a href="qvideorenderercontrol.html">QVideoRendererControl</a></th><td>Control for rendering to a video surface</td></tr>
+<tr valign="top" class="odd"><th><a href="qvideosurfaceformat.html">QVideoSurfaceFormat</a></th><td>Specifies the stream format of a video presentation surface</td></tr>
 <tr valign="top" class="even"><th><a href="qvideowidget.html">QVideoWidget</a></th><td>Widget which presents video produced by a media object</td></tr>
 <tr valign="top" class="odd"><th><a href="qvideowidgetcontrol.html">QVideoWidgetControl</a></th><td>Media control which implements a video widget</td></tr>
 <tr valign="top" class="even"><th><a href="qvideowindowcontrol.html">QVideoWindowControl</a></th><td>Media control for rendering video to a window</td></tr>

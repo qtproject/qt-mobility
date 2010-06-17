@@ -43,7 +43,7 @@
 #define S60VIDEOSURFACE_H
 
 #include <QtGui/qwidget.h>
-#include <QtMultimedia/qabstractvideosurface.h>
+#include <qabstractvideosurface.h>
 
 class S60VideoSurface : public QAbstractVideoSurface
 {
