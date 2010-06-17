@@ -58,6 +58,17 @@ EventEditPage::EventEditPage(QWidget *parent)
     QLabel *endTimeLabel = new QLabel("End time:", this);
     m_endTimeEdit = new QDateTimeEdit(this);
 
+#ifdef Q_WS_X11
+    // Add push buttons for Maemo as it does not support soft keys
+    QHBoxLayout* hbLayout = new QHBoxLayout();
+    QPushButton *okButton = new QPushButton("Ok", this);
+    connect(okButton,SIGNAL(clicked()),this,SLOT(saveClicked()));
+    hbLayout->addWidget(okButton);
+    QPushButton *cancelButton = new QPushButton("Cancel", this);
+    connect(cancelButton,SIGNAL(clicked()),this,SLOT(cancelClicked()));
+    hbLayout->addWidget(cancelButton);
+#endif
+
     QVBoxLayout *scrollAreaLayout = new QVBoxLayout();
     scrollAreaLayout->addWidget(subjectLabel);
     scrollAreaLayout->addWidget(m_subjectEdit);
@@ -65,6 +76,7 @@ EventEditPage::EventEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_startTimeEdit);
     scrollAreaLayout->addWidget(endTimeLabel);
     scrollAreaLayout->addWidget(m_endTimeEdit);
+    scrollAreaLayout->addLayout(hbLayout);
 
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);

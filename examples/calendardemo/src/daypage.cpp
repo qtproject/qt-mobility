@@ -65,6 +65,24 @@ DayPage::DayPage(QWidget *parent)
     mainlayout->addWidget(m_itemList);
     connect(m_itemList, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(itemDoubleClicked(QListWidgetItem *)));
 
+#ifdef Q_WS_X11
+    // Add push buttons for Maemo as it does not support soft keys
+    QHBoxLayout* hbLayout = new QHBoxLayout();
+    QPushButton* editEventButton = new QPushButton("Edit",this);
+    connect(editEventButton,SIGNAL(clicked()),this,SLOT(editItem()));
+    hbLayout->addWidget(editEventButton);
+    QPushButton* removeEventButton = new QPushButton("Remove",this);
+    connect(removeEventButton,SIGNAL(clicked()),this,SLOT(removeItem()));
+    hbLayout->addWidget(removeEventButton);
+    QPushButton* addEventButton = new QPushButton("Add Event",this);
+    connect(addEventButton,SIGNAL(clicked()),this,SLOT(addNewEvent()));
+    hbLayout->addWidget(addEventButton);
+    QPushButton* backButton = new QPushButton("Back",this);
+    connect(backButton,SIGNAL(clicked()),this,SLOT(backClicked()));
+    hbLayout->addWidget(backButton);
+    mainlayout->addLayout(hbLayout);
+#endif
+
     setLayout(mainlayout);
 
     // Add softkeys
