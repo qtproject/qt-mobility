@@ -67,6 +67,7 @@
 #include <qlandmarkfetchrequest.h>
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
+#include <qlandmarkcategorysaverequest.h>
 #include <QMetaType>
 #include <QDebug>
 
@@ -85,12 +86,14 @@ QTM_USE_NAMESPACE
 Q_DECLARE_METATYPE(QList<QLandmarkCategoryId>);
 Q_DECLARE_METATYPE(QList<QLandmarkId>);
 Q_DECLARE_METATYPE(QList<QLandmark>);
+Q_DECLARE_METATYPE(QList<QLandmarkCategory>);
 Q_DECLARE_METATYPE(QLandmarkAbstractRequest::State)
 Q_DECLARE_METATYPE(QLandmarkAbstractRequest *)
 Q_DECLARE_METATYPE(QLandmarkFetchRequest *)
 Q_DECLARE_METATYPE(QLandmarkManager::Error)
 Q_DECLARE_METATYPE(QLandmarkSaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkRemoveRequest *)
+Q_DECLARE_METATYPE(QLandmarkCategorySaveRequest *)
 
 class tst_QLandmarkManagerEngineSqlite : public QObject
 {
@@ -101,11 +104,13 @@ public:
     qRegisterMetaType<QList<QLandmarkCategoryId> >();
     qRegisterMetaType<QList<QLandmarkId> >();
     qRegisterMetaType<QList<QLandmark> >();
+    qRegisterMetaType<QList<QLandmarkCategory> >();
     qRegisterMetaType<QLandmarkAbstractRequest::State>();
     qRegisterMetaType<QLandmarkAbstractRequest *>();
     qRegisterMetaType<QLandmarkFetchRequest *>();
     qRegisterMetaType<QLandmarkSaveRequest *>();
     qRegisterMetaType<QLandmarkRemoveRequest *>();
+    qRegisterMetaType<QLandmarkCategorySaveRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
     }
 
@@ -348,6 +353,35 @@ private slots:
         // add - with attributes
     }
 
+     void addCategoryAsync() {
+        QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+
+        // add - no attributes
+        QLandmarkCategory cat1;
+        cat1.setName("CAT1");
+        QVERIFY(m_manager->saveCategory(&cat1));
+
+        QLandmarkCategorySaveRequest saveCategoryRequest(m_manager);
+        QSignalSpy spy(&saveCategoryRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        saveCategoryRequest.setCategory(cat1);
+        saveCategoryRequest.start();
+
+        QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+        QCOMPARE(saveCategoryRequest.categories().count(),1);
+        QVERIFY(saveCategoryRequest.categories().at(0).categoryId().isValid());
+        cat1.setCategoryId(saveCategoryRequest.categories().at(0).categoryId());
+        QCOMPARE(cat1, saveCategoryRequest.categories().at(0));
+        QCOMPARE(cat1, m_manager->category(saveCategoryRequest.categories().at(0).categoryId()));
+
+
+
+        //TODO: Notifications
+        //QCOMPARE(spyAdd.count(), 1);
+        //QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
+
+        // add - with attributes
+    }
+
     void updateCategory() {
         QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
         QSignalSpy spyChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
@@ -407,6 +441,122 @@ private slots:
         // update attributes - removed
     }
 
+     void updateCategoryAsync() {
+        QSignalSpy spyAdd(m_manager, SIGNAL(categoriesAdded(QList<QLandmarkCategoryId>)));
+        QSignalSpy spyChange(m_manager, SIGNAL(categoriesChanged(QList<QLandmarkCategoryId>)));
+
+        // bad manager uri
+        QLandmarkCategory badCat1;
+        QLandmarkCategoryId badCatId1;
+
+        badCat1.setName("BAD1");
+        badCatId1.setLocalId("1");
+        badCatId1.setManagerUri("bad manager uri");
+        badCat1.setCategoryId(badCatId1);
+
+        QLandmarkCategorySaveRequest saveCategoryRequest(m_manager);
+        QSignalSpy spy(&saveCategoryRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        saveCategoryRequest.setCategory(badCat1);
+        saveCategoryRequest.start();
+
+        QVERIFY(waitForAsync(spy, &saveCategoryRequest, QLandmarkManager::DoesNotExistError));
+        QCOMPARE(saveCategoryRequest.categories().count(),1);
+        QCOMPARE(saveCategoryRequest.errorMap().count(),1);
+        QCOMPARE(saveCategoryRequest.errorMap().value(0) , QLandmarkManager::DoesNotExistError);
+        QCOMPARE(saveCategoryRequest.errorString(), QString("Category id comes from different landmark manager."));
+
+        // non existent id
+        QLandmarkCategory badCat2;
+        QLandmarkCategoryId badCatId2;
+
+        badCat2.setName("BAD2");
+        badCatId2.setLocalId("bad integer id");
+        badCatId2.setManagerUri(m_manager->managerUri());
+        badCat2.setCategoryId(badCatId2);
+
+        saveCategoryRequest.setCategory(badCat2);
+        saveCategoryRequest.start();
+
+        QVERIFY(waitForAsync(spy, &saveCategoryRequest, QLandmarkManager::DoesNotExistError));
+        QCOMPARE(saveCategoryRequest.errorMap().count(),1);
+        QCOMPARE(saveCategoryRequest.errorMap().value(0) , QLandmarkManager::DoesNotExistError);
+        QCOMPARE(saveCategoryRequest.errorString(), QString("Category id does not exist in this landmark manager."));
+
+        // add - with attributes
+        QLandmarkCategory cat1;
+        cat1.setName("CAT1");
+        //cat1.setAttribute("Key1", "Value1");
+        QVERIFY(m_manager->saveCategory(&cat1));
+        saveCategoryRequest.setCategory(cat1);
+        saveCategoryRequest.start();
+
+        QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+        QCOMPARE(saveCategoryRequest.errorMap().count(),1);
+        QCOMPARE(saveCategoryRequest.errorMap().value(0) , QLandmarkManager::NoError);
+        QCOMPARE(saveCategoryRequest.categories().count(), 1);
+        QLandmarkCategory cat1new = cat1;
+        cat1new.setCategoryId(saveCategoryRequest.categories().at(0).categoryId());
+        QCOMPARE(saveCategoryRequest.categories().at(0), m_manager->category(cat1new.categoryId()));
+        QCOMPARE(saveCategoryRequest.categories().at(0), cat1new);
+
+        /* TODO: notifications
+        QCOMPARE(spyAdd.count(), 1);
+        QCOMPARE(spyChange.count(), 0);
+        QCOMPARE(spyAdd.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
+        spyAdd.clear();*/
+
+        // update core
+        cat1.setName("CAT1Changed");
+        saveCategoryRequest.setCategory(cat1);
+        saveCategoryRequest.start();
+        QVERIFY(waitForAsync(spy, &saveCategoryRequest));
+        QCOMPARE(saveCategoryRequest.errorMap().count(),1);
+        QCOMPARE(saveCategoryRequest.errorMap().value(0) , QLandmarkManager::NoError);
+        QCOMPARE(saveCategoryRequest.categories().count(), 1);
+
+        QVERIFY(saveCategoryRequest.categories().at(0).categoryId().isValid());
+        cat1new = cat1;
+        cat1new.setCategoryId(saveCategoryRequest.categories().at(0).categoryId());
+        QCOMPARE(saveCategoryRequest.categories().at(0), m_manager->category(cat1new.categoryId()));
+        QCOMPARE(saveCategoryRequest.categories().at(0), cat1new);
+
+        QLandmarkCategory goodCat1;
+        goodCat1.setName("GOOD1");
+
+        QList<QLandmarkCategory> categories;
+        categories << goodCat1 << badCat1 << cat1new;
+        saveCategoryRequest.setCategories(categories);
+        saveCategoryRequest.start();
+        QVERIFY(waitForAsync(spy, &saveCategoryRequest, QLandmarkManager::DoesNotExistError));
+        QCOMPARE(saveCategoryRequest.categories().count(), 3);
+        QCOMPARE(saveCategoryRequest.errorMap().count(),3);
+        QCOMPARE(saveCategoryRequest.errorMap().value(0) , QLandmarkManager::NoError);
+        QCOMPARE(saveCategoryRequest.errorMap().value(1) , QLandmarkManager::DoesNotExistError);
+        QCOMPARE(saveCategoryRequest.errorMap().value(2) , QLandmarkManager::NoError);
+
+        QLandmarkCategoryId firstCatId  = saveCategoryRequest.categories().at(0).categoryId();
+        QLandmarkCategoryId secondCatId  = saveCategoryRequest.categories().at(1).categoryId();
+        QLandmarkCategoryId thirdCatId  = saveCategoryRequest.categories().at(2).categoryId();
+
+        goodCat1.setCategoryId(firstCatId);
+        cat1new.setCategoryId(thirdCatId);
+
+        QCOMPARE(goodCat1, m_manager->category(firstCatId));
+        QVERIFY(!m_manager->category(secondCatId).categoryId().isValid());
+        QCOMPARE(m_manager->error(), QLandmarkManager::BadArgumentError);
+        QCOMPARE(cat1new, m_manager->category(thirdCatId));
+
+        //TODO: notifications
+        /*QCOMPARE(spyAdd.count(), 0);
+        QCOMPARE(spyChange.count(), 1);
+        QCOMPARE(spyChange.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat1.categoryId());
+        */
+
+        // update attributes - existing
+        // update attributes - added
+        // update attributes - removed
+    }
+
     void addLandmark() {
         // TODO: notifications QSignalSpy spyAdd(m_manager, SIGNAL(landmarksAdded(QList<QLandmarkId>)));
 
@@ -422,7 +572,6 @@ private slots:
         //spyAdd.clear();
 
         // add - with attributes
-
         // add - with categories
 
         QLandmarkCategory cat1;

@@ -781,6 +781,7 @@ void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategory
     QLandmarkCategorySaveRequestPrivate* rd = static_cast<QLandmarkCategorySaveRequestPrivate*>(req->d_ptr);
     rd->error = error;
     rd->errorString = errorString;
+    rd->errorMap = errorMap;
     rd->categories = result;
     bool emitState = rd->state != newState;
     rd->state = newState;
