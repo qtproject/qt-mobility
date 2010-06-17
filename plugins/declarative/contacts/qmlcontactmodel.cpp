@@ -127,7 +127,7 @@ void QMLContactModel::exposeContactsToQML()
 }
 
 
-void QMLContactModel::importFromVcard(const QString& vcard)
+void QMLContactModel::importContacts(const QString& vcard)
 {
    QFile file(vcard);
    bool ok = file.open(QIODevice::ReadOnly);
@@ -137,7 +137,7 @@ void QMLContactModel::importFromVcard(const QString& vcard)
    }
 }
 
-void QMLContactModel::exportToVcard(const QString& vcard)
+void QMLContactModel::exportContacts(const QString& vcard)
 {
    QVersitContactExporter exporter;
    exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type);

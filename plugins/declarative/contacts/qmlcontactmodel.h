@@ -81,8 +81,8 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     Q_INVOKABLE QList<QObject*> details(int id) const;
-    Q_INVOKABLE void importFromVcard(const QString& vcard);
-    Q_INVOKABLE void exportToVcard(const QString& vcard);
+    Q_INVOKABLE void importContacts(const QString& file);
+    Q_INVOKABLE void exportContacts(const QString& file);
 signals:
 
 public slots:
