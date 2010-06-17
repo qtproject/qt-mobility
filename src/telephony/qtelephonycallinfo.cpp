@@ -161,9 +161,9 @@ QTelephonyCallInfo::CallType QTelephonyCallInfo::type() const
 /*!
     \fn  QString QTelephonyCallInfo::subTyp() const
 
-    Gives back the sub type of the call type.
+    Gives back the sub type of the call type (see \l QTelephonyCallInfo::type()).
     A subtype of a Voip call can be Skype.
-    You can use this property to get the sub type of the call.
+    You can use this property to get the sub type of the call .
 */
 QString QTelephonyCallInfo::subTyp() const
 {
@@ -187,13 +187,13 @@ QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 }
 
 /*!
-    \fn  QVariant QTelephonyCallInfo::value(const QString& param) const
-    \a param Parameter for reading additional values.
+    \fn  QVariant QTelephonyCallInfo::value(const QString& key) const
+    The \a key select the value in which the user is interrested to read.
 
     Gives back a variant value.
-    This function is for reading special values dependce on the param parameter.
+    This function is for reading additional values dependent on the key parameter.
 */
-QVariant QTelephonyCallInfo::value(const QString& param) const
+QVariant QTelephonyCallInfo::value(const QString& key) const
 {
     if(d && d->values.contains(param)){
         return d->values.value(param);

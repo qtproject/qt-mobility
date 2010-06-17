@@ -552,8 +552,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="type" fullname="QTelephonyCallInfo::type" href="qtelephonycallinfo.html#type" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="CallType" signature="type() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="subTyp" fullname="QTelephonyCallInfo::subTyp" href="qtelephonycallinfo.html#subTyp" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QString" signature="subTyp() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="status" fullname="QTelephonyCallInfo::status" href="qtelephonycallinfo.html#status" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="CallStatus" signature="status() const"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QTelephonyCallInfo::value" href="qtelephonycallinfo.html#value" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value(const QString &amp; param) const">
-                <parameter left="const QString &amp;" right="" name="param" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="value" fullname="QTelephonyCallInfo::value" href="qtelephonycallinfo.html#value" location="qtelephonycallinfo.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="value(const QString &amp; key) const">
+                <parameter left="const QString &amp;" right="" name="key" default=""/>
             </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactThumbnail" href="qcontactthumbnail.html" location="qcontactthumbnail.h" bases="QContactDetail" module="">
@@ -5773,6 +5773,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="activeCalls" fullname="QTelephonyCallList::activeCalls" href="qtelephonycalllist.html#activeCalls" location="qtelephonycalllist.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="QList&lt;QTelephonyCallInfo&gt;" signature="activeCalls(const QTelephonyCallInfo::CallType &amp; calltype) const">
                 <parameter left="const QTelephonyCallInfo::CallType &amp;" right="" name="calltype" default="QTelephonyCallInfo::Any"/>
             </function>
+            <variable access="protected" threadsafety="unspecified" status="commendable" name="d" fullname="QTelephonyCallList::d" href="qtelephonycalllist.html#d-var" location="qtelephonycalllist.h" type="QTelephonyCallListPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QServiceFilter" href="qservicefilter.html" location="qservicefilter.h" bases="" module="">
             <enum access="public" threadsafety="unspecified" status="commendable" name="VersionMatchRule" fullname="QServiceFilter::VersionMatchRule" href="qservicefilter.html#VersionMatchRule-enum" location="qservicefilter.h">

@@ -81,7 +81,7 @@ public:
     CallType type() const;
     QString subTyp() const;
     CallStatus status() const;
-    QVariant value(const QString& param) const;
+    QVariant value(const QString& key) const;
 private:
     QSharedDataPointer<QTelephonyCallInfoPrivate> d;
     friend class QTelephonyCallListPrivate;

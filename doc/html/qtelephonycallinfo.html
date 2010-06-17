@@ -37,7 +37,7 @@
 <tr><td class="memItemLeft" align="right" valign="top">CallStatus </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#status">status</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#subTyp">subTyp</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">CallType </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#type">type</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#value">value</a></b> ( const QString &amp; <i>param</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qtelephonycallinfo.html#value">value</a></b> ( const QString &amp; <i>key</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
@@ -101,14 +101,14 @@
 <p>Gives back the status of the call. A call can be in different conditions like ringing, dropped and so on. You can use this property if you want to know about the current condition of the call.</p>
 <a name="//apple_ref/cpp/instm/QTelephonyCallInfo/subTyp"></a>
 <h3 class="fn"><a name="subTyp"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QTelephonyCallInfo::subTyp () const</h3>
-<p>Gives back the sub type of the call type. A subtype of a Voip call can be Skype. You can use this property to get the sub type of the call.</p>
+<p>Gives back the sub type of the call type (see <a href="qtelephonycallinfo.html#type">QTelephonyCallInfo::type</a>()). A subtype of a Voip call can be Skype. You can use this property to get the sub type of the call .</p>
 <a name="//apple_ref/cpp/instm/QTelephonyCallInfo/type"></a>
 <h3 class="fn"><a name="type"></a><a href="qtelephonycallinfo.html#CallType-enum">CallType</a> QTelephonyCallInfo::type () const</h3>
 <p>Gives back the type of the call. A call can be a VOIP, Video Voice and so on. You can use this property to get the type of the call.</p>
 <a name="//apple_ref/cpp/instm/QTelephonyCallInfo/value"></a>
-<h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QTelephonyCallInfo::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>param</i> ) const</h3>
-<p><i>param</i> Parameter for reading additional values.</p>
-<p>Gives back a variant value. This function is for reading special values dependce on the param parameter.</p>
+<h3 class="fn"><a name="value"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QTelephonyCallInfo::value ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
+<p>The <i>key</i> select the value in which the user is interrested to read.</p>
+<p>Gives back a variant value. This function is for reading additional values dependent on the key parameter.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
