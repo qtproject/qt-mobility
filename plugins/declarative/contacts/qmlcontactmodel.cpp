@@ -44,7 +44,9 @@
 #include "qcontactmanager.h"
 #include "qcontactdetailfilter.h"
 #include "qversitreader.h"
+#include "qversitwriter.h"
 #include "qversitcontactimporter.h"
+#include "qversitcontactexporter.h"
 #include <QColor>
 #include <QHash>
 #include <QDebug>
@@ -122,20 +124,47 @@ void QMLContactModel::exposeContactsToQML()
     }
 }
 
-void QMLContactModel::fillContactsIntoMemoryEngine(QContactManager* manager)
+
+void QMLContactModel::saveContact(int id)
 {
-    QVersitReader reader;
-    QFile file("contents/example.vcf");
-    bool ok = file.open(QIODevice::ReadOnly);
-    if (ok) {
-       reader.setDevice(&file);
-       if (reader.startReading() && reader.waitForFinished()) {
-           QVersitContactImporter importer;
-           importer.importDocuments(reader.results());
-           QList<QContact> contacts = importer.contacts();
-           manager->saveContacts(&contacts, 0);
-       }
-    }
+   //TODO: save this contact
+   Q_UNUSED(id);
+}
+
+void QMLContactModel::importFromVcard(const QString& vcard)
+{
+    //TODO: need to be asynchronous here...
+    if (m_manager) {
+      QVersitReader reader;
+      QFile file(vcard);
+      bool ok = file.open(QIODevice::ReadOnly);
+      if (ok) {
+         reader.setDevice(&file);
+         if (reader.startReading() && reader.waitForFinished()) {
+             QVersitContactImporter importer;
+             importer.importDocuments(reader.results());
+             QList<QContact> contacts = importer.contacts();
+             m_manager->saveContacts(&contacts, 0);
+             fetchAgain();
+         }
+      }
+   }
+}
+
+void QMLContactModel::exportToVcard(const QString& vcard)
+{
+   //TODO: need to be asynchronous here...
+   QVersitContactExporter exporter;
+   exporter.exportContacts(m_contacts, QVersitDocument::VCard30Type);
+   QList<QVersitDocument> documents = exporter.documents();
+   QVersitWriter  writer;
+   QFile file(vcard);
+   bool ok = file.open(QIODevice::ReadWrite);
+   if (ok) {
+      writer.setDevice(&file);
+      if (writer.startWriting(documents))
+        writer.waitForFinished();
+   }
 }
 
 int QMLContactModel::rowCount(const QModelIndex &parent) const
@@ -155,10 +184,6 @@ void QMLContactModel::setManager(const QString& managerName)
     m_contactMap.clear();
 
     m_manager = new QContactManager(managerName);
-
-    if (managerName == "memory" && m_manager->contactIds().isEmpty()) {
-        fillContactsIntoMemoryEngine(m_manager);
-    }
 
     qWarning() << "Changed backend to: " << managerName;
     m_contactsRequest.setManager(m_manager);
