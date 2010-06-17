@@ -141,55 +141,6 @@ Rectangle {
                                 text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
                                 color: details.textColor;
                             }
-                            ListView {
-                                width: details.width; 
-                                highlightFollowsCurrentItem: false
-                                focus: true
-                                //anchors.fill: parent
-                                keyNavigationWraps: true
-
-                                model:contactModel.details(contactId)
-                                delegate: Component {
-                                    Item {
-                                        width: details.width;
-                                        property QtObject contactDetail : model.modelData;
-                                        Column {
-                                            Text {
-                                                width:  details.width;
-                                                height: 20;
-                                                text: contactDetail.name;
-                                                color:details.textColor;
-                                            }
-                                            ListView {
-                                                width:  details.width;
-                                                model:contactDetail.fields();
-                                                delegate: Component {
-                                                    Item {
-                                                        property QtObject field: model.modelData;
-                                                        Row {
-                                                          Text {
-                                                             text:field.key;
-                                                             color:details.textColor;
-                                                             width: details.width;
-                                                             height: 20;
-                                                          }
-                                                          TextInput {
-                                                              width: details.width;
-                                                              height: 20;
-                                                              text:field.value;
-                                                              color:details.textColor;
-                                                          }
-                                                        }
-                                                    }
-                                                }//delegate
-
-                                            }//detail fields view
-
-                                        }
-                                    }
-
-                                }//delegate
-                            }//detail list view
                         }
                     }
                 }
@@ -239,6 +190,7 @@ Rectangle {
                         PropertyChanges { target: wrapper; topColor: "#333333"; }
                         PropertyChanges { target: wrapper; bottomColor: "#111111"; }
                         PropertyChanges { target: buttonBox; x: wrapper.width + 6; }
+                        PropertyChanges { target: detailView; opacity:0 }
                     },
                     State {
                         name: "MiniDetails"
@@ -247,16 +199,20 @@ Rectangle {
                         PropertyChanges { target: smallAgainButton; opacity: 0; }
                         PropertyChanges { target: wrapper; height: Math.max(mainLabel.height + details.height + 4, buttonBox.height + 8); }
                         PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y } // XXX I don't think this should be here
+                        PropertyChanges { target: detailView; opacity:0 }
                     },
                     State {
                         name: "Details"
                         when: (mainList.currentIndex == index) && (wrapper.bigDetailsMode == 1);
-                        PropertyChanges { target: wrapper; height: mainList.height; }
+                        PropertyChanges { target: wrapper; height: 100/*mainList.height;*/; anchors.top: topItem.top; }
                         PropertyChanges { target: viewButton; opacity: 0; }
                         PropertyChanges { target: smallAgainButton; opacity: 1; }
                         PropertyChanges { target: mainAvatar; height: 96; }
                         PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y }
                         PropertyChanges { target: mainList; interactive: false; }
+                        PropertyChanges { target: detailView; model:contactModel.detailModel(contactId);}
+                        PropertyChanges { target: detailView; opacity:1;}
+                        PropertyChanges { target: mainList; opacity:0;}
                     }
             ]
 
@@ -318,6 +274,63 @@ Rectangle {
             ]
         }
     }
+
+    ListView {
+        id: detailView
+        width: parent.width;
+        height: parent.height - 100;
+        anchors.bottom: parent.bottom;
+        highlightFollowsCurrentItem: false
+        focus: true
+        keyNavigationWraps: true
+
+
+        //detail section header
+        section.property: "detailName"
+        section.criteria: ViewSection.FullString
+        section.delegate: Rectangle {
+            color: "lightsteelblue"
+            width:detailView.width
+            height: 20
+            Text {
+                x: 2; height: 20
+                verticalAlignment: Text.AlignVCenter
+                text: section
+                font.bold: true
+                color:"white"
+            }
+        }
+
+        model:contactModel.detailModel(0)
+
+        highlight: Component {
+            Rectangle { color: "#FFFF88" }
+        }
+
+        delegate: Component {
+            Item {
+                width: detailView.width;
+                height: 25;
+
+                Row {
+                    spacing: 2
+                    Text {
+                       text:key;
+                       color:"white";
+                       width: detailView.width * 0.4;
+                       height: 20;
+                    }
+                    TextInput {
+                       width: detailView.width * 0.5;
+                       height: 20;
+                       text:value;
+                       color:"yellow";
+                       onTextChanged: {field.value = text;}
+                    }
+                }
+            }
+        }//delegate
+    }//detail list view
 
     ListView {
         id: mainList
