@@ -56,15 +56,15 @@ QTM_USE_NAMESPACE
 class QTouchFeedback;
 
 class QFeedbackSymbian : public QObject, public QHapticsFeedbackInterface
-#ifndef NO_TACTILE_FEEDBACK
+#ifndef NO_TACTILE_SUPPORT
 , public QThemeFeedbackInterface
-#endif //NO_TACTILE_FEEDBACK
+#endif //NO_TACTILE_SUPPORT
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QHapticsFeedbackInterface)
-#ifndef NO_TACTILE_FEEDBACK
+#ifndef NO_TACTILE_SUPPORT
     Q_INTERFACES(QtMobility::QThemeFeedbackInterface)
-#endif //NO_TACTILE_FEEDBACK
+#endif //NO_TACTILE_SUPPORT
 public:
     QFeedbackSymbian();
     virtual ~QFeedbackSymbian();
@@ -79,9 +79,9 @@ public:
     virtual QFeedbackEffect::ErrorType updateEffectState(const QHapticsFeedbackEffect *);
     virtual QAbstractAnimation::State actualEffectState(const QHapticsFeedbackEffect *);
 
-#ifndef NO_TACTILE_FEEDBACK
+#ifndef NO_TACTILE_SUPPORT
     virtual void play(QFeedbackEffect::InstantEffect);
-#endif //NO_TACTILE_FEEDBACK
+#endif // NO_TACTILE_SUPPORT
 
 private:
     CHWRMVibra *vibra();

@@ -60,7 +60,7 @@ CCoeControl *QFeedbackSymbian::defaultWidget()
     return w ? w->winId() : 0;
 }
 
-#ifndef NO_TACTILE_FEEDBACK
+#ifndef NO_TACTILE_SUPPORT
 #include <touchfeedback.h>
 static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::InstantEffect effect)
 {
@@ -210,7 +210,7 @@ void QFeedbackSymbian::play(QFeedbackEffect::InstantEffect effect)
     QTouchFeedback::Instance()->InstantFeedback(convertToSymbian(effect));
 }
 
-#endif //NO_TACTILE_FEEDBACK
+#endif //NO_TACTILE_SUPPORT
 
 QFeedbackSymbian::QFeedbackSymbian() : m_vibra(0), m_vibraActive(true)
 {
@@ -232,11 +232,11 @@ CHWRMVibra *QFeedbackSymbian::vibra()
 QList<QFeedbackActuator> QFeedbackSymbian::actuators()
 {
     QList<QFeedbackActuator> ret;
-#ifndef NO_TACTILE_FEEDBACK
+#ifndef NO_TACTILE_SUPPORT
     if (QTouchFeedback::Instance()->TouchFeedbackSupported()) {
         ret << createFeedbackActuator(TOUCH_DEVICE);
     }
-#endif //NO_TACTILE_FEEDBACK
+#endif //NO_TACTILE_SUPPORT
     ret << createFeedbackActuator(VIBRA_DEVICE);
     return ret;
 }
@@ -251,11 +251,11 @@ void QFeedbackSymbian::setActuatorProperty(const QFeedbackActuator &actuator, Ac
         case VIBRA_DEVICE:
             m_vibraActive = value.toBool();
             break;
-    #ifndef NO_TACTILE_FEEDBACK
+    #ifndef NO_TACTILE_SUPPORT
         case TOUCH_DEVICE:
             QTouchFeedback::Instance()->SetFeedbackEnabledForThisApp(value.toBool());
             break;
-    #endif //NO_TACTILE_FEEDBACK
+    #endif //NO_TACTILE_SUPPORT
         default:
             break;
         }
@@ -306,10 +306,10 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
         {
         case VIBRA_DEVICE:
             return m_vibraActive;
-    #ifndef NO_TACTILE_FEEDBACK
+    #ifndef NO_TACTILE_SUPPORT
         case TOUCH_DEVICE:
             return QTouchFeedback::Instance()->FeedbackEnabledForThisApp();
-    #endif //NO_TACTILE_FEEDBACK
+    #endif //NO_TACTILE_SUPPORT
         default:
             return false;
         }
@@ -333,11 +333,11 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QHaptics
         case VIBRA_DEVICE:
             vibra()->StartVibraL(effect->duration() - effect->currentTime(), qRound(100 * effect->intensity()));
             break;
-#ifndef NO_TACTILE_FEEDBACK
+#ifndef NO_TACTILE_SUPPORT
         case TOUCH_DEVICE:
             QTouchFeedback::Instance()->ModifyFeedback(defaultWidget(), qRound(100 * effect->intensity()));
             break;
-#endif //NO_TACTILE_FEEDBACK
+#endif //NO_TACTILE_SUPPORT
         default:
             break;
         }
@@ -365,7 +365,7 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QHapticsFee
             break;
         }
         break;
-#ifndef NO_TACTILE_FEEDBACK
+#ifndef NO_TACTILE_SUPPORT
     case TOUCH_DEVICE:
         switch(effect->state())
         {
@@ -380,7 +380,7 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QHapticsFee
             break;
         }
         break;
-#endif //NO_TACTILE_FEEDBACK
+#endif //NO_TACTILE_SUPPORT
     default:
         break;
     }
