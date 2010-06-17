@@ -293,10 +293,13 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
     CCalEntry *entry = CCalEntry::NewL(type, globalUid, method, seqNum);
     CleanupStack::Pop(globalUid); // ownership passed?
     CleanupStack::PushL(entry);
+
+    // Check if this is an exising entry which needs update.
+    if (item->localId() && item->id().managerUri() == managerUri()) {
+        // Use old local id.
+        entry->SetLocalUidL(TCalLocalUid(item->localId()));
+    }
         
-    // Update last modified date to entry
-    entry->SetLastModifiedDateL();
-    
     // Transform QOrganizerItem -> CCalEntry    
     m_itemTransform.toEntryL(*item, entry);
     
@@ -314,15 +317,9 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
         // -> let's use the "one-error-fits-all" error code KErrGeneral.
         User::Leave(KErrGeneral);
     }
-
-    // Update timestamp
-    QOrganizerItemTimestamp timeStamp = item->detail<QOrganizerItemTimestamp>();
-    timeStamp.setLastModified(OrganizerItemDetailTransform::toQDateTimeL(entry->LastModifiedDateL()));
-    // TODO: where do we get the created timestamp? native api does not seem to support it
-    item->saveDetail(&timeStamp);
     
-    // Update guid
-    item->setGuid(OrganizerItemDetailTransform::toQString(entry->UidL()));
+    // Transform details that are available/updated after saving    
+    m_itemTransform.toItemPostSaveL(*entry, item);
     
     // Update local id
     QOrganizerItemId itemId;

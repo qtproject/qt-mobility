@@ -43,14 +43,35 @@
 
 void OrganizerItemTimeStampTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
-    QOrganizerItemTimestamp timeStamp;
+    QOrganizerItemTimestamp timeStamp = item->detail<QOrganizerItemTimestamp>();
+    timeStamp.setCreated(toQDateTimeL(entry.DTStampL()));
     timeStamp.setLastModified(toQDateTimeL(entry.LastModifiedDateL()));
     item->saveDetail(&timeStamp);
 }
 
+void OrganizerItemTimeStampTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)
+{
+    transformToDetailL(entry, item);
+}
+
 void OrganizerItemTimeStampTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
-    Q_UNUSED(item);
-    Q_UNUSED(entry);
-    // Not used. Timestamp was set when CCalEntry was created.
+    QOrganizerItemTimestamp timeStamp = item.detail<QOrganizerItemTimestamp>();
+    if (!timeStamp.created().isNull() && timeStamp.created().isValid()) {
+        // This is an old entry.
+        entry->SetDTStampL(toTCalTimeL(timeStamp.created()));    
+    } else {
+        // This is new entry. Generate creation time.
+        TCalTime dtstamp;
+        TTime currentUtcTime;
+        currentUtcTime.UniversalTime();
+        dtstamp.SetTimeUtcL(currentUtcTime);
+        entry->SetDTStampL(dtstamp);
+    }
+    // NOTE: modified timestamp is automatically set by symbian calendar server
+}
+
+QString OrganizerItemTimeStampTransform::detailDefinitionName()
+{
+    return QOrganizerItemTimestamp::DefinitionName;    
 }

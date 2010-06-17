@@ -307,6 +307,9 @@ void tst_SymbianOm::timeStamp()
     // TODO: support for created time? is it possible with symbian?
     // TODO: check detail definitions
     
+    QDateTime startTime = QDateTime::currentDateTime();
+    //qDebug() << "starttime:" << startTime;
+    
     // Save item
     QOrganizerTodo item1;
     item1.setDisplayLabel("do stuff");
@@ -314,9 +317,13 @@ void tst_SymbianOm::timeStamp()
     
     // Verify timestamp
     QOrganizerItemTimestamp timeStamp1 = item1.detail<QOrganizerItemTimestamp>();
+    //qDebug() << "timestamp1" << timeStamp1;
     QVERIFY(!timeStamp1.isEmpty());
+    QVERIFY(timeStamp1.created().isValid());
     QVERIFY(timeStamp1.lastModified().isValid());
-    
+    QVERIFY(timeStamp1.created() >= startTime);
+    QVERIFY(timeStamp1.lastModified() >= startTime);    
+        
     // Wait a while
     QTest::qSleep(1000);
 
@@ -326,14 +333,18 @@ void tst_SymbianOm::timeStamp()
     
     // Verify timestamp
     QOrganizerItemTimestamp timeStamp2 = item1.detail<QOrganizerItemTimestamp>();
+    //qDebug() << "timestamp2" << timeStamp2;
     QVERIFY(!timeStamp2.isEmpty());
+    QVERIFY(timeStamp2.created().isValid());
+    QVERIFY(timeStamp2.created() == timeStamp1.created());
     QVERIFY(timeStamp2.lastModified().isValid());
-    QVERIFY(timeStamp2.lastModified() > timeStamp1.lastModified()); 
-    
+    QVERIFY(timeStamp2.lastModified() > timeStamp1.lastModified());
+        
     // Load the same item again
     QOrganizerTodo item2 = m_om->item(item1.localId());
     QVERIFY(m_om->error() == QOrganizerItemManager::NoError);
     QOrganizerItemTimestamp timeStamp3 = item2.detail<QOrganizerItemTimestamp>();
+    //qDebug() << "timestamp3" << timeStamp3;
     QVERIFY(timeStamp3.lastModified() == timeStamp2.lastModified());
 }
 

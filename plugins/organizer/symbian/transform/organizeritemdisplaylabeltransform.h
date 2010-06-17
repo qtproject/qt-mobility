@@ -48,6 +48,7 @@ class OrganizerItemDisplayLabelTransform : public OrganizerItemDetailTransform
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
+    QString detailDefinitionName();
 };
 
 #endif /* ORGANIZERITEMDISPLAYLABELTRANSFORM_H_ */

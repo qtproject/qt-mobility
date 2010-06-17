@@ -56,3 +56,8 @@ void OrganizerItemPriorityTransform::transformToEntryL(const QOrganizerItem& ite
     if (!priority.isEmpty())
         entry->SetPriorityL(priority.priority()); // allowed values between 0 and 255.
 }
+
+QString OrganizerItemPriorityTransform::detailDefinitionName()
+{
+    return QOrganizerItemPriority::DefinitionName;    
+}

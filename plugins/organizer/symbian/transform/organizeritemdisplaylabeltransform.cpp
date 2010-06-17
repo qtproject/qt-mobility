@@ -40,6 +40,7 @@
 ****************************************************************************/
 
 #include "organizeritemdisplaylabeltransform.h"
+#include "qorganizeritemdisplaylabel.h"
 
 void OrganizerItemDisplayLabelTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
@@ -52,4 +53,9 @@ void OrganizerItemDisplayLabelTransform::transformToEntryL(const QOrganizerItem&
 {
     if (!item.displayLabel().isEmpty())
         entry->SetSummaryL(toPtrC16(item.displayLabel()));
+}
+
+QString OrganizerItemDisplayLabelTransform::detailDefinitionName()
+{
+    return QOrganizerItemDisplayLabel::DefinitionName;    
 }

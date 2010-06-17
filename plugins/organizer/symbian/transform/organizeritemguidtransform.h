@@ -48,7 +48,9 @@ class OrganizerItemGuidTransform : public OrganizerItemDetailTransform
 public:
     OrganizerItemGuidTransform();
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
+    void transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
+    QString detailDefinitionName();
     static HBufC8 *guidLC(const QOrganizerItem &item);
 };
 

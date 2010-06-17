@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "organizeritemdescriptiontransform.h"
+#include "qorganizeritemdescription.h"
 
 void OrganizerItemDescriptionTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
@@ -51,4 +52,9 @@ void OrganizerItemDescriptionTransform::transformToEntryL(const QOrganizerItem& 
 {
     if (!item.description().isEmpty())
         entry->SetDescriptionL(toPtrC16(item.description()));
+}
+
+QString OrganizerItemDescriptionTransform::detailDefinitionName()
+{
+    return QOrganizerItemDescription::DefinitionName;    
 }

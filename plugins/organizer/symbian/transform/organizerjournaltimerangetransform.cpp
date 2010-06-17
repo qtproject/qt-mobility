@@ -63,3 +63,8 @@ void OrganizerJournalTimeRangeTransform::transformToEntryL(const QOrganizerItem&
             entry->SetDTStampL(toTCalTimeL(range.entryDateTime())); // TODO: is DTStamp correct?
     }
 }
+
+QString OrganizerJournalTimeRangeTransform::detailDefinitionName()
+{
+    return QOrganizerJournalTimeRange::DefinitionName;    
+}

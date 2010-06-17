@@ -80,22 +80,48 @@ OrganizerItemTransform::OrganizerItemTransform()
 
 OrganizerItemTransform::~OrganizerItemTransform()
 {
+    // Delete transform objects
     foreach (OrganizerItemDetailTransform *i, m_detailTransforms)
         delete i;
 }
 
 void OrganizerItemTransform::toEntryL(const QOrganizerItem &item, CCalEntry *entry)
 {
-    // Loop through transform classes
-    foreach (OrganizerItemDetailTransform *i, m_detailTransforms)
-        i->transformToEntryL(item, entry);
+    // Loop through transform objects
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
+        // TODO: This is just for debugging. Remove before release.
+        TRAPD(err, i->transformToEntryL(item, entry));
+        if (err) {
+            qDebug() << "transformToEntryL failed! detail:" << i->detailDefinitionName() << "err:" << err;
+            User::Leave(err);
+        }
+    }
 }
 
 void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *item) const
 {
-    // Loop through transform classes
-    foreach (OrganizerItemDetailTransform *i, m_detailTransforms)
-        i->transformToDetailL(entry, item);
+    // Loop through transform objects
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
+        // TODO: This is just for debugging. Remove before release.
+        TRAPD(err, i->transformToDetailL(entry, item));
+        if (err) {
+            qDebug() << "transformToDetailL failed! detail:" << i->detailDefinitionName() << "err:" << err;
+            User::Leave(err);
+        }
+    }
+}
+
+void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item) const
+{
+    // Loop through transform objects
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
+        // TODO: This is just for debugging. Remove before release.
+        TRAPD(err, i->transformToDetailPostSaveL(entry, item));
+        if (err) {
+            qDebug() << "transformToDetailPostSaveL failed! detail:" << i->detailDefinitionName() << "err:" << err;
+            User::Leave(err);
+        }
+    }
 }
 
 void OrganizerItemTransform::toItemL(const CCalInstance &instance, QOrganizerItem *item) const
@@ -110,9 +136,9 @@ void OrganizerItemTransform::toItemL(const CCalInstance &instance, QOrganizerIte
 
 void OrganizerItemTransform::debugEntryL(const CCalEntry &entry) const
 {
-    qDebug() << "CCalEntry";
-    qDebug() << "LocalUid    :" << entry.LocalUidL();
-    qDebug() << "Uid         :" << OrganizerItemDetailTransform::toQString(entry.UidL());
+    qDebug() << QString("CCalEntry uid-%1 localUid-%2")
+        .arg(OrganizerItemDetailTransform::toQString(entry.UidL()))
+        .arg(entry.LocalUidL());
     qDebug() << "Type        :" << entry.EntryTypeL();
     qDebug() << "Summary     :" << OrganizerItemDetailTransform::toQString(entry.SummaryL());
     qDebug() << "Desription  :" << OrganizerItemDetailTransform::toQString(entry.DescriptionL());

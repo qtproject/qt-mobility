@@ -94,6 +94,11 @@ void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& i
     //  TODO: what about recurrence.exceptionRules()? there is no match in native API.
 }
 
+QString OrganizerItemRecurrenceTransform::detailDefinitionName()
+{
+    return QOrganizerItemRecurrence::DefinitionName;    
+}
+
 void OrganizerItemRecurrenceTransform::toTCalTimesL(const QList<QDate> &dates, RArray<TCalTime> &calDates) const
 {
     foreach (QDate date, dates) {

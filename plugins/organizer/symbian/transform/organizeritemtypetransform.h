@@ -48,6 +48,7 @@ class OrganizerItemTypeTransform : public OrganizerItemDetailTransform
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
+    QString detailDefinitionName();
     static CCalEntry::TType entryTypeL(const QOrganizerItem &item);
 };
 

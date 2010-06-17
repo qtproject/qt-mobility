@@ -59,3 +59,8 @@ void OrganizerItemLocationTransform::transformToEntryL(const QOrganizerItem& ite
         entry->SetLocationL(toPtrC16(loc.locationName()));
     }
 }
+
+QString OrganizerItemLocationTransform::detailDefinitionName()
+{
+    return QOrganizerItemLocation::DefinitionName;    
+}

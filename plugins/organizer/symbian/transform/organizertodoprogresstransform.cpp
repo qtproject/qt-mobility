@@ -84,3 +84,9 @@ void OrganizerTodoProgressTransform::transformToEntryL(const QOrganizerItem& ite
             entry->SetCompletedL(true, toTCalTimeL(progress.finishedDateTime()));
     }
 }
+
+QString OrganizerTodoProgressTransform::detailDefinitionName()
+{
+    return QOrganizerTodoProgress::DefinitionName;    
+}
+

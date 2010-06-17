@@ -54,7 +54,9 @@ public:
     virtual ~OrganizerItemDetailTransform();
 
     virtual void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item) = 0;
+    virtual void transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item);
     virtual void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry) = 0;
+    virtual QString detailDefinitionName() = 0;
 
     static QString toQString(const TDesC8 &des);
     static QString toQString(const TDesC16 &des);

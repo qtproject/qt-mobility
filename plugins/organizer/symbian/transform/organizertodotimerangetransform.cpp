@@ -67,3 +67,8 @@ void OrganizerTodoTimeRangeTransform::transformToEntryL(const QOrganizerItem& it
             entry->SetStartAndEndTimeL(toTCalTimeL(range.startDateTime()), toTCalTimeL(range.dueDateTime()));
     }
 }
+
+QString OrganizerTodoTimeRangeTransform::detailDefinitionName()
+{
+    return QOrganizerTodoTimeRange::DefinitionName;    
+}

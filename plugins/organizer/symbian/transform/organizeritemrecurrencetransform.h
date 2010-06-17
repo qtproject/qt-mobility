@@ -49,6 +49,7 @@ class OrganizerItemRecurrenceTransform : public OrganizerItemDetailTransform
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
+    QString detailDefinitionName();
 
 private:
     void toTCalTimesL(const QList<QDate> &dateTimes, RArray<TCalTime> &calDates) const;

@@ -52,12 +52,12 @@ void OrganizerItemTypeTransform::transformToDetailL(const CCalEntry& entry, QOrg
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
     else if (entryType == CCalEntry::EAppt)
         itemType = QLatin1String(QOrganizerItemType::TypeEvent);
+    else if (entryType == CCalEntry::EAnniv)
+        itemType = QLatin1String(QOrganizerItemType::TypeEvent);
     else
         User::Leave(KErrUnknown); // unknown type
 
-    // TODO: CCalEntry::EAppt
     // TODO: CCalEntry::EReminder
-    // TODO: CCalEntry::EAnniv
 
     item->setType(itemType);
 }
@@ -67,6 +67,11 @@ void OrganizerItemTypeTransform::transformToEntryL(const QOrganizerItem& item, C
     Q_UNUSED(item);
     Q_UNUSED(entry);
     // Not used. Entry type is already set when CCalEntry was created.
+}
+
+QString OrganizerItemTypeTransform::detailDefinitionName()
+{
+    return QOrganizerItemType::DefinitionName;    
 }
 
 CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &item)
@@ -83,7 +88,7 @@ CCalEntry::TType OrganizerItemTypeTransform::entryTypeL(const QOrganizerItem &it
 
     // TODO: CCalEntry::EEvent???
     // TODO: CCalEntry::EReminder
-    // TODO: CCalEntry::EAnniv
+    // TODO: CCalEntry::EAnniv if itemType=event & category=anniversary
 
     return entryType;
 }

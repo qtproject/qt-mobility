@@ -81,3 +81,8 @@ void OrganizerEventTimeRangeTransform::transformToEntryL(const QOrganizerItem& i
             User::Leave(KErrArgument);        
     }
 }
+
+QString OrganizerEventTimeRangeTransform::detailDefinitionName()
+{
+    return QOrganizerEventTimeRange::DefinitionName;
+}

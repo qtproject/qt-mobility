@@ -48,6 +48,7 @@ class OrganizerJournalTimeRangeTransform : public OrganizerItemDetailTransform
 public:
     void transformToDetailL(const CCalEntry& entry, QOrganizerItem *item);
     void transformToEntryL(const QOrganizerItem& item, CCalEntry* entry);
+    QString detailDefinitionName();
 };
 
 #endif /* ORGANIZERJOURNALTIMERANGETRANSFORM_H_ */

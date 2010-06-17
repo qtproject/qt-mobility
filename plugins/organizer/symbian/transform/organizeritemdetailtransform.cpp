@@ -50,6 +50,13 @@ OrganizerItemDetailTransform::~OrganizerItemDetailTransform()
 
 }
 
+void OrganizerItemDetailTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)
+{
+    Q_UNUSED(entry);
+    Q_UNUSED(item);
+    // empty default implementation
+}
+
 QString OrganizerItemDetailTransform::toQString(const TDesC8 &des)
 {
     return QString::fromUtf8((const char *)des.Ptr(), des.Length());

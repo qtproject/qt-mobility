@@ -39,6 +39,7 @@
 **
 ****************************************************************************/
 #include "organizeritemguidtransform.h"
+#include "qorganizeritemguid.h"
 
 const TInt KGuidLength = 30;
 
@@ -58,11 +59,21 @@ void OrganizerItemGuidTransform::transformToDetailL(const CCalEntry& entry, QOrg
         item->setGuid(guid);
 }
 
+void OrganizerItemGuidTransform::transformToDetailPostSaveL(const CCalEntry& entry, QOrganizerItem *item)
+{
+    transformToDetailL(entry, item);
+}
+
 void OrganizerItemGuidTransform::transformToEntryL(const QOrganizerItem& item, CCalEntry* entry)
 {
     Q_UNUSED(item);
     Q_UNUSED(entry);
     // Not used. Guid is already set when CCalEntry was created.
+}
+
+QString OrganizerItemGuidTransform::detailDefinitionName()
+{
+    return QOrganizerItemGuid::DefinitionName;    
 }
 
 HBufC8 *OrganizerItemGuidTransform::guidLC(const QOrganizerItem &item)
