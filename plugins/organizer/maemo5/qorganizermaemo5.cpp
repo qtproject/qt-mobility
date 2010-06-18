@@ -160,8 +160,144 @@ QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganize
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
 }
 
+void QOrganizerItemMaemo5Engine::removeAllForDebug() const
+{
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+
+    std::vector<CEvent*> events = cal->getEvents( calError );
+    for( int i = 0; i < events.size(); ++i )
+    {
+        CEvent* cevent = events[i];
+        std::string itemId = cevent->getId();
+        int calError = CALENDAR_OPERATION_SUCCESSFUL;
+        cal->deleteComponent( itemId, calError );
+        delete cevent;
+        qDebug() << "Deleted event";
+    }
+    std::vector<CTodo*> todos = cal->getTodos( calError );
+    for( int i = 0; i < todos.size(); ++i )
+    {
+        CTodo* ctodo = todos[i];
+        std::string itemId = ctodo->getId();
+        int calError = CALENDAR_OPERATION_SUCCESSFUL;
+        cal->deleteComponent( itemId, calError );
+        delete ctodo;
+        qDebug() << "Deleted todo";
+    }
+    std::vector<CJournal*> journals = cal->getJournals( calError );
+    for( int i = 0; i < journals.size(); ++i )
+    {
+        CJournal* cjournal = journals[i];
+        std::string itemId = cjournal->getId();
+        int calError = CALENDAR_OPERATION_SUCCESSFUL;
+        cal->deleteComponent( itemId, calError );
+        delete cjournal;
+        qDebug() << "Deleted journal";
+    }
+}
+
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
+    /*
+    // A TEMPORARY TEST CODE FOR CREATING RECURRING EVENTS
+    // Create event
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    CEvent* cevent = new CEvent();
+    cevent->setCalendarId( cal->getCalendarId() );
+    cevent->setDateStart(QDateTime(QDate(2010,8,20),QTime(11,0,0)).toTime_t());
+    cevent->setDateEnd(QDateTime(QDate(2010,8,20),QTime(12,0,0)).toTime_t());
+    cevent->setSummary(QString("Recurrence test event").toStdString());
+    cevent->setDescription(QString("Should repeat 10 times yearly").toStdString());
+
+    // Create recurrence rule
+    CRecurrenceRule* crecrule = new CRecurrenceRule();
+    crecrule->setFrequency( YEARLY_RECURRENCE );
+    crecrule->setCount( 10 );
+    crecrule->setRrule( "FREQ=YEARLY;COUNT=10" );
+
+    qDebug() << "RecurrenceRule: " << QString::fromStdString( crecrule->toString() );
+    std::vector< CRecurrenceRule* > rrules;
+    rrules.push_back( crecrule );
+
+    // Create recurrence
+    CRecurrence* crecurrence = new CRecurrence();
+    crecurrence->setRtype( 4 );
+    crecurrence->setRecurrenceRule( rrules );
+    qDebug() << "Recurrence: " << QString::fromStdString( crecurrence->toString() );
+
+    // Add recurrence to event
+    bool ok = cevent->setRecurrence( crecurrence );
+    qDebug() << "Status: " << ok;
+
+    // Add event to calendar
+    int calError;
+    cal->addEvent(cevent, calError);
+    qDebug() << "Cal error: " << calError;
+    */
+
+
+
+
+    // TODO: This quick implementation is provided only to make the demo application to work
+    // It doesn't support any filters, sort orders or fetch hints
+
+    *error = QOrganizerItemManager::NoError;
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    QList<QOrganizerItem> retn;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+
+    std::vector<CEvent*> events = cal->getEvents( calError );
+    for( int i = 0; i < events.size(); ++i )
+    {
+        CEvent* cevent = events[i];
+
+/*
+        // Debug code:
+        qDebug() << "**- Event id " << QString::fromStdString(cevent->getId());
+        CRecurrence* crec = cevent->getRecurrence();
+        qDebug() << "**- Recurrence: " << QString::fromStdString( crec->toString() );
+
+        std::vector< CRecurrenceRule* > rrules;
+        rrules = crec->getRecurrenceRule();
+        qDebug() << rrules.size();
+        for( int i = 0; i < rrules.size(); ++i )
+        {
+            CRecurrenceRule* rule = rrules[i];
+            qDebug() << "**- " << QString::fromStdString( rule->toString() );
+        }
+*/
+        QOrganizerEvent event = convertCEventToQEvent( cevent );
+        fillInCommonCComponentDetails( &event, cevent );
+        delete cevent;
+        retn.append( event );
+    }
+
+    std::vector<CTodo*> todos = cal->getTodos( calError );
+    for( int i = 0; i < todos.size(); ++i )
+    {
+        CTodo* ctodo = todos[i];
+        QOrganizerTodo todo = convertCTodoToQTodo( ctodo );
+        fillInCommonCComponentDetails( &todo, ctodo );
+        delete ctodo;
+        retn.append( todo );
+    }
+
+    std::vector<CJournal*> journals = cal->getJournals( calError );
+    for( int i = 0; i < journals.size(); ++i )
+    {
+        CJournal* cjournal = journals[i];
+        QOrganizerJournal journal = convertCJournalToQJournal( cjournal );
+        fillInCommonCComponentDetails( &journal, cjournal );
+        delete cjournal;
+        retn.append( journal );
+    }
+
+    cleanupCal( cal );
+    return retn;
+
+
+
     /*
         TODO
 
@@ -173,6 +309,8 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
         The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
         fetch at least what is mentioned in the fetch hint).
     */
+
+    /*
 
     Q_UNUSED(fetchHint);
     *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
@@ -193,7 +331,7 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
         }
      */
 
-    return ret;
+    //return ret;
 }
 
 QOrganizerItem QOrganizerItemMaemo5Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
@@ -469,7 +607,7 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     *error = QOrganizerItemManager::InvalidItemTypeError;
 
-    CComponent* component = createCComponent( cal, *item );
+    CComponent* component = createCComponent( cal, item );
     if( !component )
         return calError;
 
@@ -774,15 +912,15 @@ void QOrganizerItemMaemo5Engine::fillInCommonCComponentDetails( QOrganizerItem* 
     }
 }
 
-CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const QOrganizerItem& item ) const
+CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const QOrganizerItem* item ) const
 {
-    QOrganizerItemLocalId itemId = item.localId();
+    QOrganizerItemLocalId itemId = item->localId();
     QString itemIdStr = QString::number( itemId );
     int calId = cal->getCalendarId();
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
     CComponent* retn = 0; // Return null on errors
 
-    if (item.type() == QOrganizerItemType::TypeEvent) {
+    if (item->type() == QOrganizerItemType::TypeEvent) {
         CEvent* cevent = cal->getEvent( itemIdStr.toStdString(), calError );
         if ( !cevent ) {
             // Event did not existed in calendar, create a new CEvent with an empty ID
@@ -795,28 +933,27 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         cevent->setCalendarId( calId );
 
         // Set the event specific details
-        const QOrganizerEvent& event = static_cast<const QOrganizerEvent&>( item );
-        if (!event.locationGeoCoordinates().isEmpty())
-            cevent->setGeo(event.locationGeoCoordinates().toStdString());
-        if (!event.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
-            cevent->setPriority(static_cast<int>(event.priority()));
+        const QOrganizerEvent* event = static_cast<const QOrganizerEvent*>( item );
+        if (!event->locationGeoCoordinates().isEmpty())
+            cevent->setGeo(event->locationGeoCoordinates().toStdString());
+        if (!event->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
+            cevent->setPriority(static_cast<int>(event->priority()));
 
         // Build and set the recurrence information of the event
         CRecurrence* recurrence = createCRecurrence( item );
-
-        cevent->setRecurrence( recurrence ); // setting makes a copy
-        delete recurrence;
+        cevent->setRecurrence( recurrence );
+        delete recurrence; // setting makes a copy
         recurrence = 0;
 
         // TODO: Maybe the following should be removed and should be set on the upper level?
-        if (!event.startDateTime().isNull())
-            cevent->setDateStart(event.startDateTime().toTime_t());
-        if (!event.endDateTime().isNull())
-            cevent->setDateEnd(event.endDateTime().toTime_t());
+        if (!event->startDateTime().isNull())
+            cevent->setDateStart(event->startDateTime().toTime_t());
+        if (!event->endDateTime().isNull())
+            cevent->setDateEnd(event->endDateTime().toTime_t());
 
         retn = cevent;
     }
-    else if (item.type() == QOrganizerItemType::TypeTodo) {
+    else if (item->type() == QOrganizerItemType::TypeTodo) {
         CTodo* ctodo = cal->getTodo( itemIdStr.toStdString(), calError );
         if ( !ctodo ) {
             // Event did not existed in calendar, create a new CEvent with an empty ID
@@ -829,22 +966,22 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         ctodo->setCalendarId( calId );
 
         // Set the todo specific details
-        const QOrganizerTodo& todo = static_cast<const QOrganizerTodo&>( item );
-        if (!todo.detail("QOrganizerItemLocation::DefinitionName").isEmpty())
-            ctodo->setGeo(todo.detail<QOrganizerItemLocation>().geoLocation().toStdString());
-        if (!todo.detail("QOrganizerItemPriority::DefinitionName").isEmpty())
-            ctodo->setPriority(static_cast<int>(todo.priority()));
-        if (!todo.dueDateTime().isNull())
-            ctodo->setDue(todo.dueDateTime().toTime_t());
+        const QOrganizerTodo* todo = static_cast<const QOrganizerTodo*>( item );
+        if (!todo->detail("QOrganizerItemLocation::DefinitionName").isEmpty())
+            ctodo->setGeo(todo->detail<QOrganizerItemLocation>().geoLocation().toStdString());
+        if (!todo->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
+            ctodo->setPriority(static_cast<int>(todo->priority()));
+        if (!todo->dueDateTime().isNull())
+            ctodo->setDue(todo->dueDateTime().toTime_t());
         // TODO: CTodo::setCompleted, CTodo::setPercentComplete ??
 
         // TODO: Maybe the following should be removed and should be set on the upper level?
-        if (!todo.notBeforeDateTime().isNull())
-            ctodo->setDateStart(todo.notBeforeDateTime().toTime_t());
+        if (!todo->notBeforeDateTime().isNull())
+            ctodo->setDateStart(todo->notBeforeDateTime().toTime_t());
 
         retn = ctodo;
     }
-    else if (item.type() == QOrganizerItemType::TypeJournal) {
+    else if (item->type() == QOrganizerItemType::TypeJournal) {
         CJournal* cjournal = cal->getJournal( itemIdStr.toStdString(), calError );
         if ( !cjournal ) {
             // Event did not existed in calendar, create a new CEvent with an empty ID
@@ -859,23 +996,23 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         // Set journal specific details
         // TODO: There's no journal specific details in Maemo.
         // TODO: Maybe should be removed and should be set on the upper level?
-        const QOrganizerJournal& journal = static_cast<const QOrganizerJournal&>( item );
-        if (!journal.dateTime().isNull())
-            cjournal->setDateStart(journal.dateTime().toTime_t());
+        const QOrganizerJournal* journal = static_cast<const QOrganizerJournal*>( item );
+        if (!journal->dateTime().isNull())
+            cjournal->setDateStart(journal->dateTime().toTime_t());
 
         retn = cjournal;
     }
 
     if( retn ) {
         // Set the common details for all CComponents:
-        if (!item.displayLabel().isEmpty())
-            retn->setSummary(item.displayLabel().toStdString());
-        if (!item.description().isEmpty())
-            retn->setDescription(item.description().toStdString());
-        if (!item.guid().isEmpty())
-            retn->setGUid(item.guid().toStdString());
+        if (!item->displayLabel().isEmpty())
+            retn->setSummary(item->displayLabel().toStdString());
+        if (!item->description().isEmpty())
+            retn->setDescription(item->description().toStdString());
+        if (!item->guid().isEmpty())
+            retn->setGUid(item->guid().toStdString());
 
-        QStringList comments = item.comments();
+        QStringList comments = item->comments();
         if ( !comments.isEmpty() ) {
             // TODO: Maemo5 has only a single string for comments,
             // map the comment list to a string somehow.
@@ -885,30 +1022,24 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
     return retn;
 }
 
-CRecurrence* QOrganizerItemMaemo5Engine::createCRecurrence( const QOrganizerItem& item ) const
+CRecurrence* QOrganizerItemMaemo5Engine::createCRecurrence( const QOrganizerItem* item ) const
 {
     // Only the event and todo types contain recurrence information
-    if (item.type() == QOrganizerItemType::TypeEvent) {
-        const QOrganizerEvent& event = static_cast<const QOrganizerEvent&>( item );
-
-        //QList<QDate> recurrenceDates = event.recurrenceDates();
-        //QList<QOrganizerItemRecurrenceRule> exceptionRules = event.exceptionRules();
-        //QList<QDate> exceptionDates = event.exceptionDates();
-
+    if (item->type() == QOrganizerItemType::TypeEvent) {
         d->m_recTransformer.beginTransformToCrecurrence();
+        const QOrganizerEvent* event = static_cast<const QOrganizerEvent*>( item );
+        QList<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
 
-        QList<QOrganizerItemRecurrenceRule> recurrenceRules = event.recurrenceRules();
         foreach( QOrganizerItemRecurrenceRule rule, recurrenceRules )
             d->m_recTransformer.addQOrganizerItemRecurrenceRule( rule );
 
-        // TODO: recurrenceDates, exceptionRules, exceptionDates
-
+        // TODO: Add recurrenceDates, exceptionRules & exceptionDates
         return d->m_recTransformer.crecurrence(); // TODO: This may need error handling?
     }
-    else if (item.type() == QOrganizerItemType::TypeTodo) {
-        const QOrganizerTodo& todo = static_cast<const QOrganizerTodo&>( item );
-        QList<QDate> recurrenceDates = todo.recurrenceDates();
-        QList<QOrganizerItemRecurrenceRule> recurrenceRules = todo.recurrenceRules();
+    else if (item->type() == QOrganizerItemType::TypeTodo) {
+        const QOrganizerTodo* todo = static_cast<const QOrganizerTodo*>( item );
+        QList<QDate> recurrenceDates = todo->recurrenceDates();
+        QList<QOrganizerItemRecurrenceRule> recurrenceRules = todo->recurrenceRules();
 
         // TODO
     }

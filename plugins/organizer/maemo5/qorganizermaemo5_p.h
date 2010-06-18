@@ -146,6 +146,11 @@ public:
 
     QList<QOrganizerItem> itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const;
     QList<QOrganizerItemLocalId> itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const;
+
+    // TODO: This is temporary just to reset the calendar in error situations,
+    // use only for debugging & remove this finally!
+    void removeAllForDebug() const;
+
     QList<QOrganizerItem> items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
     QOrganizerItem item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const;
 
@@ -177,10 +182,10 @@ private:
 
     // conversions between CComponent and QOrganizerItem
     void fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component ) const;
-    CComponent* createCComponent( CCalendar* cal, const QOrganizerItem& item ) const;
+    CComponent* createCComponent( CCalendar* cal, const QOrganizerItem* item ) const;
 
     // recurrence information conversions
-    CRecurrence* createCRecurrence( const QOrganizerItem& item ) const;
+    CRecurrence* createCRecurrence( const QOrganizerItem* item ) const;
 
     // error code conversion
     QOrganizerItemManager::Error calErrorToManagerError( int calError ) const;
@@ -198,4 +203,3 @@ private:
 };
 
 #endif
-

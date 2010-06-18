@@ -44,11 +44,11 @@
 
 #include <CRecurrence.h>
 #include <CRecurrenceRule.h>
-#include <QDebug>
 
 QTM_USE_NAMESPACE
 
 OrganizerRecurrenceTransform::OrganizerRecurrenceTransform()
+    : m_rtype( 0 )
 {
 }
 
@@ -59,14 +59,13 @@ OrganizerRecurrenceTransform::~OrganizerRecurrenceTransform()
 
 void OrganizerRecurrenceTransform::beginTransformToCrecurrence()
 {
-    //qDebug() << "OrganizerRecurrenceTransform::beginTransformToCrecurrence";
-
     std::vector< CRecurrenceRule* >::iterator i;
     for( i = m_vRRuleList.begin(); i != m_vRRuleList.end(); ++i )
         delete *i;
     for( i = m_vERuleList.begin(); i != m_vERuleList.end(); ++i )
         delete *i;
 
+    m_rtype = 0;
     m_vRRuleList.clear();
     m_vERuleList.clear();
     m_vRecDateList.clear();
@@ -88,19 +87,19 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence( bool* success ) const
     }
 
     CRecurrence* retn = new CRecurrence();
+
+    // Set rule type
+    retn->setRtype( m_rtype );
+
     // Add recursion rules
     if( !m_vRRuleList.empty() ) {
         if( !retn->setRecurrenceRule( m_vRRuleList ) ) {
-            qDebug() << "setRRule failed";
             delete retn;
             return 0; // failed
         }
-
-        std::vector< CRecurrenceRule* > tmp = retn->getRecurrenceRule();
-        qDebug() << "Recurrence rules count: " << tmp.size();
-        if( tmp.size() > 0 )
-            qDebug() << QString::fromStdString(tmp[0]->toString());
     }
+
+    // TODO: Excpetion rules, recurrence dates & exception dates
 
     if ( success )
         *success = true;
@@ -110,35 +109,80 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence( bool* success ) const
 
 void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceRule( const QOrganizerItemRecurrenceRule& rule )
 {
-    qDebug() << "OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceRule";
-
     CRecurrenceRule* crecrule = new CRecurrenceRule();
 
-    crecrule->setFrequency( qfrequencyToCfrequency( rule.frequency() ) );
-
+    QString icalRule;
+//#define USE_PRODUCTION_CODE
+#ifndef USE_PRODUCTION_CODE
+    icalRule += qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Daily ) + ";";
+    icalRule += qcountToIcalCount( 10 ) + ";";
+    icalRule += qintervalToIcalInterval( 1 );
+    //crecrule->setFrequency( qfrequencyToCfrequency( QOrganizerItemRecurrenceRule::Daily ) );
+    //crecrule->setCount( 10 );
+    //crecrule->setInterval( 1 );
+#else // USE_PRODUCTION_CODE
+    icalRule += qfrequencyToIcalFrequency( rule.frequency() ) + ";";
     if ( rule.count() > 0 )
-        crecrule->setCount( rule.count() );
+        icalRule += qcountToIcalCount( rule.count() ) + ";";
     else if ( rule.endDate() != QDate() )
-        crecrule->setUntil( QDateTime( rule.endDate(), QTime( 23, 59, 59 ) ).toTime_t() );
+        icalRule += qendDateToIcalUntil( rule.endDate() ) + ";";
 
-    crecrule->setInterval( rule.interval() );
+    icalRule += qintervalToIcalInterval( rule.interval() ); // the last parameter must not end with separator
 
-    crecrule->setCount( 10 ); // TEST, remove
-    crecrule->setInterval( 1 ); // TEST, remove
-    crecrule->setUntil( QDateTime( QDate( 2010, 8, 1), QTime( 23, 59, 59) ).toTime_t() ); // TEST, remove
+#endif // USE_PRODUCTION_CODE
 
-    qDebug() << "Recurrence rule " << QString::fromStdString( crecrule->toString() );
+    // TODO: Handle the other parameters of QOrganizerItemRecurrenceRule
 
+    // Store rule to the rule vector
+    crecrule->setRrule( icalRule.toStdString() );
     m_vRRuleList.push_back( crecrule );
+
+    // Update the recursion type, set according to the most frequent rule
+    int ruleRtype = qfrequencyToRtype( rule.frequency() );
+    m_rtype = m_rtype ? ( ruleRtype < m_rtype ? ruleRtype : m_rtype ) : ruleRtype;
 }
 
-FREQUENCY OrganizerRecurrenceTransform::qfrequencyToCfrequency( QOrganizerItemRecurrenceRule::Frequency frequency ) const
+QString OrganizerRecurrenceTransform::qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Frequency frequency ) const
 {
     switch( frequency )
     {
-    case QOrganizerItemRecurrenceRule::Daily: return DAILY_RECURRENCE;
-    case QOrganizerItemRecurrenceRule::Weekly: return WEEKLY_RECURRENCE;
-    case QOrganizerItemRecurrenceRule::Monthly: return MONTHLY_RECURRENCE;
-    case QOrganizerItemRecurrenceRule::Yearly: return YEARLY_RECURRENCE;
+    case QOrganizerItemRecurrenceRule::Daily: return QString("FREQ=DAILY");
+    case QOrganizerItemRecurrenceRule::Weekly: return QString("FREQ=WEEKLY");
+    case QOrganizerItemRecurrenceRule::Monthly: return QString("FREQ=MONTHLY");
+    case QOrganizerItemRecurrenceRule::Yearly: return QString("FREQ=YEARLY");
+    }
+}
+
+QString OrganizerRecurrenceTransform::qcountToIcalCount( int count ) const
+{
+    return QString("COUNT=") + QString::number(count);
+}
+
+QString OrganizerRecurrenceTransform::qintervalToIcalInterval( int interval ) const
+{
+    return QString("INTERVAL=") + QString::number( interval );
+}
+
+QString OrganizerRecurrenceTransform::qendDateToIcalUntil( QDate endDate ) const
+{
+    // TODO: Check the correctness of this conversion, is there situations when this is not correct?
+    return QString("UNTIL=") + endDate.toString("yyyyMMdd") + "T235959Z";
+}
+
+int OrganizerRecurrenceTransform::qfrequencyToRtype( QOrganizerItemRecurrenceRule::Frequency frequency ) const
+{
+    // The recursion types the native calendar application
+    // uses are found by experiment:
+    const int NATIVE_CAL_APP_DAILY = 1;
+    const int NATIVE_CAL_APP_WEEKLY = 3;
+    const int NATIVE_CAL_APP_MONTHLY = 5;
+    const int NATIVE_CAL_APP_YEARLY = 6;
+
+    switch( frequency )
+    {
+    case QOrganizerItemRecurrenceRule::Daily: return NATIVE_CAL_APP_DAILY;
+    case QOrganizerItemRecurrenceRule::Weekly: return NATIVE_CAL_APP_WEEKLY;
+    case QOrganizerItemRecurrenceRule::Monthly: return NATIVE_CAL_APP_MONTHLY;
+    case QOrganizerItemRecurrenceRule::Yearly: return NATIVE_CAL_APP_YEARLY;
     }
 }

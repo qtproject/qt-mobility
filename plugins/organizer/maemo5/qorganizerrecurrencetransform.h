@@ -72,9 +72,15 @@ public:
 
 private:
     // conversions
-    FREQUENCY qfrequencyToCfrequency( QOrganizerItemRecurrenceRule::Frequency frequency ) const;
+    QString qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Frequency frequency ) const;
+    QString qcountToIcalCount( int count ) const;
+    QString qintervalToIcalInterval( int interval ) const;
+    QString qendDateToIcalUntil( QDate endDate ) const;
+
+    int qfrequencyToRtype( QOrganizerItemRecurrenceRule::Frequency frequency ) const;
 
 private:
+    int m_rtype; // Recursion type parameter for the native calendar backend
     std::vector< CRecurrenceRule* > m_vRRuleList;
     std::vector< CRecurrenceRule* > m_vERuleList;
     std::vector< std::string > m_vRecDateList;
