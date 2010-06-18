@@ -249,7 +249,7 @@ void QVersitDocument::clear()
  */
 void QVersitDocument::addSubDocument(const QVersitDocument& subdocument)
 {
-    d->mSubDocuments.append(document);
+    d->mSubDocuments.append(subdocument);
 }
 
 /*!
