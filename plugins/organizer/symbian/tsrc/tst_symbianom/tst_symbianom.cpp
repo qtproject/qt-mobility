@@ -683,6 +683,37 @@ void tst_SymbianOm::addTodo_data(QString managerName)
                 << QTstDetail(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime().addDays(1)));
     }
     
+    // *** test QOrganizerTodoProgress ***
+    QTstDetail itemTypeTodo(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeTodo);
+    QTstDetail timeStart(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldStartDateTime, QDateTime::currentDateTime());
+    QTstDetail timeDue(QOrganizerTodoTimeRange::DefinitionName, QOrganizerTodoTimeRange::FieldDueDateTime, QDateTime::currentDateTime().addDays(1));
+    
+    QTest::newRow(QString("[%1] Item type Todo; details: progress StatusNotStarted").arg(managerName).toLatin1().constData())
+        << managerName
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList() << itemTypeTodo << timeStart << timeDue
+            << QTstDetail(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusNotStarted));
+    
+    QTest::newRow(QString("[%1] Item type Todo; details: progress StatusInProgress").arg(managerName).toLatin1().constData())
+        << managerName
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList() << itemTypeTodo << timeStart << timeDue
+            << QTstDetail(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusInProgress));
+    
+    QTest::newRow(QString("[%1] Item type Todo; details: progress StatusComplete").arg(managerName).toLatin1().constData())
+        << managerName
+        << (int) QOrganizerItemManager::NoError
+        << (QTstDetailList() << itemTypeTodo << timeStart << timeDue
+            << QTstDetail(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete)
+            << QTstDetail(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldFinishedDateTime, QDateTime::currentDateTime()));    
+
+    QTest::newRow(QString("[%1] Item type Todo; details: progress StatusComplete, no finished date").arg(managerName).toLatin1().constData())
+        << managerName
+        << (int) QOrganizerItemManager::BadArgumentError
+        << (QTstDetailList() << itemTypeTodo << timeStart << timeDue
+            << QTstDetail(QOrganizerTodoProgress::DefinitionName, QOrganizerTodoProgress::FieldStatus, QOrganizerTodoProgress::StatusComplete));    
+    
+    
 /* TODO: Enable and implement
     QTest::newRow(QString("[%1] Item type TodoOccurrence").arg(managerName).toLatin1().constData())
         << managerName

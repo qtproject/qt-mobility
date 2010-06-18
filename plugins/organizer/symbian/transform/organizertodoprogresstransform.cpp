@@ -56,7 +56,7 @@ void OrganizerTodoProgressTransform::transformToDetailL(const CCalEntry& entry, 
             progress.setStatus(QOrganizerTodoProgress::StatusComplete);
             progress.setFinishedDateTime(toQDateTimeL(entry.CompletedTimeL()));
         } else {
-            User::Leave(KErrArgument); // TODO: Do we really need to leave?
+            User::Leave(KErrUnknown);
         }
 
         item->saveDetail(&progress);
@@ -69,19 +69,21 @@ void OrganizerTodoProgressTransform::transformToEntryL(const QOrganizerItem& ite
     {
         QOrganizerTodoProgress progress = item.detail<QOrganizerTodoProgress>();
         if (progress.isEmpty())
-            return;
+            return; // TODO: should we leave instead?
 
-        if (progress.status() == QOrganizerTodoProgress::StatusNotStarted)
+        if (progress.status() == QOrganizerTodoProgress::StatusNotStarted) {
             entry->SetStatusL(CCalEntry::ETodoNeedsAction);
-        else if (progress.status() == QOrganizerTodoProgress::StatusInProgress)
+        } else if (progress.status() == QOrganizerTodoProgress::StatusInProgress) {
             entry->SetStatusL(CCalEntry::ETodoInProcess);
-        else if (progress.status() == QOrganizerTodoProgress::StatusComplete)
+        } else if (progress.status() == QOrganizerTodoProgress::StatusComplete) {
             entry->SetStatusL(CCalEntry::ETodoCompleted);
-        else
-            User::Leave(KErrArgument); // TODO: Do we really need to leave?
-
-        if (!progress.isEmpty() && progress.status() == QOrganizerTodoProgress::StatusComplete)
+            // symbian calandar will panic if time is not valid
+            if (!progress.finishedDateTime().isValid())
+                User::Leave(KErrArgument);
             entry->SetCompletedL(true, toTCalTimeL(progress.finishedDateTime()));
+        } else {
+            User::Leave(KErrArgument);
+        }
     }
 }
 
