@@ -57,7 +57,7 @@ class QOrganizerQmlPlugin : public QDeclarativeExtensionPlugin
 public:
     void registerTypes(const char *uri)
     {
-        Q_ASSERT(uri == QLatin1String("com.nokia.mobility"));
+        Q_ASSERT(uri == QLatin1String("QtMobility.organizer"));
         qmlRegisterType<QMLOrganizerModel>(uri, 1, 0, "QmlOrganizerModel");
         qmlRegisterType<QMLOrganizerItem>(uri, 1, 0, "QmlOrganizerItem");
         qmlRegisterType<QMLOrganizer>(uri, 1, 0, "QmlOrganizer");
