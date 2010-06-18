@@ -30,8 +30,7 @@ contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
                satellitedialog 
     contains(mobility_modules,bearer) {
-    	SUBDIRS += flickrdemo \
-                   weatherinfo 
+    	SUBDIRS += flickrdemo
                    #mapviewer (disable for now) 
                    #qgeoapiui
         
