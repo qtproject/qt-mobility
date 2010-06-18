@@ -64,7 +64,7 @@ QMLContact::QMLContact(QObject *parent)
     roleNames.insert(DetailFieldRole, "field");
     setRoleNames(roleNames);
 
-    connect(&m_saveRequest, SIGNAL(resultAvailable()), this, SLOT(onContactSaved()));
+    connect(&m_saveRequest, SIGNAL(resultsAvailable()), this, SLOT(onContactSaved()));
 }
 
 void QMLContact::setManager(QContactManager* manager)
