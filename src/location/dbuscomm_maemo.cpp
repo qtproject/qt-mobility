@@ -50,7 +50,9 @@ const QString DBusComm::positioningdService   = QString("com.nokia.positioningd.
 const QString DBusComm::positioningdPath      = QString("/com/nokia/positioningd/client");
 const QString DBusComm::positioningdInterface = QString("com.nokia.positioningd.client");
 
-DBusComm::DBusComm()
+DBusComm::DBusComm(QObject *parent) : QObject(parent), 
+                                      minimumUpdateInterval(1000), 
+                                      availablePositioningMethods(QGeoPositionInfoSource::AllPositioningMethods)
 {
 }
 
@@ -67,7 +69,7 @@ int DBusComm::init()
 
     int cnt = 6; 
     do {
-        cout << "Connecting to positioning daemon..." << endl;
+        // cout << "Connecting to positioning daemon..." << endl;
         positioningdProxy = new QDBusInterface(positioningdService,
                                                positioningdPath,
                                                positioningdInterface,
@@ -80,6 +82,18 @@ int DBusComm::init()
         cerr << "DBus connection to positioning daemon failed.\n";
         return -1;
     }
+    serviceDisconnectWatcher = new QDBusServiceWatcher (positioningdService, QDBusConnection::sessionBus(), 
+                                                        QDBusServiceWatcher::WatchForUnregistration, this);
+    
+    QObject::connect(serviceDisconnectWatcher, SIGNAL(serviceUnregistered ( const QString &)),
+                     this,SLOT(onServiceDisconnect(const QString &)));
+
+    serviceConnectWatcher = new QDBusServiceWatcher (positioningdService, QDBusConnection::sessionBus(), 
+                                                     QDBusServiceWatcher::WatchForRegistration, this);
+    
+    QObject::connect(serviceConnectWatcher, SIGNAL(serviceRegistered ( const QString &)),
+                     this,SLOT(onServiceConnect(const QString &)));
+    
 
     if (createUniqueName() == false) { // set myService, myPath 
         return -1;
@@ -95,6 +109,21 @@ int DBusComm::init()
     sendDBusRegister();
 
     return 0;
+}
+
+
+void DBusComm::onServiceDisconnect(const QString &name)
+{
+    Q_UNUSED(name);
+    emit serviceDisconnected();
+}
+
+
+void DBusComm::onServiceConnect(const QString &name)
+{
+    Q_UNUSED(name);
+    sendDBusRegister();
+    emit serviceConnected();
 }
 
 
@@ -116,60 +145,47 @@ void DBusComm::receiveSatellitesInUse(const QList<QGeoSatelliteInfo> &info)
 }
 
 
-void DBusComm::receiveSettings(const QGeoPositionInfoSource::PositioningMethod methods,
-                              const int interval)
+void DBusComm::receiveSettings(QGeoPositionInfoSource::PositioningMethod methods, qint32 interval)
 {
-    Q_UNUSED(methods)
-    cout << "Interval confirmed to be :" << interval << "\n";
-    // FIXME save these
-
-    return;
+    availablePositioningMethods = methods;
+    minimumUpdateInterval = interval;
 }
 
 
 bool DBusComm::sendDBusRegister()
 {
-#if 1
-    QDBusReply<int> reply;
-    reply = positioningdProxy->call("registerListener",
-                                    myService.toAscii().constData(),
-                                    myPath.toAscii().constData());
-    if (reply.isValid()) {
-        clientId = reply.value();
+    QDBusMessage reply = positioningdProxy->call("registerListener",
+                                                 myService.toAscii().constData(),
+                                                 myPath.toAscii().constData());
+    if (reply.type() == QDBusMessage::ReplyMessage) {
+        QList<QVariant> values = reply.arguments();
+        clientId = values.takeFirst().toInt();
+        quint32 m = values.takeFirst().toUInt();
+        availablePositioningMethods = (QGeoPositionInfoSource::PositioningMethod) m;
+        minimumUpdateInterval = values.takeFirst().toUInt();
         cout << "Register client ID: " << clientId << endl;
+        cout << "Methods available: " << hex << availablePositioningMethods << dec;
+        cout  << " minInterval: " << minimumUpdateInterval << "\n"; 
     } else {
         cerr << endl << "DBus error:\n";
-        cerr << reply.error().name().toAscii().constData() << endl;
-        cerr << reply.error().message().toAscii().constData() << endl;
+        cerr << reply.errorName().toAscii().constData() << endl;
+        cerr << reply.errorMessage().toAscii().constData() << endl;
         return false;
     }
-#else
-    QList<QVariant> args;
-    QDBusMessage message = QDBusMessage::createMethodCall(positioningdService, positioningdPath,
-                                                          positioningdInterface, "registerListener");
-    args << myService.toAscii().constData() << myPath.toAscii().constData();
-    message.setArguments(args);
-    QDBusPendingCall pending = QDBusConnection::systemBus().asyncCall(message, 10000);
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(pending, this);
-    QObject::connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)),
-                     this, SLOT(registerDone(QDBusPendingCallWatcher*)));
-    
-    cout << "DBusComm::sendDBusRegister() Register client\n";
-#endif
+
     return true;
 }
 
 
-void DBusComm::registerDone(QDBusPendingCallWatcher *call)
+QGeoPositionInfoSource::PositioningMethods DBusComm::availableMethods() const
 {
-    QDBusPendingReply<int> reply = *call;
-    if (reply.isValid()) {
-        clientId = reply.value();
-        cout << "Register client ID: " << clientId << endl;
-    } 
-    else {
-        std::cerr << "DBusComm::register Dbus Error:" << qPrintable(reply.error().message()) << "\n";
-    }
+    return availablePositioningMethods;
+}
+
+
+int DBusComm::minimumInterval() const
+{
+    return minimumUpdateInterval;
 }
 
 
@@ -203,7 +219,7 @@ QGeoPositionInfo& DBusComm::requestLastKnownPosition(bool satelliteMethodOnly)
     static QGeoPositionInfo update;
 
     if (reply.isValid()) {
-        cout << "requestLastKnownPosition(): received update\n";
+        // cout << "requestLastKnownPosition(): received update\n";
         QByteArray message = reply.value();
         QDataStream stream(message);
         stream >> update;
