@@ -62,8 +62,7 @@ public:
         AttackIntensity,
         FadeTime,
         FadeIntensity,
-        Period,
-        Device
+        Period //optional
     };
 
     enum ActuatorProperty
