@@ -126,7 +126,6 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
     const QVector<QStringList> resultSet = reply.value();
 
     rCache.count = rCache.index + resultSet.count();
-    postSyncEvent(SyncEvent::startEvent(resultSet.count()));
 
     QVector<QVariant> &values = rCache.values;
     values.clear();
@@ -155,8 +154,6 @@ void QGalleryTrackerItemListPrivate::parseRows(const QDBusPendingCall &call)
     }
 
     synchronize();
-
-    postSyncEvent(SyncEvent::finishEvent());
 }
 
 void QGalleryTrackerItemListPrivate::correctRows(
@@ -228,6 +225,8 @@ void QGalleryTrackerItemListPrivate::synchronize()
 
         if ((equal = rBegin.isEqual(aBegin + offset, identityWidth))) {
             aIt = aBegin + offset;
+
+            postSyncEvent(SyncEvent::startEvent(aCacheIndex(aIt), 0, rCache.index, 0));
         } else {
             aIt = aBegin + qMax(0, offset - 8);
         }
@@ -237,7 +236,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
         if ((equal = aBegin.isEqual(rBegin + offset, identityWidth))) {
             rIt = rBegin + offset;
 
-            postSyncEvent(SyncEvent::updateEvent(aCache.index, rCache.index, offset));
+            postSyncEvent(SyncEvent::startEvent(aCache.index, 0, rCacheIndex(rIt), 0));
         } else {
             rIt = rBegin + qMax(0, offset - 8);
         }
@@ -271,7 +270,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
                     const int aCount = aIt - aBegin;
                     const int rCount = rIt - rBegin;
 
-                    postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
+                    postSyncEvent(SyncEvent::startEvent(aIndex, aCount, rIndex, rCount));
 
                     break;
                 } else if ((equal = rInner.isEqual(aOuter, identityWidth))) {
@@ -286,7 +285,7 @@ void QGalleryTrackerItemListPrivate::synchronize()
                     const int aCount = aIt - aBegin;
                     const int rCount = rIt - rBegin;
 
-                    postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
+                    postSyncEvent(SyncEvent::startEvent(aIndex, aCount, rIndex, rCount));
 
                     break;
                 }
@@ -297,17 +296,10 @@ void QGalleryTrackerItemListPrivate::synchronize()
     if (equal) {
         synchronizeRows(aIt, rIt, aEnd, rEnd);
 
-        const int aIndex = aCacheIndex(aIt);
-        const int rIndex = rCacheIndex(rIt);
-        const int aCount = rCache.count - rCache.index < queryLimit ? aEnd - aIt : 0;
-        const int rCount = rEnd - rIt;
-
-        postSyncEvent(SyncEvent::replaceEvent(aIndex, aCount, rIndex, rCount));
+        postSyncEvent(SyncEvent::finishEvent(aCacheIndex(aIt), rCacheIndex(rIt)));
     } else {
-        const int aCount = aCache.count - aCache.index;
-        const int rCount = rCache.values.count() / tableWidth;
-
-        postSyncEvent(SyncEvent::replaceEvent(aCache.index, aCount, rCache.index, rCount));
+        postSyncEvent(SyncEvent::startEvent(0, 0, 0, 0));
+        postSyncEvent(SyncEvent::finishEvent(aCache.index, rCache.index));
     }
 }
 
@@ -431,7 +423,29 @@ void QGalleryTrackerItemListPrivate::processSyncEvents()
     while (SyncEvent *event = syncEvents.dequeue()) {
         switch (event->type) {
         case SyncEvent::Start:
-            rCache.count = rCache.index + event->rCount;
+            if (event->aCount > 0) {
+                aCache.offset = event->aIndex + event->aCount;
+                rCache.cutoff = event->rIndex;
+
+                rowCount -= event->aCount;
+
+                emit q_func()->removed(event->rIndex, event->aCount);
+            }
+
+            if (event->rCount > 0) {
+                aCache.offset = event->aIndex + event->aCount;
+                rCache.cutoff = event->rIndex + event->rCount;
+
+                rowCount += event->rCount;
+
+                q_func()->inserted(event->rIndex, event->rCount);
+            } else if (event->rIndex > rCache.index) {
+                const int count = event->rIndex - rCache.index;
+
+                rCache.cutoff = event->rIndex;
+
+                emit q_func()->metaDataChanged(rCache.index, count, QList<int>());
+            }
             break;
         case SyncEvent::Update:
             aCache.offset = event->aIndex;
@@ -453,22 +467,48 @@ void QGalleryTrackerItemListPrivate::processSyncEvents()
                 aCache.offset = event->aIndex + event->aCount;
                 rCache.cutoff = event->rIndex + event->rCount;
 
-                if (event->rIndex > rowCount) {
-                    const int index = rowCount;
+                rowCount += event->rCount;
 
-                    rowCount = event->rIndex + event->rCount;
-
-                    q_func()->inserted(index, rowCount - index);
-                } else {
-                    rowCount += event->rCount;
-
-                    q_func()->inserted(event->rIndex, event->rCount);
-                }
-                break;
+                q_func()->inserted(event->rIndex, event->rCount);
             }
             break;
-        case SyncEvent::Finish:
-            flags |= SyncFinished;
+        case SyncEvent::Finish: {
+                const int aCount = aCache.count - event->aIndex;
+                const int rCount = rCache.count - event->rIndex;
+
+                aCache.offset = aCache.count;
+
+                if (aCount > 0 && rCache.count - rCache.index < queryLimit) {
+                    rowCount -= aCount;
+
+                    rCache.cutoff = event->rIndex;
+
+                    emit q_func()->removed(event->rIndex, aCount);
+                }
+
+                if (rCount > 0) {
+                    if (event->rIndex < rowCount) {
+                        rCache.cutoff = qMin(rowCount, rCache.count);
+
+                        q_func()->metaDataChanged(event->rIndex, rCache.cutoff - event->rIndex);
+                    } else {
+                        rCache.cutoff = event->rIndex;
+                    }
+
+                    if (rCache.cutoff < rCache.count) {
+                        const int index = rowCount;
+
+                        rCache.cutoff = rCache.count;
+                        rowCount = rCache.count;
+
+                        q_func()->inserted(index, rowCount - index);
+                    }
+                } else {
+                    rCache.cutoff = rCache.count;
+                }
+
+                flags |= SyncFinished;
+            }
             break;
         default:
             break;
@@ -504,28 +544,28 @@ void QGalleryTrackerItemListPrivate::_q_parseFinished()
     aCache.values.clear();
     aCache.count = 0;
 
-    const int statusIndex = rCache.cutoff;
-
-    rCache.cutoff = rCache.count;
-
-    if (rCache.cutoff > rowCount) {
-        const int statusCount = rowCount - statusIndex;
-
-        const int index = rowCount;
-        const int count = rCache.cutoff - rowCount;
-
-        rowCount = rCache.cutoff;
-
-        emit q_func()->inserted(index, count);
-
-        if (statusCount > 0)
-            emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
-    } else {
-        const int statusCount = rCache.index - statusIndex;
-
-        if (statusCount > 0)
-            emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
-    }
+//    const int statusIndex = rCache.cutoff;
+//
+//    rCache.cutoff = rCache.count;
+//
+//    if (rCache.cutoff > rowCount) {
+//        const int statusCount = rowCount - statusIndex;
+//
+//        const int index = rowCount;
+//        const int count = rCache.cutoff - rowCount;
+//
+//        rowCount = rCache.cutoff;
+//
+//        emit q_func()->inserted(index, count);
+//
+//        if (statusCount > 0)
+//            emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
+//    } else {
+//        const int statusCount = rCache.index - statusIndex;
+//
+//        if (statusCount > 0)
+//            emit q_func()->metaDataChanged(statusIndex, statusCount, QList<int>());
+//    }
 
     flags &= ~Active;
 

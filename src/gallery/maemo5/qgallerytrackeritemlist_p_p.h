@@ -90,7 +90,8 @@ public:
         const int rIndex;
         const int rCount;
 
-        static SyncEvent *startEvent(int count) { return new SyncEvent(Start, 0, 0, 0, count); }
+        static SyncEvent *startEvent(int aIndex, int aCount, int rIndex, int rCount) {
+            return new SyncEvent(Start, aIndex, aCount, rIndex, rCount); }
 
         static SyncEvent *updateEvent(int aIndex, int rIndex, int count) {
             return new SyncEvent(Update, aIndex, count, rIndex, count); }
@@ -98,7 +99,8 @@ public:
         static SyncEvent *replaceEvent(int aIndex, int aCount, int rIndex, int rCount) {
             return new SyncEvent(Replace, aIndex, aCount, rIndex, rCount); }
 
-        static SyncEvent *finishEvent() { return new SyncEvent(Finish, 0, 0, 0, 0); }
+        static SyncEvent *finishEvent(int aIndex, int rIndex) {
+            return new SyncEvent(Finish, aIndex, 0, rIndex, 0); }
 
     private:
         SyncEvent(Type type, int aIndex, int aCount, int rIndex, int rCount)

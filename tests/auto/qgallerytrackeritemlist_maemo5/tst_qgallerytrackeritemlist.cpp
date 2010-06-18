@@ -73,6 +73,7 @@ public Q_SLOTS:
     void cleanup();
 
 private Q_SLOTS:
+//private:
     void query();
     void refresh();
     void reset();
@@ -83,6 +84,7 @@ private Q_SLOTS:
     void replaceMiddleItem();
     void scrollDownOverlapping();
     void scrollUpOverlapping();
+    void scrollJitterOverlapping();
 
 private:
     void populateArguments(
@@ -826,6 +828,96 @@ void tst_QGalleryTrackerItemList::scrollUpOverlapping()
     QCOMPARE(list.id(200), QVariant(QLatin1String("c-000")));
     QCOMPARE(list.id(300), QVariant());
     QCOMPARE(list.id(400), QVariant());
+    QCOMPARE(list.id(500), QVariant());
+}
+
+void tst_QGalleryTrackerItemList::scrollJitterOverlapping()
+{
+    QGalleryTrackerItemListArguments arguments;
+
+    populateArguments(&arguments, QLatin1String("query"));
+
+    for (char c = 'a'; c <= 'z'; ++c)
+        m_queryAdaptor->setCount(c, 100);
+
+    QGalleryTrackerItemList list(arguments, true, 0, 32);
+
+    QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
+    QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
+    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
+    QCOMPARE(list.count(), 0);
+
+    QVERIFY(list.waitForFinished(INT_MAX));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 256);
+    QCOMPARE(insertSpy.count(), 1);
+    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
+    QCOMPARE(insertSpy.last().value(1).toInt(), 256);
+    QCOMPARE(removeSpy.count(), 0);
+    QCOMPARE(changeSpy.count(), 0);
+
+    QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
+    QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
+    QCOMPARE(list.id(200), QVariant(QLatin1String("c-000")));
+    QCOMPARE(list.id(300), QVariant());
+    QCOMPARE(list.id(400), QVariant());
+    QCOMPARE(list.id(500), QVariant());
+
+    list.setCursorPosition(256);
+    QVERIFY(list.waitForFinished(INT_MAX));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 448);
+    QCOMPARE(insertSpy.count(), 2);
+    QCOMPARE(insertSpy.last().value(0).toInt(), 256);
+    QCOMPARE(insertSpy.last().value(1).toInt(), 192);
+    QCOMPARE(removeSpy.count(), 0);
+    QCOMPARE(changeSpy.count(), 0);
+
+    QCOMPARE(list.id(0), QVariant());
+    QCOMPARE(list.id(100), QVariant());
+    QCOMPARE(list.id(200), QVariant(QLatin1String("c-000")));
+    QCOMPARE(list.id(300), QVariant(QLatin1String("d-000")));
+    QCOMPARE(list.id(400), QVariant(QLatin1String("e-000")));
+    QCOMPARE(list.id(500), QVariant());
+
+    list.setCursorPosition(0);
+    QVERIFY(list.waitForFinished(INT_MAX));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 448);
+    QCOMPARE(insertSpy.count(), 2);
+    QCOMPARE(removeSpy.count(), 0);
+    QCOMPARE(changeSpy.count(), 1);
+    QCOMPARE(changeSpy.last().value(0).toInt(), 0);
+    QCOMPARE(changeSpy.last().value(1).toInt(), 192);
+
+    QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
+    QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
+    QCOMPARE(list.id(200), QVariant(QLatin1String("c-000")));
+    QCOMPARE(list.id(300), QVariant());
+    QCOMPARE(list.id(400), QVariant());
+    QCOMPARE(list.id(500), QVariant());
+
+    list.setCursorPosition(256);
+    QVERIFY(list.waitForFinished(INT_MAX));
+
+    QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
+    QCOMPARE(list.count(), 448);
+    QCOMPARE(insertSpy.count(), 2);
+    QCOMPARE(removeSpy.count(), 0);
+    QCOMPARE(changeSpy.count(), 2);
+    QCOMPARE(changeSpy.last().value(0).toInt(), 256);
+    QCOMPARE(changeSpy.last().value(1).toInt(), 192);
+
+    QCOMPARE(list.id(0), QVariant());
+    QCOMPARE(list.id(100), QVariant());
+    QCOMPARE(list.id(200), QVariant(QLatin1String("c-000")));
+    QCOMPARE(list.id(300), QVariant(QLatin1String("d-000")));
+    QCOMPARE(list.id(400), QVariant(QLatin1String("e-000")));
     QCOMPARE(list.id(500), QVariant());
 }
 
