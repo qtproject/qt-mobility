@@ -189,10 +189,8 @@ int QMLContact::rowCount(const QModelIndex &parent) const
 
 QVariant QMLContact::data(const QModelIndex &index, int role) const
 {
-    qWarning() << "index = " << index.row();
     QMLContactDetailField* field = qobject_cast<QMLContactDetailField*>(m_detailFields[index.row()]);
     if (field) {
-        qWarning() << "role = " << role;
         switch(role) {
             case Qt::DisplayRole:
             case DetailFieldKeyRole:

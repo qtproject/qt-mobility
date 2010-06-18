@@ -86,102 +86,150 @@ Rectangle {
                 anchors.centerIn: parent;
                 onClicked: { littleDetailsMode = !littleDetailsMode; mainList.currentIndex = index; }
             }
+            Column {
+                Row {
+                    spacing: 2
+                    Item {
+                        id: mainAvatar;
+                        height: wrapper.height;
+                        width: height;
 
-            Row {
-                spacing: 2
-                Item {
-                    id: mainAvatar;
-                    height: wrapper.height;
-                    width: height;
-
-                    Rectangle {
-                        border.width: 2;
-                        radius: 4;
-                        anchors.fill: parent;
-                        anchors.margins: 2;
-
-                        Image {
-                            id: avatar
+                        Rectangle {
+                            border.width: 2;
+                            radius: 4;
                             anchors.fill: parent;
                             anchors.margins: 2;
 
-                            pixmap: model.decoration
-                            source: model.avatar;
-                            fillMode: Image.PreserveAspectFit
-                        }
-                    }
-                }
+                            Image {
+                                id: avatar
+                                anchors.fill: parent;
+                                anchors.margins: 2;
 
-                Column {
-                    Item {
-                        id: mainLabel;
-                        width: nameTxt.width
-                        height: nameTxt.height + 16;
-                        Text {
-                            id: nameTxt
-                            y: 8;
-                            text: display
-                            color: "white"
-                        }
-                    }
-
-                    Item {
-                        id: details
-                        property color textColor: "#ffffdd";
-                        opacity: wrapper.detailsOpacity
-                        height: childrenRect.height + 6;
-                        width: childrenRect.width;
-                        
-                        Column {
-                            Text {
-                                text: model.interestLabel + ": " + model.interest
-                                color: details.textColor;
-                            }
-                            Text {
-                                text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
-                                color: details.textColor;
+                                pixmap: model.decoration
+                                source: model.avatar;
+                                fillMode: Image.PreserveAspectFit
                             }
                         }
                     }
-                }
 
-                Item {
-                    id: buttonBox
-                    x: wrapper.width - 6 - childrenRect.width;
-                    y: 4;
-                    height:childrenRect.height
-                    opacity: details.opacity;
                     Column {
-                        // Buttons
-                        MediaButton {
-                            id: dialButton;
-                            text: "Dial";
-                        }
-                        MediaButton {
-                            id: textButton
-                            text: "Send Text";
-                        }
                         Item {
-                            height:childrenRect.height
-                            width: childrenRect.width
+                            id: mainLabel;
+                            width: nameTxt.width
+                            height: nameTxt.height + 16;
+                            Text {
+                                id: nameTxt
+                                y: 8;
+                                text: display
+                                color: "white"
+                            }
+                        }
+
+                        Item {
+                            id: details
+                            property color textColor: "#ffffdd";
+                            opacity: wrapper.detailsOpacity
+                            height: childrenRect.height + 6;
+                            width: childrenRect.width;
+
+                            Column {
+                                Text {
+                                    text: model.interestLabel + ": " + model.interest
+                                    color: details.textColor;
+                                }
+                                Text {
+                                    text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
+                                    color: details.textColor;
+                                }
+                            }
+                        }
+                    }
+
+                    Item {
+                        id: buttonBox
+                        x: wrapper.width - 6 - childrenRect.width;
+                        y: 4;
+                        height:childrenRect.height
+                        opacity: details.opacity;
+                        Column {
+                            // Buttons
                             MediaButton {
-                                id: viewButton
-                                text: "More..."
-                                opacity: 0;
-                                onClicked: wrapper.bigDetailsMode = 1;
+                                id: dialButton;
+                                text: "Dial";
                             }
                             MediaButton {
-                                id: smallAgainButton
-                                text: "Back";
-                                anchors.top:viewButton.top;
-                                opacity: 0;
-                                onClicked: wrapper.bigDetailsMode = 0;
+                                id: textButton
+                                text: "Send Text";
+                            }
+                            Item {
+                                height:childrenRect.height
+                                width: childrenRect.width
+                                MediaButton {
+                                    id: viewButton
+                                    text: "More..."
+                                    opacity: 0;
+                                    onClicked: wrapper.bigDetailsMode = 1;
+                                }
+                                MediaButton {
+                                    id: smallAgainButton
+                                    text: "Back";
+                                    anchors.top:viewButton.top;
+                                    opacity: 0;
+                                    onClicked: wrapper.bigDetailsMode = 0;
+                                }
                             }
                         }
                     }
                 }
-            }
+                ListView {
+                    id: detailView
+                    width: wrapper.width;
+                    focus: true
+                    opacity: 0
+                    keyNavigationWraps: true
 
+
+                    //detail section header
+                    section.property:  "detailName"
+                    section.criteria: ViewSection.FullString
+                    section.delegate: Rectangle {
+                        color: "lightsteelblue"
+                        width:detailView.width
+                        height: 20
+                        Text {
+                            x: 2; height: 20
+                            verticalAlignment: Text.AlignVCenter
+                            text: section
+                            font.bold: true
+                            color:"white"
+                        }
+                    }
+                    model:contactModel.detailModel(contactId)
+                    delegate: Component {
+                        Item {
+                            width: detailView.width;
+                            height: 25;
+
+                            Row {
+                                spacing: 5
+                                Text {
+                                   text: detailName + "."  + key;
+                                   color:"white";
+                                   width: detailView.width * 0.5;
+                                   height: 20;
+                                }
+                                TextInput {
+                                  width: detailView.width * 0.5;
+                                   height: 20;
+                                   text: field.value;
+                                   color:"yellow";
+                                   //onTextChanged: {field.value = text;}
+                                }
+                            }
+                        }
+                    }//delegate
+                }//detail list view
+            }
             states: [
                     State {
                         name: "List";
@@ -204,15 +252,14 @@ Rectangle {
                     State {
                         name: "Details"
                         when: (mainList.currentIndex == index) && (wrapper.bigDetailsMode == 1);
-                        PropertyChanges { target: wrapper; height: 100/*mainList.height;*/; anchors.top: topItem.top; }
+                        PropertyChanges { target: wrapper; height: mainList.height; }
                         PropertyChanges { target: viewButton; opacity: 0; }
                         PropertyChanges { target: smallAgainButton; opacity: 1; }
                         PropertyChanges { target: mainAvatar; height: 96; }
                         PropertyChanges { target: mainList; explicit: true; contentY: wrapper.y }
                         PropertyChanges { target: mainList; interactive: false; }
-                        PropertyChanges { target: detailView; model:contactModel.detailModel(contactId);}
                         PropertyChanges { target: detailView; opacity:1;}
-                        PropertyChanges { target: mainList; opacity:0;}
+                        PropertyChanges { target: detailView; height:wrapper.height - 100;}
                     }
             ]
 
@@ -274,63 +321,6 @@ Rectangle {
             ]
         }
     }
-
-    ListView {
-        id: detailView
-        width: parent.width;
-        height: parent.height - 100;
-        anchors.bottom: parent.bottom;
-        highlightFollowsCurrentItem: false
-        focus: true
-        keyNavigationWraps: true
-
-
-        //detail section header
-        section.property: "detailName"
-        section.criteria: ViewSection.FullString
-        section.delegate: Rectangle {
-            color: "lightsteelblue"
-            width:detailView.width
-            height: 20
-            Text {
-                x: 2; height: 20
-                verticalAlignment: Text.AlignVCenter
-                text: section
-                font.bold: true
-                color:"white"
-            }
-        }
-
-        model:contactModel.detailModel(0)
-
-        highlight: Component {
-            Rectangle { color: "#FFFF88" }
-        }
-
-        delegate: Component {
-            Item {
-                width: detailView.width;
-                height: 25;
-
-                Row {
-                    spacing: 2
-                    Text {
-                       text:key;
-                       color:"white";
-                       width: detailView.width * 0.4;
-                       height: 20;
-                    }
-                    TextInput {
-                       width: detailView.width * 0.5;
-                       height: 20;
-                       text:value;
-                       color:"yellow";
-                       onTextChanged: {field.value = text;}
-                    }
-                }
-            }
-        }//delegate
-    }//detail list view
 
     ListView {
         id: mainList
