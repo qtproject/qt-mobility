@@ -56,8 +56,8 @@ void QGalleryTrackerItemListPrivate::update()
 
     updateTimer.stop();
 
-    typedef QList<QGalleryTrackerMetaDataEdit *>::iterator iterator;
-    for (iterator it = edits.begin(), end = edits.end(); it != end; ++it)
+    typedef QList<QGalleryTrackerMetaDataEdit *>::iterator Edit;
+    for (Edit it = edits.begin(), end = edits.end(); it != end; ++it)
         (*it)->commit();
     edits.clear();
 
@@ -73,69 +73,65 @@ void QGalleryTrackerItemListPrivate::update()
         flags &= ~(Refresh | PositionUpdated);
     }
 
+    if (rCache.cutoff > 0 && imageColumns.count() > 0) {
+        typedef QVector<QGalleryTrackerImageColumn *>::const_iterator Column;
 
-//    if (d->rCache.cutoff > 0 && d->imageColumns.count() > 0) {
-//        typedef QVector<QGalleryTrackerImageColumn *>::const_iterator iterator;
-//
-//        const int absoluteIndex = qMax(
-//                d->rCache.index, qMin(d->rCache.count - d->minimumPagedItems, position & ~7));
-//        const int maximumCount = qMin(d->minimumPagedItems, d->rCache.count - absoluteIndex);
-//        const int absoluteCount = absoluteIndex + maximumCount;
-//
-//        if (absoluteIndex < d->imageCacheIndex) {
-//            QVector<QVariant>::const_iterator begin
-//                    = d->rCache.values.constBegin()
-//                    + ((absoluteIndex - d->rCache.index) * d->tableWidth);
-//
-//            if (absoluteCount > d->imageCacheIndex) {
-//                const int insertCount = d->imageCacheIndex - absoluteIndex;
-//                const int removeCount = d->imageCacheCount - absoluteCount;
-//
-//                for (iterator it = d->imageColumns.begin(); it != d->imageColumns.end(); ++it) {
-//                    (*it)->removeImages(insertCount, removeCount);
-//                    (*it)->insertImages(0, insertCount, begin, d->tableWidth);
-//                    (*it)->moveOffset(absoluteIndex);
-//                }
-//            } else {
-//                for (iterator it = d->imageColumns.begin(); it != d->imageColumns.end(); ++it) {
-//                    (*it)->removeImages(0, maximumCount);
-//                    (*it)->insertImages(0, maximumCount, begin, d->tableWidth);
-//                    (*it)->moveOffset(absoluteIndex);
-//                }
-//            }
-//
-//            d->imageCacheIndex = absoluteIndex;
-//            d->imageCacheCount = absoluteCount;
-//        } else if (absoluteCount > d->imageCacheCount) {
-//            if (absoluteIndex < d->imageCacheCount) {
-//                const int removeCount = absoluteIndex - d->imageCacheIndex;
-//                const int insertCount = absoluteCount - d->imageCacheCount;
-//
-//                QVector<QVariant>::const_iterator begin
-//                        = d->rCache.values.constBegin()
-//                        + ((absoluteIndex - d->rCache.index + removeCount) * d->tableWidth);
-//
-//                for (iterator it = d->imageColumns.begin(); it != d->imageColumns.end(); ++it) {
-//                    (*it)->removeImages(insertCount, removeCount);
-//                    (*it)->insertImages(0, insertCount, begin, d->tableWidth);
-//                    (*it)->moveOffset(absoluteIndex);
-//                }
-//            } else {
-//                QVector<QVariant>::const_iterator begin
-//                        = d->rCache.values.constBegin()
-//                        + ((absoluteIndex - d->rCache.index) * d->tableWidth);
-//
-//                for (iterator it = d->imageColumns.begin(); it != d->imageColumns.end(); ++it) {
-//                    (*it)->removeImages(0, d->imageCacheCount);
-//                    (*it)->insertImages(0, maximumCount, begin, d->tableWidth);
-//                    (*it)->moveOffset(absoluteIndex);
-//                }
-//            }
-//
-//            d->imageCacheIndex = absoluteIndex;
-//            d->imageCacheCount = absoluteCount;
-//        }
-//    }
+        const int absoluteIndex = qMax(
+                rCache.index, qMin(rCache.count - minimumPagedItems, cursorPosition & 7));
+        const int maximumCount = qMin(minimumPagedItems, rCache.count - absoluteIndex);
+        const int absoluteCount =  absoluteIndex + maximumCount;
+
+        if (absoluteIndex < imageCacheIndex) {
+            QVector<QVariant>::const_iterator begin = rCache.values.constBegin()
+                    + ((absoluteIndex - rCache.index) * tableWidth);
+
+            if (absoluteCount > imageCacheIndex) {
+                const int insertCount = imageCacheCount - absoluteIndex;
+                const int removeCount = imageCacheCount - absoluteCount;
+
+                for (Column it = imageColumns.begin(); it != imageColumns.end(); ++it) {
+                    (*it)->removeImages(insertCount, removeCount);
+                    (*it)->insertImages(0, insertCount, begin, tableWidth);
+                    (*it)->moveOffset(absoluteIndex);
+                }
+            } else {
+                for (Column it = imageColumns.begin(); it != imageColumns.end(); ++it) {
+                    (*it)->removeImages(0, maximumCount);
+                    (*it)->insertImages(0, maximumCount, begin, tableWidth);
+                    (*it)->moveOffset(absoluteIndex);
+                }
+            }
+
+            imageCacheIndex = absoluteIndex;
+            imageCacheCount = absoluteCount;
+        } else if (absoluteCount > imageCacheCount) {
+            if (absoluteIndex < imageCacheCount) {
+                const int removeCount = absoluteIndex - imageCacheIndex;
+                const int insertCount = absoluteCount - imageCacheCount;
+
+                QVector<QVariant>::const_iterator begin = rCache.values.constBegin()
+                        + ((absoluteIndex - rCache.index) * tableWidth);
+
+                for (Column it = imageColumns.begin(); it != imageColumns.end(); ++it) {
+                    (*it)->removeImages(insertCount, removeCount);
+                    (*it)->insertImages(0, insertCount, begin, tableWidth);
+                    (*it)->moveOffset(absoluteIndex);
+                }
+            } else {
+                QVector<QVariant>::const_iterator begin = rCache.values.constBegin()
+                        + ((absoluteIndex - rCache.index) * tableWidth);
+
+                for (Column it = imageColumns.begin(); it != imageColumns.end(); ++it) {
+                    (*it)->removeImages(0, imageCacheCount);
+                    (*it)->insertImages(0, maximumCount, begin, tableWidth);
+                    (*it)->moveOffset(absoluteIndex);
+                }
+            }
+
+            imageCacheIndex = absoluteIndex;
+            imageCacheCount = absoluteCount;
+        }
+    }
 }
 
 void QGalleryTrackerItemListPrivate::query(int index)
