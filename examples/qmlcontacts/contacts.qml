@@ -213,12 +213,12 @@ Rectangle {
                             Row {
                                 spacing: 5
                                 Text {
-                                   text: detailName + "."  + key;
+                                   text:  key;
                                    color:"white";
                                    width: detailView.width * 0.5;
                                    height: 20;
                                 }
-                                TextInput {
+                                TextEdit {
                                   width: detailView.width * 0.5;
                                    height: 20;
                                    text: field.value;
