@@ -45,7 +45,7 @@
 
 #include <qmobilityglobal.h>
 
-#include <qfeedbackplugin.h>
+#include <qfeedbackplugininterfaces.h>
 
 #include <hwrmvibra.h>
 
@@ -55,15 +55,15 @@ QTM_USE_NAMESPACE
 
 class QTouchFeedback;
 
-class QFeedbackSymbian : public QObject, public QHapticsFeedbackInterface
+class QFeedbackSymbian : public QObject, public QFeedbackHapticsInterface
 #ifndef NO_TACTILE_SUPPORT
-, public QThemeFeedbackInterface
+, public QFeedbackThemeInterface
 #endif //NO_TACTILE_SUPPORT
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QHapticsFeedbackInterface)
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackHapticsInterface)
 #ifndef NO_TACTILE_SUPPORT
-    Q_INTERFACES(QtMobility::QThemeFeedbackInterface)
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackThemeInterface)
 #endif //NO_TACTILE_SUPPORT
 public:
     QFeedbackSymbian();
@@ -75,12 +75,12 @@ public:
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
     virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty);
 
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QHapticsFeedbackEffect *, EffectProperty);
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QHapticsFeedbackEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QHapticsFeedbackEffect *);
+    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty);
+    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackHapticsEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QFeedbackHapticsEffect *);
 
 #ifndef NO_TACTILE_SUPPORT
-    virtual void play(QFeedbackEffect::InstantEffect);
+    virtual bool play(QFeedbackEffect::ThemeEffect);
 #endif // NO_TACTILE_SUPPORT
 
 private:

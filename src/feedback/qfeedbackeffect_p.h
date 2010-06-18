@@ -60,12 +60,12 @@
 
 QTM_BEGIN_NAMESPACE
 
-class QHapticsFeedbackEffectPrivate
+class QFeedbackHapticsEffectPrivate
 {
 public:
-    QHapticsFeedbackEffectPrivate() : duration(250),
+    QFeedbackHapticsEffectPrivate() : duration(250),
                     intensity(1), attackTime(0), attackIntensity(0), fadeTime(0),
-                    period(-1), actuator(QFeedbackActuator::defaultActuator())
+                    period(-1)
     {
 
     }
@@ -81,19 +81,19 @@ public:
     QFeedbackActuator actuator;
 };
 
-class QFileFeedbackEffectPrivate
+class QFeedbackFileEffectPrivate
 {
 public:
-    QFileFeedbackEffectPrivate(QFileFeedbackEffect *effect) : effect(effect), loaded(false), isLoading(false), backendUsed(-1)
+    QFeedbackFileEffectPrivate(QFeedbackFileEffect *effect) : effect(effect), loaded(false), isLoading(false), backendUsed(-1)
     {
     }
 
-    static QFileFeedbackEffectPrivate *get(QFileFeedbackEffect *e) { return e->priv.data(); }
-    static const QFileFeedbackEffectPrivate *get(const QFileFeedbackEffect *e) { return e->priv.data(); }
+    static QFeedbackFileEffectPrivate *get(QFeedbackFileEffect *e) { return e->priv.data(); }
+    static const QFeedbackFileEffectPrivate *get(const QFeedbackFileEffect *e) { return e->priv.data(); }
 
     void loadFinished(bool success);
 
-    QFileFeedbackEffect *effect;
+    QFeedbackFileEffect *effect;
 
     QString fileName;
     bool loaded;

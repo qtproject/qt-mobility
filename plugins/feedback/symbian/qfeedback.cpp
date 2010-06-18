@@ -62,111 +62,108 @@ CCoeControl *QFeedbackSymbian::defaultWidget()
 
 #ifndef NO_TACTILE_SUPPORT
 #include <touchfeedback.h>
-static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::InstantEffect effect)
+static TTouchLogicalFeedback convertToSymbian(QFeedbackEffect::ThemeEffect effect)
 {
 
-    TTouchLogicalFeedback instantFeedbackSymbian = ETouchFeedbackBasic;
+    TTouchLogicalFeedback themeFeedbackSymbian = ETouchFeedbackBasic;
 
     switch (effect) {
-    case QFeedbackEffect::InstantNone:
-        instantFeedbackSymbian = ETouchFeedbackNone;
+    case QFeedbackEffect::ThemeBasic:
+        themeFeedbackSymbian = ETouchFeedbackBasic;
         break;
-    case QFeedbackEffect::InstantBasic:
-        instantFeedbackSymbian = ETouchFeedbackBasic;
-        break;
-    case QFeedbackEffect::InstantSensitive:
-        instantFeedbackSymbian = ETouchFeedbackSensitive;
+    case QFeedbackEffect::ThemeSensitive:
+        themeFeedbackSymbian = ETouchFeedbackSensitive;
         break;
 #ifdef ADVANCED_TACTILE_SUPPORT
-    case QFeedbackEffect::InstantBasicButton:
-        instantFeedbackSymbian = ETouchFeedbackBasicButton;
+    case QFeedbackEffect::ThemeBasicButton:
+        themeFeedbackSymbian = ETouchFeedbackBasicButton;
         break;
-    case QFeedbackEffect::InstantSensitiveButton:
-        instantFeedbackSymbian = ETouchFeedbackSensitiveButton;
+    case QFeedbackEffect::ThemeSensitiveButton:
+        themeFeedbackSymbian = ETouchFeedbackSensitiveButton;
         break;
-    case QFeedbackEffect::InstantBasicItem:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeBasicItem:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantSensitiveItem:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeSensitiveItem:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantBounceEffect:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeBounceEffect:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantPopupOpen:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemePopupOpen:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantPopupClose:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemePopupClose:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantBasicSlider:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeBasicSlider:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantSensitiveSlider:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeSensitiveSlider:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantStopFlick:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeStopFlick:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantFlick:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeFlick:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantEditor:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeEditor:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantTextSelection:
-        instantFeedbackSymbian = ETouchFeedbackTextSelection;
+    case QFeedbackEffect::ThemeTextSelection:
+        themeFeedbackSymbian = ETouchFeedbackTextSelection;
         break;
-    case QFeedbackEffect::InstantBlankSelection:
-        instantFeedbackSymbian = ETouchFeedbackBlankSelection;
+    case QFeedbackEffect::ThemeBlankSelection:
+        themeFeedbackSymbian = ETouchFeedbackBlankSelection;
         break;
-    case QFeedbackEffect::InstantLineSelection:
-        instantFeedbackSymbian = ETouchFeedbackLineSelection;
+    case QFeedbackEffect::ThemeLineSelection:
+        themeFeedbackSymbian = ETouchFeedbackLineSelection;
         break;
-    case QFeedbackEffect::InstantEmptyLineSelection:
-        instantFeedbackSymbian = ETouchFeedbackEmptyLineSelection;
+    case QFeedbackEffect::ThemeEmptyLineSelection:
+        themeFeedbackSymbian = ETouchFeedbackEmptyLineSelection;
         break;
-    case QFeedbackEffect::InstantCheckbox:
-        instantFeedbackSymbian = ETouchFeedbackCheckbox;
+    case QFeedbackEffect::ThemeCheckbox:
+        themeFeedbackSymbian = ETouchFeedbackCheckbox;
         break;
-    case QFeedbackEffect::InstantMultipleCheckbox:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeMultipleCheckbox:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantSensitiveKeypad:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeSensitiveKeypad:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantBasicKeypad:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeBasicKeypad:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantMultitouchActivate:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeMultitouchActivate:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantRotateStep:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeRotateStep:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
-    case QFeedbackEffect::InstantItemDrop:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+    case QFeedbackEffect::ThemeItemDrop:
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case QFeedbackEffect::ItemMoveOver:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case QFeedbackEffect::ItemPick:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case QFeedbackEffect:::ItemScroll:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
     case QFeedbackEffect::PopUp:
-        instantFeedbackSymbian = ETouchFeedbackPopUp;
+        themeFeedbackSymbian = ETouchFeedbackPopUp;
         break;
     case QFeedbackEffect::LongPress:
-        instantFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
+        themeFeedbackSymbian = ETouchFeedbackBasic; // Effects changing in 10.1 are mapped to basic.
         break;
 #endif //ADVANCED_TACTILE_SUPPORT
     default:
         break;
     }
-    return instantFeedbackSymbian;
+    return themeFeedbackSymbian;
 }
 
 #ifdef ADVANCED_TACTILE_SUPPORT
@@ -205,9 +202,10 @@ public:
 };
 #endif //ADVANCED_TACTILE_SUPPORT
 
-void QFeedbackSymbian::play(QFeedbackEffect::InstantEffect effect)
+bool QFeedbackSymbian::play(QFeedbackEffect::ThemeEffect effect)
 {
     QTouchFeedback::Instance()->InstantFeedback(convertToSymbian(effect));
+    return true; //there is no way to kno if there was a failure
 }
 
 #endif //NO_TACTILE_SUPPORT
@@ -298,9 +296,6 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
             }
             return ret;
         }
-    case SupportedCapabilities:
-        return 0;
-
     case Enabled:
         switch(actuator.id())
         {
@@ -319,7 +314,13 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
 
 }
 
-QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QHapticsFeedbackEffect *effect, EffectProperty prop)
+bool QFeedbackImmersion::isActuatorCapabilitySupported(QFeedbackActuator::Capability)
+{
+    return false;
+}
+
+
+QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty prop)
 {
 
     switch(prop)
@@ -349,7 +350,7 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QHaptics
 
 }
 
-QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QHapticsFeedbackEffect *effect)
+QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QFeedbackHapticsEffect *effect)
 {
     switch(effect->actuator().id())
     {
@@ -387,37 +388,7 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QHapticsFee
     return QFeedbackEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackSymbian::actualEffectState(const QHapticsFeedbackEffect *effect)
+QAbstractAnimation::State QFeedbackSymbian::actualEffectState(const QFeedbackHapticsEffect *effect)
 {
     return effect->state();
 }
-
-/*
-#ifdef ADVANCED_TACTILE_SUPPORT
-TTouchContinuousFeedback QFeedbackSymbian::convertToSymbian(QFeedbackEffect::ContinuousEffect effect)
-{
-    TTouchContinuousFeedback continuousFeedbackSymbian = ETouchContinuousSmooth;
-    switch (effect) {
-        case ContinuousSmooth:
-            continuousFeedbackSymbian = ETouchContinuousSmooth;
-            break;
-        case ContinuousSlider:
-            continuousFeedbackSymbian = ETouchContinuousSlider;
-            break;
-        case ContinuousPopup:
-            continuousFeedbackSymbian = ETouchContinuousSmooth;
-            break;
-        case ContinuousInput:
-            continuousFeedbackSymbian = ETouchContinuousSmooth;
-            break;
-        case ContinuousPinch:
-            continuousFeedbackSymbian = ETouchContinuousSmooth;
-            break;
-        default:
-            break;
-    }
-    return continuousFeedbackSymbian;
-}
-
-#endif
-*/

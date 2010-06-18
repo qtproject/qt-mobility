@@ -45,7 +45,7 @@
 #include <qmobilityglobal.h>
 #include "qfeedbackactuator.h"
 #include "qfeedbackeffect.h"
-#include "qfeedbackplugin.h"
+#include "qfeedbackplugininterfaces.h"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QVariant>
@@ -67,7 +67,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QDummyBackend : QObject, public QHapticsFeedbackInterface
+class QDummyBackend : QObject, public QFeedbackHapticsInterface
 {
 public:
     QDummyBackend() : QObject(qApp) { }
@@ -76,12 +76,13 @@ public:
 
     void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) { }
     QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) { return QVariant(); }
+    bool isActuatorCapabilitySupported(QFeedbackActuator::Capability) { return false; }
 
-    QFeedbackEffect::ErrorType updateEffectProperty(const QHapticsFeedbackEffect *, EffectProperty) { return QFeedbackEffect::UnknownError; }
-    QFeedbackEffect::ErrorType updateEffectState(const QHapticsFeedbackEffect *) { return QFeedbackEffect::UnknownError; }
-    QAbstractAnimation::State actualEffectState(const QHapticsFeedbackEffect *) { return QAbstractAnimation::Stopped; }
+    QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) { return QFeedbackEffect::UnknownError; }
+    QFeedbackEffect::ErrorType updateEffectState(const QFeedbackHapticsEffect *) { return QFeedbackEffect::UnknownError; }
+    QAbstractAnimation::State actualEffectState(const QFeedbackHapticsEffect *) { return QAbstractAnimation::Stopped; }
 
-    virtual void play(QFeedbackEffect::InstantEffect effect) { Q_UNUSED(effect); }
+    virtual bool play(QFeedbackEffect::ThemeEffect effect) { Q_UNUSED(effect); return false; }
 
 };
 

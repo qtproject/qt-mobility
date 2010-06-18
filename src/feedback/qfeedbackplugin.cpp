@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qfeedbackplugin.h"
+#include "qfeedbackplugininterfaces.h"
 #include "qfeedbackplugin_p.h"
 #include "qfeedbackeffect_p.h"
 
@@ -52,7 +52,7 @@
 
 QTM_BEGIN_NAMESPACE
 
-class FileBackend : public QFileFeedbackInterface
+class FileBackend : public QFeedbackFileInterface
 {
 public:
     FileBackend()
@@ -60,62 +60,62 @@ public:
     }
 
     //this class is used to redirect the calls to all the file backends available
-    virtual void setLoaded(QFileFeedbackEffect *effect, bool load)
+    virtual void setLoaded(QFeedbackFileEffect *effect, bool load)
     {
         if (load) {
             //start loading
-            QFileFeedbackEffectPrivate *priv = QFileFeedbackEffectPrivate::get(effect);
+            QFeedbackFileEffectPrivate *priv = QFeedbackFileEffectPrivate::get(effect);
             priv->isLoading = true;
             tryBackendLoad(effect);
         } else {
             //unload        
-            if (QFileFeedbackInterface *subBackend = getBackend(effect))
+            if (QFeedbackFileInterface *subBackend = getBackend(effect))
                 return subBackend->setLoaded(effect, load);
         }
     }
 
-    virtual QFileFeedbackEffect::ErrorType updateEffectState(QFileFeedbackEffect *effect)
+    virtual QFeedbackEffect::ErrorType updateEffectState(QFeedbackFileEffect *effect)
     {
-        if (QFileFeedbackInterface *subBackend = getBackend(effect))
+        if (QFeedbackFileInterface *subBackend = getBackend(effect))
             return subBackend->updateEffectState(effect);
 
-        return QFileFeedbackEffect::UnknownError;
+        return QFeedbackEffect::UnknownError;
     }
 
-    virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *effect)
+    virtual QAbstractAnimation::State actualEffectState(const QFeedbackFileEffect *effect)
     {
-        if (QFileFeedbackInterface *subBackend = getBackend(effect))
+        if (QFeedbackFileInterface *subBackend = getBackend(effect))
             return subBackend->actualEffectState(effect);
 
         return QAbstractAnimation::Stopped;
     }
 
-    virtual int effectDuration(const QFileFeedbackEffect *effect)
+    virtual int effectDuration(const QFeedbackFileEffect *effect)
     {
-         if (QFileFeedbackInterface *subBackend = getBackend(effect))
+         if (QFeedbackFileInterface *subBackend = getBackend(effect))
             return subBackend->effectDuration(effect);
 
         return 0;
    }
 
-    virtual QStringList mimeTypes()
+    virtual QStringList supportedMimeTypes()
     {
         QStringList ret;
         for (int i = 0; i < subBackends.count(); ++i)
-            ret += subBackends.at(i)->mimeTypes();
+            ret += subBackends.at(i)->supportedMimeTypes();
         return ret;
     }
 
-    void addFileBackend(QFileFeedbackInterface *backend)
+    void addFileBackend(QFeedbackFileInterface *backend)
     {
         subBackends.append(backend);
     }
 
-    void asyncLoadFinished(QFileFeedbackEffect *effect, bool success)
+    void asyncLoadFinished(QFeedbackFileEffect *effect, bool success)
     {
         if (success) {
             //the file was loaded by the current backend
-            QFileFeedbackEffectPrivate *p = QFileFeedbackEffectPrivate::get(effect);
+            QFeedbackFileEffectPrivate *p = QFeedbackFileEffectPrivate::get(effect);
             p->loadFinished(true);
             return;
         }
@@ -125,19 +125,19 @@ public:
     }
 
 private:
-    QList<QFileFeedbackInterface*> subBackends; 
+    QList<QFeedbackFileInterface*> subBackends; 
 
-    QFileFeedbackInterface *getBackend(const QFileFeedbackEffect *effect)
+    QFeedbackFileInterface *getBackend(const QFeedbackFileEffect *effect)
     {
-        const QFileFeedbackEffectPrivate *priv = QFileFeedbackEffectPrivate::get(effect);
+        const QFeedbackFileEffectPrivate *priv = QFeedbackFileEffectPrivate::get(effect);
         if (priv->backendUsed >= 0 && priv->backendUsed < subBackends.count())
                 return subBackends.at(priv->backendUsed);
         return 0;
     }
 
-    void tryBackendLoad(QFileFeedbackEffect *effect)
+    void tryBackendLoad(QFeedbackFileEffect *effect)
     {
-        QFileFeedbackEffectPrivate *p = QFileFeedbackEffectPrivate::get(effect);
+        QFeedbackFileEffectPrivate *p = QFeedbackFileEffectPrivate::get(effect);
         p->backendUsed++;
 
         //let's try to load the file
@@ -171,16 +171,16 @@ struct BackendManager
                 bool usedPlugin = false;
 
                 if (!backend) {
-                    backend = qobject_cast<QHapticsFeedbackInterface*>(loader.instance());
+                    backend = qobject_cast<QFeedbackHapticsInterface*>(loader.instance());
                     usedPlugin = backend != 0;
                 }
 
                 if (!themeBackend) {
-                    themeBackend = qobject_cast<QThemeFeedbackInterface*>(loader.instance());
+                    themeBackend = qobject_cast<QFeedbackThemeInterface*>(loader.instance());
                     usedPlugin = usedPlugin || themeBackend != 0;
                 }
 
-                QFileFeedbackInterface *fileBackend = qobject_cast<QFileFeedbackInterface*>(loader.instance());
+                QFeedbackFileInterface *fileBackend = qobject_cast<QFeedbackFileInterface*>(loader.instance());
                 if (fileBackend) {
                     this->fileBackend.addFileBackend(fileBackend);
                     usedPlugin = true;
@@ -195,36 +195,34 @@ struct BackendManager
             backend = new QDummyBackend;
     }
 
-    QHapticsFeedbackInterface *backend;
-    QThemeFeedbackInterface *themeBackend;
+    QFeedbackHapticsInterface *backend;
+    QFeedbackThemeInterface *themeBackend;
     FileBackend fileBackend;
 };
 
 Q_GLOBAL_STATIC(BackendManager, backendManager);
 
-QFeedbackActuator QHapticsFeedbackInterface::createFeedbackActuator(int id)
+QFeedbackActuator QFeedbackHapticsInterface::createFeedbackActuator(int id)
 {
-    QFeedbackActuator dev;
-    dev.m_id = id;
-    return dev;
+    return QFeedbackActuator(id);
 }
 
-QHapticsFeedbackInterface *QHapticsFeedbackInterface::instance()
+QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
 {
     return backendManager()->backend;
 }
 
-QThemeFeedbackInterface *QThemeFeedbackInterface::instance()
+QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 {
     return backendManager()->themeBackend;
 }
 
-QFileFeedbackInterface *QFileFeedbackInterface::instance()
+QFeedbackFileInterface *QFeedbackFileInterface::instance()
 {
     return &backendManager()->fileBackend;
 }
 
-void QFileFeedbackInterface::asyncLoadFinished(QFileFeedbackEffect *effect, bool success)
+void QFeedbackFileInterface::asyncLoadFinished(QFeedbackFileEffect *effect, bool success)
 {
     backendManager()->fileBackend.asyncLoadFinished(effect, success);
 }

@@ -14,7 +14,7 @@ include(../../common.pri)
 INCLUDEPATH += .
 
 # Input
-PUBLIC_HEADERS += qfeedbackactuator.h qfeedbackeffect.h qfeedbackplugin.h
+PUBLIC_HEADERS += qfeedbackactuator.h qfeedbackeffect.h qfeedbackplugininterfaces.h
 PRIVATE_HEADERS += qfeedbackeffect_p.h qfeedbackplugin_p.h
 
 SOURCES += qfeedbackactuator.cpp qfeedbackeffect.cpp qfeedbackplugin.cpp

@@ -58,11 +58,9 @@ class Q_FEEDBACK_EXPORT QFeedbackActuator
     Q_ENUMS(State)
 public:
     enum Capability {
-        //this might need to be extended
-        Envelope = 1,
-        Period = 2
+        Envelope,
+        Period
     };
-    Q_DECLARE_FLAGS(Capabilities, Capability)
 
 
     enum State {
@@ -79,16 +77,16 @@ public:
     QString name() const;
     State state() const;
 
-    Capabilities supportedCapabilities() const;
+    bool isCapabilitySupported(Capability) const;
 
     bool isEnabled() const;
     void setEnabled(bool);
 
-    static QFeedbackActuator defaultActuator();
     static QList<QFeedbackActuator> actuators();
 
 private:
-    friend class QHapticsFeedbackInterface;
+    QFeedbackActuator(int id);
+    friend class QFeedbackHapticsInterface;
     int m_id;
 };
 

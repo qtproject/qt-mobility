@@ -59,7 +59,7 @@ void QFeedbackPhonon::mediaObjectStateChanged()
     QFeedbackMediaObject *mediaObject = qobject_cast<QFeedbackMediaObject*>(sender());
     Q_ASSERT(mediaObject);
     mediaObject->overrideState = false;
-    QFileFeedbackEffect *effect = mediaObject->effect;
+    QFeedbackFileEffect *effect = mediaObject->effect;
     if (!effect->isLoading())
         return;
     switch(mediaObject->state())
@@ -82,7 +82,7 @@ void QFeedbackPhonon::mediaObjectStateChanged()
     }
 }
 
-void QFeedbackPhonon::setLoaded(QFileFeedbackEffect *effect, bool load)
+void QFeedbackPhonon::setLoaded(QFeedbackFileEffect *effect, bool load)
 {
     Q_ASSERT(audioPlayers.contains(effect) != load);
 
@@ -107,7 +107,7 @@ void QFeedbackPhonon::setLoaded(QFileFeedbackEffect *effect, bool load)
 
 }
 
-QFileFeedbackEffect::ErrorType QFeedbackPhonon::updateEffectState(QFileFeedbackEffect *effect)
+QFeedbackEffect::ErrorType QFeedbackPhonon::updateEffectState(QFeedbackFileEffect *effect)
 {
     //the file should be loaded
     Q_ASSERT(audioPlayers.contains(effect));
@@ -130,10 +130,10 @@ QFileFeedbackEffect::ErrorType QFeedbackPhonon::updateEffectState(QFileFeedbackE
     //the change is not immediate
     mediaObject->overrideState = true;
 
-    return QFileFeedbackEffect::NoError;
+    return QFeedbackFileEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackPhonon::actualEffectState(const QFileFeedbackEffect *effect)
+QAbstractAnimation::State QFeedbackPhonon::actualEffectState(const QFeedbackFileEffect *effect)
 {
     QFeedbackMediaObject *mediaObject = audioPlayers.value(effect, 0);
     if (!mediaObject)
@@ -154,7 +154,7 @@ QAbstractAnimation::State QFeedbackPhonon::actualEffectState(const QFileFeedback
     }
 }
 
-int QFeedbackPhonon::effectDuration(const QFileFeedbackEffect *effect)
+int QFeedbackPhonon::effectDuration(const QFeedbackFileEffect *effect)
 {
     Phonon::MediaObject *mediaObject = audioPlayers.value(effect, 0);
     if (!mediaObject)
@@ -162,7 +162,7 @@ int QFeedbackPhonon::effectDuration(const QFileFeedbackEffect *effect)
     return mediaObject->totalTime();
 }
 
-QStringList QFeedbackPhonon::mimeTypes()
+QStringList QFeedbackPhonon::supportedMimeTypes()
 {
     return Phonon::BackendCapabilities::availableMimeTypes();
 }

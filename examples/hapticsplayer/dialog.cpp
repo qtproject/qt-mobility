@@ -103,7 +103,7 @@ Dialog::Dialog()
     fileEffectStateChanged(fileEffect.state());
 
     ui.tabWidget->setTabEnabled(1, QFeedbackEffect::supportsThemeEffect());
-    ui.tabWidget->setTabEnabled(2, !QFileFeedbackEffect::mimeTypes().isEmpty());
+    ui.tabWidget->setTabEnabled(2, !QFeedbackFileEffect::supportedMimeTypes().isEmpty());
 }
 
 QFeedbackActuator Dialog::currentActuator() const
@@ -127,8 +127,8 @@ void Dialog::enabledChanged(bool on)
     QFeedbackActuator dev = currentActuator();
     dev.setEnabled(on);
     ui.enabled->setChecked(dev.isEnabled());
-    ui.envelope->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackActuator::Envelope));
-    ui.grpPeriod->setEnabled(dev.isEnabled() && (dev.supportedCapabilities() & QFeedbackActuator::Period));
+    ui.envelope->setEnabled(dev.isEnabled() && (dev.isCapabilitySupported(QFeedbackActuator::Envelope)));
+    ui.grpPeriod->setEnabled(dev.isEnabled() && (dev.isCapabilitySupported(QFeedbackActuator::Period)));
 }
 
 void Dialog::playPauseClicked()
@@ -202,7 +202,7 @@ void Dialog::instantPlayClicked()
 {
     const QMetaObject &mo = QFeedbackEffect::staticMetaObject;
     const QMetaEnum &me = mo.enumerator(mo.indexOfEnumerator(ENUM_INSTANT_EFFECT));
-    QFeedbackEffect::playThemeEffect(QFeedbackEffect::InstantEffect(me.keyToValue(ui.instantEffect->currentText().toLatin1())));
+    QFeedbackEffect::playThemeEffect(QFeedbackEffect::ThemeEffect(me.keyToValue(ui.instantEffect->currentText().toLatin1())));
 }
 
 void Dialog::browseClicked()

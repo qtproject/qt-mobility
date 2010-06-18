@@ -43,7 +43,7 @@
 
 #include <qmobilityglobal.h>
 
-#include <qfeedbackplugin.h>
+#include <qfeedbackplugininterfaces.h>
 
 #include <phonon/mediaobject.h>
 
@@ -52,37 +52,37 @@ QTM_USE_NAMESPACE
 
 class QFeedbackMediaObject;
 
-class QFeedbackPhonon : public QObject, public QFileFeedbackInterface
+class QFeedbackPhonon : public QObject, public QFeedbackFileInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QFileFeedbackInterface)
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackFileInterface)
 public:
     QFeedbackPhonon();
     virtual ~QFeedbackPhonon();
 
-    virtual void setLoaded(QFileFeedbackEffect*, bool);
-    virtual QFileFeedbackEffect::ErrorType updateEffectState(QFileFeedbackEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *);
-    virtual int effectDuration(const QFileFeedbackEffect*);
-    virtual QStringList mimeTypes();
+    virtual void setLoaded(QFeedbackFileEffect*, bool);
+    virtual QFeedbackEffect::ErrorType updateEffectState(QFeedbackFileEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QFeedbackFileEffect *);
+    virtual int effectDuration(const QFeedbackFileEffect*);
+    virtual QStringList supportedMimeTypes();
 
 private Q_SLOTS:
     void mediaObjectStateChanged();
 
 private:
-    QHash<const QFileFeedbackEffect *, QFeedbackMediaObject*> audioPlayers;
+    QHash<const QFeedbackFileEffect *, QFeedbackMediaObject*> audioPlayers;
 };
 
 class QFeedbackMediaObject : public Phonon::MediaObject
 {
     Q_OBJECT
 public:
-    QFeedbackMediaObject(QFeedbackPhonon *parent, QFileFeedbackEffect *effect) : Phonon::MediaObject(parent), effect(effect), overrideState(false)
+    QFeedbackMediaObject(QFeedbackPhonon *parent, QFeedbackFileEffect *effect) : Phonon::MediaObject(parent), effect(effect), overrideState(false)
     {
         connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)), parent, SLOT(mediaObjectStateChanged())); 
     }
 
-    QFileFeedbackEffect *effect;
+    QFeedbackFileEffect *effect;
     bool overrideState; //decides if the state should be picked from the effect (that's useful during a transition)
 };
 

@@ -121,8 +121,6 @@ QVariant QFeedbackImmersion::actuatorProperty(const QFeedbackActuator &actuator,
 
             return ret;
         }
-    case SupportedCapabilities:
-        return qVariantFromValue<int>(QFeedbackActuator::Envelope | QFeedbackActuator::Period);
     case Enabled:
         {
             VibeBool disabled = true;
@@ -134,6 +132,19 @@ QVariant QFeedbackImmersion::actuatorProperty(const QFeedbackActuator &actuator,
         return QVariant();
     }
 }
+
+bool QFeedbackImmersion::isActuatorCapabilitySupported(QFeedbackActuator::Capability cap)
+{
+    switch(cap)
+    {
+    case QFeedbackActuator::Envelope:
+    case QFeedbackActuator::Period:
+        return true;
+    default:
+        return false;
+    }
+}
+
 
 VibeInt32 QFeedbackImmersion::convertedDuration(int duration)
 {
@@ -173,7 +184,7 @@ VibeInt32 QFeedbackImmersion::handleForActuator(int actId)
     return actuatorHandles.at(actId);
 }
 
-QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QHapticsFeedbackEffect *effect, EffectProperty)
+QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
     if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
@@ -202,7 +213,7 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QHapti
     return QFeedbackEffect::NoError;
 }
 
-QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QHapticsFeedbackEffect *effect)
+QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFeedbackHapticsEffect *effect)
 {
     VibeStatus status = VIBE_S_SUCCESS;
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
@@ -249,7 +260,7 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QHapticsF
     return QFeedbackEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QHapticsFeedbackEffect *effect)
+QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackHapticsEffect *effect)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
     if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
@@ -272,7 +283,7 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QHapticsFe
     }
 }
 
-void QFeedbackImmersion::setLoaded(QFileFeedbackEffect *effect, bool load)
+void QFeedbackImmersion::setLoaded(QFeedbackFileEffect *effect, bool load)
 {
     const QString fileName = effect->fileName();
     if (!load && !fileData.contains(fileName))
@@ -305,7 +316,7 @@ void QFeedbackImmersion::setLoaded(QFileFeedbackEffect *effect, bool load)
     }
 }
 
-QFileFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(QFileFeedbackEffect *effect)
+QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(QFeedbackFileEffect *effect)
 {
     VibeStatus status = VIBE_S_SUCCESS;
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
@@ -339,12 +350,12 @@ QFileFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(QFileFeedba
     }
 
     if (VIBE_FAILED(status))
-        return QFileFeedbackEffect::UnknownError;
+        return QFeedbackEffect::UnknownError;
 
-    return QFileFeedbackEffect::NoError;
+    return QFeedbackEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFileFeedbackEffect *effect)
+QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackFileEffect *effect)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
     if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
@@ -366,7 +377,7 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFileFeedb
     }
 }
 
-int QFeedbackImmersion::effectDuration(const QFileFeedbackEffect *effect)
+int QFeedbackImmersion::effectDuration(const QFeedbackFileEffect *effect)
 {
     VibeInt32 ret = 0;
     if (fileData.contains(effect->fileName()))
@@ -375,7 +386,7 @@ int QFeedbackImmersion::effectDuration(const QFileFeedbackEffect *effect)
     return ret;
 }
 
-QStringList QFeedbackImmersion::mimeTypes()
+QStringList QFeedbackImmersion::supportedMimeTypes()
 {
     return QStringList() << QLatin1String("vibra/ivt");
 }

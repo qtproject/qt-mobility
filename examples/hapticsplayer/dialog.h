@@ -85,8 +85,8 @@ private Q_SLOTS:
 private:
     QFeedbackActuator currentActuator() const;
     Ui_Dialog ui;
-    QHapticsFeedbackEffect effect;
-    QFileFeedbackEffect fileEffect;
+    QFeedbackHapticsEffect effect;
+    QFeedbackFileEffect fileEffect;
 };
 
 #endif

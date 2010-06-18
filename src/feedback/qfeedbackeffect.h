@@ -52,8 +52,8 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QFeedbackActuator;
-class QHapticsFeedbackEffectPrivate;
-class QFileFeedbackEffectPrivate;
+class QFeedbackHapticsEffectPrivate;
+class QFeedbackFileEffectPrivate;
 
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
@@ -61,17 +61,17 @@ class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
     Q_ENUMS(InstantEffect)
     Q_ENUMS(ErrorType)
 public:
-    enum InstantEffect {
-        InstantNone, InstantBasic, InstantSensitive, InstantBasicButton, InstantSensitiveButton,
-        InstantBasicKeypad, InstantSensitiveKeypad, InstantBasicSlider, InstantSensitiveSlider,
-        InstantBasicItem, InstantSensitiveItem, InstantItemScroll, InstantItemPick, InstantItemDrop,
-        InstantItemMoveOver, InstantBounceEffect, InstantCheckbox, InstantMultipleCheckbox, InstantEditor,
-        InstantTextSelection, InstantBlankSelection, InstantLineSelection, InstantEmptyLineSelection,
-        InstantPopUp, InstantPopupOpen, InstantPopupClose, InstantFlick, InstantStopFlick,
-        InstantMultitouchActivate, InstantRotateStep, InstantLongPress, InstantPositiveTacticon,
-        InstantNeutralTacticon, InstantNegativeTacticon,
-        NumberOfInstantFeedbacks,
-        InstantUser = 65535
+    enum ThemeEffect {
+        ThemeBasic, ThemeSensitive, ThemeBasicButton, ThemeSensitiveButton,
+        ThemeBasicKeypad, ThemeSensitiveKeypad, ThemeBasicSlider, ThemeSensitiveSlider,
+        ThemeBasicItem, ThemeSensitiveItem, ThemeItemScroll, ThemeItemPick, ThemeItemDrop,
+        ThemeItemMoveOver, ThemeBounceEffect, ThemeCheckbox, ThemeMultipleCheckbox, ThemeEditor,
+        ThemeTextSelection, ThemeBlankSelection, ThemeLineSelection, ThemeEmptyLineSelection,
+        ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick,
+        ThemeMultitouchActivate, ThemeRotateStep, ThemeLongPress, ThemePositiveTacticon,
+        ThemeNeutralTacticon, ThemeNegativeTacticon,
+        NumberOfThemeFeedbacks,
+        ThemeUser = 65535
     };
 
     enum ErrorType {
@@ -84,14 +84,14 @@ public:
     QFeedbackEffect(QObject *parent = 0);
 
     static bool supportsThemeEffect();
-    static void playThemeEffect(InstantEffect effect);
+    static bool playThemeEffect(ThemeEffect effect);
 
 Q_SIGNALS:
     void error(ErrorType); //the feedback could not be played
 
 };
 
-class Q_FEEDBACK_EXPORT QHapticsFeedbackEffect : public QFeedbackEffect
+class Q_FEEDBACK_EXPORT QFeedbackHapticsEffect : public QFeedbackEffect
 {
     Q_OBJECT
 public:
@@ -108,8 +108,8 @@ public:
         INFINITE = -1
     };
 
-    QHapticsFeedbackEffect(QObject *parent = 0);
-    ~QHapticsFeedbackEffect();
+    QFeedbackHapticsEffect(QObject *parent = 0);
+    ~QFeedbackHapticsEffect();
 
     void setDuration(int msecs);
     int duration() const;
@@ -142,19 +142,19 @@ protected:
     void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
 
 private:
-    friend class QHapticsFeedbackEffectPrivate;
-    QScopedPointer<QHapticsFeedbackEffectPrivate> priv;
+    friend class QFeedbackHapticsEffect;
+    QScopedPointer<QFeedbackHapticsEffectPrivate> priv;
 };
 
-class Q_FEEDBACK_EXPORT QFileFeedbackEffect : public QFeedbackEffect
+class Q_FEEDBACK_EXPORT QFeedbackFileEffect : public QFeedbackEffect
 {
     Q_OBJECT
     Q_PROPERTY(bool loaded READ isLoaded WRITE setLoaded)
     Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
 
 public:
-    QFileFeedbackEffect(QObject *parent = 0);
-    ~QFileFeedbackEffect();
+    QFeedbackFileEffect(QObject *parent = 0);
+    ~QFeedbackFileEffect();
 
     int duration() const;
 
@@ -165,7 +165,7 @@ public:
     QString fileName() const;
     void setFileName(const QString &);
 
-    static QStringList mimeTypes();
+    static QStringList supportedMimeTypes();
 
 signals:
     void loadFinished(bool);
@@ -177,8 +177,8 @@ protected:
 
 
 private:
-    friend class QFileFeedbackEffectPrivate;
-    QScopedPointer<QFileFeedbackEffectPrivate> priv;
+    friend class QFeedbackFileEffectPrivate;
+    QScopedPointer<QFeedbackFileEffectPrivate> priv;
 };
 
 QTM_END_NAMESPACE

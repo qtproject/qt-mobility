@@ -41,7 +41,7 @@
 
 #include "qfeedbackeffect.h"
 #include "qfeedbackeffect_p.h"
-#include "qfeedbackplugin.h"
+#include "qfeedbackplugininterfaces.h"
 
 #include <QtCore>
 #include <QDebug>
@@ -62,27 +62,26 @@ QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(parent)
 /*!
     \fn void QFeedbackEffect::playThemeEffect(InstantEffect effect)
 
-    plays instant feedback.
+    plays instant feedback and return true if the effect could be played.
 
     That feedback is defined by the theme of the system.
 */
-void QFeedbackEffect::playThemeEffect(InstantEffect effect)
+bool QFeedbackEffect::playThemeEffect(ThemeEffect effect)
 {
-    if (QThemeFeedbackInterface *iface = QThemeFeedbackInterface::instance())
-        iface->play(effect);
-    else
-        qWarning("QFeedbackEffect::playThemeEffect: playing themed effects not supported");
+    if (QFeedbackThemeInterface *iface = QFeedbackThemeInterface::instance())
+        return iface->play(effect);
+    return false;
 }
 
 bool QFeedbackEffect::supportsThemeEffect()
 {
-    return QThemeFeedbackInterface::instance() != 0;
+    return QFeedbackThemeInterface::instance() != 0;
 }
 
 
 /*!
-    \class QHapticsFeedbackEffect
-    \brief The QHapticsFeedbackEffect allows to play a haptics feedback on an actuator.
+    \class QFeedbackHapticsEffect
+    \brief The QFeedbackHapticsEffect allows to play a haptics feedback on an actuator.
 
     It is possible to set the duration, intenisy and envelope of the effect.
     It is a subclass of QFeedbackEffect (subclass of QAbstractAnimation) which makes it 
@@ -98,140 +97,140 @@ bool QFeedbackEffect::supportsThemeEffect()
     \sa QAbstractAnimation, QFeedbackDevice
 */
 
-QHapticsFeedbackEffect::QHapticsFeedbackEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QHapticsFeedbackEffectPrivate)
+QFeedbackHapticsEffect::QFeedbackHapticsEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QFeedbackHapticsEffectPrivate)
 {
 }
 
 
-QHapticsFeedbackEffect::~QHapticsFeedbackEffect()
+QFeedbackHapticsEffect::~QFeedbackHapticsEffect()
 {
 }
 
 /*!
-    \property QHapticsFeedbackEffect::duration
+    \property QFeedbackHapticsEffect::duration
     \brief the expected duration of the effect.
 
     This property defines the duration of the feedback effect.
 */
-int QHapticsFeedbackEffect::duration() const
+int QFeedbackHapticsEffect::duration() const
 {
     return priv->duration;
 }
-void QHapticsFeedbackEffect::setDuration(int msecs)
+void QFeedbackHapticsEffect::setDuration(int msecs)
 {
     if (priv->duration == msecs)
         return;
     priv->duration = msecs;
-    QHapticsFeedbackInterface::instance()->updateEffectProperty(this, QHapticsFeedbackInterface::Duration);
+    QFeedbackHapticsInterface::instance()->updateEffectProperty(this, QFeedbackHapticsInterface::Duration);
 }
 
 /*!
-    \property QHapticsFeedbackEffect::intensity
+    \property QFeedbackHapticsEffect::intensity
     \brief the intensity of the effect.
 
     This property defines the intensity of the feedback effect.
     The value can be between 0. and 1.
 */
-qreal QHapticsFeedbackEffect::intensity() const
+qreal QFeedbackHapticsEffect::intensity() const
 {
     return priv->intensity;
 }
-void QHapticsFeedbackEffect::setIntensity(qreal intensity)
+void QFeedbackHapticsEffect::setIntensity(qreal intensity)
 {
     if (priv->intensity == intensity)
         return;
     priv->intensity = intensity;
-    QHapticsFeedbackInterface::instance()->updateEffectProperty(this, QHapticsFeedbackInterface::Intensity);
+    QFeedbackHapticsInterface::instance()->updateEffectProperty(this, QFeedbackHapticsInterface::Intensity);
 }
 
 /*!
-    \property QHapticsFeedbackEffect::attackTime
+    \property QFeedbackHapticsEffect::attackTime
     \brief the duration of the fade-in effect.
 
     This property defines the duration of the fade-in effect in msecs.
 */
-int QHapticsFeedbackEffect::attackTime() const
+int QFeedbackHapticsEffect::attackTime() const
 {
     return priv->attackTime;
 }
-void QHapticsFeedbackEffect::setAttackTime(int msecs)
+void QFeedbackHapticsEffect::setAttackTime(int msecs)
 {
     if (priv->attackTime == msecs)
         return;
     priv->attackTime = msecs;
-    QHapticsFeedbackInterface::instance()->updateEffectProperty(this, QHapticsFeedbackInterface::AttackTime);
+    QFeedbackHapticsInterface::instance()->updateEffectProperty(this, QFeedbackHapticsInterface::AttackTime);
 }
 
 /*!
-    \property QHapticsFeedbackEffect::attackIntensity
+    \property QFeedbackHapticsEffect::attackIntensity
     \brief the initial intensity of the effect.
 
     This property defines the initial intensity of the effect, before it fades in.
     It is usually lower than intensity.
 */
-qreal QHapticsFeedbackEffect::attackIntensity() const
+qreal QFeedbackHapticsEffect::attackIntensity() const
 {
     return priv->attackIntensity;
 }
-void QHapticsFeedbackEffect::setAttackIntensity(qreal intensity)
+void QFeedbackHapticsEffect::setAttackIntensity(qreal intensity)
 {
     if (priv->attackIntensity == intensity)
         return;
     priv->attackIntensity = intensity;
-    QHapticsFeedbackInterface::instance()->updateEffectProperty(this, QHapticsFeedbackInterface::AttackIntensity);
+    QFeedbackHapticsInterface::instance()->updateEffectProperty(this, QFeedbackHapticsInterface::AttackIntensity);
 }
 
 /*!
-    \property QHapticsFeedbackEffect::fadeTime
+    \property QFeedbackHapticsEffect::fadeTime
     \brief the duration of the fade-out effect.
 
     This property defines the duration of the fade-out effect in msecs.
 */
-int QHapticsFeedbackEffect::fadeTime() const
+int QFeedbackHapticsEffect::fadeTime() const
 {
     return priv->fadeTime;
 }
-void QHapticsFeedbackEffect::setFadeTime(int msecs)
+void QFeedbackHapticsEffect::setFadeTime(int msecs)
 {
     if (priv->fadeTime == msecs)
         return;
     priv->fadeTime = msecs;
-    QHapticsFeedbackInterface::instance()->updateEffectProperty(this, QHapticsFeedbackInterface::FadeTime);
+    QFeedbackHapticsInterface::instance()->updateEffectProperty(this, QFeedbackHapticsInterface::FadeTime);
 }
 
 /*!
-    \property QHapticsFeedbackEffect::fadeIntensity
+    \property QFeedbackHapticsEffect::fadeIntensity
     \brief the final intensity of the effect.
 
     This property defines the final intensity of the effect, after it fades out.
     It is usually lower than intensity.
 */
-qreal QHapticsFeedbackEffect::fadeIntensity() const
+qreal QFeedbackHapticsEffect::fadeIntensity() const
 {
     return priv->fadeIntensity;
 }
-void QHapticsFeedbackEffect::setFadeIntensity(qreal intensity)
+void QFeedbackHapticsEffect::setFadeIntensity(qreal intensity)
 {
     if (priv->fadeIntensity == intensity)
         return;
     priv->fadeIntensity = intensity;
-    QHapticsFeedbackInterface::instance()->updateEffectProperty(this, QHapticsFeedbackInterface::FadeIntensity);
+    QFeedbackHapticsInterface::instance()->updateEffectProperty(this, QFeedbackHapticsInterface::FadeIntensity);
 }
 
 /*!
-    \property QHapticsFeedbackEffect::actuator
+    \property QFeedbackHapticsEffect::actuator
     \brief the actuator on which the effect operates.
 
     This property defines the actuator on which the effect operates.
 */
-QFeedbackActuator QHapticsFeedbackEffect::actuator() const
+QFeedbackActuator QFeedbackHapticsEffect::actuator() const
 {
     return priv->actuator;
 }
-void QHapticsFeedbackEffect::setActuator(const QFeedbackActuator &actuator)
+void QFeedbackHapticsEffect::setActuator(const QFeedbackActuator &actuator)
 {
     if (state() != Stopped) {
-        qWarning("QHapticsFeedbackEffect::setActuator: The effect is not stopped");
+        qWarning("QFeedbackHapticsEffect::setActuator: The effect is not stopped");
         return;
     }
 
@@ -239,20 +238,20 @@ void QHapticsFeedbackEffect::setActuator(const QFeedbackActuator &actuator)
 }
 
 /*!
-    \property QHapticsFeedbackEffect::period
+    \property QFeedbackHapticsEffect::period
     \brief set the period for the effect.
 
     It has a default value of -1, which mean that it is not a periodic effect.
     Note: not all actuators support periodic effects
 */
-int QHapticsFeedbackEffect::period() const
+int QFeedbackHapticsEffect::period() const
 {
     return priv->period;
 }
-void QHapticsFeedbackEffect::setPeriod(int msecs)
+void QFeedbackHapticsEffect::setPeriod(int msecs)
 {
     if (state() != Stopped) {
-        qWarning("QHapticsFeedbackEffect::setPeriod: the period can only  be changed if the effect is stopped");
+        qWarning("QFeedbackHapticsEffect::setPeriod: the period can only be changed if the effect is stopped");
         return;
     }
     priv->period = msecs;
@@ -261,9 +260,9 @@ void QHapticsFeedbackEffect::setPeriod(int msecs)
 /*
     \reimp
 */
-void QHapticsFeedbackEffect::updateCurrentTime(int /*currentTime*/)
+void QFeedbackHapticsEffect::updateCurrentTime(int /*currentTime*/)
 {
-    switch(QHapticsFeedbackInterface::instance()->actualEffectState(this))
+    switch(QFeedbackHapticsInterface::instance()->actualEffectState(this))
     {
     case QAbstractAnimation::Running:
         start();
@@ -280,16 +279,16 @@ void QHapticsFeedbackEffect::updateCurrentTime(int /*currentTime*/)
 /*
     \reimp
 */
-void QHapticsFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+void QFeedbackHapticsEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
 {
-    ErrorType e = QHapticsFeedbackInterface::instance()->updateEffectState(this);
+    ErrorType e = QFeedbackHapticsInterface::instance()->updateEffectState(this);
     QAbstractAnimation::updateState(newState, oldState);
     if (e != NoError)
         emit error(e);
 }
 
 
-void QFileFeedbackEffectPrivate::loadFinished(bool success)
+void QFeedbackFileEffectPrivate::loadFinished(bool success)
 {
     isLoading = false;
     loaded = success;
@@ -299,28 +298,28 @@ void QFileFeedbackEffectPrivate::loadFinished(bool success)
 }
 
 
-QFileFeedbackEffect::QFileFeedbackEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QFileFeedbackEffectPrivate(this))
+QFeedbackFileEffect::QFeedbackFileEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QFeedbackFileEffectPrivate(this))
 {
 }
 
-QFileFeedbackEffect::~QFileFeedbackEffect()
+QFeedbackFileEffect::~QFeedbackFileEffect()
 {
     setLoaded(false); //ensures we unload the file and frees resources
 }
 
-int QFileFeedbackEffect::duration() const
+int QFeedbackFileEffect::duration() const
 {
-    return QFileFeedbackInterface::instance()->effectDuration(this);
+    return QFeedbackFileInterface::instance()->effectDuration(this);
 }
 
-QString QFileFeedbackEffect::fileName() const
+QString QFeedbackFileEffect::fileName() const
 {
     return priv->fileName;
 }
-void QFileFeedbackEffect::setFileName(const QString &fileName)
+void QFeedbackFileEffect::setFileName(const QString &fileName)
 {
     if (state() != QAbstractAnimation::Stopped) {
-        qWarning("QFileFeedbackEffect::setFileName: can't set the file while the feedback is running");
+        qWarning("QFeedbackFileEffect::setFileName: can't set the file while the feedback is running");
         return;
     }
     setLoaded(false);
@@ -328,35 +327,35 @@ void QFileFeedbackEffect::setFileName(const QString &fileName)
     setLoaded(true);
 }
 
-bool QFileFeedbackEffect::isLoading() const
+bool QFeedbackFileEffect::isLoading() const
 {
     return priv->isLoading;
 }
-bool QFileFeedbackEffect::isLoaded() const
+bool QFeedbackFileEffect::isLoaded() const
 {
     return priv->loaded;
 }
-void QFileFeedbackEffect::setLoaded(bool load)
+void QFeedbackFileEffect::setLoaded(bool load)
 {
     if (state() != QAbstractAnimation::Stopped) {
-        qWarning() << "QFileFeedbackEffect::setLoaded: can't load/unload a file while the effect is not stopped";
+        qWarning() << "QFeedbackFileEffect::setLoaded: can't load/unload a file while the effect is not stopped";
         return;
     }
 
     if (priv->loaded == load && !(isLoading() && !load) )
         return;
 
-    QFileFeedbackInterface::instance()->setLoaded(this, load);
+    QFeedbackFileInterface::instance()->setLoaded(this, load);
 }
 
-QStringList QFileFeedbackEffect::mimeTypes()
+QStringList QFeedbackFileEffect::supportedMimeTypes()
 {
-    return QFileFeedbackInterface::instance()->mimeTypes();
+    return QFeedbackFileInterface::instance()->supportedMimeTypes();
 }
 
-void QFileFeedbackEffect::updateCurrentTime(int /*currentTime*/)
+void QFeedbackFileEffect::updateCurrentTime(int /*currentTime*/)
 {
-    switch(QFileFeedbackInterface::instance()->actualEffectState(this))
+    switch(QFeedbackFileInterface::instance()->actualEffectState(this))
     {
     case QAbstractAnimation::Running:
         start();
@@ -370,9 +369,9 @@ void QFileFeedbackEffect::updateCurrentTime(int /*currentTime*/)
     }
 }
 
-void QFileFeedbackEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+void QFeedbackFileEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
 {
-    ErrorType e = QFileFeedbackInterface::instance()->updateEffectState(this);
+    ErrorType e = QFeedbackFileInterface::instance()->updateEffectState(this);
     QAbstractAnimation::updateState(newState, oldState);
     if (e != NoError)
         emit error(e);

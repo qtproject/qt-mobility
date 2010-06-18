@@ -48,20 +48,18 @@
 #include <QtCore/QObject>
 #include <QtCore/QMutex>
 
-#include <qfeedbackplugin.h>
+#include <qfeedbackplugininterfaces.h>
 
 #include <ImmVibe.h>
-
-#define DEVICE_COUNT 3
 
 QT_BEGIN_HEADER
 QTM_USE_NAMESPACE
 
-class QFeedbackImmersion : public QObject, public QHapticsFeedbackInterface, public QFileFeedbackInterface
+class QFeedbackImmersion : public QObject, public QFeedbackHapticsInterface, public QFeedbackFileInterface
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QHapticsFeedbackInterface)
-    Q_INTERFACES(QtMobility::QFileFeedbackInterface)
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackHapticsInterface)
+    Q_INTERFACES(QTM_NAMESPACE::QFeedbackFileInterface)
 public:
     QFeedbackImmersion();
     virtual ~QFeedbackImmersion();
@@ -71,17 +69,18 @@ public:
     //for actuator handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &);
     virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty);
+    virtual bool isActuatorCapabilitySupported(QFeedbackActuator::Capability);
 
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QHapticsFeedbackEffect *, EffectProperty);
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QHapticsFeedbackEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QHapticsFeedbackEffect *);
+    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty);
+    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackHapticsEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QFeedbackHapticsEffect *);
 
     //for loading files
-    virtual void setLoaded(QFileFeedbackEffect*, bool);
-    virtual QFileFeedbackEffect::ErrorType updateEffectState(QFileFeedbackEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFileFeedbackEffect *);
-    virtual int effectDuration(const QFileFeedbackEffect *);
-    virtual QStringList mimeTypes();
+    virtual void setLoaded(QFeedbackFileEffect*, bool);
+    virtual QFeedbackEffect::ErrorType updateEffectState(QFeedbackFileEffect *);
+    virtual QAbstractAnimation::State actualEffectState(const QFeedbackFileEffect *);
+    virtual int effectDuration(const QFeedbackFileEffect *);
+    virtual QStringList supportedMimeTypes();
 
 private:
     VibeInt32 handleForActuator(const QFeedbackActuator &actuator);
