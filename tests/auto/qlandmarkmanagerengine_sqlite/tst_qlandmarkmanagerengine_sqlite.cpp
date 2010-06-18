@@ -68,6 +68,7 @@
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
 #include <qlandmarkcategorysaverequest.h>
+#include <qlandmarkcategoryremoverequest.h>
 #include <QMetaType>
 #include <QDebug>
 
@@ -94,6 +95,7 @@ Q_DECLARE_METATYPE(QLandmarkManager::Error)
 Q_DECLARE_METATYPE(QLandmarkSaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategorySaveRequest *)
+Q_DECLARE_METATYPE(QLandmarkCategoryRemoveRequest *)
 
 class tst_QLandmarkManagerEngineSqlite : public QObject
 {
@@ -111,6 +113,7 @@ public:
     qRegisterMetaType<QLandmarkSaveRequest *>();
     qRegisterMetaType<QLandmarkRemoveRequest *>();
     qRegisterMetaType<QLandmarkCategorySaveRequest *>();
+    qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
     }
 
@@ -942,6 +945,112 @@ private slots:
         QVERIFY(m_manager->saveLandmark(&lmA));
 
         QVERIFY(m_manager->removeCategory(catY.categoryId()));
+        QLandmark lmAnew = m_manager->landmark(lmA.landmarkId());
+        QVERIFY(lmA != lmAnew);
+        QCOMPARE(lmA.categoryIds().count(), 3);
+        QCOMPARE(lmAnew.categoryIds().count(), 2);
+        QCOMPARE(lmAnew.categoryIds().at(0), catX.categoryId());
+        QCOMPARE(lmAnew.categoryIds().at(1), catZ.categoryId());
+    }
+
+    void removeCategoryIdAsync() {
+        QSignalSpy spyRemove(m_manager, SIGNAL(categoriesRemoved(QList<QLandmarkCategoryId>)));
+
+        QLandmarkCategoryId id1;
+        id1.setManagerUri(m_manager->managerUri());
+        id1.setLocalId("1");
+
+        QLandmarkCategoryRemoveRequest removeRequest(m_manager);
+        QSignalSpy spy(&removeRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        removeRequest.setCategoryId(id1);
+        removeRequest.start();
+
+        QVERIFY(waitForAsync(spy, &removeRequest, QLandmarkManager::NoError));
+        QCOMPARE(removeRequest.errorMap().count(),1);
+        QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::NoError);
+
+        //TODO: notifications
+        //QCOMPARE(spyRemove.count(), 0);
+
+        QLandmarkCategory cat2;
+        cat2.setName("CAT2");
+        QVERIFY(m_manager->saveCategory(&cat2));
+
+        removeRequest.setCategoryId(cat2.categoryId());
+        removeRequest.start();
+
+        QVERIFY(waitForAsync(spy, &removeRequest, QLandmarkManager::NoError));
+        QCOMPARE(removeRequest.errorMap().count(),1);
+        QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::NoError);
+
+        //TODO: Notifications
+        /*
+        QCOMPARE(spyRemove.count(), 1);
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat2.categoryId());
+        spyRemove.clear();*/
+
+        // with attributes
+
+        // effect on landmarks
+
+        QLandmarkCategory cat3;
+        cat3.setName("CAT3");
+        QVERIFY(m_manager->saveCategory(&cat3));
+
+        QLandmark lm1;
+        lm1.setName("LM1");
+        QVERIFY(m_manager->saveLandmark(&lm1));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
+
+        lm1.addCategoryId(cat3.categoryId());
+        QVERIFY(m_manager->saveLandmark(&lm1));
+        QCOMPARE(lm1, m_manager->landmark(lm1.landmarkId()));
+
+        removeRequest.setCategoryId(cat3.categoryId());
+        removeRequest.start();
+
+        QVERIFY(waitForAsync(spy, &removeRequest, QLandmarkManager::NoError));
+        QCOMPARE(removeRequest.errorMap().count(),1);
+        QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::NoError);
+
+        //TODO: notifications
+        /* QCOMPARE(spyRemove.count(), 1);
+        QCOMPARE(spyRemove.at(0).at(0).value<QList<QLandmarkCategoryId> >().at(0), cat3.categoryId());
+        spyRemove.clear(); */
+
+        QLandmark lm2 = m_manager->landmark(lm1.landmarkId());
+        QVERIFY(lm1 != lm2);
+        QCOMPARE(lm1.categoryIds().size(), 1);
+        QCOMPARE(lm2.categoryIds().size(), 0);
+
+        QLandmark lmA;
+        lmA.setName("LMA");
+        QVERIFY(m_manager->saveLandmark(&lmA));
+
+        QLandmarkCategory catX;
+        catX.setName("CATX");
+        QVERIFY(m_manager->saveCategory(&catX));
+
+        QLandmarkCategory catY;
+        catY.setName("CATY");
+        QVERIFY(m_manager->saveCategory(&catY));
+
+        QLandmarkCategory catZ;
+        catZ.setName("CATZ");
+        QVERIFY(m_manager->saveCategory(&catZ));
+
+        lmA.addCategoryId(catX.categoryId());
+        lmA.addCategoryId(catY.categoryId());
+        lmA.addCategoryId(catZ.categoryId());
+
+        QVERIFY(m_manager->saveLandmark(&lmA));
+        removeRequest.setCategoryId(catY.categoryId());
+        removeRequest.start();
+
+        QVERIFY(waitForAsync(spy, &removeRequest, QLandmarkManager::NoError));
+        QCOMPARE(removeRequest.errorMap().count(),1);
+        QCOMPARE(removeRequest.errorMap().value(0), QLandmarkManager::NoError);
+
         QLandmark lmAnew = m_manager->landmark(lmA.landmarkId());
         QVERIFY(lmA != lmAnew);
         QCOMPARE(lmA.categoryIds().count(), 3);

@@ -66,6 +66,7 @@
 #include <qlandmarksaverequest.h>
 #include <qlandmarkremoverequest.h>
 #include <qlandmarkcategorysaverequest.h>
+#include <qlandmarkcategoryremoverequest.h>
 
 #include <qlandmarkfilehandler_gpx_p.h>
 #include <qlandmarkfilehandler_lmx_p.h>
@@ -1737,6 +1738,58 @@ bool removeCategory(const QString &connectionName, const QLandmarkCategoryId &ca
     return true;
 }
 
+bool removeCategories(const QString &connectionName, const QList<QLandmarkCategoryId> &categoryIds,
+                    QMap<int, QLandmarkManager::Error> *errorMap,
+                    QLandmarkManager::Error *error,
+                    QString *errorString, const QString &managerUri)
+{
+    QList<QLandmarkCategoryId> removedIds;
+
+    bool noErrors = true;
+    QLandmarkManager::Error lastError = QLandmarkManager::NoError;
+    QString lastErrorString;
+    QLandmarkManager::Error loopError;
+    QString loopErrorString;
+    for (int i = 0; i < categoryIds.size(); ++i) {
+        loopError = QLandmarkManager::NoError;
+        loopErrorString.clear();
+
+        bool result = removeCategory(connectionName, categoryIds.at(i), &loopError, &loopErrorString, managerUri);
+
+        if (errorMap)
+            errorMap->insert(i, loopError);
+
+        if (!result) {
+            noErrors = false;
+            lastError = loopError;
+            lastErrorString = loopErrorString;
+        }
+
+        if (result)
+            removedIds << categoryIds.at(i);
+    }
+
+    if (noErrors) {
+        if (error)
+            *error = QLandmarkManager::NoError;
+        if (errorString)
+            *errorString = "";
+    } else {
+        if (error)
+            *error = lastError;
+        if (errorString)
+            *errorString = lastErrorString;
+    }
+
+    //TODO: notifications
+    //if (removedIds.size() != 0)
+    //    emit landmarksRemoved(removedIds);
+
+    return noErrors;
+}
+
+
+
 QueryRun::QueryRun(QLandmarkAbstractRequest *req, const QString &uri, QLandmarkManagerEngineSqlite *eng)
     : request(req),
       error(QLandmarkManager::NoError),
@@ -1871,7 +1924,30 @@ void QueryRun::run()
                 }
                 break;
         }
+        case QLandmarkAbstractRequest::CategoryRemoveRequest :
+            {
+                QLandmarkCategoryRemoveRequest *removeRequest = static_cast<QLandmarkCategoryRemoveRequest *> (request);
+                QList<QLandmarkCategoryId> categoryIds = removeRequest->categoryIds();
+               ::removeCategories(connectionName, categoryIds, &errorMap, &error, &errorString, managerUri);
 
+                if (this->isCanceled) {
+                    categoryIds.clear();
+                    QMetaObject::invokeMethod(engine, "updateLandmarkCategoryRemoveRequest",
+                                              Q_ARG(QLandmarkCategoryRemoveRequest *,removeRequest),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(ERROR_MAP, errorMap),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::CanceledState));
+                } else {
+                    QMetaObject::invokeMethod(engine, "updateLandmarkCategoryRemoveRequest",
+                                              Q_ARG(QLandmarkCategoryRemoveRequest *,removeRequest),
+                                              Q_ARG(QLandmarkManager::Error, error),
+                                              Q_ARG(QString, errorString),
+                                              Q_ARG(ERROR_MAP, errorMap),
+                                              Q_ARG(QLandmarkAbstractRequest::State,QLandmarkAbstractRequest::FinishedState));
+                }
+                break;
+            }
         default:
             break;
         }
@@ -2931,4 +3007,10 @@ void QLandmarkManagerEngineSqlite::updateLandmarkCategorySaveRequest(QLandmarkCa
                             QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
 {
     QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(req, result, error, errorString, errorMap, newState);
+}
+
+void QLandmarkManagerEngineSqlite::updateLandmarkCategoryRemoveRequest(QLandmarkCategoryRemoveRequest* req,
+                            QLandmarkManager::Error error, const QString &errorString, const ERROR_MAP &errorMap, QLandmarkAbstractRequest::State newState)
+{
+    QLandmarkManagerEngine::updateLandmarkCategoryRemoveRequest(req, error, errorString, errorMap, newState);
 }
