@@ -789,7 +789,7 @@ void tst_QGalleryTrackerItemList::scrollUpOverlapping()
     for (char c = 'a'; c <= 'z'; ++c)
         m_queryAdaptor->setCount(c, 100);
 
-    QGalleryTrackerItemList list(arguments, true, 192, 32);
+    QGalleryTrackerItemList list(arguments, true, 256, 32);
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
@@ -987,7 +987,7 @@ void tst_QGalleryTrackerItemList::scrollUpNoOverlap()
     for (char c = 'a'; c <= 'z'; ++c)
         m_queryAdaptor->setCount(c, 100);
 
-    QGalleryTrackerItemList list(arguments, true, 448, 32);
+    QGalleryTrackerItemList list(arguments, true, 512, 32);
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
@@ -1084,7 +1084,6 @@ void tst_QGalleryTrackerItemList::scrollJitterNoOverlap()
     QCOMPARE(list.id(500), QVariant(QLatin1String("f-000")));
     QCOMPARE(list.id(600), QVariant(QLatin1String("g-000")));
     QCOMPARE(list.id(700), QVariant(QLatin1String("h-000")));
-
 
     list.setCursorPosition(0);
     QVERIFY(list.waitForFinished(1000));

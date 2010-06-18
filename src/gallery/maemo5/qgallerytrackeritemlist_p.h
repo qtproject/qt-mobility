@@ -163,6 +163,8 @@ Q_SIGNALS:
 protected:
     QGalleryTrackerItemList(QGalleryTrackerItemListPrivate &dd, QObject *parent);
 
+    void timerEvent(QTimerEvent *event);
+
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemList)
     Q_PRIVATE_SLOT(d_func(), void _q_queryFinished(QDBusPendingCallWatcher *))

@@ -213,11 +213,13 @@ public:
 
     enum Flag
     {
-        Refresh         = 0x01,
-        Cancelled       = 0x02,
-        Live            = 0x04,
-        SyncFinished    = 0x08,
-        Active          = 0x10
+        Cancelled       = 0x01,
+        Live            = 0x02,
+        Refresh         = 0x04,
+        PositionUpdated = 0x08,
+        UpdateRequested = 0x10,
+        Active          = 0x20,
+        SyncFinished    = 0x40
     };
 
     Q_DECLARE_FLAGS(Flags, Flag)
@@ -312,7 +314,16 @@ public:
     inline int rCacheIndex(const row_iterator &iterator) const {
         return iterator - rCache.values.begin() + rCache.index; }
 
-    void update(int index);
+    void query(int index);
+
+    void update();
+    void requestUpdate()
+    {
+        if (!(flags & UpdateRequested)) {
+            flags |= UpdateRequested;
+            QCoreApplication::postEvent(q_func(), new QEvent(QEvent::UpdateRequest));
+        }
+    }
 
     void queryFinished(const QDBusPendingCall &call);
     void parseRows(const QDBusPendingCall &call);
@@ -333,7 +344,7 @@ public:
     void postSyncEvent(SyncEvent *event)
     {
         if (syncEvents.enqueue(event))
-            QCoreApplication::postEvent(q_func(), new QEvent(QEvent::UpdateRequest));
+            QCoreApplication::postEvent(q_func(), new QEvent(QEvent::UpdateLater));
     }
 
     void processSyncEvents();
