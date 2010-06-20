@@ -69,6 +69,7 @@
 #include <qlandmarkremoverequest.h>
 #include <qlandmarkcategorysaverequest.h>
 #include <qlandmarkcategoryremoverequest.h>
+#include <qlandmarkcategoryfetchrequest.h>
 #include <QMetaType>
 #include <QDebug>
 
@@ -96,6 +97,7 @@ Q_DECLARE_METATYPE(QLandmarkSaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkRemoveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategorySaveRequest *)
 Q_DECLARE_METATYPE(QLandmarkCategoryRemoveRequest *)
+Q_DECLARE_METATYPE(QLandmarkCategoryFetchRequest *)
 
 class tst_QLandmarkManagerEngineSqlite : public QObject
 {
@@ -112,6 +114,7 @@ public:
     qRegisterMetaType<QLandmarkFetchRequest *>();
     qRegisterMetaType<QLandmarkSaveRequest *>();
     qRegisterMetaType<QLandmarkRemoveRequest *>();
+    qRegisterMetaType<QLandmarkCategoryFetchRequest *>();
     qRegisterMetaType<QLandmarkCategorySaveRequest *>();
     qRegisterMetaType<QLandmarkCategoryRemoveRequest *>();
     qRegisterMetaType<QLandmarkManager::Error>();
@@ -229,6 +232,42 @@ private slots:
         id2.setManagerUri(m_manager->managerUri());
         id2.setLocalId(cat2.categoryId().localId());
         QCOMPARE(cat2, m_manager->category(id2));
+
+        // add  - with attributes
+        // get present
+    }
+
+        void retrieveCategoryAsync() {
+        QLandmarkCategoryId id1;
+        id1.setManagerUri(m_manager->managerUri());
+        id1.setLocalId("1");
+
+        QLandmarkCategoryFetchRequest fetchRequest(m_manager);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.setCategoryId(id1);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        QCOMPARE(fetchRequest.categories().count(), 0);
+
+        fetchRequest.setMatchingScheme(QLandmarkCategoryFetchRequest::MatchAll);
+        fetchRequest.start();
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::DoesNotExistError));
+        QCOMPARE(fetchRequest.categories().count(), 0);
+
+        QLandmarkCategory cat2;
+        cat2.setName("CAT2");
+        QVERIFY(m_manager->saveCategory(&cat2));
+
+        QLandmarkCategoryId id2;
+        id2.setManagerUri(m_manager->managerUri());
+        id2.setLocalId(cat2.categoryId().localId());
+
+        fetchRequest.setCategoryId(id2);
+        fetchRequest.start();
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::NoError));
+        QCOMPARE(fetchRequest.categories().count(),1);
+        QCOMPARE(cat2, fetchRequest.categories().at(0));
 
         // add  - with attributes
         // get present
@@ -1229,6 +1268,128 @@ private slots:
         cats = m_manager->categories(catIds);
         QCOMPARE(cats.count(), 0);
         QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
+
+        //retrieve all categories
+        cats = m_manager->categories();
+        QCOMPARE(m_manager->error(), QLandmarkManager::NoError);
+        QCOMPARE(cats.count(), 3);
+        QCOMPARE(cats.at(0).name(), QString("CAT1"));
+        QCOMPARE(cats.at(0).categoryId().isValid(), true);
+        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).categoryId().isValid(), true);
+        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).categoryId().isValid(), true);
+    }
+
+     void retrieveMultipleCategoriesAsync() {
+        QList<QLandmarkCategoryId> catIds;
+
+        QLandmarkCategory cat1;
+        cat1.setName("CAT1");
+        QVERIFY(m_manager->saveCategory(&cat1));
+        catIds << cat1.categoryId();
+
+        QLandmarkCategory cat3;
+        cat3.setName("CAT3");
+        QVERIFY(m_manager->saveCategory(&cat3));
+        catIds << cat3.categoryId();
+
+        QLandmarkCategory cat2;
+        cat2.setName("CAT2");
+        QVERIFY(m_manager->saveCategory(&cat2));
+        catIds << cat2.categoryId();
+
+        QString uri = m_manager->managerUri();
+        int i = 1;
+
+        QLandmarkCategoryFetchRequest fetchRequest(m_manager);
+        QSignalSpy spy(&fetchRequest, SIGNAL(stateChanged(QLandmarkAbstractRequest::State)));
+        fetchRequest.setMatchingScheme(QLandmarkCategoryFetchRequest::MatchAll);
+        fetchRequest.setCategoryIds(catIds);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        QList<QLandmarkCategory> cats = fetchRequest.categories();
+        QCOMPARE(cats.size(), 3);
+
+        QCOMPARE(cats.at(0).name(), QString("CAT1"));
+        QCOMPARE(cats.at(0).categoryId().isValid(), true);
+        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).categoryId().isValid(), true);
+        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).categoryId().isValid(), true);
+
+        //try matching subset
+        fetchRequest.setMatchingScheme(QLandmarkCategoryFetchRequest::MatchSubset);
+        fetchRequest.setCategoryIds(catIds);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest));
+        cats = fetchRequest.categories();
+        QCOMPARE(cats.size(), 3);
+
+        QCOMPARE(cats.at(0).name(), QString("CAT1"));
+        QCOMPARE(cats.at(0).categoryId().isValid(), true);
+        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).categoryId().isValid(), true);
+        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).categoryId().isValid(), true);
+
+//
+        QList<QLandmarkCategoryId> invalidCatIds;
+
+        while (invalidCatIds.size() < 3) {
+            QLandmarkCategoryId id;
+            id.setManagerUri(uri);
+            id.setLocalId(QString::number(i));
+            QLandmarkCategory cat = m_manager->category(id);
+            if (!cat.categoryId().isValid()) {
+                invalidCatIds << id;
+            }
+            ++i;
+        }
+
+        catIds.insert(1, invalidCatIds.at(0));
+        catIds.insert(3, invalidCatIds.at(1));
+        catIds.insert(5, invalidCatIds.at(2));
+
+        fetchRequest.setMatchingScheme(QLandmarkCategoryFetchRequest::MatchAll);
+        fetchRequest.setCategoryIds(catIds);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::DoesNotExistError));
+        QCOMPARE(fetchRequest.categories().count(), 0);
+
+        fetchRequest.setMatchingScheme(QLandmarkCategoryFetchRequest::MatchSubset);
+        fetchRequest.setCategoryIds(catIds);
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::NoError));
+        cats = fetchRequest.categories();
+        QCOMPARE(cats.size(), 3);
+
+        QCOMPARE(cats.at(0).name(), QString("CAT1"));
+        QCOMPARE(cats.at(0).categoryId().isValid(), true);
+        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).categoryId().isValid(), true);
+        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).categoryId().isValid(), true);
+
+        //try fetching all categories i.e. pass in an empty category id list
+        fetchRequest.setMatchingScheme(QLandmarkCategoryFetchRequest::MatchSubset);
+        fetchRequest.setCategoryIds(QList<QLandmarkCategoryId>());
+        fetchRequest.start();
+
+        QVERIFY(waitForAsync(spy, &fetchRequest, QLandmarkManager::NoError));
+        cats = fetchRequest.categories();
+        QCOMPARE(cats.size(), 3);
+
+        QCOMPARE(cats.at(0).name(), QString("CAT1"));
+        QCOMPARE(cats.at(0).categoryId().isValid(), true);
+        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).categoryId().isValid(), true);
+        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).categoryId().isValid(), true);
     }
 
     void retrieveMultipleLandmarks() {

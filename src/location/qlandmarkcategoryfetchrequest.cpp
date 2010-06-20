@@ -109,6 +109,16 @@ void QLandmarkCategoryFetchRequest::setCategoryIds(const QList<QLandmarkCategory
 }
 
 /*!
+    Convenience function to set a single category identified by \a categoryId to be fetched.
+*/
+void QLandmarkCategoryFetchRequest::setCategoryId(const QLandmarkCategoryId &categoryId)
+{
+    Q_D(QLandmarkCategoryFetchRequest);
+    d->categoryIds.clear();
+    d->categoryIds.append(categoryId);
+}
+
+/*!
     Returns the matching scheme for the fetch request.
 
     By default the matching scheme is set to to \a MatchSubset

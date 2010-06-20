@@ -58,7 +58,8 @@ public:
     ~QLandmarkCategoryFetchRequest();
 
     QList<QLandmarkCategoryId> categoryIds() const;
-    void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds);
+    void setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds = QList<QLandmarkCategoryId>());
+    void setCategoryId(const QLandmarkCategoryId &categoryId);
 
     QList<QLandmarkCategory> categories() const;
 
