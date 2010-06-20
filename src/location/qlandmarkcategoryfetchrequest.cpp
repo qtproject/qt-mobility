@@ -108,6 +108,26 @@ void QLandmarkCategoryFetchRequest::setCategoryIds(const QList<QLandmarkCategory
     d->categoryIds = categoryIds;
 }
 
+/*!
+    Returns the matching scheme for the fetch request.
+
+    By default the matching scheme is set to to \a MatchSubset
+*/
+QLandmarkCategoryFetchRequest::MatchingScheme QLandmarkCategoryFetchRequest::matchingScheme() const
+{
+    Q_D(const QLandmarkCategoryFetchRequest);
+    return d->matchingScheme;
+}
+
+/*!
+    Sets the \matchingScheme of the fetch request.
+*/
+void QLandmarkCategoryFetchRequest::setMatchingScheme(QLandmarkCategoryFetchRequest::MatchingScheme matchingScheme)
+{
+    Q_D(QLandmarkCategoryFetchRequest);
+    d->matchingScheme = matchingScheme;
+}
+
 #include "moc_qlandmarkcategoryfetchrequest.cpp"
 
 QTM_END_NAMESPACE

@@ -56,6 +56,7 @@
 #include "qlandmarkabstractrequest_p.h"
 #include "qlandmark.h"
 #include "qlandmarkcategory.h"
+#include "qlandmarkcategoryfetchrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -135,10 +136,12 @@ public:
         :QLandmarkAbstractRequestPrivate(mgr)
     {
         type = QLandmarkAbstractRequest::CategoryFetchRequest;
+        matchingScheme = QLandmarkCategoryFetchRequest::MatchSubset;
     }
 
     QList<QLandmarkCategory> categories;
     QList<QLandmarkCategoryId> categoryIds;
+    QLandmarkCategoryFetchRequest::MatchingScheme matchingScheme;
 };
 
 

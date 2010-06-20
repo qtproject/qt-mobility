@@ -1200,6 +1200,15 @@ private slots:
         QString uri = m_manager->managerUri();
         int i = 1;
 
+        QList<QLandmarkCategory> cats = m_manager->categories(catIds);
+        QCOMPARE(cats.size(), 3);
+        QCOMPARE(cats.at(0).name(), QString("CAT1"));
+        QCOMPARE(cats.at(0).categoryId().isValid(), true);
+        QCOMPARE(cats.at(1).name(), QString("CAT2"));
+        QCOMPARE(cats.at(1).categoryId().isValid(), true);
+        QCOMPARE(cats.at(2).name(), QString("CAT3"));
+        QCOMPARE(cats.at(2).categoryId().isValid(), true);
+
         QList<QLandmarkCategoryId> invalidCatIds;
 
         while (invalidCatIds.size() < 3) {
@@ -1217,16 +1226,9 @@ private slots:
         catIds.insert(3, invalidCatIds.at(1));
         catIds.insert(5, invalidCatIds.at(2));
 
-        QList<QLandmarkCategory> cats = m_manager->categories(catIds);
-
-        QCOMPARE(cats.size(), 3);
-
-        QCOMPARE(cats.at(0).name(), QString("CAT1"));
-        QCOMPARE(cats.at(0).categoryId().isValid(), true);
-        QCOMPARE(cats.at(1).name(), QString("CAT2"));
-        QCOMPARE(cats.at(1).categoryId().isValid(), true);
-        QCOMPARE(cats.at(2).name(), QString("CAT3"));
-        QCOMPARE(cats.at(2).categoryId().isValid(), true);
+        cats = m_manager->categories(catIds);
+        QCOMPARE(cats.count(), 0);
+        QCOMPARE(m_manager->error(), QLandmarkManager::DoesNotExistError);
     }
 
     void retrieveMultipleLandmarks() {
