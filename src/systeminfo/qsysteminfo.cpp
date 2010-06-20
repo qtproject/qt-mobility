@@ -371,7 +371,6 @@ Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent), d(sysinfoPrivate())
 {
-
 }
 
 /*!

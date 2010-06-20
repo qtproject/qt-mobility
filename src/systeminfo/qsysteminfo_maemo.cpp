@@ -170,18 +170,6 @@ bool QSystemInfoPrivate::hasFeatureSupported(QSystemInfo::Feature feature)
 #endif /* Maemo 5 */
         }
         break;
-    case QSystemInfo::VideoOutFeature :
-        {
-            const QString sysPath = "/sys/class/video4linux/";
-            const QDir sysDir(sysPath);
-            QStringList filters;
-            filters << "*";
-            const QStringList sysList = sysDir.entryList( filters ,QDir::Dirs, QDir::Name);
-            if(sysList.contains("video0")) {
-                featureSupported = true;
-            }
-        }
-        break;
     case QSystemInfo::HapticsFeature:
         {
            // if(halIsAvailable) {
