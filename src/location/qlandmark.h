@@ -49,16 +49,16 @@
 #include <QVariant>
 #include <QStringList>
 #include <QUrl>
+#include "qgeocoordinate.h"
+#include "qlandmarkid.h"
+#include "qlandmarkcategoryid.h"
+#include "qgeoaddress.h"
 
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QLandmarkId;
-class QLandmarkCategoryId;
 class QGeoLocation;
-class QGeoAddress;
-class QGeoCoordinate;
 
 class QLandmarkPrivate;
 class Q_LOCATION_EXPORT QLandmark
@@ -109,6 +109,8 @@ public:
 
     QLandmarkId landmarkId() const;
     void setLandmarkId(const QLandmarkId &id);
+
+    void clear();
 private:
     QSharedDataPointer<QLandmarkPrivate> d;
 };

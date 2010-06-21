@@ -431,3 +431,21 @@ void QLandmark::setLandmarkId(const QLandmarkId &id)
 {
     d->id = id;
 }
+
+/*!
+    Clears all the data fields of the landmark.
+*/
+void QLandmark::clear()
+{
+    d->name.clear();
+    d->categoryIds.clear();
+    d->location = QGeoLocation();
+    d->description.clear();
+    d->iconUrl.clear();
+    d->radius = 0.0;
+    d->attributes.clear();
+    d->phone.clear();
+    d->url.clear();
+    d->id = QLandmarkId();
+}
+
