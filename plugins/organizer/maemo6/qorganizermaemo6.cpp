@@ -412,9 +412,18 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
     bool itemIsNew = (managerUri() != item->id().managerUri()
             || item->localId() == 0);
     Incidence* incidence = 0;
-    if (item->type() == QOrganizerItemType::TypeNote) {
+    if (item->type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent* event = static_cast<QOrganizerEvent*>(item);
+        incidence = convertQEventToKEvent(*event);
+    } else if (item->type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo* todo = static_cast<QOrganizerTodo*>(item);
+        incidence = convertQTodoToKTodo(*todo);
+    } else if (item->type() == QOrganizerItemType::TypeNote) {
         QOrganizerNote* note = static_cast<QOrganizerNote*>(item);
         incidence = convertQNoteToKJournal(*note);
+    } else if (item->type() == QOrganizerItemType::TypeJournal) {
+        QOrganizerJournal* journal = static_cast<QOrganizerJournal*>(item);
+        incidence = convertQJournalToKJournal(*journal);
     } else {
         *error = QOrganizerItemManager::InvalidItemTypeError;
         return 0;
@@ -436,19 +445,56 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
 }
 
 /*!
- * Converts \a note into an Incidence which is of subclass Journal.  The caller is responsible
+ * Converts \a qEvent into an Incidence which is of subclass Event.  The caller is responsible
  * for deleting the object.
  */
-Incidence* QOrganizerItemMaemo6Engine::convertQNoteToKJournal(const QOrganizerNote& note)
+Event* QOrganizerItemMaemo6Engine::convertQEventToKEvent(const QOrganizerEvent& qEvent)
 {
-    Journal* journal = new Journal;
-    if (!note.description().isEmpty()) {
-        journal->setDescription(note.description());
-    }
-    if (!note.displayLabel().isEmpty()) {
-        journal->setSummary(note.displayLabel());
-    }
-    return journal;
+    Event* kEvent = new Event;
+    convertDetailsToIncidenceFields(qEvent, kEvent);
+    return kEvent;
+}
+
+/*!
+ * Converts \a qTodo into an Incidence which is of subclass Todo.  The caller is responsible
+ * for deleting the object.
+ */
+Todo* QOrganizerItemMaemo6Engine::convertQTodoToKTodo(const QOrganizerTodo& qTodo)
+{
+    Todo* kTodo = new Todo;
+    convertDetailsToIncidenceFields(qTodo, kTodo);
+    return kTodo;
+}
+
+/*!
+ * Converts \a qJournal into an Incidence which is of subclass Journal.  The caller is responsible
+ * for deleting the object.
+ */
+Journal* QOrganizerItemMaemo6Engine::convertQJournalToKJournal(const QOrganizerJournal& qJournal)
+{
+    Journal* kJournal = new Journal;
+    convertDetailsToIncidenceFields(qJournal, kJournal);
+    return kJournal;
+}
+
+/*!
+ * Converts \a qNote into an Incidence which is of subclass Journal.  The caller is responsible
+ * for deleting the object.
+ */
+Journal* QOrganizerItemMaemo6Engine::convertQNoteToKJournal(const QOrganizerNote& qNote)
+{
+    Journal* kJournal = new Journal;
+    convertDetailsToIncidenceFields(qNote, kJournal);
+    return kJournal;
+}
+
+/*!
+ * Converts the item-common details of \a item to fields to set in \a incidence.
+ */
+void QOrganizerItemMaemo6Engine::convertDetailsToIncidenceFields(const QOrganizerItem& item, Incidence* incidence)
+{
+    incidence->setDescription(item.description());
+    incidence->setSummary(item.displayLabel());
 }
 
 
