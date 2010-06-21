@@ -258,11 +258,6 @@ void QSensorBackend::addOutputRange(qreal min, qreal max, qreal accuracy)
     qoutputrange details = {min, max, accuracy};
 
     d->outputRanges << details;
-
-    // When adding the first range, set outputRage to it
-    if (d->outputRange == -1) {
-        d->outputRange = 0;
-    }
 }
 
 /*!

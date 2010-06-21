@@ -38,27 +38,11 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QTMESSAGING_H
-#define QTMESSAGING_H
 
-#include "qmessageglobal.h"
-#include "qmessageaccount.h"
-#include "qmessageaccountfilter.h"
-#include "qmessageaccountid.h"
-#include "qmessageaccountsortorder.h"
-#include "qmessagedatacomparator.h"
-#include "qmessagefolder.h"
-#include "qmessagefolderfilter.h"
-#include "qmessagefolderid.h"
-#include "qmessagefoldersortorder.h"
-#include "qmessage.h"
-#include "qmessagefilter.h"
-#include "qmessageid.h"
-#include "qmessagesortorder.h"
-#include "qmessagecontentcontainer.h"
-#include "qmessagecontentcontainerid.h"
-#include "qmessageaddress.h"
-#include "qmessageservice.h"
-#include "qmessagemanager.h"
+#include <hbinputkeymapfactory.h>
 
-#endif
+int main(int argc, char** argv)
+{
+    HbKeymapFactory *test_if_this_compiles_or_not;
+	return 0;
+}
