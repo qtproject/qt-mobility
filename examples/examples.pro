@@ -105,10 +105,6 @@ contains(mobility_modules,sensors) {
 # Organizer API examples
 contains(mobility_modules, organizer) {
     SUBDIRS += calendardemo
-    
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += timescape
-    }    
 }
 
 sources.path = $$QT_MOBILITY_PREFIX/bin
