@@ -44,17 +44,17 @@
 
 QTM_USE_NAMESPACE
 
-void QOrganizerTodo::setNotBeforeDateTime(const QDateTime& notBeforeDateTime)
+void QOrganizerTodo::setStartDateTime(const QDateTime& startDateTime)
 {
     QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
-    ttr.setNotBeforeDateTime(notBeforeDateTime);
+    ttr.setStartDateTime(startDateTime);
     saveDetail(&ttr);
 }
 
-QDateTime QOrganizerTodo::notBeforeDateTime() const
+QDateTime QOrganizerTodo::startDateTime() const
 {
     QOrganizerTodoTimeRange ttr = detail<QOrganizerTodoTimeRange>();
-    return ttr.notBeforeDateTime();
+    return ttr.startDateTime();
 }
 
 void QOrganizerTodo::setDueDateTime(const QDateTime& dueDateTime)
@@ -135,3 +135,42 @@ QOrganizerItemPriority::Priority QOrganizerTodo::priority() const
     return pd.priority();
 }
 
+void QOrganizerTodo::setProgressPercentage(int percentage)
+{
+    // XXX TODO: make the API more consistent with that in QOrganizerTodoProgress.
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
+    tp.setPercentageComplete(percentage);
+    saveDetail(&tp);
+}
+
+int QOrganizerTodo::progressPercentage() const
+{
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
+    return tp.percentageComplete();
+}
+
+void QOrganizerTodo::setStatus(QOrganizerTodoProgress::Status status)
+{
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
+    tp.setStatus(status);
+    saveDetail(&tp);
+}
+
+QOrganizerTodoProgress::Status QOrganizerTodo::status() const
+{
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
+    return tp.status();
+}
+
+void QOrganizerTodo::setFinishedDateTime(const QDateTime& finishedDateTime)
+{
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
+    tp.setFinishedDateTime(finishedDateTime);
+    saveDetail(&tp);
+}
+
+QDateTime QOrganizerTodo::finishedDateTime() const
+{
+    QOrganizerTodoProgress tp = detail<QOrganizerTodoProgress>();
+    return tp.finishedDateTime();
+}

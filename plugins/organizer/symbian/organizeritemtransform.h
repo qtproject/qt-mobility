@@ -42,19 +42,17 @@
 #ifndef ORGANIZERITEMTRANSFORM_H_
 #define ORGANIZERITEMTRANSFORM_H_
 
-#include <calentry.h>
-#include <caltime.h>
-#include <QDateTime>
+#include <QList>
 #include <qmobilityglobal.h>
-#include <qorganizeritemrecurrencerule.h>
 
 QTM_BEGIN_NAMESPACE
 class QOrganizerItem;
 QTM_END_NAMESPACE
-
 QTM_USE_NAMESPACE
 
+class CCalEntry;
 class CCalInstance;
+class OrganizerItemDetailTransform;
 
 class OrganizerItemTransform
 {
@@ -62,30 +60,16 @@ public:
     OrganizerItemTransform();
     ~OrganizerItemTransform();
 
-    CCalEntry *toEntryLC(const QOrganizerItem &item);
+    void toEntryL(const QOrganizerItem &item, CCalEntry *entry);
     void toItemL(const CCalEntry &entry, QOrganizerItem *item) const;
+    void toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item) const;
     void toItemL(const CCalInstance &instance, QOrganizerItem *item) const;
 
-    HBufC8 *guidLC(const QOrganizerItem &item);
-
-    CCalEntry::TType entryTypeL(const QOrganizerItem &item) const;
-    QString itemTypeL(const CCalEntry &entry) const;
-
-    QString toQString(const TDesC8 &des) const;
-    QString toQString(const TDesC16 &des) const;
-    TPtrC8 toPtrC8(const QString &string) const;
-    TPtrC16 toPtrC16(const QString &string) const;
-
-    TCalTime toTCalTime(QDateTime dateTime) const;
-    QDateTime toQDateTime(TCalTime calTime) const;
-
-    void toTCalTimes(const QList<QDate> &dateTimes, RArray<TCalTime> &calDates) const;
-    QList<QDate> toQDates(const RArray<TCalTime> &calDates) const;
-
-    TCalRRule toCalRRule(QList<QOrganizerItemRecurrenceRule> rules) const;
-    QList<QOrganizerItemRecurrenceRule> toItemRecurrenceRules(TCalRRule calRule) const;
-
 private:
+    void debugEntryL(const CCalEntry &entry) const;
+    
+private:
+    QList<OrganizerItemDetailTransform *> m_detailTransforms;
 };
 
 #endif /* ORGANIZERITEMTRANSFORM_H_ */

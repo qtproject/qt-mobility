@@ -39,7 +39,7 @@
 **
 ****************************************************************************/
 
-#include "qorganizermaemo6_p.h"
+#include "qorganizermaemo6.h"
 #include "qtorganizer.h"
 
 //QTM_USE_NAMESPACE
@@ -47,6 +47,7 @@
 QOrganizerItemManagerEngine* QOrganizerItemMaemo6Factory::engine(const QMap<QString, QString>& parameters, QOrganizerItemManager::Error* error)
 {
     Q_UNUSED(parameters);
+
     Q_UNUSED(error);
 
     /* TODO - if you understand any specific parameters. save them in the engine so that engine::managerParameters can return them */
@@ -62,6 +63,11 @@ QString QOrganizerItemMaemo6Factory::managerName() const
 }
 Q_EXPORT_PLUGIN2(qtorganizer_maemo6, QOrganizerItemMaemo6Factory);
 
+
+QOrganizerItemMaemo6Engine::QOrganizerItemMaemo6Engine()
+    : d(new QOrganizerItemMaemo6EngineData)
+{
+}
 
 QOrganizerItemMaemo6Engine::~QOrganizerItemMaemo6Engine()
 {
@@ -113,120 +119,114 @@ QList<QOrganizerItem> QOrganizerItemMaemo6Engine::itemInstances(const QOrganizer
 
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo6Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
 {
-    /*
-        TODO
+    QList<QOrganizerItem> ret = items(filter, sortOrders, QOrganizerItemFetchHint(), error);
 
-        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return their ids.
-
-        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
-        functions to filter and sort it for you.
-
-        If you do have to fetch, consider setting a fetch hint that restricts the information to that needed for filtering/sorting.
-    */
-
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
-
-    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
-    QList<QOrganizerItem> ret;
-
-    foreach(const QOrganizerItem& item, partiallyFilteredItems) {
-        if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
-            ret.append(item);
-        }
-    }
-
+    // TODO: we don't have to sort again since items() has done it for us
     return QOrganizerItemManagerEngine::sortItems(ret, sortOrders);
 }
 
 QList<QOrganizerItem> QOrganizerItemMaemo6Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    /*
-        TODO
-
-        Given the supplied filter and sort order, fetch the list of items [not instances] that correspond, and return them.
-
-        If you don't support the filter or sort orders, you can fetch a partially (or un-) filtered list and ask the helper
-        functions to filter and sort it for you.
-
-        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
-        fetch at least what is mentioned in the fetch hint).
-    */
-
     Q_UNUSED(fetchHint);
-    *error = QOrganizerItemManager::NotSupportedError; // TODO <- remove this
+    // TODO: optimise by using our own filters
 
-    QList<QOrganizerItem> partiallyFilteredItems; // = ..., your code here.. [TODO]
+    // Just naively get all the incidences
+    d->m_calendarBackend.setFilter(0);
+    Incidence::List incidences = d->m_calendarBackend.incidences();
+    QList<QOrganizerItem> partiallyFilteredItems;
+
+    // Convert them all to QOrganizerItems
+    IncidenceToItemConverter converter(managerUri());
+    foreach (Incidence* incidence, incidences) {
+        QOrganizerItem item;
+        if (converter.convertIncidenceToItem(incidence, &item))
+            partiallyFilteredItems << item;
+    }
     QList<QOrganizerItem> ret;
 
+    // Now filter them
     foreach(const QOrganizerItem& item, partiallyFilteredItems) {
         if (QOrganizerItemManagerEngine::testFilter(filter, item)) {
             QOrganizerItemManagerEngine::addSorted(&ret, item, sortOrders);
         }
     }
 
-    /* An alternative formulation, depending on how your engine is implemented is just:
-
-        foreach(const QOrganizerItemLocalId& id, itemIds(filter, sortOrders, error)) {
-            ret.append(item(id, fetchHint, error);
-        }
-     */
-
     return ret;
 }
 
 QOrganizerItem QOrganizerItemMaemo6Engine::item(const QOrganizerItemLocalId& itemId, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    /*
-        TODO
-
-        Fetch a single item by id.
-
-        The fetch hint suggests how much of the item to fetch.  You can ignore the fetch hint and fetch everything (but you must
-        fetch at least what is mentioned in the fetch hint).
-
-    */
-    return QOrganizerItemManagerEngine::item(itemId, fetchHint, error);
+    Q_UNUSED(fetchHint);
+    Incidence* theIncidence = incidence(itemId);
+    if (!theIncidence) {
+        *error = QOrganizerItemManager::DoesNotExistError;
+        return QOrganizerItem();
+    }
+    IncidenceToItemConverter converter(managerUri());
+    QOrganizerItem item;
+    if (converter.convertIncidenceToItem(theIncidence, &item)) {
+        return item;
+    } else {
+        *error = QOrganizerItemManager::DoesNotExistError;
+        return QOrganizerItem();
+    }
 }
 
 bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
     /*
         TODO
-
-        Save a list of items.
-
-        For each item, convert it to your local type, assign an item id, and update the
-        QOrganizerItem's ID (in the list above - e.g. *items[idx] = updated item).
-
-        If you encounter an error (e.g. converting to local type, or saving), insert an entry into
-        the map above at the corresponding index (e.g. errorMap->insert(idx, QOIM::InvalidDetailError).
-        You should set the "error" variable as well (first, last, most serious error etc).
-
         The item passed in should be validated according to the schema.
     */
-    return QOrganizerItemManagerEngine::saveItems(items, errorMap, error);
-
+    *error = QOrganizerItemManager::NoError;
+    for (int i = 0; i < items->size(); i++) {
+        QOrganizerItemManager::Error thisError;
+        QOrganizerItem item = items->at(i);
+        Incidence* theIncidence = softSaveItem(&item, &thisError);
+        if (theIncidence) {
+            d->m_calendarBackend.save();
+            QString kId = theIncidence->uid();
+            QOrganizerItemLocalId qLocalId = qHash(kId);
+            QOrganizerItemId qId;
+            qId.setManagerUri(managerUri());
+            qId.setLocalId(qLocalId);
+            item.setId(qId);
+            items->replace(i, item);
+            d->m_QIdToKId.insert(qLocalId, kId);
+        } else {
+            *error = thisError;
+            errorMap->insert(i, thisError);
+        }
+    }
+    // TODO: save the calendar to disk
+    return *error == QOrganizerItemManager::NoError;
 }
 
 bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
 {
-    /*
-        TODO
-
-        Remove a list of items, given by their id.
-
-        If you encounter an error, insert an error into the appropriate place in the error map,
-        and update the error variable as well.
-
-        DoesNotExistError should be used if the id refers to a non existent item.
-    */
-    return QOrganizerItemManagerEngine::removeItems(itemIds, errorMap, error);
+    *error = QOrganizerItemManager::NoError;
+    for (int i = 0; i < itemIds.size(); i++) {
+        QOrganizerItemLocalId id = itemIds[i];
+        Incidence* theIncidence = incidence(id);
+        if (!theIncidence) {
+            *error = QOrganizerItemManager::DoesNotExistError;
+            errorMap->insert(i, QOrganizerItemManager::DoesNotExistError);
+            continue;
+        }
+        if (d->m_calendarBackend.deleteIncidence(theIncidence)) {
+            d->m_QIdToKId.remove(id);
+        } else {
+            *error = QOrganizerItemManager::UnspecifiedError;
+            errorMap->insert(i, QOrganizerItemManager::UnspecifiedError);
+        }
+    }
+    return *error == QOrganizerItemManager::NoError;
 }
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo6Engine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
     /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return detailDefinitions(itemType, error);
+    return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
 }
 
 QOrganizerItemDetailDefinition QOrganizerItemMaemo6Engine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
@@ -392,5 +392,134 @@ QStringList QOrganizerItemMaemo6Engine::supportedItemTypes() const
     ret << QOrganizerItemType::TypeTodoOccurrence;
 
     return ret;
+}
+
+Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& itemId) const
+{
+    // TODO: check managerUri as well
+    if (!d->m_QIdToKId.contains(itemId))
+        return 0;
+    else
+        return d->m_calendarBackend.incidence(d->m_QIdToKId.value(itemId));
+}
+
+/*!
+ * Saves \a item to the manager, but doesn't persist the change to disk.
+ * Sets \a error appropriately if if couldn't be saved.
+ */
+Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error)
+{
+    bool itemIsNew = (managerUri() != item->id().managerUri()
+            || item->localId() == 0);
+    Incidence* incidence = 0;
+    if (item->type() == QOrganizerItemType::TypeNote) {
+        QOrganizerNote* note = static_cast<QOrganizerNote*>(item);
+        incidence = convertQNoteToKJournal(*note);
+    } else {
+        *error = QOrganizerItemManager::InvalidItemTypeError;
+        return 0;
+    }
+    if (!itemIsNew) {
+        if (!d->m_QIdToKId.contains(item->localId())) {
+            *error = QOrganizerItemManager::DoesNotExistError;
+            return 0;
+        }
+        QString uid = d->m_QIdToKId.value(item->localId());
+        Incidence* oldIncidence = d->m_calendarBackend.incidence(uid);
+        Q_ASSERT(oldIncidence);
+        d->m_calendarBackend.deleteIncidence(oldIncidence);
+        incidence->setUid(uid);
+    }
+    d->m_calendarBackend.addIncidence(incidence);
+    *error = QOrganizerItemManager::NoError;
+    return incidence;
+}
+
+/*!
+ * Converts \a note into an Incidence which is of subclass Journal.  The caller is responsible
+ * for deleting the object.
+ */
+Incidence* QOrganizerItemMaemo6Engine::convertQNoteToKJournal(const QOrganizerNote& note)
+{
+    Journal* journal = new Journal;
+    if (!note.description().isEmpty()) {
+        journal->setDescription(note.description());
+    }
+    if (!note.displayLabel().isEmpty()) {
+        journal->setSummary(note.displayLabel());
+    }
+    return journal;
+}
+
+
+/*! \class IncidenceToItemConverter:
+ * 
+ * This class converts a single kcal Incidence to a QOrganizerItem
+ */
+
+/*!
+ * Converts a kcal \a incidence into a QOrganizer \a item.
+ * \a incidence and \a item must both not be null.
+ * Whatever was in \a item before will be ignored and lost.
+ */
+bool QOrganizerItemMaemo6Engine::IncidenceToItemConverter::convertIncidenceToItem(
+        Incidence* incidence, QOrganizerItem* item)
+{
+    if (incidence->accept(m_visitor)) {
+        *item = m_converted;
+        return true;
+    } else {
+        return false;
+    }
+}
+
+/*!
+ * Don't call this directly unless you are an Incidence::AddVisitor.
+ * Converts a kcal Event.
+ */
+bool QOrganizerItemMaemo6Engine::IncidenceToItemConverter::addEvent(Event* e)
+{
+    m_converted = QOrganizerEvent();
+    convertCommonDetails(e, &m_converted);
+    return true;
+}
+
+/*!
+ * Don't call this directly unless you are an Incidence::AddVisitor.
+ * Converts a kcal Todo.
+ */
+bool QOrganizerItemMaemo6Engine::IncidenceToItemConverter::addTodo(Todo* t)
+{
+    m_converted = QOrganizerTodo();
+    convertCommonDetails(t, &m_converted);
+    return true;
+}
+
+/*!
+ * Don't call this directly unless you are an Incidence::AddVisitor.
+ * Converts a kcal Journal.
+ */
+bool QOrganizerItemMaemo6Engine::IncidenceToItemConverter::addJournal(Journal* j)
+{
+    if (j->dtStart().isValid())
+        m_converted = QOrganizerJournal();
+    else
+        m_converted = QOrganizerNote();
+    convertCommonDetails(j, &m_converted);
+    return true;
+}
+
+/*!
+ * Adds details to \a item based on fields found in \a incidence.
+ */
+void QOrganizerItemMaemo6Engine::IncidenceToItemConverter::convertCommonDetails(
+        Incidence* incidence, QOrganizerItem* item)
+{
+    QOrganizerItemId id;
+    id.setManagerUri(m_managerUri);
+    id.setLocalId(qHash(incidence->uid()));
+    item->setId(id);
+    item->setDisplayLabel(incidence->summary());
+    item->setDescription(incidence->description());
 }
 

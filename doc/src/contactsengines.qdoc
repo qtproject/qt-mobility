@@ -99,41 +99,24 @@ The in-memory engine supports the default schema, and provides all functionality
 the Qt Mobility Contacts API; however, all data is stored in-memory and is not persisted in any
 way.
 
-\section3 Symbian 3.1 Engine
+\section3 Symbian Engine
 
-The Symbian 3.1 engine identifies itself as the "symbian" engine, but is only available on the
-Symbian 3.1 platform.
+The Symbian engine identifies itself as the "symbian" engine, and is only available on the
+Symbian S60 3.1, S60 3.2, S60 5.0 and Symbian^3 platforms.
 
-The Symbian 3.1 engine supports a modified version of the default schema.
-\list
- \o TODO: what is the schema supported by this engine.
- \o TODO: what functionality is supported by this engine.
- \o TODO: is there anything else that clients may need to know?
-\endlist
+The Symbian engine supports a modified version of the default schema.  The schema supported
+by the Symbian engine depends on which version of the platform is being used.
 
-\section3 Symbian 3.2 Engine
+The symbian engine allows clients to use both the asynchronous and synchronous interfaces,
+and supports various different relationships, supports setting the self-contact, and
+persists all saved data to the system addressbook.
 
-The Symbian 3.2 engine identifies itself as the "symbian" engine, but is only available on the
-Symbian 3.2 platform.
+\section3 Symbian Sim Engine
 
-The Symbian 3.2 engine supports a modified version of the default schema.
-\list
- \o TODO: what is the schema supported by this engine.
- \o TODO: what functionality is supported by this engine.
- \o TODO: is there anything else that clients may need to know?
-\endlist
-
-\section3 Symbian 5.0 Engine
-
-The Symbian 5.0 engine identifies itself as the "symbian" engine, but is only available on the
-Symbian 5.0 platform.
-
-The Symbian 5.0 engine supports a modified version of the default schema.
-\list
- \o TODO: what is the schema supported by this engine.
- \o TODO: what functionality is supported by this engine.
- \o TODO: is there anything else that clients may need to know?
-\endlist
+The Symbian Sim engine identifies itself as the "symbiansim" engine, and is only available
+on Symbian platforms.  It is an extremely limited engine which supports a very small
+subset of the default schema, and can be constructed with a "store" parameter to set which contact
+store to interact with.  The value of the "store" parameter may be either "ADN", "FDN" or "SDN".
 
 \section3 Maemo 5 (Fremantle) Engine
 
@@ -170,17 +153,13 @@ The Maemo 5 (Fremantle) engine supports asynchronous and synchronous requests, b
 group contacts or relationships of any kind.  It does not allow clients to set a particular contact
 as the "self" contact.  It persists all data in the system addressbook.
 
-\section3 libQtTracker Engine
+\section3 Windows CE Engine
 
-The libQtTracker Engine identifies itself as "qtcontacts-tracker", and is available on any
-platform which supports the required libqttracker libraries of the correct version.
+The Windows CE engine identifies itself as the "wince" engine, and is only available
+on the Windows Mobile 6.0 platform.
 
-The libQtTracker engine supports a modified version of the default schema.
-\list
- \o TODO: what is the schema supported by this engine.
- \o TODO: what functionality is supported by this engine.
- \o TODO: is there anything else that clients may need to know?
-\endlist
+It supports a subset of the default schema, and supports both the asynchronous and synchronous
+interfaces to the datastore.  It persists saved data to the system addressbook.
 
 \section1 Information For Engine Implementors
 
@@ -281,7 +260,7 @@ It may also choose to implement the "single contact" functions:
   \o QContactManagerEngine::removeContact()
 \endlist
 If it does not, the default implementation of those functions will use the batch (plural) versions
-of those functions to implement the required behaviour.
+of those functions to implement the required behavior.
 
 If the engine supports modification of its schema (that is, extension of its definitions at
 run-time), it must report that it supports the \c QContactManager::MutableDefinitions feature

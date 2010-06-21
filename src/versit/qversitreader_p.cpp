@@ -877,7 +877,7 @@ QString QVersitReaderPrivate::paramValue(const QByteArray& parameter, QTextCodec
     return codec->toUnicode(value);
 }
 
-/*!
+/*
  * Returns true if and only if \a text contains \a ba at \a index
  *
  * On entry, index must be >= 0

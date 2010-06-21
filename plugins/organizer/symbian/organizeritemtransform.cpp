@@ -41,290 +41,87 @@
 
 #include "organizeritemtransform.h"
 
-#include <e32math.h>
+#include <QDebug>
+#include <calentry.h>
 #include <calinstance.h>
-#include <caluser.h>
-#include <calrrule.h>
 
-#include <qorganizeritem.h>
-#include <qorganizeritemdetails.h>
-
-const TInt KGuidLength = 30;
+#include "qorganizeritem.h"
+#include "organizereventtimerangetransform.h"
+#include "organizeritemdescriptiontransform.h"
+#include "organizeritemdetailtransform.h"
+#include "organizeritemdisplaylabeltransform.h"
+#include "organizeritemguidtransform.h"
+#include "organizeritemlocationtransform.h"
+#include "organizeritemprioritytransform.h"
+#include "organizeritemrecurrencetransform.h"
+#include "organizeritemtimestamptransform.h"
+#include "organizeritemtypetransform.h"
+#include "organizerjournaltimerangetransform.h"
+#include "organizertodoprogresstransform.h"
+#include "organizertodotimerangetransform.h"
 
 QTM_USE_NAMESPACE
 
 OrganizerItemTransform::OrganizerItemTransform()
 {
-
+    m_detailTransforms.append(new OrganizerItemTypeTransform()); // this must be first always
+    m_detailTransforms.append(new OrganizerEventTimeRangeTransform());
+    m_detailTransforms.append(new OrganizerItemDescriptionTransform());
+    m_detailTransforms.append(new OrganizerItemDisplayLabelTransform());
+    m_detailTransforms.append(new OrganizerItemGuidTransform());
+    m_detailTransforms.append(new OrganizerItemLocationTransform());
+    m_detailTransforms.append(new OrganizerItemPriorityTransform());
+    m_detailTransforms.append(new OrganizerItemRecurrenceTransform());
+    m_detailTransforms.append(new OrganizerItemTimeStampTransform());
+    m_detailTransforms.append(new OrganizerJournalTimeRangeTransform());
+    m_detailTransforms.append(new OrganizerTodoProgressTransform());
+    m_detailTransforms.append(new OrganizerTodoTimeRangeTransform());    
 }
 
 OrganizerItemTransform::~OrganizerItemTransform()
 {
-
+    // Delete transform objects
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms)
+        delete i;
 }
 
-HBufC8 *OrganizerItemTransform::guidLC(const QOrganizerItem &item)
+void OrganizerItemTransform::toEntryL(const QOrganizerItem &item, CCalEntry *entry)
 {
-    // Read guid from organizer item
-    QString globalUidString = item.guid();
-
-    // Create a buffer for guid
-    HBufC8* globalUidBuf = HBufC8::NewLC(KGuidLength);
-    TPtr8 ptr = globalUidBuf->Des();
-
-    if (item.guid().isEmpty())
-    {
-        // Create a new guid
-        TTime homeTime;
-        homeTime.HomeTime();
-        TInt64 seed = homeTime.Int64();
-        TInt randumNumber = Math::Rand(seed);
-        ptr.Num(randumNumber);
-    }
-    else
-    {
-        // Use the old guid
-        ptr = toPtrC8(globalUidString);
-    }
-
-    return globalUidBuf; // ownership passed
-}
-
-CCalEntry::TType OrganizerItemTransform::entryTypeL(const QOrganizerItem &item) const
-{
-    QString itemType = item.type();
-    CCalEntry::TType entryType;
-
-    if (itemType == QOrganizerItemType::TypeTodo )
-        entryType = CCalEntry::ETodo;
-    else if (itemType == QOrganizerItemType::TypeEvent )
-        entryType = CCalEntry::EEvent;
-    else
-        User::Leave(KErrUnknown); // unknown type
-
-    // TODO: CCalEntry::EAppt
-    // TODO: CCalEntry::EReminder
-    // TODO: CCalEntry::EAnniv
-
-    return entryType;
-}
-
-QString OrganizerItemTransform::itemTypeL(const CCalEntry &entry) const
-{
-    CCalEntry::TType entryType = entry.EntryTypeL();
-    QString itemType;
-
-    if (entryType == CCalEntry::ETodo)
-        itemType = QLatin1String(QOrganizerItemType::TypeTodo);
-    else if (entryType == CCalEntry::EEvent)
-        itemType = QLatin1String(QOrganizerItemType::TypeEvent);
-    else
-        User::Leave(KErrUnknown); // unknown type
-
-    // TODO: CCalEntry::EAppt
-    // TODO: CCalEntry::EReminder
-    // TODO: CCalEntry::EAnniv
-
-    return itemType;
-}
-
-CCalEntry *OrganizerItemTransform::toEntryLC(const QOrganizerItem &item)
-{
-    // Create entry
-    CCalEntry::TType type = entryTypeL(item);
-    HBufC8* globalUid = guidLC(item);
-    CCalEntry::TMethod method = CCalEntry::EMethodAdd;
-    TInt seqNum = 0;
-    //TCalTime recurrenceId;
-    //CalCommon::TRecurrenceRange recurrenceRange;
-    CCalEntry *entry = CCalEntry::NewL(type, globalUid, method, seqNum);
-    CleanupStack::Pop(globalUid); // ownership passed?
-    CleanupStack::PushL(entry);
-
-    // *** Date and Time ***
-    if (item.type() == QOrganizerItemType::TypeEvent)
-    {
-        QOrganizerEventTimeRange range = item.detail<QOrganizerEventTimeRange>();
-        if (!range.isEmpty())
-            entry->SetStartAndEndTimeL(toTCalTime(range.startDateTime()), toTCalTime(range.endDateTime()));
-    }
-    else if(item.type() == QOrganizerItemType::TypeJournal)
-    {
-        QOrganizerJournalTimeRange range = item.detail<QOrganizerJournalTimeRange>();
-        if (!range.isEmpty())
-            entry->SetDTStampL(toTCalTime(range.entryDateTime()));
-    }
-    else if(item.type() == QOrganizerItemType::TypeTodo)
-    {
-        QOrganizerTodoTimeRange range = item.detail<QOrganizerTodoTimeRange>();
-        if (!range.isEmpty())
-            entry->SetStartAndEndTimeL(toTCalTime(range.notBeforeDateTime()), toTCalTime(range.dueDateTime()));
-
-        QOrganizerTodoProgress progress = item.detail<QOrganizerTodoProgress>();
-        if (!progress.isEmpty() && progress.status() == QOrganizerTodoProgress::StatusComplete)
-            entry->SetCompletedL(true, toTCalTime(progress.finishedDateTime()));
-    }
-
-    // *** Repeat rules / RDate / ExDate Methods ***
-    QOrganizerItemRecurrence recurrence = item.detail<QOrganizerItemRecurrence>();
-    if (!recurrence.isEmpty())
-    {
-        // TODO: can we have recurrenceRules and recurrenceDates at the same time?
-
-        if (recurrence.recurrenceRules().count())
-            entry->SetRRuleL(toCalRRule(recurrence.recurrenceRules()));
-
-        if (recurrence.recurrenceDates().count()) {
-            RArray<TCalTime> calRDates;
-            toTCalTimes(recurrence.recurrenceDates(), calRDates);
-            entry->SetRDatesL(calRDates);
+    // Loop through transform objects
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
+        // TODO: This is just for debugging. Remove before release.
+        TRAPD(err, i->transformToEntryL(item, entry));
+        if (err) {
+            qDebug() << "transformToEntryL failed! detail:" << i->detailDefinitionName() << "err:" << err;
+            User::Leave(err);
         }
-
-        if (recurrence.exceptionDates().count()) {
-            RArray<TCalTime> calExDates;
-            toTCalTimes(recurrence.exceptionDates(), calExDates);
-            entry->SetRDatesL(calExDates);
-        }
-
-        //  TODO: what about recurrence.exceptionRules()? there is no match in native API.
     }
-
-
-    // *** Entry alarm ***
-    //entry->SetAlarmL(CCalAlarm* aAlarm);
-
-    // *** Text Fields ***
-    if (!item.displayLabel().isEmpty())
-        entry->SetSummaryL(toPtrC16(item.displayLabel()));
-
-    if (!item.description().isEmpty())
-        entry->SetDescriptionL(toPtrC16(item.description()));
-
-    QOrganizerItemLocation loc = item.detail<QOrganizerItemLocation>();
-    if (!loc.isEmpty()) {
-        // NOTE: what about geoLocation & address?
-        entry->SetLocationL(toPtrC16(loc.locationName()));
-    }
-
-    // *** Category list ***
-    // TODO:
-    //entry->AddCategoryL(CCalCategory* aCategory);
-    //entry->DeleteCategoryL(TInt aIndex);
-
-    // *** Attendee Methods ***
-    // TODO:
-    //entry->AddAttendeeL(CCalAttendee* aAttendee);
-    //entry->DeleteAttendeeL(TInt aIndex);
-    //entry->SetOrganizerL(CCalUser* aUser);
-    //entry->SetPhoneOwnerL(const CCalUser* aOwner);
-
-    // *** Other Attributes ***
-    // TODO:
-    //entry->SetStatusL(TStatus aStatus);
-    //entry->SetReplicationStatusL(TReplicationStatus aReplicationStatus);
-
-    QOrganizerItemPriority priority = item.detail<QOrganizerItemPriority>();
-    if (!priority.isEmpty())
-        entry->SetPriorityL(priority.priority()); // allowed values between 0 and 255.
-
-    // TODO:
-    //entry->SetMethodL(TMethod aMethod);
-    //entry->SetSequenceNumberL(TInt aSeq);
-    //entry->SequenceNumberL() const;
-    //entry->SetTzRulesL(const CTzRules& aTzRule);
-    //entry->SetTzRulesL();
-
-    if (item.localId())
-        entry->SetLocalUidL(item.localId());
-
-    return entry;
 }
 
 void OrganizerItemTransform::toItemL(const CCalEntry &entry, QOrganizerItem *item) const
 {
-    item->setType(itemTypeL(entry));
-    item->setGuid(toQString(entry.UidL()));
-
-    // *** Date and Time ***
-    TCalTime startTime = entry.StartTimeL();
-    TCalTime endTime = entry.EndTimeL();
-    TCalTime dtstamp = entry.DTStampL();
-
-    if (item->type() == QOrganizerItemType::TypeEvent)
-    {
-        QOrganizerEventTimeRange range;
-        if (startTime.TimeUtcL() != Time::NullTTime())
-            range.setStartDateTime(toQDateTime(startTime));
-        if (endTime.TimeUtcL() != Time::NullTTime())
-            range.setEndDateTime(toQDateTime(endTime));
-        item->saveDetail(&range);
-    }
-    else if(item->type() == QOrganizerItemType::TypeJournal)
-    {
-        if (dtstamp.TimeUtcL() != Time::NullTTime()) {
-            QOrganizerJournalTimeRange range;
-            range.setEntryDateTime(toQDateTime(entry.DTStampL()));
-            item->saveDetail(&range);
+    // Loop through transform objects
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
+        // TODO: This is just for debugging. Remove before release.
+        TRAPD(err, i->transformToDetailL(entry, item));
+        if (err) {
+            qDebug() << "transformToDetailL failed! detail:" << i->detailDefinitionName() << "err:" << err;
+            User::Leave(err);
         }
     }
-    else if(item->type() == QOrganizerItemType::TypeTodo)
-    {
-        QOrganizerTodoTimeRange range;
-        if (startTime.TimeUtcL() != Time::NullTTime())
-            range.setNotBeforeDateTime(toQDateTime(startTime));
-        if (endTime.TimeUtcL() != Time::NullTTime())
-            range.setDueDateTime(toQDateTime(endTime));
-        item->saveDetail(&range);
+}
 
-        QOrganizerTodoProgress progress;
-
-        CCalEntry::TStatus entryStatus = entry.StatusL();
-        if (entryStatus == CCalEntry::ETodoNeedsAction)
-            progress.setStatus(QOrganizerTodoProgress::StatusNotStarted);
-        if (entryStatus == CCalEntry::ETodoInProcess)
-            progress.setStatus(QOrganizerTodoProgress::StatusInProgress);
-        if (entryStatus == CCalEntry::ETodoCompleted)
-            progress.setStatus(QOrganizerTodoProgress::StatusComplete);
-
-        if (progress.status() == QOrganizerTodoProgress::StatusComplete)
-            progress.setFinishedDateTime(toQDateTime(entry.CompletedTimeL()));
-
-        item->saveDetail(&progress);
+void OrganizerItemTransform::toItemPostSaveL(const CCalEntry &entry, QOrganizerItem *item) const
+{
+    // Loop through transform objects
+    foreach (OrganizerItemDetailTransform *i, m_detailTransforms) {
+        // TODO: This is just for debugging. Remove before release.
+        TRAPD(err, i->transformToDetailPostSaveL(entry, item));
+        if (err) {
+            qDebug() << "transformToDetailPostSaveL failed! detail:" << i->detailDefinitionName() << "err:" << err;
+            User::Leave(err);
+        }
     }
-
-    // *** Repeat rules / RDate / ExDate Methods ***
-    QOrganizerItemRecurrence recurrence;
-
-    TCalRRule calRRule;
-    entry.GetRRuleL(calRRule);
-    recurrence.setRecurrenceRules(toItemRecurrenceRules(calRRule));
-
-    RArray<TCalTime> calRDateList;
-    entry.GetRDatesL(calRDateList);
-    recurrence.setRecurrenceDates(toQDates(calRDateList));
-
-    RArray<TCalTime> calExDateList;
-    entry.GetExceptionDatesL(calExDateList);
-    recurrence.setExceptionDates(toQDates(calExDateList));
-
-    // TODO: exceptionRules
-    // There is no native support for this.
-
-    item->saveDetail(&recurrence);
-
-    // **** Text Fields ***
-    item->setDisplayLabel(toQString(entry.SummaryL()));
-    item->setDescription(toQString(entry.DescriptionL()));
-
-    QOrganizerItemLocation location;
-    location.setLocationName(toQString(entry.LocationL()));
-
-    // **** Other Attributes ***
-    QOrganizerItemPriority priority;
-    // TODO: do we need some kind of conversion?
-    // Item has range from 0-9 and entry has range from 0 - 255.
-    priority.setPriority((QOrganizerItemPriority::Priority) entry.PriorityL());
-    item->saveDetail(&priority);
 }
 
 void OrganizerItemTransform::toItemL(const CCalInstance &instance, QOrganizerItem *item) const
@@ -337,74 +134,12 @@ void OrganizerItemTransform::toItemL(const CCalInstance &instance, QOrganizerIte
     // TODO: transform  CCalInstance::EndTimeL()
 }
 
-QString OrganizerItemTransform::toQString(const TDesC8 &des) const
+void OrganizerItemTransform::debugEntryL(const CCalEntry &entry) const
 {
-    return QString::fromUtf8((const char *)des.Ptr(), des.Length());
-}
-
-QString OrganizerItemTransform::toQString(const TDesC16 &des) const
-{
-    return QString::fromUtf16(des.Ptr(), des.Length());
-}
-
-TPtrC8 OrganizerItemTransform::toPtrC8(const QString &string) const
-{
-    return TPtrC8(reinterpret_cast<const TUint8*>(string.data()));
-}
-
-TPtrC16 OrganizerItemTransform::toPtrC16(const QString &string) const
-{
-    return TPtrC16(reinterpret_cast<const TUint16*>(string.utf16()));
-}
-
-TCalTime OrganizerItemTransform::toTCalTime(QDateTime dateTime) const
-{
-    uint secondsFrom1970 = dateTime.toTime_t();
-    quint64 usecondsFrom1970 = ((quint64) secondsFrom1970) * ((quint64) 1000000) + ((quint64) dateTime.time().msec() * (quint64)1000);
-    TTime time1970(_L("19700000:000000.000000"));
-    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-    quint64 useconds = usecondsBCto1970 + usecondsFrom1970;
-
-    TTime time(useconds);
-    TCalTime calTime;
-    calTime.SetTimeUtcL(time);
-
-    return calTime;
-}
-
-QDateTime OrganizerItemTransform::toQDateTime(TCalTime calTime) const
-{
-    const TTime time1970(_L("19700000:000000.000000"));
-    quint64 usecondsBCto1970 = time1970.MicroSecondsFrom(TTime(0)).Int64();
-    quint64 useconds = calTime.TimeUtcL().Int64() - usecondsBCto1970;
-    quint64 seconds = useconds / (quint64)1000000;
-    quint64 msecondscomponent = (useconds - seconds * (quint64)1000000) / (quint64)1000;
-    QDateTime dateTime;
-    dateTime.setTime_t(seconds);
-    dateTime.setTime(dateTime.time().addMSecs(msecondscomponent));
-    return dateTime;
-}
-
-void OrganizerItemTransform::toTCalTimes(const QList<QDate> &dates, RArray<TCalTime> &calDates) const
-{
-    // TODO: conversion
-}
-
-QList<QDate> OrganizerItemTransform::toQDates(const RArray<TCalTime> &calDates) const
-{
-    // TODO: conversion
-    return QList<QDate>();
-}
-
-TCalRRule OrganizerItemTransform::toCalRRule(QList<QOrganizerItemRecurrenceRule> rules) const
-{
-    TCalRRule calRRule;
-    // TODO: conversion
-    return calRRule;
-}
-
-QList<QOrganizerItemRecurrenceRule> OrganizerItemTransform::toItemRecurrenceRules(TCalRRule calRule) const
-{
-    // TODO: conversion
-    return QList<QOrganizerItemRecurrenceRule>();
+    qDebug() << QString("CCalEntry uid-%1 localUid-%2")
+        .arg(OrganizerItemDetailTransform::toQString(entry.UidL()))
+        .arg(entry.LocalUidL());
+    qDebug() << "Type        :" << entry.EntryTypeL();
+    qDebug() << "Summary     :" << OrganizerItemDetailTransform::toQString(entry.SummaryL());
+    qDebug() << "Desription  :" << OrganizerItemDetailTransform::toQString(entry.DescriptionL());
 }

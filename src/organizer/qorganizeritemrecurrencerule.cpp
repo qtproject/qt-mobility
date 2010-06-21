@@ -101,7 +101,8 @@ QOrganizerItemRecurrenceRule::Frequency QOrganizerItemRecurrenceRule::frequency(
  */
 void QOrganizerItemRecurrenceRule::setCount(int count)
 {
-    d->m_variantValues.remove(FieldEndDate);
+    if (count > 0)
+        d->m_variantValues.remove(FieldEndDate);
     d->m_variantValues.insert(FieldCount, count);
 }
 
@@ -120,7 +121,8 @@ int QOrganizerItemRecurrenceRule::count() const
  */
 void QOrganizerItemRecurrenceRule::setEndDate(const QDate& endDate)
 {
-    d->m_variantValues.remove(FieldCount);
+    if (endDate.isValid())
+        d->m_variantValues.remove(FieldCount);
     d->m_variantValues.insert(FieldEndDate, endDate);
 }
 

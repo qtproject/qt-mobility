@@ -1,0 +1,35 @@
+//
+// Copyright (c) 2009 Nokia Corporation and/or its subsidiary(-ies).
+// All rights reserved.
+// This component and the accompanying materials are made available
+// under the terms of "Eclipse Public License v1.0"
+// which accompanies this distribution, and is available
+// at the URL "http://www.eclipse.org/legal/epl-v10.html".
+//
+// Initial Contributors:
+// Nokia Corporation - initial contribution.
+//
+// Contributors:
+//
+// Description: 
+//
+
+LOAD_SUITE CntPerfTestServer
+
+START_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81117
+//! @file
+//! @SYMTestCaseID PIM-APPENG-CNTMODEL-CIT-P81117
+//! @SYMTestType CIT
+//! @SYMTestPriority Low
+//! @SYMPREQ 811
+//! @SYMTestCaseDesc ViewDef tests where contact item is opened/read using ViewDefs containing all possible existing uids 
+//! @SYMTestActions OOpen and read a contact using the default ViewDefs. 
+//! then read and minimally read a contact using ViewDef X containing an existing uid.
+//! store the number of hidden/non-hidden and empty/non-empty fields after each read/open,
+//! repeat until all existing uids are tested
+//! repeat test 4 times so that X excludes/includes all possible combination of fields
+//! @SYMTestExpectedResults Check that the values match the expected results as constrained by the fields that are excluded / included within the ViewDef.
+RUN_TEST_STEP !PanicCode=8 100 CntPerfTestServer ViewDefAnyFieldsTest c:\CntPerfTest\configs\cntperftest.ini RepeatConfig
+RUN_TEST_STEP 300 CntPerfTestServer ViewDefAnyFieldsTest c:\CntPerfTest\configs\cntperftest.ini SingleConfig
+RUN_TEST_STEP 3000 CntPerfTestServer ViewDefAnyFieldsTest c:\CntPerfTest\configs\cntperftest.ini UniqueConfig
+END_TESTCASE PIM-APPENG-CNTMODEL-CIT-P81117

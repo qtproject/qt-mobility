@@ -1,5 +1,5 @@
 import Qt 4.7
-import com.nokia.mobility 1.0
+import QtMobility.organizer 1.0
 import "contents" as TimeScape
 
 Rectangle {

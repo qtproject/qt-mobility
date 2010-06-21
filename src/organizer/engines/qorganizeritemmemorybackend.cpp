@@ -413,7 +413,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
             upperBound = instance.endDateTime();
         } else {
             QOrganizerTodoOccurrence instance = currException;
-            lowerBound = instance.notBeforeDateTime();
+            lowerBound = instance.startDateTime();
             upperBound = instance.dueDateTime();
         }
 
@@ -429,7 +429,7 @@ QList<QOrganizerItem> QOrganizerItemMemoryEngine::itemInstances(const QOrganizer
         initialDateTime = evt.startDateTime();
     } else if (generator.type() == QOrganizerItemType::TypeTodo) {
         QOrganizerTodo todo = generator;
-        initialDateTime = todo.notBeforeDateTime();
+        initialDateTime = todo.startDateTime();
     } else {
         // erm... not a recurring item in our schema...
         return QList<QOrganizerItem>() << generator;
@@ -531,9 +531,9 @@ QOrganizerItem QOrganizerItemMemoryEngine::generateInstance(const QOrganizerItem
         QDateTime temp = ttr.dueDateTime();
         temp.setDate(rdate.date());
         ttr.setDueDateTime(temp);
-        temp = ttr.notBeforeDateTime();
+        temp = ttr.startDateTime();
         temp.setDate(rdate.date());
-        ttr.setNotBeforeDateTime(temp);
+        ttr.setStartDateTime(temp);
         instanceItem.saveDetail(&ttr);
     }
 

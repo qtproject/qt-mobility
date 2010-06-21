@@ -56,20 +56,15 @@ class Q_ORGANIZER_EXPORT QOrganizerTodoProgress : public QOrganizerItemDetail
 public:
 #ifdef Q_QDOC
     const char* DefinitionName;
-    const char* FieldStartedDateTime;
     const char* FieldFinishedDateTime;
     const char* FieldPercentageComplete;
     const char* FieldStatus;
 #else
     Q_DECLARE_CUSTOM_ORGANIZER_DETAIL(QOrganizerTodoProgress, "TodoProgress")
-    Q_DECLARE_LATIN1_CONSTANT(FieldStartedDateTime, "StartedDateTime");
     Q_DECLARE_LATIN1_CONSTANT(FieldFinishedDateTime, "FinishedDateTime");
     Q_DECLARE_LATIN1_CONSTANT(FieldPercentageComplete, "PercentageComplete");
     Q_DECLARE_LATIN1_CONSTANT(FieldStatus, "Status");
 #endif
-
-    void setStartedDateTime(const QDateTime& startedDateTime) {setValue(FieldStartedDateTime, startedDateTime);}
-    QDateTime startedDateTime() const {return value<QDateTime>(FieldStartedDateTime);}
 
     void setFinishedDateTime(const QDateTime& finishedDateTime) {setValue(FieldFinishedDateTime, finishedDateTime);}
     QDateTime finishedDateTime() const {return value<QDateTime>(FieldFinishedDateTime);}

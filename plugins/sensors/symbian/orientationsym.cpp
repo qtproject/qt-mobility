@@ -45,7 +45,7 @@
 /**
  * set the id of the orientation sensor
  */
-const char *COrientationSensorSym::id("sym.orientation");
+char const * const COrientationSensorSym::id("sym.orientation");
 
 /**
  * Factory function, this is used to create the orientation sensor object

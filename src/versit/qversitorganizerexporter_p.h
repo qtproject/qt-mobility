@@ -80,6 +80,12 @@ private:
             QList<QVersitProperty>* removedProperties,
             QList<QVersitProperty>* generatedProperties,
             QSet<QString>* processedFields);
+    void encodeJournalTimeRange(
+            const QOrganizerItemDetail& detail,
+            const QVersitDocument& document,
+            QList<QVersitProperty>* removedProperties,
+            QList<QVersitProperty>* generatedProperties,
+            QSet<QString>* processedFields);
     void encodeTimestamp(
             const QOrganizerItemDetail& detail,
             const QVersitDocument& document,

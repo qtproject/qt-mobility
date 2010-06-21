@@ -1,6 +1,6 @@
 TEMPLATE = lib
 CONFIG += plugin
-TARGET = $$qtLibraryTarget(qtmedia_m3u)
+TARGET = $$qtLibraryTarget(qtmultimediakit_m3u)
 
 PLUGIN_TYPE=playlistformats
 

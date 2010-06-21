@@ -52,9 +52,37 @@ QTM_BEGIN_NAMESPACE
   \brief The QVersitDocument class is a container for a list of versit properties.
   \ingroup versit
 
-  For example a vCard can be presented as a QVersitDocument that consists of a number of properties
-  such as a name (N), a telephone number (TEL) and an email address (EMAIL) to name a few.
-  Each of these properties is stored as an instance of a QVersitProperty in a QVersitDocument.
+  A vCard is represented in abstract form as a QVersitDocument that consists of a number of
+  properties such as a name (N), a telephone number (TEL) and an email address (EMAIL), for
+  instance.  Each of these properties is stored as an instance of a QVersitProperty in a
+  QVersitDocument.
+
+  In addition to the list of properties, QVersitDocument also records the type of the Versit
+  document in two ways.  The VersitType enum describes the format in which the document is to be
+  serialized by QVersitWriter (or the format from which it was read by QVersitReader), and should
+  not be used to infer any semantics about the document data.  The componentType field is a string
+  corresponding directly to the value of the BEGIN line in a document.  For example, for a vCard,
+  this will always be the string "VCARD"; for an iCalendar, it could be "VCALENDAR", "VEVENT",
+  "VTODO", "VJOURNAL", "VALARM" or "VTIMEZONE".
+
+  As well as properties, a QVersitDocument can hold other documents.  For iCalendar, this is how
+  a single VCALENDAR document can compose documents of type VEVENT, VTODO, etc.
+
+  For example, for the following iCalendar:
+  \code
+  BEGIN:VCALENDAR
+  VERSION:2.0
+  BEGIN:VEVENT
+  SUMMARY:Christmas
+  DTSTART:20001225
+  END:VEVENT
+  END:VCALENDAR
+  \endcode
+
+  This can be represented as a QVersitDocument of with componentType VCALENDAR and versitType
+  ICalendar20Type.  It contains no properties (note: the VERSION property is not stored explicitly
+  as a property) and one sub-document.  The sub-document has componentType VEVENT and versitType
+  ICalendar20Type, and contains two properties.
 
   QVersitDocument supports implicit sharing.
 
@@ -63,10 +91,11 @@ QTM_BEGIN_NAMESPACE
 
 /*!
   \enum QVersitDocument::VersitType
-  This enum describes a versit document type and version.
+  This enum describes a Versit document serialization format and version.
   \value InvalidType No type specified or a document with an invalid type was parsed
   \value VCard21Type vCard version 2.1
   \value VCard30Type vCard version 3.0
+  \value ICalendar20Type iCalendar version 2.0
  */
 
 /*! Constructs a new empty document */
@@ -160,7 +189,7 @@ QVersitDocument::VersitType QVersitDocument::type() const
 }
 
 /*!
- * Sets the versit component type (eg. VCARD, VCALENDAR, VEVENT, etc.)
+ * Sets the versit component type to \a componentType (eg. VCARD, VCALENDAR, VEVENT, etc.)
  */
 void QVersitDocument::setComponentType(QString componentType)
 {
@@ -218,9 +247,9 @@ void QVersitDocument::clear()
 /*!
  * Adds \a subdocument to the Versit document.
  */
-void QVersitDocument::addSubDocument(const QVersitDocument& document)
+void QVersitDocument::addSubDocument(const QVersitDocument& subdocument)
 {
-    d->mSubDocuments.append(document);
+    d->mSubDocuments.append(subdocument);
 }
 
 /*!

@@ -738,7 +738,7 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent
     return ret;
 }
 
-QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate, const QString& calendarName) const
+QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDate& instanceDate, const QString& calendarName) const
 {
     // TODO: The code in this method is from the Proof of Concept
     // TODO: Replace the Proof of Concept codes at some point
@@ -766,11 +766,9 @@ QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccur
     if (!tempdt.isNull())
         ret.setEndDateTime(tempdt);
 
-    // now set the parent information (parent id and original datetime)
-    QOrganizerItemId pId;
-    pId.setManagerUri(managerUri());
+    // now set the parent information (parent id and original date)
     QString hashKey = calendarName + ":" + QString::fromStdString(cevent->getId());
-    pId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
+    ret.setParentLocalId(QOrganizerItemLocalId(qHash(hashKey)));
 
     // TODO: These were removed from API, check if these are still needed
     //ret.setParentItemId(pId);
@@ -793,10 +791,22 @@ QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo ) co
         ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint));
     QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
-        ret.setNotBeforeDateTime(tempdt);
+        ret.setStartDateTime(tempdt);
     tempdt = QDateTime::fromTime_t(ctodo->getDue());
     if (!tempdt.isNull())
         ret.setDueDateTime(tempdt);
+    tempint = ctodo->getPercentComplete();
+    if (tempint != -1)
+        ret.setProgressPercentage(tempint);
+    tempdt = QDateTime::fromTime_t(ctodo->getCompleted());
+    if (!tempdt.isNull())
+        ret.setFinishedDateTime(tempdt);
+    tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
+    if (!tempdt.isNull())
+        ret.setStartDateTime(tempdt);
+    
+    // status is always available..
+    ret.setStatus(static_cast<QOrganizerTodoProgress::Status>(ctodo->getStatus()));
 
     return ret;
 }
@@ -812,7 +822,7 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
         ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint));
     QDateTime tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
-        ret.setNotBeforeDateTime(tempdt);
+        ret.setStartDateTime(tempdt);
     QString tempstr = QString::fromStdString(ctodo->getSummary());
     if (!tempstr.isEmpty())
         ret.setDisplayLabel(tempstr);
@@ -827,18 +837,12 @@ QOrganizerTodoOccurrence QOrganizerItemMaemo5Engine::convertCTodoToQTodoOccurren
         ret.setFinishedDateTime(tempdt);
     tempdt = QDateTime::fromTime_t(ctodo->getDateStart());
     if (!tempdt.isNull())
-        ret.setStartedDateTime(tempdt);
+        ret.setStartDateTime(tempdt);
     
     // status is always available..
     // TODO: Commented out, check this!
     //ret.setStatus(static_cast<QOrganizerItemTodoProgress::Status>(ctodo->getStatus()));
     
-    QOrganizerItemId rId;
-    rId.setManagerUri(managerUri());
-    QString hashKey = calendarName + ":" + QString::fromStdString(ctodo->getId());
-    rId.setLocalId(QOrganizerItemLocalId(qHash(hashKey)));
-    ret.setId(rId);
-
     // now, in maemo, the parent id is the same as this id (todo's only have one occurrence).
 
     // TODO: These were removed from API, check if these are still needed?

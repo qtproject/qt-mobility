@@ -6,6 +6,9 @@ PLUGIN_TYPE=organizer
 CONFIG += mobility
 MOBILITY = organizer
 
+CONFIG += link_pkgconfig
+PKGCONFIG += libextendedkcal libextendedkcal-dev
+
 include(../../../common.pri)
 
 INCLUDEPATH += ../../../src/organizer \
@@ -15,7 +18,7 @@ INCLUDEPATH += ../../../src/organizer \
                 ../../../src/organizer/details
 
 HEADERS += \
-        qorganizermaemo6_p.h
+        qorganizermaemo6.h
 SOURCES += \
         qorganizermaemo6.cpp
 

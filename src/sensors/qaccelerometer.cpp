@@ -148,7 +148,7 @@ void QAccelerometerReading::setZ(qreal z)
     \sa QSensorFilter::filter()
 */
 
-const char *QAccelerometer::type("QAccelerometer");
+char const * const QAccelerometer::type("QAccelerometer");
 
 /*!
     \class QAccelerometer
