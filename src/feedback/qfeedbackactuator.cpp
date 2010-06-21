@@ -114,7 +114,7 @@ int QFeedbackActuator::id() const
 /*!
     \fn bool QFeedbackActuator::isValid()
 
-    returns true if the actuator is valid. Default constructed actuators are invalid.
+    returns true if the actuator is valid.
 */
 bool QFeedbackActuator::isValid() const
 {

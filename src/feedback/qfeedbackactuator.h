@@ -53,7 +53,6 @@ class QFeedbackEffect;
 class Q_FEEDBACK_EXPORT QFeedbackActuator
 {
     Q_GADGET
-    Q_ENUMS(Type)
     Q_ENUMS(Capability)
     Q_ENUMS(State)
 public:
@@ -61,7 +60,6 @@ public:
         Envelope,
         Period
     };
-
 
     enum State {
         Busy,

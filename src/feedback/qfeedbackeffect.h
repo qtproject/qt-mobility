@@ -58,7 +58,7 @@ class QFeedbackFileEffectPrivate;
 class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
 {
     Q_OBJECT
-    Q_ENUMS(InstantEffect)
+    Q_ENUMS(ThemeEffect)
     Q_ENUMS(ErrorType)
 public:
     enum ThemeEffect {
@@ -81,7 +81,7 @@ public:
         DeviceBusy
     };
 
-    QFeedbackEffect(QObject *parent = 0);
+    explicit QFeedbackEffect(QObject *parent = 0);
 
     static bool supportsThemeEffect();
     static bool playThemeEffect(ThemeEffect effect);
@@ -108,7 +108,7 @@ public:
         INFINITE = -1
     };
 
-    QFeedbackHapticsEffect(QObject *parent = 0);
+    explicit QFeedbackHapticsEffect(QObject *parent = 0);
     ~QFeedbackHapticsEffect();
 
     void setDuration(int msecs);
@@ -142,7 +142,7 @@ protected:
     void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
 
 private:
-    friend class QFeedbackHapticsEffect;
+    friend class QFeedbackHapticsEffectPrivate;
     QScopedPointer<QFeedbackHapticsEffectPrivate> priv;
 };
 
@@ -153,7 +153,7 @@ class Q_FEEDBACK_EXPORT QFeedbackFileEffect : public QFeedbackEffect
     Q_PROPERTY(QString fileName READ fileName WRITE setFileName)
 
 public:
-    QFeedbackFileEffect(QObject *parent = 0);
+    explicit QFeedbackFileEffect(QObject *parent = 0);
     ~QFeedbackFileEffect();
 
     int duration() const;
@@ -174,7 +174,6 @@ protected:
     //virtual methods from QAbstractAnimation
     void updateCurrentTime(int currentTime);
     void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
-
 
 private:
     friend class QFeedbackFileEffectPrivate;

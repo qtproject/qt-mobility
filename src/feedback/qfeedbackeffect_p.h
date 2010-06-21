@@ -63,22 +63,22 @@ QTM_BEGIN_NAMESPACE
 class QFeedbackHapticsEffectPrivate
 {
 public:
-    QFeedbackHapticsEffectPrivate() : duration(250),
-                    intensity(1), attackTime(0), attackIntensity(0), fadeTime(0),
-                    period(-1)
+    QFeedbackHapticsEffectPrivate() :
+                    duration(250), attackTime(0), fadeTime(0), period(-1),
+                    intensity(1), attackIntensity(0), fadeIntensity(0)
     {
 
     }
 
-
+    // Try to avoid holes (mostly where qreal == double)
     int duration;
-    qreal intensity;
     int attackTime;
-    qreal attackIntensity;
     int fadeTime;
-    qreal fadeIntensity;
     int period;
     QFeedbackActuator actuator;
+    qreal intensity;
+    qreal attackIntensity;
+    qreal fadeIntensity;
 };
 
 class QFeedbackFileEffectPrivate

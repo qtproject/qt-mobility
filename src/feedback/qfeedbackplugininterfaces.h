@@ -74,6 +74,7 @@ public:
 
     //static members for actuators management
     virtual QList<QFeedbackActuator> actuators() = 0;
+    virtual ~QFeedbackHapticsInterface() {}
 
     //for actuator handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) = 0;
@@ -95,6 +96,7 @@ protected:
 class QFeedbackThemeInterface
 {
 public:
+    virtual ~QFeedbackThemeInterface() {}
     virtual bool play(QFeedbackEffect::ThemeEffect) = 0;
     static QFeedbackThemeInterface *instance();
 };
@@ -102,13 +104,14 @@ public:
 class Q_FEEDBACK_EXPORT QFeedbackFileInterface
 {
 public:
+    virtual ~QFeedbackFileInterface() {}
     virtual void setLoaded(QFeedbackFileEffect*, bool) = 0;
     virtual QFeedbackEffect::ErrorType updateEffectState(QFeedbackFileEffect *) = 0;
     virtual QAbstractAnimation::State actualEffectState(const QFeedbackFileEffect *) = 0;
     virtual int effectDuration(const QFeedbackFileEffect*) = 0;
     virtual QStringList supportedMimeTypes() = 0;
 
-    //functioncalled from the plugin when it has finished loading a file
+    //function called from the plugin when it has finished loading a file
     void asyncLoadFinished(QFeedbackFileEffect*, bool success);
 
     static QFeedbackFileInterface *instance();
