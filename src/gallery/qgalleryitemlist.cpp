@@ -228,6 +228,12 @@ QGalleryItemList::~QGalleryItemList()
 */
 
 /*!
+    \fn QGalleryItemList::propertyType(int key) const
+
+    Returns the type of the property identified by \a key.
+*/
+
+/*!
     \property QGalleryItemList::cursorPosition
 
     \brief The current position of the cache cursor.

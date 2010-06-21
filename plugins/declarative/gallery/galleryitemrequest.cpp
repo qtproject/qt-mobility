@@ -212,7 +212,7 @@ void GalleryItemRequest::_q_itemListChanged(QGalleryItemList *items)
     if (m_itemList && m_itemList->count() > 0) {
         typedef QHash<int, QString>::const_iterator iterator;
         for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
-            m_metaData->clear(it.value());
+            m_metaData->insert(it.value(), QVariant(m_itemList->propertyType(it.key())));
     }
 
     m_itemList = items;
@@ -227,11 +227,19 @@ void GalleryItemRequest::_q_itemListChanged(QGalleryItemList *items)
                 const int key = m_itemList->propertyKey(*it);
 
                 m_propertyKeys.insert(key, *it);
-                m_metaData->insert(*it, m_itemList->metaData(0, key));
+
+                QVariant value = m_itemList->metaData(0, key);
+                m_metaData->insert(*it, value.isNull()
+                        ? QVariant(m_itemList->propertyType(key))
+                        : value);
             }
         } else {
-            for (iterator it = propertyNames.begin(); it != propertyNames.end(); ++it)
-                m_propertyKeys.insert(m_itemList->propertyKey(*it), *it);
+            for (iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
+                const int key = m_itemList->propertyKey(*it);
+                m_propertyKeys.insert(key, *it);
+
+                m_metaData->insert(*it, QVariant(m_itemList->propertyType(key)));
+            }
         }
 
         connect(m_itemList, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
@@ -247,8 +255,12 @@ void GalleryItemRequest::_q_itemsInserted(int index, int)
 {
     if (index == 0) {
         typedef QHash<int, QString>::const_iterator iterator;
-        for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
-            m_metaData->insert(it.value(), m_itemList->metaData(0, it.key()));
+        for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it) {
+            QVariant value = m_itemList->metaData(0, it.key());
+            m_metaData->insert(it.value(), value.isNull()
+                    ? QVariant(m_itemList->propertyType(it.key()))
+                    : value);
+        }
 
         emit itemChanged();
     }
@@ -259,7 +271,7 @@ void GalleryItemRequest::_q_itemsRemoved(int index, int)
     if (index == 0) {
         typedef QHash<int, QString>::const_iterator iterator;
         for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
-            m_metaData->clear(it.value());
+            m_metaData->insert(it.value(), QVariant(m_itemList->propertyType(it.key())));
 
         emit itemChanged();
     }
@@ -269,12 +281,20 @@ void GalleryItemRequest::_q_metaDataChanged(int index, int, const QList<int> &ke
 {
     if (index == 0 && keys.isEmpty()) {
         typedef QHash<int, QString>::const_iterator iterator;
-        for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
-            m_metaData->insert(it.value(), m_itemList->metaData(0, it.key()));
+        for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it) {
+            QVariant value = m_itemList->metaData(0, it.key());
+            m_metaData->insert(it.value(), value.isNull()
+                    ? QVariant(m_itemList->propertyType(it.key()))
+                    : value);
+        }
     } else if (index == 0) {
         typedef QList<int>::const_iterator iterator;
-        for (iterator it = keys.begin(); it != keys.end(); ++it)
-            m_metaData->insert(m_propertyKeys.value(*it), m_itemList->metaData(0, *it));
+        for (iterator it = keys.begin(); it != keys.end(); ++it){
+            QVariant value = m_itemList->metaData(0, *it);
+            m_metaData->insert(m_propertyKeys.value(*it), value.isNull()
+                    ? QVariant(m_itemList->propertyType(*it))
+                    : value);
+        }
     }
 }
 

@@ -248,6 +248,7 @@ public:
         , queryArguments(arguments.queryArguments)
         , propertyNames(arguments.propertyNames)
         , propertyAttributes(arguments.propertyAttributes)
+        , propertyTypes(arguments.propertyTypes)
         , valueColumns(arguments.valueColumns)
         , compositeColumns(arguments.compositeColumns)
         , aliasColumns(arguments.aliasColumns)
@@ -294,6 +295,7 @@ public:
     const QVariantList queryArguments;
     const QStringList propertyNames;
     const QVector<QGalleryProperty::Attributes> propertyAttributes;
+    const QVector<QVariant::Type> propertyTypes;
     const QVector<QGalleryTrackerValueColumn *> valueColumns;
     const QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
     const QVector<int> aliasColumns;

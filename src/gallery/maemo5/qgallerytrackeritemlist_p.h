@@ -111,6 +111,7 @@ struct QGalleryTrackerItemListArguments
     QStringList propertyNames;
     QStringList fieldNames;
     QVector<QGalleryProperty::Attributes> propertyAttributes;
+    QVector<QVariant::Type> propertyTypes;
     QVector<QGalleryTrackerValueColumn *> valueColumns;
     QVector<QGalleryTrackerCompositeColumn *> compositeColumns;
     QVector<int> aliasColumns;
@@ -134,6 +135,7 @@ public:
     QStringList propertyNames() const;
     int propertyKey(const QString &property) const;
     QGalleryProperty::Attributes propertyAttributes(int key) const;
+    QVariant::Type propertyType(int key) const;
 
     void setCursorPosition(int position);
 

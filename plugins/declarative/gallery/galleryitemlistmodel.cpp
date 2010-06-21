@@ -78,7 +78,13 @@ QVariant GalleryItemListModel::data(const QModelIndex &index, int role) const
         case 2:
             return m_itemList->url(index.row());
         default:
-            return m_itemList->metaData(index.row(), role - 3);
+            {
+                QVariant value = m_itemList->metaData(index.row(), role - 3);
+
+                return value.isNull()
+                        ?  QVariant(m_itemList->propertyType(role - 3))
+                        : value;
+            }
         }
     } else {
         return QVariant();
@@ -97,7 +103,6 @@ bool GalleryItemListModel::setData(
     }
 
 }
-
 
 QModelIndex GalleryItemListModel::index(int row, int column, const QModelIndex &parent) const
 {

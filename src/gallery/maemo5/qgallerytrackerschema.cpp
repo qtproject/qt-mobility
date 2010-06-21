@@ -96,6 +96,7 @@ namespace
     {
         QLatin1String name;
         QLatin1String profile;
+        QVariant::Type type;
         QGalleryItemPropertyList dependencies;
         QGalleryTrackerImageColumn *(*createColumn)(
                 QGalleryDBusInterfaceFactory *dbus,
@@ -270,10 +271,11 @@ namespace
 #define QT_GALLERY_AGGREGATE_PROPERTY(PropertyName, Field, Aggregate, Type) \
 { QLatin1String(PropertyName), QLatin1String(Field), QLatin1String(Aggregate), QVariant::Type }
 
-#define QT_GALLERY_THUMBNAIL_PROPERTY(PropertyName, Profile, Dependencies, Factory) \
+#define QT_GALLERY_THUMBNAIL_PROPERTY(PropertyName, Profile, Type, Dependencies, Factory) \
 { \
     QLatin1String(PropertyName), \
     QLatin1String(Profile), \
+    QVariant::Type, \
     QGalleryItemPropertyList(Dependencies), \
     Factory \
 }
@@ -661,22 +663,26 @@ static const QGalleryThumbnailProperty qt_galleryFileThumbnailPropertyList[] =
     QT_GALLERY_THUMBNAIL_PROPERTY(
             "previewImage",
             "large",
+            Image,
             qt_galleryFileThumbnailDependencyList,
             QGalleryTrackerThumbnailColumn::createImageColumn),
     QT_GALLERY_THUMBNAIL_PROPERTY(
             "previewPixmap",
             "large",
+            Pixmap,
             qt_galleryFileThumbnailDependencyList,
             QGalleryTrackerThumbnailColumn::createPixmapColumn),
 #endif
     QT_GALLERY_THUMBNAIL_PROPERTY(
             "thumbnailImage",
             QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
+            Image,
             qt_galleryFileThumbnailDependencyList,
             QGalleryTrackerThumbnailColumn::createImageColumn),
     QT_GALLERY_THUMBNAIL_PROPERTY(
             "thumbnailPixmap",
             QT_GALLERY_THUMBNAIL_NORMAL_PROFILE,
+            Pixmap,
             qt_galleryFileThumbnailDependencyList,
             QGalleryTrackerThumbnailColumn::createPixmapColumn)
 
@@ -1488,6 +1494,8 @@ void QGalleryTrackerSchema::populateItemArguments(
     QVector<QGalleryProperty::Attributes> aliasAttributes;
     QVector<QGalleryProperty::Attributes> thumbnailAttributes;
     QVector<QVariant::Type> valueTypes;
+    QVector<QVariant::Type> aliasTypes;
+    QVector<QVariant::Type> thumbnailTypes;
     QVector<const QGalleryThumbnailProperty *> imageProperties;
     QVector<QVector<int> > imageColumns;
 
@@ -1511,6 +1519,7 @@ void QGalleryTrackerSchema::populateItemArguments(
                 arguments->aliasColumns.append(fieldIndex + 2);
                 aliasNames.append(*it);
                 aliasAttributes.append(itemProperties[propertyIndex].attributes);
+                aliasTypes.append(itemProperties[propertyIndex].type);
             } else {
                 arguments->fieldNames.append(field);
                 valueNames.append(*it);
@@ -1541,6 +1550,7 @@ void QGalleryTrackerSchema::populateItemArguments(
 
             thumbnailNames.append(*it);
             thumbnailAttributes.append(QGalleryProperty::CanRead);
+            thumbnailTypes.append(thumbnailProperties[propertyIndex].type);
             imageProperties.append(&thumbnailProperties[propertyIndex]);
             imageColumns.append(columns);
         } else if (*it == QLatin1String("filePath")) {
@@ -1622,6 +1632,7 @@ void QGalleryTrackerSchema::populateItemArguments(
             dbus, imageProperties, imageColumns, valueNames.count() + aliasNames.count());
     arguments->propertyNames = valueNames + aliasNames + thumbnailNames;
     arguments->propertyAttributes = valueAttributes + aliasAttributes + thumbnailAttributes;
+    arguments->propertyTypes = valueTypes + aliasTypes + thumbnailTypes;
 
     for (int i = 0; i < arguments->propertyAttributes.count(); ++i) {
         if (arguments->propertyAttributes.at(i) & IsResource)
@@ -1648,6 +1659,7 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     QVector<QGalleryProperty::Attributes> aliasAttributes;
     QVector<QVariant::Type> identityTypes;
     QVector<QVariant::Type> aggregateTypes;
+    QVector<QVariant::Type> aliasTypes;
     QVector<int> identityColumns;
 
     const QGalleryAggregateType &type = qt_galleryAggregateTypeList[m_aggregateIndex];
@@ -1693,6 +1705,7 @@ void QGalleryTrackerSchema::populateAggregateArguments(
             arguments->aliasColumns.append(fieldIndex);
             aliasNames.append(*it);
             aliasAttributes.append(properties[propertyIndex].attributes & PropertyMask);
+            aliasTypes.append(properties[propertyIndex].type);
         } else if ((propertyIndex = aggregateProperties.indexOfProperty(*it)) >= 0) {
             aggregateNames.append(*it);
             aggregateFields.append(aggregateProperties[propertyIndex].field);
@@ -1755,6 +1768,7 @@ void QGalleryTrackerSchema::populateAggregateArguments(
     arguments->valueColumns = qt_createValueColumns(identityTypes + aggregateTypes);
     arguments->propertyNames = identityNames + aggregateNames + aliasNames;
     arguments->propertyAttributes = identityAttributes + aggregateAttributes + aliasAttributes;
+    arguments->propertyTypes = identityTypes + aggregateTypes + aliasTypes;
 }
 
 QTM_END_NAMESPACE

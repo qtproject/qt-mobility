@@ -736,6 +736,11 @@ QGalleryProperty::Attributes QGalleryTrackerItemList::propertyAttributes(int key
     return d_func()->propertyAttributes.value(key - d_func()->valueOffset);
 }
 
+QVariant::Type QGalleryTrackerItemList::propertyType(int key) const
+{
+    return d_func()->propertyTypes.value(key - d_func()->valueOffset);
+}
+
 int QGalleryTrackerItemList::count() const
 {
     return d_func()->rowCount;

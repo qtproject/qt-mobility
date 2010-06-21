@@ -67,6 +67,7 @@ public:
 
     QGalleryProperty::Attributes propertyAttributes(int) const {
         return QGalleryProperty::Attributes(); }
+    QVariant::Type propertyType(int) const { return QVariant::Invalid; }
 
     int count() const { return 1; }
 

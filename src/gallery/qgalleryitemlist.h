@@ -101,6 +101,7 @@ public:
     virtual QStringList propertyNames() const = 0;
     virtual int propertyKey(const QString &property) const = 0;
     virtual QGalleryProperty::Attributes propertyAttributes(int key) const = 0;
+    virtual QVariant::Type propertyType(int key) const = 0;
 
     int cursorPosition() const;
     virtual int minimumPagedItems() const;
