@@ -42,7 +42,7 @@
 #include "qgeomappingmanagerengine_nokia_p.h"
 #include "qgeomapreply_nokia_p.h"
 
-#include <QGeoTiledMapRequest>
+#include <qgeotiledmaprequest.h>
 
 #include <QNetworkAccessManager>
 #include <QNetworkDiskCache>

@@ -43,7 +43,7 @@
 #define PLACEPRESENTER_H
 
 #include "geopresenter.h"
-#include <QGeoPlacesReply>
+#include <qgeoplacesreply.h>
 #include <QTreeWidget>
 
 QTM_USE_NAMESPACE

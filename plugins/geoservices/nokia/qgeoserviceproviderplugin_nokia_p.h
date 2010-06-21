@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <QGeoServiceProviderFactory>
+#include <qgeoserviceproviderfactory.h>
 #include <QObject>
 
 QTM_USE_NAMESPACE

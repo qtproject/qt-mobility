@@ -41,7 +41,7 @@
 
 #include "qgeoroutexmlparser_p.h"
 
-#include <QGeoDistance>
+#include <qgeodistance.h>
 #include <QXmlStreamReader>
 #include <QIODevice>
 #include <QStringList>

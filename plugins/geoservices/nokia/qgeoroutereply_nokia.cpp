@@ -42,7 +42,7 @@
 #include "qgeoroutereply_nokia_p.h"
 #include "qgeoroutexmlparser_p.h"
 
-#include <QGeoRouteRequest>
+#include <qgeorouterequest.h>
 
 QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request, QNetworkReply *reply, QObject *parent)
         : QGeoRouteReply(request, parent),

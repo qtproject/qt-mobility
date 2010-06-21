@@ -43,7 +43,7 @@
 #define SERVICESTAB_H_
 
 #include <QWidget>
-#include <QGeoServiceProvider>
+#include <qgeoserviceprovider.h>
 
 class QTreeWidget;
 class QLineEdit;

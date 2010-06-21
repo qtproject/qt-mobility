@@ -42,9 +42,9 @@
 #include "routepresenter.h"
 
 #include <QStringBuilder>
-#include <QGeoBoundingBox>
-#include <QGeoDistance>
-#include <QGeoNavigationInstruction>
+#include <qgeoboundingbox.h>
+#include <qgeodistance.h>
+#include <qgeonavigationinstruction.h>
 
 RoutePresenter::RoutePresenter(QTreeWidget* treeWidget, const QGeoRouteReply* routeReply)
         : GeoPresenter(treeWidget), routeReply(routeReply)

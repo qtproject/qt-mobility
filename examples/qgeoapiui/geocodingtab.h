@@ -43,7 +43,7 @@
 #define GEOCODINGTAB_H_
 
 #include <QWidget>
-#include <QGeoPlacesManager>
+#include <qgeoplacesmanager.h>
 
 class QTreeWidget;
 class QLineEdit;

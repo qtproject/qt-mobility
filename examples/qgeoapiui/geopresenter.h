@@ -46,8 +46,8 @@
 #include <QRectF>
 #include <QString>
 
-#include <QGeoBoundingBox>
-#include <QGeoCoordinate>
+#include <qgeoboundingbox.h>
+#include <qgeocoordinate.h>
 
 QTM_USE_NAMESPACE
 

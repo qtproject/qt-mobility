@@ -60,12 +60,12 @@
 class QXmlStreamReader;
 class QIODevice;
 
-#include <QGeoRoute>
-#include <QGeoRouteSegment>
-#include <QGeoCoordinate>
-#include <QGeoBoundingBox>
-#include <QGeoRouteRequest>
-#include <QGeoNavigationInstruction>
+#include <qgeoroute.h>
+#include <qgeoroutesegment.h>
+#include <qgeocoordinate.h>
+#include <qgeoboundingbox.h>
+#include <qgeorouterequest.h>
+#include <qgeonavigationinstruction.h>
 
 QTM_USE_NAMESPACE
 

@@ -43,7 +43,7 @@
 #define MAPTILETAB_H_
 
 #include <QWidget>
-#include <QGeoMappingManager>
+#include <qgeomappingmanager.h>
 
 class QLabel;
 class QLineEdit;

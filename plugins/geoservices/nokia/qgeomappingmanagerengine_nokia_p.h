@@ -53,9 +53,9 @@
 // We mean it.
 //
 
-#include <QGeoServiceProvider>
-#include <QGeoTiledMappingManagerEngine>
-#include <QGeoTiledMappingManagerThread>
+#include <qgeoserviceprovider.h>
+#include <qgeotiledmappingmanagerengine.h>
+#include <qgeotiledmappingmanagerthread.h>
 
 class QNetworkAccessManager;
 class QNetworkDiskCache;

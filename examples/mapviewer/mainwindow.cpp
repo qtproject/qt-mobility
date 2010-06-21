@@ -47,7 +47,7 @@
 #include <QMessageBox>
 #include <QTimer>
 
-#include <QGeoCoordinate>
+#include <qgeocoordinate.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>

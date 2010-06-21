@@ -51,7 +51,7 @@
 #include <QPushButton>
 #include <QMessageBox>
 #include <QTimer>
-#include <QGeoServiceProvider>
+#include <qgeoserviceprovider.h>
 
 ServicesTab::ServicesTab(QWidget *parent) :
         QWidget(parent)

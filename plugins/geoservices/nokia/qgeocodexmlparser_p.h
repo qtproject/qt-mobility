@@ -61,10 +61,10 @@
 class QXmlStreamReader;
 class QIODevice;
 
-#include <QGeoCoordinate>
-#include <QGeoBoundingBox>
-#include <QGeoPlace>
-#include <QGeoAddress>
+#include <qgeocoordinate.h>
+#include <qgeoboundingbox.h>
+#include <qgeoplace.h>
+#include <qgeoaddress.h>
 
 QTM_USE_NAMESPACE
 

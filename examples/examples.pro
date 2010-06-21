@@ -30,8 +30,8 @@ contains(mobility_modules,location) {
     SUBDIRS += logfilepositionsource \
                satellitedialog
     !symbian|contains(mobility_modules,bearer) {
-    	SUBDIRS += qgeoapiui
-                   #mapviewer (disable for now)
+    	SUBDIRS += qgeoapiui \
+                   mapviewer
 
     }
 

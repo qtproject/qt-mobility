@@ -53,7 +53,7 @@
 // We mean it.
 //
 
-#include <QGeoRouteReply>
+#include <qgeoroutereply.h>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE

@@ -44,7 +44,7 @@
 
 #include <QStringList>
 #include <QNetworkProxy>
-#include <QGeoBoundingBox>
+#include <qgeoboundingbox.h>
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),

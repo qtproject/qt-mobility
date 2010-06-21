@@ -55,7 +55,7 @@ class QTabWidget;
 #include <QNetworkSession>
 #endif
 
-#include <QGeoServiceProvider>
+#include <qgeoserviceprovider.h>
 
 QTM_USE_NAMESPACE
 

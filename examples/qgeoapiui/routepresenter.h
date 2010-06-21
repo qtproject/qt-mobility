@@ -46,9 +46,9 @@
 
 #include "geopresenter.h"
 
-#include <QGeoRouteReply>
-#include <QGeoCoordinate>
-#include <QGeoRouteSegment>
+#include <qgeoroutereply.h>
+#include <qgeocoordinate.h>
+#include <qgeoroutesegment.h>
 
 QTM_USE_NAMESPACE
 
