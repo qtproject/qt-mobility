@@ -13,7 +13,6 @@ INCLUDEPATH += $$SOURCE_DIR/src/feedback
 target.path=$$QT_MOBILITY_PREFIX/plugins/feedback
 INSTALLS+=target
 QT += phonon
-LIBS += -lQtFeedback
 CONFIG += mobility
 MOBILITY = feedback
 

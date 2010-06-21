@@ -37,3 +37,7 @@ contains(MOBILITY, messaging) {
 contains(MOBILITY, versit) {
     qtAddLibrary(QtVersit)
 }
+
+contains(MOBILITY, feedback) {
+    qtAddLibrary(QtFeedback)
+}

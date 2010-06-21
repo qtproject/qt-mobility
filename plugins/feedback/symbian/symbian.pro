@@ -10,7 +10,7 @@ SOURCES += qfeedback.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/feedback
 
-LIBS += -lQtFeedback -lhwrmvibraclient
+LIBS += -lhwrmvibraclient
 CONFIG += mobility
 MOBILITY = feedback
 

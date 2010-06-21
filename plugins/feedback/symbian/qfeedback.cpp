@@ -314,7 +314,7 @@ QVariant QFeedbackSymbian::actuatorProperty(const QFeedbackActuator &actuator, A
 
 }
 
-bool QFeedbackImmersion::isActuatorCapabilitySupported(QFeedbackActuator::Capability)
+bool QFeedbackSymbian::isActuatorCapabilitySupported(QFeedbackActuator::Capability)
 {
     return false;
 }

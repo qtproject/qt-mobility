@@ -9,7 +9,8 @@ HEADERS += dialog.h
 SOURCES += dialog.cpp main.cpp
 FORMS += dialog.ui
 
-LIBS += -lQtFeedback
+CONFIG += mobility
+MOBILITY = feedback
 
 include(../examples.pri)
 

@@ -11,7 +11,7 @@ SOURCES += qfeedback.cpp
 
 INCLUDEPATH += $$SOURCE_DIR/src/feedback
 
-LIBS += -limmvibe -lQtFeedback
+LIBS += -limmvibe
 CONFIG += mobility
 MOBILITY = feedback
 
