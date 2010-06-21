@@ -573,7 +573,7 @@ void tst_SymbianOm::addEvent_data(QString managerName)
                 << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
                 << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
     }
-    QTest::newRow(QString("[%1] Item type Event; details: description").arg(managerName).toLatin1().constData())
+    QTest::newRow(QString("[%1] Item type Event; details: start time, description").arg(managerName).toLatin1().constData())
         << managerName
         << (int) QOrganizerItemManager::NoError
         << (QTstDetailList()
@@ -596,6 +596,7 @@ void tst_SymbianOm::addEvent_data(QString managerName)
             << (QTstDetailList()
                 << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEventOccurrence));
                 */
+
 }
 
 /**
