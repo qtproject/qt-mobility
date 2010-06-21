@@ -64,9 +64,9 @@ public:
 
     void tryLoad(QPluginLoader &loader)
     {
-        if (T *newHaptics = qobject_cast<T*>(loader.instance())) {
-            if (!inst || inst->pluginPriority() < newHaptics->pluginPriority()) {
-                inst = newHaptics;
+        if (T *newInst = qobject_cast<T*>(loader.instance())) {
+            if (!inst || inst->pluginPriority() < newInst->pluginPriority()) {
+                inst = newInst;
                 pl.unload(); //release any reference to a previous plugin instance
                 pl.setFileName(loader.fileName());
                 pl.load(); //Adds a ref to the library

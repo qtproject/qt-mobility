@@ -41,12 +41,13 @@
 
 #include "qfeedback.h"
 #include <QtCore/QtPlugin>
+#include <QtCore/QCoreApplication>
 #include <phonon/backendcapabilities.h>
 #include <phonon/audiooutput.h>
 
 Q_EXPORT_PLUGIN2(feedback_phonon, QFeedbackPhonon)
 
-QFeedbackPhonon::QFeedbackPhonon()
+QFeedbackPhonon::QFeedbackPhonon() : QObject(qApp)
 {
 }
 
