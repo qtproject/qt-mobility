@@ -84,6 +84,7 @@ public:
     void next();
     int row() const;
     int col() const;
+    int zoomLevel() const;
     QRectF tileRect() const;
 
 private:

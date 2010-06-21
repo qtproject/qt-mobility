@@ -50,6 +50,8 @@ class QGeoTiledMapDataPrivate;
 
 class Q_LOCATION_EXPORT QGeoTiledMapData : public QGeoMapData
 {
+    friend class QGeoTiledMapDataPrivate;
+
 public:
     QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget);
     virtual ~QGeoTiledMapData();
@@ -71,6 +73,8 @@ public:
     virtual QList<QGeoMapObject*> visibleMapObjects();
     virtual QList<QGeoMapObject*> mapObjectsAtScreenPosition(const QPointF &screenPosition, int radius = 0);
     virtual QList<QGeoMapObject*> mapObjectsInScreenRect(const QRectF &screenRect);
+
+    virtual QPixmap mapObjectsOverlay() const;
 
     QRectF protectedRegion() const;
     void clearProtectedRegion();

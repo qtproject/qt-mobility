@@ -215,8 +215,10 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 
     // TODO check if already added?
 
-    if (childObject)
+    if (childObject) {
         d->children.append(childObject);
+        d->zOrderedChildren.insert(childObject->zValue(), childObject);
+    }
 }
 
 /*!
@@ -228,8 +230,10 @@ void QGeoMapObject::addChildObject(QGeoMapObject *childObject)
 void QGeoMapObject::removeChildObject(QGeoMapObject *childObject)
 {
     Q_D(QGeoMapObject);
-    if (childObject)
+    if (childObject) {
         d->children.removeAll(childObject);
+        d->zOrderedChildren.remove(childObject->zValue(), childObject);
+    }
 }
 
 /*!

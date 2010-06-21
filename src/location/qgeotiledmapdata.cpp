@@ -43,7 +43,9 @@
 #include "qgeotiledmapdata_p.h"
 
 #include "qgeotiledmappingmanagerengine.h"
+#include "qgeotiledmappingmanagerengine_p.h"
 #include "qgeocoordinate.h"
+#include "qgeoboundingbox.h"
 
 #include <QDebug>
 
@@ -55,7 +57,7 @@ QTM_BEGIN_NAMESPACE
 
 QGeoTiledMapData::QGeoTiledMapData(QGeoMappingManagerEngine *engine, QGeoMapWidget *widget)
         : QGeoMapData(engine, widget),
-        d_ptr(new QGeoTiledMapDataPrivate())
+        d_ptr(new QGeoTiledMapDataPrivate(this))
 {
     QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
     QGeoMapData::setZoomLevel(DEFAULT_ZOOMLEVEL);
@@ -313,16 +315,48 @@ QList<QGeoMapObject*> QGeoTiledMapData::mapObjectsInScreenRect(const QRectF &scr
     return QList<QGeoMapObject*>();
 }
 
+QPixmap QGeoTiledMapData::mapObjectsOverlay() const
+{
+    bool needsPainting = false;
+    QPixmap overlay(d_ptr->screenRect.width(), d_ptr->screenRect.height());
+    overlay.fill(Qt::transparent);
+    QPainter painter(&overlay);
+    //TODO: add some type checking
+    QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
+    QGeoTileIterator it(d_ptr->screenRect, tileEngine->tileSize(), static_cast<int>(zoomLevel()));
+
+    //For all tiles covered by the current screenRect,
+    //paint all mop objects that intersect those tiles
+    while (it.hasNext()) {
+        it.next();
+        qulonglong tileKey = QGeoTiledMapDataPrivate::tileKey(it.row(), it.col(), it.zoomLevel());
+
+        if (d_ptr->tileToObject.contains(tileKey)) {
+            QList<QGeoMapObject*> objects = d_ptr->tileToObject.value(tileKey);
+            //TODO: paint objects
+        }
+    }
+
+    if (needsPainting)
+        return overlay;
+
+    return QPixmap();
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate() {}
+QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(QGeoTiledMapData *q)
+    : q_ptr(q)
+{}
 
 QGeoTiledMapDataPrivate::QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &other)
         : width(other.width),
         height(other.height),
         protectRegion(other.protectRegion),
-        screenRect(other.screenRect) {}
+        screenRect(other.screenRect),
+        q_ptr(other.q_ptr)
+{}
 
 QGeoTiledMapDataPrivate::~QGeoTiledMapDataPrivate() {}
 
@@ -332,8 +366,44 @@ QGeoTiledMapDataPrivate& QGeoTiledMapDataPrivate::operator= (const QGeoTiledMapD
     height = other.height;
     protectRegion = other.protectRegion;
     screenRect = other.screenRect;
+    q_ptr = other.q_ptr;
 
     return *this;
+}
+
+qulonglong QGeoTiledMapDataPrivate::tileKey(int row, int col, int zoomLevel)
+{
+    qulonglong result = 1 << (zoomLevel);
+    result *= row;
+    result += col;
+    return result;
+}
+
+void QGeoTiledMapDataPrivate::mapObjectToTiles(QGeoMapObject *mapObject)
+{
+    if (!mapObject)
+        return;
+
+    QGeoBoundingBox box = mapObject->boundingBox();
+    QPointF topLeft = q_ptr->coordinateToScreenPosition(box.topLeft()) + q_ptr->screenRect().topLeft();
+    QPointF bottomRight = q_ptr->coordinateToScreenPosition(box.bottomRight()) + q_ptr->screenRect().topLeft();
+    QRectF rect(topLeft, bottomRight);
+    //TODO: add some type checking
+    QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(q_ptr->engine());
+    QGeoTileIterator it(rect, tileEngine->tileSize(), static_cast<int>(q_ptr->zoomLevel()));
+
+    while (it.hasNext()) {
+        it.next();
+        qulonglong key = tileKey(it.row(), it.col(), it.zoomLevel());
+
+        if (tileToObject.contains(key))
+            tileToObject[key].append(mapObject);
+        else {
+            QList<QGeoMapObject*> objects;
+            objects.append(mapObject);
+            tileToObject[key] = objects;
+        }
+    }
 }
 
 QTM_END_NAMESPACE

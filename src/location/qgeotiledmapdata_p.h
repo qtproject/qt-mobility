@@ -54,24 +54,41 @@
 //
 
 #include "qmobilityglobal.h"
+#include "qgeomapobject.h"
 
 #include <QRectF>
+#include <QHash>
 
 QTM_BEGIN_NAMESPACE
+
+class QGeoMapRectangleObject;
+class QGeoTiledMapData;
 
 class QGeoTiledMapDataPrivate
 {
 public:
-    QGeoTiledMapDataPrivate();
+    QGeoTiledMapDataPrivate(QGeoTiledMapData *q);
     QGeoTiledMapDataPrivate(const QGeoTiledMapDataPrivate &other);
     ~QGeoTiledMapDataPrivate();
     QGeoTiledMapDataPrivate& operator= (const QGeoTiledMapDataPrivate &other);
+
+    static qulonglong tileKey(int row, int col, int zoomLevel);
+
+    void mapObjectToTiles(QGeoMapObject *mapObject);
+
+    //void paintMapObject(const QGeoMapObject * mapObject) const;
+    //void paintMapRectangleObject(const QGeoMapRectangleObject * rectangle) const;
 
     qulonglong width;
     qulonglong height;
 
     QRectF protectRegion;
     QRectF screenRect;
+
+    QHash<qulonglong, QList<QGeoMapObject*> > tileToObject;
+
+    QGeoTiledMapData* q_ptr;
+    Q_DECLARE_PUBLIC(QGeoTiledMapData)
 };
 
 QTM_END_NAMESPACE

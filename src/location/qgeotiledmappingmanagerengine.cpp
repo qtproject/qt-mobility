@@ -349,6 +349,11 @@ int QGeoTileIterator::col() const
     return aCol;
 }
 
+int QGeoTileIterator::zoomLevel() const
+{
+    return aZoomLevel;
+}
+
 ///*******************************************************************************
 //*******************************************************************************/
 

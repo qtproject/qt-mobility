@@ -45,6 +45,7 @@
 #include "qgeomapobject.h"
 
 #include <QList>
+#include <QMultiMap>
 #include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
@@ -62,6 +63,7 @@ public:
     QGeoMapObject::Type type;
     QGeoMapObject *parent;
     QList<QGeoMapObject *> children;
+    QMultiMap<int, QGeoMapObject* > zOrderedChildren;
     int zValue;
     bool isVisible;
     QGeoBoundingBox boundingBox;
