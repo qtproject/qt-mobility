@@ -60,25 +60,22 @@ QTM_BEGIN_NAMESPACE
         width: 1024
         height: 768
 
-        GalleryQuery {
-            id: request;
-            gallery: DocumentGallery {}
-
-            itemType: "Image"
-            properties: ["thumbnailImage"]
-            filter: GalleryFilter {
-                property: "fileName";
-                value: "*.jpg";
-                matchFlags: GalleryFilter.MatchExactly
-            }
-        }
-
         GridView {
             anchors.fill: parent
             cellWidth: 128
             cellHeight: 128
 
-            model: request.model
+            model: GalleryQuery {
+                gallery: DocumentGallery {}
+
+                itemType: "Image"
+                properties: ["thumbnailImage"]
+                filter: GalleryFilter {
+                    property: "fileName";
+                    value: "*.jpg";
+                    matchFlags: GalleryFilter.MatchExactly
+                }
+            }
 
             delegate: Image {
                 pixmap: thumbnailImage
@@ -91,9 +88,8 @@ QTM_BEGIN_NAMESPACE
 */
 
 GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
-    : QObject(parent)
-    , m_items(0)
-    , m_model(0)
+    : GalleryItemListModel(parent)
+    , m_complete(false)
 {
     connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
     connect(&m_request, SIGNAL(cancelled()), this, SIGNAL(cancelled()));
@@ -106,12 +102,11 @@ GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
     connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
     connect(&m_request, SIGNAL(itemsChanged(QGalleryItemList*)),
-            this, SLOT(_q_itemsChanged(QGalleryItemList*)));
+            this, SLOT(setItemList(QGalleryItemList*)));
 }
 
 GalleryQueryRequest::~GalleryQueryRequest()
 {
-    delete m_model;
 }
 
 void GalleryQueryRequest::classBegin()
@@ -120,7 +115,11 @@ void GalleryQueryRequest::classBegin()
 
 void GalleryQueryRequest::componentComplete()
 {
-    reload();
+    m_complete = true;
+
+    if (m_filter)
+        m_request.setFilter(m_filter->filter());
+    m_request.execute();
 }
 
 /*!
@@ -263,24 +262,9 @@ void GalleryQueryRequest::componentComplete()
 void GalleryQueryRequest::reload()
 {
     m_request.setFilter(m_filter ? m_filter->filter() : QGalleryFilter());
-    if (m_items)
-        m_request.setInitialCursorPosition(m_items->cursorPosition());
+    if (m_itemList)
+        m_request.setInitialCursorPosition(!m_updateCursor ? m_itemList->cursorPosition() : 0);
     m_request.execute();
-}
-
-void GalleryQueryRequest::_q_itemsChanged(QGalleryItemList *items)
-{
-    GalleryItemListModel *model = 0;
-
-    if (items)
-        model = new GalleryItemListModel(items, this);
-
-    qSwap(model, m_model);
-
-    emit modelChanged();
-    emit cursorPositionChanged();
-
-    delete model;
 }
 
 #include "moc_galleryqueryrequest.cpp"

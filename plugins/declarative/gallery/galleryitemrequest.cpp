@@ -187,8 +187,10 @@ void GalleryItemRequest::_q_itemsChanged(QGalleryItemList *items)
 {
     GalleryItemListModel *model = 0;
 
-    if (items)
-        model = new GalleryItemListModel(items, this);
+    if (items) {
+        model = new GalleryItemListModel(this);
+        model->setItemList(items);
+    }
 
     qSwap(model, m_model);
 

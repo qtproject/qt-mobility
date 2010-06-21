@@ -58,7 +58,7 @@ QTM_BEGIN_NAMESPACE
 
 class GalleryFilterBase;
 
-class GalleryQueryRequest : public QObject, public QDeclarativeParserStatus
+class GalleryQueryRequest : public GalleryItemListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -75,11 +75,11 @@ class GalleryQueryRequest : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(int cursorPosition READ cursorPosition WRITE setCursorPosition NOTIFY cursorPositionChanged)
     Q_PROPERTY(int minimumPagedItems READ minimumPagedItems WRITE setMinimumPagedItems)
+    Q_PROPERTY(bool autoUpdateCursorPosition READ autoUpdateCursorPosition WRITE setAutoUpdateCursorPosition)
     Q_PROPERTY(QString itemType READ itemType WRITE setItemType)
     Q_PROPERTY(Scope scope READ scope WRITE setScope)
     Q_PROPERTY(QVariant scopeItemId READ scopeItemId WRITE setScopeItemId)
     Q_PROPERTY(GalleryFilterBase* filter READ filter WRITE setFilter NOTIFY filterChanged)
-    Q_PROPERTY(QObject *model READ model NOTIFY modelChanged)
 public:
     enum State
     {
@@ -127,10 +127,12 @@ public:
     int maximumProgress() const { return m_request.maximumProgress(); }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) { m_request.setPropertyNames(names); }
+    void setPropertyNames(const QStringList &names) {
+        if (!m_complete) m_request.setPropertyNames(names); }
 
     QStringList sortPropertyNames() const { return m_request.sortPropertyNames(); }
-    void setSortPropertyNames(const QStringList &names) { m_request.setSortPropertyNames(names); }
+    void setSortPropertyNames(const QStringList &names) {
+        if (!m_complete) m_request.setSortPropertyNames(names); }
 
     bool isLive() const { return m_request.isLive(); }
     void setLive(bool live) { m_request.setLive(live); }
@@ -139,18 +141,19 @@ public:
     void setMinimumPagedItems(int items) { m_request.setMinimumPagedItems(items); }
 
     int cursorPosition() const {
-        return m_items ? m_items->cursorPosition() : m_request.initialCursorPosition(); }
+        return m_itemList ? m_itemList->cursorPosition() : m_request.initialCursorPosition(); }
     void setCursorPosition(int position)
     {
-        if (m_items)
-            m_items->setCursorPosition(position);
+        if (m_itemList)
+            m_itemList->setCursorPosition(position);
         else
             m_request.setInitialCursorPosition(position);
         emit cursorPositionChanged();
     }
 
     QString itemType() const { return m_request.itemType(); }
-    void setItemType(const QString &itemType) { m_request.setItemType(itemType); }
+    void setItemType(const QString &itemType) {
+        if (!m_complete) m_request.setItemType(itemType); }
 
     Scope scope() const { return Scope(m_request.scope()); }
     void setScope(Scope scope) { m_request.setScope(QGalleryAbstractRequest::Scope(scope)); }
@@ -160,8 +163,6 @@ public:
 
     GalleryFilterBase *filter() const { return m_filter; }
     void setFilter(GalleryFilterBase *filter) { m_filter = filter; }
-
-    QObject *model() const { return m_model; }
 
     void classBegin();
     void componentComplete();
@@ -179,17 +180,11 @@ Q_SIGNALS:
     void stateChanged();
     void resultChanged();
     void progressChanged();
-    void cursorPositionChanged();
-    void modelChanged();
-
-private Q_SLOTS:
-    void _q_itemsChanged(QGalleryItemList *items);
 
 private:
     QGalleryQueryRequest m_request;
     QPointer<GalleryFilterBase> m_filter;
-    QGalleryItemList *m_items;
-    GalleryItemListModel *m_model;
+    bool m_complete;
 };
 
 QTM_END_NAMESPACE

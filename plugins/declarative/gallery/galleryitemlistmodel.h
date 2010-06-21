@@ -54,7 +54,7 @@ class GalleryItemListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
-    GalleryItemListModel(QGalleryItemList *list, QObject *parent = 0);
+    GalleryItemListModel(QObject *parent = 0);
     ~GalleryItemListModel();
 
     int rowCount(const QModelIndex &parent) const;
@@ -62,14 +62,29 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     bool setData(const QModelIndex &index, const QVariant &value, int role);
 
+    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+
+    bool autoUpdateCursorPosition() const { return m_updateCursor; }
+    void setAutoUpdateCursorPosition(bool enabled) { m_updateCursor = enabled; }
+
+public Q_SLOTS:
+    void setItemList(QGalleryItemList *list);
+
+Q_SIGNALS:
+    void cursorPositionChanged();
+
 private Q_SLOTS:
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);
     void _q_itemsMoved(int from, int to, int count);
     void _q_metaDataChanged(int index, int count, const QList<int> &keys);
 
-private:
+protected:
     QGalleryItemList *m_itemList;
+    int m_rowCount;
+    int m_lowerOffset;
+    int m_upperOffset;
+    bool m_updateCursor;
 };
 
 QTM_END_NAMESPACE
