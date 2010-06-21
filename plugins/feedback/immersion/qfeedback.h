@@ -64,6 +64,8 @@ public:
     QFeedbackImmersion();
     virtual ~QFeedbackImmersion();
 
+    virtual PluginPriority pluginPriority();
+
     virtual QList<QFeedbackActuator> actuators();
 
     //for actuator handling

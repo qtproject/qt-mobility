@@ -50,7 +50,20 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class Q_FEEDBACK_EXPORT QFeedbackHapticsInterface
+class QFeedbackInterface
+{
+public:
+    enum PluginPriority
+    {
+        PluginLowPriority,
+        PluginNormalPriority,
+        PluginHighPriority
+    };
+
+    virtual PluginPriority pluginPriority() = 0;
+};
+
+class Q_FEEDBACK_EXPORT QFeedbackHapticsInterface : public QFeedbackInterface
 {
 public:
     //going with enums allow more flexibility without breaking BC
@@ -93,7 +106,7 @@ protected:
     QFeedbackActuator createFeedbackActuator(int id);
 };
 
-class QFeedbackThemeInterface
+class QFeedbackThemeInterface : public QFeedbackInterface
 {
 public:
     virtual ~QFeedbackThemeInterface() {}

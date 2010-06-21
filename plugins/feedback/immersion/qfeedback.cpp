@@ -71,6 +71,11 @@ QFeedbackImmersion::~QFeedbackImmersion()
     ImmVibeTerminate();
 }
 
+QFeedbackInterface::PluginPriority QFeedbackImmersion::pluginPriority()
+{
+    return PluginNormalPriority;
+}
+
 QList<QFeedbackActuator> QFeedbackImmersion::actuators()
 {
     QList<QFeedbackActuator> ret;

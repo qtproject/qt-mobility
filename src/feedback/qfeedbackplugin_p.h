@@ -83,7 +83,7 @@ public:
     QAbstractAnimation::State actualEffectState(const QFeedbackHapticsEffect *) { return QAbstractAnimation::Stopped; }
 
     virtual bool play(QFeedbackEffect::ThemeEffect effect) { Q_UNUSED(effect); return false; }
-
+    virtual PluginPriority pluginPriority() { return PluginLowPriority; }
 };
 
 QTM_END_NAMESPACE

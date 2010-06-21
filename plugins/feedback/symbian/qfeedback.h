@@ -71,6 +71,8 @@ public:
     QFeedbackSymbian();
     virtual ~QFeedbackSymbian();
 
+    virtual PluginPriority pluginPriority();
+
     virtual QList<QFeedbackActuator> actuators();
 
     //for device handling

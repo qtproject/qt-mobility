@@ -52,6 +52,35 @@
 
 QTM_BEGIN_NAMESPACE
 
+ template <class T>
+class BackendLoader
+{
+public:
+    BackendLoader() : inst(0) { }
+    ~BackendLoader() { pl.unload(); }
+
+    void setInstance(T *newInst) { inst = newInst; }
+    T * instance() { return inst; }
+
+    void tryLoad(QPluginLoader &loader)
+    {
+        if (T *newHaptics = qobject_cast<T*>(loader.instance())) {
+            if (!inst || inst->pluginPriority() < newHaptics->pluginPriority()) {
+                inst = newHaptics;
+                pl.unload(); //release any reference to a previous plugin instance
+                pl.setFileName(loader.fileName());
+                pl.load(); //Adds a ref to the library
+            }
+        }
+    }
+
+
+private:
+    QPluginLoader pl;
+    T *inst;
+};
+
+
 class FileBackend : public QFeedbackFileInterface
 {
 public:
@@ -101,8 +130,9 @@ public:
     virtual QStringList supportedMimeTypes()
     {
         QStringList ret;
-        for (int i = 0; i < subBackends.count(); ++i)
+        for (int i = 0; i < subBackends.count(); ++i) {
             ret += subBackends.at(i)->supportedMimeTypes();
+        }
         return ret;
     }
 
@@ -154,9 +184,10 @@ private:
 };
 
 
-struct BackendManager
+class BackendManager
 {
-    BackendManager() : backend(0), themeBackend(0)
+public:
+    BackendManager()
     {
         const QStringList paths = QCoreApplication::libraryPaths();
         for (int i = 0; i < paths.size(); ++i) {
@@ -168,35 +199,24 @@ struct BackendManager
 
             foreach (const QFileInfo &pluginLib, pluginDir.entryInfoList(QDir::Files)) {
                 QPluginLoader loader(pluginLib.absoluteFilePath());
-                bool usedPlugin = false;
 
-                if (!backend) {
-                    backend = qobject_cast<QFeedbackHapticsInterface*>(loader.instance());
-                    usedPlugin = backend != 0;
-                }
+                hapticsBackend.tryLoad(loader);
+                themeBackend.tryLoad(loader);
 
-                if (!themeBackend) {
-                    themeBackend = qobject_cast<QFeedbackThemeInterface*>(loader.instance());
-                    usedPlugin = usedPlugin || themeBackend != 0;
-                }
-
-                QFeedbackFileInterface *fileBackend = qobject_cast<QFeedbackFileInterface*>(loader.instance());
-                if (fileBackend) {
-                    this->fileBackend.addFileBackend(fileBackend);
-                    usedPlugin = true;
-                }
-
-                if (!usedPlugin)
+                if (QFeedbackFileInterface *newFile = qobject_cast<QFeedbackFileInterface*>(loader.instance())) {
+                    fileBackend.addFileBackend(newFile);
+                } else {
                     loader.unload();
+                }
             }
         }
 
-        if (!backend)
-            backend = new QDummyBackend;
+        if (!hapticsBackend.instance())
+            hapticsBackend.setInstance(new QDummyBackend);
     }
 
-    QFeedbackHapticsInterface *backend;
-    QFeedbackThemeInterface *themeBackend;
+    BackendLoader<QFeedbackHapticsInterface> hapticsBackend;
+    BackendLoader<QFeedbackThemeInterface> themeBackend;
     FileBackend fileBackend;
 };
 
@@ -209,12 +229,12 @@ QFeedbackActuator QFeedbackHapticsInterface::createFeedbackActuator(int id)
 
 QFeedbackHapticsInterface *QFeedbackHapticsInterface::instance()
 {
-    return backendManager()->backend;
+    return backendManager()->hapticsBackend.instance();
 }
 
 QFeedbackThemeInterface *QFeedbackThemeInterface::instance()
 {
-    return backendManager()->themeBackend;
+    return backendManager()->themeBackend.instance();
 }
 
 QFeedbackFileInterface *QFeedbackFileInterface::instance()
