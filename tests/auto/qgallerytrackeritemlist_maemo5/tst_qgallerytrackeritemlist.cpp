@@ -223,8 +223,9 @@ public:
             int index, int count, QVector<QVariant>::const_iterator begin, int tableWidth)
     {
         typedef QVector<QVariant>::const_iterator iterator;
-        for (iterator it = begin + m_column; index < count; ++index, it += tableWidth)
+        for (iterator it = begin + m_column; index < count; ++index, it += tableWidth) {
             m_images.insert(index, *it);
+        }
     }
 
     void removeImages(int index, int count)

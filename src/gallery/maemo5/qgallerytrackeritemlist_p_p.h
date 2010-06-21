@@ -313,9 +313,7 @@ public:
         return iterator - aCache.values.begin() + aCache.index; }
     inline int rCacheIndex(const row_iterator &iterator) const {
         return iterator - rCache.values.begin() + rCache.index; }
-
-    void query(int index);
-
+    
     void update();
     void requestUpdate()
     {
@@ -324,6 +322,13 @@ public:
             QCoreApplication::postEvent(q_func(), new QEvent(QEvent::UpdateRequest));
         }
     }
+    
+    void removeHeadImages(int count);
+    void removeTailImages(int count);
+    void insertHeadImages(int index, int count);
+    void insertTailImages(int index, int count);
+
+    void query(int index);
 
     void queryFinished(const QDBusPendingCall &call);
     void parseRows(const QDBusPendingCall &call);
