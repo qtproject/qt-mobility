@@ -939,7 +939,7 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         if (!event->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
             cevent->setPriority(static_cast<int>(event->priority()));
 
-        // Build and set the recurrence information of the event
+        // Build and set the recurrence information for the event
         CRecurrence* recurrence = createCRecurrence( item );
         cevent->setRecurrence( recurrence );
         delete recurrence; // setting makes a copy
@@ -975,6 +975,8 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
             ctodo->setDue(todo->dueDateTime().toTime_t());
         // TODO: CTodo::setCompleted, CTodo::setPercentComplete ??
 
+        // TODO: Recurrence information
+
         // TODO: Maybe the following should be removed and should be set on the upper level?
         if (!todo->notBeforeDateTime().isNull())
             ctodo->setDateStart(todo->notBeforeDateTime().toTime_t());
@@ -994,7 +996,7 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         cjournal->setCalendarId( calId );
 
         // Set journal specific details
-        // TODO: There's no journal specific details in Maemo.
+        // TODO: There are no journal specific details in Maemo.
         // TODO: Maybe should be removed and should be set on the upper level?
         const QOrganizerJournal* journal = static_cast<const QOrganizerJournal*>( item );
         if (!journal->dateTime().isNull())
@@ -1015,7 +1017,7 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         QStringList comments = item->comments();
         if ( !comments.isEmpty() ) {
             // TODO: Maemo5 has only a single string for comments,
-            // map the comment list to a string somehow.
+            // map the comment list to a string some way.
         }
     }
 
@@ -1029,15 +1031,18 @@ CRecurrence* QOrganizerItemMaemo5Engine::createCRecurrence( const QOrganizerItem
         d->m_recTransformer.beginTransformToCrecurrence();
         const QOrganizerEvent* event = static_cast<const QOrganizerEvent*>( item );
 
+        // Add recurrence rules
         QList<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
         foreach( QOrganizerItemRecurrenceRule rule, recurrenceRules )
             d->m_recTransformer.addQOrganizerItemRecurrenceRule( rule );
 
+        // Add exception rules
         QList<QOrganizerItemRecurrenceRule> exceptionRules = event->exceptionRules();
         foreach( QOrganizerItemRecurrenceRule rule, exceptionRules )
             d->m_recTransformer.addQOrganizerItemExceptionRule( rule );
 
         // TODO: Add recurrenceDates & exceptionDates
+
         return d->m_recTransformer.crecurrence(); // TODO: This may need error handling?
     }
     else if (item->type() == QOrganizerItemType::TypeTodo) {
@@ -1048,7 +1053,7 @@ CRecurrence* QOrganizerItemMaemo5Engine::createCRecurrence( const QOrganizerItem
         // TODO
     }
 
-    return 0; // no recurrence information
+    return 0; // no recurrence information for this item type
 }
 
 QOrganizerItemManager::Error QOrganizerItemMaemo5Engine::calErrorToManagerError( int calError ) const

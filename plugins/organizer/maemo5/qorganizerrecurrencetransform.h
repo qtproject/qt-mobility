@@ -78,7 +78,15 @@ private:
     QString qcountToIcalCount( int count ) const;
     QString qintervalToIcalInterval( int interval ) const;
     QString qendDateToIcalUntil( QDate endDate ) const;
-
+    QString qdaysOfWeekToIcalByDay( const QList<Qt::DayOfWeek>& daysOfWeek ) const;
+    QString qweekStartToIcalWkst( Qt::DayOfWeek dayOfWeek ) const;
+    QString qweekdayToIcalWeekday( Qt::DayOfWeek dayOfWeek ) const;
+    QString qdaysOfMonthToIcalByMonthDay( const QList<int>& daysOfMonth ) const;
+    QString qdaysOfYearToIcalByYearDay( const QList<int>& daysOfYear ) const;
+    QString qmonthsToIcalByMonth( const QList<QOrganizerItemRecurrenceRule::Month>& months ) const;
+    QString qweeksOfYearToIcalByWeekNo( const QList<int>& weeksOfYear ) const;
+    QString qpositionsToIcalBySetPos( const QList<int>& positions ) const;
+    QString listOfNumbers( const QList<int>& list ) const;
     int qfrequencyToRtype( QOrganizerItemRecurrenceRule::Frequency frequency ) const;
 
 private:
