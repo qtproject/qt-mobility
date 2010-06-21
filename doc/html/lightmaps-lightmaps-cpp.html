@@ -346,15 +346,18 @@
 
         ~LightMaps() {
             m_session-&gt;close();
-            m_location-&gt;stopUpdates();
+            if (m_location)
+                m_location-&gt;stopUpdates();
         }
 
         void stopPositioning() {
-            m_location-&gt;stopUpdates();
+            if (m_location)
+                m_location-&gt;stopUpdates();
         }
 
         void startPositioning() {
-            m_location-&gt;startUpdates();
+            if (m_location)
+                m_location-&gt;startUpdates();
         }
 
         void setCenter(qreal lat, qreal lng) {

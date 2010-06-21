@@ -19,8 +19,6 @@ contains(mobility_modules,serviceframework) {
     }
 }
 
-sources.path = $$QT_MOBILITY_PREFIX/bin
-INSTALLS += sources
 
 #BearerManagement examples
 contains(mobility_modules,bearer) {
@@ -38,11 +36,10 @@ contains(mobility_modules,location) {
     }
 
     contains(mobility_modules,bearer) {
-    	SUBDIRS += flickrdemo \
-                   weatherinfo \
-                   lightmaps \
-                   mapviewer \
-                   qgeoapiui
+    	SUBDIRS += flickrdemo
+                   #mapviewer (disable for now) 
+                   #qgeoapiui
+        
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
@@ -52,9 +49,6 @@ contains(mobility_modules,location) {
 #Contacts examples
 contains(mobility_modules,contacts) {
     SUBDIRS += samplephonebook
-    contains(mobility_modules,versit):contains(QT_CONFIG, declarative) {
-        SUBDIRS += qmlcontacts
-    }
 }
 
 #Publish and Subscribe examples
@@ -63,6 +57,8 @@ contains(mobility_modules,publishsubscribe) {
         SUBDIRS += publish-subscribe
         contains(QT_CONFIG, declarative) {
             SUBDIRS += battery-charge
+
+            sources.files += battery-charge/battery-subscriber
         }
     }
 }
@@ -72,12 +68,15 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 
 #Multimedia
 contains(mobility_modules,multimedia) {
-    #disabled on Symbian due to missing backend
     SUBDIRS += \
         radio \
-        player \
         slideshow \
-        audiorecorder
+        audiorecorder \
+        audiodevices \
+        audioinput \
+        audiooutput \
+        videographicsitem \
+        videowidget
 }
 
 
@@ -87,8 +86,7 @@ contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
         !win32-g++ {
 	    SUBDIRS += \
                 querymessages \
-                writemessage \
-                serviceactions
+                writemessage
 
             contains(mobility_modules,contacts) {
                 SUBDIRS += keepintouch
@@ -105,3 +103,5 @@ contains(mobility_modules,sensors) {
     SUBDIRS += sensors
 }
 
+sources.path = $$QT_MOBILITY_PREFIX/bin
+INSTALLS += sources

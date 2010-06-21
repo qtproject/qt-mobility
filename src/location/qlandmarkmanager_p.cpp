@@ -96,10 +96,6 @@ void QLandmarkManagerPrivate::createEngine(const QString &managerName, const QMa
 
     if (engine) {
         QObject::connect(engine,
-                SIGNAL(dataChanged()),
-                q,
-                SIGNAL(dataChanged()));
-        QObject::connect(engine,
                 SIGNAL(landmarksAdded(QList<QLandmarkId>)),
                 q,
                 SIGNAL(landmarksAdded(QList<QLandmarkId>)));

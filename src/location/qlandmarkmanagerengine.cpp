@@ -71,7 +71,6 @@
 #include "qlandmarkproximityfilter.h"
 #include "qlandmarkunionfilter.h"
 
-
 #include "qgeocoordinate.h"
 
 QTM_BEGIN_NAMESPACE
@@ -136,11 +135,12 @@ int QLandmarkManagerEngine::managerVersion() const
 /*!
     Returns a list of landmark ids of landmarks that match the given \a filter, sorted
     according to the given \a sortOrders.  Depending on the backend, this filtering operation
-    may involve retrieving all the landmarks.  Any error which occurs will be saved in \a error
-    and \a errorString.
+    may involve retrieving all the landmarks.  Various fetch operation parameters may be specified by \a fetchHint.
+
+    Any error which occurs will be saved in \a error and \a errorString.
  */
 QList<QLandmarkId> QLandmarkManagerEngine::landmarkIds(const QLandmarkFilter& filter,
-        const QList<QLandmarkSortOrder>& sortOrders, QLandmarkManager::Error* error,
+        const QList<QLandmarkSortOrder>& sortOrders, const QLandmarkFetchHint& fetchHint, QLandmarkManager::Error* error,
         QString *errorString) const
 {
     return QList<QLandmarkId>();
@@ -168,28 +168,13 @@ QLandmark QLandmarkManagerEngine::landmark(const QLandmarkId &landmarkId, QLandm
 }
 
 /*!
-    Returns a list of landmarks which match the given \a landmarkIds.
-
-    The engine will populate \a errorMap (the map of indices of the
-    \a landmarkIds list to the error which occurred when retrieving the landmark
-    at that index) for every index for which the landmark could not be
-    retrieved.
-
-    Overall operation errors are stored in \a error and \a errorString.
-*/
-QList<QLandmark> QLandmarkManagerEngine::landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
-        QString *errorString) const
-{
-    return QList<QLandmark>();
-}
-
-/*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
+    Various fetch operation parameters are specified by \a fetchHint.
 
     Overall operation errors are stored in \a error and \a errorString.
 */
 QList<QLandmark> QLandmarkManagerEngine::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
-        QLandmarkManager::Error *error, QString *errorString) const
+                                                   const QLandmarkFetchHint &fetchHint, QLandmarkManager::Error *error, QString *errorString) const
 {
     return QList<QLandmark>();
 }
@@ -414,10 +399,15 @@ bool QLandmarkManagerEngine::exportLandmarks(QIODevice *device, const QByteArray
 }
 
 /*!
-    \fn bool QLandmarkManagerEngine::isFilterSupported(QLandmarkFilter::FilterType filterType) const
+    \fn QLandmarkManager::FilterSupportLevel QLandmarkManagerEngine::filterSupportLevel(const QLandmarkFilter &filter) const
 
-    Returns a whether the supplied \a filterType can be implemented
-    natively by this engine. If not, the functionality will be emulated.
+    Returns the support level the manager engine provides for the given \a filter.
+*/
+
+/*!
+    \fn bool QLandmarkManagerEngine::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+
+    Returns true if the manager engine supports the given \a feature, otherwise returns false;
 */
 
 /*!
@@ -501,98 +491,74 @@ bool QLandmarkManagerEngine::waitForRequestFinished(QLandmarkAbstractRequest* re
 }
 
 /*!
-  \fn QLandmarkManagerEngine::dataChanged()
-
-  This signal is emitted some time after changes occur to the data managed by this
-  engine, and the engine is unable to precisely determine which changes occurred, or if the
-  engine considers the changes to be radical enough to require clients to reload all data.
-
-  If this signal is emitted, no other signals may be emitted for the associated changes.
-
-  As it is possible that other processes (or other devices) may have caused the
-  changes, the timing can not be determined.
-
-  \sa landmarksAdded(), landmarksChanged(), landmarksRemoved(), categoriesAdded(),
-  categoriesChanged(), categoriesRemoved()
- */
-
-/*!
    \fn QLandmarkManagerEngine::landmarksAdded(const QList<QLandmarkId> &landmarkIds)
 
-   This signal is emitted some time after a set of landmarks has been added
-   (and where the \l dataChanged() signal was not emitted for those
-   changes).  As it is possible that other processes(or other devices) may
+   This signal is emitted some time after a set of landmarks has been added.
+   As it is possible that other processes(or other devices) may
    have added the landmarks, the exact timing cannot be determined.
 
    There may be one or more landmark identifiers in the \a landmarkIds list.
 
-   \sa dataChanged()
+   \sa landmarksChanged(), landmarksRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::landmarksChanged(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted some time after a set of landmarks have been modified
-    (and where the \l dataChanged() signal was not emitted for those changes).  As it is
-    possible that other processes(or other devices) may have modified the landmarks,
+    This signal is emitted some time after a set of landmarks have been modified.
+    As it is possible that other processes(or other devices) may have modified the landmarks,
     the timing cannot be determined.
 
     There may be one ore more landmark identifiers in the \a landmarkIds list.
-
-    \sa dataChanged()
+    \sa landmarksAdded(), landmarksRemoved()
 */
 
 
 /*!
     \fn QLandmarkManagerEngine::landmarksRemoved(const QList<QLandmarkId> &landmarkIds)
 
-    This signal is emitted some time after a set of landmarks have been removed
-    (and where the \l dataChanged() signal was not emitted for those changes).  As it is
+    This signal is emitted some time after a set of landmarks have been removed.  As it is
     possible that other processes(or other devices) may have removed the landmarks,
     the timing cannot be determined.
 
     There may be one ore more landmark identifiers in the \a landmarkIds list.
-
-    \sa dataChanged()
+    \sa landmarksAdded(), landmarksChanged()
 */
 
 /*!
    \fn QLandmarkManagerEngine::categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds)
 
    This signal is emitted some time after a set of categories has been added
-   (and where the \l dataChanged() signal was not emitted for those
-   changes).  As it is possible that other processes(or other devices) may
+   As it is possible that other processes(or other devices) may
    have added the landmarks, the exact timing cannot be determined.
 
    There may be one or more category identifiers in the \a categoryIds list.
 
-   \sa dataChanged()
+   \sa categoriesChanged(), categoriesRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted some time after a set of categories have been modified
-    (and where the \l dataChanged() signal was not emitted for those changes).  As it is
-    possible that other processes(or other devices) may have modified the categories,
+    As it is possible that other processes(or other devices) may have modified the categories,
     the timing cannot be determined.
 
     There may be one ore more category identifiers in the \a categoryIds list.
 
-    \sa dataChanged()
+    \sa categoriesAdded(), categoriesRemoved()
 */
 
 /*!
     \fn QLandmarkManagerEngine::categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted some time after a set of categories have been removed
-    (and where the \l dataChanged() signal was not emitted for those changes).  As it is
-    possible that other processes(or other devices) may have removed the categories,
+    As it is possible that other processes(or other devices) may have removed the categories,
     the timing cannot be determined.
 
     There may be one ore more category identifiers in the \a categoryIds list.
 
-    \sa dataChanged()
+    \sa categoriesAdded(), categoriesChanged()
 */
 
 /*!
@@ -631,7 +597,7 @@ void QLandmarkManagerEngine::updateLandmarkIdFetchRequest(QLandmarkIdFetchReques
         return;
     QLandmarkIdFetchRequestPrivate * rd = static_cast<QLandmarkIdFetchRequestPrivate*>(req->d_ptr);
     rd->error = error;
-    rd->errorString = error;
+    rd->errorString = errorString;
     rd->landmarkIds = result;
     bool emitState = rd->state != newState;
     rd->state =newState;
@@ -659,7 +625,7 @@ void QLandmarkManagerEngine::updateLandmarkFetchRequest(QLandmarkFetchRequest* r
         return;
     QLandmarkFetchRequestPrivate * rd = static_cast<QLandmarkFetchRequestPrivate*>(req->d_ptr);
     rd->error = error;
-    rd->errorString = error;
+    rd->errorString = errorString;
     rd->landmarks = result;
     bool emitState = rd->state != newState;
     rd->state =newState;
@@ -815,6 +781,7 @@ void QLandmarkManagerEngine::updateLandmarkCategorySaveRequest(QLandmarkCategory
     QLandmarkCategorySaveRequestPrivate* rd = static_cast<QLandmarkCategorySaveRequestPrivate*>(req->d_ptr);
     rd->error = error;
     rd->errorString = errorString;
+    rd->errorMap = errorMap;
     rd->categories = result;
     bool emitState = rd->state != newState;
     rd->state = newState;
@@ -985,7 +952,7 @@ void QLandmarkManagerEngine::addSorted(QList<QLandmark>* sorted, const QLandmark
 {
     if (sortOrders.count() > 0) {
         for (int i = 0; i < sorted->size(); i++) {
-            // check to see if the new contact should be inserted here
+            // check to see if the new landmark should be inserted here
             int comparison = compareLandmark(sorted->at(i), landmark, sortOrders);
             if (comparison > 0) {
                 sorted->insert(i, landmark);
@@ -1109,12 +1076,13 @@ bool QLandmarkManagerEngine::testFilter(const QLandmarkFilter& filter, const QLa
             QLandmarkNameFilter nameFilter(filter);
             return QString::compare(nameFilter.name(), landmark.name(), nameFilter.caseSensitivity()) == 0;
         }
-        case QLandmarkFilter::NearestFilter:
-            //Since we have only one landmark to use, is considered the nearest
-            return true;
         case QLandmarkFilter::ProximityFilter:
         {
             QLandmarkProximityFilter proximityFilter(filter);
+
+            if (proximityFilter.selection() == QLandmarkProximityFilter::SelectNearestOnly)
+                return true; // since we only have one landmark to use, is considered the nearest
+
             double distance = proximityFilter.coordinate().distanceTo(landmark.coordinate());
             if (distance < proximityFilter.radius() || qFuzzyCompare(distance, proximityFilter.radius()))
                 return true;

@@ -55,7 +55,6 @@
 //
 
 #include "qmlbackendmonitorao_s60_p.h"
-#include "qgeoareamonitor_s60_p.h"
 #include "qmlbackendmonitorinfo_s60_p.h"
 
 #include <lbtsessiontrigger.h>

@@ -52,6 +52,11 @@ QTM_BEGIN_NAMESPACE
 
     Conceptually it performs an AND operation and thus may be used to
     select landmarks which match all of it's constituent filters.
+
+    Whether an intersection filter can be comprised of
+    compound filters  (i.e. union or intersection filters) is backend specific.
+    Even if this is supported the performance of such a filter is likely to be poor.
+
 */
 
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkIntersectionFilter);

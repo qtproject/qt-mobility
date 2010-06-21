@@ -49,7 +49,7 @@
 </ul>
 <a name="namespace"></a>
 <h3>Namespace</h3>
-<p>The QtMobility API's are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility API's into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="location-positioning"></a>
 <h3>Location Positioning</h3>
 <p>Location data involves a precisely specified position on the Earth's surface &#x2014; as provided by a latitude-longitude coordinate &#x2014; along with associated data, such as:</p>
@@ -196,7 +196,7 @@
             }
         }
     }</pre>
-<p>The example includes a <tt>ClientApplication</tt> class that requests updates from the <tt>LogFilePositionSource</tt> class. Run the exaple to see the data that is received by <tt>ClientApplication</tt>.</p>
+<p>The example includes a <tt>ClientApplication</tt> class that requests updates from the <tt>LogFilePositionSource</tt> class. Run the example to see the data that is received by <tt>ClientApplication</tt>.</p>
 <p>Before running the example, make sure you have done both <tt>make</tt> and <tt>make install</tt>.</p>
 <a name="examples"></a>
 <h4>Examples</h4>
@@ -238,8 +238,9 @@
 <tr valign="top" class="odd"><th><a href="qlandmark.html">QLandmark</a></th><td>Represents a location or point of interest of some significance</td></tr>
 <tr valign="top" class="even"><th><a href="qlandmarkcategory.html">QLandmarkCategory</a></th><td>Designates a grouping of landmarks of similar type</td></tr>
 <tr valign="top" class="odd"><th><a href="qlandmarkcategoryid.html">QLandmarkCategoryId</a></th><td>Unique identifier for a category</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkid.html">QLandmarkId</a></th><td>Unique identifier for a landmark</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkmanager.html">QLandmarkManager</a></th><td>Interface for storage and retrieval of landmarks from a landmark store</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkfetchhint.html">QLandmarkFetchHint</a></th><td>Miscellaneous hints to the manager when fetching landmarks</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkid.html">QLandmarkId</a></th><td>Unique identifier for a landmark</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkmanager.html">QLandmarkManager</a></th><td>Interface for storage and retrieval of landmarks from a landmark store</td></tr>
 </table></p>
 <a name="landmark-selection-classes"></a>
 <h5>Landmark Selection classes</h5>
@@ -254,9 +255,8 @@
 <tr valign="top" class="odd"><th><a href="qlandmarkidfilter.html">QLandmarkIdFilter</a></th><td>Used to search for landmarks based on a list of landmark identifiers</td></tr>
 <tr valign="top" class="even"><th><a href="qlandmarkintersectionfilter.html">QLandmarkIntersectionFilter</a></th><td>Filter which intersects the results of its constituent filters</td></tr>
 <tr valign="top" class="odd"><th><a href="qlandmarknamefilter.html">QLandmarkNameFilter</a></th><td>Used to search for landmarks by name</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarknearestfilter.html">QLandmarkNearestFilter</a></th><td>Used to search for the landmark nearest to a given coordinate</td></tr>
-<tr valign="top" class="odd"><th><a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a></th><td>Used to search for landmarks based on the radius around a given coordinate</td></tr>
-<tr valign="top" class="even"><th><a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a></th><td>Filter which unions the results of its constituent filters</td></tr>
+<tr valign="top" class="even"><th><a href="qlandmarkproximityfilter.html">QLandmarkProximityFilter</a></th><td>Used to search for landmarks based on the radius around a given coordinate</td></tr>
+<tr valign="top" class="odd"><th><a href="qlandmarkunionfilter.html">QLandmarkUnionFilter</a></th><td>Filter which unions the results of its constituent filters</td></tr>
 </table></p>
 <a name="sortorders"></a>
 <h6>SortOrders</h6>

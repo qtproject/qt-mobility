@@ -6,6 +6,7 @@ include(../../common.pri)
 
 DEFINES += QT_BUILD_LOCATION_LIB QT_MAKEDLL
 
+INCLUDEPATH += $$MW_LAYER_SYSTEMINCLUDE
 INCLUDEPATH += .
 DEPENDPATH += .
 
@@ -72,14 +73,16 @@ PUBLIC_HEADERS += \
                     qlandmarkmanagerengine.h \
                     qlandmarkmanagerenginefactory.h \
                     qlandmarknamefilter.h \
-                    qlandmarknamesort.h \
-                    qlandmarknearestfilter.h \
                     qlandmarkproximityfilter.h \
                     qlandmarkremoverequest.h \
                     qlandmarksaverequest.h \
                     qlandmarksortorder.h \
                     qlandmarkunionfilter.h \
-                    qnmeapositioninfosource.h 
+                    qlandmarkfetchhint.h \
+                    qgeoboundingbox.h \
+                    qnmeapositioninfosource.h \
+                    qlandmarknamesort.h \
+                    qlandmarkdistancesort.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
@@ -128,13 +131,12 @@ PRIVATE_HEADERS += \
                     qlandmarkintersectionfilter_p.h \
                     qlandmarkmanager_p.h \
                     qlandmarknamefilter_p.h \
-                    qlandmarknamesort_p.h \
-                    qlandmarknearestfilter_p.h \
                     qlandmarkproximityfilter_p.h \
                     qlandmarkrequests_p.h \
                     qlandmarksortorder_p.h \
                     qlandmarkunionfilter_p.h \
                     qlocationutils_p.h \
+                    qlandmarkfetchhint_p.h \
                     qnmeapositioninfosource_p.h
 
 symbian {
@@ -277,15 +279,16 @@ SOURCES += \
             qlandmarkmanagerengine.cpp \
             qlandmarkmanagerenginefactory.cpp \
             qlandmarknamefilter.cpp \
-            qlandmarknamesort.cpp \
-            qlandmarknearestfilter.cpp \
             qlandmarkproximityfilter.cpp \
             qlandmarkremoverequest.cpp \
             qlandmarksaverequest.cpp \
             qlandmarksortorder.cpp \
             qlandmarkunionfilter.cpp \
             qlocationutils.cpp \
-            qnmeapositioninfosource.cpp
+            qlandmarkfetchhint.cpp \
+            qnmeapositioninfosource.cpp \
+            qlandmarknamesort.cpp \
+            qlandmarkdistancesort.cpp
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB

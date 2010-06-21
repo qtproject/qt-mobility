@@ -51,13 +51,23 @@ QTM_BEGIN_NAMESPACE
     \ingroup landmarks-filter
 */
 
+/*!
+    \enum QLandmarkIdFilter::MatchingScheme
+    Defines the matching behavior of the id filter.
+    \value MatchAll A landmark must be returned for every id assigned to the filter.
+                    Failure to match every id results in a QLandmarkManager::DoesNotExistError.
+    \value MatchSubset Every id does not have to be matched to a landmark.  Matching
+                       only a subset of the assigned ids is acceptable.
+*/
+
 Q_IMPLEMENT_LANDMARKFILTER_PRIVATE(QLandmarkIdFilter)
 
 /*!
-    Creates a filter that selects landmarks by a list of landmark \a ids.
+    Creates a filter that selects landmarks using a list of landmark \a ids and a
+    \a matchingScheme.
 */
-QLandmarkIdFilter::QLandmarkIdFilter(const QList<QLandmarkId> &ids)
-        : QLandmarkFilter(new QLandmarkIdFilterPrivate(ids)) {}
+QLandmarkIdFilter::QLandmarkIdFilter(const QList<QLandmarkId> &ids, MatchingScheme matchingScheme)
+        : QLandmarkFilter(new QLandmarkIdFilterPrivate(ids, matchingScheme)) {}
 
 /*!
     \fn QLandmarkIdFilter::QLandmarkIdFilter(const QLandmarkFilter &other)
@@ -91,21 +101,12 @@ void QLandmarkIdFilter::setLandmarkIds(const QList<QLandmarkId> &ids)
 }
 
 /*!
-    Prepends \a id to the list of landmark ids this filter searches for.
-*/
-void QLandmarkIdFilter::prepend(const QLandmarkId &id)
-{
-    Q_D(QLandmarkIdFilter);
-    d->landmarkIds.prepend(id);
-}
-
-/*!
-    Appends \a id to the list of landmark ids this filter searches for.
+    Adds \a id to the list of landmark ids this filter searches for.
 */
 void QLandmarkIdFilter::append(const QLandmarkId &id)
 {
     Q_D(QLandmarkIdFilter);
-    d->landmarkIds.prepend(id);
+    d->landmarkIds.append(id);
 }
 
 /*!
@@ -137,18 +138,40 @@ QLandmarkIdFilter &QLandmarkIdFilter::operator<<(const QLandmarkId &id)
     return *this;
 }
 
+/*!
+    Returns the matching scheme of the filter.
+
+    The matching scheme specifies whether the filter needs to match all
+    landmark ids or only a subset.  The default scheme is \c MatchSubset.
+*/
+QLandmarkIdFilter::MatchingScheme QLandmarkIdFilter::matchingScheme() const
+{
+    Q_D(const QLandmarkIdFilter);
+    return d->matchingScheme;
+}
+
+/*!
+    Sets the \a matchingScheme of the filter.
+*/
+void QLandmarkIdFilter::setMatchingScheme(QLandmarkIdFilter::MatchingScheme matchingScheme)
+{
+    Q_D(QLandmarkIdFilter);
+    d->matchingScheme = matchingScheme;
+}
+
 /*******************************************************************************
 *******************************************************************************/
 
-QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids)
-        : landmarkIds(ids)
+QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids, QLandmarkIdFilter::MatchingScheme scheme)
+        : landmarkIds(ids), matchingScheme(scheme)
 {
     type = QLandmarkFilter::LandmarkIdFilter;
 }
 
 QLandmarkIdFilterPrivate::QLandmarkIdFilterPrivate(const QLandmarkIdFilterPrivate &other)
         : QLandmarkFilterPrivate(other),
-        landmarkIds(landmarkIds)
+        landmarkIds(other.landmarkIds),
+        matchingScheme(other.matchingScheme)
 {
 }
 

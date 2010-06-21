@@ -103,7 +103,7 @@ void QProximityReading::setClose(bool close)
     \sa QSensorFilter::filter()
 */
 
-const char *QProximitySensor::type("QProximitySensor");
+char const * const QProximitySensor::type("QProximitySensor");
 
 /*!
     \class QProximitySensor

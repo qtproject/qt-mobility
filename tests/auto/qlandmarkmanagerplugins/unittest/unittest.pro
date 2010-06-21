@@ -12,10 +12,12 @@ CONFIG += mobility
 MOBILITY = location
 SOURCES  += tst_qlandmarkmanagerplugins.cpp
 
+!symbian {
 LIBS += -L../../../../build/tests/bin/plugins/landmarks/ -llandmarks_testdummystatic
 
 TESTDLLS = \
     $$mobilityDeployFilename(landmarks_testdummystatic)
+}
 
 # App local deployment
 symbian|wince* {

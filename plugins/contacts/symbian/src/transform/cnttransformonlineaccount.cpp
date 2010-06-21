@@ -199,20 +199,6 @@ QContactDetail *CntTransformOnlineAccount::transformItemField(const CContactItem
 	return onlineAccount;
 }
 
-bool CntTransformOnlineAccount::supportsField(TUint32 fieldType) const
-{
-    bool ret = false;
-    if (fieldType == KUidContactFieldSIPID.iUid ||
-        fieldType == KUidContactFieldIMPP.iUid  ||
-        fieldType == KUidContactFieldServiceProvider.iUid  ||
-        fieldType == KUidContactFieldPresence.iUid  ||
-        fieldType == KUidContactFieldStatusMsg.iUid )         
-    {
-        ret = true;
-    }
-    return ret;
-}
-
 bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
 {
     bool ret = false;
@@ -220,6 +206,16 @@ bool CntTransformOnlineAccount::supportsDetail(QString detailName) const
         ret = true;
     }
     return ret;
+}
+
+QList<TUid> CntTransformOnlineAccount::supportedFields() const
+{
+    return QList<TUid>()
+        << KUidContactFieldSIPID
+        << KUidContactFieldIMPP
+        << KUidContactFieldServiceProvider
+        << KUidContactFieldPresence
+        << KUidContactFieldStatusMsg;
 }
 
 QList<TUid> CntTransformOnlineAccount::supportedSortingFieldTypes(QString detailFieldName) const
@@ -285,6 +281,16 @@ void CntTransformOnlineAccount::detailDefinitions(QMap<QString, QContactDetailDe
         QContactDetailDefinition d = definitions.value(QContactOnlineAccount::DefinitionName);
         QMap<QString, QContactDetailFieldDefinition> fields = d.fields();
         QContactDetailFieldDefinition f;
+        
+        // Support only certain subtypes 
+        f.setDataType(QVariant::StringList);
+        QVariantList subTypes;
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSip));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeSipVoip));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeImpp));
+        subTypes << QString(QLatin1String(QContactOnlineAccount::SubTypeVideoShare));
+        f.setAllowableValues(subTypes);
+        fields[QContactOnlineAccount::FieldSubTypes] = f;        
 
         // Don't support "ContextOther"
         f.setDataType(QVariant::StringList);

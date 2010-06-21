@@ -71,7 +71,6 @@ class QLandmarkExportRequest;
 class QLandmarkFilter;
 class QLandmarkNameFilter;
 class QLandmarkProximityFilter;
-class QLandmarkNearestFilter;
 class QLandmarkCategoryFilter;
 class QLandmarkBoxFilter;
 class QLandmarkUnionFilter;
@@ -96,7 +95,7 @@ public:
     QString managerUri() const;
 
     /* Filtering */
-    virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,
+    virtual QList<QLandmarkId> landmarkIds(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders, const QLandmarkFetchHint &fetchHint,
                                            QLandmarkManager::Error *error, QString *errorString) const = 0;
     virtual QList<QLandmarkCategoryId> categoryIds(QLandmarkManager::Error *error,
             QString *errorString) const = 0;
@@ -104,10 +103,8 @@ public:
     /* Retrieval */
     virtual QLandmark landmark(const QLandmarkId &landmarkId, QLandmarkManager::Error *error,
                                QString *errorString) const =0;
-    virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders,
+    virtual QList<QLandmark> landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder>& sortOrders, const QLandmarkFetchHint &fetchHint,
                                        QLandmarkManager::Error *error, QString *errorString) const = 0;
-    virtual QList<QLandmark> landmarks(const QList<QLandmarkId> &landmarkIds, QMap<int, QLandmarkManager::Error> *errorMap, QLandmarkManager::Error *error,
-                                       QString *errorString) const = 0;
     virtual QLandmarkCategory category(const QLandmarkCategoryId &landmarkCategoryId, QLandmarkManager::Error *error,
                                        QString *errorString) const = 0;
     virtual QList<QLandmarkCategory> categories(const QList<QLandmarkCategoryId> &landmarkCategoryIds, QLandmarkManager::Error *error,
@@ -129,7 +126,8 @@ public:
     virtual bool exportLandmarks(QIODevice *device, const QByteArray &format, QList<QLandmarkId> landmarkIds,
                                  QLandmarkManager::Error *error, QString *errorString) const;
 
-    virtual bool isFilterSupported(QLandmarkFilter::FilterType filterType) const = 0;
+    virtual QLandmarkManager::FilterSupportLevel filterSupportLevel(const QLandmarkFilter &filter) const = 0;
+    virtual bool isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const = 0;
 
     virtual bool isReadOnly() const = 0;
     virtual bool isReadOnly(const QLandmarkId &landmarkId) const = 0;
@@ -142,7 +140,6 @@ public:
     virtual bool waitForRequestFinished(QLandmarkAbstractRequest* request, int msecs) = 0;
 
 Q_SIGNALS:
-    void dataChanged();
     void landmarksAdded(const QList<QLandmarkId> &landmarkIds);
     void landmarksChanged(const QList<QLandmarkId> &landmarkIds);
     void landmarksRemoved(const QList<QLandmarkId> &landmarkIds);

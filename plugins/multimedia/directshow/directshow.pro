@@ -1,13 +1,14 @@
 TEMPLATE = lib
-QT+=multimedia
+
 CONFIG += plugin
-QT+=multimedia
-TARGET = $$qtLibraryTarget(qtmedia_dsengine)
+TARGET = $$qtLibraryTarget(dsengine)
 
 PLUGIN_TYPE=mediaservice
 
 include (../../../common.pri)
-INCLUDEPATH+=../../../src/multimedia
+INCLUDEPATH+=../../../src/multimedia \
+             ../../../src/multimedia/audio \
+             ../../../src/multimedia/video
 
 CONFIG += mobility
 MOBILITY = multimedia

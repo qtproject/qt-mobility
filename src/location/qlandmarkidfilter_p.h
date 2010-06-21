@@ -55,25 +55,29 @@
 
 #include "qlandmarkfilter_p.h"
 #include "qlandmarkid.h"
+#include "qlandmarkidfilter.h"
 
 QTM_BEGIN_NAMESPACE
 
 class QLandmarkIdFilterPrivate : public QLandmarkFilterPrivate
 {
 public:
-    QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids =QList<QLandmarkId>());
+    QLandmarkIdFilterPrivate(const QList<QLandmarkId> &ids =QList<QLandmarkId>(),
+                                QLandmarkIdFilter::MatchingScheme mathcingScheme = QLandmarkIdFilter::MatchSubset);
     QLandmarkIdFilterPrivate(const QLandmarkIdFilterPrivate &other);
     virtual ~QLandmarkIdFilterPrivate();
 
     virtual bool compare(const QLandmarkFilterPrivate *other) const
     {
         const QLandmarkIdFilterPrivate *od = static_cast<const QLandmarkIdFilterPrivate*>(other);
-        return landmarkIds == od->landmarkIds;
+        return landmarkIds == od->landmarkIds &&
+                    matchingScheme == od->matchingScheme;
     }
 
     Q_IMPLEMENT_LANDMARKFILTER_VIRTUALCTORS(QLandmarkIdFilter, QLandmarkFilter::LandmarkIdFilter)
 
     QList<QLandmarkId> landmarkIds;
+    QLandmarkIdFilter::MatchingScheme matchingScheme;
 
 };
 

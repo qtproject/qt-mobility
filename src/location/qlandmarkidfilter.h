@@ -52,16 +52,20 @@ class QLandmarkIdFilterPrivate;
 class Q_LOCATION_EXPORT QLandmarkIdFilter : public QLandmarkFilter
 {
 public:
-    QLandmarkIdFilter(const QList<QLandmarkId> &ids =  QList<QLandmarkId>());
+    enum MatchingScheme{MatchAll, MatchSubset};
+    QLandmarkIdFilter(const QList<QLandmarkId> &ids =  QList<QLandmarkId>(),
+                                MatchingScheme matchingScheme = MatchSubset);
     QLandmarkIdFilter(const QLandmarkFilter &other);
     virtual ~QLandmarkIdFilter();
 
     QList<QLandmarkId> landmarkIds() const;
     void setLandmarkIds(const QList<QLandmarkId> &ids);
-    void prepend(const QLandmarkId &id);
     void append(const QLandmarkId &id);
     void remove(const QLandmarkId &id);
     void clear();
+
+    MatchingScheme matchingScheme() const;
+    void setMatchingScheme(MatchingScheme scheme);
 
     QLandmarkIdFilter &operator<<(const QLandmarkId &);
 

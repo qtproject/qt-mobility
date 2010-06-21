@@ -56,6 +56,7 @@
 #include "qlandmarkabstractrequest_p.h"
 #include "qlandmark.h"
 #include "qlandmarkcategory.h"
+#include "qlandmarkcategoryfetchrequest.h"
 
 QTM_BEGIN_NAMESPACE
 
@@ -63,10 +64,14 @@ class QLandmarkIdFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkIdFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr){}
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::LandmarkIdFetchRequest;
+    }
 
     QLandmarkFilter filter;
     QList<QLandmarkSortOrder>sorting;
+    QLandmarkFetchHint fetchHint;
     QList<QLandmarkId> landmarkIds;
 };
 
@@ -74,9 +79,13 @@ class QLandmarkFetchRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkFetchRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::LandmarkFetchRequest;
+    }
     QLandmarkFilter filter;
     QList<QLandmarkSortOrder> sorting;
+    QLandmarkFetchHint fetchHint;
     QList<QLandmark> landmarks;
 };
 
@@ -84,7 +93,10 @@ class QLandmarkRemoveRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkRemoveRequestPrivate(QLandmarkManager *manager)
-        : QLandmarkAbstractRequestPrivate(manager) {}
+        : QLandmarkAbstractRequestPrivate(manager)
+    {
+        type = QLandmarkAbstractRequest::LandmarkRemoveRequest;
+    }
 
     QList<QLandmarkId> landmarkIds;
     QMap<int, QLandmarkManager::Error> errorMap;
@@ -95,7 +107,11 @@ class QLandmarkSaveRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkSaveRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr){}
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::LandmarkSaveRequest;
+    }
+
     QList<QLandmark> landmarks;
     QMap<int, QLandmarkManager::Error> errorMap;
 
@@ -106,7 +122,9 @@ class QLandmarkCategoryIdFetchRequestPrivate: public QLandmarkAbstractRequestPri
 public:
     QLandmarkCategoryIdFetchRequestPrivate(QLandmarkManager *mgr)
         : QLandmarkAbstractRequestPrivate(mgr)
-    {}
+    {
+        type = QLandmarkAbstractRequest::CategoryIdFetchRequest;
+    }
 
     QList<QLandmarkCategoryId> categoryIds;
 };
@@ -115,11 +133,15 @@ class QLandmarkCategoryFetchRequestPrivate : public QLandmarkAbstractRequestPriv
 {
 public:
     QLandmarkCategoryFetchRequestPrivate(QLandmarkManager *mgr)
-        :QLandmarkAbstractRequestPrivate(mgr){
+        :QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::CategoryFetchRequest;
+        matchingScheme = QLandmarkCategoryFetchRequest::MatchSubset;
     }
 
     QList<QLandmarkCategory> categories;
     QList<QLandmarkCategoryId> categoryIds;
+    QLandmarkCategoryFetchRequest::MatchingScheme matchingScheme;
 };
 
 
@@ -127,7 +149,10 @@ class QLandmarkCategoryRemoveRequestPrivate : public QLandmarkAbstractRequestPri
 {
 public:
     QLandmarkCategoryRemoveRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::CategoryRemoveRequest;
+    }
 
 
     QList<QLandmarkCategoryId> categoryIds;
@@ -138,7 +163,10 @@ class QLandmarkCategorySaveRequestPrivate : public QLandmarkAbstractRequestPriva
 {
 public:
     QLandmarkCategorySaveRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::CategorySaveRequest;
+    }
 
     QList<QLandmarkCategory> categories;
     QMap<int, QLandmarkManager::Error> errorMap;
@@ -148,7 +176,10 @@ class QLandmarkImportRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkImportRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::ImportRequest;
+    }
 
     QIODevice *device;
     QString fileName;
@@ -160,7 +191,10 @@ class QLandmarkExportRequestPrivate : public QLandmarkAbstractRequestPrivate
 {
 public:
     QLandmarkExportRequestPrivate(QLandmarkManager *mgr)
-        : QLandmarkAbstractRequestPrivate(mgr) {}
+        : QLandmarkAbstractRequestPrivate(mgr)
+    {
+        type = QLandmarkAbstractRequest::ExportRequest;
+    }
 
     QIODevice *device;
     QString fileName;

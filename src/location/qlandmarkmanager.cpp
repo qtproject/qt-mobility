@@ -54,6 +54,7 @@
 #include "qlandmark.h"
 #include "qlandmarkmanagerengine.h"
 #include "qlandmarkmanagerenginefactory.h"
+#include "qlandmarkidfilter.h"
 
 QTM_USE_NAMESPACE
 /*!
@@ -76,9 +77,25 @@ QTM_USE_NAMESPACE
     \value NotSupportedError The most recent operation failed because the requested operation is not supported in the specified store.
     \value BadArgumentError The most recent operation failed because one or more of the parameters to the operation were invalid.
     \value InvalidManagerError The most recent operation failed because the manager failed to initialize correctly and is invalid.
-           This could be due using a manager name that is not recognised/available.
+           This could be due using a manager name that is not recognised/available. A landmark request object will return this error if
+           if is assigned a null manager pointer.
     \value UnknownError The most recent operation failed for an unknown reason.
 */
+
+/*!
+    \enum QLandmarkManager::LandmarkFeature
+    Defines the possible features the landmark manager can support.
+    \value GenericAttributes The manager supports landmarks and categories which have generic attributes
+*/
+
+/*!
+    \enum QLandmarkManager::FilterSupportLevel
+    Defines the possible support levels the manager can provide for a given filter.
+    \value Native The manager natively supports the filter.
+    \value Emulated The manager emulates the behaviour of the filter.  An emulated filter will inherently be slower than a natively supported filter.
+    \value None The manager does not support the filter at all.
+*/
+
 
 /*!
     Constructs a QLandmarkManager. The default implementation for the platform will be used.
@@ -432,8 +449,10 @@ QLandmark QLandmarkManager::landmark(const QLandmarkId &landmarkId) const
 
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the \a sortOrders.
+    Various fetch operation parameters may be specified by \a fetchHint.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QList<QLandmarkSortOrder> &sortOrders,
+                                             const QLandmarkFetchHint &fetchHint) const
 {
     Q_D(const QLandmarkManager);
 
@@ -445,6 +464,7 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 
     QList<QLandmark> lms = d->engine->landmarks(filter,
                            sortOrders,
+                           fetchHint,
                            &(d->errorCode),
                            &(d->errorString));
 
@@ -456,8 +476,10 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
 
 /*!
     Returns a list of landmarks which match the given \a filter and are sorted according to the given \a sortOrder.
+    Various fetch operation parameters may be specified by \a fetchHint.
 */
-QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder) const
+QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder,
+                                             const QLandmarkFetchHint &fetchHint) const
 {
     Q_D(const QLandmarkManager);
 
@@ -468,9 +490,12 @@ QList<QLandmark> QLandmarkManager::landmarks(const QLandmarkFilter &filter, cons
     }
 
     QList<QLandmarkSortOrder> sortOrders;
-    sortOrders.append(sortOrder);
+    if (sortOrder.type() != QLandmarkSortOrder::DefaultSort)
+        sortOrders.append(sortOrder);
+
     QList<QLandmark> lms = d->engine->landmarks(filter,
                            sortOrders,
+                           fetchHint,
                            &(d->errorCode),
                            &(d->errorString));
 
@@ -494,12 +519,19 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
         return QList<QLandmark>();
     }
 
+    QLandmarkIdFilter idFilter(landmarkIds);
+    idFilter.setMatchingScheme(QLandmarkIdFilter::MatchAll);
+    QList<QLandmarkSortOrder> sortOrders;
+
     // use the error map to add to the error string?
     // or use it to remove the landmarks which had errors?
-    QList<QLandmark> lms = d->engine->landmarks(landmarkIds,
-                           0,
-                           &(d->errorCode),
-                           &(d->errorString));
+
+    QList<QLandmark> lms = d->engine->landmarks(idFilter,
+                                                sortOrders,
+                                                QLandmarkFetchHint(),
+                                                &(d->errorCode),
+                                                &(d->errorString));
+
     if (d->errorCode != NoError)
         return QList<QLandmark>();
 
@@ -508,10 +540,11 @@ QList<QLandmark> QLandmarkManager::landmarks(const QList<QLandmarkId> &landmarkI
 
 /*!
     Returns a list of landmark identifiers of landmarks that match the given \a filter, sorted
-    according to the given \a sortOrders.
+    according to the given \a sortOrders.  Various fetch operation parameters may be specified by \a fetchHint.
 */
 QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
-        const QList<QLandmarkSortOrder> &sortOrders) const
+                                                 const QList<QLandmarkSortOrder> &sortOrders,
+                                                 const QLandmarkFetchHint &fetchHint) const
 {
     Q_D(const QLandmarkManager);
 
@@ -523,6 +556,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
                              sortOrders,
+                             fetchHint,
                              &(d->errorCode),
                              &(d->errorString));
 
@@ -534,12 +568,12 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 
 /*!
     Convenience function for returning a list of landmark identifiers of landmarks that match the given \a filter, sorted
-    according to the given \a sortOrder.
+    according to the given \a sortOrder. Various fetch operation parameters may be specified by \a fetchHint.
 
     This is a convenience function.
 */
-QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
-        const QLandmarkSortOrder &sortOrder) const
+QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter, const QLandmarkSortOrder &sortOrder,
+                                                 const QLandmarkFetchHint &fetchHint) const
 {
     Q_D(const QLandmarkManager);
 
@@ -554,6 +588,7 @@ QList<QLandmarkId> QLandmarkManager::landmarkIds(const QLandmarkFilter &filter,
 
     QList<QLandmarkId> ids = d->engine->landmarkIds(filter,
                              sortOrders,
+                             fetchHint,
                              &(d->errorCode),
                              &(d->errorString));
 
@@ -665,7 +700,8 @@ bool QLandmarkManager::exportLandmarks(const QString &fileName, const QByteArray
 }
 
 /*!
-    Returns the error code of the most recent operation
+    Returns the error code of the most recent operation.  All functions will modify the error based on whether the
+    operation successfully or not.
 */
 QLandmarkManager::Error QLandmarkManager::error() const
 {
@@ -684,23 +720,37 @@ QString QLandmarkManager::errorString() const
 }
 
 /*!
-    Returns true if the given \a filterType is supported
-    natively by the manager, else false if the filter behaviour would be emulated.
-
-    Note: In some cases, the behaviour of an unsupprted filter cannot be emulated.
-    In these cases the filter will fail.
+    Returns whether the manager supports the given \a feature.
 */
-bool QLandmarkManager::isFilterSupported(QLandmarkFilter::FilterType filterType) const
+bool QLandmarkManager::isFeatureSupported(QLandmarkManager::LandmarkFeature feature) const
+{
+    Q_D(const QLandmarkManager);
+
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager");
+        return false;
+    }
+
+    return d->engine->isFeatureSupported(feature);
+}
+
+/*!
+    Returns the support level the manager provides for the given \a filter.
+*/
+QLandmarkManager::FilterSupportLevel QLandmarkManager::filterSupportLevel(const QLandmarkFilter &filter) const
 {
     Q_D(const QLandmarkManager);
 
      if (!d->engine) {
         d->errorCode = QLandmarkManager::InvalidManagerError;
         d->errorString = QString("Invalid Manager");
-        return false;
+        return QLandmarkManager::None;
     }
 
-    return d->engine->isFilterSupported(filterType);
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
+    return d->engine->filterSupportLevel(filter);
 }
 
 /*!
@@ -716,6 +766,8 @@ bool QLandmarkManager::isReadOnly() const
         return true;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->isReadOnly();
 }
 
@@ -758,7 +810,10 @@ bool QLandmarkManager::isReadOnly(const QLandmarkCategoryId &categoryId) const
 }
 
 /*!
-    Returns the manager name for this QLandmarkManager
+    Returns the manager name for this QLandmarkManager.
+
+    The manager name usually takes the format of a reverse domain string.  An example
+    of a manager name is \c com.nokia.qt.landmarks.engines.sqlite
 */
 QString QLandmarkManager::managerName() const
 {
@@ -770,11 +825,16 @@ QString QLandmarkManager::managerName() const
         return QString();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->managerName();
 }
 
 /*!
-    Return the parameters relevant to the creation of this QLandmarkManager
+    Return the parameters relevant to the creation of this QLandmarkManager.
+
+    The parameters may be viewed as a set of key-value pairs.  Each manager
+    may have a different set of parameters depending upon its backend implementation.
 */
 QMap<QString, QString> QLandmarkManager::managerParameters() const
 {
@@ -786,6 +846,8 @@ QMap<QString, QString> QLandmarkManager::managerParameters() const
         return QMap<QString, QString>();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->managerParameters();
 }
 
@@ -802,6 +864,8 @@ QString QLandmarkManager::managerUri() const
         return QString();
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->managerUri();
 }
 
@@ -818,6 +882,8 @@ int QLandmarkManager::managerVersion() const
         return 0;
     }
 
+    d->errorCode = QLandmarkManager::NoError;
+    d->errorString = "";
     return d->engine->managerVersion();
 }
 
@@ -944,17 +1010,9 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
 }
 
 /*!
-    \fn QLandmarkManager::dataChanged()
-    This signal is emitted by the manager if its internal state changes and it is unable to precisely determine
-    the changes which occurred, or if the manager considers the changes to be radical enough to require clients to reload
-    all data.  If the signal is emitted, no other signals will be emitted for the associated changes.
-*/
-
-/*!
     \fn void QLandmarkManager::landmarksAdded(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been added to the datastore managed by this manager.
-    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
 
     \sa landmarksChanged(), landmarksRemoved()
 */
@@ -963,7 +1021,6 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::landmarksChanged(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been modified in the datastore managed by this manager.
-    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
 
     \sa landmarksAdded(), landmarksRemoved()
 */
@@ -972,7 +1029,6 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::landmarksRemoved(const QList<QLandmarkId> &landmarkIds)
 
     This signal is emitted when landmarks (identified by \a landmarkIds) have been removed from the datastore managed by this manager.
-    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
 
     \sa landmarksAdded(), landmarksChanged()
 */
@@ -981,7 +1037,6 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesAdded(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been added to the datastore managed by this manager.
-    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
 
     \sa categoriesChanged(), categoriesRemoved()
 */
@@ -990,7 +1045,6 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesChanged(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been modified in the datastore managed by this manager.
-    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
 
     \sa categoriesAdded(), categoriesRemoved()
 */
@@ -999,7 +1053,6 @@ QLandmarkManagerEngine *QLandmarkManager::engine()
     \fn void QLandmarkManager::categoriesRemoved(const QList<QLandmarkCategoryId> &categoryIds)
 
     This signal is emitted when categories (identified by \a categoryIds) have been removed from the datastore managed by this manager.
-    This signal is not emitted if the dataChanged() signal was previously emitted for these changes.
 
     \sa categoriesAdded(), categoriesChanged()
 */

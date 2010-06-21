@@ -59,13 +59,11 @@
 #include <lbtsessiontrigger.h>
 
 #include "qgeoareamonitor.h"
-#include "qgeoareamonitor_s60_p.h"
 
 #include <lbt.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoAreaMonitorS60;
 class QMLBackendTriggerChangeAO : public CActive
 {
 public :
