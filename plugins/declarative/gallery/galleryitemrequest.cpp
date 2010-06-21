@@ -41,6 +41,8 @@
 
 #include "galleryitemrequest.h"
 
+#include <QtDeclarative/qdeclarativepropertymap.h>
+
 QTM_BEGIN_NAMESPACE
 
 /*!
@@ -50,13 +52,16 @@ QTM_BEGIN_NAMESPACE
 
     This is element is part of the \bold {QtMobility.gallery 1.0} module.
 
+
+
     \sa GalleryFilterRequest
 */
 
 GalleryItemRequest::GalleryItemRequest(QObject *parent)
     : QObject(parent)
-    , m_items(0)
-    , m_model(0)
+    , m_itemList(0)
+    , m_metaData(0)
+    , m_complete(false)
 {
     connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
     connect(&m_request, SIGNAL(cancelled()), this, SIGNAL(cancelled()));
@@ -69,12 +74,16 @@ GalleryItemRequest::GalleryItemRequest(QObject *parent)
     connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
     connect(&m_request, SIGNAL(itemChanged(QGalleryItemList*)),
-            this, SLOT(_q_itemsChanged(QGalleryItemList*)));
+            this, SLOT(_q_itemListChanged(QGalleryItemList*)));
+
+    m_metaData = new QDeclarativePropertyMap(this);
+
+    connect(m_metaData, SIGNAL(valueChanged(QString,QVariant)),
+            this, SLOT(_q_valueChanged(QString,QVariant)));
 }
 
 GalleryItemRequest::~GalleryItemRequest()
 {
-    delete m_model;
 }
 
 /*!
@@ -121,15 +130,27 @@ GalleryItemRequest::~GalleryItemRequest()
 */
 
 /*!
-    \qmlpropery galleryId GalleryItem::itemId
+    \qmlpropery galleryId GalleryItem::item
 
     This property holds the id of the item to return information about.
 */
 
 /*!
-    \qmlproperty model GalleryItem::model
+    \qmlproperty string GalleryItem::itemType
 
-    This property holds a model containing the results of a request.
+    This property holds the type of a gallery item.
+*/
+
+/*!
+    \qmlproperty url GalleryItem::itemUrl
+
+    This property holds the URL of a gallery item.
+*/
+
+/*!
+    \qmlproperty object GalleryItem::metaData
+
+    This property holds the meta-data of a gallery item.
 */
 
 /*!
@@ -180,23 +201,87 @@ void GalleryItemRequest::classBegin()
 
 void GalleryItemRequest::componentComplete()
 {
-    reload();
+    m_complete = true;
+
+    if (m_request.itemId().isValid())
+        m_request.execute();
 }
 
-void GalleryItemRequest::_q_itemsChanged(QGalleryItemList *items)
+void GalleryItemRequest::_q_itemListChanged(QGalleryItemList *items)
 {
-    GalleryItemListModel *model = 0;
-
-    if (items) {
-        model = new GalleryItemListModel(this);
-        model->setItemList(items);
+    if (m_itemList && m_itemList->count() > 0) {
+        typedef QHash<int, QString>::const_iterator iterator;
+        for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
+            m_metaData->clear(it.value());
     }
 
-    qSwap(model, m_model);
+    m_itemList = items;
+    m_propertyKeys.clear();
 
-    emit modelChanged();
+    if (m_itemList) {
+        const QStringList propertyNames = m_itemList->propertyNames();
 
-    delete model;
+        typedef QStringList::const_iterator iterator;
+        if (m_itemList->count() > 0) {
+            for (iterator it = propertyNames.begin(); it != propertyNames.end(); ++it) {
+                const int key = m_itemList->propertyKey(*it);
+
+                m_propertyKeys.insert(key, *it);
+                m_metaData->insert(*it, m_itemList->metaData(0, key));
+            }
+        } else {
+            for (iterator it = propertyNames.begin(); it != propertyNames.end(); ++it)
+                m_propertyKeys.insert(m_itemList->propertyKey(*it), *it);
+        }
+
+        connect(m_itemList, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
+        connect(m_itemList, SIGNAL(removed(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
+        connect(m_itemList, SIGNAL(metaDataChanged(int,int,QList<int>)),
+                this, SLOT(_q_metaDataChanged(int,int,QList<int>)));
+    }
+
+    emit itemChanged();
+}
+
+void GalleryItemRequest::_q_itemsInserted(int index, int)
+{
+    if (index == 0) {
+        typedef QHash<int, QString>::const_iterator iterator;
+        for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
+            m_metaData->insert(it.value(), m_itemList->metaData(0, it.key()));
+
+        emit itemChanged();
+    }
+}
+
+void GalleryItemRequest::_q_itemsRemoved(int index, int)
+{
+    if (index == 0) {
+        typedef QHash<int, QString>::const_iterator iterator;
+        for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
+            m_metaData->clear(it.value());
+
+        emit itemChanged();
+    }
+}
+
+void GalleryItemRequest::_q_metaDataChanged(int index, int, const QList<int> &keys)
+{
+    if (index == 0 && keys.isEmpty()) {
+        typedef QHash<int, QString>::const_iterator iterator;
+        for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
+            m_metaData->insert(it.value(), m_itemList->metaData(0, it.key()));
+    } else if (index == 0) {
+        typedef QList<int>::const_iterator iterator;
+        for (iterator it = keys.begin(); it != keys.end(); ++it)
+            m_metaData->insert(m_propertyKeys.value(*it), m_itemList->metaData(0, *it));
+    }
+}
+
+void GalleryItemRequest::_q_valueChanged(const QString &key, const QVariant &value)
+{
+    if (m_itemList)
+        m_itemList->setMetaData(0, key, value);
 }
 
 #include "moc_galleryitemrequest.cpp"

@@ -47,12 +47,7 @@
 
 #include <QtCore/qpointer.h>
 #include <QtDeclarative/qdeclarative.h>
-
-#include "galleryitemlistmodel.h"
-
-QT_BEGIN_NAMESPACE
-class QAbstractItemModel;
-QT_END_NAMESPACE
+#include <QtDeclarative/qdeclarativepropertymap.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,8 +66,10 @@ class GalleryItemRequest : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(int maximumProgress READ maximumProgress NOTIFY progressChanged)
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
-    Q_PROPERTY(QVariant itemId READ itemId WRITE setItemId)
-    Q_PROPERTY(QObject *model READ model NOTIFY modelChanged)
+    Q_PROPERTY(QVariant item READ itemId WRITE setItemId)
+    Q_PROPERTY(QString itemType READ itemType NOTIFY itemChanged)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY itemChanged)
+    Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
     enum State
     {
@@ -114,15 +111,20 @@ public:
     int maximumProgress() const { return m_request.maximumProgress(); }
 
     QStringList propertyNames() { return m_request.propertyNames(); }
-    void setPropertyNames(const QStringList &names) { m_request.setPropertyNames(names); }
+    void setPropertyNames(const QStringList &names) {
+        if (!m_complete) m_request.setPropertyNames(names); }
 
     bool isLive() const { return m_request.isLive(); }
     void setLive(bool live) { m_request.setLive(live); }
 
     QVariant itemId() const { return m_request.itemId(); }
-    void setItemId(const QVariant &itemId) { m_request.setItemId(itemId); }
+    void setItemId(const QVariant &itemId) {
+        m_request.setItemId(itemId); if (m_complete) m_request.execute(); }
 
-    QObject *model() const { return m_model; }
+    QString itemType() const { return m_itemList ? m_itemList->type(0) : QString(); }
+    QUrl itemUrl() const { return m_itemList ? m_itemList->url(0) : QUrl(); }
+
+    QObject *metaData() const { return m_metaData; }
 
     void classBegin();
     void componentComplete();
@@ -140,16 +142,23 @@ Q_SIGNALS:
     void stateChanged();
     void resultChanged();
     void progressChanged();
-    void modelChanged();
+    void itemChanged();
+    void metaDataChanged();
 
 private Q_SLOTS:
-    void _q_itemsChanged(QGalleryItemList *items);
+    void _q_itemListChanged(QGalleryItemList *list);
+    void _q_itemsInserted(int index, int count);
+    void _q_itemsRemoved(int index, int count);
+    void _q_metaDataChanged(int index, int count, const QList<int> &keys);
+    void _q_valueChanged(const QString &key, const QVariant &value);
 
 private:
     QGalleryItemRequest m_request;
     QPointer<GalleryFilterBase> m_filter;
-    QGalleryItemList *m_items;
-    GalleryItemListModel *m_model;
+    QGalleryItemList *m_itemList;
+    QDeclarativePropertyMap *m_metaData;
+    QHash<int, QString> m_propertyKeys;
+    bool m_complete;
 };
 
 QTM_END_NAMESPACE

@@ -71,14 +71,14 @@ QVariant GalleryItemListModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()) {
         switch (role) {
-        case -1:
+        case 0:
             return m_itemList->id(index.row());
-        case -2:
+        case 1:
             return m_itemList->type(index.row());
-        case -3:
+        case 2:
             return m_itemList->url(index.row());
         default:
-            return m_itemList->metaData(index.row(), role);
+            return m_itemList->metaData(index.row(), role - 3);
         }
     } else {
         return QVariant();
@@ -89,7 +89,7 @@ bool GalleryItemListModel::setData(
         const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid() && m_itemList->propertyAttributes(role) & QGalleryProperty::CanWrite) {
-        m_itemList->setMetaData(index.row(), role, value);
+        m_itemList->setMetaData(index.row(), role - 3, value);
 
         return true;
     } else {
@@ -135,11 +135,11 @@ void GalleryItemListModel::setItemList(QGalleryItemList *list)
 
         typedef QStringList::const_iterator iterator;
         for (iterator it = propertyNames.constBegin(), end = propertyNames.constEnd(); it != end; ++it)
-            roleNames.insert(m_itemList->propertyKey(*it), it->toLatin1());
+            roleNames.insert(m_itemList->propertyKey(*it) + 3, it->toLatin1());
 
-        roleNames.insert(-1, QByteArray("itemId"));
-        roleNames.insert(-2, QByteArray("itemType"));
-        roleNames.insert(-3, QByteArray("url"));
+        roleNames.insert(0, QByteArray("itemId"));
+        roleNames.insert(1, QByteArray("itemType"));
+        roleNames.insert(2, QByteArray("url"));
 
         setRoleNames(roleNames);
 
