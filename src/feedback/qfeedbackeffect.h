@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtGui module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -70,7 +70,7 @@ public:
         ThemePopUp, ThemePopupOpen, ThemePopupClose, ThemeFlick, ThemeStopFlick,
         ThemeMultitouchActivate, ThemeRotateStep, ThemeLongPress, ThemePositiveTacticon,
         ThemeNeutralTacticon, ThemeNegativeTacticon,
-        NumberOfThemeFeedbacks,
+        NumberOfThemeEffects,
         ThemeUser = 65535
     };
 
@@ -160,6 +160,9 @@ public:
 
     bool isLoading() const;
     bool isLoaded() const;
+
+    void load();
+    void unload();
     void setLoaded(bool);
 
     QString fileName() const;

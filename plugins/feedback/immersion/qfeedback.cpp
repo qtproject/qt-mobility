@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtGui module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -194,14 +194,14 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QFeedb
     if (effect->period() > 0) {
         status = ImmVibeModifyPlayingPeriodicEffect(handleForActuator(effect->actuator()), effectHandle,
                                            convertedDuration(effect->duration()),
-                                           effect->intensity() / qreal(VIBE_MAX_MAGNITUDE), effect->period(),
+                                           effect->intensity() * qreal(VIBE_MAX_MAGNITUDE), effect->period(),
                                            VIBE_DEFAULT_STYLE,
                                            effect->attackTime(), effect->attackIntensity(),
                                            effect->fadeTime(), effect->fadeIntensity());
     } else {
         status = ImmVibeModifyPlayingMagSweepEffect(handleForActuator(effect->actuator()), effectHandle,
                                            convertedDuration(effect->duration()),
-                                           effect->intensity() / qreal(VIBE_MAX_MAGNITUDE),
+                                           effect->intensity() * qreal(VIBE_MAX_MAGNITUDE),
                                            VIBE_DEFAULT_STYLE,
                                            effect->attackTime(), effect->attackIntensity(),
                                            effect->fadeTime(), effect->fadeIntensity());

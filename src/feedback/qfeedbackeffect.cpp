@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtGui module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -288,6 +288,9 @@ void QFeedbackHapticsEffect::updateState(QAbstractAnimation::State newState, QAb
 }
 
 
+/*!
+    \internal
+*/
 void QFeedbackFileEffectPrivate::loadFinished(bool success)
 {
     isLoading = false;
@@ -312,6 +315,10 @@ int QFeedbackFileEffect::duration() const
     return QFeedbackFileInterface::instance()->effectDuration(this);
 }
 
+/*!
+    \property QFeedbackFileEffect::filename
+    \brief the name of the file that is loaded.
+*/
 QString QFeedbackFileEffect::fileName() const
 {
     return priv->fileName;
@@ -327,10 +334,20 @@ void QFeedbackFileEffect::setFileName(const QString &fileName)
     setLoaded(true);
 }
 
+/*!
+    \fn bool QFeedbackFileEffect::isLoading()
+
+    returns true if the current file is being loaded.
+*/
 bool QFeedbackFileEffect::isLoading() const
 {
     return priv->isLoading;
 }
+
+/*!
+    \property QFeedbackFileEffect::loaded
+    \brief determines if the file has been successfully loaded.
+*/
 bool QFeedbackFileEffect::isLoaded() const
 {
     return priv->loaded;
@@ -348,11 +365,45 @@ void QFeedbackFileEffect::setLoaded(bool load)
     QFeedbackFileInterface::instance()->setLoaded(this, load);
 }
 
+
+/*!
+    \fn void QFeedbackFileEffect::load()
+
+    makes sure that the file associated with the feedback object is loaded.
+    It will be automatically loaded when setFileName or start functions
+    are called.
+*/
+void QFeedbackFileEffect::load()
+{
+    setLoaded(true);
+}
+
+/*!
+    \fn void QFeedbackFileEffect::unload()
+
+    makes sure that the file associated with the feedback object is unloaded.
+    It will be automatically loaded when the setFileName function is called with
+    another file or the object is destructed.
+*/
+void QFeedbackFileEffect::unload()
+{
+    setLoaded(false);
+}
+
+
+/*!
+    \fn QStringList QFeedbackFileEffect::supportedMimeTypes()
+
+    returns the MIME types supported for playing effects from file.
+*/
 QStringList QFeedbackFileEffect::supportedMimeTypes()
 {
     return QFeedbackFileInterface::instance()->supportedMimeTypes();
 }
 
+/*!
+    \reimp
+*/
 void QFeedbackFileEffect::updateCurrentTime(int /*currentTime*/)
 {
     switch(QFeedbackFileInterface::instance()->actualEffectState(this))
@@ -369,8 +420,12 @@ void QFeedbackFileEffect::updateCurrentTime(int /*currentTime*/)
     }
 }
 
+/*!
+    \reimp
+*/
 void QFeedbackFileEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
 {
+    load(); // makes sure the file is loaded
     ErrorType e = QFeedbackFileInterface::instance()->updateEffectState(this);
     QAbstractAnimation::updateState(newState, oldState);
     if (e != NoError)

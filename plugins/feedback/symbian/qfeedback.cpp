@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the QtGui module of the Qt Toolkit.
+** This file is part of the Qt Mobility Components.
 **
 ** $QT_BEGIN_LICENSE:LGPL$
 ** No Commercial Usage
@@ -230,7 +230,8 @@ CHWRMVibra *QFeedbackSymbian::vibra()
 QList<QFeedbackActuator> QFeedbackSymbian::actuators()
 {
     QList<QFeedbackActuator> ret;
-#ifndef NO_TACTILE_SUPPORT
+#ifndef ADVANCED_TACTILE_SUPPORT
+    //if we don't have advanced tactile support then the MTouchFeedback doesn't really support custom effects
     if (QTouchFeedback::Instance()->TouchFeedbackSupported()) {
         ret << createFeedbackActuator(TOUCH_DEVICE);
     }
