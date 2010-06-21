@@ -48,7 +48,6 @@
 const TInt KDesiredReadingCount = 1;
 const TInt KMaximumReadingCount = 1;
 const TInt KDefaultBufferingPeriod = 0;
-const TInt KInvalidDataRate = 123456;
 const TInt KAccuracyInvalid = -1;
 
 ///// Internal Functions
@@ -193,6 +192,7 @@ TInt CSensorBackendSym::SetMeasurementRange()
         {
         return SetProperty(KSensrvPropIdMeasureRange, ESensrvIntProperty, ESensrvArrayPropertyInfo, sensor()->outputRange());
         }       
+    return KErrNone;
     }
 
 TInt CSensorBackendSym::SetDataRate()
@@ -252,7 +252,7 @@ TInt CSensorBackendSym::SetDataRate()
 
 void CSensorBackendSym::SetProperties()
     {
-    if(sensor())
+    if(sensor()->outputRange() != -1)
         {
         //Set measurement range
         TInt err = SetMeasurementRange();
@@ -260,8 +260,11 @@ void CSensorBackendSym::SetProperties()
             {
             sensorError(err);
             }
+        }
+    if(sensor()->dataRate() != 0)
+        {
         //Set data rate
-        err = SetDataRate();
+        TInt err = SetDataRate();
         if(err != KErrNone)
             {
             sensorError(err);
@@ -377,8 +380,6 @@ void CSensorBackendSym::GetDataRate()
                 }
             //Set datarate as range
             addDataRate(min, max);
-            //Set current datarate as default
-            sensor()->setDataRate(value);
         }
         //if list has more than one item, data rate will be having descrete values, agreed with DS team
         else if(datarate_prop.GetArrayIndex() == ESensrvArrayPropertyInfo)                             
@@ -404,20 +405,9 @@ void CSensorBackendSym::GetDataRate()
                         datarate_prop.GetValue(datarate);
                         }
                     addDataRate(datarate, datarate);
-                    if(i == index)
-                        {
-                        //Setting current datarate as default
-                        sensor()->setDataRate(datarate);
-                        }
                     }
                 }
             }
-        }
-    // QT requires atleast one datarate to be available, Sensor server does not
-    // define a datarate for state based sensors, hence this hack
-    if(sensor()->availableDataRates().length() == 0)
-        {
-        addDataRate(KInvalidDataRate, KInvalidDataRate);
         }
     }
 
@@ -563,11 +553,6 @@ void CSensorBackendSym::GetMeasurementrangeAndAccuracy()
                             // set invalid accuracy for rest of measument ranges
                             addOutputRange(measureMin*scale, measureMax*scale, KAccuracyInvalid);
                             }
-                        }
-                    if(i == index)
-                        {
-                        //Setting current output range as default
-                        sensor()->setOutputRange(i - min);
                         }
                     }
                 }

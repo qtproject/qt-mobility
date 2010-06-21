@@ -47,7 +47,7 @@
 #include "qt7playerservice.h"
 #include "qt7playercontrol.h"
 #include "qt7playersession.h"
-#include "qt7videooutputcontrol.h"
+#include "qt7videooutput.h"
 #include "qt7movieviewoutput.h"
 #include "qt7movieviewrenderer.h"
 #include "qt7movierenderer.h"
@@ -60,89 +60,67 @@
 QT_USE_NAMESPACE
 
 QT7PlayerService::QT7PlayerService(QObject *parent):
-    QMediaService(parent)
+    QMediaService(parent),
+    m_videoOutput(0)
 {
-    m_session = new QT7PlayerSession;
+    m_session = new QT7PlayerSession(this);
 
     m_control = new QT7PlayerControl(this);
     m_control->setSession(m_session);
 
     m_playerMetaDataControl = new QT7PlayerMetaDataControl(m_session, this);
     connect(m_control, SIGNAL(mediaChanged(QMediaContent)), m_playerMetaDataControl, SLOT(updateTags()));
-
-    m_videoOutputControl = new QT7VideoOutputControl(this);
-
-    m_videoWidnowControl = 0;
-    m_videoWidgetControl = 0;
-    m_videoRendererControl = 0;
-
-#if defined(QT_MAC_USE_COCOA)
-    m_videoWidnowControl = new QT7MovieViewOutput(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::WindowOutput);
-    qDebug() << "Using cocoa";
-#endif
-
-#ifdef QUICKTIME_C_API_AVAILABLE
-    m_videoRendererControl = new QT7MovieRenderer(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
-
-    m_videoWidgetControl = new QT7MovieVideoWidget(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::WidgetOutput);
-    qDebug() << "QuickTime C API is available";
-#else
-    m_videoRendererControl = new QT7MovieViewRenderer(this);
-    m_videoOutputControl->enableOutput(QVideoOutputControl::RendererOutput);
-    qDebug() << "QuickTime C API is not available";
-#endif
-
-
-    connect(m_videoOutputControl, SIGNAL(videoOutputChanged(QVideoOutputControl::Output)),
-            this, SLOT(updateVideoOutput()));
 }
 
 QT7PlayerService::~QT7PlayerService()
 {
 }
 
-QMediaControl *QT7PlayerService::control(const char *name) const
+QMediaControl *QT7PlayerService::requestControl(const char *name)
 {
     if (qstrcmp(name, QMediaPlayerControl_iid) == 0)
         return m_control;
 
-    if (qstrcmp(name, QVideoOutputControl_iid) == 0)
-        return m_videoOutputControl;
-
-    if (qstrcmp(name, QVideoWindowControl_iid) == 0)
-        return m_videoWidnowControl;
-
-    if (qstrcmp(name, QVideoRendererControl_iid) == 0)
-        return m_videoRendererControl;
-
-    if (qstrcmp(name, QVideoWidgetControl_iid) == 0)
-        return m_videoWidgetControl;
-
-    if (qstrcmp(name, QMetaDataControl_iid) == 0)
+    if (qstrcmp(name, QMetaDataReaderControl_iid) == 0)
         return m_playerMetaDataControl;
+
+    if (!m_videoOutput) {
+        if (qstrcmp(name, QVideoWindowControl_iid) == 0) {
+#if defined(QT_MAC_USE_COCOA)
+            m_videoOutput = new QT7MovieViewOutput(this);
+#endif
+        }
+
+        if (qstrcmp(name, QVideoRendererControl_iid) == 0) {
+#ifdef QUICKTIME_C_API_AVAILABLE
+            m_videoOutput = new QT7MovieRenderer(this);
+#else
+            m_videoOutput = new QT7MovieViewRenderer(this);
+#endif
+        }
+
+        if (qstrcmp(name, QVideoWidgetControl_iid) == 0) {
+#ifdef QUICKTIME_C_API_AVAILABLE
+            m_videoOutput = new QT7MovieVideoWidget(this);
+#endif
+        }
+
+        if (m_videoOutput) {
+            QT7VideoOutput *videoOutput = qobject_cast<QT7VideoOutput*>(m_videoOutput);
+            m_session->setVideoOutput(videoOutput);
+            return m_videoOutput;
+        }
+    }
 
     return 0;
 }
 
-void QT7PlayerService::updateVideoOutput()
+void QT7PlayerService::releaseControl(QMediaControl *control)
 {
-    qDebug() << "QT7PlayerService::updateVideoOutput" << m_videoOutputControl->output();
-
-    switch (m_videoOutputControl->output()) {
-    case QVideoOutputControl::WindowOutput:
-        m_session->setVideoOutput(m_videoWidnowControl);
-        break;
-    case QVideoOutputControl::RendererOutput:
-        m_session->setVideoOutput(m_videoRendererControl);
-        break;
-    case QVideoOutputControl::WidgetOutput:
-        m_session->setVideoOutput(m_videoWidgetControl);
-        break;
-    default:
+    if (m_videoOutput == control) {
+        m_videoOutput = 0;
         m_session->setVideoOutput(0);
+        delete control;
     }
 }
 

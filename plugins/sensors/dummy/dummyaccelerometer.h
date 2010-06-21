@@ -50,7 +50,7 @@ QTM_USE_NAMESPACE
 class dummyaccelerometer : public dummycommon
 {
 public:
-    static const char *id;
+    static char const * const id;
 
     dummyaccelerometer(QSensor *sensor);
 

@@ -73,6 +73,7 @@ class QThreadSignalSpy: public QObject
 public:
     QThreadSignalSpy(QObject *obj, const char *aSignal)
     {
+        QMutexLocker m(&lock);
 #ifdef Q_CC_BOR
         const int memberOffset = QObject::staticMetaObject.methodCount();
 #else
@@ -136,7 +137,6 @@ public:
 private:
     void initArgs(const QMetaMethod &member)
     {
-        QMutexLocker m(&lock);
         QList<QByteArray> params = member.parameterTypes();
         for (int i = 0; i < params.count(); ++i) {
             int tp = QMetaType::type(params.at(i).constData());

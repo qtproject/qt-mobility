@@ -210,7 +210,7 @@
         QStringList exampleXmlFiles;
         exampleXmlFiles &lt;&lt; &quot;filemanagerservice.xml&quot; &lt;&lt; &quot;bluetoothtransferservice.xml&quot;;
         foreach (const QString &amp;fileName, exampleXmlFiles) {
-            QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
+            const QString path = QCoreApplication::applicationDirPath() + &quot;/xmldata/&quot; + fileName;
             serviceManager-&gt;addService(path);
         }
     }

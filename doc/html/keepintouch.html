@@ -171,9 +171,21 @@
             tabChanged(1);
     #endif
 
-            if (contactList-&gt;currentItem()) {
+            if (
+    #ifdef USE_CONTACTS_COMBOBOX
+                    contactList-&gt;currentIndex() != -1
+    #else
+                    contactList-&gt;currentItem()
+    #endif
+                    ) {
                 <span class="comment">// Select the first address automatically</span>
-                addressSelected(contactList-&gt;currentItem()-&gt;text());
+                addressSelected(
+    #ifdef USE_CONTACTS_COMBOBOX
+                        contactList-&gt;currentText()
+    #else
+                        contactList-&gt;currentItem()-&gt;text()
+    #endif
+                        );
             }
         }
     }</pre>
@@ -225,7 +237,13 @@
         int index = messageCombo-&gt;currentIndex();
         if (index != -1) {
             <span class="comment">// Find the address currently selected</span>
-            const QString &amp;selectedAddress(addressList[contactList-&gt;currentRow()]);
+            const QString &amp;selectedAddress(addressList[
+    #ifdef USE_CONTACTS_COMBOBOX
+                    contactList-&gt;currentIndex()
+    #else
+                    contactList-&gt;currentRow()
+    #endif
+                    ]);
 
             <span class="comment">// Show the message selected</span>
             QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);
@@ -238,7 +256,13 @@
         int index = messageCombo-&gt;currentIndex();
         if (index != -1) {
             <span class="comment">// Find the address currently selected</span>
-            const QString &amp;selectedAddress(addressList[contactList-&gt;currentRow()]);
+            const QString &amp;selectedAddress(addressList[
+    #ifdef USE_CONTACTS_COMBOBOX
+                    contactList-&gt;currentIndex()
+    #else
+                    contactList-&gt;currentRow()
+    #endif
+                    ]);
 
             <span class="comment">// Find the selected message</span>
             QMessageId &amp;messageId((addressMessages[selectedAddress])[index].second);

@@ -83,13 +83,24 @@
         connect(imageViewer, SIGNAL(elapsedTimeChanged(int)), this, SLOT(elapsedTimeChanged(int)));
 
         playlist = new QMediaPlaylist;
-        playlist-&gt;setMediaObject(imageViewer);
+        imageViewer-&gt;bind(playlist);
+
+        connect(playlist, SIGNAL(loaded()), this, SLOT(playlistLoaded()));
+        connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
 
         connect(playlist, SIGNAL(loaded()), this, SLOT(playlistLoaded()));
         connect(playlist, SIGNAL(loadFailed()), this, SLOT(playlistLoadFailed()));
 
         QVideoWidget *videoWidget = new QVideoWidget;
-        videoWidget-&gt;setMediaObject(imageViewer);
+        imageViewer-&gt;bind(videoWidget);
+
+        statusLabel = new QLabel(tr(&quot;%1 Images&quot;).arg(0));
+        statusLabel-&gt;setAlignment(Qt::AlignCenter);
+
+        viewerLayout = new QStackedLayout;
+        viewerLayout-&gt;setStackingMode(QStackedLayout::StackAll);
+        viewerLayout-&gt;addWidget(videoWidget);
+        viewerLayout-&gt;addWidget(statusLabel);
 
         statusLabel = new QLabel(tr(&quot;%1 Images&quot;).arg(0));
         statusLabel-&gt;setAlignment(Qt::AlignCenter);

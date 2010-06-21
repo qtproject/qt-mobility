@@ -116,7 +116,7 @@ void ToDoTool::registerExampleServices()
     QStringList exampleXmlFiles;
     exampleXmlFiles << "notesmanagerservice.xml";
     foreach (const QString &fileName, exampleXmlFiles) {
-        QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
+        const QString path = QCoreApplication::applicationDirPath() + "/xmldata/" + fileName;
         serviceManager->addService(path);
     }
 }

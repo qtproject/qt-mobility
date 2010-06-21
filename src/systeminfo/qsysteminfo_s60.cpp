@@ -38,7 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "qsysteminfo.h"
+#include "qsysteminfocommon.h"
 #include "qsysteminfo_s60_p.h"
 
 #include <QStringList>
@@ -64,6 +64,8 @@
 #include <bttypes.h>
 #include <etel3rdparty.h>
 #include <aknkeylock.h>
+#define RD_STARTUP_CHANGE
+#include <startupdomainpskeys.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -306,6 +308,12 @@ QSystemNetworkInfoPrivate::QSystemNetworkInfoPrivate(QObject *parent)
     DeviceInfo::instance()->cellSignalStrenghtInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkInfo()->addObserver(this);
     DeviceInfo::instance()->cellNetworkRegistrationInfo()->addObserver(this);
+    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkNameChanged()),
+        this, SLOT(wlanNetworkNameChanged()));
+    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkSignalStrengthChanged()),
+        this, SLOT(wlanNetworkSignalStrengthChanged()));
+    connect(DeviceInfo::instance()->wlanInfo(), SIGNAL(wlanNetworkStatusChanged()),
+        this, SLOT(wlanNetworkStatusChanged()));
 }
 
 QSystemNetworkInfoPrivate::~QSystemNetworkInfoPrivate()
@@ -350,6 +358,12 @@ QSystemNetworkInfo::NetworkStatus QSystemNetworkInfoPrivate::networkStatus(QSyst
             };
         }
         case QSystemNetworkInfo::WlanMode:
+        {
+            if (DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus())
+                return QSystemNetworkInfo::Connected;
+            else
+                return QSystemNetworkInfo::NoNetworkAvailable;
+        }
         case QSystemNetworkInfo::EthernetMode:
         case QSystemNetworkInfo::BluetoothMode:
         case QSystemNetworkInfo::WimaxMode:
@@ -381,6 +395,7 @@ int QSystemNetworkInfoPrivate::networkSignalStrength(QSystemNetworkInfo::Network
         }
 
         case QSystemNetworkInfo::WlanMode:
+            return DeviceInfo::instance()->wlanInfo()->wlanNetworkSignalStrength();
         case QSystemNetworkInfo::EthernetMode:
         case QSystemNetworkInfo::BluetoothMode:
         case QSystemNetworkInfo::WimaxMode:
@@ -451,6 +466,7 @@ QString QSystemNetworkInfoPrivate::networkName(QSystemNetworkInfo::NetworkMode m
             return DeviceInfo::instance()->cellNetworkInfo()->networkName();
         }
         case QSystemNetworkInfo::WlanMode:
+            return DeviceInfo::instance()->wlanInfo()->wlanNetworkName();
         case QSystemNetworkInfo::EthernetMode:
         case QSystemNetworkInfo::BluetoothMode:
         case QSystemNetworkInfo::WimaxMode:
@@ -539,6 +555,28 @@ void QSystemNetworkInfoPrivate::cellNetworkStatusChanged()
     emit networkStatusChanged(mode, networkStatus(mode));
 }
 
+void QSystemNetworkInfoPrivate::wlanNetworkNameChanged()
+{
+    emit networkNameChanged(QSystemNetworkInfo::WlanMode,
+        DeviceInfo::instance()->wlanInfo()->wlanNetworkName());
+}
+
+void QSystemNetworkInfoPrivate::wlanNetworkSignalStrengthChanged()
+{
+    emit networkSignalStrengthChanged(QSystemNetworkInfo::WlanMode,
+        DeviceInfo::instance()->wlanInfo()->wlanNetworkSignalStrength());
+}
+
+//TODO: There are no WLAN specific modes (Not connected, Infrastructure, Adhoc, Secure Infrastructure and Searching)
+void QSystemNetworkInfoPrivate::wlanNetworkStatusChanged()
+{
+    bool status = DeviceInfo::instance()->wlanInfo()->wlanNetworkConnectionStatus();
+    if (status)
+        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::Connected);
+    else
+        emit networkStatusChanged(QSystemNetworkInfo::WlanMode, QSystemNetworkInfo::NoNetworkAvailable);
+}
+
 QSystemNetworkInfo::NetworkMode QSystemNetworkInfoPrivate::currentMode()
 {
     QSystemNetworkInfo::NetworkMode mode = QSystemNetworkInfo::UnknownMode;
@@ -594,6 +632,74 @@ int QSystemDisplayInfoPrivate::colorDepth(int screen)
     )
     return depth;
 }
+
+
+QSystemDisplayInfo::DisplayOrientation QSystemDisplayInfoPrivate::getOrientation(int screen)
+{
+    QSystemDisplayInfo::DisplayOrientation orientation = QSystemDisplayInfo::Unknown;
+
+    if(screen < 16 && screen > -1) {
+        int rotation = 0;
+        switch(rotation) {
+        case 0:
+        case 360:
+            orientation = QSystemDisplayInfo::Landscape;
+            break;
+        case 90:
+            orientation = QSystemDisplayInfo::Portrait;
+            break;
+        case 180:
+            orientation = QSystemDisplayInfo::InvertedLandscape;
+            break;
+        case 270:
+            orientation = QSystemDisplayInfo::InvertedPortrait;
+            break;
+        };
+    }
+    return orientation;
+}
+
+
+float QSystemDisplayInfoPrivate::contrast(int screen)
+{
+    Q_UNUSED(screen);
+
+    return 0.0;
+}
+
+int QSystemDisplayInfoPrivate::getDPIWidth(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+
+        }
+    return dpi;
+}
+
+int QSystemDisplayInfoPrivate::getDPIHeight(int screen)
+{
+    int dpi=0;
+    if(screen < 16 && screen > -1) {
+
+    }
+    return dpi;
+}
+
+
+int QSystemDisplayInfoPrivate::physicalHeight(int screen)
+{
+    int height=0;
+
+    return height;
+}
+
+int QSystemDisplayInfoPrivate::physicalWidth(int screen)
+{
+    int width=0;
+
+    return width;
+}
+
 
 QSystemStorageInfoPrivate::QSystemStorageInfoPrivate(QObject *parent)
     : QObject(parent)
@@ -863,7 +969,10 @@ QString QSystemDeviceInfoPrivate::imei()
 
 QString QSystemDeviceInfoPrivate::imsi()
 {
-    return DeviceInfo::instance()->subscriberInfo()->imsi();
+    if (simStatus() == QSystemDeviceInfo::SimNotAvailable)
+        return QString();
+    else
+        return DeviceInfo::instance()->subscriberInfo()->imsi();
 }
 
 QString QSystemDeviceInfoPrivate::manufacturer()
@@ -909,7 +1018,19 @@ QSystemDeviceInfo::BatteryStatus QSystemDeviceInfoPrivate::batteryStatus()
 
 QSystemDeviceInfo::SimStatus QSystemDeviceInfoPrivate::simStatus()
 {
-    return QSystemDeviceInfo::SimNotAvailable;  //Not available in public SDKs
+    TInt lockStatus = 0;
+    TInt err = RProperty::Get(KPSUidStartup, KStartupSimLockStatus, lockStatus);
+    if (err == KErrNone && (TPSSimLockStatus)lockStatus != ESimLockOk) {
+        return QSystemDeviceInfo::SimLocked;
+    }
+
+    TInt simStatus = 0;
+    err = RProperty::Get(KPSUidStartup, KPSSimStatus, simStatus);
+    if (err == KErrNone && TPSSimStatus(simStatus) == ESimUsable) {
+        return QSystemDeviceInfo::SingleSimAvailable;
+    }
+
+    return QSystemDeviceInfo::SimNotAvailable;
 }
 
 bool QSystemDeviceInfoPrivate::isDeviceLocked()
@@ -949,6 +1070,11 @@ void QSystemDeviceInfoPrivate::batteryLevelChanged()
 void QSystemDeviceInfoPrivate::chargingStatusChanged()
 {
     emit powerStateChanged(currentPowerState());
+}
+
+bool QSystemDeviceInfoPrivate::currentBluetoothPowerState()
+{
+    return false;
 }
 
 DeviceInfo *DeviceInfo::m_instance = NULL;
