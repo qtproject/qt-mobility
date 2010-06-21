@@ -47,6 +47,8 @@
 
 #include <qfeedbackplugininterfaces.h>
 
+#include <e32base.h>
+
 #include <hwrmvibra.h>
 
 
