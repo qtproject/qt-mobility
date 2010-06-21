@@ -476,23 +476,21 @@ bool QMessageService::send(QMessage &message)
     }
     
     if (retVal) {
-        QMessage outgoing(message);
-    
         // Set default account if unset
-        if (!outgoing.parentAccountId().isValid()) {
-            outgoing.setParentAccountId(accountId);
+        if (!message.parentAccountId().isValid()) {
+            message.setParentAccountId(accountId);
         }
         
-        if (outgoing.type() == QMessage::AnyType || outgoing.type() == QMessage::NoType) {
-            outgoing.setType(msgType);
+        if (message.type() == QMessage::AnyType || message.type() == QMessage::NoType) {
+            message.setType(msgType);
         }
 
         if (account.messageTypes() & QMessage::Sms) {
-            retVal = d_ptr->sendSMS(outgoing);
+            retVal = d_ptr->sendSMS(message);
         } else if (account.messageTypes() & QMessage::Mms) {
-            retVal = d_ptr->sendMMS(outgoing);
+            retVal = d_ptr->sendMMS(message);
         } else if (account.messageTypes() & QMessage::Email) {
-            retVal = d_ptr->sendEmail(outgoing);
+            retVal = d_ptr->sendEmail(message);
         }
     }
     
