@@ -22,7 +22,6 @@ QT += declarative
 CONFIG += mobility
 MOBILITY = organizer
 
-DESTDIR = $$[QT_INSTALL_PREFIX]/imports/$$TARGETPATH
 target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 
 
