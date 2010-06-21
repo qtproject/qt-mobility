@@ -126,7 +126,8 @@ bool QGeoAddress::operator==(const QGeoAddress &other) const
            d->sDistrict == other.district() &&
            d->sThoroughfareName == other.thoroughfareName() &&
            d->sThoroughfareNumber == other.thoroughfareNumber() &&
-           d->sPostCode == other.postCode();
+           d->sPostCode == other.postCode() &&
+           d->sPostOfficeBox == other.postOfficeBox();
 }
 
 /*!
@@ -310,7 +311,24 @@ bool QGeoAddress::isEmpty() const
            d->sDistrict.isEmpty() &&
            d->sThoroughfareName.isEmpty() &&
            d->sThoroughfareNumber.isEmpty() &&
-           d->sPostCode.isEmpty();
+           d->sPostCode.isEmpty() &&
+           d->sPostOfficeBox.isEmpty();
+}
+/*!
+    Clears the all the address' data fields.
+*/
+void QGeoAddress::clear()
+{
+    d->sCountry.clear();
+    d->sCountryCode.clear();
+    d->sState.clear();
+    d->sCounty.clear();
+    d->sCity.clear();
+    d->sDistrict.clear();
+    d->sThoroughfareName.clear();
+    d->sThoroughfareNumber.clear();
+    d->sPostCode.clear();
+    d->sPostOfficeBox.clear();
 }
 
 QTM_END_NAMESPACE
