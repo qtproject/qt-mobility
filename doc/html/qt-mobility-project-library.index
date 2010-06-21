@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QDOCINDEX>
-<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0.1">
+<INDEX url="" title="Qt Mobility Project Library Reference Documentation" version="Mobility Project 1.0.2">
     <namespace access="public" threadsafety="unspecified" status="commendable" name="" href="" location="" module="">
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactRelationship" href="qcontactrelationship.html" location="qcontactrelationship.h" bases="" module="">
             <variable access="public" threadsafety="unspecified" status="commendable" name="HasMember" fullname="QContactRelationship::HasMember" href="qcontactrelationship.html#HasMember-var" location="qcontactrelationship.h" type="const QLatin1Constant" static="true"/>
@@ -640,10 +640,10 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="supportedMimeTypes" fullname="QMediaPlayer::supportedMimeTypes" href="qmediaplayer.html#supportedMimeTypes" location="qmediaplayer.h" virtual="non" meta="plain" const="false" static="true" overload="false" type="QStringList" signature="supportedMimeTypes(QFlags&lt;QMediaPlayer::Flag&gt; flags)">
                 <parameter left="QFlags&lt;QMediaPlayer::Flag&gt;" right="" name="flags" default="0"/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVideoOutput" fullname="QMediaPlayer::setVideoOutput" href="qmediaplayer.html#setVideoOutput" location="qmediaplayer.h" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVideoOutput(QVideoWidget * output)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setVideoOutput" fullname="QMediaPlayer::setVideoOutput" href="qmediaplayer.html#setVideoOutput" location="qmediaplayer.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" type="void" signature="setVideoOutput(QVideoWidget * output)">
                 <parameter left="QVideoWidget *" right="" name="output" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setVideoOutput" fullname="QMediaPlayer::setVideoOutput" href="qmediaplayer.html#setVideoOutput-2" location="qmediaplayer.h" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setVideoOutput(QGraphicsVideoItem * output)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setVideoOutput" fullname="QMediaPlayer::setVideoOutput" href="qmediaplayer.html#setVideoOutput-2" location="qmediaplayer.cpp" virtual="non" meta="plain" const="false" static="false" overload="true" overload-number="2" type="void" signature="setVideoOutput(QGraphicsVideoItem * output)">
                 <parameter left="QGraphicsVideoItem *" right="" name="output" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="media" fullname="QMediaPlayer::media" href="qmediaplayer.html#media-prop" location="qmediaplayer.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="media" type="QMediaContent" signature="media() const"/>
@@ -1789,7 +1789,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setMedia" fullname="QMediaImageViewer::setMedia" href="qmediaimageviewer.html#media-prop" location="qmediaimageviewer.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" associated-property="media" type="void" signature="setMedia(const QMediaContent &amp; media)">
                 <parameter left="const QMediaContent &amp;" right="" name="media" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="setPlaylist" fullname="QMediaImageViewer::setPlaylist" href="qmediaimageviewer.html#setPlaylist" location="qmediaimageviewer.cpp" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="setPlaylist(QMediaPlaylist * playlist)">
+            <function access="public" threadsafety="unspecified" status="commendable" name="setPlaylist" fullname="QMediaImageViewer::setPlaylist" href="qmediaimageviewer.html#setPlaylist" location="qmediaimageviewer.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="setPlaylist(QMediaPlaylist * playlist)">
                 <parameter left="QMediaPlaylist *" right="" name="playlist" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="play" fullname="QMediaImageViewer::play" href="qmediaimageviewer.html#play" location="qmediaimageviewer.h" virtual="non" meta="slot" const="false" static="false" overload="false" type="void" signature="play()"/>
@@ -2050,7 +2050,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaRecorder" fullname="QMediaRecorder::~QMediaRecorder" href="qmediarecorder.html#dtor.QMediaRecorder" location="qmediarecorder.h" virtual="non" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaRecorder()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mediaObject" fullname="QMediaRecorder::mediaObject" href="qmediarecorder.html#mediaObject" location="qmediarecorder.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMediaObject *" signature="mediaObject() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mediaObject" fullname="QMediaRecorder::mediaObject" href="qmediarecorder.html#mediaObject" location="qmediarecorder.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMediaObject *" signature="mediaObject() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="isAvailable" fullname="QMediaRecorder::isAvailable" href="qmediarecorder.html#isAvailable" location="qmediarecorder.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isAvailable() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="availabilityError" fullname="QMediaRecorder::availabilityError" href="qmediarecorder.html#availabilityError" location="qmediarecorder.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QtMultimediaKit::AvailabilityError" signature="availabilityError() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="outputLocation" fullname="QMediaRecorder::outputLocation" href="qmediarecorder.html#outputLocation-prop" location="qmediarecorder.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="outputLocation" type="QUrl" signature="outputLocation() const"/>
@@ -2137,9 +2137,6 @@
                 <parameter left="bool" right="" name="writable" default=""/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="metaDataChanged" fullname="QMediaRecorder::metaDataChanged" href="qmediarecorder.html#metaDataChanged" location="qmediarecorder.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="metaDataChanged()"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setMediaObject" fullname="QMediaRecorder::setMediaObject" href="qmediarecorder.html#setMediaObject" location="qmediarecorder.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="setMediaObject(QMediaObject * object)">
-                <parameter left="QMediaObject *" right="" name="object" default=""/>
-            </function>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionRemoveRequest" href="qcontactdetaildefinitionremoverequest.html" location="qcontactdetaildefinitionremoverequest.h" bases="QContactAbstractRequest" module="">
             <function access="public" threadsafety="unspecified" status="commendable" name="QContactDetailDefinitionRemoveRequest" fullname="QContactDetailDefinitionRemoveRequest::QContactDetailDefinitionRemoveRequest" href="qcontactdetaildefinitionremoverequest.html#QContactDetailDefinitionRemoveRequest" location="qcontactdetaildefinitionremoverequest.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QContactDetailDefinitionRemoveRequest(QObject * parent)">
@@ -2628,12 +2625,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="nativeSizeChanged" fullname="QGraphicsVideoItem::nativeSizeChanged" href="qgraphicsvideoitem.html#nativeSizeChanged" location="qgraphicsvideoitem.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="nativeSizeChanged(const QSizeF &amp; size)">
                 <parameter left="const QSizeF &amp;" right="" name="size" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="timerEvent" fullname="QGraphicsVideoItem::timerEvent" href="qgraphicsvideoitem.html#timerEvent" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="timerEvent(QTimerEvent * event)">
-                <parameter left="QTimerEvent *" right="" name="event" default=""/>
-            </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setMediaObject" fullname="QGraphicsVideoItem::setMediaObject" href="qgraphicsvideoitem.html#setMediaObject" location="qgraphicsvideoitem_maemo5.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="setMediaObject(QMediaObject * object)">
-                <parameter left="QMediaObject *" right="" name="object" default=""/>
             </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QGraphicsVideoItem::d_ptr" href="qgraphicsvideoitem.html#d_ptr-var" location="qgraphicsvideoitem.h" type="QGraphicsVideoItemPrivate *" static="false"/>
         </class>
@@ -3754,8 +3745,8 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="setPlaylist" fullname="QMediaPlaylistSourceControl::setPlaylist" href="qmediaplaylistsourcecontrol.html#setPlaylist" location="qmediaplaylistsourcecontrol.h" virtual="pure" meta="plain" const="false" static="false" overload="false" type="void" signature="setPlaylist(QMediaPlaylist * playlist)">
                 <parameter left="QMediaPlaylist *" right="" name="playlist" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="playlistChanged" fullname="QMediaPlaylistSourceControl::playlistChanged" href="qmediaplaylistsourcecontrol.html#playlistChanged" location="qmediaplaylistsourcecontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="playlistChanged(QMediaPlaylist * )">
-                <parameter left="QMediaPlaylist *" right="" name="" default=""/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="playlistChanged" fullname="QMediaPlaylistSourceControl::playlistChanged" href="qmediaplaylistsourcecontrol.html#playlistChanged" location="qmediaplaylistsourcecontrol.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="playlistChanged(QMediaPlaylist * playlist)">
+                <parameter left="QMediaPlaylist *" right="" name="playlist" default=""/>
             </function>
             <function access="protected" threadsafety="unspecified" status="commendable" name="QMediaPlaylistSourceControl" fullname="QMediaPlaylistSourceControl::QMediaPlaylistSourceControl" href="qmediaplaylistsourcecontrol.html#QMediaPlaylistSourceControl" location="qmediaplaylistsourcecontrol.h" virtual="non" meta="constructor" const="false" static="false" overload="false" type="" signature="QMediaPlaylistSourceControl(QObject * parent)">
                 <parameter left="QObject *" right="" name="parent" default="0"/>
@@ -4445,7 +4436,7 @@
                 <parameter left="QObject *" right="" name="parent" default="0"/>
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="~QMediaPlaylist" fullname="QMediaPlaylist::~QMediaPlaylist" href="qmediaplaylist.html#dtor.QMediaPlaylist" location="qmediaplaylist.h" virtual="impure" meta="destructor" const="false" static="false" overload="false" type="" signature="~QMediaPlaylist()"/>
-            <function access="public" threadsafety="unspecified" status="commendable" name="mediaObject" fullname="QMediaPlaylist::mediaObject" href="qmediaplaylist.html#mediaObject" location="qmediaplaylist.cpp" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMediaObject *" signature="mediaObject() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="mediaObject" fullname="QMediaPlaylist::mediaObject" href="qmediaplaylist.html#mediaObject" location="qmediaplaylist.h" virtual="impure" meta="plain" const="true" static="false" overload="false" type="QMediaObject *" signature="mediaObject() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="playbackMode" fullname="QMediaPlaylist::playbackMode" href="qmediaplaylist.html#playbackMode-prop" location="qmediaplaylist.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" associated-property="playbackMode" type="PlaybackMode" signature="playbackMode() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="setPlaybackMode" fullname="QMediaPlaylist::setPlaybackMode" href="qmediaplaylist.html#playbackMode-prop" location="qmediaplaylist.cpp" virtual="non" meta="plain" const="false" static="false" overload="false" associated-property="playbackMode" type="void" signature="setPlaybackMode(PlaybackMode mode)">
                 <parameter left="PlaybackMode" right="" name="mode" default=""/>
@@ -4541,9 +4532,6 @@
             </function>
             <function access="public" threadsafety="unspecified" status="commendable" name="loaded" fullname="QMediaPlaylist::loaded" href="qmediaplaylist.html#loaded" location="qmediaplaylist.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="loaded()"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="loadFailed" fullname="QMediaPlaylist::loadFailed" href="qmediaplaylist.html#loadFailed" location="qmediaplaylist.h" virtual="non" meta="signal" const="false" static="false" overload="false" type="void" signature="loadFailed()"/>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setMediaObject" fullname="QMediaPlaylist::setMediaObject" href="qmediaplaylist.html#setMediaObject" location="qmediaplaylist.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="setMediaObject(QMediaObject * mediaObject)">
-                <parameter left="QMediaObject *" right="" name="mediaObject" default=""/>
-            </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QMediaPlaylist::d_ptr" href="qmediaplaylist.html#d_ptr-var" location="qmediaplaylist.h" type="QMediaPlaylistPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QAbstractVideoSurface" href="qabstractvideosurface.html" location="qabstractvideosurface.h" bases="QObject" module="">
@@ -6761,9 +6749,6 @@
             <function access="protected" threadsafety="unspecified" status="commendable" name="paintEvent" fullname="QVideoWidget::paintEvent" href="qvideowidget.html#paintEvent" location="qvideowidget.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="paintEvent(QPaintEvent * event)">
                 <parameter left="QPaintEvent *" right="" name="event" default=""/>
             </function>
-            <function access="protected" threadsafety="unspecified" status="commendable" name="setMediaObject" fullname="QVideoWidget::setMediaObject" href="qvideowidget.html#setMediaObject" location="qvideowidget.cpp" virtual="impure" meta="plain" const="false" static="false" overload="false" type="bool" signature="setMediaObject(QMediaObject * object)">
-                <parameter left="QMediaObject *" right="" name="object" default=""/>
-            </function>
             <variable access="protected" threadsafety="unspecified" status="commendable" name="d_ptr" fullname="QVideoWidget::d_ptr" href="qvideowidget.html#d_ptr-var" location="qvideowidget.h" type="QVideoWidgetPrivate *" static="false"/>
         </class>
         <class access="public" threadsafety="unspecified" status="commendable" name="QVersitDocument" href="qversitdocument.html" location="qversitdocument.h" bases="" module="">
@@ -6993,7 +6978,7 @@
             <function access="public" threadsafety="unspecified" status="commendable" name="unbind" fullname="QMediaObject::unbind" href="qmediaobject.html#unbind" location="qmediaobject.h" virtual="impure" meta="plain" const="false" static="false" overload="false" type="void" signature="unbind(QObject * object)">
                 <parameter left="QObject *" right="" name="object" default=""/>
             </function>
-            <function access="public" threadsafety="unspecified" status="commendable" name="isMetaDataAvailable" fullname="QMediaObject::isMetaDataAvailable" href="qmediaobject.html#isMetaDataAvailable" location="qmediaobject.cpp" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isMetaDataAvailable() const"/>
+            <function access="public" threadsafety="unspecified" status="commendable" name="isMetaDataAvailable" fullname="QMediaObject::isMetaDataAvailable" href="qmediaobject.html#isMetaDataAvailable" location="qmediaobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="bool" signature="isMetaDataAvailable() const"/>
             <function access="public" threadsafety="unspecified" status="commendable" name="metaData" fullname="QMediaObject::metaData" href="qmediaobject.html#metaData" location="qmediaobject.h" virtual="non" meta="plain" const="true" static="false" overload="false" type="QVariant" signature="metaData(QtMultimediaKit::MetaData key) const">
                 <parameter left="QtMultimediaKit::MetaData" right="" name="key" default=""/>
             </function>
@@ -7774,12 +7759,19 @@
             <contents name="motivation" title="Motivation" level="2"/>
             <contents name="interface" title="Interface" level="2"/>
             <contents name="known-issues" title="Known Issues" level="2"/>
+            <page access="public" status="commendable" name="qmlcontacts/imageprovider.cpp" href="qmlcontacts-imageprovider-cpp.html" subtype="file" title="" fulltitle="imageprovider.cpp Example File" subtitle="qmlcontacts/imageprovider.cpp" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/imageprovider.h" href="qmlcontacts-imageprovider-h.html" subtype="file" title="" fulltitle="imageprovider.h Example File" subtitle="qmlcontacts/imageprovider.h" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/plugin.cpp" href="qmlcontacts-plugin-cpp.html" subtype="file" title="" fulltitle="plugin.cpp Example File" subtitle="qmlcontacts/plugin.cpp" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/qmlcontact.cpp" href="qmlcontacts-qmlcontact-cpp.html" subtype="file" title="" fulltitle="qmlcontact.cpp Example File" subtitle="qmlcontacts/qmlcontact.cpp" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/qmlcontact.h" href="qmlcontacts-qmlcontact-h.html" subtype="file" title="" fulltitle="qmlcontact.h Example File" subtitle="qmlcontacts/qmlcontact.h" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/qmlcontactdetail.cpp" href="qmlcontacts-qmlcontactdetail-cpp.html" subtype="file" title="" fulltitle="qmlcontactdetail.cpp Example File" subtitle="qmlcontacts/qmlcontactdetail.cpp" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/qmlcontactdetail.h" href="qmlcontacts-qmlcontactdetail-h.html" subtype="file" title="" fulltitle="qmlcontactdetail.h Example File" subtitle="qmlcontacts/qmlcontactdetail.h" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/qmlcontactdetailfield.cpp" href="qmlcontacts-qmlcontactdetailfield-cpp.html" subtype="file" title="" fulltitle="qmlcontactdetailfield.cpp Example File" subtitle="qmlcontacts/qmlcontactdetailfield.cpp" location=""/>
+            <page access="public" status="commendable" name="qmlcontacts/qmlcontactdetailfield.h" href="qmlcontacts-qmlcontactdetailfield-h.html" subtype="file" title="" fulltitle="qmlcontactdetailfield.h Example File" subtitle="qmlcontacts/qmlcontactdetailfield.h" location=""/>
             <page access="public" status="commendable" name="qmlcontacts/qmlcontactmodel.cpp" href="qmlcontacts-qmlcontactmodel-cpp.html" subtype="file" title="" fulltitle="qmlcontactmodel.cpp Example File" subtitle="qmlcontacts/qmlcontactmodel.cpp" location=""/>
             <page access="public" status="commendable" name="qmlcontacts/qmlcontactmodel.h" href="qmlcontacts-qmlcontactmodel-h.html" subtype="file" title="" fulltitle="qmlcontactmodel.h Example File" subtitle="qmlcontacts/qmlcontactmodel.h" location=""/>
             <page access="public" status="commendable" name="qmlcontacts/contents/default.svg" href="qmlcontacts-contents-default-svg.html" subtype="file" title="" fulltitle="default.svg Example File" subtitle="qmlcontacts/contents/default.svg" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/main.cpp" href="qmlcontacts-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="qmlcontacts/main.cpp" location=""/>
             <page access="public" status="commendable" name="qmlcontacts/qmlcontacts.pro" href="qmlcontacts-qmlcontacts-pro.html" subtype="file" title="" fulltitle="qmlcontacts.pro Example File" subtitle="qmlcontacts/qmlcontacts.pro" location=""/>
-            <page access="public" status="commendable" name="qmlcontacts/qmlcontacts.qrc" href="qmlcontacts-qmlcontacts-qrc.html" subtype="file" title="" fulltitle="qmlcontacts.qrc Example File" subtitle="qmlcontacts/qmlcontacts.qrc" location=""/>
         </page>
         <page access="public" status="commendable" name="servicefw" href="servicefw.html" subtype="group" title="Service Frameworks Classes" fulltitle="Service Frameworks Classes" subtitle="" location="sf.qdoc"/>
         <page access="public" status="commendable" name="service-frameworks.html" href="service-frameworks.html" subtype="page" title="Qt Service Framework" fulltitle="Qt Service Framework" subtitle="" location="sf.qdoc">
@@ -7844,7 +7836,7 @@
             <page access="public" status="commendable" name="writemessage/writemessage.pro" href="writemessage-writemessage-pro.html" subtype="file" title="" fulltitle="writemessage.pro Example File" subtitle="writemessage/writemessage.pro" location=""/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QMetaDataWriterControl_iid" href="qmetadatawritercontrol.html#QMetaDataWriterControl_iid" location="qmetadatawritercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QMetaDataWriterControl" type="" signature="QMetaDataWriterControl_iid()"/>
-        <page access="public" status="commendable" name="contactsusagehtml" href="contactsusagehtml.html" subtype="page" title="Contacts API Usage" fulltitle="Contacts API Usage" subtitle="" location="contactsusage.qdoc">
+        <page access="public" status="commendable" name="contactsusage.html" href="contactsusage.html" subtype="page" title="Contacts API Usage" fulltitle="Contacts API Usage" subtitle="" location="contactsusage.qdoc">
             <contents name="introduction" title="Introduction" level="1"/>
             <contents name="manager-settings-and-configuration" title="Manager Settings And Configuration" level="1"/>
             <contents name="loading-the-default-manager-for-the-platform" title="Loading the default manager for the platform" level="2"/>
@@ -7881,10 +7873,11 @@
             <contents name="system-info-api" title="System Info API" level="3"/>
             <contents name="known-issues" title="Known Issues" level="1"/>
             <contents name="non-api-specific-issues" title="Non-API specific issues" level="2"/>
+            <contents name="bearer-management-api" title="Bearer Management API" level="2"/>
             <contents name="contacts-api" title="Contacts API" level="2"/>
+            <contents name="bearer-management-api" title="Bearer Management API" level="2"/>
             <contents name="messaging-api" title="Messaging API" level="2"/>
             <contents name="multimedia-api" title="Multimedia API" level="2"/>
-            <contents name="sensors-api" title="Sensors API" level="2"/>
             <contents name="system-info-api" title="System Info API" level="2"/>
         </page>
         <function access="public" threadsafety="unspecified" status="commendable" name="QVideoEncoderControl_iid" href="qvideoencodercontrol.html#QVideoEncoderControl_iid" location="qvideoencodercontrol.cpp" virtual="non" meta="macrowithoutparams" const="false" static="false" overload="false" relates="QVideoEncoderControl" type="" signature="QVideoEncoderControl_iid()"/>
@@ -7958,11 +7951,10 @@
             <contents name="schema-differences" title="Schema Differences" level="2"/>
             <contents name="provided-engines" title="Provided Engines" level="2"/>
             <contents name="in-memory-example-engine" title="In-Memory Example Engine" level="3"/>
-            <contents name="symbian-3-1-engine" title="Symbian 3.1 Engine" level="3"/>
-            <contents name="symbian-3-2-engine" title="Symbian 3.2 Engine" level="3"/>
-            <contents name="symbian-5-0-engine" title="Symbian 5.0 Engine" level="3"/>
+            <contents name="symbian-engine" title="Symbian Engine" level="3"/>
+            <contents name="symbian-sim-engine" title="Symbian Sim Engine" level="3"/>
             <contents name="maemo-5-fremantle-engine" title="Maemo 5 (Fremantle) Engine" level="3"/>
-            <contents name="libqttracker-engine" title="libQtTracker Engine" level="3"/>
+            <contents name="windows-ce-engine" title="Windows CE Engine" level="3"/>
             <contents name="information-for-engine-implementors" title="Information For Engine Implementors" level="1"/>
             <contents name="which-functions-do-i-need-to-implement" title="Which Functions Do I Need To Implement" level="2"/>
             <contents name="mandatory-functions" title="Mandatory Functions" level="3"/>

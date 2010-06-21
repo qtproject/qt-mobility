@@ -9,7 +9,7 @@ PUBLIC_HEADERS += audio/qaudio.h \
            audio/qaudiosystemplugin.h \
            audio/qaudiosystem.h 
 
-PRIVATE_HEADERS += audio/qaudiodevicefactory_p.h
+PRIVATE_HEADERS += audio/qaudiodevicefactory_p.h audio/qaudiopluginloader_p.h
 
 
 SOURCES += audio/qaudio.cpp \
@@ -19,7 +19,8 @@ SOURCES += audio/qaudio.cpp \
            audio/qaudioinput.cpp \
            audio/qaudiosystemplugin.cpp \
            audio/qaudiosystem.cpp \
-           audio/qaudiodevicefactory.cpp
+           audio/qaudiodevicefactory.cpp \
+           audio/qaudiopluginloader.cpp
 
 #contains(QT_CONFIG, audio-backend) {
 

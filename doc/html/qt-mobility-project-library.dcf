@@ -1400,8 +1400,6 @@
         <keyword ref="qgraphicsvideoitem.html#boundingRect">boundingRect</keyword>
         <keyword ref="qgraphicsvideoitem.html#nativeSizeChanged">nativeSizeChanged</keyword>
         <keyword ref="qgraphicsvideoitem.html#paint">paint</keyword>
-        <keyword ref="qgraphicsvideoitem.html#setMediaObject">setMediaObject</keyword>
-        <keyword ref="qgraphicsvideoitem.html#timerEvent">timerEvent</keyword>
         <section ref="qgraphicsvideoitem-members.html" title="List of all members"/>
     </section>
     <section ref="qimageencodercontrol.html" title="QImageEncoderControl Class Reference">
@@ -1704,7 +1702,6 @@
         <keyword ref="qmediaplaylist.html#previousIndex">previousIndex</keyword>
         <keyword ref="qmediaplaylist.html#removeMedia">removeMedia</keyword>
         <keyword ref="qmediaplaylist.html#save">save</keyword>
-        <keyword ref="qmediaplaylist.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qmediaplaylist.html#shuffle">shuffle</keyword>
         <section ref="qmediaplaylist-members.html" title="List of all members"/>
     </section>
@@ -1842,7 +1839,6 @@
         <keyword ref="qmediarecorder.html#record">record</keyword>
         <keyword ref="qmediarecorder.html#setEncodingSettings">setEncodingSettings</keyword>
         <keyword ref="qmediarecorder.html#setExtendedMetaData">setExtendedMetaData</keyword>
-        <keyword ref="qmediarecorder.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qmediarecorder.html#setMetaData">setMetaData</keyword>
         <keyword ref="qmediarecorder.html#state">state</keyword>
         <keyword ref="qmediarecorder.html#stateChanged">stateChanged</keyword>
@@ -3485,7 +3481,6 @@
         <keyword ref="qvideowidget.html#paintEvent">paintEvent</keyword>
         <keyword ref="qvideowidget.html#resizeEvent">resizeEvent</keyword>
         <keyword ref="qvideowidget.html#saturationChanged">saturationChanged</keyword>
-        <keyword ref="qvideowidget.html#setMediaObject">setMediaObject</keyword>
         <keyword ref="qvideowidget.html#showEvent">showEvent</keyword>
         <keyword ref="qvideowidget.html#sizeHint">sizeHint</keyword>
         <section ref="qvideowidget-members.html" title="List of all members"/>
@@ -3562,8 +3557,8 @@
     <section ref="contacts.html" title="Contacts">
         <keyword ref="contacts.html">Contacts</keyword>
     </section>
-    <section ref="contactsusagehtml.html" title="Contacts API Usage">
-        <keyword ref="contactsusagehtml.html">Contacts API Usage</keyword>
+    <section ref="contactsusage.html" title="Contacts API Usage">
+        <keyword ref="contactsusage.html">Contacts API Usage</keyword>
     </section>
     <section ref="contactsasync.html" title="Contacts Asynchronous API">
         <keyword ref="contactsasync.html">Contacts Asynchronous API</keyword>

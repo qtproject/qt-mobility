@@ -39,38 +39,10 @@
 **
 ****************************************************************************/
 
-#include "s60videooutputcontrol.h"
+#include <hbinputkeymapfactory.h>
 
-S60VideoOutputControl::S60VideoOutputControl(QObject *parent)
-    : QVideoOutputControl(parent)
-    , m_output(NoOutput)
+int main(int argc, char** argv)
 {
-    setAvailableOutputs(QList<QVideoOutputControl::Output>()
-//                        << QVideoOutputControl::RendererOutput
-//                        << QVideoOutputControl::WindowOutput
-                        << QVideoOutputControl::WidgetOutput);
-}
-
-QList<QVideoOutputControl::Output> S60VideoOutputControl::availableOutputs() const
-{
-    return m_outputs;
-}
-
-void S60VideoOutputControl::setAvailableOutputs(const QList<Output> &outputs)
-{
-    emit availableOutputsChanged(m_outputs = outputs);
-}
-
-QVideoOutputControl::Output S60VideoOutputControl::output() const
-{
-    return m_output;
-}
-
-void S60VideoOutputControl::setOutput(Output output)
-{
-    if (!m_outputs.contains(output))
-        output = NoOutput;
-
-    if (m_output != output)
-        emit outputChanged(m_output = output);
+    HbKeymapFactory *test_if_this_compiles_or_not;
+	return 0;
 }

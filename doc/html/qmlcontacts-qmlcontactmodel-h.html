@@ -57,9 +57,11 @@
     #define QMLCONTACTMODEL_H
 
     #include &lt;QAbstractListModel&gt;
+    #include &lt;QDeclarativePropertyMap&gt;
     #include &quot;qcontact.h&quot;
     #include &quot;qcontactmanager.h&quot;
     #include &quot;qcontactfetchrequest.h&quot;
+    #include &quot;qmlcontact.h&quot;
 
     QTM_USE_NAMESPACE;
     class QMLContactModel : public QAbstractListModel
@@ -73,6 +75,9 @@
         enum {
             InterestRole = Qt::UserRole + 500,
             InterestLabelRole,
+            ContactRole,
+            ContactIdRole,
+            DetailsRole,
             AvatarRole,
             PresenceAvailableRole,
             PresenceTextRole,
@@ -82,11 +87,13 @@
 
         QStringList availableManagers() const;
 
-        QString manager();
+        QString manager() const;
         void setManager(const QString&amp; manager);
 
         int rowCount(const QModelIndex &amp;parent) const;
         QVariant data(const QModelIndex &amp;index, int role) const;
+
+        Q_INVOKABLE QList&lt;QObject*&gt; details(int id) const;
     signals:
 
     public slots:
@@ -97,9 +104,10 @@
 
     private:
         QPair&lt;QString, QString&gt; interestingDetail(const QContact&amp;c) const;
-
+        void exposeContactsToQML();
         void fillContactsIntoMemoryEngine(QContactManager* manager);
 
+        QMap&lt;QContactLocalId, QMLContact*&gt; m_contactMap;
         QList&lt;QContact&gt; m_contacts;
         QContactManager* m_manager;
         QContactFetchHint m_fetchHint;
@@ -112,6 +120,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

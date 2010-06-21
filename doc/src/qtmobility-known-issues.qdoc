@@ -141,16 +141,23 @@ Support is present for the following System Info API classes
 
 \section2 Non-API specific issues
 \list
-    \o Qt Mobility does not compile if Qt using a namespace.
     \o Not all example applications will display(fit) well on small screens.
     \o Prefixed paths in includes such as \code #include <QtLibrary/MyClass> \endcode or \code #include <QtLibrary/myclass.h> \endcode do not currently work on Symbian.
 \endlist
 
+\section2 Bearer Management API
+\list
+    \o Fremantle: Segmentation fault on removing a connected network
+\endlist
+
 \section2 Contacts API
 \list
-    \o S60: Async contact operations not supported
     \o S60: Extending contact fields at runtime is not supported on most Symbian platforms because would compromise compatibility with the S60 platform Phonebook application.
-    \o S60 3.1: the Symbian contacts plugins are not loaded on a device.
+\endlist
+
+\section2 Bearer Management API
+\list
+    \o Fremantle: Application fail to acquire satellite signal
 \endlist
 
 \section2 Messaging API
@@ -179,24 +186,16 @@ Support is present for the following System Info API classes
 
 \section2 Multimedia API
 \list
+    \o Fremantle: Audiorecorder fails to create file
+    \o Fremantle: Slideshow fails to display images
     \o S60: Audio capture does not support currently any special features like format, encoding etc.
-    \o S60: seeking is not working properly
-    \o S60: video size does not remain constant in repeated plays
-    \o S60: full screen video not working OK
+    \o S60, Fremantle: Full screen video not handled correctly
     \o S60: 3.2.3 (E75 for example) player example don't work.
     \o Windows desktop: wmp multimedia plugin does not display video with Windows Media Player 10 or 12
 \endlist
 
-\section2 Sensors API
-\list
-    \o S60: The S60 sensor backends are under development and may not be complete.
-    \o S60 3.1: src/s60installs/s60installs.pro: the s60_sensor_api plugin for 3.1 devices is not added to the sis file when generating the sis file for multiple SDKs.
-\endlist
-
 \section2 System Info API
 \list
-    \o S60: Battery status incorrect on test applications startup.
-    \o S60: Phone is still charging but power state shows 100% and "wall power".
-    \o S60: number of bars for network reporting signal strength is hardcoded.
+    \o S60: Signal strength is not implemented
 \endlist
 */

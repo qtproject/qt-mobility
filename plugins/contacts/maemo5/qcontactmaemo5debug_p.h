@@ -55,7 +55,6 @@ extern bool QCM5_DEBUG_ENABLED;
 
 /* Define Macros for debugging */
 #define QCM5_DEBUG  if (QCM5_DEBUG_ENABLED) qDebug()
-#define QCM5_DEBUG_ARG(x)  if (QCM5_DEBUG_ENABLED) qDebug() << x;
 
 /* Check env var and switch on/off debugging */
 static inline void initDebugLogger(){

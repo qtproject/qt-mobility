@@ -105,7 +105,7 @@
 <pre>    viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
-    viewer-&gt;addVideoOutput(display);
+    viewer-&gt;setVideoOutput(display);
     display-&gt;show();</pre>
 <p>QMediaImageViewer can be paired with a <a href="qmediaplaylist.html">QMediaPlaylist</a> to create a slide show of images. Constructing a <a href="qmediaplaylist.html">QMediaPlaylist</a> with a pointer to an instance of QMediaImageViewer will attach it to the image viewer; changing the playlist's selection will then change the media displayed by the image viewer. With a playlist attached QMediaImageViewer's <a href="qmediaimageviewer.html#play">play</a>(), <a href="qmediaimageviewer.html#pause">pause</a>(), and <a href="qmediaimageviewer.html#stop">stop</a>() slots can be control the progression of the playlist. The <a href="qmediaimageviewer.html#timeout-prop">timeout</a> property determines how long an image is displayed for before progressing to the next in the playlist, and the <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> property holds how the duration the current image has been displayed for.</p>
 <pre>    playlist = new QMediaPlaylist(this);
@@ -238,9 +238,11 @@
 <p>If no playlist is attached to an image viewer this will do nothing.</p>
 <a name="//apple_ref/cpp/instm/QMediaImageViewer/playlist"></a>
 <h3 class="fn"><a name="playlist"></a><a href="qmediaplaylist.html">QMediaPlaylist</a> * QMediaImageViewer::playlist () const</h3>
+<p>Returns the current playlist, or 0 if none.</p>
 <p>See also <a href="qmediaimageviewer.html#setPlaylist">setPlaylist</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaImageViewer/setPlaylist"></a>
 <h3 class="fn"><a name="setPlaylist"></a>void QMediaImageViewer::setPlaylist ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Use <i>playlist</i> as the source of images to be displayed in the viewer.</p>
 <p>See also <a href="qmediaimageviewer.html#playlist">playlist</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaImageViewer/stateChanged"></a>
 <h3 class="fn"><a name="stateChanged"></a>void QMediaImageViewer::stateChanged ( <a href="qmediaimageviewer.html#State-enum">QMediaImageViewer::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
@@ -253,6 +255,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

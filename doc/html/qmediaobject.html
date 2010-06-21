@@ -134,6 +134,10 @@
 <p>Returns a list of keys there is meta-data available for.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/bind"></a>
 <h3 class="fn"><a name="bind"></a>bool QMediaObject::bind ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>object</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Bind <i>object</i> to the <a href="qmediaobject.html">QMediaObject</a> instance.</p>
+<p>This method establishes a relationship between the media object and a helper object. The nature of the relationship depends on both parties. This methods returns true if the helper was succesfully bound, false otherwise.</p>
+<p>The object passed must implement the <a href="qmediabindableinterface.html">QMediaBindableInterface</a> interface.</p>
+<p>See also <a href="qmediabindableinterface.html">QMediaBindableInterface</a>.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/extendedMetaData"></a>
 <h3 class="fn"><a name="extendedMetaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaObject::extendedMetaData ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>key</i> ) const</h3>
 <p>Returns the value associated with a meta-data <i>key</i>.</p>
@@ -143,6 +147,7 @@
 <p>Returns true if the service is available for use.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/isMetaDataAvailable"></a>
 <h3 class="fn"><a name="isMetaDataAvailable"></a>bool QMediaObject::isMetaDataAvailable () const</h3>
+<p>Returns true if there is meta-data associated with this media object, else false.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/metaData"></a>
 <h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaObject::metaData ( <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::MetaData</a> <i>key</i> ) const</h3>
 <p>Returns the value associated with a meta-data <i>key</i>.</p>
@@ -164,10 +169,13 @@
 <p>Returns the media service that provides the functionality of a multimedia object.</p>
 <a name="//apple_ref/cpp/instm/QMediaObject/unbind"></a>
 <h3 class="fn"><a name="unbind"></a>void QMediaObject::unbind ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>object</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Detach <i>object</i> from the <a href="qmediaobject.html">QMediaObject</a> instance.</p>
+<p>Disconnect the help object from the media object.</p>
+<p>See also <a href="qmediabindableinterface.html">QMediaBindableInterface</a>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>
