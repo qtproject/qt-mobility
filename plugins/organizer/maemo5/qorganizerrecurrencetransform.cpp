@@ -54,7 +54,7 @@ OrganizerRecurrenceTransform::OrganizerRecurrenceTransform()
 
 OrganizerRecurrenceTransform::~OrganizerRecurrenceTransform()
 {
-    beginTransformToCrecurrence(); // clears the lists
+    beginTransformToCrecurrence(); // frees the resources
 }
 
 void OrganizerRecurrenceTransform::beginTransformToCrecurrence()
@@ -62,12 +62,9 @@ void OrganizerRecurrenceTransform::beginTransformToCrecurrence()
     std::vector< CRecurrenceRule* >::iterator i;
     for( i = m_vRRuleList.begin(); i != m_vRRuleList.end(); ++i )
         delete *i;
-    for( i = m_vERuleList.begin(); i != m_vERuleList.end(); ++i )
-        delete *i;
 
     m_rtype = 0;
     m_vRRuleList.clear();
-    m_vERuleList.clear();
     m_vRecDateList.clear();
     m_vExceptionDateList.clear();
 }
@@ -79,7 +76,7 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence( bool* success ) const
     if ( success )
         *success = false;
 
-    if ( m_vRRuleList.empty() && m_vERuleList.empty() && m_vRecDateList.empty() && m_vExceptionDateList.empty() )
+    if ( m_vRRuleList.empty() && m_vRecDateList.empty() && m_vExceptionDateList.empty() )
     {
         if ( success )
             *success = true;
@@ -88,10 +85,10 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence( bool* success ) const
 
     CRecurrence* retn = new CRecurrence();
 
-    // Set rule type
+    // Set recurrence type
     retn->setRtype( m_rtype );
 
-    // Add recursion rules
+    // Add recursion and exception rules
     if( !m_vRRuleList.empty() ) {
         if( !retn->setRecurrenceRule( m_vRRuleList ) ) {
             delete retn;
@@ -99,7 +96,7 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence( bool* success ) const
         }
     }
 
-    // TODO: Excpetion rules, recurrence dates & exception dates
+    // TODO: recurrence dates & exception dates
 
     if ( success )
         *success = true;
@@ -109,17 +106,45 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence( bool* success ) const
 
 void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceRule( const QOrganizerItemRecurrenceRule& rule )
 {
-    CRecurrenceRule* crecrule = new CRecurrenceRule();
+    QString icalRule = qrecurrenceRuleToIcalRecurrenceRule( rule );
 
+    // Store the new rule to the rule vector
+    CRecurrenceRule* crecrule = new CRecurrenceRule();
+    crecrule->setRuleType( RECURRENCE_RULE );
+    crecrule->setRrule( icalRule.toStdString() );
+    m_vRRuleList.push_back( crecrule );
+
+    // Update the recursion type, set according to the most frequent rule
+    int ruleRtype = qfrequencyToRtype( rule.frequency() );
+    m_rtype = m_rtype ? ( ruleRtype < m_rtype ? ruleRtype : m_rtype ) : ruleRtype;
+}
+
+void OrganizerRecurrenceTransform::addQOrganizerItemExceptionRule( const QOrganizerItemRecurrenceRule& rule )
+{
+    QString icalRule = qrecurrenceRuleToIcalRecurrenceRule( rule );
+
+    // temp:
+    /* // Can't test without this due to a bug in API (21 Jun)
+    icalRule = qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Weekly ) + ";";
+    icalRule += qcountToIcalCount( 52 ) + ";";
+    icalRule += qintervalToIcalInterval( 1 );
+    */
+
+    // Store the new rule to the rule vector
+    CRecurrenceRule* crecrule = new CRecurrenceRule();
+    crecrule->setRuleType( EXCEPTION_RULE );
+    crecrule->setRrule( icalRule.toStdString() );
+    m_vRRuleList.push_back( crecrule );
+}
+
+QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule( const QOrganizerItemRecurrenceRule& rule ) const
+{
     QString icalRule;
 //#define USE_PRODUCTION_CODE
 #ifndef USE_PRODUCTION_CODE
     icalRule += qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Daily ) + ";";
     icalRule += qcountToIcalCount( 10 ) + ";";
     icalRule += qintervalToIcalInterval( 1 );
-    //crecrule->setFrequency( qfrequencyToCfrequency( QOrganizerItemRecurrenceRule::Daily ) );
-    //crecrule->setCount( 10 );
-    //crecrule->setInterval( 1 );
 #else // USE_PRODUCTION_CODE
     icalRule += qfrequencyToIcalFrequency( rule.frequency() ) + ";";
     if ( rule.count() > 0 )
@@ -128,18 +153,11 @@ void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceRule( const QOrgan
         icalRule += qendDateToIcalUntil( rule.endDate() ) + ";";
 
     icalRule += qintervalToIcalInterval( rule.interval() ); // the last parameter must not end with separator
-
 #endif // USE_PRODUCTION_CODE
 
     // TODO: Handle the other parameters of QOrganizerItemRecurrenceRule
 
-    // Store rule to the rule vector
-    crecrule->setRrule( icalRule.toStdString() );
-    m_vRRuleList.push_back( crecrule );
-
-    // Update the recursion type, set according to the most frequent rule
-    int ruleRtype = qfrequencyToRtype( rule.frequency() );
-    m_rtype = m_rtype ? ( ruleRtype < m_rtype ? ruleRtype : m_rtype ) : ruleRtype;
+    return icalRule;
 }
 
 QString OrganizerRecurrenceTransform::qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Frequency frequency ) const

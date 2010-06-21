@@ -69,9 +69,11 @@ public:
     CRecurrence* crecurrence( bool* success = 0 ) const;
 
     void addQOrganizerItemRecurrenceRule( const QOrganizerItemRecurrenceRule& rule );
+    void addQOrganizerItemExceptionRule( const QOrganizerItemRecurrenceRule& rule );
 
 private:
     // conversions
+    QString qrecurrenceRuleToIcalRecurrenceRule( const QOrganizerItemRecurrenceRule& rule ) const;
     QString qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Frequency frequency ) const;
     QString qcountToIcalCount( int count ) const;
     QString qintervalToIcalInterval( int interval ) const;
@@ -81,8 +83,7 @@ private:
 
 private:
     int m_rtype; // Recursion type parameter for the native calendar backend
-    std::vector< CRecurrenceRule* > m_vRRuleList;
-    std::vector< CRecurrenceRule* > m_vERuleList;
+    std::vector< CRecurrenceRule* > m_vRRuleList; // recurrence and exception rules
     std::vector< std::string > m_vRecDateList;
     std::vector< std::string > m_vExceptionDateList;
 };

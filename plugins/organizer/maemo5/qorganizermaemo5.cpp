@@ -1028,12 +1028,16 @@ CRecurrence* QOrganizerItemMaemo5Engine::createCRecurrence( const QOrganizerItem
     if (item->type() == QOrganizerItemType::TypeEvent) {
         d->m_recTransformer.beginTransformToCrecurrence();
         const QOrganizerEvent* event = static_cast<const QOrganizerEvent*>( item );
-        QList<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
 
+        QList<QOrganizerItemRecurrenceRule> recurrenceRules = event->recurrenceRules();
         foreach( QOrganizerItemRecurrenceRule rule, recurrenceRules )
             d->m_recTransformer.addQOrganizerItemRecurrenceRule( rule );
 
-        // TODO: Add recurrenceDates, exceptionRules & exceptionDates
+        QList<QOrganizerItemRecurrenceRule> exceptionRules = event->exceptionRules();
+        foreach( QOrganizerItemRecurrenceRule rule, exceptionRules )
+            d->m_recTransformer.addQOrganizerItemExceptionRule( rule );
+
+        // TODO: Add recurrenceDates & exceptionDates
         return d->m_recTransformer.crecurrence(); // TODO: This may need error handling?
     }
     else if (item->type() == QOrganizerItemType::TypeTodo) {
