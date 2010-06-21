@@ -61,9 +61,12 @@
 #include "qgallerytrackermetadataedit_p.h"
 #include "qgallerytrackerschema_p.h"
 
+#include <QtCore/qcoreapplication.h>
 #include <QtCore/qbasictimer.h>
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qfuturewatcher.h>
+#include <QtCore/qqueue.h>
+#include <QtCore/qwaitcondition.h>
 
 QTM_BEGIN_NAMESPACE
 
@@ -71,6 +74,79 @@ class QGalleryTrackerItemListPrivate : public QGalleryAbstractResponsePrivate
 {
     Q_DECLARE_PUBLIC(QGalleryTrackerItemList)
 public:
+    struct SyncEvent
+    {
+        enum Type
+        {
+            Start,
+            Update,
+            Replace,
+            Finish
+        };
+
+        const Type type;
+        const int aIndex;
+        const int aCount;
+        const int rIndex;
+        const int rCount;
+
+        static SyncEvent *startEvent(int aIndex, int aCount, int rIndex, int rCount) {
+            return new SyncEvent(Start, aIndex, aCount, rIndex, rCount); }
+
+        static SyncEvent *updateEvent(int aIndex, int rIndex, int count) {
+            return new SyncEvent(Update, aIndex, count, rIndex, count); }
+
+        static SyncEvent *replaceEvent(int aIndex, int aCount, int rIndex, int rCount) {
+            return new SyncEvent(Replace, aIndex, aCount, rIndex, rCount); }
+
+        static SyncEvent *finishEvent(int aIndex, int rIndex) {
+            return new SyncEvent(Finish, aIndex, 0, rIndex, 0); }
+
+    private:
+        SyncEvent(Type type, int aIndex, int aCount, int rIndex, int rCount)
+            : type(type), aIndex(aIndex), aCount(aCount), rIndex(rIndex), rCount(rCount) {}
+
+    };
+
+    class SyncEventQueue
+    {
+    public:
+        SyncEventQueue() {}
+        ~SyncEventQueue() { qDeleteAll(m_queue); }
+
+        bool enqueue(SyncEvent *event)
+        {
+            QMutexLocker locker(&m_mutex);
+
+            m_queue.enqueue(event);
+            m_wait.wakeOne();
+
+            return m_queue.count() == 1;
+        }
+
+        SyncEvent *dequeue()
+        {
+            QMutexLocker locker(&m_mutex);
+
+            return !m_queue.isEmpty() ? m_queue.dequeue() : 0;
+        }
+
+        bool waitForEvent(int msecs)
+        {
+            QMutexLocker locker(&m_mutex);
+
+            if (!m_queue.isEmpty())
+                return true;
+
+            return m_wait.wait(&m_mutex, msecs);
+        }
+
+    private:
+        QQueue<SyncEvent *> m_queue;
+        QMutex m_mutex;
+        QWaitCondition m_wait;
+    };
+
     struct Row
     {
         Row() {}
@@ -96,6 +172,8 @@ public:
         row_iterator operator --(int) { row_iterator n(*this); begin -= width; return n; }
 
         int operator -(const row_iterator &other) const { return (begin - other.begin) / width; }
+        int operator -(const QVector<QVariant>::const_iterator &iterator) const {
+            return (begin - iterator) / width; }
 
         row_iterator operator +(int span) const {
             return row_iterator(begin + (span * width), width); }
@@ -117,30 +195,6 @@ public:
         mutable Row row;
     };
 
-    enum RowEventType
-    {
-        RowsChanged = QEvent::User,
-        RowsInserted,
-        RowsRemoved,
-        SyncFinalized
-    };
-
-    class RowEvent : public QEvent
-    {
-    public:
-        RowEvent(RowEventType type, int aIndex, int rIndex, int count)
-            : QEvent(QEvent::Type(type))
-            , aIndex(aIndex)
-            , rIndex(rIndex)
-            , count(count)
-        {
-        }
-
-        const int aIndex;
-        const int rIndex;
-        const int count;
-    };
-
     struct Cache
     {
         Cache() : index(0), count(0), cutoff(0) {}
@@ -159,13 +213,20 @@ public:
 
     enum Flag
     {
-        Refresh = 0x01
+        Cancelled       = 0x01,
+        Live            = 0x02,
+        Refresh         = 0x04,
+        PositionUpdated = 0x08,
+        UpdateRequested = 0x10,
+        Active          = 0x20,
+        SyncFinished    = 0x40
     };
 
     Q_DECLARE_FLAGS(Flags, Flag)
 
     QGalleryTrackerItemListPrivate(
             const QGalleryTrackerItemListArguments &arguments,
+            bool live,
             int cursorPosition,
             int minimumPagedItems)
         : idColumn(arguments.idColumn)
@@ -192,7 +253,11 @@ public:
         , aliasColumns(arguments.aliasColumns)
         , imageColumns(arguments.imageColumns)
         , sortCriteria(arguments.sortCriteria)
+        , resourceKeys(arguments.resourceKeys)
     {
+        if (live)
+            flags |= Live;
+
         QGalleryItemListPrivate::cursorPosition = cursorPosition;
         QGalleryItemListPrivate::minimumPagedItems = (minimumPagedItems + 15) & ~15;
     }
@@ -234,6 +299,7 @@ public:
     const QVector<int> aliasColumns;
     const QVector<QGalleryTrackerImageColumn *> imageColumns;
     const QVector<QGalleryTrackerSortCriteria> sortCriteria;
+    const QVector<int> resourceKeys;
     Cache aCache;   // Access cache.
     Cache rCache;   // Replacement cache.
 
@@ -241,8 +307,28 @@ public:
     QFutureWatcher<void> parseWatcher;
     QList<QGalleryTrackerMetaDataEdit *> edits;
     QBasicTimer updateTimer;
+    SyncEventQueue syncEvents;
 
-    void update(int index);
+    inline int aCacheIndex(const row_iterator &iterator) const {
+        return iterator - aCache.values.begin() + aCache.index; }
+    inline int rCacheIndex(const row_iterator &iterator) const {
+        return iterator - rCache.values.begin() + rCache.index; }
+    
+    void update();
+    void requestUpdate()
+    {
+        if (!(flags & UpdateRequested)) {
+            flags |= UpdateRequested;
+            QCoreApplication::postEvent(q_func(), new QEvent(QEvent::UpdateRequest));
+        }
+    }
+    
+    void removeHeadImages(int count);
+    void removeTailImages(int count);
+    void insertHeadImages(int index, int count);
+    void insertTailImages(int index, int count);
+
+    void query(int index);
 
     void queryFinished(const QDBusPendingCall &call);
     void parseRows(const QDBusPendingCall &call);
@@ -259,6 +345,15 @@ public:
             row_iterator &rBegin,
             const row_iterator &aEnd,
             const row_iterator &rEnd);
+
+    void postSyncEvent(SyncEvent *event)
+    {
+        if (syncEvents.enqueue(event))
+            QCoreApplication::postEvent(q_func(), new QEvent(QEvent::UpdateLater));
+    }
+
+    void processSyncEvents();
+    bool waitForSyncFinish(int msecs);
 
     void _q_queryFinished(QDBusPendingCallWatcher *watcher);
     void _q_parseFinished();

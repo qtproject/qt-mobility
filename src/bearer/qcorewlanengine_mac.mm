@@ -160,7 +160,7 @@ void networkChangeCallback(SCDynamicStoreRef/* store*/, CFArrayRef changedKeys, 
 }
 
 QScanThread::QScanThread(QObject *parent)
-    :QThread(parent), interfaceName(nil)
+    :QThread(parent), interfaceName()
 {
 }
 
@@ -314,7 +314,7 @@ QList<QNetworkConfigurationPrivate *> QScanThread::getConfigurations()
         config->isValid = fetchedConfigurations.at(i)->isValid;
         config->id = fetchedConfigurations.at(i)->id;
         config->state = fetchedConfigurations.at(i)->state;
-
+        config->bearer = fetchedConfigurations.at(i)->bearer;
         config->type = fetchedConfigurations.at(i)->type;
         config->roamingSupported = fetchedConfigurations.at(i)->roamingSupported;
         config->purpose = fetchedConfigurations.at(i)->purpose;
@@ -336,6 +336,9 @@ void QScanThread::getUserProfiles()
     for(uint row=0; row < [wifiInterfaces count]; row++ ) {
 
         CWInterface *wifiInterface = [CWInterface interfaceWithName: [wifiInterfaces objectAtIndex:row]];
+        if (![wifiInterface power])
+            continue;
+
         NSString *nsInterfaceName = [wifiInterface name];
 // add user configured system networks
         SCDynamicStoreRef dynRef = SCDynamicStoreCreate(kCFAllocatorSystemDefault, (CFStringRef)@"Qt corewlan", nil, nil);
@@ -401,7 +404,7 @@ void QScanThread::getUserProfiles()
     }
 
     [pool release];
-#endif    
+#endif
 }
 
 QString QScanThread::getSsidFromNetworkName(const QString &name)

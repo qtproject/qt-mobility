@@ -98,7 +98,7 @@
                 break;
             }
         }
-
+        connect(&amp;manager, SIGNAL(onlineStateChanged(bool)), this ,SLOT(onlineStateChanged(bool)));
         connect(&amp;manager, SIGNAL(configurationAdded(const QNetworkConfiguration&amp;)),
                 this, SLOT(configurationAdded(const QNetworkConfiguration&amp;)));
         connect(&amp;manager, SIGNAL(configurationRemoved(const QNetworkConfiguration&amp;)),
@@ -106,7 +106,6 @@
         connect(&amp;manager, SIGNAL(configurationChanged(const QNetworkConfiguration&amp;)),
                 this, SLOT(configurationChanged(const QNetworkConfiguration)));
         connect(&amp;manager, SIGNAL(updateCompleted()), this, SLOT(updateConfigurations()));
-        connect(&amp;manager, SIGNAL(onlineStateChanged(bool)), this ,SLOT(onlineStateChanged(bool)));
 
     #ifdef Q_OS_WIN
         connect(registerButton, SIGNAL(clicked()), this, SLOT(registerNetwork()));
@@ -129,6 +128,10 @@
     #endif
         connect(scanButton, SIGNAL(clicked()),
                 this, SLOT(performScan()));
+
+        <span class="comment">// Just in case update all configurations so that all</span>
+        <span class="comment">// configurations are up to date.</span>
+        manager.updateConfigurations();
     }
 
     BearerMonitor::~BearerMonitor()
@@ -226,6 +229,10 @@
     {
         progressBar-&gt;hide();
         scanButton-&gt;show();
+
+        <span class="comment">// Just in case update online state, on Symbian platform</span>
+        <span class="comment">// WLAN scan needs to be triggered initially to have their true state.</span>
+        onlineStateChanged(manager.isOnline());
 
         QList&lt;QTreeWidgetItem *&gt; items = treeWidget-&gt;findItems(QLatin1String(&quot;*&quot;), Qt::MatchWildcard);
         QMap&lt;QString, QTreeWidgetItem *&gt; itemMap;

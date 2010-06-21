@@ -74,7 +74,7 @@ public:
     explicit GrueSensor(QObject *parent = 0) : QSensor(GrueSensor::type, parent) {}
     virtual ~GrueSensor() {}
     GrueSensorReading *reading() const { return static_cast<GrueSensorReading*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 // end generated code
 

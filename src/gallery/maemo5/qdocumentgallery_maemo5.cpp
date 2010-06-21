@@ -178,9 +178,9 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createItemListResponse(
 
     if (isItemType) {
         response = new QGalleryTrackerItemResponse(
-                arguments, metaDataInterface(), cursorPosition, minimumPagedItems);
+                arguments, metaDataInterface(), isLive, cursorPosition, minimumPagedItems);
     } else {
-        response = new QGalleryTrackerItemList(arguments, cursorPosition, minimumPagedItems);
+        response = new QGalleryTrackerItemList(arguments, isLive, cursorPosition, minimumPagedItems);
     }
 
     if (isLive) {
@@ -266,7 +266,15 @@ QGalleryAbstractResponse *QDocumentGalleryPrivate::createCountResponse(
     if (result != QGalleryAbstractRequest::Succeeded) {
         return new QGalleryBaseResponse(result);
     } else {
-        return new QGalleryTrackerCountResponse(arguments);
+        QGalleryTrackerCountResponse *response = new QGalleryTrackerCountResponse(arguments);
+
+        if (request->isLive()) {
+            QObject::connect(
+                    changeNotifier(), SIGNAL(itemsChanged(int)),
+                    response, SLOT(refresh(int)));
+        }
+
+        return response;
     }
 }
 

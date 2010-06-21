@@ -61,7 +61,8 @@ public:
     AudioCaptureService(QObject *parent = 0);
     ~AudioCaptureService();
 
-    QMediaControl *control(const char *name) const;
+    QMediaControl *requestControl(const char *interface);
+    void releaseControl(QMediaControl *control);
 private:
     AudioCaptureSession       *m_session;
     AudioEncoderControl       *m_encoderControl;

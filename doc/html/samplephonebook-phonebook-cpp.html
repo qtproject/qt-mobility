@@ -99,7 +99,9 @@
 
     void PhoneBook::activateEditor(QContactLocalId contactId)
     {
+    #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
         menuBar()-&gt;setVisible(false);
+    #endif
         m_editorPage-&gt;setCurrentContact(m_manager, contactId);
         m_stackedWidget-&gt;setCurrentIndex(1); <span class="comment">// list = 0, editor = 1, find = 2.</span>
     }
@@ -124,7 +126,9 @@
 
     void PhoneBook::activateFind()
     {
+    #if !(defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5))
         menuBar()-&gt;setVisible(false);
+    #endif
         m_stackedWidget-&gt;setCurrentIndex(2); <span class="comment">// list = 0, editor = 1, find = 2.</span>
     }
 

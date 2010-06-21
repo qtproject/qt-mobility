@@ -116,14 +116,16 @@ struct QGalleryTrackerItemListArguments
     QVector<int> aliasColumns;
     QVector<QGalleryTrackerImageColumn *> imageColumns;
     QVector<QGalleryTrackerSortCriteria> sortCriteria;
+    QVector<int> resourceKeys;
 };
 
-class QGalleryTrackerItemList : public QGalleryAbstractResponse
+class Q_AUTOTEST_EXPORT QGalleryTrackerItemList : public QGalleryAbstractResponse
 {
     Q_OBJECT
 public:
     QGalleryTrackerItemList(
             const QGalleryTrackerItemListArguments &arguments,
+            bool live,
             int cursorPosition,
             int minimumPagedItems,
             QObject *parent = 0);
@@ -160,6 +162,8 @@ Q_SIGNALS:
 
 protected:
     QGalleryTrackerItemList(QGalleryTrackerItemListPrivate &dd, QObject *parent);
+
+    void timerEvent(QTimerEvent *event);
 
 private:
     Q_DECLARE_PRIVATE(QGalleryTrackerItemList)

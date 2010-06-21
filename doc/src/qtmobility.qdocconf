@@ -13,6 +13,7 @@ headerdirs = ../../src/bearer \
              ../../src/systeminfo \
              ../../src/contacts \
              ../../src/multimedia \
+             ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
@@ -26,6 +27,7 @@ sourcedirs = ../../src/bearer \
              ../../src/systeminfo \
              ../../src/contacts \
              ../../src/multimedia \
+             ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
@@ -36,6 +38,7 @@ excludedirs = ../../src/messaging/win32wce \
               ../../src/publishsubscribe/symbian
 
 exampledirs = ../../examples \
+              ../../demos \
               ../.. \
               .
 

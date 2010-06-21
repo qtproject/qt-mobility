@@ -84,6 +84,20 @@ void QGalleryTrackerMetaDataEdit::commit()
     }
 }
 
+void QGalleryTrackerMetaDataEdit::itemsInserted(int index, int count)
+{
+    if (index < m_index)
+        m_index += count;
+}
+
+void QGalleryTrackerMetaDataEdit::itemsRemoved(int index, int count)
+{
+    if (index + count < m_index)
+        m_index -= count;
+    else if (index < m_index)
+        m_index = -1;
+}
+
 void QGalleryTrackerMetaDataEdit::watcherFinished(QDBusPendingCallWatcher *watcher)
 {
     Q_ASSERT(watcher == m_watcher);
