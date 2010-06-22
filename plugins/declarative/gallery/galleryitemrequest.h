@@ -67,8 +67,11 @@ class GalleryItemRequest : public QObject, public QDeclarativeParserStatus
     Q_PROPERTY(QStringList properties READ propertyNames WRITE setPropertyNames)
     Q_PROPERTY(bool live READ isLive WRITE setLive)
     Q_PROPERTY(QVariant item READ itemId WRITE setItemId)
-    Q_PROPERTY(QString itemType READ itemType NOTIFY itemChanged)
-    Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY itemChanged)
+    Q_PROPERTY(bool reading READ isReading NOTIFY statusChanged)
+    Q_PROPERTY(bool writing READ isWriting NOTIFY statusChanged)
+    Q_PROPERTY(bool available READ isAvailable NOTIFY availableChanged)
+    Q_PROPERTY(QString itemType READ itemType NOTIFY availableChanged)
+    Q_PROPERTY(QUrl itemUrl READ itemUrl NOTIFY availableChanged)
     Q_PROPERTY(QObject *metaData READ metaData NOTIFY metaDataChanged)
 public:
     enum State
@@ -121,6 +124,17 @@ public:
     void setItemId(const QVariant &itemId) {
         m_request.setItemId(itemId); if (m_complete) m_request.execute(); }
 
+    bool isReading() const
+    {
+        return m_request.state() == QGalleryAbstractRequest::Active
+                || (m_itemList && (m_itemList->status(0) & QGalleryItemList::Reading));
+    }
+
+    bool isWriting() const {
+        return m_itemList && (m_itemList->status(0) & QGalleryItemList::Writing); }
+
+    bool isAvailable() const { return m_itemList && m_itemList->count() > 0; }
+
     QString itemType() const { return m_itemList ? m_itemList->type(0) : QString(); }
     QUrl itemUrl() const { return m_itemList ? m_itemList->url(0) : QUrl(); }
 
@@ -142,13 +156,15 @@ Q_SIGNALS:
     void stateChanged();
     void resultChanged();
     void progressChanged();
-    void itemChanged();
+    void statusChanged();
+    void availableChanged();
     void metaDataChanged();
 
 private Q_SLOTS:
     void _q_itemListChanged(QGalleryItemList *list);
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);
+    void _q_statusChanged(int index, int count);
     void _q_metaDataChanged(int index, int count, const QList<int> &keys);
     void _q_valueChanged(const QString &key, const QVariant &value);
 

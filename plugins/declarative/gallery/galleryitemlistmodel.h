@@ -54,6 +54,17 @@ class GalleryItemListModel : public QAbstractListModel
 {
     Q_OBJECT
 public:
+    enum Roles
+    {
+        ItemId = 0,
+        ItemType,
+        ItemUrl,
+        Reading,
+        Writing,
+        Available,
+        MetaDataOffset
+    };
+
     GalleryItemListModel(QObject *parent = 0);
     ~GalleryItemListModel();
 
@@ -77,7 +88,7 @@ private Q_SLOTS:
     void _q_itemsInserted(int index, int count);
     void _q_itemsRemoved(int index, int count);
     void _q_itemsMoved(int from, int to, int count);
-    void _q_metaDataChanged(int index, int count, const QList<int> &keys);
+    void _q_itemsChanged(int index, int count);
 
 protected:
     QGalleryItemList *m_itemList;

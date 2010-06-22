@@ -130,9 +130,29 @@ GalleryItemRequest::~GalleryItemRequest()
 */
 
 /*!
-    \qmlpropery galleryId GalleryItem::item
+    \qmlproperty galleryId GalleryItem::item
 
     This property holds the id of the item to return information about.
+*/
+
+/*!
+    \qmlproperty bool GalleryItem::available
+
+    This property holds whether the meta-data of an item is available.
+*/
+
+/*!
+    \qmlproperty bool GalleryItem::reading
+
+    This property holds whether the meta-data of an item is currently being
+    read.
+*/
+
+/*!
+    \qmlproperty bool GalleryItem::writing
+
+    This property holds whether the meta-data of an item is currently being
+    written.
 */
 
 /*!
@@ -248,7 +268,8 @@ void GalleryItemRequest::_q_itemListChanged(QGalleryItemList *items)
                 this, SLOT(_q_metaDataChanged(int,int,QList<int>)));
     }
 
-    emit itemChanged();
+    emit statusChanged();
+    emit availableChanged();
 }
 
 void GalleryItemRequest::_q_itemsInserted(int index, int)
@@ -262,7 +283,8 @@ void GalleryItemRequest::_q_itemsInserted(int index, int)
                     : value);
         }
 
-        emit itemChanged();
+        emit statusChanged();
+        emit availableChanged();
     }
 }
 
@@ -273,8 +295,15 @@ void GalleryItemRequest::_q_itemsRemoved(int index, int)
         for (iterator it = m_propertyKeys.constBegin(); it != m_propertyKeys.constEnd(); ++it)
             m_metaData->insert(it.value(), QVariant(m_itemList->propertyType(it.key())));
 
-        emit itemChanged();
+        emit statusChanged();
+        emit availableChanged();
     }
+}
+
+void GalleryItemRequest::_q_statusChanged(int index, int)
+{
+    if (index == 0)
+        emit statusChanged();
 }
 
 void GalleryItemRequest::_q_metaDataChanged(int index, int, const QList<int> &keys)

@@ -71,18 +71,24 @@ QVariant GalleryItemListModel::data(const QModelIndex &index, int role) const
 {
     if (index.isValid()) {
         switch (role) {
-        case 0:
+        case ItemId:
             return m_itemList->id(index.row());
-        case 1:
+        case ItemType:
             return m_itemList->type(index.row());
-        case 2:
+        case ItemUrl:
             return m_itemList->url(index.row());
+        case Reading:
+            return bool(m_itemList->status(index.row()) & QGalleryItemList::Reading);
+        case Writing:
+            return bool(m_itemList->status(index.row()) & QGalleryItemList::Writing);
+        case Available:
+            return !bool(m_itemList->status(index.row()) & QGalleryItemList::OutOfRange);
         default:
             {
-                QVariant value = m_itemList->metaData(index.row(), role - 3);
+                QVariant value = m_itemList->metaData(index.row(), role - MetaDataOffset);
 
                 return value.isNull()
-                        ?  QVariant(m_itemList->propertyType(role - 3))
+                        ?  QVariant(m_itemList->propertyType(role - MetaDataOffset))
                         : value;
             }
         }
@@ -94,8 +100,10 @@ QVariant GalleryItemListModel::data(const QModelIndex &index, int role) const
 bool GalleryItemListModel::setData(
         const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.isValid() && m_itemList->propertyAttributes(role) & QGalleryProperty::CanWrite) {
-        m_itemList->setMetaData(index.row(), role - 3, value);
+    if (index.isValid()
+            && (role -= MetaDataOffset) > 0
+            && m_itemList->propertyAttributes(role) & QGalleryProperty::CanWrite) {
+        m_itemList->setMetaData(index.row(), role, value);
 
         return true;
     } else {
@@ -140,19 +148,22 @@ void GalleryItemListModel::setItemList(QGalleryItemList *list)
 
         typedef QStringList::const_iterator iterator;
         for (iterator it = propertyNames.constBegin(), end = propertyNames.constEnd(); it != end; ++it)
-            roleNames.insert(m_itemList->propertyKey(*it) + 3, it->toLatin1());
+            roleNames.insert(m_itemList->propertyKey(*it) + MetaDataOffset, it->toLatin1());
 
-        roleNames.insert(0, QByteArray("itemId"));
-        roleNames.insert(1, QByteArray("itemType"));
-        roleNames.insert(2, QByteArray("url"));
+        roleNames.insert(ItemId, QByteArray("itemId"));
+        roleNames.insert(ItemType, QByteArray("itemType"));
+        roleNames.insert(ItemUrl, QByteArray("url"));
+        roleNames.insert(Reading, QByteArray("reading"));
+        roleNames.insert(Writing, QByteArray("writing"));
+        roleNames.insert(Available, QByteArray("available"));
 
         setRoleNames(roleNames);
 
         connect(m_itemList, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
         connect(m_itemList, SIGNAL(removed(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
         connect(m_itemList, SIGNAL(moved(int,int,int)), this, SLOT(_q_itemsMoved(int,int,int)));
-        connect(m_itemList, SIGNAL(metaDataChanged(int,int,QList<int>)),
-                this, SLOT(_q_metaDataChanged(int,int,QList<int>)));
+        connect(m_itemList, SIGNAL(statusChanged(int,int)), this, SLOT(_q_itemsChanged(int,int)));
+        connect(m_itemList, SIGNAL(metaDataChanged(int,int)), this, SLOT(_q_itemsChanged(int,int)));
 
         m_lowerOffset = m_itemList->minimumPagedItems() / 4;
         m_upperOffset = m_lowerOffset - m_itemList->minimumPagedItems();
@@ -185,7 +196,7 @@ void GalleryItemListModel::_q_itemsMoved(int from, int to, int count)
     endMoveRows();
 }
 
-void GalleryItemListModel::_q_metaDataChanged(int index, int count, const QList<int> &)
+void GalleryItemListModel::_q_itemsChanged(int index, int count)
 {
     emit dataChanged(createIndex(index, 0), createIndex(index + count - 1, 0));
 }
