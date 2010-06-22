@@ -42,6 +42,7 @@
 #include "qorganizersymbian_p.h"
 #include "qtorganizer.h"
 #include <calsession.h>
+#include <calchangecallback.h>
 #include <calentryview.h>
 #include "organizeritemdetailtransform.h"
 #include "organizeritemtypetransform.h"
@@ -79,18 +80,34 @@ QOrganizerItemSymbianEngine::QOrganizerItemSymbianEngine() :
     // Open calendar session and open default file
     m_calSession = CCalSession::NewL();
     m_calSession->OpenL(KNullDesC);
-
+    
     // Create entry view (creation is synchronized with CActiveSchedulerWait)
     m_entryView = CCalEntryView::NewL(*m_calSession, *this);
     m_activeSchedulerWait = new CActiveSchedulerWait();
     // TODO: The calendar session may take some time to initialize which would
     // make an UI app using symbian backend freeze. To be refactored.
     m_activeSchedulerWait->Start();
+    
+    // Create change notification filter
+    TCalTime minTime;
+    minTime.SetTimeUtcL(TCalTime::MinTime());
+    TCalTime maxTime;
+    maxTime.SetTimeUtcL(TCalTime::MaxTime());
+    CalCommon::TCalTimeRange calTimeRange(minTime, maxTime);
+    CCalChangeNotificationFilter *filter = CCalChangeNotificationFilter::NewL(MCalChangeCallBack2::EChangeEntryAll, true, calTimeRange);
+    
+    // Start listening to calendar events
+    m_calSession->StartChangeNotification(*this, *filter);
+    
+    // Cleanup
+    delete filter;
 }
 
 QOrganizerItemSymbianEngine::~QOrganizerItemSymbianEngine()
 {
     /* TODO clean up your stuff.  Perhaps a QScopedPointer or QSharedDataPointer would be in order */
+    m_calSession->StopChangeNotification();
+    
     delete m_activeSchedulerWait;
     delete m_entryView;
     delete m_calSession;
@@ -259,29 +276,46 @@ bool QOrganizerItemSymbianEngine::saveItems(QList<QOrganizerItem> *items, QMap<i
     // TODO: the performance would be probably better, if we had a separate
     // implementation for the case with a list of items that would save all
     // the items
+    
+    QOrganizerItemChangeSet changeSet;
+    
     for (int i(0); i < items->count(); i++) {
         QOrganizerItem item = items->at(i);
-        saveItem(&item, error);
-        if (*error != QOrganizerItemManager::NoError) {
-            errorMap->insert(i, *error);
+        
+        // Save
+        QOrganizerItemManager::Error saveError;
+        TRAPD(err, saveItemL(&item, &changeSet));
+        transformError(err, &saveError);
+        
+        // Check error
+        if (saveError != QOrganizerItemManager::NoError) {
+            *error = saveError;
+            if (errorMap)
+                errorMap->insert(i, *error);
         } else {
             // Update the item with the data that is available after save
             items->replace(i, item);
         }
     }
-
+    
+    // Emit changes
+    changeSet.emitSignals(this);
+    
     return *error == QOrganizerItemManager::NoError;
 }
+
 
 bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemManager::Error* error)
 {
     // TODO: Validate item according to the schema
-
-    TRAPD(err, saveItemL(item));
-    return transformError(err, error);
+    QOrganizerItemChangeSet changeSet;
+    TRAPD(err, saveItemL(item, &changeSet));
+    transformError(err, error);
+    changeSet.emitSignals(this);
+    return *error == QOrganizerItemManager::NoError;
 }
 
-void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
+void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet)
 {
     // Create entry
     CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
@@ -295,9 +329,11 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
     CleanupStack::PushL(entry);
 
     // Check if this is an exising entry which needs update.
+    bool isNewEntry = true;
     if (item->localId() && item->id().managerUri() == managerUri()) {
         // Use old local id.
         entry->SetLocalUidL(TCalLocalUid(item->localId()));
+        isNewEntry = false;
     }
         
     // Transform QOrganizerItem -> CCalEntry    
@@ -331,6 +367,12 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item)
     // Cleanup
     CleanupStack::PopAndDestroy(&entries);
     CleanupStack::PopAndDestroy(entry);
+    
+    // Update change set
+    if (isNewEntry)
+        changeSet->insertAddedItem(item->localId());
+    else
+        changeSet->insertChangedItem(item->localId());
 }
 
 bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
@@ -338,33 +380,54 @@ bool QOrganizerItemSymbianEngine::removeItems(const QList<QOrganizerItemLocalId>
     // TODO: the performance would be probably better, if we had a separate
     // implementation for the case with a list of item ids that would
     // remove all the items
+    
+    QOrganizerItemChangeSet changeSet;
+    
     for (int i(0); i < itemIds.count(); i++) {
-        QOrganizerItemLocalId localId = itemIds.at(i);
-        removeItem(localId, error);
-        if (*error != QOrganizerItemManager::NoError) {
-            errorMap->insert(i, *error);
+        
+        // Remove
+        QOrganizerItemManager::Error removeError;
+        TRAPD(err, removeItemL(itemIds.at(i), &changeSet));
+        transformError(err, &removeError);
+        
+        // Check error
+        if (removeError != QOrganizerItemManager::NoError) {
+            *error = removeError;
+            if (errorMap)
+                errorMap->insert(i, *error);
         }
     }
+    
+    // Emit changes
+    changeSet.emitSignals(this);
+    
     return *error == QOrganizerItemManager::NoError;
 }
 
 bool QOrganizerItemSymbianEngine::removeItem(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemManager::Error* error)
 {
-    TRAPD(err, removeItemL(organizeritemId));
-    return transformError(err, error);
+    QOrganizerItemChangeSet changeSet;
+    TRAPD(err, removeItemL(organizeritemId, &changeSet));
+    transformError(err, error);
+    changeSet.emitSignals(this);
+    return *error == QOrganizerItemManager::NoError;
 }
 
-void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organizeritemId)
+void QOrganizerItemSymbianEngine::removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet)
 {
     // TODO: DoesNotExistError should be used if the id refers to a non existent item.
     // TODO: How to remove item instances?
 
+    // Remove
     RArray<TCalLocalUid> ids;
     CleanupClosePushL(ids);
     ids.AppendL(TCalLocalUid(organizeritemId));
     TInt count(0);
     m_entryView->DeleteL(ids, count);
     CleanupStack::PopAndDestroy(&ids);
+    
+    // Update change set
+    changeSet->insertRemovedItem(organizeritemId);
 }
 
 QList<QOrganizerItem> QOrganizerItemSymbianEngine::slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const
@@ -574,6 +637,45 @@ TBool QOrganizerItemSymbianEngine::NotifyProgress()
 {
     // No 
     return EFalse;
+}
+
+/*!
+ * From MCalChangeCallBack2
+ */
+void QOrganizerItemSymbianEngine::CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems)
+{
+    // NOTE: We will not be notified of a change if we are the source. So these events are
+    // caused by something else than our manager instance.
+    
+    QOrganizerItemChangeSet changeSet;
+    
+    int count = aChangeItems.Count();
+    for (int i=0; i<count; i++) 
+    {
+        QOrganizerItemLocalId entryId = QOrganizerItemLocalId(aChangeItems[i].iEntryId);
+        switch(aChangeItems[i].iChangeType)
+        {
+            case MCalChangeCallBack2::EChangeAdd:       
+                changeSet.insertAddedItem(entryId);
+                break;
+                
+            case MCalChangeCallBack2::EChangeDelete:
+                changeSet.insertRemovedItem(entryId);
+                break;
+                
+            case MCalChangeCallBack2::EChangeModify:
+                changeSet.insertChangedItem(entryId);
+                break;
+                
+            case MCalChangeCallBack2::EChangeUndefined:
+                // fallthrough
+            default: 
+                changeSet.setDataChanged(true);
+                break;
+        }
+    }
+    
+    changeSet.emitSignals(this);
 }
 
 /*! Transform a Symbian error id to QOrganizerItemManager::Error.
