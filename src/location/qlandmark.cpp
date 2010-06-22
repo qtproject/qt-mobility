@@ -473,9 +473,12 @@ void QLandmark::setLandmarkId(const QLandmarkId &id)
 */
 void QLandmark::clear()
 {
+    Q_D(QLandmark);
+    d->address.clear();
+    d->coordinate = QGeoCoordinate();
+    d->boundingBox = QGeoBoundingBox();
     d->name.clear();
     d->categoryIds.clear();
-    d->location = QGeoLocation();
     d->description.clear();
     d->iconUrl.clear();
     d->radius = 0.0;

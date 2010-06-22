@@ -44,17 +44,14 @@
 
 #include "qmobilityglobal.h"
 
-#include "qgeoplace.h"
-
 #include <QObject>
 #include <QSharedDataPointer>
 #include <QVariant>
 #include <QStringList>
 #include <QUrl>
-#include "qgeocoordinate.h"
+#include "qgeoplace.h"
 #include "qlandmarkid.h"
 #include "qlandmarkcategoryid.h"
-#include "qgeoaddress.h"
 
 QT_BEGIN_HEADER
 
