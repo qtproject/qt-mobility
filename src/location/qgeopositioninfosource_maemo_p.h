@@ -59,12 +59,13 @@
 #ifdef Q_WS_MAEMO_5
 #include "qgeocoordinate.h"
 
-extern "C" {
-   #include <glib.h>
-   #include <location/location-gpsd-control.h>
-   #include <location/location-gps-device.h>
-   #include <location/location-misc.h>
-   #include <location/location-distance-utils.h>
+extern "C"
+{
+#include <glib.h>
+#include <location/location-gpsd-control.h>
+#include <location/location-gps-device.h>
+#include <location/location-misc.h>
+#include <location/location-distance-utils.h>
 }
 #endif
 

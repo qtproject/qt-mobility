@@ -75,7 +75,7 @@ void QGeoPositionInfoSourceMaemo::newPositionUpdate(const QGeoPositionInfo &upda
 QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
     static QGeoPositionInfo lastUpdate;
-    lastUpdate = dbusComm->requestLastKnownPosition(fromSatellitePositioningMethodsOnly); 
+    lastUpdate = dbusComm->requestLastKnownPosition(fromSatellitePositioningMethodsOnly);
 
     return lastUpdate;
 }

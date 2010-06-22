@@ -46,7 +46,8 @@
 #include <QRectF>
 #include <QString>
 
-#include "qgeocoordinate.h"
+#include <qgeoboundingbox.h>
+#include <qgeocoordinate.h>
 
 QTM_USE_NAMESPACE
 
@@ -56,7 +57,7 @@ protected:
     GeoPresenter(QTreeWidget* treeWidget) : treeWidget(treeWidget) {}
 
     QString formatGeoCoordinate(const QGeoCoordinate& coord);
-    void showBoundingBox(QTreeWidgetItem* routeItem, const QRectF& box);
+    void showBoundingBox(QTreeWidgetItem* routeItem, const QGeoBoundingBox& box);
 
 public:
     virtual void show() = 0;

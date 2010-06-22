@@ -163,7 +163,7 @@ Q_SIGNALS:
 
 private:
     QLandmarkManagerPrivate *d_ptr;
-    Q_DECLARE_PRIVATE(QLandmarkManager);
+    Q_DECLARE_PRIVATE(QLandmarkManager)
 
     QLandmarkManagerEngine *engine();
 };

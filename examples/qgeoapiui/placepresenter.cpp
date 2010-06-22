@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 #include "placepresenter.h"
-#include "qgeoaddress.h"
+#include <qgeoaddress.h>
 
-PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QSearchResponse* codingReply)
+PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QGeoPlacesReply* codingReply)
         : GeoPresenter(treeWidget), codingReply(codingReply)
 {
 }
@@ -51,7 +51,7 @@ void PlacePresenter::show()
 {
     treeWidget->clear();
     QTreeWidgetItem* top = showPlaces();
-    QList<QGeoLocation> places = codingReply->places();
+    QList<QGeoPlace> places = codingReply->places();
 
     for (int i = 0; i < places.length(); i++) {
         showPlace(top, places[i]);
@@ -70,23 +70,19 @@ QTreeWidgetItem* PlacePresenter::showPlaces()
     */
 
     QTreeWidgetItem* prop = new QTreeWidgetItem(top);
-    prop->setText(0, "description");
-    prop->setText(1, codingReply->description());
-
-    prop = new QTreeWidgetItem(top);
     prop->setText(0, "count");
     prop->setText(1, QString().setNum(codingReply->places().size()));
 
     return top;
 }
 
-void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoLocation& place)
+void PlacePresenter::showPlace(QTreeWidgetItem* top, const QGeoPlace& place)
 {
     QTreeWidgetItem* prop;
     QTreeWidgetItem* placeItem = new QTreeWidgetItem(top);
     placeItem->setText(0, "place");
 
-    if (!place.boundingBox().isEmpty())
+    if (!place.boundingBox().isValid())
         showBoundingBox(placeItem, place.boundingBox());
 
     prop = new QTreeWidgetItem(placeItem);

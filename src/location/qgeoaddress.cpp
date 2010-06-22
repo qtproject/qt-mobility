@@ -75,8 +75,6 @@ QGeoAddressPrivate::~QGeoAddressPrivate()
     \ingroup location
 
     This class represents an address of a location.
-
-    \sa QSearchResponse
 */
 
 /*!

@@ -94,7 +94,7 @@ private:
 
     void activateTimer();
     void startLocationDaemon();
-    
+
     enum PositionInfoState {
         Undefined = 0,
         Started = 1,
