@@ -1,21 +1,31 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qmediaimageviewer.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qmediaimageviewer.cpp -->
   <title>Qt Mobility Project 1.1: QMediaImageViewer Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QMediaImageViewer"></a>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaImageViewer Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QMediaImageViewer</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#properties">Properties</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#public-slots">Public Slots</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QMediaImageViewer Class Reference</h1>
 <p>The QMediaImageViewer class provides a means of viewing image media. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMediaImageViewer&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QMediaImageViewer&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediaobject.html">QMediaObject</a>.</p>
 <ul>
 <li><a href="qmediaimageviewer-members.html">List of all members, including inherited members</a></li>
@@ -23,92 +33,93 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#MediaStatus-enum">MediaStatus</a></b> { NoMedia, LoadingMedia, LoadedMedia, InvalidMedia }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#State-enum">State</a></b> { StoppedState, PlayingState, PausedState }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#MediaStatus-enum">MediaStatus</a></b> { NoMedia, LoadingMedia, LoadedMedia, InvalidMedia }</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#State-enum">State</a></b> { StoppedState, PlayingState, PausedState }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
-<p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
-<tr><td width="45%" valign="top"><ul>
-<li><div class="fn"><b><a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a></b> : const int</div></li>
-<li><div class="fn"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> : QMediaContent</div></li>
-<li><div class="fn"><b><a href="qmediaimageviewer.html#mediaStatus-prop">mediaStatus</a></b> : const MediaStatus</div></li>
-</ul></td><td valign="top"><ul>
-<li><div class="fn"><b><a href="qmediaimageviewer.html#state-prop">state</a></b> : const State</div></li>
-<li><div class="fn"><b><a href="qmediaimageviewer.html#timeout-prop">timeout</a></b> : int</div></li>
+<table class="propsummary">
+<tr><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a></b> : const int</li>
+<li class="fn"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> : QMediaContent</li>
+<li class="fn"><b><a href="qmediaimageviewer.html#mediaStatus-prop">mediaStatus</a></b> : const MediaStatus</li>
+</ul></td><td  class="topAlign"><ul>
+<li class="fn"><b><a href="qmediaimageviewer.html#state-prop">state</a></b> : const State</li>
+<li class="fn"><b><a href="qmediaimageviewer.html#timeout-prop">timeout</a></b> : int</li>
 </ul>
 </td></tr>
-</table></p>
+</table>
 <ul>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 </ul>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#QMediaImageViewer">QMediaImageViewer</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#dtor.QMediaImageViewer">~QMediaImageViewer</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaStatus-prop">mediaStatus</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaPlaylist * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#playlist">playlist</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#state-prop">state</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#timeout-prop">timeout</a></b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#QMediaImageViewer">QMediaImageViewer</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#dtor.QMediaImageViewer">~QMediaImageViewer</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QMediaContent </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#media-prop">media</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> MediaStatus </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#mediaStatus-prop">mediaStatus</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> QMediaPlaylist * </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#playlist">playlist</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> State </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#state-prop">state</a></b> () const</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> int </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#timeout-prop">timeout</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>12 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">12 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#pause">pause</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#play">play</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#media-prop">setMedia</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#setPlaylist">setPlaylist</a></b> ( QMediaPlaylist * <i>playlist</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#timeout-prop">setTimeout</a></b> ( int <i>timeout</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#stop">stop</a></b> ()</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#pause">pause</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#play">play</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#media-prop">setMedia</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#setPlaylist">setPlaylist</a></b> ( QMediaPlaylist * <i>playlist</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#timeout-prop">setTimeout</a></b> ( int <i>timeout</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#stop">stop</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#elapsedTimeChanged">elapsedTimeChanged</a></b> ( int <i>time</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaImageViewer::MediaStatus <i>status</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#stateChanged">stateChanged</a></b> ( QMediaImageViewer::State <i>state</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#elapsedTimeChanged">elapsedTimeChanged</a></b> ( int <i>time</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaImageViewer::MediaStatus <i>status</i> )</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#stateChanged">stateChanged</a></b> ( QMediaImageViewer::State <i>state</i> )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
-<li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">2 protected functions inherited from <a href="qmediaobject.html#protected-functions">QMediaObject</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaImageViewer class provides a means of viewing image media.</p>
 <p>QMediaImageViewer is used together with a media display object such as <a href="qvideowidget.html">QVideoWidget</a> to present an image. A display object is attached to the image viewer by passing a pointer to the QMediaImageViewer instance to the setMediaObject() function of the display object.</p>
-<pre>    viewer = new QMediaImageViewer(this);
+<pre class="highlightedCode brush: cpp">    viewer = new QMediaImageViewer(this);
 
     display = new QVideoWidget;
     viewer-&gt;setVideoOutput(display);
     display-&gt;show();</pre>
 <p>QMediaImageViewer can be paired with a <a href="qmediaplaylist.html">QMediaPlaylist</a> to create a slide show of images. Constructing a <a href="qmediaplaylist.html">QMediaPlaylist</a> with a pointer to an instance of QMediaImageViewer will attach it to the image viewer; changing the playlist's selection will then change the media displayed by the image viewer. With a playlist attached QMediaImageViewer's <a href="qmediaimageviewer.html#play">play</a>(), <a href="qmediaimageviewer.html#pause">pause</a>(), and <a href="qmediaimageviewer.html#stop">stop</a>() slots can be control the progression of the playlist. The <a href="qmediaimageviewer.html#timeout-prop">timeout</a> property determines how long an image is displayed for before progressing to the next in the playlist, and the <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> property holds how the duration the current image has been displayed for.</p>
-<pre>    playlist = new QMediaPlaylist(this);
+<pre class="highlightedCode brush: cpp">    playlist = new QMediaPlaylist(this);
     playlist-&gt;setMediaObject(viewer);
     playlist-&gt;setPlaybackMode(QMediaPlaylist::Loop);
     playlist-&gt;addMedia(image1);
@@ -117,140 +128,114 @@
 
     viewer-&gt;setTimeout(5000);
     viewer-&gt;play();</pre>
+</div>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QMediaImageViewer/MediaStatus"></a>
-<a name="//apple_ref/cpp/econst/QMediaImageViewer/NoMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaImageViewer/LoadingMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaImageViewer/LoadedMedia"></a>
-<a name="//apple_ref/cpp/econst/QMediaImageViewer/InvalidMedia"></a>
 <h3 class="fn"><a name="MediaStatus-enum"></a>enum QMediaImageViewer::MediaStatus</h3>
 <p>Enumerates the status of an image viewer's current media.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaImageViewer::NoMedia</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">There is no current media.</td></tr>
-<tr><td valign="top"><tt>QMediaImageViewer::LoadingMedia</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The image viewer is loading the current media.</td></tr>
-<tr><td valign="top"><tt>QMediaImageViewer::LoadedMedia</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The image viewer has loaded the current media.</td></tr>
-<tr><td valign="top"><tt>QMediaImageViewer::InvalidMedia</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">The current media cannot be loaded.</td></tr>
-</table></p>
-<a name="//apple_ref/cpp/tag/QMediaImageViewer/State"></a>
-<a name="//apple_ref/cpp/econst/QMediaImageViewer/StoppedState"></a>
-<a name="//apple_ref/cpp/econst/QMediaImageViewer/PlayingState"></a>
-<a name="//apple_ref/cpp/econst/QMediaImageViewer/PausedState"></a>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QMediaImageViewer::NoMedia</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">There is no current media.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaImageViewer::LoadingMedia</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The image viewer is loading the current media.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaImageViewer::LoadedMedia</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The image viewer has loaded the current media.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaImageViewer::InvalidMedia</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">The current media cannot be loaded.</td></tr>
+</table>
 <h3 class="fn"><a name="State-enum"></a>enum QMediaImageViewer::State</h3>
 <p>Enumerates the possible control states an image viewer may be in. The control state of an image viewer determines whether the image viewer is automatically progressing through images in an attached playlist.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaImageViewer::StoppedState</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The image viewer is stopped, and will not automatically move to the next image. The <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> is fixed at 0.</td></tr>
-<tr><td valign="top"><tt>QMediaImageViewer::PlayingState</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The slide show is playing, and will move to the next image when the <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> reaches the <a href="qmediaimageviewer.html#timeout-prop">timeout</a>. The <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> is being incremented.</td></tr>
-<tr><td valign="top"><tt>QMediaImageViewer::PausedState</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">The image viewer is paused, and will not automatically move the to next image. The <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> is fixed at the time the image viewer was paused.</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QMediaImageViewer::StoppedState</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The image viewer is stopped, and will not automatically move to the next image. The <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> is fixed at 0.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaImageViewer::PlayingState</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">The slide show is playing, and will move to the next image when the <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> reaches the <a href="qmediaimageviewer.html#timeout-prop">timeout</a>. The <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> is being incremented.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaImageViewer::PausedState</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">The image viewer is paused, and will not automatically move the to next image. The <a href="qmediaimageviewer.html#elapsedTime-prop">elapsedTime</a> is fixed at the time the image viewer was paused.</td></tr>
+</table>
+</div>
 <hr />
+<div class="prop"/>
 <h2>Property Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/elapsedTime"></a>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/elapsedTimeChanged"></a>
 <h3 class="fn"><a name="elapsedTime-prop"></a>elapsedTime : const int</h3>
 <p>This property holds the amount of time in milliseconds that has elapsed since the current image was loaded.</p>
 <p>The elapsed time only increases while the image viewer is in the <a href="qmediaimageviewer.html#State-enum">PlayingState</a>. If stopped the elapsed time will be reset to 0.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>elapsedTime</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>elapsedTime</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#elapsedTimeChanged">elapsedTimeChanged</a></b> ( int <i>time</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#elapsedTimeChanged">elapsedTimeChanged</a></b> ( int <i>time</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/media"></a>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/setMedia"></a>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/mediaChanged"></a>
 <h3 class="fn"><a name="media-prop"></a>media : <a href="qmediacontent.html">QMediaContent</a></h3>
 <p>This property holds the media an image viewer is presenting.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b>media</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setMedia</b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> QMediaContent </td><td class="memItemRight bottomAlign"><b>media</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setMedia</b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#mediaChanged">mediaChanged</a></b> ( const QMediaContent &amp; <i>media</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/mediaStatus"></a>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/mediaStatusChanged"></a>
 <h3 class="fn"><a name="mediaStatus-prop"></a>mediaStatus : const <a href="qmediaimageviewer.html#MediaStatus-enum">MediaStatus</a></h3>
 <p>This property holds the status of the current media.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">MediaStatus </td><td class="memItemRight" valign="bottom"><b>mediaStatus</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> MediaStatus </td><td class="memItemRight bottomAlign"><b>mediaStatus</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaImageViewer::MediaStatus <i>status</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#mediaStatusChanged">mediaStatusChanged</a></b> ( QMediaImageViewer::MediaStatus <i>status</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/state"></a>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/stateChanged"></a>
 <h3 class="fn"><a name="state-prop"></a>state : const <a href="qmediaimageviewer.html#State-enum">State</a></h3>
 <p>This property holds the playlist control state of a slide show.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">State </td><td class="memItemRight" valign="bottom"><b>state</b> () const</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> State </td><td class="memItemRight bottomAlign"><b>state</b> () const</td></tr>
 </table>
 <p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaimageviewer.html#stateChanged">stateChanged</a></b> ( QMediaImageViewer::State <i>state</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaimageviewer.html#stateChanged">stateChanged</a></b> ( QMediaImageViewer::State <i>state</i> )</td></tr>
 </table>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/timeout"></a>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/setTimeout"></a>
 <h3 class="fn"><a name="timeout-prop"></a>timeout : int</h3>
 <p>This property holds the amount of time in milliseconds an image is displayed for before moving to the next image.</p>
 <p>The timeout only applies if the image viewer has a playlist attached and is in the <a href="qmediaimageviewer.html#State-enum">PlayingState</a>.</p>
 <p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>timeout</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setTimeout</b> ( int <i>timeout</i> )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft topAlign rightAlign"> int </td><td class="memItemRight bottomAlign"><b>timeout</b> () const</td></tr>
+<tr><td class="memItemLeft topAlign rightAlign"> void </td><td class="memItemRight bottomAlign"><b>setTimeout</b> ( int <i>timeout</i> )</td></tr>
 </table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/QMediaImageViewer"></a>
 <h3 class="fn"><a name="QMediaImageViewer"></a>QMediaImageViewer::QMediaImageViewer ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
 <p>Constructs a new image viewer with the given <i>parent</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/~QMediaImageViewer"></a>
 <h3 class="fn"><a name="dtor.QMediaImageViewer"></a>QMediaImageViewer::~QMediaImageViewer ()</h3>
 <p>Destroys an image viewer.</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/elapsedTimeChanged"></a>
-<h3 class="fn"><a name="elapsedTimeChanged"></a>void QMediaImageViewer::elapsedTimeChanged ( int <i>time</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="elapsedTimeChanged"></a>void QMediaImageViewer::elapsedTimeChanged ( int <i>time</i> )<tt> [signal]</tt></h3>
 <p>Signals that the amount of <i>time</i> in milliseconds since the current image was loaded has changed.</p>
 <p>This signal is emitted at a regular interval when the image viewer is in the <a href="qmediaimageviewer.html#State-enum">PlayingState</a> and an image is loaded. The notification interval is controlled by the <a href="qmediaobject.html#notifyInterval-prop">QMediaObject::notifyInterval</a> property.</p>
 <p>See also <a href="qmediaimageviewer.html#timeout-prop">timeout</a> and <a href="qmediaobject.html#notifyInterval-prop">QMediaObject::notifyInterval</a>.</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/mediaChanged"></a>
-<h3 class="fn"><a name="mediaChanged"></a>void QMediaImageViewer::mediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="mediaChanged"></a>void QMediaImageViewer::mediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>media</i> )<tt> [signal]</tt></h3>
 <p>Signals that the <i>media</i> an image viewer is presenting has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/mediaStatusChanged"></a>
-<h3 class="fn"><a name="mediaStatusChanged"></a>void QMediaImageViewer::mediaStatusChanged ( <a href="qmediaimageviewer.html#MediaStatus-enum">QMediaImageViewer::MediaStatus</a> <i>status</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="mediaStatusChanged"></a>void QMediaImageViewer::mediaStatusChanged ( <a href="qmediaimageviewer.html#MediaStatus-enum">QMediaImageViewer::MediaStatus</a> <i>status</i> )<tt> [signal]</tt></h3>
 <p>Signals the the <i>status</i> of the current media has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/pause"></a>
-<h3 class="fn"><a name="pause"></a>void QMediaImageViewer::pause ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="pause"></a>void QMediaImageViewer::pause ()<tt> [slot]</tt></h3>
 <p>Pauses a slide show.</p>
 <p>The current media and elapsed time are retained. If resumed, the current image will be displayed for the remainder of the time out period before the next image is loaded.</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/play"></a>
-<h3 class="fn"><a name="play"></a>void QMediaImageViewer::play ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="play"></a>void QMediaImageViewer::play ()<tt> [slot]</tt></h3>
 <p>Starts a slide show.</p>
 <p>If the playlist has no current media this will start at the beginning of the playlist, otherwise it will resume from the current media.</p>
 <p>If no playlist is attached to an image viewer this will do nothing.</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/playlist"></a>
 <h3 class="fn"><a name="playlist"></a><a href="qmediaplaylist.html">QMediaPlaylist</a> * QMediaImageViewer::playlist () const</h3>
 <p>Returns the current playlist, or 0 if none.</p>
 <p>See also <a href="qmediaimageviewer.html#setPlaylist">setPlaylist</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/setPlaylist"></a>
-<h3 class="fn"><a name="setPlaylist"></a>void QMediaImageViewer::setPlaylist ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="setPlaylist"></a>void QMediaImageViewer::setPlaylist ( <a href="qmediaplaylist.html">QMediaPlaylist</a> * <i>playlist</i> )<tt> [slot]</tt></h3>
 <p>Use <i>playlist</i> as the source of images to be displayed in the viewer.</p>
 <p>See also <a href="qmediaimageviewer.html#playlist">playlist</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/stateChanged"></a>
-<h3 class="fn"><a name="stateChanged"></a>void QMediaImageViewer::stateChanged ( <a href="qmediaimageviewer.html#State-enum">QMediaImageViewer::State</a> <i>state</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="stateChanged"></a>void QMediaImageViewer::stateChanged ( <a href="qmediaimageviewer.html#State-enum">QMediaImageViewer::State</a> <i>state</i> )<tt> [signal]</tt></h3>
 <p>Signals that the playlist control <i>state</i> of an image viewer has changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaImageViewer/stop"></a>
-<h3 class="fn"><a name="stop"></a>void QMediaImageViewer::stop ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<h3 class="fn"><a name="stop"></a>void QMediaImageViewer::stop ()<tt> [slot]</tt></h3>
 <p>Stops a slide show.</p>
 <p>The current media is retained, but the elapsed time is discarded. If resumed, the current image will be displayed for the full time out period before the next image is loaded.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>

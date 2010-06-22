@@ -1,21 +1,31 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html
-    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<!-- qmediastreamscontrol.cpp -->
 <head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- qmediastreamscontrol.cpp -->
   <title>Qt Mobility Project 1.1: QMediaStreamsControl Class Reference</title>
-  <link href="classic.css" rel="stylesheet" type="text/css" />
-</head>
-<body>
-<a name="//apple_ref/cpp/cl//QMediaStreamsControl"></a>
+  <link rel="stylesheet" type="text/css" href="style/OfflineStyle.css" /></head>
+<body class="offline narrow" >
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaStreamsControl Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">Modules</a></li>              <li>QMediaStreamsControl</li>
+<div class="toc">
+<h3>Contents</h3>
+<ul>
+<li class="level1"><a href="#public-types">Public Types</a></li>
+<li class="level1"><a href="#public-functions">Public Functions</a></li>
+<li class="level1"><a href="#signals">Signals</a></li>
+<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
+<li class="level1"><a href="#macros">Macros</a></li>
+<li class="level1"><a href="#details">Detailed Description</a></li>
+</ul>
+</div>
+<h1 class="title">QMediaStreamsControl Class Reference</h1>
 <p>The QMediaStreamsControl class provides a media stream selection control. <a href="#details">More...</a></p>
-<pre>    #include &lt;QMediaStreamsControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<pre class="highlightedCode brush: cpp">    #include &lt;QMediaStreamsControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <ul>
 <li><a href="qmediastreamscontrol-members.html">List of all members, including inherited members</a></li>
@@ -23,119 +33,110 @@
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#StreamType-enum">StreamType</a></b> { AudioStream, VideoStream, SubPictureStream, UnknownStream, DataStream }</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#StreamType-enum">StreamType</a></b> { AudioStream, VideoStream, SubPictureStream, UnknownStream, DataStream }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#dtor.QMediaStreamsControl">~QMediaStreamsControl</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#isActive">isActive</a></b> ( int <i>stream</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual QVariant </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#metaData">metaData</a></b> ( int <i>stream</i>, QtMultimediaKit::MetaData <i>key</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#setActive">setActive</a></b> ( int <i>stream</i>, bool <i>state</i> ) = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#streamCount">streamCount</a></b> () = 0</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">virtual StreamType </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#streamType">streamType</a></b> ( int <i>stream</i> ) = 0</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#dtor.QMediaStreamsControl">~QMediaStreamsControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#isActive">isActive</a></b> ( int <i>stream</i> ) = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual QVariant </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#metaData">metaData</a></b> ( int <i>stream</i>, QtMultimediaKit::MetaData <i>key</i> ) = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#setActive">setActive</a></b> ( int <i>stream</i>, bool <i>state</i> ) = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual int </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#streamCount">streamCount</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> virtual StreamType </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#streamType">streamType</a></b> ( int <i>stream</i> ) = 0</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#activeStreamsChanged">activeStreamsChanged</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#streamsChanged">streamsChanged</a></b> ()</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#activeStreamsChanged">activeStreamsChanged</a></b> ()</td></tr>
+<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#streamsChanged">streamsChanged</a></b> ()</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#QMediaStreamsControl">QMediaStreamsControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#QMediaStreamsControl">QMediaStreamsControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="macros"></a>
 <h2>Macros</h2>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediastreamscontrol.html#QMediaStreamsControl_iid">QMediaStreamsControl_iid</a></b></td></tr>
+<table class="alignedsummary">
+<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediastreamscontrol.html#QMediaStreamsControl_iid">QMediaStreamsControl_iid</a></b></td></tr>
 </table>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
+<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaStreamsControl class provides a media stream selection control.</p>
 <p>The QMediaStreamsControl class provides descriptions of the available media streams and allows individual streams to be activated and deactivated.</p>
 <p>The interface name of QMediaStreamsControl is <tt>com.nokia.Qt.MediaStreamsControl</tt> as defined in <a href="qmediastreamscontrol.html#QMediaStreamsControl_iid">QMediaStreamsControl_iid</a>.</p>
+</div>
 <p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>().</p>
 <hr />
+<div class="types"/>
 <h2>Member Type Documentation</h2>
-<a name="//apple_ref/cpp/tag/QMediaStreamsControl/StreamType"></a>
-<a name="//apple_ref/cpp/econst/QMediaStreamsControl/AudioStream"></a>
-<a name="//apple_ref/cpp/econst/QMediaStreamsControl/VideoStream"></a>
-<a name="//apple_ref/cpp/econst/QMediaStreamsControl/SubPictureStream"></a>
-<a name="//apple_ref/cpp/econst/QMediaStreamsControl/UnknownStream"></a>
-<a name="//apple_ref/cpp/econst/QMediaStreamsControl/DataStream"></a>
 <h3 class="fn"><a name="StreamType-enum"></a>enum QMediaStreamsControl::StreamType</h3>
 <p>Media stream type.</p>
-<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
-<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
-<tr><td valign="top"><tt>QMediaStreamsControl::AudioStream</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Audio stream.</td></tr>
-<tr><td valign="top"><tt>QMediaStreamsControl::VideoStream</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Video stream.</td></tr>
-<tr><td valign="top"><tt>QMediaStreamsControl::SubPictureStream</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Subpicture or teletext stream.</td></tr>
-<tr><td valign="top"><tt>QMediaStreamsControl::UnknownStream</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The stream type is unknown.</td></tr>
-<tr><td valign="top"><tt>QMediaStreamsControl::DataStream</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">&nbsp;</td></tr>
-</table></p>
+<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+<tr><td  class="topAlign"><tt>QMediaStreamsControl::AudioStream</tt></td><td class=" topAlign"><tt>2</tt></td><td  class="topAlign">Audio stream.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaStreamsControl::VideoStream</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Video stream.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaStreamsControl::SubPictureStream</tt></td><td class=" topAlign"><tt>3</tt></td><td  class="topAlign">Subpicture or teletext stream.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaStreamsControl::UnknownStream</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">The stream type is unknown.</td></tr>
+<tr><td  class="topAlign"><tt>QMediaStreamsControl::DataStream</tt></td><td class=" topAlign"><tt>4</tt></td><td  class="topAlign">&nbsp;</td></tr>
+</table>
+</div>
 <hr />
+<div class="func"/>
 <h2>Member Function Documentation</h2>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/QMediaStreamsControl"></a>
-<h3 class="fn"><a name="QMediaStreamsControl"></a>QMediaStreamsControl::QMediaStreamsControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<h3 class="fn"><a name="QMediaStreamsControl"></a>QMediaStreamsControl::QMediaStreamsControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
 <p>Constructs a new media streams control with the given <i>parent</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/~QMediaStreamsControl"></a>
-<h3 class="fn"><a name="dtor.QMediaStreamsControl"></a>QMediaStreamsControl::~QMediaStreamsControl ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<h3 class="fn"><a name="dtor.QMediaStreamsControl"></a>QMediaStreamsControl::~QMediaStreamsControl ()<tt> [virtual]</tt></h3>
 <p>Destroys a media streams control.</p>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/activeStreamsChanged"></a>
-<h3 class="fn"><a name="activeStreamsChanged"></a>void QMediaStreamsControl::activeStreamsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="activeStreamsChanged"></a>void QMediaStreamsControl::activeStreamsChanged ()<tt> [signal]</tt></h3>
 <p>The signal is emited when the active streams list is changed.</p>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/isActive"></a>
-<h3 class="fn"><a name="isActive"></a>bool QMediaStreamsControl::isActive ( int <i>stream</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="isActive"></a>bool QMediaStreamsControl::isActive ( int <i>stream</i> )<tt> [pure virtual]</tt></h3>
 <p>Returns true if the media <i>stream</i> is active.</p>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/metaData"></a>
-<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaStreamsControl::metaData ( int <i>stream</i>, <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::MetaData</a> <i>key</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="metaData"></a><a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> QMediaStreamsControl::metaData ( int <i>stream</i>, <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::MetaData</a> <i>key</i> )<tt> [pure virtual]</tt></h3>
 <p>Returns the meta-data value of <i>key</i> for a given <i>stream</i>.</p>
 <p>Useful metadata keya are <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::Title</a>, <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::Description</a> and <a href="qtmultimediakit.html#MetaData-enum">QtMultimediaKit::Language</a>.</p>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/setActive"></a>
-<h3 class="fn"><a name="setActive"></a>void QMediaStreamsControl::setActive ( int <i>stream</i>, bool <i>state</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="setActive"></a>void QMediaStreamsControl::setActive ( int <i>stream</i>, bool <i>state</i> )<tt> [pure virtual]</tt></h3>
 <p>Sets the active <i>state</i> of a media <i>stream</i>.</p>
 <p>Setting the active state of a media stream to true will activate it. If any other stream of the same type was previously active it will be deactivated. Setting the active state fo a media stream to false will deactivate it.</p>
 <p>See also <a href="qmediastreamscontrol.html#isActive">isActive</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/streamCount"></a>
-<h3 class="fn"><a name="streamCount"></a>int QMediaStreamsControl::streamCount ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="streamCount"></a>int QMediaStreamsControl::streamCount ()<tt> [pure virtual]</tt></h3>
 <p>Returns the number of media streams.</p>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/streamType"></a>
-<h3 class="fn"><a name="streamType"></a><a href="qmediastreamscontrol.html#StreamType-enum">StreamType</a> QMediaStreamsControl::streamType ( int <i>stream</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<h3 class="fn"><a name="streamType"></a><a href="qmediastreamscontrol.html#StreamType-enum">StreamType</a> QMediaStreamsControl::streamType ( int <i>stream</i> )<tt> [pure virtual]</tt></h3>
 <p>Return the type of a media <i>stream</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaStreamsControl/streamsChanged"></a>
-<h3 class="fn"><a name="streamsChanged"></a>void QMediaStreamsControl::streamsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<h3 class="fn"><a name="streamsChanged"></a>void QMediaStreamsControl::streamsChanged ()<tt> [signal]</tt></h3>
 <p>The signal is emited when the available streams list is changed.</p>
+</div>
 <hr />
+<div class="macros"/>
 <h2>Macro Documentation</h2>
-<a name="//apple_ref/cpp/macro//QMediaStreamsControl_iid"></a>
 <h3 class="fn"><a name="QMediaStreamsControl_iid"></a>QMediaStreamsControl_iid</h3>
 <p><tt>com.nokia.Qt.MediaStreamsControl</tt></p>
 <p>Defines the interface name of the <a href="qmediastreamscontrol.html">QMediaStreamsControl</a> class.</p>
+</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
