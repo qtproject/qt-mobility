@@ -74,9 +74,9 @@ public:
         qmlRegisterType<GalleryFilterInclusiveRange>(uri, 1, 0, "GalleryInclusivePropertyRange");
         qmlRegisterType<GalleryFilterUnion>(uri, 1, 0, "GalleryFilterUnion");
         qmlRegisterType<GalleryFilterIntersection>(uri, 1, 0, "GalleryFilterIntersection");
-        qmlRegisterType<GalleryCountRequest>(uri, 1, 0, "GalleryCountQuery");
+        qmlRegisterType<GalleryCountRequest>(uri, 1, 0, "GalleryQueryCount");
         qmlRegisterType<GalleryItemRequest>(uri, 1, 0, "GalleryItem");
-        qmlRegisterType<GalleryQueryRequest>(uri, 1, 0, "GalleryQuery");
+        qmlRegisterType<GalleryQueryRequest>(uri, 1, 0, "GalleryQueryModel");
         qmlRegisterType<QAbstractGallery>();
         qmlRegisterType<QDocumentGallery>(uri, 1, 0, "DocumentGallery");
     }

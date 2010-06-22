@@ -46,13 +46,14 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryCountQuery GalleryCountRequest
+    \qmlclass GalleryQueryCount GalleryCountRequest
 
-    \brief The GalleryCountQuery element allows you to query a count of items
-    from a gallery.
+    \brief The GalleryQueryCount element allows you to fetch the number of
+    items matching a gallery query.
 
-    This is element is part of the \bold {QtMobility.gallery 1.0} module.
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 
+    \sa GalleryQueryModel, GalleryItem
 */
 
 GalleryCountRequest::GalleryCountRequest(QObject *parent)
@@ -71,13 +72,13 @@ GalleryCountRequest::GalleryCountRequest(QObject *parent)
 }
 
 /*!
-    \qmlproperty QAbstractGallery GalleryCountQuery::gallery
+    \qmlproperty QAbstractGallery GalleryQueryCount::gallery
 
     This property holds the gallery a query should return results from.
 */
 
 /*!
-    \qmlproperty enum GalleryCountQuery::state
+    \qmlproperty enum GalleryQueryCount::state
 
     This property holds the state of a query.  It can be one of:
 
@@ -92,7 +93,7 @@ GalleryCountRequest::GalleryCountRequest(QObject *parent)
 */
 
 /*!
-    \qmlproperty enum GalleryCountQuery::result
+    \qmlproperty enum GalleryQueryCount::result
 
     The property holds the result of a query. It can be one of:
 
@@ -119,100 +120,100 @@ GalleryCountRequest::GalleryCountRequest(QObject *parent)
 */
 
 /*!
-    \qmlproperty int GalleryCountQuery::currentProgress
+    \qmlproperty int GalleryQueryCount::currentProgress
 
     This property holds the current progress value.
 */
 
 /*!
-    \qmlproperty int GalleryCountQuery::maximumProgress
+    \qmlproperty int GalleryQueryCount::maximumProgress
 
     This property holds the maximum progress value.
 */
 
 /*!
-    \qmlproperty stringlist GalleryCountQuery::properties
+    \qmlproperty stringlist GalleryQueryCount::properties
 
     This property holds the item properties a query should return values for.
 */
 
 /*!
-    \qmlproperty bool GalleryCountQuery::live
+    \qmlproperty bool GalleryQueryCount::live
 
     This property holds whether a query should refresh its results
     automatically.
 */
 
 /*!
-    \qmlproperty string GalleryCountQuery::itemType
+    \qmlproperty string GalleryQueryCount::itemType
 
     This property contains the type of item a query should return.
 */
 
 /*!
-    \qmlproperty GalleryFilter GalleryCountQuery::filter
+    \qmlproperty GalleryFilter GalleryQueryCount::filter
 
     This property contains criteria to used to filter the results of a query.
 */
 
 /*!
-    \qmlproperty enum GalleryCountQuery::scope
+    \qmlproperty enum GalleryQueryCount::scope
 
     The property contains whether a query should count the direct descendants
     of the \l scopeItemId or all descendants.
 */
 
 /*!
-    \qmlproperty variant GalleryCountQuery::scopeItemId
+    \qmlproperty variant GalleryQueryCount::scopeItemId
 
     This property contains the id of an item that a query should return a
     count of the descendants of.
 */
 
 /*!
-    \qmlproperty int GalleryCountQuery::count
+    \qmlproperty int GalleryQueryCount::count
 
     This property holds the number of items matching a query.
 */
 
 /*!
-    \qmlmethod GalleryCountQuery::reload()
+    \qmlmethod GalleryQueryCount::reload()
 
     Re-queries the gallery.
 */
 
 /*!
-    \qmlmethod GalleryCountQuery::cancel()
+    \qmlmethod GalleryQueryCount::cancel()
 
     Cancels an executing query.
 */
 
 /*!
-    \qmlmethod GalleryCountQuery::clear()
+    \qmlmethod GalleryQueryCount::clear()
 
     Clears the results of a query.
 */
 
 /*!
-    \qmlsignal GalleryCountQuery::onSucceeded()
+    \qmlsignal GalleryQueryCount::onSucceeded()
 
     Signals that a query has finished successfully.
 */
 
 /*!
-    \qmlsignal GalleryCountQuery::onCancelled()
+    \qmlsignal GalleryQueryCount::onCancelled()
 
     Signals that a query was cancelled.
 */
 
 /*!
-    \qmlsignal GalleryCountQuery::onFailed(error)
+    \qmlsignal GalleryQueryCount::onFailed(error)
 
     Signals that a query failed with the given \a error.
 */
 
 /*!
-    \qmlsignal GalleryCountQuery::onFinished(result)
+    \qmlsignal GalleryQueryCount::onFinished(result)
 
     Signals that a query finished with the given \a result.
 */

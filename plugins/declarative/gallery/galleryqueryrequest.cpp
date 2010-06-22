@@ -46,11 +46,27 @@
 QTM_BEGIN_NAMESPACE
 
 /*!
-    \qmlclass GalleryQuery GalleryQueryRequest
-    \brief The GalleryQueryRequest element allows you to query a list of items
-    from a gallery.
+    \qmlclass GalleryQueryModel GalleryQueryRequest
+    \brief The GalleryQueryRequest element is used to specify a model containing
+    items from a gallery.
 
-    This is element is part of the \bold {QtMobility.gallery 1.0} module.
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
+
+    The properties that should be returned for each item by the query are
+    specified in \l properties. In addition all queries return the following
+    properties:
+
+    \list
+    \o itemId The ID of an item.
+    \o itemUrl The URL of an item.
+    \o itemType The type of an item.
+    \o available Whether the meta-data of an item is currently available.
+    Meta-data can be unavailable when an item is outside the loaded range.
+    \o reading Whether the model is in the process of querying new meta-data
+    values for an item.
+    \o writing Whether the model is in the process of writing changes to
+    meta-data values back to the gallery.
+    \endlist
 
     \qml
     import Qt 4.7
@@ -65,7 +81,7 @@ QTM_BEGIN_NAMESPACE
             cellWidth: 128
             cellHeight: 128
 
-            model: GalleryQuery {
+            model: GalleryQueryModel {
                 gallery: DocumentGallery {}
 
                 itemType: "Image"
@@ -84,7 +100,7 @@ QTM_BEGIN_NAMESPACE
     }
     \endqml
 
-    \sa GalleryItem, GalleryCountQuery
+    \sa GalleryItem, GalleryQueryCount
 */
 
 GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
@@ -127,13 +143,13 @@ void GalleryQueryRequest::componentComplete()
 }
 
 /*!
-    \qmlproperty QAbstractGallery GalleryQuery::gallery
+    \qmlproperty QAbstractGallery GalleryQueryModel::gallery
 
     This property holds the gallery a query should return results from.
 */
 
 /*!
-    \qmlproperty enum GalleryQuery::state
+    \qmlproperty enum GalleryQueryModel::state
 
     This property holds the state of a query.  It can be one of:
 
@@ -148,7 +164,7 @@ void GalleryQueryRequest::componentComplete()
 */
 
 /*!
-    \qmlproperty enum GalleryQuery::result
+    \qmlproperty enum GalleryQueryModel::result
 
     The property holds the result of a query. It can be one of:
 
@@ -175,114 +191,114 @@ void GalleryQueryRequest::componentComplete()
 */
 
 /*!
-    \qmlproperty int GalleryQuery::currentProgress
+    \qmlproperty int GalleryQueryModel::currentProgress
 
     This property holds the current progress value.
 */
 
 /*!
-    \qmlproperty int GalleryQuery::maximumProgress
+    \qmlproperty int GalleryQueryModel::maximumProgress
 
     This property holds the maximum progress value.
 */
 
 /*!
-    \qmlproperty QStringList GalleryQuery::properties
+    \qmlproperty QStringList GalleryQueryModel::properties
 
     This property holds the item properties a query should return values for.
 */
 
 /*!
-    \qmlproperty QStringList GalleryQuery::sortProperties
+    \qmlproperty QStringList GalleryQueryModel::sortProperties
 
     This property holds the properties the results of a query should be sorted
     on.
 */
 
 /*!
-    \qmlproperty bool GalleryQuery::live
+    \qmlproperty bool GalleryQueryModel::live
 
     This property holds whether a query should refresh its results
     automatically.
 */
 
 /*!
-    \qmlproperty int GalleryQuery::cursorPosition
+    \qmlproperty int GalleryQueryModel::cursorPosition
 
     This property holds the offset of a query's internal cache.
 */
 
 /*!
-    \qmlproperty int GalleryQuery::minimumPagedItems
+    \qmlproperty int GalleryQueryModel::minimumPagedItems
 
     This property contains the minimum number of consectutive items a query
     should retain in it's internal cache.
 */
 
 /*!
-    \qmlproperty string GalleryQuery::itemType
+    \qmlproperty string GalleryQueryModel::itemType
 
     This property contains the type of item a query should return.
 */
 
 /*!
-    \qmlproperty GalleryFilter GalleryQuery::filter
+    \qmlproperty GalleryFilter GalleryQueryModel::filter
 
     This property contains criteria to used to filter the results of a query.
 */
 
 /*!
-    \qmlproperty variant GalleryQuery::scopeItemId
+    \qmlproperty variant GalleryQueryModel::scopeItemId
 
     This property contains the id of an item that a query should return a
     count of the descendants of.
 */
 
 /*!
-    \qmlproperty enum GalleryQuery::scope
+    \qmlproperty enum GalleryQueryModel::scope
 
     The property contains whether a query should count the direct descendants
     of the \l scopeItemId or all descendants.
 */
 
 /*!
-    \qmlmethod GalleryQuery::reload()
+    \qmlmethod GalleryQueryModel::reload()
 
     Re-queries the gallery.
 */
 
 /*!
-    \qmlmethod GalleryQuery::cancel()
+    \qmlmethod GalleryQueryModel::cancel()
 
     Cancels an executing query.
 */
 
 /*!
-    \qmlmethod GalleryQuery::clear()
+    \qmlmethod GalleryQueryModel::clear()
 
     Clears the results of a query.
 */
 
 /*!
-    \qmlsignal GalleryQuery::onSucceeded()
+    \qmlsignal GalleryQueryModel::onSucceeded()
 
     Signals that a query has finished successfully.
 */
 
 /*!
-    \qmlsignal GalleryQuery::onCancelled()
+    \qmlsignal GalleryQueryModel::onCancelled()
 
     Signals that a query was cancelled.
 */
 
 /*!
-    \qmlsignal GalleryQuery::onFailed(error)
+    \qmlsignal GalleryQueryModel::onFailed(error)
 
     Signals that a query failed with the given \a error.
 */
 
 /*!
-    \qmlsignal GalleryQuery::onFinished(result)
+    \qmlsignal GalleryQueryModel::onFinished(result)
 
     Signals that a query finished with the given \a result.
 */

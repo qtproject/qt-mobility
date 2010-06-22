@@ -47,8 +47,11 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \qmlclass GalleryFilter GalleryFilter
+
     \brief The GalleryFilter element provides filtering criteria for a gallery
     query.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 
     \qml
     GalleryFilter {
@@ -87,8 +90,11 @@ QGalleryFilter GalleryFilter::filter() const
 
 /*!
     \qmlclass GalleryPropertyLessThan GalleryFilterLessThan
+
     \brief The GalleryPropertyLessThan element provides a gallery filter which
     tests if a property value is less than a value.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
 /*!
@@ -113,8 +119,11 @@ QGalleryFilter GalleryFilterLessThan::filter() const
 
 /*!
     \qmlclass GalleryPropertyLessThan GalleryFilterLessEqualsThan
+
     \brief The GalleryPropertyLessEqualThan element provides a gallery filter
     which tests if a property value is less than or equals a value.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
 /*!
@@ -139,8 +148,11 @@ QGalleryFilter GalleryFilterLessThanEquals::filter() const
 
 /*!
     \qmlclass GalleryPropertyGreaterThan GalleryFilterGreaterThan
+
     \brief The GalleryPropertyGreaterThan element provides a gallery filter
     which tests if a property value is greater than a value.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
 /*!
@@ -165,8 +177,11 @@ QGalleryFilter GalleryFilterGreaterThan::filter() const
 
 /*!
     \qmlclass GalleryPropertyGreaterThanEquals GalleryFilterGreaterThanEquals
+
     \brief The GalleryPropertyGreaterThanEquals element provides a gallery filter which
     tests if a property value is greater than or equals a value.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
 /*!
@@ -191,8 +206,11 @@ QGalleryFilter GalleryFilterGreaterThanEquals::filter() const
 
 /*!
     \qmlclass GalleryPropertyExclusiveRange GalleryFilterExclusiveRange
+
     \brief The GalleryPropertyExclusiveRange element provides a gallery filter
     which tests if a property value is between but not equal to two values.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
 /*!
@@ -223,8 +241,11 @@ QGalleryFilter GalleryFilterExclusiveRange::filter() const
 
 /*!
     \qmlclass GalleryInclusivePropertyRange GalleryFilterInclusiveRange
+
     \brief The GalleryInclusivePropertyRange element provides a gallery filter
     which tests if a property value is between or equal to two values.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
 /*!
@@ -255,7 +276,10 @@ QGalleryFilter GalleryFilterInclusiveRange::filter() const
 
 /*!
     \qmlclass GalleryFilterUnion GalleryFilterUnion
+
     \brief The GalleryFilterUnion elements provides a union of gallery filters.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
 /*!
@@ -290,8 +314,11 @@ QGalleryFilter GalleryFilterUnion::filter() const
 
 /*!
     \qmlclass GalleryFilterIntersection GalleryFilterIntersection
+
     \brief The GalleryFilterIntersection elements provides a intersection of
     gallery filters.
+
+    This element is part of the \bold {QtMobility.gallery 1.0} module.
 */
 
 /*!
