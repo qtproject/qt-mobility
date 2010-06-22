@@ -46,13 +46,8 @@ testcase = {
     initTestCase: function()
     {
         testcase.qtuitest_platform = getLocalEnv("TESTPLATFORM");
-        if (!checkPlatform("symbian") &&
-            !checkPlatform("windows") &&
-            !checkPlatform("linux") &&
-            !checkPlatform("maemo") &&
-            !checkPlatform("mac") &&
-            !checkPlatform("wince")) {
-            fail("TESTPLATFORM not valid");
+        if (!checkPlatform(testcase.qtuitest_platform)){
+            fail("TESTPLATFORM "+ testcase.qtuitest_platform +" not valid");
         }
         if (testcase.platform == "linux" || testcase.platform == "maemo" || testcase.platform == "mac") {
             testcase.platform = "unix";
@@ -91,9 +86,20 @@ testcase = {
 
 function checkPlatform(platform)
 {
-    if (testcase.qtuitest_platform != undefined &&
-        testcase.qtuitest_platform.indexOf(platform) != -1) {
-        testcase.platform = platform;
+    if (platform == undefined){
+        return false;
+    }
+    if (platform.contains("S60") || platform.contains("Symbian")) {
+        testcase.platform = "symbian";
+        return true;
+    } else if (platform.contains("maemo") || platform.contains("linux") || platform.contains("mac")) {
+        testcase.platform = "unix";
+        return true;
+    } else if (platform.contains("windows")) {
+        testcase.platform = "windows";
+        return true;
+    } else if (platform.contains("wince")) {
+        testcase.platform = "wince";
         return true;
     }
     return false;
