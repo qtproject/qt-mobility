@@ -14,8 +14,6 @@ HEADERS += \
         galleryfilter.h \
         galleryitemrequest.h \
         galleryqueryrequest.h \
-        galleryremoverequest.h \
-        galleryurlrequest.h
 
 SOURCES += \
         gallerycountrequest.cpp \
@@ -23,8 +21,6 @@ SOURCES += \
         galleryfilter.cpp \
         galleryitemrequest.cpp \
         galleryqueryrequest.cpp \
-        galleryremoverequest.cpp \
-        galleryurlrequest.cpp
 
 CONFIG += mobility
 MOBILITY += gallery

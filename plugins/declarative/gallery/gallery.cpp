@@ -48,8 +48,6 @@
 #include "galleryfilter.h"
 #include "galleryitemrequest.h"
 #include "galleryqueryrequest.h"
-#include "galleryremoverequest.h"
-#include "galleryurlrequest.h"
 
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QAbstractGallery))
 QML_DECLARE_TYPE(QTM_PREPEND_NAMESPACE(QDocumentGallery))
@@ -79,8 +77,6 @@ public:
         qmlRegisterType<GalleryCountRequest>(uri, 1, 0, "GalleryCountQuery");
         qmlRegisterType<GalleryItemRequest>(uri, 1, 0, "GalleryItem");
         qmlRegisterType<GalleryQueryRequest>(uri, 1, 0, "GalleryQuery");
-        qmlRegisterType<GalleryRemoveRequest>(uri, 1, 0, "GalleryRemoveRequest");
-        qmlRegisterType<GalleryUrlRequest>(uri, 1, 0, "GalleryUrlRequest");
         qmlRegisterType<QAbstractGallery>();
         qmlRegisterType<QDocumentGallery>(uri, 1, 0, "DocumentGallery");
     }
