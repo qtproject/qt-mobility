@@ -7,7 +7,7 @@ CONFIG += mobility
 MOBILITY = organizer
 
 CONFIG += link_pkgconfig
-PKGCONFIG += libextendedkcal libextendedkcal-dev
+PKGCONFIG += libextendedkcal
 
 include(../../../common.pri)
 
