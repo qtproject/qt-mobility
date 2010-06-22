@@ -226,7 +226,7 @@ bool QOrganizerItemSkeletonEngine::removeItems(const QList<QOrganizerItemLocalId
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemSkeletonEngine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
     /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return detailDefinitions(itemType, error);
+    return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
 }
 
 QOrganizerItemDetailDefinition QOrganizerItemSkeletonEngine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
