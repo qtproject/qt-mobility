@@ -88,7 +88,11 @@ QTM_BEGIN_NAMESPACE
 */
 
 GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
-    : GalleryItemListModel(parent)
+    : QAbstractListModel(parent)
+    , m_itemList(0)
+    , m_lowerOffset(0)
+    , m_upperOffset(0)
+    , m_updateCursor(true)
     , m_complete(false)
 {
     connect(&m_request, SIGNAL(succeeded()), this, SIGNAL(succeeded()));
@@ -102,7 +106,7 @@ GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
     connect(&m_request, SIGNAL(finished(int)), this, SIGNAL(finished(int)));
 
     connect(&m_request, SIGNAL(itemsChanged(QGalleryItemList*)),
-            this, SLOT(setItemList(QGalleryItemList*)));
+            this, SLOT(_q_setItemList(QGalleryItemList*)));
 }
 
 GalleryQueryRequest::~GalleryQueryRequest()
@@ -265,6 +269,145 @@ void GalleryQueryRequest::reload()
     if (m_itemList)
         m_request.setInitialCursorPosition(!m_updateCursor ? m_itemList->cursorPosition() : 0);
     m_request.execute();
+}
+
+
+int GalleryQueryRequest::rowCount(const QModelIndex &parent) const
+{
+    return !parent.isValid() ? m_rowCount : 0;
+}
+
+QVariant GalleryQueryRequest::data(const QModelIndex &index, int role) const
+{
+    if (index.isValid()) {
+        switch (role) {
+        case ItemId:
+            return m_itemList->id(index.row());
+        case ItemType:
+            return m_itemList->type(index.row());
+        case ItemUrl:
+            return m_itemList->url(index.row());
+        case Reading:
+            return bool(m_itemList->status(index.row()) & QGalleryItemList::Reading);
+        case Writing:
+            return bool(m_itemList->status(index.row()) & QGalleryItemList::Writing);
+        case Available:
+            return !bool(m_itemList->status(index.row()) & QGalleryItemList::OutOfRange);
+        default:
+            {
+                QVariant value = m_itemList->metaData(index.row(), role - MetaDataOffset);
+
+                return value.isNull()
+                        ?  QVariant(m_itemList->propertyType(role - MetaDataOffset))
+                        : value;
+            }
+        }
+    } else {
+        return QVariant();
+    }
+}
+
+bool GalleryQueryRequest::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (index.isValid()
+            && (role -= MetaDataOffset) > 0
+            && m_itemList->propertyAttributes(role) & QGalleryProperty::CanWrite) {
+        m_itemList->setMetaData(index.row(), role, value);
+
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+QModelIndex GalleryQueryRequest::index(int row, int column, const QModelIndex &parent) const
+{
+    if (!parent.isValid() && row >= 0 && row < m_rowCount && column == 0) {
+        if (m_updateCursor) {
+            if (row < m_itemList->count() - 1) {
+                const int position = m_itemList->cursorPosition();
+
+                if (row - m_lowerOffset < position && position > 0) {
+                    m_itemList->setCursorPosition(qMax(0, row - m_lowerOffset));
+
+                    emit const_cast<GalleryQueryRequest *>(this)->cursorPositionChanged();
+                } else if (row + m_upperOffset > position) {
+                    m_itemList->setCursorPosition(qMax(0, row + m_upperOffset));
+
+                    emit const_cast<GalleryQueryRequest *>(this)->cursorPositionChanged();
+                }
+            }
+        }
+
+        return createIndex(row, column);
+    } else {
+        return QModelIndex();
+    }
+}
+
+void GalleryQueryRequest::_q_setItemList(QGalleryItemList *list)
+{
+    m_itemList = list;
+
+    if (m_itemList) {
+        QHash<int, QByteArray> roleNames;
+
+        QStringList propertyNames = m_itemList->propertyNames();
+
+        typedef QStringList::const_iterator iterator;
+        for (iterator it = propertyNames.constBegin(), end = propertyNames.constEnd(); it != end; ++it)
+            roleNames.insert(m_itemList->propertyKey(*it) + MetaDataOffset, it->toLatin1());
+
+        roleNames.insert(ItemId, QByteArray("itemId"));
+        roleNames.insert(ItemType, QByteArray("itemType"));
+        roleNames.insert(ItemUrl, QByteArray("url"));
+        roleNames.insert(Reading, QByteArray("reading"));
+        roleNames.insert(Writing, QByteArray("writing"));
+        roleNames.insert(Available, QByteArray("available"));
+
+        setRoleNames(roleNames);
+
+        connect(m_itemList, SIGNAL(inserted(int,int)), this, SLOT(_q_itemsInserted(int,int)));
+        connect(m_itemList, SIGNAL(removed(int,int)), this, SLOT(_q_itemsRemoved(int,int)));
+        connect(m_itemList, SIGNAL(moved(int,int,int)), this, SLOT(_q_itemsMoved(int,int,int)));
+        connect(m_itemList, SIGNAL(statusChanged(int,int)), this, SLOT(_q_itemsChanged(int,int)));
+        connect(m_itemList, SIGNAL(metaDataChanged(int,int)), this, SLOT(_q_itemsChanged(int,int)));
+
+        m_lowerOffset = m_itemList->minimumPagedItems() / 4;
+        m_upperOffset = m_lowerOffset - m_itemList->minimumPagedItems();
+
+        m_rowCount = m_itemList->count();
+    } else {
+        m_rowCount = 0;
+    }
+
+    reset();
+}
+
+void GalleryQueryRequest::_q_itemsInserted(int index, int count)
+{
+    beginInsertRows(QModelIndex(), index, index + count - 1);
+    m_rowCount += count;
+    endInsertRows();
+}
+
+void GalleryQueryRequest::_q_itemsRemoved(int index, int count)
+{
+    beginRemoveRows(QModelIndex(), index, index + count - 1);
+    m_rowCount -= count;
+    endRemoveRows();
+}
+
+void GalleryQueryRequest::_q_itemsMoved(int from, int to, int count)
+{
+    beginMoveRows(QModelIndex(), from, from + count - 1, QModelIndex(), to);
+    endMoveRows();
+}
+
+void GalleryQueryRequest::_q_itemsChanged(int index, int count)
+{
+    emit dataChanged(createIndex(index, 0), createIndex(index + count - 1, 0));
 }
 
 #include "moc_galleryqueryrequest.cpp"

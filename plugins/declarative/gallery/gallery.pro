@@ -12,7 +12,6 @@ QT += declarative
 HEADERS += \
         gallerycountrequest.h \
         galleryfilter.h \
-        galleryitemlistmodel.h \
         galleryitemrequest.h \
         galleryqueryrequest.h \
         galleryremoverequest.h \
@@ -22,7 +21,6 @@ SOURCES += \
         gallerycountrequest.cpp \
         gallery.cpp \
         galleryfilter.cpp \
-        galleryitemlistmodel.cpp \
         galleryitemrequest.cpp \
         galleryqueryrequest.cpp \
         galleryremoverequest.cpp \

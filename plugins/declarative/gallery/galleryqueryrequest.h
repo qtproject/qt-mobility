@@ -45,20 +45,15 @@
 #include <qgalleryitemlist.h>
 #include <qgalleryqueryrequest.h>
 
+#include <QtCore/qabstractitemmodel.h>
 #include <QtCore/qpointer.h>
 #include <QtDeclarative/qdeclarative.h>
-
-#include "galleryitemlistmodel.h"
-
-QT_BEGIN_NAMESPACE
-class QAbstractItemModel;
-QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
 class GalleryFilterBase;
 
-class GalleryQueryRequest : public GalleryItemListModel, public QDeclarativeParserStatus
+class GalleryQueryRequest : public QAbstractListModel, public QDeclarativeParserStatus
 {
     Q_OBJECT
     Q_INTERFACES(QDeclarativeParserStatus)
@@ -114,6 +109,17 @@ public:
         DirectDescendants
     };
 
+    enum Roles
+    {
+        ItemId = 0,
+        ItemType,
+        ItemUrl,
+        Reading,
+        Writing,
+        Available,
+        MetaDataOffset
+    };
+
     GalleryQueryRequest(QObject *parent = 0);
     ~GalleryQueryRequest();
 
@@ -164,6 +170,16 @@ public:
     GalleryFilterBase *filter() const { return m_filter; }
     void setFilter(GalleryFilterBase *filter) { m_filter = filter; }
 
+    int rowCount(const QModelIndex &parent) const;
+
+    QVariant data(const QModelIndex &index, int role) const;
+    bool setData(const QModelIndex &index, const QVariant &value, int role);
+
+    QModelIndex index(int row, int column, const QModelIndex &parent) const;
+
+    bool autoUpdateCursorPosition() const { return m_updateCursor; }
+    void setAutoUpdateCursorPosition(bool enabled) { m_updateCursor = enabled; }
+
     void classBegin();
     void componentComplete();
 
@@ -180,10 +196,23 @@ Q_SIGNALS:
     void stateChanged();
     void resultChanged();
     void progressChanged();
+    void cursorPositionChanged();
+
+private Q_SLOTS:
+    void _q_setItemList(QGalleryItemList *list);
+    void _q_itemsInserted(int index, int count);
+    void _q_itemsRemoved(int index, int count);
+    void _q_itemsMoved(int from, int to, int count);
+    void _q_itemsChanged(int index, int count);
 
 private:
     QGalleryQueryRequest m_request;
     QPointer<GalleryFilterBase> m_filter;
+    QGalleryItemList *m_itemList;
+    int m_rowCount;
+    int m_lowerOffset;
+    int m_upperOffset;
+    bool m_updateCursor;
     bool m_complete;
 };
 
