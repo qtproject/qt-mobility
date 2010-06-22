@@ -195,8 +195,8 @@ QTelephonyCallInfo::CallStatus QTelephonyCallInfo::status() const
 */
 QVariant QTelephonyCallInfo::value(const QString& key) const
 {
-    if(d && d->values.contains(param)){
-        return d->values.value(param);
+    if(d && d->values.contains(key)){
+        return d->values.value(key);
     }
     return QVariant();
 }
