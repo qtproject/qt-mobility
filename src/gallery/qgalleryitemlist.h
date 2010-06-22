@@ -127,6 +127,7 @@ Q_SIGNALS:
     void inserted(int index, int count);
     void removed(int index, int count);
     void moved(int from, int to, int count);
+    void statusChanged(int index, int count);
 
     void metaDataChanged(int index, int count, const QList<int> &keys = QList<int>());
 

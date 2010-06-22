@@ -355,6 +355,10 @@ public:
     }
 
     void processSyncEvents();
+    void syncStart(const int aIndex, const int aCount, const int rIndex, const int rCount);
+    void syncUpdate(const int aIndex, const int aCount, const int rIndex, const int rCount);
+    void syncReplace(const int aIndex, const int aCount, const int rIndex, const int rCount);
+    void syncFinish(const int aIndex, const int rIndex);
     bool waitForSyncFinish(int msecs);
 
     void _q_queryFinished(QDBusPendingCallWatcher *watcher);

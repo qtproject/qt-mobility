@@ -335,7 +335,7 @@ void tst_QGalleryTrackerItemList::query()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -345,10 +345,10 @@ void tst_QGalleryTrackerItemList::query()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.url(0), QUrl(QLatin1String("file:///a/000")));
@@ -386,21 +386,20 @@ void tst_QGalleryTrackerItemList::refresh()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
-
 
     QVERIFY(list.waitForFinished(1000));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(15), QVariant(QLatin1String("a-015")));
@@ -412,7 +411,11 @@ void tst_QGalleryTrackerItemList::refresh()
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 16);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 16);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(15), QVariant(QLatin1String("a-015")));
@@ -430,7 +433,7 @@ void tst_QGalleryTrackerItemList::reset()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -440,10 +443,10 @@ void tst_QGalleryTrackerItemList::reset()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(15), QVariant(QLatin1String("a-015")));
@@ -457,12 +460,14 @@ void tst_QGalleryTrackerItemList::reset()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
     QCOMPARE(removeSpy.count(), 1);
-    QCOMPARE(removeSpy.last().value(0).toInt(), 0);
-    QCOMPARE(removeSpy.last().value(1).toInt(), 16);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 16);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(1).toInt(), 16);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("b-000")));
     QCOMPARE(list.id(15), QVariant(QLatin1String("b-015")));
@@ -483,7 +488,7 @@ void tst_QGalleryTrackerItemList::removeItem()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -493,10 +498,10 @@ void tst_QGalleryTrackerItemList::removeItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 18);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 18);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 18);
 
     QCOMPARE(list.id(7), QVariant(QLatin1String("a-007")));
     QCOMPARE(list.id(8), QVariant(QLatin1String("b-000")));
@@ -511,9 +516,15 @@ void tst_QGalleryTrackerItemList::removeItem()
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 1);
-    QCOMPARE(removeSpy.last().value(0).toInt(), 8);
-    QCOMPARE(removeSpy.last().value(1).toInt(), 2);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 18);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(),  8);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(0).toInt(),  8);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(1).toInt(),  2);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(),  8);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(),  8);
 
     QCOMPARE(list.id(7), QVariant(QLatin1String("a-007")));
     QCOMPARE(list.id(8), QVariant(QLatin1String("c-000")));
@@ -532,7 +543,7 @@ void tst_QGalleryTrackerItemList::insertItem()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -542,10 +553,10 @@ void tst_QGalleryTrackerItemList::insertItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
     QCOMPARE(list.id(7), QVariant(QLatin1String("a-007")));
     QCOMPARE(list.id(8), QVariant(QLatin1String("c-000")));
@@ -558,10 +569,16 @@ void tst_QGalleryTrackerItemList::insertItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 18);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 8);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 2);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 16);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(),  8);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  8);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(),  2);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 10);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(),  8);
 
     QCOMPARE(list.id(7), QVariant(QLatin1String("a-007")));
     QCOMPARE(list.id(8), QVariant(QLatin1String("b-000")));
@@ -581,7 +598,7 @@ void tst_QGalleryTrackerItemList::replaceFirstItem()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -591,10 +608,10 @@ void tst_QGalleryTrackerItemList::replaceFirstItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(1), QVariant(QLatin1String("c-000")));
@@ -608,12 +625,16 @@ void tst_QGalleryTrackerItemList::replaceFirstItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 1);
     QCOMPARE(removeSpy.count(), 1);
-    QCOMPARE(removeSpy.last().value(0).toInt(), 0);
-    QCOMPARE(removeSpy.last().value(1).toInt(), 1);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 16);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(1).toInt(),  1);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(),  1);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(),  1);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 15);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("b-000")));
     QCOMPARE(list.id(1), QVariant(QLatin1String("c-000")));
@@ -633,7 +654,7 @@ void tst_QGalleryTrackerItemList::replaceLastItem()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -643,10 +664,10 @@ void tst_QGalleryTrackerItemList::replaceLastItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
     QCOMPARE(list.id(14), QVariant(QLatin1String("a-014")));
     QCOMPARE(list.id(15), QVariant(QLatin1String("b-000")));
@@ -660,12 +681,16 @@ void tst_QGalleryTrackerItemList::replaceLastItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 15);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 1);
     QCOMPARE(removeSpy.count(), 1);
-    QCOMPARE(removeSpy.last().value(0).toInt(), 15);
-    QCOMPARE(removeSpy.last().value(1).toInt(), 1);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 2);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 16);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 15);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(0).toInt(), 15);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(1).toInt(),  1);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(), 15);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(),  1);
 
     QCOMPARE(list.id(14), QVariant(QLatin1String("a-014")));
     QCOMPARE(list.id(15), QVariant(QLatin1String("c-000")));
@@ -685,7 +710,7 @@ void tst_QGalleryTrackerItemList::replaceMiddleItem()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -695,10 +720,10 @@ void tst_QGalleryTrackerItemList::replaceMiddleItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 16);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 16);
 
     QCOMPARE(list.id(7), QVariant(QLatin1String("a-007")));
     QCOMPARE(list.id(8), QVariant(QLatin1String("b-000")));
@@ -714,12 +739,18 @@ void tst_QGalleryTrackerItemList::replaceMiddleItem()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 16);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 8);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 2);
     QCOMPARE(removeSpy.count(), 1);
-    QCOMPARE(removeSpy.last().value(0).toInt(), 8);
-    QCOMPARE(removeSpy.last().value(1).toInt(), 2);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 16);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),  0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(),  8);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(0).toInt(),  8);
+    QCOMPARE(removeSpy.at(removeSpy.count() - 1).value(1).toInt(),  2);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),  8);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(),  2);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 10);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(),  6);
 
     QCOMPARE(list.id(7), QVariant(QLatin1String("a-007")));
     QCOMPARE(list.id(8), QVariant(QLatin1String("c-000")));
@@ -740,7 +771,7 @@ void tst_QGalleryTrackerItemList::scrollDownOverlapping()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -750,10 +781,10 @@ void tst_QGalleryTrackerItemList::scrollDownOverlapping()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 256);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 256);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),   0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
@@ -768,10 +799,16 @@ void tst_QGalleryTrackerItemList::scrollDownOverlapping()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 448);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 256);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 192);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(),  64);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(),  64);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(), 256);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 192);
 
     QCOMPARE(list.id(0), QVariant());
     QCOMPARE(list.id(100), QVariant());
@@ -794,7 +831,7 @@ void tst_QGalleryTrackerItemList::scrollUpOverlapping()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -804,10 +841,10 @@ void tst_QGalleryTrackerItemList::scrollUpOverlapping()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 448);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 448);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),   0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 448);
 
     QCOMPARE(list.id(0), QVariant());
     QCOMPARE(list.id(100), QVariant());
@@ -823,9 +860,13 @@ void tst_QGalleryTrackerItemList::scrollUpOverlapping()
     QCOMPARE(list.count(), 448);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 1);
-    QCOMPARE(changeSpy.last().value(0).toInt(), 0);
-    QCOMPARE(changeSpy.last().value(1).toInt(), 192);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
@@ -848,7 +889,7 @@ void tst_QGalleryTrackerItemList::scrollJitterOverlapping()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -858,10 +899,10 @@ void tst_QGalleryTrackerItemList::scrollJitterOverlapping()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 256);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 256);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),   0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
@@ -876,10 +917,16 @@ void tst_QGalleryTrackerItemList::scrollJitterOverlapping()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 448);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 256);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 192);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(),  64);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(),  64);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(), 256);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 192);
 
     QCOMPARE(list.id(0), QVariant());
     QCOMPARE(list.id(100), QVariant());
@@ -895,9 +942,13 @@ void tst_QGalleryTrackerItemList::scrollJitterOverlapping()
     QCOMPARE(list.count(), 448);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 1);
-    QCOMPARE(changeSpy.last().value(0).toInt(), 0);
-    QCOMPARE(changeSpy.last().value(1).toInt(), 192);
+    QCOMPARE(statusSpy.count(), 6);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
@@ -913,9 +964,15 @@ void tst_QGalleryTrackerItemList::scrollJitterOverlapping()
     QCOMPARE(list.count(), 448);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 2);
-    QCOMPARE(changeSpy.last().value(0).toInt(), 256);
-    QCOMPARE(changeSpy.last().value(1).toInt(), 192);
+    QCOMPARE(statusSpy.count(), 10);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 4).value(0).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 4).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(), 192);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(),  64);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 192);
 
     QCOMPARE(list.id(0), QVariant());
     QCOMPARE(list.id(100), QVariant());
@@ -938,7 +995,7 @@ void tst_QGalleryTrackerItemList::scrollDownNoOverlap()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -948,10 +1005,10 @@ void tst_QGalleryTrackerItemList::scrollDownNoOverlap()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 256);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 256);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),   0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
@@ -966,10 +1023,12 @@ void tst_QGalleryTrackerItemList::scrollDownNoOverlap()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 704);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 256);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 448);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 256);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(), 256);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 448);
 
     QCOMPARE(list.id(0), QVariant());
     QCOMPARE(list.id(100), QVariant());
@@ -992,7 +1051,7 @@ void tst_QGalleryTrackerItemList::scrollUpNoOverlap()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -1002,10 +1061,10 @@ void tst_QGalleryTrackerItemList::scrollUpNoOverlap()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 704);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 704);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 704);
 
     QCOMPARE(list.id(0), QVariant());
     QCOMPARE(list.id(100), QVariant());
@@ -1021,9 +1080,13 @@ void tst_QGalleryTrackerItemList::scrollUpNoOverlap()
     QCOMPARE(list.count(), 704);
     QCOMPARE(insertSpy.count(), 1);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 1);
-    QCOMPARE(changeSpy.last().value(0).toInt(), 0);
-    QCOMPARE(changeSpy.last().value(1).toInt(), 256);
+    QCOMPARE(statusSpy.count(), 3);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(), 448);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
@@ -1046,7 +1109,7 @@ void tst_QGalleryTrackerItemList::scrollJitterNoOverlap()
 
     QSignalSpy insertSpy(&list, SIGNAL(inserted(int,int)));
     QSignalSpy removeSpy(&list, SIGNAL(removed(int,int)));
-    QSignalSpy changeSpy(&list, SIGNAL(metaDataChanged(int,int)));
+    QSignalSpy statusSpy(&list, SIGNAL(statusChanged(int,int)));
 
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::NoResult));
     QCOMPARE(list.count(), 0);
@@ -1056,10 +1119,10 @@ void tst_QGalleryTrackerItemList::scrollJitterNoOverlap()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 256);
     QCOMPARE(insertSpy.count(), 1);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 0);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 256);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(),   0);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
@@ -1074,10 +1137,12 @@ void tst_QGalleryTrackerItemList::scrollJitterNoOverlap()
     QCOMPARE(list.result(), int(QGalleryAbstractRequest::Succeeded));
     QCOMPARE(list.count(), 704);
     QCOMPARE(insertSpy.count(), 2);
-    QCOMPARE(insertSpy.last().value(0).toInt(), 256);
-    QCOMPARE(insertSpy.last().value(1).toInt(), 448);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 0);
+    QCOMPARE(statusSpy.count(), 1);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 256);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(0).toInt(), 256);
+    QCOMPARE(insertSpy.at(insertSpy.count() - 1).value(1).toInt(), 448);
 
     QCOMPARE(list.id(0), QVariant());
     QCOMPARE(list.id(100), QVariant());
@@ -1093,9 +1158,13 @@ void tst_QGalleryTrackerItemList::scrollJitterNoOverlap()
     QCOMPARE(list.count(), 704);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 1);
-    QCOMPARE(changeSpy.last().value(0).toInt(), 0);
-    QCOMPARE(changeSpy.last().value(1).toInt(), 256);
+    QCOMPARE(statusSpy.count(), 4);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(), 448);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant(QLatin1String("a-000")));
     QCOMPARE(list.id(100), QVariant(QLatin1String("b-000")));
@@ -1111,9 +1180,13 @@ void tst_QGalleryTrackerItemList::scrollJitterNoOverlap()
     QCOMPARE(list.count(), 704);
     QCOMPARE(insertSpy.count(), 2);
     QCOMPARE(removeSpy.count(), 0);
-    QCOMPARE(changeSpy.count(), 2);
-    QCOMPARE(changeSpy.last().value(0).toInt(), 448);
-    QCOMPARE(changeSpy.last().value(1).toInt(), 256);
+    QCOMPARE(statusSpy.count(), 7);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(0).toInt(), 448);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 3).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(0).toInt(),   0);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 2).value(1).toInt(), 256);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(0).toInt(), 448);
+    QCOMPARE(statusSpy.at(statusSpy.count() - 1).value(1).toInt(), 256);
 
     QCOMPARE(list.id(0), QVariant());
     QCOMPARE(list.id(100), QVariant());

@@ -186,6 +186,11 @@ void QGalleryTrackerItemListPrivate::query(int index)
 
         emit q_func()->progressChanged(0, 2);
     }
+
+    const int statusCount = qMin(rowCount, rCache.count);
+
+    if (statusCount > rCache.index)
+        emit q_func()->statusChanged(rCache.index, statusCount - rCache.index);
 }
 
 void QGalleryTrackerItemListPrivate::_q_queryFinished(QDBusPendingCallWatcher *watcher)
@@ -525,92 +530,16 @@ void QGalleryTrackerItemListPrivate::processSyncEvents()
     while (SyncEvent *event = syncEvents.dequeue()) {
         switch (event->type) {
         case SyncEvent::Start:
-            if (event->aCount > 0) {
-                aCache.offset = event->aIndex + event->aCount;
-                rCache.cutoff = event->rIndex;
-
-                rowCount -= event->aCount;
-
-                emit q_func()->removed(event->rIndex, event->aCount);
-            }
-
-            if (event->rCount > 0) {
-                aCache.offset = event->aIndex + event->aCount;
-                rCache.cutoff = event->rIndex + event->rCount;
-
-                rowCount += event->rCount;
-
-                q_func()->inserted(event->rIndex, event->rCount);
-            } else if (event->rIndex > rCache.index) {
-                const int count = event->rIndex - rCache.index;
-
-                rCache.cutoff = event->rIndex;
-
-                emit q_func()->metaDataChanged(rCache.index, count, QList<int>());
-            }
+            syncStart(event->aIndex, event->aCount, event->rIndex, event->rCount);
             break;
         case SyncEvent::Update:
-            aCache.offset = event->aIndex;
-            rCache.cutoff = event->rIndex + event->rCount;
-
-            emit q_func()->metaDataChanged(event->rIndex, event->rCount, QList<int>());
-
+            syncUpdate(event->aIndex, event->aCount, event->rIndex, event->rCount);
             break;
         case SyncEvent::Replace:
-            if (event->aCount > 0) {
-                aCache.offset = event->aIndex + event->aCount;
-                rCache.cutoff = event->rIndex;
-
-                rowCount -= event->aCount;
-
-                emit q_func()->removed(event->rIndex, event->aCount);
-            }
-            if (event->rCount > 0) {
-                aCache.offset = event->aIndex + event->aCount;
-                rCache.cutoff = event->rIndex + event->rCount;
-
-                rowCount += event->rCount;
-
-                q_func()->inserted(event->rIndex, event->rCount);
-            }
+            syncReplace(event->aIndex, event->aCount, event->rIndex, event->rCount);
             break;
-        case SyncEvent::Finish: {
-                const int aCount = aCache.count - event->aIndex;
-                const int rCount = rCache.count - event->rIndex;
-
-                aCache.offset = aCache.count;
-
-                if (aCount > 0 && rCache.count - rCache.index < queryLimit) {
-                    rowCount -= aCount;
-
-                    rCache.cutoff = event->rIndex;
-
-                    emit q_func()->removed(event->rIndex, aCount);
-                }
-
-                if (rCount > 0) {
-                    if (event->rIndex < rowCount) {
-                        rCache.cutoff = qMin(rowCount, rCache.count);
-
-                        q_func()->metaDataChanged(event->rIndex, rCache.cutoff - event->rIndex);
-                    } else {
-                        rCache.cutoff = event->rIndex;
-                    }
-
-                    if (rCache.cutoff < rCache.count) {
-                        const int index = rowCount;
-
-                        rCache.cutoff = rCache.count;
-                        rowCount = rCache.count;
-
-                        q_func()->inserted(index, rowCount - index);
-                    }
-                } else {
-                    rCache.cutoff = rCache.count;
-                }
-
-                flags |= SyncFinished;
-            }
+        case SyncEvent::Finish:
+            syncFinish(event->aIndex, event->rIndex);
             break;
         default:
             break;
@@ -618,6 +547,146 @@ void QGalleryTrackerItemListPrivate::processSyncEvents()
 
         delete event;
     }
+}
+
+void QGalleryTrackerItemListPrivate::syncStart(
+        const int aIndex, const int aCount, const int rIndex, const int rCount)
+{
+    if (rIndex > aCache.index) {
+        const int statusCount = qMin(rIndex, aCache.count) - aCache.index;
+
+        rCache.cutoff = rIndex;
+
+        emit q_func()->statusChanged(aCache.index, statusCount);
+    }
+
+    if (aCount > 0) {
+        aCache.offset = aIndex + aCount;
+        rCache.cutoff = rIndex;
+
+        rowCount -= aCount;
+
+        emit q_func()->removed(rIndex, aCount);
+    }
+
+    if (rCount > 0) {
+        aCache.offset = aIndex + aCount;
+        rCache.cutoff = rIndex + rCount;
+
+        rowCount += rCount;
+
+        q_func()->inserted(rIndex, rCount);
+    } else if (rIndex > rCache.cutoff) {
+        const int statusCount = rIndex - rCache.cutoff;
+
+        rCache.cutoff = rIndex;
+
+        emit q_func()->statusChanged(rCache.index, statusCount);
+    }
+}
+
+void QGalleryTrackerItemListPrivate::syncUpdate(
+        const int aIndex, const int aCount, const int rIndex, const int rCount)
+{
+    const int statusIndex = rCache.cutoff;
+
+    aCache.offset = aIndex + aCount;
+    rCache.cutoff = rIndex + rCount;
+
+    emit q_func()->metaDataChanged(rIndex, rCount);
+    emit q_func()->statusChanged(statusIndex, rCache.cutoff - statusIndex);
+}
+
+void QGalleryTrackerItemListPrivate::syncReplace(
+        const int aIndex, const int aCount, const int rIndex, const int rCount)
+{
+    if (rIndex > rCache.cutoff) {
+        const int statusIndex = rCache.cutoff;
+
+        rCache.cutoff = rIndex;
+
+        emit q_func()->statusChanged(statusIndex, rCache.cutoff - statusIndex);
+    }
+
+    if (aCount > 0) {
+        aCache.offset = aIndex + aCount;
+        rCache.cutoff = rIndex;
+
+        rowCount -= aCount;
+
+        emit q_func()->removed(rIndex, aCount);
+    }
+
+    if (rCount > 0) {
+        aCache.offset = aIndex + aCount;
+        rCache.cutoff = rIndex + rCount;
+
+        rowCount += rCount;
+
+        emit q_func()->inserted(rIndex, rCount);
+    }
+}
+
+void QGalleryTrackerItemListPrivate::syncFinish(
+        const int aIndex, const int rIndex)
+{
+    const int aCount = aCache.count - aIndex;
+    const int rCount = rCache.count - rIndex;
+
+    if (aCount > 0) {
+        if (rCache.count - rCache.index < queryLimit) {
+            aCache.offset = aCache.count;
+
+            rowCount -= aCount;
+
+            emit q_func()->removed(rIndex, aCount);
+        } else {
+            const int statusIndex = aCache.offset;
+
+            aCache.offset = aCache.count;
+            rCache.cutoff = rIndex;
+
+            emit q_func()->statusChanged(statusIndex, aCache.count - statusIndex);
+        }
+    } else {
+        aCache.offset = aCache.count;
+    }
+
+    if (rCache.cutoff < rIndex) {
+        const int statusIndex = rCache.cutoff;
+
+        rCache.cutoff = rIndex;
+
+        emit q_func()->statusChanged(statusIndex, rCache.cutoff - statusIndex);
+    }
+
+    if (rCount > 0) {
+        if (rIndex < rowCount) {
+            rCache.cutoff = qMin(rowCount, rCache.count);
+
+            q_func()->statusChanged(rIndex, rCache.cutoff - rIndex);
+        } else {
+            rCache.cutoff = rIndex;
+        }
+
+        if (rCache.cutoff < rCache.count) {
+            const int index = rowCount;
+
+            rCache.cutoff = rCache.count;
+            rowCount = rCache.count;
+
+            q_func()->inserted(index, rowCount - index);
+        }
+    } else if (rCache.cutoff < rCache.count) {
+        const int statusIndex = rCache.cutoff;
+        const int statusCount = rCache.count - rCache.cutoff;
+
+        rCache.cutoff = rCache.count;
+
+        emit q_func()->statusChanged(statusIndex, statusCount);
+    }
+
+    flags |= SyncFinished;
 }
 
 bool QGalleryTrackerItemListPrivate::waitForSyncFinish(int msecs)

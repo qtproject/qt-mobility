@@ -346,6 +346,13 @@ void QGalleryItemList::setMetaData(int index, const QString &property, const QVa
 */
 
 /*!
+    \fn QGalleryItemList::statusChanged(int index, int count)
+
+    Signals that the status of \a count gallery items starting at \a index has
+    changed.
+*/
+
+/*!
     \fn QGalleryItemList::metaDataChanged(int index, int count, const QList<int> &keys)
 
     Signals that the meta-data identified by \a keys of \a count gallery items
