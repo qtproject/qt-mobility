@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- qgeomapdata.cpp -->
+<head>
+  <title>Qt Mobility Project 1.1: QGeoMapData Class Reference</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<a name="//apple_ref/cpp/cl//QGeoMapData"></a>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QGeoMapData Class Reference</h1>
+<p>The QGeoMapData class are used as a bridge between <a href="qgeomapwidget.html">QGeoMapWidget</a> and <a href="qgeomappingmanager.html">QGeoMappingManager</a>. <a href="#details">More...</a></p>
+<pre>    #include &lt;QGeoMapData&gt;</pre><ul>
+<li><a href="qgeomapdata-members.html">List of all members, including inherited members</a></li>
+</ul>
+<hr />
+<a name="public-functions"></a>
+<h2>Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#QGeoMapData">QGeoMapData</a></b> ( QGeoMappingManagerEngine * <i>engine</i>, QGeoMapWidget * <i>widget</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#dtor.QGeoMapData">~QGeoMapData</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#addMapObject">addMapObject</a></b> ( QGeoMapObject * <i>mapObject</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#center">center</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QPointF </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#coordinateToScreenPosition">coordinateToScreenPosition</a></b> ( const QGeoCoordinate &amp; <i>coordinate</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#imageChangesTriggerUpdates">imageChangesTriggerUpdates</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QPixmap </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapImage">mapImage</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapObjects">mapObjects</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapObjectsAtScreenPosition">mapObjectsAtScreenPosition</a></b> ( const QPointF &amp; <i>screenPosition</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapObjectsInScreenRect">mapObjectsInScreenRect</a></b> ( const QRectF &amp; <i>screenRect</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoMapWidget::MapType </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#mapType">mapType</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#pan">pan</a></b> ( int <i>dx</i>, int <i>dy</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#removeMapObject">removeMapObject</a></b> ( QGeoMapObject * <i>mapObject</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QGeoCoordinate </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#screenPositionToCoordinate">screenPositionToCoordinate</a></b> ( const QPointF &amp; <i>screenPosition</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#setCenter">setCenter</a></b> ( const QGeoCoordinate &amp; <i>center</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#setImageChangesTriggerUpdates">setImageChangesTriggerUpdates</a></b> ( bool <i>trigger</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#setMapImage">setMapImage</a></b> ( const QPixmap &amp; <i>mapImage</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#setMapType">setMapType</a></b> ( QGeoMapWidget::MapType <i>mapType</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#setViewportSize">setViewportSize</a></b> ( const QSizeF &amp; <i>size</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#setZoomLevel">setZoomLevel</a></b> ( qreal <i>zoomLevel</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QSizeF </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#viewportSize">viewportSize</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QList&lt;QGeoMapObject *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#visibleMapObjects">visibleMapObjects</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual qreal </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#zoomLevel">zoomLevel</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="protected-functions"></a>
+<h2>Protected Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">QGeoMapObject * </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#containerObject">containerObject</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoMappingManagerEngine * </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#engine">engine</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoMapWidget * </td><td class="memItemRight" valign="bottom"><b><a href="qgeomapdata.html#widget">widget</a></b> () const</td></tr>
+</table>
+<a name="details"></a>
+<hr />
+<h2>Detailed Description</h2>
+<p>The QGeoMapData class are used as a bridge between <a href="qgeomapwidget.html">QGeoMapWidget</a> and <a href="qgeomappingmanager.html">QGeoMappingManager</a>.</p>
+<p>Instances of QGeoMapData are created with <a href="qgeomappingmanager.html#createMapData">QGeoMappingManager::createMapData</a>(), and are used internally by QGeoMappingWidget to manage the state of the map and the associated <a href="qgeomapobject.html">QGeoMapObject</a> instances.</p>
+<p>Plugin implementers will need to provide implementations of coordinateToScreenPosition(const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp;coordinate) and <a href="qgeocoordinate.html">QGeoCoordinate</a> screenPositionToCoordinate(const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp;screenPosition).</p>
+<p>The other virtual functions can be overriden. If the screen position to coordinate tranformations are expensive then overriding these functions may allow optimizations based on caching parts of the geometry information.</p>
+<hr />
+<h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QGeoMapData/QGeoMapData"></a>
+<h3 class="fn"><a name="QGeoMapData"></a>QGeoMapData::QGeoMapData ( <a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> * <i>engine</i>, <a href="qgeomapwidget.html">QGeoMapWidget</a> * <i>widget</i> )</h3>
+<p>Constructs a new map data object, which stores the map data required by <i>widget</i> and makes use of the functionality provided by <i>engine</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/~QGeoMapData"></a>
+<h3 class="fn"><a name="dtor.QGeoMapData"></a>QGeoMapData::~QGeoMapData ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Destroys this map data object.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/addMapObject"></a>
+<h3 class="fn"><a name="addMapObject"></a>void QGeoMapData::addMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Adds <i>mapObject</i> to the list of map objects managed by this map.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/center"></a>
+<h3 class="fn"><a name="center"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapData::center () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the coordinate of the point in the center of the map viewport.</p>
+<p>See also <a href="qgeomapdata.html#setCenter">setCenter</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/containerObject"></a>
+<h3 class="fn"><a name="containerObject"></a><a href="qgeomapobject.html">QGeoMapObject</a> * QGeoMapData::containerObject ()&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Returns the <a href="qgeomapobject.html">QGeoMapObject</a> which acts as the parent to all <a href="qgeomapobject.html">QGeoMapObject</a> instances which are added to the map by the user.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/coordinateToScreenPosition"></a>
+<h3 class="fn"><a name="coordinateToScreenPosition"></a><a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> QGeoMapData::coordinateToScreenPosition ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>coordinate</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the position on the screen at which <i>coordinate</i> is displayed.</p>
+<p>An invalid <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> will be returned if <i>coordinate</i> is invalid or is not within the current viewport.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/engine"></a>
+<h3 class="fn"><a name="engine"></a><a href="qgeomappingmanagerengine.html">QGeoMappingManagerEngine</a> * QGeoMapData::engine () const&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Returns the mapping engine that this map data object is associated with.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/imageChangesTriggerUpdates"></a>
+<h3 class="fn"><a name="imageChangesTriggerUpdates"></a>bool QGeoMapData::imageChangesTriggerUpdates () const</h3>
+<p>Returns whether changes to the map image will case <a href="qgeomapdata.html#widget">widget</a>() to update.</p>
+<p>See also <a href="qgeomapdata.html#setImageChangesTriggerUpdates">setImageChangesTriggerUpdates</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/mapImage"></a>
+<h3 class="fn"><a name="mapImage"></a><a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> QGeoMapData::mapImage () const</h3>
+<p>Returns the image that will be displayed in the viewport of <a href="qgeomapdata.html#widget">widget</a>().</p>
+<p>See also <a href="qgeomapdata.html#setMapImage">setMapImage</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/mapObjects"></a>
+<h3 class="fn"><a name="mapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapData::mapObjects ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the list of map objects managed by this map.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/mapObjectsAtScreenPosition"></a>
+<h3 class="fn"><a name="mapObjectsAtScreenPosition"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapData::mapObjectsAtScreenPosition ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>screenPosition</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the list of map objects managed by this map which are visible and contain the point <i>screenPosition</i> within their boundaries.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/mapObjectsInScreenRect"></a>
+<h3 class="fn"><a name="mapObjectsInScreenRect"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapData::mapObjectsInScreenRect ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>screenRect</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the list of map objects managed by this map which are visible and which are displayed at least partially within the on screen rectangle <i>screenRect</i>.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/mapType"></a>
+<h3 class="fn"><a name="mapType"></a><a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a> QGeoMapData::mapType () const</h3>
+<p>Returns the type of map data which is being displayed.</p>
+<p>See also <a href="qgeomapdata.html#setMapType">setMapType</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/pan"></a>
+<h3 class="fn"><a name="pan"></a>void QGeoMapData::pan ( int <i>dx</i>, int <i>dy</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Pans the map view <i>dx</i> pixels in the x direction and <i>dy</i> pixels in they y direction.</p>
+<p>The x and y axes are specified in Graphics View Framework coordinates. By default this will mean that positive values of <i>dx</i> move the viewed area to the right and that positive values of <i>dy</i> move the viewed area down.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/removeMapObject"></a>
+<h3 class="fn"><a name="removeMapObject"></a>void QGeoMapData::removeMapObject ( <a href="qgeomapobject.html">QGeoMapObject</a> * <i>mapObject</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Removes <i>mapObject</i> from the list of map objects managed by this map.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/screenPositionToCoordinate"></a>
+<h3 class="fn"><a name="screenPositionToCoordinate"></a><a href="qgeocoordinate.html">QGeoCoordinate</a> QGeoMapData::screenPositionToCoordinate ( const <a href="http://qt.nokia.com/doc/4.6/qpointf.html">QPointF</a> &amp; <i>screenPosition</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
+<p>Returns the coordinate corresponding to the point in the viewport at <i>screenPosition</i>.</p>
+<p>An invalid <a href="qgeocoordinate.html">QGeoCoordinate</a> will be returned if <i>screenPosition</i> is invalid or is not within the current viewport.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/setCenter"></a>
+<h3 class="fn"><a name="setCenter"></a>void QGeoMapData::setCenter ( const <a href="qgeocoordinate.html">QGeoCoordinate</a> &amp; <i>center</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Centers the map viewport on the coordinate <i>center</i>.</p>
+<p>See also <a href="qgeomapdata.html#center">center</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/setImageChangesTriggerUpdates"></a>
+<h3 class="fn"><a name="setImageChangesTriggerUpdates"></a>void QGeoMapData::setImageChangesTriggerUpdates ( bool <i>trigger</i> )</h3>
+<p>Sets whether changes to the map image will cause <a href="qgeomapdata.html#widget">widget</a>() to update to <i>trigger</i>.</p>
+<p>See also <a href="qgeomapdata.html#imageChangesTriggerUpdates">imageChangesTriggerUpdates</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/setMapImage"></a>
+<h3 class="fn"><a name="setMapImage"></a>void QGeoMapData::setMapImage ( const <a href="http://qt.nokia.com/doc/4.6/qpixmap.html">QPixmap</a> &amp; <i>mapImage</i> )</h3>
+<p>Sets the image that will be displayed in the viewport of <a href="qgeomapdata.html#widget">widget</a>() to <i>mapImage</i>.</p>
+<p>See also <a href="qgeomapdata.html#mapImage">mapImage</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/setMapType"></a>
+<h3 class="fn"><a name="setMapType"></a>void QGeoMapData::setMapType ( <a href="qgeomapwidget.html#MapType-enum">QGeoMapWidget::MapType</a> <i>mapType</i> )</h3>
+<p>Changes the type of map data to display to <i>mapType</i>.</p>
+<p>See also <a href="qgeomapdata.html#mapType">mapType</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/setViewportSize"></a>
+<h3 class="fn"><a name="setViewportSize"></a>void QGeoMapData::setViewportSize ( const <a href="http://qt.nokia.com/doc/4.6/qsizef.html">QSizeF</a> &amp; <i>size</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Sets the size of the map viewport to <i>size</i>.</p>
+<p>The size will be adjusted by the associated <a href="qgeomapwidget.html">QGeoMapWidget</a> as it resizes.</p>
+<p>See also <a href="qgeomapdata.html#viewportSize">viewportSize</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/setZoomLevel"></a>
+<h3 class="fn"><a name="setZoomLevel"></a>void QGeoMapData::setZoomLevel ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> <i>zoomLevel</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Sets the zoom level of the map to <i>zoomLevel</i>.</p>
+<p>Larger values of the zoom level correspond to more detailed views of the map.</p>
+<p>If <i>zoomLevel</i> is less than minimumZoomLevel() then minimumZoomLevel() will be used, and if <i>zoomLevel</i> is larger than maximumZoomLevel() then maximumZoomLevel() will be used.</p>
+<p>See also <a href="qgeomapdata.html#zoomLevel">zoomLevel</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/viewportSize"></a>
+<h3 class="fn"><a name="viewportSize"></a><a href="http://qt.nokia.com/doc/4.6/qsizef.html">QSizeF</a> QGeoMapData::viewportSize () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the size of the map viewport.</p>
+<p>The size will be adjusted by the associated <a href="qgeomapwidget.html">QGeoMapWidget</a> as it resizes.</p>
+<p>See also <a href="qgeomapdata.html#setViewportSize">setViewportSize</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/visibleMapObjects"></a>
+<h3 class="fn"><a name="visibleMapObjects"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeomapobject.html">QGeoMapObject</a> *&gt; QGeoMapData::visibleMapObjects ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the list of map objects managed by this map which are currently visible and at least partially within the viewport of the map.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/widget"></a>
+<h3 class="fn"><a name="widget"></a><a href="qgeomapwidget.html">QGeoMapWidget</a> * QGeoMapData::widget () const&nbsp;&nbsp;<tt> [protected]</tt></h3>
+<p>Returns the widget that this map data object is associated with.</p>
+<a name="//apple_ref/cpp/instm/QGeoMapData/zoomLevel"></a>
+<h3 class="fn"><a name="zoomLevel"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#qreal-typedef">qreal</a> QGeoMapData::zoomLevel () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Returns the zoom level of the map.</p>
+<p>Larger values of the zoom level correspond to more detailed views of the map.</p>
+<p>See also <a href="qgeomapdata.html#setZoomLevel">setZoomLevel</a>().</p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

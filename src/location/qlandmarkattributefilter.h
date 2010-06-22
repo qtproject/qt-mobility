@@ -65,7 +65,7 @@ public:
     QStringList attributeKeys() const;
 
 private:
-    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter);
+    Q_DECLARE_LANDMARKFILTER_PRIVATE(QLandmarkAttributeFilter)
 };
 
 QTM_END_NAMESPACE

@@ -40,12 +40,12 @@
 ****************************************************************************/
 
 #include <QtGui/QApplication>
-#include "tabbeddialog.h"
+#include "tabbedwindow.h"
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    TabbedDialog w;
+    TabbedWindow w;
 #ifdef Q_OS_SYMBIAN
     w.showFullScreen();
 #else

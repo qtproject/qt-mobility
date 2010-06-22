@@ -25,16 +25,29 @@
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#QGeoRoute">QGeoRoute</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#QGeoRoute-2">QGeoRoute</a></b> ( const QGeoRoute &amp; <i>other</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#dtor.QGeoRoute">~QGeoRoute</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">const QRectF &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#boundingBox">boundingBox</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">quint32 </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#distance">distance</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QManeuver&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#maneuvers">maneuvers</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setBoundingBox">setBoundingBox</a></b> ( const QRectF &amp; <i>boundingBox</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setDistance">setDistance</a></b> ( quint32 <i>distance</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setManeuvers">setManeuvers</a></b> ( const QList&lt;QManeuver&gt; &amp; <i>maneuvers</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setTimeOfArrival">setTimeOfArrival</a></b> ( const QDateTime &amp; <i>timeOfArrival</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setTimeOfDeparture">setTimeOfDeparture</a></b> ( const QDateTime &amp; <i>timeOfDeparture</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#timeOfArrival">timeOfArrival</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QDateTime </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#timeOfDeparture">timeOfDeparture</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#appendRouteSegment">appendRouteSegment</a></b> ( const QGeoRouteSegment * <i>routeSegment</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest::AvoidFeatureTypes </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#avoidFeatureTypes">avoidFeatureTypes</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoBoundingBox </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#bounds">bounds</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoDistance </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#distance">distance</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest::RouteOptimization </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#optimization">optimization</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoCoordinate&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#path">path</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QGeoCoordinate&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#pathSummary">pathSummary</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#request">request</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#routeId">routeId</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;const QGeoRouteSegment *&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#routeSegments">routeSegments</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setAvoidFeatureTypes">setAvoidFeatureTypes</a></b> ( const QGeoRouteRequest::AvoidFeatureTypes <i>avoidFeatureTypes</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setBounds">setBounds</a></b> ( const QGeoBoundingBox &amp; <i>bounds</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setDistance">setDistance</a></b> ( const QGeoDistance &amp; <i>distance</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setOptimization">setOptimization</a></b> ( const QGeoRouteRequest::RouteOptimization <i>optimization</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setPath">setPath</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; <i>path</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setPathSummary">setPathSummary</a></b> ( const QList&lt;QGeoCoordinate&gt; &amp; <i>pathSummary</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setRequest">setRequest</a></b> ( const QGeoRouteRequest &amp; <i>request</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setRouteId">setRouteId</a></b> ( const QString &amp; <i>id</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setRouteSegments">setRouteSegments</a></b> ( const QList&lt;const QGeoRouteSegment *&gt; &amp; <i>routeSegments</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setTravelMode">setTravelMode</a></b> ( const QGeoRouteRequest::TravelMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#setTravelTime">setTravelTime</a></b> ( int <i>secs</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QGeoRouteRequest::TravelMode </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#travelMode">travelMode</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#travelTime">travelTime</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QGeoRoute &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qgeoroute.html#operator-eq">operator=</a></b> ( const QGeoRoute &amp; <i>other</i> )</td></tr>
 </table>
 <a name="details"></a>
@@ -43,8 +56,8 @@
 <p>The QGeoRoute class represents a route between two points.</p>
 <p>A QGeoRoute object contains high level information about a route, such as the length the route, the estimated travel time for the route, and enough information to render a basic image of the route on a map.</p>
 <p>The QGeoRoute object also contains a list of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> objecs, or objects derived from <a href="qgeoroutesegment.html">QGeoRouteSegment</a>, which describe subsections of the route in greater detail. The subclasses of <a href="qgeoroutesegment.html">QGeoRouteSegment</a> are used to provide specific information for the subsection of the route for particular cases, as may be needed when the segment is to be traversed via public transport or in a truck.</p>
-<p>An instance <a href="qgeoroutingservice.html">QGeoRoutingService</a> of will normally be responsible for the creation and setup of QGeoRoute objects.</p>
-<p>See also <a href="qgeoroutingservice.html">QGeoRoutingService</a>.</p>
+<p>Routing information is normally requested using <a href="qgeoroutingmanager.html#calculateRoute">QGeoRoutingManager::calculateRoute</a>(), which returns a <a href="qgeoroutereply.html">QGeoRouteReply</a> instance. If the operation is completed successfully the routing information can be accessed with <a href="qgeoroutereply.html#routes">QGeoRouteReply::routes</a>()</p>
+<p>See also <a href="qgeoroutingmanager.html">QGeoRoutingManager</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QGeoRoute/QGeoRoute"></a>
@@ -55,48 +68,115 @@
 <a name="//apple_ref/cpp/instm/QGeoRoute/~QGeoRoute"></a>
 <h3 class="fn"><a name="dtor.QGeoRoute"></a>QGeoRoute::~QGeoRoute ()</h3>
 <p>Destroys a route object.</p>
-<a name="//apple_ref/cpp/instm/QGeoRoute/boundingBox"></a>
-<h3 class="fn"><a name="boundingBox"></a>const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; QGeoRoute::boundingBox () const</h3>
-<p>Returns the bounding box that completely encloses the route.</p>
-<p>The x coordinates of the corner points represent longitudes and the y coordinates represent latitudes.</p>
-<p>See also <a href="qgeoroute.html#setBoundingBox">setBoundingBox</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/appendRouteSegment"></a>
+<h3 class="fn"><a name="appendRouteSegment"></a>void QGeoRoute::appendRouteSegment ( const <a href="qgeoroutesegment.html">QGeoRouteSegment</a> * <i>routeSegment</i> )</h3>
+<a name="//apple_ref/cpp/instm/QGeoRoute/avoidFeatureTypes"></a>
+<h3 class="fn"><a name="avoidFeatureTypes"></a><a href="qgeorouterequest.html#AvoidFeatureType-enum">QGeoRouteRequest::AvoidFeatureTypes</a> QGeoRoute::avoidFeatureTypes () const</h3>
+<p>API REVIEW NOTE</p>
+<p>This may not be in the API, since it's present in <a href="qgeoroute.html#request">request</a>() and hence redundant. This is being discussed with the people who added it.</p>
+<p>See also <a href="qgeoroute.html#setAvoidFeatureTypes">setAvoidFeatureTypes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/bounds"></a>
+<h3 class="fn"><a name="bounds"></a><a href="qgeoboundingbox.html">QGeoBoundingBox</a> QGeoRoute::bounds () const</h3>
+<p>Returns a bounding box which encompasses the entire route.</p>
+<p>See also <a href="qgeoroute.html#setBounds">QGeoRoute::setBounds</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoRoute/distance"></a>
-<h3 class="fn"><a name="distance"></a><a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> QGeoRoute::distance () const</h3>
-<p>Returns the distance covered by this route in meters.</p>
+<h3 class="fn"><a name="distance"></a><a href="qgeodistance.html">QGeoDistance</a> QGeoRoute::distance () const</h3>
+<p>Returns the distance covered by this route.</p>
 <p>See also <a href="qgeoroute.html#setDistance">setDistance</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoute/maneuvers"></a>
-<h3 class="fn"><a name="maneuvers"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qmaneuver.html">QManeuver</a>&gt; QGeoRoute::maneuvers () const</h3>
-<p>Returns the list of all maneuvers comprising the route.</p>
-<p>See also <a href="qgeoroute.html#setManeuvers">setManeuvers</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoute/setBoundingBox"></a>
-<h3 class="fn"><a name="setBoundingBox"></a>void QGeoRoute::setBoundingBox ( const <a href="http://qt.nokia.com/doc/4.6/qrectf.html">QRectF</a> &amp; <i>boundingBox</i> )</h3>
-<p>Sets the bounding box which completely encloses the route to <i>boundingBox</i></p>
-<p>The x coordinates of the corner points represent longitudes and the y coordinates represent latitudes.</p>
-<p>See also <a href="qgeoroute.html#boundingBox">boundingBox</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/optimization"></a>
+<h3 class="fn"><a name="optimization"></a><a href="qgeorouterequest.html#RouteOptimization-enum">QGeoRouteRequest::RouteOptimization</a> QGeoRoute::optimization () const</h3>
+<p>API REVIEW NOTE</p>
+<p>This may not be in the API, since it's present in <a href="qgeoroute.html#request">request</a>() and hence redundant. This is being discussed with the people who added it.</p>
+<p>See also <a href="qgeoroute.html#setOptimization">setOptimization</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/path"></a>
+<h3 class="fn"><a name="path"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRoute::path () const</h3>
+<p>API REVIEW NOTE</p>
+<p>This may not be in the API, or it may replace <a href="qgeoroute.html#pathSummary">pathSummary</a>().</p>
+<p>It's possible that both will be removed, provided that its acceptable to only expose the detailed route geometry via <a href="qgeoroutesegment.html">QGeoRouteSegment</a>, since the &quot;summary&quot; path should probably be recomputed based on how the route is being viewed (mostly based on the zoom level).</p>
+<p>This is being discussed with the people who added it.</p>
+<p>See also <a href="qgeoroute.html#setPath">setPath</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/pathSummary"></a>
+<h3 class="fn"><a name="pathSummary"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; QGeoRoute::pathSummary () const</h3>
+<p>Returns a list of coordinates suitable for providing a graphical overview of the route.</p>
+<p>The detailed routing information is present in <a href="qgeoroutesegment.html#path">QGeoRouteSegment::path</a>().</p>
+<p>See also <a href="qgeoroute.html#setPathSummary">setPathSummary</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/request"></a>
+<h3 class="fn"><a name="request"></a><a href="qgeorouterequest.html">QGeoRouteRequest</a> QGeoRoute::request () const</h3>
+<p>Returns the route request which describes the criteria used in the calculation of this route.</p>
+<p>See also <a href="qgeoroute.html#setRequest">setRequest</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/routeId"></a>
+<h3 class="fn"><a name="routeId"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QGeoRoute::routeId () const</h3>
+<p>Returns the ID of this route.</p>
+<p>Service providers which support the updating of routes commonly assign IDs to routes. If this route did not come from such a service provider the function will return an empty string.</p>
+<p>See also <a href="qgeoroute.html#setRouteId">setRouteId</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/routeSegments"></a>
+<h3 class="fn"><a name="routeSegments"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;const <a href="qgeoroutesegment.html">QGeoRouteSegment</a> *&gt; QGeoRoute::routeSegments () const</h3>
+<p>Returns the route segments.</p>
+<p><a href="qgeoroutesegment.html">QGeoRouteSegment</a> contains more detailed information than <a href="qgeoroute.html">QGeoRoute</a> and can be subclasses to provide more specialized information, such as for the description of segments of the journey for those who are travelling by public transport, or by truck.</p>
+<p>See also <a href="qgeoroutesegment.html">QGeoRouteSegment</a> and <a href="qgeoroute.html#setRouteSegments">QGeoRoute::setRouteSegments</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setAvoidFeatureTypes"></a>
+<h3 class="fn"><a name="setAvoidFeatureTypes"></a>void QGeoRoute::setAvoidFeatureTypes ( const <a href="qgeorouterequest.html#AvoidFeatureType-enum">QGeoRouteRequest::AvoidFeatureTypes</a> <i>avoidFeatureTypes</i> )</h3>
+<p>API REVIEW NOTE</p>
+<p>This may not be in the API, since it's present in <a href="qgeoroute.html#request">request</a>() and hence redundant. This is being discussed with the people who added it.</p>
+<p>See also <a href="qgeoroute.html#avoidFeatureTypes">avoidFeatureTypes</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setBounds"></a>
+<h3 class="fn"><a name="setBounds"></a>void QGeoRoute::setBounds ( const <a href="qgeoboundingbox.html">QGeoBoundingBox</a> &amp; <i>bounds</i> )</h3>
+<p>Sets the bounding box which encompasses the entire route to <i>bounds</i>.</p>
+<p>See also <a href="qgeoroute.html#bounds">QGeoRoute::bounds</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoRoute/setDistance"></a>
-<h3 class="fn"><a name="setDistance"></a>void QGeoRoute::setDistance ( <a href="http://qt.nokia.com/doc/4.6/qtglobal.html#quint32-typedef">quint32</a> <i>distance</i> )</h3>
-<p>Sets the distance covered by this route to <i>distance</i> metres.</p>
+<h3 class="fn"><a name="setDistance"></a>void QGeoRoute::setDistance ( const <a href="qgeodistance.html">QGeoDistance</a> &amp; <i>distance</i> )</h3>
+<p>Sets the distance covered by this route to <i>distance</i>.</p>
 <p>See also <a href="qgeoroute.html#distance">distance</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoute/setManeuvers"></a>
-<h3 class="fn"><a name="setManeuvers"></a>void QGeoRoute::setManeuvers ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qmaneuver.html">QManeuver</a>&gt; &amp; <i>maneuvers</i> )</h3>
-<p>Sets the list of maneuvers which define the route to <i>maneuvers</i>.</p>
-<p>See also <a href="qgeoroute.html#maneuvers">maneuvers</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoute/setTimeOfArrival"></a>
-<h3 class="fn"><a name="setTimeOfArrival"></a>void QGeoRoute::setTimeOfArrival ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>timeOfArrival</i> )</h3>
-<p>Sets the time of arrival for this route to <i>timeOfArrival</i></p>
-<p>See also <a href="qgeoroute.html#timeOfArrival">timeOfArrival</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoute/setTimeOfDeparture"></a>
-<h3 class="fn"><a name="setTimeOfDeparture"></a>void QGeoRoute::setTimeOfDeparture ( const <a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> &amp; <i>timeOfDeparture</i> )</h3>
-<p>Sets the time of departure for this route to <i>timeOfDeparture</i></p>
-<p>See also <a href="qgeoroute.html#timeOfDeparture">timeOfDeparture</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoute/timeOfArrival"></a>
-<h3 class="fn"><a name="timeOfArrival"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QGeoRoute::timeOfArrival () const</h3>
-<p>Returns the arrival time of this route.</p>
-<p>See also <a href="qgeoroute.html#setTimeOfArrival">setTimeOfArrival</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoRoute/timeOfDeparture"></a>
-<h3 class="fn"><a name="timeOfDeparture"></a><a href="http://qt.nokia.com/doc/4.6/qdatetime.html">QDateTime</a> QGeoRoute::timeOfDeparture () const</h3>
-<p>Returns the departure time of this route.</p>
-<p>See also <a href="qgeoroute.html#setTimeOfDeparture">setTimeOfDeparture</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setOptimization"></a>
+<h3 class="fn"><a name="setOptimization"></a>void QGeoRoute::setOptimization ( const <a href="qgeorouterequest.html#RouteOptimization-enum">QGeoRouteRequest::RouteOptimization</a> <i>optimization</i> )</h3>
+<p>API REVIEW NOTE</p>
+<p>This may not be in the API, since it's present in <a href="qgeoroute.html#request">request</a>() and hence redundant. This is being discussed with the people who added it.</p>
+<p>See also <a href="qgeoroute.html#optimization">optimization</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setPath"></a>
+<h3 class="fn"><a name="setPath"></a>void QGeoRoute::setPath ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>path</i> )</h3>
+<p>API REVIEW NOTE</p>
+<p>This may not be in the API, or it may replace <a href="qgeoroute.html#setPathSummary">setPathSummary</a>().</p>
+<p>It's possible that both will be removed, provided that its acceptable to only expose the detailed route geometry via <a href="qgeoroutesegment.html">QGeoRouteSegment</a>, since the &quot;summary&quot; path should probably be recomputed based on how the route is being viewed (mostly based on the zoom level).</p>
+<p>This is being discussed with the people who added it.</p>
+<p>See also <a href="qgeoroute.html#path">path</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setPathSummary"></a>
+<h3 class="fn"><a name="setPathSummary"></a>void QGeoRoute::setPathSummary ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qgeocoordinate.html">QGeoCoordinate</a>&gt; &amp; <i>pathSummary</i> )</h3>
+<p>Sets the list of coordinates suitable for providing a graphical overview of the route to <i>pathSummary</i>.</p>
+<p>Actual routing information may describe the geographic path of the route in much higher detail than is necessary to draw the route at most scales,</p>
+<p>The detailed routing information can be set with <a href="qgeoroutesegment.html#setPath">QGeoRouteSegment::setPath</a>().</p>
+<p>See also <a href="qgeoroute.html#pathSummary">pathSummary</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setRequest"></a>
+<h3 class="fn"><a name="setRequest"></a>void QGeoRoute::setRequest ( const <a href="qgeorouterequest.html">QGeoRouteRequest</a> &amp; <i>request</i> )</h3>
+<p>Sets the route request which describes the criteria used in the calculcation of this route to <i>request</i>.</p>
+<p>See also <a href="qgeoroute.html#request">request</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setRouteId"></a>
+<h3 class="fn"><a name="setRouteId"></a>void QGeoRoute::setRouteId ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>id</i> )</h3>
+<p>Sets the ID of this route to <i>id</i>.</p>
+<p>Service providers which support the updating of routes commonly assign IDs to routes. If this route came from such a service provider changing the ID will probably cause route updates to stop working.</p>
+<p>See also <a href="qgeoroute.html#routeId">routeId</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setRouteSegments"></a>
+<h3 class="fn"><a name="setRouteSegments"></a>void QGeoRoute::setRouteSegments ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;const <a href="qgeoroutesegment.html">QGeoRouteSegment</a> *&gt; &amp; <i>routeSegments</i> )</h3>
+<p>Sets the list of route segements to <i>routeSegments</i>.</p>
+<p><a href="qgeoroutesegment.html">QGeoRouteSegment</a> contains more detailed information than <a href="qgeoroute.html">QGeoRoute</a> and can be subclasses to provide more specialized information, such as for the description of segments of the journey for those who are travelling by public transport, or by truck.</p>
+<p>See also <a href="qgeoroutesegment.html">QGeoRouteSegment</a> and <a href="qgeoroute.html#routeSegments">QGeoRoute::routeSegments</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setTravelMode"></a>
+<h3 class="fn"><a name="setTravelMode"></a>void QGeoRoute::setTravelMode ( const <a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TravelMode</a> <i>mode</i> )</h3>
+<p>API REVIEW NOTE</p>
+<p>This might be moved into <a href="qgeoroutesegment.html">QGeoRouteSegment</a> to support mult-mode routes.</p>
+<p>See also <a href="qgeoroute.html#travelMode">travelMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/setTravelTime"></a>
+<h3 class="fn"><a name="setTravelTime"></a>void QGeoRoute::setTravelTime ( int <i>secs</i> )</h3>
+<p>Sets the estimated amount of time it will take to traverse this route, in seconds, to <i>secs</i>.</p>
+<p>See also <a href="qgeoroute.html#travelTime">travelTime</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/travelMode"></a>
+<h3 class="fn"><a name="travelMode"></a><a href="qgeorouterequest.html#TravelMode-enum">QGeoRouteRequest::TravelMode</a> QGeoRoute::travelMode () const</h3>
+<p>API REVIEW NOTE</p>
+<p>This might be moved into <a href="qgeoroutesegment.html">QGeoRouteSegment</a> to support mult-mode routes.</p>
+<p>See also <a href="qgeoroute.html#setTravelMode">setTravelMode</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoRoute/travelTime"></a>
+<h3 class="fn"><a name="travelTime"></a>int QGeoRoute::travelTime () const</h3>
+<p>Returns the estimated amount of time it will take to traverse this route, in seconds.</p>
+<p>See also <a href="qgeoroute.html#setTravelTime">setTravelTime</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoRoute/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QGeoRoute &amp; QGeoRoute::operator= ( const QGeoRoute &amp; <i>other</i> )</h3>
 <p>Assigns the contents of <i>other</i> to this route and returns a reference to this route.</p>

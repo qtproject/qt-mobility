@@ -4,7 +4,8 @@ TARGET = MapViewer
 TEMPLATE = app \
     thread
 INCLUDEPATH += ../../src/global \
-    ../../src/location
+    ../../src/location \
+    ../../include/QtmLocation
 SOURCES += main.cpp \
     mainwindow.cpp
 HEADERS += mainwindow.h

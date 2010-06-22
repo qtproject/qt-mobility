@@ -42,11 +42,11 @@
 #include "qgeoareamonitor_maemo_p.h"
 
 QTM_BEGIN_NAMESPACE
-        
+
 #define UPDATE_INTERVAL_5S  5000
 #define TO_METERS           1000
-        
-QGeoAreaMonitorMaemo::QGeoAreaMonitorMaemo(QObject *parent) : QGeoAreaMonitor(parent) 
+
+QGeoAreaMonitorMaemo::QGeoAreaMonitorMaemo(QObject *parent) : QGeoAreaMonitor(parent)
 {
     insideArea = false;
     location = QGeoPositionInfoSource::createDefaultSource(this);
@@ -78,14 +78,14 @@ void QGeoAreaMonitorMaemo::setRadius(qreal radius)
 
 void QGeoAreaMonitorMaemo::positionUpdated(const QGeoPositionInfo &info)
 {
-    double distance = 
-            location_distance_between(info.coordinate().latitude(),
-                                      info.coordinate().longitude(),
-                                      QGeoAreaMonitor::center().latitude(),
-                                      QGeoAreaMonitor::center().longitude());
-    
+    double distance =
+        location_distance_between(info.coordinate().latitude(),
+                                  info.coordinate().longitude(),
+                                  QGeoAreaMonitor::center().latitude(),
+                                  QGeoAreaMonitor::center().longitude());
+
     distance = distance * TO_METERS;
-    
+
     if (distance <= QGeoAreaMonitor::radius()) {
         if (!insideArea)
             emit areaEntered(info);

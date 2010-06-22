@@ -16,11 +16,12 @@
 <p>This is the complete list of members for <a href="qgeoroutereply.html">QGeoRouteReply</a>, including inherited members.</p>
 <p><table class="propsummary" width="100%" border="0" cellpadding="0" cellspacing="0">
 <tr><td width="45%" valign="top"><ul>
-<li><div class="fn">enum <b><a href="qgeoroutereply.html#ErrorCode-enum">ErrorCode</a></b></div></li>
-<li><div class="fn"><b><a href="qgeoroutereply.html#QGeoRouteReply">QGeoRouteReply</a></b> ( QObject * )</div></li>
+<li><div class="fn">enum <b><a href="qgeoroutereply.html#Error-enum">Error</a></b></div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#QGeoRouteReply">QGeoRouteReply</a></b> ( Error, const QString &amp;, QObject * )</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#QGeoRouteReply-2">QGeoRouteReply</a></b> ( const QGeoRouteRequest &amp;, QObject * )</div></li>
 <li><div class="fn"><b><a href="qgeoroutereply.html#dtor.QGeoRouteReply">~QGeoRouteReply</a></b> ()</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#abort">abort</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#blockSignals">blockSignals</a></b> ( bool )</div></li>
-<li><div class="fn"><b><a href="qgeoroutereply.html#cancel">cancel</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#childEvent">childEvent</a></b> ( QChildEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#children">children</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#connect">connect</a></b> ( const QObject *, const char *, const QObject *, const char *, Qt::ConnectionType )</div></li>
@@ -29,7 +30,6 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#customEvent">customEvent</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#d_ptr-var">d_ptr</a></b> : </div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#deleteLater">deleteLater</a></b> ()</div></li>
-<li><div class="fn"><b><a href="qgeoroutereply.html#description">description</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#destroyed">destroyed</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#disconnect">disconnect</a></b> ( const QObject *, const char *, const QObject *, const char * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#disconnect-2">disconnect</a></b> ( const char *, const QObject *, const char * )</div></li>
@@ -38,7 +38,9 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dumpObjectInfo">dumpObjectInfo</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dumpObjectTree">dumpObjectTree</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#dynamicPropertyNames">dynamicPropertyNames</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qgeoroutereply.html#error">error</a></b> ( QGeoRouteReply::ErrorCode, const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#error">error</a></b> () const : Error</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#error-2">error</a></b> ( QGeoRouteReply::Error, const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#errorString">errorString</a></b> () const : QString</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#event">event</a></b> ( QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#eventFilter">eventFilter</a></b> ( QObject *, QEvent * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#findChild">findChild</a></b> ( const QString &amp; ) const</div></li>
@@ -48,6 +50,7 @@
 <li><div class="fn"><b><a href="qgeoroutereply.html#finished">finished</a></b> ()</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#inherits">inherits</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#installEventFilter">installEventFilter</a></b> ( QObject * )</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#isFinished">isFinished</a></b> () const : bool</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#isWidgetType">isWidgetType</a></b> () const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#killTimer">killTimer</a></b> ( int )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#metaObject">metaObject</a></b> () const</div></li>
@@ -57,9 +60,11 @@
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#property">property</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#receivers">receivers</a></b> ( const char * ) const</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#removeEventFilter">removeEventFilter</a></b> ( QObject * )</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#request">request</a></b> () const : QGeoRouteRequest</div></li>
 <li><div class="fn"><b><a href="qgeoroutereply.html#routes">routes</a></b> () const : QList&lt;QGeoRoute&gt;</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#sender">sender</a></b> () const</div></li>
-<li><div class="fn"><b><a href="qgeoroutereply.html#setDescription">setDescription</a></b> ( const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#setError">setError</a></b> ( Error, const QString &amp; )</div></li>
+<li><div class="fn"><b><a href="qgeoroutereply.html#setFinished">setFinished</a></b> ( bool )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#objectName-prop">setObjectName</a></b> ( const QString &amp; )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#setParent">setParent</a></b> ( QObject * )</div></li>
 <li><div class="fn"><b><a href="http://qt.nokia.com/doc/4.6/qobject.html#setProperty">setProperty</a></b> ( const char *, const QVariant &amp; )</div></li>

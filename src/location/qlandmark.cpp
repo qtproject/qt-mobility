@@ -50,6 +50,9 @@
 #include "qgeoaddress.h"
 #include "qgeocoordinate.h"
 
+#include "qgeoplace.h"
+#include "qgeoplace_p.h"
+
 #include <QVariant>
 #include <QStringList>
 
@@ -58,16 +61,23 @@ QTM_USE_NAMESPACE
 // ----- QLandmarkPrivate -----
 
 QLandmarkPrivate::QLandmarkPrivate()
-        : QSharedData()
+        : QGeoPlacePrivate()
 {
+    type = QGeoPlace::LandmarkType;
+    radius = -1.0;
+}
+
+QLandmarkPrivate::QLandmarkPrivate(const QGeoPlacePrivate &other)
+        : QGeoPlacePrivate(other)
+{
+    type = QGeoPlace::LandmarkType;
     radius = -1.0;
 }
 
 QLandmarkPrivate::QLandmarkPrivate(const QLandmarkPrivate &other)
-        : QSharedData(other),
+        : QGeoPlacePrivate(other),
         name(other.name),
         categoryIds(other.categoryIds),
-        location(other.location),
         description(other.description),
         iconUrl(other.iconUrl),
         radius(other.radius),
@@ -82,8 +92,8 @@ QLandmarkPrivate::~QLandmarkPrivate() {}
 
 QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
 {
+    QGeoPlacePrivate::operator =(other);
     name = other.name;
-    location = other.location;
     description = other.description;
     iconUrl = other.iconUrl;
     radius = other.radius;
@@ -98,8 +108,8 @@ QLandmarkPrivate& QLandmarkPrivate::operator= (const QLandmarkPrivate & other)
 
 bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
 {
-    return ((name == other.name)
-            && (location == other.location)
+    return (QGeoPlacePrivate::operator== (other)
+            && (name == other.name)
             && (description == other.description)
             && (iconUrl == other.iconUrl)
             && (radius == other.radius)
@@ -150,15 +160,42 @@ bool QLandmarkPrivate::operator== (const QLandmarkPrivate &other) const
     A new landmark will be assigned with invalid QLandmarkId.
 */
 QLandmark::QLandmark()
-        : d(new QLandmarkPrivate)
+        : QGeoPlace(new QLandmarkPrivate)
 {
+}
+
+/*!
+    Constructs a new landmark from \a other.
+
+    If other is a QLandmark instance this is equivalent to
+    QLandmark(const QLandmark &other).
+
+    If other::type() is QGeoPlace instance this will initialize just the
+    coordinate and address of this landmark.
+
+    Otherwise this is equivalent to QLandmark().
+*/
+QLandmark::QLandmark(const QGeoPlace &other)
+    : QGeoPlace(other)
+{
+    switch (other.type()) {
+        case QGeoPlace::GeoPlaceType:
+        d_ptr = new QLandmarkPrivate(*(other.d_ptr.constData()));
+        break;
+    case QGeoPlace::LandmarkType:
+        // nothing extra to do here
+        break;
+    default:
+        d_ptr = new QLandmarkPrivate();
+        break;
+    }
 }
 
 /*!
     Constructs a copy of \a other.
 */
 QLandmark::QLandmark(const QLandmark &other)
-        : d(other.d)
+        : QGeoPlace(other)
 {
 }
 
@@ -174,8 +211,18 @@ QLandmark::~QLandmark()
 */
 QLandmark &QLandmark::operator= (const QLandmark & other)
 {
-    d = other.d;
+    d_ptr = other.d_ptr;
     return *this;
+}
+
+inline QLandmarkPrivate* QLandmark::d_func()
+{
+    return reinterpret_cast<QLandmarkPrivate*>(d_ptr.data());
+}
+
+inline const QLandmarkPrivate* QLandmark::d_func() const
+{
+    return reinterpret_cast<const QLandmarkPrivate*>(d_ptr.constData());
 }
 
 /*!
@@ -189,7 +236,8 @@ QLandmark &QLandmark::operator= (const QLandmark & other)
 */
 bool QLandmark::operator== (const QLandmark &other) const
 {
-    return (*d == *(other.d));
+    Q_D(const QLandmark);
+    return *d == *(other.d_func());
 }
 
 /*!
@@ -206,6 +254,7 @@ bool QLandmark::operator== (const QLandmark &other) const
 */
 QString QLandmark::name() const
 {
+    Q_D(const QLandmark);
     return d->name;
 }
 
@@ -214,39 +263,8 @@ QString QLandmark::name() const
 */
 void QLandmark::setName(const QString &name)
 {
+    Q_D(QLandmark);
     d->name = name;
-}
-
-/*!
-    Returns the coordinate of the landmark.
-*/
-QGeoCoordinate QLandmark::coordinate() const
-{
-    return d->location.coordinate();
-}
-
-/*!
-    Sets the \a coordinate of the landmark.
-*/
-void QLandmark::setCoordinate(const QGeoCoordinate& coordinate)
-{
-    d->location.setCoordinate(coordinate);
-}
-
-/*!
-    Returns the landmark's address.
-*/
-QGeoAddress QLandmark::address() const
-{
-    return d->location.address();
-}
-
-/*!
-    Sets the \a address of the landmark.
-*/
-void QLandmark::setAddress(const QGeoAddress &address)
-{
-    d->location.setAddress(address);
 }
 
 /*!
@@ -257,6 +275,7 @@ void QLandmark::setAddress(const QGeoAddress &address)
 */
 QList<QLandmarkCategoryId> QLandmark::categoryIds() const
 {
+    Q_D(const QLandmark);
     return d->categoryIds;
 }
 
@@ -269,7 +288,7 @@ QList<QLandmarkCategoryId> QLandmark::categoryIds() const
 */
 void QLandmark::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 {
-
+    Q_D(QLandmark);
     d->categoryIds.clear();
 
     // remove duplicates
@@ -287,6 +306,7 @@ void QLandmark::setCategoryIds(const QList<QLandmarkCategoryId> &categoryIds)
 */
 void QLandmark::addCategoryId(const QLandmarkCategoryId &categoryId)
 {
+    Q_D(QLandmark);
     if (!d->categoryIds.contains(categoryId))
         d->categoryIds.append(categoryId);
 }
@@ -298,6 +318,7 @@ void QLandmark::addCategoryId(const QLandmarkCategoryId &categoryId)
 */
 void QLandmark::removeCategoryId(const QLandmarkCategoryId &categoryId)
 {
+    Q_D(QLandmark);
     d->categoryIds.removeAll(categoryId);
 }
 
@@ -306,6 +327,7 @@ void QLandmark::removeCategoryId(const QLandmarkCategoryId &categoryId)
 */
 QString QLandmark::description() const
 {
+    Q_D(const QLandmark);
     return d->description;
 }
 
@@ -314,6 +336,7 @@ QString QLandmark::description() const
 */
 void QLandmark::setDescription(const QString &description)
 {
+    Q_D(QLandmark);
     d->description = description;
 }
 
@@ -322,6 +345,7 @@ void QLandmark::setDescription(const QString &description)
 */
 QUrl QLandmark::iconUrl() const
 {
+    Q_D(const QLandmark);
     return d->iconUrl;
 }
 
@@ -330,6 +354,7 @@ QUrl QLandmark::iconUrl() const
 */
 void QLandmark::setIconUrl(const QUrl &url)
 {
+    Q_D(QLandmark);
     d->iconUrl = url;
 }
 
@@ -342,6 +367,7 @@ void QLandmark::setIconUrl(const QUrl &url)
 */
 double QLandmark::radius() const
 {
+    Q_D(const QLandmark);
     return d->radius;
 }
 
@@ -350,6 +376,7 @@ double QLandmark::radius() const
 */
 void QLandmark::setRadius(double radius)
 {
+    Q_D(QLandmark);
     d->radius = radius;
 }
 
@@ -361,6 +388,7 @@ void QLandmark::setRadius(double radius)
 */
 QVariant QLandmark::attribute(const QString &key, const QVariant &defaultValue) const
 {
+    Q_D(const QLandmark);
     return d->attributes.value(key, defaultValue);
 }
 
@@ -369,6 +397,7 @@ QVariant QLandmark::attribute(const QString &key, const QVariant &defaultValue) 
 */
 void QLandmark::setAttribute(const QString &key, const QVariant &value)
 {
+    Q_D(QLandmark);
     d->attributes[key] = value;
 }
 
@@ -379,6 +408,7 @@ void QLandmark::setAttribute(const QString &key, const QVariant &value)
 */
 QStringList QLandmark::attributeKeys() const
 {
+    Q_D(const QLandmark);
     return d->attributes.keys();
 }
 
@@ -387,6 +417,7 @@ QStringList QLandmark::attributeKeys() const
 */
 QString QLandmark::phone() const
 {
+    Q_D(const QLandmark);
     return d->phone;
 }
 
@@ -395,6 +426,7 @@ QString QLandmark::phone() const
 */
 void QLandmark::setPhone(const QString &phone)
 {
+    Q_D(QLandmark);
     d->phone = phone;
 }
 /*!
@@ -402,6 +434,7 @@ void QLandmark::setPhone(const QString &phone)
 */
 QUrl QLandmark::url() const
 {
+    Q_D(const QLandmark);
     return d->url;
 }
 
@@ -410,6 +443,7 @@ QUrl QLandmark::url() const
 */
 void QLandmark::setUrl(const QUrl &url)
 {
+    Q_D(QLandmark);
     d->url = url;
 }
 
@@ -418,6 +452,7 @@ void QLandmark::setUrl(const QUrl &url)
 */
 QLandmarkId QLandmark::landmarkId() const
 {
+    Q_D(const QLandmark);
     return d->id;
 }
 
@@ -429,6 +464,7 @@ QLandmarkId QLandmark::landmarkId() const
 */
 void QLandmark::setLandmarkId(const QLandmarkId &id)
 {
+    Q_D(QLandmark);
     d->id = id;
 }
 
@@ -437,9 +473,12 @@ void QLandmark::setLandmarkId(const QLandmarkId &id)
 */
 void QLandmark::clear()
 {
+    Q_D(QLandmark);
+    d->address.clear();
+    d->coordinate = QGeoCoordinate();
+    d->boundingBox = QGeoBoundingBox();
     d->name.clear();
     d->categoryIds.clear();
-    d->location = QGeoLocation();
     d->description.clear();
     d->iconUrl.clear();
     d->radius = 0.0;

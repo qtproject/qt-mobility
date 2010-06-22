@@ -138,7 +138,7 @@ public:
     MyClass(QObject *parent = 0)
         : QObject(parent)
     {
-        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
+        QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource(this);
         if (source) {
             connect(source, SIGNAL(positionUpdated(QGeoPositionInfo)),
                     this, SLOT(positionUpdated(QGeoPositionInfo)));
@@ -315,6 +315,119 @@ A manager backend may be implemented by subclassing QLandmarkManagerEngine, and 
 a QLandmarkManagerEngineFactory which can instantiate it when required.
 
 \annotatedlist landmarks-backend
+
+\section1 Maps and Navigation
+
+The Maps and Navigation API is based on plugins.
+
+Since most providers of mapping, geocoding and routing information offer 
+no guarantees that their data is interoperable with the data provided by 
+other services, the plugins are used to group the functionality per 
+service provider.
+
+The plugins are accessed via QGeoServiceProvider, and a Nokia based plugin 
+is part of Qt Mobility.
+
+\code
+    QGeoMappingManager *mappingManager = 0;
+    QGeoRoutingManager *routingManager = 0;
+    QGeoPlacesManager *placesManager = 0;
+
+    QGeoServiceProvider serviceProvider("nokia");
+
+    if (serviceProvider.error() == QGeoServiceProvider::NoError) {
+        mappingManager = serviceProvider.mappingManager();
+        routingManager = serviceProvider.routingManager();
+        placesManager = serviceProvider.placesManager();
+    }
+\endcode
+
+\section2 Common classes
+
+\annotatedlist maps
+
+\section2 Mapping
+
+The QGeoMapWidget class is the main class used for displaying and interacting
+with maps. It is designed for use within the Graphics View Framework, and is
+a subclass of QGraphicsWidget.
+
+The QGeoMappingManager provides most of the functionality required by
+QGeoMapWidget.  The details of QGeoMappingManager are mostly only important
+to plugin implementers, as regular users should not need to make use of
+QGeoMappingManager outside of the QGeoMapWidget constructor:
+\code
+    QGeoMapWidget *widget = new QGeoMapWidget(mappingManager);
+\endcode
+
+\annotatedlist maps-mapping
+
+\section3 Map objects
+
+QGeoMapObject and its subclasses provide the ability to add graphics to the map
+specified in terms of coordinates and distances. QGeoMapObject instances can
+also be grouped into heirarchies in order to simplify the process of creating
+compound objects and managing groups of objects.
+
+\annotatedlist maps-mapping-objects
+
+\section2 Routing
+
+QGeoRoutingManager handles requests for routing information.
+
+The requests are created as QGeoRouteRequest instances, which are 
+passed to QGeoRoutingManager::calculateRoute().  The returned 
+QGeoRouteReply instance will contain the result of the request when 
+it is completed.
+
+The QGeoRoute class describes the resulting route.  Each route is 
+broken up into a number of QGeoRouteSegment instances, with the division 
+usually occurring at either user specified waypoints or at changes in the 
+mode of transport, like when changing from a train to a bus.
+
+Each QGeoRouteSegment has a QGeoNavigationInstruction instance which 
+describes the instructions that would be issued to a user attempting 
+to follow a route.  These instructions a location, which is typically 
+somewhere near the end of the associated QGeoRouteSegment, and 
+instruction text describing how the next QGeoRouteSegment should be reached.
+
+Several QGeoRouteSegment subclasses exist and can be used to provide 
+additional data about the segment, like the route number of a bus or 
+the speed limit of a road.
+
+Similarly, subclasses of QGeoNavigationInstruction can be used to 
+access data structures describing the intruction in more detail than 
+the usual instruction text and location.
+
+\annotatedlist maps-routing
+
+\section2 Places
+
+QGeoPlacesManager handles geocoding, reverse geocoding and free-text 
+search for places.  
+
+The free-text search will attempt to geocode text that looks like an 
+address while simultaneously searching any landmark databases that the
+service pro.
+It is even possibly to add additional QLandmarkManager instances to 
+the soures of data, so that users can search online databases alongside 
+their personal offline landmarks store.
+
+\annotatedlist maps-places
+
+\section2 Implementing backends
+
+A plugin implementer needs to subclass QGeoServiceProviderFactory and as 
+many of the ManagerEngine classes as they want to provide implementations for.
+
+Subclassing QGeoServiceProviderFactory will only involve exposing a name and 
+a version by overriding QGeoServiceProviderFactory::providerName() and 
+QGeoServiceProviderFactory::providerVersion(), and overriding 
+QGeoServiceProviderFactory::createPlacesManagerEngine(), 
+QGeoServiceProviderFactory::createMappingManagerEngine() and
+QGeoServiceProviderFactory::createRoutingManagerEngine() as appropriate.
+
+\annotatedlist maps-impl
 
 */
 

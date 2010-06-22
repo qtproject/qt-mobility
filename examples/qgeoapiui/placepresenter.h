@@ -42,26 +42,25 @@
 #ifndef PLACEPRESENTER_H
 #define PLACEPRESENTER_H
 
-#include <QTreeWidget>
-
-#include "qsearchresponse.h"
 #include "geopresenter.h"
+#include <qgeoplacesreply.h>
+#include <QTreeWidget>
 
 QTM_USE_NAMESPACE
 
 class PlacePresenter : GeoPresenter
 {
 public:
-    PlacePresenter(QTreeWidget* treeWidget, const QSearchResponse* codingReply);
+    PlacePresenter(QTreeWidget* treeWidget, const QGeoPlacesReply* codingReply);
     virtual void show();
 
 private:
     QTreeWidgetItem* showPlaces();
-    void showPlace(QTreeWidgetItem* top, const QGeoLocation& place);
+    void showPlace(QTreeWidgetItem* top, const QGeoPlace& place);
     void showAddress(QTreeWidgetItem* addrItem, const QGeoAddress& address);
 
 private:
-    const QSearchResponse* codingReply;
+    const QGeoPlacesReply* codingReply;
 };
 
 #endif
