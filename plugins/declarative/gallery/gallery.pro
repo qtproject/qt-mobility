@@ -13,14 +13,14 @@ HEADERS += \
         gallerycountrequest.h \
         galleryfilter.h \
         galleryitemrequest.h \
-        galleryqueryrequest.h \
+        galleryqueryrequest.h
 
 SOURCES += \
         gallerycountrequest.cpp \
         gallery.cpp \
         galleryfilter.cpp \
         galleryitemrequest.cpp \
-        galleryqueryrequest.cpp \
+        galleryqueryrequest.cpp
 
 CONFIG += mobility
 MOBILITY += gallery
