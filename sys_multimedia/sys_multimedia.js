@@ -42,10 +42,10 @@
 
 testcase = {
 
-  preconditions: function()
+  initTestCase: function()
   {
 
-      prompt(twiki('*Preconditoins to the Multimedia Player tests :*
+      prompt(twiki('*Preconditions to the Multimedia Player tests*
 
    1. Have 2 test .mp4 file available on device (Such as the file available from here: http://camendesign.com/code/video_for_everybody/test.html) 
    1. Have 2 test .mp3 and .vaw file available on device 
@@ -61,9 +61,9 @@ testcase = {
 '));
   },
 
-  player1: function()
+  play_an_audio_file: function()
   {
-      prompt(twiki('*Player Test 1 :* Listen to an audio file on device
+      prompt(twiki('*Play an audio file on device*
 
    1. Launch player application
    1.  Click [Open]
@@ -75,15 +75,15 @@ testcase = {
    1.  Verify that .mp3 file is audible on device'));
   },
 
-  player2: function()
+  basic_player_controls_for_audio: function()
   {
-      prompt(twiki('*Player Test 2:* All player control features of player application function properly with audio file
+      prompt(twiki('*All player control features of player application function properly with audio file*
 
-   1. Continuation of Test 1
+        1. Assumed: An audio file plays on the device
 
    1. Click on [Pause]
    1. Verify that file has paused
-   1. Verify that [Pause] controll has now changed to [Play] controll
+   1. Verify that [Pause] control has now changed to [Play] control
    1. Click on [Play]
    1. Verify that file continues to play from where previously paused.
    1. Verify that [Play] icon is now a [Pause] icon
@@ -126,7 +126,7 @@ testcase = {
 '));
   },
 
-  player3: function()
+  seek_controls_for_audio: function()
   {
       prompt(twiki('*Player Test 3:* Fast forward trough a playing audio file
 
@@ -143,13 +143,12 @@ testcase = {
    1. Click or Tap on [Multiplier] control. 
    1. Select [0.5] 
    1. Verify that file is playing at half speed 
-   1. With multiplier control set on [0.5], select a new file from the pla
-list window
+   1. With multiplier control set on [0.5], select a new file from the playlist window
    1. Verify that the Multiplier control has reverted back to [1.0]
    1. Verify that the audio is playing at normal speed'));
   },
 
-  player4: function()
+  play_a_video_file: function()
   {
       prompt(twiki('*Player Test 4 :* Watch a video file on device
 
@@ -164,7 +163,7 @@ list window
 '));
   },
 
-  player5: function()
+  basic_controls_for_video: function()
   {
       prompt(twiki('*Player Test 5:* All features of player application function properly with video file
 
@@ -207,15 +206,6 @@ list window
    1. Verify that [Mute] control is displaying the Muted icon
    1. Click or Tap on [Mute] control again
    1. Verify that sound has reverted back to level selected prior to muting
-   1. Click or Tap on [1.0] (Multiplier) control.
-   1. Select [2.0]
-   1. Verify that file is playing at double speed
-   1. With multiplier control set on [2.0], select a new file from the playlist window
-   1. Verify that the Multiplier control has reverted back to [1.0]
-   1. Verify that the video is playing at normal speed
-   1. Click or Tap on [Multiplier] control.
-   1. Select [0.5]
-   1. Verify that file is playing at half speed
    1. Tap and drag positional slider to right, then release
    1. Verify that player continues to play file at later part of file
    1. Tap and drag positional slider to left, then release
@@ -229,7 +219,7 @@ list window
 '));
   },
 
-  player6: function()
+  seek_controls_for_video: function()
   {
       prompt(twiki('*Player Test 6 :* Fast Forward through a playing video file
 
@@ -243,7 +233,7 @@ list window
    1. Verify that file is playing at half speed'));
   },
 
-  player7: function()
+  basic_controls_for_streamed_content: function()
   {
     prompt(twiki('*Player Test 7:* All features of player application function properly with streaming
 
@@ -280,9 +270,9 @@ list window
 '));
     },
     
-  radio1: function()
+  play_a_radio_transmission: function()
   {
-      prompt(twiki('*Radio Test 1 :* Listen to an radio transmition on the device
+      prompt(twiki('*Radio Test 1 :* Listen to a radio transmission on the device
 
    1. *Note* This test requires radio reception and headphones to be connected to device 
    1. *Note* Audible system notifications should be enabled for this test
@@ -311,12 +301,12 @@ list window
 '));
   },
 
-  camera1: function()
+  take_a_photo: function()
   {
       prompt(twiki(readLocalFile(baseDataPath() + "testtext/" + currentTestFunction())));
   },
 
-  recorder1: function()
+  record_an_audio_file: function()
   {
       prompt(twiki('*Recorder Test 1 :* Record audio on the device
 
@@ -345,7 +335,7 @@ If I then select "audio/PCM" as the audio codec I\'m able to record .wav file de
 '));
   },
 
-  slideshow1: function()
+  play_a_slideshow: function()
   {
       prompt(twiki('*Slideshow Test 1 :* Play a slideshow of pictures on the device from various sources
 
