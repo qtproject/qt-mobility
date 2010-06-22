@@ -575,12 +575,13 @@ void QGalleryTrackerItemListPrivate::syncStart(
 
         rowCount += rCount;
 
-        q_func()->inserted(rIndex, rCount);
+        emit q_func()->inserted(rIndex, rCount);
     } else if (rIndex > rCache.cutoff) {
         const int statusCount = rIndex - rCache.cutoff;
 
         rCache.cutoff = rIndex;
 
+        emit q_func()->metaDataChanged(rCache.index, statusCount);
         emit q_func()->statusChanged(rCache.index, statusCount);
     }
 }
@@ -664,7 +665,8 @@ void QGalleryTrackerItemListPrivate::syncFinish(
         if (rIndex < rowCount) {
             rCache.cutoff = qMin(rowCount, rCache.count);
 
-            q_func()->statusChanged(rIndex, rCache.cutoff - rIndex);
+            emit q_func()->metaDataChanged(rIndex, rCache.cutoff - rIndex);
+            emit q_func()->statusChanged(rIndex, rCache.cutoff - rIndex);
         } else {
             rCache.cutoff = rIndex;
         }
