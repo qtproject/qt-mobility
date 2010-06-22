@@ -46,26 +46,54 @@
 
 #include "qorganizeritem.h"
 #include "qorganizeritemmanager.h"
-#include "qorganizeritemfetchrequest.h"
+#include "qorganizeritemsaverequest.h"
 
 QTM_USE_NAMESPACE;
 
-class QMLOrganizerItemDetail;
-class QMLOrganizerItem : public QObject
+class QMLOrganizerItem : public QAbstractListModel
 {
-Q_OBJECT
-Q_CLASSINFO("DefaultProperty", "displayLabel")
-
+    Q_OBJECT
+    Q_PROPERTY (bool itemChanged READ itemChanged NOTIFY onItemChanged);
+    Q_PROPERTY (int itemId READ itemId NOTIFY onItemIdChanged);
 public:
+    enum {
+        DetailNameRole = Qt::UserRole + 500,
+        DetailFieldKeyRole,
+        DetailFieldValueRole,
+        DetailFieldRole
+    };
+
     explicit QMLOrganizerItem(QObject *parent = 0);
-    void setOrganizerItem(const QOrganizerItem& item);
-    bool isEmpty() const;
-    //Acts as details model
-    Q_INVOKABLE QVariant details() const;
+    void setItem(const QOrganizerItem& c);
+    void setManager(QOrganizerItemManager* manager);
+    QOrganizerItem item() const;
+    QVariant itemMap() const;
+    Q_INVOKABLE QList<QObject*> details() const;
+    Q_INVOKABLE QList<QObject*> detailFields() const;
+    bool itemChanged() const;
+    Q_INVOKABLE void save();
+
+    int itemId() const;
+    int rowCount(const QModelIndex &parent) const;
+    QVariant data(const QModelIndex &index, int role) const;
+
+
+signals:
+    void onItemChanged();
+    void onItemIdChanged();
+private slots:
+    void onItemSaved();
 private:
+    QOrganizerItem m_item;
+    QDeclarativePropertyMap* m_itemMap;
+    QList<QDeclarativePropertyMap*> m_detailMaps;
     QList<QObject*> m_details;
+    QList<QObject*> m_detailFields;
+    QOrganizerItemManager* m_manager;
+    QOrganizerItemSaveRequest m_saveRequest;
 };
 
- QML_DECLARE_TYPE(QMLOrganizerItem)
+
+QML_DECLARE_TYPE(QMLOrganizerItem)
 
 #endif // QMLORGANIZERITEM_H

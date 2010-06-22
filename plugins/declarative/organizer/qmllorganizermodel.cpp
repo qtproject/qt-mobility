@@ -139,7 +139,7 @@ void QMLOrganizerModel::itemsReceived()
     beginInsertRows(QModelIndex(), 0, items.count());
     foreach (const QOrganizerItem& item, items) {
         QMLOrganizerItem* qitem = new QMLOrganizerItem(this);
-        qitem->setOrganizerItem(item);
+        qitem->setItem(item);
         m_items.append(qitem);
     }
     endInsertRows();

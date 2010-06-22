@@ -109,7 +109,7 @@ static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDet
     return QString();
 }
 
-static QString ToContactDetailName(const QString& name)
+static QString unNormalizePropertyName(const QString& name)
 {
    if (!name.isEmpty())
      return name.mid(1).prepend(name[0].toUpper());
@@ -164,9 +164,9 @@ bool QMLOrganizerItemDetail::detailChanged() const
 
 QOrganizerItemDetail QMLOrganizerItemDetail::detail() const
 {
-    QOrganizerItemDetail d(ToContactDetailName(name()));
+    QOrganizerItemDetail d(unNormalizePropertyName(name()));
     foreach (const QString& key, m_map->keys()) {
-        d.setValue(ToContactDetailName(key), m_map->value(key));
+        d.setValue(unNormalizePropertyName(key), m_map->value(key));
     }
     return d;
 }
