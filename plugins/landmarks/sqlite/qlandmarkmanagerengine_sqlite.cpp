@@ -91,6 +91,9 @@
 #include <QThreadPool>
 #include <QUuid>
 #include <math.h>
+#include <QSettings>
+#include <QFileInfo>
+#include <QDir>
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -2149,9 +2152,19 @@ QLandmarkManagerEngineSqlite::QLandmarkManagerEngineSqlite(const QString &filena
 
 {
     qRegisterMetaType<ERROR_MAP >();
-
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", m_dbConnectionName);
-    db.setDatabaseName(filename);
+
+    if (m_dbFilename.isEmpty()) {
+        QSettings settings(QSettings::IniFormat, QSettings::UserScope,
+                           QLatin1String("Nokia"), QLatin1String("QtLandmarks"));
+        QFileInfo fi(settings.fileName());
+        QDir dir = fi.dir();
+        dir.mkpath(dir.path());
+        m_dbFilename = dir.path() + QDir::separator() + QString("QtLandmarks") +  QLatin1String(".db");
+
+    }
+
+    db.setDatabaseName(m_dbFilename);
     if (!db.open()) {
         qWarning() << db.lastError().text();
     }

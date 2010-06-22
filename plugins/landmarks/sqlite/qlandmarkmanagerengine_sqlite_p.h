@@ -67,7 +67,7 @@ class QLandmarkManagerEngineSqlite : public QLandmarkManagerEngine
 {
     Q_OBJECT
 public:
-    QLandmarkManagerEngineSqlite(const QString &filename = QString(":memory:"));
+    QLandmarkManagerEngineSqlite(const QString &filename = QString());
     ~QLandmarkManagerEngineSqlite();
 
     /* URI reporting */

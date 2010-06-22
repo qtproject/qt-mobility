@@ -106,7 +106,21 @@ QLandmarkManager::QLandmarkManager(QObject *parent)
         : QObject(parent),
           d_ptr(new QLandmarkManagerPrivate())
 {
-    //TODO: implement
+    Q_D(QLandmarkManager);
+    d->q_ptr = this;
+    QString managerName;
+
+#ifdef Q_OS_SYMBIAN
+#else
+    managerName = "com.nokia.qt.landmarks.engines.sqlite";
+#endif
+
+    d->createEngine(managerName);
+    if (!d->engine) {
+        d->errorCode = QLandmarkManager::InvalidManagerError;
+        d->errorString = QString("Invalid Manager, name: %1").arg(managerName);
+        qWarning() << "Invalid QLandmarkManager instantiated with name: " << managerName;
+    }
 }
 
 /*!
