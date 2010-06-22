@@ -120,6 +120,7 @@ S60VideoWidgetControl::S60VideoWidgetControl(QObject *parent)
     : QVideoWidgetControl(parent)
     , m_widget(0)
     , m_aspectRatioMode(Qt::KeepAspectRatio)
+    , m_fullScreenEnabled(0)
 {
     initializeVideoOutput();
 }
@@ -161,11 +162,21 @@ void S60VideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode ratio)
 
 bool S60VideoWidgetControl::isFullScreen() const
 {
-    return m_widget->isFullScreen();
+    return m_fullScreenEnabled;
 }
 
 void S60VideoWidgetControl::setFullScreen(bool fullScreen)
 {
+    if (m_fullScreenEnabled == fullScreen)
+        return;
+
+    m_fullScreenEnabled = fullScreen;
+
+    if (fullScreen && m_widget)
+        m_widget->showFullScreen();
+    else if (m_widget)
+        m_widget->showNormal();
+
     emit fullScreenChanged(fullScreen);
 }
 
@@ -212,13 +223,15 @@ void S60VideoWidgetControl::setSaturation(int saturation)
 bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
 {
     if (object == m_widget) {
-        if (   e->type() == QEvent::Resize 
-            || e->type() == QEvent::Move 
-            || e->type() == QEvent::WinIdChange
+        if (e->type() == QEvent::WinIdChange
             || e->type() == QEvent::ParentChange 
-            || e->type() == QEvent::Show)
+            || e->type() == QEvent::Show) {
             emit widgetUpdated();
-    }    
+        } else if (e->type() == QEvent::Resize
+            || e->type() == QEvent::Move) {
+            emit widgetResized();
+        }
+    }
     return false;
 }
 

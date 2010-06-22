@@ -44,7 +44,6 @@
 #include "s60mediaplayerservice.h"
 #include "s60videooverlay.h"
 
-#include <QtCore/qdebug.h>
 #include <QtGui/qwidget.h>
 #include <QtCore/qtimer.h>
 #include <QApplication>
@@ -75,7 +74,6 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
     m_audioOutput = 0;
 #endif
 
-    resetNativeHandles();
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
     QT_TRAP_THROWING(m_player = CVideoPlayerUtility2::NewL(
         *this,
@@ -83,6 +81,7 @@ S60VideoPlayerSession::S60VideoPlayerSession(QMediaService *service)
         EMdaPriorityPreferenceNone
         ));
 #else
+    resetNativeHandles();
     QT_TRAP_THROWING(m_player = CVideoPlayerUtility::NewL(
         *this,
         0,
@@ -155,10 +154,12 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
 
     if (oldWidgetControl) {
         disconnect(oldWidgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
+        disconnect(oldWidgetControl, SIGNAL(widgetResized()), this, SLOT(resizeVideoWindow()));
         disconnect(this, SIGNAL(stateChanged(QMediaPlayer::State)), oldWidgetControl, SLOT(videoStateChanged(QMediaPlayer::State)));
     }
     if (newWidgetControl) {
         connect(newWidgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
+        connect(newWidgetControl, SIGNAL(widgetResized()), this, SLOT(resizeVideoWindow()));
         connect(this, SIGNAL(stateChanged(QMediaPlayer::State)), newWidgetControl, SLOT(videoStateChanged(QMediaPlayer::State)));
     }
 
@@ -175,7 +176,6 @@ void S60VideoPlayerSession::setVideoRenderer(QObject *videoOutput)
     S60VideoWidgetControl *oldWidgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
 
     if (oldWidgetControl) {
-        S60VideoWidgetControl *oldWidgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
         disconnect(oldWidgetControl, SIGNAL(widgetUpdated()), this, SLOT(resetVideoDisplay()));
         disconnect(oldWidgetControl, SIGNAL(beginVideoWindowNativePaint()), this, SLOT(suspendDirectScreenAccess()));
         disconnect(oldWidgetControl, SIGNAL(endVideoWindowNativePaint()), this, SLOT(resumeDirectScreenAccess()));
@@ -198,26 +198,13 @@ bool S60VideoPlayerSession::resetNativeHandles()
     TRect newRect = TRect(0,0,0,0);
     Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio;
 
-    S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.requestControl(QVideoWidgetControl_iid));
-    S60VideoOverlay* windowControl;
-    if (!widgetControl)
-        windowControl = qobject_cast<S60VideoOverlay *>(m_service.requestControl(QVideoWindowControl_iid));
+    S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
+
     if (widgetControl) {
         QWidget *videoWidget = widgetControl->videoWidget();
         newId = widgetControl->videoWidgetWId();
         newRect = QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
         aspectRatioMode = widgetControl->aspectRatioMode();
-    } else if (windowControl) {
-        newId = windowControl->winId();
-        newRect = TRect( newId->DrawableWindow()->AbsPosition(), newId->DrawableWindow()->Size());
-    } else {
-        if (QApplication::activeWindow())
-            newId = QApplication::activeWindow()->effectiveWinId();
-
-        if (!newId && QApplication::allWidgets().count())
-            newId = QApplication::allWidgets().at(0)->effectiveWinId();
-
-        Q_ASSERT(newId != 0);
     }
     if (newRect == m_rect &&  newId == m_windowId && aspectRatioMode == m_aspectRatioMode)
         return false;
@@ -329,27 +316,34 @@ void S60VideoPlayerSession::MvpuoOpenComplete(TInt aError)
 #ifdef MMF_VIDEO_SURFACES_SUPPORTED
 void S60VideoPlayerSession::MvpuoPrepareComplete(TInt aError)
 {
-    setError(aError);
-    TRect rect;
-    S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.requestControl(QVideoWidgetControl_iid));
-    const QSize size = widgetControl->videoWidgetSize();
-    rect.SetSize(TSize(size.width(), size.height()));
+    setError(aError); // if we have some playback errors, handle them
 
-    if (m_displayWindow)
+    if (m_displayWindow) {
         m_player->RemoveDisplayWindow(*m_displayWindow);
+        m_displayWindow = NULL;
+    }
 
     RWindow *window = static_cast<RWindow *>(m_window);
     if (window) {
+        TRect rect;
+        S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
+        const QSize size = widgetControl->videoWidgetSize();
+        rect.SetSize(TSize(size.width(), size.height()));
+        m_rect = rect;
+
         window->SetBackgroundColor(TRgb(0, 0, 0, 255));
         TRAPD(error,
-            m_player->AddDisplayWindowL(m_wsSession, m_screenDevice, *window, rect, rect);
-            TSize originalSize;
+            m_player->AddDisplayWindowL(m_wsSession, m_screenDevice, *window, m_rect, m_rect);)
+        setError(error); // if we can't add window it an error at this point
+        TSize originalSize;
+        TRAP_IGNORE(
             m_player->VideoFrameSizeL(originalSize);
             m_originalSize = QSize(originalSize.iWidth, originalSize.iHeight);
-            m_player->SetScaleFactorL(*window, scaleFactor().first, scaleFactor().second));
-        setError(error);
+            m_player->SetScaleFactorL(*window, scaleFactor().first, scaleFactor().second);)
+
+        m_displayWindow = window;
     }
-    m_displayWindow = window;
+
 #ifdef HAS_AUDIOROUTING_IN_VIDEOPLAYER
     TRAPD(err,
         m_audioOutput = CAudioOutput::NewL(*m_player);
@@ -426,24 +420,33 @@ void S60VideoPlayerSession::updateMetaDataEntriesL()
 void S60VideoPlayerSession::resetVideoDisplay()
 {
     if (resetNativeHandles()) {
+
+        S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
+        if (!widgetControl)
+            return;
+
         TRect rect;
-        S60VideoWidgetControl* widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.requestControl(QVideoWidgetControl_iid));
         const QSize size = widgetControl->videoWidgetSize();
         rect.SetSize(TSize(size.width(), size.height()));
-        if (m_displayWindow)
+        m_rect = rect;
+
+        if (m_displayWindow) {
             m_player->RemoveDisplayWindow(*m_displayWindow);
+            m_displayWindow = NULL;
+        }
+
         RWindow *window = static_cast<RWindow *>(m_window);
         if (window) {
             window->SetBackgroundColor(TRgb(0, 0, 0, 255));
-            TRAPD(err,
+            TRAP_IGNORE(
                m_player->AddDisplayWindowL(m_wsSession,
                                            m_screenDevice,
                                            *window,
-                                           rect,
-                                           rect));
-            setError(err);
+                                           m_rect,
+                                           m_rect));
+            m_displayWindow = window;
         }
-        m_displayWindow = window;
+
         if(    mediaStatus() == QMediaPlayer::LoadedMedia
             || mediaStatus() == QMediaPlayer::StalledMedia
             || mediaStatus() == QMediaPlayer::BufferingMedia
@@ -480,6 +483,30 @@ void S60VideoPlayerSession::resetVideoDisplay()
 }
 #endif //MMF_VIDEO_SURFACES_SUPPORTED
 
+void S60VideoPlayerSession::resizeVideoWindow()
+{
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+    S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
+    m_aspectRatioMode = widgetControl->aspectRatioMode();
+
+    TRect rect;
+    const QSize size = widgetControl->videoWidgetSize();
+    rect.SetSize(TSize(size.width(), size.height()));
+    m_rect = rect;
+
+    TRAPD( err, m_player->SetVideoExtentL(*m_displayWindow, m_rect);
+        m_player->SetWindowClipRectL(*m_displayWindow, m_rect);)
+
+    // don't waste time on calling this when we have error
+    if (KErrNone != err) {
+        TSize originalSize;
+        TRAP_IGNORE(
+            m_player->VideoFrameSizeL(originalSize);
+            m_originalSize = QSize(originalSize.iWidth, originalSize.iHeight);
+            m_player->SetScaleFactorL(*m_displayWindow, scaleFactor().first, scaleFactor().second); )
+    }
+#endif //MMF_VIDEO_SURFACES_SUPPORTED
+}
 void S60VideoPlayerSession::suspendDirectScreenAccess()
 {
     m_dsaStopped = stopDirectScreenAccess();
