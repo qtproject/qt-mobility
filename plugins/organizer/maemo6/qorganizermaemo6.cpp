@@ -194,6 +194,11 @@ bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
 
 bool QOrganizerItemMaemo6Engine::saveItem(QOrganizerItem* item,  QOrganizerItemManager::Error* error)
 {
+    // ensure that the organizeritem's details conform to their definitions
+    if (!validateItem(*item, error)) {
+        return false;
+    }
+
     Incidence* theIncidence = softSaveItem(item, error);
     if (theIncidence) {
         d->m_calendarBackend.save();
@@ -232,8 +237,8 @@ bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>&
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo6Engine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
-    /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
+    *error = QOrganizerItemManager::NoError;
+    return schemaDefinitions().value(itemType);
 }
 
 QOrganizerItemDetailDefinition QOrganizerItemMaemo6Engine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
@@ -399,6 +404,42 @@ QStringList QOrganizerItemMaemo6Engine::supportedItemTypes() const
     ret << QOrganizerItemType::TypeTodoOccurrence;
 
     return ret;
+}
+
+QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaemo6Engine::schemaDefinitions() const {
+    // lazy initialisation of schema definitions.
+    if (d->m_definitions.isEmpty()) {
+        // Loop through default schema definitions
+        QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schema
+                = QOrganizerItemManagerEngine::schemaDefinitions();
+        foreach (const QString& itemType, schema.keys()) {
+            // Only add the item types that we support
+            if (itemType == QOrganizerItemType::TypeEvent ||
+                itemType == QOrganizerItemType::TypeEventOccurrence ||
+                itemType == QOrganizerItemType::TypeTodo ||
+                itemType == QOrganizerItemType::TypeTodoOccurrence ||
+                itemType == QOrganizerItemType::TypeJournal ||
+                itemType == QOrganizerItemType::TypeNote) {
+                QMap<QString, QOrganizerItemDetailDefinition> definitions
+                        = schema.value(itemType);
+                
+                QMap<QString, QOrganizerItemDetailDefinition> supportedDefinitions;
+
+                QMapIterator<QString, QOrganizerItemDetailDefinition> it(definitions);
+                while (it.hasNext()) {
+                    it.next();
+                    // Only add the definitions that we support
+                    if (it.key() == QOrganizerItemType::DefinitionName ||
+                        it.key() == QOrganizerItemDescription::DefinitionName ||
+                        it.key() == QOrganizerItemDisplayLabel::DefinitionName) {
+                        supportedDefinitions.insert(it.key(), it.value());
+                    }
+                }
+                d->m_definitions.insert(itemType, supportedDefinitions);
+            }
+        }
+    }
+    return d->m_definitions;
 }
 
 Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& itemId) const
