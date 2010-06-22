@@ -94,6 +94,7 @@ public:
     void setPostOfficeBox(const QString &postOfficeBox);
 
     bool isEmpty() const;
+    void clear();
 
 private:
     QSharedDataPointer<QGeoAddressPrivate> d;
