@@ -49,47 +49,79 @@ QTM_BEGIN_NAMESPACE
 
 QGeoPositionInfoSourceMaemo::QGeoPositionInfoSourceMaemo(QObject *parent): QGeoPositionInfoSource(parent)
 {
-    time_interval_ = DefaultUpdateInterval;
-    availableMethods = AllPositioningMethods;
+    requestTimer = new QTimer(this);
+    QObject::connect(requestTimer, SIGNAL(timeout()), this, SLOT(requestTimerExpired()));
+    locationOngoing = false;
 }
 
 
 int QGeoPositionInfoSourceMaemo::init()
 {
-    int status;
-    dbusComm = new DBusComm();
-    if ((status = dbusComm->init()) == 0) {
+    dbusComm = new DBusComm(this);
+    int status = dbusComm->init();
+
+    if (status == 0) {
         QObject::connect(dbusComm, SIGNAL(receivedPositionUpdate(const QGeoPositionInfo &)),
                          this, SLOT(newPositionUpdate(const QGeoPositionInfo &)));
+        QObject::connect(dbusComm, SIGNAL(serviceConnected()),
+                         this, SLOT(onServiceConnect()));
+        QObject::connect(dbusComm, SIGNAL(serviceDisconnected()),
+                         this, SLOT(onServiceDisconnect()));
     }
     return status;
 }
 
+void QGeoPositionInfoSourceMaemo::onServiceDisconnect()
+{
+    //
+}
+
+
+void QGeoPositionInfoSourceMaemo::onServiceConnect()
+{
+    DBusComm::Command command = (DBusComm::Command)( int(DBusComm::CommandStart) 
+                                                     | int(DBusComm::CommandSetInterval) 
+                                                     | int(DBusComm::CommandSetMethods) );
+    int interval = QGeoPositionInfoSource::updateInterval();
+    QGeoPositionInfoSource::PositioningMethods method;
+    method = QGeoPositionInfoSource::preferredPositioningMethods();
+
+    if (locationOngoing) {
+        dbusComm->sendConfigRequest(command, method, interval);
+    }
+}
 
 void QGeoPositionInfoSourceMaemo::newPositionUpdate(const QGeoPositionInfo &update)
 {
-    emit positionUpdated(update);
+    if(update.isValid()) {
+        emit positionUpdated(update);
+        if ( requestTimer->isActive() )
+            shutdownRequestSession();
+    } else {
+        if ( !requestTimer->isActive() )
+            emit updateTimeout();
+    }
 }
 
 
 QGeoPositionInfo QGeoPositionInfoSourceMaemo::lastKnownPosition(bool fromSatellitePositioningMethodsOnly) const
 {
-    static QGeoPositionInfo lastUpdate;
-    lastUpdate = dbusComm->requestLastKnownPosition(fromSatellitePositioningMethodsOnly);
+    QGeoPositionInfo update = dbusComm->requestLastKnownPosition(fromSatellitePositioningMethodsOnly); 
 
-    return lastUpdate;
+    return update;
 }
 
 
 QGeoPositionInfoSource::PositioningMethods QGeoPositionInfoSourceMaemo::supportedPositioningMethods() const
 {
-    return availableMethods;
+    return dbusComm->availableMethods();
 }
 
 
 void QGeoPositionInfoSourceMaemo::setUpdateInterval(int msec)
 {
-    msec = (msec < MinimumUpdateInterval) ? MinimumUpdateInterval : msec;
+    qint32 min = dbusComm->minimumInterval();
+    msec = (msec < min) ? min : msec;
     QGeoPositionInfoSource::setUpdateInterval(msec);
 
     dbusComm->sendConfigRequest(dbusComm->CommandSetInterval, 0, msec);
@@ -105,25 +137,64 @@ void QGeoPositionInfoSourceMaemo::setPreferredPositioningMethods(PositioningMeth
 
 int QGeoPositionInfoSourceMaemo::minimumUpdateInterval() const
 {
-    return MinimumUpdateInterval;
+    return dbusComm->minimumInterval();
 }
 
 
 void QGeoPositionInfoSourceMaemo::startUpdates()
 {
-    dbusComm->sendConfigRequest(DBusComm::CommandStart, 0, time_interval_);
+    locationOngoing = true;
+    if ( !requestTimer->isActive() )
+        dbusComm->sendConfigRequest(DBusComm::CommandStart, 0, 0);
 }
 
 
 void QGeoPositionInfoSourceMaemo::stopUpdates()
 {
-    dbusComm->sendConfigRequest(dbusComm->CommandStop, 0, 0);
+    locationOngoing = false;
+    if ( !requestTimer->isActive() )
+        dbusComm->sendConfigRequest(dbusComm->CommandStop, 0, 0);
 }
 
 
 void QGeoPositionInfoSourceMaemo::requestUpdate(int timeout)
 {
-    dbusComm->sendConfigRequest(dbusComm->CommandOneShot, 0, timeout);
+    if ( QGeoPositionInfoSource::updateInterval() != 
+         dbusComm->minimumInterval() )
+        dbusComm->sendConfigRequest(dbusComm->CommandSetInterval, 0, 
+                                    dbusComm->minimumInterval());
+
+    if ( !QGeoPositionInfoSource::preferredPositioningMethods().testFlag(QGeoPositionInfoSource::AllPositioningMethods) )
+        dbusComm->sendConfigRequest(dbusComm->CommandSetMethods, 
+                                    QGeoPositionInfoSource::AllPositioningMethods, 0);
+
+    if ( !locationOngoing )
+        dbusComm->sendConfigRequest(dbusComm->CommandStart, 0, 0);
+
+    requestTimer->start(timeout);
+}
+
+void QGeoPositionInfoSourceMaemo::requestTimerExpired()
+{
+    emit updateTimeout();
+    shutdownRequestSession();
+}
+
+void QGeoPositionInfoSourceMaemo::shutdownRequestSession()
+{
+    requestTimer->stop();
+
+    if ( !locationOngoing )
+        dbusComm->sendConfigRequest(dbusComm->CommandStop, 0, 0);
+
+    if ( QGeoPositionInfoSource::updateInterval() !=
+         dbusComm->minimumInterval() )
+        dbusComm->sendConfigRequest(dbusComm->CommandSetInterval, 0,
+                                    QGeoPositionInfoSource::updateInterval());
+
+    if ( !QGeoPositionInfoSource::preferredPositioningMethods().testFlag(QGeoPositionInfoSource::AllPositioningMethods) )
+        dbusComm->sendConfigRequest(dbusComm->CommandSetMethods,
+                                    QGeoPositionInfoSource::preferredPositioningMethods(), 0);
 }
 
 #include "moc_qgeopositioninfosource_maemo_p.cpp"
