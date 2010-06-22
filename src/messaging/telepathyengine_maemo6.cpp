@@ -174,10 +174,6 @@ void TelepathyEngine::onAccountReady(TpSessionAccount *tpacc)
         }
 
         emit accountReady(tpacc);
-
-        //if (!m_reqMsg.isEmpty())
-	// tpacc->sendMessageToAddress(m_reqAddress, m_reqMsg);
-
     }
     QDEBUG_FUNCTION_END
 }
@@ -253,7 +249,6 @@ bool TelepathyEngine::sendMessage(QMessage &message, QMessageService *service)
 void TelepathyEngine::_updateImAccounts() const
 {
     QDEBUG_FUNCTION_BEGIN
-//    iDefaultImAccountId = QMessageAccountId();
     m_iAccounts.clear();
 
 

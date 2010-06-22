@@ -54,6 +54,11 @@
 namespace 
 {
 
+//! returns text prefix used in SMS storage engine to identify the type of processing message
+/*!
+ \param event communication event (message)
+ \return QString representing text prefix for the message Id
+ */
 QString prefixForEvent(const Event &event)
 {
     QString prefix;
@@ -105,7 +110,7 @@ struct MessageFilter
     MessageFilter(const QMessageFilter &filter)
 	: _filter(filter)
      {
-	 _privateFilter = QMessageFilterPrivate::implementation(_filter); 
+         _privateFilter = QMessageFilter//!Private::implementation(_filter);
      }
 
     void operator()(const Event &event)
@@ -165,12 +170,13 @@ struct MessageFilterAndBodySearcher
 }
 
 Q_GLOBAL_STATIC(StorageEngine, storageEngine);
-
+//! returns pointer to the singleton instance
 StorageEngine* StorageEngine::instance()
 {
     return storageEngine();
 }
 
+//! constructor
 StorageEngine::StorageEngine(QObject *parent) 
 	: QObject(parent)
 	, m_sync(true)
@@ -194,9 +200,10 @@ StorageEngine::StorageEngine(QObject *parent)
     QDEBUG_FUNCTION_END
 }
 
-/**
- *
- * Converts message to event.
+/*!
+ Converts message to event.
+ \param message source message
+ \return SMS event filled by the corresponding data
  *
  */
 Event StorageEngine::eventFromMessage(const QMessage &message)
@@ -281,6 +288,12 @@ Event StorageEngine::eventFromMessage(const QMessage &message)
  * Converts event to message.
  *
  */
+/*!
+ Converts event to message
+ \param event source event
+ \return SMS message filled by the corresponding data
+ *
+ */
 QMessage StorageEngine::messageFromEvent(const Event &ev)
 {
     QDEBUG_FUNCTION_BEGIN
@@ -359,11 +372,16 @@ QMessage StorageEngine::messageFromEvent(const Event &ev)
     return message;
 }
 
+//! returns error value
 QMessageManager::Error StorageEngine::error() const
 {
     return m_error;
 }
 
+/*! synchronous method to count filtered messages
+  \param filter Filter
+  \return number of messages satisfying to the filter
+ */
 int StorageEngine::countMessagesSync(const QMessageFilter &filter)
 {
     QDEBUG_FUNCTION_BEGIN
@@ -384,6 +402,15 @@ int StorageEngine::countMessagesSync(const QMessageFilter &filter)
     return counter._count;
 }
 
+/*! synchronous method that returns list of filtered messages. List will be sorted in QMessageStore::queryMessages().
+  \param filter Filter
+  \param body  specifies the string that message have to contain
+  \param matchFlags specifies the matching method to use
+  \param sortOrder specifies how to sort identifiers
+  \param limit an upper bound on the number of ids in the list returned
+  \param offset specifies how many ids to skip at the beginning of the list returned
+  \return list of messages satisfying to the filter and containing the body
+ */
 QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, const QString &body,
 						QMessageDataComparator::MatchFlags matchFlags, const QMessageSortOrder &sortOrder,
 						uint limit, uint offset)
@@ -410,6 +437,13 @@ QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, co
     return searcher._ids;
 }
 
+/*! synchronous method that returns list of filtered messages. List will be sorted in QMessageStore::queryMessages().
+  \param filter Filter
+  \param sortOrder specifies how to sort identifiers
+  \param limit an upper bound on the number of ids in the list returned
+  \param offset specifies how many ids to skip at the beginning of the list returned
+  \return list of messages satisfying to the filter
+ */
 QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, const QMessageSortOrder &sortOrder, uint limit, uint offset)
 {
     QDEBUG_FUNCTION_BEGIN
@@ -434,6 +468,10 @@ QMessageIdList StorageEngine::queryMessagesSync(const QMessageFilter &filter, co
     return searcher._ids;
 }
 
+/*! Asynchronous method to count filtered messages
+  \param filter Filter
+  \return number of messages satisfying to the filter
+ */
 bool StorageEngine::countMessages(QMessageService *service, const QMessageFilter &filter)
 {
     QDEBUG_FUNCTION_BEGIN
@@ -493,7 +531,7 @@ void StorageEngine::onModelReady()
     QDEBUG_FUNCTION_END
 }
 
-/**
+/*!
  *
  * Returns message from m_SMSModel by id. Sync call.
  *
@@ -515,7 +553,7 @@ QMessage StorageEngine::message(const QMessageId &id) const
     return QMessage();
 }
 
-/**
+/*!
  *
  * Removes message m_SMSModel and events database by id. Sync call.
  *
@@ -550,7 +588,7 @@ bool StorageEngine::removeMessage(const QMessageId &id)
    return ret;
 }
 
-/**
+/*!
  *
  * Adds message to m_SMSModel and events database.  Sync call.
  *
@@ -574,7 +612,7 @@ bool StorageEngine::addMessage(QMessage &message)
     return ret;
 }
 
-/**
+/*!
  *
  * Updates existing message data in m_SMSModel and tracker database.
  *
@@ -597,7 +635,7 @@ bool StorageEngine::updateMessage(QMessage &message)
     return ret;
 }
 
-/**
+/*!
  *
  * Returns instance of QMessageFolder, corresponding to one of standard SMS folders
  *
@@ -621,7 +659,7 @@ QMessageFolder StorageEngine::folder(const QMessageFolderId& id)
     return folder;
 }
 
-/**
+/*!
  *
  * Returns the constant number od standard SMS folders. Sync call.
  *
@@ -643,7 +681,7 @@ int StorageEngine::countFolders(const QMessageFolderFilter& filter)
     return result.size();
 }
 
-/**
+/*!
  *
  * Returns list of standard SMS folders acceptable by filter. Sync call.
  *
@@ -670,12 +708,18 @@ QMessageFolderIdList StorageEngine::queryFolders(const QMessageFolderFilter &fil
 }
 
 
+/*!
+  Internal slot for events addition
+  */
 void StorageEngine::eventsAdded(const QList<CommHistory::Event> &events)
 {
     qDebug() << "StorageEngine::eventsAdded";
     processFilters(events, &StorageEngine::messageAdded);
 }
 
+/*!
+  Internal slot for events update
+  */
 void StorageEngine::eventsUpdated(const QList<CommHistory::Event> &events)
 {
     qDebug() << "StorageEngine::eventsUpdated";
@@ -698,11 +742,17 @@ void StorageEngine::eventDeleted(int id)
 	emit messageRemoved(messageId, idSet);
 }
 
+/*!
+  Add filter to the map
+ */
 void StorageEngine::registerNotificationFilter(QMessageManager::NotificationFilterId id, const QMessageFilter &filter)
 {
     m_filters[id] = filter;
 }
 
+/*!
+  Delete filter specified by id from the map of filters
+ */
 void StorageEngine::unregisterNotificationFilter(QMessageManager::NotificationFilterId id)
 {
     m_filters.remove(id);
@@ -739,6 +789,9 @@ void StorageEngine::processFilters(const QList<CommHistory::Event> &events, void
     }
 }
 
+/*!
+  Start Messaging UI composer passing contacts list  and message text
+ */
 bool StorageEngine::compose(const QMessage &message)
 {
     QDEBUG_FUNCTION_BEGIN
@@ -754,6 +807,9 @@ bool StorageEngine::compose(const QMessage &message)
     return true;
 }
 
+/*!
+  Get message by Id and start Messaging UI passing message data
+ */
 bool StorageEngine::show(const QMessageId &id)
 {
     QDEBUG_FUNCTION_BEGIN
@@ -761,8 +817,7 @@ bool StorageEngine::show(const QMessageId &id)
     m_error = QMessageManager::NoError;
 
     if (id.isValid()) {
-        QMessage message(id);
-        qDebug() << "after message";
+        QMessage message(id);        
         ret = compose(message);
     }
     else {
@@ -819,6 +874,7 @@ ServiceQuery::~ServiceQuery()
     qDebug() << "ServiceQuery::~ServiceQuery()";
 }
 
+//! main processing
 void ServiceQuery::doQuery()
 {
     if (_type == CountQuery) {
@@ -838,6 +894,7 @@ void ServiceQuery::doQuery()
     }
 }
 
+//! sort internal list of messages and apply limit and offset parameters
 void ServiceQuery::sortMessages()
 {
     MessagingHelper::orderMessages(_ids, _sortOrder);
@@ -873,7 +930,7 @@ void ServiceQuery::searchBody()
 	QTimer::singleShot(0, this, SLOT(completed()));
     }
 }
-
+//! slot that inform upper layer (QMessageService) about the operation completion and return results
 void ServiceQuery::completed()
 {
     QMessageServicePrivate *p = QMessageServicePrivate::implementation(*_service);
