@@ -93,9 +93,16 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 {
     *error = QOrganizerItemManager::NoError;
     int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    QList<QOrganizerItem> retn;
+
+    if ( periodStart > periodEnd )
+    {
+        *error = QOrganizerItemManager::BadArgumentError;
+        return retn;
+    }
+
     CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
     std::string nativeId = QString::number(generator.localId()).toStdString();
-    QList<QOrganizerItem> retn;
 
     if ( generator.type() == QOrganizerItemType::TypeEvent )
     {
@@ -104,12 +111,22 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
         if ( cevent && *error == QOrganizerItemManager::NoError )
         {
             // Get event instance times
-            std::vector< std::time_t > eventInstanceTimes;
-            cevent->generateInstanceTimes( periodStart.toTime_t(), periodEnd.toTime_t(), eventInstanceTimes );
+            std::vector< std::time_t > eventInstanceDates;
+            cevent->generateInstanceTimes( periodStart.toTime_t(), periodEnd.toTime_t(), eventInstanceDates );
 
-            // Fill the result list with event occurrences
+            // If maxCount is given, resize to maxCount
+            if ( maxCount > 0 && maxCount < eventInstanceDates.size() )
+                eventInstanceDates.resize( maxCount );
 
-
+            // Generate the event occurrences
+            std::vector< std::time_t >::const_iterator i;
+            for( i = eventInstanceDates.begin(); i != eventInstanceDates.end(); ++i )
+            {
+                QDateTime instanceDate = QDateTime::fromTime_t( *i );
+                QOrganizerEventOccurrence eventOcc = convertCEventToQEventOccurrence( cevent, instanceDate );
+                fillInCommonCComponentDetails( &eventOcc, cevent, false ); // false = do not set ids
+                retn << eventOcc;
+            }
         }
     }
     else if ( generator.type() == QOrganizerItemType::TypeTodo )
@@ -130,29 +147,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
     cleanupCal( cal );
 
     return retn;
-
-
-
-
-    /*
-        TODO
-
-        This function should create a list of instances that occur in the time period from the supplied item.
-        The periodStart should always be valid, and either the periodEnd or the maxCount will be valid (if periodEnd is
-        valid, use that.  Otherwise use the count).  It's permissible to limit the number of items returned...
-
-        Basically, if the generator item is an Event, a list of EventOccurrences should be returned.  Similarly for
-        Todo/TodoOccurrence.
-
-        If there are no instances, return an empty list.
-
-        The returned items should have a QOrganizerItemInstanceOrigin detail that points to the generator and the
-        original instance that the event would have occurred on (e.g. with an exception).
-
-        They should not have recurrence information details in them.
-
-        We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
-    */
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
@@ -704,8 +698,31 @@ QOrganizerEvent QOrganizerItemMaemo5Engine::convertCEventToQEvent(CEvent* cevent
     return ret;
 }
 
-QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDate& instanceDate, const QString& calendarName) const
+QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate) const
 {
+    QOrganizerEventOccurrence ret;
+
+    int tempint = cevent->getPriority();
+    if (tempint != -1)
+        ret.setPriority(static_cast<QOrganizerItemPriority::Priority>(tempint)); // assume that the saved priority is vCal compliant.
+    QDateTime tempdt = QDateTime::fromTime_t(cevent->getDateStart());
+    if (!tempdt.isNull())
+        ret.setStartDateTime(tempdt);
+    tempdt = QDateTime::fromTime_t(cevent->getDateEnd());
+    if (!tempdt.isNull())
+        ret.setEndDateTime(tempdt);
+
+    // Set parent id
+    QString idString = QString::fromStdString( cevent->getId() );
+    QOrganizerItemLocalId localId = idString.toUInt();
+    ret.setParentLocalId( localId );
+
+    // Set original event date
+    ret.setOriginalDate( instanceDate.date() );
+
+    return ret;
+
+    /*
     // TODO: The code in this method is from the Proof of Concept
     // TODO: Replace the Proof of Concept codes at some point
 
@@ -747,6 +764,7 @@ QOrganizerEventOccurrence QOrganizerItemMaemo5Engine::convertCEventToQEventOccur
     ret.setId(rId);
 
     return ret;
+    */
 }
 
 QOrganizerTodo QOrganizerItemMaemo5Engine::convertCTodoToQTodo(CTodo* ctodo ) const
@@ -842,7 +860,7 @@ QOrganizerJournal QOrganizerItemMaemo5Engine::convertCJournalToQJournal(CJournal
     return ret;
 }
 
-void QOrganizerItemMaemo5Engine::fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component ) const
+void QOrganizerItemMaemo5Engine::fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component, bool setId ) const
 {
     // TODO: Possible fields to add (defined in the CComponent superclass):
     // TODO: flags, status, (datestart), (dateend), lastmodified, (comments)
@@ -872,12 +890,18 @@ void QOrganizerItemMaemo5Engine::fillInCommonCComponentDetails( QOrganizerItem* 
             item->saveDetail(&ig);
         }
 
-        // Component ID
-        QString idString = QString::fromStdString( component->getId() );
-        QOrganizerItemLocalId localId = idString.toUInt();
+        // Set component ID
         QOrganizerItemId id;
-        id.setLocalId(localId);
         id.setManagerUri(managerUri());
+        if ( setId ) {
+            QString idString = QString::fromStdString( component->getId() );
+            QOrganizerItemLocalId localId = idString.toUInt();
+            id.setLocalId(localId);
+        }
+        else {
+            QOrganizerItemLocalId localId( 0 ); // no local id
+            id.setLocalId(localId);
+        }
         item->setId( id );
     }
 }

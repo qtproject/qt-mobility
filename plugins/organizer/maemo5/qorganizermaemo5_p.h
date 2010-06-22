@@ -175,13 +175,13 @@ private:
 
     // conversion functions
     QOrganizerEvent convertCEventToQEvent(CEvent* cevent) const;
-    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDate& instanceDate, const QString& calendarName) const;
+    QOrganizerEventOccurrence convertCEventToQEventOccurrence(CEvent* cevent, const QDateTime& instanceDate) const;
     QOrganizerTodo convertCTodoToQTodo(CTodo* ctodo) const;
     QOrganizerTodoOccurrence convertCTodoToQTodoOccurrence(CTodo* ctodo, const QString& calendarName) const;
     QOrganizerJournal convertCJournalToQJournal(CJournal* cjournal ) const;
 
     // conversions between CComponent and QOrganizerItem
-    void fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component ) const;
+    void fillInCommonCComponentDetails( QOrganizerItem* item, CComponent* component, bool setId = true ) const;
     CComponent* createCComponent( CCalendar* cal, const QOrganizerItem* item ) const;
 
     // recurrence information conversions
