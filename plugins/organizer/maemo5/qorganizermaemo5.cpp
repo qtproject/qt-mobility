@@ -603,7 +603,6 @@ int QOrganizerItemMaemo5Engine::doSaveItem(CCalendar* cal, QOrganizerItem* item,
                 id.setManagerUri(managerUri());
                 item->setId( id );
             }
-
         }
         delete cevent;
         return calError;
@@ -926,24 +925,30 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         }
         cevent->setCalendarId( calId );
 
-        // Set the event specific details
+        // Set the event specific details:
         const QOrganizerEvent* event = static_cast<const QOrganizerEvent*>( item );
+
+        // Location geo coordinates
         if (!event->locationGeoCoordinates().isEmpty())
             cevent->setGeo(event->locationGeoCoordinates().toStdString());
+
+        // Priority
         if (!event->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
             cevent->setPriority(static_cast<int>(event->priority()));
+
+        // Start date
+        if (!event->startDateTime().isNull())
+            cevent->setDateStart(event->startDateTime().toTime_t());
+
+        // End date
+        if (!event->endDateTime().isNull())
+            cevent->setDateEnd(event->endDateTime().toTime_t());
 
         // Build and set the recurrence information for the event
         CRecurrence* recurrence = createCRecurrence( item );
         cevent->setRecurrence( recurrence );
         delete recurrence; // setting makes a copy
         recurrence = 0;
-
-        // TODO: Maybe the following should be removed and should be set on the upper level?
-        if (!event->startDateTime().isNull())
-            cevent->setDateStart(event->startDateTime().toTime_t());
-        if (!event->endDateTime().isNull())
-            cevent->setDateEnd(event->endDateTime().toTime_t());
 
         retn = cevent;
     }
@@ -959,21 +964,40 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         }
         ctodo->setCalendarId( calId );
 
-        // Set the todo specific details
+        // Set the todo specific details:
         const QOrganizerTodo* todo = static_cast<const QOrganizerTodo*>( item );
+
+        // Location geo coordinates
         if (!todo->detail("QOrganizerItemLocation::DefinitionName").isEmpty())
             ctodo->setGeo(todo->detail<QOrganizerItemLocation>().geoLocation().toStdString());
+
+        // Priority
         if (!todo->detail("QOrganizerItemPriority::DefinitionName").isEmpty())
             ctodo->setPriority(static_cast<int>(todo->priority()));
+
+        // Start date
+        // TODO: ctodo->setDateStart and ctodo->setDue actually affect to the
+        // same attribute of CTodo instance... How should these be set?
+
+        // Due date
         if (!todo->dueDateTime().isNull())
             ctodo->setDue(todo->dueDateTime().toTime_t());
         // TODO: CTodo::setCompleted, CTodo::setPercentComplete ??
 
-        // TODO: Recurrence information
-
-        // TODO: Maybe the following should be removed and should be set on the upper level?
+        // TODO: How shall all these time fields be set??????
+        /*
         if (!todo->finishedDateTime().isNull())
             ctodo->setDateStart(todo->finishedDateTime().toTime_t());
+            */
+
+        // Progress percentage
+        ctodo->setPercentComplete( todo->progressPercentage() );
+
+        // Build and set the recurrence information for the todo
+        CRecurrence* recurrence = createCRecurrence( item );
+        ctodo->setRecurrence( recurrence );
+        delete recurrence; // setting makes a copy
+        recurrence = 0;
 
         retn = ctodo;
     }
@@ -1000,11 +1024,30 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
     }
 
     if( retn ) {
-        // Set the common details for all CComponents:
+        // Set the details common for all the CComponents:
+
+        // Summary
         if (!item->displayLabel().isEmpty())
             retn->setSummary(item->displayLabel().toStdString());
+
+        // Descriptiom
         if (!item->description().isEmpty())
             retn->setDescription(item->description().toStdString());
+
+        // Location (Geo location is not set here as it's not a general CComponent detail)
+        QOrganizerItemLocation location = item->detail("QOrganizerItemLocation::DefinitionName");
+        if ( !location.isEmpty() )
+            retn->setLocation( location.locationName().toStdString() );
+
+        // dateStart and dateEnd are common fields for all CComponents, but those are set
+        // separately for each item type here, because there are independent time ranges
+        // defined for each type in the Qt Mobility API.
+
+        // (TODO: Status ?)
+
+        // (TODO: Until ?)
+
+        // GUid
         if (!item->guid().isEmpty())
             retn->setGUid(item->guid().toStdString());
 
