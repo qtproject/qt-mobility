@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:ns="http://www.w3.org/1999/xlink/"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="64px"
+   height="64px"
+   id="svg4090"
+   version="1.1"
+   inkscape:version="0.47 r22583"
+   sodipodi:docname="New document 5">
+  <defs
+     id="defs4092">
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="0 : 32 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="64 : 32 : 1"
+       inkscape:persp3d-origin="32 : 21.333333 : 1"
+       id="perspective4098" />
+    <inkscape:perspective
+       id="perspective4076"
+       inkscape:persp3d-origin="0.5 : 0.33333333 : 1"
+       inkscape:vp_z="1 : 0.5 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_x="0 : 0.5 : 1"
+       sodipodi:type="inkscape:persp3d" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#blueSphere"
+       id="radialGradient4066"
+       gradientUnits="userSpaceOnUse"
+       cx="0"
+       cy="0"
+       fx="-50"
+       fy="-50"
+       r="100" />
+    <radialGradient
+       id="blueSphere"
+       gradientUnits="userSpaceOnUse"
+       cx="0"
+       cy="0"
+       r="100"
+       fx="-50"
+       fy="-50">
+      <stop
+         offset="0%"
+         stop-color="white"
+         id="stop3983" />
+      <stop
+         offset="75%"
+         stop-color="blue"
+         id="stop3985" />
+      <stop
+         offset="100%"
+         stop-color="#222244"
+         id="stop3987" />
+    </radialGradient>
+    <radialGradient
+       r="100"
+       fy="-50"
+       fx="-50"
+       cy="0"
+       cx="0"
+       gradientUnits="userSpaceOnUse"
+       id="radialGradient4088"
+       xlink:href="#blueSphere"
+       inkscape:collect="always" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.5"
+     inkscape:cx="32"
+     inkscape:cy="32"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:document-units="px"
+     inkscape:grid-bbox="true"
+     inkscape:window-width="1021"
+     inkscape:window-height="783"
+     inkscape:window-x="203"
+     inkscape:window-y="47"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata4095">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <g
+       id="g4060"
+       transform="matrix(0.31957051,0,0,0.3204796,32,32.09091)">
+      <use
+         height="400"
+         width="400"
+         y="0"
+         x="0"
+         id="use4062"
+         transform="matrix(1,0,0,0.5,25,55)"
+         ns:href="#shadow" />
+      <circle
+         sodipodi:ry="100"
+         sodipodi:rx="100"
+         sodipodi:cy="0"
+         sodipodi:cx="0"
+         style="fill:url(#radialGradient4088)"
+         d="M 100,0 C 100,55.228475 55.228475,100 0,100 -55.228475,100 -100,55.228475 -100,0 c 0,-55.228475 44.771525,-100 100,-100 55.228475,0 100,44.771525 100,100 z"
+         id="circle4064"
+         r="100"
+         cy="0"
+         cx="0" />
+    </g>
+  </g>
+</svg>

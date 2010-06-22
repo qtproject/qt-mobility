@@ -72,7 +72,7 @@ examples/sensors/show_tap/show_tap
 examples/servicebrowser/servicebrowser
 examples/sfw-notes/sfw-notes
 examples/slideshow/slideshow
-examples/sysinfo/sysinfo
+examples/sysinfo/qsysinfo
 examples/videographicsitem/videographicsitem
 examples/videowidget/videowidget
 *.app

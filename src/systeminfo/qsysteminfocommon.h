@@ -39,28 +39,27 @@
 **
 ****************************************************************************/
 
-#include <qserviceinterfacedescriptor.h>
-#include <qabstractsecuritysession.h>
-#include <qservicecontext.h>
+#ifndef QSYSTEMINFOCOMMON_H
+#define QSYSTEMINFOCOMMON_H
 
-#include "filemanagerplugin.h"
-#include "filemanagerstorage.h"
-#include "filemanagertransfer.h"
+#include "qmobilityglobal.h"
 
-//! [createinstance-sig]
-QObject* FileManagerPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
-//! [createinstance-sig]
-{
-    Q_UNUSED(context);
-    Q_UNUSED(session);
-//! [createinstance]
-    if (descriptor.interfaceName() == "com.nokia.qt.examples.FileStorage")
-        return new FileManagerStorage(this);
-    else if (descriptor.interfaceName() == "com.nokia.qt.examples.FileTransfer")
-        return new FileManagerTransfer(this);
-    else
-        return 0;
-//! [createinstance]
-}
+#ifdef Q_OS_LINUX
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "qsysteminfo_maemo_p.h"
+#else
+#include "qsysteminfo_linux_p.h"
+#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
+#endif //Q_OS_LINUX
 
-Q_EXPORT_PLUGIN2(serviceframework_filemanagerplugin, FileManagerPlugin)
+#ifdef Q_OS_WIN
+#include "qsysteminfo_win_p.h"
+#endif
+#ifdef Q_OS_MAC
+#include "qsysteminfo_mac_p.h"
+#endif
+#ifdef Q_OS_SYMBIAN
+#include "qsysteminfo_s60_p.h"
+#endif
+
+#endif // QSYSTEMINFOCOMMON_H
