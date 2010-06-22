@@ -10,7 +10,7 @@ SOURCES = weatherinfo.cpp \
 RESOURCES = weatherinfo.qrc
 QT += network svg
 
-include(../../examples/examples.pri)
+include(../demos.pri)
 
 CONFIG += mobility
 MOBILITY = location bearer
