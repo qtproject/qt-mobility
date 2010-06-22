@@ -182,24 +182,31 @@ bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
     for (int i = 0; i < items->size(); i++) {
         QOrganizerItemManager::Error thisError;
         QOrganizerItem item = items->at(i);
-        Incidence* theIncidence = softSaveItem(&item, &thisError);
-        if (theIncidence) {
-            d->m_calendarBackend.save();
-            QString kId = theIncidence->uid();
-            QOrganizerItemLocalId qLocalId = qHash(kId);
-            QOrganizerItemId qId;
-            qId.setManagerUri(managerUri());
-            qId.setLocalId(qLocalId);
-            item.setId(qId);
+        if (saveItem(&item, &thisError)) {
             items->replace(i, item);
-            d->m_QIdToKId.insert(qLocalId, kId);
         } else {
             *error = thisError;
             errorMap->insert(i, thisError);
         }
     }
-    // TODO: save the calendar to disk
     return *error == QOrganizerItemManager::NoError;
+}
+
+bool QOrganizerItemMaemo6Engine::saveItem(QOrganizerItem* item,  QOrganizerItemManager::Error* error)
+{
+    Incidence* theIncidence = softSaveItem(item, error);
+    if (theIncidence) {
+        d->m_calendarBackend.save();
+        QString kId = theIncidence->uid();
+        QOrganizerItemLocalId qLocalId = qHash(kId);
+        QOrganizerItemId qId;
+        qId.setManagerUri(managerUri());
+        qId.setLocalId(qLocalId);
+        item->setId(qId);
+        d->m_QIdToKId.insert(qLocalId, kId);
+        return true;
+    }
+    return false;
 }
 
 bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
