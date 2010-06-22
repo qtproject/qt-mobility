@@ -59,19 +59,19 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \qmlproperty GalleryFilter::property
+    \qmlproperty string GalleryFilter::property
 
     This property holds the name of the property to filter against.
 */
 
 /*!
-    \qmlproperty GalleryFilter::value
+    \qmlproperty variant GalleryFilter::value
 
     This property holds the value to filter using.
 */
 
 /*!
-    \qmlproperty GalleryFilter::matchFlags
+    \qmlproperty enum GalleryFilter::matchFlags
 
     This property holds how a value is filtered against a property.
 */
@@ -92,13 +92,13 @@ QGalleryFilter GalleryFilter::filter() const
 */
 
 /*!
-    \qmlproperty GalleryPropertyLessThan::property
+    \qmlproperty string GalleryPropertyLessThan::property
 
     This property holds the name of the property the filter tests.
 */
 
 /*!
-    \qmlproperty GalleryPropertyLessThan::value
+    \qmlproperty variant GalleryPropertyLessThan::value
 
     This property holds the value the filter tests against.
 */
@@ -118,13 +118,13 @@ QGalleryFilter GalleryFilterLessThan::filter() const
 */
 
 /*!
-    \qmlproperty GalleryPropertyLessThan::property
+    \qmlproperty string GalleryPropertyLessThan::property
 
     This property holds the name of the property the filter tests.
 */
 
 /*!
-    \qmlproperty GalleryPropertyLessThan::value
+    \qmlproperty variant GalleryPropertyLessThan::value
 
     This property holds the value the filter tests against.
 */
@@ -144,13 +144,13 @@ QGalleryFilter GalleryFilterLessThanEquals::filter() const
 */
 
 /*!
-    \qmlproperty GalleryPropertyGreaterThan::property
+    \qmlproperty string GalleryPropertyGreaterThan::property
 
     This property holds the name of the property the filter tests.
 */
 
 /*!
-    \qmlproperty GalleryPropertyGreaterThan::value
+    \qmlproperty variant GalleryPropertyGreaterThan::value
 
     This property holds the value the filter tests against.
 */
@@ -170,13 +170,13 @@ QGalleryFilter GalleryFilterGreaterThan::filter() const
 */
 
 /*!
-    \qmlproperty GalleryPropertyGreaterThanEquals::property
+    \qmlproperty string GalleryPropertyGreaterThanEquals::property
 
     This property holds the name of the property the filter tests.
 */
 
 /*!
-    \qmlproperty GalleryPropertyGreaterThanEquals::value
+    \qmlproperty variant GalleryPropertyGreaterThanEquals::value
 
     This property holds the value the filter tests against.
 */
@@ -196,19 +196,19 @@ QGalleryFilter GalleryFilterGreaterThanEquals::filter() const
 */
 
 /*!
-    \qmlproperty GalleryPropertyExclusiveRange::property
+    \qmlproperty string GalleryPropertyExclusiveRange::property
 
     This property holds the name of the property the filter tests.
 */
 
 /*!
-    \qmlproperty GalleryPropertyExclusiveRange::minimum
+    \qmlproperty variant GalleryPropertyExclusiveRange::minimum
 
     This property holds the minimum value the filter tests against.
 */
 
 /*!
-    \qmlproperty GalleryPropertyExclusiveRange::maximum
+    \qmlproperty variant GalleryPropertyExclusiveRange::maximum
     
     This property holds the maximum value the filter tests against.
 */
@@ -228,19 +228,19 @@ QGalleryFilter GalleryFilterExclusiveRange::filter() const
 */
 
 /*!
-    \qmlproperty GalleryInclusivePropertyRange::property
+    \qmlproperty string GalleryInclusivePropertyRange::property
 
     This property holds the name of the property the filter tests.
 */
 
 /*!
-    \qmlproperty GalleryInclusivePropertyRange::minimum
+    \qmlproperty variant GalleryInclusivePropertyRange::minimum
 
     This property holds the minimum value the filter tests against.
 */
 
 /*!
-    \qmlproperty GalleryInclusivePropertyRange::maximum
+    \qmlproperty variant GalleryInclusivePropertyRange::maximum
     
     This property holds the maximum value the filter tests against.
 */

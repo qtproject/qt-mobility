@@ -97,10 +97,7 @@ public:
         InvalidPropertyError            = QGalleryAbstractRequest::NoResult,
         PropertyTypeError               = QGalleryAbstractRequest::NoResult,
         UnsupportedFilterTypeError      = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterOptionError    = QGalleryAbstractRequest::NoResult,
-        PermissionsError                = QGalleryAbstractRequest::NoResult,
-        InvalidDestinationError         = QGalleryAbstractRequest::NoResult,
-        InvalidUrlError                 = QGalleryAbstractRequest::NoResult,
+        UnsupportedFilterOptionError    = QGalleryAbstractRequest::NoResult
     };
 
     enum Scope

@@ -84,7 +84,7 @@ QTM_BEGIN_NAMESPACE
     }
     \endqml
 
-    \sa GalleryItem
+    \sa GalleryItem, GalleryCountQuery
 */
 
 GalleryQueryRequest::GalleryQueryRequest(QObject *parent)
@@ -127,7 +127,7 @@ void GalleryQueryRequest::componentComplete()
 }
 
 /*!
-    \qmlproperty gallery GalleryQuery::gallery
+    \qmlproperty QAbstractGallery GalleryQuery::gallery
 
     This property holds the gallery a query should return results from.
 */
@@ -135,13 +135,43 @@ void GalleryQueryRequest::componentComplete()
 /*!
     \qmlproperty enum GalleryQuery::state
 
-    This property holds the state of a query.
+    This property holds the state of a query.  It can be one of:
+
+    \list
+    \o Inactive The query has finished.
+    \o Active The query is currently executing.
+    \o Cancelling The query has been cancelled, but has yet reached the
+    Inactive state.
+    \o Idle The query has finished and is monitoring its result set for
+    changes.
+    \endlist
 */
 
 /*!
     \qmlproperty enum GalleryQuery::result
 
-    The property holds the result of a query.
+    The property holds the result of a query. It can be one of:
+
+    \list
+    \o NoResult The query is still executing.
+    \o Succeeded The query finished successfully.
+    \o Cancelled The query was cancelled.
+    \o NoGallery No gallery was set on the query.
+    \o NotSupported Queries are not supported by the \l gallery.
+    \o ConnectionError The query failed due to a connection error.
+    \o InvalidItemError The query failed because the value of \l scopeItemId
+    is not a valid item ID.
+    \o ItemTypeError The query failed because the value of \l itemType is not
+    a valid item type.
+    \o InvalidPropertyError The query failed because the \l filter refers to an
+    invalid property.
+    \o PropertyTypeError The query failed because the type of a value in the
+    \l filter is incompatible with the property.
+    \o UnsupportedFilterTypeError The query failed because the set \l filter
+    is not supported by the \l gallery.
+    \o UnsupportedFilterOptionError The query failed because an option of a
+    \l filter is not supported by the \l gallery.
+    \endlist
 */
 
 /*!
@@ -157,13 +187,13 @@ void GalleryQueryRequest::componentComplete()
 */
 
 /*!
-    \qmlproperty stringlist GalleryQuery::properties
+    \qmlproperty QStringList GalleryQuery::properties
 
     This property holds the item properties a query should return values for.
 */
 
 /*!
-    \qmlproperty stringlist GalleryQuery::sortProperties
+    \qmlproperty QStringList GalleryQuery::sortProperties
 
     This property holds the properties the results of a query should be sorted
     on.
@@ -196,13 +226,13 @@ void GalleryQueryRequest::componentComplete()
 */
 
 /*!
-    \qmlproperty filter GalleryQuery::filter
+    \qmlproperty GalleryFilter GalleryQuery::filter
 
     This property contains criteria to used to filter the results of a query.
 */
 
 /*!
-    \qmlproperty galleryId GalleryQuery::scopeItemId
+    \qmlproperty variant GalleryQuery::scopeItemId
 
     This property contains the id of an item that a query should return a
     count of the descendants of.
@@ -213,12 +243,6 @@ void GalleryQueryRequest::componentComplete()
 
     The property contains whether a query should count the direct descendants
     of the \l scopeItemId or all descendants.
-*/
-
-/*!
-    \qmlproperty model GalleryQuery::model
-
-    This property holds a model containing the results of a query.
 */
 
 /*!

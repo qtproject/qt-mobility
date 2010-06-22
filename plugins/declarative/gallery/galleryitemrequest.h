@@ -90,15 +90,7 @@ public:
         NoGallery                       = QGalleryAbstractRequest::NoResult,
         NotSupported                    = QGalleryAbstractRequest::NoResult,
         ConnectionError                 = QGalleryAbstractRequest::NoResult,
-        InvalidItemError                = QGalleryAbstractRequest::NoResult,
-        ItemTypeError                   = QGalleryAbstractRequest::NoResult,
-        InvalidPropertyError            = QGalleryAbstractRequest::NoResult,
-        PropertyTypeError               = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterTypeError      = QGalleryAbstractRequest::NoResult,
-        UnsupportedFilterOptionError    = QGalleryAbstractRequest::NoResult,
-        PermissionsError                = QGalleryAbstractRequest::NoResult,
-        InvalidDestinationError         = QGalleryAbstractRequest::NoResult,
-        InvalidUrlError                 = QGalleryAbstractRequest::NoResult,
+        InvalidItemError                = QGalleryAbstractRequest::NoResult
     };
 
     GalleryItemRequest(QObject *parent = 0);

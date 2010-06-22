@@ -47,14 +47,12 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \qmlclass GalleryItem GalleryItemRequest
-    \brief The GalleryItem element allows you to request a single item
-    from a gallery
+    \brief The GalleryItem element allows you to request information about a
+    single item from a gallery
 
     This is element is part of the \bold {QtMobility.gallery 1.0} module.
 
-
-
-    \sa GalleryFilterRequest
+    \sa GalleryQuery
 */
 
 GalleryItemRequest::GalleryItemRequest(QObject *parent)
@@ -87,21 +85,41 @@ GalleryItemRequest::~GalleryItemRequest()
 }
 
 /*!
-    \qmlproperty gallery GalleryItem::gallery
+    \qmlproperty QAbstractGallery GalleryItem::gallery
 
-    This property holds the gallery a request should return results from.
+    This property holds the gallery an item should be requested from.
 */
 
 /*!
     \qmlproperty enum GalleryItem::state
 
-    This property holds the state of a request.
+    This property holds the state of an item request.  It can be one of:
+
+    \list
+    \o Inactive The request has finished.
+    \o Active The request is currently executing.
+    \o Cancelling The request has been cancelled, but has yet reached the
+    Inactive state.
+    \o Idle The request has finished and is monitoring its result set for
+    changes.
+    \endlist
 */
 
 /*!
     \qmlproperty enum GalleryItem::result
 
-    The property holds the result of a request.
+    The property holds the result of an item request. It can be one of:
+
+    \list
+    \o NoResult The request is still executing.
+    \o Succeeded The request finished successfully.
+    \o Cancelled The request was cancelled.
+    \o NoGallery No \l gallery was specified.
+    \o NotSupported Item requests are not supported by the \l gallery.
+    \o ConnectionError The request failed due to a connection error.
+    \o InvalidItemError The request failed because the value of \l item
+    is not a valid item ID.
+    \endlist
 */
 
 /*!
@@ -117,7 +135,7 @@ GalleryItemRequest::~GalleryItemRequest()
 */
 
 /*!
-    \qmlproperty stringlist GalleryItem::properties
+    \qmlproperty QStringList GalleryItem::properties
 
     This property holds the item properties a request should return values for.
 */
@@ -130,7 +148,7 @@ GalleryItemRequest::~GalleryItemRequest()
 */
 
 /*!
-    \qmlproperty galleryId GalleryItem::item
+    \qmlproperty variant GalleryItem::item
 
     This property holds the id of the item to return information about.
 */
