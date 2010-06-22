@@ -5,10 +5,21 @@
 #include <QDebug>
 
 TestSms::TestSms(QObject *parent) :
-        QObject(parent)
+        QObject(parent),m_pMS(new QMessageService()), m_pMM(new QMessageManager())
 {
-    //QMessageService *_ms = m_ms.instance();
-    m_pMS = new QMessageService();
+    if (m_pMM)
+    {
+        m_pMM->registerNotificationFilter(QMessageFilter::byType(QMessage::Sms));
+
+        connect(m_pMM, SIGNAL(messageAdded(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)),
+            SLOT(onMessageAdded(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)));
+
+        connect(m_pMM, SIGNAL(messageRemoved(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)),
+            SLOT(onMessageRemoved(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)));
+
+        connect(m_pMM, SIGNAL(messageUpdated(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)),
+            SLOT(onMessageUpdated(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)));
+    }
 }
 
 void TestSms::debugMessage(QMessage &message)
@@ -21,6 +32,33 @@ void TestSms::debugMessage(QMessage &message)
     qDebug() << "To:" << (message.to().isEmpty() ? "**none**" : message.to().first().addressee());
     qDebug() << "Body:" << message.textContent();
     //QDEBUG_FUNCTION_END
+}
+
+QMessage TestSms::createEmail(const QString &text)
+{
+    qDebug() << __PRETTY_FUNCTION__ << "begin";
+    //bool ret = false;
+
+    QMessage message;
+    QList<QMessageAccountId> m_accountList;
+
+
+    /*
+    foreach (const QMessageAccountId& id, m_accountList) {
+        QMessageAccount acc(id);
+        if(acc.messageTypes() & QMessage::Email)
+            message.setParentAccountId(id);
+    }*/
+
+    message.setType(QMessage::Email);
+    message.setTo(QMessageAddress(QMessageAddress::Email, "poniz@yandex.ru"));
+    message.setFrom(QMessageAddress(QMessageAddress::Email, "alexander.ponizovkin@gmail.com"));
+    message.setBody(text);
+    message.setSubject("This is subject");
+    //message.setDate(QDateTime::fromTime_t(11));
+    //message.setReceivedDate(QDateTime::currentDateTime());
+
+    return message;
 }
 
 QMessage TestSms::createSms(const QString &text)
@@ -130,8 +168,6 @@ bool TestSms::startSmsSending()
 
 bool TestSms::testMessageManager_queryCount()
 {
-    //if (!m_pMM)
-        m_pMM = new QMessageManager();
     /*
 
 
@@ -161,9 +197,6 @@ bool TestSms::testMessageManager_queryCount()
 
 bool TestSms::testMessageManager_queryMessage(const QMessageFilter &filter)
 {
-    //if (!m_pMM)
-        m_pMM = new QMessageManager();
-
     QMessageIdList ids = m_pMM->queryMessages(filter);
      qDebug() << __PRETTY_FUNCTION__ << "Completed m_pMM->queryMessages" ;
     debugMeesageIdList(ids);
@@ -273,7 +306,6 @@ void TestSms::debugMeesageFolderIdList ( const QMessageFolderIdList & ids )
 
 bool TestSms::testQueryFolders()
 {
-     m_pMM = new QMessageManager();
 
      QMessageFolderIdList ids = m_pMM->queryFolders();
      debugMeesageFolderIdList(ids);
@@ -283,7 +315,6 @@ bool TestSms::testQueryFolders()
 
 bool TestSms::getMessage(const QString &strId)
 {
-     m_pMM = new QMessageManager();
      QMessageId id(strId);
 
      QMessage mes = m_pMM->message(id);
@@ -293,3 +324,57 @@ bool TestSms::getMessage(const QString &strId)
 
      return true;
 }
+
+bool TestSms::compose()
+{
+    QMessage m = createSms("This is testing of compose()");
+    return m_pMS && m_pMS->compose(m);
+}
+
+bool TestSms::show(const QString &strId)
+{
+    //QMessage m = createSms("This is testing of show()");
+    qDebug() << __PRETTY_FUNCTION__ << "begin";
+    QMessageId id(strId);
+
+    if (id.isValid())
+        qDebug() <<  __PRETTY_FUNCTION__ << "ID is valid";
+    else
+        qDebug() <<  __PRETTY_FUNCTION__ << "ID is NOT valid";
+
+    bool ret = /*m_pMS &&*/  m_pMS->show(id);
+    qDebug() << __PRETTY_FUNCTION__ << "end";
+    return ret;
+}
+
+bool TestSms::qmf_show(const QString &strId)
+{
+    //QMessage m = createSms("This is testing of show()");
+    QMessageId id("QMF_" + strId);
+
+    return m_pMS && m_pMS->show(id);
+}
+
+bool TestSms::qmf_compose()
+{
+    QMessage m = createEmail("This is testing of compose()");
+    //QMessageId id("QMF_" + strId);
+
+    return m_pMS && m_pMS->compose(m);
+}
+
+void TestSms::onMessageAdded(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)
+{
+    qDebug() << __PRETTY_FUNCTION__ << "Message ID = " << id.toString();
+}
+
+void TestSms::onMessageRemoved(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)
+{
+    qDebug() << __PRETTY_FUNCTION__ << "Message ID = " << id.toString();
+}
+
+void TestSms::onMessageUpdated(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds)
+{
+    qDebug() << __PRETTY_FUNCTION__ << "Message ID = " << id.toString();
+}
+

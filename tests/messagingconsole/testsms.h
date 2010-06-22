@@ -24,6 +24,11 @@ public:
     bool testMessage();
     bool getMessage(const QString &strId);
     QMessage createSms(const QString &text);
+    QMessage createEmail(const QString &text);
+    bool compose();
+    bool show(const QString &strId);
+    bool qmf_show(const QString &strId);
+    bool qmf_compose();
 
 signals:
 
@@ -32,6 +37,10 @@ public slots:
     void onMessagesFound(const QMessageIdList &ids);
    // void progressChanged ( uint value, uint total );
     //void stateChanged ( QMessageService::State newState );
+
+    void onMessageAdded(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds);
+    void onMessageRemoved(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds);
+    void onMessageUpdated(const QMessageId & id, const QMessageManager::NotificationFilterIdSet & matchingFilterIds);
 
 private:
     QMessageService *m_pMS;
