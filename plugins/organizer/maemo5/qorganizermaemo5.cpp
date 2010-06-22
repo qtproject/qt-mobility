@@ -91,24 +91,47 @@ int QOrganizerItemMaemo5Engine::managerVersion() const
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizerItem& generator, const QDateTime& periodStart, const QDateTime& periodEnd, int maxCount, QOrganizerItemManager::Error* error) const
 {
-
-    //TODO!
-
     *error = QOrganizerItemManager::NoError;
+    int calError = CALENDAR_OPERATION_SUCCESSFUL;
+    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
+    std::string nativeId = QString::number(generator.localId()).toStdString();
+    QList<QOrganizerItem> retn;
 
-    //QOrganizerItem item = item( generator.localId(), , error );
-
-
-    //CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
-
-    if( generator.type() == QOrganizerItemType::TypeTodo )
+    if ( generator.type() == QOrganizerItemType::TypeEvent )
     {
-        // Todo types do not have recurrent occurrences in Maemo5
+        CEvent* cevent = cal->getEvent( nativeId, calError );
+        *error = calErrorToManagerError( calError );
+        if ( cevent && *error == QOrganizerItemManager::NoError )
+        {
+            // Get event instance times
+            std::vector< std::time_t > eventInstanceTimes;
+            cevent->generateInstanceTimes( periodStart.toTime_t(), periodEnd.toTime_t(), eventInstanceTimes );
+
+            // Fill the result list with event occurrences
 
 
-
-        //return;
+        }
     }
+    else if ( generator.type() == QOrganizerItemType::TypeTodo )
+    {
+        CTodo* ctodo = cal->getTodo( nativeId, calError );
+        *error = calErrorToManagerError( calError );
+        if ( ctodo && *error == QOrganizerItemManager::NoError )
+        {
+            // TODO
+        }
+    }
+    else
+    {
+        // Other item types can't have occurrences
+        *error = QOrganizerItemManager::BadArgumentError;
+    }
+
+    cleanupCal( cal );
+
+    return retn;
+
+
 
 
     /*
@@ -130,7 +153,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::itemInstances(const QOrganizer
 
         We might change the signature to split up the periodStart + periodEnd / periodStart + maxCount cases.
     */
-    return QOrganizerItemManagerEngine::itemInstances(generator, periodStart, periodEnd, maxCount, error);
 }
 
 QList<QOrganizerItemLocalId> QOrganizerItemMaemo5Engine::itemIds(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, QOrganizerItemManager::Error* error) const
@@ -199,46 +221,6 @@ void QOrganizerItemMaemo5Engine::removeAllForDebug() const
 
 QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders, const QOrganizerItemFetchHint& fetchHint, QOrganizerItemManager::Error* error) const
 {
-    /*
-    // A TEMPORARY TEST CODE FOR CREATING RECURRING EVENTS
-    // Create event
-    CCalendar* cal = d->m_mcInstance->getDefaultCalendar();
-    CEvent* cevent = new CEvent();
-    cevent->setCalendarId( cal->getCalendarId() );
-    cevent->setDateStart(QDateTime(QDate(2010,8,20),QTime(11,0,0)).toTime_t());
-    cevent->setDateEnd(QDateTime(QDate(2010,8,20),QTime(12,0,0)).toTime_t());
-    cevent->setSummary(QString("Recurrence test event").toStdString());
-    cevent->setDescription(QString("Should repeat 10 times yearly").toStdString());
-
-    // Create recurrence rule
-    CRecurrenceRule* crecrule = new CRecurrenceRule();
-    crecrule->setFrequency( YEARLY_RECURRENCE );
-    crecrule->setCount( 10 );
-    crecrule->setRrule( "FREQ=YEARLY;COUNT=10" );
-
-    qDebug() << "RecurrenceRule: " << QString::fromStdString( crecrule->toString() );
-    std::vector< CRecurrenceRule* > rrules;
-    rrules.push_back( crecrule );
-
-    // Create recurrence
-    CRecurrence* crecurrence = new CRecurrence();
-    crecurrence->setRtype( 4 );
-    crecurrence->setRecurrenceRule( rrules );
-    qDebug() << "Recurrence: " << QString::fromStdString( crecurrence->toString() );
-
-    // Add recurrence to event
-    bool ok = cevent->setRecurrence( crecurrence );
-    qDebug() << "Status: " << ok;
-
-    // Add event to calendar
-    int calError;
-    cal->addEvent(cevent, calError);
-    qDebug() << "Cal error: " << calError;
-    */
-
-
-
-
     // TODO: This quick implementation is provided only to make the demo application to work
     // It doesn't support any filters, sort orders or fetch hints
 
@@ -251,22 +233,6 @@ QList<QOrganizerItem> QOrganizerItemMaemo5Engine::items(const QOrganizerItemFilt
     for( int i = 0; i < events.size(); ++i )
     {
         CEvent* cevent = events[i];
-
-/*
-        // Debug code:
-        qDebug() << "**- Event id " << QString::fromStdString(cevent->getId());
-        CRecurrence* crec = cevent->getRecurrence();
-        qDebug() << "**- Recurrence: " << QString::fromStdString( crec->toString() );
-
-        std::vector< CRecurrenceRule* > rrules;
-        rrules = crec->getRecurrenceRule();
-        qDebug() << rrules.size();
-        for( int i = 0; i < rrules.size(); ++i )
-        {
-            CRecurrenceRule* rule = rrules[i];
-            qDebug() << "**- " << QString::fromStdString( rule->toString() );
-        }
-*/
         QOrganizerEvent event = convertCEventToQEvent( cevent );
         fillInCommonCComponentDetails( &event, cevent );
         delete cevent;
@@ -982,8 +948,8 @@ CComponent* QOrganizerItemMaemo5Engine::createCComponent( CCalendar* cal, const 
         // TODO: Recurrence information
 
         // TODO: Maybe the following should be removed and should be set on the upper level?
-        if (!todo->notBeforeDateTime().isNull())
-            ctodo->setDateStart(todo->notBeforeDateTime().toTime_t());
+        if (!todo->finishedDateTime().isNull())
+            ctodo->setDateStart(todo->finishedDateTime().toTime_t());
 
         retn = ctodo;
     }

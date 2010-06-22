@@ -105,7 +105,6 @@ CRecurrence* OrganizerRecurrenceTransform::crecurrence( bool* success ) const
 void OrganizerRecurrenceTransform::addQOrganizerItemRecurrenceRule( const QOrganizerItemRecurrenceRule& rule )
 {
     QString icalRule = qrecurrenceRuleToIcalRecurrenceRule( rule );
-    qDebug() << "iCal rule: " << icalRule;
 
     // Store the new rule to the rule vector
     CRecurrenceRule* crecrule = new CRecurrenceRule();
@@ -122,13 +121,6 @@ void OrganizerRecurrenceTransform::addQOrganizerItemExceptionRule( const QOrgani
 {
     QString icalRule = qrecurrenceRuleToIcalRecurrenceRule( rule );
 
-    // Temporary code:
-    /* // Can't test without this probably due to a bug in API (situation 21 Jun 2010)
-    icalRule = qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Weekly ) + ";";
-    icalRule += qcountToIcalCount( 52 ) + ";";
-    icalRule += qintervalToIcalInterval( 1 );
-    */
-
     // Store the new rule to the rule vector
     CRecurrenceRule* crecrule = new CRecurrenceRule();
     crecrule->setRuleType( EXCEPTION_RULE );
@@ -138,40 +130,6 @@ void OrganizerRecurrenceTransform::addQOrganizerItemExceptionRule( const QOrgani
 
 QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule( const QOrganizerItemRecurrenceRule& rule ) const
 {
-//#define USE_PRODUCTION_CODE
-#ifndef USE_PRODUCTION_CODE
-    // Test code
-    QString icalRule;
-    icalRule += qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Daily ) + ";";
-    //icalRule += qcountToIcalCount( 10 ) + ";";
-    //icalRule += qendDateToIcalUntil( QDate(2011,6,30) ) + ";";
-    icalRule += qintervalToIcalInterval( 1 ) + ";";
-
-    /*
-    QList<Qt::DayOfWeek> daysOfWeek;
-    daysOfWeek << Qt::Wednesday << Qt::Monday;
-    icalRule += qdaysOfWeekToIcalByDay( daysOfWeek );
-    */
-
-    /*
-    QList<QOrganizerItemRecurrenceRule::Month> months;
-    months << QOrganizerItemRecurrenceRule::November << QOrganizerItemRecurrenceRule::January;
-    icalRule += qmonthsToIcalByMonth( months );
-    */
-
-    /*
-    QList<int> daysOfMonth;
-    daysOfMonth << 17 << 18 << 19 << 20;
-    icalRule += qdaysOfMonthToIcalByMonthDay( daysOfMonth );
-    */
-
-    /*
-    QList<Qt::DayOfWeek> daysOfWeek;
-    daysOfWeek << Qt::Monday << Qt::Wednesday;
-    icalRule += qdaysOfWeekToIcalByDay( daysOfWeek );
-    */
-    return icalRule;
-#else // USE_PRODUCTION_CODE
     QStringList icalRule;
 
     icalRule << qfrequencyToIcalFrequency( rule.frequency() );
@@ -206,7 +164,6 @@ QString OrganizerRecurrenceTransform::qrecurrenceRuleToIcalRecurrenceRule( const
     icalRule << qweekStartToIcalWkst( rule.weekStart() );
 
     return icalRule.join(";");
-#endif // USE_PRODUCTION_CODE
 }
 
 QString OrganizerRecurrenceTransform::qfrequencyToIcalFrequency( QOrganizerItemRecurrenceRule::Frequency frequency ) const
@@ -246,7 +203,10 @@ QString OrganizerRecurrenceTransform::qdaysOfWeekToIcalByDay( const QList<Qt::Da
 
 QString OrganizerRecurrenceTransform::qweekStartToIcalWkst( Qt::DayOfWeek dayOfWeek ) const
 {
-    return QString("WKST=") + qweekdayToIcalWeekday( dayOfWeek );
+    QString dayOfWeekString( qweekdayToIcalWeekday( dayOfWeek ) );
+    if ( dayOfWeekString.isNull() )
+        dayOfWeekString = QString("MO"); // set Monday as default
+    return QString("WKST=") + dayOfWeekString;
 }
 
 QString OrganizerRecurrenceTransform::qweekdayToIcalWeekday( Qt::DayOfWeek dayOfWeek ) const
@@ -260,6 +220,7 @@ QString OrganizerRecurrenceTransform::qweekdayToIcalWeekday( Qt::DayOfWeek dayOf
     case Qt::Friday: return QString("FR");
     case Qt::Saturday: return QString("SA");
     case Qt::Sunday: return QString("SU");
+    default: return QString();
     }
 }
 
@@ -293,11 +254,11 @@ QString OrganizerRecurrenceTransform::qpositionsToIcalBySetPos( const QList<int>
 
 QString OrganizerRecurrenceTransform::listOfNumbers( const QList<int>& list ) const
 {
-    // Sort the list, otherwise the Fremantle calendar may not accept it
+    // The calendar backend wants the lists to be sorted
     QList<int> sortedList = list;
     qSort(sortedList.begin(), sortedList.end());
 
-    // Return a list of numbers
+    // Return a list of numbers, separated by comma
     QStringList slist;
     foreach( int number, sortedList )
         slist << QString::number( number );

@@ -92,8 +92,8 @@ private:
 private:
     int m_rtype; // Recursion type parameter for the native calendar backend
     std::vector< CRecurrenceRule* > m_vRRuleList; // recurrence and exception rules
-    std::vector< std::string > m_vRecDateList;
-    std::vector< std::string > m_vExceptionDateList;
+    std::vector< std::string > m_vRecDateList; // recursion dates
+    std::vector< std::string > m_vExceptionDateList; // exception dates
 };
 
 #endif // QORGANIZERRECURRENCETRANSFORM_H
