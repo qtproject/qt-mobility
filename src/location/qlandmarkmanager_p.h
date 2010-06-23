@@ -70,7 +70,7 @@ class QLandmarkManagerPrivate
 {
 public:
     QLandmarkManagerPrivate();
-    void createEngine(const QString &managerName, const QMap<QString,QString> &parameters);
+    void createEngine(const QString &managerName, const QMap<QString,QString> &parameters = (QMap<QString, QString>()));
 
     QLandmarkManagerEngine *engine;
     mutable QLandmarkManager::Error errorCode;

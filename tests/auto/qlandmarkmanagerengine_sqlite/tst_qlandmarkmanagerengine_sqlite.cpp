@@ -47,7 +47,6 @@
 #include <qlandmarkcategory.h>
 #include <qlandmarkcategoryid.h>
 #include <qlandmarkmanager.h>
-#include <qgeolocation.h>
 #include <qgeocoordinate.h>
 
 #include <qlandmarkfilter.h>

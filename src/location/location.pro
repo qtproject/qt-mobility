@@ -16,18 +16,17 @@ PUBLIC_HEADERS += \
                     qgeoboundingbox.h \
                     qgeocoordinate.h \
                     qgeodistance.h \
-                    qgeonavigationinstruction.h \
-                    #qgeonavigator.h \
-					qgeomapcircleobject.h \
+                    qgeomapcircleobject.h \
                     qgeomapdata.h \
-					qgeomapmarkerobject.h \
-					qgeomapobject.h \
+                    qgeomapmarkerobject.h \
+                    qgeomapobject.h \
                     qgeomappingmanager.h \
                     qgeomappingmanagerengine.h \
-					qgeomappolygonobject.h \
-					qgeomappolylineobject.h \
-					qgeomaprectangleobject.h \
+                    qgeomappolygonobject.h \
+                    qgeomappolylineobject.h \
+                    qgeomaprectangleobject.h \
                     qgeomapwidget.h \
+                    qgeonavigationinstruction.h \
                     qgeoplace.h \
                     qgeoplacesmanager.h \
                     qgeoplacesmanagerengine.h \
@@ -62,6 +61,7 @@ PUBLIC_HEADERS += \
                     qlandmarkcategorysaverequest.h \
                     qlandmarkdistancesort.h \
                     qlandmarkexportrequest.h \
+                    qlandmarkfetchhint.h \
                     qlandmarkfetchrequest.h \
                     qlandmarkfilter.h \
                     qlandmarkid.h \
@@ -73,33 +73,29 @@ PUBLIC_HEADERS += \
                     qlandmarkmanagerengine.h \
                     qlandmarkmanagerenginefactory.h \
                     qlandmarknamefilter.h \
+                    qlandmarknamesort.h \
                     qlandmarkproximityfilter.h \
                     qlandmarkremoverequest.h \
                     qlandmarksaverequest.h \
                     qlandmarksortorder.h \
                     qlandmarkunionfilter.h \
-                    qlandmarkfetchhint.h \
-                    qgeoboundingbox.h \
-                    qnmeapositioninfosource.h \
-                    qlandmarknamesort.h \
-                    qlandmarkdistancesort.h
+                    qnmeapositioninfosource.h
 
 PRIVATE_HEADERS += \
                     qgeoaddress_p.h \
                     qgeoboundingbox_p.h \
                     qgeodistance_p.h \
-					qgeomapcircleobject_p.h \
+                    qgeomapcircleobject_p.h \
                     qgeomapdata_p.h \
-					qgeomapmarkerobject_p.h \
-					qgeomapobject_p.h \
+                    qgeomapmarkerobject_p.h \
+                    qgeomapobject_p.h \
                     qgeomappingmanager_p.h \
                     qgeomappingmanagerengine_p.h \
-					qgeomappolygonobject_p.h \
-					qgeomappolylineobject_p.h \
-					qgeomaprectangleobject_p.h \
+                    qgeomappolygonobject_p.h \
+                    qgeomappolylineobject_p.h \
+                    qgeomaprectangleobject_p.h \
                     qgeomapwidget_p.h \
                     qgeonavigationinstruction_p.h \
-                    #qgeonavigator_p.h \
                     qgeoplace_p.h \
                     qgeoplacesmanager_p.h \
                     qgeoplacesmanagerengine_p.h \
@@ -123,6 +119,7 @@ PRIVATE_HEADERS += \
                     qlandmarkcategoryfilter_p.h \
                     qlandmarkcategoryid_p.h \
                     qlandmarkdistancesort_p.h \
+                    qlandmarkfetchhint_p.h \
                     qlandmarkfilehandler_gpx_p.h \
                     qlandmarkfilehandler_lmx_p.h \
                     qlandmarkfilter_p.h \
@@ -136,8 +133,7 @@ PRIVATE_HEADERS += \
                     qlandmarksortorder_p.h \
                     qlandmarkunionfilter_p.h \
                     qlocationutils_p.h \
-                    qlandmarkfetchhint_p.h \
-                    qnmeapositioninfosource_p.h
+                    qnmeapositioninfosource_p.h 
 
 symbian {
     PRIVATE_HEADERS += qgeopositioninfosource_s60_p.h \
@@ -219,18 +215,17 @@ SOURCES += \
             qgeoboundingbox.cpp \
             qgeocoordinate.cpp \
             qgeodistance.cpp \
-            qgeonavigationinstruction.cpp \
-            #qgeonavigator.cpp \
-			qgeomapcircleobject.cpp \
-	        qgeomapdata.cpp \
-			qgeomapmarkerobject.cpp \
-			qgeomapobject.cpp \
+            qgeomapcircleobject.cpp \
+            qgeomapdata.cpp \
+            qgeomapmarkerobject.cpp \
+            qgeomapobject.cpp \
             qgeomappingmanager.cpp \
             qgeomappingmanagerengine.cpp \
-			qgeomappolygonobject.cpp \
-			qgeomappolylineobject.cpp \
-			qgeomaprectangleobject.cpp \
+            qgeomappolygonobject.cpp \
+            qgeomappolylineobject.cpp \
+            qgeomaprectangleobject.cpp \
             qgeomapwidget.cpp \
+            qgeonavigationinstruction.cpp \
             qgeoplace.cpp \
             qgeoplacesmanager.cpp \
             qgeoplacesmanagerengine.cpp \
@@ -265,6 +260,7 @@ SOURCES += \
             qlandmarkcategorysaverequest.cpp \
             qlandmarkdistancesort.cpp \
             qlandmarkexportrequest.cpp \
+            qlandmarkfetchhint.cpp \
             qlandmarkfetchrequest.cpp \
             qlandmarkfilehandler_gpx.cpp \
             qlandmarkfilehandler_lmx.cpp \
@@ -279,16 +275,14 @@ SOURCES += \
             qlandmarkmanagerengine.cpp \
             qlandmarkmanagerenginefactory.cpp \
             qlandmarknamefilter.cpp \
+            qlandmarknamesort.cpp \
             qlandmarkproximityfilter.cpp \
             qlandmarkremoverequest.cpp \
             qlandmarksaverequest.cpp \
             qlandmarksortorder.cpp \
             qlandmarkunionfilter.cpp \
             qlocationutils.cpp \
-            qlandmarkfetchhint.cpp \
-            qnmeapositioninfosource.cpp \
-            qlandmarknamesort.cpp \
-            qlandmarkdistancesort.cpp
+            qnmeapositioninfosource.cpp 
 
 symbian {
     TARGET.CAPABILITY = ALL -TCB
