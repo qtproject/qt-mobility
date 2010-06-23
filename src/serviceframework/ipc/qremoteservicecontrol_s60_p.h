@@ -53,6 +53,8 @@
 #include <QDebug>
 #endif
 
+#include <QQueue>
+
 QTM_BEGIN_NAMESPACE
 
 const TUint KServerMajorVersionNumber = 1;
@@ -100,7 +102,7 @@ public:
     void CancelListenForPackages();
 
  public:
-    TBuf8<1455> iMessageFromServer; // TODO not necessarily enough (was 255)
+    TBuf8<1550> iMessageFromServer; // TODO not necessarily enough (was 255)
     TPckgBuf<TInt> iState; // TPckgBuf type can be used directly as IPC parameter
 
 signals:
@@ -159,6 +161,7 @@ class CServiceProviderServerSession : public CSession2
         SymbianServerEndPoint* iOwner;
         QByteArray* iByteArray;
         RMessage2 iMsg; // For replying pending service package requests
+        QQueue<QServicePackage> iPendingPackageQueue;
         TBool iPendingPackageRequest;
     };
 

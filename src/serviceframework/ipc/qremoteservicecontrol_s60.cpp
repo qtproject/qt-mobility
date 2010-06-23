@@ -54,9 +54,15 @@ QTM_BEGIN_NAMESPACE
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
 void printServicePackage(const QServicePackage& package)
 {
+  if(package.d) {
     qDebug() << "QServicePackage packageType  : " << package.d->packageType;
     qDebug() << "QServicePackage QUuid        : " << package.d->messageId;
     qDebug() << "QServicePackage responseType : " << package.d->responseType;
+  }
+  else {
+    qDebug() << "Invalid ServicePackage" << " LEAVING"; 
+    User::Leave(KErrCorrupt);
+  }
 }
 #endif
 
@@ -69,7 +75,7 @@ public:
         : QServiceIpcEndPoint(parent), session(session)
     {
         Q_ASSERT(session);
-        qDebug() << "Symbian IPC endpoint created.";
+        qDebug() << "Symbian IPC endpoint created. 1550 buffer v2";
         // TODO does not exist / work / may be useless.
         // connect(session, SIGNAL(ReadyRead()), this, SLOT(readIncoming()));
         // connect(session, SIGNAL(Disconnected()), this, SIGNAL(disconnected()));
@@ -469,6 +475,8 @@ void CServiceProviderServerSession::HandlePackageRequestL(const RMessage2& aMess
     qDebug("HandlePackageRequestL(). Setting pending true and storing message.");
     iMsg = aMessage;
     iPendingPackageRequest = ETrue;
+    if(!iPendingPackageQueue.isEmpty())
+      SendServicePackage(iPendingPackageQueue.dequeue());
 }
 
 void CServiceProviderServerSession::HandlePackageRequestCancelL(const RMessage2& /*aMessage*/)
@@ -500,7 +508,8 @@ void CServiceProviderServerSession::SendServicePackage(const QServicePackage& aP
         iMsg.Complete(EPackageRequestComplete);
         iPendingPackageRequest = EFalse;
     } else {
-        qWarning("RTR SendServicePackage: service package from server to client dropped - no pending receive request.");
+        iPendingPackageQueue.enqueue(aPackage);
+        qWarning() << "RTR SendServicePackage: service package from server to client queued - no pending receive request.";
     }
 }
 
@@ -547,7 +556,6 @@ void ServiceMessageListener::RunL()
         QDataStream in(byteArray);
         QServicePackage results;
         in >> results;
-
 #ifdef QT_SFW_SYMBIAN_IPC_DEBUG
         qDebug() << "ServiceMessageListener Reproduced service package: ";
         printServicePackage(results);
