@@ -77,6 +77,8 @@ private: // util functions
     void addManagers();
     void addItemsWeeklyRecurrence(QString managerName, QString itemType);
     void addItemsDailyRecurrence(QString managerName, QString itemType);
+    void addItemsMonthlyRecurrence(QString managerName, QString itemType);
+    void addItemsYearlyRecurrence(QString managerName, QString itemType);
 
 private:
     QOrganizerItemManager *m_om;
@@ -114,6 +116,7 @@ void tst_recurringItems::addRecurrenceRule_data()
     foreach (QString managerName, managerNames) {
         addItemsWeeklyRecurrence(managerName, QOrganizerItemType::TypeEvent);
         addItemsDailyRecurrence(managerName, QOrganizerItemType::TypeEvent);
+        addItemsYearlyRecurrence(managerName, QOrganizerItemType::TypeEvent);
     }
 }
 
@@ -226,6 +229,42 @@ void tst_recurringItems::addItemsWeeklyRecurrence(QString managerName, QString i
 
 /*!
  * Helper method for adding the actual recurrence test cases. Tests adding
+ * organizer items with monthly recurrences.
+ */
+void tst_recurringItems::addItemsMonthlyRecurrence(QString managerName, QString itemType)
+{
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Monthly);
+    rrule.setCount(3);
+    QList<int> daysOfMonth;
+    daysOfMonth.append(15);
+    rrule.setDaysOfMonth(daysOfMonth);
+    QTest::newRow(QString("[%1] monthly on 15th day for 3 months").arg(managerName).toLatin1().constData())
+        << managerName
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
+
+    if (!managerName.contains(m_managerNameSymbian)) {
+        // Symbian recurrence rule does not support positions so the test case
+        // is disabled
+        rrule.setDaysOfMonth(QList<int>()); // clear days of month
+        QList<Qt::DayOfWeek> daysOfWeek;
+        daysOfWeek.append(Qt::Sunday);
+        rrule.setDaysOfWeek(daysOfWeek);
+        QList<int> positions;
+        positions.append(1);
+        rrule.setPositions(positions);
+        QTest::newRow(QString("[%1] the 1st Sunday of the month for 3 months").arg(managerName).toLatin1().constData())
+            << managerName
+            << itemType
+            << QDateTime::currentDateTime().addSecs(3600)
+            << rrule;
+    }
+}
+
+/*!
+ * Helper method for adding the actual recurrence test cases. Tests adding
  * organizer items with daily recurrences.
  */
 void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString itemType)
@@ -253,6 +292,24 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
         << rrule;
         */
 }
+
+void tst_recurringItems::addItemsYearlyRecurrence(QString managerName, QString itemType)
+{
+    /* TODO: enable and implement
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Yearly);
+    rrule.setCount(3);
+    QList<QOrganizerItemRecurrenceRule::Month> months;
+    months.append(QOrganizerItemRecurrenceRule::January);
+    months.append(QOrganizerItemRecurrenceRule::March);
+    rrule.setMonths(months);
+    QTest::newRow(QString("[%1] yearly on January and March").arg(managerName).toLatin1().constData())
+        << managerName
+        << itemType
+        << QDateTime::currentDateTime().addSecs(3600)
+        << rrule;
+     */
+
     /* TODO: enable the test cases and implement on symbian backend
     QOrganizerItemRecurrenceRule daysofmonthrrule;
     QList<int> daysOfMonth;
@@ -271,23 +328,13 @@ void tst_recurringItems::addItemsDailyRecurrence(QString managerName, QString it
     daysOfYear.append(32);
     daysofyearrrule.setDaysOfYear(daysOfYear);
     daysofyearrrule.setCount(1);
-
     QTest::newRow(QString("[%1] Days of Year=32, Count=1").arg(managerName).toLatin1().constData())
         << managerName
         << itemType
         << QDateTime::currentDateTime().addSecs(3600)
         << daysofyearrrule;
-        */
-
-    /* TODO: Enable the test case and implement
-    // The following unsets count!
-    rrule.setEndDate(QDateTime::currentDateTime().addDays(15));
-    QTest::newRow(QString("[%1] Days of week=Monday;Sunday, enddate=+15").arg(managerName).toLatin1().constData())
-        << managerName
-        << itemType
-        << QDateTime::currentDateTime().addSecs(3600)
-        << rrule;
     */
+}
 
 QTEST_MAIN(tst_recurringItems);
 #include "tst_recurringItems.moc"

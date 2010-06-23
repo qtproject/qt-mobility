@@ -285,10 +285,6 @@ void tst_SymbianOm::removeSimpleItem()
 
 void tst_SymbianOm::fetchItems()
 {
-    // Remove all first
-    QList<QOrganizerItemLocalId> ids = m_om->itemIds();
-    m_om->removeItems(ids, 0);
-    
     // Add some items
     QList<QOrganizerItem> expectedItems;
     for (int i=0; i<10; i++) {
@@ -316,10 +312,6 @@ void tst_SymbianOm::fetchItems()
 
 void tst_SymbianOm::fetchItemIds()
 {
-    // Remove all first
-    QList<QOrganizerItemLocalId> ids = m_om->itemIds();
-    m_om->removeItems(ids, 0);
-    
     // Add some items
     QList<QOrganizerItemLocalId> expectedIds;
     for (int i=0; i<10; i++) {
