@@ -39,34 +39,50 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDERFACTORY_NOKIA_H
-#define QGEOSERVICEPROVIDERFACTORY_NOKIA_H
+#ifndef QGEOROUTEPARSER_H
+#define QGEOROUTEPARSER_H
 
-#include <qgeoserviceproviderfactory.h>
-#include <QObject>
+#include <QList>
+#include <QMap>
+#include <QString>
+
+class QIODevice;
+
+#include <qgeoroute.h>
+#include <qgeoroutesegment.h>
+#include <qgeocoordinate.h>
+#include <qgeoboundingbox.h>
+#include <qgeorouterequest.h>
+#include <qgeonavigationinstruction.h>
 
 QTM_USE_NAMESPACE
 
-class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
+class QGeoRouteDataContainer
 {
-    Q_OBJECT
-    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoServiceProviderFactoryNokia();
-    ~QGeoServiceProviderFactoryNokia();
+    quint8 id;
+    QByteArray data;
+};
 
-    QString providerName() const;
-    int providerVersion() const;
+class QGeoRouteParser
+{
+public:
+    QGeoRouteParser(const QGeoRouteRequest &request);
+    ~QGeoRouteParser();
 
-    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QString> &parameters,
-                                                       QGeoServiceProvider::Error *error,
-                                                       QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
+    bool parse(QIODevice* source);
+    QList<QGeoRoute> results() const;
+    QString errorString() const;
+
+private:
+    QList<QGeoRouteDataContainer> QGeoRouteParser::decodeTLV(QByteArray data, bool base64=false);
+    QGeoCoordinate coordinateFromByteArray(QByteArray array);
+    quint32 int32FromByteArray(QByteArray array);
+    double fromInt32(quint32 value);
+
+    QGeoRouteRequest m_request;
+    QList<QGeoRoute> m_results;
+    QString m_errorString;
 };
 
 #endif

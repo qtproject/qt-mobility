@@ -39,34 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDERFACTORY_NOKIA_H
-#define QGEOSERVICEPROVIDERFACTORY_NOKIA_H
+#ifndef QGEOSEARCHREPLY_NOKIA_H
+#define QGEOSEARCHREPLY_NOKIA_H
 
-#include <qgeoserviceproviderfactory.h>
-#include <QObject>
+#include <qgeosearchreply.h>
+#include <QNetworkReply>
 
 QTM_USE_NAMESPACE
 
-class QGeoServiceProviderFactoryNokia : public QObject, public QGeoServiceProviderFactory
+class QGeoSearchReplyNokia : public QGeoSearchReply
 {
     Q_OBJECT
-    Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoServiceProviderFactoryNokia();
-    ~QGeoServiceProviderFactoryNokia();
+    QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    ~QGeoSearchReplyNokia();
 
-    QString providerName() const;
-    int providerVersion() const;
+    void abort();
 
-    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QString> &parameters,
-                                                       QGeoServiceProvider::Error *error,
-                                                       QString *errorString) const;
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QString> &parameters,
-                                                         QGeoServiceProvider::Error *error,
-                                                         QString *errorString) const;
+private slots:
+    void networkFinished();
+    void networkError(QNetworkReply::NetworkError error);
+
+private:
+    QNetworkReply *m_reply;
 };
 
 #endif

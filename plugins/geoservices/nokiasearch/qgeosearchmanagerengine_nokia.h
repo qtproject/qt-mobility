@@ -39,40 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGER_NOKIA_H
-#define QGEOPLACESMANAGER_NOKIA_H
+#ifndef QGEOSEARCHMANAGERENGINE_NOKIA_H
+#define QGEOSEARCHMANAGERENGINE_NOKIA_H
 
-#include <QGeoServiceProvider>
-#include <QGeoPlacesManagerEngine>
+#include <qgeoserviceprovider.h>
+#include <qgeosearchmanagerengine.h>
 
 #include <QNetworkAccessManager>
 
 QTM_USE_NAMESPACE
 
-class QGeoPlacesManagerEngineNokia : public QGeoPlacesManagerEngine
+class QGeoSearchManagerEngineNokia : public QGeoSearchManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoPlacesManagerEngineNokia(const QMap<QString, QString> &parameters,
+    QGeoSearchManagerEngineNokia(const QMap<QString, QString> &parameters,
                                  QGeoServiceProvider::Error *error,
                                  QString *errorString);
-    ~QGeoPlacesManagerEngineNokia();
+    ~QGeoSearchManagerEngineNokia();
 
-    QGeoPlacesReply* geocode(const QGeoAddress &address,
+    QGeoSearchReply* geocode(const QGeoAddress &address,
                              const QGeoBoundingBox &bounds);
-    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
+    QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
                              const QGeoBoundingBox &bounds);
 
-    QGeoPlacesReply* placesSearch(const QString &searchString,
-                                  QGeoPlacesManager::SearchTypes searchTypes,
+    QGeoSearchReply* placesSearch(const QString &searchString,
+                                  QGeoSearchManager::SearchTypes searchTypes,
                                   const QGeoBoundingBox &bounds);
 
 private slots:
     void placesFinished();
-    void placesError(QGeoPlacesReply::Error error, const QString &errorString);
+    void placesError(QGeoSearchReply::Error error, const QString &errorString);
 
 private:
-    QGeoPlacesReply* search(QString requestString);
+    QGeoSearchReply* search(QString requestString);
 
     QNetworkAccessManager *m_networkManager;
     QString m_host;

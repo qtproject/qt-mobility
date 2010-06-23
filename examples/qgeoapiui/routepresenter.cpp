@@ -121,11 +121,11 @@ void RoutePresenter::showRoute(QTreeWidgetItem* top, const QGeoRoute& route)
     wayPointsItem->setText(0, "route overview");
     showPoints(wayPointsItem, route.pathSummary());
 
-    QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
-    segmentsItem->setText(0, "segments");
-
     const QList<const QGeoRouteSegment*> segments = route.routeSegments();
-    for (int i = 0; i < segments.length(); ++i) {
+    QTreeWidgetItem* segmentsItem = new QTreeWidgetItem(routeItem);
+    segmentsItem->setText(0, "segments (max 100 shown)");
+    segmentsItem->setText(1, QString().setNum(segments.length()));
+    for (int i = 0; i < segments.length() && i<100; ++i) {
         showRouteSegment(segmentsItem, segments[i]);
     }
 }
@@ -193,24 +193,25 @@ void RoutePresenter::showRouteSegment(QTreeWidgetItem* routeItem, const QGeoRout
     maneuverPointsItem->setText(0, "segment points");
     showPoints(maneuverPointsItem, segment->path());
 
-    QTreeWidgetItem* instructionItem = new QTreeWidgetItem(maneuverItem);
-    instructionItem->setText(0, "instruction");
+    if(segment->instruction()) {
+        QTreeWidgetItem* instructionItem = new QTreeWidgetItem(maneuverItem);
+        instructionItem->setText(0, "instruction");
 
-    QTreeWidgetItem* positionItem = new QTreeWidgetItem(instructionItem);
-    positionItem->setText(0, "position");
-    QList<QGeoCoordinate> points;
-    points.append(segment->instruction()->position());
-    showPoints(positionItem, points);
+        QTreeWidgetItem* positionItem = new QTreeWidgetItem(instructionItem);
+        positionItem->setText(0, "position");
+        QList<QGeoCoordinate> points;
+        points.append(segment->instruction()->position());
+        showPoints(positionItem, points);
 
-    propItem = new QTreeWidgetItem(instructionItem);
-    propItem->setText(0, "text");
-    propItem->setText(1, segment->instruction()->instructionText());
-
+        propItem = new QTreeWidgetItem(instructionItem);
+        propItem->setText(0, "text");
+        propItem->setText(1, segment->instruction()->instructionText());
+    }
 }
 
 void RoutePresenter::showPoints(QTreeWidgetItem* pointsItem, const QList<QGeoCoordinate>& points)
 {
-    for (int i = 0; i < points.length(); ++i) {
+    for (int i = 0; i < points.count(); ++i) {
         QTreeWidgetItem* point = new QTreeWidgetItem(pointsItem);
         point->setText(0, QString().setNum(i + 1));
         point->setText(1, formatGeoCoordinate(points[i]));

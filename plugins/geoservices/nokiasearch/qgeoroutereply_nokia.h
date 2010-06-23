@@ -42,7 +42,7 @@
 #ifndef QGEOROUTEREPLY_NOKIA_H
 #define QGEOROUTEREPLY_NOKIA_H
 
-#include <QGeoRouteReply>
+#include <qgeoroutereply.h>
 #include <QNetworkReply>
 
 QTM_USE_NAMESPACE
