@@ -39,29 +39,58 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESREPLY_NOKIA_H
-#define QGEOPLACESREPLY_NOKIA_H
+#include "qgeosearchreply_nokia.h"
 
-#include <QGeoPlacesReply>
-#include <QNetworkReply>
-
-QTM_USE_NAMESPACE
-
-class QGeoPlacesReplyNokia : public QGeoPlacesReply
+QGeoSearchReplyNokia::QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent)
+        : QGeoSearchReply(parent),
+        m_reply(reply)
 {
-    Q_OBJECT
-public:
-    QGeoPlacesReplyNokia(QNetworkReply *reply, QObject *parent = 0);
-    ~QGeoPlacesReplyNokia();
+    connect(m_reply,
+            SIGNAL(finished()),
+            this,
+            SLOT(networkFinished()));
 
-    void abort();
+    connect(m_reply,
+            SIGNAL(error(QNetworkReply::NetworkError)),
+            this,
+            SLOT(networkError(QNetworkReply::NetworkError)));
+}
 
-private slots:
-    void networkFinished();
-    void networkError(QNetworkReply::NetworkError error);
+QGeoSearchReplyNokia::~QGeoSearchReplyNokia()
+{
+    //TODO: possible mem leak -> m_reply->deleteLater() ?
+}
 
-private:
-    QNetworkReply *m_reply;
-};
+void QGeoSearchReplyNokia::abort()
+{
+    m_reply->abort();
+    m_reply->deleteLater();
+}
 
-#endif
+void QGeoSearchReplyNokia::networkFinished()
+{
+    if (m_reply->error() != QNetworkReply::NoError) {
+        setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
+        m_reply->deleteLater();
+        return;
+    }
+
+//    QGeoCodeXmlParser parser;
+
+//    if (parser.parse(m_reply)) {
+        // TODO trim results based on bounds
+//        setPlaces(parser.results());
+//        setFinished(true);
+//    } else {
+        // add a qWarning with the actual parser.errorString()
+        setError(QGeoSearchReply::ParseError, "The response from the service was not in a recognisable format.");
+//    }
+
+    m_reply->deleteLater();
+}
+
+void QGeoSearchReplyNokia::networkError(QNetworkReply::NetworkError error)
+{
+    setError(QGeoSearchReply::CommunicationError, m_reply->errorString());
+    m_reply->deleteLater();
+}

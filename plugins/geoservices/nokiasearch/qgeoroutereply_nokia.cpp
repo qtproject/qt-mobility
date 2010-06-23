@@ -40,9 +40,9 @@
 ****************************************************************************/
 
 #include "qgeoroutereply_nokia.h"
-//#include "qgeoroutexmlparser_p.h"
+#include "qgeorouteparser.h"
 
-#include <QGeoRouteRequest>
+#include <qgeorouterequest.h>
 
 QGeoRouteReplyNokia::QGeoRouteReplyNokia(const QGeoRouteRequest &request, QNetworkReply *reply, QObject *parent)
         : QGeoRouteReply(request, parent),
@@ -77,15 +77,15 @@ void QGeoRouteReplyNokia::networkFinished()
         return;
     }
 
-//    QGeoRouteXmlParser parser(request());
+    QGeoRouteParser parser(request());
 
-//    if (parser.parse(m_reply)) {
-//        setRoutes(parser.results());
-//        setFinished(true);
-//    } else {
+    if (parser.parse(m_reply)) {
+        setRoutes(parser.results());
+        setFinished(true);
+    } else {
         // add a qWarning with the actual parser.errorString()
         setError(QGeoRouteReply::ParseError, "The response from the service was not in a recognisable format.");
-//    }
+    }
 
     m_reply->deleteLater();
 }

@@ -41,8 +41,8 @@
 
 #include "qgeoserviceproviderplugin_nokia.h"
 
-#include <QGeoMappingManagerEngine>
-#include "qgeoplacesmanagerengine_nokia.h"
+#include <qgeomappingmanagerengine.h>
+#include "qgeosearchmanagerengine_nokia.h"
 #include "qgeoroutingmanagerengine_nokia.h"
 
 #include <QtPlugin>
@@ -62,25 +62,29 @@ int QGeoServiceProviderFactoryNokia::providerVersion() const
     return 1;
 }
 
-QGeoPlacesManagerEngine* QGeoServiceProviderFactoryNokia::createPlacesManagerEngine(const QMap<QString, QString> &parameters,
+QGeoSearchManagerEngine* QGeoServiceProviderFactoryNokia::createSearchManagerEngine(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    return NULL;
+    return 0;
 }
 
 QGeoMappingManagerEngine* QGeoServiceProviderFactoryNokia::createMappingManagerEngine(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)const
 {
-    return NULL;
+    Q_UNUSED(parameters)
+    Q_UNUSED(error)
+    Q_UNUSED(errorString)
+
+    return 0;
 }
 
 QGeoRoutingManagerEngine* QGeoServiceProviderFactoryNokia::createRoutingManagerEngine(const QMap<QString, QString> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString) const
 {
-    return NULL;
+    return new QGeoRoutingManagerEngineNokia(parameters, error, errorString);
 }
 
 Q_EXPORT_PLUGIN2(qtgeoservices_nokiasearch, QGeoServiceProviderFactoryNokia)

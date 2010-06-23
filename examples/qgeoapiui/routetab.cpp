@@ -54,7 +54,7 @@
 
 RouteTab::RouteTab(QWidget *parent) :
         QWidget(parent),
-        m_routingManager(NULL)
+        m_routingManager(0)
 {
     QLabel *source = new QLabel(tr("Source:"));
     m_srcLong = new QLineEdit("10");
@@ -128,8 +128,10 @@ void RouteTab::on_btnRequest_clicked()
         QGeoCoordinate dst(m_destLat->text().toDouble(), m_destLong->text().toDouble());
 
         QGeoRouteRequest request(src, dst);
-        request.setSegmentDetail(QGeoRouteRequest::DetailedSegmentData);
-        request.setInstructionDetail(QGeoRouteRequest::DetailedInstructions);
+        if((m_routingManager->supportedSegmentDetails() & QGeoRouteRequest::DetailedSegmentData) != 0)
+            request.setSegmentDetail(QGeoRouteRequest::DetailedSegmentData);
+        if((m_routingManager->supportedInstructionDetails() & QGeoRouteRequest::DetailedInstructions) != 0)
+            request.setInstructionDetail(QGeoRouteRequest::DetailedInstructions);
 
         m_resultTree->clear();
 

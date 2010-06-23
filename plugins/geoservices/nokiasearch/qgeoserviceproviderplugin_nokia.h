@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_NOKIA_H
-#define QGEOSERVICEPROVIDER_NOKIA_H
+#ifndef QGEOSERVICEPROVIDERFACTORY_NOKIA_H
+#define QGEOSERVICEPROVIDERFACTORY_NOKIA_H
 
-#include <QGeoServiceProviderFactory>
+#include <qgeoserviceproviderfactory.h>
 #include <QObject>
 
 QTM_USE_NAMESPACE
@@ -58,7 +58,7 @@ public:
     QString providerName() const;
     int providerVersion() const;
 
-    QGeoPlacesManagerEngine* createPlacesManagerEngine(const QMap<QString, QString> &parameters,
+    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QString> &parameters,
                                                        QGeoServiceProvider::Error *error,
                                                        QString *errorString) const;
     QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QString> &parameters,

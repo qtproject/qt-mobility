@@ -39,48 +39,29 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGER_DUMMY_H
-#define QGEOPLACESMANAGER_DUMMY_H
+#ifndef QGEOSEARCHREPLY_NOKIA_H
+#define QGEOSEARCHREPLY_NOKIA_H
 
-#include <QGeoPlacesManager>
-#include <QTimer>
+#include <qgeosearchreply.h>
+#include <QNetworkReply>
 
 QTM_USE_NAMESPACE
 
-class QGeoPlacesReplyDummy : public QGeoPlacesReply
+class QGeoSearchReplyNokia : public QGeoSearchReply
 {
     Q_OBJECT
 public:
-    QGeoPlacesReplyDummy(const QList<QGeoPlace> &places,QObject *parent = 0)
-        :QGeoPlacesReply(parent) 
-    { 
-        setPlaces(places);
-        QTimer::singleShot(0, this, SIGNAL(finished()));
-    }
-    ~QGeoPlacesReplyDummy(){}
+    QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    ~QGeoSearchReplyNokia();
 
-    void abort() {}
-};
-
-class QGeoPlacesManagerDummy : public QGeoPlacesManager
-{
-    Q_OBJECT
-public:
-    QGeoPlacesManagerDummy(QObject *parent = 0);
-    ~QGeoPlacesManagerDummy();
-    
-    QGeoPlacesReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
-    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds = QGeoBoundingBox());
-
-    QGeoPlacesReply* placesSearch(const QString &searchString,
-                                  SearchTypes searchTypes = SearchTypes(SearchAll),
-                                  const QGeoBoundingBox &bounds = QGeoBoundingBox());
+    void abort();
 
 private slots:
-    void placesFinished();
-    void placesError(QGeoPlacesReply::Error error, const QString &errorString);
+    void networkFinished();
+    void networkError(QNetworkReply::NetworkError error);
+
+private:
+    QNetworkReply *m_reply;
 };
 
-#endif // QGEOPLACESMANAGER_DUMMY_H
+#endif

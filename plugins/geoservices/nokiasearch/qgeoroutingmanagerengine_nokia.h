@@ -39,17 +39,30 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOROUTINGMANAGER_NOKIA_H
-#define QGEOROUTINGMANAGER_NOKIA_H
+#ifndef QGEOROUTINGMANAGERENGINE_NOKIA_H
+#define QGEOROUTINGMANAGERENGINE_NOKIA_H
 
-#include <QGeoServiceProvider>
-#include <QGeoRoutingManagerEngine>
+#include <qgeoserviceprovider.h>
+#include <qgeoroutingmanagerengine.h>
 #include <QNetworkAccessManager>
+#include <QByteArray>
+
+#include <QHash>
 
 QTM_USE_NAMESPACE
 
 class QGeoRoutingManagerEngineNokia : public QGeoRoutingManagerEngine
 {
+    enum RouteFlags {
+        Default = 0x0,
+        Shortest = 0x1,
+        Pedestrian = 0x2,
+        AvoidHighways = 0x4,
+        AvoidTunnels = 0x8,
+        AvoidFerries = 0x10,
+        AvoidTollRoads = 0x20
+    };
+
     Q_OBJECT
 public:
     QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters,
@@ -66,8 +79,12 @@ private slots:
 
 private:
     QString calculateRouteRequestString(const QGeoRouteRequest &request);
-    QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
-
+    QString encodeTLV(quint8 id, QByteArray data);
+    QString encodeTLV(quint8 id, quint8 data);
+    QString encodeTLV(quint8 id, quint16 data);
+    QString encodeTLV(quint8 id, quint32 data);
+    QByteArray coordinateToByteArray(QGeoCoordinate coord);
+    quint32 toInt32(double value);
     QNetworkAccessManager *m_networkManager;
     QString m_host;
 };

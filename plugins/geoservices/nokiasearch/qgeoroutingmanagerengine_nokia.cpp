@@ -42,9 +42,25 @@
 #include "qgeoroutingmanagerengine_nokia.h"
 #include "qgeoroutereply_nokia.h"
 
+#include <QBuffer>
 #include <QStringList>
 #include <QNetworkProxy>
-#include <QGeoBoundingBox>
+#include <qgeoboundingbox.h>
+
+const quint8 ID_REQUEST_TYPE=0x1;
+const quint8 ID_REQUEST_UNICODE=0x63;
+const quint8 ID_REQUEST_ZLIB=0x59;
+const quint8 ID_REQUEST_BASE64=0x58;
+const quint8 ID_REQUEST_MANEUVER_INFO=0x9c;
+const quint8 ID_REQUEST_JUNCTION_INFO=0x47;
+const quint8 ID_REQUEST_ROUTE_START_POSITION=0x1f;
+const quint8 ID_REQUEST_ROUTE_END_POSITION=0x20;
+const quint8 ID_REQUEST_ROUTE_FLAGS=0x23;
+const quint8 ID_REQUEST_ROUTE_GUIDANCE_LANGUAGE=0x78;
+const quint16 ID_REQUEST_ROUTE=0x2;
+const quint8 ID_REQUEST_TRUE=0xff;
+const quint8 ID_REQUEST_FALSE=0x0;
+
 
 QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString, QString> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoRoutingManagerEngine(parameters),
@@ -71,21 +87,27 @@ QGeoRoutingManagerEngineNokia::QGeoRoutingManagerEngineNokia(const QMap<QString,
     setSupportsExcludeAreas(false);
 
     QGeoRouteRequest::AvoidFeatureTypes avoidFeatures;
-    avoidFeatures |= QGeoRouteRequest::AvoidNothing;
+    avoidFeatures |= QGeoRouteRequest::AvoidTolls;
+    avoidFeatures |= QGeoRouteRequest::AvoidFerries;
+    avoidFeatures |= QGeoRouteRequest::AvoidTunnels;
     setSupportedAvoidFeatureTypes(avoidFeatures);
 
     QGeoRouteRequest::InstructionDetails instructionDetails;
-    instructionDetails |= QGeoRouteRequest::NoInstructions;
+    instructionDetails |= QGeoRouteRequest::BasicInstructions;
     setSupportedInstructionDetails(instructionDetails);
 
     QGeoRouteRequest::RouteOptimizations optimizations;
+    optimizations |= QGeoRouteRequest::ShortestRoute;
+    optimizations |= QGeoRouteRequest::FastestRoute;
     setSupportedRouteOptimizations(optimizations);
 
     QGeoRouteRequest::TravelModes travelModes;
+    travelModes |= QGeoRouteRequest::CarTravel;
+    travelModes |= QGeoRouteRequest::PedestrianTravel;
     setSupportedTravelModes(travelModes);
 
     QGeoRouteRequest::SegmentDetails segmentDetails;
-    segmentDetails |= QGeoRouteRequest::NoSegmentData;
+    segmentDetails |= QGeoRouteRequest::BasicSegmentData;
     setSupportedSegmentDetails(segmentDetails);
 
     if (error)
@@ -102,7 +124,7 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
     QString reqString = calculateRouteRequestString(request);
 
     if (reqString.isEmpty()) {
-        QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The give route request options are not supported by this service provider.", this);
+        QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "The given route request options are not supported by this service provider.", this);
         emit error(reply, reply->error(), reply->errorString());
         return reply;
     }
@@ -125,6 +147,8 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 
 QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
+    Q_UNUSED(route)
+    Q_UNUSED(position)
     QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "Route updates are not supported by this service provider.", this);
     emit error(reply, reply->error(), reply->errorString());
 
@@ -153,19 +177,103 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     if ((request.numberAlternativeRoutes() != 0) && !supportsAlternativeRoutes())
         supported = false;
 
+    int numWaypoints = request.waypoints().size();
+    if (numWaypoints < 2)
+        supported = false;
+
+
     if (!supported)
         return "";
 
     QString requestString = "http://";
     requestString += m_host;
-    requestString += "rt?tlv=";
+    requestString += "/rt?tlv=";
+
+    requestString += encodeTLV(ID_REQUEST_TYPE, ID_REQUEST_ROUTE);
+    requestString += encodeTLV(ID_REQUEST_UNICODE, ID_REQUEST_FALSE);
+    requestString += encodeTLV(ID_REQUEST_ZLIB, ID_REQUEST_FALSE);
+    requestString += encodeTLV(ID_REQUEST_BASE64, ID_REQUEST_FALSE);
+    requestString += encodeTLV(ID_REQUEST_MANEUVER_INFO, ID_REQUEST_TRUE);
+    requestString += encodeTLV(ID_REQUEST_JUNCTION_INFO, ID_REQUEST_TRUE);
+
+    requestString += encodeTLV(ID_REQUEST_ROUTE_START_POSITION,coordinateToByteArray(request.waypoints().at(0)));
+    requestString += encodeTLV(ID_REQUEST_ROUTE_END_POSITION,coordinateToByteArray(request.waypoints().at(numWaypoints-1)));
+
+    quint32 flags = Default;
+    if ((request.routeOptimization() & QGeoRouteRequest::ShortestRoute) != 0)
+        flags |= Shortest;
+    if ((request.travelModes() & QGeoRouteRequest::PedestrianTravel) != 0)
+        flags |= Pedestrian;
+    if ((request.avoidFeatureTypes() & QGeoRouteRequest::AvoidTolls) != 0)
+        flags |= AvoidTollRoads;
+    if ((request.avoidFeatureTypes() & QGeoRouteRequest::AvoidHighways) != 0)
+        flags |= AvoidHighways;
+    if ((request.avoidFeatureTypes() & QGeoRouteRequest::AvoidFerries) != 0)
+        flags |= AvoidFerries;
+    if ((request.avoidFeatureTypes() & QGeoRouteRequest::AvoidTunnels) != 0)
+        flags |= AvoidTunnels;
+
+    requestString += encodeTLV(ID_REQUEST_ROUTE_FLAGS,flags);
+    requestString += encodeTLV(ID_REQUEST_ROUTE_GUIDANCE_LANGUAGE,QByteArray::fromRawData("DEF\x0",4));
 
     return requestString;
 }
 
-QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
+QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, QByteArray data)
 {
-    return "";
+    QByteArray dataArray;
+    QDataStream dataStream(&dataArray,QIODevice::WriteOnly);
+    dataStream.setByteOrder(QDataStream::LittleEndian);
+    dataStream << id << quint16(data.length());
+    dataArray.append(data);
+
+    return dataArray.toHex().data();
+}
+
+QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint8 data)
+{
+    QByteArray dataArray;
+    QDataStream dataStream(&dataArray,QIODevice::WriteOnly);
+    dataStream.setByteOrder(QDataStream::LittleEndian);
+    dataStream << id << quint16(1) << data;  //data length 1 bytes
+
+    return dataArray.toHex().data();
+}
+
+QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint16 data)
+{
+    QByteArray dataArray;
+    QDataStream dataStream(&dataArray,QIODevice::WriteOnly);
+    dataStream.setByteOrder(QDataStream::LittleEndian);
+    dataStream << id << quint16(2) << data;  //data length 2 bytes
+
+    return dataArray.toHex().data();
+}
+
+QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, quint32 data)
+{
+    QByteArray dataArray;
+    QDataStream dataStream(&dataArray,QIODevice::WriteOnly);
+    dataStream.setByteOrder(QDataStream::LittleEndian);
+    dataStream << id << quint16(4) << data; //data length 4 bytes
+
+    return dataArray.toHex().data();
+}
+
+QByteArray QGeoRoutingManagerEngineNokia::coordinateToByteArray(QGeoCoordinate coord)
+{
+    QByteArray array;
+    QDataStream dataStream(&array,QIODevice::WriteOnly);
+    dataStream.setByteOrder(QDataStream::LittleEndian);
+    dataStream << toInt32(coord.latitude()+90) << toInt32(coord.longitude()+180);
+    return array;
+}
+
+quint32 QGeoRoutingManagerEngineNokia::toInt32(double value)
+{
+    value *= 0xB60B60; // 0x100000000 / 360;
+    value -= (value > 0x7fffffff ? 2^32 : 0);
+    return quint32(value);
 }
 
 void QGeoRoutingManagerEngineNokia::routeFinished()
