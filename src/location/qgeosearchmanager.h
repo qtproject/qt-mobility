@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGER_H
-#define QGEOPLACESMANAGER_H
+#ifndef QGEOSEARCHMANAGER_H
+#define QGEOSEARCHMANAGER_H
 
-#include "qgeoplacesreply.h"
+#include "qgeosearchreply.h"
 #include "qgeoboundingbox.h"
 
 #include <QObject>
@@ -53,10 +53,10 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
 
-class QGeoPlacesManagerEngine;
-class QGeoPlacesManagerPrivate;
+class QGeoSearchManagerEngine;
+class QGeoSearchManagerPrivate;
 
-class Q_LOCATION_EXPORT QGeoPlacesManager : public QObject
+class Q_LOCATION_EXPORT QGeoSearchManager : public QObject
 {
     Q_OBJECT
 public:
@@ -68,18 +68,18 @@ public:
     };
     Q_DECLARE_FLAGS(SearchTypes, SearchType)
 
-    ~QGeoPlacesManager();
+    ~QGeoSearchManager();
 
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    QGeoPlacesReply* geocode(const QGeoAddress &address,
+    QGeoSearchReply* geocode(const QGeoAddress &address,
                              const QGeoBoundingBox &bounds = QGeoBoundingBox());
-    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
+    QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
                              const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
-    QGeoPlacesReply* placesSearch(const QString &searchString,
+    QGeoSearchReply* textSearch(const QString &searchString,
                                   SearchTypes searchTypes = SearchTypes(SearchAll),
                                   const QGeoBoundingBox &bounds = QGeoBoundingBox());
 
@@ -93,19 +93,19 @@ public:
     void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
 signals:
-    void finished(QGeoPlacesReply* reply);
-    void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
+    void finished(QGeoSearchReply* reply);
+    void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());
 
 private:
-    QGeoPlacesManager(QGeoPlacesManagerEngine *engine, QObject *parent = 0);
+    QGeoSearchManager(QGeoSearchManagerEngine *engine, QObject *parent = 0);
 
-    QGeoPlacesManagerPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoPlacesManager)
+    QGeoSearchManagerPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoSearchManager)
 
     friend class QGeoServiceProvider;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoPlacesManager::SearchTypes)
+Q_DECLARE_OPERATORS_FOR_FLAGS(QGeoSearchManager::SearchTypes)
 
 QTM_END_NAMESPACE
 

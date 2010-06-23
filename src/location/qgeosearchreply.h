@@ -39,40 +39,64 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESREPLY_NOKIA_P_H
-#define QGEOPLACESREPLY_NOKIA_P_H
+#ifndef QGEOSEARCHREPLY_H
+#define QGEOSEARCHREPLY_H
 
-//
-//  W A R N I N G
-//  -------------
-//
-// This file is not part of the Qt API.  It exists purely as an
-// implementation detail.  This header file may change from version to
-// version without notice, or even be removed.
-//
-// We mean it.
-//
+#include "qgeoplace.h"
 
-#include <qgeoplacesreply.h>
-#include <QNetworkReply>
+#include <QObject>
+#include <QList>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesReplyNokia : public QGeoPlacesReply
+class QGeoSearchReplyPrivate;
+
+class Q_LOCATION_EXPORT QGeoSearchReply : public QObject
 {
     Q_OBJECT
+
 public:
-    QGeoPlacesReplyNokia(QNetworkReply *reply, QObject *parent = 0);
-    ~QGeoPlacesReplyNokia();
+    enum Error {
+        NoError,
+        EngineNotSetError,
+        CommunicationError,
+        ParseError,
+        UnsupportedOptionError,
+        UnknownError
+    };
 
-    void abort();
+    QGeoSearchReply(Error error, const QString &errorString, QObject *parent = 0);
+    virtual ~QGeoSearchReply();
 
-private slots:
-    void networkFinished();
-    void networkError(QNetworkReply::NetworkError error);
+    bool isFinished() const;
+    Error error() const;
+    QString errorString() const;
+
+    QGeoBoundingBox bounds() const;
+    QList<QGeoPlace> places() const;
+
+public slots:
+    virtual void abort();
+
+signals:
+    void finished();
+    void error(QGeoSearchReply::Error error, const QString &errorString = QString());
+
+protected:
+    QGeoSearchReply(QObject *parent = 0);
+
+    void setError(Error error, const QString &errorString);
+    void setFinished(bool finished);
+
+    void setBounds(const QGeoBoundingBox& bounds);
+    void addPlace(const QGeoPlace &place);
+    void setPlaces(const QList<QGeoPlace> &places);
 
 private:
-    QNetworkReply *m_reply;
+    QGeoSearchReplyPrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoSearchReply)
 };
+
+QTM_END_NAMESPACE
 
 #endif

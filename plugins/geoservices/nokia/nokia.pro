@@ -15,11 +15,11 @@ HEADERS += \
             qgeomappingmanagerengine_nokia_p.h \
             qgeomapreply_nokia_p.h \
             #qgeomapviewport_nokia_p.h \
-            qgeoplacesmanagerengine_nokia_p.h \
-            qgeoplacesreply_nokia_p.h \
             qgeoroutereply_nokia_p.h \
             qgeoroutexmlparser_p.h \
             qgeoroutingmanagerengine_nokia_p.h \
+            qgeosearchmanagerengine_nokia_p.h \
+            qgeosearchreply_nokia_p.h \
             qgeoserviceproviderplugin_nokia_p.h
 
 SOURCES += \
@@ -27,11 +27,11 @@ SOURCES += \
             qgeomappingmanagerengine_nokia.cpp \
             qgeomapreply_nokia.cpp \
             #qgeomapviewport_nokia.cpp \
-            qgeoplacesmanagerengine_nokia.cpp \
-            qgeoplacesreply_nokia.cpp \
             qgeoroutereply_nokia.cpp \
             qgeoroutexmlparser.cpp \
             qgeoroutingmanagerengine_nokia.cpp \
+            qgeosearchmanagerengine_nokia.cpp \
+            qgeosearchreply_nokia.cpp \
             qgeoserviceproviderplugin_nokia.cpp
 
 INCLUDEPATH += $$QT_MOBILITY_BUILD_TREE/include/QtmLocation

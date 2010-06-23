@@ -28,9 +28,6 @@ PUBLIC_HEADERS += \
                     qgeomapwidget.h \
                     qgeonavigationinstruction.h \
                     qgeoplace.h \
-                    qgeoplacesmanager.h \
-                    qgeoplacesmanagerengine.h \
-                    qgeoplacesreply.h \
                     qgeopositioninfo.h \
                     qgeopositioninfosource.h \
                     qgeoroute.h \
@@ -41,6 +38,9 @@ PUBLIC_HEADERS += \
                     qgeoroutingmanagerengine.h \
                     qgeosatelliteinfo.h \
                     qgeosatelliteinfosource.h \
+                    qgeosearchmanager.h \
+                    qgeosearchmanagerengine.h \
+                    qgeosearchreply.h \
                     qgeoserviceprovider.h \
                     qgeoserviceproviderfactory.h \
                     qgeotiledmapdata.h \
@@ -97,15 +97,15 @@ PRIVATE_HEADERS += \
                     qgeomapwidget_p.h \
                     qgeonavigationinstruction_p.h \
                     qgeoplace_p.h \
-                    qgeoplacesmanager_p.h \
-                    qgeoplacesmanagerengine_p.h \
-                    qgeoplacesreply_p.h \
                     qgeoroute_p.h \
                     qgeoroutereply_p.h \
                     qgeorouterequest_p.h \
                     qgeoroutesegment_p.h \
                     qgeoroutingmanager_p.h \
                     qgeoroutingmanagerengine_p.h \
+                    qgeosearchmanager_p.h \
+                    qgeosearchmanagerengine_p.h \
+                    qgeosearchreply_p.h \
                     qgeoserviceprovider_p.h \
                     qgeotiledmapdata_p.h \
                     qgeotiledmappingmanagerengine_p.h \
@@ -227,9 +227,6 @@ SOURCES += \
             qgeomapwidget.cpp \
             qgeonavigationinstruction.cpp \
             qgeoplace.cpp \
-            qgeoplacesmanager.cpp \
-            qgeoplacesmanagerengine.cpp \
-            qgeoplacesreply.cpp \
             qgeopositioninfo.cpp \
             qgeopositioninfosource.cpp \
             qgeoroute.cpp \
@@ -240,6 +237,9 @@ SOURCES += \
             qgeoroutingmanagerengine.cpp \
             qgeosatelliteinfo.cpp \
             qgeosatelliteinfosource.cpp \
+            qgeosearchmanager.cpp \
+            qgeosearchmanagerengine.cpp \
+            qgeosearchreply.cpp \
             qgeoserviceprovider.cpp \
             qgeoserviceproviderfactory.cpp \
             qgeotiledmapdata.cpp \

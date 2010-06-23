@@ -54,7 +54,7 @@
 
 GeocodingTab::GeocodingTab(QWidget *parent) :
         QWidget(parent),
-        m_placesManager(NULL)
+        m_searchManager(NULL)
 {
     m_obloc = new QLineEdit("Deutschland, München");
     m_obloc->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -129,27 +129,27 @@ GeocodingTab::~GeocodingTab()
 {
 }
 
-void GeocodingTab::initialize(QGeoPlacesManager *placesManager)
+void GeocodingTab::initialize(QGeoSearchManager *searchManager)
 {
-    m_placesManager = placesManager;
-    if (m_placesManager) {
-        QObject::connect(m_placesManager, SIGNAL(finished(QGeoPlacesReply*)), this,
-                         SLOT(replyFinished(QGeoPlacesReply*)));
-        QObject::connect(m_placesManager,
-                         SIGNAL(error(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)), this,
-                         SLOT(resultsError(QGeoPlacesReply*, QGeoPlacesReply::Error, QString)));
+    m_searchManager = searchManager;
+    if (m_searchManager) {
+        QObject::connect(m_searchManager, SIGNAL(finished(QGeoSearchReply*)), this,
+                         SLOT(replyFinished(QGeoSearchReply*)));
+        QObject::connect(m_searchManager,
+                         SIGNAL(error(QGeoSearchReply*, QGeoSearchReply::Error, QString)), this,
+                         SLOT(resultsError(QGeoSearchReply*, QGeoSearchReply::Error, QString)));
     }
 }
 
 void GeocodingTab::on_btnRequest_clicked()
 {
-    if (m_placesManager) {
+    if (m_searchManager) {
         QString s = m_obloc->text();
 
         m_resultTree->clear();
 
         if (!s.isEmpty()) {
-            m_placesManager->placesSearch(s, QGeoPlacesManager::SearchGeocode);
+            m_searchManager->textSearch(s, QGeoSearchManager::SearchGeocode);
         } else {
             QGeoAddress address;
             address.setCountry(m_country->text());
@@ -158,23 +158,23 @@ void GeocodingTab::on_btnRequest_clicked()
             address.setPostCode(m_zip->text());
             address.setThoroughfareName(m_street->text());
             address.setThoroughfareNumber(m_streetNumber->text());
-            m_placesManager->geocode(address);
+            m_searchManager->geocode(address);
         }
     } else {
         QMessageBox::warning(this, tr("Places"), tr("No places manager available."));
     }
 }
 
-void GeocodingTab::replyFinished(QGeoPlacesReply* reply)
+void GeocodingTab::replyFinished(QGeoSearchReply* reply)
 {
-    if (!isHidden() && reply->error() == QGeoPlacesReply::NoError) {
+    if (!isHidden() && reply->error() == QGeoSearchReply::NoError) {
         PlacePresenter presenter(m_resultTree, reply);
         presenter.show();
         reply->deleteLater();
     }
 }
 
-void GeocodingTab::resultsError(QGeoPlacesReply* reply, QGeoPlacesReply::Error errorCode, QString errorString)
+void GeocodingTab::resultsError(QGeoSearchReply* reply, QGeoSearchReply::Error errorCode, QString errorString)
 {
     Q_UNUSED(errorCode)
 

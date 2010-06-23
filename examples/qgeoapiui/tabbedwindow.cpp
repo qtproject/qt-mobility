@@ -129,8 +129,8 @@ void TabbedWindow::setProvider(QString providerId)
         return;
     }
 
-    m_geocodingTab->initialize(m_serviceProvider->placesManager());
-    m_reverseTab->initialize(m_serviceProvider->placesManager());
+    m_geocodingTab->initialize(m_serviceProvider->searchManager());
+    m_reverseTab->initialize(m_serviceProvider->searchManager());
     m_routingTab->initialize(m_serviceProvider->routingManager());
     m_mappingTab->initialize(m_serviceProvider->mappingManager());
 }

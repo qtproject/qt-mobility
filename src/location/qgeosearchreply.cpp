@@ -39,19 +39,19 @@
 **
 ****************************************************************************/
 
-#include "qgeoplacesreply.h"
-#include "qgeoplacesreply_p.h"
+#include "qgeosearchreply.h"
+#include "qgeosearchreply_p.h"
 
 QTM_BEGIN_NAMESPACE
 /*!
-    \class QGeoPlacesReply
+    \class QGeoSearchReply
 
-    \brief The QGeoPlacesReply class manages an operation started by an
-    instance of QGeoPlacesManager.
+    \brief The QGeoSearchReply class manages an operation started by an
+    instance of QGeoSearchManager.
 
     \ingroup maps-places
 
-    Instances of QGeoPlacesReply manage the state and results of these
+    Instances of QGeoSearchReply manage the state and results of these
     operations.
 
     The isFinished(), error() and errorString() methods provide information
@@ -62,14 +62,14 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    \enum QGeoPlacesReply::Error
+    \enum QGeoSearchReply::Error
 
     Describes an error which prevented the completion of the operation.
 
     \value NoError
         No error has occurred.
     \value EngineNotSetError
-        The places manager that was used did not have a QGeoPlacesManagerEngine instance associated with it.
+        The search manager that was used did not have a QGeoSearchManagerEngine instance associated with it.
     \value CommunicationError
         An error occurred while communicating with the service provider.
     \value ParseError
@@ -82,23 +82,23 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
-    Constructs a places reply with the specified \a parent.
+    Constructs a search reply with the specified \a parent.
 */
-QGeoPlacesReply::QGeoPlacesReply(QObject *parent)
+QGeoSearchReply::QGeoSearchReply(QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoPlacesReplyPrivate()) {}
+        d_ptr(new QGeoSearchReplyPrivate()) {}
 
 /*!
-    Constructs a places reply with a given \a error and \a errorString and the specified \a parent.
+    Constructs a search reply with a given \a error and \a errorString and the specified \a parent.
 */
-QGeoPlacesReply::QGeoPlacesReply(Error error, const QString &errorString, QObject *parent)
+QGeoSearchReply::QGeoSearchReply(Error error, const QString &errorString, QObject *parent)
         : QObject(parent),
-        d_ptr(new QGeoPlacesReplyPrivate(error, errorString)) {}
+        d_ptr(new QGeoSearchReplyPrivate(error, errorString)) {}
 
 /*!
-    Destroys this places reply object.
+    Destroys this search reply object.
 */
-QGeoPlacesReply::~QGeoPlacesReply()
+QGeoSearchReply::~QGeoSearchReply()
 {
     delete d_ptr;
 }
@@ -109,11 +109,11 @@ QGeoPlacesReply::~QGeoPlacesReply()
     If \a finished is true, this will cause the finished() signal to be
     emitted.
 
-    If the operation completed successfully, QGeoPlacesReply::setPlaces()
+    If the operation completed successfully, QGeoSearchReply::setPlaces()
     should be called before this function. If an error occured,
-    QGeoPlacesReply::setError() should be used instead.
+    QGeoSearchReply::setError() should be used instead.
 */
-void QGeoPlacesReply::setFinished(bool finished)
+void QGeoSearchReply::setFinished(bool finished)
 {
     d_ptr->isFinished = finished;
     if (d_ptr->isFinished)
@@ -124,7 +124,7 @@ void QGeoPlacesReply::setFinished(bool finished)
     Return true if the operation completed successfully or encountered an
     error which cause the operation to come to a halt.
 */
-bool QGeoPlacesReply::isFinished() const
+bool QGeoSearchReply::isFinished() const
 {
     return d_ptr->isFinished;
 }
@@ -136,7 +136,7 @@ bool QGeoPlacesReply::isFinished() const
     This wil also cause error() and finished() signals to be emitted, in that
     order.
 */
-void QGeoPlacesReply::setError(QGeoPlacesReply::Error error, const QString &errorString)
+void QGeoSearchReply::setError(QGeoSearchReply::Error error, const QString &errorString)
 {
     d_ptr->error = error;
     d_ptr->errorString = errorString;
@@ -147,9 +147,9 @@ void QGeoPlacesReply::setError(QGeoPlacesReply::Error error, const QString &erro
 /*!
     Returns the error state of this reply.
 
-    If the result is QGeoPlacesReply::NoError then no error has occurred.
+    If the result is QGeoSearchReply::NoError then no error has occurred.
 */
-QGeoPlacesReply::Error QGeoPlacesReply::error() const
+QGeoSearchReply::Error QGeoSearchReply::error() const
 {
     return d_ptr->error;
 }
@@ -162,9 +162,9 @@ QGeoPlacesReply::Error QGeoPlacesReply::error() const
     which case this will also return an empty string.
 
     To determine whether an error has occurred, check to see if
-    QGeoPlacesReply::error() is equal to QGeoPlacesReply::NoError.
+    QGeoSearchReply::error() is equal to QGeoSearchReply::NoError.
 */
-QString QGeoPlacesReply::errorString() const
+QString QGeoSearchReply::errorString() const
 {
     return d_ptr->errorString;
 }
@@ -172,7 +172,7 @@ QString QGeoPlacesReply::errorString() const
 /*!
     Sets the viewport which contains the results to \a bounds.
 */
-void QGeoPlacesReply::setBounds(const QGeoBoundingBox &bounds)
+void QGeoSearchReply::setBounds(const QGeoBoundingBox &bounds)
 {
     d_ptr->bounds = bounds;
 }
@@ -181,9 +181,9 @@ void QGeoPlacesReply::setBounds(const QGeoBoundingBox &bounds)
     Returns the viewport which contains the results.
 
     This function will return an invalid QGeoBoundingBox if no viewport bias
-    was specified in the QGeoPlacesManager function which created this reply.
+    was specified in the QGeoSearchManager function which created this reply.
 */
-QGeoBoundingBox QGeoPlacesReply::bounds() const
+QGeoBoundingBox QGeoSearchReply::bounds() const
 {
     return d_ptr->bounds;
 }
@@ -192,9 +192,9 @@ QGeoBoundingBox QGeoPlacesReply::bounds() const
     Returns a list of places.
 
     The places are the results of the operation corresponding to the
-    QGeoPlacesManager function which created this reply.
+    QGeoSearchManager function which created this reply.
 */
-QList<QGeoPlace> QGeoPlacesReply::places() const
+QList<QGeoPlace> QGeoSearchReply::places() const
 {
     return d_ptr->places;
 }
@@ -202,7 +202,7 @@ QList<QGeoPlace> QGeoPlacesReply::places() const
 /*!
     Adds \a place to the list of places in this reply.
 */
-void QGeoPlacesReply::addPlace(const QGeoPlace &place)
+void QGeoSearchReply::addPlace(const QGeoPlace &place)
 {
     d_ptr->places.append(place);
 }
@@ -210,7 +210,7 @@ void QGeoPlacesReply::addPlace(const QGeoPlace &place)
 /*!
     Sets the list of \a places in the reply.
 */
-void QGeoPlacesReply::setPlaces(const QList<QGeoPlace> &places)
+void QGeoSearchReply::setPlaces(const QList<QGeoPlace> &places)
 {
     d_ptr->places = places;
 }
@@ -220,28 +220,28 @@ void QGeoPlacesReply::setPlaces(const QList<QGeoPlace> &places)
 
     This will do nothing if the reply is finished.
 */
-void QGeoPlacesReply::abort()
+void QGeoSearchReply::abort()
 {
     if (!isFinished())
         setFinished(true);
 }
 
 /*!
-    \fn void QGeoPlacesReply::finished()
+    \fn void QGeoSearchReply::finished()
 
     This signal is emitted when this reply has finished processing.
 
-    If error() equals QGeoPlacesReply::NoError then the processing
+    If error() equals QGeoSearchReply::NoError then the processing
     finished successfully.
 
-    This signal and QGeoPlacesManager::finished() will be
+    This signal and QGeoSearchManager::finished() will be
     emitted at the same time.
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
 */
 /*!
-    \fn void QGeoPlacesReply::error(QGeoPlacesReply::Error error, const QString &errorString)
+    \fn void QGeoSearchReply::error(QGeoSearchReply::Error error, const QString &errorString)
 
     This signal is emitted when an error has been detected in the processing of
     this reply. The finished() signal will probably follow.
@@ -249,7 +249,7 @@ void QGeoPlacesReply::abort()
     The error will be described by the error code \a error. If \a errorString is
     not empty it will contain a textual description of the error.
 
-    This signal and QGeoPlacesManager::error() will be emitted at the same time.
+    This signal and QGeoSearchManager::error() will be emitted at the same time.
 
     \note Do no delete this reply object in the slot connected to this
     signal. Use deleteLater() instead.
@@ -258,26 +258,26 @@ void QGeoPlacesReply::abort()
 /*******************************************************************************
 *******************************************************************************/
 
-QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate()
-        : error(QGeoPlacesReply::NoError),
+QGeoSearchReplyPrivate::QGeoSearchReplyPrivate()
+        : error(QGeoSearchReply::NoError),
         errorString(""),
         isFinished(false) {}
 
-QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate(QGeoPlacesReply::Error error, const QString &errorString)
+QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(QGeoSearchReply::Error error, const QString &errorString)
         : error(error),
         errorString(errorString),
         isFinished(true) {}
 
-QGeoPlacesReplyPrivate::QGeoPlacesReplyPrivate(const QGeoPlacesReplyPrivate &other)
+QGeoSearchReplyPrivate::QGeoSearchReplyPrivate(const QGeoSearchReplyPrivate &other)
         : error(error),
         errorString(errorString),
         isFinished(isFinished),
         bounds(other.bounds),
         places(other.places) {}
 
-QGeoPlacesReplyPrivate::~QGeoPlacesReplyPrivate() {}
+QGeoSearchReplyPrivate::~QGeoSearchReplyPrivate() {}
 
-QGeoPlacesReplyPrivate& QGeoPlacesReplyPrivate::operator= (const QGeoPlacesReplyPrivate & other)
+QGeoSearchReplyPrivate& QGeoSearchReplyPrivate::operator= (const QGeoSearchReplyPrivate & other)
 {
     error = other.error;
     errorString = other.errorString;
@@ -288,6 +288,6 @@ QGeoPlacesReplyPrivate& QGeoPlacesReplyPrivate::operator= (const QGeoPlacesReply
     return *this;
 }
 
-#include "moc_qgeoplacesreply.cpp"
+#include "moc_qgeosearchreply.cpp"
 
 QTM_END_NAMESPACE

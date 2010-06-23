@@ -39,64 +39,40 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESREPLY_H
-#define QGEOPLACESREPLY_H
+#ifndef QGEOPLACESREPLY_NOKIA_P_H
+#define QGEOPLACESREPLY_NOKIA_P_H
 
-#include "qgeoplace.h"
+//
+//  W A R N I N G
+//  -------------
+//
+// This file is not part of the Qt API.  It exists purely as an
+// implementation detail.  This header file may change from version to
+// version without notice, or even be removed.
+//
+// We mean it.
+//
 
-#include <QObject>
-#include <QList>
+#include <qgeosearchreply.h>
+#include <QNetworkReply>
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
-class QGeoPlacesReplyPrivate;
-
-class Q_LOCATION_EXPORT QGeoPlacesReply : public QObject
+class QGeoSearchReplyNokia : public QGeoSearchReply
 {
     Q_OBJECT
-
 public:
-    enum Error {
-        NoError,
-        EngineNotSetError,
-        CommunicationError,
-        ParseError,
-        UnsupportedOptionError,
-        UnknownError
-    };
+    QGeoSearchReplyNokia(QNetworkReply *reply, QObject *parent = 0);
+    ~QGeoSearchReplyNokia();
 
-    QGeoPlacesReply(Error error, const QString &errorString, QObject *parent = 0);
-    virtual ~QGeoPlacesReply();
+    void abort();
 
-    bool isFinished() const;
-    Error error() const;
-    QString errorString() const;
-
-    QGeoBoundingBox bounds() const;
-    QList<QGeoPlace> places() const;
-
-public slots:
-    virtual void abort();
-
-signals:
-    void finished();
-    void error(QGeoPlacesReply::Error error, const QString &errorString = QString());
-
-protected:
-    QGeoPlacesReply(QObject *parent = 0);
-
-    void setError(Error error, const QString &errorString);
-    void setFinished(bool finished);
-
-    void setBounds(const QGeoBoundingBox& bounds);
-    void addPlace(const QGeoPlace &place);
-    void setPlaces(const QList<QGeoPlace> &places);
+private slots:
+    void networkFinished();
+    void networkError(QNetworkReply::NetworkError error);
 
 private:
-    QGeoPlacesReplyPrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoPlacesReply)
+    QNetworkReply *m_reply;
 };
-
-QTM_END_NAMESPACE
 
 #endif

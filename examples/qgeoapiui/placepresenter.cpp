@@ -42,7 +42,7 @@
 #include "placepresenter.h"
 #include <qgeoaddress.h>
 
-PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QGeoPlacesReply* codingReply)
+PlacePresenter::PlacePresenter(QTreeWidget *treeWidget, const QGeoSearchReply* codingReply)
         : GeoPresenter(treeWidget), codingReply(codingReply)
 {
 }

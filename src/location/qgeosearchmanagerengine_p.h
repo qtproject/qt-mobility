@@ -39,8 +39,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGER_NOKIA_P_H
-#define QGEOPLACESMANAGER_NOKIA_P_H
+#ifndef QGEOSEARCHMANAGERENGINE_P_H
+#define QGEOSEARCHMANAGERENGINE_P_H
 
 //
 //  W A R N I N G
@@ -53,41 +53,34 @@
 // We mean it.
 //
 
-#include <qgeoserviceprovider.h>
-#include <qgeoplacesmanagerengine.h>
+#include "qgeosearchmanagerengine.h"
 
-#include <QNetworkAccessManager>
+#include <QList>
 
-QTM_USE_NAMESPACE
+QTM_BEGIN_NAMESPACE
 
-class QGeoPlacesManagerEngineNokia : public QGeoPlacesManagerEngine
+class QLandmarkManager;
+
+class QGeoSearchManagerEnginePrivate
 {
-    Q_OBJECT
 public:
-    QGeoPlacesManagerEngineNokia(const QMap<QString, QString> &parameters,
-                                 QGeoServiceProvider::Error *error,
-                                 QString *errorString);
-    ~QGeoPlacesManagerEngineNokia();
+    QGeoSearchManagerEnginePrivate(const QMap<QString, QString> &parameters);
+    QGeoSearchManagerEnginePrivate(const QGeoSearchManagerEnginePrivate &other);
+    ~QGeoSearchManagerEnginePrivate();
 
-    QGeoPlacesReply* geocode(const QGeoAddress &address,
-                             const QGeoBoundingBox &bounds);
-    QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
-                             const QGeoBoundingBox &bounds);
+    QGeoSearchManagerEnginePrivate& operator= (const QGeoSearchManagerEnginePrivate &other);
 
-    QGeoPlacesReply* placesSearch(const QString &searchString,
-                                  QGeoPlacesManager::SearchTypes searchTypes,
-                                  const QGeoBoundingBox &bounds);
+    QString managerName;
+    QMap<QString, QString> managerParameters;
+    int managerVersion;
 
-private slots:
-    void placesFinished();
-    void placesError(QGeoPlacesReply::Error error, const QString &errorString);
+    QLandmarkManager *defaultLandmarkManager;
+    QList<QLandmarkManager*> additionalLandmarkManagers;
 
-private:
-    static QString trimDouble(qreal degree, int decimalDigits = 10);
-    QGeoPlacesReply* search(QString requestString);
-
-    QNetworkAccessManager *m_networkManager;
-    QString m_host;
+    bool supportsGeocoding;
+    QGeoSearchManager::SearchTypes supportedSearchTypes;
 };
+
+QTM_END_NAMESPACE
 
 #endif

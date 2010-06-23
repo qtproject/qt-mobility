@@ -39,11 +39,11 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOPLACESMANAGERENGINE_H
-#define QGEOPLACESMANAGERENGINE_H
+#ifndef QGEOSEARCHMANAGERENGINE_H
+#define QGEOSEARCHMANAGERENGINE_H
 
-#include "qgeoplacesmanager.h"
-#include "qgeoplacesreply.h"
+#include "qgeosearchmanager.h"
+#include "qgeosearchreply.h"
 #include "qgeoboundingbox.h"
 
 #include <QObject>
@@ -53,30 +53,30 @@ QTM_BEGIN_NAMESPACE
 
 class QLandmarkManager;
 
-class QGeoPlacesManagerEnginePrivate;
+class QGeoSearchManagerEnginePrivate;
 
-class Q_LOCATION_EXPORT QGeoPlacesManagerEngine : public QObject
+class Q_LOCATION_EXPORT QGeoSearchManagerEngine : public QObject
 {
     Q_OBJECT
 public:
-    QGeoPlacesManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
-    virtual ~QGeoPlacesManagerEngine();
+    QGeoSearchManagerEngine(const QMap<QString, QString> &parameters, QObject *parent = 0);
+    virtual ~QGeoSearchManagerEngine();
 
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;
     int managerVersion() const;
 
-    virtual QGeoPlacesReply* geocode(const QGeoAddress &address,
+    virtual QGeoSearchReply* geocode(const QGeoAddress &address,
                                      const QGeoBoundingBox &bounds);
-    virtual QGeoPlacesReply* geocode(const QGeoCoordinate &coordinate,
+    virtual QGeoSearchReply* geocode(const QGeoCoordinate &coordinate,
                                      const QGeoBoundingBox &bounds);
 
-    virtual QGeoPlacesReply* placesSearch(const QString &searchString,
-                                          QGeoPlacesManager::SearchTypes searchTypes,
+    virtual QGeoSearchReply* textSearch(const QString &searchString,
+                                          QGeoSearchManager::SearchTypes searchTypes,
                                           const QGeoBoundingBox &bounds);
 
     bool supportsGeocoding() const;
-    QGeoPlacesManager::SearchTypes supportedSearchTypes() const;
+    QGeoSearchManager::SearchTypes supportedSearchTypes() const;
 
     QLandmarkManager* defaultLandmarkManager() const;
 
@@ -85,20 +85,20 @@ public:
     void addAdditionalLandmarkManager(QLandmarkManager *landmarkManager);
 
 signals:
-    void finished(QGeoPlacesReply* reply);
-    void error(QGeoPlacesReply* reply, QGeoPlacesReply::Error error, QString errorString = QString());
+    void finished(QGeoSearchReply* reply);
+    void error(QGeoSearchReply* reply, QGeoSearchReply::Error error, QString errorString = QString());
 
 protected:
     void setDefaultLandmarkManager(QLandmarkManager *landmarkManager);
     void setSupportsGeocoding(bool supported);
-    void setSupportedSearchTypes(QGeoPlacesManager::SearchTypes searchTypes);
+    void setSupportedSearchTypes(QGeoSearchManager::SearchTypes searchTypes);
 
 private:
     void setManagerName(const QString &managerName);
     void setManagerVersion(int managerVersion);
 
-    QGeoPlacesManagerEnginePrivate *d_ptr;
-    Q_DISABLE_COPY(QGeoPlacesManagerEngine)
+    QGeoSearchManagerEnginePrivate *d_ptr;
+    Q_DISABLE_COPY(QGeoSearchManagerEngine)
 
     friend class QGeoServiceProvider;
 };

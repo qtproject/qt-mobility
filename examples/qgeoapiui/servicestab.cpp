@@ -141,8 +141,8 @@ void ServicesTab::listServiceProviders()
 
         QTreeWidgetItem* prop = new QTreeWidgetItem(top);
         prop->setText(0, "Places");
-        QGeoPlacesManager* placesManager = serviceProvider->placesManager();
-        if (placesManager)
+        QGeoSearchManager* searchManager = serviceProvider->searchManager();
+        if (searchManager)
             prop->setText(1, tr("true"));
         else
             prop->setText(1, tr("false"));
