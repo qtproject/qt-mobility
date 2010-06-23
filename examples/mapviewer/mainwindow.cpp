@@ -44,6 +44,7 @@
 
 #include <QPointF>
 #include <QNetworkProxy>
+#include <QNetworkProxyFactory>
 #include <QMessageBox>
 #include <QTimer>
 
@@ -137,6 +138,9 @@ MainWindow::MainWindow(QWidget *parent) :
         m_serviceProvider(0)
 {
     ui->setupUi(this);
+
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+
     setProvider("nokia");
 
     qgv = new QGraphicsView(this);
@@ -170,11 +174,12 @@ void MainWindow::setProvider(QString providerId)
 {
     QMap<QString, QString> parameters;
     if (providerId == "nokia") {
-        parameters.insert("places.proxy", "172.16.42.137");
+        // TODO remove proxy lines before release
+        //parameters.insert("places.proxy", "172.16.42.137");
         parameters.insert("places.host", "dev-a7.bln.gate5.de");
-        parameters.insert("routing.proxy", "172.16.42.137");
+        //parameters.insert("routing.proxy", "172.16.42.137");
         parameters.insert("routing.host", "172.24.32.155");
-        parameters.insert("mapping.proxy", "172.16.42.40");
+        //parameters.insert("mapping.proxy", "172.16.42.40");
         parameters.insert("mapping.host", "maptile.svc.nokia.com.edgesuite.net");
     }
 

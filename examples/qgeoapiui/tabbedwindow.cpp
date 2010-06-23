@@ -47,6 +47,7 @@
 #include <QVBoxLayout>
 #include <QTimer>
 #include <QMessageBox>
+#include <QNetworkProxyFactory>
 
 #ifdef Q_OS_SYMBIAN
 #include <QNetworkConfigurationManager>
@@ -75,6 +76,8 @@ TabbedWindow::TabbedWindow(QWidget *parent)
     m_session->open();
     m_session->waitForOpened(-1);
 #endif
+
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     ServicesTab* servicesTab = new ServicesTab();
 
@@ -106,12 +109,13 @@ void TabbedWindow::setProvider(QString providerId)
 {
     QMap<QString, QString> parameters;
     if (providerId == "nokia") {
-        parameters.insert("places.proxy", "172.16.42.137");
+        // TODO remove proxy lines ahead of release
+        //parameters.insert("places.proxy", "172.16.42.137");
         //parameters.insert("places.host", "dev-a7.bln.gate5.de");
         parameters.insert("places.host", "loc.desktop.maps.svc.ovi.com");
-        parameters.insert("routing.proxy", "172.16.42.137");
+        //parameters.insert("routing.proxy", "172.16.42.137");
 //        parameters.insert("routing.host", "172.24.32.155");
-        parameters.insert("mapping.proxy", "172.16.42.40");
+        //parameters.insert("mapping.proxy", "172.16.42.40");
         parameters.insert("mapping.host", "maptile.svc.nokia.com.edgesuite.net");
     }
 
