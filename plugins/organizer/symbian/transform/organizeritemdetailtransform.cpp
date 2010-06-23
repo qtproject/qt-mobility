@@ -96,6 +96,19 @@ TCalTime OrganizerItemDetailTransform::toTCalTimeL(QDateTime dateTime)
     return calTime;
 }
 
+TCalTime OrganizerItemDetailTransform::toTCalTimeL(QDate date)
+{
+    TCalTime calTime;
+    calTime.SetTimeUtcL(Time::NullTTime());
+
+    if (date.isValid()) {
+        QDateTime dateTime(date);
+        calTime = toTCalTimeL(dateTime);
+    }
+
+    return calTime;
+}
+
 QDateTime OrganizerItemDetailTransform::toQDateTimeL(TCalTime calTime)
 {
     const TTime time1970(_L("19700000:000000.000000"));

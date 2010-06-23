@@ -63,6 +63,7 @@ public:
     static TPtrC8 toPtrC8(const QString &string);
     static TPtrC16 toPtrC16(const QString &string);
     static TCalTime toTCalTimeL(QDateTime dateTime);
+    static TCalTime toTCalTimeL(QDate date);
     static QDateTime toQDateTimeL(TCalTime calTime);
 };
 
