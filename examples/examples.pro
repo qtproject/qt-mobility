@@ -5,9 +5,9 @@ TEMPLATE = subdirs
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
-               bluetoothtransferplugin \
-               notesmanagerplugin \
-               servicebrowser
+            bluetoothtransferplugin \
+            notesmanagerplugin \
+            servicebrowser
 
     !symbian:SUBDIRS+= sfw-notes
     
@@ -34,7 +34,7 @@ contains(mobility_modules,location) {
         contains(QT_CONFIG, webkit) {
             SUBDIRS += fetchgooglemaps
         }
-    }		
+    }
 }
 
 #Contacts examples
