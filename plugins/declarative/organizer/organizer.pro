@@ -30,12 +30,14 @@ target.path = $$[QT_INSTALL_IMPORTS]/$$TARGETPATH
 HEADERS += qmlorganizermodel.h \
            qmlorganizeritem.h \
            qmlorganizeritemdetail.h \
+           qmlorganizeritemdetailfield.h \
            qmlorganizer.h
 
 SOURCES += plugin.cpp \
            qmllorganizermodel.cpp \
            qmlorganizeritem.cpp \
            qmlorganizeritemdetail.cpp \
+           qmlorganizeritemdetailfield.cpp \
            qmlorganizer.cpp
 
 qmldir.files += $$PWD/qmldir

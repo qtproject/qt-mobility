@@ -47,7 +47,51 @@
 
 QTM_USE_NAMESPACE
 
+#ifndef QTRY_COMPARE
+#define QTRY_COMPARE(__expr, __expected) \
+    do { \
+        const int __step = 50; \
+        const int __timeout = 5000; \
+        if ((__expr) != (__expected)) { \
+            QTest::qWait(0); \
+        } \
+        for (int __i = 0; __i < __timeout && ((__expr) != (__expected)); __i+=__step) { \
+            QTest::qWait(__step); \
+        } \
+        QCOMPARE(__expr, __expected); \
+    } while(0)
+#endif
+
+
+
+#define QTRY_COMPARE_SIGNAL_COUNTS() \
+    QTRY_COMPARE(spyAdded.count(), itemsAddedSignals); \
+    QTRY_COMPARE(spyChanged.count(), itemsChangedSignals); \
+    QTRY_COMPARE(spyRemoved.count(), itemsRemovedSignals); \
+    QTRY_COMPARE(spyDataChanged.count(), dataChangedSignals); \
+    if (spyAdded.count()) \
+        { QCOMPARE(spyAdded.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsAdded); } \
+    if (spyChanged.count()) \
+        { QCOMPARE(spyChanged.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsChanged); } \
+    if (spyRemoved.count()) \
+        { QCOMPARE(spyRemoved.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsRemoved); }
+
+#define QTRY_COMPARE_SIGNAL_COUNTS2() \
+    QTRY_COMPARE(spyAdded2.count(), itemsAddedSignals); \
+    QTRY_COMPARE(spyChanged2.count(), itemsChangedSignals); \
+    QTRY_COMPARE(spyRemoved2.count(), itemsRemovedSignals); \
+    QTRY_COMPARE(spyDataChanged2.count(), dataChangedSignals); \
+    if (spyAdded2.count()) \
+        { QCOMPARE(spyAdded2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsAdded); } \
+    if (spyChanged2.count()) \
+        { QCOMPARE(spyChanged2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsChanged); } \
+    if (spyRemoved2.count()) \
+        { QCOMPARE(spyRemoved2.last().at(0).value<QList<QOrganizerItemLocalId> >().count(), itemsRemoved); }
+
+
 const QString m_managerNameSymbian("symbian");
+
+Q_DECLARE_METATYPE(QList<QOrganizerItemLocalId >);
 
 /*!
  * A test helper class that acts as a placeholder for QOrganizerItemDetail data.
@@ -100,6 +144,8 @@ private slots:  // Test cases
     void timeStamp();
     void addItem_data();
     void addItem();
+    void signalEmission_data(){ addManagers(); };
+    void signalEmission(); 
 
 private:
     // TODO: enable the following test cases by moving them to "private slots"
@@ -226,6 +272,15 @@ void tst_SymbianOm::removeSimpleItem()
     itemIds.append(item3.localId());
     QMap<int, QOrganizerItemManager::Error> errorMap;
     QVERIFY(m_om->removeItems(itemIds, &errorMap));
+
+    // Remove with itemIds
+    QOrganizerItem item4;
+    item4.setType(QOrganizerItemType::TypeTodo);
+    QOrganizerItem item5;
+    item5.setType(QOrganizerItemType::TypeTodo);
+    QVERIFY(m_om->saveItem(&item4));
+    QVERIFY(m_om->saveItem(&item5));
+    QVERIFY(m_om->removeItems(m_om->itemIds(), 0));
 }
 
 void tst_SymbianOm::fetchItems()
@@ -466,6 +521,88 @@ void tst_SymbianOm::addItem()
     }
 }
 
+void tst_SymbianOm::signalEmission()
+{
+    QFETCH(QString, managerName);
+    
+    // Create a second manager
+    QOrganizerItemManager om2(managerName);
+    
+    // Connect signal spies
+    qRegisterMetaType<QOrganizerItemLocalId>("QOrganizerItemLocalId");
+    qRegisterMetaType<QList<QOrganizerItemLocalId> >("QList<QOrganizerItemLocalId>");
+    QSignalSpy spyAdded(m_om, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
+    QSignalSpy spyChanged(m_om, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
+    QSignalSpy spyRemoved(m_om, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    QSignalSpy spyDataChanged(m_om, SIGNAL(dataChanged()));
+    QSignalSpy spyAdded2(&om2, SIGNAL(itemsAdded(QList<QOrganizerItemLocalId>)));
+    QSignalSpy spyChanged2(&om2, SIGNAL(itemsChanged(QList<QOrganizerItemLocalId>)));
+    QSignalSpy spyRemoved2(&om2, SIGNAL(itemsRemoved(QList<QOrganizerItemLocalId>)));
+    QSignalSpy spyDataChanged2(&om2, SIGNAL(dataChanged()));
+    int itemsAddedSignals = 0;
+    int itemsChangedSignals = 0;
+    int itemsRemovedSignals = 0;
+    int dataChangedSignals = 0;
+    int itemsAdded = 0;
+    int itemsChanged = 0;
+    int itemsRemoved = 0;
+    
+    // Save
+    QOrganizerTodo todo;
+    QVERIFY(m_om->saveItem(&todo));
+    itemsAddedSignals++;
+    itemsAdded = 1;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Change
+    todo.setDescription("foobar");
+    QVERIFY(m_om->saveItem(&todo));
+    itemsChangedSignals++;
+    itemsChanged = 1;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Remove
+    QVERIFY(m_om->removeItem(todo.localId()));
+    itemsRemovedSignals++;
+    itemsRemoved = 1;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Save - batch
+    todo.setId(QOrganizerItemId());
+    todo.setGuid(QString());
+    QOrganizerTodo todo2;
+    QList<QOrganizerItem> items;
+    items << todo;
+    items << todo2;
+    QVERIFY(m_om->saveItems(&items, 0));
+    itemsAddedSignals++;
+    itemsAdded = 2;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Change - batch
+    items[0].setDescription("foobar1");
+    items[1].setDescription("foobar2");
+    QVERIFY(m_om->saveItems(&items, 0));
+    itemsChangedSignals++;
+    itemsChanged = 2;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+    
+    // Remove - batch
+    QList<QOrganizerItemLocalId> itemIds;
+    itemIds << items[0].localId();
+    itemIds << items[1].localId();
+    QVERIFY(m_om->removeItems(itemIds, 0));
+    itemsRemovedSignals++;
+    itemsRemoved = 2;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();
+}
+
 /*!
  * Helper method for executing test cases with all the available managers
  */
@@ -564,13 +701,14 @@ void tst_SymbianOm::addEvent_data(QString managerName)
                 << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
                 << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldEndDateTime, QDateTime::currentDateTime().addSecs(3600)));
     }
-
-    /* TODO: Enable and implement
-    QTest::newRow(QString("[%1] Item type Event; details: description").arg(managerName).toLatin1().constData())
+    QTest::newRow(QString("[%1] Item type Event; details: start time, description").arg(managerName).toLatin1().constData())
         << managerName
+        << (int) QOrganizerItemManager::NoError
         << (QTstDetailList()
             << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEvent)
+            << QTstDetail(QOrganizerEventTimeRange::DefinitionName, QOrganizerEventTimeRange::FieldStartDateTime, QDateTime::currentDateTime())
             << QTstDetail(QOrganizerItemDescription::DefinitionName, QOrganizerItemDescription::FieldDescription, QString("Meeting with Elbonian president")));
+    /* TODO: Enable and implement
     QTest::newRow(QString("[%1] Item type Event; details: description, note").arg(managerName).toLatin1().constData())
         << managerName
         << (QTstDetailList()
@@ -586,6 +724,7 @@ void tst_SymbianOm::addEvent_data(QString managerName)
             << (QTstDetailList()
                 << QTstDetail(QOrganizerItemType::DefinitionName, QOrganizerItemType::FieldType, QOrganizerItemType::TypeEventOccurrence));
                 */
+
 }
 
 /**

@@ -40,7 +40,9 @@
 ****************************************************************************/
 #include "organizeritemrecurrencetransform.h"
 #include "qorganizeritemrecurrence.h"
+#include "qorganizereventtimerange.h"
 #include <calrrule.h>
+
 
 void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry, QOrganizerItem *item)
 {
@@ -51,15 +53,19 @@ void OrganizerItemRecurrenceTransform::transformToDetailL(const CCalEntry& entry
 
     TCalRRule calRRule;
     entry.GetRRuleL(calRRule);
-    recurrence.setRecurrenceRules(toItemRecurrenceRules(calRRule));
+    recurrence.setRecurrenceRules(toItemRecurrenceRulesL(calRRule));
 
     RArray<TCalTime> calRDateList;
     entry.GetRDatesL(calRDateList);
-    recurrence.setRecurrenceDates(toQDatesL(calRDateList));
+    if (calRDateList.Count()) {
+        recurrence.setRecurrenceDates(toQDatesL(calRDateList));
+    }
 
     RArray<TCalTime> calExDateList;
     entry.GetExceptionDatesL(calExDateList);
-    recurrence.setExceptionDates(toQDatesL(calExDateList));
+    if (calExDateList.Count()) {
+        recurrence.setExceptionDates(toQDatesL(calExDateList));
+    }
 
     // TODO: exceptionRules
     // There is no native support for this.
@@ -76,8 +82,11 @@ void OrganizerItemRecurrenceTransform::transformToEntryL(const QOrganizerItem& i
 
     // TODO: can we have recurrenceRules and recurrenceDates at the same time?
 
+    // TODO: Also other item types may have a recurrence item
+    QOrganizerEventTimeRange timerange = item.detail(QOrganizerEventTimeRange::DefinitionName);
+
     if (recurrence.recurrenceRules().count())
-        entry->SetRRuleL(toCalRRule(recurrence.recurrenceRules()));
+        entry->SetRRuleL(toCalRRuleL(recurrence.recurrenceRules(), timerange.startDateTime()));
 
     if (recurrence.recurrenceDates().count()) {
         RArray<TCalTime> calRDates;
@@ -119,14 +128,126 @@ QList<QDate> OrganizerItemRecurrenceTransform::toQDatesL(const RArray<TCalTime> 
     return dates;
 }
 
-QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecurrenceRules(const TCalRRule &rrule) const
+QList<QOrganizerItemRecurrenceRule> OrganizerItemRecurrenceTransform::toItemRecurrenceRulesL(const TCalRRule &calrrule) const
 {
-    // TODO: conversion
-    return QList<QOrganizerItemRecurrenceRule>();
+    // TODO: only conversion for "day of week" is implemented
+
+    QList<Qt::DayOfWeek> daysOfWeek;
+    RArray<TDay> byDay;
+    CleanupClosePushL(byDay);
+    calrrule.GetByDayL(byDay);
+    for (TInt i(0); i < byDay.Count(); i++) {
+        daysOfWeek.append(toDayOfWeek(byDay[i]));
+    }
+    CleanupStack::PopAndDestroy(&byDay);
+    
+    QOrganizerItemRecurrenceRule rrule;
+    rrule.setDaysOfWeek(daysOfWeek);
+
+    // Count has higher priority than end date
+    if (calrrule.Count()) {
+        rrule.setCount(calrrule.Count());
+    } else if (calrrule.Until().TimeUtcL() != Time::NullTTime()) {
+        rrule.setEndDate(toQDateTimeL(calrrule.Until()).date());
+    }
+
+    //TODO: rrule.setInterval(calrrule.Interval());
+    // TODO: other frequencies?
+    rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+
+    QList<QOrganizerItemRecurrenceRule> rrules;
+    rrules.append(rrule);
+    return rrules;
 }
 
-TCalRRule OrganizerItemRecurrenceTransform::toCalRRule(QList<QOrganizerItemRecurrenceRule> recrules) const
+TCalRRule OrganizerItemRecurrenceTransform::toCalRRuleL(QList<QOrganizerItemRecurrenceRule> recrules, QDateTime startDateTime) const
 {
-    // TODO: conversion
-    return TCalRRule();
+    TCalRRule calRule;
+    if (recrules.count()) {
+        // TODO: only taking the first available into account
+        QOrganizerItemRecurrenceRule rrule = recrules[0];
+
+        if (rrule.frequency() == QOrganizerItemRecurrenceRule::Weekly) {
+            calRule.SetType(TCalRRule::EWeekly);
+            calRule.SetDtStart(toTCalTimeL(startDateTime));
+            if (rrule.count()) {
+                calRule.SetCount(rrule.count());
+            }
+            if (rrule.endDate().isValid()) {
+                if (rrule.endDate() < startDateTime.date()) {
+                    // End date before start date!
+                    User::Leave(KErrArgument);
+                }
+                calRule.SetUntil(toTCalTimeL(rrule.endDate()));
+            }
+
+            RArray<TDay> byDay;
+            // TODO: how about daysOfMonth, daysOfYear and so on?
+            foreach (Qt::DayOfWeek dayOfWeek, rrule.daysOfWeek()) {
+                byDay.AppendL(toTDay(dayOfWeek));
+            }
+
+            // TODO: Symbian calendar server does not allow storing weekly
+            // recurrence without "by day" data! This means that a client
+            // must set "days of week" for a QOrganizerItemRecurrenceRule
+            if (byDay.Count()){
+                calRule.SetByDay(byDay);
+            }
+            byDay.Close();
+
+            //TODO: ? calRule.SetWkSt(EMonday);
+            //TODO: calRule.SetInterval(rrule.interval());
+        } else {
+            // TODO: implement the rest of the frequencies
+            User::Leave(KErrNotReady);
+        }
+    }
+
+    return calRule;
+}
+
+Qt::DayOfWeek OrganizerItemRecurrenceTransform::toDayOfWeek(TDay day) const
+{
+    switch (day) {
+    case EMonday:
+        return Qt::Monday;
+    case ETuesday:
+        return Qt::Tuesday;
+    case EWednesday:
+        return Qt::Wednesday;
+    case EThursday:
+        return Qt::Thursday;
+    case EFriday:
+        return Qt::Friday;
+    case ESaturday:
+        return Qt::Saturday;
+    case ESunday:
+        return Qt::Sunday;
+    default:
+        // Should never happen
+        return Qt::Monday;
+    }
+}
+
+TDay OrganizerItemRecurrenceTransform::toTDay(Qt::DayOfWeek dayOfWeek) const
+{
+    switch (dayOfWeek) {
+    case Qt::Monday:
+        return EMonday;
+    case Qt::Tuesday:
+        return ETuesday;
+    case Qt::Wednesday:
+        return EWednesday;
+    case Qt::Thursday:
+        return EThursday;
+    case Qt::Friday:
+        return EFriday;
+    case Qt::Saturday:
+        return ESaturday;
+    case Qt::Sunday:
+        return ESunday;
+    default:
+        // Should never happen
+        return EMonday;
+    }
 }

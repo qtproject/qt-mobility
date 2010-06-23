@@ -67,14 +67,14 @@ QString OrganizerItemDetailTransform::toQString(const TDesC16 &des)
     return QString::fromUtf16(des.Ptr(), des.Length());
 }
 
-TPtrC8 OrganizerItemDetailTransform::toPtrC8(const QString &string)
+TPtrC8 OrganizerItemDetailTransform::toPtrC8(const QByteArray &bytes)
 {
-    return TPtrC8(reinterpret_cast<const TUint8*>(string.data()));
+    return TPtrC8(reinterpret_cast<const TUint8*>(bytes.constData()), bytes.size());
 }
 
 TPtrC16 OrganizerItemDetailTransform::toPtrC16(const QString &string)
 {
-    return TPtrC16(reinterpret_cast<const TUint16*>(string.utf16()));
+    return TPtrC16(reinterpret_cast<const TUint16*>(string.utf16()), string.size());
 }
 
 TCalTime OrganizerItemDetailTransform::toTCalTimeL(QDateTime dateTime)
@@ -91,6 +91,19 @@ TCalTime OrganizerItemDetailTransform::toTCalTimeL(QDateTime dateTime)
 
         TTime time(useconds);
         calTime.SetTimeUtcL(time);
+    }
+
+    return calTime;
+}
+
+TCalTime OrganizerItemDetailTransform::toTCalTimeL(QDate date)
+{
+    TCalTime calTime;
+    calTime.SetTimeUtcL(Time::NullTTime());
+
+    if (date.isValid()) {
+        QDateTime dateTime(date);
+        calTime = toTCalTimeL(dateTime);
     }
 
     return calTime;

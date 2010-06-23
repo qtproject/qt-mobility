@@ -60,9 +60,10 @@ public:
 
     static QString toQString(const TDesC8 &des);
     static QString toQString(const TDesC16 &des);
-    static TPtrC8 toPtrC8(const QString &string);
+    static TPtrC8 toPtrC8(const QByteArray &bytes);
     static TPtrC16 toPtrC16(const QString &string);
     static TCalTime toTCalTimeL(QDateTime dateTime);
+    static TCalTime toTCalTimeL(QDate date);
     static QDateTime toQDateTimeL(TCalTime calTime);
 };
 

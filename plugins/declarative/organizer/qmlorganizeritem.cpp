@@ -2,7 +2,7 @@
 **
 ** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
-** Contact: Nokia Corporation (qt-info@nokia.com)
+** item: Nokia Corporation (qt-info@nokia.com)
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -41,7 +41,7 @@
 #include <qorganizeritemdetails.h>
 #include "qmlorganizeritem.h"
 #include "qmlorganizeritemdetail.h"
-
+#include "qmlorganizeritemdetailfield.h"
 
 
 static QString normalizePropertyName(const QString& name)
@@ -53,29 +53,155 @@ static QString normalizePropertyName(const QString& name)
 
 
 QMLOrganizerItem::QMLOrganizerItem(QObject *parent)
-    :QObject(parent)
+    :QAbstractListModel(parent),
+    m_itemMap(0)
 {
+    QHash<int, QByteArray> roleNames;
+    roleNames = QAbstractItemModel::roleNames();
+    roleNames.insert(DetailNameRole, "detailName");
+    roleNames.insert(DetailFieldKeyRole, "key");
+    roleNames.insert(DetailFieldValueRole, "value");
+    roleNames.insert(DetailFieldRole, "field");
+    setRoleNames(roleNames);
+
+    connect(&m_saveRequest, SIGNAL(resultsAvailable()), this, SLOT(onitemSaved()));
 }
 
-void QMLOrganizerItem::setOrganizerItem(const QOrganizerItem& item)
+void QMLOrganizerItem::setManager(QOrganizerItemManager* manager)
 {
-    QList<QOrganizerItemDetail> details = item.details();
+   m_manager = manager;
+}
+void QMLOrganizerItem::setItem(const QOrganizerItem& c)
+{
+    m_item = c;
 
+    if (m_itemMap) {
+        delete m_itemMap;
+        m_detailMaps.clear();
+    }
+
+    foreach (QObject* detail, m_details) {
+        delete detail;
+    }
     m_details.clear();
+    m_detailFields.clear();
+
+    m_itemMap = new QDeclarativePropertyMap(this);
+
+
+    QList<QOrganizerItemDetail> details = m_item.details();
+
     foreach (const QOrganizerItemDetail& detail, details) {
-      QMLOrganizerItemDetail* qmldetail = new QMLOrganizerItemDetail(detail, this);
-      setProperty(normalizePropertyName(detail.definitionName()).toLatin1().data(), qVariantFromValue(qmldetail));
-      m_details.append(qmldetail);
+      QMLOrganizerItemDetail* qd = new QMLOrganizerItemDetail(this);
+
+      QDeclarativePropertyMap* dm = new QDeclarativePropertyMap(m_itemMap);
+
+      connect(dm, SIGNAL(valueChanged(QString,QVariant)), qd, SLOT(detailChanged(QString,QVariant)));
+
+
+      QVariantMap values = detail.variantValues();
+      foreach (const QString& key, values.keys()) {
+          dm->insert(normalizePropertyName(key), values.value(key));
+      }
+      qd->setName(normalizePropertyName(detail.definitionName()));
+      m_details.append(qd);
+      qd->setDetailPropertyMap(dm);
+      m_detailMaps.append(dm);
+
+      m_detailFields << qd->fields();
+      m_itemMap->insert(normalizePropertyName(detail.definitionName()), QVariant::fromValue(static_cast<QObject*>(dm)));
     }
 }
 
-
-QVariant QMLOrganizerItem::details() const
+QOrganizerItem QMLOrganizerItem::item() const
 {
-    return QVariant::fromValue(m_details);
+    QOrganizerItem c(m_item);
+    foreach (QObject* o, m_details) {
+        QMLOrganizerItemDetail* d = qobject_cast<QMLOrganizerItemDetail*>(o);
+        if (d && d->detailChanged()) {
+            QOrganizerItemDetail detail = d->detail();
+            c.saveDetail(&detail);
+        }
+    }
+
+    return c;
 }
 
- bool QMLOrganizerItem::isEmpty() const
- {
-    return m_details.isEmpty();
- }
+QList<QObject*> QMLOrganizerItem::detailFields() const
+{
+    return m_detailFields;
+}
+QList<QObject*> QMLOrganizerItem::details() const
+{
+    return m_details;
+}
+
+QVariant QMLOrganizerItem::itemMap() const
+{
+    if (m_itemMap)
+        return QVariant::fromValue(static_cast<QObject*>(m_itemMap));
+    return QVariant();
+}
+
+
+void QMLOrganizerItem::save()
+{
+   if (itemChanged()) {
+     m_saveRequest.setManager(m_manager);
+     m_saveRequest.setItem(item());
+     m_saveRequest.start();
+   }
+}
+
+
+bool QMLOrganizerItem::itemChanged() const
+{
+   foreach (QObject* o, m_details) {
+     QMLOrganizerItemDetail* detail = qobject_cast<QMLOrganizerItemDetail*>(o);
+     if (detail->detailChanged())
+       return true;
+   }
+   return false;
+}
+
+void QMLOrganizerItem::onItemSaved()
+{
+   if (m_saveRequest.isFinished() && m_saveRequest.error() == QOrganizerItemManager::NoError) {
+      foreach (QObject* o, m_details) {
+        QMLOrganizerItemDetail* detail = qobject_cast<QMLOrganizerItemDetail*>(o);
+        detail->setDetailChanged(false);
+      }
+   }
+}
+
+
+
+int QMLOrganizerItem::itemId() const
+{
+    return m_item.localId();
+}
+
+int QMLOrganizerItem::rowCount(const QModelIndex &parent) const
+{
+    Q_UNUSED(parent);
+    return m_detailFields.count();
+}
+
+QVariant QMLOrganizerItem::data(const QModelIndex &index, int role) const
+{
+    QMLOrganizerItemDetailField* field = qobject_cast<QMLOrganizerItemDetailField*>(m_detailFields[index.row()]);
+    if (field) {
+        switch(role) {
+            case Qt::DisplayRole:
+            case DetailFieldKeyRole:
+                return field->key();
+            case DetailNameRole:
+                return field->detailName();
+            case DetailFieldValueRole:
+                return field->value();
+            case DetailFieldRole:
+                return QVariant::fromValue((QObject*)field);
+        }
+    }
+    return QVariant();
+}

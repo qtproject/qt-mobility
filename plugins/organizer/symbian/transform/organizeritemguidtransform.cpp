@@ -91,7 +91,8 @@ HBufC8 *OrganizerItemGuidTransform::guidLC(const QOrganizerItem &item)
         ptr.Num(qrand());
     } else {
         // Use the old guid
-        ptr = toPtrC8(globalUidString);
+        QByteArray bytes = globalUidString.toUtf8();
+        ptr = toPtrC8(bytes);
     }
 
     return globalUidBuf; // ownership passed

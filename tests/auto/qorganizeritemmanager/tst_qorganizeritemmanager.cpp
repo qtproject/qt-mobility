@@ -1660,6 +1660,7 @@ void tst_QOrganizerItemManager::detailDefinitions()
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
     QMap<QString, QOrganizerItemDetailDefinition> defs = cm->detailDefinitions();
+    QVERIFY(defs.size() > 0);
 
     /* Validate the existing definitions */
 

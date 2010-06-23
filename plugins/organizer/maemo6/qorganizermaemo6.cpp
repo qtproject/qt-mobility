@@ -182,24 +182,36 @@ bool QOrganizerItemMaemo6Engine::saveItems(QList<QOrganizerItem>* items, QMap<in
     for (int i = 0; i < items->size(); i++) {
         QOrganizerItemManager::Error thisError;
         QOrganizerItem item = items->at(i);
-        Incidence* theIncidence = softSaveItem(&item, &thisError);
-        if (theIncidence) {
-            d->m_calendarBackend.save();
-            QString kId = theIncidence->uid();
-            QOrganizerItemLocalId qLocalId = qHash(kId);
-            QOrganizerItemId qId;
-            qId.setManagerUri(managerUri());
-            qId.setLocalId(qLocalId);
-            item.setId(qId);
+        if (saveItem(&item, &thisError)) {
             items->replace(i, item);
-            d->m_QIdToKId.insert(qLocalId, kId);
         } else {
             *error = thisError;
             errorMap->insert(i, thisError);
         }
     }
-    // TODO: save the calendar to disk
     return *error == QOrganizerItemManager::NoError;
+}
+
+bool QOrganizerItemMaemo6Engine::saveItem(QOrganizerItem* item,  QOrganizerItemManager::Error* error)
+{
+    // ensure that the organizeritem's details conform to their definitions
+    if (!validateItem(*item, error)) {
+        return false;
+    }
+
+    Incidence* theIncidence = softSaveItem(item, error);
+    if (theIncidence) {
+        d->m_calendarBackend.save();
+        QString kId = theIncidence->uid();
+        QOrganizerItemLocalId qLocalId = qHash(kId);
+        QOrganizerItemId qId;
+        qId.setManagerUri(managerUri());
+        qId.setLocalId(qLocalId);
+        item->setId(qId);
+        d->m_QIdToKId.insert(qLocalId, kId);
+        return true;
+    }
+    return false;
 }
 
 bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>& itemIds, QMap<int, QOrganizerItemManager::Error>* errorMap, QOrganizerItemManager::Error* error)
@@ -225,8 +237,8 @@ bool QOrganizerItemMaemo6Engine::removeItems(const QList<QOrganizerItemLocalId>&
 
 QMap<QString, QOrganizerItemDetailDefinition> QOrganizerItemMaemo6Engine::detailDefinitions(const QString& itemType, QOrganizerItemManager::Error* error) const
 {
-    /* TODO - once you know what your engine will support, implement this properly.  One way is to call the base version, and add/remove things as needed */
-    return QOrganizerItemManagerEngine::detailDefinitions(itemType, error);
+    *error = QOrganizerItemManager::NoError;
+    return schemaDefinitions().value(itemType);
 }
 
 QOrganizerItemDetailDefinition QOrganizerItemMaemo6Engine::detailDefinition(const QString& definitionId, const QString& itemType, QOrganizerItemManager::Error* error) const
@@ -394,6 +406,42 @@ QStringList QOrganizerItemMaemo6Engine::supportedItemTypes() const
     return ret;
 }
 
+QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > QOrganizerItemMaemo6Engine::schemaDefinitions() const {
+    // lazy initialisation of schema definitions.
+    if (d->m_definitions.isEmpty()) {
+        // Loop through default schema definitions
+        QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schema
+                = QOrganizerItemManagerEngine::schemaDefinitions();
+        foreach (const QString& itemType, schema.keys()) {
+            // Only add the item types that we support
+            if (itemType == QOrganizerItemType::TypeEvent ||
+                itemType == QOrganizerItemType::TypeEventOccurrence ||
+                itemType == QOrganizerItemType::TypeTodo ||
+                itemType == QOrganizerItemType::TypeTodoOccurrence ||
+                itemType == QOrganizerItemType::TypeJournal ||
+                itemType == QOrganizerItemType::TypeNote) {
+                QMap<QString, QOrganizerItemDetailDefinition> definitions
+                        = schema.value(itemType);
+                
+                QMap<QString, QOrganizerItemDetailDefinition> supportedDefinitions;
+
+                QMapIterator<QString, QOrganizerItemDetailDefinition> it(definitions);
+                while (it.hasNext()) {
+                    it.next();
+                    // Only add the definitions that we support
+                    if (it.key() == QOrganizerItemType::DefinitionName ||
+                        it.key() == QOrganizerItemDescription::DefinitionName ||
+                        it.key() == QOrganizerItemDisplayLabel::DefinitionName) {
+                        supportedDefinitions.insert(it.key(), it.value());
+                    }
+                }
+                d->m_definitions.insert(itemType, supportedDefinitions);
+            }
+        }
+    }
+    return d->m_definitions;
+}
+
 Incidence* QOrganizerItemMaemo6Engine::incidence(const QOrganizerItemLocalId& itemId) const
 {
     // TODO: check managerUri as well
@@ -412,9 +460,18 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
     bool itemIsNew = (managerUri() != item->id().managerUri()
             || item->localId() == 0);
     Incidence* incidence = 0;
-    if (item->type() == QOrganizerItemType::TypeNote) {
+    if (item->type() == QOrganizerItemType::TypeEvent) {
+        QOrganizerEvent* event = static_cast<QOrganizerEvent*>(item);
+        incidence = convertQEventToKEvent(*event);
+    } else if (item->type() == QOrganizerItemType::TypeTodo) {
+        QOrganizerTodo* todo = static_cast<QOrganizerTodo*>(item);
+        incidence = convertQTodoToKTodo(*todo);
+    } else if (item->type() == QOrganizerItemType::TypeNote) {
         QOrganizerNote* note = static_cast<QOrganizerNote*>(item);
         incidence = convertQNoteToKJournal(*note);
+    } else if (item->type() == QOrganizerItemType::TypeJournal) {
+        QOrganizerJournal* journal = static_cast<QOrganizerJournal*>(item);
+        incidence = convertQJournalToKJournal(*journal);
     } else {
         *error = QOrganizerItemManager::InvalidItemTypeError;
         return 0;
@@ -436,19 +493,56 @@ Incidence* QOrganizerItemMaemo6Engine::softSaveItem(QOrganizerItem* item, QOrgan
 }
 
 /*!
- * Converts \a note into an Incidence which is of subclass Journal.  The caller is responsible
+ * Converts \a qEvent into an Incidence which is of subclass Event.  The caller is responsible
  * for deleting the object.
  */
-Incidence* QOrganizerItemMaemo6Engine::convertQNoteToKJournal(const QOrganizerNote& note)
+Event* QOrganizerItemMaemo6Engine::convertQEventToKEvent(const QOrganizerEvent& qEvent)
 {
-    Journal* journal = new Journal;
-    if (!note.description().isEmpty()) {
-        journal->setDescription(note.description());
-    }
-    if (!note.displayLabel().isEmpty()) {
-        journal->setSummary(note.displayLabel());
-    }
-    return journal;
+    Event* kEvent = new Event;
+    convertDetailsToIncidenceFields(qEvent, kEvent);
+    return kEvent;
+}
+
+/*!
+ * Converts \a qTodo into an Incidence which is of subclass Todo.  The caller is responsible
+ * for deleting the object.
+ */
+Todo* QOrganizerItemMaemo6Engine::convertQTodoToKTodo(const QOrganizerTodo& qTodo)
+{
+    Todo* kTodo = new Todo;
+    convertDetailsToIncidenceFields(qTodo, kTodo);
+    return kTodo;
+}
+
+/*!
+ * Converts \a qJournal into an Incidence which is of subclass Journal.  The caller is responsible
+ * for deleting the object.
+ */
+Journal* QOrganizerItemMaemo6Engine::convertQJournalToKJournal(const QOrganizerJournal& qJournal)
+{
+    Journal* kJournal = new Journal;
+    convertDetailsToIncidenceFields(qJournal, kJournal);
+    return kJournal;
+}
+
+/*!
+ * Converts \a qNote into an Incidence which is of subclass Journal.  The caller is responsible
+ * for deleting the object.
+ */
+Journal* QOrganizerItemMaemo6Engine::convertQNoteToKJournal(const QOrganizerNote& qNote)
+{
+    Journal* kJournal = new Journal;
+    convertDetailsToIncidenceFields(qNote, kJournal);
+    return kJournal;
+}
+
+/*!
+ * Converts the item-common details of \a item to fields to set in \a incidence.
+ */
+void QOrganizerItemMaemo6Engine::convertDetailsToIncidenceFields(const QOrganizerItem& item, Incidence* incidence)
+{
+    incidence->setDescription(item.description());
+    incidence->setSummary(item.displayLabel());
 }
 
 

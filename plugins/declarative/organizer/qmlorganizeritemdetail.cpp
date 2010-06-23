@@ -40,6 +40,7 @@
 
 #include <qorganizeritemdetails.h>
 #include "qmlorganizeritemdetail.h"
+#include "qmlorganizeritemdetailfield.h"
 
 
 static QString normalizePropertyName(const QString& name)
@@ -108,36 +109,76 @@ static QString defaultPropertyNameForOrganizerItemDetail(const QOrganizerItemDet
     return QString();
 }
 
-QMLOrganizerItemDetail::QMLOrganizerItemDetail(QObject *parent)
-    :QObject(parent)
+static QString unNormalizePropertyName(const QString& name)
+{
+   if (!name.isEmpty())
+     return name.mid(1).prepend(name[0].toUpper());
+   return QString();
+}
+
+
+QMLOrganizerItemDetail::QMLOrganizerItemDetail(QObject* parent)
+    :QObject(parent),
+    m_detailChanged(false)
 {
 
 }
 
-QMLOrganizerItemDetail::QMLOrganizerItemDetail(const QOrganizerItemDetail& detail, QObject *parent)
-    :QObject(parent)
+QDeclarativePropertyMap* QMLOrganizerItemDetail::propertyMap() const
 {
-    setItemDetail(detail);
+    return m_map;
 }
-
-void QMLOrganizerItemDetail::setItemDetail(const QOrganizerItemDetail& detail)
+void QMLOrganizerItemDetail::setDetailPropertyMap(QDeclarativePropertyMap* map)
 {
-    QVariantMap values = detail.variantValues();
-    foreach (const QString& key, values.keys()) {
-        setProperty(normalizePropertyName(key).toLatin1().data(), values.value(key));
+    m_map = map;
+
+    foreach (const QString& key, m_map->keys()) {
+        QMLOrganizerItemDetailField* field = new QMLOrganizerItemDetailField(this);
+        field->setDetailPropertyMap(m_map);
+        field->setKey(key);
+        field->setDetailName(m_detailName);
+        m_fields.append(field);
+
     }
-    m_defaultPropertyName = normalizePropertyName(defaultPropertyNameForOrganizerItemDetail(detail));
 }
 
-QVariant QMLOrganizerItemDetail::defaultProperty() const
+QList<QObject*> QMLOrganizerItemDetail::fields() const
 {
-    if (m_defaultPropertyName.isEmpty())
-        return QVariant();
-    return property(m_defaultPropertyName.toLatin1().data());
+    return m_fields;
 }
 
-void QMLOrganizerItemDetail::setDefaultProperty(const QVariant& value)
+QString QMLOrganizerItemDetail::name() const
 {
-    if (!m_defaultPropertyName.isEmpty())
-        setProperty(m_defaultPropertyName.toLatin1().data(), value);
+    return m_detailName;
+}
+
+void QMLOrganizerItemDetail::setName(const QString& name)
+{
+    m_detailName = name;
+}
+
+bool QMLOrganizerItemDetail::detailChanged() const
+{
+    return m_detailChanged;
+}
+
+QOrganizerItemDetail QMLOrganizerItemDetail::detail() const
+{
+    QOrganizerItemDetail d(unNormalizePropertyName(name()));
+    foreach (const QString& key, m_map->keys()) {
+        d.setValue(unNormalizePropertyName(key), m_map->value(key));
+    }
+    return d;
+}
+
+void QMLOrganizerItemDetail::detailChanged(const QString &key, const QVariant &value)
+{
+    qWarning() << "detailChanged field:"  << key << " value:" << value;
+    m_detailChanged = true;
+}
+
+void QMLOrganizerItemDetail::setDetailChanged(bool changed)
+{
+    m_detailChanged = changed;
+    emit onDetailChanged();
 }

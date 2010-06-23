@@ -76,6 +76,7 @@
 #include "organizeritemtransform.h"
 
 #include <calprogresscallback.h> // MCalProgressCallBack
+#include <calchangecallback.h>
 
 QTM_USE_NAMESPACE
 
@@ -111,7 +112,9 @@ class CCalEntryView;
 class CActiveSchedulerWait;
 class TCalTime;
 
-class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, public MCalProgressCallBack
+class QOrganizerItemSymbianEngine : public QOrganizerItemManagerEngine, 
+                                    public MCalProgressCallBack,
+                                    public MCalChangeCallBack2
 {
     Q_OBJECT
 
@@ -160,14 +163,17 @@ public: // MCalProgressCallBack
     void Completed(TInt aError);
     TBool NotifyProgress();
     
+public: // MCalChangeCallBack2
+    void CalChangeNotification(RArray<TCalChangeEntry>& aChangeItems);
+    
 public: 
     /* Util functions */
     static bool transformError(TInt symbianError, QOrganizerItemManager::Error* qtError);
 
 private:
     void itemL(const QOrganizerItemLocalId& itemId, QOrganizerItem *item, const QOrganizerItemFetchHint& fetchHint) const;
-    void saveItemL(QOrganizerItem *item);
-    void removeItemL(const QOrganizerItemLocalId& organizeritemId);
+    void saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet);
+    void removeItemL(const QOrganizerItemLocalId& organizeritemId, QOrganizerItemChangeSet *changeSet);
     QList<QOrganizerItem> slowFilter(const QList<QOrganizerItem> &items, const QOrganizerItemFilter& filter, const QList<QOrganizerItemSortOrder>& sortOrders) const;
 
 private:
