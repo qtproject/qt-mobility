@@ -155,7 +155,7 @@ void LiblocationWrapper::locationChanged(LocationGPSDevice *device,
                 coordinate.setLatitude(device->fix->latitude);
                 coordinate.setLongitude(device->fix->longitude);
                 posInfo.setAttribute(QGeoPositionInfo::HorizontalAccuracy,
-                                     device->fix->eph * 100);
+                                     device->fix->eph / 100.0);
                 posInfo.setAttribute(QGeoPositionInfo::VerticalAccuracy,
                                      device->fix->epv);
             }
