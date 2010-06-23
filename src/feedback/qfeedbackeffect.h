@@ -43,7 +43,7 @@
 #define QFEEDBACKEFFECT_H
 
 #include <qmobilityglobal.h>
-#include <QtCore/QAbstractAnimation>
+#include <QtCore/QObject>
 #include <QtCore/QStringList>
 
 
@@ -55,11 +55,15 @@ class QFeedbackActuator;
 class QFeedbackHapticsEffectPrivate;
 class QFeedbackFileEffectPrivate;
 
-class Q_FEEDBACK_EXPORT QFeedbackEffect : public QAbstractAnimation
+class Q_FEEDBACK_EXPORT QFeedbackEffect : public QObject
 {
     Q_OBJECT
     Q_ENUMS(ThemeEffect)
     Q_ENUMS(ErrorType)
+    Q_ENUMS(State)
+
+    Q_PROPERTY(int duration READ duration)
+    Q_PROPERTY(State state READ state)
 public:
     enum ThemeEffect {
         ThemeBasic, ThemeSensitive, ThemeBasicButton, ThemeSensitiveButton,
@@ -74,21 +78,41 @@ public:
         ThemeUser = 65535
     };
 
+    enum State {
+        Stopped,
+        Paused,
+        Running,
+        Loading
+    };
+
     enum ErrorType {
         //to be completed
-        NoError,
         UnknownError,
         DeviceBusy
     };
 
     explicit QFeedbackEffect(QObject *parent = 0);
 
+    virtual State state() const = 0;
+    virtual int duration() const = 0;
+
+    //for themes
     static bool supportsThemeEffect();
     static bool playThemeEffect(ThemeEffect effect);
 
-Q_SIGNALS:
-    void error(ErrorType); //the feedback could not be played
+public Q_SLOTS:
+    void start();
+    void stop();
+    void pause();
 
+protected:
+    virtual void setState(State) = 0;
+
+Q_SIGNALS:
+    void error(QFeedbackEffect::ErrorType) const; //when an error occurs
+
+private:
+    friend class QFeedbackInterface;
 };
 
 class Q_FEEDBACK_EXPORT QFeedbackHapticsEffect : public QFeedbackEffect
@@ -136,12 +160,14 @@ public:
     void setActuator(const QFeedbackActuator &actuator);
     QFeedbackActuator actuator() const;
 
+    //reimplementations from QFeedbackEffect
+    virtual State state() const;
+
 protected:
-    //virtual methods from QAbstractAnimation
-    void updateCurrentTime(int currentTime);
-    void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
+    virtual void setState(State);
 
 private:
+    Q_DISABLE_COPY(QFeedbackHapticsEffect)
     friend class QFeedbackHapticsEffectPrivate;
     QScopedPointer<QFeedbackHapticsEffectPrivate> priv;
 };
@@ -158,7 +184,6 @@ public:
 
     int duration() const;
 
-    bool isLoading() const;
     bool isLoaded() const;
 
     void load();
@@ -170,15 +195,14 @@ public:
 
     static QStringList supportedMimeTypes();
 
-signals:
-    void loadFinished(bool);
+    //reimplementations from QFeedbackEffect
+    virtual State state() const;
 
 protected:
-    //virtual methods from QAbstractAnimation
-    void updateCurrentTime(int currentTime);
-    void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState);
+    virtual void setState(State);
 
 private:
+    Q_DISABLE_COPY(QFeedbackFileEffect)
     friend class QFeedbackFileEffectPrivate;
     QScopedPointer<QFeedbackFileEffectPrivate> priv;
 };

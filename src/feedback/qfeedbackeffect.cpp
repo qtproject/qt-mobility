@@ -55,8 +55,23 @@ QTM_BEGIN_NAMESPACE
     \brief This is the base class for the feedback framework.
 */
 
-QFeedbackEffect::QFeedbackEffect(QObject *parent) : QAbstractAnimation(parent)
+QFeedbackEffect::QFeedbackEffect(QObject *parent) : QObject(parent)
 {
+}
+
+void QFeedbackEffect::start()
+{
+    setState(Running);
+}
+
+void QFeedbackEffect::stop()
+{
+    setState(Stopped);
+}
+
+void QFeedbackEffect::pause()
+{
+    setState(Paused);
 }
 
 /*!
@@ -258,46 +273,26 @@ void QFeedbackHapticsEffect::setPeriod(int msecs)
 }
 
 /*
-    \reimp
+\reimp
 */
-void QFeedbackHapticsEffect::updateCurrentTime(int /*currentTime*/)
+void QFeedbackHapticsEffect::setState(State state)
 {
-    switch(QFeedbackHapticsInterface::instance()->actualEffectState(this))
-    {
-    case QAbstractAnimation::Running:
-        start();
-        break;
-    case QAbstractAnimation::Paused:
-        pause();
-        break;
-    case QAbstractAnimation::Stopped:
-        stop();
-        break;
-    }
+    QFeedbackHapticsInterface::instance()->setEffectState(this, state);
 }
 
-/*
-    \reimp
-*/
-void QFeedbackHapticsEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+QFeedbackEffect::State QFeedbackHapticsEffect::state() const
 {
-    ErrorType e = QFeedbackHapticsInterface::instance()->updateEffectState(this);
-    QAbstractAnimation::updateState(newState, oldState);
-    if (e != NoError)
-        emit error(e);
+    return QFeedbackHapticsInterface::instance()->effectState(this);
 }
-
 
 /*!
     \internal
 */
 void QFeedbackFileEffectPrivate::loadFinished(bool success)
 {
-    isLoading = false;
     loaded = success;
     if( !success)
         backendUsed = -1;
-    emit effect->loadFinished(success);
 }
 
 
@@ -335,16 +330,6 @@ void QFeedbackFileEffect::setFileName(const QString &fileName)
 }
 
 /*!
-    \fn bool QFeedbackFileEffect::isLoading()
-
-    returns true if the current file is being loaded.
-*/
-bool QFeedbackFileEffect::isLoading() const
-{
-    return priv->isLoading;
-}
-
-/*!
     \property QFeedbackFileEffect::loaded
     \brief determines if the file has been successfully loaded.
 */
@@ -354,13 +339,13 @@ bool QFeedbackFileEffect::isLoaded() const
 }
 void QFeedbackFileEffect::setLoaded(bool load)
 {
+    if (priv->loaded == load)
+        return;
+
     if (state() != QAbstractAnimation::Stopped) {
         qWarning() << "QFeedbackFileEffect::setLoaded: can't load/unload a file while the effect is not stopped";
         return;
     }
-
-    if (priv->loaded == load && !(isLoading() && !load) )
-        return;
 
     QFeedbackFileInterface::instance()->setLoaded(this, load);
 }
@@ -401,35 +386,20 @@ QStringList QFeedbackFileEffect::supportedMimeTypes()
     return QFeedbackFileInterface::instance()->supportedMimeTypes();
 }
 
-/*!
-    \reimp
+
+/*
+\reimp
 */
-void QFeedbackFileEffect::updateCurrentTime(int /*currentTime*/)
+void QFeedbackFileEffect::setState(State newState)
 {
-    switch(QFeedbackFileInterface::instance()->actualEffectState(this))
-    {
-    case QAbstractAnimation::Running:
-        start();
-        break;
-    case QAbstractAnimation::Paused:
-        pause();
-        break;
-    case QAbstractAnimation::Stopped:
-        stop();
-        break;
-    }
+    if (newState != Stopped && state() == Stopped)
+        load(); // makes sure the file is loaded
+    QFeedbackFileInterface::instance()->setEffectState(this, newState);
 }
 
-/*!
-    \reimp
-*/
-void QFeedbackFileEffect::updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
+QFeedbackEffect::State QFeedbackFileEffect::state() const
 {
-    load(); // makes sure the file is loaded
-    ErrorType e = QFeedbackFileInterface::instance()->updateEffectState(this);
-    QAbstractAnimation::updateState(newState, oldState);
-    if (e != NoError)
-        emit error(e);
+    return QFeedbackFileInterface::instance()->effectState(this);
 }
 
 #include "moc_qfeedbackeffect.cpp"

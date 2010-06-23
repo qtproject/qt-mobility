@@ -326,19 +326,19 @@ bool QFeedbackSymbian::isActuatorCapabilitySupported(QFeedbackActuator::Capabili
 }
 
 
-QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty prop)
+void QFeedbackSymbian::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty prop)
 {
 
     switch(prop)
     {
     case Intensity:
-        if (effect->state() != QAbstractAnimation::Running)
+        if (!m_elapsed.contains(effect) || m_elapsed[effect].isPaused())
             break;
 
         switch(effect->actuator().id())
         {
         case VIBRA_DEVICE:
-            vibra()->StartVibraL(effect->duration() - effect->currentTime(), qRound(100 * effect->intensity()));
+            vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity()));
             break;
 #ifndef NO_TACTILE_SUPPORT
         case TOUCH_DEVICE:
@@ -351,39 +351,58 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectProperty(const QFeedbac
         break;
 
     }
-
-    return QFeedbackEffect::NoError;
-
 }
 
-QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QFeedbackHapticsEffect *effect)
+void QFeedbackSymbian::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State newState)
 {
     switch(effect->actuator().id())
     {
     case VIBRA_DEVICE:
-        switch(effect->state())
+        switch(newState)
         {
-        case QAbstractAnimation::Stopped:
-        case QAbstractAnimation::Paused:
-            vibra()->StopVibraL();
+        case QFeedbackEffect::Stopped:
+            if (m_elapsed.contains(effect)) {
+                vibra()->StopVibraL();
+                m_elapsed.remove(effect);
+            }
             break;
-        case QAbstractAnimation::Running:
-            vibra()->StartVibraL(effect->duration() - effect->currentTime(), qRound(100 * effect->intensity()));
+        case QFeedbackEffect::Paused:
+            if (m_elapsed.contains(effect)) {
+                vibra()->StopVibraL();
+                m_elapsed[effect].pause();
+            }
+            break;
+        case QFeedbackEffect::Running:
+            if (m_elapsed[effect].elapsed() >= effect->duration())
+                m_elapsed.remove(effect); //we reached the end. it's time to restart
+            vibra()->StartVibraL(effect->duration() - m_elapsed[effect].elapsed(), qRound(100 * effect->intensity()));
+            m_elapsed[effect].start();
             break;
         }
         break;
 #ifndef NO_TACTILE_SUPPORT
     case TOUCH_DEVICE:
-        switch(effect->state())
+        switch(newState)
         {
-        case QAbstractAnimation::Paused:
-        case QAbstractAnimation::Stopped:
-            QTouchFeedback::Instance()->StopFeedback(defaultWidget());
+        case QFeedbackEffect::Stopped:
+            if (m_elapsed.contains(effect)) {
+                QTouchFeedback::Instance()->StopFeedback(defaultWidget());
+                m_elapsed.remove(effect);
+            }
             break;
-        case QAbstractAnimation::Running:
+        case QFeedbackEffect::Paused:
+            if (m_elapsed.contains(effect)) {
+                QTouchFeedback::Instance()->StopFeedback(defaultWidget());
+                m_elapsed[effect].pause();
+            }
+            break;
+        case QFeedbackEffect::Running:
+            if (m_elapsed[effect].elapsed() >= effect->duration())
+                m_elapsed.remove(effect); //we reached the end. it's time to restart
             QTouchFeedback::Instance()->StartFeedback(defaultWidget(),
                                          0, //what effect
-                                         0, qRound(effect->intensity() * 100), qMax(0, effect->duration()*1000));
+                                         0, qRound(effect->intensity() * 100), qMax(0, (effect->duration() - m_elapsed[effect].elapsed()) * 1000));
+            m_elapsed[effect].start();
             break;
         }
         break;
@@ -391,10 +410,14 @@ QFeedbackEffect::ErrorType QFeedbackSymbian::updateEffectState(const QFeedbackHa
     default:
         break;
     }
-    return QFeedbackEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackSymbian::actualEffectState(const QFeedbackHapticsEffect *effect)
+QFeedbackEffect::State QFeedbackSymbian::effectState(const QFeedbackHapticsEffect *effect)
 {
-    return effect->state();
+    if (m_elapsed.contains(effect) && m_elapsed[effect].elapsed() < effect->duration()) {
+
+        return m_elapsed[effect].isPaused() ? QFeedbackEffect::Paused : QFeedbackEffect::Running;
+    }
+    
+    return QFeedbackEffect::Stopped;
 }

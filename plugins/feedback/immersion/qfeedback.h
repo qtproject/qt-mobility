@@ -73,14 +73,14 @@ public:
     virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty);
     virtual bool isActuatorCapabilitySupported(QFeedbackActuator::Capability);
 
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty);
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackHapticsEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackHapticsEffect *);
+    virtual void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty);
+    virtual void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State);
+    virtual QFeedbackEffect::State effectState(const QFeedbackHapticsEffect *);
 
     //for loading files
     virtual void setLoaded(QFeedbackFileEffect*, bool);
-    virtual QFeedbackEffect::ErrorType updateEffectState(QFeedbackFileEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackFileEffect *);
+    virtual void setEffectState(QFeedbackFileEffect *, QFeedbackEffect::State);
+    virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *);
     virtual int effectDuration(const QFeedbackFileEffect *);
     virtual QStringList supportedMimeTypes();
 

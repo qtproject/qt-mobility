@@ -41,6 +41,8 @@
 #ifndef QFEEDBACK_SYMBIAN_H
 #define QFEEDBACK_SYMBIAN_H
 
+#include <QtCore/QElapsedTimer>
+#include <QtCore/QHash>
 #include <QtGui/QWidget>
 
 #include <qmobilityglobal.h>
@@ -48,7 +50,6 @@
 #include <qfeedbackplugininterfaces.h>
 
 #include <e32base.h>
-
 #include <hwrmvibra.h>
 
 
@@ -80,9 +81,9 @@ public:
     virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty);
     virtual bool isActuatorCapabilitySupported(QFeedbackActuator::Capability);
 
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty);
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackHapticsEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackHapticsEffect *);
+    virtual void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty);
+    virtual void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State);
+    virtual QFeedbackEffect::State effectState(const QFeedbackHapticsEffect *);
 
 #ifndef NO_TACTILE_SUPPORT
     virtual bool play(QFeedbackEffect::ThemeEffect);
@@ -96,6 +97,43 @@ private:
 
     CHWRMVibra *m_vibra;
     bool m_vibraActive;
+
+    class PausableElapsedTimer
+    {
+    public:
+        PausableElapsedTimer() : pausedTime(0) { }
+
+        void start()
+        {
+            m_elapsedTimer.start();
+        }
+
+        void pause()
+        {
+            if (m_elapsedTimer.isValid())
+                pausedTime += m_elapsedTimer.elapsed();
+            m_elapsedTimer.invalidate();
+        }
+
+        bool isPaused() const
+        {
+            return !m_elapsedTimer.isValid();
+        }
+
+
+        int elapsed() const
+        {
+            return pausedTime + m_elapsedTimer.isValid() ? m_elapsedTimer.elapsed() : 0;
+        }
+
+
+    private:
+        QElapsedTimer m_elapsedTimer;
+        int pausedTime;
+
+    };
+
+    QHash<const QFeedbackHapticsEffect*, PausableElapsedTimer> m_elapsed;
 };
 
 

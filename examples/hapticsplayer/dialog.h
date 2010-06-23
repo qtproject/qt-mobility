@@ -63,7 +63,6 @@ private Q_SLOTS:
     void playPauseClicked();
     void durationChanged(int);
     void intensityChanged(int);
-    void effectStateChanged(QAbstractAnimation::State newState);
 
     void attackTimeChanged(int);
     void attackIntensityChanged(int);
@@ -79,8 +78,9 @@ private Q_SLOTS:
     //File API
     void browseClicked();
     void filePlayPauseClicked();
-    void fileEffectStateChanged(QAbstractAnimation::State newState);
-    void fileLoadFinished();
+
+protected:
+    void timerEvent(QTimerEvent *);
 
 private:
     QFeedbackActuator currentActuator() const;

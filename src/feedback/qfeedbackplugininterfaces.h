@@ -50,7 +50,7 @@ QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
 
-class QFeedbackInterface
+class Q_FEEDBACK_EXPORT QFeedbackInterface
 {
 public:
     enum PluginPriority
@@ -60,7 +60,8 @@ public:
         PluginHighPriority
     };
 
-    virtual PluginPriority pluginPriority() = 0;
+protected:
+    static void reportError(const QFeedbackEffect *, QFeedbackEffect::ErrorType);
 };
 
 class Q_FEEDBACK_EXPORT QFeedbackHapticsInterface : public QFeedbackInterface
@@ -89,15 +90,17 @@ public:
     virtual QList<QFeedbackActuator> actuators() = 0;
     virtual ~QFeedbackHapticsInterface() {}
 
+    virtual PluginPriority pluginPriority() = 0;
+
     //for actuator handling
     virtual void setActuatorProperty(const QFeedbackActuator &, ActuatorProperty, const QVariant &) = 0;
     virtual QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) = 0;
     virtual bool isActuatorCapabilitySupported(QFeedbackActuator::Capability) = 0;
     
     //effects
-    virtual QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) = 0;
-    virtual QFeedbackEffect::ErrorType updateEffectState(const QFeedbackHapticsEffect *) = 0;
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackHapticsEffect *) = 0;
+    virtual void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) = 0;
+    virtual void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State) = 0;
+    virtual QFeedbackEffect::State effectState(const QFeedbackHapticsEffect *) = 0;
 
     static QFeedbackHapticsInterface *instance();
 
@@ -110,24 +113,27 @@ class QFeedbackThemeInterface : public QFeedbackInterface
 {
 public:
     virtual ~QFeedbackThemeInterface() {}
+    virtual PluginPriority pluginPriority() = 0;
     virtual bool play(QFeedbackEffect::ThemeEffect) = 0;
     static QFeedbackThemeInterface *instance();
 };
 
-class Q_FEEDBACK_EXPORT QFeedbackFileInterface
+class Q_FEEDBACK_EXPORT QFeedbackFileInterface : public QFeedbackInterface
 {
 public:
     virtual ~QFeedbackFileInterface() {}
     virtual void setLoaded(QFeedbackFileEffect*, bool) = 0;
-    virtual QFeedbackEffect::ErrorType updateEffectState(QFeedbackFileEffect *) = 0;
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackFileEffect *) = 0;
+    virtual void setEffectState(QFeedbackFileEffect *, QFeedbackEffect::State) = 0;
+    virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *) = 0;
     virtual int effectDuration(const QFeedbackFileEffect*) = 0;
     virtual QStringList supportedMimeTypes() = 0;
 
+    static QFeedbackFileInterface *instance();
+
+protected:
     //function called from the plugin when it has finished loading a file
     static void asyncLoadFinished(QFeedbackFileEffect*, bool success);
 
-    static QFeedbackFileInterface *instance();
 };
 
 

@@ -59,7 +59,6 @@ Dialog::Dialog()
     connect(ui.stop, SIGNAL(pressed()), &effect, SLOT(stop()));
     connect(ui.duration, SIGNAL(valueChanged(int)), SLOT(durationChanged(int)));
     connect(ui.intensity, SIGNAL(valueChanged(int)), SLOT(intensityChanged(int)));
-    connect(&effect, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), SLOT(effectStateChanged(QAbstractAnimation::State)));
 
     //for the envelope
     connect(ui.attackTime, SIGNAL(valueChanged(int)), SLOT(attackTimeChanged(int)));
@@ -77,8 +76,6 @@ Dialog::Dialog()
     connect(ui.browse, SIGNAL(pressed()), SLOT(browseClicked()));
     connect(ui.filePlayPause, SIGNAL(pressed()), SLOT(filePlayPauseClicked()));
     connect(ui.fileStop, SIGNAL(pressed()), &fileEffect, SLOT(stop()));
-    connect(&fileEffect, SIGNAL(stateChanged(QAbstractAnimation::State, QAbstractAnimation::State)), SLOT(fileEffectStateChanged(QAbstractAnimation::State)));
-    connect(&fileEffect, SIGNAL(loadFinished(bool)), SLOT(fileLoadFinished()));
 
     foreach(const QFeedbackActuator &dev, QFeedbackActuator::actuators()) {
         ui.actuators->addItem(dev.name());
@@ -94,16 +91,17 @@ Dialog::Dialog()
 
     //initialization
     durationChanged(effect.duration());
-    effectStateChanged(effect.state());
     intensityChanged(ui.intensity->value());
     attackTimeChanged(ui.attackTime->value());
     attackIntensityChanged(ui.attackIntensity->value());
     fadeTimeChanged(ui.fadeTime->value());
     fadeIntensityChanged(ui.fadeIntensity->value());
-    fileEffectStateChanged(fileEffect.state());
 
     ui.tabWidget->setTabEnabled(1, QFeedbackEffect::supportsThemeEffect());
     ui.tabWidget->setTabEnabled(2, !QFeedbackFileEffect::supportedMimeTypes().isEmpty());
+
+    //that is a hackish way of updating the info concerning the effects
+    startTimer(50);
 }
 
 QFeedbackActuator Dialog::currentActuator() const
@@ -133,7 +131,7 @@ void Dialog::enabledChanged(bool on)
 
 void Dialog::playPauseClicked()
 {
-    if (effect.state() == QAbstractAnimation::Running)
+    if (effect.state() == QFeedbackEffect::Running)
         effect.pause();
     else
         effect.start();
@@ -153,11 +151,32 @@ void Dialog::intensityChanged(int value)
     ui.lblIntensity->setText(QString::number(effect.intensity()));
 }
 
-void Dialog::effectStateChanged(QAbstractAnimation::State newState)
+void Dialog::timerEvent(QTimerEvent *e)
 {
-    const QMetaObject *mo = effect.metaObject();
-    ui.effectState->setText(mo->enumerator(mo->indexOfEnumerator(ENUM_ANIMATION_STATE)).key(newState));
-    ui.stop->setEnabled(newState != QAbstractAnimation::Stopped);
+    //update the display for effect
+    {
+        QFeedbackEffect::State newState = effect.state();
+        const QMetaObject *mo = effect.metaObject();
+        ui.effectState->setText(mo->enumerator(mo->indexOfEnumerator(ENUM_ANIMATION_STATE)).key(newState));
+        ui.stop->setEnabled(newState != QFeedbackEffect::Stopped);
+    }
+
+    //update the display for effect
+    {
+        QFeedbackEffect::State newState = fileEffect.state();
+        const QMetaObject *mo = fileEffect.metaObject();
+        ui.fileEffectState->setText(mo->enumerator(mo->indexOfEnumerator(ENUM_ANIMATION_STATE)).key(newState));
+        ui.fileStop->setEnabled(newState != QFeedbackEffect::Stopped);
+
+        if (fileEffect.isLoaded()) {
+            ui.fileStatus->setText( fileEffect.isLoaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );
+            ui.filePlayPause->setEnabled(fileEffect.isLoaded());
+            ui.fileStop->setEnabled(false);
+        } else {
+            ui.fileStatus->setText( tr("No file loaded") );
+        }
+    }
+    QDialog::timerEvent(e);
 }
 
 void Dialog::attackTimeChanged(int attackTime)
@@ -216,31 +235,12 @@ void Dialog::browseClicked()
     fileEffect.setFileName(filename);
 }
 
-void Dialog::fileLoadFinished()
-{
-    if (fileEffect.isLoaded()) {
-        ui.fileStatus->setText( fileEffect.isLoaded() ? QString::fromLatin1("%1 : %2 ms").arg(tr("Loaded")).arg(fileEffect.duration()) : tr("Not Loaded") );
-        ui.filePlayPause->setEnabled(fileEffect.isLoaded());
-        ui.fileStop->setEnabled(false);
-    } else {
-        ui.fileStatus->setText( tr("Impossible to load") );
-    }
-}
-
-
 void Dialog::filePlayPauseClicked()
 {
-    if (fileEffect.state() == QAbstractAnimation::Running)
+    if (fileEffect.state() == QFeedbackEffect::Running)
         fileEffect.pause();
     else
         fileEffect.start();
-}
-
-void Dialog::fileEffectStateChanged(QAbstractAnimation::State newState)
-{
-    const QMetaObject *mo = fileEffect.metaObject();
-    ui.fileEffectState->setText(mo->enumerator(mo->indexOfEnumerator(ENUM_ANIMATION_STATE)).key(newState));
-    ui.fileStop->setEnabled(newState != QAbstractAnimation::Stopped);
 }
 
 #include "moc_dialog.cpp"

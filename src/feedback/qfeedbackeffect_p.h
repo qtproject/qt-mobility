@@ -60,6 +60,23 @@
 
 QTM_BEGIN_NAMESPACE
 
+
+class QFeedbackEffectPrivate
+{
+public:
+    QFeedbackEffectPrivate() : state(QFeedbackEffect::Stopped)
+    {
+    }
+
+    virtual ~QFeedbackEffectPrivate()
+    {
+    }
+
+
+    QFeedbackEffect::State state;
+
+};
+
 class QFeedbackHapticsEffectPrivate
 {
 public:
@@ -84,7 +101,7 @@ public:
 class QFeedbackFileEffectPrivate
 {
 public:
-    QFeedbackFileEffectPrivate(QFeedbackFileEffect *effect) : effect(effect), loaded(false), isLoading(false), backendUsed(-1)
+    QFeedbackFileEffectPrivate(QFeedbackFileEffect *effect) : effect(effect), loaded(false), backendUsed(-1)
     {
     }
 
@@ -99,7 +116,6 @@ public:
     bool loaded;
 
     //used for loading the file
-    bool isLoading;
     int backendUsed;
 };
 

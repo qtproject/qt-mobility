@@ -189,11 +189,11 @@ VibeInt32 QFeedbackImmersion::handleForActuator(int actId)
     return actuatorHandles.at(actId);
 }
 
-QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty)
+void QFeedbackImmersion::updateEffectProperty(const QFeedbackHapticsEffect *effect, EffectProperty)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
     if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
-        return QFeedbackEffect::NoError; // the effect is simply not running
+        return; // the effect is simply not running
 
     VibeStatus status = VIBE_S_SUCCESS;
     if (effect->period() > 0) {
@@ -213,29 +213,28 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectProperty(const QFeedb
     }
 
     if (VIBE_FAILED(status))
-        return QFeedbackEffect::UnknownError;
+        reportError(effect, QFeedbackEffect::UnknownError);
 
-    return QFeedbackEffect::NoError;
 }
 
-QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFeedbackHapticsEffect *effect)
+void QFeedbackImmersion::setEffectState(const QFeedbackHapticsEffect *effect, QFeedbackEffect::State state)
 {
     VibeStatus status = VIBE_S_SUCCESS;
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
 
-    switch (effect->state())
+    switch (state)
     {
-    case QAbstractAnimation::Stopped:
+    case QFeedbackEffect::Stopped:
         if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
             status = ImmVibeStopPlayingEffect(handleForActuator(effect->actuator()), effectHandle);
             effectHandles.remove(effect);
         }
         break;
-    case QAbstractAnimation::Paused:
+    case QFeedbackEffect::Paused:
         Q_ASSERT(VIBE_IS_VALID_EFFECT_HANDLE(effectHandle));
         status = ImmVibePausePlayingEffect(handleForActuator(effect->actuator()), effectHandle);
         break;
-    case QAbstractAnimation::Running:
+    case QFeedbackEffect::Running:
         //if the effect handle exists, the feedback must be paused 
         if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
             status = ImmVibeResumePausedEffect(handleForActuator(effect->actuator()), effectHandle);
@@ -258,18 +257,13 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(const QFeedback
         }
         break;
     }
-
-    if (VIBE_FAILED(status))
-        return QFeedbackEffect::UnknownError;
-
-    return QFeedbackEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackHapticsEffect *effect)
+QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackHapticsEffect *effect)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
     if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
-        return QAbstractAnimation::Stopped; // the effect is simply not running
+        return QFeedbackEffect::Stopped; // the effect is simply not running
 
     VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
     ImmVibeGetEffectState(handleForActuator(effect->actuator()), effectHandle, &effectState);
@@ -278,13 +272,13 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackH
     switch(effectState)
     {
     case VIBE_EFFECT_STATE_PAUSED:
-        return QAbstractAnimation::Paused;
+        return QFeedbackEffect::Paused;
     case VIBE_EFFECT_STATE_PLAYING:
-        return QAbstractAnimation::Running;
+        return QFeedbackEffect::Running;
     case VIBE_EFFECT_STATE_NOT_PLAYING:
     default:
         effectHandles.remove(effect);
-        return QAbstractAnimation::Stopped;
+        return QFeedbackEffect::Stopped;
     }
 }
 
@@ -321,26 +315,26 @@ void QFeedbackImmersion::setLoaded(QFeedbackFileEffect *effect, bool load)
     }
 }
 
-QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(QFeedbackFileEffect *effect)
+void QFeedbackImmersion::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
 {
     VibeStatus status = VIBE_S_SUCCESS;
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
 
     VibeInt32 dev = handleForActuator(0); //we always use the default (first) device
 
-    switch (effect->state())
+    switch (state)
     {
-    case QAbstractAnimation::Stopped:
+    case QFeedbackEffect::Stopped:
         if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
             status = ImmVibeStopPlayingEffect(dev, effectHandle);
             effectHandles.remove(effect);
         }
         break;
-    case QAbstractAnimation::Paused:
+    case QFeedbackEffect::Paused:
         Q_ASSERT(VIBE_IS_VALID_EFFECT_HANDLE(effectHandle));
         status = ImmVibePausePlayingEffect(dev, effectHandle);
         break;
-    case QAbstractAnimation::Running:
+    case QFeedbackEffect::Running:
         //if the effect handle exists, the feedback must be paused 
         if (VIBE_IS_VALID_EFFECT_HANDLE(effectHandle)) {
             status = ImmVibeResumePausedEffect(dev, effectHandle);
@@ -355,16 +349,14 @@ QFeedbackEffect::ErrorType QFeedbackImmersion::updateEffectState(QFeedbackFileEf
     }
 
     if (VIBE_FAILED(status))
-        return QFeedbackEffect::UnknownError;
-
-    return QFeedbackEffect::NoError;
+        reportError(effect, QFeedbackEffect::UnknownError);
 }
 
-QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackFileEffect *effect)
+QFeedbackEffect::State QFeedbackImmersion::effectState(const QFeedbackFileEffect *effect)
 {
     VibeInt32 effectHandle = effectHandles.value(effect, VIBE_INVALID_EFFECT_HANDLE_VALUE);
     if (VIBE_IS_INVALID_EFFECT_HANDLE(effectHandle))
-        return QAbstractAnimation::Stopped; // the effect is simply not running
+        return QFeedbackEffect::Stopped; // the effect is simply not running
 
     VibeInt32 effectState = VIBE_EFFECT_STATE_NOT_PLAYING;
     ImmVibeGetEffectState(handleForActuator(0), effectHandle, &effectState);
@@ -373,12 +365,12 @@ QAbstractAnimation::State QFeedbackImmersion::actualEffectState(const QFeedbackF
     switch(effectState)
     {
     case VIBE_EFFECT_STATE_PAUSED:
-        return QAbstractAnimation::Paused;
+        return QFeedbackEffect::Paused;
     case VIBE_EFFECT_STATE_PLAYING:
-        return QAbstractAnimation::Running;
+        return QFeedbackEffect::Running;
     case VIBE_EFFECT_STATE_NOT_PLAYING:
     default:
-        return QAbstractAnimation::Stopped;
+        return QFeedbackEffect::Stopped;
     }
 }
 

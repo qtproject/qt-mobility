@@ -52,7 +52,13 @@
 
 QTM_BEGIN_NAMESPACE
 
- template <class T>
+
+void QFeedbackInterface::reportError(const QFeedbackEffect *effect, QFeedbackEffect::ErrorType error)
+{
+    emit effect->error(error);
+}
+
+template <class T>
 class BackendLoader
 {
 public:
@@ -93,8 +99,6 @@ public:
     {
         if (load) {
             //start loading
-            QFeedbackFileEffectPrivate *priv = QFeedbackFileEffectPrivate::get(effect);
-            priv->isLoading = true;
             tryBackendLoad(effect);
         } else {
             //unload        
@@ -103,20 +107,20 @@ public:
         }
     }
 
-    virtual QFeedbackEffect::ErrorType updateEffectState(QFeedbackFileEffect *effect)
+    virtual void setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
     {
         if (QFeedbackFileInterface *subBackend = getBackend(effect))
-            return subBackend->updateEffectState(effect);
+            subBackend->setEffectState(effect, state);
 
-        return QFeedbackEffect::UnknownError;
+        QFeedbackInterface::reportError(effect, QFeedbackEffect::UnknownError);
     }
 
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackFileEffect *effect)
+    virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *effect)
     {
         if (QFeedbackFileInterface *subBackend = getBackend(effect))
-            return subBackend->actualEffectState(effect);
+            return subBackend->effectState(effect);
 
-        return QAbstractAnimation::Stopped;
+        return QFeedbackEffect::Stopped;
     }
 
     virtual int effectDuration(const QFeedbackFileEffect *effect)
@@ -145,8 +149,7 @@ public:
     {
         if (success) {
             //the file was loaded by the current backend
-            QFeedbackFileEffectPrivate *p = QFeedbackFileEffectPrivate::get(effect);
-            p->loadFinished(true);
+            QFeedbackFileEffectPrivate::get(effect)->loadFinished(true);
             return;
         }
 
@@ -180,7 +183,6 @@ private:
         subBackends.at(p->backendUsed)->setLoaded(effect, true);
         //now we're waiting for the reply (call to asyncLoadFinished)
     }
-
 };
 
 

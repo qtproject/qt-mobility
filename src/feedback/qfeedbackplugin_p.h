@@ -78,9 +78,9 @@ public:
     QVariant actuatorProperty(const QFeedbackActuator &, ActuatorProperty) { return QVariant(); }
     bool isActuatorCapabilitySupported(QFeedbackActuator::Capability) { return false; }
 
-    QFeedbackEffect::ErrorType updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) { return QFeedbackEffect::UnknownError; }
-    QFeedbackEffect::ErrorType updateEffectState(const QFeedbackHapticsEffect *) { return QFeedbackEffect::UnknownError; }
-    QAbstractAnimation::State actualEffectState(const QFeedbackHapticsEffect *) { return QAbstractAnimation::Stopped; }
+    void updateEffectProperty(const QFeedbackHapticsEffect *, EffectProperty) { }
+    void setEffectState(const QFeedbackHapticsEffect *, QFeedbackEffect::State) { }
+    QFeedbackEffect::State effectState(const QFeedbackHapticsEffect *) { return QFeedbackEffect::Stopped; }
 
     virtual bool play(QFeedbackEffect::ThemeEffect effect) { Q_UNUSED(effect); return false; }
     virtual PluginPriority pluginPriority() { return PluginLowPriority; }

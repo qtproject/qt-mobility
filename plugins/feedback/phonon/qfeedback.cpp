@@ -47,6 +47,24 @@
 
 Q_EXPORT_PLUGIN2(feedback_phonon, QFeedbackPhonon)
 
+static QFeedbackEffect::State convertToEffectState(Phonon::State state)
+{
+    switch(state)
+    {
+    case Phonon::BufferingState:
+    case Phonon::LoadingState:
+        return QFeedbackEffect::Loading;
+    case Phonon::PausedState:
+        return QFeedbackEffect::Paused;
+    case Phonon::PlayingState:
+        return QFeedbackEffect::Running;
+    case Phonon::ErrorState:
+    case Phonon::StoppedState:
+    default:
+        return QFeedbackEffect::Stopped;
+    }
+}
+
 QFeedbackPhonon::QFeedbackPhonon() : QObject(qApp)
 {
 }
@@ -59,12 +77,11 @@ void QFeedbackPhonon::mediaObjectStateChanged()
 {
     QFeedbackMediaObject *mediaObject = qobject_cast<QFeedbackMediaObject*>(sender());
     Q_ASSERT(mediaObject);
-    mediaObject->overrideState = false;
     QFeedbackFileEffect *effect = mediaObject->effect;
-    if (!effect->isLoading())
-        return;
+
     switch(mediaObject->state())
     {
+    case Phonon::BufferingState:
     case Phonon::LoadingState:
         //nothing to do, wait for the next state change
         break;
@@ -75,11 +92,11 @@ void QFeedbackPhonon::mediaObjectStateChanged()
         break;
     case Phonon::ErrorState:
     default:
+        reportError(effect, QFeedbackEffect::UnknownError);
         //we need to delete the mediaobject
         mediaObject->deleteLater();
         audioPlayers.remove(effect);
         asyncLoadFinished(effect, false);
-        break;
     }
 }
 
@@ -108,51 +125,33 @@ void QFeedbackPhonon::setLoaded(QFeedbackFileEffect *effect, bool load)
 
 }
 
-QFeedbackEffect::ErrorType QFeedbackPhonon::updateEffectState(QFeedbackFileEffect *effect)
+void QFeedbackPhonon::setEffectState(QFeedbackFileEffect *effect, QFeedbackEffect::State state)
 {
     //the file should be loaded
     Q_ASSERT(audioPlayers.contains(effect));
 
     QFeedbackMediaObject *mediaObject = audioPlayers[effect];
-    switch(effect->state()) 
+    switch(state) 
     {
-    case QAbstractAnimation::Stopped:
+    case QFeedbackEffect::Stopped:
         mediaObject->stop();
         break;
-    case QAbstractAnimation::Paused:
+    case QFeedbackEffect::Paused:
         mediaObject->pause();
         break;
-    case QAbstractAnimation::Running:
+    case QFeedbackEffect::Running:
         mediaObject->play();
         break;
     }
-
-    //from now on until the state changed we need to override the state of the effect because
-    //the change is not immediate
-    mediaObject->overrideState = true;
-
-    return QFeedbackFileEffect::NoError;
 }
 
-QAbstractAnimation::State QFeedbackPhonon::actualEffectState(const QFeedbackFileEffect *effect)
+QFeedbackEffect::State QFeedbackPhonon::effectState(const QFeedbackFileEffect *effect)
 {
     QFeedbackMediaObject *mediaObject = audioPlayers.value(effect, 0);
     if (!mediaObject)
-        return QAbstractAnimation::Stopped;
+        return QFeedbackEffect::Stopped;
 
-    if (mediaObject->overrideState)
-        return effect->state();
-
-
-    switch (mediaObject->state())
-    {
-    case Phonon::PlayingState:
-        return QAbstractAnimation::Running;
-    case Phonon::PausedState:
-        return QAbstractAnimation::Paused;
-    default:
-        return QAbstractAnimation::Stopped;
-    }
+    return convertToEffectState(mediaObject->state());
 }
 
 int QFeedbackPhonon::effectDuration(const QFeedbackFileEffect *effect)

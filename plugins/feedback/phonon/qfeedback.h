@@ -61,8 +61,8 @@ public:
     virtual ~QFeedbackPhonon();
 
     virtual void setLoaded(QFeedbackFileEffect*, bool);
-    virtual QFeedbackEffect::ErrorType updateEffectState(QFeedbackFileEffect *);
-    virtual QAbstractAnimation::State actualEffectState(const QFeedbackFileEffect *);
+    virtual void setEffectState(QFeedbackFileEffect *, QFeedbackEffect::State);
+    virtual QFeedbackEffect::State effectState(const QFeedbackFileEffect *);
     virtual int effectDuration(const QFeedbackFileEffect*);
     virtual QStringList supportedMimeTypes();
 
@@ -77,13 +77,13 @@ class QFeedbackMediaObject : public Phonon::MediaObject
 {
     Q_OBJECT
 public:
-    QFeedbackMediaObject(QFeedbackPhonon *parent, QFeedbackFileEffect *effect) : Phonon::MediaObject(parent), effect(effect), overrideState(false)
+    QFeedbackMediaObject(QFeedbackPhonon *parent, QFeedbackFileEffect *effect) : Phonon::MediaObject(parent), effect(effect)
     {
         connect(this, SIGNAL(stateChanged(Phonon::State, Phonon::State)), parent, SLOT(mediaObjectStateChanged())); 
+        connect(this, SIGNAL(finished()), SLOT(stop())); 
     }
 
     QFeedbackFileEffect *effect;
-    bool overrideState; //decides if the state should be picked from the effect (that's useful during a transition)
 };
 
 QT_END_HEADER
