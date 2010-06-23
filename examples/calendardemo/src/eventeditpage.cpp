@@ -76,7 +76,9 @@ EventEditPage::EventEditPage(QWidget *parent)
     scrollAreaLayout->addWidget(m_startTimeEdit);
     scrollAreaLayout->addWidget(endTimeLabel);
     scrollAreaLayout->addWidget(m_endTimeEdit);
+#ifdef Q_WS_X11
     scrollAreaLayout->addLayout(hbLayout);
+#endif
 
     QScrollArea *scrollArea = new QScrollArea(this);
     scrollArea->setWidgetResizable(true);
