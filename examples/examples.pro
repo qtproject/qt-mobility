@@ -69,7 +69,12 @@ contains(mobility_modules,multimedia) {
         radio \
         player \
         slideshow \
-        audiorecorder
+        audiorecorder \
+        audiodevices \
+        audioinput \
+        audiooutput \
+        videographicsitem \
+        videowidget
 }
 
 

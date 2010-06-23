@@ -63,17 +63,17 @@
 <tr valign="top" class="even"><td><a href="versit.html">Versit</a></td><td>versit</td></tr>
 </table></p>
 <p>When developing on Symbian we will also need to add the required capabilites to the project file in order to satisfy the Symbian security model. This can be achieved with a line such as the following:</p>
-<pre>    TARGET.CAPABILITIES = CAPABILITY_A CABAPILITY_B</pre>
+<pre>    TARGET.CAPABILITY = CAPABILITY_A CABAPILITY_B</pre>
 <p>CAPABILITY_A and CAPABILITY_B are place holders for the appropriate Symbian capabilities. A complete list of all Symbian capabilities and their availability to application developers can be found in the <a href="http://developer.symbian.org/wiki/index.php/Capabilities_(Symbian_Signed)">Symbian capability documentation</a>.</p>
 <p>The subsequent table provides an overview of possibily required capabilities for each Mobility library. Note that not all capabilities are always required when using a particular API. The exact list depends on which parts of an API is utilized by an application.</p>
 <p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
 <thead><tr valign="top" class="qt-style"><th>Domain</th><th>Symbian Capabilities</th></tr></thead>
 <tr valign="top" class="odd"><td><a href="bearer-management.html">Bearer Management</a></td><td>ReadUserData NetworkServices (NetworkControl for <a href="qnetworksession.html#stop">QNetworkSession::stop</a>())</td></tr>
-<tr valign="top" class="even"><td><a href="contacts.html">Contacts</a></td><td>ReadUserData WriteUserData SwEvent ReadDeviceData WriteDeviceData</td></tr>
+<tr valign="top" class="even"><td><a href="contacts.html">Contacts</a></td><td>ReadUserData WriteUserData</td></tr>
 <tr valign="top" class="odd"><td><a href="location-overview.html">Location</a></td><td>Location</td></tr>
 <tr valign="top" class="even"><td><a href="multimedia.html">Multimedia</a></td><td>UserEnvironment ReadUserData WriteUserData ReadDeviceData WriteDeviceData</td></tr>
 <tr valign="top" class="odd"><td><a href="messaging.html">Messaging</a></td><td>LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment ReadDeviceData WriteDeviceData</td></tr>
-<tr valign="top" class="even"><td><a href="publ-subs.html">Publish And Subscribe</a></td><td>ReadDeviceData WriteDeviceData</td></tr>
+<tr valign="top" class="even"><td><a href="publ-subs.html">Publish And Subscribe</a></td><td>Capability depends on P&amp;S value being read/written. API itself doesn't require any capability.</td></tr>
 <tr valign="top" class="odd"><td><a href="service-frameworks.html">Service Framework</a></td><td>No capabilities requried by itself, the plugins may have capability requirements.</td></tr>
 <tr valign="top" class="even"><td><a href="preview.html#sensor-api">Sensor API</a></td><td>ReadDeviceData</td></tr>
 <tr valign="top" class="odd"><td><a href="systeminfo.html">System Information</a></td><td>LocalServices ReadUserData WriteUserData NetworkServices UserEnvironment Location ReadDeviceData</td></tr>
@@ -97,6 +97,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

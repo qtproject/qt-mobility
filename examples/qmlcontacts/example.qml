@@ -38,8 +38,8 @@
 **
 ****************************************************************************/
 
-import QmlContactModel 1.0
-import Qt 4.6
+import Qt 4.7
+import com.nokia.mobility 1.0
 import "contents"
 
 Rectangle {
@@ -52,7 +52,7 @@ Rectangle {
     color: "#080808";
 
     QmlContactModel {
-        id: "myModel"
+        id: contactModel 
         manager: "memory"
     }
 
@@ -127,6 +127,7 @@ Rectangle {
                         opacity: wrapper.detailsOpacity
                         height: childrenRect.height + 6;
                         width: childrenRect.width;
+                        
                         Column {
                             Text {
                                 text: model.interestLabel + ": " + model.interest
@@ -136,12 +137,61 @@ Rectangle {
                                 text: model.presenceAvailable ? model.presenceText + " [" + model.presenceMessage + "]" : " ";
                                 color: details.textColor;
                             }
+                            ListView {
+                                width: details.width; 
+                                highlightFollowsCurrentItem: false
+                                focus: true
+                                //anchors.fill: parent
+                                keyNavigationWraps: true
+
+                                model:contactModel.details(contactId)
+                                delegate: Component {
+                                    Item {
+                                        width: details.width;
+                                        property QtObject contactDetail : model.modelData;
+                                        Column {
+                                            Text {
+                                                width:  details.width;
+                                                height: 20;
+                                                text: contactDetail.name;
+                                                color:details.textColor;
+                                            }
+                                            ListView {
+                                                width:  details.width;
+                                                model:contactDetail.fields();
+                                                delegate: Component {
+                                                    Item {
+                                                        property QtObject field: model.modelData;
+                                                        Row {
+                                                          Text {
+                                                             text:field.key;
+                                                             color:details.textColor;
+                                                             width: details.width;
+                                                             height: 20;
+                                                          }
+                                                          TextInput {
+                                                              width: details.width;
+                                                              height: 20;
+                                                              text:field.value;
+                                                              color:details.textColor;
+                                                          }
+                                                        }
+                                                    }
+                                                }//delegate
+
+                                            }//detail fields view
+
+                                        }
+                                    }
+
+                                }//delegate
+                            }//detail list view
                         }
                     }
                 }
 
                 Item {
-                    id: "buttonBox"
+                    id: buttonBox
                     x: wrapper.width - 6 - childrenRect.width;
                     y: 4;
                     height:childrenRect.height
@@ -267,7 +317,7 @@ Rectangle {
 
     ListView {
         id: mainList
-        model: myModel
+        model: contactModel
         width: parent.width; height: parent.height
         delegate: listdelegate
         highlightFollowsCurrentItem: false

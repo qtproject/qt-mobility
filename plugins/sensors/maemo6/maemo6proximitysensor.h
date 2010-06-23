@@ -56,7 +56,6 @@ class maemo6proximitysensor : public maemo6sensorbase
 
 public:
     static char const * const id;
-
     maemo6proximitysensor(QSensor *sensor);
 
 private:

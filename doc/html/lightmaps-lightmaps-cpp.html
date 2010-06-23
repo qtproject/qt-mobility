@@ -736,7 +736,7 @@
             connect(nightModeAction, SIGNAL(triggered()), map, SLOT(toggleNightMode()));
             connect(osmAction, SIGNAL(triggered()), SLOT(aboutOsm()));
 
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
             menuBar()-&gt;addAction(gpsAction);
             menuBar()-&gt;addAction(osloAction);
             menuBar()-&gt;addAction(berlinAction);
@@ -800,7 +800,7 @@
 
         MapZoom w;
         w.setWindowTitle(&quot;OpenStreetMap&quot;);
-    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM)
+    #if defined(Q_OS_SYMBIAN) || defined(Q_OS_WINCE_WM) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
         w.showMaximized();
     #else
         w.resize(600, 450);
@@ -813,6 +813,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

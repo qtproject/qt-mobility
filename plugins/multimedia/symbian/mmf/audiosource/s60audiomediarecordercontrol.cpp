@@ -66,29 +66,29 @@ bool S60AudioMediaRecorderControl::setOutputLocation(const QUrl& sink)
 {
     return m_session->setOutputLocation(sink);
 }
-                                                  
+
 QMediaRecorder::State S60AudioMediaRecorderControl::convertState(S60AudioCaptureSession::TAudioCaptureState aState) const
 {
-    QMediaRecorder::State state = QMediaRecorder::StoppedState;;       
+    QMediaRecorder::State state = QMediaRecorder::StoppedState;;
     switch (aState) {
     case S60AudioCaptureSession::ERecording:
-        state = QMediaRecorder::RecordingState;            
-        break;            
-    case S60AudioCaptureSession::EPaused:            
-        state = QMediaRecorder::PausedState;            
-        break;            
-    case S60AudioCaptureSession::ERecordComplete:             
+        state = QMediaRecorder::RecordingState;
+        break;
+    case S60AudioCaptureSession::EPaused:
+        state = QMediaRecorder::PausedState;
+        break;
+    case S60AudioCaptureSession::ERecordComplete:
     case S60AudioCaptureSession::ENotInitialized:
     case S60AudioCaptureSession::EOpenCompelete:
-    case S60AudioCaptureSession::EInitialized:            
-        state = QMediaRecorder::StoppedState;            
-        break;            
-    }            
-    return state;         
+    case S60AudioCaptureSession::EInitialized:
+        state = QMediaRecorder::StoppedState;
+        break;
+    }
+    return state;
 }
-                                    
+
 void S60AudioMediaRecorderControl::updateState(S60AudioCaptureSession::TAudioCaptureState aState)
-{   
+{
     QMediaRecorder::State newState = convertState(aState);
     if (m_state != newState) {
         m_state = newState;
@@ -97,7 +97,7 @@ void S60AudioMediaRecorderControl::updateState(S60AudioCaptureSession::TAudioCap
 }
 
 QMediaRecorder::State S60AudioMediaRecorderControl::state() const
-{   
+{
     return m_state;
 }
 
@@ -119,4 +119,14 @@ void S60AudioMediaRecorderControl::pause()
 void S60AudioMediaRecorderControl::stop()
 {
     m_session->stop();
+}
+
+bool S60AudioMediaRecorderControl::isMuted() const
+{
+    return m_session->muted();
+}
+
+void S60AudioMediaRecorderControl::setMuted(bool muted)
+{
+    m_session->mute(muted);
 }

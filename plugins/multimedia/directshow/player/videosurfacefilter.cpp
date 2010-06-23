@@ -49,7 +49,7 @@
 #include <QtCore/qcoreapplication.h>
 #include <QtCore/qcoreevent.h>
 #include <QtCore/qthread.h>
-#include <QtMultimedia/qabstractvideosurface.h>
+#include <qabstractvideosurface.h>
 
 #include <initguid.h>
 

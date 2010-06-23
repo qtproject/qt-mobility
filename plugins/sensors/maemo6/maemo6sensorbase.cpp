@@ -41,12 +41,15 @@
 
 #include "maemo6sensorbase.h"
 
+
 SensorManagerInterface* maemo6sensorbase::m_remoteSensorManager = 0;
+
+
 const float maemo6sensorbase::GRAVITY_EARTH = 9.80665;
 const float maemo6sensorbase::GRAVITY_EARTH_THOUSANDTH = 0.00980665;
 
 maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
-    : QSensorBackend(sensor), m_sensorInterface(0), m_sensorRunning(false)
+    : QSensorBackend(sensor), m_sensorInterface(0)
 {
     if (!m_remoteSensorManager)
         m_remoteSensorManager = &SensorManagerInterface::instance();
@@ -54,7 +57,7 @@ maemo6sensorbase::maemo6sensorbase(QSensor *sensor)
 
 maemo6sensorbase::~maemo6sensorbase()
 {
-   if (m_sensorInterface) {
+    if (m_sensorInterface) {
         stop();
         QObject::disconnect(m_sensorInterface);
         delete m_sensorInterface, m_sensorInterface = 0;
@@ -63,30 +66,28 @@ maemo6sensorbase::~maemo6sensorbase()
 
 void maemo6sensorbase::start()
 {
-    if (m_sensorRunning)
-        return;
+
     if (m_sensorInterface) {
         int dataRate = sensor()->dataRate();
-        int interval = 1000 / dataRate;
-        // for testing max speed
-        //interval = 1;
-        //dataRate = 1000;
         if (dataRate > 0) {
+            int interval = 1000 / dataRate;
+            // for testing maximum speed
+            //interval = 1;
+            //dataRate = 1000;
             qDebug() << "Setting data rate" << dataRate << "Hz (interval" << interval << "ms) for" << m_sensorInterface->id();
             m_sensorInterface->setInterval(interval);
         } else {
-            qDebug() << "Sensor data rate" << dataRate << "Hz";
+            qDebug() << "Data rate in don't care mode (interval" << m_sensorInterface->interval() << "ms) for" << m_sensorInterface->id();
         }
-        m_sensorInterface->start();
+        int returnCode = m_sensorInterface->start().error().type();
+        if (returnCode==0) return;
+        qWarning()<<"m_sensorInterface did not start, error code:"<<returnCode;
     }
-    m_sensorRunning = true;
+    sensorStopped();
 }
 
 void maemo6sensorbase::stop()
 {
-    if (!m_sensorRunning)
-        return;
     if (m_sensorInterface)
         m_sensorInterface->stop();
-    m_sensorRunning = false;
 }
