@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,26 +38,28 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#ifndef QTMESSAGING_H
-#define QTMESSAGING_H
 
-#include "qmessageglobal.h"
-#include "qmessageaccount.h"
-#include "qmessageaccountfilter.h"
-#include "qmessageaccountid.h"
-#include "qmessageaccountsortorder.h"
-#include "qmessagefolder.h"
-#include "qmessagefolderfilter.h"
-#include "qmessagefolderid.h"
-#include "qmessagefoldersortorder.h"
-#include "qmessage.h"
-#include "qmessagefilter.h"
-#include "qmessageid.h"
-#include "qmessagesortorder.h"
-#include "qmessagecontentcontainer.h"
-#include "qmessagecontentcontainerid.h"
-#include "qmessageaddress.h"
-#include "qmessageservice.h"
-#include "qmessagemanager.h"
+#ifndef QSYSTEMINFOCOMMON_H
+#define QSYSTEMINFOCOMMON_H
 
+#include "qmobilityglobal.h"
+
+#ifdef Q_OS_LINUX
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "qsysteminfo_maemo_p.h"
+#else
+#include "qsysteminfo_linux_p.h"
+#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
+#endif //Q_OS_LINUX
+
+#ifdef Q_OS_WIN
+#include "qsysteminfo_win_p.h"
 #endif
+#ifdef Q_OS_MAC
+#include "qsysteminfo_mac_p.h"
+#endif
+#ifdef Q_OS_SYMBIAN
+#include "qsysteminfo_s60_p.h"
+#endif
+
+#endif // QSYSTEMINFOCOMMON_H

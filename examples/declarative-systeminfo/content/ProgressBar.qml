@@ -4,7 +4,7 @@
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
-** This file is part of the Qt Mobility Components.
+** This file is part of the QtDeclarative module of the Qt Toolkit.
 **
 ** $QT_BEGIN_LICENSE:BSD$
 ** You may use this file under the terms of the BSD license as follows:
@@ -38,38 +38,48 @@
 **
 ****************************************************************************/
 
-#include <QApplication>
-#include <QtGui>
-#include <QDeclarativeEngine>
-#include <QDeclarativeComponent>
-#include <QDebug>
-#include <QDeclarativeView>
-#include <qcontactmanager.h>
-#include "qmlcontactmodel.h"
+import Qt 4.7
 
-QT_USE_NAMESPACE
-QTM_USE_NAMESPACE
+Item {
+    id: progressbar
 
-int main(int argc, char ** argv)
-{
-    QApplication app(argc, argv);
+    property int minimum: 0
+    property int maximum: 100
+    property int value: 0
+    property int maxval: 0
+    property alias color: gradient1.color
+    property alias secondColor: gradient2.color
 
+    width: 30; height: 250
+    clip: true
 
-    QDeclarativeEngine engine;
+    BorderImage {
+        source: "background.png"
+        width: parent.width; height: parent.height
+        border { left: 4; top: 4; right: 4; bottom: 4 }
+    }
 
-    qmlRegisterType<QMLContactModel>("QmlContactModel", 1, 0, "QmlContactModel");
+    Rectangle {
+        id: highlight
 
-    QWidget *b = new QWidget();
-    QVBoxLayout *vbox = new QVBoxLayout;
-    vbox->setMargin(0);
+        property int widthDest: ((progressbar.height * (value - minimum)) / (maximum - minimum) )
 
-    QDeclarativeView *view = new QDeclarativeView(b);
-    view->setFocusPolicy(Qt::StrongFocus);
-    view->setResizeMode(QDeclarativeView::SizeViewToRootObject);
-    view->setSource(QUrl("qrc:/example.qml"));
-    vbox->addWidget(view);
-    b->setLayout(vbox);
-    b->show();    
+        height: highlight.widthDest
+        Behavior on height { SmoothedAnimation { velocity: 1200 } }
 
-    return app.exec();
+        anchors { left: parent.left; right: parent.right; bottom: parent.bottom; leftMargin: 2; rightMargin: 2; bottomMargin: 2 }
+//        anchors { left: parent.left; top: parent.top; bottom: parent.bottom; leftMargin: 3; topMargin: 3; bottomMargin: 3 }
+        radius: 1
+        gradient: Gradient {
+            GradientStop { id: gradient1; position: 0.0 }
+            GradientStop { id: gradient2; position: 1.0 }
+        }
+
+    }
+    Text {
+        anchors { /*right: highlight.right; rightMargin: 6; */horizontalCenter: parent.horizontalCenter }
+        color: "black"
+        font.bold: true
+        text: maxval + '%'//Math.floor((value - minimum) / (maximum - minimum) * 100) + '%'
+    }
 }

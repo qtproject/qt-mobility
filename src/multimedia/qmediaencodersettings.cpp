@@ -638,7 +638,7 @@ private:
     imageCapture->setImageSettings(imageSettings);
     \endcode
 
-    \sa QStillImageCapture, QImageEncoderControl
+    \sa QImageEncoderControl
 */
 
 /*!

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,28 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qserviceinterfacedescriptor.h>
-#include <qabstractsecuritysession.h>
-#include <qservicecontext.h>
+#include <hbinputkeymapfactory.h>
 
-#include "filemanagerplugin.h"
-#include "filemanagerstorage.h"
-#include "filemanagertransfer.h"
-
-//! [createinstance-sig]
-QObject* FileManagerPlugin::createInstance(const QServiceInterfaceDescriptor& descriptor, QServiceContext* context, QAbstractSecuritySession* session)
-//! [createinstance-sig]
+int main(int argc, char** argv)
 {
-    Q_UNUSED(context);
-    Q_UNUSED(session);
-//! [createinstance]
-    if (descriptor.interfaceName() == "com.nokia.qt.examples.FileStorage")
-        return new FileManagerStorage(this);
-    else if (descriptor.interfaceName() == "com.nokia.qt.examples.FileTransfer")
-        return new FileManagerTransfer(this);
-    else
-        return 0;
-//! [createinstance]
+    HbKeymapFactory *test_if_this_compiles_or_not;
+	return 0;
 }
-
-Q_EXPORT_PLUGIN2(serviceframework_filemanagerplugin, FileManagerPlugin)
