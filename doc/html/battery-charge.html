@@ -26,27 +26,56 @@
 <pre>    /power/battery/charge
     /power/battery/charging</pre>
 <p>and provides controls for modifying their values.</p>
-<p align="center"><img src="images/battery-publisher.png" /></p><p>The second program, battery-subscriber, is implemented in QML with some C++ code to display the QML and make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML.</p>
+<p align="center"><img src="images/battery-publisher.png" /></p><p>The second program, battery-subscriber, is implemented in QML with some C++ code to display the QML and makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML.</p>
 <p>The user interface of the battery subscriber program is described in QML. It has the following features: A rectangular area representing the percent charge of the battery. It indicates a low battery state by changing the color to red, it is green otherwise. An animation is shown to indicate that the battery is being recharged.</p>
 <p align="center"><img src="images/battery-subscriber.png" /></p><a name="battery-subscriber"></a>
 <h2>Battery Subscriber</h2>
-<p>The first step is to make <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML so that our QML code can access the keys published by the battery-publisher. This is achieved by using the QML_DECLARE_TYPE() and QML_DEFINE_TYPE() macros. The following code makes <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> available from within QML as ValueSpaceSubscriber.</p>
-<pre></pre>
+<p>The <a href="qvaluespacesubscriber.html">QValueSpaceSubscriber</a> class is available from within QML through the use of a plugin which is parsed by the QML engine. This means that simply using the QML element 'ValueSpaceSubscriber' allows access to the valuespace, which is demonstrated below.</p>
 <a name="qml"></a>
 <h3>QML</h3>
+<p>Firstly, import the plugin library that provides the ValueSpaceSubscriber QML element.</p>
+<pre>    import QtMobility.publishsubscribe 1.0</pre>
 <p>Two ValueSpaceSubscriber instances are created, one for each of the battery values. We give each object a unique id so that we can reference it from elsewhere in the QML. We set the <i>path</i> properties to the Value Space path of the keys. Finally we set the <i>notify</i> properties to true to enable the emission of change notification signals.</p>
-<pre></pre>
+<pre>        ValueSpaceSubscriber {
+            id: batteryCharge
+            path: &quot;/power/battery/charge&quot;
+        }
+        ValueSpaceSubscriber {
+            id: batteryCharging
+            path: &quot;/power/battery/charging&quot;
+        }</pre>
 <p>The default state of the rectangle used to visualize the battery charge uses the <i>charge</i> property of our BatteryCharge class in the expression for its height.</p>
-<pre></pre>
+<pre>            id: visualCharge
+            x: 12
+            y: 22 + 196 - height
+            width: 76
+            height: 196 * batteryCharge.value / 100
+            clip: true
+            color: &quot;green&quot;</pre>
 <p>When the battery charge changes the height of the rectangle will automatically change.</p>
 <p>Next we define two additional states. The <i>low</i> state is entered when the battery charge drops below 25% and the battery is not being recharged. When in this state the color is set to red.</p>
-<pre></pre>
+<pre>            State {
+                name: &quot;low&quot;
+                when: batteryCharge.value &lt; 25 &amp;&amp; !batteryCharging.value
+                PropertyChanges {
+                    target: visualCharge
+                    color: &quot;red&quot;
+                }
+            }</pre>
 <p>The <i>charging</i> state is entered when the battery is being recharged. When in this state a particle effect animation is enabled.</p>
-<pre></pre>
+<pre>            State {
+                name: &quot;charging&quot;
+                when: batteryCharging.value
+                PropertyChanges {
+                    target: bubbles
+                    count: batteryCharge.value / 5
+                    emissionRate: 5
+                }
+            },</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

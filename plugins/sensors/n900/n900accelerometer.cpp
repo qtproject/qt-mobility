@@ -45,10 +45,10 @@
 #include <time.h>
 #include <stdio.h>
 
-const char *n900accelerometer::id("n900.accelerometer");
-const char *n900accelerometer::filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord");
-const char *n900accelerometer::range("/sys/class/i2c-adapter/i2c-3/3-001d/scale");
-const char *n900accelerometer::rate("/sys/class/i2c-adapter/i2c-3/3-001d/rate");
+char const * const n900accelerometer::id("n900.accelerometer");
+char const * const n900accelerometer::filename("/sys/class/i2c-adapter/i2c-3/3-001d/coord");
+char const * const n900accelerometer::range("/sys/class/i2c-adapter/i2c-3/3-001d/scale");
+char const * const n900accelerometer::rate("/sys/class/i2c-adapter/i2c-3/3-001d/rate");
 
 n900accelerometer::n900accelerometer(QSensor *sensor)
     : n900filebasedsensor(sensor)
@@ -57,7 +57,6 @@ n900accelerometer::n900accelerometer(QSensor *sensor)
     // Details derived from the kernel driver
     addDataRate(100, 100); // 100Hz
     addDataRate(400, 400); // 400Hz
-    sensor->setDataRate(100); // default is 100Hz
     addOutputRange(-22.418, 22.418, 0.17651); // 2G
     addOutputRange(-89.672, 89.672, 0.70608); // 8G
     setDescription(QLatin1String("lis302dl"));
@@ -71,19 +70,23 @@ void n900accelerometer::start()
         goto error;
 
     // Configure the range
-    fd = fopen(range, "w");
-    if (!fd) goto error;
-    if (sensor()->outputRange() == 0)
-        fprintf(fd, "normal\n");
-    else
-        fprintf(fd, "full\n");
-    fclose(fd);
+    if (sensor()->outputRange() != -1) {
+        fd = fopen(range, "w");
+        if (!fd) goto error;
+        if (sensor()->outputRange() == 0)
+            fprintf(fd, "normal\n");
+        else
+            fprintf(fd, "full\n");
+        fclose(fd);
+    }
 
     // Configure the rate
-    fd = fopen(rate, "w");
-    if (!fd) goto error;
-    fprintf(fd, "%d\n", sensor()->dataRate());
-    fclose(fd);
+    if (sensor()->dataRate() != 0) {
+        fd = fopen(rate, "w");
+        if (!fd) goto error;
+        fprintf(fd, "%d\n", sensor()->dataRate());
+        fclose(fd);
+    }
 
     n900filebasedsensor::start();
     return;

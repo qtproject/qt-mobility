@@ -42,7 +42,7 @@
 #include <QTest>
 #include <QDebug>
 
-#include "qtmessaging.h"
+#include "qmessageservice.h"
 #include "../support/support.h"
 
 #if defined(Q_OS_SYMBIAN) || (defined(Q_OS_WIN) && defined(_WIN32_WCE))
@@ -450,7 +450,7 @@ void tst_QMessageService::testQueryMessages()
         connect(testService,SIGNAL(messagesFound(const QMessageIdList&)),&sc,SLOT(messagesFound(const QMessageIdList&)));
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         connect(testService,SIGNAL(stateChanged(QMessageService::State)),&sc,SLOT(stateChanged(QMessageService::State)));
-#endif        
+#endif
 
         // Order is irrelevant for filtering
 
@@ -459,10 +459,10 @@ void tst_QMessageService::testQueryMessages()
             QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter),true);
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+				QTest::qWait(1000);
+#endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
             sc.reset();
@@ -470,10 +470,10 @@ void tst_QMessageService::testQueryMessages()
             QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter),true);
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+                QTest::qWait(1000);
+#endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
 
         } else {
@@ -483,10 +483,10 @@ void tst_QMessageService::testQueryMessages()
             QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter,body),true);
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+                QTest::qWait(1000);
+#endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
             sc.reset();
@@ -494,10 +494,10 @@ void tst_QMessageService::testQueryMessages()
             QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter,body),true);
 #if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+                QTest::qWait(1000);
+#endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
         }
     } else {
@@ -1458,11 +1458,11 @@ void tst_QMessageService::testQueryCountData()
         << "";
 
     QTest::newRow("size greater than equal")
-        << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) 
+        << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual)
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << ( QMessageIdList() << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
-#elif defined(Q_OS_SYMBIAN)        
+#elif defined(Q_OS_SYMBIAN)
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
 #else
@@ -1576,15 +1576,15 @@ void tst_QMessageService::testQueryCountData()
 
 #if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("standardFolder equality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal)
-#ifndef Q_OS_SYMBIAN    
+        << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal)
+#ifndef Q_OS_SYMBIAN
         << messageIds
         << ( QMessageIdList() )
 #else // Created folders are not mapped to any Standard Folder in Symbian 
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
-#endif        
+#endif 
         << "";
 
     QTest::newRow("standardFolder equality 2")
@@ -1600,7 +1600,7 @@ void tst_QMessageService::testQueryCountData()
         << "";
 
     QTest::newRow("standardFolder inequality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::NotEqual) 
+        << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::NotEqual)
 #if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << ( QMessageIdList() )
         << messageIds
@@ -1945,27 +1945,27 @@ void tst_QMessageService::testCountMessages()
         connect(testService,SIGNAL(messagesCounted(int)),&sc,SLOT(messagesCounted(int)));
 #ifdef Q_OS_SYMBIAN
         connect(testService,SIGNAL(stateChanged(QMessageService::State)),&sc,SLOT(stateChanged(QMessageService::State)));
-#endif        
+#endif
 
         // Order is irrelevant for filtering
 
         if(body.isEmpty()) {
             QCOMPARE(testService->countMessages(filter&~existingAccountsFilter),true);
-#ifdef Q_OS_SYMBIAN            
+#ifdef Q_OS_SYMBIAN
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+				QTest::qWait(1000);
+#endif
             QCOMPARE(sc.count-existingMessageIds.count(), ids.count());
 
             QCOMPARE(testService->countMessages(~filter&~existingAccountsFilter),true);
-#ifdef Q_OS_SYMBIAN            
+#ifdef Q_OS_SYMBIAN
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+                QTest::qWait(1000);
+#endif
             QCOMPARE(sc.count-existingMessageIds.count(), negatedIds.count());
         }
 

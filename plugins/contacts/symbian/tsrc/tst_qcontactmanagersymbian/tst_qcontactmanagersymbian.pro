@@ -12,9 +12,7 @@ symbian: {
     
     SOURCES  += tst_qcontactmanagersymbian.cpp
     TARGET.CAPABILITY = ReadUserData \
-                        WriteUserData \
-                        ReadDeviceData \
-                        WriteDeviceData
+                        WriteUserData
 
     LIBS += -lqtcontacts \
     		-lcntmodel

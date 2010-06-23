@@ -13,6 +13,7 @@ headerdirs = ../../src/bearer \
              ../../src/systeminfo \
              ../../src/contacts \
              ../../src/multimedia \
+             ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
@@ -25,6 +26,7 @@ sourcedirs = ../../src/bearer \
              ../../src/systeminfo \
              ../../src/contacts \
              ../../src/multimedia \
+             ../../plugins/declarative/multimedia \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
@@ -47,8 +49,8 @@ outputdir               = ../html
 extraimages.HTML        = qtlogo \
                           codeless
 
-versionsym              = "QtMobility Project 1.0.1"
-version                 = Mobility Project 1.0.1
+versionsym              = "QtMobility Project 1.0.2"
+version                 = Mobility Project 1.0.2
 
 base                    = file:./doc/html
 
@@ -177,7 +179,7 @@ HTML.footer             = "<p /><address><hr /><div align=\"center\">\n" \
                           "<table width=\"100%\" cellspacing=\"0\" border=\"0\"><tr class=\"address\">\n" \
                           "<td align=\"left\">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>\n" \
                           "<td width=\"20%\" align=\"center\"><a href=\"trademarks.html\">Trademarks</a></td>\n" \
-                          "<td align=\"right\"><div align=\"right\">Qt Mobility Project 1.0.1</div></td>\n" \
+                          "<td align=\"right\"><div align=\"right\">Qt Mobility Project 1.0.2</div></td>\n" \
                           "</tr></table></div></address>"
 
 macro.raisedaster.HTML  = "<sup>*</sup>"

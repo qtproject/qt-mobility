@@ -65,6 +65,9 @@
     \list
     \o \l{fetchgooglemaps}{Fetch Google Maps}
     \o \l{logfilepositionsource}{Log File Position Source}
+    \o \l{weatherinfo}{Weather Info}
+    \o \l{lightmaps}{LightMaps}
+    \o \l{flickrdemo}{Flickr Demo}
     \endlist
 
     \section2 Messaging
@@ -80,7 +83,6 @@
     \o \l{audiorecorder}{Audio Recorder}
     \o \l{player}{Player}
     \o \l{radio}{Radio}
-    \o \l{recorder}{Recorder}
     \o \l{slideshow}{Slideshow}
     \endlist
 

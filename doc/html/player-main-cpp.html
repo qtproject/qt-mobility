@@ -63,6 +63,8 @@
 
     #ifdef Q_OS_SYMBIAN
         QMainWindow window;
+        window.setContentsMargins(10, 10, 10, 10); <span class="comment">// workaround for issue where UI is not drawn in older SDKs</span>
+                                                   <span class="comment">// this line can be removed when bug QTBUG-8697 is fixed</span>
         Player *player = new Player(&amp;window);
         window.setCentralWidget(player);
         window.showMaximized();
@@ -76,6 +78,6 @@
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
 </tr></table></div></address></body>
 </html>

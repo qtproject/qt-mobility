@@ -83,7 +83,7 @@ public:
     explicit QAmbientLightSensor(QObject *parent = 0) : QSensor(QAmbientLightSensor::type, parent) {}
     virtual ~QAmbientLightSensor() {}
     QAmbientLightReading *reading() const { return static_cast<QAmbientLightReading*>(QSensor::reading()); }
-    static const char *type;
+    static char const * const type;
 };
 
 QTM_END_NAMESPACE

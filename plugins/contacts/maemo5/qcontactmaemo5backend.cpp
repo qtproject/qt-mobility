@@ -99,9 +99,30 @@ QString QContactMaemo5Engine::synthesizedDisplayLabel(const QContact& contact, Q
 {
   QString label;
   
+  // Try to get the display name from the OSSO-ABook Contact
   label = d->m_abook->getDisplayName(contact);
   
+  // Synthesise the display label for not saved contacts
+  // A. FirstName + LastName
+  if (label.isEmpty()){
+    QContactName name = contact.detail(QContactName::DefinitionName);
+    QStringList nameList;
+    
+    nameList << name.firstName();
+    if (name.lastName().count()){
+      nameList << name.lastName();
+    }
+    
+    label = nameList.join(QString(' '));
+  }
   
+  // B. Email
+  if (label.isEmpty()){
+    QContactEmailAddress email = contact.detail(QContactEmailAddress::DefinitionName);
+    label = email.emailAddress();
+  }
+  
+  // 
   if (label.isEmpty()){
     *error = QContactManager::UnspecifiedError;
     return QString("No name");
@@ -144,8 +165,26 @@ QList<QContactLocalId> QContactMaemo5Engine::contactIds(const QContactFilter& fi
 {
   Q_CHECK_PTR(d->m_abook);
   
-  //return QContactManagerEngine::contactIds(filter, sortOrders, error);
-  return d->m_abook->contactIds(filter, sortOrders, error);
+  QList<QContactLocalId> rtn;
+
+  // do this naively for now...
+  QContactManager::Error tempError = QContactManager::NoError;
+  QList<QContactLocalId> allIds = d->m_abook->contactIds(filter, sortOrders, error);
+  QList<QContact> sortedAndFiltered;
+  
+  foreach (const QContactLocalId& currId, allIds) {
+    QContact curr = contact(currId, QContactFetchHint(), &tempError);
+    if (tempError != QContactManager::NoError)
+      *error = tempError;
+    if (QContactManagerEngine::testFilter(filter, curr)) {
+      QContactManagerEngine::addSorted(&sortedAndFiltered, curr, sortOrders);
+    }
+  }
+
+  foreach (const QContact& contact, sortedAndFiltered) {
+    rtn.append(contact.localId());
+  }
+  return rtn;
 }
 
 QList<QContact> QContactMaemo5Engine::contacts(const QContactFilter & filter, const QList<QContactSortOrder> & sortOrders, const QContactFetchHint & fetchHint,
@@ -166,6 +205,7 @@ QContact QContactMaemo5Engine::contact(const QContactLocalId& contactId, const Q
   Q_UNUSED(fetchHint); //TODO
   Q_CHECK_PTR(d->m_abook);
   
+  //NOTE getQContact can't set the displayLabel
   QContact *contact = d->m_abook->getQContact(contactId, error);
   QContact rtn(*contact);
   delete contact;
@@ -254,6 +294,9 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     
     QContactDetailFieldDefinition gsfd; //Generic string field definition
     gsfd.setDataType(QVariant::String);
+
+    // XXX NOTE: only QContactPhoneNumber, QContactOnlineAccount,
+    // QContactEmailAddress and QContactAddress are currently non-unique.
     
     // QContactAddress
     fields = defns[contactType][QContactAddress::DefinitionName].fields();
@@ -261,6 +304,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.insert(AddressFieldExtension, gsfd);
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactAddress::DefinitionName].setFields(fields);
+    defns[contactType][QContactAddress::DefinitionName].setUnique(false);
     
     // No QContactAnniversary
     defns[contactType].remove(QContactAnniversary::DefinitionName);
@@ -268,30 +312,34 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     // No QContactAvatar
     defns[contactType].remove(QContactAvatar::DefinitionName);
 
-    // TODO setUnique(true);
     // QContactBirthday
     fields = defns[contactType][QContactBirthday::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactBirthday::DefinitionName].setFields(fields);
+    defns[contactType][QContactBirthday::DefinitionName].setUnique(true);
 
     // QContactDisplayLabel
     fields = defns[contactType][QContactDisplayLabel::DefinitionName].fields();
     defns[contactType][QContactDisplayLabel::DefinitionName].setFields(fields);
+    defns[contactType][QContactDisplayLabel::DefinitionName].setUnique(true);
     
     // QContactEmailAddress
     fields = defns[contactType][QContactEmailAddress::DefinitionName].fields();
     fields.insert(QContactDetail::FieldDetailUri, gsfd);
     defns[contactType][QContactEmailAddress::DefinitionName].setFields(fields);
+    defns[contactType][QContactEmailAddress::DefinitionName].setUnique(false);
     
     // QContactFamily
     fields = defns[contactType][QContactFamily::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactFamily::DefinitionName].setFields(fields);
+    defns[contactType][QContactFamily::DefinitionName].setUnique(true);
 
     // QContactGender
     fields = defns[contactType][QContactGender::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactGender::DefinitionName].setFields(fields);
+    defns[contactType][QContactGender::DefinitionName].setUnique(true);
 
     // No QContactGeoLocation
     defns[contactType].remove(QContactGeoLocation::DefinitionName);
@@ -300,6 +348,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields = defns[contactType][QContactGuid::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactGuid::DefinitionName].setFields(fields);
+    defns[contactType][QContactGuid::DefinitionName].setUnique(true);
   
     // No QContactGlobalPresence
     defns[contactType].remove(QContactGlobalPresence::DefinitionName);
@@ -312,16 +361,19 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactName::FieldPrefix);
     fields.remove(QContactName::FieldSuffix);
     defns[contactType][QContactName::DefinitionName].setFields(fields);
+    defns[contactType][QContactName::DefinitionName].setUnique(true);
     
     // QContactNickname
     fields = defns[contactType][QContactNickname::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactNickname::DefinitionName].setFields(fields);
+    defns[contactType][QContactNickname::DefinitionName].setUnique(true);
 
     // QContactNote
     fields = defns[contactType][QContactNote::DefinitionName].fields();
     fields.remove(QContactDetail::FieldContext);
     defns[contactType][QContactNote::DefinitionName].setFields(fields);
+    defns[contactType][QContactNote::DefinitionName].setUnique(true);
 
     // QContactOnlineAccount
     fields = defns[contactType][QContactOnlineAccount::DefinitionName].fields();
@@ -330,6 +382,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactOnlineAccount::FieldSubTypes);
     fields.insert("AccountPath", gsfd);
     defns[contactType][QContactOnlineAccount::DefinitionName].setFields(fields);
+    defns[contactType][QContactOnlineAccount::DefinitionName].setUnique(false);
     
     // QContactOrganization
     fields = defns[contactType][QContactOrganization::DefinitionName].fields();
@@ -338,9 +391,10 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactOrganization::FieldDepartment);
     fields.remove(QContactOrganization::FieldLocation);
     fields.remove(QContactOrganization::FieldLogoUrl);
-    fields.remove(QContactOrganization::FieldName);
+    fields.remove(QContactOrganization::FieldTitle);
     fields.remove(QContactOrganization::FieldRole);
     defns[contactType][QContactOrganization::DefinitionName].setFields(fields);
+    defns[contactType][QContactOrganization::DefinitionName].setUnique(true);
     
     // QContactPhoneNumber
     fields = defns[contactType][QContactPhoneNumber::DefinitionName].fields();
@@ -352,6 +406,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     phoneSubtype.setAllowableValues(allowableValues);
     fields.insert(QContactPhoneNumber::FieldSubTypes, phoneSubtype);
     defns[contactType][QContactPhoneNumber::DefinitionName].setFields(fields);
+    defns[contactType][QContactPhoneNumber::DefinitionName].setUnique(false);
 
     // No QContactPresence
     defns[contactType].remove(QContactPresence::DefinitionName);
@@ -380,6 +435,7 @@ QMap<QString, QContactDetailDefinition> QContactMaemo5Engine::detailDefinitions(
     fields.remove(QContactDetail::FieldContext);
     fields.remove(QContactUrl::FieldSubType);
     defns[contactType][QContactUrl::DefinitionName].setFields(fields);
+    defns[contactType][QContactUrl::DefinitionName].setUnique(true);
     
     QCM5_DEBUG << "Contact type" << contactType << "Keys" <<  defns.keys();
     
