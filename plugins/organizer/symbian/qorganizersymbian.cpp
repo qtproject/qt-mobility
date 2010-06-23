@@ -317,9 +317,29 @@ bool QOrganizerItemSymbianEngine::saveItem(QOrganizerItem *item, QOrganizerItemM
 
 void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItemChangeSet *changeSet)
 {
+    // Check local id
+    bool isNewEntry = true;
+    if (item->localId()) {
+        // Don't allow saving with local id defined unless the item is from this manager.
+        if (item->id().managerUri() != managerUri())
+            User::Leave(KErrArgument);
+        isNewEntry = false;
+    }
+    
+    // Get guid from item. New guid is generated if empty.
+    HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
+    
+    // If guid was defined in item check if it matches to something
+    if (!item->guid().isEmpty()) {
+        RPointerArray<CCalEntry> calEntryArray;
+        m_entryView->FetchL(*globalUid, calEntryArray);
+        if (calEntryArray.Count())            
+            isNewEntry = false; // found at least one existing entry with this guid
+        calEntryArray.ResetAndDestroy();
+    }
+    
     // Create entry
     CCalEntry::TType type = OrganizerItemTypeTransform::entryTypeL(*item);
-    HBufC8* globalUid = OrganizerItemGuidTransform::guidLC(*item);
     CCalEntry::TMethod method = CCalEntry::EMethodAdd; // TODO
     TInt seqNum = 0; // TODO
     //TCalTime recurrenceId; // TODO
@@ -328,13 +348,9 @@ void QOrganizerItemSymbianEngine::saveItemL(QOrganizerItem *item, QOrganizerItem
     CleanupStack::Pop(globalUid); // ownership passed?
     CleanupStack::PushL(entry);
 
-    // Check if this is an exising entry which needs update.
-    bool isNewEntry = true;
-    if (item->localId() && item->id().managerUri() == managerUri()) {
-        // Use old local id.
+    // Use old local id if we are updating and entry
+    if (!isNewEntry)
         entry->SetLocalUidL(TCalLocalUid(item->localId()));
-        isNewEntry = false;
-    }
         
     // Transform QOrganizerItem -> CCalEntry    
     m_itemTransform.toEntryL(*item, entry);

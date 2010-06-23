@@ -376,6 +376,40 @@ void tst_SymbianOm::uniqueIds()
         QVERIFY(lids[i] == item.localId());
         QVERIFY(guids[i] == item.guid());
     }
+    
+    // Save a new todo item with own localid. Should fail.
+    QOrganizerTodo todo;
+    QOrganizerItemId id;
+    id.setLocalId(12345);
+    todo.setId(id);
+    QVERIFY(!m_om->saveItem(&todo));
+    
+    // Save a new todo item with own guid. Should pass.
+    todo = QOrganizerTodo();
+    todo.setGuid("1234567890");
+    QVERIFY(m_om->saveItem(&todo));
+    QVERIFY(todo.guid() == "1234567890");
+    
+    // Save an existing todo item with guid only. Should pass.
+    QOrganizerItemLocalId localId = todo.localId();
+    todo.setDescription("foobar");
+    todo.setId(QOrganizerItemId());
+    QVERIFY(m_om->saveItem(&todo));
+    QVERIFY(todo.localId() == localId); // local id should remain the same
+    
+    // Change manager uri and save again. Should fail.
+    id = todo.id();
+    id.setManagerUri("foobar");
+    todo.setId(id);
+    QVERIFY(!m_om->saveItem(&todo));    
+        
+    // Save a new todo item with own guid & localid. Should fail.
+    todo = QOrganizerTodo();
+    id = QOrganizerItemId();
+    id.setLocalId(12345);
+    todo.setId(id);
+    todo.setGuid("11111");
+    QVERIFY(!m_om->saveItem(&todo));
 }
 
 void tst_SymbianOm::timeStamp()
@@ -459,6 +493,7 @@ void tst_SymbianOm::addItem_data()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
+    //managerNames.removeAll("memory");
 
     foreach (QString managerName, managerNames) {
         addEvent_data(managerName);
@@ -563,6 +598,15 @@ void tst_SymbianOm::signalEmission()
     QTRY_COMPARE_SIGNAL_COUNTS();
     QTRY_COMPARE_SIGNAL_COUNTS2();
     
+    // Change but with guid only (local id not defined)
+    todo.setDescription("barfoo");
+    todo.setId(QOrganizerItemId());
+    QVERIFY(m_om->saveItem(&todo));
+    itemsChangedSignals++;
+    itemsChanged = 1;
+    QTRY_COMPARE_SIGNAL_COUNTS();
+    QTRY_COMPARE_SIGNAL_COUNTS2();    
+    
     // Remove
     QVERIFY(m_om->removeItem(todo.localId()));
     itemsRemovedSignals++;
@@ -613,6 +657,7 @@ void tst_SymbianOm::addManagers()
     QStringList managerNames = QOrganizerItemManager::availableManagers();
     managerNames.removeAll("invalid"); // the test cases would not pass on invalid backend
     managerNames.removeAll("skeleton"); // the test cases would not pass on skeleton backend
+    //managerNames.removeAll("memory");
 
     foreach(QString mgr, managerNames) {
         QTest::newRow(QString("[%1]").arg(mgr).toLatin1().constData()) << mgr;
