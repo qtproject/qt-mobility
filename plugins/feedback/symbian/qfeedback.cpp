@@ -202,11 +202,6 @@ public:
 };
 #endif //ADVANCED_TACTILE_SUPPORT
 
-QFeedbackInterface::PluginPriority QFeedbackSymbian::pluginPriority()
-{
-    return PluginLowPriority;
-}
-
 bool QFeedbackSymbian::play(QFeedbackEffect::ThemeEffect effect)
 {
     QTouchFeedback::Instance()->InstantFeedback(convertToSymbian(effect));
@@ -214,6 +209,11 @@ bool QFeedbackSymbian::play(QFeedbackEffect::ThemeEffect effect)
 }
 
 #endif //NO_TACTILE_SUPPORT
+
+QFeedbackInterface::PluginPriority QFeedbackSymbian::pluginPriority()
+{
+    return PluginLowPriority;
+}
 
 QFeedbackSymbian::QFeedbackSymbian() : m_vibra(0), m_vibraActive(true)
 {
