@@ -229,7 +229,12 @@ bool S60VideoWidgetControl::eventFilter(QObject *object, QEvent *e)
             emit widgetUpdated();
         } else if (e->type() == QEvent::Resize
             || e->type() == QEvent::Move) {
-            emit widgetResized();
+#ifdef MMF_VIDEO_SURFACES_SUPPORTED
+           emit widgetResized();
+#else
+           emit widgetUpdated();
+#endif //MMF_VIDEO_SURFACES_SUPPORTED
+
         }
     }
     return false;

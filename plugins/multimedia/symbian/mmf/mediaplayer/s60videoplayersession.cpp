@@ -103,8 +103,11 @@ S60VideoPlayerSession::~S60VideoPlayerSession()
         m_audioOutput->UnregisterObserver(*this);
     delete m_audioOutput;
 #endif
-    m_player->Close();
-    delete m_player;
+    if (m_player) {
+        m_player->Close();
+        delete m_player;
+        m_player = NULL;
+    }
 }
 
 void S60VideoPlayerSession::doLoadL(const TDesC &path)
@@ -198,13 +201,24 @@ bool S60VideoPlayerSession::resetNativeHandles()
     TRect newRect = TRect(0,0,0,0);
     Qt::AspectRatioMode aspectRatioMode = Qt::KeepAspectRatio;
 
-    S60VideoWidgetControl *widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
+    S60VideoWidgetControl *widgetControl;
+
+    if (!m_videoOutput) // this is for pre Symbian^3 devices as we need output for CVideoPlayerUtility
+        widgetControl = qobject_cast<S60VideoWidgetControl *>(m_service.requestControl(QVideoWidgetControl_iid));
+    else
+        widgetControl = qobject_cast<S60VideoWidgetControl *>(m_videoOutput);
 
     if (widgetControl) {
         QWidget *videoWidget = widgetControl->videoWidget();
         newId = widgetControl->videoWidgetWId();
         newRect = QRect2TRect(QRect(videoWidget->mapToGlobal(videoWidget->pos()), videoWidget->size()));
         aspectRatioMode = widgetControl->aspectRatioMode();
+    } else {
+        if (QApplication::activeWindow())
+            newId = QApplication::activeWindow()->effectiveWinId();
+        if (!newId && QApplication::allWidgets().count())
+            newId = QApplication::allWidgets().at(0)->effectiveWinId();
+        Q_ASSERT(newId != 0);
     }
     if (newRect == m_rect &&  newId == m_windowId && aspectRatioMode == m_aspectRatioMode)
         return false;
