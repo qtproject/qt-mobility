@@ -79,7 +79,6 @@ private slots:
 
 private:
     QString calculateRouteRequestString(const QGeoRouteRequest &request);
-    QString updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position);
     QString encodeTLV(quint8 id, QByteArray data);
     QString encodeTLV(quint8 id, quint8 data);
     QString encodeTLV(quint8 id, quint16 data);

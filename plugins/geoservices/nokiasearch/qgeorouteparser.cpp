@@ -80,10 +80,7 @@ bool QGeoRouteParser::parse(QIODevice* source)
             for (int i = 0; i < pointcount && itemCount < decoded.count(); ++i, ++itemCount) {
                 QGeoRouteDataContainer cont = decoded[itemCount];
                 if (cont.id == HL_POINT) {
-                    QGeoCoordinate gc = coordinateFromByteArray(cont.data);
-                    double lat = gc.latitude();
-                    double lon = gc.longitude();
-                    path.append(gc);
+                    path.append(coordinateFromByteArray(cont.data));
                     }
             }
             QGeoRouteSegment* segment = new QGeoRouteSegment();
@@ -119,7 +116,6 @@ QList<QGeoRouteDataContainer> QGeoRouteParser::decodeTLV(QByteArray data, bool b
         dataArray = QByteArray::fromHex(data);
     QDataStream dataStream(&dataArray,QIODevice::ReadOnly);
     dataStream.setByteOrder(QDataStream::LittleEndian);
-    int i=0;
     quint8 id;
     quint16 dataLen;
     while(!dataStream.atEnd()) {
@@ -156,7 +152,7 @@ quint32 QGeoRouteParser::int32FromByteArray(QByteArray array)
 
 double QGeoRouteParser::fromInt32(quint32 value)
 {
-    double converted = value + (value < 0 ? 0x100000000 : 0);
+    double converted = value + (value < 0 ? 2^32 : 0);
     converted /= 0xB60B60; // 0x100000000/360;
     return converted;
 }

@@ -147,6 +147,8 @@ QGeoRouteReply* QGeoRoutingManagerEngineNokia::calculateRoute(const QGeoRouteReq
 
 QGeoRouteReply* QGeoRoutingManagerEngineNokia::updateRoute(const QGeoRoute &route, const QGeoCoordinate &position)
 {
+    Q_UNUSED(route)
+    Q_UNUSED(position)
     QGeoRouteReply *reply = new QGeoRouteReply(QGeoRouteReply::UnsupportedOptionError, "Route updates are not supported by this service provider.", this);
     emit error(reply, reply->error(), reply->errorString());
 
@@ -215,11 +217,6 @@ QString QGeoRoutingManagerEngineNokia::calculateRouteRequestString(const QGeoRou
     requestString += encodeTLV(ID_REQUEST_ROUTE_GUIDANCE_LANGUAGE,QByteArray::fromRawData("DEF\x0",4));
 
     return requestString;
-}
-
-QString QGeoRoutingManagerEngineNokia::updateRouteRequestString(const QGeoRoute &route, const QGeoCoordinate &position)
-{
-    return "";
 }
 
 QString QGeoRoutingManagerEngineNokia::encodeTLV(quint8 id, QByteArray data)
