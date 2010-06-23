@@ -52,23 +52,94 @@ QTM_BEGIN_NAMESPACE
 
 /*!
     \class QFeedbackEffect
-    \brief This is the base class for the feedback framework.
+    \brief This is the abstract base class for the feedback framework.
+
+    It has the concepts of duration and state. 
 */
 
+/*!
+    \enum QFeedbackEffect::State
+
+    This enum describes the state of the effect.
+
+    \value Stopped The feedback is not running. This is the initial state.
+    The state changes to either Loading when loading a feedback or
+    to Running when the feedback is started by calling start().
+
+    \value Paused The feedback is paused. Calling start() will resume it.
+
+    \value Running The feedback is running. You can control the current state
+    by calling the state() function.
+
+    \value Loading The feedback is loading. That can happen when loading
+    is done asynchronously.
+
+    \sa state()
+*/
+
+/*!
+    \enum QFeedbackEffect::ErrorType
+
+    This enum describes the possible errors happening on the effect.
+
+    \value UnknownError An unknown error occurred.
+
+    \value DeviceBusy The feedback could not start because the device is busy.
+
+    \sa error()
+*/
+
+/*!
+    \property QFeedbackEffect::state
+    \brief state of the feedback.
+
+    It has a default value of Stopped. Each time you call the state() the backend
+    is called to get the actual feedback effect state.
+*/
+
+/*!
+    \property QFeedbackEffect::duration
+    \brief duration of the feedback.
+*/
+
+/*!
+    Constructs the QFeedbackEffect base class, and passes \a parent to
+    QObject's constructor.
+*/
 QFeedbackEffect::QFeedbackEffect(QObject *parent) : QObject(parent)
 {
 }
 
+/*
+    \fn void QFeedbackEffect::start()
+
+    Starts playing the effect. If an error occurs there the
+    error signal will be emitted.
+*/
 void QFeedbackEffect::start()
 {
     setState(Running);
 }
 
+/*
+    \fn void QFeedbackEffect::stop()
+
+    Stops a playing effect. If an error occurs there the
+    error signal will be emitted.
+
+    \sa play(), pause(), setState()
+*/
 void QFeedbackEffect::stop()
 {
     setState(Stopped);
 }
 
+/*
+    \fn void QFeedbackEffect::pause()
+
+    Pauses a playing effect. If an error occurs there the
+    error signal will be emitted.
+*/
 void QFeedbackEffect::pause()
 {
     setState(Paused);
@@ -88,6 +159,12 @@ bool QFeedbackEffect::playThemeEffect(ThemeEffect effect)
     return false;
 }
 
+/*!
+    \fn void bool QFeedbackEffect::supportsThemeEffect()
+
+    Allows the user to know if playing themed feedback is available.
+
+*/
 bool QFeedbackEffect::supportsThemeEffect()
 {
     return QFeedbackThemeInterface::instance() != 0;
@@ -98,10 +175,10 @@ bool QFeedbackEffect::supportsThemeEffect()
     \class QFeedbackHapticsEffect
     \brief The QFeedbackHapticsEffect allows to play a haptics feedback on an actuator.
 
-    It is possible to set the duration, intenisy and envelope of the effect.
-    It is a subclass of QFeedbackEffect (subclass of QAbstractAnimation) which makes it 
-    inherit properties from it like the possibility to loop or be integrated in an 
-    animation group. It can also be started, stopped or paused.
+    It is possible to set the duration, intensity, envelope and period of the effect.
+    It is a subclass of QFeedbackEffect (subclass of QObject), which makes it 
+    inherit its properties: duration and state.
+    It can also be started, stopped or paused.
 
     You can set the duration to INFINITE. It is then up to the program to stop the effect.
 
@@ -109,16 +186,24 @@ bool QFeedbackEffect::supportsThemeEffect()
 
     it can report errors through the error signal.
 
-    \sa QAbstractAnimation, QFeedbackDevice
+    \sa QFeedbackActuator
 */
 
+/*!
+    Constructs the QFeedbackHatpicsEffect class, and passes \a parent to
+    QObject's constructor.
+*/
 QFeedbackHapticsEffect::QFeedbackHapticsEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QFeedbackHapticsEffectPrivate)
 {
 }
 
 
+/*!
+    Stops the feedback if it is running.
+*/
 QFeedbackHapticsEffect::~QFeedbackHapticsEffect()
 {
+    stop();
 }
 
 /*!
@@ -280,10 +365,26 @@ void QFeedbackHapticsEffect::setState(State state)
     QFeedbackHapticsInterface::instance()->setEffectState(this, state);
 }
 
+/*
+\reimp
+*/
 QFeedbackEffect::State QFeedbackHapticsEffect::state() const
 {
     return QFeedbackHapticsInterface::instance()->effectState(this);
 }
+
+/*!
+    \class QFeedbackFileEffect
+    \brief The QFeedbackFileEffect allows to play a haptics feedback from a file.
+
+    You can load and unload the file at will to free resources or be as fast as possible.
+    It is a subclass of QFeedbackEffect (subclass of QObject), which makes it 
+    inherit its properties: duration and state.
+    It can also be started, stopped or paused.
+
+    it can report errors through the error signal.
+*/
+
 
 /*!
     \internal
@@ -296,15 +397,25 @@ void QFeedbackFileEffectPrivate::loadFinished(bool success)
 }
 
 
+/*!
+    Constructs the QFeedbackFileEffect class, and passes \a parent to
+    QObject's constructor.
+*/
 QFeedbackFileEffect::QFeedbackFileEffect(QObject *parent) : QFeedbackEffect(parent), priv(new QFeedbackFileEffectPrivate(this))
 {
 }
 
+/*!
+    Stops the feedback and  unloads the file if necessary.
+*/
 QFeedbackFileEffect::~QFeedbackFileEffect()
 {
     setLoaded(false); //ensures we unload the file and frees resources
 }
 
+/*
+    \reimp
+*/
 int QFeedbackFileEffect::duration() const
 {
     return QFeedbackFileInterface::instance()->effectDuration(this);
@@ -313,6 +424,8 @@ int QFeedbackFileEffect::duration() const
 /*!
     \property QFeedbackFileEffect::filename
     \brief the name of the file that is loaded.
+
+    Setting that property will automatically unload the previous file and load the new one.
 */
 QString QFeedbackFileEffect::fileName() const
 {
@@ -397,6 +510,9 @@ void QFeedbackFileEffect::setState(State newState)
     QFeedbackFileInterface::instance()->setEffectState(this, newState);
 }
 
+/*
+\reimp
+*/
 QFeedbackEffect::State QFeedbackFileEffect::state() const
 {
     return QFeedbackFileInterface::instance()->effectState(this);

@@ -78,6 +78,10 @@ public:
         ThemeUser = 65535
     };
 
+    enum Duration {
+        INFINITE = -1
+    };
+
     enum State {
         Stopped,
         Paused,
@@ -86,7 +90,6 @@ public:
     };
 
     enum ErrorType {
-        //to be completed
         UnknownError,
         DeviceBusy
     };
@@ -127,10 +130,6 @@ public:
     Q_PROPERTY(int fadeIntensity READ fadeIntensity WRITE setFadeIntensity)
     Q_PROPERTY(int period READ period WRITE setPeriod)
     Q_PROPERTY(QFeedbackActuator actuator READ actuator WRITE setActuator)
-
-    enum Duration {
-        INFINITE = -1
-    };
 
     explicit QFeedbackHapticsEffect(QObject *parent = 0);
     ~QFeedbackHapticsEffect();
