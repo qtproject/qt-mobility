@@ -11,7 +11,12 @@ CONFIG(debug, debug|release) {
     WAS_IN_DEBUG=release
 }
 
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(staticconfig.pri)
+
+symbian:contains(symbian_symbols_unfrozen,1) {
+    #see configure.bat for details
+    MMP_RULES+="EXPORTUNFROZEN"
+}
 
 mac {
     contains(QT_CONFIG, qt_framework):contains(TEMPLATE, lib) {
@@ -24,6 +29,24 @@ mac {
             contains(QT_CONFIG,debug): CONFIG+=debug
             contains(QT_CONFIG,release): CONFIG+=release
         }
+    }
+}
+
+#In Windows we want to build libraries in debug and release mode if the user
+#didn't select a version - if Qt is build in debug_and_release
+#this avoids problems for third party as qmake build debug by default
+#If mobility selected debug_and_release but Qt only supports
+#one version but not the other we slently disable the impossible combination
+win32:contains(CONFIG_WIN32,build_all) {
+    contains(QT_CONFIG,debug):contains(QT_CONFIG,release) {
+        contains(TEMPLATE,.*lib):!plugin {
+            CONFIG += $$WAS_IN_DEBUG
+            CONFIG += debug_and_release build_all
+        }
+    } else {
+        CONFIG -= debug_and_release debug release
+        contains(QT_CONFIG,debug): CONFIG+=debug
+        contains(QT_CONFIG,release): CONFIG+=release
     }
 }
 
@@ -62,11 +85,22 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
 !testcase {
     OBJECTS_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET
     !plugin {
-        contains(TEMPLATE,.*lib):DESTDIR = $$OUTPUT_DIR/lib
-        else:DESTDIR = $$OUTPUT_DIR/bin
+        contains(TEMPLATE,.*lib) {
+            DESTDIR = $$OUTPUT_DIR/lib
+            symbian:defFilePath=../s60installs
+            VERSION = 1.1.0
+        } else {
+            DESTDIR = $$OUTPUT_DIR/bin
+        }
     } else {
-        testplugin:DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE
-        !testplugin:DESTDIR = $$OUTPUT_DIR/plugins/$$PLUGIN_TYPE
+        testplugin {
+            DESTDIR = $$OUTPUT_DIR/build/tests/bin/plugins/$$PLUGIN_TYPE 
+        } else {
+            #check that plugin_type is set or warn otherwise
+            isEmpty(PLUGIN_TYPE):message(PLUGIN_TYPE not specified - install rule may not work)
+            target.path=$${QT_MOBILITY_PLUGINS}/$${PLUGIN_TYPE}
+            INSTALLS += target
+        }
     }
 
     MOC_DIR = $$OUTPUT_DIR/build/$$SUBDIRPART/$$TARGET/moc
@@ -86,8 +120,13 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
     QMAKE_RPATHDIR += $$OUTPUT_DIR/lib
 }
 
+contains(TEMPLATE,.*lib):DEFINES += QT_SHARED
+
 maemo6 {
     DEFINES+= Q_WS_MAEMO_6
+    contains(TEMPLATE,.*app.*): QMAKE_LIB_FLAGS+= -Wl,-rpath-link $$[QT_INSTALL_LIBS]
+    QMAKE_LIB_FLAGS+= -Wl,-rpath-link $$[QT_INSTALL_LIBS]
+    QMAKE_RPATHDIR += $$[QT_INSTALL_LIBS]
 }
 maemo5 {
     DEFINES+= Q_WS_MAEMO_5
@@ -123,6 +162,9 @@ wince* {
 symbian {
     #For some reason the default include path doesn't include MOC_DIR on symbian
     INCLUDEPATH += $$MOC_DIR
+    
+    #This is supposed to be defined in symbian_os.hrh
+    #DEFINES += SYMBIAN_EMULATOR_SUPPORTS_PERPROCESS_WSD
 }
 
 # Add the output dirs to the link path too
@@ -133,9 +175,8 @@ mac:contains(QT_CONFIG,qt_framework) {
 }
 LIBS += -L$$OUTPUT_DIR/lib
 
-# For symbian, we are not freezing yet
-symbian:MMP_RULES += "EXPORTUNFROZEN"
 
 DEPENDPATH += . $$SOURCE_DIR
 INCLUDEPATH += $$SOURCE_DIR/src/global
 
+!symbian:!wince*:DEFINES += QTM_PLUGIN_PATH=\\\"$$replace(QT_MOBILITY_PLUGINS, \\\\, /)\\\"

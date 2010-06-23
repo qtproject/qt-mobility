@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qgeopositioninfosource.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QGeoPositionInfoSource Class Reference</title>
+  <title>Qt Mobility Project 1.1: QGeoPositionInfoSource Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -70,7 +70,7 @@
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a></b> ( const QGeoPositionInfo &amp; <i>update</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#requestTimeout">requestTimeout</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qgeopositioninfosource.html#updateTimeout">updateTimeout</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
@@ -95,13 +95,14 @@
 <h2>Detailed Description</h2>
 <p>The QGeoPositionInfoSource class is an abstract base class for the distribution of positional updates.</p>
 <p>The static function <a href="qgeopositioninfosource.html#createDefaultSource">QGeoPositionInfoSource::createDefaultSource</a>() creates a default position source that is appropriate for the platform, if one is available. Otherwise, QGeoPositionInfoSource can be subclassed to create an appropriate custom source of position data.</p>
-<p>Users of a QGeoPositionInfoSource subclass can request the current position using <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>(), or start and stop regular position updates using <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() and <a href="qgeopositioninfosource.html#stopUpdates">stopUpdates</a>(). When an update is available, positionUpdate() is emitted. The last known position can be accessed with lastUpdate().</p>
-<p>If regular position updates are required, <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() can be used to specify how often these updates should be emitted. (If no interval is specified, updates are simply provided whenever they are available.) For example:</p>
+<p>Users of a QGeoPositionInfoSource subclass can request the current position using <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>(), or start and stop regular position updates using <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() and <a href="qgeopositioninfosource.html#stopUpdates">stopUpdates</a>(). When an update is available, <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a>() is emitted. The last known position can be accessed with <a href="qgeopositioninfosource.html#lastKnownPosition">lastKnownPosition</a>().</p>
+<p>If regular position updates are required, <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() can be used to specify how often these updates should be emitted. If no interval is specified, updates are simply provided whenever they are available. For example:</p>
 <pre><span class="comment">    // Emit updates every 10 seconds if available</span>
     QGeoPositionInfoSource *source = QGeoPositionInfoSource::createDefaultSource();
-    source-&gt;setUpdateInterval(10000);</pre>
+    if (source)
+        source-&gt;setUpdateInterval(10000);</pre>
 <p>To remove an update interval that was previously set, call <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() with a value of 0.</p>
-<p>Note that the position source may have a minimum value requirement for update intervals, as returned by minimumIntervalForType().</p>
+<p>Note that the position source may have a minimum value requirement for update intervals, as returned by <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</a>().</p>
 <p><b>Warning:</b> On Windows CE it is not possible to detect if a device is GPS enabled. The default position source on a Windows CE device without GPS support will never provide any position data.</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -135,6 +136,7 @@
 <p>This property holds this property holds the requested interval in milliseconds between each update.</p>
 <p>If the update interval is not set (or is set to 0) the source will provide updates as often as necessary.</p>
 <p>If the update interval is set, the source will provide updates at an interval as close to the requested interval as possible. If the requested interval is less than the <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</a>(), the minimum interval is used instead.</p>
+<p>Changes to the update interval will happen as soon as is practical, however the time the change takes may vary between implementations. Whether or not the elapsed time from the previous interval is counted as part of the new interval is also implementation dependent.</p>
 <p>The default value for this property is 0.</p>
 <p>Note: Subclass implementations must call the base implementation of setUpdateInterval() so that updateInterval() returns the correct value.</p>
 <p><b>Access functions:</b></p>
@@ -166,12 +168,9 @@
 <h3 class="fn"><a name="preferredPositioningMethods"></a><a href="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethods</a> QGeoPositionInfoSource::preferredPositioningMethods () const</h3>
 <p>Returns the positioning methods set by <a href="qgeopositioninfosource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</a>().</p>
 <p>See also <a href="qgeopositioninfosource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</a>().</p>
-<a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/requestTimeout"></a>
-<h3 class="fn"><a name="requestTimeout"></a>void QGeoPositionInfoSource::requestTimeout ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Emitted if <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>() was called and the current position could not be retrieved within the specified timeout.</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/requestUpdate"></a>
 <h3 class="fn"><a name="requestUpdate"></a>void QGeoPositionInfoSource::requestUpdate ( int <i>timeout</i> = 0 )&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
-<p>Attempts to get the current position and emit <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a>() with this information. If the current position cannot be found within the given <i>timeout</i> (in milliseconds) or if <i>timeout</i> is less than the value returned by <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</a>(), <a href="qgeopositioninfosource.html#requestTimeout">requestTimeout</a>() is emitted.</p>
+<p>Attempts to get the current position and emit <a href="qgeopositioninfosource.html#positionUpdated">positionUpdated</a>() with this information. If the current position cannot be found within the given <i>timeout</i> (in milliseconds) or if <i>timeout</i> is less than the value returned by <a href="qgeopositioninfosource.html#minimumUpdateInterval-prop">minimumUpdateInterval</a>(), <a href="qgeopositioninfosource.html#updateTimeout">updateTimeout</a>() is emitted.</p>
 <p>If the timeout is zero, the timeout defaults to a reasonable timeout period as appropriate for the source.</p>
 <p>This does nothing if another update request is in progress. However it can be called even if <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() has already been called and regular updates are in progress.</p>
 <p>If the source uses multiple positioning methods, it tries to gets the current position from the most accurate positioning method within the given timeout.</p>
@@ -179,12 +178,14 @@
 <h3 class="fn"><a name="setPreferredPositioningMethods"></a>void QGeoPositionInfoSource::setPreferredPositioningMethods ( <a href="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethods</a> <i>methods</i> )&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Sets the preferred positioning methods for this source to <i>methods</i>.</p>
 <p>If <i>methods</i> includes a method that is not supported by the source, the unsupported method will be ignored.</p>
+<p>If <i>methods</i> does not include any methods supported by the source, the preferred methods will be set to the set of methods which the source supports.</p>
 <p><b>Note:</b> When reimplementing this method, subclasses must call the base method implementation to ensure <a href="qgeopositioninfosource.html#preferredPositioningMethods">preferredPositioningMethods</a>() returns the correct value.</p>
 <p>See also <a href="qgeopositioninfosource.html#preferredPositioningMethods">preferredPositioningMethods</a>() and <a href="qgeopositioninfosource.html#supportedPositioningMethods">supportedPositioningMethods</a>().</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/startUpdates"></a>
 <h3 class="fn"><a name="startUpdates"></a>void QGeoPositionInfoSource::startUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Starts emitting updates at regular intervals as specified by <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>().</p>
 <p>If <a href="qgeopositioninfosource.html#updateInterval-prop">setUpdateInterval</a>() has not been called, the source will emit updates as soon as they become available.</p>
+<p>An updateTimout() signal will be emitted if this <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> subclass determines that it will not be able to provide regular updates. This could happen if a satellite fix is lost or if a hardware error is detected. Position updates will recommence if the data becomes available later on. The updateTimout() signal will not be emitted again until after the periodic updates resume.</p>
 <a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/stopUpdates"></a>
 <h3 class="fn"><a name="stopUpdates"></a>void QGeoPositionInfoSource::stopUpdates ()&nbsp;&nbsp;<tt> [pure virtual slot]</tt></h3>
 <p>Stops emitting updates at regular intervals.</p>
@@ -192,10 +193,14 @@
 <h3 class="fn"><a name="supportedPositioningMethods"></a><a href="qgeopositioninfosource.html#PositioningMethod-enum">PositioningMethods</a> QGeoPositionInfoSource::supportedPositioningMethods () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the positioning methods available to this source.</p>
 <p>See also <a href="qgeopositioninfosource.html#setPreferredPositioningMethods">setPreferredPositioningMethods</a>().</p>
+<a name="//apple_ref/cpp/instm/QGeoPositionInfoSource/updateTimeout"></a>
+<h3 class="fn"><a name="updateTimeout"></a>void QGeoPositionInfoSource::updateTimeout ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>If <a href="qgeopositioninfosource.html#requestUpdate">requestUpdate</a>() was called, this signal will be emitted if the current position could not be retrieved within the specified timeout.</p>
+<p>If <a href="qgeopositioninfosource.html#startUpdates">startUpdates</a>() has been called, this signal will be emitted if this <a href="qgeopositioninfosource.html">QGeoPositionInfoSource</a> subclass determines that it will not be able to provide further regular updates. This signal will not be emitted again until after the regular updates resume.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

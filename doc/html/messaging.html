@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- messaging.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Messaging</title>
+  <title>Qt Mobility Project 1.1: Messaging</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -15,7 +15,8 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Messaging<br /><span class="subtitle"></span>
 </h1>
 <p>The Qt Messaging API enables access to messaging services to search and sort messages, send messages, retrieve message data, and launch the preferred messaging client on the system to either display an existing message, compose a new message, or respond to an existing message.</p>
-<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#namespace">Namespace</a></li>
+<li><a href="#overview">Overview</a></li>
 <li><a href="#reference-documentation">Reference documentation</a></li>
 <ul><li><a href="#main-classes">Main classes</a></li>
 </ul>
@@ -28,10 +29,17 @@
 <li><a href="#messaging-services">Messaging Services</a></li>
 <li><a href="#concurrent-access-to-messaging-data">Concurrent Access to Messaging Data</a></li>
 <li><a href="#abstraction-of-messaging-data-storage-mechanism">Abstraction of Messaging Data Storage Mechanism</a></li>
+<li><a href="#examples">Examples</a></li>
+<ul><li><a href="#keep-in-touch">Keep In Touch</a></li>
+<li><a href="#service-actions">Service Actions</a></li>
 </ul>
+</ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
-<p>The messaging library provides a set of APIs for accessing messaging data. Interfaces are provided to retrieve and query messages, folders and accounts, also interfaces to create, modify, and store messages are provided. A unified interface for manipulation and storage of SMS, MMS, Email and XMPP messages is provided. Handling of internet media (MIME) messages that have only been partially retrieved is supported.</p>
+<p>The messaging library provides a set of APIs for accessing messaging data. Interfaces are provided to retrieve and query messages, folders and accounts, also interfaces to create, modify, and store messages are provided. A unified interface for manipulation and storage of SMS, MMS, MIME Email and TNEF Email messages is provided. Handling of messages that have only been partially retrieved is supported.</p>
 <p>An API to access messaging services to send messages and retrieve message data is provided, as well as messaging services to compose, reply to, forward and show messages using a native application.</p>
 <p>Notifications of addition, removal and updating of stored messages can be enabled.</p>
 <p>The library provides unified access to the messaging data on a device including concurrent access to messaging data by multiple applications, and independence from the mechanism used to store the messaging data on the device.</p>
@@ -133,10 +141,18 @@
 <a name="abstraction-of-messaging-data-storage-mechanism"></a>
 <h3>Abstraction of Messaging Data Storage Mechanism</h3>
 <p>The library abstracts the storage method used to store messaging data.</p>
+<a name="examples"></a>
+<h3>Examples</h3>
+<a name="keep-in-touch"></a>
+<h4>Keep In Touch</h4>
+<p>The <a href="keepintouch.html">Keep In Touch</a> example shows how to extract useful information from the messages stored by the system.</p>
+<a name="service-actions"></a>
+<h4>Service Actions</h4>
+<p>The <a href="serviceactions.html">Service Actions</a> example is a program to demonstrate how to compose, send, show, query and retrieve messages, and also react to message store events using the Qt Mobility Messaging API.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

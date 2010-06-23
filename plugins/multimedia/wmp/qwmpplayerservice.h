@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,15 +43,15 @@
 #define QWMPPLAYERSERVICE_H
 
 #include "qwmpevents.h"
-#include "qwmpvideooutputcontrol.h"
 
 #include <qmediaservice.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 class QMediaMetaData;
 class QMediaPlayerControl;
 class QMediaPlaylist;
-QTM_END_NAMESPACE
+class QVideoWindowControl;
+QT_END_NAMESPACE
 
 class QEvrVideoOverlay;
 class QWmpMetaData;
@@ -60,7 +60,7 @@ class QWmpPlaylist;
 class QWmpPlaylistControl;
 class QWmpVideoOverlay;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QWmpPlayerService
     : public QMediaService
     , public IOleClientSite
@@ -78,7 +78,8 @@ public:
     QWmpPlayerService(EmbedMode mode, QObject *parent = 0);
     ~QWmpPlayerService();
 
-    QMediaControl *control(const char *name) const;
+    QMediaControl *requestControl(const char *name);
+    void releaseControl(QMediaControl *control);
 
     // IUnknown
     HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void **object);
@@ -102,9 +103,6 @@ public:
     HRESULT STDMETHODCALLTYPE GetScriptableObject(BSTR *pbstrName, IDispatch **ppDispatch);
     HRESULT STDMETHODCALLTYPE GetCustomUIMode(BSTR *pbstrFile);
 
-public Q_SLOTS:
-    void videoOutputChanged(QVideoOutputControl::Output output);
-
 private:
     volatile LONG m_ref;
     const EmbedMode m_embedMode;
@@ -114,7 +112,7 @@ private:
     QWmpPlayerControl *m_control;
     QWmpMetaData *m_metaData;
     QWmpPlaylistControl *m_playlist;
-    QWmpVideoOutputControl *m_videoOutputControl;
+    QVideoWindowControl *m_activeVideoOverlay;
     QWmpVideoOverlay *m_oleVideoOverlay;
 #ifdef QWMP_EVR
     QEvrVideoOverlay *m_evrVideoOverlay;

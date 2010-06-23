@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -120,7 +120,7 @@ void QGstreamerVideoInputDeviceControl::update()
     QFileInfoList entries = devDir.entryInfoList(QStringList() << "video*");
 
     foreach( const QFileInfo &entryInfo, entries ) {
-        qDebug() << "Try" << entryInfo.filePath();
+        //qDebug() << "Try" << entryInfo.filePath();
 
         int fd = ::open(entryInfo.filePath().toLatin1().constData(), O_RDWR );
         if (fd == -1)
@@ -147,7 +147,7 @@ void QGstreamerVideoInputDeviceControl::update()
                 name = entryInfo.fileName();
             else
                 name = QString((const char*)vcap.card);
-            qDebug() << "found camera: " << name;
+            //qDebug() << "found camera: " << name;
 
             m_names.append(entryInfo.filePath());
             m_descriptions.append(name);

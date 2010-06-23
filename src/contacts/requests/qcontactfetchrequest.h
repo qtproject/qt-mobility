@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,7 @@
 #include "qcontactsortorder.h"
 #include "qcontactfilter.h"
 #include "qcontact.h"
+#include "qcontactfetchhint.h"
 
 #include <QList>
 #include <QStringList>
@@ -59,22 +60,18 @@ class Q_CONTACTS_EXPORT QContactFetchRequest : public QContactAbstractRequest
     Q_OBJECT
 
 public:
-    QContactFetchRequest();
-    ~QContactFetchRequest();
+    QContactFetchRequest(QObject* parent = 0);
 
     /* Selection, restriction and sorting */
     void setFilter(const QContactFilter& filter);
     void setSorting(const QList<QContactSortOrder>& sorting);
-    void setDefinitionRestrictions(const QStringList& definitionNames);
+    void setFetchHint(const QContactFetchHint& fetchHint);
     QContactFilter filter() const;
     QList<QContactSortOrder> sorting() const;
-    QStringList definitionRestrictions() const;
+    QContactFetchHint fetchHint() const;
 
     /* Results */
     QList<QContact> contacts() const;
-
-signals:
-    void progress(QContactFetchRequest* self, bool appendOnly);
 
 private:
     Q_DISABLE_COPY(QContactFetchRequest)

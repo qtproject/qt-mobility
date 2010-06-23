@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,9 +42,9 @@
 #ifndef QIMAGEENCODERCONTROL_H
 #define QIMAGEENCODERCONTROL_H
 
-#include <qmediacontrol.h>
-#include <qmediarecorder.h>
-#include <qmediaencodersettings.h>
+#include "qmediacontrol.h"
+#include "qmediarecorder.h"
+#include "qmediaencodersettings.h"
 
 #include <QtCore/qsize.h>
 
@@ -53,9 +53,9 @@ class QByteArray;
 class QStringList;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QImageEncoderControl : public QMediaControl
+class Q_MULTIMEDIA_EXPORT QImageEncoderControl : public QMediaControl
 {
     Q_OBJECT
 
@@ -78,6 +78,6 @@ protected:
 #define QImageEncoderControl_iid "com.nokia.Qt.QImageEncoderControl/1.0"
 Q_MEDIA_DECLARE_CONTROL(QImageEncoderControl, QImageEncoderControl_iid)
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

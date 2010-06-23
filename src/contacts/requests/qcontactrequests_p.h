@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -83,6 +83,7 @@ public:
     }
 
     QList<QContact> m_contacts;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -104,7 +105,7 @@ public:
 
     QContactFilter m_filter;
     QList<QContactSortOrder> m_sorting;
-    QStringList m_definitionRestrictions;
+    QContactFetchHint m_fetchHint;
 
     QList<QContact> m_contacts;
 };
@@ -126,7 +127,8 @@ public:
         return QContactAbstractRequest::ContactRemoveRequest;
     }
 
-    QContactFilter m_filter;
+    QList<QContactLocalId> m_contactIds;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactLocalIdFetchRequestPrivate : public QContactAbstractRequestPrivate
@@ -156,7 +158,8 @@ class QContactDetailDefinitionFetchRequestPrivate : public QContactAbstractReque
 {
 public:
     QContactDetailDefinitionFetchRequestPrivate()
-        : QContactAbstractRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_contactType(QString(QLatin1String(QContactType::TypeContact)))
     {
     }
 
@@ -172,13 +175,15 @@ public:
     QString m_contactType;
     QStringList m_names;
     QMap<QString, QContactDetailDefinition> m_definitions;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactDetailDefinitionSaveRequestPrivate : public QContactAbstractRequestPrivate
 {
 public:
     QContactDetailDefinitionSaveRequestPrivate()
-        : QContactAbstractRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_contactType(QString(QLatin1String(QContactType::TypeContact)))
     {
     }
 
@@ -193,13 +198,15 @@ public:
 
     QString m_contactType;
     QList<QContactDetailDefinition> m_definitions;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactDetailDefinitionRemoveRequestPrivate : public QContactAbstractRequestPrivate
 {
 public:
     QContactDetailDefinitionRemoveRequestPrivate()
-        : QContactAbstractRequestPrivate()
+        : QContactAbstractRequestPrivate(),
+        m_contactType(QString(QLatin1String(QContactType::TypeContact)))
     {
     }
 
@@ -214,14 +221,14 @@ public:
 
     QString m_contactType;
     QStringList m_names;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactRelationshipFetchRequestPrivate : public QContactAbstractRequestPrivate
 {
 public:
     QContactRelationshipFetchRequestPrivate()
-        : QContactAbstractRequestPrivate(),
-        m_role(QContactRelationshipFilter::Either)
+        : QContactAbstractRequestPrivate()
     {
     }
 
@@ -234,10 +241,12 @@ public:
         return QContactAbstractRequest::RelationshipFetchRequest;
     }
 
+    // selection criteria
     QContactId m_first;
+    QContactId m_second;
     QString m_relationshipType;
-    QContactId m_participantUri;
-    QContactRelationshipFilter::Role m_role;
+
+    // results
     QList<QContactRelationship> m_relationships;
 };
 
@@ -259,6 +268,7 @@ public:
     }
 
     QList<QContactRelationship> m_relationships;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 class QContactRelationshipRemoveRequestPrivate : public QContactAbstractRequestPrivate
@@ -278,9 +288,8 @@ public:
         return QContactAbstractRequest::RelationshipRemoveRequest;
     }
 
-    QContactId m_first;
-    QContactId m_second;
-    QString m_relationshipType;
+    QList<QContactRelationship> m_relationships;
+    QMap<int, QContactManager::Error> m_errors;
 };
 
 QTM_END_NAMESPACE

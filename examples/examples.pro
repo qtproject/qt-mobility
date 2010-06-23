@@ -1,4 +1,4 @@
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 
@@ -7,30 +7,41 @@ SUBDIRS += hapticsplayer
 #ServiceFramework examples
 contains(mobility_modules,serviceframework) {
     SUBDIRS += filemanagerplugin \
-            bluetoothtransferplugin \
-            servicebrowser
+               bluetoothtransferplugin \
+               notesmanagerplugin \
+               servicebrowser
+
+    !symbian:SUBDIRS+= sfw-notes
+    
+    contains(QT_CONFIG, declarative) {
+        SUBDIRS += declarative-sfw-dialer
+
+        sources.files += declarative-sfw-notes \
+                         declarative-sfw-dialer/declarative-sfw-dialer
+    }
 }
+
 
 #BearerManagement examples
 contains(mobility_modules,bearer) {
     SUBDIRS += bearermonitor bearercloud
-    contains(QT_CONFIG, declarative) {
-        SUBDIRS += declarative
-    }
 }
 
 #Location examples
 contains(mobility_modules,location) {
-    SUBDIRS += logfilepositionsource
-    contains(QT_CONFIG, webkit) {
-        SUBDIRS += fetchgooglemaps
-    }
+    SUBDIRS += logfilepositionsource \
+		satellitedialog
+    contains(mobility_modules,bearer) {
+    	SUBDIRS += flickrdemo
+        contains(QT_CONFIG, webkit) {
+            SUBDIRS += fetchgooglemaps
+        }
+    }		
 }
 
 #Contacts examples
 contains(mobility_modules,contacts) {
-    SUBDIRS += samplephonebook \
-            incomingcalls
+    SUBDIRS += samplephonebook
 }
 
 #Publish and Subscribe examples
@@ -39,6 +50,8 @@ contains(mobility_modules,publishsubscribe) {
         SUBDIRS += publish-subscribe
         contains(QT_CONFIG, declarative) {
             SUBDIRS += battery-charge
+
+            sources.files += battery-charge/battery-subscriber
         }
     }
 }
@@ -48,23 +61,40 @@ contains(mobility_modules,systeminfo): SUBDIRS += sysinfo
 
 #Multimedia
 contains(mobility_modules,multimedia) {
-    #disabled on Symbian due to missing backend
-    !symbian:SUBDIRS += \
+    SUBDIRS += \
         radio \
-        player \
-        cameracapture \
         slideshow \
-        streamplayer \
-        audiorecorder
+        audiorecorder \
+        audiodevices \
+        audioinput \
+        audiooutput \
+        videographicsitem \
+        videowidget
 }
 
+
 #Messaging examples
-contains(mobility_modules,messaging) {
-    contains(qmf_enabled,yes)|wince*|win32|symbian|maemo6 {
-    !win32-g++:SUBDIRS += \
-        keepintouch\
-        querymessages\
-        writemessage\
-        serviceactions
+contains(qmf_enabled,yes)|wince*|win32|symbian|maemo5 {
+    contains(mobility_modules,messaging) {
+        !win32-g++ {
+	    SUBDIRS += \
+                querymessages \
+                writemessage
+
+            contains(mobility_modules,contacts) {
+                SUBDIRS += keepintouch
+            }
+
+            # MessagingEx lives in tests for some reason
+            maemo5:SUBDIRS += ../tests/messagingex
+         }
     }
 }
+
+# Sensors API examples
+contains(mobility_modules,sensors) {
+    SUBDIRS += sensors
+}
+
+sources.path = $$QT_MOBILITY_PREFIX/bin
+INSTALLS += sources

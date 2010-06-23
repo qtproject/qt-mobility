@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,14 +58,18 @@ QGeoInfoValidator::~QGeoInfoValidator() {}
 
 // This QGeoInfoThreadWinCE instance takes ownership of the validator, and must delete it before
 // it is destructed.
-QGeoInfoThreadWinCE::QGeoInfoThreadWinCE(QGeoInfoValidator *validator, QObject *parent)
+QGeoInfoThreadWinCE::QGeoInfoThreadWinCE(QGeoInfoValidator *validator, bool timeoutsForPeriodicUpdates, QObject *parent)
         : QThread(parent),
         validator(validator),
+        timeoutsForPeriodicUpdates(timeoutsForPeriodicUpdates),
         requestScheduled(false),
         requestInterval(0),
         updatesScheduled(false),
         updatesInterval(0),
-        hasLastPosition(false)
+        stopping(false),
+        hasLastPosition(false),
+        invalidDataReceived(false),
+        updateTimeoutTriggered(false)
 {
     qRegisterMetaType<GPS_POSITION>();
     m_newDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
@@ -81,9 +85,11 @@ QGeoInfoThreadWinCE::~QGeoInfoThreadWinCE()
 
     updatesScheduled = false;
     requestScheduled = false;
-    wakeUp();
+    stopping = true;
 
     mutex.unlock();
+
+    wakeUp();
 
     wait();
 
@@ -131,37 +137,33 @@ void QGeoInfoThreadWinCE::requestUpdate(int timeout)
         requestInterval = timeout;
         requestNextTime = currentDateTime().addMSecs(requestInterval);
 
-        // See comments above run() to see why we're doing things like this
-        if (!isRunning())
-            start();
-        else
-            wakeUp();
+        locker.unlock();
+        wakeUp();
     }
 }
 
 void QGeoInfoThreadWinCE::startUpdates()
 {
+    QMutexLocker locker(&mutex);
     if (!updatesScheduled) {
-        QMutexLocker locker(&mutex);
-
         updatesScheduled = true;
+        updateTimeoutTriggered = false;
+        hasLastPosition = false;
 
         if (updatesInterval != 0)
             updatesNextTime = currentDateTime().addMSecs(updatesInterval);
 
-        // See comments above run() to see why we're doing things like this
-        if (!isRunning())
-            start();
-        else
-            wakeUp();
+        locker.unlock();
+        wakeUp();
     }
 }
 
 void QGeoInfoThreadWinCE::stopUpdates()
 {
+    QMutexLocker locker(&mutex);
     if (updatesScheduled) {
-        QMutexLocker locker(&mutex);
         updatesScheduled = false;
+        locker.unlock();
         wakeUp();
     }
 }
@@ -199,6 +201,7 @@ void QGeoInfoThreadWinCE::setUpdateInterval(int interval)
             updatesNextTime = now.addMSecs(updatesInterval);
         }
 
+        locker.unlock();
         wakeUp();
     }
 }
@@ -206,6 +209,7 @@ void QGeoInfoThreadWinCE::setUpdateInterval(int interval)
 void QGeoInfoThreadWinCE::wakeUp()
 {
     SetEvent(m_wakeUpEvent);
+    statusUpdated.wakeAll();
 }
 
 // We try to keep the GPS turned off as much as we can to preserve battery life.
@@ -214,17 +218,33 @@ void QGeoInfoThreadWinCE::wakeUp()
 // The methods requestUpdate() and startUpdates() will call start() if required.
 void QGeoInfoThreadWinCE::run()
 {
+    mutex.lock();
     gpsReachedOnState = false;
-    m_gps = GPSOpenDevice(m_newDataEvent, m_gpsStateChange, NULL, 0);
+    m_gps = NULL;
 
     const int handleCount = 3;
     HANDLE handles[handleCount] = { m_newDataEvent, m_gpsStateChange, m_wakeUpEvent };
 
-    while (true) {
-        QMutexLocker locker(&mutex);
+    if (updatesScheduled || requestScheduled) {
+        m_gps = GPSOpenDevice(m_newDataEvent, m_gpsStateChange, NULL, 0);
+    }
 
-        if (!updatesScheduled && !requestScheduled)
+    while (true) {
+
+        if (stopping)
             break;
+
+        if (!updatesScheduled && !requestScheduled) {
+            if (m_gps != NULL) {
+                GPSCloseDevice(m_gps);
+                m_gps = NULL;
+            }
+            statusUpdated.wait(&mutex);
+            if (updatesScheduled || requestScheduled) {
+                gpsReachedOnState = false;
+                m_gps = GPSOpenDevice(m_newDataEvent, m_gpsStateChange, NULL, 0);
+            }
+        }
 
         // If the periodic update is 0 then updates are returned as available.
         // If this is not the case then the next timeout will be set for whichever of
@@ -238,22 +258,23 @@ void QGeoInfoThreadWinCE::run()
         if (requestScheduled) {
             if (!updatesScheduled || (updatesInterval == 0)
                     || (msecsTo(requestNextTime, updatesNextTime) >= 0)) {
-                timeout = msecsTo(now, requestNextTime);
+                timeout = msecsTo(now, requestNextTime) + 100;
             } else {
-                timeout = msecsTo(now, updatesNextTime);
+                if (updatesInterval != 0)
+                    timeout = msecsTo(now, updatesNextTime) + 100;
             }
         } else {
             // updatesScheduled has to be true or we wouldn't still be in the larger while loop.
             if (updatesInterval != 0)
-                timeout = msecsTo(now, updatesNextTime);
+                timeout = msecsTo(now, updatesNextTime) + 100;
         }
 
         if (timeout > MaximumMainLoopWaitTime)
             timeout = MaximumMainLoopWaitTime;
 
-        locker.unlock();
+        mutex.unlock();
         DWORD dwRet = WaitForMultipleObjects(handleCount, handles, FALSE, timeout);
-        locker.relock();
+        mutex.lock();
 
         // The GPS data has been updated.
         if (dwRet == WAIT_OBJECT_0) {
@@ -272,46 +293,54 @@ void QGeoInfoThreadWinCE::run()
             dwRet = GPSGetPosition(m_gps, &posn, timeout, 0);
 
             if (dwRet == ERROR_SUCCESS) {
-                if (!validator->valid(posn))
-                    continue;
+                if (!validator->valid(posn)) {
+                    invalidDataReceived = true;
+                } else {
+                    m_lastPosition = posn;
+                    hasLastPosition = true;
+                    updateTimeoutTriggered = false;
 
-                m_lastPosition = posn;
-                hasLastPosition = true;
+                    // A request and a periodic update could both be satisfied at once.
+                    // We use this flag to prevent a double update.
+                    bool emitDataUpdated = false;
 
-                // A request and a periodic update could both be satisfied at once.
-                // We use this flag to prevent a double update.
-                bool emitDataUpdated = false;
-
-                // If a request is in process we emit the dataUpdated signal.
-                if (requestScheduled) {
-                    emitDataUpdated = true;
-                    requestScheduled = false;
-                }
-
-                // If we are updating as data becomes available or if the update period has elapsed
-                // we emit the dataUpdated signal.
-                if (updatesScheduled) {
-                    QDateTime now = currentDateTime();
-                    if (updatesInterval == 0) {
+                    // If a request is in process we emit the dataUpdated signal.
+                    if (requestScheduled) {
                         emitDataUpdated = true;
-                    } else if (msecsTo(now, updatesNextTime) < 0) {
-                        while (msecsTo(now, updatesNextTime) < 0)
-                            updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
-                        emitDataUpdated = true;
+                        requestScheduled = false;
+                    }
+
+                    // If we are updating as data becomes available or if the update period has elapsed
+                    // we emit the dataUpdated signal.
+                    if (updatesScheduled) {
+                        QDateTime now = currentDateTime();
+                        if (updatesInterval == 0) {
+                            emitDataUpdated = true;
+                        } else if (msecsTo(now, updatesNextTime) < 0) {
+                            while (msecsTo(now, updatesNextTime) < 0)
+                                updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
+                            emitDataUpdated = true;
+                        }
+                    }
+
+                    if (emitDataUpdated) {
+                        hasLastPosition = false;
+                        mutex.unlock();
+                        emit dataUpdated(m_lastPosition);
+                        mutex.lock();
                     }
                 }
-
-                if (emitDataUpdated) {
-                    emit dataUpdated(m_lastPosition);
-                }
             }
-        } else {
+        }
+        if (dwRet != WAIT_OBJECT_0 || invalidDataReceived) {
+            invalidDataReceived = false;
 
             // Third party apps may have the ability to turn off the gps hardware independently of
             // the Microsoft GPS API.
             // This checks for an unexpected power down and turns the hardware back on.
 
             // The GPS state has been updated.
+
             if (dwRet == WAIT_OBJECT_0 + 1) {
                 GPS_DEVICE device;
                 device.dwVersion = GPS_VERSION_1;
@@ -330,29 +359,50 @@ void QGeoInfoThreadWinCE::run()
             }
 
             // We reach this point if the gps state has changed, if the wake up event has been
-            // triggered, or if a timeout occurred while waiting for gps data.
+            // triggered, if we received data we were not interested in from the GPS,
+            // or if a timeout occurred while waiting for gps data.
             //
             // In all of these cases we should check for request and periodic update timeouts.
 
             QDateTime now = currentDateTime();
 
+            bool emitUpdateTimeout = false;
+
             // Check for request timeouts.
             if (requestScheduled && msecsTo(now, requestNextTime) < 0) {
                 requestScheduled = false;
-                emit requestTimeout();
+                emitUpdateTimeout = true;
             }
 
             // Check to see if a periodic update is due.
-            if (updatesScheduled && updatesInterval != 0 && msecsTo(now, updatesNextTime) < 0) {
+            if (updatesScheduled && updatesInterval != 0 && (msecsTo(now, updatesNextTime) < 0)) {
                 while (msecsTo(now, updatesNextTime) < 0)
                     updatesNextTime = updatesNextTime.addMSecs(updatesInterval);
-                if (hasLastPosition)
+                if (hasLastPosition) {
+                    hasLastPosition = false;
+                    mutex.unlock();
                     emit dataUpdated(m_lastPosition);
+                    mutex.lock();
+                } else {
+                    if (timeoutsForPeriodicUpdates && !updateTimeoutTriggered) {
+                        updateTimeoutTriggered = true;
+                        emitUpdateTimeout = true;
+                    }
+                }
+            }
+
+            if (emitUpdateTimeout) {
+                mutex.unlock();
+                emit updateTimeout();
+                mutex.lock();
             }
         }
     }
 
-    GPSCloseDevice(m_gps);
+    if (m_gps != NULL)
+        GPSCloseDevice(m_gps);
+
+    mutex.unlock();
 }
 
 #include "moc_qgeoinfothread_wince_p.cpp"

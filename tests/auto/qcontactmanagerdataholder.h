@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,6 +47,7 @@
 #include <QMultiMap>
 #include <QList>
 #include <QString>
+#include <QDebug>
 
 #include "qcontactmanager.h"
 
@@ -70,36 +71,36 @@ public:
     {
         QStringList managerNames = QContactManager::availableManagers();
 
-        foreach(QString mgr, managerNames) {
+        foreach(const QString& mgr, managerNames) {
+            // Don't bother with these
+            if (mgr == "memory" || mgr == "invalid" || mgr == "testdummy" || mgr == "maliciousplugin")
+                continue;
             QMap<QString, QString> params;
             QString mgrUri = QContactManager::buildUri(mgr, params);
             QContactManager* cm = QContactManager::fromUri(mgrUri);
             if (cm) {
-                QList<QContact> contacts;
-                foreach (const QContactLocalId id,  cm->contacts()) {
-                    contacts.push_back(cm->contact(id));
-                }
+                qDebug() << "Saving contacts for" << mgrUri;
+                QList<QContact> contacts = cm->contacts();
                 savedContacts.insert(cm->managerName(),contacts);
-                QList<QContactLocalId> ids = cm->contacts();
-                cm->removeContacts(&ids);
+                QList<QContactLocalId> ids;
+                foreach(const QContact& contact, contacts)
+                    ids.append(contact.localId());
+                cm->removeContacts(ids, 0);
+                delete cm;
             }
         }
     }
 
     ~QContactManagerDataHolder()
     {
-        QStringList managerNames = QContactManager::availableManagers();
-
-        foreach(QString mgr, managerNames) {
-            QMap<QString, QString> params;
-            QString mgrUri = QContactManager::buildUri(mgr, params);
+        foreach(const QString& mgrUri, savedContacts.keys()) {
             QContactManager* cm = QContactManager::fromUri(mgrUri);
             if (cm) {
-                QList<QContact> contacts = savedContacts.value(cm->managerName());
-                foreach(QContact c, contacts) {
-                    c.setId(QContactId());
-                    cm->saveContact(&c);
-                }
+                qDebug() << "Restoring contacts for" << mgrUri;
+                QList<QContact> contacts = savedContacts.value(mgrUri);
+                cm->saveContacts(&contacts, 0);
+                // XXX this doesn't restore relationships..
+                delete cm;
             }
         }
     }

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="CRepository" version="" uidName="KCRUidProfileEngine" uidValue="0x101f8798">
+<repository target="CRepository" uidValue="0x101f8798">
 <key ref="/profile/id" int="0x7e000001"/>
 </repository>

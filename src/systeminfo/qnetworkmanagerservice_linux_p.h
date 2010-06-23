@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -67,7 +67,9 @@
 #include <QtDBus/QDBusObjectPath>
 #include <QtDBus/QDBusContext>
 #include <QMap>
+#include "qnmdbushelper_p.h"
 
+#ifndef NETWORK_MANAGER_H
 typedef enum NMDeviceType
 {
     DEVICE_TYPE_UNKNOWN = 0,
@@ -108,6 +110,13 @@ typedef enum
 #define NM_DBUS_INTERFACE_ACTIVE_CONNECTION NM_DBUS_INTERFACE ".Connection.Active"
 #define NM_DBUS_INTERFACE_IP4_CONFIG        NM_DBUS_INTERFACE ".IP4Config"
 
+#define NM_DBUS_SERVICE_USER_SETTINGS     "org.freedesktop.NetworkManagerUserSettings"
+#define NM_DBUS_SERVICE_SYSTEM_SETTINGS   "org.freedesktop.NetworkManagerSystemSettings"
+
+#define NM_802_11_AP_FLAGS_NONE				0x00000000
+#define NM_802_11_AP_FLAGS_PRIVACY			0x00000001
+#endif
+
 QTM_BEGIN_NAMESPACE
 typedef QMap< QString, QMap<QString,QVariant> > QNmSettingsMap;
 typedef QList<quint32> ServerThing;
@@ -118,27 +127,6 @@ Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QNmSettingsMap))
 Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(ServerThing))
 
 QTM_BEGIN_NAMESPACE
-
-class QNmDBusHelper: public QObject, protected QDBusContext
- {
-     Q_OBJECT
- public:
-
- public slots:
-    void deviceStateChanged(quint32);
-    void slotAccessPointAdded( QDBusObjectPath );
-    void slotAccessPointRemoved( QDBusObjectPath );
-    void slotPropertiesChanged( QMap<QString,QVariant>);
-    void slotSettingsRemoved();
-
-Q_SIGNALS:
-    void pathForStateChanged(const QString &, quint32);
-    void pathForAccessPointAdded(const QString &,  QDBusObjectPath );
-    void pathForAccessPointRemoved(const QString &,  QDBusObjectPath );
-    void pathForPropertiesChanged(const QString &, QMap<QString,QVariant>);
-    void pathForSettingsRemoved(const QString &);
-};
-
 
 class QNetworkManagerInterfacePrivate;
 class QNetworkManagerInterface : public QObject
@@ -173,12 +161,10 @@ Q_SIGNALS:
 
 private Q_SLOTS:
 private:
-//    Q_DISABLE_COPY(QNetworkManagerInterface); ??
     QNetworkManagerInterfacePrivate *d;
     QNmDBusHelper *nmDBusHelper;
-}; //end QNetworkManagerInterface
+};
 
-////////
 class QNetworkManagerInterfaceAccessPointPrivate;
 class QNetworkManagerInterfaceAccessPoint : public QObject
 {
@@ -186,7 +172,6 @@ class QNetworkManagerInterfaceAccessPoint : public QObject
     
 public:
     
-    // NM_DEVICE_STATE
     enum DeviceState {
         Unknown = 0,
         Unmanaged,
@@ -247,9 +232,8 @@ private:
     QNetworkManagerInterfaceAccessPointPrivate *d;
     QNmDBusHelper *nmDBusHelper;
 
-}; //end QNetworkManagerInterfaceAccessPoint
+};
 
-////////
 class QNetworkManagerInterfaceDevicePrivate;
 class QNetworkManagerInterfaceDevice : public QObject
 {
@@ -277,9 +261,8 @@ Q_SIGNALS:
 private:
     QNetworkManagerInterfaceDevicePrivate *d;
     QNmDBusHelper *nmDBusHelper;
-}; //end QNetworkManagerInterfaceDevice
+};
 
-////////
 class QNetworkManagerInterfaceDeviceWiredPrivate;
 class QNetworkManagerInterfaceDeviceWired : public QObject
 {
@@ -302,9 +285,8 @@ Q_SIGNALS:
 private:
     QNetworkManagerInterfaceDeviceWiredPrivate *d;
     QNmDBusHelper *nmDBusHelper;
-}; // end QNetworkManagerInterfaceDeviceWired
+};
 
-////
 class QNetworkManagerInterfaceDeviceWirelessPrivate;
 class QNetworkManagerInterfaceDeviceWireless : public QObject
 {
@@ -344,9 +326,8 @@ Q_SIGNALS:
 private:
     QNetworkManagerInterfaceDeviceWirelessPrivate *d;
     QNmDBusHelper *nmDBusHelper;
-}; // end QNetworkManagerInterfaceDeviceWireless
+};
 
-////
 class QNetworkManagerSettingsPrivate;
 class QNetworkManagerSettings : public QObject
 {
@@ -366,9 +347,8 @@ Q_SIGNALS:
     void newConnection(QDBusObjectPath);
 private:
     QNetworkManagerSettingsPrivate *d;
-}; //end QNetworkManagerSettings
+};
 
-////
 class QNetworkManagerSettingsConnectionPrivate;
 class QNetworkManagerSettingsConnection : public QObject
 {
@@ -381,7 +361,6 @@ public:
     
     QDBusInterface  *connectionInterface() const;
     QNmSettingsMap getSettings();
-    //    void update(QNmSettingsMap map);
     bool setConnections();
     NMDeviceType getType();
     bool isAutoConnect();
@@ -401,9 +380,8 @@ Q_SIGNALS:
 private:
     QNmDBusHelper *nmDBusHelper;
     QNetworkManagerSettingsConnectionPrivate *d;
-}; //end QNetworkManagerSettingsConnection
+};
 
-////
 class QNetworkManagerConnectionActivePrivate;
 class QNetworkManagerConnectionActive : public QObject
 {
@@ -437,9 +415,8 @@ Q_SIGNALS:
 private:
     QNetworkManagerConnectionActivePrivate *d;
     QNmDBusHelper *nmDBusHelper;
-}; //QNetworkManagerConnectionActive
+};
 
-////
 class QNetworkManagerIp4ConfigPrivate;
 class QNetworkManagerIp4Config : public QObject
 {
@@ -449,14 +426,12 @@ public:
 	QNetworkManagerIp4Config(const QString &dbusPathName, QObject *parent = 0);
 	~QNetworkManagerIp4Config();
 
-	//    QList<quint32> nameservers();
     QStringList domains() const;
     bool isValid();
 
  private:
 	QNetworkManagerIp4ConfigPrivate *d;    
 };
-////
 QTM_END_NAMESPACE
 
 

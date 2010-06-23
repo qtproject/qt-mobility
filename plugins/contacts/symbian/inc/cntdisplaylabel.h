@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,35 +43,37 @@
 #define CNTDISPLAYLABEL_H_
 
 #include <QObject>
+#include <QLatin1String>
 
 #include <qcontactmanager.h>
 #include <qcontact.h>
 #include <qcontactdetail.h>
 
+
 #include <qmobilityglobal.h>
+
 QTM_USE_NAMESPACE
 
 class CntDisplayLabel : public QObject
-    {
+{
     Q_OBJECT
     
 public:
     CntDisplayLabel();
     virtual ~CntDisplayLabel();
 
-    QString synthesizeDisplayLabel( const QContact& contact, QContactManager::Error& error) const;
-    QString generateDisplayLabel( const QContact &contact, const QList<QMap<QString, QString> > detailList) const;
-    QString delimiter() const;
-    
-    QList<QMap<QString, QString> > contactDisplayLabelDetails() const;
-    QList<QMap<QString, QString> > groupDisplayLabelDetails() const;
+    QString synthesizedDisplayLabel( const QContact& contact, QContactManager::Error* error) const;
+    QList<QPair<QLatin1String, QLatin1String> > contactFilterDetails() const;
+    QList<QPair<QLatin1String, QLatin1String> > groupFilterDetails() const;
     
 private:
     void setDisplayLabelDetails();
+    QString generateDisplayLabel( const QContact &contact, const QList<QList<QPair<QLatin1String, QLatin1String> > > detailList) const;
+    QString delimiter() const;
     
 private:
-    QList<QMap<QString, QString> > m_contactDetails;
-    QList<QMap<QString, QString> > m_groupDetails;
-    };
+    QList<QList<QPair<QLatin1String, QLatin1String> > > m_contactDisplayLabelDetails;
+    QList<QList<QPair<QLatin1String, QLatin1String> > > m_groupDisplayLabelDetails;
+};
 
 #endif /* CNTDISPLAYLABEL_H_ */

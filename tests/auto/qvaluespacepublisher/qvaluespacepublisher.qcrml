@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<repository target="RProperty" version="" uidName="qvaluespacepublisher" uidValue="0x2002AC87">
+<repository target="RProperty" uidValue="0x2002AC87">
 <key ref="/value" int="0x00000001"/>
 <key ref="/testConstructor/value" int="0x00000002"/>
 <key ref="/testConstructor/subpath/value" int="0x00000003"/>

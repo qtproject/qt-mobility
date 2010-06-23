@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,8 +65,12 @@ class QGeoPositionInfo;
 class QLocationUtils
 {
 public:
-    inline static bool isValidLat(double lat) { return lat >= -90 && lat <= 90; }
-    inline static bool isValidLong(double lng) { return lng >= -180 && lng <= 180; }
+    inline static bool isValidLat(double lat) {
+        return lat >= -90 && lat <= 90;
+    }
+    inline static bool isValidLong(double lng) {
+        return lng >= -180 && lng <= 180;
+    }
 
     /*
         Creates a QGeoPositionInfo from a GGA, GLL, RMC, VTG or ZDA sentence.

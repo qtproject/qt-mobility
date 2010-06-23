@@ -1,0 +1,275 @@
+/****************************************************************************
+**
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+** All rights reserved.
+** Contact: Nokia Corporation (qt-info@nokia.com)
+**
+** This file is part of the Qt Mobility Components.
+**
+** $QT_BEGIN_LICENSE:LGPL$
+** No Commercial Usage
+** This file contains pre-release code and may not be distributed.
+** You may use this file in accordance with the terms and conditions
+** contained in the Technology Preview License Agreement accompanying
+** this package.
+**
+** GNU Lesser General Public License Usage
+** Alternatively, this file may be used under the terms of the GNU Lesser
+** General Public License version 2.1 as published by the Free Software
+** Foundation and appearing in the file LICENSE.LGPL included in the
+** packaging of this file.  Please review the following information to
+** ensure the GNU Lesser General Public License version 2.1 requirements
+** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+**
+** In addition, as a special exception, Nokia gives you certain additional
+** rights.  These rights are described in the Nokia Qt LGPL Exception
+** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+**
+** If you have questions regarding the use of this file, please contact
+** Nokia at qt-info@nokia.com.
+**
+**
+**
+**
+**
+**
+**
+**
+** $QT_END_LICENSE$
+**
+****************************************************************************/
+
+/*!
+
+\page contactssync.html
+
+\title Contacts Synchronous API
+
+\tableofcontents
+
+
+\section1 Introduction
+
+The Contacts Synchronous API enables a client to synchronously fetch, update, or remove
+contact data from a contact manager.  A synchronous API is of most use to clients who wish
+to perform simple requests where performance or user interface responsiveness is not critical.
+Synchronous calls to a contact manager will block until they are completed, and therefore
+should not be performed in the GUI thread if the manager is a frontend to an online service
+or long-latency datastore.  The main advantage of the synchronous API is its simplicity and
+convenience.
+
+Most operations which may be performed using the synchronous API may also be
+performed using the asynchronous API.  It is recommended for most
+applications that the asynchronous API be used where possible.
+
+
+\section1 Using The API
+
+The synchronous API offered by the Contacts module is available through the QContactManager
+class.  It consists of four major sections:
+\list
+  \o Error Reporting
+  \o Schema Manipulation
+  \o Contact Manipulation
+  \o Relationship Manipulation
+\endlist
+
+
+\section2 Error Reporting
+
+When a synchronous operation fails, clients need to be able to retrieve error information associated
+with that synchronous operation.  The QContactManager::error() function provides this information to clients.
+
+For some synchronous operations (for example, batch save or remove operations) it is possible that
+multiple errors may occur during the operation.  In those cases, the synchronous function will take
+a pointer to a map of input index to error, which will be filled by the function as required, and
+the QContactManager::error() function will report the overall operation error.
+
+Error reporting is handled slightly differently in the asynchronous API, in that each instance of
+an asynchronous request is able to report any overall operation error as well as the finer-grained
+map of errors, for the operation which it requested.
+
+
+\section2 Contact Manipulation
+
+The most common type of operation that clients will perform involves retrieval or modification of contacts.
+The QContactManager class offers synchronous API to retrieve, create, update and delete contacts.  The create
+and update operations are provided through the same interface.  Both singular and batch operations are offered
+by the API.
+
+A contact is identified by its QContactId.  This id consists of two parts: a URI which identifies the contact manager
+which stores the contact, and the local id of the contact in that manager.  Some operations which take a pointer
+to a contact as an argument may modify the contact during the operation; updating the contact id is a common example.
+
+The QContactManager class provides API for accessing the IDs of contacts which are stored in the manager:
+\list
+  \o contactIds(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
+  \o contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>()) const
+\endlist
+
+The contact id retrieval functionality is also provided via asynchronous API through the QContactLocalIdFetchRequest class.
+
+The synchronous, singular contact manipulation functions offered by the QContactManager class are:
+\list
+  \o contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint = QContactFetchHint()) const
+  \o saveContact(QContact* contact)
+  \o removeContact(const QContactLocalId& contactId)
+\endlist
+
+The (optional) fetch argument to the contact accessor function allows clients to tell the plugin
+which types of information they wish to retrieve.  This argument is a hint only, and may be ignored safely by the plugin,
+or used by the plugin to optimize the performance of the retrieve operation.
+
+The save operation entails a validation step, where the contact's details are checked against the supported schema.
+If the contact is valid, it will be saved.  Note that if the contact already exists in the database (determined by
+the id of the contact) it will be replaced with the contact contained in the argument.  This means that clients should
+not save any contact which was retrieved with a non-empty fetchHint defined, or data loss may occur.
+
+Any error which occurs during such singular contact manipulation functions may be accessed by calling QContactManager::error()
+directly after the original synchronous call.
+
+The synchronous, batch contact manipulation functions offered by the QContactManager class are:
+\list
+  \o contacts(const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const
+  \o contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders = QList<QContactSortOrder>(), const QContactFetchHint& fetchHint = QContactFetchHint()) const
+  \o saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap)
+  \o removeContacts(QList<QContactLocalId>* contactIds, QMap<int, QContactManager::Error>* errorMap)
+\endlist
+
+The batch save and remove functions both take an (optional) pointer to a map of errors.  If the pointer is non-null,
+this map will be filled out with any errors which occur.  The overall operation error of any batch manipulation operation
+may be accessed by calling QContactManager::error() directly after the original synchronous call.
+
+The contact manipulation functionality is also provided via asynchronous API through the QContactFetchRequest,
+QContactSaveRequest, and QContactRemoveRequest classes.
+
+The "self" contact is a special concept, which has dedicated API.  A client may instruct any backend which supports the
+concept of a self contact that a particular, previously saved contact is the self contact.  Any backend which implements
+this functionality should report that it supports the QContactManager::SelfContact feature.
+
+The API which provides the self-contact functionality consists of:
+\list
+  \o setSelfContactId(const QContactLocalId& contactId)
+  \o selfContactId() const
+\endlist
+
+In order to unset the self contact, a client may either delete the contact which is currently set as the self contact,
+or set the self contact id to be the invalid, zero id (constructed via QContactLocalId(0)).
+The self-contact manipulation functionality is only available via the synchronous API.
+
+
+\section2 Relationship Manipulation
+
+Contacts may be related in various ways.  The contacts API allows clients to define relationships between contacts
+if the plugin providing the functionality supports such relationships.  Any plugin which supports relationships
+should report this functionality by reporting that it supports the QContactManager::Relationships feature.
+
+Some plugins support arbitrary relationship types.  Clients can define custom relationships between contacts saved
+in such plugins.  Any plugin which supports arbitrary relationship types should report this functionality by reporting
+that it supports the QContactManager::ArbitraryRelationshipTypes feature.
+
+The API which provides the relationship manipulation functionality consists of:
+\list
+  \o relationships(const QContactId& participantId, QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+  \o relationships(const QString& relationshipType = QString(), const QContactId& participantId = QContactId(), QContactRelationshipFilter::Role role = QContactRelationshipFilter::Either) const;
+  \o saveRelationship(QContactRelationship* relationship);
+  \o saveRelationships(QList<QContactRelationship>* relationships);
+  \o removeRelationship(const QContactRelationship& relationship);
+  \o removeRelationships(const QList<QContactRelationship>& relationships);
+\endlist
+
+The relationship manipulation functionality is also provided via asynchronous API through the QContactRelationshipFetchRequest,
+QContactRelationshipSaveRequest, and QContactRelationshipRemoveRequest classes.
+
+
+\section2 Schema Manipulation
+
+The schema supported by a plugin is the list of detail definitions which are supported by the plugin.
+A contact which contains a detail of a particular definition which is not supported by the plugin
+will fail to validate when the user attempts to save it in that manager.  The schema also includes
+any access constraints which may apply to certain details or detail definitions (for example,
+a particular detail definition might be declared to be unique per-contact in a particular manager).
+
+Every plugin will support a slightly different schema, as the schema which can be supported will depend
+on the semantics and limitations of the underlying storage platform on which the plugin is based.
+The default schema is described in the \l {Qt Contacts Schema}{Qt Mobility Contacts schema documentation},
+and plugins should attempt to implement that schema; however no guarantees are given to clients as to
+the conformance of the schemas supported by various plugins to the default schema.
+
+Some plugins support extensible detail types.  This means that third party developers can
+extend the schema of such plugins at run time (for example, to add a new field to a detail).
+Some plugins allow third party developers to define new detail types (that is, to
+add an entirely new detail type to the schema supported by that plugin).
+Plugins which support these types of operations must report to clients that they support the
+QContactManager::MutableDefinitions feature.
+
+The synchronous API offers several functions to retrieve or modify the schema supported by a plugin:
+\list
+  \o detailDefinitions(const QString& contactType = QContactType::TypeContact) const
+  \o detailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact) const
+  \o saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType = QContactType::TypeContact)
+  \o removeDetailDefinition(const QString& definitionName, const QString& contactType = QContactType::TypeContact)
+\endlist
+
+The schema manipulation functionality is also provided via asynchronous API through the
+QContactDetailDefinitionFetchRequest, QContactDetailDefinitionSaveRequest and QContactDetailDefinitionRemoveRequest
+classes.
+
+Note that the schema supported by a plugin may vary depending on the type of contact to which the schema applies.
+For example, a particular plugin might support name, address, phone number, email address, and gender details for
+normal contacts, but only name, address, and phone number details for a group contact.
+
+
+\section1 Examples Of Usage
+
+The synchronous API provides the simplest way to access or modify the
+contact information managed by a particular backend.  It has the
+disadvantage that calls block until completion and is therefore
+most suitable only for applications which interact with local, high-speed
+datastores.
+
+
+\section2 Saving a new contact to the default manager
+
+The client creates a new contact, adds a name and a phone number, and
+saves it to the default store of the default manager.
+
+We assume the existence of a specialized leaf-class that allows simple
+access to details of the definition identified by the "PhoneNumber"
+identifier, and another that allows simple access to details of the
+definition identified by the "Name" identifier.  These specialized leaf
+classes may be written by anyone, and simply wrap the functionality
+provided by QContactDetail in order to allow simpler access to fields
+supported by a particular definition.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Creating a new contact
+
+\section2 Filtering by detail definition and value
+
+The client utilizes a default manager and asks for any contacts with a
+particular phone number.  The example assumes that the default manager
+supports the provided QContactPhoneNumber detail leaf class (which
+implements the default definition for phone number details).
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Filtering by definition and value
+
+
+\section2 Installing a plugin that modifies the definition of one type of detail
+
+The client installs a plugin, which requires a new field to be added to
+details of the "EmailAddress" definition.  It loads the definition from the
+default manager, modifies it (by adding the new field - a label field), and
+saves it back.
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Installing a plugin which modifies a definition
+
+\section3 Modifying an existing contact and saving the modifications
+
+The client retrieves a contact, modifies one of its details, adds a new
+detail, and then saves the contact back to the manager.  Note that it uses
+the newly added field of the email address definition!
+
+    \snippet snippets/qtcontactsdocsample/qtcontactsdocsample.cpp Modifying an existing contact
+
+*/
+

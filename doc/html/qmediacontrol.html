@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediacontrol.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaControl Class Reference</title>
+  <title>Qt Mobility Project 1.1: QMediaControl Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -17,7 +17,7 @@
 <p>The QMediaControl class provides a base interface for media service controls. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
-<p>Inherited by <a href="qaudiodevicecontrol.html">QAudioDeviceControl</a>, <a href="qaudioencodercontrol.html">QAudioEncoderControl</a>, <a href="qcameracontrol.html">QCameraControl</a>, <a href="qcameraexposurecontrol.html">QCameraExposureControl</a>, <a href="qcamerafocuscontrol.html">QCameraFocusControl</a>, <a href="qimagecapturecontrol.html">QImageCaptureControl</a>, <a href="qimageencodercontrol.html">QImageEncoderControl</a>, <a href="qimageprocessingcontrol.html">QImageProcessingControl</a>, <a href="qmediaformatcontrol.html">QMediaFormatControl</a>, <a href="qmediaplayercontrol.html">QMediaPlayerControl</a>, <a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a>, <a href="qmediarecordercontrol.html">QMediaRecorderControl</a>, <a href="qmediastreamscontrol.html">QMediaStreamsControl</a>, <a href="qmetadatacontrol.html">QMetaDataControl</a>, <a href="qradiotunercontrol.html">QRadioTunerControl</a>, <a href="qvideodevicecontrol.html">QVideoDeviceControl</a>, <a href="qvideoencodercontrol.html">QVideoEncoderControl</a>, <a href="qvideooutputcontrol.html">QVideoOutputControl</a>, <a href="qvideorenderercontrol.html">QVideoRendererControl</a>, <a href="qvideowidgetcontrol.html">QVideoWidgetControl</a>, and <a href="qvideowindowcontrol.html">QVideoWindowControl</a>.</p>
+<p>Inherited by <a href="qaudioencodercontrol.html">QAudioEncoderControl</a>, <a href="qaudioendpointselector.html">QAudioEndpointSelector</a>, <a href="qimageencodercontrol.html">QImageEncoderControl</a>, <a href="qmediacontainercontrol.html">QMediaContainerControl</a>, <a href="qmediaplayercontrol.html">QMediaPlayerControl</a>, <a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a>, <a href="qmediaplaylistsourcecontrol.html">QMediaPlaylistSourceControl</a>, <a href="qmediarecordercontrol.html">QMediaRecorderControl</a>, <a href="qmediastreamscontrol.html">QMediaStreamsControl</a>, <a href="qmetadatareadercontrol.html">QMetaDataReaderControl</a>, <a href="qmetadatawritercontrol.html">QMetaDataWriterControl</a>, <a href="qradiotunercontrol.html">QRadioTunerControl</a>, <a href="qvideodevicecontrol.html">QVideoDeviceControl</a>, <a href="qvideoencodercontrol.html">QVideoEncoderControl</a>, <a href="qvideorenderercontrol.html">QVideoRendererControl</a>, <a href="qvideowidgetcontrol.html">QVideoWidgetControl</a>, and <a href="qvideowindowcontrol.html">QVideoWindowControl</a>.</p>
 <ul>
 <li><a href="qmediacontrol-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -59,12 +59,12 @@
 <h2>Detailed Description</h2>
 <p>The QMediaControl class provides a base interface for media service controls.</p>
 <p>Media controls provide an interface to individual features provided by a media service. Most services implement a principal control which exposes the core functionality of the service and a number optional controls which expose any additional functionality.</p>
-<p>A pointer to a control implemented by a media service can be obtained using the <a href="qmediaservice.html#control">control()</a> member of <a href="qmediaservice.html">QMediaService</a>. If the service doesn't implement a control it will instead return a null pointer.</p>
+<p>A pointer to a control implemented by a media service can be obtained using the <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() member of <a href="qmediaservice.html">QMediaService</a>. If the service doesn't implement a control it will instead return a null pointer.</p>
 <pre>    QMediaPlayerControl *control = qobject_cast&lt;QMediaPlayerControl *&gt;(
-            service-&gt;control(&quot;com.nokia.Qt.QMediaPlayerControl/1.0&quot;));</pre>
-<p>Alternatively if the IId of the control has been declared using Q_MEDIA_DECLARE_CONTROL the template version of <a href="qmediaservice.html#control">QMediaService::control</a>() can be used to request the service without explicitly passing the IId.</p>
-<pre>    QMediaPlayerControl *control = service-&gt;control&lt;QMediaPlayerControl *&gt;();</pre>
-<p>Most application code will not interface directly with a media service's controls, instead the <a href="qmediaobject.html">QMediaObject</a> which owns the service acts as an intermeditary between one or more controls and the application.</p>
+            service-&gt;requestControl(&quot;com.nokia.Qt.QMediaPlayerControl/1.0&quot;));</pre>
+<p>Alternatively if the IId of the control has been declared using Q_MEDIA_DECLARE_CONTROL the template version of <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() can be used to request the service without explicitly passing the IId.</p>
+<pre>    QMediaPlayerControl *control = service-&gt;requestControl&lt;QMediaPlayerControl *&gt;();</pre>
+<p>Most application code will not interface directly with a media service's controls, instead the <a href="qmediaobject.html">QMediaObject</a> which owns the service acts as an intermediary between one or more controls and the application.</p>
 <p>See also <a href="qmediaservice.html">QMediaService</a> and <a href="qmediaobject.html">QMediaObject</a>.</p>
 <hr />
 <h2>Member Function Documentation</h2>
@@ -79,13 +79,13 @@
 <a name="//apple_ref/cpp/macro//Q_MEDIA_DECLARE_CONTROL"></a>
 <h3 class="fn"><a name="Q_MEDIA_DECLARE_CONTROL"></a>Q_MEDIA_DECLARE_CONTROL (  <i>Class</i>,  <i>IId</i> )</h3>
 <p>The Q_MEDIA_DECLARE_CONTROL macro declares an <i>IId</i> for a <i>Class</i> that inherits from <a href="qmediacontrol.html">QMediaControl</a>.</p>
-<p>Declaring an IId for a <a href="qmediacontrol.html">QMediaControl</a> allows an instance of that control to be requested from <a href="qmediaservice.html#control">QMediaService::control</a>() without explicitly passing the IId.</p>
+<p>Declaring an IId for a <a href="qmediacontrol.html">QMediaControl</a> allows an instance of that control to be requested from <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() without explicitly passing the IId.</p>
 <pre>    QMediaPlayerControl *control = service-&gt;control&lt;QMediaPlayerControl *&gt;();</pre>
-<p>See also <a href="qmediaservice.html#control">QMediaService::control</a>().</p>
+<p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

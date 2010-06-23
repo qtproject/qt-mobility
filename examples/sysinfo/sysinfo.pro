@@ -1,6 +1,6 @@
 QT       += network
 
-TARGET = sysinfo
+TARGET = qsysinfo
 TEMPLATE = app
 
 
@@ -8,6 +8,7 @@ SOURCES += main.cpp\
         dialog.cpp
 
 HEADERS  += dialog.h
+RESOURCES = examples.qrc
 
 INCLUDEPATH += ../../src/systeminfo
 
@@ -23,7 +24,11 @@ win32 {
 
 unix: {
     linux-*: {
-        FORMS += dialog.ui
+        maemo* {
+            FORMS += dialog_landscape.ui
+        } else {
+            FORMS += dialog.ui
+        }
     }
     
     mac: {
@@ -32,7 +37,7 @@ unix: {
 }
 
 symbian {
-    TARGET.CAPABILITY = ALL -TCB
+    TARGET.CAPABILITY = LocalServices NetworkServices ReadUserData UserEnvironment Location  ReadDeviceData
     TARGET.UID3 = 0x2002ac7e
     FORMS    += dialog_s60.ui
 }

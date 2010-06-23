@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaplaylist.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaPlaylist Class Reference</title>
+  <title>Qt Mobility Project 1.1: QMediaPlaylist Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -16,7 +16,7 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlaylist Class Reference</h1>
 <p>The QMediaPlaylist class provides a list of media content to play. <a href="#details">More...</a></p>
 <pre>    #include &lt;QMediaPlaylist&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
-<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a>.</p>
+<p>Inherits <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> and <a href="qmediabindableinterface.html">QMediaBindableInterface</a>.</p>
 <ul>
 <li><a href="qmediaplaylist-members.html">List of all members, including inherited members</a></li>
 </ul>
@@ -25,14 +25,14 @@
 <h2>Public Types</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#Error-enum">Error</a></b> { NoError, FormatError, FormatNotSupportedError, NetworkError, AccessDeniedError }</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#PlaybackMode-enum">PlaybackMode</a></b> { CurrentItemOnce, CurrentItemInLoop, Linear, Loop, Random }</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#PlaybackMode-enum">PlaybackMode</a></b> { CurrentItemOnce, CurrentItemInLoop, Sequential, Loop, Random }</td></tr>
 </table>
 <hr />
 <a name="properties"></a>
 <h2>Properties</h2>
 <ul>
+<li><div class="fn"><b><a href="qmediaplaylist.html#currentIndex-prop">currentIndex</a></b> : int</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#currentMedia-prop">currentMedia</a></b> : const QMediaContent</div></li>
-<li><div class="fn"><b><a href="qmediaplaylist.html#currentPosition-prop">currentPosition</a></b> : int</div></li>
 <li><div class="fn"><b><a href="qmediaplaylist.html#playbackMode-prop">playbackMode</a></b> : QMediaPlaylist::PlaybackMode</div></li>
 </ul>
 <ul>
@@ -42,34 +42,41 @@
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QMediaObject * <i>mediaObject</i> = 0, QObject * <i>parent</i> = 0 )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#QMediaPlaylist">QMediaPlaylist</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#dtor.QMediaPlaylist">~QMediaPlaylist</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#appendItem">appendItem</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#appendItems">appendItems</a></b> ( const QList&lt;QMediaContent&gt; &amp; <i>items</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#addMedia">addMedia</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#addMedia-2">addMedia</a></b> ( const QList&lt;QMediaContent&gt; &amp; <i>items</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#clear">clear</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentIndex-prop">currentIndex</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentMedia-prop">currentMedia</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentPosition-prop">currentPosition</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">Error </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#error">error</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#errorString">errorString</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insertItem">insertItem</a></b> ( int <i>pos</i>, const QMediaContent &amp; <i>content</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insertItems">insertItems</a></b> ( int <i>pos</i>, const QList&lt;QMediaContent&gt; &amp; <i>items</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insertMedia">insertMedia</a></b> ( int <i>pos</i>, const QMediaContent &amp; <i>content</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#insertMedia-2">insertMedia</a></b> ( int <i>pos</i>, const QList&lt;QMediaContent&gt; &amp; <i>items</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#isEmpty">isEmpty</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#isReadOnly">isReadOnly</a></b> () const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#load">load</a></b> ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#load-2">load</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> = 0 )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#media">media</a></b> ( int <i>position</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#nextPosition">nextPosition</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QMediaContent </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#media">media</a></b> ( int <i>index</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#mediaCount">mediaCount</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#nextIndex">nextIndex</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">PlaybackMode </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#playbackMode-prop">playbackMode</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#previousPosition">previousPosition</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#removeItem">removeItem</a></b> ( int <i>pos</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#removeItems">removeItems</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#previousIndex">previousIndex</a></b> ( int <i>steps</i> = 1 ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#removeMedia">removeMedia</a></b> ( int <i>pos</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#removeMedia-2">removeMedia</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#save">save</a></b> ( const QUrl &amp; <i>location</i>, const char * <i>format</i> = 0 )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#save-2">save</a></b> ( QIODevice * <i>device</i>, const char * <i>format</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#playbackMode-prop">setPlaybackMode</a></b> ( PlaybackMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#size">size</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaObject * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#mediaObject">mediaObject</a></b> () const</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 public function inherited from <a href="qmediabindableinterface.html#public-functions">QMediaBindableInterface</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
@@ -77,7 +84,7 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#next">next</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#previous">previous</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentPosition-prop">setCurrentPosition</a></b> ( int <i>playlistPosition</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentIndex-prop">setCurrentIndex</a></b> ( int <i>playlistPosition</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#shuffle">shuffle</a></b> ()</td></tr>
 </table>
 <ul>
@@ -87,16 +94,16 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsAboutToBeInserted">itemsAboutToBeInserted</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsAboutToBeRemoved">itemsAboutToBeRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsChanged">itemsChanged</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsInserted">itemsInserted</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#itemsRemoved">itemsRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#loadFailed">loadFailed</a></b> ()</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#loaded">loaded</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#mediaAboutToBeInserted">mediaAboutToBeInserted</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#mediaAboutToBeRemoved">mediaAboutToBeRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#mediaChanged">mediaChanged</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#mediaInserted">mediaInserted</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#mediaRemoved">mediaRemoved</a></b> ( int <i>start</i>, int <i>end</i> )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#playlistPositionChanged">playlistPositionChanged</a></b> ( int <i>position</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
@@ -106,24 +113,28 @@
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
 <li><div class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div class="fn"></div>1 protected function inherited from <a href="qmediabindableinterface.html#protected-functions">QMediaBindableInterface</a></li>
 <li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
 <p>The QMediaPlaylist class provides a list of media content to play.</p>
-<p>QMediaPlaylist is intended to be used with other media objects, like <a href="qmediaplayer.html">QMediaPlayer</a> or <a href="qmediaimageviewer.html">QMediaImageViewer</a>. QMediaPlaylist allows to access the service intrinsic playlist functionality if available, otherwise it provides the the local memory playlist implementation.</p>
+<p>QMediaPlaylist is intended to be used with other media objects, like <a href="qmediaplayer.html">QMediaPlayer</a> or <a href="qmediaimageviewer.html">QMediaImageViewer</a>.</p>
+<p>QMediaPlaylist allows to access the service intrinsic playlist functionality if available, otherwise it provides the the local memory playlist implementation.</p>
 <pre>    player = new QMediaPlayer;
 
-    playlist = new QMediaPlaylist(player);
+    playlist = new QMediaPlaylist;
     playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie1.mp4&quot;));</span>
     playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie2.mp4&quot;));</span>
     playlist-&gt;append(QUrl(&quot;http:<span class="comment">//example.com/movie3.mp4&quot;));</span>
 
-    playlist-&gt;setCurrentPosition(1);
+    playlist-&gt;setCurrentIndex(1);
+
+    player-&gt;setPlaylist(playlist);
 
     player-&gt;play();</pre>
-<p>Depending on playlist source implementation, most of playlist modifcation operations can be asynchronous.</p>
+<p>Depending on playlist source implementation, most of the playlist mutating operations can be asynchronous.</p>
 <p>See also <a href="qmediacontent.html">QMediaContent</a>.</p>
 <hr />
 <h2>Member Type Documentation</h2>
@@ -146,7 +157,7 @@
 <a name="//apple_ref/cpp/tag/QMediaPlaylist/PlaybackMode"></a>
 <a name="//apple_ref/cpp/econst/QMediaPlaylist/CurrentItemOnce"></a>
 <a name="//apple_ref/cpp/econst/QMediaPlaylist/CurrentItemInLoop"></a>
-<a name="//apple_ref/cpp/econst/QMediaPlaylist/Linear"></a>
+<a name="//apple_ref/cpp/econst/QMediaPlaylist/Sequential"></a>
 <a name="//apple_ref/cpp/econst/QMediaPlaylist/Loop"></a>
 <a name="//apple_ref/cpp/econst/QMediaPlaylist/Random"></a>
 <h3 class="fn"><a name="PlaybackMode-enum"></a>enum QMediaPlaylist::PlaybackMode</h3>
@@ -154,13 +165,27 @@
 <p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
 <tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
 <tr><td valign="top"><tt>QMediaPlaylist::CurrentItemOnce</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">The current item is played only once.</td></tr>
-<tr><td valign="top"><tt>QMediaPlaylist::CurrentItemInLoop</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The current item is played in the loop.</td></tr>
-<tr><td valign="top"><tt>QMediaPlaylist::Linear</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Playback starts from the first to the last items and stops. next item is a null item when the last one is currently playing.</td></tr>
-<tr><td valign="top"><tt>QMediaPlaylist::Loop</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Playback continues from the first item after the last one finished playing.</td></tr>
+<tr><td valign="top"><tt>QMediaPlaylist::CurrentItemInLoop</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">The current item is played repeatedly in a loop.</td></tr>
+<tr><td valign="top"><tt>QMediaPlaylist::Sequential</tt></td><td align="center" valign="top"><tt>2</tt></td><td valign="top">Playback starts from the current and moves through each successive item until the last is reached and then stops. The next item is a null item when the last one is currently playing.</td></tr>
+<tr><td valign="top"><tt>QMediaPlaylist::Loop</tt></td><td align="center" valign="top"><tt>3</tt></td><td valign="top">Playback restarts at the first item after the last has finished playing.</td></tr>
 <tr><td valign="top"><tt>QMediaPlaylist::Random</tt></td><td align="center" valign="top"><tt>4</tt></td><td valign="top">Play items in random order.</td></tr>
 </table></p>
 <hr />
 <h2>Property Documentation</h2>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/currentIndex"></a>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/setCurrentIndex"></a>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/currentIndexChanged"></a>
+<h3 class="fn"><a name="currentIndex-prop"></a>currentIndex : int</h3>
+<p>This property holds current position.</p>
+<p><b>Access functions:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>currentIndex</b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setCurrentIndex</b> ( int <i>playlistPosition</i> )</td></tr>
+</table>
+<p><b>Notifier signal:</b></p>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
+</table>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/currentMedia"></a>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/currentMediaChanged"></a>
 <h3 class="fn"><a name="currentMedia-prop"></a>currentMedia : const <a href="qmediacontent.html">QMediaContent</a></h3>
@@ -172,20 +197,6 @@
 <p><b>Notifier signal:</b></p>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
-</table>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/currentPosition"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/setCurrentPosition"></a>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/playlistPositionChanged"></a>
-<h3 class="fn"><a name="currentPosition-prop"></a>currentPosition : int</h3>
-<p>This property holds current position.</p>
-<p><b>Access functions:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b>currentPosition</b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b>setCurrentPosition</b> ( int <i>playlistPosition</i> )</td></tr>
-</table>
-<p><b>Notifier signal:</b></p>
-<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylist.html#playlistPositionChanged">playlistPositionChanged</a></b> ( int <i>position</i> )</td></tr>
 </table>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/playbackMode"></a>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/setPlaybackMode"></a>
@@ -205,23 +216,25 @@
 <hr />
 <h2>Member Function Documentation</h2>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/QMediaPlaylist"></a>
-<h3 class="fn"><a name="QMediaPlaylist"></a>QMediaPlaylist::QMediaPlaylist ( <a href="qmediaobject.html">QMediaObject</a> * <i>mediaObject</i> = 0, <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
-<p>Create a new playlist object for with the given <i>parent</i>. If <i>mediaObject</i> is null or doesn't have an intrinsic playlist, internal local memory playlist source will be created.</p>
+<h3 class="fn"><a name="QMediaPlaylist"></a>QMediaPlaylist::QMediaPlaylist ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )</h3>
+<p>Create a new playlist object for with the given <i>parent</i>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/~QMediaPlaylist"></a>
 <h3 class="fn"><a name="dtor.QMediaPlaylist"></a>QMediaPlaylist::~QMediaPlaylist ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the playlist.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/appendItem"></a>
-<h3 class="fn"><a name="appendItem"></a>bool QMediaPlaylist::appendItem ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/addMedia"></a>
+<h3 class="fn"><a name="addMedia"></a>bool QMediaPlaylist::addMedia ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>
 <p>Append the media <i>content</i> to the playlist.</p>
-<p>Returns true if the operation is successfull, other wise return false.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/appendItems"></a>
-<h3 class="fn"><a name="appendItems"></a>bool QMediaPlaylist::appendItems ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3>
+<p>Returns true if the operation is successful, otherwise return false.</p>
+<h3 class="fn"><a name="addMedia-2"></a>bool QMediaPlaylist::addMedia ( const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3>
 <p>Append multiple media content <i>items</i> to the playlist.</p>
-<p>Returns true if the operation is successfull, other wise return false.</p>
+<p>Returns true if the operation is successful, otherwise return false.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/clear"></a>
 <h3 class="fn"><a name="clear"></a>bool QMediaPlaylist::clear ()</h3>
 <p>Remove all the items from the playlist.</p>
-<p>Returns true if the operation is successfull, other wise return false.</p>
+<p>Returns true if the operation is successful, otherwise return false.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/currentIndexChanged"></a>
+<h3 class="fn"><a name="currentIndexChanged"></a>void QMediaPlaylist::currentIndexChanged ( int <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when playlist position changed to <i>position</i>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/currentMediaChanged"></a>
 <h3 class="fn"><a name="currentMediaChanged"></a>void QMediaPlaylist::currentMediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when current media changes to <i>content</i>.</p>
@@ -231,46 +244,30 @@
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/errorString"></a>
 <h3 class="fn"><a name="errorString"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QMediaPlaylist::errorString () const</h3>
 <p>Returns the string describing the last error condition.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/insertItem"></a>
-<h3 class="fn"><a name="insertItem"></a>bool QMediaPlaylist::insertItem ( int <i>pos</i>, const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/insertMedia"></a>
+<h3 class="fn"><a name="insertMedia"></a>bool QMediaPlaylist::insertMedia ( int <i>pos</i>, const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )</h3>
 <p>Insert the media <i>content</i> to the playlist at position <i>pos</i>.</p>
 <p>Returns true if the operation is successful, otherwise false.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/insertItems"></a>
-<h3 class="fn"><a name="insertItems"></a>bool QMediaPlaylist::insertItems ( int <i>pos</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3>
+<h3 class="fn"><a name="insertMedia-2"></a>bool QMediaPlaylist::insertMedia ( int <i>pos</i>, const <a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="qmediacontent.html">QMediaContent</a>&gt; &amp; <i>items</i> )</h3>
 <p>Insert multiple media content <i>items</i> to the playlist at position <i>pos</i>.</p>
 <p>Returns true if the operation is successful, otherwise false.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/isEmpty"></a>
 <h3 class="fn"><a name="isEmpty"></a>bool QMediaPlaylist::isEmpty () const</h3>
 <p>Returns true if the playlist contains no items; otherwise returns false.</p>
-<p>See also <a href="qmediaplaylist.html#size">size</a>().</p>
+<p>See also <a href="http://qt.nokia.com/doc/4.6/basicqmltypes.html">size</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/isReadOnly"></a>
 <h3 class="fn"><a name="isReadOnly"></a>bool QMediaPlaylist::isReadOnly () const</h3>
 <p>Returns true if the playlist can be modified; otherwise returns false.</p>
-<p>See also <a href="qmediaplaylist.html#size">size</a>().</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/itemsAboutToBeInserted"></a>
-<h3 class="fn"><a name="itemsAboutToBeInserted"></a>void QMediaPlaylist::itemsAboutToBeInserted ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when item to be inserted at <i>start</i> and ending at <i>end</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/itemsAboutToBeRemoved"></a>
-<h3 class="fn"><a name="itemsAboutToBeRemoved"></a>void QMediaPlaylist::itemsAboutToBeRemoved ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when item to de deleted ar <i>start</i> and ending at <i>end</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/itemsChanged"></a>
-<h3 class="fn"><a name="itemsChanged"></a>void QMediaPlaylist::itemsChanged ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted after media has been changed in the playlist between <i>start</i> and <i>end</i> positions inclusive.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/itemsInserted"></a>
-<h3 class="fn"><a name="itemsInserted"></a>void QMediaPlaylist::itemsInserted ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted after media has been inserted into the playlist. The new items are those between <i>start</i> and <i>end</i> inclusive.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/itemsRemoved"></a>
-<h3 class="fn"><a name="itemsRemoved"></a>void QMediaPlaylist::itemsRemoved ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>This signal is emitted after media has been removed from the playlist. The removed items are those between <i>start</i> and <i>end</i> inclusive.</p>
+<p>See also <a href="http://qt.nokia.com/doc/4.6/basicqmltypes.html">size</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/load"></a>
 <h3 class="fn"><a name="load"></a>void QMediaPlaylist::load ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3>
 <p>Load playlist from <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name and data.</p>
 <p>New items are appended to playlist.</p>
-<p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
+<p><a href="qmediaplaylist.html#loaded">QMediaPlaylist::loaded</a>() signal is emitted if playlist was loaded successfully, otherwise the playlist emits <a href="qmediaplaylist.html#loadFailed">loadFailed</a>().</p>
 <h3 class="fn"><a name="load-2"></a>void QMediaPlaylist::load ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const char * <i>format</i> = 0 )</h3>
 <p>Load playlist from <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> <i>device</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from device data.</p>
 <p>New items are appended to playlist.</p>
-<p>Returns true if playlist was loaded succesfully, otherwise returns false.</p>
+<p><a href="qmediaplaylist.html#loaded">QMediaPlaylist::loaded</a>() signal is emitted if playlist was loaded successfully, otherwise the playlist emits <a href="qmediaplaylist.html#loadFailed">loadFailed</a>().</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/loadFailed"></a>
 <h3 class="fn"><a name="loadFailed"></a>void QMediaPlaylist::loadFailed ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted if failed to load playlist.</p>
@@ -278,55 +275,70 @@
 <h3 class="fn"><a name="loaded"></a>void QMediaPlaylist::loaded ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when playlist finished loading.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/media"></a>
-<h3 class="fn"><a name="media"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylist::media ( int <i>position</i> ) const</h3>
-<p>Returns the media content at index <i>position</i> in the playlist.</p>
+<h3 class="fn"><a name="media"></a><a href="qmediacontent.html">QMediaContent</a> QMediaPlaylist::media ( int <i>index</i> ) const</h3>
+<p>Returns the media content at <i>index</i> in the playlist.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/mediaAboutToBeInserted"></a>
+<h3 class="fn"><a name="mediaAboutToBeInserted"></a>void QMediaPlaylist::mediaAboutToBeInserted ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when items are to be inserted at <i>start</i> and ending at <i>end</i>.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/mediaAboutToBeRemoved"></a>
+<h3 class="fn"><a name="mediaAboutToBeRemoved"></a>void QMediaPlaylist::mediaAboutToBeRemoved ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when item are to be deleted at <i>start</i> and ending at <i>end</i>.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/mediaChanged"></a>
+<h3 class="fn"><a name="mediaChanged"></a>void QMediaPlaylist::mediaChanged ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted after media has been changed in the playlist between <i>start</i> and <i>end</i> positions inclusive.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/mediaCount"></a>
+<h3 class="fn"><a name="mediaCount"></a>int QMediaPlaylist::mediaCount () const</h3>
+<p>Returns the number of items in the playlist.</p>
+<p>See also <a href="qmediaplaylist.html#isEmpty">isEmpty</a>().</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/mediaInserted"></a>
+<h3 class="fn"><a name="mediaInserted"></a>void QMediaPlaylist::mediaInserted ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted after media has been inserted into the playlist. The new items are those between <i>start</i> and <i>end</i> inclusive.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/mediaObject"></a>
+<h3 class="fn"><a name="mediaObject"></a><a href="qmediaobject.html">QMediaObject</a> * QMediaPlaylist::mediaObject () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediabindableinterface.html#mediaObject">QMediaBindableInterface::mediaObject</a>().</p>
+<p>Returns the <a href="qmediaobject.html">QMediaObject</a> instance that this <a href="qmediaplaylist.html">QMediaPlaylist</a> is bound too, or 0 otherwise.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/mediaRemoved"></a>
+<h3 class="fn"><a name="mediaRemoved"></a>void QMediaPlaylist::mediaRemoved ( int <i>start</i>, int <i>end</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>This signal is emitted after media has been removed from the playlist. The removed items are those between <i>start</i> and <i>end</i> inclusive.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/next"></a>
 <h3 class="fn"><a name="next"></a>void QMediaPlaylist::next ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Advance to the next media content in playlist.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/nextPosition"></a>
-<h3 class="fn"><a name="nextPosition"></a>int QMediaPlaylist::nextPosition ( int <i>steps</i> = 1 ) const</h3>
-<p>Returns the position of item, which were current after calling <a href="qmediaplaylist.html#next">next</a>() <i>steps</i> times.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/nextIndex"></a>
+<h3 class="fn"><a name="nextIndex"></a>int QMediaPlaylist::nextIndex ( int <i>steps</i> = 1 ) const</h3>
+<p>Returns the index of the item, which would be current after calling <a href="qmediaplaylist.html#next">next</a>() <i>steps</i> times.</p>
 <p>Returned value depends on the size of playlist, current position and playback mode.</p>
 <p>See also <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/playbackModeChanged"></a>
 <h3 class="fn"><a name="playbackModeChanged"></a>void QMediaPlaylist::playbackModeChanged ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when playback mode changed to <i>mode</i>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/playlistPositionChanged"></a>
-<h3 class="fn"><a name="playlistPositionChanged"></a>void QMediaPlaylist::playlistPositionChanged ( int <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when playlist position changed to <i>position</i>.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/previous"></a>
 <h3 class="fn"><a name="previous"></a>void QMediaPlaylist::previous ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Return to the previous media content in playlist.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/previousPosition"></a>
-<h3 class="fn"><a name="previousPosition"></a>int QMediaPlaylist::previousPosition ( int <i>steps</i> = 1 ) const</h3>
-<p>Returns the position of item, which were current after calling <a href="qmediaplaylist.html#previous">previous</a>() <i>steps</i> times.</p>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/previousIndex"></a>
+<h3 class="fn"><a name="previousIndex"></a>int QMediaPlaylist::previousIndex ( int <i>steps</i> = 1 ) const</h3>
+<p>Returns the index of the item, which would be current after calling <a href="qmediaplaylist.html#previous">previous</a>() <i>steps</i> times.</p>
 <p>See also <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/removeItem"></a>
-<h3 class="fn"><a name="removeItem"></a>bool QMediaPlaylist::removeItem ( int <i>pos</i> )</h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylist/removeMedia"></a>
+<h3 class="fn"><a name="removeMedia"></a>bool QMediaPlaylist::removeMedia ( int <i>pos</i> )</h3>
 <p>Remove the item from the playlist at position <i>pos</i>.</p>
-<p>Returns true if the operation is successfull, other wise return false.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/removeItems"></a>
-<h3 class="fn"><a name="removeItems"></a>bool QMediaPlaylist::removeItems ( int <i>start</i>, int <i>end</i> )</h3>
-<p>Remove the items from the playlist from position <i>start</i> to <i>end</i> inclusive.</p>
-<p>Returns true if the operation is successfull, other wise return false.</p>
+<p>Returns true if the operation is successful, otherwise return false.</p>
+<h3 class="fn"><a name="removeMedia-2"></a>bool QMediaPlaylist::removeMedia ( int <i>start</i>, int <i>end</i> )</h3>
+<p>Remove items in the playlist from <i>start</i> to <i>end</i> inclusive.</p>
+<p>Returns true if the operation is successful, otherwise return false.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/save"></a>
 <h3 class="fn"><a name="save"></a>bool QMediaPlaylist::save ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i>, const char * <i>format</i> = 0 )</h3>
 <p>Save playlist to <i>location</i>. If <i>format</i> is specified, it is used, otherwise format is guessed from location name.</p>
-<p>Returns true if playlist was saved succesfully, otherwise returns false.</p>
+<p>Returns true if playlist was saved successfully, otherwise returns false.</p>
 <h3 class="fn"><a name="save-2"></a>bool QMediaPlaylist::save ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const char * <i>format</i> )</h3>
 <p>Save playlist to <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> <i>device</i> using format <i>format</i>.</p>
-<p>Returns true if playlist was saved succesfully, otherwise returns false.</p>
+<p>Returns true if playlist was saved successfully, otherwise returns false.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylist/shuffle"></a>
 <h3 class="fn"><a name="shuffle"></a>void QMediaPlaylist::shuffle ()&nbsp;&nbsp;<tt> [slot]</tt></h3>
 <p>Shuffle items in the playlist.</p>
-<a name="//apple_ref/cpp/instm/QMediaPlaylist/size"></a>
-<h3 class="fn"><a name="size"></a>int QMediaPlaylist::size () const</h3>
-<p>Returns the number of items in the playlist.</p>
-<p>See also <a href="qmediaplaylist.html#isEmpty">isEmpty</a>().</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

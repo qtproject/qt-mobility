@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,18 +55,17 @@ class Q_CONTACTS_EXPORT QContactUrl : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldUrl;
-    const char* FieldSubType;
-    const char* SubTypeHomePage;
-    const char* SubTypeFavourite;
-    const char* SubTypeSocialNetworking;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldUrl;
+    static const QLatin1Constant FieldSubType;
+    static const QLatin1Constant SubTypeHomePage;
+    static const QLatin1Constant SubTypeFavourite;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactUrl, "Url")
-    Q_DECLARE_LATIN1_LITERAL(FieldUrl, "Url");
-    Q_DECLARE_LATIN1_LITERAL(FieldSubType, "SubType");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeHomePage, "HomePage");
-    Q_DECLARE_LATIN1_LITERAL(SubTypeFavourite, "Favourite");
+    Q_DECLARE_LATIN1_CONSTANT(FieldUrl, "Url");
+    Q_DECLARE_LATIN1_CONSTANT(FieldSubType, "SubType");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeHomePage, "HomePage");
+    Q_DECLARE_LATIN1_CONSTANT(SubTypeFavourite, "Favourite");
 #endif
 
     void setUrl(const QString& url) {setValue(FieldUrl, url);}

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -75,6 +75,7 @@
 QTM_BEGIN_NAMESPACE
 
 class QContactAbstractRequest;
+class QContactManagerEngine;
 class QContactMemoryEngineData : public QSharedData
 {
 public:
@@ -83,8 +84,7 @@ public:
         m_refCount(QAtomicInt(1)),
         m_selfContactId(0),
         m_nextContactId(1),
-        m_anonymous(false),
-        m_engineVersion(0)
+        m_anonymous(false)
     {
     }
 
@@ -93,8 +93,7 @@ public:
         m_refCount(QAtomicInt(1)),
         m_selfContactId(other.m_selfContactId),
         m_nextContactId(other.m_nextContactId),
-        m_anonymous(other.m_anonymous),
-        m_engineVersion(0)
+        m_anonymous(other.m_anonymous)
     {
     }
 
@@ -112,85 +111,115 @@ public:
     QMap<QContactLocalId, QList<QContactRelationship> > m_orderedRelationships; // map of ordered lists of contact relationships
     QList<QString> m_definitionIds;                // list of definition types (id's)
     mutable QMap<QString, QMap<QString, QContactDetailDefinition> > m_definitions; // map of contact type to map of definition name to definitions.
-    mutable QMap<QString, QSet<QString> > m_createOnlyIds; // a list of create only definitions for each contact type
     QContactLocalId m_nextContactId;
     bool m_anonymous;                              // Is this backend ever shared?
-    QString m_engineName;                          // name of this engine as supplied by factory (memory)
-    int m_engineVersion;                           // version of this engine as supplied by factory
 
-    QQueue<QContactAbstractRequest*> m_asynchronousOperations; // async requests to be performed.
+    void emitSharedSignals(QContactChangeSet* cs)
+    {
+        foreach(QContactManagerEngine* engine, m_sharedEngines)
+            cs->emitSignals(engine);
+    }
+
+    QList<QContactManagerEngine*> m_sharedEngines;   // The list of engines that share this data
 };
 
-class Q_CONTACTS_EXPORT QContactMemoryEngine : public QContactManagerEngine
+class QContactMemoryEngine : public QContactManagerEngine
 {
     Q_OBJECT
 
 public:
-    using QContactManagerEngine::contacts;
-
     static QContactMemoryEngine *createMemoryEngine(const QMap<QString, QString>& parameters);
-    void deref();
+
+    ~QContactMemoryEngine();
 
     /* URI reporting */
     QString managerName() const;
     QMap<QString, QString> managerParameters() const;
+    /*! \reimp */
+    int managerVersion() const {return 1;}
+
+    virtual QList<QContactLocalId> contactIds(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, QContactManager::Error* error) const;
+    virtual QList<QContact> contacts(const QContactFilter& filter, const QList<QContactSortOrder>& sortOrders, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+    virtual QContact contact(const QContactLocalId& contactId, const QContactFetchHint& fetchHint, QContactManager::Error* error) const;
+
+    virtual bool saveContacts(QList<QContact>* contacts, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+    virtual bool removeContacts(const QList<QContactLocalId>& contactIds, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+
+    /*! \reimp */
+    virtual QContact compatibleContact(const QContact& original, QContactManager::Error* error) const
+    {
+        return QContactManagerEngine::compatibleContact(original, error);
+    }
+
+    /*! \reimp */
+    virtual QString synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
+    {
+        return QContactManagerEngine::synthesizedDisplayLabel(contact, error);
+    }
 
     /* "Self" contact id (MyCard) */
-    bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error& error);
-    QContactLocalId selfContactId(QContactManager::Error& error) const;
+    virtual bool setSelfContactId(const QContactLocalId& contactId, QContactManager::Error* error);
+    virtual QContactLocalId selfContactId(QContactManager::Error* error) const;
 
-    /* Contacts - Accessors and Mutators */
-    QList<QContactLocalId> contacts(const QList<QContactSortOrder>& sortOrders, QContactManager::Error& error) const;
-    QContact contact(const QContactLocalId& contactId, QContactManager::Error& error) const;
-    QList<QContactManager::Error> saveContacts(QList<QContact>* contacts, QContactManager::Error& error);
-    bool saveContact(QContact* contact, QContactManager::Error& error);
-    QList<QContactManager::Error> removeContacts(QList<QContactLocalId>* contactIds, QContactManager::Error& error);
-    bool removeContact(const QContactLocalId& contactId, QContactManager::Error& error);
+    /* Relationships between contacts */
+    virtual QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationship::Role role, QContactManager::Error* error) const;
+    virtual bool saveRelationships(QList<QContactRelationship>* relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
+    virtual bool removeRelationships(const QList<QContactRelationship>& relationships, QMap<int, QContactManager::Error>* errorMap, QContactManager::Error* error);
 
-    /* Relationships - Accessors and Mutators */
-    QList<QContactRelationship> relationships(const QString& relationshipType, const QContactId& participantId, QContactRelationshipFilter::Role role, QContactManager::Error& error) const;
-    bool saveRelationship(QContactRelationship* relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> saveRelationships(QList<QContactRelationship>* relationships, QContactManager::Error& error);
-    bool removeRelationship(const QContactRelationship& relationship, QContactManager::Error& error);
-    QList<QContactManager::Error> removeRelationships(const QList<QContactRelationship>& relationships, QContactManager::Error& error);
+    /*! \reimp */
+    virtual bool validateContact(const QContact& contact, QContactManager::Error* error) const
+    {
+        return QContactManagerEngine::validateContact(contact, error);
+    }
+    /*! \reimp */
+    virtual bool validateDefinition(const QContactDetailDefinition& def, QContactManager::Error* error) const
+    {
+        return QContactManagerEngine::validateDefinition(def, error);
+    }
 
     /* Definitions - Accessors and Mutators */
-    QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error& error) const;
-    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error& error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error& error);
+    virtual QMap<QString, QContactDetailDefinition> detailDefinitions(const QString& contactType, QContactManager::Error* error) const;
+    /*! \reimp */
+    virtual QContactDetailDefinition detailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error) const
+    {
+        return QContactManagerEngine::detailDefinition(definitionId, contactType, error);
+    }
+    virtual bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactManager::Error* error);
+    virtual bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactManager::Error* error);
 
     /* Asynchronous Request Support */
-    void requestDestroyed(QContactAbstractRequest* req);
-    bool startRequest(QContactAbstractRequest* req);
-    bool cancelRequest(QContactAbstractRequest* req);
-    bool waitForRequestProgress(QContactAbstractRequest* req, int msecs);
-    bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
+    virtual void requestDestroyed(QContactAbstractRequest* req);
+    virtual bool startRequest(QContactAbstractRequest* req);
+    virtual bool cancelRequest(QContactAbstractRequest* req);
+    virtual bool waitForRequestFinished(QContactAbstractRequest* req, int msecs);
 
     /* Capabilities reporting */
-    bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
-    bool filterSupported(const QContactFilter& filter) const;
-    QList<QVariant::Type> supportedDataTypes() const;
-
-    /* Version Reporting */
-    int implementationVersion() const;
+    virtual bool hasFeature(QContactManager::ManagerFeature feature, const QString& contactType) const;
+    virtual bool isRelationshipTypeSupported(const QString& relationshipType, const QString& contactType) const;
+    virtual bool isFilterSupported(const QContactFilter& filter) const;
+    virtual QList<QVariant::Type> supportedDataTypes() const;
+    /*! \reimp */
+    virtual QStringList supportedContactTypes() const
+    {
+        return QContactManagerEngine::supportedContactTypes();
+    }
 
 protected:
-    QContactMemoryEngine(const QMap<QString, QString>& parameters);
-
-private slots:
-    void performAsynchronousOperation();
+    QContactMemoryEngine(QContactMemoryEngineData* data);
 
 private:
     /* Implement "signal coalescing" for batch functions via change set */
-    bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error& error);
-    bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error& error);
+    bool saveContact(QContact* theContact, QContactChangeSet& changeSet, QContactManager::Error* error);
+    bool removeContact(const QContactLocalId& contactId, QContactChangeSet& changeSet, QContactManager::Error* error);
+    bool saveDetailDefinition(const QContactDetailDefinition& def, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error);
+    bool removeDetailDefinition(const QString& definitionId, const QString& contactType, QContactChangeSet& changeSet, QContactManager::Error* error);
+    bool saveRelationship(QContactRelationship* relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
+    bool removeRelationship(const QContactRelationship& relationship, QContactChangeSet& changeSet, QContactManager::Error* error);
+
+    void performAsynchronousOperation(QContactAbstractRequest* request);
 
     QContactMemoryEngineData* d;
-    static QMap<QString, QContactMemoryEngine*> engines;
+    static QMap<QString, QContactMemoryEngineData*> engineDatas;
 };
 
 QTM_END_NAMESPACE

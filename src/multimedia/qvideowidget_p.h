@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -54,15 +54,19 @@
 //
 
 #include <qmobilityglobal.h>
-#include <qvideowidget.h>
+#include "qvideowidget.h"
 
 #ifndef QT_NO_OPENGL
 #include <QGLWidget>
 #endif
 
-#include <qpaintervideosurface_p.h>
+#include "qpaintervideosurface_p.h"
 
-QTM_BEGIN_NAMESPACE
+#include <QtCore/qpointer.h>
+
+QT_BEGIN_NAMESPACE
+
+class QMediaService;
 
 class QVideoWidgetControlInterface
 {
@@ -76,8 +80,8 @@ public:
 
     virtual void setFullScreen(bool fullScreen) = 0;
 
-    virtual QVideoWidget::AspectRatioMode aspectRatioMode() const = 0;
-    virtual void setAspectRatioMode(QVideoWidget::AspectRatioMode mode) = 0;
+    virtual Qt::AspectRatioMode aspectRatioMode() const = 0;
+    virtual void setAspectRatioMode(Qt::AspectRatioMode mode) = 0;
 };
 
 class QVideoWidgetBackend : public QObject, public QVideoWidgetControlInterface
@@ -99,7 +103,9 @@ class QVideoWidgetControlBackend : public QObject, public QVideoWidgetControlInt
 {
     Q_OBJECT
 public:
-    QVideoWidgetControlBackend(QVideoWidgetControl *control, QWidget *widget);
+    QVideoWidgetControlBackend(QMediaService *service, QVideoWidgetControl *control, QWidget *widget);
+
+    void releaseControl();
 
     void setBrightness(int brightness);
     void setContrast(int contrast);
@@ -108,10 +114,11 @@ public:
 
     void setFullScreen(bool fullScreen);
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
 private:
+    QMediaService *m_service;
     QVideoWidgetControl *m_widgetControl;
 };
 
@@ -122,9 +129,10 @@ class QRendererVideoWidgetBackend : public QVideoWidgetBackend
 {
     Q_OBJECT
 public:
-    QRendererVideoWidgetBackend(QVideoRendererControl *control, QWidget *widget);
+    QRendererVideoWidgetBackend(QMediaService *service, QVideoRendererControl *control, QWidget *widget);
     ~QRendererVideoWidgetBackend();
 
+    void releaseControl();
     void clearSurface();
 
     void setBrightness(int brightness);
@@ -134,8 +142,8 @@ public:
 
     void setFullScreen(bool fullScreen);
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     QSize sizeHint() const;
 
@@ -152,14 +160,21 @@ Q_SIGNALS:
     void hueChanged(int hue);
     void saturationChanged(int saturation);
 
-private:
-    QRect displayRect() const;
+private Q_SLOTS:
+    void formatChanged(const QVideoSurfaceFormat &format);
+    void frameChanged();
 
+private:
+    void updateRects();
+
+    QMediaService *m_service;
     QVideoRendererControl *m_rendererControl;
     QWidget *m_widget;
     QPainterVideoSurface *m_surface;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
-    QSize m_aspectRatio;
+    Qt::AspectRatioMode m_aspectRatioMode;
+    QRect m_boundingRect;
+    QRectF m_sourceRect;
+    QSize m_nativeSize;
     bool m_updatePaintDevice;
 };
 
@@ -169,8 +184,10 @@ class QWindowVideoWidgetBackend : public QVideoWidgetBackend
 {
     Q_OBJECT
 public:
-    QWindowVideoWidgetBackend(QVideoWindowControl *control, QWidget *widget);
+    QWindowVideoWidgetBackend(QMediaService *service, QVideoWindowControl *control, QWidget *widget);
     ~QWindowVideoWidgetBackend();
+
+    void releaseControl();
 
     void setBrightness(int brightness);
     void setContrast(int contrast);
@@ -179,8 +196,8 @@ public:
 
    void setFullScreen(bool fullScreen);
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     QSize sizeHint() const;
 
@@ -191,9 +208,10 @@ public:
     void paintEvent(QPaintEvent *event);
 
 private:
+    QMediaService *m_service;
     QVideoWindowControl *m_windowControl;
     QWidget *m_widget;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     QSize m_pixelAspectRatio;
 };
 
@@ -207,8 +225,7 @@ public:
     QVideoWidgetPrivate()
         : q_ptr(0)
         , mediaObject(0)
-        , service(0)
-        , outputControl(0)
+        , service(0)        
         , widgetBackend(0)
         , windowBackend(0)
         , rendererBackend(0)
@@ -218,16 +235,15 @@ public:
         , contrast(0)
         , hue(0)
         , saturation(0)
-        , aspectRatioMode(QVideoWidget::KeepAspectRatio)
+        , aspectRatioMode(Qt::KeepAspectRatio)
         , nonFullScreenFlags(0)
         , wasFullScreen(false)
     {
     }
 
     QVideoWidget *q_ptr;
-    QMediaObject *mediaObject;
+    QPointer<QMediaObject> mediaObject;
     QMediaService *service;
-    QVideoOutputControl *outputControl;
     QVideoWidgetControlBackend *widgetBackend;
     QWindowVideoWidgetBackend *windowBackend;
     QRendererVideoWidgetBackend *rendererBackend;
@@ -237,16 +253,18 @@ public:
     int contrast;
     int hue;
     int saturation;
-    QVideoWidget::AspectRatioMode aspectRatioMode;
+    Qt::AspectRatioMode aspectRatioMode;
     Qt::WindowFlags nonFullScreenFlags;
     bool wasFullScreen;
 
+    bool createWidgetBackend();
+    bool createWindowBackend();
+    bool createRendererBackend();
+
     void setCurrentControl(QVideoWidgetControlInterface *control);
-    void show();
     void clearService();
 
     void _q_serviceDestroyed();
-    void _q_mediaObjectDestroyed();
     void _q_brightnessChanged(int brightness);
     void _q_contrastChanged(int contrast);
     void _q_hueChanged(int hue);
@@ -255,6 +273,6 @@ public:
     void _q_dimensionsChanged();
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

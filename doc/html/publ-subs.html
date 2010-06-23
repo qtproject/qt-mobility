@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- publ-subs.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Publish and Subscribe</title>
+  <title>Qt Mobility Project 1.1: Publish and Subscribe</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -15,13 +15,17 @@
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Publish and Subscribe<br /><span class="subtitle"></span>
 </h1>
 <p>The Publish and Subscribe API enables applications to read item values, navigate through and subscribe to change notifications.</p>
-<ul><li><a href="#overview">Overview</a></li>
+<ul><li><a href="#namespace">Namespace</a></li>
+<li><a href="#overview">Overview</a></li>
 <li><a href="#detailed-layer-descriptions">Detailed Layer Descriptions</a></li>
 <ul><li><a href="#shared-memory-layer">Shared Memory Layer</a></li>
 <li><a href="#symbian-settings-layer">Symbian Settings Layer</a></li>
 <ul><li><a href="#declaring-value-space-paths">Declaring Value Space Paths</a></li>
 <li><a href="#location-of-qcrml-files">Location of QCRML Files</a></li>
 <li><a href="#limitations">Limitations</a></li>
+</ul>
+<li><a href="#gconf-layer">GConf Layer</a></li>
+<ul><li><a href="#limitations">Limitations</a></li>
 </ul>
 </ul>
 <li><a href="#examples">Examples</a></li>
@@ -30,6 +34,9 @@
 </ul>
 <li><a href="#namespaces-and-classes">Namespaces and Classes</a></li>
 </ul>
+<a name="namespace"></a>
+<h3>Namespace</h3>
+<p>The QtMobility APIs are placed into the <i>QtMobility</i> namespace. This is done to facilitate the future migration of Mobility APIs into Qt. See the <a href="quickstart.html">Quickstart guide</a> for an example on how the namespace impacts on application development.</p>
 <a name="overview"></a>
 <h3>Overview</h3>
 <p>The Qt Value Space unifies various sources of hierarchical data into a single consistent model. Conceptually the Value Space is a hierarchical tree of which each node or leaf can optionally contain a <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> value. A serialized version of a simple example Value Space might look like this.</p>
@@ -55,6 +62,7 @@
 <tr valign="top" class="odd"><td>Non-volatile Registry Layer</td><td>The Non-volatile Registry layer provides a permanent Value Space backing store using keys stored in the Windows' registry. The Non-volatile Registry layer is only available on Windows platforms. The Non-volatile Registry layer has an order of 0.</td></tr>
 <tr valign="top" class="even"><td>ContextKit Layer</td><td>The ContextKit layer provides a non-permanent Value Space backing store using ContextKit. Publishing values to this layer via <a href="qvaluespacepublisher.html">QValueSpacePublisher</a> is currently not supported. The ContextKit layer has an order of 0.</td></tr>
 <tr valign="top" class="odd"><td><a href="#symbian-settings-layer">Symbian Settings Layer</a></td><td>The Symbian Settings layer provides a permanent Value Space backing store using the Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository). The Symbian Settings layer has an order of 0.</td></tr>
+<tr valign="top" class="even"><td><a href="#gconf-layer">GConf Layer</a></td><td>The GConf Layer provides a permanent Value Space backing store using the GConf configuration system designed for the GNOME desktop environment. The GConf Layer has an order of 0 and it's the only available layer in Maemo 5.</td></tr>
 </table></p>
 <p>The Value Space has support for both client/server and peer-to-peer layer architectures. If a layer that uses a client/server architecture is used and a server process is not provided by the underlying system it will be necessary to start one. This can be done by calling QValueSpace::initValueSpaceServer() prior to any other use of the Value Space.</p>
 <a name="detailed-layer-descriptions"></a>
@@ -67,27 +75,27 @@
 <p>Change notifications are transmitted to clients in the form of &quot;something has changed&quot; messages. Nodes within the shared memory region are versioned, which allows clients to quickly determine exactly what has changed without the need for a bulkier change notification protocol.</p>
 <a name="symbian-settings-layer"></a>
 <h4>Symbian Settings Layer</h4>
-<p>Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository). The underlying system limits the features and available data types but at least reading, writing and monitoring Symbian aware data types work in both RProperty and CRepository.</p>
+<p>Publish and Subscribe API can be used to access Symbian OS' Properties (RProperty) as well as Central Repository files (CRepository).</p>
 <a name="declaring-value-space-paths"></a>
 <h5>Declaring Value Space Paths</h5>
 <p>Since Publish and Subscribe API is based on Value Space that is accessed via textual path we need to somehow specify how particular paths are turned into RPropery or CRepository key definitions. Here the QCRML files come for help.</p>
 <p>QCRML files are XML files that can be used to declare available Value Space paths that are visible to the clients. Each path defines whether the actual value is stored in CRepository or RPropery as well as needed Category/Repository/Key UIDs.</p>
 <p>The following QCRML file defines Value Space paths for power state properties stored in Symbian OS Properties:</p>
 <pre>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-    &lt;repository target=&quot;RProperty&quot; version=&quot;&quot; uidName=&quot;KPSUidHWRMPowerState&quot; uidValue=&quot;0x10205041&quot;&gt;
+    &lt;repository target=&quot;RProperty&quot; uidValue=&quot;0x10205041&quot;&gt;
         &lt;key ref=&quot;/resources/battery/level&quot; int=&quot;0x00000001&quot;/&gt;
         &lt;key ref=&quot;/resources/battery/status&quot; int=&quot;0x00000002&quot;/&gt;
         &lt;key ref=&quot;/resources/charging/status&quot; int=&quot;0x00000003&quot;/&gt;
     &lt;/repository&gt;</pre>
 <p>The following QCRML file defines a Value Space path for the &quot;current profile id&quot; stored in Central Repository:</p>
 <pre>    &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
-    &lt;repository target=&quot;CRepository&quot; version=&quot;&quot; uidName=&quot;KCRUidProfileEngine&quot; uidValue=&quot;0x101f8798&quot;&gt;
+    &lt;repository target=&quot;CRepository&quot; uidValue=&quot;0x101f8798&quot;&gt;
         &lt;key ref=&quot;/profile/id&quot; int=&quot;0x7e000001&quot;/&gt;
     &lt;/repository&gt;</pre>
 <p>The <tt>qcrmlgen</tt> tool located in the <tt>tools</tt> directory can be used to create QCRML files.</p>
 <a name="location-of-qcrml-files"></a>
 <h5>Location of QCRML Files</h5>
-<p>All the QCRML files need to be located in <tt>c:\resource\qt\crml</tt> directory in Symbian file system.</p>
+<p>All the QCRML files need to be located in <tt>\resource\qt\crml</tt> directory (in any available drive) in Symbian file system.</p>
 <p>In <tt>.pro</tt> files this means that the files need to be deployed with the SIS package.</p>
 <p>Example <tt>.pro</tt> file section:</p>
 <pre>    symbian {
@@ -97,8 +105,13 @@
     }</pre>
 <a name="limitations"></a>
 <h5>Limitations</h5>
-<p>Symbian OS Properties are limited to data of type <tt>int</tt> and <tt>QByteArray</tt>. <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> is also possible to be passed via Value Space but it is recognized as <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> in the receiving end. Use <a href="http://qt.nokia.com/doc/4.6/qvariant.html#toString">QVariant::toString</a>() to explicitly convert it back into a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> in cases where you know that the data was originally a <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>. The maximum size for <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> is 65535 bytes.</p>
-<p>In addition to the types supported by Symbian OS Properties, Central Repository also supports qreal.</p>
+<p>The underlying Symbian APIs limit the data types that can be stored natively in available backing stores. In practice this is not a problem since the unsupported data types are automatically serialized in <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> and stored as 8-bit byte form by SymbianSettingslayer. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native Symbian codes that access the same data directly. The maximum size of the bytearray is 65535 for RPropery backing store.</p>
+<a name="gconf-layer"></a>
+<h4>GConf Layer</h4>
+<p>Publish and Subscribe API can be used to access the GConf configuration system.</p>
+<a name="limitations"></a>
+<h5>Limitations</h5>
+<p>GConf can natively store only a limited set of <a href="http://qt.nokia.com/doc/4.6/qvariant.html">QVariant</a> data types. These types are Bool, Int, Double, String, StringList and List. When publishing other data types the values are automatically serialized and stored to GConf as BASE64 encoded strings. When reading these values they are automatically converted back to the original data types. The serialization/deserialization is transparent operation to the API user but may cause interoperatibility issues with native applications that access the same data directly.</p>
 <a name="examples"></a>
 <h3>Examples</h3>
 <a name="publish-and-subscribe"></a>
@@ -117,8 +130,8 @@
 </table></p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

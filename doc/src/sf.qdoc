@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -65,6 +65,13 @@ arbitrary services.
 
 \tableofcontents
 
+\section1 Namespace
+
+The QtMobility APIs are placed into the \i{QtMobility} namespace. This is done
+to facilitate the future migration of Mobility APIs into Qt. See the
+\l {Quickstart Example}{Quickstart guide} for an example on how the
+namespace impacts on application development.
+
 
 \section1 Introduction
 
@@ -111,7 +118,7 @@ service provider.
 
 \section1 Using the Framework
 
-This section assumes that the user wants to access the \i FileManager
+This section assumes that the user wants to access the \i FileStorage
 service which offers an implementation for the \i com.nokia.qt.examples.FileStorage
 interface The service framework enables multiple ways of accessing those
 implementations. 
@@ -127,7 +134,7 @@ The client code has precise knowledge of the service and its interfaces.
 \code
     QServiceManager manager;
     QServiceFilter filter("com.nokia.qt.examples.FileStorage");
-    filter.setServiceName("FileManager");
+    filter.setServiceName("FileStorage");
 
     // find services complying with filter
     QList<QServiceInterfaceDescriptor> foundServices;
@@ -141,39 +148,62 @@ The client code has precise knowledge of the service and its interfaces.
 
 \section2 Default Lookup
 
-The client code has knowledge of the interface and doesn't really care
-about the service that implements the interface. In such cases the default
-service lookup can be utilized to create a service object instance. If the
-same service provides multiple versions of the same interface the latest
-version is returned. Therefore subsequent versions of the same interface
-must always be binary compatible to previous versions.
+It is assumed that the client has knowledge of the interface but does not really care
+about the specific type or version of the service implementing the interface. In such cases the default
+service lookup can be utilized to create a service object instance.
 
 \code
     QServiceManager manager;
-    QObject *storage;
-    storage = manager.loadInterface("com.nokia.qt.examples.FileStorage");
+    manager.setInterfaceDefault("FileStorageService", "com.nokia.qt.examples.FileStorage");
 \endcode
 
-\section3 Header Lookup
+The above call to \l QServiceManager::setInterfaceDefault() registers the \i FileStorageService as default implementation.
+Whenever a client asks for an implementation of \i com.nokia.qt.examples.FileStorage the \i FileStorageService
+service will be loaded. If (at the time of this call) the \i FileStorageService provides multiple registered implementations/versions for the
+same interface the latest version becomes the default. Therefore subsequent versions of the same interface
+must always be binary compatible to previous versions.
+
+The current scope of the service manager object determines whether the default assignment is valid for all users
+or whether it is valid for the current user only. The system default is used if the user
+scope has not been defined. This enables users to customize their personal preferences.
+By default the first service installing a so far unknown interface becomes the system wide default selection.
+
+\section3 QObject based services
+
+This is the most common way of interacting with services.
+
+\code
+    storage = manager.loadInterface("com.nokia.qt.examples.FileStorage");
+    if (storage)
+        QMetaObject::invokeMethod(storage, "deleteFile", Q_ARG(QString, "/tmp/readme.txt"));
+\endcode
+
+The above invocation of the file storage object's deleteFile() function is done via the service's
+QMetaObject. The client does not require any knowledge of the objects actual type and therefore
+does not have to link against a service specific library.
+
+\section3 Typed services
 
 So far all lookup mechanism returned a QObject pointer. This pointer can be
-utilised by introspecting the object using Qt's meta object system.
-Therefore the client does not have to have any knowledge of the object
-header or symbols. However in some use cases it may be more convenient to
+utilized by introspecting the object, using Qt's meta object system.
+However in some use cases it may be more convenient to
 directly interact with the service object by including the service header
-and/or linking against the service provider.
+and/or linking against the service provider. The main advantage is compile time checking.
+Its disadvantage is that client and service must share the implementation of the service object via a library
+they link against or via a common header file. Note that such sharing breaks the fundamental ServiceFramework
+principle of separating clients from service as changes of the service type may require changes to both, services and clients.
 
 The subsequent code snippet demonstrates how this may look like:
 
 \code
-#include <filestorage.h>
-...
-QServiceManager manager;
-FileStorage *storage = 0;
-...
-manager.setInterfaceDefault("FileManager", "com.nokia.qt.examples.FileStorage");
-storage = manager.getInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
-
+    #include <filestorage.h>
+    ...
+    QServiceManager manager;
+    FileStorage *storage = 0;
+    ...
+    storage = manager.loadLocalTypedInterface<FileStorage>("com.nokia.qt.examples.FileStorage");
+    if (storage)
+        storage->deleteFile("/tmp/readme.txt");
 \endcode
 
 
@@ -282,7 +312,9 @@ The elements and attributes have the following meanings:
         \o "
         \o capabilities
         \o This property is a list of arbitrary strings which are
-           interpreted as permissions/capabilities. This list can be empty.
+           interpreted as permissions/capabilities. The list elements are
+           comma-separated and spaces after commas are not permitted.
+           This list can be empty.
     \row
         \o "
         \o name
@@ -383,7 +415,7 @@ all services that implement the interface \i com.nokia.qt.ILocation:
 \code
     QServiceManager mgr;
     QServiceFilter filter;
-    filter.setInterfaceName("com.nokia.qt.ILocation");
+    filter.setInterface("com.nokia.qt.ILocation");
     QList<QServiceInterfaceDescriptor> list = mgr.findInterfaces(filter);
     for(int i = 0; i < list.size(); i++) {
         QObject *serviceObject;

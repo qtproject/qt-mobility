@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,26 +42,31 @@
 #ifndef QMEDIAPLAYER_H
 #define QMEDIAPLAYER_H
 
-#include <qmediaserviceprovider.h>
-#include <qmediaobject.h>
-#include <qmediacontent.h>
+#include "qmediaserviceprovider.h"
+#include "qmediaobject.h"
+#include "qmediacontent.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_HEADER
 
+QT_BEGIN_NAMESPACE
 
 class QMediaPlaylist;
+class QVideoWidget;
+class QGraphicsVideoItem;
 
 
 class QMediaPlayerPrivate;
-class Q_MEDIA_EXPORT QMediaPlayer : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QMediaPlayer : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(QMediaContent media READ media WRITE setMedia NOTIFY mediaChanged)
+    Q_PROPERTY(QMediaPlaylist * playlist READ playlist WRITE setPlaylist)
     Q_PROPERTY(qint64 duration READ duration NOTIFY durationChanged)
     Q_PROPERTY(qint64 position READ position WRITE setPosition NOTIFY positionChanged)
     Q_PROPERTY(int volume READ volume WRITE setVolume NOTIFY volumeChanged)
     Q_PROPERTY(bool muted READ isMuted WRITE setMuted NOTIFY mutedChanged)
     Q_PROPERTY(int bufferStatus READ bufferStatus NOTIFY bufferStatusChanged)
+    Q_PROPERTY(bool audioAvailable READ isAudioAvailable NOTIFY audioAvailableChanged)
     Q_PROPERTY(bool videoAvailable READ isVideoAvailable NOTIFY videoAvailableChanged)
     Q_PROPERTY(bool seekable READ isSeekable NOTIFY seekableChanged)
     Q_PROPERTY(qreal playbackRate READ playbackRate WRITE setPlaybackRate NOTIFY playbackRateChanged)
@@ -94,7 +99,8 @@ public:
 
     enum Flag
     {
-        LowLatency = 0x01
+        LowLatency = 0x01,
+        StreamPlayback = 0x02
     };
     Q_DECLARE_FLAGS(Flags, Flag)
 
@@ -111,13 +117,17 @@ public:
     QMediaPlayer(QObject *parent = 0, Flags flags = 0, QMediaServiceProvider *provider = QMediaServiceProvider::defaultServiceProvider());
     ~QMediaPlayer();
 
-    static QtMedia::SupportEstimate hasSupport(const QString &mimeType,
+    static QtMultimediaKit::SupportEstimate hasSupport(const QString &mimeType,
                                             const QStringList& codecs = QStringList(),
                                             Flags flags = 0);
     static QStringList supportedMimeTypes(Flags flags = 0);
 
+    void setVideoOutput(QVideoWidget *);
+    void setVideoOutput(QGraphicsVideoItem *);
+
     QMediaContent media() const;
     const QIODevice *mediaStream() const;
+    QMediaPlaylist *playlist() const;
 
     State state() const;
     MediaStatus mediaStatus() const;
@@ -127,12 +137,13 @@ public:
 
     int volume() const;
     bool isMuted() const;
+    bool isAudioAvailable() const;
     bool isVideoAvailable() const;
 
     int bufferStatus() const;
 
     bool isSeekable() const;
-    qreal playbackRate() const;
+    qreal playbackRate() const;   
 
     Error error() const;
     QString errorString() const;
@@ -149,6 +160,7 @@ public Q_SLOTS:
     void setPlaybackRate(qreal rate);
 
     void setMedia(const QMediaContent &media, QIODevice *stream = 0);
+    void setPlaylist(QMediaPlaylist *playlist);
 
 Q_SIGNALS:
     void mediaChanged(const QMediaContent &media);
@@ -161,6 +173,7 @@ Q_SIGNALS:
 
     void volumeChanged(int volume);
     void mutedChanged(bool muted);
+    void audioAvailableChanged(bool available);
     void videoAvailableChanged(bool videoAvailable);
 
     void bufferStatusChanged(int percentFilled);
@@ -171,8 +184,8 @@ Q_SIGNALS:
     void error(QMediaPlayer::Error error);
 
 public:
-    virtual void bind(QObject*);
-    virtual void unbind(QObject*);
+    virtual bool bind(QObject *);
+    virtual void unbind(QObject *);
 
 private:
     Q_DISABLE_COPY(QMediaPlayer)
@@ -184,11 +197,12 @@ private:
     Q_PRIVATE_SLOT(d_func(), void _q_playlistDestroyed())
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlayer::State))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlayer::MediaStatus))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaPlayer::Error))
+Q_DECLARE_METATYPE(QMediaPlayer::State)
+Q_DECLARE_METATYPE(QMediaPlayer::MediaStatus)
+Q_DECLARE_METATYPE(QMediaPlayer::Error)
 
+QT_END_HEADER
 
 #endif  // QMEDIAPLAYER_H

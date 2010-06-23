@@ -40,7 +40,7 @@
 ****************************************************************************/
 
 #include <QtTest/QtTest>
-
+#include <QDateTime>
 #include "qtcontacts.h"
 
 //TESTED_CLASS=
@@ -87,6 +87,7 @@ private slots:
     void testOrganisation();
     void testPhoneNumber();
     void testUrl();    
+    void testPresence();
 
 private slots:
 
@@ -104,9 +105,9 @@ void tst_details::dumpContact(const QContact& contact)
 {
     qDebug() << "Contact: " << contact.localId();
     QList<QContactDetail> details = contact.details();
-    foreach(QContactDetail d, details) {
+    foreach(const QContactDetail& d, details) {
         qDebug() << "  " << d.definitionName() << ":";
-        foreach( QString key, d.values().keys() )
+        foreach( const QString& key, d.variantValues().keys() )
             qDebug() << "    " << key << d.variantValue(key);
     }
 }
@@ -114,12 +115,12 @@ void tst_details::dumpContact(const QContact& contact)
 void tst_details::initTestCase()
 {
     qDebug() << "Available managers:";
-    foreach( QString manager, QContactManager::availableManagers() )
+    foreach( const QString& manager, QContactManager::availableManagers() )
         qDebug() << manager;
     QVERIFY(QContactManager::availableManagers().contains("symbian"));
 
     QContactManager cm("symbian");
-    QList<QContactLocalId> ids = cm.contacts();
+    QList<QContactLocalId> ids = cm.contactIds();
     cm.removeContacts( &ids );
 }
 
@@ -296,9 +297,9 @@ void tst_details::testName()
 
     QContactName n;
     n.setPrefix( "prefix" );
-    n.setFirst( "first" );
-    n.setMiddle( "middle" );
-    n.setLast( "last" );
+    n.setFirstName( "first" );
+    n.setMiddleName( "middle" );
+    n.setLastName( "last" );
     n.setSuffix( "suffix" );
     c.saveDetail( &n );
 
@@ -400,5 +401,20 @@ void tst_details::testUrl()
     saveAndVerifyContact( c );
 }
 
+void tst_details::testPresence()
+{
+    QContact c;
+    
+    QContactPresence presence;
+    presence.setNickname("Tom");
+    presence.setTimestamp(QDateTime::currentTime());
+    presence.setPresenceState(QContactPresence::PresenceAvailable);
+    presence.setPresenceStateText("Available");
+    presence.setPresenceStateImageUrl("http://example.com/example.jpg");
+    presence.setCustomMessage("MSN");
+    c.saveDetail(&presence);
+   
+    saveAndVerifyContact( c );
+}
 QTEST_MAIN(tst_details)
 #include "tst_details.moc"

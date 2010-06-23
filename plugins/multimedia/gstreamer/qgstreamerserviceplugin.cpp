@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -50,7 +50,9 @@
 #ifdef QMEDIA_GSTREAMER_PLAYER
 #include "qgstreamerplayerservice.h"
 #endif
-#ifdef QMEDIA_GSTREAMER_CAPTURE
+#if defined(QMEDIA_GSTREAMER_CAPTURE) && (defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
+#include "qgstreamercaptureservice_maemo.h"
+#elif defined(QMEDIA_GSTREAMER_CAPTURE)
 #include "qgstreamercaptureservice.h"
 #endif
 
@@ -77,7 +79,6 @@ QStringList QGstreamerServicePlugin::keys() const
 #endif
 #ifdef QMEDIA_GSTREAMER_CAPTURE
             << QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE)
-            << QLatin1String(Q_MEDIASERVICE_CAMERA)
 #endif
             ;
 }
@@ -91,12 +92,9 @@ QMediaService* QGstreamerServicePlugin::create(const QString &key)
 #ifdef QMEDIA_GSTREAMER_CAPTURE
     if (key == QLatin1String(Q_MEDIASERVICE_AUDIOSOURCE))
         return new QGstreamerCaptureService(key);
-
-    if (key == QLatin1String(Q_MEDIASERVICE_CAMERA))
-        return new QGstreamerCaptureService(key);
 #endif
 
-    qDebug() << "unsupported key:" << key;
+    //qDebug() << "unsupported key:" << key;
     return 0;
 }
 
@@ -105,77 +103,4 @@ void QGstreamerServicePlugin::release(QMediaService *service)
     delete service;
 }
 
-QList<QByteArray> QGstreamerServicePlugin::devices(const QByteArray &service) const
-{
-    if (service == Q_MEDIASERVICE_CAMERA) {
-        if (m_cameraDevices.isEmpty())
-            updateDevices();
-
-        return m_cameraDevices;
-    }
-
-    return QList<QByteArray>();
-}
-
-QString QGstreamerServicePlugin::deviceDescription(const QByteArray &service, const QByteArray &device)
-{
-    if (service == Q_MEDIASERVICE_CAMERA) {
-        if (m_cameraDevices.isEmpty())
-            updateDevices();
-
-        for (int i=0; i<m_cameraDevices.count(); i++)
-            if (m_cameraDevices[i] == device)
-                return m_cameraDescriptions[i];
-    }
-
-    return QString();
-}
-
-void QGstreamerServicePlugin::updateDevices() const
-{
-    m_cameraDevices.clear();
-    m_cameraDescriptions.clear();
-
-    QDir devDir("/dev");
-    devDir.setFilter(QDir::System);
-
-    QFileInfoList entries = devDir.entryInfoList(QStringList() << "video*");
-
-    foreach( const QFileInfo &entryInfo, entries ) {
-        qDebug() << "Try" << entryInfo.filePath();
-
-        int fd = ::open(entryInfo.filePath().toLatin1().constData(), O_RDWR );
-        if (fd == -1)
-            continue;
-
-        bool isCamera = false;
-
-        v4l2_input input;
-        memset(&input, 0, sizeof(input));
-        for (; ::ioctl(fd, VIDIOC_ENUMINPUT, &input) >= 0; ++input.index) {
-            if(input.type == V4L2_INPUT_TYPE_CAMERA || input.type == 0) {
-                isCamera = ::ioctl(fd, VIDIOC_S_INPUT, input.index) != 0;
-                break;
-            }
-        }
-
-        if (isCamera) {
-            // find out its driver "name"
-            QString name;
-            struct v4l2_capability vcap;
-            memset(&vcap, 0, sizeof(struct v4l2_capability));
-
-            if (ioctl(fd, VIDIOC_QUERYCAP, &vcap) != 0)
-                name = entryInfo.fileName();
-            else
-                name = QString((const char*)vcap.card);
-            qDebug() << "found camera: " << name;
-
-            m_cameraDevices.append(entryInfo.filePath().toLocal8Bit());
-            m_cameraDescriptions.append(name);
-        }
-        ::close(fd);
-    }
-}
-
-Q_EXPORT_PLUGIN2(gstengine, QGstreamerServicePlugin);
+Q_EXPORT_PLUGIN2(qtmedia_gstengine, QGstreamerServicePlugin);

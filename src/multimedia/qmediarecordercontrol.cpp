@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,14 +39,14 @@
 **
 ****************************************************************************/
 
-#include <qmediarecordercontrol.h>
+#include "qmediarecordercontrol.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 
 /*!
     \class QMediaRecorderControl
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
     \preliminary
     \brief The QMediaRecorderControl class provides access to the recording
@@ -64,7 +64,7 @@ QTM_BEGIN_NAMESPACE
     The interface name of QMediaRecorderControl is \c com.nokia.Qt.QMediaRecorderControl/1.0 as
     defined in QMediaRecorderControl_iid.
 
-    \sa QMediaService::control(), QMediaRecorder
+    \sa QMediaService::requestControl(), QMediaRecorder
 
 */
 
@@ -144,6 +144,18 @@ QMediaRecorderControl::~QMediaRecorderControl()
     is started.
 */
 
+/*!
+    \fn bool QMediaRecorderControl::isMuted() const
+
+    Returns true if the recorder is muted, and false if it is not.
+*/
+
+/*!
+    \fn void QMediaRecorderControl::setMuted(bool muted)
+
+    Sets the \a muted state of a media recorder.
+*/
+
 
 /*!
     \fn void QMediaRecorderControl::stateChanged(QMediaRecorder::State state)
@@ -160,11 +172,17 @@ QMediaRecorderControl::~QMediaRecorderControl()
 */
 
 /*!
+    \fn void QMediaRecorderControl::mutedChanged(bool muted)
+
+    Signals that the \a muted state of a media recorder has changed.
+*/
+
+/*!
     \fn void QMediaRecorderControl::error(int error, const QString &errorString)
 
     Signals that an \a error has occurred.  The \a errorString describes the error.
 */
 
 #include "moc_qmediarecordercontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

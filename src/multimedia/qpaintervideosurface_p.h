@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,16 +58,40 @@
 #include <QtGui/qimage.h>
 #include <QtGui/qmatrix4x4.h>
 #include <QtGui/qpaintengine.h>
-#include <QtMultimedia/qabstractvideosurface.h>
-#include <QtMultimedia/qvideoframe.h>
+#include <qabstractvideosurface.h>
+#include <qvideoframe.h>
 
 QT_BEGIN_NAMESPACE
 class QGLContext;
 QT_END_NAMESPACE
 
-QTM_BEGIN_NAMESPACE
+QT_USE_NAMESPACE
 
-class QVideoSurfacePainter;
+QT_BEGIN_NAMESPACE
+
+class QVideoSurfacePainter
+{
+public:
+    virtual ~QVideoSurfacePainter();
+
+    virtual QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+            QAbstractVideoBuffer::HandleType handleType) const = 0;
+
+    virtual bool isFormatSupported(
+            const QVideoSurfaceFormat &format, QVideoSurfaceFormat *similar) const = 0;
+
+    virtual QAbstractVideoSurface::Error start(const QVideoSurfaceFormat &format) = 0;
+    virtual void stop() = 0;
+
+    virtual QAbstractVideoSurface::Error setCurrentFrame(const QVideoFrame &frame) = 0;
+
+    virtual QAbstractVideoSurface::Error paint(
+            const QRectF &target, QPainter *painter, const QRectF &source) = 0;
+
+    virtual void updateColors(int brightness, int contrast, int hue, int saturation) = 0;
+};
+
+
 class Q_AUTOTEST_EXPORT QPainterVideoSurface : public QAbstractVideoSurface
 {
     Q_OBJECT
@@ -101,7 +125,7 @@ public:
     bool isReady() const;
     void setReady(bool ready);
 
-    void paint(QPainter *painter, const QRect &rect);
+    void paint(QPainter *painter, const QRectF &target, const QRectF &source = QRectF(0, 0, 1, 1));
 
 #if !defined(QT_NO_OPENGL) && !defined(QT_OPENGL_ES_1_CL) && !defined(QT_OPENGL_ES_1)
     const QGLContext *glContext() const;
@@ -150,6 +174,6 @@ private:
 Q_DECLARE_OPERATORS_FOR_FLAGS(QPainterVideoSurface::ShaderTypes)
 #endif
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

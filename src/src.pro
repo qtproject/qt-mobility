@@ -1,4 +1,4 @@
-include($$QT_MOBILITY_BUILD_TREE/config.pri)
+include(../staticconfig.pri)
 
 TEMPLATE = subdirs
 SUBDIRS += global
@@ -6,10 +6,7 @@ SUBDIRS += global
 contains(mobility_modules,serviceframework) {
     SUBDIRS += serviceframework
     symbian {
-        SUBDIRS = serviceframework/symbian/dll/databasemanagerserver_dll.pro \
-                  serviceframework/symbian/exe/databasemanagerserver_exe.pro \
-                  $$SUBDIRS
-        CONFIG += ordered
+        SUBDIRS += serviceframework/databasemanagerserver_symbian/databasemanagerserver.pro
     }
 }
 
@@ -28,18 +25,20 @@ contains(mobility_modules,publishsubscribe) {
 
 contains(mobility_modules,systeminfo): SUBDIRS += systeminfo
 contains(mobility_modules,versit): SUBDIRS += versit
+contains(mobility_modules,sensors): SUBDIRS += sensors
 
 # Versit depends on Contacts
 versit.subdir=versit
 versit.target=sub-versit
 versit.depends=contacts
 
-contains(mobility_modules,messaging) {
-    contains(qmf_enabled, yes)|wince*|win32|symbian|maemo6 {
+contains(qmf_enabled, yes)|wince*|win32|symbian|maemo5 {
+    contains(mobility_modules,messaging) {
         !win32-g++:SUBDIRS += messaging
     }
 }
 
 symbian {
-    SUBDIRS += s60installs/s60installs.pro
+    SUBDIRS += s60installs
 }
+

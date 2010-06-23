@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,13 +42,13 @@
 #ifndef QT7PLAYERMETADATACONTROL_H
 #define QT7PLAYERMETADATACONTROL_H
 
-#include <qmetadatacontrol.h>
+#include <qmetadatareadercontrol.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QT7PlayerSession;
 
-class QT7PlayerMetaDataControl : public QMetaDataControl
+class QT7PlayerMetaDataControl : public QMetaDataReaderControl
 {
     Q_OBJECT
 public:
@@ -58,12 +58,10 @@ public:
     bool isMetaDataAvailable() const;
     bool isWritable() const;
 
-    QVariant metaData(QtMedia::MetaData key) const;
-    void setMetaData(QtMedia::MetaData key, const QVariant &value);
-    QList<QtMedia::MetaData> availableMetaData() const;
+    QVariant metaData(QtMultimediaKit::MetaData key) const;
+    QList<QtMultimediaKit::MetaData> availableMetaData() const;
 
     QVariant extendedMetaData(const QString &key) const ;
-    void setExtendedMetaData(const QString &key, const QVariant &value);
     QStringList availableExtendedMetaData() const;
 
 private slots:
@@ -71,9 +69,9 @@ private slots:
 
 private:
     QT7PlayerSession *m_session;
-    QMap<QtMedia::MetaData, QVariant> m_tags;
+    QMap<QtMultimediaKit::MetaData, QVariant> m_tags;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,6 +39,8 @@
 **
 ****************************************************************************/
 
+#import <QTKit/QTkit.h>
+
 #include "qt7backend.h"
 
 #include "qt7playercontrol.h"
@@ -46,15 +48,10 @@
 #include "qt7playersession.h"
 #include <QtCore/qdebug.h>
 
-#import <QTKit/QTDataReference.h>
-#import <QTKit/QTMovie.h>
-#import <QTKit/QTMovieView.h>
-#import <QTKit/QTMovieLayer.h>
-#import <AppKit/NSImage.h>
+#include <QuartzCore/CIFilter.h>
+#include <QuartzCore/CIVector.h>
 
-#include <CoreFoundation/CoreFoundation.h>
-
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 #define VIDEO_TRANSPARENT(m) -(void)m:(NSEvent *)e{[[self superview] m:e];}
 
@@ -67,6 +64,7 @@ QTM_USE_NAMESPACE
 
 - (TransparentQTMovieView *) init;
 - (void) setDrawRect:(QRect &)rect;
+- (CIImage *) view:(QTMovieView *)view willDisplayImage:(CIImage *)img;
 - (void) setContrast:(qreal) contrast;
 @end
 
@@ -160,9 +158,10 @@ QT7MovieViewOutput::QT7MovieViewOutput(QObject *parent)
    :QT7VideoWindowControl(parent),
     m_movie(0),
     m_movieView(0),
+    m_layouted(false),
     m_winId(0),
     m_fullscreen(false),
-    m_aspectRatioMode(QVideoWidget::KeepAspectRatio),
+    m_aspectRatioMode(Qt::KeepAspectRatio),
     m_brightness(0),
     m_contrast(0),
     m_hue(0),
@@ -172,6 +171,8 @@ QT7MovieViewOutput::QT7MovieViewOutput(QObject *parent)
 
 QT7MovieViewOutput::~QT7MovieViewOutput()
 {
+    [(QTMovieView*)m_movieView release];
+    [(QTMovie*)m_movie release];
 }
 
 void QT7MovieViewOutput::setupVideoOutput()
@@ -182,7 +183,7 @@ void QT7MovieViewOutput::setupVideoOutput()
     if (m_movie == 0 || m_winId <= 0)
         return;
 
-    NSSize size = [[(QTMovie*)m_movie attributeForKey:@"QTMovieCurrentSizeAttribute"] sizeValue];
+    NSSize size = [[(QTMovie*)m_movie attributeForKey:@"QTMovieNaturalSizeAttribute"] sizeValue];
     m_nativeSize = QSize(size.width, size.height);
 
     if (!m_movieView)
@@ -192,18 +193,36 @@ void QT7MovieViewOutput::setupVideoOutput()
     [(QTMovieView*)m_movieView setMovie:(QTMovie*)m_movie];
 
     [(NSView *)m_winId addSubview:(QTMovieView*)m_movieView];
+    m_layouted = true;
 
     setDisplayRect(m_displayRect);
 }
 
-void QT7MovieViewOutput::setEnabled(bool)
-{
-}
-
 void QT7MovieViewOutput::setMovie(void *movie)
 {
-    m_movie = movie;
-    setupVideoOutput();
+    if (m_movie != movie) {
+        if (m_movie) {
+            if (m_movieView)
+                [(QTMovieView*)m_movieView setMovie:nil];
+
+            [(QTMovie*)m_movie release];
+        }
+
+        m_movie = movie;
+
+        if (m_movie)
+            [(QTMovie*)m_movie retain];
+
+        setupVideoOutput();
+    }
+}
+
+void QT7MovieViewOutput::updateNaturalSize(const QSize &newSize)
+{
+    if (m_nativeSize != newSize) {
+        m_nativeSize = newSize;
+        emit nativeSizeChanged();
+    }
 }
 
 WId QT7MovieViewOutput::winId() const
@@ -213,8 +232,15 @@ WId QT7MovieViewOutput::winId() const
 
 void QT7MovieViewOutput::setWinId(WId id)
 {
-    m_winId = id;
-    setupVideoOutput();
+    if (m_winId != id) {
+        if (m_movieView && m_layouted) {
+            [(QTMovieView*)m_movieView removeFromSuperview];
+            m_layouted = false;
+        }
+
+        m_winId = id;
+        setupVideoOutput();
+    }
 }
 
 QRect QT7MovieViewOutput::displayRect() const
@@ -228,7 +254,7 @@ void QT7MovieViewOutput::setDisplayRect(const QRect &rect)
 
     if (m_movieView) {
         AutoReleasePool pool;
-        [(QTMovieView*)m_movieView setPreservesAspectRatio:(m_aspectRatioMode == QVideoWidget::KeepAspectRatio ? YES : NO)];
+        [(QTMovieView*)m_movieView setPreservesAspectRatio:(m_aspectRatioMode == Qt::KeepAspectRatio ? YES : NO)];
         [(QTMovieView*)m_movieView setFrame:NSMakeRect(m_displayRect.x(),
                                                        m_displayRect.y(),
                                                        m_displayRect.width(),
@@ -257,12 +283,12 @@ QSize QT7MovieViewOutput::nativeSize() const
     return m_nativeSize;
 }
 
-QVideoWidget::AspectRatioMode QT7MovieViewOutput::aspectRatioMode() const
+Qt::AspectRatioMode QT7MovieViewOutput::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QT7MovieViewOutput::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+void QT7MovieViewOutput::setAspectRatioMode(Qt::AspectRatioMode mode)
 {
     m_aspectRatioMode = mode;
     setDisplayRect(m_displayRect);

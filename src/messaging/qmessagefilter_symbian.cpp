@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -236,13 +236,13 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(filter._comparatorValue));
             if (cmp == QMessageDataComparator::Equal) {
                 if (filter._value.toString().length() > 0) {
-                    if (message.from().recipient().compare(filter._value.toString(),caseSensitivity) == 0) {
+                    if (message.from().addressee().compare(filter._value.toString(),caseSensitivity) == 0) {
                         return true;
                     }
                 }
             } else { // NotEqual
                 if (filter._value.toString().length() > 0) {
-                    if (message.from().recipient().compare(filter._value.toString(),caseSensitivity) != 0) {
+                    if (message.from().addressee().compare(filter._value.toString(),caseSensitivity) != 0) {
                         return true;
                     }
                 } else {
@@ -252,11 +252,11 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
         } else if (filter._comparatorType == QMessageFilterPrivate::Inclusion) {
             QMessageDataComparator::InclusionComparator cmp(static_cast<QMessageDataComparator::InclusionComparator>(filter._comparatorValue));
             if (cmp == QMessageDataComparator::Includes) {
-                if (message.from().recipient().contains(filter._value.toString(),caseSensitivity)) {
+                if (message.from().addressee().contains(filter._value.toString(),caseSensitivity)) {
                     return true;
                 }
             } else { // Excludes
-            if (!message.from().recipient().contains(filter._value.toString(),caseSensitivity)) {
+            if (!message.from().addressee().contains(filter._value.toString(),caseSensitivity)) {
                     return true;
                 }
             }
@@ -271,7 +271,7 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
             // Check to addresses
             QMessageAddressList addrList = message.to();
             for (int i=0; i < addrList.count(); i++) {
-                if (addrList[i].recipient().contains(filter._value.toString(),caseSensitivity)) {
+                if (addrList[i].addressee().contains(filter._value.toString(),caseSensitivity)) {
                     includes = true;
                     break;
                 }
@@ -280,7 +280,7 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
                 // Check cc addresses
                 addrList = message.cc();
                 for (int i=0; i < addrList.count(); i++) {
-                    if (addrList[i].recipient().contains(filter._value.toString(),caseSensitivity)) {
+                    if (addrList[i].addressee().contains(filter._value.toString(),caseSensitivity)) {
                         includes = true;
                         break;
                     }
@@ -290,7 +290,7 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
                 // Check bcc addresses
                 addrList = message.bcc();
                 for (int i=0; i < addrList.count(); i++) {
-                    if (addrList[i].recipient().contains(filter._value.toString(),caseSensitivity)) {
+                    if (addrList[i].addressee().contains(filter._value.toString(),caseSensitivity)) {
                         includes = true;
                         break;
                     }
@@ -497,30 +497,30 @@ bool QMessageFilterPrivate::filter(const QMessage &message, const QMessageFilter
         if (filter._comparatorType == QMessageFilterPrivate::Equality) {
             QMessageDataComparator::EqualityComparator cmp(static_cast<QMessageDataComparator::EqualityComparator>(filter._comparatorValue));
             if (cmp == QMessageDataComparator::Equal) {
-                if (message.size() == filter._value.toUInt()) {
+                if (message.size() == filter._value.toInt()) {
                     return true;
                 }
             } else { // NotEqual
-                if (message.size() != filter._value.toUInt()) {
+                if (message.size() != filter._value.toInt()) {
                     return true;
                 }
             }
         } else if (filter._comparatorType == QMessageFilterPrivate::Relation) {
             QMessageDataComparator::RelationComparator cmp(static_cast<QMessageDataComparator::RelationComparator>(filter._comparatorValue));
             if (cmp == QMessageDataComparator::LessThan) {
-                if (message.size() < filter._value.toUInt()) {
+                if (message.size() < filter._value.toInt()) {
                     return true;
                 }
             } else if (cmp == QMessageDataComparator::LessThanEqual) {
-                if (message.size() <= filter._value.toUInt()) {
+                if (message.size() <= filter._value.toInt()) {
                     return true;
                 }
             } else if (cmp == QMessageDataComparator::GreaterThan) {
-                if (message.size() > filter._value.toUInt()) {
+                if (message.size() > filter._value.toInt()) {
                     return true;
                 }
             } else { // GreaterThanEqual
-                if (message.size() >= filter._value.toUInt()) {
+                if (message.size() >= filter._value.toInt()) {
                     return true;
                 }
             }

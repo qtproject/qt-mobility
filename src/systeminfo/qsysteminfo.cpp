@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,8 +42,13 @@
 #include "qsysteminfo.h"
 
 #ifdef Q_OS_LINUX
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+#include "qsysteminfo_maemo_p.h"
+#else
 #include "qsysteminfo_linux_p.h"
-#endif
+#endif //Q_WS_MAEMO_5 & Q_WS_MAEMO_6
+#endif //Q_OS_LINUX
+
 #ifdef Q_OS_WIN
 #include "qsysteminfo_win_p.h"
 #endif
@@ -64,7 +69,7 @@
 #include <QDesktopWidget>
 #include <QDebug>
 
-
+#include <QMetaType>
 #include <locale.h>
 
 QTM_BEGIN_NAMESPACE
@@ -147,7 +152,7 @@ is a reliable way to gather such information.
     \value EmergencyOnly          Emergency calls only.
     \value Searching              Searching for or connecting with the network.
     \value Busy                   Network is busy.
-    \value Connected              Connected to newtwork.
+    \value Connected              Connected to network.
     \value HomeNetwork            On Home Network.
     \value Denied                 Network access denied.
     \value Roaming                On Roaming network.
@@ -157,7 +162,7 @@ is a reliable way to gather such information.
     \enum QSystemNetworkInfo::NetworkMode
     This enum describes the type of network:
 
-    \value UnknownMode             Unknown network.or netowrk error.
+    \value UnknownMode             Unknown network, or network error.
     \value GsmMode                 Global System for Mobile (GSM) network.
     \value CdmaMode                Code division multiple access (CDMA) network.
     \value WcdmaMode               Wideband Code Division Multiple Access (W-CDMA) network.
@@ -202,7 +207,7 @@ is a reliable way to gather such information.
     \class QSystemDeviceInfo
 
     \ingroup systeminfo
-    
+
     \brief The QSystemDeviceInfo class provides access to device
 information from the system.
 
@@ -224,14 +229,14 @@ information from the system.
    /*!
   \fn void QSystemDeviceInfo::powerStateChanged(QSystemDeviceInfo::PowerState state)
 
-  This signal is emitted when the power state has changed, such as when a phone gets plugged qint32o the wall.
+  This signal is emitted when the power state has changed, such as when a phone gets plugged in to the wall.
   \a state is the new power state.
  */
 
 /*!
   \fn  void QSystemDeviceInfo::currentProfileChanged(QSystemDeviceInfo::Profile profile)
 
-  This signal is emitted whenever the network profile changes, specified by \a profile.
+  This signal is emitted whenever the users active profile changes, specified by \a profile.
 */
 
 
@@ -352,18 +357,20 @@ information from the system.
   This signal is emitted whenever bluetooth state changes, specified by \a on.
 */
 
+Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
+Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
+Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
+Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
+
  /*!
 \fn QSystemInfo::QSystemInfo(QObject *parent)
    Constructs a QSystemInfo object with the given \a parent.
  */
 
-Q_GLOBAL_STATIC(QSystemInfoPrivate, sysinfoPrivate)
-
 QSystemInfo::QSystemInfo(QObject *parent)
     : QObject(parent), d(sysinfoPrivate())
 {
-    connect(d,SIGNAL(currentLanguageChanged(QString)),
-            this,SIGNAL(currentLanguageChanged(QString)));
 }
 
 /*!
@@ -373,6 +380,38 @@ QSystemInfo::~QSystemInfo()
 {
 }
 
+/*!
+    \internal
+
+    This function is called when the client connects to signals.
+
+    \sa connectNotify()
+*/
+
+void QSystemInfo::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentLanguageChanged(QString))))) {
+        connect(d,SIGNAL(currentLanguageChanged(QString)),
+                this,SIGNAL(currentLanguageChanged(QString)));
+    }
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the signals.
+
+    \sa connectNotify()
+*/
+void QSystemInfo::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentLanguageChanged(QString))))) {
+        disconnect(d,SIGNAL(currentLanguageChanged(QString)),
+                   this,SIGNAL(currentLanguageChanged(QString)));
+    }
+}
 /*!
   \property QSystemInfo::currentLanguage
   \brief The current Language
@@ -433,28 +472,22 @@ bool QSystemInfo::hasFeatureSupported(QSystemInfo::Feature feature)
    \fn QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
    Constructs a QSystemNetworkInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemNetworkInfoPrivate, netInfoPrivate)
 
 QSystemNetworkInfo::QSystemNetworkInfo(QObject *parent)
     : QObject(parent), d(netInfoPrivate())
 {
-    connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
-            this,SIGNAL(currentMobileCountryCodeChanged(QString)));
-
-    connect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
-            this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+    qRegisterMetaType<QSystemNetworkInfo::NetworkMode>("QSystemNetworkInfo::NetworkMode");
+    qRegisterMetaType<QSystemNetworkInfo::NetworkStatus>("QSystemNetworkInfo::NetworkStatus");
 
     connect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
-            this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
-
+                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
     connect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
-            this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
-
+                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
     connect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
-            this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
-
+                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
     connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
-            this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+
 }
 
 /*!
@@ -467,7 +500,8 @@ QSystemNetworkInfo::~QSystemNetworkInfo()
 /*!
     Returns the status of the network \a mode.
 */
-QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode) {
+QSystemNetworkInfo::NetworkStatus QSystemNetworkInfo::networkStatus(QSystemNetworkInfo::NetworkMode mode)
+{
     return netInfoPrivate()->networkStatus(mode);
 }
 
@@ -486,7 +520,7 @@ int QSystemNetworkInfo::networkSignalStrength(QSystemNetworkInfo::NetworkMode mo
 /*!
   \property QSystemNetworkInfo::cellId
   \brief The devices Cell ID
-    Returns the Cell ID of the connected tower or based station.
+    Returns the Cell ID of the connected tower or based station, or 0 if not connected.
 */
 int QSystemNetworkInfo::cellId()
 {
@@ -497,7 +531,7 @@ int QSystemNetworkInfo::cellId()
   \property QSystemNetworkInfo::locationAreaCode
   \brief The LAC.
 
-    Returns the Location Area Code. In the case of none such as a Desktop, an empty string.
+    Returns the Location Area Code. In the case of a Desktop computer, 0 is returned.
 */
 int QSystemNetworkInfo::locationAreaCode()
 {
@@ -508,8 +542,8 @@ int QSystemNetworkInfo::locationAreaCode()
    \property QSystemNetworkInfo::currentMobileCountryCode
    \brief The current MCC.
 
-    Returns the current Mobile Country Code. In the case of none such as a Desktop, an empty string.
-/*/
+    Returns the current Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
+*/
 QString QSystemNetworkInfo::currentMobileCountryCode()
 {
     return netInfoPrivate()->currentMobileCountryCode();
@@ -519,7 +553,7 @@ QString QSystemNetworkInfo::currentMobileCountryCode()
   \property QSystemNetworkInfo::currentMobileNetworkCode
   \brief The current MNC.
 
-    Returns the current Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Returns the current Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::currentMobileNetworkCode()
 {
@@ -530,7 +564,7 @@ QString QSystemNetworkInfo::currentMobileNetworkCode()
   \property QSystemNetworkInfo::homeMobileCountryCode
   \brief The home MNC.
 
-    Returns the home Mobile Network Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Country Code. In the case of a Desktop computer, an empty string is returned.
 */
 QString QSystemNetworkInfo::homeMobileCountryCode()
 {
@@ -541,7 +575,9 @@ QString QSystemNetworkInfo::homeMobileCountryCode()
   \property QSystemNetworkInfo::homeMobileNetworkCode
   \brief The home MCC.
 
-    Returns the home Mobile Country Code. In the case of none such as a Desktop, an empty string.
+    Returns the home Mobile Network Code. In the case of a Desktop computer, an empty string is returned.
+    Note: Some platforms don't support retrieving this info. In this case the Network Code is
+    returned only when the device is registered on home network.
 */
 QString QSystemNetworkInfo::homeMobileNetworkCode()
 {
@@ -560,17 +596,125 @@ QString QSystemNetworkInfo::networkName(QSystemNetworkInfo::NetworkMode mode)
 /*!
   Returns the MAC address for the interface servicing the network \a mode.
   */
-QString QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
+void QSystemNetworkInfo::macAddress(QSystemNetworkInfo::NetworkMode mode)
 {
     return netInfoPrivate()->macAddress(mode);
 }
 
 /*!
-  Returns the first found QNetworkInterface for type \a mode.
+  Returns the first found QNetworkInterface for type \a mode, or an invalid QNetworkInterface, if none is found.
   */
 QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::NetworkMode mode)
 {
     return netInfoPrivate()->interfaceForMode(mode);
+}
+/*!
+  Returns the current active mode. If more than one mode is active, returns the
+  default or preferred mode. If no modes are active, returns UnknownMode.
+  */
+QSystemNetworkInfo::NetworkMode QSystemNetworkInfo::currentMode()
+{
+    return netInfoPrivate()->currentMode();
+}
+
+/*!
+    \internal
+
+    This function is called when the client connects to the networkSignalStrengthChanged()
+    signal.
+*/
+void QSystemNetworkInfo::connectNotify(const char *signal)
+{
+    //check for networkSignalStrengthChanged() signal connect notification
+    //This is not required on all platforms
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+                                 networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
+        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(true);
+    }
+#endif
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentMobileCountryCodeChanged(QString))))) {
+        connect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
+                this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentMobileNetworkCodeChanged(QString))))) {
+        connect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
+                this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkModeChanged(QSystemNetworkInfo::NetworkMode))))) {
+        connect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))))) {
+        connect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))))) {
+        connect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
+                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
+        connect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+    }
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the networkSignalStrengthChanged()
+    signal.
+
+    \sa connectNotify()
+*/
+void QSystemNetworkInfo::disconnectNotify(const char *signal)
+{
+    //check for networkSignalStrengthChanged() signal disconnect notification
+    //This is not required on all platforms
+#if defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+                                 networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode, int))))) {
+        netInfoPrivate()->setWlanSignalStrengthCheckEnabled(false);
+    }
+#endif
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentMobileCountryCodeChanged(QString))))) {
+        disconnect(d,SIGNAL(currentMobileCountryCodeChanged(QString)),
+                this,SIGNAL(currentMobileCountryCodeChanged(QString)));
+    }
+
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentMobileNetworkCodeChanged(QString))))) {
+        disconnect(d,SIGNAL(currentMobileNetworkCodeChanged(QString)),
+                this,SIGNAL(currentMobileNetworkCodeChanged(QString)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkModeChanged(QSystemNetworkInfo::NetworkMode))))) {
+        disconnect(d,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)),
+                this,SIGNAL(networkModeChanged(QSystemNetworkInfo::NetworkMode)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkNameChanged(QSystemNetworkInfo::NetworkMode,QString))))) {
+        disconnect(d,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)),
+                this,SIGNAL(networkNameChanged(QSystemNetworkInfo::NetworkMode,QString)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int))))) {
+        disconnect(d,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)),
+                this,SIGNAL(networkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus))))) {
+        disconnect(d,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)),
+                this,SIGNAL(networkStatusChanged(QSystemNetworkInfo::NetworkMode,QSystemNetworkInfo::NetworkStatus)));
+    }
 }
 
 // display
@@ -578,7 +722,6 @@ QNetworkInterface QSystemNetworkInfo::interfaceForMode(QSystemNetworkInfo::Netwo
    \fn QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
    Constructs a QSystemDisplayInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemDisplayInfoPrivate, displayInfoPrivate)
 
 QSystemDisplayInfo::QSystemDisplayInfo(QObject *parent)
     : QObject(parent)
@@ -593,20 +736,23 @@ QSystemDisplayInfo::~QSystemDisplayInfo()
 }
 
 /*!
-    Returns the display brightness of \a screen in %, 1 - 100 scale.
+    Returns the display brightness of the screen with index \a screenNumber in %, 1 - 100 scale.
 
     Depending on platform, displayBrightness may not be available due to
     differing hardware, software or driver implementation. In which case this
     will return 0.
 
+    \sa QDesktopWidget::screenCount()
 */
-int QSystemDisplayInfo::displayBrightness(int screen)
+int QSystemDisplayInfo::displayBrightness(int screenNumber)
 {
-    return displayInfoPrivate()->displayBrightness(screen);
+    return displayInfoPrivate()->displayBrightness(screenNumber);
 }
 
 /*!
-    Returns the color depth of the screen \a screenNumber, in bits per pixel.
+    Returns the color depth of the screen with the index \a screenNumber, in bits per pixel, or 0 if the screen is not found.
+
+    \sa QDesktopWidget::screenCount()
 */
 int QSystemDisplayInfo::colorDepth(int screenNumber)
 {
@@ -617,11 +763,11 @@ int QSystemDisplayInfo::colorDepth(int screenNumber)
    \fn QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
    Constructs a QSystemStorageInfo object with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemStorageInfoPrivate, storageInfoPrivate)
 
 QSystemStorageInfo::QSystemStorageInfo(QObject *parent)
     : QObject(parent)
 {
+    qRegisterMetaType<QSystemStorageInfo::DriveType>("QSystemStorageInfo::DriveType");
 }
 
 /*!
@@ -653,7 +799,7 @@ qlonglong QSystemStorageInfo::availableDiskSpace(const QString &volumeDrive)
   \property QSystemStorageInfo::logicalDrives
   \brief The logical drives.
 
-    Returns a QStringList of volumes or partitions.
+    Returns a QStringList of volumes or partitions, or an empty list if no drives are found.
 */
 QStringList QSystemStorageInfo::logicalDrives()
 {
@@ -673,26 +819,17 @@ QSystemStorageInfo::DriveType QSystemStorageInfo::typeForDrive(const QString &dr
    \fn QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
    Constructs a QSystemDeviceInfo with the given \a parent.
  */
-Q_GLOBAL_STATIC(QSystemDeviceInfoPrivate, deviceInfoPrivate)
 
 QSystemDeviceInfo::QSystemDeviceInfo(QObject *parent)
     : QObject(parent), d(deviceInfoPrivate())
 {
-    connect(d,SIGNAL(batteryLevelChanged(int)),
-            this,SIGNAL(batteryLevelChanged(int)));
-
-    connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
-            this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
-
-    connect(d,SIGNAL(bluetoothStateChanged(bool)),
-            this,SIGNAL(bluetoothStateChanged(bool)));
-
-    connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
-            this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
-
-    connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
-            this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
-    }
+            connect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+       connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+            connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+}
 
 /*!
   Destroys the QSystemDeviceInfo object.
@@ -701,6 +838,78 @@ QSystemDeviceInfo::~QSystemDeviceInfo()
 {
 }
 
+/*!
+    \internal
+
+    This function is called when the client connects to signals.
+
+    \sa connectNotify()
+*/
+
+void QSystemDeviceInfo::connectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryLevelChanged(int))))) {
+        connect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))))) {
+        connect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            bluetoothStateChanged(bool))))) {
+        connect(d,SIGNAL(bluetoothStateChanged(bool)),
+                this,SIGNAL(bluetoothStateChanged(bool)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        connect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            powerStateChanged(QSystemDeviceInfo::PowerState))))) {
+        connect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    }
+}
+
+/*!
+    \internal
+
+    This function is called when the client disconnects from the signals.
+
+    \sa connectNotify()
+*/
+void QSystemDeviceInfo::disconnectNotify(const char *signal)
+{
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryLevelChanged(int))))) {
+        disconnect(d,SIGNAL(batteryLevelChanged(int)),
+                this,SIGNAL(batteryLevelChanged(int)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            batteryStatusChanged(QSystemDeviceInfo::BatteryStatus))))) {
+        disconnect(d,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)),
+                this,SIGNAL(batteryStatusChanged(QSystemDeviceInfo::BatteryStatus)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            bluetoothStateChanged(bool))))) {
+        disconnect(d,SIGNAL(bluetoothStateChanged(bool)),
+                this,SIGNAL(bluetoothStateChanged(bool)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            currentProfileChanged(QSystemDeviceInfo::Profile))))) {
+        disconnect(d,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)),
+                this,SIGNAL(currentProfileChanged(QSystemDeviceInfo::Profile)));
+    }
+    if (QLatin1String(signal) == QLatin1String(QMetaObject::normalizedSignature(SIGNAL(
+            powerStateChanged(QSystemDeviceInfo::PowerState))))) {
+        disconnect(d,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)),
+                this,SIGNAL(powerStateChanged(QSystemDeviceInfo::PowerState)));
+    }
+}
 
 /*!
   \property QSystemDeviceInfo::inputMethodType
@@ -764,7 +973,7 @@ QString QSystemDeviceInfo::model()
   \property QSystemDeviceInfo::productName
   \brief The product name.
 
-    Returns the product name of the device. In the case where no product information is available,
+    Returns the product name of the device. In the case where no product information is available, an empty string will be returned.
 
 */
 QString QSystemDeviceInfo::productName()
@@ -850,14 +1059,18 @@ QSystemDeviceInfo::PowerState QSystemDeviceInfo::currentPowerState()
  /*!
    Constructs a QSystemScreenSaver object with the given \a parent.
 
-   On platforms where there is no one default screensaver mechanism, such as Linux, this class
+   On platforms where there is no default screensaver mechanism, such as Linux, this class
    may not be available.
  */
 
 QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
     : QObject(parent)
 {
+#ifdef Q_OS_LINUX
+    d = new QSystemScreenSaverPrivate(static_cast<QSystemScreenSaverLinuxCommonPrivate*>(parent));
+#else
     d = new QSystemScreenSaverPrivate(parent);
+#endif
     screenSaverIsInhibited = screenSaverInhibited();
 }
 
@@ -866,18 +1079,15 @@ QSystemScreenSaver::QSystemScreenSaver(QObject *parent)
  */
 QSystemScreenSaver::~QSystemScreenSaver()
 {
-    qWarning() << Q_FUNC_INFO;
-//    if(screenSaverIsInhibited != screenSaverInhibited())
-//        setScreenSaverEnabled(screenSaverIsInhibited);
-
     delete d;
 }
 
 /*!
     Temporarily inhibits the screensaver.
 
-    Will be reverted upon destruction of the QSystemScreenSaver object.
-    Returns true on success, otherwise false.
+    The screensaver will be set to a non inhibited state only when this QSystemScreenSaver object gets destroyed.
+
+    This is a non blocking function that will return true if the inhibit procedure was successful, otherwise false.
 
     On platforms that support it, if screensaver is secure by policy, the policy will be honored
     and this will fail.

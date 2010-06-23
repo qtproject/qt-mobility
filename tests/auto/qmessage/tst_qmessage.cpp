@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -109,6 +109,7 @@ private slots:
     void testMessageAddress_data();
     void testMessageAddress();
     void testHeaderFields();
+    void testStandardFolder();
 
 private:
     QMessageAccountId testAccountId;
@@ -129,6 +130,11 @@ tst_QMessage::~tst_QMessage()
 
 void tst_QMessage::initTestCase()
 {
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+    if (!Support::mapiAvailable())
+        QSKIP("Skipping tests because a MAPI subsystem does not appear to be available", SkipAll);
+#endif
+
     Support::clearMessageStore();
 
     {
@@ -195,7 +201,7 @@ void tst_QMessage::testFrom()
     QCOMPARE(msg.from() != QMessageAddress(), true);
     QCOMPARE(msg.isModified(), true);
 
-    addr = QMessageAddress(QMessageAddress::Xmpp, "bob@example.org");
+    addr = QMessageAddress(QMessageAddress::InstantMessage, "bob@example.org");
     msg.setFrom(addr);
     QCOMPARE(msg.from(), addr);
     QCOMPARE(msg.from() != QMessageAddress(), true);
@@ -305,7 +311,7 @@ void tst_QMessage::testBcc()
     QCOMPARE(msg.isModified(), true);
 
     addresses = QMessageAddressList();
-    addresses.append(QMessageAddress(QMessageAddress::Xmpp, "charlie@example.org"));
+    addresses.append(QMessageAddress(QMessageAddress::InstantMessage, "charlie@example.org"));
     msg.setBcc(addresses);
     QCOMPARE(msg.bcc(), addresses);
 }
@@ -451,3 +457,8 @@ void tst_QMessage::testHeaderFields()
     QCOMPARE(msg.headerFieldValue("X-None").isEmpty(), true);
 }
 
+void tst_QMessage::testStandardFolder()
+{
+    QMessage msg;
+    QCOMPARE(msg.standardFolder(), QMessage::DraftsFolder);
+}

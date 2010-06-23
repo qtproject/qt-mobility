@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -58,8 +58,7 @@ class Q_CONTACTS_EXPORT QContactLocalIdFetchRequest : public QContactAbstractReq
     Q_OBJECT
 
 public:
-    QContactLocalIdFetchRequest();
-    ~QContactLocalIdFetchRequest();
+    QContactLocalIdFetchRequest(QObject* parent = 0);
 
     /* Selection, restriction and sorting */
     void setFilter(const QContactFilter& filter);
@@ -69,9 +68,6 @@ public:
 
     /* Results */
     QList<QContactLocalId> ids() const;
-
-signals:
-    void progress(QContactLocalIdFetchRequest* self, bool appendOnly);
 
 private:
     Q_DISABLE_COPY(QContactLocalIdFetchRequest)

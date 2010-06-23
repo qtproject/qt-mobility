@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qmediaplaylistioplugin.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QMediaPlaylistIOPlugin Class Reference</title>
+  <title>Qt Mobility Project 1.1: QMediaPlaylistIOPlugin Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -68,7 +68,7 @@
 <p>Identifies if plug-in can read <i>format</i> data from an I/O <i>device</i>.</p>
 <p>Returns true if the data can be read; and false otherwise.</p>
 <h3 class="fn"><a name="canRead-2"></a>bool QMediaPlaylistIOPlugin::canRead ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Identifies if a plug-in can read <i>format</i> data from a URI <i>location</i>.</p>
+<p>Identifies if a plug-in can read <i>format</i> data from a URL <i>location</i>.</p>
 <p>Returns true if the data can be read; and false otherwise.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/canWrite"></a>
 <h3 class="fn"><a name="canWrite"></a>bool QMediaPlaylistIOPlugin::canWrite ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -79,7 +79,7 @@
 <p>Returns a new <a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> which reads <i>format</i> data from an I/O <i>device</i>.</p>
 <p>If the device is invalid or the format is unsupported this will return a null pointer.</p>
 <h3 class="fn"><a name="createReader-2"></a><a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> * QMediaPlaylistIOPlugin::createReader ( const <a href="http://qt.nokia.com/doc/4.6/qurl.html">QUrl</a> &amp; <i>location</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> = QByteArray() )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
-<p>Returns a new <a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> which reads <i>format</i> data from a URI <i>location</i>.</p>
+<p>Returns a new <a href="qmediaplaylistreader.html">QMediaPlaylistReader</a> which reads <i>format</i> data from a URL <i>location</i>.</p>
 <p>If the location or the format is unsupported this will return a null pointer.</p>
 <a name="//apple_ref/cpp/instm/QMediaPlaylistIOPlugin/createWriter"></a>
 <h3 class="fn"><a name="createWriter"></a><a href="qmediaplaylistwriter.html">QMediaPlaylistWriter</a> * QMediaPlaylistIOPlugin::createWriter ( <a href="http://qt.nokia.com/doc/4.6/qiodevice.html">QIODevice</a> * <i>device</i>, const <a href="http://qt.nokia.com/doc/4.6/qbytearray.html">QByteArray</a> &amp; <i>format</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
@@ -90,8 +90,8 @@
 <p>Returns a list of format keys supported by a plug-in.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

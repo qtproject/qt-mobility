@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -123,9 +123,9 @@ QMessageServicePrivate::QMessageServicePrivate()
     : QObject(),
       _active(0),
       _error(QMessageManager::NoError),
+      _activeStoreAction(false),
       _limit(0),
-      _offset(0),
-      _activeStoreAction(false)
+      _offset(0)
 {
     connect(&_transmit, SIGNAL(activityChanged(QMailServiceAction::Activity)), this, SLOT(transmitActivityChanged(QMailServiceAction::Activity)));
     connect(&_transmit, SIGNAL(statusChanged(QMailServiceAction::Status)), this, SLOT(statusChanged(QMailServiceAction::Status)));
@@ -136,7 +136,7 @@ QMessageServicePrivate::QMessageServicePrivate()
 
 bool QMessageServicePrivate::isBusy() const
 {
-    if (_active && ((_active->activity() == QMailServiceAction::Pending) || (_active->activity() == QMailServiceAction::InProgress)) ||
+    if ((_active && ((_active->activity() == QMailServiceAction::Pending) || (_active->activity() == QMailServiceAction::InProgress))) ||
         _activeStoreAction) {
         qWarning() << "Action is currently busy";
         return true;

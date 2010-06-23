@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -63,7 +63,16 @@ public:
 
     QMessageStore *q_ptr;
     QMessageStorePrivatePlatform *p_ptr;
-
+#ifdef Q_WS_MAEMO_5
+    enum NotificationType
+    {
+        Added,
+        Updated,
+        Removed
+    };
+    void messageNotification(QMessageStorePrivate::NotificationType type, const QMessageId& id,
+                             const QMessageManager::NotificationFilterIdSet &matchingFilters);
+#endif
 #ifdef Q_OS_WIN
     static QMutex* mutex(QMessageStore*);
     static QMutex* mutex(QMessageManager&);

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,14 +46,21 @@
 
 #include <QtCore/qlist.h>
 #include <QtCore/qmutex.h>
+#include <QtCore/qqueue.h>
 #include <QtCore/qpointer.h>
 #include <QtCore/qwaitcondition.h>
-#include <QtMultimedia/qvideosurfaceformat.h>
-#include <QtMultimedia/qvideoframe.h>
+#include <qvideosurfaceformat.h>
+#include <qvideoframe.h>
+#include <qabstractvideobuffer.h>
 
 QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 QT_END_NAMESPACE
+
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+class QGstXvImageBuffer;
+class QGstXvImageBufferPool;
+#endif
 
 class QVideoSurfaceGstDelegate : public QObject
 {
@@ -61,10 +68,15 @@ class QVideoSurfaceGstDelegate : public QObject
 public:
     QVideoSurfaceGstDelegate(QAbstractVideoSurface *surface);
 
-    QList<QVideoFrame::PixelFormat> supportedPixelFormats() const;
+    QList<QVideoFrame::PixelFormat> supportedPixelFormats(
+            QAbstractVideoBuffer::HandleType handleType = QAbstractVideoBuffer::NoHandle) const;
+
+    QVideoSurfaceFormat surfaceFormat() const;
 
     bool start(const QVideoSurfaceFormat &format, int bytesPerLine);
     void stop();
+
+    bool isActive();
 
     GstFlowReturn render(GstBuffer *buffer);
 
@@ -94,6 +106,7 @@ public:
     GstVideoSink parent;
 
     static QVideoSurfaceGstSink *createSink(QAbstractVideoSurface *surface);
+    static QVideoSurfaceFormat formatForCaps(GstCaps *caps, int *bytesPerLine = 0);
 
 private:
     static GType get_type();
@@ -122,6 +135,14 @@ private:
 
 private:
     QVideoSurfaceGstDelegate *delegate;
+
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+    QGstXvImageBufferPool *pool;
+#endif
+
+    GstCaps *lastRequestedCaps;
+    GstCaps *lastBufferCaps;
+    QVideoSurfaceFormat *lastSurfaceFormat;
 };
 
 

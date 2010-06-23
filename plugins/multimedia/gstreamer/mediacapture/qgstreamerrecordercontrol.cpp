@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,6 +40,9 @@
 ****************************************************************************/
 
 #include "qgstreamerrecordercontrol.h"
+#include "qgstreameraudioencode.h"
+#include "qgstreamervideoencode.h"
+#include "qgstreamermediacontainercontrol.h"
 #include <QtCore/QDebug>
 
 QGstreamerRecorderControl::QGstreamerRecorderControl(QGstreamerCaptureSession *session)
@@ -48,6 +51,7 @@ QGstreamerRecorderControl::QGstreamerRecorderControl(QGstreamerCaptureSession *s
     connect(m_session, SIGNAL(stateChanged(QGstreamerCaptureSession::State)), SLOT(updateState()));
     connect(m_session, SIGNAL(error(int,QString)), SIGNAL(error(int,QString)));
     connect(m_session, SIGNAL(durationChanged(qint64)), SIGNAL(durationChanged(qint64)));
+    m_hasPreviewState = m_session->captureMode() != QGstreamerCaptureSession::Audio;
 }
 
 QGstreamerRecorderControl::~QGstreamerRecorderControl()
@@ -99,9 +103,9 @@ qint64 QGstreamerRecorderControl::duration() const
 void QGstreamerRecorderControl::record()
 {
     m_session->dumpGraph("before-record");
-    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+    if (!m_hasPreviewState || m_session->state() != QGstreamerCaptureSession::StoppedState) {
         m_session->setState(QGstreamerCaptureSession::RecordingState);
-    else
+    } else
         emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
 
     m_session->dumpGraph("after-record");
@@ -110,16 +114,126 @@ void QGstreamerRecorderControl::record()
 void QGstreamerRecorderControl::pause()
 {
     m_session->dumpGraph("before-pause");
-    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+    if (!m_hasPreviewState || m_session->state() != QGstreamerCaptureSession::StoppedState) {
         m_session->setState(QGstreamerCaptureSession::PausedState);
-    else
+    } else
         emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
 }
 
 void QGstreamerRecorderControl::stop()
 {
-    if (m_session->state() != QGstreamerCaptureSession::StoppedState)
-        m_session->setState(QGstreamerCaptureSession::PreviewState);
+    if (!m_hasPreviewState) {
+        m_session->setState(QGstreamerCaptureSession::StoppedState);
+    } else {
+        if (m_session->state() != QGstreamerCaptureSession::StoppedState)
+            m_session->setState(QGstreamerCaptureSession::PreviewState);
+    }
+}
+
+void QGstreamerRecorderControl::applySettings()
+{
+    //Check the codecs are compatible with container,
+    //and choose the compatible codecs/container if omitted
+    QGstreamerAudioEncode *audioEncodeControl = m_session->audioEncodeControl();
+    QGstreamerVideoEncode *videoEncodeControl = m_session->videoEncodeControl();
+    QGstreamerMediaContainerControl *mediaContainerControl = m_session->mediaContainerControl();
+
+    bool needAudio = m_session->captureMode() & QGstreamerCaptureSession::Audio;
+    bool needVideo = m_session->captureMode() & QGstreamerCaptureSession::Video;
+
+    QStringList containerCandidates;
+    if (mediaContainerControl->containerMimeType().isEmpty())
+        containerCandidates = mediaContainerControl->supportedContainers();
     else
-        emit error(QMediaRecorder::ResourceError, tr("Service has not been started"));
+        containerCandidates << mediaContainerControl->containerMimeType();
+
+
+    QStringList audioCandidates;
+    if (needAudio) {
+        QAudioEncoderSettings audioSettings = audioEncodeControl->audioSettings();
+        if (audioSettings.codec().isEmpty())
+            audioCandidates = audioEncodeControl->supportedAudioCodecs();
+        else
+            audioCandidates << audioSettings.codec();
+    }
+
+    QStringList videoCandidates;
+    if (needVideo) {
+        QVideoEncoderSettings videoSettings = videoEncodeControl->videoSettings();
+        if (videoSettings.codec().isEmpty())
+            videoCandidates = videoEncodeControl->supportedVideoCodecs();
+        else
+            videoCandidates << videoSettings.codec();
+    }
+
+    QString container;
+    QString audioCodec;
+    QString videoCodec;
+
+    foreach (const QString &containerCandidate, containerCandidates) {
+        QSet<QString> supportedTypes = mediaContainerControl->supportedStreamTypes(containerCandidate);
+
+        audioCodec.clear();
+        videoCodec.clear();
+
+        if (needAudio) {
+            bool found = false;
+            foreach (const QString &audioCandidate, audioCandidates) {
+                QSet<QString> audioTypes = audioEncodeControl->supportedStreamTypes(audioCandidate);
+                if (!audioTypes.intersect(supportedTypes).isEmpty()) {
+                    found = true;
+                    audioCodec = audioCandidate;
+                    break;
+                }
+            }
+            if (!found)
+                continue;
+        }
+
+        if (needVideo) {
+            bool found = false;
+            foreach (const QString &videoCandidate, videoCandidates) {
+                QSet<QString> videoTypes = videoEncodeControl->supportedStreamTypes(videoCandidate);
+                if (!videoTypes.intersect(supportedTypes).isEmpty()) {
+                    found = true;
+                    videoCodec = videoCandidate;
+                    break;
+                }
+            }
+            if (!found)
+                continue;
+        }
+
+        container = containerCandidate;
+        break;
+    }
+
+    if (container.isEmpty()) {
+        emit error(QMediaRecorder::FormatError, tr("Not compatible codecs and container format."));
+    } else {
+        mediaContainerControl->setContainerMimeType(container);
+
+        if (needAudio) {
+            QAudioEncoderSettings audioSettings = audioEncodeControl->audioSettings();
+            audioSettings.setCodec(audioCodec);
+            audioEncodeControl->setAudioSettings(audioSettings);
+        }
+
+        if (needVideo) {
+            QVideoEncoderSettings videoSettings = videoEncodeControl->videoSettings();
+            videoSettings.setCodec(videoCodec);
+            videoEncodeControl->setVideoSettings(videoSettings);
+        }
+    }
+}
+
+
+bool QGstreamerRecorderControl::isMuted() const
+{
+    return false;
+}
+
+void QGstreamerRecorderControl::setMuted(bool)
+{
+
 }

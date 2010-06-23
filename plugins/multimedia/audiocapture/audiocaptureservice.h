@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,14 +44,15 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediaservice.h>
+#include "../../../src/multimedia/qmediaservice.h"
 
 class AudioCaptureSession;
 class AudioEncoderControl;
+class AudioContainerControl;
 class AudioMediaRecorderControl;
 class AudioEndpointSelector;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 class AudioCaptureService : public QMediaService
 {
@@ -60,10 +61,12 @@ public:
     AudioCaptureService(QObject *parent = 0);
     ~AudioCaptureService();
 
-    QMediaControl *control(const char *name) const;
+    QMediaControl *requestControl(const char *interface);
+    void releaseControl(QMediaControl *control);
 private:
     AudioCaptureSession       *m_session;
     AudioEncoderControl       *m_encoderControl;
+    AudioContainerControl     *m_containerControl;
     AudioEndpointSelector     *m_endpointSelector;
     AudioMediaRecorderControl *m_mediaControl;
 };

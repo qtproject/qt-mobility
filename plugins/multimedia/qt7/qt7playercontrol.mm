@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,7 +47,7 @@
 #include <QtCore/qurl.h>
 #include <QtCore/qdebug.h>
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 
 QT7PlayerControl::QT7PlayerControl(QObject *parent)
    : QMediaPlayerControl(parent)
@@ -70,6 +70,7 @@ void QT7PlayerControl::setSession(QT7PlayerSession *session)
             this, SIGNAL(mediaStatusChanged(QMediaPlayer::MediaStatus)));
     connect(m_session, SIGNAL(volumeChanged(int)), this, SIGNAL(volumeChanged(int)));
     connect(m_session, SIGNAL(mutedChanged(bool)), this, SIGNAL(mutedChanged(bool)));
+    connect(m_session, SIGNAL(audioAvailableChanged(bool)), this, SIGNAL(audioAvailableChanged(bool)));
     connect(m_session, SIGNAL(videoAvailableChanged(bool)), this, SIGNAL(videoAvailableChanged(bool)));
     connect(m_session, SIGNAL(error(int,QString)), this, SIGNAL(error(int,QString)));
 }
@@ -114,11 +115,14 @@ bool QT7PlayerControl::isSeekable() const
     return m_session->isSeekable();
 }
 
-QPair<qint64, qint64> QT7PlayerControl::seekRange() const
+QMediaTimeRange QT7PlayerControl::availablePlaybackRanges() const
 {
-    return isSeekable()
-            ? qMakePair<qint64, qint64>(0, duration())
-            : qMakePair<qint64, qint64>(0, 0);
+    QMediaTimeRange result;
+
+    if (isSeekable())
+        result.addInterval(0, duration());
+
+    return result;
 }
 
 qreal QT7PlayerControl::playbackRate() const
@@ -178,6 +182,10 @@ void QT7PlayerControl::setMedia(const QMediaContent &content, QIODevice *stream)
     emit mediaChanged(content);
 }
 
+bool QT7PlayerControl::isAudioAvailable() const
+{
+    return m_session->isAudioAvailable();
+}
 
 bool QT7PlayerControl::isVideoAvailable() const
 {

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -70,8 +70,7 @@ QT_BEGIN_HEADER
 QTM_BEGIN_NAMESPACE
 
 class QNmeaReader;
-struct QPendingGeoPositionInfo
-{
+struct QPendingGeoPositionInfo {
     QGeoPositionInfo info;
     bool hasFix;
 };
@@ -87,6 +86,11 @@ public:
     void startUpdates();
     void stopUpdates();
     void requestUpdate(int msec);
+
+    bool parsePosInfoFromNmeaData(const char *data,
+                                  int size,
+                                  QGeoPositionInfo *posInfo,
+                                  bool *hasFix);
 
     void notifyNewUpdate(QGeoPositionInfo *update, bool fixStatus);
 
@@ -119,6 +123,7 @@ private:
     QDate m_currentDate;
     QTimer *m_requestTimer;
     bool m_noUpdateLastInterval;
+    bool m_updateTimeoutSent;
     bool m_connectedReadyRead;
 };
 
@@ -127,7 +132,7 @@ class QNmeaReader
 {
 public:
     explicit QNmeaReader(QNmeaPositionInfoSourcePrivate *sourcePrivate)
-        : m_proxy(sourcePrivate) {}
+            : m_proxy(sourcePrivate) {}
     virtual ~QNmeaReader() {}
 
     virtual void readAvailableData() = 0;

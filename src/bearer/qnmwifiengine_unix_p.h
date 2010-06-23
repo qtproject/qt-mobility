@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -64,7 +64,6 @@
 #include <qnetworksession.h>
 #include <qnetworkconfiguration.h>
 #include <qnetworkconfigmanager_p.h>
-
 
 
 QTM_BEGIN_NAMESPACE
@@ -140,7 +139,6 @@ private:
 private slots:
     void updateDeviceInterfaceState(const QString &, quint32);
     void addDevice(QDBusObjectPath path);
-    void removeDevice(QDBusObjectPath path);
 
 Q_SIGNALS:
     void configurationChanged(const QNetworkConfiguration& config);

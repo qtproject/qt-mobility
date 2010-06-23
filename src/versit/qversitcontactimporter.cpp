@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,58 +39,105 @@
 **
 ****************************************************************************/
 
+#include "qcontactmanagerengine.h"
 #include "qversitcontactimporter.h"
 #include "qversitcontactimporter_p.h"
 #include "qversitdocument.h"
 #include "qversitproperty.h"
 #include "qmobilityglobal.h"
 
-QTM_BEGIN_NAMESPACE
+QTM_USE_NAMESPACE
 
 /*!
-  \class QVersitContactImporter
- 
-  \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
+  \class QVersitContactImporterPropertyHandler
+  \brief The QVersitContactImporterPropertyHandler class is an interface for clients wishing to
+  implement custom import behaviour for versit properties
 
   \ingroup versit
- 
-  The versit properties (\l QVersitProperty) that were not imported by
-  \l QVersitContactImporter::importContact() can be fetched after importing
-  by calling \l QVersitContactImporter::unknownVersitProperties().
-  For the returned properties,
-  the client can perform the conversions from versit properties
-  to contact details and add the converted details to the QContact.
- 
-  \code
- 
-  QVersitDocument document;
-  QVersitProperty property;
- 
-  property.setName(QString::fromAscii("N"));
-  property.setValue("Citizen;John;Q;;");
-  document.addProperty(property);
- 
-  property.setName(QString::fromAscii("X-UNKNOWN-PROPERTY"));
-  property.setValue("some value");
-  document.addProperty(property);
- 
-  QVersitContactImporter importer;
-  importer.setImagePath(QString::fromAscii("/my/image/path"));
-  importer.setAudioClipPath(QString::fromAscii("my/audio_clip/path"));
- 
-  QContact contact = importer.importContact(document);
-  // contact now contains the "N" property as a QContactName
-  QList<QVersitProperty> unknownProperties = importer.unknownVersitProperties();
-  // unknownProperties contains "X-UNKNOWN-PROPERTY"
-  // that can be handled by the client itself
- 
-  \endcode
- 
-  \sa QVersitDocument, QVersitReader
+
+  \sa QVersitContactImporter
  */
 
+/*!
+ * \fn QVersitContactImporterPropertyHandler::~QVersitContactImporterPropertyHandler()
+ * Frees any memory in use by this handler.
+ */
+
+/*!
+ * \fn virtual bool QVersitContactImporterPropertyHandler::preProcessProperty(const QVersitDocument& document, const QVersitProperty& property, int contactIndex, QContact* contact) = 0;
+ * Process \a property and update \a contact with the corresponding QContactDetail(s).
+ * \a document provides the context within which the property was found.
+ * \a contactIndex specifies the position that \a contact will take in the list returned by
+ * \l QVersitContactImporter::importDocuments().
+ *
+ * Returns true if the property has been handled and requires no further processing, false
+ * otherwise.
+ *
+ * This function is called on every QVersitProperty encountered during an import.  Supply this
+ * function and return true to implement custom import behaviour.
+ */
+
+/*!
+ * \fn virtual bool QVersitContactImporterPropertyHandler::postProcessProperty(const QVersitDocument& document, const QVersitProperty& property, bool alreadyProcessed, int contactIndex, QContact* contact) = 0;
+ * Process \a property and update \a contact with the corresponding QContactDetail(s).
+ * \a document provides the context within which the property was found.
+ * \a contactIndex specifies the position that \a contact will take in the list returned by
+ * \l QVersitContactImporter::importDocuments().
+ * \a alreadyProcessed is true if the detail has already been processed either by
+ * \l preProcessProperty() or by QVersitContactImporter itself.
+ *
+ * Returns true if the property has been handled, false otherwise.
+ *
+ * This function is called on every QVersitProperty encountered during an import.  This can be
+ * used to implement support for QVersitProperties not supported by QVersitContactImporter.
+ */
+
+/*!
+ * \class QVersitContactImporter
+ * \brief The QVersitContactImporter class creates QContacts from QVersitDocuments.
+ *
+ * \ingroup versit
+ *
+ * A \l QVersitResourceHandler is associated with the importer to supply the behaviour for saving
+ * files to persistent storage.  By default, this is set to a \l QVersitDefaultResourceHandler,
+ * which does not save files to persistent storage.  Note that although avatars found in vCards
+ * are not saved to disk by default, the importer does set the pixmap of the contact detail to the
+ * image.  If a full-sized avatar image needs to be persisted, a custom QVersitResourceHandler
+ * should be supplied which implements this.
+ *
+ * By associating a QVersitContactImporterPropertyHandler with the importer using
+ * setPropertyHandler(), the client can pass in a handler to override the processing of properties
+ * and/or handle properties that QVersitContactImporter doesn't support.
+ *
+ * An example property handler that decodes unknown properties generated by the example detail handler provided in the QVersitContactExporter documentation:
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Property handler
+ *
+ * An example usage of QVersitContactImporter
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import example
+ *
+ * \section1 Importing categories
+ * The importer imports the vCard CATEGORIES property by converting each category to a QContactTag.
+ * Some managers may not have support for QContactTag, but instead support categorization using the
+ * \l{QContactRelationship::HasMember}{HasMember} QContactRelationship along with contacts of type
+ * \l{QContactType::TypeGroup}{TypeGroup}.  For these backends, if the categorization information
+ * needs to be retained through group relationships, extra work needs to be done to do the
+ * conversion.  Below is some example code that does this translation.
+ *
+ * \snippet ../../doc/src/snippets/qtversitdocsample/qtversitdocsample.cpp Import relationship example
+ *
+ * \sa QVersitDocument, QVersitReader, QVersitContactImporterPropertyHandler
+ */
+
+/*!
+  \enum QVersitContactImporter::Error
+  This enum specifies an error that occurred during the most recent call to importDocuments()
+  \value NoError The most recent operation was successful
+  \value InvalidDocumentError One of the documents is not a vCard
+  \value EmptyDocumentError One of the documents is empty
+  */
+
 /*! Constructs a new importer */
-QVersitContactImporter::QVersitContactImporter() 
+QVersitContactImporter::QVersitContactImporter()
     : d(new QVersitContactImporterPrivate)
 {
 }
@@ -102,60 +149,93 @@ QVersitContactImporter::~QVersitContactImporter()
 }
 
 /*!
- * Sets the \a path where the contact photos will be saved.
- * This function should be called before calling \l importContact().
- * If the image path has not been set,
- * the images in the versit document will not be added to the contact.
- * There is no default path for them.
+ * Converts \a documents into a corresponding list of QContacts.  After calling this, the converted
+ * contacts can be retrieved by calling contacts().
+ * Returns true on success.  If any of the documents cannot be imported as contacts (eg. they aren't
+ * vCards), false is returned and errors() will return a list describing the errors that occurred.
+ * The successfully imported documents will still be available via contacts().
+ *
+ * \sa contacts(), errors()
  */
-void QVersitContactImporter::setImagePath(const QString& path)
+bool QVersitContactImporter::importDocuments(const QList<QVersitDocument>& documents)
 {
-    d->mImagePath = path;
+    int documentIndex = 0;
+    int contactIndex = 0;
+    d->mContacts.clear();
+    d->mErrors.clear();
+    bool ok = true;
+    foreach (const QVersitDocument& document, documents) {
+        QContact contact;
+        QVersitContactImporter::Error error;
+        if (d->importContact(document, contactIndex, &contact, &error)) {
+            d->mContacts.append(contact);
+            contactIndex++;
+        } else {
+            d->mErrors.insert(documentIndex, error);
+            ok = false;
+        }
+        documentIndex++;
+    }
+
+    return ok;
 }
 
 /*!
- * Returns the path where the contact photos are saved.
+ * Returns the contacts imported in the most recent call to importDocuments().
+ *
+ * \sa importDocuments()
  */
-QString QVersitContactImporter::imagePath() const
+QList<QContact> QVersitContactImporter::contacts() const
 {
-    return d->mImagePath;
+    return d->mContacts;
 }
 
 /*!
- * Sets the \a path where the contact related audio clips will be saved.
- * This function should be called before calling \l importContact().
- * If the audio clip path has not been set,
- * the audio clips in the versit document will not be added to the contact.
- * There is no default path for them.
+ * Returns the map of errors encountered in the most recent call to importDocuments().  The key is
+ * the index into the input list of documents and the value is the error that occurred on that
+ * document.
+ *
+ * \sa importDocuments()
  */
-void QVersitContactImporter::setAudioClipPath(const QString& path)
+QMap<int, QVersitContactImporter::Error> QVersitContactImporter::errors() const
 {
-    d->mAudioClipPath = path;
+    return d->mErrors;
 }
 
 /*!
- * Returns the path where the contact related audio clips will be saved.
+ * Sets \a handler to be the handler for processing QVersitProperties, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
-QString QVersitContactImporter::audioClipPath() const
+void QVersitContactImporter::setPropertyHandler(QVersitContactImporterPropertyHandler* handler)
 {
-    return d->mAudioClipPath;
+    d->mPropertyHandler = handler;
 }
 
 /*!
- * Creates a QContact from \a versitDocument.
+ * Gets the handler for processing QVersitProperties.
  */
-QContact QVersitContactImporter::importContact(const QVersitDocument& versitDocument)
+QVersitContactImporterPropertyHandler* QVersitContactImporter::propertyHandler() const
 {
-    return d->importContact(versitDocument);
+    return d->mPropertyHandler;
 }
 
 /*!
- * Returns the list of versit properties that were not imported
- * by the most recent call of \l importContact().
+ * Sets \a handler to be the handler to save files with, or 0 to have no handler.
+ *
+ * Does not take ownership of the handler.  The client should ensure the handler remains valid for
+ * the lifetime of the exporter.
  */
-QList<QVersitProperty> QVersitContactImporter::unknownVersitProperties()
+void QVersitContactImporter::setResourceHandler(QVersitResourceHandler* handler)
 {
-    return d->mUnknownVersitProperties;
+    d->mResourceHandler = handler;
 }
 
-QTM_END_NAMESPACE
+/*!
+ * Returns the associated resource handler.
+ */
+QVersitResourceHandler* QVersitContactImporter::resourceHandler() const
+{
+    return d->mResourceHandler;
+}

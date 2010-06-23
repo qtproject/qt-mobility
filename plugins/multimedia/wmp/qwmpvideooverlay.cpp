@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,8 +48,9 @@ QWmpVideoOverlay::QWmpVideoOverlay(IWMPPlayer4 *player, IOleObject *object, QWmp
     , m_player(player)
     , m_object(object)
     , m_inPlaceObject(0)
-    , m_aspectRatioMode(QVideoWidget::KeepAspectRatio)
-    , m_enabled(false)
+    , m_winId(0)
+    , m_aspectRatioMode(Qt::KeepAspectRatio)
+    , m_fullScreen(false)
 {
     HRESULT hr;
 
@@ -66,18 +67,6 @@ QWmpVideoOverlay::~QWmpVideoOverlay()
         m_inPlaceObject->Release();
 }
 
-void QWmpVideoOverlay::setEnabled(bool enabled)
-{
-    m_enabled = enabled;
-
-    if (m_inPlaceObject && winId()) {
-        QRect rect = displayRect();
-
-        RECT rcPos = { rect.left(), rect.top(), rect.right(), rect.bottom() };
-        m_object->DoVerb(OLEIVERB_INPLACEACTIVATE, 0, m_service, 0, winId(), &rcPos);
-    }
-}
-
 WId QWmpVideoOverlay::winId() const
 {
     return m_winId;
@@ -85,17 +74,22 @@ WId QWmpVideoOverlay::winId() const
 
 void QWmpVideoOverlay::setWinId(WId id)
 {
-    if (m_inPlaceObject && m_enabled) {
-        QRect rect = displayRect();
+    m_winId = id;
 
-        RECT rcPos = { rect.left(), rect.top(), rect.right(), rect.bottom() };
-        m_object->DoVerb(OLEIVERB_INPLACEACTIVATE, 0, m_service, 0, id, &rcPos);
+    if (m_inPlaceObject && m_winId) {
+        RECT rcPos = 
+        { 
+            m_displayRect.left(),
+            m_displayRect.top(),
+            m_displayRect.right(),
+            m_displayRect.bottom() 
+        };
+
+        m_inPlaceObject->InPlaceDeactivate();
+        m_object->DoVerb(OLEIVERB_INPLACEACTIVATE, 0, m_service, 0, m_winId, &rcPos);
     }
 
-    if (!id)
-        m_enabled = false;
 
-    m_winId = id;
 }
 
 extern HDC Q_GUI_EXPORT qt_win_display_dc();
@@ -111,7 +105,9 @@ QRect QWmpVideoOverlay::displayRect() const
 
 void QWmpVideoOverlay::setDisplayRect(const QRect &rect)
 {
-    if (m_inPlaceObject && m_enabled) {
+    m_displayRect = rect;
+
+    if (m_inPlaceObject) {
         HDC gdc = QT_PREPEND_NAMESPACE(qt_win_display_dc)();
 
         SIZEL hmSize = {
@@ -120,11 +116,28 @@ void QWmpVideoOverlay::setDisplayRect(const QRect &rect)
 
         m_object->SetExtent(DVASPECT_CONTENT, &hmSize);
 
-        RECT rcPos = { rect.left(), rect.top(), rect.right(), rect.bottom() };
-        m_inPlaceObject->SetObjectRects(&rcPos, &rcPos);
-    }
+        RECT rcClip = { rect.left(), rect.top(), rect.right(), rect.bottom() };
 
-    m_displayRect = rect;
+        if (m_aspectRatioMode == Qt::KeepAspectRatioByExpanding) {
+            QSize size = m_sizeHint;
+            size.scale(rect.width(), rect.height(), Qt::KeepAspectRatioByExpanding);
+
+            QRect positionRect(QPoint(0, 0), size);
+            positionRect.moveCenter(rect.center());
+
+            RECT rcPos = 
+            { 
+                positionRect.left(),
+                positionRect.top(),
+                positionRect.right(),
+                positionRect.bottom()
+            };
+
+            m_inPlaceObject->SetObjectRects(&rcPos, &rcClip);
+        } else {
+            m_inPlaceObject->SetObjectRects(&rcClip, &rcClip);
+        }
+    }
 }
 
 bool QWmpVideoOverlay::isFullScreen() const
@@ -153,27 +166,18 @@ void QWmpVideoOverlay::setNativeSize(const QSize &size)
     }
 }
 
-QVideoWidget::AspectRatioMode QWmpVideoOverlay::aspectRatioMode() const
+Qt::AspectRatioMode QWmpVideoOverlay::aspectRatioMode() const
 {
     return m_aspectRatioMode;
 }
 
-void QWmpVideoOverlay::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+void QWmpVideoOverlay::setAspectRatioMode(Qt::AspectRatioMode mode)
 {
-        switch (mode) {
-        case QVideoWidget::KeepAspectRatio:
-        m_player->put_stretchToFit(FALSE);
+    m_aspectRatioMode = mode;
 
-        m_aspectRatioMode = mode;
-        break;
-    case QVideoWidget::IgnoreAspectRatio:
-        m_player->put_stretchToFit(TRUE);
+    m_player->put_stretchToFit(mode != Qt::KeepAspectRatio);
 
-        m_aspectRatioMode = mode;
-        break;
-    default:
-        break;
-    }
+    setDisplayRect(m_displayRect);
 }
 
 void QWmpVideoOverlay::repaint()
@@ -237,11 +241,8 @@ HRESULT QWmpVideoOverlay::GetWindow(HWND *phwnd)
 {
     if (!phwnd) {
         return E_POINTER;
-    } else if (!m_enabled) {
-        *phwnd = 0;
-        return E_UNEXPECTED;
     } else {
-        *phwnd = winId();
+        *phwnd = m_winId;
         return S_OK;
     }
 }
@@ -282,21 +283,40 @@ HRESULT QWmpVideoOverlay::GetWindowContext(
     QueryInterface(IID_IOleInPlaceFrame, reinterpret_cast<void **>(ppFrame));
     QueryInterface(IID_IOleInPlaceUIWindow, reinterpret_cast<void **>(ppDoc));
 
-    if (m_enabled) {
-        QRect rect = displayRect();
+    if (m_winId) {
+        SetRect(lprcClipRect,
+                m_displayRect.left(),
+                m_displayRect.top(),
+                m_displayRect.right(),
+                m_displayRect.bottom());
 
-        SetRect(lprcPosRect, rect.left(), rect.top(), rect.right(), rect.bottom());
-        SetRect(lprcClipRect, rect.left(), rect.top(), rect.right(), rect.bottom());
+        if (m_aspectRatioMode == Qt::KeepAspectRatioByExpanding) {
+            QSize size = m_sizeHint;
+            size.scale(
+                m_displayRect.width(),
+                m_displayRect.height(),
+                Qt::KeepAspectRatioByExpanding);
+
+            QRect positionRect(QPoint(0, 0), size);
+            positionRect.moveCenter(m_displayRect.center());
+
+            SetRect(lprcPosRect,
+                    positionRect.left(),
+                    positionRect.top(),
+                    positionRect.right(),
+                    positionRect.bottom());
+        } else {
+            *lprcPosRect = *lprcClipRect;
+        }
     } else {
         SetRectEmpty(lprcPosRect);
         SetRectEmpty(lprcClipRect);
     }
 
-    lpFrameInfo->cb = sizeof(OLEINPLACEFRAMEINFO);
-    lpFrameInfo->fMDIApp = false;
+    lpFrameInfo->fMDIApp = FALSE;
     lpFrameInfo->haccel = 0;
     lpFrameInfo->cAccelEntries = 0;
-    lpFrameInfo->hwndFrame = m_enabled ? winId() : 0;
+    lpFrameInfo->hwndFrame = m_winId;
 
     return S_OK;
 }

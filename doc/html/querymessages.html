@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- querymessages.qdoc -->
 <head>
-  <title>Qt Mobility Project 1.0: Query Messages Example</title>
+  <title>Qt Mobility Project 1.1: Query Messages Example</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -46,11 +46,11 @@
                         } else if (arg == &quot;date&quot;) {
                             result.append(message.date().toLocalTime().toString());</pre>
 <p>Finally, we print the results accumulated for each message that matched our query.</p>
-<pre>                qDebug() &lt;&lt; qPrintable(QString::number(++n) + '\t') &lt;&lt; qPrintable(result.join(&quot;\t&quot;));</pre>
+<pre>                printMessage(QString::number(++n) + '\t' + result.join(&quot;\t&quot;));</pre>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,13 +39,13 @@
 **
 ****************************************************************************/
 
-#include <qmediaresource.h>
+#include "qmediaresource.h"
 
 #include <QtCore/qsize.h>
 #include <QtCore/qurl.h>
 #include <QtCore/qvariant.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QMediaResource
@@ -92,7 +92,17 @@ QMediaResource::QMediaResource()
 */
 QMediaResource::QMediaResource(const QUrl &url, const QString &mimeType)
 {
-    values.insert(Url, qVariantFromValue(url));
+    values.insert(Url, url);
+    values.insert(MimeType, mimeType);
+}
+
+/*!
+    Constructs a media resource with the given \a mimeType from a network \a request.
+*/
+QMediaResource::QMediaResource(const QNetworkRequest &request, const QString &mimeType)
+{
+    values.insert(Request, QVariant::fromValue(request));
+    values.insert(Url, request.url());
     values.insert(MimeType, mimeType);
 }
 
@@ -158,6 +168,17 @@ bool QMediaResource::isNull() const
 QUrl QMediaResource::url() const
 {
     return qvariant_cast<QUrl>(values.value(Url));
+}
+
+/*!
+    Returns the network request associated with this media resource.
+*/
+QNetworkRequest QMediaResource::request() const
+{
+    if(values.contains(Request))
+        return qvariant_cast<QNetworkRequest>(values.value(Request));
+
+    return QNetworkRequest(url());
 }
 
 /*!
@@ -278,24 +299,24 @@ void QMediaResource::setAudioBitRate(int rate)
 }
 
 /*!
-    Returns the audio sample frequency of a media resource.
+    Returns the audio sample rate of a media resource.
 
     This may be zero if the sample size is unknown, or the resource contains no audio stream.
 */
-int QMediaResource::frequency() const
+int QMediaResource::sampleRate() const
 {
-    return qvariant_cast<int>(values.value(Frequency));
+    return qvariant_cast<int>(values.value(SampleRate));
 }
 
 /*!
-    Sets the audio sample \a frequency of a media resource.
+    Sets the audio \a sampleRate of a media resource.
 */
-void QMediaResource::setFrequency(int frequency)
+void QMediaResource::setSampleRate(int sampleRate)
 {
-    if (frequency != 0)
-        values.insert(Frequency, frequency);
+    if (sampleRate != 0)
+        values.insert(SampleRate, sampleRate);
     else
-        values.remove(Frequency);
+        values.remove(SampleRate);
 }
 
 /*!
@@ -372,5 +393,5 @@ void QMediaResource::setResolution(int width, int height)
     else
         values.remove(Resolution);
 }
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

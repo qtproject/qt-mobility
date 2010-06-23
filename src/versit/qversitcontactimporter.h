@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,6 +43,7 @@
 #define QVERSITCONTACTIMPORTER_H
 
 #include "qmobilityglobal.h"
+#include "qversitresourcehandler.h"
 
 #include <qcontact.h>
 
@@ -51,24 +52,46 @@
 QTM_BEGIN_NAMESPACE
 
 class QVersitDocument;
-class QVersitProperty;
 class QVersitContactImporterPrivate;
+class QVersitProperty;
+
+class Q_VERSIT_EXPORT QVersitContactImporterPropertyHandler
+{
+public:
+    virtual ~QVersitContactImporterPropertyHandler() {}
+    virtual bool preProcessProperty(const QVersitDocument& document,
+                                    const QVersitProperty& property,
+                                    int contactIndex,
+                                    QContact* contact) = 0;
+    virtual bool postProcessProperty(const QVersitDocument& document,
+                                     const QVersitProperty& property,
+                                     bool alreadyProcessed,
+                                     int contactIndex,
+                                     QContact* contact) = 0;
+};
 
 class Q_VERSIT_EXPORT QVersitContactImporter
 {
 public:
+    enum Error {
+        NoError = 0,
+        InvalidDocumentError,
+        EmptyDocumentError
+    };
+
     QVersitContactImporter();
     ~QVersitContactImporter();
 
-    void setImagePath(const QString& path);
-    QString imagePath() const;
-    
-    void setAudioClipPath(const QString& path);
-    QString audioClipPath() const;
+    bool importDocuments(const QList<QVersitDocument>& documents);
+    QList<QContact> contacts() const;
+    QMap<int, Error> errors() const;
 
-    QContact importContact(const QVersitDocument& versitDocument);
-    QList<QVersitProperty> unknownVersitProperties();
-    
+    void setPropertyHandler(QVersitContactImporterPropertyHandler* handler);
+    QVersitContactImporterPropertyHandler* propertyHandler() const;
+
+    void setResourceHandler(QVersitResourceHandler* handler);
+    QVersitResourceHandler* resourceHandler() const;
+
 private:
     QVersitContactImporterPrivate* d;
 };

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,7 +44,6 @@
 #define QMLBACKENDMONITORCREATETRIGGER_H_
 
 #include "qmlbackendmonitorao_s60_p.h"
-#include "qgeoareamonitor_s60_p.h"
 #include "qmlbackendmonitorinfo_s60_p.h"
 
 #include <lbtsessiontrigger.h>
@@ -61,15 +60,15 @@ class QMLBackendMonitorCreateTriggerAO : public CActive
 public :
     static QMLBackendMonitorCreateTriggerAO* NewL(QGeoAreaMonitorS60* aParent , RLbtServer &aLbtServer);
 
-    bool  InitializeTrigger(QGeoAreaMonitorS60* aParent ,enTriggerType aType,TCoordinate& aCoordinate,qreal& aRadius);
+    bool  InitializeTrigger(QGeoAreaMonitorS60* aParent, enTriggerType aType, TCoordinate& aCoordinate, qreal& aRadius);
 
-    bool isTriggerInitialized(QGeoAreaMonitorS60* aParent ,enTriggerType aType);
+    bool isTriggerInitialized(QGeoAreaMonitorS60* aParent, enTriggerType aType);
 
     void  DoCancel();
 
     void RunL();
 
-    void SetTriggerState(QGeoAreaMonitorS60* aParent,enTriggerType aType,bool aStatus);
+    void SetTriggerState(QGeoAreaMonitorS60* aParent, enTriggerType aType, bool aStatus);
 
     TInt getRadius(qreal& radius);
 
@@ -82,7 +81,7 @@ private :
     void ConstructL(RLbtServer &aLbtServ);
 
     bool isValid() {
-        return subsessionCreated && (iTriggerMonitorInfo!=NULL);
+        return subsessionCreated && (iTriggerMonitorInfo != NULL);
     }
 private:
 

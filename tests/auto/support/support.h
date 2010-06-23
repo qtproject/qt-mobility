@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -63,6 +63,10 @@ namespace Support {
     QMessageFolderId addFolder(const Parameters &params);
     QMessageId addMessage(const Parameters &params);
 
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+
+    bool mapiAvailable();
+#endif
 }
 
 #endif

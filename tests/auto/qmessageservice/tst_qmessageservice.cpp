@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -247,6 +247,11 @@ void tst_QMessageService::cleanUp()
 
 void tst_QMessageService::initTestCase()
 {
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+    if (!Support::mapiAvailable())
+        QSKIP("Skipping tests because a MAPI subsystem does not appear to be available", SkipAll);
+#endif
+
     Support::clearMessageStore();
 
     QMessageManager* manager = new QMessageManager(this);
@@ -284,7 +289,7 @@ void tst_QMessageService::initTestCase()
         ("path", "Innbox")
         ("name", "Innbox")
         ("parentFolderPath", "")
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << Params()("parentAccountName", "Work")
         ("path", "Innbox/X-Announce")
         ("name", "X-Announce")
@@ -317,7 +322,7 @@ void tst_QMessageService::initTestCase()
     QList<Support::Parameters> messageParams;
     messageParams << Params()("parentAccountName", "Alter Ego")
         ("parentFolderPath", "My messages")
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN)) // SMS messages must be in SMS store on Windows and on Symbian
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)) // SMS messages must be in SMS store on Windows and on Symbian
         ("type", "email")
 #else
         ("type", "sms")
@@ -360,7 +365,7 @@ void tst_QMessageService::initTestCase()
         ("status-hasAttachments", "true")
         ("attachments", attachmentPaths)
         ("custom-spam", "filter:no")
-#ifndef Q_OS_SYMBIAN                             
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << Params()("parentAccountName", "Work")
         ("parentFolderPath", "Innbox/X-Announce")
         ("type", "email")
@@ -443,32 +448,32 @@ void tst_QMessageService::testQueryMessages()
 
         SignalCatcher sc(this);
         connect(testService,SIGNAL(messagesFound(const QMessageIdList&)),&sc,SLOT(messagesFound(const QMessageIdList&)));
-#ifdef Q_OS_SYMBIAN
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         connect(testService,SIGNAL(stateChanged(QMessageService::State)),&sc,SLOT(stateChanged(QMessageService::State)));
-#endif        
+#endif
 
         // Order is irrelevant for filtering
 
         if (body.isEmpty()) {
             sc.reset();
             QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter),true);
-#ifdef Q_OS_SYMBIAN            
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+				QTest::qWait(1000);
+#endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
             sc.reset();
 
             QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter),true);
-#ifdef Q_OS_SYMBIAN            
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+                QTest::qWait(1000);
+#endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
 
         } else {
@@ -476,23 +481,23 @@ void tst_QMessageService::testQueryMessages()
             sc.reset();
 
             QCOMPARE(testService->queryMessages(filter&~existingAccountsFilter,body),true);
-#ifdef Q_OS_SYMBIAN            
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+                QTest::qWait(1000);
+#endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),ids.toSet());
 
             sc.reset();
 
             QCOMPARE(testService->queryMessages(~filter&~existingAccountsFilter,body),true);
-#ifdef Q_OS_SYMBIAN            
+#if (defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+                QTest::qWait(1000);
+#endif
             QCOMPARE(sc.ids.toSet().subtract(existingMessageIds),negatedIds.toSet());
         }
     } else {
@@ -507,11 +512,13 @@ void tst_QMessageService::testQueryCountData()
     QTest::addColumn<QMessageIdList>("negatedIds");
     QTest::addColumn<QString>("body");
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("empty filter")
         << QMessageFilter() 
         << messageIds
         << QMessageIdList()
         << "";
+#endif
 
     QTest::newRow("id equality 1")
         << QMessageFilter::byId(messageIds[0], QMessageDataComparator::Equal) 
@@ -567,11 +574,13 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("id list inclusion empty")
         << QMessageFilter::byId(QMessageIdList(), QMessageDataComparator::Includes) 
         << QMessageIdList()
         << messageIds
         << "";
+#endif
 
     QTest::newRow("id list exclusion 1")
         << QMessageFilter::byId(QMessageIdList() << messageIds[0], QMessageDataComparator::Excludes) 
@@ -591,12 +600,15 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] )
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("id list exclusion empty")
         << QMessageFilter::byId(QMessageIdList(), QMessageDataComparator::Excludes) 
         << messageIds
         << QMessageIdList()
         << "";
+#endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("id filter inclusion empty")
         << QMessageFilter::byId(QMessageFilter(), QMessageDataComparator::Includes) 
         << messageIds
@@ -615,10 +627,11 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
+#endif
 
     QTest::newRow("type equality 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Equal) 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         << QMessageIdList()
         << messageIds
 #else
@@ -629,7 +642,7 @@ void tst_QMessageService::testQueryCountData()
 
     QTest::newRow("type equality 2")
         << QMessageFilter::byType(QMessage::Email, QMessageDataComparator::Equal) 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         << messageIds
         << QMessageIdList()
 #else
@@ -646,7 +659,7 @@ void tst_QMessageService::testQueryCountData()
 
     QTest::newRow("type inequality 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::NotEqual) 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         << messageIds
         << QMessageIdList()
 #else
@@ -657,7 +670,7 @@ void tst_QMessageService::testQueryCountData()
 
     QTest::newRow("type inequality 2")
         << QMessageFilter::byType(QMessage::Email, QMessageDataComparator::NotEqual) 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         << QMessageIdList()
         << messageIds
 #else
@@ -674,7 +687,7 @@ void tst_QMessageService::testQueryCountData()
 
     QTest::newRow("type mask inclusion 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Includes) 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         << QMessageIdList()
         << messageIds
 #else
@@ -685,7 +698,7 @@ void tst_QMessageService::testQueryCountData()
 
     QTest::newRow("type mask inclusion 2")
         << QMessageFilter::byType(QMessage::Email, QMessageDataComparator::Includes) 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         << messageIds
         << QMessageIdList()
 #else
@@ -708,7 +721,7 @@ void tst_QMessageService::testQueryCountData()
 
     QTest::newRow("type mask exclusion 1")
         << QMessageFilter::byType(QMessage::Sms, QMessageDataComparator::Excludes) 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         << messageIds
         << QMessageIdList()
 #else
@@ -719,7 +732,7 @@ void tst_QMessageService::testQueryCountData()
 
     QTest::newRow("type mask exclusion 2")
         << QMessageFilter::byType(QMessage::Email, QMessageDataComparator::Excludes) 
-#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN))
+#if (defined(Q_OS_SYMBIAN) || defined(Q_OS_WIN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6))
         << QMessageIdList()
         << messageIds
 #else
@@ -740,6 +753,7 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("sender equality 1")
         << QMessageFilter::bySender("Esteemed.Colleague@example.com", QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] )
@@ -751,6 +765,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[4] )
         << "";
+#endif
 
     QTest::newRow("sender equality non-matching")
         << QMessageFilter::bySender("Nonesuch", QMessageDataComparator::Equal) 
@@ -770,6 +785,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("sender inequality 1")
         << QMessageFilter::bySender("Esteemed.Colleague@example.com", QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] << messageIds[2] << messageIds[3] << messageIds[4] )
@@ -859,6 +875,7 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << messageIds
         << "";
+#endif
 
     QTest::newRow("recipients inclusion 1")
         << QMessageFilter::byRecipients("example", QMessageDataComparator::Includes) 
@@ -1040,6 +1057,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("timeStamp equality 1")
         << QMessageFilter::byTimeStamp(QDateTime::fromString("1999-04-01T10:30:00Z", Qt::ISODate), QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[4] )
@@ -1215,7 +1233,9 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[4] )
         << "";
+#endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status equality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
@@ -1227,6 +1247,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << "";
+#endif
 
     QTest::newRow("status equality 3")
         << QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::Equal) 
@@ -1234,6 +1255,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status inequality 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
@@ -1245,6 +1267,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
         << "";
+#endif
 
     QTest::newRow("status inequality 3")
         << QMessageFilter::byStatus(QMessage::Removed, QMessageDataComparator::NotEqual) 
@@ -1252,6 +1275,7 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status mask inclusion 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
@@ -1263,6 +1287,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
+#endif
 
     QTest::newRow("status mask inclusion 3")
         << QMessageFilter::byStatus(QMessage::Read | QMessage::Removed, QMessageDataComparator::Includes) 
@@ -1276,6 +1301,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("status mask exclusion 1")
         << QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Excludes) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
@@ -1293,6 +1319,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
         << "";
+#endif
 
     QTest::newRow("status mask exclusion empty")
         << QMessageFilter::byStatus(static_cast<QMessage::StatusFlags>(0), QMessageDataComparator::Excludes) 
@@ -1300,6 +1327,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("priority equality 1")
         << QMessageFilter::byPriority(QMessage::HighPriority, QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
@@ -1335,6 +1363,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] )
         << "";
+#endif
 
     QTest::newRow("size equality 1")
         << QMessageFilter::bySize(messageSizes[3], QMessageDataComparator::Equal) 
@@ -1391,6 +1420,7 @@ void tst_QMessageService::testQueryCountData()
     uint discriminator(messageSizes[1]);
 #endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("size less than")
         << QMessageFilter::bySize(discriminator, QMessageDataComparator::LessThan) 
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
@@ -1428,11 +1458,11 @@ void tst_QMessageService::testQueryCountData()
         << "";
 
     QTest::newRow("size greater than equal")
-        << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual) 
+        << QMessageFilter::bySize(discriminator, QMessageDataComparator::GreaterThanEqual)
 #if defined(Q_OS_WIN) && defined(_WIN32_WCE)
         << ( QMessageIdList() << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[4] )
-#elif defined(Q_OS_SYMBIAN)        
+#elif defined(Q_OS_SYMBIAN)
         << ( QMessageIdList() << messageIds[1] << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
 #else
@@ -1440,7 +1470,9 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] << messageIds[3] << messageIds[4] )
 #endif
         << "";
+#endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId equality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::Equal) 
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
@@ -1452,6 +1484,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[0] )
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << "";
+#endif
 
     QTest::newRow("parentAccountId equality invalid")
         << QMessageFilter::byParentAccountId(QMessageAccountId(), QMessageDataComparator::Equal) 
@@ -1459,6 +1492,7 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId inequality 1")
         << QMessageFilter::byParentAccountId(accountIds[0], QMessageDataComparator::NotEqual) 
         << ( QMessageIdList() << messageIds[0] )
@@ -1470,6 +1504,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] )
         << "";
+#endif
 
     QTest::newRow("parentAccountId inequality invalid")
         << QMessageFilter::byParentAccountId(QMessageAccountId(), QMessageDataComparator::NotEqual) 
@@ -1477,6 +1512,7 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentAccountId filter inclusion 1")
         << QMessageFilter::byParentAccountId(QMessageAccountFilter::byName("Alter Ego", QMessageDataComparator::Equal), QMessageDataComparator::Includes) 
         << ( QMessageIdList() << messageIds[0] )
@@ -1536,25 +1572,27 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << QMessageIdList()
         << "";
+#endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("standardFolder equality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::Equal)
-#ifndef Q_OS_SYMBIAN    
+        << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::Equal)
+#ifndef Q_OS_SYMBIAN
         << messageIds
         << ( QMessageIdList() )
 #else // Created folders are not mapped to any Standard Folder in Symbian 
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
-#endif        
+#endif 
         << "";
 
     QTest::newRow("standardFolder equality 2")
         << QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::Equal) 
-#ifndef Q_OS_SYMBIAN    
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << ( QMessageIdList() )
         << messageIds
-#else // Created folders are not mapped to any Standard Folder in Symbian 
+#else // Created folders are not mapped to any Standard Folder in Symbian & Maemo
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
@@ -1562,11 +1600,11 @@ void tst_QMessageService::testQueryCountData()
         << "";
 
     QTest::newRow("standardFolder inequality 1")
-        << QMessageFilter::byStandardFolder(QMessage::InboxFolder, QMessageDataComparator::NotEqual) 
-#ifndef Q_OS_SYMBIAN    
+        << QMessageFilter::byStandardFolder(QMessage::DraftsFolder, QMessageDataComparator::NotEqual)
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << ( QMessageIdList() )
         << messageIds
-#else // Created folders are not mapped to any Standard Folder in Symbian 
+#else // Created folders are not mapped to any Standard Folder in Symbian & Maemo
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
@@ -1575,15 +1613,16 @@ void tst_QMessageService::testQueryCountData()
 
     QTest::newRow("standardFolder inequality 2")
         << QMessageFilter::byStandardFolder(QMessage::TrashFolder, QMessageDataComparator::NotEqual) 
-#ifndef Q_OS_SYMBIAN    
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
         << messageIds
         << ( QMessageIdList() )
-#else // Created folders are not mapped to any Standard Folder in Symbian 
+#else // Created folders are not mapped to any Standard Folder in Symbian & Maemo
         // <=> No messages will be returned, if messages are searched using Standard Folder Filter     
         << ( QMessageIdList() )
         << ( QMessageIdList() )
 #endif        
         << "";
+#endif
 
     QTest::newRow("parentFolderId equality 1")
         << QMessageFilter::byParentFolderId(folderIds[0], QMessageDataComparator::Equal) 
@@ -1621,6 +1660,7 @@ void tst_QMessageService::testQueryCountData()
         << QMessageIdList()
         << "";
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("parentFolderId filter inclusion 1")
         << QMessageFilter::byParentFolderId(QMessageFolderFilter::byPath("My messages", QMessageDataComparator::Equal), QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[0] )
@@ -1690,8 +1730,9 @@ void tst_QMessageService::testQueryCountData()
         << messageIds
         << QMessageIdList()
         << "";
+#endif
 
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("ancestorFolderIds inclusion 1")
         << QMessageFilter::byAncestorFolderIds(folderIds[1], QMessageDataComparator::Includes)
         << ( QMessageIdList() << messageIds[3] << messageIds[4] )
@@ -1789,6 +1830,7 @@ void tst_QMessageService::testQueryCountData()
         << "";
 #endif    
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Test some basic combinations
     QTest::newRow("status mask inclusion AND timeStamp greater than")
         << ( QMessageFilter::byStatus(QMessage::Read, QMessageDataComparator::Includes) &
@@ -1833,6 +1875,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[3] << messageIds[4] )
         << "";
+#endif
 
     QMessageFilter orEquals(QMessageFilter::bySubject("agenda", QMessageDataComparator::Includes));
     orEquals |= QMessageFilter::bySubject("ee", QMessageDataComparator::Excludes);
@@ -1841,7 +1884,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[1] << messageIds[2] << messageIds[3] )
         << ( QMessageIdList() << messageIds[0] << messageIds[4] )
         << "";
-
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     QTest::newRow("body")
         << QMessageFilter()
         << ( QMessageIdList() << messageIds[0] << messageIds[2] )
@@ -1853,7 +1896,9 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[2] )
         << ( QMessageIdList() << messageIds[0] ) // contains body but does not match filter
         << "summer";
+#endif
 
+#if !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     // Test options
     QMessageFilter caseInsensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
     QTest::newRow("options:caseInsensitive 1")
@@ -1861,6 +1906,7 @@ void tst_QMessageService::testQueryCountData()
         << ( QMessageIdList() << messageIds[4] )
         << ( QMessageIdList() << messageIds[0] << messageIds[1] << messageIds[2] << messageIds[3] )
         << "";
+#endif
 
     QMessageFilter caseSensitive1(QMessageFilter::bySubject("free beer", QMessageDataComparator::Equal));
     caseSensitive1.setMatchFlags(QMessageDataComparator::MatchCaseSensitive);
@@ -1899,27 +1945,27 @@ void tst_QMessageService::testCountMessages()
         connect(testService,SIGNAL(messagesCounted(int)),&sc,SLOT(messagesCounted(int)));
 #ifdef Q_OS_SYMBIAN
         connect(testService,SIGNAL(stateChanged(QMessageService::State)),&sc,SLOT(stateChanged(QMessageService::State)));
-#endif        
+#endif
 
         // Order is irrelevant for filtering
 
         if(body.isEmpty()) {
             QCOMPARE(testService->countMessages(filter&~existingAccountsFilter),true);
-#ifdef Q_OS_SYMBIAN            
+#ifdef Q_OS_SYMBIAN
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+				QTest::qWait(1000);
+#endif
             QCOMPARE(sc.count-existingMessageIds.count(), ids.count());
 
             QCOMPARE(testService->countMessages(~filter&~existingAccountsFilter),true);
-#ifdef Q_OS_SYMBIAN            
+#ifdef Q_OS_SYMBIAN
             QTRY_VERIFY(sc.state == QMessageService::FinishedState);
-#else            
+#else
             while(testService->state() == QMessageService::ActiveState)
-                qApp->processEvents();
-#endif            
+                QTest::qWait(1000);
+#endif
             QCOMPARE(sc.count-existingMessageIds.count(), negatedIds.count());
         }
 

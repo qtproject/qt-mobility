@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -217,8 +217,8 @@ QMessageId addMessage(const Parameters &params)
                         message.setType(QMessage::Mms);
                     } else if (type.toLower() == "sms") {
                         message.setType(QMessage::Sms);
-                    } else if (type.toLower() == "xmpp") {
-                        message.setType(QMessage::Xmpp);
+                    } else if (type.toLower() == "instantmessage") {
+                        message.setType(QMessage::InstantMessage);
                     } else {
                         message.setType(QMessage::Email);
                     }

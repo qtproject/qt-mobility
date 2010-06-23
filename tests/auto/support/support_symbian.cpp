@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,7 @@
 #include <qmessageid.h>
 #include <qmessagemanager.h>
 #include <qmessage_symbian_p.h>
+#include <messagingutil_p.h>
 
 #include <QDebug>
 
@@ -94,6 +95,9 @@ void CSymbianMessagingSession::HandleSessionEventL(TMsvSessionEvent /*aEvent*/, 
 }
 
 QTM_BEGIN_NAMESPACE
+
+using namespace MessagingUtil;
+
 class MapiSession
 {
 public:
@@ -165,8 +169,8 @@ QMessageId MapiSession::addMessage(const Support::Parameters &params)
                         message.setType(QMessage::Mms);
                     } else if (type.toLower() == "sms") {
                         message.setType(QMessage::Sms);
-                    } else if (type.toLower() == "xmpp") {
-                        message.setType(QMessage::Xmpp);
+                    } else if (type.toLower() == "instantmessage") {
+                        message.setType(QMessage::InstantMessage);
                     } else {
                         message.setType(QMessage::Email);
                     }
@@ -338,7 +342,7 @@ QMessageAccountId createPopAndSmtpAccountL(const TDesC& accountName, const TDesC
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-    return QMessageAccountId(QString::number(popAccount.iPopService));
+    return QMessageAccountId(addIdPrefix(QString::number(popAccount.iPopService), SymbianHelpers::EngineTypeMTM));
 }
 
 QMessageAccountId createPopAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
@@ -454,14 +458,20 @@ QMessageAccountId createImapAndSmtpAccountL(const TDesC& accountName, const TDes
     pImSmtpSettings->SetReplyToAddressL(fromAddress);
     pImSmtpSettings->SetReceiptAddressL(fromAddress);
     pImSmtpSettings->SetPort(25);
-    pEmailAccounts->CreateSmtpAccountL(imapAccount, *pImSmtpSettings, *pImIAPPreferences, EFalse);
+    TSmtpAccount smtpAccount = pEmailAccounts->CreateSmtpAccountL(imapAccount, *pImSmtpSettings, *pImIAPPreferences, EFalse);
+    
+    TSmtpAccount defaultAccount;
+    if (pEmailAccounts->DefaultSmtpAccountL(defaultAccount) == KErrNotFound)
+        {
+        pEmailAccounts->SetDefaultSmtpAccountL(smtpAccount);
+        }
 
     CleanupStack::PopAndDestroy(pImSmtpSettings);
     CleanupStack::PopAndDestroy(pImap4Settings);
     CleanupStack::PopAndDestroy(pImIAPPreferences);
     CleanupStack::PopAndDestroy(pEmailAccounts);
 
-    return QMessageAccountId(QString::number(imapAccount.iImapService));
+    return QMessageAccountId(addIdPrefix(QString::number(imapAccount.iImapService), SymbianHelpers::EngineTypeMTM));
 }
 
 QMessageAccountId createImapAndSmtpAccount(const TDesC& accountName, const TDesC& fromAddress)
@@ -516,7 +526,7 @@ QMessageFolderId addFolderL(const TDesC& symbianAccountName, const TDesC& symbia
     serviceEntryIdString = nullString.left(8-serviceEntryIdString.length()) + serviceEntryIdString;
     QString folderIdString = QString::number(folderId);
     folderIdString = nullString.left(8-folderIdString.length()) + folderIdString;
-    return serviceEntryIdString+folderIdString;
+    return addIdPrefix(serviceEntryIdString+folderIdString, SymbianHelpers::EngineTypeMTM);
 }
 
 QMessageFolderId addFolder(const Parameters &params)

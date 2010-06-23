@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -86,14 +86,12 @@ public:
 
     QSystemInfoPrivate(QObject *parent = 0);
     virtual ~QSystemInfoPrivate();
-// general
-    QString currentLanguage() const; // 2 letter ISO 639-1
-    QStringList availableLanguages() const;	 // 2 letter ISO 639-1
+    QString currentLanguage() const;
+    QStringList availableLanguages() const;
 
     QString version(QTM_PREPEND_NAMESPACE(QSystemInfo::Version),  const QString &parameter = QString());
 
-    QString currentCountryCode() const; //2 letter ISO 3166-1
-//features
+    QString currentCountryCode() const;
     bool hasFeatureSupported(QTM_PREPEND_NAMESPACE(QSystemInfo::Feature) feature);
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
@@ -121,8 +119,8 @@ public:
     int cellId();
     int locationAreaCode();
 
-    QString currentMobileCountryCode(); // Mobile Country Code
-    QString currentMobileNetworkCode(); // Mobile Network Code
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
@@ -135,6 +133,8 @@ public:
 
    void emitNetworkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
    void emitNetworkSignalStrengthChanged(QSystemNetworkInfo::NetworkMode,int);
+   QSystemNetworkInfo::NetworkMode currentMode();
+
 
    static QSystemNetworkInfoPrivate *instance();
 protected:
@@ -172,9 +172,15 @@ public:
     virtual ~QSystemDisplayInfoPrivate();
 
 
-// display
     int displayBrightness(int screen);
     int colorDepth(int screen);
+
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 };
 
 class QSystemStorageInfoPrivate : public QObject
@@ -186,15 +192,17 @@ public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
 
-    // memory
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
-    QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume); //returns enum
+    QTM_PREPEND_NAMESPACE(QSystemStorageInfo::DriveType) typeForDrive(const QString &driveVolume);
 
 private:
     QHash<QString, QString> mountEntriesHash;
     void mountEntries();
+
+Q_SIGNALS:
+    void logicalDrivesChanged(bool);
 
 };
 
@@ -232,8 +240,6 @@ public:
     QSystemDeviceInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDeviceInfoPrivate();
 
-// device
-
     QString imei();
     QString imsi();
     QString manufacturer();
@@ -251,6 +257,8 @@ public:
     QTM_PREPEND_NAMESPACE(QSystemDeviceInfo::PowerState) currentPowerState();
     void setConnection();
     static QSystemDeviceInfoPrivate *instance() {return self;}
+
+    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -59,23 +59,9 @@ QContactInvalidEngine::QContactInvalidEngine()
 }
 
 /*! \reimp */
-void QContactInvalidEngine::deref()
-{
-    delete this;
-}
-
-/*! \reimp */
 QString QContactInvalidEngine::managerName() const
 {
     return QString(QLatin1String("invalid"));
-}
-
-/*! \reimp */
-QString QContactInvalidEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
-{
-    Q_UNUSED(contact);
-    error = QContactManager::NotSupportedError;
-    return QString();
 }
 
 QTM_END_NAMESPACE

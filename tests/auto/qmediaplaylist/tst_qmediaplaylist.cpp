@@ -49,7 +49,7 @@
 
 #include "qm3uhandler.h"
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class MockReadOnlyPlaylistProvider : public QMediaPlaylistProvider
 {
     Q_OBJECT
@@ -117,11 +117,15 @@ public:
     {        
     }
 
-    QMediaControl* control(const char *iid) const
+    QMediaControl* requestControl(const char *iid)
     {
         if (qstrcmp(iid, QMediaPlaylistControl_iid) == 0)
             return mockControl;
         return 0;
+    }
+
+    void releaseControl(QMediaControl *)
+    {
     }
 
     MockPlaylistControl *mockControl;
@@ -407,7 +411,6 @@ void tst_QMediaPlaylist::saveAndLoad()
     QBuffer buffer;
     buffer.open(QBuffer::ReadWrite);
 
-    QTest::ignoreMessage(QtWarningMsg, "Load static plugins for \"/playlistformats/\" ");
     bool res = playlist.save(&buffer, "unsupported_format");
     QVERIFY(!res);
     QVERIFY(playlist.error() != QMediaPlaylist::NoError);
@@ -444,13 +447,20 @@ void tst_QMediaPlaylist::saveAndLoad()
     QCOMPARE(playlist.media(0), playlist2.media(0));
     QCOMPARE(playlist.media(1), playlist2.media(1));
     QCOMPARE(playlist.media(3), playlist2.media(3));
-
+#ifdef Q_OS_SYMBIAN
+    res = playlist.save(QUrl(QLatin1String("file:///c:/data/test_m3u.m3u")), "m3u");
+#else
     res = playlist.save(QUrl(QLatin1String("tmp.m3u")), "m3u");
+#endif
     QVERIFY(res);
 
     playlist2.clear();
     QVERIFY(playlist2.isEmpty());
+#ifdef Q_OS_SYMBIAN
+    playlist2.load(QUrl(QLatin1String("file:///c:/data/test_m3u.m3u")), "m3u");
+#else
     playlist2.load(QUrl(QLatin1String("tmp.m3u")), "m3u");
+#endif
     QCOMPARE(playlist.error(), QMediaPlaylist::NoError);
 
     QCOMPARE(playlist.mediaCount(), playlist2.mediaCount());
@@ -466,9 +476,9 @@ void tst_QMediaPlaylist::playbackMode_data()
     QTest::addColumn<int>("pos");
     QTest::addColumn<int>("expectedNext");
 
-    QTest::newRow("Linear, 0") << QMediaPlaylist::Linear << -1 << 0 << 1;
-    QTest::newRow("Linear, 1") << QMediaPlaylist::Linear << 0 << 1 << 2;
-    QTest::newRow("Linear, 2") << QMediaPlaylist::Linear << 1 << 2 << -1;
+    QTest::newRow("Sequential, 0") << QMediaPlaylist::Sequential << -1 << 0 << 1;
+    QTest::newRow("Sequential, 1") << QMediaPlaylist::Sequential << 0 << 1 << 2;
+    QTest::newRow("Sequential, 2") << QMediaPlaylist::Sequential << 1 << 2 << -1;
 
     QTest::newRow("Loop, 0") << QMediaPlaylist::Loop << 2 << 0 << 1;
     QTest::newRow("Loop, 1") << QMediaPlaylist::Loop << 0 << 1 << 2;
@@ -491,7 +501,7 @@ void tst_QMediaPlaylist::playbackMode()
     playlist.addMedia(content2);
     playlist.addMedia(content3);
 
-    QCOMPARE(playlist.playbackMode(), QMediaPlaylist::Linear);
+    QCOMPARE(playlist.playbackMode(), QMediaPlaylist::Sequential);
     QCOMPARE(playlist.currentIndex(), -1);
 
     playlist.setPlaybackMode(playbackMode);
@@ -535,7 +545,7 @@ void tst_QMediaPlaylist::readOnlyPlaylist()
 {
     MockReadOnlyPlaylistObject mediaObject;
     QMediaPlaylist playlist;
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
 
     QVERIFY(playlist.isReadOnly());
     QVERIFY(!playlist.isEmpty());
@@ -605,17 +615,17 @@ void tst_QMediaPlaylist::setMediaObject()
     QVERIFY(playlist.mediaObject() == 0);
     QVERIFY(!playlist.isReadOnly());
 
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
     QCOMPARE(playlist.mediaObject(), qobject_cast<QMediaObject*>(&mediaObject));
     QCOMPARE(playlist.mediaCount(), 3);
     QVERIFY(playlist.isReadOnly());
 
-    playlist.setMediaObject(0);
+    mediaObject.unbind(&playlist);
     QVERIFY(playlist.mediaObject() == 0);
     QCOMPARE(playlist.mediaCount(), 0);
     QVERIFY(!playlist.isReadOnly());
 
-    playlist.setMediaObject(&mediaObject);
+    mediaObject.bind(&playlist);
     QCOMPARE(playlist.mediaObject(), qobject_cast<QMediaObject*>(&mediaObject));
     QCOMPARE(playlist.mediaCount(), 3);
     QVERIFY(playlist.isReadOnly());

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,81 +47,81 @@
 
 struct QGstreamerMetaDataKeyLookup
 {
-    QtMedia::MetaData key;
+    QtMultimediaKit::MetaData key;
     const char *token;
 };
 
 static const QGstreamerMetaDataKeyLookup qt_gstreamerMetaDataKeys[] =
 {
-    { QtMedia::Title, GST_TAG_TITLE },
-    //{ QtMedia::SubTitle, 0 },
-    //{ QtMedia::Author, 0 },
-    { QtMedia::Comment, GST_TAG_COMMENT },
-    { QtMedia::Description, GST_TAG_DESCRIPTION },
-    //{ QtMedia::Category, 0 },
-    { QtMedia::Genre, GST_TAG_GENRE },
-    { QtMedia::Year, "year" },
-    //{ QtMedia::UserRating, 0 },
+    { QtMultimediaKit::Title, GST_TAG_TITLE },
+    //{ QtMultimediaKit::SubTitle, 0 },
+    //{ QtMultimediaKit::Author, 0 },
+    { QtMultimediaKit::Comment, GST_TAG_COMMENT },
+    { QtMultimediaKit::Description, GST_TAG_DESCRIPTION },
+    //{ QtMultimediaKit::Category, 0 },
+    { QtMultimediaKit::Genre, GST_TAG_GENRE },
+    { QtMultimediaKit::Year, "year" },
+    //{ QtMultimediaKit::UserRating, 0 },
 
-    { QtMedia::Language, GST_TAG_LANGUAGE_CODE },
+    { QtMultimediaKit::Language, GST_TAG_LANGUAGE_CODE },
 
-    { QtMedia::Publisher, GST_TAG_ORGANIZATION },
-    { QtMedia::Copyright, GST_TAG_COPYRIGHT },
-    //{ QtMedia::ParentalRating, 0 },
-    //{ QtMedia::RatingOrganisation, 0 },
+    { QtMultimediaKit::Publisher, GST_TAG_ORGANIZATION },
+    { QtMultimediaKit::Copyright, GST_TAG_COPYRIGHT },
+    //{ QtMultimediaKit::ParentalRating, 0 },
+    //{ QtMultimediaKit::RatingOrganisation, 0 },
 
     // Media
-    //{ QtMedia::Size, 0 },
-    //{ QtMedia::MediaType, 0 },
-    { QtMedia::Duration, GST_TAG_DURATION },
+    //{ QtMultimediaKit::Size, 0 },
+    //{ QtMultimediaKit::MediaType, 0 },
+    { QtMultimediaKit::Duration, GST_TAG_DURATION },
 
     // Audio
-    { QtMedia::AudioBitRate, GST_TAG_BITRATE },
-    { QtMedia::AudioCodec, GST_TAG_AUDIO_CODEC },
-    //{ QtMedia::ChannelCount, 0 },
-    //{ QtMedia::Frequency, 0 },
+    { QtMultimediaKit::AudioBitRate, GST_TAG_BITRATE },
+    { QtMultimediaKit::AudioCodec, GST_TAG_AUDIO_CODEC },
+    //{ QtMultimediaKit::ChannelCount, 0 },
+    //{ QtMultimediaKit::SampleRate, 0 },
 
     // Music
-    { QtMedia::AlbumTitle, GST_TAG_ALBUM },
-    { QtMedia::AlbumArtist,  GST_TAG_ARTIST},
-    { QtMedia::ContributingArtist, GST_TAG_PERFORMER },
+    { QtMultimediaKit::AlbumTitle, GST_TAG_ALBUM },
+    { QtMultimediaKit::AlbumArtist,  GST_TAG_ARTIST},
+    { QtMultimediaKit::ContributingArtist, GST_TAG_PERFORMER },
 #if (GST_VERSION_MAJOR >= 0) && (GST_VERSION_MINOR >= 10) && (GST_VERSION_MICRO >= 19)
-    { QtMedia::Composer, GST_TAG_COMPOSER },
+    { QtMultimediaKit::Composer, GST_TAG_COMPOSER },
 #endif
-    //{ QtMedia::Conductor, 0 },
-    //{ QtMedia::Lyrics, 0 },
-    //{ QtMedia::Mood, 0 },
-    { QtMedia::TrackNumber, GST_TAG_TRACK_NUMBER },
+    //{ QtMultimediaKit::Conductor, 0 },
+    //{ QtMultimediaKit::Lyrics, 0 },
+    //{ QtMultimediaKit::Mood, 0 },
+    { QtMultimediaKit::TrackNumber, GST_TAG_TRACK_NUMBER },
 
-    //{ QtMedia::CoverArtUrlSmall, 0 },
-    //{ QtMedia::CoverArtUrlLarge, 0 },
+    //{ QtMultimediaKit::CoverArtUrlSmall, 0 },
+    //{ QtMultimediaKit::CoverArtUrlLarge, 0 },
 
     // Image/Video
-    //{ QtMedia::Resolution, 0 },
-    //{ QtMedia::PixelAspectRatio, 0 },
+    //{ QtMultimediaKit::Resolution, 0 },
+    //{ QtMultimediaKit::PixelAspectRatio, 0 },
 
     // Video
-    //{ QtMedia::VideoFrameRate, 0 },
-    //{ QtMedia::VideoBitRate, 0 },
-    { QtMedia::VideoCodec, GST_TAG_VIDEO_CODEC },
+    //{ QtMultimediaKit::VideoFrameRate, 0 },
+    //{ QtMultimediaKit::VideoBitRate, 0 },
+    { QtMultimediaKit::VideoCodec, GST_TAG_VIDEO_CODEC },
 
-    //{ QtMedia::PosterUrl, 0 },
+    //{ QtMultimediaKit::PosterUrl, 0 },
 
     // Movie
-    //{ QtMedia::ChapterNumber, 0 },
-    //{ QtMedia::Director, 0 },
-    { QtMedia::LeadPerformer, GST_TAG_PERFORMER },
-    //{ QtMedia::Writer, 0 },
+    //{ QtMultimediaKit::ChapterNumber, 0 },
+    //{ QtMultimediaKit::Director, 0 },
+    { QtMultimediaKit::LeadPerformer, GST_TAG_PERFORMER },
+    //{ QtMultimediaKit::Writer, 0 },
 
     // Photos
-    //{ QtMedia::CameraManufacturer, 0 },
-    //{ QtMedia::CameraModel, 0 },
-    //{ QtMedia::Event, 0 },
-    //{ QtMedia::Subject, 0 }
+    //{ QtMultimediaKit::CameraManufacturer, 0 },
+    //{ QtMultimediaKit::CameraModel, 0 },
+    //{ QtMultimediaKit::Event, 0 },
+    //{ QtMultimediaKit::Subject, 0 }
 };
 
 QGstreamerMetaDataProvider::QGstreamerMetaDataProvider(QGstreamerPlayerSession *session, QObject *parent)
-    :QMetaDataControl(parent), m_session(session)
+    :QMetaDataReaderControl(parent), m_session(session)
 {
     connect(m_session, SIGNAL(tagsChanged()), SLOT(updateTags()));
 }
@@ -140,7 +140,7 @@ bool QGstreamerMetaDataProvider::isWritable() const
     return false;
 }
 
-QVariant QGstreamerMetaDataProvider::metaData(QtMedia::MetaData key) const
+QVariant QGstreamerMetaDataProvider::metaData(QtMultimediaKit::MetaData key) const
 {
     static const int count = sizeof(qt_gstreamerMetaDataKeys) / sizeof(QGstreamerMetaDataKeyLookup);
 
@@ -152,15 +152,9 @@ QVariant QGstreamerMetaDataProvider::metaData(QtMedia::MetaData key) const
     return QVariant();
 }
 
-void QGstreamerMetaDataProvider::setMetaData(QtMedia::MetaData key, QVariant const &value)
+QList<QtMultimediaKit::MetaData> QGstreamerMetaDataProvider::availableMetaData() const
 {
-    Q_UNUSED(key);
-    Q_UNUSED(value);
-}
-
-QList<QtMedia::MetaData> QGstreamerMetaDataProvider::availableMetaData() const
-{
-    static QMap<QByteArray, QtMedia::MetaData> keysMap;
+    static QMap<QByteArray, QtMultimediaKit::MetaData> keysMap;
     if (keysMap.isEmpty()) {
         const int count = sizeof(qt_gstreamerMetaDataKeys) / sizeof(QGstreamerMetaDataKeyLookup);
         for (int i = 0; i < count; ++i) {
@@ -168,9 +162,9 @@ QList<QtMedia::MetaData> QGstreamerMetaDataProvider::availableMetaData() const
         }
     }
 
-    QList<QtMedia::MetaData> res;
+    QList<QtMultimediaKit::MetaData> res;
     foreach (const QByteArray &key, m_session->tags().keys()) {
-        QtMedia::MetaData tag = keysMap.value(key, QtMedia::MetaData(-1));
+        QtMultimediaKit::MetaData tag = keysMap.value(key, QtMultimediaKit::MetaData(-1));
         if (tag != -1)
             res.append(tag);
     }
@@ -181,12 +175,6 @@ QList<QtMedia::MetaData> QGstreamerMetaDataProvider::availableMetaData() const
 QVariant QGstreamerMetaDataProvider::extendedMetaData(const QString &key) const
 {
     return m_session->tags().value(key.toLatin1());
-}
-
-void QGstreamerMetaDataProvider::setExtendedMetaData(const QString &key, QVariant const &value)
-{
-    Q_UNUSED(key);
-    Q_UNUSED(value);
 }
 
 QStringList QGstreamerMetaDataProvider::availableExtendedMetaData() const

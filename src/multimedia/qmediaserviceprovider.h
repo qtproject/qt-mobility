@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,21 +45,22 @@
 #include <QtCore/qobject.h>
 #include <QtCore/qshareddata.h>
 #include <qmobilityglobal.h>
-#include <qtmedianamespace.h>
+#include "qtmedianamespace.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaService;
 
 class QMediaServiceProviderHintPrivate;
-class Q_MEDIA_EXPORT QMediaServiceProviderHint
+class Q_MULTIMEDIA_EXPORT QMediaServiceProviderHint
 {
 public:
     enum Type { Null, ContentType, Device, SupportedFeatures };
 
     enum Feature {
         LowLatencyPlayback = 0x01,
-        RecordingSupport = 0x02
+        RecordingSupport = 0x02,
+        StreamPlayback = 0x04
     };
     Q_DECLARE_FLAGS(Features, Feature)
 
@@ -92,7 +93,7 @@ private:
     QSharedDataPointer<QMediaServiceProviderHintPrivate> d;
 };
 
-class Q_MEDIA_EXPORT QMediaServiceProvider : public QObject
+class Q_MULTIMEDIA_EXPORT QMediaServiceProvider : public QObject
 {
     Q_OBJECT
 
@@ -100,7 +101,7 @@ public:
     virtual QMediaService* requestService(const QByteArray &type, const QMediaServiceProviderHint &hint = QMediaServiceProviderHint()) = 0;
     virtual void releaseService(QMediaService *service) = 0;
 
-    virtual QtMedia::SupportEstimate hasSupport(const QByteArray &serviceType,
+    virtual QtMultimediaKit::SupportEstimate hasSupport(const QByteArray &serviceType,
                                              const QString &mimeType,
                                              const QStringList& codecs,
                                              int flags = 0) const;
@@ -110,6 +111,10 @@ public:
     virtual QString deviceDescription(const QByteArray &serviceType, const QByteArray &device);
 
     static QMediaServiceProvider* defaultServiceProvider();
+
+#ifdef QT_BUILD_INTERNAL
+    static void setDefaultServiceProvider(QMediaServiceProvider *provider);
+#endif
 };
 
 /*!
@@ -157,6 +162,6 @@ public:
 #define Q_MEDIASERVICE_RADIO "com.nokia.qt.radio"
 
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif  // QMEDIASERVICEPROVIDER_H

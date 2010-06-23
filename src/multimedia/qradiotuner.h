@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,15 +44,15 @@
 
 #include <QtCore/qobject.h>
 
-#include <qmediaobject.h>
-#include <qmediaserviceprovider.h>
+#include "qmediaobject.h"
+#include "qmediaserviceprovider.h"
 
 #include <QPair>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QRadioTunerPrivate;
-class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
+class Q_MULTIMEDIA_EXPORT QRadioTuner : public QMediaObject
 {
     Q_OBJECT
     Q_PROPERTY(State state READ state NOTIFY stateChanged)
@@ -71,7 +71,7 @@ class Q_MEDIA_EXPORT QRadioTuner : public QMediaObject
 
 public:
     enum State { ActiveState, StoppedState };
-    enum Band { AM, FM, SW, LW };
+    enum Band { AM, FM, SW, LW, FM2 };
     enum Error { NoError, ResourceError, OpenError, OutOfRangeError };
     enum StereoMode { ForceStereo, ForceMono, Auto };
 
@@ -79,7 +79,7 @@ public:
     ~QRadioTuner();
 
     bool isAvailable() const;
-    QtMedia::AvailabilityError availabilityError() const;
+    QtMultimediaKit::AvailabilityError availabilityError() const;
 
     State state() const;
 
@@ -135,11 +135,11 @@ private:
     Q_DECLARE_PRIVATE(QRadioTuner)
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::State);
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::Band);
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::Error);
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QRadioTuner)::StereoMode);
+Q_DECLARE_METATYPE(QRadioTuner::State)
+Q_DECLARE_METATYPE(QRadioTuner::Band)
+Q_DECLARE_METATYPE(QRadioTuner::Error)
+Q_DECLARE_METATYPE(QRadioTuner::StereoMode)
 
 #endif  // QRADIOPLAYER_H

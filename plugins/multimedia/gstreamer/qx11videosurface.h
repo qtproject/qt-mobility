@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,7 +43,9 @@
 #define QX11VIDEOSURFACE_H
 
 #include <QtGui/qwidget.h>
-#include <QtMultimedia/qabstractvideosurface.h>
+#include <qabstractvideosurface.h>
+
+#ifndef QT_NO_XVIDEO
 
 #include <X11/Xlib.h>
 #include <X11/extensions/Xv.h>
@@ -63,6 +65,9 @@ public:
 
     QRect displayRect() const;
     void setDisplayRect(const QRect &rect);
+
+    QRect viewport() const;
+    void setViewport(const QRect &rect);
 
     int brightness() const;
     void setBrightness(int brightness);
@@ -106,5 +111,7 @@ private:
 
     static int redistribute(int value, int fromLower, int fromUpper, int toLower, int toUpper);
 };
+
+#endif //QT_NO_XVIDEO
 
 #endif

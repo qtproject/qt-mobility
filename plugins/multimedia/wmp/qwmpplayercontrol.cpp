@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -61,11 +61,15 @@ QWmpPlayerControl::QWmpPlayerControl(IWMPCore3 *player, QWmpEvents *events, QObj
     , m_state(QMediaPlayer::StoppedState)
     , m_duration(0)
     , m_buffering(false)
+    , m_audioAvailable(false)
     , m_videoAvailable(false)
 {
     m_player->get_controls(&m_controls);
     m_player->get_settings(&m_settings);
     m_player->get_network(&m_network);
+
+    if (m_settings)
+        m_settings->put_autoStart(FALSE);
 
     WMPPlayState state = wmppsUndefined;
     if (m_player->get_playState(&state) == S_OK)
@@ -175,10 +179,21 @@ bool QWmpPlayerControl::isVideoAvailable() const
     return m_videoAvailable;
 }
 
+bool QWmpPlayerControl::isAudioAvailable() const
+{
+    return m_audioAvailable;
+}
+
+void QWmpPlayerControl::setAudioAvailable(bool available)
+{
+    if (m_audioAvailable != available)
+        emit audioAvailableChanged(m_audioAvailable = available);
+}
+
 void QWmpPlayerControl::setVideoAvailable(bool available)
 {
     if (m_videoAvailable != available)
-        emit this->videoAvailableChanged(m_videoAvailable = available);
+        emit videoAvailableChanged(m_videoAvailable = available);
 }
 
 bool QWmpPlayerControl::isSeekable() const
@@ -186,18 +201,21 @@ bool QWmpPlayerControl::isSeekable() const
     return true;
 }
 
-QPair<qint64, qint64> QWmpPlayerControl::seekRange() const
+QMediaTimeRange QWmpPlayerControl::availablePlaybackRanges() const
 {
-    double duration = 0.;
+    QMediaTimeRange ranges;
 
     IWMPMedia *media = 0;
     if (m_controls && m_controls->get_currentItem(&media) == S_OK) {
+        double duration = 0;
         media->get_duration(&duration);
-
         media->Release();
+
+        if(duration > 0)
+            ranges.addInterval(0, duration * 1000);
     }
 
-    return qMakePair<qint64, qint64>(0, m_duration * 1000);
+    return ranges;
 }
 
 qreal QWmpPlayerControl::playbackRate() const
@@ -410,7 +428,7 @@ QUrl QWmpPlayerControl::url() const
 
 void QWmpPlayerControl::setUrl(const QUrl &url)
 {
-    if (m_player) {
+    if (url != QWmpPlayerControl::url() && m_player) {
         BSTR string = SysAllocString(reinterpret_cast<const wchar_t *>(url.toString().unicode()));
 
         m_player->put_URL(string);

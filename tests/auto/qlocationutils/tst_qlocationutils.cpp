@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,7 +38,8 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
-#include "../../../src/location/qlocationutils_p.h"
+//#include "../../../src/location/qlocationutils_p.h"
+#include "qlocationutils_p.h"
 #include "qgeopositioninfo.h"
 
 #include <QDebug>
@@ -196,21 +197,21 @@ private slots:
 
         for (int i=0; i<dblValues.count(); i++) {
             info = QGeoPositionInfo();
-            info.setProperty(QGeoPositionInfo::Heading, dblValues[i]);
+            info.setAttribute(QGeoPositionInfo::Direction, dblValues[i]);
             QTest::newRow(qPrintable(QString("RMC-heading %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPRMC,,,,,,,,%1,,,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << info << false << true;
         }
 
         for (int i=0; i<dblValues.count(); i++) {
             info = QGeoPositionInfo();
-            info.setProperty(QGeoPositionInfo::GroundSpeed, dblValues[i] * 1.852 / 3.6);
+            info.setAttribute(QGeoPositionInfo::GroundSpeed, dblValues[i] * 1.852 / 3.6);
             QTest::newRow(qPrintable(QString("RMC-speed %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPRMC,,,,,,,%1,,,,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << info << false << true;
         }
 
         for (int i=0; i<dblValues.count(); i++) {
             info = QGeoPositionInfo();
-            info.setProperty(QGeoPositionInfo::MagneticVariation, dblValues[i]);
+            info.setAttribute(QGeoPositionInfo::MagneticVariation, dblValues[i]);
             char direction = dblValues[i] > 0 ? 'E' : 'W';
             QTest::newRow(qPrintable(QString("RMC-magVar %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPRMC,,,,,,,,,,%1,%2,*").arg(qAbs(dblValues[i]), 0, 'g', 10).arg(direction)) 
                     << info << false << true;
@@ -225,9 +226,9 @@ private slots:
                 << false << true;
 
         info = QGeoPositionInfo(QGeoCoordinate(-lat, lng), QDateTime(QDate(2008,4,3), QTime(22,1,25,999), Qt::UTC));
-        info.setProperty(QGeoPositionInfo::GroundSpeed, 8.9 * 1.852 / 3.6);
-        info.setProperty(QGeoPositionInfo::Heading, 47.6);
-        info.setProperty(QGeoPositionInfo::MagneticVariation, -11.2);
+        info.setAttribute(QGeoPositionInfo::GroundSpeed, 8.9 * 1.852 / 3.6);
+        info.setAttribute(QGeoPositionInfo::Direction, 47.6);
+        info.setAttribute(QGeoPositionInfo::MagneticVariation, -11.2);
         QTest::newRow("RMC-all") << addChecksumEtc("$GPRMC,220125.999,A,2734.7964,S,15306.0124,E,8.9,47.6,030408,11.2,W,A*")
                 << info
                 << true << true;
@@ -236,21 +237,21 @@ private slots:
 
         for (int i=0; i<dblValues.count(); i++) {
             info = QGeoPositionInfo();
-            info.setProperty(QGeoPositionInfo::Heading, dblValues[i]);
+            info.setAttribute(QGeoPositionInfo::Direction, dblValues[i]);
             QTest::newRow(qPrintable(QString("VTG-heading %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPVTG,%1,,,,,,,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << info << false << true;
         }
 
         for (int i=0; i<dblValues.count(); i++) {
             info = QGeoPositionInfo();
-            info.setProperty(QGeoPositionInfo::GroundSpeed, dblValues[i] / 3.6);
+            info.setAttribute(QGeoPositionInfo::GroundSpeed, dblValues[i] / 3.6);
             QTest::newRow(qPrintable(QString("VTG-speed %1").arg(dblValues[i]))) << addChecksumEtc(QString("$GPVTG,,,,,,,%1,,*").arg(dblValues[i], 0, 'g', 10)) 
                     << info << false << true;
         }
 
         info = QGeoPositionInfo();
-        info.setProperty(QGeoPositionInfo::Heading, 158.7);
-        info.setProperty(QGeoPositionInfo::GroundSpeed, 61.5 / 3.6);
+        info.setAttribute(QGeoPositionInfo::Direction, 158.7);
+        info.setAttribute(QGeoPositionInfo::GroundSpeed, 61.5 / 3.6);
         QTest::newRow("VTG-all") << addChecksumEtc("$GPVTG,158.7,T,169.9,M,33.2,N,61.5,K,A*")
                 << info
                 << false << true;

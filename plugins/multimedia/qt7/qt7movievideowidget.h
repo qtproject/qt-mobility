@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,14 +49,14 @@
 #include <qmediaplayer.h>
 
 #include <QtGui/qmacdefines_mac.h>
-#include "qt7videooutputcontrol.h"
+#include "qt7videooutput.h"
 
-#include <CoreVideo/CVOpenGLTexture.h>
+#include <QuartzCore/CVOpenGLTexture.h>
 #include <QuickTime/QuickTime.h>
 
 class GLVideoWidget;
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QCvDisplayLink;
 class QT7PlayerSession;
@@ -69,8 +69,8 @@ public:
     QT7MovieVideoWidget(QObject *parent = 0);
     virtual ~QT7MovieVideoWidget();
 
-    void setEnabled(bool);
     void setMovie(void *movie);
+    void updateNaturalSize(const QSize &newSize);
 
     QWidget *videoWidget();
 
@@ -79,8 +79,8 @@ public:
 
     QSize nativeSize() const;
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     int brightness() const;
     void setBrightness(int brightness);
@@ -114,13 +114,13 @@ private:
 
     bool m_fullscreen;
     QSize m_nativeSize;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     int m_brightness;
     int m_contrast;
     int m_hue;
     int m_saturation;
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

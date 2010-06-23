@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -48,13 +48,11 @@
 #include <lbtsessiontrigger.h>
 
 #include "qgeoareamonitor.h"
-#include "qgeoareamonitor_s60_p.h"
 
 #include <lbt.h>
 
 QTM_BEGIN_NAMESPACE
 
-class QGeoAreaMonitorS60;
 class QMLBackendTriggerChangeAO : public CActive
 {
 public :
@@ -69,7 +67,7 @@ private :
     QMLBackendTriggerChangeAO();
     ~QMLBackendTriggerChangeAO();
     inline bool isValid() {
-        return subsessionCreated && (iTriggerMonitorInfo!=NULL);
+        return subsessionCreated && (iTriggerMonitorInfo != NULL);
     }
     void ConstructL(RLbtServer& albtServ);
 

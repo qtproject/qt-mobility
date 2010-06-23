@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -62,6 +62,8 @@
 
 #include <f32file.h>
 #include "telephonyinfo_s60.h"
+#include "chargingstatus_s60.h"
+#include "wlaninfo_s60.h"
 
 QT_BEGIN_HEADER
 
@@ -88,6 +90,7 @@ Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
+    QString QLocaleToISO639_1(QLocale::Language language) const;  
     QString TLanguageToISO639_1(TLanguage language) const;
     QString S60Version() const;
 };
@@ -117,6 +120,7 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    QSystemNetworkInfo::NetworkMode currentMode();
 
 Q_SIGNALS:
     void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -128,7 +132,6 @@ Q_SIGNALS:
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged(){};
-    void powerStateChanged(){};
 
     void countryCodeChanged();
     void networkCodeChanged();
@@ -137,6 +140,11 @@ protected:  //from MTelephonyInfoObserver
 
     void cellNetworkSignalStrengthChanged();
     void cellNetworkStatusChanged();
+
+public slots:
+    void wlanNetworkNameChanged();
+    void wlanNetworkSignalStrengthChanged();
+    void wlanNetworkStatusChanged();
 };
 
 //////// QSystemDisplayInfo
@@ -151,7 +159,13 @@ public:
 
     static int displayBrightness(int screen);
     static int colorDepth(int screen);
-};
+
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);};
 
 
 //////// QSystemStorageInfo
@@ -169,6 +183,10 @@ public:
 
 private:
     RFs iFs;
+
+
+Q_SIGNALS:
+    void logicalDrivesChanged(bool);
 };
 
 //////// QSystemDeviceInfo
@@ -188,7 +206,8 @@ QTM_BEGIN_NAMESPACE
 class QSystemDeviceInfoPrivate : public QObject,
     public MTelephonyInfoObserver,
     public MProEngProfileActivationObserver,
-    public MCenRepNotifyHandlerCallback
+    public MCenRepNotifyHandlerCallback,
+    public MChargingStatusObserver
 {
     Q_OBJECT
 
@@ -210,10 +229,12 @@ public:
     QSystemDeviceInfo::BatteryStatus batteryStatus();
 
     bool isDeviceLocked();
-    QSystemDeviceInfo::SimStatus simStatus();
+    static QSystemDeviceInfo::SimStatus simStatus();
     QSystemDeviceInfo::Profile currentProfile();
 
     QSystemDeviceInfo::PowerState currentPowerState();
+
+    bool currentBluetoothPowerState();
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -236,8 +257,7 @@ private:
 
 protected:  //from MTelephonyInfoObserver
     void batteryLevelChanged();
-    void powerStateChanged();
-    
+
     void countryCodeChanged(){};
     void networkCodeChanged(){};
     void networkNameChanged(){};
@@ -245,6 +265,9 @@ protected:  //from MTelephonyInfoObserver
 
     void cellNetworkSignalStrengthChanged(){};
     void cellNetworkStatusChanged(){};
+
+protected:  //from MChargingStatusObserver
+    void chargingStatusChanged();
 
 private:    //data
     MProEngEngine *m_profileEngine;
@@ -275,7 +298,6 @@ private:    //data
 //////// DeviceInfo (singleton)
 class DeviceInfo
 {
-
 public:
     static DeviceInfo *instance()
     {
@@ -302,6 +324,14 @@ public:
         return m_subscriberInfo;
     }
 
+    CChargingStatus *chargingStatus()
+    {
+        if (!m_chargingStatus) {
+            m_chargingStatus = new CChargingStatus;
+        }
+        return m_chargingStatus;
+    }
+
     CBatteryInfo *batteryInfo()
     {
         if (!m_batteryInfo) {
@@ -309,7 +339,7 @@ public:
         }
         return m_batteryInfo;
     }
-    
+
     CCellNetworkInfo *cellNetworkInfo()
     {
         if (!m_cellNetworkInfo) {
@@ -317,7 +347,7 @@ public:
         }
         return m_cellNetworkInfo;
     }
-    
+
     CCellNetworkRegistrationInfo *cellNetworkRegistrationInfo()
     {
         if (!m_cellNetworkRegistrationInfo) {
@@ -325,7 +355,7 @@ public:
         }
         return m_cellNetworkRegistrationInfo;
     }
-    
+
     CCellSignalStrengthInfo *cellSignalStrenghtInfo()
     {
         if (!m_cellSignalStrengthInfo) {
@@ -334,10 +364,18 @@ public:
         return m_cellSignalStrengthInfo;
     }
 
+    CWlanInfo *wlanInfo()
+    {
+        if (!m_wlanInfo) {
+            m_wlanInfo = new CWlanInfo;
+        }
+        return m_wlanInfo;
+    }
+
 private:
-    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_batteryInfo(NULL),
-        m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
-        m_cellSignalStrengthInfo(NULL)
+    DeviceInfo() : m_phoneInfo(NULL), m_subscriberInfo(NULL), m_chargingStatus(NULL),
+        m_batteryInfo(NULL), m_cellNetworkInfo(NULL), m_cellNetworkRegistrationInfo(NULL),
+        m_cellSignalStrengthInfo(NULL), m_wlanInfo(NULL)
     {
         m_telephony = CTelephony::NewL();
     };
@@ -348,9 +386,11 @@ private:
         delete m_cellNetworkRegistrationInfo;
         delete m_cellNetworkInfo;
         delete m_batteryInfo;
+        delete m_chargingStatus;
         delete m_subscriberInfo;
         delete m_phoneInfo;
         delete m_telephony;
+        delete m_wlanInfo;
     }
 
     static DeviceInfo *m_instance;
@@ -358,10 +398,12 @@ private:
     CTelephony *m_telephony;
     CPhoneInfo *m_phoneInfo;
     CSubscriberInfo *m_subscriberInfo;
+    CChargingStatus *m_chargingStatus;
     CBatteryInfo *m_batteryInfo;
     CCellNetworkInfo *m_cellNetworkInfo;
     CCellNetworkRegistrationInfo *m_cellNetworkRegistrationInfo;
     CCellSignalStrengthInfo *m_cellSignalStrengthInfo;
+    CWlanInfo* m_wlanInfo;
 };
 
 QTM_END_NAMESPACE

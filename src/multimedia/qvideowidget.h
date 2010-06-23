@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,38 +45,36 @@
 #include <QtGui/qwidget.h>
 
 #include <qmobilityglobal.h>
+#include <qmediabindableinterface.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 class QMediaObject;
 
 class QVideoWidgetPrivate;
-class Q_MEDIA_EXPORT QVideoWidget : public QWidget
+class Q_MULTIMEDIA_EXPORT QVideoWidget : public QWidget, public QMediaBindableInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QMediaBindableInterface)
     Q_PROPERTY(QMediaObject* mediaObject READ mediaObject WRITE setMediaObject)
     Q_PROPERTY(bool fullScreen READ isFullScreen WRITE setFullScreen NOTIFY fullScreenChanged)
-    Q_PROPERTY(AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode NOTIFY aspectRatioModeChanged)
+    Q_PROPERTY(Qt::AspectRatioMode aspectRatioMode READ aspectRatioMode WRITE setAspectRatioMode NOTIFY aspectRatioModeChanged)
     Q_PROPERTY(int brightness READ brightness WRITE setBrightness NOTIFY brightnessChanged)
     Q_PROPERTY(int contrast READ contrast WRITE setContrast NOTIFY contrastChanged)
     Q_PROPERTY(int hue READ hue WRITE setHue NOTIFY hueChanged)
     Q_PROPERTY(int saturation READ saturation WRITE setSaturation NOTIFY saturationChanged)
-    Q_ENUMS(AspectRatio)
 
 public:
-    enum AspectRatioMode { IgnoreAspectRatio, KeepAspectRatio };
-
     QVideoWidget(QWidget *parent = 0);
     ~QVideoWidget();   
 
-    QMediaObject *mediaObject() const;
-    void setMediaObject(QMediaObject *object);
+    QMediaObject *mediaObject() const;    
 
 #ifdef Q_QDOC
     bool isFullScreen() const;
 #endif
 
-    AspectRatioMode aspectRatioMode() const;
+    Qt::AspectRatioMode aspectRatioMode() const;
 
     int brightness() const;
     int contrast() const;
@@ -87,7 +85,7 @@ public:
 
 public Q_SLOTS:
     void setFullScreen(bool fullScreen);
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
     void setBrightness(int brightness);
     void setContrast(int contrast);
     void setHue(int hue);
@@ -108,21 +106,22 @@ protected:
     void moveEvent(QMoveEvent *event);
     void paintEvent(QPaintEvent *event);
 
+    bool setMediaObject(QMediaObject *object);
+
 protected:
     QVideoWidgetPrivate *d_ptr;
 
 private:
     Q_DECLARE_PRIVATE(QVideoWidget)
     Q_PRIVATE_SLOT(d_func(), void _q_serviceDestroyed())
-    Q_PRIVATE_SLOT(d_func(), void _q_mediaObjectDestroyed())
     Q_PRIVATE_SLOT(d_func(), void _q_brightnessChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_contrastChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_hueChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_saturationChanged(int))
     Q_PRIVATE_SLOT(d_func(), void _q_fullScreenChanged(bool))
-    Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged());
+    Q_PRIVATE_SLOT(d_func(), void _q_dimensionsChanged())
 };
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
 #endif

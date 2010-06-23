@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -49,7 +49,7 @@
 class QWmpEvents;
 class QWmpPlaylist;
 
-QTM_USE_NAMESPACE
+QT_USE_NAMESPACE
 class QWmpPlayerControl : public QMediaPlayerControl
 {
     Q_OBJECT
@@ -80,6 +80,9 @@ public:
 
     int bufferStatus() const;
 
+    bool isAudioAvailable() const;
+    void setAudioAvailable(bool available);
+
     bool isVideoAvailable() const;
     void setVideoAvailable(bool available);
 
@@ -87,7 +90,7 @@ public:
     void setPlaybackRate(qreal rate);
 
     bool isSeekable() const;
-    QPair<qint64, qint64> seekRange() const;
+    QMediaTimeRange availablePlaybackRanges() const;
 
     void play();
     void pause();
@@ -119,6 +122,7 @@ private:
     QMediaPlayer::MediaStatus m_status;
     qint64 m_duration;
     bool m_buffering;
+    bool m_audioAvailable;
     bool m_videoAvailable;
 };
 

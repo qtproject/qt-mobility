@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Test>
+    <case>
+        <Name>Multi class</Name>
+        <InterfaceHeader>IMultiClassFct.h</InterfaceHeader>
+        <CompareHeader>MultiClassFct.h</CompareHeader>
+        <ExpectedResult>
+        </ExpectedResult>
+    </case>
+    <case>
+        <Name>Property Functions</Name>
+        <InterfaceHeader>IPropertyFct.h</InterfaceHeader>
+        <CompareHeader>PropertyFct.h</CompareHeader>
+        <ExpectedResult>
+            <msg>IPropertyImpl::Q_PROPERTY ( Property4Type property4 READ readProperty4 WRITE writeProperty4 NOTIFY notifyProperty4 RESET resetProperty4 )</msg>
+            <msg>IPropertyImpl::Q_PROPERTY ( Property5Type property5 READ readProperty5 WRITE writeProperty5 NOTIFY notifyProperty5 RESET resetProperty5 )</msg>
+            <msg>IPropertyImpl::Q_PROPERTY ( MyFlags1 Flag1 READ readFlag1 NOTIFY notifyFlag1 )</msg>
+            <msg>IPropertyImpl::Q_ENUMS ( Property3Type )</msg>
+            <msg>IPropertyImpl::Q_ENUMS ( Property5Type )</msg>
+            <msg>IPropertyImpl::Q_ENUMS ( Property6Type )</msg>
+            <msg>IPropertyImpl::Q_FLAGS ( MyFlags1 )</msg>
+            <msg>IPropertyImpl::Q_FLAGS ( MyFlags2 )</msg>
+        </ExpectedResult>
+    </case>
+    <case>
+        <Name>Invokable Functions</Name>
+        <InterfaceHeader>IInvokableFct.h</InterfaceHeader>
+        <CompareHeader>InvokableFct.h</CompareHeader>
+        <ExpectedResult>
+            <msg>public Normal Invokable IMyInterfaceImpl::QString invokeFct17 ( bool arg1 , QString arg2 , int arg3 )</msg>
+            <msg>public Normal Invokable IMyInterfaceImpl::QString diffname1 ( bool arg1 , QString arg2 , int arg3 )</msg>
+            <msg>public Normal Invokable IMyInterfaceImpl::void overloadedDiffFct ( bool arg1 , QString arg2 , int arg3 )</msg>
+            <msg>public Normal Invokable IMyInterfaceImpl::void notInvokable ( )</msg>
+        </ExpectedResult>
+    </case>
+    <case>
+        <Name>Signal Functions</Name>
+        <InterfaceHeader>ISignalFct.h</InterfaceHeader>
+        <CompareHeader>SignalFct.h</CompareHeader>
+        <ExpectedResult>
+            <msg>protected Signal IMyInterfaceImpl::int signalFct17 ( bool arg1 , QString arg2 , int arg3 )</msg>
+            <msg>protected Signal IMyInterfaceImpl::void diffnames1(bool arg1, QString arg2, int arg3)</msg>
+            <msg>protected Signal IMyInterfaceImpl::void overloadedDiffFct(bool arg1, QString arg2, int arg3)</msg>
+            <msg>protected Signal IMyInterfaceImpl::void noSingnal ( )</msg>
+        </ExpectedResult>
+    </case>
+    <case>
+        <Name>Enum and flags</Name>
+        <InterfaceHeader>IEnumFlagsFct.h</InterfaceHeader>
+        <CompareHeader>IEnumFlagsFct.h</CompareHeader>
+        <ExpectedResult>
+        </ExpectedResult>
+    </case>
+</Test>

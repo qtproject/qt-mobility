@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -55,11 +55,11 @@ class Q_CONTACTS_EXPORT QContactBirthday : public QContactDetail
 {
 public:
 #ifdef Q_QDOC
-    const char* DefinitionName;
-    const char* FieldBirthday;
+    static const QLatin1Constant DefinitionName;
+    static const QLatin1Constant FieldBirthday;
 #else
     Q_DECLARE_CUSTOM_CONTACT_DETAIL(QContactBirthday, "Birthday")
-    Q_DECLARE_LATIN1_LITERAL(FieldBirthday, "Birthday");
+    Q_DECLARE_LATIN1_CONSTANT(FieldBirthday, "Birthday");
 #endif
 
     void setDate(const QDate& date) {setValue(FieldBirthday, date);}

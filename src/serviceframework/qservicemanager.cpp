@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,8 +42,9 @@
 #include "qservicemanager.h"
 #include "qserviceplugininterface.h"
 #include "qabstractsecuritysession.h"
+#include "qserviceinterfacedescriptor_p.h"
 #ifdef Q_OS_SYMBIAN
-    #include "databasemanager_s60_p.h"
+    #include "databasemanager_symbian_p.h"
 #else
     #include "databasemanager_p.h"
 #endif
@@ -51,9 +52,9 @@
 #include <QObject>
 #include <QPluginLoader>
 #include <QFile>
-//#include <QDebug>
 #include <QCoreApplication>
 #include <QDir>
+#include <QSystemSemaphore>
 
 QTM_BEGIN_NAMESPACE
 
@@ -64,7 +65,10 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
         return libNameOrPath;
 
     // try to find plug-in via QLibrary
-    const QStringList paths = QCoreApplication::libraryPaths();
+    QStringList paths = QCoreApplication::libraryPaths();
+#ifdef QTM_PLUGIN_PATH
+    paths << QLatin1String(QTM_PLUGIN_PATH)+QLatin1String("/serviceframework");
+#endif
     for (int i=0; i<paths.count(); i++) {
         QString libPath = QDir::toNativeSeparators(paths[i]) + QDir::separator() + libNameOrPath;
         
@@ -74,21 +78,19 @@ static QString qservicemanager_resolveLibraryPath(const QString &libNameOrPath)
             libPath = fi.completeBaseName() + QLatin1String(".qtplugin");
         else
             libPath += QLatin1String(".qtplugin");
-#endif       
-        
+
+        QLibrary lib(libPath);
+        if (QFile::exists(libPath) && lib.load()) {
+            lib.unload();
+            return libPath;
+        }
+#else       
         QLibrary lib(libPath);  
         if (lib.load()) {
             lib.unload();
-#ifdef Q_OS_SYMBIAN
-         QFileInfo fi2(libPath);
-         QString fileName = lib.fileName();
-         fileName.chop(4); // .dll is removed
-         libPath = QDir::toNativeSeparators(fi2.absolutePath()) + QDir::separator() + fileName + QLatin1String(".qtplugin");
-         qDebug() << libPath;
-         return libPath;  
-#endif
             return lib.fileName();
         }
+#endif        
     }
     return QString();
 }
@@ -406,11 +408,36 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     //service instance is around
     QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
     if (pluginIFace) {
-        QObject *obj = pluginIFace->createInstance(descriptor, context, session);
-        if (obj) {
-            QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader);
-            QObject::connect(obj, SIGNAL(destroyed()), cleanup, SLOT(deleteLater()));
-            return obj;
+
+        //check initialization first as the service may be a pre-registered one
+        bool doLoading = true;
+        QString serviceInitialized = descriptor.customAttribute(SERVICE_INITIALIZED_ATTR);
+        if (!serviceInitialized.isEmpty() && (serviceInitialized == QLatin1String("NO"))) {
+            // open/create the semaphore using the service's name as identifier
+            QSystemSemaphore semaphore(descriptor.serviceName(), 1);
+            if (semaphore.error() != QSystemSemaphore::NoError) {
+                //try to create it
+                semaphore.setKey(descriptor.serviceName(), 1, QSystemSemaphore::Create);
+            }
+            if (semaphore.error() == QSystemSemaphore::NoError && semaphore.acquire()) {
+                pluginIFace->installService();
+                DatabaseManager::DbScope scope = d->scope == QService::UserScope ?
+                        DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
+                d->dbManager->serviceInitialized(descriptor.serviceName(), scope);
+                // release semaphore
+                semaphore.release();
+            }
+            else
+                doLoading = false;
+        }
+
+        if (doLoading) {
+            QObject *obj = pluginIFace->createInstance(descriptor, context, session);
+            if (obj) {
+                QServicePluginCleanup *cleanup = new QServicePluginCleanup(loader);
+                QObject::connect(obj, SIGNAL(destroyed()), cleanup, SLOT(deleteLater()));
+                return obj;
+            }
         }
     }
 
@@ -431,6 +458,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
 
     If \a interfaceName is not a known interface the returned pointer will be null.
 
+    Note that using this function implies that service and client share
+    the implementation of T which means that service and client become tightly coupled.
+    This may cause issue during later updates as certain changes may require code changes
+    to the service and client.
+
     The caller takes ownership of the returned pointer.
 
     The security session object is not mandatory. If the session pointer is null,
@@ -450,6 +482,11 @@ QObject* QServiceManager::loadInterface(const QServiceInterfaceDescriptor& descr
     by the caller of this function. The template class must be derived from QObject.
 
     If the \a serviceDescriptor is not valid the returned pointer will be null.
+
+    Note that using this function implies that service and client share
+    the implementation of T which means that service and client become tightly coupled.
+    This may cause issue during later updates as certain changes may require code changes
+    to the service and client.
 
     The caller takes ownership of the returned pointer.
 
@@ -518,6 +555,7 @@ bool QServiceManager::addService(QIODevice *device)
             DatabaseManager::UserOnlyScope : DatabaseManager::SystemScope;
     ServiceMetaDataResults results = parser.parseResults();
     bool result = d->dbManager->registerService(results, scope);
+
     if (result) {
         QPluginLoader *loader = new QPluginLoader(qservicemanager_resolveLibraryPath(data.location));
         QServicePluginInterface *pluginIFace = qobject_cast<QServicePluginInterface *>(loader->instance());
@@ -533,6 +571,7 @@ bool QServiceManager::addService(QIODevice *device)
     } else {
         d->setError();
     }
+
     return result;
 }
 

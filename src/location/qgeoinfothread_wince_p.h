@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -84,7 +84,7 @@ public:
         MaximumMainLoopWaitTime = 5000
     };
 
-    QGeoInfoThreadWinCE(QGeoInfoValidator *validator, QObject *parent = 0);
+    QGeoInfoThreadWinCE(QGeoInfoValidator *validator, bool timeoutsForPeriodicUpdates, QObject *parent = 0);
     ~QGeoInfoThreadWinCE();
 
 //public slots:
@@ -95,7 +95,7 @@ public:
 
 signals:
     void dataUpdated(GPS_POSITION data);
-    void requestTimeout();
+    void updateTimeout();
 
 protected:
     void run();
@@ -107,6 +107,7 @@ private:
     int msecsTo(QDateTime from, QDateTime to);
 
     QGeoInfoValidator *validator;
+    bool timeoutsForPeriodicUpdates;
 
     bool requestScheduled;
     qint32 requestInterval;
@@ -116,12 +117,17 @@ private:
     qint32 updatesInterval;
     QDateTime updatesNextTime;
 
+    bool stopping;
+
     bool gpsReachedOnState;
 
     bool hasLastPosition;
+    bool invalidDataReceived;
+    bool updateTimeoutTriggered;
     GPS_POSITION m_lastPosition;
 
     QMutex mutex;
+    QWaitCondition statusUpdated;
 
     HANDLE m_gps;
     HANDLE m_newDataEvent;

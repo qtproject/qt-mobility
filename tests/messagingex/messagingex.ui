@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>278</width>
-    <height>390</height>
+    <width>321</width>
+    <height>488</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -60,7 +60,7 @@
        </layout>
       </widget>
       <widget class="QWidget" name="page_2" >
-       <layout class="QVBoxLayout" name="verticalLayout_3" >
+       <layout class="QVBoxLayout" name="verticalLayout" >
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_3" >
           <item>
@@ -111,21 +111,25 @@
          <widget class="QTextEdit" name="emailMessageEdit" />
         </item>
         <item>
-         <widget class="QPushButton" name="addEmailAttachmentButton" >
-          <property name="enabled" >
-           <bool>true</bool>
-          </property>
-          <property name="text" >
-           <string>Add Attachment</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="removeAttachmentButton" >
-          <property name="text" >
-           <string>Remove Attachment</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_7" >
+          <item>
+           <widget class="QPushButton" name="addEmailAttachmentButton" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="text" >
+             <string>Add Attachment</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="removeAttachmentButton" >
+            <property name="text" >
+             <string>Remove Attachment</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
         <item>
          <widget class="QLabel" name="emailAttachmentLabel" >
@@ -135,21 +139,25 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="sendEmailButton" >
-          <property name="enabled" >
-           <bool>true</bool>
-          </property>
-          <property name="text" >
-           <string>Send Message</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="addMessageButton" >
-          <property name="text" >
-           <string>Store message</string>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" name="horizontalLayout_6" >
+          <item>
+           <widget class="QPushButton" name="addMessageButton" >
+            <property name="text" >
+             <string>Store message</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="sendEmailButton" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="text" >
+             <string>Send Message</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -668,7 +676,27 @@
          </widget>
         </item>
         <item row="3" column="0" >
-         <widget class="QDateTimeEdit" name="timestampdateTimeEdit" />
+         <widget class="QDateTimeEdit" name="timestampdateTimeEdit" >
+          <property name="dateTime" >
+           <datetime>
+            <hour>0</hour>
+            <minute>0</minute>
+            <second>0</second>
+            <year>2000</year>
+            <month>1</month>
+            <day>1</day>
+           </datetime>
+          </property>
+          <property name="currentSection" >
+           <enum>QDateTimeEdit::YearSection</enum>
+          </property>
+          <property name="displayFormat" >
+           <string>yyyy/MM/dd HH:mm</string>
+          </property>
+          <property name="calendarPopup" >
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item row="4" column="0" >
          <widget class="QPushButton" name="timestampButton" >
@@ -748,7 +776,17 @@
          </widget>
         </item>
         <item row="3" column="0" >
-         <widget class="QDateTimeEdit" name="receptiondateTimeEdit" />
+         <widget class="QDateTimeEdit" name="receptiondateTimeEdit" >
+          <property name="currentSection" >
+           <enum>QDateTimeEdit::YearSection</enum>
+          </property>
+          <property name="displayFormat" >
+           <string>yyyy/MM/dd HH:mm</string>
+          </property>
+          <property name="calendarPopup" >
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
         <item row="4" column="0" >
          <widget class="QPushButton" name="receptionButton" >

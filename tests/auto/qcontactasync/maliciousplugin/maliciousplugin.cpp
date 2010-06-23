@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -53,20 +53,118 @@
 #include "maliciousplugin_p.h"
 #include "qcontactmanager.h"
 
+#include <QThread>
+#include <QMutex>
+#include <QSet>
+#include <QDebug>
+
+class MaliciousThreadObject : public QObject
+{
+    Q_OBJECT
+public:
+    MaliciousThreadObject() {}
+
+public slots:
+    void activateRequest(QContactAbstractRequest* req)
+    {
+        mutex.lock();
+        if (activeRequests.contains(req)) {
+            QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::ActiveState);
+        }
+        mutex.unlock();
+    }
+
+    void finishRequest(QContactAbstractRequest* req)
+    {
+        QContactManager::Error errorResult = QContactManager::NoError;
+        QMap<int, QContactManager::Error> errorsResult;
+        QList<QContactLocalId> idResult;
+        QList<QContact> contactResult;
+        QList<QContactDetailDefinition> defResult;
+        QMap<QString, QContactDetailDefinition> defMapResult;
+        QList<QContactRelationship> relResult;
+
+        mutex.lock();
+        if (activeRequests.contains(req)) {
+            switch(req->type()) {
+                case QContactAbstractRequest::ContactLocalIdFetchRequest:
+                    QContactManagerEngine::updateContactLocalIdFetchRequest(static_cast<QContactLocalIdFetchRequest*>(req), idResult, errorResult, QContactAbstractRequest::FinishedState);
+                    break;
+
+                case QContactAbstractRequest::ContactFetchRequest:
+                    QContactManagerEngine::updateContactFetchRequest(static_cast<QContactFetchRequest*>(req), contactResult, errorResult, QContactAbstractRequest::FinishedState);
+                    break;
+
+                case QContactAbstractRequest::DetailDefinitionSaveRequest:
+                    QContactManagerEngine::updateDefinitionSaveRequest(static_cast<QContactDetailDefinitionSaveRequest*>(req), defResult, errorResult, errorsResult, QContactAbstractRequest::FinishedState);
+                    break;
+
+                case QContactAbstractRequest::DetailDefinitionFetchRequest:
+                    QContactManagerEngine::updateDefinitionFetchRequest(static_cast<QContactDetailDefinitionFetchRequest*>(req), defMapResult, errorResult, errorsResult, QContactAbstractRequest::FinishedState);
+                    break;
+
+                case QContactAbstractRequest::DetailDefinitionRemoveRequest:
+                    QContactManagerEngine::updateDefinitionRemoveRequest(static_cast<QContactDetailDefinitionRemoveRequest*>(req), errorResult, errorsResult, QContactAbstractRequest::FinishedState);
+                    break;
+                default:
+                    QContactManagerEngine::updateRequestState(req, QContactAbstractRequest::FinishedState);
+                    break;
+            }
+        }
+        activeRequests.remove(req);
+        mutex.unlock();
+    }
+public:
+    QMutex mutex;
+
+    QSet<QContactAbstractRequest*> activeRequests;
+};
+
+class MaliciousThread : public QThread
+{
+    Q_OBJECT;
+public:
+    MaliciousThread();
+    ~MaliciousThread();
+    QObject* eventLoopQuitHack;
+};
+
+MaliciousThread::MaliciousThread()
+{
+    eventLoopQuitHack = new QObject;
+    eventLoopQuitHack->moveToThread(this);
+    connect(eventLoopQuitHack, SIGNAL(destroyed(QObject*)), SLOT(quit()), Qt::DirectConnection);
+}
+
+MaliciousThread::~MaliciousThread()
+{
+    eventLoopQuitHack->deleteLater();
+    wait();
+}
+
 MaliciousAsyncManagerEngine::MaliciousAsyncManagerEngine()
         : QContactManagerEngine()
 {
+    thread = new MaliciousThread();
+    threadObject = new MaliciousThreadObject();
+    threadObject->moveToThread(thread);
+
+    connect(this, SIGNAL(doStartRequest(QContactAbstractRequest*)), threadObject, SLOT(activateRequest(QContactAbstractRequest*)));
+    connect(this, SIGNAL(doFinishRequest(QContactAbstractRequest*)), threadObject, SLOT(finishRequest(QContactAbstractRequest*)));
+
+    thread->start();
 }
 
-void MaliciousAsyncManagerEngine::deref()
+MaliciousAsyncManagerEngine::~MaliciousAsyncManagerEngine()
 {
-    // does this leak?
+    delete thread;
+    delete threadObject;
 }
 
-QString MaliciousAsyncManagerEngine::synthesizeDisplayLabel(const QContact& contact, QContactManager::Error& error) const
+QString MaliciousAsyncManagerEngine::synthesizedDisplayLabel(const QContact& contact, QContactManager::Error* error) const
 {
     Q_UNUSED(contact);
-    error = QContactManager::NotSupportedError;
+    *error = QContactManager::NotSupportedError;
     return QString();
 }
 
@@ -77,35 +175,31 @@ QString MaliciousAsyncManagerEngine::managerName() const
 
 bool MaliciousAsyncManagerEngine::startRequest(QContactAbstractRequest* req)
 {
-    QContactManager::Error errorResult = QContactManager::NoError;
-    QList<QContactManager::Error> errorsResult;
-    QList<QContactLocalId> idResult;
-    QList<QContact> contactResult;
-    QList<QContactDetailDefinition> defResult;
-    QMap<QString, QContactDetailDefinition> defMapResult;
-    QList<QContactRelationship> relResult;
+    threadObject->mutex.lock();
+    threadObject->activeRequests.insert(req);
+    threadObject->mutex.unlock();
 
-    // maliciously attempt to update the request with every result type
-    updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, idResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, contactResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, defResult, errorResult, errorsResult, QContactAbstractRequest::Active);
-    updateRequest(req, defMapResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
-    updateRequest(req, relResult, errorResult, errorsResult, QContactAbstractRequest::Active, false);
+    // Spawn a thread to do stuff on another thread
+    emit doStartRequest(req);
+    emit doFinishRequest(req);
 
-    QContactManagerEngine::startRequest(req);
     return true;
 }
 
 bool MaliciousAsyncManagerEngine::cancelRequest(QContactAbstractRequest *req)
 {
-    QContactManager::Error errorResult = QContactManager::NoError;
-    QList<QContactManager::Error> errorsResult;
-    updateRequestStatus(req, errorResult, errorsResult, QContactAbstractRequest::Cancelled, false);
+    updateRequestState(req, QContactAbstractRequest::CanceledState);
     QContactManagerEngine::cancelRequest(req);
     return true;
 }
 
+void MaliciousAsyncManagerEngine::requestDestroyed(QContactAbstractRequest *req)
+{
+    threadObject->mutex.lock();
+    threadObject->activeRequests.remove(req);
+    threadObject->mutex.unlock();
+    QContactManagerEngine::requestDestroyed(req);
+}
 
 QString MaliciousEngineFactory::managerName() const
 {
@@ -113,9 +207,11 @@ QString MaliciousEngineFactory::managerName() const
 }
 Q_EXPORT_PLUGIN2(MALICIOUSPLUGINTARGET, MaliciousEngineFactory);
 
-QContactManagerEngine* MaliciousEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error& error)
+QContactManagerEngine* MaliciousEngineFactory::engine(const QMap<QString, QString>& parameters, QContactManager::Error* error)
 {
     Q_UNUSED(parameters);
-    error = QContactManager::NoError;
-    return &mame;
+    *error = QContactManager::NoError;
+    return new MaliciousAsyncManagerEngine();
 }
+
+#include "maliciousplugin.moc"

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -40,20 +40,23 @@
 ****************************************************************************/
 
 #include "qgstreamermediacontainercontrol.h"
-#include <gst/gst.h>
+
+
+#include <QtCore/qdebug.h>
 
 QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent)
     :QMediaContainerControl(parent)
 {
     QList<QByteArray> formatCandidates;
-    formatCandidates << "matroska" << "ogg" << "quicktime" << "mp4" << "avi" << "3gpp";
+    formatCandidates << "matroska" << "ogg" << "mp4" << "quicktime" << "avi" << "3gpp";
     formatCandidates << "flv" << "wav" << "amr" << "asf" << "dv" << "gif";
     formatCandidates << "mpeg" << "vob" << "mpegts" << "3g2" << "3gp";
+    formatCandidates << "raw";
 
     m_elementNames["matroska"] = "matroskamux";
     m_elementNames["ogg"] = "oggmux";
-    m_elementNames["quicktime"] = "qtmux";
-    m_elementNames["mp4"] = "mp4mux";
+    m_elementNames["mp4"] = "ffmux_mp4";
+    m_elementNames["quicktime"] = "ffmux_mov";
     m_elementNames["avi"] = "avimux";
     m_elementNames["3gpp"] = "gppmux";
     m_elementNames["flv"] = "flvmux";
@@ -67,7 +70,9 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
     m_elementNames["mpegts"] = "ffmux_mpegts";
     m_elementNames["3g2"] = "ffmux_3g2";
     m_elementNames["3gp"] = "ffmux_3gp";
+    m_elementNames["raw"] = "identity";
 
+    QSet<QString> allTypes;
 
     foreach( const QByteArray& formatName, formatCandidates ) {
         QByteArray elementName = m_elementNames[formatName];
@@ -77,12 +82,44 @@ QGstreamerMediaContainerControl::QGstreamerMediaContainerControl(QObject *parent
             const gchar *descr = gst_element_factory_get_description(factory);
             m_containerDescriptions.insert(formatName, QString::fromUtf8(descr));
 
+
+            if (formatName == QByteArray("raw")) {
+                m_streamTypes.insert(formatName, allTypes);
+            } else {
+                QSet<QString> types = supportedStreamTypes(factory, GST_PAD_SINK);
+                m_streamTypes.insert(formatName, types);
+                allTypes.unite(types);
+            }
+
             gst_object_unref(GST_OBJECT(factory));
         }
     }
 
-    if (!m_supportedContainers.isEmpty())
-        setContainerMimeType(m_supportedContainers[0]);
+    //if (!m_supportedContainers.isEmpty())
+    //    setContainerMimeType(m_supportedContainers[0]);
+}
+
+QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(GstElementFactory *factory, GstPadDirection direction)
+{
+    QSet<QString> types;
+    const GList *pads = gst_element_factory_get_static_pad_templates(factory);
+    for (const GList *pad = pads; pad; pad = g_list_next(pad)) {
+        GstStaticPadTemplate *templ = (GstStaticPadTemplate*)pad->data;
+        if (templ->direction == direction) {
+            GstCaps *caps = gst_static_caps_get(&templ->static_caps);
+            for (uint i=0; i<gst_caps_get_size(caps); i++) {
+                GstStructure *structure = gst_caps_get_structure(caps, i);
+                types.insert( QString::fromUtf8(gst_structure_get_name(structure)) );
+            }
+            gst_caps_unref(caps);
+        }
+    }
+
+    return types;
 }
 
 
+QSet<QString> QGstreamerMediaContainerControl::supportedStreamTypes(const QString &container) const
+{
+    return m_streamTypes.value(container);
+}

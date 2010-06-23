@@ -4,7 +4,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <!-- qaudiocapturesource.cpp -->
 <head>
-  <title>Qt Mobility Project 1.0: QAudioCaptureSource Class Reference</title>
+  <title>Qt Mobility Project 1.1: QAudioCaptureSource Class Reference</title>
   <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
@@ -14,7 +14,7 @@
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
 <td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QAudioCaptureSource Class Reference</h1>
-<p>The QAudioCaptureSource class provides an interface to query and select an audio input device. <a href="#details">More...</a></p>
+<p>The QAudioCaptureSource class provides an interface to query and select an audio input endpoint. <a href="#details">More...</a></p>
 <pre>    #include &lt;QAudioCaptureSource&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediaobject.html">QMediaObject</a>.</p>
 <ul>
@@ -26,22 +26,27 @@
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#QAudioCaptureSource">QAudioCaptureSource</a></b> ( QObject * <i>parent</i> = 0, QMediaServiceProvider * <i>provider</i> = QMediaServiceProvider::defaultServiceProvider() )</td></tr>
 <tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#dtor.QAudioCaptureSource">~QAudioCaptureSource</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#defaultDevice">defaultDevice</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#description">description</a></b> ( int <i>index</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#deviceCount">deviceCount</a></b> () const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QIcon </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#icon">icon</a></b> ( int <i>index</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#name">name</a></b> ( int <i>index</i> ) const</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">int </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#selectedDevice">selectedDevice</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#activeAudioInput">activeAudioInput</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#audioDescription">audioDescription</a></b> ( const QString &amp; <i>name</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QList&lt;QString&gt; </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#audioInputs">audioInputs</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#defaultAudioInput">defaultAudioInput</a></b> () const</td></tr>
+</table>
+<hr />
+<a name="reimplemented-public-functions"></a>
+<h2>Reimplemented Public Functions</h2>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual QtMultimediaKit::AvailabilityError </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#availabilityError">availabilityError</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#isAvailable">isAvailable</a></b> () const</td></tr>
 </table>
 <ul>
-<li><div bar="2" class="fn"></div>11 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
+<li><div bar="2" class="fn"></div>12 public functions inherited from <a href="qmediaobject.html#public-functions">QMediaObject</a></li>
 <li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="public-slots"></a>
 <h2>Public Slots</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#setSelectedDevice">setSelectedDevice</a></b> ( int <i>index</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#setAudioInput">setAudioInput</a></b> ( const QString &amp; <i>name</i> )</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
@@ -50,9 +55,8 @@
 <a name="signals"></a>
 <h2>Signals</h2>
 <table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#devicesChanged">devicesChanged</a></b> ()</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#selectedDeviceChanged">selectedDeviceChanged</a></b> ( int <i>index</i> )</td></tr>
-<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#selectedDeviceChanged-2">selectedDeviceChanged</a></b> ( const QString &amp; <i>deviceName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#activeAudioInputChanged">activeAudioInputChanged</a></b> ( const QString &amp; <i>name</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qaudiocapturesource.html#availableAudioInputsChanged">availableAudioInputsChanged</a></b> ()</td></tr>
 </table>
 <ul>
 <li><div bar="2" class="fn"></div>4 signals inherited from <a href="qmediaobject.html#signals">QMediaObject</a></li>
@@ -60,7 +64,7 @@
 </ul>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li><div class="fn"></div>3 properties inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="qmediaobject.html#properties">QMediaObject</a></li>
 <li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
 <li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
 <li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
@@ -71,14 +75,14 @@
 <a name="details"></a>
 <hr />
 <h2>Detailed Description</h2>
-<p>The QAudioCaptureSource class provides an interface to query and select an audio input device.</p>
-<p>QAudioCaptureSource provides access to the audio devices available on your system.</p>
-<p>You can query these devices and select one to use.</p>
+<p>The QAudioCaptureSource class provides an interface to query and select an audio input endpoint.</p>
+<p>QAudioCaptureSource provides access to the audio inputs available on your system.</p>
+<p>You can query these inputs and select one to use.</p>
 <p>A typical implementation example:</p>
 <pre>    QAudioCaptureSource* audiocapturesource = new QAudioCaptureSource;
     QMediaRecorder* capture = new QMediaRecorder(audiocapturesource);</pre>
 <p>The audiocapturesource interface is then used to:</p>
-<p>- Get and Set the audio device to use.</p>
+<p>- Get and Set the audio input to use.</p>
 <p>The capture interface is then used to:</p>
 <p>- Set the destination using setOutputLocation()</p>
 <p>- Set the format parameters using setAudioCodec(),</p>
@@ -92,41 +96,39 @@
 <a name="//apple_ref/cpp/instm/QAudioCaptureSource/~QAudioCaptureSource"></a>
 <h3 class="fn"><a name="dtor.QAudioCaptureSource"></a>QAudioCaptureSource::~QAudioCaptureSource ()</h3>
 <p>Destroys the audiocapturesource object.</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/defaultDevice"></a>
-<h3 class="fn"><a name="defaultDevice"></a>int QAudioCaptureSource::defaultDevice () const</h3>
-<p>Returns the default audio input devices index.</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/description"></a>
-<h3 class="fn"><a name="description"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QAudioCaptureSource::description ( int <i>index</i> ) const</h3>
-<p>Returns the description of the audio input device at <i>index</i>.</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/deviceCount"></a>
-<h3 class="fn"><a name="deviceCount"></a>int QAudioCaptureSource::deviceCount () const</h3>
-<p>Returns the number of audio input devices available.</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/devicesChanged"></a>
-<h3 class="fn"><a name="devicesChanged"></a>void QAudioCaptureSource::devicesChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal is emitted when the available audio input devices has changed.</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/icon"></a>
-<h3 class="fn"><a name="icon"></a><a href="http://qt.nokia.com/doc/4.6/qicon.html">QIcon</a> QAudioCaptureSource::icon ( int <i>index</i> ) const</h3>
-<p>Returns the icon for the audio input device at <i>index</i>.</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/name"></a>
-<h3 class="fn"><a name="name"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QAudioCaptureSource::name ( int <i>index</i> ) const</h3>
-<p>Returns the name of the audio input device at <i>index</i>.</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/selectedDevice"></a>
-<h3 class="fn"><a name="selectedDevice"></a>int QAudioCaptureSource::selectedDevice () const</h3>
-<p>Returns the index of the currently selected audio input device.</p>
-<p>See also <a href="qaudiocapturesource.html#setSelectedDevice">setSelectedDevice</a>().</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/selectedDeviceChanged"></a>
-<h3 class="fn"><a name="selectedDeviceChanged"></a>void QAudioCaptureSource::selectedDeviceChanged ( int <i>index</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when selected audio device changes to <i>index</i>.</p>
-<h3 class="fn"><a name="selectedDeviceChanged-2"></a>void QAudioCaptureSource::selectedDeviceChanged ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>deviceName</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
-<p>Signal emitted when selected audio device changes to <i>deviceName</i>.</p>
-<a name="//apple_ref/cpp/instm/QAudioCaptureSource/setSelectedDevice"></a>
-<h3 class="fn"><a name="setSelectedDevice"></a>void QAudioCaptureSource::setSelectedDevice ( int <i>index</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
-<p>Sets the audio input device to <i>index</i>.</p>
-<p>See also <a href="qaudiocapturesource.html#selectedDevice">selectedDevice</a>().</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/activeAudioInput"></a>
+<h3 class="fn"><a name="activeAudioInput"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QAudioCaptureSource::activeAudioInput () const</h3>
+<p>Returns the active audio input name.</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/activeAudioInputChanged"></a>
+<h3 class="fn"><a name="activeAudioInputChanged"></a>void QAudioCaptureSource::activeAudioInputChanged ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal emitted when active audio input changes to <i>name</i>.</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/audioDescription"></a>
+<h3 class="fn"><a name="audioDescription"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QAudioCaptureSource::audioDescription ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> ) const</h3>
+<p>Returns the description of the audio input device with <i>name</i>.</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/audioInputs"></a>
+<h3 class="fn"><a name="audioInputs"></a><a href="http://qt.nokia.com/doc/4.6/qlist.html">QList</a>&lt;<a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a>&gt; QAudioCaptureSource::audioInputs () const</h3>
+<p>Returns a list of available audio inputs</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/availabilityError"></a>
+<h3 class="fn"><a name="availabilityError"></a><a href="qtmultimediakit.html#AvailabilityError-enum">QtMultimediaKit::AvailabilityError</a> QAudioCaptureSource::availabilityError () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaobject.html#availabilityError">QMediaObject::availabilityError</a>().</p>
+<p>Returns the error state of the audio capture service.</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/availableAudioInputsChanged"></a>
+<h3 class="fn"><a name="availableAudioInputsChanged"></a>void QAudioCaptureSource::availableAudioInputsChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
+<p>Signal is emitted when the available audio inputs change.</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/defaultAudioInput"></a>
+<h3 class="fn"><a name="defaultAudioInput"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QAudioCaptureSource::defaultAudioInput () const</h3>
+<p>Returns the default audio input name.</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/isAvailable"></a>
+<h3 class="fn"><a name="isAvailable"></a>bool QAudioCaptureSource::isAvailable () const&nbsp;&nbsp;<tt> [virtual]</tt></h3>
+<p>Reimplemented from <a href="qmediaobject.html#isAvailable">QMediaObject::isAvailable</a>().</p>
+<p>Returns true if the audio capture service is available, otherwise returns false.</p>
+<a name="//apple_ref/cpp/instm/QAudioCaptureSource/setAudioInput"></a>
+<h3 class="fn"><a name="setAudioInput"></a>void QAudioCaptureSource::setAudioInput ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>name</i> )&nbsp;&nbsp;<tt> [slot]</tt></h3>
+<p>Set the active audio input to <i>name</i>.</p>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
-<td align="left">Copyright &copy; 2009 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.0</div></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
 </tr></table></div></address></body>
 </html>

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -43,45 +43,78 @@
 
 QTM_BEGIN_NAMESPACE
 
+QMessageAccountSortOrderPrivate::QMessageAccountSortOrderPrivate(QMessageAccountSortOrder *sortOrder)
+ : q_ptr(sortOrder)
+{
+}
+
+bool QMessageAccountSortOrderPrivate::lessThan(const QMessageAccountSortOrder &sortOrder,
+                                               const QMessageAccount &account1, const QMessageAccount &account2)
+{
+    QMessageAccountSortOrderPrivate *d(sortOrder.d_ptr);
+    if (d && d->_order == Qt::AscendingOrder) { // Hack preventing null ointer
+        return (account1.name().compare(account2.name(), Qt::CaseInsensitive) < 0);
+    }
+    return (account1.name().compare(account2.name(), Qt::CaseInsensitive) > 0);
+}
+
 QMessageAccountSortOrder::QMessageAccountSortOrder()
+ : d_ptr(0)
 {
 }
 
 QMessageAccountSortOrder::QMessageAccountSortOrder(const QMessageAccountSortOrder &other)
+ : d_ptr(new QMessageAccountSortOrderPrivate(this))
 {
-    Q_UNUSED(other)
+        this->operator=(other);
 }
 
 QMessageAccountSortOrder::~QMessageAccountSortOrder()
 {
+        delete d_ptr;
+        d_ptr = 0;
 }
 
 bool QMessageAccountSortOrder::isEmpty() const
 {
-    return false; // stub
+        return (d_ptr == 0);
 }
 
 bool QMessageAccountSortOrder::isSupported() const
 {
-    return true; // stub
+    return true;
 }
 
 bool QMessageAccountSortOrder::operator==(const QMessageAccountSortOrder& other) const
 {
-    Q_UNUSED(other)
-    return false; // stub
+    if (!d_ptr && !other.d_ptr) {
+        return true;
+    }
+    if (!d_ptr || !other.d_ptr) {
+        return false;
+    }
+
+        return (d_ptr->_order == other.d_ptr->_order);
 }
 
 QMessageAccountSortOrder& QMessageAccountSortOrder::operator=(const QMessageAccountSortOrder& other)
 {
-    Q_UNUSED(other)
-    return *this; // stub
+        if (&other != this) {
+            if (!d_ptr) {
+                        d_ptr = new QMessageAccountSortOrderPrivate(this);
+            }
+                d_ptr->_order = other.d_ptr->_order;
+        }
+
+        return *this;
 }
 
 QMessageAccountSortOrder QMessageAccountSortOrder::byName(Qt::SortOrder order)
 {
-    Q_UNUSED(order)
-    return QMessageAccountSortOrder(); // stub
+        QMessageAccountSortOrder sortOrder;
+        sortOrder.d_ptr = new QMessageAccountSortOrderPrivate(&sortOrder);
+        sortOrder.d_ptr->_order = order;
+        return sortOrder;
 }
 
 QTM_END_NAMESPACE

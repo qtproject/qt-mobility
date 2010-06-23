@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -68,7 +68,7 @@ public :
     CMonitorTriggerInfo* getMonitorTriggerInfo(TLbtTriggerId aTrigID);
 
     //return CMonitorTriggerInfo from the QGeoAreaMonitorS60
-    CMonitorTriggerInfo* getMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,enTriggerType aType);
+    CMonitorTriggerInfo* getMonitorTriggerInfo(QGeoAreaMonitorS60* aParent, enTriggerType aType);
 
     //return the header of the linked list
     inline CMonitorTriggerInfo* getMonitorTriggerInfo() {
@@ -76,7 +76,7 @@ public :
     }
 
     //add the entry and exit trigger info to the list
-    bool addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent,TLbtTriggerId aTriggerID,enTriggerType aType);
+    bool addMonitorTriggerInfo(QGeoAreaMonitorS60* aParent, TLbtTriggerId aTriggerID, enTriggerType aType);
 
     //remove the CMonitorTriggerInfo corresponding to the TriggerID
     void removeMonitorTriggerInfo(TLbtTriggerId aTrigID);

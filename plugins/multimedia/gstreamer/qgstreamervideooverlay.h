@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,12 +46,14 @@
 
 #include "qgstreamervideorendererinterface.h"
 
-QTM_USE_NAMESPACE
-
 QT_BEGIN_NAMESPACE
 class QAbstractVideoSurface;
 QT_END_NAMESPACE
 class QX11VideoSurface;
+
+#if defined(Q_WS_X11) && !defined(QT_NO_XVIDEO)
+
+QT_USE_NAMESPACE
 
 class QGstreamerVideoOverlay : public QVideoWindowControl, public QGstreamerVideoRendererInterface
 {
@@ -72,8 +74,8 @@ public:
 
     QSize nativeSize() const;
 
-    QVideoWidget::AspectRatioMode aspectRatioMode() const;
-    void setAspectRatioMode(QVideoWidget::AspectRatioMode mode);
+    Qt::AspectRatioMode aspectRatioMode() const;
+    void setAspectRatioMode(Qt::AspectRatioMode mode);
 
     void repaint();
 
@@ -93,6 +95,9 @@ public:
 
     GstElement *videoSink();
 
+signals:
+    void sinkChanged();
+
 private slots:
     void surfaceFormatChanged();
 
@@ -101,9 +106,11 @@ private:
 
     QX11VideoSurface *m_surface;
     GstElement *m_videoSink;
-    QVideoWidget::AspectRatioMode m_aspectRatioMode;
+    Qt::AspectRatioMode m_aspectRatioMode;
     QRect m_displayRect;
     bool m_fullScreen;
 };
+
+#endif //QT_NO_XVIDEO
 
 #endif

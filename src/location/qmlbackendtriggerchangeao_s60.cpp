@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -60,6 +60,7 @@ TInt QMLBackendTriggerChangeAO::refCount = 0;
 void QMLBackendTriggerChangeAO::NotifyChangeEvent()
 {
     if (!IsActive()) {
+        iStatus = KRequestPending;
         iLbt.NotifyTriggerChangeEvent(iTriggerChangeEvent, iStatus);
         SetActive();
     }
@@ -113,7 +114,7 @@ void QMLBackendTriggerChangeAO::RunL()
                 triggerInfo1 = iTriggerMonitorInfo->getMonitorTriggerInfo();
 
                 while (triggerInfo1) {
-                    for (i=0; i<count; i++) {
+                    for (i = 0; i < count; i++) {
                         //get the trigger entryinfo
                         entry = trigInfoList[i]->TriggerEntry();
 
@@ -125,7 +126,7 @@ void QMLBackendTriggerChangeAO::RunL()
 
                     triggerInfo2 = triggerInfo1->next;
 
-                    if (i==count)   //if the triggerinfo1->triggerid not found
+                    if (i == count)   //if the triggerinfo1->triggerid not found
                         //in the trigger list of the LBT server,
                         //remove the triggerinfo from the linked list
                     {
@@ -138,14 +139,14 @@ void QMLBackendTriggerChangeAO::RunL()
                         //exit trigger in the linked list
                         if (triggerInfo1->iType == EntryTrigger)
                             triggerInfo3 = iTriggerMonitorInfo->getMonitorTriggerInfo(
-                                               triggerInfo1->iParent,ExitTrigger);
+                                               triggerInfo1->iParent , ExitTrigger);
 
                         //if triggerinfo1->triggerid is found in the trigger list,
                         //and if it is an entry trigger, search for the corresponding
                         //entry trigger in the linked list
                         else if (triggerInfo1->iType == ExitTrigger)
                             triggerInfo3 = iTriggerMonitorInfo->getMonitorTriggerInfo(
-                                               triggerInfo1->iParent,EntryTrigger);
+                                               triggerInfo1->iParent, EntryTrigger);
 
                         //callback called for the notification change event of the trigger
                         if (triggerInfo3) {
@@ -206,14 +207,14 @@ void QMLBackendTriggerChangeAO::RunL()
                     //linked list
                     if (triggerInfo1->iType == EntryTrigger)
                         triggerInfo2 = iTriggerMonitorInfo->getMonitorTriggerInfo(
-                                           triggerInfo1->iParent,ExitTrigger);
+                                           triggerInfo1->iParent, ExitTrigger);
 
                     //if the trigger updated is ExitTrigger, get the information
                     //of the corresponding EntryTrigger if any,fro mthe
                     //linked list
                     else if (triggerInfo1->iType == ExitTrigger)
                         triggerInfo2 = iTriggerMonitorInfo->getMonitorTriggerInfo(
-                                           triggerInfo1->iParent,EntryTrigger);
+                                           triggerInfo1->iParent, EntryTrigger);
 
                     //callback called for the notification change event for the trigger
                     if (triggerInfo2) {
@@ -241,7 +242,7 @@ void QMLBackendTriggerChangeAO::RunL()
 
 
                 //retrieve the list of trigger IDs created by the client
-                TRAPD(ret,iLbt.ListTriggerIdsL(triggerIdList));
+                TRAPD(ret, iLbt.ListTriggerIdsL(triggerIdList));
 
                 if (ret != KErrNone) {
                     break;
@@ -256,7 +257,7 @@ void QMLBackendTriggerChangeAO::RunL()
                 triggerInfo1 = iTriggerMonitorInfo->getMonitorTriggerInfo();
 
                 while (triggerInfo1) {
-                    for (i=0; i<count; i++) {
+                    for (i = 0; i < count; i++) {
                         //if the triggerinfo retrieved matches the triggerIdList
                         //id break
                         if (triggerInfo1->iTriggerID == triggerIdList[i])
@@ -265,7 +266,7 @@ void QMLBackendTriggerChangeAO::RunL()
 
                     triggerInfo2 = triggerInfo1->next;
 
-                    if (i==count)   //if the triggerinfo1->triggerid not found
+                    if (i == count)   //if the triggerinfo1->triggerid not found
                         //in the trigger list of the LBT server,
                         //remove the triggerinfo from the linked list
                     {
@@ -331,7 +332,7 @@ QMLBackendTriggerChangeAO* QMLBackendTriggerChangeAO::NewL(RLbtServer& aLbtServ)
 
 }
 
-QMLBackendTriggerChangeAO::QMLBackendTriggerChangeAO() : iTriggerMonitorInfo(NULL),CActive(EPriorityNormal)
+QMLBackendTriggerChangeAO::QMLBackendTriggerChangeAO() : CActive(EPriorityNormal), iTriggerMonitorInfo(NULL)
 {
     CActiveScheduler::Add(this);        //add current AO, to the Schedular
 }

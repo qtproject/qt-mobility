@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,11 +57,26 @@
 #include <QObject>
 #include <QSize>
 #include <QHash>
+#include "qsysteminfocommon.h"
+
+//#include "qmobilityglobal.h"
 
 #include "qsysteminfo.h"
-#include <qmobilityglobal.h>
+
+#include "qsystemdeviceinfo.h"
+#include "qsystemdisplayinfo.h"
+#include "qsystemnetworkinfo.h"
+#include "qsystemscreensaver.h"
+#include "qsystemstorageinfo.h"
 
 #include <QTimer>
+#include <QtCore/qthread.h>
+#include <QtCore/qmutex.h>
+ #include <QEventLoop>
+
+#include <SystemConfiguration/SystemConfiguration.h>
+//#include <CoreFoundation/CoreFoundation.h>
+#include <DiskArbitration/DiskArbitration.h>
 
 QT_BEGIN_HEADER
 
@@ -74,6 +89,8 @@ QTM_BEGIN_NAMESPACE
 
 class QSystemNetworkInfo;
 
+class QLangLoopThread;
+
 class QSystemInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -82,26 +99,33 @@ public:
 
     QSystemInfoPrivate(QObject *parent = 0);
     virtual ~QSystemInfoPrivate();
-// general
-    QString currentLanguage() const; // 2 letter ISO 639-1
-    QStringList availableLanguages() const;	 // 2 letter ISO 639-1
+    QString currentLanguage() const;
+    QStringList availableLanguages() const;
 
     QString version(QSystemInfo::Version,  const QString &parameter = QString());
 
-    QString currentCountryCode() const; //2 letter ISO 3166-1
-//features
+    QString currentCountryCode() const;
     bool hasFeatureSupported(QSystemInfo::Feature feature);
+    void languageChanged(const QString &);
+    static QSystemInfoPrivate *instance() {return self;}
+
 Q_SIGNALS:
     void currentLanguageChanged(const QString &);
 
 private:
     QTimer *langTimer;
     QString langCached;
+    QLangLoopThread * langloopThread;
+    static QSystemInfoPrivate *self;
+    bool langThreadOk;
 
-private Q_SLOTS:
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
 
 };
 
+class QRunLoopThread;
 class QSystemNetworkInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -116,8 +140,8 @@ public:
     int cellId();
     int locationAreaCode();
 
-    QString currentMobileCountryCode(); // Mobile Country Code
-    QString currentMobileNetworkCode(); // Mobile Network Code
+    QString currentMobileCountryCode();
+    QString currentMobileNetworkCode();
 
     QString homeMobileCountryCode();
     QString homeMobileNetworkCode();
@@ -126,6 +150,12 @@ public:
     QString macAddress(QSystemNetworkInfo::NetworkMode mode);
 
     QNetworkInterface interfaceForMode(QSystemNetworkInfo::NetworkMode mode);
+    static QSystemNetworkInfoPrivate *instance() {return self;}
+    void wifiNetworkChanged(const QString &notification, const QString interfaceName);
+    QString getDefaultInterface();
+    QSystemNetworkInfo::NetworkMode currentMode();
+    void ethernetChanged();
+
 
 Q_SIGNALS:
    void networkStatusChanged(QSystemNetworkInfo::NetworkMode, QSystemNetworkInfo::NetworkStatus);
@@ -135,13 +165,27 @@ Q_SIGNALS:
    void networkNameChanged(QSystemNetworkInfo::NetworkMode, const QString &);
    void networkModeChanged(QSystemNetworkInfo::NetworkMode);
 
+public Q_SLOTS:
+   void primaryInterface();
+
 private:
-    bool isInterfaceActive(const char* netInterface);
     QTimer *rssiTimer;
     int signalStrengthCache;
-    
-private slots:
+    static QSystemNetworkInfoPrivate *self;
+    QRunLoopThread * runloopThread;
+    QString defaultInterface;
+    QSystemNetworkInfo::NetworkMode modeForInterface(QString interfaceName);
+
+private Q_SLOTS:
     void rssiTimeout();
+protected:
+    void startNetworkChangeLoop();
+    bool isInterfaceActive(const char* netInterface);
+
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+    bool hasWifi;
+    bool networkThreadOk;
 
 };
 
@@ -154,12 +198,18 @@ public:
     QSystemDisplayInfoPrivate(QObject *parent = 0);
     virtual ~QSystemDisplayInfoPrivate();
 
-
-// display
     int displayBrightness(int screen);
     int colorDepth(int screen);
+
+    QSystemDisplayInfo::DisplayOrientation getOrientation(int screen);
+    float contrast(int screen);
+    int getDPIWidth(int screen);
+    int getDPIHeight(int screen);
+    int physicalHeight(int screen);
+    int physicalWidth(int screen);
 };
 
+class QDASessionThread;
 class QSystemStorageInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -169,19 +219,30 @@ public:
     QSystemStorageInfoPrivate(QObject *parent = 0);
     virtual ~QSystemStorageInfoPrivate();
 
-    // memory
     qint64 availableDiskSpace(const QString &driveVolume);
     qint64 totalDiskSpace(const QString &driveVolume);
     QStringList logicalDrives();
-    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume); //returns enum
+    QSystemStorageInfo::DriveType typeForDrive(const QString &driveVolume);
+
+public Q_SLOTS:
+    void storageChanged( bool added);
+Q_SIGNALS:
+    void logicalDrivesChanged(bool);
 
 private:
     QHash<QString, QString> mountEntriesHash;
     bool updateVolumesMap();
     void mountEntries();
+    bool sessionThread();
 
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
+    QDASessionThread *daSessionThread;
 };
 
+class QBluetoothListenerThread;
 class QSystemDeviceInfoPrivate : public QObject
 {
     Q_OBJECT
@@ -190,8 +251,6 @@ public:
 
     QSystemDeviceInfoPrivate(QObject *parent = 0);
     ~QSystemDeviceInfoPrivate();
-
-// device
 
     static QString imei();
     static QString imsi();
@@ -209,7 +268,10 @@ public:
 
     QSystemDeviceInfo::PowerState currentPowerState();
     void setConnection();
-    static QSystemDeviceInfoPrivate *instance() {return self;}
+    static QSystemDeviceInfoPrivate *instance();
+
+    bool currentBluetoothPowerState();
+    bool btThreadOk;
 
 Q_SIGNALS:
     void batteryLevelChanged(int);
@@ -224,6 +286,12 @@ private:
     QSystemDeviceInfo::PowerState currentPowerStateCache;
     QSystemDeviceInfo::BatteryStatus batteryStatusCache;
     static QSystemDeviceInfoPrivate *self;
+    QBluetoothListenerThread *btThread;
+
+protected:
+    void connectNotify(const char *signal);
+    void disconnectNotify(const char *signal);
+
 };
 
 
@@ -245,9 +313,99 @@ private:
     bool isInhibited;
     QTimer *ssTimer;
 
-private slots:
+private Q_SLOTS:
     void activityTimeout();
 
+};
+
+class QRunLoopThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QRunLoopThread(QObject *parent = 0);
+    ~QRunLoopThread();
+    bool keepRunning;
+    void stop();
+
+protected:
+    void run();
+
+private:
+    void startNetworkChangeLoop();
+    QMutex mutex;
+    SCDynamicStoreRef storeSession;// = NULL;
+    CFRunLoopSourceRef runloopSource;
+
+private Q_SLOTS:
+};
+
+class QLangLoopThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QLangLoopThread(QObject *parent = 0);
+    ~QLangLoopThread();
+    bool keepRunning;
+    void stop();
+
+protected:
+    void run();
+
+private:
+    QMutex mutex;
+private Q_SLOTS:
+};
+
+class QDASessionThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QDASessionThread(QObject *parent = 0);
+    ~QDASessionThread();
+    bool keepRunning;
+    void stop();
+    DASessionRef session;
+Q_SIGNALS:
+    void logicalDrivesChanged(bool);
+
+protected:
+    void run();
+
+private:
+    QMutex mutex;
+
+private Q_SLOTS:
+};
+
+class QBluetoothListenerThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    QBluetoothListenerThread(QObject *parent = 0);
+    ~QBluetoothListenerThread();
+    bool keepRunning;
+
+public Q_SLOTS:
+    void emitBtPower(bool);
+    void stop();
+
+Q_SIGNALS:
+    void bluetoothPower(bool);
+
+protected:
+    void run();
+    IONotificationPortRef port;
+    CFRunLoopRef rl;
+    CFRunLoopSourceRef rls;
+
+private:
+    QMutex mutex;
+
+private Q_SLOTS:
 };
 
 QTM_END_NAMESPACE

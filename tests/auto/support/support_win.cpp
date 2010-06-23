@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -57,6 +57,8 @@
 #ifdef _WIN32_WCE
 #include <cemapi.h>
 #endif
+
+#include <messagingutil_p.h>
 
 // Missing definitions
 #ifndef PR_PST_CONFIG_FLAGS
@@ -386,7 +388,7 @@ QMessageAccountId accountIdFromRecordKey(const QByteArray &recordKey)
         encodedIdStream << recordKey;
     }
 
-    return QMessageAccountId(encodedId.toBase64());
+    return QMessageAccountId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
 }
 
 QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByteArray &entryId, const QByteArray &storeKey)
@@ -407,7 +409,7 @@ QMessageFolderId folderIdFromProperties(const QByteArray &recordKey, const QByte
 #endif
     }
 
-    return QMessageFolderId(encodedId.toBase64());
+    return QMessageFolderId(MessagingUtil::addIdPrefix(encodedId.toBase64()));
 }
 
 QByteArray objectProperty(IMAPIProp *object, ULONG tag)
@@ -1351,8 +1353,8 @@ public:
                             message.setType(QMessage::Mms);
                         } else if (type.toLower() == "sms") {
                             message.setType(QMessage::Sms);
-                        } else if (type.toLower() == "xmpp") {
-                            message.setType(QMessage::Xmpp);
+                        } else if (type.toLower() == "instantmessage") {
+                            message.setType(QMessage::InstantMessage);
                         } else {
                             message.setType(QMessage::Email);
                         }
@@ -1421,5 +1423,44 @@ QMessageId addMessage(const Parameters &params)
     return MapiSession::addMessage(params);
 }
 
-}
+#if defined(Q_OS_WIN) && !defined(Q_OS_WINCE)
+/*
+ * Returns true if a MAPI subsystem is available, as per the
+ * information at
+ * http://msdn.microsoft.com/en-us/library/cc815368.aspx
+ *
+ * Returns false if a MAPI subsystem could not be found.
+ */
+bool mapiAvailable()
+{
+    bool mapix = false;
+    LONG res = -1;
+    HKEY key;
+    res = RegOpenKeyExW(HKEY_LOCAL_MACHINE,
+                        L"SOFTWARE\\Microsoft\\Windows Messaging Subsystem",
+                        0,
+                        KEY_READ,
+                        &key);
 
+    if (res == ERROR_SUCCESS) {
+        unsigned long type = REG_SZ;
+        unsigned long size = 512;
+        char ret[512] = "";
+        res = RegQueryValueExW(key,
+                               L"MAPIX",
+                               0,
+                               &type,
+                               (LPBYTE)&ret[0],
+                               &size);
+
+        if (res == ERROR_SUCCESS && (QString::fromUtf16((const ushort*)ret).toInt() == 1))
+            mapix = true;
+    }
+
+    RegCloseKey(key);
+
+    return mapix;
+}
+#endif
+
+}

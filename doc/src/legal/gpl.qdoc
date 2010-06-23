@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,29 +39,12 @@
 **
 ****************************************************************************/
 
-/*! \page gpl.html
-\title GNU General Public License (GPL)
-\ingroup licensing
-\brief About the GPL license used for Qt.
-
-The Qt GUI Toolkit is Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).\br
-Contact: Nokia Corporation (qt-info@nokia.com)
-
-Qt is available under the GPL.
-
-\section1 The GNU General Public License (Version 3)
-
-Reference: \l{GNU General Public License}
-
-\snippet doc/src/snippets/code/doc_src_gpl.qdoc GPL v3
-*/
-
 /*! \page lgpl.html
 \title GNU Lesser General Public License (LGPL)
 \ingroup licensing
 \brief About the LGPL license used for Qt.
 
-The Qt GUI Toolkit is Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).\br
+The Qt GUI Toolkit is Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).\br
 Contact: Nokia Corporation (qt-info@nokia.com)
 
 Qt is available under the LGPL.

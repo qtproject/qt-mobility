@@ -1,17 +1,17 @@
 TEMPLATE = lib
 
 # distinct from QtMultimedia
-TARGET = QtMedia
+TARGET = QtMultimediaKit
 
 include (../../common.pri)
 INCLUDEPATH+= .
 
-QT += network multimedia
+QT += network
 
 contains(QT_CONFIG, opengl): QT += opengl
 
 !static:DEFINES += QT_MAKEDLL
-DEFINES += QT_BUILD_MEDIA_LIB
+DEFINES += QT_BUILD_MULTIMEDIA_LIB
 
 PRIVATE_HEADERS += \
     qmediacontrol_p.h \
@@ -28,6 +28,7 @@ PUBLIC_HEADERS += \
     qmediacontrol.h \
     qmediaobject.h \
     qmediaservice.h \
+    qmediabindableinterface.h \
     qlocalmediaplaylistprovider.h \
     qmediaimageviewer.h \
     qmediaplayer.h \
@@ -43,12 +44,12 @@ PUBLIC_HEADERS += \
     qmediarecordercontrol.h \
     qmediaserviceprovider.h \
     qmediaserviceproviderplugin.h \
-    qmetadatacontrol.h \
+    qmetadatareadercontrol.h \
+    qmetadatawritercontrol.h \
     qmediastreamscontrol.h \
     qradiotuner.h \
     qradiotunercontrol.h \
     qtmedianamespace.h \
-    qvideooutputcontrol.h \
     qvideowidget.h \
     qvideowindowcontrol.h \
     qvideowidgetcontrol.h \
@@ -58,14 +59,17 @@ PUBLIC_HEADERS += \
     qaudiocapturesource.h \
     qmediacontainercontrol.h \
     qmediaplaylistcontrol.h \
+    qmediaplaylistsourcecontrol.h \
     qaudioendpointselector.h \
     qvideodevicecontrol.h \
     qgraphicsvideoitem.h \
-    qvideorenderercontrol.h
+    qvideorenderercontrol.h \
+    qmediatimerange.h
 
 SOURCES += qmediacontrol.cpp \
     qmediaobject.cpp \
     qmediaservice.cpp \
+    qmediabindableinterface.cpp \
     qlocalmediaplaylistprovider.cpp \
     qmediaimageviewer.cpp \
     qmediaimageviewerservice.cpp \
@@ -81,11 +85,11 @@ SOURCES += qmediacontrol.cpp \
     qmediacontent.cpp \
     qmediaresource.cpp \
     qmediaserviceprovider.cpp \
-    qmetadatacontrol.cpp \
+    qmetadatareadercontrol.cpp \
+    qmetadatawritercontrol.cpp \
     qmediastreamscontrol.cpp \
     qradiotuner.cpp \
     qradiotunercontrol.cpp \
-    qvideooutputcontrol.cpp \
     qvideowidget.cpp \
     qvideowindowcontrol.cpp \
     qvideowidgetcontrol.cpp \
@@ -95,38 +99,46 @@ SOURCES += qmediacontrol.cpp \
     qaudiocapturesource.cpp \
     qmediacontainercontrol.cpp \
     qmediaplaylistcontrol.cpp \
+    qmediaplaylistsourcecontrol.cpp \
     qaudioendpointselector.cpp \
     qvideodevicecontrol.cpp \
     qmediapluginloader.cpp \
-    qgraphicsvideoitem.cpp \
     qpaintervideosurface.cpp \
-    qvideorenderercontrol.cpp
+    qvideorenderercontrol.cpp \
+    qmediatimerange.cpp
 
-contains(QT_CONFIG, declarative) {
-   QT += declarative
-   PRIVATE_HEADERS += qmlsound_p.h
-   SOURCES += qmlsound.cpp
+include(audio/audio.pri)
+include(video/video.pri)
+include(effects/effects.pri)
+
+mac {
+   HEADERS += qpaintervideosurface_mac_p.h
+   OBJECTIVE_SOURCES += qpaintervideosurface_mac.mm
+
+   LIBS += -framework AppKit -framework QuartzCore -framework QTKit
 }
 
-include (experimental/experimental.pri)
+maemo5 {
+    QMAKE_CXXFLAGS += -march=armv7a -mcpu=cortex-a8 -mfloat-abi=softfp -mfpu=neon
+    HEADERS += qxvideosurface_maemo5_p.h
+    SOURCES += qxvideosurface_maemo5.cpp
+    SOURCES += qgraphicsvideoitem_maemo5.cpp
+    LIBS += -lXv
+} else {
+    SOURCES += qgraphicsvideoitem.cpp
+}
+
 HEADERS += $$PUBLIC_HEADERS $$PRIVATE_HEADERS
 
 symbian {
     load(data_caging_paths)
-    QtMediaDeployment.sources = QtMedia.dll
+    QtMediaDeployment.sources = QtMultimediaKit.dll
     QtMediaDeployment.path = /sys/bin
     DEPLOYMENT += QtMediaDeployment
     TARGET.UID3=0x2002AC77
-    MMP_RULES += EXPORTUNFROZEN
     TARGET.CAPABILITY = ALL -TCB
-
-    deploy.path = $${EPOCROOT}
-    exportheaders.sources = $$PUBLIC_HEADERS
-    exportheaders.path = epoc32/include
-    
-    for(header, exportheaders.sources) {
-        BLD_INF_RULES.prj_exports += "$$header $$deploy.path$$exportheaders.path/$$basename(header)"
-    }
+    LIBS += -lefsrv
 }
 
+CONFIG += middleware
 include(../../features/deploy.pri)

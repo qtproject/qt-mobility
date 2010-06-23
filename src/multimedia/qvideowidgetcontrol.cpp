@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -39,10 +39,10 @@
 **
 ****************************************************************************/
 
-#include <qvideowidgetcontrol.h>
-#include <qmediacontrol_p.h>
+#include "qvideowidgetcontrol.h"
+#include "qmediacontrol_p.h"
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
 /*!
     \class QVideoWidgetControl
@@ -51,28 +51,23 @@ QTM_BEGIN_NAMESPACE
     \brief The QVideoWidgetControl class provides a media control which
     implements a video widget.
 
-    \ingroup multimedia-serv
+    \ingroup multimedia
 
-    The videoWidget() property of QVideoWidgetControl provides a pointer to
-    a video widget implemented by the control's media service.  This widget
-    is owned by the media service and so care should be taken not to delete it.
+    The videoWidget() property of QVideoWidgetControl provides a pointer to a
+    video widget implemented by the control's media service.  This widget is
+    owned by the media service and so care should be taken not to delete it.
 
     \code
-    QVideoWidgetControl *widgetControl = mediaService->control<QVideoWidgetControl *>();
-
+    QVideoWidgetControl *widgetControl = mediaService->requestControl<QVideoWidgetControl *>();
     layout->addWidget(widgetControl->widget());
     \endcode
 
-    QVideoWidgetControl is one of number of possible video output controls,
-    in order to receive video it must be made the active video output
-    control by setting the output property of QVideoOutputControl to \l {QVideoOutputControl::WidgetOutput}{WidgetOutput}. Consequently any
-    QMediaService that implements QVideoWidgetControl must also implement
-    QVideoOutputControl.
+    QVideoWidgetControl is one of number of possible video output controls.
 
     The interface name of QVideoWidgetControl is \c com.nokia.Qt.QVideoWidgetControl/1.0 as
     defined in QVideoWidgetControl_iid.
 
-    \sa QMediaService::control(), QVideoOutputControl, QVideoWidget
+    \sa QMediaService::requestControl(), QVideoWidget
 */
 
 /*!
@@ -125,7 +120,7 @@ QVideoWidgetControl::~QVideoWidgetControl()
 */
 
 /*!
-    \fn QVideoWidgetControl::setAspectRatioMode(QVideoWidget::AspectRatioMode mode)
+    \fn QVideoWidgetControl::setAspectRatioMode(Qt::AspectRatioMode mode)
 
     Sets the aspect ratio \a mode which determines how video is scaled to the fit the widget with
     respect to its aspect ratio.
@@ -229,5 +224,5 @@ QVideoWidgetControl::~QVideoWidgetControl()
 */
 
 #include "moc_qvideowidgetcontrol.cpp"
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 

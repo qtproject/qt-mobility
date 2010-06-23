@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,7 +46,7 @@
 
 #ifdef Q_OS_SYMBIAN
 #include "qnetworksession_s60_p.h"
-#elif Q_WS_MAEMO_6
+#elif defined(Q_WS_MAEMO_6) || defined(Q_WS_MAEMO_5)
 #include "qnetworksession_maemo_p.h"
 #else
 #include "qnetworksession_p.h"
@@ -141,7 +141,7 @@ QTM_BEGIN_NAMESPACE
 
     \value UnknownSessionError          An unidentified error occurred.
     \value SessionAbortedError          The session was aborted by the user or system.
-    \value RoamingError                 The session cannot roam to the new configuration.
+    \value RoamingError                 The session cannot roam to a new configuration.
     \value OperationNotSupportedError   The operation is not supported for current configuration.
     \value InvalidConfigurationError    The operation cannot currently be performed for the
                                         current configuration.
@@ -294,6 +294,8 @@ bool QNetworkSession::waitForOpened(int msecs)
     QEventLoop* loop = new QEventLoop(this);
     QObject::connect(d, SIGNAL(quitPendingWaitsForOpened()),
                      loop, SLOT(quit()));
+    QObject::connect(this, SIGNAL(error(QNetworkSession::SessionError)),
+                     loop, SLOT(quit()));
 
     //final call
     if (msecs>=0)
@@ -328,7 +330,10 @@ void QNetworkSession::close()
 /*!
     Invalidates all open sessions against the network interface and therefore stops the 
     underlying network interface. This function always changes the session's state() flag to
-    \l Disconnected.
+    \l Disconnected. 
+    
+    On Symbian platform, a 'NetworkControl' capability is required for
+    full interface-level stop (without the capability, only the current session is stopped).
 
     \sa open(), close()
 */
@@ -405,6 +410,9 @@ QNetworkConfiguration QNetworkSession::configuration() const
     This function only returns a valid QNetworkInterface when this session is \l Connected.
 
     The returned interface may change as a result of a roaming process.
+    
+    Note: this function does not work in Symbian emulator due to the way the 
+    connectivity is emulated on Windows.
 
     \sa state()
 */

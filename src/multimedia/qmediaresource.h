@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -44,16 +44,18 @@
 
 #include <QtCore/qmap.h>
 #include <QtCore/qmetatype.h>
+#include <QtNetwork/qnetworkrequest.h>
 
 #include <qmobilityglobal.h>
 
-QTM_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-class Q_MEDIA_EXPORT QMediaResource
+class Q_MULTIMEDIA_EXPORT QMediaResource
 {
 public:
     QMediaResource();
     QMediaResource(const QUrl &url, const QString &mimeType = QString());
+    QMediaResource(const QNetworkRequest &request, const QString &mimeType = QString());
     QMediaResource(const QMediaResource &other);
     QMediaResource &operator =(const QMediaResource &other);
     ~QMediaResource();
@@ -64,6 +66,7 @@ public:
     bool operator !=(const QMediaResource &other) const;
 
     QUrl url() const;
+    QNetworkRequest request() const;
     QString mimeType() const;
 
     QString language() const;
@@ -81,8 +84,8 @@ public:
     int audioBitRate() const;
     void setAudioBitRate(int rate);
 
-    int frequency() const;
-    void setFrequency(int frequency);
+    int sampleRate() const;
+    void setSampleRate(int frequency);
 
     int channelCount() const;
     void setChannelCount(int channels);
@@ -99,6 +102,7 @@ private:
     enum Property
     {
         Url,
+        Request,
         MimeType,
         Language,
         AudioCodec,
@@ -106,19 +110,19 @@ private:
         DataSize,
         AudioBitRate,
         VideoBitRate,
-        Frequency,
+        SampleRate,
         ChannelCount,
-        Resolution,
+        Resolution
     };
     QMap<int, QVariant> values;
 };
 
 typedef QList<QMediaResource> QMediaResourceList;
 
-QTM_END_NAMESPACE
+QT_END_NAMESPACE
 
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaResource))
-Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QMediaResourceList))
+Q_DECLARE_METATYPE(QMediaResource)
+Q_DECLARE_METATYPE(QMediaResourceList)
 
 
 #endif

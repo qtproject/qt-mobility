@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -38,6 +38,7 @@
 ** $QT_END_LICENSE$
 **
 ****************************************************************************/
+
 #ifndef QLOCATIONTESTUTILS_P_H
 #define QLOCATIONTESTUTILS_P_H
 
@@ -103,6 +104,7 @@ public:
 
     static QString createRmcSentence(const QDateTime &dt);
     static QString createGgaSentence(const QTime &time);
+    static QString createGgaSentence(int lat, int lng, const QTime &time);
     static QString createZdaSentence(const QDateTime &dt);
 };
 

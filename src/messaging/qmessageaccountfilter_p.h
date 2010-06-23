@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -47,7 +47,7 @@
 
 #include <QSet>
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
 #include <qmessageaccount.h>
 #include <QVariant>
 #endif
@@ -59,7 +59,7 @@ class QMessageAccountFilterPrivate
     Q_DECLARE_PUBLIC(QMessageAccountFilter)
 
 public:
-#ifndef Q_OS_SYMBIAN
+#if !defined(Q_OS_SYMBIAN) && !defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6)
     enum Criterion { None = 0, IdEquality, IdInclusion, NameEquality, NameInclusion };
     enum Operator { Identity = 0, And, Or, Not, Nand, Nor, OperatorEnd };
 #endif
@@ -68,9 +68,9 @@ public:
     ~QMessageAccountFilterPrivate();
     QMessageAccountFilter *q_ptr;
 
-#ifdef Q_OS_SYMBIAN
+#if defined(Q_OS_SYMBIAN) || defined(Q_WS_MAEMO_5) || defined(Q_WS_MAEMO_6)
     typedef QList<QMessageAccountFilter> SortedMessageAccountFilterList;
-    
+
     bool filter(const QMessageAccount &messageAccount) const;
     static bool filter(const QMessageAccount &messageAccount, const QMessageAccountFilterPrivate &filter);
 

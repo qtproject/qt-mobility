@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -534,10 +534,10 @@ private slots:
         QGeoCoordinate allZero(0.0, 0.0, 0.0);
 
         QTest::newRow("empty, dd, no hemisphere")
-                << empty << QGeoCoordinate::DecimalDegrees
+                << empty << QGeoCoordinate::Degrees
                 << QString();
         QTest::newRow("empty, dd, hemisphere")
-                << empty << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << empty << QGeoCoordinate::DegreesWithHemisphere
                 << QString();
         QTest::newRow("empty, dm, no hemisphere")
                 << empty << QGeoCoordinate::DegreesMinutes
@@ -553,10 +553,10 @@ private slots:
                 << QString();
 
         QTest::newRow("too low, dd, no hemisphere")
-                << toolow << QGeoCoordinate::DecimalDegrees
+                << toolow << QGeoCoordinate::Degrees
                 << QString();
         QTest::newRow("too low, dd, hemisphere")
-                << toolow << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << toolow << QGeoCoordinate::DegreesWithHemisphere
                 << QString();
         QTest::newRow("too low, dm, no hemisphere")
                 << toolow << QGeoCoordinate::DegreesMinutes
@@ -572,10 +572,10 @@ private slots:
                 << QString();
 
         QTest::newRow("too high, dd, no hemisphere")
-                << toohigh << QGeoCoordinate::DecimalDegrees
+                << toohigh << QGeoCoordinate::Degrees
                 << QString();
         QTest::newRow("too high, dd, hemisphere")
-                << toohigh << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << toohigh << QGeoCoordinate::DegreesWithHemisphere
                 << QString();
         QTest::newRow("too high, dm, no hemisphere")
                 << toohigh << QGeoCoordinate::DegreesMinutes
@@ -591,10 +591,10 @@ private slots:
                 << QString();
 
         QTest::newRow("zeroLatLong, dd, no hemisphere")
-                << zeroLatLong << QGeoCoordinate::DecimalDegrees
+                << zeroLatLong << QGeoCoordinate::Degrees
                 << QString("0.00000%1, 0.00000%1").arg(DEGREES_SYMB);
         QTest::newRow("zeroLatLong, dd, hemisphere")
-                << zeroLatLong << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << zeroLatLong << QGeoCoordinate::DegreesWithHemisphere
                 << QString("0.00000%1, 0.00000%1").arg(DEGREES_SYMB);
         QTest::newRow("zeroLatLong, dm, no hemisphere")
                 << zeroLatLong << QGeoCoordinate::DegreesMinutes
@@ -610,10 +610,10 @@ private slots:
                 << QString("0%1 0' 0.0\", 0%1 0' 0.0\"").arg(DEGREES_SYMB);
 
         QTest::newRow("allZero, dd, no hemisphere")
-                << allZero << QGeoCoordinate::DecimalDegrees
+                << allZero << QGeoCoordinate::Degrees
                 << QString("0.00000%1, 0.00000%1, 0m").arg(DEGREES_SYMB);
         QTest::newRow("allZero, dd, hemisphere")
-                << allZero << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << allZero << QGeoCoordinate::DegreesWithHemisphere
                 << QString("0.00000%1, 0.00000%1, 0m").arg(DEGREES_SYMB);
         QTest::newRow("allZero, dm, no hemisphere")
                 << allZero << QGeoCoordinate::DegreesMinutes
@@ -629,10 +629,10 @@ private slots:
                 << QString("0%1 0' 0.0\", 0%1 0' 0.0\", 0m").arg(DEGREES_SYMB);
 
         QTest::newRow("NE, dd, no hemisphere")
-                << northEast << QGeoCoordinate::DecimalDegrees
+                << northEast << QGeoCoordinate::Degrees
                 << QString("27.46758%1, 153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("NE, dd, hemisphere")
-                << northEast << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << northEast << QGeoCoordinate::DegreesWithHemisphere
                 << QString("27.46758%1 N, 153.02789%1 E").arg(DEGREES_SYMB);
         QTest::newRow("NE, dm, no hemisphere")
                 << northEast << QGeoCoordinate::DegreesMinutes
@@ -648,10 +648,10 @@ private slots:
                 << QString("27%1 28' 3.3\" N, 153%1 1' 40.4\" E").arg(DEGREES_SYMB);
 
         QTest::newRow("NE with alt, dd, no hemisphere")
-                << northEastWithAlt << QGeoCoordinate::DecimalDegrees
+                << northEastWithAlt << QGeoCoordinate::Degrees
                 << QString("27.46758%1, 153.02789%1, 28.2341m").arg(DEGREES_SYMB);
         QTest::newRow("NE with alt, dd, hemisphere")
-                << northEastWithAlt << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << northEastWithAlt << QGeoCoordinate::DegreesWithHemisphere
                 << QString("27.46758%1 N, 153.02789%1 E, 28.2341m").arg(DEGREES_SYMB);
         QTest::newRow("NE with alt, dm, no hemisphere")
                 << northEastWithAlt << QGeoCoordinate::DegreesMinutes
@@ -667,10 +667,10 @@ private slots:
                 << QString("27%1 28' 3.3\" N, 153%1 1' 40.4\" E, 28.2341m").arg(DEGREES_SYMB);
 
         QTest::newRow("SE, dd, no hemisphere")
-                << southEast << QGeoCoordinate::DecimalDegrees
+                << southEast << QGeoCoordinate::Degrees
                 << QString("-27.46758%1, 153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("SE, dd, hemisphere")
-                << southEast << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << southEast << QGeoCoordinate::DegreesWithHemisphere
                 << QString("27.46758%1 S, 153.02789%1 E").arg(DEGREES_SYMB);
         QTest::newRow("SE, dm, no hemisphere")
                 << southEast << QGeoCoordinate::DegreesMinutes
@@ -686,10 +686,10 @@ private slots:
                 << QString("27%1 28' 3.3\" S, 153%1 1' 40.4\" E").arg(DEGREES_SYMB);
 
         QTest::newRow("SE with alt, dd, no hemisphere, 28.2341m")
-                << southEastWithAlt << QGeoCoordinate::DecimalDegrees
+                << southEastWithAlt << QGeoCoordinate::Degrees
                 << QString("-27.46758%1, 153.02789%1, 28.2341m").arg(DEGREES_SYMB);
         QTest::newRow("SE with alt, dd, hemisphere, 28.2341m")
-                << southEastWithAlt << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << southEastWithAlt << QGeoCoordinate::DegreesWithHemisphere
                 << QString("27.46758%1 S, 153.02789%1 E, 28.2341m").arg(DEGREES_SYMB);
         QTest::newRow("SE with alt, dm, no hemisphere, 28.2341m")
                 << southEastWithAlt << QGeoCoordinate::DegreesMinutes
@@ -705,10 +705,10 @@ private slots:
                 << QString("27%1 28' 3.3\" S, 153%1 1' 40.4\" E, 28.2341m").arg(DEGREES_SYMB);;
 
         QTest::newRow("NW, dd, no hemisphere")
-                << northWest << QGeoCoordinate::DecimalDegrees
+                << northWest << QGeoCoordinate::Degrees
                 << QString("27.46758%1, -153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("NW, dd, hemisphere")
-                << northWest << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << northWest << QGeoCoordinate::DegreesWithHemisphere
                 << QString("27.46758%1 N, 153.02789%1 W").arg(DEGREES_SYMB);
         QTest::newRow("NW, dm, no hemisphere")
                 << northWest << QGeoCoordinate::DegreesMinutes
@@ -724,10 +724,10 @@ private slots:
                 << QString("27%1 28' 3.3\" N, 153%1 1' 40.4\" W").arg(DEGREES_SYMB);
 
         QTest::newRow("NW with alt, dd, no hemisphere, 28.2341m")
-                << northWestWithAlt << QGeoCoordinate::DecimalDegrees
+                << northWestWithAlt << QGeoCoordinate::Degrees
                 << QString("27.46758%1, -153.02789%1, 28.2341m").arg(DEGREES_SYMB);
         QTest::newRow("NW with alt, dd, hemisphere, 28.2341m")
-                << northWestWithAlt << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << northWestWithAlt << QGeoCoordinate::DegreesWithHemisphere
                 << QString("27.46758%1 N, 153.02789%1 W, 28.2341m").arg(DEGREES_SYMB);
         QTest::newRow("NW with alt, dm, no hemisphere, 28.2341m")
                 << northWestWithAlt << QGeoCoordinate::DegreesMinutes
@@ -743,10 +743,10 @@ private slots:
                 << QString("27%1 28' 3.3\" N, 153%1 1' 40.4\" W, 28.2341m").arg(DEGREES_SYMB);
 
         QTest::newRow("SW, dd, no hemisphere")
-                << southWest << QGeoCoordinate::DecimalDegrees
+                << southWest << QGeoCoordinate::Degrees
                 << QString("-27.46758%1, -153.02789%1").arg(DEGREES_SYMB);
         QTest::newRow("SW, dd, hemisphere")
-                << southWest << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << southWest << QGeoCoordinate::DegreesWithHemisphere
                 << QString("27.46758%1 S, 153.02789%1 W").arg(DEGREES_SYMB);
         QTest::newRow("SW, dm, no hemisphere")
                 << southWest << QGeoCoordinate::DegreesMinutes
@@ -762,10 +762,10 @@ private slots:
                 << QString("27%1 28' 3.3\" S, 153%1 1' 40.4\" W").arg(DEGREES_SYMB);
 
         QTest::newRow("SW with alt, dd, no hemisphere, 28.2341m")
-                << southWestWithAlt << QGeoCoordinate::DecimalDegrees
+                << southWestWithAlt << QGeoCoordinate::Degrees
                 << QString("-27.46758%1, -153.02789%1, 28.2341m").arg(DEGREES_SYMB);
         QTest::newRow("SW with alt, dd, hemisphere, 28.2341m")
-                << southWestWithAlt << QGeoCoordinate::DecimalDegreesWithHemisphere
+                << southWestWithAlt << QGeoCoordinate::DegreesWithHemisphere
                 << QString("27.46758%1 S, 153.02789%1 W, 28.2341m").arg(DEGREES_SYMB);
         QTest::newRow("SW with alt, dm, no hemisphere, 28.2341m")
                 << southWestWithAlt << QGeoCoordinate::DegreesMinutes

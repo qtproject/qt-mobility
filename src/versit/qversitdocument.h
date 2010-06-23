@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -46,6 +46,12 @@
 
 #include <QList>
 #include <QSharedDataPointer>
+#include <QVariant>
+#include <QDebug>
+
+QT_BEGIN_NAMESPACE
+class QTextCodec;
+QT_END_NAMESPACE
 
 QTM_BEGIN_NAMESPACE
 
@@ -55,31 +61,45 @@ class QVersitProperty;
 class Q_VERSIT_EXPORT QVersitDocument
 {
 public:
+    enum VersitType {
+        InvalidType,
+        VCard21Type,   // vCard version 2.1
+        VCard30Type    // vCard version 3.0 (RFC 2426)
+    };
+
     QVersitDocument();
     QVersitDocument(const QVersitDocument& other);
+    QVersitDocument(VersitType type);
     ~QVersitDocument();
 
     QVersitDocument& operator=(const QVersitDocument& other);
-    
-    /*! Versit document type */
-    enum VersitType {
-        VCard21,   // vCard version 2.1
-        VCard30    // vCard version 3.0 (RFC 2426)
-    };
+    bool operator==(const QVersitDocument& other) const;
+    bool operator!=(const QVersitDocument& other) const;
 
     // metadata about the versit document itself.
-    void setVersitType(VersitType type);
-    VersitType versitType() const;
+    void setType(VersitType type);
+    VersitType type() const;
 
     void addProperty(const QVersitProperty& property);
-    QList<QVersitProperty> properties() const;
+    void removeProperty(const QVersitProperty& property);
     void removeProperties(const QString& name);
+    QList<QVersitProperty> properties() const;
+
+    bool isEmpty() const;
+    void clear();
 
 private:
-    
+
     QSharedDataPointer<QVersitDocumentPrivate> d;
 };
 
+Q_VERSIT_EXPORT uint qHash(const QVersitDocument& key);
+#ifndef QT_NO_DEBUG_STREAM
+Q_VERSIT_EXPORT QDebug operator<<(QDebug dbg, const QVersitDocument& property);
+#endif
+
 QTM_END_NAMESPACE
+
+Q_DECLARE_METATYPE(QTM_PREPEND_NAMESPACE(QVersitDocument))
 
 #endif // QVERSITDOCUMENT_H

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -45,6 +45,7 @@
 #include "qgeopositioninfosource_s60_p.h"
 #include "qgeosatelliteinfosource_s60_p.h"
 #include "qgeosatelliteinfosource.h"
+#include "qgeosatelliteinfo.h"
 
 #include <QList>
 
@@ -110,7 +111,7 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
     if (error == KErrNone) {
         CleanupClosePushL(mPositionServer);
 
-        mDevStatusUpdateAO = CQMLBackendAO::NewL(this,DeviceStatus);
+        mDevStatusUpdateAO = CQMLBackendAO::NewL(this, DeviceStatus);
 
         if (mDevStatusUpdateAO == NULL) {
             CleanupStack::Pop(1);
@@ -128,7 +129,7 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
             mRegUpdateAO = CQMLBackendAOSatellite::NewL(this,RegularUpdate,mCurrentModuleId);
         */
         TUint8 bits;
-        TInt index= -1;
+        TInt index = -1;
 
         CQMLBackendAO *temp = NULL;
 
@@ -140,13 +141,13 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
             index = getIndexPositionModule(bits);
 
             if (index >= 0) {
-                TRAPD(ret,temp = CQMLBackendAO::NewL(this,RegularUpdate,
-                                                     mList[index].mUid));
+                TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
+                                                      mList[index].mUid));
 
                 if ((ret == KErrNone) && (temp != NULL))
                     break;
 
-                bits = bits & (0XFF ^(1<<index));
+                bits = bits & (0XFF ^(1 << index));
             }
         } while (index >= 0);
 
@@ -154,6 +155,8 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
             mRegUpdateAO = temp;
             mRegUpdateAO->setUpdateInterval(0);
             mCurrentModuleId = mList[index].mUid;
+        } else {
+            delete temp;
         }
 
         CleanupStack::Pop(2);
@@ -165,7 +168,7 @@ void CQGeoSatelliteInfoSourceS60::ConstructL()
 TInt CQGeoSatelliteInfoSourceS60::checkModule(TPositionModuleId aId)const
 {
     TInt i;
-    for (i=0; i<mListSize; i++)
+    for (i = 0; i < mListSize; i++)
         if (mList[i].mUid == aId)
             return i;
     return -1;
@@ -178,8 +181,8 @@ int CQGeoSatelliteInfoSourceS60::minimumUpdateInterval() const
         return 0;
 
     TInt i = checkModule(mCurrentModuleId);
-    if (i!= -1)
-        return mList[i].mTimeToNextFix.Int64()/1000;             //divide by 1000, to convert microsecond to milisecond
+    if (i != -1)
+        return mList[i].mTimeToNextFix.Int64() / 1000;           //divide by 1000, to convert microsecond to milisecond
     return 0;
 }
 
@@ -192,7 +195,7 @@ TInt CQGeoSatelliteInfoSourceS60::getIndexPositionModule(TUint8 aBits) const
     TPositionModuleId modID = TUid::Null();
 
     //index = -1 : no methods available in the mList that supports preferred methods
-    index= -1;
+    index = -1;
 
     for (TInt i = 0; i < mListSize ; i++) {
         //check the module properties to select the preferred method,search should not
@@ -210,9 +213,10 @@ TInt CQGeoSatelliteInfoSourceS60::getIndexPositionModule(TUint8 aBits) const
 
 //private function : to get the index of the positioning method with time to first fix
 //lesser than timeout
-TInt CQGeoSatelliteInfoSourceS60::getMoreAccurateMethod(TInt aTimeout,TUint8 aBits)
+TInt CQGeoSatelliteInfoSourceS60::getMoreAccurateMethod(TInt aTimeout, TUint8 aBits)
 {
-    TInt index = -1, temp = INT_MAX;
+    TInt index = -1;
+    double temp = -1.0;
 
     TTimeIntervalMicroSeconds microSeconds;
 
@@ -222,30 +226,50 @@ TInt CQGeoSatelliteInfoSourceS60::getMoreAccurateMethod(TInt aTimeout,TUint8 aBi
     if (microSeconds == 0)
         microSeconds = INT_MAX;
 
-    for (TInt i =0 ; i < mListSize ; i++) {
+    for (TInt i = 0 ; i < mListSize; i++) {
         if (mList[i].mIsAvailable
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
                 && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
                 && (((aBits >> i) & 1))
                 && (mList[i].mTimeToFirstFix < microSeconds)) {
-            if (mList[i].mHorizontalAccuracy < temp) {
+            if ((temp == -1.0) || (mList[i].mHorizontalAccuracy < temp)) {
                 index = i;
                 temp = mList[i].mHorizontalAccuracy;
             }
         }
     }
+
+    if (index != -1)
+        return index;
+
+    bool minSet = false;
+    microSeconds = 0;
+
+    for (TInt i = 0 ; i < mListSize; i++) {
+        if (mList[i].mIsAvailable
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceUnknown)
+                && (mList[i].mStatus != TPositionModuleStatus::EDeviceError)
+                && (((aBits >> i) & 1))) {
+            if (!minSet || (mList[i].mTimeToFirstFix < microSeconds)) {
+                index = i;
+                minSet = true;
+                microSeconds = mList[i].mTimeToFirstFix;
+            }
+        }
+    }
+
     return index;
 }
 
 //private function : to update the mList array
-void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt aStatus)
+void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo, TInt aStatus)
 {
 
     TInt i, index;
     TPositionModuleId id;
     TBool available;
     TReal32 accuracy;
-    TTimeIntervalMicroSeconds time_to_first_fix,time_to_next_fix;
+    TTimeIntervalMicroSeconds time_to_first_fix, time_to_next_fix;
     TPositionQuality quality;
     CQMLBackendAO *temp = NULL;
 
@@ -266,7 +290,6 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt
 
     //time taken for the subsequent fix
     time_to_next_fix = quality.TimeToNextFix();
-
 
     if ((i = checkModule(id)) == -1) {
         //update the properties of the module
@@ -316,15 +339,17 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt
         //positioning method
         if (mCurrentModuleId == TUid::Null() && (available == TRUE) &&
                 (aStatus != TPositionModuleStatus::EDeviceUnknown) &&
-                (aStatus !=TPositionModuleStatus::EDeviceError)) {
+                (aStatus != TPositionModuleStatus::EDeviceError)) {
             TInt interval = 0;
 
-            TRAPD(ret , temp = CQMLBackendAO::NewL(this,RegularUpdate,
-                                                   mList[i].mUid));
+            TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
+                                                  mList[i].mUid));
 
             if ((ret == KErrNone) && (temp != NULL)) {
                 temp->setUpdateInterval(interval);
 
+                if  (mRegUpdateAO)
+                    delete mRegUpdateAO;
                 mRegUpdateAO = temp;
 
                 //to be uncommented when startUpdates are done
@@ -340,9 +365,9 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt
 
         //check if the status of the currently used modules for regular update or
         //request update has changed
-        if (((id == mCurrentModuleId)||(id == mReqModuleId)) &&
-                ((aStatus== TPositionModuleStatus::EDeviceUnknown) ||
-                 (aStatus==TPositionModuleStatus::EDeviceError) ||
+        if (((id == mCurrentModuleId) || (id == mReqModuleId)) &&
+                ((aStatus == TPositionModuleStatus::EDeviceUnknown) ||
+                 (aStatus == TPositionModuleStatus::EDeviceError) ||
                  (available == FALSE))) {
             //if the change happened for regular update
             if (id == mCurrentModuleId) {
@@ -350,8 +375,8 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt
 
                 TUint8 bits;
 
-                delete  mRegUpdateAO;
-
+                if (mRegUpdateAO)
+                    delete  mRegUpdateAO;
 
                 bits = mModuleFlags;
 
@@ -361,13 +386,13 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt
                     index = getIndexPositionModule(bits);
 
                     if (index >= 0) {
-                        TRAPD(ret,temp = CQMLBackendAO::NewL(this,RegularUpdate,
-                                                             mList[index].mUid));
+                        TRAPD(ret, temp = CQMLBackendAO::NewL(this, RegularUpdate,
+                                                              mList[index].mUid));
 
                         if ((ret == KErrNone) && (temp != NULL))
                             break;
 
-                        bits = bits & (0XFF ^(1<<index));
+                        bits = bits & (0XFF ^(1 << index));
                     }
                 } while (index >= 0);
 
@@ -395,10 +420,11 @@ void CQGeoSatelliteInfoSourceS60::updateStatus(TPositionModuleInfo aModInfo,TInt
 
             //check if device status of the request update module changed
             if (id == mReqModuleId) {
-                delete mReqUpdateAO;
+                if (mRegUpdateAO)
+                    delete mReqUpdateAO;
                 mReqUpdateAO = NULL;
                 mReqModuleId = TUid::Null();
-                emit requestTimeout;
+                emit requestTimeout();
             }
 
         }
@@ -421,16 +447,16 @@ void CQGeoSatelliteInfoSourceS60::updateDeviceStatus(void)
         //count on the modules currently supported by the device
         mPositionServer.GetNumModules(modCount);
 
-        for (TInt i = 0; i < modCount ; i++) {
+        for (TUint i = 0; i < modCount; i++) {
             //get module information
-            mPositionServer.GetModuleInfoByIndex(i,moduleInfo);
+            mPositionServer.GetModuleInfoByIndex(i, moduleInfo);
 
             if (moduleInfo.Capabilities() & TPositionModuleInfo::ECapabilitySatellite) {
                 //get module status
-                mPositionServer.GetModuleStatus(moduleStatus,moduleInfo.ModuleId());
+                mPositionServer.GetModuleStatus(moduleStatus, moduleInfo.ModuleId());
 
                 //update the properties of the module in the mList array
-                updateStatus(moduleInfo,moduleStatus.DeviceStatus());
+                updateStatus(moduleInfo, moduleStatus.DeviceStatus());
 
                 mModuleFlags |= (1 << i);
             }
@@ -442,14 +468,14 @@ void CQGeoSatelliteInfoSourceS60::updateDeviceStatus(void)
         TPositionModuleId id = mStatusEvent.ModuleId();
 
         //get module information
-        mPositionServer.GetModuleInfoById(id,moduleInfo);
+        mPositionServer.GetModuleInfoById(id, moduleInfo);
 
         if (moduleInfo.Capabilities() & TPositionModuleInfo::ECapabilitySatellite) {
             //get current status of the module
             mStatusEvent.GetModuleStatus(moduleStatus);
 
             //update the properties of the module in the mList array
-            updateStatus(moduleInfo,moduleStatus.DeviceStatus());
+            updateStatus(moduleInfo, moduleStatus.DeviceStatus());
         }
 
     }
@@ -465,16 +491,15 @@ void CQGeoSatelliteInfoSourceS60::TPositionSatelliteInfo2QGeoSatelliteInfo(
     QList<QGeoSatelliteInfo> &qListSatInUse)
 {
     TInt satInView = aSatInfo.NumSatellitesInView();
-    TInt satUsed  = aSatInfo.NumSatellitesUsed();
     TSatelliteData satData;
     QGeoSatelliteInfo qInfo;
 
-    for (TInt i =0; i < satInView ; i++) {
-        aSatInfo.GetSatelliteData(i,satData);
+    for (TInt i = 0; i < satInView; i++) {
+        aSatInfo.GetSatelliteData(i, satData);
         qInfo.setSignalStrength(satData.SignalStrength());
         qInfo.setPrnNumber(satData.SatelliteId());
-        qInfo.setProperty(QGeoSatelliteInfo::Elevation,satData.Elevation());
-        qInfo.setProperty(QGeoSatelliteInfo::Azimuth,satData.Azimuth());
+        qInfo.setAttribute(QGeoSatelliteInfo::Elevation, satData.Elevation());
+        qInfo.setAttribute(QGeoSatelliteInfo::Azimuth, satData.Azimuth());
         if (satData.IsUsed() == TRUE) {
             qListSatInUse.append(qInfo);
         }
@@ -489,7 +514,7 @@ void CQGeoSatelliteInfoSourceS60::updatePosition(TPositionSatelliteInfo aSatInfo
     QList<QGeoSatelliteInfo> qListSatInView;
     if (aError == KErrNone) {
         //fill posUpdate
-        TPositionSatelliteInfo2QGeoSatelliteInfo(aSatInfo,qListSatInView,
+        TPositionSatelliteInfo2QGeoSatelliteInfo(aSatInfo, qListSatInView,
                 qListSatInUse);
         if ((receivers(SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&))) > 0)) {
             if ((isStartUpdate == FALSE) || (mqListSatInView != qListSatInView)) {
@@ -518,7 +543,7 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
     TInt index = -1;
     TUint8 bits;
 
-    CQMLBackendAO *temp;
+    CQMLBackendAO *temp = NULL;
 
     //requestupdate
     //return if already a request update is pending
@@ -535,7 +560,7 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
     do  {
 
         //index of the more accurate method in the array
-        index = getMoreAccurateMethod(aTimeout,bits);
+        index = getMoreAccurateMethod(aTimeout, bits);
 
         //no positioning method method available : emit requestTimeout
         if (index < 0) {
@@ -548,11 +573,12 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
             return;
         }
 
-        TRAPD(ret,temp = CQMLBackendAO::NewL(this,OnceUpdate,mList[index].mUid));
+        TRAPD(ret, temp = CQMLBackendAO::NewL(this, OnceUpdate, mList[index].mUid));
 
         if ((ret == KErrNone) && (temp != NULL)) {
             //delete the old reqest update
-            delete mReqUpdateAO;
+            if (mReqUpdateAO)
+                delete mReqUpdateAO;
 
             //set the requestAO to the newly created AO
             mReqUpdateAO = temp;
@@ -566,13 +592,14 @@ void CQGeoSatelliteInfoSourceS60::requestUpdate(int aTimeout)
             return;
         }
 
-        bits = bits & (0XFF ^(1<<index));
+        bits = bits & (0XFF ^(1 << index));
 
-    } while (index >=0);
+    } while (index >= 0);
 
     //cleanup resources if the invalid requpdate is still stored
     if (mReqUpdateAO) {
         delete mReqUpdateAO;
+        mReqUpdateAO = NULL;
         mReqModuleId = TUid::Null();
     }
 
@@ -610,7 +637,7 @@ void CQGeoSatelliteInfoSourceS60::disconnectNotify(const char *aSignal)
 {
     // Cancel updates if slot is disconnected for the positionUpdate() signal.
 
-    if ((mRegUpdateAO)&&(QLatin1String(aSignal) == SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&))) && (receivers(SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&))) == 0) &&
+    if ((mRegUpdateAO) && (QLatin1String(aSignal) == SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&))) && (receivers(SIGNAL(satellitesInViewUpdated(const QList<QGeoSatelliteInfo>&))) == 0) &&
             (QLatin1String(aSignal) == SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&))) && (receivers(SIGNAL(satellitesInUseUpdated(const QList<QGeoSatelliteInfo>&))) == 0))
         mRegUpdateAO->cancelUpdate();
 

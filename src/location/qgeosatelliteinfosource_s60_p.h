@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -83,7 +83,7 @@ public:
  *
  */
 class CQGeoSatelliteInfoSourceS60 : public INotificationSatelliteCallback,
-        public QGeoSatelliteInfoSource
+            public QGeoSatelliteInfoSource
 
 {
 public:
@@ -188,9 +188,9 @@ protected:
 
 private:
     /**
-    * Active object for requestUpdate
+    *  current module ID
     */
-    CQMLBackendAO * mReqUpdateAO;
+    TPositionModuleId mCurrentModuleId;
 
     /**
     *prvmoduleID
@@ -203,15 +203,20 @@ private:
     CQMLBackendAO * mDevStatusUpdateAO;
 
     /**
-     * Positioner server
-     */
-    RPositionServer mPositionServer;
-
+    * Active object for requestUpdate
+    */
+    CQMLBackendAO * mReqUpdateAO;
 
     /**
     * Active object for regular updates.
     */
     CQMLBackendAO * mRegUpdateAO;
+
+    /**
+     * Positioner server
+     */
+    RPositionServer mPositionServer;
+
 
     /*
      * Number of Satellites in View
@@ -227,11 +232,6 @@ private:
     *  list of supported position methods
     */
     CSatMethodInfo mList[MAX_SIZE];
-
-    /**
-    *  current module ID
-    */
-    TPositionModuleId mCurrentModuleId;
 
     /**
      * maintaiss the size of thr CPosMethodInfo array

@@ -1,6 +1,6 @@
 /****************************************************************************
 **
-** Copyright (C) 2009 Nokia Corporation and/or its subsidiary(-ies).
+** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
 ** All rights reserved.
 ** Contact: Nokia Corporation (qt-info@nokia.com)
 **
@@ -42,9 +42,8 @@
 #ifndef QSERVICEFILTER_H
 #define QSERVICEFILTER_H
 
-#include <QStringList>
-
 #include "qmobilityglobal.h"
+#include <QStringList>
 
 QT_BEGIN_NAMESPACE
 class QDataStream;
@@ -53,6 +52,11 @@ QT_END_NAMESPACE
 QT_BEGIN_HEADER
 
 QTM_BEGIN_NAMESPACE
+
+#ifdef QT_SFW_SERVICEDATABASE_GENERATE
+#undef Q_SERVICEFW_EXPORT
+#define Q_SERVICEFW_EXPORT
+#endif
 
 class QServiceFilterPrivate;
 class Q_SERVICEFW_EXPORT QServiceFilter
@@ -71,7 +75,7 @@ public:
     QServiceFilter();
     ~QServiceFilter();
     QServiceFilter(const QServiceFilter& other);
-    QServiceFilter(const QString& interfaceName,
+    explicit QServiceFilter(const QString& interfaceName,
                    const QString& version = QString(),
                    QServiceFilter::VersionMatchRule rule = QServiceFilter::MinimumVersionMatch);
 
