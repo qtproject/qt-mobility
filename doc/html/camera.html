@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!-- camera.qdoc -->
+<head>
+  <title>Qt Mobility Project 1.1: Camera</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">Camera<br /><span class="subtitle"></span>
+</h1>
+<p><b>Note:</b> This API and documentation is a <b>Technology Preview</b> and is still subject to change.</p>
+<p>The Camera API provides control of system camera devices. Providing support for still or video image capture with sound support.</p>
+<ul><li><a href="#overview">Overview</a></li>
+<li><a href="#still-images">Still Images</a></li>
+<li><a href="#video-clips">Video Clips</a></li>
+<li><a href="#focus">Focus</a></li>
+<li><a href="#cancelling-asynchronous-operations">Cancelling Asynchronous Operations</a></li>
+<li><a href="#camera-controls">Camera Controls</a></li>
+<li><a href="#classes">Classes</a></li>
+</ul>
+<a name="overview"></a>
+<h3>Overview</h3>
+<p>The Camera API allows high level control of various aspects of still images and video. Camera is a part of the Multimedia API and this relationship is apparent when you notice that certain core classes are subclassed from some Multimedia base classes including <a href="qmediaobject.html">QMediaObject</a> and <a href="qmediacontrol.html">QMediaControl</a>.</p>
+<a name="still-images"></a>
+<h3>Still Images</h3>
+<p>In order to capture an image we need to create a QCamera object and use it to initialize a <a href="qvideowidget.html">QVideoWidget</a>, so we can see where the camera is pointing - a viewfinder. The camera object is also used to initialize a new QStillImageCapture object, imageCapture. All that is then needed is to start the camera, lock it so that the settings are not changed while the image capture occurs, capture the image, and finally unlock the camera ready for the next photo.</p>
+<pre>    camera = new QCamera;
+    viewFinder = new QCameraViewfinder();
+    viewFinder-&gt;show();
+
+    camera-&gt;setViewfinder(viewFinder);
+
+    imageCapture = new QStillImageCapture(camera);
+
+    camera-&gt;start();
+
+<span class="comment">    //on half pressed shutter button</span>
+    camera-&gt;lock();
+
+    ...
+
+<span class="comment">    //on shutter button pressed</span>
+    imageCapture-&gt;capture(&quot;imagefile.jpg&quot;);
+
+<span class="comment">    //on shutter button released</span>
+    camera-&gt;unlock();</pre>
+<p>Alternatively, we could have used a <a href="qvideowidget.html">QVideoWidget</a> initialized with the camera object to create a view finder.</p>
+<a name="video-clips"></a>
+<h3>Video Clips</h3>
+<p>Previously we saw code that allowed the capture of a still image. Recording video requires the use of a <a href="qmediarecorder.html">QMediaRecorder</a> object and a <a href="qaudiocapturesource.html">QAudioCaptureSource</a> for sound.</p>
+<p>To record video we need to create a camera object as before but this time as well as creating a viewfinder, we will also initialize a media recorder object and an audio source object for sound configuration details.</p>
+<pre>    mediaRecorder = new QMediaRecorder(camera);
+    ...
+    audioSource = new QAudioCaptureSource(camera);</pre>
+<p>Signals from the <font color="red"><b><code>\e</code></b></font> mediaRecorder can be connected to slots to react to changes in the state of the recorder or error events. Recording itself starts with the <a href="qmediarecorder.html#record">record()</a> function of mediaRecorder being called, this causes the signal <a href="qmediarecorder.html#stateChanged">stateChanged()</a> to be emitted. The recording process can be changed with the <a href="qmediarecorder.html#record">record()</a>, <a href="qmediarecorder.html#pause">pause()</a>, <a href="qmediarecorder.html#stop">stop()</a> and <a href="qmediarecorder.html#muted-prop">setMuted()</a> slots in <a href="qmediarecorder.html">QMediaRecorder</a>.</p>
+<p>When the camera is in video mode, as decided by the application, then as the shutter button is pressed the camera is locked as before but instead the <a href="qmediarecorder.html#record">record()</a> function in <a href="qmediarecorder.html">QMediaRecorder</a> is used.</p>
+<a name="focus"></a>
+<h3>Focus</h3>
+<p>Focusing is managed by the classes QCameraFocus and QCameraFocusControl. QCameraFocus allows the developer to set the general policy by means of the enums for the FocusMode and the FocusPointMode. FocusMode deals with settings such as AutoFocus, ContinuousFocus and InfinityFocus, whereas FocusPointMode deals with the various focus zones within the view. FocusPointMode has support for face recognition, center focus and a custom focus where the focus point can be specified.</p>
+<a name="cancelling-asynchronous-operations"></a>
+<h3>Cancelling Asynchronous Operations</h3>
+<p>Various operations such as image capture and auto focusing occur asynchrously. These operations can often be cancelled by the start of a new operation as long as this is supported by the backend. For image capture, the operation can be cancelled by calling cancelCapture(). For AutoFocus, autoexposure or white balance cancellation can be done by calling <font color="red"><b><code>\e</code></b></font> {QCamera::unlock(QCamera::LockFocus)}.</p>
+<a name="camera-controls"></a>
+<h3>Camera Controls</h3>
+<p><table class="generic" align="center" cellpadding="2" cellspacing="1" border="0">
+<thead><tr valign="top" class="qt-style"><th>Control Name</th><th>Description</th></tr></thead>
+<tr valign="top" class="odd"><td>camera</td><td>the interface for system camera devices</td></tr>
+<tr valign="top" class="even"><td>burst control</td><td>capturing multiple images as fast as possible</td></tr>
+<tr valign="top" class="odd"><td>bracketing</td><td>Capture a number of images with different camera settings</td></tr>
+<tr valign="top" class="even"><td>exposure</td><td>Includes: flash mode; flash power; metering mode; aperture; shutter speed, iso setting</td></tr>
+<tr valign="top" class="odd"><td>focus</td><td>Includes: optical zoom; digital zoom; focus point; focus zones</td></tr>
+<tr valign="top" class="even"><td>image processing</td><td>white balance; contrast; saturation; sharpen; denoise</td></tr>
+<tr valign="top" class="odd"><td>locks</td><td>handles the locking and unlocking of camera devices</td></tr>
+<tr valign="top" class="even"><td>viewfinder</td><td>used to set displayed items and resolution</td></tr>
+</table></p>
+<a name="classes"></a>
+<h3>Classes</h3>
+<p><table width="100%" class="annotated" cellpadding="2" cellspacing="1" border="0">
+</table></p>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.1.0</div></td>
+</tr></table></div></address></body>
+</html>

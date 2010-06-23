@@ -3556,6 +3556,9 @@
     <section ref="bearer-management.html" title="Bearer Management">
         <keyword ref="bearer-management.html">Bearer Management</keyword>
     </section>
+    <section ref="camera.html" title="Camera">
+        <keyword ref="camera.html">Camera</keyword>
+    </section>
     <section ref="classlists.html" title="Class and Function Documentation">
         <keyword ref="classlists.html">Class and Function Documentation</keyword>
     </section>

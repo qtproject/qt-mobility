@@ -7273,6 +7273,15 @@
             <page access="public" status="commendable" name="filemanagerplugin/filemanagertransfer.h" href="filemanagerplugin-filemanagertransfer-h.html" subtype="file" title="" fulltitle="filemanagertransfer.h Example File" subtitle="filemanagerplugin/filemanagertransfer.h" location=""/>
             <page access="public" status="commendable" name="filemanagerplugin/filemanagerplugin.pro" href="filemanagerplugin-filemanagerplugin-pro.html" subtype="file" title="" fulltitle="filemanagerplugin.pro Example File" subtitle="filemanagerplugin/filemanagerplugin.pro" location=""/>
         </page>
+        <page access="public" status="commendable" name="camera.html" href="camera.html" subtype="page" title="Camera" fulltitle="Camera" subtitle="" location="camera.qdoc">
+            <contents name="overview" title="Overview" level="1"/>
+            <contents name="still-images" title="Still Images" level="1"/>
+            <contents name="video-clips" title="Video Clips" level="1"/>
+            <contents name="focus" title="Focus" level="1"/>
+            <contents name="cancelling-asynchronous-operations" title="Cancelling Asynchronous Operations" level="1"/>
+            <contents name="camera-controls" title="Camera Controls" level="1"/>
+            <contents name="classes" title="Classes" level="1"/>
+        </page>
         <page access="public" status="commendable" name="quickstart" href="quickstart.html" subtype="example" title="Quickstart Example" fulltitle="Quickstart Example" subtitle="" location="quickstart.qdoc">
             <page access="public" status="commendable" name="quickstart/main.cpp" href="quickstart-main-cpp.html" subtype="file" title="" fulltitle="main.cpp Example File" subtitle="quickstart/main.cpp" location=""/>
             <page access="public" status="commendable" name="quickstart/quickstart.pro" href="quickstart-quickstart-pro.html" subtype="file" title="" fulltitle="quickstart.pro Example File" subtitle="quickstart/quickstart.pro" location=""/>

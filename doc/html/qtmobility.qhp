@@ -647,6 +647,7 @@
                     <section ref="classes.html" title="All Qt Mobility Classes"/>
                     <section ref="annotated.html" title="Annotated Class List"/>
                     <section ref="bearer-management.html" title="Bearer Management"/>
+                    <section ref="camera.html" title="Camera"/>
                     <section ref="classlists.html" title="Class and Function Documentation"/>
                     <section ref="contacts.html" title="Contacts"/>
                     <section ref="contactsusage.html" title="Contacts API Usage"/>
@@ -698,6 +699,7 @@
             <keyword name="Bearer Management" id="Bearer Management" ref="bearer-management.html"/>
             <keyword name="Bearer Monitor Example" id="Bearer Monitor Example" ref="bearermonitor.html"/>
             <keyword name="Bluetooth Transfer Plugin Example" id="Bluetooth Transfer Plugin Example" ref="bluetoothtransferplugin.html"/>
+            <keyword name="Camera" id="Camera" ref="camera.html"/>
             <keyword name="Class and Function Documentation" id="Class and Function Documentation" ref="classlists.html"/>
             <keyword name="Contacts" id="Contacts" ref="contacts.html"/>
             <keyword name="Contacts API Usage" id="Contacts API Usage" ref="contactsusage.html"/>
@@ -4117,6 +4119,7 @@
             <file>qmediaservice-members.html</file>
             <file>qlatin1constant-members.html</file>
             <file>examples.html</file>
+            <file>camera.html</file>
             <file>images/sensors-geo-vs-raw-magnetism.jpg</file>
             <file>qcontacttag.html</file>
             <file>qcontactglobalpresence-members.html</file>

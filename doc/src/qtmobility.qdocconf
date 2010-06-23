@@ -17,6 +17,7 @@ headerdirs = ../../src/bearer \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
+             ../../src/camera \
              .
 
 sourcedirs = ../../src/bearer \
@@ -30,6 +31,7 @@ sourcedirs = ../../src/bearer \
              ../../src/messaging \
              ../../src/versit \
              ../../src/sensors \
+             ../../src/camera \
              .
 
 excludedirs = ../../src/messaging/win32wce \
