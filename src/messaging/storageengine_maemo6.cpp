@@ -110,7 +110,7 @@ struct MessageFilter
     MessageFilter(const QMessageFilter &filter)
 	: _filter(filter)
      {
-         _privateFilter = QMessageFilter//!Private::implementation(_filter);
+         _privateFilter = QMessageFilterPrivate::implementation(_filter);
      }
 
     void operator()(const Event &event)
@@ -676,7 +676,9 @@ int StorageEngine::countFolders(const QMessageFolderFilter& filter)
            << QMessageFolderId(FOLDER_ID_SENT)
            << QMessageFolderId(FOLDER_ID_TRASH);
 
+    //qDebug() << __PRETTY_FUNCTION__ << "size before filtering:" << result.size();
     MessagingHelper::filterFolders(result, filter);
+    //qDebug() << __PRETTY_FUNCTION__ << "size after filtering:" << result.size();
 
     return result.size();
 }
