@@ -102,9 +102,6 @@ private:
     int                         iValue;
 };
 
-#else
-// No problem on earlier platforms
-#include <cntuids.h>
 #endif
 
 class CntDisplayLabel : public QObject
@@ -137,8 +134,8 @@ private:
     QList<QList<QPair<QLatin1String, QLatin1String> > > m_groupDisplayLabelDetails;
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     CntCenrep* m_settings;
-#endif
     int m_nameOrder;
+#endif
 };
 
 #endif /* CNTDISPLAYLABEL_H_ */

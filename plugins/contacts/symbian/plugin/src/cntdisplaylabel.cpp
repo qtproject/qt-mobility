@@ -46,8 +46,7 @@
  * Constructor
  */
 
-CntDisplayLabel::CntDisplayLabel() :
-m_nameOrder(CntOrderFirstLast)
+CntDisplayLabel::CntDisplayLabel()
 {
 #ifdef SYMBIAN_BACKEND_USE_SQLITE
     m_settings = new CntCenrep(KCntNameOrdering, *this);
@@ -175,9 +174,11 @@ QString CntDisplayLabel::generateDisplayLabel( const QContact &contact, const QL
                 
                 if(!label.isEmpty())
                 {
+#ifdef SYMBIAN_BACKEND_USE_SQLITE
                     // Inlcude a comma if needed in the display label
                     if (m_nameOrder == CntOrderLastCommaFirst)
                         displayLabel.append(comma());
+#endif
                     displayLabel.append(delimiter());                        
                     displayLabel.append(label);
                 }  
