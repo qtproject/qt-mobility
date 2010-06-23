@@ -57,13 +57,12 @@ class QGeoMapObjectPrivate
 public:
     QGeoMapObjectPrivate(QGeoMapObject *impl, QGeoMapObject *parent);
     QGeoMapObjectPrivate(const QGeoMapObjectPrivate &other);
-    ~QGeoMapObjectPrivate();
+    virtual ~QGeoMapObjectPrivate();
     QGeoMapObjectPrivate& operator= (const QGeoMapObjectPrivate &other);
 
     QGeoMapObject::Type type;
     QGeoMapObject *parent;
     QList<QGeoMapObject *> children;
-    QMultiMap<int, QGeoMapObject* > zOrderedChildren;
     int zValue;
     bool isVisible;
     QGeoBoundingBox boundingBox;

@@ -58,11 +58,32 @@
 
 #include <QRectF>
 #include <QHash>
+#include <QMultiMap>
+#include <QString>
 
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapRectangleObject;
 class QGeoTiledMapData;
+
+struct QGeoTiledMapObjectInfo
+{
+    QRectF boundingBox;
+};
+
+class QGeoCompositeZValue
+{
+public:
+    QGeoCompositeZValue();
+    QGeoCompositeZValue(const QGeoCompositeZValue &other);
+    QGeoCompositeZValue& operator=(const QGeoCompositeZValue &other);
+    bool operator==(const QGeoCompositeZValue &other) const;
+    bool operator<(const QGeoCompositeZValue &other) const;
+
+    QList<int> compZValue;
+};
+
+uint qHash(const QGeoCompositeZValue &zValue);
 
 class QGeoTiledMapDataPrivate
 {
@@ -74,10 +95,13 @@ public:
 
     static qulonglong tileKey(int row, int col, int zoomLevel);
 
-    void mapObjectToTiles(QGeoMapObject *mapObject);
+    void calculateInfo(const QGeoMapObject *mapObject);
+    void calculateMapRectangleInfo(const QGeoMapRectangleObject *rectangle);
 
-    //void paintMapObject(const QGeoMapObject * mapObject) const;
-    //void paintMapRectangleObject(const QGeoMapRectangleObject * rectangle) const;
+    bool intersects(const QGeoMapObject *mapObject, const QRectF &rect) const;
+
+    void paintMapObject(QPainter &painter, const QGeoMapObject *mapObject) const;
+    void paintMapRectangleObject(QPainter &painter,const QGeoMapRectangleObject *rectangle) const;
 
     qulonglong width;
     qulonglong height;
@@ -85,7 +109,9 @@ public:
     QRectF protectRegion;
     QRectF screenRect;
 
-    QHash<qulonglong, QList<QGeoMapObject*> > tileToObject;
+    QHash<QGeoMapObject*, QGeoCompositeZValue> objToCompZValue;
+    QHash<const QGeoMapObject*, QGeoTiledMapObjectInfo*> objInfo;
+    QMultiMap<QGeoCompositeZValue, QGeoMapObject*> zOrderedObj;
 
     QGeoTiledMapData* q_ptr;
     Q_DECLARE_PUBLIC(QGeoTiledMapData)

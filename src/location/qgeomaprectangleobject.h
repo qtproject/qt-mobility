@@ -47,11 +47,14 @@
 QTM_BEGIN_NAMESPACE
 
 class QGeoMapRectangleObjectPrivate;
+class QGeoBoundingBox;
+class QGeoCoordinate;
 
 class Q_LOCATION_EXPORT QGeoMapRectangleObject : public QGeoMapObject
 {
 public:
-    QGeoMapRectangleObject(QGeoMapObject *parent = 0);
+    QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent = 0);
+    QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent = 0);
     ~QGeoMapRectangleObject();
 
 private:

@@ -47,8 +47,10 @@
 #include <QNetworkProxyFactory>
 #include <QMessageBox>
 #include <QTimer>
+#include <QAction>
 
 #include <qgeocoordinate.h>
+#include <qgeomaprectangleobject.h>
 
 #ifdef Q_OS_SYMBIAN
 #include <QMessageBox>
@@ -132,10 +134,14 @@ void MapWidget::wheelEvent(QGraphicsSceneWheelEvent* event)
     event->accept();
 }
 
+/**************************************************************************************
+**************************************************************************************/
+
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent),
         ui(new Ui::MainWindow),
-        m_serviceProvider(0)
+        m_serviceProvider(0),
+        m_popupMenu(0)
 {
     ui->setupUi(this);
 
@@ -158,6 +164,10 @@ MainWindow::MainWindow(QWidget *parent) :
     m_mapWidget->setGeometry(0, 0, width(), height());
     //m_mapWidget->setZoomLevel(8);
     m_mapWidget->setCenter(QGeoCoordinate(52.5,13.0));
+
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    QObject::connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+                     this, SLOT(customContextMenuRequest(const QPoint&)));
 
     setWindowTitle(tr("Map Viewer Demo"));
 
@@ -213,4 +223,43 @@ void MainWindow::changeEvent(QEvent *e)
         default:
             break;
     }
+}
+
+void MainWindow::createMenus()
+{
+    QAction* menuItem;
+    m_popupMenu = new QMenu(this);
+
+    QMenu* subMenuItem = new QMenu(tr("Draw"), this);
+    m_popupMenu->addMenu(subMenuItem);
+
+    menuItem = new QAction(tr("Rectangle"), this);
+    subMenuItem->addAction(menuItem);
+    QObject::connect(menuItem, SIGNAL(triggered(bool)),
+                     this, SLOT(drawRect(bool)));
+}
+
+void MainWindow::drawRect(bool /*checked*/)
+{
+    //for (int i = 0; i < selectedMarkers.count() - 1; i++) {
+    //    const QMapMarker* m1 = selectedMarkers[i];
+    //    const QMapMarker* m2 = selectedMarkers[i + 1];
+    //    QPen pen(Qt::white);
+    //    pen.setWidth(2);
+    //    QColor fill(Qt::black);
+    //    fill.setAlpha(65);
+    //    mapView->addMapObject(new QMapRect(m1->point(), m2->point(), pen, QBrush(fill), 1));
+    //}
+
+    //selectedMarkers.clear();
+    m_mapWidget->addMapObject(new QGeoMapRectangleObject(QGeoCoordinate(48,10), QGeoCoordinate(52,12)));
+}
+
+void MainWindow::customContextMenuRequest(const QPoint& point)
+{
+    //if (focusWidget() == qgv) {
+        if (!m_popupMenu)
+            createMenus();
+        m_popupMenu->popup(QPoint(100,100));
+    //}
 }

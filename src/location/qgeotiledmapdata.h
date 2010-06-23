@@ -64,6 +64,8 @@ public:
     void setCenter(const QGeoCoordinate &center);
     QGeoCoordinate center() const;
 
+    void addMapObject(QGeoMapObject *mapObject);
+
     void setZoomLevel(qreal zoomLevel);
     void setViewportSize(const QSizeF &size);
     void pan(int dx, int dy);

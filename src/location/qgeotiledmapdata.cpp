@@ -46,6 +46,7 @@
 #include "qgeotiledmappingmanagerengine_p.h"
 #include "qgeocoordinate.h"
 #include "qgeoboundingbox.h"
+#include "qgeomaprectangleobject.h"
 
 #include <QDebug>
 
@@ -321,19 +322,16 @@ QPixmap QGeoTiledMapData::mapObjectsOverlay() const
     QPixmap overlay(d_ptr->screenRect.width(), d_ptr->screenRect.height());
     overlay.fill(Qt::transparent);
     QPainter painter(&overlay);
-    //TODO: add some type checking
-    QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(QGeoMapData::engine());
-    QGeoTileIterator it(d_ptr->screenRect, tileEngine->tileSize(), static_cast<int>(zoomLevel()));
 
-    //For all tiles covered by the current screenRect,
-    //paint all mop objects that intersect those tiles
+    QMapIterator<QGeoCompositeZValue, QGeoMapObject*> it(d_ptr->zOrderedObj);
+
     while (it.hasNext()) {
         it.next();
-        qulonglong tileKey = QGeoTiledMapDataPrivate::tileKey(it.row(), it.col(), it.zoomLevel());
+        const QGeoMapObject &obj = it.value();
 
-        if (d_ptr->tileToObject.contains(tileKey)) {
-            QList<QGeoMapObject*> objects = d_ptr->tileToObject.value(tileKey);
-            //TODO: paint objects
+        if (d_ptr->intersects(&obj, d_ptr->screenRect)) {
+            needsPainting = true;
+            d_ptr->paintMapObject(painter, &obj);
         }
     }
 
@@ -341,6 +339,81 @@ QPixmap QGeoTiledMapData::mapObjectsOverlay() const
         return overlay;
 
     return QPixmap();
+}
+
+void QGeoTiledMapData::addMapObject(QGeoMapObject *mapObject)
+{
+    //construct composite zValue first
+    QGeoCompositeZValue zValue;
+    QGeoMapObject* parent = mapObject->parentObject();
+
+    if (parent && d_ptr->objToCompZValue.contains(parent))
+        zValue = d_ptr->objToCompZValue[parent];
+
+    zValue.compZValue.append(mapObject->zValue());
+    //add to internal tables
+    d_ptr->objToCompZValue.insert(mapObject, zValue);
+    d_ptr->zOrderedObj.insert(zValue, mapObject);
+
+    d_ptr->calculateInfo(mapObject);
+
+    QGeoMapData::addMapObject(mapObject);
+}
+
+/*******************************************************************************
+*******************************************************************************/
+
+QGeoCompositeZValue::QGeoCompositeZValue() {}
+
+QGeoCompositeZValue::QGeoCompositeZValue(const QGeoCompositeZValue &other)
+    : compZValue(other.compZValue) 
+{}
+
+QGeoCompositeZValue& QGeoCompositeZValue::operator=(const QGeoCompositeZValue &other)
+{
+    compZValue = other.compZValue;
+    return *this;
+}
+
+bool QGeoCompositeZValue::operator==(const QGeoCompositeZValue &other) const
+{
+    if (compZValue.size() != other.compZValue.size())
+        return false;
+
+    int sz = compZValue.size();
+
+    for (int i = 0; i < sz; i++)
+
+        if (compZValue.at(i) != other.compZValue.at(i))
+            return false;
+
+    return true;
+}
+
+bool QGeoCompositeZValue::operator<(const QGeoCompositeZValue &other) const
+{
+    int sz = compZValue.size();
+    int otherSz = other.compZValue.size();
+    
+    for (int i = 0; i < sz && i < otherSz; i++)
+
+        if (compZValue.at(i) < other.compZValue.at(i))
+            return true;
+        else if (compZValue.at(i) > other.compZValue.at(i))
+            return false;
+
+    return false;
+}
+
+uint qHash(const QGeoCompositeZValue &zValue)
+{
+    QString hashStr;
+    int len = zValue.compZValue.size();
+
+    for (int i = 0; i < len; i++)
+        hashStr += QString::number(zValue.compZValue.at(i)) + "/";
+
+    return qHash(hashStr);
 }
 
 /*******************************************************************************
@@ -379,31 +452,56 @@ qulonglong QGeoTiledMapDataPrivate::tileKey(int row, int col, int zoomLevel)
     return result;
 }
 
-void QGeoTiledMapDataPrivate::mapObjectToTiles(QGeoMapObject *mapObject)
+bool QGeoTiledMapDataPrivate::intersects(const QGeoMapObject *mapObject, const QRectF &rect) const
 {
     if (!mapObject)
+        return false;
+
+    if (!objInfo.contains(mapObject))
+        return false;
+
+    //TODO: consider dateline wrapping
+    return rect.intersects(objInfo[mapObject]->boundingBox);
+}
+
+void QGeoTiledMapDataPrivate::paintMapObject(QPainter &painter, const QGeoMapObject *mapObject) const
+{
+    if (mapObject->type() == QGeoMapObject::RectangleType)
+        paintMapRectangleObject(painter, static_cast<const QGeoMapRectangleObject*>(mapObject));
+}
+
+void QGeoTiledMapDataPrivate::paintMapRectangleObject(QPainter &painter, const QGeoMapRectangleObject *rectangle) const
+{
+    if (!objInfo.contains(rectangle))
         return;
 
-    QGeoBoundingBox box = mapObject->boundingBox();
-    QPointF topLeft = q_ptr->coordinateToScreenPosition(box.topLeft()) + q_ptr->screenRect().topLeft();
-    QPointF bottomRight = q_ptr->coordinateToScreenPosition(box.bottomRight()) + q_ptr->screenRect().topLeft();
-    QRectF rect(topLeft, bottomRight);
-    //TODO: add some type checking
-    QGeoTiledMappingManagerEngine *tileEngine = static_cast<QGeoTiledMappingManagerEngine *>(q_ptr->engine());
-    QGeoTileIterator it(rect, tileEngine->tileSize(), static_cast<int>(q_ptr->zoomLevel()));
+    QGeoTiledMapObjectInfo* info = objInfo.value(rectangle);
+    QRectF rect = info->boundingBox.translated(-(screenRect.topLeft()));
+    painter.drawRect(rect);
+}
 
-    while (it.hasNext()) {
-        it.next();
-        qulonglong key = tileKey(it.row(), it.col(), it.zoomLevel());
+void QGeoTiledMapDataPrivate::calculateInfo(const QGeoMapObject *mapObject)
+{
+    if (mapObject->type() == QGeoMapObject::RectangleType)
+        calculateMapRectangleInfo(static_cast<const QGeoMapRectangleObject*>(mapObject));
+}
 
-        if (tileToObject.contains(key))
-            tileToObject[key].append(mapObject);
-        else {
-            QList<QGeoMapObject*> objects;
-            objects.append(mapObject);
-            tileToObject[key] = objects;
-        }
-    }
+void QGeoTiledMapDataPrivate::calculateMapRectangleInfo(const QGeoMapRectangleObject *rectangle)
+{
+    qulonglong topLeftX;
+    qulonglong topLeftY;
+    qulonglong bottomRightX;
+    qulonglong bottomRightY;
+    
+    q_ptr->coordinateToWorldPixel(rectangle->boundingBox().topLeft(), &topLeftX, &topLeftY);
+    q_ptr->coordinateToWorldPixel(rectangle->boundingBox().bottomRight(), &bottomRightX, &bottomRightY);
+
+    if (objInfo.contains(rectangle))
+        delete objInfo.take(rectangle);
+
+    QGeoTiledMapObjectInfo* info = new QGeoTiledMapObjectInfo;
+    info->boundingBox = QRectF(QPointF(topLeftX, topLeftY), QPointF(bottomRightX, bottomRightY));
+    objInfo[rectangle] = info;
 }
 
 QTM_END_NAMESPACE

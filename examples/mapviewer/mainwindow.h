@@ -50,6 +50,7 @@
 #include <QResizeEvent>
 #include <QGraphicsView>
 #include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 
 namespace Ui
 {
@@ -97,11 +98,17 @@ private:
     Ui::MainWindow *ui;
 
     void setProvider(QString providerId);
+    void createMenus();
+
+private slots:
+    void drawRect(bool checked);
+    void customContextMenuRequest(const QPoint&);
 
 private:
     QGeoServiceProvider *m_serviceProvider;
     QGeoMappingManager *m_mapManager;
     MapWidget *m_mapWidget;
+    QMenu* m_popupMenu;
 
     QGraphicsView* qgv;
 

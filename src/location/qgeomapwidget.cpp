@@ -166,13 +166,9 @@ void QGeoMapWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
     painter->drawPixmap(d_ptr->mapData->mapImage().rect(), d_ptr->mapData->mapImage(), d_ptr->mapData->mapImage().rect());
     QPixmap objOverlay = d_ptr->mapData->mapObjectsOverlay();
-    //overlay.fill(Qt::transparent);
-    //QPainter p(&overlay);
-    //p.setPen(Qt::blue);
-    //p.drawRect(10,10, 100,100);
+
     if (!objOverlay.isNull())
         painter->drawPixmap(objOverlay.rect(), objOverlay, objOverlay.rect());
-
 }
 
 /*!

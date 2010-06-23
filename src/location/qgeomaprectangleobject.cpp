@@ -41,11 +41,21 @@
 
 #include "qgeomaprectangleobject.h"
 #include "qgeomaprectangleobject_p.h"
+#include "qgeoboundingbox.h"
 
 QTM_BEGIN_NAMESPACE
 
-QGeoMapRectangleObject::QGeoMapRectangleObject(QGeoMapObject *parent)
-    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent)) {}
+QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoBoundingBox &boundingBox, QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
+{
+    d_ptr->boundingBox = boundingBox;
+}
+
+QGeoMapRectangleObject::QGeoMapRectangleObject(const QGeoCoordinate &topLeft, const QGeoCoordinate &bottomRight, QGeoMapObject *parent)
+    : QGeoMapObject(new QGeoMapRectangleObjectPrivate(this, parent))
+{
+    d_ptr->boundingBox = QGeoBoundingBox(topLeft, bottomRight);
+}
 
 QGeoMapRectangleObject::~QGeoMapRectangleObject()
 {
