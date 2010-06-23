@@ -45,7 +45,7 @@
 #include <QBuffer>
 #include <QStringList>
 #include <QNetworkProxy>
-#include <QGeoBoundingBox>
+#include <qgeoboundingbox.h>
 
 const quint8 ID_REQUEST_TYPE=0x1;
 const quint8 ID_REQUEST_UNICODE=0x63;
@@ -272,7 +272,7 @@ QByteArray QGeoRoutingManagerEngineNokia::coordinateToByteArray(QGeoCoordinate c
 quint32 QGeoRoutingManagerEngineNokia::toInt32(double value)
 {
     value *= 0xB60B60; // 0x100000000 / 360;
-    value -= (value > 0x7fffffff ? 0x100000000 : 0);
+    value -= (value > 0x7fffffff ? 2^32 : 0);
     return quint32(value);
 }
 
