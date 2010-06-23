@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Qt Mobility Project 1.0: imageprovider.cpp Example File (qmlcontacts/imageprovider.cpp)</title>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<table border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr>
+<td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
+<td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">imageprovider.cpp Example File<br /><span class="small-subtitle">qmlcontacts/imageprovider.cpp</span>
+</h1>
+<pre><span class="comment">    /****************************************************************************
+    **
+    ** Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies).
+    ** All rights reserved.
+    ** Contact: Nokia Corporation (qt-info@nokia.com)
+    **
+    ** This file is part of the demonstration applications of the Qt Toolkit.
+    **
+    ** $QT_BEGIN_LICENSE:LGPL$
+    ** No Commercial Usage
+    ** This file contains pre-release code and may not be distributed.
+    ** You may use this file in accordance with the terms and conditions
+    ** contained in the Technology Preview License Agreement accompanying
+    ** this package.
+    **
+    ** GNU Lesser General Public License Usage
+    ** Alternatively, this file may be used under the terms of the GNU Lesser
+    ** General Public License version 2.1 as published by the Free Software
+    ** Foundation and appearing in the file LICENSE.LGPL included in the
+    ** packaging of this file.  Please review the following information to
+    ** ensure the GNU Lesser General Public License version 2.1 requirements
+    ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+    **
+    ** In addition, as a special exception, Nokia gives you certain additional
+    ** rights.  These rights are described in the Nokia Qt LGPL Exception
+    ** version 1.1, included in the file LGPL_EXCEPTION.txt in this package.
+    **
+    ** If you have questions regarding the use of this file, please contact
+    ** Nokia at qt-info@nokia.com.
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    **
+    ** $QT_END_LICENSE$
+    **
+    ****************************************************************************/</span>
+
+    #include &lt;qdeclarativeextensionplugin.h&gt;
+
+    #include &lt;qdeclarativeengine.h&gt;
+    #include &lt;qdeclarative.h&gt;
+    #include &lt;qcontactmanager.h&gt;
+    #include &lt;qcontactdetails.h&gt;
+    #include &quot;imageprovider.h&quot;
+
+    QTM_USE_NAMESPACE
+
+<span class="comment">    // This is run in a low priority thread.</span>
+    QImage ContactThumbnailImageProvider::request(const QString &amp;id, QSize *size, const QSize &amp;req_size)
+    {
+        if (m_thumbnails.contains(id)) {
+            if (size)
+                *size = req_size;
+            return m_thumbnails.value(id).scaled(req_size);
+        }
+
+        <span class="comment">/* url format:
+            image://thumbnail/{manager.contactid}
+         */</span>
+
+        QString managerName = id.split('.').first();
+        QString localId = id.split('.').last();
+
+        QContactManager* manager = 0;
+        if (m_managers.contains(managerName)) {
+            manager = m_managers.value(managerName);
+        } else {
+            manager = new QContactManager(managerName);
+            m_managers.insert(managerName, manager);
+        }
+
+        QContact c = manager-&gt;contact(localId.toInt());
+
+        QImage image(
+                req_size.width() &gt; 0 ? req_size.width() : 100,
+                req_size.height() &gt; 0 ? req_size.height() : 50,
+                QImage::Format_RGB32);
+
+        QContactThumbnail t = c.detail&lt;QContactThumbnail&gt;();
+        if (!t.thumbnail().isNull()) {
+            image = t.thumbnail().scaled(image.size());
+        } else {
+            QContactAvatar a = c.detail&lt;QContactAvatar&gt;();
+            QString imageUrl = a.imageUrl().isEmpty()? QString::fromLatin1(&quot;contents/default.svg&quot;) : a.imageUrl().toString();
+            image.load(imageUrl);
+        }
+
+        if (size)
+            *size = image.size();
+
+        m_thumbnails.insert(id, image);
+
+        return image;
+    }
+
+    ContactThumbnailImageProvider::~ContactThumbnailImageProvider()
+    {
+        foreach(const QString&amp; name, m_managers.keys()) {
+            delete m_managers.value(name);
+        }
+
+        m_managers.clear();
+    }</pre>
+<p /><address><hr /><div align="center">
+<table width="100%" cellspacing="0" border="0"><tr class="address">
+<td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
+<td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+</tr></table></div></address></body>
+</html>

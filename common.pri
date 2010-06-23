@@ -88,7 +88,7 @@ contains(build_unit_tests, yes):DEFINES+=QTM_BUILD_UNITTESTS
         contains(TEMPLATE,.*lib) {
             DESTDIR = $$OUTPUT_DIR/lib
             symbian:defFilePath=../s60installs
-            VERSION = 1.0.1
+            VERSION = 1.0.2
         } else {
             DESTDIR = $$OUTPUT_DIR/bin
         }

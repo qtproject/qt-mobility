@@ -1,33 +1,21 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qmediaplaylistcontrol.cpp -->
+<head>
   <title>Qt Mobility Project 1.0: QMediaPlaylistControl Class Reference</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+<body>
+<a name="//apple_ref/cpp/cl//QMediaPlaylistControl"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a></li>
-<div class="toc">
-<h3>Contents</h3>
-<ul>
-<li class="level1"><a href="#public-functions">Public Functions</a></li>
-<li class="level1"><a href="#signals">Signals</a></li>
-<li class="level1"><a href="#protected-functions">Protected Functions</a></li>
-<li class="level1"><a href="#macros">Macros</a></li>
-<li class="level1"><a href="#details">Detailed Description</a></li>
-</ul>
-</div>
-<h1 class="title">QMediaPlaylistControl Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QMediaPlaylistControl Class Reference</h1>
 <p>The QMediaPlaylistControl class provides access to the playlist functionality of a <a href="qmediaservice.html">QMediaService</a>. <a href="#details">More...</a></p>
-<pre class="highlightedCode">    #include &lt;QMediaPlaylistControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
+<pre>    #include &lt;QMediaPlaylistControl&gt;</pre><p><b>This class is under development and is subject to change.</b></p>
 <p>Inherits <a href="qmediacontrol.html">QMediaControl</a>.</p>
 <ul>
 <li><a href="qmediaplaylistcontrol-members.html">List of all members, including inherited members</a></li>
@@ -35,126 +23,136 @@
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> virtual </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#dtor.QMediaPlaylistControl">~QMediaPlaylistControl</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual int </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#currentIndex">currentIndex</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#next">next</a></b> () = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual int </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#nextIndex">nextIndex</a></b> ( int <i>step</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaPlaylist::PlaybackMode </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#playbackMode">playbackMode</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual QMediaPlaylistProvider * </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#playlistProvider">playlistProvider</a></b> () const = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#previous">previous</a></b> () = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual int </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#previousIndex">previousIndex</a></b> ( int <i>step</i> ) const = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#setCurrentIndex">setCurrentIndex</a></b> ( int <i>position</i> ) = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#setPlaybackMode">setPlaybackMode</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> ) = 0</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> virtual bool </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#setPlaylistProvider">setPlaylistProvider</a></b> ( QMediaPlaylistProvider * <i>playlist</i> ) = 0</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">virtual </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#dtor.QMediaPlaylistControl">~QMediaPlaylistControl</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#currentIndex">currentIndex</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#next">next</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#nextIndex">nextIndex</a></b> ( int <i>step</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlaylist::PlaybackMode </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playbackMode">playbackMode</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual QMediaPlaylistProvider * </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playlistProvider">playlistProvider</a></b> () const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#previous">previous</a></b> () = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual int </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#previousIndex">previousIndex</a></b> ( int <i>step</i> ) const = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#setCurrentIndex">setCurrentIndex</a></b> ( int <i>position</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#setPlaybackMode">setPlaybackMode</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> ) = 0</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">virtual bool </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#setPlaylistProvider">setPlaylistProvider</a></b> ( QMediaPlaylistProvider * <i>playlist</i> ) = 0</td></tr>
 </table>
 <ul>
-<li class="fn">29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>29 public functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="signals"></a>
 <h2>Signals</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#playlistProviderChanged">playlistProviderChanged</a></b> ()</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#currentIndexChanged">currentIndexChanged</a></b> ( int <i>position</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#currentMediaChanged">currentMediaChanged</a></b> ( const QMediaContent &amp; <i>content</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playbackModeChanged">playbackModeChanged</a></b> ( QMediaPlaylist::PlaybackMode <i>mode</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#playlistProviderChanged">playlistProviderChanged</a></b> ()</td></tr>
 </table>
 <ul>
-<li class="fn">1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
+<li><div bar="2" class="fn"></div>1 signal inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#signals">QObject</a></li>
 </ul>
 <hr />
 <a name="protected-functions"></a>
 <h2>Protected Functions</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#QMediaPlaylistControl">QMediaPlaylistControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#QMediaPlaylistControl">QMediaPlaylistControl</a></b> ( QObject * <i>parent</i> = 0 )</td></tr>
 </table>
 <ul>
-<li class="fn">7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
+<li><div bar="2" class="fn"></div>7 protected functions inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-functions">QObject</a></li>
 </ul>
 <hr />
 <a name="macros"></a>
 <h2>Macros</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid">QMediaPlaylistControl_iid</a></b></td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid">QMediaPlaylistControl_iid</a></b></td></tr>
 </table>
 <h3>Additional Inherited Members</h3>
 <ul>
-<li class="fn">1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
-<li class="fn">1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
-<li class="fn">1 public variable inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
-<li class="fn">4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
-<li class="fn">2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
+<li><div class="fn"></div>1 property inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#properties">QObject</a></li>
+<li><div class="fn"></div>1 public slot inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-slots">QObject</a></li>
+<li><div class="fn"></div>1 public type inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#public-variables">QObject</a></li>
+<li><div class="fn"></div>4 static public members inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#static-public-members">QObject</a></li>
+<li><div class="fn"></div>2 protected variables inherited from <a href="http://qt.nokia.com/doc/4.6/qobject.html#protected-variables">QObject</a></li>
 </ul>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QMediaPlaylistControl class provides access to the playlist functionality of a <a href="qmediaservice.html">QMediaService</a>.</p>
 <p>If a <a href="qmediaservice.html">QMediaService</a> contains an internal playlist it will implement QMediaPlaylistControl. This control provides access to the contents of the <a href="qmediaplaylistcontrol.html#playlistProvider">playlist</a>, as well as the <a href="qmediaplaylistcontrol.html#currentIndex">position</a> of the current media, and a means of navigating to the <a href="qmediaplaylistcontrol.html#next">next</a> and <a href="qmediaplaylistcontrol.html#previous">previous</a> media.</p>
 <p>The functionality provided by the control is exposed to application code through the <a href="qmediaplaylist.html">QMediaPlaylist</a> class.</p>
 <p>The interface name of QMediaPlaylistControl is <tt>com.nokia.Qt.QMediaPlaylistControl/1.0</tt> as defined in <a href="qmediaplaylistcontrol.html#QMediaPlaylistControl_iid">QMediaPlaylistControl_iid</a>.</p>
-</div>
 <p>See also <a href="qmediaservice.html#requestControl">QMediaService::requestControl</a>() and <a href="qmediaplayer.html">QMediaPlayer</a>.</p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
-<h3 class="fn"><a name="QMediaPlaylistControl"></a>QMediaPlaylistControl::QMediaPlaylistControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )<tt> [protected]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/QMediaPlaylistControl"></a>
+<h3 class="fn"><a name="QMediaPlaylistControl"></a>QMediaPlaylistControl::QMediaPlaylistControl ( <a href="http://qt.nokia.com/doc/4.6/qobject.html">QObject</a> * <i>parent</i> = 0 )&nbsp;&nbsp;<tt> [protected]</tt></h3>
 <p>Create a new playlist control object with the given <i>parent</i>.</p>
-<h3 class="fn"><a name="dtor.QMediaPlaylistControl"></a>QMediaPlaylistControl::~QMediaPlaylistControl ()<tt> [virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/~QMediaPlaylistControl"></a>
+<h3 class="fn"><a name="dtor.QMediaPlaylistControl"></a>QMediaPlaylistControl::~QMediaPlaylistControl ()&nbsp;&nbsp;<tt> [virtual]</tt></h3>
 <p>Destroys the playlist control.</p>
-<h3 class="fn"><a name="currentIndex"></a>int QMediaPlaylistControl::currentIndex () const<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/currentIndex"></a>
+<h3 class="fn"><a name="currentIndex"></a>int QMediaPlaylistControl::currentIndex () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns position of the current media source in the playlist.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#setCurrentIndex">setCurrentIndex</a>().</p>
-<h3 class="fn"><a name="currentIndexChanged"></a>void QMediaPlaylistControl::currentIndexChanged ( int <i>position</i> )<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/currentIndexChanged"></a>
+<h3 class="fn"><a name="currentIndexChanged"></a>void QMediaPlaylistControl::currentIndexChanged ( int <i>position</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emited when the playlist <i>position</i> is changed.</p>
-<h3 class="fn"><a name="currentMediaChanged"></a>void QMediaPlaylistControl::currentMediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/currentMediaChanged"></a>
+<h3 class="fn"><a name="currentMediaChanged"></a>void QMediaPlaylistControl::currentMediaChanged ( const <a href="qmediacontent.html">QMediaContent</a> &amp; <i>content</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emitted when current media changes to <i>content</i>.</p>
-<h3 class="fn"><a name="next"></a>void QMediaPlaylistControl::next ()<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/next"></a>
+<h3 class="fn"><a name="next"></a>void QMediaPlaylistControl::next ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Moves to the next item in playlist.</p>
-<h3 class="fn"><a name="nextIndex"></a>int QMediaPlaylistControl::nextIndex ( int <i>step</i> ) const<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/nextIndex"></a>
+<h3 class="fn"><a name="nextIndex"></a>int QMediaPlaylistControl::nextIndex ( int <i>step</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the index of item, which were current after calling <a href="qmediaplaylistcontrol.html#next">next</a>() <i>step</i> times.</p>
 <p>Returned value depends on the size of playlist, current position and playback mode.</p>
 <p>See also <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
-<h3 class="fn"><a name="playbackMode"></a><a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> QMediaPlaylistControl::playbackMode () const<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/playbackMode"></a>
+<h3 class="fn"><a name="playbackMode"></a><a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> QMediaPlaylistControl::playbackMode () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the playlist navigation mode.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#setPlaybackMode">setPlaybackMode</a>() and <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a>.</p>
-<h3 class="fn"><a name="playbackModeChanged"></a>void QMediaPlaylistControl::playbackModeChanged ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/playbackModeChanged"></a>
+<h3 class="fn"><a name="playbackModeChanged"></a>void QMediaPlaylistControl::playbackModeChanged ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emited when the playback <i>mode</i> is changed.</p>
-<h3 class="fn"><a name="playlistProvider"></a><a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * QMediaPlaylistControl::playlistProvider () const<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/playlistProvider"></a>
+<h3 class="fn"><a name="playlistProvider"></a><a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * QMediaPlaylistControl::playlistProvider () const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the playlist used by this media player.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#setPlaylistProvider">setPlaylistProvider</a>().</p>
-<h3 class="fn"><a name="playlistProviderChanged"></a>void QMediaPlaylistControl::playlistProviderChanged ()<tt> [signal]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/playlistProviderChanged"></a>
+<h3 class="fn"><a name="playlistProviderChanged"></a>void QMediaPlaylistControl::playlistProviderChanged ()&nbsp;&nbsp;<tt> [signal]</tt></h3>
 <p>Signal emited when the playlist provider has changed.</p>
-<h3 class="fn"><a name="previous"></a>void QMediaPlaylistControl::previous ()<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/previous"></a>
+<h3 class="fn"><a name="previous"></a>void QMediaPlaylistControl::previous ()&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns to the previous item in playlist.</p>
-<h3 class="fn"><a name="previousIndex"></a>int QMediaPlaylistControl::previousIndex ( int <i>step</i> ) const<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/previousIndex"></a>
+<h3 class="fn"><a name="previousIndex"></a>int QMediaPlaylistControl::previousIndex ( int <i>step</i> ) const&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Returns the index of item, which were current after calling <a href="qmediaplaylistcontrol.html#previous">previous</a>() <i>step</i> times.</p>
 <p>See also <a href="qmediaplaylist.html#playbackMode-prop">QMediaPlaylist::playbackMode</a>.</p>
-<h3 class="fn"><a name="setCurrentIndex"></a>void QMediaPlaylistControl::setCurrentIndex ( int <i>position</i> )<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/setCurrentIndex"></a>
+<h3 class="fn"><a name="setCurrentIndex"></a>void QMediaPlaylistControl::setCurrentIndex ( int <i>position</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Jump to the item at the given <i>position</i>.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#currentIndex">currentIndex</a>().</p>
-<h3 class="fn"><a name="setPlaybackMode"></a>void QMediaPlaylistControl::setPlaybackMode ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/setPlaybackMode"></a>
+<h3 class="fn"><a name="setPlaybackMode"></a>void QMediaPlaylistControl::setPlaybackMode ( <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a> <i>mode</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Sets the playback <i>mode</i>.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#playbackMode">playbackMode</a>() and <a href="qmediaplaylist.html#PlaybackMode-enum">QMediaPlaylist::PlaybackMode</a>.</p>
-<h3 class="fn"><a name="setPlaylistProvider"></a>bool QMediaPlaylistControl::setPlaylistProvider ( <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * <i>playlist</i> )<tt> [pure virtual]</tt></h3>
+<a name="//apple_ref/cpp/instm/QMediaPlaylistControl/setPlaylistProvider"></a>
+<h3 class="fn"><a name="setPlaylistProvider"></a>bool QMediaPlaylistControl::setPlaylistProvider ( <a href="qmediaplaylistprovider.html">QMediaPlaylistProvider</a> * <i>playlist</i> )&nbsp;&nbsp;<tt> [pure virtual]</tt></h3>
 <p>Set the playlist of this media player to <i>playlist</i>.</p>
 <p>In many cases it is possible just to use the playlist constructed by player, but sometimes replacing the whole playlist allows to avoid copyting of all the items bettween playlists.</p>
 <p>Returns true if player can use this passed playlist; otherwise returns false.</p>
 <p>See also <a href="qmediaplaylistcontrol.html#playlistProvider">playlistProvider</a>().</p>
-</div>
 <hr />
-<div class="macros"/>
 <h2>Macro Documentation</h2>
+<a name="//apple_ref/cpp/macro//QMediaPlaylistControl_iid"></a>
 <h3 class="fn"><a name="QMediaPlaylistControl_iid"></a>QMediaPlaylistControl_iid</h3>
 <p><tt>com.nokia.Qt.QMediaPlaylistControl/1.0</tt></p>
 <p>Defines the interface name of the <a href="qmediaplaylistcontrol.html">QMediaPlaylistControl</a> class.</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+</tr></table></div></address></body>
 </html>

@@ -42,7 +42,7 @@
 #include <QTest>
 #include <QDebug>
 
-#include "qtmessaging.h"
+#include "qmessageservice.h"
 #include "../support/support.h"
 
 #if defined(Q_OS_SYMBIAN) || (defined(Q_OS_WIN) && defined(_WIN32_WCE))

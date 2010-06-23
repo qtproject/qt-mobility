@@ -38,10 +38,10 @@
 **
 ****************************************************************************/
 
-import Qt 4.6
+import Qt 4.7
 
 Item {
-    property var text
+    property string text
     signal clicked
 
     id: container

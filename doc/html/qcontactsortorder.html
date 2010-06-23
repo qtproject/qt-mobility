@@ -1,131 +1,134 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <!-- qcontactsortorder.cpp -->
+<head>
   <title>Qt Mobility Project 1.0: QContactSortOrder Class Reference</title>
-  <!--[if IE]><meta name="MSSmartTagsPreventParsing" content="true"><meta http-equiv="imagetoolbar" content="no"><![endif]--><!--[if lt IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie6.css"><![endif]--><!--[if IE 7]><link rel="stylesheet" type="text/css" href="style/style_ie7.css"><![endif]--><!--[if IE 8]><link rel="stylesheet" type="text/css" href="style/style_ie8.css"><![endif]-->  <link rel="stylesheet" type="text/css" href="style/style.css" />
-  <script src="scripts/jquery.js" type="text/javascript"></script>
-  <script src="scripts/functions.js" type="text/javascript"></script>
+  <link href="classic.css" rel="stylesheet" type="text/css" />
 </head>
-<body class="offline"  onload="CheckEmptyAndLoadList();">
+<body>
+<a name="//apple_ref/cpp/cl//QContactSortOrder"></a>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 <tr>
 <td align="left" valign="top" width="32"><a href="http://qt.nokia.com/"><img src="images/qtlogo.png" align="left" border="0" /></a></td>
 <td width="1">&nbsp;&nbsp;</td><td class="postheader" valign="center"><a href="index.html"><font color="#004faf">Home</font></a>&nbsp;&middot; <a href="classes.html"><font color="#004faf">All&nbsp;Classes</font></a>&nbsp;&middot; <a href="functions.html"><font color="#004faf">All&nbsp;Functions</font></a>&nbsp;&middot;</td>
-<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table>              <li><a href="modules.html">All Modules</a></li>              <li><a href="qcontactsortorder.html">QContactSortOrder</a></li>
-<div class="toc">
-<h3>Contents</h3>
-<ul>
-<li class="level1"><a href="#public-types">Public Types</a></li>
-<li class="level1"><a href="#public-functions">Public Functions</a></li>
-<li class="level1"><a href="#details">Detailed Description</a></li>
-</ul>
-</div>
-<h1 class="title">QContactSortOrder Class Reference</h1>
+<td align="right" valign="top" width="230"><img src="images/codeless.png"  border="0" /></td></tr></table><h1 class="title">QContactSortOrder Class Reference</h1>
 <p>The QContactSortOrder class defines how a list of contacts should be ordered according to some criteria <a href="#details">More...</a></p>
-<pre class="highlightedCode">    #include &lt;QContactSortOrder&gt;</pre><ul>
+<pre>    #include &lt;QContactSortOrder&gt;</pre><ul>
 <li><a href="qcontactsortorder-members.html">List of all members, including inherited members</a></li>
 </ul>
 <hr />
 <a name="public-types"></a>
 <h2>Public Types</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> enum </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#BlankPolicy-enum">BlankPolicy</a></b> { BlanksFirst, BlanksLast }</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top">enum </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#BlankPolicy-enum">BlankPolicy</a></b> { BlanksFirst, BlanksLast }</td></tr>
 </table>
 <hr />
 <a name="public-functions"></a>
 <h2>Public Functions</h2>
-<table class="alignedsummary">
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#QContactSortOrder">QContactSortOrder</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#QContactSortOrder-2">QContactSortOrder</a></b> ( const QContactSortOrder &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#dtor.QContactSortOrder">~QContactSortOrder</a></b> ()</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> BlankPolicy </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#blankPolicy">blankPolicy</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> Qt::CaseSensitivity </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#caseSensitivity">caseSensitivity</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#detailDefinitionName">detailDefinitionName</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QString </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#detailFieldName">detailFieldName</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> Qt::SortOrder </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#direction">direction</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#isValid">isValid</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#setBlankPolicy">setBlankPolicy</a></b> ( BlankPolicy <i>blankPolicy</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#setCaseSensitivity">setCaseSensitivity</a></b> ( Qt::CaseSensitivity <i>sensitivity</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#setDetailDefinitionName">setDetailDefinitionName</a></b> ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> void </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#setDirection">setDirection</a></b> ( Qt::SortOrder <i>direction</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#operator-QList-ltQContactSortOrder-gt">operator QList&lt;QContactSortOrder&gt;</a></b> () const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#operator-not-eq">operator!=</a></b> ( const QContactSortOrder &amp; <i>other</i> ) const</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> QContactSortOrder &amp; </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#operator-eq">operator=</a></b> ( const QContactSortOrder &amp; <i>other</i> )</td></tr>
-<tr><td class="memItemLeft rightAlign topAlign"> bool </td><td class="memItemRight bottomAlign"><b><a href="qcontactsortorder.html#operator-eq-eq">operator==</a></b> ( const QContactSortOrder &amp; <i>other</i> ) const</td></tr>
+<table class="alignedsummary" border="0" cellpadding="0" cellspacing="0" width="100%">
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#QContactSortOrder">QContactSortOrder</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#QContactSortOrder-2">QContactSortOrder</a></b> ( const QContactSortOrder &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#dtor.QContactSortOrder">~QContactSortOrder</a></b> ()</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">BlankPolicy </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#blankPolicy">blankPolicy</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Qt::CaseSensitivity </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#caseSensitivity">caseSensitivity</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#detailDefinitionName">detailDefinitionName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QString </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#detailFieldName">detailFieldName</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">Qt::SortOrder </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#direction">direction</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#isValid">isValid</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#setBlankPolicy">setBlankPolicy</a></b> ( BlankPolicy <i>blankPolicy</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#setCaseSensitivity">setCaseSensitivity</a></b> ( Qt::CaseSensitivity <i>sensitivity</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#setDetailDefinitionName">setDetailDefinitionName</a></b> ( const QString &amp; <i>definitionName</i>, const QString &amp; <i>fieldName</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">void </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#setDirection">setDirection</a></b> ( Qt::SortOrder <i>direction</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top"></td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#operator-QList-ltQContactSortOrder-gt">operator QList&lt;QContactSortOrder&gt;</a></b> () const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#operator-not-eq">operator!=</a></b> ( const QContactSortOrder &amp; <i>other</i> ) const</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">QContactSortOrder &amp; </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#operator-eq">operator=</a></b> ( const QContactSortOrder &amp; <i>other</i> )</td></tr>
+<tr><td class="memItemLeft" align="right" valign="top">bool </td><td class="memItemRight" valign="bottom"><b><a href="qcontactsortorder.html#operator-eq-eq">operator==</a></b> ( const QContactSortOrder &amp; <i>other</i> ) const</td></tr>
 </table>
 <a name="details"></a>
 <hr />
-<div class="descr"/>
 <h2>Detailed Description</h2>
 <p>The QContactSortOrder class defines how a list of contacts should be ordered according to some criteria</p>
-</div>
 <hr />
-<div class="types"/>
 <h2>Member Type Documentation</h2>
+<a name="//apple_ref/cpp/tag/QContactSortOrder/BlankPolicy"></a>
+<a name="//apple_ref/cpp/econst/QContactSortOrder/BlanksFirst"></a>
+<a name="//apple_ref/cpp/econst/QContactSortOrder/BlanksLast"></a>
 <h3 class="fn"><a name="BlankPolicy-enum"></a>enum QContactSortOrder::BlankPolicy</h3>
 <p>Enumerates the ways in which the sort order interprets blanks when sorting contacts</p>
-<table class="valuelist"><tr class="odd"><tr><th>Constant</th><th>Value</th><th>Description</th></tr>
-<tr><td  class="topAlign"><tt>QContactSortOrder::BlanksFirst</tt></td><td class=" topAlign"><tt>0</tt></td><td  class="topAlign">Considers blank values to evaluate to less than all other values in comparisons</td></tr>
-<tr><td  class="topAlign"><tt>QContactSortOrder::BlanksLast</tt></td><td class=" topAlign"><tt>1</tt></td><td  class="topAlign">Considers blank values to evaluate to greater than all other values in comparisons</td></tr>
-</table>
-</div>
+<p><table class="valuelist" border="1" cellpadding="2" cellspacing="1" width="100%">
+<tr><th width="25%">Constant</th><th width="15%">Value</th><th width="60%">Description</th></tr>
+<tr><td valign="top"><tt>QContactSortOrder::BlanksFirst</tt></td><td align="center" valign="top"><tt>0</tt></td><td valign="top">Considers blank values to evaluate to less than all other values in comparisons</td></tr>
+<tr><td valign="top"><tt>QContactSortOrder::BlanksLast</tt></td><td align="center" valign="top"><tt>1</tt></td><td valign="top">Considers blank values to evaluate to greater than all other values in comparisons</td></tr>
+</table></p>
 <hr />
-<div class="func"/>
 <h2>Member Function Documentation</h2>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/QContactSortOrder"></a>
 <h3 class="fn"><a name="QContactSortOrder"></a>QContactSortOrder::QContactSortOrder ()</h3>
 <p>Constructs a new sort order</p>
 <h3 class="fn"><a name="QContactSortOrder-2"></a>QContactSortOrder::QContactSortOrder ( const QContactSortOrder &amp; <i>other</i> )</h3>
 <p>Constructs a copy of the <i>other</i> sort order</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/~QContactSortOrder"></a>
 <h3 class="fn"><a name="dtor.QContactSortOrder"></a>QContactSortOrder::~QContactSortOrder ()</h3>
 <p>Frees any memory in use by this sort order</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/blankPolicy"></a>
 <h3 class="fn"><a name="blankPolicy"></a><a href="qcontactsortorder.html#BlankPolicy-enum">BlankPolicy</a> QContactSortOrder::blankPolicy () const</h3>
 <p>Returns the blank policy of the sort order</p>
 <p>See also <a href="qcontactsortorder.html#setBlankPolicy">setBlankPolicy</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/caseSensitivity"></a>
 <h3 class="fn"><a name="caseSensitivity"></a><a href="http://qt.nokia.com/doc/4.6/qt.html#CaseSensitivity-enum">Qt::CaseSensitivity</a> QContactSortOrder::caseSensitivity () const</h3>
 <p>Returns the case sensitivity of the sort order</p>
 <p>See also <a href="qcontactsortorder.html#setCaseSensitivity">setCaseSensitivity</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/detailDefinitionName"></a>
 <h3 class="fn"><a name="detailDefinitionName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactSortOrder::detailDefinitionName () const</h3>
 <p>Returns the definition name of the details which will be inspected to perform sorting. Note that if a contact has multiple details of the definition, the result of the sorting is undefined.</p>
 <p>See also <a href="qcontactsortorder.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/detailFieldName"></a>
 <h3 class="fn"><a name="detailFieldName"></a><a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> QContactSortOrder::detailFieldName () const</h3>
 <p>Returns the name of the field in the definition which will be inspected to perform sorting</p>
 <p>See also <a href="qcontactsortorder.html#setDetailDefinitionName">setDetailDefinitionName</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/direction"></a>
 <h3 class="fn"><a name="direction"></a><a href="http://qt.nokia.com/doc/4.6/qt.html#SortOrder-enum">Qt::SortOrder</a> QContactSortOrder::direction () const</h3>
 <p>Returns the direction of the sort order</p>
 <p>See also <a href="qcontactsortorder.html#setDirection">setDirection</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/isValid"></a>
 <h3 class="fn"><a name="isValid"></a>bool QContactSortOrder::isValid () const</h3>
 <p>Returns true if the sort order is able to be used to sort a list of contacts; otherwise, returns false</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/setBlankPolicy"></a>
 <h3 class="fn"><a name="setBlankPolicy"></a>void QContactSortOrder::setBlankPolicy ( <a href="qcontactsortorder.html#BlankPolicy-enum">BlankPolicy</a> <i>blankPolicy</i> )</h3>
 <p>Sets the sort order's policy on blank values with respect to sorting to <i>blankPolicy</i></p>
 <p>See also <a href="qcontactsortorder.html#blankPolicy">blankPolicy</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/setCaseSensitivity"></a>
 <h3 class="fn"><a name="setCaseSensitivity"></a>void QContactSortOrder::setCaseSensitivity ( <a href="http://qt.nokia.com/doc/4.6/qt.html#CaseSensitivity-enum">Qt::CaseSensitivity</a> <i>sensitivity</i> )</h3>
 <p>Sets the case sensitivity of the sort order to <i>sensitivity</i></p>
 <p>See also <a href="qcontactsortorder.html#caseSensitivity">caseSensitivity</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/setDetailDefinitionName"></a>
 <h3 class="fn"><a name="setDetailDefinitionName"></a>void QContactSortOrder::setDetailDefinitionName ( const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>definitionName</i>, const <a href="http://qt.nokia.com/doc/4.6/qstring.html">QString</a> &amp; <i>fieldName</i> )</h3>
 <p>Sets the definition name of the details which will be inspected to perform sorting to <i>definitionName</i>, and the name of those details' fields which contains the value which contacts will be sorted by to <i>fieldName</i></p>
 <p>See also <a href="qcontactsortorder.html#detailDefinitionName">detailDefinitionName</a>() and <a href="qcontactsortorder.html#detailFieldName">detailFieldName</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/setDirection"></a>
 <h3 class="fn"><a name="setDirection"></a>void QContactSortOrder::setDirection ( <a href="http://qt.nokia.com/doc/4.6/qt.html#SortOrder-enum">Qt::SortOrder</a> <i>direction</i> )</h3>
 <p>Sets the sort order direction to <i>direction</i></p>
 <p>See also <a href="qcontactsortorder.html#direction">direction</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/operator QList&lt;QContactSortOrder&gt;"></a>
 <h3 class="fn"><a name="operator-QList-ltQContactSortOrder-gt"></a>QContactSortOrder::operator QList&lt;QContactSortOrder&gt; () const</h3>
 <p>Constructs a new list of sort orders containing only the current sort order</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/operator!="></a>
 <h3 class="fn"><a name="operator-not-eq"></a>bool QContactSortOrder::operator!= ( const QContactSortOrder &amp; <i>other</i> ) const</h3>
 <p>Returns true if this sort order is not identical to the <i>other</i> sort order</p>
 <p>See also <a href="qcontactsortorder.html#operator-eq-eq">operator==</a>().</p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/operator="></a>
 <h3 class="fn"><a name="operator-eq"></a>QContactSortOrder &amp; QContactSortOrder::operator= ( const QContactSortOrder &amp; <i>other</i> )</h3>
 <p>Assigns this sort order to be equal to <i>other</i></p>
+<a name="//apple_ref/cpp/instm/QContactSortOrder/operator=="></a>
 <h3 class="fn"><a name="operator-eq-eq"></a>bool QContactSortOrder::operator== ( const QContactSortOrder &amp; <i>other</i> ) const</h3>
 <p>Returns true if this sort order is identical to the <i>other</i> sort order</p>
 <p>See also <a href="qcontactsortorder.html#operator-not-eq">operator!=</a>().</p>
-</div>
 <p /><address><hr /><div align="center">
 <table width="100%" cellspacing="0" border="0"><tr class="address">
 <td align="left">Copyright &copy; 2010 Nokia Corporation and/or its subsidiary(-ies)</td>
 <td width="20%" align="center"><a href="trademarks.html">Trademarks</a></td>
-<td align="right"><div align="right">Qt Mobility Project 1.0.1</div></td>
-</tr></table></div></address>  <script src="scripts/functions.js" type="text/javascript"></script>
-</body>
+<td align="right"><div align="right">Qt Mobility Project 1.0.2</div></td>
+</tr></table></div></address></body>
 </html>

@@ -30,6 +30,8 @@ unix: {
     }
 }
 
+mac:CONFIG -= app_bundle
+
 symbian {
     #addFiles.sources = ../../notesmanagerplugin/notesmanagerservice.xml
     #addFiles.path = xmldata
