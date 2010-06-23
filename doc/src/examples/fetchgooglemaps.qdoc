@@ -40,13 +40,11 @@
 ****************************************************************************/
 
 /*!
-    \example lightmaps
-    \title LightMaps Example
+    \example fetchgooglemaps
+    \title Fetch Google Maps Example
 
-    This demo shows a lookup of the local street map based on the users
-    location as determined by GPS. If no GPS is detected a default location
-    is selected. Also from the Options menu the user can select a sample
-    city. There is also an option to select night view.
-
-    \image lightmaps-oslo.png
+    This example displays an image from Google Maps based on the 
+    current position of the user as detected by the Location API.  If 
+    the platform does not have support the Location API then position 
+    information from a log file will be replayed.
 */

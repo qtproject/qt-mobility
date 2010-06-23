@@ -55,14 +55,6 @@ public:
     explicit QGeoSatelliteInfoSourceMaemo(QObject *parent = 0);
     int init();
 
-private:
-    DBusComm* dbusComm;
-    bool registered;
-
-private Q_SLOTS:
-    void newSatellitesInView(const QList<QGeoSatelliteInfo> &update);
-    void newSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
-    
 public Q_SLOTS:
     void startUpdates();
     void stopUpdates();
@@ -73,7 +65,16 @@ Q_SIGNALS:
     void satellitesInUseUpdated(const QList<QGeoSatelliteInfo> &satellites);
     void requestTimeout();
 
+private Q_SLOTS:
+    void newSatellitesInView(const QList<QGeoSatelliteInfo> &update);
+    void newSatellitesInUse(const QList<QGeoSatelliteInfo> &update);
+    void onServiceDisconnect();
+    void onServiceConnect();
+
 private:
+    DBusComm* dbusComm;
+    bool registered;
+    bool running;
     Q_DISABLE_COPY(QGeoSatelliteInfoSourceMaemo)
 };
 
