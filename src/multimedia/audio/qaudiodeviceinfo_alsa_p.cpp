@@ -148,7 +148,10 @@ bool QAudioDeviceInfoInternal::open()
 
     if(dev.compare(QLatin1String("default")) == 0) {
 #if(SND_LIB_MAJOR == 1 && SND_LIB_MINOR == 0 && SND_LIB_SUBMINOR >= 14)
-        dev = QLatin1String(devices.first().constData());
+        if (devices.size() > 0)
+            dev = QLatin1String(devices.first().constData());
+        else
+            return false;
 #else
         dev = QLatin1String("hw:0,0");
 #endif
@@ -451,8 +454,10 @@ QList<QByteArray> QAudioDeviceInfoInternal::availableDevices(QAudio::Mode mode)
     if (idx > 0)
         devices.append("default");
 #endif
+#if (!defined(Q_WS_MAEMO_5) && !defined(Q_WS_MAEMO_6))
     if (devices.size() == 0 && allDevices.size() > 0)
         return allDevices;
+#endif
 
     return devices;
 }
