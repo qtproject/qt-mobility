@@ -96,11 +96,6 @@ void CntDisplayLabel::setDisplayLabelDetails()
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), firstLatin));
     contactPrefferedDisplayLabelDetails.append(qMakePair(QLatin1String(QContactName::DefinitionName), secondLatin));
     m_contactDisplayLabelDetails.append(contactPrefferedDisplayLabelDetails);
-
-    //if preferred details doesn't exist use these
-    QList<QPair<QLatin1String, QLatin1String> > contactSecondaryDisplayLabelDetails;
-    contactSecondaryDisplayLabelDetails.append(qMakePair(QLatin1String(QContactOrganization::DefinitionName), QLatin1String(QContactOrganization::FieldName)));
-    m_contactDisplayLabelDetails.append(contactSecondaryDisplayLabelDetails);
     
     //Group
     QList<QPair<QLatin1String, QLatin1String> > preferredGroupDisplayLabelDetails;
