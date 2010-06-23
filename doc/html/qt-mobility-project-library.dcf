@@ -3694,6 +3694,9 @@
     <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
         <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
     </section>
+    <section ref="fetchgooglemaps.html" title="Fetch Google Maps Example">
+        <keyword ref="fetchgooglemaps.html">Fetch Google Maps Example</keyword>
+    </section>
     <section ref="filemanagerplugin.html" title="File Manager Plugin Example">
         <keyword ref="filemanagerplugin.html">File Manager Plugin Example</keyword>
     </section>
@@ -3703,8 +3706,11 @@
     <section ref="keepintouch.html" title="Keep in Touch Example">
         <keyword ref="keepintouch.html">Keep in Touch Example</keyword>
     </section>
-    <section ref="lightmaps.html" title="LightMap Example">
-        <keyword ref="lightmaps.html">LightMap Example</keyword>
+    <section ref="lightmaps.html" title="LightMaps Example">
+        <keyword ref="lightmaps.html">LightMaps Example</keyword>
+    </section>
+    <section ref="logfilepositionsource.html" title="Log File Position Source Example">
+        <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
     </section>
     <section ref="logfilepositionsource.html" title="Log File Position Source Example">
         <keyword ref="logfilepositionsource.html">Log File Position Source Example</keyword>
