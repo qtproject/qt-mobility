@@ -52,7 +52,7 @@ const int KWlanInfoSignalStrengthMin = 100;
 
 CWlanInfo::CWlanInfo(QObject *parent) : QObject(parent)
     , m_wlanStatus(false)
-    , m_wlanSsid(NULL)
+    , m_wlanSsid()
     , m_wlanSignalStrength(-1)
 {
     TRAP_IGNORE(
