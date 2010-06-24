@@ -106,7 +106,10 @@ private:
     QOrganizerItemRecurrenceRule icalRecurrenceRuleToQrecurrenceRule(CRecurrenceRule *rule) const;
     QOrganizerItemRecurrenceRule::Frequency icalFrequencyToQfrequency(FREQUENCY frequency) const;
     Qt::DayOfWeek icalWeekdayToQdayOfWeek(short weekday, bool *status = 0) const;
-    Qt::DayOfWeek icalrecurrencetypeWeekdayToQdayOfWeek(const QString& weekday) const;
+    Qt::DayOfWeek icalRecurrenceTypeWeekdayToQdayOfWeek(const QString& weekday) const;
+
+    // common methods
+    QMap<QString, Qt::DayOfWeek> icalRecurrenceWeekDayQdayOfWeekMapping() const;
 
 private:
     // QRecurrence -> CRecurrence

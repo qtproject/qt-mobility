@@ -224,19 +224,10 @@ QString OrganizerRecurrenceTransform::qweekStartToIcalWkst(Qt::DayOfWeek dayOfWe
     return QString("WKST=") + dayOfWeekString;
 }
 
-QString OrganizerRecurrenceTransform::qweekdayToIcalWeekday( Qt::DayOfWeek dayOfWeek ) const
+QString OrganizerRecurrenceTransform::qweekdayToIcalWeekday(Qt::DayOfWeek dayOfWeek) const
 {
-    switch( dayOfWeek )
-    {
-    case Qt::Monday: return QString("MO");
-    case Qt::Tuesday: return QString("TU");
-    case Qt::Wednesday: return QString("WE");
-    case Qt::Thursday: return QString("TH");
-    case Qt::Friday: return QString("FR");
-    case Qt::Saturday: return QString("SA");
-    case Qt::Sunday: return QString("SU");
-    default: return QString();
-    }
+    QMap<QString, Qt::DayOfWeek> mapping = icalRecurrenceWeekDayQdayOfWeekMapping();
+    return mapping.key(dayOfWeek);
 }
 
 QString OrganizerRecurrenceTransform::qdaysOfMonthToIcalByMonthDay(const QList<int> &daysOfMonth) const
@@ -404,7 +395,7 @@ QOrganizerItemRecurrenceRule OrganizerRecurrenceTransform::icalRecurrenceRuleToQ
     QString weekday;
     if (weekstartAt>=0)
         weekday = qrule.mid( weekstartAt + weekstartField.length(), 2 );
-    retn.setWeekStart(icalrecurrencetypeWeekdayToQdayOfWeek(weekday));
+    retn.setWeekStart(icalRecurrenceTypeWeekdayToQdayOfWeek(weekday));
 
     return retn;
 }
@@ -417,6 +408,9 @@ QOrganizerItemRecurrenceRule::Frequency OrganizerRecurrenceTransform::icalFreque
     case WEEKLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Weekly;
     case MONTHLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Monthly;
     case YEARLY_RECURRENCE: return QOrganizerItemRecurrenceRule::Yearly;
+    default:
+        // No corresponding frequencies defined for the rest of cases
+        return QOrganizerItemRecurrenceRule::Daily;
     }
 }
 
@@ -437,7 +431,16 @@ Qt::DayOfWeek OrganizerRecurrenceTransform::icalWeekdayToQdayOfWeek(short weekda
     }
 }
 
-Qt::DayOfWeek OrganizerRecurrenceTransform::icalrecurrencetypeWeekdayToQdayOfWeek(const QString &weekday) const
+Qt::DayOfWeek OrganizerRecurrenceTransform::icalRecurrenceTypeWeekdayToQdayOfWeek(const QString &weekday) const
+{
+    QMap<QString, Qt::DayOfWeek> mapping = icalRecurrenceWeekDayQdayOfWeekMapping();
+    if (mapping.contains(weekday))
+        return mapping.value(weekday);
+    else
+        return Qt::Monday; // Return Monday as a default start of week
+}
+
+QMap<QString, Qt::DayOfWeek> OrganizerRecurrenceTransform::icalRecurrenceWeekDayQdayOfWeekMapping() const
 {
     QMap<QString,Qt::DayOfWeek> mapping;
     mapping["MO"] = Qt::Monday;
@@ -447,8 +450,5 @@ Qt::DayOfWeek OrganizerRecurrenceTransform::icalrecurrencetypeWeekdayToQdayOfWee
     mapping["FR"] = Qt::Friday;
     mapping["SA"] = Qt::Saturday;
     mapping["SU"] = Qt::Sunday;
-    if (mapping.contains(weekday))
-        return mapping.value(weekday);
-    else
-        return Qt::Monday; // Return Monday as a default start of week
+    return mapping;
 }
