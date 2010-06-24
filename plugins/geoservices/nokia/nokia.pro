@@ -40,6 +40,7 @@ INCLUDEPATH += $$QT_MOBILITY_SOURCE_TREE/src/location
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
     TARGET.CAPABILITY = ALL -TCB
+    TARGET.UID3 = 0x2002BFCA
     pluginDep.sources = $${TARGET}.dll
     pluginDep.path = $${QT_PLUGINS_BASE_DIR}/$${PLUGIN_TYPE}
     DEPLOYMENT += pluginDep      
