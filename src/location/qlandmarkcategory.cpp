@@ -278,3 +278,15 @@ QStringList QLandmarkCategory::attributeKeys() const
 {
     return d->attributes.keys();
 }
+
+/*!
+    Clears all the data fields of the category.
+*/
+void QLandmarkCategory::clear()
+{
+    d->name.clear();
+    d->iconUrl.clear();
+    d->description.clear();
+    d->attributes.clear();
+    d->id = QLandmarkCategoryId();
+}
