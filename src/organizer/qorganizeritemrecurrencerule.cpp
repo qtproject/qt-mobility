@@ -90,7 +90,10 @@ void QOrganizerItemRecurrenceRule::setFrequency(Frequency freq)
 
 QOrganizerItemRecurrenceRule::Frequency QOrganizerItemRecurrenceRule::frequency() const
 {
-    return static_cast<Frequency>(d->m_variantValues.value(FieldFrequency).toInt());
+    if (d->m_variantValues.contains(FieldFrequency))
+        return static_cast<Frequency>(d->m_variantValues.value(FieldFrequency).toInt());
+    else
+        return Weekly;
 }
 
 /*! Sets the "count" condition of the recurrence rule.  If an end-date was previously set,
@@ -142,7 +145,10 @@ void QOrganizerItemRecurrenceRule::setInterval(int interval)
 
 int QOrganizerItemRecurrenceRule::interval() const
 {
-    return d->m_variantValues.value(FieldInterval).toInt();
+    if (d->m_variantValues.contains(FieldInterval))
+        return d->m_variantValues.value(FieldInterval).toInt();
+    else
+        return 1;
 }
 
 // Defaults for the below: empty
@@ -279,7 +285,10 @@ void QOrganizerItemRecurrenceRule::setWeekStart(Qt::DayOfWeek day)
 
 Qt::DayOfWeek QOrganizerItemRecurrenceRule::weekStart() const
 {
-    return static_cast<Qt::DayOfWeek>(d->m_variantValues.value(FieldWeekStart).toInt());
+    if (d->m_variantValues.contains(FieldWeekStart))
+        return static_cast<Qt::DayOfWeek>(d->m_variantValues.value(FieldWeekStart).toInt());
+    else
+        return Qt::Monday;
 }
 
 QVariantMap QOrganizerItemRecurrenceRule::variantValues() const

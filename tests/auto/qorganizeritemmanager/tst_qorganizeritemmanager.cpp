@@ -113,6 +113,8 @@ class UnsupportedMetatype {
 Q_DECLARE_METATYPE(UnsupportedMetatype)
 Q_DECLARE_METATYPE(QOrganizerItem)
 Q_DECLARE_METATYPE(QOrganizerItemManager::Error)
+Q_DECLARE_METATYPE(QOrganizerItemRecurrenceRule)
+Q_DECLARE_METATYPE(QList<QDate>)
 
 class tst_QOrganizerItemManager : public QObject
 {
@@ -146,12 +148,13 @@ private slots:
     /* Special test with special data */
     void uriParsing();
     void compatibleItem();
+    void recurrenceWithGenerator();
 
     /* Tests that are run on all managers */
     void metadata();
     void nullIdOperations();
     void add();
-    void addOccurrences();
+    void addOccurrenceExceptionsWithGuid();
     void update();
     void remove();
     void batch();
@@ -172,11 +175,12 @@ private slots:
     /* Special test with special data */
     void uriParsing_data();
     void compatibleItem_data();
+    void recurrenceWithGenerator_data();
     /* Tests that are run on all managers */
     void metadata_data() {addManagers();}
     void nullIdOperations_data() {addManagers();}
     void add_data() {addManagers();}
-    void addOccurrences_data() {addManagers();}
+    void addOccurrenceExceptionsWithGuid_data() {addManagers();}
     void update_data() {addManagers();}
     void remove_data() {addManagers();}
     void batch_data() {addManagers();}
@@ -776,11 +780,11 @@ void tst_QOrganizerItemManager::add()
 
     // now a item with many details of a particular definition
     // if the detail is not unique it should then support minumum of two of the same kind
-    const int nrOfdetails = 2;
+    // const int nrOfdetails = 2;
     // XXX TODO.
 }
 
-void tst_QOrganizerItemManager::addOccurrences()
+void tst_QOrganizerItemManager::addOccurrenceExceptionsWithGuid()
 {
     QFETCH(QString, uri);
     QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
@@ -1345,6 +1349,71 @@ void tst_QOrganizerItemManager::compatibleItem()
     QFETCH(QOrganizerItemManager::Error, error);
     QCOMPARE(cm.compatibleItem(input), expected);
     QCOMPARE(cm.error(), error);
+}
+
+void tst_QOrganizerItemManager::recurrenceWithGenerator_data()
+{
+    QTest::addColumn<QString>("uri");
+    QTest::addColumn<QDate>("eventDate");
+    QTest::addColumn<QOrganizerItemRecurrenceRule>("recurrenceRule");
+    QTest::addColumn<QDate>("startDate");
+    QTest::addColumn<QDate>("endDate");
+    QTest::addColumn<QList<QDate> >("occurrenceDates");
+
+    QStringList managers = QOrganizerItemManager::availableManagers();
+
+    /* Known one that will not pass */
+    managers.removeAll("invalid");
+    managers.removeAll("testdummy");
+    managers.removeAll("teststaticdummy");
+    managers.removeAll("maliciousplugin");
+
+    foreach(QString mgr, managers) {
+        QString managerUri = QOrganizerItemManager::buildUri(mgr, QMap<QString, QString>());
+
+        {
+            QOrganizerItemRecurrenceRule rrule;
+            rrule.setFrequency(QOrganizerItemRecurrenceRule::Weekly);
+            rrule.setEndDate(QDate(2010, 2, 1));
+            QTest::newRow(QString("mgr=%1, weekly recurrence").arg(mgr).toLatin1().constData())
+                << managerUri << QDate(2010, 1, 1) << rrule
+                << QDate(2010, 1, 1) << QDate(2010, 1, 20)
+                << (QList<QDate>() << QDate(2010, 1, 1) << QDate(2010, 1, 8) << QDate(2010, 1, 15));
+        }
+    }
+}
+
+void tst_QOrganizerItemManager::recurrenceWithGenerator()
+{
+    QFETCH(QString, uri);
+    QFETCH(QDate, eventDate);
+    QFETCH(QOrganizerItemRecurrenceRule, recurrenceRule);
+    QScopedPointer<QOrganizerItemManager> cm(QOrganizerItemManager::fromUri(uri));
+    QFETCH(QDate, startDate);
+    QFETCH(QDate, endDate);
+    QFETCH(QList<QDate>, occurrenceDates);
+
+    QOrganizerEvent event;
+    event.setDisplayLabel("event");
+    event.setStartDateTime(QDateTime(eventDate, QTime(11, 0, 0)));
+    event.setEndDateTime(QDateTime(eventDate, QTime(11, 30, 0)));
+    event.setRecurrenceRules(QList<QOrganizerItemRecurrenceRule>() << recurrenceRule);
+    QVERIFY(cm->saveItem(&event));
+    QList<QOrganizerItem> items = cm->itemInstances(event,
+            QDateTime(startDate, QTime(0, 0, 0)),
+            QDateTime(endDate.addDays(1), QTime(0, 0, 0)));
+    QCOMPARE(items.size(), occurrenceDates.size());
+    for (int i = 0; i < items.size(); i++) {
+        QOrganizerItem item = items.at(i);
+        QCOMPARE(item.type(), QString(QLatin1String(QOrganizerItemType::TypeEventOccurrence)));
+        QDate occurrenceDate;
+        if (item.type() == QOrganizerItemType::TypeEventOccurrence) {
+            occurrenceDate = item.detail<QOrganizerEventTimeRange>().startDateTime().date();
+        } else if (item.type() == QOrganizerItemType::TypeTodoOccurrence) {
+            occurrenceDate = item.detail<QOrganizerTodoTimeRange>().startDateTime().date();
+        }
+        QCOMPARE(occurrenceDate, occurrenceDates.at(i));
+    }
 }
 
 void tst_QOrganizerItemManager::itemValidation()

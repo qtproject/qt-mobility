@@ -80,6 +80,8 @@ class QOrganizerEvent;
 class QOrganizerTodo;
 class QOrganizerNote;
 class QOrganizerJournal;
+class QOrganizerItemRecurrence;
+class QOrganizerItemRecurrenceRule;
 QTM_END_NAMESPACE
 
 QTM_USE_NAMESPACE
@@ -161,11 +163,15 @@ private:
     QMap<QString, QMap<QString, QOrganizerItemDetailDefinition> > schemaDefinitions() const;
     Incidence* incidence(const QOrganizerItemLocalId& itemId) const;
     Incidence* softSaveItem(QOrganizerItem* item, QOrganizerItemManager::Error* error);
-    Event* convertQEventToKEvent(const QOrganizerEvent& note);
-    Todo* convertQTodoToKTodo(const QOrganizerTodo& note);
-    Journal* convertQJournalToKJournal(const QOrganizerJournal& note);
-    Journal* convertQNoteToKJournal(const QOrganizerNote& note);
-    void convertDetailsToIncidenceFields(const QOrganizerItem& item, Incidence* incidence);
+    Event* createKEvent(const QOrganizerEvent& note);
+    Todo* createKTodo(const QOrganizerTodo& note);
+    Journal* createKJournal(const QOrganizerJournal& note);
+    Journal* createKNote(const QOrganizerNote& note);
+    void convertCommonDetailsToIncidenceFields(const QOrganizerItem& item, Incidence* incidence);
+    void convertQRecurrenceToKRecurrence(const QOrganizerItemRecurrence& qRecurrence,
+            Recurrence* kRecurrence);
+    RecurrenceRule* createKRecurrenceRule(Recurrence* kRecurrence,
+            const QOrganizerItemRecurrenceRule& rrule);
 
     QOrganizerItemMaemo6EngineData* d;
 
