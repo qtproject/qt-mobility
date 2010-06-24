@@ -178,6 +178,14 @@ QBluetoothUuid::QBluetoothUuid(const QBluetoothUuid &uuid)
 }
 
 /*!
+    Constructs a new Bluetooth UUID that is a copy of \a uuid.
+*/
+QBluetoothUuid::QBluetoothUuid(const QUuid &uuid)
+:   QUuid(uuid)
+{
+}
+
+/*!
     Destroys the Bluetooth UUID.
 */
 QBluetoothUuid::~QBluetoothUuid()
@@ -270,6 +278,9 @@ quint128 QBluetoothUuid::toUInt128() const
     return uuid;
 }
 
+/*!
+    Returns true if \a other is equal to this Bluetooth UUID; otherwise returns false.
+*/
 bool QBluetoothUuid::operator==(const QBluetoothUuid &other) const
 {
     return QUuid::operator==(other);

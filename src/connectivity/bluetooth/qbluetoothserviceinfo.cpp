@@ -116,6 +116,16 @@ QTM_BEGIN_NAMESPACE
 */
 
 /*!
+    \enum QBluetoothServiceInfo::Protocol
+
+    This enum describes the socket protocol used by the service.
+
+    \value UnknownProtocol  The service uses an unknown socket protocol.
+    \value L2capProtocol    The service uses the L2CAP socket protocol.
+    \value RfcommProtocol   The service uses the RFCOMM socket protocol.
+*/
+
+/*!
     \fn bool QBluetoothServiceInfo::isRegistered() const
 
     Returns true if the service info is registered with the platforms service discovery protocol
